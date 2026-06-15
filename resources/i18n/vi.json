@@ -1189,7 +1189,7 @@
       "description": {
         "AccessTokens": "Quản lý mã thông báo truy cập để xác thực các yêu cầu API đến điểm cuối của deployment này.",
         "AutoScaling": "Cấu hình các quy tắc tự động mở rộng để tự động điều chỉnh số lượng bản sao dựa trên số liệu lưu lượng truy cập.",
-        "Replicas": "Xem tất cả các phiên bản bản sao đang chạy cho deployment này cùng với trạng thái sức khỏe và tài nguyên của chúng.",
+        "Replicas": "Xem tất cả các bản sao đang chạy cho deployment này cùng với trạng thái sức khỏe và tài nguyên của chúng.",
         "Revision": "Duyệt qua các lần sửa đổi deployment trước đây và khôi phục về bất kỳ phiên bản nào.",
         "RevisionHistory": "Duyệt qua các lần sửa đổi deployment trước đây và khôi phục về bất kỳ phiên bản nào."
       }
@@ -2449,7 +2449,7 @@
     "tooltip": {
       "Degraded": "Bộ kiểm tra sức khỏe không thể tiếp cận bản sao này. Nó tạm thời bị loại khỏi Active Pool.",
       "FailedToStart": "Bản sao không khởi động được. Kiểm tra nhật ký phiên để tìm nguyên nhân.",
-      "Healthy": "Bình thường. Được bao gồm trong App Proxy Active Pool và đang nhận lưu lượng.",
+      "Healthy": "Sẵn sàng xử lý yêu cầu.",
       "NotChecked": "Trong giai đoạn trễ ban đầu. Đang chờ kiểm tra sức khỏe lần đầu tiên.",
       "Provisioning": "Bản sao đang được cấp phát.",
       "Running": "Tiến trình bản sao đang chạy và sẵn sàng được kiểm tra.",

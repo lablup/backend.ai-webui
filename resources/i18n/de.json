@@ -1189,7 +1189,7 @@
       "description": {
         "AccessTokens": "Verwalten Sie Zugriffstoken zur Authentifizierung von API-Anfragen an den Endpunkt dieses Deployments.",
         "AutoScaling": "Konfigurieren Sie Regeln zur automatischen Skalierung, um die Anzahl der Replikate basierend auf Verkehrsmetriken automatisch anzupassen.",
-        "Replicas": "Zeigen Sie alle laufenden Replikat-Instanzen dieses Deployments mit ihrem Gesundheitszustand und Ressourcenstatus an.",
+        "Replicas": "Zeigen Sie alle laufenden Replikate dieses Deployments mit ihrem Gesundheitszustand und Ressourcenstatus an.",
         "Revision": "Sehen Sie sich vergangene Deployment-Revisionen an und führen Sie einen Rollback auf eine beliebige frühere Version durch.",
         "RevisionHistory": "Durchsuchen Sie vergangene Deployment-Revisionen und führen Sie ein Rollback auf eine beliebige frühere Version durch."
       }
@@ -2449,7 +2449,7 @@
     "tooltip": {
       "Degraded": "Der Health-Checker kann dieses Replikat nicht erreichen. Es wird vorübergehend aus dem Active Pool ausgeschlossen.",
       "FailedToStart": "Das Replikat konnte nicht gestartet werden. Überprüfen Sie die Sitzungsprotokolle auf die Ursache.",
-      "Healthy": "Gesund. Im App Proxy Active Pool enthalten und empfängt Datenverkehr.",
+      "Healthy": "Bereit, Anfragen zu verarbeiten.",
       "NotChecked": "Innerhalb der anfänglichen Verzögerungszeit. Wartet auf die erste Gesundheitsprüfung.",
       "Provisioning": "Das Replikat wird bereitgestellt.",
       "Running": "Der Replikat-Prozess läuft und ist bereit zur Überprüfung.",

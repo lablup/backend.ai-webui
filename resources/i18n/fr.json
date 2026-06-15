@@ -1189,7 +1189,7 @@
       "description": {
         "AccessTokens": "Gérez les jetons d'accès pour authentifier les requêtes API vers le point de terminaison de ce déploiement.",
         "AutoScaling": "Configurez des règles de mise à l'échelle automatique pour ajuster automatiquement le nombre de répliques en fonction des métriques de trafic.",
-        "Replicas": "Affichez toutes les instances de réplique en cours d'exécution pour ce déploiement avec leur état de santé et leurs ressources.",
+        "Replicas": "Affichez toutes les répliques en cours d'exécution pour ce déploiement avec leur état de santé et leurs ressources.",
         "Revision": "Parcourez les révisions de déploiement passées et revenez à n'importe laquelle.",
         "RevisionHistory": "Parcourez les révisions de déploiement passées et revenez à n'importe laquelle."
       }
@@ -2449,7 +2449,7 @@
     "tooltip": {
       "Degraded": "Le vérificateur de santé ne peut pas atteindre cette réplique. Elle est temporairement exclue du Active Pool.",
       "FailedToStart": "La réplique n'a pas réussi à démarrer. Vérifiez les journaux de session pour en trouver la cause.",
-      "Healthy": "En bonne santé. Incluse dans le App Proxy Active Pool et recevant du trafic.",
+      "Healthy": "Prête à traiter les requêtes.",
       "NotChecked": "Dans la période de délai initial. En attente de la première vérification de santé.",
       "Provisioning": "La réplique est en cours d'approvisionnement.",
       "Running": "Le processus de réplique est en cours d'exécution et prêt à être vérifié.",

@@ -1189,7 +1189,7 @@
       "description": {
         "AccessTokens": "Urus token akses untuk mengesahkan permintaan API ke titik akhir deployment ini.",
         "AutoScaling": "Konfigurasikan peraturan penskalaan automatik untuk melaraskan bilangan replika secara automatik berdasarkan metrik trafik.",
-        "Replicas": "Lihat semua instans replika yang sedang berjalan untuk deployment ini beserta status kesihatan dan sumber dayanya.",
+        "Replicas": "Lihat semua replika yang sedang berjalan untuk deployment ini beserta status kesihatan dan sumber dayanya.",
         "Revision": "Semak semula revisi deployment yang lalu dan gulung balik ke mana-mana versi sebelumnya.",
         "RevisionHistory": "Semak semula revisi deployment yang lalu dan gulung balik ke mana-mana versi sebelumnya."
       }
@@ -2447,7 +2447,7 @@
     "tooltip": {
       "Degraded": "Pemeriksa kesihatan tidak dapat mencapai replika ini. Ia dikecualikan sementara daripada Active Pool.",
       "FailedToStart": "Replika gagal dimulakan. Semak log sesi untuk mengetahui puncanya.",
-      "Healthy": "Sihat. Disertakan dalam App Proxy Active Pool dan menerima trafik.",
+      "Healthy": "Bersedia untuk mengendalikan permintaan.",
       "NotChecked": "Dalam tempoh kelewatan awal. Menunggu pemeriksaan kesihatan pertama.",
       "Provisioning": "Replika sedang diperuntukkan.",
       "Running": "Proses replika sedang berjalan dan bersedia untuk diperiksa.",

@@ -1189,7 +1189,7 @@
       "description": {
         "AccessTokens": "Zarządzaj tokenami dostępu do uwierzytelniania żądań API do punktu końcowego tego wdrożenia.",
         "AutoScaling": "Skonfiguruj reguły automatycznego skalowania, aby automatycznie dostosowywać liczbę replik na podstawie metryk ruchu.",
-        "Replicas": "Wyświetl wszystkie uruchomione instancje replik tego wdrożenia wraz z ich stanem zdrowia i statusem zasobów.",
+        "Replicas": "Wyświetl wszystkie uruchomione repliki tego wdrożenia wraz z ich stanem zdrowia i statusem zasobów.",
         "Revision": "Przeglądaj poprzednie wersje wdrożenia i wróć do dowolnej z nich.",
         "RevisionHistory": "Przeglądaj poprzednie wersje wdrożenia i wróć do dowolnej z nich."
       }
@@ -2449,7 +2449,7 @@
     "tooltip": {
       "Degraded": "Sprawdzanie stanu nie może osiągnąć tej repliki. Jest tymczasowo wykluczona z Active Pool.",
       "FailedToStart": "Replika nie uruchomiła się. Sprawdź dzienniki sesji w celu znalezienia przyczyny.",
-      "Healthy": "Zdrowa. Zawarta w App Proxy Active Pool i odbiera ruch.",
+      "Healthy": "Gotowa do obsługi żądań.",
       "NotChecked": "W początkowym okresie opóźnienia. Oczekuje na pierwsze sprawdzenie stanu.",
       "Provisioning": "Replika jest provisionowana.",
       "Running": "Proces repliki jest uruchomiony i gotowy do sprawdzenia.",

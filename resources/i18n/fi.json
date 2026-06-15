@@ -1189,7 +1189,7 @@
       "description": {
         "AccessTokens": "Hallitse käyttöoikeustunnuksia, joilla todennetaan API-pyynnöt tämän käyttöönoton päätepisteeseen.",
         "AutoScaling": "Määritä automaattisen skaalauksen säännöt, joiden avulla replikoiden määrää säädetään automaattisesti liikennemittareiden perusteella.",
-        "Replicas": "Tarkastele kaikkia tämän käyttöönoton käynnissä olevia replikaesiintymiä niiden terveys- ja resurssitiloineen.",
+        "Replicas": "Tarkastele kaikkia tämän käyttöönoton käynnissä olevia replikoita niiden terveys- ja resurssitiloineen.",
         "Revision": "Selaa aiempia käyttöönottorevisioita ja palauta mikä tahansa aiempi versio.",
         "RevisionHistory": "Selaa aiempia käyttöönottorevisioita ja palauta mikä tahansa niistä."
       }
@@ -2447,7 +2447,7 @@
     "tooltip": {
       "Degraded": "Terveystarkistaja ei pääse tähän replikkaan. Se on väliaikaisesti poistettu Active Poolista.",
       "FailedToStart": "Replikka ei käynnistynyt. Tarkista istuntologeista syy.",
-      "Healthy": "Terve. Sisältyy App Proxy Active Pooliin ja vastaanottaa liikennettä.",
+      "Healthy": "Valmis käsittelemään pyyntöjä.",
       "NotChecked": "Alkuvaiheen viiveen sisällä. Odottaa ensimmäistä terveystarkistusta.",
       "Provisioning": "Replikka valmistellaan.",
       "Running": "Replikan prosessi on käynnissä ja valmis tarkistettavaksi.",

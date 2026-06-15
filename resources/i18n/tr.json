@@ -1189,7 +1189,7 @@
       "description": {
         "AccessTokens": "Bu dağıtımın uç noktasına yapılan API isteklerini doğrulamak için erişim jetonlarını yönetin.",
         "AutoScaling": "Trafik ölçütlerine göre replika sayısını otomatik olarak ayarlamak için otomatik ölçeklendirme kurallarını yapılandırın.",
-        "Replicas": "Bu dağıtım için çalışan tüm replika örneklerini sağlık durumları ve kaynak statüleriyle birlikte görüntüleyin.",
+        "Replicas": "Bu dağıtım için çalışan tüm replikaları sağlık durumları ve kaynak statüleriyle birlikte görüntüleyin.",
         "Revision": "Geçmiş dağıtım revizyonlarını inceleyin ve istediğiniz bir önceki sürüme geri alın.",
         "RevisionHistory": "Geçmiş dağıtım revizyonlarını inceleyin ve istediğiniz bir önceki sürüme geri dönün."
       }
@@ -2447,7 +2447,7 @@
     "tooltip": {
       "Degraded": "Sağlık denetleyicisi bu replikaya ulaşamıyor. Geçici olarak Active Pool'dan çıkarıldı.",
       "FailedToStart": "Replika başlatılamadı. Nedeni bulmak için oturum günlüklerini kontrol edin.",
-      "Healthy": "Sağlıklı. App Proxy Active Pool'a dahil ve trafik alıyor.",
+      "Healthy": "İstekleri işlemeye hazır.",
       "NotChecked": "İlk gecikme süresinde. İlk sağlık kontrolü bekleniyor.",
       "Provisioning": "Replika temin ediliyor.",
       "Running": "Replika süreci çalışıyor ve kontrol edilmeye hazır.",

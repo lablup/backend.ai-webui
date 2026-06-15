@@ -1189,7 +1189,7 @@
       "description": {
         "AccessTokens": "Gerencie tokens de acesso para autenticar requisições de API no endpoint deste deployment.",
         "AutoScaling": "Configure regras de dimensionamento automático para ajustar automaticamente o número de réplicas com base nas métricas de tráfego.",
-        "Replicas": "Visualize todas as instâncias de réplica em execução deste deployment com seu status de saúde e recursos.",
+        "Replicas": "Visualize todas as réplicas em execução deste deployment com seu status de saúde e recursos.",
         "Revision": "Navegue pelas revisões anteriores do deployment e reverta para qualquer versão anterior.",
         "RevisionHistory": "Navegue pelas revisões anteriores do deployment e reverta para qualquer uma delas."
       }
@@ -2447,7 +2447,7 @@
     "tooltip": {
       "Degraded": "O verificador de saúde não consegue alcançar esta réplica. Ela está temporariamente excluída do Active Pool.",
       "FailedToStart": "A réplica falhou ao iniciar. Verifique os logs da sessão para encontrar a causa.",
-      "Healthy": "Saudável. Incluída no App Proxy Active Pool e recebendo tráfego.",
+      "Healthy": "Pronta para atender solicitações.",
       "NotChecked": "Dentro do período de atraso inicial. Aguardando a primeira verificação de saúde.",
       "Provisioning": "A réplica está sendo provisionada.",
       "Running": "O processo da réplica está em execução e pronto para ser verificado.",

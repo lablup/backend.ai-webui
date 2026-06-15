@@ -1176,7 +1176,7 @@
       "description": {
         "AccessTokens": "Manage access tokens for authenticating API requests to this deployment's endpoint.",
         "AutoScaling": "Configure auto-scaling rules to automatically adjust replica count based on traffic metrics.",
-        "Replicas": "View all running replica instances for this deployment with their health and resource status.",
+        "Replicas": "View all running replicas for this deployment with their health and resource status.",
         "Revision": "Browse past deployment revisions and roll back to any previous one.",
         "RevisionHistory": "Browse past deployment revisions and roll back to any previous one."
       }
@@ -2434,7 +2434,7 @@
     "tooltip": {
       "Degraded": "Health checker cannot reach this replica. It is temporarily excluded from the Active Pool.",
       "FailedToStart": "The replica failed to start. Check the session logs for the cause.",
-      "Healthy": "Healthy. Included in the App Proxy Active Pool and receiving traffic.",
+      "Healthy": "Ready to handle requests.",
       "NotChecked": "Within the initial delay period. Awaiting the first health check.",
       "Provisioning": "The replica is being provisioned.",
       "Running": "The replica process is running and ready to be checked.",

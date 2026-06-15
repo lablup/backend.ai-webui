@@ -1190,7 +1190,7 @@
       "description": {
         "AccessTokens": "管理用於向此部署端點驗證 API 請求的存取令牌。",
         "AutoScaling": "設定自動擴縮容規則，根據流量指標自動調整副本數量。",
-        "Replicas": "檢視此部署所有正在執行的副本實例及其健康狀態和資源狀況。",
+        "Replicas": "檢視此部署所有正在執行的副本及其健康狀態和資源狀況。",
         "Revision": "瀏覽過去的部署版本歷史，並回滾至任意之前的版本。",
         "RevisionHistory": "瀏覽過去的部署版本歷史，並回滾至任意之前的版本。"
       }
@@ -2451,7 +2451,7 @@
     "tooltip": {
       "Degraded": "健康檢查器無法存取此副本。它已從 Active Pool 中暫時排除。",
       "FailedToStart": "副本啟動失敗。請查看工作階段日誌以了解原因。",
-      "Healthy": "正常。已包含在 App Proxy Active Pool 中並正在接收流量。",
+      "Healthy": "已準備好處理請求。",
       "NotChecked": "在初始延遲期內。正在等待第一次健康檢查。",
       "Provisioning": "副本正在設定中。",
       "Running": "副本程序正在執行並準備好接受檢查。",
