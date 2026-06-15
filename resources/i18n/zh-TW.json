@@ -2235,8 +2235,11 @@
     "RoleMember": "成員"
   },
   "projectSelect": {
+    "GoToProject": "前往 {{project}}",
     "NoAccessibleProjects": "沒有可存取的專案。",
-    "ProjectAdminBadge": "專案管理員"
+    "ProjectAdminBadge": "專案管理員",
+    "ProjectNotFoundOrNoAccess": "找不到專案 '{{project}}' 或您沒有存取權限。",
+    "SwitchToAccessibleProject": "請從頁面頂部的專案選擇器中選擇一個可存取的專案。"
   },
   "prometheusQueryPreset": {
     "AddPreset": "新增預設",

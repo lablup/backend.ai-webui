@@ -16,7 +16,11 @@ import {
   useCurrentUserProjectRoles,
   useEffectiveAdminRole,
 } from '../../hooks/useCurrentUserProjectRoles';
-import { useCurrentMenuKey, useRouteScope } from '../../hooks/useRouteScope';
+import {
+  useActiveProjectName,
+  useCurrentMenuKey,
+  useRouteScope,
+} from '../../hooks/useRouteScope';
 import { useWebUIMenuItems } from '../../hooks/useWebUIMenuItems';
 import BAINotificationButton from '../BAINotificationButton';
 import LoginSessionExtendButton from '../LoginSessionExtendButton';
@@ -62,6 +66,14 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
   const location = useLocation();
   const routeScope = useRouteScope();
   const currentMenuKey = useCurrentMenuKey();
+  // When the URL carries an invalid/inaccessible `:projectName`, the atom keeps
+  // the last valid project, which would make the header selector look like that
+  // project is selected. Detect this and show the selector unselected instead.
+  const activeProjectName = useActiveProjectName();
+  const accessibleProjectNames =
+    (baiClient as unknown as { groups?: string[] })?.groups ?? [];
+  const isUrlProjectInvalid =
+    !!activeProjectName && !accessibleProjectNames.includes(activeProjectName);
   const { isSelectedAdminCategoryMenu } = useWebUIMenuItems();
   const effectiveAdminRole = useEffectiveAdminRole();
   const { projectAdminIds } = useCurrentUserProjectRoles();
@@ -196,7 +208,13 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
             className="non-draggable"
             showSearch
             domain={currentDomainName}
-            value={isProjectChanging ? optimisticProjectId : currentProject?.id}
+            value={
+              isProjectChanging
+                ? optimisticProjectId
+                : isUrlProjectInvalid
+                  ? undefined
+                  : currentProject?.id
+            }
             onSelectProject={(projectInfo) => {
               const isTargetProjectAdmin = projectAdminIds.includes(
                 projectInfo.projectId,

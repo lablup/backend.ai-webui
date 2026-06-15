@@ -2233,8 +2233,11 @@
     "RoleMember": "สมาชิก"
   },
   "projectSelect": {
+    "GoToProject": "ไปยัง {{project}}",
     "NoAccessibleProjects": "ไม่มีโปรเจกต์ที่สามารถเข้าถึงได้",
-    "ProjectAdminBadge": "ผู้ดูแลโปรเจกต์"
+    "ProjectAdminBadge": "ผู้ดูแลโปรเจกต์",
+    "ProjectNotFoundOrNoAccess": "ไม่พบโปรเจกต์ '{{project}}' หรือคุณไม่มีสิทธิ์เข้าถึง",
+    "SwitchToAccessibleProject": "เลือกโปรเจกต์ที่สามารถเข้าถึงได้จากตัวเลือกโปรเจกต์ที่ด้านบนของหน้า"
   },
   "prometheusQueryPreset": {
     "AddPreset": "เพิ่มพรีเซต",

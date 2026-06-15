@@ -2231,8 +2231,11 @@
     "RoleMember": "Участник"
   },
   "projectSelect": {
+    "GoToProject": "Перейти к {{project}}",
     "NoAccessibleProjects": "Нет доступных проектов.",
-    "ProjectAdminBadge": "Администратор проекта"
+    "ProjectAdminBadge": "Администратор проекта",
+    "ProjectNotFoundOrNoAccess": "Проект '{{project}}' не найден или у вас нет к нему доступа.",
+    "SwitchToAccessibleProject": "Выберите доступный проект в селекторе проектов в верхней части страницы."
   },
   "prometheusQueryPreset": {
     "AddPreset": "Добавить пресет",
