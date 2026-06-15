@@ -297,6 +297,7 @@
   },
   "auditLog": {
     "AuditLog": "Audit Log",
+    "EntityType": "Entity Type",
     "Operation": "Operation",
     "Status": "Status",
     "Time": "Time",
