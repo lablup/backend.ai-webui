@@ -443,6 +443,8 @@
     "DeleteChatHistory": "Conversa clara",
     "DeleteChattingSession": "Eliminar Chat",
     "DeleteChattingSessionDescription": "Você está prestes a excluir este tópico. \nUma vez excluído, ele não pode ser recuperado. \nPor favor, proceda com cautela.",
+    "Deployment": "Implantação",
+    "DeploymentModels": "Modelos de {{name}}",
     "DropFileHere": "Solte o arquivo aqui",
     "History": "História",
     "NewChat": "Novo chat",
@@ -474,6 +476,10 @@
           "TopP": "Top P"
         }
       }
+    },
+    "intro": {
+      "Description": "Converse com o modelo LLM definido na sua Implantação por meio de uma API compatível com OpenAI.",
+      "Title": "Converse com seus modelos implantados"
     }
   },
   "credential": {

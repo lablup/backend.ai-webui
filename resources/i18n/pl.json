@@ -443,6 +443,8 @@
     "DeleteChatHistory": "Przejrzysty czat",
     "DeleteChattingSession": "Usuń czat",
     "DeleteChattingSessionDescription": "Zamierzasz usunąć ten temat. \nRaz usuniętego nie można odzyskać. \nProszę postępować ostrożnie.",
+    "Deployment": "Wdrożenie",
+    "DeploymentModels": "Modele użytkownika {{name}}",
     "DropFileHere": "Upuść plik tutaj",
     "History": "Historia",
     "NewChat": "Nowy czat",
@@ -474,6 +476,10 @@
           "TopP": "Top P"
         }
       }
+    },
+    "intro": {
+      "Description": "Czatuj z modelem LLM zdefiniowanym w swoim Wdrożeniu przez API zgodne z OpenAI.",
+      "Title": "Czatuj z wdrożonymi modelami"
     }
   },
   "credential": {

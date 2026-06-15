@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c53946a820e47295c1530ab5d02ed807>>
+ * @generated SignedSource<<514d5a97f361d828c0a0a20d504f6506>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,6 +12,7 @@ import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type ChatHeader_Endpoint$data = {
   readonly endpoint_id: string | null | undefined;
+  readonly name: string | null | undefined;
   readonly " $fragmentType": "ChatHeader_Endpoint";
 };
 export type ChatHeader_Endpoint$key = {
@@ -31,12 +32,19 @@ const node: ReaderFragment = {
       "kind": "ScalarField",
       "name": "endpoint_id",
       "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "name",
+      "storageKey": null
     }
   ],
   "type": "Endpoint",
   "abstractKey": null
 };
 
-(node as any).hash = "baa41c02cf67330c6bf4313d43280faa";
+(node as any).hash = "2ea82665de3ccedca19e1f751f511d03";
 
 export default node;

@@ -443,6 +443,8 @@
     "DeleteChatHistory": "Açık Sohbet",
     "DeleteChattingSession": "Sohbeti Sil",
     "DeleteChattingSessionDescription": "Bu konuyu silmek üzeresiniz. \nBir kere silindikten sonra geri getirilemez. \nLütfen dikkatli bir şekilde ilerleyin.",
+    "Deployment": "Dağıtım",
+    "DeploymentModels": "{{name}}'nin Modelleri",
     "DropFileHere": "Dosyayı buraya bırakın",
     "History": "Tarih",
     "NewChat": "Yeni sohbet",
@@ -474,6 +476,10 @@
           "TopP": "Top P"
         }
       }
+    },
+    "intro": {
+      "Description": "Dağıtımınızda tanımlanan LLM modeliyle OpenAI uyumlu API aracılığıyla sohbet edin.",
+      "Title": "Dağıtılan modellerinizle sohbet edin"
     }
   },
   "credential": {

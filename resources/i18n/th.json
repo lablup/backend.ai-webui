@@ -443,6 +443,8 @@
     "DeleteChatHistory": "เคลียร์แชท",
     "DeleteChattingSession": "ลบแชท",
     "DeleteChattingSessionDescription": "คุณกำลังจะลบหัวข้อนี้ เมื่อลบแล้วจะไม่สามารถกู้คืนได้ กรุณาดำเนินการด้วยความระมัดระวัง",
+    "Deployment": "การปรับใช้",
+    "DeploymentModels": "โมเดลของ {{name}}",
     "DropFileHere": "วางไฟล์ที่นี่",
     "History": "ประวัติศาสตร์",
     "NewChat": "แชทใหม่",
@@ -474,6 +476,10 @@
           "TopP": "Top P"
         }
       }
+    },
+    "intro": {
+      "Description": "แชทกับโมเดล LLM ที่กำหนดไว้ในการปรับใช้ของคุณผ่าน API ที่เข้ากันได้กับ OpenAI",
+      "Title": "แชทกับโมเดลที่ปรับใช้ของคุณ"
     }
   },
   "credential": {

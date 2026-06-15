@@ -443,6 +443,8 @@
     "DeleteChatHistory": "Selkeä keskustelu",
     "DeleteChattingSession": "Poista keskustelu",
     "DeleteChattingSessionDescription": "Olet poistamassa tätä aihetta. \nKun se on poistettu, sitä ei voi palauttaa. \nOle hyvä ja jatka varoen.",
+    "Deployment": "Käyttöönotto",
+    "DeploymentModels": "{{name}}:n mallit",
     "DropFileHere": "Pudota tiedosto tähän",
     "History": "Historia",
     "NewChat": "Uusi keskustelu",
@@ -474,6 +476,10 @@
           "TopP": "Top P"
         }
       }
+    },
+    "intro": {
+      "Description": "Keskustele Käyttöönotossasi määritellyn LLM-mallin kanssa OpenAI-yhteensopivan API:n kautta.",
+      "Title": "Keskustele käyttöönotetuilla malleillasi"
     }
   },
   "credential": {

@@ -432,6 +432,8 @@
     "DeleteChatHistory": "Clear Chat",
     "DeleteChattingSession": "Delete Chat",
     "DeleteChattingSessionDescription": "You are about to delete this topic. Once deleted, it cannot be recovered. Please proceed with caution.",
+    "Deployment": "Deployment",
+    "DeploymentModels": "{{name}}'s Models",
     "DropFileHere": "Drop file here",
     "History": "History",
     "NewChat": "New Chat",
@@ -463,6 +465,10 @@
           "TopP": "Top P"
         }
       }
+    },
+    "intro": {
+      "Description": "Chat with the LLM model defined in your deployment through an OpenAI-compatible API.",
+      "Title": "Chat with your deployed models"
     }
   },
   "credential": {

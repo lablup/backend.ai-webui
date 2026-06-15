@@ -443,6 +443,8 @@
     "DeleteChatHistory": "清晰聊天",
     "DeleteChattingSession": "删除聊天",
     "DeleteChattingSessionDescription": "您即将删除该主题。\n一旦删除，就无法恢复。\n请谨慎行事。",
+    "Deployment": "部署",
+    "DeploymentModels": "{{name}}的模型",
     "DropFileHere": "将文件拖放到此处",
     "History": "历史",
     "NewChat": "新聊天",
@@ -474,6 +476,10 @@
           "TopP": "Top P"
         }
       }
+    },
+    "intro": {
+      "Description": "通过兼容 OpenAI 的 API，与您的部署中定义的 LLM 模型对话。",
+      "Title": "与您已部署的模型对话"
     }
   },
   "credential": {

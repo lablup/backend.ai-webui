@@ -443,6 +443,8 @@
     "DeleteChatHistory": "Chat clair",
     "DeleteChattingSession": "Supprimer le chat",
     "DeleteChattingSessionDescription": "Vous êtes sur le point de supprimer ce sujet. \nUne fois supprimé, il ne peut pas être récupéré. \nVeuillez procéder avec prudence.",
+    "Deployment": "Déploiement",
+    "DeploymentModels": "Modèles de {{name}}",
     "DropFileHere": "Déposez le fichier ici",
     "History": "L'histoire",
     "NewChat": "Nouvelle discussion",
@@ -474,6 +476,10 @@
           "TopP": "Top P"
         }
       }
+    },
+    "intro": {
+      "Description": "Discutez avec le modèle LLM défini dans votre Déploiement via une API compatible OpenAI.",
+      "Title": "Discutez avec vos modèles déployés"
     }
   },
   "credential": {

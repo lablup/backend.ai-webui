@@ -443,6 +443,8 @@
     "DeleteChatHistory": "Trò chuyện rõ ràng",
     "DeleteChattingSession": "Xóa trò chuyện",
     "DeleteChattingSessionDescription": "Bạn sắp xóa chủ đề này. \nMột khi đã xóa, nó không thể được phục hồi. \nHãy tiến hành thận trọng.",
+    "Deployment": "Triển khai",
+    "DeploymentModels": "Các mô hình của {{name}}",
     "DropFileHere": "Thả tập tin ở đây",
     "History": "Lịch sử",
     "NewChat": "Cuộc trò truyện mới",
@@ -474,6 +476,10 @@
           "TopP": "Top P"
         }
       }
+    },
+    "intro": {
+      "Description": "Trò chuyện với mô hình LLM được định nghĩa trong Triển khai của bạn qua API tương thích OpenAI.",
+      "Title": "Trò chuyện với các mô hình đã triển khai của bạn"
     }
   },
   "credential": {

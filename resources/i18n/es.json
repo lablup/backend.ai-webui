@@ -443,6 +443,8 @@
     "DeleteChatHistory": "Chat claro",
     "DeleteChattingSession": "Borrar chat",
     "DeleteChattingSessionDescription": "Estás a punto de eliminar este tema. \nUna vez eliminado, no se puede recuperar. \nProceda con precaución.",
+    "Deployment": "Despliegue",
+    "DeploymentModels": "Modelos de {{name}}",
     "DropFileHere": "Suelta el archivo aquí",
     "History": "Historia",
     "NewChat": "Nuevo chat",
@@ -474,6 +476,10 @@
           "TopP": "Top P"
         }
       }
+    },
+    "intro": {
+      "Description": "Chatea con el modelo LLM definido en tu Despliegue a través de una API compatible con OpenAI.",
+      "Title": "Chatea con tus modelos desplegados"
     }
   },
   "credential": {

@@ -443,6 +443,8 @@
     "DeleteChatHistory": "Sembang jelas",
     "DeleteChattingSession": "Padam sembang",
     "DeleteChattingSessionDescription": "Anda akan memadamkan topik ini. \nSetelah dipadam, ia tidak boleh dipulihkan. \nSila teruskan dengan berhati-hati.",
+    "Deployment": "Penggunaan",
+    "DeploymentModels": "Model {{name}}",
     "DropFileHere": "Lepaskan fail di sini",
     "History": "Sejarah",
     "NewChat": "Sembang Baharu",
@@ -474,6 +476,10 @@
           "TopP": "Top P"
         }
       }
+    },
+    "intro": {
+      "Description": "Berbual dengan model LLM yang ditakrifkan dalam Penggunaan anda melalui API yang serasi dengan OpenAI.",
+      "Title": "Berbual dengan model yang telah anda gunakan"
     }
   },
   "credential": {

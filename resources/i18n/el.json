@@ -443,6 +443,8 @@
     "DeleteChatHistory": "Καθαρή συνομιλία",
     "DeleteChattingSession": "Διαγραφή συνομιλίας",
     "DeleteChattingSessionDescription": "Πρόκειται να διαγράψετε αυτό το θέμα. \nΑφού διαγραφεί, δεν μπορεί να ανακτηθεί. \nΠαρακαλούμε προχωρήστε με προσοχή.",
+    "Deployment": "Ανάπτυξη",
+    "DeploymentModels": "Μοντέλα του {{name}}",
     "DropFileHere": "Αποθέστε το αρχείο εδώ",
     "History": "Ιστορία",
     "NewChat": "Νέα συνομιλία",
@@ -474,6 +476,10 @@
           "TopP": "Top P"
         }
       }
+    },
+    "intro": {
+      "Description": "Συνομιλήστε με το μοντέλο LLM που ορίζεται στην Ανάπτυξή σας μέσω API συμβατού με OpenAI.",
+      "Title": "Συνομιλήστε με τα αναπτυγμένα μοντέλα σας"
     }
   },
   "credential": {

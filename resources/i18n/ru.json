@@ -443,6 +443,8 @@
     "DeleteChatHistory": "Четкий чат",
     "DeleteChattingSession": "Удалить чат",
     "DeleteChattingSessionDescription": "Вы собираетесь удалить эту тему. \nПосле удаления его невозможно восстановить. \nПожалуйста, действуйте осторожно.",
+    "Deployment": "Развёртывание",
+    "DeploymentModels": "Модели {{name}}",
     "DropFileHere": "Перетащите файл сюда",
     "History": "История",
     "NewChat": "Новый чат",
@@ -474,6 +476,10 @@
           "TopP": "Top P"
         }
       }
+    },
+    "intro": {
+      "Description": "Общайтесь с LLM-моделью, определённой в вашем Развёртывании, через API, совместимый с OpenAI.",
+      "Title": "Общайтесь с вашими развёрнутыми моделями"
     }
   },
   "credential": {

@@ -13,7 +13,17 @@ import {
 import { type ChatProviderData } from '../components/Chat/ChatModel';
 import WebUINavigate from '../components/WebUINavigate';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
-import { Badge, Button, Card, Drawer, theme, Tooltip, Typography } from 'antd';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
+import {
+  Alert,
+  Badge,
+  Button,
+  Card,
+  Drawer,
+  theme,
+  Tooltip,
+  Typography,
+} from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIButton, BAIFlex, BAICard, BAITable } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -173,7 +183,10 @@ const PureChatPage = ({ id }: { id: string }) => {
   const defaultEndpointId = useDefaultEndpointId();
   const provider = useChatProviderData(defaultEndpointId);
   const { styles } = useStyles();
+  const { token } = theme.useToken();
   const [openHistory, setOpenHistory] = useState(false);
+  const [chatIntroAlertDismissed, setChatIntroAlertDismissed] =
+    useBAISettingUserState('chat_intro_alert_dismissed');
   const {
     chat,
     history,
@@ -248,49 +261,72 @@ const PureChatPage = ({ id }: { id: string }) => {
           </BAIFlex>
         }
       >
-        {id && (
-          <BAIFlex
-            direction="row"
-            align="stretch"
-            gap={'xs'}
-            style={{
-              overflow: 'hidden',
-              minHeight: 0,
-              height: '100%',
-            }}
-          >
-            <Suspense fallback={<Card loading style={{ width: '100%' }} />}>
-              {_.map(chat.chats, (chatData) => (
-                <ChatCard
-                  key={chatData.id}
-                  chat={chatData}
-                  onUpdateChat={(newChatProperties) => {
-                    updateChatData(chatData.id, newChatProperties);
-                  }}
-                  fetchOnClient
-                  onRemoveChat={() => {
-                    removeChatData(chatData.id);
-                  }}
-                  onAddChat={() => {
-                    addChatData(chatData);
-                  }}
-                  onSaveMessage={(message) => {
-                    saveChatMessage(chatData.id, message);
-                  }}
-                  onClearMessage={(chatData) => {
-                    clearChatMessage(chatData.id);
-                  }}
-                  closable={isClosable(chat.chats.length)}
-                  cloneable={isClonable(chat.chats.length)}
-                  style={{
-                    flex: 1,
-                    overflow: 'hidden',
-                  }}
-                />
-              ))}
-            </Suspense>
-          </BAIFlex>
-        )}
+        <BAIFlex
+          direction="column"
+          align="stretch"
+          style={{
+            overflow: 'hidden',
+            minHeight: 0,
+            height: '100%',
+          }}
+        >
+          {!chatIntroAlertDismissed && (
+            <Alert
+              type="info"
+              showIcon
+              closable={{
+                closeIcon: true,
+                afterClose: () => setChatIntroAlertDismissed(true),
+              }}
+              title={t('chatui.intro.Title')}
+              description={t('chatui.intro.Description')}
+              style={{ marginBottom: token.size }}
+            />
+          )}
+          {id && (
+            <BAIFlex
+              direction="row"
+              align="stretch"
+              gap={'xs'}
+              style={{
+                overflow: 'hidden',
+                minHeight: 0,
+                flex: 1,
+              }}
+            >
+              <Suspense fallback={<Card loading style={{ width: '100%' }} />}>
+                {_.map(chat.chats, (chatData) => (
+                  <ChatCard
+                    key={chatData.id}
+                    chat={chatData}
+                    onUpdateChat={(newChatProperties) => {
+                      updateChatData(chatData.id, newChatProperties);
+                    }}
+                    fetchOnClient
+                    onRemoveChat={() => {
+                      removeChatData(chatData.id);
+                    }}
+                    onAddChat={() => {
+                      addChatData(chatData);
+                    }}
+                    onSaveMessage={(message) => {
+                      saveChatMessage(chatData.id, message);
+                    }}
+                    onClearMessage={(chatData) => {
+                      clearChatMessage(chatData.id);
+                    }}
+                    closable={isClosable(chat.chats.length)}
+                    cloneable={isClonable(chat.chats.length)}
+                    style={{
+                      flex: 1,
+                      overflow: 'hidden',
+                    }}
+                  />
+                ))}
+              </Suspense>
+            </BAIFlex>
+          )}
+        </BAIFlex>
         <ChatHistoryDrawer
           selectedHistoryId={chat.id}
           open={openHistory}

@@ -443,6 +443,8 @@
     "DeleteChatHistory": "クリア・チャット",
     "DeleteChattingSession": "チャット削除",
     "DeleteChattingSessionDescription": "このトピックを削除しようとしています。\n一度削除すると復元することはできません。\n慎重に進めてください。",
+    "Deployment": "デプロイ",
+    "DeploymentModels": "{{name}}のモデル",
     "DropFileHere": "ここにファイルをドロップします",
     "History": "歴史",
     "NewChat": "新しいチャット",
@@ -474,6 +476,10 @@
           "TopP": "Top P"
         }
       }
+    },
+    "intro": {
+      "Description": "デプロイに定義されたLLMモデルと、OpenAI互換APIを通じてチャットできます。",
+      "Title": "デプロイしたモデルとチャットする"
     }
   },
   "credential": {

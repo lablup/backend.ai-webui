@@ -50,6 +50,7 @@ export interface UserSettings {
   custom_theme_config?: CustomThemeConfig;
   deploymentRevisionCreationMode?: 'preset' | 'custom';
   schedulingHistoryExpandMode?: 'expand-all' | 'collapse-all' | 'errors-only';
+  chat_intro_alert_dismissed?: boolean;
 }
 
 export type SessionHistory = {

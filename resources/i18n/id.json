@@ -443,6 +443,8 @@
     "DeleteChatHistory": "Hapus Obrolan",
     "DeleteChattingSession": "Menghapus Obrolan",
     "DeleteChattingSessionDescription": "Anda akan menghapus topik ini. \nSetelah dihapus, itu tidak dapat dipulihkan. \nSilakan lanjutkan dengan hati-hati.",
+    "Deployment": "Deployment",
+    "DeploymentModels": "Model dari {{name}}",
     "DropFileHere": "Letakkan file di sini",
     "History": "Sejarah",
     "NewChat": "Obrolan Baru",
@@ -474,6 +476,10 @@
           "TopP": "Top P"
         }
       }
+    },
+    "intro": {
+      "Description": "Ngobrol dengan model LLM yang ditentukan dalam Deployment Anda melalui API yang kompatibel dengan OpenAI.",
+      "Title": "Ngobrol dengan model yang telah Anda deploy"
     }
   },
   "credential": {

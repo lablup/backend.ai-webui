@@ -445,6 +445,8 @@
     "DeleteChatHistory": "채팅 지우기",
     "DeleteChattingSession": "채팅 삭제",
     "DeleteChattingSessionDescription": "이 주제를 삭제하려고 합니다. \n삭제한 후에는 복구할 수 없습니다. \n주의해서 진행하시기 바랍니다.",
+    "Deployment": "배포",
+    "DeploymentModels": "{{name}}의 모델",
     "DropFileHere": "파일을 여기에 놓아주세요.",
     "History": "히스토리",
     "NewChat": "새 채팅",
@@ -476,6 +478,10 @@
           "TopP": "Top P"
         }
       }
+    },
+    "intro": {
+      "Description": "배포에 정의된 LLM 모델과 OpenAI 호환 API로 대화할 수 있습니다.",
+      "Title": "배포한 모델과 대화하기"
     }
   },
   "credential": {

@@ -122,6 +122,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
     graphql`
       fragment ChatHeader_Endpoint on Endpoint {
         endpoint_id
+        name
       }
     `,
     endpointFrgmt,
@@ -225,6 +226,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
         {!isEmpty(models) && (
           <ModelSelect
             models={models}
+            endpointName={endpoint?.name}
             value={modelId}
             onChange={(modelId) => {
               startTransition(() => {

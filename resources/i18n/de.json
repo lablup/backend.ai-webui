@@ -443,6 +443,8 @@
     "DeleteChatHistory": "Chat löschen",
     "DeleteChattingSession": "Chat löschen",
     "DeleteChattingSessionDescription": "Sie sind dabei, dieses Thema zu löschen. \nEinmal gelöscht, kann es nicht wiederhergestellt werden. \nBitte gehen Sie vorsichtig vor.",
+    "Deployment": "Bereitstellung",
+    "DeploymentModels": "Modelle von {{name}}",
     "DropFileHere": "Datei hier ablegen",
     "History": "Geschichte",
     "NewChat": "Neuer Chat",
@@ -474,6 +476,10 @@
           "TopP": "Top P"
         }
       }
+    },
+    "intro": {
+      "Description": "Chatten Sie mit dem LLM-Modell, das in Ihrer Bereitstellung definiert ist, über eine OpenAI-kompatible API.",
+      "Title": "Chatten Sie mit Ihren bereitgestellten Modellen"
     }
   },
   "credential": {

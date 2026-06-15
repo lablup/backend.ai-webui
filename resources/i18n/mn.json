@@ -443,6 +443,8 @@
     "DeleteChatHistory": "Цэвэр яриа",
     "DeleteChattingSession": "Унцыг устгана уу",
     "DeleteChattingSessionDescription": "Та энэ сэдвийг устгах гэж байна. \nУстгасны дараа сэргээх боломжгүй. \nБолгоомжтой үргэлжлүүлнэ үү.",
+    "Deployment": "Байршуулалт",
+    "DeploymentModels": "{{name}}-ын загварууд",
     "DropFileHere": "Файлыг энд буулгана уу",
     "History": "Түүх",
     "NewChat": "Шинэ чат",
@@ -474,6 +476,10 @@
           "TopP": "Top P"
         }
       }
+    },
+    "intro": {
+      "Description": "Байршуулалтдаа тодорхойлсон LLM загвартай OpenAI-тай нийцтэй API-аар дамжуулан чатлаарай.",
+      "Title": "Байршуулсан загваруудтайгаа чатлах"
     }
   },
   "credential": {
