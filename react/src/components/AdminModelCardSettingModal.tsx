@@ -248,7 +248,18 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
             variables: {
               input: {
                 vfolderId: toLocalId(values.vfolderId),
-                modelStoreProjectId: currentProject.id!,
+                // The model card must be created in the MODEL_STORE project — the
+                // same project that backs the VFolder selector above — not the
+                // admin's current compute project. When the admin is not currently
+                // in the model-store project, `currentProject.id` would write the
+                // card to the wrong project; `modelStoreProject.id` is the
+                // model-store-dedicated project. Falls back to the current project
+                // only if no model-store project is resolved.
+                // TODO: model cards in the model-store project are slated to
+                // become global cards. Once a query that can look up cards across
+                // projects of multiple scopes is added, this will need to change.
+                modelStoreProjectId:
+                  modelStoreProject?.id ?? currentProject.id!,
                 domainName: values.domainName || null,
                 ...metadataInput,
               },
