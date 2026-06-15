@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ff20fa825d347e35021204496628d125>>
+ * @generated SignedSource<<17fabfcf7a1dfe7561f25db712b60f65>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -77,11 +77,14 @@ export type SessionSchedulingHistoryOrderBy = {
 };
 export type SessionSchedulingHistoryModalQuery$variables = {
   filter?: SessionSchedulingHistoryFilter | null | undefined;
+  limit?: number | null | undefined;
+  offset?: number | null | undefined;
   orderBy?: ReadonlyArray<SessionSchedulingHistoryOrderBy> | null | undefined;
   scope: SessionScope;
 };
 export type SessionSchedulingHistoryModalQuery$data = {
   readonly sessionScopedSchedulingHistories: {
+    readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly " $fragmentSpreads": FragmentRefs<"BAISchedulingHistoryTableFragment">;
@@ -103,18 +106,38 @@ var v0 = {
 v1 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "orderBy"
+  "name": "limit"
 },
 v2 = {
   "defaultValue": null,
   "kind": "LocalArgument",
+  "name": "offset"
+},
+v3 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "orderBy"
+},
+v4 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
   "name": "scope"
 },
-v3 = [
+v5 = [
   {
     "kind": "Variable",
     "name": "filter",
     "variableName": "filter"
+  },
+  {
+    "kind": "Variable",
+    "name": "limit",
+    "variableName": "limit"
+  },
+  {
+    "kind": "Variable",
+    "name": "offset",
+    "variableName": "offset"
   },
   {
     "kind": "Variable",
@@ -127,14 +150,21 @@ v3 = [
     "variableName": "scope"
   }
 ],
-v4 = {
+v6 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "count",
+  "storageKey": null
+},
+v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "result",
   "storageKey": null
 },
-v5 = {
+v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -146,7 +176,9 @@ return {
     "argumentDefinitions": [
       (v0/*: any*/),
       (v1/*: any*/),
-      (v2/*: any*/)
+      (v2/*: any*/),
+      (v3/*: any*/),
+      (v4/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
@@ -154,12 +186,13 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": (v3/*: any*/),
+        "args": (v5/*: any*/),
         "concreteType": "SessionSchedulingHistoryConnection",
         "kind": "LinkedField",
         "name": "sessionScopedSchedulingHistories",
         "plural": false,
         "selections": [
+          (v6/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -197,21 +230,24 @@ return {
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
-      (v2/*: any*/),
+      (v4/*: any*/),
       (v0/*: any*/),
-      (v1/*: any*/)
+      (v3/*: any*/),
+      (v1/*: any*/),
+      (v2/*: any*/)
     ],
     "kind": "Operation",
     "name": "SessionSchedulingHistoryModalQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v3/*: any*/),
+        "args": (v5/*: any*/),
         "concreteType": "SessionSchedulingHistoryConnection",
         "kind": "LinkedField",
         "name": "sessionScopedSchedulingHistories",
         "plural": false,
         "selections": [
+          (v6/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -235,7 +271,7 @@ return {
                     "name": "id",
                     "storageKey": null
                   },
-                  (v4/*: any*/),
+                  (v7/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -251,7 +287,7 @@ return {
                         "name": "step",
                         "storageKey": null
                       },
-                      (v4/*: any*/),
+                      (v7/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -259,7 +295,7 @@ return {
                         "name": "errorCode",
                         "storageKey": null
                       },
-                      (v5/*: any*/),
+                      (v8/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -312,7 +348,7 @@ return {
                     "name": "toStatus",
                     "storageKey": null
                   },
-                  (v5/*: any*/),
+                  (v8/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -332,16 +368,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "fd4f2a0c97f5368a8886b4ffcc9a7bdf",
+    "cacheID": "7c5c34bfae059fe7639c97b11c1a4d9e",
     "id": null,
     "metadata": {},
     "name": "SessionSchedulingHistoryModalQuery",
     "operationKind": "query",
-    "text": "query SessionSchedulingHistoryModalQuery(\n  $scope: SessionScope!\n  $filter: SessionSchedulingHistoryFilter\n  $orderBy: [SessionSchedulingHistoryOrderBy!]\n) {\n  sessionScopedSchedulingHistories(scope: $scope, filter: $filter, orderBy: $orderBy) {\n    edges {\n      node {\n        ...BAISchedulingHistoryTableFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAISchedulingHistoryNodesFragment on SessionSchedulingHistory {\n  id\n  attempts\n  createdAt\n  updatedAt\n  fromStatus\n  toStatus\n  message\n  phase\n  result\n}\n\nfragment BAISchedulingHistoryTableFragment on SessionSchedulingHistory {\n  id\n  result\n  subSteps {\n    ...BAISubStepNodesFragment\n  }\n  ...BAISchedulingHistoryNodesFragment\n}\n\nfragment BAISubStepNodesFragment on SubStepResultGQL {\n  step\n  result\n  errorCode\n  message\n  startedAt\n  endedAt\n}\n"
+    "text": "query SessionSchedulingHistoryModalQuery(\n  $scope: SessionScope!\n  $filter: SessionSchedulingHistoryFilter\n  $orderBy: [SessionSchedulingHistoryOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  sessionScopedSchedulingHistories(scope: $scope, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...BAISchedulingHistoryTableFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAISchedulingHistoryNodesFragment on SessionSchedulingHistory {\n  id\n  attempts\n  createdAt\n  updatedAt\n  fromStatus\n  toStatus\n  message\n  phase\n  result\n}\n\nfragment BAISchedulingHistoryTableFragment on SessionSchedulingHistory {\n  id\n  result\n  subSteps {\n    ...BAISubStepNodesFragment\n  }\n  ...BAISchedulingHistoryNodesFragment\n}\n\nfragment BAISubStepNodesFragment on SubStepResultGQL {\n  step\n  result\n  errorCode\n  message\n  startedAt\n  endedAt\n}\n"
   }
 };
 })();
 
-(node as any).hash = "f5aba8ae25a148fe9089ab6f25dd0269";
+(node as any).hash = "6221439d9cf111e4683277c5e89974db";
 
 export default node;

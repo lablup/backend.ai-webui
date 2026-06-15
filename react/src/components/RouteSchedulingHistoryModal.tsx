@@ -4,6 +4,7 @@ import {
   RouteSchedulingHistoryModalQuery,
 } from '../__generated__/RouteSchedulingHistoryModalQuery.graphql';
 import { convertToOrderBy } from '../helper';
+import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import {
   BAIFetchKeyButton,
@@ -32,12 +33,17 @@ export const RouteSchedulingHistoryQuery = graphql`
     $scope: RouteScope!
     $filter: RouteHistoryFilter
     $orderBy: [RouteHistoryOrderBy!]
+    $limit: Int
+    $offset: Int
   ) {
     routeScopedSchedulingHistories(
       scope: $scope
       filter: $filter
       orderBy: $orderBy
+      limit: $limit
+      offset: $offset
     ) {
+      count
       edges {
         node {
           ...BAIRouteSchedulingHistoryTableFragment
@@ -81,6 +87,8 @@ const RouteSchedulingHistoryModal = ({
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.RouteSchedulingHistory',
   );
+  const { tablePaginationOption, setTablePaginationOption } =
+    useBAIPaginationOptionState({ current: 1, pageSize: 10 });
 
   // Re-fetches happen from event handlers (filter / order / refresh), never from
   // render or an effect. We carry the existing variables forward via
@@ -122,8 +130,9 @@ const RouteSchedulingHistoryModal = ({
             value={filter}
             onChange={(next) => {
               setFilter(next);
+              setTablePaginationOption({ current: 1 });
               onReload(
-                { ...queryRef.variables, filter: next },
+                { ...queryRef.variables, filter: next, offset: 0 },
                 { fetchPolicy: 'network-only' },
               );
             }}
@@ -217,13 +226,31 @@ const RouteSchedulingHistoryModal = ({
           order={order}
           onChangeOrder={(nextOrder) => {
             setOrder(nextOrder);
+            setTablePaginationOption({ current: 1 });
             onReload(
               {
                 ...queryRef.variables,
                 orderBy: convertToOrderBy<RouteHistoryOrderBy>(nextOrder),
+                offset: 0,
               },
               { fetchPolicy: 'network-only' },
             );
+          }}
+          pagination={{
+            pageSize: tablePaginationOption.pageSize,
+            current: tablePaginationOption.current,
+            total: data.routeScopedSchedulingHistories?.count ?? 0,
+            onChange: (current, pageSize) => {
+              setTablePaginationOption({ current, pageSize });
+              onReload(
+                {
+                  ...queryRef.variables,
+                  limit: pageSize,
+                  offset: current > 1 ? (current - 1) * pageSize : 0,
+                },
+                { fetchPolicy: 'network-only' },
+              );
+            },
           }}
           schedulingHistoryFrgmt={_.map(
             data.routeScopedSchedulingHistories?.edges,

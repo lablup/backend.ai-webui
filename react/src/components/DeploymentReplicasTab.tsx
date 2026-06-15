@@ -321,6 +321,8 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
                     {
                       scope: { routeId: id },
                       orderBy: [{ field: 'UPDATED_AT', direction: 'DESC' }],
+                      limit: 10,
+                      offset: 0,
                     },
                     {
                       fetchPolicy: 'store-and-network',

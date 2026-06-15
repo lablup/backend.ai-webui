@@ -507,6 +507,8 @@ const DeploymentConfigurationSection: React.FC<
                         deploymentId: safeDecodeUuid(rawId) ?? rawId,
                       },
                       orderBy: [{ field: 'UPDATED_AT', direction: 'DESC' }],
+                      limit: 10,
+                      offset: 0,
                     },
                     { fetchPolicy: 'store-and-network' },
                   );
