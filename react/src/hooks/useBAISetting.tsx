@@ -49,6 +49,7 @@ export interface UserSettings {
   container_log_auto_refresh_interval?: number;
   custom_theme_config?: CustomThemeConfig;
   deploymentRevisionCreationMode?: 'preset' | 'custom';
+  schedulingHistoryExpandMode?: 'expand-all' | 'collapse-all' | 'errors-only';
 }
 
 export type SessionHistory = {

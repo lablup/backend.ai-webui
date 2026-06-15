@@ -127,12 +127,11 @@
     "Category": "Categoria",
     "CreatedAt": "Criado em",
     "ErrorCode": "Código de erro",
-    "From": "De",
+    "From": "Status de origem",
     "Message": "Mensagem",
     "Phase": "Fase",
     "Result": "Resultado",
-    "StatusTransition": "Transição de status",
-    "To": "Até",
+    "To": "Status de destino",
     "UpdatedAt": "Atualizado em"
   },
   "comp:BAIDeploymentSelect": {
@@ -331,12 +330,11 @@
     "Category": "Categoria",
     "CreatedAt": "Criado em",
     "ErrorCode": "Código de erro",
-    "From": "De",
+    "From": "Status de origem",
     "Message": "Mensagem",
     "Phase": "Fase",
     "Result": "Resultado",
-    "StatusTransition": "Transição de status",
-    "To": "Até",
+    "To": "Status de destino",
     "UpdatedAt": "Atualizado em"
   },
   "comp:BAIRuntimeVariantSelect": {
@@ -347,12 +345,11 @@
     "Category": "Categoria",
     "CreatedAt": "Criado em",
     "ErrorCode": "Código de erro",
-    "From": "De",
+    "From": "Status de origem",
     "Message": "Mensagem",
     "Phase": "Fase",
     "Result": "Resultado",
-    "StatusTransition": "Transição de status",
-    "To": "Até",
+    "To": "Status de destino",
     "UpdatedAt": "Atualizado em"
   },
   "comp:BAISessionAgentIds": {
@@ -377,6 +374,10 @@
     "Step": "Etapa"
   },
   "comp:BAITable": {
+    "CollapseAll": "Recolher tudo",
+    "ExpandAll": "Expandir tudo",
+    "ExpandErrorsOnly": "Expandir somente erros",
+    "ExpandOptions": "Opções de expansão",
     "Export": "Exportar",
     "ExportCSV": "Exportar CSV",
     "GoToFirstPage": "Ir para a primeira página",

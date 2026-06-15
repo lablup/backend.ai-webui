@@ -127,12 +127,11 @@
     "Category": "Ангилал",
     "CreatedAt": "Үүссэн огноо",
     "ErrorCode": "Алдааны код",
-    "From": "Эхлэх",
+    "From": "Эх төлөв",
     "Message": "Зурвас",
     "Phase": "Шат",
     "Result": "Үр дүн",
-    "StatusTransition": "Статусын шилжилт",
-    "To": "Хүртэл",
+    "To": "Зорилтот төлөв",
     "UpdatedAt": "Шинэчлэгдсэн огноо"
   },
   "comp:BAIDeploymentSelect": {
@@ -325,12 +324,11 @@
     "Category": "Ангилал",
     "CreatedAt": "Үүссэн огноо",
     "ErrorCode": "Алдааны код",
-    "From": "Эхлэх",
+    "From": "Эх төлөв",
     "Message": "Зурвас",
     "Phase": "Шат",
     "Result": "Үр дүн",
-    "StatusTransition": "Статусын шилжилт",
-    "To": "Хүртэл",
+    "To": "Зорилтот төлөв",
     "UpdatedAt": "Шинэчлэгдсэн огноо"
   },
   "comp:BAIRuntimeVariantSelect": {
@@ -341,12 +339,11 @@
     "Category": "Ангилал",
     "CreatedAt": "Үүссэн огноо",
     "ErrorCode": "Алдааны код",
-    "From": "Эхлэх",
+    "From": "Эх төлөв",
     "Message": "Зурвас",
     "Phase": "Шат",
     "Result": "Үр дүн",
-    "StatusTransition": "Статусын шилжилт",
-    "To": "Хүртэл",
+    "To": "Зорилтот төлөв",
     "UpdatedAt": "Шинэчлэгдсэн огноо"
   },
   "comp:BAISessionAgentIds": {
@@ -371,6 +368,10 @@
     "Step": "Алхам"
   },
   "comp:BAITable": {
+    "CollapseAll": "Бүгдийг хураах",
+    "ExpandAll": "Бүгдийг дэлгэх",
+    "ExpandErrorsOnly": "Зөвхөн алдааг дэлгэх",
+    "ExpandOptions": "Дэлгэх сонголтууд",
     "Export": "Экспорт",
     "ExportCSV": "CSV экспортлах",
     "GoToFirstPage": "Эх хуудас руу шилжих",

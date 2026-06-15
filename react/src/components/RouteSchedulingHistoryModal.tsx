@@ -4,13 +4,14 @@ import {
   RouteSchedulingHistoryModalQuery,
 } from '../__generated__/RouteSchedulingHistoryModalQuery.graphql';
 import { convertToOrderBy } from '../helper';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
 import {
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAIModal,
   BAIModalProps,
-  BAIRouteSchedulingHistoryNodeTable,
+  BAIRouteSchedulingHistoryTable,
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -39,7 +40,7 @@ export const RouteSchedulingHistoryQuery = graphql`
     ) {
       edges {
         node {
-          ...BAIRouteSchedulingHistoryNodeTableFragment
+          ...BAIRouteSchedulingHistoryTableFragment
         }
       }
     }
@@ -74,6 +75,12 @@ const RouteSchedulingHistoryModal = ({
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [filter, setFilter] = useState<RouteHistoryFilter>();
   const [order, setOrder] = useState<string | null>('-updatedAt');
+  const [expandMode, setExpandMode] = useBAISettingUserState(
+    'schedulingHistoryExpandMode',
+  );
+  const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
+    'table_column_overrides.RouteSchedulingHistory',
+  );
 
   // Re-fetches happen from event handlers (filter / order / refresh), never from
   // render or an effect. We carry the existing variables forward via
@@ -105,8 +112,7 @@ const RouteSchedulingHistoryModal = ({
           minHeight: '80vh',
         },
       }}
-      cancelText={t('button.Close')}
-      footer={(_originNode, { CancelBtn }) => <CancelBtn />}
+      footer={null}
       onCancel={onCancel}
       {...modalProps}
     >
@@ -199,9 +205,15 @@ const RouteSchedulingHistoryModal = ({
             />
           </BAIFlex>
         </BAIFlex>
-        <BAIRouteSchedulingHistoryNodeTable
+        <BAIRouteSchedulingHistoryTable
           resizable
           loading={isRefetchingInTransition}
+          expandMode={expandMode ?? undefined}
+          onExpandModeChange={setExpandMode}
+          tableSettings={{
+            columnOverrides,
+            onColumnOverridesChange: setColumnOverrides,
+          }}
           order={order}
           onChangeOrder={(nextOrder) => {
             setOrder(nextOrder);

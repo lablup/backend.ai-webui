@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5d0ef863d0714f49059be1797b0c4c60>>
+ * @generated SignedSource<<0d329743d1c924326df8fb382f88645e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -85,7 +85,7 @@ export type RouteSchedulingHistoryModalQuery$data = {
   readonly routeScopedSchedulingHistories: {
     readonly edges: ReadonlyArray<{
       readonly node: {
-        readonly " $fragmentSpreads": FragmentRefs<"BAIRouteSchedulingHistoryNodeTableFragment">;
+        readonly " $fragmentSpreads": FragmentRefs<"BAIRouteSchedulingHistoryTableFragment">;
       };
     }>;
   } | null | undefined;
@@ -187,7 +187,7 @@ return {
                   {
                     "args": null,
                     "kind": "FragmentSpread",
-                    "name": "BAIRouteSchedulingHistoryNodeTableFragment"
+                    "name": "BAIRouteSchedulingHistoryTableFragment"
                   }
                 ],
                 "storageKey": null
@@ -243,51 +243,7 @@ return {
                     "name": "id",
                     "storageKey": null
                   },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "routeId",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "deploymentId",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "category",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "phase",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "fromStatus",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "toStatus",
-                    "storageKey": null
-                  },
                   (v4/*: any*/),
-                  (v5/*: any*/),
-                  (v6/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -327,6 +283,36 @@ return {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
+                    "name": "category",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "phase",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "fromStatus",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "toStatus",
+                    "storageKey": null
+                  },
+                  (v5/*: any*/),
+                  (v6/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "attempts",
                     "storageKey": null
                   },
@@ -356,16 +342,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "5db4b1d03cdc23ddcee7e24da57e934d",
+    "cacheID": "76285934ccc8e905542eefed19bd318d",
     "id": null,
     "metadata": {},
     "name": "RouteSchedulingHistoryModalQuery",
     "operationKind": "query",
-    "text": "query RouteSchedulingHistoryModalQuery(\n  $scope: RouteScope!\n  $filter: RouteHistoryFilter\n  $orderBy: [RouteHistoryOrderBy!]\n) {\n  routeScopedSchedulingHistories(scope: $scope, filter: $filter, orderBy: $orderBy) {\n    edges {\n      node {\n        ...BAIRouteSchedulingHistoryNodeTableFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIRouteSchedulingHistoryNodeTableFragment on RouteHistory {\n  id\n  routeId\n  deploymentId\n  category\n  phase\n  fromStatus\n  toStatus\n  result\n  errorCode\n  message\n  subSteps {\n    ...BAISubStepNodesFragment\n  }\n  attempts\n  createdAt\n  updatedAt\n}\n\nfragment BAISubStepNodesFragment on SubStepResultGQL {\n  step\n  result\n  errorCode\n  message\n  startedAt\n  endedAt\n}\n"
+    "text": "query RouteSchedulingHistoryModalQuery(\n  $scope: RouteScope!\n  $filter: RouteHistoryFilter\n  $orderBy: [RouteHistoryOrderBy!]\n) {\n  routeScopedSchedulingHistories(scope: $scope, filter: $filter, orderBy: $orderBy) {\n    edges {\n      node {\n        ...BAIRouteSchedulingHistoryTableFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIRouteSchedulingHistoryNodeTableFragment on RouteHistory {\n  id\n  category\n  phase\n  fromStatus\n  toStatus\n  result\n  errorCode\n  message\n  attempts\n  createdAt\n  updatedAt\n}\n\nfragment BAIRouteSchedulingHistoryTableFragment on RouteHistory {\n  id\n  result\n  subSteps {\n    ...BAISubStepNodesFragment\n  }\n  ...BAIRouteSchedulingHistoryNodeTableFragment\n}\n\nfragment BAISubStepNodesFragment on SubStepResultGQL {\n  step\n  result\n  errorCode\n  message\n  startedAt\n  endedAt\n}\n"
   }
 };
 })();
 
-(node as any).hash = "d718b55942730d51c42ce434352c4e59";
+(node as any).hash = "0dc8467432ed583ed53bcd9160cd0cb1";
 
 export default node;

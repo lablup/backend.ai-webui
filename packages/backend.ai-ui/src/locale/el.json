@@ -127,12 +127,11 @@
     "Category": "Κατηγορία",
     "CreatedAt": "Δημιουργήθηκε στις",
     "ErrorCode": "Κωδικός σφάλματος",
-    "From": "Από",
+    "From": "Κατάσταση προέλευσης",
     "Message": "Μήνυμα",
     "Phase": "Φάση",
     "Result": "Αποτέλεσμα",
-    "StatusTransition": "Αλλαγή κατάστασης",
-    "To": "Έως",
+    "To": "Κατάσταση προορισμού",
     "UpdatedAt": "Ενημερώθηκε στις"
   },
   "comp:BAIDeploymentSelect": {
@@ -325,12 +324,11 @@
     "Category": "Κατηγορία",
     "CreatedAt": "Δημιουργήθηκε στις",
     "ErrorCode": "Κωδικός σφάλματος",
-    "From": "Από",
+    "From": "Κατάσταση προέλευσης",
     "Message": "Μήνυμα",
     "Phase": "Φάση",
     "Result": "Αποτέλεσμα",
-    "StatusTransition": "Αλλαγή κατάστασης",
-    "To": "Έως",
+    "To": "Κατάσταση προορισμού",
     "UpdatedAt": "Ενημερώθηκε στις"
   },
   "comp:BAIRuntimeVariantSelect": {
@@ -341,12 +339,11 @@
     "Category": "Κατηγορία",
     "CreatedAt": "Δημιουργήθηκε στις",
     "ErrorCode": "Κωδικός σφάλματος",
-    "From": "Από",
+    "From": "Κατάσταση προέλευσης",
     "Message": "Μήνυμα",
     "Phase": "Φάση",
     "Result": "Αποτέλεσμα",
-    "StatusTransition": "Αλλαγή κατάστασης",
-    "To": "Έως",
+    "To": "Κατάσταση προορισμού",
     "UpdatedAt": "Ενημερώθηκε στις"
   },
   "comp:BAISessionAgentIds": {
@@ -371,6 +368,10 @@
     "Step": "Βήμα"
   },
   "comp:BAITable": {
+    "CollapseAll": "Σύμπτυξη όλων",
+    "ExpandAll": "Ανάπτυξη όλων",
+    "ExpandErrorsOnly": "Ανάπτυξη μόνο σφαλμάτων",
+    "ExpandOptions": "Επιλογές ανάπτυξης",
     "Export": "Εξαγωγή",
     "ExportCSV": "Εξαγωγή CSV",
     "GoToFirstPage": "Μετάβαση στην πρώτη σελίδα",

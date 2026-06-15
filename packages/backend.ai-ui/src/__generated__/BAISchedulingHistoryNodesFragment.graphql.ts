@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ce6f00b122f73ac787c18a8f27b6222b>>
+ * @generated SignedSource<<bad7936a21ca79c32758a84f123d5aeb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,10 +19,6 @@ export type BAISchedulingHistoryNodesFragment$data = ReadonlyArray<{
   readonly message: string | null | undefined;
   readonly phase: string;
   readonly result: SchedulingResult;
-  readonly sessionId: string;
-  readonly subSteps: ReadonlyArray<{
-    readonly " $fragmentSpreads": FragmentRefs<"BAISubStepNodesFragment">;
-  }>;
   readonly toStatus: string | null | undefined;
   readonly updatedAt: string;
   readonly " $fragmentType": "BAISchedulingHistoryNodesFragment";
@@ -45,13 +41,6 @@ const node: ReaderFragment = {
       "args": null,
       "kind": "ScalarField",
       "name": "id",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "sessionId",
       "storageKey": null
     },
     {
@@ -109,28 +98,12 @@ const node: ReaderFragment = {
       "kind": "ScalarField",
       "name": "result",
       "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "SubStepResultGQL",
-      "kind": "LinkedField",
-      "name": "subSteps",
-      "plural": true,
-      "selections": [
-        {
-          "args": null,
-          "kind": "FragmentSpread",
-          "name": "BAISubStepNodesFragment"
-        }
-      ],
-      "storageKey": null
     }
   ],
   "type": "SessionSchedulingHistory",
   "abstractKey": null
 };
 
-(node as any).hash = "d9ace8d5059e208cc256c1f0c236d273";
+(node as any).hash = "a52af4f53e01beb70d74f67b151aa5e0";
 
 export default node;

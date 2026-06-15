@@ -4,14 +4,14 @@ import {
   SessionSchedulingHistoryOrderBy,
 } from '../__generated__/SessionSchedulingHistoryModalQuery.graphql';
 import { convertToOrderBy } from '../helper';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
 import {
-  BAIButton,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAIModal,
   BAIModalProps,
-  BAISchedulingHistoryNodes,
+  BAISchedulingHistoryTable,
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -33,10 +33,17 @@ const SessionSchedulingHistoryModal = ({
   onCancel,
   ...modalProps
 }: SessionSchedulingHistoryModalProps) => {
+  'use memo';
   const { t } = useTranslation();
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [filter, setFilter] = useState<SessionSchedulingHistoryFilter>();
   const [order, setOrder] = useState<string | null>('-updatedAt');
+  const [expandMode, setExpandMode] = useBAISettingUserState(
+    'schedulingHistoryExpandMode',
+  );
+  const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
+    'table_column_overrides.SessionSchedulingHistory',
+  );
 
   const deferredOpenValue = useDeferredValue(open);
   const deferredFetchKey = useDeferredValue(fetchKey);
@@ -56,7 +63,7 @@ const SessionSchedulingHistoryModal = ({
         ) {
           edges {
             node {
-              ...BAISchedulingHistoryNodesFragment
+              ...BAISchedulingHistoryTableFragment
             }
           }
         }
@@ -90,17 +97,7 @@ const SessionSchedulingHistoryModal = ({
           minHeight: '80vh',
         },
       }}
-      footer={
-        <BAIButton
-          onClick={(e) =>
-            onCancel?.(
-              e as Parameters<NonNullable<BAIModalProps['onCancel']>>[0],
-            )
-          }
-        >
-          {t('button.Close')}
-        </BAIButton>
-      }
+      footer={null}
       onCancel={onCancel}
       {...modalProps}
     >
@@ -184,7 +181,7 @@ const SessionSchedulingHistoryModal = ({
             />
           </BAIFlex>
         </BAIFlex>
-        <BAISchedulingHistoryNodes
+        <BAISchedulingHistoryTable
           resizable
           loading={
             deferredFetchKey !== fetchKey ||
@@ -193,6 +190,12 @@ const SessionSchedulingHistoryModal = ({
           }
           order={order}
           onChangeOrder={setOrder}
+          expandMode={expandMode ?? undefined}
+          onExpandModeChange={setExpandMode}
+          tableSettings={{
+            columnOverrides,
+            onColumnOverridesChange: setColumnOverrides,
+          }}
           schedulingHistoryFrgmt={_.map(
             queryRef.sessionScopedSchedulingHistories?.edges,
             'node',

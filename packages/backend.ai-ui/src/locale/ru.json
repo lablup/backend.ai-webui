@@ -127,12 +127,11 @@
     "Category": "Категория",
     "CreatedAt": "Дата создания",
     "ErrorCode": "Код ошибки",
-    "From": "От",
+    "From": "Исходный статус",
     "Message": "Сообщение",
     "Phase": "Этап",
     "Result": "Результат",
-    "StatusTransition": "Смена статуса",
-    "To": "До",
+    "To": "Целевой статус",
     "UpdatedAt": "Обновлено"
   },
   "comp:BAIDeploymentSelect": {
@@ -325,12 +324,11 @@
     "Category": "Категория",
     "CreatedAt": "Дата создания",
     "ErrorCode": "Код ошибки",
-    "From": "От",
+    "From": "Исходный статус",
     "Message": "Сообщение",
     "Phase": "Этап",
     "Result": "Результат",
-    "StatusTransition": "Смена статуса",
-    "To": "До",
+    "To": "Целевой статус",
     "UpdatedAt": "Обновлено"
   },
   "comp:BAIRuntimeVariantSelect": {
@@ -341,12 +339,11 @@
     "Category": "Категория",
     "CreatedAt": "Дата создания",
     "ErrorCode": "Код ошибки",
-    "From": "От",
+    "From": "Исходный статус",
     "Message": "Сообщение",
     "Phase": "Этап",
     "Result": "Результат",
-    "StatusTransition": "Смена статуса",
-    "To": "До",
+    "To": "Целевой статус",
     "UpdatedAt": "Обновлено"
   },
   "comp:BAISessionAgentIds": {
@@ -371,6 +368,10 @@
     "Step": "Шаг"
   },
   "comp:BAITable": {
+    "CollapseAll": "Свернуть все",
+    "ExpandAll": "Развернуть все",
+    "ExpandErrorsOnly": "Развернуть только ошибки",
+    "ExpandOptions": "Параметры разворачивания",
     "Export": "Экспорт",
     "ExportCSV": "Экспорт в CSV",
     "GoToFirstPage": "Перейти на первую страницу",

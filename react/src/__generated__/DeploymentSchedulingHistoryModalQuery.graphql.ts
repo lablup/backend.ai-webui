@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9e0263ab0ebb2358b611f0d8cc490846>>
+ * @generated SignedSource<<c587f9e1882663e663a5d0e7f2aca1f5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -84,7 +84,7 @@ export type DeploymentSchedulingHistoryModalQuery$data = {
   readonly deploymentScopedSchedulingHistories: {
     readonly edges: ReadonlyArray<{
       readonly node: {
-        readonly " $fragmentSpreads": FragmentRefs<"BAIDeploymentSchedulingHistoryNodesFragment">;
+        readonly " $fragmentSpreads": FragmentRefs<"BAIDeploymentSchedulingHistoryTableFragment">;
       };
     }>;
   } | null | undefined;
@@ -186,7 +186,7 @@ return {
                   {
                     "args": null,
                     "kind": "FragmentSpread",
-                    "name": "BAIDeploymentSchedulingHistoryNodesFragment"
+                    "name": "BAIDeploymentSchedulingHistoryTableFragment"
                   }
                 ],
                 "storageKey": null
@@ -242,37 +242,7 @@ return {
                     "name": "id",
                     "storageKey": null
                   },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "category",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "phase",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "fromStatus",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "toStatus",
-                    "storageKey": null
-                  },
                   (v4/*: any*/),
-                  (v5/*: any*/),
-                  (v6/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -312,6 +282,36 @@ return {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
+                    "name": "category",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "phase",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "fromStatus",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "toStatus",
+                    "storageKey": null
+                  },
+                  (v5/*: any*/),
+                  (v6/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "attempts",
                     "storageKey": null
                   },
@@ -341,16 +341,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "6cc521a7daf46bd6ff23d8369e069d7c",
+    "cacheID": "d5545baf9254238711d930e4388936dd",
     "id": null,
     "metadata": {},
     "name": "DeploymentSchedulingHistoryModalQuery",
     "operationKind": "query",
-    "text": "query DeploymentSchedulingHistoryModalQuery(\n  $scope: DeploymentScope!\n  $filter: DeploymentHistoryFilter\n  $orderBy: [DeploymentHistoryOrderBy!]\n) {\n  deploymentScopedSchedulingHistories(scope: $scope, filter: $filter, orderBy: $orderBy) {\n    edges {\n      node {\n        ...BAIDeploymentSchedulingHistoryNodesFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIDeploymentSchedulingHistoryNodesFragment on DeploymentHistory {\n  id\n  category\n  phase\n  fromStatus\n  toStatus\n  result\n  errorCode\n  message\n  subSteps {\n    ...BAISubStepNodesFragment\n  }\n  attempts\n  createdAt\n  updatedAt\n}\n\nfragment BAISubStepNodesFragment on SubStepResultGQL {\n  step\n  result\n  errorCode\n  message\n  startedAt\n  endedAt\n}\n"
+    "text": "query DeploymentSchedulingHistoryModalQuery(\n  $scope: DeploymentScope!\n  $filter: DeploymentHistoryFilter\n  $orderBy: [DeploymentHistoryOrderBy!]\n) {\n  deploymentScopedSchedulingHistories(scope: $scope, filter: $filter, orderBy: $orderBy) {\n    edges {\n      node {\n        ...BAIDeploymentSchedulingHistoryTableFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIDeploymentSchedulingHistoryNodesFragment on DeploymentHistory {\n  id\n  category\n  phase\n  fromStatus\n  toStatus\n  result\n  errorCode\n  message\n  attempts\n  createdAt\n  updatedAt\n}\n\nfragment BAIDeploymentSchedulingHistoryTableFragment on DeploymentHistory {\n  id\n  result\n  subSteps {\n    ...BAISubStepNodesFragment\n  }\n  ...BAIDeploymentSchedulingHistoryNodesFragment\n}\n\nfragment BAISubStepNodesFragment on SubStepResultGQL {\n  step\n  result\n  errorCode\n  message\n  startedAt\n  endedAt\n}\n"
   }
 };
 })();
 
-(node as any).hash = "4386ab0845d3e5ba13c6f60075522b52";
+(node as any).hash = "85600df901d6fbaa9bbc3ac84ede6d06";
 
 export default node;

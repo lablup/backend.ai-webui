@@ -4,8 +4,9 @@ import {
   DeploymentSchedulingHistoryModalQuery,
 } from '../__generated__/DeploymentSchedulingHistoryModalQuery.graphql';
 import { convertToOrderBy } from '../helper';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
 import {
-  BAIDeploymentSchedulingHistoryNodes,
+  BAIDeploymentSchedulingHistoryTable,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
@@ -39,7 +40,7 @@ export const DeploymentSchedulingHistoryQuery = graphql`
     ) {
       edges {
         node {
-          ...BAIDeploymentSchedulingHistoryNodesFragment
+          ...BAIDeploymentSchedulingHistoryTableFragment
         }
       }
     }
@@ -74,6 +75,12 @@ const DeploymentSchedulingHistoryModal = ({
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [filter, setFilter] = useState<DeploymentHistoryFilter>();
   const [order, setOrder] = useState<string | null>('-updatedAt');
+  const [expandMode, setExpandMode] = useBAISettingUserState(
+    'schedulingHistoryExpandMode',
+  );
+  const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
+    'table_column_overrides.DeploymentSchedulingHistory',
+  );
 
   // Re-fetches happen from event handlers (filter / order / refresh), never from
   // render or an effect. We carry the existing variables forward via
@@ -105,8 +112,7 @@ const DeploymentSchedulingHistoryModal = ({
           minHeight: '80vh',
         },
       }}
-      cancelText={t('button.Close')}
-      footer={(_originNode, { CancelBtn }) => <CancelBtn />}
+      footer={null}
       onCancel={onCancel}
       {...modalProps}
     >
@@ -199,9 +205,15 @@ const DeploymentSchedulingHistoryModal = ({
             />
           </BAIFlex>
         </BAIFlex>
-        <BAIDeploymentSchedulingHistoryNodes
+        <BAIDeploymentSchedulingHistoryTable
           resizable
           loading={isRefetchingInTransition}
+          expandMode={expandMode ?? undefined}
+          onExpandModeChange={setExpandMode}
+          tableSettings={{
+            columnOverrides,
+            onColumnOverridesChange: setColumnOverrides,
+          }}
           order={order}
           onChangeOrder={(nextOrder) => {
             setOrder(nextOrder);

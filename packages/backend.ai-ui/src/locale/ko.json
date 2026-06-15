@@ -127,12 +127,11 @@
     "Category": "카테고리",
     "CreatedAt": "생성일",
     "ErrorCode": "오류 코드",
-    "From": "이전",
+    "From": "이전 상태",
     "Message": "메시지",
     "Phase": "단계",
     "Result": "결과",
-    "StatusTransition": "상태 전환",
-    "To": "이후",
+    "To": "이후 상태",
     "UpdatedAt": "수정일"
   },
   "comp:BAIDeploymentSelect": {
@@ -325,12 +324,11 @@
     "Category": "카테고리",
     "CreatedAt": "생성일",
     "ErrorCode": "오류 코드",
-    "From": "이전",
+    "From": "이전 상태",
     "Message": "메시지",
     "Phase": "단계",
     "Result": "결과",
-    "StatusTransition": "상태 전환",
-    "To": "이후",
+    "To": "이후 상태",
     "UpdatedAt": "수정일"
   },
   "comp:BAIRuntimeVariantSelect": {
@@ -341,12 +339,11 @@
     "Category": "카테고리",
     "CreatedAt": "생성일",
     "ErrorCode": "오류 코드",
-    "From": "이전",
+    "From": "이전 상태",
     "Message": "메시지",
     "Phase": "단계",
     "Result": "결과",
-    "StatusTransition": "상태 전환",
-    "To": "이후",
+    "To": "이후 상태",
     "UpdatedAt": "수정일"
   },
   "comp:BAISessionAgentIds": {
@@ -371,6 +368,10 @@
     "Step": "세부단계"
   },
   "comp:BAITable": {
+    "CollapseAll": "모두 닫기",
+    "ExpandAll": "모두 열기",
+    "ExpandErrorsOnly": "오류만 펼치기",
+    "ExpandOptions": "펼치기 옵션",
     "Export": "내보내기",
     "ExportCSV": "CSV로 내보내기",
     "GoToFirstPage": "첫 페이지로 이동하기",

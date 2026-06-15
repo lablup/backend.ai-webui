@@ -127,12 +127,11 @@
     "Category": "類別",
     "CreatedAt": "建立時間",
     "ErrorCode": "錯誤代碼",
-    "From": "從",
+    "From": "起始狀態",
     "Message": "訊息",
     "Phase": "階段",
     "Result": "結果",
-    "StatusTransition": "狀態轉換",
-    "To": "至",
+    "To": "目標狀態",
     "UpdatedAt": "更新時間"
   },
   "comp:BAIDeploymentSelect": {
@@ -325,12 +324,11 @@
     "Category": "類別",
     "CreatedAt": "建立時間",
     "ErrorCode": "錯誤代碼",
-    "From": "從",
+    "From": "起始狀態",
     "Message": "訊息",
     "Phase": "階段",
     "Result": "結果",
-    "StatusTransition": "狀態轉換",
-    "To": "至",
+    "To": "目標狀態",
     "UpdatedAt": "更新時間"
   },
   "comp:BAIRuntimeVariantSelect": {
@@ -341,12 +339,11 @@
     "Category": "類別",
     "CreatedAt": "建立時間",
     "ErrorCode": "錯誤代碼",
-    "From": "從",
+    "From": "起始狀態",
     "Message": "訊息",
     "Phase": "階段",
     "Result": "結果",
-    "StatusTransition": "狀態轉換",
-    "To": "至",
+    "To": "目標狀態",
     "UpdatedAt": "更新時間"
   },
   "comp:BAISessionAgentIds": {
@@ -371,6 +368,10 @@
     "Step": "步驟"
   },
   "comp:BAITable": {
+    "CollapseAll": "收合全部",
+    "ExpandAll": "展開全部",
+    "ExpandErrorsOnly": "僅展開錯誤",
+    "ExpandOptions": "展開選項",
     "Export": "匯出",
     "ExportCSV": "匯出 CSV",
     "GoToFirstPage": "跳到第一頁",

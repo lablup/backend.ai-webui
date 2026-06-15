@@ -127,12 +127,11 @@
     "Category": "Kategori",
     "CreatedAt": "Oluşturulma Tarihi",
     "ErrorCode": "Hata Kodu",
-    "From": "Kaynak",
+    "From": "Başlangıç durumu",
     "Message": "Mesaj",
     "Phase": "Aşama",
     "Result": "Sonuç",
-    "StatusTransition": "Durum Geçişi",
-    "To": "Bitiş",
+    "To": "Hedef durum",
     "UpdatedAt": "Güncelleme Tarihi"
   },
   "comp:BAIDeploymentSelect": {
@@ -325,12 +324,11 @@
     "Category": "Kategori",
     "CreatedAt": "Oluşturulma Tarihi",
     "ErrorCode": "Hata Kodu",
-    "From": "Kaynak",
+    "From": "Başlangıç durumu",
     "Message": "Mesaj",
     "Phase": "Aşama",
     "Result": "Sonuç",
-    "StatusTransition": "Durum Geçişi",
-    "To": "Bitiş",
+    "To": "Hedef durum",
     "UpdatedAt": "Güncelleme Tarihi"
   },
   "comp:BAIRuntimeVariantSelect": {
@@ -341,12 +339,11 @@
     "Category": "Kategori",
     "CreatedAt": "Oluşturulma Tarihi",
     "ErrorCode": "Hata Kodu",
-    "From": "Kaynak",
+    "From": "Başlangıç durumu",
     "Message": "Mesaj",
     "Phase": "Aşama",
     "Result": "Sonuç",
-    "StatusTransition": "Durum Geçişi",
-    "To": "Bitiş",
+    "To": "Hedef durum",
     "UpdatedAt": "Güncelleme Tarihi"
   },
   "comp:BAISessionAgentIds": {
@@ -371,6 +368,10 @@
     "Step": "Adım"
   },
   "comp:BAITable": {
+    "CollapseAll": "Tümünü daralt",
+    "ExpandAll": "Tümünü genişlet",
+    "ExpandErrorsOnly": "Yalnızca hataları genişlet",
+    "ExpandOptions": "Genişletme seçenekleri",
     "Export": "Dışa aktar",
     "ExportCSV": "CSV Dışa Aktar",
     "GoToFirstPage": "İlk sayfaya git",

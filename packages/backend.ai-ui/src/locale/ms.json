@@ -127,12 +127,11 @@
     "Category": "Kategori",
     "CreatedAt": "Dicipta pada",
     "ErrorCode": "Kod Ralat",
-    "From": "Dari",
+    "From": "Status asal",
     "Message": "Mesej",
     "Phase": "Fasa",
     "Result": "Hasil",
-    "StatusTransition": "Peralihan Status",
-    "To": "Kepada",
+    "To": "Status sasaran",
     "UpdatedAt": "Dikemas kini pada"
   },
   "comp:BAIDeploymentSelect": {
@@ -325,12 +324,11 @@
     "Category": "Kategori",
     "CreatedAt": "Dicipta pada",
     "ErrorCode": "Kod Ralat",
-    "From": "Dari",
+    "From": "Status asal",
     "Message": "Mesej",
     "Phase": "Fasa",
     "Result": "Hasil",
-    "StatusTransition": "Peralihan Status",
-    "To": "Kepada",
+    "To": "Status sasaran",
     "UpdatedAt": "Dikemas kini pada"
   },
   "comp:BAIRuntimeVariantSelect": {
@@ -341,12 +339,11 @@
     "Category": "Kategori",
     "CreatedAt": "Dicipta pada",
     "ErrorCode": "Kod Ralat",
-    "From": "Dari",
+    "From": "Status asal",
     "Message": "Mesej",
     "Phase": "Fasa",
     "Result": "Hasil",
-    "StatusTransition": "Peralihan Status",
-    "To": "Kepada",
+    "To": "Status sasaran",
     "UpdatedAt": "Dikemas kini pada"
   },
   "comp:BAISessionAgentIds": {
@@ -371,6 +368,10 @@
     "Step": "Langkah"
   },
   "comp:BAITable": {
+    "CollapseAll": "Runtuhkan semua",
+    "ExpandAll": "Kembangkan semua",
+    "ExpandErrorsOnly": "Kembangkan ralat sahaja",
+    "ExpandOptions": "Pilihan pengembangan",
     "Export": "Eksport",
     "ExportCSV": "Eksport CSV",
     "GoToFirstPage": "Pergi ke halaman pertama",

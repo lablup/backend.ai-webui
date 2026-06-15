@@ -127,12 +127,11 @@
     "Category": "Category",
     "CreatedAt": "Created At",
     "ErrorCode": "Error Code",
-    "From": "From",
+    "From": "From Status",
     "Message": "Message",
     "Phase": "Phase",
     "Result": "Result",
-    "StatusTransition": "Status Transition",
-    "To": "To",
+    "To": "To Status",
     "UpdatedAt": "Updated At"
   },
   "comp:BAIDeploymentSelect": {
@@ -325,12 +324,11 @@
     "Category": "Category",
     "CreatedAt": "Created At",
     "ErrorCode": "Error Code",
-    "From": "From",
+    "From": "From Status",
     "Message": "Message",
     "Phase": "Phase",
     "Result": "Result",
-    "StatusTransition": "Status Transition",
-    "To": "To",
+    "To": "To Status",
     "UpdatedAt": "Updated At"
   },
   "comp:BAIRuntimeVariantSelect": {
@@ -341,12 +339,11 @@
     "Category": "Category",
     "CreatedAt": "Created At",
     "ErrorCode": "Error Code",
-    "From": "From",
+    "From": "From Status",
     "Message": "Message",
     "Phase": "Phase",
     "Result": "Result",
-    "StatusTransition": "Status Transition",
-    "To": "To",
+    "To": "To Status",
     "UpdatedAt": "Updated At"
   },
   "comp:BAISessionAgentIds": {
@@ -371,6 +368,10 @@
     "Step": "Step"
   },
   "comp:BAITable": {
+    "CollapseAll": "Collapse all",
+    "ExpandAll": "Expand all",
+    "ExpandErrorsOnly": "Expand errors only",
+    "ExpandOptions": "Expand options",
     "Export": "Export",
     "ExportCSV": "Export CSV",
     "GoToFirstPage": "Go to first page",

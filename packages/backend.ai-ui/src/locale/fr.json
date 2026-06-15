@@ -127,12 +127,11 @@
     "Category": "Catégorie",
     "CreatedAt": "Créé le",
     "ErrorCode": "Code d'erreur",
-    "From": "De",
+    "From": "Statut d'origine",
     "Message": "Message",
     "Phase": "Phase",
     "Result": "Résultat",
-    "StatusTransition": "Transition d'état",
-    "To": "À",
+    "To": "Statut de destination",
     "UpdatedAt": "Mis à jour le"
   },
   "comp:BAIDeploymentSelect": {
@@ -325,12 +324,11 @@
     "Category": "Catégorie",
     "CreatedAt": "Créé le",
     "ErrorCode": "Code d'erreur",
-    "From": "De",
+    "From": "Statut d'origine",
     "Message": "Message",
     "Phase": "Phase",
     "Result": "Résultat",
-    "StatusTransition": "Transition d'état",
-    "To": "À",
+    "To": "Statut de destination",
     "UpdatedAt": "Mis à jour le"
   },
   "comp:BAIRuntimeVariantSelect": {
@@ -341,12 +339,11 @@
     "Category": "Catégorie",
     "CreatedAt": "Créé le",
     "ErrorCode": "Code d'erreur",
-    "From": "De",
+    "From": "Statut d'origine",
     "Message": "Message",
     "Phase": "Phase",
     "Result": "Résultat",
-    "StatusTransition": "Transition d'état",
-    "To": "À",
+    "To": "Statut de destination",
     "UpdatedAt": "Mis à jour le"
   },
   "comp:BAISessionAgentIds": {
@@ -371,6 +368,10 @@
     "Step": "Étape"
   },
   "comp:BAITable": {
+    "CollapseAll": "Tout réduire",
+    "ExpandAll": "Tout développer",
+    "ExpandErrorsOnly": "Développer les erreurs uniquement",
+    "ExpandOptions": "Options de développement",
     "Export": "Exporter",
     "ExportCSV": "Exporter en CSV",
     "GoToFirstPage": "Aller à la première page",

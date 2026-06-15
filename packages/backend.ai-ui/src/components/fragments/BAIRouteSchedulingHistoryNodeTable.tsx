@@ -18,8 +18,6 @@ import {
   BAITable,
   BAITableProps,
 } from '../Table';
-import { BAIColumnGroupType } from '../Table/BAITable';
-import BAISubStepNodes from './BAISubStepNodes';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';
@@ -68,8 +66,6 @@ const BAIRouteSchedulingHistoryNodeTable = ({
       fragment BAIRouteSchedulingHistoryNodeTableFragment on RouteHistory
       @relay(plural: true) {
         id
-        routeId
-        deploymentId
         category
         phase
         fromStatus
@@ -77,9 +73,6 @@ const BAIRouteSchedulingHistoryNodeTable = ({
         result
         errorCode
         message
-        subSteps {
-          ...BAISubStepNodesFragment
-        }
         attempts
         createdAt
         updatedAt
@@ -89,10 +82,7 @@ const BAIRouteSchedulingHistoryNodeTable = ({
   );
 
   const baseColumns = _.map(
-    filterOutEmpty<
-      | BAIColumnType<RouteSchedulingHistoryNodeInList>
-      | BAIColumnGroupType<RouteSchedulingHistoryNodeInList>
-    >([
+    filterOutEmpty<BAIColumnType<RouteSchedulingHistoryNodeInList>>([
       {
         dataIndex: 'updatedAt',
         title: t('comp:BAIRouteSchedulingHistoryNodes.UpdatedAt'),
@@ -133,22 +123,16 @@ const BAIRouteSchedulingHistoryNodeTable = ({
         sorter: isEnableSorter('category'),
       },
       {
-        title: t('comp:BAIRouteSchedulingHistoryNodes.StatusTransition'),
-        key: 'statusTransition',
-        children: [
-          {
-            key: 'fromStatus',
-            title: t('comp:BAIRouteSchedulingHistoryNodes.From'),
-            dataIndex: 'fromStatus',
-            sorter: isEnableSorter('from_status'),
-          },
-          {
-            key: 'toStatus',
-            title: t('comp:BAIRouteSchedulingHistoryNodes.To'),
-            dataIndex: 'toStatus',
-            sorter: isEnableSorter('to_status'),
-          },
-        ],
+        key: 'fromStatus',
+        title: t('comp:BAIRouteSchedulingHistoryNodes.From'),
+        dataIndex: 'fromStatus',
+        sorter: isEnableSorter('from_status'),
+      },
+      {
+        key: 'toStatus',
+        title: t('comp:BAIRouteSchedulingHistoryNodes.To'),
+        dataIndex: 'toStatus',
+        sorter: isEnableSorter('to_status'),
       },
       {
         dataIndex: 'attempts',
@@ -203,18 +187,6 @@ const BAIRouteSchedulingHistoryNodeTable = ({
         onChangeOrder?.(
           (order as (typeof availableRouteHistorySorterValues)[number]) || null,
         );
-      }}
-      expandable={{
-        rowExpandable: (record) => !_.isEmpty(record.subSteps),
-        expandedRowRender: (record) => {
-          return (
-            <BAISubStepNodes
-              resizable
-              subStepsFrgmt={record.subSteps}
-              pagination={false}
-            />
-          );
-        },
       }}
       {...tableProps}
     />
