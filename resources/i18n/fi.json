@@ -2161,7 +2161,7 @@
     "Preset": "Esiasetus",
     "PresetTooltip": "Esiasetus määrittää resurssikokoonpanon (CPU, muisti, GPU), jota käytetään tämän mallin palveluna suorittamiseen.",
     "ProjectNotFound": "Model Store -projektia ei löydy",
-    "ProjectNotFoundDescription": "MODEL_STORE-projektia ei löytynyt. Ota yhteyttä järjestelmänvalvojaan.",
+    "ProjectNotFoundDescription": "Model Store -projektia ei löytynyt. Ota yhteyttä järjestelmänvalvojaan.",
     "QuickDeployDetailed": "Määritä ja ota käyttöön...",
     "RelativeTime": "{{time}}",
     "ResourceGroup": "Resurssiryhmä",

@@ -2163,7 +2163,7 @@
     "Preset": "พรีเซ็ต",
     "PresetTooltip": "พรีเซ็ตกำหนดค่าการกำหนดทรัพยากร (CPU, หน่วยความจำ, GPU) ที่ใช้ในการรันโมเดลนี้เป็นบริการ",
     "ProjectNotFound": "ไม่พบโปรเจกต์ Model Store",
-    "ProjectNotFoundDescription": "ไม่พบโปรเจกต์ MODEL_STORE กรุณาติดต่อผู้ดูแลระบบ",
+    "ProjectNotFoundDescription": "ไม่พบโปรเจกต์ Model Store กรุณาติดต่อผู้ดูแลระบบ",
     "QuickDeployDetailed": "ตั้งค่าและปรับใช้...",
     "RelativeTime": "{{time}}",
     "ResourceGroup": "กลุ่มทรัพยากร",

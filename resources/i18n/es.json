@@ -2161,7 +2161,7 @@
     "Preset": "Preset",
     "PresetTooltip": "Un preset define la configuración de recursos (CPU, memoria, GPU) utilizada para ejecutar este modelo como servicio.",
     "ProjectNotFound": "Proyecto de Model Store no encontrado",
-    "ProjectNotFoundDescription": "No se pudo encontrar el proyecto MODEL_STORE. Contacte a su administrador.",
+    "ProjectNotFoundDescription": "No se pudo encontrar el proyecto Model Store. Contacte a su administrador.",
     "QuickDeployDetailed": "Configurar e implementar...",
     "RelativeTime": "{{time}}",
     "ResourceGroup": "Grupo de recursos",

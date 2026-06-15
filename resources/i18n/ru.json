@@ -2161,7 +2161,7 @@
     "Preset": "Пресет",
     "PresetTooltip": "Пресет определяет конфигурацию ресурсов (ЦП, память, GPU), используемую для запуска этой модели в качестве сервиса.",
     "ProjectNotFound": "Проект Model Store не найден",
-    "ProjectNotFoundDescription": "Проект MODEL_STORE не найден. Обратитесь к администратору.",
+    "ProjectNotFoundDescription": "Проект Model Store не найден. Обратитесь к администратору.",
     "QuickDeployDetailed": "Настроить и развернуть...",
     "RelativeTime": "{{time}}",
     "ResourceGroup": "Группа ресурсов",

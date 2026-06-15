@@ -14,6 +14,7 @@ import FolderCreateModalV2 from './FolderCreateModalV2';
 import FolderLink from './FolderLink';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
 import {
+  Alert,
   App,
   Form,
   type FormInstance,
@@ -283,6 +284,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
   return (
     <>
       <BAIModal
+        {...modalProps}
         title={
           isEditMode
             ? t('adminModelCard.EditModelCard')
@@ -292,254 +294,271 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
           onRequestClose?.(false);
         }}
         okText={isEditMode ? t('button.Update') : t('button.Create')}
-        okButtonProps={{
-          loading: isCreateInFlight || isUpdateInFlight,
-        }}
         onOk={handleOk}
-        {...modalProps}
+        okButtonProps={{
+          ...modalProps.okButtonProps,
+          loading: isCreateInFlight || isUpdateInFlight,
+          disabled:
+            !modelStoreProject?.id || modalProps.okButtonProps?.disabled,
+        }}
       >
-        <Form ref={formRef} layout="vertical" initialValues={initialValues}>
-          <Form.Item
-            name="name"
-            label={t('adminModelCard.Name')}
-            tooltip={t('adminModelCard.NameTooltip')}
-            rules={[
-              {
-                required: true,
-                message: t('adminModelCard.NameRequired'),
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-
-          {isEditMode ? (
-            <Form.Item label={t('adminModelCard.ModelStorageFolder')}>
-              <BAIFlex gap="xs" align="center">
-                {modelCard.vfolder && (
-                  <VFolderNodeIdenticonV2
-                    vfolderNodeIdenticonFrgmt={modelCard.vfolder}
-                  />
-                )}
-                <FolderLink
-                  folderId={modelCard.vfolderId}
-                  folderName={
-                    modelCard.vfolder?.metadata?.name ?? modelCard.vfolderId
-                  }
-                />
-              </BAIFlex>
-            </Form.Item>
-          ) : (
-            <Form.Item label={t('adminModelCard.ModelStorageFolder')} required>
-              <BAIFlex gap="xs" align="center">
-                <Suspense fallback={<Input disabled style={{ flex: 1 }} />}>
-                  <Form.Item
-                    name="vfolderId"
-                    noStyle
-                    rules={[
-                      {
-                        required: true,
-                        message: t('adminModelCard.VFolderRequired'),
-                      },
-                    ]}
-                  >
-                    <BAIVFolderSelect
-                      ref={vfolderSelectRef}
-                      excludeDeleted
-                      filter='ownership_type == "group"'
-                      currentProjectId={modelStoreProject?.id ?? undefined}
-                      style={{ flex: 1 }}
-                    />
-                  </Form.Item>
-                </Suspense>
-                {isModelStoreProject ? (
-                  <BAIButton
-                    icon={<PlusIcon />}
-                    onClick={() => setIsOpenCreateFolderModal(true)}
-                  />
-                ) : (
-                  <Popconfirm
-                    title={t(
-                      'importArtifactRevisionToFolderModal.ModelStoreProjectRequired',
-                    )}
-                    description={t(
-                      'importArtifactRevisionToFolderModal.ModelStoreProjectRequiredDescription',
-                    )}
-                    okText={t('button.ChangeProject')}
-                    cancelText={t('button.Cancel')}
-                    onConfirm={() => {
-                      if (modelStoreProject?.id && modelStoreProject?.name) {
-                        startTransition(() => {
-                          setCurrentProject({
-                            projectId: modelStoreProject.id!,
-                            projectName: modelStoreProject.name!,
-                          });
-                          message.success(
-                            t(
-                              'importArtifactRevisionToFolderModal.CurrentProjectChangedSuccessfully',
-                            ),
-                          );
-                          setIsOpenCreateFolderModal(true);
-                        });
-                      } else {
-                        message.error(
-                          t(
-                            'importArtifactRevisionToFolderModal.FailedToRetrieveModelStoreProject',
-                          ),
-                        );
-                      }
-                    }}
-                  >
-                    <BAIButton icon={<PlusIcon />} />
-                  </Popconfirm>
-                )}
-              </BAIFlex>
-            </Form.Item>
-          )}
-
-          {isEditMode ? (
-            <Form.Item label={t('adminModelCard.Domain')}>
-              <Typography.Text>{modelCard.domainName}</Typography.Text>
-            </Form.Item>
-          ) : (
-            <Suspense
-              fallback={
-                <Form.Item name="domainName" label={t('adminModelCard.Domain')}>
-                  <Input disabled />
-                </Form.Item>
-              }
-            >
-              <Form.Item name="domainName" label={t('adminModelCard.Domain')}>
-                <BAIDomainSelect />
-              </Form.Item>
-            </Suspense>
-          )}
-
-          <Form.Item
-            name="author"
-            label={t('adminModelCard.Author')}
-            tooltip={t('adminModelCard.AuthorTooltip')}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            name="title"
-            label={t('adminModelCard.Title')}
-            tooltip={t('adminModelCard.TitleTooltip')}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            name="modelVersion"
-            label={t('adminModelCard.ModelVersion')}
-            tooltip={t('adminModelCard.ModelVersionTooltip')}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            name="description"
-            label={t('adminModelCard.Description')}
-            tooltip={t('adminModelCard.DescriptionTooltip')}
-          >
-            <Input.TextArea rows={3} />
-          </Form.Item>
-
-          <Form.Item
-            name="task"
-            label={t('adminModelCard.Task')}
-            tooltip={t('adminModelCard.TaskTooltip')}
-          >
-            <Input placeholder={t('adminModelCard.TaskPlaceholder')} />
-          </Form.Item>
-
-          <Form.Item
-            name="category"
-            label={t('adminModelCard.Category')}
-            tooltip={t('adminModelCard.CategoryTooltip')}
-          >
-            <Input placeholder={t('adminModelCard.CategoryPlaceholder')} />
-          </Form.Item>
-
-          <Form.Item
-            name="architecture"
-            label={t('adminModelCard.Architecture')}
-            tooltip={t('adminModelCard.ArchitectureTooltip')}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            name="framework"
-            label={t('adminModelCard.Framework')}
-            tooltip={t('adminModelCard.FrameworkTooltip')}
-          >
-            {/* FR-3121: commit a framework on comma in addition to Enter. */}
-            <Select
-              mode="tags"
-              tokenSeparators={[',']}
-              placeholder={t('adminModelCard.AddFramework')}
-              notFoundContent={null}
-            />
-          </Form.Item>
-
-          <Form.Item
-            name="label"
-            label={t('adminModelCard.Label')}
-            tooltip={t('adminModelCard.LabelTooltip')}
-          >
-            {/* FR-3121: commit a label on comma in addition to Enter. */}
-            <Select
-              mode="tags"
-              tokenSeparators={[',']}
-              placeholder={t('adminModelCard.AddLabel')}
-              notFoundContent={null}
-            />
-          </Form.Item>
-
-          <Form.Item
-            name="license"
-            label={t('adminModelCard.License')}
-            tooltip={t('adminModelCard.LicenseTooltip')}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            name="readme"
-            label={t('adminModelCard.Readme')}
-            tooltip={t('adminModelCard.ReadmeTooltip')}
-          >
-            <Input.TextArea rows={6} />
-          </Form.Item>
-
-          <Form.Item
-            name="accessLevel"
-            label={t('adminModelCard.AccessLevel')}
-            tooltip={t('adminModelCard.AccessLevelTooltip')}
-            rules={[
-              {
-                required: true,
-                message: t('adminModelCard.AccessLevelRequired'),
-              },
-            ]}
-          >
-            <Select
-              options={[
+        {!modelStoreProject?.id ? (
+          <Alert
+            type="error"
+            showIcon
+            title={t('modelStore.ProjectNotFound')}
+            description={t('modelStore.ProjectNotFoundDescription')}
+          />
+        ) : (
+          <Form ref={formRef} layout="vertical" initialValues={initialValues}>
+            <Form.Item
+              name="name"
+              label={t('adminModelCard.Name')}
+              tooltip={t('adminModelCard.NameTooltip')}
+              rules={[
                 {
-                  value: 'INTERNAL',
-                  label: t('adminModelCard.Private'),
-                },
-                {
-                  value: 'PUBLIC',
-                  label: t('adminModelCard.Public'),
+                  required: true,
+                  message: t('adminModelCard.NameRequired'),
                 },
               ]}
-            />
-          </Form.Item>
-        </Form>
+            >
+              <Input />
+            </Form.Item>
+
+            {isEditMode ? (
+              <Form.Item label={t('adminModelCard.ModelStorageFolder')}>
+                <BAIFlex gap="xs" align="center">
+                  {modelCard.vfolder && (
+                    <VFolderNodeIdenticonV2
+                      vfolderNodeIdenticonFrgmt={modelCard.vfolder}
+                    />
+                  )}
+                  <FolderLink
+                    folderId={modelCard.vfolderId}
+                    folderName={
+                      modelCard.vfolder?.metadata?.name ?? modelCard.vfolderId
+                    }
+                  />
+                </BAIFlex>
+              </Form.Item>
+            ) : (
+              <Form.Item
+                label={t('adminModelCard.ModelStorageFolder')}
+                required
+              >
+                <BAIFlex gap="xs" align="center">
+                  <Suspense fallback={<Input disabled style={{ flex: 1 }} />}>
+                    <Form.Item
+                      name="vfolderId"
+                      noStyle
+                      rules={[
+                        {
+                          required: true,
+                          message: t('adminModelCard.VFolderRequired'),
+                        },
+                      ]}
+                    >
+                      <BAIVFolderSelect
+                        ref={vfolderSelectRef}
+                        excludeDeleted
+                        filter='ownership_type == "group"'
+                        currentProjectId={modelStoreProject?.id ?? undefined}
+                        style={{ flex: 1 }}
+                      />
+                    </Form.Item>
+                  </Suspense>
+                  {isModelStoreProject ? (
+                    <BAIButton
+                      icon={<PlusIcon />}
+                      onClick={() => setIsOpenCreateFolderModal(true)}
+                    />
+                  ) : (
+                    <Popconfirm
+                      title={t(
+                        'importArtifactRevisionToFolderModal.ModelStoreProjectRequired',
+                      )}
+                      description={t(
+                        'importArtifactRevisionToFolderModal.ModelStoreProjectRequiredDescription',
+                      )}
+                      okText={t('button.ChangeProject')}
+                      cancelText={t('button.Cancel')}
+                      onConfirm={() => {
+                        if (modelStoreProject?.id && modelStoreProject?.name) {
+                          startTransition(() => {
+                            setCurrentProject({
+                              projectId: modelStoreProject.id!,
+                              projectName: modelStoreProject.name!,
+                            });
+                            message.success(
+                              t(
+                                'importArtifactRevisionToFolderModal.CurrentProjectChangedSuccessfully',
+                              ),
+                            );
+                            setIsOpenCreateFolderModal(true);
+                          });
+                        } else {
+                          message.error(
+                            t(
+                              'importArtifactRevisionToFolderModal.FailedToRetrieveModelStoreProject',
+                            ),
+                          );
+                        }
+                      }}
+                    >
+                      <BAIButton icon={<PlusIcon />} />
+                    </Popconfirm>
+                  )}
+                </BAIFlex>
+              </Form.Item>
+            )}
+
+            {isEditMode ? (
+              <Form.Item label={t('adminModelCard.Domain')}>
+                <Typography.Text>{modelCard.domainName}</Typography.Text>
+              </Form.Item>
+            ) : (
+              <Suspense
+                fallback={
+                  <Form.Item
+                    name="domainName"
+                    label={t('adminModelCard.Domain')}
+                  >
+                    <Input disabled />
+                  </Form.Item>
+                }
+              >
+                <Form.Item name="domainName" label={t('adminModelCard.Domain')}>
+                  <BAIDomainSelect />
+                </Form.Item>
+              </Suspense>
+            )}
+
+            <Form.Item
+              name="author"
+              label={t('adminModelCard.Author')}
+              tooltip={t('adminModelCard.AuthorTooltip')}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              name="title"
+              label={t('adminModelCard.Title')}
+              tooltip={t('adminModelCard.TitleTooltip')}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              name="modelVersion"
+              label={t('adminModelCard.ModelVersion')}
+              tooltip={t('adminModelCard.ModelVersionTooltip')}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              name="description"
+              label={t('adminModelCard.Description')}
+              tooltip={t('adminModelCard.DescriptionTooltip')}
+            >
+              <Input.TextArea rows={3} />
+            </Form.Item>
+
+            <Form.Item
+              name="task"
+              label={t('adminModelCard.Task')}
+              tooltip={t('adminModelCard.TaskTooltip')}
+            >
+              <Input placeholder={t('adminModelCard.TaskPlaceholder')} />
+            </Form.Item>
+
+            <Form.Item
+              name="category"
+              label={t('adminModelCard.Category')}
+              tooltip={t('adminModelCard.CategoryTooltip')}
+            >
+              <Input placeholder={t('adminModelCard.CategoryPlaceholder')} />
+            </Form.Item>
+
+            <Form.Item
+              name="architecture"
+              label={t('adminModelCard.Architecture')}
+              tooltip={t('adminModelCard.ArchitectureTooltip')}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              name="framework"
+              label={t('adminModelCard.Framework')}
+              tooltip={t('adminModelCard.FrameworkTooltip')}
+            >
+              {/* FR-3121: commit a framework on comma in addition to Enter. */}
+              <Select
+                mode="tags"
+                tokenSeparators={[',']}
+                placeholder={t('adminModelCard.AddFramework')}
+                notFoundContent={null}
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="label"
+              label={t('adminModelCard.Label')}
+              tooltip={t('adminModelCard.LabelTooltip')}
+            >
+              {/* FR-3121: commit a label on comma in addition to Enter. */}
+              <Select
+                mode="tags"
+                tokenSeparators={[',']}
+                placeholder={t('adminModelCard.AddLabel')}
+                notFoundContent={null}
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="license"
+              label={t('adminModelCard.License')}
+              tooltip={t('adminModelCard.LicenseTooltip')}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              name="readme"
+              label={t('adminModelCard.Readme')}
+              tooltip={t('adminModelCard.ReadmeTooltip')}
+            >
+              <Input.TextArea rows={6} />
+            </Form.Item>
+
+            <Form.Item
+              name="accessLevel"
+              label={t('adminModelCard.AccessLevel')}
+              tooltip={t('adminModelCard.AccessLevelTooltip')}
+              rules={[
+                {
+                  required: true,
+                  message: t('adminModelCard.AccessLevelRequired'),
+                },
+              ]}
+            >
+              <Select
+                options={[
+                  {
+                    value: 'INTERNAL',
+                    label: t('adminModelCard.Private'),
+                  },
+                  {
+                    value: 'PUBLIC',
+                    label: t('adminModelCard.Public'),
+                  },
+                ]}
+              />
+            </Form.Item>
+          </Form>
+        )}
       </BAIModal>
       <FolderCreateModalV2
         open={isOpenCreateFolderModal}

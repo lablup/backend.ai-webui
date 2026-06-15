@@ -2163,7 +2163,7 @@
     "Preset": "Preset",
     "PresetTooltip": "Preset definiuje konfigurację zasobów (CPU, pamięć, GPU) używaną do uruchomienia tego modelu jako usługi.",
     "ProjectNotFound": "Nie znaleziono projektu Model Store",
-    "ProjectNotFoundDescription": "Nie można znaleźć projektu MODEL_STORE. Skontaktuj się z administratorem.",
+    "ProjectNotFoundDescription": "Nie można znaleźć projektu Model Store. Skontaktuj się z administratorem.",
     "QuickDeployDetailed": "Skonfiguruj i wdróż...",
     "RelativeTime": "{{time}}",
     "ResourceGroup": "Grupa zasobów",
