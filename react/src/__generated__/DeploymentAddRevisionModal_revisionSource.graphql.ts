@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<29f6883de8f8e0fc2eb06cb0a948eb3b>>
+ * @generated SignedSource<<d324388b8f0c630629f17b8e46372450>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -23,6 +23,7 @@ export type DeploymentAddRevisionModal_revisionSource$data = {
   readonly imageV2: {
     readonly id: string;
     readonly identity: {
+      readonly architecture: string;
       readonly canonicalName: string;
     };
   } | null | undefined;
@@ -429,6 +430,13 @@ return {
               "kind": "ScalarField",
               "name": "canonicalName",
               "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "architecture",
+              "storageKey": null
             }
           ],
           "storageKey": null
@@ -442,6 +450,6 @@ return {
 };
 })();
 
-(node as any).hash = "cdab9b06df5358ab32b14a8f19fb8336";
+(node as any).hash = "3518445152bb9533c4acfb20ee9046d7";
 
 export default node;

@@ -316,6 +316,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         id
         identity {
           canonicalName
+          architecture
         }
       }
     }
@@ -598,9 +599,9 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
 
   // Build a Custom-form prefill object from a preset node read off the
   // singular `deploymentRevisionPreset(id:)` query (resolved via
-  // `fetchPresetData`). `image canonicalName` is fetched async because
+  // `fetchPresetData`). The image full name is fetched async because
   // `ImageEnvironmentSelectFormItems` matches the form's `environments.version`
-  // against canonical names.
+  // against image full names (`registry/namespace:tag@architecture`).
   const buildPrefillFromPreset = async (
     preset: NonNullable<
       DeploymentAddRevisionModalSelectedPresetQuery$data['deploymentRevisionPreset']
@@ -622,7 +623,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         ? ('single-node' as const)
         : ('multi-node' as const);
 
-    let imageCanonicalName: string | undefined;
+    // Full image name (`registry/namespace:tag@architecture`); the
+    // architecture suffix is required so `ImageEnvironmentSelectFormItems`
+    // exact-matches the original image instead of defaulting to the first
+    // architecture in the sorted list.
+    let imageFullName: string | undefined;
     if (preset.execution?.imageId) {
       try {
         const result =
@@ -633,6 +638,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 imageV2(id: $id) {
                   identity {
                     canonicalName
+                    architecture
                   }
                 }
               }
@@ -640,10 +646,14 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             { id: preset.execution.imageId },
             { fetchPolicy: 'store-or-network' },
           ).toPromise();
-        imageCanonicalName =
-          result?.imageV2?.identity?.canonicalName ?? undefined;
+        const identity = result?.imageV2?.identity;
+        imageFullName = identity?.canonicalName
+          ? identity.architecture
+            ? `${identity.canonicalName}@${identity.architecture}`
+            : identity.canonicalName
+          : undefined;
       } catch {
-        imageCanonicalName = undefined;
+        imageFullName = undefined;
       }
     }
 
@@ -683,9 +693,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       enabledAutomaticShmem: !shmemEntry,
       runtimeVariantId: preset.runtimeVariantId ?? undefined,
       environ: environEntries,
-      ...(imageCanonicalName
-        ? { environments: { version: imageCanonicalName } }
-        : {}),
+      ...(imageFullName ? { environments: { version: imageFullName } } : {}),
     };
 
     return prefill as Partial<FormValues>;
@@ -872,12 +880,19 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       mountDestination: rev.modelMountConfig?.mountDestination ?? '/models',
       definitionPath: rev.modelMountConfig?.definitionPath ?? undefined,
       // `ImageEnvironmentSelectFormItems` matches the form's
-      // `environments.version` against its image catalog by canonical
-      // name; setting this is enough to drive the rest of the
-      // environment selector (registry/namespace/tag) and ultimately
-      // populate `environments.image.id`.
+      // `environments.version` against its image catalog by full name
+      // (`registry/namespace:tag@architecture`); the architecture suffix is
+      // required so the exact-match step picks the originally-used image
+      // instead of falling back to the first architecture in the sorted list
+      // (e.g. aarch64 for an x86_64 deployment). Setting this drives the rest
+      // of the environment selector and ultimately populates
+      // `environments.image.id`.
       environments: rev.imageV2?.identity?.canonicalName
-        ? { version: rev.imageV2.identity.canonicalName }
+        ? {
+            version: rev.imageV2.identity.architecture
+              ? `${rev.imageV2.identity.canonicalName}@${rev.imageV2.identity.architecture}`
+              : rev.imageV2.identity.canonicalName,
+          }
         : undefined,
       // EnvVarFormList stores entries as { variable, value } — translate
       // from the GraphQL `{ name, value }` shape on prefill.

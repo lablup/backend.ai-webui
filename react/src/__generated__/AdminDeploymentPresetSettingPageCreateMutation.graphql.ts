@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0c1955a9ba1410119b63bb1b138f3c4b>>
+ * @generated SignedSource<<cc1ec96cf216cece41132224db4564be>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,7 +19,7 @@ export type CreateDeploymentRevisionPresetInput = {
   description?: string | null | undefined;
   environ?: ReadonlyArray<EnvironEntryInput> | null | undefined;
   imageId: string;
-  modelDefinition?: ModelDefinitionInput | null | undefined;
+  modelDefinition?: PresetModelDefinitionInput | null | undefined;
   name: string;
   openToPublic?: boolean | null | undefined;
   presetValues?: ReadonlyArray<DeploymentRevisionPresetValueEntryInput> | null | undefined;
@@ -47,36 +47,36 @@ export type BlueGreenConfigInput = {
   autoPromote?: boolean;
   promoteDelaySeconds?: number;
 };
-export type ModelDefinitionInput = {
-  models?: ReadonlyArray<ModelConfigInput> | null | undefined;
+export type PresetModelDefinitionInput = {
+  models: ReadonlyArray<PresetModelConfigInput>;
 };
-export type ModelConfigInput = {
-  metadata?: ModelMetadataInput | null | undefined;
-  modelPath?: string | null | undefined;
-  name?: string | null | undefined;
-  service?: ModelServiceConfigInput | null | undefined;
+export type PresetModelConfigInput = {
+  metadata?: PresetModelMetadataInput | null | undefined;
+  modelPath: string;
+  name: string;
+  service: PresetModelServiceConfigInput;
 };
-export type ModelServiceConfigInput = {
-  healthCheck?: ModelHealthCheckInput | null | undefined;
-  port?: number | null | undefined;
-  preStartActions?: ReadonlyArray<PreStartActionInput> | null | undefined;
-  shell?: string | null | undefined;
-  startCommand?: ReadonlyArray<string> | null | undefined;
+export type PresetModelServiceConfigInput = {
+  healthCheck?: PresetModelHealthCheckInput | null | undefined;
+  port: number;
+  preStartActions: ReadonlyArray<PreStartActionInput>;
+  shell?: string;
+  startCommand: ReadonlyArray<string>;
 };
 export type PreStartActionInput = {
   action: string;
   args: any;
 };
-export type ModelHealthCheckInput = {
+export type PresetModelHealthCheckInput = {
   enable?: boolean;
-  expectedStatusCode?: number | null | undefined;
-  initialDelay?: number | null | undefined;
-  interval?: number | null | undefined;
-  maxRetries?: number | null | undefined;
-  maxWaitTime?: number | null | undefined;
-  path?: string | null | undefined;
+  expectedStatusCode?: number;
+  initialDelay?: number;
+  interval?: number;
+  maxRetries?: number;
+  maxWaitTime?: number;
+  path?: string;
 };
-export type ModelMetadataInput = {
+export type PresetModelMetadataInput = {
   architecture?: string | null | undefined;
   author?: string | null | undefined;
   category?: string | null | undefined;
