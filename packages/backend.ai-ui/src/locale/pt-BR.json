@@ -392,6 +392,19 @@
   "comp:BAIUserSelect": {
     "SelectUser": "Selecionar usuário"
   },
+  "comp:BAIVFolderMountConfigInput": {
+    "AliasInvalid": "Invalid path format.",
+    "AliasOverlapping": "Mount path overlaps with another folder.",
+    "AliasPlaceholder": "Mount path",
+    "Name": "Name",
+    "PathAndAlias": "Path & Alias",
+    "PathAndAliasTooltip": "The path inside the container where the folder will be mounted. Leave empty to use the default path.",
+    "RemoveFolder": "Remove",
+    "Subpath": "Subpath",
+    "SubpathInvalid": "Subpath must be a relative path and must not contain '..'.",
+    "SubpathPlaceholder": "e.g. dataset/train (optional)",
+    "SubpathTooltip": "Mount a subfolder inside the folder as the source instead of its root. Leave empty to mount the root."
+  },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Selecionar pasta"
   },
