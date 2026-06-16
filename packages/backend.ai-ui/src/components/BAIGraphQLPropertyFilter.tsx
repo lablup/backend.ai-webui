@@ -93,7 +93,12 @@ export type FilterPropertyType =
   | 'boolean'
   | 'enum'
   | 'uuid'
-  | 'datetime';
+  | 'datetime'
+  // First-class custom input. A `custom` property MUST supply `renderInput`
+  // (e.g. a domain-specific Select like a user picker). Operators, `valueMode`,
+  // and tag label rendering are driven by the same property fields as the
+  // built-in types.
+  | 'custom';
 
 export type FilterOperator =
   // String operators
@@ -150,12 +155,26 @@ type BaseFilterProperty = {
   valueMode?: 'scalar' | 'operator';
   // For UI/tag display when valueMode='scalar', use this operator symbol (default 'equals').
   implicitOperator?: FilterOperator;
-  // Custom input renderer. When provided, replaces the default AutoComplete input.
-  // Call onConfirm(value) to add the condition. `isValid` and `errorMessage`
-  // reflect the latest `rule.validate` outcome so the custom input can surface
-  // the same error UX the default AutoComplete shows via Tooltip.
+  // When true, committing a new condition for this property replaces any
+  // existing condition with the same property key instead of appending another
+  // tag. Use for single-value pickers (e.g. "filter by user") where stacking
+  // multiple conditions for the same key would be confusing. Defaults to false
+  // (the historical multi-condition behavior).
+  singleValue?: boolean;
+  // Custom input renderer. Required for `type: 'custom'`; when provided for any
+  // type it replaces the default AutoComplete input.
+  //  - `value` / `setValue`: the controlled draft value of the input, owned by
+  //    the filter. A controlled control (e.g. `BAIUserSelect`) binds to these.
+  //  - `onConfirm(value, label?)`: commit the draft as a filter condition. The
+  //    optional `label` is a human-readable tag label (e.g. a user's email) so
+  //    the tag shows it instead of the raw confirmed value (e.g. a UUID).
+  //  - `isValid` / `errorMessage`: reflect the latest `rule.validate` outcome so
+  //    the custom input can surface the same error UX the default AutoComplete
+  //    shows via Tooltip.
   renderInput?: (props: {
-    onConfirm: (value: string) => void;
+    value: string | undefined;
+    setValue: (value: string | undefined) => void;
+    onConfirm: (value: string, label?: string) => void;
     isValid: boolean;
     errorMessage?: string;
   }) => React.ReactNode;
@@ -190,6 +209,12 @@ interface FilterCondition {
   type: FilterPropertyType;
 }
 
+// Resolves the value-display key used to look up a human-readable tag label
+// for a confirmed condition. Keyed by property + raw value so the same UUID
+// confirmed under two properties stays independent.
+const valueLabelKey = (property: string, value: any): string =>
+  `${property}::${String(value)}`;
+
 const OPERATORS_BY_TYPE: Record<FilterPropertyType, FilterOperator[]> = {
   string: [
     'iContains',
@@ -213,6 +238,9 @@ const OPERATORS_BY_TYPE: Record<FilterPropertyType, FilterOperator[]> = {
   enum: ['equals', 'notEquals', 'in', 'notIn'],
   uuid: ['equals', 'notEquals', 'in', 'notIn'],
   datetime: ['equals', 'notEquals', 'before', 'after'],
+  // Custom inputs typically pin a single operator via `fixedOperator`, but fall
+  // back to the UUID-style set when they don't.
+  custom: ['equals', 'notEquals', 'in', 'notIn'],
 };
 
 const OPERATOR_SHORT_LABELS: Partial<Record<FilterOperator, string>> = {
@@ -254,6 +282,7 @@ const DEFAULT_OPERATOR_BY_TYPE: Record<FilterPropertyType, FilterOperator> = {
   enum: 'equals',
   uuid: 'equals',
   datetime: 'equals',
+  custom: 'equals',
 };
 
 function generateId(): string {
@@ -535,6 +564,19 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
   const [isOpenAutoComplete, setIsOpenAutoComplete] = useState(false);
   const [isValid, setIsValid] = useState(true);
   const [isFocused, setIsFocused] = useState(false);
+  // Controlled draft value handed to a `custom` property's `renderInput`. The
+  // input owns its display via these; on confirm the value is committed as a
+  // condition and the draft is cleared.
+  const [customDraftValue, setCustomDraftValue] = useState<
+    string | undefined
+  >();
+  // Human-readable tag labels keyed by `valueLabelKey(property, value)`.
+  // Conditions are derived from `value` on every render, so a label captured at
+  // confirm time cannot live on the condition itself — it is stored here and
+  // resolved in `renderConditionTag`. Labels are session-scoped: a filter
+  // restored from a URL/programmatic value falls back to the raw value until
+  // re-selected.
+  const [labelByValue, setLabelByValue] = useState<Record<string, string>>({});
 
   const propertyOptions = filterProperties.map((property) => ({
     label: property.propertyLabel,
@@ -599,7 +641,7 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
     return false;
   }, [selectedProperty]);
 
-  const addCondition = (value: string) => {
+  const addCondition = (value: string, label?: string) => {
     if (_.isEmpty(value)) return;
 
     if (effectiveStrictSelection && effectiveOptions) {
@@ -628,12 +670,39 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
       type: selectedProperty.type,
     };
 
-    updateConditions([...conditions, newCondition]);
+    // Remember the human-readable label for this confirmed value so the tag can
+    // show it instead of the raw value (e.g. user email instead of UUID).
+    if (label !== undefined) {
+      setLabelByValue((prev) => ({
+        ...prev,
+        [valueLabelKey(selectedProperty.key, value)]: label,
+      }));
+    }
+
+    // Single-value properties replace any existing condition for the same key
+    // instead of stacking another tag.
+    const base = selectedProperty.singleValue
+      ? conditions.filter((c) => c.property !== selectedProperty.key)
+      : conditions;
+    updateConditions([...base, newCondition]);
     setSearch('');
+    setCustomDraftValue(undefined);
   };
 
   const removeCondition = (id: string) => {
+    const removed = conditions.find((c) => c.id === id);
     const newConditions = conditions.filter((c) => c.id !== id);
+    // Drop the cached tag label for the removed condition so `labelByValue`
+    // doesn't grow unbounded across a long session of selections/removals.
+    if (removed) {
+      const key = valueLabelKey(removed.property, removed.value);
+      setLabelByValue((prev) => {
+        if (!(key in prev)) return prev;
+        const next = { ...prev };
+        delete next[key];
+        return next;
+      });
+    }
     updateConditions(newConditions);
   };
 
@@ -646,12 +715,17 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
   ): React.ReactElement => {
     const operatorShortLabel =
       OPERATOR_SHORT_LABELS[condition.operator] || condition.operator;
+    // Prefer a human-readable label captured at confirm time (e.g. user email)
+    // over the raw confirmed value (e.g. UUID), falling back to the value.
+    const resolvedLabel =
+      labelByValue[valueLabelKey(condition.property, condition.value)];
     const displayValue =
-      condition.operator === 'in' || condition.operator === 'notIn'
+      resolvedLabel ??
+      (condition.operator === 'in' || condition.operator === 'notIn'
         ? `[${condition.value}]`
         : condition.type === 'datetime' && dayjs(condition.value).isValid()
           ? dayjs(condition.value).format('YYYY-MM-DD HH:mm')
-          : condition.value;
+          : condition.value);
 
     return (
       <Tag
@@ -668,7 +742,7 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
           removeCondition(condition.id);
         }}
         style={{ margin: 0 }}
-        title={`${condition.propertyLabel} ${getOperatorLabel(condition.operator)} ${condition.value}`}
+        title={`${condition.propertyLabel} ${getOperatorLabel(condition.operator)} ${resolvedLabel ?? condition.value}`}
       >
         {condition.propertyLabel} {operatorShortLabel} {displayValue}
       </Tag>
@@ -698,6 +772,8 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
           onChange={(_value, options) => {
             const property = _.castArray(options)[0].filter;
             setSelectedProperty(property);
+            // Clear any in-progress custom draft when switching properties.
+            setCustomDraftValue(undefined);
             const mode =
               property.valueMode ||
               (property.type === 'boolean' ? 'scalar' : 'operator');
@@ -730,11 +806,15 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
         )}
         {selectedProperty?.renderInput ? (
           selectedProperty.renderInput({
+            value: customDraftValue,
+            setValue: setCustomDraftValue,
             onConfirm: addCondition,
             isValid,
             errorMessage: selectedProperty.rule?.message,
           })
-        ) : selectedProperty?.type === 'datetime' ? (
+        ) : selectedProperty?.type ===
+          'custom' ? // than falling through to the free-text AutoComplete. // A `custom` property must supply `renderInput`; render nothing rather
+        null : selectedProperty?.type === 'datetime' ? (
           <DatePicker
             value={selectedDate}
             showTime
@@ -756,7 +836,7 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
               value={search}
               open={isOpenAutoComplete}
               onOpenChange={setIsOpenAutoComplete}
-              onSelect={addCondition}
+              onSelect={(value) => addCondition(value)}
               onChange={(value) => {
                 setIsValid(true);
                 setSearch(value);
@@ -773,7 +853,7 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
               onFocus={() => setIsFocused(true)}
             >
               <Input.Search
-                onSearch={addCondition}
+                onSearch={(value) => addCondition(value)}
                 allowClear
                 status={!isValid && isFocused ? 'error' : undefined}
               />

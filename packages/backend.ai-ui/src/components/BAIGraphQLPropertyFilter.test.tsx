@@ -125,3 +125,87 @@ describe('BAIGraphQLPropertyFilter tag removal', () => {
     });
   });
 });
+
+// FR-3011: first-class `custom` filter type. `renderInput` here exposes plain
+// buttons that call `onConfirm(value, label)` so the tag label resolution and
+// `singleValue` replacement can be asserted without a real picker.
+const ownerCustomProperties: Array<FilterProperty> = [
+  {
+    key: 'owner.id',
+    propertyLabel: 'Owner',
+    type: 'custom',
+    fixedOperator: 'equals',
+    singleValue: true,
+    renderInput: ({ onConfirm }) => (
+      <>
+        <button
+          type="button"
+          onClick={() => onConfirm('uuid-alice', 'alice@example.com')}
+        >
+          pick-alice
+        </button>
+        <button
+          type="button"
+          onClick={() => onConfirm('uuid-bob', 'bob@example.com')}
+        >
+          pick-bob
+        </button>
+      </>
+    ),
+  },
+];
+
+const ControlledCustom = ({
+  onFilterChange,
+}: {
+  onFilterChange?: (value: GraphQLFilter | undefined) => void;
+}) => {
+  const [value, setValue] = useState<GraphQLFilter | undefined>();
+  return (
+    <BAIGraphQLPropertyFilter
+      filterProperties={ownerCustomProperties}
+      value={value}
+      onChange={(next) => {
+        setValue(next);
+        onFilterChange?.(next);
+      }}
+    />
+  );
+};
+
+describe('BAIGraphQLPropertyFilter custom type', () => {
+  it('commits a custom condition and shows the human-readable label, not the raw value', async () => {
+    const onFilterChange = vi.fn();
+    render(<ControlledCustom onFilterChange={onFilterChange} />);
+
+    fireEvent.click(screen.getByText('pick-alice'));
+
+    // The confirmed value flows into the GraphQL filter under the dot-notation key.
+    await waitFor(() => {
+      expect(onFilterChange).toHaveBeenCalledWith({
+        owner: { id: { equals: 'uuid-alice' } },
+      });
+    });
+    // The tag shows the label (email), not the raw confirmed value (uuid).
+    expect(screen.getByText(/Owner.*alice@example\.com/)).toBeVisible();
+    expect(screen.queryByText(/uuid-alice/)).not.toBeInTheDocument();
+  });
+
+  it('replaces the existing condition instead of stacking when singleValue is set', async () => {
+    render(<ControlledCustom />);
+
+    fireEvent.click(screen.getByText('pick-alice'));
+    await waitFor(() => {
+      expect(screen.getByText(/Owner.*alice@example\.com/)).toBeVisible();
+    });
+
+    fireEvent.click(screen.getByText('pick-bob'));
+    await waitFor(() => {
+      expect(screen.getByText(/Owner.*bob@example\.com/)).toBeVisible();
+    });
+
+    // The earlier condition is replaced, leaving exactly one tag.
+    expect(screen.queryByText(/alice@example\.com/)).not.toBeInTheDocument();
+    expect(document.querySelectorAll('.ant-tag')).toHaveLength(1);
+  });
+});

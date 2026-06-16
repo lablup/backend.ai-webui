@@ -1,6 +1,10 @@
 import BAIGraphQLPropertyFilter from './BAIGraphQLPropertyFilter';
+import { createUserFilterProperty } from './createUserFilterProperty';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Select } from 'antd';
+import { Suspense, useMemo } from 'react';
+import { RelayEnvironmentProvider } from 'react-relay';
+import { createMockEnvironment } from 'relay-test-utils';
 import { action } from 'storybook/actions';
 
 const meta: Meta<typeof BAIGraphQLPropertyFilter> = {
@@ -23,6 +27,7 @@ const meta: Meta<typeof BAIGraphQLPropertyFilter> = {
 New in this version:
 - **DateTime support**: When a property has type 'datetime', a DatePicker with time selection is rendered instead of a text input. Values are serialized as ISO strings and displayed in filter tags as 'YYYY-MM-DD HH:mm'.
 - **UUID support**: UUID type properties use \`equals\`, \`notEquals\`, \`in\`, \`notIn\` operators and support validation rules.
+- **First-class \`custom\` type**: Set \`type: 'custom'\` and supply \`renderInput\` to drive a property with any domain-specific control (e.g., a user picker). The renderer receives a controlled \`value\`/\`setValue\` draft plus \`onConfirm(value, label?)\` to commit a condition with an optional human-readable tag label (so a tag can show a user's email instead of the raw UUID). \`createUserFilterProperty\` ships a ready-made user picker built on this. Set \`singleValue\` so re-selecting replaces the condition instead of stacking tags.
 - **Custom input via renderInput**: Replace the default AutoComplete input with any component (e.g., an async select). Call \`onConfirm(value)\` to add the condition.
 - Operatorless fields via valueMode: 'scalar' for properties that should emit direct scalar values (e.g., { isUrgent: true }). Use implicitOperator (defaults to 'equals') to control how tags are displayed in the UI.
 
@@ -73,7 +78,7 @@ The component generates GraphQL-compatible filter objects that can be directly u
 FilterProperty = {
   key: string;              // Property key in the GraphQL schema
   propertyLabel: string;    // Display label for the property
-  type: 'string' | 'number' | 'boolean' | 'enum' | 'uuid' | 'datetime';
+  type: 'string' | 'number' | 'boolean' | 'enum' | 'uuid' | 'datetime' | 'custom';
   operators?: FilterOperator[];  // Available operators for this property
   defaultOperator?: FilterOperator;
   options?: AutoCompleteProps['options'];  // Autocomplete suggestions
@@ -88,11 +93,19 @@ FilterProperty = {
   valueMode?: 'scalar' | 'operator';
   // Visual operator for UI tags when valueMode='scalar' (default 'equals')
   implicitOperator?: FilterOperator;
-  // Custom input renderer — replaces the default AutoComplete.
-  // Call onConfirm(value) to submit the condition. \`isValid\` / \`errorMessage\`
-  // reflect the latest rule.validate outcome so custom inputs can show errors.
+  // Replace any existing condition for this key on confirm instead of stacking
+  // a new tag — use for single-value pickers. Default false.
+  singleValue?: boolean;
+  // Custom input renderer — required for type: 'custom', replaces the default
+  // AutoComplete for any type. \`value\`/\`setValue\` are the controlled draft a
+  // controlled control binds to; \`onConfirm(value, label?)\` commits the draft as
+  // a condition, with an optional human-readable tag label (e.g. user email
+  // instead of UUID). \`isValid\`/\`errorMessage\` reflect the latest rule.validate
+  // outcome so custom inputs can show errors.
   renderInput?: (props: {
-    onConfirm: (value: string) => void;
+    value: string | undefined;
+    setValue: (value: string | undefined) => void;
+    onConfirm: (value: string, label?: string) => void;
     isValid: boolean;
     errorMessage?: string;
   }) => ReactNode;
@@ -919,4 +932,181 @@ export const WithScalarValueModeOnString: Story = {
     },
     onChange: action('Scalar mode (string) filter changed'),
   },
+};
+
+// --- Custom type ('custom') ---------------------------------------------------
+
+// label != value, so the committed value (an opaque id) differs from the tag
+// label — demonstrating human-readable tag rendering for custom inputs.
+const sampleOwnerOptions = [
+  { label: 'alice@example.com', value: 'owner-uuid-0001' },
+  { label: 'bob@example.com', value: 'owner-uuid-0002' },
+  { label: 'carol@example.com', value: 'owner-uuid-0003' },
+];
+
+export const WithCustomType: Story = {
+  name: "Custom type ('custom')",
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "A first-class `type: 'custom'` property. `renderInput` binds a controlled antd Select to `value`/`setValue` and commits via `onConfirm(value, label)`. The filter emits the raw value (an opaque id) while the tag shows the human-readable label. `singleValue: true` makes re-selecting replace the condition instead of stacking tags.",
+      },
+    },
+  },
+  args: {
+    filterProperties: [
+      {
+        key: 'owner.id',
+        propertyLabel: 'Owner',
+        type: 'custom',
+        fixedOperator: 'equals',
+        singleValue: true,
+        renderInput: ({ value, setValue, onConfirm }) => (
+          <Select
+            showSearch
+            placeholder="Select owner"
+            style={{ minWidth: 220 }}
+            value={value}
+            optionFilterProp="label"
+            options={sampleOwnerOptions}
+            onChange={(next, option) => {
+              setValue(next);
+              if (next) {
+                const label = Array.isArray(option)
+                  ? option[0]?.label
+                  : option?.label;
+                onConfirm(next, typeof label === 'string' ? label : undefined);
+                setValue(undefined);
+              }
+            }}
+          />
+        ),
+      },
+    ],
+    combinationMode: 'AND',
+    onChange: action('custom type filter changed'),
+  },
+};
+
+// --- User filter property (createUserFilterProperty) --------------------------
+
+// Relay global ID format: btoa('TypeName:localId'). BAIUserSelect resolves the
+// local id (UUID) for valuePropName="id".
+const makeUserId = (localId: string) => btoa(`User:${localId}`);
+
+type UserMockItem = {
+  id: string;
+  email: string;
+  username: string;
+  full_name: string;
+  status: string;
+  role: string;
+};
+
+const sampleUsers: UserMockItem[] = [
+  {
+    id: makeUserId('aaaa1111-1111-1111-1111-111111111111'),
+    email: 'alice@example.com',
+    username: 'alice',
+    full_name: 'Alice Anderson',
+    status: 'active',
+    role: 'user',
+  },
+  {
+    id: makeUserId('bbbb2222-2222-2222-2222-222222222222'),
+    email: 'bob@example.com',
+    username: 'bob',
+    full_name: 'Bob Brown',
+    status: 'active',
+    role: 'admin',
+  },
+  {
+    id: makeUserId('cccc3333-3333-3333-3333-333333333333'),
+    email: 'carol@example.com',
+    username: 'carol',
+    full_name: 'Carol Clark',
+    status: 'active',
+    role: 'user',
+  },
+];
+
+const makeUserEdge = (user: UserMockItem) => ({
+  node: { __typename: 'UserNode', ...user },
+});
+
+/**
+ * Direct-response resolver for BAIUserSelect's two queries (paginated list +
+ * selected-value label). Mirrors the BAIAdminImageSelect story pattern.
+ */
+const UserRelayResolver = ({
+  children,
+  users,
+}: {
+  children: React.ReactNode;
+  users: UserMockItem[];
+}) => {
+  const environment = useMemo(() => {
+    const env = createMockEnvironment();
+    const queueResolver = () => {
+      env.mock.queueOperationResolver((operation) => {
+        queueResolver();
+        const opName = operation.request.node.params.name;
+        const vars = operation.request.variables as Record<string, unknown>;
+
+        if (opName === 'BAIUserSelectValueQuery') {
+          if (vars.skipSelected) return { data: {} };
+          return { data: { user_nodes: { edges: users.map(makeUserEdge) } } };
+        }
+        // BAIUserSelectPaginatedQuery — return all users.
+        return {
+          data: {
+            user_nodes: {
+              count: users.length,
+              edges: users.map(makeUserEdge),
+            },
+          },
+        };
+      });
+    };
+    queueResolver();
+    return env;
+    // stable: users is a module-level constant per story
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (
+    <RelayEnvironmentProvider environment={environment}>
+      <Suspense fallback="Loading...">{children}</Suspense>
+    </RelayEnvironmentProvider>
+  );
+};
+
+export const WithUserFilterProperty: Story = {
+  name: 'User filter property (createUserFilterProperty)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "The ready-made `createUserFilterProperty` factory wires `BAIUserSelect` into a `custom` property. Operators search users by email; the filter submits the resolved local user id (UUID) under the configured key (here `createdBy.id` → `{ createdBy: { id: { equals: uuid } } }`), while the tag displays the chosen user's email instead of the UUID. Single-value: re-selecting replaces the condition.",
+      },
+    },
+  },
+  args: {
+    combinationMode: 'AND',
+    onChange: action('user filter changed'),
+  },
+  render: (args) => (
+    <UserRelayResolver users={sampleUsers}>
+      <BAIGraphQLPropertyFilter
+        {...args}
+        filterProperties={[
+          createUserFilterProperty({
+            key: 'createdBy.id',
+            propertyLabel: 'Created by',
+          }),
+        ]}
+      />
+    </UserRelayResolver>
+  ),
 };
