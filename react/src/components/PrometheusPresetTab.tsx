@@ -11,13 +11,15 @@ import { PrometheusQueryPresetEditorModalFragment$key } from '../__generated__/P
 import { convertToOrderBy } from '../helper';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import AutoUpdateFetchKeyButton, {
+  LONG_AUTO_UPDATE_DELAY_OPTIONS,
+} from './AutoUpdateFetchKeyButton';
 import PrometheusQueryPresetEditorModal from './PrometheusQueryPresetEditorModal';
 import PrometheusQueryPresetNodes from './PrometheusQueryPresetNodes';
 import { App } from 'antd';
 import {
   BAIButton,
   BAIDeleteConfirmModal,
-  BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   type GraphQLFilter,
@@ -150,7 +152,9 @@ const PrometheusPresetTab: React.FC = () => {
           ]}
         />
         <BAIFlex gap="xs">
-          <BAIFetchKeyButton
+          <AutoUpdateFetchKeyButton
+            settingId="prometheus-preset"
+            autoUpdateDelayOptions={LONG_AUTO_UPDATE_DELAY_OPTIONS}
             value={fetchKey}
             onChange={updateFetchKey}
             loading={isPending}

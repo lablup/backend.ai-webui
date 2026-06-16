@@ -8,6 +8,7 @@ import {
   ComputeSessionListPageQuery$variables,
 } from '../__generated__/ComputeSessionListPageQuery.graphql';
 import ActionItemContent from '../components/ActionItemContent';
+import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
 import TerminateSessionModal from '../components/ComputeSessionNodeItems/TerminateSessionModal';
@@ -38,7 +39,6 @@ import {
 import {
   BAIAlertIconWithTooltip,
   BAICard,
-  BAIFetchKeyButton,
   BAIFlex,
   BAILink,
   BAIPropertyFilter,
@@ -515,12 +515,12 @@ const ComputeSessionListPage = () => {
                   </Tooltip>
                 </>
               )}
-              <BAIFetchKeyButton
+              <AutoUpdateFetchKeyButton
+                settingId="session-list"
                 loading={
                   deferredQueryVariables !== queryVariables ||
                   deferredFetchKey !== fetchKey
                 }
-                autoUpdateDelay={15_000}
                 // showLastLoadTime
                 value={fetchKey}
                 onChange={(newFetchKey) => {

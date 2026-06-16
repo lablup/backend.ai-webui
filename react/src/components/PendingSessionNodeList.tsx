@@ -10,6 +10,7 @@ import { useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
+import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import SessionNodes from './SessionNodes';
 import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
 import { Form } from 'antd';
@@ -17,7 +18,6 @@ import {
   BAIAlert,
   BAIFlex,
   filterOutNullAndUndefined,
-  BAIFetchKeyButton,
   useFetchKey,
   INITIAL_FETCH_KEY,
 } from 'backend.ai-ui';
@@ -117,12 +117,12 @@ const PendingSessionNodeList: React.FC = () => {
             tooltip={t('general.ResourceGroup')}
           />
         </Form.Item>
-        <BAIFetchKeyButton
+        <AutoUpdateFetchKeyButton
+          settingId="pending-session-list"
           loading={
             deferredQueryVariables !== queryVariables ||
             deferredFetchKey !== fetchKey
           }
-          autoUpdateDelay={7_000}
           value={fetchKey}
           onChange={(newFetchKey) => {
             updateFetchKey(newFetchKey);

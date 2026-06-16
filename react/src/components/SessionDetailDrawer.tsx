@@ -4,10 +4,11 @@
  */
 import { SessionDetailDrawerFragment$key } from '../__generated__/SessionDetailDrawerFragment.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
+import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import SessionDetailContent from './SessionDetailContent';
 import { Drawer, Skeleton } from 'antd';
 import { DrawerProps } from 'antd/lib';
-import { BAIFetchKeyButton, useFetchKey } from 'backend.ai-ui';
+import { useFetchKey } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { Suspense, useMemo, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -65,9 +66,9 @@ const SessionDetailDrawer: React.FC<SessionDetailDrawerProps> = ({
       title={t('session.SessionInfo')}
       size={800}
       extra={
-        <BAIFetchKeyButton
+        <AutoUpdateFetchKeyButton
+          settingId="session-detail"
           loading={isPendingReload}
-          autoUpdateDelay={7_000}
           value={fetchKey}
           onChange={(newFetchKey) => {
             startReloadTransition(() => {
