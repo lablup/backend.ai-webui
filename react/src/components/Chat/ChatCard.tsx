@@ -146,6 +146,9 @@ function useModels(
               name: model.id,
             }))
           : [],
+        // Preserve the error code so consumers (modelsError below) can detect
+        // a failed `/models` fetch; otherwise it is dropped by this select.
+        error: res.error,
       };
     },
   });
@@ -549,7 +552,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
         endTime={endTime}
       />
       <ChatInput
-        disabled={!baseURL}
+        disabled={!baseURL || !!modelsError}
         sync={chat.sync}
         input={input}
         setInput={setInput}
