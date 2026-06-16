@@ -4,8 +4,9 @@
  */
 import { AgentDetailDrawerFragment$key } from '../__generated__/AgentDetailDrawerFragment.graphql';
 import AgentDetailDrawerContent from './AgentDetailDrawerContent';
+import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import { Drawer, type DrawerProps, Skeleton } from 'antd';
-import { BAIFetchKeyButton, toLocalId, useBAILogger } from 'backend.ai-ui';
+import { toLocalId, useBAILogger } from 'backend.ai-ui';
 import { Suspense, useEffect, useEffectEvent, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useMutation, useRefetchableFragment } from 'react-relay';
@@ -78,8 +79,8 @@ const AgentDetailDrawer: React.FC<AgentDetailDrawerProps> = ({
       onClose={onRequestClose}
       {...drawerProps}
       extra={
-        <BAIFetchKeyButton
-          autoUpdateDelay={7_000}
+        <AutoUpdateFetchKeyButton
+          settingId="agent-detail"
           loading={isPendingRefetch}
           value=""
           onChange={() => {

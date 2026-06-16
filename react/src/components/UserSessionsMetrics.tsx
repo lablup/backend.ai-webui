@@ -6,15 +6,13 @@ import { UserSessionsMetricsQuery } from '../__generated__/UserSessionsMetricsQu
 import { newLineToBrElement } from '../helper';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import AutoUpdateFetchKeyButton, {
+  LONG_AUTO_UPDATE_DELAY_OPTIONS,
+} from './AutoUpdateFetchKeyButton';
 import BAIBoard, { BAIBoardItem } from './BAIBoard';
 import SessionMetricGraph from './SessionMetricGraph';
 import { Alert, DatePicker, Empty, Skeleton, theme } from 'antd';
-import {
-  useUpdatableState,
-  BAIFetchKeyButton,
-  BAIFlex,
-  filterOutEmpty,
-} from 'backend.ai-ui';
+import { useUpdatableState, BAIFlex, filterOutEmpty } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { Suspense, useEffect, useMemo, useState, useTransition } from 'react';
@@ -244,7 +242,9 @@ const UserSessionsMetrics: React.FC<UserSessionsMetricsProps> = () => {
             },
           ]}
         />
-        <BAIFetchKeyButton
+        <AutoUpdateFetchKeyButton
+          settingId="user-sessions-metrics"
+          autoUpdateDelayOptions={LONG_AUTO_UPDATE_DELAY_OPTIONS}
           loading={isPendingUsageTransition}
           value={usageFetchKey}
           onChange={() => {

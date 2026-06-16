@@ -6,6 +6,7 @@ import type {
   ProjectAdminUsersPageQuery,
   UserV2OrderBy,
 } from '../__generated__/ProjectAdminUsersPageQuery.graphql';
+import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import { convertToOrderBy } from '../helper';
@@ -16,7 +17,6 @@ import { Skeleton } from 'antd';
 import {
   availableUserV2SorterValues,
   BAICard,
-  BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAIAdminUserV2Table,
@@ -183,11 +183,11 @@ const ProjectAdminUsersContent: React.FC<ProjectAdminUsersContentProps> = ({
             }}
           />
         </BAIFlex>
-        <BAIFetchKeyButton
+        <AutoUpdateFetchKeyButton
+          settingId="project-admin-users"
           loading={isLoading}
           value={fetchKey}
           onChange={(next) => updateFetchKey(next)}
-          autoUpdateDelay={15_000}
         />
       </BAIFlex>
       <BAIAdminUserV2Table

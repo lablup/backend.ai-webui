@@ -8,6 +8,7 @@ import type {
   SessionV2OrderBy,
   SessionV2Status,
 } from '../__generated__/ProjectAdminSessionPageQuery.graphql';
+import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import TerminateSessionModalForProjectAdmin from '../components/TerminateSessionModalForProjectAdmin';
@@ -18,7 +19,6 @@ import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { Button, Skeleton, Tooltip, theme } from 'antd';
 import {
   BAICard,
-  BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
@@ -244,11 +244,11 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
               </Tooltip>
             </>
           )}
-          <BAIFetchKeyButton
+          <AutoUpdateFetchKeyButton
+            settingId="project-admin-session"
             loading={isLoading}
             value={fetchKey}
             onChange={(next) => updateFetchKey(next)}
-            autoUpdateDelay={15_000}
           />
         </BAIFlex>
       </BAIFlex>
