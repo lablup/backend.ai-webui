@@ -154,7 +154,10 @@
     "SelectDomain": "选择域"
   },
   "comp:BAIFetchKeyButton": {
+    "AutoRefresh": "自动刷新",
+    "EverySeconds": "{{count}}秒",
     "LastUpdated": "最后更新",
+    "Off": "关闭",
     "Refresh": "刷新"
   },
   "comp:BAIGraphQLPropertyFilter": {

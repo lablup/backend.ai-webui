@@ -23,10 +23,12 @@ A refresh button that manages fetch keys for data refetching with auto-update ca
 | \`loading\` | \`boolean\` | \`false\` | Loading state of the data fetch |
 | \`lastLoadTime\` | \`Date\` | \`undefined\` | Timestamp of the last successful load |
 | \`showLastLoadTime\` | \`boolean\` | \`false\` | Shows "Last updated: X ago" in tooltip |
-| \`autoUpdateDelay\` | \`number \\| null\` | \`null\` | Auto-refresh interval in milliseconds |
+| \`autoUpdateDelay\` | \`number \\| null\` | \`null\` | Auto-refresh interval in ms (controllable); \`null\` = Off |
 | \`onChange\` | \`(fetchKey: string) => void\` | - | Callback fired when fetch key updates |
 | \`hidden\` | \`boolean\` | \`false\` | Hides the button completely |
 | \`pauseWhenHidden\` | \`boolean\` | \`true\` | Pauses auto-update when button is hidden |
+| \`onChangeAutoUpdateDelay\` | \`(delayMs: number \\| null) => void\` | - | Fired when the user picks an interval; **providing it shows the dropdown** |
+| \`autoUpdateDelayOptions\` | \`number[]\` | \`[5000, 10000, 15000, 30000, 60000]\` | Interval presets (ms); "Off" is auto-prepended |
 
 For all other props, refer to [Ant Design Button](https://ant.design/components/button).
         `,
@@ -67,7 +69,8 @@ For all other props, refer to [Ant Design Button](https://ant.design/components/
     },
     autoUpdateDelay: {
       control: { type: 'number' },
-      description: 'Auto-refresh interval in milliseconds, null to disable',
+      description:
+        'Auto-refresh interval in ms (controllable); null disables (Off)',
       table: {
         type: { summary: 'number | null' },
         defaultValue: { summary: 'null' },
@@ -94,6 +97,23 @@ For all other props, refer to [Ant Design Button](https://ant.design/components/
       table: {
         type: { summary: 'boolean' },
         defaultValue: { summary: 'true' },
+      },
+    },
+    onChangeAutoUpdateDelay: {
+      action: 'onChangeAutoUpdateDelay',
+      description:
+        'Fired when the user selects an interval or "Off"; providing it shows the dropdown',
+      table: {
+        type: { summary: '(delayMs: number | null) => void' },
+      },
+    },
+    autoUpdateDelayOptions: {
+      control: { type: 'object' },
+      description:
+        'Interval presets in ms; "Off" is auto-prepended by the component',
+      table: {
+        type: { summary: 'number[]' },
+        defaultValue: { summary: '[5000, 10000, 15000, 30000, 60000]' },
       },
     },
   },
@@ -204,6 +224,53 @@ export const AutoUpdate: Story = {
             showLastLoadTime={true}
           />
         </BAIFlex>
+      </BAIFlex>
+    );
+  },
+};
+
+export const IntervalDropdown: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Providing `onChangeAutoUpdateDelay` opts the button into the interval dropdown: a caret trigger next to the refresh button lets the user pick an auto-refresh interval or turn it off. Auto-refresh is off by default; once an interval is selected it shows as a label (e.g. "15s") on the dropdown trigger button.',
+      },
+    },
+  },
+  render: () => {
+    const [fetchKey, setFetchKey] = useState(new Date().toISOString());
+    const [loading, setLoading] = useState(false);
+    const [delay, setDelay] = useState<number | null>(null);
+    const [counter, setCounter] = useState(0);
+
+    const handleChange = (newKey: string) => {
+      setLoading(true);
+      setFetchKey(newKey);
+      setCounter((prev) => prev + 1);
+      // Simulate API call
+      setTimeout(() => {
+        setLoading(false);
+      }, 800);
+    };
+
+    return (
+      <BAIFlex direction="column" gap="md" align="start">
+        <BAIFlex gap="sm" align="center">
+          <span style={{ width: 200 }}>Configurable interval:</span>
+          <BAIFetchKeyButton
+            value={fetchKey}
+            loading={loading}
+            onChange={handleChange}
+            autoUpdateDelay={delay}
+            onChangeAutoUpdateDelay={setDelay}
+            showLastLoadTime={true}
+          />
+          <span>Refresh count: {counter}</span>
+        </BAIFlex>
+        <div style={{ fontSize: '12px', color: '#666' }}>
+          Selected interval: {delay === null ? 'Off' : `${delay / 1000}s`}
+        </div>
       </BAIFlex>
     );
   },

@@ -154,7 +154,10 @@
     "SelectDomain": "Seleccionar dominio"
   },
   "comp:BAIFetchKeyButton": {
+    "AutoRefresh": "Actualización automática",
+    "EverySeconds": "{{count}}s",
     "LastUpdated": "Última actualización",
+    "Off": "Desactivado",
     "Refresh": "Actualizar"
   },
   "comp:BAIGraphQLPropertyFilter": {

@@ -154,7 +154,10 @@
     "SelectDomain": "Chọn miền"
   },
   "comp:BAIFetchKeyButton": {
+    "AutoRefresh": "Tự động làm mới",
+    "EverySeconds": "{{count}}s",
     "LastUpdated": "Cập nhật lần cuối",
+    "Off": "Tắt",
     "Refresh": "Làm mới"
   },
   "comp:BAIGraphQLPropertyFilter": {
