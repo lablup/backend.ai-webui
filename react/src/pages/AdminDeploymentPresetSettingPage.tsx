@@ -28,72 +28,89 @@ const buildModelDefinitionInput = (
   // The model definition is optional: the card's switch (`enabled`) gates it,
   // so when off we omit it entirely (`modelDefinition: null`).
   if (!value?.enabled || !value.models?.length) return null;
+  // A model is only emitted when it carries a service, so if no model has one
+  // the definition is effectively empty — omit it (`modelDefinition: null`)
+  // instead of sending `{ models: [] }`, which violates the create path's
+  // "at least one model" requirement.
+  if (!value.models.some((m) => m.service)) return null;
   return {
-    models: value.models.map((m) => ({
-      name: m.name,
-      modelPath: m.modelPath,
-      // `port` is required by the preset's strict ModelDefinition validation
-      // (no backend default), so the form guarantees it is present here.
-      service: {
-        port: m.service?.port ?? null,
-        shell: m.service?.shell,
-        startCommand: m.service?.startCommand?.trim()
-          ? m.service.startCommand.trim().split(/\s+/)
-          : null,
-        preStartActions: (m.service?.preStartActions ?? []).map((a) => ({
-          action: a.action,
-          args: (() => {
-            try {
-              return JSON.parse(a.args || '{}');
-            } catch {
-              return {};
-            }
-          })(),
-        })),
-        healthCheck: (() => {
-          const hc = m.service?.healthCheck;
-          const checked = !!m.service?.enableHealthCheck;
-          // Disabled → send health_check: null. The preset's strict validation
-          // checks every inner field whenever the object is present, and GraphQL
-          // injects null for omitted fields (which pydantic rejects), so
-          // `{ enable: false }` alone still fails — null is the only way to disable.
-          if (!checked) return null;
-          // Enabled → the form requires all HC fields, so they are present here.
-          const fields = {
-            path: hc?.path,
-            interval: hc?.interval,
-            maxRetries: hc?.maxRetries,
-            maxWaitTime: hc?.maxWaitTime,
-            expectedStatusCode: hc?.expectedStatusCode,
-            initialDelay: hc?.initialDelay,
-          };
-          // Managers < 26.4.4rc7 strip the `enable` flag; on 26.4.4rc7+ it is
-          // sent explicitly to mark the check enabled.
-          return supportsHealthCheckEnable
-            ? { enable: true, ...fields }
-            : fields;
-        })(),
-      },
-      metadata: m.metadata
-        ? {
-            author: m.metadata.author || null,
-            title: m.metadata.title || null,
-            version: m.metadata.version || null,
-            created: null,
-            lastModified: null,
-            description: m.metadata.description || null,
-            task: m.metadata.task || null,
-            category: m.metadata.category || null,
-            architecture: m.metadata.architecture || null,
-            framework: m.metadata.framework?.length
-              ? m.metadata.framework
-              : null,
-            label: m.metadata.label?.length ? m.metadata.label : null,
-            license: m.metadata.license || null,
-            minResource: null,
-          }
-        : null,
-    })),
+    models: value.models.flatMap((m) => {
+      const service = m.service;
+      // `service` is optional on a model, but the create path's
+      // PresetModelServiceConfigInput is required (the update path's is
+      // nullable), so a model without a service can't be submitted — skip it.
+      // When present, ModelServiceFormValue guarantees port/shell/startCommand,
+      // so no field-level guards or non-null assertions are needed here.
+      if (!service) {
+        return [];
+      }
+      return [
+        {
+          name: m.name,
+          modelPath: m.modelPath,
+          service: {
+            port: service.port,
+            shell: service.shell,
+            startCommand: service.startCommand.trim()
+              ? service.startCommand.trim().split(/\s+/)
+              : [],
+            preStartActions: (service.preStartActions ?? []).map((a) => ({
+              action: a.action,
+              args: (() => {
+                try {
+                  return JSON.parse(a.args || '{}');
+                } catch {
+                  return {};
+                }
+              })(),
+            })),
+            healthCheck: (() => {
+              const hc = service.healthCheck;
+              const checked = !!service.enableHealthCheck;
+              // Disabled → send health_check: null. The preset's strict
+              // validation checks every inner field whenever the object is
+              // present, and GraphQL injects null for omitted fields (which
+              // pydantic rejects), so `{ enable: false }` alone still fails —
+              // null is the only way to disable.
+              if (!checked) return null;
+              // Enabled → the form requires all HC fields, so they are present.
+              const fields = {
+                path: hc?.path,
+                interval: hc?.interval,
+                maxRetries: hc?.maxRetries,
+                maxWaitTime: hc?.maxWaitTime,
+                expectedStatusCode: hc?.expectedStatusCode,
+                initialDelay: hc?.initialDelay,
+              };
+              // Managers < 26.4.4rc7 strip the `enable` flag; on 26.4.4rc7+ it
+              // is sent explicitly to mark the check enabled.
+              return supportsHealthCheckEnable
+                ? { enable: true, ...fields }
+                : fields;
+            })(),
+          },
+          metadata: m.metadata
+            ? {
+                author: m.metadata.author || null,
+                title: m.metadata.title || null,
+                version: m.metadata.version || null,
+                created: null,
+                lastModified: null,
+                description: m.metadata.description || null,
+                task: m.metadata.task || null,
+                category: m.metadata.category || null,
+                architecture: m.metadata.architecture || null,
+                framework: m.metadata.framework?.length
+                  ? m.metadata.framework
+                  : null,
+                label: m.metadata.label?.length ? m.metadata.label : null,
+                license: m.metadata.license || null,
+                minResource: null,
+              }
+            : null,
+        },
+      ];
+    }),
   };
 };
 

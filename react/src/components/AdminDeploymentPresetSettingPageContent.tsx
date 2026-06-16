@@ -300,9 +300,8 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                 service: m.service
                   ? {
                       port: m.service.port,
-                      shell: m.service.shell ?? undefined,
-                      startCommand:
-                        m.service.startCommand?.join(' ') ?? undefined,
+                      shell: m.service.shell,
+                      startCommand: m.service.startCommand?.join(' ') ?? '',
                       // 26.4.4rc7+: `enable` is authoritative; older managers
                       // omit it, so fall back to the object's presence.
                       enableHealthCheck:

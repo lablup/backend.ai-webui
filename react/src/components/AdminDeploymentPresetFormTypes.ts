@@ -21,9 +21,13 @@ export type PreStartActionFormValue = {
 };
 
 export type ModelServiceFormValue = {
-  port?: number;
-  shell?: string;
-  startCommand?: string;
+  // `service` itself is optional on a model, but when present these three are
+  // always provided: the form marks them `required` (see
+  // AdminDeploymentPresetModelConfigItem) and the create path's
+  // PresetModelServiceConfigInput requires `port` / `startCommand` non-null.
+  port: number;
+  shell: string;
+  startCommand: string;
   preStartActions?: PreStartActionFormValue[];
   enableHealthCheck?: boolean;
   healthCheck?: ModelHealthCheckFormValue;
