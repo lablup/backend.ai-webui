@@ -154,7 +154,12 @@
     "SelectDomain": "Pilih Domain"
   },
   "comp:BAIFetchKeyButton": {
+    "AutoRefresh": "Penyegaran otomatis",
+    "EveryHours": "{{count}}h",
+    "EveryMinutes": "{{count}}m",
+    "EverySeconds": "{{count}}s",
     "LastUpdated": "Terakhir diperbarui",
+    "Off": "Mati",
     "Refresh": "Segarkan"
   },
   "comp:BAIGraphQLPropertyFilter": {
