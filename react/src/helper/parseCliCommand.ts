@@ -48,15 +48,52 @@ const RUNTIME_DEFAULTS: Record<DetectedRuntime, RuntimeDefaults> = {
   unknown: { port: 8000, healthCheckPath: '/health' },
 };
 
+/** A token needs quoting when it contains whitespace or shell-significant chars. */
+const QUOTE_NEEDED = /[\s'"\\$`]/;
+
+/**
+ * Single source of truth for the escape mapping shared by `formatShellCommand`
+ * (encode) and `tokenizeShellCommand` (decode). Keeping one table is what makes
+ * the two functions exact inverses by construction — there is no second escape
+ * set to drift out of sync with. `\` must be listed first when encoding so it is
+ * doubled before the other sequences introduce their own backslashes.
+ */
+const ESCAPE_ENCODE: ReadonlyArray<
+  readonly [literal: string, escaped: string]
+> = [
+  ['\\', '\\\\'],
+  ['"', '\\"'],
+  ['\n', '\\n'],
+  ['\t', '\\t'],
+  ['\r', '\\r'],
+];
+/** Reverse of `ESCAPE_ENCODE`, keyed by the character that follows a backslash. */
+const ESCAPE_DECODE: Readonly<Record<string, string>> = {
+  '\\': '\\',
+  '"': '"',
+  n: '\n',
+  t: '\t',
+  r: '\r',
+};
+
 /**
  * Inverse of `tokenizeShellCommand` for prefill/display.
- * Joins a token list back into a shell-command-like string, quoting any
- * token that contains whitespace or shell-significant characters via
- * `JSON.stringify` so a subsequent re-tokenize round-trips.
+ * Joins a token list back into a shell-command-like string, double-quoting any
+ * token that contains whitespace or shell-significant characters and escaping
+ * via the shared `ESCAPE_ENCODE` table. Newlines/tabs survive as `\n`/`\t`
+ * escapes (so the prefill stays single-line and readable) and are restored by
+ * `tokenizeShellCommand`.
  */
 export function formatShellCommand(tokens: readonly string[]): string {
   return tokens
-    .map((t) => (/[\s'"\\$`]/.test(t) ? JSON.stringify(t) : t))
+    .map((t) => {
+      if (!QUOTE_NEEDED.test(t)) return t;
+      let escaped = t;
+      for (const [literal, replacement] of ESCAPE_ENCODE) {
+        escaped = escaped.split(literal).join(replacement);
+      }
+      return `"${escaped}"`;
+    })
     .join(' ');
 }
 
@@ -76,7 +113,12 @@ export function tokenizeShellCommand(input: string): string[] {
     const ch = input[i];
 
     if (escaped) {
-      current += ch;
+      // Decode via the shared `ESCAPE_DECODE` table so this is the exact inverse
+      // of `formatShellCommand` (FR-3146). A stored token like "\n--flag" comes
+      // back as "\n--flag", not the literal "n--flag". Any other escaped char
+      // (`\ ` from a typed escaped space, `\<realNewline>` line continuation,
+      // etc.) is taken literally.
+      current += ESCAPE_DECODE[ch] ?? ch;
       escaped = false;
       continue;
     }
