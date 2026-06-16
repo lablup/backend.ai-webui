@@ -222,6 +222,7 @@
     "EndpointURL": "エンドポイントURL",
     "FailedToDeleteDeployment": "デプロイメントの削除に失敗しました。",
     "HealthySummary": "{{healthy}} / {{total}}",
+    "Lifecycle": "ライフサイクル",
     "Model": "モデル",
     "Name": "名前",
     "OpenToPublic": "公開",
@@ -235,7 +236,6 @@
     "ResourceGroup": "リソースグループ",
     "RevisionNumber": "リビジョン",
     "RevisionNumberTooltip": "デプロイメントの現在のリビジョン番号。",
-    "Status": "状態",
     "StrategyType": "戦略",
     "Tags": "タグ",
     "UpdatedAt": "更新日時"

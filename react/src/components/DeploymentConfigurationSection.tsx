@@ -106,8 +106,8 @@ const DeploymentOverviewContent: React.FC<{
 
   const deploymentItems = filterOutEmpty([
     {
-      key: 'status',
-      label: t('deployment.Status'),
+      key: 'lifecycle',
+      label: t('deployment.Lifecycle'),
       children: deployment?.metadata.status ? (
         <BAIFlex align="center" gap="xs">
           <BAIDeploymentStatusTag

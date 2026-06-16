@@ -222,6 +222,7 @@
     "EndpointURL": "URL Titik Akhir",
     "FailedToDeleteDeployment": "Gagal memadamkan penggunaan.",
     "HealthySummary": "{{healthy}} / {{total}}",
+    "Lifecycle": "Kitaran Hayat",
     "Model": "Model",
     "Name": "Nama",
     "OpenToPublic": "Terbuka untuk Awam",
@@ -235,7 +236,6 @@
     "ResourceGroup": "Kumpulan Sumber",
     "RevisionNumber": "Semakan",
     "RevisionNumberTooltip": "Nombor semakan semasa penggunaan.",
-    "Status": "Status",
     "StrategyType": "Strategi",
     "Tags": "Tag",
     "UpdatedAt": "Dikemas kini Pada"

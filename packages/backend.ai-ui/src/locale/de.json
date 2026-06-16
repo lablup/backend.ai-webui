@@ -222,6 +222,7 @@
     "EndpointURL": "Endpunkt URL",
     "FailedToDeleteDeployment": "Fehler beim Löschen des Deployments.",
     "HealthySummary": "{{healthy}} / {{total}}",
+    "Lifecycle": "Lebenszyklus",
     "Model": "Modell",
     "Name": "Name",
     "OpenToPublic": "Öffentlich",
@@ -235,7 +236,6 @@
     "ResourceGroup": "Ressourcengruppe",
     "RevisionNumber": "Revision",
     "RevisionNumberTooltip": "Die aktuelle Revisionsnummer des Deployments.",
-    "Status": "Status",
     "StrategyType": "Strategie",
     "Tags": "Stichworte",
     "UpdatedAt": "Aktualisiert am"

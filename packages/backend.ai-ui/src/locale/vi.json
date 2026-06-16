@@ -222,6 +222,7 @@
     "EndpointURL": "URL điểm cuối",
     "FailedToDeleteDeployment": "Không thể xóa triển khai.",
     "HealthySummary": "{{healthy}} / {{total}}",
+    "Lifecycle": "Vòng đời",
     "Model": "Mô hình",
     "Name": "Tên",
     "OpenToPublic": "Mở cho công khai",
@@ -235,7 +236,6 @@
     "ResourceGroup": "Nhóm tài nguyên",
     "RevisionNumber": "Phiên bản",
     "RevisionNumberTooltip": "Số phiên bản hiện tại của triển khai.",
-    "Status": "Trạng thái",
     "StrategyType": "Chiến lược",
     "Tags": "Thẻ",
     "UpdatedAt": "Ngày cập nhật"

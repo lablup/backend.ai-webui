@@ -222,6 +222,7 @@
     "EndpointURL": "엔드포인트 URL",
     "FailedToDeleteDeployment": "배포 삭제에 실패했습니다.",
     "HealthySummary": "{{healthy}} / {{total}}",
+    "Lifecycle": "라이프사이클",
     "Model": "모델",
     "Name": "이름",
     "OpenToPublic": "공개",
@@ -235,7 +236,6 @@
     "ResourceGroup": "리소스 그룹",
     "RevisionNumber": "리비전",
     "RevisionNumberTooltip": "배포의 현재 리비전 번호입니다.",
-    "Status": "상태",
     "StrategyType": "전략",
     "Tags": "태그",
     "UpdatedAt": "수정 시각"

@@ -222,6 +222,7 @@
     "EndpointURL": "Päätepisteen URL",
     "FailedToDeleteDeployment": "Käyttöönoton poistaminen epäonnistui.",
     "HealthySummary": "{{healthy}} / {{total}}",
+    "Lifecycle": "Elinkaari",
     "Model": "Malli",
     "Name": "Nimi",
     "OpenToPublic": "Avoin julkisesti",
@@ -235,7 +236,6 @@
     "ResourceGroup": "Resurssiryhmä",
     "RevisionNumber": "Revisio",
     "RevisionNumberTooltip": "Käyttöönoton nykyinen revisionumero.",
-    "Status": "Tila",
     "StrategyType": "Strategia",
     "Tags": "Tunnisteet",
     "UpdatedAt": "Päivitetty"

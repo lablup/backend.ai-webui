@@ -222,6 +222,7 @@
     "EndpointURL": "URL конечной точки",
     "FailedToDeleteDeployment": "Не удалось удалить развёртывание.",
     "HealthySummary": "{{healthy}} / {{total}}",
+    "Lifecycle": "Жизненный цикл",
     "Model": "Модель",
     "Name": "Имя",
     "OpenToPublic": "Открыто для всех",
@@ -235,7 +236,6 @@
     "ResourceGroup": "Группа ресурсов",
     "RevisionNumber": "Ревизия",
     "RevisionNumberTooltip": "Текущий номер ревизии развёртывания.",
-    "Status": "Статус",
     "StrategyType": "Стратегия",
     "Tags": "Теги",
     "UpdatedAt": "Обновлено"

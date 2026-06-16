@@ -222,6 +222,7 @@
     "EndpointURL": "端点URL",
     "FailedToDeleteDeployment": "删除部署失败。",
     "HealthySummary": "{{healthy}} / {{total}}",
+    "Lifecycle": "生命周期",
     "Model": "模型",
     "Name": "名称",
     "OpenToPublic": "公开",
@@ -235,7 +236,6 @@
     "ResourceGroup": "资源组",
     "RevisionNumber": "修订版本",
     "RevisionNumberTooltip": "部署的当前修订版本号。",
-    "Status": "状态",
     "StrategyType": "策略",
     "Tags": "标签",
     "UpdatedAt": "更新时间"

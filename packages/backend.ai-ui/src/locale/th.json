@@ -222,6 +222,7 @@
     "EndpointURL": "URL ปลายทาง",
     "FailedToDeleteDeployment": "ไม่สามารถลบการปรับใช้ได้",
     "HealthySummary": "{{healthy}} / {{total}}",
+    "Lifecycle": "วงจรชีวิต",
     "Model": "โมเดล",
     "Name": "ชื่อ",
     "OpenToPublic": "เปิดสาธารณะ",
@@ -235,7 +236,6 @@
     "ResourceGroup": "กลุ่มทรัพยากร",
     "RevisionNumber": "ฉบับแก้ไข",
     "RevisionNumberTooltip": "หมายเลขฉบับแก้ไขปัจจุบันของการปรับใช้",
-    "Status": "สถานะ",
     "StrategyType": "กลยุทธ์",
     "Tags": "แท็ก",
     "UpdatedAt": "วันที่อัปเดต"

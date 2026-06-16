@@ -222,6 +222,7 @@
     "EndpointURL": "URL Τελικού Σημείου",
     "FailedToDeleteDeployment": "Αποτυχία διαγραφής ανάπτυξης.",
     "HealthySummary": "{{healthy}} / {{total}}",
+    "Lifecycle": "Κύκλος ζωής",
     "Model": "Μοντέλο",
     "Name": "Όνομα",
     "OpenToPublic": "Ανοιχτό στο Κοινό",
@@ -235,7 +236,6 @@
     "ResourceGroup": "Ομάδα Πόρων",
     "RevisionNumber": "Αναθεώρηση",
     "RevisionNumberTooltip": "Ο τρέχων αριθμός αναθεώρησης της ανάπτυξης.",
-    "Status": "Κατάσταση",
     "StrategyType": "Στρατηγική",
     "Tags": "Ετικέτες",
     "UpdatedAt": "Ενημερώθηκε"

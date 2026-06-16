@@ -297,7 +297,7 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
       key: 'status',
       title: (
         <BAIFlex gap="xxs" align="center">
-          {t('general.Status')}
+          {t('deployment.ReplicaLifecycle')}
           <BAIQuestionIconWithTooltip
             title={t('deployment.ReplicaLifecycleStatusTooltip')}
           />

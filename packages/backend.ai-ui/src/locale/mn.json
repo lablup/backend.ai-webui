@@ -222,6 +222,7 @@
     "EndpointURL": "Төгсгөлийн цэгийн URL",
     "FailedToDeleteDeployment": "Байршуулалт устгаж чадсангүй.",
     "HealthySummary": "{{healthy}} / {{total}}",
+    "Lifecycle": "Амьдралын мөчлөг",
     "Model": "Загвар",
     "Name": "Нэр",
     "OpenToPublic": "Нийтэд нээлттэй",
@@ -235,7 +236,6 @@
     "ResourceGroup": "Нөөцийн бүлэг",
     "RevisionNumber": "Засвар",
     "RevisionNumberTooltip": "Байршуулалтын одоогийн засварын дугаар.",
-    "Status": "Төлөв",
     "StrategyType": "Стратеги",
     "Tags": "Шошго",
     "UpdatedAt": "Шинэчлэгдсэн огноо"
