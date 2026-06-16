@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-05-27
+> **Last Updated:** 2026-06-12
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -43,7 +43,7 @@
 | Information       | `/information`                         |    2     |    2    | ✅ 100% |
 | Reservoir         | `/reservoir`, `/reservoir/:artifactId` |    18    |    0    |  ❌ 0%  |
 | Branding          | `/branding`                            |    14    |    0    |  ❌ 0%  |
-| App Launcher      | (modal)                                |    18    |   10    | 🔶 56%  |
+| App Launcher      | (modal)                                |    19    |   11    | 🔶 58%  |
 | Chat              | `/chat/:id?`                           |    6     |    6    | ✅ 100% |
 | Plugin System     | (config-based)                         |    12    |   12    | ✅ 100% |
 | RBAC Management   | `/rbac`                                |    22    |   21    | 🔶 95%  |
@@ -920,11 +920,12 @@
 | Tensorboard → TensorboardPathModal | ❌ | - |
 | NNI Board / MLflow UI → AppLaunchConfirmationModal | ❌ | - |
 | Generic TCP apps → TCPConnectionInfoModal | ❌ | - |
+| Proxy worker unavailable → error, no bogus dialog (FR-3027) | ✅ | `User sees "Worker not available." error instead of a bogus connection dialog when the proxy worker is unavailable (FR-3027)` |
 | Pre-open port apps launch | ❌ | - |
 | "Open to Public" option with client IPs | ❌ | - |
 | "Preferred Port" option | ❌ | - |
 
-**Coverage: 🔶 10/18 features**
+**Coverage: 🔶 11/19 features**
 
 ---
 
