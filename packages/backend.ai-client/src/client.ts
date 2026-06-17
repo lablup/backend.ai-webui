@@ -926,16 +926,11 @@ export class Client {
       // Role auto-assign (BA-6183 / BA-6184 / BA-6187). FR-3029.
       this._features['role-auto-assign'] = true;
       this._features['session-export-user-filter'] = true;
-    }
-    // ModelRuntimeConfig gained `runtimeVariantPresetValues` in 26.4.4
-    // (FR-3139): runtime-variant preset values are sent as their own
-    // `{ presetId, value }` list instead of being serialized into environ /
-    // EXTRA_ARGS. Pinned to the rc9 tag so the flag also activates against the
-    // staging manager that implements the field (BA-6520, reported as rc9; rc <
-    // final in PEP440). The @since directive in the Relay query uses the same
-    // version string.
-    // TODO(FR-3139): simplify to '26.4.4' once rc builds are out of use.
-    if (this.isManagerVersionCompatibleWith('26.4.4rc9')) {
+      // ModelRuntimeConfig gained `runtimeVariantPresetValues` in 26.4.4rc9
+      // (FR-3139): preset values are sent as their own `{ presetId, value }`
+      // list instead of being serialized into environ / EXTRA_ARGS. Pinned to
+      // rc9 so the flag also activates against the staging manager (BA-6520).
+      // TODO(FR-3139): simplify to '26.4.4' once rc builds are out of use.
       this._features['model-runtime-variant-preset-values'] = true;
     }
   }

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f32f32fdb29659c09ff5a63f8e3194b8>>
+ * @generated SignedSource<<05278b114ead823c838932e42b778e43>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -80,6 +80,17 @@ export type DeploymentRevisionDetail_revision$data = {
     readonly runtimeVariant: {
       readonly name: string;
     } | null | undefined;
+    readonly runtimeVariantPresetValues: ReadonlyArray<{
+      readonly preset: {
+        readonly displayName: string | null | undefined;
+        readonly name: string;
+        readonly targetSpec: {
+          readonly key: string;
+        };
+      } | null | undefined;
+      readonly presetId: string;
+      readonly value: string;
+    }>;
   };
   readonly resourceConfig: {
     readonly resourceOpts: {
@@ -116,31 +127,32 @@ v1 = {
   "name": "name",
   "storageKey": null
 },
-v2 = [
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "value",
+  "storageKey": null
+},
+v3 = [
   (v1/*: any*/),
-  {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "value",
-    "storageKey": null
-  }
+  (v2/*: any*/)
 ],
-v3 = {
+v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "vfolderId",
   "storageKey": null
 },
-v4 = {
+v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "mountDestination",
   "storageKey": null
 },
-v5 = {
+v6 = {
   "alias": null,
   "args": null,
   "concreteType": "VirtualFolderNode",
@@ -252,7 +264,7 @@ return {
               "kind": "LinkedField",
               "name": "entries",
               "plural": true,
-              "selections": (v2/*: any*/),
+              "selections": (v3/*: any*/),
               "storageKey": null
             }
           ],
@@ -303,7 +315,63 @@ return {
               "kind": "LinkedField",
               "name": "entries",
               "plural": true,
-              "selections": (v2/*: any*/),
+              "selections": (v3/*: any*/),
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "RuntimeVariantPresetValue",
+          "kind": "LinkedField",
+          "name": "runtimeVariantPresetValues",
+          "plural": true,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "presetId",
+              "storageKey": null
+            },
+            (v2/*: any*/),
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "RuntimeVariantPreset",
+              "kind": "LinkedField",
+              "name": "preset",
+              "plural": false,
+              "selections": [
+                (v1/*: any*/),
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "displayName",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "PresetTargetSpec",
+                  "kind": "LinkedField",
+                  "name": "targetSpec",
+                  "plural": false,
+                  "selections": [
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "key",
+                      "storageKey": null
+                    }
+                  ],
+                  "storageKey": null
+                }
+              ],
               "storageKey": null
             }
           ],
@@ -320,8 +388,8 @@ return {
       "name": "modelMountConfig",
       "plural": false,
       "selections": [
-        (v3/*: any*/),
         (v4/*: any*/),
+        (v5/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -329,7 +397,7 @@ return {
           "name": "definitionPath",
           "storageKey": null
         },
-        (v5/*: any*/)
+        (v6/*: any*/)
       ],
       "storageKey": null
     },
@@ -341,8 +409,8 @@ return {
       "name": "extraMounts",
       "plural": true,
       "selections": [
-        (v3/*: any*/),
         (v4/*: any*/),
+        (v5/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -350,7 +418,7 @@ return {
           "name": "mountPerm",
           "storageKey": null
         },
-        (v5/*: any*/)
+        (v6/*: any*/)
       ],
       "storageKey": null
     },
@@ -537,6 +605,6 @@ return {
 };
 })();
 
-(node as any).hash = "bc669fc911f7565b73ca025a9cbedf70";
+(node as any).hash = "7ff96db6c2c8e7d837d91a6cab00f105";
 
 export default node;
