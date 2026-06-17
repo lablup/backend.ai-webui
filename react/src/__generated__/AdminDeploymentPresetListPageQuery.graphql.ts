@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2f7e193f2654e85942461e8e11fa38f7>>
+ * @generated SignedSource<<b6093662a8996a5d54bbca2f21c2c1d0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -241,13 +241,6 @@ return {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
-                    "name": "rank",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
                     "name": "runtimeVariantId",
                     "storageKey": null
                   },
@@ -303,6 +296,13 @@ return {
                         "kind": "ScalarField",
                         "name": "imageId",
                         "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "startupCommand",
+                        "storageKey": null
                       }
                     ],
                     "storageKey": null
@@ -328,6 +328,20 @@ return {
                         "kind": "ScalarField",
                         "name": "deploymentStrategy",
                         "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "openToPublic",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "revisionHistoryLimit",
+                        "storageKey": null
                       }
                     ],
                     "storageKey": null
@@ -337,6 +351,13 @@ return {
                     "args": null,
                     "kind": "ScalarField",
                     "name": "createdAt",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "updatedAt",
                     "storageKey": null
                   }
                 ],
@@ -351,12 +372,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "f7c0148ae47503fd5354512471b34062",
+    "cacheID": "975590c5da745e264e60d74f79d5a3cc",
     "id": null,
     "metadata": {},
     "name": "AdminDeploymentPresetListPageQuery",
     "operationKind": "query",
-    "text": "query AdminDeploymentPresetListPageQuery(\n  $filter: DeploymentRevisionPresetFilter\n  $orderBy: [DeploymentRevisionPresetOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  deploymentRevisionPresets(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        name\n        ...AdminDeploymentPresetNodesFragment\n      }\n    }\n  }\n}\n\nfragment AdminDeploymentPresetNodesFragment on DeploymentRevisionPreset {\n  id\n  name\n  description\n  rank\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n  }\n  deploymentDefaults {\n    replicaCount\n    deploymentStrategy\n  }\n  createdAt\n}\n"
+    "text": "query AdminDeploymentPresetListPageQuery(\n  $filter: DeploymentRevisionPresetFilter\n  $orderBy: [DeploymentRevisionPresetOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  deploymentRevisionPresets(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        name\n        ...AdminDeploymentPresetNodesFragment\n      }\n    }\n  }\n}\n\nfragment AdminDeploymentPresetNodesFragment on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n  }\n  deploymentDefaults {\n    replicaCount\n    deploymentStrategy\n    openToPublic\n    revisionHistoryLimit\n  }\n  createdAt\n  updatedAt\n}\n"
   }
 };
 })();
