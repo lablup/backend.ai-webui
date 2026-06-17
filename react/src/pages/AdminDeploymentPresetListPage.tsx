@@ -33,9 +33,15 @@ import {
 import * as _ from 'lodash-es';
 import { PlusIcon } from 'lucide-react';
 import { parseAsJson, parseAsString, useQueryStates } from 'nuqs';
-import React, { useDeferredValue, useState } from 'react';
+import React, {
+  useDeferredValue,
+  useEffect,
+  useEffectEvent,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
+import { useLocation } from 'react-router-dom';
 
 const AdminDeploymentPresetListPage: React.FC = () => {
   'use memo';
@@ -74,6 +80,31 @@ const AdminDeploymentPresetListPage: React.FC = () => {
   );
 
   const [fetchKey, updateFetchKey] = useFetchKey();
+
+  // After a successful create/update, the setting page navigates back here with
+  // `state.refreshDeploymentPresets`. Force a network refetch (the same effect
+  // the refresh button and the DELETE flow trigger via `updateFetchKey()`),
+  // then clear the flag so a manual reload doesn't refetch again.
+  const location = useLocation();
+  const refreshFlag = (
+    location.state as { refreshDeploymentPresets?: boolean } | null
+  )?.refreshDeploymentPresets;
+  // `updateFetchKey` / `webuiNavigate` / `location.*` are side-effect helpers,
+  // not synchronization keys — read their latest values via useEffectEvent so
+  // the effect only re-runs on the derived `refreshFlag` (no
+  // exhaustive-deps suppression needed).
+  const clearRefreshFlag = useEffectEvent(() => {
+    updateFetchKey();
+    webuiNavigate(location.pathname + location.search, {
+      replace: true,
+      state: null,
+    });
+  });
+  useEffect(() => {
+    if (refreshFlag) {
+      clearRefreshFlag();
+    }
+  }, [refreshFlag]);
 
   const queryVariables = {
     filter: (queryParams.filter ?? undefined) as

@@ -258,13 +258,19 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
       `,
     );
 
-  const navigateToList = () => {
+  const navigateToList = (refresh = false) => {
     const params = new URLSearchParams();
     params.set('tab', 'deployment-presets');
-    webuiNavigate({
-      pathname: '/admin-deployments',
-      search: params.toString(),
-    });
+    webuiNavigate(
+      {
+        pathname: '/admin-deployments',
+        search: params.toString(),
+      },
+      // After a successful create/update, signal the list to force a network
+      // refetch on arrival (mirrors how DELETE calls `updateFetchKey()`); a
+      // plain navigation otherwise serves the stale store-cached list.
+      refresh ? { state: { refreshDeploymentPresets: true } } : undefined,
+    );
   };
 
   const handleSubmit = async () => {
@@ -325,7 +331,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
           },
         });
         message.success(t('adminDeploymentPreset.PresetUpdated'));
-        navigateToList();
+        navigateToList(true);
       } else {
         await commitCreate({
           input: {
@@ -368,7 +374,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
           },
         });
         message.success(t('adminDeploymentPreset.PresetCreated'));
-        navigateToList();
+        navigateToList(true);
       }
     } catch (error: unknown) {
       logger.error(error);
