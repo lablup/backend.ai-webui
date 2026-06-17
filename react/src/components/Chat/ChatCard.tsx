@@ -77,6 +77,28 @@ const useStyles = createStyles(({ token, css }) => ({
   `,
 }));
 
+function readFileAsDataURL(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      // `FileReader.result` is typed `string | ArrayBuffer | null`; only a
+      // string is a valid data URL. Reject instead of casting so a malformed
+      // read can never produce an invalid `url` downstream.
+      if (typeof reader.result === 'string') {
+        resolve(reader.result);
+      } else {
+        reject(new Error('FileReader did not return a data URL string.'));
+      }
+    };
+    reader.onerror = () =>
+      reject(reader.error ?? new Error('Failed to read the file.'));
+    // Without an abort handler the Promise would hang forever if the read is
+    // aborted (e.g. the file becomes unavailable mid-read).
+    reader.onabort = () => reject(new Error('File reading was aborted.'));
+    reader.readAsDataURL(file);
+  });
+}
+
 function createModelsURL(baseURL: string) {
   const { origin, pathname: path } = new URL(baseURL.trim());
   const normalizedPath = path === '/' ? '/models' : `${path}/models`;
@@ -291,9 +313,22 @@ const PureChatCard: React.FC<ChatCardProps> = ({
               abortSignal: init?.signal || undefined,
               model: wrapLanguageModel({
                 model: provider.chatModel(modelId),
-                middleware: extractReasoningMiddleware({
-                  tagName: 'think',
-                }),
+                middleware: [
+                  extractReasoningMiddleware({
+                    tagName: 'think',
+                  }),
+                  // The openai-compatible provider does not advertise any
+                  // `supportedUrls`, so the AI SDK treats a `data:` image
+                  // attachment as a remote asset and tries to *download* it,
+                  // failing with "Failed to download data:image/...". Advertise
+                  // that the model accepts image URLs inline so the SDK passes
+                  // the data URL straight through as an `image_url` part.
+                  {
+                    overrideSupportedUrls: () => ({
+                      'image/*': [/^data:/, /^https?:\/\//],
+                    }),
+                  },
+                ],
               }),
               messages: convertToModelMessages(body?.messages),
               system: agent?.systemPrompt || undefined,
@@ -374,17 +409,32 @@ const PureChatCard: React.FC<ChatCardProps> = ({
       parts.push({ type: 'text', text: textContent });
     }
 
-    // Add files if present
+    // Add files if present.
+    // Encode each file as a base64 data URL rather than an object URL: a
+    // `blob:` URL is only resolvable inside the document that created it, so it
+    // cannot be read once the attachment is forwarded to the model endpoint
+    // through the openai-compatible provider. A data URL inlines the bytes and
+    // is delivered to the model as-is.
     if (files && files.length > 0) {
-      files.forEach((file) => {
-        const url = URL.createObjectURL(file);
-        parts.push({
-          type: 'file',
-          url: url,
-          mediaType: file.type || 'application/octet-stream',
-          filename: file.name,
-        });
-      });
+      // `onSendMessage` is fired from ChatInput without awaiting, so a
+      // rejection here would surface as an unhandled promise rejection.
+      // Catch the read failure, surface it to the user, and abort the send
+      // rather than forwarding a half-built message to the model.
+      try {
+        const fileParts = await Promise.all(
+          files.map(async (file) => ({
+            type: 'file' as const,
+            url: await readFileAsDataURL(file),
+            mediaType: file.type || 'application/octet-stream',
+            filename: file.name,
+          })),
+        );
+        parts.push(...fileParts);
+      } catch (error) {
+        logger.error('Failed to read attached file(s) as data URL:', error);
+        appMessage.error(t('theme.FailedToReadFile'));
+        return;
+      }
     }
 
     // Send with parts array if we have content
