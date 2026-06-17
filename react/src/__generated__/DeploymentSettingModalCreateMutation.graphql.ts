@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1e39a9a35771e3b392636dac91e05c86>>
+ * @generated SignedSource<<34b726bb12703b5a243b6d23d30745ac>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -84,12 +84,17 @@ export type ImageInput = {
 export type ModelRuntimeConfigInput = {
   environ?: EnvironmentVariablesInput | null | undefined;
   runtimeVariantId: string;
+  runtimeVariantPresetValues?: ReadonlyArray<RuntimeVariantPresetValueInput> | null | undefined;
 };
 export type EnvironmentVariablesInput = {
   entries: ReadonlyArray<EnvironmentVariableEntryInput>;
 };
 export type EnvironmentVariableEntryInput = {
   name: string;
+  value: string;
+};
+export type RuntimeVariantPresetValueInput = {
+  presetId: string;
   value: string;
 };
 export type ModelMountConfigInput = {

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d324388b8f0c630629f17b8e46372450>>
+ * @generated SignedSource<<07c37c790793b542333551ba7308d475>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -62,6 +62,10 @@ export type DeploymentAddRevisionModal_revisionSource$data = {
       readonly name: string;
     } | null | undefined;
     readonly runtimeVariantId: string;
+    readonly runtimeVariantPresetValues: ReadonlyArray<{
+      readonly presetId: string;
+      readonly value: string;
+    }>;
   };
   readonly resourceConfig: {
     readonly resourceOpts: {
@@ -90,24 +94,25 @@ var v0 = {
   "name": "name",
   "storageKey": null
 },
-v1 = [
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "value",
+  "storageKey": null
+},
+v2 = [
   (v0/*: any*/),
-  {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "value",
-    "storageKey": null
-  }
+  (v1/*: any*/)
 ],
-v2 = {
+v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "vfolderId",
   "storageKey": null
 },
-v3 = {
+v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -168,7 +173,7 @@ return {
               "kind": "LinkedField",
               "name": "entries",
               "plural": true,
-              "selections": (v1/*: any*/),
+              "selections": (v2/*: any*/),
               "storageKey": null
             }
           ],
@@ -210,8 +215,8 @@ return {
       "name": "extraMounts",
       "plural": true,
       "selections": [
-        (v2/*: any*/),
-        (v3/*: any*/)
+        (v3/*: any*/),
+        (v4/*: any*/)
       ],
       "storageKey": null
     },
@@ -257,9 +262,28 @@ return {
               "kind": "LinkedField",
               "name": "entries",
               "plural": true,
-              "selections": (v1/*: any*/),
+              "selections": (v2/*: any*/),
               "storageKey": null
             }
+          ],
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "RuntimeVariantPresetValue",
+          "kind": "LinkedField",
+          "name": "runtimeVariantPresetValues",
+          "plural": true,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "presetId",
+              "storageKey": null
+            },
+            (v1/*: any*/)
           ],
           "storageKey": null
         }
@@ -274,8 +298,8 @@ return {
       "name": "modelMountConfig",
       "plural": false,
       "selections": [
-        (v2/*: any*/),
         (v3/*: any*/),
+        (v4/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -450,6 +474,6 @@ return {
 };
 })();
 
-(node as any).hash = "3518445152bb9533c4acfb20ee9046d7";
+(node as any).hash = "94f9806003b984d4534543e7895a61e8";
 
 export default node;

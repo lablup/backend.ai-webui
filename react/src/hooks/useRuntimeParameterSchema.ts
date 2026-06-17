@@ -29,6 +29,12 @@ export interface SelectOption {
 
 /** A single runtime variant preset from the API. */
 export interface RuntimeVariantPresetDef {
+  /**
+   * Relay global id of the preset. Used to build the standalone
+   * `runtimeVariantPresetValues` list (`{ presetId, value }`) that is sent as
+   * its own mutation variable, decoupled from env vars / EXTRA_ARGS.
+   */
+  id: string;
   /** Preset name (unique identifier within the variant). */
   name: string;
   /** Human-readable description of the parameter. */
@@ -126,6 +132,7 @@ export function useRuntimeParameterSchema(
         ) @catch(to: RESULT) {
           edges {
             node {
+              id
               name
               description
               rank
@@ -192,6 +199,7 @@ export function useRuntimeParameterSchema(
       .map((edge) => edge?.node)
       .filter(Boolean)
       .map((node) => ({
+        id: node.id,
         name: node.name,
         description: node.description ?? null,
         rank: node.rank,
@@ -249,86 +257,50 @@ export function useRuntimeParameterSchema(
 }
 
 /**
- * Build a defaults map from parameter definitions.
- * Used for excluding default values from the serialized args string.
+ * A single runtime variant preset value, keyed by preset id.
+ *
+ * Matches the backend's `RuntimeVariantPresetValue` / `RuntimeVariantPresetValueInput`
+ * (`{ presetId, value }`) on `modelRuntimeConfig`. Preset values are their own
+ * variable — queried and mutated independently of environment variables.
  */
-export function buildDefaultsMap(
+export interface RuntimeVariantPresetValueEntry {
+  /** UUID of the `RuntimeVariantPreset` this value applies to. */
+  presetId: string;
+  /** The user-provided value, serialized as a string. */
+  value: string;
+}
+
+/**
+ * Collect runtime-variant preset values as a standalone list keyed by preset
+ * id, to be sent as `modelRuntimeConfig.runtimeVariantPresetValues` (separate
+ * from `environ`).
+ *
+ * Every user-touched, non-empty value is sent — including values equal to the
+ * preset default. A value the user explicitly interacted with is an explicit
+ * choice, so it must always reach the backend rather than being silently
+ * trimmed away when it happens to match the default.
+ *
+ * The control state (`values`) is keyed by `param.key` (the UI binding); this
+ * maps each touched key back to its preset `id`.
+ */
+export function buildRuntimeVariantPresetValues(
   groups: RuntimeParameterGroup[],
-): Record<string, string> {
-  const defaults: Record<string, string> = {};
+  values: Record<string, string>,
+  touchedKeys: Set<string>,
+): RuntimeVariantPresetValueEntry[] {
+  const entries: RuntimeVariantPresetValueEntry[] = [];
   for (const group of groups) {
     for (const param of group.params) {
-      if (param.defaultValue !== null) {
-        defaults[param.key] = param.defaultValue;
-      }
+      if (!touchedKeys.has(param.key)) continue;
+      const value = values[param.key];
+      if (value === undefined || value === '') continue;
+      // `param.id` is the Relay global id from the `id` field; decode it to the
+      // UUID the backend's `preset_id` expects.
+      entries.push({
+        presetId: toLocalId(param.id),
+        value,
+      });
     }
   }
-  return defaults;
-}
-
-/**
- * Build a set of known ARGS-type schema keys from parameter definitions.
- * Used for reverse-mapping existing EXTRA_ARGS to UI controls (only ARGS presets).
- */
-export function buildArgsSchemaKeySet(
-  groups: RuntimeParameterGroup[],
-): Set<string> {
-  const keys = new Set<string>();
-  for (const group of groups) {
-    for (const param of group.params) {
-      if (param.presetTarget === 'ARGS') {
-        keys.add(param.key);
-      }
-    }
-  }
-  return keys;
-}
-
-/**
- * Build a set of known ENV-type preset keys from parameter definitions.
- * Used for extracting individual env vars in edit mode.
- */
-export function buildEnvPresetKeySet(
-  groups: RuntimeParameterGroup[],
-): Set<string> {
-  const keys = new Set<string>();
-  for (const group of groups) {
-    for (const param of group.params) {
-      if (param.presetTarget === 'ENV') {
-        keys.add(param.key);
-      }
-    }
-  }
-  return keys;
-}
-
-/**
- * Derive the EXTRA_ARGS environment variable name for a given runtime variant.
- * Convention: `{VARIANT_UPPER}_EXTRA_ARGS` (e.g., vllm → VLLM_EXTRA_ARGS).
- */
-export function getExtraArgsEnvVarName(runtimeVariant: string): string {
-  return `${runtimeVariant.toUpperCase()}_EXTRA_ARGS`;
-}
-
-/**
- * Known runtime variant names that have EXTRA_ARGS env vars.
- * Used to clean up stale env vars when switching runtime variants.
- */
-const KNOWN_EXTRA_ARGS_VARIANTS = ['vllm', 'sglang'];
-
-/**
- * Returns all known EXTRA_ARGS env var names.
- * Used to clean up stale env vars when switching runtime variants.
- */
-export function getAllExtraArgsEnvVarNames(): string[] {
-  return KNOWN_EXTRA_ARGS_VARIANTS.map(getExtraArgsEnvVarName);
-}
-
-/**
- * Flatten all preset definitions from groups into a single array.
- */
-export function flattenPresets(
-  groups: RuntimeParameterGroup[],
-): RuntimeVariantPresetDef[] {
-  return groups.flatMap((g) => g.params);
+  return entries;
 }

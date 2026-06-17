@@ -23,20 +23,13 @@ import {
   formatShellCommand,
   tokenizeShellCommand,
 } from '../helper/parseCliCommand';
-import {
-  mergeExtraArgs,
-  reverseMapExtraArgs,
-} from '../helper/runtimeExtraArgsParser';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import {
-  buildArgsSchemaKeySet,
-  buildDefaultsMap,
-  flattenPresets,
-  getAllExtraArgsEnvVarNames,
-  getExtraArgsEnvVarName,
+  buildRuntimeVariantPresetValues,
   type RuntimeParameterGroup,
+  type RuntimeVariantPresetValueEntry,
 } from '../hooks/useRuntimeParameterSchema';
 import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
 import EnvVarFormList, { type EnvVarFormListValue } from './EnvVarFormList';
@@ -287,6 +280,10 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             value
           }
         }
+        runtimeVariantPresetValues @since(version: "26.4.4rc9") {
+          presetId
+          value
+        }
       }
       modelMountConfig {
         vfolderId
@@ -344,6 +341,14 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   // older managers reject it, so we keep the legacy null-when-disabled shape.
   const supportsHealthCheckEnable = baiClient.supports(
     'model-health-check-enable',
+  );
+  // Managers from 26.4.4 (pinned to the rc9 staging tag) accept
+  // `runtimeVariantPresetValues` on ModelRuntimeConfigInput (FR-3139); older
+  // managers lack the field, so the key must be omitted from the mutation input
+  // entirely. The matching @since directive on the query field uses the same
+  // version string.
+  const supportsRuntimeVariantPresetValues = baiClient.supports(
+    'model-runtime-variant-preset-values',
   );
 
   // Refs to refetch each form's model folder select after creating a new
@@ -413,18 +418,15 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   // namespace (registered by RuntimeParameterFormSection), so required presets
   // participate in normal form validation. Touched keys and groups are kept in
   // refs since changing them must not re-render the modal — both are only read
-  // at submit time via serializeRuntimeParamsToEnviron.
+  // at submit time to collect runtime-variant preset values.
   const runtimeParamTouchedKeysRef = useRef<Set<string>>(new Set());
   const runtimeParamGroupsRef = useRef<RuntimeParameterGroup[] | null>(null);
 
-  // Initial values fed into `RuntimeParameterFormSection` for non-custom
-  // variants — split out of `currentRevision.modelRuntimeConfig.environ`
-  // once at mount time so the runtime-parameter UI can reverse-map ARGS-
-  // and ENV-typed presets back into their controls. State (not ref) so the
-  // child re-renders with the right initial data after the body resolves.
-  const [initialRuntimeExtraArgs, setInitialRuntimeExtraArgs] = useState('');
-  const [initialRuntimeEnvVars, setInitialRuntimeEnvVars] = useState<
-    Record<string, string> | undefined
+  // Initial preset values fed into `RuntimeParameterFormSection` for non-custom
+  // variants in edit mode, keyed by preset id. State (not ref) so the child
+  // re-renders with the right initial data after the revision body resolves.
+  const [initialRuntimePresetValues, setInitialRuntimePresetValues] = useState<
+    ReadonlyArray<RuntimeVariantPresetValueEntry> | undefined
   >(undefined);
 
   // Snapshot of prefilled `extraMounts.mountDestination`, keyed by the
@@ -803,24 +805,15 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         ]),
     );
 
-    // Split `environ` for non-custom variants: the runtime-parameter
-    // section uses one designated env var (e.g. `BACKEND_VLLM_EXTRA_ARGS`)
-    // to encode CLI-style ARGS presets, and individual env vars for ENV
-    // presets. Build both sides and stash them so the child can reverse-map.
-    const environRecord: Record<string, string> = Object.fromEntries(
-      (rev.modelRuntimeConfig?.environ?.entries ?? []).map((e) => [
-        e.name,
-        e.value,
-      ]),
-    );
+    // Hydrate the runtime-parameter section from the revision's preset values
+    // (non-custom variants). Preset values are their own field now — no longer
+    // encoded into `environ` / EXTRA_ARGS — so we feed them through directly,
+    // keyed by preset id.
     if (!isCustom && variantName) {
-      const extraArgsKey = getExtraArgsEnvVarName(variantName);
-      const { [extraArgsKey]: extraArgsValue, ...envVarsWithoutArgs } =
-        environRecord;
-      setInitialRuntimeExtraArgs(extraArgsValue ?? '');
-      setInitialRuntimeEnvVars(
-        Object.keys(envVarsWithoutArgs).length > 0
-          ? envVarsWithoutArgs
+      const presetValues = rev.modelRuntimeConfig?.runtimeVariantPresetValues;
+      setInitialRuntimePresetValues(
+        presetValues && presetValues.length > 0
+          ? presetValues.map((p) => ({ presetId: p.presetId, value: p.value }))
           : undefined,
       );
     }
@@ -993,73 +986,30 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     setMode('custom');
   };
 
-  // Serialize runtime parameter form values (registered by
-  // RuntimeParameterFormSection under `runtimeParams`) into an environ map —
-  // mirrors ServiceLauncherPageContent logic.
-  const serializeRuntimeParamsToEnviron = (
-    environ: Record<string, string>,
-    runtimeVariant: string,
+  // Collect runtime-variant preset values as a standalone list keyed by preset
+  // id (`{ presetId, value }`), kept separate from `environ`. Sent to the
+  // backend as `modelRuntimeConfig.runtimeVariantPresetValues`. Reads from the
+  // form's `runtimeParams` namespace (native-typed values), stringifying each
+  // touched non-empty value before delegating to the schema helper.
+  const collectRuntimeVariantPresetValues = (
     runtimeParams: RuntimeParameterValues | undefined,
-  ) => {
+  ): RuntimeVariantPresetValueEntry[] => {
     const groups = runtimeParamGroupsRef.current;
-    if (!groups || !runtimeParams || Object.keys(runtimeParams).length === 0)
-      return;
+    if (!groups || !runtimeParams) return [];
 
-    const extraArgsEnvVar = getExtraArgsEnvVarName(runtimeVariant);
-    for (const envName of getAllExtraArgsEnvVarNames()) {
-      if (envName !== extraArgsEnvVar) delete environ[envName];
-    }
-
-    // Form values are native-typed (number/boolean/string); downstream
-    // merge/compare logic works on the API's string encoding.
-    const touchedValues: Record<string, string> = {};
+    // Form values are native-typed (number/boolean/string); the backend's
+    // preset value list works on the API's string encoding.
+    const stringValues: Record<string, string> = {};
     for (const [key, val] of Object.entries(runtimeParams)) {
-      if (!runtimeParamTouchedKeysRef.current.has(key)) continue;
       if (val === undefined || val === null || val === '') continue;
-      touchedValues[key] = String(val);
+      stringValues[key] = String(val);
     }
 
-    const presets = flattenPresets(groups);
-    const presetMap = new Map(presets.map((p) => [p.key, p]));
-    const defaults = buildDefaultsMap(groups);
-    const argsValues: Record<string, string> = {};
-    const envValues: Record<string, string> = {};
-
-    for (const [key, val] of Object.entries(touchedValues)) {
-      if (val === '' || val === undefined) continue;
-      const preset = presetMap.get(key);
-      if (!preset) continue;
-      if (preset.presetTarget === 'ENV') envValues[key] = val;
-      else argsValues[key] = val;
-    }
-
-    const argsSchemaKeys = buildArgsSchemaKeySet(groups);
-    if (environ[extraArgsEnvVar] && argsSchemaKeys.size > 0) {
-      const { unmappedText } = reverseMapExtraArgs(
-        environ[extraArgsEnvVar],
-        argsSchemaKeys,
-      );
-      if (unmappedText) environ[extraArgsEnvVar] = unmappedText;
-      else delete environ[extraArgsEnvVar];
-    }
-
-    for (const preset of presets) {
-      if (preset.presetTarget === 'ENV') delete environ[preset.key];
-    }
-
-    if (Object.keys(argsValues).length > 0) {
-      const manualArgs = environ[extraArgsEnvVar] ?? '';
-      const merged = mergeExtraArgs(argsValues, manualArgs, defaults);
-      if (merged) environ[extraArgsEnvVar] = merged;
-      else delete environ[extraArgsEnvVar];
-    }
-
-    for (const [key, val] of Object.entries(envValues)) {
-      const preset = presetMap.get(key);
-      if (preset?.defaultValue !== null && preset?.defaultValue === val)
-        continue;
-      environ[key] = val;
-    }
+    return buildRuntimeVariantPresetValues(
+      groups,
+      stringValues,
+      runtimeParamTouchedKeysRef.current,
+    );
   };
 
   const handleCustomFinish = (values: FormValues): void => {
@@ -1136,16 +1086,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     const isCustom = variantName === 'custom';
     const isCommandMode = values.customDefinitionMode === 'command';
 
+    // `environ` now carries ONLY the user's manual Environment Variables —
+    // runtime-variant preset values are no longer merged in here.
     const environRecord: Record<string, string> = {};
     for (const { variable, value } of values.environ ?? []) {
       if (variable) environRecord[variable] = value;
-    }
-    if (!isCustom) {
-      serializeRuntimeParamsToEnviron(
-        environRecord,
-        variantName,
-        values.runtimeParams,
-      );
     }
     const environEntries = Object.entries(environRecord).map(
       ([name, value]) => ({ name, value }),
@@ -1175,6 +1120,14 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         ? { enable: true, ...configuredFields }
         : { enable: false };
     })();
+
+    // Runtime-variant preset values are their own list (kept out of `environ`),
+    // sent via `modelRuntimeConfig.runtimeVariantPresetValues`. Only collected
+    // for non-custom variants on managers that support the field.
+    const runtimeVariantPresetValues =
+      isCustom || !supportsRuntimeVariantPresetValues
+        ? []
+        : collectRuntimeVariantPresetValues(values.runtimeParams);
 
     const modelDefinition =
       isCustom && isCommandMode && values.startCommand
@@ -1219,6 +1172,16 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             runtimeVariantId: values.runtimeVariantId,
             environ:
               environEntries.length > 0 ? { entries: environEntries } : null,
+            // Preset values are sent as their own field, keyed by preset id —
+            // NOT folded into `environ`. The key is omitted entirely on
+            // managers that predate the field (< 26.4.4), which would reject an
+            // unknown input field.
+            ...(supportsRuntimeVariantPresetValues && {
+              runtimeVariantPresetValues:
+                runtimeVariantPresetValues.length > 0
+                  ? runtimeVariantPresetValues
+                  : null,
+            }),
           },
           modelMountConfig: {
             vfolderId: toLocalId(values.modelFolderId),
@@ -1678,8 +1641,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                       onGroupsLoaded={(groups) => {
                         runtimeParamGroupsRef.current = groups;
                       }}
-                      initialExtraArgs={initialRuntimeExtraArgs}
-                      initialEnvVars={initialRuntimeEnvVars}
+                      initialPresetValues={initialRuntimePresetValues}
                     />
                   </Suspense>
                 </div>

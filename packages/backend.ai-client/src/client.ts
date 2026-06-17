@@ -927,6 +927,17 @@ export class Client {
       this._features['role-auto-assign'] = true;
       this._features['session-export-user-filter'] = true;
     }
+    // ModelRuntimeConfig gained `runtimeVariantPresetValues` in 26.4.4
+    // (FR-3139): runtime-variant preset values are sent as their own
+    // `{ presetId, value }` list instead of being serialized into environ /
+    // EXTRA_ARGS. Pinned to the rc9 tag so the flag also activates against the
+    // staging manager that implements the field (BA-6520, reported as rc9; rc <
+    // final in PEP440). The @since directive in the Relay query uses the same
+    // version string.
+    // TODO(FR-3139): simplify to '26.4.4' once rc builds are out of use.
+    if (this.isManagerVersionCompatibleWith('26.4.4rc9')) {
+      this._features['model-runtime-variant-preset-values'] = true;
+    }
   }
 
   /**
