@@ -53,6 +53,7 @@
     "RevisionHistoryLimitTooltip": "Bilangan semakan lama yang disimpan untuk setiap deployment yang dicipta dari praset ini. Semakan yang lebih lama dihapus secara automatik.",
     "Runtime": "Runtime",
     "RuntimeRequired": "Runtime diperlukan.",
+    "RuntimeTooltip": "Runtime inferens (cth. vLLM, SGLang) yang disasarkan oleh praset ini. Memilihnya mendedahkan parameter runtime yang boleh dikonfigurasi, yang nilainya disimpan bersama praset dan digunakan pada deployment yang dicipta daripadanya.",
     "RuntimeVariantId": "ID Runtime",
     "SectionAdvanced": "Lanjutan",
     "SectionBasicInfo": "Maklumat Asas",

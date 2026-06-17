@@ -53,6 +53,7 @@
     "RevisionHistoryLimitTooltip": "Số lượng bản sửa đổi cũ được giữ lại cho mỗi triển khai được tạo từ cài đặt sẵn này. Các bản sửa đổi cũ hơn sẽ được xóa tự động.",
     "Runtime": "Runtime",
     "RuntimeRequired": "Runtime là bắt buộc.",
+    "RuntimeTooltip": "Runtime suy luận (vd. vLLM, SGLang) mà cài đặt sẵn này hướng tới. Chọn một runtime sẽ hiển thị các tham số runtime có thể cấu hình, các giá trị này được lưu cùng cài đặt sẵn và áp dụng cho các triển khai được tạo từ nó.",
     "RuntimeVariantId": "ID runtime",
     "SectionAdvanced": "Nâng cao",
     "SectionBasicInfo": "Thông tin cơ bản",

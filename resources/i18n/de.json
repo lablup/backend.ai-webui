@@ -53,6 +53,7 @@
     "RevisionHistoryLimitTooltip": "Anzahl der vergangenen Revisionen, die für jede aus dieser Voreinstellung erstellte Bereitstellung aufbewahrt werden. Ältere Revisionen werden automatisch gelöscht.",
     "Runtime": "Runtime",
     "RuntimeRequired": "Runtime ist erforderlich.",
+    "RuntimeTooltip": "Die Inferenz-Runtime (z. B. vLLM, SGLang), auf die diese Voreinstellung abzielt. Durch die Auswahl einer Runtime werden ihre konfigurierbaren Laufzeitparameter angezeigt, deren Werte mit der Voreinstellung gespeichert und auf Bereitstellungen angewendet werden, die daraus erstellt wurden.",
     "RuntimeVariantId": "Runtime-ID",
     "SectionAdvanced": "Erweitert",
     "SectionBasicInfo": "Grundlegende Informationen",

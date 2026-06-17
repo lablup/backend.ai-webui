@@ -53,6 +53,7 @@
     "RevisionHistoryLimitTooltip": "為從此預設建立的每個部署保留的歷史修訂數量。較舊的修訂將自動刪除。",
     "Runtime": "執行環境",
     "RuntimeRequired": "執行環境為必填項。",
+    "RuntimeTooltip": "此預設所針對的推理執行環境（如 vLLM、SGLang）。選擇後將顯示其可配置的執行時期參數，這些參數值將與預設一起儲存，並套用至從該預設建立的部署。",
     "RuntimeVariantId": "執行環境 ID",
     "SectionAdvanced": "進階",
     "SectionBasicInfo": "基本資訊",

@@ -73,7 +73,7 @@ const DeploymentPresetDetailModal: React.FC<
           revisionHistoryLimit
           deploymentStrategy
         }
-        presetValues {
+        presetValues @since(version: "26.4.4rc9") {
           presetId
           value
         }

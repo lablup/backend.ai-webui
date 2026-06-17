@@ -53,6 +53,7 @@
     "RevisionHistoryLimitTooltip": "Number of past revisions kept for each deployment created from this preset. Older revisions are pruned automatically.",
     "Runtime": "Runtime",
     "RuntimeRequired": "Runtime is required.",
+    "RuntimeTooltip": "The inference runtime (e.g., vLLM, SGLang) this preset targets. Selecting one reveals its configurable runtime parameters, whose values are saved with the preset and applied to deployments created from it.",
     "RuntimeVariantId": "Runtime ID",
     "SectionAdvanced": "Advanced",
     "SectionBasicInfo": "Basic Info",

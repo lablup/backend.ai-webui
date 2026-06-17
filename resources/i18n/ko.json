@@ -53,6 +53,7 @@
     "RevisionHistoryLimitTooltip": "이 프리셋으로 생성된 각 배포에서 보관할 과거 리비전 개수입니다. 오래된 리비전은 자동으로 정리됩니다.",
     "Runtime": "런타임",
     "RuntimeRequired": "런타임은 필수입니다.",
+    "RuntimeTooltip": "이 프리셋이 대상으로 하는 추론 런타임(예: vLLM, SGLang)입니다. 런타임을 선택하면 구성 가능한 런타임 파라미터가 표시되며, 해당 값은 프리셋과 함께 저장되어 이 프리셋으로 생성된 배포에 적용됩니다.",
     "RuntimeVariantId": "런타임 ID",
     "SectionAdvanced": "고급",
     "SectionBasicInfo": "기본 정보",

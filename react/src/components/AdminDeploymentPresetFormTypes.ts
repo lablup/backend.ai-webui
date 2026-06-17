@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { RuntimeParameterValues } from './RuntimeParameterFormSection';
 
 export const STEP_KEYS = ['basic', 'model', 'review'] as const;
 export type StepKey = (typeof STEP_KEYS)[number];
@@ -85,6 +86,12 @@ export type AdminDeploymentPresetFormValue = {
   openToPublic?: boolean;
   replicaCount?: number;
   revisionHistoryLimit?: number;
+  /**
+   * Runtime-variant preset parameter values keyed by preset key, registered by
+   * RuntimeParameterFormSection under the `runtimeParams` namespace. Native-typed
+   * (number/boolean/string); serialized to the API's string encoding at submit.
+   */
+  runtimeParams?: RuntimeParameterValues;
 };
 
 export type ResourceSlotTypeInfo = {

@@ -53,6 +53,7 @@
     "RevisionHistoryLimitTooltip": "Nombre d'anciennes révisions conservées pour chaque déploiement créé à partir de ce préréglage. Les révisions plus anciennes sont supprimées automatiquement.",
     "Runtime": "Runtime",
     "RuntimeRequired": "Le runtime est obligatoire.",
+    "RuntimeTooltip": "Le runtime d'inférence (ex. vLLM, SGLang) ciblé par ce préréglage. En sélectionner un révèle ses paramètres de runtime configurables, dont les valeurs sont enregistrées avec le préréglage et appliquées aux déploiements créés à partir de celui-ci.",
     "RuntimeVariantId": "ID Runtime",
     "SectionAdvanced": "Avancé",
     "SectionBasicInfo": "Informations de Base",

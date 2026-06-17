@@ -140,8 +140,12 @@ export function useRuntimeParameterSchema(
               displayName
               # Version-gated: stripped from the request on managers older than
               # the capability cutoff (runtime-variant-preset-required in
-              # client.ts) so the presets query stays valid on legacy backends.
-              required @since(version: "26.4.4")
+              # client.ts, which turns on at 26.4.4rc9) so the presets query
+              # stays valid on legacy backends. Must match that flag's version —
+              # gating at the final "26.4.4" would strip the field on every
+              # 26.4.4rc manager (rc < final in PEP440), even though the field
+              # already exists there from rc9 onward.
+              required @since(version: "26.4.4rc9")
               targetSpec {
                 presetTarget
                 valueType
@@ -271,6 +275,33 @@ export interface RuntimeVariantPresetValueEntry {
 }
 
 /**
+ * Walk the grouped preset tree and return each user-touched, non-empty
+ * parameter whose value differs from its preset default, paired with that
+ * value. This is the single definition of "explicit override" — both the
+ * submit payload ({@link buildRuntimeVariantPresetValues}) and the human-
+ * readable review rows derive from it, so the filter lives in one place.
+ *
+ * The control state (`values`) is keyed by `param.key` (the UI binding).
+ */
+export function collectTouchedRuntimePresetParams(
+  groups: RuntimeParameterGroup[],
+  values: Record<string, string>,
+  touchedKeys: Set<string>,
+): Array<{ param: RuntimeVariantPresetDef; value: string }> {
+  const result: Array<{ param: RuntimeVariantPresetDef; value: string }> = [];
+  for (const group of groups) {
+    for (const param of group.params) {
+      if (!touchedKeys.has(param.key)) continue;
+      const value = values[param.key];
+      if (value === undefined || value === '') continue;
+      if (param.defaultValue !== null && param.defaultValue === value) continue;
+      result.push({ param, value });
+    }
+  }
+  return result;
+}
+
+/**
  * Collect runtime-variant preset values as a standalone list keyed by preset
  * id, to be sent as `modelRuntimeConfig.runtimeVariantPresetValues` (separate
  * from `environ`).
@@ -288,19 +319,11 @@ export function buildRuntimeVariantPresetValues(
   values: Record<string, string>,
   touchedKeys: Set<string>,
 ): RuntimeVariantPresetValueEntry[] {
-  const entries: RuntimeVariantPresetValueEntry[] = [];
-  for (const group of groups) {
-    for (const param of group.params) {
-      if (!touchedKeys.has(param.key)) continue;
-      const value = values[param.key];
-      if (value === undefined || value === '') continue;
-      // `param.id` is the Relay global id from the `id` field; decode it to the
-      // UUID the backend's `preset_id` expects.
-      entries.push({
-        presetId: toLocalId(param.id),
-        value,
-      });
-    }
-  }
-  return entries;
+  return collectTouchedRuntimePresetParams(groups, values, touchedKeys).map(
+    // `param.id` is a Relay global id; the backend's `preset_id` is a UUID.
+    ({ param, value }) => ({
+      presetId: toLocalId(param.id) ?? param.id,
+      value,
+    }),
+  );
 }

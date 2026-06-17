@@ -53,6 +53,7 @@
     "RevisionHistoryLimitTooltip": "Aiempien versioiden määrä, joka säilytetään kullekin tästä esiasetuksesta luodulle käyttöönotolle. Vanhemmat versiot poistetaan automaattisesti.",
     "Runtime": "Suoritusaika",
     "RuntimeRequired": "Suoritusaika on pakollinen.",
+    "RuntimeTooltip": "Päättelysuoritusaika (esim. vLLM, SGLang), johon tämä esiasetus kohdistuu. Valitsemalla suoritusajan paljastuvat sen määritettävissä olevat suoritusaikaparametrit, joiden arvot tallennetaan esiasetuksen mukana ja sovelletaan siitä luotuihin käyttöönottoihin.",
     "RuntimeVariantId": "Suoritusajan tunnus",
     "SectionAdvanced": "Lisäasetukset",
     "SectionBasicInfo": "Perustiedot",

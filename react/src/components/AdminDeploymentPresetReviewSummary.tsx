@@ -32,6 +32,12 @@ interface PresetReviewSummaryProps {
   onGoToStep: (index: number) => void;
   runtimeVariants: ReadonlyArray<{ id: string; name: string }>;
   errorFieldNames: string[];
+  /** Touched, non-default runtime-variant preset values (label + value). */
+  runtimeParamRows?: ReadonlyArray<{
+    key: string;
+    label: string;
+    value: string;
+  }>;
 }
 
 const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
@@ -40,6 +46,7 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
   onGoToStep,
   runtimeVariants,
   errorFieldNames,
+  runtimeParamRows = [],
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -120,6 +127,17 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
               '-'
             )}
           </Descriptions.Item>
+          {runtimeParamRows.length > 0 && (
+            <Descriptions.Item label={t('modelService.RuntimeParamTitle')}>
+              <BAIFlex direction="column" align="start" gap="xxs">
+                {runtimeParamRows.map((r) => (
+                  <Typography.Text key={r.key}>
+                    - {r.label}: {r.value}
+                  </Typography.Text>
+                ))}
+              </BAIFlex>
+            </Descriptions.Item>
+          )}
         </Descriptions>
       </BAICard>
 

@@ -5,6 +5,12 @@
 import type { AdminDeploymentPresetSettingPageContent_preset$key } from '../__generated__/AdminDeploymentPresetSettingPageContent_preset.graphql';
 import EnvVarFormList from '../components/EnvVarFormList';
 import {
+  buildRuntimeVariantPresetValues,
+  collectTouchedRuntimePresetParams,
+  type RuntimeParameterGroup,
+  type RuntimeVariantPresetValueEntry,
+} from '../hooks/useRuntimeParameterSchema';
+import {
   STEP_KEYS,
   type AdminDeploymentPresetFormValue,
   type ResourceSlotTypeInfo,
@@ -17,6 +23,10 @@ import {
 } from './AdminDeploymentPresetResourceFields';
 import PresetReviewSummary from './AdminDeploymentPresetReviewSummary';
 import PresetValidationTour from './AdminDeploymentPresetValidationTour';
+import RuntimeParameterFormSection, {
+  RUNTIME_PARAMS_NAMESPACE,
+  type RuntimeParameterValues,
+} from './RuntimeParameterFormSection';
 import {
   DoubleRightOutlined,
   LeftOutlined,
@@ -54,6 +64,7 @@ import React, {
   useEffect,
   useEffectEvent,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -83,6 +94,16 @@ export interface AdminDeploymentPresetSettingPageContentProps {
   runtimeVariants?: ReadonlyArray<{ id: string; name: string }>;
   /** Resource slot type definitions for dynamic slot key selector. */
   resourceSlotTypes?: ReadonlyArray<ResourceSlotTypeInfo>;
+  /**
+   * Populated with a getter that returns the current runtime-variant preset
+   * values (`{ presetId, value }`). Runtime parameter state is owned here (so
+   * it can be URL-synced and shown in the review step); the parent page reads
+   * the collected values at submit time through this ref without re-rendering
+   * on every slider/input change.
+   */
+  collectRuntimePresetValuesRef?: React.RefObject<
+    () => RuntimeVariantPresetValueEntry[]
+  >;
   onCancel?: () => void;
   onSubmit?: () => Promise<void>;
   isSubmitting?: boolean;
@@ -117,6 +138,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
   presetFrgmt,
   runtimeVariants = [],
   resourceSlotTypes = [],
+  collectRuntimePresetValuesRef,
   onSubmit,
   isSubmitting,
 }) => {
@@ -165,6 +187,10 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
           revisionHistoryLimit
           deploymentStrategy
         }
+        presetValues @since(version: "26.4.4rc9") {
+          presetId
+          value
+        }
         modelDefinition {
           models {
             name
@@ -209,13 +235,24 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
     presetFrgmt ?? null,
   );
   // URL-synced step + form values (create mode only; sensitive fields excluded)
-  const [{ step: currentStepKey, formValues: formValuesFromURL }, setQuery] =
-    useQueryStates({
-      step: parseAsStringLiteral(STEP_KEYS).withDefault('basic'),
-      formValues: parseAsJson<Partial<AdminDeploymentPresetFormValue>>(
-        (v) => v as Partial<AdminDeploymentPresetFormValue>,
-      ).withDefault({} as Partial<AdminDeploymentPresetFormValue>),
-    });
+  const [
+    {
+      step: currentStepKey,
+      formValues: formValuesFromURL,
+      runtimeParams: runtimeParamsFromURL,
+    },
+    setQuery,
+  ] = useQueryStates({
+    step: parseAsStringLiteral(STEP_KEYS).withDefault('basic'),
+    formValues: parseAsJson<Partial<AdminDeploymentPresetFormValue>>(
+      (v) => v as Partial<AdminDeploymentPresetFormValue>,
+    ).withDefault({} as Partial<AdminDeploymentPresetFormValue>),
+    // Runtime-variant preset values ({ presetId, value }) live outside the antd
+    // form, so they get their own URL key (create mode only).
+    runtimeParams: parseAsJson<RuntimeVariantPresetValueEntry[]>(
+      (v) => v as RuntimeVariantPresetValueEntry[],
+    ).withDefault([] as RuntimeVariantPresetValueEntry[]),
+  });
 
   const currentStepIndex = STEP_KEYS.indexOf(currentStepKey);
   const isLastStep = currentStepIndex === STEP_KEYS.length - 1;
@@ -225,6 +262,92 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
     value: toLocalId(rt.id),
     label: rt.name,
   }));
+
+  // Snapshot the create-mode URL values once at mount (lazy state initializer).
+  // Later edits flow through the section's own state and re-write the URL, so
+  // re-seeding from the live URL value would fight the user's input.
+  const [initialRuntimeParamsFromURL] = useState(() => runtimeParamsFromURL);
+
+  // Seed the runtime parameters section: in edit mode from the preset's saved
+  // values, in create mode from the URL snapshot. Both are `{ presetId, value
+  // }`, the shape the section's `initialPresetValues` expects. No explicit
+  // useMemo — the React Compiler ('use memo') memoizes this derivation.
+  const initialRuntimePresetValues:
+    | ReadonlyArray<RuntimeVariantPresetValueEntry>
+    | undefined =
+    mode === 'edit'
+      ? (preset?.presetValues?.map((pv) => ({
+          presetId: pv.presetId,
+          value: pv.value,
+        })) ?? undefined)
+      : initialRuntimeParamsFromURL.length > 0
+        ? initialRuntimeParamsFromURL
+        : undefined;
+
+  // Runtime parameter state. The values themselves live in the enclosing antd
+  // form under the `runtimeParams` namespace (written by the section); only the
+  // touched-keys set and the loaded preset groups are tracked here in refs so
+  // they can be read at submit/review time without forcing re-renders.
+  const runtimeParamTouchedKeysRef = useRef<Set<string>>(new Set());
+  const runtimeParamGroupsRef = useRef<RuntimeParameterGroup[] | null>(null);
+
+  // Read the form's runtime parameter namespace (native-typed values) and
+  // stringify each touched, non-empty value into the API's string encoding,
+  // the shape the schema helpers operate on.
+  const readRuntimeParamStringValues = (): Record<string, string> => {
+    const runtimeParams = form.getFieldValue([RUNTIME_PARAMS_NAMESPACE]) as
+      | RuntimeParameterValues
+      | undefined;
+    const stringValues: Record<string, string> = {};
+    if (!runtimeParams) return stringValues;
+    for (const [key, val] of Object.entries(runtimeParams)) {
+      if (val === undefined || val === null || val === '') continue;
+      stringValues[key] = String(val);
+    }
+    return stringValues;
+  };
+
+  // Collect the touched, non-default runtime parameter values as a standalone
+  // list keyed by preset id. Exposed to the parent page (for submit) via ref.
+  const collectRuntimePresetValues = (): RuntimeVariantPresetValueEntry[] => {
+    const groups = runtimeParamGroupsRef.current;
+    if (!groups) return [];
+    return buildRuntimeVariantPresetValues(
+      groups,
+      readRuntimeParamStringValues(),
+      runtimeParamTouchedKeysRef.current,
+    );
+  };
+  // Expose the collector to the parent page via ref (assigned in an effect — a
+  // ref must not be mutated during render). The collector reads refs lazily at
+  // call time, so a per-render reassignment is harmless.
+  useEffect(() => {
+    if (collectRuntimePresetValuesRef) {
+      collectRuntimePresetValuesRef.current = collectRuntimePresetValues;
+    }
+  });
+
+  // Human-readable rows (label + value) for the touched, non-default runtime
+  // parameters, used by the review summary. Read from the refs at render time
+  // (the section stays mounted across steps, so the refs are current when the
+  // review step renders).
+  const getRuntimeParamReviewRows = (): Array<{
+    key: string;
+    label: string;
+    value: string;
+  }> => {
+    const groups = runtimeParamGroupsRef.current;
+    if (!groups) return [];
+    return collectTouchedRuntimePresetParams(
+      groups,
+      readRuntimeParamStringValues(),
+      runtimeParamTouchedKeysRef.current,
+    ).map(({ param, value }) => ({
+      key: param.key,
+      label: param.displayName ?? param.name,
+      value,
+    }));
+  };
 
   // Model definition is gated by a switch; when off the card shows only its
   // header (no divider, no body).
@@ -387,6 +510,8 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
   }, [preset]);
 
   // Debounced URL sync — create mode only; exclude sensitive / large fields.
+  // Also persists runtime-variant preset values (read from the refs) so a
+  // shared/reloaded URL restores the configured runtime parameters.
   const { run: syncFormToURL } = useDebounceFn(
     () => {
       if (mode !== 'create') return;
@@ -396,7 +521,12 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
           formValues: _.omit(currentValue, [
             'environ',
             'modelDefinition',
+            // Runtime params are persisted separately below as { presetId,
+            // value } entries; exclude the raw form namespace to avoid
+            // double-storing and a conflicting restore path.
+            RUNTIME_PARAMS_NAMESPACE,
           ]) as Partial<AdminDeploymentPresetFormValue>,
+          runtimeParams: collectRuntimePresetValues(),
         },
         { history: 'replace' },
       );
@@ -533,6 +663,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             <Form.Item
               name="runtimeVariantId"
               label={t('adminDeploymentPreset.Runtime')}
+              tooltip={t('adminDeploymentPreset.RuntimeTooltip')}
               rules={[
                 {
                   required: true,
@@ -551,6 +682,50 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                 }}
               />
             </Form.Item>
+
+            {/* Runtime parameters — appear once a (non-custom) runtime variant
+                is selected, directly under the Runtime selector and before the
+                Image field. Reuses the Add Revision modal's section so the
+                preset can pre-seed runtime-variant preset values; values live
+                in the section's own state and are read at submit time. */}
+            <Form.Item dependencies={['runtimeVariantId']} noStyle>
+              {({
+                getFieldValue,
+              }: FormInstance<AdminDeploymentPresetFormValue>) => {
+                const variantId = getFieldValue('runtimeVariantId');
+                const variantName = runtimeVariants.find(
+                  (rt) => toLocalId(rt.id) === variantId,
+                )?.name;
+                if (!variantName || variantName === 'custom') return null;
+                return (
+                  // Pull the section up under the Runtime selector (the
+                  // selector's default Form.Item marginBottom leaves too large a
+                  // gap) and restore a normal field gap before the Image field.
+                  <div
+                    style={{
+                      marginTop: -token.margin,
+                      marginBottom: token.marginLG,
+                    }}
+                  >
+                    <Suspense fallback={<Skeleton active />}>
+                      <RuntimeParameterFormSection
+                        runtimeVariant={variantName}
+                        onTouchedKeysChange={(keys) => {
+                          runtimeParamTouchedKeysRef.current = keys;
+                          syncFormToURL();
+                        }}
+                        onGroupsLoaded={(groups) => {
+                          runtimeParamGroupsRef.current = groups;
+                          syncFormToURL();
+                        }}
+                        initialPresetValues={initialRuntimePresetValues}
+                      />
+                    </Suspense>
+                  </div>
+                );
+              }}
+            </Form.Item>
+
             <Form.Item
               name="imageId"
               label={t('adminDeploymentPreset.Image')}
@@ -881,6 +1056,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                     onGoToStep={goToStep}
                     runtimeVariants={runtimeVariants}
                     errorFieldNames={errorFieldNames}
+                    runtimeParamRows={getRuntimeParamReviewRows()}
                   />
                 </Suspense>
               )}

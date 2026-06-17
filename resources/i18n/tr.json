@@ -53,6 +53,7 @@
     "RevisionHistoryLimitTooltip": "Bu ön ayardan oluşturulan her dağıtım için tutulan geçmiş revizyon sayısı. Eski revizyonlar otomatik olarak temizlenir.",
     "Runtime": "Çalışma Zamanı",
     "RuntimeRequired": "Çalışma zamanı zorunludur.",
+    "RuntimeTooltip": "Bu ön ayarın hedeflediği çıkarım çalışma zamanı (örn. vLLM, SGLang). Bir tane seçildiğinde yapılandırılabilir çalışma zamanı parametreleri görünür hale gelir; bu parametrelerin değerleri ön ayarla birlikte kaydedilir ve buradan oluşturulan dağıtımlara uygulanır.",
     "RuntimeVariantId": "Çalışma Zamanı ID",
     "SectionAdvanced": "Gelişmiş",
     "SectionBasicInfo": "Temel Bilgiler",

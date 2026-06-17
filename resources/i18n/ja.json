@@ -53,6 +53,7 @@
     "RevisionHistoryLimitTooltip": "このプリセットから作成された各デプロイメントで保持される過去のリビジョン数。古いリビジョンは自動的に削除されます。",
     "Runtime": "ランタイム",
     "RuntimeRequired": "ランタイムは必須です。",
+    "RuntimeTooltip": "このプリセットが対象とする推論ランタイム（例：vLLM、SGLang）です。選択すると、設定可能なランタイムパラメータが表示され、その値はプリセットとともに保存され、このプリセットから作成されたデプロイメントに適用されます。",
     "RuntimeVariantId": "ランタイムID",
     "SectionAdvanced": "詳細設定",
     "SectionBasicInfo": "基本情報",

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4cd0217ea08b2928d9e105d884b9a2e4>>
+ * @generated SignedSource<<9459acab71c7c58d7a3f3e0f0591f9f1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -73,6 +73,10 @@ export type AdminDeploymentPresetSettingPageContent_preset$data = {
     }>;
   } | null | undefined;
   readonly name: string;
+  readonly presetValues: ReadonlyArray<{
+    readonly presetId: string;
+    readonly value: string;
+  }>;
   readonly resource: {
     readonly resourceOpts: ReadonlyArray<{
       readonly name: string;
@@ -311,6 +315,25 @@ return {
           "name": "deploymentStrategy",
           "storageKey": null
         }
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "DeploymentRevisionPresetValueEntry",
+      "kind": "LinkedField",
+      "name": "presetValues",
+      "plural": true,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "presetId",
+          "storageKey": null
+        },
+        (v2/*: any*/)
       ],
       "storageKey": null
     },
@@ -563,6 +586,6 @@ return {
 };
 })();
 
-(node as any).hash = "695ddaf780e16e2224f6dcf69bc10587";
+(node as any).hash = "c83c328cdcc552d536aa078349408feb";
 
 export default node;

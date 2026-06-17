@@ -53,6 +53,7 @@
     "RevisionHistoryLimitTooltip": "Número de revisões anteriores mantidas para cada implantação criada a partir desta predefinição. Revisões mais antigas são excluídas automaticamente.",
     "Runtime": "Runtime",
     "RuntimeRequired": "O runtime é obrigatório.",
+    "RuntimeTooltip": "O runtime de inferência (ex. vLLM, SGLang) ao qual este preset se destina. Ao selecioná-lo, os parâmetros de runtime configuráveis são exibidos, cujos valores são salvos com o preset e aplicados às implantações criadas a partir dele.",
     "RuntimeVariantId": "ID de Runtime",
     "SectionAdvanced": "Avançado",
     "SectionBasicInfo": "Informações Básicas",

@@ -53,6 +53,7 @@
     "RevisionHistoryLimitTooltip": "Jumlah revisi lama yang disimpan untuk setiap deployment yang dibuat dari preset ini. Revisi yang lebih lama dihapus secara otomatis.",
     "Runtime": "Runtime",
     "RuntimeRequired": "Runtime wajib diisi.",
+    "RuntimeTooltip": "Runtime inferensi (mis. vLLM, SGLang) yang menjadi target preset ini. Memilih salah satunya akan menampilkan parameter runtime yang dapat dikonfigurasi, yang nilainya disimpan bersama preset dan diterapkan pada deployment yang dibuat darinya.",
     "RuntimeVariantId": "ID Runtime",
     "SectionAdvanced": "Lanjutan",
     "SectionBasicInfo": "Info Dasar",

@@ -12,9 +12,10 @@ import AdminDeploymentPresetSettingPageContent, {
   type ModelDefinitionFormValue,
 } from '../components/AdminDeploymentPresetSettingPageContent';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { type RuntimeVariantPresetValueEntry } from '../hooks/useRuntimeParameterSchema';
 import { App, Form, Typography, theme } from 'antd';
 import { BAIFlex, useBAILogger, useMutationWithPromise } from 'backend.ai-ui';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useParams } from 'react-router-dom';
@@ -132,6 +133,15 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Runtime parameter state lives in `RuntimeParameterFormSection` (managed by
+  // the content component, which also URL-syncs it and renders it in the review
+  // step). The content component populates this collector so submit can read
+  // the standalone preset values (`{ presetId, value }`) without re-rendering
+  // the page on every slider/input change.
+  const collectRuntimePresetValuesRef = useRef<
+    () => RuntimeVariantPresetValueEntry[]
+  >(() => []);
+
   // Fetch preset in edit mode (@skip avoids the request in create mode).
   const { deploymentRevisionPreset: presetFrgmt } =
     useLazyLoadQuery<AdminDeploymentPresetSettingPagePresetQuery>(
@@ -216,6 +226,11 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
             preset {
               id
               name
+              # Refresh the full preset node in the Relay store so a later
+              # edit-page open (store-and-network) hydrates from fresh data —
+              # in particular runtimeVariant preset values, which the form
+              # section seeds once on mount and would otherwise show stale.
+              ...AdminDeploymentPresetSettingPageContent_preset
             }
           }
         }
@@ -232,6 +247,11 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
             preset {
               id
               name
+              # Refresh the full preset node in the Relay store so re-opening the
+              # edit page (store-and-network) hydrates from fresh data — in
+              # particular runtimeVariant preset values, which the form section
+              # seeds once on mount and would otherwise show the pre-edit value.
+              ...AdminDeploymentPresetSettingPageContent_preset
             }
           }
         }
@@ -254,6 +274,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
     const valid = await form.validateFields().catch(() => null);
     if (!valid) return;
     const values: AdminDeploymentPresetFormValue = form.getFieldsValue(true);
+    const presetValues = collectRuntimePresetValuesRef.current();
 
     setIsSubmitting(true);
     try {
@@ -298,6 +319,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
             openToPublic: values.openToPublic ?? null,
             replicaCount: values.replicaCount ?? null,
             revisionHistoryLimit: values.revisionHistoryLimit ?? null,
+            presetValues: presetValues.length ? presetValues : null,
             // TODO: Add BLUE_GREEN support when the backend implements it.
             deploymentStrategy: { type: 'ROLLING' as const },
           },
@@ -340,6 +362,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
             openToPublic: values.openToPublic ?? null,
             replicaCount: values.replicaCount!,
             revisionHistoryLimit: values.revisionHistoryLimit ?? null,
+            presetValues: presetValues.length ? presetValues : null,
             // TODO: Add BLUE_GREEN support when the backend implements it.
             deploymentStrategy: { type: 'ROLLING' as const },
           },
@@ -382,6 +405,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
         presetFrgmt={presetFrgmt}
         runtimeVariants={runtimeVariantList}
         resourceSlotTypes={resourceSlotTypeList}
+        collectRuntimePresetValuesRef={collectRuntimePresetValuesRef}
         onCancel={navigateToList}
         onSubmit={handleSubmit}
         isSubmitting={isSubmitting}

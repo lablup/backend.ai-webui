@@ -53,6 +53,7 @@
     "RevisionHistoryLimitTooltip": "为从此预设创建的每个部署保留的历史修订数量。较旧的修订将自动删除。",
     "Runtime": "运行时",
     "RuntimeRequired": "运行时为必填项。",
+    "RuntimeTooltip": "此预设所针对的推理运行时（如 vLLM、SGLang）。选择后将显示其可配置的运行时参数，这些参数值将与预设一起保存，并应用于从该预设创建的部署。",
     "RuntimeVariantId": "运行时 ID",
     "SectionAdvanced": "高级",
     "SectionBasicInfo": "基本信息",

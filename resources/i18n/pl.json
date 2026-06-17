@@ -53,6 +53,7 @@
     "RevisionHistoryLimitTooltip": "Liczba poprzednich rewizji przechowywanych dla każdego wdrożenia utworzonego z tego ustawienia wstępnego. Starsze rewizje są automatycznie usuwane.",
     "Runtime": "Środowisko uruchomieniowe",
     "RuntimeRequired": "Środowisko uruchomieniowe jest wymagane.",
+    "RuntimeTooltip": "Środowisko uruchomieniowe wnioskowania (np. vLLM, SGLang), do którego odnosi się to ustawienie wstępne. Wybranie go ujawnia konfigurowalne parametry środowiska uruchomieniowego, których wartości są zapisywane razem z ustawieniem wstępnym i stosowane do wdrożeń z niego tworzonych.",
     "RuntimeVariantId": "ID środowiska uruchomieniowego",
     "SectionAdvanced": "Zaawansowane",
     "SectionBasicInfo": "Podstawowe informacje",

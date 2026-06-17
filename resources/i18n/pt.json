@@ -53,6 +53,7 @@
     "RevisionHistoryLimitTooltip": "Número de revisões anteriores mantidas para cada implementação criada a partir desta predefinição. Revisões mais antigas são eliminadas automaticamente.",
     "Runtime": "Runtime",
     "RuntimeRequired": "O runtime é obrigatório.",
+    "RuntimeTooltip": "O runtime de inferência (ex. vLLM, SGLang) ao qual esta predefinição se destina. Ao selecionar um, são revelados os parâmetros de runtime configuráveis, cujos valores são guardados com a predefinição e aplicados às implementações criadas a partir dela.",
     "RuntimeVariantId": "ID de Runtime",
     "SectionAdvanced": "Avançado",
     "SectionBasicInfo": "Informações Básicas",
