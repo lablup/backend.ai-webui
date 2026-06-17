@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { RuntimeParameterValues } from './RuntimeParameterFormSection';
 
 export const STEP_KEYS = ['basic', 'model', 'review'] as const;
 export type StepKey = (typeof STEP_KEYS)[number];
@@ -21,9 +22,13 @@ export type PreStartActionFormValue = {
 };
 
 export type ModelServiceFormValue = {
-  port?: number;
-  shell?: string;
-  startCommand?: string;
+  // `service` itself is optional on a model, but when present these three are
+  // always provided: the form marks them `required` (see
+  // AdminDeploymentPresetModelConfigItem) and the create path's
+  // PresetModelServiceConfigInput requires `port` / `startCommand` non-null.
+  port: number;
+  shell: string;
+  startCommand: string;
   preStartActions?: PreStartActionFormValue[];
   enableHealthCheck?: boolean;
   healthCheck?: ModelHealthCheckFormValue;
@@ -45,20 +50,24 @@ export type ModelMetadataFormValue = {
 export type ModelConfigFormValue = {
   name: string;
   modelPath: string;
-  enableService?: boolean;
   service?: ModelServiceFormValue;
-  enableMetadata?: boolean;
   metadata?: ModelMetadataFormValue;
 };
 
 export type ModelDefinitionFormValue = {
+  /**
+   * UI switch: whether this preset defines a model. The model definition is
+   * optional (nullable) — when off, the submit sends `modelDefinition: null`;
+   * when on, the single model's sub-fields are required.
+   */
+  enabled?: boolean;
   models?: ModelConfigFormValue[];
 };
 
 export type AdminDeploymentPresetFormValue = {
   name: string;
   description?: string;
-  /** UUID of the selected runtime variant (create mode only — read-only in edit). */
+  /** UUID of the selected runtime variant (editable in both create and edit). */
   runtimeVariantId: string;
   /** UUID of the selected image. */
   imageId: string;
@@ -77,6 +86,12 @@ export type AdminDeploymentPresetFormValue = {
   openToPublic?: boolean;
   replicaCount?: number;
   revisionHistoryLimit?: number;
+  /**
+   * Runtime-variant preset parameter values keyed by preset key, registered by
+   * RuntimeParameterFormSection under the `runtimeParams` namespace. Native-typed
+   * (number/boolean/string); serialized to the API's string encoding at submit.
+   */
+  runtimeParams?: RuntimeParameterValues;
 };
 
 export type ResourceSlotTypeInfo = {

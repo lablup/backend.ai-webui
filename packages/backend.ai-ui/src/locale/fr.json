@@ -127,12 +127,11 @@
     "Category": "Catégorie",
     "CreatedAt": "Créé le",
     "ErrorCode": "Code d'erreur",
-    "From": "De",
+    "From": "Statut d'origine",
     "Message": "Message",
     "Phase": "Phase",
     "Result": "Résultat",
-    "StatusTransition": "Transition d'état",
-    "To": "À",
+    "To": "Statut de destination",
     "UpdatedAt": "Mis à jour le"
   },
   "comp:BAIDeploymentSelect": {
@@ -223,6 +222,7 @@
     "EndpointURL": "URL du point final",
     "FailedToDeleteDeployment": "Échec de la suppression du déploiement.",
     "HealthySummary": "{{healthy}} / {{total}}",
+    "Lifecycle": "Cycle de vie",
     "Model": "Modèle",
     "Name": "Nom",
     "OpenToPublic": "Ouvert au public",
@@ -236,7 +236,6 @@
     "ResourceGroup": "Groupe de Ressources",
     "RevisionNumber": "Révision",
     "RevisionNumberTooltip": "Le numéro de révision actuel du déploiement.",
-    "Status": "Statut",
     "StrategyType": "Stratégie",
     "Tags": "Tags",
     "UpdatedAt": "Mis à jour le"
@@ -325,12 +324,11 @@
     "Category": "Catégorie",
     "CreatedAt": "Créé le",
     "ErrorCode": "Code d'erreur",
-    "From": "De",
+    "From": "Statut d'origine",
     "Message": "Message",
     "Phase": "Phase",
     "Result": "Résultat",
-    "StatusTransition": "Transition d'état",
-    "To": "À",
+    "To": "Statut de destination",
     "UpdatedAt": "Mis à jour le"
   },
   "comp:BAIRuntimeVariantSelect": {
@@ -341,12 +339,11 @@
     "Category": "Catégorie",
     "CreatedAt": "Créé le",
     "ErrorCode": "Code d'erreur",
-    "From": "De",
+    "From": "Statut d'origine",
     "Message": "Message",
     "Phase": "Phase",
     "Result": "Résultat",
-    "StatusTransition": "Transition d'état",
-    "To": "À",
+    "To": "Statut de destination",
     "UpdatedAt": "Mis à jour le"
   },
   "comp:BAISessionAgentIds": {
@@ -371,6 +368,10 @@
     "Step": "Étape"
   },
   "comp:BAITable": {
+    "CollapseAll": "Tout réduire",
+    "ExpandAll": "Tout développer",
+    "ExpandErrorsOnly": "Développer les erreurs uniquement",
+    "ExpandOptions": "Options de développement",
     "Export": "Exporter",
     "ExportCSV": "Exporter en CSV",
     "GoToFirstPage": "Aller à la première page",

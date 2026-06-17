@@ -358,7 +358,7 @@ Select **Enter Command** to define the startup directly as a CLI command. The fo
 - **Model Mount Destination**: The path inside the container where the model storage folder is mounted (default: `/models`).
 - **Port**: The container port that the inference server listens on (default: `8000`).
 - **Health Check URL**: The HTTP endpoint path called during service health checks (default: `/health`).
-- **Initial Delay**: Seconds to wait after container startup before the first health check (default: `60.0`). Increase this for large models that take longer to load.
+- **Startup Grace Period**: Grace period in seconds after container startup during which failed health checks are tolerated; the replica becomes active on the first successful check (default: `60.0`). Increase this for large models that take longer to load.
 - **Max Retries**: Maximum consecutive health check failures before the replica is marked `UNHEALTHY` (default: `10`).
 - **Interval**: Seconds between consecutive health checks (default: `10.0`).
 - **Max Wait Time**: Timeout in seconds for each individual health check request (default: `15.0`).
@@ -496,11 +496,16 @@ The Replicas tab shows the routing nodes that make up the deployment. Replica en
 - **Running**: Shows replicas that are currently provisioning, running, or otherwise active.
 - **Terminated**: Shows replicas that have completed their lifecycle.
 
-Each replica row carries three independent status fields:
+Each replica row carries three **independent** status fields. They describe different axes and should be read together — a replica can be *Running* in its lifecycle while its health is still *Not Checked*, for example.
 
-- **Lifecycle Status**: Where the replica is in its lifecycle (for example, *Provisioning*, *Running*, *Terminating*).
-- **Health Status**: The current health of the replica process (for example, *Healthy*, *Unhealthy*).
-- **Traffic Status**: Whether the replica is currently serving requests.
+- **Lifecycle Status**: Where the replica is in its lifecycle — for example, *Provisioning*, *Warming Up*, *Running*, *Terminating*, or *Terminated*. During **Warming Up**, the replica is inside its startup grace period: it is starting up and waiting for the first successful health check. Failed checks are tolerated during this window; the replica moves to *Running* on the first success, and is terminated if it never succeeds before the window ends. The column header reads **Lifecycle**.
+- **Health Status**: The current health of the replica process — *Healthy*, *Unhealthy*, *Degraded*, or *Not Checked*.
+   * **Not Checked** means the first health check has not completed yet — the replica is typically still in its **Warming Up** grace period. By itself it does not indicate a problem; read the **Lifecycle Status** to see where the replica is.
+- **Traffic Status**: Whether the replica is currently serving requests. A replica can be removed from traffic independently of its health (for example, when it is manually deactivated), which is why traffic is shown as its own status rather than being merged into Health Status.
+
+:::note
+The three statuses are independent axes. During the **Warming Up** lifecycle phase a replica is within its startup grace period, and its **Health Status** typically reads *Not Checked* until the first check completes — by itself that does not indicate a problem.
+:::
 
 Click on a replica node to open the session detail drawer, where you can view individual session details.
 
@@ -536,7 +541,7 @@ The following fields are displayed:
 
 When the model definition file defines a model, the following fields are also shown:
 
-- **Model Name**, **Model Path**, **Start Command**, **Port**, **Health Check URL**, **Initial Delay**, **Max Retries**, **Interval (s)**, **Max Wait Time (s)**
+- **Model Name**, **Model Path**, **Start Command**, **Port**, **Health Check URL**, **Startup Grace Period**, **Max Retries**, **Interval (s)**, **Max Wait Time (s)**
 
 **Applying-in-progress state**
 

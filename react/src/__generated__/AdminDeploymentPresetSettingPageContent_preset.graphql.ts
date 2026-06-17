@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<94e7b17c104a7b8b476a6330761041eb>>
+ * @generated SignedSource<<9459acab71c7c58d7a3f3e0f0591f9f1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -54,6 +54,7 @@ export type AdminDeploymentPresetSettingPageContent_preset$data = {
       readonly name: string;
       readonly service: {
         readonly healthCheck: {
+          readonly enable: boolean;
           readonly expectedStatusCode: number;
           readonly initialDelay: number;
           readonly interval: number;
@@ -72,6 +73,10 @@ export type AdminDeploymentPresetSettingPageContent_preset$data = {
     }>;
   } | null | undefined;
   readonly name: string;
+  readonly presetValues: ReadonlyArray<{
+    readonly presetId: string;
+    readonly value: string;
+  }>;
   readonly resource: {
     readonly resourceOpts: ReadonlyArray<{
       readonly name: string;
@@ -316,6 +321,25 @@ return {
     {
       "alias": null,
       "args": null,
+      "concreteType": "DeploymentRevisionPresetValueEntry",
+      "kind": "LinkedField",
+      "name": "presetValues",
+      "plural": true,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "presetId",
+          "storageKey": null
+        },
+        (v2/*: any*/)
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
       "concreteType": "ModelDefinition",
       "kind": "LinkedField",
       "name": "modelDefinition",
@@ -399,6 +423,13 @@ return {
                   "name": "healthCheck",
                   "plural": false,
                   "selections": [
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "enable",
+                      "storageKey": null
+                    },
                     {
                       "alias": null,
                       "args": null,
@@ -555,6 +586,6 @@ return {
 };
 })();
 
-(node as any).hash = "1b81d107592e15d8c1eb20a76757596e";
+(node as any).hash = "c83c328cdcc552d536aa078349408feb";
 
 export default node;

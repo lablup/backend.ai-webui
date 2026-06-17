@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<99c2af909dfcd47073c5d0506d918fce>>
+ * @generated SignedSource<<20f2d6fcb470e62d08c07b83a1caea9d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -60,6 +60,7 @@ export type useRuntimeParameterSchemaPresetsQuery$data = {
         readonly category: string | null | undefined;
         readonly description: string | null | undefined;
         readonly displayName: string | null | undefined;
+        readonly id: string;
         readonly name: string;
         readonly rank: number;
         readonly required: boolean;
@@ -112,215 +113,254 @@ var v0 = [
     "name": "orderBy"
   }
 ],
-v1 = [
-  {
-    "kind": "Variable",
-    "name": "filter",
-    "variableName": "filter"
-  },
-  {
-    "kind": "Literal",
-    "name": "first",
-    "value": 100
-  },
-  {
-    "kind": "Variable",
-    "name": "orderBy",
-    "variableName": "orderBy"
-  }
-],
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "name",
-  "storageKey": null
-},
-v3 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "description",
-  "storageKey": null
-},
-v4 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "rank",
-  "storageKey": null
-},
-v5 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "category",
-  "storageKey": null
-},
-v6 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "displayName",
-  "storageKey": null
-},
-v7 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "required",
-  "storageKey": null
-},
-v8 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "PresetTargetSpec",
-  "kind": "LinkedField",
-  "name": "targetSpec",
-  "plural": false,
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "presetTarget",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "valueType",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "defaultValue",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "key",
-      "storageKey": null
-    }
-  ],
-  "storageKey": null
-},
-v9 = {
+v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "min",
   "storageKey": null
 },
-v10 = {
+v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "max",
   "storageKey": null
 },
-v11 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "UIOption",
+v3 = {
+  "alias": "runtimeVariantPresetsResult",
+  "args": [
+    {
+      "kind": "Variable",
+      "name": "filter",
+      "variableName": "filter"
+    },
+    {
+      "kind": "Literal",
+      "name": "first",
+      "value": 100
+    },
+    {
+      "kind": "Variable",
+      "name": "orderBy",
+      "variableName": "orderBy"
+    }
+  ],
+  "concreteType": "RuntimeVariantPresetConnection",
   "kind": "LinkedField",
-  "name": "uiOption",
+  "name": "runtimeVariantPresets",
   "plural": false,
   "selections": [
     {
       "alias": null,
       "args": null,
-      "kind": "ScalarField",
-      "name": "uiType",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "SliderOption",
+      "concreteType": "RuntimeVariantPresetEdge",
       "kind": "LinkedField",
-      "name": "slider",
-      "plural": false,
-      "selections": [
-        (v9/*: any*/),
-        (v10/*: any*/),
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "step",
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "NumberOption",
-      "kind": "LinkedField",
-      "name": "number",
-      "plural": false,
-      "selections": [
-        (v9/*: any*/),
-        (v10/*: any*/)
-      ],
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "ChoiceOption",
-      "kind": "LinkedField",
-      "name": "choices",
-      "plural": false,
+      "name": "edges",
+      "plural": true,
       "selections": [
         {
           "alias": null,
           "args": null,
-          "concreteType": "ChoiceItem",
+          "concreteType": "RuntimeVariantPreset",
           "kind": "LinkedField",
-          "name": "items",
-          "plural": true,
+          "name": "node",
+          "plural": false,
           "selections": [
             {
               "alias": null,
               "args": null,
               "kind": "ScalarField",
-              "name": "value",
+              "name": "id",
               "storageKey": null
             },
             {
               "alias": null,
               "args": null,
               "kind": "ScalarField",
-              "name": "label",
+              "name": "name",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "description",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "rank",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "category",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "displayName",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "required",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "PresetTargetSpec",
+              "kind": "LinkedField",
+              "name": "targetSpec",
+              "plural": false,
+              "selections": [
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "presetTarget",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "valueType",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "defaultValue",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "key",
+                  "storageKey": null
+                }
+              ],
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "UIOption",
+              "kind": "LinkedField",
+              "name": "uiOption",
+              "plural": false,
+              "selections": [
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "uiType",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "SliderOption",
+                  "kind": "LinkedField",
+                  "name": "slider",
+                  "plural": false,
+                  "selections": [
+                    (v1/*: any*/),
+                    (v2/*: any*/),
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "step",
+                      "storageKey": null
+                    }
+                  ],
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "NumberOption",
+                  "kind": "LinkedField",
+                  "name": "number",
+                  "plural": false,
+                  "selections": [
+                    (v1/*: any*/),
+                    (v2/*: any*/)
+                  ],
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "ChoiceOption",
+                  "kind": "LinkedField",
+                  "name": "choices",
+                  "plural": false,
+                  "selections": [
+                    {
+                      "alias": null,
+                      "args": null,
+                      "concreteType": "ChoiceItem",
+                      "kind": "LinkedField",
+                      "name": "items",
+                      "plural": true,
+                      "selections": [
+                        {
+                          "alias": null,
+                          "args": null,
+                          "kind": "ScalarField",
+                          "name": "value",
+                          "storageKey": null
+                        },
+                        {
+                          "alias": null,
+                          "args": null,
+                          "kind": "ScalarField",
+                          "name": "label",
+                          "storageKey": null
+                        }
+                      ],
+                      "storageKey": null
+                    }
+                  ],
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "TextOption",
+                  "kind": "LinkedField",
+                  "name": "text",
+                  "plural": false,
+                  "selections": [
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "placeholder",
+                      "storageKey": null
+                    }
+                  ],
+                  "storageKey": null
+                }
+              ],
               "storageKey": null
             }
           ],
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "TextOption",
-      "kind": "LinkedField",
-      "name": "text",
-      "plural": false,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "placeholder",
           "storageKey": null
         }
       ],
@@ -338,47 +378,7 @@ return {
     "selections": [
       {
         "kind": "CatchField",
-        "field": {
-          "alias": "runtimeVariantPresetsResult",
-          "args": (v1/*: any*/),
-          "concreteType": "RuntimeVariantPresetConnection",
-          "kind": "LinkedField",
-          "name": "runtimeVariantPresets",
-          "plural": false,
-          "selections": [
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "RuntimeVariantPresetEdge",
-              "kind": "LinkedField",
-              "name": "edges",
-              "plural": true,
-              "selections": [
-                {
-                  "alias": null,
-                  "args": null,
-                  "concreteType": "RuntimeVariantPreset",
-                  "kind": "LinkedField",
-                  "name": "node",
-                  "plural": false,
-                  "selections": [
-                    (v2/*: any*/),
-                    (v3/*: any*/),
-                    (v4/*: any*/),
-                    (v5/*: any*/),
-                    (v6/*: any*/),
-                    (v7/*: any*/),
-                    (v8/*: any*/),
-                    (v11/*: any*/)
-                  ],
-                  "storageKey": null
-                }
-              ],
-              "storageKey": null
-            }
-          ],
-          "storageKey": null
-        },
+        "field": (v3/*: any*/),
         "to": "RESULT"
       }
     ],
@@ -391,67 +391,20 @@ return {
     "kind": "Operation",
     "name": "useRuntimeParameterSchemaPresetsQuery",
     "selections": [
-      {
-        "alias": "runtimeVariantPresetsResult",
-        "args": (v1/*: any*/),
-        "concreteType": "RuntimeVariantPresetConnection",
-        "kind": "LinkedField",
-        "name": "runtimeVariantPresets",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "RuntimeVariantPresetEdge",
-            "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "RuntimeVariantPreset",
-                "kind": "LinkedField",
-                "name": "node",
-                "plural": false,
-                "selections": [
-                  (v2/*: any*/),
-                  (v3/*: any*/),
-                  (v4/*: any*/),
-                  (v5/*: any*/),
-                  (v6/*: any*/),
-                  (v7/*: any*/),
-                  (v8/*: any*/),
-                  (v11/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "id",
-                    "storageKey": null
-                  }
-                ],
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
+      (v3/*: any*/)
     ]
   },
   "params": {
-    "cacheID": "c50b9afc88d7df7acb0266ad0b158c67",
+    "cacheID": "5bbc015e6f56c46b36db735efac2cc97",
     "id": null,
     "metadata": {},
     "name": "useRuntimeParameterSchemaPresetsQuery",
     "operationKind": "query",
-    "text": "query useRuntimeParameterSchemaPresetsQuery(\n  $filter: RuntimeVariantPresetFilter\n  $orderBy: [RuntimeVariantPresetOrderBy!]\n) {\n  runtimeVariantPresetsResult: runtimeVariantPresets(filter: $filter, orderBy: $orderBy, first: 100) {\n    edges {\n      node {\n        name\n        description\n        rank\n        category\n        displayName\n        required @since(version: \"26.4.4\")\n        targetSpec {\n          presetTarget\n          valueType\n          defaultValue\n          key\n        }\n        uiOption {\n          uiType\n          slider {\n            min\n            max\n            step\n          }\n          number {\n            min\n            max\n          }\n          choices {\n            items {\n              value\n              label\n            }\n          }\n          text {\n            placeholder\n          }\n        }\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query useRuntimeParameterSchemaPresetsQuery(\n  $filter: RuntimeVariantPresetFilter\n  $orderBy: [RuntimeVariantPresetOrderBy!]\n) {\n  runtimeVariantPresetsResult: runtimeVariantPresets(filter: $filter, orderBy: $orderBy, first: 100) {\n    edges {\n      node {\n        id\n        name\n        description\n        rank\n        category\n        displayName\n        required @since(version: \"26.4.4rc9\")\n        targetSpec {\n          presetTarget\n          valueType\n          defaultValue\n          key\n        }\n        uiOption {\n          uiType\n          slider {\n            min\n            max\n            step\n          }\n          number {\n            min\n            max\n          }\n          choices {\n            items {\n              value\n              label\n            }\n          }\n          text {\n            placeholder\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "b2d9c283adf7730e2edc4a76372e799b";
+(node as any).hash = "3298409d6b04174c9190dbf0ae3ee751";
 
 export default node;

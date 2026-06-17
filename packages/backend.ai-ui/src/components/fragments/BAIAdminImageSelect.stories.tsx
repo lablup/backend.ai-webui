@@ -7,28 +7,37 @@ import { createMockEnvironment } from 'relay-test-utils';
 // Relay global ID format: btoa('TypeName:localId')
 const makeImageId = (localId: string) => btoa(`ImageV2Node:${localId}`);
 
-type ImageMockItem = { id: string; canonicalName: string };
+type ImageMockItem = {
+  id: string;
+  canonicalName: string;
+  architecture: string;
+};
 
 const sampleImages: ImageMockItem[] = [
   {
     id: makeImageId('aaaa1111-1111-1111-1111-111111111111'),
     canonicalName: 'cr.backend.ai/stable/python:3.11-cuda12.1',
+    architecture: 'x86_64',
   },
   {
     id: makeImageId('bbbb2222-2222-2222-2222-222222222222'),
     canonicalName: 'cr.backend.ai/stable/pytorch:2.1-cuda12.1',
+    architecture: 'aarch64',
   },
   {
     id: makeImageId('cccc3333-3333-3333-3333-333333333333'),
     canonicalName: 'cr.backend.ai/stable/tensorflow:2.14-cuda12.1',
+    architecture: 'x86_64',
   },
   {
     id: makeImageId('dddd4444-4444-4444-4444-444444444444'),
     canonicalName: 'cr.backend.ai/stable/python:3.10-cpu',
+    architecture: 'aarch64',
   },
   {
     id: makeImageId('eeee5555-5555-5555-5555-555555555555'),
     canonicalName: 'cr.backend.ai/stable/jupyter:7.1-cuda12.1',
+    architecture: 'x86_64',
   },
 ];
 
@@ -39,11 +48,16 @@ const sampleManyImages: ImageMockItem[] = Array.from(
       `image-${String(i + 1).padStart(4, '0')}-0000-0000-0000-000000000000`,
     ),
     canonicalName: `cr.backend.ai/stable/image-${i + 1}:latest`,
+    architecture: i % 2 === 0 ? 'x86_64' : 'aarch64',
   }),
 );
 
-const makeEdge = ({ id, canonicalName }: ImageMockItem) => ({
-  node: { __typename: 'ImageV2Node', id, identity: { canonicalName } },
+const makeEdge = ({ id, canonicalName, architecture }: ImageMockItem) => ({
+  node: {
+    __typename: 'ImageV2Node',
+    id,
+    identity: { canonicalName, architecture },
+  },
 });
 
 /**
@@ -244,7 +258,7 @@ export const Default: Story = {
     docs: {
       description: {
         story:
-          'Basic usage showing 5 images. Each option displays the canonical name. Search functionality is enabled by default.',
+          'Basic usage showing 5 images of mixed CPU architectures. Each option displays the canonical name with its architecture in `<canonicalName>@<architecture>` format. Search functionality is enabled by default.',
       },
     },
   },

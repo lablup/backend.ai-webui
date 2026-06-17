@@ -19,7 +19,7 @@ import {
   Space,
   Tooltip,
 } from 'antd';
-import { BAIFlex, BAISelect } from 'backend.ai-ui';
+import { BAIEndpointsIcon, BAIFlex, BAISelect } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { InfoIcon } from 'lucide-react';
 import React, { useDeferredValue, useEffect, useRef, useState } from 'react';
@@ -196,6 +196,8 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
         <BAISelect
           ref={selectRef}
           placeholder={t('chatui.SelectEndpoint')}
+          prefix={<BAIEndpointsIcon />}
+          header={t('chatui.Deployment')}
           style={{
             minWidth: 100,
             fontWeight: 'normal',

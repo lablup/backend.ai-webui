@@ -11,8 +11,11 @@ import { DeleteFilled, SettingOutlined } from '@ant-design/icons';
 import {
   BAIColumnType,
   BAINameActionCell,
+  BAISessionClusterMode,
   BAITable,
   BAITableProps,
+  BAIText,
+  BooleanTag,
   filterOutEmpty,
   filterOutNullAndUndefined,
   toLocalId,
@@ -73,7 +76,6 @@ const AdminDeploymentPresetNodes: React.FC<AdminDeploymentPresetNodesProps> = ({
         id @required(action: NONE)
         name @required(action: NONE)
         description
-        rank
         runtimeVariantId
         runtimeVariant {
           id
@@ -85,12 +87,16 @@ const AdminDeploymentPresetNodes: React.FC<AdminDeploymentPresetNodesProps> = ({
         }
         execution {
           imageId
+          startupCommand
         }
         deploymentDefaults {
           replicaCount
           deploymentStrategy
+          openToPublic
+          revisionHistoryLimit
         }
         createdAt
+        updatedAt
       }
     `,
     presetsFrgmt,
@@ -116,6 +122,7 @@ const AdminDeploymentPresetNodes: React.FC<AdminDeploymentPresetNodesProps> = ({
               id
               identity {
                 canonicalName
+                architecture
               }
             }
           }
@@ -128,10 +135,15 @@ const AdminDeploymentPresetNodes: React.FC<AdminDeploymentPresetNodesProps> = ({
 
   // PresetExecutionSpec.imageId is a raw UUID, but ImageV2.id is a Relay
   // global ID — toLocalId is required to match results back to imageIds.
-  const imageNameById: Record<string, string> = {};
+  // Label is "<canonicalName>@<architecture>" so admins can tell aarch64
+  // and x86_64 images apart.
+  const imageLabelById: Record<string, string> = {};
   for (const edge of imagesData.adminImagesV2?.edges ?? []) {
-    if (edge?.node?.id && edge.node.identity?.canonicalName) {
-      imageNameById[toLocalId(edge.node.id)] = edge.node.identity.canonicalName;
+    const identity = edge?.node?.identity;
+    if (edge?.node?.id && identity?.canonicalName) {
+      imageLabelById[toLocalId(edge.node.id)] = identity.architecture
+        ? `${identity.canonicalName}@${identity.architecture}`
+        : identity.canonicalName;
     }
   }
 
@@ -183,18 +195,40 @@ const AdminDeploymentPresetNodes: React.FC<AdminDeploymentPresetNodesProps> = ({
         render: (__, record) => {
           const imageId = record.execution?.imageId;
           if (!imageId) return '-';
-          return imageNameById[imageId] ?? imageId;
+          const label = imageLabelById[imageId] ?? imageId;
+          return (
+            <BAIText copyable style={{ wordBreak: 'break-all' }}>
+              {label}
+            </BAIText>
+          );
+        },
+      },
+      {
+        key: 'startupCommand',
+        title: t('adminDeploymentPreset.StartupCommand'),
+        defaultHidden: true,
+        onCell: () => ({ style: { maxWidth: 500 } }),
+        render: (__, record) => {
+          const startupCommand = record.execution?.startupCommand;
+          return startupCommand ? (
+            <BAIText code copyable ellipsis={{ tooltip: true }}>
+              {startupCommand}
+            </BAIText>
+          ) : (
+            '-'
+          );
         },
       },
       {
         key: 'cluster',
         title: t('adminDeploymentPreset.Cluster'),
         defaultHidden: true,
-        render: (__, record) => {
-          const { clusterMode, clusterSize } = record.cluster ?? {};
-          if (!clusterMode) return '-';
-          return `${clusterMode} × ${clusterSize}`;
-        },
+        render: (__, record) => (
+          <BAISessionClusterMode
+            clusterMode={record.cluster?.clusterMode}
+            clusterSize={record.cluster?.clusterSize}
+          />
+        ),
       },
       {
         key: 'replicaCount',
@@ -209,12 +243,38 @@ const AdminDeploymentPresetNodes: React.FC<AdminDeploymentPresetNodesProps> = ({
           record.deploymentDefaults?.deploymentStrategy ?? '-',
       },
       {
+        key: 'openToPublic',
+        title: t('adminDeploymentPreset.OpenToPublic'),
+        defaultHidden: true,
+        render: (__, record) => (
+          <BooleanTag
+            value={record.deploymentDefaults?.openToPublic ?? false}
+            trueLabel={t('deployment.Public')}
+            falseLabel={t('deployment.Private')}
+          />
+        ),
+      },
+      {
+        key: 'revisionHistoryLimit',
+        title: t('adminDeploymentPreset.RevisionHistoryLimit'),
+        defaultHidden: true,
+        render: (__, record) =>
+          record.deploymentDefaults?.revisionHistoryLimit ?? '-',
+      },
+      {
         key: 'createdAt',
         title: t('general.CreatedAt'),
         dataIndex: 'createdAt',
         sorter: isEnableSorter('createdAt'),
         render: (createdAt: string) =>
           createdAt ? dayjs(createdAt).format('YYYY-MM-DD HH:mm') : '-',
+      },
+      {
+        key: 'updatedAt',
+        title: t('general.ModifiedAt'),
+        dataIndex: 'updatedAt',
+        render: (updatedAt: string | null | undefined) =>
+          updatedAt ? dayjs(updatedAt).format('YYYY-MM-DD HH:mm') : '-',
       },
     ]),
     (column) => {

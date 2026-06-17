@@ -127,12 +127,11 @@
     "Category": "Kategori",
     "CreatedAt": "Dibuat pada",
     "ErrorCode": "Kode Kesalahan",
-    "From": "Dari",
+    "From": "Status asal",
     "Message": "Pesan",
     "Phase": "Tahap",
     "Result": "Hasil",
-    "StatusTransition": "Transisi Status",
-    "To": "sampai",
+    "To": "Status tujuan",
     "UpdatedAt": "Diperbarui pada"
   },
   "comp:BAIDeploymentSelect": {
@@ -223,6 +222,7 @@
     "EndpointURL": "URL Titik Akhir",
     "FailedToDeleteDeployment": "Gagal menghapus penerapan.",
     "HealthySummary": "{{healthy}} / {{total}}",
+    "Lifecycle": "Siklus Hidup",
     "Model": "Model",
     "Name": "Nama",
     "OpenToPublic": "Terbuka untuk Umum",
@@ -236,7 +236,6 @@
     "ResourceGroup": "Grup Sumber Daya",
     "RevisionNumber": "Revisi",
     "RevisionNumberTooltip": "Nomor revisi saat ini dari penerapan.",
-    "Status": "Status",
     "StrategyType": "Strategi",
     "Tags": "Tag",
     "UpdatedAt": "Diperbarui Pada"
@@ -325,12 +324,11 @@
     "Category": "Kategori",
     "CreatedAt": "Dibuat pada",
     "ErrorCode": "Kode Kesalahan",
-    "From": "Dari",
+    "From": "Status asal",
     "Message": "Pesan",
     "Phase": "Tahap",
     "Result": "Hasil",
-    "StatusTransition": "Transisi Status",
-    "To": "sampai",
+    "To": "Status tujuan",
     "UpdatedAt": "Diperbarui pada"
   },
   "comp:BAIRuntimeVariantSelect": {
@@ -341,12 +339,11 @@
     "Category": "Kategori",
     "CreatedAt": "Dibuat pada",
     "ErrorCode": "Kode Kesalahan",
-    "From": "Dari",
+    "From": "Status asal",
     "Message": "Pesan",
     "Phase": "Tahap",
     "Result": "Hasil",
-    "StatusTransition": "Transisi Status",
-    "To": "sampai",
+    "To": "Status tujuan",
     "UpdatedAt": "Diperbarui pada"
   },
   "comp:BAISessionAgentIds": {
@@ -371,6 +368,10 @@
     "Step": "Langkah"
   },
   "comp:BAITable": {
+    "CollapseAll": "Ciutkan semua",
+    "ExpandAll": "Perluas semua",
+    "ExpandErrorsOnly": "Perluas hanya kesalahan",
+    "ExpandOptions": "Opsi perluasan",
     "Export": "Ekspor",
     "ExportCSV": "Ekspor CSV",
     "GoToFirstPage": "Ke halaman pertama",

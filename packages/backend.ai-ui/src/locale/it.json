@@ -127,12 +127,11 @@
     "Category": "Categoria",
     "CreatedAt": "Creato il",
     "ErrorCode": "Codice errore",
-    "From": "Da",
+    "From": "Stato di origine",
     "Message": "Messaggio",
     "Phase": "Fase",
     "Result": "Risultato",
-    "StatusTransition": "Transizione di stato",
-    "To": "A",
+    "To": "Stato di destinazione",
     "UpdatedAt": "Aggiornato il"
   },
   "comp:BAIDeploymentSelect": {
@@ -223,6 +222,7 @@
     "EndpointURL": "URL del punto finale",
     "FailedToDeleteDeployment": "Eliminazione del deployment non riuscita.",
     "HealthySummary": "{{healthy}} / {{total}}",
+    "Lifecycle": "Ciclo di vita",
     "Model": "Modello",
     "Name": "Nome",
     "OpenToPublic": "Aperto al pubblico",
@@ -236,7 +236,6 @@
     "ResourceGroup": "Gruppo di Risorse",
     "RevisionNumber": "Revisione",
     "RevisionNumberTooltip": "Il numero di revisione corrente del deployment.",
-    "Status": "Stato",
     "StrategyType": "Strategia",
     "Tags": "Tag",
     "UpdatedAt": "Aggiornato il"
@@ -325,12 +324,11 @@
     "Category": "Categoria",
     "CreatedAt": "Creato il",
     "ErrorCode": "Codice errore",
-    "From": "Da",
+    "From": "Stato di origine",
     "Message": "Messaggio",
     "Phase": "Fase",
     "Result": "Risultato",
-    "StatusTransition": "Transizione di stato",
-    "To": "A",
+    "To": "Stato di destinazione",
     "UpdatedAt": "Aggiornato il"
   },
   "comp:BAIRuntimeVariantSelect": {
@@ -341,12 +339,11 @@
     "Category": "Categoria",
     "CreatedAt": "Creato il",
     "ErrorCode": "Codice errore",
-    "From": "Da",
+    "From": "Stato di origine",
     "Message": "Messaggio",
     "Phase": "Fase",
     "Result": "Risultato",
-    "StatusTransition": "Transizione di stato",
-    "To": "A",
+    "To": "Stato di destinazione",
     "UpdatedAt": "Aggiornato il"
   },
   "comp:BAISessionAgentIds": {
@@ -371,6 +368,10 @@
     "Step": "Passo"
   },
   "comp:BAITable": {
+    "CollapseAll": "Comprimi tutto",
+    "ExpandAll": "Espandi tutto",
+    "ExpandErrorsOnly": "Espandi solo errori",
+    "ExpandOptions": "Opzioni di espansione",
     "Export": "Esporta",
     "ExportCSV": "Esporta CSV",
     "GoToFirstPage": "Vai alla prima pagina",

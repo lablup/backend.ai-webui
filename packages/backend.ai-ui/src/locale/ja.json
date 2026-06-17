@@ -127,12 +127,11 @@
     "Category": "カテゴリ",
     "CreatedAt": "作成日時",
     "ErrorCode": "エラーコード",
-    "From": "送信元",
+    "From": "遷移元ステータス",
     "Message": "メッセージ",
     "Phase": "フェーズ",
     "Result": "結果",
-    "StatusTransition": "ステータス遷移",
-    "To": "宛先",
+    "To": "遷移先ステータス",
     "UpdatedAt": "更新日時"
   },
   "comp:BAIDeploymentSelect": {
@@ -223,6 +222,7 @@
     "EndpointURL": "エンドポイントURL",
     "FailedToDeleteDeployment": "デプロイメントの削除に失敗しました。",
     "HealthySummary": "{{healthy}} / {{total}}",
+    "Lifecycle": "ライフサイクル",
     "Model": "モデル",
     "Name": "名前",
     "OpenToPublic": "公開",
@@ -236,7 +236,6 @@
     "ResourceGroup": "リソースグループ",
     "RevisionNumber": "リビジョン",
     "RevisionNumberTooltip": "デプロイメントの現在のリビジョン番号。",
-    "Status": "状態",
     "StrategyType": "戦略",
     "Tags": "タグ",
     "UpdatedAt": "更新日時"
@@ -325,12 +324,11 @@
     "Category": "カテゴリ",
     "CreatedAt": "作成日時",
     "ErrorCode": "エラーコード",
-    "From": "送信元",
+    "From": "遷移元ステータス",
     "Message": "メッセージ",
     "Phase": "フェーズ",
     "Result": "結果",
-    "StatusTransition": "ステータス遷移",
-    "To": "宛先",
+    "To": "遷移先ステータス",
     "UpdatedAt": "更新日時"
   },
   "comp:BAIRuntimeVariantSelect": {
@@ -341,12 +339,11 @@
     "Category": "カテゴリ",
     "CreatedAt": "作成日時",
     "ErrorCode": "エラーコード",
-    "From": "送信元",
+    "From": "遷移元ステータス",
     "Message": "メッセージ",
     "Phase": "フェーズ",
     "Result": "結果",
-    "StatusTransition": "ステータス遷移",
-    "To": "宛先",
+    "To": "遷移先ステータス",
     "UpdatedAt": "更新日時"
   },
   "comp:BAISessionAgentIds": {
@@ -371,6 +368,10 @@
     "Step": "ステップ"
   },
   "comp:BAITable": {
+    "CollapseAll": "すべて折りたたむ",
+    "ExpandAll": "すべて展開",
+    "ExpandErrorsOnly": "エラーのみ展開",
+    "ExpandOptions": "展開オプション",
     "Export": "エクスポート",
     "ExportCSV": "CSV をエクスポート",
     "GoToFirstPage": "最初のページへ",

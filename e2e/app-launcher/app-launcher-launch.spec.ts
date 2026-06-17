@@ -595,5 +595,97 @@ test.describe(
       // this listener (e.g., WebSocket or a different path). This is acceptable as the UI behavior
       // (error notification or connection modal) has already been verified above.
     });
+
+    // FR-3027: When the App Proxy Coordinator cannot allocate a worker for the
+    // circuit (e.g. the TCP worker's port pool is exhausted), the permit-key
+    // request inside `_connectToProxyWorker` receives an HTTP 503
+    // `WorkerNotAvailable` ("Worker not available.") problem+json response.
+    // `sendRequest` resolves that to a `{ status, statusText, body }` object
+    // rather than throwing. The launcher must surface that backend message as
+    // an error notification and must NOT open a bogus 127.0.0.1 connection
+    // dialog.
+    //
+    // The live test backend routes the App Proxy through an address that is not
+    // reachable from the browser, so the real handshake never reaches the
+    // permit step. We therefore mock the proxy handshake (conf -> add) just
+    // enough to drive the launcher into `_connectToProxyWorker`, then force the
+    // permit request to 503. The production `_connectToProxyWorker` code path
+    // — the actual fix under test — runs unchanged against a real 503 response.
+    test('User sees "Worker not available." error instead of a bogus connection dialog when the proxy worker is unavailable (FR-3027)', async ({}, testInfo) => {
+      testInfo.setTimeout(120000);
+      test.skip(!sessionCreated, 'Session was not created successfully');
+
+      await expect(appLauncherModal.getModal()).toBeVisible();
+
+      const sshdAppVisible = await appLauncherModal
+        .getAppButton('sshd')
+        .isVisible()
+        .catch(() => false);
+      test.skip(!sshdAppVisible, 'SSH/SFTP app not available');
+
+      const PERMIT_MARKER = '__fr3027_worker_permit__';
+
+      // 1. Mock the V1 proxy token mint (`PUT {proxyURL}conf`).
+      await sharedPage.route('**/conf', async (route) => {
+        if (route.request().method() !== 'PUT') return route.fallback();
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ token: 'fr3027-mock-token' }),
+        });
+      });
+
+      // 2. Mock the circuit `add` endpoint so the launcher proceeds to the
+      //    permit step with a worker URL we control.
+      await sharedPage.route('**/proxy/**/add**', async (route) => {
+        const origin = new URL(route.request().url()).origin;
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            url: `${origin}/${PERMIT_MARKER}?token=fr3027-mock-token`,
+          }),
+        });
+      });
+
+      // 3. Force the permit-key request (inside `_connectToProxyWorker`) to the
+      //    real backend failure: HTTP 503 `WorkerNotAvailable` problem+json.
+      await sharedPage.route(`**/${PERMIT_MARKER}**`, async (route) => {
+        await route.fulfill({
+          status: 503,
+          contentType: 'application/problem+json',
+          body: JSON.stringify({
+            type: 'https://api.backend.ai/probs/appproxy/worker-not-available',
+            title: 'Worker not available.',
+          }),
+        });
+      });
+
+      try {
+        // 4. Launch the SFTP (sshd) TCP app.
+        await appLauncherModal.clickApp('sshd');
+
+        // 5. The backend error message must surface in the launch notification.
+        const errorNotification = sharedPage
+          .locator('.ant-notification-notice')
+          .filter({ hasText: 'Worker not available.' });
+        await expect(errorNotification).toBeVisible({ timeout: 30000 });
+
+        // 6. No bogus SSH/SFTP connection dialog must open.
+        const sftpConnectionModal = sharedPage
+          .getByRole('dialog')
+          .filter({ hasText: /SSH.*SFTP.*connection|SFTP.*connection/i });
+        await expect(sftpConnectionModal).toHaveCount(0);
+
+        // 7. The app launcher modal remains open.
+        await expect(appLauncherModal.getModal()).toBeVisible();
+      } finally {
+        // Cleanup: always remove route overrides so a mid-test failure cannot
+        // leak these mocks into `afterAll` cleanup or later serial tests.
+        await sharedPage.unroute('**/conf');
+        await sharedPage.unroute('**/proxy/**/add**');
+        await sharedPage.unroute(`**/${PERMIT_MARKER}**`);
+      }
+    });
   },
 );

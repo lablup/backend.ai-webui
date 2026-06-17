@@ -196,7 +196,7 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
       },
       {
         key: 'status',
-        title: t('comp:BAIModelDeploymentNodes.Status'),
+        title: t('comp:BAIModelDeploymentNodes.Lifecycle'),
         dataIndex: ['metadata', 'status'],
         render: (__, record) => {
           const status = record.metadata?.status;

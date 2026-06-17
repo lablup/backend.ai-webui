@@ -18,8 +18,6 @@ import {
   BAITable,
   BAITableProps,
 } from '../Table';
-import { BAIColumnGroupType } from '../Table/BAITable';
-import BAISubStepNodes from './BAISubStepNodes';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';
@@ -76,9 +74,6 @@ const BAIDeploymentSchedulingHistoryNodes = ({
           result
           errorCode
           message
-          subSteps {
-            ...BAISubStepNodesFragment
-          }
           attempts
           createdAt
           updatedAt
@@ -88,10 +83,7 @@ const BAIDeploymentSchedulingHistoryNodes = ({
     );
 
   const baseColumns = _.map(
-    filterOutEmpty<
-      | BAIColumnType<DeploymentSchedulingHistoryNodeInList>
-      | BAIColumnGroupType<DeploymentSchedulingHistoryNodeInList>
-    >([
+    filterOutEmpty<BAIColumnType<DeploymentSchedulingHistoryNodeInList>>([
       {
         dataIndex: 'updatedAt',
         title: t('comp:BAIDeploymentSchedulingHistoryNodes.UpdatedAt'),
@@ -132,22 +124,16 @@ const BAIDeploymentSchedulingHistoryNodes = ({
         sorter: isEnableSorter('category'),
       },
       {
-        title: t('comp:BAIDeploymentSchedulingHistoryNodes.StatusTransition'),
-        key: 'statusTransition',
-        children: [
-          {
-            key: 'fromStatus',
-            title: t('comp:BAIDeploymentSchedulingHistoryNodes.From'),
-            dataIndex: 'fromStatus',
-            sorter: isEnableSorter('from_status'),
-          },
-          {
-            key: 'toStatus',
-            title: t('comp:BAIDeploymentSchedulingHistoryNodes.To'),
-            dataIndex: 'toStatus',
-            sorter: isEnableSorter('to_status'),
-          },
-        ],
+        key: 'fromStatus',
+        title: t('comp:BAIDeploymentSchedulingHistoryNodes.From'),
+        dataIndex: 'fromStatus',
+        sorter: isEnableSorter('from_status'),
+      },
+      {
+        key: 'toStatus',
+        title: t('comp:BAIDeploymentSchedulingHistoryNodes.To'),
+        dataIndex: 'toStatus',
+        sorter: isEnableSorter('to_status'),
       },
       {
         dataIndex: 'attempts',
@@ -203,18 +189,6 @@ const BAIDeploymentSchedulingHistoryNodes = ({
           (order as (typeof availableDeploymentHistorySorterValues)[number]) ||
             null,
         );
-      }}
-      expandable={{
-        rowExpandable: (record) => !_.isEmpty(record.subSteps),
-        expandedRowRender: (record) => {
-          return (
-            <BAISubStepNodes
-              resizable
-              subStepsFrgmt={record.subSteps}
-              pagination={false}
-            />
-          );
-        },
       }}
       {...tableProps}
     />

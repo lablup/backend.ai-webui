@@ -127,12 +127,11 @@
     "Category": "หมวดหมู่",
     "CreatedAt": "สร้างเมื่อ",
     "ErrorCode": "รหัสข้อผิดพลาด",
-    "From": "จาก",
+    "From": "สถานะต้นทาง",
     "Message": "ข้อความ",
     "Phase": "ระยะ",
     "Result": "ผลลัพธ์",
-    "StatusTransition": "การเปลี่ยนสถานะ",
-    "To": "ถึง",
+    "To": "สถานะปลายทาง",
     "UpdatedAt": "อัปเดตเมื่อ"
   },
   "comp:BAIDeploymentSelect": {
@@ -223,6 +222,7 @@
     "EndpointURL": "URL ปลายทาง",
     "FailedToDeleteDeployment": "ไม่สามารถลบการปรับใช้ได้",
     "HealthySummary": "{{healthy}} / {{total}}",
+    "Lifecycle": "วงจรชีวิต",
     "Model": "โมเดล",
     "Name": "ชื่อ",
     "OpenToPublic": "เปิดสาธารณะ",
@@ -236,7 +236,6 @@
     "ResourceGroup": "กลุ่มทรัพยากร",
     "RevisionNumber": "ฉบับแก้ไข",
     "RevisionNumberTooltip": "หมายเลขฉบับแก้ไขปัจจุบันของการปรับใช้",
-    "Status": "สถานะ",
     "StrategyType": "กลยุทธ์",
     "Tags": "แท็ก",
     "UpdatedAt": "วันที่อัปเดต"
@@ -325,12 +324,11 @@
     "Category": "หมวดหมู่",
     "CreatedAt": "สร้างเมื่อ",
     "ErrorCode": "รหัสข้อผิดพลาด",
-    "From": "จาก",
+    "From": "สถานะต้นทาง",
     "Message": "ข้อความ",
     "Phase": "ระยะ",
     "Result": "ผลลัพธ์",
-    "StatusTransition": "การเปลี่ยนสถานะ",
-    "To": "ถึง",
+    "To": "สถานะปลายทาง",
     "UpdatedAt": "อัปเดตเมื่อ"
   },
   "comp:BAIRuntimeVariantSelect": {
@@ -341,12 +339,11 @@
     "Category": "หมวดหมู่",
     "CreatedAt": "สร้างเมื่อ",
     "ErrorCode": "รหัสข้อผิดพลาด",
-    "From": "จาก",
+    "From": "สถานะต้นทาง",
     "Message": "ข้อความ",
     "Phase": "ระยะ",
     "Result": "ผลลัพธ์",
-    "StatusTransition": "การเปลี่ยนสถานะ",
-    "To": "ถึง",
+    "To": "สถานะปลายทาง",
     "UpdatedAt": "อัปเดตเมื่อ"
   },
   "comp:BAISessionAgentIds": {
@@ -371,6 +368,10 @@
     "Step": "ขั้นตอน"
   },
   "comp:BAITable": {
+    "CollapseAll": "ยุบทั้งหมด",
+    "ExpandAll": "ขยายทั้งหมด",
+    "ExpandErrorsOnly": "ขยายเฉพาะข้อผิดพลาด",
+    "ExpandOptions": "ตัวเลือกการขยาย",
     "Export": "ส่งออก",
     "ExportCSV": "ส่งออก CSV",
     "GoToFirstPage": "ไปยังหน้าแรก",

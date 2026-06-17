@@ -127,12 +127,11 @@
     "Category": "类别",
     "CreatedAt": "创建时间",
     "ErrorCode": "错误代码",
-    "From": "从",
+    "From": "起始状态",
     "Message": "消息",
     "Phase": "阶段",
     "Result": "结果",
-    "StatusTransition": "状态转换",
-    "To": "到",
+    "To": "目标状态",
     "UpdatedAt": "更新时间"
   },
   "comp:BAIDeploymentSelect": {
@@ -223,6 +222,7 @@
     "EndpointURL": "端点URL",
     "FailedToDeleteDeployment": "删除部署失败。",
     "HealthySummary": "{{healthy}} / {{total}}",
+    "Lifecycle": "生命周期",
     "Model": "模型",
     "Name": "名称",
     "OpenToPublic": "公开",
@@ -236,7 +236,6 @@
     "ResourceGroup": "资源组",
     "RevisionNumber": "修订版本",
     "RevisionNumberTooltip": "部署的当前修订版本号。",
-    "Status": "状态",
     "StrategyType": "策略",
     "Tags": "标签",
     "UpdatedAt": "更新时间"
@@ -325,12 +324,11 @@
     "Category": "类别",
     "CreatedAt": "创建时间",
     "ErrorCode": "错误代码",
-    "From": "从",
+    "From": "起始状态",
     "Message": "消息",
     "Phase": "阶段",
     "Result": "结果",
-    "StatusTransition": "状态转换",
-    "To": "到",
+    "To": "目标状态",
     "UpdatedAt": "更新时间"
   },
   "comp:BAIRuntimeVariantSelect": {
@@ -341,12 +339,11 @@
     "Category": "类别",
     "CreatedAt": "创建时间",
     "ErrorCode": "错误代码",
-    "From": "从",
+    "From": "起始状态",
     "Message": "消息",
     "Phase": "阶段",
     "Result": "结果",
-    "StatusTransition": "状态转换",
-    "To": "到",
+    "To": "目标状态",
     "UpdatedAt": "更新时间"
   },
   "comp:BAISessionAgentIds": {
@@ -371,6 +368,10 @@
     "Step": "步骤"
   },
   "comp:BAITable": {
+    "CollapseAll": "收起全部",
+    "ExpandAll": "展开全部",
+    "ExpandErrorsOnly": "仅展开错误",
+    "ExpandOptions": "展开选项",
     "Export": "导出",
     "ExportCSV": "导出 CSV",
     "GoToFirstPage": "转到第一页",

@@ -127,12 +127,11 @@
     "Category": "Luokka",
     "CreatedAt": "Luotu",
     "ErrorCode": "Virhekoodi",
-    "From": "Alkaen",
+    "From": "Lähtötila",
     "Message": "Viesti",
     "Phase": "Vaihe",
     "Result": "Tulos",
-    "StatusTransition": "Tilan siirtymä",
-    "To": "Saakka",
+    "To": "Kohdetila",
     "UpdatedAt": "Päivitetty"
   },
   "comp:BAIDeploymentSelect": {
@@ -223,6 +222,7 @@
     "EndpointURL": "Päätepisteen URL",
     "FailedToDeleteDeployment": "Käyttöönoton poistaminen epäonnistui.",
     "HealthySummary": "{{healthy}} / {{total}}",
+    "Lifecycle": "Elinkaari",
     "Model": "Malli",
     "Name": "Nimi",
     "OpenToPublic": "Avoin julkisesti",
@@ -236,7 +236,6 @@
     "ResourceGroup": "Resurssiryhmä",
     "RevisionNumber": "Revisio",
     "RevisionNumberTooltip": "Käyttöönoton nykyinen revisionumero.",
-    "Status": "Tila",
     "StrategyType": "Strategia",
     "Tags": "Tunnisteet",
     "UpdatedAt": "Päivitetty"
@@ -325,12 +324,11 @@
     "Category": "Luokka",
     "CreatedAt": "Luotu",
     "ErrorCode": "Virhekoodi",
-    "From": "Alkaen",
+    "From": "Lähtötila",
     "Message": "Viesti",
     "Phase": "Vaihe",
     "Result": "Tulos",
-    "StatusTransition": "Tilan siirtymä",
-    "To": "Saakka",
+    "To": "Kohdetila",
     "UpdatedAt": "Päivitetty"
   },
   "comp:BAIRuntimeVariantSelect": {
@@ -341,12 +339,11 @@
     "Category": "Luokka",
     "CreatedAt": "Luotu",
     "ErrorCode": "Virhekoodi",
-    "From": "Alkaen",
+    "From": "Lähtötila",
     "Message": "Viesti",
     "Phase": "Vaihe",
     "Result": "Tulos",
-    "StatusTransition": "Tilan siirtymä",
-    "To": "Saakka",
+    "To": "Kohdetila",
     "UpdatedAt": "Päivitetty"
   },
   "comp:BAISessionAgentIds": {
@@ -371,6 +368,10 @@
     "Step": "Vaihe"
   },
   "comp:BAITable": {
+    "CollapseAll": "Tiivistä kaikki",
+    "ExpandAll": "Laajenna kaikki",
+    "ExpandErrorsOnly": "Laajenna vain virheet",
+    "ExpandOptions": "Laajenemisvaihtoehdot",
     "Export": "Vie",
     "ExportCSV": "Vie CSV",
     "GoToFirstPage": "Siirry ensimmäiselle sivulle",

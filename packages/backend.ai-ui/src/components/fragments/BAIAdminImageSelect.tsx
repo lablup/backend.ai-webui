@@ -109,6 +109,7 @@ const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
                 id
                 identity {
                   canonicalName
+                  architecture
                 }
               }
             }
@@ -149,6 +150,7 @@ const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
                 id
                 identity {
                   canonicalName
+                  architecture
                 }
               }
             }
@@ -188,8 +190,18 @@ const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
     [updateFetchKey, startRefetchTransition],
   );
 
+  // Compose the option label as "<canonicalName>@<architecture>" (Backend.AI's
+  // canonical image reference format) so admins can distinguish images by CPU
+  // architecture (e.g. aarch64 vs x86_64) when nodes of mixed architectures are present.
+  // `identity` is optional because callers pass a possibly-absent node, but its
+  // `canonicalName` / `architecture` are non-nullable per the schema.
+  const getImageLabel = (identity?: {
+    canonicalName: string;
+    architecture: string;
+  }) => (identity ? `${identity.canonicalName}@${identity.architecture}` : '');
+
   const availableOptions = _.map(paginationData, (item) => ({
-    label: item?.identity?.canonicalName,
+    label: getImageLabel(item?.identity),
     value: item?.id ? toLocalId(item.id) : item?.id,
   }));
 
@@ -201,7 +213,7 @@ const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
       const resolved = value ? selectedImageMap[value] : undefined;
       if (resolved) {
         return {
-          label: resolved.identity?.canonicalName,
+          label: getImageLabel(resolved.identity),
           value: toLocalId(resolved.id),
         };
       }

@@ -127,12 +127,11 @@
     "Category": "Ангилал",
     "CreatedAt": "Үүссэн огноо",
     "ErrorCode": "Алдааны код",
-    "From": "Эхлэх",
+    "From": "Эх төлөв",
     "Message": "Зурвас",
     "Phase": "Шат",
     "Result": "Үр дүн",
-    "StatusTransition": "Статусын шилжилт",
-    "To": "Хүртэл",
+    "To": "Зорилтот төлөв",
     "UpdatedAt": "Шинэчлэгдсэн огноо"
   },
   "comp:BAIDeploymentSelect": {
@@ -223,6 +222,7 @@
     "EndpointURL": "Төгсгөлийн цэгийн URL",
     "FailedToDeleteDeployment": "Байршуулалт устгаж чадсангүй.",
     "HealthySummary": "{{healthy}} / {{total}}",
+    "Lifecycle": "Амьдралын мөчлөг",
     "Model": "Загвар",
     "Name": "Нэр",
     "OpenToPublic": "Нийтэд нээлттэй",
@@ -236,7 +236,6 @@
     "ResourceGroup": "Нөөцийн бүлэг",
     "RevisionNumber": "Засвар",
     "RevisionNumberTooltip": "Байршуулалтын одоогийн засварын дугаар.",
-    "Status": "Төлөв",
     "StrategyType": "Стратеги",
     "Tags": "Шошго",
     "UpdatedAt": "Шинэчлэгдсэн огноо"
@@ -325,12 +324,11 @@
     "Category": "Ангилал",
     "CreatedAt": "Үүссэн огноо",
     "ErrorCode": "Алдааны код",
-    "From": "Эхлэх",
+    "From": "Эх төлөв",
     "Message": "Зурвас",
     "Phase": "Шат",
     "Result": "Үр дүн",
-    "StatusTransition": "Статусын шилжилт",
-    "To": "Хүртэл",
+    "To": "Зорилтот төлөв",
     "UpdatedAt": "Шинэчлэгдсэн огноо"
   },
   "comp:BAIRuntimeVariantSelect": {
@@ -341,12 +339,11 @@
     "Category": "Ангилал",
     "CreatedAt": "Үүссэн огноо",
     "ErrorCode": "Алдааны код",
-    "From": "Эхлэх",
+    "From": "Эх төлөв",
     "Message": "Зурвас",
     "Phase": "Шат",
     "Result": "Үр дүн",
-    "StatusTransition": "Статусын шилжилт",
-    "To": "Хүртэл",
+    "To": "Зорилтот төлөв",
     "UpdatedAt": "Шинэчлэгдсэн огноо"
   },
   "comp:BAISessionAgentIds": {
@@ -371,6 +368,10 @@
     "Step": "Алхам"
   },
   "comp:BAITable": {
+    "CollapseAll": "Бүгдийг хураах",
+    "ExpandAll": "Бүгдийг дэлгэх",
+    "ExpandErrorsOnly": "Зөвхөн алдааг дэлгэх",
+    "ExpandOptions": "Дэлгэх сонголтууд",
     "Export": "Экспорт",
     "ExportCSV": "CSV экспортлах",
     "GoToFirstPage": "Эх хуудас руу шилжих",

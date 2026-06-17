@@ -123,6 +123,7 @@ export interface BAISelectProps<
   atBottomThreshold?: number;
   atBottomStateChange?: (atBottom: boolean) => void;
   bottomLoading?: boolean;
+  header?: React.ReactNode;
   footer?: React.ReactNode;
   endReached?: () => void; // New prop for endReached
   searchAction?: (value: string) => Promise<void>;
@@ -138,6 +139,7 @@ function BAISelect<
   tooltip = '',
   atBottomThreshold = 30,
   atBottomStateChange,
+  header,
   footer,
   endReached, // Destructure the new prop
   searchAction,
@@ -227,7 +229,7 @@ function BAISelect<
           selectProps.onPopupScroll?.(e);
         }}
         popupRender={
-          footer
+          header || footer
             ? (menu) => {
                 // Process with custom popupRender if provided
                 // const renderedMenu = selectProps.popupRender
@@ -236,30 +238,59 @@ function BAISelect<
 
                 return (
                   <BAIFlex direction="column" align="stretch">
+                    {header ? (
+                      <>
+                        <BAIFlex
+                          align="center"
+                          style={{
+                            paddingBottom: token.paddingXXS,
+                            paddingInline: token.paddingSM,
+                          }}
+                        >
+                          {_.isString(header) ? (
+                            <Typography.Text type="secondary">
+                              {header}
+                            </Typography.Text>
+                          ) : (
+                            header
+                          )}
+                        </BAIFlex>
+                        <Divider
+                          style={{
+                            margin: 0,
+                            marginBottom: token.marginXXS,
+                          }}
+                        />
+                      </>
+                    ) : null}
                     {menu}
-                    <Divider
-                      style={{
-                        margin: 0,
-                        marginBottom: token.paddingXS,
-                      }}
-                    />
-                    <BAIFlex
-                      direction="column"
-                      align="end"
-                      gap={'xs'}
-                      style={{
-                        paddingBottom: token.paddingXXS,
-                        paddingInline: token.paddingSM,
-                      }}
-                    >
-                      {_.isString(footer) ? (
-                        <Typography.Text type="secondary">
-                          {footer}
-                        </Typography.Text>
-                      ) : (
-                        footer
-                      )}
-                    </BAIFlex>
+                    {footer ? (
+                      <>
+                        <Divider
+                          style={{
+                            margin: 0,
+                            marginBottom: token.paddingXS,
+                          }}
+                        />
+                        <BAIFlex
+                          direction="column"
+                          align="end"
+                          gap={'xs'}
+                          style={{
+                            paddingBottom: token.paddingXXS,
+                            paddingInline: token.paddingSM,
+                          }}
+                        >
+                          {_.isString(footer) ? (
+                            <Typography.Text type="secondary">
+                              {footer}
+                            </Typography.Text>
+                          ) : (
+                            footer
+                          )}
+                        </BAIFlex>
+                      </>
+                    ) : null}
                   </BAIFlex>
                 );
               }

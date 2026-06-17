@@ -2,7 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { parseCliCommand, tokenizeShellCommand } from './parseCliCommand';
+import {
+  formatShellCommand,
+  parseCliCommand,
+  tokenizeShellCommand,
+} from './parseCliCommand';
 
 describe('tokenizeShellCommand', () => {
   it('should split basic whitespace-separated tokens', () => {
@@ -49,6 +53,66 @@ describe('tokenizeShellCommand', () => {
       '--tp',
       '2',
     ]);
+  });
+
+  it('preserves a backslash-newline line continuation into the next token (FR-3146)', () => {
+    // The newline is kept (as part of the following token) so the multi-line
+    // command is preserved; only the backslash escape marker is consumed.
+    expect(
+      tokenizeShellCommand('vllm serve /models \\\n--trust-remote-code'),
+    ).toEqual(['vllm', 'serve', '/models', '\n--trust-remote-code']);
+  });
+
+  it('interprets a JSON-style \\n escape as a newline character', () => {
+    // formatShellCommand quotes a newline-bearing token via JSON.stringify,
+    // producing a literal `\n`; tokenize must turn it back into a newline,
+    // not the letter "n".
+    expect(tokenizeShellCommand('"\\n--trust-remote-code"')).toEqual([
+      '\n--trust-remote-code',
+    ]);
+  });
+});
+
+describe('formatShellCommand / tokenizeShellCommand round trip', () => {
+  it('preserves newlines through prefill -> resubmit (FR-3146)', () => {
+    // A revision stored with the shell line-continuation newline captured into
+    // the following token must round-trip identically through the Add Revision
+    // prefill (format) and resubmit (tokenize) — NOT corrupt into `n--flag`.
+    const storedTokens = [
+      'vllm',
+      'serve',
+      '/models',
+      '\n--trust-remote-code',
+      '\n--enable-expert-parallel',
+    ];
+    const prefilled = formatShellCommand(storedTokens);
+    expect(tokenizeShellCommand(prefilled)).toEqual(storedTokens);
+  });
+
+  it('round-trips a backslash-newline command without corruption (FR-3146)', () => {
+    const tokens = tokenizeShellCommand('python train.py \\\n--epochs 10');
+    // The line-continuation newline is preserved into the next token...
+    expect(tokens).toEqual(['python', 'train.py', '\n--epochs', '10']);
+    // ...and survives the prefill -> resubmit round trip instead of becoming
+    // the literal `n--epochs` the original bug produced.
+    expect(tokenizeShellCommand(formatShellCommand(tokens))).toEqual(tokens);
+  });
+
+  it('round-trips control-character tokens (shared-escape inverse contract)', () => {
+    // formatShellCommand and tokenizeShellCommand share one escape table, so
+    // they are exact inverses. Escaped chars (\n \t \r) and chars that pass
+    // through literally (\b \f and other control chars) must all round-trip.
+    const tokens = [
+      'cmd',
+      'tab\tafter',
+      'cr\rafter',
+      'back\bspace',
+      'form\ffeed',
+      `null${String.fromCharCode(0)}byte`,
+      `bell${String.fromCharCode(7)}char`,
+      'newline\nafter',
+    ];
+    expect(tokenizeShellCommand(formatShellCommand(tokens))).toEqual(tokens);
   });
 });
 

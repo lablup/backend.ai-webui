@@ -95,6 +95,17 @@ const DeploymentRevisionDetail: React.FC<{
               value
             }
           }
+          runtimeVariantPresetValues @since(version: "26.4.4rc9") {
+            presetId
+            value
+            preset {
+              name
+              displayName
+              targetSpec {
+                key
+              }
+            }
+          }
         }
         modelMountConfig {
           vfolderId
@@ -160,6 +171,28 @@ const DeploymentRevisionDetail: React.FC<{
   // bare `="value"` lines if the backend ever returns one.
   const namedEnvironEntries = environEntries.filter(
     (entry): entry is typeof entry & { name: string } => !!entry.name,
+  );
+  // Runtime-variant preset values the revision was built with (the same
+  // parameters set in the Add Revision "Runtime Parameters" form, e.g. DType /
+  // Quantization). Gated at `26.4.4rc9` — the rc where the field landed on the
+  // manager. Gating at the final `26.4.4` would strip it on every 26.4.4rc
+  // manager (rc < final in PEP440), but leaving it ungated sends it to
+  // pre-rc9 / 26.4.3 managers that lack the field, erroring the whole query;
+  // rc9 keeps it on rc9+ and final while stripping it on older managers.
+  // `?? []` still guards a missing field defensively.
+  // The preset's display label is resolved inline via the `preset` DataLoader
+  // field; mirror the Add Revision form's `displayName ?? name` resolution,
+  // then fall back to the CLI/env key or the raw preset id.
+  const presetValues = (runtimeConfig?.runtimeVariantPresetValues ?? []).map(
+    (entry) => ({
+      presetId: entry.presetId,
+      value: entry.value,
+      label:
+        entry.preset?.displayName ||
+        entry.preset?.name ||
+        entry.preset?.targetSpec?.key ||
+        entry.presetId,
+    }),
   );
   const resourceSlots = revision.resourceSlots ?? [];
   // Shared memory lives in resourceConfig.resourceOpts as a `{ name, value }`
@@ -369,6 +402,23 @@ const DeploymentRevisionDetail: React.FC<{
       key: 'runtime-variant',
       label: t('deployment.RuntimeVariant'),
       children: runtimeConfig?.runtimeVariant?.name || renderFallback(),
+    },
+    {
+      key: 'runtime-preset-values',
+      label: t('modelService.RuntimeParamTitle'),
+      span: 2,
+      children:
+        presetValues.length > 0 ? (
+          <BAIFlex direction="column" align="start" gap="xxs">
+            {presetValues.map((preset) => (
+              <Typography.Text key={preset.presetId}>
+                {`- ${preset.label}: ${preset.value}`}
+              </Typography.Text>
+            ))}
+          </BAIFlex>
+        ) : (
+          renderFallback()
+        ),
     },
     {
       key: 'inference-runtime-config',

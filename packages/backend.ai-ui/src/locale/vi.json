@@ -127,12 +127,11 @@
     "Category": "Danh mục",
     "CreatedAt": "Ngày tạo",
     "ErrorCode": "Mã lỗi",
-    "From": "Từ",
+    "From": "Trạng thái nguồn",
     "Message": "Tin nhắn",
     "Phase": "Giai đoạn",
     "Result": "Kết quả",
-    "StatusTransition": "Chuyển đổi trạng thái",
-    "To": "Đến",
+    "To": "Trạng thái đích",
     "UpdatedAt": "Cập nhật lúc"
   },
   "comp:BAIDeploymentSelect": {
@@ -223,6 +222,7 @@
     "EndpointURL": "URL điểm cuối",
     "FailedToDeleteDeployment": "Không thể xóa triển khai.",
     "HealthySummary": "{{healthy}} / {{total}}",
+    "Lifecycle": "Vòng đời",
     "Model": "Mô hình",
     "Name": "Tên",
     "OpenToPublic": "Mở cho công khai",
@@ -236,7 +236,6 @@
     "ResourceGroup": "Nhóm tài nguyên",
     "RevisionNumber": "Phiên bản",
     "RevisionNumberTooltip": "Số phiên bản hiện tại của triển khai.",
-    "Status": "Trạng thái",
     "StrategyType": "Chiến lược",
     "Tags": "Thẻ",
     "UpdatedAt": "Ngày cập nhật"
@@ -325,12 +324,11 @@
     "Category": "Danh mục",
     "CreatedAt": "Ngày tạo",
     "ErrorCode": "Mã lỗi",
-    "From": "Từ",
+    "From": "Trạng thái nguồn",
     "Message": "Tin nhắn",
     "Phase": "Giai đoạn",
     "Result": "Kết quả",
-    "StatusTransition": "Chuyển đổi trạng thái",
-    "To": "Đến",
+    "To": "Trạng thái đích",
     "UpdatedAt": "Cập nhật lúc"
   },
   "comp:BAIRuntimeVariantSelect": {
@@ -341,12 +339,11 @@
     "Category": "Danh mục",
     "CreatedAt": "Ngày tạo",
     "ErrorCode": "Mã lỗi",
-    "From": "Từ",
+    "From": "Trạng thái nguồn",
     "Message": "Tin nhắn",
     "Phase": "Giai đoạn",
     "Result": "Kết quả",
-    "StatusTransition": "Chuyển đổi trạng thái",
-    "To": "Đến",
+    "To": "Trạng thái đích",
     "UpdatedAt": "Cập nhật lúc"
   },
   "comp:BAISessionAgentIds": {
@@ -371,6 +368,10 @@
     "Step": "Bước"
   },
   "comp:BAITable": {
+    "CollapseAll": "Thu gọn tất cả",
+    "ExpandAll": "Mở rộng tất cả",
+    "ExpandErrorsOnly": "Chỉ mở rộng lỗi",
+    "ExpandOptions": "Tùy chọn mở rộng",
     "Export": "Xuất",
     "ExportCSV": "Xuất CSV",
     "GoToFirstPage": "Đến trang đầu",

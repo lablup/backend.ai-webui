@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<46774e41c560a173a4a5a28d03d27c4f>>
+ * @generated SignedSource<<fccecc4ed5b6d1562f24f9a79b09cc94>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,20 +19,23 @@ export type AdminDeploymentPresetNodesFragment$data = ReadonlyArray<{
   readonly createdAt: string;
   readonly deploymentDefaults: {
     readonly deploymentStrategy: DeploymentStrategyType | null | undefined;
+    readonly openToPublic: boolean | null | undefined;
     readonly replicaCount: number | null | undefined;
+    readonly revisionHistoryLimit: number | null | undefined;
   };
   readonly description: string | null | undefined;
   readonly execution: {
     readonly imageId: string | null | undefined;
+    readonly startupCommand: string | null | undefined;
   };
   readonly id: string;
   readonly name: string;
-  readonly rank: number;
   readonly runtimeVariant: {
     readonly id: string;
     readonly name: string;
   } | null | undefined;
   readonly runtimeVariantId: string;
+  readonly updatedAt: string | null | undefined;
   readonly " $fragmentType": "AdminDeploymentPresetNodesFragment";
 } | null | undefined>;
 export type AdminDeploymentPresetNodesFragment$key = ReadonlyArray<{
@@ -78,13 +81,6 @@ return {
       "args": null,
       "kind": "ScalarField",
       "name": "description",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "rank",
       "storageKey": null
     },
     {
@@ -146,6 +142,13 @@ return {
           "kind": "ScalarField",
           "name": "imageId",
           "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "startupCommand",
+          "storageKey": null
         }
       ],
       "storageKey": null
@@ -171,6 +174,20 @@ return {
           "kind": "ScalarField",
           "name": "deploymentStrategy",
           "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "openToPublic",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "revisionHistoryLimit",
+          "storageKey": null
         }
       ],
       "storageKey": null
@@ -181,6 +198,13 @@ return {
       "kind": "ScalarField",
       "name": "createdAt",
       "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "updatedAt",
+      "storageKey": null
     }
   ],
   "type": "DeploymentRevisionPreset",
@@ -188,6 +212,6 @@ return {
 };
 })();
 
-(node as any).hash = "f4bff724a137c2c01ed07c8d65af12dc";
+(node as any).hash = "8f8684f1a6df397171415c6b094c22c1";
 
 export default node;

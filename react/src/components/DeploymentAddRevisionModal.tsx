@@ -23,19 +23,13 @@ import {
   formatShellCommand,
   tokenizeShellCommand,
 } from '../helper/parseCliCommand';
-import {
-  mergeExtraArgs,
-  reverseMapExtraArgs,
-} from '../helper/runtimeExtraArgsParser';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import {
-  buildArgsSchemaKeySet,
-  buildDefaultsMap,
-  flattenPresets,
-  getAllExtraArgsEnvVarNames,
-  getExtraArgsEnvVarName,
+  buildRuntimeVariantPresetValues,
   type RuntimeParameterGroup,
+  type RuntimeVariantPresetValueEntry,
 } from '../hooks/useRuntimeParameterSchema';
 import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
 import EnvVarFormList, { type EnvVarFormListValue } from './EnvVarFormList';
@@ -120,12 +114,14 @@ export type FormValues = ImageEnvironmentFormInput &
     customDefinitionMode?: 'command' | 'file';
     startCommand?: string;
     commandPort?: number;
+    commandEnableHealthCheck?: boolean;
     commandHealthCheck?: string;
     commandModelMount?: string;
     commandInitialDelay?: number;
     commandMaxRetries?: number;
     commandInterval?: number;
     commandMaxWaitTime?: number;
+    commandExpectedStatusCode?: number;
     environ: EnvVarFormListValue[];
     /** Runtime-variant preset values, registered by RuntimeParameterFormSection. */
     runtimeParams?: RuntimeParameterValues;
@@ -284,6 +280,10 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             value
           }
         }
+        runtimeVariantPresetValues @since(version: "26.4.4rc9") {
+          presetId
+          value
+        }
       }
       modelMountConfig {
         vfolderId
@@ -298,11 +298,13 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             startCommand
             port
             healthCheck {
+              enable @since(version: "26.4.4")
               path
               maxRetries
               initialDelay
               interval
               maxWaitTime
+              expectedStatusCode
             }
           }
         }
@@ -311,6 +313,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         id
         identity {
           canonicalName
+          architecture
         }
       }
     }
@@ -333,6 +336,20 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   const { id: currentProjectId } = useCurrentProjectValue();
   const { logger } = useBAILogger();
   const { open: openFolderExplorer } = useFolderExplorerOpener();
+  const baiClient = useSuspendedBackendaiClient();
+  // 26.4.4+ managers accept the `enable` flag on ModelHealthCheckInput;
+  // older managers reject it, so we keep the legacy null-when-disabled shape.
+  const supportsHealthCheckEnable = baiClient.supports(
+    'model-health-check-enable',
+  );
+  // Managers from 26.4.4 (pinned to the rc9 staging tag) accept
+  // `runtimeVariantPresetValues` on ModelRuntimeConfigInput (FR-3139); older
+  // managers lack the field, so the key must be omitted from the mutation input
+  // entirely. The matching @since directive on the query field uses the same
+  // version string.
+  const supportsRuntimeVariantPresetValues = baiClient.supports(
+    'model-runtime-variant-preset-values',
+  );
 
   // Refs to refetch each form's model folder select after creating a new
   // model-usage folder, or via the manual refresh button. Two refs because
@@ -401,18 +418,15 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   // namespace (registered by RuntimeParameterFormSection), so required presets
   // participate in normal form validation. Touched keys and groups are kept in
   // refs since changing them must not re-render the modal — both are only read
-  // at submit time via serializeRuntimeParamsToEnviron.
+  // at submit time to collect runtime-variant preset values.
   const runtimeParamTouchedKeysRef = useRef<Set<string>>(new Set());
   const runtimeParamGroupsRef = useRef<RuntimeParameterGroup[] | null>(null);
 
-  // Initial values fed into `RuntimeParameterFormSection` for non-custom
-  // variants — split out of `currentRevision.modelRuntimeConfig.environ`
-  // once at mount time so the runtime-parameter UI can reverse-map ARGS-
-  // and ENV-typed presets back into their controls. State (not ref) so the
-  // child re-renders with the right initial data after the body resolves.
-  const [initialRuntimeExtraArgs, setInitialRuntimeExtraArgs] = useState('');
-  const [initialRuntimeEnvVars, setInitialRuntimeEnvVars] = useState<
-    Record<string, string> | undefined
+  // Initial preset values fed into `RuntimeParameterFormSection` for non-custom
+  // variants in edit mode, keyed by preset id. State (not ref) so the child
+  // re-renders with the right initial data after the revision body resolves.
+  const [initialRuntimePresetValues, setInitialRuntimePresetValues] = useState<
+    ReadonlyArray<RuntimeVariantPresetValueEntry> | undefined
   >(undefined);
 
   // Snapshot of prefilled `extraMounts.mountDestination`, keyed by the
@@ -587,9 +601,9 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
 
   // Build a Custom-form prefill object from a preset node read off the
   // singular `deploymentRevisionPreset(id:)` query (resolved via
-  // `fetchPresetData`). `image canonicalName` is fetched async because
+  // `fetchPresetData`). The image full name is fetched async because
   // `ImageEnvironmentSelectFormItems` matches the form's `environments.version`
-  // against canonical names.
+  // against image full names (`registry/namespace:tag@architecture`).
   const buildPrefillFromPreset = async (
     preset: NonNullable<
       DeploymentAddRevisionModalSelectedPresetQuery$data['deploymentRevisionPreset']
@@ -611,7 +625,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         ? ('single-node' as const)
         : ('multi-node' as const);
 
-    let imageCanonicalName: string | undefined;
+    // Full image name (`registry/namespace:tag@architecture`); the
+    // architecture suffix is required so `ImageEnvironmentSelectFormItems`
+    // exact-matches the original image instead of defaulting to the first
+    // architecture in the sorted list.
+    let imageFullName: string | undefined;
     if (preset.execution?.imageId) {
       try {
         const result =
@@ -622,6 +640,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 imageV2(id: $id) {
                   identity {
                     canonicalName
+                    architecture
                   }
                 }
               }
@@ -629,10 +648,14 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             { id: preset.execution.imageId },
             { fetchPolicy: 'store-or-network' },
           ).toPromise();
-        imageCanonicalName =
-          result?.imageV2?.identity?.canonicalName ?? undefined;
+        const identity = result?.imageV2?.identity;
+        imageFullName = identity?.canonicalName
+          ? identity.architecture
+            ? `${identity.canonicalName}@${identity.architecture}`
+            : identity.canonicalName
+          : undefined;
       } catch {
-        imageCanonicalName = undefined;
+        imageFullName = undefined;
       }
     }
 
@@ -672,9 +695,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       enabledAutomaticShmem: !shmemEntry,
       runtimeVariantId: preset.runtimeVariantId ?? undefined,
       environ: environEntries,
-      ...(imageCanonicalName
-        ? { environments: { version: imageCanonicalName } }
-        : {}),
+      ...(imageFullName ? { environments: { version: imageFullName } } : {}),
     };
 
     return prefill as Partial<FormValues>;
@@ -761,6 +782,13 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     }
     const service = rev.modelDefinition?.models?.[0]?.service;
     const customModelPath = rev.modelDefinition?.models?.[0]?.modelPath;
+    // On 26.4.4+ a disabled source revision carries `enable: false`; treat
+    // that as "no health check" for prefill so form fields stay empty. On older
+    // managers `enable` is stripped (undefined), fall back to object presence.
+    const healthCheck =
+      service?.healthCheck && service.healthCheck.enable !== false
+        ? service.healthCheck
+        : undefined;
     // For custom + command mode: the saved revision carries a populated
     // `modelDefinition` with a `startCommand` token list. For custom +
     // file mode the form serializes to a null `modelDefinition`, so the
@@ -777,24 +805,15 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         ]),
     );
 
-    // Split `environ` for non-custom variants: the runtime-parameter
-    // section uses one designated env var (e.g. `BACKEND_VLLM_EXTRA_ARGS`)
-    // to encode CLI-style ARGS presets, and individual env vars for ENV
-    // presets. Build both sides and stash them so the child can reverse-map.
-    const environRecord: Record<string, string> = Object.fromEntries(
-      (rev.modelRuntimeConfig?.environ?.entries ?? []).map((e) => [
-        e.name,
-        e.value,
-      ]),
-    );
+    // Hydrate the runtime-parameter section from the revision's preset values
+    // (non-custom variants). Preset values are their own field now — no longer
+    // encoded into `environ` / EXTRA_ARGS — so we feed them through directly,
+    // keyed by preset id.
     if (!isCustom && variantName) {
-      const extraArgsKey = getExtraArgsEnvVarName(variantName);
-      const { [extraArgsKey]: extraArgsValue, ...envVarsWithoutArgs } =
-        environRecord;
-      setInitialRuntimeExtraArgs(extraArgsValue ?? '');
-      setInitialRuntimeEnvVars(
-        Object.keys(envVarsWithoutArgs).length > 0
-          ? envVarsWithoutArgs
+      const presetValues = rev.modelRuntimeConfig?.runtimeVariantPresetValues;
+      setInitialRuntimePresetValues(
+        presetValues && presetValues.length > 0
+          ? presetValues.map((p) => ({ presetId: p.presetId, value: p.value }))
           : undefined,
       );
     }
@@ -854,12 +873,19 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       mountDestination: rev.modelMountConfig?.mountDestination ?? '/models',
       definitionPath: rev.modelMountConfig?.definitionPath ?? undefined,
       // `ImageEnvironmentSelectFormItems` matches the form's
-      // `environments.version` against its image catalog by canonical
-      // name; setting this is enough to drive the rest of the
-      // environment selector (registry/namespace/tag) and ultimately
-      // populate `environments.image.id`.
+      // `environments.version` against its image catalog by full name
+      // (`registry/namespace:tag@architecture`); the architecture suffix is
+      // required so the exact-match step picks the originally-used image
+      // instead of falling back to the first architecture in the sorted list
+      // (e.g. aarch64 for an x86_64 deployment). Setting this drives the rest
+      // of the environment selector and ultimately populates
+      // `environments.image.id`.
       environments: rev.imageV2?.identity?.canonicalName
-        ? { version: rev.imageV2.identity.canonicalName }
+        ? {
+            version: rev.imageV2.identity.architecture
+              ? `${rev.imageV2.identity.canonicalName}@${rev.imageV2.identity.architecture}`
+              : rev.imageV2.identity.canonicalName,
+          }
         : undefined,
       // EnvVarFormList stores entries as { variable, value } — translate
       // from the GraphQL `{ name, value }` shape on prefill.
@@ -867,17 +893,22 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         variable: e.name,
         value: e.value,
       })),
+      // Health check prefill applies to every runtime variant and mode
+      // (FR-3068): the checkbox + fields reflect the source revision's
+      // health-check override regardless of how the definition is provided.
+      commandEnableHealthCheck: !!healthCheck,
+      commandHealthCheck: healthCheck?.path ?? undefined,
+      commandInitialDelay: healthCheck?.initialDelay ?? undefined,
+      commandMaxRetries: healthCheck?.maxRetries ?? undefined,
+      commandInterval: healthCheck?.interval ?? undefined,
+      commandMaxWaitTime: healthCheck?.maxWaitTime ?? undefined,
+      commandExpectedStatusCode: healthCheck?.expectedStatusCode ?? undefined,
       ...(hasCustomCommand && service
         ? {
             customDefinitionMode: 'command' as const,
             startCommand: formatShellCommand(service.startCommand ?? []),
             commandPort: service.port,
-            commandHealthCheck: service.healthCheck?.path ?? undefined,
             commandModelMount: customModelPath ?? '/models',
-            commandInitialDelay: service.healthCheck?.initialDelay ?? undefined,
-            commandMaxRetries: service.healthCheck?.maxRetries ?? undefined,
-            commandInterval: service.healthCheck?.interval ?? undefined,
-            commandMaxWaitTime: service.healthCheck?.maxWaitTime ?? undefined,
           }
         : isCustom
           ? { customDefinitionMode: 'file' as const }
@@ -955,73 +986,30 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     setMode('custom');
   };
 
-  // Serialize runtime parameter form values (registered by
-  // RuntimeParameterFormSection under `runtimeParams`) into an environ map —
-  // mirrors ServiceLauncherPageContent logic.
-  const serializeRuntimeParamsToEnviron = (
-    environ: Record<string, string>,
-    runtimeVariant: string,
+  // Collect runtime-variant preset values as a standalone list keyed by preset
+  // id (`{ presetId, value }`), kept separate from `environ`. Sent to the
+  // backend as `modelRuntimeConfig.runtimeVariantPresetValues`. Reads from the
+  // form's `runtimeParams` namespace (native-typed values), stringifying each
+  // touched non-empty value before delegating to the schema helper.
+  const collectRuntimeVariantPresetValues = (
     runtimeParams: RuntimeParameterValues | undefined,
-  ) => {
+  ): RuntimeVariantPresetValueEntry[] => {
     const groups = runtimeParamGroupsRef.current;
-    if (!groups || !runtimeParams || Object.keys(runtimeParams).length === 0)
-      return;
+    if (!groups || !runtimeParams) return [];
 
-    const extraArgsEnvVar = getExtraArgsEnvVarName(runtimeVariant);
-    for (const envName of getAllExtraArgsEnvVarNames()) {
-      if (envName !== extraArgsEnvVar) delete environ[envName];
-    }
-
-    // Form values are native-typed (number/boolean/string); downstream
-    // merge/compare logic works on the API's string encoding.
-    const touchedValues: Record<string, string> = {};
+    // Form values are native-typed (number/boolean/string); the backend's
+    // preset value list works on the API's string encoding.
+    const stringValues: Record<string, string> = {};
     for (const [key, val] of Object.entries(runtimeParams)) {
-      if (!runtimeParamTouchedKeysRef.current.has(key)) continue;
       if (val === undefined || val === null || val === '') continue;
-      touchedValues[key] = String(val);
+      stringValues[key] = String(val);
     }
 
-    const presets = flattenPresets(groups);
-    const presetMap = new Map(presets.map((p) => [p.key, p]));
-    const defaults = buildDefaultsMap(groups);
-    const argsValues: Record<string, string> = {};
-    const envValues: Record<string, string> = {};
-
-    for (const [key, val] of Object.entries(touchedValues)) {
-      if (val === '' || val === undefined) continue;
-      const preset = presetMap.get(key);
-      if (!preset) continue;
-      if (preset.presetTarget === 'ENV') envValues[key] = val;
-      else argsValues[key] = val;
-    }
-
-    const argsSchemaKeys = buildArgsSchemaKeySet(groups);
-    if (environ[extraArgsEnvVar] && argsSchemaKeys.size > 0) {
-      const { unmappedText } = reverseMapExtraArgs(
-        environ[extraArgsEnvVar],
-        argsSchemaKeys,
-      );
-      if (unmappedText) environ[extraArgsEnvVar] = unmappedText;
-      else delete environ[extraArgsEnvVar];
-    }
-
-    for (const preset of presets) {
-      if (preset.presetTarget === 'ENV') delete environ[preset.key];
-    }
-
-    if (Object.keys(argsValues).length > 0) {
-      const manualArgs = environ[extraArgsEnvVar] ?? '';
-      const merged = mergeExtraArgs(argsValues, manualArgs, defaults);
-      if (merged) environ[extraArgsEnvVar] = merged;
-      else delete environ[extraArgsEnvVar];
-    }
-
-    for (const [key, val] of Object.entries(envValues)) {
-      const preset = presetMap.get(key);
-      if (preset?.defaultValue !== null && preset?.defaultValue === val)
-        continue;
-      environ[key] = val;
-    }
+    return buildRuntimeVariantPresetValues(
+      groups,
+      stringValues,
+      runtimeParamTouchedKeysRef.current,
+    );
   };
 
   const handleCustomFinish = (values: FormValues): void => {
@@ -1098,20 +1086,48 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     const isCustom = variantName === 'custom';
     const isCommandMode = values.customDefinitionMode === 'command';
 
+    // `environ` now carries ONLY the user's manual Environment Variables —
+    // runtime-variant preset values are no longer merged in here.
     const environRecord: Record<string, string> = {};
     for (const { variable, value } of values.environ ?? []) {
       if (variable) environRecord[variable] = value;
     }
-    if (!isCustom) {
-      serializeRuntimeParamsToEnviron(
-        environRecord,
-        variantName,
-        values.runtimeParams,
-      );
-    }
     const environEntries = Object.entries(environRecord).map(
       ([name, value]) => ({ name, value }),
     );
+
+    // Health check is opt-in via the explicit checkbox (FR-3068), shown for
+    // every runtime variant and definition mode. When on, all health-check
+    // fields are required in the UI (mirrors the preset form). For non-command
+    // modes (non-custom runtimes and custom+file) we send a minimal
+    // modelDefinition override containing only the health check when enabled.
+    const healthCheckEnabled = !!values.commandEnableHealthCheck;
+    const healthCheck = (() => {
+      const configuredFields = {
+        path: values.commandHealthCheck,
+        interval: values.commandInterval,
+        maxRetries: values.commandMaxRetries,
+        maxWaitTime: values.commandMaxWaitTime,
+        initialDelay: values.commandInitialDelay,
+        expectedStatusCode: values.commandExpectedStatusCode,
+      };
+      if (!supportsHealthCheckEnable) {
+        // Managers < 26.4.4: null disables the health check.
+        return healthCheckEnabled ? configuredFields : null;
+      }
+      // 26.4.4+: always send the object so the server can seed defaults.
+      return healthCheckEnabled
+        ? { enable: true, ...configuredFields }
+        : { enable: false };
+    })();
+
+    // Runtime-variant preset values are their own list (kept out of `environ`),
+    // sent via `modelRuntimeConfig.runtimeVariantPresetValues`. Only collected
+    // for non-custom variants on managers that support the field.
+    const runtimeVariantPresetValues =
+      isCustom || !supportsRuntimeVariantPresetValues
+        ? []
+        : collectRuntimeVariantPresetValues(values.runtimeParams);
 
     const modelDefinition =
       isCustom && isCommandMode && values.startCommand
@@ -1124,20 +1140,14 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                   preStartActions: [],
                   startCommand: tokenizeShellCommand(values.startCommand),
                   port: values.commandPort ?? 8000,
-                  healthCheck: values.commandHealthCheck
-                    ? {
-                        path: values.commandHealthCheck,
-                        interval: values.commandInterval ?? 10,
-                        maxRetries: values.commandMaxRetries ?? 10,
-                        maxWaitTime: values.commandMaxWaitTime ?? 15,
-                        initialDelay: values.commandInitialDelay,
-                      }
-                    : null,
+                  healthCheck,
                 },
               },
             ],
           }
-        : null;
+        : healthCheckEnabled
+          ? { models: [{ service: { healthCheck } }] }
+          : null;
 
     const mountDestination =
       isCustom && isCommandMode
@@ -1162,6 +1172,16 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             runtimeVariantId: values.runtimeVariantId,
             environ:
               environEntries.length > 0 ? { entries: environEntries } : null,
+            // Preset values are sent as their own field, keyed by preset id —
+            // NOT folded into `environ`. The key is omitted entirely on
+            // managers that predate the field (< 26.4.4), which would reject an
+            // unknown input field.
+            ...(supportsRuntimeVariantPresetValues && {
+              runtimeVariantPresetValues:
+                runtimeVariantPresetValues.length > 0
+                  ? runtimeVariantPresetValues
+                  : null,
+            }),
           },
           modelMountConfig: {
             vfolderId: toLocalId(values.modelFolderId),
@@ -1441,6 +1461,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 <Suspense fallback={<BAISelect loading style={{ flex: 1 }} />}>
                   <Form.Item
                     name="modelFolderId"
+                    label={t('deployment.ModelFolder')}
                     noStyle
                     rules={[{ required: true }]}
                   >
@@ -1506,18 +1527,8 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           onFinishFailed={handleFinishFailed}
           initialValues={_.merge({}, RESOURCE_ALLOCATION_INITIAL_FORM_VALUES, {
             resourceGroup: deployment?.metadata?.resourceGroupName,
-            mountDestination: '/models',
             customDefinitionMode: 'command',
-            commandPort: 8000,
-            commandHealthCheck: '/health',
-            commandModelMount: '/models',
-            // 60s was too short for large models to finish loading before the
-            // first health check. Default to 1800s as a short-term fix until a
-            // shared backend/frontend default (feature flag) lands. See FR-3005.
-            commandInitialDelay: 1800,
-            commandMaxRetries: 10,
-            commandInterval: 10,
-            commandMaxWaitTime: 15,
+            commandEnableHealthCheck: false,
             environ: [],
           })}
         >
@@ -1531,6 +1542,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               <Suspense fallback={<BAISelect loading style={{ flex: 1 }} />}>
                 <Form.Item
                   name="modelFolderId"
+                  label={t('deployment.ModelFolder')}
                   noStyle
                   rules={[{ required: true }]}
                 >
@@ -1629,8 +1641,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                       onGroupsLoaded={(groups) => {
                         runtimeParamGroupsRef.current = groups;
                       }}
-                      initialExtraArgs={initialRuntimeExtraArgs}
-                      initialEnvVars={initialRuntimeEnvVars}
+                      initialPresetValues={initialRuntimePresetValues}
                     />
                   </Suspense>
                 </div>
@@ -1686,76 +1697,18 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                           >
                             <Input placeholder="/models" allowClear />
                           </Form.Item>
-                          <BAIFlex gap="sm">
-                            <Form.Item
-                              name="commandPort"
-                              label={t('modelService.Port')}
-                              tooltip={t('modelService.PortTooltip')}
-                              style={{ flex: 1 }}
-                            >
-                              <InputNumber
-                                min={1}
-                                max={65535}
-                                style={{ width: '100%' }}
-                              />
-                            </Form.Item>
-                            <Form.Item
-                              name="commandHealthCheck"
-                              label={t('modelService.HealthCheck')}
-                              tooltip={t('modelService.HealthCheckTooltip')}
-                              style={{ flex: 1 }}
-                            >
-                              <Input placeholder="/health" allowClear />
-                            </Form.Item>
-                          </BAIFlex>
-                          <BAIFlex gap="sm">
-                            <Form.Item
-                              name="commandInitialDelay"
-                              label={t('modelService.InitialDelay')}
-                              tooltip={t('modelService.InitialDelayTooltip')}
-                              style={{ flex: 1 }}
-                            >
-                              <InputNumber
-                                min={0}
-                                step={0.5}
-                                style={{ width: '100%' }}
-                              />
-                            </Form.Item>
-                            <Form.Item
-                              name="commandMaxRetries"
-                              label={t('modelService.MaxRetries')}
-                              tooltip={t('modelService.MaxRetriesTooltip')}
-                              style={{ flex: 1 }}
-                            >
-                              <InputNumber min={0} style={{ width: '100%' }} />
-                            </Form.Item>
-                          </BAIFlex>
-                          <BAIFlex gap="sm">
-                            <Form.Item
-                              name="commandInterval"
-                              label={t('modelService.Interval')}
-                              tooltip={t('modelService.IntervalTooltip')}
-                              style={{ flex: 1 }}
-                            >
-                              <InputNumber
-                                min={1}
-                                step={0.5}
-                                style={{ width: '100%' }}
-                              />
-                            </Form.Item>
-                            <Form.Item
-                              name="commandMaxWaitTime"
-                              label={t('modelService.MaxWaitTime')}
-                              tooltip={t('modelService.MaxWaitTimeTooltip')}
-                              style={{ flex: 1 }}
-                            >
-                              <InputNumber
-                                min={1}
-                                step={0.5}
-                                style={{ width: '100%' }}
-                              />
-                            </Form.Item>
-                          </BAIFlex>
+                          <Form.Item
+                            name="commandPort"
+                            label={t('modelService.Port')}
+                            tooltip={t('modelService.PortTooltip')}
+                          >
+                            <InputNumber
+                              min={2}
+                              max={65535}
+                              placeholder="8000"
+                              style={{ width: '100%' }}
+                            />
+                          </Form.Item>
                         </>
                       ) : (
                         <BAIFlex gap="sm">
@@ -1788,6 +1741,131 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 </>
               );
             }}
+          </Form.Item>
+
+          {/* Health check is shown for every runtime variant and definition
+              mode (FR-3068); enabling it submits a health-check override. */}
+          <Form.Item
+            name="commandEnableHealthCheck"
+            valuePropName="checked"
+            style={{ marginBottom: token.marginXS }}
+          >
+            <Checkbox>{t('modelService.EnableHealthCheck')}</Checkbox>
+          </Form.Item>
+          <Form.Item dependencies={['commandEnableHealthCheck']} noStyle>
+            {({ getFieldValue: getHc }: FormInstance<FormValues>) =>
+              getHc('commandEnableHealthCheck') ? (
+                <BAIFlex direction="column" align="stretch" gap="xs">
+                  <Form.Item
+                    name="commandHealthCheck"
+                    label={t('adminDeploymentPreset.modelDef.HealthCheckPath')}
+                    tooltip={t('modelService.HealthCheckTooltip')}
+                    rules={[{ required: true }]}
+                  >
+                    <Input
+                      placeholder={t('general.Example', {
+                        value: '/health',
+                      })}
+                      allowClear
+                    />
+                  </Form.Item>
+                  <BAIFlex gap="md" wrap="wrap" align="end">
+                    <Form.Item
+                      name="commandInterval"
+                      label={t(
+                        'adminDeploymentPreset.modelDef.HealthCheckInterval',
+                      )}
+                      tooltip={t('modelService.IntervalTooltip')}
+                      rules={[{ required: true }]}
+                      style={{ flex: 1, minWidth: 160 }}
+                    >
+                      <InputNumber
+                        min={1}
+                        placeholder={t('general.Example', {
+                          value: '10',
+                        })}
+                        suffix={t('time.Sec')}
+                        style={{ width: '100%' }}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name="commandMaxRetries"
+                      label={t(
+                        'adminDeploymentPreset.modelDef.HealthCheckMaxRetries',
+                      )}
+                      tooltip={t('modelService.MaxRetriesTooltip')}
+                      rules={[{ required: true }]}
+                      style={{ flex: 1, minWidth: 160 }}
+                    >
+                      <InputNumber
+                        min={1}
+                        placeholder={t('general.Example', {
+                          value: '10',
+                        })}
+                        style={{ width: '100%' }}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name="commandMaxWaitTime"
+                      label={t(
+                        'adminDeploymentPreset.modelDef.HealthCheckMaxWaitTime',
+                      )}
+                      tooltip={t('modelService.MaxWaitTimeTooltip')}
+                      rules={[{ required: true }]}
+                      style={{ flex: 1, minWidth: 160 }}
+                    >
+                      <InputNumber
+                        min={1}
+                        placeholder={t('general.Example', {
+                          value: '15',
+                        })}
+                        suffix={t('time.Sec')}
+                        style={{ width: '100%' }}
+                      />
+                    </Form.Item>
+                  </BAIFlex>
+                  <BAIFlex gap="md" wrap="wrap" align="end">
+                    <Form.Item
+                      name="commandExpectedStatusCode"
+                      label={t(
+                        'adminDeploymentPreset.modelDef.HealthCheckExpectedStatus',
+                      )}
+                      tooltip={t('modelService.ExpectedStatusTooltip')}
+                      rules={[{ required: true }]}
+                      style={{ flex: 1, minWidth: 160 }}
+                    >
+                      <InputNumber
+                        min={101}
+                        max={599}
+                        placeholder={t('general.Example', {
+                          value: '200',
+                        })}
+                        style={{ width: '100%' }}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name="commandInitialDelay"
+                      label={t(
+                        'adminDeploymentPreset.modelDef.HealthCheckInitialDelay',
+                      )}
+                      tooltip={t('modelService.InitialDelayTooltip')}
+                      rules={[{ required: true }]}
+                      style={{ flex: 1, minWidth: 160 }}
+                    >
+                      <InputNumber
+                        min={0}
+                        placeholder={t('general.Example', {
+                          value: '60',
+                        })}
+                        suffix={t('time.Sec')}
+                        style={{ width: '100%' }}
+                      />
+                    </Form.Item>
+                    <div style={{ flex: 1, minWidth: 160 }} />
+                  </BAIFlex>
+                </BAIFlex>
+              ) : null
+            }
           </Form.Item>
 
           <SectionHeader>{t('session.launcher.Environments')}</SectionHeader>

@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useAdminImageCanonicalName } from '../hooks/hooksUsingRelay';
+import { useAdminImageReference } from '../hooks/hooksUsingRelay';
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
 import type { AdminDeploymentPresetFormValue } from './AdminDeploymentPresetFormTypes';
 import SourceCodeView from './SourceCodeView';
@@ -32,6 +32,12 @@ interface PresetReviewSummaryProps {
   onGoToStep: (index: number) => void;
   runtimeVariants: ReadonlyArray<{ id: string; name: string }>;
   errorFieldNames: string[];
+  /** Touched, non-default runtime-variant preset values (label + value). */
+  runtimeParamRows?: ReadonlyArray<{
+    key: string;
+    label: string;
+    value: string;
+  }>;
 }
 
 const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
@@ -40,15 +46,15 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
   onGoToStep,
   runtimeVariants,
   errorFieldNames,
+  runtimeParamRows = [],
 }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  // Pass `true` to include values set via setFieldValue (e.g. enableService,
-  // enableMetadata) that have no registered Form.Item. The `true` overload
-  // returns `any`; annotate the variable explicitly to restore type safety.
+  // `true` includes untouched fields and arrays (e.g. modelDefinition.models)
+  // that getFieldsValue() omits; its overload returns `any`, so annotate here.
   const values: AdminDeploymentPresetFormValue = form.getFieldsValue(true);
-  const imageCanonicalName = useAdminImageCanonicalName(values.imageId);
+  const imageReference = useAdminImageReference(values.imageId);
 
   const basicInfoHasError = BASIC_INFO_FIELDS.some((f) =>
     errorFieldNames.includes(f),
@@ -109,18 +115,29 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
             </Descriptions.Item>
           )}
           <Descriptions.Item label={t('adminDeploymentPreset.Image')}>
-            {imageCanonicalName ? (
+            {imageReference ? (
               <Typography.Text
                 code
                 style={{ wordBreak: 'break-all' }}
-                copyable={{ text: imageCanonicalName }}
+                copyable={{ text: imageReference }}
               >
-                {imageCanonicalName}
+                {imageReference}
               </Typography.Text>
             ) : (
               '-'
             )}
           </Descriptions.Item>
+          {runtimeParamRows.length > 0 && (
+            <Descriptions.Item label={t('modelService.RuntimeParamTitle')}>
+              <BAIFlex direction="column" align="start" gap="xxs">
+                {runtimeParamRows.map((r) => (
+                  <Typography.Text key={r.key}>
+                    - {r.label}: {r.value}
+                  </Typography.Text>
+                ))}
+              </BAIFlex>
+            </Descriptions.Item>
+          )}
         </Descriptions>
       </BAICard>
 
@@ -143,15 +160,29 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
                     ...(values.cpu ? { cpu: Number(values.cpu) } : {}),
                     ...(values.mem ? { mem: values.mem } : {}),
                     ...Object.fromEntries(
-                      (values.resourceSlots ?? []).map((s) => [
-                        s.resourceType,
-                        s.quantity,
-                      ]),
+                      (values.resourceSlots ?? [])
+                        .filter(Boolean)
+                        .map((s) => [s?.resourceType, s?.quantity]),
                     ),
                   } as any
                 }
               />
             </BAIFlex>
+          </Descriptions.Item>
+          <Descriptions.Item label={t('adminDeploymentPreset.ResourceOpts')}>
+            {values.resourceOpts?.some((o) => o.name?.trim()) ? (
+              <BAIFlex direction="row" align="start" gap="sm" wrap="wrap">
+                {values.resourceOpts
+                  .filter((o) => o.name?.trim())
+                  .map((o, i) => (
+                    <Typography.Text key={`${o.name?.trim()}-${i}`} code>
+                      {o.name?.trim()}: {o.value?.trim() || '-'}
+                    </Typography.Text>
+                  ))}
+              </BAIFlex>
+            ) : (
+              '-'
+            )}
           </Descriptions.Item>
           <Descriptions.Item label={t('adminDeploymentPreset.ClusterMode')}>
             {values.clusterMode === 'SINGLE_NODE'
@@ -220,7 +251,7 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
               <SourceCodeView language="shell">
                 {_.map(
                   values.environ,
-                  (e) => `${e.variable ?? ''}="${e.value ?? ''}"`,
+                  (e) => `${e?.variable ?? ''}="${e?.value ?? ''}"`,
                 ).join('\n')}
               </SourceCodeView>
             ) : (
@@ -228,7 +259,8 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
             )}
           </Descriptions.Item>
         </Descriptions>
-        {values.modelDefinition?.models?.length ? (
+        {values.modelDefinition?.enabled &&
+        values.modelDefinition?.models?.length ? (
           <BAIFlex
             direction="column"
             align="stretch"
@@ -241,7 +273,7 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
             >
               {t('adminDeploymentPreset.ModelDefinition')}
             </Typography.Text>
-            {values.modelDefinition.models.map((m, i) => (
+            {values.modelDefinition.models.filter(Boolean).map((m, i) => (
               <BAICard key={i} size="small" title={m.name}>
                 <Descriptions column={1} size="small">
                   <Descriptions.Item
@@ -251,21 +283,21 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
                       {m.modelPath || '-'}
                     </Typography.Text>
                   </Descriptions.Item>
-                  {m.enableService && m.service?.port != null && (
+                  {m.service?.port != null && (
                     <Descriptions.Item
                       label={t('adminDeploymentPreset.modelDef.Port')}
                     >
                       {m.service.port}
                     </Descriptions.Item>
                   )}
-                  {m.enableService && m.service?.shell && (
+                  {m.service?.shell && (
                     <Descriptions.Item
                       label={t('adminDeploymentPreset.modelDef.Shell')}
                     >
                       <Typography.Text code>{m.service.shell}</Typography.Text>
                     </Descriptions.Item>
                   )}
-                  {m.enableService && m.service?.startCommand && (
+                  {m.service?.startCommand && (
                     <Descriptions.Item
                       label={t('adminDeploymentPreset.modelDef.StartCommand')}
                     >
@@ -274,28 +306,37 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
                       </Typography.Text>
                     </Descriptions.Item>
                   )}
-                  {m.enableService &&
-                    (m.service?.preStartActions?.length ?? 0) > 0 && (
-                      <Descriptions.Item
-                        label={t(
-                          'adminDeploymentPreset.modelDef.PreStartActions',
-                        )}
-                      >
-                        {m.service?.preStartActions?.map((a, ai) => (
+                  {(m.service?.preStartActions?.length ?? 0) > 0 && (
+                    <Descriptions.Item
+                      label={t(
+                        'adminDeploymentPreset.modelDef.PreStartActions',
+                      )}
+                    >
+                      {m.service?.preStartActions
+                        ?.filter(Boolean)
+                        .map((a, ai) => (
                           <Typography.Text
                             key={ai}
                             code
                             style={{ display: 'block' }}
                           >
-                            {a.action}
+                            {a?.action}
                           </Typography.Text>
                         ))}
-                      </Descriptions.Item>
+                    </Descriptions.Item>
+                  )}
+                  <Descriptions.Item
+                    label={t(
+                      'adminDeploymentPreset.modelDef.EnableHealthCheck',
                     )}
-                  {m.enableService &&
-                    m.service?.enableHealthCheck &&
-                    m.service.healthCheck?.path && (
-                      <>
+                  >
+                    {m.service?.enableHealthCheck
+                      ? t('general.Enabled')
+                      : t('general.Disabled')}
+                  </Descriptions.Item>
+                  {m.service?.enableHealthCheck && (
+                    <>
+                      {m.service.healthCheck?.path && (
                         <Descriptions.Item
                           label={t(
                             'adminDeploymentPreset.modelDef.HealthCheckPath',
@@ -305,115 +346,115 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
                             {m.service.healthCheck.path}
                           </Typography.Text>
                         </Descriptions.Item>
-                        {m.service.healthCheck.interval != null && (
-                          <Descriptions.Item
-                            label={t(
-                              'adminDeploymentPreset.modelDef.HealthCheckInterval',
-                            )}
-                          >
-                            {m.service.healthCheck.interval}
-                          </Descriptions.Item>
-                        )}
-                        {m.service.healthCheck.maxRetries != null && (
-                          <Descriptions.Item
-                            label={t(
-                              'adminDeploymentPreset.modelDef.HealthCheckMaxRetries',
-                            )}
-                          >
-                            {m.service.healthCheck.maxRetries}
-                          </Descriptions.Item>
-                        )}
-                        {m.service.healthCheck.maxWaitTime != null && (
-                          <Descriptions.Item
-                            label={t(
-                              'adminDeploymentPreset.modelDef.HealthCheckMaxWaitTime',
-                            )}
-                          >
-                            {m.service.healthCheck.maxWaitTime}
-                          </Descriptions.Item>
-                        )}
-                        {m.service.healthCheck.expectedStatusCode != null && (
-                          <Descriptions.Item
-                            label={t(
-                              'adminDeploymentPreset.modelDef.HealthCheckExpectedStatus',
-                            )}
-                          >
-                            {m.service.healthCheck.expectedStatusCode}
-                          </Descriptions.Item>
-                        )}
-                        {m.service.healthCheck.initialDelay != null && (
-                          <Descriptions.Item
-                            label={t(
-                              'adminDeploymentPreset.modelDef.HealthCheckInitialDelay',
-                            )}
-                          >
-                            {m.service.healthCheck.initialDelay}
-                          </Descriptions.Item>
-                        )}
-                      </>
-                    )}
-                  {m.enableMetadata && m.metadata?.title && (
+                      )}
+                      {m.service.healthCheck?.interval != null && (
+                        <Descriptions.Item
+                          label={t(
+                            'adminDeploymentPreset.modelDef.HealthCheckInterval',
+                          )}
+                        >
+                          {m.service.healthCheck.interval}
+                        </Descriptions.Item>
+                      )}
+                      {m.service.healthCheck?.maxRetries != null && (
+                        <Descriptions.Item
+                          label={t(
+                            'adminDeploymentPreset.modelDef.HealthCheckMaxRetries',
+                          )}
+                        >
+                          {m.service.healthCheck.maxRetries}
+                        </Descriptions.Item>
+                      )}
+                      {m.service.healthCheck?.maxWaitTime != null && (
+                        <Descriptions.Item
+                          label={t(
+                            'adminDeploymentPreset.modelDef.HealthCheckMaxWaitTime',
+                          )}
+                        >
+                          {m.service.healthCheck.maxWaitTime}
+                        </Descriptions.Item>
+                      )}
+                      {m.service.healthCheck?.expectedStatusCode != null && (
+                        <Descriptions.Item
+                          label={t(
+                            'adminDeploymentPreset.modelDef.HealthCheckExpectedStatus',
+                          )}
+                        >
+                          {m.service.healthCheck.expectedStatusCode}
+                        </Descriptions.Item>
+                      )}
+                      {m.service.healthCheck?.initialDelay != null && (
+                        <Descriptions.Item
+                          label={t(
+                            'adminDeploymentPreset.modelDef.HealthCheckInitialDelay',
+                          )}
+                        >
+                          {m.service.healthCheck.initialDelay}
+                        </Descriptions.Item>
+                      )}
+                    </>
+                  )}
+                  {m.metadata?.title && (
                     <Descriptions.Item
                       label={t('adminDeploymentPreset.modelDef.Title')}
                     >
                       {m.metadata.title}
                     </Descriptions.Item>
                   )}
-                  {m.enableMetadata && m.metadata?.author && (
+                  {m.metadata?.author && (
                     <Descriptions.Item
                       label={t('adminDeploymentPreset.modelDef.Author')}
                     >
                       {m.metadata.author}
                     </Descriptions.Item>
                   )}
-                  {m.enableMetadata && m.metadata?.version && (
+                  {m.metadata?.version && (
                     <Descriptions.Item
                       label={t('adminDeploymentPreset.modelDef.Version')}
                     >
                       {m.metadata.version}
                     </Descriptions.Item>
                   )}
-                  {m.enableMetadata && m.metadata?.description && (
+                  {m.metadata?.description && (
                     <Descriptions.Item
                       label={t('adminDeploymentPreset.modelDef.Description')}
                     >
                       {m.metadata.description}
                     </Descriptions.Item>
                   )}
-                  {m.enableMetadata && m.metadata?.task && (
+                  {m.metadata?.task && (
                     <Descriptions.Item
                       label={t('adminDeploymentPreset.modelDef.Task')}
                     >
                       {m.metadata.task}
                     </Descriptions.Item>
                   )}
-                  {m.enableMetadata && m.metadata?.category && (
+                  {m.metadata?.category && (
                     <Descriptions.Item
                       label={t('adminDeploymentPreset.modelDef.Category')}
                     >
                       {m.metadata.category}
                     </Descriptions.Item>
                   )}
-                  {m.enableMetadata && m.metadata?.architecture && (
+                  {m.metadata?.architecture && (
                     <Descriptions.Item
                       label={t('adminDeploymentPreset.modelDef.Architecture')}
                     >
                       {m.metadata.architecture}
                     </Descriptions.Item>
                   )}
-                  {m.enableMetadata &&
-                    (m.metadata?.framework?.length ?? 0) > 0 && (
-                      <Descriptions.Item
-                        label={t('adminDeploymentPreset.modelDef.Framework')}
-                      >
-                        <Space size="small" wrap>
-                          {m.metadata!.framework!.map((f, fi) => (
-                            <Tag key={fi}>{f}</Tag>
-                          ))}
-                        </Space>
-                      </Descriptions.Item>
-                    )}
-                  {m.enableMetadata && (m.metadata?.label?.length ?? 0) > 0 && (
+                  {(m.metadata?.framework?.length ?? 0) > 0 && (
+                    <Descriptions.Item
+                      label={t('adminDeploymentPreset.modelDef.Framework')}
+                    >
+                      <Space size="small" wrap>
+                        {m.metadata!.framework!.map((f, fi) => (
+                          <Tag key={fi}>{f}</Tag>
+                        ))}
+                      </Space>
+                    </Descriptions.Item>
+                  )}
+                  {(m.metadata?.label?.length ?? 0) > 0 && (
                     <Descriptions.Item
                       label={t('adminDeploymentPreset.modelDef.Label')}
                     >
@@ -424,7 +465,7 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
                       </Space>
                     </Descriptions.Item>
                   )}
-                  {m.enableMetadata && m.metadata?.license && (
+                  {m.metadata?.license && (
                     <Descriptions.Item
                       label={t('adminDeploymentPreset.modelDef.License')}
                     >

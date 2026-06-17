@@ -4,14 +4,15 @@ import {
   SessionSchedulingHistoryOrderBy,
 } from '../__generated__/SessionSchedulingHistoryModalQuery.graphql';
 import { convertToOrderBy } from '../helper';
+import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
 import {
-  BAIButton,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAIModal,
   BAIModalProps,
-  BAISchedulingHistoryNodes,
+  BAISchedulingHistoryTable,
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -33,30 +34,49 @@ const SessionSchedulingHistoryModal = ({
   onCancel,
   ...modalProps
 }: SessionSchedulingHistoryModalProps) => {
+  'use memo';
   const { t } = useTranslation();
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [filter, setFilter] = useState<SessionSchedulingHistoryFilter>();
   const [order, setOrder] = useState<string | null>('-updatedAt');
+  const [expandMode, setExpandMode] = useBAISettingUserState(
+    'schedulingHistoryExpandMode',
+  );
+  const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
+    'table_column_overrides.SessionSchedulingHistory',
+  );
+  const {
+    baiPaginationOption,
+    tablePaginationOption,
+    setTablePaginationOption,
+  } = useBAIPaginationOptionState({ current: 1, pageSize: 10 });
 
   const deferredOpenValue = useDeferredValue(open);
   const deferredFetchKey = useDeferredValue(fetchKey);
   const deferredFilter = useDeferredValue(filter);
   const deferredOrder = useDeferredValue(order);
+  const deferredOffset = useDeferredValue(baiPaginationOption.offset);
+  const deferredLimit = useDeferredValue(baiPaginationOption.limit);
   const queryRef = useLazyLoadQuery<SessionSchedulingHistoryModalQuery>(
     graphql`
       query SessionSchedulingHistoryModalQuery(
         $scope: SessionScope!
         $filter: SessionSchedulingHistoryFilter
         $orderBy: [SessionSchedulingHistoryOrderBy!]
+        $limit: Int
+        $offset: Int
       ) {
         sessionScopedSchedulingHistories(
           scope: $scope
           filter: $filter
           orderBy: $orderBy
+          limit: $limit
+          offset: $offset
         ) {
+          count
           edges {
             node {
-              ...BAISchedulingHistoryNodesFragment
+              ...BAISchedulingHistoryTableFragment
             }
           }
         }
@@ -70,6 +90,8 @@ const SessionSchedulingHistoryModal = ({
       orderBy: convertToOrderBy<SessionSchedulingHistoryOrderBy>(
         deferredOrder,
       ) ?? [{ field: 'UPDATED_AT', direction: 'DESC' }],
+      limit: deferredLimit,
+      offset: deferredOffset,
     },
     {
       fetchKey: deferredFetchKey,
@@ -90,17 +112,7 @@ const SessionSchedulingHistoryModal = ({
           minHeight: '80vh',
         },
       }}
-      footer={
-        <BAIButton
-          onClick={(e) =>
-            onCancel?.(
-              e as Parameters<NonNullable<BAIModalProps['onCancel']>>[0],
-            )
-          }
-        >
-          {t('button.Close')}
-        </BAIButton>
-      }
+      footer={null}
       onCancel={onCancel}
       {...modalProps}
     >
@@ -108,7 +120,10 @@ const SessionSchedulingHistoryModal = ({
         <BAIFlex justify="between" wrap="wrap" gap="sm">
           <BAIGraphQLPropertyFilter
             value={filter}
-            onChange={setFilter}
+            onChange={(next) => {
+              setFilter(next);
+              setTablePaginationOption({ current: 1 });
+            }}
             filterProperties={[
               {
                 key: 'id',
@@ -184,15 +199,34 @@ const SessionSchedulingHistoryModal = ({
             />
           </BAIFlex>
         </BAIFlex>
-        <BAISchedulingHistoryNodes
+        <BAISchedulingHistoryTable
           resizable
           loading={
             deferredFetchKey !== fetchKey ||
             deferredFilter !== filter ||
-            deferredOrder !== order
+            deferredOrder !== order ||
+            deferredOffset !== baiPaginationOption.offset ||
+            deferredLimit !== baiPaginationOption.limit
           }
           order={order}
-          onChangeOrder={setOrder}
+          onChangeOrder={(nextOrder) => {
+            setOrder(nextOrder);
+            setTablePaginationOption({ current: 1 });
+          }}
+          expandMode={expandMode ?? undefined}
+          onExpandModeChange={setExpandMode}
+          tableSettings={{
+            columnOverrides,
+            onColumnOverridesChange: setColumnOverrides,
+          }}
+          pagination={{
+            pageSize: tablePaginationOption.pageSize,
+            current: tablePaginationOption.current,
+            total: queryRef.sessionScopedSchedulingHistories?.count ?? 0,
+            onChange: (current, pageSize) => {
+              setTablePaginationOption({ current, pageSize });
+            },
+          }}
           schedulingHistoryFrgmt={_.map(
             queryRef.sessionScopedSchedulingHistories?.edges,
             'node',

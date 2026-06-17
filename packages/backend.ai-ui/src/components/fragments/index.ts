@@ -184,6 +184,12 @@ export type {
   BAIRouteSchedulingHistoryNodesProps,
   RouteSchedulingHistoryNodeInList,
 } from './BAIRouteSchedulingHistoryNodeTable';
+export { default as BAISchedulingHistoryTable } from './BAISchedulingHistoryTable';
+export type { BAISchedulingHistoryTableProps } from './BAISchedulingHistoryTable';
+export { default as BAIDeploymentSchedulingHistoryTable } from './BAIDeploymentSchedulingHistoryTable';
+export type { BAIDeploymentSchedulingHistoryTableProps } from './BAIDeploymentSchedulingHistoryTable';
+export { default as BAIRouteSchedulingHistoryTable } from './BAIRouteSchedulingHistoryTable';
+export type { BAIRouteSchedulingHistoryTableProps } from './BAIRouteSchedulingHistoryTable';
 export { default as BAIDeploymentSelect } from './BAIDeploymentSelect';
 export type {
   BAIDeploymentSelectProps,

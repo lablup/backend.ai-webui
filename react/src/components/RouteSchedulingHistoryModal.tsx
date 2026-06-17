@@ -4,13 +4,15 @@ import {
   RouteSchedulingHistoryModalQuery,
 } from '../__generated__/RouteSchedulingHistoryModalQuery.graphql';
 import { convertToOrderBy } from '../helper';
+import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
 import {
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAIModal,
   BAIModalProps,
-  BAIRouteSchedulingHistoryNodeTable,
+  BAIRouteSchedulingHistoryTable,
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -31,15 +33,20 @@ export const RouteSchedulingHistoryQuery = graphql`
     $scope: RouteScope!
     $filter: RouteHistoryFilter
     $orderBy: [RouteHistoryOrderBy!]
+    $limit: Int
+    $offset: Int
   ) {
     routeScopedSchedulingHistories(
       scope: $scope
       filter: $filter
       orderBy: $orderBy
+      limit: $limit
+      offset: $offset
     ) {
+      count
       edges {
         node {
-          ...BAIRouteSchedulingHistoryNodeTableFragment
+          ...BAIRouteSchedulingHistoryTableFragment
         }
       }
     }
@@ -74,6 +81,14 @@ const RouteSchedulingHistoryModal = ({
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [filter, setFilter] = useState<RouteHistoryFilter>();
   const [order, setOrder] = useState<string | null>('-updatedAt');
+  const [expandMode, setExpandMode] = useBAISettingUserState(
+    'schedulingHistoryExpandMode',
+  );
+  const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
+    'table_column_overrides.RouteSchedulingHistory',
+  );
+  const { tablePaginationOption, setTablePaginationOption } =
+    useBAIPaginationOptionState({ current: 1, pageSize: 10 });
 
   // Re-fetches happen from event handlers (filter / order / refresh), never from
   // render or an effect. We carry the existing variables forward via
@@ -105,8 +120,7 @@ const RouteSchedulingHistoryModal = ({
           minHeight: '80vh',
         },
       }}
-      cancelText={t('button.Close')}
-      footer={(_originNode, { CancelBtn }) => <CancelBtn />}
+      footer={null}
       onCancel={onCancel}
       {...modalProps}
     >
@@ -116,8 +130,9 @@ const RouteSchedulingHistoryModal = ({
             value={filter}
             onChange={(next) => {
               setFilter(next);
+              setTablePaginationOption({ current: 1 });
               onReload(
-                { ...queryRef.variables, filter: next },
+                { ...queryRef.variables, filter: next, offset: 0 },
                 { fetchPolicy: 'network-only' },
               );
             }}
@@ -199,19 +214,43 @@ const RouteSchedulingHistoryModal = ({
             />
           </BAIFlex>
         </BAIFlex>
-        <BAIRouteSchedulingHistoryNodeTable
+        <BAIRouteSchedulingHistoryTable
           resizable
           loading={isRefetchingInTransition}
+          expandMode={expandMode ?? undefined}
+          onExpandModeChange={setExpandMode}
+          tableSettings={{
+            columnOverrides,
+            onColumnOverridesChange: setColumnOverrides,
+          }}
           order={order}
           onChangeOrder={(nextOrder) => {
             setOrder(nextOrder);
+            setTablePaginationOption({ current: 1 });
             onReload(
               {
                 ...queryRef.variables,
                 orderBy: convertToOrderBy<RouteHistoryOrderBy>(nextOrder),
+                offset: 0,
               },
               { fetchPolicy: 'network-only' },
             );
+          }}
+          pagination={{
+            pageSize: tablePaginationOption.pageSize,
+            current: tablePaginationOption.current,
+            total: data.routeScopedSchedulingHistories?.count ?? 0,
+            onChange: (current, pageSize) => {
+              setTablePaginationOption({ current, pageSize });
+              onReload(
+                {
+                  ...queryRef.variables,
+                  limit: pageSize,
+                  offset: current > 1 ? (current - 1) * pageSize : 0,
+                },
+                { fetchPolicy: 'network-only' },
+              );
+            },
           }}
           schedulingHistoryFrgmt={_.map(
             data.routeScopedSchedulingHistories?.edges,

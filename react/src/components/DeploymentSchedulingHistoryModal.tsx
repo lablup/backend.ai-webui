@@ -4,8 +4,10 @@ import {
   DeploymentSchedulingHistoryModalQuery,
 } from '../__generated__/DeploymentSchedulingHistoryModalQuery.graphql';
 import { convertToOrderBy } from '../helper';
+import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
 import {
-  BAIDeploymentSchedulingHistoryNodes,
+  BAIDeploymentSchedulingHistoryTable,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
@@ -31,15 +33,20 @@ export const DeploymentSchedulingHistoryQuery = graphql`
     $scope: DeploymentScope!
     $filter: DeploymentHistoryFilter
     $orderBy: [DeploymentHistoryOrderBy!]
+    $limit: Int
+    $offset: Int
   ) {
     deploymentScopedSchedulingHistories(
       scope: $scope
       filter: $filter
       orderBy: $orderBy
+      limit: $limit
+      offset: $offset
     ) {
+      count
       edges {
         node {
-          ...BAIDeploymentSchedulingHistoryNodesFragment
+          ...BAIDeploymentSchedulingHistoryTableFragment
         }
       }
     }
@@ -74,6 +81,14 @@ const DeploymentSchedulingHistoryModal = ({
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [filter, setFilter] = useState<DeploymentHistoryFilter>();
   const [order, setOrder] = useState<string | null>('-updatedAt');
+  const [expandMode, setExpandMode] = useBAISettingUserState(
+    'schedulingHistoryExpandMode',
+  );
+  const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
+    'table_column_overrides.DeploymentSchedulingHistory',
+  );
+  const { tablePaginationOption, setTablePaginationOption } =
+    useBAIPaginationOptionState({ current: 1, pageSize: 10 });
 
   // Re-fetches happen from event handlers (filter / order / refresh), never from
   // render or an effect. We carry the existing variables forward via
@@ -105,8 +120,7 @@ const DeploymentSchedulingHistoryModal = ({
           minHeight: '80vh',
         },
       }}
-      cancelText={t('button.Close')}
-      footer={(_originNode, { CancelBtn }) => <CancelBtn />}
+      footer={null}
       onCancel={onCancel}
       {...modalProps}
     >
@@ -116,8 +130,9 @@ const DeploymentSchedulingHistoryModal = ({
             value={filter}
             onChange={(next) => {
               setFilter(next);
+              setTablePaginationOption({ current: 1 });
               onReload(
-                { ...queryRef.variables, filter: next },
+                { ...queryRef.variables, filter: next, offset: 0 },
                 { fetchPolicy: 'network-only' },
               );
             }}
@@ -199,19 +214,43 @@ const DeploymentSchedulingHistoryModal = ({
             />
           </BAIFlex>
         </BAIFlex>
-        <BAIDeploymentSchedulingHistoryNodes
+        <BAIDeploymentSchedulingHistoryTable
           resizable
           loading={isRefetchingInTransition}
+          expandMode={expandMode ?? undefined}
+          onExpandModeChange={setExpandMode}
+          tableSettings={{
+            columnOverrides,
+            onColumnOverridesChange: setColumnOverrides,
+          }}
           order={order}
           onChangeOrder={(nextOrder) => {
             setOrder(nextOrder);
+            setTablePaginationOption({ current: 1 });
             onReload(
               {
                 ...queryRef.variables,
                 orderBy: convertToOrderBy<DeploymentHistoryOrderBy>(nextOrder),
+                offset: 0,
               },
               { fetchPolicy: 'network-only' },
             );
+          }}
+          pagination={{
+            pageSize: tablePaginationOption.pageSize,
+            current: tablePaginationOption.current,
+            total: data.deploymentScopedSchedulingHistories?.count ?? 0,
+            onChange: (current, pageSize) => {
+              setTablePaginationOption({ current, pageSize });
+              onReload(
+                {
+                  ...queryRef.variables,
+                  limit: pageSize,
+                  offset: current > 1 ? (current - 1) * pageSize : 0,
+                },
+                { fetchPolicy: 'network-only' },
+              );
+            },
           }}
           schedulingHistoryFrgmt={_.map(
             data.deploymentScopedSchedulingHistories?.edges,

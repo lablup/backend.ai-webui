@@ -17,7 +17,7 @@ import SessionNodes, {
 } from '../components/SessionNodes';
 import { handleRowSelectionChange } from '../helper';
 import { ExtractResultValue } from '../helper/resultTypes';
-import { useWebUINavigate } from '../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -86,6 +86,7 @@ const ComputeSessionListPage = () => {
 
   const userRole = useCurrentUserRole();
   const [currentUser] = useCurrentUserInfo();
+  const baiClient = useSuspendedBackendaiClient();
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -618,6 +619,19 @@ const ComputeSessionListPage = () => {
                         }
                         if (queryParams.type && queryParams.type !== 'all') {
                           csvFilter.session_type = [queryParams.type];
+                        }
+                        // This page is strictly personal (see currentUserFilter
+                        // above), so the CSV export must be scoped to the current
+                        // user too — otherwise an admin exports every user's
+                        // sessions. Mirrors the table's user_id filter via the
+                        // session export `user.email` filter (BA-6480).
+                        if (
+                          baiClient.supports('session-export-user-filter') &&
+                          currentUser.email
+                        ) {
+                          csvFilter.user = {
+                            email: { equals: currentUser.email },
+                          };
                         }
                         await exportCSV(selectedExportKeys, csvFilter).catch(
                           (err) => {

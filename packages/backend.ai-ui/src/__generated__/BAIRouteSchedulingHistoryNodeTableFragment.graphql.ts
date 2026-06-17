@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7826d64cc35baebfbae84de866de9d0e>>
+ * @generated SignedSource<<a5551f78ac6c3a7a81da42ebe1585381>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,17 +15,12 @@ export type BAIRouteSchedulingHistoryNodeTableFragment$data = ReadonlyArray<{
   readonly attempts: number;
   readonly category: string;
   readonly createdAt: string;
-  readonly deploymentId: string;
   readonly errorCode: string | null | undefined;
   readonly fromStatus: string | null | undefined;
   readonly id: string;
   readonly message: string | null | undefined;
   readonly phase: string;
   readonly result: SchedulingResult;
-  readonly routeId: string;
-  readonly subSteps: ReadonlyArray<{
-    readonly " $fragmentSpreads": FragmentRefs<"BAISubStepNodesFragment">;
-  }>;
   readonly toStatus: string | null | undefined;
   readonly updatedAt: string;
   readonly " $fragmentType": "BAIRouteSchedulingHistoryNodeTableFragment";
@@ -48,20 +43,6 @@ const node: ReaderFragment = {
       "args": null,
       "kind": "ScalarField",
       "name": "id",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "routeId",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "deploymentId",
       "storageKey": null
     },
     {
@@ -116,22 +97,6 @@ const node: ReaderFragment = {
     {
       "alias": null,
       "args": null,
-      "concreteType": "SubStepResultGQL",
-      "kind": "LinkedField",
-      "name": "subSteps",
-      "plural": true,
-      "selections": [
-        {
-          "args": null,
-          "kind": "FragmentSpread",
-          "name": "BAISubStepNodesFragment"
-        }
-      ],
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
       "kind": "ScalarField",
       "name": "attempts",
       "storageKey": null
@@ -155,6 +120,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "3f283b3e8ef039a11e41ade44a38092f";
+(node as any).hash = "bd0c64d2e599015d8b9db0afbcb05c7c";
 
 export default node;

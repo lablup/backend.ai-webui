@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0535132828abc9eed973a60752c269fe>>
+ * @generated SignedSource<<a9352110d0ad45b9d6726d071c00635a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,6 +15,7 @@ export type DeploymentAddRevisionModalImageNameQuery$variables = {
 export type DeploymentAddRevisionModalImageNameQuery$data = {
   readonly imageV2: {
     readonly identity: {
+      readonly architecture: string;
       readonly canonicalName: string;
     };
   } | null | undefined;
@@ -52,6 +53,13 @@ v2 = {
       "args": null,
       "kind": "ScalarField",
       "name": "canonicalName",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "architecture",
       "storageKey": null
     }
   ],
@@ -108,16 +116,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "c7f86a18b204736e35e7935bb3913511",
+    "cacheID": "71af54781375e6ee4bceb1c73e74d088",
     "id": null,
     "metadata": {},
     "name": "DeploymentAddRevisionModalImageNameQuery",
     "operationKind": "query",
-    "text": "query DeploymentAddRevisionModalImageNameQuery(\n  $id: ID!\n) {\n  imageV2(id: $id) {\n    identity {\n      canonicalName\n    }\n    id\n  }\n}\n"
+    "text": "query DeploymentAddRevisionModalImageNameQuery(\n  $id: ID!\n) {\n  imageV2(id: $id) {\n    identity {\n      canonicalName\n      architecture\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "e0f63d644538b757a6d30c78d1771156";
+(node as any).hash = "7f7c91d5e401085de1ab4d56ffb2ef9b";
 
 export default node;

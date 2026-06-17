@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<aa104f63e58e1c03d1fb03d8c713a79f>>
+ * @generated SignedSource<<eccee3bd3c15f814f9bbe478c1533800>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -33,6 +33,22 @@ export type DeploymentPresetDetailModalFragment$data = {
     readonly startupCommand: string | null | undefined;
   };
   readonly id: string;
+  readonly modelDefinition: {
+    readonly models: ReadonlyArray<{
+      readonly name: string;
+      readonly service: {
+        readonly healthCheck: {
+          readonly enable: boolean;
+          readonly expectedStatusCode: number;
+          readonly initialDelay: number;
+          readonly interval: number;
+          readonly maxRetries: number;
+          readonly maxWaitTime: number;
+          readonly path: string;
+        } | null | undefined;
+      } | null | undefined;
+    }>;
+  } | null | undefined;
   readonly name: string;
   readonly presetValues: ReadonlyArray<{
     readonly presetId: string;
@@ -299,6 +315,100 @@ return {
         (v2/*: any*/)
       ],
       "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "ModelDefinition",
+      "kind": "LinkedField",
+      "name": "modelDefinition",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "ModelConfig",
+          "kind": "LinkedField",
+          "name": "models",
+          "plural": true,
+          "selections": [
+            (v1/*: any*/),
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "ModelServiceConfig",
+              "kind": "LinkedField",
+              "name": "service",
+              "plural": false,
+              "selections": [
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "ModelHealthCheck",
+                  "kind": "LinkedField",
+                  "name": "healthCheck",
+                  "plural": false,
+                  "selections": [
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "enable",
+                      "storageKey": null
+                    },
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "interval",
+                      "storageKey": null
+                    },
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "path",
+                      "storageKey": null
+                    },
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "maxRetries",
+                      "storageKey": null
+                    },
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "maxWaitTime",
+                      "storageKey": null
+                    },
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "expectedStatusCode",
+                      "storageKey": null
+                    },
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "initialDelay",
+                      "storageKey": null
+                    }
+                  ],
+                  "storageKey": null
+                }
+              ],
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
     }
   ],
   "type": "DeploymentRevisionPreset",
@@ -306,6 +416,6 @@ return {
 };
 })();
 
-(node as any).hash = "1e222e4572f001b430fba49ecaf73cb4";
+(node as any).hash = "93492d97fc60a7f2a69989f05fbb98af";
 
 export default node;

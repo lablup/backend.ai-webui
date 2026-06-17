@@ -904,7 +904,14 @@ export class Client {
     if (this.isManagerVersionCompatibleWith('26.4.3')) {
       this._features['model-deployment-extended-filter'] = true;
     }
-    if (this.isManagerVersionCompatibleWith('26.4.4')) {
+    // ModelHealthCheck gained an `enable` flag in 26.4.4 (BA-6242): health
+    // checks are opt-in via `enable: true/false` instead of nulling the whole
+    // object. Pinned to the rc7 tag for the same staging-manager reason as above.
+    // TODO(FR-3056): simplify to '26.4.4' once the final release ships.
+    if (this.isManagerVersionCompatibleWith('26.4.4rc7')) {
+      this._features['model-health-check-enable'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('26.4.4rc9')) {
       // RBAC list filters became their *Filter wrapper shapes (#11442):
       // scope/entity type enums -> RBACElementTypeFilter, roleId UUID ->
       // UUIDFilter, etc. FR-3017 (entityType enum), FR-3031 (roleId UUID).
@@ -918,6 +925,13 @@ export class Client {
       this._features['runtime-variant-preset-required'] = true;
       // Role auto-assign (BA-6183 / BA-6184 / BA-6187). FR-3029.
       this._features['role-auto-assign'] = true;
+      this._features['session-export-user-filter'] = true;
+      // ModelRuntimeConfig gained `runtimeVariantPresetValues` in 26.4.4rc9
+      // (FR-3139): preset values are sent as their own `{ presetId, value }`
+      // list instead of being serialized into environ / EXTRA_ARGS. Pinned to
+      // rc9 so the flag also activates against the staging manager (BA-6520).
+      // TODO(FR-3139): simplify to '26.4.4' once rc builds are out of use.
+      this._features['model-runtime-variant-preset-values'] = true;
     }
   }
 

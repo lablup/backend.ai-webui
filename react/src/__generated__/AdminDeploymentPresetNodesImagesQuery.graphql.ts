@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<65edfb88908aad5cb9265eeec22282e6>>
+ * @generated SignedSource<<09c354441a4d5eeafb0e24d0d57073cd>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,6 +19,7 @@ export type AdminDeploymentPresetNodesImagesQuery$data = {
       readonly node: {
         readonly id: string;
         readonly identity: {
+          readonly architecture: string;
           readonly canonicalName: string;
         };
       };
@@ -112,6 +113,13 @@ v1 = [
                     "kind": "ScalarField",
                     "name": "canonicalName",
                     "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "architecture",
+                    "storageKey": null
                   }
                 ],
                 "storageKey": null
@@ -144,16 +152,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "b16c3e55edc57c5e3de2cfb8b5a26a34",
+    "cacheID": "604ff4cb5204d2b04162356cf1bc921e",
     "id": null,
     "metadata": {},
     "name": "AdminDeploymentPresetNodesImagesQuery",
     "operationKind": "query",
-    "text": "query AdminDeploymentPresetNodesImagesQuery(\n  $ids: [UUID!]!\n  $limit: Int!\n) {\n  adminImagesV2(filter: {id: {in: $ids}}, limit: $limit) {\n    edges {\n      node {\n        id\n        identity {\n          canonicalName\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query AdminDeploymentPresetNodesImagesQuery(\n  $ids: [UUID!]!\n  $limit: Int!\n) {\n  adminImagesV2(filter: {id: {in: $ids}}, limit: $limit) {\n    edges {\n      node {\n        id\n        identity {\n          canonicalName\n          architecture\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "d8f2ec0224716ede95d74f0cc01629c0";
+(node as any).hash = "3d1d4122d3da2b08617c72d2defb1ad0";
 
 export default node;

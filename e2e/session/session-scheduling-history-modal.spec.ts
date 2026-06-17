@@ -165,9 +165,6 @@ test.describe(
         modal.getByRole('columnheader', { name: 'Result' }),
       ).toBeVisible();
       await expect(
-        modal.getByRole('columnheader', { name: 'Status Transition' }),
-      ).toBeVisible();
-      await expect(
         modal.getByRole('columnheader', { name: 'Attempts' }),
       ).toBeVisible();
       await expect(
@@ -177,48 +174,19 @@ test.describe(
         modal.getByRole('columnheader', { name: 'Created At' }),
       ).toBeVisible();
 
-      // 7. Verify the sub-header "From" and "To" within Status Transition
+      // 7. Verify the flat status-transition columns "From Status" and
+      // "To Status" (the grouped "Status Transition" header was removed).
       await expect(
-        modal.getByRole('columnheader', { name: 'From' }),
+        modal.getByRole('columnheader', { name: 'From Status' }),
       ).toBeVisible();
       await expect(
-        modal.getByRole('columnheader', { name: 'To' }),
+        modal.getByRole('columnheader', { name: 'To Status' }),
       ).toBeVisible();
-
-      // 8. Verify the Close button is visible in the modal footer
-      const closeButtonFooter = modal
-        .getByRole('button', { name: 'Close' })
-        .filter({ hasText: 'Close' });
-      await expect(closeButtonFooter).toBeVisible();
     });
 
     // ─────────────────────────────────────────────────────────────────────────
     // 3. Modal Dismissal
     // ─────────────────────────────────────────────────────────────────────────
-
-    test('Admin can close the Session Scheduling History modal using the footer Close button', async ({
-      page,
-    }) => {
-      // 1. Open the Session Detail drawer and history modal
-      await openSessionDetailDrawer(page);
-      const modal = await openSchedulingHistoryModal(page);
-
-      // 2. Verify the modal is visible
-      await expect(modal).toBeVisible();
-
-      // 3. Click the footer "Close" button
-      await modal
-        .getByRole('button', { name: 'Close' })
-        .filter({ hasText: 'Close' })
-        .click();
-
-      // 4. Verify the modal is no longer visible
-      await expect(modal).not.toBeVisible();
-
-      // 5. Verify the Session Detail drawer is still open
-      const drawer = page.getByRole('dialog', { name: 'Session Info' });
-      await expect(drawer).toBeVisible();
-    });
 
     test('Admin can close the Session Scheduling History modal using the X button in the header', async ({
       page,
@@ -231,9 +199,8 @@ test.describe(
       await expect(modal).toBeVisible();
 
       // 3. Click the X (close) button in the modal header.
-      // The Ant Design modal header X button has aria-label="Close" and appears first in DOM order.
-      // The footer "Close" button has visible text "Close" (use hasText to distinguish them).
-      // The header X button is the first button named "Close" in the modal.
+      // The Ant Design modal header X button has aria-label="Close"; the modal
+      // is footerless, so it is the only "Close" button in the modal.
       const headerCloseButton = modal
         .getByRole('button', { name: 'Close' })
         .first();
@@ -732,7 +699,15 @@ test.describe(
       await openSessionDetailDrawer(page);
       const modal = await openSchedulingHistoryModal(page);
 
-      // 2. Identify a row with an expand icon (the schedule-sessions row has sub-steps).
+      // 2. Switch to "Collapse all" via the header kebab (⋮) menu first. The
+      // default "expand errors only" mode filters SUCCESS sub-steps out of the
+      // nested table, so expanding the all-SUCCESS schedule-sessions row would
+      // show an empty sub-step table. "Collapse all" disables that filter while
+      // leaving every row collapsed, so the row can still be manually expanded.
+      await modal.locator('thead button').first().click();
+      await page.getByRole('menuitem', { name: 'Collapse all' }).click();
+
+      // 3. Identify a row with an expand icon (the schedule-sessions row has sub-steps).
       // NOTE: antd renders a "spaced" (invisible) expand button on ALL rows, even non-expandable
       // ones. Playwright's accessible-name computation for <tr> uses text content only (not
       // nested button aria-labels), so the pattern /Expand row schedule-sessions/ does not match
@@ -743,7 +718,7 @@ test.describe(
         .filter({ hasText: 'schedule-sessions' });
       await expect(expandableRow).toBeVisible();
 
-      // 3. Click the expand icon/arrow on that row
+      // 4. Click the expand icon/arrow on that row
       await expandableRow.getByLabel('Expand row').click();
 
       // 4. Verify the sub-steps table columns are visible
@@ -783,7 +758,13 @@ test.describe(
       await openSessionDetailDrawer(page);
       const modal = await openSchedulingHistoryModal(page);
 
-      // 2. Expand the schedule-sessions row.
+      // 2. Switch to "Collapse all" so the nested sub-step table is not filtered
+      // to errors-only (the default mode hides the SUCCESS sub-step asserted
+      // below). Rows start collapsed, so the row can still be manually expanded.
+      await modal.locator('thead button').first().click();
+      await page.getByRole('menuitem', { name: 'Collapse all' }).click();
+
+      // 3. Expand the schedule-sessions row.
       // Use filter by text content — see test #8 comment for why the name pattern
       // /Expand row schedule-sessions/ does not work with Playwright's row accname.
       // Narrow to the first match to avoid strict-mode violations if multiple
@@ -926,7 +907,13 @@ test.describe(
         .filter({ hasText: 'schedule-sessions' });
       await expect(scheduleRow).toBeVisible();
 
-      // 5. Expand the schedule-sessions row to view sub-step details
+      // 5. Switch to "Collapse all" so the nested sub-step table is not filtered
+      // to errors-only (the default mode hides the SUCCESS sub-step asserted in
+      // step 7). Rows stay collapsed, so the row is still manually expandable.
+      await modal.locator('thead button').first().click();
+      await page.getByRole('menuitem', { name: 'Collapse all' }).click();
+
+      // 6. Expand the schedule-sessions row to view sub-step details
       await scheduleRow.getByLabel('Expand row').click();
 
       // 6. Verify the sub-steps table appears with correct column headers
@@ -956,11 +943,8 @@ test.describe(
         modal.getByRole('columnheader', { name: 'Phase' }),
       ).toBeVisible();
 
-      // 10. Click the footer "Close" button to close the modal
-      await modal
-        .getByRole('button', { name: 'Close' })
-        .filter({ hasText: 'Close' })
-        .click();
+      // 10. Click the header X (close) button to close the modal
+      await modal.getByRole('button', { name: 'Close' }).first().click();
 
       // 11. Verify the modal is closed
       await expect(modal).not.toBeVisible();

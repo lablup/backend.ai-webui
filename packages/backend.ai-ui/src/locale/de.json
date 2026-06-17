@@ -127,12 +127,11 @@
     "Category": "Kategorie",
     "CreatedAt": "Erstellt am",
     "ErrorCode": "Fehlercode",
-    "From": "Von",
+    "From": "Ausgangsstatus",
     "Message": "Nachricht",
     "Phase": "Phase",
     "Result": "Ergebnis",
-    "StatusTransition": "Statuswechsel",
-    "To": "An",
+    "To": "Zielstatus",
     "UpdatedAt": "Aktualisiert am"
   },
   "comp:BAIDeploymentSelect": {
@@ -223,6 +222,7 @@
     "EndpointURL": "Endpunkt URL",
     "FailedToDeleteDeployment": "Fehler beim Löschen des Deployments.",
     "HealthySummary": "{{healthy}} / {{total}}",
+    "Lifecycle": "Lebenszyklus",
     "Model": "Modell",
     "Name": "Name",
     "OpenToPublic": "Öffentlich",
@@ -236,7 +236,6 @@
     "ResourceGroup": "Ressourcengruppe",
     "RevisionNumber": "Revision",
     "RevisionNumberTooltip": "Die aktuelle Revisionsnummer des Deployments.",
-    "Status": "Status",
     "StrategyType": "Strategie",
     "Tags": "Stichworte",
     "UpdatedAt": "Aktualisiert am"
@@ -325,12 +324,11 @@
     "Category": "Kategorie",
     "CreatedAt": "Erstellt am",
     "ErrorCode": "Fehlercode",
-    "From": "Von",
+    "From": "Ausgangsstatus",
     "Message": "Nachricht",
     "Phase": "Phase",
     "Result": "Ergebnis",
-    "StatusTransition": "Statuswechsel",
-    "To": "An",
+    "To": "Zielstatus",
     "UpdatedAt": "Aktualisiert am"
   },
   "comp:BAIRuntimeVariantSelect": {
@@ -341,12 +339,11 @@
     "Category": "Kategorie",
     "CreatedAt": "Erstellt am",
     "ErrorCode": "Fehlercode",
-    "From": "Von",
+    "From": "Ausgangsstatus",
     "Message": "Nachricht",
     "Phase": "Phase",
     "Result": "Ergebnis",
-    "StatusTransition": "Statuswechsel",
-    "To": "An",
+    "To": "Zielstatus",
     "UpdatedAt": "Aktualisiert am"
   },
   "comp:BAISessionAgentIds": {
@@ -371,6 +368,10 @@
     "Step": "Schritt"
   },
   "comp:BAITable": {
+    "CollapseAll": "Alle einklappen",
+    "ExpandAll": "Alle ausklappen",
+    "ExpandErrorsOnly": "Nur Fehler ausklappen",
+    "ExpandOptions": "Ausklappoptionen",
     "Export": "Exportieren",
     "ExportCSV": "Als CSV exportieren",
     "GoToFirstPage": "Zur ersten Seite",

@@ -2,15 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { reverseMapExtraArgs } from '../helper/runtimeExtraArgsParser';
 import { useSuspendedBackendaiClient } from '../hooks';
 import {
   RuntimeVariantPresetDef,
   RuntimeParameterGroup,
+  RuntimeVariantPresetValueEntry,
   useRuntimeParameterSchema,
-  buildArgsSchemaKeySet,
-  buildEnvPresetKeySet,
-  flattenPresets,
 } from '../hooks/useRuntimeParameterSchema';
 import InputNumberWithSlider from './InputNumberWithSlider';
 import { UndoOutlined } from '@ant-design/icons';
@@ -26,7 +23,7 @@ import {
   Alert,
   Tabs,
 } from 'antd';
-import { BAIButton, BAIFlex } from 'backend.ai-ui';
+import { BAIButton, BAIFlex, toLocalId } from 'backend.ai-ui';
 import React, { useEffect, useEffectEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -84,10 +81,14 @@ interface RuntimeParameterFormSectionProps {
   onTouchedKeysChange?: (touchedKeys: Set<string>) => void;
   /** Called when preset groups are loaded from the API */
   onGroupsLoaded?: (groups: RuntimeParameterGroup[] | null) => void;
-  /** Existing extra args string for edit mode reverse-mapping (ARGS-type presets) */
-  initialExtraArgs?: string;
-  /** Existing environ for edit mode reverse-mapping (ENV-type presets) */
-  initialEnvVars?: Record<string, string>;
+  /**
+   * Existing preset values for edit mode, keyed by preset id
+   * (`{ presetId, value }`). Replaces the former EXTRA_ARGS / env-var
+   * reverse-mapping: preset values are now their own query field
+   * (`runtimeVariantPresetValues`), so controls hydrate directly from these
+   * entries instead of being parsed out of environment variables.
+   */
+  initialPresetValues?: ReadonlyArray<RuntimeVariantPresetValueEntry>;
 }
 
 /**
@@ -103,8 +104,7 @@ const RuntimeParameterFormSection: React.FC<
   runtimeVariant,
   onTouchedKeysChange,
   onGroupsLoaded,
-  initialExtraArgs,
-  initialEnvVars,
+  initialPresetValues,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -133,7 +133,7 @@ const RuntimeParameterFormSection: React.FC<
   }, [groups]);
 
   // Track which parameter keys the user has explicitly interacted with.
-  // In edit mode, keys already present in the endpoint's env vars are pre-marked.
+  // In edit mode, keys hydrated from existing preset values are pre-marked.
   const [touchedKeys, setTouchedKeys] = useState<Set<string>>(new Set());
 
   const [activeTab, setActiveTab] = useState<string>('');
@@ -142,50 +142,34 @@ const RuntimeParameterFormSection: React.FC<
   // surfaced as control placeholders instead, so untouched fields stay empty
   // (the runtime applies its own defaults) and required presets fail
   // validation until the user supplies an explicit value. In edit mode,
-  // values reverse-mapped from the existing extra args / env vars are seeded.
+  // values hydrated from existing preset values (keyed by preset id) are
+  // seeded.
   const initializeValues = useEffectEvent(() => {
     if (!groups) return;
 
-    const hasInitialData = !!initialExtraArgs || !!initialEnvVars;
-
-    if (hasInitialData) {
-      let mappedFromArgs: Record<string, string> = {};
-      let mappedFromEnv: Record<string, string> = {};
-
-      // Reverse-map ARGS-type presets from EXTRA_ARGS string
-      if (initialExtraArgs) {
-        const argsSchemaKeys = buildArgsSchemaKeySet(groups);
-        const { mappedArgs } = reverseMapExtraArgs(
-          initialExtraArgs,
-          argsSchemaKeys,
-        );
-        mappedFromArgs = mappedArgs;
-      }
-
-      // Reverse-map ENV-type presets from individual env vars
-      if (initialEnvVars) {
-        const envPresetKeys = buildEnvPresetKeySet(groups);
-        for (const envKey of envPresetKeys) {
-          if (initialEnvVars[envKey] !== undefined) {
-            mappedFromEnv[envKey] = initialEnvVars[envKey];
-          }
+    if (initialPresetValues && initialPresetValues.length > 0) {
+      // Map preset id → preset definition so queried `{ presetId, value }`
+      // entries can hydrate the controls. Accept either the local UUID or the
+      // Relay global id, since the source of the id can vary across call sites.
+      const idToParam = new Map<string, RuntimeVariantPresetDef>();
+      for (const group of groups) {
+        for (const param of group.params) {
+          idToParam.set(param.id, param);
+          const localId = toLocalId(param.id);
+          if (localId) idToParam.set(localId, param);
         }
       }
 
-      const presetMap = new Map(flattenPresets(groups).map((p) => [p.key, p]));
       const nativeMapped: RuntimeParameterValues = {};
-      for (const [key, raw] of Object.entries({
-        ...mappedFromArgs,
-        ...mappedFromEnv,
-      })) {
-        const preset = presetMap.get(key);
-        if (preset) nativeMapped[key] = toNativeValue(preset, raw);
+      for (const { presetId, value } of initialPresetValues) {
+        const param = idToParam.get(presetId);
+        if (param) nativeMapped[param.key] = toNativeValue(param, value);
       }
 
       // Replace the whole namespace so values from a previously selected
       // variant don't leak into this one.
       form.setFieldValue(RUNTIME_PARAMS_NAMESPACE, nativeMapped);
-      // Pre-mark keys from existing env vars as touched
+      // Pre-mark keys hydrated from existing preset values as touched.
       const initialTouched = new Set(Object.keys(nativeMapped));
       setTouchedKeys(initialTouched);
       onTouchedKeysChange?.(initialTouched);
@@ -196,9 +180,10 @@ const RuntimeParameterFormSection: React.FC<
     }
   });
 
-  // Initialize only when runtimeVariant or groups change — NOT when initialExtraArgs/initialEnvVars
-  // change (e.g., due to Relay store updates after mutation). The initial* props are read inside
-  // initializeValues via useEffectEvent, so they always reflect the latest closure.
+  // Initialize only when runtimeVariant or groups change — NOT when
+  // initialPresetValues changes (e.g., due to Relay store updates after a
+  // mutation). The initial* prop is read inside initializeValues via
+  // useEffectEvent, so it always reflects the latest closure.
   useEffect(() => {
     initializeValues();
   }, [runtimeVariant, groups]);

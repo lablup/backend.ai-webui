@@ -297,7 +297,7 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
       key: 'status',
       title: (
         <BAIFlex gap="xxs" align="center">
-          {t('general.Status')}
+          {t('deployment.ReplicaLifecycle')}
           <BAIQuestionIconWithTooltip
             title={t('deployment.ReplicaLifecycleStatusTooltip')}
           />
@@ -321,6 +321,8 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
                     {
                       scope: { routeId: id },
                       orderBy: [{ field: 'UPDATED_AT', direction: 'DESC' }],
+                      limit: 10,
+                      offset: 0,
                     },
                     {
                       fetchPolicy: 'store-and-network',
@@ -345,11 +347,18 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
         </BAIFlex>
       ),
       dataIndex: 'healthStatus',
-      render: (value: string | null | undefined) => (
+      render: (value: string | null | undefined, record: ReplicaNode) => (
         // TODO(needs-backend): FR-2787 — expose failure reason / error message
         // from the replica once the backend adds a `failureReason` field to
         // `ModelReplica` so unhealthy replicas surface actionable error info.
-        <ReplicaStatusTag status={toReplicaTagStatus(value)} />
+        //
+        // A terminated replica reports healthStatus NOT_CHECKED, whose
+        // "awaiting the first health check" tooltip is misleading once the
+        // replica is gone — suppress the tooltip in that case (keep the tag).
+        <ReplicaStatusTag
+          status={toReplicaTagStatus(value)}
+          showTooltip={toReplicaTagStatus(record.status) !== 'TERMINATED'}
+        />
       ),
     },
     {

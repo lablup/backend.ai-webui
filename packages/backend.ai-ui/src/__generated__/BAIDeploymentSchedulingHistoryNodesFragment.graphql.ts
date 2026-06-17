@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<99de343c87eba570df6b2b85270538f5>>
+ * @generated SignedSource<<71095bfdeccbadb23853c6e22f7d6864>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -21,9 +21,6 @@ export type BAIDeploymentSchedulingHistoryNodesFragment$data = ReadonlyArray<{
   readonly message: string | null | undefined;
   readonly phase: string;
   readonly result: SchedulingResult;
-  readonly subSteps: ReadonlyArray<{
-    readonly " $fragmentSpreads": FragmentRefs<"BAISubStepNodesFragment">;
-  }>;
   readonly toStatus: string | null | undefined;
   readonly updatedAt: string;
   readonly " $fragmentType": "BAIDeploymentSchedulingHistoryNodesFragment";
@@ -100,22 +97,6 @@ const node: ReaderFragment = {
     {
       "alias": null,
       "args": null,
-      "concreteType": "SubStepResultGQL",
-      "kind": "LinkedField",
-      "name": "subSteps",
-      "plural": true,
-      "selections": [
-        {
-          "args": null,
-          "kind": "FragmentSpread",
-          "name": "BAISubStepNodesFragment"
-        }
-      ],
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
       "kind": "ScalarField",
       "name": "attempts",
       "storageKey": null
@@ -139,6 +120,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "993394664d6af0ea9ee225d992cff972";
+(node as any).hash = "eb0787126d34e31d6d0aa79127c25d2f";
 
 export default node;

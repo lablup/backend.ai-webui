@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c9b11cc78d999a8adae74bc3eee94da9>>
+ * @generated SignedSource<<647732c7555c81ded3a8bc56d94d23ca>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -107,6 +107,13 @@ return {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
+            "name": "name",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "id",
             "storageKey": null
           }
@@ -116,12 +123,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "6e2c7cca467d32f74de4ddf840a8f08a",
+    "cacheID": "88acc886856e154b1e3691c9159266a3",
     "id": null,
     "metadata": {},
     "name": "ChatCardQuery",
     "operationKind": "query",
-    "text": "query ChatCardQuery(\n  $endpointId: UUID!\n) {\n  endpoint(endpoint_id: $endpointId) {\n    endpoint_id\n    url\n    ...ChatHeader_Endpoint\n    id\n  }\n}\n\nfragment ChatHeader_Endpoint on Endpoint {\n  endpoint_id\n}\n"
+    "text": "query ChatCardQuery(\n  $endpointId: UUID!\n) {\n  endpoint(endpoint_id: $endpointId) {\n    endpoint_id\n    url\n    ...ChatHeader_Endpoint\n    id\n  }\n}\n\nfragment ChatHeader_Endpoint on Endpoint {\n  endpoint_id\n  name\n}\n"
   }
 };
 })();

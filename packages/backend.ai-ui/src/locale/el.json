@@ -127,12 +127,11 @@
     "Category": "Κατηγορία",
     "CreatedAt": "Δημιουργήθηκε στις",
     "ErrorCode": "Κωδικός σφάλματος",
-    "From": "Από",
+    "From": "Κατάσταση προέλευσης",
     "Message": "Μήνυμα",
     "Phase": "Φάση",
     "Result": "Αποτέλεσμα",
-    "StatusTransition": "Αλλαγή κατάστασης",
-    "To": "Έως",
+    "To": "Κατάσταση προορισμού",
     "UpdatedAt": "Ενημερώθηκε στις"
   },
   "comp:BAIDeploymentSelect": {
@@ -223,6 +222,7 @@
     "EndpointURL": "URL Τελικού Σημείου",
     "FailedToDeleteDeployment": "Αποτυχία διαγραφής ανάπτυξης.",
     "HealthySummary": "{{healthy}} / {{total}}",
+    "Lifecycle": "Κύκλος ζωής",
     "Model": "Μοντέλο",
     "Name": "Όνομα",
     "OpenToPublic": "Ανοιχτό στο Κοινό",
@@ -236,7 +236,6 @@
     "ResourceGroup": "Ομάδα Πόρων",
     "RevisionNumber": "Αναθεώρηση",
     "RevisionNumberTooltip": "Ο τρέχων αριθμός αναθεώρησης της ανάπτυξης.",
-    "Status": "Κατάσταση",
     "StrategyType": "Στρατηγική",
     "Tags": "Ετικέτες",
     "UpdatedAt": "Ενημερώθηκε"
@@ -325,12 +324,11 @@
     "Category": "Κατηγορία",
     "CreatedAt": "Δημιουργήθηκε στις",
     "ErrorCode": "Κωδικός σφάλματος",
-    "From": "Από",
+    "From": "Κατάσταση προέλευσης",
     "Message": "Μήνυμα",
     "Phase": "Φάση",
     "Result": "Αποτέλεσμα",
-    "StatusTransition": "Αλλαγή κατάστασης",
-    "To": "Έως",
+    "To": "Κατάσταση προορισμού",
     "UpdatedAt": "Ενημερώθηκε στις"
   },
   "comp:BAIRuntimeVariantSelect": {
@@ -341,12 +339,11 @@
     "Category": "Κατηγορία",
     "CreatedAt": "Δημιουργήθηκε στις",
     "ErrorCode": "Κωδικός σφάλματος",
-    "From": "Από",
+    "From": "Κατάσταση προέλευσης",
     "Message": "Μήνυμα",
     "Phase": "Φάση",
     "Result": "Αποτέλεσμα",
-    "StatusTransition": "Αλλαγή κατάστασης",
-    "To": "Έως",
+    "To": "Κατάσταση προορισμού",
     "UpdatedAt": "Ενημερώθηκε στις"
   },
   "comp:BAISessionAgentIds": {
@@ -371,6 +368,10 @@
     "Step": "Βήμα"
   },
   "comp:BAITable": {
+    "CollapseAll": "Σύμπτυξη όλων",
+    "ExpandAll": "Ανάπτυξη όλων",
+    "ExpandErrorsOnly": "Ανάπτυξη μόνο σφαλμάτων",
+    "ExpandOptions": "Επιλογές ανάπτυξης",
     "Export": "Εξαγωγή",
     "ExportCSV": "Εξαγωγή CSV",
     "GoToFirstPage": "Μετάβαση στην πρώτη σελίδα",

@@ -672,9 +672,9 @@ const useStyles = createStyles(({ token, css }) => ({
       font-weight: 500;
       color: ${token.colorTextTertiary};
     }
-    body:not(.dark-theme) & .ant-table-expanded-row > .ant-table-cell,
-    body:not(.dark-theme) & .ant-table-expanded-row:hover > .ant-table-cell {
-      background: #e3e3e3;
+    & .ant-table-expanded-row > .ant-table-cell,
+    & .ant-table-expanded-row:hover > .ant-table-cell {
+      background: ${token.colorFillSecondary};
     }
   `,
   zeroWithSelectionColumn: css`
