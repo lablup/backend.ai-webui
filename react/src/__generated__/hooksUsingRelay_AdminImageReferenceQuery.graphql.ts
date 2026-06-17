@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<061bc85889a29081260835fb878091f2>>
+ * @generated SignedSource<<fd7fb2a0ccbc22c5fa6b8653ac28062f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,23 +9,24 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type hooksUsingRelay_AdminImageCanonicalNameQuery$variables = {
+export type hooksUsingRelay_AdminImageReferenceQuery$variables = {
   id: string;
 };
-export type hooksUsingRelay_AdminImageCanonicalNameQuery$data = {
+export type hooksUsingRelay_AdminImageReferenceQuery$data = {
   readonly adminImagesV2: {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly identity: {
+          readonly architecture: string;
           readonly canonicalName: string;
         };
       };
     }>;
   } | null | undefined;
 };
-export type hooksUsingRelay_AdminImageCanonicalNameQuery = {
-  response: hooksUsingRelay_AdminImageCanonicalNameQuery$data;
-  variables: hooksUsingRelay_AdminImageCanonicalNameQuery$variables;
+export type hooksUsingRelay_AdminImageReferenceQuery = {
+  response: hooksUsingRelay_AdminImageReferenceQuery$data;
+  variables: hooksUsingRelay_AdminImageReferenceQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -74,6 +75,13 @@ v2 = {
       "kind": "ScalarField",
       "name": "canonicalName",
       "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "architecture",
+      "storageKey": null
     }
   ],
   "storageKey": null
@@ -83,7 +91,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "hooksUsingRelay_AdminImageCanonicalNameQuery",
+    "name": "hooksUsingRelay_AdminImageReferenceQuery",
     "selections": [
       {
         "alias": null,
@@ -127,7 +135,7 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "hooksUsingRelay_AdminImageCanonicalNameQuery",
+    "name": "hooksUsingRelay_AdminImageReferenceQuery",
     "selections": [
       {
         "alias": null,
@@ -173,16 +181,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "aa61d8950f022a65a74a32ab014bb7b3",
+    "cacheID": "2488b1b0b7c570c4740c0826f33c1964",
     "id": null,
     "metadata": {},
-    "name": "hooksUsingRelay_AdminImageCanonicalNameQuery",
+    "name": "hooksUsingRelay_AdminImageReferenceQuery",
     "operationKind": "query",
-    "text": "query hooksUsingRelay_AdminImageCanonicalNameQuery(\n  $id: UUID!\n) {\n  adminImagesV2(filter: {id: {equals: $id}}, limit: 1) {\n    edges {\n      node {\n        identity {\n          canonicalName\n        }\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query hooksUsingRelay_AdminImageReferenceQuery(\n  $id: UUID!\n) {\n  adminImagesV2(filter: {id: {equals: $id}}, limit: 1) {\n    edges {\n      node {\n        identity {\n          canonicalName\n          architecture\n        }\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0a0243b442f62df3f28e69e6c91eb93a";
+(node as any).hash = "1268865e22264aa8fe7c775602949b70";
 
 export default node;

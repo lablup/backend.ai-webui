@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ad6a539a202d3009cb10a3f5282124df>>
+ * @generated SignedSource<<8d2264399408b5cde4b337f60bfe297e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -77,6 +77,7 @@ export type BAIAdminImageSelectPaginatedQuery$data = {
       readonly node: {
         readonly id: string;
         readonly identity: {
+          readonly architecture: string;
           readonly canonicalName: string;
         };
       };
@@ -183,6 +184,13 @@ v3 = [
                     "kind": "ScalarField",
                     "name": "canonicalName",
                     "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "architecture",
+                    "storageKey": null
                   }
                 ],
                 "storageKey": null
@@ -223,16 +231,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "3605d3829fb95096dc3f8daee65f73fa",
+    "cacheID": "3607855c4e9666c6ebd350ba0a2c510c",
     "id": null,
     "metadata": {},
     "name": "BAIAdminImageSelectPaginatedQuery",
     "operationKind": "query",
-    "text": "query BAIAdminImageSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: ImageV2Filter\n) {\n  adminImagesV2(offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: NAME, direction: ASC}]) {\n    count\n    edges {\n      node {\n        id\n        identity {\n          canonicalName\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BAIAdminImageSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: ImageV2Filter\n) {\n  adminImagesV2(offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: NAME, direction: ASC}]) {\n    count\n    edges {\n      node {\n        id\n        identity {\n          canonicalName\n          architecture\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "9d58814c6c642167f778476211c7c450";
+(node as any).hash = "f54610edee78e3778fe21cf9882fcff3";
 
 export default node;

@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useAdminImageCanonicalName } from '../hooks/hooksUsingRelay';
+import { useAdminImageReference } from '../hooks/hooksUsingRelay';
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
 import type { AdminDeploymentPresetFormValue } from './AdminDeploymentPresetFormTypes';
 import SourceCodeView from './SourceCodeView';
@@ -54,7 +54,7 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
   // `true` includes untouched fields and arrays (e.g. modelDefinition.models)
   // that getFieldsValue() omits; its overload returns `any`, so annotate here.
   const values: AdminDeploymentPresetFormValue = form.getFieldsValue(true);
-  const imageCanonicalName = useAdminImageCanonicalName(values.imageId);
+  const imageReference = useAdminImageReference(values.imageId);
 
   const basicInfoHasError = BASIC_INFO_FIELDS.some((f) =>
     errorFieldNames.includes(f),
@@ -115,13 +115,13 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
             </Descriptions.Item>
           )}
           <Descriptions.Item label={t('adminDeploymentPreset.Image')}>
-            {imageCanonicalName ? (
+            {imageReference ? (
               <Typography.Text
                 code
                 style={{ wordBreak: 'break-all' }}
-                copyable={{ text: imageCanonicalName }}
+                copyable={{ text: imageReference }}
               >
-                {imageCanonicalName}
+                {imageReference}
               </Typography.Text>
             ) : (
               '-'
