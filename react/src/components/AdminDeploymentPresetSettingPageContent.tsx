@@ -149,34 +149,35 @@ const ImageSelectField: React.FC<{
 const sanitizeFormValuesForURL = (
   values: Partial<AdminDeploymentPresetFormValue>,
 ): Partial<AdminDeploymentPresetFormValue> => {
-  const next = _.cloneDeep(values);
-  if (next.environ) {
-    next.environ = next.environ.map((e) => ({
-      variable: e?.variable ?? '',
-      value: '',
-    }));
-  }
-  if (next.modelDefinition?.models) {
-    next.modelDefinition = {
-      ...next.modelDefinition,
-      models: next.modelDefinition.models.map((m) =>
-        m
-          ? {
-              ...m,
-              service: m.service
-                ? {
-                    ...m.service,
-                    preStartActions: (m.service.preStartActions ?? []).map(
-                      (a) => ({ action: a?.action ?? '', args: '' }),
-                    ),
-                  }
-                : m.service,
-            }
-          : m,
-      ),
-    };
-  }
-  return next;
+  return {
+    ...values,
+    ...(values.environ && {
+      environ: values.environ.map((e) => ({
+        variable: e?.variable ?? '',
+        value: '',
+      })),
+    }),
+    ...(values.modelDefinition?.models && {
+      modelDefinition: {
+        ...values.modelDefinition,
+        models: values.modelDefinition.models.map((m) =>
+          m
+            ? {
+                ...m,
+                service: m.service
+                  ? {
+                      ...m.service,
+                      preStartActions: (m.service.preStartActions ?? []).map(
+                        (a) => ({ action: a?.action ?? '', args: '' }),
+                      ),
+                    }
+                  : m.service,
+              }
+            : m,
+        ),
+      },
+    }),
+  };
 };
 
 // ---------------------------------------------------------------------------
