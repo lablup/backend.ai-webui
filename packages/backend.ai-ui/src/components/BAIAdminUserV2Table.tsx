@@ -4,6 +4,7 @@ import {
   BAIQuestionIconWithTooltip,
   BAITable,
   BAITableProps,
+  BAITagList,
   BAIText,
   BooleanTag,
   filterOutEmpty,
@@ -15,7 +16,6 @@ import type {
   BAIAdminUserV2TableFragment$key,
 } from '../__generated__/BAIAdminUserV2TableFragment.graphql';
 import { useBAIi18n } from '../hooks/useBAIi18n';
-import { Tag, Tooltip } from 'antd';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import React from 'react';
@@ -66,35 +66,6 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
 }) => {
   'use memo';
   const { t } = useBAIi18n();
-
-  // Show only the first item inline on a single line; collapse the rest into a
-  // `+N` tag whose tooltip reveals the full list (all items) on hover.
-  const renderOverflowList = (
-    items: ReadonlyArray<string | number> | null | undefined,
-  ) => {
-    if (!items || items.length === 0) return '-';
-    const [first, ...rest] = items;
-    return (
-      <BAIFlex gap="xxs" align="center">
-        <span style={{ whiteSpace: 'nowrap' }}>{first}</span>
-        {rest.length > 0 && (
-          <Tooltip
-            title={
-              <BAIFlex direction="column" align="start">
-                {items.map((item, index) => (
-                  <span key={index}>{item}</span>
-                ))}
-              </BAIFlex>
-            }
-          >
-            <Tag color="default" style={{ marginInlineEnd: 0, cursor: 'help' }}>
-              +{rest.length}
-            </Tag>
-          </Tooltip>
-        )}
-      </BAIFlex>
-    );
-  };
 
   const users = useFragment(
     graphql`
@@ -236,8 +207,13 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
       {
         key: 'allowed_client_ip',
         title: t('comp:UserNodes.AllowedClientIps'),
-        render: (__, record) =>
-          renderOverflowList(record.security?.allowedClientIp),
+        render: (__, record) => (
+          <BAITagList
+            variant="text"
+            maxInline={1}
+            items={record.security?.allowedClientIp ?? []}
+          />
+        ),
       },
       {
         key: 'status',
@@ -297,8 +273,13 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
             />
           </BAIFlex>
         ),
-        render: (__, record) =>
-          renderOverflowList(record.container?.containerGids),
+        render: (__, record) => (
+          <BAITagList
+            variant="text"
+            maxInline={1}
+            items={record.container?.containerGids ?? []}
+          />
+        ),
       },
       {
         key: 'created_at',
