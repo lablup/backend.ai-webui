@@ -7,7 +7,7 @@ import {
   useDefaultImagesWithFallbackQuery,
   useDefaultImagesWithFallbackQuery$data,
 } from '../__generated__/useDefaultImagesWithFallbackQuery.graphql';
-import { getImageFullName } from '../helper';
+import { findMatchingImage, getImageFullName } from '../helper';
 import { atom, useAtom } from 'jotai';
 import { atomWithDefault } from 'jotai/utils';
 import * as _ from 'lodash-es';
@@ -40,23 +40,20 @@ const IMAGES_QUERY = graphql`
   }
 `;
 
+// Start as `undefined` so the hook's effect always runs the image fetch and
+// resolves the configured image (if any) against the installed image list via
+// `findMatchingImage`. This lets shorthand config values
+// (e.g. "registry/namespace" without a tag/arch) be matched to a concrete
+// installed image instead of being used verbatim. Resolution falls back to the
+// raw config value when no installed image matches, so a configured value is
+// never lost.
 const defaultFileBrowserImageAtom = atomWithDefault<
   string | null | undefined | Promise<string | null | undefined>
->(async () => {
-  const baiClient = await backendaiClientPromise;
-  return _.isEmpty(baiClient._config?.defaultFileBrowserImage)
-    ? undefined
-    : baiClient._config?.defaultFileBrowserImage;
-});
+>(async () => undefined);
 
 const systemSSHImageAtom = atomWithDefault<
   string | null | undefined | Promise<string | null | undefined>
->(async () => {
-  const baiClient = await backendaiClientPromise;
-  return _.isEmpty(baiClient._config?.systemSSHImage)
-    ? undefined
-    : baiClient._config?.systemSSHImage;
-});
+>(async () => undefined);
 const systemSSHImageInfoAtom =
   atom<NonNullable<useDefaultImagesWithFallbackQuery$data['images']>[number]>();
 
@@ -92,9 +89,24 @@ export const useDefaultFileBrowserImageWithFallback = () => {
           ),
         )
         .then(async (filebrowserImages) => {
-          const firstImage = _.first(filebrowserImages);
+          const baiClient = await backendaiClientPromise;
+          const configValue = baiClient._config?.defaultFileBrowserImage;
+          const validImages =
+            filebrowserImages?.filter(
+              (image): image is NonNullable<typeof image> => image != null,
+            ) ?? [];
+
+          // Use findMatchingImage if config value exists, otherwise take first filtered image
+          const matchedImage = configValue
+            ? findMatchingImage(configValue, validImages)
+            : _.first(validImages);
+
+          // Fall back to the raw config value when it cannot be resolved to an
+          // installed image, so an explicitly configured image is never lost.
           setDefaultFileBrowserImage(
-            firstImage ? getImageFullName(firstImage) : null,
+            matchedImage
+              ? getImageFullName(matchedImage)
+              : configValue || null,
           );
         })
         .catch(() => {
@@ -144,9 +156,24 @@ export const useDefaultSystemSSHImageWithFallback = () => {
           ),
         )
         .then(async (sshImages) => {
-          const firstImage = _.first(sshImages);
-          setSystemSSHImage(firstImage ? getImageFullName(firstImage) : null);
-          setSystemSSHImageInfo(firstImage || undefined);
+          const baiClient = await backendaiClientPromise;
+          const configValue = baiClient._config?.systemSSHImage;
+          const validImages =
+            sshImages?.filter(
+              (image): image is NonNullable<typeof image> => image != null,
+            ) ?? [];
+
+          // Use findMatchingImage if config value exists, otherwise take first filtered image
+          const matchedImage = configValue
+            ? findMatchingImage(configValue, validImages)
+            : _.first(validImages);
+
+          // Fall back to the raw config value when it cannot be resolved to an
+          // installed image, so an explicitly configured image is never lost.
+          setSystemSSHImage(
+            matchedImage ? getImageFullName(matchedImage) : configValue || null,
+          );
+          setSystemSSHImageInfo(matchedImage || undefined);
         })
         .catch(() => {
           // in case of error, set null to disable SFTP button
