@@ -11,6 +11,11 @@
  * Markers:
  *   <!-- terminology:auto:concepts START --> ... <!-- terminology:auto:concepts END -->
  *   <!-- terminology:auto:avoid START -->    ... <!-- terminology:auto:avoid END -->
+ *   <!-- terminology:auto:verbs START -->    ... <!-- terminology:auto:verbs END -->
+ *     (optional: rendered only when the verbs markers are present — absent
+ *      markers are a no-op so older TERMINOLOGY.md files keep regenerating
+ *      cleanly. One row per `verbs[]` entry; an empty `verbs` array yields a
+ *      header-only table.)
  *
  * Usage:
  *   node scripts/generate-terminology.mjs           # write TERMINOLOGY.md in place
@@ -52,6 +57,10 @@ const MARKERS = {
   avoid: {
     start: "<!-- terminology:auto:avoid START -->",
     end: "<!-- terminology:auto:avoid END -->",
+  },
+  verbs: {
+    start: "<!-- terminology:auto:verbs START -->",
+    end: "<!-- terminology:auto:verbs END -->",
   },
 };
 
@@ -197,6 +206,75 @@ function renderAvoid(data) {
 }
 
 /**
+ * Render the "Approved Verbs" table from data.verbs.
+ *
+ * A PURE LEXICON: one approved verb per intent, in a stated context, with the
+ * rejected near-synonyms. The table deliberately does NOT carry a "confirmation"
+ * column — whether an action needs a typed-confirm modal is owned by
+ * .claude/rules/destructive-confirmation.md (keyed off reversibility, per call
+ * site), and conflating the two axes is exactly what this artifact avoids. The
+ * optional "Reversible" column is documentation only.
+ * @param {any} data parsed terminology.json
+ * @returns {string}
+ */
+function renderVerbs(data) {
+  const verbs = Array.isArray(data.verbs) ? data.verbs : [];
+  // Deterministic order: by intent, then id.
+  const rows = [...verbs].sort(
+    (a, b) =>
+      byString(String(a.intent ?? ""), String(b.intent ?? "")) ||
+      byString(String(a.id ?? ""), String(b.id ?? "")),
+  );
+
+  const hasReversible = rows.some(
+    (v) => typeof v.reversible === "string" && v.reversible.length > 0,
+  );
+  const hasDecidingFR = rows.some(
+    (v) => typeof v.decidingFR === "string" && v.decidingFR.length > 0,
+  );
+  const hasDescription = rows.some(
+    (v) => typeof v.description === "string" && v.description.length > 0,
+  );
+
+  const headers = ["Intent", "Approved Verb (EN)", "Avoid", "Context"];
+  if (hasReversible) headers.push("Reversible");
+  if (hasDecidingFR) headers.push("Deciding FR");
+  if (hasDescription) headers.push("Description");
+
+  const lines = [];
+  lines.push(`| ${headers.join(" | ")} |`);
+  lines.push(`|${headers.map(() => "---").join("|")}|`);
+
+  for (const v of rows) {
+    const avoidList = Array.isArray(v.avoid) ? v.avoid.join(", ") : "";
+    const row = [
+      cell(v.intent),
+      cell(v.preferred ? v.preferred.en : undefined),
+      cell(avoidList),
+      cell(v.context),
+    ];
+    if (hasReversible) row.push(cell(v.reversible));
+    if (hasDecidingFR) row.push(cell(v.decidingFR));
+    if (hasDescription) row.push(cell(v.description));
+    lines.push(`| ${row.join(" | ")} |`);
+  }
+
+  return lines.join("\n");
+}
+
+/**
+ * Does the markdown contain both markers of a pair? Used to make the verbs
+ * region optional: when the markers are absent we skip it entirely so older
+ * TERMINOLOGY.md files (pre-verbs) keep regenerating without error.
+ * @param {string} md
+ * @param {{start: string, end: string}} marker
+ * @returns {boolean}
+ */
+function hasMarkers(md, marker) {
+  return md.includes(marker.start) && md.includes(marker.end);
+}
+
+/**
  * Replace the content between a START/END marker pair, preserving the markers
  * and everything outside them. Throws if either marker is missing.
  * @param {string} md
@@ -236,6 +314,12 @@ function generate(md, data) {
   let out = md;
   out = replaceRegion(out, MARKERS.concepts, renderConcepts(data));
   out = replaceRegion(out, MARKERS.avoid, renderAvoid(data));
+  // Verbs region is OPTIONAL: render only when the markers exist. This keeps
+  // the generator backward-compatible with any TERMINOLOGY.md that predates the
+  // verbs table, and lets a doc opt out of the verbs table by omitting markers.
+  if (hasMarkers(out, MARKERS.verbs)) {
+    out = replaceRegion(out, MARKERS.verbs, renderVerbs(data));
+  }
   return out;
 }
 
