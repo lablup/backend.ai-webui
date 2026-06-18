@@ -107,7 +107,7 @@
       "PreStartActions": "启动前操作",
       "Shell": "Shell",
       "StartCommand": "启动命令",
-      "StartCommandPlaceholder": "例如：python server.py",
+      "StartCommandPlaceholder": "例如： vllm serve /models --tp 2",
       "Task": "任务",
       "Title": "标题",
       "Version": "版本"
@@ -2094,7 +2094,8 @@
     "Shell": "Shell",
     "StartChat": "Start Chat",
     "StartCommand": "启动命令",
-    "StartCommandPlaceholder": "例如：vllm serve /models/my-model --tp 2",
+    "StartCommandHelperShell": "Shell 语法：/bin/bash -c \"cmd1; cmd2\"",
+    "StartCommandPlaceholder": "例如： vllm serve /models --tp 2",
     "StartCommandTooltip": "用于启动模型服务进程的 CLI 命令。",
     "StartModelService": "从模型文件夹启动服务",
     "StartModelServiceWithName": "从模型文件夹启动服务：{{name}}",

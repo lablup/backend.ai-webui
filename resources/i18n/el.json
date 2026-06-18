@@ -107,7 +107,7 @@
       "PreStartActions": "Ενέργειες πριν την εκκίνηση",
       "Shell": "Shell",
       "StartCommand": "Εντολή εκκίνησης",
-      "StartCommandPlaceholder": "π.χ., python server.py",
+      "StartCommandPlaceholder": "π.χ. vllm serve /models --tp 2",
       "Task": "Εργασία",
       "Title": "Τίτλος",
       "Version": "Έκδοση"
@@ -2092,7 +2092,8 @@
     "Shell": "Shell",
     "StartChat": "Start Chat",
     "StartCommand": "Εκκίνηση Εντολή",
-    "StartCommandPlaceholder": "π.χ., vllm serve /models/my-model --tp 2",
+    "StartCommandHelperShell": "Σύνταξη shell: /bin/bash -c \"cmd1; cmd2\"",
+    "StartCommandPlaceholder": "π.χ. vllm serve /models --tp 2",
     "StartCommandTooltip": "Η εντολή CLI για εκκίνηση της διεργασίας εξυπηρέτησης μοντέλου.",
     "StartModelService": "Εκκίνηση υπηρεσίας από τον φάκελο μοντέλου",
     "StartModelServiceWithName": "Εκκίνηση υπηρεσίας από τον φάκελο μοντέλου: {{name}}",

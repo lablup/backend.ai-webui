@@ -11,6 +11,7 @@ import AdminDeploymentPresetSettingPageContent, {
   type AdminDeploymentPresetFormValue,
   type ModelDefinitionFormValue,
 } from '../components/AdminDeploymentPresetSettingPageContent';
+import { tokenizeShellCommand } from '../helper/parseCliCommand';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { type RuntimeVariantPresetValueEntry } from '../hooks/useRuntimeParameterSchema';
 import { App, Form, Typography, theme } from 'antd';
@@ -52,9 +53,7 @@ const buildModelDefinitionInput = (
           service: {
             port: service.port,
             shell: service.shell,
-            startCommand: service.startCommand.trim()
-              ? service.startCommand.trim().split(/\s+/)
-              : [],
+            startCommand: tokenizeShellCommand(service.startCommand),
             preStartActions: (service.preStartActions ?? []).map((a) => ({
               action: a.action,
               args: (() => {

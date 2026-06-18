@@ -107,7 +107,7 @@
       "PreStartActions": "Действия перед запуском",
       "Shell": "Shell",
       "StartCommand": "Команда запуска",
-      "StartCommandPlaceholder": "напр., python server.py",
+      "StartCommandPlaceholder": "напр. vllm serve /models --tp 2",
       "Task": "Задача",
       "Title": "Заголовок",
       "Version": "Версия"
@@ -2092,7 +2092,8 @@
     "Shell": "Shell",
     "StartChat": "Start Chat",
     "StartCommand": "Запустить команду",
-    "StartCommandPlaceholder": "напр. vllm serve /models/my-model --tp 2",
+    "StartCommandHelperShell": "Синтаксис оболочки: /bin/bash -c \"cmd1; cmd2\"",
+    "StartCommandPlaceholder": "напр. vllm serve /models --tp 2",
     "StartCommandTooltip": "Команда CLI для запуска процесса обслуживания модели.",
     "StartModelService": "Запустить сервис из папки модели",
     "StartModelServiceWithName": "Запустить сервис из папки модели: {{name}}",

@@ -237,9 +237,18 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
         <Descriptions column={1} size="small">
           <Descriptions.Item label={t('adminDeploymentPreset.StartupCommand')}>
             {values.startupCommand ? (
-              <Typography.Text code style={{ whiteSpace: 'pre-wrap' }}>
+              <SourceCodeView language="shell">
                 {values.startupCommand}
-              </Typography.Text>
+              </SourceCodeView>
+            ) : (
+              '-'
+            )}
+          </Descriptions.Item>
+          <Descriptions.Item label={t('adminDeploymentPreset.BootstrapScript')}>
+            {values.bootstrapScript ? (
+              <SourceCodeView language="shell">
+                {values.bootstrapScript}
+              </SourceCodeView>
             ) : (
               '-'
             )}
@@ -301,9 +310,9 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
                     <Descriptions.Item
                       label={t('adminDeploymentPreset.modelDef.StartCommand')}
                     >
-                      <Typography.Text code>
+                      <SourceCodeView language="shell">
                         {m.service.startCommand}
-                      </Typography.Text>
+                      </SourceCodeView>
                     </Descriptions.Item>
                   )}
                   {(m.service?.preStartActions?.length ?? 0) > 0 && (

@@ -518,12 +518,28 @@ function setSameSitePolicy() {
   session.defaultSession.webRequest.onHeadersReceived(
     filter,
     (details, callback) => {
-      const cookies = details.responseHeaders['Set-Cookie'] || [];
-      cookies.map((cookie) => cookie.replace('SameSite=Lax', 'SameSite=None')); // Override SameSite Lax option to None for App mode cookie.
-      if (cookies.length > 0 && !cookies.includes('SameSite')) {
-        // Add SameSite policy if not present.
-        details.responseHeaders['Set-Cookie'] =
-          cookies + '; SameSite=None; Secure';
+      // HTTP header names are case-insensitive and Electron may normalize the
+      // Set-Cookie key differently across platforms/versions, so find the
+      // actual key rather than assuming 'Set-Cookie'.
+      const cookieKey = Object.keys(details.responseHeaders).find(
+        (key) => key.toLowerCase() === 'set-cookie',
+      );
+      if (cookieKey) {
+        details.responseHeaders[cookieKey] = details.responseHeaders[
+          cookieKey
+        ].map((cookie) => {
+          // Normalize any SameSite value (Lax, Strict, or missing) to None so
+          // the cookie is sent on cross-site requests. Case-insensitive to
+          // match RFC 6265.
+          const withSameSite = /SameSite=/i.test(cookie)
+            ? cookie.replace(/SameSite=\w+/i, 'SameSite=None')
+            : cookie + '; SameSite=None';
+          // SameSite=None requires the Secure attribute, otherwise
+          // Chromium/Electron rejects the cookie.
+          return /;\s*Secure/i.test(withSameSite)
+            ? withSameSite
+            : withSameSite + '; Secure';
+        });
       }
       callback({ cancel: false, responseHeaders: details.responseHeaders });
     },
