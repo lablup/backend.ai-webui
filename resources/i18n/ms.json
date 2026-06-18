@@ -107,7 +107,7 @@
       "PreStartActions": "Tindakan Pra-Mula",
       "Shell": "Shell",
       "StartCommand": "Perintah Mula",
-      "StartCommandPlaceholder": "cth., python server.py",
+      "StartCommandPlaceholder": "cth. vllm serve /models --tp 2",
       "Task": "Tugas",
       "Title": "Tajuk",
       "Version": "Versi"
@@ -2092,7 +2092,8 @@
     "Shell": "Shell",
     "StartChat": "Start Chat",
     "StartCommand": "Mulakan Perintah",
-    "StartCommandPlaceholder": "cth. vllm serve /models/my-model --tp 2",
+    "StartCommandHelperShell": "Sintaks shell: /bin/bash -c \"cmd1; cmd2\"",
+    "StartCommandPlaceholder": "cth. vllm serve /models --tp 2",
     "StartCommandTooltip": "Perintah CLI untuk memulakan proses penyajian model.",
     "StartModelService": "Mulakan Perkhidmatan dari Folder Model",
     "StartModelServiceWithName": "Mulakan Perkhidmatan dari Folder Model: {{name}}",

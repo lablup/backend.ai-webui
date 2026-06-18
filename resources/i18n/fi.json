@@ -107,7 +107,7 @@
       "PreStartActions": "Käynnistystä edeltävät toiminnot",
       "Shell": "Shell",
       "StartCommand": "Käynnistyskomento",
-      "StartCommandPlaceholder": "esim. python server.py",
+      "StartCommandPlaceholder": "esim. vllm serve /models --tp 2",
       "Task": "Tehtävä",
       "Title": "Otsikko",
       "Version": "Versio"
@@ -2092,7 +2092,8 @@
     "Shell": "Shell",
     "StartChat": "Start Chat",
     "StartCommand": "Käynnistä komento",
-    "StartCommandPlaceholder": "esim. vllm serve /models/my-model --tp 2",
+    "StartCommandHelperShell": "Shell-syntaksi: /bin/bash -c \"cmd1; cmd2\"",
+    "StartCommandPlaceholder": "esim. vllm serve /models --tp 2",
     "StartCommandTooltip": "CLI-komento mallin palveluprosessin käynnistämiseksi.",
     "StartModelService": "Start Service from Model Folder",
     "StartModelServiceWithName": "Start Service from Model Folder: {{name}}",

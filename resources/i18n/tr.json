@@ -107,7 +107,7 @@
       "PreStartActions": "Başlatma Öncesi Eylemler",
       "Shell": "Shell",
       "StartCommand": "Başlatma Komutu",
-      "StartCommandPlaceholder": "örn. python server.py",
+      "StartCommandPlaceholder": "örn. vllm serve /models --tp 2",
       "Task": "Görev",
       "Title": "Başlık",
       "Version": "Sürüm"
@@ -2092,7 +2092,8 @@
     "Shell": "Shell",
     "StartChat": "Start Chat",
     "StartCommand": "Komutu Başlat",
-    "StartCommandPlaceholder": "örn. vllm serve /models/my-model --tp 2",
+    "StartCommandHelperShell": "Kabuk sözdizimi: /bin/bash -c \"cmd1; cmd2\"",
+    "StartCommandPlaceholder": "örn. vllm serve /models --tp 2",
     "StartCommandTooltip": "Model servis sürecini başlatmak için CLI komutu.",
     "StartModelService": "Model Klasöründen Hizmet Başlat",
     "StartModelServiceWithName": "Model Klasöründen Hizmet Başlat: {{name}}",

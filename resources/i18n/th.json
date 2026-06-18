@@ -107,7 +107,7 @@
       "PreStartActions": "การกระทำก่อนเริ่ม",
       "Shell": "Shell",
       "StartCommand": "คำสั่งเริ่มต้น",
-      "StartCommandPlaceholder": "เช่น python server.py",
+      "StartCommandPlaceholder": "เช่น vllm serve /models --tp 2",
       "Task": "งาน",
       "Title": "ชื่อเรื่อง",
       "Version": "เวอร์ชัน"
@@ -2094,7 +2094,8 @@
     "Shell": "Shell",
     "StartChat": "Start Chat",
     "StartCommand": "คำสั่งเริ่มต้น",
-    "StartCommandPlaceholder": "เช่น vllm serve /models/my-model --tp 2",
+    "StartCommandHelperShell": "ไวยากรณ์เชลล์: /bin/bash -c \"cmd1; cmd2\"",
+    "StartCommandPlaceholder": "เช่น vllm serve /models --tp 2",
     "StartCommandTooltip": "คำสั่ง CLI สำหรับเริ่มต้นกระบวนการให้บริการโมเดล",
     "StartModelService": "Start Service from Model Folder",
     "StartModelServiceWithName": "Start Service from Model Folder: {{name}}",

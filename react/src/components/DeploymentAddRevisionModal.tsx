@@ -1138,7 +1138,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 modelPath: values.commandModelMount ?? '/models',
                 service: {
                   preStartActions: [],
-                  startCommand: tokenizeShellCommand(values.startCommand),
+                  startCommand: tokenizeShellCommand(values.startCommand ?? ''),
                   port: values.commandPort ?? 8000,
                   healthCheck,
                 },
@@ -1681,6 +1681,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                             name="startCommand"
                             label={t('modelService.StartCommand')}
                             tooltip={t('modelService.StartCommandTooltip')}
+                            extra={t('modelService.StartCommandHelperShell')}
                             rules={[{ required: true, whitespace: true }]}
                           >
                             <Input.TextArea

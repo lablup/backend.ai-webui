@@ -107,7 +107,7 @@
       "PreStartActions": "Ações de pré-inicialização",
       "Shell": "Shell",
       "StartCommand": "Comando de inicialização",
-      "StartCommandPlaceholder": "ex.: python server.py",
+      "StartCommandPlaceholder": "ex. vllm serve /models --tp 2",
       "Task": "Tarefa",
       "Title": "Título",
       "Version": "Versão"
@@ -2092,7 +2092,8 @@
     "Shell": "Shell",
     "StartChat": "Start Chat",
     "StartCommand": "Comando Iniciar",
-    "StartCommandPlaceholder": "ex. vllm serve /models/my-model --tp 2",
+    "StartCommandHelperShell": "Sintaxe shell: /bin/bash -c \"cmd1; cmd2\"",
+    "StartCommandPlaceholder": "ex. vllm serve /models --tp 2",
     "StartCommandTooltip": "O comando CLI para iniciar o processo de serviço do modelo.",
     "StartModelService": "Iniciar Serviço a partir da Pasta de Modelo",
     "StartModelServiceWithName": "Iniciar Serviço a partir da Pasta de Modelo: {{name}}",

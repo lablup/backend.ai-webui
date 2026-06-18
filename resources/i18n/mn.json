@@ -107,7 +107,7 @@
       "PreStartActions": "Эхлэхийн өмнөх үйлдлүүд",
       "Shell": "Shell",
       "StartCommand": "Эхлүүлэх тушаал",
-      "StartCommandPlaceholder": "жш.: python server.py",
+      "StartCommandPlaceholder": "жн: vllm serve /models --tp 2",
       "Task": "Даалгавар",
       "Title": "Гарчиг",
       "Version": "Хувилбар"
@@ -2093,7 +2093,8 @@
     "Shell": "Shell",
     "StartChat": "Start Chat",
     "StartCommand": "Эхлэх тушаал",
-    "StartCommandPlaceholder": "жш нь vllm serve /models/my-model --tp 2",
+    "StartCommandHelperShell": "Shell синтакс: /bin/bash -c \"cmd1; cmd2\"",
+    "StartCommandPlaceholder": "жн: vllm serve /models --tp 2",
     "StartCommandTooltip": "Загвар үйлчлэх процессыг эхлүүлэх CLI тушаал.",
     "StartModelService": "Загварын хавтаснаас үйлчилгээ эхлүүлэх",
     "StartModelServiceWithName": "Загварын хавтаснаас үйлчилгээ эхлүүлэх: {{name}}",

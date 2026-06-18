@@ -4,6 +4,7 @@
  */
 import type { AdminDeploymentPresetSettingPageContent_preset$key } from '../__generated__/AdminDeploymentPresetSettingPageContent_preset.graphql';
 import EnvVarFormList from '../components/EnvVarFormList';
+import { formatShellCommand } from '../helper/parseCliCommand';
 import {
   buildRuntimeVariantPresetValues,
   collectTouchedRuntimePresetParams,
@@ -424,7 +425,9 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                   ? {
                       port: m.service.port,
                       shell: m.service.shell,
-                      startCommand: m.service.startCommand?.join(' ') ?? '',
+                      startCommand: formatShellCommand(
+                        m.service.startCommand ?? [],
+                      ),
                       // 26.4.4rc7+: `enable` is authoritative; older managers
                       // omit it, so fall back to the object's presence.
                       enableHealthCheck:
@@ -917,6 +920,8 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             <Form.Item
               name="startupCommand"
               label={t('adminDeploymentPreset.StartupCommand')}
+              tooltip={t('modelService.StartCommandTooltip')}
+              extra={t('modelService.StartCommandHelperShell')}
             >
               <Input.TextArea
                 rows={2}

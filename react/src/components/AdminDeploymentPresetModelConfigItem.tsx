@@ -100,6 +100,8 @@ const ModelConfigItem: React.FC<{
             {...restField}
             name={[listItemName, 'service', 'startCommand']}
             label={t('adminDeploymentPreset.modelDef.StartCommand')}
+            tooltip={t('modelService.StartCommandTooltip')}
+            extra={t('modelService.StartCommandHelperShell')}
             rules={[{ required: true }]}
           >
             <Input

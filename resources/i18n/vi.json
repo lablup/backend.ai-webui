@@ -107,7 +107,7 @@
       "PreStartActions": "Hành động trước khởi động",
       "Shell": "Shell",
       "StartCommand": "Lệnh khởi động",
-      "StartCommandPlaceholder": "vd.: python server.py",
+      "StartCommandPlaceholder": "vd: vllm serve /models --tp 2",
       "Task": "Tác vụ",
       "Title": "Tiêu đề",
       "Version": "Phiên bản"
@@ -2094,7 +2094,8 @@
     "Shell": "Shell",
     "StartChat": "Start Chat",
     "StartCommand": "Bắt đầu lệnh",
-    "StartCommandPlaceholder": "vd. vllm serve /models/my-model --tp 2",
+    "StartCommandHelperShell": "Cú pháp shell: /bin/bash -c \"cmd1; cmd2\"",
+    "StartCommandPlaceholder": "vd: vllm serve /models --tp 2",
     "StartCommandTooltip": "Lệnh CLI để khởi động tiến trình phục vụ mô hình.",
     "StartModelService": "Khởi động dịch vụ từ thư mục mô hình",
     "StartModelServiceWithName": "Khởi động dịch vụ từ thư mục mô hình: {{name}}",
