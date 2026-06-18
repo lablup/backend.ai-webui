@@ -1,0 +1,39 @@
+{
+  "epic": "FR-1692",
+  "task": "FR-2313",
+  "title": "RBAC Admin Role-based Admin Menu Behavior",
+  "created": "2026-03-17",
+  "updated": "2026-03-23",
+  "status": "planning",
+  "subtasks": [
+    {
+      "key": "FR-2316",
+      "title": "Add Admin Session list page with full session table (superadmin only)",
+      "githubIssue": 6118,
+      "phase": 1,
+      "index": "1-1"
+    },
+    {
+      "key": "FR-2317",
+      "title": "Add Admin Data (VFolder) list page without folder creation (superadmin only)",
+      "githubIssue": 6119,
+      "phase": 1,
+      "index": "1-2"
+    },
+    {
+      "key": "FR-2318",
+      "title": "Add Admin Service (Serving) list page with modify/delete but no creation (superadmin only)",
+      "githubIssue": 6120,
+      "phase": 1,
+      "index": "1-3"
+    }
+  ],
+  "resolvedDecisions": [
+    { "id": "DN-1", "date": "2026-03-23", "summary": "User page read-only in initial version" },
+    { "id": "DN-2", "date": "2026-03-23", "summary": "Domain admin can only set role to 'user'" },
+    { "id": "DN-3", "date": "2026-03-23", "summary": "Purge user deferred" },
+    { "id": "DN-4", "date": "2026-03-23", "summary": "Full management (modify+delete) for services; creation only from user menu" },
+    { "id": "DN-5", "date": "2026-03-23", "summary": "Folder creation only from user menu" },
+    { "id": "DN-6", "date": "2026-03-23", "summary": "Domain admin full management deferred" }
+  ]
+}
