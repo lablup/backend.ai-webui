@@ -202,8 +202,14 @@ export const useBackendAIAppLauncher = (
       );
     }
     const token = response.token;
+    // `ComputeSessionNode.name` is nullable in the schema; the V1 wsproxy
+    // resolves the session by name, so a missing name would build a
+    // `.../undefined/...` path and fail as SessionNotFound (surfaced as 503).
+    if (!session?.name) {
+      throw new AppLaunchError('Session name is not available.', 'configuring');
+    }
     return new URL(
-      `proxy/${token}/${session?.row_id}/add?${new URLSearchParams({ app }).toString()}`,
+      `proxy/${token}/${encodeURIComponent(session.name)}/add?${new URLSearchParams({ app }).toString()}`,
       proxyURL,
     ).href;
   };
@@ -282,11 +288,20 @@ export const useBackendAIAppLauncher = (
    * Used when re-launching apps like tensorboard that need to be restarted with different args.
    */
   const _close_wsproxy = async (app: string) => {
+    // V1 wsproxy keys its proxy map by session name (must match the `add`
+    // URL). `name` is nullable in the schema, so skip cleanup rather than
+    // building a `.../undefined/...` path that targets the wrong key.
+    if (!session?.name) {
+      logger.warn(
+        '[_close_wsproxy] Session name is not available; skipping close.',
+      );
+      return false;
+    }
     const token = baiClient._config.accessKey;
     const proxyURL = await getProxyURL(await getWSProxyVersion());
 
     const uri = new URL(
-      `proxy/${token}/${session?.row_id}/delete?${new URLSearchParams({ app }).toString()}`,
+      `proxy/${token}/${encodeURIComponent(session.name)}/delete?${new URLSearchParams({ app }).toString()}`,
       proxyURL,
     );
 
