@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<647732c7555c81ded3a8bc56d94d23ca>>
+ * @generated SignedSource<<66d5074596f4c4c9082e6df0b8a2131b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,6 +16,7 @@ export type ChatCardQuery$variables = {
 export type ChatCardQuery$data = {
   readonly endpoint: Result<{
     readonly endpoint_id: string | null | undefined;
+    readonly replicas: number | null | undefined;
     readonly url: string | null | undefined;
     readonly " $fragmentSpreads": FragmentRefs<"ChatHeader_Endpoint">;
   } | null | undefined, unknown>;
@@ -53,6 +54,13 @@ v3 = {
   "kind": "ScalarField",
   "name": "url",
   "storageKey": null
+},
+v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "replicas",
+  "storageKey": null
 };
 return {
   "fragment": {
@@ -73,6 +81,7 @@ return {
           "selections": [
             (v2/*: any*/),
             (v3/*: any*/),
+            (v4/*: any*/),
             {
               "args": null,
               "kind": "FragmentSpread",
@@ -103,6 +112,7 @@ return {
         "selections": [
           (v2/*: any*/),
           (v3/*: any*/),
+          (v4/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -123,16 +133,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "88acc886856e154b1e3691c9159266a3",
+    "cacheID": "99c9ded5ee686463528762c94e09697b",
     "id": null,
     "metadata": {},
     "name": "ChatCardQuery",
     "operationKind": "query",
-    "text": "query ChatCardQuery(\n  $endpointId: UUID!\n) {\n  endpoint(endpoint_id: $endpointId) {\n    endpoint_id\n    url\n    ...ChatHeader_Endpoint\n    id\n  }\n}\n\nfragment ChatHeader_Endpoint on Endpoint {\n  endpoint_id\n  name\n}\n"
+    "text": "query ChatCardQuery(\n  $endpointId: UUID!\n) {\n  endpoint(endpoint_id: $endpointId) {\n    endpoint_id\n    url\n    replicas\n    ...ChatHeader_Endpoint\n    id\n  }\n}\n\nfragment ChatHeader_Endpoint on Endpoint {\n  endpoint_id\n  name\n}\n"
   }
 };
 })();
 
-(node as any).hash = "5ff3fd270fca0bac7779be279e93341e";
+(node as any).hash = "d528439518d2d61f340b117a8ac42ee8";
 
 export default node;

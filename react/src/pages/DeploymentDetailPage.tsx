@@ -113,6 +113,12 @@ const DeploymentDetailPage: React.FC = () => {
               openToPublic
               endpointUrl
             }
+            replicaState {
+              desiredReplicaCount
+            }
+            runningReplicas: replicas(filter: { status: { equals: RUNNING } }) {
+              count
+            }
             accessTokens {
               count
             }
@@ -198,6 +204,11 @@ const DeploymentDetailPage: React.FC = () => {
   const hasAccessTokens = (deployment.accessTokens?.count ?? 0) > 0;
   const isDeploymentDestroying =
     isDeploymentInStoppedCategory(deploymentStatus);
+  const hasNoDesiredReplicas =
+    (deployment.replicaState?.desiredReplicaCount ?? 0) === 0;
+  const hasNoRunningReplicas =
+    !hasNoDesiredReplicas && (deployment.runningReplicas?.count ?? 0) === 0;
+  const hasNoActiveReplicas = hasNoDesiredReplicas || hasNoRunningReplicas;
   // The private-deployment alert prompts the user to create a token so the
   // endpoint is actually reachable. Suppress it when the endpoint has not
   // been issued yet (creating a token would be premature) or when the user
@@ -247,6 +258,27 @@ const DeploymentDetailPage: React.FC = () => {
     }
   };
 
+  const cannotUseModelServiceAlert = () => {
+    if (hasNoDesiredReplicas) {
+      return (
+        <Alert
+          type="warning"
+          showIcon
+          title={t('deployment.NoDesiredReplicas')}
+        />
+      );
+    }
+    if (hasNoRunningReplicas) {
+      return (
+        <Alert
+          type="warning"
+          showIcon
+          title={t('deployment.NoRunningReplicas')}
+        />
+      );
+    }
+  };
+
   return (
     <BAIFlex direction="column" align="stretch" gap="md">
       {isProjectMismatch && deploymentProjectId && (
@@ -257,7 +289,11 @@ const DeploymentDetailPage: React.FC = () => {
           action={<SwitchToProjectButton projectId={deploymentProjectId} />}
         />
       )}
-      {isDeploymentReady && !hasNoRevision && (
+      {hasNoActiveReplicas &&
+        !hasNoRevision &&
+        !isDeploymentDestroying &&
+        cannotUseModelServiceAlert()}
+      {isDeploymentReady && !hasNoRevision && !hasNoActiveReplicas && (
         <Alert
           type="success"
           showIcon

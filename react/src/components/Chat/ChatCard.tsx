@@ -237,6 +237,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
         endpoint(endpoint_id: $endpointId) @catch {
           endpoint_id
           url
+          replicas
           ...ChatHeader_Endpoint
         }
       }
@@ -251,6 +252,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
   const endpoint = endpointResult.endpoint.ok
     ? endpointResult.endpoint.value
     : null;
+  const hasNoDesiredReplicas = endpoint?.replicas === 0;
   const {
     styles: { chatCard: chatCardStyle, alert: alertStyle },
   } = useStyles();
@@ -561,6 +563,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
           token={effectiveApiKey}
           endpointId={endpoint?.endpoint_id}
           loading={isPendingUpdate}
+          hasNoDesiredReplicas={hasNoDesiredReplicas}
           onSubmit={(data) => {
             startUpdateTransition(() => {
               updateFetchKey();
