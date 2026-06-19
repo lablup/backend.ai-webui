@@ -154,6 +154,7 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
       {
         key: 'id',
         title: t('comp:UserNodes.UserID'),
+        exportKey: 'uuid',
         render: (__, record) => (
           <BAIText copyable ellipsis monospace style={{ maxWidth: 100 }}>
             {toLocalId(record.id)}
@@ -170,12 +171,14 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
       {
         key: 'full_name',
         title: t('comp:UserNodes.FullName'),
+        exportKey: 'full_name',
         render: (__, record) => record.basicInfo?.fullName || '-',
       },
       {
         key: 'domain_name',
         title: t('comp:UserNodes.DomainName'),
         dataIndex: 'domainName',
+        exportKey: 'domain_name',
         minWidth: 100,
         sorter: isEnableSorter('domainName'),
         render: (__, record) => record.organization?.domainName || '-',
@@ -188,16 +191,19 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
       {
         key: 'system_role',
         title: t('comp:UserNodes.Role'),
+        exportKey: 'role',
         render: (__, record) => record.organization?.role || '-',
       },
       {
         key: 'resource_policy',
         title: t('comp:UserNodes.ResourcePolicy'),
+        exportKey: 'resource_policy_name',
         render: (__, record) => record.organization?.resourcePolicy || '-',
       },
       {
         key: 'main_access_key',
         title: t('comp:UserNodes.MainAccessKey'),
+        exportKey: 'main_access_key',
         render: (__, record) =>
           record.organization?.mainAccessKey ? (
             <BAIText copyable ellipsis monospace style={{ maxWidth: 120 }}>
@@ -304,6 +310,7 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
         key: 'created_at',
         title: t('comp:UserNodes.CreatedAt'),
         dataIndex: 'createdAt',
+        exportKey: 'created_at',
         sorter: isEnableSorter('createdAt'),
         defaultSortOrder: 'descend',
         render: (__, record) =>
@@ -315,6 +322,7 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
         key: 'modified_at',
         title: t('comp:UserNodes.ModifiedAt'),
         dataIndex: 'modifiedAt',
+        exportKey: 'modified_at',
         sorter: isEnableSorter('modifiedAt'),
         render: (__, record) =>
           record.timestamps?.modifiedAt
