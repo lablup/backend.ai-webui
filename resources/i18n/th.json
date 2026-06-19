@@ -2814,6 +2814,7 @@
     "SessionTerminated": "เซสชันถูกยุติแล้ว",
     "SessionType": "ประเภทเซสชัน",
     "SessionsTerminated": "เซสชันถูกยุติแล้ว",
+    "SomeSessionsNotTerminated": "บางเซสชันไม่สามารถยุติได้",
     "StartupCommand": "คำสั่งเริ่มต้น",
     "Status": "สถานะ",
     "StatusDetail": "รายละเอียด",

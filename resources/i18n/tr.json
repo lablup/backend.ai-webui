@@ -2812,6 +2812,7 @@
     "SessionTerminated": "Oturum sonlandırıldı.",
     "SessionType": "OturumTürü",
     "SessionsTerminated": "Oturumlar sonlandırıldı.",
+    "SomeSessionsNotTerminated": "Bazı oturumlar sonlandırılamadı.",
     "StartupCommand": "Başlatma Komutu",
     "Status": "Durum",
     "StatusDetail": "Detay",

@@ -2815,6 +2815,7 @@
     "SessionTerminated": "Session terminée.",
     "SessionType": "Type de session",
     "SessionsTerminated": "Séances terminées.",
+    "SomeSessionsNotTerminated": "Certaines sessions n'ont pas pu être terminées.",
     "StartupCommand": "Commande de démarrage",
     "Status": "Statut",
     "StatusDetail": "Détail",

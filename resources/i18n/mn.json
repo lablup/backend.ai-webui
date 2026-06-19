@@ -2813,6 +2813,7 @@
     "SessionTerminated": "Чуулган дуусав.",
     "SessionType": "SessionType",
     "SessionsTerminated": "Чуулган дуусгавар болсон.",
+    "SomeSessionsNotTerminated": "Зарим сессийг дуусгахад алдаа гарлаа.",
     "StartupCommand": "Эхлэх тушаал",
     "Status": "Статус",
     "StatusDetail": "Дэлгэрэнгүй",

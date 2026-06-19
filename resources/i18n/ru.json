@@ -2812,6 +2812,7 @@
     "SessionTerminated": "Сессия завершена.",
     "SessionType": "SessionType",
     "SessionsTerminated": "Сеансы завершены.",
+    "SomeSessionsNotTerminated": "Некоторые сеансы не удалось завершить.",
     "StartupCommand": "Команда запуска",
     "Status": "Статус",
     "StatusDetail": "Деталь",

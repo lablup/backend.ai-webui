@@ -2812,6 +2812,7 @@
     "SessionTerminated": "Η συνεδρία τερματίστηκε.",
     "SessionType": "SessionType",
     "SessionsTerminated": "Οι συνεδρίες τερματίστηκαν.",
+    "SomeSessionsNotTerminated": "Ορισμένες συνεδρίες απέτυχαν να τερματιστούν.",
     "StartupCommand": "Εντολή εκκίνησης",
     "Status": "Κατάσταση",
     "StatusDetail": "Λεπτομέρεια",

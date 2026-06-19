@@ -2812,6 +2812,7 @@
     "SessionTerminated": "Sessão finalizada.",
     "SessionType": "Tipo de sessão",
     "SessionsTerminated": "Sessões encerradas.",
+    "SomeSessionsNotTerminated": "Algumas sessões falharam ao encerrar.",
     "StartupCommand": "Comando de inicialização",
     "Status": "Status",
     "StatusDetail": "Detalhes",

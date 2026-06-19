@@ -2815,6 +2815,7 @@
     "SessionTerminated": "Sesja zakończona.",
     "SessionType": "SessionType",
     "SessionsTerminated": "Sesje zakończone.",
+    "SomeSessionsNotTerminated": "Niektóre sesje nie zostały zakończone.",
     "StartupCommand": "Polecenie startowe",
     "Status": "Status",
     "StatusDetail": "Szczegóły",

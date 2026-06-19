@@ -2815,6 +2815,7 @@
     "SessionTerminated": "Sesi dihentikan.",
     "SessionType": "Jenis Sesi",
     "SessionsTerminated": "Sesi-sesi dihentikan.",
+    "SomeSessionsNotTerminated": "Beberapa sesi gagal dihentikan.",
     "StartupCommand": "Perintah startup",
     "Status": "Status",
     "StatusDetail": "Detail",

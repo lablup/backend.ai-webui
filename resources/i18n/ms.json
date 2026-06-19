@@ -2812,6 +2812,7 @@
     "SessionTerminated": "Sesi ditamatkan.",
     "SessionType": "Jenis Sesi",
     "SessionsTerminated": "Sesi ditamatkan.",
+    "SomeSessionsNotTerminated": "Sesetengah sesi gagal ditamatkan.",
     "StartupCommand": "Perintah Permulaan",
     "Status": "Status",
     "StatusDetail": "Perincian",

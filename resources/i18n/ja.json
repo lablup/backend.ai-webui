@@ -2814,6 +2814,7 @@
     "SessionTerminated": "セッションが終了しました。",
     "SessionType": "セッションタイプ",
     "SessionsTerminated": "セッションは終了しました。",
+    "SomeSessionsNotTerminated": "一部のセッションの終了に失敗しました。",
     "StartupCommand": "起動コマンド",
     "Status": "状態",
     "StatusDetail": "詳細情報",

@@ -2814,6 +2814,7 @@
     "SessionTerminated": "Phiên chấm dứt.",
     "SessionType": "Loại phiên",
     "SessionsTerminated": "Phiên đã kết thúc.",
+    "SomeSessionsNotTerminated": "Một số phiên không thể kết thúc.",
     "StartupCommand": "Lệnh khởi động",
     "Status": "Trạng thái",
     "StatusDetail": "Chi tiết",

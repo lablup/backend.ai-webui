@@ -2802,6 +2802,7 @@
     "SessionTerminated": "Session terminated.",
     "SessionType": "SessionType",
     "SessionsTerminated": "Sessions terminated.",
+    "SomeSessionsNotTerminated": "Some sessions failed to terminate.",
     "StartupCommand": "Startup Command",
     "Status": "Status",
     "StatusDetail": "Detail",

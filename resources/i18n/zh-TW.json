@@ -2816,6 +2816,7 @@
     "SessionTerminated": "會話終止。",
     "SessionType": "会话类型",
     "SessionsTerminated": "會話終止。",
+    "SomeSessionsNotTerminated": "部分會話終止失敗。",
     "StartupCommand": "啟動指令",
     "Status": "地位",
     "StatusDetail": "详细信息",

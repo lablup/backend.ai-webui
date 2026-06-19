@@ -2814,6 +2814,7 @@
     "SessionTerminated": "Sitzung beendet.",
     "SessionType": "SessionType",
     "SessionsTerminated": "Sitzungen beendet.",
+    "SomeSessionsNotTerminated": "Einige Sitzungen konnten nicht beendet werden.",
     "StartupCommand": "Startbefehl",
     "Status": "Status",
     "StatusDetail": "Einzelheiten",

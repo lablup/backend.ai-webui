@@ -12,7 +12,7 @@ import { useCurrentUserRole } from '../../hooks/backendai';
 import { useSetBAINotification } from '../../hooks/useBAINotification';
 import { usePainKiller } from '../../hooks/usePainKiller';
 import { usePromiseTracker } from '../../usePromiseTracker';
-import { Card, Checkbox, type ModalProps, Typography } from 'antd';
+import { App, Card, Checkbox, type ModalProps, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import { filterOutEmpty, BAIFlex, BAIModal } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -244,6 +244,7 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
   const relayEvn = useRelayEnvironment();
   const painKiller = usePainKiller();
   const { upsertNotification } = useSetBAINotification();
+  const { message } = App.useApp();
 
   return (
     <BAIModal
@@ -252,20 +253,24 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
       open={openTerminateModal}
       confirmLoading={pendingCount > 0}
       onOk={() => {
-        const promises = _.map(
-          filterOutEmpty(_.castArray(sessions)),
-          (session) => {
-            return terminateSession(session)
-              .catch((err) => {
-                upsertNotification({
-                  message: painKiller.relieve(err?.title),
-                  description: err?.description,
-                  open: true,
-                });
-              })
-              .finally(() => {
-                // refetch session node
-                return fetchQuery<TerminateSessionModalRefetchQuery>(
+        const targetSessions = filterOutEmpty(_.castArray(sessions));
+        const promises = _.map(targetSessions, (session) => {
+          return terminateSession(session)
+            .catch((err) => {
+              upsertNotification({
+                message: painKiller.relieve(err?.title),
+                description: err?.description,
+                open: true,
+              });
+              // Re-throw so Promise.allSettled below reports this session as
+              // rejected and the success/partial-failure message can be derived
+              // from the settled results.
+              throw err;
+            })
+            .finally(() => {
+              // refetch session node
+              return (
+                fetchQuery<TerminateSessionModalRefetchQuery>(
                   relayEvn,
                   graphql`
                     query TerminateSessionModalRefetchQuery(
@@ -282,12 +287,29 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
                     id: session.id,
                     scope_id: `project:${session.project_id}`,
                   },
-                ).toPromise();
-              });
-          },
-        );
+                )
+                  .toPromise()
+                  // Swallow refetch errors so the summary toast reflects only the
+                  // termination outcome, not a failed post-termination refetch.
+                  .catch(() => {})
+              );
+            });
+        });
         promises.map(trackPromise);
-        Promise.allSettled(promises).then(() => {
+        Promise.allSettled(promises).then((results) => {
+          const rejectedCount = results.filter(
+            (result) => result.status === 'rejected',
+          ).length;
+          const succeededCount = targetSessions.length - rejectedCount;
+          if (rejectedCount > 0) {
+            message.warning(t('session.SomeSessionsNotTerminated'));
+          } else if (succeededCount > 0) {
+            message.success(
+              succeededCount === 1
+                ? t('session.SessionTerminated')
+                : t('session.SessionsTerminated'),
+            );
+          }
           setIsForce(false);
           onRequestClose(true);
         });

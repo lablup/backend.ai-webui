@@ -2817,6 +2817,7 @@
     "SessionTerminated": "세션을 중지했습니다.",
     "SessionType": "세션 타입",
     "SessionsTerminated": "세션들을 중지했습니다.",
+    "SomeSessionsNotTerminated": "일부 세션 종료에 실패했습니다.",
     "StartupCommand": "시작 시 실행할 명령어",
     "Status": "상태",
     "StatusDetail": "상세 정보",
