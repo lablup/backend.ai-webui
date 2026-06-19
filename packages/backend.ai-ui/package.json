@@ -114,7 +114,7 @@
     "storybook": "^10.3.5",
     "typescript": "~6.0.3",
     "typescript-eslint": "catalog:",
-    "vite": "^6.4.2",
+    "vite": "^6.4.3",
     "vite-plugin-dts": "^4.5.4",
     "vite-plugin-relay-lite": "^0.11.0",
     "vite-plugin-svgr": "^4.5.0",
