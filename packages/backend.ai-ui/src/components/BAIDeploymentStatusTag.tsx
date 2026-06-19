@@ -1,6 +1,7 @@
 import { SemanticColor, useSemanticColorMap } from '../helper';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import BAITag from './BAITag';
+import { LoadingOutlined } from '@ant-design/icons';
 import type { TagProps } from 'antd';
 import React from 'react';
 
@@ -45,6 +46,21 @@ export const isDeploymentInStoppedCategory = (
 ): boolean =>
   status != null &&
   (DEPLOYMENT_STOPPED_CATEGORY_STATUSES as readonly string[]).includes(status);
+
+/**
+ * Statuses that show the loading spinner on the tag — the deployment is
+ * actively processing. `PENDING` (queued, not processing) is excluded.
+ */
+export const DEPLOYMENT_IN_PROGRESS_STATUSES = [
+  'DEPLOYING',
+  'SCALING',
+] as const satisfies readonly BAIDeploymentStatus[];
+
+export const isDeploymentInProgress = (
+  status: BAIDeploymentStatus | '%future added value' | null | undefined,
+): boolean =>
+  status != null &&
+  (DEPLOYMENT_IN_PROGRESS_STATUSES as readonly string[]).includes(status);
 
 const deploymentStatusSemanticMap: Record<BAIDeploymentStatus, SemanticColor> =
   {
@@ -100,6 +116,9 @@ const BAIDeploymentStatusTag: React.FC<BAIDeploymentStatusTagProps> = ({
   return (
     <BAITag
       {...tagProps}
+      icon={
+        isDeploymentInProgress(status) ? <LoadingOutlined spin /> : undefined
+      }
       color={semanticColorMap[deploymentStatusSemanticMap[status]]}
     >
       {t(deploymentStatusI18nMap[status])}

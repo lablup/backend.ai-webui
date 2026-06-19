@@ -107,6 +107,8 @@ export {
   default as BAIDeploymentStatusTag,
   isDeploymentInStoppedCategory,
   DEPLOYMENT_STOPPED_CATEGORY_STATUSES,
+  isDeploymentInProgress,
+  DEPLOYMENT_IN_PROGRESS_STATUSES,
 } from './BAIDeploymentStatusTag';
 export type {
   BAIDeploymentStatusTagProps,
