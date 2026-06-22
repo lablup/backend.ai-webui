@@ -38,6 +38,15 @@ character(s).
 Enter your email (or username) and password, then click the `Login` button.
 
 ![](../images/login_dialog.png)
+<!-- TODO: Capture screenshot of login dialog showing the Diagonal Weave animated background -->
+
+:::note
+The login screen displays an animated Diagonal Weave background pattern behind the
+login dialog. The application version and build information appear in the bottom-left
+corner, and copyright information appears in the bottom-right corner of the screen.
+The email field is automatically focused when the login dialog opens.
+:::
+
 
 <a id="connection-mode"></a>
 

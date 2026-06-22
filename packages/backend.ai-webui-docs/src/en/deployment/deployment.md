@@ -354,14 +354,35 @@ When you select the **Custom** runtime variant, a **Model Definition Mode** segm
 
 Select **Enter Command** to define the startup directly as a CLI command. The following fields are available:
 
-- **Start Command**: The shell command (or argument list) to launch the inference server. For example, `python -m http.server 8000`.
+- **Start Command**: The command to launch the inference server. For example, `python -m http.server 8000`.
+
+:::tip[Shell operators require an explicit shell invocation]
+The backend executes the start command directly (exec-style), not through a shell. Shell operators such as `;`, `|`, `&&`, and `\` (line continuation) are **not** interpreted unless you invoke a shell explicitly.
+
+Instead of:
+
+```bash
+chmod +x /setup.sh; vllm serve /models
+```
+
+Use:
+
+```bash
+/bin/bash -c "chmod +x /setup.sh; vllm serve /models"
+```
+
+The Review step (step 4 of the wizard) renders the start command and bootstrap script as code blocks for easy review before you confirm.
+:::
+
 - **Model Mount Destination**: The path inside the container where the model storage folder is mounted (default: `/models`).
 - **Port**: The container port that the inference server listens on (default: `8000`).
-- **Health Check URL**: The HTTP endpoint path called during service health checks (default: `/health`).
-- **Startup Grace Period**: Grace period in seconds after container startup during which failed health checks are tolerated; the replica becomes active on the first successful check (default: `60.0`). Increase this for large models that take longer to load.
-- **Max Retries**: Maximum consecutive health check failures before the replica is marked `UNHEALTHY` (default: `10`).
-- **Interval**: Seconds between consecutive health checks (default: `10.0`).
-- **Max Wait Time**: Timeout in seconds for each individual health check request (default: `15.0`).
+- **Enable Health Check**: When enabled, the system periodically sends HTTP requests to the inference server to verify it is responding correctly. When disabled (the default for new revisions), no health check is configured and unhealthy replicas are not automatically detected. Turn this on for production deployments. When **Enable Health Check** is checked, the following additional fields appear:
+   * **Health Check URL**: The HTTP endpoint path called during service health checks (default: `/health`).
+   * **Startup Grace Period**: Grace period in seconds after container startup during which failed health checks are tolerated; the replica becomes active on the first successful check (default: `60.0`). Increase this for large models that take longer to load.
+   * **Max Retries**: Maximum consecutive health check failures before the replica is marked `UNHEALTHY` (default: `10`).
+   * **Interval**: Seconds between consecutive health checks (default: `10.0`).
+   * **Max Wait Time**: Timeout in seconds for each individual health check request (default: `15.0`).
+   * **Expected Status Code**: The HTTP response status code that indicates a healthy service (default: `200`).
 
 ##### Use Config File Mode
 
@@ -381,6 +402,23 @@ Parameters are organized into tab-separated categories. The available tabs vary 
 :::note
 Unchanged parameters use the runtime's default values.
 :::
+
+:::note[Required parameters]
+Administrators can mark individual parameters as required. Required parameters are indicated by a red asterisk (★) next to the label. Submitting the form with an empty required parameter is blocked — the field shows an inline validation error even if the parameter is on an unvisited tab.
+
+On backends older than Backend.AI Manager 26.4.4, all parameters are treated as optional regardless of the administrator's configuration.
+:::
+
+**Enable Health Check**
+
+In Advanced Mode, all runtime variants — including `vLLM` and `SGLang` — include an **Enable Health Check** section at the bottom of the Runtime Parameters area. This is off by default for new revisions. When you check **Enable Health Check**, the following fields appear and are required:
+
+- **Health Check URL**: The HTTP endpoint path the system will call to verify service health.
+- **Startup Grace Period**: Seconds to wait after container startup before health check failures count against the replica (default: `60.0`).
+- **Max Retries**: Consecutive failures allowed before the replica is marked `UNHEALTHY` (default: `10`).
+- **Interval**: Seconds between checks (default: `10.0`).
+- **Max Wait Time**: Per-request timeout in seconds (default: `15.0`).
+- **Expected Status Code**: HTTP status code that indicates a healthy response (default: `200`).
 
 **vLLM Runtime Parameters**
 
@@ -517,7 +555,7 @@ If a replica has encountered an error, clicking the error indicator on the row o
 
 ### Revisions Tab
 
-The **Revisions** card on the deployment detail page has two tabs: **Current Revision** and **Revision History**. The `Add Revision` button at the top of the card is available from both tabs and opens the Add Revision modal (see [Add Revision](#add-revision)).
+The **Revisions** card on the deployment detail page has three tabs: **Current Revision**, **Revision History**, and **Audit Log**. The `Add Revision` button at the top of the card is available from all tabs and opens the Add Revision modal (see [Add Revision](#add-revision)).
 
 #### Current Revision Tab
 
@@ -538,6 +576,7 @@ The following fields are displayed:
 - **Image**: The container image used to run the replica.
 - **Cluster Mode**: The clustering layout of each replica's compute session (mode / size).
 - **Environment Variables**: Key-value pairs injected into the container, displayed as a shell script block.
+- **Runtime Parameters**: Runtime-variant preset parameter values configured for this revision (for example, DType: float32, Quantization: awq). Shown only for `vLLM` or `SGLang` revisions that have preset parameter values configured. Shows a dash for the `Custom` runtime or revisions with no preset values.
 
 When the model definition file defines a model, the following fields are also shown:
 
@@ -580,6 +619,28 @@ Each row has an **Apply** action button. Click it to open a confirmation dialog.
 - The **Apply** button is disabled for the currently active revision and any revision that is being applied.
 
 Clicking the revision number in any row opens the revision detail drawer, which shows the full configuration of that revision. The drawer also has an **Apply** button (disabled for the current and applying revisions).
+
+:::note
+The **Runtime Parameters** field also appears in the revision detail drawer for `vLLM` and `SGLang` revisions, showing the same preset parameter values as the Current Revision tab.
+:::
+
+#### Audit Log Tab
+
+The **Audit Log** tab shows a chronological record of all actions taken on this deployment. Use it to track who changed the deployment and when.
+
+<!-- TODO: Capture screenshot of the Audit Log tab -->
+
+The tab provides the following controls:
+
+- **Filter bar**: Filter log entries by **Status**, **Operation**, **Triggered By** (search by user ID), and a **Time** date-range picker.
+- **Auto-refresh button**: Reload the log without leaving the tab.
+- **Pagination**: Navigate through log entries page by page.
+
+:::note
+The Audit Log tab uses lazy loading — the query is sent only when you first activate the tab. The active tab is reflected in the URL (`?revisionTab=auditLog`), so you can share a link directly to the audit log view.
+
+Access to audit log data is enforced by the backend and may be restricted to superadmins.
+:::
 
 ### Auto Scaling Rules
 
@@ -698,6 +759,62 @@ To use the model, you will need the following information:
 
 ![](../images/LLM_chat_custom_model.png)
 
+<a id="deployment-presets"></a>
+
+## Deployment Presets
+
+Deployment presets let administrators save a complete set of revision configuration values — runtime variant, container image, resource allocation, startup command, and health check settings — and reuse them when adding revisions. Users select a preset in **Preset Mode** when adding a revision; admins create and edit presets through the Deployment Presets page.
+
+### Managing Deployment Presets
+
+The Deployment Presets page lists all presets available in the current project. The table includes the following **default-visible** columns:
+
+- **Name**: The preset name.
+- **Runtime**: The runtime variant (for example, `vLLM`, `SGLang`, or `Custom`).
+- **Image**: The container image in `<canonicalName>@<architecture>` format (for example, `cr.backend.ai/stable/pytorch:2.1-cuda12.1@aarch64`). The value is copyable. This format makes it easy to distinguish images by CPU architecture on mixed-architecture clusters.
+- **Replicas**: The desired replica count saved with this preset.
+- **Created**: When the preset was created.
+- **Modified**: When the preset was last updated (`updatedAt`).
+
+Use the **column visibility** gear button on the right side of the table header to show or hide additional columns. The following columns are **hidden by default** but can be enabled:
+
+- **Description**: The preset's description text.
+- **Startup Command**: The configured start command, truncated with a tooltip. The value is copyable.
+- **Cluster**: The cluster mode saved with the preset.
+- **Strategy**: The scheduling strategy.
+- **Open to Public**: Shows a `Public` or `Private` tag based on the preset's default visibility setting.
+- **Revision History Limit**: How many revisions are retained.
+- **Rank**: The sort rank of the preset (sortable column).
+
+### Create a Deployment Preset
+
+Click the `Create Preset` button to open the **Create Deployment Preset** form. The form collects the same fields as the Add Revision Advanced Mode form, organized in the same sections:
+
+- **Model & Runtime**: Select a runtime variant. For `vLLM` or `SGLang`, a **Runtime Parameters** section appears with tabs (Model Loading, Resource Memory, Serving Performance, and others). For the `Custom` runtime, startup command and health check fields appear instead.
+- **Environments**: Select the container image. The dropdown shows images in `<canonicalName>@<architecture>` format so you can distinguish images by CPU architecture. This same format appears in the Review step of the form.
+- **Cluster & Resources**: Set CPU, memory, and accelerator allocation.
+- **Advanced Settings** *(collapsible)*: Mount additional storage folders.
+
+:::note[Required Runtime Parameters]
+When a `vLLM` or `SGLang` runtime is selected, administrators can mark individual runtime parameters as required (indicated by a red asterisk ★). Submitting the preset form with an empty required parameter is blocked with an inline validation error. This same validation rule applies when adding a revision from a preset.
+:::
+
+The configured runtime parameter values are saved with the preset and applied when a deployment is created from this preset. Unchanged parameters keep their runtime defaults. The configured values also appear in the **Review** step under **Basic Info** before you save the preset.
+
+### Edit a Deployment Preset
+
+Click the edit icon on a preset row to open the **Edit Deployment Preset** form, pre-filled with the current values. The same fields and validation rules apply as for creating a preset.
+
+### Preset Detail Modal
+
+Click the **ⓘ** (info) button next to a preset selector — for example, in the **Preset Mode** of the Add Revision modal — to open the **Preset Detail** modal. The modal shows a summary of the preset's configuration, including the following cards:
+
+- **Basic Info**: Name, runtime variant, image, replicas, cluster mode, startup command, and environment variables.
+- **Resources**: CPU, memory, and accelerator allocation.
+- **Health Check**: Whether health checking is enabled for this preset.
+   * When **Enabled**: shows the configured Path, Interval, Max Retries, Max Wait Time, Expected Status Code, and Startup Grace Period.
+   * When **Disabled**: shows `Disabled`.
+
 <a id="model-store"></a>
 
 ## Model Store
@@ -710,9 +827,14 @@ The Model Store provides a card-based gallery of pre-configured models that you 
 
 The page uses a search and sort layout at the top:
 
-- **Search Models**: Use the **Filter By Name** property filter to search model cards by name.
+- **Filter By Name**: Search model cards by name.
+- **Storage Host**: Filter cards by the storage host where the model folder resides.
 - **Sort**: Choose how results are ordered. The available options are `Name (A→Z)`, `Name (Z→A)`, `Oldest first`, and `Newest first`.
 - **Refresh**: Click the refresh button to reload the card list.
+
+:::note
+The model list is automatically scoped to the current domain's MODEL_STORE project. There is no separate domain filter — all cards visible on this page already belong to your domain.
+:::
 
 Each card displays the model brand icon, title (or name when no title is set), task tag, relative creation time, and the author with an icon. Cards that have **no compatible presets** for the current project are shown at 50% opacity. You can still open such a card to view its details, but its **Deploy** button is disabled and an error alert is shown in the drawer: **No compatible presets available. This model cannot be deployed.**
 
@@ -755,4 +877,15 @@ If the selected model has no compatible presets for the current project, the dra
 **Deploy** button is disabled and deployment is blocked until a compatible preset is available.
 :::
 
+### Model Store Administration
 
+Superadmins can create, edit, and delete model cards from the Model Store admin panel.
+
+When creating or editing a model card:
+
+- **Label** and **Framework** tag fields accept either **Enter** or a **comma (,)** as a token separator, so you can type `pytorch, transformers,` to add multiple tags in one pass without pressing Enter between each one.
+- The **Domain** field pre-fills with the admin's currently active domain when creating a new card, saving the step of selecting the domain manually.
+
+:::tip
+To add multiple labels or framework tags quickly, type them separated by commas (for example, `nlp, text-generation, llm`) and they will all be added at once.
+:::

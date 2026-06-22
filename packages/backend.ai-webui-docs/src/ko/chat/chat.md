@@ -8,21 +8,31 @@
 이를 통해 사용자는 Backend.AI가 제공하는 서비스와 다양한 대규모 언어 모델(LLM)을 경험할 수 있습니다.
 
 ![](../images/chat_page.png)
+<!-- TODO: Capture screenshot of the Chat page showing the intro banner and updated Deployment selector -->
+
+:::note
+채팅 페이지에 처음 방문하면 페이지 상단에 안내 배너가 표시됩니다:
+"Chat with your deployed models — Chat with the LLM model defined in your deployment through an OpenAI-compatible API."
+닫기 버튼을 클릭하여 배너를 닫을 수 있으며, 한번 닫은 후에는 다시 표시되지 않습니다.
+:::
 
 <a id="selecting-models"></a>
 
 ## 모델 선택하기
 
-채팅 페이지 카드의 왼쪽 상단에서 엔드포인트와 모델을 선택할 수 있습니다. 엔드포인트 선택란을 클릭하면, 엔드포인트를 직접 검색하거나 목록에서 선택할 수 있으며, 모델도 동일한 방식으로 선택할 수 있습니다. 단, 선택한 엔드포인트에 해당하는 모델이 없을 경우, OpenAI 호환 기본 경로와 토큰을 확인한 후 '모델 정보 새로고침' 버튼을 클릭하세요.
+채팅 페이지의 각 채팅 카드 왼쪽 상단에서 배포(Deployment)와 모델을 선택할 수 있습니다.
+배포 아이콘이 앞에 표시된 **Deployment** 선택란을 클릭하면 "Deployment" 헤더 아래에 사용 가능한 배포 목록이 드롭다운으로 표시됩니다.
+배포를 선택하면 모델 드롭다운 헤더가 "{배포 이름}'s Models"로 업데이트되어 해당 배포와 연결된 모델 목록이 표시됩니다.
+선택한 배포에 해당하는 모델이 없을 경우, OpenAI 호환 기본 경로와 토큰을 확인한 후 '모델 정보 새로고침' 버튼을 클릭하세요.
 
 ![](../images/custom_model.png)
 
 사용자 정의 모델 설정에 필요한 입력 사항은 다음 설명을 참조하세요.
 
-- baseURL (선택 사항): 모델이 위치한 서버의 기본 URL입니다.
+- **baseURL** (선택 사항): 모델이 위치한 서버의 기본 URL입니다.
   버전 정보를 반드시 포함해야 합니다.
   예를 들어, OpenAI API를 사용하는 경우 https://api.openai.com/v1 을 입력합니다.
-- Token (선택 사항): 모델 서비스에 접근하기 위한 인증 키입니다. 토큰은
+- **Token** (선택 사항): 모델 서비스에 접근하기 위한 인증 키입니다. 토큰은
   Backend.AI뿐만 아니라 다양한 서비스에서 생성할 수 있습니다. 형식과 생성 과정은
   서비스에 따라 다를 수 있으므로, 해당 서비스의 가이드를 참조하세요.
   예를 들어, Backend.AI에서 생성된 서비스를 사용하는 경우, 토큰 생성 방법에 대한

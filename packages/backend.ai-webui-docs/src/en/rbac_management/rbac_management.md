@@ -29,10 +29,15 @@ The table displays the following columns:
 - **Scope Type**: The scope type of the role's first assigned scope, with a `+N` indicator when the role has multiple scopes.
 - **Scope ID**: The raw scope ID of the role's first assigned scope, with a `+N` indicator when the role has multiple scopes.
 - **Source**: Indicates whether the role is **System** (pre-defined) or **Custom** (user-created).
+- **Auto Assign**: Indicates whether the role is automatically assigned to a user when they are added to a scope the role is registered in. Displays **Active** when auto-assignment is enabled, or **Inactive** when disabled.
 - **Created At**: The date and time when the role was created.
 - **Updated At**: The date and time when the role was last modified.
 
-You can sort the table by clicking the **Role Name**, **Created At**, or **Updated At** column headers.
+You can sort the table by clicking the **Role Name**, **Created At**, or **Updated At** column headers. Use the column visibility gear button on the right side of the table header to show or hide individual columns.
+
+:::note
+Requires Backend.AI Manager 26.4.4 or later for the **Auto Assign** column to appear.
+:::
 
 ### System vs Custom Roles
 
@@ -51,6 +56,7 @@ To create a new custom role:
 2. In the creation modal, fill in the following fields:
    - **Role Name** (required): Enter a unique name for the role
    - **Description** (optional): Enter a description of the role's purpose
+   - **Auto Assign** (optional): When enabled, the role is automatically granted to users when they are added to a scope the role is registered in. Disabled by default.
    - **Scope Type / Target** (required, at least one): For each scope row, select a **Scope Type** and then choose the specific **Target** within that scope type. Click **Add** to add more scope rows, or the delete icon to remove a row. You must add at least one scope.
 3. Click **OK** to create the role
 
@@ -76,6 +82,7 @@ The drawer header displays the role name and provides an **Edit** button for cus
 
 - **Source**: System or Custom
 - **Status**: Active or Inactive
+- **Auto Assign**: Whether auto-assignment is Active or Inactive. When Active, the role is automatically granted to users added to one of its registered scopes.
 - **Created At**: The creation timestamp
 - **Updated At**: The last modification timestamp
 - **Description**: The role's description
@@ -199,14 +206,14 @@ The **Role Assignments** tab in the role detail drawer shows which users are ass
 ### Revoke Users from a Role
 
 1. In the **Role Assignments** tab, click the revoke (trash) icon button next to the user you want to remove
-2. A **Revoke User** confirmation modal opens. Type **`Permanently Delete`** into the input field exactly as shown — the **Revoke User** button stays disabled until the entered text matches. Click **Revoke User** to confirm, or **Cancel** to dismiss.
+2. A **Revoke User** confirmation modal opens. Review the listed user(s) and click **Revoke User** to confirm, or **Cancel** to dismiss.
 
 ![](../images/rbac_revoke_popconfirm.png)
 
 Revoking a user removes only that user's assignment to this role; the role itself and its other assignments remain unchanged.
 
-:::danger
-Revoking a user from a role cannot be undone. The confirmation modal requires you to type `Permanently Delete` before the **Revoke User** button is enabled.
+:::note
+Revoking a role assignment can be reversed by re-adding the user to the role from the **Role Assignments** tab.
 :::
 
 <a id="grant-project-admin"></a>

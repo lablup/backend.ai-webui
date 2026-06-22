@@ -8,14 +8,22 @@
 これにより、ユーザーはBackend.AIが提供するサービスと多様な大規模言語モデル（LLM）を体験できます。
 
 ![](../images/chat_page.png)
+<!-- TODO: Capture screenshot of the Chat page showing the intro banner and updated Deployment selector -->
+
+:::note
+チャットページに初めてアクセスすると、ページ上部に次のような案内バナーが表示されます：
+「Chat with your deployed models — Chat with the LLM model defined in your deployment through an OpenAI-compatible API.」
+閉じるボタンをクリックするとバナーを非表示にでき、一度非表示にすると再表示されません。
+:::
 
 <a id="selecting-models"></a>
 
 ## モデルの選択
 
-チャットページの各チャットカードの左上で、エンドポイントとモデルを選択できます。
-エンドポイント欄をクリックすると、利用可能なエンドポイントを検索したり一覧から選択したりでき、モデルも同じ方法で選択できます。
-選択したエンドポイントに対応するモデルがない場合は、OpenAI互換のベースパスおよびトークンを確認してから、'Refresh model info' ボタンをクリックしてください。
+チャットページの各チャットカードの左上で、デプロイメントとモデルを選択できます。
+**デプロイメント**フィールド（デプロイメントアイコンのプレフィックスが付いています）をクリックすると、「Deployment」ヘッダーの下に利用可能なデプロイメントが一覧表示されたドロップダウンが開きます。
+デプロイメントを選択すると、モデルドロップダウンのヘッダーが「{デプロイメント名}'s Models」に更新され、そのデプロイメントに関連付けられたモデルが一覧表示されます。
+選択したデプロイメントに対応するモデルがない場合は、OpenAI互換のベースパスおよびトークンを確認してから、'Refresh model info' ボタンをクリックしてください。
 
 ![](../images/custom_model.png)
 

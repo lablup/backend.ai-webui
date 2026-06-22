@@ -95,27 +95,32 @@ directory will not be deleted when the compute session is terminated.
 ## Explore Folder
 
 
-Click the folder name to open a file explorer and view the contents of the folder.
+Click the folder name to open the folder explorer and view the contents of the folder.
 
 ![](../images/click_folder_name.png)
 
-You can see that directories and files inside the folder will be listed, if
-exists. Click a directory name in the Name column to move to the directory.  You
-can click the download button or delete button in the Actions column to download
-it or delete it entirely from the directory. You can rename a file/directory as
-well. For more detailed file operations, you can mount this folder when creating
-a compute session, and then use a service like Terminal or Jupyter Notebook to
-do it.
+The folder explorer uses a two-panel layout:
+
+- **Left panel**: File browser showing the directory tree and file list for the storage folder.
+- **Right panel**: Additional information and logs, organized into two tabs:
+  * **Metadata**: Folder description and properties (previously shown as a side panel).
+  * **Audit Log**: A chronological record of operations performed on this folder.
+
+On wide (xl) screens a draggable divider separates the two panels so you can resize them to suit your workflow. On narrow screens the panels stack vertically.
+
+![](../images/split_panel_folder_explorer.png)
+<!-- TODO: Capture screenshot of the split-panel folder explorer layout -->
+
+### File Operations
+
+Inside the left panel you can see all directories and files in the folder. Click a directory name in the Name column to navigate into it. Use the buttons in the Actions column to download or delete a file or directory. You can rename a file or directory as well. For more detailed file operations, you can mount this folder when creating a compute session and then use a service like Terminal or Jupyter Notebook.
 
 ![](../images/folder_explorer.png)
 
-You can create a new directory on the current path with the 'Create' button
-(in the folder explorer), or upload a local file or folder with the 'Upload' button. All
-of these file operations can also be performed using the above-described method
-of mounting folders into a compute session.
+You can create a new directory on the current path with the **Create** button, or upload a local file or folder with the **Upload** button. All of these file operations can also be performed using the above-described method of mounting folders into a compute session.
 
 :::warning
-The 'Upload' button (and drag-and-drop upload) is **disabled** when your account
+The **Upload** button (and drag-and-drop upload) is **disabled** when your account
 does not have the `upload-file` permission on the storage host that hosts this
 folder. The button itself remains visible but is greyed out, and tooltips
 explain that uploads are not permitted.
@@ -131,9 +136,7 @@ drawer.
 
 ![](../images/vfolder_upload_disabled.png)
 
-The maximum length of file or directory inside a folder may depends on the host
-file system. But, it usually cannot exceed 255 characters.
-
+The maximum length of a file or directory name inside a folder depends on the host file system, but it usually cannot exceed 255 characters.
 
 :::note
 To ensure smooth performance, the screen limits the maximum number of files that can be displayed when a
@@ -144,7 +147,7 @@ in the directory.
 
 ### Edit Text Files
 
-You can edit text files directly in the folder explorer. Click the folder name to open the file explorer, then click the 'Edit File' button in the Control column for any text file.
+You can edit text files directly in the folder explorer. Click the folder name to open the file explorer, then click the **Edit File** button in the Control column for any text file.
 
 ![](../images/folder_explorer_edit_button.png)
 
@@ -152,10 +155,30 @@ The text file editor opens in a modal with a code editor interface. The editor a
 
 ![](../images/text_file_editor_modal.png)
 
-The editor supports both light and dark themes matching your UI preferences. You can edit the file content, then click 'Save' to upload the modified file, or 'Cancel' to discard changes.
+The editor supports both light and dark themes matching your UI preferences. You can edit the file content, then click **Save** to upload the modified file, or **Cancel** to discard changes.
 
 :::note
 The Edit File button is only available when your access to this storage folder includes the `write_content` permission (granted via folder sharing permission or your role on the folder). Storage-host level settings in the control panel do not affect this. If the file fails to load, an error message will be displayed.
+:::
+
+### Audit Log Tab
+
+The **Audit Log** tab in the right panel shows a chronological list of all operations performed on this storage folder (create, update, delete events, and more).
+
+![](../images/vfolder_audit_log_tab.png)
+<!-- TODO: Capture screenshot of the Audit Log tab in the folder explorer -->
+
+You can filter the audit log using the following controls:
+
+- **Status**: Filter by operation result (for example, SUCCESS or ERROR).
+- **Operation**: Filter by operation type (for example, create or delete).
+- **Triggered By**: Search by the user ID of the actor. Entries display in "email (id)" format.
+- **Time**: Narrow results to a specific date and time range.
+
+An auto-refresh button keeps the log up to date without a full page reload. The log uses lazy loading — the query is sent to the server only the first time you open the tab.
+
+:::note
+The Audit Log tab is visible to all users, but the backend enforces access restrictions. Only superadmins receive audit log data. Regular users will see an empty list.
 :::
 
 ## Rename Folder
