@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<eccee3bd3c15f814f9bbe478c1533800>>
+ * @generated SignedSource<<328f270689bce99ce8ca4ab69de03c34>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -33,6 +33,12 @@ export type DeploymentPresetDetailModalFragment$data = {
     readonly startupCommand: string | null | undefined;
   };
   readonly id: string;
+  readonly image: {
+    readonly id: string;
+    readonly identity: {
+      readonly canonicalName: string;
+    };
+  } | null | undefined;
   readonly modelDefinition: {
     readonly models: ReadonlyArray<{
       readonly name: string;
@@ -203,6 +209,36 @@ return {
               "storageKey": null
             },
             (v2/*: any*/)
+          ],
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "ImageV2",
+      "kind": "LinkedField",
+      "name": "image",
+      "plural": false,
+      "selections": [
+        (v0/*: any*/),
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "ImageV2IdentityInfo",
+          "kind": "LinkedField",
+          "name": "identity",
+          "plural": false,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "canonicalName",
+              "storageKey": null
+            }
           ],
           "storageKey": null
         }
@@ -416,6 +452,6 @@ return {
 };
 })();
 
-(node as any).hash = "93492d97fc60a7f2a69989f05fbb98af";
+(node as any).hash = "8777e9341f9f6cf76068aa32e2b2a71f";
 
 export default node;

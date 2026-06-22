@@ -6,7 +6,6 @@ import type {
   AdminDeploymentPresetNodesFragment$data,
   AdminDeploymentPresetNodesFragment$key,
 } from '../__generated__/AdminDeploymentPresetNodesFragment.graphql';
-import type { AdminDeploymentPresetNodesImagesQuery } from '../__generated__/AdminDeploymentPresetNodesImagesQuery.graphql';
 import { DeleteFilled, SettingOutlined } from '@ant-design/icons';
 import {
   BAIColumnType,
@@ -18,13 +17,12 @@ import {
   BooleanTag,
   filterOutEmpty,
   filterOutNullAndUndefined,
-  toLocalId,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 export type DeploymentPresetNodeInList = NonNullable<
   AdminDeploymentPresetNodesFragment$data[number]
@@ -89,6 +87,13 @@ const AdminDeploymentPresetNodes: React.FC<AdminDeploymentPresetNodesProps> = ({
           imageId
           startupCommand
         }
+        image @since(version: "26.4.4") {
+          id
+          identity {
+            canonicalName
+            architecture
+          }
+        }
         deploymentDefaults {
           replicaCount
           deploymentStrategy
@@ -103,49 +108,6 @@ const AdminDeploymentPresetNodes: React.FC<AdminDeploymentPresetNodesProps> = ({
   );
 
   const filteredPresets = filterOutNullAndUndefined(presets);
-
-  const imageIds = _.uniq(
-    filteredPresets
-      .map((p) => p.execution?.imageId)
-      .filter((id): id is string => id != null),
-  );
-
-  const imagesData = useLazyLoadQuery<AdminDeploymentPresetNodesImagesQuery>(
-    graphql`
-      query AdminDeploymentPresetNodesImagesQuery(
-        $ids: [UUID!]!
-        $limit: Int!
-      ) {
-        adminImagesV2(filter: { id: { in: $ids } }, limit: $limit) {
-          edges {
-            node {
-              id
-              identity {
-                canonicalName
-                architecture
-              }
-            }
-          }
-        }
-      }
-    `,
-    { ids: imageIds, limit: imageIds.length || 1 },
-    { fetchPolicy: 'store-or-network' },
-  );
-
-  // PresetExecutionSpec.imageId is a raw UUID, but ImageV2.id is a Relay
-  // global ID — toLocalId is required to match results back to imageIds.
-  // Label is "<canonicalName>@<architecture>" so admins can tell aarch64
-  // and x86_64 images apart.
-  const imageLabelById: Record<string, string> = {};
-  for (const edge of imagesData.adminImagesV2?.edges ?? []) {
-    const identity = edge?.node?.identity;
-    if (edge?.node?.id && identity?.canonicalName) {
-      imageLabelById[toLocalId(edge.node.id)] = identity.architecture
-        ? `${identity.canonicalName}@${identity.architecture}`
-        : identity.canonicalName;
-    }
-  }
 
   const baseColumns: BAIColumnType<DeploymentPresetNodeInList>[] = _.map(
     filterOutEmpty<BAIColumnType<DeploymentPresetNodeInList>>([
@@ -193,9 +155,17 @@ const AdminDeploymentPresetNodes: React.FC<AdminDeploymentPresetNodesProps> = ({
         key: 'image',
         title: t('adminDeploymentPreset.Image'),
         render: (__, record) => {
-          const imageId = record.execution?.imageId;
-          if (!imageId) return '-';
-          const label = imageLabelById[imageId] ?? imageId;
+          // `image` is gated by @since(26.4.4); on older servers it is null,
+          // so fall back to the raw imageId. Label is
+          // "<canonicalName>@<architecture>" so admins can tell aarch64 and
+          // x86_64 images apart.
+          const identity = record.image?.identity;
+          const label = identity
+            ? identity.architecture
+              ? `${identity.canonicalName}@${identity.architecture}`
+              : identity.canonicalName
+            : record.execution?.imageId;
+          if (!label) return '-';
           return (
             <BAIText copyable style={{ wordBreak: 'break-all' }}>
               {label}
