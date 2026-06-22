@@ -301,20 +301,21 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   );
 
   useEffect(() => {
-    _.isFunction(onChangeAutoMountedFolders) &&
-      onChangeAutoMountedFolders(autoMountedFolderNames);
-    // Do not need to run when `autoMountedFolderNames` changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoMountedFolderNames]);
-
-  useEffect(() => {
-    // Only reset selectedRowKeys when currentProject changes if there are no controlled selectedRowKeys
+    // Reset selected rows and auto-mounted folders when the project changes.
+    // This effect must be defined BEFORE the autoMountedFolderNames effect so
+    // that React runs it first. The autoMountedFolderNames effect fires second
+    // and re-populates the field with the new project's dot-file folders.
     if (!controlledSelectedRowKeys || controlledSelectedRowKeys.length === 0) {
       setSelectedRowKeys([]);
     }
-    // Reset selectedRowKeys when currentProject changes
+    _.isFunction(onChangeAutoMountedFolders) && onChangeAutoMountedFolders([]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentProject.id]);
+
+  useEffect(() => {
+    _.isFunction(onChangeAutoMountedFolders) &&
+      onChangeAutoMountedFolders(autoMountedFolderNames);
+  }, [autoMountedFolderNames, onChangeAutoMountedFolders]);
 
   const [searchKey, setSearchKey] = useState('');
   const displayingFolders = useMemo(() => {
