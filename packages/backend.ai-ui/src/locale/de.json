@@ -387,17 +387,18 @@
     "SelectUser": "Benutzer auswählen"
   },
   "comp:BAIVFolderMountConfigInput": {
-    "AliasInvalid": "Invalid path format.",
-    "AliasOverlapping": "Mount path overlaps with another folder.",
-    "AliasPlaceholder": "Mount path",
+    "AliasInvalid": "Ungültiges Pfadformat.",
+    "AliasOverlapping": "Der Einhängepfad überschneidet sich mit einem anderen Ordner.",
+    "AliasPlaceholder": "Einhängepfad",
+    "AutoMountedFolders": "Automatisch eingehängte Ordner",
     "Name": "Name",
-    "PathAndAlias": "Path & Alias",
-    "PathAndAliasTooltip": "The path inside the container where the folder will be mounted. Leave empty to use the default path.",
-    "RemoveFolder": "Remove",
-    "Subpath": "Subpath",
-    "SubpathInvalid": "Subpath must be a relative path and must not contain '..'.",
-    "SubpathPlaceholder": "e.g. dataset/train (optional)",
-    "SubpathTooltip": "Mount a subfolder inside the folder as the source instead of its root. Leave empty to mount the root."
+    "PathAndAlias": "Pfad & Alias",
+    "PathAndAliasTooltip": "Der Pfad im Container, in den der Ordner eingehängt wird. Leer lassen, um den Standardpfad zu verwenden.",
+    "RemoveFolder": "Entfernen",
+    "Subpath": "Unterpfad",
+    "SubpathInvalid": "Der Unterpfad muss ein relativer Pfad sein und darf '..' nicht enthalten.",
+    "SubpathPlaceholder": "z. B. dataset/train (optional)",
+    "SubpathTooltip": "Hängt einen Unterordner innerhalb des Ordners als Quelle ein, anstatt dessen Wurzel. Leer lassen, um die Wurzel einzuhängen."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Ordner auswählen"

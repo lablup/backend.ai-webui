@@ -387,17 +387,18 @@
     "SelectUser": "Chọn người dùng"
   },
   "comp:BAIVFolderMountConfigInput": {
-    "AliasInvalid": "Invalid path format.",
-    "AliasOverlapping": "Mount path overlaps with another folder.",
-    "AliasPlaceholder": "Mount path",
-    "Name": "Name",
-    "PathAndAlias": "Path & Alias",
-    "PathAndAliasTooltip": "The path inside the container where the folder will be mounted. Leave empty to use the default path.",
-    "RemoveFolder": "Remove",
-    "Subpath": "Subpath",
-    "SubpathInvalid": "Subpath must be a relative path and must not contain '..'.",
-    "SubpathPlaceholder": "e.g. dataset/train (optional)",
-    "SubpathTooltip": "Mount a subfolder inside the folder as the source instead of its root. Leave empty to mount the root."
+    "AliasInvalid": "Định dạng đường dẫn không hợp lệ.",
+    "AliasOverlapping": "Đường dẫn mount trùng lặp với thư mục khác.",
+    "AliasPlaceholder": "Đường dẫn mount",
+    "AutoMountedFolders": "Thư mục tự động mount",
+    "Name": "Tên",
+    "PathAndAlias": "Đường dẫn & Bí danh",
+    "PathAndAliasTooltip": "Đường dẫn bên trong container nơi thư mục sẽ được mount. Để trống để sử dụng đường dẫn mặc định.",
+    "RemoveFolder": "Xóa",
+    "Subpath": "Đường dẫn con",
+    "SubpathInvalid": "Đường dẫn con phải là đường dẫn tương đối và không được chứa '..'.",
+    "SubpathPlaceholder": "vd. dataset/train (tùy chọn)",
+    "SubpathTooltip": "Mount một thư mục con bên trong thư mục làm nguồn thay vì thư mục gốc. Để trống để mount từ thư mục gốc."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Chọn thư mục"

@@ -390,6 +390,7 @@
     "AliasInvalid": "Invalid path format.",
     "AliasOverlapping": "Mount path overlaps with another folder.",
     "AliasPlaceholder": "Mount path",
+    "AutoMountedFolders": "Automount Folders",
     "Name": "Name",
     "PathAndAlias": "Path & Alias",
     "PathAndAliasTooltip": "The path inside the container where the folder will be mounted. Leave empty to use the default path.",

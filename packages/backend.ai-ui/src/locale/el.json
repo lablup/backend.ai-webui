@@ -387,17 +387,18 @@
     "SelectUser": "Επιλογή χρήστη"
   },
   "comp:BAIVFolderMountConfigInput": {
-    "AliasInvalid": "Invalid path format.",
-    "AliasOverlapping": "Mount path overlaps with another folder.",
-    "AliasPlaceholder": "Mount path",
-    "Name": "Name",
-    "PathAndAlias": "Path & Alias",
-    "PathAndAliasTooltip": "The path inside the container where the folder will be mounted. Leave empty to use the default path.",
-    "RemoveFolder": "Remove",
-    "Subpath": "Subpath",
-    "SubpathInvalid": "Subpath must be a relative path and must not contain '..'.",
-    "SubpathPlaceholder": "e.g. dataset/train (optional)",
-    "SubpathTooltip": "Mount a subfolder inside the folder as the source instead of its root. Leave empty to mount the root."
+    "AliasInvalid": "Μη έγκυρη μορφή διαδρομής.",
+    "AliasOverlapping": "Η διαδρομή προσάρτησης επικαλύπτεται με άλλο φάκελο.",
+    "AliasPlaceholder": "Διαδρομή προσάρτησης",
+    "AutoMountedFolders": "Φάκελοι αυτόματης προσάρτησης",
+    "Name": "Όνομα",
+    "PathAndAlias": "Διαδρομή & Ψευδώνυμο",
+    "PathAndAliasTooltip": "Η διαδρομή εντός του container όπου θα προσαρτηθεί ο φάκελος. Αφήστε κενό για να χρησιμοποιηθεί η προεπιλεγμένη διαδρομή.",
+    "RemoveFolder": "Αφαίρεση",
+    "Subpath": "Υποδιαδρομή",
+    "SubpathInvalid": "Η υποδιαδρομή πρέπει να είναι σχετική και να μην περιέχει '..'.",
+    "SubpathPlaceholder": "π.χ. dataset/train (προαιρετικό)",
+    "SubpathTooltip": "Προσαρτά έναν υποφάκελο εντός του φακέλου ως πηγή αντί της ρίζας του. Αφήστε κενό για προσάρτηση της ρίζας."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Επιλογή φακέλου"

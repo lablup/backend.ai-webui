@@ -387,17 +387,18 @@
     "SelectUser": "เลือกผู้ใช้"
   },
   "comp:BAIVFolderMountConfigInput": {
-    "AliasInvalid": "Invalid path format.",
-    "AliasOverlapping": "Mount path overlaps with another folder.",
-    "AliasPlaceholder": "Mount path",
-    "Name": "Name",
-    "PathAndAlias": "Path & Alias",
-    "PathAndAliasTooltip": "The path inside the container where the folder will be mounted. Leave empty to use the default path.",
-    "RemoveFolder": "Remove",
+    "AliasInvalid": "รูปแบบพาธไม่ถูกต้อง",
+    "AliasOverlapping": "พาธ mount ซ้ำซ้อนกับโฟลเดอร์อื่น",
+    "AliasPlaceholder": "พาธ mount",
+    "AutoMountedFolders": "โฟลเดอร์ที่ mount อัตโนมัติ",
+    "Name": "ชื่อ",
+    "PathAndAlias": "พาธ & Alias",
+    "PathAndAliasTooltip": "พาธภายใน container ที่โฟลเดอร์จะถูก mount ปล่อยว่างเพื่อใช้พาธเริ่มต้น",
+    "RemoveFolder": "ลบ",
     "Subpath": "Subpath",
-    "SubpathInvalid": "Subpath must be a relative path and must not contain '..'.",
-    "SubpathPlaceholder": "e.g. dataset/train (optional)",
-    "SubpathTooltip": "Mount a subfolder inside the folder as the source instead of its root. Leave empty to mount the root."
+    "SubpathInvalid": "Subpath ต้องเป็น relative path และต้องไม่มี '..'",
+    "SubpathPlaceholder": "เช่น dataset/train (ไม่บังคับ)",
+    "SubpathTooltip": "mount โฟลเดอร์ย่อยภายในโฟลเดอร์เป็นแหล่งข้อมูลแทน root ปล่อยว่างเพื่อ mount จาก root"
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "เลือกโฟลเดอร์"

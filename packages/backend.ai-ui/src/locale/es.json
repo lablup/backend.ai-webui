@@ -387,17 +387,18 @@
     "SelectUser": "Seleccionar usuario"
   },
   "comp:BAIVFolderMountConfigInput": {
-    "AliasInvalid": "Invalid path format.",
-    "AliasOverlapping": "Mount path overlaps with another folder.",
-    "AliasPlaceholder": "Mount path",
-    "Name": "Name",
-    "PathAndAlias": "Path & Alias",
-    "PathAndAliasTooltip": "The path inside the container where the folder will be mounted. Leave empty to use the default path.",
-    "RemoveFolder": "Remove",
-    "Subpath": "Subpath",
-    "SubpathInvalid": "Subpath must be a relative path and must not contain '..'.",
-    "SubpathPlaceholder": "e.g. dataset/train (optional)",
-    "SubpathTooltip": "Mount a subfolder inside the folder as the source instead of its root. Leave empty to mount the root."
+    "AliasInvalid": "Formato de ruta inválido.",
+    "AliasOverlapping": "La ruta de montaje se superpone con otra carpeta.",
+    "AliasPlaceholder": "Ruta de montaje",
+    "AutoMountedFolders": "Carpetas de montaje automático",
+    "Name": "Nombre",
+    "PathAndAlias": "Ruta & Alias",
+    "PathAndAliasTooltip": "La ruta dentro del contenedor donde se montará la carpeta. Déjelo vacío para usar la ruta predeterminada.",
+    "RemoveFolder": "Eliminar",
+    "Subpath": "Subruta",
+    "SubpathInvalid": "La subruta debe ser una ruta relativa y no debe contener '..'.",
+    "SubpathPlaceholder": "p. ej. dataset/train (opcional)",
+    "SubpathTooltip": "Monta una subcarpeta dentro de la carpeta como origen en lugar de su raíz. Déjelo vacío para montar la raíz."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Seleccionar carpeta"

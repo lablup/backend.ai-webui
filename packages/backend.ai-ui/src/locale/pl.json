@@ -387,17 +387,18 @@
     "SelectUser": "Wybierz użytkownika"
   },
   "comp:BAIVFolderMountConfigInput": {
-    "AliasInvalid": "Invalid path format.",
-    "AliasOverlapping": "Mount path overlaps with another folder.",
-    "AliasPlaceholder": "Mount path",
-    "Name": "Name",
-    "PathAndAlias": "Path & Alias",
-    "PathAndAliasTooltip": "The path inside the container where the folder will be mounted. Leave empty to use the default path.",
-    "RemoveFolder": "Remove",
-    "Subpath": "Subpath",
-    "SubpathInvalid": "Subpath must be a relative path and must not contain '..'.",
-    "SubpathPlaceholder": "e.g. dataset/train (optional)",
-    "SubpathTooltip": "Mount a subfolder inside the folder as the source instead of its root. Leave empty to mount the root."
+    "AliasInvalid": "Nieprawidłowy format ścieżki.",
+    "AliasOverlapping": "Ścieżka montowania pokrywa się z innym folderem.",
+    "AliasPlaceholder": "Ścieżka montowania",
+    "AutoMountedFolders": "Automatycznie montowane foldery",
+    "Name": "Nazwa",
+    "PathAndAlias": "Ścieżka & Alias",
+    "PathAndAliasTooltip": "Ścieżka wewnątrz kontenera, w której zostanie zamontowany folder. Pozostaw puste, aby użyć domyślnej ścieżki.",
+    "RemoveFolder": "Usuń",
+    "Subpath": "Podścieżka",
+    "SubpathInvalid": "Podścieżka musi być ścieżką względną i nie może zawierać '..'.",
+    "SubpathPlaceholder": "np. dataset/train (opcjonalne)",
+    "SubpathTooltip": "Montuje podfolder wewnątrz folderu jako źródło zamiast jego katalogu głównego. Pozostaw puste, aby zamontować katalog główny."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Wybierz folder"

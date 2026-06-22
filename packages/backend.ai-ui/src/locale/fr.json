@@ -387,17 +387,18 @@
     "SelectUser": "Sélectionner un utilisateur"
   },
   "comp:BAIVFolderMountConfigInput": {
-    "AliasInvalid": "Invalid path format.",
-    "AliasOverlapping": "Mount path overlaps with another folder.",
-    "AliasPlaceholder": "Mount path",
-    "Name": "Name",
-    "PathAndAlias": "Path & Alias",
-    "PathAndAliasTooltip": "The path inside the container where the folder will be mounted. Leave empty to use the default path.",
-    "RemoveFolder": "Remove",
-    "Subpath": "Subpath",
-    "SubpathInvalid": "Subpath must be a relative path and must not contain '..'.",
-    "SubpathPlaceholder": "e.g. dataset/train (optional)",
-    "SubpathTooltip": "Mount a subfolder inside the folder as the source instead of its root. Leave empty to mount the root."
+    "AliasInvalid": "Format de chemin invalide.",
+    "AliasOverlapping": "Le chemin de montage chevauche un autre dossier.",
+    "AliasPlaceholder": "Chemin de montage",
+    "AutoMountedFolders": "Dossiers montés automatiquement",
+    "Name": "Nom",
+    "PathAndAlias": "Chemin & Alias",
+    "PathAndAliasTooltip": "Le chemin à l'intérieur du conteneur où le dossier sera monté. Laissez vide pour utiliser le chemin par défaut.",
+    "RemoveFolder": "Supprimer",
+    "Subpath": "Sous-chemin",
+    "SubpathInvalid": "Le sous-chemin doit être un chemin relatif et ne doit pas contenir '..'.",
+    "SubpathPlaceholder": "ex. dataset/train (facultatif)",
+    "SubpathTooltip": "Monte un sous-dossier à l'intérieur du dossier comme source au lieu de sa racine. Laissez vide pour monter la racine."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Sélectionner un dossier"

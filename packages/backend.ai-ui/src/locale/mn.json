@@ -387,17 +387,18 @@
     "SelectUser": "Хэрэглэгч сонгох"
   },
   "comp:BAIVFolderMountConfigInput": {
-    "AliasInvalid": "Invalid path format.",
-    "AliasOverlapping": "Mount path overlaps with another folder.",
-    "AliasPlaceholder": "Mount path",
-    "Name": "Name",
-    "PathAndAlias": "Path & Alias",
-    "PathAndAliasTooltip": "The path inside the container where the folder will be mounted. Leave empty to use the default path.",
-    "RemoveFolder": "Remove",
-    "Subpath": "Subpath",
-    "SubpathInvalid": "Subpath must be a relative path and must not contain '..'.",
-    "SubpathPlaceholder": "e.g. dataset/train (optional)",
-    "SubpathTooltip": "Mount a subfolder inside the folder as the source instead of its root. Leave empty to mount the root."
+    "AliasInvalid": "Замын формат буруу байна.",
+    "AliasOverlapping": "Маунтын зам өөр хавтастай давхцаж байна.",
+    "AliasPlaceholder": "Маунтын зам",
+    "AutoMountedFolders": "Автоматаар маунт хийсэн хавтаснууд",
+    "Name": "Нэр",
+    "PathAndAlias": "Зам & Alias",
+    "PathAndAliasTooltip": "Хавтасыг контейнер дотор маунт хийх зам. Анхдагч замыг ашиглахын тулд хоосон үлдээнэ үү.",
+    "RemoveFolder": "Хасах",
+    "Subpath": "Дэд зам",
+    "SubpathInvalid": "Дэд зам нь харьцангуй зам байх ёстой бөгөөд '..' агуулж болохгүй.",
+    "SubpathPlaceholder": "жш нь dataset/train (заавал биш)",
+    "SubpathTooltip": "Хавтасны үндсийн оронд хавтас дотрах дэд хавтасыг эх сурвалж болгон маунт хийнэ. Үндсийг маунт хийхийн тулд хоосон үлдээнэ үү."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Хавтас сонгох"

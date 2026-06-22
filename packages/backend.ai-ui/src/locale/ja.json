@@ -387,17 +387,18 @@
     "SelectUser": "ユーザーを選択"
   },
   "comp:BAIVFolderMountConfigInput": {
-    "AliasInvalid": "Invalid path format.",
-    "AliasOverlapping": "Mount path overlaps with another folder.",
-    "AliasPlaceholder": "Mount path",
-    "Name": "Name",
-    "PathAndAlias": "Path & Alias",
-    "PathAndAliasTooltip": "The path inside the container where the folder will be mounted. Leave empty to use the default path.",
-    "RemoveFolder": "Remove",
-    "Subpath": "Subpath",
-    "SubpathInvalid": "Subpath must be a relative path and must not contain '..'.",
-    "SubpathPlaceholder": "e.g. dataset/train (optional)",
-    "SubpathTooltip": "Mount a subfolder inside the folder as the source instead of its root. Leave empty to mount the root."
+    "AliasInvalid": "パスの形式が無効です。",
+    "AliasOverlapping": "マウントパスが別のフォルダと重複しています。",
+    "AliasPlaceholder": "マウントパス",
+    "AutoMountedFolders": "自動マウントフォルダ",
+    "Name": "名前",
+    "PathAndAlias": "パス & エイリアス",
+    "PathAndAliasTooltip": "コンテナ内でフォルダがマウントされるパスです。デフォルトのパスを使用する場合は空欄にしてください。",
+    "RemoveFolder": "削除",
+    "Subpath": "サブパス",
+    "SubpathInvalid": "サブパスは相対パスである必要があり、'..' を含めることはできません。",
+    "SubpathPlaceholder": "例: dataset/train (省略可)",
+    "SubpathTooltip": "フォルダのルートではなく、フォルダ内のサブフォルダをマウントソースとして使用します。ルートをマウントするには空欄にしてください。"
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "フォルダを選択"

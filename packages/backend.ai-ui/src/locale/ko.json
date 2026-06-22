@@ -390,6 +390,7 @@
     "AliasInvalid": "경로 형식이 올바르지 않습니다.",
     "AliasOverlapping": "다른 폴더와 마운트 경로가 중복됩니다.",
     "AliasPlaceholder": "마운트 경로",
+    "AutoMountedFolders": "자동 마운트 폴더",
     "Name": "이름",
     "PathAndAlias": "경로 & 대체이름",
     "PathAndAliasTooltip": "폴더가 컨테이너 내부에 마운트될 경로입니다. 비워두면 기본 경로가 사용됩니다.",
