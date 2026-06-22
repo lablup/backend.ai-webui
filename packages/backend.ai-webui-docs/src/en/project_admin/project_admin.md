@@ -22,7 +22,7 @@ Switching to a different project from the header's project selector re-evaluates
 
 ## The Project Admin Sidebar
 
-When you select a project in which you are a project admin, the sidebar's **Administration** section displays four entries dedicated to managing that project:
+When you select a project in which you are a project admin, the sidebar's **Operations** section displays four entries dedicated to managing that project:
 
 - **Users** — the members of the current project
 - **Data** — the storage folders owned by the current project
@@ -31,7 +31,7 @@ When you select a project in which you are a project admin, the sidebar's **Admi
 
 ![](../images/project_admin_sidebar.png)
 
-Each of the four pages renders an info banner at the top reminding you that the contents are scoped to the currently selected project.
+Whenever you are on any of these project-admin pages, a single info banner appears above the page content, reminding you that only items belonging to the currently selected project are shown. The banner is rendered once at the layout level rather than separately on each page.
 
 ![](../images/project_admin_scope_alert.png)
 
@@ -69,9 +69,16 @@ To terminate one or more sessions:
 
 1. Select the sessions you want to terminate using the checkboxes in the leftmost column. To terminate a single session, you can use the row's terminate action instead.
 2. Click the power-off icon in the table header to open the confirmation modal.
-3. Review the list of targeted sessions in the modal and click **OK** to confirm.
+3. Review the list of targeted sessions in the modal.
+4. Optionally select the **Force Terminate** checkbox to terminate or cancel the sessions regardless of their current status. Enabling this option displays a warning and changes the confirm button label from **Terminate** to **Force Terminate**.
+5. Click the confirm button to terminate the sessions.
 
 ![](../images/project_admin_terminate_session_modal.png)
+<!-- TODO: Re-capture screenshot of project_admin_terminate_session_modal.png — current image is missing the Force Terminate checkbox and warning -->
+
+:::warning
+Use **Force Terminate** only when a session is stuck and its state does not change for an unreasonably long time. Force terminate does not delete the actual containers on the agent(s), so manual cleanup may be required afterward.
+:::
 
 :::note
 Clicking a session name on the project-admin Sessions page does not currently open a session detail drawer. For background on compute sessions and their detail view, see the [Session Page](#session-page) chapter.
@@ -92,13 +99,18 @@ The page provides the following controls:
 
 The table displays the deployment's Name, Revision, Status, Replicas, Model, Created At, and Owner columns, along with the deployment's domain, project, and resource group when relevant.
 
+The **Revision** column shows the deployment's current revision as a clickable `#N` link. Click it to open a drawer that displays the details of the current revision.
+
+   The current revision is available on Backend.AI Manager 26.4.3 and later.
+
 ### Deployment Actions
 
 The following actions are available on each deployment row:
 
 - Click the **deployment name** to navigate to the deployment detail page within the project-admin scope.
+- Click the **revision number** (`#N`) to open the revision detail drawer for the current revision.
 - Click the **pencil icon** to edit the deployment's configuration in the settings modal.
-- Click the **trash icon** to delete the deployment after confirmation.
+- Click the **trash icon** to delete the deployment. The confirmation modal requires you to type the deployment's name before the deletion is performed.
 
 ![](../images/project_admin_deployment_detail.png)
 
@@ -111,11 +123,15 @@ For details about deployment revisions, replicas, and traffic routing, see the [
 The **Data** page lists the storage folders (vfolders) owned by the currently selected project. Use this page to create project-shared folders, restore folders that were accidentally deleted, or purge folders that no longer need to be retained.
 
 ![](../images/project_admin_data_page.png)
+<!-- TODO: Re-capture screenshot of project_admin_data_page.png — current image shows the old mode pill labels (Data/Model) and the old "Deleted" tab instead of "Trash" with count badges -->
 
 The page provides the following controls:
 
-- **Active / Deleted** tabs: Switch between currently active folders and folders that have been soft-deleted.
-- **Mode pill**: Filter by folder usage mode — **All**, **General**, **Data**, **Auto Mount**, or **Model**.
+- **Active / Trash** tabs: Switch between currently active folders and folders that have been soft-deleted. Each tab shows a count badge with the number of folders it contains.
+- **Mode pill**: Filter by folder usage mode — **All**, **General**, **Pipeline**, **Auto Mount**, or **Models**.
+
+   The **Pipeline** and **Models** options appear only when the corresponding features are enabled in the deployment — the FastTrack pipeline endpoint for **Pipeline**, and model folders for **Models**.
+
 - **Property filter**: Filter the list using the standard storage-folder property filter.
 
 ### Create a Folder
@@ -138,10 +154,10 @@ For details about folder usage modes, permissions, and quota, see the [Vfolder](
 
 ### Restore or Permanently Delete a Folder
 
-Switch to the **Deleted** tab to see folders that have been soft-deleted. Two actions are available on each row:
+Switch to the **Trash** tab to see folders that have been soft-deleted. Select one or more folders using the row checkboxes, then use the header action buttons that appear next to the selection count:
 
-- **Restore**: Move the folder back to the Active tab.
-- **Delete forever**: Permanently purge the folder. This action is irreversible and requires you to type the folder's name to confirm.
+- **Restore**: Move the selected folders back to the Active tab.
+- **Delete forever**: Permanently purge the selected folders. This action is irreversible and requires you to type the folder's name to confirm.
 
 ![](../images/project_admin_data_deleted_tab.png)
 
