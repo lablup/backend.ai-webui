@@ -3,16 +3,15 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { DeploymentDetailPageQuery } from '../__generated__/DeploymentDetailPageQuery.graphql';
-import BAIErrorBoundary, {
-  ErrorWithGraphQL,
-} from '../components/BAIErrorBoundary';
-import DeploymentAccessTokensTab from '../components/DeploymentAccessTokensTab';
+import { ErrorWithGraphQL } from '../components/BAIErrorBoundary';
+import DeploymentAccessTokensCard from '../components/DeploymentAccessTokensCard';
 import DeploymentAddRevisionModal, {
   type DeploymentAddRevisionModalCreatedRevision,
 } from '../components/DeploymentAddRevisionModal';
-import DeploymentAutoScalingTab from '../components/DeploymentAutoScalingTab';
-import DeploymentConfigurationSection from '../components/DeploymentConfigurationSection';
-import DeploymentReplicasTab from '../components/DeploymentReplicasTab';
+import DeploymentAutoScalingCard from '../components/DeploymentAutoScalingCard';
+import DeploymentBasicInfoCard from '../components/DeploymentBasicInfoCard';
+import DeploymentReplicasCard from '../components/DeploymentReplicasCard';
+import DeploymentRevisionCard from '../components/DeploymentRevisionCard';
 import DeploymentRevisionDetailDrawer from '../components/DeploymentRevisionDetailDrawer';
 import SwitchToProjectButton from '../components/SwitchToProjectButton';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
@@ -22,20 +21,10 @@ import {
   getPathFromMenuKey,
   useWebUIMenuItems,
 } from '../hooks/useWebUIMenuItems';
-import { QuestionCircleOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import {
-  Alert,
-  Button,
-  Result,
-  Skeleton,
-  Tooltip,
-  Typography,
-  theme,
-} from 'antd';
+import { Alert, Button, Result, Typography, theme } from 'antd';
 import {
   BAIButton,
-  BAICard,
   BAIDeploymentStatus,
   BAIDeploymentStatusTag,
   BAIFlex,
@@ -47,7 +36,7 @@ import {
 } from 'backend.ai-ui';
 import type { GraphQLFormattedError } from 'graphql';
 import { BotMessageSquareIcon, PlusIcon } from 'lucide-react';
-import React, { Suspense, useRef, useState, useTransition } from 'react';
+import React, { useRef, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useParams } from 'react-router-dom';
@@ -77,7 +66,7 @@ const DeploymentDetailPage: React.FC = () => {
     { setLeft: closeAddRevision, setRight: openAddRevision },
   ] = useToggle(false);
   // Lifted here so the "Private deployment" alert can open the same
-  // create-access-token modal that DeploymentAccessTokensTab owns — the alert
+  // create-access-token modal that DeploymentAccessTokensCard owns — the alert
   // CTA and the section's "+" button share one flow.
   const [
     createAccessTokenOpen,
@@ -134,10 +123,11 @@ const DeploymentDetailPage: React.FC = () => {
               }
             }
             ...DeploymentAddRevisionModal_deployment
-            ...DeploymentConfigurationSection_deployment
-            ...DeploymentReplicasTab_deployment
-            ...DeploymentAccessTokensTab_deployment
-            ...DeploymentAutoScalingTab_deployment
+            ...DeploymentBasicInfoCard_deployment
+            ...DeploymentRevisionCard_deployment
+            ...DeploymentReplicasCard_deployment
+            ...DeploymentAccessTokensCard_deployment
+            ...DeploymentAutoScalingCard_deployment
           }
         }
       `,
@@ -372,39 +362,26 @@ const DeploymentDetailPage: React.FC = () => {
         </Typography.Title>
         <BAIDeploymentStatusTag status={deploymentStatus} />
       </BAIFlex>
-      <DeploymentConfigurationSection
+      <DeploymentBasicInfoCard
+        deploymentFrgmt={deployment}
+        isPendingRefetch={isPendingRefetch}
+        onRefetch={handleRefetch}
+      />
+      <DeploymentRevisionCard
         deploymentFrgmt={deployment}
         revisionFetchKey={revisionFetchKey}
-        isPendingRefetch={isPendingRefetch}
         onRefetch={handleRefetch}
         onAddRevision={openAddRevision}
         revisionCardRef={revisionsSectionRef}
+        isAddRevisionDisabled={isDeploymentDestroying || isProjectMismatch}
       />
-      <BAICard
-        title={
-          <BAIFlex gap="xs" align="center">
-            {t('deployment.tab.Replicas')}
-            <Tooltip title={t('deployment.tab.description.Replicas')}>
-              <QuestionCircleOutlined
-                style={{ color: token.colorTextDescription }}
-              />
-            </Tooltip>
-          </BAIFlex>
-        }
-        styles={{ body: { paddingTop: 0 } }}
-      >
-        <BAIErrorBoundary>
-          <Suspense fallback={<Skeleton active />}>
-            <DeploymentReplicasTab
-              deploymentFrgmt={deployment}
-              deploymentId={deploymentGlobalId}
-              replicaFetchKey={replicaFetchKey}
-            />
-          </Suspense>
-        </BAIErrorBoundary>
-      </BAICard>
-      <DeploymentAutoScalingTab deploymentFrgmt={deployment} />
-      <DeploymentAccessTokensTab
+      <DeploymentReplicasCard
+        deploymentFrgmt={deployment}
+        deploymentId={deploymentGlobalId}
+        replicaFetchKey={replicaFetchKey}
+      />
+      <DeploymentAutoScalingCard deploymentFrgmt={deployment} />
+      <DeploymentAccessTokensCard
         cardRef={accessTokensSectionRef}
         deploymentFrgmt={deployment}
         deploymentId={deploymentGlobalId}

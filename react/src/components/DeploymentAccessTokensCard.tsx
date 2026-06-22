@@ -2,14 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { DeploymentAccessTokensTabCreateMutation } from '../__generated__/DeploymentAccessTokensTabCreateMutation.graphql';
-import { DeploymentAccessTokensTabDeleteMutation } from '../__generated__/DeploymentAccessTokensTabDeleteMutation.graphql';
-import { DeploymentAccessTokensTabListQuery } from '../__generated__/DeploymentAccessTokensTabListQuery.graphql';
-import { DeploymentAccessTokensTab_deployment$key } from '../__generated__/DeploymentAccessTokensTab_deployment.graphql';
-import {
-  DeleteFilled,
-  QuestionCircleOutlined,
-} from '@ant-design/icons';
+import { DeploymentAccessTokensCardCreateMutation } from '../__generated__/DeploymentAccessTokensCardCreateMutation.graphql';
+import { DeploymentAccessTokensCardDeleteMutation } from '../__generated__/DeploymentAccessTokensCardDeleteMutation.graphql';
+import { DeploymentAccessTokensCardListQuery } from '../__generated__/DeploymentAccessTokensCardListQuery.graphql';
+import { DeploymentAccessTokensCard_deployment$key } from '../__generated__/DeploymentAccessTokensCard_deployment.graphql';
+import { DeleteFilled, QuestionCircleOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
 import {
   App,
@@ -32,9 +29,11 @@ import {
   BAITable,
   BAIText,
   BAIUnmountAfterClose,
+  INITIAL_FETCH_KEY,
   filterOutNullAndUndefined,
   toLocalId,
   useBAILogger,
+  useFetchKey,
   useMutationWithPromise,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -53,8 +52,8 @@ import {
   useMutation,
 } from 'react-relay';
 
-interface DeploymentAccessTokensTabProps {
-  deploymentFrgmt: DeploymentAccessTokensTab_deployment$key;
+interface DeploymentAccessTokensCardProps {
+  deploymentFrgmt: DeploymentAccessTokensCard_deployment$key;
   deploymentId: string;
   isOwnedByCurrentUser?: boolean;
   isDeploymentDestroying?: boolean;
@@ -68,7 +67,7 @@ interface DeploymentAccessTokensTabProps {
   cardRef?: React.RefObject<HTMLDivElement | null>;
 }
 
-const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
+const DeploymentAccessTokensCard: React.FC<DeploymentAccessTokensCardProps> = ({
   deploymentFrgmt,
   deploymentId,
   isOwnedByCurrentUser = true,
@@ -83,7 +82,7 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
-  const [fetchKey, setFetchKey] = useState(0);
+  const [fetchKey, updateFetchKey] = useFetchKey();
 
   const [isCreateModalOpen, setIsCreateModalOpen] =
     useControllableValue<boolean>(controlledModalProps, {
@@ -103,7 +102,7 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
 
   const deployment = useFragment(
     graphql`
-      fragment DeploymentAccessTokensTab_deployment on ModelDeployment {
+      fragment DeploymentAccessTokensCard_deployment on ModelDeployment {
         id
         networkAccess {
           endpointUrl
@@ -114,8 +113,8 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
   );
 
   const commitCreateMutation =
-    useMutationWithPromise<DeploymentAccessTokensTabCreateMutation>(graphql`
-      mutation DeploymentAccessTokensTabCreateMutation(
+    useMutationWithPromise<DeploymentAccessTokensCardCreateMutation>(graphql`
+      mutation DeploymentAccessTokensCardCreateMutation(
         $input: CreateAccessTokenInput!
       ) {
         createAccessToken(input: $input) {
@@ -131,7 +130,7 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
 
   const handleRefetch = () => {
     startRefetchTransition(() => {
-      setFetchKey((k) => k + 1);
+      updateFetchKey();
     });
   };
 
@@ -281,7 +280,7 @@ const DeploymentAccessTokensTab: React.FC<DeploymentAccessTokensTabProps> = ({
 
 interface DeploymentAccessTokensTableProps {
   deploymentId: string;
-  fetchKey: number;
+  fetchKey: string;
   isPendingRefetch: boolean;
   isDeleteDisabled: boolean;
   onAfterDelete: () => void;
@@ -305,10 +304,15 @@ const DeploymentAccessTokensTable: React.FC<
     token: string;
   } | null>(null);
 
+  // First load serves cached tokens immediately + refreshes in the background;
+  // an explicit refresh / a just-created token bumps the (deferred) fetchKey so
+  // those go network-only. Mirrors DeploymentRevisionHistoryTab / Replicas.
+  const isInitialFetch = fetchKey === INITIAL_FETCH_KEY;
+
   const { deployment: listData } =
-    useLazyLoadQuery<DeploymentAccessTokensTabListQuery>(
+    useLazyLoadQuery<DeploymentAccessTokensCardListQuery>(
       graphql`
-        query DeploymentAccessTokensTabListQuery($deploymentId: ID!) {
+        query DeploymentAccessTokensCardListQuery($deploymentId: ID!) {
           deployment(id: $deploymentId) {
             accessTokens(orderBy: [{ field: CREATED_AT, direction: DESC }]) {
               count
@@ -325,7 +329,10 @@ const DeploymentAccessTokensTable: React.FC<
         }
       `,
       { deploymentId },
-      { fetchKey, fetchPolicy: 'network-only' },
+      {
+        fetchKey,
+        fetchPolicy: isInitialFetch ? 'store-and-network' : 'network-only',
+      },
     );
 
   type AccessTokenNode = NonNullable<
@@ -339,8 +346,8 @@ const DeploymentAccessTokensTable: React.FC<
   );
 
   const [commitDelete, isDeletingToken] =
-    useMutation<DeploymentAccessTokensTabDeleteMutation>(graphql`
-      mutation DeploymentAccessTokensTabDeleteMutation(
+    useMutation<DeploymentAccessTokensCardDeleteMutation>(graphql`
+      mutation DeploymentAccessTokensCardDeleteMutation(
         $input: DeleteAccessTokenInput!
       ) {
         deleteAccessToken(input: $input) {
@@ -594,4 +601,4 @@ const CreateAccessTokenModal: React.FC<CreateAccessTokenModalProps> = ({
   );
 };
 
-export default DeploymentAccessTokensTab;
+export default DeploymentAccessTokensCard;

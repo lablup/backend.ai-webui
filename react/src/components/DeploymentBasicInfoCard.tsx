@@ -2,46 +2,31 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { DeploymentConfigurationSectionDeleteMutation } from '../__generated__/DeploymentConfigurationSectionDeleteMutation.graphql';
+import { DeploymentBasicInfoCardDeleteMutation } from '../__generated__/DeploymentBasicInfoCardDeleteMutation.graphql';
 import type {
-  DeploymentConfigurationSection_deployment$data,
-  DeploymentConfigurationSection_deployment$key,
-} from '../__generated__/DeploymentConfigurationSection_deployment.graphql';
-import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
+  DeploymentBasicInfoCard_deployment$data,
+  DeploymentBasicInfoCard_deployment$key,
+} from '../__generated__/DeploymentBasicInfoCard_deployment.graphql';
 import { DeploymentSchedulingHistoryModalQuery } from '../__generated__/DeploymentSchedulingHistoryModalQuery.graphql';
-import type { ScopedAuditLogQuery as ScopedAuditLogQueryType } from '../__generated__/ScopedAuditLogQuery.graphql';
 import { useWebUINavigate } from '../hooks';
-import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import BAIErrorBoundary from './BAIErrorBoundary';
-import DeploymentRevisionDetail from './DeploymentRevisionDetail';
-import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
-import DeploymentRevisionHistoryTab from './DeploymentRevisionHistoryTab';
 import DeploymentSchedulingHistoryModal, {
   DeploymentSchedulingHistoryQuery,
 } from './DeploymentSchedulingHistoryModal';
 import DeploymentSettingModal from './DeploymentSettingModal';
-import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
-import ScopedAuditLog, { ScopedAuditLogQuery } from './ScopedAuditLog';
 import {
   DeleteFilled,
   EditOutlined,
   HistoryOutlined,
-  LoadingOutlined,
   MoreOutlined,
 } from '@ant-design/icons';
 import {
-  Alert,
   App,
   Button,
   Descriptions,
   Divider,
   Dropdown,
-  Empty,
-  Skeleton,
   Space,
   Typography,
-  theme,
 } from 'antd';
 import {
   BAIButton,
@@ -60,27 +45,21 @@ import {
   toLocalId,
   useBAILogger,
   useConnectedBAIClient,
-  useInterval,
 } from 'backend.ai-ui';
 import type { BAIDeploymentStatus } from 'backend.ai-ui';
-import { PlusIcon } from 'lucide-react';
-import { parseAsStringLiteral, useQueryState } from 'nuqs';
-import React, { Suspense, useEffect, useEffectEvent, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation, useQueryLoader } from 'react-relay';
 import { useLocation } from 'react-router-dom';
 
-interface DeploymentConfigurationSectionProps {
-  deploymentFrgmt: DeploymentConfigurationSection_deployment$key | null;
-  revisionFetchKey: string;
+interface DeploymentBasicInfoCardProps {
+  deploymentFrgmt: DeploymentBasicInfoCard_deployment$key | null;
   isPendingRefetch: boolean;
   onRefetch: () => void;
-  onAddRevision: () => void;
-  revisionCardRef?: React.RefObject<HTMLDivElement | null>;
 }
 
 type DeploymentSectionData =
-  | DeploymentConfigurationSection_deployment$data
+  | DeploymentBasicInfoCard_deployment$data
   | null
   | undefined;
 
@@ -233,29 +212,26 @@ const DeploymentOverviewContent: React.FC<{
   );
 };
 
-const DeploymentConfigurationSection: React.FC<
-  DeploymentConfigurationSectionProps
-> = ({
+/**
+ * DeploymentBasicInfoCard — top-level "Basic Information" card on the
+ * Deployment detail page. Shows the overview descriptions and owns the
+ * deployment-level actions (Edit settings, Delete, Scheduling history).
+ */
+const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
   deploymentFrgmt,
-  revisionFetchKey,
   isPendingRefetch,
   onRefetch,
-  onAddRevision,
-  revisionCardRef,
 }) => {
   'use memo';
-
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const webuiNavigate = useWebUINavigate();
   const location = useLocation();
-  const currentProject = useCurrentProjectValue();
 
   const deployment = useFragment(
     graphql`
-      fragment DeploymentConfigurationSection_deployment on ModelDeployment {
+      fragment DeploymentBasicInfoCard_deployment on ModelDeployment {
         id
         ...DeploymentSettingModal_deployment
         metadata {
@@ -278,40 +254,11 @@ const DeploymentConfigurationSection: React.FC<
         replicaState {
           desiredReplicaCount
         }
-        currentRevision @since(version: "26.4.3") {
-          id
-          revisionNumber
-          ...DeploymentRevisionDetail_revision
-        }
-        deployingRevision @since(version: "26.4.3") {
-          id
-          revisionNumber
-          ...DeploymentRevisionDetail_revision
-        }
-        ...DeploymentRevisionHistoryTab_deployment
       }
     `,
     deploymentFrgmt,
   );
 
-  const [drawerState, setDrawerState] = useState<{
-    revisionFrgmt: DeploymentRevisionDetail_revision$key;
-    status?: 'current' | 'deploying' | 'none';
-    title?: string;
-  } | null>(null);
-
-  const [activeRevisionTab, setActiveRevisionTab] = useQueryState(
-    'revisionTab',
-    {
-      ...parseAsStringLiteral([
-        'currentRevision',
-        'revisionHistory',
-        'auditLog',
-      ] as const).withDefault('currentRevision'),
-      history: 'replace' as const,
-      scroll: false,
-    },
-  );
   const [settingModalOpen, setSettingModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [historyModalOpen, setHistoryModalOpen] = useState(false);
@@ -319,62 +266,14 @@ const DeploymentConfigurationSection: React.FC<
     useQueryLoader<DeploymentSchedulingHistoryModalQuery>(
       DeploymentSchedulingHistoryQuery,
     );
-  const [auditLogQueryRef, loadAuditLogQuery] =
-    useQueryLoader<ScopedAuditLogQueryType>(ScopedAuditLogQuery);
-
-  const { baiPaginationOption, setTablePaginationOption } =
-    useBAIPaginationOptionState({ current: 1, pageSize: 10 });
-  const reloadAuditLogQuery: React.ComponentProps<
-    typeof ScopedAuditLog
-  >['onReload'] = (variables, options) => {
-    const limit = variables.limit ?? 10;
-    setTablePaginationOption({
-      pageSize: limit,
-      current: variables.offset ? Math.floor(variables.offset / limit) + 1 : 1,
-    });
-    loadAuditLogQuery(variables, options);
-  };
-
-  const loadAuditLog = () => {
-    if (!deployment?.id) {
-      return;
-    }
-    const rawId = deployment.id;
-    loadAuditLogQuery(
-      {
-        scope: {
-          entity: [
-            {
-              entityType: 'MODEL_DEPLOYMENT',
-              entityId: safeDecodeUuid(rawId) ?? rawId,
-            },
-          ],
-        },
-        orderBy: [{ field: 'CREATED_AT', direction: 'DESC' }],
-        limit: baiPaginationOption.limit,
-        offset: baiPaginationOption.offset,
-      },
-      { fetchPolicy: 'store-and-network' },
-    );
-  };
-
-  const loadAuditLogIfTabActiveOnMount = useEffectEvent(() => {
-    if (activeRevisionTab === 'auditLog' && auditLogQueryRef == null) {
-      loadAuditLog();
-    }
-  });
-
-  useEffect(function loadAuditLogOnMountIfTabActive() {
-    loadAuditLogIfTabActiveOnMount();
-  }, []);
 
   const baiClient = useConnectedBAIClient();
   const supportsDeploymentSchedulingHistory =
     baiClient?.supports('deployment-scheduling-history') ?? false;
 
   const [commitDeleteMutation, isInFlightDeleteMutation] =
-    useMutation<DeploymentConfigurationSectionDeleteMutation>(graphql`
-      mutation DeploymentConfigurationSectionDeleteMutation(
+    useMutation<DeploymentBasicInfoCardDeleteMutation>(graphql`
+      mutation DeploymentBasicInfoCardDeleteMutation(
         $input: DeleteDeploymentInput!
       ) {
         deleteModelDeployment(input: $input) {
@@ -385,22 +284,13 @@ const DeploymentConfigurationSection: React.FC<
 
   const deploymentName = deployment?.metadata.name ?? '';
   // Derive the stopped-category guard locally from this component's own
-  // fragment status (rather than threading a boolean prop down from the page),
-  // consistent with the project-mismatch guard resolved below.
+  // fragment status (rather than threading a boolean prop down from the page).
   const deploymentStatus = deployment?.metadata.status;
   const listPath = location.pathname.startsWith('/admin-deployments')
     ? '/admin-deployments'
     : location.pathname.startsWith('/project-admin-deployments')
       ? '/project-admin-deployments'
       : '/deployments';
-
-  // Resolve project mismatch directly here (rather than threading the flag
-  // through props) so callers don't need to know about this guard. When the
-  // viewer's current project differs from the deployment's, the Add Revision
-  // call-to-action below is disabled — switching projects is required first.
-  const deploymentProjectId = deployment?.metadata.projectId ?? null;
-  const isProjectMismatch =
-    !!deploymentProjectId && deploymentProjectId !== currentProject.id;
 
   const handleDelete = () => {
     if (!deployment?.id) return;
@@ -426,25 +316,6 @@ const DeploymentConfigurationSection: React.FC<
       },
     });
   };
-
-  const handleShowRevisionDrawer = (
-    frgmt: DeploymentRevisionDetail_revision$key,
-    status?: 'current' | 'deploying' | 'none',
-    title?: string,
-  ) => {
-    setDrawerState({ revisionFrgmt: frgmt, status, title });
-  };
-
-  const currentRevision = deployment?.currentRevision;
-  const deployingRevision = deployment?.deployingRevision;
-  const isDeployingDifferentRevision =
-    !!deployingRevision && deployingRevision.id !== currentRevision?.id;
-
-  // While a different revision is being applied, poll so the UI moves off
-  // the "applying" state once the deployment finishes rolling out. We don't
-  // know up-front how long the rollout takes, so we keep refetching until
-  // the deploying revision matches the current revision.
-  useInterval(onRefetch, isDeployingDifferentRevision ? 5000 : null);
 
   return (
     <>
@@ -518,126 +389,6 @@ const DeploymentConfigurationSection: React.FC<
           }
         />
       </BAICard>
-      <BAICard
-        ref={revisionCardRef}
-        activeTabKey={activeRevisionTab}
-        onTabChange={(key) => {
-          if (
-            key === 'currentRevision' ||
-            key === 'revisionHistory' ||
-            key === 'auditLog'
-          ) {
-            if (key === 'auditLog' && auditLogQueryRef == null) {
-              loadAuditLog();
-            }
-            void setActiveRevisionTab(key);
-          }
-        }}
-        tabList={[
-          {
-            key: 'currentRevision',
-            label: t('deployment.CurrentRevision'),
-          },
-          {
-            key: 'revisionHistory',
-            label: t('deployment.RevisionHistory'),
-          },
-          {
-            key: 'auditLog',
-            label: t('auditLog.AuditLog'),
-          },
-        ]}
-        tabBarExtraContent={
-          <BAIFlex gap="xs" align="center">
-            <BAIButton
-              type="primary"
-              icon={<PlusIcon />}
-              disabled={
-                isDeploymentInStoppedCategory(deploymentStatus) ||
-                isProjectMismatch
-              }
-              // `action` (not `onClick`) wraps the open state update in
-              // `startTransition` so the page stays interactive while
-              // the modal mounts. The button shows a loading spinner
-              // until the transition completes.
-              action={async () => {
-                onAddRevision();
-              }}
-            >
-              {t('deployment.AddRevision')}
-            </BAIButton>
-          </BAIFlex>
-        }
-      >
-        {activeRevisionTab === 'currentRevision' && (
-          <>
-            {isDeployingDifferentRevision && (
-              <Alert
-                type="info"
-                icon={<LoadingOutlined spin />}
-                showIcon
-                style={{ marginBottom: token.marginMD }}
-                title={t('deployment.ApplyingRevision', {
-                  revisionNumber:
-                    deployingRevision.revisionNumber != null
-                      ? `#${deployingRevision.revisionNumber}`
-                      : (toLocalId(deployingRevision.id) ?? ''),
-                })}
-                action={
-                  <Button
-                    onClick={() =>
-                      handleShowRevisionDrawer(
-                        deployingRevision,
-                        'deploying',
-                        t('deployment.ApplyingRevisionDetail'),
-                      )
-                    }
-                  >
-                    {t('deployment.ViewRevision')}
-                  </Button>
-                }
-              />
-            )}
-            {currentRevision ? (
-              <DeploymentRevisionDetail
-                revisionFrgmt={currentRevision}
-                status="current"
-              />
-            ) : !isDeployingDifferentRevision ? (
-              <Empty
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
-                description={t('deployment.NoCurrentRevisionDeployed')}
-              />
-            ) : null}
-          </>
-        )}
-        {activeRevisionTab === 'revisionHistory' && deployment && (
-          <ErrorBoundaryWithNullFallback>
-            <Suspense fallback={<Skeleton active paragraph={{ rows: 4 }} />}>
-              <DeploymentRevisionHistoryTab
-                deploymentFrgmt={deployment}
-                deploymentId={deployment.id}
-                fetchKey={revisionFetchKey}
-              />
-            </Suspense>
-          </ErrorBoundaryWithNullFallback>
-        )}
-        {activeRevisionTab === 'auditLog' && deployment && (
-          <BAIErrorBoundary>
-            {auditLogQueryRef ? (
-              <Suspense fallback={<Skeleton active paragraph={{ rows: 4 }} />}>
-                <ScopedAuditLog
-                  queryRef={auditLogQueryRef}
-                  onReload={reloadAuditLogQuery}
-                  tableSettings={{}}
-                />
-              </Suspense>
-            ) : (
-              <Skeleton active paragraph={{ rows: 4 }} />
-            )}
-          </BAIErrorBoundary>
-        )}
-      </BAICard>
       <DeploymentSettingModal
         open={settingModalOpen}
         deploymentFrgmt={deployment}
@@ -646,15 +397,6 @@ const DeploymentConfigurationSection: React.FC<
           if (success) onRefetch();
         }}
       />
-      <BAIUnmountAfterClose>
-        <DeploymentRevisionDetailDrawer
-          revisionFrgmt={drawerState?.revisionFrgmt}
-          status={drawerState?.status}
-          title={drawerState?.title}
-          open={!!drawerState}
-          onClose={() => setDrawerState(null)}
-        />
-      </BAIUnmountAfterClose>
       <BAIDeleteConfirmModal
         open={isDeleteModalOpen}
         title={t('deployment.DeleteDeployment')}
@@ -683,4 +425,4 @@ const DeploymentConfigurationSection: React.FC<
   );
 };
 
-export default DeploymentConfigurationSection;
+export default DeploymentBasicInfoCard;
