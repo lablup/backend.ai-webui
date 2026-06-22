@@ -3,37 +3,26 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { PurgeUsersModalBulkMutation } from '../__generated__/PurgeUsersModalBulkMutation.graphql';
-import { PurgeUsersModalMutation } from '../__generated__/PurgeUsersModalMutation.graphql';
-import { useSuspendedBackendaiClient } from '../hooks';
+import { PurgeUsersModalFragment$key } from '../__generated__/PurgeUsersModalFragment.graphql';
 import { App, Checkbox, Form, theme } from 'antd';
 import { FormInstance } from 'antd/lib';
 import {
   BAIDeleteConfirmModal,
   BAIDeleteConfirmModalProps,
+  filterOutNullAndUndefined,
   toLocalId,
   useBAILogger,
-  useErrorMessageResolver,
-  useMutationWithPromise,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useMutation } from 'react-relay';
-import { PayloadError } from 'relay-runtime';
-
-// TODO(FR-3019): AdminUserManagement now uses the v2 (adminUsersV2) query, so
-// this modal should later be updated to receive data via a v2 UserV2 fragment
-// instead of a plain { id, email } list.
-export interface PurgeUsersModalUser {
-  id: string;
-  email: string;
-}
+import { graphql, useFragment, useMutation } from 'react-relay';
 
 export interface PurgeUsersModalProps extends Omit<
   BAIDeleteConfirmModalProps,
   'items' | 'title' | 'okText' | 'okButtonProps' | 'confirmText'
 > {
-  users: ReadonlyArray<PurgeUsersModalUser>;
+  usersFrgmt: PurgeUsersModalFragment$key;
 }
 
 interface PurgeUsersFormValues {
@@ -42,10 +31,24 @@ interface PurgeUsersFormValues {
 }
 
 const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
-  users,
+  usersFrgmt,
   ...baiModalProps
 }) => {
   'use memo';
+
+  const userList = filterOutNullAndUndefined(
+    useFragment(
+      graphql`
+        fragment PurgeUsersModalFragment on UserV2 @relay(plural: true) {
+          id
+          basicInfo {
+            email
+          }
+        }
+      `,
+      usersFrgmt,
+    ),
+  );
 
   const { t } = useTranslation();
   const { message } = App.useApp();
@@ -53,11 +56,7 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
   const formRef = useRef<FormInstance<PurgeUsersFormValues>>(null);
   const { token } = theme.useToken();
   const [isPending, setIsPending] = useState(false);
-  const { getErrorMessage } = useErrorMessageResolver();
-  const baiClient = useSuspendedBackendaiClient();
-  const supportsBulkPurge = baiClient.supports('bulk-purge-users');
 
-  // >= 26.3.0: adminBulkPurgeUsersV2
   const [commitBulkPurge, isInFlightBulkPurge] =
     useMutation<PurgeUsersModalBulkMutation>(graphql`
       mutation PurgeUsersModalBulkMutation($input: BulkPurgeUsersV2Input!) {
@@ -71,22 +70,7 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
       }
     `);
 
-  // < 26.3.0: legacy purge_user
-  const mutatePurgeUserWithPromise =
-    useMutationWithPromise<PurgeUsersModalMutation>(graphql`
-      mutation PurgeUsersModalMutation(
-        $email: String!
-        $props: PurgeUserInput!
-      ) {
-        purge_user(email: $email, props: $props) {
-          ok
-          msg
-        }
-      }
-    `);
-
   const handleOk = (e: React.MouseEvent<HTMLButtonElement>) => {
-    const userList = _.compact(users);
     formRef.current
       ?.validateFields()
       .then((values) => {
@@ -97,109 +81,52 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
           values['deleteModelServices'] || false
         );
 
-        if (supportsBulkPurge) {
-          const userIds = userList.map((user) => toLocalId(user.id));
-          commitBulkPurge({
-            variables: {
-              input: {
-                userIds,
-                options: {
-                  purgeSharedVfolders,
-                  delegateEndpointOwnership,
-                },
+        const userIds = userList.map((user) => toLocalId(user.id));
+        commitBulkPurge({
+          variables: {
+            input: {
+              userIds,
+              options: {
+                purgeSharedVfolders,
+                delegateEndpointOwnership,
               },
             },
-            onCompleted: (res, errors) => {
-              if (errors && errors.length > 0) {
-                message.error(errors.map((e) => e.message).join(', '));
-                setIsPending(false);
-                return;
-              }
-              const adminBulkPurgeUsersV2 = res.adminBulkPurgeUsersV2;
-              if (!adminBulkPurgeUsersV2) {
-                message.error(t('error.UnknownError'));
-                setIsPending(false);
-                return;
-              }
-              const { purgedCount, failed } = adminBulkPurgeUsersV2;
-
-              if (failed.length > 0) {
-                const failedMessages = failed.map((f) => f.message).join(', ');
-                message.error(failedMessages);
-              }
-
-              if (purgedCount > 0) {
-                message.success(
-                  t('credential.UsersPermanentlyDeleted', {
-                    total: userList.length,
-                    count: purgedCount,
-                  }),
-                );
-                baiModalProps.onOk?.(e);
-              }
+          },
+          onCompleted: (res, errors) => {
+            if (errors && errors.length > 0) {
+              message.error(errors.map((e) => e.message).join(', '));
               setIsPending(false);
-            },
-            onError: (error) => {
-              message.error(error.message);
+              return;
+            }
+            const adminBulkPurgeUsersV2 = res.adminBulkPurgeUsersV2;
+            if (!adminBulkPurgeUsersV2) {
+              message.error(t('error.UnknownError'));
               setIsPending(false);
-            },
-          });
-        } else {
-          // < 26.3.0: use legacy purge_user in a loop
-          const promises = userList.map((user) =>
-            mutatePurgeUserWithPromise({
-              email: user.email ?? '',
-              props: {
-                purge_shared_vfolders: purgeSharedVfolders,
-                delegate_endpoint_ownership: delegateEndpointOwnership,
-              },
-            }).catch((error) => {
-              return Promise.reject({ user, error });
-            }),
-          );
+              return;
+            }
+            const { purgedCount, failed } = adminBulkPurgeUsersV2;
 
-          Promise.allSettled(promises)
-            .then((results) => {
-              const fulfilled = results.filter((r) => r.status === 'fulfilled');
-              const rejected = results.filter(
-                (r) => r.status === 'rejected',
-              ) as PromiseRejectedResult[];
+            if (failed.length > 0) {
+              const failedMessages = failed.map((f) => f.message).join(', ');
+              message.error(failedMessages);
+            }
 
-              if (rejected.length > 0) {
-                const failedUserNames = rejected
-                  .map((r: PromiseRejectedResult) => {
-                    const reason = r.reason;
-                    return reason.user.email || t('credential.WrongEmail');
-                  })
-                  .join(', ');
-
-                failedUserNames &&
-                  message.error(
-                    t('credential.FailedToDeleteUsers', {
-                      users: failedUserNames,
-                    }),
-                  );
-
-                const error =
-                  rejected[0]?.reason?.error?.length > 0 &&
-                  rejected[0].reason.error[0];
-                error && message.error(getErrorMessage(error as PayloadError));
-              }
-
-              if (fulfilled.length > 0) {
-                message.success(
-                  t('credential.UsersPermanentlyDeleted', {
-                    total: userList.length,
-                    count: fulfilled.length,
-                  }),
-                );
-                baiModalProps.onOk?.(e);
-              }
-            })
-            .finally(() => {
-              setIsPending(false);
-            });
-        }
+            if (purgedCount > 0) {
+              message.success(
+                t('credential.UsersPermanentlyDeleted', {
+                  total: userList.length,
+                  count: purgedCount,
+                }),
+              );
+              baiModalProps.onOk?.(e);
+            }
+            setIsPending(false);
+          },
+          onError: (error) => {
+            message.error(error.message);
+            setIsPending(false);
+          },
+        });
       })
       .catch((e) => {
         logger.error('Validation failed:', e);
@@ -213,9 +140,9 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
       target={t('general.User')}
       onOk={(e) => handleOk(e)}
       confirmLoading={isPending || isInFlightBulkPurge}
-      items={_.map(_.compact(users), (user) => ({
+      items={_.map(userList, (user) => ({
         key: user.id,
-        label: user.email ?? '',
+        label: user.basicInfo.email,
       }))}
       requireConfirmInput
       confirmText={t('credential.PermanentlyDelete')}

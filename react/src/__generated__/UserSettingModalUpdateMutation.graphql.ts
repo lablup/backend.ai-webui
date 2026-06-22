@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5f5c34721426f8aaa8de6c4c4ac91864>>
+ * @generated SignedSource<<a0d3314f6330ab3e582a48a90201ecbb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -29,11 +29,12 @@ export type UpdateUserV2Input = {
   sudoSessionEnabled?: boolean | null | undefined;
   username?: string | null | undefined;
 };
-export type UserProfileSettingModalUpdateUserMutation$variables = {
+export type UserSettingModalUpdateMutation$variables = {
   input: UpdateUserV2Input;
+  userId: string;
 };
-export type UserProfileSettingModalUpdateUserMutation$data = {
-  readonly updateUserV2: {
+export type UserSettingModalUpdateMutation$data = {
+  readonly adminUpdateUserV2: {
     readonly user: {
       readonly basicInfo: {
         readonly description: string | null | undefined;
@@ -72,20 +73,23 @@ export type UserProfileSettingModalUpdateUserMutation$data = {
     };
   } | null | undefined;
 };
-export type UserProfileSettingModalUpdateUserMutation = {
-  response: UserProfileSettingModalUpdateUserMutation$data;
-  variables: UserProfileSettingModalUpdateUserMutation$variables;
+export type UserSettingModalUpdateMutation = {
+  response: UserSettingModalUpdateMutation$data;
+  variables: UserSettingModalUpdateMutation$variables;
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = [
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "input"
-  }
-],
-v1 = [
+var v0 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "input"
+},
+v1 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "userId"
+},
+v2 = [
   {
     "alias": null,
     "args": [
@@ -93,11 +97,16 @@ v1 = [
         "kind": "Variable",
         "name": "input",
         "variableName": "input"
+      },
+      {
+        "kind": "Variable",
+        "name": "userId",
+        "variableName": "userId"
       }
     ],
     "concreteType": "UpdateUserV2Payload",
     "kind": "LinkedField",
-    "name": "updateUserV2",
+    "name": "adminUpdateUserV2",
     "plural": false,
     "selections": [
       {
@@ -337,32 +346,38 @@ v1 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v0/*: any*/),
+      (v1/*: any*/)
+    ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "UserProfileSettingModalUpdateUserMutation",
-    "selections": (v1/*: any*/),
+    "name": "UserSettingModalUpdateMutation",
+    "selections": (v2/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v1/*: any*/),
+      (v0/*: any*/)
+    ],
     "kind": "Operation",
-    "name": "UserProfileSettingModalUpdateUserMutation",
-    "selections": (v1/*: any*/)
+    "name": "UserSettingModalUpdateMutation",
+    "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "7058e74e168b78a893d20d6de8cc09db",
+    "cacheID": "6d9694c22dd3d159d5a4e20ca653d6e1",
     "id": null,
     "metadata": {},
-    "name": "UserProfileSettingModalUpdateUserMutation",
+    "name": "UserSettingModalUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation UserProfileSettingModalUpdateUserMutation(\n  $input: UpdateUserV2Input!\n) {\n  updateUserV2(input: $input) {\n    user {\n      id\n      basicInfo {\n        email\n        fullName\n        username\n        description\n        integrationName\n      }\n      organization {\n        domainName\n        role\n        resourcePolicy\n        mainAccessKey\n      }\n      security {\n        totpActivated\n        totpActivatedAt\n        sudoSessionEnabled\n        allowedClientIp\n      }\n      status {\n        status\n        statusInfo\n        needPasswordChange\n      }\n      container {\n        containerUid\n        containerMainGid\n        containerGids\n      }\n      timestamps {\n        createdAt\n        modifiedAt\n      }\n    }\n  }\n}\n"
+    "text": "mutation UserSettingModalUpdateMutation(\n  $userId: UUID!\n  $input: UpdateUserV2Input!\n) {\n  adminUpdateUserV2(userId: $userId, input: $input) {\n    user {\n      id\n      basicInfo {\n        email\n        fullName\n        username\n        description\n        integrationName\n      }\n      organization {\n        domainName\n        role\n        resourcePolicy\n        mainAccessKey\n      }\n      security {\n        totpActivated\n        totpActivatedAt\n        sudoSessionEnabled\n        allowedClientIp\n      }\n      status {\n        status\n        statusInfo\n        needPasswordChange\n      }\n      container {\n        containerUid\n        containerMainGid\n        containerGids\n      }\n      timestamps {\n        createdAt\n        modifiedAt\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "d2dd9fa7dbd020c11fc03607d6400386";
+(node as any).hash = "5846adb6fee8b57f1a573238dea83916";
 
 export default node;

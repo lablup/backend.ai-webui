@@ -16,17 +16,18 @@ const ForceTOTPChecker = () => {
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const baiClient = useSuspendedBackendaiClient();
 
-  const { user } = useLazyLoadQuery<ForceTOTPCheckerQuery>(
+  const { myUserV2: user } = useLazyLoadQuery<ForceTOTPCheckerQuery>(
     graphql`
-      query ForceTOTPCheckerQuery($email: String, $isNotSupportTotp: Boolean!) {
-        user(email: $email) {
-          totp_activated @skipOnClient(if: $isNotSupportTotp)
+      query ForceTOTPCheckerQuery($isNotSupportTotp: Boolean!) {
+        myUserV2 {
+          security {
+            totpActivated @skipOnClient(if: $isNotSupportTotp)
+          }
           ...TOTPActivateModalFragment
         }
       }
     `,
     {
-      email: baiClient?.email ?? '',
       isNotSupportTotp: !isTOTPSupported,
     },
     {
@@ -37,7 +38,7 @@ const ForceTOTPChecker = () => {
   const open =
     baiClient?.supports('force2FA') &&
     baiClient?._config.force2FA &&
-    user?.totp_activated === false;
+    user?.security?.totpActivated === false;
   return (
     !!isTOTPSupported && (
       <TOTPActivateModal

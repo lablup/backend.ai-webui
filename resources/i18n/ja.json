@@ -555,6 +555,8 @@
     "ExportCSV": "CSVをエクスポート",
     "ExportCSVFile": "CSVファイルのエクスポート",
     "FailedToDeleteUsers": "次のユーザーを完全に削除できませんでした: {{users}}",
+    "FailedToLoadProjects": "プロジェクト情報を読み込めませんでした。しばらくしてからもう一度お試しください。",
+    "FailedToLoadUserInfo": "ユーザー情報を読み込めませんでした。もう一度お試しください。",
     "FailedToUpdateUsers": "ユーザーの更新に失敗しました: {{users}}",
     "FileName": "ファイル名",
     "For900Seconds": "900秒間",

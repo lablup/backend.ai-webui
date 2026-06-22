@@ -555,6 +555,8 @@
     "ExportCSV": "xuất CSV",
     "ExportCSVFile": "Xuất tệp CSV",
     "FailedToDeleteUsers": "Không thể xóa vĩnh viễn người dùng: {{users}}.",
+    "FailedToLoadProjects": "Không thể tải thông tin dự án. Vui lòng thử lại sau.",
+    "FailedToLoadUserInfo": "Không thể tải thông tin người dùng. Vui lòng thử lại.",
     "FailedToUpdateUsers": "Không thể cập nhật người dùng: {{users}}",
     "FileName": "Tên tệp",
     "For900Seconds": "trong 900 giây",

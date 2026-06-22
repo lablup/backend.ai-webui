@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6873a2e8480d63aa479a52e63163e388>>
+ * @generated SignedSource<<0b5b4c9daa0942f8a9b340535ff954a6>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,47 +12,43 @@ import { ReaderFragment } from 'relay-runtime';
 export type UserRoleV2 = "ADMIN" | "MONITOR" | "SUPERADMIN" | "USER" | "%future added value";
 export type UserStatusV2 = "ACTIVE" | "BEFORE_VERIFICATION" | "DELETED" | "INACTIVE" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
-export type BAIAdminUserV2TableFragment$data = ReadonlyArray<{
+export type UserInfoModalFragment$data = {
   readonly basicInfo: {
     readonly description: string | null | undefined;
     readonly email: string;
     readonly fullName: string | null | undefined;
-    readonly integrationName: string | null | undefined;
     readonly username: string | null | undefined;
   };
-  readonly container: {
-    readonly containerGids: ReadonlyArray<number> | null | undefined;
-    readonly containerMainGid: number | null | undefined;
-    readonly containerUid: number | null | undefined;
-  };
-  readonly id: string;
   readonly organization: {
     readonly domainName: string | null | undefined;
     readonly mainAccessKey: string | null | undefined;
     readonly resourcePolicy: string;
     readonly role: UserRoleV2 | null | undefined;
   };
+  readonly projects: {
+    readonly edges: ReadonlyArray<{
+      readonly node: {
+        readonly basicInfo: {
+          readonly name: string;
+        };
+        readonly id: string;
+      };
+    }>;
+  } | null | undefined;
   readonly security: {
-    readonly allowedClientIp: ReadonlyArray<string> | null | undefined;
     readonly sudoSessionEnabled: boolean;
     readonly totpActivated: boolean | null | undefined;
-    readonly totpActivatedAt: string | null | undefined;
   };
   readonly status: {
     readonly needPasswordChange: boolean | null | undefined;
     readonly status: UserStatusV2;
-    readonly statusInfo: string | null | undefined;
   };
-  readonly timestamps: {
-    readonly createdAt: string | null | undefined;
-    readonly modifiedAt: string | null | undefined;
-  };
-  readonly " $fragmentType": "BAIAdminUserV2TableFragment";
-} | null | undefined>;
-export type BAIAdminUserV2TableFragment$key = ReadonlyArray<{
-  readonly " $data"?: BAIAdminUserV2TableFragment$data;
-  readonly " $fragmentSpreads": FragmentRefs<"BAIAdminUserV2TableFragment">;
-}>;
+  readonly " $fragmentType": "UserInfoModalFragment";
+};
+export type UserInfoModalFragment$key = {
+  readonly " $data"?: UserInfoModalFragment$data;
+  readonly " $fragmentSpreads": FragmentRefs<"UserInfoModalFragment">;
+};
 
 const node: ReaderFragment = {
   "argumentDefinitions": [
@@ -62,22 +58,9 @@ const node: ReaderFragment = {
     }
   ],
   "kind": "Fragment",
-  "metadata": {
-    "plural": true
-  },
-  "name": "BAIAdminUserV2TableFragment",
+  "metadata": null,
+  "name": "UserInfoModalFragment",
   "selections": [
-    {
-      "kind": "RequiredField",
-      "field": {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "id",
-        "storageKey": null
-      },
-      "action": "NONE"
-    },
     {
       "alias": null,
       "args": null,
@@ -97,14 +80,14 @@ const node: ReaderFragment = {
           "alias": null,
           "args": null,
           "kind": "ScalarField",
-          "name": "fullName",
+          "name": "username",
           "storageKey": null
         },
         {
           "alias": null,
           "args": null,
           "kind": "ScalarField",
-          "name": "username",
+          "name": "fullName",
           "storageKey": null
         },
         {
@@ -113,12 +96,55 @@ const node: ReaderFragment = {
           "kind": "ScalarField",
           "name": "description",
           "storageKey": null
+        }
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "UserV2StatusInfo",
+      "kind": "LinkedField",
+      "name": "status",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "status",
+          "storageKey": null
         },
         {
           "alias": null,
           "args": null,
           "kind": "ScalarField",
-          "name": "integrationName",
+          "name": "needPasswordChange",
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "UserV2SecurityInfo",
+      "kind": "LinkedField",
+      "name": "security",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "totpActivated",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "sudoSessionEnabled",
           "storageKey": null
         }
       ],
@@ -166,126 +192,56 @@ const node: ReaderFragment = {
     {
       "alias": null,
       "args": null,
-      "concreteType": "UserV2SecurityInfo",
+      "concreteType": "ProjectV2Connection",
       "kind": "LinkedField",
-      "name": "security",
+      "name": "projects",
       "plural": false,
       "selections": [
         {
           "alias": null,
           "args": null,
-          "kind": "ScalarField",
-          "name": "totpActivated",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "totpActivatedAt",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "sudoSessionEnabled",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "allowedClientIp",
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "UserV2StatusInfo",
-      "kind": "LinkedField",
-      "name": "status",
-      "plural": false,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "status",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "statusInfo",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "needPasswordChange",
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "UserV2ContainerSettings",
-      "kind": "LinkedField",
-      "name": "container",
-      "plural": false,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "containerUid",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "containerMainGid",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "containerGids",
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "EntityTimestamps",
-      "kind": "LinkedField",
-      "name": "timestamps",
-      "plural": false,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "createdAt",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "modifiedAt",
+          "concreteType": "ProjectV2Edge",
+          "kind": "LinkedField",
+          "name": "edges",
+          "plural": true,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "ProjectV2",
+              "kind": "LinkedField",
+              "name": "node",
+              "plural": false,
+              "selections": [
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "id",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "ProjectBasicInfo",
+                  "kind": "LinkedField",
+                  "name": "basicInfo",
+                  "plural": false,
+                  "selections": [
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "name",
+                      "storageKey": null
+                    }
+                  ],
+                  "storageKey": null
+                }
+              ],
+              "storageKey": null
+            }
+          ],
           "storageKey": null
         }
       ],
@@ -296,6 +252,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "cc2d2f87954ec529fdc80352e406cf85";
+(node as any).hash = "42b0c8c3a83e175bf5e1e5ab56f161e3";
 
 export default node;

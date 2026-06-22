@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ba86ff2ce6afa0cfa99f735b07cec9f7>>
+ * @generated SignedSource<<8acf95169f0d1be4db6400c353a419b2>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,10 +11,15 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type UserProfileSettingModalFragment$data = {
-  readonly allowed_client_ip: ReadonlyArray<string | null | undefined> | null | undefined;
-  readonly full_name: string | null | undefined;
-  readonly id: string | null | undefined;
-  readonly totp_activated: boolean | null | undefined;
+  readonly basicInfo: {
+    readonly email: string;
+    readonly fullName: string | null | undefined;
+  };
+  readonly id: string;
+  readonly security: {
+    readonly allowedClientIp: ReadonlyArray<string> | null | undefined;
+    readonly totpActivated: boolean | null | undefined;
+  };
   readonly " $fragmentSpreads": FragmentRefs<"TOTPActivateModalFragment">;
   readonly " $fragmentType": "UserProfileSettingModalFragment";
 };
@@ -28,10 +33,6 @@ const node: ReaderFragment = {
     {
       "kind": "RootArgument",
       "name": "isNotSupportTotp"
-    },
-    {
-      "kind": "RootArgument",
-      "name": "isNotSupportUpdateUserV2"
     }
   ],
   "kind": "Fragment",
@@ -48,22 +49,51 @@ const node: ReaderFragment = {
     {
       "alias": null,
       "args": null,
-      "kind": "ScalarField",
-      "name": "full_name",
+      "concreteType": "UserV2BasicInfo",
+      "kind": "LinkedField",
+      "name": "basicInfo",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "email",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "fullName",
+          "storageKey": null
+        }
+      ],
       "storageKey": null
     },
     {
       "alias": null,
       "args": null,
-      "kind": "ScalarField",
-      "name": "totp_activated",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "allowed_client_ip",
+      "concreteType": "UserV2SecurityInfo",
+      "kind": "LinkedField",
+      "name": "security",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "totpActivated",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "allowedClientIp",
+          "storageKey": null
+        }
+      ],
       "storageKey": null
     },
     {
@@ -72,10 +102,10 @@ const node: ReaderFragment = {
       "name": "TOTPActivateModalFragment"
     }
   ],
-  "type": "User",
+  "type": "UserV2",
   "abstractKey": null
 };
 
-(node as any).hash = "dc28655b632e6c63e50ea41267a10be1";
+(node as any).hash = "7748d6ef82197657e9545689a3497939";
 
 export default node;

@@ -555,6 +555,8 @@
     "ExportCSV": "ส่งออก CSV",
     "ExportCSVFile": "ส่งออกไฟล์ CSV",
     "FailedToDeleteUsers": "ไม่สามารถลบผู้ใช้อย่างถาวรได้: {{users}}",
+    "FailedToLoadProjects": "ไม่สามารถโหลดข้อมูลโปรเจกต์ได้ กรุณาลองใหม่อีกครั้งในภายหลัง",
+    "FailedToLoadUserInfo": "ไม่สามารถโหลดข้อมูลผู้ใช้ได้ กรุณาลองใหม่อีกครั้ง",
     "FailedToUpdateUsers": "ไม่สามารถอัปเดตผู้ใช้ได้: {{users}}",
     "FileName": "ชื่อไฟล์",
     "For900Seconds": "สำหรับ 900 วินาที",

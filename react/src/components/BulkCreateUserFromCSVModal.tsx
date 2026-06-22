@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { BulkCreateUserFromCSVModalGroupsQuery } from '../__generated__/BulkCreateUserFromCSVModalGroupsQuery.graphql';
-import type { BulkCreateUserFromCSVModalKeypairsQuery } from '../__generated__/BulkCreateUserFromCSVModalKeypairsQuery.graphql';
 import {
   BulkCreateUserFromCSVModalMutation,
   CreateUserV2Input,
@@ -66,7 +65,6 @@ import {
   BAIQuestionIconWithTooltip,
   BAIRowWrapWithDividers,
   BAIText,
-  filterOutNullAndUndefined,
   useBAILogger,
   useBAISignedRequestWithPromise,
 } from 'backend.ai-ui';
@@ -208,10 +206,10 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
   // loading. Project-name validation is skipped until this is true so rows are
   // not transiently flagged as "unknown project" while the fetch is in flight.
   const [groupsLoaded, setGroupsLoaded] = useState(false);
-  // Keypairs of the just-created users, shown in a download modal on full
-  // success — mirroring the single-user create flow. The bulk mutation payload
-  // does not expose secret keys (UserV2 has no keypair field), so they are
-  // fetched separately per created email after the mutation completes.
+  // Keypairs of the just-created users, shown in a download modal on success
+  // (full or partial) — mirroring the single-user create flow.
+  // adminBulkCreateUsersWithKeypairV2 returns each keypair's one-time secret
+  // key directly in the payload; no follow-up fetch is needed.
   const [createdKeypairs, setCreatedKeypairs] =
     useState<GeneratedKeypairListModalFragment$key | null>(null);
 
@@ -222,9 +220,11 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
       mutation BulkCreateUserFromCSVModalMutation(
         $input: BulkCreateUserV2Input!
       ) {
-        adminBulkCreateUsersV2(input: $input) {
-          createdUsers {
-            id
+        adminBulkCreateUsersWithKeypairV2(input: $input) {
+          created {
+            keypair {
+              ...GeneratedKeypairListModalFragment
+            }
           }
           failed {
             index
@@ -250,33 +250,6 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
       }
     }
   `;
-
-  // Fetch the freshly-created users' keypairs (access + secret) so they can be
-  // downloaded right after creation. `keypairs` filters by a single email, so
-  // we query per created email in parallel and aggregate the plural fragment
-  // refs. Admins can read secret_key of existing keypairs, so this surfaces the
-  // same data the single-user create flow returns inline.
-  const keypairsQuery = graphql`
-    query BulkCreateUserFromCSVModalKeypairsQuery($email: String) {
-      keypairs(email: $email) {
-        ...GeneratedKeypairListModalFragment
-      }
-    }
-  `;
-
-  const fetchCreatedKeypairs = (emails: string[]) =>
-    Promise.all(
-      emails.map((email) =>
-        fetchQuery<BulkCreateUserFromCSVModalKeypairsQuery>(
-          relayEnvironment,
-          keypairsQuery,
-          { email },
-          { fetchPolicy: 'network-only' },
-        ).toPromise(),
-      ),
-    ).then((results) =>
-      filterOutNullAndUndefined(results.flatMap((r) => r?.keypairs ?? [])),
-    );
 
   const loadGroups = useEffectEvent((domainName: string) => {
     setGroupsLoaded(false);
@@ -649,9 +622,16 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
             resolve();
             return;
           }
-          const createdCount =
-            res.adminBulkCreateUsersV2?.createdUsers?.length ?? 0;
-          const failed = res.adminBulkCreateUsersV2?.failed ?? [];
+          const createdList =
+            res.adminBulkCreateUsersWithKeypairV2?.created ?? [];
+          const createdCount = createdList.length;
+          const failed = res.adminBulkCreateUsersWithKeypairV2?.failed ?? [];
+          // Surface keypairs first: secret keys are one-time and must be shown
+          // regardless of whether some rows failed.
+          const keypairs = _.map(createdList, (created) => created.keypair);
+          if (keypairs.length > 0) {
+            setCreatedKeypairs(keypairs);
+          }
           if (failed.length > 0) {
             setFailedRows([...failed]);
             setCreatedCount(createdCount);
@@ -662,27 +642,16 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
               }),
             );
             logger.error('Bulk create partial failures:', failed);
+            if (keypairs.length === 0) {
+              onRequestClose(true);
+            }
           } else {
             message.success(
               t('credential.BulkCreateUserSuccess', { count: createdCount }),
             );
-            // Surface the created keypairs for download (same as single-user
-            // creation). Fetching is best-effort — creation already succeeded,
-            // so a lookup failure must not block closing the modal.
-            fetchCreatedKeypairs(validRows.map((r) => r.email))
-              .then((keypairs) => {
-                if (keypairs.length > 0) {
-                  setCreatedKeypairs(keypairs);
-                } else {
-                  onRequestClose(true);
-                }
-              })
-              .catch((err) => {
-                logger.error('Failed to fetch created keypairs', err);
-                onRequestClose(true);
-              })
-              .finally(() => resolve());
-            return;
+            if (keypairs.length === 0) {
+              onRequestClose(true);
+            }
           }
           resolve();
         },

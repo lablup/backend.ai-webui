@@ -114,8 +114,8 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
           mainAccessKey
         }
         security {
-          totpActivated
-          totpActivatedAt
+          totpActivated @skipOnClient(if: $isNotSupportTotp)
+          totpActivatedAt @skipOnClient(if: $isNotSupportTotp)
           sudoSessionEnabled
           allowedClientIp
         }

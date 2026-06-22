@@ -555,6 +555,8 @@
     "ExportCSV": "导出 CSV",
     "ExportCSVFile": "导出 CSV 文件",
     "FailedToDeleteUsers": "无法永久删除用户：{{users}}",
+    "FailedToLoadProjects": "加载项目信息失败。请稍后重试。",
+    "FailedToLoadUserInfo": "加载用户信息失败。请重试。",
     "FailedToUpdateUsers": "更新用户失败：{{users}}",
     "FileName": "文件名",
     "For900Seconds": "900 秒",

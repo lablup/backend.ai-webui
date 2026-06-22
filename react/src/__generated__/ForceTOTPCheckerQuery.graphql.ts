@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ca686cde6615b723817c7c12df3acf14>>
+ * @generated SignedSource<<34fe6fd50d15a60b11fc3b90537753b1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,12 +11,13 @@
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type ForceTOTPCheckerQuery$variables = {
-  email?: string | null | undefined;
   isNotSupportTotp: boolean;
 };
 export type ForceTOTPCheckerQuery$data = {
-  readonly user: {
-    readonly totp_activated: boolean | null | undefined;
+  readonly myUserV2: {
+    readonly security: {
+      readonly totpActivated: boolean | null | undefined;
+    };
     readonly " $fragmentSpreads": FragmentRefs<"TOTPActivateModalFragment">;
   } | null | undefined;
 };
@@ -30,26 +31,25 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "email"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
     "name": "isNotSupportTotp"
   }
 ],
-v1 = [
-  {
-    "kind": "Variable",
-    "name": "email",
-    "variableName": "email"
-  }
-],
-v2 = {
+v1 = {
   "alias": null,
   "args": null,
-  "kind": "ScalarField",
-  "name": "totp_activated",
+  "concreteType": "UserV2SecurityInfo",
+  "kind": "LinkedField",
+  "name": "security",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "totpActivated",
+      "storageKey": null
+    }
+  ],
   "storageKey": null
 };
 return {
@@ -61,13 +61,13 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "User",
+        "args": null,
+        "concreteType": "UserV2",
         "kind": "LinkedField",
-        "name": "user",
+        "name": "myUserV2",
         "plural": false,
         "selections": [
-          (v2/*: any*/),
+          (v1/*: any*/),
           {
             "args": null,
             "kind": "FragmentSpread",
@@ -88,18 +88,29 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "User",
+        "args": null,
+        "concreteType": "UserV2",
         "kind": "LinkedField",
-        "name": "user",
+        "name": "myUserV2",
         "plural": false,
         "selections": [
-          (v2/*: any*/),
+          (v1/*: any*/),
           {
             "alias": null,
             "args": null,
-            "kind": "ScalarField",
-            "name": "email",
+            "concreteType": "UserV2BasicInfo",
+            "kind": "LinkedField",
+            "name": "basicInfo",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "email",
+                "storageKey": null
+              }
+            ],
             "storageKey": null
           },
           {
@@ -115,16 +126,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "70674447a73f84f7a45b697e1500898b",
+    "cacheID": "8fb38b90c90755984db4944f61e7d954",
     "id": null,
     "metadata": {},
     "name": "ForceTOTPCheckerQuery",
     "operationKind": "query",
-    "text": "query ForceTOTPCheckerQuery(\n  $email: String\n  $isNotSupportTotp: Boolean!\n) {\n  user(email: $email) {\n    totp_activated @skipOnClient(if: $isNotSupportTotp)\n    ...TOTPActivateModalFragment\n    id\n  }\n}\n\nfragment TOTPActivateModalFragment on User {\n  email\n  totp_activated @skipOnClient(if: $isNotSupportTotp)\n}\n"
+    "text": "query ForceTOTPCheckerQuery(\n  $isNotSupportTotp: Boolean!\n) {\n  myUserV2 {\n    security {\n      totpActivated @skipOnClient(if: $isNotSupportTotp)\n    }\n    ...TOTPActivateModalFragment\n    id\n  }\n}\n\nfragment TOTPActivateModalFragment on UserV2 {\n  basicInfo {\n    email\n  }\n  security {\n    totpActivated @skipOnClient(if: $isNotSupportTotp)\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "fb9cf30eac56ebd925f7570a79eb380f";
+(node as any).hash = "b4059de5b963751573cacd523dc23c66";
 
 export default node;

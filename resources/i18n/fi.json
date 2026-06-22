@@ -555,6 +555,8 @@
     "ExportCSV": "viedä CSV",
     "ExportCSVFile": "Vie CSV-tiedosto",
     "FailedToDeleteUsers": "Käyttäjän(ien) pysyvä poistaminen epäonnistui: {{users}}",
+    "FailedToLoadProjects": "Projektitietojen lataaminen epäonnistui. Yritä uudelleen myöhemmin.",
+    "FailedToLoadUserInfo": "Käyttäjätietojen lataaminen epäonnistui. Yritä uudelleen.",
     "FailedToUpdateUsers": "Käyttäjien päivittäminen epäonnistui: {{users}}",
     "FileName": "Tiedoston nimi",
     "For900Seconds": "900 sekuntia",

@@ -73,40 +73,35 @@ const UserDropdownMenu: React.FC<{
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [, startRefetchTransition] = useTransition();
 
-  const { user, myClientIp } = useLazyLoadQuery<UserDropdownMenuQuery>(
-    graphql`
-      query UserDropdownMenuQuery(
-        $email: String!
-        $isNotSupportTotp: Boolean!
-        $isNotSupportUpdateUserV2: Boolean!
-      ) {
-        user(email: $email) {
-          full_name
-          ...UserProfileSettingModalFragment
+  const { myUserV2: user, myClientIp } =
+    useLazyLoadQuery<UserDropdownMenuQuery>(
+      graphql`
+        query UserDropdownMenuQuery($isNotSupportTotp: Boolean!) {
+          myUserV2 {
+            basicInfo {
+              fullName
+            }
+            ...UserProfileSettingModalFragment
+          }
+          myClientIp {
+            clientIp
+          }
         }
-        myClientIp @skipOnClient(if: $isNotSupportUpdateUserV2) {
-          clientIp
-        }
-      }
-    `,
-    {
-      email: baiClient.email,
-      isNotSupportTotp: !isTOTPSupported,
-      isNotSupportUpdateUserV2: !baiClient.supports('update-user-v2'),
-    },
-    {
-      fetchPolicy: 'store-and-network',
-      fetchKey,
-    },
-  );
+      `,
+      {
+        isNotSupportTotp: !isTOTPSupported,
+      },
+      {
+        fetchPolicy: 'store-and-network',
+        fetchKey,
+      },
+    );
 
-  const currentClientIp = baiClient.supports('update-user-v2')
-    ? myClientIp?.clientIp
-    : undefined;
+  const currentClientIp = myClientIp?.clientIp;
 
   const displayName =
-    _.trim(user?.full_name ?? '').length > 0
-      ? (user?.full_name ?? '')
+    _.trim(user?.basicInfo?.fullName ?? '').length > 0
+      ? (user?.basicInfo?.fullName ?? '')
       : userInfo.email;
 
   const items: MenuProps['items'] = filterOutEmpty([

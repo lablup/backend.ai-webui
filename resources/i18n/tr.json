@@ -555,6 +555,8 @@
     "ExportCSV": "CSV'yi dışa aktar",
     "ExportCSVFile": "CSV Dosyasını Dışa Aktar",
     "FailedToDeleteUsers": "Kullanıcı(lar) kalıcı olarak silinemedi: {{users}}",
+    "FailedToLoadProjects": "Proje bilgileri yüklenemedi. Lütfen daha sonra tekrar deneyin.",
+    "FailedToLoadUserInfo": "Kullanıcı bilgileri yüklenemedi. Lütfen tekrar deneyin.",
     "FailedToUpdateUsers": "Kullanıcılar güncellenemedi: {{users}}",
     "FileName": "Dosya adı",
     "For900Seconds": "900 saniye",

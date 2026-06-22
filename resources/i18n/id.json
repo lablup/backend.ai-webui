@@ -555,6 +555,8 @@
     "ExportCSV": "ekspor CSV",
     "ExportCSVFile": "Ekspor File CSV",
     "FailedToDeleteUsers": "Gagal menghapus pengguna secara permanen: {{users}}",
+    "FailedToLoadProjects": "Gagal memuat informasi proyek. Silakan coba lagi nanti.",
+    "FailedToLoadUserInfo": "Gagal memuat informasi pengguna. Silakan coba lagi.",
     "FailedToUpdateUsers": "Gagal memperbarui pengguna: {{users}}",
     "FileName": "Nama file",
     "For900Seconds": "selama 900 detik",

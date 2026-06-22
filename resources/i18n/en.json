@@ -544,6 +544,8 @@
     "ExportCSV": "export CSV",
     "ExportCSVFile": "Export CSV File",
     "FailedToDeleteUsers": "Failed to permanently delete the user(s): {{users}}",
+    "FailedToLoadProjects": "Failed to load project information. Please try again.",
+    "FailedToLoadUserInfo": "Failed to load user information. Please try again.",
     "FailedToUpdateUsers": "Failed to update users: {{users}}",
     "FileName": "File name",
     "For900Seconds": "for 900 seconds",

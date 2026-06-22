@@ -2,66 +2,76 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { UserInfoModalQuery } from '../__generated__/UserInfoModalQuery.graphql';
+import { UserInfoModalFragment$key } from '../__generated__/UserInfoModalFragment.graphql';
 import { useTOTPSupported } from '../hooks/backendai';
-import { Descriptions, type DescriptionsProps, Tag, Spin } from 'antd';
+import { WarningOutlined } from '@ant-design/icons';
+import {
+  Descriptions,
+  type DescriptionsProps,
+  Tag,
+  Spin,
+  Tooltip,
+  theme,
+} from 'antd';
 import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface Props extends BAIModalProps {
-  userEmail: string;
+  userInfoFrgmt: UserInfoModalFragment$key | null | undefined;
   onRequestClose: () => void;
 }
 
 const UserInfoModal: React.FC<Props> = ({
-  userEmail,
+  userInfoFrgmt,
   onRequestClose,
   ...baiModalProps
 }) => {
+  'use memo';
   const { t } = useTranslation();
+  const { token } = theme.useToken();
 
   const { isTOTPSupported, isLoading: isLoadingManagerSupportingTOTP } =
     useTOTPSupported();
 
-  const { user } = useLazyLoadQuery<UserInfoModalQuery>(
+  const user = useFragment(
     graphql`
-      query UserInfoModalQuery(
-        $email: String
-        $isNotSupportSudoSessionEnabled: Boolean!
-        $isTOTPSupported: Boolean!
-      ) {
-        user(email: $email) {
+      fragment UserInfoModalFragment on UserV2 {
+        basicInfo {
           email
           username
-          need_password_change
-          full_name
+          fullName
           description
+        }
+        status {
           status
-          domain_name
+          needPasswordChange
+        }
+        security {
+          totpActivated @skipOnClient(if: $isNotSupportTotp)
+          sudoSessionEnabled
+        }
+        organization {
+          domainName
           role
-          groups {
-            id
-            name
+          resourcePolicy
+          mainAccessKey
+        }
+        projects {
+          edges {
+            node {
+              id
+              basicInfo {
+                name
+              }
+            }
           }
-          resource_policy
-          # TODO: reflect https://github.com/lablup/backend.ai-webui/pull/1999
-          # support from 23.09.0b1
-          # https://github.com/lablup/backend.ai/pull/1530
-          sudo_session_enabled
-            @skipOnClient(if: $isNotSupportSudoSessionEnabled)
-          totp_activated @include(if: $isTOTPSupported)
-          main_access_key @since(version: "23.09.7")
         }
       }
     `,
-    {
-      email: userEmail,
-      isNotSupportSudoSessionEnabled: false,
-      isTOTPSupported: isTOTPSupported ?? false,
-    },
+    userInfoFrgmt ?? null,
   );
 
   const columnSetting: DescriptionsProps['column'] = {
@@ -88,33 +98,33 @@ const UserInfoModal: React.FC<Props> = ({
         labelStyle={{ width: '50%' }}
       >
         <Descriptions.Item label={t('credential.UserID')}>
-          {user?.email}
+          {user?.basicInfo.email}
         </Descriptions.Item>
         <Descriptions.Item label={t('credential.Description')}>
-          {user?.description}
+          {user?.basicInfo.description}
         </Descriptions.Item>
         <Descriptions.Item label={t('credential.UserName')}>
-          {user?.username}
+          {user?.basicInfo.username}
         </Descriptions.Item>
         <Descriptions.Item label={t('credential.FullName')}>
-          {user?.full_name}
+          {user?.basicInfo.fullName}
         </Descriptions.Item>
         <Descriptions.Item label={t('credential.MainAccessKey')}>
-          {user?.main_access_key}
+          {user?.organization.mainAccessKey}
         </Descriptions.Item>
         <Descriptions.Item label={t('credential.DescActiveUser')}>
-          {user?.status === 'active' ? t('button.Yes') : t('button.No')}
+          {user?.status.status === 'ACTIVE' ? t('button.Yes') : t('button.No')}
         </Descriptions.Item>
         <Descriptions.Item label={t('credential.DescRequirePasswordChange')}>
-          {user?.need_password_change ? t('button.Yes') : t('button.No')}
+          {user?.status.needPasswordChange ? t('button.Yes') : t('button.No')}
         </Descriptions.Item>
         <Descriptions.Item label={t('credential.EnableSudoSession')}>
-          {user?.sudo_session_enabled ? t('button.Yes') : t('button.No')}
+          {user?.security.sudoSessionEnabled ? t('button.Yes') : t('button.No')}
         </Descriptions.Item>
         {isTOTPSupported && (
           <Descriptions.Item label={t('webui.menu.TotpActivated')}>
             <Spin spinning={isLoadingManagerSupportingTOTP}>
-              {user?.totp_activated ? t('button.Yes') : t('button.No')}
+              {user?.security.totpActivated ? t('button.Yes') : t('button.No')}
             </Spin>
           </Descriptions.Item>
         )}
@@ -127,13 +137,13 @@ const UserInfoModal: React.FC<Props> = ({
         labelStyle={{ width: '50%' }}
       >
         <Descriptions.Item label={t('credential.Role')}>
-          {user?.role}
+          {user?.organization.role}
         </Descriptions.Item>
         <Descriptions.Item label={t('credential.Domain')}>
-          {user?.domain_name}
+          {user?.organization.domainName}
         </Descriptions.Item>
         <Descriptions.Item label={t('credential.ResourcePolicy')}>
-          {user?.resource_policy}
+          {user?.organization.resourcePolicy}
         </Descriptions.Item>
       </Descriptions>
       <br />
@@ -142,11 +152,19 @@ const UserInfoModal: React.FC<Props> = ({
         labelStyle={{ width: '50%' }}
       >
         <Descriptions.Item>
-          <BAIFlex gap="xs" wrap="wrap">
-            {_.map(user?.groups, (group) => {
-              return <Tag key={group?.id}>{group?.name}</Tag>;
-            })}
-          </BAIFlex>
+          {user && !user.projects ? (
+            <Tooltip title={t('credential.FailedToLoadProjects')}>
+              <WarningOutlined style={{ color: token.colorError }} />
+            </Tooltip>
+          ) : (
+            <BAIFlex gap="xs" wrap="wrap">
+              {_.map(user?.projects?.edges, (edge) => {
+                return (
+                  <Tag key={edge?.node?.id}>{edge?.node?.basicInfo.name}</Tag>
+                );
+              })}
+            </BAIFlex>
+          )}
         </Descriptions.Item>
       </Descriptions>
     </BAIModal>

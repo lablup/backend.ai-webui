@@ -555,6 +555,8 @@
     "ExportCSV": "esporta CSV",
     "ExportCSVFile": "Esporta file CSV",
     "FailedToDeleteUsers": "Impossibile eliminare definitivamente l'utente/i: {{users}}",
+    "FailedToLoadProjects": "Impossibile caricare le informazioni del progetto. Riprovare più tardi.",
+    "FailedToLoadUserInfo": "Impossibile caricare le informazioni utente. Riprovare.",
     "FailedToUpdateUsers": "Impossibile aggiornare gli utenti: {{users}}",
     "FileName": "Nome del file",
     "For900Seconds": "per 900 secondi",
