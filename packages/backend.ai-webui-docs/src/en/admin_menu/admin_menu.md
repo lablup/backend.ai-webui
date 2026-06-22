@@ -6,10 +6,24 @@ Logging in with an admin account will reveal an extra Administration menu on the
 User information registered in Backend.AI is listed in the Users tab.
 super-admin role user can see all users' information, create and deactivate a user.
 
-User ID (email), Name (username), Role and Description(User Description) can be filtered by typing text in the
-search box on each column header.
+Use the property filter bar above the table to narrow the list. The base properties are User ID (email), ID, Name (username), Project, and Role. The list is sorted by clicking column headers, and your filters and sort state are applied across the whole dataset rather than just the current page.
+
+In addition to the base columns, the super-admin user list shows several extra columns sourced from the user record:
+
+- **Main Access Key**: The user's main access key, used for API authentication. The value is copyable.
+- **2FA Activated At**: The timestamp when two-factor authentication was activated for the user.
+- **Allowed Client IPs**: The IP addresses or CIDR ranges from which the user is allowed to access the system.
+- **Need Password Change**: Whether the user is flagged to change their password on next login.
+- **Container UID / Container Main GID / Container GIDs**: The numeric user ID, primary group ID, and supplementary group IDs assigned to processes inside the user's containers.
+
+:::note
+When the connected Backend.AI Manager is version 26.4.4 or later, additional filter properties become available in the property filter bar: Full Name, Description, Status Info, and Resource Policy (string match); Need Password Change, 2FA Activated, and Sudo Session Enabled (boolean); Container UID and Container Main GID (integer); and Container GIDs (single-GID membership). These filters are shown only when the Manager advertises support for them.
+:::
 
 ![](../images/admin_user_page.png)
+<!-- TODO: Re-capture admin_user_page.png to reflect the adminUsersV2 table layout (Main Access Key, 2FA Activated At, Allowed Client IPs, Need Password Change, Container UID/GID columns) -->
+
+
 
 <a id="create-and-update-users"></a>
 
@@ -197,11 +211,12 @@ If some rows fail, only the successful rows result in new accounts. Failed rows 
 
 ## Inactivate user account
 
-Deleting user accounts is not allowed even for superadmins, to track usage
-statistics per user, metric retention, and accidental account loss. Instead,
-admins can inactivate user accounts to keep users from logging in. Click the
-delete icon in the Controls panel. A popover asking confirmation appears, and
-you can deactivate the user by clicking the Deactivate button.
+To track usage statistics per user, retain metrics, and prevent accidental
+account loss, the recommended way to stop a user from logging in is to
+**deactivate** the account rather than delete it. Deactivation keeps the user's
+records intact while blocking sign-in. Click the delete icon in the Controls
+panel. A popover asking confirmation appears, and you can deactivate the user by
+clicking the Deactivate button.
 
 ![](../images/user_deactivate_confirmation.png)
 
@@ -214,6 +229,59 @@ the target user to `Active`.
 Please note that deactivating or reactivating the user does not change the user's credentials, since the user
 account can have multiple keypairs, which brings it hard to decide which credential
 should be reactivated.
+:::
+
+While day-to-day account management relies on deactivation, superadmins **can**
+permanently remove accounts that are already inactive, using the Purge feature
+described below.
+
+<a id="purge-inactive-users"></a>
+
+### Purge Inactive Users
+
+Superadmins can permanently delete (purge) user accounts that have already been
+deactivated. Purging is available **only** for users in the **Inactive** tab —
+active users must be deactivated first. Unlike deactivation, purging is
+irreversible and also removes the user's associated data.
+
+In the Users page, switch to the **Inactive** tab (the status selector reads
+**Inactive (include keypair)** to indicate that purging also affects the user's
+keypairs). You can purge users in two ways:
+
+- **Per-user purge**: Click the trash-bin (permanently delete) icon in the
+  Controls column of a single inactive user's row.
+- **Bulk purge**: Select one or more inactive users with the row checkboxes, then
+  click the **Permanently Delete Users** button (the red trash-bin button that
+  appears next to the selection count).
+
+![](../images/user_purge_inactive_tab.png)
+<!-- TODO: Capture screenshot of user_purge_inactive_tab.png — Inactive Users tab showing the per-row purge (trash) icon and the bulk Permanently Delete Users button -->
+
+Either action opens the **Permanently Delete Users** confirmation modal. Because
+this operation cannot be undone, you must type the confirmation phrase shown in
+the modal before the delete button becomes enabled. The modal also offers two
+options:
+
+- **Delete shared virtual folders as well?**: When checked, virtual folders
+  shared by the purged users are also deleted. When unchecked, those folders are
+  left in place.
+- **Delete created model services as well?**: When checked, model services
+  created by the purged users are deleted as well. When unchecked, ownership of
+  those services is delegated instead of deleting them.
+
+![](../images/purge_users_modal.png)
+<!-- TODO: Capture screenshot of purge_users_modal.png — Permanently Delete Users confirmation modal with the two option checkboxes and the irreversibility alert -->
+
+:::danger
+Purging a user is **irreversible**. The user's virtual folders, kernel history,
+and related keypairs are also deleted. Make sure you have selected the correct
+users before confirming.
+:::
+
+:::note
+Bulk purge with the option checkboxes requires Backend.AI Manager version 26.3.0
+or later. On earlier Managers, the purge falls back to deleting the selected
+users one at a time.
 :::
 
 <a id="manage-users-keypairs"></a>
@@ -790,6 +858,11 @@ Credentials tab of the Users page, click the gear button located in the
 Controls column of the desired keypair, and click the Select Policy field to
 choose it.
 
+When selecting a keypair resource policy for a specific user, the selection table
+includes an **Assigned Keypairs** column that shows which of the user's keypairs
+are currently bound to each policy, so you can confirm the user's existing
+assignments before choosing a policy.
+
 You can also delete each of resource keypairs by clicking trash can icon
 in the Control column. When you click the icon, the confirmation popup will appears.
 Click 'Delete' button to erase."
@@ -1128,6 +1201,8 @@ The image list displays additional columns for more detailed image information:
 
 You can select multiple uninstalled images and click the `Install` button to install them on available agent nodes in bulk.
 
+Clicking a sortable column header sorts the entire image list server-side (across all pages, not just the currently visible page), and the active sort is persisted in the page URL so it is preserved when you reload or share the link.
+
 You can change the minimum resource requirements for each image by clicking the
 'Setting (Gear)' in the Controls panel. Each image has hardware and resource
 requirements for minimal operation. (For example, for GPU-only images, there
@@ -1190,8 +1265,13 @@ button. The registry creation dialog contains the following fields:
 - **Project Name**: The project or namespace in the registry (required). Use the full path including namespace and project name for GitLab registries.
 - **Extra Information**: A JSON string for additional configuration needed for each registry type. This field is available from version 24.09.3.
 - **SSL Verification**: Toggles whether Backend.AI verifies the registry's SSL certificate when connecting. **Enabled by default**, which is the recommended setting for any registry reachable over the public internet. Disable this only for a registry served with a self-signed certificate inside a trusted internal environment where you have already verified the network path; turning it off makes the connection vulnerable to man-in-the-middle attacks.
+- **Set as Global Registry**: A toggle that, when enabled, allows access to the registry from all projects. This field is available from version 24.09.0.
+- **Allowed Projects**: When **Set as Global Registry** is turned off, use this field to select the specific projects that are allowed to use the registry. This field is available from version 25.3.0.
 
 ![](../images/container_registry_editor_modal.png)
+<!-- TODO: Re-capture container_registry_editor_modal.png to show the Set as Global Registry toggle and the Allowed Projects field -->
+
+
 
 
 ### GitLab Container Registry Configuration
@@ -1378,23 +1458,47 @@ By using this feature, admin can easily manage and monitor the exact amount of s
 
 ![](../images/storage_list.png)
 
-In order to set quota, you need to first access to storages tab in resource page.
-And then, click 'Setting (Gear)' in control column.
+To manage a storage host, click the storage host name (or the 'Setting (Gear)'
+in the control column) in the Storages list. This opens the **Storage Host
+Detail Drawer**, where capacity (quota) and folder permissions are configured.
 
 :::note
 Please remind that quota setting is only available in storage that provides quota setting
 (e.g. XFS, CephFS, NetApp, Purestorage, etc.). Although you can see the usage of storage
-in quota setting page regardless of storage, you cannot configure the quota which doesn't
+in the Capacity tab regardless of storage, you cannot configure the quota which doesn't
 support quota configuration internally.
 
 ![](../images/no_support_quota_setting.png)
 :::
 
+<a id="storage-host-detail-drawer"></a>
+
+#### Storage Host Detail Drawer
+
+The Storage Host Detail Drawer is the single place to inspect and manage a
+storage host. It opens from the Storages list and shows the host name and mount
+path at the top, a resource summary, and a set of tabs. The standalone storage
+setting page that previously existed has been absorbed into the **Capacity** tab
+of this drawer.
+
+![](../images/storage_host_detail_drawer.png)
+<!-- TODO: Capture screenshot of storage_host_detail_drawer.png — Storage Host detail drawer showing the tab strip (Project Folder Permissions / User Folder Permissions / Capacity) -->
+
+The drawer contains the following tabs:
+
+- **Project Folder Permissions**: View and manage which domains and projects can
+  access the host's project folders. See the [Project Folder Permissions](#project-folder-permission) section below.
+- **User Folder Permissions**: View and manage the permissions that apply to user
+  folders on the host. User folder permissions are determined by the keypair
+  resource policy linked to a user's main access key.
+- **Capacity**: Configure per-user and per-project storage quotas, and view the
+  host's usage and capabilities. See the [Quota Setting Panel](#quota-setting-panel) section below. This tab is unavailable for storage hosts that do not support quota configuration.
+
 <a id="quota-setting-panel"></a>
 
 #### Quota Setting Panel
 
-In Quota setting page, there are two panels.
+The **Capacity** tab of the Storage Host Detail Drawer contains two panels.
 
 ![](../images/quota_setting_page.png)
 
@@ -1417,7 +1521,7 @@ In Quota setting page, there are two panels.
 
 In Backend.AI, there are two types of vfolders created by user and admin(project). In this section,
 we would like to show how to check current quota setting per-user and how to configure it.
-First, make sure the active tab of quota settings panel is `For User`. Then, select user you desire to
+First, on the Capacity tab, make sure the active sub-tab of the Quota Settings panel is `For User`. Then, select user you desire to
 check and edit the quota. You can see the quota id that corresponds to user's id and the configuration already set
 in the table, if you already set the quota.
 
@@ -1459,13 +1563,26 @@ is used as the default value.
 
 <a id="project-folder-permission"></a>
 
-#### Project Folder Permission
+#### Project Folder Permissions
 
-The storage host detail drawer includes a **Project Folder Permission** tab where administrators can view and manage which projects have access to the selected storage host. To open the drawer, click the storage host name in the Storages list.
+The **Project Folder Permissions** tab of the [Storage Host Detail Drawer](#storage-host-detail-drawer) lets administrators view and manage which domains and projects can access the selected storage host's project folders.
+
+![](../images/project_folder_permission_tab.png)
+<!-- TODO: Capture screenshot of project_folder_permission_tab.png — Project Folder Permissions tab with the domain selector and the tri-state effective-permission indicators -->
+
+The tab has two sections: a **Domains** table for the selected domain, and a **Projects** table for the projects in that domain.
 
 :::tip
-The domain selector on the **Project Folder Permission** tab defaults to the currently active domain when the drawer opens, so the folder permissions for that domain are visible immediately. You can switch to a different domain or clear the selection to view permissions across other domains.
+The domain selector on the **Project Folder Permissions** tab defaults to the currently active domain when the drawer opens, so the folder permissions for that domain are visible immediately. You can switch to a different domain or clear the selection to view permissions across other domains.
 :::
+
+The effective permissions for a project folder are the **union of the selected domain's grants and the project's own grants** — a permission granted at either the domain or project level applies to that project's folders. To make this clear, the Projects table uses a tri-state indicator for each permission:
+
+- **Set on project**: The permission is granted directly on the project.
+- **Inherited from domain**: The permission is granted at the domain level and therefore inherited by the project.
+- Neither: The permission is not granted at either level.
+
+You can select multiple rows (using the row checkboxes) in the Domains, Projects, or User Folder Permissions tables to compare their permission sets side by side. With rows selected, click **Edit Permissions** to open the bulk edit modal, which applies the chosen permission set to all selected entities at once. The modal opens with all permissions selected by default, and saving overwrites the selected entities' permissions with exactly the set you choose.
 
 <a id="download-session-lists"></a>
 
