@@ -23,15 +23,24 @@ You can dismiss this banner by clicking the close button, and it will not reappe
 Users can select the deployment and model from the top left corner of each chat card on the Chat page.
 Clicking the **Deployment** field (indicated by a deployment icon prefix) opens a dropdown showing available deployments under a "Deployment" header.
 Once a deployment is selected, the model dropdown header updates to show "{deployment name}'s Models", listing the models associated with that deployment.
-If no model is associated with the selected deployment, verify the base path and token compatibility with OpenAI, then click the 'Refresh model info' button.
+
+If models cannot be loaded for the selected deployment, a configuration panel appears with the following alerts:
+
+- **LLM models not found** (warning): The model list could not be retrieved from the deployment's endpoint. Adjust the base path or token in the panel below and click **Refresh Model Information** to retry.
+- **Desired replica count is 0** (warning): The selected deployment has its replica count set to 0 and cannot respond. Set the desired replica count to 1 or more in the Deployment settings to enable it.
+
+The following alerts may also appear in the chat card:
+
+- **Endpoint URL is not valid** (error): The endpoint URL for the selected deployment could not be resolved. Verify that the deployment is properly configured and has a reachable URL.
+- **Streaming error** (error): An error occurred while communicating with the model. The message describes the cause. Dismiss the alert and retry your message after resolving the issue.
 
 ![](../images/custom_model.png)
 
 Refer to the description below for the necessary inputs to configure custom model settings:
 
-- **baseURL** (optional): Base URL of the server where the model is located.
+- **Base Path** (optional): The path suffix appended to the deployment's endpoint URL when sending requests.
   Make sure to include the version information.
-  For instance, when utilizing the OpenAI API, users should enter https://api.openai.com/v1.
+  For instance, when utilizing the OpenAI API, enter `v1`.
 - **Token** (optional): An authentication key to access the model service. Tokens can be
   generated from various services, not just Backend.AI. The format and generation process
   may vary depending on the service. Always refer to the specific service's guide for details.

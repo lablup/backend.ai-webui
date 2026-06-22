@@ -502,13 +502,13 @@ When a deployment is created from a preset, the preset's values pre-populate the
 
 Each preset stores the following deployment defaults:
 
-- **Basic Info**: Name, description, runtime variant, rank (display ordering).
+- **Basic Info**: Name, description, runtime variant, rank (display ordering), and runtime parameters (for non-custom runtimes).
 - **Image**: The container image to deploy.
 - **Resources**: Resource slots (CPU, memory, GPU), shared memory (SHM), and resource options.
 - **Cluster**: Cluster mode (Single-Node or Multi-Node) and cluster size.
 - **Execution**: Startup command, environment variables, and bootstrap script.
 - **Deployment Defaults**: Replica count, revision history limit, and the *Open to Public* visibility default.
-- **Advanced**: Model definition JSON (when needed for a custom runtime).
+- **Model Definition** (optional): Model name, model path, service configuration (port, startup command, pre-start actions), health check settings, and metadata.
 
 <a id="managing-deployment-presets"></a>
 
@@ -535,6 +535,7 @@ The list view shows each preset with its name, runtime, image, rank, and key res
       * **Description**: A short summary of the preset's intended use.
       * **Runtime**: The runtime variant (for example, vLLM, SGLang, or Custom).
       * **Rank**: Display ordering among presets of the same runtime. Lower values appear first.
+      * **Runtime Parameters** (optional): Parameter values for the selected runtime variant (for example, quantization method or data type). This section appears only when a non-custom runtime such as vLLM or SGLang is selected.
    - **Image**: The container image to use when deploying.
    - **Resources**: Resource slots (CPU, memory, GPU), shared memory, and resource options (key/value pairs).
    - **Cluster**: Cluster mode (Single-Node or Multi-Node) and cluster size.
@@ -543,7 +544,11 @@ The list view shows each preset with its name, runtime, image, rank, and key res
       * **Replica Count**: Default number of replicas created from this preset.
       * **Revision History Limit**: Number of past revisions kept for each deployment created from this preset.
       * **Open to Public**: Whether the endpoint of deployments created from this preset is reachable without an access token by default.
-   - **Advanced** (optional): Model definition JSON for custom runtimes.
+   - **Model Definition** (optional): Enable the toggle to configure a structured model definition. When enabled:
+      * **Model Name** and **Model Path**: The model identifier and its location in the container.
+      * **Service Configuration** (optional): Port, shell, startup command, and pre-start actions.
+      * **Health Check** (optional): Path, interval, max retries, max wait time, expected status code, and startup grace period.
+      * **Metadata** (optional): Author, title, version, task, category, and other descriptive fields.
 
    ![](../images/deployment_preset_create_modal.png)
 

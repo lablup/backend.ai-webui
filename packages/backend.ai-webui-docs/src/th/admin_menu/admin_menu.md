@@ -475,13 +475,13 @@ models:
 
 แต่ละพรีเซ็ตจะเก็บข้อมูลต่อไปนี้:
 
-- **ข้อมูลพื้นฐาน (Basic Info)**: ชื่อ คำอธิบาย runtime และอันดับการแสดงผล (rank)
+- **ข้อมูลพื้นฐาน (Basic Info)**: ชื่อ คำอธิบาย runtime อันดับการแสดงผล (rank) และ runtime parameters (สำหรับ runtime ที่ไม่ใช่ Custom)
 - **อิมเมจ (Image)**: คอนเทนเนอร์อิมเมจที่ใช้ดีพลอย
 - **ทรัพยากร (Resources)**: resource slots (CPU, memory, GPU), หน่วยความจำที่แชร์ (SHM) และตัวเลือกทรัพยากร
 - **คลัสเตอร์ (Cluster)**: cluster mode (Single-Node หรือ Multi-Node) และขนาดคลัสเตอร์
 - **การเรียกใช้งาน (Execution)**: startup command, environment variables และ bootstrap script
 - **ค่าเริ่มต้นของการดีพลอย (Deployment Defaults)**: จำนวน replica, จำนวน revision ที่เก็บไว้ และค่าเริ่มต้นของ *Open to Public*
-- **ขั้นสูง (Advanced)**: JSON ของ model definition เมื่อจำเป็นสำหรับ runtime แบบ Custom
+- **คำจำกัดความโมเดล (Model Definition)** (ตัวเลือกเสริม): ชื่อโมเดล, path ของโมเดล, การตั้งค่าบริการ (พอร์ต, startup command, pre-start actions), การตั้งค่า health check และ metadata
 
 <a id="managing-deployment-presets"></a>
 
@@ -508,6 +508,7 @@ models:
       * **คำอธิบาย**: สรุปสั้น ๆ เกี่ยวกับการใช้งานพรีเซ็ตนี้
       * **Runtime**: runtime variant (เช่น vLLM, SGLang หรือ Custom)
       * **อันดับการแสดงผล**: ลำดับการแสดงผลในกลุ่มพรีเซ็ตของ runtime เดียวกัน ค่าน้อยจะแสดงก่อน
+      * **Runtime Parameters** (ตัวเลือกเสริม): ค่าพารามิเตอร์สำหรับ runtime variant ที่เลือก (เช่น วิธีการ quantization หรือ data type) จะปรากฏเฉพาะเมื่อเลือก runtime ที่ไม่ใช่ Custom เช่น vLLM หรือ SGLang
    - **อิมเมจ**: คอนเทนเนอร์อิมเมจที่จะใช้ดีพลอย
    - **ทรัพยากร**: resource slots (CPU, memory, GPU), หน่วยความจำที่แชร์ และตัวเลือกทรัพยากร (คู่ key/value)
    - **คลัสเตอร์**: cluster mode (Single-Node หรือ Multi-Node) และขนาดคลัสเตอร์
@@ -516,7 +517,11 @@ models:
       * **จำนวน Replica**: จำนวน replica เริ่มต้นสำหรับ deployment ที่สร้างจากพรีเซ็ตนี้
       * **จำนวน Revision ที่เก็บไว้**: จำนวน revision ก่อนหน้าที่ถูกเก็บไว้สำหรับแต่ละ deployment ที่สร้างจากพรีเซ็ตนี้
       * **Open to Public**: ค่าเริ่มต้นว่า endpoint ของ deployment ที่สร้างจากพรีเซ็ตนี้สามารถเข้าถึงได้โดยไม่ต้องใช้ access token หรือไม่
-   - **ขั้นสูง** (ตัวเลือกเสริม): JSON ของ model definition สำหรับ runtime แบบ Custom
+   - **คำจำกัดความโมเดล (Model Definition)** (ตัวเลือกเสริม): เปิดใช้งานด้วย toggle เพื่อกำหนดค่า model definition แบบมีโครงสร้าง เมื่อเปิดใช้งานจะสามารถตั้งค่าได้ดังนี้:
+      * **ชื่อโมเดล** และ **Path ของโมเดล**: ตัวระบุโมเดลและตำแหน่งของโมเดลในคอนเทนเนอร์
+      * **การตั้งค่าบริการ (Service Configuration)** (ตัวเลือกเสริม): พอร์ต, shell, startup command และ pre-start actions
+      * **Health Check** (ตัวเลือกเสริม): path, interval, จำนวนครั้งสูงสุดที่ลองใหม่, เวลารอสูงสุด, status code ที่คาดหวัง และ startup grace period
+      * **Metadata** (ตัวเลือกเสริม): ผู้แต่ง, ชื่อ, เวอร์ชัน, task, หมวดหมู่ และข้อมูลอื่น ๆ
 
    ![](../images/deployment_preset_create_modal.png)
 
