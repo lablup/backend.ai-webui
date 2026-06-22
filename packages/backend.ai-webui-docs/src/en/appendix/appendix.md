@@ -76,14 +76,17 @@ create a compute session.
 You can check the operation of the job scheduler in a simple way from the
 user Web-UI. When the GPU host can allocate up to 2 fGPUs,
 let's create 3 compute sessions at the same time requesting
-allocation of 1 fGPU, respectively. In the Custom allocation section of the session launch
-dialog, there are GPU and Sessions sliders. If you specify a value greater than
-1 in Sessions and click the LAUNCH button, the number of sessions will be
-requested at the same time. Let's set the GPU and Sessions to 1 and 3,
-respectively. This is the situation that 3 sessions requesting a
-total of 3 fGPUs are created when only 2 fGPUs exist.
+allocation of 1 fGPU, respectively. In the **Custom allocation** section of the
+session launch dialog, set the GPU amount to 1, and set the **Number of sessions**
+control to 3. If you specify a value greater than 1 in **Number of sessions** and
+click the **LAUNCH** button, that many sessions will be requested at the same
+time. (**Number of sessions** is distinct from **Cluster Size**, which controls
+how many nodes make up a single multi-node session.) This is the situation that
+3 sessions requesting a total of 3 fGPUs are created when only 2 fGPUs exist.
 
 ![](../images/session_launch_dialog_2_sessions.png)
+<!-- TODO: Verify/re-capture screenshot of session_launch_dialog_2_sessions.png — Custom allocation now uses the "Number of sessions" control (FR-2867 reworked the Resource Allocation UX) -->
+
 
 Wait for a while and you will see three compute sessions being listed.
 If you look closely at the Status panel, you can see that two of the
@@ -113,35 +116,38 @@ install packages by themselves. Here, we'll walk through an example that takes
 advantage of multiple versions of the multiple ML library immediately.
 
 Go to the Sessions page and open the session launch dialog. There may be various
-kernel images depending on the installation settings.
+kernel images depending on the installation settings. The exact frameworks and
+versions available depend on what your administrator has registered, so the list
+in your environment may differ from the screenshot below.
 
 ![](../images/various_kernel_images.png)
+<!-- TODO: Verify/re-capture screenshot of various_kernel_images.png — environment list and launcher layout may have changed -->
 
-Here, let's select the TensorFlow 2.3 environment and created a session.
+Here, let's select a specific TensorFlow version and create a session.
 
 ![](../images/session_launch_dialog_tf23.png)
 
 Open the web terminal of the created session and run the following Python
-command. You can see that TensorFlow 2.3 version is installed.
+command. You can see that the selected TensorFlow version is installed.
 
 ![](../images/tf23_version_print.png)
 
-This time, let's select the TensorFlow 1.15 environment to create a compute
+This time, let's select a different TensorFlow version to create a compute
 session. If resources are insufficient, delete the previous session.
 
 ![](../images/session_launch_dialog_tf115.png)
 
 Open the web terminal of the created session and run the same Python command as
-before. You can see that TensorFlow 1.15(.4) version is installed.
+before. You can see that the other TensorFlow version is installed.
 
 ![](../images/tf115_version_print.png)
 
-Finally, create a compute session using PyTorch version 1.9.
+Finally, create a compute session using a PyTorch image.
 
 ![](../images/session_launch_dialog_pytorch17.png)
 
 Open the web terminal of the created session and run the following Python
-command. You can see that PyTorch 1.9 version is installed.
+command. You can see that the selected PyTorch version is installed.
 
 ![](../images/pytorch17_version_print.png)
 
@@ -154,8 +160,10 @@ TensorFlow and PyTorch through Backend.AI without unnecessary effort to install 
 ## Convert a compute session to a new private Docker image
 
 If you want to convert a running compute session (container) to a new Docker image
-that you can use later to create a new compute session, you need to prepare your
-compute session environment and ask administrators to convert it.
+that you can reuse later to create new compute sessions, Backend.AI provides a
+self-service "Convert Session to Image" feature. You can commit a running session
+directly from the WebUI, without asking an administrator, and the resulting image
+becomes a private customized image visible only to you.
 
 - First, prepare your compute session by installing the packages that you need
   and adjust the configurations as you like.
@@ -174,17 +182,27 @@ the system directory. The contents in your home directory, usually
 `/home/work`, are not saved in converting a compute session to a new
 Docker image.
 :::
-- When your compute session is prepared, please ask an administrator to convert
-  it to a new Docker image. You need to inform them the session name or ID and
-  your email address in the platform.
-- The administrator will convert your compute session to a new Docker image and
-  send you the full image name and tag.
-- You can manually enter the image name in the session launch dialog. The image
-  is private and not be revealed to other users
 
-  ![](../images/session-creation-by-specifying-image-name.png)
+- When your compute session is prepared, open the session detail panel and choose
+  **Push session to customized image** (the **Commit Session** action). Enter a
+  name for the image and confirm. For the full step-by-step procedure, see the
+  [Save session commit](#save-session-commit) section.
+- The committed image is created as a private customized image. You can find and
+  manage it from the [My Environments](#my-environments) page, and select it from
+  the environment list the next time you launch a session.
 
-- A new compute session will be created using the new Docker image.
+:::note
+The "Convert Session to Image" feature is available from version 24.03 and only
+when the session is in `INTERACTIVE` mode. It must be enabled in your deployment
+(`enableContainerCommit`); if you do not see the **Push session to customized
+image** action, container commit is disabled in your installation. In that case,
+ask an administrator to convert your session to a new image instead — provide the
+session name or ID and your email address, and the administrator will send you the
+full image name and tag. You can then enter that image name manually in the
+session launch dialog. The image is private and is not revealed to other users.
+
+![](../images/session-creation-by-specifying-image-name.png)
+:::
 
 
 <a id="backend-ai-server-installation-guide"></a>
@@ -204,6 +222,8 @@ optimal performance, just double the amount of each resources.
 
 The essential host dependent packages that must be pre-installed before installing
 each service are:
+
+<!-- TODO(needs-backend): confirm current host-dependency version minimums and NVIDIA Container Toolkit naming with the server team (FR-3194) -->
 
 - Web-UI: Operating system that can run the latest browsers (Windows, Mac
   OS, Ubuntu, etc.)
