@@ -604,6 +604,10 @@ Backend.AI ช่วยให้ผู้ดูแลระบบสามาร
 
 พรีเซตเหล่านี้จัดการได้จากแท็บ **Prometheus Preset** บนหน้า การปรับใช้ของผู้ดูแลระบบ (`/admin-deployments?tab=prometheus-preset`)
 
+:::note[เฉพาะ Superadmin: ตัวอย่างสดในตัวแก้ไขกฎ Auto Scaling]
+เมื่อ Superadmin เปิดตัวแก้ไขกฎ Auto Scaling สำหรับการปรับใช้ ตั้งค่า **แหล่งที่มาของเมตริก** เป็น `Prometheus` และเลือกพรีเซ็ต จะมีตัวอย่างสด **ค่าปัจจุบัน (Current value)** แสดงด้านล่างตัวเลือกพรีเซ็ต แสดงค่าเมตริกล่าสุดจาก Prometheus ตัวอย่างนี้มองเห็นได้เฉพาะบัญชี Superadmin เท่านั้น — ผู้ใช้ทั่วไปและผู้ดูแลระบบโดเมนจะไม่เห็น
+:::
+
 ![](../images/admin_prometheus_preset_list.png)
 
 <a id="prometheus-preset-list-and-filter"></a>

@@ -631,6 +631,10 @@ Backend.AI lets administrators define reusable **Prometheus query presets** that
 
 The presets are managed from the **Prometheus Preset** tab on the Admin Deployments page (`/admin-deployments?tab=prometheus-preset`).
 
+:::note[Superadmin only: live preview in the Auto Scaling Rule editor]
+When a superadmin opens the Auto Scaling Rule editor for a deployment, sets **Metric Source** to `Prometheus`, and selects a preset, a live **Current value** preview appears below the preset selector showing the latest metric value from Prometheus. This preview is only visible to superadmin accounts — regular users and domain admins do not see it.
+:::
+
 ![](../images/admin_prometheus_preset_list.png)
 
 <a id="prometheus-preset-list-and-filter"></a>
