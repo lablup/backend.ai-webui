@@ -2007,6 +2007,7 @@
     "PreparingService": "Przygotowywanie usługi",
     "PreparingServiceDescription": "Twoja usługa jest przygotowywana. Może to potrwać kilka minut w zależności od rozmiaru modelu.",
     "Preset": "Preset",
+    "PresetNotFound": "Nie znaleziono presetu.",
     "Processing": "Przetwarzanie...",
     "Public": "Publiczny",
     "Ready": "Gotowy",

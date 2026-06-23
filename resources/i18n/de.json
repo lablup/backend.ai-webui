@@ -2007,6 +2007,7 @@
     "PreStartActions": "Vorab-Aktionen",
     "PreparingService": "Ihren Dienst vorbereiten",
     "PreparingServiceDescription": "Ihr Dienst wird vorbereitet. Dies kann je nach Modellgröße einige Minuten dauern.",
+    "PresetNotFound": "Voreinstellung nicht gefunden.",
     "Processing": "Wird bearbeitet...",
     "Public": "Öffentlich",
     "Ready": "Bereit",

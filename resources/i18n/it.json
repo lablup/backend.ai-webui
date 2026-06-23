@@ -2005,6 +2005,7 @@
     "PreStartActions": "Azioni pre-avvio",
     "PreparingService": "Preparazione del servizio in corso",
     "PreparingServiceDescription": "Il servizio è in fase di preparazione. Questa operazione potrebbe richiedere alcuni minuti a seconda delle dimensioni del modello.",
+    "PresetNotFound": "Preset non trovato.",
     "Processing": "In lavorazione...",
     "Public": "Pubblico",
     "Ready": "Pronto",

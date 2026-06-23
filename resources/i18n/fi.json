@@ -2005,6 +2005,7 @@
     "PreStartActions": "Käynnistystä edeltävät toiminnot",
     "PreparingService": "Valmistellaan palveluasi",
     "PreparingServiceDescription": "Palveluasi valmistellaan. Tämä voi kestää useita minuutteja mallin koosta riippuen.",
+    "PresetNotFound": "Määritystä ei löydy.",
     "Processing": "Käsitellään...",
     "Public": "Julkinen",
     "Ready": "Valmis",

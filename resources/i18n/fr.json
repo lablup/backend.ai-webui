@@ -2007,6 +2007,7 @@
     "PreparingService": "Préparation de votre service",
     "PreparingServiceDescription": "Votre service est en cours de préparation. Cela peut prendre plusieurs minutes selon la taille du modèle.",
     "Preset": "Preset",
+    "PresetNotFound": "Préréglage introuvable.",
     "Processing": "Traitement...",
     "Public": "Public",
     "Ready": "Prêt",

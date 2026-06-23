@@ -2007,6 +2007,7 @@
     "PreStartActions": "Ações antes do arranque",
     "PreparingService": "A preparar o seu serviço",
     "PreparingServiceDescription": "O seu serviço está a ser preparado. Isto pode demorar alguns minutos dependendo do tamanho do modelo.",
+    "PresetNotFound": "Predefinição não encontrada.",
     "Processing": "Em processamento...",
     "Public": "Público",
     "Ready": "Preparar",

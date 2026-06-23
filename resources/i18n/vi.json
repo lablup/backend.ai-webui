@@ -2007,6 +2007,7 @@
     "PreStartActions": "Hành động trước khởi động",
     "PreparingService": "Đang chuẩn bị dịch vụ của bạn",
     "PreparingServiceDescription": "Dịch vụ của bạn đang được chuẩn bị. Quá trình này có thể mất vài phút tùy thuộc vào kích thước mô hình.",
+    "PresetNotFound": "Không tìm thấy preset.",
     "Processing": "Xử lý...",
     "Public": "Công cộng",
     "Ready": "Sẵn sàng",

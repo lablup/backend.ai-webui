@@ -2009,6 +2009,7 @@
     "PreStartActions": "啟動前操作",
     "PreparingService": "正在準備您的服務",
     "PreparingServiceDescription": "您的服務正在準備中，根據模型大小，這可能需要幾分鐘時間。",
+    "PresetNotFound": "找不到預設。",
     "Processing": "加工...",
     "Public": "公众",
     "Ready": "準備好",

@@ -2007,6 +2007,7 @@
     "PreStartActions": "事前起動アクション",
     "PreparingService": "サービスを準備しています",
     "PreparingServiceDescription": "サービスを準備中です。モデルのサイズによっては数分かかる場合があります。",
+    "PresetNotFound": "プリセットが見つかりません。",
     "Processing": "処理...",
     "Public": "公開",
     "Ready": "準備ができて",

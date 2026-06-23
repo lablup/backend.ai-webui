@@ -200,38 +200,31 @@ const DeploymentPresetDetailModal: React.FC<
             <BAIFlex direction="column" align="stretch" gap="xs">
               <ResourceNumbersOfSession
                 resource={
-                  Object.fromEntries(
-                    (preset.resourceSlots ?? []).map((s) =>
-                      s.slotName === 'cpu'
-                        ? [s.slotName, parseFloat(s.quantity)]
-                        : [s.slotName, s.quantity],
+                  {
+                    ...Object.fromEntries(
+                      (preset.resourceSlots ?? []).map((s) =>
+                        s.slotName === 'cpu'
+                          ? [s.slotName, parseFloat(s.quantity)]
+                          : [s.slotName, s.quantity],
+                      ),
                     ),
-                  ) as ResourceAllocationFormValue['resource']
+                    ...(shmem ? { shmem } : {}),
+                  } as ResourceAllocationFormValue['resource']
                 }
               />
-              {(shmem ||
-                (preset.resource?.resourceOpts?.filter(
-                  (o) => o.name !== 'shmem',
-                ).length ?? 0) > 0) && (
+              {(preset.resource?.resourceOpts?.filter((o) => o.name !== 'shmem')
+                .length ?? 0) > 0 && (
                 <Descriptions
                   size="small"
                   column={2}
-                  items={[
-                    ...(shmem
-                      ? [
-                          {
-                            label: t('adminDeploymentPreset.Shmem'),
-                            children: `${shmem} GiB`,
-                          },
-                        ]
-                      : []),
-                    ...(preset.resource?.resourceOpts
+                  items={
+                    preset.resource?.resourceOpts
                       ?.filter((opt) => opt.name !== 'shmem')
                       .map((opt) => ({
                         label: opt.name,
                         children: opt.value,
-                      })) ?? []),
-                  ]}
+                      })) ?? []
+                  }
                 />
               )}
             </BAIFlex>

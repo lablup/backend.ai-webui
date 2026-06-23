@@ -2007,6 +2007,7 @@
     "PreStartActions": "การกระทำก่อนเริ่ม",
     "PreparingService": "กำลังเตรียมบริการของคุณ",
     "PreparingServiceDescription": "บริการของคุณกำลังถูกเตรียม อาจใช้เวลาหลายนาทีขึ้นอยู่กับขนาดของโมเดล",
+    "PresetNotFound": "ไม่พบพรีเซต.",
     "Processing": "กำลังประมวลผล...",
     "Public": "สาธารณะ",
     "Ready": "พร้อม",

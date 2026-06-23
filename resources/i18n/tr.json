@@ -2005,6 +2005,7 @@
     "PreStartActions": "Başlatma Öncesi Eylemler",
     "PreparingService": "Hizmetiniz hazırlanıyor",
     "PreparingServiceDescription": "Hizmetiniz hazırlanıyor. Bu işlem, model boyutuna bağlı olarak birkaç dakika sürebilir.",
+    "PresetNotFound": "Ön ayar bulunamadı.",
     "Processing": "İşleme...",
     "Public": "Kamu",
     "Ready": "Hazır",
