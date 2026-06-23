@@ -224,7 +224,12 @@ test.describe(
       await modal.close();
     });
 
-    test.fixme('User can access File Browser from VFolder explorer modal without defaultFileBrowserImage setting', () => {});
+    // The "File Browser without defaultFileBrowserImage setting" scenario was a
+    // never-implemented empty test.fixme stub (added in FR-1714). The behavior
+    // still exists in the app (useDefaultFileBrowserImageWithFallback queries
+    // installed images when the config is unset), but testing it requires a
+    // config-controlled environment. Tracked as a proper implementation task in
+    // FR-3118 instead of an empty permanently-skipped placeholder.
 
     test('User can view VFolder details in the explorer modal', async ({
       page,
