@@ -20,16 +20,116 @@ async function cleanupPolicy(page: Page, policyName: string) {
   }
 }
 
+// Each CRUD test provisions its own uniquely-named policy so that edit and
+// delete no longer depend on a create test having run first. TEST_RUN_ID keeps
+// names unique across runs; the per-test label keeps them unique within a run.
+function policyName(kind: string, label: string) {
+  return `e2e-${kind}-policy-${TEST_RUN_ID}-${label}`;
+}
+
+async function selectPolicyTab(
+  page: Page,
+  tabName: 'Keypair' | 'User' | 'Project',
+) {
+  await page.getByRole('tab', { name: tabName }).click();
+  await expect(
+    page.getByRole('tab', { name: tabName, selected: true }),
+  ).toBeVisible();
+}
+
+// Creation helpers — extracted so each test can provision its own resource.
+// Each assumes the caller is already on the resource-policy page; the helper
+// selects the right tab, clears any leftover policy of the same name (retry
+// safety), creates the policy and verifies it appears.
+async function createKeypairPolicy(page: Page, name: string) {
+  // Keypair is the default tab.
+  await cleanupPolicy(page, name);
+  await page.getByRole('button', { name: 'Create' }).click();
+  const modal = page.getByRole('dialog', {
+    name: 'Create Keypair Resource Policy',
+  });
+  await expect(modal).toBeVisible();
+  await modal.getByRole('textbox', { name: 'Name' }).fill(name);
+  await modal.getByRole('button', { name: 'OK' }).click();
+  await expect(modal).toBeHidden({ timeout: 10000 });
+  await expect(page.getByRole('row').filter({ hasText: name })).toBeVisible({
+    timeout: 10000,
+  });
+}
+
+async function createUserPolicy(page: Page, name: string) {
+  await selectPolicyTab(page, 'User');
+  await cleanupPolicy(page, name);
+  await page.getByRole('button', { name: 'Create' }).click();
+  const modal = page.getByRole('dialog', {
+    name: 'Create User Resource Policy',
+  });
+  await expect(modal).toBeVisible();
+  await modal.getByRole('textbox', { name: 'Name' }).fill(name);
+  await modal
+    .getByRole('spinbutton', { name: 'Max Session Count Per Model Session' })
+    .fill('10');
+  await modal
+    .getByRole('spinbutton', { name: 'Max Customized Image Count' })
+    .fill('3');
+  await modal.getByRole('button', { name: 'OK' }).click();
+  // User policy creation makes an API call that may take time.
+  await expect(modal).toBeHidden({ timeout: 30000 });
+  await expect(page.getByRole('row').filter({ hasText: name })).toBeVisible({
+    timeout: 10000,
+  });
+}
+
+async function createProjectPolicy(page: Page, name: string) {
+  await selectPolicyTab(page, 'Project');
+  await cleanupPolicy(page, name);
+  await page.getByRole('button', { name: 'Create' }).click();
+  const modal = page.getByRole('dialog');
+  await expect(modal).toBeVisible();
+  await modal.getByRole('textbox', { name: 'Name' }).fill(name);
+  await modal.getByRole('button', { name: 'OK' }).click();
+  await expect(modal).toBeHidden({ timeout: 10000 });
+  await expect(page.getByRole('row').filter({ hasText: name })).toBeVisible({
+    timeout: 10000,
+  });
+}
+
+// Deletes a policy on the current tab by hovering its row and confirming the
+// typed-name delete modal. Used by the delete tests (where deletion is the
+// asserted behavior) — create/edit tests reuse cleanupPolicy for teardown.
+async function deletePolicyAndVerify(page: Page, name: string) {
+  const policyRow = page.getByRole('row').filter({ hasText: name });
+  await expect(policyRow).toBeVisible();
+  await policyRow.getByRole('cell').first().hover();
+  await policyRow.getByRole('button', { name: 'delete' }).click();
+
+  // BAIDeleteConfirmModal with requireConfirmInput: type the policy name to enable Delete
+  const confirmInput = page.locator('#confirmText');
+  await expect(confirmInput).toBeVisible();
+  await confirmInput.fill(name);
+
+  await page.getByRole('button', { name: 'Delete', exact: true }).click();
+
+  await expect(page.getByRole('row').filter({ hasText: name })).toBeHidden({
+    timeout: 10000,
+  });
+}
+
 test.describe(
   'Resource Policy',
   { tag: ['@critical', '@resource-policy', '@functional'] },
   () => {
-    // Run groups and tests in this file in order on a single worker so the
-    // independent list tests don't interleave with the CRUD chains.
+    // Not serial: each CRUD test provisions its own uniquely-named policy and
+    // cleans up after itself, so the tests are order-independent and a failure
+    // in one does not cascade-skip the others (FR-3116). `mode: 'default'` only
+    // removes serial's cascade-skip — it does not by itself pin execution to a
+    // single worker: under the project's `fullyParallel: true` these tests can
+    // run concurrently locally and run sequentially on CI (`workers: 1`). The
+    // independence above makes both execution orders safe.
     test.describe.configure({ mode: 'default' });
 
-    // Independent of the CRUD chain: only reads the default policy list, so a
-    // chain failure must not skip it (extracted from the serial block in FR-3113).
+    // Independent of the CRUD tests: only reads the default policy list, so a
+    // CRUD failure must not skip it (extracted from the serial block in FR-3113).
     test('Admin can see Keypair policy list with expected columns', async ({
       page,
       request,
@@ -58,111 +158,69 @@ test.describe(
       await expect(defaultRow).toBeVisible();
     });
 
-    // Keep serial: create → edit → delete operate on the same named policy.
-    test.describe.serial('Keypair Resource Policy CRUD', () => {
-      const KEYPAIR_POLICY_NAME = `e2e-kp-policy-${TEST_RUN_ID}`;
+    test('Admin can create a Keypair policy', async ({ page, request }) => {
+      const name = policyName('kp', 'create');
+      await loginAsAdmin(page, request);
+      await navigateTo(page, 'resource-policy');
 
-      test('Admin can create a Keypair policy', async ({ page, request }) => {
-        await loginAsAdmin(page, request);
-        await navigateTo(page, 'resource-policy');
+      await createKeypairPolicy(page, name);
 
-        // Cleanup any leftover test policy (also handles serial-group retries)
-        await cleanupPolicy(page, KEYPAIR_POLICY_NAME);
-
-        // Click Create button
-        await page.getByRole('button', { name: 'Create' }).click();
-
-        // Verify Create Keypair Resource Policy dialog appears
-        const modal = page.getByRole('dialog', {
-          name: 'Create Keypair Resource Policy',
-        });
-        await expect(modal).toBeVisible();
-
-        // Fill in the policy name
-        await modal
-          .getByRole('textbox', { name: 'Name' })
-          .fill(KEYPAIR_POLICY_NAME);
-
-        // Click OK
-        await modal.getByRole('button', { name: 'OK' }).click();
-
-        // Verify modal closes
-        await expect(modal).toBeHidden({ timeout: 10000 });
-
-        // Verify new policy appears in the table
-        await expect(
-          page.getByRole('row').filter({ hasText: KEYPAIR_POLICY_NAME }),
-        ).toBeVisible({ timeout: 10000 });
-      });
-
-      test('Admin can edit a Keypair policy', async ({ page, request }) => {
-        await loginAsAdmin(page, request);
-        await navigateTo(page, 'resource-policy');
-
-        // Find the test policy row, hover to reveal actions, and click setting
-        const policyRow = page
-          .getByRole('row')
-          .filter({ hasText: KEYPAIR_POLICY_NAME });
-        await expect(policyRow).toBeVisible();
-        await policyRow.getByRole('cell').first().hover();
-        await policyRow.getByRole('button', { name: 'setting' }).click();
-
-        // Verify Update dialog appears
-        const modal = page.getByRole('dialog');
-        await expect(modal).toBeVisible();
-
-        // Change Cluster Size to 2
-        const clusterSizeInput = modal.getByRole('spinbutton', {
-          name: 'Cluster Size',
-        });
-        await clusterSizeInput.fill('2');
-
-        // Click OK
-        await modal.getByRole('button', { name: 'OK' }).click();
-
-        // Verify modal closes
-        await expect(modal).toBeHidden({ timeout: 10000 });
-
-        // Verify the cluster size value is updated in the table
-        const updatedRow = page
-          .getByRole('row')
-          .filter({ hasText: KEYPAIR_POLICY_NAME });
-        await expect(
-          updatedRow.getByRole('cell', { name: '2', exact: true }),
-        ).toBeVisible({ timeout: 10000 });
-      });
-
-      test('Admin can delete a Keypair policy', async ({ page, request }) => {
-        await loginAsAdmin(page, request);
-        await navigateTo(page, 'resource-policy');
-
-        // Find the test policy row
-        const policyRow = page
-          .getByRole('row')
-          .filter({ hasText: KEYPAIR_POLICY_NAME });
-        await expect(policyRow).toBeVisible();
-
-        // Hover to reveal actions, then click delete button
-        await policyRow.getByRole('cell').first().hover();
-        await policyRow.getByRole('button', { name: 'delete' }).click();
-
-        // BAIDeleteConfirmModal with requireConfirmInput: type the policy name to enable Delete
-        const confirmInput = page.locator('#confirmText');
-        await expect(confirmInput).toBeVisible();
-        await confirmInput.fill(KEYPAIR_POLICY_NAME);
-
-        // Confirm deletion in modal
-        await page.getByRole('button', { name: 'Delete', exact: true }).click();
-
-        // Verify the policy is removed
-        await expect(
-          page.getByRole('row').filter({ hasText: KEYPAIR_POLICY_NAME }),
-        ).toBeHidden({ timeout: 10000 });
-      });
+      // Self-cleanup so the created policy does not leak to later runs.
+      await cleanupPolicy(page, name);
     });
 
-    // Independent of the CRUD chain: only reads the default policy list, so a
-    // chain failure must not skip it (extracted from the serial block in FR-3113).
+    test('Admin can edit a Keypair policy', async ({ page, request }) => {
+      const name = policyName('kp', 'edit');
+      await loginAsAdmin(page, request);
+      await navigateTo(page, 'resource-policy');
+
+      // Provision this test's own policy so it doesn't depend on the create test.
+      await createKeypairPolicy(page, name);
+
+      // Find the test policy row, hover to reveal actions, and click setting
+      const policyRow = page.getByRole('row').filter({ hasText: name });
+      await expect(policyRow).toBeVisible();
+      await policyRow.getByRole('cell').first().hover();
+      await policyRow.getByRole('button', { name: 'setting' }).click();
+
+      // Verify Update dialog appears
+      const modal = page.getByRole('dialog');
+      await expect(modal).toBeVisible();
+
+      // Change Cluster Size to 2
+      const clusterSizeInput = modal.getByRole('spinbutton', {
+        name: 'Cluster Size',
+      });
+      await clusterSizeInput.fill('2');
+
+      // Click OK
+      await modal.getByRole('button', { name: 'OK' }).click();
+
+      // Verify modal closes
+      await expect(modal).toBeHidden({ timeout: 10000 });
+
+      // Verify the cluster size value is updated in the table
+      const updatedRow = page.getByRole('row').filter({ hasText: name });
+      await expect(
+        updatedRow.getByRole('cell', { name: '2', exact: true }),
+      ).toBeVisible({ timeout: 10000 });
+
+      // Self-cleanup.
+      await cleanupPolicy(page, name);
+    });
+
+    test('Admin can delete a Keypair policy', async ({ page, request }) => {
+      const name = policyName('kp', 'delete');
+      await loginAsAdmin(page, request);
+      await navigateTo(page, 'resource-policy');
+
+      // Provision this test's own policy, then delete it (the asserted behavior).
+      await createKeypairPolicy(page, name);
+      await deletePolicyAndVerify(page, name);
+    });
+
+    // Independent of the CRUD tests: only reads the default policy list, so a
+    // CRUD failure must not skip it (extracted from the serial block in FR-3113).
     test('Admin can see User policy list', async ({ page, request }) => {
       await loginAsAdmin(page, request);
       await navigateTo(page, 'resource-policy');
@@ -186,88 +244,30 @@ test.describe(
       await expect(defaultRow).toBeVisible();
     });
 
-    // Keep serial: create → delete operate on the same named policy.
-    test.describe.serial('User Resource Policy CRUD', () => {
-      const USER_POLICY_NAME = `e2e-user-policy-${TEST_RUN_ID}`;
+    test('Admin can create a User policy', async ({ page, request }) => {
+      const name = policyName('user', 'create');
+      await loginAsAdmin(page, request);
+      await navigateTo(page, 'resource-policy');
 
-      test('Admin can create a User policy', async ({ page, request }) => {
-        await loginAsAdmin(page, request);
-        await navigateTo(page, 'resource-policy');
+      await createUserPolicy(page, name);
 
-        // Switch to User tab
-        await page.getByRole('tab', { name: 'User' }).click();
-
-        // Cleanup any leftover test policy (also handles serial-group retries)
-        await cleanupPolicy(page, USER_POLICY_NAME);
-
-        // Click Create button
-        await page.getByRole('button', { name: 'Create' }).click();
-
-        // Verify dialog appears
-        const modal = page.getByRole('dialog', {
-          name: 'Create User Resource Policy',
-        });
-        await expect(modal).toBeVisible();
-
-        // Fill in policy name
-        await modal
-          .getByRole('textbox', { name: 'Name' })
-          .fill(USER_POLICY_NAME);
-
-        // Fill required fields
-        await modal
-          .getByRole('spinbutton', {
-            name: 'Max Session Count Per Model Session',
-          })
-          .fill('10');
-        await modal
-          .getByRole('spinbutton', { name: 'Max Customized Image Count' })
-          .fill('3');
-
-        // Click OK and wait for response
-        await modal.getByRole('button', { name: 'OK' }).click();
-
-        // Verify modal closes (may take time for API call)
-        await expect(modal).toBeHidden({ timeout: 30000 });
-
-        // Verify new policy appears
-        await expect(
-          page.getByRole('row').filter({ hasText: USER_POLICY_NAME }),
-        ).toBeVisible({ timeout: 10000 });
-      });
-
-      test('Admin can delete a User policy', async ({ page, request }) => {
-        await loginAsAdmin(page, request);
-        await navigateTo(page, 'resource-policy');
-
-        // Switch to User tab
-        await page.getByRole('tab', { name: 'User' }).click();
-
-        // Find and delete the test policy
-        const policyRow = page
-          .getByRole('row')
-          .filter({ hasText: USER_POLICY_NAME });
-        await expect(policyRow).toBeVisible();
-        await policyRow.getByRole('cell').first().hover();
-        await policyRow.getByRole('button', { name: 'delete' }).click();
-
-        // BAIDeleteConfirmModal with requireConfirmInput: type the policy name to enable Delete
-        const confirmInput = page.locator('#confirmText');
-        await expect(confirmInput).toBeVisible();
-        await confirmInput.fill(USER_POLICY_NAME);
-
-        // Confirm deletion in modal
-        await page.getByRole('button', { name: 'Delete', exact: true }).click();
-
-        // Verify removal
-        await expect(
-          page.getByRole('row').filter({ hasText: USER_POLICY_NAME }),
-        ).toBeHidden({ timeout: 10000 });
-      });
+      // Self-cleanup (createUserPolicy left us on the User tab).
+      await cleanupPolicy(page, name);
     });
 
-    // Independent of the CRUD chain: only reads the default policy list, so a
-    // chain failure must not skip it (extracted from the serial block in FR-3113).
+    test('Admin can delete a User policy', async ({ page, request }) => {
+      const name = policyName('user', 'delete');
+      await loginAsAdmin(page, request);
+      await navigateTo(page, 'resource-policy');
+
+      // Provision this test's own policy, then delete it (createUserPolicy
+      // leaves us on the User tab where the policy lives).
+      await createUserPolicy(page, name);
+      await deletePolicyAndVerify(page, name);
+    });
+
+    // Independent of the CRUD tests: only reads the default policy list, so a
+    // CRUD failure must not skip it (extracted from the serial block in FR-3113).
     test('Admin can see Project policy list', async ({ page, request }) => {
       await loginAsAdmin(page, request);
       await navigateTo(page, 'resource-policy');
@@ -291,72 +291,26 @@ test.describe(
       await expect(defaultRow).toBeVisible();
     });
 
-    // Keep serial: create → delete operate on the same named policy.
-    test.describe.serial('Project Resource Policy CRUD', () => {
-      const PROJECT_POLICY_NAME = `e2e-proj-policy-${TEST_RUN_ID}`;
+    test('Admin can create a Project policy', async ({ page, request }) => {
+      const name = policyName('proj', 'create');
+      await loginAsAdmin(page, request);
+      await navigateTo(page, 'resource-policy');
 
-      test('Admin can create a Project policy', async ({ page, request }) => {
-        await loginAsAdmin(page, request);
-        await navigateTo(page, 'resource-policy');
+      await createProjectPolicy(page, name);
 
-        // Switch to Project tab
-        await page.getByRole('tab', { name: 'Project' }).click();
+      // Self-cleanup (createProjectPolicy left us on the Project tab).
+      await cleanupPolicy(page, name);
+    });
 
-        // Cleanup any leftover test policy (also handles serial-group retries)
-        await cleanupPolicy(page, PROJECT_POLICY_NAME);
+    test('Admin can delete a Project policy', async ({ page, request }) => {
+      const name = policyName('proj', 'delete');
+      await loginAsAdmin(page, request);
+      await navigateTo(page, 'resource-policy');
 
-        // Click Create button
-        await page.getByRole('button', { name: 'Create' }).click();
-
-        // Verify dialog appears
-        const modal = page.getByRole('dialog');
-        await expect(modal).toBeVisible();
-
-        // Fill in policy name
-        await modal
-          .getByRole('textbox', { name: 'Name' })
-          .fill(PROJECT_POLICY_NAME);
-
-        // Click OK
-        await modal.getByRole('button', { name: 'OK' }).click();
-
-        // Verify modal closes
-        await expect(modal).toBeHidden({ timeout: 10000 });
-
-        // Verify new policy appears
-        await expect(
-          page.getByRole('row').filter({ hasText: PROJECT_POLICY_NAME }),
-        ).toBeVisible({ timeout: 10000 });
-      });
-
-      test('Admin can delete a Project policy', async ({ page, request }) => {
-        await loginAsAdmin(page, request);
-        await navigateTo(page, 'resource-policy');
-
-        // Switch to Project tab
-        await page.getByRole('tab', { name: 'Project' }).click();
-
-        // Find and delete the test policy
-        const policyRow = page
-          .getByRole('row')
-          .filter({ hasText: PROJECT_POLICY_NAME });
-        await expect(policyRow).toBeVisible();
-        await policyRow.getByRole('cell').first().hover();
-        await policyRow.getByRole('button', { name: 'delete' }).click();
-
-        // BAIDeleteConfirmModal with requireConfirmInput: type the policy name to enable Delete
-        const confirmInput = page.locator('#confirmText');
-        await expect(confirmInput).toBeVisible();
-        await confirmInput.fill(PROJECT_POLICY_NAME);
-
-        // Confirm deletion in modal
-        await page.getByRole('button', { name: 'Delete', exact: true }).click();
-
-        // Verify removal
-        await expect(
-          page.getByRole('row').filter({ hasText: PROJECT_POLICY_NAME }),
-        ).toBeHidden({ timeout: 10000 });
-      });
+      // Provision this test's own policy, then delete it (createProjectPolicy
+      // leaves us on the Project tab where the policy lives).
+      await createProjectPolicy(page, name);
+      await deletePolicyAndVerify(page, name);
     });
   },
 );
