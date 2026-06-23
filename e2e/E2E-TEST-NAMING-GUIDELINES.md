@@ -298,6 +298,36 @@ UI element inside the test body and skipping when it is absent. The gate skips
 with an auditable reason on incapable backends; on capable backends a missing
 UI element fails the test instead of silently skipping.
 
+### Environment-constraint tags (FR-3114)
+
+When a spec needs a backend environment capability or pre-seeded data that
+the standard test cluster may not provide, tag it so it can be excluded on
+incapable targets (and re-included once infra provisions the capability):
+
+- `@requires-app-<service>` — the session image used by the suite must
+  expose the `<service>` service port (`ai.backend.service-ports`), e.g.
+  `@requires-app-jupyter`, `@requires-app-jupyterlab`, `@requires-app-vscode`,
+  `@requires-app-sshd`, `@requires-app-vscode-desktop`
+- `@requires-vfolder-type-group` — the cluster's etcd `volumes/_types`
+  config must include `group` (Project-type vfolders). Gate with
+  `skipUnlessAllowedVFolderType(page, 'group', ...)`
+- `@requires-seeded-data` — the target cluster must hold pre-seeded data
+  beyond a fresh install's defaults (e.g. >20 registered images for image
+  list pagination, >1 page of model store cards, an inactive keypair on the
+  e2e user account). The skip reason must state the exact data precondition.
+
+```bash
+# Run everything that works on a freshly installed, unseeded cluster
+npx playwright test --grep-invert "@requires-seeded-data"
+
+# Exclude suites that need specific session apps or Project-type vfolders
+npx playwright test --grep-invert "@requires-app-|@requires-vfolder-type-group"
+```
+
+Each `@requires-*` tagged test keeps a runtime gate (a `test.skip(condition,
+reason)` whose reason cites the constraint and the tag) so a run on an
+incapable backend reports an auditable skip instead of a false pass.
+
 ## Test Structure Best Practices
 
 ### 1. Spec Reference Comment

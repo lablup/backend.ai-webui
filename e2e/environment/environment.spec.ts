@@ -617,72 +617,77 @@ test.describe(
     });
 
     // Scenario 2.10 — Pagination resets to page 1 when filter applied
-    test('Admin sees pagination reset to page 1 when a filter is applied on page 2', async ({
-      page,
-    }) => {
-      // 1. Check total row count to determine if there are enough images for page 2
-      // Use the visible standalone pagination (ant-pagination-end); the built-in
-      // ant-table-pagination is hidden on this page.
-      const paginationTotal = page
-        .locator('.ant-pagination-end')
-        .locator('.ant-pagination-total-text');
-      // Ensure pagination total text is present and readable; fail if it is not.
-      await expect(paginationTotal).toBeVisible();
-      const totalText = await paginationTotal.textContent();
-      if (!totalText) {
-        throw new Error('Pagination total text is empty or null');
-      }
-      const totalMatch = totalText.match(/of\s+(\d+)/);
-      if (!totalMatch) {
-        throw new Error(
-          `Unexpected pagination total text format: "${totalText}"`,
+    test(
+      'Admin sees pagination reset to page 1 when a filter is applied on page 2',
+      { tag: ['@requires-seeded-data'] },
+      async ({ page }) => {
+        // 1. Check total row count to determine if there are enough images for page 2
+        // Use the visible standalone pagination (ant-pagination-end); the built-in
+        // ant-table-pagination is hidden on this page.
+        const paginationTotal = page
+          .locator('.ant-pagination-end')
+          .locator('.ant-pagination-total-text');
+        // Ensure pagination total text is present and readable; fail if it is not.
+        await expect(paginationTotal).toBeVisible();
+        const totalText = await paginationTotal.textContent();
+        if (!totalText) {
+          throw new Error('Pagination total text is empty or null');
+        }
+        const totalMatch = totalText.match(/of\s+(\d+)/);
+        if (!totalMatch) {
+          throw new Error(
+            `Unexpected pagination total text format: "${totalText}"`,
+          );
+        }
+        const total = parseInt(totalMatch[1], 10);
+
+        // Environment data gate (FR-3114): this scenario needs a second page of
+        // results, i.e. more than 20 images registered on the target cluster
+        // (default page size is 20). Seeding more images is an infra task —
+        // until then the test skips with an auditable reason.
+        test.skip(
+          total <= 20,
+          `Pagination scenario requires more than 20 images in the image list (found ${total}; default page size 20, @requires-seeded-data)`,
         );
-      }
-      const total = parseInt(totalMatch[1], 10);
 
-      // Skip if not enough images for page 2 (default page size is 20)
-      if (total <= 20) {
-        test.skip();
-        return;
-      }
+        // Use the standalone visible pagination (ant-pagination-end) which is the
+        // actual pagination rendered for the image list. The ant-table-pagination
+        // built into the table is hidden (display:none) on this page.
+        const visiblePagination = page.locator('.ant-pagination-end');
 
-      // Use the standalone visible pagination (ant-pagination-end) which is the
-      // actual pagination rendered for the image list. The ant-table-pagination
-      // built into the table is hidden (display:none) on this page.
-      const visiblePagination = page.locator('.ant-pagination-end');
+        // 2. Navigate to page 2 by clicking the page 2 button in pagination
+        await visiblePagination
+          .locator('.ant-pagination-item')
+          .filter({ hasText: '2' })
+          .click();
+        await page
+          .locator('.ant-spin-spinning')
+          .waitFor({ state: 'detached', timeout: 10000 })
+          .catch(() => {});
 
-      // 2. Navigate to page 2 by clicking the page 2 button in pagination
-      await visiblePagination
-        .locator('.ant-pagination-item')
-        .filter({ hasText: '2' })
-        .click();
-      await page
-        .locator('.ant-spin-spinning')
-        .waitFor({ state: 'detached', timeout: 10000 })
-        .catch(() => {});
+        // 3. Verify we are on page 2
+        await expect(
+          visiblePagination.locator('.ant-pagination-item-active'),
+        ).toHaveText('2');
 
-      // 3. Verify we are on page 2
-      await expect(
-        visiblePagination.locator('.ant-pagination-item-active'),
-      ).toHaveText('2');
+        // 4. Apply a Name filter with value "python"
+        await applyImageFilter(page, 'Name', 'python');
+        const nameTag = page
+          .locator('.ant-tag')
+          .filter({ has: page.locator('[aria-label="Close"]') })
+          .filter({ hasText: 'Name: python' });
+        await expect(nameTag).toBeVisible();
 
-      // 4. Apply a Name filter with value "python"
-      await applyImageFilter(page, 'Name', 'python');
-      const nameTag = page
-        .locator('.ant-tag')
-        .filter({ has: page.locator('[aria-label="Close"]') })
-        .filter({ hasText: 'Name: python' });
-      await expect(nameTag).toBeVisible();
+        // 5. Verify pagination has reset to page 1
+        await expect(
+          visiblePagination.locator('.ant-pagination-item-active'),
+        ).toHaveText('1');
 
-      // 5. Verify pagination has reset to page 1
-      await expect(
-        visiblePagination.locator('.ant-pagination-item-active'),
-      ).toHaveText('1');
-
-      // 6. Cleanup: remove the filter tag
-      await removeFilterTag(page, 'Name: python');
-      await expect(nameTag).not.toBeVisible();
-    });
+        // 6. Cleanup: remove the filter tag
+        await removeFilterTag(page, 'Name: python');
+        await expect(nameTag).not.toBeVisible();
+      },
+    );
 
     // Scenario 2.11 — Strict selection rejects freeform input
     test('Admin cannot add a filter for architecture with an invalid freeform value', async ({

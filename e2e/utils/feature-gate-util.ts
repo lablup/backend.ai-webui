@@ -16,12 +16,18 @@
  *   `_updateSupportList()`)
  * - `config.toml` toggles → `skipUnlessClientConfig(page, 'enableModelFolders', ...)`
  *   (same source of truth as `baiClient._config.*` in components)
+ * - Client properties (FR-3114) → `getClientProperty(page, 'current_group')`
+ *   (same source of truth as `baiClient.<property>` in components)
+ * - etcd-configured vfolder types (FR-3114) →
+ *   `skipUnlessAllowedVFolderType(page, 'group', ...)` (same source of truth
+ *   as `baiClient.vfolder.list_allowed_types()`)
  *
  * Pair these gates with a version-requirement tag on the test or describe
  * block (e.g. `@requires-manager-v25.15`, `@requires-webui-v26.4`) so gated
  * specs can be excluded explicitly on incapable targets:
  * `npx playwright test --grep-invert "@requires-manager-v25.15"`.
- * See e2e/E2E-TEST-NAMING-GUIDELINES.md ("Feature-gate tags (FR-3112)").
+ * See e2e/E2E-TEST-NAMING-GUIDELINES.md ("Feature-gate tags (FR-3112)" and
+ * "Environment-constraint tags (FR-3114)").
  */
 import { test, Page } from '@playwright/test';
 
@@ -149,4 +155,47 @@ export async function skipUnlessClientConfig(
 ): Promise<void> {
   const value = await getClientConfigValue(page, key);
   test.skip(!value, reason);
+}
+
+/**
+ * Returns a top-level property of the logged-in Backend.AI client, e.g.
+ * `current_group` (the active project name) — the same source components
+ * read via `useCurrentProjectValue()` / `baiClient.current_group`.
+ */
+export async function getClientProperty(
+  page: Page,
+  key: string,
+): Promise<unknown> {
+  await waitForBackendAIClient(page);
+  return page.evaluate((k) => (globalThis as any).backendaiclient?.[k], key);
+}
+
+/**
+ * Returns the vfolder types allowed by the cluster's etcd configuration
+ * (`volumes/_types`), e.g. `['user', 'group']` — the same source
+ * `FolderCreateModal` reads via `baiClient.vfolder.list_allowed_types()`.
+ */
+export async function listAllowedVFolderTypes(page: Page): Promise<string[]> {
+  await waitForBackendAIClient(page);
+  return page.evaluate(async () => {
+    const types = await (
+      globalThis as any
+    ).backendaiclient?.vfolder?.list_allowed_types();
+    return Array.isArray(types) ? types : [];
+  });
+}
+
+/**
+ * Declarative environment gate (FR-3114): skips the current test (with the
+ * given auditable reason) when the cluster's etcd `volumes/_types` config
+ * does not allow the given vfolder type (e.g. `'group'` for Project-type
+ * vfolders). Pair with the `@requires-vfolder-type-group` tag.
+ */
+export async function skipUnlessAllowedVFolderType(
+  page: Page,
+  type: string,
+  reason: string,
+): Promise<void> {
+  const allowedTypes = await listAllowedVFolderTypes(page);
+  test.skip(!allowedTypes.includes(type), reason);
 }
