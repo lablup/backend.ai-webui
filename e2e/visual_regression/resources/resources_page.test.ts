@@ -11,7 +11,10 @@ test.beforeEach(async ({ page, request }) => {
   });
   await loginAsVisualRegressionAdmin(page, request);
   await navigateTo(page, 'agent');
-  // FIXME: Agent tab is not visible - page might have changed or renamed
+  // FIXME(FR-3111/stale-baseline): The Resources page tabs were renamed
+  // (visible labels now: Agents / Storages / Resource Group; i18n key
+  // webui.menu.StorageProxies renders as "Storages"), so the 'Agent' tab locator is dead.
+  // Tab locator fix deferred to FR-3115.
   await expect(page.getByRole('tab', { name: 'Agent' })).toBeVisible();
 });
 
@@ -19,8 +22,10 @@ test.describe(
   'Resources page Visual Regression Test',
   { tag: ['@regression', '@agent', '@visual'] },
   () => {
-    // FIXME: Test skipped due to beforeEach failure (Agent tab not visible)
-    // Agent table
+    // FIXME(FR-3111/stale-baseline): Resources tabs renamed (visible labels:
+    // Agents / Storages / Resource Group); `snapshot/agent-table.png` and `snapshot/agent-setting-modal.png`
+    // reflect the old tab layout. Locator fix + baseline refresh deferred to FR-3115
+    // (frozen backend).
     test.fixme(`Agent table`, async ({ page }) => {
       await page.getByRole('tab', { name: 'Agent' }).click();
       await expect(

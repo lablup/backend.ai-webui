@@ -40,8 +40,10 @@ test.describe(
       });
     });
 
-    // FIXME: Test timeout - getByLabel('Change') cannot be clicked (element not found)
-    // The "Change password" link might have been removed or its label changed
+    // FIXME(FR-3111/stale-baseline): The login UI migrated from the Lit `div.card`
+    // markup to React (LoginFormPanel/ChangePasswordView), so the getByLabel('Change')
+    // locator is dead and `snapshot/change-password-modal.png` shows the old Lit modal.
+    // Locator rewrite + baseline refresh deferred to FR-3115 (frozen backend).
     test.fixme('Change password modal', async ({ page }) => {
       await page.getByLabel('Change').click();
       await expect(page.locator('div.card').nth(1)).toBeVisible();
