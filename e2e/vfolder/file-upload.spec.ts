@@ -30,6 +30,9 @@ const openFolderExplorer = async (
   return modal;
 };
 
+// Keep serial: the tests chain state on one shared vfolder. testFolderName
+// (declared at describe scope) names that folder; the first (single-file)
+// test creates it and the multi-file test uploads into the same folder.
 test.describe.serial(
   'Button-Based File Upload',
   { tag: ['@critical', '@vfolder', '@functional'] },

@@ -24,43 +24,50 @@ test.describe(
   'Resource Policy',
   { tag: ['@critical', '@resource-policy', '@functional'] },
   () => {
+    // Run groups and tests in this file in order on a single worker so the
+    // independent list tests don't interleave with the CRUD chains.
+    test.describe.configure({ mode: 'default' });
+
+    // Independent of the CRUD chain: only reads the default policy list, so a
+    // chain failure must not skip it (extracted from the serial block in FR-3113).
+    test('Admin can see Keypair policy list with expected columns', async ({
+      page,
+      request,
+    }) => {
+      await loginAsAdmin(page, request);
+      await navigateTo(page, 'resource-policy');
+
+      // Verify Keypair tab is selected by default
+      await expect(
+        page.getByRole('tab', { name: 'Keypair', selected: true }),
+      ).toBeVisible();
+
+      // Verify table columns
+      await expect(
+        page.getByRole('columnheader', { name: 'Name' }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole('columnheader', { name: 'Concurrency' }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole('columnheader', { name: 'Cluster Size' }),
+      ).toBeVisible();
+
+      // Verify default policy row exists
+      const defaultRow = page.getByRole('row').filter({ hasText: 'default' });
+      await expect(defaultRow).toBeVisible();
+    });
+
+    // Keep serial: create → edit → delete operate on the same named policy.
     test.describe.serial('Keypair Resource Policy CRUD', () => {
       const KEYPAIR_POLICY_NAME = `e2e-kp-policy-${TEST_RUN_ID}`;
-
-      test('Admin can see Keypair policy list with expected columns', async ({
-        page,
-        request,
-      }) => {
-        await loginAsAdmin(page, request);
-        await navigateTo(page, 'resource-policy');
-
-        // Verify Keypair tab is selected by default
-        await expect(
-          page.getByRole('tab', { name: 'Keypair', selected: true }),
-        ).toBeVisible();
-
-        // Verify table columns
-        await expect(
-          page.getByRole('columnheader', { name: 'Name' }),
-        ).toBeVisible();
-        await expect(
-          page.getByRole('columnheader', { name: 'Concurrency' }),
-        ).toBeVisible();
-        await expect(
-          page.getByRole('columnheader', { name: 'Cluster Size' }),
-        ).toBeVisible();
-
-        // Verify default policy row exists
-        const defaultRow = page.getByRole('row').filter({ hasText: 'default' });
-        await expect(defaultRow).toBeVisible();
-
-        // Cleanup any leftover test policy
-        await cleanupPolicy(page, KEYPAIR_POLICY_NAME);
-      });
 
       test('Admin can create a Keypair policy', async ({ page, request }) => {
         await loginAsAdmin(page, request);
         await navigateTo(page, 'resource-policy');
+
+        // Cleanup any leftover test policy (also handles serial-group retries)
+        await cleanupPolicy(page, KEYPAIR_POLICY_NAME);
 
         // Click Create button
         await page.getByRole('button', { name: 'Create' }).click();
@@ -154,34 +161,34 @@ test.describe(
       });
     });
 
+    // Independent of the CRUD chain: only reads the default policy list, so a
+    // chain failure must not skip it (extracted from the serial block in FR-3113).
+    test('Admin can see User policy list', async ({ page, request }) => {
+      await loginAsAdmin(page, request);
+      await navigateTo(page, 'resource-policy');
+
+      // Switch to User tab
+      await page.getByRole('tab', { name: 'User' }).click();
+      await expect(
+        page.getByRole('tab', { name: 'User', selected: true }),
+      ).toBeVisible();
+
+      // Verify table columns
+      await expect(
+        page.getByRole('columnheader', { name: 'Name' }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole('columnheader', { name: 'Max Folder Count' }),
+      ).toBeVisible();
+
+      // Verify default policy row exists
+      const defaultRow = page.getByRole('row').filter({ hasText: 'default' });
+      await expect(defaultRow).toBeVisible();
+    });
+
+    // Keep serial: create → delete operate on the same named policy.
     test.describe.serial('User Resource Policy CRUD', () => {
       const USER_POLICY_NAME = `e2e-user-policy-${TEST_RUN_ID}`;
-
-      test('Admin can see User policy list', async ({ page, request }) => {
-        await loginAsAdmin(page, request);
-        await navigateTo(page, 'resource-policy');
-
-        // Switch to User tab
-        await page.getByRole('tab', { name: 'User' }).click();
-        await expect(
-          page.getByRole('tab', { name: 'User', selected: true }),
-        ).toBeVisible();
-
-        // Verify table columns
-        await expect(
-          page.getByRole('columnheader', { name: 'Name' }),
-        ).toBeVisible();
-        await expect(
-          page.getByRole('columnheader', { name: 'Max Folder Count' }),
-        ).toBeVisible();
-
-        // Verify default policy row exists
-        const defaultRow = page.getByRole('row').filter({ hasText: 'default' });
-        await expect(defaultRow).toBeVisible();
-
-        // Cleanup
-        await cleanupPolicy(page, USER_POLICY_NAME);
-      });
 
       test('Admin can create a User policy', async ({ page, request }) => {
         await loginAsAdmin(page, request);
@@ -189,6 +196,9 @@ test.describe(
 
         // Switch to User tab
         await page.getByRole('tab', { name: 'User' }).click();
+
+        // Cleanup any leftover test policy (also handles serial-group retries)
+        await cleanupPolicy(page, USER_POLICY_NAME);
 
         // Click Create button
         await page.getByRole('button', { name: 'Create' }).click();
@@ -256,34 +266,34 @@ test.describe(
       });
     });
 
+    // Independent of the CRUD chain: only reads the default policy list, so a
+    // chain failure must not skip it (extracted from the serial block in FR-3113).
+    test('Admin can see Project policy list', async ({ page, request }) => {
+      await loginAsAdmin(page, request);
+      await navigateTo(page, 'resource-policy');
+
+      // Switch to Project tab
+      await page.getByRole('tab', { name: 'Project' }).click();
+      await expect(
+        page.getByRole('tab', { name: 'Project', selected: true }),
+      ).toBeVisible();
+
+      // Verify table columns
+      await expect(
+        page.getByRole('columnheader', { name: 'Name' }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole('columnheader', { name: 'Max Folder Count' }),
+      ).toBeVisible();
+
+      // Verify default policy row
+      const defaultRow = page.getByRole('row').filter({ hasText: 'default' });
+      await expect(defaultRow).toBeVisible();
+    });
+
+    // Keep serial: create → delete operate on the same named policy.
     test.describe.serial('Project Resource Policy CRUD', () => {
       const PROJECT_POLICY_NAME = `e2e-proj-policy-${TEST_RUN_ID}`;
-
-      test('Admin can see Project policy list', async ({ page, request }) => {
-        await loginAsAdmin(page, request);
-        await navigateTo(page, 'resource-policy');
-
-        // Switch to Project tab
-        await page.getByRole('tab', { name: 'Project' }).click();
-        await expect(
-          page.getByRole('tab', { name: 'Project', selected: true }),
-        ).toBeVisible();
-
-        // Verify table columns
-        await expect(
-          page.getByRole('columnheader', { name: 'Name' }),
-        ).toBeVisible();
-        await expect(
-          page.getByRole('columnheader', { name: 'Max Folder Count' }),
-        ).toBeVisible();
-
-        // Verify default policy row
-        const defaultRow = page.getByRole('row').filter({ hasText: 'default' });
-        await expect(defaultRow).toBeVisible();
-
-        // Cleanup
-        await cleanupPolicy(page, PROJECT_POLICY_NAME);
-      });
 
       test('Admin can create a Project policy', async ({ page, request }) => {
         await loginAsAdmin(page, request);
@@ -291,6 +301,9 @@ test.describe(
 
         // Switch to Project tab
         await page.getByRole('tab', { name: 'Project' }).click();
+
+        // Cleanup any leftover test policy (also handles serial-group retries)
+        await cleanupPolicy(page, PROJECT_POLICY_NAME);
 
         // Click Create button
         await page.getByRole('button', { name: 'Create' }).click();

@@ -8,7 +8,8 @@ import {
 } from '../utils/test-util';
 import { test } from '@playwright/test';
 
-test.describe.serial(
+// Not serial: single test — no ordering dependency.
+test.describe(
   'VFolder Consecutive Deletion - User Operations',
   { tag: ['@regression', '@vfolder', '@functional'] },
   () => {

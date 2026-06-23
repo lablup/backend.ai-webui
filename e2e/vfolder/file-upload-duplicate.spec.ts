@@ -30,6 +30,8 @@ const openFolderExplorer = async (
   return modal;
 };
 
+// Keep serial: the cancel test depends on the vfolder and the file uploaded
+// by the first test (overwrite-confirmation requires the pre-existing file).
 test.describe.serial(
   'Duplicate File Upload',
   { tag: ['@critical', '@vfolder', '@functional'] },

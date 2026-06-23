@@ -26,10 +26,17 @@ const openFolderExplorer = async (
   return modal;
 };
 
-test.describe.serial(
+// Not serial: each test provisions its own uniquely-named folder (or uses
+// none) and deletes it at the end of its body, so a failure doesn't cascade.
+// A mid-test failure can leave its folder behind, but names are unique per
+// run so later tests/runs are unaffected. mode: 'default' keeps tests
+// sequential on one worker to limit backend load.
+test.describe(
   'VFolder Explorer Modal',
   { tag: ['@critical', '@vfolder', '@functional'] },
   () => {
+    test.describe.configure({ mode: 'default' });
+
     test.beforeEach(async ({ page, request }) => {
       await loginAsUser(page, request);
       await navigateTo(page, 'data');

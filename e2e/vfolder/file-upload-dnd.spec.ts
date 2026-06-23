@@ -30,7 +30,8 @@ const openFolderExplorer = async (
   return modal;
 };
 
-test.describe.serial(
+// Not serial: single test — no ordering dependency.
+test.describe(
   'Drag-and-Drop File Upload',
   { tag: ['@critical', '@vfolder', '@functional'] },
   () => {

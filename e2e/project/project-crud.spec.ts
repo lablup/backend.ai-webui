@@ -1,78 +1,84 @@
 // spec: e2e/.agent-output/test-plan-project.md
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
-import test, { expect } from '@playwright/test';
+import test, { expect, Page } from '@playwright/test';
 
 const TEST_RUN_ID = Date.now().toString(36);
 const PROJECT_NAME = `e2e-test-project-${TEST_RUN_ID}`;
 const PROJECT_DESCRIPTION = 'Test project for E2E';
 const UPDATED_DESCRIPTION = 'Updated E2E description';
 
-test.describe.serial(
-  'Project CRUD',
+// Run groups and tests in this file in order on a single worker so the
+// independent list test doesn't interleave with the CRUD chain.
+test.describe.configure({ mode: 'default' });
+
+// Cleanup function to delete the test project if it exists.
+// The project lifecycle is: Active → Deactivated (trash) → Purged (hard delete).
+// This helper handles all lifecycle states: if the project is active it
+// deactivates it first, then switches to the Inactive tab and purges it.
+async function cleanupTestProject(page: Page) {
+  // Check Active tab first
+  const activeProjectRow = page
+    .getByRole('row')
+    .filter({ hasText: PROJECT_NAME });
+  const isActiveVisible = await activeProjectRow
+    .isVisible({ timeout: 2000 })
+    .catch(() => false);
+
+  if (isActiveVisible) {
+    // Deactivate first (Popconfirm flow)
+    await activeProjectRow.hover();
+    await activeProjectRow
+      .locator('.bai-name-action-cell-actions button')
+      .nth(1)
+      .click();
+    const deactivatePopconfirm = page.locator('.ant-popconfirm');
+    await expect(deactivatePopconfirm).toBeVisible({ timeout: 5000 });
+    await deactivatePopconfirm
+      .getByRole('button', { name: 'Deactivate' })
+      .click();
+    await expect(activeProjectRow).toBeHidden({ timeout: 10000 });
+  }
+
+  // Switch to Inactive tab and purge
+  // Use the label wrapper (not the hidden radio input) to click the radio button
+  await page
+    .locator('label')
+    .filter({ hasText: /^Inactive$/ })
+    .click();
+  const inactiveProjectRow = page
+    .getByRole('row')
+    .filter({ hasText: PROJECT_NAME });
+  const isInactiveVisible = await inactiveProjectRow
+    .isVisible({ timeout: 5000 })
+    .catch(() => false);
+
+  if (isInactiveVisible) {
+    await inactiveProjectRow.hover();
+    // In Inactive tab: buttons are [setting(0), activate(1), purge(2)]
+    await inactiveProjectRow
+      .locator('.bai-name-action-cell-actions button')
+      .nth(2)
+      .click();
+    const purgeDialog = page.getByRole('dialog', { name: 'Purge Project' });
+    await expect(purgeDialog).toBeVisible({ timeout: 5000 });
+    await purgeDialog.locator('#confirmText').fill(PROJECT_NAME);
+    await purgeDialog.getByRole('button', { name: 'Purge' }).click();
+    await expect(inactiveProjectRow).toBeHidden({ timeout: 10000 });
+  }
+
+  // Return to Active tab for subsequent tests
+  await page
+    .locator('label')
+    .filter({ hasText: /^Active$/ })
+    .click();
+}
+
+// Independent of the CRUD chain: only reads the default project list, so a
+// chain failure must not skip it (extracted from the serial block in FR-3113).
+test.describe(
+  'Project List',
   { tag: ['@critical', '@project', '@functional'] },
   () => {
-    // Cleanup function to delete the test project if it exists.
-    // The project lifecycle is: Active → Deactivated (trash) → Purged (hard delete).
-    // This helper handles all lifecycle states: if the project is active it
-    // deactivates it first, then switches to the Inactive tab and purges it.
-    async function cleanupTestProject(page: any) {
-      // Check Active tab first
-      const activeProjectRow = page
-        .getByRole('row')
-        .filter({ hasText: PROJECT_NAME });
-      const isActiveVisible = await activeProjectRow
-        .isVisible({ timeout: 2000 })
-        .catch(() => false);
-
-      if (isActiveVisible) {
-        // Deactivate first (Popconfirm flow)
-        await activeProjectRow.hover();
-        await activeProjectRow
-          .locator('.bai-name-action-cell-actions button')
-          .nth(1)
-          .click();
-        const deactivatePopconfirm = page.locator('.ant-popconfirm');
-        await expect(deactivatePopconfirm).toBeVisible({ timeout: 5000 });
-        await deactivatePopconfirm
-          .getByRole('button', { name: 'Deactivate' })
-          .click();
-        await expect(activeProjectRow).toBeHidden({ timeout: 10000 });
-      }
-
-      // Switch to Inactive tab and purge
-      // Use the label wrapper (not the hidden radio input) to click the radio button
-      await page
-        .locator('label')
-        .filter({ hasText: /^Inactive$/ })
-        .click();
-      const inactiveProjectRow = page
-        .getByRole('row')
-        .filter({ hasText: PROJECT_NAME });
-      const isInactiveVisible = await inactiveProjectRow
-        .isVisible({ timeout: 5000 })
-        .catch(() => false);
-
-      if (isInactiveVisible) {
-        await inactiveProjectRow.hover();
-        // In Inactive tab: buttons are [setting(0), activate(1), purge(2)]
-        await inactiveProjectRow
-          .locator('.bai-name-action-cell-actions button')
-          .nth(2)
-          .click();
-        const purgeDialog = page.getByRole('dialog', { name: 'Purge Project' });
-        await expect(purgeDialog).toBeVisible({ timeout: 5000 });
-        await purgeDialog.locator('#confirmText').fill(PROJECT_NAME);
-        await purgeDialog.getByRole('button', { name: 'Purge' }).click();
-        await expect(inactiveProjectRow).toBeHidden({ timeout: 10000 });
-      }
-
-      // Return to Active tab for subsequent tests
-      await page
-        .locator('label')
-        .filter({ hasText: /^Active$/ })
-        .click();
-    }
-
     test('Admin can see project list with expected columns', async ({
       page,
       request,
@@ -117,15 +123,23 @@ test.describe.serial(
       await expect(
         defaultRow.getByRole('cell', { name: 'GENERAL' }),
       ).toBeVisible();
-
-      // 6. Cleanup any leftover test project from previous runs
-      await cleanupTestProject(page);
     });
+  },
+);
 
+// Keep serial: create → edit → filter → delete operate on the same project
+// (PROJECT_NAME).
+test.describe.serial(
+  'Project CRUD',
+  { tag: ['@critical', '@project', '@functional'] },
+  () => {
     test('Admin can create a new project', async ({ page, request }) => {
       // 1. Login as admin and navigate to project page
       await loginAsAdmin(page, request);
       await navigateTo(page, 'project');
+
+      // Cleanup any leftover test project (also handles serial-group retries)
+      await cleanupTestProject(page);
 
       // 2. Click the Create Project button
       await page.getByRole('button', { name: 'Create Project' }).click();

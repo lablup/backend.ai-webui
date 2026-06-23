@@ -24,6 +24,9 @@ const PASSWORD = 'testing@123';
 const NEW_PASSWORD = 'new-password@123';
 const MODIFIED_USERNAME = `modified-e2e-user-${TEST_RUN_ID}`;
 
+// Keep serial: lifecycle chain on a single user (EMAIL) — create → update
+// password → deactivate → reactivate → purge → login-denied all carry the
+// user's credentials and active/inactive state forward between tests.
 test.describe.serial(
   'User CRUD',
   { tag: ['@critical', '@user', '@functional'] },

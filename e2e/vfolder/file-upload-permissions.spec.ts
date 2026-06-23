@@ -23,6 +23,8 @@ const openFolderExplorer = async (
   return modal;
 };
 
+// Keep serial: the permission-change tests (currently fixme — FR-3110) reuse
+// the RW/RO folders created by the preceding creation tests in this block.
 test.describe.serial(
   'Upload Permission Controls',
   { tag: ['@critical', '@vfolder', '@functional'] },
