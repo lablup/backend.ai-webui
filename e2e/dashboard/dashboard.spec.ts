@@ -2,6 +2,7 @@
 // scenarios: 6 (Widget Rendering), 7 (Session Count Widget), 8 (My Resources Widget),
 //            9 (My Resources in Resource Group Widget), 10 (Agent Stats Widget),
 //            11 (Recently Created Sessions Widget), 12 (Board Layout)
+import { skipUnlessClientFeature } from '../utils/feature-gate-util';
 import { loginAsAdmin, loginAsUser, navigateTo } from '../utils/test-util';
 import { test, expect } from '@playwright/test';
 
@@ -299,65 +300,68 @@ test.describe(
     // -----------------------------------------------------------------------
     // 10. Agent Stats Widget (Admin Only)
     // -----------------------------------------------------------------------
-    test.describe('Agent Stats Widget', () => {
-      test.beforeEach(async ({ page, request }) => {
-        await loginAsAdmin(page, request);
-        await navigateTo(page, 'summary');
-      });
+    test.describe(
+      'Agent Stats Widget',
+      { tag: ['@requires-manager-v25.15'] },
+      () => {
+        test.beforeEach(async ({ page, request }) => {
+          await loginAsAdmin(page, request);
+          await navigateTo(page, 'summary');
 
-      test('Admin can view cluster-level resource statistics in the Agent Stats widget', async ({
-        page,
-      }) => {
-        // Agent Stats widget requires server >= 25.15.0
-        const widget = page
-          .locator('.bai_grid_item')
-          .filter({ hasText: 'Agent Statistics' });
+          // Declarative feature gate (FR-3112): the Agent Statistics widget is
+          // rendered only when the manager supports 'agent-stats'
+          // (manager >= 25.15.0; widget introduced by FR-1575).
+          await skipUnlessClientFeature(
+            page,
+            'agent-stats',
+            "Agent Statistics widget requires the 'agent-stats' capability (Backend.AI manager >= 25.15.0, FR-1575)",
+          );
+        });
 
-        // Skip test explicitly if widget is not available on this server version
-        test.skip(
-          !(await widget.isVisible({ timeout: WIDGET_TIMEOUT })),
-          'Agent Statistics widget not available (requires server >= 25.15.0)',
-        );
+        test('Admin can view cluster-level resource statistics in the Agent Stats widget', async ({
+          page,
+        }) => {
+          // 1. The backend is capable — the widget MUST be present; absence is a failure.
+          const widget = page
+            .locator('.bai_grid_item')
+            .filter({ hasText: 'Agent Statistics' });
+          await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
-        // 2. Verify a "Used" / "Free" segmented toggle is present
-        const segmentedControl = widget.locator('.ant-segmented');
-        await expect(segmentedControl).toBeVisible();
+          // 2. Verify a "Used" / "Free" segmented toggle is present
+          const segmentedControl = widget.locator('.ant-segmented');
+          await expect(segmentedControl).toBeVisible();
 
-        // 3. Click the "Free" segment and verify it becomes selected
-        await segmentedControl.getByText('Free').click();
-        await expect(
-          segmentedControl.locator('.ant-segmented-item-selected'),
-        ).toContainText('Free');
+          // 3. Click the "Free" segment and verify it becomes selected
+          await segmentedControl.getByText('Free').click();
+          await expect(
+            segmentedControl.locator('.ant-segmented-item-selected'),
+          ).toContainText('Free');
 
-        // 4. Click the "Used" segment and verify it becomes selected
-        await segmentedControl.getByText('Used').click();
-        await expect(
-          segmentedControl.locator('.ant-segmented-item-selected'),
-        ).toContainText('Used');
-      });
+          // 4. Click the "Used" segment and verify it becomes selected
+          await segmentedControl.getByText('Used').click();
+          await expect(
+            segmentedControl.locator('.ant-segmented-item-selected'),
+          ).toContainText('Used');
+        });
 
-      test('Admin can manually refresh the Agent Stats widget', async ({
-        page,
-      }) => {
-        // Agent Stats widget requires server >= 25.15.0
-        const widget = page
-          .locator('.bai_grid_item')
-          .filter({ hasText: 'Agent Statistics' });
+        test('Admin can manually refresh the Agent Stats widget', async ({
+          page,
+        }) => {
+          // 1. The backend is capable — the widget MUST be present; absence is a failure.
+          const widget = page
+            .locator('.bai_grid_item')
+            .filter({ hasText: 'Agent Statistics' });
+          await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
-        // Skip test explicitly if widget is not available on this server version
-        test.skip(
-          !(await widget.isVisible({ timeout: WIDGET_TIMEOUT })),
-          'Agent Statistics widget not available (requires server >= 25.15.0)',
-        );
+          // 2. Click the refresh button in the widget header
+          const refreshButton = widget.getByRole('button', { name: 'reload' });
+          await refreshButton.click();
 
-        // 2. Click the refresh button in the widget header
-        const refreshButton = widget.getByRole('button', { name: 'reload' });
-        await refreshButton.click();
-
-        // 3. Verify the widget still renders after refresh (no error state)
-        await expect(widget).toBeVisible();
-      });
-    });
+          // 3. Verify the widget still renders after refresh (no error state)
+          await expect(widget).toBeVisible();
+        });
+      },
+    );
 
     // -----------------------------------------------------------------------
     // 11. Recently Created Sessions Widget

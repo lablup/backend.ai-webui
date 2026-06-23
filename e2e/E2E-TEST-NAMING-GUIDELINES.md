@@ -25,6 +25,7 @@ user-workflow.spec.ts
 ```
 
 **Examples:**
+
 - ✅ `vfolder-explorer-modal.spec.ts`
 - ✅ `session-creation-workflow.spec.ts`
 - ✅ `user-settings-management.spec.ts`
@@ -40,6 +41,7 @@ test.describe.serial('[Component/Feature] - [User Role/Category] Actions', () =>
 ```
 
 **Examples:**
+
 - ✅ `FolderExplorerModal - User VFolder Access`
 - ✅ `SessionLauncher - Resource Allocation Scenarios`
 - ✅ `AdminSettings - User Management`
@@ -55,6 +57,7 @@ test('[Actor] can/cannot [action] [when/with/in condition]', async ({ page }) =>
 ```
 
 **Key Components:**
+
 - **Actor**: User, Admin, Guest, Manager (based on role)
 - **Action Verb**: create, delete, upload, download, view, modify, share, access, etc.
 - **Object**: what is being acted upon (file, folder, session, etc.)
@@ -121,6 +124,7 @@ test('User sees [UI element state] when accessing VFolder with [permission level
 ```
 
 **Examples:**
+
 ```typescript
 test('User can upload files in VFolder with write permissions', async ({ page }) => {
 test('User cannot delete folders in VFolder with read-only permissions', async ({ page }) => {
@@ -135,6 +139,7 @@ test('User completes [workflow name] successfully', async ({ page }) => {
 ```
 
 **Examples:**
+
 ```typescript
 test('User can create a VFolder and then upload files to it', async ({ page }) => {
 test('User completes session creation workflow with GPU resources', async ({ page }) => {
@@ -148,6 +153,7 @@ test('User is redirected to [location] when [condition]', async ({ page }) => {
 ```
 
 **Examples:**
+
 ```typescript
 test('User sees error message when accessing non-existent VFolder', async ({ page }) => {
 test('User is redirected to login page when session expires', async ({ page }) => {
@@ -162,6 +168,7 @@ test('User sees [UI feedback] after [action]', async ({ page }) => {
 ```
 
 **Examples:**
+
 ```typescript
 test('User can click folder row to open explorer modal', async ({ page }) => {
 test('User sees success notification after uploading file', async ({ page }) => {
@@ -176,6 +183,7 @@ test('User can verify [information] is displayed correctly', async ({ page }) =>
 ```
 
 **Examples:**
+
 ```typescript
 test('User sees folder name and permissions in explorer modal header', async ({ page }) => {
 test('User can verify VFolder size and usage in details panel', async ({ page }) => {
@@ -186,22 +194,26 @@ test('User can verify VFolder size and usage in details panel', async ({ page })
 Different user roles should be explicitly mentioned:
 
 ### User (Default Role)
+
 ```typescript
 test('User can create personal VFolder', async ({ page }) => {
 ```
 
 ### Admin
+
 ```typescript
 test('Admin can view all users sessions in the dashboard', async ({ page }) => {
 test('Admin can modify resource limits for user groups', async ({ page }) => {
 ```
 
 ### Guest
+
 ```typescript
 test('Guest cannot access VFolder management page', async ({ page }) => {
 ```
 
 ### Manager
+
 ```typescript
 test('Manager can approve VFolder sharing requests', async ({ page }) => {
 ```
@@ -252,6 +264,40 @@ test('Form Validation', async ({ page }) => {
 test('Create Form', async ({ page }) => {
 ```
 
+## Tags
+
+Tests and describe blocks are tagged via the Playwright `{ tag: [...] }` option.
+
+### Suite/category tags (existing taxonomy)
+
+- `@critical`, `@functional`, `@regression`, `@visual` — test category
+- `@admin`, `@crud` — role / operation type
+- Feature-area tags matching the directory, e.g. `@session`, `@vfolder`,
+  `@dashboard`, `@start`, `@environment`, `@statistics`, `@plugin`
+
+### Feature-gate tags (FR-3112)
+
+When a spec exercises a feature that only exists from a certain WebUI or
+Backend.AI manager version onward, tag it with an explicit version
+requirement so it can be excluded on incapable targets instead of silently
+self-skipping:
+
+- `@requires-webui-vX.Y` — requires a WebUI build >= vX.Y
+  (e.g. `@requires-webui-v26.4` for the FR-2302 datetime filters)
+- `@requires-manager-vX.Y` — requires a Backend.AI manager >= X.Y
+  (e.g. `@requires-manager-v25.15` for the FR-1575 Agent Statistics widget)
+
+```bash
+# Run everything except specs that need a newer manager
+npx playwright test --grep-invert "@requires-manager-v25.15"
+```
+
+Pair the tag with a **declarative gate** from `e2e/utils/feature-gate-util.ts`
+(`skipUnlessClientFeature`, `skipUnlessClientConfig`) instead of probing for a
+UI element inside the test body and skipping when it is absent. The gate skips
+with an auditable reason on incapable backends; on capable backends a missing
+UI element fails the test instead of silently skipping.
+
 ## Test Structure Best Practices
 
 ### 1. Spec Reference Comment
@@ -267,7 +313,9 @@ Always include a reference to the test plan at the top of the file:
 Use numbered comments to describe each test step in user terms:
 
 ```typescript
-test('User can upload file to VFolder with write permissions', async ({ page }) => {
+test('User can upload file to VFolder with write permissions', async ({
+  page,
+}) => {
   // 1. Navigate to data page
   await navigateTo(page, 'data');
 
@@ -364,9 +412,13 @@ When updating existing tests to follow these guidelines:
 ### Example Migration
 
 **Before:**
+
 ```typescript
-test.describe.serial('FolderExplorerModal - VFolder Access and Permissions', () => {
-  test('Valid VFolder with Full Permissions (Read & Write)', async ({ page }) => {
+test.describe
+  .serial('FolderExplorerModal - VFolder Access and Permissions', () => {
+  test('Valid VFolder with Full Permissions (Read & Write)', async ({
+    page,
+  }) => {
     // Test body...
   });
 
@@ -377,13 +429,18 @@ test.describe.serial('FolderExplorerModal - VFolder Access and Permissions', () 
 ```
 
 **After:**
+
 ```typescript
 test.describe.serial('FolderExplorerModal - User VFolder Access', () => {
-  test('User can create folders and upload files in VFolder with write permissions', async ({ page }) => {
+  test('User can create folders and upload files in VFolder with write permissions', async ({
+    page,
+  }) => {
     // Test body...
   });
 
-  test('User can view files but cannot upload to read-only VFolder', async ({ page }) => {
+  test('User can view files but cannot upload to read-only VFolder', async ({
+    page,
+  }) => {
     // Test body...
   });
 });

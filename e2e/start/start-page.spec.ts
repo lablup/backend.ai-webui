@@ -3,6 +3,7 @@
 //            4 (Start From URL Modal), 5 (Board Item Drag-and-Drop)
 import { StartPage } from '../utils/classes/common/StartPage';
 import { FolderCreationModal } from '../utils/classes/vfolder/FolderCreationModal';
+import { skipUnlessClientConfig } from '../utils/feature-gate-util';
 import {
   loginAsAdmin,
   loginAsUser,
@@ -265,14 +266,18 @@ test.describe(
       }) => {
         const startPage = new StartPage(page);
 
-        // 1. Check if the "Start Model Service" card is visible (depends on enableModelFolders config)
-        const card = startPage.getModelServiceCard();
-
-        // Skip test explicitly if the card is not available in the current configuration
-        test.skip(
-          !(await card.isVisible()),
-          'Model service card not available in current configuration',
+        // Declarative config gate (FR-3112): the "Start Model Service" card is
+        // rendered only when `enableModelFolders = true` in config.toml
+        // (StartPage.tsx reads `baiClient._config.enableModelFolders`).
+        await skipUnlessClientConfig(
+          page,
+          'enableModelFolders',
+          'Start Model Service card requires `enableModelFolders = true` in config.toml',
         );
+
+        // 1. The config enables the feature — the card MUST be present; absence is a failure.
+        const card = startPage.getModelServiceCard();
+        await expect(card).toBeVisible({ timeout: CARD_TIMEOUT });
 
         // 2. Click the "Start Service" button within the card
         await startPage.getStartServiceButton(card).click();
