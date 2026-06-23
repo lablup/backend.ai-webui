@@ -3,7 +3,7 @@
 import { AppLauncherModal } from '../utils/classes/session/AppLauncherModal';
 import { SessionLauncher } from '../utils/classes/session/SessionLauncher';
 import { loginAsUser, modifyConfigToml } from '../utils/test-util';
-import { test, expect, Page, BrowserContext } from '@playwright/test';
+import { test, expect, Page, BrowserContext, Request } from '@playwright/test';
 
 /**
  * TODO: Remove this function when proxy 502 error handling is no longer needed.
@@ -168,6 +168,38 @@ test.describe(
       }
     });
 
+    // FR-3126: `sharedPage` is reused across the whole serial suite, so a
+    // `request` listener left attached accumulates test-by-test (duplicated
+    // captures, memory growth). `trackProxyRequests` registers a self-detaching
+    // listener (first matching proxy/add request wins) AND records it so the
+    // `afterEach` below can guarantee teardown even when a test fails or aborts
+    // before any matching request is observed — the leak case Copilot flagged.
+    const activeRequestListeners: Array<(request: Request) => void> = [];
+    const trackProxyRequests = () => {
+      const proxyRequests: Array<{ url: string; method: string }> = [];
+      const captureProxyRequest = (request: Request) => {
+        const url = request.url();
+        if (url.includes('/proxy/') || url.includes('/add')) {
+          proxyRequests.push({ url, method: request.method() });
+          sharedPage.off('request', captureProxyRequest);
+          const index = activeRequestListeners.indexOf(captureProxyRequest);
+          if (index >= 0) activeRequestListeners.splice(index, 1);
+        }
+      };
+      sharedPage.on('request', captureProxyRequest);
+      activeRequestListeners.push(captureProxyRequest);
+      return proxyRequests;
+    };
+
+    test.afterEach(() => {
+      // Unconditional teardown: detach any listener that did not self-remove,
+      // so the shared serial `sharedPage` never accumulates request listeners.
+      while (activeRequestListeners.length > 0) {
+        const listener = activeRequestListeners.pop();
+        if (listener) sharedPage?.off('request', listener);
+      }
+    });
+
     test('User can launch Console (Terminal/ttyd) app in new browser tab', async ({}, testInfo) => {
       testInfo.setTimeout(120000); // 2 minutes timeout for app initialization
       test.skip(!sessionCreated, 'Session was not created successfully');
@@ -175,17 +207,9 @@ test.describe(
       // Modal is already opened in beforeAll, verify it's visible
       await expect(appLauncherModal.getModal()).toBeVisible();
 
-      // Set up network request tracking for proxy endpoint
-      const proxyRequests: any[] = [];
-      sharedPage.on('request', (request) => {
-        const url = request.url();
-        if (url.includes('/proxy/') || url.includes('/add')) {
-          proxyRequests.push({
-            url,
-            method: request.method(),
-          });
-        }
-      });
+      // Set up network request tracking for the proxy endpoint via the suite
+      // helper (self-detaching listener + unconditional afterEach teardown).
+      const proxyRequests = trackProxyRequests();
 
       // Track new page openings (new browser tabs) - MUST be set BEFORE clicking
       const newPagePromise = sharedContext.waitForEvent('page', {
@@ -260,17 +284,9 @@ test.describe(
           "Jupyter Notebook app requires a session image exposing the 'jupyter' service port (@requires-app-jupyter)",
         );
 
-        // Set up network request tracking
-        const proxyRequests: any[] = [];
-        sharedPage.on('request', (request) => {
-          const url = request.url();
-          if (url.includes('/proxy/') || url.includes('/add')) {
-            proxyRequests.push({
-              url,
-              method: request.method(),
-            });
-          }
-        });
+        // Set up network request tracking via the suite helper (self-detaching
+        // listener + unconditional afterEach teardown for the shared page).
+        const proxyRequests = trackProxyRequests();
 
         // Track new page openings (MUST be set BEFORE clicking)
         const newPagePromise = sharedContext.waitForEvent('page', {
@@ -339,17 +355,9 @@ test.describe(
           "JupyterLab app requires a session image exposing the 'jupyterlab' service port (@requires-app-jupyterlab)",
         );
 
-        // Set up network request tracking
-        const proxyRequests: any[] = [];
-        sharedPage.on('request', (request) => {
-          const url = request.url();
-          if (url.includes('/proxy/') || url.includes('/add')) {
-            proxyRequests.push({
-              url,
-              method: request.method(),
-            });
-          }
-        });
+        // Set up network request tracking via the suite helper (self-detaching
+        // listener + unconditional afterEach teardown for the shared page).
+        const proxyRequests = trackProxyRequests();
 
         // Track new page openings (MUST be set BEFORE clicking)
         const newPagePromise = sharedContext.waitForEvent('page', {
@@ -420,17 +428,9 @@ test.describe(
           "Visual Studio Code app requires a session image exposing the 'vscode' service port (@requires-app-vscode)",
         );
 
-        // Set up network request tracking
-        const proxyRequests: any[] = [];
-        sharedPage.on('request', (request) => {
-          const url = request.url();
-          if (url.includes('/proxy/') || url.includes('/add')) {
-            proxyRequests.push({
-              url,
-              method: request.method(),
-            });
-          }
-        });
+        // Set up network request tracking via the suite helper (self-detaching
+        // listener + unconditional afterEach teardown for the shared page).
+        const proxyRequests = trackProxyRequests();
 
         // Track new page openings (MUST be set BEFORE clicking)
         const newPagePromise = sharedContext.waitForEvent('page', {
@@ -498,17 +498,9 @@ test.describe(
           "SSH/SFTP app requires a session image exposing the 'sshd' service port (@requires-app-sshd)",
         );
 
-        // Set up network request tracking
-        const proxyRequests: any[] = [];
-        sharedPage.on('request', (request) => {
-          const url = request.url();
-          if (url.includes('/proxy/') || url.includes('/add')) {
-            proxyRequests.push({
-              url,
-              method: request.method(),
-            });
-          }
-        });
+        // Set up network request tracking via the suite helper (self-detaching
+        // listener + unconditional afterEach teardown for the shared page).
+        const proxyRequests = trackProxyRequests();
 
         // 1. Click SSH/SFTP app button
         await appLauncherModal.clickApp('sshd');
@@ -568,17 +560,9 @@ test.describe(
           "VS Code Desktop app requires a session image exposing the 'vscode-desktop' service port (@requires-app-vscode-desktop)",
         );
 
-        // Set up network request tracking
-        const proxyRequests: any[] = [];
-        sharedPage.on('request', (request) => {
-          const url = request.url();
-          if (url.includes('/proxy/') || url.includes('/add')) {
-            proxyRequests.push({
-              url,
-              method: request.method(),
-            });
-          }
-        });
+        // Set up network request tracking via the suite helper (self-detaching
+        // listener + unconditional afterEach teardown for the shared page).
+        const proxyRequests = trackProxyRequests();
 
         // 1. Click VS Code Desktop app button
         await appLauncherModal.clickApp('vscode-desktop');
