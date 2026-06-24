@@ -166,7 +166,7 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
             valuePropName="checked"
             style={{ marginBottom: 0 }}
           >
-            <Checkbox>{t('credential.DeleteModelServicesAsWell')}</Checkbox>
+            <Checkbox>{t('credential.DeleteDeploymentsAsWell')}</Checkbox>
           </Form.Item>
         </Form>
       }

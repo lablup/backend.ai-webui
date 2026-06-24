@@ -217,9 +217,9 @@ const StartPage: React.FC = () => {
         content: (
           <ThemeSecondaryProvider>
             <ActionItemContent
-              title={t('start.ModelService')}
-              description={t('start.ModelServiceDesc')}
-              buttonText={t('start.button.ModelService')}
+              title={t('start.StartDeployment')}
+              description={t('start.StartDeploymentDesc')}
+              buttonText={t('start.button.StartDeployment')}
               icon={<AppstoreAddOutlined />}
               onClick={() => webuiNavigate('/deployments')}
             />
