@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { LegacyModelCardModalFragment$key } from '../__generated__/LegacyModelCardModalFragment.graphql';
 import { LegacyModelStoreListPageQuery } from '../__generated__/LegacyModelStoreListPageQuery.graphql';
 import LegacyModelCardModal from '../components/LegacyModelCardModal';
 import ModelBrandIcon from '../components/ModelBrandIcon';
@@ -60,8 +59,7 @@ const LegacyModelStoreListPage: React.FC = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
   const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
-  const [currentModelInfo, setCurrentModelInfo] =
-    useState<LegacyModelCardModalFragment$key | null>();
+  const [currentModelInfo, setCurrentModelInfo] = useState<ModelCard | null>();
 
   const [isPendingRefetching, startRefetchingTransition] = useTransition();
 

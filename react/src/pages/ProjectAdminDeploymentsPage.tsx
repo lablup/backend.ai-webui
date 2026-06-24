@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
 import type { ProjectAdminDeploymentsPageDeleteMutation } from '../__generated__/ProjectAdminDeploymentsPageDeleteMutation.graphql';
 import type {
   DeploymentFilter,
@@ -51,6 +50,16 @@ import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
 type DeploymentStatusCategory = 'running' | 'finished';
 
+type RevisionNode = NonNullable<
+  NonNullable<
+    NonNullable<
+      NonNullable<
+        ProjectAdminDeploymentsPageQuery['response']['projectDeployments']
+      >['edges'][number]
+    >['node']
+  >['currentRevision']
+>;
+
 interface ProjectAdminDeploymentsContentProps {
   projectId: string;
 }
@@ -71,7 +80,7 @@ const ProjectAdminDeploymentsContent: React.FC<
     string | null
   >(null);
   const [drawerRevisionFrgmt, setDrawerRevisionFrgmt] =
-    useState<DeploymentRevisionDetail_revision$key | null>(null);
+    useState<RevisionNode | null>(null);
 
   const {
     baiPaginationOption,

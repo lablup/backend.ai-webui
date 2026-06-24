@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { ImportArtifactRevisionToFolderModalArtifactRevisionFragment$key } from '../__generated__/ImportArtifactRevisionToFolderModalArtifactRevisionFragment.graphql';
 import {
   ArtifactStatus,
   ReservoirArtifactDetailPageQuery,
@@ -73,10 +72,9 @@ const ReservoirArtifactDetailPage = () => {
     useState<BAIDeleteArtifactRevisionsModalArtifactRevisionFragmentKey>([]);
   const [selectedRevisions, setSelectedRevisions] =
     useState<BAIImportArtifactModalArtifactRevisionFragmentKey>([]);
-  const [selectedImportRevisions, setSelectedImportRevisions] =
-    useState<ImportArtifactRevisionToFolderModalArtifactRevisionFragment$key>(
-      [],
-    );
+  const [selectedImportRevisions, setSelectedImportRevisions] = useState<
+    ReadonlyArray<RevisionNode>
+  >([]);
   const [queryParams, setQuery] = useQueryParams({
     filter: withDefault(JsonParam, {}),
   });
