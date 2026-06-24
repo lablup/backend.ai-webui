@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e56c840ac43d3670bde2a0c94f100bba>>
+ * @generated SignedSource<<94eef6590dcbc2acd26834056995b5a9>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -411,12 +411,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "72c77a4c8447b7e1855b6cc212bd0099",
+    "cacheID": "234827b7fbc4366a772797004142c1df",
     "id": null,
     "metadata": {},
     "name": "ImageListQuery",
     "operationKind": "query",
-    "text": "query ImageListQuery(\n  $scopeId: ScopeField!\n  $offset: Int\n  $first: Int\n  $filter: String\n  $order: String\n) {\n  image_nodes(scope_id: $scopeId, offset: $offset, first: $first, filter: $filter, order: $order) {\n    edges {\n      node {\n        id\n        name @deprecatedSince(version: \"24.12.0\")\n        tag\n        registry\n        architecture\n        digest\n        installed\n        labels {\n          key\n          value\n        }\n        humanized_name\n        resource_limits {\n          key\n          min\n          max\n        }\n        namespace @since(version: \"24.12.0\")\n        base_image_name @since(version: \"24.12.0\")\n        tags @since(version: \"24.12.0\") {\n          key\n          value\n        }\n        version @since(version: \"24.12.0\")\n        ...AliasedImageDoubleTagsFragment\n        ...ManageImageResourceLimitModal_image\n        ...ManageAppsModal_image\n      }\n    }\n    count\n  }\n}\n\nfragment AliasedImageDoubleTagsFragment on ImageNode {\n  labels {\n    key\n    value\n  }\n  tags @since(version: \"24.12.0\") {\n    key\n    value\n  }\n}\n\nfragment ManageAppsModal_image on ImageNode {\n  labels {\n    key\n    value\n  }\n  registry\n  name @deprecatedSince(version: \"24.12.0\")\n  namespace @since(version: \"24.12.0\")\n  architecture\n  installed\n  tag\n}\n\nfragment ManageImageResourceLimitModal_image on ImageNode {\n  resource_limits {\n    key\n    min\n    max\n  }\n  registry\n  name @deprecatedSince(version: \"24.12.0\")\n  namespace @since(version: \"24.12.0\")\n  architecture\n  installed\n  tag\n}\n"
+    "text": "query ImageListQuery(\n  $scopeId: ScopeField!\n  $offset: Int\n  $first: Int\n  $filter: String\n  $order: String\n) {\n  image_nodes(scope_id: $scopeId, offset: $offset, first: $first, filter: $filter, order: $order) {\n    edges {\n      node {\n        id\n        name @deprecatedSince(version: \"24.12.0\")\n        tag\n        registry\n        architecture\n        digest\n        installed\n        labels {\n          key\n          value\n        }\n        humanized_name\n        resource_limits {\n          key\n          min\n          max\n        }\n        namespace @since(version: \"24.12.0\")\n        base_image_name @since(version: \"24.12.0\")\n        tags @since(version: \"24.12.0\") {\n          key\n          value\n        }\n        version @since(version: \"24.12.0\")\n        ...AliasedImageDoubleTagsFragment\n        ...ManageImageResourceLimitModal_image\n        ...ManageAppsModal_image\n      }\n    }\n    count\n  }\n}\n\nfragment AliasedImageDoubleTagsFragment on ImageNode {\n  labels {\n    key\n    value\n  }\n  tags @since(version: \"24.12.0\") {\n    key\n    value\n  }\n}\n\nfragment ManageAppsModal_image on ImageNode {\n  labels {\n    key\n    value\n  }\n  registry\n  name @deprecatedSince(version: \"24.12.0\")\n  namespace @since(version: \"24.12.0\")\n  architecture\n  tag\n}\n\nfragment ManageImageResourceLimitModal_image on ImageNode {\n  resource_limits {\n    key\n    min\n    max\n  }\n  registry\n  name @deprecatedSince(version: \"24.12.0\")\n  namespace @since(version: \"24.12.0\")\n  architecture\n  tag\n}\n"
   }
 };
 })();
