@@ -649,17 +649,12 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
             {({ getFieldValue }) => {
               const usageMode = getFieldValue('usage_mode');
               const type = getFieldValue('type');
-              const allowOnlyROForModelProjectFolder = baiClient?.supports(
-                'allow-only-ro-permission-for-model-project-folder',
-              );
               const shouldDisableRWPermission =
-                usageMode === 'model' &&
-                type === 'project' &&
-                allowOnlyROForModelProjectFolder;
+                usageMode === 'model' && type === 'project';
 
               return (
                 <Form.Item
-                  label={t('data.Permission')}
+                  label={t('data.folders.MountPermission')}
                   name={'permission'}
                   required
                   dependencies={['usage_mode', 'type']}
