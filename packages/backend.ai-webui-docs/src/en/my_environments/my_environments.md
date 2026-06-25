@@ -11,6 +11,7 @@ compute sessions. The table displays the following metadata for each image:
 
 - **Full image path**: The complete image path, with a copy icon to quickly
   copy it to your clipboard
+- **Control**: Contains the delete button for removing the image
 - **Registry**: The container registry where the image is stored
 - **Architecture**: The CPU architecture of the image
 - **Namespace**: The namespace the image belongs to
@@ -18,7 +19,6 @@ compute sessions. The table displays the following metadata for each image:
 - **Version**: The version identifier of the image
 - **Tags**: Labels associated with the image
 - **Digest**: The unique content hash of the image
-- **Control**: Contains the delete button for removing the image
 
 ![](../images/my_environments.png)
 

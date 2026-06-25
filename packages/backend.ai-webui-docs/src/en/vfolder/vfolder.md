@@ -31,33 +31,6 @@ list with the `Invited` type. The `/data` page itself is also a valid entry
 point for reviewing invitations — open the Data page and the same invitation
 list is reachable from the folder status summary.
 
-A User folder is created directly by an individual user for personal use.
-A Project folder is created by a domain administrator for each project.
-Regular users cannot create project folders themselves; they can only use
-project folders that have been created by an administrator.
-
-![](../images/vfolder_status.png)
-
-The Storage Status and Quota per storage volume show the following information:
-
-- Storage Status
-    - Created Folders: The number of folders that the user created.
-
-         - Limit: The maximum number of folders that the user can create afterwards. This value depends on the resource policy applied to the user and cannot be changed without changing the resource policy. Folders that were not created by the user (eg. folders invited to share, or project folders) are not counted.
-
-    * Project Folders: The number of project folders that the user created.
-    * Invited Folders: The number of folders that the user was invited to share.
-- Quota per storage volume
-    * Host: The name of the storage host.
-    * Project: Current project folder usage / current project folder quota scope.
-    * User: Current user folder usage / current user folder quota scope.
-
-
-:::note
-Please remind that quota is only available in storage that provides quota setting
-(e.g. XFS, CephFS, NetApp, Purestorage, etc.). For the quota setting, please refer
-to the [Quota Setting Panel](#quota-setting-panel) section.
-:::
 
 <a id="create-storage-folder"></a>
 <a id="create_storage_folder"></a>
@@ -108,16 +81,15 @@ The folder explorer uses a two-panel layout:
 
 On wide (xl) screens a draggable divider separates the two panels so you can resize them to suit your workflow. On narrow screens the panels stack vertically.
 
+![](../images/folder_explorer.png)
+
 ![](../images/split_panel_folder_explorer.png)
-<!-- TODO: Capture screenshot of the split-panel folder explorer layout -->
 
 ### File Operations
 
 Inside the left panel you can see all directories and files in the folder. Click a directory name in the Name column to navigate into it. Use the buttons in the Actions column to download or delete a file or directory. You can rename a file or directory as well. For more detailed file operations, you can mount this folder when creating a compute session and then use a service like Terminal or Jupyter Notebook.
 
-![](../images/folder_explorer.png)
-
-You can create a new directory on the current path with the **Create** button, or upload a local file or folder with the **Upload** button. All of these file operations can also be performed using the above-described method of mounting folders into a compute session.
+You can create a new folder on the current path with the **Create Folder** button, or upload a local file or folder with the **Upload** button. All of these file operations can also be performed using the above-described method of mounting folders into a compute session.
 
 :::warning
 The **Upload** button (and drag-and-drop upload) is **disabled** when your account
@@ -166,7 +138,6 @@ The Edit File button is only available when your access to this storage folder i
 The **Audit Log** tab in the right panel shows a chronological list of all operations performed on this storage folder (create, update, delete events, and more).
 
 ![](../images/vfolder_audit_log_tab.png)
-<!-- TODO: Capture screenshot of the Audit Log tab in the folder explorer -->
 
 You can filter the audit log using the following controls:
 
@@ -204,9 +175,7 @@ please click 'trash bin' button in the same column.
 
 ![](../images/vfolder_trash_list.png)
 
-A confirmation modal will pop up with
-an input field saying `Type folder name to delete`. Make sure you type the exact folder name correctly
-into the field, and click the red 'DELETE FOREVER' button to permanently delete the folder.
+A confirmation modal will appear asking you to type the folder name. Once you enter the folder name correctly, the **Delete Forever** button becomes active. Click it to permanently delete the folder.
 
 ![](../images/vfolder_delete_dialog.png)
 
@@ -221,12 +190,6 @@ this action cannot be undone.
 :::
 
 ![](../images/vfolder_cascading_delete_warning.png)
-
-Administrators who delete model cards from the **Admin → Manage Model Cards**
-page can trigger the inverse flow — bulk-deleting model cards offers an option
-to also move the associated storage folders to the trash. See
-[Manage Model Cards](../admin_menu/admin_menu.md#manage-models-cards) for the
-admin-side bulk flow.
 
 ## Using FileBrowser
 
@@ -398,7 +361,7 @@ automatically. (This session will not affect resource occupancy.)
 For the connection, click 'Download SSH Key' button to download the SSH private key
 (`id_container`). Also, remember the host and port number. Then, you can copy your
 files to the session using the Connection Example code written in the dialog, or
-referring to the following guide: [SFTP Connection Guide](../sftp_to_container/sftp_to_container.md#for-linux-mac).
+referring to the following guide: [SFTP Connection Guide](../sftp_to_container/sftp_to_container.md#ssh-sftp-container).
 To preserve the files, you need to transfer the files to the storage folder. Also,
 the session will be terminated when there is no transfer for some time.
 

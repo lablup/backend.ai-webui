@@ -46,6 +46,8 @@ link, you can also download the `id_container` file located under
 SSH key may change when new session is created. In that case, it must be
 downloaded again.
 
+![](../images/SSH_SFTP_connection.png)
+
 ![](../images/sftp_app.png)
 
 To SSH connect to the compute session with the downloaded SSH private key, you

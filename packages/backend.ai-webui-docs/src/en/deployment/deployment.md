@@ -377,12 +377,12 @@ The Review step (step 4 of the wizard) renders the start command and bootstrap s
 - **Model Mount Destination**: The path inside the container where the model storage folder is mounted (default: `/models`).
 - **Port**: The container port that the inference server listens on (default: `8000`).
 - **Enable Health Check**: When enabled, the system periodically sends HTTP requests to the inference server to verify it is responding correctly. When disabled (the default for new revisions), no health check is configured and unhealthy replicas are not automatically detected. Turn this on for production deployments. When **Enable Health Check** is checked, the following additional fields appear:
-   * **Health Check URL**: The HTTP endpoint path called during service health checks (default: `/health`).
-   * **Startup Grace Period**: Grace period in seconds after container startup during which failed health checks are tolerated; the replica becomes active on the first successful check (default: `60.0`). Increase this for large models that take longer to load.
-   * **Max Retries**: Maximum consecutive health check failures before the replica is marked `UNHEALTHY` (default: `10`).
+   * **Path**: The HTTP endpoint path called during service health checks (default: `/health`).
    * **Interval**: Seconds between consecutive health checks (default: `10.0`).
+   * **Max Retries**: Maximum consecutive health check failures before the replica is marked `UNHEALTHY` (default: `10`).
    * **Max Wait Time**: Timeout in seconds for each individual health check request (default: `15.0`).
    * **Expected Status Code**: The HTTP response status code that indicates a healthy service (default: `200`).
+   * **Startup Grace Period**: Grace period in seconds after container startup during which failed health checks are tolerated; the replica becomes active on the first successful check (default: `60.0`). Increase this for large models that take longer to load.
 
 ##### Use Config File Mode
 
@@ -413,12 +413,12 @@ On backends older than Backend.AI Manager 26.4.4, all parameters are treated as 
 
 In Advanced Mode, all runtime variants — including `vLLM` and `SGLang` — include an **Enable Health Check** section at the bottom of the Runtime Parameters area. This is off by default for new revisions. When you check **Enable Health Check**, the following fields appear and are required:
 
-- **Health Check URL**: The HTTP endpoint path the system will call to verify service health.
-- **Startup Grace Period**: Seconds to wait after container startup before health check failures count against the replica (default: `60.0`).
-- **Max Retries**: Consecutive failures allowed before the replica is marked `UNHEALTHY` (default: `10`).
+- **Path**: The HTTP endpoint path the system will call to verify service health.
 - **Interval**: Seconds between checks (default: `10.0`).
+- **Max Retries**: Consecutive failures allowed before the replica is marked `UNHEALTHY` (default: `10`).
 - **Max Wait Time**: Per-request timeout in seconds (default: `15.0`).
 - **Expected Status Code**: HTTP status code that indicates a healthy response (default: `200`).
+- **Startup Grace Period**: Seconds to wait after container startup before health check failures count against the replica (default: `60.0`).
 
 **vLLM Runtime Parameters**
 
@@ -504,7 +504,7 @@ The Deployment Detail Page shows contextual alert banners at the top, reflecting
 
 The Service Info card displays the following details:
 
-- **Deployment Name** and **Status**
+- **Deployment Name** and **Status**. Next to the status tag is a **Scheduling History** link button; click it to view the deployment's scheduling event history in a modal.
 - **Deployment ID** and **Session Owner**
 - **Visibility**: Shown as a Public / Private tag. **Public** means the endpoint is reachable without an access token; **Private** means callers must supply a valid access token.
 - **Number of Replicas**
@@ -524,32 +524,6 @@ The Service Info card's header exposes an **Edit** button alongside a **More** m
 
 ![](../images/endpoint_detail_more_menu.png)
 
-
-### Replicas
-
-The Replicas tab shows the routing nodes that make up the deployment. Replica entries are filtered by a **Running / Terminated** radio control at the top of the tab, which replaced the previous enum-based status filter.
-
-![](../images/replica_status_filter.png)
-
-- **Running**: Shows replicas that are currently provisioning, running, or otherwise active.
-- **Terminated**: Shows replicas that have completed their lifecycle.
-
-Each replica row carries three **independent** status fields. They describe different axes and should be read together — a replica can be *Running* in its lifecycle while its health is still *Not Checked*, for example.
-
-- **Lifecycle Status**: Where the replica is in its lifecycle — for example, *Provisioning*, *Warming Up*, *Running*, *Terminating*, or *Terminated*. During **Warming Up**, the replica is inside its startup grace period: it is starting up and waiting for the first successful health check. Failed checks are tolerated during this window; the replica moves to *Running* on the first success, and is terminated if it never succeeds before the window ends. The column header reads **Lifecycle**.
-- **Health Status**: The current health of the replica process — *Healthy*, *Unhealthy*, *Degraded*, or *Not Checked*.
-   * **Not Checked** means the first health check has not completed yet — the replica is typically still in its **Warming Up** grace period. By itself it does not indicate a problem; read the **Lifecycle Status** to see where the replica is.
-- **Traffic Status**: Whether the replica is currently serving requests. A replica can be removed from traffic independently of its health (for example, when it is manually deactivated), which is why traffic is shown as its own status rather than being merged into Health Status.
-
-:::note
-The three statuses are independent axes. During the **Warming Up** lifecycle phase a replica is within its startup grace period, and its **Health Status** typically reads *Not Checked* until the first check completes — by itself that does not indicate a problem.
-:::
-
-Click on a replica node to open the session detail drawer, where you can view individual session details.
-
-If a replica has encountered an error, clicking the error indicator on the row opens a JSON viewer modal that displays the raw error data. This is useful for diagnosing issues with individual replicas.
-
-![](../images/route_error_json_viewer.png)
 
 <a id="revisions-tab"></a>
 
@@ -573,14 +547,16 @@ The following fields are displayed:
 - **Model Definition File Path**: Path to the model definition file within the model folder.
 - **Additional Mounts**: Extra storage folders mounted into each replica.
 - **Runtime**: The serving runtime (for example, `vLLM`, `SGLang`, or `Custom`).
+- **Runtime Parameters**: Runtime-variant preset parameter values configured for this revision (for example, DType: float32, Quantization: awq). Shown only for `vLLM` or `SGLang` revisions that have preset parameter values configured. Shows a dash for the `Custom` runtime or revisions with no preset values.
+- **Runtime Configuration**: Additional `vLLM` or `SGLang` settings, displayed as a JSON blob. Shown only when such configuration exists for the runtime.
 - **Image**: The container image used to run the replica.
 - **Cluster Mode**: The clustering layout of each replica's compute session (mode / size).
 - **Environment Variables**: Key-value pairs injected into the container, displayed as a shell script block.
-- **Runtime Parameters**: Runtime-variant preset parameter values configured for this revision (for example, DType: float32, Quantization: awq). Shown only for `vLLM` or `SGLang` revisions that have preset parameter values configured. Shows a dash for the `Custom` runtime or revisions with no preset values.
 
 When the model definition file defines a model, the following fields are also shown:
 
-- **Model Name**, **Model Path**, **Start Command**, **Port**, **Health Check URL**, **Startup Grace Period**, **Max Retries**, **Interval (s)**, **Max Wait Time (s)**
+- **Model Name**, **Model Path**, **Start Command**, **Port**, **Shell**, **Pre-Start Actions**, **Health Check URL**, **Startup Grace Period**, **Max Retries**, **Interval (s)**, **Max Wait Time (s)**, **Expected Status Code**
+- **Health Check Enabled**: Whether periodic health checking is enabled for this revision.
 
 **Applying-in-progress state**
 
@@ -600,25 +576,29 @@ The table includes the following columns:
 
 - **Revision (ID)**: The revision number and its UUID. The revision number is an incrementing integer; lower numbers are older revisions. Click the revision number to open the revision detail drawer.
 - **Created At**
+- **Runtime**: The serving runtime used in this revision (for example, `vLLM`, `SGLang`, or `Custom`).
 - **Cluster Mode**: The clustering layout formatted as "mode / size". Hover over the column header for a description.
 
 The following columns are hidden by default but can be enabled from the column settings:
 
-- **Model Name**, **Runtime**, **Image**, **Model Folder**
+- **Model Name**, **Image**, **Model Folder**
 
 **Filters**
 
 The filter bar above the table lets you narrow the list by revision number, created-at date range, cluster mode, image, and model folder.
 
-**Applying a revision**
+**Applying a revision and other actions**
 
-Each row has an **Apply** action button. Click it to open a confirmation dialog. On confirm, the selected revision becomes the current revision and the deployment begins serving traffic with the new configuration. The previous revision is preserved in the history.
+Each row has an **Apply** button and a **More** menu.
+
+- **Apply**: Click it to open a confirmation dialog. On confirm, the selected revision becomes the current revision and the deployment begins serving traffic with the new configuration. The previous revision is preserved in the history.
+- **New revision based on this**: Available from the **More** menu. It opens the Add Revision modal pre-filled with that revision's settings, so you can quickly modify and redeploy it.
 
 - A green **Current** tag marks the revision that is currently active.
 - A yellow **Applying** tag (with a loading spinner) marks a revision that is being applied.
 - The **Apply** button is disabled for the currently active revision and any revision that is being applied.
 
-Clicking the revision number in any row opens the revision detail drawer, which shows the full configuration of that revision. The drawer also has an **Apply** button (disabled for the current and applying revisions).
+Clicking the revision number in any row opens the revision detail drawer, which shows the full configuration of that revision. The drawer also has an **Apply** button and a **New revision based on this** button; the **Apply** button is disabled for the current and applying revisions.
 
 :::note
 The **Runtime Parameters** field also appears in the revision detail drawer for `vLLM` and `SGLang` revisions, showing the same preset parameter values as the Current Revision tab.
@@ -628,7 +608,7 @@ The **Runtime Parameters** field also appears in the revision detail drawer for 
 
 The **Audit Log** tab shows a chronological record of all actions taken on this deployment. Use it to track who changed the deployment and when.
 
-<!-- TODO: Capture screenshot of the Audit Log tab -->
+![](../images/audit_log_tab.png)
 
 The tab provides the following controls:
 
@@ -638,9 +618,37 @@ The tab provides the following controls:
 
 :::note
 The Audit Log tab uses lazy loading — the query is sent only when you first activate the tab. The active tab is reflected in the URL (`?revisionTab=auditLog`), so you can share a link directly to the audit log view.
-
-Access to audit log data is enforced by the backend and may be restricted to superadmins.
 :::
+
+### Replicas
+
+The Replicas tab shows the routing nodes that make up the deployment. Replica entries are filtered by a **Running / Terminated** radio control at the top of the tab, which replaced the previous enum-based status filter.
+
+![](../images/replica_status_filter.png)
+
+- **Running**: Shows replicas that are currently provisioning, running, or otherwise active.
+- **Terminated**: Shows replicas that have completed their lifecycle.
+
+Each replica row carries three **independent** status fields. They describe different axes and should be read together — a replica can be *Running* in its lifecycle while its health is still *Not Checked*, for example.
+
+- **Lifecycle Status**: Where the replica is in its lifecycle — for example, *Provisioning*, *Warming Up*, *Running*, *Terminating*, or *Terminated*. During **Warming Up**, the replica is inside its startup grace period: it is starting up and waiting for the first successful health check. Failed checks are tolerated during this window; the replica moves to *Running* on the first success, and is terminated if it never succeeds before the window ends. The column header reads **Lifecycle**.
+- **Health Status**: The current health of the replica process — *Healthy*, *Unhealthy*, *Degraded*, or *Not Checked*.
+   * **Not Checked** means the first health check has not completed yet — the replica is typically still in its **Warming Up** grace period. By itself it does not indicate a problem; read the **Lifecycle Status** to see where the replica is.
+- **Traffic Status**: Whether the replica is currently serving requests. A replica can be removed from traffic independently of its health (for example, when it is manually deactivated), which is why traffic is shown as its own status rather than being merged into Health Status.
+
+:::note
+The three statuses are independent axes. During the **Warming Up** lifecycle phase a replica is within its startup grace period, and its **Health Status** typically reads *Not Checked* until the first check completes — by itself that does not indicate a problem.
+:::
+
+Click the session name in the **Session** column to open the session detail drawer. Click the revision number in the **Revision (ID)** column to open the revision detail drawer.
+
+Next to the status tag in the **Lifecycle** column is a history icon button. Click it to open the **Replica Scheduling History** modal for that replica, where you can review the replica's scheduling events filtered by date range, status, and other criteria.
+
+![](../images/replica_scheduling_history.png)
+
+If a replica has encountered an error, clicking the error indicator on the row opens a JSON viewer modal that displays the raw error data. This is useful for diagnosing issues with individual replicas.
+
+![](../images/route_error_json_viewer.png)
 
 ### Auto Scaling Rules
 
@@ -657,9 +665,9 @@ The rule list provides:
 
 Click the `Add Rules` button to open the **Add Auto Scaling Rule** editor. To modify an existing rule, click the edit icon on its row; the **Edit Auto Scaling Rule** editor opens with the rule's values pre-filled. The editor contains the following fields in order:
 
-- **Metric Source**: Select one of `Kernel`, `Inference Framework`, or `Prometheus`.
-- **Metric Name**: For `Kernel` and `Inference Framework`, enter a metric name. For `Kernel`, a list of common metrics (such as `cpu_util`, `mem`, `net_rx`, and `net_tx`) is offered as autocomplete suggestions, and you can also type a custom name freely.
-- **Metric Name (Prometheus Preset)**: Shown only when **Metric Source** is `Prometheus`. Select a preset from the dropdown; the preset's metric name, query template, and (when defined) **Cooldown Sec.** are filled in automatically. Below the selector, a **Current value** preview shows the latest value returned by the preset, with a refresh button. When multiple series are returned, the preview shows the number of series and the most recent value; if no data is available, it shows **No data available**.
+- **Metric Source**: Select `Kernel` or `Prometheus`.
+- **Metric Name**: For `Kernel`, enter a metric name. Common metrics such as `cpu_util`, `mem`, `net_rx`, and `net_tx` are offered as autocomplete suggestions, and you can also type a custom name freely.
+- **Metric Name (Prometheus Preset)**: Shown only when **Metric Source** is `Prometheus`. Select a preset from the dropdown; the preset's metric name, query template, and (when defined) **Cooldown Sec.** are filled in automatically.
 - **Condition**: A segmented control for choosing the scaling direction. It provides three options.
 
    - **Scale In**: Decreases replicas when the metric falls below a threshold. Sets `Metric < [threshold]`.
@@ -672,16 +680,12 @@ Click the `Add Rules` button to open the **Add Auto Scaling Rule** editor. To mo
 
    - Only a minimum threshold is set: `[metric] < [minThreshold]` triggers **Scale In** (replicas decrease when the metric falls below the threshold).
    - Only a maximum threshold is set: `[metric] > [maxThreshold]` triggers **Scale Out** (replicas increase when the metric rises above the threshold).
-   - Both thresholds are set: replicas are scaled in or out depending on which boundary the metric crosses (`[minThreshold] < [metric] < [maxThreshold]` is the normal operating range).
+   - Both thresholds are set: if `[metric] < [minThreshold]`, replicas **scale in**; if `[metric] > [maxThreshold]`, replicas **scale out**.
 
 - **Cooldown Sec.**: The time, in seconds, to wait after a scaling event before the next evaluation.
 - **Min Replicas** and **Max Replicas**: The lower and upper bounds that auto-scaling enforces on the replica count. Auto-scaling will not reduce the number of replicas below **Min Replicas** or increase it above **Max Replicas**.
 
 ![](../images/auto_scaling_rules_modal_v2.png)
-
-When **Metric Source** is set to `Prometheus`, the editor shows the preset selector and the live **Current value** preview.
-
-![](../images/auto_scaling_rules_modal_prometheus_v2.png)
 
 <a id="generating-tokens"></a>
 
@@ -759,62 +763,6 @@ To use the model, you will need the following information:
 
 ![](../images/LLM_chat_custom_model.png)
 
-<a id="deployment-presets"></a>
-
-## Deployment Presets
-
-Deployment presets let administrators save a complete set of revision configuration values — runtime variant, container image, resource allocation, startup command, and health check settings — and reuse them when adding revisions. Users select a preset in **Preset Mode** when adding a revision; admins create and edit presets through the Deployment Presets page.
-
-### Managing Deployment Presets
-
-The Deployment Presets page lists all presets available in the current project. The table includes the following **default-visible** columns:
-
-- **Name**: The preset name.
-- **Runtime**: The runtime variant (for example, `vLLM`, `SGLang`, or `Custom`).
-- **Image**: The container image in `<canonicalName>@<architecture>` format (for example, `cr.backend.ai/stable/pytorch:2.1-cuda12.1@aarch64`). The value is copyable. This format makes it easy to distinguish images by CPU architecture on mixed-architecture clusters.
-- **Replicas**: The desired replica count saved with this preset.
-- **Created**: When the preset was created.
-- **Modified**: When the preset was last updated (`updatedAt`).
-
-Use the **column visibility** gear button on the right side of the table header to show or hide additional columns. The following columns are **hidden by default** but can be enabled:
-
-- **Description**: The preset's description text.
-- **Startup Command**: The configured start command, truncated with a tooltip. The value is copyable.
-- **Cluster**: The cluster mode saved with the preset.
-- **Strategy**: The scheduling strategy.
-- **Open to Public**: Shows a `Public` or `Private` tag based on the preset's default visibility setting.
-- **Revision History Limit**: How many revisions are retained.
-- **Rank**: The sort rank of the preset (sortable column).
-
-### Create a Deployment Preset
-
-Click the `Create Preset` button to open the **Create Deployment Preset** form. The form collects the same fields as the Add Revision Advanced Mode form, organized in the same sections:
-
-- **Model & Runtime**: Select a runtime variant. For `vLLM` or `SGLang`, a **Runtime Parameters** section appears with tabs (Model Loading, Resource Memory, Serving Performance, and others). For the `Custom` runtime, startup command and health check fields appear instead.
-- **Environments**: Select the container image. The dropdown shows images in `<canonicalName>@<architecture>` format so you can distinguish images by CPU architecture. This same format appears in the Review step of the form.
-- **Cluster & Resources**: Set CPU, memory, and accelerator allocation.
-- **Advanced Settings** *(collapsible)*: Mount additional storage folders.
-
-:::note[Required Runtime Parameters]
-When a `vLLM` or `SGLang` runtime is selected, administrators can mark individual runtime parameters as required (indicated by a red asterisk ★). Submitting the preset form with an empty required parameter is blocked with an inline validation error. This same validation rule applies when adding a revision from a preset.
-:::
-
-The configured runtime parameter values are saved with the preset and applied when a deployment is created from this preset. Unchanged parameters keep their runtime defaults. The configured values also appear in the **Review** step under **Basic Info** before you save the preset.
-
-### Edit a Deployment Preset
-
-Click the edit icon on a preset row to open the **Edit Deployment Preset** form, pre-filled with the current values. The same fields and validation rules apply as for creating a preset.
-
-### Preset Detail Modal
-
-Click the **ⓘ** (info) button next to a preset selector — for example, in the **Preset Mode** of the Add Revision modal — to open the **Preset Detail** modal. The modal shows a summary of the preset's configuration, including the following cards:
-
-- **Basic Info**: Name, runtime variant, image, replicas, cluster mode, startup command, and environment variables.
-- **Resources**: CPU, memory, and accelerator allocation.
-- **Health Check**: Whether health checking is enabled for this preset.
-   * When **Enabled**: shows the configured Path, Interval, Max Retries, Max Wait Time, Expected Status Code, and Startup Grace Period.
-   * When **Disabled**: shows `Disabled`.
-
 <a id="model-store"></a>
 
 ## Model Store
@@ -877,15 +825,3 @@ If the selected model has no compatible presets for the current project, the dra
 **Deploy** button is disabled and deployment is blocked until a compatible preset is available.
 :::
 
-### Model Store Administration
-
-Superadmins can create, edit, and delete model cards from the Model Store admin panel.
-
-When creating or editing a model card:
-
-- **Label** and **Framework** tag fields accept either **Enter** or a **comma (,)** as a token separator, so you can type `pytorch, transformers,` to add multiple tags in one pass without pressing Enter between each one.
-- The **Domain** field pre-fills with the admin's currently active domain when creating a new card, saving the step of selecting the domain manually.
-
-:::tip
-To add multiple labels or framework tags quickly, type them separated by commas (for example, `nlp, text-generation, llm`) and they will all be added at once.
-:::

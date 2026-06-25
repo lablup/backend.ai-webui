@@ -23,11 +23,13 @@ When a deployment is created from a preset, the preset's values pre-populate the
 Each preset stores the following deployment defaults:
 
 - **Basic Info**: Name, description, runtime variant, rank (display ordering).
-- **Image**: The container image to deploy.
+- **Image**: The container image to deploy, shown in `<canonicalName>@<architecture>` format.
+- **Runtime Parameters**: Serving-framework parameters for vLLM or SGLang runtimes (not shown for the Custom runtime).
 - **Resources**: Resource slots (CPU, memory, GPU), shared memory (SHM), and resource options.
 - **Cluster**: Cluster mode (Single-Node or Multi-Node) and cluster size.
 - **Execution**: Startup command, environment variables, and bootstrap script.
 - **Deployment Defaults**: Replica count, revision history limit, and the *Open to Public* visibility default.
+- **Health Check**: Optional periodic health check, gated behind an *Enable Health Check* toggle.
 - **Advanced**: Model definition JSON (when needed for a custom runtime).
 
 <a id="managing-deployment-presets"></a>
@@ -63,11 +65,12 @@ Additional columns can be shown or hidden using the column visibility gear butto
    - **Runtime Parameters** (appears when a non-Custom runtime such as vLLM or SGLang is selected): Configure the serving framework parameters for this preset. Parameters are organized in tabs — for example, **Model Loading**, **Resource Memory**, **Serving Performance**, **Multimodal**, and **Tool Reasoning** for vLLM. Saved parameter values are applied when a deployment is created from this preset; parameters you leave unchanged will use the runtime's defaults when the deployment runs.
    - **Resources**: Resource slots (CPU, memory, GPU), shared memory, and resource options (key/value pairs).
    - **Cluster**: Cluster mode (Single-Node or Multi-Node) and cluster size.
-   - **Execution**: Startup command, environment variables, and bootstrap script.
+   - **Execution**: **Startup Command**, environment variables, and bootstrap script. The Startup Command field shows a shell-syntax hint (`Shell syntax: /bin/bash -c "cmd1; cmd2"`) because the command is executed as `/bin/bash -c <command>`. This means you can use shell operators such as `;`, `|`, and `&&` directly in the field.
    - **Deployment Defaults**:
       * **Replica Count**: Default number of replicas created from this preset.
       * **Revision History Limit**: Number of past revisions kept for each deployment created from this preset.
       * **Open to Public**: Whether the endpoint of deployments created from this preset is reachable without an access token by default.
+   - **Health Check**: This section has an **Enable Health Check** toggle, which is **off** by default. When the toggle is off, the health check fields are hidden. When you turn it on, the health check fields appear and become configurable: Path, Interval, Max Retries, Max Wait Time, Status Code, and Startup Grace Period.
    - **Advanced** (optional): Model definition JSON for custom runtimes.
 
    ![](../images/deployment_preset_create_modal.png)
@@ -82,6 +85,10 @@ If a required field is missing or invalid, the **Create Preset** button stays di
 Administrators can mark individual Runtime Parameters as required. Required parameters display a red asterisk (★) next to the label. The save button stays disabled until all required parameters are filled in. Required parameter validation applies even to parameters on unvisited tabs.
 
 On backends older than Backend.AI Manager 26.4.4, all parameters are treated as optional.
+:::
+
+:::note[Version requirement]
+The **Enable Health Check** toggle and required-parameter validation for Runtime Parameters require **Backend.AI Manager 26.4.4 or later**. On older backends, the health check is not gated behind a toggle and all runtime parameters are treated as optional. The Enable Health Check toggle also applies to the vLLM/SGLang Advanced Mode runtime parameters.
 :::
 
 ### Edit a Deployment Preset

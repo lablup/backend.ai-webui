@@ -44,10 +44,9 @@ both view and modify the folder. Click the `Add` button to send the invitation.
 
 ![](../images/send_vfolder_invitation.png)
 
-Switch back to User B's account and navigate to the Data page.
-The number of invited folders can be checked in the Storage Status panel.
+Switch back to User B's account. An invitation badge appears next to the Data page entry in the sidebar and next to the folder status summary at the top of the folder list. The badge shows the count of pending invitations.
 
-![](../images/pending_invitations.png)
+![](../images/vfolder_invitation_badge.png)
 
 Clicking the badge opens an invitation list modal, where pending folder invitations
 can be accepted or declined.

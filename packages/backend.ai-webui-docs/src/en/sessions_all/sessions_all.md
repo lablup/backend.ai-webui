@@ -436,7 +436,6 @@ changes, resource modifications, and administrative operations — along with wh
 action and when.
 
 ![](../images/session_audit_log.png)
-<!-- TODO: Capture screenshot of the Audit Log tab in the session detail panel -->
 
 :::note
 The Audit Log is enforced by the backend and may be visible only to superadmins. Regular users

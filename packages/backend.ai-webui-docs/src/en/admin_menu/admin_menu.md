@@ -152,7 +152,7 @@ This feature is available only on Backend.AI Manager version 26.2.0 or later.
 
 When you need to create multiple user accounts from an existing roster or exported data, you can upload a CSV file directly instead of specifying a sequential prefix. Click the ellipsis (`...`) dropdown next to the **Create User** button and select **Bulk Create Users from CSV** to open the CSV upload dialog.
 
-<!-- TODO: Capture screenshot of bulk_create_user_csv_dropdown.png -->
+![](../images/bulk_create_user_csv_dropdown.png)
 
 #### Preparing the CSV File
 
@@ -183,7 +183,7 @@ After selecting your CSV file, the dialog shows a preview table listing all rows
 - Rows with formatting or validation errors are highlighted with inline error messages so you can correct the source file before retrying.
 - A summary at the top of the preview shows the total number of valid and invalid rows.
 
-<!-- TODO: Capture screenshot of bulk_create_user_csv_modal.png showing the preview table with valid and invalid rows -->
+![](../images/bulk_create_user_csv_modal.png)
 
 #### Creating the Users
 
@@ -411,6 +411,20 @@ The Admin Deployments page has up to four tabs:
 Each individual admin deployment has its own dedicated route at `/admin-deployments/:id`. When you open a deployment from the Admin Deployments page, the URL changes to this path so that the deployment detail can be linked to or bookmarked directly.
 :::
 
+#### Deployment Detail Page
+
+When you open a deployment from the Admin Deployments page, the **Revisions** card on the Deployment Detail Page provides three tabs: **Current Revision**, **Revision History**, and **Audit Log**. These behave the same as on the user-facing Deployments page — for the full description of each tab, see the [Revisions Tab](../deployment/deployment.md#revisions-tab) section in the Model Serving documentation.
+
+- **Current Revision**: Shows the full configuration of the revision currently serving traffic. This includes a **Runtime Parameters** row that lists the runtime-variant parameter values configured for the revision (for `vLLM` and `SGLang` runtimes). The **Image** field is displayed in `<canonicalName>@<architecture>` format (for example, `cr.backend.ai/stable/pytorch:2.1-cuda12.1@aarch64`), so you can distinguish images by CPU architecture on mixed-architecture clusters.
+- **Revision History**: Lists every revision added to the deployment. Clicking a revision number opens a detail drawer that also shows the **Runtime Parameters** row for `vLLM` and `SGLang` revisions.
+- **Audit Log**: Shows a chronological record of every action taken on the deployment. Each entry lists the **Operation**, **Triggered By** (the user who performed the action), the **Time**, and the **Status**. A filter bar lets you narrow entries by **Status**, **Operation**, **Triggered By** (search by user ID), and a **Time** date-range picker. The tab uses lazy loading — its data is fetched only when you first activate the tab.
+
+   ![](../images/audit_log_tab.png)
+
+:::note[Version requirement]
+The **Runtime Parameters** row on the Current Revision tab and in the Revision History detail drawer requires **Backend.AI Manager 26.4.4 or later**. On older backends this row is not shown.
+:::
+
 <a id="admin-model-store-management"></a>
 
 ### Admin Model Store Management
@@ -452,12 +466,12 @@ Click the `Create Model Card` button to open the creation modal. Fill in the fol
 - **Model Version**: The version of the model.
 - **Task**: The inference task type (e.g., text-generation).
 - **Category**: The model category (e.g., LLM).
-- **Framework**: The ML framework used (e.g., PyTorch, TensorFlow).
-- **Label**: Tags for categorization and filtering.
+- **Framework**: The ML framework used (e.g., PyTorch, TensorFlow). This is a tag input — type a value and press **Enter** or type a **comma** to add each entry.
+- **Label**: Tags for categorization and filtering. Like **Framework**, this is a tag input — press **Enter** or type a **comma** to add each tag.
 - **License**: The license under which the model is distributed.
 - **Architecture**: The model architecture (e.g., Transformer).
 - **README**: A markdown README for the model.
-- **Domain**: The domain to associate the model card with.
+- **Domain**: The domain to associate the model card with. When creating a new model card, this field is pre-filled with your current domain; you can change it if needed.
 - **Project ID** (required): The project that owns the model card.
 - **VFolder** (required): The storage folder containing the model files.
 - **Access Level**: Controls who can see the model card in the user-facing Model Store.
@@ -502,13 +516,15 @@ When a deployment is created from a preset, the preset's values pre-populate the
 
 Each preset stores the following deployment defaults:
 
-- **Basic Info**: Name, description, runtime variant, rank (display ordering).
-- **Image**: The container image to deploy.
+- **Basic Info**: Name, description, runtime variant, and rank (display ordering).
+- **Image**: The container image to deploy, shown in `<canonicalName>@<architecture>` format.
+- **Runtime Parameters**: Serving-framework parameters for vLLM or SGLang runtimes (not shown for the Custom runtime).
 - **Resources**: Resource slots (CPU, memory, GPU), shared memory (SHM), and resource options.
 - **Cluster**: Cluster mode (Single-Node or Multi-Node) and cluster size.
 - **Execution**: Startup command, environment variables, and bootstrap script.
 - **Deployment Defaults**: Replica count, revision history limit, and the *Open to Public* visibility default.
-- **Advanced**: Model definition JSON (when needed for a custom runtime).
+- **Health Check**: Optional periodic health check, gated behind an *Enable Health Check* toggle.
+- **Model Definition** (optional): Model name, model path, service configuration (port, startup command, pre-start actions), and metadata.
 
 <a id="managing-deployment-presets"></a>
 
@@ -518,12 +534,16 @@ Only administrators can create, edit, or delete deployment presets. Administrato
 
 ![](../images/admin_deployment_preset_list.png)
 
-The list view shows each preset with its name, runtime, image, rank, and key resource fields. From this list, administrators can:
+The list view shows each preset with its key fields. From this list, administrators can:
 
 - Filter presets by name, runtime, or tag.
 - Click a tag chip on any row to filter the list to presets sharing that tag.
 - Open a preset's detail view to inspect its full configuration.
 - Create, edit, or delete a preset.
+
+The following columns are visible by default: **Name**, **Runtime**, **Image** (displayed in `<canonicalName>@<architecture>` format and copyable), **Replicas**, **Created**, and **Modified** (the timestamp when the preset was last updated).
+
+Additional columns are hidden by default and can be shown using the column-settings gear button (⚙) at the right of the table header: **Description**, **Startup Command**, **Open to Public** (shown as a Public/Private tag), and **Rank** (sortable). Your column choices are persisted per browser across sessions.
 
 #### Create a Deployment Preset
 
@@ -535,15 +555,20 @@ The list view shows each preset with its name, runtime, image, rank, and key res
       * **Description**: A short summary of the preset's intended use.
       * **Runtime**: The runtime variant (for example, vLLM, SGLang, or Custom).
       * **Rank**: Display ordering among presets of the same runtime. Lower values appear first.
-   - **Image**: The container image to use when deploying.
+   - **Image**: The container image to use when deploying. Images are listed in `<canonicalName>@<architecture>` format (for example, `cr.backend.ai/stable/pytorch:2.1-cuda12.1@aarch64`), which helps distinguish images by CPU architecture on mixed-architecture clusters.
+   - **Runtime Parameters** (appears only when a non-Custom runtime such as **vLLM** or **SGLang** is selected): Configure the serving framework parameters for this preset. Parameters are organized in tabs — for example, **Model Loading**, **Resource Memory**, and **Serving Performance**. Required parameters are marked with a red asterisk (★) next to the label, and the save button stays disabled until every required parameter is filled in — including required parameters on tabs you have not visited yet.
    - **Resources**: Resource slots (CPU, memory, GPU), shared memory, and resource options (key/value pairs).
    - **Cluster**: Cluster mode (Single-Node or Multi-Node) and cluster size.
-   - **Execution**: Startup command, environment variables, and bootstrap script.
+   - **Execution**: **Startup Command**, environment variables, and bootstrap script. The Startup Command field shows a shell-syntax hint (`Shell syntax: /bin/bash -c "cmd1; cmd2"`) because the command is executed as `/bin/bash -c <command>`. This means you can use shell operators such as `;`, `|`, and `&&` directly in the field.
    - **Deployment Defaults**:
       * **Replica Count**: Default number of replicas created from this preset.
       * **Revision History Limit**: Number of past revisions kept for each deployment created from this preset.
       * **Open to Public**: Whether the endpoint of deployments created from this preset is reachable without an access token by default.
-   - **Advanced** (optional): Model definition JSON for custom runtimes.
+   - **Health Check**: This section has an **Enable Health Check** toggle, which is **off** by default. When the toggle is off, the health check fields are hidden. When you turn it on, the health check fields appear and become configurable: Path, Interval, Max Retries, Max Wait Time, Status Code, and Startup Grace Period.
+   - **Model Definition** (optional): Enable the toggle to configure a structured model definition. When enabled:
+      * **Model Name** and **Model Path**: The model identifier and its location in the container.
+      * **Service Configuration** (optional): Port, shell, startup command, and pre-start actions.
+      * **Metadata** (optional): Author, title, version, task, category, and other descriptive fields.
 
    ![](../images/deployment_preset_create_modal.png)
 
@@ -551,6 +576,10 @@ The list view shows each preset with its name, runtime, image, rank, and key res
 
 :::tip
 If a required field is missing or invalid, the **Create Preset** button stays disabled until the error is resolved. Required fields show inline validation messages as you type.
+:::
+
+:::note[Version requirement]
+The **Enable Health Check** toggle and required-parameter validation for Runtime Parameters require **Backend.AI Manager 26.4.4 or later**. On older backends, the health check is not gated behind a toggle and all runtime parameters are treated as optional. The Enable Health Check toggle also applies to the vLLM/SGLang Advanced Mode runtime parameters.
 :::
 
 #### Edit a Deployment Preset
@@ -581,7 +610,9 @@ End users apply a deployment preset through the **VFolder Deploy** modal, which 
 
 1. From the Data page, locate the model folder you want to deploy and click **Deploy as Service**.
 2. The VFolder Deploy modal opens, listing the deployment presets available for your project.
-3. Click a preset row to open its **Deployment Preset Detail** view. The detail view shows every field that the preset will apply when used — image, runtime, resources, cluster mode, replica count, visibility, and so on.
+3. Click a preset row to open its **Deployment Preset Detail** view. The detail view shows every field that the preset will apply when used — image, runtime, resources, cluster mode, replica count, visibility, and so on. The detail view also includes a **Health Check** card:
+   - When health check is enabled in the preset: the card shows **Enabled** along with the configured Path, Interval, Max Retries, Max Wait Time, Status Code, and Startup Grace Period.
+   - When health check is disabled: the card shows **Disabled**.
 
    ![](../images/vfolder_deploy_preset_detail.png)
 
@@ -630,6 +661,10 @@ This is useful when you have many presets and want to quickly narrow down to, fo
 Backend.AI lets administrators define reusable **Prometheus query presets** that auto-scaling rules and other monitoring features can reference by name. A preset bundles a metric name, a PromQL query template, an optional time window, and optional filter / group labels so operators do not have to retype the same query for every rule.
 
 The presets are managed from the **Prometheus Preset** tab on the Admin Deployments page (`/admin-deployments?tab=prometheus-preset`).
+
+:::note[Superadmin only: live preview in the Auto Scaling Rule editor]
+When a superadmin opens the Auto Scaling Rule editor for a deployment, sets **Metric Source** to `Prometheus`, and selects a preset, a live **Current value** preview appears below the preset selector showing the latest metric value from Prometheus. This preview is only visible to superadmin accounts — regular users and domain admins do not see it.
+:::
 
 ![](../images/admin_prometheus_preset_list.png)
 

@@ -71,8 +71,6 @@ navigation:
           path: deployment/deployment.md
         - title: Chat
           path: chat/chat.md
-        - title: Import Run
-          path: import_run/import_run.md
         - title: My Environments
           path: my_environments/my_environments.md
     - category: Storage & Data
@@ -142,8 +140,6 @@ navigation:
           path: deployment/deployment.md
         - title: チャット
           path: chat/chat.md
-        - title: インポート＆実行
-          path: import_run/import_run.md
         - title: マイ環境
           path: my_environments/my_environments.md
     - category: ストレージとデータ
@@ -213,8 +209,6 @@ navigation:
           path: deployment/deployment.md
         - title: 채팅
           path: chat/chat.md
-        - title: 가져오기 및 실행
-          path: import_run/import_run.md
         - title: 내 환경
           path: my_environments/my_environments.md
     - category: 스토리지 및 데이터
@@ -284,8 +278,6 @@ navigation:
           path: deployment/deployment.md
         - title: แชท
           path: chat/chat.md
-        - title: นำเข้าและรัน
-          path: import_run/import_run.md
         - title: สภาพแวดล้อมของฉัน
           path: my_environments/my_environments.md
     - category: พื้นที่จัดเก็บและข้อมูล
