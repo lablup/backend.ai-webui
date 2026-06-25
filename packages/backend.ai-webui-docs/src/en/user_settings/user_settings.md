@@ -112,23 +112,99 @@ etc.).
 ### My Keypair Information
 
 Every user has at least one keypair. You can view your access key and secret key
-by clicking the Config button. Remember that only one main access keypair exists.
+by clicking the 'Config' button. Remember that only one main access keypair exists.
 
-![](../images/my_keypair_information.png)
+![](../images/my_keypair_management.png)
 
-:::note
-Depending on the server version, the keypair information dialog may display
-a table view with additional management options such as issuing new keypairs,
-deactivating, or revoking existing ones.
+At the top of the dialog, the **Main Access Key** banner shows your current main
+access key. Click the copy icon next to it to copy the key to your clipboard.
+
+#### Browsing Your Keypairs
+
+The dialog lists your keypairs in a table. Use the controls above the table to
+narrow down what is shown:
+
+- **Active** / **Inactive** toggle: Switch between viewing active keypairs and
+  deactivated keypairs.
+- **Filter**: Filter the list by **Access Key** or **Resource Policy**.
+- **Column sorting**: Sort the table by **Access Key**, **Resource Policy**,
+  **Created At**, or **Last Used** by clicking the column header.
+- **Pagination**: Move between pages when you have more keypairs than fit on a
+  single page.
+
+The table includes the following columns:
+
+- **Access Key**: The keypair's access key. Your main access key is flagged with
+  a key icon. Click the copy icon to copy the access key.
+- **Controls**: The actions available for each keypair (see below).
+- **Resource Policy**: The resource policy applied to the keypair.
+- **Created At**: When the keypair was created.
+- **Last Used**: When the keypair was last used.
+- **Modified At**: When the keypair was last modified. This column is hidden by
+  default; you can show it through the table column settings.
+
+#### Issuing a New Keypair
+
+Click the **Issue New Keypair** button to create a new keypair. After the
+keypair is issued, the **Keypair Credential Information** dialog appears, showing
+the new credentials one time only.
+
+![](../images/keypair_credential_info.png)
+
+The dialog reveals the following values, each with a copy button:
+
+- **Access Key**
+- **Secret Key**
+- **SSH Public Key**
+
+Click **Download CSV** to save the credentials to a file.
+
+:::warning
+*"This information cannot be viewed again after closing this window. Please save
+it in a safe place."* The secret key is shown only once. Copy it or download the
+CSV before you close the dialog — there is no way to retrieve the secret key
+afterward.
 :::
+
+#### Managing Active Keypairs
+
+For each active keypair, the **Controls** column provides these actions:
+
+- **Set as Main**: Make this keypair your main access key. A confirmation prompt
+  appears before the change is applied. The current main access key already in
+  use does not show this action.
+
+  ![](../images/keypair_set_as_main_confirm.png)
+
+- **Deactivate**: Deactivate the keypair so it can no longer be used. A
+  confirmation prompt appears before the keypair is deactivated. The main access
+  key cannot be deactivated — switch to another key first
+  (*"Cannot deactivate the main access key. Switch to another key first."*).
 
 :::note[Re-Login Required]
-When the main access key changes (for example, after issuing a new keypair
-and designating it as the main one), the WebUI shows a **Re-Login Required**
-notification with the message *"The main access key has been changed. Please
-log in again to apply the change."* Log out and sign in again so that the
-new main access key is applied to your session.
+When the main access key changes (for example, after issuing a new keypair and
+setting it as the main one), the WebUI shows a **Re-Login Required**
+notification with the message *"The main access key has been changed. Please log
+in again to apply the change."* Log out and sign in again so that the new main
+access key is applied to your session.
 :::
+
+#### Managing Inactive Keypairs
+
+Switch to the **Inactive** view to manage deactivated keypairs. Each inactive
+keypair provides these actions:
+
+- **Restore**: Reactivate the keypair so it can be used again. A confirmation
+  prompt appears before the keypair is restored.
+- **Delete Keypair**: Permanently delete the keypair.
+
+:::danger
+Deleting a keypair is **irreversible** — the keypair cannot be recovered once
+deleted. To prevent accidental deletion, you must type **Permanently Delete**
+into the confirmation field before the delete is allowed.
+:::
+
+![](../images/keypair_delete_confirm.png)
 
 <a id="user-ssh-keypair-management"></a>
 
