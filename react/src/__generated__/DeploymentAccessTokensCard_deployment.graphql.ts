@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<eb352084a2d3c5fa54fb8701b30c5228>>
+ * @generated SignedSource<<d62944c99b33dadc3451c93c3c6b37ce>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,23 +10,23 @@
 
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type DeploymentAccessTokensTab_deployment$data = {
+export type DeploymentAccessTokensCard_deployment$data = {
   readonly id: string;
   readonly networkAccess: {
     readonly endpointUrl: string | null | undefined;
   };
-  readonly " $fragmentType": "DeploymentAccessTokensTab_deployment";
+  readonly " $fragmentType": "DeploymentAccessTokensCard_deployment";
 };
-export type DeploymentAccessTokensTab_deployment$key = {
-  readonly " $data"?: DeploymentAccessTokensTab_deployment$data;
-  readonly " $fragmentSpreads": FragmentRefs<"DeploymentAccessTokensTab_deployment">;
+export type DeploymentAccessTokensCard_deployment$key = {
+  readonly " $data"?: DeploymentAccessTokensCard_deployment$data;
+  readonly " $fragmentSpreads": FragmentRefs<"DeploymentAccessTokensCard_deployment">;
 };
 
 const node: ReaderFragment = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
-  "name": "DeploymentAccessTokensTab_deployment",
+  "name": "DeploymentAccessTokensCard_deployment",
   "selections": [
     {
       "alias": null,
@@ -58,6 +58,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "48a180522415b103a2e930a5abc7a973";
+(node as any).hash = "e7372d3fa2bb21537f6b39e44698dedf";
 
 export default node;

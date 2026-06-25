@@ -2,45 +2,28 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { AutoScalingRuleListDeleteMutation } from '../__generated__/AutoScalingRuleListDeleteMutation.graphql';
 import {
   AutoScalingRuleListNodesFragment$data,
   AutoScalingRuleListNodesFragment$key,
 } from '../__generated__/AutoScalingRuleListNodesFragment.graphql';
-import { AutoScalingRuleListPresetsQuery } from '../__generated__/AutoScalingRuleListPresetsQuery.graphql';
-import { AutoScalingRuleListQuery } from '../__generated__/AutoScalingRuleListQuery.graphql';
-import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
-import { useBAISettingUserState } from '../hooks/useBAISetting';
-import AutoScalingRuleEditorModal from './AutoScalingRuleEditorModal';
 import { DeleteFilled, SettingOutlined } from '@ant-design/icons';
-import { App, Tag, Tooltip, Typography } from 'antd';
+import { Tag, Tooltip, Typography } from 'antd';
 import {
-  BAIButton,
   BAIQuestionIconWithTooltip,
-  BAIDeleteConfirmModal,
-  BAIFetchKeyButton,
   BAIFlex,
-  BAIGraphQLPropertyFilter,
   BAINameActionCell,
   BAITable,
-  BAIUnmountAfterClose,
   filterOutNullAndUndefined,
-  toLocalId,
-  useFetchKey,
-  useMutationWithPromise,
 } from 'backend.ai-ui';
 import type { BAITableProps, GraphQLFilter } from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
-import * as _ from 'lodash-es';
-import { PlusIcon } from 'lucide-react';
-import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
-import React, { useDeferredValue, useState, useTransition } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 type DateTimeFilter = { before?: string | null; after?: string | null };
 
-type AutoScalingRuleNode = NonNullable<
+export type AutoScalingRuleNode = NonNullable<
   AutoScalingRuleListNodesFragment$data[number]
 >;
 
@@ -115,7 +98,7 @@ type AutoScalingRuleFilterInput = {
 };
 
 /** Maps BAIGraphQLPropertyFilter output → AutoScalingRuleFilter, preserving AND/OR/NOT. */
-const toAutoScalingRuleFilter = (
+export const toAutoScalingRuleFilter = (
   filter: GraphQLFilter,
 ): AutoScalingRuleFilterInput => {
   const result: AutoScalingRuleFilterInput = {};
@@ -131,8 +114,6 @@ const toAutoScalingRuleFilter = (
   return result;
 };
 
-// --- Nodes component (fragment-based table rendering) ---
-
 interface AutoScalingRuleListNodesProps extends Omit<
   BAITableProps<AutoScalingRuleNode>,
   'dataSource' | 'columns'
@@ -145,6 +126,12 @@ interface AutoScalingRuleListNodesProps extends Omit<
   onDeleteRule: (id: string, metricName: string) => void;
 }
 
+/**
+ * Presentational auto-scaling rules table. Reads the rule nodes from a plural
+ * fragment and renders them; the Prometheus preset names are resolved by the
+ * parent card and passed down via `presetMap`, so this component owns no data
+ * fetching of its own.
+ */
 const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
   autoScalingRulesFrgmt,
   presetMap,
@@ -361,308 +348,4 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
   );
 };
 
-// --- List orchestrator component ---
-
-interface AutoScalingRuleListProps {
-  deploymentId: string; // Relay global ID (e.g., toGlobalId('ModelDeployment', uuid))
-  isEndpointDestroying: boolean;
-  isOwnedByCurrentUser: boolean;
-}
-
-const AutoScalingRuleList: React.FC<AutoScalingRuleListProps> = ({
-  deploymentId,
-  isEndpointDestroying,
-  isOwnedByCurrentUser,
-}) => {
-  'use memo';
-  const { t } = useTranslation();
-  const { message } = App.useApp();
-  const [isPendingRefetch, startRefetchTransition] = useTransition();
-  const [fetchKey, updateFetchKey] = useFetchKey();
-
-  const [editingRuleId, setEditingRuleId] = useState<string | null>(null);
-  const [isOpenEditorModal, setIsOpenEditorModal] = useState(false);
-  const [deletingRule, setDeletingRule] = useState<{
-    id: string;
-    metricName: string;
-  } | null>(null);
-
-  const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
-    'table_column_overrides.AutoScalingRuleList',
-  );
-
-  // BAITable order string: "createdAt" (ASC) | "-createdAt" (DESC)
-  const [queryParams, setQueryParams] = useQueryStates(
-    {
-      order: parseAsStringLiteral([
-        'createdAt',
-        '-createdAt',
-      ] as const).withDefault('-createdAt'),
-      filter: parseAsJson<GraphQLFilter>((value) => value as GraphQLFilter),
-    },
-    { history: 'replace' },
-  );
-
-  const orderString = queryParams.order;
-  const graphQLFilter = queryParams.filter ?? undefined;
-
-  const {
-    baiPaginationOption,
-    tablePaginationOption,
-    setTablePaginationOption,
-  } = useBAIPaginationOptionStateOnSearchParam({ current: 1, pageSize: 10 });
-
-  const filterInput = graphQLFilter
-    ? toAutoScalingRuleFilter(graphQLFilter)
-    : null;
-
-  const queryVariables = {
-    deploymentId,
-    offset: baiPaginationOption.offset,
-    limit: baiPaginationOption.limit,
-    orderBy: [
-      {
-        field: 'CREATED_AT' as const,
-        direction: (orderString.startsWith('-') ? 'DESC' : 'ASC') as
-          | 'ASC'
-          | 'DESC',
-      },
-    ],
-    filter: filterInput,
-  };
-  const deferredQueryVariables = useDeferredValue(queryVariables);
-
-  const data = useLazyLoadQuery<AutoScalingRuleListQuery>(
-    graphql`
-      query AutoScalingRuleListQuery(
-        $deploymentId: ID!
-        $offset: Int
-        $limit: Int
-        $orderBy: [AutoScalingRuleOrderBy!]
-        $filter: AutoScalingRuleFilter
-      ) {
-        deployment(id: $deploymentId) {
-          autoScalingRules(
-            offset: $offset
-            limit: $limit
-            orderBy: $orderBy
-            filter: $filter
-          ) {
-            count
-            edges {
-              node {
-                id
-                metricName
-                ...AutoScalingRuleListNodesFragment
-                ...AutoScalingRuleEditorModalFragment
-              }
-            }
-          }
-        }
-      }
-    `,
-    deferredQueryVariables,
-    {
-      fetchPolicy: 'store-and-network',
-      fetchKey,
-    },
-  );
-
-  const { prometheusQueryPresets } =
-    useLazyLoadQuery<AutoScalingRuleListPresetsQuery>(
-      graphql`
-        query AutoScalingRuleListPresetsQuery {
-          prometheusQueryPresets {
-            edges {
-              node {
-                id
-                name
-              }
-            }
-          }
-        }
-      `,
-      {},
-    );
-
-  const presetMap = (() => {
-    const map = new Map<string, string>();
-    if (prometheusQueryPresets?.edges) {
-      for (const edge of prometheusQueryPresets.edges) {
-        if (edge?.node) {
-          map.set(toLocalId(edge.node.id), edge.node.name);
-        }
-      }
-    }
-    return map;
-  })();
-
-  const autoScalingRuleNodes = filterOutNullAndUndefined(
-    _.map(data?.deployment?.autoScalingRules?.edges, 'node'),
-  );
-
-  const totalCount = data?.deployment?.autoScalingRules?.count ?? 0;
-
-  const commitDeleteMutation =
-    useMutationWithPromise<AutoScalingRuleListDeleteMutation>(graphql`
-      mutation AutoScalingRuleListDeleteMutation(
-        $input: DeleteAutoScalingRuleInput!
-      ) {
-        deleteAutoScalingRule(input: $input) {
-          id
-        }
-      }
-    `);
-
-  const handleRefetch = () => {
-    startRefetchTransition(() => {
-      updateFetchKey();
-    });
-  };
-
-  const handleDeleteRule = (ruleId: string, metricName: string) => {
-    setDeletingRule({ id: ruleId, metricName });
-  };
-
-  return (
-    <>
-      <BAIFlex direction="column" align="stretch" gap="sm">
-        <BAIFlex align="center" gap="sm">
-          <BAIGraphQLPropertyFilter
-            style={{ flex: 1 }}
-            filterProperties={[
-              {
-                key: 'createdAt',
-                propertyLabel: t('autoScalingRule.CreatedAt'),
-                type: 'datetime',
-                operators: ['after', 'before'],
-                defaultOperator: 'after',
-              },
-              {
-                key: 'lastTriggeredAt',
-                propertyLabel: t('autoScalingRule.LastTriggered'),
-                type: 'datetime',
-                operators: ['after', 'before'],
-                defaultOperator: 'after',
-              },
-            ]}
-            value={graphQLFilter}
-            onChange={(filter) => {
-              startRefetchTransition(() => {
-                setQueryParams({ filter: filter ?? null });
-                setTablePaginationOption({ current: 1 });
-              });
-            }}
-          />
-          <BAIFetchKeyButton
-            loading={isPendingRefetch}
-            value=""
-            onChange={() => {
-              startRefetchTransition(() => updateFetchKey());
-            }}
-          />
-          <BAIButton
-            type="primary"
-            icon={<PlusIcon />}
-            disabled={isEndpointDestroying || !isOwnedByCurrentUser}
-            onClick={() => {
-              setEditingRuleId(null);
-              setIsOpenEditorModal(true);
-            }}
-          >
-            {t('modelService.AddRules')}
-          </BAIButton>
-        </BAIFlex>
-        <AutoScalingRuleListNodes
-          autoScalingRulesFrgmt={autoScalingRuleNodes}
-          presetMap={presetMap}
-          order={orderString}
-          loading={
-            isPendingRefetch || deferredQueryVariables !== queryVariables
-          }
-          tableSettings={{
-            columnOverrides: columnOverrides,
-            onColumnOverridesChange: setColumnOverrides,
-          }}
-          onChangeOrder={(order) => {
-            startRefetchTransition(() => {
-              setQueryParams({
-                order: order ? (order as 'createdAt' | '-createdAt') : null,
-              });
-            });
-          }}
-          pagination={{
-            pageSize: tablePaginationOption.pageSize,
-            current: tablePaginationOption.current,
-            total: totalCount,
-            onChange: (current, pageSize) => {
-              setTablePaginationOption({ current, pageSize });
-            },
-          }}
-          isEndpointDestroying={isEndpointDestroying}
-          isOwnedByCurrentUser={isOwnedByCurrentUser}
-          onEditRule={(id) => {
-            setEditingRuleId(id);
-            setIsOpenEditorModal(true);
-          }}
-          onDeleteRule={handleDeleteRule}
-        />
-      </BAIFlex>
-      <BAIUnmountAfterClose>
-        <AutoScalingRuleEditorModal
-          open={isOpenEditorModal}
-          modelDeploymentId={toLocalId(deploymentId)}
-          autoScalingRuleFrgmt={
-            editingRuleId
-              ? (autoScalingRuleNodes.find((r) => r.id === editingRuleId) ??
-                null)
-              : null
-          }
-          onRequestClose={(success) => {
-            setIsOpenEditorModal(false);
-            if (success) {
-              handleRefetch();
-            }
-          }}
-          afterClose={() => {
-            setEditingRuleId(null);
-          }}
-        />
-      </BAIUnmountAfterClose>
-      <BAIDeleteConfirmModal
-        open={!!deletingRule}
-        title={t('autoScalingRule.DeleteAutoScalingRule')}
-        description={t('autoScalingRule.DeleteConfirmation')}
-        items={
-          deletingRule
-            ? [{ key: deletingRule.id, label: deletingRule.metricName }]
-            : []
-        }
-        reversible
-        onOk={() => {
-          if (!deletingRule) return;
-          return commitDeleteMutation({
-            input: { id: toLocalId(deletingRule.id) },
-          })
-            .then(() => {
-              setDeletingRule(null);
-              handleRefetch();
-              message.success({
-                key: 'autoscaling-rule-deleted',
-                content: t('autoScalingRule.SuccessfullyDeleted'),
-              });
-            })
-            .catch((error) => {
-              const errors = Array.isArray(error) ? error : [error];
-              for (const err of errors) {
-                message.error(err?.message || t('dialog.ErrorOccurred'));
-              }
-            });
-        }}
-        onCancel={() => setDeletingRule(null)}
-      />
-    </>
-  );
-};
-
-export default AutoScalingRuleList;
+export default AutoScalingRuleListNodes;

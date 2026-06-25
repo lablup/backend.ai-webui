@@ -3,14 +3,15 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
-  DeploymentReplicasTabListQuery,
+  DeploymentReplicasCardListQuery,
   ReplicaOrderBy,
-} from '../__generated__/DeploymentReplicasTabListQuery.graphql';
-import { DeploymentReplicasTab_deployment$key } from '../__generated__/DeploymentReplicasTab_deployment.graphql';
+} from '../__generated__/DeploymentReplicasCardListQuery.graphql';
+import { DeploymentReplicasCard_deployment$key } from '../__generated__/DeploymentReplicasCard_deployment.graphql';
 import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
 import { RouteSchedulingHistoryModalQuery } from '../__generated__/RouteSchedulingHistoryModalQuery.graphql';
 import { convertToOrderBy } from '../helper';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import BAIErrorBoundary from './BAIErrorBoundary';
 import BAIRadioGroup from './BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import ReplicaStatusTag, { ReplicaStatus } from './ReplicaStatusTag';
@@ -18,10 +19,11 @@ import RouteSchedulingHistoryModal, {
   RouteSchedulingHistoryQuery,
 } from './RouteSchedulingHistoryModal';
 import SessionDetailDrawer from './SessionDetailDrawer';
-import { HistoryOutlined } from '@ant-design/icons';
-import { Tooltip, Typography } from 'antd';
+import { HistoryOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { Skeleton, Tooltip, Typography, theme } from 'antd';
 import {
   BAIButton,
+  BAICard,
   BAIColumnType,
   BAIFetchKeyButton,
   BAIFlex,
@@ -31,6 +33,7 @@ import {
   BAITable,
   BAITag,
   BAIUnmountAfterClose,
+  INITIAL_FETCH_KEY,
   filterOutEmpty,
   safeDecodeUuid,
   toLocalId,
@@ -46,7 +49,7 @@ import {
   parseAsStringLiteral,
   useQueryStates,
 } from 'nuqs';
-import React, { useState, useTransition } from 'react';
+import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -86,8 +89,8 @@ const isEnableSorter = (key: string) =>
 const toReplicaTagStatus = (value?: string | null): ReplicaStatus =>
   (value as ReplicaStatus) ?? 'NOT_CHECKED';
 
-interface DeploymentReplicasTabProps {
-  deploymentFrgmt: DeploymentReplicasTab_deployment$key;
+interface DeploymentReplicasCardProps {
+  deploymentFrgmt: DeploymentReplicasCard_deployment$key;
   deploymentId: string;
   // External fetch key (e.g. bumped by the page when a new revision is added
   // and replicas are spawned) — combined with the local manual-refresh key so
@@ -95,7 +98,49 @@ interface DeploymentReplicasTabProps {
   replicaFetchKey?: string;
 }
 
-const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
+/**
+ * DeploymentReplicasCard — top-level Replicas card on the Deployment detail
+ * page. Owns the `BAICard` (title + tooltip) and the error/loading boundaries
+ * so the card header stays visible while the replicas list (loaded by the
+ * inner `DeploymentReplicasCardContent`) suspends.
+ */
+const DeploymentReplicasCard: React.FC<DeploymentReplicasCardProps> = ({
+  deploymentFrgmt,
+  deploymentId,
+  replicaFetchKey,
+}) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { token } = theme.useToken();
+
+  return (
+    <BAICard
+      title={
+        <BAIFlex gap="xs" align="center">
+          {t('deployment.tab.Replicas')}
+          <Tooltip title={t('deployment.tab.description.Replicas')}>
+            <QuestionCircleOutlined
+              style={{ color: token.colorTextDescription }}
+            />
+          </Tooltip>
+        </BAIFlex>
+      }
+      styles={{ body: { paddingTop: 0 } }}
+    >
+      <BAIErrorBoundary>
+        <Suspense fallback={<Skeleton active />}>
+          <DeploymentReplicasCardContent
+            deploymentFrgmt={deploymentFrgmt}
+            deploymentId={deploymentId}
+            replicaFetchKey={replicaFetchKey}
+          />
+        </Suspense>
+      </BAIErrorBoundary>
+    </BAICard>
+  );
+};
+
+const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
   deploymentFrgmt,
   deploymentId,
   replicaFetchKey,
@@ -105,6 +150,8 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
   const [isPending, startTransition] = useTransition();
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
+    // Keep the original setting key (component renamed Tab→Card) so users don't
+    // lose saved column customizations.
     'table_column_overrides.DeploymentReplicasTab',
   );
 
@@ -133,7 +180,7 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
 
   useFragment(
     graphql`
-      fragment DeploymentReplicasTab_deployment on ModelDeployment {
+      fragment DeploymentReplicasCard_deployment on ModelDeployment {
         id
       }
     `,
@@ -175,6 +222,13 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
   }));
 
   const [fetchKey, setFetchKey] = useState(0);
+  // First load (no manual refresh and no page-driven replica refetch yet) can
+  // serve cached data immediately and refresh in the background; explicit
+  // refresh / add-revision goes network-only for fresh data. Mirrors
+  // DeploymentRevisionHistoryTab.
+  const isInitialFetch =
+    fetchKey === 0 &&
+    (replicaFetchKey === undefined || replicaFetchKey === INITIAL_FETCH_KEY);
   const baiClient = useConnectedBAIClient();
   const supportsRouteSchedulingHistory = baiClient.supports(
     'route-scheduling-history',
@@ -191,9 +245,9 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
     useState<DeploymentRevisionDetail_revision$key | null>(null);
 
   const { deployment: listData } =
-    useLazyLoadQuery<DeploymentReplicasTabListQuery>(
+    useLazyLoadQuery<DeploymentReplicasCardListQuery>(
       graphql`
-        query DeploymentReplicasTabListQuery(
+        query DeploymentReplicasCardListQuery(
           $deploymentId: ID!
           $filter: ReplicaFilter
           $orderBy: [ReplicaOrderBy!]
@@ -237,7 +291,7 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
       { deploymentId, ...queryVars },
       {
         fetchKey: `${fetchKey}-${replicaFetchKey ?? ''}`,
-        fetchPolicy: 'network-only',
+        fetchPolicy: isInitialFetch ? 'store-and-network' : 'network-only',
       },
     );
 
@@ -571,4 +625,4 @@ const DeploymentReplicasTab: React.FC<DeploymentReplicasTabProps> = ({
   );
 };
 
-export default DeploymentReplicasTab;
+export default DeploymentReplicasCard;

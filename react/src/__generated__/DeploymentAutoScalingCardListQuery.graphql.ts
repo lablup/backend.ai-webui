@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a73fd3a3228696ab5d292538e774da34>>
+ * @generated SignedSource<<c3c65e653e35f168ed3ced3cc5cffb7b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -36,14 +36,14 @@ export type NullableDateTimeFilter = {
   isNull?: boolean | null | undefined;
   notEquals?: string | null | undefined;
 };
-export type AutoScalingRuleListQuery$variables = {
+export type DeploymentAutoScalingCardListQuery$variables = {
   deploymentId: string;
   filter?: AutoScalingRuleFilter | null | undefined;
   limit?: number | null | undefined;
   offset?: number | null | undefined;
   orderBy?: ReadonlyArray<AutoScalingRuleOrderBy> | null | undefined;
 };
-export type AutoScalingRuleListQuery$data = {
+export type DeploymentAutoScalingCardListQuery$data = {
   readonly deployment: {
     readonly autoScalingRules: {
       readonly count: number;
@@ -57,9 +57,9 @@ export type AutoScalingRuleListQuery$data = {
     } | null | undefined;
   } | null | undefined;
 };
-export type AutoScalingRuleListQuery = {
-  response: AutoScalingRuleListQuery$data;
-  variables: AutoScalingRuleListQuery$variables;
+export type DeploymentAutoScalingCardListQuery = {
+  response: DeploymentAutoScalingCardListQuery$data;
+  variables: DeploymentAutoScalingCardListQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -149,7 +149,7 @@ return {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "AutoScalingRuleListQuery",
+    "name": "DeploymentAutoScalingCardListQuery",
     "selections": [
       {
         "alias": null,
@@ -222,7 +222,7 @@ return {
       (v1/*: any*/)
     ],
     "kind": "Operation",
-    "name": "AutoScalingRuleListQuery",
+    "name": "DeploymentAutoScalingCardListQuery",
     "selections": [
       {
         "alias": null,
@@ -345,16 +345,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "79f124acac426955bf7fe564f6d9a5c1",
+    "cacheID": "41c9b35cb41550bd8f8cde32c8b21c1a",
     "id": null,
     "metadata": {},
-    "name": "AutoScalingRuleListQuery",
+    "name": "DeploymentAutoScalingCardListQuery",
     "operationKind": "query",
-    "text": "query AutoScalingRuleListQuery(\n  $deploymentId: ID!\n  $offset: Int\n  $limit: Int\n  $orderBy: [AutoScalingRuleOrderBy!]\n  $filter: AutoScalingRuleFilter\n) {\n  deployment(id: $deploymentId) {\n    autoScalingRules(offset: $offset, limit: $limit, orderBy: $orderBy, filter: $filter) {\n      count\n      edges {\n        node {\n          id\n          metricName\n          ...AutoScalingRuleListNodesFragment\n          ...AutoScalingRuleEditorModalFragment\n        }\n      }\n    }\n    id\n  }\n}\n\nfragment AutoScalingRuleEditorModalFragment on AutoScalingRule {\n  id\n  metricSource\n  metricName\n  minThreshold\n  maxThreshold\n  stepSize\n  timeWindow\n  minReplicas\n  maxReplicas\n  prometheusQueryPresetId\n}\n\nfragment AutoScalingRuleListNodesFragment on AutoScalingRule {\n  id\n  metricSource\n  metricName\n  minThreshold\n  maxThreshold\n  stepSize\n  timeWindow\n  minReplicas\n  maxReplicas\n  prometheusQueryPresetId\n  createdAt\n  lastTriggeredAt\n  ...AutoScalingRuleEditorModalFragment\n}\n"
+    "text": "query DeploymentAutoScalingCardListQuery(\n  $deploymentId: ID!\n  $offset: Int\n  $limit: Int\n  $orderBy: [AutoScalingRuleOrderBy!]\n  $filter: AutoScalingRuleFilter\n) {\n  deployment(id: $deploymentId) {\n    autoScalingRules(offset: $offset, limit: $limit, orderBy: $orderBy, filter: $filter) {\n      count\n      edges {\n        node {\n          id\n          metricName\n          ...AutoScalingRuleListNodesFragment\n          ...AutoScalingRuleEditorModalFragment\n        }\n      }\n    }\n    id\n  }\n}\n\nfragment AutoScalingRuleEditorModalFragment on AutoScalingRule {\n  id\n  metricSource\n  metricName\n  minThreshold\n  maxThreshold\n  stepSize\n  timeWindow\n  minReplicas\n  maxReplicas\n  prometheusQueryPresetId\n}\n\nfragment AutoScalingRuleListNodesFragment on AutoScalingRule {\n  id\n  metricSource\n  metricName\n  minThreshold\n  maxThreshold\n  stepSize\n  timeWindow\n  minReplicas\n  maxReplicas\n  prometheusQueryPresetId\n  createdAt\n  lastTriggeredAt\n  ...AutoScalingRuleEditorModalFragment\n}\n"
   }
 };
 })();
 
-(node as any).hash = "bfa849a7cb503e04b249b2f73510b568";
+(node as any).hash = "56b6637e50dbda972f85edac73bc04b5";
 
 export default node;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b769c4514d444fdb6dcdba4b435e99d9>>
+ * @generated SignedSource<<230bbce74d2e1191ab3ba94a09384365>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,17 +11,7 @@
 import { ReaderFragment } from 'relay-runtime';
 export type DeploymentStatus = "DEPLOYING" | "PENDING" | "READY" | "SCALING" | "STOPPED" | "STOPPING" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
-export type DeploymentConfigurationSection_deployment$data = {
-  readonly currentRevision: {
-    readonly id: string;
-    readonly revisionNumber: number;
-    readonly " $fragmentSpreads": FragmentRefs<"DeploymentRevisionDetail_revision">;
-  } | null | undefined;
-  readonly deployingRevision: {
-    readonly id: string;
-    readonly revisionNumber: number;
-    readonly " $fragmentSpreads": FragmentRefs<"DeploymentRevisionDetail_revision">;
-  } | null | undefined;
+export type DeploymentBasicInfoCard_deployment$data = {
   readonly id: string;
   readonly metadata: {
     readonly domainName: string;
@@ -43,12 +33,12 @@ export type DeploymentConfigurationSection_deployment$data = {
   readonly replicaState: {
     readonly desiredReplicaCount: number;
   };
-  readonly " $fragmentSpreads": FragmentRefs<"DeploymentRevisionHistoryTab_deployment" | "DeploymentSettingModal_deployment">;
-  readonly " $fragmentType": "DeploymentConfigurationSection_deployment";
+  readonly " $fragmentSpreads": FragmentRefs<"DeploymentSettingModal_deployment">;
+  readonly " $fragmentType": "DeploymentBasicInfoCard_deployment";
 };
-export type DeploymentConfigurationSection_deployment$key = {
-  readonly " $data"?: DeploymentConfigurationSection_deployment$data;
-  readonly " $fragmentSpreads": FragmentRefs<"DeploymentConfigurationSection_deployment">;
+export type DeploymentBasicInfoCard_deployment$key = {
+  readonly " $data"?: DeploymentBasicInfoCard_deployment$data;
+  readonly " $fragmentSpreads": FragmentRefs<"DeploymentBasicInfoCard_deployment">;
 };
 
 const node: ReaderFragment = (function(){
@@ -56,38 +46,22 @@ var v0 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-},
-v1 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
   "name": "name",
   "storageKey": null
-},
-v2 = [
-  (v0/*: any*/),
-  {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "revisionNumber",
-    "storageKey": null
-  },
-  {
-    "args": null,
-    "kind": "FragmentSpread",
-    "name": "DeploymentRevisionDetail_revision"
-  }
-];
+};
 return {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
-  "name": "DeploymentConfigurationSection_deployment",
+  "name": "DeploymentBasicInfoCard_deployment",
   "selections": [
-    (v0/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "id",
+      "storageKey": null
+    },
     {
       "args": null,
       "kind": "FragmentSpread",
@@ -101,7 +75,7 @@ return {
       "name": "metadata",
       "plural": false,
       "selections": [
-        (v1/*: any*/),
+        (v0/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -146,7 +120,7 @@ return {
               "name": "basicInfo",
               "plural": false,
               "selections": [
-                (v1/*: any*/)
+                (v0/*: any*/)
               ],
               "storageKey": null
             }
@@ -203,31 +177,6 @@ return {
         }
       ],
       "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "ModelRevision",
-      "kind": "LinkedField",
-      "name": "currentRevision",
-      "plural": false,
-      "selections": (v2/*: any*/),
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "ModelRevision",
-      "kind": "LinkedField",
-      "name": "deployingRevision",
-      "plural": false,
-      "selections": (v2/*: any*/),
-      "storageKey": null
-    },
-    {
-      "args": null,
-      "kind": "FragmentSpread",
-      "name": "DeploymentRevisionHistoryTab_deployment"
     }
   ],
   "type": "ModelDeployment",
@@ -235,6 +184,6 @@ return {
 };
 })();
 
-(node as any).hash = "021c9e11d0201fb948249c5b903b8992";
+(node as any).hash = "25c43526c832d75ea335a66d0e86f3af";
 
 export default node;

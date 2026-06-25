@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ed436f8481c3be81112d6a4a1e85d1bc>>
+ * @generated SignedSource<<3a3751084a9001fb28178d913533d939>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,17 +12,17 @@ import { ConcreteRequest } from 'relay-runtime';
 export type DeleteDeploymentInput = {
   id: string;
 };
-export type DeploymentConfigurationSectionDeleteMutation$variables = {
+export type DeploymentBasicInfoCardDeleteMutation$variables = {
   input: DeleteDeploymentInput;
 };
-export type DeploymentConfigurationSectionDeleteMutation$data = {
+export type DeploymentBasicInfoCardDeleteMutation$data = {
   readonly deleteModelDeployment: {
     readonly id: string;
   } | null | undefined;
 };
-export type DeploymentConfigurationSectionDeleteMutation = {
-  response: DeploymentConfigurationSectionDeleteMutation$data;
-  variables: DeploymentConfigurationSectionDeleteMutation$variables;
+export type DeploymentBasicInfoCardDeleteMutation = {
+  response: DeploymentBasicInfoCardDeleteMutation$data;
+  variables: DeploymentBasicInfoCardDeleteMutation$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -64,7 +64,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "DeploymentConfigurationSectionDeleteMutation",
+    "name": "DeploymentBasicInfoCardDeleteMutation",
     "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -73,20 +73,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "DeploymentConfigurationSectionDeleteMutation",
+    "name": "DeploymentBasicInfoCardDeleteMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "ccb2e618fc149ec819f2dbee3d35c7a1",
+    "cacheID": "70ed95e6d8ed42187398c9bc2c13f5bb",
     "id": null,
     "metadata": {},
-    "name": "DeploymentConfigurationSectionDeleteMutation",
+    "name": "DeploymentBasicInfoCardDeleteMutation",
     "operationKind": "mutation",
-    "text": "mutation DeploymentConfigurationSectionDeleteMutation(\n  $input: DeleteDeploymentInput!\n) {\n  deleteModelDeployment(input: $input) {\n    id\n  }\n}\n"
+    "text": "mutation DeploymentBasicInfoCardDeleteMutation(\n  $input: DeleteDeploymentInput!\n) {\n  deleteModelDeployment(input: $input) {\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "739b8de15b5a7bdec89ece3d8628621f";
+(node as any).hash = "219d6f05b61219aeb47beff89d87a769";
 
 export default node;
