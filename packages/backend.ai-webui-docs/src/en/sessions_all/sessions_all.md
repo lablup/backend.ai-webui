@@ -161,9 +161,22 @@ dropdown menu on the **Confirm and Launch** step. See
   * Select Agent: Select the agent to be assigned. By default, the agent is automatically selected
     by the scheduler. The agent selector displays the actual amount of available resources for each agent.
     Currently, this feature is only supported in single-node, single-container environments.
-  * Cluster mode: Cluster mode allows users to create
-    multiple compute sessions at once. For more information, refer to the
+  * Cluster Mode: Choose how a single compute session is laid out across
+    agents. **Single Node** places the main node and all worker nodes on one
+    agent (a physical node or virtual machine), while **Multi Node** splits one
+    main node and one or more worker nodes across several agents. Hover the
+    (`?`) icon next to each option for a short description. After choosing a
+    mode, set the **Cluster Size** with the slider or number input: in
+    Single Node mode the size counts **containers** on one agent, and in
+    Multi Node mode it counts **nodes** spread across agents. The *remaining*
+    mark on the slider shows the largest size that can start immediately with
+    the resources currently allocated — a larger size is allowed, but the
+    session may stay pending until enough resources free up. A Multi Node
+    session with a size of 1 is created as a Single Node session. For more
+    information, refer to the
     [Overview of Backend.AI cluster compute session](#backendai-cluster-compute-session).
+
+    ![](../images/cluster_mode.png)
 
 :::note
 The Agent Select feature may not be available depending on the server environment.
