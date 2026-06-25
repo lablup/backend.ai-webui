@@ -645,6 +645,7 @@ Click the session name in the **Session** column to open the session detail draw
 Next to the status tag in the **Lifecycle** column is a history icon button. Click it to open the **Replica Scheduling History** modal for that replica, where you can review the replica's scheduling events filtered by date range, status, and other criteria.
 
 ![](../images/replica_scheduling_history.png)
+<!-- TODO: Capture screenshot of the Replica Scheduling History modal -->
 
 If a replica has encountered an error, clicking the error indicator on the row opens a JSON viewer modal that displays the raw error data. This is useful for diagnosing issues with individual replicas.
 

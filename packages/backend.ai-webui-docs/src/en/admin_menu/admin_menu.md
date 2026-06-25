@@ -297,113 +297,23 @@ also displayed in the Permission panel.
 
 ![](../images/group_folder_listed_in_B.png)
 
-<a id="manage-models-cards"></a>
-
-<a id="manage-model-cards"></a>
-
-## Manage Model Cards
-
-Model cards in the Model Store are created and managed through the [Admin Model Store Management](#admin-model-store-management) interface. Each model card is linked to a storage folder (vfolder) that contains the actual model files.
-
-### Setting Up the Model Store Folder
-
-:::note
-If the model is hosted on Hugging Face as a gated model, you will need to request access before downloading. Refer to [Gated models](https://huggingface.co/docs/hub/models-gated) for details.
-:::
-
-First, set the project to `model-store`.
-
-![](../images/select_project_to_model_store.png)
-
-Go to the Data page and click the **Create Folder** button. Configure the folder as follows:
-
-- **Usage Mode**: Model
-- **Type**: Project
-- **Permission**: Read-Write
-
-![](../images/model_store_folder.png)
-
-After creating the folder, download the model files into it. You can mount the model folder during session creation and use tools such as `huggingface-cli` to download model weights.
-
-:::note
-You need to download the model files manually into the folder. For instructions on how to download from Hugging Face, refer to [Downloading models](https://huggingface.co/docs/hub/models-downloading).
-:::
-
-Once the folder and its model files are ready, create a model card through the [Admin Model Store Management](#admin-model-store-management) interface and link it to this folder.
-
-![](../images/model_card_detail.png)
-
-### Model Definition File (Advanced — Custom Runtime)
-
-For the `Custom` runtime variant, you can optionally place a `model-definition.yaml` file in the model folder. This file tells Backend.AI how to start and operate the inference server during serving — including the startup command, health check settings, and any pre-start actions such as downloading model weights at launch time.
-
-:::note
-Runtime variants such as `vLLM`, `SGLang`, `NVIDIA NIM`, and `Modular MAX` do not require a `model-definition.yaml` file. These variants handle model configuration automatically based on the selected settings.
-:::
-
-The following is an example `model-definition.yaml` that starts a vLLM server using the `Custom` variant:
-
-```yaml
-models:
-  - name: "Llama-3.1-8B-Instruct"
-    model_path: "/models/Llama-3.1-8B-Instruct"
-    service:
-      pre_start_actions:
-        - action: run_command
-          args:
-            command:
-              - huggingface-cli
-              - download
-              - --local-dir
-              - /models/Llama-3.1-8B-Instruct
-              - --token
-              - hf_****
-              - meta-llama/Llama-3.1-8B-Instruct
-      start_command:
-        - /usr/bin/python
-        - -m
-        - vllm.entrypoints.openai.api_server
-        - --model
-        - /models/Llama-3.1-8B-Instruct
-        - --served-model-name
-        - Llama-3.1-8B-Instruct
-        - --tensor-parallel-size
-        - "1"
-        - --host
-        - "0.0.0.0"
-        - --port
-        - "8000"
-        - --max-model-len
-        - "4096"
-      port: 8000
-      health_check:
-        path: /v1/models
-        max_retries: 500
-```
-
-For a full description of the model definition format, refer to the [Model Definition Guide](../deployment/deployment.md#model-definition-guide) in the Model Serving documentation.
-
-:::note
-To enable the **Deploy** button on a model card in the Model Store, include `service-definition.toml` in the linked folder so Backend.AI can read the model service configuration. Add `model-definition.yaml` only when you use the `Custom` runtime variant; preset runtime variants (such as `vLLM`, `SGLang`, `NVIDIA NIM`, and `Modular MAX`) do not require it. For details on the service definition file, refer to the [Service Definition File](../deployment/deployment.md#service-definition-file) section in the Model Serving documentation.
-:::
-
 <a id="admin-features"></a>
 
-## Model Serving
+## Model Deployment
 
 <a id="admin-deployments-page"></a>
 <a id="admin-serving-page"></a>
 
 ### Admin Deployments Page
 
-Administrators and superadmins can access the Admin Deployments page at `/admin-deployments`, which provides a cross-project view of every deployment in the cluster. This page shows the **Project** column in addition to the standard deployment list columns, allowing admins to manage deployments across all projects.
+Administrators and superadmins can access the Admin Deployments page at `/admin-deployments`, which provides a cross-project view of every deployment in the cluster. The **Project** column is available in the deployment list but is hidden by default; you can enable it using the column settings.
 
 ![](../images/admin_serving_page.png)
 
 The Admin Deployments page has up to four tabs:
 
-- **Deployments**: Always shown. Displays the deployment list across all projects, with the same lifecycle and property filters as the user-facing Deployments page.
-- **Model Store Management**: Always shown. Available to superadmins only. See the [Admin Model Store Management](#admin-model-store-management) section below.
+- **Deployments**: Displays the deployment list across all projects, with the same lifecycle and property filters as the user-facing Deployments page.
+- **Model Store Management**: See the [Admin Model Store Management](#admin-model-store-management) section below.
 - **Prometheus Preset**: Lets administrators manage reusable Prometheus query presets. See the [Prometheus Query Presets](#prometheus-query-presets) section below.
 - **Deployment Presets**: Lets administrators manage reusable deployment presets that end users can apply when deploying a model. See the [Deployment Presets](#deployment-presets) section below.
 
@@ -413,17 +323,26 @@ Each individual admin deployment has its own dedicated route at `/admin-deployme
 
 #### Deployment Detail Page
 
-When you open a deployment from the Admin Deployments page, the **Revisions** card on the Deployment Detail Page provides three tabs: **Current Revision**, **Revision History**, and **Audit Log**. These behave the same as on the user-facing Deployments page — for the full description of each tab, see the [Revisions Tab](../deployment/deployment.md#revisions-tab) section in the Model Serving documentation.
+When you open a deployment from the Admin Deployments page, the **Revisions** card on the Deployment Detail Page provides three tabs: **Current Revision**, **Revision History**, and **Audit Log**. These behave the same as on the user-facing Deployments page — for the full description of each tab, see the [Revisions Tab](../deployment/deployment.md#revisions-tab) section in the Model Deployment documentation.
 
-- **Current Revision**: Shows the full configuration of the revision currently serving traffic. This includes a **Runtime Parameters** row that lists the runtime-variant parameter values configured for the revision (for `vLLM` and `SGLang` runtimes). The **Image** field is displayed in `<canonicalName>@<architecture>` format (for example, `cr.backend.ai/stable/pytorch:2.1-cuda12.1@aarch64`), so you can distinguish images by CPU architecture on mixed-architecture clusters.
-- **Revision History**: Lists every revision added to the deployment. Clicking a revision number opens a detail drawer that also shows the **Runtime Parameters** row for `vLLM` and `SGLang` revisions.
-- **Audit Log**: Shows a chronological record of every action taken on the deployment. Each entry lists the **Operation**, **Triggered By** (the user who performed the action), the **Time**, and the **Status**. A filter bar lets you narrow entries by **Status**, **Operation**, **Triggered By** (search by user ID), and a **Time** date-range picker. The tab uses lazy loading — its data is fetched only when you first activate the tab.
-
-   ![](../images/audit_log_tab.png)
+- **Current Revision**: Shows the full configuration of the revision currently serving traffic. This includes a **Runtime Parameters** row that lists the runtime-variant parameter values configured for the revision (for `vLLM` and `SGLang` runtimes).
+- **Revision History**: Lists every revision added to the deployment. Clicking a revision opens a detail view that shows the full configuration of that revision, including the **Runtime Parameters** row for `vLLM` and `SGLang` revisions.
+- **Audit Log**: Shows a record of actions performed on the deployment.
 
 :::note[Version requirement]
-The **Runtime Parameters** row on the Current Revision tab and in the Revision History detail drawer requires **Backend.AI Manager 26.4.4 or later**. On older backends this row is not shown.
+The **Runtime Parameters** row on the Current Revision tab and in the Revision History detail view requires **Backend.AI Manager 26.4.4 or later**. On older backends this row is not shown.
 :::
+
+The **Audit Log** tab tracks all action history for the deployment. Each entry includes:
+
+- **Time**: The timestamp when the action was performed.
+- **Operation**: The type of action performed.
+- **Status**: The result of the operation.
+- **Description**: Additional details about the operation.
+- **Duration**: The time taken to complete the operation.
+- **Triggered By**: The user who initiated the action.
+
+You can filter entries by **Status**, **Operation**, **Triggered By**, and a **Time** date-range picker.
 
 <a id="admin-model-store-management"></a>
 
@@ -479,6 +398,9 @@ Click the `Create Model Card` button to open the creation modal. Fill in the fol
    * `Internal`: Visible only to administrators of the owning domain and project. Regular users cannot see internal cards in their Model Store.
    * `Public`: Visible to all users who have access to the owning project.
 
+![](../images/model_card_create_modal.png)
+<!-- TODO: Capture screenshot of the Create Model Card modal -->
+
 #### Editing a Model Card
 
 Click the edit icon next to the model card name to modify an existing model card. The edit modal opens with previously entered fields already filled in.
@@ -495,164 +417,6 @@ The deletion confirmation dialog includes an **Also delete the associated model 
 - When this option is unchecked, only the model card record is removed; the linked storage folder remains untouched and can be reused for another model card.
 
 The same behavior applies to **bulk deletion** (the label becomes **Also delete all associated model folders**): each selected model card's linked storage folder is moved to the trash when the option is checked, and a trash notification is shown for each folder that was moved.
-
-<a id="deployment-presets"></a>
-
-## Deployment Presets
-
-A **Deployment Preset** is a reusable, administrator-curated bundle of deployment settings — image, runtime, resource slots, cluster mode, environment variables, startup command, replica count, visibility, and other defaults — that end users can apply when they create a model deployment from a storage folder. Presets let administrators publish a small set of vetted, known-good deployment shapes (for example, *vLLM-GPU-Large* or *SGLang-CPU-Small*) so that end users can deploy a model without having to choose every advanced field from scratch.
-
-![](../images/deployment_preset_list.png)
-
-### What Is a Deployment Preset?
-
-A Deployment Preset captures the defaults of a model deployment so that:
-
-- **Administrators** can offer end users a curated catalog of deployment shapes that match the organization's hardware and policy constraints.
-- **End users** can pick a preset when deploying a model from the Data page (via the *Create New Deployment with Preset* flow) and skip filling in advanced fields manually.
-- **Operators** can ensure that production deployments use consistent resource allocations, runtimes, and visibility defaults across the organization.
-
-When a deployment is created from a preset, the preset's values pre-populate the deployment launcher fields. Users can still review and adjust those fields before confirming the deployment.
-
-Each preset stores the following deployment defaults:
-
-- **Basic Info**: Name, description, runtime variant, and rank (display ordering).
-- **Image**: The container image to deploy, shown in `<canonicalName>@<architecture>` format.
-- **Runtime Parameters**: Serving-framework parameters for vLLM or SGLang runtimes (not shown for the Custom runtime).
-- **Resources**: Resource slots (CPU, memory, GPU), shared memory (SHM), and resource options.
-- **Cluster**: Cluster mode (Single-Node or Multi-Node) and cluster size.
-- **Execution**: Startup command, environment variables, and bootstrap script.
-- **Deployment Defaults**: Replica count, revision history limit, and the *Open to Public* visibility default.
-- **Health Check**: Optional periodic health check, gated behind an *Enable Health Check* toggle.
-- **Model Definition** (optional): Model name, model path, service configuration (port, startup command, pre-start actions), and metadata.
-
-<a id="managing-deployment-presets"></a>
-
-### Managing Deployment Presets
-
-Only administrators can create, edit, or delete deployment presets. Administrators manage them from the **Deployment Presets** tab on the Admin Deployments page.
-
-![](../images/admin_deployment_preset_list.png)
-
-The list view shows each preset with its key fields. From this list, administrators can:
-
-- Filter presets by name, runtime, or tag.
-- Click a tag chip on any row to filter the list to presets sharing that tag.
-- Open a preset's detail view to inspect its full configuration.
-- Create, edit, or delete a preset.
-
-The following columns are visible by default: **Name**, **Runtime**, **Image** (displayed in `<canonicalName>@<architecture>` format and copyable), **Replicas**, **Created**, and **Modified** (the timestamp when the preset was last updated).
-
-Additional columns are hidden by default and can be shown using the column-settings gear button (⚙) at the right of the table header: **Description**, **Startup Command**, **Open to Public** (shown as a Public/Private tag), and **Rank** (sortable). Your column choices are persisted per browser across sessions.
-
-#### Create a Deployment Preset
-
-1. Click the **Create Preset** button at the top right of the preset list.
-2. Fill in the fields in the *Create Preset* dialog. The dialog is organized into the following sections:
-
-   - **Basic Info**:
-      * **Name**: A unique preset name (for example, `vLLM-GPU-Large`).
-      * **Description**: A short summary of the preset's intended use.
-      * **Runtime**: The runtime variant (for example, vLLM, SGLang, or Custom).
-      * **Rank**: Display ordering among presets of the same runtime. Lower values appear first.
-   - **Image**: The container image to use when deploying. Images are listed in `<canonicalName>@<architecture>` format (for example, `cr.backend.ai/stable/pytorch:2.1-cuda12.1@aarch64`), which helps distinguish images by CPU architecture on mixed-architecture clusters.
-   - **Runtime Parameters** (appears only when a non-Custom runtime such as **vLLM** or **SGLang** is selected): Configure the serving framework parameters for this preset. Parameters are organized in tabs — for example, **Model Loading**, **Resource Memory**, and **Serving Performance**. Required parameters are marked with a red asterisk (★) next to the label, and the save button stays disabled until every required parameter is filled in — including required parameters on tabs you have not visited yet.
-   - **Resources**: Resource slots (CPU, memory, GPU), shared memory, and resource options (key/value pairs).
-   - **Cluster**: Cluster mode (Single-Node or Multi-Node) and cluster size.
-   - **Execution**: **Startup Command**, environment variables, and bootstrap script. The Startup Command field shows a shell-syntax hint (`Shell syntax: /bin/bash -c "cmd1; cmd2"`) because the command is executed as `/bin/bash -c <command>`. This means you can use shell operators such as `;`, `|`, and `&&` directly in the field.
-   - **Deployment Defaults**:
-      * **Replica Count**: Default number of replicas created from this preset.
-      * **Revision History Limit**: Number of past revisions kept for each deployment created from this preset.
-      * **Open to Public**: Whether the endpoint of deployments created from this preset is reachable without an access token by default.
-   - **Health Check**: This section has an **Enable Health Check** toggle, which is **off** by default. When the toggle is off, the health check fields are hidden. When you turn it on, the health check fields appear and become configurable: Path, Interval, Max Retries, Max Wait Time, Status Code, and Startup Grace Period.
-   - **Model Definition** (optional): Enable the toggle to configure a structured model definition. When enabled:
-      * **Model Name** and **Model Path**: The model identifier and its location in the container.
-      * **Service Configuration** (optional): Port, shell, startup command, and pre-start actions.
-      * **Metadata** (optional): Author, title, version, task, category, and other descriptive fields.
-
-   ![](../images/deployment_preset_create_modal.png)
-
-3. Click **Create Preset** to save. A success notification confirms the preset has been created.
-
-:::tip
-If a required field is missing or invalid, the **Create Preset** button stays disabled until the error is resolved. Required fields show inline validation messages as you type.
-:::
-
-:::note[Version requirement]
-The **Enable Health Check** toggle and required-parameter validation for Runtime Parameters require **Backend.AI Manager 26.4.4 or later**. On older backends, the health check is not gated behind a toggle and all runtime parameters are treated as optional. The Enable Health Check toggle also applies to the vLLM/SGLang Advanced Mode runtime parameters.
-:::
-
-#### Edit a Deployment Preset
-
-1. From the preset list, open the action menu on the preset row (or open the preset's detail view) and select **Edit Preset**.
-2. The *Edit Preset* dialog opens with the preset's current values pre-filled. The available sections are identical to the *Create Preset* dialog.
-3. Adjust the fields as needed, then click **Edit Preset** to save your changes.
-
-![](../images/deployment_preset_edit_modal.png)
-
-Editing a preset only changes the defaults for **future** deployments. Existing deployments that were already created from this preset are not modified.
-
-#### Delete a Deployment Preset
-
-1. From the preset list (or the preset's detail view), open the action menu on the preset and select **Delete Preset**.
-2. A typed-confirmation dialog appears asking you to type the preset's name to confirm. The **OK** button stays disabled until the typed value matches the preset name exactly.
-3. Type the preset's name, then click **OK** to confirm.
-
-:::danger
-Deleting a deployment preset is **irreversible**. The preset itself is removed, but deployments that were already created from it continue to run unaffected. Future deployments can no longer reference this preset.
-:::
-
-<a id="using-a-preset-when-deploying-a-model"></a>
-
-### Using a Preset When Deploying a Model
-
-End users apply a deployment preset through the **VFolder Deploy** modal, which opens when you deploy a model from a storage folder on the Data page.
-
-1. From the Data page, locate the model folder you want to deploy and click **Deploy as Service**.
-2. The VFolder Deploy modal opens, listing the deployment presets available for your project.
-3. Click a preset row to open its **Deployment Preset Detail** view. The detail view shows every field that the preset will apply when used — image, runtime, resources, cluster mode, replica count, visibility, and so on. The detail view also includes a **Health Check** card:
-   - When health check is enabled in the preset: the card shows **Enabled** along with the configured Path, Interval, Max Retries, Max Wait Time, Status Code, and Startup Grace Period.
-   - When health check is disabled: the card shows **Disabled**.
-
-   ![](../images/vfolder_deploy_preset_detail.png)
-
-4. From the detail view, choose how to proceed:
-
-   - **Auto-deploy**: Create the deployment immediately using the preset's values as-is. This is the fastest path; the deployment is created in one click with no further input required.
-   - **Manual deploy** (*Create New Deployment with Preset*): Open the deployment launcher with all fields pre-populated from the preset, so you can review and adjust before confirming.
-
-:::note
-The active preset, tab key, and other navigation state are preserved in the URL via `URLSearchParams`. You can share a link to a specific preset's detail view, and the recipient lands on the same screen.
-:::
-
-### Pre-Populated Launcher Fields
-
-When you choose the manual-deploy path, the deployment launcher opens with every field pre-filled from the selected preset:
-
-- Image, runtime variant, and resource group.
-- Resource slots, shared memory, and resource options.
-- Cluster mode and cluster size.
-- Startup command and environment variables.
-- Replica count, revision history limit, and **Open to Public** visibility.
-- Auto-selected resource preset, which is preserved across the launcher's initial-value resolution.
-
-You can edit any pre-populated field before deploying. Editing a field does **not** modify the underlying preset — it only changes the values used for this one deployment. The preset's defaults remain unchanged for future deployments.
-
-:::tip
-If the auto-selected resource preset is the right one for your workload, leave it as-is. The launcher preserves the auto-selection across the initial-values pass, so you do not need to re-select it after switching presets.
-:::
-
-### Filtering by Tags
-
-Both the user-facing preset list and the admin preset list support **clickable tag chips** that filter the list to presets sharing the clicked tag.
-
-![](../images/deployment_preset_tag_filter.png)
-
-1. Locate a preset row that has the tag you want to filter by.
-2. Click the tag chip on that row.
-3. The list refreshes to show only presets that include the selected tag. The active filter is reflected in the filter bar; clear it to return to the full list.
-
-This is useful when you have many presets and want to quickly narrow down to, for example, all GPU-backed presets or all presets for a specific runtime family.
 
 <a id="prometheus-query-presets"></a>
 
@@ -732,7 +496,130 @@ Click the **Delete** action in the **Name** cell of a preset row to open the del
 Deleting a Prometheus query preset is **permanent and cannot be undone**. Auto-scaling rules and other features that reference the deleted preset will lose their query template and may stop functioning until they are reconfigured to point at a different preset.
 :::
 
-Because deletion is irreversible, the dialog requires you to **type the preset's name** into the confirmation input before the **Delete** button becomes enabled. This typed-confirmation pattern (`BAIConfirmModalWithInput`) is used consistently across Backend.AI for permanent-delete actions. Type the exact preset name shown in the dialog title and click **Delete** to confirm.
+Because deletion is irreversible, the dialog requires you to **type the preset's name** into the confirmation input before the **Delete** button becomes enabled. Type the exact preset name shown in the dialog title and click **Delete** to confirm.
+
+<a id="deployment-presets"></a>
+
+## Deployment Presets
+
+A **Deployment Preset** is a reusable, administrator-curated bundle of deployment settings — image, runtime, resource slots, cluster mode, environment variables, startup command, replica count, visibility, and other defaults — that end users can apply when they create a model deployment from a storage folder. Presets let administrators publish a small set of vetted, known-good deployment shapes (for example, *vLLM-GPU-Large* or *SGLang-CPU-Small*) so that end users can deploy a model without having to choose every advanced field from scratch.
+
+![](../images/deployment_preset_list.png)
+
+### What Is a Deployment Preset?
+
+A Deployment Preset captures the defaults of a model deployment so that:
+
+- **Administrators** can offer end users a curated catalog of deployment shapes that match the organization's hardware and policy constraints.
+- **End users** can pick a preset when deploying a model from the Data page (via the *Create New Deployment with Preset* flow) and skip filling in advanced fields manually.
+- **Operators** can ensure that production deployments use consistent resource allocations, runtimes, and visibility defaults across the organization.
+
+When a deployment is created from a preset, the preset's values pre-populate the deployment fields. Users can still review and adjust those fields before confirming the deployment.
+
+Each preset stores the following deployment defaults:
+
+- **Basic Info**: Name, description, runtime variant, and image.
+- **Runtime Parameters**: Serving-framework parameters for vLLM or SGLang runtimes (not shown for the Custom runtime).
+- **Resources**: Resource slots (CPU, memory, GPU), shared memory (SHM), and resource options.
+- **Cluster**: Cluster mode (Single-Node or Multi-Node) and cluster size.
+- **Model & Execution**: Startup command, bootstrap script, and environment variables.
+- **Model Definition** (optional): Model name, model path, service configuration (port, startup command, pre-start actions), Health Check, and metadata.
+- **Deployment**: Replica count, revision history limit, and the *Open to Public* visibility default.
+
+<a id="managing-deployment-presets"></a>
+
+### Managing Deployment Presets
+
+Only administrators can create, edit, or delete deployment presets. Administrators manage them from the **Deployment Presets** tab on the Admin Deployments page.
+
+![](../images/admin_deployment_preset_list.png)
+
+The list view shows each preset with its key fields. From this list, administrators can:
+
+- Filter presets by name or runtime.
+- Open a preset's detail view to inspect its full configuration.
+- Create, edit, or delete a preset.
+
+The following columns are visible by default: **Name** (with inline edit and delete actions), **Runtime**, **Image** (displayed in `<canonicalName>@<architecture>` format and copyable), **Replicas**, **Created At**, and **Modified At**.
+
+Additional columns are hidden by default and can be shown using the column-settings gear button (⚙) at the right of the table header: **Description**, **Startup Command**, **Cluster**, **Strategy**, **Open to Public** (shown as a Public/Private tag), and **Revision History Limit**. Your column choices are persisted per browser across sessions.
+
+#### Create a Deployment Preset
+
+1. Click the **Create Preset** button at the top right of the preset list.
+2. Fill in the fields in the *Create Preset* dialog. The dialog is organized into the following cards, presented across two steps:
+
+   - **Basic Info**:
+      * **Name** (required): A unique preset name (for example, `vLLM-GPU-Large`).
+      * **Description**: A short summary of the preset's intended use.
+      * **Runtime** (required): The runtime variant (for example, vLLM, SGLang, or Custom).
+      * **Runtime Parameters** (appears only when a non-Custom runtime such as **vLLM** or **SGLang** is selected): The serving framework parameters for this preset, organized in tabs — for example, **Model Loading**, **Resource Memory**, and **Serving Performance**. Required parameters are marked with a red asterisk (★) next to the label, and the save button stays disabled until every required parameter is filled in — including required parameters on tabs you have not visited yet.
+      * **Image** (required): The container image to use when deploying. Images are listed in `<canonicalName>@<architecture>` format (for example, `cr.backend.ai/stable/pytorch:2.1-cuda12.1@aarch64`), which helps distinguish images by CPU architecture on mixed-architecture clusters.
+   - **Resources**: Resource slots (CPU, memory, GPU), shared memory, and resource options (key/value pairs).
+   - **Cluster**: Cluster mode (Single-Node or Multi-Node) and cluster size.
+   - **Deployment**:
+      * **Replica Count** (required): Default number of replicas created from this preset.
+      * **Revision History Limit**: Number of past revisions kept for each deployment created from this preset.
+      * **Open to Public**: A checkbox controlling whether the endpoint of deployments created from this preset is reachable without an access token by default.
+   - **Model & Execution**: **Startup Command**, bootstrap script, and environment variables. The Startup Command field shows a shell-syntax hint (`Shell syntax: /bin/bash -c "cmd1; cmd2"`) because the command is executed as `/bin/bash -c <command>`. This means you can use shell operators such as `;`, `|`, and `&&` directly in the field.
+   - **Model Definition** (optional): Enable the toggle to configure a structured model definition. When enabled:
+      * **Model Name** and **Model Path**: The model identifier and its location in the container.
+      * **Service Configuration**: Port, shell, startup command, and pre-start actions.
+      * **Health Check**: An **Enable Health Check** toggle, which is **off** by default. When the toggle is off, the health check fields are hidden. When you turn it on, the health check fields appear and become configurable: Path, Interval, Max Retries, Max Wait Time, Status Code, and Startup Grace Period.
+      * **Metadata**: Author, title, version, task, category, and other descriptive fields.
+
+   ![](../images/deployment_preset_create_modal.png)
+
+3. Click **Create Preset** to save. A success notification confirms the preset has been created.
+
+:::tip
+If a required field is missing or invalid, the **Create Preset** button stays disabled until the error is resolved. Required fields show inline validation messages as you type.
+:::
+
+:::note[Version requirement]
+The **Enable Health Check** toggle and required-parameter validation for Runtime Parameters require **Backend.AI Manager 26.4.4 or later**. On older backends, the health check is not gated behind a toggle and all runtime parameters are treated as optional.
+:::
+
+#### Edit a Deployment Preset
+
+1. From the preset list, open the action menu on the preset row (or open the preset's detail view) and select **Edit Preset**.
+2. The *Edit Preset* dialog opens with the preset's current values pre-filled. The available sections are identical to the *Create Preset* dialog.
+3. Adjust the fields as needed, then click **Edit Preset** to save your changes.
+
+![](../images/deployment_preset_edit_modal.png)
+
+Editing a preset only changes the defaults for **future** deployments. Existing deployments that were already created from this preset are not modified.
+
+#### Delete a Deployment Preset
+
+1. From the preset list (or the preset's detail view), open the action menu on the preset and select **Delete Preset**.
+2. A typed-confirmation dialog appears asking you to type the preset's name to confirm. The **OK** button stays disabled until the typed value matches the preset name exactly.
+3. Type the preset's name, then click **OK** to confirm.
+
+:::danger
+Deleting a deployment preset is **irreversible**. The preset itself is removed, but deployments that were already created from it continue to run unaffected. Future deployments can no longer reference this preset.
+:::
+
+<a id="using-a-preset-when-deploying-a-model"></a>
+
+### Using a Preset When Deploying a Model
+
+End users apply a deployment preset through the **Create New Deployment with Preset** modal, which opens when you deploy a model from a storage folder on the Data page.
+
+1. From the Data page, locate the model folder you want to deploy.
+2. Click the **Deploy** button on the folder row.
+3. The **Create New Deployment with Preset** modal opens. Select the deployment preset to apply and the target resource group.
+4. To inspect the preset's configuration before deploying, click the **ⓘ** (Info) button next to the preset selector to open the **Deployment Preset Detail** view.
+5. Click **OK** to create the deployment using the selected preset's values.
+
+![](../images/vfolder_deploy_preset_detail.png)
+
+The **Deployment Preset Detail** view shows every field that the preset will apply when used — image, runtime, resources, cluster mode, replica count, visibility, and so on. It also includes a **Health Check** card:
+
+- When health check is enabled in the preset: the card shows **Enabled** along with the configured Path, Interval, Max Retries, Max Wait Time, Status Code, and Startup Grace Period.
+- When health check is disabled: the card shows **Disabled**.
+
+For advanced configuration, go to the Deployments page and create a new deployment manually. The revision-add modal offers two modes: **Preset Mode** (applies the preset directly) and **Advanced Mode**, where the deployment launcher opens pre-filled with the preset's values so you can review and adjust every field — image, runtime variant, resource group, resource slots, shared memory, resource options, cluster mode, cluster size, startup command, environment variables, replica count, revision history limit, and **Open to Public** visibility — before confirming. Editing a field in **Advanced Mode** does **not** modify the underlying preset; it only changes the values used for that one deployment.
 
 <a id="manage-resource-policy"></a>
 

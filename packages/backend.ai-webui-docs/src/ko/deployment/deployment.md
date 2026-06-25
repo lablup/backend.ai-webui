@@ -608,6 +608,7 @@ SGLang은 다음 파라미터 탭을 제공합니다: **Model Loading**, **Resou
 **라이프사이클** 컬럼의 상태 태그 옆에는 기록 아이콘 버튼이 있습니다. 클릭하면 해당 복제본의 **복제본 스케줄링 기록** 모달이 열리며, 복제본의 스케줄링 이벤트 기록을 날짜 범위, 상태 등으로 필터링하여 확인할 수 있습니다.
 
 ![](../images/replica_scheduling_history.png)
+<!-- TODO: Capture screenshot of the Replica Scheduling History modal -->
 
 복제본에서 오류가 발생한 경우 행의 오류 표시를 클릭하면 JSON 뷰어 모달이 열리며, 원시 오류 데이터를 표시합니다. 개별 복제본의 문제를 진단할 때 유용합니다.
 

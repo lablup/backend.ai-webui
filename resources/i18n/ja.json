@@ -867,7 +867,7 @@
       "FolderUsing": "使用量",
       "InviteUsers": "ユーザーを招待します",
       "KickOut": "共有を停止します",
-      "KickOutConfirm": "{email}}との共有を停止しますか？",
+      "KickOutConfirm": "{{email}}との共有を停止しますか？",
       "Leave": "去る",
       "LeaveAFolder": "フォルダを離れる",
       "LeaveFolder": "招待されたフォルダを出る",
