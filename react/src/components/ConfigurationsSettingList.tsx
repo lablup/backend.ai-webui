@@ -12,7 +12,7 @@ import { Alert, App, Button } from 'antd';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-export type SchedulerType = 'fifo' | 'lifo' | 'drf';
+export type SchedulerType = 'fifo' | 'lifo' | 'drf' | 'fair-share';
 export type ImagePullingBehavior = 'digest' | 'tag' | 'none';
 export type SchedulerOptions = {
   num_retries_to_skip: string;
