@@ -95,8 +95,8 @@ Backend.AI does not match with the resource actually used by the container. In t
 case, follow the steps below.
 
 - Login as admin account.
-- Visit Maintenance page.
-- Click the RECALCULATE USAGE button to manually correct the resource occupancy.
+- Visit the **Maintenance** page.
+- Click the **Recalculate Usage** button to manually correct the resource occupancy.
 
 ### Image is not displayed after it is pushed to a docker registry
 
@@ -107,11 +107,17 @@ This feature is only available for superadmins.
 
 If a new image is pushed to one of the Backend.AI docker registries, the image
 metadata must be updated in Backend.AI to be used in creating a compute session.
-Metadata update can be performed by clicking the RESCAN IMAGES button on the
-Maintenance page. This will update metadata for every docker registry, if
+Metadata update can be performed by clicking the **Rescan Images** button on the
+**Maintenance** page. This will update metadata for every docker registry, if
 there are multiple registries.
 
-If you want to update the metadata for a specific docker registry, you can go to
-the Registries tab in Environments page.  Just click the refresh button in the
-Controls panel of the desired registry. Be careful not to delete the registry
-by clicking the trash icon.
+If you want to update the metadata for a specific docker registry, open the
+**Registries** tab on the **Environments** page. Each registry is shown as a row
+with an action menu. Click the **Rescan Images** action for the desired
+registry's row to refresh only that registry's image metadata.
+
+:::warning
+The same row also has a **Delete** action (the trash icon). Deleting a registry
+permanently removes it from Backend.AI — do not confuse it with the **Rescan
+Images** action.
+:::
