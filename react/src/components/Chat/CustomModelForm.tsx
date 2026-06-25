@@ -23,6 +23,7 @@ type CustomModelFormProps = {
   token?: string;
   endpointId?: string | null;
   loading: boolean;
+  hasNoDesiredReplicas?: boolean;
   onSubmit?: (formData: CustomModelFormValues) => void;
 };
 
@@ -32,6 +33,7 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
   token,
   endpointId,
   loading,
+  hasNoDesiredReplicas,
   onSubmit,
 }) => {
   const { t } = useTranslation();
@@ -68,6 +70,15 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
           token: token,
         }}
       >
+        {hasNoDesiredReplicas ? (
+          <div style={{ marginBottom: themeToken.size }}>
+            <Alert
+              type="warning"
+              showIcon
+              title={t('chatui.NoDesiredReplicas')}
+            />
+          </div>
+        ) : null}
         <div style={{ marginBottom: themeToken.size }}>
           <Alert type="warning" showIcon title={t('chatui.CannotFindModel')} />
         </div>

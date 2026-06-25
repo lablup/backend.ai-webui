@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b3b6ab96d5621ca2d4ebdd4b7ab00ee2>>
+ * @generated SignedSource<<4a0dc3ea1381c91b8d367ef0fe60f64b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -112,6 +112,7 @@ export type UserV2OrderBy = {
 };
 export type ProjectAdminUsersPageQuery$variables = {
   filter?: UserV2Filter | null | undefined;
+  isNotSupportTotp: boolean;
   limit?: number | null | undefined;
   offset?: number | null | undefined;
   orderBy?: ReadonlyArray<UserV2OrderBy> | null | undefined;
@@ -142,24 +143,29 @@ var v0 = {
 v1 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "limit"
+  "name": "isNotSupportTotp"
 },
 v2 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "offset"
+  "name": "limit"
 },
 v3 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "orderBy"
+  "name": "offset"
 },
 v4 = {
   "defaultValue": null,
   "kind": "LocalArgument",
+  "name": "orderBy"
+},
+v5 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
   "name": "projectId"
 },
-v5 = [
+v6 = [
   {
     "kind": "Variable",
     "name": "filter",
@@ -192,14 +198,14 @@ v5 = [
     "name": "scope"
   }
 ],
-v6 = {
+v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "count",
   "storageKey": null
 },
-v7 = {
+v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -213,7 +219,8 @@ return {
       (v1/*: any*/),
       (v2/*: any*/),
       (v3/*: any*/),
-      (v4/*: any*/)
+      (v4/*: any*/),
+      (v5/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
@@ -221,13 +228,13 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": (v5/*: any*/),
+        "args": (v6/*: any*/),
         "concreteType": "UserV2Connection",
         "kind": "LinkedField",
         "name": "projectUsersV2",
         "plural": false,
         "selections": [
-          (v6/*: any*/),
+          (v7/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -244,7 +251,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v7/*: any*/),
+                  (v8/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
@@ -266,24 +273,25 @@ return {
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
-      (v4/*: any*/),
+      (v5/*: any*/),
       (v0/*: any*/),
+      (v4/*: any*/),
+      (v2/*: any*/),
       (v3/*: any*/),
-      (v1/*: any*/),
-      (v2/*: any*/)
+      (v1/*: any*/)
     ],
     "kind": "Operation",
     "name": "ProjectAdminUsersPageQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v5/*: any*/),
+        "args": (v6/*: any*/),
         "concreteType": "UserV2Connection",
         "kind": "LinkedField",
         "name": "projectUsersV2",
         "plural": false,
         "selections": [
-          (v6/*: any*/),
+          (v7/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -300,7 +308,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v7/*: any*/),
+                  (v8/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -526,16 +534,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "cf26e0cd045a5f1e6eca79d40c52c4c6",
+    "cacheID": "fb385584684057ab73f7ce5523c380e3",
     "id": null,
     "metadata": {},
     "name": "ProjectAdminUsersPageQuery",
     "operationKind": "query",
-    "text": "query ProjectAdminUsersPageQuery(\n  $projectId: UUID!\n  $filter: UserV2Filter\n  $orderBy: [UserV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  projectUsersV2(scope: {projectId: $projectId}, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        ...BAIAdminUserV2TableFragment\n      }\n    }\n  }\n}\n\nfragment BAIAdminUserV2TableFragment on UserV2 {\n  id\n  basicInfo {\n    email\n    fullName\n    username\n    description\n    integrationName\n  }\n  organization {\n    domainName\n    role\n    resourcePolicy\n    mainAccessKey\n  }\n  security {\n    totpActivated\n    totpActivatedAt\n    sudoSessionEnabled\n    allowedClientIp\n  }\n  status {\n    status\n    statusInfo\n    needPasswordChange\n  }\n  container {\n    containerUid\n    containerMainGid\n    containerGids\n  }\n  timestamps {\n    createdAt\n    modifiedAt\n  }\n}\n"
+    "text": "query ProjectAdminUsersPageQuery(\n  $projectId: UUID!\n  $filter: UserV2Filter\n  $orderBy: [UserV2OrderBy!]\n  $limit: Int\n  $offset: Int\n  $isNotSupportTotp: Boolean!\n) {\n  projectUsersV2(scope: {projectId: $projectId}, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        ...BAIAdminUserV2TableFragment\n      }\n    }\n  }\n}\n\nfragment BAIAdminUserV2TableFragment on UserV2 {\n  id\n  basicInfo {\n    email\n    fullName\n    username\n    description\n    integrationName\n  }\n  organization {\n    domainName\n    role\n    resourcePolicy\n    mainAccessKey\n  }\n  security {\n    totpActivated @skipOnClient(if: $isNotSupportTotp)\n    totpActivatedAt @skipOnClient(if: $isNotSupportTotp)\n    sudoSessionEnabled\n    allowedClientIp\n  }\n  status {\n    status\n    statusInfo\n    needPasswordChange\n  }\n  container {\n    containerUid\n    containerMainGid\n    containerGids\n  }\n  timestamps {\n    createdAt\n    modifiedAt\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "fb1bd2c3763d73ccf663029cf48fa196";
+(node as any).hash = "d5f4ffba0272ef9fff6d5f57995b17fe";
 
 export default node;

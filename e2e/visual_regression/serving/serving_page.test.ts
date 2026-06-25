@@ -31,8 +31,10 @@ test.describe(
         });
       });
 
-      // FIXME: Test timeout - "Model Definition" text is not visible after clicking Start Service
-      // The create service page might have changed its structure or text
+      // FIXME(FR-3111/stale-baseline): The service launcher was revamped — the
+      // "Model Definition" anchor is gone and `snapshot/create-service-page.png`
+      // reflects the old form layout. Anchor/mask update + baseline refresh deferred
+      // to FR-3115 (frozen backend).
       test.fixme('Create a new service page', async ({ page }) => {
         await page.setViewportSize({
           width: 1300,
@@ -54,8 +56,9 @@ test.describe(
         });
       });
 
-      // FIXME: Test timeout - setting button cannot be clicked
-      // The serving page might not have any services to update, or the button locator changed
+      // FIXME(FR-3111/missing-test-data): No pre-seeded service exists, so the
+      // 'setting' row button cannot be clicked. Not a stale baseline; owned by the
+      // test-data seeding triage category of FR-3109.
       test.fixme('Update Service', async ({ page }) => {
         await page.setViewportSize({
           width: 1100,
@@ -76,8 +79,9 @@ test.describe(
         });
       });
 
-      // FIXME: Test timeout - delete button cannot be clicked
-      // The serving page might not have any services to delete, or the button locator changed
+      // FIXME(FR-3111/missing-test-data): No pre-seeded service exists, so the
+      // 'delete' row button cannot be clicked. Not a stale baseline; owned by the
+      // test-data seeding triage category of FR-3109.
       test.fixme('Delete modal', async ({ page }) => {
         await page.getByRole('button', { name: 'delete' }).click();
         const deleteModal = page.locator('div.ant-modal-content').first();
@@ -86,9 +90,10 @@ test.describe(
     });
 
     test.describe('Routing Info page', () => {
-      // FIXME: Test timeout in beforeEach - 'service_test2' link cannot be clicked
-      // The test data service might not exist or the link locator changed.
-      // Also updated to use 'deployments' path (old 'serving' route returns 404).
+      // FIXME(FR-3111/missing-test-data): The seeded endpoint 'service_test2' does not
+      // exist on the test backend, so beforeEach cannot open the routing info page.
+      // (beforeEach navigates via 'deployments' — the old 'serving' route returns 404.)
+      // Owned by the test-data seeding triage category of FR-3109.
       test.beforeEach(async ({ page, request }) => {
         await loginAsVisualRegressionUser(page, request);
         await navigateTo(page, 'deployments');
@@ -101,7 +106,8 @@ test.describe(
         ).toBeVisible();
       });
 
-      // FIXME: Test skipped due to beforeEach failure (service_test2 link not found)
+      // FIXME(FR-3111/missing-test-data): Skipped due to the beforeEach failure
+      // (service_test2 not seeded). Not a stale baseline; see FR-3109 test-data triage.
       test.fixme('Routing Info page', async ({ page }) => {
         await page.setViewportSize({
           width: 1100,
@@ -115,7 +121,8 @@ test.describe(
         });
       });
 
-      // FIXME: Test skipped due to beforeEach failure (service_test2 link not found)
+      // FIXME(FR-3111/missing-test-data): Skipped due to the beforeEach failure
+      // (service_test2 not seeded). Not a stale baseline; see FR-3109 test-data triage.
       test.fixme('Add Auto Scaling Rule modal', async ({ page }) => {
         await page.getByRole('button', { name: 'plus Add Rules' }).click();
         await page.getByText('Add Auto Scaling Rule').waitFor();
@@ -125,7 +132,8 @@ test.describe(
         );
       });
 
-      // FIXME: Test skipped due to beforeEach failure (service_test2 link not found)
+      // FIXME(FR-3111/missing-test-data): Skipped due to the beforeEach failure
+      // (service_test2 not seeded). Not a stale baseline; see FR-3109 test-data triage.
       test.fixme('generate token modal', async ({ page }) => {
         await page.getByRole('button', { name: 'plus Generate Token' }).click();
         await page.getByText('Generate new Token').waitFor();

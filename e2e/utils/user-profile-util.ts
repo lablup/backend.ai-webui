@@ -1,4 +1,9 @@
-import type { Page, Locator } from '@playwright/test';
+import {
+  KeyPairModal,
+  UserSettingModal,
+} from './classes/user/UserSettingModal';
+import { navigateTo } from './test-util';
+import { expect, type Page, type Locator } from '@playwright/test';
 
 /**
  * Map of action titles to their Ant Design / Lucide icon selectors.
@@ -112,6 +117,37 @@ export async function removeAllIpTags(container: Locator) {
   }
   // Press Tab to blur the combobox without closing the modal (Escape would close it)
   await selectInput.press('Tab');
+}
+
+/**
+ * Creates a fresh, disposable user through the admin credential UI.
+ *
+ * Used so profile-editing / allowed-client-IP tests never mutate a shared
+ * account (e.g. `admin@lablup.com`). The caller must be logged in as an admin
+ * on `adminPage` before invoking this. See FR-3138.
+ */
+export async function createDisposableUser(
+  adminPage: Page,
+  email: string,
+  username: string,
+  password: string,
+): Promise<void> {
+  await navigateTo(adminPage, 'credential');
+  await expect(adminPage.getByRole('tab', { name: 'Users' })).toBeVisible();
+
+  await adminPage.getByRole('button', { name: 'Create User' }).click();
+  const userSettingModal = UserSettingModal.forCreate(adminPage);
+  await userSettingModal.createUser(email, username, password);
+
+  // A key pair is generated on creation — acknowledge and close the modal.
+  const keyPairModal = new KeyPairModal(adminPage);
+  await keyPairModal.waitForVisible();
+  await keyPairModal.close();
+  await userSettingModal.waitForHidden();
+
+  await expect(adminPage.getByRole('cell', { name: email })).toBeVisible({
+    timeout: 10000,
+  });
 }
 
 /**

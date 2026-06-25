@@ -9,6 +9,7 @@ import {
   PrometheusQueryPresetEditorModalFragment$key,
 } from '../__generated__/PrometheusQueryPresetEditorModalFragment.graphql';
 import { PrometheusQueryPresetEditorModalUpdateMutation } from '../__generated__/PrometheusQueryPresetEditorModalUpdateMutation.graphql';
+import { useCurrentUserRole } from '../hooks/backendai';
 import PrometheusQueryTemplatePreview from './PrometheusQueryTemplatePreview';
 import { App, Form, Input } from 'antd';
 import {
@@ -87,6 +88,7 @@ const PrometheusQueryPresetEditorModal: React.FC<
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
+  const currentUserRole = useCurrentUserRole();
   const deferredOpen = useDeferredValue(baiModalProps.open);
 
   const preset = useFragment(
@@ -392,16 +394,18 @@ const PrometheusQueryPresetEditorModal: React.FC<
             },
           ]}
           extra={
-            <PrometheusQueryTemplatePreview
-              queryTemplate={
-                // `Form.useWatch` returns `undefined` on the very first render
-                // before `initialValues` are applied. In edit mode that would
-                // hide the preview for a tick and then trigger the 800ms
-                // debounce; falling back to the fragment value lets the
-                // preview start fetching the existing template immediately.
-                watchedQueryTemplate ?? preset?.queryTemplate ?? ''
-              }
-            />
+            currentUserRole === 'superadmin' ? (
+              <PrometheusQueryTemplatePreview
+                queryTemplate={
+                  // `Form.useWatch` returns `undefined` on the very first render
+                  // before `initialValues` are applied. In edit mode that would
+                  // hide the preview for a tick and then trigger the 800ms
+                  // debounce; falling back to the fragment value lets the
+                  // preview start fetching the existing template immediately.
+                  watchedQueryTemplate ?? preset?.queryTemplate ?? ''
+                }
+              />
+            ) : undefined
           }
         >
           <TextArea autoSize={{ minRows: 4, maxRows: 12 }} />

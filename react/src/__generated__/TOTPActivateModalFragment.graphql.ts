@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<210f88d5d02a5f74bafedbc558a70af4>>
+ * @generated SignedSource<<d38d6a0fa40427f3feb26e4ecf1da514>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,8 +11,12 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type TOTPActivateModalFragment$data = {
-  readonly email: string | null | undefined;
-  readonly totp_activated: boolean | null | undefined;
+  readonly basicInfo: {
+    readonly email: string;
+  };
+  readonly security: {
+    readonly totpActivated: boolean | null | undefined;
+  };
   readonly " $fragmentType": "TOTPActivateModalFragment";
 };
 export type TOTPActivateModalFragment$key = {
@@ -34,22 +38,44 @@ const node: ReaderFragment = {
     {
       "alias": null,
       "args": null,
-      "kind": "ScalarField",
-      "name": "email",
+      "concreteType": "UserV2BasicInfo",
+      "kind": "LinkedField",
+      "name": "basicInfo",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "email",
+          "storageKey": null
+        }
+      ],
       "storageKey": null
     },
     {
       "alias": null,
       "args": null,
-      "kind": "ScalarField",
-      "name": "totp_activated",
+      "concreteType": "UserV2SecurityInfo",
+      "kind": "LinkedField",
+      "name": "security",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "totpActivated",
+          "storageKey": null
+        }
+      ],
       "storageKey": null
     }
   ],
-  "type": "User",
+  "type": "UserV2",
   "abstractKey": null
 };
 
-(node as any).hash = "f5da6b3094f7d70bef9373d9c907955c";
+(node as any).hash = "ea5b0c796463b95ee22c460285ab0847";
 
 export default node;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2ee7d3c8d2e138a1a65937062bfa6ed1>>
+ * @generated SignedSource<<178c14de1fcdf535cd55298898a880d5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,11 +11,15 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type GeneratedKeypairListModalFragment$data = ReadonlyArray<{
-  readonly access_key: string | null | undefined;
-  readonly secret_key: string | null | undefined;
-  readonly user_info: {
-    readonly email: string | null | undefined;
-  } | null | undefined;
+  readonly keypair: {
+    readonly accessKey: string;
+    readonly user: {
+      readonly basicInfo: {
+        readonly email: string;
+      };
+    } | null | undefined;
+  };
+  readonly secretKey: string;
   readonly " $fragmentType": "GeneratedKeypairListModalFragment";
 }>;
 export type GeneratedKeypairListModalFragment$key = ReadonlyArray<{
@@ -35,39 +39,61 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "access_key",
+      "name": "secretKey",
       "storageKey": null
     },
     {
       "alias": null,
       "args": null,
-      "kind": "ScalarField",
-      "name": "secret_key",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "UserInfo",
+      "concreteType": "KeyPairV2",
       "kind": "LinkedField",
-      "name": "user_info",
+      "name": "keypair",
       "plural": false,
       "selections": [
         {
           "alias": null,
           "args": null,
           "kind": "ScalarField",
-          "name": "email",
+          "name": "accessKey",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "UserV2",
+          "kind": "LinkedField",
+          "name": "user",
+          "plural": false,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "UserV2BasicInfo",
+              "kind": "LinkedField",
+              "name": "basicInfo",
+              "plural": false,
+              "selections": [
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "email",
+                  "storageKey": null
+                }
+              ],
+              "storageKey": null
+            }
+          ],
           "storageKey": null
         }
       ],
       "storageKey": null
     }
   ],
-  "type": "KeyPair",
+  "type": "CreateKeypairPayload",
   "abstractKey": null
 };
 
-(node as any).hash = "a3a1b6d9c401dfb603fdda3157146445";
+(node as any).hash = "d2527833fc24a9a79c94517ef855963e";
 
 export default node;

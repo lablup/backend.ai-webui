@@ -1,7 +1,8 @@
 // spec: e2e/.agent-output/test-plan-session-cluster-mode.md
 // seed: e2e/seed.spec.ts
+import { skipUnlessWebUIVersion } from '../utils/feature-gate-util';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 
 /**
  * Helper: navigate to session launcher step 2 and wait for the Cluster mode section.
@@ -13,6 +14,25 @@ async function navigateToClusterModeSection(
   await navigateTo(page, 'session/start');
   await page.getByRole('button', { name: '2 Environments & Resource' }).click();
   await expect(page.getByText('Cluster mode')).toBeVisible({ timeout: 10000 });
+}
+
+/**
+ * Runtime half of the @requires-webui-v26.4 gate (FR-3114): the
+ * "Multi-node with size 1 will be created as a single-node session." warning
+ * is rendered by ClusterModeFormItems (FR-2381), introduced after WebUI
+ * v26.3.0 and first released in v26.4. Gates on the explicit WebUI version
+ * source (`globalThis.packageVersion`) instead of probing the warning
+ * element, so on a capable build a missing warning is a real failure — the
+ * `expect(warningMessage).toBeVisible()` at the call site is the failure
+ * signal. Exclude these specs on older targets with:
+ *   npx playwright test --grep-invert "@requires-webui-v26.4"
+ */
+async function skipUnlessSizeOneWarningAvailable(page: Page): Promise<void> {
+  await skipUnlessWebUIVersion(
+    page,
+    '26.4',
+    'Multi-node size-1 warning requires ClusterModeFormItems (FR-2381, @requires-webui-v26.4)',
+  );
 }
 
 test.describe(
@@ -29,7 +49,7 @@ test.describe(
 
     test(
       'User sees warning when selecting Multi Node with cluster size 1',
-      { tag: ['@smoke', '@regression'] },
+      { tag: ['@smoke', '@regression', '@requires-webui-v26.4'] },
       async ({ page }) => {
         // NOTE: This test requires ClusterModeFormItems.tsx (feat/FR-2381),
         // which was introduced in the main branch after v26.3.0.
@@ -61,24 +81,10 @@ test.describe(
 
         // Verify the warning message is displayed beneath the cluster size control.
         // This warning is shown by ClusterModeFormItems (introduced in FR-2381).
-        // Skip gracefully if the feature is not available in the server's build.
         const warningMessage = page.getByText(
           'Multi-node with size 1 will be created as a single-node session.',
         );
-        // Wait up to 5 s for the async form validation to render the warning.
-        // Skip gracefully only if the feature is genuinely absent in the build.
-        const isWarningVisible = await warningMessage
-          .first()
-          .waitFor({ state: 'visible', timeout: 5000 })
-          .then(() => true)
-          .catch(() => false);
-        if (!isWarningVisible) {
-          test.skip(
-            true,
-            'Warning feature (FR-2381) not available in the server build. Requires WebUI > v26.3.0.',
-          );
-          return;
-        }
+        await skipUnlessSizeOneWarningAvailable(page);
         await expect(warningMessage).toBeVisible();
       },
     );
@@ -160,7 +166,7 @@ test.describe(
 
     test(
       'User dismisses warning by switching from Multi Node to Single Node',
-      { tag: ['@smoke', '@regression'] },
+      { tag: ['@smoke', '@regression', '@requires-webui-v26.4'] },
       async ({ page }) => {
         // NOTE: Requires ClusterModeFormItems.tsx (feat/FR-2381) — see note above.
         await navigateToClusterModeSection(page);
@@ -173,21 +179,7 @@ test.describe(
         const warningMessage = page.getByText(
           'Multi-node with size 1 will be created as a single-node session.',
         );
-
-        // Wait up to 5 s for the async form validation to render the warning.
-        // Skip gracefully only if the feature is genuinely absent in the build.
-        const isWarningVisible = await warningMessage
-          .first()
-          .waitFor({ state: 'visible', timeout: 5000 })
-          .then(() => true)
-          .catch(() => false);
-        if (!isWarningVisible) {
-          test.skip(
-            true,
-            'Warning feature (FR-2381) not available in the server build. Requires WebUI > v26.3.0.',
-          );
-          return;
-        }
+        await skipUnlessSizeOneWarningAvailable(page);
 
         // Switch to Single Node by clicking the Single Node label
         const singleNodeLabel = page
@@ -202,7 +194,7 @@ test.describe(
 
     test(
       'User sees warning again after switching back from Single Node to Multi Node with size 1',
-      { tag: ['@regression'] },
+      { tag: ['@regression', '@requires-webui-v26.4'] },
       async ({ page }) => {
         // NOTE: Requires ClusterModeFormItems.tsx (feat/FR-2381) — see note above.
         await navigateToClusterModeSection(page);
@@ -219,20 +211,7 @@ test.describe(
 
         // Select Multi Node — check if warning feature is available
         await multiNodeLabel.click();
-        // Wait up to 5 s for the async form validation to render the warning.
-        // Skip gracefully only if the feature is genuinely absent in the build.
-        const isWarningVisible = await warningMessage
-          .first()
-          .waitFor({ state: 'visible', timeout: 5000 })
-          .then(() => true)
-          .catch(() => false);
-        if (!isWarningVisible) {
-          test.skip(
-            true,
-            'Warning feature (FR-2381) not available in the server build. Requires WebUI > v26.3.0.',
-          );
-          return;
-        }
+        await skipUnlessSizeOneWarningAvailable(page);
 
         // Switch to Single Node — warning should disappear
         await singleNodeLabel.click();

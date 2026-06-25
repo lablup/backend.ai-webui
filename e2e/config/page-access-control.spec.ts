@@ -184,10 +184,15 @@ test.describe(
   },
 );
 
-test.describe.serial(
+// Not serial: tests are independent (each logs in fresh; afterEach resets config),
+// so a failure doesn't cascade. mode: 'default' keeps them sequential on one worker
+// because config.toml is server-global state.
+test.describe(
   'Page Access Control - Permission-Based Access (401 Page)',
   { tag: ['@critical', '@config', '@functional'] },
   () => {
+    test.describe.configure({ mode: 'default' });
+
     test.afterEach(async ({ page, request }) => {
       // Reset config after each test
       await modifyConfigToml(page, request, {
@@ -285,10 +290,15 @@ test.describe.serial(
   },
 );
 
-test.describe.serial(
+// Not serial: tests are independent (each sets its own config; afterEach resets),
+// so a failure doesn't cascade. mode: 'default' keeps them sequential on one worker
+// because config.toml is server-global state.
+test.describe(
   'Page Access Control - Not Found Page (404)',
   { tag: ['@critical', '@config', '@functional'] },
   () => {
+    test.describe.configure({ mode: 'default' });
+
     test.afterEach(async ({ page, request }) => {
       // Reset config after each test
       await modifyConfigToml(page, request, {
@@ -381,10 +391,14 @@ test.describe.serial(
   },
 );
 
-test.describe.serial(
+// Not serial: single test — no ordering dependency. mode: 'default' keeps any
+// future tests sequential on one worker because config.toml is server-global state.
+test.describe(
   'Page Access Control - Root Redirect with Configuration',
   { tag: ['@critical', '@config', '@functional'] },
   () => {
+    test.describe.configure({ mode: 'default' });
+
     test.afterEach(async ({ page, request }) => {
       // Reset config after each test
       await modifyConfigToml(page, request, {
@@ -449,10 +463,15 @@ test.describe.serial(
   },
 );
 
-test.describe.serial(
+// Not serial: tests are independent (each sets its own config; afterEach resets),
+// so a failure doesn't cascade. mode: 'default' keeps them sequential on one worker
+// because config.toml is server-global state.
+test.describe(
   'Page Access Control - Combined Scenarios (blocklist + inactiveList)',
   { tag: ['@critical', '@config', '@functional'] },
   () => {
+    test.describe.configure({ mode: 'default' });
+
     test.afterEach(async ({ page, request }) => {
       // Reset config after each test
       await modifyConfigToml(page, request, {

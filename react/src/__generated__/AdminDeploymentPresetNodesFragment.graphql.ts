@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fccecc4ed5b6d1562f24f9a79b09cc94>>
+ * @generated SignedSource<<f61bb2628b3f3d9819e81a484c24203d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -29,6 +29,13 @@ export type AdminDeploymentPresetNodesFragment$data = ReadonlyArray<{
     readonly startupCommand: string | null | undefined;
   };
   readonly id: string;
+  readonly image: {
+    readonly id: string;
+    readonly identity: {
+      readonly architecture: string;
+      readonly canonicalName: string;
+    };
+  } | null | undefined;
   readonly name: string;
   readonly runtimeVariant: {
     readonly id: string;
@@ -156,6 +163,43 @@ return {
     {
       "alias": null,
       "args": null,
+      "concreteType": "ImageV2",
+      "kind": "LinkedField",
+      "name": "image",
+      "plural": false,
+      "selections": [
+        (v0/*: any*/),
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "ImageV2IdentityInfo",
+          "kind": "LinkedField",
+          "name": "identity",
+          "plural": false,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "canonicalName",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "architecture",
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
       "concreteType": "PresetDeploymentDefaults",
       "kind": "LinkedField",
       "name": "deploymentDefaults",
@@ -212,6 +256,6 @@ return {
 };
 })();
 
-(node as any).hash = "8f8684f1a6df397171415c6b094c22c1";
+(node as any).hash = "a4e1509007a42bdd70eac53b4710e1dc";
 
 export default node;

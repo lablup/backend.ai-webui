@@ -2,14 +2,15 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { AdminUserManagementModifyMutation } from '../__generated__/AdminUserManagementModifyMutation.graphql';
 import {
   AdminUserManagementQuery,
   AdminUserManagementQuery$data,
   UserV2OrderBy,
 } from '../__generated__/AdminUserManagementQuery.graphql';
+import { AdminUserManagementUpdateUserMutation } from '../__generated__/AdminUserManagementUpdateUserMutation.graphql';
 import { convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { useTOTPSupported } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
@@ -30,6 +31,7 @@ import { App, Button, Dropdown, Space, theme } from 'antd';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
+  toLocalId,
   BAIFlex,
   BAIGraphQLFilterProperty,
   BAIGraphQLPropertyFilter,
@@ -49,7 +51,7 @@ import {
 import * as _ from 'lodash-es';
 import { BanIcon, EditIcon, PlusIcon, UndoIcon } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
-import React, { useState, useTransition, useDeferredValue } from 'react';
+import React, { useState, useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
@@ -83,16 +85,11 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
   );
   const { message } = App.useApp();
 
-  const [emailForInfoModal, setEmailForInfoModal] = useState<string | null>(
-    null,
-  );
-  const [isPendingInfoModalOpen, startInfoModalOpenTransition] =
-    useTransition();
-  const [isPendingSettingModalOpen, startSettingModalOpenTransition] =
-    useTransition();
-  const [emailForSettingModal, setEmailForSettingModal] = useState<
-    string | null
+  const [selectedUserForInfoModal, setSelectedUserForInfoModal] = useState<
+    UserNode['node'] | null
   >(null);
+  const [selectedUserForSettingModal, setSelectedUserForSettingModal] =
+    useState<UserNode['node'] | null>(null);
   const [openCreateModal, setOpenCreateModal] = useState<boolean>(false);
   const [openBulkCreateModal, setOpenBulkCreateModal] =
     useState<boolean>(false);
@@ -114,6 +111,8 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
     pageSize: 10,
   });
 
+  const { isTOTPSupported } = useTOTPSupported();
+
   const statusFilter =
     queryParams.status === 'ACTIVE'
       ? ({ equals: 'ACTIVE' } as const)
@@ -127,6 +126,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
     orderBy: convertToOrderBy<Required<UserV2OrderBy>>(queryParams.order),
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
+    isNotSupportTotp: !isTOTPSupported,
   };
 
   const deferredQueryVariables = useDeferredValue(queryVariables);
@@ -145,6 +145,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
         $orderBy: [UserV2OrderBy!]
         $limit: Int
         $offset: Int
+        $isNotSupportTotp: Boolean!
       ) {
         adminUsersV2(
           filter: $filter
@@ -160,6 +161,10 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
                 email
               }
               ...BAIAdminUserV2TableFragment
+              ...PurgeUsersModalFragment
+              ...UpdateUsersModalFragment
+              ...UserInfoModalFragment
+              ...UserSettingModalFragment
             }
           }
         }
@@ -175,29 +180,31 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
     },
   );
 
-  const [commitModifyUser] = useMutation<AdminUserManagementModifyMutation>(
-    graphql`
-      mutation AdminUserManagementModifyMutation(
-        $email: String!
-        $props: ModifyUserInput!
+  // >= 26.4.0: adminUpdateUserV2 — status toggle keyed by userId.
+  const [commitUpdateUserV2] =
+    useMutation<AdminUserManagementUpdateUserMutation>(graphql`
+      mutation AdminUserManagementUpdateUserMutation(
+        $userId: UUID!
+        $input: UpdateUserV2Input!
       ) {
-        modify_user(email: $email, props: $props) {
-          ok
-          msg
+        adminUpdateUserV2(userId: $userId, input: $input) {
+          user {
+            id
+          }
         }
       }
-    `,
+    `);
+
+  // v2 UserV2 fragment refs driving the Update / Purge modals.
+  const selectedUserFragmentRefs = filterOutNullAndUndefined(
+    selectedUserList.map((user) => user?.node),
   );
 
-  // Plain { id, email } list for the v1-based modals (Update / Purge).
-  // The list itself is migrated to v2, but the modals keep their existing
-  // (non-v2) mutations and only need id/email.
-  const selectedUsersForModal = _.compact(
-    selectedUserList.map((user) => user?.node),
-  ).map((node) => ({
-    id: node.id,
-    email: node.basicInfo.email,
-  }));
+  // Resolve the full user node (carrying the modal fragment refs) for a row id.
+  // The detail / edit modals are driven by the presence of this fragment rather
+  // than by an id, so `open` follows whether a user is selected.
+  const findUserNode = (id: string) =>
+    adminUsersV2?.edges?.find((edge) => edge?.node?.id === id)?.node ?? null;
 
   const renderEmailWithActions = (__: unknown, record: UserV2InList) => {
     const email = record.basicInfo?.email ?? '';
@@ -212,9 +219,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
             title: t('credential.UserDetail'),
             icon: <InfoCircleOutlined />,
             onClick: () => {
-              startInfoModalOpenTransition(() => {
-                setEmailForInfoModal(email || null);
-              });
+              setSelectedUserForInfoModal(findUserNode(record.id));
             },
           },
           {
@@ -222,9 +227,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
             title: t('button.Edit'),
             icon: <SettingOutlined />,
             onClick: () => {
-              startSettingModalOpenTransition(() => {
-                setEmailForSettingModal(email || null);
-              });
+              setSelectedUserForSettingModal(findUserNode(record.id));
             },
           },
           {
@@ -245,48 +248,41 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
               cancelText: t('button.Cancel'),
               okButtonProps: isActive ? { danger: true } : undefined,
               onConfirm: () => {
-                return new Promise<void>((resolve) => {
-                  commitModifyUser({
-                    variables: {
-                      email: email,
-                      props: {
-                        status: isActive ? 'inactive' : 'active',
+                const handleStatusUpdated = () => {
+                  message.success(t('credential.StatusUpdatedSuccessfully'));
+                  setSelectedUserList((prev) =>
+                    prev.filter((user) => user?.node?.id !== record?.id),
+                  );
+                  updateFetchKey();
+                };
+
+                if (record?.id) {
+                  return new Promise<void>((resolve) => {
+                    commitUpdateUserV2({
+                      variables: {
+                        userId: toLocalId(record.id),
+                        input: { status: isActive ? 'INACTIVE' : 'ACTIVE' },
                       },
-                    },
-                    onCompleted: (res, errors) => {
-                      const errorMessage = errors?.[0]?.message;
-                      const notOkMessage =
-                        res?.modify_user?.ok === false
-                          ? res.modify_user.msg
-                          : undefined;
-                      if (res.modify_user?.ok === false || errors?.[0]) {
-                        message.error(
-                          notOkMessage ||
-                            errorMessage ||
-                            t('error.UnknownError'),
-                        );
-                        logger.error(res.modify_user?.msg, errorMessage);
+                      onCompleted: (_res, errors) => {
+                        if (errors?.[0]) {
+                          message.error(
+                            errors[0].message || t('error.UnknownError'),
+                          );
+                          logger.error(errors);
+                          resolve();
+                          return;
+                        }
+                        handleStatusUpdated();
                         resolve();
-                        return;
-                      }
-                      message.success(
-                        t('credential.StatusUpdatedSuccessfully'),
-                      );
-                      setSelectedUserList((prev) => {
-                        return prev.filter(
-                          (user) => user?.node?.id !== record?.id,
-                        );
-                      });
-                      updateFetchKey();
-                      resolve();
-                    },
-                    onError: (error) => {
-                      message.error(error?.message);
-                      logger.error(error);
-                      resolve();
-                    },
+                      },
+                      onError: (error) => {
+                        message.error(error?.message);
+                        logger.error(error);
+                        resolve();
+                      },
+                    });
                   });
-                });
+                }
               },
             },
           },
@@ -528,13 +524,24 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
         usersFrgmt={filterOutNullAndUndefined(
           _.map(adminUsersV2?.edges, 'node'),
         )}
-        customizeColumns={(baseColumns) => [
-          {
-            ...baseColumns[0],
-            render: renderEmailWithActions,
-          },
-          ...baseColumns.slice(1),
-        ]}
+        customizeColumns={(baseColumns) => {
+          // The TOTP columns are meaningless when the manager has no TOTP
+          // plugin (their data is skipped via @skipOnClient), so hide them.
+          const columns = isTOTPSupported
+            ? baseColumns
+            : baseColumns.filter(
+                (column) =>
+                  column.key !== 'totp_activated' &&
+                  column.key !== 'totp_activated_at',
+              );
+          return [
+            {
+              ...columns[0],
+              render: renderEmailWithActions,
+            },
+            ...columns.slice(1),
+          ];
+        }}
         scroll={{ x: 'max-content' }}
         pagination={{
           pageSize: tablePaginationOption.pageSize,
@@ -594,33 +601,39 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
             : undefined
         }
       />
-      <UserInfoModal
-        userEmail={emailForInfoModal || ''}
-        open={!!emailForInfoModal || isPendingInfoModalOpen}
-        loading={isPendingInfoModalOpen}
-        onRequestClose={() => {
-          setEmailForInfoModal(null);
-        }}
-      />
-      <UserSettingModal
-        userEmail={emailForSettingModal}
-        open={
-          !!emailForSettingModal ||
-          isPendingSettingModalOpen ||
-          openCreateModal ||
-          openBulkCreateModal
-        }
-        bulkCreate={openBulkCreateModal}
-        loading={isPendingSettingModalOpen}
-        onRequestClose={(success) => {
-          setEmailForSettingModal(null);
-          setOpenCreateModal(false);
-          setOpenBulkCreateModal(false);
-          if (success) {
-            updateFetchKey();
-          }
-        }}
-      />
+      <BAIUnmountAfterClose>
+        <UserInfoModal
+          userInfoFrgmt={selectedUserForInfoModal}
+          open={!!selectedUserForInfoModal}
+          onRequestClose={() => setSelectedUserForInfoModal(null)}
+        />
+      </BAIUnmountAfterClose>
+      <BAIUnmountAfterClose>
+        <UserSettingModal
+          userSettingFrgmt={selectedUserForSettingModal}
+          open={!!selectedUserForSettingModal}
+          onRequestClose={(success) => {
+            setSelectedUserForSettingModal(null);
+            if (success) {
+              updateFetchKey();
+            }
+          }}
+        />
+      </BAIUnmountAfterClose>
+      <BAIUnmountAfterClose>
+        <UserSettingModal
+          userSettingFrgmt={null}
+          open={openCreateModal || openBulkCreateModal}
+          bulkCreate={openBulkCreateModal}
+          onRequestClose={(success) => {
+            setOpenCreateModal(false);
+            setOpenBulkCreateModal(false);
+            if (success) {
+              updateFetchKey();
+            }
+          }}
+        />
+      </BAIUnmountAfterClose>
       <BAIUnmountAfterClose>
         <BulkCreateUserFromCSVModal
           open={openBulkCreateCSVModal}
@@ -638,12 +651,12 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
           onOk={() => {
             togglePurgeUsersModal();
             setSelectedUserList([]);
-            updateFetchKey();
+            // updateFetchKey();
           }}
           onCancel={() => {
             togglePurgeUsersModal();
           }}
-          users={selectedUsersForModal}
+          usersFrgmt={selectedUserFragmentRefs}
         />
       </BAIUnmountAfterClose>
       <BAIUnmountAfterClose>
@@ -659,17 +672,10 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
           onCancel={() => {
             setPurgeTargetId(null);
           }}
-          users={_.compact(
+          usersFrgmt={filterOutNullAndUndefined(
             adminUsersV2?.edges
               ?.filter((edge) => edge?.node?.id === purgeTargetId)
-              .map((edge) =>
-                edge?.node
-                  ? {
-                      id: edge.node.id,
-                      email: edge.node.basicInfo.email,
-                    }
-                  : null,
-              ),
+              .map((edge) => edge?.node),
           )}
         />
       </BAIUnmountAfterClose>
@@ -684,7 +690,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
           onCancel={() => {
             toggleUpdateUsersModal();
           }}
-          users={selectedUsersForModal}
+          usersFrgmt={selectedUserFragmentRefs}
         />
       </BAIUnmountAfterClose>
     </BAIFlex>

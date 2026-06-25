@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8b15c43a48bbcfc3b358b445f136a68a>>
+ * @generated SignedSource<<900546b6f074e8f20dbf0ca8416433f2>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,7 +12,6 @@ import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type ManageAppsModal_image$data = {
   readonly architecture: string | null | undefined;
-  readonly installed: boolean | null | undefined;
   readonly labels: ReadonlyArray<{
     readonly key: string | null | undefined;
     readonly value: string | null | undefined;
@@ -91,13 +90,6 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "installed",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
       "name": "tag",
       "storageKey": null
     }
@@ -106,6 +98,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "8020d2cd64bdb0d68c7f3db353b3afbd";
+(node as any).hash = "93135d3fe605f5e46532ed40e111bbde";
 
 export default node;

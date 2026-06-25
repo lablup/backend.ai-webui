@@ -30,16 +30,22 @@ const openFolderExplorer = async (
   return modal;
 };
 
-test.describe.serial(
+// Not serial: the shared vfolder AND its baseline file are provisioned once in
+// beforeAll (fresh context). Both overwrite-confirmation tests then act on that
+// pre-existing duplicate independently — neither removes the baseline file
+// (one overwrites it, the other cancels), so they are order-independent and a
+// failure in one does not cascade-skip the other. mode: 'default' keeps them
+// sequential on one worker to limit backend load. See FR-3117.
+test.describe(
   'Duplicate File Upload',
   { tag: ['@critical', '@vfolder', '@functional'] },
   () => {
-    test.describe.configure({ timeout: 90_000 });
+    test.describe.configure({ mode: 'default', timeout: 90_000 });
     const testFolderName = 'e2e-test-dup-upload-' + Date.now();
     let tmpDir: string;
     let testFilePath: string;
 
-    test.beforeAll(async () => {
+    test.beforeAll(async ({ browser, request }) => {
       // Create temporary directory and test file
       tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'e2e-dup-upload-'));
 
@@ -48,6 +54,38 @@ test.describe.serial(
         testFilePath,
         'This is test file for e2e duplicate upload testing',
       );
+
+      // Provision the shared vfolder and upload the baseline file once, in a
+      // fresh context, so each overwrite test has a pre-existing duplicate to
+      // act on without depending on the other test's body. try/finally
+      // guarantees the context is closed even if any provisioning/upload step
+      // throws, so a failed setup can't leak the context.
+      const context = await browser.newContext();
+      try {
+        const page = await context.newPage();
+        await loginAsUser(page, request);
+        await createVFolderAndVerify(
+          page,
+          testFolderName,
+          'general',
+          'user',
+          'rw',
+        );
+
+        // openFolderExplorer already calls verifyFileExplorerLoaded().
+        const modal = await openFolderExplorer(page, testFolderName);
+        const uploadButton = await modal.getUploadButton();
+        await uploadButton.click();
+        const [fileChooser] = await Promise.all([
+          page.waitForEvent('filechooser'),
+          page.getByRole('button', { name: 'file-add Upload Files' }).click(),
+        ]);
+        await fileChooser.setFiles([testFilePath]);
+        await modal.verifyFileVisible(path.basename(testFilePath));
+        await modal.close();
+      } finally {
+        await context.close();
+      }
     });
 
     test.beforeEach(async ({ page, request }) => {
@@ -85,22 +123,15 @@ test.describe.serial(
     test('User sees duplicate confirmation when uploading existing file', async ({
       page,
     }) => {
-      // 1. Create a VFolder with Read & Write permissions
-      await createVFolderAndVerify(
-        page,
-        testFolderName,
-        'general',
-        'user',
-        'rw',
-      );
+      const fileName = path.basename(testFilePath);
 
-      // 2. Open the VFolder in FolderExplorerModal
-      let modal = await openFolderExplorer(page, testFolderName);
+      // 1. Open the shared VFolder (the baseline file was uploaded in beforeAll)
+      const modal = await openFolderExplorer(page, testFolderName);
 
-      // 3. Verify file explorer loaded
-      await modal.verifyFileExplorerLoaded();
+      // 2. Verify the pre-existing baseline file is present
+      await modal.verifyFileVisible(fileName);
 
-      // 4. Upload a test file via Upload button (first upload - establish baseline)
+      // 3. Upload the SAME file again to trigger the overwrite confirmation
       const uploadButton = await modal.getUploadButton();
       await uploadButton.click();
 
@@ -111,29 +142,7 @@ test.describe.serial(
 
       await fileChooser.setFiles([testFilePath]);
 
-      // 5. Verify the file appears in the file table
-      const fileName = path.basename(testFilePath);
-      await modal.verifyFileVisible(fileName);
-
-      // 6. Close the modal
-      await modal.close();
-
-      // 7. Re-open the VFolder in FolderExplorerModal
-      modal = await openFolderExplorer(page, testFolderName);
-
-      // 8. Click "Upload" button again
-      const uploadButton2 = await modal.getUploadButton();
-      await uploadButton2.click();
-
-      // 9. Upload the SAME file again
-      const [fileChooser2] = await Promise.all([
-        page.waitForEvent('filechooser'),
-        page.getByRole('button', { name: 'file-add Upload Files' }).click(),
-      ]);
-
-      await fileChooser2.setFiles([testFilePath]);
-
-      // 10. Verify a confirmation modal appears with title "Overwrite Confirmation"
+      // 4. Verify a confirmation modal appears with the overwrite prompt
       const confirmModal = page.getByRole('dialog').last();
       await expect(confirmModal).toBeVisible();
       await expect(
@@ -142,10 +151,10 @@ test.describe.serial(
         ),
       ).toBeVisible();
 
-      // 11. Click "OK" to confirm overwrite
+      // 5. Click "OK" to confirm overwrite
       await page.getByRole('button', { name: 'OK' }).click();
 
-      // 12. Verify the file still exists in the file table (overwritten)
+      // 6. Verify the file still exists in the file table (overwritten)
       await modal.verifyFileVisible(fileName);
 
       // Close modal
@@ -153,10 +162,10 @@ test.describe.serial(
     });
 
     test('User can cancel duplicate file upload', async ({ page }) => {
-      // 1. Open the same VFolder in FolderExplorerModal
+      // 1. Open the shared VFolder in FolderExplorerModal
       const modal = await openFolderExplorer(page, testFolderName);
 
-      // 2. Verify the file from previous test exists in the table
+      // 2. Verify the baseline file (uploaded in beforeAll) exists in the table
       const fileName = path.basename(testFilePath);
       await modal.verifyFileVisible(fileName);
 

@@ -24,6 +24,9 @@ const EMAIL = `e2e-ip-restrict-${TEST_RUN_ID}@lablup.com`;
 const USERNAME = `e2e-ip-restrict-${TEST_RUN_ID}`;
 const PASSWORD = 'testing@123';
 
+// Keep serial: tests share the user created in the first test and the
+// currentClientIp captured in the second; later tests depend on the IP
+// allow-list state set by earlier ones, and the last test cleans up.
 test.describe.serial(
   'IP restriction enforcement during active session',
   { tag: ['@functional', '@regression', '@user-profile'] },

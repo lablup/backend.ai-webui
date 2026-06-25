@@ -34,14 +34,19 @@ const TOTPActivateModal: React.FC<Props> = ({
   onRequestClose,
   ...baiModalProps
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const formRef = useRef<FormInstance<TOTPActivateFormData>>(null);
 
   const user = useFragment(
     graphql`
-      fragment TOTPActivateModalFragment on User {
-        email
-        totp_activated @skipOnClient(if: $isNotSupportTotp)
+      fragment TOTPActivateModalFragment on UserV2 {
+        basicInfo {
+          email
+        }
+        security {
+          totpActivated @skipOnClient(if: $isNotSupportTotp)
+        }
       }
     `,
     userFrgmt,
@@ -55,8 +60,8 @@ const TOTPActivateModal: React.FC<Props> = ({
   }>({
     queryKey: ['initialize_totp', baiClient?.email, baiModalProps.open],
     queryFn: () => {
-      return user?.email === baiClient?.email &&
-        !user?.totp_activated &&
+      return user?.basicInfo?.email === baiClient?.email &&
+        !user?.security?.totpActivated &&
         baiModalProps.open
         ? baiClient.initialize_totp()
         : null;
@@ -127,6 +132,7 @@ export const TOTPActivateForm: React.FC<TOTPActiveFormProps> = ({
   totp_key,
   ref,
 }) => {
+  'use memo';
   const { token } = theme.useToken();
   const { t } = useTranslation();
   return (

@@ -13,12 +13,13 @@ import {
   Typography,
   FormInstance,
   theme,
+  Alert,
 } from 'antd';
 import { BAIButton, BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { PlusIcon } from 'lucide-react';
-import React, { useState } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
 interface ManageAppsModalProps extends BAIModalProps {
@@ -37,10 +38,6 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
 }) => {
   const { t } = useTranslation();
   const formRef = React.useRef<FormInstance>(null);
-  const [isReinstallConfirmOpen, setIsReinstallConfirmOpen] = useState(false);
-  const [pendingCommitRequest, setPendingCommitRequest] = useState<
-    (() => void) | null
-  >(null);
 
   const { token } = theme.useToken();
 
@@ -55,7 +52,6 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
         name @deprecatedSince(version: "24.12.0")
         namespace @since(version: "24.12.0")
         architecture
-        installed
         tag
       }
     `,
@@ -128,43 +124,38 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
             }
           },
         );
-        const commitRequest = () =>
-          commitModifyImageInput({
-            variables: {
-              target: `${image?.registry}/${image?.name ?? image.namespace}:${image?.tag}`,
-              architecture: image?.architecture,
-              props: {
-                labels: labels,
-                resource_limits: undefined,
-              },
+        // Service ports are stored as image label metadata read by the
+        // manager at session-creation time, so a modification applies to
+        // newly created sessions immediately without any image reinstall.
+        commitModifyImageInput({
+          variables: {
+            target: `${image?.registry}/${image?.name ?? image.namespace}:${image?.tag}`,
+            architecture: image?.architecture,
+            props: {
+              labels: labels,
+              resource_limits: undefined,
             },
-            onCompleted: (res, errors) => {
-              if (!res?.modify_image?.ok) {
-                message.error(res?.modify_image?.msg);
-                return;
-              }
-              if (errors && errors?.length > 0) {
-                const errorMsgList = _.map(errors, (error) => error.message);
-                for (const error of errorMsgList) {
-                  message.error(error);
-                }
-              } else {
-                message.success(t('environment.DescImagePortsModified'));
-                onRequestClose(true);
-              }
+          },
+          onCompleted: (res, errors) => {
+            if (!res?.modify_image?.ok) {
+              message.error(res?.modify_image?.msg);
               return;
-            },
-            onError: () => {
-              message.error(t('dialog.ErrorOccurred'));
-            },
-          });
-
-        if (image?.installed) {
-          setPendingCommitRequest(() => commitRequest);
-          setIsReinstallConfirmOpen(true);
-        } else {
-          commitRequest();
-        }
+            }
+            if (errors && errors?.length > 0) {
+              const errorMsgList = _.map(errors, (error) => error.message);
+              for (const error of errorMsgList) {
+                message.error(error);
+              }
+            } else {
+              message.success(t('environment.DescImagePortsModified'));
+              onRequestClose(true);
+            }
+            return;
+          },
+          onError: () => {
+            message.error(t('dialog.ErrorOccurred'));
+          },
+        });
       })
       .catch(() => {});
   };
@@ -179,6 +170,12 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
       title={t('environment.ManageApps')}
       {...baiModalProps}
     >
+      <Alert
+        type="info"
+        showIcon
+        style={{ marginBottom: token.marginMD }}
+        title={t('environment.AppPortsApplyToNewSessionsOnly')}
+      />
       <BAIFlex
         direction="row"
         style={{ width: '100%', marginBottom: token.marginXS }}
@@ -319,25 +316,6 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
           </Form.List>
         </BAIFlex>
       </Form>
-      <BAIModal
-        open={isReinstallConfirmOpen}
-        title={t('environment.ImageReinstallationRequired')}
-        okText={t('button.Confirm')}
-        okButtonProps={{ danger: true }}
-        onOk={() => {
-          setIsReinstallConfirmOpen(false);
-          pendingCommitRequest?.();
-          setPendingCommitRequest(null);
-        }}
-        onCancel={() => {
-          setIsReinstallConfirmOpen(false);
-          setPendingCommitRequest(null);
-        }}
-      >
-        <Trans
-          i18nKey={'environment.ModifyImageResourceLimitReinstallRequired'}
-        />
-      </BAIModal>
     </BAIModal>
   );
 };

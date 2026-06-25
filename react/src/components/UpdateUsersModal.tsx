@@ -3,9 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
-  ModifyUserInput,
-  UpdateUsersModalMutation,
-} from '../__generated__/UpdateUsersModalMutation.graphql';
+  UpdateUsersModalBulkUpdateMutation,
+  UserStatusV2,
+} from '../__generated__/UpdateUsersModalBulkUpdateMutation.graphql';
+import { UpdateUsersModalFragment$key } from '../__generated__/UpdateUsersModalFragment.graphql';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import ProjectSelect from './ProjectSelect';
 import UserResourcePolicySelect from './UserResourcePolicySelect';
@@ -18,15 +19,13 @@ import {
   BAIModal,
   BAIModalProps,
   BAISelect,
+  toLocalId,
   useBAILogger,
-  useErrorMessageResolver,
-  useMutationWithPromise,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Suspense, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql } from 'react-relay';
-import { PayloadError } from 'relay-runtime';
+import { graphql, useFragment, useMutation } from 'react-relay';
 
 interface UpdateUsersFormValues {
   domain_name?: string;
@@ -38,38 +37,57 @@ interface UpdateUsersFormValues {
   container_gids?: string[];
 }
 
-// TODO(FR-3019): AdminUserManagement now uses the v2 (adminUsersV2) query, so
-// this modal should later be updated to receive data via a v2 UserV2 fragment
-// instead of a plain { id, email } list.
-export interface UpdateUsersModalUser {
-  id: string;
-  email: string;
-}
+// Maps the form's v1 status strings to the v2 UserStatusV2 enum.
+const statusToV2: Record<
+  NonNullable<UpdateUsersFormValues['status']>,
+  UserStatusV2
+> = {
+  active: 'ACTIVE',
+  inactive: 'INACTIVE',
+  'before-verification': 'BEFORE_VERIFICATION',
+  deleted: 'DELETED',
+};
 
 export interface UpdateUsersModalProps extends Omit<BAIModalProps, 'title'> {
-  users: ReadonlyArray<UpdateUsersModalUser>;
+  usersFrgmt: UpdateUsersModalFragment$key;
 }
 
-const UpdateUsersModal = ({ users, ...modalProps }: UpdateUsersModalProps) => {
+const UpdateUsersModal = ({
+  usersFrgmt,
+  ...modalProps
+}: UpdateUsersModalProps) => {
   'use memo';
+  const { t } = useTranslation();
+  const { token } = theme.useToken();
+  const { message } = App.useApp();
+  const { logger } = useBAILogger();
   const formRef = useRef<FormInstance<UpdateUsersFormValues>>(null);
   const [isPending, setIsPending] = useState(false);
-  const { token } = theme.useToken();
-  const { t } = useTranslation();
-  const { message } = App.useApp();
-  const { getErrorMessage } = useErrorMessageResolver();
-  const { logger } = useBAILogger();
-
-  // TODO: when backend supports batch update, change to batch mutation
-  const mutateUpdateUsersWithPromise =
-    useMutationWithPromise<UpdateUsersModalMutation>(graphql`
-      mutation UpdateUsersModalMutation(
-        $email: String!
-        $props: ModifyUserInput!
+  const users = useFragment(
+    graphql`
+      fragment UpdateUsersModalFragment on UserV2 @relay(plural: true) {
+        id
+        basicInfo {
+          email
+        }
+      }
+    `,
+    usersFrgmt,
+  );
+  // >= 26.4.0: adminBulkUpdateUsersV2 — single round-trip, keyed by userId.
+  const [commitBulkUpdate, isInFlightBulkUpdate] =
+    useMutation<UpdateUsersModalBulkUpdateMutation>(graphql`
+      mutation UpdateUsersModalBulkUpdateMutation(
+        $input: BulkUpdateUserV2Input!
       ) {
-        modify_user(email: $email, props: $props) {
-          ok
-          msg
+        adminBulkUpdateUsersV2(input: $input) {
+          updatedUsers {
+            id
+          }
+          failed {
+            userId
+            message
+          }
         }
       }
     `);
@@ -78,78 +96,81 @@ const UpdateUsersModal = ({ users, ...modalProps }: UpdateUsersModalProps) => {
     <BAIModal
       title={t('credential.UpdateUsers')}
       okText={t('button.Update')}
-      confirmLoading={isPending}
+      confirmLoading={isPending || isInFlightBulkUpdate}
       {...modalProps}
+      okButtonProps={{
+        ...modalProps.okButtonProps,
+        disabled: users.length === 0,
+      }}
       onOk={(e) => {
         formRef.current
           ?.validateFields()
           .then((values) => {
             setIsPending(true);
-            const userList = _.compact(users);
 
-            // Build props with type safety and remove empty values
-            const props = _.omitBy(
+            // v2: same field-inclusion rules as the legacy path, but with
+            // camelCase keys and the UserStatusV2 enum.
+            const input = _.omitBy(
               {
-                domain_name: values.domain_name,
-                group_ids: values.group_ids,
-                status: values.status,
-                resource_policy: values.resource_policy,
-                container_uid: values.container_uid,
-                container_main_gid: values.container_main_gid,
-                container_gids: !_.isEmpty(values.container_gids)
+                domainName: values.domain_name,
+                groupIds: values.group_ids,
+                status: values.status ? statusToV2[values.status] : undefined,
+                resourcePolicy: values.resource_policy,
+                containerUid: values.container_uid,
+                containerMainGid: values.container_main_gid,
+                containerGids: !_.isEmpty(values.container_gids)
                   ? _.map(values.container_gids, (gid) => _.toNumber(gid))
                   : undefined,
-              } satisfies ModifyUserInput,
-              (value) => _.isNil(value) || value === '' || _.isEmpty(value),
+              },
+              (value) =>
+                _.isNil(value) ||
+                value === '' ||
+                (!_.isNumber(value) && _.isEmpty(value)),
             );
 
-            const promises = userList.map((user) =>
-              mutateUpdateUsersWithPromise({
-                email: user.email || '',
-                props,
-              }).catch((error) => Promise.reject({ user, error })),
-            );
-            Promise.allSettled(promises)
-              .then((results) => {
-                const fulfilled = results.filter(
-                  (r) => r.status === 'fulfilled',
-                );
-                const rejected = results.filter((r) => r.status === 'rejected');
+            commitBulkUpdate({
+              variables: {
+                input: {
+                  users: users.map((user) => ({
+                    userId: toLocalId(user.id),
+                    input,
+                  })),
+                },
+              },
+              onCompleted: (res, errors) => {
+                if (errors && errors.length > 0) {
+                  message.error(errors.map((err) => err.message).join(', '));
+                  setIsPending(false);
+                  return;
+                }
+                const adminBulkUpdateUsersV2 = res.adminBulkUpdateUsersV2;
+                if (!adminBulkUpdateUsersV2) {
+                  message.error(t('error.UnknownError'));
+                  setIsPending(false);
+                  return;
+                }
+                const { updatedUsers, failed } = adminBulkUpdateUsersV2;
 
-                if (rejected.length > 0) {
-                  const failedUserNames = rejected
-                    .map((r) => {
-                      const reason = r.reason;
-                      return reason.user.email || t('credential.WrongEmail');
-                    })
-                    .join(', ');
-
-                  failedUserNames &&
-                    message.error(
-                      t('credential.FailedToUpdateUsers', {
-                        users: failedUserNames,
-                      }),
-                    );
-                  const error =
-                    rejected[0]?.reason?.error?.length > 0 &&
-                    rejected[0].reason.error[0];
-                  error &&
-                    message.error(getErrorMessage(error as PayloadError));
+                if (failed.length > 0) {
+                  message.error(failed.map((f) => f.message).join(', '));
                 }
 
-                if (fulfilled.length > 0) {
+                if (updatedUsers.length > 0) {
                   message.success(
                     t('credential.UpdatedUsers', {
-                      count: fulfilled.length,
-                      total: userList.length,
+                      count: updatedUsers.length,
+                      total: users.length,
                     }),
                   );
                   modalProps.onOk?.(e);
                 }
-              })
-              .finally(() => {
                 setIsPending(false);
-              });
+              },
+              onError: (error) => {
+                message.error(error.message);
+                setIsPending(false);
+              },
+            });
           })
           .catch((error) => {
             logger.error('Validation failed:', error);
@@ -174,7 +195,7 @@ const UpdateUsersModal = ({ users, ...modalProps }: UpdateUsersModalProps) => {
               }}
             >
               {_.map(users, (user) => (
-                <li key={user.id}>{user.email}</li>
+                <li key={user.id}>{user.basicInfo.email}</li>
               ))}
             </ul>
           }

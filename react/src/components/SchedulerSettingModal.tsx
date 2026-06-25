@@ -153,6 +153,10 @@ const SchedulerSettingModal = ({
                 label: 'DRF',
                 value: 'drf',
               },
+              {
+                label: 'Fair Share',
+                value: 'fair-share',
+              },
             ]}
           />
         </Form.Item>

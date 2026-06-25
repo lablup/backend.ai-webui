@@ -11,6 +11,7 @@ import { AutoScalingRuleEditorModalPresetsQuery } from '../__generated__/AutoSca
 import { AutoScalingRuleEditorModalUpdateMutation } from '../__generated__/AutoScalingRuleEditorModalUpdateMutation.graphql';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { useCurrentUserRole } from '../hooks/backendai';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import PrometheusQueryTemplatePreview from './PrometheusQueryTemplatePreview';
 import {
@@ -111,6 +112,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
+  const currentUserRole = useCurrentUserRole();
   const isSupportPrometheusAutoScalingRule = baiClient.supports(
     'prometheus-auto-scaling-rule',
   );
@@ -342,7 +344,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
               },
             ]}
             extra={
-              selectedPreset ? (
+              currentUserRole === 'superadmin' && selectedPreset ? (
                 <PrometheusQueryTemplatePreview
                   key={selectedPreset.id}
                   queryTemplate={selectedPreset.queryTemplate}

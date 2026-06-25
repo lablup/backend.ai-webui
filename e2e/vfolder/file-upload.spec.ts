@@ -30,18 +30,23 @@ const openFolderExplorer = async (
   return modal;
 };
 
-test.describe.serial(
+// Not serial: the shared vfolder is provisioned once in beforeAll (fresh
+// context, mirroring vfolder-explorer-modal.spec.ts), and each test uploads
+// its own distinct files into it, so the tests are order-independent and a
+// failure in one does not cascade-skip the others. mode: 'default' keeps them
+// sequential on one worker to limit backend load. See FR-3117.
+test.describe(
   'Button-Based File Upload',
   { tag: ['@critical', '@vfolder', '@functional'] },
   () => {
-    test.describe.configure({ timeout: 90_000 });
+    test.describe.configure({ mode: 'default', timeout: 90_000 });
     const testFolderName = 'e2e-test-upload-' + Date.now();
     let tmpDir: string;
     let testFile1Path: string;
     let testFile2Path: string;
     let testFile3Path: string;
 
-    test.beforeAll(async () => {
+    test.beforeAll(async ({ browser, request }) => {
       // Create temporary directory and test files
       tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'e2e-upload-'));
 
@@ -62,6 +67,25 @@ test.describe.serial(
         testFile3Path,
         'This is test file 3 for e2e upload testing',
       );
+
+      // Provision the shared vfolder once, in a fresh context, so neither test
+      // owns creation as an asserted step and the suite no longer needs to be
+      // serial. try/finally guarantees the context is closed even if login or
+      // folder creation throws, so a failed provisioning can't leak it.
+      const context = await browser.newContext();
+      try {
+        const page = await context.newPage();
+        await loginAsUser(page, request);
+        await createVFolderAndVerify(
+          page,
+          testFolderName,
+          'general',
+          'user',
+          'rw',
+        );
+      } finally {
+        await context.close();
+      }
     });
 
     test.beforeEach(async ({ page, request }) => {
@@ -99,39 +123,30 @@ test.describe.serial(
     test('User can upload a single file via Upload button', async ({
       page,
     }) => {
-      // 1. Create a VFolder with Read & Write permissions
-      await createVFolderAndVerify(
-        page,
-        testFolderName,
-        'general',
-        'user',
-        'rw',
-      );
-
-      // 2. Open the VFolder in FolderExplorerModal
+      // 1. Open the shared VFolder (provisioned in beforeAll) in FolderExplorerModal
       const modal = await openFolderExplorer(page, testFolderName);
 
-      // 3. Verify file explorer loaded
+      // 2. Verify file explorer loaded
       await modal.verifyFileExplorerLoaded();
 
-      // 4. Click the "Upload" button
+      // 3. Click the "Upload" button
       const uploadButton = await modal.getUploadButton();
       await uploadButton.click();
 
-      // 5. In the dropdown, click "Upload Files" button and handle file chooser
+      // 4. In the dropdown, click "Upload Files" button and handle file chooser
       const [fileChooser] = await Promise.all([
         page.waitForEvent('filechooser'),
         page.getByRole('button', { name: 'file-add Upload Files' }).click(),
       ]);
 
-      // 6. Upload a single test file
+      // 5. Upload a single test file
       await fileChooser.setFiles([testFile1Path]);
 
-      // 7. Verify the uploaded file appears in the file table
+      // 6. Verify the uploaded file appears in the file table
       const fileName = path.basename(testFile1Path);
       await modal.verifyFileVisible(fileName);
 
-      // 8. Close modal
+      // 7. Close modal
       await modal.close();
     });
 

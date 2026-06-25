@@ -134,41 +134,46 @@ test.describe(
     });
 
     // 10.3 Pagination state is persisted in the URL query parameters
-    test('Superadmin can persist pagination state in the URL query parameters', async ({
-      page,
-    }) => {
-      const adminModelCardPage = new AdminModelCardPage(page);
-      await page.goto(
-        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
-      );
-      await adminModelCardPage.waitForTableLoad();
+    test(
+      'Superadmin can persist pagination state in the URL query parameters',
+      { tag: ['@requires-seeded-data'] },
+      async ({ page }) => {
+        const adminModelCardPage = new AdminModelCardPage(page);
+        await page.goto(
+          `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+        );
+        await adminModelCardPage.waitForTableLoad();
 
-      // Only proceed if there are multiple pages
-      const nextButton = page.getByRole('button', { name: 'right' });
-      const isNextEnabled = await nextButton.isEnabled();
-      if (!isNextEnabled) {
-        test.skip();
-        return;
-      }
+        // Environment data gate (FR-3114): this scenario needs more than one
+        // page of model store cards on the target cluster. Seeding more model
+        // cards is an infra task — until then the test skips with an auditable
+        // reason.
+        const nextButton = page.getByRole('button', { name: 'right' });
+        const isNextEnabled = await nextButton.isEnabled();
+        test.skip(
+          !isNextEnabled,
+          'Pagination scenario requires more than one page of model store cards on the target cluster (@requires-seeded-data)',
+        );
 
-      // Navigate to page 2
-      await nextButton.click();
-      // Use the URL as the source of truth for the active page
-      await expect(page).toHaveURL(/current=2/);
+        // Navigate to page 2
+        await nextButton.click();
+        // Use the URL as the source of truth for the active page
+        await expect(page).toHaveURL(/current=2/);
 
-      // Verify page 2 pagination item is active
-      await expect(
-        page.getByRole('listitem', { name: '2' }).first(),
-      ).toBeVisible();
+        // Verify page 2 pagination item is active
+        await expect(
+          page.getByRole('listitem', { name: '2' }).first(),
+        ).toBeVisible();
 
-      const page2URL = page.url();
+        const page2URL = page.url();
 
-      // Reload the page and verify it stays on page 2
-      await page.goto(page2URL);
-      await adminModelCardPage.waitForTableLoad();
+        // Reload the page and verify it stays on page 2
+        await page.goto(page2URL);
+        await adminModelCardPage.waitForTableLoad();
 
-      // Verify page 2 is still active after reload
-      await expect(page).toHaveURL(/current=2/);
-    });
+        // Verify page 2 is still active after reload
+        await expect(page).toHaveURL(/current=2/);
+      },
+    );
   },
 );

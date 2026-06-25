@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c1e38083382e29c4d797ccc3a1543bf9>>
+ * @generated SignedSource<<4169ebe4564ad966318fdaeb8c86d570>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -392,6 +392,36 @@ return {
                       {
                         "alias": null,
                         "args": null,
+                        "concreteType": "ImageV2",
+                        "kind": "LinkedField",
+                        "name": "image",
+                        "plural": false,
+                        "selections": [
+                          (v2/*: any*/),
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "ImageV2IdentityInfo",
+                            "kind": "LinkedField",
+                            "name": "identity",
+                            "plural": false,
+                            "selections": [
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "canonicalName",
+                                "storageKey": null
+                              }
+                            ],
+                            "storageKey": null
+                          }
+                        ],
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
                         "concreteType": "PresetResourceAllocation",
                         "kind": "LinkedField",
                         "name": "resource",
@@ -599,12 +629,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "a914287733ec26750faacc95eaea86b5",
+    "cacheID": "33e16587997de9e1ad58fda766f8fb71",
     "id": null,
     "metadata": {},
     "name": "ModelCardDrawerQuery",
     "operationKind": "query",
-    "text": "query ModelCardDrawerQuery(\n  $id: UUID!\n) {\n  modelCardV2(id: $id) {\n    ...ModelCardDrawerFragment\n    id\n  }\n}\n\nfragment DeploymentPresetDetailModalFragment on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues @since(version: \"26.4.4rc9\") {\n    presetId\n    value\n  }\n  modelDefinition {\n    models {\n      name\n      service {\n        healthCheck {\n          enable @since(version: \"26.4.4rc7\")\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n    }\n  }\n}\n\nfragment ModelCardDeployModalFragment on ModelCardV2 {\n  id\n  availablePresets(orderBy: [{field: RANK, direction: \"ASC\"}]) {\n    edges {\n      node {\n        id\n        name\n        runtimeVariantId\n        ...DeploymentPresetDetailModalFragment\n      }\n    }\n  }\n}\n\nfragment ModelCardDrawerFragment on ModelCardV2 {\n  id\n  name\n  metadata {\n    title\n    author\n    description\n    task\n    category\n    architecture\n    framework\n    label\n    license\n    modelVersion\n  }\n  minResource {\n    resourceType\n    quantity\n  }\n  readme\n  createdAt\n  updatedAt\n  vfolder {\n    id\n    metadata {\n      name\n    }\n    ...VFolderNodeIdenticonV2Fragment\n  }\n  ...ModelCardDeployModalFragment\n}\n\nfragment VFolderNodeIdenticonV2Fragment on VFolder {\n  id\n}\n"
+    "text": "query ModelCardDrawerQuery(\n  $id: UUID!\n) {\n  modelCardV2(id: $id) {\n    ...ModelCardDrawerFragment\n    id\n  }\n}\n\nfragment DeploymentPresetDetailModalFragment on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  image @since(version: \"26.4.4\") {\n    id\n    identity {\n      canonicalName\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues @since(version: \"26.4.4rc9\") {\n    presetId\n    value\n  }\n  modelDefinition {\n    models {\n      name\n      service {\n        healthCheck {\n          enable @since(version: \"26.4.4rc7\")\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n    }\n  }\n}\n\nfragment ModelCardDeployModalFragment on ModelCardV2 {\n  id\n  availablePresets(orderBy: [{field: RANK, direction: \"ASC\"}]) {\n    edges {\n      node {\n        id\n        name\n        runtimeVariantId\n        ...DeploymentPresetDetailModalFragment\n      }\n    }\n  }\n}\n\nfragment ModelCardDrawerFragment on ModelCardV2 {\n  id\n  name\n  metadata {\n    title\n    author\n    description\n    task\n    category\n    architecture\n    framework\n    label\n    license\n    modelVersion\n  }\n  minResource {\n    resourceType\n    quantity\n  }\n  readme\n  createdAt\n  updatedAt\n  vfolder {\n    id\n    metadata {\n      name\n    }\n    ...VFolderNodeIdenticonV2Fragment\n  }\n  ...ModelCardDeployModalFragment\n}\n\nfragment VFolderNodeIdenticonV2Fragment on VFolder {\n  id\n}\n"
   }
 };
 })();

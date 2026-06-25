@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1d1e90493324bc579fefc3eb21c35b4f>>
+ * @generated SignedSource<<46f3d2fccf92a49efe3337c9fb135c59>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -199,6 +199,36 @@ return {
                     "storageKey": null
                   },
                   (v4/*: any*/)
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "ImageV2",
+            "kind": "LinkedField",
+            "name": "image",
+            "plural": false,
+            "selections": [
+              (v2/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ImageV2IdentityInfo",
+                "kind": "LinkedField",
+                "name": "identity",
+                "plural": false,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "canonicalName",
+                    "storageKey": null
+                  }
                 ],
                 "storageKey": null
               }
@@ -412,12 +442,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "81ad2a7db4a7e88c60d295aec28d761d",
+    "cacheID": "ccd4b84ef4b7bf255f7a95f4bbbacd00",
     "id": null,
     "metadata": {},
     "name": "DeploymentAddRevisionModalPresetDetailQuery",
     "operationKind": "query",
-    "text": "query DeploymentAddRevisionModalPresetDetailQuery(\n  $id: UUID!\n) {\n  deploymentRevisionPreset(id: $id) {\n    ...DeploymentPresetDetailModalFragment\n    id\n  }\n}\n\nfragment DeploymentPresetDetailModalFragment on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues @since(version: \"26.4.4rc9\") {\n    presetId\n    value\n  }\n  modelDefinition {\n    models {\n      name\n      service {\n        healthCheck {\n          enable @since(version: \"26.4.4rc7\")\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query DeploymentAddRevisionModalPresetDetailQuery(\n  $id: UUID!\n) {\n  deploymentRevisionPreset(id: $id) {\n    ...DeploymentPresetDetailModalFragment\n    id\n  }\n}\n\nfragment DeploymentPresetDetailModalFragment on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  image @since(version: \"26.4.4\") {\n    id\n    identity {\n      canonicalName\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues @since(version: \"26.4.4rc9\") {\n    presetId\n    value\n  }\n  modelDefinition {\n    models {\n      name\n      service {\n        healthCheck {\n          enable @since(version: \"26.4.4rc7\")\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();

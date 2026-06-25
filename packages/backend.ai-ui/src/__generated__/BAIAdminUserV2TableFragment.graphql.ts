@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0f608d74562127034caa2731461c5879>>
+ * @generated SignedSource<<6873a2e8480d63aa479a52e63163e388>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -55,7 +55,12 @@ export type BAIAdminUserV2TableFragment$key = ReadonlyArray<{
 }>;
 
 const node: ReaderFragment = {
-  "argumentDefinitions": [],
+  "argumentDefinitions": [
+    {
+      "kind": "RootArgument",
+      "name": "isNotSupportTotp"
+    }
+  ],
   "kind": "Fragment",
   "metadata": {
     "plural": true
@@ -291,6 +296,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "62cfcc65f05626ead1298a3d96ec720c";
+(node as any).hash = "cc2d2f87954ec529fdc80352e406cf85";
 
 export default node;

@@ -183,7 +183,6 @@ const PureChatPage = ({ id }: { id: string }) => {
   const defaultEndpointId = useDefaultEndpointId();
   const provider = useChatProviderData(defaultEndpointId);
   const { styles } = useStyles();
-  const { token } = theme.useToken();
   const [openHistory, setOpenHistory] = useState(false);
   const [chatIntroAlertDismissed, setChatIntroAlertDismissed] =
     useBAISettingUserState('chat_intro_alert_dismissed');
@@ -202,154 +201,160 @@ const PureChatPage = ({ id }: { id: string }) => {
 
   return (
     chat && (
-      <BAICard
-        title={
-          <Typography.Text
-            className={styles.fixEditableVerticalAlign}
-            editable={
-              getChatById(chat.id)
-                ? {
-                    onChange: (value) => {
-                      if (!_.isEmpty(value)) {
-                        updateHistory({ ...chat, label: value });
-                      }
-                    },
-                    text: chat.label,
-                    triggerType: ['icon', 'text'],
-                  }
-                : undefined
-            }
-          >
-            {chat.label}
-          </Typography.Text>
-        }
-        style={{
-          overflow: 'hidden',
-          minHeight: 0,
-          display: 'flex',
-          flexDirection: 'column',
-          height: '100%',
-        }}
-        styles={{
-          body: {
-            overflow: 'hidden',
-            height: '100%',
-            paddingTop: 0,
-          },
-        }}
-        extra={
-          <BAIFlex>
-            <Tooltip title={t('chatui.NewChat')}>
-              <BAIButton
-                type="text"
-                icon={<PlusIcon />}
-                onClick={() => {
-                  setOpenHistory(false);
-                  navigate('/chat', { replace: true });
-                }}
-              />
-            </Tooltip>
-            <Tooltip title={t('chatui.History')}>
-              <Button
-                type="text"
-                icon={<HistoryIcon />}
-                onClick={() => {
-                  setOpenHistory(!openHistory);
-                }}
-              />
-            </Tooltip>
-          </BAIFlex>
-        }
+      <BAIFlex
+        direction="column"
+        align="stretch"
+        gap="sm"
+        style={{ height: '100%', overflow: 'hidden', minHeight: 0 }}
       >
-        <BAIFlex
-          direction="column"
-          align="stretch"
+        {!chatIntroAlertDismissed && (
+          <Alert
+            type="info"
+            showIcon
+            closable={{
+              closeIcon: true,
+              afterClose: () => setChatIntroAlertDismissed(true),
+            }}
+            title={t('chatui.intro.Title')}
+            description={t('chatui.intro.Description')}
+          />
+        )}
+        <BAICard
+          title={
+            <Typography.Text
+              className={styles.fixEditableVerticalAlign}
+              editable={
+                getChatById(chat.id)
+                  ? {
+                      onChange: (value) => {
+                        if (!_.isEmpty(value)) {
+                          updateHistory({ ...chat, label: value });
+                        }
+                      },
+                      text: chat.label,
+                      triggerType: ['icon', 'text'],
+                    }
+                  : undefined
+              }
+            >
+              {chat.label}
+            </Typography.Text>
+          }
           style={{
             overflow: 'hidden',
             minHeight: 0,
-            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            flex: 1,
           }}
-        >
-          {!chatIntroAlertDismissed && (
-            <Alert
-              type="info"
-              showIcon
-              closable={{
-                closeIcon: true,
-                afterClose: () => setChatIntroAlertDismissed(true),
-              }}
-              title={t('chatui.intro.Title')}
-              description={t('chatui.intro.Description')}
-              style={{ marginBottom: token.size }}
-            />
-          )}
-          {id && (
-            <BAIFlex
-              direction="row"
-              align="stretch"
-              gap={'xs'}
-              style={{
-                overflow: 'hidden',
-                minHeight: 0,
-                flex: 1,
-              }}
-            >
-              <Suspense fallback={<Card loading style={{ width: '100%' }} />}>
-                {_.map(chat.chats, (chatData) => (
-                  <ChatCard
-                    key={chatData.id}
-                    chat={chatData}
-                    onUpdateChat={(newChatProperties) => {
-                      updateChatData(chatData.id, newChatProperties);
-                    }}
-                    fetchOnClient
-                    onRemoveChat={() => {
-                      removeChatData(chatData.id);
-                    }}
-                    onAddChat={() => {
-                      addChatData(chatData);
-                    }}
-                    onSaveMessage={(message) => {
-                      saveChatMessage(chatData.id, message);
-                    }}
-                    onClearMessage={(chatData) => {
-                      clearChatMessage(chatData.id);
-                    }}
-                    closable={isClosable(chat.chats.length)}
-                    cloneable={isClonable(chat.chats.length)}
-                    style={{
-                      flex: 1,
-                      overflow: 'hidden',
-                    }}
-                  />
-                ))}
-              </Suspense>
+          styles={{
+            body: {
+              overflow: 'hidden',
+              height: '100%',
+              paddingTop: 0,
+            },
+          }}
+          extra={
+            <BAIFlex>
+              <Tooltip title={t('chatui.NewChat')}>
+                <BAIButton
+                  type="text"
+                  icon={<PlusIcon />}
+                  onClick={() => {
+                    setOpenHistory(false);
+                    navigate('/chat', { replace: true });
+                  }}
+                />
+              </Tooltip>
+              <Tooltip title={t('chatui.History')}>
+                <Button
+                  type="text"
+                  icon={<HistoryIcon />}
+                  onClick={() => {
+                    setOpenHistory(!openHistory);
+                  }}
+                />
+              </Tooltip>
             </BAIFlex>
-          )}
-        </BAIFlex>
-        <ChatHistoryDrawer
-          selectedHistoryId={chat.id}
-          open={openHistory}
-          history={history}
-          onClickClose={() => {
-            setOpenHistory(false);
-          }}
-          onClickRemove={(historyId) => {
-            const remainHistories = removeHistory(historyId);
-
-            if (remainHistories === 0) {
+          }
+        >
+          <BAIFlex
+            direction="column"
+            align="stretch"
+            style={{
+              overflow: 'hidden',
+              minHeight: 0,
+              height: '100%',
+            }}
+          >
+            {id && (
+              <BAIFlex
+                direction="row"
+                align="stretch"
+                gap={'xs'}
+                style={{
+                  overflow: 'hidden',
+                  minHeight: 0,
+                  flex: 1,
+                }}
+              >
+                <Suspense fallback={<Card loading style={{ width: '100%' }} />}>
+                  {_.map(chat.chats, (chatData) => (
+                    <ChatCard
+                      key={chatData.id}
+                      chat={chatData}
+                      onUpdateChat={(newChatProperties) => {
+                        updateChatData(chatData.id, newChatProperties);
+                      }}
+                      fetchOnClient
+                      onRemoveChat={() => {
+                        removeChatData(chatData.id);
+                      }}
+                      onAddChat={() => {
+                        addChatData(chatData);
+                      }}
+                      onSaveMessage={(message) => {
+                        saveChatMessage(chatData.id, message);
+                      }}
+                      onClearMessage={(chatData) => {
+                        clearChatMessage(chatData.id);
+                      }}
+                      closable={isClosable(chat.chats.length)}
+                      cloneable={isClonable(chat.chats.length)}
+                      style={{
+                        flex: 1,
+                        overflow: 'hidden',
+                      }}
+                    />
+                  ))}
+                </Suspense>
+              </BAIFlex>
+            )}
+          </BAIFlex>
+          <ChatHistoryDrawer
+            selectedHistoryId={chat.id}
+            open={openHistory}
+            history={history}
+            onClickClose={() => {
               setOpenHistory(false);
-              navigate('/chat', { replace: true });
-            } else if (historyId === chat.id) {
-              const chat = history.filter(({ id }) => id !== historyId)[0];
-              navigate(`/chat/${chat?.id}`, { replace: true });
-            }
-          }}
-          onClickHistory={(historyId) => {
-            navigate(`/chat/${historyId}`, { replace: true });
-          }}
-        />
-      </BAICard>
+            }}
+            onClickRemove={(historyId) => {
+              const remainHistories = removeHistory(historyId);
+
+              if (remainHistories === 0) {
+                setOpenHistory(false);
+                navigate('/chat', { replace: true });
+              } else if (historyId === chat.id) {
+                const chat = history.filter(({ id }) => id !== historyId)[0];
+                navigate(`/chat/${chat?.id}`, { replace: true });
+              }
+            }}
+            onClickHistory={(historyId) => {
+              navigate(`/chat/${historyId}`, { replace: true });
+            }}
+          />
+        </BAICard>
+      </BAIFlex>
     )
   );
 };

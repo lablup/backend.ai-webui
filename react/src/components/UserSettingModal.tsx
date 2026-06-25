@@ -9,8 +9,8 @@ import {
   UserStatusV2,
 } from '../__generated__/UserSettingModalBulkCreateMutation.graphql';
 import { UserSettingModalCreateMutation } from '../__generated__/UserSettingModalCreateMutation.graphql';
-import { UserSettingModalModifyMutation } from '../__generated__/UserSettingModalModifyMutation.graphql';
-import { UserSettingModalQuery } from '../__generated__/UserSettingModalQuery.graphql';
+import { UserSettingModalFragment$key } from '../__generated__/UserSettingModalFragment.graphql';
+import { UserSettingModalUpdateMutation } from '../__generated__/UserSettingModalUpdateMutation.graphql';
 import { isValidIPOrCidr } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
@@ -47,13 +47,14 @@ import {
   BAISelect,
   BAIUnmountAfterClose,
   filterOutNullAndUndefined,
+  toLocalId,
   useBAILogger,
   useUpdatableState,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense, useDeferredValue, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useMutation, useLazyLoadQuery } from 'react-relay';
+import { graphql, useMutation, useFragment } from 'react-relay';
 
 type UserRole = {
   [key: string]: string[];
@@ -83,6 +84,7 @@ type FormValues = {
   group_ids?: string[];
   status: string;
   allowed_client_ip?: string[];
+  main_access_key?: string;
   need_password_change: boolean;
   totp_activated?: boolean;
   sudo_session_enabled?: boolean;
@@ -112,6 +114,21 @@ const roleToV2: Record<string, UserRoleV2> = {
   monitor: 'MONITOR',
 };
 
+// Reverse maps: v2 enums → the form's v1 string values used by the Select inputs.
+const statusFromV2: Record<string, string> = {
+  ACTIVE: 'active',
+  INACTIVE: 'inactive',
+  BEFORE_VERIFICATION: 'before-verification',
+  DELETED: 'deleted',
+};
+
+const roleFromV2: Record<string, string> = {
+  USER: 'user',
+  ADMIN: 'admin',
+  SUPERADMIN: 'superadmin',
+  MONITOR: 'monitor',
+};
+
 const formatBulkEmail = (
   prefix: string,
   suffix: string,
@@ -132,17 +149,18 @@ const formatBulkUsername = (
 };
 
 interface UserSettingModalProps extends BAIModalProps {
-  userEmail?: string | null;
+  userSettingFrgmt?: UserSettingModalFragment$key | null;
   bulkCreate?: boolean;
   onRequestClose: (success: boolean) => void;
 }
 
 const UserSettingModal: React.FC<UserSettingModalProps> = ({
-  userEmail = null,
+  userSettingFrgmt = null,
   bulkCreate = false,
   onRequestClose,
   ...baiModalProps
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { modal } = App.useApp();
@@ -162,116 +180,138 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
   const [createdKeypairs, setCreatedKeypairs] =
     useState<GeneratedKeypairListModalFragment$key | null>();
 
-  const { user } = useLazyLoadQuery<UserSettingModalQuery>(
+  const user = useFragment(
     graphql`
-      query UserSettingModalQuery($email: String, $isNotSupportTotp: Boolean!) {
-        user(email: $email) {
+      fragment UserSettingModalFragment on UserV2 {
+        id
+        basicInfo {
           email
           username
-          need_password_change
-          full_name
+          fullName
           description
-          status
-          domain_name
-          role
-          groups {
-            id
-            name
-          }
-          resource_policy
-          sudo_session_enabled
-          totp_activated @skipOnClient(if: $isNotSupportTotp)
-          allowed_client_ip
-          main_access_key
-          container_uid
-          container_main_gid
-          container_gids
-          ...TOTPActivateModalFragment
         }
+        status {
+          status
+          needPasswordChange
+        }
+        organization {
+          domainName
+          role
+          resourcePolicy
+          mainAccessKey
+        }
+        security {
+          totpActivated @skipOnClient(if: $isNotSupportTotp)
+          sudoSessionEnabled
+          allowedClientIp
+        }
+        container {
+          containerUid
+          containerMainGid
+          containerGids
+        }
+        projects {
+          edges {
+            node {
+              id
+            }
+          }
+        }
+        ...TOTPActivateModalFragment
       }
     `,
-    {
-      email: userEmail ?? '',
-      isNotSupportTotp: !isTOTPSupported,
-    },
-    {
-      // Do not fetch user data if the modal is closed or the user email is not provided
-      fetchPolicy: deferredOpen && userEmail ? 'network-only' : 'store-only',
-      fetchKey: fetchKey,
-    },
+    userSettingFrgmt ?? null,
   );
 
-  const [commitModifyUserSetting, isInFlightCommitModifyUserSetting] =
-    useMutation<UserSettingModalModifyMutation>(graphql`
-      mutation UserSettingModalModifyMutation(
-        $email: String!
-        $props: ModifyUserInput!
-        $isNotSupportTotp: Boolean!
+  // >= 26.4.0: adminUpdateUserV2 — edit keyed by userId.
+  const [commitUpdateUserV2, isInFlightUpdateUserV2] =
+    useMutation<UserSettingModalUpdateMutation>(graphql`
+      mutation UserSettingModalUpdateMutation(
+        $userId: UUID!
+        $input: UpdateUserV2Input!
       ) {
-        modify_user(email: $email, props: $props) {
-          ok
-          msg
+        adminUpdateUserV2(userId: $userId, input: $input) {
           user {
             id
-            email
-            username
-            need_password_change
-            full_name
-            description
-            status
-            domain_name
-            role
-            groups {
-              id
-              name
+            basicInfo {
+              email
+              fullName
+              username
+              description
+              integrationName
             }
-            resource_policy
-            sudo_session_enabled
-            totp_activated @skipOnClient(if: $isNotSupportTotp)
-            allowed_client_ip
-            main_access_key
-            container_uid
-            container_main_gid
-            container_gids
-            ...TOTPActivateModalFragment
+            organization {
+              domainName
+              role
+              resourcePolicy
+              mainAccessKey
+            }
+            security {
+              totpActivated
+              totpActivatedAt
+              sudoSessionEnabled
+              allowedClientIp
+            }
+            status {
+              status
+              statusInfo
+              needPasswordChange
+            }
+            container {
+              containerUid
+              containerMainGid
+              containerGids
+            }
+            timestamps {
+              createdAt
+              modifiedAt
+            }
           }
         }
       }
     `);
 
+  // >= 26.4.3: adminCreateUserV2 returns the user together with its generated
+  // keypair (secret key shown once), so single create runs fully on v2.
   const [commitCreateUser, isInFlightCommitCreateUser] =
     useMutation<UserSettingModalCreateMutation>(graphql`
-      mutation UserSettingModalCreateMutation(
-        $email: String!
-        $props: UserInput!
-        $isNotSupportTotp: Boolean!
-      ) {
-        create_user(email: $email, props: $props) {
-          ok
-          msg
+      mutation UserSettingModalCreateMutation($input: CreateUserV2Input!) {
+        adminCreateUserV2(input: $input) {
           user {
             id
-            email
-            username
-            need_password_change
-            full_name
-            description
-            status
-            domain_name
-            role
-            groups {
-              id
-              name
+            basicInfo {
+              email
+              fullName
+              username
+              description
+              integrationName
             }
-            resource_policy
-            sudo_session_enabled
-            totp_activated @skipOnClient(if: $isNotSupportTotp)
-            allowed_client_ip
-            main_access_key
-            container_uid
-            container_main_gid
-            container_gids
-            ...TOTPActivateModalFragment
+            organization {
+              domainName
+              role
+              resourcePolicy
+              mainAccessKey
+            }
+            security {
+              totpActivated
+              totpActivatedAt
+              sudoSessionEnabled
+              allowedClientIp
+            }
+            status {
+              status
+              statusInfo
+              needPasswordChange
+            }
+            container {
+              containerUid
+              containerMainGid
+              containerGids
+            }
+            timestamps {
+              createdAt
+              modifiedAt
+            }
           }
           keypair {
             ...GeneratedKeypairListModalFragment
@@ -280,14 +320,19 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
       }
     `);
 
+  // adminBulkCreateUsersWithKeypairV2 replaces the deprecated
+  // adminBulkCreateUsersV2, returning each created user's generated keypair
+  // and one-time secret key.
   const [commitBulkCreateUsers, isInFlightBulkCreateUsers] =
     useMutation<UserSettingModalBulkCreateMutation>(graphql`
       mutation UserSettingModalBulkCreateMutation(
         $input: BulkCreateUserV2Input!
       ) {
-        adminBulkCreateUsersV2(input: $input) {
-          createdUsers {
-            id
+        adminBulkCreateUsersWithKeypairV2(input: $input) {
+          created {
+            keypair {
+              ...GeneratedKeypairListModalFragment
+            }
           }
           failed {
             index
@@ -346,9 +391,11 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                 return;
               }
 
-              const createdCount =
-                res.adminBulkCreateUsersV2?.createdUsers?.length ?? 0;
-              const failedList = res.adminBulkCreateUsersV2?.failed ?? [];
+              const createdList =
+                res.adminBulkCreateUsersWithKeypairV2?.created ?? [];
+              const createdCount = createdList.length;
+              const failedList =
+                res.adminBulkCreateUsersWithKeypairV2?.failed ?? [];
 
               if (failedList.length > 0) {
                 message.warning(
@@ -365,7 +412,14 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   }),
                 );
               }
-              onRequestClose(true);
+
+              // Reveal the generated keypairs (secret keys are returned once).
+              const keypairs = _.map(createdList, (created) => created.keypair);
+              if (keypairs.length > 0) {
+                setCreatedKeypairs(keypairs);
+              } else {
+                onRequestClose(true);
+              }
             },
             onError: (err) => {
               message.error(t('dialog.ErrorOccurred'));
@@ -376,39 +430,42 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
         }
 
         const formValues = values as FormValues;
-        const mutationProps = {
-          ..._.omit(formValues, 'email', 'password_confirm'),
-          // Convert container_gids from string[] to number[]
-          container_gids: _.map(formValues.container_gids, (v) =>
-            _.toNumber(v),
-          ),
-          need_password_change: formValues.need_password_change || false,
-        };
 
         if (user) {
-          commitModifyUserSetting({
+          commitUpdateUserV2({
             variables: {
-              email: formValues?.email || '',
-              props: mutationProps,
-              isNotSupportTotp: !isTOTPSupported,
+              userId: toLocalId(user.id),
+              input: {
+                username: formValues.username,
+                password: formValues.password || undefined,
+                fullName: formValues.full_name,
+                description: formValues.description,
+                status: formValues.status
+                  ? statusToV2[formValues.status]
+                  : undefined,
+                role: formValues.role ? roleToV2[formValues.role] : undefined,
+                domainName: formValues.domain_name,
+                groupIds: formValues.group_ids,
+                allowedClientIp: formValues.allowed_client_ip,
+                needPasswordChange: formValues.need_password_change || false,
+                resourcePolicy: formValues.resource_policy,
+                sudoSessionEnabled: formValues.sudo_session_enabled,
+                mainAccessKey: formValues.main_access_key,
+                containerUid: formValues.container_uid,
+                containerMainGid: formValues.container_main_gid,
+                containerGids: _.map(formValues.container_gids, (v) =>
+                  _.toNumber(v),
+                ),
+              },
             },
-            onCompleted: (res, errors) => {
-              const errorMessage = errors?.[0]?.message; //user modify mutation can have only one error at most
-              const notOkMessage =
-                res?.modify_user?.ok === false
-                  ? res.modify_user.msg
-                  : undefined;
-
-              if (res.modify_user?.ok === false || errors?.[0]) {
-                message.error(
-                  notOkMessage || errorMessage || t('error.UnknownError'),
-                );
-                logger.error(res?.modify_user?.msg, errorMessage);
+            onCompleted: (_res, errors) => {
+              if (errors?.[0]) {
+                message.error(errors[0].message || t('error.UnknownError'));
+                logger.error(errors);
                 return;
               }
-
               message.success(t('environment.SuccessfullyModified'));
-              onRequestClose(true);
+              onRequestClose(false);
             },
             onError: (err) => {
               message.error(t('dialog.ErrorOccurred'));
@@ -418,46 +475,52 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
         } else {
           commitCreateUser({
             variables: {
-              email: formValues?.email || '',
-              props: {
-                ...mutationProps,
-                // In create user, password is required field
+              input: {
+                email: formValues.email,
+                username: formValues.username,
                 password: formValues.password as string,
+                domainName: formValues.domain_name,
+                needPasswordChange: formValues.need_password_change || false,
+                status: statusToV2[formValues.status] || 'ACTIVE',
+                role: roleToV2[formValues.role] || 'USER',
+                fullName: formValues.full_name || null,
+                description: formValues.description || null,
+                groupIds: formValues.group_ids || null,
+                allowedClientIp: formValues.allowed_client_ip || null,
+                totpActivated: formValues.totp_activated || false,
+                resourcePolicy: formValues.resource_policy || 'default',
+                sudoSessionEnabled: formValues.sudo_session_enabled || false,
+                containerUid: formValues.container_uid ?? null,
+                containerMainGid: formValues.container_main_gid ?? null,
+                containerGids: formValues.container_gids
+                  ? _.map(formValues.container_gids, (v) => _.toNumber(v))
+                  : null,
               },
-              isNotSupportTotp: !isTOTPSupported,
             },
             onCompleted: (res, errors) => {
-              const errorMessage = errors?.[0]?.message; //user creation mutation can have only one error at most
-              const notOkMessage =
-                res?.create_user?.ok === false
-                  ? res.create_user.msg
-                  : undefined;
+              // adminCreateUserV2 reports failures via GraphQL errors
+              // (at most one).
+              const errorMessage = errors?.[0]?.message;
 
-              // Handle "user already exists" error separately to show a more user-friendly message
-              if (
-                (notOkMessage && notOkMessage.includes('already exists')) ||
-                (errorMessage &&
-                  errorMessage.includes('The user already exists'))
-              ) {
+              // Handle "user already exists" error separately to show a more
+              // user-friendly message.
+              if (errorMessage && errorMessage.includes('already exists')) {
                 message.error(t('credential.UserAccountCreatedError'));
-                logger.error(res?.create_user?.msg, errorMessage);
+                logger.error(errorMessage);
                 return;
               }
 
-              // Handle other errors messages
-              if (res.create_user?.ok === false || errors?.[0]) {
-                message.error(
-                  notOkMessage || errorMessage || t('error.UnknownError'),
-                );
-                logger.error(res, errors);
+              if (errors?.[0]) {
+                message.error(errorMessage || t('error.UnknownError'));
+                logger.error(errors);
                 return;
-              } else if (res.create_user?.keypair) {
-                // Show the created keypair modal if user creation is successful
-                setCreatedKeypairs([res.create_user.keypair]);
+              }
+
+              if (res.adminCreateUserV2?.keypair) {
+                // Show the created keypair modal (secret key returned once).
+                setCreatedKeypairs([res.adminCreateUserV2.keypair]);
               } else {
-                // User might have been created successfully but no keypair returned
-                // Just close the modal with success to refresh the user list
-                onRequestClose(true);
+                onRequestClose(false);
               }
             },
             onError: (err) => {
@@ -483,7 +546,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
       destroyOnHidden
       onOk={handleOk}
       confirmLoading={
-        isInFlightCommitModifyUserSetting ||
+        isInFlightUpdateUserV2 ||
         isInFlightCommitCreateUser ||
         isInFlightBulkCreateUsers
       }
@@ -499,11 +562,35 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
           initialValues={
             user
               ? {
-                  ...user,
-                  // Convert container_gids from number[] to string[] for Select mode="tags"
-                  container_gids: user.container_gids
-                    ? _.map(user.container_gids, (gid) => String(gid))
+                  email: user.basicInfo.email,
+                  username: user.basicInfo.username ?? undefined,
+                  full_name: user.basicInfo.fullName ?? undefined,
+                  description: user.basicInfo.description ?? undefined,
+                  need_password_change: user.status.needPasswordChange ?? false,
+                  status: statusFromV2[user.status.status],
+                  role: user.organization.role
+                    ? roleFromV2[user.organization.role]
                     : undefined,
+                  domain_name: user.organization.domainName ?? undefined,
+                  resource_policy: user.organization.resourcePolicy,
+                  main_access_key: user.organization.mainAccessKey ?? undefined,
+                  sudo_session_enabled: user.security.sudoSessionEnabled,
+                  totp_activated: user.security.totpActivated ?? undefined,
+                  allowed_client_ip: user.security.allowedClientIp
+                    ? [...user.security.allowedClientIp]
+                    : undefined,
+                  container_uid: user.container.containerUid ?? undefined,
+                  container_main_gid:
+                    user.container.containerMainGid ?? undefined,
+                  // Convert container_gids from number[] to string[] for Select mode="tags"
+                  container_gids: user.container.containerGids
+                    ? _.map(user.container.containerGids, (gid) => String(gid))
+                    : undefined,
+                  group_ids: _.compact(
+                    _.map(user.projects?.edges, (edge) =>
+                      edge?.node?.id ? toLocalId(edge.node.id) : null,
+                    ),
+                  ),
                 }
               : ({
                   need_password_change: bulkCreate ? true : false,
@@ -771,7 +858,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               label={t('webui.menu.TotpActivated')}
               valuePropName="checked"
               extra={
-                user?.email !== baiClient?.email && (
+                user?.basicInfo.email !== baiClient?.email && (
                   <Typography.Text
                     type="secondary"
                     style={{ fontSize: token.fontSizeSM }}
@@ -787,13 +874,14 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   mutationToRemoveTotp.isPending
                 }
                 disabled={
-                  user?.email !== baiClient?.email && !user?.totp_activated
+                  user?.basicInfo.email !== baiClient?.email &&
+                  !user?.security.totpActivated
                 }
                 onChange={(checked: boolean) => {
                   if (checked) {
                     toggleTOTPActivateModal();
                   } else {
-                    if (user?.totp_activated) {
+                    if (user?.security.totpActivated) {
                       formRef.current?.setFieldValue('totp_activated', true);
                       modal.confirm({
                         title: t('totp.TurnOffTotp'),
@@ -803,21 +891,24 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                         okType: 'danger',
                         cancelText: t('button.No'),
                         onOk() {
-                          mutationToRemoveTotp.mutate(user?.email || '', {
-                            onSuccess: () => {
-                              message.success(
-                                t('totp.RemoveTotpSetupCompleted'),
-                              );
-                              updateFetchKey();
-                              formRef.current?.setFieldValue(
-                                'totp_activated',
-                                false,
-                              );
+                          mutationToRemoveTotp.mutate(
+                            user?.basicInfo.email || '',
+                            {
+                              onSuccess: () => {
+                                message.success(
+                                  t('totp.RemoveTotpSetupCompleted'),
+                                );
+                                updateFetchKey();
+                                formRef.current?.setFieldValue(
+                                  'totp_activated',
+                                  false,
+                                );
+                              },
+                              onError: (err) => {
+                                logger.error(err);
+                              },
                             },
-                            onError: (err) => {
-                              logger.error(err);
-                            },
-                          });
+                          );
                         },
                         onCancel() {
                           formRef.current?.setFieldValue(
@@ -866,7 +957,11 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   getValueProps={(value) => ({
                     value: _.isArray(value)
                       ? value
-                      : _.map(user?.groups, (g) => g?.id),
+                      : _.compact(
+                          _.map(user?.projects?.edges, (edge) =>
+                            edge?.node?.id ? toLocalId(edge.node.id) : null,
+                          ),
+                        ),
                   })}
                 >
                   <ProjectSelect
@@ -1035,7 +1130,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               </Form.Item>
             </>
           )}
-          {!!user && userEmail && (
+          {!!user && (
             <Suspense
               fallback={
                 <Form.Item label={t('credential.MainAccessKey')}>
@@ -1047,7 +1142,10 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                 name="main_access_key"
                 label={t('credential.MainAccessKey')}
               >
-                <AccessKeySelect userEmail={userEmail} fetchKey={fetchKey} />
+                <AccessKeySelect
+                  userEmail={user.basicInfo.email}
+                  fetchKey={fetchKey}
+                />
               </Form.Item>
             </Suspense>
           )}

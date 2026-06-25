@@ -914,46 +914,53 @@ test.describe(
       ).toBeHidden({ timeout: 10000 });
     });
 
-    test('User cannot delete a keypair without typing the exact confirmation phrase', async ({
-      page,
-    }) => {
-      await openKeypairModal(page);
+    test(
+      'User cannot delete a keypair without typing the exact confirmation phrase',
+      { tag: ['@requires-seeded-data'] },
+      async ({ page }) => {
+        await openKeypairModal(page);
 
-      const modal = page.getByRole('dialog', { name: 'My Keypair Management' });
+        const modal = page.getByRole('dialog', {
+          name: 'My Keypair Management',
+        });
 
-      // Switch to Inactive tab
-      await modal.locator('label').filter({ hasText: 'Inactive' }).click();
+        // Switch to Inactive tab
+        await modal.locator('label').filter({ hasText: 'Inactive' }).click();
 
-      const inactiveRows = getKeypairTableRows(page);
-      const count = await inactiveRows.count();
+        const inactiveRows = getKeypairTableRows(page);
+        const count = await inactiveRows.count();
 
-      if (count === 0) {
+        // Environment data gate (FR-3114): needs at least one pre-existing
+        // inactive keypair on the e2e user account. Seeding it is an infra
+        // task — until then the test skips with an auditable reason.
         test.skip(
-          true,
-          'Requires at least one inactive keypair to exercise the delete confirmation flow.',
+          count === 0,
+          'Requires at least one inactive keypair on the e2e user account to exercise the delete confirmation flow (@requires-seeded-data)',
         );
-      }
 
-      // Click Delete Keypair on first inactive row (in Controls cell)
-      await inactiveRows
-        .first()
-        .locator('td')
-        .nth(1)
-        .locator('button.ant-btn-dangerous')
-        .click();
+        // Click Delete Keypair on first inactive row (in Controls cell)
+        await inactiveRows
+          .first()
+          .locator('td')
+          .nth(1)
+          .locator('button.ant-btn-dangerous')
+          .click();
 
-      const deleteDialog = page.getByRole('dialog', { name: /Delete Keypair/ });
-      await expect(deleteDialog).toBeVisible();
+        const deleteDialog = page.getByRole('dialog', {
+          name: /Delete Keypair/,
+        });
+        await expect(deleteDialog).toBeVisible();
 
-      // Verify Delete button is disabled when input is empty
-      await expect(
-        deleteDialog.getByRole('button', { name: 'Delete' }),
-      ).toBeDisabled();
+        // Verify Delete button is disabled when input is empty
+        await expect(
+          deleteDialog.getByRole('button', { name: 'Delete' }),
+        ).toBeDisabled();
 
-      // Close the dialog without deleting
-      await deleteDialog.getByRole('button', { name: 'Close' }).click();
-      await expect(deleteDialog).toBeHidden();
-    });
+        // Close the dialog without deleting
+        await deleteDialog.getByRole('button', { name: 'Close' }).click();
+        await expect(deleteDialog).toBeHidden();
+      },
+    );
 
     test('User can cancel the delete confirmation dialog without deleting the keypair', async ({
       page,

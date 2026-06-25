@@ -363,10 +363,15 @@ test.describe(
   },
 );
 
-test.describe.serial(
+// Not serial: each test provisions its own role (cleanupTestRole + createTestRole),
+// so a failure doesn't cascade. mode: 'default' keeps tests sequential on one worker
+// because they share the same ROLE_NAME (fullyParallel would make them race).
+test.describe(
   'RBAC Role Permissions Management',
   { tag: ['@rbac', '@critical', '@functional'] },
   () => {
+    test.describe.configure({ mode: 'default' });
+
     test('Superadmin can add a permission to a role', async ({
       page,
       request,
@@ -662,10 +667,15 @@ const ASSIGN_FIXTURE_EMAIL = `e2e-rbac-assign-${ASSIGN_FIXTURE_RUN_ID}@lablup.co
 const ASSIGN_FIXTURE_USERNAME = `e2e-rbac-assign-${ASSIGN_FIXTURE_RUN_ID}`;
 const ASSIGN_FIXTURE_PASSWORD = 'testing@123';
 
-test.describe.serial(
+// Not serial: each test provisions its own role (cleanupTestRole + createTestRole),
+// so a failure doesn't cascade. mode: 'default' keeps tests sequential on one worker
+// because they share the same ROLE_NAME (fullyParallel would make them race).
+test.describe(
   'RBAC Role Assignments Management',
   { tag: ['@rbac', '@critical', '@functional'] },
   () => {
+    test.describe.configure({ mode: 'default' });
+
     test.beforeAll(async ({ browser }) => {
       // Admin creates the disposable user via the Credential page UI.
       const adminContext = await browser.newContext();

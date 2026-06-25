@@ -9,6 +9,7 @@ import type {
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import { convertToOrderBy } from '../helper';
+import { useTOTPSupported } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { Skeleton } from 'antd';
@@ -61,6 +62,7 @@ const ProjectAdminUsersContent: React.FC<ProjectAdminUsersContentProps> = ({
   );
 
   const [fetchKey, updateFetchKey] = useFetchKey();
+  const { isTOTPSupported } = useTOTPSupported();
 
   const statusFilter =
     queryParams.status === 'ACTIVE'
@@ -76,6 +78,7 @@ const ProjectAdminUsersContent: React.FC<ProjectAdminUsersContentProps> = ({
     orderBy: convertToOrderBy<Required<UserV2OrderBy>>(queryParams.order),
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
+    isNotSupportTotp: !isTOTPSupported,
   };
 
   const deferredQueryVariables = useDeferredValue(queryVariables);
@@ -89,6 +92,7 @@ const ProjectAdminUsersContent: React.FC<ProjectAdminUsersContentProps> = ({
         $orderBy: [UserV2OrderBy!]
         $limit: Int
         $offset: Int
+        $isNotSupportTotp: Boolean!
       ) {
         projectUsersV2(
           scope: { projectId: $projectId }
@@ -188,6 +192,17 @@ const ProjectAdminUsersContent: React.FC<ProjectAdminUsersContentProps> = ({
       </BAIFlex>
       <BAIAdminUserV2Table
         usersFrgmt={userNodes}
+        customizeColumns={(baseColumns) =>
+          // The TOTP columns are meaningless when the manager has no TOTP
+          // plugin (their data is skipped via @skipOnClient), so hide them.
+          isTOTPSupported
+            ? baseColumns
+            : baseColumns.filter(
+                (column) =>
+                  column.key !== 'totp_activated' &&
+                  column.key !== 'totp_activated_at',
+              )
+        }
         loading={isLoading}
         order={queryParams.order}
         onChangeOrder={(order) => {

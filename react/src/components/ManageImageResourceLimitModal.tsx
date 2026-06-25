@@ -8,7 +8,16 @@ import {
 } from '../__generated__/ManageImageResourceLimitModalMutation.graphql';
 import { ManageImageResourceLimitModal_image$key } from '../__generated__/ManageImageResourceLimitModal_image.graphql';
 import { compareNumberWithUnits } from '../helper';
-import { Form, type FormInstance, message, InputNumber, Row, Col } from 'antd';
+import {
+  Form,
+  type FormInstance,
+  message,
+  InputNumber,
+  Row,
+  Col,
+  Alert,
+  theme,
+} from 'antd';
 import {
   useResourceSlotsDetails,
   BAIModal,
@@ -16,8 +25,8 @@ import {
   BAIDynamicUnitInputNumber,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import React, { useRef, useState, Fragment } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import React, { useRef, Fragment } from 'react';
+import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
 const DEFAULT_MIN_MEMORY = '1g'; // Default minimum memory value for resource limits
@@ -37,12 +46,9 @@ const ManageImageResourceLimitModal: React.FC<
   // [Associated PR links] : https://github.com/lablup/backend.ai/pull/1941
 
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const formRef = useRef<FormInstance>(null);
   const { mergedResourceSlots } = useResourceSlotsDetails();
-  const [isReinstallConfirmOpen, setIsReinstallConfirmOpen] = useState(false);
-  const [pendingCommitRequest, setPendingCommitRequest] = useState<
-    (() => void) | null
-  >(null);
 
   const image = useFragment(
     graphql`
@@ -56,7 +62,6 @@ const ManageImageResourceLimitModal: React.FC<
         name @deprecatedSince(version: "24.12.0")
         namespace @since(version: "24.12.0")
         architecture
-        installed
         tag
       }
     `,
@@ -97,38 +102,33 @@ const ManageImageResourceLimitModal: React.FC<
       }))
       .filter((item) => !_.isEmpty(item?.min));
 
-    const commitRequest = () =>
-      commitModifyImageInput({
-        variables: {
-          target: `${image?.registry}/${image?.name ?? image?.namespace}:${image?.tag}`,
-          architecture: image?.architecture,
-          props: {
-            resource_limits,
-          },
+    // Image resource limits are pure DB metadata read by the scheduler at
+    // session-enqueue time, so a modification applies to newly created
+    // sessions immediately without any image reinstall.
+    commitModifyImageInput({
+      variables: {
+        target: `${image?.registry}/${image?.name ?? image?.namespace}:${image?.tag}`,
+        architecture: image?.architecture,
+        props: {
+          resource_limits,
         },
-        onCompleted: (res, errors) => {
-          if (!res?.modify_image?.ok) {
-            message.error(res?.modify_image?.msg);
-            return;
-          }
-          if (errors?.length) {
-            _.forEach(errors, (error) => message.error(error.message));
-          } else {
-            message.success(t('environment.DescImageResourceModified'));
-            onRequestClose(true);
-          }
-        },
-        onError: () => {
-          message.error(t('dialog.ErrorOccurred'));
-        },
-      });
-
-    if (image?.installed) {
-      setPendingCommitRequest(() => commitRequest);
-      setIsReinstallConfirmOpen(true);
-    } else {
-      commitRequest();
-    }
+      },
+      onCompleted: (res, errors) => {
+        if (!res?.modify_image?.ok) {
+          message.error(res?.modify_image?.msg);
+          return;
+        }
+        if (errors?.length) {
+          _.forEach(errors, (error) => message.error(error.message));
+        } else {
+          message.success(t('environment.DescImageResourceModified'));
+          onRequestClose(true);
+        }
+      },
+      onError: () => {
+        message.error(t('dialog.ErrorOccurred'));
+      },
+    });
   };
 
   return (
@@ -143,6 +143,12 @@ const ManageImageResourceLimitModal: React.FC<
       title={t('environment.ModifyMinimumImageResourceLimit')}
       {...BAIModalProps}
     >
+      <Alert
+        type="info"
+        showIcon
+        style={{ marginBottom: token.marginMD }}
+        title={t('environment.ResourceLimitAppliesToNewSessionsOnly')}
+      />
       <Form
         ref={formRef}
         layout="vertical"
@@ -231,25 +237,6 @@ const ManageImageResourceLimitModal: React.FC<
           )}
         </Row>
       </Form>
-      <BAIModal
-        open={isReinstallConfirmOpen}
-        title={t('environment.ImageReinstallationRequired')}
-        okText={t('button.Confirm')}
-        okButtonProps={{ danger: true }}
-        onOk={() => {
-          setIsReinstallConfirmOpen(false);
-          pendingCommitRequest?.();
-          setPendingCommitRequest(null);
-        }}
-        onCancel={() => {
-          setIsReinstallConfirmOpen(false);
-          setPendingCommitRequest(null);
-        }}
-      >
-        <Trans
-          i18nKey={'environment.ModifyImageResourceLimitReinstallRequired'}
-        />
-      </BAIModal>
     </BAIModal>
   );
 };

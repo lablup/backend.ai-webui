@@ -128,6 +128,58 @@ const ImageSelectField: React.FC<{
 };
 
 // ---------------------------------------------------------------------------
+// URL state sanitization
+// ---------------------------------------------------------------------------
+
+/**
+ * Sanitize the preset form values before writing them to the (shareable) URL.
+ *
+ * The URL persists the form *structure* and non-secret config so a half-filled
+ * form survives a reload or can be shared, but it must never carry secret-prone
+ * free-text. We keep field names / ids / resource shape / model + service config
+ * / metadata, and blank out the values that could hold credentials or tokens:
+ *   - `environ[].value`            → blanked (variable name kept)
+ *   - `modelDefinition` per model  → `service.preStartActions[].args` blanked
+ *                                    (action kept)
+ *
+ * `service.startCommand` is kept: it is the model launch command (service
+ * config), not a credential, so persisting it lets a shared link restore the
+ * full service definition.
+ */
+const sanitizeFormValuesForURL = (
+  values: Partial<AdminDeploymentPresetFormValue>,
+): Partial<AdminDeploymentPresetFormValue> => {
+  const next = _.cloneDeep(values);
+  if (next.environ) {
+    next.environ = next.environ.map((e) => ({
+      variable: e?.variable ?? '',
+      value: '',
+    }));
+  }
+  if (next.modelDefinition?.models) {
+    next.modelDefinition = {
+      ...next.modelDefinition,
+      models: next.modelDefinition.models.map((m) =>
+        m
+          ? {
+              ...m,
+              service: m.service
+                ? {
+                    ...m.service,
+                    preStartActions: (m.service.preStartActions ?? []).map(
+                      (a) => ({ action: a?.action ?? '', args: '' }),
+                    ),
+                  }
+                : m.service,
+            }
+          : m,
+      ),
+    };
+  }
+  return next;
+};
+
+// ---------------------------------------------------------------------------
 // Main content component
 // ---------------------------------------------------------------------------
 
@@ -512,18 +564,18 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
     applyInitialValues();
   }, [preset]);
 
-  // Debounced URL sync — create mode only; exclude sensitive / large fields.
-  // Also persists runtime-variant preset values (read from the refs) so a
-  // shared/reloaded URL restores the configured runtime parameters.
+  // Debounced URL sync — create mode only. Strips secret-prone values
+  // (env-var values, model command/args) via sanitizeFormValuesForURL so a
+  // shared link restores the layout without leaking secrets. Also persists
+  // runtime-variant preset values (read from the refs) so a shared/reloaded
+  // URL restores the configured runtime parameters.
   const { run: syncFormToURL } = useDebounceFn(
     () => {
       if (mode !== 'create') return;
       const currentValue = form.getFieldsValue();
       setQuery(
         {
-          formValues: _.omit(currentValue, [
-            'environ',
-            'modelDefinition',
+          formValues: _.omit(sanitizeFormValuesForURL(currentValue), [
             // Runtime params are persisted separately below as { presetId,
             // value } entries; exclude the raw form namespace to avoid
             // double-storing and a conflicting restore path.

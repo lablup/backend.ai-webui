@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b6093662a8996a5d54bbca2f21c2c1d0>>
+ * @generated SignedSource<<b2c649500e1dc94be2461e41a3d37f47>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -310,6 +310,43 @@ return {
                   {
                     "alias": null,
                     "args": null,
+                    "concreteType": "ImageV2",
+                    "kind": "LinkedField",
+                    "name": "image",
+                    "plural": false,
+                    "selections": [
+                      (v6/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "ImageV2IdentityInfo",
+                        "kind": "LinkedField",
+                        "name": "identity",
+                        "plural": false,
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "canonicalName",
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "architecture",
+                            "storageKey": null
+                          }
+                        ],
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
                     "concreteType": "PresetDeploymentDefaults",
                     "kind": "LinkedField",
                     "name": "deploymentDefaults",
@@ -372,12 +409,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "975590c5da745e264e60d74f79d5a3cc",
+    "cacheID": "e010668333406a1ca2d16b2541b6a1d3",
     "id": null,
     "metadata": {},
     "name": "AdminDeploymentPresetListPageQuery",
     "operationKind": "query",
-    "text": "query AdminDeploymentPresetListPageQuery(\n  $filter: DeploymentRevisionPresetFilter\n  $orderBy: [DeploymentRevisionPresetOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  deploymentRevisionPresets(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        name\n        ...AdminDeploymentPresetNodesFragment\n      }\n    }\n  }\n}\n\nfragment AdminDeploymentPresetNodesFragment on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n  }\n  deploymentDefaults {\n    replicaCount\n    deploymentStrategy\n    openToPublic\n    revisionHistoryLimit\n  }\n  createdAt\n  updatedAt\n}\n"
+    "text": "query AdminDeploymentPresetListPageQuery(\n  $filter: DeploymentRevisionPresetFilter\n  $orderBy: [DeploymentRevisionPresetOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  deploymentRevisionPresets(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        name\n        ...AdminDeploymentPresetNodesFragment\n      }\n    }\n  }\n}\n\nfragment AdminDeploymentPresetNodesFragment on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n  }\n  image @since(version: \"26.4.4\") {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n  }\n  deploymentDefaults {\n    replicaCount\n    deploymentStrategy\n    openToPublic\n    revisionHistoryLimit\n  }\n  createdAt\n  updatedAt\n}\n"
   }
 };
 })();

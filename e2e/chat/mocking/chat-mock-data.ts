@@ -101,6 +101,11 @@ export function chatCardQueryMockResponse(endpointId: string) {
     endpoint: {
       endpoint_id: endpointId,
       url: isB ? MOCK_ENDPOINT_URL_B : MOCK_ENDPOINT_URL,
+      // `replicas` is selected by ChatCardQuery (FR-3156, #7935). It must be
+      // present in the mock — the query wraps `endpoint` in Relay `@catch`,
+      // so a missing field makes the catch result not-ok, nulls the endpoint,
+      // and leaves the chat input disabled (no base URL → no /v1/models fetch).
+      replicas: 1,
       name: isB ? 'mock-endpoint-b' : 'mock-endpoint',
     },
   };
@@ -114,6 +119,10 @@ export function chatCardQueryNullUrlMockResponse(endpointId: string) {
     endpoint: {
       endpoint_id: endpointId,
       url: null,
+      // See chatCardQueryMockResponse: `replicas` must be present for the
+      // Relay `@catch` on `endpoint` to resolve to a value (here we are
+      // deliberately exercising the null-URL path, not a missing endpoint).
+      replicas: 1,
       name: 'mock-endpoint-no-url',
     },
   };

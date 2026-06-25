@@ -39,15 +39,20 @@ const GeneratedKeypairListModal: React.FC<GeneratedKeypairListModalProps> = ({
   onRequestClose,
   ...modalProps
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const keypairData = useFragment(
     graphql`
-      fragment GeneratedKeypairListModalFragment on KeyPair
+      fragment GeneratedKeypairListModalFragment on CreateKeypairPayload
       @relay(plural: true) {
-        access_key
-        secret_key
-        user_info {
-          email
+        secretKey
+        keypair {
+          accessKey
+          user {
+            basicInfo {
+              email
+            }
+          }
         }
       }
     `,
@@ -60,9 +65,9 @@ const GeneratedKeypairListModal: React.FC<GeneratedKeypairListModalProps> = ({
     exportCSVWithFormattingRules(
       _.map(keypairData, (keypair) => {
         return {
-          email: keypair?.user_info?.email,
-          'access key': keypair?.access_key,
-          'secret key': keypair?.secret_key,
+          email: keypair?.keypair?.user?.basicInfo?.email,
+          'access key': keypair?.keypair?.accessKey,
+          'secret key': keypair?.secretKey,
         };
       }),
       'backendai_api_keypair',
@@ -101,35 +106,39 @@ const GeneratedKeypairListModal: React.FC<GeneratedKeypairListModalProps> = ({
           scroll={{ x: 'max-content', y: 500 }}
           pagination={false}
           dataSource={keypairData}
-          rowKey={'access_key'}
+          rowKey={(record) => record?.keypair?.accessKey ?? ''}
           columns={[
             {
               title: t('general.E-Mail'),
-              dataIndex: ['user_info', 'email'],
+              dataIndex: ['keypair', 'user', 'basicInfo', 'email'],
               key: 'email',
               sorter: (a, b) =>
-                localeCompare(a?.user_info?.email, b?.user_info?.email),
+                localeCompare(
+                  a?.keypair?.user?.basicInfo?.email,
+                  b?.keypair?.user?.basicInfo?.email,
+                ),
               defaultSortOrder: 'ascend',
             },
             {
               title: t('credential.AccessKey'),
-              dataIndex: 'access_key',
+              dataIndex: ['keypair', 'accessKey'],
               key: 'access_key',
               render: (value) => (
                 <BAIText copyable monospace>
                   {value}
                 </BAIText>
               ),
-              sorter: (a, b) => localeCompare(a?.access_key, b?.access_key),
+              sorter: (a, b) =>
+                localeCompare(a?.keypair?.accessKey, b?.keypair?.accessKey),
             },
             {
               title: t('credential.SecretKey'),
-              dataIndex: 'secret_key',
+              dataIndex: 'secretKey',
               key: 'secret_key',
               render: (value) => (
                 <BAIText copyable={{ text: value }}>**********</BAIText>
               ),
-              sorter: (a, b) => localeCompare(a?.secret_key, b?.secret_key),
+              sorter: (a, b) => localeCompare(a?.secretKey, b?.secretKey),
             },
           ]}
         />

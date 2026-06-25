@@ -15,8 +15,10 @@ test.describe(
   'Dashboard page Visual Regression Test',
   { tag: ['@regression', '@visual'] },
   () => {
-    // FIXME: Test fails in beforeEach - "My Sessions" text is not visible on page
-    // The page might have changed or the locator needs updating
+    // FIXME(FR-3111/stale-baseline): The Dashboard was redesigned (NEO) — the
+    // "My Sessions" anchor is gone and the spec still navigates via the legacy
+    // `/summary` redirect, so `snapshot/dashboard-page.png` reflects the old layout.
+    // Navigation/locator fix + baseline refresh deferred to FR-3115 (frozen backend).
     test.fixme('dashboard full page', async ({ page }) => {
       await expect(page).toHaveScreenshot('dashboard_page.png', {
         fullPage: true,

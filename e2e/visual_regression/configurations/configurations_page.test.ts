@@ -20,14 +20,16 @@ test.describe(
   'Configuration page Visual Regression Test',
   { tag: ['@regression', '@config', '@visual'] },
   () => {
-    // FIXME: Login fails - user-dropdown-button not visible after login
+    // FIXME(FR-3111/auth-infra): Login fails — user-dropdown-button not visible after
+    // login. Not a stale baseline; owned by the login-infra triage category of FR-3109.
     test.fixme('Configuration page', async ({ page }) => {
       await expect(page).toHaveScreenshot('configurations-page.png', {
         fullPage: true,
       });
     });
 
-    // FIXME: Login fails - user-dropdown-button not visible after login
+    // FIXME(FR-3111/auth-infra): Login fails — user-dropdown-button not visible after
+    // login. Not a stale baseline; owned by the login-infra triage category of FR-3109.
     test.fixme('Overlay Network settings modal', async ({ page }) => {
       await page
         .locator('div')
@@ -51,8 +53,9 @@ test.describe(
       await page.getByRole('button', { name: 'Close' }).click();
     });
 
-    // FIXME: Test fails because beforeEach navigation fails after first test runs
-    // Error: page.getByText('Overlay Network', { exact: true }) is not visible after previous test
+    // FIXME(FR-3111/auth-infra): beforeEach navigation fails after the first test runs —
+    // page.getByText('Overlay Network', { exact: true }) not visible. Not a stale
+    // baseline; owned by the login-infra triage category of FR-3109.
     test.fixme('Scheduler settings modal', async ({ page }) => {
       await page
         .locator('div')

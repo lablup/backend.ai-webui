@@ -1,5 +1,9 @@
 import { FolderCreationModal } from '../utils/classes/vfolder/FolderCreationModal';
 import {
+  getClientProperty,
+  skipUnlessAllowedVFolderType,
+} from '../utils/feature-gate-util';
+import {
   deleteForeverAndVerifyFromTrash,
   loginAsAdmin,
   loginAsUser,
@@ -95,26 +99,35 @@ test.describe(
         }
       });
 
-      test('Admin can create a Project-type vfolder', async ({ page }) => {
-        const modal = await openCreateFolderModalAsAdmin(page);
-        await modal.fillFolderName(folderName);
+      test(
+        'Admin can create a Project-type vfolder',
+        { tag: ['@requires-vfolder-type-group'] },
+        async ({ page }) => {
+          // Declarative environment gate (FR-3114): Project-type vfolders are
+          // only offered when the cluster's etcd `volumes/_types` config
+          // includes 'group' (FolderCreateModal reads it via
+          // `baiClient.vfolder.list_allowed_types()`).
+          await skipUnlessAllowedVFolderType(
+            page,
+            'group',
+            "Project-type vfolder creation requires the 'group' vfolder type in the cluster's etcd `volumes/_types` config (@requires-vfolder-type-group)",
+          );
 
-        // Project-type radio should be visible for admin
-        const projectTypeRadio = await modal.getProjectTypeRadio();
-        await expect(projectTypeRadio).toBeVisible();
+          const modal = await openCreateFolderModalAsAdmin(page);
+          await modal.fillFolderName(folderName);
 
-        // Check if project type radio is enabled (requires 'group' type in ETCD config)
-        const isDisabled = await projectTypeRadio.isDisabled();
-        if (!isDisabled) {
+          // The environment allows 'group' — the Project-type radio MUST be
+          // present and selectable; a disabled radio here is a real failure.
+          const projectTypeRadio = await modal.getProjectTypeRadio();
+          await expect(projectTypeRadio).toBeVisible();
+          await expect(projectTypeRadio).toBeEnabled();
+
           await projectTypeRadio.check();
           await expect(projectTypeRadio).toBeChecked();
-        } else {
-          // If project type is not available, fall back to user type and skip
-          test.skip(true, 'Project type is not available in this environment');
-        }
 
-        await (await modal.getCreateButton()).click();
-      });
+          await (await modal.getCreateButton()).click();
+        },
+      );
     });
 
     test.describe('Project radio disabled states (admin)', () => {
@@ -143,6 +156,21 @@ test.describe(
       test('Project radio is disabled when usage mode is model (non-model-store project)', async ({
         page,
       }) => {
+        // Declarative environment gate (FR-3114): this disabled-state
+        // assertion only holds when the admin's active project is NOT the
+        // model-store project (`FolderCreateModal` enables the Project radio
+        // in model mode when `currentProject.name === 'model-store'`). Gate
+        // on the actual capability source (`baiClient.current_group`) instead
+        // of probing the radio's enabled state.
+        const currentProjectName = await getClientProperty(
+          page,
+          'current_group',
+        );
+        test.skip(
+          currentProjectName === 'model-store',
+          "Disabled-state assertion assumes a non-model-store project; the admin's active project is the model-store project.",
+        );
+
         const modal = new FolderCreationModal(page);
         await modal.modalToBeVisible();
         await modal.fillFolderName(folderName);
@@ -155,16 +183,6 @@ test.describe(
         // Project-type radio should be visible for admin
         const projectTypeRadio = await modal.getProjectTypeRadio();
         await expect(projectTypeRadio).toBeVisible();
-
-        // If the project radio is enabled here, we are likely in a model-store project.
-        // In that case, this test's assumption ("non-model-store project") does not hold,
-        // so skip to avoid environment-dependent failures.
-        if (await projectTypeRadio.isEnabled()) {
-          test.skip(
-            true,
-            'Current project behaves as model-store; skipping disabled-state assertion.',
-          );
-        }
 
         // Project radio should be disabled when model mode is selected
         // and current project is not model-store

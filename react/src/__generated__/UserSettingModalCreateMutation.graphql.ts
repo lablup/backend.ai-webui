@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d7963c5bd2539e0355dd9884f2008faa>>
+ * @generated SignedSource<<93ad1a06d7205e10a9e82cf578a8bb4e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,61 +10,71 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type UserInput = {
-  allowed_client_ip?: ReadonlyArray<string | null | undefined> | null | undefined;
-  container_gids?: ReadonlyArray<number | null | undefined> | null | undefined;
-  container_main_gid?: number | null | undefined;
-  container_uid?: number | null | undefined;
+export type UserRoleV2 = "ADMIN" | "MONITOR" | "SUPERADMIN" | "USER" | "%future added value";
+export type UserStatusV2 = "ACTIVE" | "BEFORE_VERIFICATION" | "DELETED" | "INACTIVE" | "%future added value";
+export type CreateUserV2Input = {
+  allowedClientIp?: ReadonlyArray<string> | null | undefined;
+  containerGids?: ReadonlyArray<number> | null | undefined;
+  containerMainGid?: number | null | undefined;
+  containerUid?: number | null | undefined;
   description?: string | null | undefined;
-  domain_name?: string;
-  full_name?: string | null | undefined;
-  group_ids?: ReadonlyArray<string | null | undefined> | null | undefined;
-  is_active?: boolean | null | undefined;
-  need_password_change: boolean;
+  domainName: string;
+  email: string;
+  fullName?: string | null | undefined;
+  groupIds?: ReadonlyArray<string> | null | undefined;
+  needPasswordChange: boolean;
   password: string;
-  resource_policy?: string | null | undefined;
-  role?: string | null | undefined;
-  status?: string | null | undefined;
-  sudo_session_enabled?: boolean | null | undefined;
-  totp_activated?: boolean | null | undefined;
+  resourcePolicy?: string;
+  role: UserRoleV2;
+  status: UserStatusV2;
+  sudoSessionEnabled?: boolean;
+  totpActivated?: boolean;
   username: string;
 };
 export type UserSettingModalCreateMutation$variables = {
-  email: string;
-  isNotSupportTotp: boolean;
-  props: UserInput;
+  input: CreateUserV2Input;
 };
 export type UserSettingModalCreateMutation$data = {
-  readonly create_user: {
+  readonly adminCreateUserV2: {
     readonly keypair: {
       readonly " $fragmentSpreads": FragmentRefs<"GeneratedKeypairListModalFragment">;
-    } | null | undefined;
-    readonly msg: string | null | undefined;
-    readonly ok: boolean | null | undefined;
+    };
     readonly user: {
-      readonly allowed_client_ip: ReadonlyArray<string | null | undefined> | null | undefined;
-      readonly container_gids: ReadonlyArray<number | null | undefined> | null | undefined;
-      readonly container_main_gid: number | null | undefined;
-      readonly container_uid: number | null | undefined;
-      readonly description: string | null | undefined;
-      readonly domain_name: string | null | undefined;
-      readonly email: string | null | undefined;
-      readonly full_name: string | null | undefined;
-      readonly groups: ReadonlyArray<{
-        readonly id: string | null | undefined;
-        readonly name: string | null | undefined;
-      } | null | undefined> | null | undefined;
-      readonly id: string | null | undefined;
-      readonly main_access_key: string | null | undefined;
-      readonly need_password_change: boolean | null | undefined;
-      readonly resource_policy: string | null | undefined;
-      readonly role: string | null | undefined;
-      readonly status: string | null | undefined;
-      readonly sudo_session_enabled: boolean | null | undefined;
-      readonly totp_activated: boolean | null | undefined;
-      readonly username: string | null | undefined;
-      readonly " $fragmentSpreads": FragmentRefs<"TOTPActivateModalFragment">;
-    } | null | undefined;
+      readonly basicInfo: {
+        readonly description: string | null | undefined;
+        readonly email: string;
+        readonly fullName: string | null | undefined;
+        readonly integrationName: string | null | undefined;
+        readonly username: string | null | undefined;
+      };
+      readonly container: {
+        readonly containerGids: ReadonlyArray<number> | null | undefined;
+        readonly containerMainGid: number | null | undefined;
+        readonly containerUid: number | null | undefined;
+      };
+      readonly id: string;
+      readonly organization: {
+        readonly domainName: string | null | undefined;
+        readonly mainAccessKey: string | null | undefined;
+        readonly resourcePolicy: string;
+        readonly role: UserRoleV2 | null | undefined;
+      };
+      readonly security: {
+        readonly allowedClientIp: ReadonlyArray<string> | null | undefined;
+        readonly sudoSessionEnabled: boolean;
+        readonly totpActivated: boolean | null | undefined;
+        readonly totpActivatedAt: string | null | undefined;
+      };
+      readonly status: {
+        readonly needPasswordChange: boolean | null | undefined;
+        readonly status: UserStatusV2;
+        readonly statusInfo: string | null | undefined;
+      };
+      readonly timestamps: {
+        readonly createdAt: string | null | undefined;
+        readonly modifiedAt: string | null | undefined;
+      };
+    };
   } | null | undefined;
 };
 export type UserSettingModalCreateMutation = {
@@ -73,244 +83,273 @@ export type UserSettingModalCreateMutation = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "email"
-},
-v1 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "isNotSupportTotp"
-},
-v2 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "props"
-},
-v3 = [
+var v0 = [
   {
-    "kind": "Variable",
-    "name": "email",
-    "variableName": "email"
-  },
-  {
-    "kind": "Variable",
-    "name": "props",
-    "variableName": "props"
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "input"
   }
 ],
-v4 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "ok",
-  "storageKey": null
-},
-v5 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "msg",
-  "storageKey": null
-},
-v6 = {
+v1 = [
+  {
+    "kind": "Variable",
+    "name": "input",
+    "variableName": "input"
+  }
+],
+v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v7 = {
+v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "email",
   "storageKey": null
 },
-v8 = {
+v4 = {
   "alias": null,
   "args": null,
-  "kind": "ScalarField",
-  "name": "username",
-  "storageKey": null
-},
-v9 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "need_password_change",
-  "storageKey": null
-},
-v10 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "full_name",
-  "storageKey": null
-},
-v11 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "description",
-  "storageKey": null
-},
-v12 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "status",
-  "storageKey": null
-},
-v13 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "domain_name",
-  "storageKey": null
-},
-v14 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "role",
-  "storageKey": null
-},
-v15 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "UserGroup",
+  "concreteType": "UserV2",
   "kind": "LinkedField",
-  "name": "groups",
-  "plural": true,
+  "name": "user",
+  "plural": false,
   "selections": [
-    (v6/*: any*/),
+    (v2/*: any*/),
     {
       "alias": null,
       "args": null,
-      "kind": "ScalarField",
-      "name": "name",
+      "concreteType": "UserV2BasicInfo",
+      "kind": "LinkedField",
+      "name": "basicInfo",
+      "plural": false,
+      "selections": [
+        (v3/*: any*/),
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "fullName",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "username",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "description",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "integrationName",
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "UserV2OrganizationInfo",
+      "kind": "LinkedField",
+      "name": "organization",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "domainName",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "role",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "resourcePolicy",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "mainAccessKey",
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "UserV2SecurityInfo",
+      "kind": "LinkedField",
+      "name": "security",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "totpActivated",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "totpActivatedAt",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "sudoSessionEnabled",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "allowedClientIp",
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "UserV2StatusInfo",
+      "kind": "LinkedField",
+      "name": "status",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "status",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "statusInfo",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "needPasswordChange",
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "UserV2ContainerSettings",
+      "kind": "LinkedField",
+      "name": "container",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "containerUid",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "containerMainGid",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "containerGids",
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "EntityTimestamps",
+      "kind": "LinkedField",
+      "name": "timestamps",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "createdAt",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "modifiedAt",
+          "storageKey": null
+        }
+      ],
       "storageKey": null
     }
   ],
   "storageKey": null
-},
-v16 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "resource_policy",
-  "storageKey": null
-},
-v17 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "sudo_session_enabled",
-  "storageKey": null
-},
-v18 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "totp_activated",
-  "storageKey": null
-},
-v19 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "allowed_client_ip",
-  "storageKey": null
-},
-v20 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "main_access_key",
-  "storageKey": null
-},
-v21 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "container_uid",
-  "storageKey": null
-},
-v22 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "container_main_gid",
-  "storageKey": null
-},
-v23 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "container_gids",
-  "storageKey": null
 };
 return {
   "fragment": {
-    "argumentDefinitions": [
-      (v0/*: any*/),
-      (v1/*: any*/),
-      (v2/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "UserSettingModalCreateMutation",
     "selections": [
       {
         "alias": null,
-        "args": (v3/*: any*/),
-        "concreteType": "CreateUser",
+        "args": (v1/*: any*/),
+        "concreteType": "CreateUserV2Payload",
         "kind": "LinkedField",
-        "name": "create_user",
+        "name": "adminCreateUserV2",
         "plural": false,
         "selections": [
           (v4/*: any*/),
-          (v5/*: any*/),
           {
             "alias": null,
             "args": null,
-            "concreteType": "User",
-            "kind": "LinkedField",
-            "name": "user",
-            "plural": false,
-            "selections": [
-              (v6/*: any*/),
-              (v7/*: any*/),
-              (v8/*: any*/),
-              (v9/*: any*/),
-              (v10/*: any*/),
-              (v11/*: any*/),
-              (v12/*: any*/),
-              (v13/*: any*/),
-              (v14/*: any*/),
-              (v15/*: any*/),
-              (v16/*: any*/),
-              (v17/*: any*/),
-              (v18/*: any*/),
-              (v19/*: any*/),
-              (v20/*: any*/),
-              (v21/*: any*/),
-              (v22/*: any*/),
-              (v23/*: any*/),
-              {
-                "args": null,
-                "kind": "FragmentSpread",
-                "name": "TOTPActivateModalFragment"
-              }
-            ],
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "KeyPair",
+            "concreteType": "CreateKeypairPayload",
             "kind": "LinkedField",
             "name": "keypair",
             "plural": false,
@@ -332,57 +371,23 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [
-      (v0/*: any*/),
-      (v2/*: any*/),
-      (v1/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "UserSettingModalCreateMutation",
     "selections": [
       {
         "alias": null,
-        "args": (v3/*: any*/),
-        "concreteType": "CreateUser",
+        "args": (v1/*: any*/),
+        "concreteType": "CreateUserV2Payload",
         "kind": "LinkedField",
-        "name": "create_user",
+        "name": "adminCreateUserV2",
         "plural": false,
         "selections": [
           (v4/*: any*/),
-          (v5/*: any*/),
           {
             "alias": null,
             "args": null,
-            "concreteType": "User",
-            "kind": "LinkedField",
-            "name": "user",
-            "plural": false,
-            "selections": [
-              (v6/*: any*/),
-              (v7/*: any*/),
-              (v8/*: any*/),
-              (v9/*: any*/),
-              (v10/*: any*/),
-              (v11/*: any*/),
-              (v12/*: any*/),
-              (v13/*: any*/),
-              (v14/*: any*/),
-              (v15/*: any*/),
-              (v16/*: any*/),
-              (v17/*: any*/),
-              (v18/*: any*/),
-              (v19/*: any*/),
-              (v20/*: any*/),
-              (v21/*: any*/),
-              (v22/*: any*/),
-              (v23/*: any*/)
-            ],
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "KeyPair",
+            "concreteType": "CreateKeypairPayload",
             "kind": "LinkedField",
             "name": "keypair",
             "plural": false,
@@ -391,29 +396,52 @@ return {
                 "alias": null,
                 "args": null,
                 "kind": "ScalarField",
-                "name": "access_key",
+                "name": "secretKey",
                 "storageKey": null
               },
               {
                 "alias": null,
                 "args": null,
-                "kind": "ScalarField",
-                "name": "secret_key",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "UserInfo",
+                "concreteType": "KeyPairV2",
                 "kind": "LinkedField",
-                "name": "user_info",
+                "name": "keypair",
                 "plural": false,
                 "selections": [
-                  (v7/*: any*/)
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "accessKey",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "UserV2",
+                    "kind": "LinkedField",
+                    "name": "user",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "UserV2BasicInfo",
+                        "kind": "LinkedField",
+                        "name": "basicInfo",
+                        "plural": false,
+                        "selections": [
+                          (v3/*: any*/)
+                        ],
+                        "storageKey": null
+                      },
+                      (v2/*: any*/)
+                    ],
+                    "storageKey": null
+                  },
+                  (v2/*: any*/)
                 ],
                 "storageKey": null
-              },
-              (v6/*: any*/)
+              }
             ],
             "storageKey": null
           }
@@ -423,16 +451,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "e2216aeec5b3a041ac90522ef40e9b90",
+    "cacheID": "2d7a4992d94f27fba991f1f60749f2eb",
     "id": null,
     "metadata": {},
     "name": "UserSettingModalCreateMutation",
     "operationKind": "mutation",
-    "text": "mutation UserSettingModalCreateMutation(\n  $email: String!\n  $props: UserInput!\n  $isNotSupportTotp: Boolean!\n) {\n  create_user(email: $email, props: $props) {\n    ok\n    msg\n    user {\n      id\n      email\n      username\n      need_password_change\n      full_name\n      description\n      status\n      domain_name\n      role\n      groups {\n        id\n        name\n      }\n      resource_policy\n      sudo_session_enabled\n      totp_activated @skipOnClient(if: $isNotSupportTotp)\n      allowed_client_ip\n      main_access_key\n      container_uid\n      container_main_gid\n      container_gids\n      ...TOTPActivateModalFragment\n    }\n    keypair {\n      ...GeneratedKeypairListModalFragment\n      id\n    }\n  }\n}\n\nfragment GeneratedKeypairListModalFragment on KeyPair {\n  access_key\n  secret_key\n  user_info {\n    email\n  }\n}\n\nfragment TOTPActivateModalFragment on User {\n  email\n  totp_activated @skipOnClient(if: $isNotSupportTotp)\n}\n"
+    "text": "mutation UserSettingModalCreateMutation(\n  $input: CreateUserV2Input!\n) {\n  adminCreateUserV2(input: $input) {\n    user {\n      id\n      basicInfo {\n        email\n        fullName\n        username\n        description\n        integrationName\n      }\n      organization {\n        domainName\n        role\n        resourcePolicy\n        mainAccessKey\n      }\n      security {\n        totpActivated\n        totpActivatedAt\n        sudoSessionEnabled\n        allowedClientIp\n      }\n      status {\n        status\n        statusInfo\n        needPasswordChange\n      }\n      container {\n        containerUid\n        containerMainGid\n        containerGids\n      }\n      timestamps {\n        createdAt\n        modifiedAt\n      }\n    }\n    keypair {\n      ...GeneratedKeypairListModalFragment\n    }\n  }\n}\n\nfragment GeneratedKeypairListModalFragment on CreateKeypairPayload {\n  secretKey\n  keypair {\n    accessKey\n    user {\n      basicInfo {\n        email\n      }\n      id\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "6eac042d5d8dba3d8446023d51158e3d";
+(node as any).hash = "2c2423094ad9f6d036021cf8a59a16f4";
 
 export default node;

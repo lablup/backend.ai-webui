@@ -131,6 +131,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
                 );
                 return;
               }
+              message.success(t('deployment.DeploymentUpdated'));
               onRequestClose(true);
             },
             onError: (err) => {
@@ -179,6 +180,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
                 return;
               }
               const newId = toLocalId(createModelDeployment.deployment.id);
+              message.success(t('deployment.DeploymentCreated'));
               onRequestClose(true);
               navigate(`/deployments/${newId}`);
             },

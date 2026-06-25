@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { DeploymentPresetDetailModalFragment$key } from '../__generated__/DeploymentPresetDetailModalFragment.graphql';
-import { useImageCanonicalName } from '../hooks/hooksUsingRelay';
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
 import { ResourceAllocationFormValue } from './SessionFormItems/ResourceAllocationFormItems';
 import { Descriptions, Typography } from 'antd';
@@ -57,6 +56,12 @@ const DeploymentPresetDetailModal: React.FC<
             value
           }
         }
+        image @since(version: "26.4.4") {
+          id
+          identity {
+            canonicalName
+          }
+        }
         resource {
           resourceOpts {
             name
@@ -99,7 +104,11 @@ const DeploymentPresetDetailModal: React.FC<
     presetFrgmt ?? null,
   );
 
-  const imageCanonicalName = useImageCanonicalName(preset?.execution?.imageId);
+  // `image` is gated by @since(26.4.4); on older managers it is null, so the
+  // Image row falls back to "-". This replaces the previous secondary
+  // useImageCanonicalName(imageId) lookup now that the preset exposes the
+  // resolved image directly (BA-5952).
+  const imageCanonicalName = preset?.image?.identity?.canonicalName;
 
   const shmem = preset?.resource?.resourceOpts?.find(
     (opt) => opt.name === 'shmem',
@@ -191,38 +200,31 @@ const DeploymentPresetDetailModal: React.FC<
             <BAIFlex direction="column" align="stretch" gap="xs">
               <ResourceNumbersOfSession
                 resource={
-                  Object.fromEntries(
-                    (preset.resourceSlots ?? []).map((s) =>
-                      s.slotName === 'cpu'
-                        ? [s.slotName, parseFloat(s.quantity)]
-                        : [s.slotName, s.quantity],
+                  {
+                    ...Object.fromEntries(
+                      (preset.resourceSlots ?? []).map((s) =>
+                        s.slotName === 'cpu'
+                          ? [s.slotName, parseFloat(s.quantity)]
+                          : [s.slotName, s.quantity],
+                      ),
                     ),
-                  ) as ResourceAllocationFormValue['resource']
+                    ...(shmem ? { shmem } : {}),
+                  } as ResourceAllocationFormValue['resource']
                 }
               />
-              {(shmem ||
-                (preset.resource?.resourceOpts?.filter(
-                  (o) => o.name !== 'shmem',
-                ).length ?? 0) > 0) && (
+              {(preset.resource?.resourceOpts?.filter((o) => o.name !== 'shmem')
+                .length ?? 0) > 0 && (
                 <Descriptions
                   size="small"
                   column={2}
-                  items={[
-                    ...(shmem
-                      ? [
-                          {
-                            label: t('adminDeploymentPreset.Shmem'),
-                            children: `${shmem} GiB`,
-                          },
-                        ]
-                      : []),
-                    ...(preset.resource?.resourceOpts
+                  items={
+                    preset.resource?.resourceOpts
                       ?.filter((opt) => opt.name !== 'shmem')
                       .map((opt) => ({
                         label: opt.name,
                         children: opt.value,
-                      })) ?? []),
-                  ]}
+                      })) ?? []
+                  }
                 />
               )}
             </BAIFlex>

@@ -8,6 +8,13 @@ const ROLE_NAME = `e2e-role-${TEST_RUN_ID}`;
 const ROLE_NAME_EDITED = `e2e-role-edited-${TEST_RUN_ID}`;
 const ROLE_DESCRIPTION = `E2E test role created at ${new Date().toISOString()}`;
 
+// Run all groups in this file in order on a single worker so the independent
+// system-role check below doesn't interleave with the CRUD chain (role
+// creation/purging shifts table pagination).
+test.describe.configure({ mode: 'default' });
+
+// Keep serial: lifecycle chain on a single custom role — create → edit (rename)
+// → deactivate → activate → purge all share ROLE_NAME / ROLE_NAME_EDITED state.
 test.describe.serial(
   'RBAC Role CRUD',
   { tag: ['@rbac', '@critical', '@functional'] },
@@ -288,76 +295,6 @@ test.describe.serial(
       });
     });
 
-    test('Superadmin cannot edit a system role name or description (edit button absent)', async ({
-      page,
-      request,
-    }) => {
-      // 1. Login as admin
-      await loginAsAdmin(page, request);
-
-      // 2. Navigate to RBAC page
-      await navigateTo(page, 'rbac');
-
-      // 3. Find the Source column index. Columns: Role Name(1) Description(2) Scope Type(3)
-      //    Scope ID(4) Source(5) Created At(6) Updated At(7).
-      // Locate system roles using a column-header-based approach to find
-      // a row where the Source cell value is exactly "System", excluding "monitor" (known bug).
-      // If no system row is visible on page 1, navigate to the last page where they accumulate.
-      const systemRoleRowLocator = () =>
-        page
-          .locator('tr.ant-table-row')
-          .filter({
-            has: page.locator('td:nth-child(5)', { hasText: /^System$/ }),
-          })
-          .filter({ hasNotText: /monitor/i })
-          .first();
-
-      let systemRoleRow = systemRoleRowLocator();
-      const isSystemVisible = await systemRoleRow
-        .isVisible({ timeout: 3000 })
-        .catch(() => false);
-      if (!isSystemVisible) {
-        // Navigate to last page to find system roles
-        const lastPageButton = page.locator('.ant-pagination-item').last();
-        await lastPageButton.click();
-        await expect(page.locator('.ant-table-row').first()).toBeVisible({
-          timeout: 10000,
-        });
-        systemRoleRow = systemRoleRowLocator();
-      }
-      await expect(systemRoleRow).toBeVisible({ timeout: 10000 });
-
-      // 4. Click the role name to open the detail drawer.
-      const titleElement = systemRoleRow
-        .getByRole('cell')
-        .first()
-        .locator('.ant-typography')
-        .first();
-      // Extract name for later verification (must be done before click to avoid stale ref)
-      const systemRoleName = (await titleElement.textContent())?.trim() ?? null;
-      await titleElement.click();
-
-      // 5. Verify the drawer title "RBAC Role Info" appears
-      const drawer = page.locator('.ant-drawer');
-      await expect(drawer.getByText('RBAC Role Info')).toBeVisible();
-
-      // 6. Verify the drawer heading matches the role name we clicked
-      if (systemRoleName) {
-        await expect(
-          drawer.locator('h3').filter({ hasText: systemRoleName }),
-        ).toBeVisible({
-          timeout: 5000,
-        });
-      }
-
-      // 7. Verify the Edit button is NOT present for system roles
-      // The Edit Role button would have size="large" (CSS class .ant-btn-lg) if present
-      await expect(drawer.locator('.ant-btn-lg').first()).toBeHidden();
-
-      // Close the drawer
-      await drawer.getByRole('button', { name: 'close' }).click();
-    });
-
     test('Superadmin can delete (soft-delete) an active custom role', async ({
       page,
       request,
@@ -539,6 +476,84 @@ test.describe.serial(
       await expect(
         page.getByRole('row').filter({ hasText: ROLE_NAME_EDITED }),
       ).toBeHidden({ timeout: 5000 });
+    });
+  },
+);
+
+// Independent of the CRUD chain above: only reads existing system roles, so a
+// chain failure must not skip it (extracted from the serial block in FR-3113).
+test.describe(
+  'RBAC System Role Restrictions',
+  { tag: ['@rbac', '@critical', '@functional'] },
+  () => {
+    test('Superadmin cannot edit a system role name or description (edit button absent)', async ({
+      page,
+      request,
+    }) => {
+      // 1. Login as admin
+      await loginAsAdmin(page, request);
+
+      // 2. Navigate to RBAC page
+      await navigateTo(page, 'rbac');
+
+      // 3. Find the Source column index. Columns: Role Name(1) Description(2) Scope Type(3)
+      //    Scope ID(4) Source(5) Created At(6) Updated At(7).
+      // Locate system roles using a column-header-based approach to find
+      // a row where the Source cell value is exactly "System", excluding "monitor" (known bug).
+      // If no system row is visible on page 1, navigate to the last page where they accumulate.
+      const systemRoleRowLocator = () =>
+        page
+          .locator('tr.ant-table-row')
+          .filter({
+            has: page.locator('td:nth-child(5)', { hasText: /^System$/ }),
+          })
+          .filter({ hasNotText: /monitor/i })
+          .first();
+
+      let systemRoleRow = systemRoleRowLocator();
+      const isSystemVisible = await systemRoleRow
+        .isVisible({ timeout: 3000 })
+        .catch(() => false);
+      if (!isSystemVisible) {
+        // Navigate to last page to find system roles
+        const lastPageButton = page.locator('.ant-pagination-item').last();
+        await lastPageButton.click();
+        await expect(page.locator('.ant-table-row').first()).toBeVisible({
+          timeout: 10000,
+        });
+        systemRoleRow = systemRoleRowLocator();
+      }
+      await expect(systemRoleRow).toBeVisible({ timeout: 10000 });
+
+      // 4. Click the role name to open the detail drawer.
+      const titleElement = systemRoleRow
+        .getByRole('cell')
+        .first()
+        .locator('.ant-typography')
+        .first();
+      // Extract name for later verification (must be done before click to avoid stale ref)
+      const systemRoleName = (await titleElement.textContent())?.trim() ?? null;
+      await titleElement.click();
+
+      // 5. Verify the drawer title "RBAC Role Info" appears
+      const drawer = page.locator('.ant-drawer');
+      await expect(drawer.getByText('RBAC Role Info')).toBeVisible();
+
+      // 6. Verify the drawer heading matches the role name we clicked
+      if (systemRoleName) {
+        await expect(
+          drawer.locator('h3').filter({ hasText: systemRoleName }),
+        ).toBeVisible({
+          timeout: 5000,
+        });
+      }
+
+      // 7. Verify the Edit button is NOT present for system roles
+      // The Edit Role button would have size="large" (CSS class .ant-btn-lg) if present
+      await expect(drawer.locator('.ant-btn-lg').first()).toBeHidden();
+
+      // Close the drawer
+      await drawer.getByRole('button', { name: 'close' }).click();
     });
   },
 );
