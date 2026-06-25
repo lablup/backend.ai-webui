@@ -33,7 +33,7 @@ catalog:
   big.js: ^7.0.1
   classnames: ^2.5.1
   dayjs: ^1.11.20
-  dompurify: ^3.4.0
+  dompurify: ^3.4.11
   eslint: ^9.39.4
   eslint-plugin-import: ^2.32.0
   eslint-plugin-json-schema-validator: ^5.5.1
@@ -114,7 +114,7 @@ overrides:
   serialize-javascript: ^7.0.5                     # RCE via RegExp.flags, CPU DoS (#279, #386)
   "uuid@^11": ^11.1.1                              # buffer bounds check (#387) v11 line
   "uuid@^13": ^13.0.1                              # buffer bounds check (#374) — @lobehub/ui pulls 13.0.0
-  dompurify: ^3.4.0                                # align transitives with catalog bump
+  dompurify: ^3.4.11                                # align transitives with catalog bump
   # Dev-only transitive security overrides — FR-3014. These ship only in
   # dev/build tooling (not the production bundle), but Dependabot still
   # surfaces them. Remove an entry when every upstream consumer ranges to
