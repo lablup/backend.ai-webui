@@ -18,7 +18,6 @@ import { graphql, useFragment } from 'react-relay';
 interface DeploymentRevisionCardProps {
   deploymentFrgmt: DeploymentRevisionCard_deployment$key | null;
   revisionFetchKey: string;
-  onRefetch: () => void;
   onAddRevision: () => void;
   revisionCardRef?: React.RefObject<HTMLDivElement | null>;
   isAddRevisionDisabled?: boolean;
@@ -33,7 +32,6 @@ interface DeploymentRevisionCardProps {
 const DeploymentRevisionCard: React.FC<DeploymentRevisionCardProps> = ({
   deploymentFrgmt,
   revisionFetchKey,
-  onRefetch,
   onAddRevision,
   revisionCardRef,
   isAddRevisionDisabled = false,
@@ -111,10 +109,7 @@ const DeploymentRevisionCard: React.FC<DeploymentRevisionCardProps> = ({
       }
     >
       {activeRevisionTab === 'currentRevision' && (
-        <DeploymentCurrentRevisionTab
-          deploymentFrgmt={deployment}
-          onRefetch={onRefetch}
-        />
+        <DeploymentCurrentRevisionTab deploymentFrgmt={deployment} />
       )}
       {activeRevisionTab === 'revisionHistory' && deployment && (
         <ErrorBoundaryWithNullFallback>

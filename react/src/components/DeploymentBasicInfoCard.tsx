@@ -56,6 +56,14 @@ interface DeploymentBasicInfoCardProps {
   deploymentFrgmt: DeploymentBasicInfoCard_deployment$key | null;
   isPendingRefetch: boolean;
   onRefetch: () => void;
+  /**
+   * Auto-refresh interval (ms) for the page query's refresh button, or `null`
+   * to disable. The page sets this to a poll interval while a revision rollout
+   * is in flight so the deployment state keeps refreshing regardless of which
+   * revision sub-tab is active (the rollout poll used to live in the Current
+   * revision tab, which stopped polling once unmounted — FR-3104 review).
+   */
+  autoUpdateDelay?: number | null;
 }
 
 type DeploymentSectionData =
@@ -221,6 +229,7 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
   deploymentFrgmt,
   isPendingRefetch,
   onRefetch,
+  autoUpdateDelay = null,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -327,6 +336,7 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
               loading={isPendingRefetch}
               value=""
               onChange={onRefetch}
+              autoUpdateDelay={autoUpdateDelay}
             />
             <Space.Compact>
               <BAIButton

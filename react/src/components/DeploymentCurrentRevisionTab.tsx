@@ -8,7 +8,7 @@ import DeploymentRevisionDetail from './DeploymentRevisionDetail';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Alert, Button, Empty, theme } from 'antd';
-import { BAIUnmountAfterClose, toLocalId, useInterval } from 'backend.ai-ui';
+import { BAIUnmountAfterClose, toLocalId } from 'backend.ai-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -18,18 +18,20 @@ interface DeploymentCurrentRevisionTabProps {
     | DeploymentCurrentRevisionTab_deployment$key
     | null
     | undefined;
-  onRefetch: () => void;
 }
 
 /**
  * DeploymentCurrentRevisionTab — content of the "Current revision" tab inside
- * `DeploymentRevisionCard`. Shows the active revision detail, the "applying"
- * banner while a different revision is rolling out, and polls the page query
- * until the rollout settles.
+ * `DeploymentRevisionCard`. Shows the active revision detail and the "applying"
+ * banner while a different revision is rolling out. The rollout poll itself
+ * lives at the page level (`DeploymentDetailPage` drives the page query's
+ * auto-refetch via `BAIFetchKeyButton`'s `autoUpdateDelay`), so it keeps
+ * running even when the user switches to another revision sub-tab and this
+ * component unmounts.
  */
 const DeploymentCurrentRevisionTab: React.FC<
   DeploymentCurrentRevisionTabProps
-> = ({ deploymentFrgmt, onRefetch }) => {
+> = ({ deploymentFrgmt }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -71,12 +73,6 @@ const DeploymentCurrentRevisionTab: React.FC<
   const deployingRevision = deployment?.deployingRevision;
   const isDeployingDifferentRevision =
     !!deployingRevision && deployingRevision.id !== currentRevision?.id;
-
-  // While a different revision is being applied, poll so the UI moves off the
-  // "applying" state once the deployment finishes rolling out. We don't know
-  // up-front how long the rollout takes, so we keep refetching until the
-  // deploying revision matches the current revision.
-  useInterval(onRefetch, isDeployingDifferentRevision ? 5000 : null);
 
   return (
     <>

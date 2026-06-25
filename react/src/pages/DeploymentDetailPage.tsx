@@ -41,6 +41,11 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useParams } from 'react-router-dom';
 
+// Poll interval (ms) for refreshing the page query while a revision rollout is
+// in progress, so the deployment state moves off the "applying" banner once the
+// rollout settles.
+const REVISION_ROLLOUT_POLL_INTERVAL = 5000;
+
 const DeploymentDetailPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
@@ -190,6 +195,14 @@ const DeploymentDetailPage: React.FC = () => {
   // warning would otherwise contradict that state.
   const hasNoRevision =
     !deployment.currentRevision && !deployment.deployingRevision;
+  // A different revision is rolling out. Drive the page query's auto-refresh
+  // (through the always-mounted BasicInfoCard refresh button) while this is
+  // true so the rollout state keeps refreshing no matter which revision
+  // sub-tab is active. Previously this poll lived in the Current revision tab,
+  // which stopped polling once the user switched tabs and unmounted it.
+  const isDeployingDifferentRevision =
+    !!deployment.deployingRevision &&
+    deployment.deployingRevision.id !== deployment.currentRevision?.id;
   const hasEndpointUrl = !!deployment.networkAccess.endpointUrl;
   const hasAccessTokens = (deployment.accessTokens?.count ?? 0) > 0;
   const isDeploymentDestroying =
@@ -366,11 +379,13 @@ const DeploymentDetailPage: React.FC = () => {
         deploymentFrgmt={deployment}
         isPendingRefetch={isPendingRefetch}
         onRefetch={handleRefetch}
+        autoUpdateDelay={
+          isDeployingDifferentRevision ? REVISION_ROLLOUT_POLL_INTERVAL : null
+        }
       />
       <DeploymentRevisionCard
         deploymentFrgmt={deployment}
         revisionFetchKey={revisionFetchKey}
-        onRefetch={handleRefetch}
         onAddRevision={openAddRevision}
         revisionCardRef={revisionsSectionRef}
         isAddRevisionDisabled={isDeploymentDestroying || isProjectMismatch}
