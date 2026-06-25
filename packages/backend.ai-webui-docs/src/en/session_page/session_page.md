@@ -39,6 +39,7 @@ To view and manage sessions across all users in a project, use the **Admin Sessi
 By default, you can view the following columns: session name, status, allocated resources (AI Accelerators, CPU, Memory),
 and elapsed time.
 Additional columns can be shown or specific ones hidden by clicking the 'Settings' button at the bottom right of the table to customize the view.
+Within the column settings dialog, you can also drag columns to change the order in which they appear in the table.
 
 ![](../images/session_table_settings.png)
 

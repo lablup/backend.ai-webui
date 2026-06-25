@@ -148,6 +148,13 @@ refer to the following:
   ![](../images/launch_session_resource_2.png)
 
 :::note
+Some AI accelerators use **unified memory** — they do not have their own dedicated
+memory and share the host memory pool instead. When you select such an accelerator,
+a separate accelerator-memory amount cannot be set; the accelerator automatically
+draws from the host memory pool.
+:::
+
+:::note
 The **Number of sessions** option is no longer set in this form. To launch
 multiple sessions with the same configuration, use the start button's
 dropdown menu on the **Confirm and Launch** step. See
@@ -188,6 +195,8 @@ Click the 'Next' button below, or the 'Data & Storage' menu on the right to proc
 When a compute session is destroyed, data deletion is set to default.
 However, data stored in the mounted folders will survive.
 Data in those folders can also be reused by mounting it when creating another compute session.
+For further information on how to mount a folder and run a compute session, refer to
+[Mounting Folders to a Compute Session](#session-mounts).
 
 ![](../images/launch_session_data.png)
 
@@ -361,8 +370,10 @@ The scheduling history table displays records with the following columns:
 
 - **Phase**: The name of the scheduling phase
 - **Result**: The outcome of this scheduling step, shown as a color-coded badge
-- **Status Transition (From / To)**: The session status before and after this scheduling step
+- **From Status**: The session status before this scheduling step
+- **To Status**: The session status after this scheduling step
 - **Attempts**: How many times this scheduling step was attempted
+- **Message**: A summary message for this scheduling step
 - **Updated At**: When this record was last updated
 - **Created At**: When this record was created
 
@@ -375,7 +386,7 @@ The scheduling history table is paginated with offset-based pagination. The defa
 records per page. Changing a filter or the sort order automatically resets the view back to page 1.
 
 :::note
-The **Expand Errors Only** mode (described below) applies only to the records visible on the current
+The **Expand errors only** mode (described below) applies only to the records visible on the current
 page, not to the entire history.
 :::
 
@@ -391,19 +402,19 @@ The sub-steps table includes the following columns:
 
 - **Step**: The name of the sub-step
 - **Result**: The outcome of the sub-step, shown as a color-coded badge
-- **Message**: Detailed information or error description
 - **Error Code**: A specific error code if the step failed
+- **Message**: Detailed information or error description
 - **Started At**: When the sub-step began
 - **Ended At**: When the sub-step completed
 
 #### Expand / Collapse Control
 
-A kebab menu (⋮) in the expand-column header lets you control how rows are expanded across the
-entire table. Three view modes are available:
+A kebab menu (⋮) in the expand-column header opens the **Expand options** menu, which lets you control
+how rows are expanded across the entire table. Three view modes are available:
 
-- **Expand All**: Expands every row so all sub-steps are immediately visible.
-- **Collapse All**: Collapses every row to show only the top-level history records.
-- **Expand Errors Only** (default): Automatically expands rows whose result is not SUCCESS, and
+- **Expand all**: Expands every row so all sub-steps are immediately visible.
+- **Collapse all**: Collapses every row to show only the top-level history records.
+- **Expand errors only** (default): Automatically expands rows whose result is not SUCCESS, and
   also hides SUCCESS sub-steps within those expanded rows. This is the most useful mode for quickly
   identifying what went wrong in a session's scheduling lifecycle.
 
@@ -435,6 +446,11 @@ action and when.
 
 ![](../images/session_audit_log.png)
 
+:::note
+The Audit Log is enforced by the backend and may be visible only to superadmins. Regular users
+may see an empty result even when the tab is accessible.
+:::
+
 #### Audit Log Columns
 
 The Audit Log table includes the following columns:
@@ -444,6 +460,18 @@ The Audit Log table includes the following columns:
   resource change)
 - **Status**: The outcome of the action (`SUCCESS`, `ERROR`, `RUNNING`, or `UNKNOWN`)
 - **Time**: When the action occurred
+
+#### Audit Log Filters
+
+Use the filter bar above the table to narrow down the log entries:
+
+- **Status**: Filter by action outcome (`SUCCESS`, `ERROR`, `RUNNING`, `UNKNOWN`)
+- **Operation**: Search by operation name or keyword
+- **Triggered By**: Search by actor ID
+- **Time**: Filter by a date-range picker
+
+A **Refresh** button reloads the log. The audit log query is deferred and sent only the first time
+you activate the **Audit Log** tab.
 
 <a id="use_session"></a>
 
