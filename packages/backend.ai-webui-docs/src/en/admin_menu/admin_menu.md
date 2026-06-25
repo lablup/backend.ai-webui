@@ -2,18 +2,16 @@
 
 # Admin Features
 
-Logging in with an admin account will reveal an extra Administration menu on the bottom left of the sidebar.
-User information registered in Backend.AI is listed in the Users tab.
-super-admin role user can see all users' information, create and deactivate a user.
-
-User ID (email), Name (username), Role and Description(User Description) can be filtered by typing text in the
-search box on each column header.
+Logging in with an admin account adds an **Admin Settings** menu at the top of the sidebar. Selecting it switches the sidebar to show only the administration menus. User information registered in Backend.AI is listed under the **Users** menu. A super-admin can see all users' information, and create or deactivate users.
 
 ![](../images/admin_user_page.png)
+<!-- TODO: Re-capture admin_user_page.png to show the Admin Settings sidebar and the Users list. -->
+
+
 
 <a id="create-and-update-users"></a>
 
-## Create and update users
+## Browse and manage users
 
 A user can be created by clicking the '+Create User' button. Note that the password
 must be longer or equal to 8 characters and at least 1 alphabet/special
@@ -28,14 +26,15 @@ create a user account. Please try other email and username.
 Check if the user is created.
 
 ![](../images/check_if_user_created.png)
+<!-- TODO: Re-capture check_if_user_created.png framed to the card (currently has no padding). -->
 
-Click the green button in the Controls panel for more detailed user
+Click the info icon in the user's **Email** column row for more detailed user
 information. You can also check the domain and project information where the
 user belongs.
 
 ![](../images/user_detail_dialog.png)
 
-Click the 'Setting (Gear)' in the Controls panel to update information of a user who
+Click the settings (gear) icon in the user's **Email** column row to update information of a user who
 already exists. User's name, password, activation state, etc. can be changed. User ID (email) cannot be changed.
 
 ![](../images/user_update_dialog.png)
@@ -47,6 +46,11 @@ The user create/update dialog contains the following fields:
 - **Username**: A unique identifier for the user (up to 64 characters).
 - **Full Name**: The user's display name (up to 64 characters).
 - **Password**: Must be at least 8 characters and include at least 1 alphabet, 1 special character, and 1 number.
+- **Require password change?**: If the admin has chosen random passwords while
+  creating users in batches, this field can be set to ON to indicate that
+  password change is required. The users will see the top bar that notify user
+  to update their password, but this is a kind of descriptive flag which has no
+  effect on actual use.
 - **Description**: An optional description for the user (up to 500 characters).
 - **User Status**: Indicates the user's status. Inactive users cannot log
   in. Before Verification is a status that indicates a user needs an additional
@@ -56,13 +60,6 @@ The user create/update dialog contains the following fields:
   ![](../images/active_user_selection.png)
 
 - **Role**: The user's role (user, admin, superadmin). Available options depend on the current user's permissions.
-- **Domain**: The domain to which the user belongs. This field is shown in both the create and update dialogs.
-- **Projects**: Select one or more projects for the user to belong to. The available projects depend on the domain shown in the dialog.
-- **Require password change?**: If the admin has chosen random passwords while
-  creating users in batches, this field can be set to ON to indicate that
-  password change is required. The users will see the top bar that notify user
-  to update their password, but this is a kind of descriptive flag which has no
-  effect on actual use.
 - **Enable sudo session**: Allow the user to use sudo in the compute session.
   This is useful when the user needs to install packages or run commands that
   require root privileges. However, it is not recommended to enable this option
@@ -71,9 +68,11 @@ The user create/update dialog contains the following fields:
   When using two-factor authentication, users are additionally required to enter an
   OTP code when logging in. Administrators can only disable two-factor authentication
   for other users.
-- **Resource Policy**: From Backend.AI version 24.09, you can select the user resource policy
+- **Resource Policy**: Select the user resource policy
   to which the user belongs. For more information about user resource policies, please
   refer to the [user resource policy](#user-resource-policy) section.
+- **Domain**: The domain to which the user belongs. This field is shown in both the create and update dialogs.
+- **Projects**: Select one or more projects for the user to belong to. The available projects depend on the domain shown in the dialog.
 - **Allowed Client IPs**: Restrict which IP addresses can access the system using this user account. Enter IP addresses or CIDR notation (e.g., `10.20.30.40`, `10.20.30.0/24`). If left empty, access from any IP is allowed.
 - **Container UID**: The numeric User ID assigned to processes inside the container. This is useful when the container needs to match a specific UID for file permission purposes.
 - **Container GID**: The default numeric Group ID assigned to processes inside the container.
@@ -84,12 +83,8 @@ The user create/update dialog contains the following fields:
 
 ### Bulk Create Users
 
-:::note
-This feature is available only on Backend.AI Manager version 26.2.0 or later.
-:::
-
 When you need to create multiple user accounts at once, you can use the Bulk Create
-Users feature. On Manager 26.2.0 or later, an ellipsis (`...`) dropdown button appears
+Users feature. An ellipsis (`...`) dropdown button appears
 next to the **Create User** button on the Users page. Click this dropdown button and
 select **Bulk Create Users** to open the bulk creation dialog.
 
@@ -113,9 +108,7 @@ sequential numbers to the prefix.
   special character, and number).
 - **Password change required**: Defaults to ON for bulk-created users. When enabled,
   each user will be prompted to change their password on first login.
-- **Domain**: The domain to which the created users will belong.
-- Other fields such as **Role**, **Status**, **Resource Policy**, and **Projects** are
-  the same as single user creation.
+- All other fields (**Status**, **Role**, **Enable sudo session**, **Resource Policy**, **Domain**, **Projects**, **Allowed Client IPs**, etc.) work the same as in single user creation. See the [Browse and manage users](#create-and-update-users) section.
 
 ![](../images/bulk_create_user_dialog.png)
 
@@ -146,11 +139,7 @@ successfully created and how many failed.
 
 ### Bulk Create Users from CSV
 
-:::note
-This feature is available only on Backend.AI Manager version 26.2.0 or later.
-:::
-
-When you need to create multiple user accounts from an existing roster or exported data, you can upload a CSV file directly instead of specifying a sequential prefix. Click the ellipsis (`...`) dropdown next to the **Create User** button and select **Bulk Create Users from CSV** to open the CSV upload dialog.
+Instead of bulk-creating users directly, you can also create users by uploading a CSV file. Click the ellipsis (`...`) dropdown next to the **Create User** button and select **Bulk Create Users from CSV** to open the CSV upload dialog.
 
 ![](../images/bulk_create_user_csv_dropdown.png)
 
@@ -197,24 +186,71 @@ If some rows fail, only the successful rows result in new accounts. Failed rows 
 
 ## Inactivate user account
 
-Deleting user accounts is not allowed even for superadmins, to track usage
-statistics per user, metric retention, and accidental account loss. Instead,
-admins can inactivate user accounts to keep users from logging in. Click the
-delete icon in the Controls panel. A popover asking confirmation appears, and
-you can deactivate the user by clicking the Deactivate button.
+To track usage statistics per user, retain metrics, and prevent accidental
+account loss, the recommended way to stop a user from logging in is to
+**deactivate** the account rather than delete it. Deactivation keeps the user's
+records intact while blocking sign-in. To deactivate a user, click the deactivate icon in the user's **Email** column row. A confirmation popover appears; click the **Deactivate** button to deactivate the user.
 
 ![](../images/user_deactivate_confirmation.png)
+<!-- TODO: Re-capture user_deactivate_confirmation.png in this locale's UI language, reflecting the new flow: the deactivate icon in the user's Email column row and the confirmation popover. -->
 
-To re-activate users, go to Users - Inactive tab, and select the status of
-the target user to `Active`.
+To reactivate a user, go to the **Inactive** tab on the Users page and click the reactivate (restore) icon in the user's **Email** column row. A confirmation popover appears; click the **Activate** button to reactivate the user.
 
 ![](../images/user_inactivate_confirmation.png)
+<!-- TODO: Re-capture user_inactivate_confirmation.png in this locale's UI language, reflecting the new flow: the reactivate (restore) icon in the Email column row on the Inactive tab and the activate popover. -->
 
 :::note
 Please note that deactivating or reactivating the user does not change the user's credentials, since the user
 account can have multiple keypairs, which brings it hard to decide which credential
 should be reactivated.
 :::
+
+While day-to-day account management relies on deactivation, superadmins **can**
+permanently remove accounts that are already inactive, using the Purge feature
+described below.
+
+<a id="purge-inactive-users"></a>
+
+### Purge Inactive Users
+
+Superadmins can permanently delete (purge) user accounts that have already been
+deactivated. Purging is available **only** for users in the **Inactive** tab —
+active users must be deactivated first. Unlike deactivation, purging is
+irreversible and also removes the user's associated data.
+
+In the Users page, switch to the **Inactive** tab (the status selector reads
+**Inactive (include keypair)** to indicate that purging also affects the user's
+keypairs). You can purge users in two ways:
+
+- **Per-user purge**: Click the trash-bin (permanently delete) icon in a single inactive user's **Email** column row.
+- **Bulk purge**: Select one or more inactive users with the row checkboxes, then
+  click the **Permanently Delete Users** button (the trash-bin button that
+  appears next to the selection count).
+
+![](../images/user_purge_inactive_tab.png)
+<!-- TODO: Capture screenshot of user_purge_inactive_tab.png — Inactive Users tab showing the per-row purge (trash) icon and the bulk Permanently Delete Users button -->
+
+Either action opens the **Permanently Delete Users** confirmation modal. Because
+this operation cannot be undone, you must type the confirmation phrase shown in
+the modal before the delete button becomes enabled. The modal also offers two
+options:
+
+- **Delete shared virtual folders as well?**: When checked, virtual folders
+  shared by the purged users are also deleted. When unchecked, those folders are
+  left in place.
+- **Delete created model services as well?**: When checked, model services
+  created by the purged users are deleted as well. When unchecked, ownership of
+  those services is delegated instead of deleting them.
+
+![](../images/purge_users_modal.png)
+<!-- TODO: Capture screenshot of purge_users_modal.png — Permanently Delete Users confirmation modal with the two option checkboxes and the irreversibility alert -->
+
+:::danger
+Purging a user is **irreversible**. The user's virtual folders, kernel history,
+and related keypairs are also deleted. Make sure you have selected the correct
+users before confirming.
+:::
+
 
 <a id="manage-users-keypairs"></a>
 
@@ -235,25 +271,27 @@ keypairs are shown immediately, and to see the inactive keypairs, click the
 Inactive panel at the bottom.
 
 ![](../images/credential_list_tab.png)
+<!-- TODO: Re-capture credential_list_tab.png with the sidebar menu expanded (currently collapsed). -->
 
-Like in Users tab, you can use the buttons in the Controls panel to view or
-update keypair details. Click the green info icon button to see specific details of the keypair.
+Like in Users tab, you can use the inline buttons in the keypair's row to view or
+update keypair details. Click the info icon button to see specific details of the keypair.
 If necessary, you can copy the secret key by clicking the copy button.
 
 ![](../images/keypair_detail_dialog.png)
 
-You can modify the resource policy and rate limit of the keypair by clicking the blue 'Setting (Gear)' button.
+You can modify the resource policy and rate limit of the keypair by clicking the 'Setting (Gear)' button.
 Please keep in mind that if the 'Rate Limit' value is small, API operations such as login may be blocked.
 
 ![](../images/keypair_update_dialog.png)
 
-You can also deactivate or reactivate the keypair by clicking red 'Deactivate' button or black 'Activate' button in control column.
+You can also deactivate or reactivate the keypair by clicking the 'Deactivate' button or 'Activate' button in the keypair's row.
 Unlike the User tab, the Inactive tab allows permanent deletion of key pairs.
 However, you cannot permanently delete a key pair if it is currently being used as a user's main access key.
 
 ![](../images/keypair_delete_button.png)
 
 ![](../images/keypair_delete_confirmation.png)
+<!-- TODO: Re-capture keypair_delete_confirmation.png — shows the old UI. -->
 
 If you
 accidentally deleted a keypair, you can re-create keypair for the user by
@@ -289,6 +327,7 @@ it will be automatically assigned to the project selected in the project selecto
 Permission is set to Read-Only.
 
 ![](../images/group_folder_creation.png)
+<!-- TODO: Re-capture group_folder_creation.png — shows the old UI. -->
 
 After confirming that the folder has been created, log in with the User B's
 account and check that the project folder just created on the Data & Storage page
@@ -296,6 +335,7 @@ is displayed without any invitation procedure. You can see that R (Read Only) is
 also displayed in the Permission panel.
 
 ![](../images/group_folder_listed_in_B.png)
+<!-- TODO: Re-capture group_folder_listed_in_B.png — shows the old UI. -->
 
 <a id="admin-features"></a>
 
@@ -635,11 +675,11 @@ such as user or research requirements, and apply them on an individual basis.
 
 The Resource Policies page allows administrators to view a list of all registered resource policies.
 Administrators can review the resource policies established for keypairs, users, and projects directly on this page.
-Let's begin by examining the resource policies for keypairs. In the figure below, there are
-three policies in total (gardener, student, default). The infinity symbol (∞)
+Let's begin by examining the resource policies for keypairs. The infinity symbol (∞)
 indicates that no resource restrictions have been applied to those resources.
 
 ![](../images/resource_policy_page.png)
+<!-- TODO: Re-capture resource_policy_page.png — needs update. -->
 
 The user account being used in this guide is currently assigned to the default
 resource policy. This can be verified in the Credentials tab on the Users page.
@@ -647,7 +687,7 @@ You can also confirm that all resource policies are set to default in the Resour
 
 ![](../images/credentials.png)
 
-To modify resource policies, click the 'Setting (Gear)' in the Control column of the
+To modify resource policies, click the 'Setting (Gear)' in the Name column of the
 default policy group. In the Update Resource Policy dialog, every option is
 editable except for Policy Name, which serves as the primary key for
 distinguishing resource policies in the list. Uncheck the Unlimited checkbox
@@ -695,7 +735,7 @@ About details of each option in resource policy dialog, see the description belo
   - Allowed hosts: Backend.AI supports many NFS mountpoint. This field limits
     the accessibility to them. Even if a NFS named "data-1" is mounted on
     Backend.AI, users cannot access it unless it is allowed by resource policy.
-  - (Deprecated since 23.09.4) Max. #: the maximum number of storage folders that
+  - (Deprecated) Max. #: the maximum number of storage folders that
     can be created/invited. (max value: 100).
 
 In the keypair resource policy list, check that the Resources value of the default
@@ -708,14 +748,20 @@ value is the same as described above.
 
 To create a resource policy and associate it with a keypair, go to the
 Credentials tab of the Users page, click the gear button located in the
-Controls column of the desired keypair, and click the Select Policy field to
+Name column of the desired keypair, and click the Select Policy field to
 choose it.
 
+When selecting a keypair resource policy for a specific user, the selection table
+includes an **Assigned Keypairs** column that shows which of the user's keypairs
+are currently bound to each policy, so you can confirm the user's existing
+assignments before choosing a policy.
+
 You can also delete each of resource keypairs by clicking trash can icon
-in the Control column. When you click the icon, the confirmation popup will appears.
+in the Name column. When you click the icon, the confirmation popup will appears.
 Click 'Delete' button to erase."
 
 ![](../images/resource_policy_delete_dialog.png)
+<!-- TODO: Re-capture resource_policy_delete_dialog.png — needs update. -->
 
 :::note
 If there's any users (including inactive users) following a resource policy to be deleted,
@@ -727,12 +773,13 @@ If you want to hide or show specific columns, click the 'Setting (Gear)' at the 
 table. This will bring up a dialog where you can select the columns you want to display.
 
 ![](../images/keypair_resource_policy_table_setting.png)
+<!-- TODO: Re-capture keypair_resource_policy_table_setting.png — needs update. -->
 
 <a id="user-resource-policy"></a>
 
 #### User Resource Policy
 
-Starting from version 24.03, Backend.AI supports user resource policy management. While each
+Backend.AI supports user resource policy management. While each
 user can have multiple keypairs, a user can only have one user resource policy. In the user
 resource policy page, users can set restrictions on various settings related to folders such as
 Max Folder Count and Max Folder Size, as well as individual resource limits like Max Session
@@ -760,7 +807,7 @@ To create a new user resource policy, click the Create button.
   user cannot create a new customized image. If you want to know more about customized
   images, please refer to the [My Environments](#my-environments) section.
 
-To update, click the 'Setting (Gear)' button in the control column. To delete, click the trash can
+To update, click the 'Setting (Gear)' button in the Name column. To delete, click the trash can
 button.
 
 :::note
@@ -775,13 +822,14 @@ clicking the 'Setting (Gear)' button at the bottom right of the table.
 
 #### Project Resource Policy
 
-Starting from version 24.03, Backend.AI supports project resource policy management. Project
+Backend.AI supports project resource policy management. Project
 resource policies manage storage space (quota) and folder-related limitations for projects.
 
 When clicking the `Project` tab of the `Resource Policies` page, you can see the list of project
 resource policy.
 
 ![](../images/project_resource_policy_list.png)
+<!-- TODO: Re-capture project_resource_policy_list.png — needs update. -->
 
 To create a new project resource policy, click the `+ Create` button at the top right of the table.
 
@@ -794,13 +842,13 @@ To create a new project resource policy, click the `+ Create` button at the top 
 - **Max Folder Size**: The maximum size of the project's storage space. If the project's storage
   space exceeds this value, the administrator cannot create a new project folder. If set to
   Unlimited, it is displayed as "∞".
-- **Max Network Count**: The maximum number of networks that can be created for the project since Backend.AI version 24.12. If set to Unlimited, it is displayed as "∞".
+- **Max Network Count**: The maximum number of networks that can be created for the project. If set to Unlimited, it is displayed as "∞".
 
 The meaning of each field is similar to the user resource policy. The difference is that the
 project resource policy is applied to the project folders, while the user resource policy is
 applied to the user folders.
 
-If you want to make changes, click the `Setting (Gear)` button in the control column. Resource policy
+If you want to make changes, click the `Setting (Gear)` button in the Name column. Resource policy
 names cannot be edited. Deletion can be done by clicking the trash can icon button.
 
 :::note
@@ -825,7 +873,6 @@ Exported CSV files include a UTF-8 BOM at the start of the file, so Microsoft Ex
 
 ## Unified View for Pending Sessions
 
-From Backend.AI version 25.13.0, a unified view for pending sessions is available in the Admin Menu.
 The Admin Session page provides a unified view of all pending sessions within a
 selected resource group. The index number displayed next to the status indicates the queue position in
 which the session will be created once sufficient resources become available.
@@ -837,8 +884,8 @@ displays detailed information about the session.
 
 ## Fair Share Scheduler
 
-From Backend.AI core version 26.2.0 and later, the Fair Share Scheduler page is available in the
-Administration menu. This feature allows administrators to manage fair share scheduling weights
+The Fair Share Scheduler page is available in the
+**Admin Settings** menu. This feature allows administrators to manage fair share scheduling weights
 across a hierarchical structure of resource groups, domains, projects, and users.
 
 Fair share scheduling allocates compute resources based on historical usage patterns,
@@ -853,7 +900,7 @@ to `FAIR_SHARE`. To configure the scheduler type for a resource group, refer to 
 [Manage resource group](#manage-resource-group) section.
 :::
 
-To access this feature, click the Scheduler menu item in the Administration section of the sidebar.
+To access this feature, click the **Scheduler** menu item under **Admin Settings** in the sidebar.
 The page displays a Fair Share Setting tab with a 4-step drill-down interface.
 
 ![](../images/fair_share_resource_group_page.png)
@@ -879,8 +926,6 @@ resource group.
 
 At each step, the following common features are available:
 
-- **Filtering**: Use the property-based search filter to narrow results by name. At the User step, additional filters for email and active status are available.
-- **Sorting**: Click column headers to sort the table by that column.
 - **Pagination**: Navigate through results with configurable page size.
 - **Auto-refresh**: Data refreshes automatically every 7 seconds. A manual refresh button is also available.
 
@@ -971,10 +1016,6 @@ The table includes the following columns:
 - **Modified At**: The last modification timestamp.
 - **Created At**: The creation timestamp.
 
-:::note
-At the User step, additional filter properties are available: email, name, and active status.
-:::
-
 The same bulk operations (Usage Graph and Bulk Edit) are available when rows are selected.
 
 ### Editing Fair Share Weights
@@ -1061,11 +1102,9 @@ minimum resource requirements for the image and then generated, not cancelled.
 ![](../images/update_image_resource_setting.png)
 
 :::note
-Don't change the minimum resource requirements to an amount less than the
-predefined value! The minimum resource requirements included in the image
-metadata are values that have been tested and determined. If you are not
-really sure about the minimum amount of resources you want to change, leave
-it in the default.
+The minimum resource requirements included in the image metadata are values
+that have been tested and determined, so unless you have a clear reason to
+change the minimum resource amounts, it is recommended to keep the default values.
 :::
 
 Additionally, you can add or modify the supported apps for each image by clicking the 'Apps' icon located in the Controls column.
@@ -1073,7 +1112,7 @@ Once you click the icon, the name of the app and its corresponding port number w
 
 ![](../images/manage_app_dialog.png)
 
-In this interface, you can add supported custom applications by clicking the '+ Add' button below. To delete an application, simply click the 'red trash can' button on the right side of each row.
+In this interface, you can add supported custom applications by clicking the '+ Add' button below. To delete an application, simply click the 'trash can' button on the right side of each row.
 
 :::note
 You need to reinstall the image after changing the managed app.
@@ -1109,10 +1148,15 @@ button. The registry creation dialog contains the following fields:
 - **Password**: Optional. When editing an existing registry, check the "Change Password" checkbox to modify it.
 - **Registry Type**: Select the type of registry. Supported types include: `docker`, `harbor`, `harbor2`, `github`, `gitlab`, `ecr`, and `ecr-public`.
 - **Project Name**: The project or namespace in the registry (required). Use the full path including namespace and project name for GitLab registries.
-- **Extra Information**: A JSON string for additional configuration needed for each registry type. This field is available from version 24.09.3.
+- **Extra Information**: A JSON string for additional configuration needed for each registry type.
 - **SSL Verification**: Toggles whether Backend.AI verifies the registry's SSL certificate when connecting. **Enabled by default**, which is the recommended setting for any registry reachable over the public internet. Disable this only for a registry served with a self-signed certificate inside a trusted internal environment where you have already verified the network path; turning it off makes the connection vulnerable to man-in-the-middle attacks.
+- **Set as Global Registry**: A toggle that, when enabled, allows access to the registry from all projects.
+- **Allowed Projects**: When **Set as Global Registry** is turned off, use this field to select the specific projects that are allowed to use the registry.
 
 ![](../images/container_registry_editor_modal.png)
+<!-- TODO: Re-capture container_registry_editor_modal.png to show the Set as Global Registry toggle and the Allowed Projects field -->
+
+
 
 
 ### GitLab Container Registry Configuration
@@ -1170,7 +1214,7 @@ of currently defined resource presets.
 ![](../images/resource_preset_list.png)
 
 You can set resources such as CPU, RAM, fGPU, etc. to be provided by the
-resource preset by clicking the 'Setting (Gear)' (cogwheel) in the Controls panel.
+resource preset by clicking the 'Setting (Gear)' (cogwheel) in the Name column.
 Create or Modify Resource Preset modal shows fields of the resources currently available.
 Depending on your server's settings, certain resources may not be visible.
 After setting the resources with the desired values, save it and check if the corresponding preset is displayed
@@ -1193,6 +1237,7 @@ preset name that already exists, since it is the key value for distinguishing
 each resource preset.
 
 ![](../images/create_resource_preset_dialog.png)
+<!-- TODO: Re-capture create_resource_preset_dialog.png — needs update. -->
 
 <a id="manage-agent-nodes"></a>
 
@@ -1294,43 +1339,69 @@ that already exists, since name is the key value.
 ## Storages
 
 On STORAGES tab, you can see what kind of mount volumes (usually NFS) exist.
-From 23.03 version, We provide per-user/per-project quota setting on storage that supports quota management.
+Backend.AI provides per-user/per-project quota setting on storage that supports quota management.
 By using this feature, admin can easily manage and monitor the exact amount of storage usage for each user and project based folder.
 
 ![](../images/storage_list.png)
+<!-- TODO: Re-capture storage_list.png — needs update (name-click opens the Storage Host Detail Drawer). -->
 
-In order to set quota, you need to first access to storages tab in resource page.
-And then, click 'Setting (Gear)' in control column.
+To manage a storage host, click the storage host name in the Storages list. This opens the **Storage Host
+Detail Drawer**, where capacity (quota) and folder permissions are configured.
 
-:::note
+<a id="storage-host-detail-drawer"></a>
+
+#### Storage Host Detail Drawer
+
+The Storage Host Detail Drawer is the single place to inspect and manage a
+storage host. You can open it by clicking the host name in the Storages list. The
+top displays basic information about the host, while the bottom provides tabs for
+configuring folder permissions and capacity (quota).
+
+![](../images/storage_host_detail_drawer.png)
+<!-- TODO: Capture screenshot of storage_host_detail_drawer.png — Storage Host detail drawer showing the tab strip (Project Folder Permissions / User Folder Permissions / Capacity) -->
+
+The drawer contains the following tabs:
+
+- **Project Folder Permissions**: View and manage which domains and projects can
+  access the host's project folders. See the [Project Folder Permissions](#project-folder-permission) section below.
+- **User Folder Permissions**: View and manage the permissions that apply to user
+  folders on the host. User folder permissions are determined by the keypair
+  resource policy linked to a user's main access key.
+- **Capacity**: Configure per-user and per-project storage quotas, and view the
+  host's usage and capabilities. This tab is unavailable for storage hosts that do not support quota configuration.
+
+<a id="project-folder-permission"></a>
+
+#### Project Folder Permissions
+
+The **Project Folder Permissions** tab of the [Storage Host Detail Drawer](#storage-host-detail-drawer) lets administrators view and manage the permissions of the project folders created on the selected storage host.
+
+![](../images/project_folder_permission_tab.png)
+<!-- TODO: Capture screenshot of project_folder_permission_tab.png — Project Folder Permissions tab with the domain selector and the tri-state effective-permission indicators -->
+
+Project folder permissions consist of permissions for the selected domain and permissions for the projects under that domain.
+
+In the Backend.AI structure, a project belongs under a specific domain. Therefore, the storage permissions set on a project inherit the domain's permissions by default.
+
+You can select multiple rows (using the row checkboxes) in the Domains, Projects, or User Folder Permissions tables to compare their permission sets side by side. With rows selected, click **Edit Permissions** to open the bulk edit modal, which applies the chosen permission set to all selected entities at once. The modal opens with all permissions selected by default, and saving overwrites the selected entities' permissions with exactly the set you choose.
+
+<a id="user-folder-permission"></a>
+
+#### User Folder Permissions
+
+User folder permissions are the permissions configured in the keypair resource policy. When you select a user with the user selector on the right, only the keypair resource policies assigned to that user's keypairs are filtered and shown. The **Assigned Keypairs** column shows the user's main access key.
+
+![](../images/user_folder_permission_tab.png)
+<!-- TODO: Capture screenshot of user_folder_permission_tab.png — User Folder Permissions tab with the user selector and the Assigned Keypair column. -->
+
+<a id="quota-settings"></a>
+
+#### Quota Settings
+
 Please remind that quota setting is only available in storage that provides quota setting
 (e.g. XFS, CephFS, NetApp, Purestorage, etc.). Although you can see the usage of storage
-in quota setting page regardless of storage, you cannot configure the quota which doesn't
+in the Capacity tab regardless of storage, you cannot configure the quota which doesn't
 support quota configuration internally.
-
-![](../images/no_support_quota_setting.png)
-:::
-
-<a id="quota-setting-panel"></a>
-
-#### Quota Setting Panel
-
-In Quota setting page, there are two panels.
-
-![](../images/quota_setting_page.png)
-
-- Overview panel
-  - Usage: Shows the actual amount usage of the selected storage.
-  - Endpoint: Represents the mount point of the selected storage.
-  - Backend Type: The type of storage.
-  - Capabilities: The supported feature of the selected storage.
-
-- Quota Settings
-  - For User: Configure per-user quota setting here.
-  - For Project: Configure per-project quota(project-folder) setting here.
-  - ID: Corresponds to user or project id.
-  - Hard Limit (GB): Currently set hard limit quota for selected quota.
-  - Control: Provides editing the hard limit or even deleting the quota setting.
 
 <a id="set-user-quota"></a>
 
@@ -1338,16 +1409,17 @@ In Quota setting page, there are two panels.
 
 In Backend.AI, there are two types of vfolders created by user and admin(project). In this section,
 we would like to show how to check current quota setting per-user and how to configure it.
-First, make sure the active tab of quota settings panel is `For User`. Then, select user you desire to
+First, on the Capacity tab, make sure the active sub-tab of the Quota Settings panel is `For User`. Then, select user you desire to
 check and edit the quota. You can see the quota id that corresponds to user's id and the configuration already set
 in the table, if you already set the quota.
 
 ![](../images/per_user_quota.png)
+<!-- TODO: Re-capture per_user_quota.png — needs update. -->
 
-Of course, if you want to edit the quota, you can simply click the Edit button in the control column. After Clicking `Edit` button, you may see the small modal that enables configuring quota setting.
-After input the exact amount, don't forget to Click `OK` button, unless the changes will not be applied.
+Click the Edit button in the Quota Scope ID column to open the modal for configuring the quota.
 
 ![](../images/quota_settings_panel.png)
+<!-- TODO: Re-capture quota_settings_panel.png — needs update. -->
 
 <a id="set-project-quota"></a>
 
@@ -1359,6 +1431,7 @@ which is selecting the domain that the project is dependent on. The rest are the
 As in the picture below, you need to first select the domain, and then select the project.
 
 ![](../images/per_project_quota.png)
+<!-- TODO: Re-capture per_project_quota.png — needs update. -->
 
 <a id="unset-quota"></a>
 
@@ -1366,53 +1439,17 @@ As in the picture below, you need to first select the domain, and then select th
 
 We also provides the feature to unset the quota. Please remind that after removing the quota setting, quota will automatically follows
 user or project default quota, which cannot be set in WebUI. If you want to change the default quota setting, you may need to access to admin-only page.
-By Clicking `Unset` button in control column, the small snackbar message will show up and confirm whether you really want to delete the current quota setting.
+By Clicking `Unset` button in the Quota Scope ID column, the small snackbar message will show up and confirm whether you really want to delete the current quota setting.
 If you click `OK` button in the snackbar message, then it will delete the quota setting and automatically reset the quota follows to corresponding quota,
 which depends on the quota type(user / project).
 
 ![](../images/unset_quota.png)
+<!-- TODO: Re-capture unset_quota.png — needs update. -->
 
 :::note
 If there's no config per user/project, then corresponding values in the user/project resource policy will be set as
 a default value. For example, If no hard limit value for quota is set, `max_vfolder_size` value in the resource policy
 is used as the default value.
-:::
-
-<a id="project-folder-permission"></a>
-
-#### Project Folder Permission
-
-The storage host detail drawer includes a **Project Folder Permission** tab where administrators can view and manage which projects have access to the selected storage host. To open the drawer, click the storage host name in the Storages list.
-
-:::tip
-The domain selector on the **Project Folder Permission** tab defaults to the currently active domain when the drawer opens, so the folder permissions for that domain are visible immediately. You can switch to a different domain or clear the selection to view permissions across other domains.
-:::
-
-<a id="download-session-lists"></a>
-
-## Download session lists
-
-:::note
-This feature is currently not available on the default Session page.
-To use this feature, please enable 'Classic Session list page' option in the 'Switch back to the Classic UI' section
-on the User Setting page. For more details, please refer to [Backend.AI User Settings](#user-settings) section.
-:::
-
-There's additional feature in Session page for admin.
-On the right side of the FINISHED tab there is a menu marked with `...`.
-When you click this menu, a sub-menu export CSV appears.
-
-![](../images/export_csv_menu.png)
-
-If you click this menu, you can download the information of the compute sessions
-created so far in CSV format. After the following dialog opens, enter an appropriate
-file name (if necessary), click the EXPORT button and you will get the CSV file.
-Please note that a file name can have up to 255 characters.
-
-![](../images/export_session_dialog.png)
-
-:::tip
-All CSV files exported from Backend.AI include a UTF-8 BOM (Byte Order Mark) at the start of the file. This ensures that Microsoft Excel on non-UTF-8 systems (for example, Korean Windows using CP949) correctly recognizes the encoding and displays multi-byte characters such as Korean, Japanese, or Chinese without garbling.
 :::
 
 <a id="system-settings"></a>
@@ -1494,8 +1531,7 @@ Backend.AI supports a wide range of AI accelerators across multiple vendors:
 ![](../images/system_setting_about_scaling_plugins.png)
 
 
-When a user launches a multi-node cluster session, which is introduced at
-version 20.09, Backend.AI will dynamically create an overlay network to support
+When a user launches a multi-node cluster session, Backend.AI will dynamically create an overlay network to support
 private inter-node communication. Admins can set the value of the Maximum
 Transmission Unit (MTU) for the overlay network, if it is certain that the value
 will enhance the network speed.
@@ -1569,9 +1605,5 @@ This page is only for showing current information.
 ## RBAC Management
 
 RBAC (Role-Based Access Control) Management allows superadmins to define roles with fine-grained permissions and assign them to users. You can control which actions specific users are allowed to perform on various resources throughout the Backend.AI system.
-
-:::note
-RBAC Management is only available to superadmins and requires Backend.AI Manager version 26.4.0 or later.
-:::
 
 For detailed information about managing roles, permissions, and user assignments, refer to the dedicated [RBAC Management](#rbac-management) page.
