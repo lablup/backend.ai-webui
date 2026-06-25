@@ -2286,7 +2286,7 @@
       "Degraded": "El verificador de salud no puede alcanzar esta réplica. Se excluye temporalmente del Active Pool.",
       "FailedToStart": "La réplica no pudo iniciarse. Revise los registros de sesión para encontrar la causa.",
       "Healthy": "Listo para atender solicitudes.",
-      "NotChecked": "Esperando la primera verificación de salud.",
+      "NotChecked": "No se ha realizado ninguna verificación de salud para esta réplica.",
       "Provisioning": "La réplica está siendo aprovisionada.",
       "Running": "El proceso de réplica se está ejecutando y está listo para ser verificado.",
       "Terminated": "La réplica ha sido terminada.",

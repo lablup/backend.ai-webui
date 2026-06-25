@@ -2288,7 +2288,7 @@
       "Degraded": "Bộ kiểm tra sức khỏe không thể tiếp cận bản sao này. Nó tạm thời bị loại khỏi Active Pool.",
       "FailedToStart": "Bản sao không khởi động được. Kiểm tra nhật ký phiên để tìm nguyên nhân.",
       "Healthy": "Sẵn sàng xử lý yêu cầu.",
-      "NotChecked": "Đang chờ lần kiểm tra sức khỏe đầu tiên.",
+      "NotChecked": "Chưa thực hiện kiểm tra sức khỏe nào cho bản sao này.",
       "Provisioning": "Bản sao đang được cấp phát.",
       "Running": "Tiến trình bản sao đang chạy và sẵn sàng được kiểm tra.",
       "Terminated": "Bản sao đã bị kết thúc.",

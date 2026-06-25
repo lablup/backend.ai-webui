@@ -2286,7 +2286,7 @@
       "Degraded": "Terveystarkistaja ei pääse tähän replikkaan. Se on väliaikaisesti poistettu Active Poolista.",
       "FailedToStart": "Replikka ei käynnistynyt. Tarkista istuntologeista syy.",
       "Healthy": "Valmis käsittelemään pyyntöjä.",
-      "NotChecked": "Odotetaan ensimmäistä terveystarkistusta.",
+      "NotChecked": "Tälle replikalle ei ole tehty terveystarkistusta.",
       "Provisioning": "Replikka valmistellaan.",
       "Running": "Replikan prosessi on käynnissä ja valmis tarkistettavaksi.",
       "Terminated": "Replikka on lopetettu.",

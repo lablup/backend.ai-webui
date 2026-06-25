@@ -2288,7 +2288,7 @@
       "Degraded": "Le vérificateur de santé ne peut pas atteindre cette réplique. Elle est temporairement exclue du Active Pool.",
       "FailedToStart": "La réplique n'a pas réussi à démarrer. Vérifiez les journaux de session pour en trouver la cause.",
       "Healthy": "Prête à traiter les requêtes.",
-      "NotChecked": "En attente du premier contrôle de santé.",
+      "NotChecked": "Aucun contrôle de santé n’a été effectué pour cette réplique.",
       "Provisioning": "La réplique est en cours d'approvisionnement.",
       "Running": "Le processus de réplique est en cours d'exécution et prêt à être vérifié.",
       "Terminated": "La réplique a été terminée.",

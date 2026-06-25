@@ -2290,7 +2290,7 @@
       "Degraded": "健康檢查器無法存取此副本。它已從 Active Pool 中暫時排除。",
       "FailedToStart": "副本啟動失敗。請查看工作階段日誌以了解原因。",
       "Healthy": "已準備好處理請求。",
-      "NotChecked": "正在等待第一次健康檢查。",
+      "NotChecked": "尚未對此副本執行健康檢查。",
       "Provisioning": "副本正在設定中。",
       "Running": "副本程序正在執行並準備好接受檢查。",
       "Terminated": "副本已終止。",

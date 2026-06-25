@@ -2276,7 +2276,7 @@
       "Degraded": "Health checker cannot reach this replica. It is temporarily excluded from the Active Pool.",
       "FailedToStart": "The replica failed to start. Check the session logs for the cause.",
       "Healthy": "Ready to handle requests.",
-      "NotChecked": "Waiting for the first health check.",
+      "NotChecked": "No health check has been performed for this replica.",
       "Provisioning": "The replica is being provisioned.",
       "Running": "The replica process is running and ready to be checked.",
       "Terminated": "The replica has been terminated.",

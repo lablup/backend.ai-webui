@@ -2286,7 +2286,7 @@
       "Degraded": "Sağlık denetleyicisi bu replikaya ulaşamıyor. Geçici olarak Active Pool'dan çıkarıldı.",
       "FailedToStart": "Replika başlatılamadı. Nedeni bulmak için oturum günlüklerini kontrol edin.",
       "Healthy": "İstekleri işlemeye hazır.",
-      "NotChecked": "İlk sağlık kontrolü bekleniyor.",
+      "NotChecked": "Bu replika için herhangi bir sağlık kontrolü yapılmadı.",
       "Provisioning": "Replika temin ediliyor.",
       "Running": "Replika süreci çalışıyor ve kontrol edilmeye hazır.",
       "Terminated": "Replika sonlandırıldı.",

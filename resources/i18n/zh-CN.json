@@ -2288,7 +2288,7 @@
       "Degraded": "健康检查器无法访问此副本。它已从 Active Pool 中临时排除。",
       "FailedToStart": "副本启动失败。请查看会话日志以了解原因。",
       "Healthy": "已准备好处理请求。",
-      "NotChecked": "正在等待第一次健康检查。",
+      "NotChecked": "尚未对此副本执行健康检查。",
       "Provisioning": "副本正在配置中。",
       "Running": "副本进程正在运行并准备好接受检查。",
       "Terminated": "副本已终止。",

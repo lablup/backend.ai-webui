@@ -2288,7 +2288,7 @@
       "Degraded": "Der Health-Checker kann dieses Replikat nicht erreichen. Es wird vorübergehend aus dem Active Pool ausgeschlossen.",
       "FailedToStart": "Das Replikat konnte nicht gestartet werden. Überprüfen Sie die Sitzungsprotokolle auf die Ursache.",
       "Healthy": "Bereit, Anfragen zu verarbeiten.",
-      "NotChecked": "Warten auf die erste Gesundheitsprüfung.",
+      "NotChecked": "Für dieses Replikat wurde keine Gesundheitsprüfung durchgeführt.",
       "Provisioning": "Das Replikat wird bereitgestellt.",
       "Running": "Der Replikat-Prozess läuft und ist bereit zur Überprüfung.",
       "Terminated": "Das Replikat wurde beendet.",

@@ -2289,7 +2289,7 @@
       "Degraded": "Pemeriksa kesehatan tidak dapat menjangkau replika ini. Sementara dikecualikan dari Active Pool.",
       "FailedToStart": "Replika gagal dimulai. Periksa log sesi untuk mengetahui penyebabnya.",
       "Healthy": "Siap menangani permintaan.",
-      "NotChecked": "Menunggu pemeriksaan kesehatan pertama.",
+      "NotChecked": "Belum ada pemeriksaan kesehatan yang dilakukan untuk replika ini.",
       "Provisioning": "Replika sedang disediakan.",
       "Running": "Proses replika sedang berjalan dan siap untuk diperiksa.",
       "Terminated": "Replika telah dihentikan.",

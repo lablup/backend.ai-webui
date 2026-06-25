@@ -2288,7 +2288,7 @@
       "Degraded": "Sprawdzanie stanu nie może osiągnąć tej repliki. Jest tymczasowo wykluczona z Active Pool.",
       "FailedToStart": "Replika nie uruchomiła się. Sprawdź dzienniki sesji w celu znalezienia przyczyny.",
       "Healthy": "Gotowa do obsługi żądań.",
-      "NotChecked": "Oczekiwanie na pierwsze sprawdzenie stanu.",
+      "NotChecked": "Nie przeprowadzono sprawdzenia stanu dla tej repliki.",
       "Provisioning": "Replika jest provisionowana.",
       "Running": "Proces repliki jest uruchomiony i gotowy do sprawdzenia.",
       "Terminated": "Replika została zakończona.",

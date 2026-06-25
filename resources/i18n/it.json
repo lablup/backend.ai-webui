@@ -2286,7 +2286,7 @@
       "Degraded": "Il controllo di salute non riesce a raggiungere questa replica. È temporaneamente esclusa dall'Active Pool.",
       "FailedToStart": "La replica non è riuscita ad avviarsi. Controllare i log di sessione per la causa.",
       "Healthy": "Pronta a gestire le richieste.",
-      "NotChecked": "In attesa del primo controllo di salute.",
+      "NotChecked": "Nessun controllo di salute è stato eseguito per questa replica.",
       "Provisioning": "La replica è in fase di provisioning.",
       "Running": "Il processo della replica è in esecuzione e pronto per essere verificato.",
       "Terminated": "La replica è stata terminata.",
