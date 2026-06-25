@@ -5,21 +5,6 @@
 Backend.AI supports SSH/SFTP connection to the created compute sessions
 (containers). In this section, we will learn how to do it.
 
-:::note
-From 24.03 SSH/SFTP connection feature is available in both Web browser and WebUI Desktop application.
-When the version is 23.09 or lower version, you need to use WebUI Desktop app. Desktop app can be downloaded
-a panel from the Summary page. Using this panel, the compatible version will be downloaded automatically.
-
-![](../images/app_download_panel.png)
-
-You can also download the app from
-https://github.com/lablup/backend.ai-webui/releases. Make sure to download
-the compatible version of the Web-UI in this case. You can check the Web-UI
-version by clicking on the "About Backend.AI" sub-menu located in the
-preference menu on the upper-right side of the GUI.
-:::
-
-
 <a id="for-linux-mac"></a>
 
 ## For Linux / Mac
@@ -28,7 +13,6 @@ First, create a compute session, then click the app icon (first button) in
 Control, followed by SSH / SFTP icon. Then, a daemon that allows SSH/SFTP access
 from inside the container will be initiated, and the Web-UI app interacts with
 the daemon through a local proxy service.
-
 
 :::note
 You cannot establish a SSH/SFTP connection to the session until you click
@@ -74,7 +58,6 @@ setting public key-based connection method, simply specify `id_container`
 as the SSH private key. Each FTP client may adopt different way, so refer to
 each FTP client manual for details.
 
-
 :::note
 The SSH/SFTP connection port number is randomly assigned each time when a session
 is created. If you want to use a specific SSH/SFTP port number, you can input
@@ -101,7 +84,6 @@ permission of the `id_container` to 600. (`chmod 600 <id_container path>`)
 
 ![](../images/bad_permissions.png)
 :::
-
 
 <a id="for-windows-filezilla"></a>
 
@@ -146,7 +128,6 @@ can now transfer large files to `/home/work/` or other mounted storage folder
 with this SFTP connection.
 
 ![](../images/filezilla_connection_established.png)
-
 
 <a id="for-visual-studio-code"></a>
 
@@ -208,7 +189,6 @@ You can then open any folder or workspace on the remote host by accessing `File 
 Open...` or `File > Open Workspace...` menu just as you usually would do!
 
 ![](../images/vscode_connected_host_file_open.png)
-
 
 <a id="establish-ssh-connection-with-backendai-client-package"></a>
 

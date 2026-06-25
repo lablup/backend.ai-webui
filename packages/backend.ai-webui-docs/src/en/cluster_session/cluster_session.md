@@ -44,7 +44,7 @@ For detailed about Backend.AI cluster session, refer to the following.
 - There are two modes/types of cluster session.
 
    * Single node cluster session: A cluster session composed of two or more
-     containers on one, same agent node. In the figure above, this is session Z,
+     containers on one, same physical node. In the figure above, this is session Z,
      which is bound to a local bridge network.
    * Multi-node cluster session: A cluster session composed of two or more
      containers on different Agent nodes. In the picture above, this is
@@ -104,7 +104,7 @@ you want to create.
 
 - Single Node: All containers are created on one Agent node.
 - Multi Node: Containers are created across multiple Agent nodes within a
-  resource group. However, if all containers can be created in one agent node,
+  resource group. However, if all containers can be created in one physical node,
   all of them are created on that node. This is to minimize network latency
   between the containers.
 

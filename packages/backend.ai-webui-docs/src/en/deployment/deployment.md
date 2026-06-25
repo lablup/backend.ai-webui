@@ -10,269 +10,7 @@ Backend.AI lets you deploy AI models as inference services through the **Deploym
 
 A deployment extends a regular compute session with automated maintenance, replica scaling, and a permanent endpoint address that does not change as replicas come and go. You only specify the scaling parameters you want; Backend.AI creates, monitors, and terminates the underlying inference sessions automatically so you do not have to manage them by hand.
 
-## How to Create and Use a Deployment
-
-Starting from version 26.4.0, you can create a deployment easily without a separate configuration file.
-
-**Quick Deploy (Recommended)**: Browse pre-configured models in the [Model Store](#model-store) and click the `Deploy` button to deploy immediately.
-
-**Manual Deploy**: Click the `New Deployment` button on the Deployments page to open the **Create Deployment** modal. After the deployment is created, add a revision by clicking `Add Revision` on the Deployment Detail Page and selecting a runtime variant such as `vLLM` or `SGLang`.
-
-The general workflow is as follows:
-
-1. Create a deployment (name, visibility, and resource group).
-2. Add a revision (runtime variant, image, resources, and model storage).
-3. (If the deployment is not public) Generate a token.
-4. (For end users) Access the service endpoint to verify the service.
-5. (If needed) Add a new revision or apply a previous revision.
-6. (If needed) Terminate the deployment.
-
-<details>
-<summary>Advanced: Using Model Definition and Service Definition Files (Custom Runtime)</summary>
-
-If you are using the `Custom` runtime variant or need finer control, you can create and use model definition and service definition files:
-
-1. Create a model definition file.
-2. Create a service definition file.
-3. Upload the definition files to the model type folder.
-4. When adding a revision, select the `Custom` runtime variant and choose **Use Config File** mode.
-
-For details, refer to the [Creating a Model Definition File](#model-definition-guide) and [Creating a Service Definition File](#service-definition-file) sections.
-
-</details>
-
-<details>
-<summary>Reference: Configuration Files for Custom Runtime</summary>
-
-<a id="model-definition-guide"></a>
-
-### Creating a Model Definition File
-
-:::note
-From 24.03, you can configure model definition file name. But if you don't
-input any other input field in model definition file path, then the system will
-regard it as `model-definition.yml` or `model-definition.yaml`.
-:::
-
-The model definition file contains the configuration information
-required by the Backend.AI system to automatically start, initialize,
-and scale the inference session. It is stored in the model type folder
-independently from the container image that contains the inference
-service engine. This allows the engine to serve different models based on
-specific requirements and eliminates the need to build and deploy a new
-container image every time the model changes. By loading the model
-definition and model data from the network storage, the deployment
-process can be simplified and optimized during automatic scaling.
-
-The model definition file follows the following format:
-
-```yaml
-models:
-  - name: "simple-http-server"
-    model_path: "/models"
-    service:
-      start_command:
-        - python
-        - -m
-        - http.server
-        - --directory
-        - /home/work
-        - "8000"
-      port: 8000
-      health_check:
-        path: /
-        interval: 10.0
-        max_retries: 10
-        max_wait_time: 15.0
-        expected_status_code: 200
-        initial_delay: 60.0
-```
-
-**Key-Value Descriptions for Model Definition File**
-
-:::note
-Fields without "(Required)" mark are optional.
-:::
-
-- `name` (Required): Defines the name of the model.
-- `model_path` (Required): Addresses the path of where model is defined.
-- `service`: Item for organizing information about the files to be served
-  (includes command scripts and code).
-
-   - `pre_start_actions`: Actions to be executed before the `start_command`. These actions
-     prepare the environment by creating configuration files, setting up directories, or
-     running initialization scripts. Actions are executed sequentially in the order defined.
-
-      - `action`: The type of action to perform. See [Prestart Actions](#prestart-actions)
-        for available action types and their parameters.
-      - `args`: Action-specific parameters. Each action type has different required arguments.
-
-   - `start_command` (Required): Specify the command to be executed in model serving.
-     Can be a string or a list of strings.
-   - `port` (Required): Container port for the model service (e.g., `8000`, `8080`).
-   - `health_check`: Configuration for periodic health monitoring of the model service.
-     When configured, the system automatically checks if the service is responding correctly
-     and removes unhealthy instances from traffic routing.
-
-      - `path` (Required): HTTP endpoint path for health check requests (e.g., `/health`, `/v1/health`).
-      - `interval` (default: `10.0`): Time in seconds between consecutive health checks.
-      - `max_retries` (default: `10`): Number of consecutive failures allowed before marking
-        the service as `UNHEALTHY`. The service continues receiving traffic until this threshold is exceeded.
-      - `max_wait_time` (default: `15.0`): Timeout in seconds for each health check HTTP request.
-        If no response is received within this time, the check is considered failed.
-      - `expected_status_code` (default: `200`): HTTP status code that indicates a healthy response.
-        Common values: `200` (OK), `204` (No Content).
-      - `initial_delay` (default: `60.0`): Time in seconds to wait after container creation
-        before starting health checks. This allows time for model loading, GPU initialization,
-        and service warmup. Set higher values for large models (e.g., `300.0` for 70B+ LLMs).
-
-
-**Understanding Health Check Behavior**
-
-The health check system monitors individual model service containers and automatically
-manages traffic routing based on their health status.
-
-**① AppProxy: Traffic Routing Control**
-
-![](../images/health_check_app_proxy.svg)
-
-**② Manager: Health State Management and Eviction**
-
-![](../images/health_check_state_machine.svg)
-
-:::note
-The internal health status (used for traffic routing) may not be immediately
-synchronized with the status displayed in the user interface.
-:::
-
-**Time to UNHEALTHY**:
-
-- Initial startup: `initial_delay + interval × (max_retries + 1)`
-
-  Example with defaults: 60 + 10 × 11 = **170 seconds** (about 3 minutes)
-
-- During operation (after healthy): `interval × (max_retries + 1)`
-
-  Example with defaults: 10 × 11 = **110 seconds** (about 2 minutes)
-
-
-<a id="prestart-actions"></a>
-
-**Description for Service Action Supported in Backend.AI Model Serving**
-
-
-- `write_file`: This is an action to create a file with the given
-  file name and append control to it. the default access permission is `644`.
-
-   - `arg/filename`: Specify the file name
-   - `body`: Specify the content to be added to the file.
-   - `mode`: Specify the file's access permissions.
-   - `append`: Set whether to overwrite or append content to the file as `True` or `False` .
-
-- `write_tempfile`: This is an action to create a file with
-  a temporary file name (`.py`) and append content to it. If no value is specified for the mode, the default access permission is `644`.
-
-   - `body`: Specify the content to be added to the file.
-   - `mode`: Specify the file's access permissions.
-
-- `run_command`: The result of executing a command,
-  including any errors, will be returned in following format
-  ( `out`: Output of the command execution, `err`: Error message if an error occurs during command execution)
-
-   - `args/command`: Specify the command to executed as an array. (e.g. `python3 -m http.server 8080` command goes to ["python3", "-m", "http.server", "8080"] )
-
-- `mkdir`: This is an action to create a directory by input path
-
-   - `args/path`: Specify the path to create a directory
-
-- `log`: This is an action to print out log by input message
-
-   - `args/message`: Specify the message to be displayed in the logs.
-   -  `debug`: Set to `True` if it is in debug mode, otherwise set to `False`.
-
-### Uploading Model Definition File to Model Type Folder
-
-To upload the model definition file (`model-definition.yml`) to the
-model type folder, you need to create a virtual folder. When creating
-the virtual folder, select the `model` type instead of the default
-`general` type. Refer to the section on [creating a storage folder](#create-storage-folder) in the Data page for
-instructions on how to create a folder.
-
-![](../images/model_type_folder_creation.png)
-
-After creating the folder, select the 'MODELS' tab in the Data
-page, click on the recently created model type folder icon to open the
-folder explorer, and upload the model definition file.
-For more information on how to use the folder explorer,
-please refer to the [Explore Folder](#explore-folder) section.
-
-![](../images/model_type_folder_list.png)
-
-![](../images/model_definition_file_upload.png)
-
-<a id="service-definition-file"></a>
-
-### Creating a Service Definition File
-
-The service definition file (`service-definition.toml`) allows administrators to pre-configure the resources, environment, and runtime settings required for a model service. When this file is present in a model folder, the system uses these settings as default values when creating a service.
-
-Both `model-definition.yaml` and `service-definition.toml` must be present in the
-model folder to enable the `Deploy` button on the Model Store page. These two files
-work together: the model definition specifies the model and inference server
-configuration, while the service definition specifies the runtime environment,
-resource allocation, and environment variables.
-
-The service definition file follows the TOML format with sections organized by runtime variant. Each section configures a specific aspect of the service:
-
-```toml
-[vllm.environment]
-image        = "example.com/model-server:latest"
-architecture = "x86_64"
-
-[vllm.resource_slots]
-cpu = 1
-mem = "8gb"
-"cuda.shares" = "0.5"
-
-[vllm.environ]
-MODEL_NAME = "example-model-name"
-```
-
-
-**Key-Value Descriptions for Service Definition File**
-
-- `[{runtime}.environment]`: Specifies the container image and architecture for the model service.
-
-   - `image` (Required): The full path of the container image to use for the inference service (e.g., `example.com/model-server:latest`).
-   - `architecture` (Required): The CPU architecture of the container image (e.g., `x86_64`, `aarch64`).
-
-- `[{runtime}.resource_slots]`: Defines the compute resources allocated to the model service.
-
-   - `cpu`: Number of CPU cores to allocate (e.g., `1`, `2`, `4`).
-   - `mem`: Amount of memory to allocate. Supports unit suffixes (e.g., `"8gb"`, `"16gb"`).
-   - `"cuda.shares"`: Fractional GPU (fGPU) shares to allocate (e.g., `"0.5"`, `"1.0"`). This value is quoted because the key contains a dot.
-
-- `[{runtime}.environ]`: Sets environment variables that will be passed to the inference service container.
-
-   - You can define any environment variables required by the runtime. For example, `MODEL_NAME` is commonly used to specify which model to load.
-
-
-:::note
-The `{runtime}` prefix in each section header corresponds to the runtime variant
-name (e.g., `vllm`, `nim`, `custom`). The system matches this prefix with the
-selected runtime variant when creating the service.
-:::
-
-:::note
-When a service is created from the Model Store using the `Deploy` button, the
-settings from `service-definition.toml` are applied automatically. If you later
-need to adjust the resource allocation, you can modify the service through the
-Deployments page.
-:::
-
-</details>
-
-## Deployments Page Overview
+## Deployments Page
 
 The Deployments page displays a list of all deployments in the current project. You can access it by clicking **Deployments** in the sidebar menu.
 
@@ -312,6 +50,8 @@ The modal contains the following fields:
 
 Click `Create Deployment` to create the deployment. You are then taken to the Deployment Detail Page, where the **No Current Revision** warning is shown until you add the first revision. To update deployment-level settings (name, visibility, desired replicas, or tags) after creation, click the **Edit** button on the Service Info card.
 
+<a id="add-revision"></a>
+
 ### Add Revision
 
 A revision captures every setting needed to run the inference server — image, start command, resources, model mounts, and environment variables. From the Deployment Detail Page, click `Add Revision` to open the modal.
@@ -319,6 +59,8 @@ A revision captures every setting needed to run the inference server — image, 
 ![](../images/model_serving_add_revision_modal.png)
 
 Use the **Preset Mode** / **Advanced Mode** switcher in the modal title to select how to configure the revision.
+
+When the deployment already has a current revision, a **Load current revision** banner appears above the form in both modes. Click **Load current revision** to pre-fill the form with the current revision's configuration as a starting point; the modal switches to Advanced Mode automatically if needed. The banner is not shown when the deployment has no current revision yet, and it disappears once you load the configuration.
 
 #### Preset Mode
 
@@ -331,7 +73,7 @@ If no presets are available for the deployment's resource group, an informationa
 
 #### Advanced Mode
 
-Configure every revision setting directly. A **Load current revision** button lets you pre-fill the form from the currently active revision.
+Configure every revision setting directly.
 
 The form contains the following sections:
 
@@ -474,6 +216,242 @@ Expand the **Advanced Settings** collapse panel to mount additional storage fold
 
 - **Additional Mounts**: A table of storage folders to mount into the inference server container. Only general-purpose (non-model) folders in `ready` state are listed. Hidden folders (names starting with `.`) and the model storage folder itself are excluded.
 
+<a id="custom-runtime-config-files"></a>
+
+### Configuration Files for Custom Runtime
+
+<a id="model-definition-guide"></a>
+
+#### Creating a Model Definition File
+
+:::note
+From 24.03, you can configure model definition file name. But if you don't
+input any other input field in model definition file path, then the system will
+regard it as `model-definition.yml` or `model-definition.yaml`.
+:::
+
+The model definition file contains the configuration information
+required by the Backend.AI system to automatically start, initialize,
+and scale the inference session. It is stored in the model type folder
+independently from the container image that contains the inference
+service engine. This allows the engine to serve different models based on
+specific requirements and eliminates the need to build and deploy a new
+container image every time the model changes. By loading the model
+definition and model data from the network storage, the deployment
+process can be simplified and optimized during automatic scaling.
+
+The model definition file follows the following format:
+
+```yaml
+models:
+  - name: "simple-http-server"
+    model_path: "/models"
+    service:
+      start_command:
+        - python
+        - -m
+        - http.server
+        - --directory
+        - /home/work
+        - "8000"
+      port: 8000
+      health_check:
+        path: /
+        interval: 10.0
+        max_retries: 10
+        max_wait_time: 15.0
+        expected_status_code: 200
+        initial_delay: 60.0
+```
+
+**Key-Value Descriptions for Model Definition File**
+
+:::note
+Fields without "(Required)" mark are optional.
+:::
+
+- `name` (Required): Defines the name of the model.
+- `model_path` (Required): Addresses the path of where model is defined.
+- `service`: Item for organizing information about the files to be served
+  (includes command scripts and code).
+
+   - `pre_start_actions`: Actions to be executed before the `start_command`. These actions
+     prepare the environment by creating configuration files, setting up directories, or
+     running initialization scripts. Actions are executed sequentially in the order defined.
+
+      - `action`: The type of action to perform. See [Prestart Actions](#prestart-actions)
+        for available action types and their parameters.
+      - `args`: Action-specific parameters. Each action type has different required arguments.
+
+   - `start_command` (Required): Specify the command to be executed in model serving.
+     Can be a string or a list of strings.
+   - `port` (Required): Container port for the model service (e.g., `8000`, `8080`).
+   - `health_check`: Configuration for periodic health monitoring of the model service.
+     When configured, the system automatically checks if the service is responding correctly
+     and removes unhealthy instances from traffic routing.
+
+      - `path` (Required): HTTP endpoint path for health check requests (e.g., `/health`, `/v1/health`).
+      - `interval` (default: `10.0`): Time in seconds between consecutive health checks.
+      - `max_retries` (default: `10`): Number of consecutive failures allowed before marking
+        the service as `UNHEALTHY`. The service continues receiving traffic until this threshold is exceeded.
+      - `max_wait_time` (default: `15.0`): Timeout in seconds for each health check HTTP request.
+        If no response is received within this time, the check is considered failed.
+      - `expected_status_code` (default: `200`): HTTP status code that indicates a healthy response.
+        Common values: `200` (OK), `204` (No Content).
+      - `initial_delay` (default: `60.0`): Time in seconds to wait after container creation
+        before starting health checks. This allows time for model loading, GPU initialization,
+        and service warmup. Set higher values for large models (e.g., `300.0` for 70B+ LLMs).
+
+**Understanding Health Check Behavior**
+
+The health check system monitors individual model service containers and automatically
+manages traffic routing based on their health status.
+
+**① AppProxy: Traffic Routing Control**
+
+![](../images/health_check_app_proxy.svg)
+
+**② Manager: Health State Management and Eviction**
+
+![](../images/health_check_state_machine.svg)
+
+:::note
+The internal health status (used for traffic routing) may not be immediately
+synchronized with the status displayed in the user interface.
+:::
+
+**Time to UNHEALTHY**:
+
+- Initial startup: `initial_delay + interval × (max_retries + 1)`
+
+  Example with defaults: 60 + 10 × 11 = **170 seconds** (about 3 minutes)
+
+- During operation (after healthy): `interval × (max_retries + 1)`
+
+  Example with defaults: 10 × 11 = **110 seconds** (about 2 minutes)
+
+<a id="prestart-actions"></a>
+
+**Description for Service Action Supported in Backend.AI Model Serving**
+
+- `write_file`: This is an action to create a file with the given
+  file name and append control to it. the default access permission is `644`.
+
+   - `arg/filename`: Specify the file name
+   - `body`: Specify the content to be added to the file.
+   - `mode`: Specify the file's access permissions.
+   - `append`: Set whether to overwrite or append content to the file as `True` or `False` .
+
+- `write_tempfile`: This is an action to create a file with
+  a temporary file name (`.py`) and append content to it. If no value is specified for the mode, the default access permission is `644`.
+
+   - `body`: Specify the content to be added to the file.
+   - `mode`: Specify the file's access permissions.
+
+- `run_command`: The result of executing a command,
+  including any errors, will be returned in following format
+  ( `out`: Output of the command execution, `err`: Error message if an error occurs during command execution)
+
+   - `args/command`: Specify the command to executed as an array. (e.g. `python3 -m http.server 8080` command goes to ["python3", "-m", "http.server", "8080"] )
+
+- `mkdir`: This is an action to create a directory by input path
+
+   - `args/path`: Specify the path to create a directory
+
+- `log`: This is an action to print out log by input message
+
+   - `args/message`: Specify the message to be displayed in the logs.
+   -  `debug`: Set to `True` if it is in debug mode, otherwise set to `False`.
+
+#### Uploading Model Definition File to Model Type Folder
+
+To upload the model definition file (`model-definition.yml`) to the
+model type folder, you need to create a virtual folder. When creating
+the virtual folder, select the `model` type instead of the default
+`general` type. Refer to the section on [creating a storage folder](#create-storage-folder) in the Data page for
+instructions on how to create a folder.
+
+![](../images/model_type_folder_creation.png)
+
+After creating the folder, select the 'MODELS' tab in the Data
+page, click on the recently created model type folder icon to open the
+folder explorer, and upload the model definition file.
+For more information on how to use the folder explorer,
+please refer to the [Explore Folder](#explore-folder) section.
+
+![](../images/model_type_folder_list.png)
+
+![](../images/model_definition_file_upload.png)
+
+<a id="service-definition-file"></a>
+
+#### Creating a Service Definition File
+
+The service definition file (`service-definition.toml`) allows administrators to pre-configure the resources, environment, and runtime settings required for a model service. When this file is present in a model folder, the system uses these settings as default values when creating a service.
+
+Both `model-definition.yaml` and `service-definition.toml` must be present in the
+model folder to enable the `Deploy` button on the Model Store page. These two files
+work together: the model definition specifies the model and inference server
+configuration, while the service definition specifies the runtime environment,
+resource allocation, and environment variables.
+
+The service definition file follows the TOML format with sections organized by runtime variant. Each section configures a specific aspect of the service:
+
+```toml
+[vllm.environment]
+image        = "example.com/model-server:latest"
+architecture = "x86_64"
+
+[vllm.resource_slots]
+cpu = 1
+mem = "8gb"
+"cuda.shares" = "0.5"
+
+[vllm.environ]
+MODEL_NAME = "example-model-name"
+```
+
+**Key-Value Descriptions for Service Definition File**
+
+- `[{runtime}.environment]`: Specifies the container image and architecture for the model service.
+
+   - `image` (Required): The full path of the container image to use for the inference service (e.g., `example.com/model-server:latest`).
+   - `architecture` (Required): The CPU architecture of the container image (e.g., `x86_64`, `aarch64`).
+
+- `[{runtime}.resource_slots]`: Defines the compute resources allocated to the model service.
+
+   - `cpu`: Number of CPU cores to allocate (e.g., `1`, `2`, `4`).
+   - `mem`: Amount of memory to allocate. Supports unit suffixes (e.g., `"8gb"`, `"16gb"`).
+   - `"cuda.shares"`: Fractional GPU (fGPU) shares to allocate (e.g., `"0.5"`, `"1.0"`). This value is quoted because the key contains a dot.
+
+- `[{runtime}.environ]`: Sets environment variables that will be passed to the inference service container.
+
+   - You can define any environment variables required by the runtime. For example, `MODEL_NAME` is commonly used to specify which model to load.
+
+:::note
+The `{runtime}` prefix in each section header corresponds to the runtime variant
+name (e.g., `vllm`, `nim`, `custom`). The system matches this prefix with the
+selected runtime variant when creating the service.
+:::
+
+:::note
+When a service is created from the Model Store using the `Deploy` button, the
+settings from `service-definition.toml` are applied automatically. If you later
+need to adjust the resource allocation, you can modify the service through the
+Deployments page.
+:::
+
+<a id="quick-deploy"></a>
+
+## Quick Deployment
+
+Preset-based quick deploy lets you create a deployment without a separate configuration file. You can start a quick deploy from two entry points:
+
+- Browse a pre-configured model card in the [Model Store](#model-store) and click the `Deploy` button to deploy it immediately using a preset.
+- On the **Models** tab of the Data page, click a model folder's `Deploy as Service` button to open the **Create New Deployment with Preset** modal, then select a preset and resource group to deploy without any further configuration.
+
+For the full model deployment flow, see [Model Store](#model-store).
+
 <a id="deployment-detail-page"></a>
 
 ## Deployment Detail Page
@@ -485,18 +463,10 @@ Click on a deployment name in the Deployments list to view detailed information 
 The Deployment Detail Page shows contextual alert banners at the top, reflecting the current state of the deployment:
 
 - **Deployment is ready**: Shown when the deployment is `HEALTHY`. Includes a **Test in Chat** button as a shortcut to the LLM Chat Test interface so you can test the model without leaving the page.
-
-![](../images/endpoint_detail_ready_alert.png)
-
 - **Private deployment — use an access token to access the endpoint.**: Shown when **Open To Public** is disabled. Includes a shortcut to **Manage Access Tokens** so you can issue or copy a token. See [Access Tokens](#generating-tokens).
-
-![](../images/endpoint_detail_private_alert.png)
-
 - **No revision is deployed — add a revision to activate this service.**: Shown when the deployment has no current revision. Click `Add Revision` to create the first revision and activate the service.
 
 - **Preparing your service**: Shown while the deployment is being created or transitioning between states. Indicates the service is not yet ready to handle requests.
-
-
 
 - **Not In Project**: Shown when the deployment belongs to a different project than the currently selected one. The Edit button is disabled while this alert is active. Click the **Switch Project** button in the alert to switch to the correct project and manage the deployment.
 
@@ -523,7 +493,6 @@ The Service Info card displays the following details:
 The Service Info card's header exposes an **Edit** button alongside a **More** menu. The More menu currently contains the **Delete Deployment** action.
 
 ![](../images/endpoint_detail_more_menu.png)
-
 
 <a id="revisions-tab"></a>
 
@@ -583,10 +552,6 @@ The following columns are hidden by default but can be enabled from the column s
 
 - **Model Name**, **Image**, **Model Folder**
 
-**Filters**
-
-The filter bar above the table lets you narrow the list by revision number, created-at date range, cluster mode, image, and model folder.
-
 **Applying a revision and other actions**
 
 Each row has an **Apply** button and a **More** menu.
@@ -609,16 +574,6 @@ The **Runtime Parameters** field also appears in the revision detail drawer for 
 The **Audit Log** tab shows a chronological record of all actions taken on this deployment. Use it to track who changed the deployment and when.
 
 ![](../images/audit_log_tab.png)
-
-The tab provides the following controls:
-
-- **Filter bar**: Filter log entries by **Status**, **Operation**, **Triggered By** (search by user ID), and a **Time** date-range picker.
-- **Auto-refresh button**: Reload the log without leaving the tab.
-- **Pagination**: Navigate through log entries page by page.
-
-:::note
-The Audit Log tab uses lazy loading — the query is sent only when you first activate the tab. The active tab is reflected in the URL (`?revisionTab=auditLog`), so you can share a link directly to the audit log view.
-:::
 
 ### Replicas
 
@@ -645,7 +600,6 @@ Click the session name in the **Session** column to open the session detail draw
 Next to the status tag in the **Lifecycle** column is a history icon button. Click it to open the **Replica Scheduling History** modal for that replica, where you can review the replica's scheduling events filtered by date range, status, and other criteria.
 
 ![](../images/replica_scheduling_history.png)
-<!-- TODO: Capture screenshot of the Replica Scheduling History modal -->
 
 If a replica has encountered an error, clicking the error indicator on the row opens a JSON viewer modal that displays the raw error data. This is useful for diagnosing issues with individual replicas.
 

@@ -222,6 +222,33 @@
       "description": "An individual running instance of a deployed model service. The desired/active count of these is managed by the deployment and auto-scaling rules. Documentation section: deployment/deployment.md"
     },
     {
+      "id": "autoscaling-rule",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": "FR-3207",
+      "preferred": {
+        "en": "Auto Scaling Rule",
+        "ko": "오토스케일링 규칙",
+        "ja": "自動スケーリングルール",
+        "th": "กฎการปรับขนาดอัตโนมัติ"
+      },
+      "description": "The rule that automatically adjusts a deployment's replica count based on live metrics. Match the UI label exactly: KO uses \"오토스케일링\" (the autoScalingRule i18n keys), NOT \"자동 스케일링\". Documentation section: deployment/deployment.md"
+    },
+    {
+      "id": "physical-node",
+      "category": "Core Concepts",
+      "status": "approved",
+      "decidingFR": "FR-3207",
+      "preferred": {
+        "en": "physical node",
+        "ko": "물리 노드",
+        "ja": "物理ノード",
+        "th": "โหนดกายภาพ"
+      },
+      "context": "Cluster mode",
+      "description": "The physical machine (or virtual machine) hosting session nodes. Used in the cluster-mode setup description to explain how a managed node and worker nodes are distributed across machines. The cluster-mode UI tooltips (DescSingleNode / DescMultiNode) use this term. Do NOT confuse with \"agent node\" — in the cluster-mode node-distribution context, use \"physical node\" to match the UI."
+    },
+    {
       "id": "endpoint",
       "category": "Feature-Specific Terms",
       "status": "approved",
@@ -581,6 +608,14 @@
       "lang": "ko",
       "context": null,
       "conceptId": "replica"
+    },
+    {
+      "avoid": "자동 스케일링",
+      "useInstead": "오토스케일링",
+      "reason": "Match the UI label; the autoScalingRule i18n keys use \"오토스케일링\"",
+      "lang": "ko",
+      "context": "auto scaling rule",
+      "conceptId": "autoscaling-rule"
     }
   ]
 }

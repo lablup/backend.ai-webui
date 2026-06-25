@@ -334,7 +334,6 @@ Backend.AI는 사용자 자신의 스토리지 폴더 외에도 프로젝트를 
    * `Public`: 해당 프로젝트에 접근 권한이 있는 모든 사용자에게 표시됩니다.
 
 ![](../images/model_card_create_modal.png)
-<!-- TODO: Capture screenshot of the Create Model Card modal -->
 
 #### 모델 카드 수정
 

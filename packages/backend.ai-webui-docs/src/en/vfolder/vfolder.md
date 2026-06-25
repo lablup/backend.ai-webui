@@ -148,10 +148,6 @@ You can filter the audit log using the following controls:
 
 An auto-refresh button keeps the log up to date without a full page reload. The log uses lazy loading — the query is sent to the server only the first time you open the tab.
 
-:::note
-The Audit Log tab is visible to all users, but the backend enforces access restrictions. Only superadmins receive audit log data. Regular users will see an empty list.
-:::
-
 ## Rename Folder
 
 
@@ -361,7 +357,7 @@ automatically. (This session will not affect resource occupancy.)
 For the connection, click 'Download SSH Key' button to download the SSH private key
 (`id_container`). Also, remember the host and port number. Then, you can copy your
 files to the session using the Connection Example code written in the dialog, or
-referring to the following guide: [SFTP Connection Guide](../sftp_to_container/sftp_to_container.md#ssh-sftp-container).
+referring to the following guide: [SFTP Connection Guide](#ssh-sftp-container).
 To preserve the files, you need to transfer the files to the storage folder. Also,
 the session will be terminated when there is no transfer for some time.
 

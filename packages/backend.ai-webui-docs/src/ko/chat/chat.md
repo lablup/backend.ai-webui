@@ -3,12 +3,10 @@
 # 채팅 페이지
 
 
-버전 25.05부터 'LLM Playground' 기능이 별도의 페이지로 분리되어 채팅(Chat)으로 이름이 변경되었습니다.
 채팅 페이지에서는 다양한 LLM 모델을 한 곳에서 편리하게 비교하고 상호작용할 수 있습니다.
 이를 통해 사용자는 Backend.AI가 제공하는 서비스와 다양한 대규모 언어 모델(LLM)을 경험할 수 있습니다.
 
 ![](../images/chat_page.png)
-<!-- TODO: Capture screenshot of the Chat page showing the intro banner and updated Deployment selector -->
 
 :::note
 채팅 페이지에 처음 방문하면 페이지 상단에 안내 배너가 표시됩니다:

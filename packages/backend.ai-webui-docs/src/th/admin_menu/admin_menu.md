@@ -375,7 +375,6 @@ Backend.AI ให้บริการโฟลเดอร์จัดเก็
    * `Public`: มองเห็นได้โดยผู้ใช้ทุกคนที่มีสิทธิ์เข้าถึงโปรเจกต์ที่เป็นเจ้าของ
 
 ![](../images/model_card_create_modal.png)
-<!-- TODO: Capture screenshot of the Create Model Card modal -->
 
 #### การแก้ไขการ์ดโมเดล
 

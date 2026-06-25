@@ -3,12 +3,10 @@
 # Chat Page
 
 
-Starting from version 25.05, the 'LLM Playground' feature has been separated into its own page and renamed to Chat.
 Chat page enables users to conveniently compare and interact with different LLM models all in one location.
 This allows users to experience the services offered by Backend.AI as well as a variety of large language models (LLMs).
 
 ![](../images/chat_page.png)
-<!-- TODO: Capture screenshot of the Chat page showing the intro banner and updated Deployment selector -->
 
 :::note
 When you visit the Chat page for the first time, an introductory banner appears at the top of the page:

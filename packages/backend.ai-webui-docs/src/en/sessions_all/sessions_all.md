@@ -188,8 +188,6 @@ Click the 'Next' button below, or the 'Data & Storage' menu on the right to proc
 When a compute session is destroyed, data deletion is set to default.
 However, data stored in the mounted folders will survive.
 Data in those folders can also be reused by mounting it when creating another compute session.
-For further information on how to mount a folder and run a compute session, refer to
-[Mounting Folders to a Compute Session](#session-mounts).
 
 ![](../images/launch_session_data.png)
 
@@ -437,11 +435,6 @@ action and when.
 
 ![](../images/session_audit_log.png)
 
-:::note
-The Audit Log is enforced by the backend and may be visible only to superadmins. Regular users
-may see an empty result even when the tab is accessible.
-:::
-
 #### Audit Log Columns
 
 The Audit Log table includes the following columns:
@@ -451,18 +444,6 @@ The Audit Log table includes the following columns:
   resource change)
 - **Status**: The outcome of the action (`SUCCESS`, `ERROR`, `RUNNING`, or `UNKNOWN`)
 - **Time**: When the action occurred
-
-#### Audit Log Filters
-
-Use the filter bar above the table to narrow down the log entries:
-
-- **Status**: Filter by action outcome (`SUCCESS`, `ERROR`, `RUNNING`, `UNKNOWN`)
-- **Operation**: Search by operation name or keyword
-- **Triggered By**: Search by actor ID
-- **Time**: Filter by a date-range picker
-
-A **Refresh** button reloads the log. The audit log query is deferred and sent only the first time
-you activate the **Audit Log** tab.
 
 <a id="use_session"></a>
 

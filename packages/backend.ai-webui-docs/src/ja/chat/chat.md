@@ -2,13 +2,10 @@
 
 # チャットページ
 
-
-バージョン25.05以降、'LLMプレイグラウンド'機能は独立したページに分離され、チャット（Chat）という名称に変更されました。
 チャットページでは、さまざまなLLMモデルを一か所で便利に比較し、対話することができます。
 これにより、ユーザーはBackend.AIが提供するサービスと多様な大規模言語モデル（LLM）を体験できます。
 
 ![](../images/chat_page.png)
-<!-- TODO: Capture screenshot of the Chat page showing the intro banner and updated Deployment selector -->
 
 :::note
 チャットページに初めてアクセスすると、ページ上部に次のような案内バナーが表示されます：

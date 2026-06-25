@@ -12,23 +12,24 @@ The tables below list the approved term for each concept, per language, grouped 
 
 ### Core Concepts
 
-| Concept | EN | KO | JA | TH | Context | Description |
-|---|---|---|---|---|---|---|
-| agent | agent, agent node | 에이전트, 에이전트 노드 | エージェント, エージェントノード | เอเจนต์, โหนดเอเจนต์ | — | The compute node that runs containers (sessions). "Agent" for general reference, "agent node" when emphasizing the hardware aspect. Use "worker node" only in model serving context. |
-| compute-session | compute session | 연산 세션 | コンピュートセッション | เซสชันการคำนวณ | — | The isolated compute environment where users run code, notebooks, or applications. Use "session" as shorthand after first full mention. |
-| domain | domain | 도메인 | ドメイン | โดเมน | — | The top-level organizational unit for authority and resource control. Do NOT use "organization" or "affiliate" as substitutes. |
-| folder-type-project | Project folder | — | — | — | Storage folder type | Created by administrators, shared across project members. |
-| folder-type-user | User folder | — | — | — | Storage folder type | Created by individual users for personal use. |
-| fractional-gpu | fGPU | fGPU | fGPU | fGPU | Numeric form | Backend.AI's GPU virtualization technology that allows sharing a single physical GPU across multiple sessions. Numeric (abbreviated) form. Write "fractional GPU (fGPU)" on first mention, then "fGPU" thereafter. |
-| fractional-gpu-descriptive | fractional GPU | 분할 GPU | フラクショナルGPU | GPU แบบเศษส่วน | Descriptive form | Descriptive form of fGPU (Backend.AI's GPU virtualization technology). |
-| keypair | keypair | 키페어 | キーペア | คีย์แพร์ | — | Authentication credentials for API access. Always "keypair" (one word, no hyphen). Never "key pair" or "key-pair". |
-| project | project | 프로젝트 | プロジェクト | โปรเจกต์ | — | The work unit within a domain. Users can belong to multiple projects. Do NOT use "group" as a substitute for project. |
-| resource-group | resource group | 자원 그룹 | リソースグループ | กลุ่มทรัพยากร | — | A grouping of agents (compute nodes) with similar hardware specifications. Do NOT use "scaling group" (deprecated internal term). |
-| session-type-batch | batch session | 배치 세션 | バッチセッション | — | — | Compute session type: Pre-defined script execution. |
-| session-type-inference | inference session | 추론 세션 | 推論セッション | — | — | Compute session type: Model serving sessions. |
-| session-type-interactive | interactive session | 대화형 세션 | インタラクティブセッション | — | — | Compute session type: User interacts after creation. |
-| storage-folder | storage folder | 스토리지 폴더 | ストレージフォルダ | โฟลเดอร์จัดเก็บ | — | Persistent storage that survives session termination. Use "storage folder" in procedural text, "virtual folder" or "vfolder" in introductions. |
-| storage-folder-technical | vfolder | 가상 폴더 | バーチャルフォルダ | โฟลเดอร์เสมือน | Technical term for storage folder | Technical-context term for the storage folder (virtual folder). Referred to as "vfolder" in technical contexts. |
+| Concept | EN | KO | JA | TH | Context | Deciding FR | Description |
+|---|---|---|---|---|---|---|---|
+| agent | agent, agent node | 에이전트, 에이전트 노드 | エージェント, エージェントノード | เอเจนต์, โหนดเอเจนต์ | — | — | The compute node that runs containers (sessions). "Agent" for general reference, "agent node" when emphasizing the hardware aspect. Use "worker node" only in model serving context. |
+| compute-session | compute session | 연산 세션 | コンピュートセッション | เซสชันการคำนวณ | — | — | The isolated compute environment where users run code, notebooks, or applications. Use "session" as shorthand after first full mention. |
+| domain | domain | 도메인 | ドメイン | โดเมน | — | — | The top-level organizational unit for authority and resource control. Do NOT use "organization" or "affiliate" as substitutes. |
+| folder-type-project | Project folder | — | — | — | Storage folder type | — | Created by administrators, shared across project members. |
+| folder-type-user | User folder | — | — | — | Storage folder type | — | Created by individual users for personal use. |
+| fractional-gpu | fGPU | fGPU | fGPU | fGPU | Numeric form | — | Backend.AI's GPU virtualization technology that allows sharing a single physical GPU across multiple sessions. Numeric (abbreviated) form. Write "fractional GPU (fGPU)" on first mention, then "fGPU" thereafter. |
+| fractional-gpu-descriptive | fractional GPU | 분할 GPU | フラクショナルGPU | GPU แบบเศษส่วน | Descriptive form | — | Descriptive form of fGPU (Backend.AI's GPU virtualization technology). |
+| keypair | keypair | 키페어 | キーペア | คีย์แพร์ | — | — | Authentication credentials for API access. Always "keypair" (one word, no hyphen). Never "key pair" or "key-pair". |
+| physical-node | physical node | 물리 노드 | 物理ノード | โหนดกายภาพ | Cluster mode | FR-3207 | The physical machine (or virtual machine) hosting session nodes. Used in the cluster-mode setup description to explain how a managed node and worker nodes are distributed across machines. The cluster-mode UI tooltips (DescSingleNode / DescMultiNode) use this term. Do NOT confuse with "agent node" — in the cluster-mode node-distribution context, use "physical node" to match the UI. |
+| project | project | 프로젝트 | プロジェクト | โปรเจกต์ | — | — | The work unit within a domain. Users can belong to multiple projects. Do NOT use "group" as a substitute for project. |
+| resource-group | resource group | 자원 그룹 | リソースグループ | กลุ่มทรัพยากร | — | — | A grouping of agents (compute nodes) with similar hardware specifications. Do NOT use "scaling group" (deprecated internal term). |
+| session-type-batch | batch session | 배치 세션 | バッチセッション | — | — | — | Compute session type: Pre-defined script execution. |
+| session-type-inference | inference session | 추론 세션 | 推論セッション | — | — | — | Compute session type: Model serving sessions. |
+| session-type-interactive | interactive session | 대화형 세션 | インタラクティブセッション | — | — | — | Compute session type: User interacts after creation. |
+| storage-folder | storage folder | 스토리지 폴더 | ストレージフォルダ | โฟลเดอร์จัดเก็บ | — | — | Persistent storage that survives session termination. Use "storage folder" in procedural text, "virtual folder" or "vfolder" in introductions. |
+| storage-folder-technical | vfolder | 가상 폴더 | バーチャルフォルダ | โฟลเดอร์เสมือน | Technical term for storage folder | — | Technical-context term for the storage folder (virtual folder). Referred to as "vfolder" in technical contexts. |
 
 ### Feature-Specific Terms
 
@@ -37,6 +38,7 @@ The tables below list the approved term for each concept, per language, grouped 
 | app-proxy | App Proxy | App Proxy | App Proxy | App Proxy | — | FR-2841 | The standalone, per-resource-group proxy service that relays in-container application traffic directly between the user's browser and the compute session's Agent. Renamed from WSProxy to App Proxy in the UI in FR-2841. Use "App Proxy" only; do not reference the old "WSProxy" name in user-facing documentation. UI label stays in English across all locales. |
 | app-proxy-api-token | App Proxy API Token | App Proxy API 토큰 | App Proxy APIトークン | โทเค็น API ของ App Proxy | Field label (Resource Group settings) | FR-2841 | Resource Group settings field label for the App Proxy API token. |
 | app-proxy-server-address | App Proxy Server Address | App Proxy 서버 주소 | App Proxy サーバアドレス | ที่อยู่เซิร์ฟเวอร์ App Proxy | Field label (Resource Group settings) | FR-2841 | Resource Group settings field label for the App Proxy server address. |
+| autoscaling-rule | Auto Scaling Rule | 오토스케일링 규칙 | 自動スケーリングルール | กฎการปรับขนาดอัตโนมัติ | — | FR-3207 | The rule that automatically adjusts a deployment's replica count based on live metrics. Match the UI label exactly: KO uses "오토스케일링" (the autoScalingRule i18n keys), NOT "자동 스케일링". Documentation section: deployment/deployment.md |
 | container | Container | — | — | — | — | — | The runtime environment of a compute session. Do NOT use "container" and "kernel" interchangeably. |
 | endpoint | Endpoint | — | — | — | — | — | The access point created for a served model. |
 | inference | Inference | — | — | — | — | — | The operation of running predictions through a served model. |
@@ -175,5 +177,6 @@ Each row lists one forbidden term, its canonical replacement, and the reason. Pa
 | scaling group | resource group | Deprecated term |
 | worker node | agent node | Reserve "worker node" for model serving context only |
 | 레플리카 | 복제본 | Use the Korean translation, not the transliteration, for consistency |
+| 자동 스케일링 (auto scaling rule) | 오토스케일링 | Match the UI label; the autoScalingRule i18n keys use "오토스케일링" |
 
 <!-- terminology:auto:avoid END -->

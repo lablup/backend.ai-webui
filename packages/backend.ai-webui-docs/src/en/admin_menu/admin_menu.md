@@ -399,7 +399,6 @@ Click the `Create Model Card` button to open the creation modal. Fill in the fol
    * `Public`: Visible to all users who have access to the owning project.
 
 ![](../images/model_card_create_modal.png)
-<!-- TODO: Capture screenshot of the Create Model Card modal -->
 
 #### Editing a Model Card
 
