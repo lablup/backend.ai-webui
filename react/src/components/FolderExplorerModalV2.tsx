@@ -73,6 +73,19 @@ interface FolderExplorerProps extends BAIModalProps {
   onRequestClose: () => void;
 }
 
+/**
+ * RBAC entity types that belong to a single vfolder's audit-log scope. The
+ * vfolder row itself (`VFOLDER`) plus its data events, so the scoped audit log
+ * surfaces file/data events alongside the vfolder's own events instead of
+ * silently dropping them (FR-3145).
+ *
+ * TODO(needs-backend): the `VFOLDER_DATA` entry is scoped with the parent
+ * vfolder's UUID. Confirm the backend keys vfolder-data audit rows by the
+ * parent vfolder id; if it keys by the data entry's own id, hierarchical scope
+ * matching is required server-side for these events to appear.
+ */
+const VFOLDER_AUDIT_LOG_ENTITY_TYPES = ['VFOLDER', 'VFOLDER_DATA'] as const;
+
 const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   vfolderID,
   onRequestClose,
@@ -175,7 +188,10 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
     loadAuditLogQuery(
       {
         scope: {
-          entity: [{ entityType: 'VFOLDER', entityId: vfolderUuid }],
+          entity: VFOLDER_AUDIT_LOG_ENTITY_TYPES.map((entityType) => ({
+            entityType,
+            entityId: vfolderUuid,
+          })),
         },
         orderBy: [{ field: 'CREATED_AT', direction: 'DESC' }],
         limit: baiPaginationOption.limit,
@@ -338,6 +354,7 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
                   <ScopedAuditLog
                     queryRef={auditLogQueryRef}
                     onReload={reloadAuditLogQuery}
+                    scopeEntityTypes={VFOLDER_AUDIT_LOG_ENTITY_TYPES}
                     tableSettings={{}}
                   />
                 </Suspense>

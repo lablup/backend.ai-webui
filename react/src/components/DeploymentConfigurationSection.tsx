@@ -84,6 +84,25 @@ type DeploymentSectionData =
   | null
   | undefined;
 
+/**
+ * RBAC entity types that belong to a single deployment's audit-log scope. The
+ * deployment row itself (`MODEL_DEPLOYMENT`) plus its sub-resources, so the
+ * scoped audit log surfaces token / policy / revision events alongside the
+ * deployment's own events instead of silently dropping them (FR-3145).
+ *
+ * TODO(needs-backend): these sub-type entries are scoped with the parent
+ * deployment's UUID. Confirm the backend keys `DEPLOYMENT_TOKEN/POLICY/REVISION`
+ * audit rows by the parent deployment id (and not the sub-resource's own id);
+ * if it keys by the sub-resource id, hierarchical scope matching is required
+ * server-side for these events to appear.
+ */
+const DEPLOYMENT_AUDIT_LOG_ENTITY_TYPES = [
+  'MODEL_DEPLOYMENT',
+  'DEPLOYMENT_TOKEN',
+  'DEPLOYMENT_POLICY',
+  'DEPLOYMENT_REVISION',
+] as const;
+
 const renderFallback = () => (
   <Typography.Text type="secondary">-</Typography.Text>
 );
@@ -340,15 +359,14 @@ const DeploymentConfigurationSection: React.FC<
       return;
     }
     const rawId = deployment.id;
+    const entityId = safeDecodeUuid(rawId) ?? rawId;
     loadAuditLogQuery(
       {
         scope: {
-          entity: [
-            {
-              entityType: 'MODEL_DEPLOYMENT',
-              entityId: safeDecodeUuid(rawId) ?? rawId,
-            },
-          ],
+          entity: DEPLOYMENT_AUDIT_LOG_ENTITY_TYPES.map((entityType) => ({
+            entityType,
+            entityId,
+          })),
         },
         orderBy: [{ field: 'CREATED_AT', direction: 'DESC' }],
         limit: baiPaginationOption.limit,
@@ -629,6 +647,7 @@ const DeploymentConfigurationSection: React.FC<
                 <ScopedAuditLog
                   queryRef={auditLogQueryRef}
                   onReload={reloadAuditLogQuery}
+                  scopeEntityTypes={DEPLOYMENT_AUDIT_LOG_ENTITY_TYPES}
                   tableSettings={{}}
                 />
               </Suspense>

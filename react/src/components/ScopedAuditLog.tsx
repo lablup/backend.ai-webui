@@ -1,6 +1,7 @@
 import type {
   AuditLogOrderBy,
   AuditLogScope,
+  RBACElementType,
   ScopedAuditLogQuery as ScopedAuditLogQueryType,
 } from '../__generated__/ScopedAuditLogQuery.graphql';
 import { convertToOrderBy } from '../helper';
@@ -64,6 +65,15 @@ export interface ScopedAuditLogProps extends Omit<
     variables: ScopedAuditLogQueryType['variables'],
     options?: UseQueryLoaderLoadQueryOptions,
   ) => void;
+  /**
+   * The RBAC entity types that make up this audit-log scope (e.g. for a
+   * deployment view: `MODEL_DEPLOYMENT`, `DEPLOYMENT_TOKEN`,
+   * `DEPLOYMENT_POLICY`, `DEPLOYMENT_REVISION`). When provided with more than
+   * one type, an `entityType` enum drill-down filter is added to the filter bar
+   * so users can narrow the (OR'd) scope to a single type. The consumer owns the
+   * query scope; this prop only drives the filter UI.
+   */
+  scopeEntityTypes?: ReadonlyArray<RBACElementType>;
 }
 
 /**
@@ -79,6 +89,7 @@ export interface ScopedAuditLogProps extends Omit<
 const ScopedAuditLog = ({
   queryRef,
   onReload,
+  scopeEntityTypes,
   ...tableProps
 }: ScopedAuditLogProps) => {
   'use memo';
@@ -114,6 +125,25 @@ const ScopedAuditLog = ({
             );
           }}
           filterProperties={[
+            // Drill-down by entity type within the scope. Only meaningful when
+            // the scope spans more than one entity type (e.g. a deployment scope
+            // OR'ing MODEL_DEPLOYMENT + DEPLOYMENT_TOKEN/POLICY/REVISION); a
+            // single-type scope has nothing to narrow.
+            ...((scopeEntityTypes?.length ?? 0) > 1
+              ? [
+                  {
+                    key: 'entityType',
+                    propertyLabel: t('auditLog.EntityType'),
+                    type: 'enum' as const,
+                    strictSelection: true,
+                    fixedOperator: 'equals' as const,
+                    options: scopeEntityTypes?.map((value) => ({
+                      label: value,
+                      value,
+                    })),
+                  },
+                ]
+              : []),
             {
               key: 'status',
               propertyLabel: t('auditLog.Status'),
