@@ -142,6 +142,57 @@ will partially succeed. A warning message will display how many users were
 successfully created and how many failed.
 :::
 
+<a id="bulk-create-users-from-csv"></a>
+
+### Bulk Create Users from CSV
+
+:::note
+This feature is available only on Backend.AI Manager version 26.2.0 or later.
+:::
+
+When you need to create multiple user accounts from an existing roster or exported data, you can upload a CSV file directly instead of specifying a sequential prefix. Click the ellipsis (`...`) dropdown next to the **Create User** button and select **Bulk Create Users from CSV** to open the CSV upload dialog.
+
+<!-- TODO: Capture screenshot of bulk_create_user_csv_dropdown.png -->
+
+#### Preparing the CSV File
+
+The CSV file must use UTF-8 encoding. The first row must be a header row. Header names are matched case-insensitively. You can download a ready-to-use template by clicking **Download CSV Template** inside the dialog.
+
+**Required columns:**
+
+- **email**: The user's email address, used as the login ID.
+- **username**: A unique username for the user.
+- **password**: The initial password. The same password rules apply as for single user creation (at least 8 characters with at least 1 alphabet, special character, and number).
+
+**Optional columns:**
+
+- **full_name**: The user's display name.
+- **role**: The user's role (`user`, `admin`, or `superadmin`). Defaults to `user` if omitted.
+- **status**: The user's initial status (`active` or `inactive`). Defaults to `active` if omitted.
+- **domain_name**: The domain to assign the user to. Defaults to the current domain if omitted.
+- **description**: An optional description for the user.
+- **need_password_change**: Whether the user must change their password on first login (`true` or `false`). Defaults to `true` if omitted.
+- **resource_policy**: The name of the resource policy to assign.
+- **project**: The name of the project to add the user to.
+
+#### Uploading and Reviewing
+
+After selecting your CSV file, the dialog shows a preview table listing all rows with the following indicators:
+
+- Rows with valid data are shown normally.
+- Rows with formatting or validation errors are highlighted with inline error messages so you can correct the source file before retrying.
+- A summary at the top of the preview shows the total number of valid and invalid rows.
+
+<!-- TODO: Capture screenshot of bulk_create_user_csv_modal.png showing the preview table with valid and invalid rows -->
+
+#### Creating the Users
+
+Once you have reviewed the preview and confirmed that all rows are valid, click **Create** to submit. If some rows fail on the server side (for example, because an email or username already exists), the dialog remains open and lists the per-row errors so you can identify and resolve the conflicts.
+
+:::warning
+If some rows fail, only the successful rows result in new accounts. Failed rows are reported individually. Correct the source CSV and re-upload to create the remaining accounts.
+:::
+
 <a id="inactivate-user-account"></a>
 
 ## Inactivate user account
@@ -845,6 +896,10 @@ To save the current resource policy list as a CSV file, use the **Export CSV** a
 
 ![](../images/keypair_export.png)
 
+:::tip
+Exported CSV files include a UTF-8 BOM at the start of the file, so Microsoft Excel on non-UTF-8 systems (for example, Korean Windows using CP949) correctly recognizes the encoding and displays multi-byte characters without garbling.
+:::
+
 <a id="unified-view-for-pending-sessions"></a>
 
 ## Unified View for Pending Sessions
@@ -858,8 +913,6 @@ which the session will be created once sufficient resources become available.
 
 Similar to the Session page, you can click the session name to open a drawer that
 displays detailed information about the session.
-
-<a id="manage-images"></a>
 
 ## Fair Share Scheduler
 
@@ -1404,6 +1457,16 @@ a default value. For example, If no hard limit value for quota is set, `max_vfol
 is used as the default value.
 :::
 
+<a id="project-folder-permission"></a>
+
+#### Project Folder Permission
+
+The storage host detail drawer includes a **Project Folder Permission** tab where administrators can view and manage which projects have access to the selected storage host. To open the drawer, click the storage host name in the Storages list.
+
+:::tip
+The domain selector on the **Project Folder Permission** tab defaults to the currently active domain when the drawer opens, so the folder permissions for that domain are visible immediately. You can switch to a different domain or clear the selection to view permissions across other domains.
+:::
+
 <a id="download-session-lists"></a>
 
 ## Download session lists
@@ -1420,12 +1483,16 @@ When you click this menu, a sub-menu export CSV appears.
 
 ![](../images/export_csv_menu.png)
 
-If you click this menu, you can download the information of the comcpute sessions
+If you click this menu, you can download the information of the compute sessions
 created so far in CSV format. After the following dialog opens, enter an appropriate
 file name (if necessary), click the EXPORT button and you will get the CSV file.
 Please note that a file name can have up to 255 characters.
 
 ![](../images/export_session_dialog.png)
+
+:::tip
+All CSV files exported from Backend.AI include a UTF-8 BOM (Byte Order Mark) at the start of the file. This ensures that Microsoft Excel on non-UTF-8 systems (for example, Korean Windows using CP949) correctly recognizes the encoding and displays multi-byte characters such as Korean, Japanese, or Chinese without garbling.
+:::
 
 <a id="system-settings"></a>
 

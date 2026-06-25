@@ -38,12 +38,16 @@ Only administrators can create, edit, or delete deployment presets. Administrato
 
 ![](../images/admin_deployment_preset_list.png)
 
-The list view shows each preset with its name, runtime, image, rank, and key resource fields. From this list, administrators can:
+The list view shows each preset with key fields. From this list, administrators can:
 
 - Filter presets by name, runtime, or tag.
 - Click a tag chip on any row to filter the list to presets sharing that tag.
 - Open a preset's detail view to inspect its full configuration.
 - Create, edit, or delete a preset.
+
+The following columns are visible by default: **Name**, **Runtime**, **Image** (displayed as `<canonicalName>@<architecture>`, copyable), **Replicas**, **Created**, and **Modified** (shows when the preset was last updated).
+
+Additional columns can be shown or hidden using the column visibility gear button (⚙) at the right of the table header: **Description**, **Startup Command** (truncated with a tooltip for long values, copyable), **Cluster**, **Strategy**, **Open to Public** (shown as a Public/Private tag), **Revision History Limit**, and **Rank** (sortable).
 
 ### Create a Deployment Preset
 
@@ -55,7 +59,8 @@ The list view shows each preset with its name, runtime, image, rank, and key res
       * **Description**: A short summary of the preset's intended use.
       * **Runtime**: The runtime variant (for example, vLLM, SGLang, or Custom).
       * **Rank**: Display ordering among presets of the same runtime. Lower values appear first.
-   - **Image**: The container image to use when deploying.
+   - **Image**: The container image to use when deploying. Images are listed in `<canonicalName>@<architecture>` format (for example, `cr.backend.ai/stable/pytorch:2.1-cuda12.1@aarch64`). This format helps distinguish images by CPU architecture on mixed-architecture clusters. The same format appears on the Review step.
+   - **Runtime Parameters** (appears when a non-Custom runtime such as vLLM or SGLang is selected): Configure the serving framework parameters for this preset. Parameters are organized in tabs — for example, **Model Loading**, **Resource Memory**, **Serving Performance**, **Multimodal**, and **Tool Reasoning** for vLLM. Saved parameter values are applied when a deployment is created from this preset; parameters you leave unchanged will use the runtime's defaults when the deployment runs.
    - **Resources**: Resource slots (CPU, memory, GPU), shared memory, and resource options (key/value pairs).
    - **Cluster**: Cluster mode (Single-Node or Multi-Node) and cluster size.
    - **Execution**: Startup command, environment variables, and bootstrap script.
@@ -73,10 +78,16 @@ The list view shows each preset with its name, runtime, image, rank, and key res
 If a required field is missing or invalid, the **Create Preset** button stays disabled until the error is resolved. Required fields show inline validation messages as you type.
 :::
 
+:::note[Required parameters in presets]
+Administrators can mark individual Runtime Parameters as required. Required parameters display a red asterisk (★) next to the label. The save button stays disabled until all required parameters are filled in. Required parameter validation applies even to parameters on unvisited tabs.
+
+On backends older than Backend.AI Manager 26.4.4, all parameters are treated as optional.
+:::
+
 ### Edit a Deployment Preset
 
 1. From the preset list, open the action menu on the preset row (or open the preset's detail view) and select **Edit Preset**.
-2. The *Edit Preset* dialog opens with the preset's current values pre-filled. The available sections are identical to the *Create Preset* dialog.
+2. The *Edit Preset* dialog opens with the preset's current values pre-filled. The available sections are identical to the *Create Preset* dialog, including the **Runtime Parameters** section for vLLM and SGLang runtimes.
 3. Adjust the fields as needed, then click **Edit Preset** to save your changes.
 
 ![](../images/deployment_preset_edit_modal.png)
@@ -99,7 +110,9 @@ End users apply a deployment preset through the **VFolder Deploy** modal, which 
 
 1. From the Data page, locate the model folder you want to deploy and click **Deploy as Service**.
 2. The VFolder Deploy modal opens, listing the deployment presets available for your project.
-3. Click a preset row to open its **Deployment Preset Detail** view. The detail view shows every field that the preset will apply when used — image, runtime, resources, cluster mode, replica count, visibility, and so on.
+3. Click a preset row to open its **Deployment Preset Detail** view. The detail view shows every field that the preset will apply when used — image, runtime, resources, cluster mode, replica count, visibility, and so on. The detail view also includes a **Health Check** card:
+   - When health check is enabled in the preset: the card shows **Enabled** along with the configured Path, Interval, Max Retries, Max Wait Time, Expected Status Code, and Startup Grace Period.
+   - When health check is disabled: the card shows **Disabled**.
 
    ![](../images/vfolder_deploy_preset_detail.png)
 

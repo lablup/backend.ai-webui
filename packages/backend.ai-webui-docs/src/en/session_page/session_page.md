@@ -24,14 +24,20 @@ For more detailed information about resource panels and their metrics, please re
 
 <a id="session-list"></a>
 
-## Session list
+## Session List
 
-The 'Sessions' section displays a list of all active and completed compute sessions.
+The personal Sessions page displays only your own active and completed compute sessions.
 You can filter sessions by type — `All`, `Interactive`, `Batch`, `Inference`, or `Upload Sessions` — and switch between
 `Running` and `Finished` tabs to manage sessions.
 
+:::note
+The personal Sessions page (`/session`) always shows only your own sessions, regardless of your role.
+To view and manage sessions across all users in a project, use the **Admin Sessions** page under the
+**Administration** sidebar section.
+:::
+
 By default, you can view the following columns: session name, status, allocated resources (AI Accelerators, CPU, Memory),
-elapsed time, and for super admins, agent and owner email.
+and elapsed time.
 Additional columns can be shown or specific ones hidden by clicking the 'Settings' button at the bottom right of the table to customize the view.
 
 ![](../images/session_table_settings.png)
@@ -48,4 +54,11 @@ To launch several sessions with the same configuration in one go, click the
 more (`...`) icon next to the **Launch** button to open its dropdown menu and
 select **Launch Multiple Sessions**. See [Confirm and Launch](../sessions_all/sessions_all.md#confirm-and-launch)
 for details.
+:::
+
+:::note
+You can export the session list as a CSV file using the download button in the session list toolbar.
+The CSV export from the personal Sessions page includes only your own sessions.
+
+Requires Backend.AI Manager 26.4.4 or later. On older manager versions, the export may return all project-wide sessions.
 :::

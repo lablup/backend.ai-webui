@@ -371,6 +371,16 @@ The scheduling history table displays records with the following columns:
 You can sort the table by the **Created At** or **Updated At** columns to view records in your
 preferred order.
 
+#### History Table Pagination
+
+The scheduling history table is paginated with offset-based pagination. The default page size is 10
+records per page. Changing a filter or the sort order automatically resets the view back to page 1.
+
+:::note
+The **Expand Errors Only** mode (described below) applies only to the records visible on the current
+page, not to the entire history.
+:::
+
 #### Expandable Sub-Steps
 
 Some history records contain detailed sub-steps. When sub-steps are available, an expand arrow appears
@@ -388,6 +398,20 @@ The sub-steps table includes the following columns:
 - **Started At**: When the sub-step began
 - **Ended At**: When the sub-step completed
 
+#### Expand / Collapse Control
+
+A kebab menu (⋮) in the expand-column header lets you control how rows are expanded across the
+entire table. Three view modes are available:
+
+- **Expand All**: Expands every row so all sub-steps are immediately visible.
+- **Collapse All**: Collapses every row to show only the top-level history records.
+- **Expand Errors Only** (default): Automatically expands rows whose result is not SUCCESS, and
+  also hides SUCCESS sub-steps within those expanded rows. This is the most useful mode for quickly
+  identifying what went wrong in a session's scheduling lifecycle.
+
+The selected mode is remembered per user and persists across modal opens. You can still manually
+expand or collapse individual rows at any time, regardless of the active mode.
+
 #### Result Badge Colors
 
 Each scheduling step and sub-step displays a color-coded result badge indicating its outcome:
@@ -401,6 +425,45 @@ Each scheduling step and sub-step displays a color-coded result badge indicating
 | EXPIRED | Red | The scheduling attempt expired |
 | GIVE_UP | Red | The system gave up on scheduling |
 | SKIPPED | Gray | The step was skipped |
+
+<a id="session-audit-log"></a>
+
+### Session Audit Log
+
+The **Audit Log** tab appears at the bottom of the session detail panel alongside the **Kernels**
+tab. It provides a chronological record of every action taken on the session — such as status
+changes, resource modifications, and administrative operations — along with who triggered each
+action and when.
+
+![](../images/session_audit_log.png)
+<!-- TODO: Capture screenshot of the Audit Log tab in the session detail panel -->
+
+:::note
+The Audit Log is enforced by the backend and may be visible only to superadmins. Regular users
+may see an empty result even when the tab is accessible.
+:::
+
+#### Audit Log Columns
+
+The Audit Log table includes the following columns:
+
+- **Triggered By**: The email address and account ID of the actor who initiated the action
+- **Operation**: The type of action performed (for example, session creation, termination, or
+  resource change)
+- **Status**: The outcome of the action (`SUCCESS`, `ERROR`, `RUNNING`, or `UNKNOWN`)
+- **Time**: When the action occurred
+
+#### Audit Log Filters
+
+Use the filter bar above the table to narrow down the log entries:
+
+- **Status**: Filter by action outcome (`SUCCESS`, `ERROR`, `RUNNING`, `UNKNOWN`)
+- **Operation**: Search by operation name or keyword
+- **Triggered By**: Search by actor ID
+- **Time**: Filter by a date-range picker
+
+A **Refresh** button reloads the log. The audit log query is deferred and sent only the first time
+you activate the **Audit Log** tab.
 
 <a id="use_session"></a>
 

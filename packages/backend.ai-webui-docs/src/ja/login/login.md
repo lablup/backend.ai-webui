@@ -28,6 +28,12 @@ WebUIを起動すると、ログインダイアログが表示されます。ま
 メールアドレス（またはユーザー名）とパスワードを入力し、`ログイン`ボタンをクリックします。
 
 ![](../images/login_dialog.png)
+<!-- TODO: Capture screenshot of login dialog showing the Diagonal Weave animated background -->
+
+:::note
+ログイン画面では、ログインダイアログの背後にアニメーションする「ダイアゴナルウィーブ」背景パターンが表示されます。アプリケーションのバージョンおよびビルド情報は画面左下に、著作権情報は画面右下に表示されます。ログインダイアログが開くと、メールアドレスフィールドに自動的にフォーカスが当たります。
+:::
+
 
 <a id="connection-mode"></a>
 
