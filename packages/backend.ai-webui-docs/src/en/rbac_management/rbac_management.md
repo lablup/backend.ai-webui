@@ -4,10 +4,6 @@
 
 RBAC (Role-Based Access Control) Management allows superadmins to define roles with fine-grained permissions and assign them to users. With RBAC, you can control which actions specific users are allowed to perform on various resources throughout the Backend.AI system.
 
-:::note
-RBAC Management is only available to superadmins and requires Backend.AI Manager version 26.4.0 or later.
-:::
-
 To access the RBAC Management page, click **RBAC Management** in the **Admin Settings** section of the sidebar menu.
 
 ![](../images/rbac_role_list_page.png)
@@ -33,12 +29,6 @@ The table displays the following columns:
 - **Created At**: The date and time when the role was created.
 - **Updated At**: The date and time when the role was last modified.
 
-You can sort the table by clicking the **Role Name**, **Created At**, or **Updated At** column headers. Use the column visibility gear button on the right side of the table header to show or hide individual columns.
-
-:::note
-Requires Backend.AI Manager 26.4.4 or later for the **Auto Assign** column to appear.
-:::
-
 ### System vs Custom Roles
 
 Roles are categorized into two source types:
@@ -63,16 +53,12 @@ To create a new custom role:
 ![](../images/rbac_create_role_modal.png)
 
 :::info
-Scopes are defined at role creation time and cannot be edited afterwards through the role detail drawer. Plan the scopes carefully before creating the role.
+The **Scope Type** and **Target** you define when creating a role do not grant any permissions on their own. Instead, they pre-define the **Scope Type / Target** options that become available when you later add [permissions](#manage-permissions) to this role. In other words, role creation only narrows down the range of scope types and targets this role's permissions can use — each permission can then be configured only within the scope types and targets defined here.
 :::
 
-### Scope Types
-
-The following scope types are available when creating a role:
-
-- **Domain**: Select from a list of active domains
-- **Project**: Select a project (with domain filtering)
-- **User**: Search for a user by email or name
+:::warning
+Scopes are defined at role creation time and cannot be edited afterwards through the role detail drawer. Plan the scopes carefully before creating the role.
+:::
 
 ## View Role Details
 
@@ -93,11 +79,14 @@ Below the metadata, three tabs are available: **Scopes**, **Permissions**, and *
 
 ### Edit a Role
 
-To edit a custom role's name or description:
+To edit a custom role's name, description, or auto-assignment setting:
 
 1. Open the role detail drawer by clicking a role name in the table
 2. Click the **Edit** button (pencil icon) in the drawer header
-3. Modify the **Role Name** and/or **Description** in the edit modal
+3. Modify the following fields in the edit modal:
+   - **Role Name**: The name of the role
+   - **Description**: A description of the role's purpose
+   - **Auto Assign**: When enabled, the role is automatically granted to users added to a scope the role is registered in.
 4. Click **OK** to save the changes
 
 ![](../images/rbac_edit_role_modal.png)
@@ -124,6 +113,8 @@ Use the filter control at the top to narrow down scope entries by **Scope Type**
 Scopes are read-only in this tab. To change a role's scopes, you must create a new role with the desired scopes.
 :::
 
+<a id="manage-permissions"></a>
+
 ## Manage Permissions
 
 The **Permissions** tab in the role detail drawer shows the fine-grained permissions configured for the role.
@@ -134,10 +125,10 @@ The **Permissions** tab in the role detail drawer shows the fine-grained permiss
 
 Each permission consists of four components:
 
-- **Scope Type**: The type of resource that the permission targets (e.g., Domain, Project, User)
-- **Target**: The specific entity within the scope type (e.g., a specific domain name, a specific project)
-- **Permission Type**: The category of resource the permission controls, filtered based on the selected scope type
-- **Permission**: The operation allowed on the resource. Only valid operations for the selected permission type are shown. Operations are grouped into two categories:
+- **Scope Type**: The effective scope to which the permission applies (e.g., Domain, Project, User)
+- **Target**: A specific entity within the effective scope (e.g., a specific domain name, a specific project)
+- **Permission Type**: The target on which operations are performed within the permission's effective scope.
+- **Permission**: The operations allowed for the permission type. Only operations valid for the selected permission type are shown. Operations are grouped into two categories:
    * **Direct**: Create, Read, Update, Soft Delete, Hard Delete
    * **Delegate to Others**: Delegate All, Delegate Read, Delegate Update, Delegate Soft Delete, Delegate Hard Delete
 
@@ -151,10 +142,12 @@ Here are some common permission configurations to help you understand how the fo
 
 | Scenario | Scope Type / Target | Permission Type | Permission |
 |----------|---------------------|----------------|------------|
-| Allow a user to create storage folders in a specific project | Project / my-project | VFolder | Create |
-| Allow a user to view all sessions in a domain | Domain / default | Session | Read |
-| Allow a user to manage model serving endpoints | Domain / default | Endpoint | Create, Read, Update |
-| Allow a user to delete container images | Domain / default | Image | Soft Delete |
+| Allow a user to create storage folders in a specific project | Project / my-project | Folder | Create |
+| Allow a user to view all sessions in a specific domain | Domain / default | Session | Read |
+| Allow a user to manage model services in a specific domain | Domain / default | Model Service | Create, Read, Update |
+| Allow a user to delete container images in a specific domain | Domain / default | Image | Soft Delete |
+
+<a id="add-a-permission"></a>
 
 ### Add a Permission
 
@@ -168,20 +161,14 @@ Here are some common permission configurations to help you understand how the fo
 
 ![](../images/rbac_permission_modal.png)
 
-:::note
-The filter controls in the permissions list now use input types tailored to each filter property — selectors for enumerated values (such as Permission Type, Permission), and free text for name-style fields — making it faster to narrow the list to the entries you care about.
-:::
-
-:::note
-If a role was created without any scopes (for example, a legacy role imported from an earlier version), the **Add Permission** modal falls back to showing separate **Scope Type** and **Target** fields so that administrators can still configure the permission target.
-:::
-
 ### Remove a Permission
 
 1. In the **Permissions** tab, click the **Remove Permission** button next to the permission you want to remove
 2. A small confirmation popup appears anchored to the button. Click **OK** to confirm, or **Cancel** to dismiss.
 
 Removing a permission from a role only detaches it from the role's permission set — the role itself, its scopes, and its user assignments are kept. You can add the same permission back later from the same tab, so this action is treated as reversible and uses a lightweight popup confirmation rather than a typed-name confirmation modal.
+
+<a id="manage-user-assignments"></a>
 
 ## Manage User Assignments
 
@@ -201,14 +188,28 @@ The **Role Assignments** tab in the role detail drawer shows which users are ass
 
 ![](../images/rbac_add_user_modal.png)
 
+Adding users is a bulk operation — you can select several users in a single pass and assign them all at once.
+
 <a id="revoke-users-from-a-role"></a>
 
 ### Revoke Users from a Role
 
-1. In the **Role Assignments** tab, click the revoke (trash) icon button next to the user you want to remove
+You can revoke a single user or several users at once.
+
+To revoke a single user:
+
+1. In the **Role Assignments** tab, hover over the user row and click the revoke (trash) icon next to the user.
 2. A **Revoke User** confirmation modal opens. Review the listed user(s) and click **Revoke User** to confirm, or **Cancel** to dismiss.
 
 ![](../images/rbac_revoke_popconfirm.png)
+
+To revoke multiple users at once:
+
+1. In the **Role Assignments** tab, use the checkboxes to select the users you want to remove. A selection-count label appears next to the revoke control showing how many rows are selected; use the clear-selection control on that label to deselect all rows.
+2. Click the bulk **Revoke User** button (trash icon) that appears once one or more rows are selected.
+3. In the **Revoke User** confirmation modal, review the listed users and click **Revoke User** to confirm, or **Cancel** to dismiss.
+
+![](../images/rbac_bulk_revoke_selection.png)
 
 Revoking a user removes only that user's assignment to this role; the role itself and its other assignments remain unchanged.
 
