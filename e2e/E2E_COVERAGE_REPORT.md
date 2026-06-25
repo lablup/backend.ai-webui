@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 300 / 448 features covered (67%)**
+**Overall (in-scope routes): 301 / 449 features covered (67%)**
 
 | Page                     | Route                                  | Features | Covered | Status  |
 | ------------------------ | -------------------------------------- | :------: | :-----: | :-----: |
@@ -44,11 +44,11 @@
 | Reservoir                | `/reservoir`, `/reservoir/:artifactId` |    18    |    0    |  ❌ 0%  |
 | Branding                 | `/branding`                            |    14    |    0    |  ❌ 0%  |
 | App Launcher             | (modal)                                |    19    |   11    | 🔶 58%  |
-| Chat                     | `/chat/:id?`                           |    6     |    6    | ✅ 100% |
+| Chat                     | `/chat/:id?`                           |    7     |    7    | ✅ 100% |
 | Plugin System            | (config-based)                         |    12    |   12    | ✅ 100% |
 | RBAC Management          | `/rbac`                                |    22    |   21    | 🔶 95%  |
 | Auto Scaling Rule Preset | `/admin-serving?tab=auto-scaling-rule` |    33    |   32    | 🔶 97%  |
-| **Total**                |                                        | **448**  | **300** | **67%** |
+| **Total**                |                                        | **449**  | **301** | **67%** |
 
 ---
 
@@ -932,20 +932,21 @@
 
 ### 27. Chat (`/chat/:id?`)
 
-**Test files:** [`e2e/chat/chat.spec.ts`](chat/chat.spec.ts), [`e2e/chat/chat-sync.spec.ts`](chat/chat-sync.spec.ts)
+**Test files:** [`e2e/chat/chat.spec.ts`](chat/chat.spec.ts), [`e2e/chat/chat-sync.spec.ts`](chat/chat-sync.spec.ts), [`e2e/chat/chat-attachment.spec.ts`](chat/chat-attachment.spec.ts)
 
 **Drawer:** `ChatHistoryDrawer`
 
-| Feature                          | Status | Test                                                                          |
-| -------------------------------- | ------ | ----------------------------------------------------------------------------- |
-| Chat card interface              | ✅     | `User can see the chat page with endpoint and model selectors`                |
-| Chat history → ChatHistoryDrawer | ✅     | `User can see chat history drawer after sending a message`                    |
-| New chat creation                | ✅     | `User can rename a chat session from the page title`                          |
-| Message sending/receiving        | ✅     | `User can send a message and receive a streaming response`                    |
-| Provider/model selection         | ✅     | `User can select different endpoints in each chat pane`                       |
-| Chat history deletion            | ✅     | `User is redirected to a new chat when deleting the currently active session` |
+| Feature                             | Status | Test                                                                          |
+| ----------------------------------- | ------ | ----------------------------------------------------------------------------- |
+| Chat card interface                 | ✅     | `User can see the chat page with endpoint and model selectors`                |
+| Chat history → ChatHistoryDrawer    | ✅     | `User can see chat history drawer after sending a message`                    |
+| New chat creation                   | ✅     | `User can rename a chat session from the page title`                          |
+| Message sending/receiving           | ✅     | `User can send a message and receive a streaming response`                    |
+| Provider/model selection            | ✅     | `User can select different endpoints in each chat pane`                       |
+| Chat history deletion               | ✅     | `User is redirected to a new chat when deleting the currently active session` |
+| File attachment delivery (data URL) | ✅     | `Attached file is sent to the model as a base64 data URL, not a blob URL`     |
 
-**Coverage: ✅ 6/6 features**
+**Coverage: ✅ 7/7 features**
 
 ---
 
