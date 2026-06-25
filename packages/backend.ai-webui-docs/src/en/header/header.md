@@ -85,7 +85,7 @@ reference. These items are not clickable.
 
 - **Full name**: The current user's full name.
 - **Email**: The current user's email address.
-- **Role**: The current user's role (e.g., user, domain admin, superadmin).
+- **Role**: The current user's role (e.g., user, superadmin).
 
 Below the user information, the following action items are available.
 

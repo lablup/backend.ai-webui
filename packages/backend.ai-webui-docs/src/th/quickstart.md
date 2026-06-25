@@ -10,6 +10,7 @@
 - [เริ่มเซสชันใหม่](#create_session)
 - [ใช้งาน Jupyter Notebook](#use_session)
 - [ลบเซสชันการคำนวณ](#delete_session)
+- [ปรับใช้โมเดล](#create-deployment)
 
 ### ส่วนที่ 2. คู่มือขั้นสูงในการใช้ Backend.AI
 - [เปิดเชลล์หลายตัว (tmux)](#tmux_guide)

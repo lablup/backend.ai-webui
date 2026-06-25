@@ -158,35 +158,3 @@ achieves more intuitive use.
 |                      | Customized container image / kernel or kernel repository |
 
 \* ONLY Available on storage supports directory quota management
-
-<a id="accessible-menu-by-user-role"></a>
-
-## Accessible Menu by User Role
-
-:::note
-- Pages with `*` mark are in Administration menu.
-- Features only for admin are listed in [admin menu](#admin-menus) section.
-:::
-
-| page \\ role | user | admin |
-| --- | --- | --- |
-| Start | O | O |
-| Dashboard | O | O |
-| Data | O | O |
-| Sessions | O | O |
-| Serving | O | O |
-| My Environments | O | O |
-| Chat | O | O |
-| Model Store | O | O |
-| Agent Summary | O | O |
-| Statistics | O | O |
-| Users* | X | O |
-| Environments* | X | O |
-| Scheduler* | X | O |
-| Resource Policies* | X | O |
-| Resources* | X | O |
-| Configurations* | X | O |
-| Maintenance* | X | O |
-| Information* | X | O |
-| RBAC Management* | X | O (superadmin) |
-| Project* | X | O |

@@ -63,7 +63,7 @@ If needed, setting the name of the session (optional) is also available.
   word will be assigned automatically. Session names only accept alphanumeric
   characters between 4 and 64 without spaces.
 
-If users create a session with the `super admin` or `admin` account,
+If users create a session with the `superadmin` account,
 they can additionally assign a session owner. If you enable the toggle,
 a user email field will appear.
 
@@ -192,8 +192,6 @@ Click the 'Next' button below, or the 'Data & Storage' menu on the right to proc
 When a compute session is destroyed, data deletion is set to default.
 However, data stored in the mounted folders will survive.
 Data in those folders can also be reused by mounting it when creating another compute session.
-For further information on how to mount a folder and run a compute session, refer to
-[Mounting Folders to a Compute Session](#session-mounts).
 
 ![](../images/launch_session_data.png)
 
@@ -353,6 +351,8 @@ filter by the following properties:
 - **To Status**: Filter by the session status after the scheduling step
 - **Error Code**: Filter by error code
 - **Message**: Filter by message content
+- **Created At**: Filter by the record creation time
+- **Updated At**: Filter by the record update time
 
 A refresh button is also available next to the filter bar to reload the scheduling history data.
 
@@ -360,14 +360,14 @@ A refresh button is also available next to the filter bar to reload the scheduli
 
 The scheduling history table displays records with the following columns:
 
+- **Updated At**: When this record was last updated
+- **Created At**: When this record was created
 - **Phase**: The name of the scheduling phase
 - **Result**: The outcome of this scheduling step, shown as a color-coded badge
 - **From Status**: The session status before this scheduling step
 - **To Status**: The session status after this scheduling step
 - **Attempts**: How many times this scheduling step was attempted
 - **Message**: A summary message for this scheduling step
-- **Updated At**: When this record was last updated
-- **Created At**: When this record was created
 
 You can sort the table by the **Created At** or **Updated At** columns to view records in your
 preferred order.
@@ -553,8 +553,8 @@ Lab, etc., depending on the type of environments provided by the compute session
 
 ## Query compute session log
 
-Users can view the log of the compute session by clicking the last icon in the
-Control panel of the running compute session.
+Users can view the log of the compute session by clicking the `See Container Logs`
+icon in the session detail panel.
 
 ![](../images/session_log.png)
 

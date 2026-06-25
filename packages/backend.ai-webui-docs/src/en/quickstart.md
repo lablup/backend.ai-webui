@@ -12,6 +12,7 @@ knowledge base.
 - [How to create a session](#create_session)
 - [How to use a session](#use_session)
 - [How to delete a session](#delete_session)
+- [How to deploy a model](#create-deployment)
 
 ### Part 2. Advanced guide to using Backend.AI
 - [How to use terminal application with tmux](#tmux_guide)

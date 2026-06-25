@@ -10,6 +10,7 @@ Backend.AI WebUI를 사용하는 빠른 시작 가이드입니다. 이 튜토리
 - [새로운 세션 시작하기](#create_session)
 - [Jupyter Notebook 사용하기](#use_session)
 - [연산 세션 삭제하기](#delete_session)
+- [모델 배포하기](#create-deployment)
 
 ### 파트 2. Backend.AI 고급 사용 가이드
 - [여러 개의 쉘 띄우기 (tmux)](#tmux_guide)

@@ -46,14 +46,14 @@ Within the column settings dialog, you can also drag columns to change the order
 :::tip
 You can view the detailed scheduling history for each session from the
 session detail panel. This helps you understand scheduling decisions, delays, and failures. For more details,
-refer to [Session Scheduling History](../sessions_all/sessions_all.md#session-scheduling-history).
+refer to [Session Scheduling History](#session-scheduling-history).
 :::
 
 :::note
 The **Launch** button on the session launcher creates one session by default.
 To launch several sessions with the same configuration in one go, click the
 more (`...`) icon next to the **Launch** button to open its dropdown menu and
-select **Launch Multiple Sessions**. See [Confirm and Launch](../sessions_all/sessions_all.md#confirm-and-launch)
+select **Launch Multiple Sessions**. See [Confirm and Launch](#confirm-and-launch)
 for details.
 :::
 
