@@ -175,7 +175,6 @@ achieves more intuitive use.
 | Data | O | O |
 | Sessions | O | O |
 | Serving | O | O |
-| Import & Run | O | O |
 | My Environments | O | O |
 | Chat | O | O |
 | Model Store | O | O |

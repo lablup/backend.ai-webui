@@ -56,9 +56,28 @@ external sources. Clicking the card opens a dialog with three tabs.
    You can also click the dropdown arrow next to the button and select
    **Start with options** to customize the session environment before launching.
 
+:::note
+The notebook is downloaded from inside the compute session (its bootstrap
+script runs `curl -O <url>`), so the URL must be reachable from the session.
+Local addresses such as `localhost` or `127.0.0.1` resolve to the session
+container itself — not your own machine — and will not work. Use a URL that is
+reachable from the compute session.
+:::
+
+:::note
+Turn off your browser's pop-up blocker so the running notebook window can open
+automatically. If there are not enough resources to start the session, the
+imported notebook will not run.
+:::
+
 At the bottom of the tab, you can generate a "Run on Backend.AI" badge code.
 Copy the HTML or Markdown badge code to embed a direct-launch link in your
 project documentation.
+
+:::note
+You must be logged in before generating the badge code. Otherwise, log in first
+and try again.
+:::
 
 ### Import GitHub Repository
 
