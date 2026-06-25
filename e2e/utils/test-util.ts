@@ -500,7 +500,16 @@ export async function moveToTrashAndVerify(
   });
   await expect(folderRow).toBeVisible({ timeout: 10000 });
 
-  await folderRow.getByRole('button', { name: 'delete' }).click();
+  // Bound the move-to-trash button before clicking it. On pages where the
+  // current account cannot delete the folder (e.g. a project-type folder shown
+  // on the regular user's /data), the button stays disabled. The Playwright
+  // config sets no global actionTimeout, so a bare .click() on a disabled
+  // button would retry until the entire 180s test timeout, hanging the caller.
+  // The best-effort sweep relies on this assertion failing fast (a catchable
+  // error) so it can skip the un-deletable row instead of stranding cleanup.
+  const moveToTrashButton = folderRow.getByRole('button', { name: 'delete' });
+  await expect(moveToTrashButton).toBeEnabled({ timeout: 10000 });
+  await moveToTrashButton.click();
   // The "Move to trash" confirmation modal uses a standardized "Confirm"
   // button (t('button.Confirm')) instead of "Move".
   const confirmButton = page

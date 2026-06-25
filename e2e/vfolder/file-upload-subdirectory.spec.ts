@@ -1,11 +1,10 @@
 // spec: Suite 5: Upload to Subdirectory
 import { FolderExplorerModal } from '../utils/classes/vfolder/FolderExplorerModal';
+import { cleanupVFolderSafely } from '../utils/cleanup-util';
 import {
   loginAsUser,
   navigateTo,
   createVFolderAndVerify,
-  moveToTrashAndVerify,
-  deleteForeverAndVerifyFromTrash,
   selectPropertyFilter,
   clearAllFilters,
 } from '../utils/test-util';
@@ -65,12 +64,7 @@ test.describe(
 
       await loginAsUser(page, request);
 
-      try {
-        await moveToTrashAndVerify(page, testFolderName);
-        await deleteForeverAndVerifyFromTrash(page, testFolderName);
-      } catch {
-        console.log(`Could not delete ${testFolderName}, it may not exist`);
-      }
+      await cleanupVFolderSafely(page, testFolderName);
 
       await context.close();
 

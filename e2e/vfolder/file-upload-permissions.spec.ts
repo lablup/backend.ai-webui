@@ -1,11 +1,10 @@
 // spec: Upload Permission Controls Test Plan
 import { FolderExplorerModal } from '../utils/classes/vfolder/FolderExplorerModal';
+import { cleanupVFolderSafely } from '../utils/cleanup-util';
 import {
   loginAsUser,
   navigateTo,
   createVFolderAndVerify,
-  moveToTrashAndVerify,
-  deleteForeverAndVerifyFromTrash,
 } from '../utils/test-util';
 import { test, expect, Page } from '@playwright/test';
 
@@ -45,12 +44,7 @@ test.describe.serial(
       await loginAsUser(page, request);
 
       for (const folderName of [rwFolderName, roFolderName]) {
-        try {
-          await moveToTrashAndVerify(page, folderName);
-          await deleteForeverAndVerifyFromTrash(page, folderName);
-        } catch {
-          console.log(`Could not delete ${folderName}, it may not exist`);
-        }
+        await cleanupVFolderSafely(page, folderName);
       }
 
       await context.close();

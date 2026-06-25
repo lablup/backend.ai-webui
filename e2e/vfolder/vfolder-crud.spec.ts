@@ -1,4 +1,5 @@
 import { FolderCreationModal } from '../utils/classes/vfolder/FolderCreationModal';
+import { cleanupVFolderSafely } from '../utils/cleanup-util';
 import {
   acceptAllInvitationAndVerifySpecificFolder,
   createVFolderAndVerify,
@@ -40,8 +41,7 @@ test.describe(
           .click();
       });
       test.afterEach(async ({ page }) => {
-        await moveToTrashAndVerify(page, creationFolderName);
-        await deleteForeverAndVerifyFromTrash(page, creationFolderName);
+        await cleanupVFolderSafely(page, creationFolderName);
       });
       test('User can create a vFolder by selecting a specific location', async ({
         page,
@@ -116,8 +116,7 @@ test.describe(
           .click();
       });
       test.afterEach(async ({ page }) => {
-        await moveToTrashAndVerify(page, folderName);
-        await deleteForeverAndVerifyFromTrash(page, folderName);
+        await cleanupVFolderSafely(page, folderName);
       });
       test('User can create Auto Mount vFolder', async ({ page }) => {
         const folderCreationModal = new FolderCreationModal(page);
@@ -157,8 +156,7 @@ test.describe(
       await createVFolderAndVerify(page, sharingFolderName);
     });
     test.afterEach(async ({ page }) => {
-      await moveToTrashAndVerify(page, sharingFolderName);
-      await deleteForeverAndVerifyFromTrash(page, sharingFolderName);
+      await cleanupVFolderSafely(page, sharingFolderName);
     });
 
     test('User can share vFolder', async ({ page, browser, request }) => {

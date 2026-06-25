@@ -1,11 +1,10 @@
 // spec: Duplicate File Upload Test Plan
 import { FolderExplorerModal } from '../utils/classes/vfolder/FolderExplorerModal';
+import { cleanupVFolderSafely } from '../utils/cleanup-util';
 import {
   loginAsUser,
   navigateTo,
   createVFolderAndVerify,
-  moveToTrashAndVerify,
-  deleteForeverAndVerifyFromTrash,
   selectPropertyFilter,
   clearAllFilters,
 } from '../utils/test-util';
@@ -101,12 +100,7 @@ test.describe(
 
       await loginAsUser(page, request);
 
-      try {
-        await moveToTrashAndVerify(page, testFolderName);
-        await deleteForeverAndVerifyFromTrash(page, testFolderName);
-      } catch {
-        /* ignore cleanup errors */
-      }
+      await cleanupVFolderSafely(page, testFolderName);
 
       await context.close();
 

@@ -1,5 +1,6 @@
 // spec: FolderExplorerModal-Test-Plan.md
 import { FolderExplorerModal } from '../utils/classes/vfolder/FolderExplorerModal';
+import { cleanupVFolderSafely } from '../utils/cleanup-util';
 import {
   loginAsUser,
   navigateTo,
@@ -170,12 +171,7 @@ test.describe(
       await loginAsUser(page, request);
 
       // Clean up folder created during tests
-      try {
-        await moveToTrashAndVerify(page, testFolderName);
-        await deleteForeverAndVerifyFromTrash(page, testFolderName);
-      } catch {
-        console.log(`Could not delete ${testFolderName}, it may not exist`);
-      }
+      await cleanupVFolderSafely(page, testFolderName);
 
       await context.close();
     });

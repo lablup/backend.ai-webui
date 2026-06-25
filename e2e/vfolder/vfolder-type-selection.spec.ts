@@ -1,15 +1,10 @@
 import { FolderCreationModal } from '../utils/classes/vfolder/FolderCreationModal';
+import { cleanupVFolderSafely } from '../utils/cleanup-util';
 import {
   getClientProperty,
   skipUnlessAllowedVFolderType,
 } from '../utils/feature-gate-util';
-import {
-  deleteForeverAndVerifyFromTrash,
-  loginAsAdmin,
-  loginAsUser,
-  moveToTrashAndVerify,
-  navigateTo,
-} from '../utils/test-util';
+import { loginAsAdmin, loginAsUser, navigateTo } from '../utils/test-util';
 import { test, expect, Page } from '@playwright/test';
 
 /**
@@ -58,8 +53,7 @@ test.describe(
       });
 
       test.afterEach(async ({ page }) => {
-        await moveToTrashAndVerify(page, folderName);
-        await deleteForeverAndVerifyFromTrash(page, folderName);
+        await cleanupVFolderSafely(page, folderName);
       });
 
       test('User can create a User-type vfolder with default selection', async ({
@@ -86,17 +80,10 @@ test.describe(
       });
 
       test.afterEach(async ({ page }) => {
-        try {
-          // Project-type folders are only visible on /project-data, not on /data.
-          await moveToTrashAndVerify(page, folderName, 'project-data');
-          await deleteForeverAndVerifyFromTrash(
-            page,
-            folderName,
-            'project-data',
-          );
-        } catch {
-          // Folder may not exist if test was skipped or creation failed
-        }
+        // Project-type folders are created on /project-data but can only be
+        // DELETED from the admin data page (/admin-data); /project-data
+        // (VFolderNodesV2) does not expose the trash/delete actions.
+        await cleanupVFolderSafely(page, folderName, 'admin-data');
       });
 
       test(
@@ -146,8 +133,7 @@ test.describe(
             .getByRole('cell', { name: `VFolder Identicon ${folderName}` })
             .filter({ hasText: folderName });
           await folderRow.waitFor({ state: 'visible', timeout: 2000 });
-          await moveToTrashAndVerify(page, folderName);
-          await deleteForeverAndVerifyFromTrash(page, folderName);
+          await cleanupVFolderSafely(page, folderName);
         } catch {
           // Folder was not created; nothing to clean up
         }
