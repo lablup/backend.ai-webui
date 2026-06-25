@@ -32,7 +32,6 @@ If needed, setting the name of the session (optional) is also available.
 
   - Interactive compute session
 
-    - This is the type which has been supported from the initial version of the Backend.AI.
     - The compute session is used in a way that the user interacts with after
       creating a session without specifying a pre-defined execution script or
       command.
@@ -41,8 +40,6 @@ If needed, setting the name of the session (optional) is also available.
 
   - Batch compute session
 
-    - This type of session is supported via GUI from Backend.AI 22.03 (CLI has
-      supported the batch-type session before the 22.03).
     - Pre-define the script that will be executed when a compute session is
       ready.
     - This session will execute the script as soon as the compute session is ready, and then
@@ -286,8 +283,8 @@ By clicking the app dialog button on the far left, you can view the available ap
 ### Recent History
 
 
-'Session Launcher' page provides a set of options for creating sessions. As of 24.09,
-`Recent History` feature has been added to remember information about previously created sessions.
+'Session Launcher' page provides a set of options for creating sessions. The
+`Recent History` feature remembers information about previously created sessions.
 
 ![](../images/recent_history.png)
 
@@ -326,7 +323,7 @@ Click the 'Log' button next to the 'Hostname' in 'Kernels' to view the logs of t
 Backend.AI provides additional information for sessions in `PENDING`, `TERMINATED`, or `CANCELLED` states.
 Click the 'Info' button to check the details when available.
 
-When using Backend.AI Manager v26.2.0 or later, a clock icon button appears next to the session status tag
+A clock icon button appears next to the session status tag
 in the session detail panel. Clicking this icon opens the Session Scheduling History modal, which provides
 a detailed log of all scheduling decisions the system made for the session. For more information, refer to
 the [Session Scheduling History](#session-scheduling-history) section.
@@ -343,11 +340,6 @@ including status transitions, results, retry attempts, and any errors encountere
 useful for understanding why a session is delayed, stuck in `PENDING`, or has failed to start.
 
 ![](../images/session_scheduling_history_modal.png)
-
-:::note
-This feature is available from Backend.AI Manager v26.2.0 onwards. If the history icon does not appear
-next to the session status, your Backend.AI Manager may not support this feature yet.
-:::
 
 #### Filter Bar
 
@@ -695,7 +687,7 @@ before use.
 ## Save session commit
 
 
-Backend.AI supports \"Convert Session to Image\" feature from 24.03. Committing a `RUNNING` session will save the
+Backend.AI supports the \"Convert Session to Image\" feature. Committing a `RUNNING` session will save the
 current state of the session as a new image. Click the 'Commit' button (the fourth icon) in the session detail panel
 to open a dialog displaying the session information. After entering the session name, users can convert the session to
 a new image. The session name must be 4 to 32 characters long and can only contain alphanumeric letters, hyphens (`-`),

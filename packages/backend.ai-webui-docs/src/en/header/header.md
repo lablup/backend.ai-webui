@@ -111,9 +111,6 @@ Each item has the following meaning. Enter the desired value and click the
 `Update` button to update your information.
 
 - **Full Name**: User's name (up to 64 characters).
-- **Original password**: Your current password. This field is shown only when
-  connecting to a server prior to Backend.AI 26.4.0, and you must enter it
-  when setting a new password on such servers.
 - **New password**: New password (8 characters or more containing at least 1
   alphabet, number, and symbol). Click the eye icon to reveal the input.
 - **New password (again)**: Re-enter the new password for confirmation.
@@ -124,10 +121,6 @@ Each item has the following meaning. Enter the desired value and click the
   list does not include your current IP, a warning is shown.
 - **2FA Enabled**: Enable or disable two-factor authentication. When enabled,
   you must enter an OTP code at login.
-
-:::note
-The **Allowed client IPs** field is available from Backend.AI 26.4.0 and later.
-:::
 
 :::note
 Depending on the plugin settings, the `2FA Enabled` field might not be visible.

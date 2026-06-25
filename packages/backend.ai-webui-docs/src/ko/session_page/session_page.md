@@ -40,7 +40,7 @@ Backend.AI에서 `세션(session)`은 사용자가 할당된 자원을 사용하
 ![](../images/session_table_settings.png)
 
 :::tip
-Backend.AI Manager v26.2.0부터 세션 상세 정보 패널에서 각 세션의 상세 스케줄링 기록을 확인할 수 있습니다. 이를 통해 스케줄링 결정, 지연, 실패 등을 파악할 수 있습니다. 자세한 내용은 [세션 스케줄링 기록](#session-scheduling-history)을 참고하세요.
+세션 상세 정보 패널에서 각 세션의 상세 스케줄링 기록을 확인할 수 있습니다. 이를 통해 스케줄링 결정, 지연, 실패 등을 파악할 수 있습니다. 자세한 내용은 [세션 스케줄링 기록](../sessions_all/sessions_all.md#session-scheduling-history)을 참고하세요.
 :::
 
 :::note
@@ -52,6 +52,4 @@ Backend.AI Manager v26.2.0부터 세션 상세 정보 패널에서 각 세션의
 :::note
 세션 목록 도구 모음의 다운로드 버튼을 사용하여 세션 목록을 CSV 파일로 내보낼 수 있습니다.
 개인 세션 페이지에서 내보내는 CSV에는 본인의 세션만 포함됩니다.
-
-Backend.AI Manager 26.4.4 이상이 필요합니다. 이전 버전의 Manager에서는 프로젝트 전체 세션이 내보내질 수 있습니다.
 :::

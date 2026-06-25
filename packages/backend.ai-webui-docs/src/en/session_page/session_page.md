@@ -44,9 +44,9 @@ Within the column settings dialog, you can also drag columns to change the order
 ![](../images/session_table_settings.png)
 
 :::tip
-From Backend.AI Manager v26.2.0, you can view the detailed scheduling history for each session from the
+You can view the detailed scheduling history for each session from the
 session detail panel. This helps you understand scheduling decisions, delays, and failures. For more details,
-refer to [Session Scheduling History](#session-scheduling-history).
+refer to [Session Scheduling History](../sessions_all/sessions_all.md#session-scheduling-history).
 :::
 
 :::note
@@ -60,6 +60,4 @@ for details.
 :::note
 You can export the session list as a CSV file using the download button in the session list toolbar.
 The CSV export from the personal Sessions page includes only your own sessions.
-
-Requires Backend.AI Manager 26.4.4 or later. On older manager versions, the export may return all project-wide sessions.
 :::
