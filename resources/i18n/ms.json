@@ -424,6 +424,7 @@
     "RefreshModelInformation": "Refresh Model Maklumat",
     "Reset": "Tetapkan semula",
     "Retry": "Cuba semula",
+    "Revoke": "Batalkan",
     "Save": "Jimat",
     "SaveAndClose": "Simpan dan tutup",
     "SaveChanges": "Simpan Perubahan",
@@ -1864,6 +1865,16 @@
       "LoginWithRealm": "Log masuk dengan {{ realmName }}",
       "LoginWithSAML": "Log masuk dengan SAML"
     }
+  },
+  "loginSession": {
+    "AccessKey": "Kunci Akses",
+    "CreatedAt": "Dicipta Pada",
+    "InvalidatedAt": "Tidak Sah Pada",
+    "RevokeFailed": "Gagal membatalkan sesi log masuk.",
+    "RevokeSession": "Batalkan Sesi",
+    "RevokeSessionConfirm": "Adakah anda pasti mahu membatalkan sesi log masuk ini?",
+    "RevokeSucceeded": "Sesi log masuk berjaya dibatalkan.",
+    "User": "Pengguna"
   },
   "logs": {
     "ErrorMessage": "Mesej Ralat",
@@ -3342,6 +3353,7 @@
     "Language": "Bahasa",
     "LightMode": "Mod Cahaya",
     "LightTheme": "Mod Terang",
+    "LoginSessions": "Sesi Log Masuk",
     "Logo": "Logo CI",
     "Logs": "Log",
     "MaxConcurrentUploads": "Had muat naik fail serentak maksimum",

@@ -2,8 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { LoginSessionQuery as LoginSessionQueryType } from '../__generated__/LoginSessionQuery.graphql';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import ErrorLogList from '../components/ErrorLogList';
+import LoginSession, { LoginSessionQuery } from '../components/LoginSession';
 import MyKeypairInfoModalLegacy from '../components/MyKeypairInfoModalLegacy';
 import MyKeypairManagementModal from '../components/MyKeypairManagementModal';
 import SSHKeypairManagementModal from '../components/SSHKeypairManagementModal';
@@ -18,14 +20,14 @@ import { useThemeMode } from '../hooks/useThemeMode';
 import { SettingOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { App, Button, Skeleton, Typography } from 'antd';
-import Card from 'antd/es/card/Card';
-import { filterOutEmpty } from 'backend.ai-ui';
+import { BAICard, filterOutEmpty } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { Suspense, useState } from 'react';
+import { Suspense, useEffect, useEffectEvent, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import { useQueryLoader } from 'react-relay';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
-type TabKey = 'general' | 'logs';
+type TabKey = 'general' | 'logs' | 'login-sessions';
 export type ShellScriptType = 'bootstrap' | 'userconfig' | undefined;
 
 const tabParam = withDefault(StringParam, 'general');
@@ -37,6 +39,30 @@ const UserPreferencesPage = () => {
   const { message } = App.useApp();
   const baiClient = useSuspendedBackendaiClient();
   const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
+
+  const [loginSessionQueryRef, loadLoginSessionQuery] =
+    useQueryLoader<LoginSessionQueryType>(LoginSessionQuery);
+  // Lazily fetch login sessions only once the tab is active (covers both a tab
+  // click and a direct `?tab=login-sessions` URL restore), so the query never
+  // runs on the General/Logs tabs.
+  const ensureLoginSessionLoaded = useEffectEvent(() => {
+    if (curTabKey === 'login-sessions' && !loginSessionQueryRef) {
+      loadLoginSessionQuery(
+        {
+          orderBy: [{ field: 'CREATED_AT', direction: 'DESC' }],
+          limit: 10,
+          offset: 0,
+        },
+        { fetchPolicy: 'store-and-network' },
+      );
+    }
+  });
+  useEffect(
+    function loadLoginSessionOnTabActivation() {
+      ensureLoginSessionLoaded();
+    },
+    [curTabKey],
+  );
 
   const { themeMode, setThemeMode } = useThemeMode();
 
@@ -367,7 +393,7 @@ const UserPreferencesPage = () => {
 
   return (
     <>
-      <Card
+      <BAICard
         activeTabKey={curTabKey}
         onTabChange={(key) => setCurTabKey(key as TabKey)}
         tabList={[
@@ -378,6 +404,10 @@ const UserPreferencesPage = () => {
           {
             key: 'logs',
             label: t('userSettings.Logs'),
+          },
+          {
+            key: 'login-sessions',
+            label: t('userSettings.LoginSessions'),
           },
         ]}
       >
@@ -397,8 +427,20 @@ const UserPreferencesPage = () => {
               <ErrorLogList />
             </BAIErrorBoundary>
           )}
+          {curTabKey === 'login-sessions' && (
+            <BAIErrorBoundary>
+              {loginSessionQueryRef ? (
+                <LoginSession
+                  queryRef={loginSessionQueryRef}
+                  onReload={loadLoginSessionQuery}
+                />
+              ) : (
+                <Skeleton active />
+              )}
+            </BAIErrorBoundary>
+          )}
         </Suspense>
-      </Card>
+      </BAICard>
       {baiClient?.supports('my-keypairs') ? (
         <MyKeypairManagementModal
           open={isOpenSSHKeypairInfoModal}

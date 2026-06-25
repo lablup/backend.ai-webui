@@ -424,6 +424,7 @@
     "RefreshModelInformation": "Päivitä mallin tiedot",
     "Reset": "Nollaa",
     "Retry": "Yritä uudelleen",
+    "Revoke": "Peruuta",
     "Save": "Tallenna",
     "SaveAndClose": "Tallenna ja sulje",
     "SaveChanges": "Tallenna muutokset",
@@ -1864,6 +1865,16 @@
       "LoginWithRealm": "Kirjaudu sisään {{ realmName }}",
       "LoginWithSAML": "Kirjautuminen SAML:llä"
     }
+  },
+  "loginSession": {
+    "AccessKey": "Pääsyavain",
+    "CreatedAt": "Luotu klo",
+    "InvalidatedAt": "Mitätöity klo",
+    "RevokeFailed": "Kirjautumisistunnon peruuttaminen epäonnistui.",
+    "RevokeSession": "Peruuta istunto",
+    "RevokeSessionConfirm": "Haluatko varmasti peruuttaa tämän kirjautumisistunnon?",
+    "RevokeSucceeded": "Kirjautumisistunto peruutettu onnistuneesti.",
+    "User": "Käyttäjä"
   },
   "logs": {
     "ErrorMessage": "Virheilmoitus",
@@ -3342,6 +3353,7 @@
     "Language": "Kieli",
     "LightMode": "Valotila",
     "LightTheme": "Vaalea tila",
+    "LoginSessions": "Kirjautumisistunnot",
     "Logo": "CI-logo",
     "Logs": "Lokit",
     "MaxConcurrentUploads": "Samanaikaisen tiedostolatauksen enimmäisraja",

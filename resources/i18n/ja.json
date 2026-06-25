@@ -424,6 +424,7 @@
     "RefreshModelInformation": "モデル情報の更新",
     "Reset": "初期化",
     "Retry": "再試行",
+    "Revoke": "無効化",
     "Save": "セーブ",
     "SaveAndClose": "保存して閉じます",
     "SaveChanges": "変更内容を保存",
@@ -1866,6 +1867,16 @@
       "LoginWithRealm": "{{ realmName }}ログイン",
       "LoginWithSAML": "SAMLログイン"
     }
+  },
+  "loginSession": {
+    "AccessKey": "アクセスキー",
+    "CreatedAt": "作成日",
+    "InvalidatedAt": "無効化日",
+    "RevokeFailed": "ログインセッションの無効化に失敗しました。",
+    "RevokeSession": "セッションを無効化",
+    "RevokeSessionConfirm": "このログインセッションを無効化してもよろしいですか？",
+    "RevokeSucceeded": "ログインセッションを無効化しました。",
+    "User": "ユーザー"
   },
   "logs": {
     "ErrorMessage": "エラーメッセージ",
@@ -3344,6 +3355,7 @@
     "Language": "言語",
     "LightMode": "ライトモード",
     "LightTheme": "ライトモード",
+    "LoginSessions": "ログインセッション",
     "Logo": "CIロゴ",
     "Logs": "ログ",
     "MaxConcurrentUploads": "最大同時ファイルアップロード制限",

@@ -424,6 +424,7 @@
     "RefreshModelInformation": "Atualizar informações sobre o modelo",
     "Reset": "Reiniciar",
     "Retry": "Tentar novamente",
+    "Revoke": "Revogar",
     "Save": "Salve ",
     "SaveAndClose": "Salvar e fechar",
     "SaveChanges": "Salvar alterações",
@@ -1864,6 +1865,16 @@
       "LoginWithRealm": "Iniciar sessão com {{ realmName }}",
       "LoginWithSAML": "Iniciar sessão com SAML"
     }
+  },
+  "loginSession": {
+    "AccessKey": "Chave de acesso",
+    "CreatedAt": "Criado em",
+    "InvalidatedAt": "Invalidado em",
+    "RevokeFailed": "Falha ao revogar a sessão de login.",
+    "RevokeSession": "Revogar sessão",
+    "RevokeSessionConfirm": "Tem certeza de que deseja revogar esta sessão de login?",
+    "RevokeSucceeded": "Sessão de login revogada com sucesso.",
+    "User": "Usuário"
   },
   "logs": {
     "ErrorMessage": "Mensagem de erro",
@@ -3342,6 +3353,7 @@
     "Language": "Língua",
     "LightMode": "Modo claro",
     "LightTheme": "Modo claro",
+    "LoginSessions": "Sessões de login",
     "Logo": "Logotipo do CI",
     "Logs": "Histórico",
     "MaxConcurrentUploads": "Limite máximo de upload simultâneo de arquivos",
