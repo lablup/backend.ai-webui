@@ -27,8 +27,7 @@ const meta: Meta<typeof BAIGraphQLPropertyFilter> = {
 New in this version:
 - **DateTime support**: When a property has type 'datetime', a DatePicker with time selection is rendered instead of a text input. Values are serialized as ISO strings and displayed in filter tags as 'YYYY-MM-DD HH:mm'.
 - **UUID support**: UUID type properties use \`equals\`, \`notEquals\`, \`in\`, \`notIn\` operators and support validation rules.
-- **First-class \`custom\` type**: Set \`type: 'custom'\` and supply \`renderInput\` to drive a property with any domain-specific control (e.g., a user picker). The renderer receives a controlled \`value\`/\`setValue\` draft plus \`onConfirm(value, label?)\` to commit a condition with an optional human-readable tag label (so a tag can show a user's email instead of the raw UUID). \`createUserFilterProperty\` ships a ready-made user picker built on this. Set \`singleValue\` so re-selecting replaces the condition instead of stacking tags.
-- **Custom input via renderInput**: Replace the default AutoComplete input with any component (e.g., an async select). Call \`onConfirm(value)\` to add the condition.
+- **Custom input via \`renderInput\`**: Replace the default AutoComplete input with any controlled control (e.g., a user/domain picker or async select) bound to the standard antd \`value\`/\`onChange\` interface. The control sets the draft via \`onChange(value)\`; the filter commits it as a condition as soon as it becomes non-empty (so a single-select picker confirms on selection) and serializes it per the property's \`type\`. Keep using a built-in \`type\` (e.g. \`uuid\`) that matches what the control emits, and set \`singleValue\` so re-selecting replaces the condition instead of stacking tags. \`createUserFilterProperty\` ships a ready-made user picker built on this.
 - Operatorless fields via valueMode: 'scalar' for properties that should emit direct scalar values (e.g., { isUrgent: true }). Use implicitOperator (defaults to 'equals') to control how tags are displayed in the UI.
 
 The component generates GraphQL-compatible filter objects that can be directly used in GraphQL queries, enabling powerful and flexible data filtering across the platform.
@@ -78,7 +77,7 @@ The component generates GraphQL-compatible filter objects that can be directly u
 FilterProperty = {
   key: string;              // Property key in the GraphQL schema
   propertyLabel: string;    // Display label for the property
-  type: 'string' | 'number' | 'boolean' | 'enum' | 'uuid' | 'datetime' | 'custom';
+  type: 'string' | 'number' | 'boolean' | 'enum' | 'uuid' | 'datetime';
   operators?: FilterOperator[];  // Available operators for this property
   defaultOperator?: FilterOperator;
   options?: AutoCompleteProps['options'];  // Autocomplete suggestions
@@ -96,18 +95,14 @@ FilterProperty = {
   // Replace any existing condition for this key on confirm instead of stacking
   // a new tag — use for single-value pickers. Default false.
   singleValue?: boolean;
-  // Custom input renderer — required for type: 'custom', replaces the default
-  // AutoComplete for any type. \`value\`/\`setValue\` are the controlled draft a
-  // controlled control binds to; \`onConfirm(value, label?)\` commits the draft as
-  // a condition, with an optional human-readable tag label (e.g. user email
-  // instead of UUID). \`isValid\`/\`errorMessage\` reflect the latest rule.validate
-  // outcome so custom inputs can show errors.
+  // Custom input renderer — replaces the default AutoComplete with a controlled
+  // control (e.g. BAIUserSelect) bound to the standard \`value\`/\`onChange\`
+  // interface. \`onChange(value)\` sets the draft; the filter commits it as a
+  // condition once non-empty (single-select pickers confirm on selection) and
+  // serializes it per the property's \`type\`.
   renderInput?: (props: {
     value: string | undefined;
-    setValue: (value: string | undefined) => void;
-    onConfirm: (value: string, label?: string) => void;
-    isValid: boolean;
-    errorMessage?: string;
+    onChange: (value: string | undefined) => void;
   }) => ReactNode;
 }
         `,
@@ -857,7 +852,7 @@ export const WithRenderInput: Story = {
     docs: {
       description: {
         story:
-          'When `renderInput` is provided, the default AutoComplete is replaced with a custom component. Call `onConfirm(value)` to add the condition. Useful for async selects (e.g., fetching options from an API).',
+          'When `renderInput` is provided, the default AutoComplete is replaced with a controlled control bound to `value`/`onChange`. The filter commits the value as a condition as soon as the control emits a non-empty value. Useful for async selects (e.g., fetching options from an API).',
       },
     },
   },
@@ -874,18 +869,17 @@ export const WithRenderInput: Story = {
         propertyLabel: 'Storage Host',
         type: 'string',
         defaultOperator: 'equals',
-        renderInput: ({ onConfirm }) => (
+        renderInput: ({ value, onChange }) => (
           <Select
             placeholder="Select storage host"
             style={{ minWidth: 180 }}
+            value={value}
             options={[
               { label: 'local:volume1', value: 'local:volume1' },
               { label: 'local:volume2', value: 'local:volume2' },
               { label: 'nfs:data', value: 'nfs:data' },
             ]}
-            onChange={(value) => {
-              if (value) onConfirm(value);
-            }}
+            onChange={(next) => onChange(next ?? undefined)}
           />
         ),
       },
@@ -934,10 +928,8 @@ export const WithScalarValueModeOnString: Story = {
   },
 };
 
-// --- Custom type ('custom') ---------------------------------------------------
+// --- Custom input (controlled value/onChange) --------------------------------
 
-// label != value, so the committed value (an opaque id) differs from the tag
-// label — demonstrating human-readable tag rendering for custom inputs.
 const sampleOwnerOptions = [
   { label: 'alice@example.com', value: 'owner-uuid-0001' },
   { label: 'bob@example.com', value: 'owner-uuid-0002' },
@@ -945,12 +937,12 @@ const sampleOwnerOptions = [
 ];
 
 export const WithCustomType: Story = {
-  name: "Custom type ('custom')",
+  name: 'Custom input (controlled value/onChange)',
   parameters: {
     docs: {
       description: {
         story:
-          "A first-class `type: 'custom'` property. `renderInput` binds a controlled antd Select to `value`/`setValue` and commits via `onConfirm(value, label)`. The filter emits the raw value (an opaque id) while the tag shows the human-readable label. `singleValue: true` makes re-selecting replace the condition instead of stacking tags.",
+          "A property whose input is a controlled antd Select supplied via `renderInput`. The Select binds to `value`/`onChange`; selecting an option emits its value and the filter commits it as a condition, serialized per `type: 'uuid'` → `{ owner: { id: { equals: <id> } } }`. `singleValue: true` makes re-selecting replace the condition instead of stacking tags.",
       },
     },
   },
@@ -959,10 +951,10 @@ export const WithCustomType: Story = {
       {
         key: 'owner.id',
         propertyLabel: 'Owner',
-        type: 'custom',
+        type: 'uuid',
         fixedOperator: 'equals',
         singleValue: true,
-        renderInput: ({ value, setValue, onConfirm }) => (
+        renderInput: ({ value, onChange }) => (
           <Select
             showSearch
             placeholder="Select owner"
@@ -970,22 +962,13 @@ export const WithCustomType: Story = {
             value={value}
             optionFilterProp="label"
             options={sampleOwnerOptions}
-            onChange={(next, option) => {
-              setValue(next);
-              if (next) {
-                const label = Array.isArray(option)
-                  ? option[0]?.label
-                  : option?.label;
-                onConfirm(next, typeof label === 'string' ? label : undefined);
-                setValue(undefined);
-              }
-            }}
+            onChange={(next) => onChange(next ?? undefined)}
           />
         ),
       },
     ],
     combinationMode: 'AND',
-    onChange: action('custom type filter changed'),
+    onChange: action('custom input filter changed'),
   },
 };
 
@@ -1088,7 +1071,7 @@ export const WithUserFilterProperty: Story = {
     docs: {
       description: {
         story:
-          "The ready-made `createUserFilterProperty` factory wires `BAIUserSelect` into a `custom` property. Operators search users by email; the filter submits the resolved local user id (UUID) under the configured key (here `createdBy.id` → `{ createdBy: { id: { equals: uuid } } }`), while the tag displays the chosen user's email instead of the UUID. Single-value: re-selecting replaces the condition.",
+          "The ready-made `createUserFilterProperty` factory wires `BAIUserSelect` into a `renderInput` control on a `type: 'uuid'` property. The picker searches users by email and emits the resolved local user id (UUID); the filter commits it under the configured key (here `createdBy.id` → `{ createdBy: { id: { equals: uuid } } }`). Single-value: re-selecting replaces the condition.",
       },
     },
   },

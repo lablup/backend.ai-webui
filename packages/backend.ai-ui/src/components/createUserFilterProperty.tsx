@@ -24,10 +24,10 @@ export interface CreateUserFilterPropertyOptions {
 }
 
 /**
- * Builds a `BAIGraphQLPropertyFilter` `FilterProperty` (of `type: 'custom'`)
- * backed by `BAIUserSelect`. Operators search users by name/email and the
- * filter submits the resolved local user id (UUID), while the tag displays the
- * chosen user's email instead of the raw UUID.
+ * Builds a `BAIGraphQLPropertyFilter` `FilterProperty` (of `type: 'uuid'`)
+ * backed by `BAIUserSelect`. The control searches users by name/email and emits
+ * the resolved local user id (UUID) as the controlled `value`; the filter
+ * commits it as a condition on selection.
  *
  * Single-value: re-selecting a user replaces the existing condition rather than
  * stacking another tag.
@@ -51,36 +51,22 @@ export function createUserFilterProperty({
     key,
     propertyLabel,
     placeholder,
-    type: 'custom',
+    type: 'uuid',
     fixedOperator,
     valueMode: 'operator',
     singleValue: true,
-    renderInput: ({ value, setValue, onConfirm }) => (
+    renderInput: ({ value, onChange }) => (
       <BAIUserSelect
         valuePropName="id"
         excludeInactive
         value={value}
         placeholder={placeholder}
         style={{ minWidth: 220 }}
-        onChange={(nextValue, option) => {
+        onChange={(nextValue) => {
           const userId = _.isArray(nextValue)
             ? nextValue[0]
             : (nextValue ?? undefined);
-          setValue(userId);
-          if (userId) {
-            // BAIUserSelect (labelInValue) hands back the matched option whose
-            // `label` is the user's email — use it as the human-readable tag.
-            // This holds because the selection always originates from the open
-            // dropdown list (where options carry the email label); a value
-            // restored without picking would instead surface the raw id.
-            const matchedOption = _.isArray(option) ? option[0] : option;
-            const label = _.isString(matchedOption?.label)
-              ? matchedOption.label
-              : undefined;
-            onConfirm(userId, label);
-            // Clear the picker; the confirmed user lives on as a tag.
-            setValue(undefined);
-          }
+          onChange(userId);
         }}
       />
     ),

@@ -358,8 +358,8 @@ const AdminModelCardListPage: React.FC = () => {
                 type: 'string',
                 operators: ['equals', 'notEquals'],
                 defaultOperator: 'equals',
-                renderInput: ({ onConfirm }) => (
-                  <StorageHostFilterInput onConfirm={onConfirm} />
+                renderInput: ({ value, onChange }) => (
+                  <StorageHostFilterInput value={value} onChange={onChange} />
                 ),
               },
             ]}
