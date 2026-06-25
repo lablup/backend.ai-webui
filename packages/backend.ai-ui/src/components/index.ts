@@ -30,6 +30,8 @@ export type {
   FilterProperty as BAIGraphQLFilterProperty,
   BAIGraphQLPropertyFilterProps,
 } from './BAIGraphQLPropertyFilter';
+export { createUserFilterProperty } from './createUserFilterProperty';
+export type { CreateUserFilterPropertyOptions } from './createUserFilterProperty';
 export { default as BAIRowWrapWithDividers } from './BAIRowWrapWithDividers';
 export { default as BAIStatistic } from './BAIStatistic';
 export type { BAIStatisticProps } from './BAIStatistic';

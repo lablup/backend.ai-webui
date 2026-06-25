@@ -7,25 +7,28 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface StorageHostFilterInputProps {
-  onConfirm: (value: string) => void;
+  value: string | undefined;
+  onChange: (value: string | undefined) => void;
 }
 
 const StorageHostFilterInput: React.FC<StorageHostFilterInputProps> = ({
-  onConfirm,
+  value,
+  onChange,
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const [resetKey, setResetKey] = React.useState(0);
   return (
     <BAIStorageHostSelect
-      key={resetKey}
+      value={value}
       placeholder={t('import.StorageHost')}
-      onChange={(value) => {
+      onChange={(nextValue) => {
         // BAIStorageHostSelect supports multi-select modes that emit string[].
         // The filter only accepts a single scalar, so ignore array values.
-        if (typeof value !== 'string' || !value) return;
-        onConfirm(value);
-        setResetKey((k) => k + 1);
+        if (typeof nextValue !== 'string' || !nextValue) {
+          onChange(undefined);
+          return;
+        }
+        onChange(nextValue);
       }}
       style={{ minWidth: 180 }}
     />

@@ -150,14 +150,25 @@ type BaseFilterProperty = {
   valueMode?: 'scalar' | 'operator';
   // For UI/tag display when valueMode='scalar', use this operator symbol (default 'equals').
   implicitOperator?: FilterOperator;
-  // Custom input renderer. When provided, replaces the default AutoComplete input.
-  // Call onConfirm(value) to add the condition. `isValid` and `errorMessage`
-  // reflect the latest `rule.validate` outcome so the custom input can surface
-  // the same error UX the default AutoComplete shows via Tooltip.
+  // When true, committing a new condition for this property replaces any
+  // existing condition with the same property key instead of appending another
+  // tag. Use for single-value pickers (e.g. "filter by user") where stacking
+  // multiple conditions for the same key would be confusing. Defaults to false
+  // (the historical multi-condition behavior).
+  singleValue?: boolean;
+  // Custom input renderer. When provided it replaces the default AutoComplete
+  // input with a controlled control (e.g. `BAIUserSelect`, `BAIDomainSelect`)
+  // bound to the standard antd `value` / `onChange` interface:
+  //  - `value`: the controlled draft value owned by the filter.
+  //  - `onChange(value)`: set the draft. As soon as the draft becomes non-empty
+  //    the filter commits it as a condition (replacing the prior one when
+  //    `singleValue`) and clears the draft, so a single-select picker confirms
+  //    on selection. The committed value is serialized per the property's
+  //    `type` (e.g. `uuid` keeps the string, `number` is coerced), so pick the
+  //    built-in `type` that matches what the control emits — not a bespoke one.
   renderInput?: (props: {
-    onConfirm: (value: string) => void;
-    isValid: boolean;
-    errorMessage?: string;
+    value: string | undefined;
+    onChange: (value: string | undefined) => void;
   }) => React.ReactNode;
 };
 
@@ -535,6 +546,12 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
   const [isOpenAutoComplete, setIsOpenAutoComplete] = useState(false);
   const [isValid, setIsValid] = useState(true);
   const [isFocused, setIsFocused] = useState(false);
+  // Controlled draft value handed to a `renderInput` custom control. The input
+  // owns its display via `value`/`onChange`; once the draft becomes non-empty it
+  // is committed as a condition and the draft is cleared.
+  const [customDraftValue, setCustomDraftValue] = useState<
+    string | undefined
+  >();
 
   const propertyOptions = filterProperties.map((property) => ({
     label: property.propertyLabel,
@@ -628,8 +645,14 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
       type: selectedProperty.type,
     };
 
-    updateConditions([...conditions, newCondition]);
+    // Single-value properties replace any existing condition for the same key
+    // instead of stacking another tag.
+    const base = selectedProperty.singleValue
+      ? conditions.filter((c) => c.property !== selectedProperty.key)
+      : conditions;
+    updateConditions([...base, newCondition]);
     setSearch('');
+    setCustomDraftValue(undefined);
   };
 
   const removeCondition = (id: string) => {
@@ -688,6 +711,20 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
     }
   }, [selectedDate]);
 
+  // A `renderInput` control only exposes `value`/`onChange`; committing is the
+  // filter's responsibility. As soon as the draft becomes non-empty, commit it
+  // as a condition (single-select pickers confirm on selection) and clear it
+  // (`addCondition` resets `customDraftValue`).
+  const commitCustomDraftEvent = useEffectEvent(() => {
+    if (!_.isEmpty(customDraftValue)) {
+      addCondition(customDraftValue as string);
+    }
+  });
+
+  useEffect(() => {
+    commitCustomDraftEvent();
+  }, [customDraftValue]);
+
   return (
     <BAIFlex direction="column" gap="xs" align="start" {...containerProps}>
       <Space.Compact>
@@ -698,6 +735,8 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
           onChange={(_value, options) => {
             const property = _.castArray(options)[0].filter;
             setSelectedProperty(property);
+            // Clear any in-progress custom draft when switching properties.
+            setCustomDraftValue(undefined);
             const mode =
               property.valueMode ||
               (property.type === 'boolean' ? 'scalar' : 'operator');
@@ -730,9 +769,8 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
         )}
         {selectedProperty?.renderInput ? (
           selectedProperty.renderInput({
-            onConfirm: addCondition,
-            isValid,
-            errorMessage: selectedProperty.rule?.message,
+            value: customDraftValue,
+            onChange: setCustomDraftValue,
           })
         ) : selectedProperty?.type === 'datetime' ? (
           <DatePicker
@@ -756,7 +794,7 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
               value={search}
               open={isOpenAutoComplete}
               onOpenChange={setIsOpenAutoComplete}
-              onSelect={addCondition}
+              onSelect={(value) => addCondition(value)}
               onChange={(value) => {
                 setIsValid(true);
                 setSearch(value);
@@ -773,7 +811,7 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
               onFocus={() => setIsFocused(true)}
             >
               <Input.Search
-                onSearch={addCondition}
+                onSearch={(value) => addCondition(value)}
                 allowClear
                 status={!isValid && isFocused ? 'error' : undefined}
               />

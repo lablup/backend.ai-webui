@@ -5,7 +5,14 @@
 import { UserFolderPermissionPanelV2Query } from '../__generated__/UserFolderPermissionPanelV2Query.graphql';
 import { UserFolderPermissionPanelV2_storageVolumeFrgmt$key } from '../__generated__/UserFolderPermissionPanelV2_storageVolumeFrgmt.graphql';
 import KeypairResourcePolicyStoragePermissionTableV2 from './KeypairResourcePolicyStoragePermissionTableV2';
-import { BAIAlert, BAICard, BAIFlex, BAIUserSelect } from 'backend.ai-ui';
+import {
+  BAIAlert,
+  BAICard,
+  BAIFlex,
+  BAIGraphQLPropertyFilter,
+  createUserFilterProperty,
+  type GraphQLFilter,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -56,10 +63,15 @@ const UserFolderPermissionPanelV2: React.FC<
     vfolder_host_permissions?.vfolder_host_permission_list ?? [],
   );
 
-  // Local user id (UUID) of the selected user, or undefined to show all
-  // policies. `BAIUserSelect` with `valuePropName="id"` yields the local id
-  // that `keypair.userId` (a `UUIDFilter`) expects.
-  const [selectedUserId, setSelectedUserId] = useState<string | undefined>();
+  // The custom user filter property emits the local user id (UUID) under
+  // `keypair.userId.equals` — exactly what the table's `keypair.userId`
+  // (`UUIDFilter`) expects. It is single-value, so at most one condition exists.
+  const [userFilter, setUserFilter] = useState<GraphQLFilter | undefined>();
+  // `GraphQLFilter` is an index-signature type, so the nested `equals` is `any`
+  // (could be null/non-string). Guard at runtime so only a real string user id
+  // reaches the table.
+  const rawUserId = userFilter?.keypair?.userId?.equals;
+  const selectedUserId = _.isString(rawUserId) ? rawUserId : undefined;
 
   return (
     <BAIFlex direction="column" align="stretch" gap="md">
@@ -71,27 +83,25 @@ const UserFolderPermissionPanelV2: React.FC<
 
       <BAICard
         title={t('storageHost.permission.KeypairResourcePolicies')}
-        extra={
-          <BAIUserSelect
-            valuePropName="id"
-            excludeInactive
-            allowClear
-            value={selectedUserId}
-            onChange={(value) =>
-              setSelectedUserId(
-                _.isArray(value) ? value[0] : (value ?? undefined),
-              )
-            }
-            style={{ width: 320 }}
-          />
-        }
         styles={{ body: { paddingTop: 0 } }}
       >
-        <KeypairResourcePolicyStoragePermissionTableV2
-          storageVolumeFrgmt={storageVolume}
-          userId={selectedUserId}
-          permissionKeys={permissionKeys}
-        />
+        <BAIFlex direction="column" align="stretch" gap="sm">
+          <BAIGraphQLPropertyFilter
+            value={userFilter}
+            onChange={setUserFilter}
+            filterProperties={[
+              createUserFilterProperty({
+                key: 'keypair.userId',
+                propertyLabel: t('storageHost.permission.User'),
+              }),
+            ]}
+          />
+          <KeypairResourcePolicyStoragePermissionTableV2
+            storageVolumeFrgmt={storageVolume}
+            userId={selectedUserId}
+            permissionKeys={permissionKeys}
+          />
+        </BAIFlex>
       </BAICard>
     </BAIFlex>
   );
