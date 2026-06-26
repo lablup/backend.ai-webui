@@ -122,11 +122,11 @@ The Review step (step 4 of the wizard) renders the start command and bootstrap s
 - **Port**: The container port that the inference server listens on (default: `8000`).
 - **Enable Health Check**: When enabled, the system periodically sends HTTP requests to the inference server to verify it is responding correctly. When disabled (the default for new revisions), no health check is configured and unhealthy replicas are not automatically detected. Turn this on for production deployments. When **Enable Health Check** is checked, the following additional fields appear:
    * **Path**: The HTTP endpoint path called during service health checks (default: `/health`).
-   * **Interval**: Seconds between consecutive health checks (default: `10.0`).
-   * **Max Retries**: Maximum consecutive health check failures before the replica is marked `UNHEALTHY` (default: `10`).
-   * **Max Wait Time**: Timeout in seconds for each individual health check request (default: `15.0`).
-   * **Expected Status Code**: The HTTP response status code that indicates a healthy service (default: `200`).
-   * **Startup Grace Period**: Grace period in seconds after container startup during which failed health checks are tolerated; the replica becomes active on the first successful check (default: `60.0`). Increase this for large models that take longer to load.
+   * **Interval**: Seconds between consecutive health checks.
+   * **Max Retries**: Maximum consecutive health check failures before the replica is marked `UNHEALTHY`.
+   * **Max Wait Time**: Timeout in seconds for each individual health check request.
+   * **Expected Status Code**: The HTTP response status code that indicates a healthy service.
+   * **Startup Grace Period**: Grace period in seconds after container startup during which failed health checks are tolerated; the replica becomes active on the first successful check. Increase this for large models that take longer to load.
 
 ##### Use Config File Mode
 
@@ -156,11 +156,11 @@ Administrators can mark individual parameters as required. Required parameters a
 In Advanced Mode, all runtime variants — including `vLLM` and `SGLang` — include an **Enable Health Check** section at the bottom of the Runtime Parameters area. This is off by default for new revisions. When you check **Enable Health Check**, the following fields appear and are required:
 
 - **Path**: The HTTP endpoint path the system will call to verify service health.
-- **Interval**: Seconds between checks (default: `10.0`).
-- **Max Retries**: Consecutive failures allowed before the replica is marked `UNHEALTHY` (default: `10`).
-- **Max Wait Time**: Per-request timeout in seconds (default: `15.0`).
-- **Expected Status Code**: HTTP status code that indicates a healthy response (default: `200`).
-- **Startup Grace Period**: Seconds to wait after container startup before health check failures count against the replica (default: `60.0`).
+- **Interval**: Seconds between checks.
+- **Max Retries**: Consecutive failures allowed before the replica is marked `UNHEALTHY`.
+- **Max Wait Time**: Per-request timeout in seconds.
+- **Expected Status Code**: HTTP status code that indicates a healthy response.
+- **Startup Grace Period**: Seconds to wait after container startup before health check failures count against the replica.
 
 **vLLM Runtime Parameters**
 
@@ -373,7 +373,7 @@ instructions on how to create a folder.
 
 ![](../images/model_type_folder_creation.png)
 
-After creating the folder, select the 'MODELS' tab in the Data
+After creating the folder, select the `MODELS` tab in the Data
 page, click on the recently created model type folder icon to open the
 folder explorer, and upload the model definition file.
 For more information on how to use the folder explorer,
@@ -385,60 +385,62 @@ please refer to the [Explore Folder](#explore-folder) section.
 
 <a id="service-definition-file"></a>
 
-#### Creating a Service Definition File
+#### Pre-configuring a Deployment (`deployment-config.yaml`)
 
-The service definition file (`service-definition.toml`) allows administrators to pre-configure the resources, environment, and runtime settings required for a model service. When this file is present in a model folder, the system uses these settings as default values when creating a service.
-
-Both `model-definition.yaml` and `service-definition.toml` must be present in the
-model folder to enable the `Deploy` button on the Model Store page. These two files
-work together: the model definition specifies the model and inference server
-configuration, while the service definition specifies the runtime environment,
-resource allocation, and environment variables.
-
-The service definition file follows the TOML format with sections organized by runtime variant. Each section configures a specific aspect of the service:
-
-```toml
-[vllm.environment]
-image        = "example.com/model-server:latest"
-architecture = "x86_64"
-
-[vllm.resource_slots]
-cpu = 1
-mem = "8gb"
-"cuda.shares" = "0.5"
-
-[vllm.environ]
-MODEL_NAME = "example-model-name"
-```
-
-**Key-Value Descriptions for Service Definition File**
-
-- `[{runtime}.environment]`: Specifies the container image and architecture for the model service.
-
-   - `image` (Required): The full path of the container image to use for the inference service (e.g., `example.com/model-server:latest`).
-   - `architecture` (Required): The CPU architecture of the container image (e.g., `x86_64`, `aarch64`).
-
-- `[{runtime}.resource_slots]`: Defines the compute resources allocated to the model service.
-
-   - `cpu`: Number of CPU cores to allocate (e.g., `1`, `2`, `4`).
-   - `mem`: Amount of memory to allocate. Supports unit suffixes (e.g., `"8gb"`, `"16gb"`).
-   - `"cuda.shares"`: Fractional GPU (fGPU) shares to allocate (e.g., `"0.5"`, `"1.0"`). This value is quoted because the key contains a dot.
-
-- `[{runtime}.environ]`: Sets environment variables that will be passed to the inference service container.
-
-   - You can define any environment variables required by the runtime. For example, `MODEL_NAME` is commonly used to specify which model to load.
+You can place a `deployment-config.yaml` file in a model folder to pre-configure the resources, environment, and runtime settings used when a deployment is created from that model. When the file is present, its values are used as **defaults**; anything you set at deployment time (in the Add Revision form or the API request) overrides them.
 
 :::note
-The `{runtime}` prefix in each section header corresponds to the runtime variant
-name (e.g., `vllm`, `nim`, `custom`). The system matches this prefix with the
-selected runtime variant when creating the service.
+This file was previously named `service-definition.toml` (TOML format). The legacy `service-definition.toml` is still read as a fallback, but it is **deprecated** — prefer `deployment-config.yaml` for new model folders.
 :::
 
+`deployment-config.yaml` is **optional** and does not gate deployment. You can deploy a model whether or not the file is present — a missing or malformed file is simply skipped. Together with the optional `model-definition.yaml` (which describes the model and inference server), it lets administrators ship sensible defaults alongside a model.
+
+Values are resolved through a **three-level override hierarchy**, from lowest to highest priority:
+
+1. **Root-level defaults** — apply to every runtime variant.
+2. **Runtime-variant section** (for example `vllm`, `sglang`, `tgi`) — overrides individual fields for that variant only.
+3. **Deployment-time input** (Add Revision form / API request) — overrides everything.
+
+```yaml title="deployment-config.yaml"
+# Root level — defaults for all runtime variants
+environment:
+  image: "example.com/model-server:latest"
+  architecture: "x86_64"
+
+resource_slots:
+  cpu: 4
+  mem: "16gb"
+  "cuda.shares": "0.5"
+
+environ:
+  MODEL_NAME: "example-model-name"
+
+resource_opts:
+  shmem: "8g"
+
+# vLLM variant — overrides only the listed fields
+vllm:
+  environment:
+    image: "vllm-optimized:0.4.0"
+  resource_slots:
+    cpu: 8
+    "cuda.device": 2
+```
+
+**Field reference**
+
+- `environment`: Container image and architecture for the inference service.
+   - `image`: Full path of the container image (e.g., `example.com/model-server:latest`).
+   - `architecture`: CPU architecture of the image (e.g., `x86_64`, `aarch64`).
+- `resource_slots`: Compute resources allocated to each replica.
+   - `cpu`: Number of CPU cores (e.g., `4`, `8`).
+   - `mem`: Memory amount with a unit suffix (e.g., `"16gb"`).
+   - `"cuda.shares"` / `"cuda.device"`: Fractional or whole GPU allocation. Quote keys that contain a dot.
+- `environ`: Environment variables passed to the inference service container. Root and variant values are merged.
+- `resource_opts`: Additional resource options such as `shmem` (shared memory size).
+
 :::note
-When a service is created from the Model Store using the `Deploy` button, the
-settings from `service-definition.toml` are applied automatically. If you later
-need to adjust the resource allocation, you can modify the service through the
-Deployments page.
+For a vLLM deployment, the root defaults are merged with the `vllm` section (variant fields win), and your deployment-time input then overrides both. Only the fields listed in a variant section are overridden; everything else falls back to the root level.
 :::
 
 <a id="quick-deploy"></a>

@@ -99,9 +99,10 @@ achieves more intuitive use.
 | --- | --- | --- |
 | AMD | MI250X or later |  |
 | Furiosa | Warboy / RNGD |  |
+| Google | TPU |  |
 | Graphcore | IPU |  |
 | Groq | Groqcard |  |
-| HyperAccel |  |  |
+| HyperAccel | LPU |  |
 | Intel | Gaudi 2 and 3 | Memory usage based automatic idle resource reclamation |
 | NVIDIA support       | CUDA compute capability 7.5 or later     | (Enterprise) Fractional GPU virtualization and sharing |
 |                      |                                          | for containers                                        |
@@ -113,7 +114,7 @@ achieves more intuitive use.
 |                      |                                          | GPUDirect storage support                             |
 |                      |                                          | NGC (NVIDIA GPU Cloud) image integration              |
 |                      |                                          | GPU-GPU Network auto configuration                    |
-| Rebellions           | ATOM / ATOM+                             |                                                       |
+| Rebellions           | ATOM / ATOM+ / ATOM-Max                             |                                                       |
 | SambaNova            | SN30/40L                                 |                                                       |
 | Sapeon               | X220 / X330                              |                                                       |
 | Tenstorrent          | Wormhole                                 |                                                       |

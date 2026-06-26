@@ -53,8 +53,8 @@ To add new comparison chat cards, click the comparison icon button located in th
 
 ![](../images/add_cards.png)
 
-To remove a chat session, click on the 'more' button located in the upper right corner of the chat card.
-Then a dropdown menu will appear, and users can select 'Delete Chat' to remove a chat session.
+To remove a chat session, click on the `more` button located in the upper right corner of the chat card.
+Then a dropdown menu will appear, and users can select `Delete Chat` to remove a chat session.
 Please be cautious as this will delete all entered content.
 
 ![](../images/delete_chatting_session.png)
@@ -63,7 +63,7 @@ Please be cautious as this will delete all entered content.
 
 ## Clear Chat History
 
-Clicking the 'more' button will reveal the 'Clear chat' option.
+Clicking the `more` button will reveal the `Clear chat` option.
 By selecting this, users will erase all chat history associated with the card,
 although the card session itself will remain active.
 
@@ -73,8 +73,8 @@ although the card session itself will remain active.
 
 ## Synchronize Input
 
-The 'Sync Input' button, located at the top right, enables the synchronization of input across chat cards where the option is enabled.
-Enabling 'Sync input' means that pressing 'Enter' or clicking the 'Send' button on
+The `Sync Input` button, located at the top right, enables the synchronization of input across chat cards where the option is enabled.
+Enabling 'Sync input' means that pressing `Enter` or clicking the `Send` button on
 any card will submit the input from the card users are currently working on.
 This functionality is beneficial for comparing the outputs of various models using identical input data.
 
@@ -93,12 +93,10 @@ Using the synchronize feature, users can apply different parameters to the same 
 
 ## Chat History
 
-To start new chat, click the '+' button located in the top right corner.
+To start new chat, click the `+` button located in the top right corner.
 
 ![](../images/new_chat.png)
 
 All chat history is stored in local storage, and users can access previous chats by clicking the history button in the top-right corner.
 
 ![](../images/history_button.png)
-
-![](../images/chat_history.png)

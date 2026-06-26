@@ -32,7 +32,7 @@ is not allowed to install packages with `apt` or `yum` since they require
 permission.
 
 Alternatively, users may use Homebrew to install OS packages. Please refer to
-the [guide on using Homebrew with automount folder](../mount_vfolder/mount_vfolder.md#using-linuxbrew-with-automountfolder).
+the [guide on using Homebrew with automount folder](#using-linuxbrew-with-automountfolder).
 
 
 <a id="install_pip_pkg"></a>
@@ -48,7 +48,7 @@ reuse them for the next compute session. Just install the packages with pip like
 pip install aiohttp
 ```
 For more information, please refer to the [guide on installing Python
-packages with automount folder](../mount_vfolder/mount_vfolder.md#using-pip-with-automountfolder).
+packages with automount folder](#using-pip-with-automountfolder).
 
 ### I have created a compute session, but cannot launch Jupyter Notebook
 

@@ -35,9 +35,10 @@ Backend.AI มีการปรับแต่งที่มุ่งเน้
 | --- | --- | --- |
 | AMD | MI250X ขึ้นไป |  |
 | Furiosa | Warboy / RNGD |  |
+| Google | TPU |  |
 | Graphcore | IPU |  |
 | Groq | Groqcard |  |
-| HyperAccel |  |  |
+| HyperAccel | LPU |  |
 | Intel | Gaudi 2 และ 3 | การเรียกคืนทรัพยากรที่ไม่ได้ใช้งานอัตโนมัติตามการใช้หน่วยความจำ |
 | การสนับสนุน NVIDIA | CUDA compute capability 7.5 ขึ้นไป | (องค์กร) การจำลองเสมือนและการแชร์ GPU แบบเศษส่วน (fGPU) สำหรับคอนเทนเนอร์ |
 |  | - การอนุมานโมเดล: NVIDIA Hopper ขึ้นไป (ขึ้นอยู่กับการควอนไทซ์เป้าหมาย) |  |
@@ -46,7 +47,7 @@ Backend.AI มีการปรับแต่งที่มุ่งเน้
 |  |  | รองรับ GPUDirect Storage |
 |  |  | การรวม NGC (NVIDIA GPU Cloud) |
 |  |  | การกำหนดค่าเครือข่าย GPU-GPU อัตโนมัติ |
-| Rebellions | ATOM / ATOM+ |  |
+| Rebellions | ATOM / ATOM+ / ATOM-Max |  |
 | SambaNova | SN30/40L |  |
 | Sapeon | X220 / X330 |  |
 | Tenstorrent | Wormhole |  |
