@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 301 / 449 features covered (67%)**
+**Overall (in-scope routes): 307 / 452 features covered (68%)**
 
 | Page                     | Route                                  | Features | Covered | Status  |
 | ------------------------ | -------------------------------------- | :------: | :-----: | :-----: |
@@ -34,7 +34,7 @@
 | Configurations           | `/settings`                            |    10    |    8    | 🔶 80%  |
 | Resources                | `/agent-summary`, `/agent`             |    10    |    3    | 🔶 30%  |
 | Resource Policy          | `/resource-policy`                     |    13    |   10    | 🔶 77%  |
-| User Credentials         | `/credential`                          |    21    |   14    | 🔶 67%  |
+| User Credentials         | `/credential`                          |    22    |   15    | 🔶 68%  |
 | Maintenance              | `/maintenance`                         |    3     |    2    | 🔶 67%  |
 | User Settings            | `/usersettings`                        |    10    |    1    | 🔶 10%  |
 | Project                  | `/project`                             |    6     |    5    | 🔶 83%  |
@@ -48,7 +48,7 @@
 | Plugin System            | (config-based)                         |    12    |   12    | ✅ 100% |
 | RBAC Management          | `/rbac`                                |    22    |   21    | 🔶 95%  |
 | Auto Scaling Rule Preset | `/admin-serving?tab=auto-scaling-rule` |    33    |   32    | 🔶 97%  |
-| **Total**                |                                        | **449**  | **301** | **67%** |
+| **Total**                |                                        | **452**  | **307** | **68%** |
 
 ---
 
@@ -647,7 +647,7 @@
 
 ### 17. User Credentials (`/credential`)
 
-**Test files:** [`e2e/user/user-crud.spec.ts`](user/user-crud.spec.ts), [`e2e/user/bulk-user-creation.spec.ts`](user/bulk-user-creation.spec.ts), [`e2e/credential/credential-keypair.spec.ts`](credential/credential-keypair.spec.ts), [`e2e/user-profile/user-ip-restriction-enforcement.spec.ts`](user-profile/user-ip-restriction-enforcement.spec.ts), [`e2e/credential/bulk-create-from-csv.spec.ts`](credential/bulk-create-from-csv.spec.ts)
+**Test files:** [`e2e/user/user-crud.spec.ts`](user/user-crud.spec.ts), [`e2e/user/bulk-user-creation.spec.ts`](user/bulk-user-creation.spec.ts), [`e2e/credential/credential-keypair.spec.ts`](credential/credential-keypair.spec.ts), [`e2e/user-profile/user-ip-restriction-enforcement.spec.ts`](user-profile/user-ip-restriction-enforcement.spec.ts), [`e2e/credential/bulk-create-from-csv.spec.ts`](credential/bulk-create-from-csv.spec.ts), [`e2e/credential/bulk-create-from-csv-submit.spec.ts`](credential/bulk-create-from-csv-submit.spec.ts)
 
 **Tabs:** Users | Credentials
 
@@ -666,6 +666,7 @@
 | Bulk create single user                             | ✅     | `Admin can bulk create a single user`                                                                                       |
 | Bulk create modal open/cancel                       | ✅     | `Admin can open bulk create modal from dropdown` / `Admin can cancel bulk user creation`                                    |
 | Bulk create users from CSV (client-side validation) | ✅     | `bulk-create-from-csv.spec.ts` (preview stats + submit enable/disable)                                                      |
+| Bulk create users from CSV → real submit + purge cleanup | ✅ | `bulk-create-from-csv-submit.spec.ts` (creates users on backend, then deactivates + purges)                            |
 | Update user → UserSettingModal                      | ✅     | `Admin can update user information`                                                                                         |
 | Deactivate user                                     | ✅     | `Admin can deactivate a user`                                                                                               |
 | Reactivate user                                     | ✅     | `Admin can reactivate an inactive user`                                                                                     |
@@ -692,7 +693,7 @@
 | Edit keypair → KeypairSettingModal             | ❌     | -                                                     |
 | SSH key management → SSHKeypairManagementModal | ❌     | -                                                     |
 
-**Coverage: 🔶 14/21 features**
+**Coverage: 🔶 15/22 features**
 
 ---
 
