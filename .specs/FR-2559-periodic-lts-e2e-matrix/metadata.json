@@ -1,0 +1,11 @@
+{
+  "epicKey": "FR-2559",
+  "epicUrl": "https://lablup.atlassian.net/browse/FR-2559",
+  "slug": "periodic-lts-e2e-matrix",
+  "specTaskKey": "FR-2617",
+  "specTaskUrl": "https://lablup.atlassian.net/browse/FR-2617",
+  "sourceIssues": ["FR-2559"],
+  "language": "ko",
+  "specPath": "spec.md",
+  "createdAt": "2026-04-21T00:00:00Z"
+}
