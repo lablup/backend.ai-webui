@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<93b632205559fa42649f48cde404bf00>>
+ * @generated SignedSource<<1dbe8a7cf24702854dbe74317421af9c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -80,6 +80,7 @@ export type ModelConfigInput = {
   service?: ModelServiceConfigInput | null | undefined;
 };
 export type ModelServiceConfigInput = {
+  command?: string | null | undefined;
   healthCheck?: ModelHealthCheckInput | null | undefined;
   port?: number | null | undefined;
   preStartActions?: ReadonlyArray<PreStartActionInput> | null | undefined;
