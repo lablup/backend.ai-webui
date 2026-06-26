@@ -1,0 +1,9 @@
+email,username,password,full_name,role,status
+valid1@example.com,valid1,Password!23,Valid User One,user,active
+,missing-email-user,Password!23,Missing Email,user,active
+dup@example.com,dup-a,Password!23,Duplicate A,user,active
+dup@example.com,dup-b,Password!23,Duplicate B,user,active
+bad-email-format,bad-fmt,Password!23,Bad Format,user,active
+valid2@example.com,valid2,Password!23,Valid User Two,admin,active
+valid2-again@example.com,valid3,shortpw,Valid User Three,user,active
+valid4@example.com,valid4,Password!23,Valid User Four,user,inactive

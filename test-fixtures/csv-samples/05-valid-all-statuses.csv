@@ -1,0 +1,5 @@
+email,username,password,role,status
+status-active@example.com,status-active,Password!23,user,active
+status-inactive@example.com,status-inactive,Password!23,user,inactive
+status-before-ver@example.com,status-before-ver,Password!23,user,before-verification
+status-deleted@example.com,status-deleted,Password!23,user,deleted

@@ -1,0 +1,3 @@
+이메일,사용자 이름,이름,프로젝트,역할,자원 정책,설명,상태,비밀번호 변경 필요
+ko1@example.com,ko1,홍길동,default,user,default,내보낸 사용자,active,false
+ko2@example.com,ko2,김철수,default,admin,default,내보낸 관리자,active,true

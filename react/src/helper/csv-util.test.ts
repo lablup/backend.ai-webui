@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 // csv-util.test.ts
-import { downloadCSV, JSONToCSVBody, UTF8_BOM } from './csv-util';
+import { downloadCSV, JSONToCSVBody, parseCSV, UTF8_BOM } from './csv-util';
 
 describe('JSONToCSVBody', () => {
   it('should convert JSON data to CSV format without formatting rules', () => {
@@ -183,5 +183,58 @@ describe('downloadCSV', () => {
     downloadCSV('a,b\n1,2', 'report');
 
     expect(capturedBlob?.type).toBe('text/csv;charset=utf-8;');
+  });
+});
+
+describe('parseCSV', () => {
+  it('parses a simple CSV into keyed records', () => {
+    const csv = 'email,username\nalice@example.com,alice\nbob@example.com,bob';
+    expect(parseCSV(csv)).toEqual([
+      { email: 'alice@example.com', username: 'alice' },
+      { email: 'bob@example.com', username: 'bob' },
+    ]);
+  });
+
+  it('handles quoted fields containing commas and newlines', () => {
+    const csv = 'name,note\n"Doe, John","line1\nline2"';
+    expect(parseCSV(csv)).toEqual([
+      { name: 'Doe, John', note: 'line1\nline2' },
+    ]);
+  });
+
+  it('unescapes doubled quotes inside quoted fields', () => {
+    const csv = 'name,quote\n"John","He said ""hi"""';
+    expect(parseCSV(csv)).toEqual([{ name: 'John', quote: 'He said "hi"' }]);
+  });
+
+  it('treats CRLF line endings the same as LF', () => {
+    const csv = 'email,username\r\nalice@example.com,alice\r\n';
+    expect(parseCSV(csv)).toEqual([
+      { email: 'alice@example.com', username: 'alice' },
+    ]);
+  });
+
+  it('strips a leading UTF-8 BOM from the header', () => {
+    const csv = '\uFEFFemail,username\nalice@example.com,alice';
+    expect(parseCSV(csv)).toEqual([
+      { email: 'alice@example.com', username: 'alice' },
+    ]);
+  });
+
+  it('trims header and cell whitespace', () => {
+    const csv = ' email , username \n  alice@example.com ,  alice ';
+    expect(parseCSV(csv)).toEqual([
+      { email: 'alice@example.com', username: 'alice' },
+    ]);
+  });
+
+  it('returns an empty array when there are no data rows', () => {
+    expect(parseCSV('email,username')).toEqual([]);
+    expect(parseCSV('')).toEqual([]);
+  });
+
+  it('throws on an unterminated quoted field', () => {
+    const csv = 'email,username\n"alice@example.com,alice';
+    expect(() => parseCSV(csv)).toThrow('Unterminated quoted field in CSV');
   });
 });

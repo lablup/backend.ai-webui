@@ -1,0 +1,6 @@
+email,username,password,full_name,domain_name,resource_policy,description,role,status,need_password_change,project
+alice@example.com,alice,Password!23,Alice Kim,default,default,ML engineer,user,active,false,
+bob@example.com,bob,Secure#456,Bob Lee,default,default,Data scientist,admin,active,true,
+carol@example.com,carol,Hello@789,Carol Park,default,default,DevOps lead,superadmin,active,false,
+dave@example.com,dave,Monitor!01,Dave Choi,default,default,Observer account,monitor,active,false,
+eve@example.com,eve,Inactive!23,Eve Song,default,default,Suspended account,user,inactive,false,

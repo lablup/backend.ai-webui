@@ -34,7 +34,7 @@
 | Configurations           | `/settings`                            |    10    |    8    | 🔶 80%  |
 | Resources                | `/agent-summary`, `/agent`             |    10    |    3    | 🔶 30%  |
 | Resource Policy          | `/resource-policy`                     |    13    |   10    | 🔶 77%  |
-| User Credentials         | `/credential`                          |    20    |   13    | 🔶 65%  |
+| User Credentials         | `/credential`                          |    21    |   14    | 🔶 67%  |
 | Maintenance              | `/maintenance`                         |    3     |    2    | 🔶 67%  |
 | User Settings            | `/usersettings`                        |    10    |    1    | 🔶 10%  |
 | Project                  | `/project`                             |    6     |    5    | 🔶 83%  |
@@ -647,7 +647,7 @@
 
 ### 17. User Credentials (`/credential`)
 
-**Test files:** [`e2e/user/user-crud.spec.ts`](user/user-crud.spec.ts), [`e2e/user/bulk-user-creation.spec.ts`](user/bulk-user-creation.spec.ts), [`e2e/credential/credential-keypair.spec.ts`](credential/credential-keypair.spec.ts), [`e2e/user-profile/user-ip-restriction-enforcement.spec.ts`](user-profile/user-ip-restriction-enforcement.spec.ts)
+**Test files:** [`e2e/user/user-crud.spec.ts`](user/user-crud.spec.ts), [`e2e/user/bulk-user-creation.spec.ts`](user/bulk-user-creation.spec.ts), [`e2e/credential/credential-keypair.spec.ts`](credential/credential-keypair.spec.ts), [`e2e/user-profile/user-ip-restriction-enforcement.spec.ts`](user-profile/user-ip-restriction-enforcement.spec.ts), [`e2e/credential/bulk-create-from-csv.spec.ts`](credential/bulk-create-from-csv.spec.ts)
 
 **Tabs:** Users | Credentials
 
@@ -665,6 +665,7 @@
 | Bulk create users → UserSettingModal                | ✅     | `Admin can bulk create multiple users`                                                                                      |
 | Bulk create single user                             | ✅     | `Admin can bulk create a single user`                                                                                       |
 | Bulk create modal open/cancel                       | ✅     | `Admin can open bulk create modal from dropdown` / `Admin can cancel bulk user creation`                                    |
+| Bulk create users from CSV (client-side validation) | ✅     | `bulk-create-from-csv.spec.ts` (preview stats + submit enable/disable)                                                      |
 | Update user → UserSettingModal                      | ✅     | `Admin can update user information`                                                                                         |
 | Deactivate user                                     | ✅     | `Admin can deactivate a user`                                                                                               |
 | Reactivate user                                     | ✅     | `Admin can reactivate an inactive user`                                                                                     |
@@ -691,7 +692,7 @@
 | Edit keypair → KeypairSettingModal             | ❌     | -                                                     |
 | SSH key management → SSHKeypairManagementModal | ❌     | -                                                     |
 
-**Coverage: 🔶 13/20 features**
+**Coverage: 🔶 14/21 features**
 
 ---
 

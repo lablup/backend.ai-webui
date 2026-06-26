@@ -1,0 +1,3 @@
+uuid,email,created_at,username,password,totp_activated,full_name,sudo_session_enabled,status_info,modified_at
+11111111-1111-1111-1111-111111111111,extra1@example.com,2026-01-01T00:00:00Z,extra1,Password!23,true,Extra One,false,active,2026-01-02T00:00:00Z
+22222222-2222-2222-2222-222222222222,extra2@example.com,2026-01-01T00:00:00Z,extra2,Password!23,false,Extra Two,true,active,2026-01-02T00:00:00Z
