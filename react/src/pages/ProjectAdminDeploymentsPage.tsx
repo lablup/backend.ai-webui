@@ -11,6 +11,7 @@ import type {
   OrderDirection,
   ProjectAdminDeploymentsPageQuery,
 } from '../__generated__/ProjectAdminDeploymentsPageQuery.graphql';
+import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from '../components/DeploymentRevisionDetailDrawer';
@@ -25,7 +26,6 @@ import {
   BAICard,
   BAIDeleteConfirmModal,
   BAIDeploymentTagChips,
-  BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLFilterProperty,
   BAIGraphQLPropertyFilter,
@@ -257,11 +257,11 @@ const ProjectAdminDeploymentsContent: React.FC<
               }}
             />
           </BAIFlex>
-          <BAIFetchKeyButton
+          <AutoUpdateFetchKeyButton
+            settingId="project-admin-deployments"
             loading={isLoading}
             value={fetchKey}
             onChange={(next) => updateFetchKey(next)}
-            autoUpdateDelay={15_000}
           />
         </BAIFlex>
         <BAIModelDeploymentNodes

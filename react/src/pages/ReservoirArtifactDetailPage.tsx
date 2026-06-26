@@ -9,6 +9,7 @@ import {
   ReservoirArtifactDetailPageQuery$data,
   ReservoirArtifactDetailPageQuery$variables,
 } from '../__generated__/ReservoirArtifactDetailPageQuery.graphql';
+import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import ImportArtifactRevisionToFolderButton from '../components/ImportArtifactRevisionToFolderButton';
 import ImportArtifactRevisionToFolderModal from '../components/ImportArtifactRevisionToFolderModal';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
@@ -23,7 +24,6 @@ import {
   BAIColumnType,
   BAIDeleteArtifactRevisionsModal,
   BAIDeleteArtifactRevisionsModalArtifactRevisionFragmentKey,
-  BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAIImportArtifactModal,
@@ -298,9 +298,9 @@ const ReservoirArtifactDetailPage = () => {
           </Title>
           {artifact && <BAIArtifactTypeTag artifactTypeFrgmt={artifact} />}
         </BAIFlex>
-        <BAIFetchKeyButton
+        <AutoUpdateFetchKeyButton
+          settingId="reservoir-artifact-detail"
           value={fetchKey}
-          autoUpdateDelay={15_000}
           loading={deferredFetchKey !== fetchKey}
           onChange={() => {
             updateFetchKey();
