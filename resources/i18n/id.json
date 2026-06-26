@@ -424,6 +424,7 @@
     "RefreshModelInformation": "Menyegarkan Informasi Model",
     "Reset": "Atur Ulang",
     "Retry": "Coba lagi",
+    "Revoke": "Cabut",
     "Save": "Simpan",
     "SaveAndClose": "Simpan dan Tutup",
     "SaveChanges": "Simpan Perubahan",
@@ -1867,6 +1868,16 @@
       "LoginWithRealm": "Masuk dengan {{ namaRealm }}",
       "LoginWithSAML": "Masuk dengan SAML"
     }
+  },
+  "loginSession": {
+    "AccessKey": "Kunci Akses",
+    "CreatedAt": "Dibuat Pada",
+    "InvalidatedAt": "Dibatalkan Pada",
+    "RevokeFailed": "Gagal mencabut sesi login.",
+    "RevokeSession": "Cabut Sesi",
+    "RevokeSessionConfirm": "Apakah Anda yakin ingin mencabut sesi login ini?",
+    "RevokeSucceeded": "Sesi login berhasil dicabut.",
+    "User": "Pengguna"
   },
   "logs": {
     "ErrorMessage": "Pesan Galat",
@@ -3346,6 +3357,7 @@
     "Language": "Bahasa",
     "LightMode": "Modus Cahaya",
     "LightTheme": "Mode Terang",
+    "LoginSessions": "Sesi Login",
     "Logo": "Logo CI",
     "Logs": "Log",
     "MaxConcurrentUploads": "Batas Pengunggahan File Bersamaan Maks",
