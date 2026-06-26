@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6104a8a2f7d14791c8e5216a5dedf4ef>>
+ * @generated SignedSource<<97b5bf9d4b91b5cd934a0c58caaf2b06>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,9 +9,7 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
-export type ClusterMode = "MULTI_NODE" | "SINGLE_NODE" | "%future added value";
 export type SessionV2Status = "CANCELLED" | "CREATING" | "DEPRIORITIZING" | "PENDING" | "PREPARED" | "PREPARING" | "RUNNING" | "SCHEDULED" | "TERMINATED" | "TERMINATING" | "%future added value";
-export type SessionV2Type = "BATCH" | "INFERENCE" | "INTERACTIVE" | "SYSTEM" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type BAISessionNodesV2Fragment$data = ReadonlyArray<{
   readonly id: string;
@@ -19,10 +17,7 @@ export type BAISessionNodesV2Fragment$data = ReadonlyArray<{
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly id: string;
-        readonly identity: {
-          readonly canonicalName: string;
-          readonly namespace: string;
-        };
+        readonly " $fragmentSpreads": FragmentRefs<"BAIImageNodeSimpleTagV2Fragment">;
       };
     }>;
   } | null | undefined;
@@ -32,10 +27,8 @@ export type BAISessionNodesV2Fragment$data = ReadonlyArray<{
     readonly terminatedAt: string | null | undefined;
   };
   readonly metadata: {
-    readonly clusterMode: ClusterMode;
-    readonly clusterSize: number;
     readonly name: string;
-    readonly sessionType: SessionV2Type;
+    readonly " $fragmentSpreads": FragmentRefs<"BAISessionClusterModeV2Fragment" | "BAISessionTypeTagV2Fragment">;
   };
   readonly project: {
     readonly basicInfo: {
@@ -162,25 +155,14 @@ return {
       "selections": [
         (v1/*: any*/),
         {
-          "alias": null,
           "args": null,
-          "kind": "ScalarField",
-          "name": "sessionType",
-          "storageKey": null
+          "kind": "FragmentSpread",
+          "name": "BAISessionTypeTagV2Fragment"
         },
         {
-          "alias": null,
           "args": null,
-          "kind": "ScalarField",
-          "name": "clusterMode",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "clusterSize",
-          "storageKey": null
+          "kind": "FragmentSpread",
+          "name": "BAISessionClusterModeV2Fragment"
         }
       ],
       "storageKey": null
@@ -292,29 +274,9 @@ return {
               "selections": [
                 (v0/*: any*/),
                 {
-                  "alias": null,
                   "args": null,
-                  "concreteType": "ImageV2IdentityInfo",
-                  "kind": "LinkedField",
-                  "name": "identity",
-                  "plural": false,
-                  "selections": [
-                    {
-                      "alias": null,
-                      "args": null,
-                      "kind": "ScalarField",
-                      "name": "canonicalName",
-                      "storageKey": null
-                    },
-                    {
-                      "alias": null,
-                      "args": null,
-                      "kind": "ScalarField",
-                      "name": "namespace",
-                      "storageKey": null
-                    }
-                  ],
-                  "storageKey": null
+                  "kind": "FragmentSpread",
+                  "name": "BAIImageNodeSimpleTagV2Fragment"
                 }
               ],
               "storageKey": null
@@ -361,6 +323,6 @@ return {
 };
 })();
 
-(node as any).hash = "7b2489642946a3bce33fba24eb5f1c23";
+(node as any).hash = "8a95f29a56c4f590b7cf7269949d9396";
 
 export default node;

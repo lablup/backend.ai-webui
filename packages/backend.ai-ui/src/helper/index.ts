@@ -357,6 +357,24 @@ export const filterOutEmpty = <T>(
 ): Array<T> => _.filter(arr, (item) => !_.isEmpty(item)) as Array<T>;
 
 /**
+ * Start-cases a string while preserving dot (`.`) separators, so version-like
+ * tokens (e.g. `py3.9`) keep their dots instead of being split into words.
+ *
+ * Mirrors the v1 `preserveDotStartCase` helper used by the image metadata
+ * tag aliasing logic.
+ */
+export function preserveDotStartCase(str: string = '') {
+  // Temporarily replace periods with a unique placeholder
+  const placeholder = '<<<DOT>>>';
+  const tempStr = str.replace(/\./g, placeholder);
+
+  const startCased = _.startCase(tempStr);
+
+  // Replace the placeholder back with periods
+  return startCased.replace(new RegExp(placeholder, 'g'), '.');
+}
+
+/**
  * Filters out `null` and `undefined` values from an array of objects.
  *
  * @template T - The type of objects in the array.

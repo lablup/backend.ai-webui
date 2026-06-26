@@ -11,18 +11,11 @@ const typeTagColor = {
 };
 
 export interface BAISessionTypeTagProps {
-  /** v1 `ComputeSessionNode` fragment. Omit when passing `type` directly. */
-  sessionFrgmt?: BAISessionTypeTagFragment$key | null;
-  /**
-   * Session type value (e.g. from the v2 `SessionV2` API). Takes precedence
-   * over `sessionFrgmt` when provided.
-   */
-  type?: string | null;
+  sessionFrgmt: BAISessionTypeTagFragment$key;
 }
 
 const BAISessionTypeTag: React.FC<BAISessionTypeTagProps> = ({
   sessionFrgmt,
-  type,
 }) => {
   const session = useFragment(
     graphql`
@@ -30,18 +23,16 @@ const BAISessionTypeTag: React.FC<BAISessionTypeTagProps> = ({
         type
       }
     `,
-    sessionFrgmt ?? null,
+    sessionFrgmt,
   );
 
-  const resolvedType = type ?? session?.type;
-
-  if (_.isEmpty(resolvedType)) {
+  if (_.isEmpty(session.type)) {
     return <>-</>;
   }
 
   return (
-    <Tag color={_.get(typeTagColor, _.toUpper(resolvedType || ''))}>
-      {_.toUpper(resolvedType || '')}
+    <Tag color={_.get(typeTagColor, _.toUpper(session.type || ''))}>
+      {_.toUpper(session.type || '')}
     </Tag>
   );
 };

@@ -11,6 +11,7 @@ import {
 } from './reactQueryAlias';
 import { useBAISettingUserState, UserSettings } from './useBAISetting';
 import {
+  ImageMetaData,
   ResourceSlotDetail,
   useUpdatableState,
   useViewer,
@@ -79,6 +80,18 @@ export const useDeviceMetaData = (key = 'first') => {
       return fetch('resources/device_metadata.json')
         .then((response) => response.json())
         .then((result) => result?.deviceInfo);
+    },
+    staleTime: 1000 * 60 * 60 * 24,
+  });
+};
+
+export const useImageMetaData = (key = 'first') => {
+  return useTanQuery<ImageMetaData>({
+    queryKey: ['backendai-metadata-image', key],
+    queryFn: () => {
+      return fetch('resources/image_metadata.json').then((response) =>
+        response.json(),
+      );
     },
     staleTime: 1000 * 60 * 60 * 24,
   });
