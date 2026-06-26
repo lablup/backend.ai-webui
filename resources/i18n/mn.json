@@ -1867,6 +1867,12 @@
       "LoginWithSAML": "SAML-ээр нэвтэрнэ үү"
     }
   },
+  "loginHistory": {
+    "Domain": "Домэйн",
+    "FailReason": "Амжилтгүй болсон шалтгаан",
+    "LoginTime": "Нэвтэрсэн цаг",
+    "Result": "Үр дүн"
+  },
   "loginSession": {
     "AccessKey": "Хандалтын түлхүүр",
     "CreatedAt": "Үүсгэсэн",
@@ -3355,6 +3361,7 @@
     "Language": "Хэл",
     "LightMode": "Гэрэл горим",
     "LightTheme": "Цайвар горим",
+    "LoginHistory": "Нэвтрэх түүх",
     "LoginSessions": "Нэвтрэх сессүүд",
     "Logo": "Лого (CI)",
     "Logs": "Бүртгэл",

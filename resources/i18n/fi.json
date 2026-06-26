@@ -1866,6 +1866,12 @@
       "LoginWithSAML": "Kirjautuminen SAML:llä"
     }
   },
+  "loginHistory": {
+    "Domain": "Toimialue",
+    "FailReason": "Epäonnistumisen syy",
+    "LoginTime": "Kirjautumisaika",
+    "Result": "Tulos"
+  },
   "loginSession": {
     "AccessKey": "Pääsyavain",
     "CreatedAt": "Luotu klo",
@@ -3353,6 +3359,7 @@
     "Language": "Kieli",
     "LightMode": "Valotila",
     "LightTheme": "Vaalea tila",
+    "LoginHistory": "Kirjautumishistoria",
     "LoginSessions": "Kirjautumisistunnot",
     "Logo": "CI-logo",
     "Logs": "Lokit",
