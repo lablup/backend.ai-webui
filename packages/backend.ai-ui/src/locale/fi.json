@@ -154,7 +154,10 @@
     "SelectDomain": "Valitse toimialue"
   },
   "comp:BAIFetchKeyButton": {
+    "AutoRefresh": "Automaattinen päivitys",
+    "EverySeconds": "{{count}}s",
     "LastUpdated": "Viimeksi päivitetty",
+    "Off": "Pois",
     "Refresh": "Päivitä"
   },
   "comp:BAIGraphQLPropertyFilter": {

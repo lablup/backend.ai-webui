@@ -154,7 +154,10 @@
     "SelectDomain": "選擇網域"
   },
   "comp:BAIFetchKeyButton": {
+    "AutoRefresh": "自動重新整理",
+    "EverySeconds": "{{count}}秒",
     "LastUpdated": "最後更新",
+    "Off": "關閉",
     "Refresh": "重新整理"
   },
   "comp:BAIGraphQLPropertyFilter": {

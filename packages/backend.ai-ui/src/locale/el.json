@@ -154,7 +154,10 @@
     "SelectDomain": "Επιλέξτε τομέα"
   },
   "comp:BAIFetchKeyButton": {
+    "AutoRefresh": "Αυτόματη ανανέωση",
+    "EverySeconds": "{{count}}s",
     "LastUpdated": "Τελευταία ενημέρωση",
+    "Off": "Απενεργοποίηση",
     "Refresh": "Ανανέωση"
   },
   "comp:BAIGraphQLPropertyFilter": {

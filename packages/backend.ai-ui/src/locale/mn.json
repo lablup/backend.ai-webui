@@ -154,7 +154,10 @@
     "SelectDomain": "Домен сонгох"
   },
   "comp:BAIFetchKeyButton": {
+    "AutoRefresh": "Автоматаар сэргээх",
+    "EverySeconds": "{{count}}s",
     "LastUpdated": "Сүүлд шинэчлэгдсэн",
+    "Off": "Унтраах",
     "Refresh": "Шинэчлэх"
   },
   "comp:BAIGraphQLPropertyFilter": {

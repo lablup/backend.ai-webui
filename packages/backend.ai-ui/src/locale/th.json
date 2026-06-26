@@ -154,7 +154,10 @@
     "SelectDomain": "เลือกโดเมน"
   },
   "comp:BAIFetchKeyButton": {
+    "AutoRefresh": "รีเฟรชอัตโนมัติ",
+    "EverySeconds": "{{count}}วิ",
     "LastUpdated": "อัปเดตล่าสุด",
+    "Off": "ปิด",
     "Refresh": "รีเฟรช"
   },
   "comp:BAIGraphQLPropertyFilter": {
