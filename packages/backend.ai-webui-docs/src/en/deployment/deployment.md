@@ -25,6 +25,8 @@ You can also use the property filter bar to search deployments by **Deployment N
 
 Click the `New Deployment` button to open the **Create Deployment** modal.
 
+<a id="create-deployment"></a>
+
 ## Creating a Deployment
 
 Creating a deployment is a two-step flow:
@@ -147,8 +149,6 @@ Unchanged parameters use the runtime's default values.
 
 :::note[Required parameters]
 Administrators can mark individual parameters as required. Required parameters are indicated by a red asterisk (★) next to the label. Submitting the form with an empty required parameter is blocked — the field shows an inline validation error even if the parameter is on an unvisited tab.
-
-On backends older than Backend.AI Manager 26.4.4, all parameters are treated as optional regardless of the administrator's configuration.
 :::
 
 **Enable Health Check**
@@ -225,7 +225,7 @@ Expand the **Advanced Settings** collapse panel to mount additional storage fold
 #### Creating a Model Definition File
 
 :::note
-From 24.03, you can configure model definition file name. But if you don't
+You can configure the model definition file name. But if you don't
 input any other input field in model definition file path, then the system will
 regard it as `model-definition.yml` or `model-definition.yaml`.
 :::

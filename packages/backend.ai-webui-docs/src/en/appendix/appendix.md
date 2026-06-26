@@ -66,8 +66,8 @@ Alternatively, you can run the `nvidia-smi` command from the web terminal to que
 ## Automated job scheduling
 
 Backend.AI server has a built-in self-developed task scheduler. It automatically
-checks the available resources of all worker nodes and delegates the request to
-create a compute session to the worker that meets the user's resource request.
+checks the available resources of all agent nodes and delegates the request to
+create a compute session to the agent that meets the user's resource request.
 In addition, when resources are insufficient, the user's request to create a
 compute session is registered as a PENDING state in the job queue. Later, when
 the resources become available again, the pended request is resumed to

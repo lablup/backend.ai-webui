@@ -21,7 +21,7 @@ and then create a session.
 :::note
 By looking at the data and folder information within that project, users can see information such as usage mode,
 the storage host the folder belongs to, permissions, and more.
-Note that the 'Data & Storage' step only outputs data folders that are mountable by the current user.
+Note that the 'Data & Storage' step only lists storage folders that are mountable by the current user.
 For example, folders that belong to other projects cannot be viewed.
 :::
 

@@ -2,8 +2,7 @@
 
 # My Environments
 
-Starting from version 24.03, the My Environments page allows you to manage
-customized images created through
+The My Environments page allows you to manage customized images created through
 [session commits](#save-session-commit).
 
 On the Images tab, you can view and manage images that were converted from

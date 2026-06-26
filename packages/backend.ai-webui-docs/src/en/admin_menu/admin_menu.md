@@ -285,8 +285,8 @@ Please keep in mind that if the 'Rate Limit' value is small, API operations such
 ![](../images/keypair_update_dialog.png)
 
 You can also deactivate or reactivate the keypair by clicking the 'Deactivate' button or 'Activate' button in the keypair's row.
-Unlike the User tab, the Inactive tab allows permanent deletion of key pairs.
-However, you cannot permanently delete a key pair if it is currently being used as a user's main access key.
+Unlike the User tab, the Inactive tab allows permanent deletion of keypairs.
+However, you cannot permanently delete a keypair if it is currently being used as a user's main access key.
 
 ![](../images/keypair_delete_button.png)
 
@@ -368,10 +368,6 @@ When you open a deployment from the Admin Deployments page, the **Revisions** ca
 - **Current Revision**: Shows the full configuration of the revision currently serving traffic. This includes a **Runtime Parameters** row that lists the runtime-variant parameter values configured for the revision (for `vLLM` and `SGLang` runtimes).
 - **Revision History**: Lists every revision added to the deployment. Clicking a revision opens a detail view that shows the full configuration of that revision, including the **Runtime Parameters** row for `vLLM` and `SGLang` revisions.
 - **Audit Log**: Shows a record of actions performed on the deployment.
-
-:::note[Version requirement]
-The **Runtime Parameters** row on the Current Revision tab and in the Revision History detail view requires **Backend.AI Manager 26.4.4 or later**. On older backends this row is not shown.
-:::
 
 The **Audit Log** tab tracks all action history for the deployment. Each entry includes:
 
@@ -613,10 +609,6 @@ Additional columns are hidden by default and can be shown using the column-setti
 
 :::tip
 If a required field is missing or invalid, the **Create Preset** button stays disabled until the error is resolved. Required fields show inline validation messages as you type.
-:::
-
-:::note[Version requirement]
-The **Enable Health Check** toggle and required-parameter validation for Runtime Parameters require **Backend.AI Manager 26.4.4 or later**. On older backends, the health check is not gated behind a toggle and all runtime parameters are treated as optional.
 :::
 
 #### Edit a Deployment Preset
@@ -1243,7 +1235,7 @@ each resource preset.
 
 ## Manage agent nodes
 
-Superadmins can view the list of agent worker nodes, currently connected to
+Superadmins can view the list of agent nodes, currently connected to
 Backend.AI, by visiting the Resources page. You can check agent node's IP,
 connecting time, actual resources currently in use, etc. The WebUI does
 not provide the function to manipulate agent nodes.
@@ -1254,8 +1246,8 @@ not provide the function to manipulate agent nodes.
 
 ![](../images/agent_list.png)
 
-Also You can see exact usage about the resources in the agent worker node
-by Click note icon in the Control panel.
+You can also see the exact resource usage for the agent node by clicking
+the note icon in the Control panel.
 
 ![](../images/detailed_agent_node_usage_information.png)
 
@@ -1281,7 +1273,7 @@ preserving the existing sessions on the Agent.
 
 ## Manage resource group
 
-Agents can be grouped into units called resource (scaling) groups. For example,
+Agents can be grouped into units called resource groups. For example,
 let's say there are 3 agents with V100 GPUs and 2 agents with P100 GPUs. You
 want to expose two types of GPUs to users separately, then you can group three
 V100 agents into one resource group, and the remaining two P100 agents into

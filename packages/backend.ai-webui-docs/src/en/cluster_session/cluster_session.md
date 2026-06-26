@@ -1,11 +1,5 @@
 # Backend.AI Cluster Compute Session
 
-
-:::note
-Cluster compute session feature is supported from Backend.AI server 20.09 or
-higher.
-:::
-
 <a id="backendai-cluster-compute-session"></a>
 
 ### Overview of Backend.AI cluster compute session
@@ -30,7 +24,7 @@ For detailed about Backend.AI cluster session, refer to the following.
 - All containers under a cluster session are created by allocating the same
   amount of resources. In the figure above, all four containers of session X
   are created with the same amount of resources.
-- All containers under a cluster session mount the same data folder specified
+- All containers under a cluster session mount the same storage folder specified
   when creating a compute session.
 - All containers under a cluster session are tied to a private network.
 
@@ -95,7 +89,7 @@ CPUs, 4 cores are allocated to each container under a cluster session. Please
 note that this is not the amount of resources allocated to entire cluster
 computing session. To create a cluster compute session, server resources equal
 to N times the amount of resources set here are required (N is the cluster
-size). Also, don't forget to mount the data folder for data safekeeping.
+size). Also, don't forget to mount the storage folder for data safekeeping.
 
 ![](../images/session_launch_dialog.png)
 
@@ -145,7 +139,7 @@ distributed learning algorithm.
 
 ### See logs per container
 
-From 24.03, You can check each log of container in logs modal. It will help you
+You can check each log of container in logs modal. It will help you
 to understand what's going on not only in `main` container but also `sub` containers.
 
 ![](../images/log_modal_per_container.png)

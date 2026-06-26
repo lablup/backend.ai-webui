@@ -13,5 +13,5 @@ Backend.AI เป็นเครื่องหมายการค้าจด
 
 ©2015-|year| Lablup Inc. สงวนลิขสิทธิ์ทุกประการ.
 
-เอกสารเวอร์ชัน: v|version|.|version_date|
+เอกสารเวอร์ชัน: |version|.|version_date|
 อัปเดตล่าสุด (ปี/เดือน/วัน): |date|

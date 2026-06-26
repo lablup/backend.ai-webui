@@ -26,5 +26,5 @@ The copyright for Backend.AI™ is owned by Lablup Inc.
 
 ©2015-|year| Lablup Inc. All rights reserved.
 
-Document Version: v|version|.|version_date|
+Document Version: |version|.|version_date|
 Last Updated (Year/Month/Day): |date|

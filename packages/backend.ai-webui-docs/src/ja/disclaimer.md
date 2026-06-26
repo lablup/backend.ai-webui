@@ -13,5 +13,5 @@ Backend.AI™の著作権はLablup Inc.が所有しています。
 
 ©2015-|year| Lablup Inc. 無断転載を禁じます。
 
-ドキュメントバージョン: v|version|.|version_date|
+ドキュメントバージョン: |version|.|version_date|
 最終更新日（年/月/日）: |date|

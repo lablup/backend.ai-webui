@@ -208,7 +208,7 @@ Data in those folders can also be reused by mounting it when creating another co
 
 ![](../images/launch_session_data.png)
 
-users can specify the data folders to mount in the compute session.
+users can specify the storage folders to mount in the compute session.
 Folder explorer can be used by clicking folder name. For further information,
 please refer [Explore Folder](#explore-folder) section.
 

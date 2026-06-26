@@ -209,9 +209,9 @@ Backend.AI는 OpenSSH에 기반한 SSH keypair를 사용합니다. Windows에서
 키로 변환해야 할 수 있습니다.
 :::
 
-22.09 버전부터, Backend.AI WebUI는 사설 저장소 접근 등 유연성을 제공하기 위해
-사용자 자신의 SSH 키페어를 직접 등록하는 기능을 지원합니다. 자신의 SSH 키페어를
-추가하려면 `ENTER MANUALLY` 버튼을 클릭하십시오. 그러면 "public" 키와 "private"
+Backend.AI WebUI는 사설 저장소 접근 등 유연성을 제공하기 위해 사용자 자신의 SSH
+키페어를 직접 등록하는 기능을 지원합니다. 자신의 SSH 키페어를 추가하려면
+`ENTER MANUALLY` 버튼을 클릭하십시오. 그러면 "public" 키와 "private"
 키에 해당하는 두 개의 텍스트 영역이 표시됩니다.
 
 ![](../images/add_ssh_keypair_manually_dialog.png)

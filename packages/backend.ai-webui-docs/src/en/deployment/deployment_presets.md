@@ -83,12 +83,10 @@ If a required field is missing or invalid, the **Create Preset** button stays di
 
 :::note[Required parameters in presets]
 Administrators can mark individual Runtime Parameters as required. Required parameters display a red asterisk (★) next to the label. The save button stays disabled until all required parameters are filled in. Required parameter validation applies even to parameters on unvisited tabs.
-
-On backends older than Backend.AI Manager 26.4.4, all parameters are treated as optional.
 :::
 
-:::note[Version requirement]
-The **Enable Health Check** toggle and required-parameter validation for Runtime Parameters require **Backend.AI Manager 26.4.4 or later**. On older backends, the health check is not gated behind a toggle and all runtime parameters are treated as optional. The Enable Health Check toggle also applies to the vLLM/SGLang Advanced Mode runtime parameters.
+:::note
+The **Enable Health Check** toggle also applies to the vLLM/SGLang Advanced Mode runtime parameters.
 :::
 
 ### Edit a Deployment Preset

@@ -40,7 +40,7 @@ the [guide on using Homebrew with automount folder](../mount_vfolder/mount_vfold
 ### How to install packages with pip?
 
 By default, when you install a pip package, it will be installed under
-`~/.local`. So, if you create a automount data folder named `.local`, you
+`~/.local`. So, if you create an automount storage folder named `.local`, you
 can keep the installed packages after a compute session is destroyed, and then
 reuse them for the next compute session. Just install the packages with pip like:
 

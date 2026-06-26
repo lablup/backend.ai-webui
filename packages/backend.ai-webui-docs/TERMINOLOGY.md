@@ -57,7 +57,7 @@ The tables below list the approved term for each concept, per language, grouped 
 | Concept | EN | KO | JA | TH | Description |
 |---|---|---|---|---|---|
 | role-domain-admin | domain admin | 도메인 관리자 | ドメイン管理者 | — | Manages users and resources within a domain. |
-| role-superadmin | superadmin | 슈퍼관리자 | スーパー管理者 | — | Full system access across all domains. |
+| role-superadmin | superadmin | 슈퍼 관리자 | スーパー管理者 | — | Full system access across all domains. |
 | role-user | user | 사용자 | ユーザー | — | Standard access. |
 
 ### UI Navigation Terms
@@ -177,6 +177,8 @@ Each row lists one forbidden term, its canonical replacement, and the reason. Pa
 | scaling group | resource group | Deprecated term |
 | worker node | agent node | Reserve "worker node" for model serving context only |
 | 레플리카 | 복제본 | Use the Korean translation, not the transliteration, for consistency |
+| 슈퍼관리자 | 슈퍼 관리자 | Use the spaced form for consistency |
+| 슈퍼어드민 | 슈퍼 관리자 | Use the Korean translation, not the transliteration |
 | 자동 스케일링 (auto scaling rule) | 오토스케일링 | Match the UI label; the autoScalingRule i18n keys use "오토스케일링" |
 
 <!-- terminology:auto:avoid END -->

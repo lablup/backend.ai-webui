@@ -438,7 +438,7 @@
       "decidingFR": null,
       "preferred": {
         "en": "superadmin",
-        "ko": "슈퍼관리자",
+        "ko": "슈퍼 관리자",
         "ja": "スーパー管理者"
       },
       "description": "Full system access across all domains."
@@ -616,6 +616,22 @@
       "lang": "ko",
       "context": "auto scaling rule",
       "conceptId": "autoscaling-rule"
+    },
+    {
+      "avoid": "슈퍼관리자",
+      "useInstead": "슈퍼 관리자",
+      "reason": "Use the spaced form for consistency",
+      "lang": "ko",
+      "context": null,
+      "conceptId": "role-superadmin"
+    },
+    {
+      "avoid": "슈퍼어드민",
+      "useInstead": "슈퍼 관리자",
+      "reason": "Use the Korean translation, not the transliteration",
+      "lang": "ko",
+      "context": null,
+      "conceptId": "role-superadmin"
     }
   ]
 }

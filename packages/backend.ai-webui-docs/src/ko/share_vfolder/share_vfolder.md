@@ -55,7 +55,6 @@
 
 
 :::note
-24.09 버전부터 Backend.AI는 개선된 세션 런처(NEO)를 기본으로 제공합니다.
 이전 세션 런처를 사용하려면 [사용자 설정](#general-tab) 섹션을 참고하세요.
 이전 세션 런처의 사용 방법은 다음 [링크](https://webui.docs.backend.ai/en/23.09_a/sessions_all/sessions_all.html)를 참고하세요.
 NEO 세션 런처에 대해 자세히 알아보려면 [세션 생성](#start-a-new-session) 섹션을 참고하세요.

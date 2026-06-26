@@ -75,8 +75,7 @@ by mounting this storage folder with the User B's account.
 
 
 :::note
-From version 24.09, Backend.AI offers an improved version of the session launcher (NEO)
-as default. If you want to use the previous session launcher, please refer [User Settings](#general-tab)
+If you want to use the previous session launcher, please refer [User Settings](#general-tab)
 section. For instructions on how to use it, please refer to the following [link](https://webui.docs.backend.ai/en/23.09_a/sessions_all/sessions_all.html).
 If you want to know more about the NEO session launcher, please refer [Create Session](#start-a-new-session)
 :::

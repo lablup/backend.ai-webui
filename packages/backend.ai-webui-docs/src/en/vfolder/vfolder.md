@@ -190,8 +190,7 @@ this action cannot be undone.
 ## Using FileBrowser
 
 
-Backend.AI supports [FileBrowser](https://filebrowser.org) from version
-20.09. FileBrowser is a program that helps you manage files on a remote server
+Backend.AI supports [FileBrowser](https://filebrowser.org). FileBrowser is a program that helps you manage files on a remote server
 through a web browser. This is especially useful when uploading a directory from
 the user's local machine.
 
@@ -330,7 +329,7 @@ without creating a session.
 ## Using SFTP Server
 
 
-From 22.09, Backend.AI supports SSH / SFTP file upload from both desktop app and
+Backend.AI supports SSH / SFTP file upload from both desktop app and
 web-based WebUI. The SFTP server allows you to upload files quickly through reliable
 data streams.
 
