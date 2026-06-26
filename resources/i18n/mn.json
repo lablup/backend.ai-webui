@@ -2882,6 +2882,7 @@
       "StartNewSession": "Шинэ session эхлүүлэх",
       "StartTimeMustBeInTheFuture": "Эхлэх цаг нь одоогийн цагаас хойш байх ёстой.",
       "StartUpCommand": "Эхлүүлэх команд",
+      "StorageAccessForbidden": "Санах ойд хандах эрх цуцлагдсан",
       "SwitchOpenMPoptimization": "Автомат OpenMP оновчлолыг ашиглана уу",
       "Tags": "Шошго",
       "Template": "Сеанс загвар",
@@ -2892,6 +2893,7 @@
       "UnifiedAcceleratorMemoryNote": "\"{{description}}\"-д тусдаа хурдасгуурын санах ой байхгүй бөгөөд хостын санах ойн санг ашигладаг тул тусад нь тохируулах боломжгүй.",
       "UserResourceLimit": "Хэрэглэгчийн нөөцийн хязгаарлалт",
       "UsingBootstrapScriptInfo": "Bootstrap скрипт багтсан.",
+      "VFolderNotFound": "VFolder олдсонгүй",
       "Version": "Хувилбар",
       "YouCanStartWithHistory": "Эдгээр нь таны саяхан бүтээсэн сешний бүртгэл юм. \nШинэ хуралдаан эхлэхийн тулд хуралдааны нэр дээр дарна уу."
     },

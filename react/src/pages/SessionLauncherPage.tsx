@@ -480,6 +480,19 @@ const SessionLauncherPage = () => {
             app.modal.error({
               title: t('session.launcher.SessionAlreadyExists'),
             });
+          } else if (
+            error?.error_code === 'storage_access_forbidden' ||
+            error?.error_code === 'vfolder_access_forbidden'
+          ) {
+            app.modal.error({
+              title: t('session.launcher.StorageAccessForbidden'),
+              content: getErrorMessage(error),
+            });
+          } else if (error?.error_code === 'vfolder_read_not-found') {
+            app.modal.error({
+              title: t('session.launcher.VFolderNotFound'),
+              content: getErrorMessage(error),
+            });
           } else {
             app.modal.error({
               title: error?.title,

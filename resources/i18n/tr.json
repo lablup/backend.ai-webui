@@ -2880,6 +2880,7 @@
       "StartNewSession": "Yeni oturumu başlat",
       "StartTimeMustBeInTheFuture": "Başlangıç zamanı geçerli saatten sonra olmalıdır.",
       "StartUpCommand": "Başlangıç Komutu",
+      "StorageAccessForbidden": "Depolama erişimi reddedildi",
       "SwitchOpenMPoptimization": "Otomatik OpenMP optimizasyonunu kullanma",
       "Tags": "Etiketler",
       "Template": "Oturum Şablonu",
@@ -2890,6 +2891,7 @@
       "UnifiedAcceleratorMemoryNote": "\"{{description}}\" cihazında ayrı bir hızlandırıcı belleği yoktur; ana makine bellek havuzunu kullanır ve ayrı olarak ayarlanamaz.",
       "UserResourceLimit": "Kullanıcı Kaynak Sınırı",
       "UsingBootstrapScriptInfo": "Bootstrap betiği dahil edildi.",
+      "VFolderNotFound": "VFolder bulunamadı",
       "Version": "Sürüm",
       "YouCanStartWithHistory": "Bunlar en son oluşturduğunuz oturum kayıtlarıdır. Yeni bir oturum başlatmak için bir oturum adına tıklayın."
     },

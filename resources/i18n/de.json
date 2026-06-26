@@ -2882,6 +2882,7 @@
       "StartNewSession": "Neue Sitzung starten",
       "StartTimeMustBeInTheFuture": "Die Startzeit muss nach der aktuellen Uhrzeit liegen.",
       "StartUpCommand": "Startup-Befehl",
+      "StorageAccessForbidden": "Speicherzugriff verweigert",
       "SwitchOpenMPoptimization": "Automatische OpenMP-Optimierung verwenden",
       "Tags": "Schlagworte",
       "Template": "Sitzungsvorlage",
@@ -2892,6 +2893,7 @@
       "UnifiedAcceleratorMemoryNote": "\"{{description}}\" hat keinen separaten Beschleunigerspeicher; es nutzt den Hostspeicher-Pool und kann nicht separat festgelegt werden.",
       "UserResourceLimit": "Beschränkung der Benutzerressourcen",
       "UsingBootstrapScriptInfo": "Bootstrap-Skript ist enthalten.",
+      "VFolderNotFound": "VFolder nicht gefunden",
       "Version": "Ausführung",
       "YouCanStartWithHistory": "Dies sind Ihre kürzlich erstellten Sitzungsaufzeichnungen. Klicken Sie auf einen Sitzungsnamen, um eine neue Sitzung zu starten."
     },

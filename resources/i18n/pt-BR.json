@@ -2880,6 +2880,7 @@
       "StartNewSession": "Iniciar nova sessão",
       "StartTimeMustBeInTheFuture": "A hora de início deve ser posterior à hora atual.",
       "StartUpCommand": "Comando de arranque",
+      "StorageAccessForbidden": "Acesso ao armazenamento negado",
       "SwitchOpenMPoptimization": "Utilizar a otimização automática do OpenMP",
       "Tags": "Etiquetas",
       "Template": "Modelo de sessão",
@@ -2890,6 +2891,7 @@
       "UnifiedAcceleratorMemoryNote": "\"{{description}}\" não tem memória de acelerador separada; usa o pool de memória do host e não pode ser definida separadamente.",
       "UserResourceLimit": "Limite de recursos do usuário",
       "UsingBootstrapScriptInfo": "O script de bootstrap está incluído.",
+      "VFolderNotFound": "VFolder não encontrado",
       "Version": "Versão",
       "YouCanStartWithHistory": "Estes são os registos de sessão criados recentemente. Clique no nome de uma sessão para iniciar uma nova sessão."
     },

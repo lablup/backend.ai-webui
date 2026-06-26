@@ -2880,6 +2880,7 @@
       "StartNewSession": "Mulakan sesi baru",
       "StartTimeMustBeInTheFuture": "Masa mula mestilah selepas masa semasa.",
       "StartUpCommand": "Perintah Permulaan",
+      "StorageAccessForbidden": "Akses storan ditolak",
       "SwitchOpenMPoptimization": "Gunakan pengoptimuman OpenMP automatik",
       "Tags": "Tag",
       "Template": "Templat Sesi",
@@ -2890,6 +2891,7 @@
       "UnifiedAcceleratorMemoryNote": "\"{{description}}\" tidak mempunyai memori pemecut yang berasingan; ia menggunakan kumpulan memori hos dan tidak boleh ditetapkan secara berasingan.",
       "UserResourceLimit": "Had Sumber Pengguna",
       "UsingBootstrapScriptInfo": "Skrip bootstrap disertakan.",
+      "VFolderNotFound": "VFolder tidak ditemui",
       "Version": "Versi",
       "YouCanStartWithHistory": "Ini adalah rekod sesi yang anda baru -baru ini. \nKlik nama sesi untuk memulakan sesi baru."
     },

@@ -58,7 +58,7 @@ const isActive = (session: SessionActionButtonsFragment$data) => {
   if (session?.type === 'system') {
     return session?.status === 'RUNNING';
   }
-  return !['TERMINATED', 'CANCELLED', 'TERMINATING'].includes(
+  return !['TERMINATED', 'CANCELLED', 'TERMINATING', 'ERROR'].includes(
     session?.status || '',
   );
 };

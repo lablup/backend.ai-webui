@@ -2885,6 +2885,7 @@
       "StartNewSession": "เริ่มเซสชันใหม่",
       "StartTimeMustBeInTheFuture": "เวลาเริ่มต้นต้องเป็นเวลาหลังจากปัจจุบัน",
       "StartUpCommand": "คำสั่งเริ่มต้น",
+      "StorageAccessForbidden": "การเข้าถึงพื้นที่เก็บข้อมูลถูกปฏิเสธ",
       "SwitchOpenMPoptimization": "ใช้การปรับแต่ง OpenMP อัตโนมัติ",
       "Tags": "แท็ก",
       "Template": "เทมเพลตเซสชัน",
@@ -2895,6 +2896,7 @@
       "UnifiedAcceleratorMemoryNote": "\"{{description}}\" ไม่มีหน่วยความจำของตัวเร่งแยกต่างหาก แต่ใช้พูลหน่วยความจำของโฮสต์ จึงไม่สามารถตั้งค่าแยกต่างหากได้",
       "UserResourceLimit": "ขีดจำกัดทรัพยากรผู้ใช้",
       "UsingBootstrapScriptInfo": "สคริปต์ Bootstrap ถูกรวมไว้",
+      "VFolderNotFound": "ไม่พบโฟลเดอร์",
       "Version": "เวอร์ชัน",
       "YouCanStartWithHistory": "นี่คือบันทึกเซสชันที่คุณสร้างขึ้นเมื่อเร็ว ๆ นี้ \nคลิกชื่อเซสชันเพื่อเริ่มเซสชันใหม่"
     },

@@ -2880,6 +2880,7 @@
       "StartNewSession": "Начать новую сессию",
       "StartTimeMustBeInTheFuture": "Время начала должно быть после текущего времени.",
       "StartUpCommand": "Команда запуска",
+      "StorageAccessForbidden": "Доступ к хранилищу запрещён",
       "SwitchOpenMPoptimization": "Использование автоматической оптимизации OpenMP",
       "Tags": "Теги",
       "Template": "Шаблон сессии",
@@ -2890,6 +2891,7 @@
       "UnifiedAcceleratorMemoryNote": "На устройстве \"{{description}}\" нет отдельной памяти ускорителя; оно использует пул памяти хоста, поэтому её нельзя задать отдельно.",
       "UserResourceLimit": "Лимит ресурсов пользователя",
       "UsingBootstrapScriptInfo": "Скрипт Bootstrap включён.",
+      "VFolderNotFound": "VFolder не найден",
       "Version": "Версия",
       "YouCanStartWithHistory": "Это записи ваших недавно созданных сеансов. Щелкните имя сеанса, чтобы начать новый сеанс."
     },

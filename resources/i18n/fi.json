@@ -2880,6 +2880,7 @@
       "StartNewSession": "Aloita uusi istunto",
       "StartTimeMustBeInTheFuture": "Alkamisajan on oltava nykyisen kellonajan jälkeen.",
       "StartUpCommand": "Käynnistyskomento",
+      "StorageAccessForbidden": "Tallennustilan käyttö estetty",
       "SwitchOpenMPoptimization": "Käytä automaattista OpenMP-optimointia",
       "Tags": "Tunnisteet",
       "Template": "Istuntomalli",
@@ -2890,6 +2891,7 @@
       "UnifiedAcceleratorMemoryNote": "Laitteessa \"{{description}}\" ei ole erillistä kiihdyttimen muistia; se käyttää isäntämuistivarantoa, eikä sitä voi määrittää erikseen.",
       "UserResourceLimit": "Käyttäjän resurssirajoitus",
       "UsingBootstrapScriptInfo": "Bootstrap-skripti on mukana.",
+      "VFolderNotFound": "VFolderia ei löydy",
       "Version": "Versio",
       "YouCanStartWithHistory": "Nämä ovat äskettäin luotuja istuntotietueita. Aloita uusi istunto napsauttamalla istunnon nimeä."
     },

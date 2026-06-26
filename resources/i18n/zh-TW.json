@@ -2884,6 +2884,7 @@
       "StartNewSession": "開始新的會話",
       "StartTimeMustBeInTheFuture": "开始时间必须在当前时间之后。",
       "StartUpCommand": "启动命令",
+      "StorageAccessForbidden": "儲存空間存取被拒",
       "SwitchOpenMPoptimization": "使用 OpenMP 自动优化",
       "Tags": "標籤",
       "Template": "会议模板",
@@ -2894,6 +2895,7 @@
       "UnifiedAcceleratorMemoryNote": "\"{{description}}\"沒有獨立的加速器記憶體，它使用主機記憶體池，因此無法單獨設定。",
       "UserResourceLimit": "用戶資源限制",
       "UsingBootstrapScriptInfo": "已包含啟動腳本。",
+      "VFolderNotFound": "找不到 VFolder",
       "Version": "版本",
       "YouCanStartWithHistory": "这些是您最近创建的会话记录。点击会话名称即可开始新的会话。"
     },

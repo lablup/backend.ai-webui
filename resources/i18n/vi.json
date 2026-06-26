@@ -2882,6 +2882,7 @@
       "StartNewSession": "Bắt đầu phiên mới",
       "StartTimeMustBeInTheFuture": "Thời gian bắt đầu phải sau thời gian hiện tại.",
       "StartUpCommand": "Lệnh khởi động",
+      "StorageAccessForbidden": "Quyền truy cập bộ nhớ bị từ chối",
       "SwitchOpenMPoptimization": "Sử dụng tối ưu hóa OpenMP tự động",
       "Tags": "Thẻ",
       "Template": "Mẫu phiên",
@@ -2892,6 +2893,7 @@
       "UnifiedAcceleratorMemoryNote": "\"{{description}}\" không có bộ nhớ máy gia tốc riêng; nó sử dụng nhóm bộ nhớ máy chủ và không thể được đặt riêng.",
       "UserResourceLimit": "Giới hạn tài nguyên người dùng",
       "UsingBootstrapScriptInfo": "Đã bao gồm tập lệnh khởi tạo.",
+      "VFolderNotFound": "Không tìm thấy VFolder",
       "Version": "Phiên bản",
       "YouCanStartWithHistory": "Đây là hồ sơ phiên được tạo gần đây của bạn. \nNhấp vào tên phiên để bắt đầu một phiên mới."
     },

@@ -2880,6 +2880,7 @@
       "StartNewSession": "Ξεκινήστε τη νέα συνεδρία",
       "StartTimeMustBeInTheFuture": "Η ώρα έναρξης πρέπει να είναι μετά την τρέχουσα ώρα.",
       "StartUpCommand": "Εντολή εκκίνησης",
+      "StorageAccessForbidden": "Η πρόσβαση στον χώρο αποθήκευσης απορρίφθηκε",
       "SwitchOpenMPoptimization": "Χρήση αυτόματης βελτιστοποίησης OpenMP",
       "Tags": "Ετικέτες",
       "Template": "Πρότυπο συνεδρίας",
@@ -2890,6 +2891,7 @@
       "UnifiedAcceleratorMemoryNote": "Η \"{{description}}\" δεν διαθέτει ξεχωριστή μνήμη επιταχυντή· χρησιμοποιεί τη δεξαμενή μνήμης του κεντρικού υπολογιστή και δεν μπορεί να οριστεί ξεχωριστά.",
       "UserResourceLimit": "Όριο πόρων χρήστη",
       "UsingBootstrapScriptInfo": "Το Bootstrap script περιλαμβάνεται.",
+      "VFolderNotFound": "Το VFolder δεν βρέθηκε",
       "Version": "Εκδοχή",
       "YouCanStartWithHistory": "Αυτές είναι οι εγγραφές συνόδου που δημιουργήσατε πρόσφατα. Κάντε κλικ σε ένα όνομα συνεδρίας για να ξεκινήσετε μια νέα συνεδρία."
     },

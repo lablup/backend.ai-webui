@@ -2884,6 +2884,7 @@
       "StartNewSession": "Mulai sesi baru",
       "StartTimeMustBeInTheFuture": "Waktu mulai harus setelah waktu saat ini.",
       "StartUpCommand": "Perintah Startup",
+      "StorageAccessForbidden": "Akses penyimpanan ditolak",
       "SwitchOpenMPoptimization": "Gunakan pengoptimalan OpenMP otomatis",
       "Tags": "Tag",
       "Template": "Templat Sesi",
@@ -2894,6 +2895,7 @@
       "UnifiedAcceleratorMemoryNote": "\"{{description}}\" tidak memiliki memori akselerator terpisah; perangkat menggunakan kumpulan memori host dan tidak dapat diatur secara terpisah.",
       "UserResourceLimit": "Batas Sumber Daya Pengguna",
       "UsingBootstrapScriptInfo": "Skrip bootstrap disertakan.",
+      "VFolderNotFound": "VFolder tidak ditemukan",
       "Version": "Versi",
       "YouCanStartWithHistory": "Ini adalah catatan sesi yang baru saja Anda buat. Klik nama sesi untuk memulai sesi baru."
     },

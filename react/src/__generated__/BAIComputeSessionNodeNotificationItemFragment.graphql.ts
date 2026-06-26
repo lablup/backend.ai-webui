@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<36ad7e2be58e7f012ee9b1091b27e0c5>>
+ * @generated SignedSource<<85aef79f57b08d02241c1bf9f8ef63b4>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,8 +13,9 @@ import { FragmentRefs } from "relay-runtime";
 export type BAIComputeSessionNodeNotificationItemFragment$data = {
   readonly id: string;
   readonly name: string | null | undefined;
-  readonly row_id: string | null | undefined;
   readonly status: string | null | undefined;
+  readonly status_data: string | null | undefined;
+  readonly status_info: string | null | undefined;
   readonly " $fragmentSpreads": FragmentRefs<"SessionActionButtonsFragment" | "SessionStatusTagFragment">;
   readonly " $fragmentType": "BAIComputeSessionNodeNotificationItemFragment";
 };
@@ -29,13 +30,6 @@ const node: ReaderFragment = {
   "metadata": null,
   "name": "BAIComputeSessionNodeNotificationItemFragment",
   "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "row_id",
-      "storageKey": null
-    },
     {
       "alias": null,
       "args": null,
@@ -58,6 +52,20 @@ const node: ReaderFragment = {
       "storageKey": null
     },
     {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "status_info",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "status_data",
+      "storageKey": null
+    },
+    {
       "args": null,
       "kind": "FragmentSpread",
       "name": "SessionActionButtonsFragment"
@@ -72,6 +80,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "917e42f301a79107d0a4c8cac47d76c2";
+(node as any).hash = "072204200ff77273a5d4f68970569ab2";
 
 export default node;

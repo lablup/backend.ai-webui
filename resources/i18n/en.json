@@ -2870,6 +2870,7 @@
       "StartNewSession": "Start new session",
       "StartTimeMustBeInTheFuture": "The start time must be after the current time.",
       "StartUpCommand": "Startup Command",
+      "StorageAccessForbidden": "Storage access denied",
       "SwitchOpenMPoptimization": "Use automatic OpenMP optimization",
       "Tags": "Tags",
       "Template": "Session Template",
@@ -2880,6 +2881,7 @@
       "UnifiedAcceleratorMemoryNote": "\"{{description}}\" has no separate accelerator memory; it uses the host memory pool and cannot be set separately.",
       "UserResourceLimit": "User Resource Limit",
       "UsingBootstrapScriptInfo": "Bootstrap script is included.",
+      "VFolderNotFound": "VFolder not found",
       "Version": "Version",
       "YouCanStartWithHistory": "These are your recently created session records. Click a session name to start a new session."
     },

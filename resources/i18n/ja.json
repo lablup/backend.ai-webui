@@ -2885,6 +2885,7 @@
       "StartNewSession": "新規セッション開始",
       "StartTimeMustBeInTheFuture": "開始時刻は現在時刻より後でなければならない。",
       "StartUpCommand": "セッション開始時に実行するコマンド",
+      "StorageAccessForbidden": "ストレージへのアクセスが拒否されました",
       "SwitchOpenMPoptimization": "OpenMP自動最適化を使用",
       "Tags": "タグ",
       "Template": "セッションテンプレート",
@@ -2895,6 +2896,7 @@
       "UnifiedAcceleratorMemoryNote": "\"{{description}}\"には専用のアクセラレータメモリがなく、ホストメモリプールを共用するため、個別に設定できません。",
       "UserResourceLimit": "ユーザーリソース制限",
       "UsingBootstrapScriptInfo": "ブートストラップスクリプトが含まれています。",
+      "VFolderNotFound": "フォルダが見つかりません",
       "Version": "バージョン",
       "YouCanStartWithHistory": "これらは最近作成されたセッション記録です。セッション名をクリックすると、新しいセッションが開始されます。"
     },

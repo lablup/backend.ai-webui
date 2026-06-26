@@ -2880,6 +2880,7 @@
       "StartNewSession": "Iniciar una nueva sesión",
       "StartTimeMustBeInTheFuture": "La hora de inicio debe ser posterior a la hora actual.",
       "StartUpCommand": "Comando de inicio",
+      "StorageAccessForbidden": "Acceso al almacenamiento denegado",
       "SwitchOpenMPoptimization": "Utilizar la optimización automática OpenMP",
       "Tags": "Etiquetas",
       "Template": "Plantilla de sesión",
@@ -2890,6 +2891,7 @@
       "UnifiedAcceleratorMemoryNote": "\"{{description}}\" no tiene memoria de acelerador independiente; utiliza el grupo de memoria del host y no se puede configurar por separado.",
       "UserResourceLimit": "Límite de recursos de usuario",
       "UsingBootstrapScriptInfo": "Script de arranque incluido.",
+      "VFolderNotFound": "VFolder no encontrado",
       "Version": "Versión",
       "YouCanStartWithHistory": "Estos son sus registros de sesión creados recientemente. Haga clic en un nombre de sesión para iniciar una nueva sesión."
     },
