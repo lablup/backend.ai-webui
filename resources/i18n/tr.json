@@ -1866,6 +1866,12 @@
       "LoginWithSAML": "SAML ile Oturum Açma"
     }
   },
+  "loginHistory": {
+    "Domain": "Alan Adı",
+    "FailReason": "Hata Nedeni",
+    "LoginTime": "Oturum Açma Zamanı",
+    "Result": "Sonuç"
+  },
   "loginSession": {
     "AccessKey": "Erişim Anahtarı",
     "CreatedAt": "Oluşturulma Tarihi",
@@ -3353,6 +3359,7 @@
     "Language": "Dil",
     "LightMode": "Işık Modu",
     "LightTheme": "Açık Mod",
+    "LoginHistory": "Giriş Geçmişi",
     "LoginSessions": "Oturum Açma Oturumları",
     "Logo": "Logo CI",
     "Logs": "Kütükler",
