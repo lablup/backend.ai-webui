@@ -141,10 +141,18 @@ function useModels(
 
         const url = createModelsURL(baseURL);
         const authToken = effectiveApiKey ?? provider.apiKey;
+        // FR-3212: An unresponsive endpoint (TCP connects but never returns an
+        // HTTP response) would otherwise hang this fetch forever, leaving the
+        // Suspense boundary spinning indefinitely. Abort after 30s so the
+        // request rejects and falls into the catch below (error: -1), driving
+        // the established CustomModelForm recovery UX. 30s is generous enough
+        // for a slow-but-healthy endpoint (cold start, app-proxy/TLS latency)
+        // while still bounding a dead connection to a recoverable failure.
         const response = await fetch(url, {
           headers: {
             Authorization: authToken ? `Bearer ${authToken}` : '',
           },
+          signal: AbortSignal.timeout(30000),
         });
 
         if (!response.ok) {
