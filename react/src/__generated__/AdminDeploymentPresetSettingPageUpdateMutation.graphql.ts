@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<76e2ef9c7fc4ef98f0997b1c321f2ace>>
+ * @generated SignedSource<<fce99cf16cbb504be52481b6e6b46d0f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -24,7 +24,7 @@ export type UpdateDeploymentRevisionPresetInput = {
   modelDefinition?: ModelDefinitionInput | null | undefined;
   name?: string | null | undefined;
   openToPublic?: boolean | null | undefined;
-  presetValues?: ReadonlyArray<DeploymentRevisionPresetValueEntryInput> | null | undefined;
+  presetValues?: ReadonlyArray<RuntimeVariantPresetValueEntryInput> | null | undefined;
   rank?: number | null | undefined;
   replicaCount?: number | null | undefined;
   resourceOpts?: ReadonlyArray<ResourceOptsEntryInput> | null | undefined;
@@ -60,6 +60,7 @@ export type ModelConfigInput = {
   service?: ModelServiceConfigInput | null | undefined;
 };
 export type ModelServiceConfigInput = {
+  command?: string | null | undefined;
   healthCheck?: ModelHealthCheckInput | null | undefined;
   port?: number | null | undefined;
   preStartActions?: ReadonlyArray<PreStartActionInput> | null | undefined;
@@ -106,7 +107,7 @@ export type EnvironEntryInput = {
   key: string;
   value: string;
 };
-export type DeploymentRevisionPresetValueEntryInput = {
+export type RuntimeVariantPresetValueEntryInput = {
   presetId: string;
   value: string;
 };
@@ -422,7 +423,7 @@ return {
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "DeploymentRevisionPresetValueEntry",
+                "concreteType": "RuntimeVariantPresetValueEntry",
                 "kind": "LinkedField",
                 "name": "presetValues",
                 "plural": true,

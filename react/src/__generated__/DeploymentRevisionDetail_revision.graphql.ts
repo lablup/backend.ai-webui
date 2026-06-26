@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a96ec4b3e81a264dca617d4c34b273cd>>
+ * @generated SignedSource<<0f6035bc86ada9fa10cde721d6f610f2>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -54,7 +54,7 @@ export type DeploymentRevisionDetail_revision$data = {
           readonly action: string;
           readonly args: any;
         }>;
-        readonly shell: string;
+        readonly shell: string | null | undefined;
         readonly startCommand: ReadonlyArray<string> | null | undefined;
       } | null | undefined;
     }>;

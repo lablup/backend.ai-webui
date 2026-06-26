@@ -89,7 +89,6 @@ const ModelConfigItem: React.FC<{
               name={[listItemName, 'service', 'shell']}
               label={t('adminDeploymentPreset.modelDef.Shell')}
               style={{ flex: 2, minWidth: 160 }}
-              rules={[{ required: true }]}
             >
               <Input
                 placeholder={t('general.Example', { value: '/bin/bash' })}
