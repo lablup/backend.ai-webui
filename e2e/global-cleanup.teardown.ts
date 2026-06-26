@@ -23,12 +23,50 @@
  * a per-test `sweepVFolders` call — because the teardown runs after every other
  * project has finished, so no parallel test owns a live `e2e-*` folder.
  */
+import {
+  createAdminApiContext,
+  listUsersByPattern,
+  purgeUserViaApi,
+} from './utils/admin-api';
 import { sweepServices, sweepVFolders } from './utils/cleanup-util';
 import { loginAsAdmin, loginAsUser } from './utils/test-util';
 import { Page, test } from '@playwright/test';
 
 // Matches every e2e vfolder naming scheme used across the specs.
 const E2E_VFOLDER_PATTERN = /e2e-/i;
+
+// Matches the disposable fixture accounts other specs create (e.g.
+// e2e-rbac-assign-*, e2e-mykeypair-*, e2e-test-user-*, e2e-profile-*). Anchored
+// to the `e2e-` prefix so it can never match a standard test account
+// (admin@/user@/user2@/monitor@/domain-admin@lablup.com).
+const E2E_USER_PATTERN = /^e2e-[a-z0-9._-]*@lablup\.com$/i;
+
+/**
+ * Belt-and-suspenders user sweep (FR-3217). Specs that create fixture users now
+ * purge them in their own afterAll, but a hard-killed run can skip that hook and
+ * strand an `e2e-*` account on the shared server. This purges any leftover via
+ * the admin GraphQL API (pagination-immune, no credential-UI flakiness — see
+ * FR-3138). It CAN throw: admin login (createAdminApiContext), transport, and
+ * GraphQL errors propagate (purgeUserViaApi only swallows missing-user /
+ * `ok: false`). The caller wraps this in its own try/catch so a sweep failure
+ * never reds an otherwise-green run; the `finally` here disposes the API
+ * context even when a sweep step throws.
+ */
+async function sweepLeftoverE2EUsers(): Promise<void> {
+  const api = await createAdminApiContext();
+  try {
+    const leaked = await listUsersByPattern(api, E2E_USER_PATTERN);
+    let purged = 0;
+    for (const { email } of leaked) {
+      if (await purgeUserViaApi(api, email)) purged++;
+    }
+    if (purged > 0) {
+      console.log(`[global-cleanup] purged ${purged} leftover e2e-* user(s).`);
+    }
+  } finally {
+    await api.dispose();
+  }
+}
 
 /** Run a best-effort sweep, swallowing any error so teardown never fails. */
 async function safeSweep(
@@ -74,5 +112,12 @@ test.describe('Global e2e cleanup', () => {
       page,
     );
     await safeSweep('admin services', (p) => sweepServices(p), page);
+    // Purge any e2e-* fixture user a per-spec afterAll failed to reap. API-based,
+    // so it does not use `page`; guard it directly so a failure never reds the run.
+    try {
+      await sweepLeftoverE2EUsers();
+    } catch (error) {
+      console.warn('[global-cleanup] user sweep failed (ignored):', error);
+    }
   });
 });

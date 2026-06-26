@@ -1,12 +1,13 @@
 // spec: e2e/.agent-output/test-plan-rbac-management.md
 // Scenarios: 3.1 – 3.4, 4.1 – 4.4, 5.1 – 5.4, 6.2 – 6.3
 // (Role detail drawer, permissions management, user assignments, edge cases)
+import { createAdminApiContext, purgeUserViaApi } from '../utils/admin-api';
 import {
   KeyPairModal,
   UserSettingModal,
 } from '../utils/classes/user/UserSettingModal';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
-import test, { expect, Page } from '@playwright/test';
+import test, { expect, Page, type APIRequestContext } from '@playwright/test';
 
 const TEST_RUN_ID = Date.now().toString(36);
 const ROLE_NAME = `e2e-detail-role-${TEST_RUN_ID}`;
@@ -658,9 +659,10 @@ test.describe(
 // assign / revoke a user to/from a custom role and then purge that role
 // during cleanup. To keep tests fully isolated from the shared
 // `user@lablup.com` (whose state must remain stable for all other suites),
-// we create a fresh user via admin in beforeAll. There is no afterAll cleanup
-// — the fixture user uses a unique `<RUN_ID>` suffix so leftovers don't
-// collide between runs, and a periodic reaper sweeps stale fixture accounts.
+// we create a fresh user via admin in beforeAll and purge it in afterAll
+// (see below) via the admin GraphQL API. The unique `<RUN_ID>` suffix keeps
+// leftovers from colliding between runs, and the global-cleanup teardown
+// sweeps any `e2e-*` account a hard-killed run failed to purge.
 const ASSIGN_FIXTURE_RUN_ID =
   Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 const ASSIGN_FIXTURE_EMAIL = `e2e-rbac-assign-${ASSIGN_FIXTURE_RUN_ID}@lablup.com`;
@@ -708,11 +710,26 @@ test.describe(
       }
     });
 
-    // No afterAll cleanup: each test run uses a unique fixture user
-    // (`e2e-rbac-assign-<RUN_ID>@lablup.com`) that does not collide with any
-    // other run, so leftover users are harmless. A separate periodic reaper
-    // should sweep stale `e2e-rbac-assign-*` accounts. Mirrors the pattern
-    // already established in e2e/credential/my-keypair-management.spec.ts.
+    // Purge the disposable fixture user after the suite via the admin GraphQL
+    // API (pagination-immune, no UI flakiness). The global-cleanup teardown
+    // also sweeps any leaked `e2e-*` account as a belt-and-suspenders backstop,
+    // but reaping it here keeps the shared server clean even when the teardown
+    // is skipped (e.g. a single-file run). Never throws — a cleanup hiccup must
+    // not fail an otherwise-passing suite.
+    test.afterAll(async () => {
+      let api: APIRequestContext | undefined;
+      try {
+        api = await createAdminApiContext();
+        await purgeUserViaApi(api, ASSIGN_FIXTURE_EMAIL);
+      } catch (error) {
+        console.warn(
+          `[rbac-role-detail] failed to purge fixture user ${ASSIGN_FIXTURE_EMAIL}:`,
+          error,
+        );
+      } finally {
+        await api?.dispose();
+      }
+    });
 
     test('Superadmin can assign a user to a role', async ({
       page,

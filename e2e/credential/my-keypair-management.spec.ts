@@ -1,4 +1,5 @@
 // spec: e2e/.agent-output/test-plan-my-keypair-management.md
+import { createAdminApiContext, purgeUserViaApi } from '../utils/admin-api';
 import {
   KeyPairModal,
   UserSettingModal,
@@ -8,7 +9,7 @@ import {
   loginAsCreatedAccount,
   navigateTo,
 } from '../utils/test-util';
-import test, { expect } from '@playwright/test';
+import test, { expect, type APIRequestContext } from '@playwright/test';
 
 // Helper to open the My Keypair Management modal
 async function openKeypairModal(page: import('@playwright/test').Page) {
@@ -151,12 +152,26 @@ test.describe(
       }
     });
 
-    // No afterAll cleanup: each test run uses a unique fixture user
-    // (`e2e-mykeypair-<TEST_RUN_ID>@lablup.com`) that does not collide with
-    // any other run, so leftover users are harmless. A separate periodic
-    // job (or a follow-up cleanup test) should reap the `e2e-mykeypair-*`
-    // accounts. Avoiding cleanup here keeps the file's tear-down fast and
-    // prevents flake from the cleanup itself.
+    // Purge the disposable fixture user after the suite via the admin GraphQL
+    // API (pagination-immune, no UI flakiness). The global-cleanup teardown
+    // also sweeps any leaked `e2e-*` account as a belt-and-suspenders backstop,
+    // but reaping it here keeps the shared server clean even when the teardown
+    // is skipped (e.g. a single-file run). Never throws — a cleanup hiccup must
+    // not fail an otherwise-passing suite.
+    test.afterAll(async () => {
+      let api: APIRequestContext | undefined;
+      try {
+        api = await createAdminApiContext();
+        await purgeUserViaApi(api, FIXTURE_EMAIL);
+      } catch (error) {
+        console.warn(
+          `[my-keypair-management] failed to purge fixture user ${FIXTURE_EMAIL}:`,
+          error,
+        );
+      } finally {
+        await api?.dispose();
+      }
+    });
 
     test.beforeEach(async ({ page, request }) => {
       // Login as the disposable fixture user (NOT the shared user@lablup.com).
