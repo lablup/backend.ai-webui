@@ -24,7 +24,7 @@
 `sudo` หากจำเป็นจริง ๆ คุณสามารถร้องขอให้ผู้ดูแลระบบอนุญาตสิทธิ์ `sudo` ได้
 
 หรืออีกทางหนึ่ง ผู้ใช้อาจใช้ Homebrew เพื่อติดตั้งแพ็กเกจ OS ได้ โปรดดู
-[คู่มือการใช้ Homebrew กับโฟลเดอร์เมาท์อัตโนมัติ](../mount_vfolder/mount_vfolder.md#using-linuxbrew-with-automountfolder)
+[คู่มือการใช้ Homebrew กับโฟลเดอร์เมาท์อัตโนมัติ](#using-linuxbrew-with-automountfolder)
 
 
 <a id="install_pip_pkg"></a>
@@ -40,7 +40,7 @@
 pip install aiohttp
 ```
 สำหรับข้อมูลเพิ่มเติม โปรดดู[คู่มือการติดตั้งแพ็กเกจ Python
-ด้วยโฟลเดอร์เมาท์อัตโนมัติ](../mount_vfolder/mount_vfolder.md#using-pip-with-automountfolder)
+ด้วยโฟลเดอร์เมาท์อัตโนมัติ](#using-pip-with-automountfolder)
 
 ### ฉันได้สร้างเซสชันการคำนวณแล้ว แต่ไม่สามารถเปิดใช้งาน Jupyter Notebook ได้
 

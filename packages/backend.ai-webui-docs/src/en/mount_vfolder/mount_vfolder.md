@@ -8,7 +8,7 @@ Normal directories and files created under `/home/work/` will disappear when the
 This is because compute sessions are dynamically created and deleted based on the container.
 To preserve data inside a container regardless of the container's lifecycle, a separate host folder must be mounted in the container, and then files must be created within the mounted folder.
 
-Go to 'Sessions' page and click the 'Start' button.
+Go to 'Sessions' page and click the `Start` button.
 After filling out the 'Session Type', 'Environments & Resource allocation' steps,
 navigate to the 'Data & Storage' step to see a list of folders that users can mount.
 From this list, choose the folders to mount and add them, or select multiple folders to mount more.
@@ -32,13 +32,13 @@ For more detailed instructions related to folders, please refer [Explore Folder]
 :::
 
 :::note
-Alternatively, a new virtual folder can be created by clicking the '+' button.
+Alternatively, a new virtual folder can be created by clicking the `+` button.
 For further information on how to create a new folder in session launcher page,
 please refer [Create storage folder](#create-storage-folder) section.
 :::
 
 In the created session, click the created session name to open detail information drawer. Then,
-click the 'Execute Terminal App' icon button (upper right corner, second from the right) to open terminal app.
+click the `Execute Terminal App` icon button (upper right corner, second from the right) to open terminal app.
 Or you can also open terminal app from the notification.
 `ls` command will mount ``user1-ml-test` folder and `user2-vfolder` under the `user1-ml-test`
 and `user2-vfolder` folders are mounted under the home directory.
@@ -69,7 +69,7 @@ Please note the contents of the file can be chekced with `cat` command.
 
 Now delete the compute session and go to the Storage page.
 Locate the `user2-vfolder folder`, open a file explorer and check that the `test_file` exists.
-Click the 'download' button in 'Actions' tab to download the file to the local machine and open it
+Click the `download` button in `Actions` tab to download the file to the local machine and open it
 to confirm that the contents are \"file inside user2-vfolder\".
 
 ![](../images/download_file_from_folder.png)

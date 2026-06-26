@@ -89,12 +89,12 @@ navigation:
           path: project_admin/project_admin.md
         - title: RBAC Management
           path: rbac_management/rbac_management.md
-        - title: Admin Features
-          path: admin_menu/admin_menu.md
         - title: Agent Summary
           path: agent_summary/agent_summary.md
         - title: Statistics
           path: statistics/statistics.md
+        - title: Admin Features
+          path: admin_menu/admin_menu.md
     - category: Reference
       items:
         - title: Trouble Shooting
@@ -156,12 +156,12 @@ navigation:
           path: project_admin/project_admin.md
         - title: RBAC管理
           path: rbac_management/rbac_management.md
-        - title: 管理者機能
-          path: admin_menu/admin_menu.md
         - title: エージェントサマリー
           path: agent_summary/agent_summary.md
         - title: 統計
           path: statistics/statistics.md
+        - title: 管理者機能
+          path: admin_menu/admin_menu.md
     - category: リファレンス
       items:
         - title: FAQ＆トラブルシューティング
@@ -223,12 +223,12 @@ navigation:
           path: project_admin/project_admin.md
         - title: RBAC 관리
           path: rbac_management/rbac_management.md
-        - title: 관리자 기능
-          path: admin_menu/admin_menu.md
         - title: 에이전트 요약
           path: agent_summary/agent_summary.md
         - title: 통계
           path: statistics/statistics.md
+        - title: 관리자 기능
+          path: admin_menu/admin_menu.md
     - category: 참고 자료
       items:
         - title: FAQ 및 문제 해결
@@ -290,12 +290,12 @@ navigation:
           path: project_admin/project_admin.md
         - title: การจัดการ RBAC
           path: rbac_management/rbac_management.md
-        - title: ฟีเจอร์ผู้ดูแลระบบ
-          path: admin_menu/admin_menu.md
         - title: สรุปเอเจนต์
           path: agent_summary/agent_summary.md
         - title: สถิติ
           path: statistics/statistics.md
+        - title: ฟีเจอร์ผู้ดูแลระบบ
+          path: admin_menu/admin_menu.md
     - category: เอกสารอ้างอิง
       items:
         - title: FAQ และการแก้ไขปัญหา
