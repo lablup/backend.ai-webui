@@ -386,6 +386,20 @@
   "comp:BAIUserSelect": {
     "SelectUser": "เลือกผู้ใช้"
   },
+  "comp:BAIVFolderMountConfigInput": {
+    "AliasInvalid": "รูปแบบพาธไม่ถูกต้อง",
+    "AliasOverlapping": "พาธ mount ซ้ำซ้อนกับโฟลเดอร์อื่น",
+    "AliasPlaceholder": "พาธ mount",
+    "AutoMountedFolders": "โฟลเดอร์ที่ mount อัตโนมัติ",
+    "Name": "ชื่อ",
+    "PathAndAlias": "พาธ & Alias",
+    "PathAndAliasTooltip": "พาธภายใน container ที่โฟลเดอร์จะถูก mount ปล่อยว่างเพื่อใช้พาธเริ่มต้น",
+    "RemoveFolder": "ลบ",
+    "Subpath": "Subpath",
+    "SubpathInvalid": "Subpath ต้องเป็น relative path และต้องไม่มี '..'",
+    "SubpathPlaceholder": "เช่น dataset/train (ไม่บังคับ)",
+    "SubpathTooltip": "mount โฟลเดอร์ย่อยภายในโฟลเดอร์เป็นแหล่งข้อมูลแทน root ปล่อยว่างเพื่อ mount จาก root"
+  },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "เลือกโฟลเดอร์"
   },

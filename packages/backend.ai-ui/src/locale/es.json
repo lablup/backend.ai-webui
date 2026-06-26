@@ -386,6 +386,20 @@
   "comp:BAIUserSelect": {
     "SelectUser": "Seleccionar usuario"
   },
+  "comp:BAIVFolderMountConfigInput": {
+    "AliasInvalid": "Formato de ruta inválido.",
+    "AliasOverlapping": "La ruta de montaje se superpone con otra carpeta.",
+    "AliasPlaceholder": "Ruta de montaje",
+    "AutoMountedFolders": "Carpetas de montaje automático",
+    "Name": "Nombre",
+    "PathAndAlias": "Ruta & Alias",
+    "PathAndAliasTooltip": "La ruta dentro del contenedor donde se montará la carpeta. Déjelo vacío para usar la ruta predeterminada.",
+    "RemoveFolder": "Eliminar",
+    "Subpath": "Subruta",
+    "SubpathInvalid": "La subruta debe ser una ruta relativa y no debe contener '..'.",
+    "SubpathPlaceholder": "p. ej. dataset/train (opcional)",
+    "SubpathTooltip": "Monta una subcarpeta dentro de la carpeta como origen en lugar de su raíz. Déjelo vacío para montar la raíz."
+  },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Seleccionar carpeta"
   },

@@ -386,6 +386,20 @@
   "comp:BAIUserSelect": {
     "SelectUser": "Valitse käyttäjä"
   },
+  "comp:BAIVFolderMountConfigInput": {
+    "AliasInvalid": "Virheellinen polkumuoto.",
+    "AliasOverlapping": "Liitospolku on päällekkäinen toisen kansion kanssa.",
+    "AliasPlaceholder": "Liitospolku",
+    "AutoMountedFolders": "Automaattisesti liitetyt kansiot",
+    "Name": "Nimi",
+    "PathAndAlias": "Polku & Alias",
+    "PathAndAliasTooltip": "Polku säilön sisällä, johon kansio liitetään. Jätä tyhjäksi käyttääksesi oletuspolkua.",
+    "RemoveFolder": "Poista",
+    "Subpath": "Alihakemisto",
+    "SubpathInvalid": "Alihakemiston on oltava suhteellinen polku eikä se saa sisältää '..'.",
+    "SubpathPlaceholder": "esim. dataset/train (valinnainen)",
+    "SubpathTooltip": "Liittää kansion sisällä olevan alikansion lähteeksi juuren sijaan. Jätä tyhjäksi liittääksesi juuren."
+  },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Valitse kansio"
   },

@@ -386,6 +386,20 @@
   "comp:BAIUserSelect": {
     "SelectUser": "選擇使用者"
   },
+  "comp:BAIVFolderMountConfigInput": {
+    "AliasInvalid": "路徑格式無效。",
+    "AliasOverlapping": "掛載路徑與另一個資料夾重疊。",
+    "AliasPlaceholder": "掛載路徑",
+    "AutoMountedFolders": "自動掛載資料夾",
+    "Name": "名稱",
+    "PathAndAlias": "路徑 & 別名",
+    "PathAndAliasTooltip": "資料夾在容器內的掛載路徑。留空則使用預設路徑。",
+    "RemoveFolder": "移除",
+    "Subpath": "子路徑",
+    "SubpathInvalid": "子路徑必須是相對路徑，且不能包含 '..'。",
+    "SubpathPlaceholder": "例如 dataset/train（選填）",
+    "SubpathTooltip": "將資料夾內的子資料夾作為掛載來源，而非資料夾根目錄。留空則掛載根目錄。"
+  },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "選擇資料夾"
   },

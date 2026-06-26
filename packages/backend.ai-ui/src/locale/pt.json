@@ -386,6 +386,20 @@
   "comp:BAIUserSelect": {
     "SelectUser": "Selecionar usuário"
   },
+  "comp:BAIVFolderMountConfigInput": {
+    "AliasInvalid": "Formato de caminho inválido.",
+    "AliasOverlapping": "O caminho de montagem sobrepõe-se a outra pasta.",
+    "AliasPlaceholder": "Caminho de montagem",
+    "AutoMountedFolders": "Pastas de montagem automática",
+    "Name": "Nome",
+    "PathAndAlias": "Caminho & Alias",
+    "PathAndAliasTooltip": "O caminho dentro do contentor onde a pasta será montada. Deixe em branco para usar o caminho predefinido.",
+    "RemoveFolder": "Remover",
+    "Subpath": "Subcaminho",
+    "SubpathInvalid": "O subcaminho deve ser um caminho relativo e não deve conter '..'.",
+    "SubpathPlaceholder": "ex. dataset/train (opcional)",
+    "SubpathTooltip": "Monta uma subpasta dentro da pasta como origem em vez da sua raiz. Deixe em branco para montar a raiz."
+  },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Selecionar pasta"
   },

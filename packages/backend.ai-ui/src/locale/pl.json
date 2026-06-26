@@ -386,6 +386,20 @@
   "comp:BAIUserSelect": {
     "SelectUser": "Wybierz użytkownika"
   },
+  "comp:BAIVFolderMountConfigInput": {
+    "AliasInvalid": "Nieprawidłowy format ścieżki.",
+    "AliasOverlapping": "Ścieżka montowania pokrywa się z innym folderem.",
+    "AliasPlaceholder": "Ścieżka montowania",
+    "AutoMountedFolders": "Automatycznie montowane foldery",
+    "Name": "Nazwa",
+    "PathAndAlias": "Ścieżka & Alias",
+    "PathAndAliasTooltip": "Ścieżka wewnątrz kontenera, w której zostanie zamontowany folder. Pozostaw puste, aby użyć domyślnej ścieżki.",
+    "RemoveFolder": "Usuń",
+    "Subpath": "Podścieżka",
+    "SubpathInvalid": "Podścieżka musi być ścieżką względną i nie może zawierać '..'.",
+    "SubpathPlaceholder": "np. dataset/train (opcjonalne)",
+    "SubpathTooltip": "Montuje podfolder wewnątrz folderu jako źródło zamiast jego katalogu głównego. Pozostaw puste, aby zamontować katalog główny."
+  },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Wybierz folder"
   },

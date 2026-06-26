@@ -386,6 +386,20 @@
   "comp:BAIUserSelect": {
     "SelectUser": "ユーザーを選択"
   },
+  "comp:BAIVFolderMountConfigInput": {
+    "AliasInvalid": "パスの形式が無効です。",
+    "AliasOverlapping": "マウントパスが別のフォルダと重複しています。",
+    "AliasPlaceholder": "マウントパス",
+    "AutoMountedFolders": "自動マウントフォルダ",
+    "Name": "名前",
+    "PathAndAlias": "パス & エイリアス",
+    "PathAndAliasTooltip": "コンテナ内でフォルダがマウントされるパスです。デフォルトのパスを使用する場合は空欄にしてください。",
+    "RemoveFolder": "削除",
+    "Subpath": "サブパス",
+    "SubpathInvalid": "サブパスは相対パスである必要があり、'..' を含めることはできません。",
+    "SubpathPlaceholder": "例: dataset/train (省略可)",
+    "SubpathTooltip": "フォルダのルートではなく、フォルダ内のサブフォルダをマウントソースとして使用します。ルートをマウントするには空欄にしてください。"
+  },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "フォルダを選択"
   },

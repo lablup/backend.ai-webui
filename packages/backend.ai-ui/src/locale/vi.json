@@ -386,6 +386,20 @@
   "comp:BAIUserSelect": {
     "SelectUser": "Chọn người dùng"
   },
+  "comp:BAIVFolderMountConfigInput": {
+    "AliasInvalid": "Định dạng đường dẫn không hợp lệ.",
+    "AliasOverlapping": "Đường dẫn mount trùng lặp với thư mục khác.",
+    "AliasPlaceholder": "Đường dẫn mount",
+    "AutoMountedFolders": "Thư mục tự động mount",
+    "Name": "Tên",
+    "PathAndAlias": "Đường dẫn & Bí danh",
+    "PathAndAliasTooltip": "Đường dẫn bên trong container nơi thư mục sẽ được mount. Để trống để sử dụng đường dẫn mặc định.",
+    "RemoveFolder": "Xóa",
+    "Subpath": "Đường dẫn con",
+    "SubpathInvalid": "Đường dẫn con phải là đường dẫn tương đối và không được chứa '..'.",
+    "SubpathPlaceholder": "vd. dataset/train (tùy chọn)",
+    "SubpathTooltip": "Mount một thư mục con bên trong thư mục làm nguồn thay vì thư mục gốc. Để trống để mount từ thư mục gốc."
+  },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Chọn thư mục"
   },

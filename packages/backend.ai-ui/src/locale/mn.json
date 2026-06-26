@@ -386,6 +386,20 @@
   "comp:BAIUserSelect": {
     "SelectUser": "Хэрэглэгч сонгох"
   },
+  "comp:BAIVFolderMountConfigInput": {
+    "AliasInvalid": "Замын формат буруу байна.",
+    "AliasOverlapping": "Маунтын зам өөр хавтастай давхцаж байна.",
+    "AliasPlaceholder": "Маунтын зам",
+    "AutoMountedFolders": "Автоматаар маунт хийсэн хавтаснууд",
+    "Name": "Нэр",
+    "PathAndAlias": "Зам & Alias",
+    "PathAndAliasTooltip": "Хавтасыг контейнер дотор маунт хийх зам. Анхдагч замыг ашиглахын тулд хоосон үлдээнэ үү.",
+    "RemoveFolder": "Хасах",
+    "Subpath": "Дэд зам",
+    "SubpathInvalid": "Дэд зам нь харьцангуй зам байх ёстой бөгөөд '..' агуулж болохгүй.",
+    "SubpathPlaceholder": "жш нь dataset/train (заавал биш)",
+    "SubpathTooltip": "Хавтасны үндсийн оронд хавтас дотрах дэд хавтасыг эх сурвалж болгон маунт хийнэ. Үндсийг маунт хийхийн тулд хоосон үлдээнэ үү."
+  },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Хавтас сонгох"
   },
