@@ -8,6 +8,7 @@ import {
   Button,
   DatePicker,
   Input,
+  InputNumber,
   Space,
   Tag,
   Tooltip,
@@ -743,6 +744,22 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
             placeholder={
               selectedProperty?.placeholder ??
               t('comp:BAIGraphQLPropertyFilter.SelectDateTime')
+            }
+          />
+        ) : selectedProperty?.type === 'number' ? (
+          // `number` properties get a numeric-only input so non-numeric text
+          // can never reach `Number(value)` and surface as a `NaN` condition.
+          <InputNumber
+            value={search === '' ? null : Number(search)}
+            onChange={(val) => {
+              setIsValid(true);
+              setSearch(_.isNil(val) ? '' : String(val));
+            }}
+            onPressEnter={() => addCondition(search)}
+            style={{ minWidth: 200 }}
+            placeholder={
+              selectedProperty?.placeholder ??
+              t('comp:BAIPropertyFilter.PlaceHolder')
             }
           />
         ) : (

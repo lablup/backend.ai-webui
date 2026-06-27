@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<91bf566d85deca6c701c733dd53bdf3e>>
+ * @generated SignedSource<<648ab9108711265fdcfad7dc1b30f5d7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,6 +11,9 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type VFolderHostPermissionV2 = "CREATE_VFOLDER" | "DELETE_VFOLDER" | "DOWNLOAD_FILE" | "INVITE_OTHERS" | "MODIFY_VFOLDER" | "MOUNT_IN_SESSION" | "SET_USER_PERM" | "UPLOAD_FILE" | "%future added value";
 export type KeypairResourcePolicyV2Filter = {
+  AND?: ReadonlyArray<KeypairResourcePolicyV2Filter> | null | undefined;
+  NOT?: ReadonlyArray<KeypairResourcePolicyV2Filter> | null | undefined;
+  OR?: ReadonlyArray<KeypairResourcePolicyV2Filter> | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
   idleTimeout?: IntFilter | null | undefined;
   keypair?: KeypairResourcePolicyKeypairNestedFilter | null | undefined;

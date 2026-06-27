@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f958c20da0cc845ddba98a3df2b8cba0>>
+ * @generated SignedSource<<623235abf6b564ad3dfa9125adda9df5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,6 +10,9 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type RuntimeVariantFilter = {
+  AND?: ReadonlyArray<RuntimeVariantFilter> | null | undefined;
+  NOT?: ReadonlyArray<RuntimeVariantFilter> | null | undefined;
+  OR?: ReadonlyArray<RuntimeVariantFilter> | null | undefined;
   name?: StringFilter | null | undefined;
 };
 export type StringFilter = {
