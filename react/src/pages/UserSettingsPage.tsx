@@ -9,11 +9,13 @@ import MyKeypairManagementModal from '../components/MyKeypairManagementModal';
 import SSHKeypairManagementModal from '../components/SSHKeypairManagementModal';
 import SettingList, { SettingGroup } from '../components/SettingList';
 import ShellScriptEditModal from '../components/ShellScriptEditModal';
+import ThemeAccentColorPicker from '../components/ThemeAccentColorPicker';
 import { useSuspendedBackendaiClient } from '../hooks';
 import {
   useBAISettingGeneralState,
   useBAISettingUserState,
 } from '../hooks/useBAISetting';
+import { useThemeFamily } from '../hooks/useThemeFamily';
 import { useThemeMode } from '../hooks/useThemeMode';
 import { SettingOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
@@ -39,6 +41,11 @@ const UserPreferencesPage = () => {
   const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
 
   const { themeMode, setThemeMode } = useThemeMode();
+  const {
+    family: themeFamily,
+    setFamily: setThemeFamily,
+    families,
+  } = useThemeFamily();
 
   const [desktopNotification, setDesktopNotification] = useBAISettingUserState(
     'desktop_notification',
@@ -134,6 +141,38 @@ const UserPreferencesPage = () => {
               setThemeMode(value);
             }
           },
+        },
+        // Only offer the family selector when the operator ships more than the
+        // built-in `default` family (theme.json `families`).
+        Object.keys(families).length > 1
+          ? {
+              'data-testid': 'items-theme-family',
+              type: 'select',
+              title: t('userSettings.ThemeFamily'),
+              description: t('userSettings.DescThemeFamily'),
+              selectProps: {
+                // Family display names come from theme.json `label` (operator-
+                // provided brand names like "Stained"); the built-in `default`
+                // family falls back to a humanized key ("Default").
+                options: _.map(families, (config, key) => ({
+                  label: config.label ?? _.startCase(key),
+                  value: key,
+                })),
+              },
+              value: themeFamily,
+              onChange: (value: string | number | undefined) => {
+                if (typeof value === 'string') {
+                  setThemeFamily(value);
+                }
+              },
+            }
+          : null,
+        {
+          'data-testid': 'items-theme-accent',
+          type: 'custom',
+          title: t('userSettings.ThemeAccentColor'),
+          description: t('userSettings.DescThemeAccentColor'),
+          children: <ThemeAccentColorPicker />,
         },
         {
           'data-testid': 'items-desktop-notification',
