@@ -1882,11 +1882,13 @@
     "UpTo3000Logs": "(Hasta 3000 registros recientes)"
   },
   "maintenance": {
+    "Announcement": "Anuncio",
     "CleanupImages": "Limpieza de imágenes",
     "CleanupOldImages": "Limpiar imágenes antiguas",
     "DescCleanupOldImages": "Limpiar imágenes antiguas de la lista de imágenes docker.",
     "DescMatchDatabase": "Recalcular la base de datos de uso con el estado actual. Util si docker falla por accidente, o algunas sesiones han sido terminadas forzosamente.",
     "DescRescanImageList": "Volver a escanear la lista de imágenes de los repositorios registrados. Puede tardar mucho tiempo, así que espere después de la ejecución.",
+    "DescSystemAnnouncement": "Cree o edite el banner de anuncios que se muestra a todos los usuarios en la parte superior de la página.",
     "Fix": "Fijar",
     "ImagesEnvironment": "Imágenes / Medio ambiente",
     "MatchDatabase": "Hacer coincidir la base de datos de uso con el estado actual",
@@ -1899,7 +1901,8 @@
     "RescanImageList": "Volver a escanear la lista de imágenes del repositorio",
     "RescanImageScanning": "Reexploración...",
     "RescanImages": "Volver a escanear imágenes",
-    "Scanning": "Escaneando..."
+    "Scanning": "Escaneando...",
+    "SystemAnnouncement": "Anuncio del sistema"
   },
   "maxLength": {
     "200chars": "(máximo 200 caracteres)",
