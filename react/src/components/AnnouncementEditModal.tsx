@@ -29,6 +29,10 @@ interface AnnouncementEditModalProps extends BAIModalProps {
   initialEnabled?: boolean;
 }
 
+// Inner height of the markdown editor. The preview box matches the editor's
+// outer height (this value + the editor wrapper's 1px top/bottom border).
+const EDITOR_HEIGHT = 280;
+
 const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
   onRequestClose,
   initialMessage,
@@ -137,7 +141,7 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
                 language="markdown"
                 editable
                 lineWrapping
-                height={280}
+                height={EDITOR_HEIGHT}
               />
             </Form.Item>
             <Form.Item
@@ -150,7 +154,10 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
                   border: `1px solid ${token.colorBorder}`,
                   borderRadius: token.borderRadius,
                   padding: token.padding,
-                  height: 280,
+                  // +2 matches the editor wrapper's 1px top/bottom border so
+                  // both boxes have the same outer height.
+                  height: EDITOR_HEIGHT + 2,
+                  boxSizing: 'border-box',
                   overflow: 'auto',
                 }}
               >
