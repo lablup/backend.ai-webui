@@ -38,7 +38,7 @@ list is reachable from the folder status summary.
 ## Create Storage Folder
 
 
-To create a new folder, click 'Create Folder' on the Data page. Fill in the fields in
+To create a new folder, click `Create Folder` on the Data page. Fill in the fields in
 the creation dialog as follows:
 
 ![](../images/vfolder_create_modal.png)
@@ -54,11 +54,11 @@ The meaning of each field in the creation dialog is as follows.
 - **Folder name**: The name of the folder (up to 64 characters).
 - **Location**: Select the NFS host where the folder will be created. If there are multiple hosts, choose one. An indicator will show if there is enough available space.
 - **Type**: Determines the type of folder to be created. It can be set as User or Project. The User folder is a folder that users can create and use alone and the Project folder is a folder created by admin and shared by users in the project.
-- **Project**: Shown only when you select project type. Designates the project to which the folder belongs when creating a new project folder. Project folders must belong to a project. For project folders, the project currently selected in the top bar is automatically selected as the target project. However, it does not play any role when creating a user folder.
-- **Permission**: Set permission of a project folder for project members. If this is set to "Read only", project members cannot write to this folder inside their compute session.
+- **Project**: Shown only when you select Project type. The folder belongs to the project currently selected in the top bar — there is no separate project selector, and a confirmation message indicates which project will own the folder. This field has no effect when creating a User folder.
+- **Permission**: The mount permission applied when the folder is mounted into a compute session. **Read & Write** allows writing to the folder inside sessions; **Read only** prevents it. This applies to both User and Project folders; for a Project folder it governs access for all project members.
 - **Cloneable**: Shown only when you select usage mode to "Model". Select whether the vfolder you are creating should be cloneable.
 
-The folders created here can be [mounted](../mount_vfolder/mount_vfolder.md#session-mounts) when creating a compute session. Folders are mounted
+The folders created here can be [mounted](#session-mounts) when creating a compute session. Folders are mounted
 under the user's default working directory, `/home/work/`, and the file stored in the mounted
 directory will not be deleted when the compute session is terminated.
 (If you delete the folder, the file will also be deleted.)
@@ -139,14 +139,16 @@ The **Audit Log** tab in the right panel shows a chronological list of all opera
 
 ![](../images/vfolder_audit_log_tab.png)
 
-You can filter the audit log using the following controls:
+The audit log shows the following columns, in order:
 
-- **Status**: Filter by operation result (for example, SUCCESS or ERROR).
-- **Operation**: Filter by operation type (for example, create or delete).
-- **Triggered By**: Search by the user ID of the actor. Entries display in "email (id)" format.
-- **Time**: Narrow results to a specific date and time range.
+- **Time**: When the operation occurred.
+- **Operation**: The type of action (for example, create, update, or delete).
+- **Status**: The result of the operation (for example, SUCCESS or ERROR).
+- **Description**: Additional details about the operation.
+- **Duration**: How long the operation took.
+- **Triggered By**: The user who performed the operation, shown in "email (id)" format.
 
-An auto-refresh button keeps the log up to date without a full page reload. The log uses lazy loading — the query is sent to the server only the first time you open the tab.
+You can filter the log by **Time**, **Operation**, **Status**, and **Triggered By**.
 
 ## Rename Folder
 
@@ -161,13 +163,13 @@ inside the detail drawer.
 ## Delete Folder
 
 
-If you have permission to delete the storage folder, you can send the folder to the 'Trash'
-tab by clicking the 'trash bin' button. When you move a folder to the Trash tab, it is marked as delete-pending.
+If you have permission to delete the storage folder, you can send the folder to the `Trash`
+tab by clicking the `trash bin` button. When you move a folder to the Trash tab, it is marked as delete-pending.
 
 ![](../images/move_to_trash.png)
 
 In this status, you can restore the folder by clicking restore button in Control column. If you want to permanently delete the folder,
-please click 'trash bin' button in the same column.
+please click `trash bin` button in the same column.
 
 ![](../images/vfolder_trash_list.png)
 
@@ -214,7 +216,7 @@ storage folder. Click the folder name to open the file explorer.
 
 ![](../images/click_folder_name.png)
 
-Click 'Execute filebrowser' button in the upper-right corner of the explorer.
+Click `Execute filebrowser` button in the upper-right corner of the explorer.
 
 ![](../images/folder_explorer.png)
 
@@ -225,7 +227,7 @@ and files.
 
 ![](../images/filebrowser_with_new_window.png)
 
-When user clicks 'EXECUTE FILEBROWSER' button, Backend.AI automatically creates a
+When user clicks `EXECUTE FILEBROWSER` button, Backend.AI automatically creates a
 dedicated compute session for the app. So, in the Sessions page, you should see
 FileBrowser compute session. It is user's responsibility to delete this compute
 session.
@@ -240,7 +242,7 @@ FileBrowser compute session.
 
 ![](../images/app_dialog_with_filebrowser.png)
 
-When you click 'EXECUTE FILEBROWSER' button again in the storage folder
+When you click `EXECUTE FILEBROWSER` button again in the storage folder
 explorer, a new compute session will be created and a total of two
 FileBrowser sessions will appear.
 :::
@@ -305,7 +307,7 @@ You can move files or directories by following steps below.
 
 ![](../images/select_folders.png)
 
-2. Click the 'arrow' button in the upper right corner of FileBrowser
+2. Click the `arrow` button in the upper right corner of FileBrowser
 
 ![](../images/click_arrow_icon.png)
 
@@ -313,7 +315,7 @@ You can move files or directories by following steps below.
 
 ![](../images/select_the_destination.png)
 
-4. Click 'MOVE' button
+4. Click `MOVE` button
 
 You will see that moving operation is successfully finished.
 
@@ -344,7 +346,7 @@ be allowed.
 Go to the Data page and open the file explorer dialog of target storage folder.
 Click the folder button or the folder name to open the file explorer.
 
-Click 'Run SFTP server' button in the upper-right corner of the explorer.
+Click `Run SFTP server` button in the upper-right corner of the explorer.
 
 ![](../images/folder_explorer.png)
 
@@ -353,7 +355,7 @@ automatically. (This session will not affect resource occupancy.)
 
 ![](../images/SSH_SFTP_connection.png)
 
-For the connection, click 'Download SSH Key' button to download the SSH private key
+For the connection, click `Download SSH Key` button to download the SSH private key
 (`id_container`). Also, remember the host and port number. Then, you can copy your
 files to the session using the Connection Example code written in the dialog, or
 referring to the following guide: [SFTP Connection Guide](#ssh-sftp-container).

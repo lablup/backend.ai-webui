@@ -88,9 +88,10 @@ GUI 클라이언트입니다. Backend.AI 서버에 접속하여 연산 자원을
 | --- | --- | --- |
 | AMD | MI250X 이상 |  |
 | Furiosa | Warboy / RNGD |  |
+| Google | TPU |  |
 | Graphcore | IPU |  |
 | Groq | Groqcard |  |
-| HyperAccel |  |  |
+| HyperAccel | LPU |  |
 | Intel | Gaudi 2 및 3 | 메모리 사용 기반 자동 유휴 자원 회수 |
 | NVIDIA 지원 | CUDA compute capability 7.5 이상 | (엔터프라이즈) 컨테이너를 위한 분할 GPU(fGPU) 가상화 및 공유 |
 |  | - 모델 추론: NVIDIA Hopper 이상 (대상 양자화에 따라 다름) |  |
@@ -99,7 +100,7 @@ GUI 클라이언트입니다. Backend.AI 서버에 접속하여 연산 자원을
 |  |  | GPUDirect 스토리지 지원 |
 |  |  | NGC (NVIDIA GPU Cloud) 이미지 통합 |
 |  |  | GPU-GPU 네트워크 자동 구성 |
-| Rebellions | ATOM / ATOM+ |  |
+| Rebellions | ATOM / ATOM+ / ATOM-Max |  |
 | SambaNova | SN30/40L |  |
 | Sapeon | X220 / X330 |  |
 | Tenstorrent | Wormhole |  |

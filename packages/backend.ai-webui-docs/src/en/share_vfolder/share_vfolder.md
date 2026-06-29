@@ -4,7 +4,6 @@ You may need to share the contents of storage folders with other users or projec
 members to collaborate. For this purpose, Backend.AI provides a flexible folder
 sharing feature.
 
-
 <a id="share-storage-folders-with-other-users"></a>
 
 ## Share Storage Folders With Other Users
@@ -24,7 +23,6 @@ Confirm that the `tests` folder is not listed when logging in with User B's
 account.
 
 ![](../images/no_test_vfolder_in_B.png)
-
 
 :::note
 If a folder named `tests` already exists in User B's account, User A's
@@ -73,13 +71,6 @@ by mounting this storage folder with the User B's account.
 
 ![](../images/launch_session_with_test_mounted_B.png)
 
-
-:::note
-If you want to use the previous session launcher, please refer [User Settings](#general-tab)
-section. For instructions on how to use it, please refer to the following [link](https://webui.docs.backend.ai/en/23.09_a/sessions_all/sessions_all.html).
-If you want to know more about the NEO session launcher, please refer [Create Session](#start-a-new-session)
-:::
-
 After creating a session, open the web terminal and check that the `tests`
 folder is mounted in the home folder. The contents of the `tests` folder are
 displayed, but attempts to create or delete files are not allowed. This is
@@ -91,12 +82,10 @@ folder if it has been shared including write access.
 This way, you can share your personal storage folders with other users based on
 your Backend.AI email account.
 
-
 :::note
 Backend.AI also provides sharing project folder to project members.
 For details, go to [sharing a project storage folder with project members](#share-project-storage-folders-with-project-members).
 :::
-
 
 <a id="adjust-permission-for-shared-folders"></a>
 
@@ -109,18 +98,15 @@ dropdown. Click the permission dropdown in a user's row to change their access
 level:
 
 - **Read only**: The invited user has read-only access to the folder.
-- **Read & Write**: The invited user has read and write access to the folder.
-  The user cannot delete folders or files.
+- **Read & Write**: The invited user has read and write access to the folder, including creating, modifying, and deleting files and folders within it.
 
 ![](../images/modify_perm.png)
-
 
 :::note
 Renaming the folder itself is available only for the owner, even if the user has been
 granted Read & Write permission. Please note that Read & Write permission does not
 include renaming the folder.
 :::
-
 
 <a id="stop-sharing-a-folder"></a>
 

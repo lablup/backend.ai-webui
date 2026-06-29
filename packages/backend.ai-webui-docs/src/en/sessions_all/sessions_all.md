@@ -9,13 +9,13 @@ This document will cover how to query and create container-based compute session
 ## Start a new session
 
 
-After logging in with a user account, click 'Sessions' on the left sidebar.
+After logging in with a user account, click `Sessions` on the left sidebar.
 'Sessions' page lets you start new sessions or use and manage existing running sessions.
 
 ![](../images/sessions_page.png)
 
 
-Click the 'START' button to start a new compute session.
+Click the `START` button to start a new compute session.
 
 ![](../images/launch_session_type.png)
 
@@ -70,7 +70,7 @@ a user email field will appear.
 ![](../images/admin_launch_session_owner.png)
 
 Enter the email of the user you want to assign the session to,
-click the 'search' button, and the user's access key will be automatically registered.
+click the `search` button, and the user's access key will be automatically registered.
 You can also select a project and resource group.
 
 ![](../images/admin_launch_session_owner_project.png)
@@ -80,9 +80,9 @@ You can also select a project and resource group.
 ### Environments & Resource allocation
 
 
-Click the 'Next' button below, or the 'Environments & Resource allocation' menu on the right
+Click the `Next` button below, or the `Environments & Resource allocation` menu on the right
 to proceed to the next page. If you want to create a session without any further
-settings, press the 'Skip to review' button. In this case, settings on the
+settings, press the `Skip to review` button. In this case, settings on the
 other pages will all use the default values.
 
   ![](../images/launch_session_environments_and_resource.png)
@@ -125,7 +125,7 @@ refer to the following:
   ![](../images/launch_session_resource.png)
 
   The meaning of each item is as follows.
-  Clicking the 'Help (?)' button will also give more information.
+  Clicking the `Help (?)` button will also give more information.
 
   * CPU: The CPU performs basic arithmetic, logic, controlling, and input/output
     (I/O) operations specified by the instructions. In general, more CPUs are beneficial for high-performance computing workloads.
@@ -200,7 +200,7 @@ The Agent Select feature may not be available depending on the server environmen
 ### Data & Storage
 
 
-Click the 'Next' button below, or the 'Data & Storage' menu on the right to proceed to the next page.
+Click the `Next` button below, or the `Data & Storage` menu on the right to proceed to the next page.
 
 When a compute session is destroyed, data deletion is set to default.
 However, data stored in the mounted folders will survive.
@@ -214,7 +214,7 @@ please refer [Explore Folder](#explore-folder) section.
 
 ![](../images/folder_explorer.png)
 
-New folder can be created by clicking the '+' button next to the search box.
+New folder can be created by clicking the `+` button next to the search box.
 When new folder is created, it will automatically be selected as the folder to mount.
 For further information, please refer [Create Storage Folder](#create-storage-folder) section.
 
@@ -224,7 +224,7 @@ For further information, please refer [Create Storage Folder](#create-storage-fo
 
 ### Network
 
-Click the 'Next' button below, or the 'Network' menu on the right to proceed to the next page.
+Click the `Next` button below, or the `Network` menu on the right to proceed to the next page.
 On this page, Network configuration can be done such as Preopen Ports.
 
 - Set Preopen Ports: Provides an interface for users to set preopen ports in a
@@ -238,22 +238,22 @@ On this page, Network configuration can be done such as Preopen Ports.
 ### Confirm and Launch
 
 
-If you are done with the network setting, click the 'Next' button below, or
-'Confirm and Launch' button on the right to proceed to the last page.
+If you are done with the network setting, click the `Next` button below, or
+`Confirm and Launch` button on the right to proceed to the last page.
 
 On the last page, users could view information of session(s) to create,
 such as environment itself, allocated resources, mount information,
 environment variables set on the previous pages, preopen ports, etc.,
-Review the settings, then click the 'Launch' button to launch the session.
-Click the 'Edit' button located at the top right of each card to redirect to relevant page.
+Review the settings, then click the `Launch` button to launch the session.
+Click the `Edit` button located at the top right of each card to redirect to relevant page.
 
 ![](../images/launch_session_confirm.png)
 
 To launch more than one session at once with the same configuration, click the
-more (`...`) icon next to the 'Launch' button to open its dropdown menu and
+more (`...`) icon next to the `Launch` button to open its dropdown menu and
 select **Launch Multiple Sessions**. A dialog appears where you can set the
 **Number of sessions** to create; each session is created independently with
-the resources shown on the form. The single-click 'Launch' action still starts
+the resources shown on the form. The single-click `Launch` action still starts
 one session by default.
 
 ![](../images/session_start_multiple_dropdown.png)
@@ -271,8 +271,8 @@ Users can edit their settings when this happens.
 
 ![](../images/launch_session_error_card.png)
 
-When you click the 'Launch' button, a warning dialog appears stating that there are no mounted folders.
-If folder mounting is not required, you can ignore the warning and click the 'Start' button in the dialog to proceed.
+When you click the `Launch` button, a warning dialog appears stating that there are no mounted folders.
+If folder mounting is not required, you can ignore the warning and click the `Start` button in the dialog to proceed.
 
 ![](../images/no_folder_notification_dialog.png)
 
@@ -327,12 +327,12 @@ The session details panel shows the information of the session, such as the
 session ID, user ID, status, type, environments, mount information, resource allocation, reserved time,
 elapsed time, agent, cluster mode, resource usage including network I/O, and kernel information.
 
-Click the 'Log' button next to the 'Hostname' in 'Kernels' to view the logs of that kernel directly.
+Click the `Log` button next to the `Hostname` in `Kernels` to view the logs of that kernel directly.
 
 ![](../images/session_detail.png)
 
 Backend.AI provides additional information for sessions in `PENDING`, `TERMINATED`, or `CANCELLED` states.
-Click the 'Info' button to check the details when available.
+Click the `Info` button to check the details when available.
 
 A clock icon button appears next to the session status tag
 in the session detail panel. Clicking this icon opens the Session Scheduling History modal, which provides
@@ -527,7 +527,7 @@ documentation.
 SSH key. If necessary, users can download it and use it for SSH / SFTP access to
 the container.
 
-Click the 'NEW' button at the top right and select the Notebook for Backend.AI,
+Click the `NEW` button at the top right and select the Notebook for Backend.AI,
 then the ipynb window appears where users can enter their own code.
 
 ![](../images/backendai_notebook_menu.png)
@@ -575,7 +575,7 @@ icon in the session detail panel.
 
 ## Rename running session
 
-Name of the active session can be changed. Click the 'Edit' button in the session detail
+Name of the active session can be changed. Click the `Edit` button in the session detail
 panel to change the session name.
 New session name should also follow the [the authoring rule](#session-naming-rule).
 
@@ -587,7 +587,7 @@ New session name should also follow the [the authoring rule](#session-naming-rul
 ## Delete a compute session
 
 To terminate a specific session, simply click on the red power button and click
-'Terminate' button in the dialog. Since the data in the folder inside the compute
+`Terminate` button in the dialog. Since the data in the folder inside the compute
 session is deleted as soon as the compute session ends, it is recommended to
 move the data to the mounted folder or upload it to the mounted folder from the
 beginning.
@@ -661,8 +661,8 @@ To give more convenient workspace for users, Backend.AI supports environment var
 in session launching. In this feature, users can add any envs such as `PATH` by filling out
 variable name and value in environment configuration dialog.
 
-To add environment variable, simply click '+ Add environment variables' button of the Variable.
-Also, you can remove the variable by clicking '-' button of the row that you want to get rid of.
+To add environment variable, simply click `+ Add environment variables` button of the Variable.
+Also, you can remove the variable by clicking `-` button of the row that you want to get rid of.
 
 ![](../images/launch_session_env.png)
 
@@ -680,10 +680,10 @@ To add preopen ports, simply enter multiple values separated by either a comma (
 
 ![](../images/preopen-ports-config.png)
 
-In the forth page of session creation page, users can add, update and delete written preopen ports. To see more detail
-information, please click 'Help (?)'' button.
+On the fourth page of the session creation page, users can add, update and delete written preopen ports. To see more detailed
+information, please click the `Help (?)` button.
 
-Users can put port numbers in between 1024 ~ 65535, to the input fields. Then, press 'Enter'. Users can specify multiple ports, separated by commas (,).
+Users can put port numbers in between 1024 ~ 65535, to the input fields. Then, press `Enter`. Users can specify multiple ports, separated by commas (,).
 Users can check the configured preopen ports in the session app launcher.
 
 ![](../images/session_app_launcher.png)
@@ -701,14 +701,14 @@ before use.
 
 
 Backend.AI supports the \"Convert Session to Image\" feature. Committing a `RUNNING` session will save the
-current state of the session as a new image. Click the 'Commit' button (the fourth icon) in the session detail panel
+current state of the session as a new image. Click the `Commit` button (the fourth icon) in the session detail panel
 to open a dialog displaying the session information. After entering the session name, users can convert the session to
 a new image. The session name must be 4 to 32 characters long and can only contain alphanumeric letters, hyphens (`-`),
 or underscores (`_`).
 
 ![](../images/push_session_to_customized_image.png)
 
-After filling out session name in the input field, click the 'PUSH SESSION TO CUSTOMIZED IMAGE' button.
+After filling out session name in the input field, click the `PUSH SESSION TO CUSTOMIZED IMAGE` button.
 The customized image created in this way can be used in future session creations. However, directories
 mounted to the container for image commits are considered external resources and are not included in
 the final image. Remember that `/home/work` is a mount folder (scratch directory), so it is not included.
