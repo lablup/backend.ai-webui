@@ -139,6 +139,11 @@ type BaseFilterProperty = {
   operators?: FilterOperator[];
   options?: AutoCompleteProps['options'];
   strictSelection?: boolean;
+  // Whether this property holds a single value. When false (the default) each
+  // committed value adds a new condition (the historical accumulate behavior).
+  // When true, the property is single-valued: committing a value overrides the
+  // existing condition for this property instead of appending another.
+  singleSelect?: boolean;
   rule?: {
     message: string;
     validate: (value: any) => boolean;
@@ -601,7 +606,10 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
     return false;
   }, [selectedProperty]);
 
-  const addCondition = (value: string | string[]) => {
+  const addCondition = (
+    value: string | string[],
+    singleSelect: boolean = false,
+  ) => {
     if (_.isEmpty(value)) return;
 
     if (effectiveStrictSelection && effectiveOptions) {
@@ -630,7 +638,12 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
       type: selectedProperty.type,
     };
 
-    updateConditions([...conditions, newCondition]);
+    // Single-valued (singleSelect) overrides any existing condition(s) for this
+    // property; otherwise (default) conditions accumulate.
+    const baseConditions = singleSelect
+      ? conditions.filter((c) => c.property !== selectedProperty.key)
+      : conditions;
+    updateConditions([...baseConditions, newCondition]);
     setSearch('');
   };
 
@@ -679,7 +692,7 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
 
   const updateSelectedDateEvent = useEffectEvent((date: Dayjs) => {
     if (date) {
-      addCondition(dayjs(date).toISOString());
+      addCondition(dayjs(date).toISOString(), selectedProperty?.singleSelect);
       setSelectedDate(null);
     }
   });
@@ -734,7 +747,7 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
           selectedProperty.renderInput({
             value: undefined, // Always undefined to keep the control empty after commit
             onChange: (value) => {
-              addCondition(value ?? '');
+              addCondition(value ?? '', selectedProperty?.singleSelect);
             },
           })
         ) : selectedProperty?.type === 'datetime' ? (
@@ -759,7 +772,9 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
               value={search}
               open={isOpenAutoComplete}
               onOpenChange={setIsOpenAutoComplete}
-              onSelect={(value) => addCondition(value)}
+              onSelect={(value) =>
+                addCondition(value, selectedProperty?.singleSelect)
+              }
               onChange={(value) => {
                 setIsValid(true);
                 setSearch(value);
@@ -776,7 +791,9 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
               onFocus={() => setIsFocused(true)}
             >
               <Input.Search
-                onSearch={(value) => addCondition(value)}
+                onSearch={(value) =>
+                  addCondition(value, selectedProperty?.singleSelect)
+                }
                 allowClear
                 status={!isValid && isFocused ? 'error' : undefined}
               />

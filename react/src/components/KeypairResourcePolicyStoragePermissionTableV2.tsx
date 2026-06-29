@@ -2,17 +2,17 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import {
-  KeypairResourcePolicyStoragePermissionTableV2Query as KeypairResourcePolicyStoragePermissionTableV2QueryType,
-  KeypairResourcePolicyV2Filter,
-} from '../__generated__/KeypairResourcePolicyStoragePermissionTableV2Query.graphql';
+import { KeypairResourcePolicyStoragePermissionTableV2PermissionQuery } from '../__generated__/KeypairResourcePolicyStoragePermissionTableV2PermissionQuery.graphql';
 import { KeypairResourcePolicyStoragePermissionTableV2UpdateMutation } from '../__generated__/KeypairResourcePolicyStoragePermissionTableV2UpdateMutation.graphql';
+import {
+  KeypairResourcePolicyStoragePermissionTableV2_nodeFrgmt$data,
+  KeypairResourcePolicyStoragePermissionTableV2_nodeFrgmt$key,
+} from '../__generated__/KeypairResourcePolicyStoragePermissionTableV2_nodeFrgmt.graphql';
 import { KeypairResourcePolicyStoragePermissionTableV2_storageVolumeFrgmt$key } from '../__generated__/KeypairResourcePolicyStoragePermissionTableV2_storageVolumeFrgmt.graphql';
 import {
   PERMISSION_DISPLAY_MAP,
   v2PermissionToKey,
 } from '../helper/storageHostPermission';
-import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import StoragePermissionEditModal from './StoragePermissionEditModal';
 import {
   CheckCircleOutlined,
@@ -29,15 +29,9 @@ import {
   type BAITableProps,
   BAITag,
   BAIUnmountAfterClose,
-  type GraphQLFilter,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import React, {
-  useDeferredValue,
-  useEffect,
-  useEffectEvent,
-  useState,
-} from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -46,31 +40,29 @@ import {
   useMutation,
 } from 'react-relay';
 
-type KeypairResourcePolicyRow = NonNullable<
-  NonNullable<
-    NonNullable<
-      KeypairResourcePolicyStoragePermissionTableV2QueryType['response']['adminKeypairResourcePoliciesV2']
-    >['edges'][number]
-  >['node']
->;
+type KeypairResourcePolicyRow =
+  KeypairResourcePolicyStoragePermissionTableV2_nodeFrgmt$data[number];
 
 export interface KeypairResourcePolicyStoragePermissionTableV2Props extends BAITableProps<KeypairResourcePolicyRow> {
   /** Fragment for the storage host — its `id` is read internally. */
   storageVolumeFrgmt: KeypairResourcePolicyStoragePermissionTableV2_storageVolumeFrgmt$key;
   /**
-   * Keypair-resource-policy filter built by the user picker, i.e.
-   * `{ keypair: { userId: { equals: <UUID> } } }`. Passed straight to the query
-   * `filter`. The selected user's UUID is extracted from it to scope the
-   * `keypairs` connection (Assigned Keypairs column); when no user is selected
-   * the table pages through every policy and that column is withheld.
+   * Plural node fragment — the page of keypair resource policies to render. The
+   * orchestrator (panel) owns the query, so `pagination` (with `total`),
+   * `loading`, filtering, and refresh are injected via `BAITableProps`.
    */
-  userFilter?: GraphQLFilter | null;
-  permissionKeys: string[];
+  policiesFrgmt: KeypairResourcePolicyStoragePermissionTableV2_nodeFrgmt$key;
+  /**
+   * The selected user's UUID (from the panel's user picker). Drives the
+   * Assigned Keypairs column: when undefined the column is withheld with a
+   * prompt to pick a user.
+   */
+  selectedUserId?: string;
 }
 
 const KeypairResourcePolicyStoragePermissionTableV2: React.FC<
   KeypairResourcePolicyStoragePermissionTableV2Props
-> = ({ storageVolumeFrgmt, userFilter, permissionKeys, ...tableProps }) => {
+> = ({ storageVolumeFrgmt, policiesFrgmt, selectedUserId, ...tableProps }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -83,89 +75,57 @@ const KeypairResourcePolicyStoragePermissionTableV2: React.FC<
     storageVolumeFrgmt,
   );
   const storageHostId = storageVolume?.id ?? '';
-  // The picker emits `{ keypair: { userId: { equals: <UUID> } } }`. Extract the
-  // UUID to scope the keypairs connection; `GraphQLFilter` is index-signature
-  // typed so guard the nested value down to a real string.
-  const rawUserId = userFilter?.keypair?.userId?.equals;
-  const selectedUserId = _.isString(rawUserId) ? rawUserId : undefined;
   const [editingRow, setEditingRow] = useState<KeypairResourcePolicyRow | null>(
     null,
   );
 
-  const {
-    baiPaginationOption,
-    tablePaginationOption,
-    setTablePaginationOption,
-  } = useBAIPaginationOptionState({ current: 1, pageSize: 10 });
-
-  // The user filter narrows the result set, so reset to the first page when it
-  // changes to avoid landing on an out-of-range offset.
-  const resetToFirstPage = useEffectEvent(() => {
-    setTablePaginationOption({
-      current: 1,
-      pageSize: tablePaginationOption.pageSize,
-    });
-  });
-  useEffect(() => {
-    resetToFirstPage();
-  }, [selectedUserId]);
-
-  const includeKeypairs = !!selectedUserId;
-  const queryVariables = {
-    filter: (userFilter ?? null) as KeypairResourcePolicyV2Filter | null,
-    limit: baiPaginationOption.limit,
-    offset: baiPaginationOption.offset,
-    includeKeypairs,
-    // Scope each policy's `keypairs` connection to the selected user too, so the
-    // Assigned Keypairs column (access keys + `+N` count) reflects only that
-    // user's keypairs governed by the policy — not every keypair on the policy.
-    keypairFilter: selectedUserId
-      ? { userId: { equals: selectedUserId } }
-      : null,
-  };
-  const deferredQueryVariables = useDeferredValue(queryVariables);
+  // Static permission catalog (the universe of vfolder host permission keys).
+  // This panel has a single card, so the table fetches its own catalog instead
+  // of receiving it as a prop; fetched once and served from the store after.
+  const { vfolder_host_permissions } =
+    useLazyLoadQuery<KeypairResourcePolicyStoragePermissionTableV2PermissionQuery>(
+      graphql`
+        query KeypairResourcePolicyStoragePermissionTableV2PermissionQuery {
+          vfolder_host_permissions {
+            vfolder_host_permission_list
+          }
+        }
+      `,
+      {},
+      { fetchPolicy: 'store-or-network' },
+    );
+  const permissionKeys = _.compact(
+    vfolder_host_permissions?.vfolder_host_permission_list ?? [],
+  );
 
   // Read AND write via V2: `adminUpdateKeypairResourcePolicyV2` returns the
   // updated entity, so requesting `allowedVfolderHosts` in the mutation
   // response lets Relay update the normalized node in place — the table
-  // refreshes without a manual refetch (no fetchKey needed).
-  const { adminKeypairResourcePoliciesV2 } =
-    useLazyLoadQuery<KeypairResourcePolicyStoragePermissionTableV2QueryType>(
+  // refreshes from the orchestrator's store without a manual refetch.
+  //
+  // Plural node fragment: the orchestrator selects the connection (count +
+  // edges) and hands this page of nodes down. `$keypairFilter` /
+  // `$includeKeypairs` are root variables supplied by that query, so no
+  // `@argumentDefinitions` is needed here.
+  const rows = _.compact(
+    useFragment(
       graphql`
-        query KeypairResourcePolicyStoragePermissionTableV2Query(
-          $filter: KeypairResourcePolicyV2Filter
-          $limit: Int!
-          $offset: Int!
-          $includeKeypairs: Boolean!
-          $keypairFilter: KeypairFilter
-        ) {
-          adminKeypairResourcePoliciesV2(
-            filter: $filter
-            limit: $limit
-            offset: $offset
-            orderBy: [{ field: NAME, direction: ASC }]
-          ) {
-            count
+        fragment KeypairResourcePolicyStoragePermissionTableV2_nodeFrgmt on KeypairResourcePolicyV2
+        @relay(plural: true) {
+          id
+          name
+          allowedVfolderHosts {
+            host
+            permissions
+          }
+          keypairs(filter: $keypairFilter) @include(if: $includeKeypairs) {
             edges {
               node {
                 id
-                name
-                allowedVfolderHosts {
-                  host
-                  permissions
-                }
-                keypairs(filter: $keypairFilter)
-                  @include(if: $includeKeypairs) {
-                  edges {
-                    node {
-                      id
-                      accessKey
-                      user {
-                        organization {
-                          mainAccessKey
-                        }
-                      }
-                    }
+                accessKey
+                user {
+                  organization {
+                    mainAccessKey
                   }
                 }
               }
@@ -173,14 +133,9 @@ const KeypairResourcePolicyStoragePermissionTableV2: React.FC<
           }
         }
       `,
-      deferredQueryVariables,
-      { fetchPolicy: 'network-only' },
-    );
-
-  const rows: KeypairResourcePolicyRow[] = _.compact(
-    adminKeypairResourcePoliciesV2?.edges?.map((edge) => edge?.node),
+      policiesFrgmt,
+    ),
   );
-  const totalCount = adminKeypairResourcePoliciesV2?.count ?? 0;
 
   const [commitUpdateKrp] =
     useMutation<KeypairResourcePolicyStoragePermissionTableV2UpdateMutation>(
@@ -259,18 +214,7 @@ const KeypairResourcePolicyStoragePermissionTableV2: React.FC<
         {...tableProps}
         rowKey="id"
         resizable={false}
-        loading={queryVariables !== deferredQueryVariables}
         dataSource={rows}
-        pagination={{
-          pageSize: tablePaginationOption.pageSize,
-          current: tablePaginationOption.current,
-          total: totalCount,
-          onChange(current, pageSize) {
-            if (_.isNumber(current) && _.isNumber(pageSize)) {
-              setTablePaginationOption({ current, pageSize });
-            }
-          },
-        }}
         locale={{
           emptyText: t('storageHost.permission.NoKeypairResourcePolicies'),
           ...(tableProps.locale ?? {}),

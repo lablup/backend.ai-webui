@@ -3143,6 +3143,7 @@
       "UnselectAll": "Unselect All",
       "Update": "Update",
       "Upload": "Upload",
+      "User": "User",
       "UserFolder": "User Folder",
       "UserFolderPermissionsNote": "User folder permissions are determined by the keypair resource policy linked to the user's main access key.",
       "Volume": "Volume"
