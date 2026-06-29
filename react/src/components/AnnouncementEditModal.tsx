@@ -16,8 +16,12 @@ import {
   useErrorMessageResolver,
   useBAILogger,
 } from 'backend.ai-ui';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
+interface AnnouncementFormValues {
+  enabled: boolean;
+  message: string;
+}
 
 interface AnnouncementEditModalProps extends BAIModalProps {
   onRequestClose: (success?: boolean) => void;
@@ -42,20 +46,18 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
   const baiClient = useSuspendedBackendaiClient();
   const queryClient = useQueryClient();
 
-  // The modal is wrapped in BAIUnmountAfterClose by its parent, so it remounts
-  // on every open — these initializers always reflect the latest announcement.
-  const [message, setMessage] = useState(initialMessage ?? '');
-  const [enabled, setEnabled] = useState(initialEnabled ?? true);
+  const [form] = Form.useForm<AnnouncementFormValues>();
+  // Drive the live preview and the message field's required marker off the
+  // form store so there is a single source of truth (no parallel useState).
+  const enabled = Form.useWatch('enabled', form) ?? initialEnabled ?? true;
+  const message = Form.useWatch('message', form) ?? '';
 
   const updateMutation = useTanMutation({
-    mutationFn: ({
-      enabled,
-      message,
-    }: {
-      enabled: boolean;
-      message: string;
-    }) => {
-      return baiClient.service.update_announcement(enabled, message);
+    mutationFn: (values: AnnouncementFormValues) => {
+      return baiClient.service.update_announcement(
+        values.enabled,
+        values.message,
+      );
     },
   });
 
@@ -66,53 +68,74 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
       okText={t('button.Save')}
       confirmLoading={updateMutation.isPending}
       onCancel={() => onRequestClose()}
-      onOk={() => {
-        // The backend rejects enabling an announcement with an empty message
-        // ("Empty message not allowed to enable announcement"); guard here so
-        // the user gets immediate feedback instead of a server error.
-        if (enabled && !message.trim()) {
-          appMessage.error(t('summary.AnnouncementMessageRequired'));
+      onOk={async () => {
+        let values: AnnouncementFormValues;
+        try {
+          values = await form.validateFields();
+        } catch {
+          // Validation errors are shown inline on the fields.
           return;
         }
-        updateMutation.mutate(
-          { enabled, message },
-          {
-            onSuccess: () => {
-              appMessage.success(t('summary.AnnouncementUpdated'));
-              queryClient.invalidateQueries({
-                queryKey: ANNOUNCEMENT_QUERY_KEY,
-              });
-              onRequestClose(true);
-            },
-            onError: (error) => {
-              appMessage.error(getErrorMessage(error));
-              logger.error(error);
-            },
+        updateMutation.mutate(values, {
+          onSuccess: () => {
+            appMessage.success(t('summary.AnnouncementUpdated'));
+            queryClient.invalidateQueries({
+              queryKey: ANNOUNCEMENT_QUERY_KEY,
+            });
+            onRequestClose(true);
           },
-        );
+          onError: (error) => {
+            appMessage.error(getErrorMessage(error));
+            logger.error(error);
+          },
+        });
       }}
       {...modalProps}
     >
-      <Form layout="vertical">
+      <Form
+        form={form}
+        layout="vertical"
+        initialValues={{
+          enabled: initialEnabled ?? true,
+          message: initialMessage ?? '',
+        }}
+      >
         <BAIFlex direction="column" align="stretch" gap="sm">
           <Form.Item
             label={t('summary.AnnouncementEnabled')}
+            name="enabled"
+            valuePropName="checked"
             required
             style={{ marginBottom: 0 }}
           >
-            <Switch checked={enabled} onChange={setEnabled} />
+            <Switch />
           </Form.Item>
           <BAIFlex direction="row" align="stretch" gap="sm" wrap="wrap">
             <Form.Item
               label={t('summary.AnnouncementMessage')}
+              name="message"
               required={enabled}
+              dependencies={['enabled']}
+              rules={[
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    // The backend rejects enabling an announcement with an
+                    // empty message ("Empty message not allowed to enable
+                    // announcement"); enforce the same rule client-side.
+                    if (getFieldValue('enabled') && !value?.trim()) {
+                      return Promise.reject(
+                        new Error(t('summary.AnnouncementMessageRequired')),
+                      );
+                    }
+                    return Promise.resolve();
+                  },
+                }),
+              ]}
               style={{ flex: 1, minWidth: 0, marginBottom: 0 }}
             >
               <BAICodeEditor
                 language="markdown"
                 editable
-                value={message}
-                onChange={setMessage}
                 lineWrapping
                 height={280}
               />
