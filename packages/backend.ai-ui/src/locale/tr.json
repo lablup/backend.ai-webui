@@ -386,6 +386,20 @@
   "comp:BAIUserSelect": {
     "SelectUser": "Kullanıcıyı Seç"
   },
+  "comp:BAIVFolderMountConfigInput": {
+    "AliasInvalid": "Geçersiz yol biçimi.",
+    "AliasOverlapping": "Bağlama yolu başka bir klasörle çakışıyor.",
+    "AliasPlaceholder": "Bağlama yolu",
+    "AutoMountedFolders": "Otomatik bağlanan klasörler",
+    "Name": "Ad",
+    "PathAndAlias": "Yol & Takma Ad",
+    "PathAndAliasTooltip": "Klasörün bağlanacağı container içindeki yol. Varsayılan yolu kullanmak için boş bırakın.",
+    "RemoveFolder": "Kaldır",
+    "Subpath": "Alt yol",
+    "SubpathInvalid": "Alt yol göreli bir yol olmalı ve '..' içermemelidir.",
+    "SubpathPlaceholder": "örn. dataset/train (isteğe bağlı)",
+    "SubpathTooltip": "Kök yerine klasörün içindeki bir alt klasörü kaynak olarak bağlar. Kökü bağlamak için boş bırakın."
+  },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Klasör Seç"
   },

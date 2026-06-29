@@ -340,7 +340,11 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
       )}
       value={
         controllableValue !== deferredControllableValue
-          ? optimisticValueWithLabel
+          ? // Optimistic state lags external value removals, so filter it to the
+            // current value to avoid briefly flickering a removed item back in.
+            optimisticValueWithLabel?.filter((item) =>
+              _.castArray(controllableValue ?? []).includes(item.value),
+            )
           : controllableValueWithLabel
       }
       labelInValue

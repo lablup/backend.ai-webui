@@ -386,6 +386,20 @@
   "comp:BAIUserSelect": {
     "SelectUser": "Pilih Pengguna"
   },
+  "comp:BAIVFolderMountConfigInput": {
+    "AliasInvalid": "Format laluan tidak sah.",
+    "AliasOverlapping": "Laluan mount bertindih dengan folder lain.",
+    "AliasPlaceholder": "Laluan mount",
+    "AutoMountedFolders": "Folder mount automatik",
+    "Name": "Nama",
+    "PathAndAlias": "Laluan & Alias",
+    "PathAndAliasTooltip": "Laluan di dalam container tempat folder akan di-mount. Biarkan kosong untuk menggunakan laluan lalai.",
+    "RemoveFolder": "Buang",
+    "Subpath": "Sublaluan",
+    "SubpathInvalid": "Sublaluan mestilah laluan relatif dan tidak boleh mengandungi '..'.",
+    "SubpathPlaceholder": "cth. dataset/train (pilihan)",
+    "SubpathTooltip": "Mount subfolder di dalam folder sebagai sumber dan bukannya root-nya. Biarkan kosong untuk mount root."
+  },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Pilih Folder"
   },

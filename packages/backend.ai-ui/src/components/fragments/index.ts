@@ -88,6 +88,18 @@ export type {
   VFolderNode,
   BAIVFolderSelectRef,
 } from './BAIVFolderSelect';
+export { default as BAIVFolderMountConfigInput } from './BAIVFolderMountConfigInput';
+export {
+  inputToMountDestination,
+  getVFolderMountConfigStatuses,
+  isVFolderMountConfigValid,
+} from './BAIVFolderMountConfigInput';
+export type {
+  BAIVFolderMountConfigInputProps,
+  VFolderMountConfigValue,
+  VFolderMountConfigStatusOptions,
+  VFolderMountConfigEntryStatus,
+} from './BAIVFolderMountConfigInput';
 export { default as BAIProjectVfolderSelect } from './BAIProjectVfolderSelect';
 export type {
   BAIProjectVfolderSelectProps,

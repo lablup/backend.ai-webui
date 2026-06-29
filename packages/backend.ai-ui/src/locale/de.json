@@ -386,6 +386,20 @@
   "comp:BAIUserSelect": {
     "SelectUser": "Benutzer auswählen"
   },
+  "comp:BAIVFolderMountConfigInput": {
+    "AliasInvalid": "Ungültiges Pfadformat.",
+    "AliasOverlapping": "Der Einhängepfad überschneidet sich mit einem anderen Ordner.",
+    "AliasPlaceholder": "Einhängepfad",
+    "AutoMountedFolders": "Automatisch eingehängte Ordner",
+    "Name": "Name",
+    "PathAndAlias": "Pfad & Alias",
+    "PathAndAliasTooltip": "Der Pfad im Container, in den der Ordner eingehängt wird. Leer lassen, um den Standardpfad zu verwenden.",
+    "RemoveFolder": "Entfernen",
+    "Subpath": "Unterpfad",
+    "SubpathInvalid": "Der Unterpfad muss ein relativer Pfad sein und darf '..' nicht enthalten.",
+    "SubpathPlaceholder": "z. B. dataset/train (optional)",
+    "SubpathTooltip": "Hängt einen Unterordner innerhalb des Ordners als Quelle ein, anstatt dessen Wurzel. Leer lassen, um die Wurzel einzuhängen."
+  },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Ordner auswählen"
   },
