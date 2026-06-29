@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
+import { useSuspenseGetAnnouncement } from '../hooks/useAnnouncement';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import AnnouncementEditModal from './AnnouncementEditModal';
 import SettingList, { SettingGroup } from './SettingList';
@@ -23,12 +23,7 @@ const MaintenanceSettingList = () => {
   const { upsertNotification } = useSetBAINotification();
   const baiClient = useSuspendedBackendaiClient();
 
-  const { data: announcement } = useSuspenseTanQuery({
-    queryKey: ['baiClient', 'service', 'get_announcement'],
-    queryFn: () => {
-      return baiClient.service.get_announcement();
-    },
-  });
+  const { data: announcement } = useSuspenseGetAnnouncement();
 
   const recalculateUsage = () => {
     setIsRecalculating(true);
