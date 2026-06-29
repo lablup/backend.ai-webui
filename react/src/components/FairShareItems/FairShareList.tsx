@@ -16,6 +16,9 @@ import {
 } from '../../__generated__/FairShareListQuery.graphql';
 import { convertToOrderBy, handleRowSelectionChange } from '../../helper';
 import { useBAIPaginationOptionStateOnSearchParam } from '../../hooks/reactPaginationQueryOptions';
+import AutoUpdateFetchKeyButton, {
+  LONG_AUTO_UPDATE_DELAY_OPTIONS,
+} from '../AutoUpdateFetchKeyButton';
 import DomainFairShareTable, {
   availableDomainFairShareSorterValues,
   DomainFairShare,
@@ -42,7 +45,6 @@ import {
   BAIQuestionIconWithTooltip,
   BAIBackButton,
   BAIButton,
-  BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAISelectionLabel,
@@ -652,8 +654,9 @@ const FairShareList: React.FC = () => {
                 </Tooltip>
               </>
             )}
-            <BAIFetchKeyButton
-              autoUpdateDelay={7_000}
+            <AutoUpdateFetchKeyButton
+              settingId="fair-share-list"
+              autoUpdateDelayOptions={LONG_AUTO_UPDATE_DELAY_OPTIONS}
               loading={fetchKey !== deferredFetchKey}
               value=""
               onChange={() => {

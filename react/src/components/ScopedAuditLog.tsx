@@ -4,10 +4,10 @@ import type {
   ScopedAuditLogQuery as ScopedAuditLogQueryType,
 } from '../__generated__/ScopedAuditLogQuery.graphql';
 import { convertToOrderBy } from '../helper';
+import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import {
   BAIAuditLogNodes,
   type BAIAuditLogNodesProps,
-  BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   filterOutNullAndUndefined,
@@ -147,14 +147,14 @@ const ScopedAuditLog = ({
             },
           ]}
         />
-        <BAIFetchKeyButton
+        <AutoUpdateFetchKeyButton
+          settingId="scoped-audit-log"
           value={fetchKey}
           onChange={(key) => {
             updateFetchKey(key);
             onReload(queryRef.variables, { fetchPolicy: 'network-only' });
           }}
           loading={isRefetching}
-          autoUpdateDelay={7_000}
         />
       </BAIFlex>
       <BAIAuditLogNodes

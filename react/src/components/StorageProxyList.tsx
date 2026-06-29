@@ -9,6 +9,7 @@ import {
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
+import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import StorageHostDetailDrawer from './StorageHostDetailDrawer';
 import { type TableColumnsType, Tag, theme, Typography } from 'antd';
 import {
@@ -18,7 +19,6 @@ import {
   BAILink,
   BAIPureStorageIcon,
   BAITable,
-  BAIFetchKeyButton,
   BAIProgressWithLabel,
   BAIDoubleTag,
   BAIUnmountAfterClose,
@@ -256,12 +256,12 @@ const StorageProxyList = () => {
               },
             ]}
           /> */}
-        <BAIFetchKeyButton
+        <AutoUpdateFetchKeyButton
+          settingId="storage-proxy-list"
           loading={
             deferredFetchKey !== fetchKey ||
             deferredQueryVariables !== queryVariables
           }
-          autoUpdateDelay={15_000}
           value={fetchKey}
           onChange={() => {
             updateFetchKey();
