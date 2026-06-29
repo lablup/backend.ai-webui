@@ -4,10 +4,11 @@
  */
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
+import { ANNOUNCEMENT_QUERY_KEY } from '../hooks/useAnnouncement';
+import AnnouncementMarkdown from './AnnouncementMarkdown';
 import BAICodeEditor from './BAICodeEditor';
 import { useQueryClient } from '@tanstack/react-query';
 import { App, Form, Switch, theme } from 'antd';
-import { createStyles } from 'antd-style';
 import {
   BAIModal,
   BAIModalProps,
@@ -15,22 +16,8 @@ import {
   useErrorMessageResolver,
   useBAILogger,
 } from 'backend.ai-ui';
-import Markdown from 'markdown-to-jsx';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-
-const useStyles = createStyles(({ css }) => ({
-  // Collapse the first/last block margins so the preview content sits flush
-  // with the box padding, keeping top/bottom spacing equal to left/right.
-  markdownPreview: css`
-    & > *:first-child {
-      margin-top: 0;
-    }
-    & > *:last-child {
-      margin-bottom: 0;
-    }
-  `,
-}));
 
 interface AnnouncementEditModalProps extends BAIModalProps {
   onRequestClose: (success?: boolean) => void;
@@ -47,7 +34,6 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
   'use memo';
 
   const { t } = useTranslation();
-  const { styles } = useStyles();
   const { token } = theme.useToken();
   const { message: appMessage } = App.useApp();
   const { logger } = useBAILogger();
@@ -94,7 +80,7 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
             onSuccess: () => {
               appMessage.success(t('summary.AnnouncementUpdated'));
               queryClient.invalidateQueries({
-                queryKey: ['baiClient', 'service', 'get_announcement'],
+                queryKey: ANNOUNCEMENT_QUERY_KEY,
               });
               onRequestClose(true);
             },
@@ -137,7 +123,6 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
               style={{ flex: 1, minWidth: 0, marginBottom: 0 }}
             >
               <div
-                className={styles.markdownPreview}
                 style={{
                   border: `1px solid ${token.colorBorder}`,
                   borderRadius: token.borderRadius,
@@ -146,7 +131,7 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
                   overflow: 'auto',
                 }}
               >
-                <Markdown>{message || ''}</Markdown>
+                <AnnouncementMarkdown>{message}</AnnouncementMarkdown>
               </div>
             </Form.Item>
           </BAIFlex>
