@@ -8,7 +8,7 @@ import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import AnnouncementEditModal from './AnnouncementEditModal';
 import { EditOutlined } from '@ant-design/icons';
 import { Button, theme } from 'antd';
-import { BAIAlert, BAIAlertProps } from 'backend.ai-ui';
+import { BAIAlert, BAIAlertProps, BAIUnmountAfterClose } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import Markdown from 'markdown-to-jsx';
 import React, { useState } from 'react';
@@ -70,11 +70,14 @@ const AnnouncementAlert: React.FC<Props> = ({ ...otherProps }) => {
         {...otherProps}
       />
       {isSuperAdmin && (
-        <AnnouncementEditModal
-          open={isEditOpen}
-          initialMessage={announcement.message}
-          onRequestClose={() => setIsEditOpen(false)}
-        />
+        <BAIUnmountAfterClose>
+          <AnnouncementEditModal
+            open={isEditOpen}
+            initialMessage={announcement.message}
+            initialEnabled={announcement.enabled}
+            onRequestClose={() => setIsEditOpen(false)}
+          />
+        </BAIUnmountAfterClose>
       )}
     </>
   ) : (

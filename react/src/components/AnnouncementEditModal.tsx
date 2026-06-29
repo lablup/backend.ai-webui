@@ -15,17 +15,19 @@ import {
   useBAILogger,
 } from 'backend.ai-ui';
 import Markdown from 'markdown-to-jsx';
-import { useEffect, useEffectEvent, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface AnnouncementEditModalProps extends BAIModalProps {
   onRequestClose: (success?: boolean) => void;
   initialMessage?: string;
+  initialEnabled?: boolean;
 }
 
 const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
   onRequestClose,
   initialMessage,
+  initialEnabled,
   ...modalProps
 }) => {
   'use memo';
@@ -39,17 +41,10 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
   const baiClient = useSuspendedBackendaiClient();
   const queryClient = useQueryClient();
 
+  // The modal is wrapped in BAIUnmountAfterClose by its parent, so it remounts
+  // on every open — these initializers always reflect the latest announcement.
   const [message, setMessage] = useState(initialMessage ?? '');
-  const [enabled, setEnabled] = useState(true);
-
-  const syncMessageOnOpen = useEffectEvent((open?: boolean) => {
-    if (open) {
-      setMessage(initialMessage ?? '');
-    }
-  });
-  useEffect(() => {
-    syncMessageOnOpen(modalProps.open);
-  }, [modalProps.open]);
+  const [enabled, setEnabled] = useState(initialEnabled ?? true);
 
   const updateMutation = useTanMutation({
     mutationFn: ({
@@ -88,7 +83,6 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
           },
         );
       }}
-      destroyOnHidden
       {...modalProps}
     >
       <BAIFlex direction="column" align="stretch" gap="sm">
