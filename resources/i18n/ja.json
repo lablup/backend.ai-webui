@@ -2520,6 +2520,7 @@
     "Agent": "エージェント",
     "AgentId": "エージェントID",
     "Agents": "エージェント",
+    "AllocatedLessThanRequested": "要求よりも少ないリソースが割り当てられました。",
     "AllowedClientIps": "許可されたクライアントIP",
     "AllowedMultipleClientsIps": "許可されたクライアント IP (カンマ区切り)",
     "AlreadyTerminatingSession": "すでに終了しているセッションです",

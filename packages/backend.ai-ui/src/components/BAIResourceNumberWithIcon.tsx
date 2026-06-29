@@ -1,4 +1,5 @@
 import { convertToBinaryUnit } from '../helper';
+import { useBAIi18n } from '../hooks/useBAIi18n';
 import { BAINvidiaIcon } from '../icons';
 import BAIFuriosaIcon from '../icons/BAIFuriosaIcon';
 import BAIGaudiIcon from '../icons/BAIGaudiIcon';
@@ -27,6 +28,16 @@ export interface BAIResourceNumberWithIconProps {
   value: string;
   hideTooltip?: boolean;
   max?: string;
+  /**
+   * Optional reference value rendered after the primary one as
+   * `value / comparedValue`, sharing a single unit (e.g. `1 / 2 Core`). Used to
+   * show an actual-vs-target pair such as allocated vs. requested resources. The
+   * `/ comparedValue` part is rendered in the muted (secondary) text color so it
+   * reads as a reference next to the primary value. When set, the whole number
+   * group carries an "Allocated / Requested" tooltip explaining the pair —
+   * independent of the resource icon's own description tooltip.
+   */
+  comparedValue?: string;
 }
 
 /**
@@ -47,9 +58,11 @@ const BAIResourceNumberWithIcon = ({
   value: amount,
   max,
   hideTooltip = false,
+  comparedValue,
 }: BAIResourceNumberWithIconProps) => {
   'use memo';
 
+  const { t } = useBAIi18n();
   const deviceMetaData = useBAIDeviceMetaData();
   const { token } = theme.useToken();
 
@@ -64,6 +77,40 @@ const BAIResourceNumberWithIcon = ({
         : amount;
   };
 
+  // The number + optional `/ compared` + unit, sharing one trailing unit.
+  const numberGroup = deviceMetaData?.[type]?.number_format.binary ? (
+    <NumberWithUnit
+      numberUnit={amount}
+      targetUnit="g"
+      unitType="binary"
+      comparedValue={comparedValue}
+      postfix={
+        _.isUndefined(max)
+          ? ''
+          : max === 'Infinity'
+            ? '~∞'
+            : `~${formatAmount(max)}`
+      }
+    />
+  ) : (
+    <>
+      <BAIText>
+        {formatAmount(amount)}
+        {_.isUndefined(max)
+          ? null
+          : max === 'Infinity'
+            ? '~∞'
+            : `~${formatAmount(max)}`}
+      </BAIText>
+      {_.isUndefined(comparedValue) ? null : (
+        <BAIText type="secondary">{`/ ${formatAmount(comparedValue)}`}</BAIText>
+      )}
+      <BAIText type="secondary" style={{ whiteSpace: 'nowrap' }}>
+        {deviceMetaData?.[type]?.display_unit || ''}
+      </BAIText>
+    </>
+  );
+
   return (
     <BAIFlex direction="row" gap="xxs">
       {deviceMetaData?.[type] ? (
@@ -71,33 +118,19 @@ const BAIResourceNumberWithIcon = ({
       ) : (
         type
       )}
-      {deviceMetaData?.[type]?.number_format.binary ? (
-        <NumberWithUnit
-          numberUnit={amount}
-          targetUnit="g"
-          unitType="binary"
-          postfix={
-            _.isUndefined(max)
-              ? ''
-              : max === 'Infinity'
-                ? '~∞'
-                : `~${formatAmount(max)}`
-          }
-        />
+      {/* When a compared value is shown, the whole number group carries a
+          tooltip explaining the `value / compared` pair (allocated vs.
+          requested). It is independent of the icon's description tooltip. */}
+      {_.isUndefined(comparedValue) ? (
+        numberGroup
       ) : (
-        <>
-          <BAIText>
-            {formatAmount(amount)}
-            {_.isUndefined(max)
-              ? null
-              : max === 'Infinity'
-                ? '~∞'
-                : `~${formatAmount(max)}`}
-          </BAIText>
-          <BAIText type="secondary" style={{ whiteSpace: 'nowrap' }}>
-            {deviceMetaData?.[type]?.display_unit || ''}
-          </BAIText>
-        </>
+        <Tooltip
+          title={t('comp:BAIResourceNumberWithIcon.AllocatedVsRequested')}
+        >
+          <BAIFlex direction="row" gap="xxs">
+            {numberGroup}
+          </BAIFlex>
+        </Tooltip>
       )}
 
       {type === 'mem' && opts?.shmem && opts?.shmem > 0 ? (

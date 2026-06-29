@@ -2516,6 +2516,7 @@
     "Agent": "Агент",
     "AgentId": "Хийнний ID",
     "Agents": "Агентууд",
+    "AllocatedLessThanRequested": "Хүссэнээс бага нөөц хуваарилагдсан байна.",
     "AllowedClientIps": "Зөвшөөрөгдсөн үйлчлүүлэгчийн IP",
     "AllowedMultipleClientsIps": "Зөвшөөрөгдсөн үйлчлүүлэгч IPS (таслалаар тусгаарлагдсан)",
     "AlreadyTerminatingSession": "Сессийг аль хэдийн дуусгаж байна.",

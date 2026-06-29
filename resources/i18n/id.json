@@ -2518,6 +2518,7 @@
     "Agent": "Agen",
     "AgentId": "ID Agen",
     "Agents": "Agen",
+    "AllocatedLessThanRequested": "Sumber daya yang dialokasikan lebih sedikit daripada yang diminta.",
     "AllowedClientIps": "IP klien yang diizinkan",
     "AllowedMultipleClientsIps": "IP klien yang diizinkan (dipisahkan koma)",
     "AlreadyTerminatingSession": "Sudah mengakhiri sesi.",

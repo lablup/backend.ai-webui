@@ -2515,6 +2515,7 @@
     "Agent": "Temsilci",
     "AgentId": "Ajan kimliği",
     "Agents": "Temsilciler",
+    "AllocatedLessThanRequested": "İstenenden daha az kaynak ayrıldı.",
     "AllowedClientIps": "İzin verilen istemci IP'leri",
     "AllowedMultipleClientsIps": "İzin verilen istemci IP'leri (virgülle ayrılmış)",
     "AlreadyTerminatingSession": "Oturum zaten sonlandırılıyor.",

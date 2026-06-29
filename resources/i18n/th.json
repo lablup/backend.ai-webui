@@ -2520,6 +2520,7 @@
     "Agent": "ตัวแทน",
     "AgentId": "ID ตัวแทน",
     "Agents": "ตัวแทน",
+    "AllocatedLessThanRequested": "มีการจัดสรรทรัพยากรน้อยกว่าที่ร้องขอ",
     "AllowedClientIps": "IP ไคลเอนต์ที่อนุญาต",
     "AllowedMultipleClientsIps": "IP ไคลเอ็นต์ที่อนุญาต (คั่นด้วยเครื่องหมายจุลภาค)",
     "AlreadyTerminatingSession": "กำลังยุติเซสชันอยู่แล้ว",

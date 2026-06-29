@@ -7,6 +7,13 @@ interface BAINumberWithUnitProps {
   targetUnit: SizeUnit;
   unitType: 'binary' | 'decimal';
   postfix?: string;
+  /**
+   * Optional reference value rendered after the number as `number / compared`,
+   * sharing the single trailing unit. The `/ compared` part is rendered in the
+   * muted (secondary) text color — same as the unit — so it reads as a
+   * reference next to the primary number.
+   */
+  comparedValue?: string;
 }
 
 const BAINumberWithUnit = ({
@@ -14,6 +21,7 @@ const BAINumberWithUnit = ({
   targetUnit,
   unitType,
   postfix,
+  comparedValue,
 }: BAINumberWithUnitProps) => {
   const convertedByTargetUnit =
     unitType === 'binary'
@@ -23,12 +31,23 @@ const BAINumberWithUnit = ({
     unitType === 'binary'
       ? convertToBinaryUnit(numberUnit, 'auto', 2, true)
       : convertToDecimalUnit(numberUnit, 'auto', 2, true);
+  const convertedComparedByTargetUnit =
+    comparedValue === undefined
+      ? undefined
+      : unitType === 'binary'
+        ? convertToBinaryUnit(comparedValue, targetUnit, 2, true)
+        : convertToDecimalUnit(comparedValue, targetUnit, 2, true);
   return (
     <BAIFlex gap="xxs">
       <Typography.Text>
         {Number(convertedByTargetUnit?.numberFixed).toString()}
         {postfix && postfix}
       </Typography.Text>
+      {convertedComparedByTargetUnit ? (
+        <Typography.Text type="secondary">
+          {`/ ${Number(convertedComparedByTargetUnit?.numberFixed).toString()}`}
+        </Typography.Text>
+      ) : null}
       <Typography.Text type="secondary">
         {convertedByTargetUnit?.displayUnit}
         {Number(convertedByTargetUnit?.numberFixed).toString() === '0' &&

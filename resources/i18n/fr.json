@@ -2517,6 +2517,7 @@
     "Agent": "Agent",
     "AgentId": "ID d'agent",
     "Agents": "Agents",
+    "AllocatedLessThanRequested": "Moins de ressources ont été allouées que demandé.",
     "AllowedClientIps": "IP de clients autorisés",
     "AllowedMultipleClientsIps": "Adresses IP client autorisées (séparées par des virgules)",
     "AlreadyTerminatingSession": "La session est déjà terminée.",

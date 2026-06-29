@@ -2505,6 +2505,7 @@
     "Agent": "Agent",
     "AgentId": "Agent ID",
     "Agents": "Agents",
+    "AllocatedLessThanRequested": "Fewer resources were allocated than requested.",
     "AllowedClientIps": "Allowed client IPs",
     "AllowedMultipleClientsIps": "Allowed client IPs (comma-separated)",
     "AlreadyTerminatingSession": "Already terminating the session.",

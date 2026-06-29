@@ -306,6 +306,9 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Pilih Grup Sumber Daya"
   },
+  "comp:BAIResourceNumberWithIcon": {
+    "AllocatedVsRequested": "Dialokasikan / Diminta"
+  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Tak terbatas"
   },

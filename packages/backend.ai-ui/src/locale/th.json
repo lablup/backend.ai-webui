@@ -306,6 +306,9 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "เลือกกลุ่มทรัพยากร"
   },
+  "comp:BAIResourceNumberWithIcon": {
+    "AllocatedVsRequested": "ที่จัดสรร / ที่ร้องขอ"
+  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "ไม่ จำกัด"
   },

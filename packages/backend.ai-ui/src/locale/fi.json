@@ -306,6 +306,9 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Valitse resurssiryhmä"
   },
+  "comp:BAIResourceNumberWithIcon": {
+    "AllocatedVsRequested": "Varattu / Pyydetty"
+  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Rajoittamaton"
   },

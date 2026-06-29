@@ -306,6 +306,9 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "리소스 그룹을 선택해주세요"
   },
+  "comp:BAIResourceNumberWithIcon": {
+    "AllocatedVsRequested": "할당 자원 / 요청 자원"
+  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "제한없음"
   },
