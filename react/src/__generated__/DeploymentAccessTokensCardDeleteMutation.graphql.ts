@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a43045989ee9e8789f10b921113079df>>
+ * @generated SignedSource<<6c8f2878181d310c69c5ad61ce2cd280>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,17 +12,17 @@ import { ConcreteRequest } from 'relay-runtime';
 export type DeleteAccessTokenInput = {
   id: string;
 };
-export type DeploymentAccessTokensTabDeleteMutation$variables = {
+export type DeploymentAccessTokensCardDeleteMutation$variables = {
   input: DeleteAccessTokenInput;
 };
-export type DeploymentAccessTokensTabDeleteMutation$data = {
+export type DeploymentAccessTokensCardDeleteMutation$data = {
   readonly deleteAccessToken: {
     readonly id: string;
   } | null | undefined;
 };
-export type DeploymentAccessTokensTabDeleteMutation = {
-  response: DeploymentAccessTokensTabDeleteMutation$data;
-  variables: DeploymentAccessTokensTabDeleteMutation$variables;
+export type DeploymentAccessTokensCardDeleteMutation = {
+  response: DeploymentAccessTokensCardDeleteMutation$data;
+  variables: DeploymentAccessTokensCardDeleteMutation$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -64,7 +64,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "DeploymentAccessTokensTabDeleteMutation",
+    "name": "DeploymentAccessTokensCardDeleteMutation",
     "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -73,20 +73,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "DeploymentAccessTokensTabDeleteMutation",
+    "name": "DeploymentAccessTokensCardDeleteMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "a511c067913c62224123dba5853f9c55",
+    "cacheID": "3001cf022c16a198843b296bca8e75f9",
     "id": null,
     "metadata": {},
-    "name": "DeploymentAccessTokensTabDeleteMutation",
+    "name": "DeploymentAccessTokensCardDeleteMutation",
     "operationKind": "mutation",
-    "text": "mutation DeploymentAccessTokensTabDeleteMutation(\n  $input: DeleteAccessTokenInput!\n) {\n  deleteAccessToken(input: $input) {\n    id\n  }\n}\n"
+    "text": "mutation DeploymentAccessTokensCardDeleteMutation(\n  $input: DeleteAccessTokenInput!\n) {\n  deleteAccessToken(input: $input) {\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "a82f98c3e592ea37497b90c70d69d6b4";
+(node as any).hash = "6877559748beeee076979bb65393d59f";
 
 export default node;

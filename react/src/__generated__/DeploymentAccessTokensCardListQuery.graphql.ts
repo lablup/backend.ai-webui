@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3252fb9ad3dd16847205ecc873731eb4>>
+ * @generated SignedSource<<845b566b21002728cf444c71dafd0578>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,10 +9,10 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type DeploymentAccessTokensTabListQuery$variables = {
+export type DeploymentAccessTokensCardListQuery$variables = {
   deploymentId: string;
 };
-export type DeploymentAccessTokensTabListQuery$data = {
+export type DeploymentAccessTokensCardListQuery$data = {
   readonly deployment: {
     readonly accessTokens: {
       readonly count: number;
@@ -27,9 +27,9 @@ export type DeploymentAccessTokensTabListQuery$data = {
     } | null | undefined;
   } | null | undefined;
 };
-export type DeploymentAccessTokensTabListQuery = {
-  response: DeploymentAccessTokensTabListQuery$data;
-  variables: DeploymentAccessTokensTabListQuery$variables;
+export type DeploymentAccessTokensCardListQuery = {
+  response: DeploymentAccessTokensCardListQuery$data;
+  variables: DeploymentAccessTokensCardListQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -132,7 +132,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "DeploymentAccessTokensTabListQuery",
+    "name": "DeploymentAccessTokensCardListQuery",
     "selections": [
       {
         "alias": null,
@@ -154,7 +154,7 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "DeploymentAccessTokensTabListQuery",
+    "name": "DeploymentAccessTokensCardListQuery",
     "selections": [
       {
         "alias": null,
@@ -172,16 +172,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "cb48b0e9b4930dfa44b7157fc8f289da",
+    "cacheID": "fe0599e3ca582035a0afb69f61751a53",
     "id": null,
     "metadata": {},
-    "name": "DeploymentAccessTokensTabListQuery",
+    "name": "DeploymentAccessTokensCardListQuery",
     "operationKind": "query",
-    "text": "query DeploymentAccessTokensTabListQuery(\n  $deploymentId: ID!\n) {\n  deployment(id: $deploymentId) {\n    accessTokens(orderBy: [{field: CREATED_AT, direction: DESC}]) {\n      count\n      edges {\n        node {\n          id\n          token\n          createdAt\n          expiresAt\n        }\n      }\n    }\n    id\n  }\n}\n"
+    "text": "query DeploymentAccessTokensCardListQuery(\n  $deploymentId: ID!\n) {\n  deployment(id: $deploymentId) {\n    accessTokens(orderBy: [{field: CREATED_AT, direction: DESC}]) {\n      count\n      edges {\n        node {\n          id\n          token\n          createdAt\n          expiresAt\n        }\n      }\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "4e84247d3aa97d220f9a949a56d396e1";
+(node as any).hash = "b43bdbd02f49d9e5a3e3b15dac4c1b90";
 
 export default node;

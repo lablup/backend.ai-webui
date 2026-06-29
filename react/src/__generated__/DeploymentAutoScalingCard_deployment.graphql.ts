@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4359cd6f82b2b243fa3d16fca083dbc5>>
+ * @generated SignedSource<<295960056b2f0a4d4f6ab9c5da290ae2>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,7 +11,7 @@
 import { ReaderFragment } from 'relay-runtime';
 export type DeploymentStatus = "DEPLOYING" | "PENDING" | "READY" | "SCALING" | "STOPPED" | "STOPPING" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
-export type DeploymentAutoScalingTab_deployment$data = {
+export type DeploymentAutoScalingCard_deployment$data = {
   readonly creator: {
     readonly basicInfo: {
       readonly email: string;
@@ -21,18 +21,18 @@ export type DeploymentAutoScalingTab_deployment$data = {
   readonly metadata: {
     readonly status: DeploymentStatus;
   };
-  readonly " $fragmentType": "DeploymentAutoScalingTab_deployment";
+  readonly " $fragmentType": "DeploymentAutoScalingCard_deployment";
 };
-export type DeploymentAutoScalingTab_deployment$key = {
-  readonly " $data"?: DeploymentAutoScalingTab_deployment$data;
-  readonly " $fragmentSpreads": FragmentRefs<"DeploymentAutoScalingTab_deployment">;
+export type DeploymentAutoScalingCard_deployment$key = {
+  readonly " $data"?: DeploymentAutoScalingCard_deployment$data;
+  readonly " $fragmentSpreads": FragmentRefs<"DeploymentAutoScalingCard_deployment">;
 };
 
 const node: ReaderFragment = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
-  "name": "DeploymentAutoScalingTab_deployment",
+  "name": "DeploymentAutoScalingCard_deployment",
   "selections": [
     {
       "alias": null,
@@ -93,6 +93,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "129d74dafb7ab8394c47065f3b9af25e";
+(node as any).hash = "a7ebc88f8233e21188ec26bb29ecdb73";
 
 export default node;
