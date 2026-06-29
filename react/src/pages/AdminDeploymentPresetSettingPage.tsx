@@ -41,8 +41,8 @@ const buildModelDefinitionInput = (
       // `service` is optional on a model, but the create path's
       // PresetModelServiceConfigInput is required (the update path's is
       // nullable), so a model without a service can't be submitted — skip it.
-      // When present, ModelServiceFormValue guarantees port/shell/startCommand,
-      // so no field-level guards or non-null assertions are needed here.
+      // When present, ModelServiceFormValue guarantees port/startCommand; shell
+      // is optional, handled below.
       if (!service) {
         return [];
       }
@@ -52,7 +52,12 @@ const buildModelDefinitionInput = (
           modelPath: m.modelPath,
           service: {
             port: service.port,
-            shell: service.shell,
+            // `shell` has no UI field (see AdminDeploymentPresetModelConfigItem)
+            // but still round-trips: on edit, an existing value flows back
+            // through `form.getFieldsValue(true)`. Omit empty/whitespace-only
+            // values so create applies the server default `/bin/bash` and a
+            // blank never lands as `''`.
+            shell: service.shell?.trim() || undefined,
             startCommand: tokenizeShellCommand(service.startCommand),
             preStartActions: (service.preStartActions ?? []).map((a) => ({
               action: a.action,

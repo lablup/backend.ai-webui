@@ -476,7 +476,10 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                 service: m.service
                   ? {
                       port: m.service.port,
-                      shell: m.service.shell,
+                      // 26.7.0: `shell` is nullable on the output. Normalize
+                      // null → undefined so the (now optional) form field shows
+                      // blank and the user can clear it.
+                      shell: m.service.shell ?? undefined,
                       startCommand: formatShellCommand(
                         m.service.startCommand ?? [],
                       ),

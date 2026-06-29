@@ -299,13 +299,8 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
                       {m.service.port}
                     </Descriptions.Item>
                   )}
-                  {m.service?.shell && (
-                    <Descriptions.Item
-                      label={t('adminDeploymentPreset.modelDef.Shell')}
-                    >
-                      <Typography.Text code>{m.service.shell}</Typography.Text>
-                    </Descriptions.Item>
-                  )}
+                  {/* `shell` is not surfaced in this form (no-op on the list
+                      `startCommand` path); see AdminDeploymentPresetModelConfigItem. */}
                   {m.service?.startCommand && (
                     <Descriptions.Item
                       label={t('adminDeploymentPreset.modelDef.StartCommand')}
