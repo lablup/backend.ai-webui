@@ -7,10 +7,11 @@ import { useSuspenseGetAnnouncement } from '../hooks/useAnnouncement';
 import AnnouncementEditModal from './AnnouncementEditModal';
 import AnnouncementMarkdown from './AnnouncementMarkdown';
 import { EditOutlined } from '@ant-design/icons';
+import { useToggle } from 'ahooks';
 import { Button } from 'antd';
 import { BAIAlert, BAIAlertProps, BAIUnmountAfterClose } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface Props extends BAIAlertProps {}
@@ -20,7 +21,7 @@ const AnnouncementAlert: React.FC<Props> = ({ ...otherProps }) => {
   const { t } = useTranslation();
   const userRole = useCurrentUserRole();
   const isSuperAdmin = userRole === 'superadmin';
-  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isEditOpen, { toggle: toggleEditModal }] = useToggle(false);
   const { data: announcement } = useSuspenseGetAnnouncement();
 
   return !_.isEmpty(announcement.message) ? (
@@ -35,7 +36,7 @@ const AnnouncementAlert: React.FC<Props> = ({ ...otherProps }) => {
               type="text"
               size="small"
               icon={<EditOutlined />}
-              onClick={() => setIsEditOpen(true)}
+              onClick={toggleEditModal}
             >
               {t('button.Edit')}
             </Button>
@@ -49,7 +50,7 @@ const AnnouncementAlert: React.FC<Props> = ({ ...otherProps }) => {
             open={isEditOpen}
             initialMessage={announcement.message}
             initialEnabled={announcement.enabled}
-            onRequestClose={() => setIsEditOpen(false)}
+            onRequestClose={toggleEditModal}
           />
         </BAIUnmountAfterClose>
       )}
