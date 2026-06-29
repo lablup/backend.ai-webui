@@ -3188,6 +3188,7 @@
     "AnnouncementEnabled": "Käytössä",
     "AnnouncementMarkdownHelp": "Markdown-syntaksi on tuettu.",
     "AnnouncementMessage": "Viesti",
+    "AnnouncementMessageRequired": "Syötä viesti ottaaksesi ilmoituksen käyttöön.",
     "AnnouncementPreview": "Esikatselu",
     "AnnouncementUpdated": "Ilmoitus on päivitetty.",
     "ChangeSystemSetting": "Vaihda järjestelmäasetusta",

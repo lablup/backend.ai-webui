@@ -3188,6 +3188,7 @@
     "AnnouncementEnabled": "Ενεργοποιημένο",
     "AnnouncementMarkdownHelp": "Υποστηρίζεται σύνταξη Markdown.",
     "AnnouncementMessage": "Μήνυμα",
+    "AnnouncementMessageRequired": "Παρακαλώ εισάγετε ένα μήνυμα για να ενεργοποιήσετε την ανακοίνωση.",
     "AnnouncementPreview": "Προεπισκόπηση",
     "AnnouncementUpdated": "Η ανακοίνωση ενημερώθηκε.",
     "ChangeSystemSetting": "Αλλαγή ρύθμισης συστήματος",

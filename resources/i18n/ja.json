@@ -3193,6 +3193,7 @@
     "AnnouncementEnabled": "有効",
     "AnnouncementMarkdownHelp": "Markdown 構文がサポートされています。",
     "AnnouncementMessage": "メッセージ",
+    "AnnouncementMessageRequired": "発表を有効にするには、メッセージを入力してください。",
     "AnnouncementPreview": "プレビュー",
     "AnnouncementUpdated": "発表が更新されました。",
     "ChangeSystemSetting": "システム設定変更",

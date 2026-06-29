@@ -3188,6 +3188,7 @@
     "AnnouncementEnabled": "Didayakan",
     "AnnouncementMarkdownHelp": "Sintaks Markdown disokong.",
     "AnnouncementMessage": "Mesej",
+    "AnnouncementMessageRequired": "Sila masukkan mesej untuk mendayakan pengumuman.",
     "AnnouncementPreview": "Pratonton",
     "AnnouncementUpdated": "Pengumuman telah dikemas kini.",
     "ChangeSystemSetting": "Ubah tetapan sistem",

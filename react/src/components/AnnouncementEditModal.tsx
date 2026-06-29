@@ -6,7 +6,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAICodeEditor from './BAICodeEditor';
 import { useQueryClient } from '@tanstack/react-query';
-import { App, Form, Switch, Typography, theme } from 'antd';
+import { App, Form, Switch, theme } from 'antd';
 import {
   BAIModal,
   BAIModalProps,
@@ -60,12 +60,19 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
 
   return (
     <BAIModal
-      width={800}
+      width={960}
       title={t('summary.EditAnnouncement')}
       okText={t('button.Save')}
       confirmLoading={updateMutation.isPending}
       onCancel={() => onRequestClose()}
       onOk={() => {
+        // The backend rejects enabling an announcement with an empty message
+        // ("Empty message not allowed to enable announcement"); guard here so
+        // the user gets immediate feedback instead of a server error.
+        if (enabled && !message.trim()) {
+          appMessage.error(t('summary.AnnouncementMessageRequired'));
+          return;
+        }
         updateMutation.mutate(
           { enabled, message },
           {
@@ -85,61 +92,67 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
       }}
       {...modalProps}
     >
-      <BAIFlex direction="column" align="stretch" gap="sm">
-        <Form layout="vertical">
-          <Form.Item label={t('summary.AnnouncementEnabled')}>
-            <Switch checked={enabled} onChange={setEnabled} />
-          </Form.Item>
+      <Form layout="vertical">
+        <BAIFlex direction="column" align="stretch" gap="sm">
           <Form.Item
-            label={t('summary.AnnouncementMessage')}
-            help={t('summary.AnnouncementMarkdownHelp')}
+            label={t('summary.AnnouncementEnabled')}
             style={{ marginBottom: 0 }}
           >
-            <BAICodeEditor
-              language="markdown"
-              editable
-              value={message}
-              onChange={setMessage}
-              lineWrapping
-              height={240}
-            />
+            <Switch checked={enabled} onChange={setEnabled} />
           </Form.Item>
-        </Form>
-        {message ? (
-          <BAIFlex direction="column" align="stretch" gap="xxs">
-            <Typography.Text type="secondary">
-              {t('summary.AnnouncementPreview')}
-            </Typography.Text>
-            <div
-              style={{
-                border: `1px solid ${token.colorBorder}`,
-                borderRadius: token.borderRadius,
-                padding: token.padding,
-              }}
+          <BAIFlex direction="row" align="stretch" gap="sm" wrap="wrap">
+            <Form.Item
+              label={t('summary.AnnouncementMessage')}
+              help={t('summary.AnnouncementMarkdownHelp')}
+              required={enabled}
+              style={{ flex: 1, minWidth: 0, marginBottom: 0 }}
             >
-              <div style={{ marginBottom: token.marginSM * -1 }}>
-                <Markdown
-                  options={{
-                    overrides: {
-                      p: {
-                        props: {
-                          style: {
-                            marginTop: 0,
-                            marginBottom: token.marginSM,
+              <BAICodeEditor
+                language="markdown"
+                editable
+                value={message}
+                onChange={setMessage}
+                lineWrapping
+                height={280}
+              />
+            </Form.Item>
+            <Form.Item
+              label={t('summary.AnnouncementPreview')}
+              style={{ flex: 1, minWidth: 0, marginBottom: 0 }}
+            >
+              <div
+                style={{
+                  border: `1px solid ${token.colorBorder}`,
+                  borderRadius: token.borderRadius,
+                  padding: token.padding,
+                  height: 280,
+                  overflow: 'auto',
+                }}
+              >
+                <div style={{ marginBottom: token.marginSM * -1 }}>
+                  <Markdown
+                    options={{
+                      overrides: {
+                        p: {
+                          props: {
+                            style: {
+                              marginTop: 0,
+                              marginBottom: token.marginSM,
+                            },
                           },
                         },
                       },
-                    },
-                  }}
-                >
-                  {/* add dummy <p> to remove unnecessary margin bottom  */}
-                  {message + '<p></p>'}
-                </Markdown>
+                    }}
+                  >
+                    {/* add dummy <p> to remove unnecessary margin bottom  */}
+                    {(message || '') + '<p></p>'}
+                  </Markdown>
+                </div>
               </div>
-            </div>
+            </Form.Item>
           </BAIFlex>
-        ) : null}
-      </BAIFlex>
+        </BAIFlex>
+      </Form>
     </BAIModal>
   );
 };

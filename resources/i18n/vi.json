@@ -3190,6 +3190,7 @@
     "AnnouncementEnabled": "Đã bật",
     "AnnouncementMarkdownHelp": "Cú pháp Markdown được hỗ trợ.",
     "AnnouncementMessage": "Nội dung",
+    "AnnouncementMessageRequired": "Vui lòng nhập nội dung để bật thông báo.",
     "AnnouncementPreview": "Xem trước",
     "AnnouncementUpdated": "Thông báo đã được cập nhật.",
     "ChangeSystemSetting": "Thay đổi cài đặt hệ thống",

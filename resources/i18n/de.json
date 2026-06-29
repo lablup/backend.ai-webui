@@ -3190,6 +3190,7 @@
     "AnnouncementEnabled": "Aktiviert",
     "AnnouncementMarkdownHelp": "Markdown-Syntax wird unterstützt.",
     "AnnouncementMessage": "Nachricht",
+    "AnnouncementMessageRequired": "Bitte geben Sie eine Nachricht ein, um die Ankündigung zu aktivieren.",
     "AnnouncementPreview": "Vorschau",
     "AnnouncementUpdated": "Ankündigung wurde aktualisiert.",
     "ChangeSystemSetting": "Systemeinstellung ändern",

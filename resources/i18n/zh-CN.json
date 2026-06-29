@@ -3190,6 +3190,7 @@
     "AnnouncementEnabled": "已启用",
     "AnnouncementMarkdownHelp": "支持 Markdown 语法。",
     "AnnouncementMessage": "内容",
+    "AnnouncementMessageRequired": "请输入内容以启用公告。",
     "AnnouncementPreview": "预览",
     "AnnouncementUpdated": "公告已更新。",
     "ChangeSystemSetting": "更改系统设置",

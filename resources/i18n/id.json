@@ -3192,6 +3192,7 @@
     "AnnouncementEnabled": "Diaktifkan",
     "AnnouncementMarkdownHelp": "Sintaks Markdown didukung.",
     "AnnouncementMessage": "Pesan",
+    "AnnouncementMessageRequired": "Masukkan pesan untuk mengaktifkan pengumuman.",
     "AnnouncementPreview": "Pratinjau",
     "AnnouncementUpdated": "Pengumuman telah diperbarui.",
     "ChangeSystemSetting": "Ubah pengaturan sistem",

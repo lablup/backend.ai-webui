@@ -3188,6 +3188,7 @@
     "AnnouncementEnabled": "Habilitado",
     "AnnouncementMarkdownHelp": "Se admite la sintaxis Markdown.",
     "AnnouncementMessage": "Mensaje",
+    "AnnouncementMessageRequired": "Por favor, ingrese un mensaje para habilitar el anuncio.",
     "AnnouncementPreview": "Vista previa",
     "AnnouncementUpdated": "El anuncio ha sido actualizado.",
     "ChangeSystemSetting": "Cambiar la configuración del sistema",

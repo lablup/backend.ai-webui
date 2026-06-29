@@ -3178,6 +3178,7 @@
     "AnnouncementEnabled": "Enabled",
     "AnnouncementMarkdownHelp": "Markdown syntax is supported.",
     "AnnouncementMessage": "Message",
+    "AnnouncementMessageRequired": "Please enter a message to enable the announcement.",
     "AnnouncementPreview": "Preview",
     "AnnouncementUpdated": "Announcement updated.",
     "ChangeSystemSetting": "Change system setting",

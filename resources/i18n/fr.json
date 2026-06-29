@@ -3191,6 +3191,7 @@
     "AnnouncementEnabled": "Activé",
     "AnnouncementMarkdownHelp": "La syntaxe Markdown est prise en charge.",
     "AnnouncementMessage": "Message",
+    "AnnouncementMessageRequired": "Veuillez saisir un message pour activer l'annonce.",
     "AnnouncementPreview": "Aperçu",
     "AnnouncementUpdated": "L'annonce a été mise à jour.",
     "ChangeSystemSetting": "Modifier les paramètres du système",

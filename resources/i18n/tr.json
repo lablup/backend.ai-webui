@@ -3188,6 +3188,7 @@
     "AnnouncementEnabled": "Etkin",
     "AnnouncementMarkdownHelp": "Markdown sözdizimi desteklenmektedir.",
     "AnnouncementMessage": "Mesaj",
+    "AnnouncementMessageRequired": "Duyuruyu etkinleştirmek için lütfen bir mesaj girin.",
     "AnnouncementPreview": "Önizleme",
     "AnnouncementUpdated": "Duyuru güncellendi.",
     "ChangeSystemSetting": "Sistem ayarını değiştir",

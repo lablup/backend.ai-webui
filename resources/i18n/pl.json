@@ -3191,6 +3191,7 @@
     "AnnouncementEnabled": "Włączono",
     "AnnouncementMarkdownHelp": "Składnia Markdown jest obsługiwana.",
     "AnnouncementMessage": "Wiadomość",
+    "AnnouncementMessageRequired": "Wprowadź wiadomość, aby włączyć ogłoszenie.",
     "AnnouncementPreview": "Podgląd",
     "AnnouncementUpdated": "Ogłoszenie zostało zaktualizowane.",
     "ChangeSystemSetting": "Zmień ustawienia systemu",

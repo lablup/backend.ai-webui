@@ -3190,6 +3190,7 @@
     "AnnouncementEnabled": "Идэвхжүүлсэн",
     "AnnouncementMarkdownHelp": "Markdown синтакс дэмжигддэг.",
     "AnnouncementMessage": "Зурвас",
+    "AnnouncementMessageRequired": "Зарлалыг идэвхжүүлэхийн тулд зурвас оруулна уу.",
     "AnnouncementPreview": "Урьдчилан харах",
     "AnnouncementUpdated": "Зарлал шинэчлэгдлээ.",
     "ChangeSystemSetting": "Системийн тохиргоог өөрчлөх",

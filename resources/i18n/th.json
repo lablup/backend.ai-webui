@@ -3193,6 +3193,7 @@
     "AnnouncementEnabled": "เปิดใช้งาน",
     "AnnouncementMarkdownHelp": "รองรับไวยากรณ์ Markdown",
     "AnnouncementMessage": "ข้อความ",
+    "AnnouncementMessageRequired": "กรุณาใส่ข้อความเพื่อเปิดใช้งานประกาศ",
     "AnnouncementPreview": "ตัวอย่าง",
     "AnnouncementUpdated": "อัปเดตประกาศแล้ว",
     "ChangeSystemSetting": "เปลี่ยนการตั้งค่าระบบ",
