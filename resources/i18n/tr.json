@@ -3186,7 +3186,6 @@
     "ActiveSessions": "Aktif Oturumlar",
     "Announcement": "Duyuru",
     "AnnouncementEnabled": "Etkin",
-    "AnnouncementMarkdownHelp": "Markdown sözdizimi desteklenmektedir.",
     "AnnouncementMessage": "Mesaj",
     "AnnouncementMessageRequired": "Duyuruyu etkinleştirmek için lütfen bir mesaj girin.",
     "AnnouncementPreview": "Önizleme",

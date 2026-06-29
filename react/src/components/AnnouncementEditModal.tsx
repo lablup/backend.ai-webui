@@ -7,6 +7,7 @@ import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAICodeEditor from './BAICodeEditor';
 import { useQueryClient } from '@tanstack/react-query';
 import { App, Form, Switch, theme } from 'antd';
+import { createStyles } from 'antd-style';
 import {
   BAIModal,
   BAIModalProps,
@@ -17,6 +18,19 @@ import {
 import Markdown from 'markdown-to-jsx';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
+const useStyles = createStyles(({ css }) => ({
+  // Collapse the first/last block margins so the preview content sits flush
+  // with the box padding, keeping top/bottom spacing equal to left/right.
+  markdownPreview: css`
+    & > *:first-child {
+      margin-top: 0;
+    }
+    & > *:last-child {
+      margin-bottom: 0;
+    }
+  `,
+}));
 
 interface AnnouncementEditModalProps extends BAIModalProps {
   onRequestClose: (success?: boolean) => void;
@@ -33,6 +47,7 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
   'use memo';
 
   const { t } = useTranslation();
+  const { styles } = useStyles();
   const { token } = theme.useToken();
   const { message: appMessage } = App.useApp();
   const { logger } = useBAILogger();
@@ -96,6 +111,7 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
         <BAIFlex direction="column" align="stretch" gap="sm">
           <Form.Item
             label={t('summary.AnnouncementEnabled')}
+            required
             style={{ marginBottom: 0 }}
           >
             <Switch checked={enabled} onChange={setEnabled} />
@@ -103,7 +119,6 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
           <BAIFlex direction="row" align="stretch" gap="sm" wrap="wrap">
             <Form.Item
               label={t('summary.AnnouncementMessage')}
-              help={t('summary.AnnouncementMarkdownHelp')}
               required={enabled}
               style={{ flex: 1, minWidth: 0, marginBottom: 0 }}
             >
@@ -118,9 +133,11 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
             </Form.Item>
             <Form.Item
               label={t('summary.AnnouncementPreview')}
+              required
               style={{ flex: 1, minWidth: 0, marginBottom: 0 }}
             >
               <div
+                className={styles.markdownPreview}
                 style={{
                   border: `1px solid ${token.colorBorder}`,
                   borderRadius: token.borderRadius,
@@ -129,25 +146,7 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
                   overflow: 'auto',
                 }}
               >
-                <div style={{ marginBottom: token.marginSM * -1 }}>
-                  <Markdown
-                    options={{
-                      overrides: {
-                        p: {
-                          props: {
-                            style: {
-                              marginTop: 0,
-                              marginBottom: token.marginSM,
-                            },
-                          },
-                        },
-                      },
-                    }}
-                  >
-                    {/* add dummy <p> to remove unnecessary margin bottom  */}
-                    {(message || '') + '<p></p>'}
-                  </Markdown>
-                </div>
+                <Markdown>{message || ''}</Markdown>
               </div>
             </Form.Item>
           </BAIFlex>

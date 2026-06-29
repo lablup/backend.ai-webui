@@ -3186,7 +3186,6 @@
     "ActiveSessions": "Sesiones activas",
     "Announcement": "Anuncio",
     "AnnouncementEnabled": "Habilitado",
-    "AnnouncementMarkdownHelp": "Se admite la sintaxis Markdown.",
     "AnnouncementMessage": "Mensaje",
     "AnnouncementMessageRequired": "Por favor, ingrese un mensaje para habilitar el anuncio.",
     "AnnouncementPreview": "Vista previa",

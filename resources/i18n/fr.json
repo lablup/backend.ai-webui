@@ -3189,7 +3189,6 @@
     "ActiveSessions": "sessions actives",
     "Announcement": "Annonce",
     "AnnouncementEnabled": "Activé",
-    "AnnouncementMarkdownHelp": "La syntaxe Markdown est prise en charge.",
     "AnnouncementMessage": "Message",
     "AnnouncementMessageRequired": "Veuillez saisir un message pour activer l'annonce.",
     "AnnouncementPreview": "Aperçu",

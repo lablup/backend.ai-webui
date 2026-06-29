@@ -3188,7 +3188,6 @@
     "ActiveSessions": "活跃期",
     "Announcement": "公告",
     "AnnouncementEnabled": "已启用",
-    "AnnouncementMarkdownHelp": "支持 Markdown 语法。",
     "AnnouncementMessage": "内容",
     "AnnouncementMessageRequired": "请输入内容以启用公告。",
     "AnnouncementPreview": "预览",
