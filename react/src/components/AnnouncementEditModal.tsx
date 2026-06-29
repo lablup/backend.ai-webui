@@ -29,9 +29,10 @@ interface AnnouncementEditModalProps extends BAIModalProps {
   initialEnabled?: boolean;
 }
 
-// Inner height of the markdown editor. The preview box matches the editor's
-// outer height (this value + the editor wrapper's 1px top/bottom border).
-const EDITOR_HEIGHT = 280;
+// Height of the markdown editor. The modal is sized like the file browser, so
+// the editor and preview get plenty of vertical room. The preview box matches
+// the editor's outer height (this value + the editor wrapper's 1px border).
+const EDITOR_HEIGHT = '78vh';
 
 const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
   onRequestClose,
@@ -67,7 +68,8 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
 
   return (
     <BAIModal
-      width={960}
+      width="90%"
+      style={{ maxWidth: 1900 }}
       title={t('summary.EditAnnouncement')}
       okText={t('button.Save')}
       confirmLoading={updateMutation.isPending}
@@ -154,9 +156,9 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
                   border: `1px solid ${token.colorBorder}`,
                   borderRadius: token.borderRadius,
                   padding: token.padding,
-                  // +2 matches the editor wrapper's 1px top/bottom border so
-                  // both boxes have the same outer height.
-                  height: EDITOR_HEIGHT + 2,
+                  // Match the editor's outer height (its inner height + the
+                  // editor wrapper's 1px top/bottom border).
+                  height: `calc(${EDITOR_HEIGHT} + 2px)`,
                   boxSizing: 'border-box',
                   overflow: 'auto',
                 }}
