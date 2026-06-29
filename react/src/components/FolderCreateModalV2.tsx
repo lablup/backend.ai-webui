@@ -649,17 +649,18 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
             {({ getFieldValue }) => {
               const usageMode = getFieldValue('usage_mode');
               const type = getFieldValue('type');
-              const allowOnlyROForModelProjectFolder = baiClient?.supports(
-                'allow-only-ro-permission-for-model-project-folder',
-              );
+              // Model project folders are forced read-only (FR-1290). The
+              // manager used to enforce this server-side (the dropped
+              // 'allow-only-ro-permission-for-model-project-folder' capability)
+              // and no longer seems to, but we keep enforcing it on the client
+              // to preserve that contract until the project-folder behavior is
+              // reworked. Mirrored in VFolderNodeDescriptionV2.
               const shouldDisableRWPermission =
-                usageMode === 'model' &&
-                type === 'project' &&
-                allowOnlyROForModelProjectFolder;
+                usageMode === 'model' && type === 'project';
 
               return (
                 <Form.Item
-                  label={t('data.Permission')}
+                  label={t('data.folders.MountPermission')}
                   name={'permission'}
                   required
                   dependencies={['usage_mode', 'type']}
