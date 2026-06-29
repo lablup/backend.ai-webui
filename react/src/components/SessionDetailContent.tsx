@@ -73,6 +73,22 @@ import {
 } from 'react-relay';
 import { useLocation } from 'react-router-dom';
 
+/**
+ * RBAC entity types that belong to a single session's audit-log scope. The
+ * session row itself (`SESSION`) plus its app-service events, so the scoped
+ * audit log surfaces session-app events alongside the session's own events
+ * instead of silently dropping them (FR-3145).
+ *
+ * TODO(needs-backend): the `SESSION_APP_SERVICE` entry is scoped with the
+ * parent session's UUID. Confirm the backend keys session-app audit rows by the
+ * parent session id; if it keys by the app-service's own id, hierarchical scope
+ * matching is required server-side for these events to appear.
+ */
+const SESSION_AUDIT_LOG_ENTITY_TYPES = [
+  'SESSION',
+  'SESSION_APP_SERVICE',
+] as const;
+
 // When a session is tagged as using a unified-memory accelerator slot, its
 // quantity is auto-allocated and not meaningfully stored in `requested_slots`.
 // Surface that slot as the accelerator type so `ResourceNumbersOfSession`
@@ -550,10 +566,14 @@ const SessionDetailContent: React.FC<{
         defaultActiveKey="kernels"
         onChange={(key) => {
           if (key === 'auditLog' && session.row_id && !auditLogQueryRef) {
+            const entityId = session.row_id;
             loadAuditLogQuery(
               {
                 scope: {
-                  entity: [{ entityType: 'SESSION', entityId: session.row_id }],
+                  entity: SESSION_AUDIT_LOG_ENTITY_TYPES.map((entityType) => ({
+                    entityType,
+                    entityId,
+                  })),
                 },
                 orderBy: [{ field: 'CREATED_AT', direction: 'DESC' }],
                 limit: baiPaginationOption.limit,
@@ -590,6 +610,7 @@ const SessionDetailContent: React.FC<{
                           <ScopedAuditLog
                             queryRef={auditLogQueryRef}
                             onReload={reloadAuditLogQuery}
+                            scopeEntityTypes={SESSION_AUDIT_LOG_ENTITY_TYPES}
                             tableSettings={{}}
                           />
                         </Suspense>

@@ -310,6 +310,7 @@
   },
   "auditLog": {
     "AuditLog": "감사 로그",
+    "EntityType": "엔티티 유형",
     "Operation": "작업",
     "Status": "상태",
     "Time": "시간",
