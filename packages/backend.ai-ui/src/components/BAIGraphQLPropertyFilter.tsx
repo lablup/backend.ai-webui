@@ -127,6 +127,17 @@ export type FilterOperator =
   // Allow custom operators
   | (string & NonNullable<unknown>);
 
+// A selected option emitted by a `renderInput` control's `onChange`, mirroring
+// the `option` argument antd's Select hands to its own `onChange` so a control
+// can forward it verbatim — hence `value` may be a number and `label` may be a
+// ReactNode. The raw `value` is committed into the GraphQL filter; only a
+// string/number `label` is shown in the condition tag (which needs a plain
+// string). A ReactNode label is ignored and the tag falls back to the value.
+export type FilterInputOption = {
+  value: string | number;
+  label?: React.ReactNode;
+};
+
 type BaseFilterProperty = {
   key: string;
   propertyLabel: string;
@@ -158,11 +169,23 @@ type BaseFilterProperty = {
   // Replaces the default AutoComplete input with a controlled control (e.g.
   // `BAIStorageHostSelect`) bound to antd `value`/`onChange`. `onChange` commits
   // the value (string, or string[] for multi-select) as a condition
-  // immediately; `value` is always `null` so the control stays controlled-empty
-  // and clears after each commit.
+  // immediately; `value` is always `undefined` so the control stays
+  // controlled-empty and clears after each commit.
+  //
+  // When the committed value is opaque to the user (e.g. a UUID emitted by
+  // `BAIUserSelect` with `valuePropName="id"`), pass the selected option(s) as
+  // the optional second argument — the same `{ value, label }` shape antd's
+  // Select hands to its own `onChange`, so a control can forward it verbatim.
+  // The filter pairs each `label` with its own `value` (no positional alignment,
+  // so multi-select is safe) and shows the label in the condition tag, while the
+  // raw value still serializes into the GraphQL filter unchanged. Omit it to
+  // display the value as-is.
   renderInput?: (props: {
     value: string | string[] | undefined;
-    onChange: (value: string | string[] | undefined) => void;
+    onChange: (
+      value: string | string[] | undefined,
+      option?: FilterInputOption | FilterInputOption[],
+    ) => void;
   }) => React.ReactNode;
 };
 
@@ -519,6 +542,14 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
 
   const [search, setSearch] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | null>(null);
+  // Maps a committed condition value to a human-readable label supplied by a
+  // `renderInput` control's `onChange` (e.g. user UUID -> email). Conditions are
+  // re-derived from the `value` filter on every render and only carry the raw
+  // value, so the label is kept here and looked up when rendering tags. Keyed by
+  // `${property}::${value}`.
+  const [valueLabelMap, setValueLabelMap] = useState<Record<string, string>>(
+    {},
+  );
   const [selectedProperty, setSelectedProperty] = useState<FilterProperty>(
     filterProperties[0],
   );
@@ -606,6 +637,27 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
     return false;
   }, [selectedProperty]);
 
+  // Persist the value -> label pairs emitted by a `renderInput` control so the
+  // condition tag can show each label (e.g. email) instead of the opaque
+  // committed value (e.g. UUID). Each option carries its own value/label pair,
+  // so the mapping is intrinsic — no positional alignment with the value array.
+  const rememberValueLabels = (
+    property: string,
+    option: FilterInputOption | FilterInputOption[],
+  ) => {
+    setValueLabelMap((prev) => {
+      const next = { ...prev };
+      _.castArray(option).forEach((o) => {
+        // Only string/number labels are renderable in a tag (and its string
+        // tooltip); skip ReactNode labels and let the tag fall back to value.
+        if (o?.value != null && (_.isString(o.label) || _.isNumber(o.label))) {
+          next[`${property}::${String(o.value)}`] = String(o.label);
+        }
+      });
+      return next;
+    });
+  };
+
   const addCondition = (
     value: string | string[],
     singleSelect: boolean = false,
@@ -661,12 +713,19 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
   ): React.ReactElement => {
     const operatorShortLabel =
       OPERATOR_SHORT_LABELS[condition.operator] || condition.operator;
+    // Prefer a renderInput-supplied label over the raw value so opaque values
+    // (e.g. UUIDs) display as something the user recognizes (e.g. an email).
+    const resolveLabel = (v: string) =>
+      valueLabelMap[`${condition.property}::${v}`] ?? v;
+    const mappedLabel =
+      valueLabelMap[`${condition.property}::${condition.value}`];
     const displayValue =
       condition.operator === 'in' || condition.operator === 'notIn'
-        ? `[${condition.value}]`
-        : condition.type === 'datetime' && dayjs(condition.value).isValid()
-          ? dayjs(condition.value).format('YYYY-MM-DD HH:mm')
-          : condition.value;
+        ? `[${String(condition.value).split(', ').map(resolveLabel).join(', ')}]`
+        : (mappedLabel ??
+          (condition.type === 'datetime' && dayjs(condition.value).isValid()
+            ? dayjs(condition.value).format('YYYY-MM-DD HH:mm')
+            : condition.value));
 
     return (
       <Tag
@@ -683,7 +742,7 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
           removeCondition(condition.id);
         }}
         style={{ margin: 0 }}
-        title={`${condition.propertyLabel} ${getOperatorLabel(condition.operator)} ${condition.value}`}
+        title={`${condition.propertyLabel} ${getOperatorLabel(condition.operator)} ${displayValue}`}
       >
         {condition.propertyLabel} {operatorShortLabel} {displayValue}
       </Tag>
@@ -746,7 +805,10 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
         {selectedProperty?.renderInput ? (
           selectedProperty.renderInput({
             value: undefined, // Always undefined to keep the control empty after commit
-            onChange: (value) => {
+            onChange: (value, option) => {
+              if (option !== undefined) {
+                rememberValueLabels(selectedProperty.key, option);
+              }
               addCondition(value ?? '', selectedProperty?.singleSelect);
             },
           })

@@ -147,15 +147,43 @@ const ownerCustomProperties: Array<FilterProperty> = [
   },
 ];
 
+// FR-3011: a `renderInput` control whose committed value is opaque (a UUID)
+// but which forwards the selected option (`{ value, label }`) as the second
+// `onChange` argument, mirroring `BAIUserSelect` with `valuePropName="id"`.
+const ownerLabeledProperties: Array<FilterProperty> = [
+  {
+    key: 'owner.id',
+    propertyLabel: 'Owner',
+    type: 'uuid',
+    fixedOperator: 'equals',
+    singleSelect: true,
+    renderInput: ({ onChange }) => (
+      <button
+        type="button"
+        onClick={() =>
+          onChange('uuid-alice', {
+            value: 'uuid-alice',
+            label: 'alice@example.com',
+          })
+        }
+      >
+        pick-alice
+      </button>
+    ),
+  },
+];
+
 const ControlledCustom = ({
   onFilterChange,
+  filterProperties: customProperties = ownerCustomProperties,
 }: {
   onFilterChange?: (value: GraphQLFilter | undefined) => void;
+  filterProperties?: Array<FilterProperty>;
 }) => {
   const [value, setValue] = useState<GraphQLFilter | undefined>();
   return (
     <BAIGraphQLPropertyFilter
-      filterProperties={ownerCustomProperties}
+      filterProperties={customProperties}
       value={value}
       onChange={(next) => {
         setValue(next);
@@ -198,5 +226,27 @@ describe('BAIGraphQLPropertyFilter custom renderInput', () => {
     // Both conditions are kept as separate tags.
     expect(screen.getByText(/Owner.*uuid-alice/)).toBeVisible();
     expect(document.querySelectorAll('.ant-tag')).toHaveLength(2);
+  });
+
+  it('displays the renderInput-supplied label in the tag while keeping the raw value in the filter', async () => {
+    const onFilterChange = vi.fn();
+    render(
+      <ControlledCustom
+        onFilterChange={onFilterChange}
+        filterProperties={ownerLabeledProperties}
+      />,
+    );
+
+    fireEvent.click(screen.getByText('pick-alice'));
+
+    // The GraphQL filter still carries the opaque value (UUID), not the label.
+    await waitFor(() => {
+      expect(onFilterChange).toHaveBeenCalledWith({
+        owner: { id: { equals: 'uuid-alice' } },
+      });
+    });
+    // The tag shows the human-readable label, not the UUID.
+    expect(screen.getByText(/Owner.*alice@example\.com/)).toBeVisible();
+    expect(screen.queryByText(/uuid-alice/)).not.toBeInTheDocument();
   });
 });

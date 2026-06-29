@@ -49,8 +49,6 @@ const UserFolderPermissionPanelV2: React.FC<
     storageVolumeFrgmt,
   );
 
-  // The user picker emits the local user id (UUID) under `keypair.userId.equals`
-  // — a valid `KeypairResourcePolicyV2Filter`.
   const [userFilter, setUserFilter] = useState<GraphQLFilter | undefined>();
   // Extract the picked user's UUID to scope the keypairs connection (Assigned
   // Keypairs column); `GraphQLFilter` is index-typed so guard down to a string.
@@ -93,9 +91,6 @@ const UserFolderPermissionPanelV2: React.FC<
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
 
-  // Orchestrator query: owns the keypair-resource-policy connection (count +
-  // edges) and hands the page of nodes to the table via a plural fragment, so
-  // the filter, pagination, and refresh controls all live here.
   const { adminKeypairResourcePoliciesV2 } =
     useLazyLoadQuery<UserFolderPermissionPanelV2Query>(
       graphql`
