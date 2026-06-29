@@ -4,6 +4,7 @@
  */
 import { useSuspendedBackendaiClient, useWebUINavigate } from '.';
 import { useBackendAIAppLauncherFragment$key } from '../__generated__/useBackendAIAppLauncherFragment.graphql';
+import { requestLocalProxyToken } from '../helper/localProxyToken';
 import { useSetBAINotification } from './useBAINotification';
 import { BAILink, useBAILogger, useErrorMessageResolver } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -282,8 +283,26 @@ export const useBackendAIAppLauncher = (
    * Used when re-launching apps like tensorboard that need to be restarted with different args.
    */
   const _close_wsproxy = async (app: string) => {
-    const token = baiClient._config.accessKey;
-    const proxyURL = await getProxyURL(await getWSProxyVersion());
+    const wsproxyVersion = await getWSProxyVersion();
+    const proxyURL = await getProxyURL(wsproxyVersion);
+    // The local v1 proxy now requires the per-instance secret token returned
+    // by /conf for the /delete route (FR-3227). The v2 remote App Proxy keeps
+    // using the access key. If the token cannot be obtained (e.g. /conf is
+    // rejected), fail the cleanup gracefully rather than hitting
+    // `/proxy/undefined/...`.
+    let token: string;
+    try {
+      token =
+        wsproxyVersion === 'v1'
+          ? await requestLocalProxyToken(baiClient, proxyURL)
+          : baiClient._config.accessKey;
+    } catch (err) {
+      logger.error(
+        '[wsproxy] failed to obtain local proxy token for cleanup',
+        err,
+      );
+      return false;
+    }
 
     const uri = new URL(
       `proxy/${token}/${session?.row_id}/delete?${new URLSearchParams({ app }).toString()}`,
