@@ -234,6 +234,7 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
             </AutoRefreshSwitch>
             <InputNumber
               min={3}
+              disabled={!autoRefreshEnabled}
               value={(autoRefreshIntervalValue ?? 1000) / 1000}
               onChange={(value) => {
                 if (typeof value === 'number') {
