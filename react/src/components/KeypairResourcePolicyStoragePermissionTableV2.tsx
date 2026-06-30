@@ -2,7 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { KeypairResourcePolicyStoragePermissionTableV2Query as KeypairResourcePolicyStoragePermissionTableV2QueryType } from '../__generated__/KeypairResourcePolicyStoragePermissionTableV2Query.graphql';
+import {
+  KeypairResourcePolicyStoragePermissionTableV2Query as KeypairResourcePolicyStoragePermissionTableV2QueryType,
+  KeypairResourcePolicyV2Filter,
+} from '../__generated__/KeypairResourcePolicyStoragePermissionTableV2Query.graphql';
 import { KeypairResourcePolicyStoragePermissionTableV2UpdateMutation } from '../__generated__/KeypairResourcePolicyStoragePermissionTableV2UpdateMutation.graphql';
 import { KeypairResourcePolicyStoragePermissionTableV2_storageVolumeFrgmt$key } from '../__generated__/KeypairResourcePolicyStoragePermissionTableV2_storageVolumeFrgmt.graphql';
 import {
@@ -26,6 +29,7 @@ import {
   type BAITableProps,
   BAITag,
   BAIUnmountAfterClose,
+  type GraphQLFilter,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, {
@@ -54,19 +58,19 @@ export interface KeypairResourcePolicyStoragePermissionTableV2Props extends BAIT
   /** Fragment for the storage host — its `id` is read internally. */
   storageVolumeFrgmt: KeypairResourcePolicyStoragePermissionTableV2_storageVolumeFrgmt$key;
   /**
-   * Local user id (UUID) selected via `BAIUserSelect`. When set, the table is
-   * filtered to the keypair resource policies that govern this user's keypairs
-   * (`filter.keypair.userId.equals`) and the Assigned Keypairs column resolves
-   * each policy's `keypairs` connection. When undefined, the table pages
-   * through every policy and the Assigned Keypairs column is withheld.
+   * Keypair-resource-policy filter built by the user picker, i.e.
+   * `{ keypair: { userId: { equals: <UUID> } } }`. Passed straight to the query
+   * `filter`. The selected user's UUID is extracted from it to scope the
+   * `keypairs` connection (Assigned Keypairs column); when no user is selected
+   * the table pages through every policy and that column is withheld.
    */
-  userId?: string | null;
+  userFilter?: GraphQLFilter | null;
   permissionKeys: string[];
 }
 
 const KeypairResourcePolicyStoragePermissionTableV2: React.FC<
   KeypairResourcePolicyStoragePermissionTableV2Props
-> = ({ storageVolumeFrgmt, userId, permissionKeys, ...tableProps }) => {
+> = ({ storageVolumeFrgmt, userFilter, permissionKeys, ...tableProps }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -79,6 +83,11 @@ const KeypairResourcePolicyStoragePermissionTableV2: React.FC<
     storageVolumeFrgmt,
   );
   const storageHostId = storageVolume?.id ?? '';
+  // The picker emits `{ keypair: { userId: { equals: <UUID> } } }`. Extract the
+  // UUID to scope the keypairs connection; `GraphQLFilter` is index-signature
+  // typed so guard the nested value down to a real string.
+  const rawUserId = userFilter?.keypair?.userId?.equals;
+  const selectedUserId = _.isString(rawUserId) ? rawUserId : undefined;
   const [editingRow, setEditingRow] = useState<KeypairResourcePolicyRow | null>(
     null,
   );
@@ -99,18 +108,20 @@ const KeypairResourcePolicyStoragePermissionTableV2: React.FC<
   });
   useEffect(() => {
     resetToFirstPage();
-  }, [userId]);
+  }, [selectedUserId]);
 
-  const includeKeypairs = !!userId;
+  const includeKeypairs = !!selectedUserId;
   const queryVariables = {
-    filter: userId ? { keypair: { userId: { equals: userId } } } : null,
+    filter: (userFilter ?? null) as KeypairResourcePolicyV2Filter | null,
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
     includeKeypairs,
     // Scope each policy's `keypairs` connection to the selected user too, so the
     // Assigned Keypairs column (access keys + `+N` count) reflects only that
     // user's keypairs governed by the policy — not every keypair on the policy.
-    keypairFilter: userId ? { userId: { equals: userId } } : null,
+    keypairFilter: selectedUserId
+      ? { userId: { equals: selectedUserId } }
+      : null,
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
 
@@ -305,7 +316,7 @@ const KeypairResourcePolicyStoragePermissionTableV2: React.FC<
               // No user selected: a policy may govern a large number of
               // keypairs, so withhold the list and prompt the operator to pick
               // a user to scope the view.
-              if (!userId) {
+              if (!selectedUserId) {
                 return (
                   <Tooltip
                     title={t('storageHost.permission.SelectUserToSeeKeypairs')}

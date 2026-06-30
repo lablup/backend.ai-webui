@@ -5,7 +5,14 @@
 import { UserFolderPermissionPanelV2Query } from '../__generated__/UserFolderPermissionPanelV2Query.graphql';
 import { UserFolderPermissionPanelV2_storageVolumeFrgmt$key } from '../__generated__/UserFolderPermissionPanelV2_storageVolumeFrgmt.graphql';
 import KeypairResourcePolicyStoragePermissionTableV2 from './KeypairResourcePolicyStoragePermissionTableV2';
-import { BAIAlert, BAICard, BAIFlex, BAIUserSelect } from 'backend.ai-ui';
+import {
+  BAIAlert,
+  BAICard,
+  BAIFlex,
+  BAIGraphQLPropertyFilter,
+  BAIUserSelect,
+  type GraphQLFilter,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -56,10 +63,9 @@ const UserFolderPermissionPanelV2: React.FC<
     vfolder_host_permissions?.vfolder_host_permission_list ?? [],
   );
 
-  // Local user id (UUID) of the selected user, or undefined to show all
-  // policies. `BAIUserSelect` with `valuePropName="id"` yields the local id
-  // that `keypair.userId` (a `UUIDFilter`) expects.
-  const [selectedUserId, setSelectedUserId] = useState<string | undefined>();
+  // The user picker emits the local user id (UUID) under `keypair.userId.equals`
+  // — a valid `KeypairResourcePolicyV2Filter` passed straight to the table.
+  const [userFilter, setUserFilter] = useState<GraphQLFilter | undefined>();
 
   return (
     <BAIFlex direction="column" align="stretch" gap="md">
@@ -71,27 +77,36 @@ const UserFolderPermissionPanelV2: React.FC<
 
       <BAICard
         title={t('storageHost.permission.KeypairResourcePolicies')}
-        extra={
-          <BAIUserSelect
-            valuePropName="id"
-            excludeInactive
-            allowClear
-            value={selectedUserId}
-            onChange={(value) =>
-              setSelectedUserId(
-                _.isArray(value) ? value[0] : (value ?? undefined),
-              )
-            }
-            style={{ width: 320 }}
-          />
-        }
         styles={{ body: { paddingTop: 0 } }}
       >
-        <KeypairResourcePolicyStoragePermissionTableV2
-          storageVolumeFrgmt={storageVolume}
-          userId={selectedUserId}
-          permissionKeys={permissionKeys}
-        />
+        <BAIFlex direction="column" align="stretch" gap="sm">
+          <BAIGraphQLPropertyFilter
+            style={{ flex: 1 }}
+            value={userFilter}
+            onChange={setUserFilter}
+            filterProperties={[
+              {
+                key: 'keypair.userId',
+                propertyLabel: t('storageHost.permission.Name'),
+                type: 'uuid',
+                fixedOperator: 'equals',
+                renderInput: ({ value, onChange }) => (
+                  <BAIUserSelect
+                    valuePropName="id"
+                    value={value}
+                    onChange={onChange}
+                    style={{ minWidth: 200 }}
+                  />
+                ),
+              },
+            ]}
+          />
+          <KeypairResourcePolicyStoragePermissionTableV2
+            storageVolumeFrgmt={storageVolume}
+            userFilter={userFilter}
+            permissionKeys={permissionKeys}
+          />
+        </BAIFlex>
       </BAICard>
     </BAIFlex>
   );
