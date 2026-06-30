@@ -2,9 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { LoginHistoryQuery as LoginHistoryQueryType } from '../__generated__/LoginHistoryQuery.graphql';
 import type { LoginSessionQuery as LoginSessionQueryType } from '../__generated__/LoginSessionQuery.graphql';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import ErrorLogList from '../components/ErrorLogList';
+import LoginHistory, { LoginHistoryQuery } from '../components/LoginHistory';
 import LoginSession, { LoginSessionQuery } from '../components/LoginSession';
 import MyKeypairInfoModalLegacy from '../components/MyKeypairInfoModalLegacy';
 import MyKeypairManagementModal from '../components/MyKeypairManagementModal';
@@ -27,7 +29,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { useQueryLoader } from 'react-relay';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
-type TabKey = 'general' | 'logs' | 'login-sessions';
+type TabKey = 'general' | 'logs' | 'login-sessions' | 'login-history';
 export type ShellScriptType = 'bootstrap' | 'userconfig' | undefined;
 
 const tabParam = withDefault(StringParam, 'general');
@@ -42,10 +44,12 @@ const UserPreferencesPage = () => {
 
   const [loginSessionQueryRef, loadLoginSessionQuery] =
     useQueryLoader<LoginSessionQueryType>(LoginSessionQuery);
-  // Lazily fetch login sessions only once the tab is active (covers both a tab
-  // click and a direct `?tab=login-sessions` URL restore), so the query never
-  // runs on the General/Logs tabs.
-  const ensureLoginSessionLoaded = useEffectEvent(() => {
+  const [loginHistoryQueryRef, loadLoginHistoryQuery] =
+    useQueryLoader<LoginHistoryQueryType>(LoginHistoryQuery);
+  // Lazily fetch a tab's data only once it becomes active (covers both a tab
+  // click and a direct `?tab=...` URL restore), so neither query runs while the
+  // General/Logs tabs are shown.
+  const ensureActiveTabQueryLoaded = useEffectEvent(() => {
     if (curTabKey === 'login-sessions' && !loginSessionQueryRef) {
       loadLoginSessionQuery(
         {
@@ -56,10 +60,20 @@ const UserPreferencesPage = () => {
         { fetchPolicy: 'store-and-network' },
       );
     }
+    if (curTabKey === 'login-history' && !loginHistoryQueryRef) {
+      loadLoginHistoryQuery(
+        {
+          orderBy: [{ field: 'CREATED_AT', direction: 'DESC' }],
+          limit: 10,
+          offset: 0,
+        },
+        { fetchPolicy: 'store-and-network' },
+      );
+    }
   });
   useEffect(
-    function loadLoginSessionOnTabActivation() {
-      ensureLoginSessionLoaded();
+    function loadActiveTabQueryOnActivation() {
+      ensureActiveTabQueryLoaded();
     },
     [curTabKey],
   );
@@ -409,6 +423,10 @@ const UserPreferencesPage = () => {
             key: 'login-sessions',
             label: t('userSettings.LoginSessions'),
           },
+          {
+            key: 'login-history',
+            label: t('userSettings.LoginHistory'),
+          },
         ]}
       >
         <Suspense fallback={<Skeleton active />}>
@@ -433,6 +451,18 @@ const UserPreferencesPage = () => {
                 <LoginSession
                   queryRef={loginSessionQueryRef}
                   onReload={loadLoginSessionQuery}
+                />
+              ) : (
+                <Skeleton active />
+              )}
+            </BAIErrorBoundary>
+          )}
+          {curTabKey === 'login-history' && (
+            <BAIErrorBoundary>
+              {loginHistoryQueryRef ? (
+                <LoginHistory
+                  queryRef={loginHistoryQueryRef}
+                  onReload={loadLoginHistoryQuery}
                 />
               ) : (
                 <Skeleton active />

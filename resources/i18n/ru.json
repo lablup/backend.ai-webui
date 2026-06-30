@@ -1866,6 +1866,12 @@
       "LoginWithSAML": "Вход в систему с помощью SAML"
     }
   },
+  "loginHistory": {
+    "Domain": "Домен",
+    "FailReason": "Причина сбоя",
+    "LoginTime": "Время входа",
+    "Result": "Результат"
+  },
   "loginSession": {
     "AccessKey": "Ключ доступа",
     "CreatedAt": "Создано в",
@@ -3355,6 +3361,7 @@
     "Language": "Язык",
     "LightMode": "Светлый режим",
     "LightTheme": "Светлый режим",
+    "LoginHistory": "История входов",
     "LoginSessions": "Сеансы входа",
     "Logo": "Логотип CI",
     "Logs": "Журналы",

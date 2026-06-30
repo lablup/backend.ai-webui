@@ -1867,6 +1867,12 @@
       "LoginWithSAML": "Se connecter avec SAML"
     }
   },
+  "loginHistory": {
+    "Domain": "Domaine",
+    "FailReason": "Raison de l'échec",
+    "LoginTime": "Heure de connexion",
+    "Result": "Résultat"
+  },
   "loginSession": {
     "AccessKey": "Clé d'accès",
     "CreatedAt": "Créé à",
@@ -3358,6 +3364,7 @@
     "Language": "Langue",
     "LightMode": "Mode lumière",
     "LightTheme": "Mode clair",
+    "LoginHistory": "Historique de connexion",
     "LoginSessions": "Sessions de connexion",
     "Logo": "Logo d'intégration continue",
     "Logs": "Journaux",

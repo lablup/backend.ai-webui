@@ -1866,6 +1866,12 @@
       "LoginWithSAML": "Σύνδεση με SAML"
     }
   },
+  "loginHistory": {
+    "Domain": "Τομέας",
+    "FailReason": "Αιτία αποτυχίας",
+    "LoginTime": "Ώρα σύνδεσης",
+    "Result": "Αποτέλεσμα"
+  },
   "loginSession": {
     "AccessKey": "Κλειδί πρόσβασης",
     "CreatedAt": "Δημιουργήθηκε στο",
@@ -3355,6 +3361,7 @@
     "Language": "Γλώσσα",
     "LightMode": "Λειτουργία φωτός",
     "LightTheme": "Φωτεινή λειτουργία",
+    "LoginHistory": "Ιστορικό συνδέσεων",
     "LoginSessions": "Συνεδρίες Σύνδεσης",
     "Logo": "Λογότυπο CI",
     "Logs": "Κούτσουρα",

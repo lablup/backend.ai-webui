@@ -1866,6 +1866,12 @@
       "LoginWithSAML": "Accesso con SAML"
     }
   },
+  "loginHistory": {
+    "Domain": "Dominio",
+    "FailReason": "Motivo dell'errore",
+    "LoginTime": "Ora di accesso",
+    "Result": "Risultato"
+  },
   "loginSession": {
     "AccessKey": "Chiave di accesso",
     "CreatedAt": "Creato a",
@@ -3355,6 +3361,7 @@
     "Language": "linguaggio",
     "LightMode": "Modalità luce",
     "LightTheme": "Modalità chiara",
+    "LoginHistory": "Cronologia degli accessi",
     "LoginSessions": "Sessioni di accesso",
     "Logo": "Logo CI",
     "Logs": "Registri",

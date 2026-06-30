@@ -1866,6 +1866,12 @@
       "LoginWithSAML": "Log masuk dengan SAML"
     }
   },
+  "loginHistory": {
+    "Domain": "Domain",
+    "FailReason": "Sebab Kegagalan",
+    "LoginTime": "Masa Log Masuk",
+    "Result": "Keputusan"
+  },
   "loginSession": {
     "AccessKey": "Kunci Akses",
     "CreatedAt": "Dicipta Pada",
@@ -3355,6 +3361,7 @@
     "Language": "Bahasa",
     "LightMode": "Mod Cahaya",
     "LightTheme": "Mod Terang",
+    "LoginHistory": "Sejarah Log Masuk",
     "LoginSessions": "Sesi Log Masuk",
     "Logo": "Logo CI",
     "Logs": "Log",

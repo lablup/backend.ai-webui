@@ -1868,6 +1868,12 @@
       "LoginWithSAML": "使用 SAML 登录"
     }
   },
+  "loginHistory": {
+    "Domain": "域",
+    "FailReason": "失败原因",
+    "LoginTime": "登录时间",
+    "Result": "结果"
+  },
   "loginSession": {
     "AccessKey": "访问密钥",
     "CreatedAt": "创建于",
@@ -3357,6 +3363,7 @@
     "Language": "语",
     "LightMode": "灯光模式",
     "LightTheme": "浅色模式",
+    "LoginHistory": "登录历史",
     "LoginSessions": "登录会话",
     "Logo": "徽标（CI）",
     "Logs": "日志",

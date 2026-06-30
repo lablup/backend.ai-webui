@@ -1868,6 +1868,12 @@
       "LoginWithSAML": "Anmeldung mit SAML"
     }
   },
+  "loginHistory": {
+    "Domain": "Domain",
+    "FailReason": "Fehlergrund",
+    "LoginTime": "Anmeldezeit",
+    "Result": "Ergebnis"
+  },
   "loginSession": {
     "AccessKey": "Zugriffsschlüssel",
     "CreatedAt": "Erstellt am",
@@ -3357,6 +3363,7 @@
     "Language": "Sprache",
     "LightMode": "Lichtmodus",
     "LightTheme": "Hellmodus",
+    "LoginHistory": "Anmeldeverlauf",
     "LoginSessions": "Anmeldesitzungen",
     "Logo": "CI-Logo",
     "Logs": "Protokolle",

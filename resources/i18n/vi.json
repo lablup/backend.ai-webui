@@ -1868,6 +1868,12 @@
       "LoginWithSAML": "Đăng nhập bằng SAML"
     }
   },
+  "loginHistory": {
+    "Domain": "Miền",
+    "FailReason": "Lý do thất bại",
+    "LoginTime": "Thời gian đăng nhập",
+    "Result": "Kết quả"
+  },
   "loginSession": {
     "AccessKey": "Khóa truy cập",
     "CreatedAt": "Được tạo tại",
@@ -3357,6 +3363,7 @@
     "Language": "Ngôn ngữ",
     "LightMode": "Chế độ sáng",
     "LightTheme": "Chế độ sáng",
+    "LoginHistory": "Lịch sử đăng nhập",
     "LoginSessions": "Phiên đăng nhập",
     "Logo": "Biểu tượng CI",
     "Logs": "Nhật ký",

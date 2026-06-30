@@ -1871,6 +1871,12 @@
       "LoginWithSAML": "SAMLログイン"
     }
   },
+  "loginHistory": {
+    "Domain": "ドメイン",
+    "FailReason": "失敗の理由",
+    "LoginTime": "ログイン日時",
+    "Result": "結果"
+  },
   "loginSession": {
     "AccessKey": "アクセスキー",
     "CreatedAt": "作成日",
@@ -3360,6 +3366,7 @@
     "Language": "言語",
     "LightMode": "ライトモード",
     "LightTheme": "ライトモード",
+    "LoginHistory": "ログイン履歴",
     "LoginSessions": "ログインセッション",
     "Logo": "CIロゴ",
     "Logs": "ログ",

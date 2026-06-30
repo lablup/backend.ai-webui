@@ -1871,6 +1871,12 @@
       "LoginWithSAML": "เข้าสู่ระบบด้วย SAML"
     }
   },
+  "loginHistory": {
+    "Domain": "โดเมน",
+    "FailReason": "สาเหตุที่ล้มเหลว",
+    "LoginTime": "เวลาเข้าสู่ระบบ",
+    "Result": "ผลลัพธ์"
+  },
   "loginSession": {
     "AccessKey": "คีย์การเข้าถึง",
     "CreatedAt": "สร้างเมื่อ",
@@ -3360,6 +3366,7 @@
     "Language": "ภาษา",
     "LightMode": "โหมดสว่าง",
     "LightTheme": "โหมดสว่าง",
+    "LoginHistory": "ประวัติการเข้าสู่ระบบ",
     "LoginSessions": "เซสชันเข้าสู่ระบบ",
     "Logo": "โลโก้ CI",
     "Logs": "บันทึก",

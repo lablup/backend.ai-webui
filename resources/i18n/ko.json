@@ -1871,6 +1871,12 @@
       "LoginWithSAML": "SAML 로그인"
     }
   },
+  "loginHistory": {
+    "Domain": "도메인",
+    "FailReason": "실패 사유",
+    "LoginTime": "로그인 시각",
+    "Result": "결과"
+  },
   "loginSession": {
     "AccessKey": "액세스 키",
     "CreatedAt": "생성 시각",
@@ -3361,6 +3367,7 @@
     "Language": "언어",
     "LightMode": "라이트 모드",
     "LightTheme": "라이트 모드",
+    "LoginHistory": "로그인 기록",
     "LoginSessions": "로그인 세션",
     "Logo": "로고 CI",
     "Logs": "로그",
