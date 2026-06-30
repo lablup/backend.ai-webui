@@ -424,6 +424,7 @@
     "RefreshModelInformation": "Model Bilgilerini Yenile",
     "Reset": "Sıfırla",
     "Retry": "Yeniden Dene",
+    "Revoke": "İptal Et",
     "Save": "Kayıt etmek",
     "SaveAndClose": "Kaydet ve kapat",
     "SaveChanges": "Değişiklikleri Kaydet",
@@ -1864,6 +1865,16 @@
       "LoginWithRealm": "{{realmName }} ile giriş yapın",
       "LoginWithSAML": "SAML ile Oturum Açma"
     }
+  },
+  "loginSession": {
+    "AccessKey": "Erişim Anahtarı",
+    "CreatedAt": "Oluşturulma Tarihi",
+    "InvalidatedAt": "Geçersizleştirilme Tarihi",
+    "RevokeFailed": "Oturum açma oturumu iptal edilemedi.",
+    "RevokeSession": "Oturumu İptal Et",
+    "RevokeSessionConfirm": "Bu oturum açma oturumunu iptal etmek istediğinizden emin misiniz?",
+    "RevokeSucceeded": "Oturum açma oturumu başarıyla iptal edildi.",
+    "User": "Kullanıcı"
   },
   "logs": {
     "ErrorMessage": "Hata mesajı",
@@ -3344,6 +3355,7 @@
     "Language": "Dil",
     "LightMode": "Işık Modu",
     "LightTheme": "Açık Mod",
+    "LoginSessions": "Oturum Açma Oturumları",
     "Logo": "Logo CI",
     "Logs": "Kütükler",
     "MaxConcurrentUploads": "Maksimum Eşzamanlı Dosya Yükleme Sınırı",

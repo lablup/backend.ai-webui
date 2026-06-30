@@ -426,6 +426,7 @@
     "RefreshModelInformation": "모델 정보 새로고침",
     "Reset": "초기화",
     "Retry": "재시도",
+    "Revoke": "해지",
     "Save": "저장",
     "SaveAndClose": "저장 후 닫기",
     "SaveChanges": "변경사항 저장",
@@ -1869,6 +1870,16 @@
       "LoginWithRealm": "{{ realmName }} 로그인",
       "LoginWithSAML": "SAML 로그인"
     }
+  },
+  "loginSession": {
+    "AccessKey": "액세스 키",
+    "CreatedAt": "생성 시각",
+    "InvalidatedAt": "무효화 시각",
+    "RevokeFailed": "로그인 세션 해지에 실패했습니다.",
+    "RevokeSession": "세션 해지",
+    "RevokeSessionConfirm": "이 로그인 세션을 해지하시겠습니까?",
+    "RevokeSucceeded": "로그인 세션을 해지했습니다.",
+    "User": "사용자"
   },
   "logs": {
     "ErrorMessage": "에러 메시지",
@@ -3350,6 +3361,7 @@
     "Language": "언어",
     "LightMode": "라이트 모드",
     "LightTheme": "라이트 모드",
+    "LoginSessions": "로그인 세션",
     "Logo": "로고 CI",
     "Logs": "로그",
     "MaxConcurrentUploads": "병렬 파일 업로드 제한",

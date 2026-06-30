@@ -424,6 +424,7 @@
     "RefreshModelInformation": "刷新机型信息",
     "Reset": "重置",
     "Retry": "重试",
+    "Revoke": "撤销",
     "Save": "保存",
     "SaveAndClose": "保存并关闭",
     "SaveChanges": "保存更改",
@@ -1866,6 +1867,16 @@
       "LoginWithRealm": "使用 {{ realmName }} 登录",
       "LoginWithSAML": "使用 SAML 登录"
     }
+  },
+  "loginSession": {
+    "AccessKey": "访问密钥",
+    "CreatedAt": "创建于",
+    "InvalidatedAt": "失效于",
+    "RevokeFailed": "撤销登录会话失败。",
+    "RevokeSession": "撤销会话",
+    "RevokeSessionConfirm": "您确定要撤销此登录会话吗？",
+    "RevokeSucceeded": "登录会话已成功撤销。",
+    "User": "用户"
   },
   "logs": {
     "ErrorMessage": "错误信息",
@@ -3346,6 +3357,7 @@
     "Language": "语",
     "LightMode": "灯光模式",
     "LightTheme": "浅色模式",
+    "LoginSessions": "登录会话",
     "Logo": "徽标（CI）",
     "Logs": "日志",
     "MaxConcurrentUploads": "最大并发文件上传限制",
