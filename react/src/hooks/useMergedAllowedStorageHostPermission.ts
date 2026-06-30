@@ -2,109 +2,49 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useSuspendedBackendaiClient } from '.';
-import { useMergedAllowedStorageHostPermission_AllowedVFolderHostsQuery } from '../__generated__/useMergedAllowedStorageHostPermission_AllowedVFolderHostsQuery.graphql';
-import { useMergedAllowedStorageHostPermission_KeypairQuery } from '../__generated__/useMergedAllowedStorageHostPermission_KeypairQuery.graphql';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useMergedAllowedStorageHostPermissionQuery } from '../__generated__/useMergedAllowedStorageHostPermissionQuery.graphql';
+import { v2PermissionToKey } from '../helper/storageHostPermission';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-export const useMergedAllowedStorageHostPermission = (
-  domain: string,
-  projectId: string,
-  userAccessKey: string,
-) => {
-  const baiClient = useSuspendedBackendaiClient();
-  const { keypair } =
-    useLazyLoadQuery<useMergedAllowedStorageHostPermission_KeypairQuery>(
+/**
+ * Per-host storage permissions for the current user, keyed by host name, with
+ * permission values in the legacy kebab-case form (e.g. 'mount-in-session',
+ * 'download-file', 'upload-file') for backward compatibility with existing
+ * consumers.
+ *
+ * Backed by `myStorageHostPermissions` (Strawberry V2), which resolves the
+ * union of `allowed_vfolder_hosts` across the domain, the user's projects, and
+ * the keypair resource policy server-side, already intersected with the
+ * registered volumes. This replaces the previous client-side merge, which had
+ * to resolve the keypair resource-policy name first and therefore incurred a
+ * request waterfall.
+ */
+export const useMergedAllowedStorageHostPermission = () => {
+  'use memo';
+  const { myStorageHostPermissions } =
+    useLazyLoadQuery<useMergedAllowedStorageHostPermissionQuery>(
       graphql`
-        query useMergedAllowedStorageHostPermission_KeypairQuery(
-          $domainName: String
-          $accessKey: String
-        ) {
-          keypair(domain_name: $domainName, access_key: $accessKey)
-            @required(action: THROW) {
-            resource_policy @required(action: THROW)
+        query useMergedAllowedStorageHostPermissionQuery {
+          myStorageHostPermissions {
+            items {
+              host
+              permissions
+            }
           }
         }
       `,
-      {
-        domainName: domain,
-        accessKey: userAccessKey,
-      },
-      {
-        fetchPolicy: 'store-or-network',
-      },
-    );
-  const mergedAllowedVFolderHosts =
-    useLazyLoadQuery<useMergedAllowedStorageHostPermission_AllowedVFolderHostsQuery>(
-      graphql`
-        query useMergedAllowedStorageHostPermission_AllowedVFolderHostsQuery(
-          $domainName: String
-          $projectId: UUID!
-          $resourcePolicyName: String
-        ) {
-          domain(name: $domainName) {
-            allowed_vfolder_hosts
-          }
-          group(id: $projectId, domain_name: $domainName) {
-            allowed_vfolder_hosts
-          }
-          keypair_resource_policy(name: $resourcePolicyName) {
-            allowed_vfolder_hosts
-          }
-        }
-      `,
-      {
-        domainName: domain,
-        projectId,
-        resourcePolicyName: keypair?.resource_policy,
-      },
-      {
-        fetchPolicy: 'store-or-network',
-      },
+      {},
     );
 
-  const allowedPermissionForDomainsByVolume = JSON.parse(
-    mergedAllowedVFolderHosts?.domain?.allowed_vfolder_hosts || '{}',
-  );
-  const allowedPermissionForGroupsByVolume = JSON.parse(
-    mergedAllowedVFolderHosts?.group?.allowed_vfolder_hosts || '{}',
-  );
-  const allowedPermissionForResourcePolicyByVolume = JSON.parse(
-    mergedAllowedVFolderHosts?.keypair_resource_policy?.allowed_vfolder_hosts ||
-      '{}',
-  );
-
-  const _mergeDedupe = (arr: any[]) => [
-    ...new Set([].concat(...arr.filter(Boolean))),
-  ];
-
-  const { data: vhostInfo } = useSuspenseQuery({
-    queryKey: ['vhostInfo'],
-    queryFn: async () => {
-      return await baiClient.vfolder.list_hosts();
-    },
-    staleTime: 1000 * 60 * 5,
-    gcTime: 0,
-  });
-  const unitedAllowedPermissionByVolume = Object.assign(
-    {},
-    ...vhostInfo.allowed.map((volume: string) => {
-      return {
-        [volume]: _mergeDedupe([
-          allowedPermissionForDomainsByVolume[volume],
-          allowedPermissionForGroupsByVolume[volume],
-          allowedPermissionForResourcePolicyByVolume[volume],
-        ]),
-      };
-    }),
+  const unitedAllowedPermissionByVolume: Record<
+    string,
+    Array<string>
+  > = Object.fromEntries(
+    (myStorageHostPermissions?.items ?? []).map((item) => [
+      item.host,
+      item.permissions.map(v2PermissionToKey),
+    ]),
   );
 
-  return {
-    StorageHostPermissionByDomain: allowedPermissionForDomainsByVolume,
-    StorageHostPermissionByGroup: allowedPermissionForGroupsByVolume,
-    StorageHostPermissionByResourcePolicy:
-      allowedPermissionForResourcePolicyByVolume,
-    unitedAllowedPermissionByVolume,
-  };
+  return { unitedAllowedPermissionByVolume };
 };

@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { FolderExplorerModalQuery } from '../__generated__/FolderExplorerModalQuery.graphql';
-import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useMergedAllowedStorageHostPermission } from '../hooks/useMergedAllowedStorageHostPermission';
@@ -75,20 +74,13 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
   const { styles } = useStyles();
 
   const [fetchKey, updateFetchKey] = useFetchKey();
-  const baiClient = useSuspendedBackendaiClient();
-  const currentDomain = useCurrentDomainValue();
   const currentProject = useCurrentProjectValue();
   if (!currentProject.id) {
     throw new Error('Project ID is required for FolderExplorerModal');
   }
-  const currentUserAccessKey = baiClient?._config?.accessKey;
   const fileExplorerRef = useRef<BAIFileExplorerRef>(null);
   const { unitedAllowedPermissionByVolume } =
-    useMergedAllowedStorageHostPermission(
-      currentDomain,
-      currentProject.id,
-      currentUserAccessKey,
-    );
+    useMergedAllowedStorageHostPermission();
   const bodyRef = useRef<HTMLDivElement | null>(null);
 
   const deferredOpen = useDeferredValue(modalProps.open);

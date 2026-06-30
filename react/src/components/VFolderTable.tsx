@@ -2,13 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { VFolderTableProjectQuery } from '../__generated__/VFolderTableProjectQuery.graphql';
 import { useBaiSignedRequestWithPromise } from '../helper';
-import { useSuspendedBackendaiClient } from '../hooks';
-import { useKeyPairLazyLoadQuery } from '../hooks/hooksUsingRelay';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useMountableVFolderHosts } from '../hooks/useMountableVFolderHosts';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import TextHighlighter from './TextHighlighter';
@@ -52,7 +50,6 @@ import React, {
   useTransition,
 } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export interface VFolderFile {
   name: string;
@@ -150,9 +147,6 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     },
   );
 
-  const baiClient = useSuspendedBackendaiClient();
-  const [keypair] = useKeyPairLazyLoadQuery(baiClient?._config.accessKey);
-
   const [internalForm] = Form.useForm<AliasMap>();
   useEffect(() => {
     // TODO: check setFieldsValue performance
@@ -195,58 +189,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     staleTime: 1000,
   });
 
-  const { domain, group, keypair_resource_policy } =
-    useLazyLoadQuery<VFolderTableProjectQuery>(
-      graphql`
-        query VFolderTableProjectQuery(
-          $domain_name: String!
-          $group_id: UUID!
-          $keypair_resource_policy_name: String!
-        ) {
-          domain(name: $domain_name) {
-            allowed_vfolder_hosts
-          }
-          group(id: $group_id, domain_name: $domain_name) {
-            allowed_vfolder_hosts
-          }
-          keypair_resource_policy(name: $keypair_resource_policy_name) {
-            allowed_vfolder_hosts
-          }
-        }
-      `,
-      {
-        domain_name: baiClient._config.domainName,
-        group_id: currentProject.id,
-        keypair_resource_policy_name: keypair?.resource_policy || '',
-      },
-      {
-        fetchPolicy: 'store-and-network',
-        fetchKey: fetchKey,
-      },
-    );
-
-  const mountableVolumesByPermission = useMemo(() => {
-    const allowedVFolderHostsByDomain = JSON.parse(
-      domain?.allowed_vfolder_hosts || '{}',
-    );
-    const allowedVFolderHostsByGroup = JSON.parse(
-      group?.allowed_vfolder_hosts || '{}',
-    );
-    const allowedVFolderHostsByKeypairResourcePolicy = JSON.parse(
-      keypair_resource_policy?.allowed_vfolder_hosts || '{}',
-    );
-
-    const mergedVFolderPermissions = _.merge(
-      {}, // start with empty object
-      allowedVFolderHostsByDomain,
-      allowedVFolderHostsByGroup,
-      allowedVFolderHostsByKeypairResourcePolicy,
-    );
-    // only allow mount if volume permission has 'mount-in-session'
-    return Object.keys(mergedVFolderPermissions).filter((volume) =>
-      mergedVFolderPermissions[volume].includes('mount-in-session'),
-    );
-  }, [domain, group, keypair_resource_policy]);
+  const mountableVolumesByPermission = useMountableVFolderHosts();
 
   const accessibleFoldersByCurrentProject = useMemo(() => {
     return (
