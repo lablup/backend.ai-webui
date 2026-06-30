@@ -5,7 +5,7 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import {
-  ANNOUNCEMENT_QUERY_KEY,
+  announcementQueryOptions,
   useSuspenseGetAnnouncement,
 } from '../hooks/useSuspenseGetAnnouncement';
 import BAICodeEditor from './BAICodeEditor';
@@ -94,7 +94,7 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
           onSuccess: () => {
             appMessage.success(t('summary.AnnouncementUpdated'));
             queryClient.invalidateQueries({
-              queryKey: ANNOUNCEMENT_QUERY_KEY,
+              queryKey: announcementQueryOptions(baiClient).queryKey,
             });
             onRequestClose(true);
           },
