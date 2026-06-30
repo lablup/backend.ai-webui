@@ -1883,11 +1883,13 @@
     "UpTo3000Logs": "(Do 3000 ostatnich dzienników)"
   },
   "maintenance": {
+    "Announcement": "Ogłoszenie",
     "CleanupImages": "Czyszczenie obrazów",
     "CleanupOldImages": "Oczyść stare obrazy",
     "DescCleanupOldImages": "Usuń stare obrazy z listy obrazów w oknie dokowanym.",
     "DescMatchDatabase": "Przelicz bazę danych użytkowania z aktualnym stanem. Przydatne, jeśli docker ulegnie awarii przez przypadek lub niektóre sesje zostały przerwane na siłę.",
     "DescRescanImageList": "Ponownie przeskanuj listę obrazów z zarejestrowanych repozytoriów. Może to zająć dużo czasu, więc poczekaj po wykonaniu.",
+    "DescSystemAnnouncement": "Utwórz lub edytuj baner ogłoszenia wyświetlany wszystkim użytkownikom u góry strony.",
     "Fix": "Naprawić",
     "ImagesEnvironment": "Obrazy/środowisko",
     "MatchDatabase": "Dopasuj bazę danych użytkowania do aktualnego stanu",
@@ -1900,7 +1902,8 @@
     "RescanImageList": "Ponownie przeskanuj listę obrazów z repozytorium",
     "RescanImageScanning": "Ponowne skanowanie...",
     "RescanImages": "Ponownie zeskanuj obrazy",
-    "Scanning": "Łów..."
+    "Scanning": "Łów...",
+    "SystemAnnouncement": "Ogłoszenie systemowe"
   },
   "maxLength": {
     "200chars": "(maksymalnie 200 znaków)",

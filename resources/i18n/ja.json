@@ -1887,11 +1887,13 @@
     "UpTo3000Logs": "（最大3000の最近のログ）"
   },
   "maintenance": {
+    "Announcement": "お知らせ",
     "CleanupImages": "クリーンアップ画像",
     "CleanupOldImages": "古い画像をクリーンアップする",
     "DescCleanupOldImages": "Dockerイメージリストから古いイメージをクリーンアップします。",
     "DescMatchDatabase": "現在の状態で使用状況データベースを再計算します。 dockerが誤って失敗した場合、または一部のセッションが強制的に終了した場合に役立ちます。",
     "DescRescanImageList": "登録されたリポジトリから画像リストを再スキャンします。 時間がかかる場合がありますので、実行後しばらくお待ちください。",
+    "DescSystemAnnouncement": "すべてのユーザーにページ上部に表示されるお知らせバナーを作成または編集します。",
     "Fix": "修正",
     "ImagesEnvironment": "画像/環境",
     "MatchDatabase": "使用状況データベースを現在の状態と照合する",
@@ -1904,7 +1906,8 @@
     "RescanImageList": "リポジトリから画像リストを再スキャンします",
     "RescanImageScanning": "再スキャン...",
     "RescanImages": "画像を再スキャンする",
-    "Scanning": "走査..."
+    "Scanning": "走査...",
+    "SystemAnnouncement": "システムのお知らせ"
   },
   "maxLength": {
     "200chars": "（最大200文字）",
