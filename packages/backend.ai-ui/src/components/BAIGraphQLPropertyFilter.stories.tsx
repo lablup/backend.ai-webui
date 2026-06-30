@@ -23,7 +23,7 @@ const meta: Meta<typeof BAIGraphQLPropertyFilter> = {
 New in this version:
 - **DateTime support**: When a property has type 'datetime', a DatePicker with time selection is rendered instead of a text input. Values are serialized as ISO strings and displayed in filter tags as 'YYYY-MM-DD HH:mm'.
 - **UUID support**: UUID type properties use \`equals\`, \`notEquals\`, \`in\`, \`notIn\` operators and support validation rules.
-- **Custom input via renderInput**: Replace the default AutoComplete input with any component (e.g., an async select). Call \`onConfirm(value)\` to add the condition.
+- **Custom input via \`renderInput\`**: Replace the default AutoComplete input with any controlled control (e.g., a user/domain picker or async select) bound to the standard antd \`value\`/\`onChange\` interface. The control sets the draft via \`onChange(value)\`; the filter commits it as a condition as soon as it becomes non-empty (so a single-select picker confirms on selection) and serializes it per the property's \`type\`. Keep using a built-in \`type\` (e.g. \`uuid\`) that matches what the control emits.
 - Operatorless fields via valueMode: 'scalar' for properties that should emit direct scalar values (e.g., { isUrgent: true }). Use implicitOperator (defaults to 'equals') to control how tags are displayed in the UI.
 
 The component generates GraphQL-compatible filter objects that can be directly used in GraphQL queries, enabling powerful and flexible data filtering across the platform.
@@ -88,13 +88,14 @@ FilterProperty = {
   valueMode?: 'scalar' | 'operator';
   // Visual operator for UI tags when valueMode='scalar' (default 'equals')
   implicitOperator?: FilterOperator;
-  // Custom input renderer — replaces the default AutoComplete.
-  // Call onConfirm(value) to submit the condition. \`isValid\` / \`errorMessage\`
-  // reflect the latest rule.validate outcome so custom inputs can show errors.
+  // Custom input renderer — replaces the default AutoComplete with a controlled
+  // control (e.g. BAIUserSelect) bound to the standard \`value\`/\`onChange\`
+  // interface. \`onChange(value)\` sets the draft; the filter commits it as a
+  // condition once non-empty (single-select pickers confirm on selection) and
+  // serializes it per the property's \`type\`.
   renderInput?: (props: {
-    onConfirm: (value: string) => void;
-    isValid: boolean;
-    errorMessage?: string;
+    value: string | string[] | undefined;
+    onChange: (value: string | string[] | undefined) => void;
   }) => ReactNode;
 }
         `,
@@ -844,7 +845,7 @@ export const WithRenderInput: Story = {
     docs: {
       description: {
         story:
-          'When `renderInput` is provided, the default AutoComplete is replaced with a custom component. Call `onConfirm(value)` to add the condition. Useful for async selects (e.g., fetching options from an API).',
+          'When `renderInput` is provided, the default AutoComplete is replaced with a controlled control bound to `value`/`onChange`. The filter commits the value as a condition as soon as the control emits a non-empty value. Useful for async selects (e.g., fetching options from an API).',
       },
     },
   },
@@ -861,18 +862,17 @@ export const WithRenderInput: Story = {
         propertyLabel: 'Storage Host',
         type: 'string',
         defaultOperator: 'equals',
-        renderInput: ({ onConfirm }) => (
+        renderInput: ({ value, onChange }) => (
           <Select
             placeholder="Select storage host"
             style={{ minWidth: 180 }}
+            value={value}
             options={[
               { label: 'local:volume1', value: 'local:volume1' },
               { label: 'local:volume2', value: 'local:volume2' },
               { label: 'nfs:data', value: 'nfs:data' },
             ]}
-            onChange={(value) => {
-              if (value) onConfirm(value);
-            }}
+            onChange={(next) => onChange(next ?? undefined)}
           />
         ),
       },
@@ -918,5 +918,48 @@ export const WithScalarValueModeOnString: Story = {
       AND: [{ slugExact: 'hello-world' }, { isPublished: true }],
     },
     onChange: action('Scalar mode (string) filter changed'),
+  },
+};
+
+// --- Custom input (controlled value/onChange) --------------------------------
+
+const sampleOwnerOptions = [
+  { label: 'alice@example.com', value: 'owner-uuid-0001' },
+  { label: 'bob@example.com', value: 'owner-uuid-0002' },
+  { label: 'carol@example.com', value: 'owner-uuid-0003' },
+];
+
+export const WithCustomType: Story = {
+  name: 'Custom input (controlled value/onChange)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "A property whose input is a controlled antd Select supplied via `renderInput`. The Select binds to `value`/`onChange`; selecting an option emits its value and the filter commits it as a condition, serialized per `type: 'uuid'` → `{ owner: { id: { equals: <id> } } }`.",
+      },
+    },
+  },
+  args: {
+    filterProperties: [
+      {
+        key: 'owner.id',
+        propertyLabel: 'Owner',
+        type: 'uuid',
+        fixedOperator: 'equals',
+        renderInput: ({ value, onChange }) => (
+          <Select
+            showSearch
+            placeholder="Select owner"
+            style={{ minWidth: 220 }}
+            value={value}
+            optionFilterProp="label"
+            options={sampleOwnerOptions}
+            onChange={(next) => onChange(next ?? undefined)}
+          />
+        ),
+      },
+    ],
+    combinationMode: 'AND',
+    onChange: action('custom input filter changed'),
   },
 };

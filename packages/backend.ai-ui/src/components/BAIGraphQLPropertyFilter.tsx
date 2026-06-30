@@ -150,14 +150,14 @@ type BaseFilterProperty = {
   valueMode?: 'scalar' | 'operator';
   // For UI/tag display when valueMode='scalar', use this operator symbol (default 'equals').
   implicitOperator?: FilterOperator;
-  // Custom input renderer. When provided, replaces the default AutoComplete input.
-  // Call onConfirm(value) to add the condition. `isValid` and `errorMessage`
-  // reflect the latest `rule.validate` outcome so the custom input can surface
-  // the same error UX the default AutoComplete shows via Tooltip.
+  // Replaces the default AutoComplete input with a controlled control (e.g.
+  // `BAIStorageHostSelect`) bound to antd `value`/`onChange`. `onChange` commits
+  // the value (string, or string[] for multi-select) as a condition
+  // immediately; `value` is always `null` so the control stays controlled-empty
+  // and clears after each commit.
   renderInput?: (props: {
-    onConfirm: (value: string) => void;
-    isValid: boolean;
-    errorMessage?: string;
+    value: string | string[] | undefined;
+    onChange: (value: string | string[] | undefined) => void;
   }) => React.ReactNode;
 };
 
@@ -329,7 +329,9 @@ function convertConditionsToGraphQLFilter(
         filterValue = condition.value;
       }
     } else if (condition.operator === 'in' || condition.operator === 'notIn') {
-      const values = condition.value.split(',').map((v: string) => v.trim());
+      const values = Array.isArray(condition.value)
+        ? condition.value
+        : condition.value.split(',').map((v: string) => v.trim());
       filterValue = {
         [condition.operator]:
           propertyConfig?.type === 'number' ? values.map(Number) : values,
@@ -599,7 +601,7 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
     return false;
   }, [selectedProperty]);
 
-  const addCondition = (value: string) => {
+  const addCondition = (value: string | string[]) => {
     if (_.isEmpty(value)) return;
 
     if (effectiveStrictSelection && effectiveOptions) {
@@ -730,9 +732,10 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
         )}
         {selectedProperty?.renderInput ? (
           selectedProperty.renderInput({
-            onConfirm: addCondition,
-            isValid,
-            errorMessage: selectedProperty.rule?.message,
+            value: undefined, // Always undefined to keep the control empty after commit
+            onChange: (value) => {
+              addCondition(value ?? '');
+            },
           })
         ) : selectedProperty?.type === 'datetime' ? (
           <DatePicker
@@ -756,7 +759,7 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
               value={search}
               open={isOpenAutoComplete}
               onOpenChange={setIsOpenAutoComplete}
-              onSelect={addCondition}
+              onSelect={(value) => addCondition(value)}
               onChange={(value) => {
                 setIsValid(true);
                 setSearch(value);
@@ -773,7 +776,7 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
               onFocus={() => setIsFocused(true)}
             >
               <Input.Search
-                onSearch={addCondition}
+                onSearch={(value) => addCondition(value)}
                 allowClear
                 status={!isValid && isFocused ? 'error' : undefined}
               />

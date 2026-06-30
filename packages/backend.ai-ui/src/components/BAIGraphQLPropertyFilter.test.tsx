@@ -125,3 +125,78 @@ describe('BAIGraphQLPropertyFilter tag removal', () => {
     });
   });
 });
+
+// FR-3011: a `renderInput` control bound to `value`/`onChange`. Plain buttons
+// call `onChange(value)` to exercise auto-commit-on-change without a real picker.
+const ownerCustomProperties: Array<FilterProperty> = [
+  {
+    key: 'owner.id',
+    propertyLabel: 'Owner',
+    type: 'uuid',
+    fixedOperator: 'equals',
+    renderInput: ({ onChange }) => (
+      <>
+        <button type="button" onClick={() => onChange('uuid-alice')}>
+          pick-alice
+        </button>
+        <button type="button" onClick={() => onChange('uuid-bob')}>
+          pick-bob
+        </button>
+      </>
+    ),
+  },
+];
+
+const ControlledCustom = ({
+  onFilterChange,
+}: {
+  onFilterChange?: (value: GraphQLFilter | undefined) => void;
+}) => {
+  const [value, setValue] = useState<GraphQLFilter | undefined>();
+  return (
+    <BAIGraphQLPropertyFilter
+      filterProperties={ownerCustomProperties}
+      value={value}
+      onChange={(next) => {
+        setValue(next);
+        onFilterChange?.(next);
+      }}
+    />
+  );
+};
+
+describe('BAIGraphQLPropertyFilter custom renderInput', () => {
+  it('commits a condition as soon as the controlled input emits a value', async () => {
+    const onFilterChange = vi.fn();
+    render(<ControlledCustom onFilterChange={onFilterChange} />);
+
+    fireEvent.click(screen.getByText('pick-alice'));
+
+    // The emitted value flows into the GraphQL filter under the dot-notation key.
+    await waitFor(() => {
+      expect(onFilterChange).toHaveBeenCalledWith({
+        owner: { id: { equals: 'uuid-alice' } },
+      });
+    });
+    // The tag shows the committed raw value.
+    expect(screen.getByText(/Owner.*uuid-alice/)).toBeVisible();
+  });
+
+  it('stacks each emitted value as a separate tag (AND of conditions)', async () => {
+    render(<ControlledCustom />);
+
+    fireEvent.click(screen.getByText('pick-alice'));
+    await waitFor(() => {
+      expect(screen.getByText(/Owner.*uuid-alice/)).toBeVisible();
+    });
+
+    fireEvent.click(screen.getByText('pick-bob'));
+    await waitFor(() => {
+      expect(screen.getByText(/Owner.*uuid-bob/)).toBeVisible();
+    });
+
+    // Both conditions are kept as separate tags.
+    expect(screen.getByText(/Owner.*uuid-alice/)).toBeVisible();
+    expect(document.querySelectorAll('.ant-tag')).toHaveLength(2);
+  });
+});

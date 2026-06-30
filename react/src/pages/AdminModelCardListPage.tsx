@@ -11,7 +11,6 @@ import type {
 } from '../__generated__/AdminModelCardListPageQuery.graphql';
 import AdminModelCardSettingModal from '../components/AdminModelCardSettingModal';
 import { useFolderExplorerOpener } from '../components/FolderExplorerOpener';
-import StorageHostFilterInput from '../components/StorageHostFilterInput';
 import VFolderNodeIdenticonV2 from '../components/VFolderNodeIdenticonV2';
 import { convertToOrderBy, handleRowSelectionChange } from '../helper';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -34,6 +33,7 @@ import {
   BAILink,
   BAINameActionCell,
   BAISelectionLabel,
+  BAIStorageHostSelect,
   BAITable,
   BAIText,
   BAITag,
@@ -358,8 +358,8 @@ const AdminModelCardListPage: React.FC = () => {
                 type: 'string',
                 operators: ['equals', 'notEquals'],
                 defaultOperator: 'equals',
-                renderInput: ({ onConfirm }) => (
-                  <StorageHostFilterInput onConfirm={onConfirm} />
+                renderInput: ({ value, onChange }) => (
+                  <BAIStorageHostSelect value={value} onChange={onChange} />
                 ),
               },
             ]}
