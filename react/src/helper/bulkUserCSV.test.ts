@@ -210,31 +210,18 @@ describe('extractRawUserRows', () => {
 describe('findMissingRequiredColumns', () => {
   it('passes a CSV that has email/username/password', () => {
     const { presentColumns } = analyze('16-export-field-keys.csv');
-    expect(
-      findMissingRequiredColumns(presentColumns, { hasGlobalPassword: false }),
-    ).toEqual([]);
+    expect(findMissingRequiredColumns(presentColumns)).toEqual([]);
   });
 
-  it('flags a raw export (no password) when no global default password is set', () => {
+  it('does NOT flag a passwordless export (password is validated per-row, not as a column)', () => {
     const { presentColumns } = analyze('18-export-no-password-column.csv');
-    expect(
-      findMissingRequiredColumns(presentColumns, { hasGlobalPassword: false }),
-    ).toEqual(['password']);
-  });
-
-  it('unlocks a passwordless export once a global default password is configured', () => {
-    const { presentColumns } = analyze('18-export-no-password-column.csv');
-    expect(
-      findMissingRequiredColumns(presentColumns, { hasGlobalPassword: true }),
-    ).toEqual([]);
+    expect(findMissingRequiredColumns(presentColumns)).toEqual([]);
   });
 
   it('flags email/username when an export omits them', () => {
     // Reuse the missing-column fixture (username, password, full_name — no email).
     const { presentColumns } = analyze('12-error-missing-required-columns.csv');
-    expect(
-      findMissingRequiredColumns(presentColumns, { hasGlobalPassword: false }),
-    ).toEqual(['email']);
+    expect(findMissingRequiredColumns(presentColumns)).toEqual(['email']);
   });
 });
 
@@ -256,9 +243,10 @@ describe('localized export headers (dynamic aliases)', () => {
     const { presentColumns } = analyze('19-export-localized-headers-ko.csv');
     // Without the server-provided localized aliases, nothing resolves.
     expect(presentColumns.size).toBe(0);
-    expect(
-      findMissingRequiredColumns(presentColumns, { hasGlobalPassword: true }),
-    ).toEqual(['email', 'username']);
+    expect(findMissingRequiredColumns(presentColumns)).toEqual([
+      'email',
+      'username',
+    ]);
   });
 
   it('recognises Korean headers once dynamic aliases are merged in', () => {
@@ -282,13 +270,9 @@ describe('localized export headers (dynamic aliases)', () => {
         'need_password_change',
       ].sort(),
     );
-    // Localized export has no password column → needs a global default password.
-    expect(
-      findMissingRequiredColumns(presentColumns, { hasGlobalPassword: false }),
-    ).toEqual(['password']);
-    expect(
-      findMissingRequiredColumns(presentColumns, { hasGlobalPassword: true }),
-    ).toEqual([]);
+    // Localized export has no password column, but that is not a blocking column
+    // (password is validated per-row), so email+username being present suffices.
+    expect(findMissingRequiredColumns(presentColumns)).toEqual([]);
     // Values land in the right canonical fields despite localized headers.
     expect(rows[0]).toMatchObject({
       email: 'ko1@example.com',

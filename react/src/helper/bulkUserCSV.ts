@@ -86,18 +86,11 @@ export const EXPORT_KEY_TO_IMPORT: Record<string, CanonicalUserColumn> = {
   project_name: 'project',
 };
 
-// Required columns when no global default password is configured. The export
-// report never includes a password column, so importing an export CSV requires
-// the admin to set a default password — which relaxes the requirement below.
-const REQUIRED_COLUMNS_WITH_PASSWORD: CanonicalUserColumn[] = [
-  'email',
-  'username',
-  'password',
-];
-const REQUIRED_COLUMNS_WITHOUT_PASSWORD: CanonicalUserColumn[] = [
-  'email',
-  'username',
-];
+// The only blocking required columns. `password` is intentionally absent: a CSV
+// without a password column (e.g. an export report, which never includes one)
+// still loads, and missing/empty passwords surface as per-row validation errors
+// instead of blocking the whole file.
+const REQUIRED_COLUMNS: CanonicalUserColumn[] = ['email', 'username'];
 
 export interface RawUserRow {
   email: string;
@@ -189,17 +182,14 @@ export const mapUserCSVColumns = (
 
 /**
  * Returns the canonical columns that are required but missing from the file.
- * `password` is only required when no global default password is configured.
+ * Only `email` and `username` are blocking required columns; `password` is
+ * validated per row (missing/empty values become row errors, not a column-level
+ * block), so a passwordless CSV still loads.
  */
 export const findMissingRequiredColumns = (
   presentColumns: Set<CanonicalUserColumn>,
-  options: { hasGlobalPassword: boolean },
-): CanonicalUserColumn[] => {
-  const required = options.hasGlobalPassword
-    ? REQUIRED_COLUMNS_WITHOUT_PASSWORD
-    : REQUIRED_COLUMNS_WITH_PASSWORD;
-  return required.filter((canon) => !presentColumns.has(canon));
-};
+): CanonicalUserColumn[] =>
+  REQUIRED_COLUMNS.filter((canon) => !presentColumns.has(canon));
 
 /**
  * Projects parsed CSV records onto the importer's RawUserRow shape. Columns
