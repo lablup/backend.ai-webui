@@ -10,7 +10,7 @@ import {
   useTOTPSupported,
 } from '../hooks/backendai';
 import AboutBackendAIModal from './AboutBackendAIModal';
-import DesktopAppDownloadModal from './DesktopAppDownloadModal';
+import DownloadModal from './DownloadModal';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import {
   UserOutlined,
@@ -178,9 +178,10 @@ const UserDropdownMenu: React.FC<{
         webuiNavigate('/usersettings?tab=logs');
       },
     },
-    baiClient._config.allowAppDownloadPanel && {
-      label: t('summary.DownloadWebUIApp'),
-      key: 'downloadDesktopApp',
+    (baiClient._config.allowAppDownloadPanel ||
+      baiClient._config.allowCLIDownloadPanel) && {
+      label: t('summary.Downloads'),
+      key: 'downloads',
       icon: <DownloadOutlined />,
       onClick: () => toggleDownloadModal(),
     },
@@ -259,7 +260,7 @@ const UserDropdownMenu: React.FC<{
           )}
         </Suspense>
         <BAIUnmountAfterClose>
-          <DesktopAppDownloadModal
+          <DownloadModal
             open={isDownloadModalOpen}
             onRequestClose={() => toggleDownloadModal()}
           />
