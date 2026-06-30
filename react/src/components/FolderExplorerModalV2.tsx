@@ -5,7 +5,6 @@
 import { FolderExplorerModalV2Query } from '../__generated__/FolderExplorerModalV2Query.graphql';
 import type { ScopedAuditLogQuery as ScopedAuditLogQueryType } from '../__generated__/ScopedAuditLogQuery.graphql';
 import { formatToUUID } from '../helper';
-import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -86,20 +85,13 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   const { styles } = useStyles();
 
   const [fetchKey, updateFetchKey] = useFetchKey();
-  const baiClient = useSuspendedBackendaiClient();
-  const currentDomain = useCurrentDomainValue();
   const currentProject = useCurrentProjectValue();
   if (!currentProject.id) {
     throw new Error('Project ID is required for FolderExplorerModalV2');
   }
-  const currentUserAccessKey = baiClient?._config?.accessKey;
   const fileExplorerRef = useRef<BAIFileExplorerRef>(null);
   const { unitedAllowedPermissionByVolume } =
-    useMergedAllowedStorageHostPermission(
-      currentDomain,
-      currentProject.id,
-      currentUserAccessKey,
-    );
+    useMergedAllowedStorageHostPermission();
   const bodyRef = useRef<HTMLDivElement | null>(null);
 
   const deferredOpen = useDeferredValue(modalProps.open);

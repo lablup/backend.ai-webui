@@ -3,11 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { SFTPServerButtonFragment$key } from '../__generated__/SFTPServerButtonFragment.graphql';
-import {
-  useCurrentDomainValue,
-  useSuspendedBackendaiClient,
-  useWebUINavigate,
-} from '../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import {
   useCurrentProjectValue,
   useResourceGroupsForCurrentProject,
@@ -50,18 +46,12 @@ const SFTPServerButton: React.FC<SFTPServerButtonProps> = ({
   const webuiNavigate = useWebUINavigate();
 
   const baiClient = useSuspendedBackendaiClient();
-  const currentDomain = useCurrentDomainValue();
   const currentProject = useCurrentProjectValue();
   if (!currentProject.id) {
     throw new Error('Project ID is required for SFTPServerButton');
   }
-  const currentUserAccessKey = baiClient?._config?.accessKey;
   const { unitedAllowedPermissionByVolume } =
-    useMergedAllowedStorageHostPermission(
-      currentDomain,
-      currentProject.id,
-      currentUserAccessKey,
-    );
+    useMergedAllowedStorageHostPermission();
   const { vhostInfo: vhostInfoByCurrentProject } =
     useResourceGroupsForCurrentProject();
 

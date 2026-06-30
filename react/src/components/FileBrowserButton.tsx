@@ -3,11 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { FileBrowserButtonFragment$key } from '../__generated__/FileBrowserButtonFragment.graphql';
-import {
-  useCurrentDomainValue,
-  useSuspendedBackendaiClient,
-  useWebUINavigate,
-} from '../hooks';
+import { useWebUINavigate } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useDefaultFileBrowserImageWithFallback } from '../hooks/useDefaultImagesWithFallback';
 import { useMergedAllowedStorageHostPermission } from '../hooks/useMergedAllowedStorageHostPermission';
@@ -46,19 +42,12 @@ const FileBrowserButton: React.FC<FileBrowserButtonProps> = ({
 
   const webuiNavigate = useWebUINavigate();
 
-  const baiClient = useSuspendedBackendaiClient();
-  const currentDomain = useCurrentDomainValue();
   const currentProject = useCurrentProjectValue();
   if (!currentProject.id) {
     throw new Error('Project ID is required for FileBrowserButton');
   }
-  const currentUserAccessKey = baiClient?._config?.accessKey;
   const { unitedAllowedPermissionByVolume } =
-    useMergedAllowedStorageHostPermission(
-      currentDomain,
-      currentProject.id,
-      currentUserAccessKey,
-    );
+    useMergedAllowedStorageHostPermission();
 
   const { getErrorMessage } = useErrorMessageResolver();
   const { startSessionWithDefault, upsertSessionNotification } =
