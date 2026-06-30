@@ -233,7 +233,15 @@
     "Status": "Статус",
     "StatusChanged": "Изменено",
     "Terminated": "Прекращено",
-    "Utilization": "Утилизация"
+    "Utilization": "Утилизация",
+    "WatcherActionFailed": "Не удалось управлять агентом.",
+    "WatcherActionWarning": "Запущенные сеансы на этом агенте могут быть затронуты.",
+    "WatcherRestart": "Перезапустить агент",
+    "WatcherRestartRequested": "Запрос на перезапуск агента отправлен.",
+    "WatcherStart": "Запустить агент",
+    "WatcherStartRequested": "Запрос на запуск агента отправлен.",
+    "WatcherStop": "Остановить агент",
+    "WatcherStopRequested": "Запрос на остановку агента отправлен."
   },
   "agentStats": {
     "AgentStats": "Статистика агента",

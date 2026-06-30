@@ -233,7 +233,15 @@
     "Status": "地位",
     "StatusChanged": "已更改",
     "Terminated": "已终止",
-    "Utilization": "利用率"
+    "Utilization": "利用率",
+    "WatcherActionFailed": "控制代理失败。",
+    "WatcherActionWarning": "此代理上正在运行的会话可能会受到影响。",
+    "WatcherRestart": "重启代理",
+    "WatcherRestartRequested": "已发送代理重启请求。",
+    "WatcherStart": "启动代理",
+    "WatcherStartRequested": "已发送代理启动请求。",
+    "WatcherStop": "停止代理",
+    "WatcherStopRequested": "已发送代理停止请求。"
   },
   "agentStats": {
     "AgentStats": "代理统计",

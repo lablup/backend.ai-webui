@@ -233,7 +233,15 @@
     "Status": "Trạng thái",
     "StatusChanged": "Đã thay đổi",
     "Terminated": "Đã chấm dứt",
-    "Utilization": "Sử dụng"
+    "Utilization": "Sử dụng",
+    "WatcherActionFailed": "Không thể điều khiển đại lý.",
+    "WatcherActionWarning": "Các phiên đang chạy trên đại lý này có thể bị ảnh hưởng.",
+    "WatcherRestart": "Khởi động lại Đại lý",
+    "WatcherRestartRequested": "Yêu cầu khởi động lại đại lý đã được gửi.",
+    "WatcherStart": "Khởi động Đại lý",
+    "WatcherStartRequested": "Yêu cầu khởi động đại lý đã được gửi.",
+    "WatcherStop": "Dừng Đại lý",
+    "WatcherStopRequested": "Yêu cầu dừng đại lý đã được gửi."
   },
   "agentStats": {
     "AgentStats": "Thống kê đại lý",

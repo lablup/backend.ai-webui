@@ -1282,6 +1282,51 @@ export class Client {
   }
 
   /**
+   * Start the agent's watcher daemon. (superadmin only)
+   *
+   * @param {string} agentId - the agent id (row id) to control
+   */
+  async start_watcher_agent(agentId: string): Promise<any> {
+    const rqst = this.newSignedRequest(
+      'POST',
+      '/resource/watcher/agent/start',
+      { agent_id: agentId },
+      null,
+    );
+    return this._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Stop the agent's watcher daemon. (superadmin only)
+   *
+   * @param {string} agentId - the agent id (row id) to control
+   */
+  async stop_watcher_agent(agentId: string): Promise<any> {
+    const rqst = this.newSignedRequest(
+      'POST',
+      '/resource/watcher/agent/stop',
+      { agent_id: agentId },
+      null,
+    );
+    return this._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Restart the agent's watcher daemon. (superadmin only)
+   *
+   * @param {string} agentId - the agent id (row id) to control
+   */
+  async restart_watcher_agent(agentId: string): Promise<any> {
+    const rqst = this.newSignedRequest(
+      'POST',
+      '/resource/watcher/agent/restart',
+      { agent_id: agentId },
+      null,
+    );
+    return this._wrapWithPromise(rqst);
+  }
+
+  /**
    * Create a `compute session` if the session for the given sessionId does not exist.
    * It returns the information for the existing session otherwise, without error.
    *

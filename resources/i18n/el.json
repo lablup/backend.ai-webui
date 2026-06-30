@@ -233,7 +233,15 @@
     "Status": "Κατάσταση",
     "StatusChanged": "Τροποποιήθηκε",
     "Terminated": "Τερματίστηκε",
-    "Utilization": "Χρήση"
+    "Utilization": "Χρήση",
+    "WatcherActionFailed": "Αποτυχία ελέγχου του πράκτορα.",
+    "WatcherActionWarning": "Οι τρέχουσες συνεδρίες σε αυτόν τον πράκτορα ενδέχεται να επηρεαστούν.",
+    "WatcherRestart": "Επανεκκίνηση Πράκτορα",
+    "WatcherRestartRequested": "Η επανεκκίνηση του πράκτορα έχει ζητηθεί.",
+    "WatcherStart": "Εκκίνηση Πράκτορα",
+    "WatcherStartRequested": "Η εκκίνηση του πράκτορα έχει ζητηθεί.",
+    "WatcherStop": "Διακοπή Πράκτορα",
+    "WatcherStopRequested": "Η διακοπή του πράκτορα έχει ζητηθεί."
   },
   "agentStats": {
     "AgentStats": "Στατιστικά Agent",
