@@ -9,6 +9,7 @@ import {
   type ProjectV2OrderBy,
 } from '../__generated__/ProjectStoragePermissionTableQuery.graphql';
 import { ProjectStoragePermissionTable_domainFrgmt$key } from '../__generated__/ProjectStoragePermissionTable_domainFrgmt.graphql';
+import { ProjectStoragePermissionTable_permissionFrgmt$key } from '../__generated__/ProjectStoragePermissionTable_permissionFrgmt.graphql';
 import { ProjectStoragePermissionTable_storageVolumeFrgmt$key } from '../__generated__/ProjectStoragePermissionTable_storageVolumeFrgmt.graphql';
 import { convertToOrderBy } from '../helper';
 import {
@@ -29,6 +30,7 @@ import {
 import { Tooltip, Typography, theme } from 'antd';
 import {
   BAIButton,
+  BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
@@ -62,29 +64,28 @@ export interface ProjectStoragePermissionTableProps extends BAITableProps<Projec
   /** Fragment for the storage host — its `id` is read internally. */
   storageVolumeFrgmt: ProjectStoragePermissionTable_storageVolumeFrgmt$key;
   /**
-   * The single selected domain whose projects are listed (via
-   * `domainProjectsV2(scope)`). `undefined` keeps the query skipped and shows
-   * the select-a-domain empty state.
-   */
-  selectedDomainName: string | undefined;
-  /**
-   * Fragment for the selected domain. Read internally to compute each project
-   * row's effective permission = union(project, domain) and the inherited
-   * host-allowed status. Null/undefined when no domain is selected.
+   * Fragment for the selected domain. Read internally for the domain `name`
+   * (which scopes the project list query via `domainProjectsV2`) and
+   * `allowed_vfolder_hosts` (to compute each project row's effective permission
+   * = union(project, domain) and the inherited host-allowed status).
+   * Null/undefined when no domain is selected → the project query is skipped
+   * and the select-a-domain empty state is shown.
    */
   domainFrgmt: ProjectStoragePermissionTable_domainFrgmt$key | null | undefined;
-  permissionKeys: string[];
+  /**
+   * Fragment for the global vfolder-host permission catalog
+   * (`PredefinedAtomicPermission`). The canonical permission key list is
+   * derived from it internally; null/undefined yields an empty key list.
+   */
+  permissionFrgmt:
+    | ProjectStoragePermissionTable_permissionFrgmt$key
+    | null
+    | undefined;
 }
 
 const ProjectStoragePermissionTable: React.FC<
   ProjectStoragePermissionTableProps
-> = ({
-  storageVolumeFrgmt,
-  selectedDomainName,
-  domainFrgmt,
-  permissionKeys,
-  ...tableProps
-}) => {
+> = ({ storageVolumeFrgmt, domainFrgmt, permissionFrgmt, ...tableProps }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -104,6 +105,7 @@ const ProjectStoragePermissionTable: React.FC<
   const domain = useFragment(
     graphql`
       fragment ProjectStoragePermissionTable_domainFrgmt on Domain {
+        name
         allowed_vfolder_hosts
       }
     `,
@@ -111,6 +113,25 @@ const ProjectStoragePermissionTable: React.FC<
   );
   const domainParsed = parseAllowedHosts(domain?.allowed_vfolder_hosts);
   const domainPermissions = new Set(domainParsed[storageHostId] ?? []);
+
+  // Domain name comes from the same fragment (single source of truth): it
+  // scopes the project list query and drives the empty-state copy. Null when no
+  // domain is selected.
+  const selectedDomainName = domain?.name ?? undefined;
+
+  // Global permission catalog (the universe of vfolder host permission keys);
+  // not tied to this domain or host, so it arrives via a root-query fragment.
+  const permission = useFragment(
+    graphql`
+      fragment ProjectStoragePermissionTable_permissionFrgmt on PredefinedAtomicPermission {
+        vfolder_host_permission_list
+      }
+    `,
+    permissionFrgmt,
+  );
+  const permissionKeys = _.compact(
+    permission?.vfolder_host_permission_list ?? [],
+  );
 
   // Empty when the modal is closed. One row → single-edit; many → bulk-edit.
   const [editingRows, setEditingRows] = useState<ProjectRow[]>([]);
@@ -290,41 +311,50 @@ const ProjectStoragePermissionTable: React.FC<
   return (
     <BAIFlex direction="column" align="stretch" gap="xs">
       <BAIFlex align="center" gap="xs">
-        <BAIGraphQLPropertyFilter
-          style={{ flex: 1 }}
-          filterProperties={[
-            {
-              key: 'name',
-              propertyLabel: t('storageHost.permission.Name'),
-              type: 'string',
-            },
-          ]}
-          value={filter}
-          onChange={(value) => {
-            setFilter(value);
-            setTablePaginationOption({ current: 1 });
-            setSelectedRowKeys([]);
-          }}
-        />
-        {selectedRowKeys.length > 0 ? (
-          <BAIFlex align="center" gap="xs" style={{ flexShrink: 0 }}>
-            <BAISelectionLabel
-              count={selectedRowKeys.length}
-              onClearSelection={() => setSelectedRowKeys([])}
-            />
-            <Tooltip title={t('storageHost.permission.EditPermissionsAction')}>
-              <BAIButton
-                icon={<SettingOutlined style={{ color: token.colorInfo }} />}
-                style={{ backgroundColor: token.colorInfoBg }}
-                onClick={() =>
-                  setEditingRows(
-                    rows.filter((row) => selectedRowKeys.includes(row.id)),
-                  )
-                }
+        <BAIFlex gap="xs" justify="between" align="start" style={{ flex: 1 }}>
+          <BAIGraphQLPropertyFilter
+            style={{ flex: 1 }}
+            filterProperties={[
+              {
+                key: 'name',
+                propertyLabel: t('storageHost.permission.Name'),
+                type: 'string',
+              },
+            ]}
+            value={filter}
+            onChange={(value) => {
+              setFilter(value);
+              setTablePaginationOption({ current: 1 });
+              setSelectedRowKeys([]);
+            }}
+          />
+          {selectedRowKeys.length > 0 ? (
+            <BAIFlex align="center" gap="xs" style={{ flexShrink: 0 }}>
+              <BAISelectionLabel
+                count={selectedRowKeys.length}
+                onClearSelection={() => setSelectedRowKeys([])}
               />
-            </Tooltip>
-          </BAIFlex>
-        ) : null}
+              <Tooltip
+                title={t('storageHost.permission.EditPermissionsAction')}
+              >
+                <BAIButton
+                  icon={<SettingOutlined style={{ color: token.colorInfo }} />}
+                  style={{ backgroundColor: token.colorInfoBg }}
+                  onClick={() =>
+                    setEditingRows(
+                      rows.filter((row) => selectedRowKeys.includes(row.id)),
+                    )
+                  }
+                />
+              </Tooltip>
+            </BAIFlex>
+          ) : null}
+          <BAIFetchKeyButton
+            value={fetchKey}
+            onChange={() => updateFetchKey()}
+            loading={deferredQueryVariables !== queryVariables}
+          />
+        </BAIFlex>
       </BAIFlex>
       <BAITable
         size="small"

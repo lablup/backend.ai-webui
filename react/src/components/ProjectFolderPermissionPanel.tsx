@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { ProjectFolderPermissionPanelPermissionQuery } from '../__generated__/ProjectFolderPermissionPanelPermissionQuery.graphql';
 import { ProjectFolderPermissionPanelQuery } from '../__generated__/ProjectFolderPermissionPanelQuery.graphql';
 import { ProjectFolderPermissionPanel_storageVolumeFrgmt$key } from '../__generated__/ProjectFolderPermissionPanel_storageVolumeFrgmt.graphql';
 import { useCurrentDomainValue } from '../hooks';
@@ -13,10 +14,11 @@ import {
   BAIAlert,
   BAICard,
   BAIDomainSelect,
+  BAIFetchKeyButton,
   BAIFlex,
+  BAIGraphQLPropertyFilter,
   useFetchKey,
 } from 'backend.ai-ui';
-import * as _ from 'lodash-es';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
@@ -52,16 +54,26 @@ const ProjectFolderPermissionPanel: React.FC<
     storageVolumeFrgmt,
   );
 
-  // Default to the current domain so the tab shows its folder permissions on
-  // open; the user can still switch to or clear the selection.
+  const { vfolder_host_permissions } =
+    useLazyLoadQuery<ProjectFolderPermissionPanelPermissionQuery>(
+      graphql`
+        query ProjectFolderPermissionPanelPermissionQuery {
+          vfolder_host_permissions {
+            ...DomainStoragePermissionTable_permissionFrgmt
+            ...ProjectStoragePermissionTable_permissionFrgmt
+          }
+        }
+      `,
+      {},
+      { fetchPolicy: 'store-or-network' },
+    );
+
   const currentDomain = useCurrentDomainValue();
   const [selectedDomainName, setSelectedDomainName] = useState<
     string | undefined
   >(currentDomain);
 
-  // Bump after a domain permission save so the domain row AND the project
-  // union both refetch from the single panel-level query.
-  const [domainFetchKey, bumpDomainFetchKey] = useFetchKey();
+  const [domainFetchKey, updateDomainFetchKey] = useFetchKey();
   const deferredFetchKey = useDeferredValue(domainFetchKey);
 
   const queryVariables = {
@@ -70,18 +82,12 @@ const ProjectFolderPermissionPanel: React.FC<
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
 
-  // Fetch only the selected domain (skipped until one is picked) and hand its
-  // fragment to both tables; each reads what it needs (the domain row, and the
-  // project union / inherited host-allowed status).
-  const data = useLazyLoadQuery<ProjectFolderPermissionPanelQuery>(
+  const { domain } = useLazyLoadQuery<ProjectFolderPermissionPanelQuery>(
     graphql`
       query ProjectFolderPermissionPanelQuery(
         $domainName: String
         $skipDomain: Boolean!
       ) {
-        vfolder_host_permissions {
-          vfolder_host_permission_list
-        }
         domain(name: $domainName) @skip(if: $skipDomain) {
           ...DomainStoragePermissionTable_domainFrgmt
           ...ProjectStoragePermissionTable_domainFrgmt
@@ -90,10 +96,6 @@ const ProjectFolderPermissionPanel: React.FC<
     `,
     deferredQueryVariables,
     { fetchPolicy: 'store-and-network', fetchKey: deferredFetchKey },
-  );
-
-  const permissionKeys: string[] = _.compact(
-    data.vfolder_host_permissions?.vfolder_host_permission_list ?? [],
   );
 
   return (
@@ -108,25 +110,45 @@ const ProjectFolderPermissionPanel: React.FC<
 
       <BAICard
         title={t('storageHost.permission.Domains')}
-        extra={
-          <BAIDomainSelect
-            value={selectedDomainName}
-            onChange={(value) =>
-              setSelectedDomainName((value as string | undefined) || undefined)
-            }
-            allowClear
-            placeholder={t('storageHost.permission.SelectDomain')}
-            style={{ width: 320 }}
-          />
-        }
         styles={{ body: { paddingTop: 0 } }}
       >
-        <DomainStoragePermissionTable
-          storageVolumeFrgmt={storageVolume}
-          domainFrgmt={data.domain}
-          permissionKeys={permissionKeys}
-          onSaved={bumpDomainFetchKey}
-        />
+        <BAIFlex direction="column" align="stretch" gap="xs">
+          <BAIFlex align="center" justify="between" gap="md" wrap="wrap">
+            <BAIGraphQLPropertyFilter
+              filterProperties={[
+                {
+                  key: 'domainName',
+                  propertyLabel: t('storageHost.permission.Name'),
+                  type: 'uuid',
+                  fixedOperator: 'equals',
+                  renderInput: () => (
+                    <BAIDomainSelect
+                      value={selectedDomainName}
+                      onChange={(value) =>
+                        setSelectedDomainName(
+                          (value as string | undefined) || undefined,
+                        )
+                      }
+                      allowClear
+                      style={{ minWidth: 200 }}
+                    />
+                  ),
+                },
+              ]}
+            />
+            <BAIFetchKeyButton
+              value={domainFetchKey}
+              onChange={updateDomainFetchKey}
+              loading={deferredFetchKey !== domainFetchKey}
+            />
+          </BAIFlex>
+          <DomainStoragePermissionTable
+            storageVolumeFrgmt={storageVolume}
+            domainFrgmt={domain}
+            permissionFrgmt={vfolder_host_permissions}
+            onSaved={updateDomainFetchKey}
+          />
+        </BAIFlex>
       </BAICard>
 
       <BAICard
@@ -157,9 +179,8 @@ const ProjectFolderPermissionPanel: React.FC<
       >
         <ProjectStoragePermissionTable
           storageVolumeFrgmt={storageVolume}
-          selectedDomainName={selectedDomainName}
-          domainFrgmt={data.domain}
-          permissionKeys={permissionKeys}
+          domainFrgmt={domain}
+          permissionFrgmt={vfolder_host_permissions}
         />
       </BAICard>
     </BAIFlex>

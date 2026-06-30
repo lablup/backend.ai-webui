@@ -4,6 +4,7 @@
  */
 import { DomainStoragePermissionTableModifyDomainMutation } from '../__generated__/DomainStoragePermissionTableModifyDomainMutation.graphql';
 import { DomainStoragePermissionTable_domainFrgmt$key } from '../__generated__/DomainStoragePermissionTable_domainFrgmt.graphql';
+import { DomainStoragePermissionTable_permissionFrgmt$key } from '../__generated__/DomainStoragePermissionTable_permissionFrgmt.graphql';
 import { DomainStoragePermissionTable_storageVolumeFrgmt$key } from '../__generated__/DomainStoragePermissionTable_storageVolumeFrgmt.graphql';
 import {
   PERMISSION_DISPLAY_MAP,
@@ -23,6 +24,7 @@ import {
   type BAITableProps,
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -42,8 +44,15 @@ export interface DomainStoragePermissionTableProps extends BAITableProps<DomainR
    * Null/undefined renders the empty (select-a-domain) state.
    */
   domainFrgmt: DomainStoragePermissionTable_domainFrgmt$key | null | undefined;
-  /** Canonical permission key list (driven by `vfolder_host_permissions`). */
-  permissionKeys: string[];
+  /**
+   * Fragment for the global vfolder-host permission catalog
+   * (`PredefinedAtomicPermission`). The canonical permission key list is
+   * derived from it internally; null/undefined yields an empty key list.
+   */
+  permissionFrgmt:
+    | DomainStoragePermissionTable_permissionFrgmt$key
+    | null
+    | undefined;
   /** Called after a successful save so the parent can refetch the domain. */
   onSaved?: () => void;
 }
@@ -53,7 +62,7 @@ const DomainStoragePermissionTable: React.FC<
 > = ({
   storageVolumeFrgmt,
   domainFrgmt,
-  permissionKeys,
+  permissionFrgmt,
   onSaved,
   ...tableProps
 }) => {
@@ -80,6 +89,20 @@ const DomainStoragePermissionTable: React.FC<
       }
     `,
     domainFrgmt ?? null,
+  );
+
+  // Global permission catalog (the universe of vfolder host permission keys);
+  // not tied to this domain or host, so it arrives via a root-query fragment.
+  const permission = useFragment(
+    graphql`
+      fragment DomainStoragePermissionTable_permissionFrgmt on PredefinedAtomicPermission {
+        vfolder_host_permission_list
+      }
+    `,
+    permissionFrgmt,
+  );
+  const permissionKeys = _.compact(
+    permission?.vfolder_host_permission_list ?? [],
   );
 
   const [commitModifyDomain] =
