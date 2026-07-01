@@ -10,6 +10,7 @@ import {
 } from '../__generated__/ReservoirPageQuery.graphql';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import ScanArtifactModelsFromHuggingFaceModal from '../components/ScanArtifactModelsFromHuggingFaceModal';
+import { buildPath } from '../helper/pathBuilder';
 import { useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
@@ -566,7 +567,7 @@ const ReservoirPage: React.FC = () => {
                         version: task.version,
                       }),
                       toText: t('reservoirPage.GoToArtifact'),
-                      to: `/reservoir/${task.artifact.id}`,
+                      to: buildPath('admin', `reservoir/${task.artifact.id}`),
                     };
                   },
                   rejected: (_data, _notification) => {
@@ -589,7 +590,7 @@ const ReservoirPage: React.FC = () => {
         open={deferredOpenHuggingFaceModal}
         onRequestClose={(_e, artifactId) => {
           toggleOpenHuggingFaceModal();
-          navigate(`/reservoir/${toLocalId(artifactId)}`);
+          navigate(buildPath('admin', `reservoir/${toLocalId(artifactId)}`));
         }}
         onCancel={toggleOpenHuggingFaceModal}
       />
