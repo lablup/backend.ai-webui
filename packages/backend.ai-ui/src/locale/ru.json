@@ -386,6 +386,20 @@
   "comp:BAIUserSelect": {
     "SelectUser": "Выберите пользователя"
   },
+  "comp:BAIVFolderMountConfigInput": {
+    "AliasInvalid": "Неверный формат пути.",
+    "AliasOverlapping": "Путь монтирования перекрывается с другой папкой.",
+    "AliasPlaceholder": "Путь монтирования",
+    "AutoMountedFolders": "Папки с автомонтированием",
+    "Name": "Имя",
+    "PathAndAlias": "Путь & Псевдоним",
+    "PathAndAliasTooltip": "Путь внутри контейнера, в который будет смонтирована папка. Оставьте пустым для использования пути по умолчанию.",
+    "RemoveFolder": "Удалить",
+    "Subpath": "Подпуть",
+    "SubpathInvalid": "Подпуть должен быть относительным путём и не должен содержать '..'.",
+    "SubpathPlaceholder": "напр. dataset/train (необязательно)",
+    "SubpathTooltip": "Монтирует подпапку внутри папки как источник вместо её корня. Оставьте пустым для монтирования корня."
+  },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Выбрать папку"
   },

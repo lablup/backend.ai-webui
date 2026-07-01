@@ -424,6 +424,7 @@
     "RefreshModelInformation": "Actualizar información del modelo",
     "Reset": "Restablecer",
     "Retry": "Reintentar",
+    "Revoke": "Revocar",
     "Save": "Guardar",
     "SaveAndClose": "Guardar y cerrar",
     "SaveChanges": "Guardar cambios",
@@ -1864,6 +1865,22 @@
       "LoginWithRealm": "Iniciar sesión con {{ realmName }}",
       "LoginWithSAML": "Inicio de sesión con SAML"
     }
+  },
+  "loginHistory": {
+    "Domain": "Dominio",
+    "FailReason": "Motivo del error",
+    "LoginTime": "Hora de inicio de sesión",
+    "Result": "Resultado"
+  },
+  "loginSession": {
+    "AccessKey": "Clave de acceso",
+    "CreatedAt": "Creado en",
+    "InvalidatedAt": "Invalidado en",
+    "RevokeFailed": "Error al revocar la sesión de inicio de sesión.",
+    "RevokeSession": "Revocar sesión",
+    "RevokeSessionConfirm": "¿Está seguro de que desea revocar esta sesión de inicio de sesión?",
+    "RevokeSucceeded": "Sesión de inicio de sesión revocada correctamente.",
+    "User": "Usuario"
   },
   "logs": {
     "ErrorMessage": "Mensaje de error",
@@ -3344,6 +3361,8 @@
     "Language": "Idioma",
     "LightMode": "Modo de luz",
     "LightTheme": "Modo claro",
+    "LoginHistory": "Historial de inicio de sesión",
+    "LoginSessions": "Sesiones de inicio de sesión",
     "Logo": "Logotipo de CI",
     "Logs": "Registros",
     "MaxConcurrentUploads": "Límite máximo de carga de archivos simultáneos",

@@ -413,6 +413,7 @@
     "RefreshModelInformation": "Refresh Model Information",
     "Reset": "Reset",
     "Retry": "Retry",
+    "Revoke": "Revoke",
     "Save": "Save",
     "SaveAndClose": "Save And Close",
     "SaveChanges": "Save Changes",
@@ -1854,6 +1855,22 @@
       "LoginWithRealm": "Login with {{ realmName }}",
       "LoginWithSAML": "Login with SAML"
     }
+  },
+  "loginHistory": {
+    "Domain": "Domain",
+    "FailReason": "Failure Reason",
+    "LoginTime": "Login Time",
+    "Result": "Result"
+  },
+  "loginSession": {
+    "AccessKey": "Access Key",
+    "CreatedAt": "Created At",
+    "InvalidatedAt": "Invalidated At",
+    "RevokeFailed": "Failed to revoke login session.",
+    "RevokeSession": "Revoke Session",
+    "RevokeSessionConfirm": "Are you sure you want to revoke this login session?",
+    "RevokeSucceeded": "Login session revoked.",
+    "User": "User"
   },
   "logs": {
     "ErrorMessage": "Error Message",
@@ -3337,6 +3354,8 @@
     "Language": "Language",
     "LightMode": "Light mode",
     "LightTheme": "Light Mode",
+    "LoginHistory": "Login History",
+    "LoginSessions": "Login Sessions",
     "Logo": "Logo CI",
     "Logs": "Logs",
     "MaxConcurrentUploads": "Max Concurrent File Upload Limit",

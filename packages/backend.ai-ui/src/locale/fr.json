@@ -386,6 +386,20 @@
   "comp:BAIUserSelect": {
     "SelectUser": "Sélectionner un utilisateur"
   },
+  "comp:BAIVFolderMountConfigInput": {
+    "AliasInvalid": "Format de chemin invalide.",
+    "AliasOverlapping": "Le chemin de montage chevauche un autre dossier.",
+    "AliasPlaceholder": "Chemin de montage",
+    "AutoMountedFolders": "Dossiers montés automatiquement",
+    "Name": "Nom",
+    "PathAndAlias": "Chemin & Alias",
+    "PathAndAliasTooltip": "Le chemin à l'intérieur du conteneur où le dossier sera monté. Laissez vide pour utiliser le chemin par défaut.",
+    "RemoveFolder": "Supprimer",
+    "Subpath": "Sous-chemin",
+    "SubpathInvalid": "Le sous-chemin doit être un chemin relatif et ne doit pas contenir '..'.",
+    "SubpathPlaceholder": "ex. dataset/train (facultatif)",
+    "SubpathTooltip": "Monte un sous-dossier à l'intérieur du dossier comme source au lieu de sa racine. Laissez vide pour monter la racine."
+  },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Sélectionner un dossier"
   },

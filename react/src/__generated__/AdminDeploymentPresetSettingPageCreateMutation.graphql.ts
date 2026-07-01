@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<eaad205348cd1afffaad0de66e5c07e8>>
+ * @generated SignedSource<<837892dcee88bb7a9639eb8158ad2d86>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -23,7 +23,7 @@ export type CreateDeploymentRevisionPresetInput = {
   modelDefinition?: PresetModelDefinitionInput | null | undefined;
   name: string;
   openToPublic?: boolean | null | undefined;
-  presetValues?: ReadonlyArray<DeploymentRevisionPresetValueEntryInput> | null | undefined;
+  presetValues?: ReadonlyArray<RuntimeVariantPresetValueEntryInput> | null | undefined;
   replicaCount: number;
   resourceOpts?: ReadonlyArray<ResourceOptsEntryInput> | null | undefined;
   resourceSlots?: ReadonlyArray<ResourceSlotEntryInput> | null | undefined;
@@ -58,11 +58,12 @@ export type PresetModelConfigInput = {
   service: PresetModelServiceConfigInput;
 };
 export type PresetModelServiceConfigInput = {
+  command?: string | null | undefined;
   healthCheck?: PresetModelHealthCheckInput | null | undefined;
   port: number;
   preStartActions: ReadonlyArray<PreStartActionInput>;
   shell?: string;
-  startCommand: ReadonlyArray<string>;
+  startCommand?: ReadonlyArray<string> | null | undefined;
 };
 export type PreStartActionInput = {
   action: string;
@@ -104,7 +105,7 @@ export type EnvironEntryInput = {
   key: string;
   value: string;
 };
-export type DeploymentRevisionPresetValueEntryInput = {
+export type RuntimeVariantPresetValueEntryInput = {
   presetId: string;
   value: string;
 };
@@ -420,7 +421,7 @@ return {
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "DeploymentRevisionPresetValueEntry",
+                "concreteType": "RuntimeVariantPresetValueEntry",
                 "kind": "LinkedField",
                 "name": "presetValues",
                 "plural": true,

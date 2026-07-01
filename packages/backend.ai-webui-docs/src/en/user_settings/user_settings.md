@@ -112,7 +112,7 @@ etc.).
 ### My Keypair Information
 
 Every user has at least one keypair. You can view your access key and secret key
-by clicking the 'Config' button. Remember that only one main access keypair exists.
+by clicking the `Config` button. Remember that only one main access keypair exists.
 
 ![](../images/my_keypair_management.png)
 
@@ -270,7 +270,7 @@ downloaded to a specific location.
 
 Use the drop-down menu at the top to select the type of script you want to write
 and then write the content. You can save the script by
-clicking the SAVE or SAVE AND CLOSE button. Click the DELETE button to delete
+clicking the `Save` or `Save And Close` button. Click the `Delete` button to delete
 the script.
 
 ![](../images/edit_user_config_script.png)

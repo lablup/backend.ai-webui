@@ -386,6 +386,20 @@
   "comp:BAIUserSelect": {
     "SelectUser": "Επιλογή χρήστη"
   },
+  "comp:BAIVFolderMountConfigInput": {
+    "AliasInvalid": "Μη έγκυρη μορφή διαδρομής.",
+    "AliasOverlapping": "Η διαδρομή προσάρτησης επικαλύπτεται με άλλο φάκελο.",
+    "AliasPlaceholder": "Διαδρομή προσάρτησης",
+    "AutoMountedFolders": "Φάκελοι αυτόματης προσάρτησης",
+    "Name": "Όνομα",
+    "PathAndAlias": "Διαδρομή & Ψευδώνυμο",
+    "PathAndAliasTooltip": "Η διαδρομή εντός του container όπου θα προσαρτηθεί ο φάκελος. Αφήστε κενό για να χρησιμοποιηθεί η προεπιλεγμένη διαδρομή.",
+    "RemoveFolder": "Αφαίρεση",
+    "Subpath": "Υποδιαδρομή",
+    "SubpathInvalid": "Η υποδιαδρομή πρέπει να είναι σχετική και να μην περιέχει '..'.",
+    "SubpathPlaceholder": "π.χ. dataset/train (προαιρετικό)",
+    "SubpathTooltip": "Προσαρτά έναν υποφάκελο εντός του φακέλου ως πηγή αντί της ρίζας του. Αφήστε κενό για προσάρτηση της ρίζας."
+  },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Επιλογή φακέλου"
   },

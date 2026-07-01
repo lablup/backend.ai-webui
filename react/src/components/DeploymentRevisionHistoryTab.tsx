@@ -721,13 +721,20 @@ const DeploymentRevisionHistoryTab: React.FC<
         }}
         order={queryParams.order ?? undefined}
         onChangeOrder={(newOrder) => {
+          // Coerce the cleared-sort case (`newOrder === undefined`) to `null`.
+          // nuqs skips keys whose value is `undefined` on a partial update, so
+          // passing `undefined` here would freeze `order` at its previous value
+          // and break the ascend → descend → default sort cycle. `null` clears
+          // the key and resets to the default order. Mirrors DeploymentReplicasCard.
           setQueryParams({
-            order: newOrder as
-              | (typeof availableRevisionSorterValues)[number]
-              | null,
+            order:
+              (newOrder as (typeof availableRevisionSorterValues)[number]) ??
+              null,
           });
           doRefetch({
-            orderBy: convertToOrderBy<ModelRevisionOrderBy>(newOrder),
+            orderBy: convertToOrderBy<ModelRevisionOrderBy>(
+              newOrder || '-revisionNumber',
+            ),
           });
         }}
         pagination={{

@@ -21,6 +21,7 @@ import {
   App,
   Descriptions,
   theme,
+  Tooltip,
   Typography,
   type DescriptionsProps,
 } from 'antd';
@@ -128,6 +129,14 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
       ? 'rw'
       : 'ro';
 
+  // Model project folders are read-only by design (FR-1290), matching
+  // FolderCreateModalV2. The manager used to enforce `ro` server-side and no
+  // longer seems to, but we keep enforcing it on the client to preserve that
+  // contract until the project-folder behavior is reworked.
+  const shouldDisableRWPermission =
+    vfolderNode.metadata?.usageMode === 'MODEL' &&
+    vfolderNode.accessControl?.ownershipType === 'GROUP';
+
   const items: DescriptionsProps['items'] = filterOutEmpty([
     !vfolderNode?.unmanagedPath && {
       key: 'path',
@@ -198,9 +207,27 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
           defaultValue={currentSelectPermission}
           options={[
             { value: 'ro', label: t('data.ReadOnly') },
-            { value: 'rw', label: t('data.ReadWrite') },
+            {
+              value: 'rw',
+              label: shouldDisableRWPermission ? (
+                <Tooltip
+                  title={t(
+                    'data.folders.ModelProjectFolderRestrictedToReadOnly',
+                  )}
+                >
+                  {t('data.ReadWrite')}
+                </Tooltip>
+              ) : (
+                t('data.ReadWrite')
+              ),
+              disabled: shouldDisableRWPermission,
+            },
           ]}
           onChange={(value) => {
+            // Defense-in-depth: never persist 'rw' for a restricted folder.
+            if (shouldDisableRWPermission && value === 'rw') {
+              return;
+            }
             updateMutation.mutate(
               { permission: value, id: vfolderId },
               {

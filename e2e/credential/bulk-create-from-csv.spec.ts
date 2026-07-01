@@ -320,21 +320,59 @@ test.describe(
       await closeModal(page);
     });
 
-    test('admin sees a missing-column error for a raw export CSV with no password column', async ({
+    test('admin can load a passwordless export CSV; rows show per-row password errors and submit is disabled', async ({
       page,
     }) => {
       await openBulkCreateCSVModal(page);
       await uploadCSV(page, '18-export-no-password-column.csv');
-      // No global default password is set → password column is required.
-      await expect(page.locator('.ant-message-notice')).toBeVisible({
-        timeout: 5000,
-      });
+      // The passwordless CSV still loads — password is validated per row.
+      expect(await getStat(page, 'rows loaded')).toBe(2);
+      // Both rows lack a password → per-row errors, none ready to create.
+      expect(await getStat(page, 'with errors')).toBe(2);
+      expect(await getStat(page, 'ready to create')).toBe(0);
+      // The submit button stays disabled while any row has a password error.
+      await expect(
+        page.getByRole('button', { name: /Create \d+ user/ }),
+      ).toBeDisabled();
+      // No blocking toast for this load.
+      await expect(page.locator('.ant-message-notice')).not.toBeVisible();
+      await closeModal(page);
+    });
+
+    test('admin filling the global default password reactively updates the preview and enables submit', async ({
+      page,
+    }) => {
+      await openBulkCreateCSVModal(page);
+      await uploadCSV(page, '18-export-no-password-column.csv');
+      // Loads with per-row password errors; submit disabled.
+      expect(await getStat(page, 'with errors')).toBe(2);
+      await expect(
+        page.getByRole('button', { name: /Create \d+ user/ }),
+      ).toBeDisabled();
+
+      // Typing a valid default password in the left "Global defaults" form fills
+      // the empty passwords reactively — the preview re-validates with no
+      // re-upload (the table is derived live from the global defaults).
       const dialog = page.getByRole('dialog', {
         name: 'Bulk Create Users from CSV',
       });
-      await expect(dialog.getByText('rows loaded')).not.toBeVisible({
-        timeout: 3000,
-      });
+      // Anchor off the visible "Password" form label rather than the password
+      // input's internal class, so the locator stays unambiguous even if another
+      // password input is added later.
+      const defaultPasswordInput = dialog
+        .locator('.ant-form-item')
+        .filter({ has: page.getByText('Password', { exact: true }) })
+        .locator('input');
+      await defaultPasswordInput.fill('Password!23');
+
+      // Preview updates live: per-row password errors clear, all rows ready,
+      // and the Create button enables. Poll both stats — the recalculation is
+      // driven by React re-render, so read after it settles.
+      await expect.poll(() => getStat(page, 'with errors')).toBe(0);
+      await expect.poll(() => getStat(page, 'ready to create')).toBe(2);
+      await expect(
+        page.getByRole('button', { name: /Create \d+ user/ }),
+      ).toBeEnabled();
       await closeModal(page);
     });
   },

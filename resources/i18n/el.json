@@ -424,6 +424,7 @@
     "RefreshModelInformation": "Ανανέωση πληροφοριών μοντέλου",
     "Reset": "Επαναφορά",
     "Retry": "Επανάληψη",
+    "Revoke": "Ανάκληση",
     "Save": "Σώσει",
     "SaveAndClose": "Αποθήκευσε και κλείσε",
     "SaveChanges": "Αποθήκευσε τις αλλαγές",
@@ -1864,6 +1865,22 @@
       "LoginWithRealm": "Σύνδεση με {{ realmName }}",
       "LoginWithSAML": "Σύνδεση με SAML"
     }
+  },
+  "loginHistory": {
+    "Domain": "Τομέας",
+    "FailReason": "Αιτία αποτυχίας",
+    "LoginTime": "Ώρα σύνδεσης",
+    "Result": "Αποτέλεσμα"
+  },
+  "loginSession": {
+    "AccessKey": "Κλειδί πρόσβασης",
+    "CreatedAt": "Δημιουργήθηκε στο",
+    "InvalidatedAt": "Ακυρώθηκε στο",
+    "RevokeFailed": "Αποτυχία ανάκλησης της συνεδρίας σύνδεσης.",
+    "RevokeSession": "Ανάκληση συνεδρίας",
+    "RevokeSessionConfirm": "Είστε βέβαιοι ότι θέλετε να ανακαλέσετε αυτή τη συνεδρία σύνδεσης;",
+    "RevokeSucceeded": "Η συνεδρία σύνδεσης ανακλήθηκε με επιτυχία.",
+    "User": "Χρήστης"
   },
   "logs": {
     "ErrorMessage": "Μήνυμα λάθους",
@@ -3344,6 +3361,8 @@
     "Language": "Γλώσσα",
     "LightMode": "Λειτουργία φωτός",
     "LightTheme": "Φωτεινή λειτουργία",
+    "LoginHistory": "Ιστορικό συνδέσεων",
+    "LoginSessions": "Συνεδρίες Σύνδεσης",
     "Logo": "Λογότυπο CI",
     "Logs": "Κούτσουρα",
     "MaxConcurrentUploads": "Μέγιστο όριο ταυτόχρονης μεταφόρτωσης αρχείων",

@@ -386,6 +386,20 @@
   "comp:BAIUserSelect": {
     "SelectUser": "Pilih Pengguna"
   },
+  "comp:BAIVFolderMountConfigInput": {
+    "AliasInvalid": "Format jalur tidak valid.",
+    "AliasOverlapping": "Jalur mount bertumpang tindih dengan folder lain.",
+    "AliasPlaceholder": "Jalur mount",
+    "AutoMountedFolders": "Folder mount otomatis",
+    "Name": "Nama",
+    "PathAndAlias": "Jalur & Alias",
+    "PathAndAliasTooltip": "Jalur di dalam container tempat folder akan di-mount. Kosongkan untuk menggunakan jalur default.",
+    "RemoveFolder": "Hapus",
+    "Subpath": "Subjal",
+    "SubpathInvalid": "Subjalur harus berupa jalur relatif dan tidak boleh mengandung '..'.",
+    "SubpathPlaceholder": "mis. dataset/train (opsional)",
+    "SubpathTooltip": "Mount subfolder di dalam folder sebagai sumber, bukan dari direktori root-nya. Kosongkan untuk mount dari root."
+  },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Pilih Folder"
   },

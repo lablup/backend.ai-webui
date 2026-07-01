@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4a0bc8e88964dce5d00c417f487c42ab>>
+ * @generated SignedSource<<ad158f99f4cc02960cca44b44d3dd8ec>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -317,7 +317,7 @@ return {
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "DeploymentRevisionPresetValueEntry",
+                "concreteType": "RuntimeVariantPresetValueEntry",
                 "kind": "LinkedField",
                 "name": "presetValues",
                 "plural": true,

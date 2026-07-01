@@ -67,35 +67,31 @@ const ModelConfigItem: React.FC<{
         showDivider
       >
         <BAIFlex direction="column" align="stretch" gap="xs">
-          <BAIFlex gap="md" wrap="wrap">
-            <Form.Item
-              {...restField}
-              name={[listItemName, 'service', 'port']}
-              label={t('adminDeploymentPreset.modelDef.Port')}
-              style={{ flex: 1, minWidth: 100 }}
-              rules={[{ required: true }]}
-            >
-              <InputNumber
-                // Backend `PresetModelServiceConfigInput.port` is `gt=1`
-                // (exclusive), so the lowest accepted port is 2.
-                min={2}
-                max={65535}
-                style={{ width: '100%' }}
-                placeholder={t('general.Example', { value: '8080' })}
-              />
-            </Form.Item>
-            <Form.Item
-              {...restField}
-              name={[listItemName, 'service', 'shell']}
-              label={t('adminDeploymentPreset.modelDef.Shell')}
-              style={{ flex: 2, minWidth: 160 }}
-              rules={[{ required: true }]}
-            >
-              <Input
-                placeholder={t('general.Example', { value: '/bin/bash' })}
-              />
-            </Form.Item>
-          </BAIFlex>
+          {/*
+            `shell` is intentionally not exposed here. It only affects the
+            deprecated single-string `command` path; this form always submits
+            the list `startCommand`, on which the backend silently ignores
+            `shell` (see `_wrap_str_start_command_into_argv`). Showing a field
+            that is a no-op in this flow — and whose value otherwise defaults to
+            `/bin/bash` — is more confusing than helpful, so it stays hidden
+            until the shell/command UX is decided. Any existing value still
+            round-trips on edit via `form.getFieldsValue(true)`. (FR-3221)
+          */}
+          <Form.Item
+            {...restField}
+            name={[listItemName, 'service', 'port']}
+            label={t('adminDeploymentPreset.modelDef.Port')}
+            rules={[{ required: true }]}
+          >
+            <InputNumber
+              // Backend `PresetModelServiceConfigInput.port` is `gt=1`
+              // (exclusive), so the lowest accepted port is 2.
+              min={2}
+              max={65535}
+              style={{ width: '100%' }}
+              placeholder={t('general.Example', { value: '8080' })}
+            />
+          </Form.Item>
           <Form.Item
             {...restField}
             name={[listItemName, 'service', 'startCommand']}

@@ -424,6 +424,7 @@
     "RefreshModelInformation": "Обновить информацию о модели",
     "Reset": "Перезагрузить",
     "Retry": "Повторить",
+    "Revoke": "Отозвать",
     "Save": "Сохранить",
     "SaveAndClose": "Сохрани и закрой",
     "SaveChanges": "Сохранить изменения",
@@ -1864,6 +1865,22 @@
       "LoginWithRealm": "Вход в систему с {{ realmName }}",
       "LoginWithSAML": "Вход в систему с помощью SAML"
     }
+  },
+  "loginHistory": {
+    "Domain": "Домен",
+    "FailReason": "Причина сбоя",
+    "LoginTime": "Время входа",
+    "Result": "Результат"
+  },
+  "loginSession": {
+    "AccessKey": "Ключ доступа",
+    "CreatedAt": "Создано в",
+    "InvalidatedAt": "Аннулировано в",
+    "RevokeFailed": "Не удалось отозвать сеанс входа.",
+    "RevokeSession": "Отозвать сеанс",
+    "RevokeSessionConfirm": "Вы уверены, что хотите отозвать этот сеанс входа?",
+    "RevokeSucceeded": "Сеанс входа успешно отозван.",
+    "User": "Пользователь"
   },
   "logs": {
     "ErrorMessage": "Сообщение об ошибке",
@@ -3344,6 +3361,8 @@
     "Language": "Язык",
     "LightMode": "Светлый режим",
     "LightTheme": "Светлый режим",
+    "LoginHistory": "История входов",
+    "LoginSessions": "Сеансы входа",
     "Logo": "Логотип CI",
     "Logs": "Журналы",
     "MaxConcurrentUploads": "Максимальный лимит одновременной загрузки файлов",

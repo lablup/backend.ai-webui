@@ -17,6 +17,7 @@ import {
   BAITable,
   BAIUnmountAfterClose,
   BAIDoubleTag,
+  BAIId,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { ScrollTextIcon } from 'lucide-react';
@@ -144,28 +145,12 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
       title: t('kernel.KernelId'),
       fixed: 'left',
       dataIndex: 'row_id',
-      render: (row_id) => (
-        <>
-          <Typography.Text copyable ellipsis>
-            {row_id}
-          </Typography.Text>
-        </>
-      ),
+      render: (row_id) => (_.isEmpty(row_id) ? '-' : <BAIId uuid={row_id} />),
     },
     {
       title: t('kernel.ContainerId'),
       dataIndex: 'container_id',
-      onCell: () => ({
-        style: { maxWidth: 250 },
-      }),
-      render: (id) =>
-        _.isEmpty(id) ? (
-          '-'
-        ) : (
-          <Typography.Text copyable ellipsis>
-            {id}
-          </Typography.Text>
-        ),
+      render: (id) => (_.isEmpty(id) ? '-' : <BAIId uuid={id} />),
     },
   ]);
 

@@ -424,6 +424,7 @@
     "RefreshModelInformation": "Загварын мэдээллийг шинэчлэх",
     "Reset": "Дахин тохируулах",
     "Retry": "Дахин оролдох",
+    "Revoke": "Цуцлах",
     "Save": "Хадгалах",
     "SaveAndClose": "Хадгалах, хаах",
     "SaveChanges": "Өөрчлөлтүүдийг хадгалах",
@@ -1865,6 +1866,22 @@
       "LoginWithRealm": "{{ realmName }}-р нэвтэрнэ үү",
       "LoginWithSAML": "SAML-ээр нэвтэрнэ үү"
     }
+  },
+  "loginHistory": {
+    "Domain": "Домэйн",
+    "FailReason": "Амжилтгүй болсон шалтгаан",
+    "LoginTime": "Нэвтэрсэн цаг",
+    "Result": "Үр дүн"
+  },
+  "loginSession": {
+    "AccessKey": "Хандалтын түлхүүр",
+    "CreatedAt": "Үүсгэсэн",
+    "InvalidatedAt": "Хүчингүй болгосон",
+    "RevokeFailed": "Нэвтрэх сессийг цуцлахад алдаа гарлаа.",
+    "RevokeSession": "Сессийг цуцлах",
+    "RevokeSessionConfirm": "Энэ нэвтрэх сессийг цуцлахдаа итгэлтэй байна уу?",
+    "RevokeSucceeded": "Нэвтрэх сессийг амжилттай цуцаллаа.",
+    "User": "Хэрэглэгч"
   },
   "logs": {
     "ErrorMessage": "Алдааны зурвас",
@@ -3346,6 +3363,8 @@
     "Language": "Хэл",
     "LightMode": "Гэрэл горим",
     "LightTheme": "Цайвар горим",
+    "LoginHistory": "Нэвтрэх түүх",
+    "LoginSessions": "Нэвтрэх сессүүд",
     "Logo": "Лого (CI)",
     "Logs": "Бүртгэл",
     "MaxConcurrentUploads": "Макс тохиролцсон файлын байршуулалт",

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9459acab71c7c58d7a3f3e0f0591f9f1>>
+ * @generated SignedSource<<2e2eed56717cd3ccab54e1ba0c9b1e06>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -67,7 +67,7 @@ export type AdminDeploymentPresetSettingPageContent_preset$data = {
           readonly action: string;
           readonly args: any;
         }>;
-        readonly shell: string;
+        readonly shell: string | null | undefined;
         readonly startCommand: ReadonlyArray<string> | null | undefined;
       } | null | undefined;
     }>;
@@ -321,7 +321,7 @@ return {
     {
       "alias": null,
       "args": null,
-      "concreteType": "DeploymentRevisionPresetValueEntry",
+      "concreteType": "RuntimeVariantPresetValueEntry",
       "kind": "LinkedField",
       "name": "presetValues",
       "plural": true,

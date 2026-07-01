@@ -3,16 +3,15 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { DeploymentDetailPageQuery } from '../__generated__/DeploymentDetailPageQuery.graphql';
-import BAIErrorBoundary, {
-  ErrorWithGraphQL,
-} from '../components/BAIErrorBoundary';
-import DeploymentAccessTokensTab from '../components/DeploymentAccessTokensTab';
+import { ErrorWithGraphQL } from '../components/BAIErrorBoundary';
+import DeploymentAccessTokensCard from '../components/DeploymentAccessTokensCard';
 import DeploymentAddRevisionModal, {
   type DeploymentAddRevisionModalCreatedRevision,
 } from '../components/DeploymentAddRevisionModal';
-import DeploymentAutoScalingTab from '../components/DeploymentAutoScalingTab';
-import DeploymentConfigurationSection from '../components/DeploymentConfigurationSection';
-import DeploymentReplicasTab from '../components/DeploymentReplicasTab';
+import DeploymentAutoScalingCard from '../components/DeploymentAutoScalingCard';
+import DeploymentBasicInfoCard from '../components/DeploymentBasicInfoCard';
+import DeploymentReplicasCard from '../components/DeploymentReplicasCard';
+import DeploymentRevisionCard from '../components/DeploymentRevisionCard';
 import DeploymentRevisionDetailDrawer from '../components/DeploymentRevisionDetailDrawer';
 import SwitchToProjectButton from '../components/SwitchToProjectButton';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
@@ -22,20 +21,10 @@ import {
   getPathFromMenuKey,
   useWebUIMenuItems,
 } from '../hooks/useWebUIMenuItems';
-import { QuestionCircleOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import {
-  Alert,
-  Button,
-  Result,
-  Skeleton,
-  Tooltip,
-  Typography,
-  theme,
-} from 'antd';
+import { Alert, Button, Result, Typography, theme } from 'antd';
 import {
   BAIButton,
-  BAICard,
   BAIDeploymentStatus,
   BAIDeploymentStatusTag,
   BAIFlex,
@@ -47,10 +36,15 @@ import {
 } from 'backend.ai-ui';
 import type { GraphQLFormattedError } from 'graphql';
 import { BotMessageSquareIcon, PlusIcon } from 'lucide-react';
-import React, { Suspense, useRef, useState, useTransition } from 'react';
+import React, { useRef, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useParams } from 'react-router-dom';
+
+// Poll interval (ms) for refreshing the page query while a revision rollout is
+// in progress, so the deployment state moves off the "applying" banner once the
+// rollout settles.
+const REVISION_ROLLOUT_POLL_INTERVAL = 5000;
 
 const DeploymentDetailPage: React.FC = () => {
   'use memo';
@@ -77,7 +71,7 @@ const DeploymentDetailPage: React.FC = () => {
     { setLeft: closeAddRevision, setRight: openAddRevision },
   ] = useToggle(false);
   // Lifted here so the "Private deployment" alert can open the same
-  // create-access-token modal that DeploymentAccessTokensTab owns — the alert
+  // create-access-token modal that DeploymentAccessTokensCard owns — the alert
   // CTA and the section's "+" button share one flow.
   const [
     createAccessTokenOpen,
@@ -134,10 +128,11 @@ const DeploymentDetailPage: React.FC = () => {
               }
             }
             ...DeploymentAddRevisionModal_deployment
-            ...DeploymentConfigurationSection_deployment
-            ...DeploymentReplicasTab_deployment
-            ...DeploymentAccessTokensTab_deployment
-            ...DeploymentAutoScalingTab_deployment
+            ...DeploymentBasicInfoCard_deployment
+            ...DeploymentRevisionCard_deployment
+            ...DeploymentReplicasCard_deployment
+            ...DeploymentAccessTokensCard_deployment
+            ...DeploymentAutoScalingCard_deployment
           }
         }
       `,
@@ -200,6 +195,14 @@ const DeploymentDetailPage: React.FC = () => {
   // warning would otherwise contradict that state.
   const hasNoRevision =
     !deployment.currentRevision && !deployment.deployingRevision;
+  // A different revision is rolling out. Drive the page query's auto-refresh
+  // (through the always-mounted BasicInfoCard refresh button) while this is
+  // true so the rollout state keeps refreshing no matter which revision
+  // sub-tab is active. Previously this poll lived in the Current revision tab,
+  // which stopped polling once the user switched tabs and unmounted it.
+  const isDeployingDifferentRevision =
+    !!deployment.deployingRevision &&
+    deployment.deployingRevision.id !== deployment.currentRevision?.id;
   const hasEndpointUrl = !!deployment.networkAccess.endpointUrl;
   const hasAccessTokens = (deployment.accessTokens?.count ?? 0) > 0;
   const isDeploymentDestroying =
@@ -372,39 +375,28 @@ const DeploymentDetailPage: React.FC = () => {
         </Typography.Title>
         <BAIDeploymentStatusTag status={deploymentStatus} />
       </BAIFlex>
-      <DeploymentConfigurationSection
+      <DeploymentBasicInfoCard
         deploymentFrgmt={deployment}
-        revisionFetchKey={revisionFetchKey}
         isPendingRefetch={isPendingRefetch}
         onRefetch={handleRefetch}
+        autoUpdateDelay={
+          isDeployingDifferentRevision ? REVISION_ROLLOUT_POLL_INTERVAL : null
+        }
+      />
+      <DeploymentRevisionCard
+        deploymentFrgmt={deployment}
+        revisionFetchKey={revisionFetchKey}
         onAddRevision={openAddRevision}
         revisionCardRef={revisionsSectionRef}
+        isAddRevisionDisabled={isDeploymentDestroying || isProjectMismatch}
       />
-      <BAICard
-        title={
-          <BAIFlex gap="xs" align="center">
-            {t('deployment.tab.Replicas')}
-            <Tooltip title={t('deployment.tab.description.Replicas')}>
-              <QuestionCircleOutlined
-                style={{ color: token.colorTextDescription }}
-              />
-            </Tooltip>
-          </BAIFlex>
-        }
-        styles={{ body: { paddingTop: 0 } }}
-      >
-        <BAIErrorBoundary>
-          <Suspense fallback={<Skeleton active />}>
-            <DeploymentReplicasTab
-              deploymentFrgmt={deployment}
-              deploymentId={deploymentGlobalId}
-              replicaFetchKey={replicaFetchKey}
-            />
-          </Suspense>
-        </BAIErrorBoundary>
-      </BAICard>
-      <DeploymentAutoScalingTab deploymentFrgmt={deployment} />
-      <DeploymentAccessTokensTab
+      <DeploymentReplicasCard
+        deploymentFrgmt={deployment}
+        deploymentId={deploymentGlobalId}
+        replicaFetchKey={replicaFetchKey}
+      />
+      <DeploymentAutoScalingCard deploymentFrgmt={deployment} />
+      <DeploymentAccessTokensCard
         cardRef={accessTokensSectionRef}
         deploymentFrgmt={deployment}
         deploymentId={deploymentGlobalId}

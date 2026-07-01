@@ -523,11 +523,9 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
       columnAliases,
     );
 
-    // password is only required when no global default password is configured —
-    // export CSVs never include a password column, so a default unlocks them.
-    const missingColumns = findMissingRequiredColumns(columnsInFile, {
-      hasGlobalPassword: !!globalDefaults.defaultPassword.trim(),
-    });
+    // Only email/username are blocking columns; password is validated per row,
+    // so a passwordless CSV still loads (missing passwords become row errors).
+    const missingColumns = findMissingRequiredColumns(columnsInFile);
     if (missingColumns.length > 0) {
       message.error(
         t('credential.validation.CSVMissingColumns', {

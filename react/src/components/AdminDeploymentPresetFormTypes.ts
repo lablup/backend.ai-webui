@@ -22,12 +22,22 @@ export type PreStartActionFormValue = {
 };
 
 export type ModelServiceFormValue = {
-  // `service` itself is optional on a model, but when present these three are
-  // always provided: the form marks them `required` (see
-  // AdminDeploymentPresetModelConfigItem) and the create path's
-  // PresetModelServiceConfigInput requires `port` / `startCommand` non-null.
+  // `service` itself is optional on a model, but when present `port` /
+  // `startCommand` are always provided by the form, which marks them
+  // `required` (see AdminDeploymentPresetModelConfigItem). Of these the create
+  // input (PresetModelServiceConfigInput) only requires `port` non-null;
+  // `startCommand` became optional/deprecated in 26.7.0 (superseded by the
+  // single-string `command`), but this form still emits `startCommand`, so it
+  // stays required at the UI level.
+  //
+  // `shell` is NOT exposed in the form UI: it only affects the deprecated
+  // string `command` path and is a silent no-op for the list `startCommand`
+  // this form submits, so the field is hidden pending a shell/command UX
+  // decision (FR-3221). It is still typed (optional, `string | undefined` —
+  // never null, to stay assignable to the create input which forbids null) so
+  // an existing value round-trips on edit via `form.getFieldsValue(true)`.
   port: number;
-  shell: string;
+  shell?: string;
   startCommand: string;
   preStartActions?: PreStartActionFormValue[];
   enableHealthCheck?: boolean;
