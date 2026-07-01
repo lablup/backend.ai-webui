@@ -10,7 +10,7 @@ import {
   createAnonymousBackendaiClient,
   useWebUINavigate,
 } from '../hooks';
-import { useDeviceMetaData } from '../hooks/backendai';
+import { useDeviceMetaData, useImageMetaData } from '../hooks/backendai';
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
 import NotificationHost from './NotificationHost';
@@ -235,10 +235,16 @@ const commonAppProps: AppProps = {
 };
 
 const BAIMetaDataWrapper = ({ children }: { children: ReactNode }) => {
-  const { data } = useDeviceMetaData();
+  const { data: deviceMetaData } = useDeviceMetaData();
+  const { data: imageMetaData } = useImageMetaData();
 
   return (
-    <BAIMetaDataProvider deviceMetaData={data}>{children}</BAIMetaDataProvider>
+    <BAIMetaDataProvider
+      deviceMetaData={deviceMetaData}
+      imageMetaData={imageMetaData}
+    >
+      {children}
+    </BAIMetaDataProvider>
   );
 };
 

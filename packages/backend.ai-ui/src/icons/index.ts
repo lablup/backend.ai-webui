@@ -48,3 +48,4 @@ export { default as BAIUploadIcon } from './BAIUploadIcon';
 export { default as BAIURLStartIcon } from './BAIURLStartIcon';
 export { default as BAIUserOutlinedIcon } from './BAIUserOutlinedIcon';
 export { default as BAIUserUnionIcon } from './BAIUserUnionIcon';
+export * from './images';
