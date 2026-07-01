@@ -749,8 +749,15 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
         ) : selectedProperty?.type === 'number' ? (
           // `number` properties get a numeric-only input so non-numeric text
           // can never reach `Number(value)` and surface as a `NaN` condition.
+          // Guard the displayed value too: switching from a string property
+          // can carry over non-numeric `search`, whose `Number(...)` is `NaN`,
+          // which antd `InputNumber` cannot render.
           <InputNumber
-            value={search === '' ? null : Number(search)}
+            value={
+              search === '' || Number.isNaN(Number(search))
+                ? null
+                : Number(search)
+            }
             onChange={(val) => {
               setIsValid(true);
               setSearch(_.isNil(val) ? '' : String(val));
