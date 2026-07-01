@@ -4,6 +4,7 @@
  */
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
+import { useQueryClient } from '@tanstack/react-query';
 import { useDebounce, useNetwork } from 'ahooks';
 import { Alert } from 'antd';
 import { createStyles } from 'antd-style';
@@ -12,6 +13,13 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const isDisplayedNetworkStatusState = atom(false);
+
+// Shared between the reachability probe query and the reset-on-reconnect effect
+// so the two never drift out of sync.
+const ENDPOINT_REACHABILITY_PROBE_KEY = [
+  'NetworkStatusBanner',
+  'endpointReachabilityProbe',
+] as const;
 
 const useStyles = createStyles(({ token, css }) => ({
   borderError: css`
@@ -30,6 +38,7 @@ const NetworkStatusBanner = () => {
   const { t } = useTranslation();
   const network = useNetwork();
   const client = useSuspendedBackendaiClient();
+  const queryClient = useQueryClient();
   const setDisplayedStatus = useSetAtom(isDisplayedNetworkStatusState);
   const { styles } = useStyles();
   const [showSoftTimeoutAlert, setShowSoftTimeoutAlert] = useState(false);
@@ -76,11 +85,7 @@ const NetworkStatusBanner = () => {
   // is used directly here because `get_manager_version` caches its result
   // after the first success and would no longer hit the network post-login.
   const { isError: endpointUnreachable } = useTanQuery({
-    queryKey: [
-      'NetworkStatusBanner',
-      'endpointReachabilityProbe',
-      client._config.endpoint,
-    ],
+    queryKey: [...ENDPOINT_REACHABILITY_PROBE_KEY, client._config.endpoint],
     queryFn: async () => {
       // Bound the probe so a genuinely unreachable endpoint surfaces the
       // banner within ~5s instead of hanging on the client-wide timeout.
@@ -91,10 +96,22 @@ const NetworkStatusBanner = () => {
     // the banner reflects the current endpoint reachability, not a stale
     // one-shot result.
     enabled: browserOffline,
-    refetchInterval: browserOffline ? 5_000 : false,
+    // A disabled query does not poll, so this only runs while `browserOffline`.
+    refetchInterval: 5_000,
     retry: false,
     staleTime: 0,
   });
+
+  // The query observer stays mounted for the component's lifetime, so a probe
+  // error from one offline episode would linger in the cache and briefly flash
+  // the banner at the start of the next episode (before the fresh probe
+  // resolves). Reset the cached probe state whenever the browser is back online
+  // so each offline episode starts from a clean slate.
+  useEffect(() => {
+    if (!browserOffline) {
+      queryClient.resetQueries({ queryKey: ENDPOINT_REACHABILITY_PROBE_KEY });
+    }
+  }, [browserOffline, queryClient]);
 
   // Show the offline banner only when the browser reports offline AND the
   // endpoint probe confirms it is actually unreachable. While the probe is in
