@@ -1,12 +1,12 @@
 # Build and release workflow for Backend.AI Desktop and WebUI bundle.
 #
-# Architecture: 4 parallel jobs (build_docs is fully independent, the others
-# share a web build step).
+# Architecture: parallel jobs. The web/desktop chain shares a web build step;
+# the docs chain (resolve_versions → build_docs) runs independently of it.
 #
 #   build_web (ubuntu) ──┬──> build_mac (macos)    → DMG x64/arm64 + local proxy
 #                        ├──> build_desktop (ubuntu) → Win/Linux ZIP x64/arm64 + local proxy
 #                        └──> upload web bundle
-#   build_docs (ubuntu, independent)               → User Guide PDFs (en/ko/ja/th)
+#   resolve_versions (ubuntu) ──> build_docs (Playwright container) → User Guide PDFs (en/ko/ja/th)
 #
 # Key optimizations over the previous single-job approach:
 #   1. Parallel jobs: macOS + win/linux + docs builds run concurrently (~10 min saved)
@@ -14,7 +14,8 @@
 #   3. Parallel local proxy compilation within each job (~3 min saved)
 #   4. Optimized ZIP compression level (-6 vs -9, marginal size diff, ~1 min saved)
 #   5. PDF generation reuses one Chromium instance and renders languages in
-#      parallel; Playwright browsers are cached across runs.
+#      parallel; the browser is pre-baked into the Playwright container, so
+#      there is no cdn.playwright.dev download at release time (FR-3225).
 
 name: Build and Release Packages
 on:
@@ -207,23 +208,23 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # ──────────────────────────────────────────────────────────────────────
-  # Job 4: Build per-language User Guide PDFs (ubuntu, target ~5 min)
+  # Job 4a: Resolve the Playwright version (ubuntu, ~1 min)
   #
-  # Independent of the web/desktop jobs — only needs the docs sources under
-  # `packages/backend.ai-webui-docs/src/`. Runs in parallel with build_mac
-  # and build_desktop, so a healthy run does not extend the overall wall
-  # clock (mac is the current critical path at ~10 min).
-  #
-  # Failure handling is scoped to the PDF build step itself (not the whole
-  # job), so partial per-language failures degrade gracefully but a full
-  # generator failure (all languages failed → generate-pdf.ts exits non-
-  # zero) still fails the job. This prevents shipping a release with zero
-  # PDF assets going unnoticed.
+  # build_docs runs inside the official Playwright container, whose tag MUST
+  # match the `playwright` version resolved from the lockfile so the baked-in
+  # browsers are used (no cdn.playwright.dev download). A `container.image`
+  # value is fixed before any step runs, so it cannot reference a step output
+  # from its own job — but it CAN reference `needs.<job>.outputs.*`. This tiny
+  # job derives the version once and hands it to build_docs, keeping the image
+  # tag in lockstep with package.json automatically (no manual bump). FR-3225.
   # ──────────────────────────────────────────────────────────────────────
-  build_docs:
+  resolve_versions:
+    # Read-only: this job only derives a version string from the checkout.
     permissions:
-      contents: write
+      contents: read
     runs-on: ubuntu-latest
+    outputs:
+      playwright: ${{ steps.pw.outputs.version }}
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v5
@@ -242,52 +243,87 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      # Cache the Playwright browser binaries (~150 MB Chromium download).
-      # The lockfile hash keys the cache so a Playwright version bump
-      # naturally invalidates the cache without manual intervention.
-      - name: Cache Playwright browsers
-        id: playwright-cache
-        uses: actions/cache@v4
+      - id: pw
+        name: Resolve Playwright version
+        run: echo "version=$(pnpm --filter backend.ai-webui-docs exec playwright --version | cut -d' ' -f2)" >> "$GITHUB_OUTPUT"
+
+  # ──────────────────────────────────────────────────────────────────────
+  # Job 4b: Build per-language User Guide PDFs (target ~5-7 min)
+  #
+  # Runs INSIDE the official Playwright container so Chromium and its OS deps
+  # are already baked into the image — there is NO cdn.playwright.dev download
+  # at release time. This is the FR-3225 fix: v26.4.10 shipped with zero PDFs
+  # because that download stalled for ~6h (a GitHub-runner ↔ Google Cloud
+  # Storage network issue, not a broken build) and rode the default job cap.
+  # The image is pulled from Microsoft Container Registry (Azure) — the same
+  # network as the runner — sidestepping the fragile GCS path entirely. The
+  # tag comes from `resolve_versions`, so it always matches the npm
+  # `playwright` version (a mismatch would silently re-trigger the download).
+  #
+  # Independent of the web/desktop jobs — only needs the docs sources under
+  # `packages/backend.ai-webui-docs/src/`.
+  #
+  # Failure handling: generate-pdf.ts degrades past per-language failures and
+  # exits non-zero only if *every* language failed, so a partial run still
+  # uploads what succeeded. The job is intentionally NOT `continue-on-error`:
+  # a total PDF failure must fail the run loudly so a zero-PDF release cannot
+  # go unnoticed again.
+  # ──────────────────────────────────────────────────────────────────────
+  build_docs:
+    needs: resolve_versions
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v${{ needs.resolve_versions.outputs.playwright }}-noble
+    # With browsers pre-baked, the job is dominated by the ~5-7 min PDF render
+    # plus the image pull, so this cap only trips on a genuine hang.
+    timeout-minutes: 30
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v5
+        name: Install pnpm
         with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          run_install: false
 
-      - name: Install Playwright Chromium
-        run: pnpm --filter backend.ai-webui-docs exec playwright install --with-deps chromium
+      - name: Install Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
 
-      # PDF rendering uses two distinct font paths that need different fonts:
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      # PDF rendering uses two distinct font paths:
       #
-      # 1. Body text — rendered by Chromium from HTML. Resolves the CSS
-      #    font-family (see styles.ts) via fontconfig, so it understands
-      #    .ttc collections. `fonts-noto-cjk` provides "Noto Sans CJK KR/JP/TC"
-      #    which the CSS lists as the canonical CJK body font.
-      #
+      # 1. Body text — rendered by Chromium from HTML via fontconfig.
+      #    `fonts-noto-cjk` provides "Noto Sans CJK KR/JP/TC", the canonical
+      #    CJK body font referenced by the CSS (styles.ts).
       # 2. Header/footer — stamped post-render by pdf-lib, which cannot embed
-      #    .ttc collections. So we additionally install language-specific
-      #    single-face packages whose paths are listed in
-      #    DEFAULT_CJK_FONT_CANDIDATES (pdf-renderer.ts):
-      #      - fonts-nanum         → /usr/share/fonts/truetype/nanum/NanumBarunGothic.ttf  (ko)
-      #      - fonts-takao-gothic  → /usr/share/fonts/truetype/takao-gothic/TakaoGothic.ttf (ja)
-      #      - fonts-thai-tlwg     → /usr/share/fonts/opentype/tlwg/Loma.otf | Garuda.ttf  (th)
+      #    .ttc collections, so it needs language-specific single-face fonts
+      #    (paths in DEFAULT_CJK_FONT_CANDIDATES, pdf-renderer.ts):
+      #      - fonts-nanum        → NanumBarunGothic.ttf  (ko)
+      #      - fonts-takao-gothic → TakaoGothic.ttf        (ja)
+      #      - fonts-thai-tlwg    → Loma.otf | Garuda.ttf  (th)
       #
-      # Languages whose pdf-lib font is missing will be reported as a failure by
-      # generate-pdf.ts but will not abort the other language renders.
+      # The container runs as root, so no `sudo`. Best-effort: a missing
+      # pdf-lib font fails only that language's header stamp, not the others.
       - name: Install CJK + Thai fonts (best effort)
         run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
+          apt-get update
+          apt-get install -y --no-install-recommends \
             fonts-noto-cjk \
             fonts-nanum fonts-takao-gothic fonts-thai-tlwg || true
           fc-cache -f || true
 
-      # generate-pdf.ts continues past per-language failures and exits
-      # non-zero only if *every* requested language failed. Combined with
-      # `continue-on-error: true` on the job, a partial PDF run still
-      # uploads the languages that succeeded.
       - name: Build PDFs (en/ko/ja/th)
         run: pnpm --filter backend.ai-webui-docs run pdf:all
 
       - name: Stage PDFs for upload
+        shell: bash
         run: |
           mkdir -p ./app
           if compgen -G "packages/backend.ai-webui-docs/dist/*.pdf" > /dev/null; then
