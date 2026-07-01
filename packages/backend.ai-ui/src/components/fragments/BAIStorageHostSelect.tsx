@@ -241,9 +241,12 @@ const BAIStorageHostSelect: React.FC<BAIStorageHostSelectProps> = ({
             }
       }
       value={
-        controllableValue !== deferredControllableValue
+        // antd treats `value={undefined}` as uncontrolled and keeps the last
+        // selection. Use `null` for the empty case so the Select stays
+        // controlled and clears.
+        (controllableValue !== deferredControllableValue
           ? optimisticValueWithLabel
-          : controllableValueWithLabel
+          : controllableValueWithLabel) ?? null
       }
       labelInValue
       labelRender={({ label }) => {
