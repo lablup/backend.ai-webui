@@ -45,10 +45,40 @@ export type BrandingConfig = {
   companyName?: string;
   brandName?: string;
 };
+export type ThemeFamilyConfig = {
+  /** Ant Design theme config for the light scheme of this family. */
+  light: ThemeConfig;
+  /** Ant Design theme config for the dark scheme of this family. */
+  dark: ThemeConfig;
+  /** Human-readable label shown in the family selector. Falls back to the key. */
+  label?: string;
+  /**
+   * How this family's header handles text/icon contrast. Drives the header text
+   * color and the conditional ReverseThemeProvider wrap in WebUIHeader.
+   * - omitted: historical behavior (light text via `colorBgBase` + always
+   *   reversed children). The built-in `default` family is unaffected.
+   * - `'dark'`: a saturated/dark header in both modes -> always light
+   *   text/icons.
+   * - `'light'`: a fixed light header in both modes -> always dark text/icons.
+   * - `'auto'`: a frosted/translucent header that follows the app light/dark
+   *   mode -> `colorText` + no reversal.
+   */
+  headerScheme?: 'light' | 'dark' | 'auto';
+};
+
 export type CustomThemeConfig = {
   fontFamily?: string;
   light: ThemeConfig;
   dark: ThemeConfig;
+  /**
+   * Additional named theme families beyond the built-in `default` family
+   * (which is synthesized from the top-level `light`/`dark` above). Keyed by
+   * family id (e.g. `stained`, `glass`). Optional for backward compatibility:
+   * a theme.json without `families` yields a single-entry catalog.
+   */
+  families?: Record<string, ThemeFamilyConfig>;
+  /** Operator default family key. Falls back to `default` when unset/unknown. */
+  defaultFamily?: string;
   logo: LogoConfig;
   sider?: SiderConfig;
   branding?: BrandingConfig;

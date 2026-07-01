@@ -9,13 +9,25 @@ import React, { useContext } from 'react';
 
 interface ReverseThemeProviderProps extends ConfigProviderProps {
   className?: string;
+  /**
+   * When false, render children unchanged (no scheme reversal). Lets callers
+   * decide per-context whether the reversed contrast is wanted, e.g. the
+   * header keeps its reversed icons on a saturated theme family, but renders
+   * children normally on a frosted "auto" family. Defaults to true.
+   */
+  enabled?: boolean;
 }
 const ReverseThemeProvider: React.FC<ReverseThemeProviderProps> = ({
+  enabled = true,
   ...props
 }) => {
   const themeConfig = useCustomThemeConfig();
   const config = useContext(ConfigProvider.ConfigContext);
   const isParentDark = config.theme?.algorithm === theme.darkAlgorithm;
+
+  if (!enabled) {
+    return <>{props.children}</>;
+  }
 
   return (
     <ConfigProvider

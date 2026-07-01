@@ -15,6 +15,35 @@
     "dark": {
       "$ref": "./antdThemeConfig.schema.json"
     },
+    "families": {
+      "type": "object",
+      "description": "Additional named theme families beyond the built-in 'default' family (synthesized from the top-level light/dark). Keyed by family id (e.g. 'stained', 'glass').",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "light": {
+            "$ref": "./antdThemeConfig.schema.json"
+          },
+          "dark": {
+            "$ref": "./antdThemeConfig.schema.json"
+          },
+          "label": {
+            "type": "string",
+            "description": "Human-readable label shown in the family selector. Falls back to the family key."
+          },
+          "headerScheme": {
+            "type": "string",
+            "enum": ["light", "dark", "auto"],
+            "description": "How the family's header handles text/icon contrast: 'dark' (light text on a saturated header), 'light' (dark text on a light header), or 'auto' (frosted header that follows the app light/dark mode). Omit to keep the historical reversed-children behavior."
+          }
+        },
+        "required": ["light", "dark"]
+      }
+    },
+    "defaultFamily": {
+      "type": "string",
+      "description": "Operator default family key. Falls back to 'default' when unset or unknown."
+    },
     "logo": {
       "type": "object",
       "description": "Properties to customize the site's logo, considering both light and dark modes.",
