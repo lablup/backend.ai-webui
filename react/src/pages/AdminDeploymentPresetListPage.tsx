@@ -23,7 +23,6 @@ import {
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
-  type GraphQLFilter,
   INITIAL_FETCH_KEY,
   toLocalId,
   useBAILogger,
@@ -66,7 +65,9 @@ const AdminDeploymentPresetListPage: React.FC = () => {
   const [queryParams, setQueryParams] = useQueryStates(
     {
       order: parseAsString.withDefault('-createdAt'),
-      filter: parseAsJson<GraphQLFilter>((value) => value as GraphQLFilter),
+      filter: parseAsJson<DeploymentRevisionPresetFilter>(
+        (value) => value as DeploymentRevisionPresetFilter,
+      ),
     },
     {
       history: 'replace',
@@ -76,9 +77,7 @@ const AdminDeploymentPresetListPage: React.FC = () => {
   const [fetchKey, updateFetchKey] = useFetchKey();
 
   const queryVariables = {
-    filter: (queryParams.filter ?? undefined) as
-      | DeploymentRevisionPresetFilter
-      | undefined,
+    filter: queryParams.filter ?? undefined,
     orderBy: convertToOrderBy<DeploymentRevisionPresetOrderBy>(
       queryParams.order,
     ),
@@ -156,7 +155,7 @@ const AdminDeploymentPresetListPage: React.FC = () => {
     <BAIFlex direction="column" align="stretch" gap={'sm'}>
       <BAIFlex justify="between" wrap="wrap" gap={'sm'}>
         <BAIFlex gap={'sm'} align="start" wrap="wrap" style={{ flexShrink: 1 }}>
-          <BAIGraphQLPropertyFilter
+          <BAIGraphQLPropertyFilter<DeploymentRevisionPresetFilter>
             filterProperties={[
               {
                 key: 'name',

@@ -5,6 +5,7 @@
 import {
   AdminUserManagementQuery,
   AdminUserManagementQuery$data,
+  UserV2Filter,
   UserV2OrderBy,
 } from '../__generated__/AdminUserManagementQuery.graphql';
 import { AdminUserManagementUpdateUserMutation } from '../__generated__/AdminUserManagementUpdateUserMutation.graphql';
@@ -35,7 +36,6 @@ import {
   BAIFlex,
   BAIGraphQLFilterProperty,
   BAIGraphQLPropertyFilter,
-  GraphQLFilter,
   useBAILogger,
   BAIFetchKeyButton,
   BAIAdminUserV2Table,
@@ -73,7 +73,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
 
   const [queryParams, setQueryParams] = useQueryStates(
     {
-      filter: parseAsJson<GraphQLFilter>((value) => value as GraphQLFilter),
+      filter: parseAsJson<UserV2Filter>((value) => value as UserV2Filter),
       order: parseAsStringLiteral(availableUserV2SorterValues),
       status: parseAsStringLiteral(['ACTIVE', 'INACTIVE']).withDefault(
         'ACTIVE',
@@ -440,7 +440,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
               },
             ]}
           />
-          <BAIGraphQLPropertyFilter
+          <BAIGraphQLPropertyFilter<UserV2Filter>
             filterProperties={filterProperties}
             value={queryParams.filter ?? undefined}
             onChange={(value) => {

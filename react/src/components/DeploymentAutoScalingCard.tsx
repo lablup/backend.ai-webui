@@ -3,16 +3,17 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { DeploymentAutoScalingCardDeleteMutation } from '../__generated__/DeploymentAutoScalingCardDeleteMutation.graphql';
-import { DeploymentAutoScalingCardListQuery } from '../__generated__/DeploymentAutoScalingCardListQuery.graphql';
+import {
+  AutoScalingRuleFilter,
+  DeploymentAutoScalingCardListQuery,
+} from '../__generated__/DeploymentAutoScalingCardListQuery.graphql';
 import { DeploymentAutoScalingCardPresetsQuery } from '../__generated__/DeploymentAutoScalingCardPresetsQuery.graphql';
 import { DeploymentAutoScalingCard_deployment$key } from '../__generated__/DeploymentAutoScalingCard_deployment.graphql';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import AutoScalingRuleEditorModal from './AutoScalingRuleEditorModal';
-import AutoScalingRuleListNodes, {
-  toAutoScalingRuleFilter,
-} from './AutoScalingRuleListNodes';
+import AutoScalingRuleListNodes from './AutoScalingRuleListNodes';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { App, Skeleton, Tooltip, theme } from 'antd';
 import {
@@ -29,7 +30,6 @@ import {
   useFetchKey,
   useMutationWithPromise,
 } from 'backend.ai-ui';
-import type { GraphQLFilter } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { PlusIcon } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
@@ -155,7 +155,9 @@ const DeploymentAutoScalingCardContent: React.FC<
         'createdAt',
         '-createdAt',
       ] as const).withDefault('-createdAt'),
-      filter: parseAsJson<GraphQLFilter>((value) => value as GraphQLFilter),
+      filter: parseAsJson<AutoScalingRuleFilter>(
+        (value) => value as AutoScalingRuleFilter,
+      ),
     },
     { history: 'replace' },
   );
@@ -169,10 +171,6 @@ const DeploymentAutoScalingCardContent: React.FC<
     setTablePaginationOption,
   } = useBAIPaginationOptionStateOnSearchParam({ current: 1, pageSize: 10 });
 
-  const filterInput = graphQLFilter
-    ? toAutoScalingRuleFilter(graphQLFilter)
-    : null;
-
   const queryVariables = {
     deploymentId,
     offset: baiPaginationOption.offset,
@@ -185,7 +183,7 @@ const DeploymentAutoScalingCardContent: React.FC<
           | 'DESC',
       },
     ],
-    filter: filterInput,
+    filter: graphQLFilter ?? null,
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
 
@@ -285,7 +283,7 @@ const DeploymentAutoScalingCardContent: React.FC<
     <>
       <BAIFlex direction="column" align="stretch" gap="sm">
         <BAIFlex align="center" gap="sm">
-          <BAIGraphQLPropertyFilter
+          <BAIGraphQLPropertyFilter<AutoScalingRuleFilter>
             style={{ flex: 1 }}
             filterProperties={[
               {

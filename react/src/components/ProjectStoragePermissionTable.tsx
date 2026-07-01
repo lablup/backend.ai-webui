@@ -38,7 +38,6 @@ import {
   BAITable,
   type BAITableProps,
   BAIUnmountAfterClose,
-  type GraphQLFilter,
   toLocalId,
   useFetchKey,
 } from 'backend.ai-ui';
@@ -142,7 +141,7 @@ const ProjectStoragePermissionTable: React.FC<
     tablePaginationOption,
     setTablePaginationOption,
   } = useBAIPaginationOptionState({ current: 1, pageSize: 10 });
-  const [filter, setFilter] = useState<GraphQLFilter | undefined>(undefined);
+  const [filter, setFilter] = useState<ProjectV2Filter | undefined>(undefined);
   const [order, setOrder] = useState<string | undefined>(undefined);
 
   const [fetchKey, updateFetchKey] = useFetchKey();
@@ -153,7 +152,7 @@ const ProjectStoragePermissionTable: React.FC<
     skip: !selectedDomainName,
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
-    filter: (filter ?? null) as ProjectV2Filter | null,
+    filter: filter ?? null,
     orderBy: convertToOrderBy<ProjectV2OrderBy>(order) ?? null,
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
@@ -312,7 +311,7 @@ const ProjectStoragePermissionTable: React.FC<
     <BAIFlex direction="column" align="stretch" gap="xs">
       <BAIFlex align="center" gap="xs">
         <BAIFlex gap="xs" justify="between" align="start" style={{ flex: 1 }}>
-          <BAIGraphQLPropertyFilter
+          <BAIGraphQLPropertyFilter<ProjectV2Filter>
             style={{ flex: 1 }}
             filterProperties={[
               {

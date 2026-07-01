@@ -15,13 +15,11 @@ import {
   BAITable,
   filterOutNullAndUndefined,
 } from 'backend.ai-ui';
-import type { BAITableProps, GraphQLFilter } from 'backend.ai-ui';
+import type { BAITableProps } from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-
-type DateTimeFilter = { before?: string | null; after?: string | null };
 
 export type AutoScalingRuleNode = NonNullable<
   AutoScalingRuleListNodesFragment$data[number]
@@ -87,31 +85,6 @@ const renderCondition = (
   }
 
   return '-';
-};
-
-type AutoScalingRuleFilterInput = {
-  createdAt?: DateTimeFilter | null;
-  lastTriggeredAt?: DateTimeFilter | null;
-  AND?: AutoScalingRuleFilterInput[];
-  OR?: AutoScalingRuleFilterInput[];
-  NOT?: AutoScalingRuleFilterInput[];
-};
-
-/** Maps BAIGraphQLPropertyFilter output → AutoScalingRuleFilter, preserving AND/OR/NOT. */
-export const toAutoScalingRuleFilter = (
-  filter: GraphQLFilter,
-): AutoScalingRuleFilterInput => {
-  const result: AutoScalingRuleFilterInput = {};
-  if (filter.createdAt) result.createdAt = filter.createdAt as DateTimeFilter;
-  if (filter.lastTriggeredAt)
-    result.lastTriggeredAt = filter.lastTriggeredAt as DateTimeFilter;
-  if (Array.isArray(filter.AND))
-    result.AND = filter.AND.map(toAutoScalingRuleFilter);
-  if (Array.isArray(filter.OR))
-    result.OR = filter.OR.map(toAutoScalingRuleFilter);
-  if (Array.isArray(filter.NOT))
-    result.NOT = filter.NOT.map(toAutoScalingRuleFilter);
-  return result;
 };
 
 interface AutoScalingRuleListNodesProps extends Omit<

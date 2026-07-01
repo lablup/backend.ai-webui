@@ -124,10 +124,10 @@ const BAIAvailablePresetSelect: React.FC<BAIAvailablePresetSelectProps> = ({
       },
     );
 
-  // `DeploymentRevisionPresetFilter` has no AND/OR combinators — its fields
-  // already AND together — so we merge by setting each field on a single
-  // object. `null` when no filter is active so the query field receives the
-  // schema default.
+  // Fields set on a single filter object are AND-ed together, so we merge the
+  // runtime-variant and search conditions onto one object rather than using an
+  // explicit AND combinator. `null` when no filter is active so the query field
+  // receives the schema default.
   const mergedFilter: NonNullable<
     BAIAvailablePresetSelectPaginatedQuery['variables']['filter']
   > | null =

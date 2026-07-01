@@ -5,7 +5,10 @@
 import { CreatePermissionModal_roleScopeFragment$key } from '../__generated__/CreatePermissionModal_roleScopeFragment.graphql';
 import { RolePermissionTabDeleteMutation } from '../__generated__/RolePermissionTabDeleteMutation.graphql';
 import { RolePermissionTabFragment$key } from '../__generated__/RolePermissionTabFragment.graphql';
-import { PermissionOrderBy } from '../__generated__/RolePermissionTabRefetchQuery.graphql';
+import {
+  PermissionFilter,
+  PermissionOrderBy,
+} from '../__generated__/RolePermissionTabRefetchQuery.graphql';
 import { convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import CreatePermissionModal from './CreatePermissionModal';
@@ -19,7 +22,6 @@ import {
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
   BAITable,
-  type GraphQLFilter,
   toLocalId,
   useBAILogger,
   useMutationWithPromise,
@@ -135,7 +137,9 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
       current: parseAsInteger.withDefault(1),
       pageSize: parseAsInteger.withDefault(10),
       order: parseAsStringLiteral(permissionOrderValues),
-      filter: parseAsJson<GraphQLFilter>((value) => value as GraphQLFilter),
+      filter: parseAsJson<PermissionFilter>(
+        (value) => value as PermissionFilter,
+      ),
     },
     {
       history: 'replace',
@@ -234,7 +238,7 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
     data.adminPermissions?.edges?.map((edge) => edge?.node) ?? [];
 
   const doRefetch = (overrides?: {
-    filter?: GraphQLFilter | null;
+    filter?: PermissionFilter | null;
     order?: string | null;
     limit?: number;
     offset?: number;
@@ -263,7 +267,7 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
     });
   };
 
-  const handleFilterChange = (newFilter: GraphQLFilter | undefined) => {
+  const handleFilterChange = (newFilter: PermissionFilter | undefined) => {
     setQueryParams({ filter: newFilter ?? null, current: 1 });
     doRefetch({ filter: newFilter ?? null, offset: 0 });
   };
@@ -315,7 +319,7 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
         wrap="wrap"
         style={{ marginBottom: 12 }}
       >
-        <BAIGraphQLPropertyFilter
+        <BAIGraphQLPropertyFilter<PermissionFilter>
           filterProperties={[
             {
               key: 'scopeType',

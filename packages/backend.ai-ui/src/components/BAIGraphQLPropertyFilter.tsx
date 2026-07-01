@@ -198,13 +198,15 @@ export type FilterProperty = BaseFilterProperty &
     | { defaultOperator?: never; fixedOperator?: never } // No operator preference
   );
 
-export interface BAIGraphQLPropertyFilterProps extends Omit<
+export interface BAIGraphQLPropertyFilterProps<
+  TFilter extends GraphQLFilter = GraphQLFilter,
+> extends Omit<
   ComponentProps<typeof BAIFlex>,
   'value' | 'onChange' | 'defaultValue'
 > {
-  value?: GraphQLFilter;
-  onChange?: (value: GraphQLFilter | undefined) => void;
-  defaultValue?: GraphQLFilter;
+  value?: TFilter;
+  onChange?: (value: TFilter | undefined) => void;
+  defaultValue?: TFilter;
   filterProperties: Array<FilterProperty>;
   loading?: boolean;
   combinationMode?: 'AND' | 'OR';
@@ -498,14 +500,16 @@ function convertGraphQLFilterToConditions(
   return conditions;
 }
 
-const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
+const BAIGraphQLPropertyFilter = <
+  TFilter extends GraphQLFilter = GraphQLFilter,
+>({
   filterProperties,
   value: propValue,
   onChange: propOnChange,
   defaultValue,
   combinationMode = 'AND',
   ...containerProps
-}) => {
+}: BAIGraphQLPropertyFilterProps<TFilter>) => {
   'use memo';
 
   const { token } = theme.useToken();
@@ -522,7 +526,7 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
     });
   };
 
-  const [value, setValue] = useControllableValue<GraphQLFilter | undefined>({
+  const [value, setValue] = useControllableValue<TFilter | undefined>({
     value: propValue,
     defaultValue: defaultValue,
     onChange: propOnChange,
@@ -607,7 +611,11 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
       filterProperties,
       combinationMode,
     );
-    setValue(filter);
+    // The converter emits a loose GraphQLFilter; narrow it back to the caller's
+    // concrete filter type. This single internal cast is what lets consumers
+    // bind `value`/`onChange` to a real schema filter type without casting at
+    // each call site.
+    setValue(filter as TFilter | undefined);
   };
 
   // Get effective options and strictSelection based on property type
@@ -892,7 +900,5 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
     </BAIFlex>
   );
 };
-
-BAIGraphQLPropertyFilter.displayName = 'BAIGraphQLPropertyFilter';
 
 export default BAIGraphQLPropertyFilter;

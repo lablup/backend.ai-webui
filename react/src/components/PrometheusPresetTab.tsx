@@ -6,6 +6,7 @@ import { PrometheusPresetTabDeleteMutation } from '../__generated__/PrometheusPr
 import {
   PrometheusPresetTabQuery,
   PrometheusPresetTabQuery$variables,
+  QueryDefinitionFilter,
 } from '../__generated__/PrometheusPresetTabQuery.graphql';
 import { PrometheusQueryPresetEditorModalFragment$key } from '../__generated__/PrometheusQueryPresetEditorModalFragment.graphql';
 import { convertToOrderBy } from '../helper';
@@ -20,7 +21,6 @@ import {
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
-  type GraphQLFilter,
   INITIAL_FETCH_KEY,
   toLocalId,
   useFetchKey,
@@ -41,7 +41,9 @@ const PrometheusPresetTab: React.FC = () => {
 
   const [queryParam, setQueryParam] = useQueryStates(
     {
-      filter: parseAsJson<GraphQLFilter>((value) => value as GraphQLFilter),
+      filter: parseAsJson<QueryDefinitionFilter>(
+        (value) => value as QueryDefinitionFilter,
+      ),
       order: parseAsString,
     },
     { history: 'replace' },
@@ -130,7 +132,7 @@ const PrometheusPresetTab: React.FC = () => {
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
       <BAIFlex direction="row" justify="between" wrap="wrap" gap="sm">
-        <BAIGraphQLPropertyFilter
+        <BAIGraphQLPropertyFilter<QueryDefinitionFilter>
           combinationMode="AND"
           value={queryParam.filter ?? undefined}
           onChange={(value) => {
