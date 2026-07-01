@@ -5,6 +5,7 @@
 import type {
   ProjectAdminSessionPageQuery,
   ProjectAdminSessionPageQuery$data,
+  SessionV2Filter,
   SessionV2OrderBy,
   SessionV2Status,
 } from '../__generated__/ProjectAdminSessionPageQuery.graphql';
@@ -24,7 +25,6 @@ import {
   BAINameActionCell,
   BAISelectionLabel,
   BAISessionNodesV2,
-  GraphQLFilter,
   INITIAL_FETCH_KEY,
   availableSessionV2SorterValues,
   filterOutEmpty,
@@ -96,7 +96,7 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
       statusCategory:
         parseAsStringLiteral(statusCategoryValues).withDefault('running'),
       order: parseAsStringLiteral(availableSessionV2SorterValues),
-      filter: parseAsJson<GraphQLFilter>((value) => value as GraphQLFilter),
+      filter: parseAsJson<SessionV2Filter>((value) => value as SessionV2Filter),
     },
     {
       history: 'replace',
@@ -201,7 +201,7 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
               { label: t('session.Finished'), value: 'finished' },
             ]}
           />
-          <BAIGraphQLPropertyFilter
+          <BAIGraphQLPropertyFilter<SessionV2Filter>
             filterProperties={[
               {
                 key: 'id',

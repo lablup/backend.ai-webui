@@ -3,7 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { RoleScopeTabFragment$key } from '../__generated__/RoleScopeTabFragment.graphql';
-import { EntityOrderBy } from '../__generated__/RoleScopeTabRefetchQuery.graphql';
+import {
+  EntityFilter,
+  EntityOrderBy,
+} from '../__generated__/RoleScopeTabRefetchQuery.graphql';
 import { convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { Tag } from 'antd';
@@ -15,7 +18,6 @@ import {
   BAIId,
   BAITable,
   filterOutEmpty,
-  type GraphQLFilter,
 } from 'backend.ai-ui';
 import {
   parseAsInteger,
@@ -49,7 +51,7 @@ const RoleScopeTab: React.FC<RoleScopeTabProps> = ({ queryRef }) => {
       current: parseAsInteger.withDefault(1),
       pageSize: parseAsInteger.withDefault(10),
       order: parseAsStringLiteral(scopeOrderValues),
-      filter: parseAsJson<GraphQLFilter>((value) => value as GraphQLFilter),
+      filter: parseAsJson<EntityFilter>((value) => value as EntityFilter),
     },
     {
       history: 'replace',
@@ -121,7 +123,7 @@ const RoleScopeTab: React.FC<RoleScopeTabProps> = ({ queryRef }) => {
   type ScopeNode = NonNullable<(typeof scopeNodes)[number]>;
 
   const doRefetch = (overrides?: {
-    filter?: GraphQLFilter | null;
+    filter?: EntityFilter | null;
     order?: string | null;
     limit?: number;
     offset?: number;
@@ -146,7 +148,7 @@ const RoleScopeTab: React.FC<RoleScopeTabProps> = ({ queryRef }) => {
     });
   };
 
-  const handleFilterChange = (newFilter: GraphQLFilter | undefined) => {
+  const handleFilterChange = (newFilter: EntityFilter | undefined) => {
     setQueryParams({ filter: newFilter ?? null, current: 1 });
     doRefetch({ filter: newFilter ?? null, offset: 0 });
   };
@@ -186,7 +188,7 @@ const RoleScopeTab: React.FC<RoleScopeTabProps> = ({ queryRef }) => {
         wrap="wrap"
         style={{ marginBottom: 12 }}
       >
-        <BAIGraphQLPropertyFilter
+        <BAIGraphQLPropertyFilter<EntityFilter>
           filterProperties={[
             {
               key: 'entityType',

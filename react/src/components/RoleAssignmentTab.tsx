@@ -5,7 +5,10 @@
 import { RoleAssignmentTabBulkAssignMutation } from '../__generated__/RoleAssignmentTabBulkAssignMutation.graphql';
 import { RoleAssignmentTabBulkRevokeMutation } from '../__generated__/RoleAssignmentTabBulkRevokeMutation.graphql';
 import { RoleAssignmentTabFragment$key } from '../__generated__/RoleAssignmentTabFragment.graphql';
-import { RoleAssignmentOrderBy } from '../__generated__/RoleAssignmentTabRefetchQuery.graphql';
+import {
+  RoleAssignmentFilter,
+  RoleAssignmentOrderBy,
+} from '../__generated__/RoleAssignmentTabRefetchQuery.graphql';
 import { RoleAssignmentTab_roleScopeFragment$key } from '../__generated__/RoleAssignmentTab_roleScopeFragment.graphql';
 import { convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
@@ -22,7 +25,6 @@ import {
   BAINameActionCell,
   BAISelectionLabel,
   BAITable,
-  type GraphQLFilter,
   useBAILogger,
   useMutationWithPromise,
 } from 'backend.ai-ui';
@@ -106,7 +108,9 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
       current: parseAsInteger.withDefault(1),
       pageSize: parseAsInteger.withDefault(10),
       order: parseAsStringLiteral(assignmentOrderValues),
-      filter: parseAsJson<GraphQLFilter>((value) => value as GraphQLFilter),
+      filter: parseAsJson<RoleAssignmentFilter>(
+        (value) => value as RoleAssignmentFilter,
+      ),
     },
     {
       history: 'replace',
@@ -202,7 +206,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
     data.adminRoleAssignments?.edges?.map((edge) => edge?.node) ?? [];
 
   const doRefetch = (overrides?: {
-    filter?: GraphQLFilter | null;
+    filter?: RoleAssignmentFilter | null;
     order?: string | null;
     limit?: number;
     offset?: number;
@@ -231,7 +235,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
     });
   };
 
-  const handleFilterChange = (newFilter: GraphQLFilter | undefined) => {
+  const handleFilterChange = (newFilter: RoleAssignmentFilter | undefined) => {
     setQueryParams({ filter: newFilter ?? null, current: 1 });
     doRefetch({ filter: newFilter ?? null, offset: 0 });
   };
@@ -304,7 +308,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
         wrap="wrap"
         style={{ marginBottom: 12 }}
       >
-        <BAIGraphQLPropertyFilter
+        <BAIGraphQLPropertyFilter<RoleAssignmentFilter>
           filterProperties={[
             {
               key: 'email',

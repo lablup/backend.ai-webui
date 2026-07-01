@@ -32,7 +32,6 @@ import {
   BAIGraphQLPropertyFilter,
   BAISelect,
   BAIStorageHostSelect,
-  type GraphQLFilter,
   safeDecodeUuid,
   useUpdatableState,
 } from 'backend.ai-ui';
@@ -74,23 +73,18 @@ const NAME_KEYWORD_OPERATORS = [
   'equals',
 ] as const;
 
-const extractFirstNameKeyword = (filter: GraphQLFilter | undefined): string => {
+const extractFirstNameKeyword = (
+  filter: ModelCardV2Filter | undefined,
+): string => {
   if (!filter) return '';
-  const name = (
-    filter as {
-      name?: Partial<Record<(typeof NAME_KEYWORD_OPERATORS)[number], string>>;
-    }
-  ).name;
+  const name = filter.name;
   if (name) {
     for (const op of NAME_KEYWORD_OPERATORS) {
       const v = name[op];
       if (v) return v;
     }
   }
-  const branches = [
-    (filter as { AND?: GraphQLFilter | GraphQLFilter[] }).AND,
-    (filter as { OR?: GraphQLFilter | GraphQLFilter[] }).OR,
-  ];
+  const branches = [filter.AND, filter.OR];
   for (const branch of branches) {
     if (!branch) continue;
     const items = Array.isArray(branch) ? branch : [branch];
@@ -196,7 +190,7 @@ const ModelCardV2Card: React.FC<{
 
 const ModelCardV2Grid: React.FC<{
   projectId: string;
-  filter?: GraphQLFilter;
+  filter?: ModelCardV2Filter;
   sortField: SortField;
   sortDirection: SortDirection;
   fetchKey: string;
@@ -249,7 +243,7 @@ const ModelCardV2Grid: React.FC<{
     `,
     {
       scope: { projectId },
-      filter: (filter as ModelCardV2Filter) ?? undefined,
+      filter: filter ?? undefined,
       orderBy: [{ field: sortField, direction: sortDirection }],
       limit: pageSize,
       offset,
@@ -312,7 +306,9 @@ const ModelStoreListPageV2: React.FC = () => {
     {
       sort: parseAsStringLiteral(SORT_VALUES).withDefault('CREATED_AT_DESC'),
       modelCard: parseAsString,
-      filter: parseAsJson<GraphQLFilter>((value) => value as GraphQLFilter),
+      filter: parseAsJson<ModelCardV2Filter>(
+        (value) => value as ModelCardV2Filter,
+      ),
     },
     { history: 'replace' },
   );
@@ -321,7 +317,7 @@ const ModelStoreListPageV2: React.FC = () => {
     queryParams.sort,
   );
 
-  const filter: GraphQLFilter | undefined = queryParams.filter ?? undefined;
+  const filter: ModelCardV2Filter | undefined = queryParams.filter ?? undefined;
   const deferredFilter = useDeferredValue(filter);
   const deferredSortField = useDeferredValue(sortField);
   const deferredSortDirection = useDeferredValue(sortDirection);
@@ -397,7 +393,7 @@ const ModelStoreListPageV2: React.FC = () => {
     <BAIFlex direction="column" align="stretch" justify="center" gap="lg">
       <BAIFlex justify="between" wrap="wrap" gap="sm">
         <BAIFlex gap="sm" align="start" style={{ flexShrink: 1 }} wrap="wrap">
-          <BAIGraphQLPropertyFilter
+          <BAIGraphQLPropertyFilter<ModelCardV2Filter>
             combinationMode="AND"
             value={filter}
             onChange={(value) => {

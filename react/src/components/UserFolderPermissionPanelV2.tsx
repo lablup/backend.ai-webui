@@ -16,7 +16,6 @@ import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAIUserSelect,
-  type GraphQLFilter,
   INITIAL_FETCH_KEY,
   useFetchKey,
 } from 'backend.ai-ui';
@@ -49,9 +48,12 @@ const UserFolderPermissionPanelV2: React.FC<
     storageVolumeFrgmt,
   );
 
-  const [userFilter, setUserFilter] = useState<GraphQLFilter | undefined>();
+  const [userFilter, setUserFilter] = useState<
+    KeypairResourcePolicyV2Filter | undefined
+  >();
   // Extract the picked user's UUID to scope the keypairs connection (Assigned
-  // Keypairs column); `GraphQLFilter` is index-typed so guard down to a string.
+  // Keypairs column); the `equals` operator is nullable, so guard down to a
+  // string.
   const rawUserId = userFilter?.keypair?.userId?.equals;
   const selectedUserId = _.isString(rawUserId) ? rawUserId : undefined;
 
@@ -78,7 +80,7 @@ const UserFolderPermissionPanelV2: React.FC<
 
   const includeKeypairs = !!selectedUserId;
   const queryVariables = {
-    filter: (userFilter ?? null) as KeypairResourcePolicyV2Filter | null,
+    filter: userFilter ?? null,
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
     includeKeypairs,
@@ -140,7 +142,7 @@ const UserFolderPermissionPanelV2: React.FC<
       >
         <BAIFlex direction="column" align="stretch" gap="sm">
           <BAIFlex align="start" justify="between" gap="md" wrap="wrap">
-            <BAIGraphQLPropertyFilter
+            <BAIGraphQLPropertyFilter<KeypairResourcePolicyV2Filter>
               style={{ flex: 1 }}
               value={userFilter}
               onChange={setUserFilter}

@@ -7,6 +7,7 @@ import type { AdminModelCardListPageDeleteMutation } from '../__generated__/Admi
 import type {
   AdminModelCardListPageQuery,
   AdminModelCardListPageQuery$data,
+  ModelCardV2Filter,
   ModelCardV2OrderBy,
 } from '../__generated__/AdminModelCardListPageQuery.graphql';
 import AdminModelCardSettingModal from '../components/AdminModelCardSettingModal';
@@ -40,7 +41,6 @@ import {
   BAIUnmountAfterClose,
   filterOutEmpty,
   filterOutNullAndUndefined,
-  type GraphQLFilter,
   INITIAL_FETCH_KEY,
   isValidUUID,
   toLocalId,
@@ -105,7 +105,9 @@ const AdminModelCardListPage: React.FC = () => {
   const [queryParams, setQueryParams] = useQueryStates(
     {
       order: parseAsString,
-      filter: parseAsJson<GraphQLFilter>((value) => value as GraphQLFilter),
+      filter: parseAsJson<ModelCardV2Filter>(
+        (value) => value as ModelCardV2Filter,
+      ),
     },
     {
       history: 'replace',
@@ -331,7 +333,7 @@ const AdminModelCardListPage: React.FC = () => {
     <BAIFlex direction="column" align="stretch" gap={'sm'}>
       <BAIFlex justify="between" wrap="wrap" gap={'sm'}>
         <BAIFlex gap={'sm'} align="start" wrap="wrap" style={{ flexShrink: 1 }}>
-          <BAIGraphQLPropertyFilter
+          <BAIGraphQLPropertyFilter<ModelCardV2Filter>
             filterProperties={[
               {
                 key: 'name',

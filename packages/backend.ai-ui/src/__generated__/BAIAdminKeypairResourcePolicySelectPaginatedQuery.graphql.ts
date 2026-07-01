@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b7102066f31a29e34c374442f165e11d>>
+ * @generated SignedSource<<97e628f43650bf3b6b07cade634d5ac0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,6 +10,9 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type KeypairResourcePolicyV2Filter = {
+  AND?: ReadonlyArray<KeypairResourcePolicyV2Filter> | null | undefined;
+  NOT?: ReadonlyArray<KeypairResourcePolicyV2Filter> | null | undefined;
+  OR?: ReadonlyArray<KeypairResourcePolicyV2Filter> | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
   idleTimeout?: IntFilter | null | undefined;
   keypair?: KeypairResourcePolicyKeypairNestedFilter | null | undefined;
