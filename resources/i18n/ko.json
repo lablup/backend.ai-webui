@@ -233,7 +233,15 @@
     "Status": "상태",
     "StatusChanged": "변경일",
     "Terminated": "종료됨",
-    "Utilization": "사용량"
+    "Utilization": "사용량",
+    "WatcherActionFailed": "에이전트 제어에 실패했습니다.",
+    "WatcherActionWarning": "이 에이전트에서 실행 중인 세션이 영향을 받을 수 있습니다.",
+    "WatcherRestart": "에이전트 재시작",
+    "WatcherRestartRequested": "에이전트 재시작을 요청했습니다.",
+    "WatcherStart": "에이전트 시작",
+    "WatcherStartRequested": "에이전트 시작을 요청했습니다.",
+    "WatcherStop": "에이전트 중지",
+    "WatcherStopRequested": "에이전트 중지를 요청했습니다."
   },
   "agentStats": {
     "AgentStats": "에이전트 통계",

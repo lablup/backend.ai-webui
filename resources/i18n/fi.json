@@ -233,7 +233,15 @@
     "Status": "Tila",
     "StatusChanged": "Muutettu",
     "Terminated": "Lopetettu",
-    "Utilization": "Käyttö"
+    "Utilization": "Käyttö",
+    "WatcherActionFailed": "Agentin hallinta epäonnistui.",
+    "WatcherActionWarning": "Tässä agentissa käynnissä oleviin istuntoihin voi vaikuttaa.",
+    "WatcherRestart": "Käynnistä agentti uudelleen",
+    "WatcherRestartRequested": "Agentin uudelleenkäynnistys on pyydetty.",
+    "WatcherStart": "Käynnistä agentti",
+    "WatcherStartRequested": "Agentin käynnistys on pyydetty.",
+    "WatcherStop": "Pysäytä agentti",
+    "WatcherStopRequested": "Agentin pysäytys on pyydetty."
   },
   "agentStats": {
     "AgentStats": "Agenttitilastot",

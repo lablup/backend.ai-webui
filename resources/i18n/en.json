@@ -233,7 +233,15 @@
     "Status": "Status",
     "StatusChanged": "Changed",
     "Terminated": "Terminated",
-    "Utilization": "Utilization"
+    "Utilization": "Utilization",
+    "WatcherActionFailed": "Failed to control the agent.",
+    "WatcherActionWarning": "Running sessions on this agent may be affected.",
+    "WatcherRestart": "Restart Agent",
+    "WatcherRestartRequested": "Agent restart has been requested.",
+    "WatcherStart": "Start Agent",
+    "WatcherStartRequested": "Agent start has been requested.",
+    "WatcherStop": "Stop Agent",
+    "WatcherStopRequested": "Agent stop has been requested."
   },
   "agentStats": {
     "AgentStats": "Agent Statistics",

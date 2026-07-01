@@ -233,7 +233,15 @@
     "Status": "Statut",
     "StatusChanged": "Modifié",
     "Terminated": "Terminé",
-    "Utilization": "Utilisation"
+    "Utilization": "Utilisation",
+    "WatcherActionFailed": "Échec du contrôle de l'agent.",
+    "WatcherActionWarning": "Les sessions en cours sur cet agent peuvent être affectées.",
+    "WatcherRestart": "Redémarrer l'agent",
+    "WatcherRestartRequested": "Le redémarrage de l'agent a été demandé.",
+    "WatcherStart": "Démarrer l'agent",
+    "WatcherStartRequested": "Le démarrage de l'agent a été demandé.",
+    "WatcherStop": "Arrêter l'agent",
+    "WatcherStopRequested": "L'arrêt de l'agent a été demandé."
   },
   "agentStats": {
     "AgentStats": "Statistiques des agents",

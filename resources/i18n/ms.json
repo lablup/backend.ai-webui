@@ -233,7 +233,15 @@
     "Status": "Status",
     "StatusChanged": "Diubah",
     "Terminated": "Ditamatkan",
-    "Utilization": "Penggunaan"
+    "Utilization": "Penggunaan",
+    "WatcherActionFailed": "Gagal mengawal ejen.",
+    "WatcherActionWarning": "Sesi yang sedang berjalan pada ejen ini mungkin terjejas.",
+    "WatcherRestart": "Mulakan Semula Ejen",
+    "WatcherRestartRequested": "Permintaan mulakan semula ejen telah dihantar.",
+    "WatcherStart": "Mulakan Ejen",
+    "WatcherStartRequested": "Permintaan mulakan ejen telah dihantar.",
+    "WatcherStop": "Hentikan Ejen",
+    "WatcherStopRequested": "Permintaan hentikan ejen telah dihantar."
   },
   "agentStats": {
     "AgentStats": "Statistik Ejen",
