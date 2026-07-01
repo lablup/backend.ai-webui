@@ -306,6 +306,9 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "リソースグループを選択"
   },
+  "comp:BAIResourceNumberWithIcon": {
+    "AllocatedVsRequested": "割り当て / 要求"
+  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "無制限"
   },

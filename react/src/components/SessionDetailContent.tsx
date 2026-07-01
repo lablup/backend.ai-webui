@@ -33,6 +33,7 @@ import {
   HistoryOutlined,
   InfoCircleOutlined,
   QuestionCircleOutlined,
+  WarningOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {
@@ -88,6 +89,15 @@ const buildResourceWithUnifiedSlot = (
     ? { ..._.omit(slots, unifiedSlotName), acceleratorType: unifiedSlotName }
     : slots;
 };
+
+// Parse a resource-slot JSON string into a numeric map, dropping zero-valued
+// slots so that requested vs. allocated slots compare equal when they only
+// differ by absent/zero entries.
+const parseSlotsToNumbers = (slots?: string | null) =>
+  _.omitBy(
+    _.mapValues(JSON.parse(slots || '{}'), (value) => _.toNumber(value)),
+    (value) => value === 0,
+  );
 
 const SessionDetailContent: React.FC<{
   id: string;
@@ -191,6 +201,7 @@ const SessionDetailContent: React.FC<{
         scaling_group
         agent_ids
         requested_slots
+        occupied_slots
         tag
         idle_checks @since(version: "24.12.0")
         type
@@ -261,6 +272,53 @@ const SessionDetailContent: React.FC<{
   );
 
   const resolvedProjectIdOfSession = session?.project_id;
+
+  // Pass both the requested and the actually-allocated (occupied_slots)
+  // resources to `ResourceNumbersOfSession`, which surfaces the allocation as
+  // the primary value and renders any differing slot as `allocated / requested`
+  // (the requested amount shown as a muted reference). Here we only additionally
+  // compute whether *any* slot differs, to flag the section label with a warning
+  // icon.
+  const requestedResource = buildResourceWithUnifiedSlot(
+    session?.requested_slots,
+    session?.tag,
+  );
+  const occupiedResource = buildResourceWithUnifiedSlot(
+    session?.occupied_slots,
+    session?.tag,
+  );
+  const hasOccupiedSlots = !_.isEmpty(
+    parseSlotsToNumbers(session?.occupied_slots),
+  );
+  // The unified-memory accelerator slot is auto-allocated and rendered as a
+  // quantity-less chip (it is stripped from the numeric map by
+  // `buildResourceWithUnifiedSlot`), so exclude it from the comparison to match
+  // what is actually displayed.
+  const unifiedSlotName = getUnifiedSlotNameFromTag(session?.tag) ?? '';
+  const requestedSlotNumbers = _.omit(
+    parseSlotsToNumbers(session?.requested_slots),
+    unifiedSlotName,
+  ) as Record<string, number>;
+  const occupiedSlotNumbers = _.omit(
+    parseSlotsToNumbers(session?.occupied_slots),
+    unifiedSlotName,
+  ) as Record<string, number>;
+  // Slot types whose allocated amount is *less* than what was requested — the
+  // round-down case the `AllocatedLessThanRequested` warning label describes.
+  // Only meaningful once the session is actually allocated (occupied_slots
+  // present). Detection is directional (`occupied < requested`) to match the
+  // directional label copy; the neutral per-chip `allocated / requested`
+  // rendering (which fires on any difference) is computed inside
+  // `ResourceNumbersOfSession` itself.
+  const slotTypesAllocatedLessThanRequested = hasOccupiedSlots
+    ? _.union(_.keys(requestedSlotNumbers), _.keys(occupiedSlotNumbers)).filter(
+        (slotType) =>
+          (occupiedSlotNumbers[slotType] ?? 0) <
+          (requestedSlotNumbers[slotType] ?? 0),
+      )
+    : [];
+  const hasResourceAllocationDifference =
+    slotTypesAllocatedLessThanRequested.length > 0;
 
   return session ? (
     <BAIFlex direction="column" gap={'lg'} align="stretch">
@@ -396,16 +454,36 @@ const SessionDetailContent: React.FC<{
               <MountedVFolderLinks sessionFrgmt={session} />
             </BAIFlex>
           </Descriptions.Item>
-          <Descriptions.Item label={t('session.launcher.ResourceAllocation')}>
-            <BAIFlex gap={'sm'} wrap="wrap">
+          <Descriptions.Item
+            label={
+              hasResourceAllocationDifference ? (
+                <Tooltip title={t('session.AllocatedLessThanRequested')}>
+                  <BAIFlex
+                    gap="xxs"
+                    align="center"
+                    style={{ color: token.colorWarning }}
+                  >
+                    <WarningOutlined />
+                    {t('session.launcher.ResourceAllocation')}
+                  </BAIFlex>
+                </Tooltip>
+              ) : (
+                t('session.launcher.ResourceAllocation')
+              )
+            }
+          >
+            <BAIFlex gap={'sm'} wrap="wrap" align="center">
               <Tooltip title={t('session.ResourceGroup')}>
                 <Tag>{session.scaling_group}</Tag>
               </Tooltip>
               <ResourceNumbersOfSession
-                resource={buildResourceWithUnifiedSlot(
-                  session.requested_slots,
-                  session.tag,
-                )}
+                resource={
+                  hasOccupiedSlots ? occupiedResource : requestedResource
+                }
+                comparedResource={
+                  hasOccupiedSlots ? requestedResource : undefined
+                }
+                showDividers
               />
             </BAIFlex>
           </Descriptions.Item>

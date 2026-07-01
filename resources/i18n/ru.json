@@ -2532,6 +2532,7 @@
     "Agent": "Агент",
     "AgentId": "Идентификатор агента",
     "Agents": "Агенты",
+    "AllocatedLessThanRequested": "Выделено меньше ресурсов, чем было запрошено.",
     "AllowedClientIps": "Разрешенные IP-адреса клиентов",
     "AllowedMultipleClientsIps": "Разрешенные IP-адреса клиентов (через запятую)",
     "AlreadyTerminatingSession": "Уже завершаю сессию.",

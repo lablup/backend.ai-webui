@@ -2532,6 +2532,7 @@
     "Agent": "Agentti",
     "AgentId": "Agenttitunnus",
     "Agents": "Agentit",
+    "AllocatedLessThanRequested": "Resursseja varattiin vähemmän kuin pyydettiin.",
     "AllowedClientIps": "Sallitut asiakkaan IP-osoitteet",
     "AllowedMultipleClientsIps": "Sallitut asiakkaan IP-osoitteet (pilkuilla erotettu)",
     "AlreadyTerminatingSession": "Istunto on jo päättymässä.",

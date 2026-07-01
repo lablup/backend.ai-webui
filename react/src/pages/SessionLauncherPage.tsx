@@ -57,6 +57,7 @@ import {
   Card,
   Checkbox,
   Col,
+  Divider,
   Dropdown,
   Form,
   Grid,
@@ -1459,8 +1460,36 @@ const SessionLauncherPage = () => {
 };
 
 type FormOrResourceRequired = {
+  /**
+   * The resource map to display as the primary value. For most callers this is
+   * the requested (configured) resource; on the session detail page it is the
+   * actually-allocated `occupied_slots`.
+   */
   resource: ResourceAllocationFormValue['resource'];
   containerCount?: number;
+  /**
+   * Optional reference resource map to compare against `resource`. On the
+   * session detail page this is the requested amount: for any numeric slot
+   * whose primary value differs from the compared value, the compared amount is
+   * appended as a muted `/ <value>` reference with an "allocated / requested"
+   * tooltip on the chip. The component computes the differing slots itself —
+   * callers only pass the two resource maps.
+   *
+   * Comparison is applied to the numeric `slotChips` only. The object-shaped
+   * `{ accelerator, acceleratorType }` branch is not threaded through the
+   * comparison; on the session detail page fGPU is compared via its dotted
+   * `cuda.shares` slot key (which routes through `slotChips`), so that path is
+   * covered. A form-shaped caller relying on `accelerator` would not get a
+   * comparison reference on the accelerator chip.
+   */
+  comparedResource?: ResourceAllocationFormValue['resource'];
+  /**
+   * When true, render a vertical divider between chips so the resources read as
+   * distinct items (used on the session detail page). Off by default so
+   * column-layout callers (e.g. `DeploymentPresetDetailModal`) don't get stray
+   * dividers between stacked chips.
+   */
+  showDividers?: boolean;
 };
 
 // Renders a unified-memory accelerator as "<device description>" with the same
@@ -1516,50 +1545,108 @@ const UnifiedAcceleratorChip: React.FC<{ type: string }> = ({ type }) => {
 export const ResourceNumbersOfSession: React.FC<FormOrResourceRequired> = ({
   resource,
   containerCount = 1,
+  comparedResource,
+  showDividers = false,
 }) => {
-  return (
-    <>
-      {_.map(
-        _.omit(resource, 'shmem', 'accelerator', 'acceleratorType'),
-        (value, type) => {
-          return value === '0' ? null : (
+  'use memo';
+  // `resource` is the primary value to display; `comparedResource` (when given)
+  // is the reference to compare against (e.g. requested vs. allocated on the
+  // session detail page). Each chip carries a stable identity key (slot type /
+  // 'accelerator' / 'unified') so React reconciles by resource across renders
+  // even though `'0'` slots are dropped and the accelerator chip is
+  // conditionally appended.
+  const displayResource = resource;
+  const slotChips = _.compact(
+    _.map(
+      _.omit(displayResource, 'shmem', 'accelerator', 'acceleratorType'),
+      (value, type) => {
+        if (value === '0') {
+          return null;
+        }
+        // Convert a raw slot value to the displayed amount (memory is byte count
+        // → number; everything else is multiplied by the container count).
+        // Applied identically to the primary and compared values.
+        const toDisplayValue = (raw: string | number) =>
+          type === 'mem'
+            ? (convertToBinaryUnit(raw.toString(), '')?.number || 0) *
+                containerCount +
+              ''
+            : _.toNumber(raw) * containerCount + '';
+        // When a compared resource is present, compare it against this slot's
+        // primary value. A difference passes the compared value to the chip,
+        // which appends it as a muted `/ <value>` reference and wraps the whole
+        // number group in an "allocated / requested" tooltip (separate from the
+        // icon's description tooltip).
+        const comparedRaw = comparedResource
+          ? _.get(comparedResource, type)
+          : undefined;
+        const isDifferent =
+          !_.isUndefined(comparedRaw) &&
+          _.toNumber(comparedRaw) !== _.toNumber(value);
+        return {
+          key: type,
+          node: (
             <BAIResourceNumberWithIcon
-              key={type}
               // @ts-ignore
               type={type}
-              value={
-                type === 'mem'
-                  ? (convertToBinaryUnit(value.toString(), '')?.number || 0) *
-                      containerCount +
-                    ''
-                  : _.toNumber(value) * containerCount + ''
+              value={toDisplayValue(value)}
+              comparedValue={
+                isDifferent ? toDisplayValue(comparedRaw) : undefined
               }
               opts={{
-                shmem: resource.shmem
-                  ? (convertToBinaryUnit(resource.shmem, '')?.number || 0) *
-                    containerCount
+                shmem: displayResource.shmem
+                  ? (convertToBinaryUnit(displayResource.shmem, '')?.number ||
+                      0) * containerCount
                   : undefined,
               }}
             />
-          );
-        },
-      )}
-      {resource?.acceleratorType &&
-      isUnifiedAcceleratorSlot(resource.acceleratorType) ? (
-        // Unified-memory accelerator: show the device description regardless of
-        // amount, with the same explanatory tooltip as the launcher's
-        // accelerator field on hover.
-        <UnifiedAcceleratorChip type={resource.acceleratorType} />
-      ) : resource &&
-        resource.accelerator &&
-        resource.acceleratorType &&
-        _.isNumber(resource.accelerator) ? (
-        <BAIResourceNumberWithIcon
-          // @ts-ignore
-          type={resource.acceleratorType}
-          value={_.toString(resource.accelerator * containerCount)}
-        />
-      ) : null}
+          ),
+        };
+      },
+    ),
+  );
+  const acceleratorChip =
+    displayResource?.acceleratorType &&
+    isUnifiedAcceleratorSlot(displayResource.acceleratorType)
+      ? {
+          key: 'unified',
+          // Unified-memory accelerator: show the device description regardless
+          // of amount, with the same explanatory tooltip as the launcher's
+          // accelerator field on hover.
+          node: (
+            <UnifiedAcceleratorChip type={displayResource.acceleratorType} />
+          ),
+        }
+      : displayResource &&
+          displayResource.accelerator &&
+          displayResource.acceleratorType &&
+          _.isNumber(displayResource.accelerator)
+        ? {
+            key: 'accelerator',
+            node: (
+              <BAIResourceNumberWithIcon
+                // @ts-ignore
+                type={displayResource.acceleratorType}
+                value={_.toString(displayResource.accelerator * containerCount)}
+              />
+            ),
+          }
+        : null;
+  const chips = _.compact([...slotChips, acceleratorChip]);
+  return (
+    <>
+      {chips.map(({ key, node }, index) => (
+        <React.Fragment key={key}>
+          {/* Separate each resource chip with a vertical divider (same pattern
+              as ImageNodeSimpleTag) so the resources read as distinct items.
+              Opt-in via `showDividers` — column-layout callers leave it off to
+              avoid stray dividers between stacked chips. */}
+          {showDividers && index > 0 ? (
+            <Divider orientation="vertical" style={{ marginInline: 0 }} />
+          ) : null}
+          {node}
+        </React.Fragment>
+      ))}
     </>
   );
 };

@@ -2532,6 +2532,7 @@
     "Agent": "Ejen",
     "AgentId": "Id ejen",
     "Agents": "ejen",
+    "AllocatedLessThanRequested": "Sumber yang diperuntukkan kurang daripada yang diminta.",
     "AllowedClientIps": "IP pelanggan yang dibenarkan",
     "AllowedMultipleClientsIps": "IPS Pelanggan yang Dibenarkan (dipisahkan koma)",
     "AlreadyTerminatingSession": "Sudah menamatkan sesi.",

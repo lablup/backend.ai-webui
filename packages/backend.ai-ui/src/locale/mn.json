@@ -306,6 +306,9 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Ресурсын бүлэг сонгох"
   },
+  "comp:BAIResourceNumberWithIcon": {
+    "AllocatedVsRequested": "Хуваарилсан / Хүссэн"
+  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Хязгааргүй"
   },

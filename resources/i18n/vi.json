@@ -2534,6 +2534,7 @@
     "Agent": "Đặc vụ",
     "AgentId": "Id đại lý",
     "Agents": "Đại lý",
+    "AllocatedLessThanRequested": "Tài nguyên được cấp phát ít hơn so với yêu cầu.",
     "AllowedClientIps": "IP khách hàng được phép",
     "AllowedMultipleClientsIps": "IP khách hàng được phép (được phân tách bằng dấu phẩy)",
     "AlreadyTerminatingSession": "Đã kết thúc phiên.",
