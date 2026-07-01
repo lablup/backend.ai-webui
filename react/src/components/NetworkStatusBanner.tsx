@@ -2,6 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useSuspendedBackendaiClient } from '../hooks';
+import { useTanQuery } from '../hooks/reactQueryAlias';
 import { useDebounce, useNetwork } from 'ahooks';
 import { Alert } from 'antd';
 import { createStyles } from 'antd-style';
@@ -24,8 +26,10 @@ const useStyles = createStyles(({ token, css }) => ({
   `,
 }));
 const NetworkStatusBanner = () => {
+  'use memo';
   const { t } = useTranslation();
   const network = useNetwork();
+  const client = useSuspendedBackendaiClient();
   const setDisplayedStatus = useSetAtom(isDisplayedNetworkStatusState);
   const { styles } = useStyles();
   const [showSoftTimeoutAlert, setShowSoftTimeoutAlert] = useState(false);
@@ -62,7 +66,40 @@ const NetworkStatusBanner = () => {
     wait: 5_000,
   });
 
-  const shouldOpenOfflineAlert = !network.online;
+  const browserOffline = !network.online;
+
+  // `navigator.onLine` (via ahooks `useNetwork`) is only a heuristic and is
+  // frequently a false positive on VPNs, captive portals, or virtualized
+  // networks. Before concluding the user is offline, confirm with one
+  // lightweight public request to the API endpoint — the same `GET /` probe
+  // the login flow issues through `get_manager_version()`. `getServerVersion`
+  // is used directly here because `get_manager_version` caches its result
+  // after the first success and would no longer hit the network post-login.
+  const { isError: endpointUnreachable } = useTanQuery({
+    queryKey: [
+      'NetworkStatusBanner',
+      'endpointReachabilityProbe',
+      client._config.endpoint,
+    ],
+    queryFn: async () => {
+      // Bound the probe so a genuinely unreachable endpoint surfaces the
+      // banner within ~5s instead of hanging on the client-wide timeout.
+      await client.getServerVersion(AbortSignal.timeout(5_000));
+      return true;
+    },
+    // Only probe while the browser reports offline; re-probe periodically so
+    // the banner reflects the current endpoint reachability, not a stale
+    // one-shot result.
+    enabled: browserOffline,
+    refetchInterval: browserOffline ? 5_000 : false,
+    retry: false,
+    staleTime: 0,
+  });
+
+  // Show the offline banner only when the browser reports offline AND the
+  // endpoint probe confirms it is actually unreachable. While the probe is in
+  // flight (before its first failure) the banner stays hidden.
+  const shouldOpenOfflineAlert = browserOffline && endpointUnreachable;
   const shouldOpenSoftAlert =
     !shouldOpenOfflineAlert && debouncedShowAlert && !dismissSoftTimeoutAlert;
 
@@ -85,9 +122,10 @@ const NetworkStatusBanner = () => {
           title={t('webui.NetworkSoftTimeout')}
           className={styles.borderWarning}
           banner
-          closable
-          onClose={() => {
-            setDismissSoftTimeoutAlert(true);
+          closable={{
+            onClose: () => {
+              setDismissSoftTimeoutAlert(true);
+            },
           }}
         />
       )}
