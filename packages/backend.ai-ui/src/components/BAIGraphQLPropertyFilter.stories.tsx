@@ -1,6 +1,7 @@
 import BAIGraphQLPropertyFilter from './BAIGraphQLPropertyFilter';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Select } from 'antd';
+import { useState } from 'react';
 import { action } from 'storybook/actions';
 
 const meta: Meta<typeof BAIGraphQLPropertyFilter> = {
@@ -138,6 +139,30 @@ GraphQLFilter = {
         defaultValue: { summary: 'AND' },
       },
     },
+  },
+  // BAIGraphQLPropertyFilter is a controlled component (same as
+  // BAIPropertyFilter): it renders exactly what `value` holds and reports
+  // changes through `onChange`. Storybook args are static, so unless each
+  // change is written back into `value` the filter looks frozen — adding a
+  // condition or removing/clearing a tag has no visible effect. We hold the
+  // value in local state per story instance so every story is independently
+  // interactive. NOTE: do not use Storybook `useArgs` here — in the autodocs
+  // page only the Primary story's `updateArgs` is wired, so every other story
+  // would stay frozen. `useState` works for every instance in both the Canvas
+  // and Docs views. The per-story `onChange: action(...)` handlers still log
+  // to the Actions panel.
+  render: (args) => {
+    const [value, setValue] = useState(args.value);
+    return (
+      <BAIGraphQLPropertyFilter
+        {...args}
+        value={value}
+        onChange={(next) => {
+          args.onChange?.(next);
+          setValue(next);
+        }}
+      />
+    );
   },
 };
 
