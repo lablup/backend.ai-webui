@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b2c649500e1dc94be2461e41a3d37f47>>
+ * @generated SignedSource<<079c40ad13707c84813ca28db8024f88>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,6 +12,9 @@ import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type DeploymentRevisionPresetOrderField = "CREATED_AT" | "NAME" | "RANK" | "%future added value";
 export type DeploymentRevisionPresetFilter = {
+  AND?: ReadonlyArray<DeploymentRevisionPresetFilter> | null | undefined;
+  NOT?: ReadonlyArray<DeploymentRevisionPresetFilter> | null | undefined;
+  OR?: ReadonlyArray<DeploymentRevisionPresetFilter> | null | undefined;
   id?: UUIDFilter | null | undefined;
   name?: StringFilter | null | undefined;
   runtimeVariantId?: UUIDFilter | null | undefined;

@@ -933,6 +933,13 @@ export class Client {
       // TODO(FR-3139): simplify to '26.4.4' once rc builds are out of use.
       this._features['model-runtime-variant-preset-values'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('26.7.0')) {
+      // Strawberry V2 filter inputs gained the AND/OR/NOT sub-filter
+      // combinators (schema: "Added in 26.7.0"), which
+      // `BAIGraphQLPropertyFilter` emits when conditions are combined. Older
+      // managers reject those arguments.
+      this._features['sub-filter'] = true;
+    }
   }
 
   /**
