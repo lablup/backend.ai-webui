@@ -38,6 +38,20 @@ const WEBUIHelpButton: React.FC<WEBUIHelpButtonProps> = ({ ...props }) => {
     information: 'admin_menu/admin_menu.html#detailed-information',
     usersettings: 'user_settings/user_settings.html',
     'my-environment': 'my_environments/my_environments.html',
+    // Scope-aware menu keys: the new `/admin/<feature>` and
+    // `/project/:name/<feature>` routes resolve `useCurrentMenuKey()` to these
+    // keys, so map them to the same doc anchors as their legacy first-segment
+    // counterparts (otherwise the help link falls back to the docs homepage).
+    deployments: 'model_serving/model_serving.html',
+    dashboard: 'summary/summary.html',
+    'admin-session': 'sessions_all/sessions_all.html',
+    'admin-deployments': 'model_serving/model_serving.html',
+    'admin-data': 'vfolder/vfolder.html',
+    'admin-dashboard': 'summary/summary.html',
+    'project-admin-session': 'sessions_all/sessions_all.html',
+    'project-admin-deployments': 'model_serving/model_serving.html',
+    'project-data': 'vfolder/vfolder.html',
+    'project-admin-users': 'admin_menu/admin_menu.html',
   };
   const URL =
     manualURL +
