@@ -83,7 +83,7 @@ jobs:
       - name: Run relay-compiler
         run: pnpm run relay
       - name: Run Vitest with coverage
-        run: pnpm exec vitest run --coverage
+        run: pnpm exec vitest run --no-cache --coverage
       - name: Report coverage on PR
         if: always()
         uses: davelosert/vitest-coverage-report-action@v2
@@ -127,7 +127,7 @@ jobs:
       - name: Run relay-compiler
         run: cd ../.. && pnpm run relay
       - name: Run Vitest with coverage
-        run: pnpm exec vitest run --coverage
+        run: pnpm exec vitest run --no-cache --coverage
       - name: Report coverage on PR
         if: always()
         uses: davelosert/vitest-coverage-report-action@v2
@@ -163,7 +163,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Run Vitest with coverage
-        run: pnpm exec vitest run --coverage
+        run: pnpm exec vitest run --no-cache --coverage
       - name: Report coverage on PR
         if: always()
         uses: davelosert/vitest-coverage-report-action@v2
