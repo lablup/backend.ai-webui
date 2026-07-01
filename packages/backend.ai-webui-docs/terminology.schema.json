@@ -29,8 +29,13 @@
     },
     "avoid": {
       "type": "array",
-      "description": "Every row of the TERMINOLOGY.md \"Terms to Avoid\" table, one entry per forbidden term.",
+      "description": "Every row of the TERMINOLOGY.md \"Terms to Avoid\" table, one entry per forbidden NOUN/phrase. This is the ONLY list the i18n checker (scripts/check-terminology-i18n.mjs CHECK 1) scans against — verb lexicon avoidances live in verbs[].avoid and are intentionally NOT scanned here, to keep the verb axis orthogonal to the noun drift checker.",
       "items": { "$ref": "#/definitions/avoidEntry" }
+    },
+    "verbs": {
+      "type": "array",
+      "description": "Approved ACTION VERBS, one entry per user-facing intent (cancel / delete / remove / terminate / stop / inactivate / purge / hide). A pure lexicon: each entry pins exactly one approved English verb for an intent, in a stated context, with the rejected near-synonyms. ORTHOGONALITY CONTRACT: this list governs only WHICH WORD labels an action; it does NOT encode confirmation-UX behavior. Whether an action needs a typed-confirm modal (BAIConfirmModalWithInput) vs a Popconfirm is decided by .claude/rules/destructive-confirmation.md from the action's REVERSIBILITY, never derived from the verb. The optional per-entry `reversible` field is documentation only and must not be read as the confirmation rule. The i18n noun-checker (CHECK 1) does NOT read this array.",
+      "items": { "$ref": "#/definitions/verbEntry" }
     }
   },
   "definitions": {
@@ -131,6 +136,62 @@
           "description": "Optional link to concepts[].id that the canonical replacement maps to, or null.",
           "type": ["string", "null"],
           "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+        }
+      }
+    },
+    "verbEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "intent", "context", "preferred", "decidingFR"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Stable kebab-case verb id (e.g. \"verb-delete\").",
+          "pattern": "^verb-[a-z0-9]+(-[a-z0-9]+)*$"
+        },
+        "intent": {
+          "type": "string",
+          "description": "The user intent this verb labels: cancel / delete / remove / terminate / stop / inactivate / purge / hide.",
+          "enum": [
+            "cancel",
+            "delete",
+            "remove",
+            "terminate",
+            "stop",
+            "inactivate",
+            "purge",
+            "hide"
+          ]
+        },
+        "context": {
+          "type": "string",
+          "description": "The situation in which this intent applies. Verb choice is context-dependent (\"remove from list\" != \"delete permanently\"), so the approved verb is only canonical within this stated context.",
+          "minLength": 1
+        },
+        "preferred": {
+          "$ref": "#/definitions/preferred",
+          "description": "Approved verb per language. English-only is sufficient for v1 (the destructive-confirmation UX is language-agnostic); other locales translate normally."
+        },
+        "avoid": {
+          "type": "array",
+          "description": "Rejected near-synonyms for this intent. Documentation/review guidance ONLY — intentionally NOT consumed by the i18n CHECK 1 drift scanner (which reads only the top-level avoid[] noun list). Keeps the verb axis orthogonal to the noun checker.",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "reversible": {
+          "type": "string",
+          "description": "Documentation-only hint about whether the action can typically be undone. MUST NOT be read as the confirmation-UX rule: the typed-confirm-vs-Popconfirm decision is owned by .claude/rules/destructive-confirmation.md, per-call-site, from the action's actual reversibility — not from this verb entry.",
+          "enum": ["reversible", "irreversible"]
+        },
+        "decidingFR": {
+          "description": "FR-XXXX issue that decided this verb, or null when the source cites none.",
+          "type": ["string", "null"],
+          "pattern": "^FR-[0-9]+$"
+        },
+        "description": {
+          "type": "string",
+          "description": "Optional one-line gloss: when to use the verb, which i18n keys it maps to, and how it differs from the rejected synonyms.",
+          "minLength": 1
         }
       }
     }
