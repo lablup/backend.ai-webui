@@ -303,19 +303,22 @@ const SessionDetailContent: React.FC<{
     parseSlotsToNumbers(session?.occupied_slots),
     unifiedSlotName,
   ) as Record<string, number>;
-  // Slot types whose allocated amount differs from what was requested. Only
-  // meaningful once the session is actually allocated (occupied_slots present).
-  // Used solely to decide whether to flag the section label with a warning icon;
-  // the per-chip `allocated / requested` rendering is computed inside
+  // Slot types whose allocated amount is *less* than what was requested — the
+  // round-down case the `AllocatedLessThanRequested` warning label describes.
+  // Only meaningful once the session is actually allocated (occupied_slots
+  // present). Detection is directional (`occupied < requested`) to match the
+  // directional label copy; the neutral per-chip `allocated / requested`
+  // rendering (which fires on any difference) is computed inside
   // `ResourceNumbersOfSession` itself.
-  const slotTypesDifferingFromRequest = hasOccupiedSlots
+  const slotTypesAllocatedLessThanRequested = hasOccupiedSlots
     ? _.union(_.keys(requestedSlotNumbers), _.keys(occupiedSlotNumbers)).filter(
         (slotType) =>
-          requestedSlotNumbers[slotType] !== occupiedSlotNumbers[slotType],
+          (occupiedSlotNumbers[slotType] ?? 0) <
+          (requestedSlotNumbers[slotType] ?? 0),
       )
     : [];
   const hasResourceAllocationDifference =
-    slotTypesDifferingFromRequest.length > 0;
+    slotTypesAllocatedLessThanRequested.length > 0;
 
   return session ? (
     <BAIFlex direction="column" gap={'lg'} align="stretch">
@@ -480,6 +483,7 @@ const SessionDetailContent: React.FC<{
                 comparedResource={
                   hasOccupiedSlots ? requestedResource : undefined
                 }
+                showDividers
               />
             </BAIFlex>
           </Descriptions.Item>

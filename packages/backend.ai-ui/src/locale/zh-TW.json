@@ -307,7 +307,7 @@
     "SelectResourceGroup": "選擇資源群組"
   },
   "comp:BAIResourceNumberWithIcon": {
-    "AllocatedVsRequested": "已分配 / 请求"
+    "AllocatedVsRequested": "已分配 / 請求"
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "無限"
