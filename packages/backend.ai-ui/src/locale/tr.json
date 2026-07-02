@@ -306,6 +306,9 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Kaynak Grubu Seç"
   },
+  "comp:BAIResourceNumberWithIcon": {
+    "AllocatedVsRequested": "Ayrılan / İstenen"
+  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Sınırsız"
   },

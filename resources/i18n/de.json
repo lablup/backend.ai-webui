@@ -2534,6 +2534,7 @@
     "Agent": "Agent",
     "AgentId": "Agenten -ID",
     "Agents": "Agenten",
+    "AllocatedLessThanRequested": "Es wurden weniger Ressourcen zugewiesen als angefordert.",
     "AllowedClientIps": "Erlaubte Client-IPs",
     "AllowedMultipleClientsIps": "Zulässige Client-IPs (durch Kommas getrennt)",
     "AlreadyTerminatingSession": "Die Sitzung ist bereits beendet.",

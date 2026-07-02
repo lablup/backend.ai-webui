@@ -2536,6 +2536,7 @@
     "Agent": "代理人",
     "AgentId": "代理ID",
     "Agents": "代理商",
+    "AllocatedLessThanRequested": "分配的資源少於請求的資源。",
     "AllowedClientIps": "允许的客户端 IP",
     "AllowedMultipleClientsIps": "允許的客戶端 IP（以逗號分隔）",
     "AlreadyTerminatingSession": "已经终止会话。",

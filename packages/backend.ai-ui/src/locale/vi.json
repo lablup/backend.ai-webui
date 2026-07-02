@@ -306,6 +306,9 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Chọn nhóm tài nguyên"
   },
+  "comp:BAIResourceNumberWithIcon": {
+    "AllocatedVsRequested": "Đã cấp phát / Đã yêu cầu"
+  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Không giới hạn"
   },

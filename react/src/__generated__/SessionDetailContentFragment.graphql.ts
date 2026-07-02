@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d7dc4959ca564d39da90385683fa5452>>
+ * @generated SignedSource<<62c2a953cd829bbd8b9f20106ec915f0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -48,6 +48,7 @@ export type SessionDetailContentFragment$data = {
     } | null | undefined>;
   } | null | undefined;
   readonly name: string | null | undefined;
+  readonly occupied_slots: string | null | undefined;
   readonly owner: {
     readonly email: string | null | undefined;
   } | null | undefined;
@@ -290,6 +291,13 @@ return {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
+      "name": "occupied_slots",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "tag",
       "storageKey": null
     },
@@ -464,6 +472,6 @@ return {
 };
 })();
 
-(node as any).hash = "1ed31bf868878d31349d76cff968e0c3";
+(node as any).hash = "1f228b44f4bfe0b596275be5ffb3d0fd";
 
 export default node;

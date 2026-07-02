@@ -306,6 +306,9 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Επιλέξτε ομάδα πόρων"
   },
+  "comp:BAIResourceNumberWithIcon": {
+    "AllocatedVsRequested": "Διατεθέντα / Ζητούμενα"
+  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Απεριόριστος"
   },

@@ -306,6 +306,9 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Seleziona gruppo di risorse"
   },
+  "comp:BAIResourceNumberWithIcon": {
+    "AllocatedVsRequested": "Allocato / Richiesto"
+  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Illimitato"
   },
