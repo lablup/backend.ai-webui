@@ -78,6 +78,7 @@
     "eslint-plugin-json-schema-validator": "catalog:",
     "eslint-plugin-prettier": "^5.5.5",
     "express": "^4.22.1",
+    "express-rate-limit": "^7.4.0",
     "globals": "catalog:",
     "husky": "^9.1.7",
     "i18next-scanner": "^4.6.0",

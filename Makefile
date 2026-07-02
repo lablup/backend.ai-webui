@@ -255,3 +255,4 @@ clean:
 	@rm -rf ./app/backend*; rm -rf ./app/Backend*
 	@rm -rf ./build/unbundle ./build/bundle ./build/web ./build/electron-app
 	@rm -rf ./react/build
+	@rm -rf ./src/wsproxy/dist
