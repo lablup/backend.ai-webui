@@ -121,7 +121,7 @@ jobs:
           curl -fsSL https://raw.githubusercontent.com/github/copilot-cli/main/install.sh -o /tmp/copilot-install.sh
           
           # Execute the installer with the specified version
-          export VERSION=0.0.374 && sudo bash /tmp/copilot-install.sh
+          export VERSION=1.0.68 && sudo bash /tmp/copilot-install.sh
           
           # Cleanup
           rm -f /tmp/copilot-install.sh
@@ -347,7 +347,7 @@ jobs:
               engine_name: "GitHub Copilot CLI",
               model: process.env.GH_AW_MODEL_AGENT_COPILOT || "",
               version: "",
-              agent_version: "0.0.374",
+              agent_version: "1.0.68",
               cli_version: "v0.34.5",
               workflow_name: "Storybook Coverage Checker",
               experimental: false,
@@ -993,7 +993,7 @@ jobs:
           curl -fsSL https://raw.githubusercontent.com/github/copilot-cli/main/install.sh -o /tmp/copilot-install.sh
           
           # Execute the installer with the specified version
-          export VERSION=0.0.374 && sudo bash /tmp/copilot-install.sh
+          export VERSION=1.0.68 && sudo bash /tmp/copilot-install.sh
           
           # Cleanup
           rm -f /tmp/copilot-install.sh
