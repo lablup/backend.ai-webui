@@ -7,6 +7,7 @@ import {
   TerminateSessionModalFragment$key,
 } from '../../__generated__/TerminateSessionModalFragment.graphql';
 import { TerminateSessionModalRefetchQuery } from '../../__generated__/TerminateSessionModalRefetchQuery.graphql';
+import { requestLocalProxyToken } from '../../helper/localProxyToken';
 import { BackendAIClient, useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import { useSetBAINotification } from '../../hooks/useBAINotification';
@@ -111,6 +112,7 @@ const getProxyURL = async (
   resourceGroupIdOfSession: string,
   projectId: string,
   baiClient: BackendAIClient,
+  wsproxyVersion?: string,
 ) => {
   let url = 'http://127.0.0.1:5050/';
   if (
@@ -125,13 +127,11 @@ const getProxyURL = async (
     url = baiClient._config.proxyURL;
   }
   if (resourceGroupIdOfSession !== undefined && projectId !== undefined) {
-    const wsproxyVersion = await getWSProxyVersion(
-      resourceGroupIdOfSession,
-      projectId,
-      baiClient,
-    );
-    if (wsproxyVersion !== 'v1') {
-      url = new URL(`${wsproxyVersion}/`, url).href;
+    const version =
+      wsproxyVersion ??
+      (await getWSProxyVersion(resourceGroupIdOfSession, projectId, baiClient));
+    if (version !== 'v1') {
+      url = new URL(`${version}/`, url).href;
     }
   }
   return url;
@@ -143,19 +143,40 @@ const terminateApp = async (
   currentProjectId: string,
   baiClient: BackendAIClient,
 ) => {
-  const proxyURL = await getProxyURL(
+  const wsproxyVersion = await getWSProxyVersion(
     session.scaling_group,
     currentProjectId,
     baiClient,
   );
+  const proxyURL = await getProxyURL(
+    session.scaling_group,
+    currentProjectId,
+    baiClient,
+    wsproxyVersion,
+  );
+  // The local v1 proxy now requires the per-instance secret token returned by
+  // /conf for the check and /delete routes (FR-3227). The v2 remote App Proxy
+  // keeps using the access key. If the token cannot be obtained (e.g. /conf is
+  // rejected), skip the wsproxy cleanup entirely — the session must still be
+  // terminable (mirrors the "even if wsproxy address is invalid, session must
+  // be deleted" invariant in terminateSession).
+  let token: string;
+  try {
+    token =
+      wsproxyVersion === 'v1'
+        ? await requestLocalProxyToken(baiClient, proxyURL)
+        : accessKey;
+  } catch {
+    return true;
+  }
 
   const rqst = {
     method: 'GET',
-    uri: new URL(`proxy/${accessKey}/${session.row_id}`, proxyURL).href,
+    uri: new URL(`proxy/${token}/${session.row_id}`, proxyURL).href,
   };
 
   return sendRequest(rqst).then((response) => {
-    let uri = new URL(`proxy/${accessKey}/${session.row_id}/delete`, proxyURL);
+    let uri = new URL(`proxy/${token}/${session.row_id}/delete`, proxyURL);
     if (localStorage.getItem('backendaiwebui.appproxy-permit-key')) {
       uri.searchParams.set(
         'permit_key',

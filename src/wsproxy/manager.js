@@ -8,11 +8,14 @@ Backend.AI Webapp proxy for Web UI
 const express = require('express'),
   EventEmitter = require('events'),
   cors = require('cors');
+const { rateLimit } = require('express-rate-limit');
 const logger = require('./lib/logger')(__filename);
 
-const ai = require('../lib/backend.ai-client-node'),
-  Gateway = require('./gateway/tcpwsproxy'),
-  SGateway = require('./gateway/consoleproxy');
+// The Backend.AI client and the proxy gateways are required lazily (inside the
+// handlers that use them) rather than at module load. They — and their
+// transitive deps such as backend.ai-ws-appproxy — are build artifacts that do
+// not exist in a source-only checkout, so eager requires would make the module
+// impossible to import without a full build (e.g. from the unit test).
 const htmldeco = require('./lib/htmldeco');
 const { escapeHtml } = require('./lib/htmldeco');
 const crypto = require('crypto');
@@ -32,6 +35,69 @@ function isValidRedirectPath(path) {
   // Reject paths starting with // (protocol-relative URLs)
   if (path.startsWith('//')) return false;
   return true;
+}
+
+// A cached gateway is only safe to reuse if its underlying TCP listener is
+// still bound. Nothing notifies this manager when a user merely closes an
+// app tab (only explicit session termination hits /delete), so a previous
+// gateway can linger in `Manager.proxies` long after its listener has died.
+// Reusing it would hand back a port whose client-side redirect fetch hangs
+// forever with no error, no timeout, and no way to recover.
+function isGatewayAlive(gateway) {
+  return typeof gateway.isAlive === 'function' ? gateway.isAlive() : true;
+}
+
+// Parse additional trusted browser origins from the WSPROXY_CORS_ORIGINS
+// environment variable. Accepts either a comma-separated list
+// ("https://a.example,https://b.example") or a JSON array
+// (["https://a.example","https://b.example"]). Used by self-hosted WebUI
+// deployments that serve the page from a non-loopback origin.
+function parseConfiguredOrigins() {
+  const env = process.env.WSPROXY_CORS_ORIGINS;
+  if (!env) return [];
+  let list;
+  try {
+    const parsed = JSON.parse(env);
+    list = Array.isArray(parsed) ? parsed : String(env).split(',');
+  } catch {
+    list = env.split(',');
+  }
+  return list.map((o) => String(o).trim()).filter(Boolean);
+}
+
+const configuredOrigins = parseConfiguredOrigins();
+
+// A loopback page (the WebUI dev server, the proxy itself, or any localhost
+// origin) is considered trusted: the proxy only binds to 127.0.0.1, so a
+// loopback origin is already inside the trust boundary. `*.localhost`
+// subdomains are included because RFC 6761 reserves the `.localhost` TLD to
+// always resolve to loopback (browsers force it to 127.0.0.1), so a page served
+// from e.g. the Portless dev URL `fr-3227.localhost` is genuinely local — a
+// remote attacker cannot host a page on a `.localhost` name.
+function isLoopbackOrigin(origin) {
+  try {
+    const { hostname } = new URL(origin);
+    return (
+      hostname === 'localhost' ||
+      hostname.endsWith('.localhost') ||
+      hostname === '127.0.0.1' ||
+      hostname === '[::1]' ||
+      hostname === '::1'
+    );
+  } catch {
+    return false;
+  }
+}
+
+// Decide whether a browser request from `origin` may read the proxy response.
+// `undefined` (no Origin header → non-browser or same-origin request) and
+// `'null'` (the Electron file:// renderer) are always allowed. Every other
+// cross-origin request must be loopback or explicitly configured. This
+// replaces the previous `cors()` default of reflecting any origin as `*`.
+function isAllowedOrigin(origin) {
+  if (!origin || origin === 'null') return true;
+  if (isLoopbackOrigin(origin)) return true;
+  return configuredOrigins.includes(origin);
 }
 
 // extHttpProxy is an endpoint of a http proxy server in a network.
@@ -66,6 +132,10 @@ class Manager extends EventEmitter {
     this.proxies = {};
     this.ports = [];
     this.baseURL = undefined;
+    // Per-instance secret returned by PUT /conf and required by every
+    // /proxy/* route. Regenerated on each proxy start, never logged. 32 random
+    // bytes → a 43-char URL-safe base64url string that can sit in the URL path.
+    this.secretToken = crypto.randomBytes(32).toString('base64url');
     this.init();
   }
 
@@ -76,11 +146,80 @@ class Manager extends EventEmitter {
     }
   }
 
+  // Drop `this.proxies[p]` if it's no longer alive, so the caller always
+  // finds either a live cached gateway or nothing. Nothing notifies this
+  // manager when a user merely closes an app tab (only explicit session
+  // termination hits /delete), so a previous gateway can linger here long
+  // after its listener has died — reusing it would hand back a port whose
+  // client-side redirect fetch hangs forever with no error, no timeout, and
+  // no way to recover.
+  _evictStaleGateway(p) {
+    if (this.proxies.hasOwnProperty(p) && !isGatewayAlive(this.proxies[p])) {
+      logger.info(`Stale proxy entry for ${p}, recreating`);
+      try {
+        this.proxies[p].stop_proxy();
+      } catch (err) {
+        logger.warn(`Failed to stop stale proxy for ${p}: ${err.message}`);
+      }
+      delete this.proxies[p];
+    }
+  }
+
+  // Constant-time comparison of a caller-supplied proxy token against the
+  // per-instance secret. `crypto.timingSafeEqual` throws when the buffers
+  // differ in length, so guard the length first — an unequal length is already
+  // a definitive non-match and leaks nothing beyond what the URL length does.
+  _isAuthorizedToken(provided) {
+    if (typeof provided !== 'string' || provided.length === 0) return false;
+    const a = Buffer.from(provided, 'utf8');
+    const b = Buffer.from(this.secretToken, 'utf8');
+    if (a.length !== b.length) return false;
+    try {
+      return crypto.timingSafeEqual(a, b);
+    } catch {
+      return false;
+    }
+  }
+
   init() {
     this.app.use(express.json());
-    this.app.use(cors());
+    // Restrict cross-origin access to trusted origins. Reflecting the specific
+    // request origin (instead of `*`) is also required for the credentialed
+    // requests the WebUI sends (fetch with `credentials: 'include'`), which a
+    // wildcard ACAO would reject.
+    this.app.use(
+      cors({
+        origin: (origin, callback) => {
+          callback(null, isAllowedOrigin(origin));
+        },
+        credentials: true,
+        methods: ['GET', 'PUT', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Accept', 'Authorization'],
+        maxAge: 86400,
+      }),
+    );
+
+    // Rate-limit the token-authorized /proxy/* routes as defense in depth:
+    // even though the per-instance token is 256-bit (brute force is
+    // infeasible), this bounds how fast a malicious page could spam proxy
+    // add/delete to disrupt the user's app proxies. Generous limit — a single
+    // desktop user issues only a handful of proxy operations per minute.
+    const proxyRateLimiter = rateLimit({
+      windowMs: 60 * 1000,
+      limit: 600,
+      standardHeaders: true,
+      legacyHeaders: false,
+    });
 
     this.app.put('/conf', (req, res) => {
+      // CSRF / origin defense in depth: the CORS preflight already blocks
+      // disallowed browser origins from issuing this PUT, but reject them
+      // server-side too so the token secrecy does not rely solely on the
+      // browser honoring CORS.
+      if (!isAllowedOrigin(req.headers['origin'])) {
+        res.status(403).send({ code: 403 });
+        return;
+      }
       let cf = {
         created: Date.now(),
         endpoint: req.body.endpoint,
@@ -101,6 +240,7 @@ class Manager extends EventEmitter {
         cf['mode'] = 'API';
         cf['access_key'] = req.body.access_key;
         cf['secret_key'] = req.body.secret_key;
+        const ai = require('../lib/backend.ai-client-node');
         let config = new ai.backend.ClientConfig(
           req.body.access_key,
           req.body.secret_key,
@@ -111,7 +251,7 @@ class Manager extends EventEmitter {
       }
       this._config = cf;
 
-      res.send({ token: 'local' });
+      res.send({ token: this.secretToken });
     });
 
     this.app.get('/', (req, res) => {
@@ -126,7 +266,11 @@ class Manager extends EventEmitter {
       res.send({ api_version: 'v1' });
     });
 
-    this.app.get('/proxy/:token/:sessionId', (req, res) => {
+    this.app.get('/proxy/:token/:sessionId', proxyRateLimiter, (req, res) => {
+      if (!this._isAuthorizedToken(req.params['token'])) {
+        res.status(403).send({ code: 403 });
+        return;
+      }
       let sessionId = req.params['sessionId'];
       if (!this._config) {
         res.send({ code: 401 });
@@ -141,143 +285,164 @@ class Manager extends EventEmitter {
       res.send({ code: 404 });
     });
 
-    this.app.get('/proxy/:token/:sessionId/add', async (req, res) => {
-      if (!this._config) {
-        res.send({ code: 401 });
-        return;
-      }
-      let sessionId = req.params['sessionId'];
-      let app = req.query.app || 'jupyter';
-      let port = parseInt(req.query.port) || undefined;
-      let p = sessionId + '|' + app;
-      let args = req.query.args ? JSON.parse(decodeURI(req.query.args)) : {};
-      let envs = req.query.envs ? JSON.parse(decodeURI(req.query.envs)) : {};
-      const protocol = req.query.protocol || 'http';
-      let gateway;
-      let ip = this.listen_ip;
-      //let port = undefined;
-      if (this.proxies.hasOwnProperty(p)) {
-        gateway = this.proxies[p];
-        port = gateway.getPort();
-      } else {
-        if (this._config.mode == 'SESSION') {
-          gateway = new SGateway(this._config);
-        } else {
-          gateway = new Gateway(this.aiclient._config);
-        }
-        this.proxies[p] = gateway;
-
-        let assigned = false;
-        let maxtry = 5;
-        for (let i = 0; i < maxtry; i++) {
-          try {
-            await gateway.start_proxy(sessionId, app, ip, port, envs, args);
-            port = gateway.getPort();
-            assigned = true;
-            break;
-          } catch (err) {
-            if ('PortInUse' === err.message) {
-              // try next number or fallback to random port for the last resort
-              port = i < maxtry - 1 ? port + 1 : undefined;
-              if (port) {
-                logger.warn('trying next port: ' + port);
-              } else {
-                logger.warn('trying random port');
-              }
-            } else {
-              logger.warn(err.message);
-            }
-          }
-        }
-        logger.debug(`proxies: ${p}`);
-        logger.info(`Total connections: ${Object.keys(this.proxies).length}`);
-        if (!assigned) {
-          res.send({ code: 500 });
+    this.app.get(
+      '/proxy/:token/:sessionId/add',
+      proxyRateLimiter,
+      async (req, res) => {
+        if (!this._isAuthorizedToken(req.params['token'])) {
+          res.status(403).send({ code: 403 });
           return;
         }
-      }
+        if (!this._config) {
+          res.send({ code: 401 });
+          return;
+        }
+        let sessionId = req.params['sessionId'];
+        let app = req.query.app || 'jupyter';
+        let port = parseInt(req.query.port) || undefined;
+        let p = sessionId + '|' + app;
+        let args = req.query.args ? JSON.parse(decodeURI(req.query.args)) : {};
+        let envs = req.query.envs ? JSON.parse(decodeURI(req.query.envs)) : {};
+        const protocol = req.query.protocol || 'http';
+        let gateway;
+        let ip = this.listen_ip;
+        //let port = undefined;
+        this._evictStaleGateway(p);
+        if (this.proxies.hasOwnProperty(p)) {
+          gateway = this.proxies[p];
+          port = gateway.getPort();
+        } else {
+          if (this._config.mode == 'SESSION') {
+            const SGateway = require('./gateway/consoleproxy');
+            gateway = new SGateway(this._config);
+          } else {
+            const Gateway = require('./gateway/tcpwsproxy');
+            gateway = new Gateway(this.aiclient._config);
+          }
+          this.proxies[p] = gateway;
 
-      let proxy_target = 'http://' + this.proxyBaseHost + ':' + port;
-      if (app == 'sftp') {
-        logger.debug('proxy target: ' + proxy_target);
-        res.send({
-          code: 200,
-          proxy: proxy_target,
-          url: this.baseURL + '/sftp?port=' + port + '&dummy=1',
-        });
-      } else if (app == 'sshd') {
-        logger.debug('proxy target: ' + proxy_target);
-        res.send({
-          code: 200,
-          proxy: proxy_target,
-          port: port,
-          url: this.baseURL + '/sshd?port=' + port + '&dummy=1',
-        });
-      } else if (app == 'vnc') {
-        logger.debug('proxy target: ' + proxy_target);
-        res.send({
-          code: 200,
-          proxy: proxy_target,
-          port: port,
-          url: this.baseURL + '/vnc?port=' + port + '&dummy=1',
-        });
-      } else if (app == 'xrdp') {
-        logger.debug('proxy target: ' + proxy_target);
-        res.send({
-          code: 200,
-          proxy: proxy_target,
-          port: port,
-          url: this.baseURL + '/xrdp?port=' + port + '&dummy=1',
-        });
-      } else {
-        res.send({
-          code: 200,
-          proxy: proxy_target,
-          url: this.baseURL + '/redirect?port=' + port,
-        });
-      }
-    });
-
-    this.app.get('/proxy/:token/:sessionId/delete', (req, res) => {
-      //find all and kill
-      if (!this._config) {
-        res.send({ code: 401 });
-        return;
-      }
-
-      let sessionId = req.params['sessionId'];
-      let app = req.query.app || null;
-
-      if (app === null) {
-        let stopped = false;
-        for (const key in this.proxies) {
-          logger.debug(key.split('|', 1));
-          if (key.split('|', 1)[0] === sessionId) {
-            logger.info(`Found app to terminate in ${sessionId}`);
-            this.proxies[key].stop_proxy();
-            delete this.proxies[key];
-            stopped = true;
+          let assigned = false;
+          let maxtry = 5;
+          for (let i = 0; i < maxtry; i++) {
+            try {
+              await gateway.start_proxy(sessionId, app, ip, port, envs, args);
+              port = gateway.getPort();
+              assigned = true;
+              break;
+            } catch (err) {
+              if ('PortInUse' === err.message) {
+                // try next number or fallback to random port for the last resort
+                port = i < maxtry - 1 ? port + 1 : undefined;
+                if (port) {
+                  logger.warn('trying next port: ' + port);
+                } else {
+                  logger.warn('trying random port');
+                }
+              } else {
+                logger.warn(err.message);
+              }
+            }
+          }
+          logger.debug(`proxies: ${p}`);
+          logger.info(`Total connections: ${Object.keys(this.proxies).length}`);
+          if (!assigned) {
+            res.send({ code: 500 });
+            return;
           }
         }
-        logger.info(`Total connections: ${Object.keys(this.proxies).length}`);
-        if (stopped) {
-          res.send({ code: 200 });
+
+        let proxy_target = 'http://' + this.proxyBaseHost + ':' + port;
+        if (app == 'sftp') {
+          logger.debug('proxy target: ' + proxy_target);
+          res.send({
+            code: 200,
+            proxy: proxy_target,
+            url: this.baseURL + '/sftp?port=' + port + '&dummy=1',
+          });
+        } else if (app == 'sshd') {
+          logger.debug('proxy target: ' + proxy_target);
+          res.send({
+            code: 200,
+            proxy: proxy_target,
+            port: port,
+            url: this.baseURL + '/sshd?port=' + port + '&dummy=1',
+          });
+        } else if (app == 'vnc') {
+          logger.debug('proxy target: ' + proxy_target);
+          res.send({
+            code: 200,
+            proxy: proxy_target,
+            port: port,
+            url: this.baseURL + '/vnc?port=' + port + '&dummy=1',
+          });
+        } else if (app == 'xrdp') {
+          logger.debug('proxy target: ' + proxy_target);
+          res.send({
+            code: 200,
+            proxy: proxy_target,
+            port: port,
+            url: this.baseURL + '/xrdp?port=' + port + '&dummy=1',
+          });
         } else {
-          res.send({ code: 404 });
+          res.send({
+            code: 200,
+            proxy: proxy_target,
+            url: this.baseURL + '/redirect?port=' + port,
+          });
         }
-      } else {
-        let p = sessionId + '|' + app;
-        if (p in this.proxies && app !== null) {
-          logger.debug(`Found ${app} to terminate in ${sessionId}`);
-          this.proxies[p].stop_proxy();
+      },
+    );
+
+    this.app.get(
+      '/proxy/:token/:sessionId/delete',
+      proxyRateLimiter,
+      (req, res) => {
+        if (!this._isAuthorizedToken(req.params['token'])) {
+          res.status(403).send({ code: 403 });
+          return;
+        }
+        //find all and kill
+        if (!this._config) {
+          res.send({ code: 401 });
+          return;
+        }
+
+        let sessionId = req.params['sessionId'];
+        let app = req.query.app || null;
+
+        if (app === null) {
+          let stopped = false;
+          for (const key in this.proxies) {
+            logger.debug(key.split('|', 1));
+            if (key.split('|', 1)[0] === sessionId) {
+              logger.info(`Found app to terminate in ${sessionId}`);
+              this.proxies[key].stop_proxy();
+              delete this.proxies[key];
+              stopped = true;
+            }
+          }
           logger.info(`Total connections: ${Object.keys(this.proxies).length}`);
-          res.send({ code: 200 });
-          delete this.proxies[p];
+          if (stopped) {
+            res.send({ code: 200 });
+          } else {
+            res.send({ code: 404 });
+          }
         } else {
-          res.send({ code: 404 });
+          let p = sessionId + '|' + app;
+          if (p in this.proxies && app !== null) {
+            logger.debug(`Found ${app} to terminate in ${sessionId}`);
+            this.proxies[p].stop_proxy();
+            logger.info(
+              `Total connections: ${Object.keys(this.proxies).length}`,
+            );
+            res.send({ code: 200 });
+            delete this.proxies[p];
+          } else {
+            res.send({ code: 404 });
+          }
         }
-      }
-    });
+      },
+    );
 
     this.app.get('/sftp', (req, res) => {
       let port = req.query.port;
@@ -436,5 +601,10 @@ class Manager extends EventEmitter {
     });
   }
 }
+
+// Exposed for regression tests, which seed `Manager.proxies` with fake
+// gateways directly to avoid constructing real gateways (a build artifact
+// unavailable in a source-only checkout).
+Manager.isGatewayAlive = isGatewayAlive;
 
 module.exports = Manager;

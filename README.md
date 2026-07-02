@@ -219,23 +219,23 @@ If your branch name contains an `FR-XXXX` issue number, the URL is `https://fr-X
 
 ### Commands Reference
 
-| Command | Description |
-|---------|-------------|
-| `pnpm run dev` | TypeScript watch + Relay watch + React dev server (concurrent) |
-| `pnpm run wsproxy` | WebSocket proxy (required for dev) |
-| `pnpm run build` | Full production build |
-| `pnpm run build:react-only` | Build only React app |
-| `pnpm run relay` | One-time Relay/GraphQL compile (project root) |
-| `pnpm run relay:watch` | Relay watch mode (uses nodemon) |
-| `pnpm run lint` | ESLint check |
-| `pnpm run lint-fix` | Auto-fix ESLint issues |
-| `pnpm run format` | Prettier format check |
-| `pnpm run format-fix` | Auto-fix formatting |
-| `bash scripts/verify.sh` | Run Relay + Lint + Format + TypeScript checks |
-| `pnpm run electron:d` | Run Electron in dev mode |
-| `pnpm run electron:d:hmr` | Run Electron in dev mode with HMR (live debug) |
-| `pnpm run test` | Jest unit tests (root: scripts/, src/) |
-| `cd react && pnpm run test` | Jest unit tests for React app |
+| Command                     | Description                                                    |
+| --------------------------- | -------------------------------------------------------------- |
+| `pnpm run dev`              | TypeScript watch + Relay watch + React dev server (concurrent) |
+| `pnpm run wsproxy`          | WebSocket proxy (required for dev)                             |
+| `pnpm run build`            | Full production build                                          |
+| `pnpm run build:react-only` | Build only React app                                           |
+| `pnpm run relay`            | One-time Relay/GraphQL compile (project root)                  |
+| `pnpm run relay:watch`      | Relay watch mode (uses nodemon)                                |
+| `pnpm run lint`             | ESLint check                                                   |
+| `pnpm run lint-fix`         | Auto-fix ESLint issues                                         |
+| `pnpm run format`           | Prettier format check                                          |
+| `pnpm run format-fix`       | Auto-fix formatting                                            |
+| `bash scripts/verify.sh`    | Run Relay + Lint + Format + TypeScript checks                  |
+| `pnpm run electron:d`       | Run Electron in dev mode                                       |
+| `pnpm run electron:d:hmr`   | Run Electron in dev mode with HMR (live debug)                 |
+| `pnpm run test`             | Jest unit tests (root: scripts/, src/)                         |
+| `cd react && pnpm run test` | Jest unit tests for React app                                  |
 
 ### Unit Testing
 
@@ -254,6 +254,7 @@ $ cp e2e/envs/.env.playwright.sample e2e/envs/.env.playwright
 ```
 
 Available environment variables:
+
 - `E2E_WEBUI_ENDPOINT` - WebUI endpoint URL (default: `http://127.0.0.1:9081`)
 - `E2E_WEBSERVER_ENDPOINT` - Backend.AI server endpoint URL (default: `http://127.0.0.1:8090`)
 - User credentials: `E2E_ADMIN_EMAIL`, `E2E_ADMIN_PASSWORD`, `E2E_USER_EMAIL`, `E2E_USER_PASSWORD`, etc.
@@ -492,6 +493,34 @@ $ set EXT_HTTP_PROXY=http://10.20.30.40:3128 (Windows)
 
 Even if you are using Electron embedded websocket proxy, you have to set the
 environment variable manually to pass through a http proxy.
+
+#### Restricting cross-origin access to the local websocket proxy
+
+The local websocket proxy only accepts cross-origin browser requests from
+**trusted origins**. The Electron renderer (loaded over `file://`, i.e. an
+`Origin` of `null` or no `Origin` header) and any **loopback** origin
+(`localhost` / `127.0.0.1` / `[::1]`, on any port) are always trusted. This
+includes `*.localhost` subdomains such as the Portless dev URL
+`https://fr-XXXX.localhost:1355` (the `.localhost` TLD always resolves to
+loopback per RFC 6761), so the Electron Desktop app and the local
+`pnpm run dev` setup need no extra configuration.
+
+If you serve the WebUI from a **non-loopback origin** (e.g. a self-hosted
+`https://webui.example.com`) and point `wsproxy.proxyURL` at this local proxy,
+add that origin to the allowlist via the `WSPROXY_CORS_ORIGINS` environment
+variable. It accepts either a comma-separated list or a JSON array:
+
+```console
+$ export WSPROXY_CORS_ORIGINS="https://webui.example.com,https://admin.example.com"
+$ export WSPROXY_CORS_ORIGINS='["https://webui.example.com"]'
+```
+
+Like the other proxy variables, this is an environment variable of the proxy
+**process** (it is _not_ part of the browser-side `config.toml`). When started
+with `pnpm run wsproxy`, the proxy also loads a `.env` file from the repository
+root (via `dotenv`), so you can put `WSPROXY_CORS_ORIGINS=...` there instead of
+exporting it. Requests from disallowed origins receive no CORS headers and a
+`PUT /conf` from a disallowed origin is rejected with `403`.
 
 ## Build web server with specific configuration
 
