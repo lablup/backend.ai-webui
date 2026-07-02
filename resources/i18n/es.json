@@ -2367,10 +2367,16 @@
     "NoScalingGroupAssignedToThisProject": "No se asigna ningún grupo de recursos a este proyecto. \nLa creación de sesiones y la creación de despliegues estarán restringidos.",
     "PendingTimeout": "Tiempo de espera pendiente",
     "PendingTimeoutDesc": "Tiempo máximo Una sesión puede permanecer en estado pendiente.\n\nSi se establece en 0, esperará indefinidamente sin un límite.\n\nSi se deja inseguro, es predeterminado a 0.",
+    "PreemptiblePriority": "__NOT_TRANSLATED__",
+    "PreemptiblePriorityDesc": "__NOT_TRANSLATED__",
+    "Preemption": "__NOT_TRANSLATED__",
+    "PreemptionMode": "__NOT_TRANSLATED__",
+    "PreemptionOrder": "__NOT_TRANSLATED__",
     "Public": "Público",
     "PublicStatus": "Estado público",
     "ResourceGroupAlreadyExist": "Ya existe un grupo de recursos con el mismo nombre.",
     "ResourceGroupCreated": "Grupo de recursos creado con éxito",
+    "ResourceGroupCreatedButConfigurationFailed": "__NOT_TRANSLATED__",
     "ResourceGroupDeleted": "Grupo de recursos eliminado correctamente",
     "ResourceGroupDetail": "Detalle del grupo de recursos",
     "ResourceGroupModified": "Grupo de recursos modificado correctamente",
@@ -2385,7 +2391,9 @@
     "SelectDomain": "Seleccionar dominio",
     "SelectScheduler": "Seleccione Programador",
     "TimeoutSeconds": "Segundos",
-    "TypeResourceGroupNameToDelete": "Escriba el nombre del grupo de recursos que desea eliminar"
+    "TypeResourceGroupNameToDelete": "Escriba el nombre del grupo de recursos que desea eliminar",
+    "UseHostNetwork": "__NOT_TRANSLATED__",
+    "UseHostNetworkDesc": "__NOT_TRANSLATED__"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Está a punto de eliminar esta política de recursos:",

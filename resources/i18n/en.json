@@ -2357,10 +2357,16 @@
     "NoScalingGroupAssignedToThisProject": "No resource group is assigned to this project. Session creation and deployment creation will be restricted.",
     "PendingTimeout": "Pending Timeout",
     "PendingTimeoutDesc": "Maximum time a session can stay in pending state.\nIf set to 0, it will wait indefinitely without a limit.\nIf left unset, it defaults to 0.",
+    "PreemptiblePriority": "Preemptible Priority",
+    "PreemptiblePriorityDesc": "Sessions with priority less than or equal to this value are eligible for preemption. Default is 5.",
+    "Preemption": "Preemption",
+    "PreemptionMode": "Preemption Mode",
+    "PreemptionOrder": "Preemption Order",
     "Public": "Public",
     "PublicStatus": "Public Status",
     "ResourceGroupAlreadyExist": "A resource group with the same name already exists.",
     "ResourceGroupCreated": "Resource group succesfully created",
+    "ResourceGroupCreatedButConfigurationFailed": "The resource group was created, but applying its configuration failed. Edit the resource group to finish configuring it.",
     "ResourceGroupDeleted": "Resource group successfully deleted",
     "ResourceGroupDetail": "Resource Group Detail",
     "ResourceGroupModified": "Resource group successfully modified",
@@ -2375,7 +2381,9 @@
     "SelectDomain": "Select Domain",
     "SelectScheduler": "Select Scheduler",
     "TimeoutSeconds": "Seconds",
-    "TypeResourceGroupNameToDelete": "Type resource group name to delete"
+    "TypeResourceGroupNameToDelete": "Type resource group name to delete",
+    "UseHostNetwork": "Use Host Network",
+    "UseHostNetworkDesc": "Allow sessions in this resource group to use the host network namespace directly instead of container isolation."
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "You are about to delete this resource policy: ",

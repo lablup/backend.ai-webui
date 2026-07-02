@@ -2367,10 +2367,16 @@
     "NoScalingGroupAssignedToThisProject": "Καμία ομάδα πόρων δεν έχει ανατεθεί σε αυτό το έργο. \nΗ δημιουργία συνόδων και η δημιουργία αναπτύξεων θα περιοριστεί.",
     "PendingTimeout": "Εκκρεμή χρονικό όριο",
     "PendingTimeoutDesc": "Μέγιστος χρόνος που μπορεί να παραμείνει σε εκκρεμούσα κατάσταση.\n\nΕάν ρυθμιστεί στο 0, θα περιμένει επ 'αόριστον χωρίς όριο.\n\nΕάν αφεθεί unset, προεπιλογές σε 0.",
+    "PreemptiblePriority": "__NOT_TRANSLATED__",
+    "PreemptiblePriorityDesc": "__NOT_TRANSLATED__",
+    "Preemption": "__NOT_TRANSLATED__",
+    "PreemptionMode": "__NOT_TRANSLATED__",
+    "PreemptionOrder": "__NOT_TRANSLATED__",
     "Public": "Δημόσιο",
     "PublicStatus": "Δημόσια κατάσταση",
     "ResourceGroupAlreadyExist": "Υπάρχει ήδη μια ομάδα πόρων με το ίδιο όνομα.",
     "ResourceGroupCreated": "Η ομάδα πόρων δημιουργήθηκε με επιτυχία",
+    "ResourceGroupCreatedButConfigurationFailed": "__NOT_TRANSLATED__",
     "ResourceGroupDeleted": "Η ομάδα πόρων διαγράφηκε με επιτυχία",
     "ResourceGroupDetail": "Λεπτομέρεια ομάδας πόρων",
     "ResourceGroupModified": "Η ομάδα πόρων τροποποιήθηκε επιτυχώς",
@@ -2385,7 +2391,9 @@
     "SelectDomain": "Επιλέξτε τομέα",
     "SelectScheduler": "Επιλέξτε Προγραμματιστής",
     "TimeoutSeconds": "δευτερόλεπτα",
-    "TypeResourceGroupNameToDelete": "Πληκτρολογήστε όνομα ομάδας πόρων για διαγραφή"
+    "TypeResourceGroupNameToDelete": "Πληκτρολογήστε όνομα ομάδας πόρων για διαγραφή",
+    "UseHostNetwork": "__NOT_TRANSLATED__",
+    "UseHostNetworkDesc": "__NOT_TRANSLATED__"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Πρόκειται να διαγράψετε αυτήν την πολιτική πόρων:",

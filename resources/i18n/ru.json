@@ -2367,10 +2367,16 @@
     "NoScalingGroupAssignedToThisProject": "Никакая группа ресурсов не назначена в этот проект. \nСоздание сеанса и создание развёртываний будет ограничено.",
     "PendingTimeout": "В ожидании тайм -аута",
     "PendingTimeoutDesc": "Максимальное время, когда сессия может оставаться в ожидании.\n\nЕсли установлено на 0, он будет ждать бесконечно без ограничения.\n\nЕсли оставить нерешенность, это по умолчанию до 0.",
+    "PreemptiblePriority": "__NOT_TRANSLATED__",
+    "PreemptiblePriorityDesc": "__NOT_TRANSLATED__",
+    "Preemption": "__NOT_TRANSLATED__",
+    "PreemptionMode": "__NOT_TRANSLATED__",
+    "PreemptionOrder": "__NOT_TRANSLATED__",
     "Public": "Публичный",
     "PublicStatus": "Общественный статус",
     "ResourceGroupAlreadyExist": "Группа ресурсов с таким именем уже существует.",
     "ResourceGroupCreated": "Группа ресурсов успешно создана",
+    "ResourceGroupCreatedButConfigurationFailed": "__NOT_TRANSLATED__",
     "ResourceGroupDeleted": "Группа ресурсов успешно удалена",
     "ResourceGroupDetail": "Сведения о группе ресурсов",
     "ResourceGroupModified": "Группа ресурсов успешно изменена",
@@ -2385,7 +2391,9 @@
     "SelectDomain": "Выбрать домен",
     "SelectScheduler": "Выберите планировщик",
     "TimeoutSeconds": "Секунды",
-    "TypeResourceGroupNameToDelete": "Введите имя группы ресурсов для удаления"
+    "TypeResourceGroupNameToDelete": "Введите имя группы ресурсов для удаления",
+    "UseHostNetwork": "__NOT_TRANSLATED__",
+    "UseHostNetworkDesc": "__NOT_TRANSLATED__"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Вы собираетесь удалить эту политику ресурсов:",

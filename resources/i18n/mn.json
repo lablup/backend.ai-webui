@@ -2368,10 +2368,16 @@
     "NoScalingGroupAssignedToThisProject": "Энэ төсөлд нөөцийн бүлэгт хуваарилагдаагүй байна. \nХуралдаан үүсгэх ба байршуулалт үүсгэхийг хязгаарлах болно.",
     "PendingTimeout": "Хүлээгдэж буй хугацаа",
     "PendingTimeoutDesc": "Хүлээн авах хугацаа хүлээгдэж буй төлөвт үлдэж болно.\n\nХэрэв 0-ийг тохируулсан бол энэ нь хязгаарлалтгүйгээр тодорхойгүй хугацаагаар хүлээх болно.\n\nХэрэв үлдсэнийг нь орхивол энэ нь 0-ийг анхдагчаар тохируулна.",
+    "PreemptiblePriority": "__NOT_TRANSLATED__",
+    "PreemptiblePriorityDesc": "__NOT_TRANSLATED__",
+    "Preemption": "__NOT_TRANSLATED__",
+    "PreemptionMode": "__NOT_TRANSLATED__",
+    "PreemptionOrder": "__NOT_TRANSLATED__",
     "Public": "Олон нийтийн",
     "PublicStatus": "Олон нийтийн статус",
     "ResourceGroupAlreadyExist": "Ижил нэртэй нөөцийн бүлэг аль хэдийн бий болсон.",
     "ResourceGroupCreated": "Нөөцийн бүлэг амжилттай байгуулагдсан",
+    "ResourceGroupCreatedButConfigurationFailed": "__NOT_TRANSLATED__",
     "ResourceGroupDeleted": "Нөөцийн бүлгийг амжилттай устгалаа",
     "ResourceGroupDetail": "Нөөцийн бүлгийн дэлгэрэнгүй",
     "ResourceGroupModified": "Нөөцийн бүлгийг амжилттай өөрчилсөн",
@@ -2386,7 +2392,9 @@
     "SelectDomain": "Домэйн сонгоно уу",
     "SelectScheduler": "Цагийн хуваарийг сонгоно уу",
     "TimeoutSeconds": "Секунд",
-    "TypeResourceGroupNameToDelete": "Устгахын тулд нөөцийн бүлгийн нэрийг бичнэ үү"
+    "TypeResourceGroupNameToDelete": "Устгахын тулд нөөцийн бүлгийн нэрийг бичнэ үү",
+    "UseHostNetwork": "__NOT_TRANSLATED__",
+    "UseHostNetworkDesc": "__NOT_TRANSLATED__"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Та энэ нөөцийн бодлогыг устгах гэж байна:",

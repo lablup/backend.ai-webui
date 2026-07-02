@@ -2369,10 +2369,16 @@
     "NoScalingGroupAssignedToThisProject": "Do tego projektu nie jest przypisywana grupa zasobów. \nTworzenie sesji i tworzenie wdrożeń będą ograniczone.",
     "PendingTimeout": "Oczekujący limit czasu",
     "PendingTimeoutDesc": "Maksymalny czas sesji może pozostać w stanie oczekiwanym.\n\nJeśli zostanie ustawiony na 0, będzie czekać na czas bez ograniczeń.\n\nJeśli pozostanie unset, domyślnie 0.",
+    "PreemptiblePriority": "__NOT_TRANSLATED__",
+    "PreemptiblePriorityDesc": "__NOT_TRANSLATED__",
+    "Preemption": "__NOT_TRANSLATED__",
+    "PreemptionMode": "__NOT_TRANSLATED__",
+    "PreemptionOrder": "__NOT_TRANSLATED__",
     "Public": "Publiczny",
     "PublicStatus": "Status publiczny",
     "ResourceGroupAlreadyExist": "Grupa zasobów o tej samej nazwie już istnieje.",
     "ResourceGroupCreated": "Pomyślnie utworzono grupę zasobów",
+    "ResourceGroupCreatedButConfigurationFailed": "__NOT_TRANSLATED__",
     "ResourceGroupDeleted": "Grupa zasobów została pomyślnie usunięta",
     "ResourceGroupDetail": "Szczegóły grupy zasobów",
     "ResourceGroupModified": "Grupa zasobów została pomyślnie zmodyfikowana",
@@ -2387,7 +2393,9 @@
     "SelectDomain": "Wybierz domenę",
     "SelectScheduler": "Wybierz harmonogram",
     "TimeoutSeconds": "sekundy",
-    "TypeResourceGroupNameToDelete": "Wpisz nazwę grupy zasobów do usunięcia"
+    "TypeResourceGroupNameToDelete": "Wpisz nazwę grupy zasobów do usunięcia",
+    "UseHostNetwork": "__NOT_TRANSLATED__",
+    "UseHostNetworkDesc": "__NOT_TRANSLATED__"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Zamierzasz usunąć tę zasadę dotyczącą zasobów:",

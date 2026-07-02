@@ -2367,10 +2367,16 @@
     "NoScalingGroupAssignedToThisProject": "Resurssiryhmää ei ole osoitettu tähän projektiin. \nIstunnon luominen ja käyttöönoton luominen rajoitetaan.",
     "PendingTimeout": "Odotettaessa aikakatkaisua",
     "PendingTimeoutDesc": "Suurin aika, jonka istunto voi pysyä vireillä olevassa tilassa.\n\nJos se on asetettu 0: een, se odottaa määräämättömäksi sanottuna ilman rajaa.\n\nJos se on jätetty, se oletusarvo on 0.",
+    "PreemptiblePriority": "__NOT_TRANSLATED__",
+    "PreemptiblePriorityDesc": "__NOT_TRANSLATED__",
+    "Preemption": "__NOT_TRANSLATED__",
+    "PreemptionMode": "__NOT_TRANSLATED__",
+    "PreemptionOrder": "__NOT_TRANSLATED__",
     "Public": "Julkinen",
     "PublicStatus": "Julkinen asema",
     "ResourceGroupAlreadyExist": "Samanniminen resurssiryhmä on jo olemassa.",
     "ResourceGroupCreated": "Resurssiryhmä luotu onnistuneesti",
+    "ResourceGroupCreatedButConfigurationFailed": "__NOT_TRANSLATED__",
     "ResourceGroupDeleted": "Resurssiryhmä onnistuneesti poistettu",
     "ResourceGroupDetail": "Resurssiryhmän tiedot",
     "ResourceGroupModified": "Resurssiryhmän muokkaus onnistui onnistuneesti",
@@ -2385,7 +2391,9 @@
     "SelectDomain": "Valitse verkkotunnus",
     "SelectScheduler": "Valitse Ajastin",
     "TimeoutSeconds": "Sekuntia",
-    "TypeResourceGroupNameToDelete": "Kirjoita poistettavan resurssiryhmän nimi"
+    "TypeResourceGroupNameToDelete": "Kirjoita poistettavan resurssiryhmän nimi",
+    "UseHostNetwork": "__NOT_TRANSLATED__",
+    "UseHostNetworkDesc": "__NOT_TRANSLATED__"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Olet poistamassa tätä resurssikäytäntöä:",

@@ -2372,10 +2372,16 @@
     "NoScalingGroupAssignedToThisProject": "このプロジェクトにはリソースグループが割り当てられていません。\nセッションの作成とデプロイの作成は制限されます。",
     "PendingTimeout": "保留中のタイムアウト",
     "PendingTimeoutDesc": "セッションが保留中の状態にとどまることができる最大時間。\n\n0に設定すると、制限なしに無期限に待機します。\n\n設定されたままにしておくと、デフォルトは0になります。",
+    "PreemptiblePriority": "__NOT_TRANSLATED__",
+    "PreemptiblePriorityDesc": "__NOT_TRANSLATED__",
+    "Preemption": "__NOT_TRANSLATED__",
+    "PreemptionMode": "__NOT_TRANSLATED__",
+    "PreemptionOrder": "__NOT_TRANSLATED__",
     "Public": "公開",
     "PublicStatus": "公開状況",
     "ResourceGroupAlreadyExist": "同じ名前のリソースグループがすでに存在します。",
     "ResourceGroupCreated": "リソースグループが正常に作成されました",
+    "ResourceGroupCreatedButConfigurationFailed": "__NOT_TRANSLATED__",
     "ResourceGroupDeleted": "リソースグループが正常に削除されました",
     "ResourceGroupDetail": "リソースグループの詳細",
     "ResourceGroupModified": "リソースグループが正常に変更されました",
@@ -2390,7 +2396,9 @@
     "SelectDomain": "ドメインを選択",
     "SelectScheduler": "スケジューラを選択",
     "TimeoutSeconds": "秒",
-    "TypeResourceGroupNameToDelete": "削除するリソースグループ名を入力します"
+    "TypeResourceGroupNameToDelete": "削除するリソースグループ名を入力します",
+    "UseHostNetwork": "__NOT_TRANSLATED__",
+    "UseHostNetworkDesc": "__NOT_TRANSLATED__"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "このリソースポリシーを削除しようとしています。",

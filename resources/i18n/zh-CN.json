@@ -2369,10 +2369,16 @@
     "NoScalingGroupAssignedToThisProject": "没有资源组分配给该项目。\n会话创建和部署创建将受到限制。",
     "PendingTimeout": "等待暂停",
     "PendingTimeoutDesc": "会话可以保持在待处理状态。\n\n如果设置为0，它将无限期地等待而无需限制。\n\n如果保持不设定，则默认为0。",
+    "PreemptiblePriority": "__NOT_TRANSLATED__",
+    "PreemptiblePriorityDesc": "__NOT_TRANSLATED__",
+    "Preemption": "__NOT_TRANSLATED__",
+    "PreemptionMode": "__NOT_TRANSLATED__",
+    "PreemptionOrder": "__NOT_TRANSLATED__",
     "Public": "公众",
     "PublicStatus": "公众地位",
     "ResourceGroupAlreadyExist": "已存在同名的资源组。",
     "ResourceGroupCreated": "资源组创建成功",
+    "ResourceGroupCreatedButConfigurationFailed": "__NOT_TRANSLATED__",
     "ResourceGroupDeleted": "资源组删除成功",
     "ResourceGroupDetail": "资源组详细信息",
     "ResourceGroupModified": "资源组修改成功",
@@ -2387,7 +2393,9 @@
     "SelectDomain": "选择域",
     "SelectScheduler": "选择调度程序",
     "TimeoutSeconds": "秒",
-    "TypeResourceGroupNameToDelete": "输入要删除的资源组名称"
+    "TypeResourceGroupNameToDelete": "输入要删除的资源组名称",
+    "UseHostNetwork": "__NOT_TRANSLATED__",
+    "UseHostNetworkDesc": "__NOT_TRANSLATED__"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "您即将删除此资源策略：",

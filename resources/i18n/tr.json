@@ -2367,10 +2367,16 @@
     "NoScalingGroupAssignedToThisProject": "Bu projeye hiçbir kaynak grubu atanmadı. \nOturum oluşturma ve dağıtım oluşturma kısıtlanacaktır.",
     "PendingTimeout": "Bekleyen zaman aşımı",
     "PendingTimeoutDesc": "Maksimum Süre Bir oturum bekleyen durumda kalabilir.\n\n0 olarak ayarlanırsa, sınırsız süresiz olarak bekleyecektir.\n\nSet kalmazsa, varsayılan 0 olarakdır.",
+    "PreemptiblePriority": "__NOT_TRANSLATED__",
+    "PreemptiblePriorityDesc": "__NOT_TRANSLATED__",
+    "Preemption": "__NOT_TRANSLATED__",
+    "PreemptionMode": "__NOT_TRANSLATED__",
+    "PreemptionOrder": "__NOT_TRANSLATED__",
     "Public": "Kamu",
     "PublicStatus": "Kamu Statüsü",
     "ResourceGroupAlreadyExist": "Aynı ada sahip bir kaynak grubu zaten var.",
     "ResourceGroupCreated": "Kaynak grubu başarıyla oluşturuldu",
+    "ResourceGroupCreatedButConfigurationFailed": "__NOT_TRANSLATED__",
     "ResourceGroupDeleted": "Kaynak grubu başarıyla silindi",
     "ResourceGroupDetail": "Kaynak Grubu Ayrıntısı",
     "ResourceGroupModified": "Kaynak grubu başarıyla değiştirildi",
@@ -2385,7 +2391,9 @@
     "SelectDomain": "Etki Alanı Seç",
     "SelectScheduler": "Zamanlayıcı Seç",
     "TimeoutSeconds": "saniye",
-    "TypeResourceGroupNameToDelete": "Silmek için kaynak grubu adını yazın"
+    "TypeResourceGroupNameToDelete": "Silmek için kaynak grubu adını yazın",
+    "UseHostNetwork": "__NOT_TRANSLATED__",
+    "UseHostNetworkDesc": "__NOT_TRANSLATED__"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Bu kaynak politikasını silmek üzeresiniz:",

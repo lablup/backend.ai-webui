@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a1b15378714e12950a4b3f283d94b043>>
+ * @generated SignedSource<<07bef5e55ad6186f50be9179ab8d3087>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,26 +9,53 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type ModifyScalingGroupInput = {
+export type PreemptionMode = "RESCHEDULE" | "TERMINATE" | "%future added value";
+export type PreemptionOrder = "NEWEST" | "OLDEST" | "%future added value";
+export type SchedulerType = "DRF" | "FAIR_SHARE" | "FIFO" | "LIFO" | "%future added value";
+export type UpdateResourceGroupInput = {
+  appProxyAddr?: string | null | undefined;
+  appproxyApiToken?: string | null | undefined;
   description?: string | null | undefined;
-  driver?: string | null | undefined;
-  driver_opts?: string | null | undefined;
-  is_active?: boolean | null | undefined;
-  is_public?: boolean | null | undefined;
-  scheduler?: string | null | undefined;
-  scheduler_opts?: string | null | undefined;
-  use_host_network?: boolean | null | undefined;
-  wsproxy_addr?: string | null | undefined;
-  wsproxy_api_token?: string | null | undefined;
+  isActive?: boolean | null | undefined;
+  isPublic?: boolean | null | undefined;
+  preemption?: PreemptionConfigInput | null | undefined;
+  resourceGroupName: string;
+  schedulerType?: SchedulerType | null | undefined;
+  useHostNetwork?: boolean | null | undefined;
+};
+export type PreemptionConfigInput = {
+  mode?: PreemptionMode;
+  order?: PreemptionOrder;
+  preemptiblePriority?: number;
 };
 export type ResourceGroupSettingModalUpdateMutation$variables = {
-  input: ModifyScalingGroupInput;
-  name: string;
+  input: UpdateResourceGroupInput;
 };
 export type ResourceGroupSettingModalUpdateMutation$data = {
-  readonly modify_scaling_group: {
-    readonly msg: string | null | undefined;
-    readonly ok: boolean | null | undefined;
+  readonly adminUpdateResourceGroup: {
+    readonly resourceGroup: {
+      readonly id: string;
+      readonly metadata: {
+        readonly description: string | null | undefined;
+      };
+      readonly name: string;
+      readonly network: {
+        readonly useHostNetwork: boolean;
+        readonly wsproxyAddr: string | null | undefined;
+      };
+      readonly scheduler: {
+        readonly preemption: {
+          readonly mode: PreemptionMode;
+          readonly order: PreemptionOrder;
+          readonly preemptiblePriority: number;
+        };
+        readonly type: SchedulerType;
+      };
+      readonly status: {
+        readonly isActive: boolean;
+        readonly isPublic: boolean;
+      };
+    };
   } | null | undefined;
 };
 export type ResourceGroupSettingModalUpdateMutation = {
@@ -37,48 +64,169 @@ export type ResourceGroupSettingModalUpdateMutation = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "input"
-},
-v1 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "name"
-},
-v2 = [
+var v0 = [
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "input"
+  }
+],
+v1 = [
   {
     "alias": null,
     "args": [
       {
         "kind": "Variable",
-        "name": "name",
-        "variableName": "name"
-      },
-      {
-        "kind": "Variable",
-        "name": "props",
+        "name": "input",
         "variableName": "input"
       }
     ],
-    "concreteType": "ModifyScalingGroup",
+    "concreteType": "UpdateResourceGroupPayload",
     "kind": "LinkedField",
-    "name": "modify_scaling_group",
+    "name": "adminUpdateResourceGroup",
     "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
-        "kind": "ScalarField",
-        "name": "ok",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "msg",
+        "concreteType": "ResourceGroup",
+        "kind": "LinkedField",
+        "name": "resourceGroup",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "id",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "name",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "ResourceGroupStatus",
+            "kind": "LinkedField",
+            "name": "status",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "isActive",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "isPublic",
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "ResourceGroupMetadata",
+            "kind": "LinkedField",
+            "name": "metadata",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "description",
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "ResourceGroupNetworkConfig",
+            "kind": "LinkedField",
+            "name": "network",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "wsproxyAddr",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "useHostNetwork",
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "ResourceGroupSchedulerConfig",
+            "kind": "LinkedField",
+            "name": "scheduler",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "type",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "PreemptionConfig",
+                "kind": "LinkedField",
+                "name": "preemption",
+                "plural": false,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "preemptiblePriority",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "order",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "mode",
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
         "storageKey": null
       }
     ],
@@ -87,38 +235,32 @@ v2 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": [
-      (v0/*: any*/),
-      (v1/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "ResourceGroupSettingModalUpdateMutation",
-    "selections": (v2/*: any*/),
+    "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [
-      (v1/*: any*/),
-      (v0/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "ResourceGroupSettingModalUpdateMutation",
-    "selections": (v2/*: any*/)
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "2352dc03b1acef2df9cf7c5f686665a3",
+    "cacheID": "3c5eefa39e52e0b55040d1fc59bac9cb",
     "id": null,
     "metadata": {},
     "name": "ResourceGroupSettingModalUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation ResourceGroupSettingModalUpdateMutation(\n  $name: String!\n  $input: ModifyScalingGroupInput!\n) {\n  modify_scaling_group(name: $name, props: $input) {\n    ok\n    msg\n  }\n}\n"
+    "text": "mutation ResourceGroupSettingModalUpdateMutation(\n  $input: UpdateResourceGroupInput!\n) {\n  adminUpdateResourceGroup(input: $input) {\n    resourceGroup {\n      id\n      name\n      status {\n        isActive\n        isPublic\n      }\n      metadata {\n        description\n      }\n      network {\n        wsproxyAddr\n        useHostNetwork\n      }\n      scheduler {\n        type\n        preemption {\n          preemptiblePriority\n          order\n          mode\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "510c22b428b17c9e16efd58a5f908c3d";
+(node as any).hash = "92f8f3a06fae49a526a2ad73f15ca551";
 
 export default node;

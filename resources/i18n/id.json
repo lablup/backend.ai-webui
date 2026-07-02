@@ -2370,10 +2370,16 @@
     "NoScalingGroupAssignedToThisProject": "Tidak ada grup sumber daya yang ditugaskan untuk proyek ini. \nPembuatan Sesi dan Pembuatan Penerapan akan dibatasi.",
     "PendingTimeout": "Waktu tunggu yang tertunda",
     "PendingTimeoutDesc": "Waktu maksimum sesi dapat tetap dalam keadaan tertunda.\n\nJika diatur ke 0, itu akan menunggu tanpa batas tanpa batas.\n\nJika dibiarkan tidak disetel, itu default ke 0.",
+    "PreemptiblePriority": "__NOT_TRANSLATED__",
+    "PreemptiblePriorityDesc": "__NOT_TRANSLATED__",
+    "Preemption": "__NOT_TRANSLATED__",
+    "PreemptionMode": "__NOT_TRANSLATED__",
+    "PreemptionOrder": "__NOT_TRANSLATED__",
     "Public": "Publik",
     "PublicStatus": "Status Publik",
     "ResourceGroupAlreadyExist": "Grup sumber daya dengan nama yang sama sudah ada.",
     "ResourceGroupCreated": "Grup sumber daya berhasil dibuat",
+    "ResourceGroupCreatedButConfigurationFailed": "__NOT_TRANSLATED__",
     "ResourceGroupDeleted": "Grup sumber daya berhasil dihapus",
     "ResourceGroupDetail": "Detail Grup Sumber Daya",
     "ResourceGroupModified": "Grup sumber daya berhasil diubah",
@@ -2388,7 +2394,9 @@
     "SelectDomain": "Pilih Domain",
     "SelectScheduler": "Pilih Penjadwal",
     "TimeoutSeconds": "Detik",
-    "TypeResourceGroupNameToDelete": "Ketik nama grup sumber daya yang akan dihapus"
+    "TypeResourceGroupNameToDelete": "Ketik nama grup sumber daya yang akan dihapus",
+    "UseHostNetwork": "__NOT_TRANSLATED__",
+    "UseHostNetworkDesc": "__NOT_TRANSLATED__"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Anda akan menghapus kebijakan sumber daya ini:",
