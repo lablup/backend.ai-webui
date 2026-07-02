@@ -4,8 +4,8 @@
  */
 import { downloadBlob } from '../../helper/csv-util';
 import { loadMonacoEditor } from '../../helper/monacoEditor';
+import { useDefaultTheme } from '../../hooks/useDefaultTheme';
 import { useThemeMode } from '../../hooks/useThemeMode';
-import { useUserCustomThemeConfig } from '../../hooks/useUserCustomThemeConfig';
 import { ExportOutlined, ImportOutlined } from '@ant-design/icons';
 import type { Monaco } from '@monaco-editor/react';
 import { Alert, App, Skeleton, theme, Upload } from 'antd';
@@ -40,12 +40,11 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
   const { token } = theme.useToken();
   const { message } = App.useApp();
   const { isDarkMode } = useThemeMode();
-  const { userCustomThemeConfig, setUserCustomThemeConfig } =
-    useUserCustomThemeConfig();
+  const { defaultTheme, setDefaultTheme } = useDefaultTheme();
   const { logger } = useBAILogger();
 
   const [editorValue, setEditorValue] = useState(
-    JSON.stringify(userCustomThemeConfig ?? {}, null, 2) ?? '',
+    JSON.stringify(defaultTheme ?? {}, null, 2) ?? '',
   );
   const monacoRef = useRef<Monaco | null>(null);
 
@@ -105,12 +104,12 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
               action={async () => {
                 const markers =
                   await monacoRef.current?.editor.getModelMarkers();
-                if (_.isEmpty(userCustomThemeConfig)) {
+                if (_.isEmpty(defaultTheme)) {
                   message.error(t('userSettings.theme.NoChangesMade'));
                 } else if (markers && markers.length > 0) {
                   message.error(t('theme.CannotApplyInvalidJsonConfig'));
                 } else {
-                  // should export current value not the userCustomThemeConfig state
+                  // should export current value not the defaultTheme state
                   let parsedValue;
                   try {
                     parsedValue = JSON.parse(editorValue);
@@ -149,7 +148,7 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
                   message.error(t('theme.CannotApplyInvalidJsonConfig'));
                   return;
                 }
-                setUserCustomThemeConfig(parsedValue);
+                setDefaultTheme(parsedValue);
                 message.success(t('theme.JsonConfigAppliedSuccessfully'));
                 onRequestClose();
               }}

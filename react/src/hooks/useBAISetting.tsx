@@ -48,6 +48,7 @@ export interface UserSettings {
   container_log_auto_refresh_enabled?: boolean;
   container_log_auto_refresh_interval?: number;
   custom_theme_config?: CustomThemeConfig;
+  custom_primary_color?: string;
   deploymentRevisionCreationMode?: 'preset' | 'custom';
   schedulingHistoryExpandMode?: 'expand-all' | 'collapse-all' | 'errors-only';
   chat_intro_alert_dismissed?: boolean;

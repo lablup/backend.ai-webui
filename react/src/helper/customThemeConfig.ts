@@ -52,18 +52,6 @@ export type ThemeFamilyConfig = {
   dark: ThemeConfig;
   /** Human-readable label shown in the family selector. Falls back to the key. */
   label?: string;
-  /**
-   * How this family's header handles text/icon contrast. Drives the header text
-   * color and the conditional ReverseThemeProvider wrap in WebUIHeader.
-   * - omitted: historical behavior (light text via `colorBgBase` + always
-   *   reversed children). The built-in `default` family is unaffected.
-   * - `'dark'`: a saturated/dark header in both modes -> always light
-   *   text/icons.
-   * - `'light'`: a fixed light header in both modes -> always dark text/icons.
-   * - `'auto'`: a frosted/translucent header that follows the app light/dark
-   *   mode -> `colorText` + no reversal.
-   */
-  headerScheme?: 'light' | 'dark' | 'auto';
 };
 
 export type CustomThemeConfig = {
@@ -85,8 +73,36 @@ export type CustomThemeConfig = {
 };
 
 let _customTheme: CustomThemeConfig | undefined;
+let _builtinThemeFamilies: Record<string, ThemeFamilyConfig> | undefined;
 
 export const getCustomTheme = () => _customTheme;
+
+/**
+ * Built-in theme families loaded from `resources/theme-families.json`. Kept
+ * separate from the operator-owned `theme.json` so version upgrades deliver
+ * new/updated families without touching operator customizations.
+ */
+export const getBuiltinThemeFamilies = () => _builtinThemeFamilies;
+
+/**
+ * Keep only structurally valid family entries (each must carry both `light`
+ * and `dark` theme configs) so a malformed theme-families.json degrades to
+ * fewer families instead of a broken catalog.
+ */
+function pickValidThemeFamilies(
+  input: unknown,
+): Record<string, ThemeFamilyConfig> | undefined {
+  if (!_.isPlainObject(input)) {
+    return undefined;
+  }
+  return _.pickBy(
+    input as Record<string, ThemeFamilyConfig>,
+    (family) =>
+      _.isPlainObject(family) &&
+      _.isPlainObject(family.light) &&
+      _.isPlainObject(family.dark),
+  );
+}
 
 const GENERIC_FAMILIES = new Set([
   'serif',
@@ -133,9 +149,18 @@ function injectFontCSS(fontFamilies: string[]) {
 }
 
 export const loadCustomThemeConfig = () => {
+  // A missing/broken theme-families.json only costs the built-in families;
+  // it must never block the theme itself.
+  const builtinFamiliesPromise = fetch('resources/theme-families.json')
+    .then((response) => (response.ok ? response.json() : undefined))
+    .catch(() => undefined);
+
   fetch('resources/theme.json')
     .then((response) => response.json())
-    .then((theme) => {
+    .then(async (theme) => {
+      _builtinThemeFamilies = pickValidThemeFamilies(
+        (await builtinFamiliesPromise)?.families,
+      );
       if (_.isUndefined(theme.light)) {
         _customTheme = { light: theme, dark: theme, logo: theme.logo };
       } else {

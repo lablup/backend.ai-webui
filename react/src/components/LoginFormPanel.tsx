@@ -13,7 +13,7 @@ import { baiSignedRequestWithPromise } from '../helper';
 import type { LoginConfigState } from '../helper/loginConfig';
 import { useAnonymousBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
+import { useThemeFamily } from '../hooks/useThemeFamily';
 import { useThemeMode } from '../hooks/useThemeMode';
 import SignupModal from './SignupModal';
 import {
@@ -127,7 +127,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();
-  const themeConfig = useCustomThemeConfig();
+  const { activeThemeFamily: themeConfig } = useThemeFamily();
 
   const [isEndpointExpanded, setIsEndpointExpanded] = useState(
     () => showEndpointInput && !isEndpointDisabled && apiEndpoint === '',

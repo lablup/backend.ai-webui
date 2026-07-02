@@ -17,7 +17,7 @@
     },
     "families": {
       "type": "object",
-      "description": "Additional named theme families beyond the built-in 'default' family (synthesized from the top-level light/dark). Keyed by family id (e.g. 'stained', 'glass').",
+      "description": "Deployment-specific theme families, keyed by family id. Merged on top of the product's built-in families (resources/theme-families.json), so an entry with the same key overrides the built-in one. The 'default' family is always synthesized from the top-level light/dark.",
       "additionalProperties": {
         "type": "object",
         "properties": {
@@ -30,11 +30,6 @@
           "label": {
             "type": "string",
             "description": "Human-readable label shown in the family selector. Falls back to the family key."
-          },
-          "headerScheme": {
-            "type": "string",
-            "enum": ["light", "dark", "auto"],
-            "description": "How the family's header handles text/icon contrast: 'dark' (light text on a saturated header), 'light' (dark text on a light header), or 'auto' (frosted header that follows the app light/dark mode). Omit to keep the historical reversed-children behavior."
           }
         },
         "required": ["light", "dark"]

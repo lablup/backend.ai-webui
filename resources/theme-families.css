@@ -22,8 +22,7 @@
    Stained: multi-layer stained-glass gradient header.
    Layers, front to back: diagonal pattern, diagonal pattern,
    three cloud ellipses, the rainbow base gradient.
-   The gradient is vivid in both light and dark mode; pair with
-   headerScheme: "dark" (light text/icons).
+   The gradient is vivid in both light and dark mode.
    ============================================================ */
 body[data-theme-family='stained'] .bai-webui-header {
   background:
@@ -73,8 +72,7 @@ body[data-theme-family='stained'] .bai-webui-header {
 
 /* ============================================================
    Glass: frosted blur header. The sticky header blurs whatever
-   content scrolls beneath it. Pair with headerScheme: "auto"
-   (text follows the light/dark mode).
+   content scrolls beneath it.
    ============================================================ */
 body[data-theme-family='glass'] .bai-webui-header {
   background: rgba(255, 255, 255, 0.2) !important;

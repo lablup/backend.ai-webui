@@ -81,6 +81,7 @@ export interface LoginConfigState {
   directoryBasedUsage: boolean;
   maxCountForPreopenPorts: number;
   allowCustomResourceAllocation: boolean;
+  allowThemeMode: boolean;
   isDirectorySizeVisible: boolean;
   eduAppNamePrefix: string;
   enableImportFromHuggingFace: boolean;
@@ -146,6 +147,7 @@ export function getDefaultLoginConfig(): LoginConfigState {
     directoryBasedUsage: false,
     maxCountForPreopenPorts: 10,
     allowCustomResourceAllocation: true,
+    allowThemeMode: false,
     isDirectorySizeVisible: false,
     eduAppNamePrefix: '',
     enableImportFromHuggingFace: false,
@@ -386,6 +388,12 @@ export function refreshConfigFromToml(config: any): LoginConfigState {
     valueType: 'boolean',
     defaultValue: true,
     value: g?.allowCustomResourceAllocation,
+  }) as boolean;
+
+  state.allowThemeMode = getConfigValueByExists(g, {
+    valueType: 'boolean',
+    defaultValue: false,
+    value: g?.allowThemeMode,
   }) as boolean;
 
   state.isDirectorySizeVisible = getConfigValueByExists(g, {
@@ -635,6 +643,7 @@ export function applyConfigToClient(cfg: LoginConfigState): void {
   client._config.maxCountForPreopenPorts = cfg.maxCountForPreopenPorts;
   client._config.allowCustomResourceAllocation =
     cfg.allowCustomResourceAllocation;
+  client._config.allowThemeMode = cfg.allowThemeMode;
   client._config.isDirectorySizeVisible = cfg.isDirectorySizeVisible;
   client._config.enableImportFromHuggingFace = cfg.enableImportFromHuggingFace;
   client._config.enableExtendLoginSession = cfg.enableExtendLoginSession;

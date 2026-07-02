@@ -15,8 +15,6 @@ import {
   useCurrentUserProjectRoles,
   useEffectiveAdminRole,
 } from '../../hooks/useCurrentUserProjectRoles';
-import { useThemeFamily } from '../../hooks/useThemeFamily';
-import { useThemeMode } from '../../hooks/useThemeMode';
 import { useWebUIMenuItems } from '../../hooks/useWebUIMenuItems';
 import BAINotificationButton from '../BAINotificationButton';
 import LoginSessionExtendButton from '../LoginSessionExtendButton';
@@ -61,36 +59,6 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
   const { isSelectedAdminCategoryMenu, defaultMenuPath } = useWebUIMenuItems();
   const effectiveAdminRole = useEffectiveAdminRole();
   const { projectAdminIds } = useCurrentUserProjectRoles();
-  const { isDarkMode } = useThemeMode();
-  const { headerScheme } = useThemeFamily();
-
-  // Header text/icon contrast per theme family (see ThemeFamilyConfig.headerScheme
-  // and resources/theme-families.css):
-  // - undefined (default/orange): historical behavior, colorBgBase text and
-  //   children reversed onto the saturated header.
-  // - 'dark'/'light': a fixed dark/light header surface in both modes.
-  // - 'auto': a frosted header that follows the app light/dark mode.
-  const appScheme: 'light' | 'dark' = isDarkMode ? 'dark' : 'light';
-  const targetHeaderScheme: 'light' | 'dark' =
-    headerScheme === undefined
-      ? appScheme === 'dark'
-        ? 'light'
-        : 'dark'
-      : headerScheme === 'auto'
-        ? appScheme
-        : headerScheme;
-  // Reverse the children's scheme only when the header surface differs from the
-  // app mode (so reversed icons land on a contrasting header).
-  const shouldReverseHeader = targetHeaderScheme !== appScheme;
-  const headerTextColor =
-    headerScheme === undefined
-      ? token.colorBgBase
-      : headerScheme === 'auto'
-        ? token.colorText
-        : targetHeaderScheme === 'dark'
-          ? 'rgba(255, 255, 255, 0.88)'
-          : 'rgba(0, 0, 0, 0.88)';
-
   // Last visited general page — shared with WebUISider's "go back" button so
   // that exiting admin mode returns the user to where they were last. See
   // WebUISider.tsx (`backendaiwebui.last_visited_general_path`).
@@ -137,12 +105,12 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
         backgroundColor: token.Layout?.headerBg,
         paddingRight: token.marginLG,
         paddingLeft: token.marginLG,
-        color: headerTextColor,
+        color: token.colorBgBase,
       }}
       className={`${styles.webuiHeader} bai-webui-header`}
     >
       <BAIFlex data-testid="label-selector-project" direction="row" gap={'sm'}>
-        <ReverseThemeProvider enabled={shouldReverseHeader}>
+        <ReverseThemeProvider>
           {!gridBreakpoint.sm && (
             <Button
               icon={<MenuIcon />}
@@ -248,7 +216,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
             </Suspense>
           )}
         <BAINotificationButton data-testid="button-notification" />
-        <ReverseThemeProvider enabled={shouldReverseHeader}>
+        <ReverseThemeProvider>
           <WebUIThemeToggleButton data-testid="button-theme" />
           <WEBUIHelpButton data-testid="button-help" />
         </ReverseThemeProvider>
@@ -257,9 +225,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
           buttonRender={(btn) => (
             //  Add a `div` to resolve the Dropdown bug when the child is a `ConfigProvider`(ReverseThemeProvider).
             <div>
-              <ReverseThemeProvider enabled={shouldReverseHeader}>
-                {btn}
-              </ReverseThemeProvider>
+              <ReverseThemeProvider>{btn}</ReverseThemeProvider>
             </div>
           )}
           style={{

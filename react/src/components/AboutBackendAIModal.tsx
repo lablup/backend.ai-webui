@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
+import { useThemeFamily } from '../hooks/useThemeFamily';
 import { useThemeMode } from '../hooks/useThemeMode';
 import { Typography } from 'antd';
 import { BAILink, BAIModal, BAIModalProps } from 'backend.ai-ui';
@@ -15,7 +15,7 @@ const AboutBackendAIModal = ({
   onRequestClose,
   ...props
 }: AboutBackendAIModalProps) => {
-  const themeConfig = useCustomThemeConfig();
+  const { activeThemeFamily: themeConfig } = useThemeFamily();
   const { isDarkMode } = useThemeMode();
   const baiClient = useSuspendedBackendaiClient();
   // @ts-ignore
