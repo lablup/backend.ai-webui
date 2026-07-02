@@ -94,25 +94,28 @@ const NetworkStatusBanner = () => {
   // The cleanup both drops in-flight results (`disposed`) and resets the
   // state so the next offline episode starts with the banner hidden instead
   // of flashing a stale failure from the previous episode.
-  useEffect(() => {
-    if (!browserOffline) {
-      return;
-    }
-    let disposed = false;
-    const runProbe = async () => {
-      const unreachable = await probeEndpointReachability();
-      if (!disposed) {
-        setEndpointUnreachable(unreachable);
+  useEffect(
+    function probeEndpointWhileBrowserOffline() {
+      if (!browserOffline) {
+        return;
       }
-    };
-    runProbe();
-    const intervalId = setInterval(runProbe, REACHABILITY_PROBE_INTERVAL_MS);
-    return () => {
-      disposed = true;
-      clearInterval(intervalId);
-      setEndpointUnreachable(false);
-    };
-  }, [browserOffline]);
+      let disposed = false;
+      const runProbe = async () => {
+        const unreachable = await probeEndpointReachability();
+        if (!disposed) {
+          setEndpointUnreachable(unreachable);
+        }
+      };
+      runProbe();
+      const intervalId = setInterval(runProbe, REACHABILITY_PROBE_INTERVAL_MS);
+      return function cleanupProbe() {
+        disposed = true;
+        clearInterval(intervalId);
+        setEndpointUnreachable(false);
+      };
+    },
+    [browserOffline],
+  );
 
   // Show the offline banner only when the browser reports offline AND the
   // endpoint probe confirms it is actually unreachable. While the probe is in
