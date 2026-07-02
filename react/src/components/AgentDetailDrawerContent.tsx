@@ -7,9 +7,10 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import AgentActionButtons from './AgentNodeItems/AgentActionButtons';
 import AgentComputePlugins from './AgentNodeItems/AgentComputePlugins';
 import AgentResources from './AgentNodeItems/AgentResources';
+import AgentSessionList from './AgentNodeItems/AgentSessionList';
 import AgentStatusTag from './AgentNodeItems/AgentStatusTag';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import { Descriptions, Grid, Tabs, theme, Typography } from 'antd';
+import { Descriptions, Grid, Skeleton, Tabs, theme, Typography } from 'antd';
 import {
   BAIDoubleTag,
   BAIFlex,
@@ -18,7 +19,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
@@ -26,7 +27,7 @@ interface AgentDetailDrawerContentProps {
   agentNodeFrgmt?: AgentDetailDrawerContentFragment$key | null;
 }
 
-type TabKey = 'resources';
+type TabKey = 'resources' | 'sessions';
 
 const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
   agentNodeFrgmt,
@@ -151,6 +152,17 @@ const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
             key: 'resources',
             label: t('agent.Resources'),
             children: <AgentResources agentNodeFrgmt={agent} />,
+          },
+          {
+            key: 'sessions',
+            label: t('agent.Sessions'),
+            children: (
+              <Suspense fallback={<Skeleton active />}>
+                {agent?.row_id ? (
+                  <AgentSessionList agentId={agent.row_id} />
+                ) : null}
+              </Suspense>
+            ),
           },
         ]}
       />
