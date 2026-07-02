@@ -65,7 +65,7 @@ versions:
       kind: archive-branch
       ref: docs-archive/26.4
     latest: true
-    pdfTag: "v26.4.7"
+    pdfTag: "v26.4.10"
 
 # Product name for log messages
 productName: "Backend.AI WebUI Docs"
