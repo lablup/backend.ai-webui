@@ -2189,7 +2189,6 @@
     "ReclamationStatusLegendYellow": "利用率较低，但尚未达到回收阈值。目前安全，但如果进一步下降则存在风险。",
     "ReclamationStatusSafe": "安全",
     "ReclamationStatusTooltipTitle": "近期平均利用率 / 回收阈值 (%)",
-    "ReclamationStatusTooltipTitleWithWindow": "最近{{duration}}的平均利用率 / 回收阈值 (%)",
     "ReclamationStatusWarning": "警告",
     "RequestContainerCommit": "请求容器承诺",
     "Reservation": "预订",

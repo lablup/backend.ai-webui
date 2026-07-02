@@ -2189,7 +2189,6 @@
     "ReclamationStatusLegendYellow": "การใช้งานต่ำแต่ยังไม่ถึงเกณฑ์การเรียกคืน ปลอดภัยในขณะนี้ แต่มีความเสี่ยงหากลดลงอีก",
     "ReclamationStatusSafe": "ปลอดภัย",
     "ReclamationStatusTooltipTitle": "การใช้งานเฉลี่ยล่าสุด / เกณฑ์การเรียกคืน (%)",
-    "ReclamationStatusTooltipTitleWithWindow": "การใช้งานเฉลี่ยใน {{duration}} ที่ผ่านมา / เกณฑ์การเรียกคืน (%)",
     "ReclamationStatusWarning": "คำเตือน",
     "RequestContainerCommit": "ขอคอมมิตคอนเทนเนอร์",
     "Reservation": "การจอง",

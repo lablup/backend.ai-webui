@@ -12,7 +12,6 @@ import {
   useMemoizedJSONParse,
   BAIFlex,
 } from 'backend.ai-ui';
-import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -62,13 +61,11 @@ export function getOverallReclamationColor(
 
 interface SessionReclamationStatusCellProps {
   sessionFrgmt: SessionReclamationStatusCellFragment$key | null;
-  /** Idle timeout (seconds) from the keypair resource policy; labels the tooltip averaging window when set. */
-  idleTimeout?: number | null;
 }
 
 const SessionReclamationStatusCell: React.FC<
   SessionReclamationStatusCellProps
-> = ({ sessionFrgmt, idleTimeout }) => {
+> = ({ sessionFrgmt }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -127,12 +124,6 @@ const SessionReclamationStatusCell: React.FC<
   };
   const { token: badgeColor, label, legend } = colorMap[overallColor];
 
-  const tooltipTitle = idleTimeout
-    ? t('session.ReclamationStatusTooltipTitleWithWindow', {
-        duration: dayjs.duration(idleTimeout, 'seconds').humanize(),
-      })
-    : t('session.ReclamationStatusTooltipTitle');
-
   return (
     <BAIFlex gap="xxs" align="center">
       <Badge color={badgeColor} />
@@ -141,7 +132,7 @@ const SessionReclamationStatusCell: React.FC<
         title={
           <BAIFlex direction="column" align="stretch" gap="xxs">
             <Typography.Text style={{ color: token.colorWhite }}>
-              {tooltipTitle}
+              {t('session.ReclamationStatusTooltipTitle')}
             </Typography.Text>
             {_.map(resources, (resource, key) => {
               const deviceName = ['cpu_util', 'mem'].includes(key)

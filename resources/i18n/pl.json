@@ -2191,7 +2191,6 @@
     "ReclamationStatusLegendYellow": "Wykorzystanie jest niskie, ale jeszcze nie osiągnęło progu odzysku. Bezpieczny na razie, ale zagrożony, jeśli spadnie dalej.",
     "ReclamationStatusSafe": "Bezpieczny",
     "ReclamationStatusTooltipTitle": "Ostatnie średnie wykorzystanie / próg odzysku (%)",
-    "ReclamationStatusTooltipTitleWithWindow": "Średnie wykorzystanie przez ostatnie {{duration}} / próg odzysku (%)",
     "ReclamationStatusWarning": "Ostrzeżenie",
     "RequestContainerCommit": "Request Container Commit",
     "Reservation": "Rezerwacja",

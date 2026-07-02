@@ -2187,7 +2187,6 @@
     "ReclamationStatusLegendYellow": "Käyttöaste on alhainen, mutta ei vielä takaisinottorajan tasolla. Turvallinen toistaiseksi, mutta vaarassa jos laskee edelleen.",
     "ReclamationStatusSafe": "Turvallinen",
     "ReclamationStatusTooltipTitle": "Viimeaikainen keskimääräinen käyttöaste / takaisinottoraja (%)",
-    "ReclamationStatusTooltipTitleWithWindow": "Viimeisen {{duration}} keskimääräinen käyttöaste / takaisinottoraja (%)",
     "ReclamationStatusWarning": "Varoitus",
     "RequestContainerCommit": "Pyyntö Container Commit",
     "Reservation": "Varaukset",

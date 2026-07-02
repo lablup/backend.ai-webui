@@ -2189,7 +2189,6 @@
     "ReclamationStatusLegendYellow": "Mức sử dụng thấp nhưng chưa đạt ngưỡng thu hồi. Hiện tại an toàn, nhưng có nguy cơ nếu tiếp tục giảm.",
     "ReclamationStatusSafe": "An toàn",
     "ReclamationStatusTooltipTitle": "Mức sử dụng trung bình gần đây / ngưỡng thu hồi (%)",
-    "ReclamationStatusTooltipTitleWithWindow": "Mức sử dụng trung bình trong {{duration}} qua / ngưỡng thu hồi (%)",
     "ReclamationStatusWarning": "Cảnh báo",
     "RequestContainerCommit": "Yêu cầu cam kết vùng chứa",
     "Reservation": "Dự phòng",

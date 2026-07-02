@@ -2187,7 +2187,6 @@
     "ReclamationStatusLegendYellow": "La utilización es baja pero aún no ha alcanzado el umbral de reclamación. Seguro por ahora, pero en riesgo si sigue bajando.",
     "ReclamationStatusSafe": "Seguro",
     "ReclamationStatusTooltipTitle": "Utilización promedio reciente / umbral de reclamación (%)",
-    "ReclamationStatusTooltipTitleWithWindow": "Utilización promedio de los últimos {{duration}} / umbral de reclamación (%)",
     "ReclamationStatusWarning": "Advertencia",
     "RequestContainerCommit": "Solicitud de Compromiso de Contenedor",
     "Reservation": "Reserva",

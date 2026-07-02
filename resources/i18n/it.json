@@ -2187,7 +2187,6 @@
     "ReclamationStatusLegendYellow": "L'utilizzo è basso ma non ha ancora raggiunto la soglia di recupero. Al sicuro per ora, ma a rischio se dovesse scendere ulteriormente.",
     "ReclamationStatusSafe": "Sicuro",
     "ReclamationStatusTooltipTitle": "Utilizzo medio recente / soglia di recupero (%)",
-    "ReclamationStatusTooltipTitleWithWindow": "Utilizzo medio degli ultimi {{duration}} / soglia di recupero (%)",
     "ReclamationStatusWarning": "Avviso",
     "RequestContainerCommit": "Richiesta di impegno del contenitore",
     "Reservation": "Prenotazione",

@@ -2189,7 +2189,6 @@
     "ReclamationStatusLegendYellow": "使用率は低いですが、まだリクレイム閾値には達していません。現時点では安全ですが、さらに低下するとリスクが生じます。",
     "ReclamationStatusSafe": "安全",
     "ReclamationStatusTooltipTitle": "最近の平均使用率 / リクレイム閾値 (%)",
-    "ReclamationStatusTooltipTitleWithWindow": "直近{{duration}}の平均使用率 / リクレイム閾値 (%)",
     "ReclamationStatusWarning": "警告",
     "RequestContainerCommit": "コンテナをコミットする",
     "Reservation": "予約時間",
