@@ -857,7 +857,17 @@ export async function generateWebsite(
   // `MAJOR.MINOR` digits or the literal `next` (versions.ts
   // validator), so a language directory can never clash with a
   // version directory.
-  if (loadedVersions.enabled && loadedVersions.latest) {
+  // Guarded on `redirectLanguages.length > 0` for the same reason the
+  // site-root index above is: an empty list (a `--lang` run whose filter
+  // excludes every language the latest version ships) has nothing to
+  // redirect to, and `buildRootRedirectIndexPage` throws on empty
+  // `languages`. The root block already warned-and-skipped for this
+  // case, so skip silently here to stay consistent.
+  if (
+    loadedVersions.enabled &&
+    loadedVersions.latest &&
+    redirectLanguages.length > 0
+  ) {
     for (const stubLang of redirectLanguages) {
       const stubPath = path.join(distBase, stubLang, "index.html");
       fs.mkdirSync(path.dirname(stubPath), { recursive: true });
@@ -873,11 +883,55 @@ export async function generateWebsite(
         "utf-8",
       );
     }
-    if (redirectLanguages.length > 0) {
-      console.log(
-        `Written: <lang>/index.html redirect stubs (${redirectLanguages.join(", ")} → ${loadedVersions.latest.label})`,
+    console.log(
+      `Written: <lang>/index.html redirect stubs (${redirectLanguages.join(", ")} → ${loadedVersions.latest.label})`,
+    );
+
+    // Version-agnostic `/latest/` alias (FR-3247). Hosting-level
+    // redirect rules (amplify-redirects.json) target `/latest/...`
+    // instead of `/<minor>/...`, so the hosting config never has to
+    // change when `latest: true` flips — the mapping from `latest` to
+    // the real minor lives HERE, in the build artifact, and re-points
+    // itself on every deploy. `latest/index.html` is the same
+    // language-picking redirect as the site root (mounted one level
+    // down); `latest/<lang>/index.html` are fixed per-language stubs.
+    // `latest` cannot collide with a real version dir: versions.ts
+    // restricts labels to MAJOR.MINOR digits or the literal `next`.
+    fs.mkdirSync(path.join(distBase, "latest"), { recursive: true });
+    fs.writeFileSync(
+      path.join(distBase, "latest", "index.html"),
+      buildRootRedirectIndexPage({
+        title,
+        productName,
+        languages: redirectLanguages.map((peerLang) => ({
+          lang: peerLang,
+          label: config.languageLabels[peerLang] ?? peerLang,
+        })),
+        fallback: redirectLanguages.includes("en")
+          ? "en"
+          : redirectLanguages[0],
+        latestVersion: loadedVersions.latest.label,
+        basePath: "latest",
+      }),
+      "utf-8",
+    );
+    for (const stubLang of redirectLanguages) {
+      const aliasPath = path.join(distBase, "latest", stubLang, "index.html");
+      fs.mkdirSync(path.dirname(aliasPath), { recursive: true });
+      fs.writeFileSync(
+        aliasPath,
+        buildLangRedirectStubPage({
+          title,
+          lang: stubLang,
+          // Two levels below the site root (latest/<lang>/), hence ../../.
+          target: `../../${canonicalPathFor(loadedVersions, stubLang, "index")}`,
+        }),
+        "utf-8",
       );
     }
+    console.log(
+      `Written: latest/ alias (index + ${redirectLanguages.join(", ")} → ${loadedVersions.latest.label})`,
+    );
   }
 
   console.log(`Website generated at: ${distBase}`);

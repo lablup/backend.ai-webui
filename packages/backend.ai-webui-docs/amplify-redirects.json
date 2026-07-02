@@ -12,114 +12,108 @@
     "\"$(jq -c '.customRules' amplify-redirects.json)\"`. Versioning the",
     "file here keeps the intent reviewable in the repo.",
     "",
-    "Anti-pattern guard:",
-    "  - The root MUST redirect to /26.4/<...>, NOT to /next/<...>.",
-    "    `next` is opt-in only (FR-5).",
-    "  - The /26.4/ target is hardcoded for v1. When the `latest: true`",
-    "    flip moves to a new minor (e.g., 26.5), update both this file",
-    "    AND re-apply the rules in the console. A future toolkit helper",
-    "    may emit this list from `versions[latest=true]` automatically.",
-    "  - Legacy RTD-style deep links (FR-3248): the pre-Amplify manual",
-    "    (readthedocs, Sphinx) served /<lang>/latest/<slug> URLs on this",
-    "    domain. Old bookmarks and search-engine results must not 404,",
-    "    so /<lang>/<*> redirects to the latest version's per-language",
-    "    index. Slug-level mapping is impossible (the Sphinx manual and",
-    "    this site have entirely different page slugs), hence the index",
-    "    target — this SUPERSEDES the per-slug idea once tracked in",
-    "    FR-2742. Order matters: keep these AFTER the exact-match root",
-    "    rule and remember /<lang>/ paths never collide with the new",
-    "    site's own URLs (those all live under /<version>/... or",
-    "    /assets/...).",
-    "  - Bare language paths (/ko, /ko/) get EXPLICIT rules per language.",
+    "RELEASE-INVARIANT DESIGN (FR-3247). Every target points at the",
+    "version-agnostic `/latest/...` alias, which the docs build emits as",
+    "part of the site artifact (`latest/index.html` = language-picking",
+    "redirect, `latest/<lang>/index.html` = per-language redirect into",
+    "the current `latest: true` minor). The alias re-points itself on",
+    "every deploy, so these rules NEVER need to change or be reapplied",
+    "when `latest: true` flips to a new minor. Rules only need",
+    "(re)application when the rule SET itself changes in this file.",
+    "Do not reintroduce version numbers (e.g. /26.4/) into targets —",
+    "that recreates the manual-reapplication drift this design removes.",
+    "",
+    "Rule notes:",
+    "  - The root MUST NOT land readers on /next/ — `next` is opt-in",
+    "    only (FR-5). The build's latest/ alias honors this: it always",
+    "    points at the `latest: true` entry, never `next`.",
+    "  - Legacy RTD-style deep links (/<lang>/latest/<slug> from the",
+    "    pre-Amplify readthedocs manual) are caught by the /<lang>/<*>",
+    "    wildcards. Slug-level mapping is impossible (the Sphinx manual",
+    "    and this site have entirely different page slugs), so they land",
+    "    on the per-language index. Supersedes FR-2742's per-slug idea.",
+    "  - Bare language paths (/ko, /ko/) get EXPLICIT rules per language:",
     "    Amplify matches sources literally (no trailing-slash",
-    "    normalization), and /<lang>/<*> is not guaranteed to match the",
-    "    bare or slash-only path — so /<lang> and /<lang>/ are spelled",
-    "    out. Keep the exact rules BEFORE that language's wildcard rule.",
+    "    normalization) and /<lang>/<*> is not guaranteed to match the",
+    "    bare or slash-only path. Keep the exact rules BEFORE that",
+    "    language's wildcard rule.",
     "",
     "Status codes:",
-    "  302 — Temporary redirect. Used for EVERY rule below, including the",
-    "        root, because every target embeds the CURRENT latest minor",
-    "        and must not be cached by browsers/crawlers past the next",
-    "        latest-stable shift.",
-    "",
-    "  FR-3247 follow-up: the root rule was 301 (permanent) in an earlier",
-    "  revision. That was a bug, not a deliberate choice — 301 tells",
-    "  browsers (Chrome's redirect cache in particular) to remember the",
-    "  mapping indefinitely, ignoring normal Cache-Control expiry AND any",
-    "  later change to this file. A visitor who loads `/` before the next",
-    "  latest-stable shift keeps bouncing straight to the OLD minor",
-    "  forever, without ever re-contacting origin, even after this rule",
-    "  is updated and reapplied in the console. `until the next",
-    "  latest-stable shift` (the original comment's own words) describes",
-    "  a temporary condition — that is 302, never 301. Do not reintroduce",
-    "  301 here unless the target stops embedding a version number (e.g.",
-    "  a stable /latest/ build alias — tracked as a possible follow-up,",
-    "  not yet implemented)."
+    "  301 — root and bare-language rules. Safe to cache permanently:",
+    "        the /latest/... targets are version-agnostic and will never",
+    "        change. (An earlier revision pointed the root at /26.4/",
+    "        with a 301 — that was a bug; browsers cache 301s",
+    "        indefinitely, which would have pinned pre-flip visitors to",
+    "        the old minor forever. Permanent status is only correct",
+    "        BECAUSE the targets no longer embed a version.)",
+    "  302 — /<lang>/<*> wildcard deep links. The source→target mapping",
+    "        is lossy (old slug → language index) and may be improved",
+    "        later, so keep crawlers/browsers re-checking."
   ],
   "customRules": [
     {
       "source": "/",
-      "target": "/26.4/",
-      "status": "302"
+      "target": "/latest/",
+      "status": "301"
     },
     {
       "source": "/en",
-      "target": "/26.4/en/",
-      "status": "302"
+      "target": "/latest/en/",
+      "status": "301"
     },
     {
       "source": "/en/",
-      "target": "/26.4/en/",
-      "status": "302"
+      "target": "/latest/en/",
+      "status": "301"
     },
     {
       "source": "/en/<*>",
-      "target": "/26.4/en/",
+      "target": "/latest/en/",
       "status": "302"
     },
     {
       "source": "/ko",
-      "target": "/26.4/ko/",
-      "status": "302"
+      "target": "/latest/ko/",
+      "status": "301"
     },
     {
       "source": "/ko/",
-      "target": "/26.4/ko/",
-      "status": "302"
+      "target": "/latest/ko/",
+      "status": "301"
     },
     {
       "source": "/ko/<*>",
-      "target": "/26.4/ko/",
+      "target": "/latest/ko/",
       "status": "302"
     },
     {
       "source": "/ja",
-      "target": "/26.4/ja/",
-      "status": "302"
+      "target": "/latest/ja/",
+      "status": "301"
     },
     {
       "source": "/ja/",
-      "target": "/26.4/ja/",
-      "status": "302"
+      "target": "/latest/ja/",
+      "status": "301"
     },
     {
       "source": "/ja/<*>",
-      "target": "/26.4/ja/",
+      "target": "/latest/ja/",
       "status": "302"
     },
     {
       "source": "/th",
-      "target": "/26.4/th/",
-      "status": "302"
+      "target": "/latest/th/",
+      "status": "301"
     },
     {
       "source": "/th/",
-      "target": "/26.4/th/",
-      "status": "302"
+      "target": "/latest/th/",
+      "status": "301"
     },
     {
       "source": "/th/<*>",
-      "target": "/26.4/th/",
+      "target": "/latest/th/",
       "status": "302"
     }
   ]

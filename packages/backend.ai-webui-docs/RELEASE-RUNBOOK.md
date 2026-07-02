@@ -128,26 +128,30 @@ PR title format: `feat(FR-XXXX): publish 26.5 to docs site` (replace
 `FR-XXXX` with the Jira ticket created for the release-publish task and
 `26.5` with the actual minor).
 
-### 4. Update `amplify-redirects.json` and re-apply it in the Amplify console
+### 4. Redirects: nothing to do on a release (release-invariant since FR-3247)
 
-`packages/backend.ai-webui-docs/amplify-redirects.json` hardcodes the
-latest minor in its redirect targets (the root rule `/` → `/26.4/` and,
-since FR-3248, the legacy deep-link rules `/<lang>/<*>` → `/26.4/<lang>/`).
-When `latest: true` moves to a new minor:
+`packages/backend.ai-webui-docs/amplify-redirects.json` targets only the
+version-agnostic `/latest/...` alias, which the docs build emits as part
+of the site artifact and re-points to the `latest: true` minor on every
+deploy. Flipping `latest: true` (step 3) therefore requires **no change
+to the redirect rules and no Amplify console action** — the merged
+config PR's Amplify build updates the alias automatically.
 
-- Update every `/26.4/...` target in the file to the new minor (same PR
-  as step 3 is fine).
-- Amplify does **not** read this file from the repo — after the PR
-  merges, re-apply the rules in the Amplify console ("App settings →
-  Rewrites and redirects", "Open text editor") or via the AWS CLI. The
-  CLI's `--custom-rules` expects a bare JSON **array** of rules, not
-  this file's `{ "_comment": [...], "customRules": [...] }` wrapper —
-  extract the `customRules` value first:
+The rules need (re)application only when the rule **set** itself changes
+in `amplify-redirects.json` (new/removed/edited rules — rare). In that
+case, apply via the Amplify console ("App settings → Rewrites and
+redirects" → "Open text editor", pasting the `customRules` array — not
+the whole file) or via the AWS CLI, whose `--custom-rules` expects a
+bare JSON **array**, not the file's `{ "_comment": ..., "customRules":
+... }` wrapper:
 
-  ```bash
-  aws amplify update-app --app-id <APP_ID> \
-    --custom-rules "$(jq -c '.customRules' packages/backend.ai-webui-docs/amplify-redirects.json)"
-  ```
+```bash
+aws amplify update-app --app-id <APP_ID> \
+  --custom-rules "$(jq -c '.customRules' packages/backend.ai-webui-docs/amplify-redirects.json)"
+```
+
+Do **not** reintroduce version numbers (e.g. `/26.4/`) into rule targets
+— that recreates the manual-reapplication step this design removed.
 
 ---
 
