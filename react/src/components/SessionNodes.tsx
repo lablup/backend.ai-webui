@@ -9,6 +9,7 @@ import {
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import AppLauncherModal from './ComputeSessionNodeItems/AppLauncherModal';
+import EditableSessionPriority from './ComputeSessionNodeItems/EditableSessionPriority';
 import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
 import SessionSlotCell from './ComputeSessionNodeItems/SessionSlotCell';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
@@ -107,6 +108,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         ...BAISessionClusterModeFragment
         ...AppLauncherModalFragment
         ...TerminateSessionModalFragment
+        ...EditableSessionPriorityFragment
         kernel_nodes {
           edges {
             node {
@@ -354,6 +356,15 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         title: t('data.Project'),
         defaultHidden: true,
         render: (project_id: string) => project_id || '-',
+      },
+      (userRole === 'superadmin' || userRole === 'admin') && {
+        key: 'priority',
+        title: t('session.Priority'),
+        defaultHidden: true,
+        exportKey: 'priority',
+        render: (__, session) => (
+          <EditableSessionPriority sessionFrgmt={session} />
+        ),
       },
       (userRole === 'superadmin' || !baiClient._config.hideAgents) && {
         key: 'agent',

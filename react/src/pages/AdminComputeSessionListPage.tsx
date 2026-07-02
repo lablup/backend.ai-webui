@@ -439,6 +439,7 @@ const AdminComputeSessionListPage = () => {
                 cluster_mode: { hidden: false },
                 created_at: { hidden: false },
                 project_id: { hidden: false },
+                priority: { hidden: false },
               },
               onColumnOverridesChange: setColumnOverrides,
             }}
