@@ -151,7 +151,7 @@ const ProjectResourcePolicyList: React.FC<
         ),
     },
     {
-      title: t('resourcePolicy.MaxQuotaScopeSize'),
+      title: t('resourcePolicy.MaxQuotaScopeSizeGB'),
       dataIndex: 'max_quota_scope_size',
       key: 'max_quota_scope_size',
       render: (text) => (text === -1 ? '∞' : bytesToGB(text)),
