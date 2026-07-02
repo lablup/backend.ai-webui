@@ -12,7 +12,7 @@ permissions:
 tools:
   github:
     toolsets: [pull_requests, repos]
-  bash:
+  bash: true
 
 safe-outputs:
   add-comment:
