@@ -8,9 +8,8 @@ import type {
   DeploymentBasicInfoCard_deployment$key,
 } from '../__generated__/DeploymentBasicInfoCard_deployment.graphql';
 import { DeploymentSchedulingHistoryModalQuery } from '../__generated__/DeploymentSchedulingHistoryModalQuery.graphql';
-import { buildPath } from '../helper/pathBuilder';
 import { useWebUINavigate } from '../hooks';
-import { useActiveProjectName, useRouteScope } from '../hooks/useRouteScope';
+import { useProjectPath } from '../hooks/useRouteScope';
 import DeploymentSchedulingHistoryModal, {
   DeploymentSchedulingHistoryQuery,
 } from './DeploymentSchedulingHistoryModal';
@@ -86,8 +85,7 @@ const DeploymentOverviewContent: React.FC<{
   'use memo';
   const { t } = useTranslation();
   const webuiNavigate = useWebUINavigate();
-  const routeScope = useRouteScope();
-  const activeProjectName = useActiveProjectName();
+  const buildProjectPath = useProjectPath();
 
   const projectName =
     deployment?.metadata.projectV2?.basicInfo?.name ??
@@ -193,12 +191,8 @@ const DeploymentOverviewContent: React.FC<{
             // back navigation remain coherent — see FR-2847 (admin) and
             // FR-2930 (project admin) for the per-scope detail-route precedent.
             // The current scope (from the route handle) plus the active project
-            // name yield the correct scope-aware list path via `buildPath`.
-            const targetPathname = buildPath(
-              routeScope,
-              'deployments',
-              activeProjectName,
-            );
+            // name yield the correct scope-aware list path via `useProjectPath`.
+            const targetPathname = buildProjectPath('deployments');
             webuiNavigate({
               pathname: targetPathname,
               search: new URLSearchParams({
@@ -237,8 +231,7 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const webuiNavigate = useWebUINavigate();
-  const routeScope = useRouteScope();
-  const activeProjectName = useActiveProjectName();
+  const buildProjectPath = useProjectPath();
 
   const deployment = useFragment(
     graphql`
@@ -299,8 +292,8 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
   const deploymentStatus = deployment?.metadata.status;
   // Scope-aware deployment-list path for back navigation. The current route
   // scope (admin / projectAdmin / project, from the route handle) plus the
-  // active project name produce the correct list URL via `buildPath`.
-  const listPath = buildPath(routeScope, 'deployments', activeProjectName);
+  // active project name produce the correct list URL via `useProjectPath`.
+  const listPath = buildProjectPath('deployments');
 
   const handleDelete = () => {
     if (!deployment?.id) return;

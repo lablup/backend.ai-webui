@@ -17,6 +17,7 @@ import {
   useEffectiveAdminRole,
 } from '../../hooks/useCurrentUserProjectRoles';
 import {
+  rewriteProjectNameInPath,
   useActiveProjectName,
   useCurrentMenuKey,
   useRouteScope,
@@ -120,9 +121,13 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
       // stays mounted with its contents intact).
       const segments = location.pathname.split('/');
       if (segments[1] === 'project' && segments.length > 2) {
-        segments[2] = encodeURIComponent(projectInfo.projectName);
         startProjectChangedTransition(() => {
-          webuiNavigate(segments.join('/') + location.search);
+          webuiNavigate(
+            rewriteProjectNameInPath(
+              location.pathname,
+              projectInfo.projectName,
+            ) + location.search,
+          );
         });
         return;
       }
@@ -269,10 +274,10 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
                     if (goBackPath) {
                       const segments = goBackPath.split('/');
                       if (segments[1] === 'project' && segments.length > 2) {
-                        segments[2] = encodeURIComponent(
+                        target = rewriteProjectNameInPath(
+                          goBackPath,
                           projectInfo.projectName,
                         );
-                        target = segments.join('/');
                       }
                     }
                     webuiNavigate(target);

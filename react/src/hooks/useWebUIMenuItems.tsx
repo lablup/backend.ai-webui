@@ -176,7 +176,7 @@ const ALL_ADMIN_PAGE_KEYS: ReadonlySet<string> = new Set([
 // the admin category. Other admin pages remain visible only to domain admins or
 // superadmins. Kept as a plain array so it can be exported and reused (e.g. for
 // per-page route gating in follow-up PRs).
-export const PROJECT_ADMIN_PAGE_KEYS = [
+const PROJECT_ADMIN_PAGE_KEYS = [
   // 'admin-session',
   // 'admin-deployments',
   // 'admin-data',
