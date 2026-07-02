@@ -1,7 +1,7 @@
 # Release Runbook
 
 Operational checklist for the release manager. This file documents what to
-do *during* a release that goes beyond "tag the commit". Background and
+do _during_ a release that goes beyond "tag the commit". Background and
 design decisions live in the spec docs under `.specs/` (at the repo root);
 this file is the short, testable checklist.
 
@@ -15,12 +15,19 @@ From v1 of the multi-version docs site (Epic
 them in order. The PDFs are produced automatically by CI — there is no
 manual upload step.
 
-### 1. Run `docs-archive-orphan-branch.yml`
+### 1. `docs-archive-orphan-branch.yml` (now automatic on release)
 
-Trigger the workflow manually (`workflow_dispatch`) so the released minor
-gets immortalized on its own orphan branch. The orphan-branch design is
-specified in FR-2710 F6 — past minors are built ONCE with the toolkit they
-shipped with and parked on `docs-archive/<minor>`.
+> **Automated since FR-3246.** Publishing a non-prerelease GitHub Release
+> auto-runs this workflow, deriving `minor_label` from the tag
+> (`v26.5.0` → `26.5`) and snapshotting the tag onto `docs-archive/<minor>`.
+> Docs fixes pushed to the `<minor>` release branch also refresh it
+> automatically (FR-3242). The manual `workflow_dispatch` below is retained
+> as a fallback / one-off backfill — you normally do **not** need to run it.
+
+To run it manually (fallback), trigger via `workflow_dispatch` so the
+released minor gets immortalized on its own orphan branch. The orphan-branch
+design is specified in FR-2710 F6 — past minors are built ONCE with the
+toolkit they shipped with and parked on `docs-archive/<minor>`.
 
 Inputs:
 
@@ -70,6 +77,15 @@ job once the underlying issue is fixed.
 Workflow file: `.github/workflows/package.yml` (job: `build_docs`).
 
 ### 3. Update `versions:` in `docs-toolkit.config.yaml` on `main`
+
+> **Partially automated since FR-3246.** For a minor that **already has a
+> `versions:` entry** (i.e. a subsequent patch on an existing line), the
+> `docs-version-pdftag-pr.yml` workflow auto-opens a PR bumping that entry's
+> `pdfTag` to the new tag on release — just review and merge it (merging
+> triggers the Amplify rebuild). You only need the manual edit below when
+> **introducing a brand-new minor**, which the automation intentionally does
+> not handle (adding the entry and moving `latest:` is a release-strategy
+> decision).
 
 Open a small PR against `main` that edits
 `packages/backend.ai-webui-docs/docs-toolkit.config.yaml`:
