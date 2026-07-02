@@ -1,9 +1,6 @@
-// Unit tests for set-version-pdftag.mjs (run: `node --test scripts/`).
-//
-// These guard the script's deliberate coupling to the config's line format:
-// if `docs-toolkit.config.yaml` is ever reformatted so the label/pdfTag
-// lines no longer match, the "real config" test below fails loudly instead
-// of the bump silently becoming a no-op.
+// Unit tests for set-version-pdftag.mjs (`pnpm run test:scripts`). The
+// "real config" test guards the line-format coupling: if the config is
+// reformatted so label/pdfTag no longer match, it fails loudly.
 
 import { test } from "node:test";
 import assert from "node:assert/strict";

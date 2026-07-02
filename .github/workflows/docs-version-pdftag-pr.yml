@@ -1,24 +1,10 @@
-# Open a PR that bumps an archived minor's `pdfTag` in
-# `docs-toolkit.config.yaml` to the just-published release tag.
-#
-# Why a PR and not a direct commit: merging to `main` is what triggers the
-# docs-site Amplify rebuild (watched path `packages/backend.ai-webui-docs/**`),
-# and merging is the deliberate human gate we keep — the automation removes
-# the hand-editing, not the review. The heavy lifting (a comment-preserving,
-# single-line edit) lives in `scripts/set-version-pdftag.mjs`; this workflow
-# only wires it to the release event and opens/refreshes the PR.
-#
-# Scope: bumps `pdfTag` for a minor that ALREADY has a `versions:` entry.
-# The first release of a brand-new minor still needs a manual `versions:`
-# entry + `latest:` move (a release-strategy decision) — the script no-ops
-# and no PR is opened in that case.
-#
-# Companion: `docs-archive-orphan-branch.yml` refreshes the archived docs
-# SOURCE on the same release event; this workflow refreshes the PDF pointer.
-#
-# References:
-#   - FR-3246 (this automation), follow-up to FR-3242.
-#   - RELEASE-RUNBOOK.md step 3 (the manual step this replaces).
+# On a published release, open a PR bumping the released minor's `pdfTag` in
+# `docs-toolkit.config.yaml`. A PR (not a direct commit) because merging to
+# `main` is what triggers the docs Amplify rebuild, and the merge stays the
+# human gate. Only bumps a minor that already has an entry; the edit lives in
+# `scripts/set-version-pdftag.mjs`. Companion `docs-archive-orphan-branch.yml`
+# refreshes the archived SOURCE on the same event. (FR-3246, follow-up to
+# FR-3242; replaces RELEASE-RUNBOOK.md step 3.)
 
 name: docs-version-pdftag-pr
 
@@ -81,10 +67,8 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version-file: ".nvmrc"
-          # The edit script is Node-stdlib only; pnpm is never invoked here.
-          # setup-node's default package-manager cache probes `pnpm store
-          # path`, which fails ("Unable to locate executable file: pnpm")
-          # since pnpm isn't installed in this job. Disable the cache.
+          # Script is Node-stdlib only; disable the pnpm cache probe (pnpm
+          # isn't installed here, so the default would fail).
           package-manager-cache: false
 
       - name: Apply pdfTag bump (no-op if entry missing or already current)
