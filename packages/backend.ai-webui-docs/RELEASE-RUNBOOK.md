@@ -112,6 +112,20 @@ PR title format: `feat(FR-XXXX): publish 26.5 to docs site` (replace
 `FR-XXXX` with the Jira ticket created for the release-publish task and
 `26.5` with the actual minor).
 
+### 4. Update `amplify-redirects.json` and re-apply it in the Amplify console
+
+`packages/backend.ai-webui-docs/amplify-redirects.json` hardcodes the
+latest minor in its redirect targets (the root rule `/` → `/26.4/` and,
+since FR-3248, the legacy deep-link rules `/<lang>/<*>` → `/26.4/<lang>/`).
+When `latest: true` moves to a new minor:
+
+- Update every `/26.4/...` target in the file to the new minor (same PR
+  as step 3 is fine).
+- Amplify does **not** read this file from the repo — after the PR
+  merges, re-apply the rules in the Amplify console ("App settings →
+  Rewrites and redirects") or via
+  `aws amplify update-app --custom-rules file://packages/backend.ai-webui-docs/amplify-redirects.json`.
+
 ---
 
 ## What is NOT a runbook step

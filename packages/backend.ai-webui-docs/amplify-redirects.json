@@ -16,12 +16,25 @@
     "    flip moves to a new minor (e.g., 26.5), update both this file",
     "    AND re-apply the rules in the console. A future toolkit helper",
     "    may emit this list from `versions[latest=true]` automatically.",
-    "  - Deep-link redirects (/<lang>/<*> -> /<latest>/<lang>/<*>) are",
-    "    intentionally out of scope for v1. Tracked in FR-2742.",
+    "  - Legacy RTD-style deep links (FR-3248): the pre-Amplify manual",
+    "    (readthedocs, Sphinx) served /<lang>/latest/<slug> URLs on this",
+    "    domain. Old bookmarks and search-engine results must not 404,",
+    "    so /<lang>/<*> redirects to the latest version's per-language",
+    "    index. Slug-level mapping is impossible (the Sphinx manual and",
+    "    this site have entirely different page slugs), hence the index",
+    "    target — this SUPERSEDES the per-slug idea once tracked in",
+    "    FR-2742. Order matters: keep these AFTER the exact-match root",
+    "    rule and remember /<lang>/ paths never collide with the new",
+    "    site's own URLs (those all live under /<version>/... or",
+    "    /assets/...).",
     "",
     "Status codes:",
     "  301 — Permanent redirect. Used for the root because /26.4/ is",
     "        the deliberate canonical landing page until the next",
+    "        latest-stable shift.",
+    "  302 — Temporary redirect. Used for the legacy /<lang>/ deep links",
+    "        because their target embeds the CURRENT latest minor and",
+    "        must not be cached by browsers/crawlers across the next",
     "        latest-stable shift."
   ],
   "customRules": [
@@ -29,6 +42,26 @@
       "source": "/",
       "target": "/26.4/",
       "status": "301"
+    },
+    {
+      "source": "/en/<*>",
+      "target": "/26.4/en/",
+      "status": "302"
+    },
+    {
+      "source": "/ko/<*>",
+      "target": "/26.4/ko/",
+      "status": "302"
+    },
+    {
+      "source": "/ja/<*>",
+      "target": "/26.4/ja/",
+      "status": "302"
+    },
+    {
+      "source": "/th/<*>",
+      "target": "/26.4/th/",
+      "status": "302"
     }
   ]
 }
