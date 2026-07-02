@@ -103,21 +103,27 @@ const SessionReclamationStatusCell: React.FC<
     return <>-</>;
   }
 
-  const colorMap: Record<ReclamationColor, { token: string; label: string }> = {
+  const colorMap: Record<
+    ReclamationColor,
+    { token: string; label: string; legend: string }
+  > = {
     red: {
       token: token.colorError,
       label: t('session.ReclamationStatusAtRisk'),
+      legend: t('session.ReclamationStatusLegendRed'),
     },
     orange: {
       token: token.colorWarning,
       label: t('session.ReclamationStatusWarning'),
+      legend: t('session.ReclamationStatusLegendYellow'),
     },
     green: {
       token: token.colorSuccess,
       label: t('session.ReclamationStatusSafe'),
+      legend: t('session.ReclamationStatusLegendGreen'),
     },
   };
-  const { token: badgeColor, label } = colorMap[overallColor];
+  const { token: badgeColor, label, legend } = colorMap[overallColor];
 
   return (
     <BAIFlex gap="xxs" align="center">
@@ -139,22 +145,14 @@ const SessionReclamationStatusCell: React.FC<
                   <Typography.Text style={{ color: token.colorWhite }}>
                     {`${mergedResourceSlots?.[deviceName]?.human_readable_name ?? deviceName}:`}
                   </Typography.Text>
-                  <Typography.Text
-                    style={{ color: getUtilizationCheckerColor(resource) }}
-                  >
+                  <Typography.Text style={{ color: token.colorWhite }}>
                     {`${util >= 0 ? toFixedFloorWithoutTrailingZeros(util, 1) : '-'} / ${threshold}`}
                   </Typography.Text>
                 </BAIFlex>
               );
             })}
             <Typography.Text style={{ color: token.colorWhite }}>
-              {t('session.ReclamationStatusLegendRed')}
-            </Typography.Text>
-            <Typography.Text style={{ color: token.colorWhite }}>
-              {t('session.ReclamationStatusLegendYellow')}
-            </Typography.Text>
-            <Typography.Text style={{ color: token.colorWhite }}>
-              {t('session.ReclamationStatusLegendGreen')}
+              {legend}
             </Typography.Text>
           </BAIFlex>
         }
