@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import usePrimaryColors from '../hooks/usePrimaryColors';
+import { useThemeFamily } from '../hooks/useThemeFamily';
 import {
   theme,
   ConfigProvider,
@@ -16,7 +16,7 @@ import React, { useContext } from 'react';
 const ThemeSecondaryProvider: React.FC<ConfigProviderProps> = ({
   ...props
 }) => {
-  const themeConfig = useCustomThemeConfig();
+  const { activeThemeFamily: themeConfig } = useThemeFamily();
   const config = useContext(ConfigProvider.ConfigContext);
   const isParentDark = config.theme?.algorithm === theme.darkAlgorithm;
   const primaryColors = usePrimaryColors();

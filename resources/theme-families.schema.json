@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "description": "Product-owned built-in theme families. This file ships with each release and is overwritten on upgrade — operators must not customize it. Deployment-specific families/overrides belong in theme.json's 'families' block instead.",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "families": {
+      "type": "object",
+      "description": "Built-in theme families keyed by family id (e.g. 'stained', 'glass'). Merged into the selectable catalog beneath operator-defined families from theme.json, so an operator entry with the same key overrides the built-in.",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "light": {
+            "$ref": "./antdThemeConfig.schema.json"
+          },
+          "dark": {
+            "$ref": "./antdThemeConfig.schema.json"
+          },
+          "label": {
+            "type": "string",
+            "description": "Human-readable label shown in the family selector. Falls back to the family key."
+          }
+        },
+        "required": ["light", "dark"]
+      }
+    }
+  },
+  "required": ["$schema", "families"]
+}

@@ -8,7 +8,7 @@ import { useCurrentUserRole } from './backendai';
 import { useDiagnosticsBadgeSeverity } from './useAutoDiagnostics';
 import { useBAISettingUserState } from './useBAISetting';
 import { useEffectiveAdminRole } from './useCurrentUserProjectRoles';
-import { useCustomThemeConfig } from './useCustomThemeConfig';
+import { useThemeFamily } from './useThemeFamily';
 import {
   PluginPage,
   useWebUIPluginLoadedValue,
@@ -926,7 +926,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   })();
 
   // Get theme config for custom logo href
-  const themeConfig = useCustomThemeConfig();
+  const { activeThemeFamily: themeConfig } = useThemeFamily();
 
   // Default menu path considering theme config's logo href
   // Priority: themeConfig.logo.href > firstAvailableMenuItem path > '/start'

@@ -3,8 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
-import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
 import usePrimaryColors from '../../hooks/usePrimaryColors';
+import { useThemeFamily } from '../../hooks/useThemeFamily';
 import {
   getPathFromMenuKey,
   useWebUIMenuItems,
@@ -45,7 +45,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const themeConfig = useCustomThemeConfig();
+  const { activeThemeFamily: themeConfig } = useThemeFamily();
 
   const config = useContext(ConfigProvider.ConfigContext);
   const currentSiderTheme =
@@ -366,7 +366,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
 };
 
 const WebUISiderWithCustomTheme: React.FC<WebUISiderProps> = (props) => {
-  const themeConfig = useCustomThemeConfig();
+  const { activeThemeFamily: themeConfig } = useThemeFamily();
   const config = useContext(ConfigProvider.ConfigContext);
   const isParentDark = config.theme?.algorithm === theme.darkAlgorithm;
 

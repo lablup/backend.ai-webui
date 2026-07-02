@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useUserCustomThemeConfig } from '../../hooks/useUserCustomThemeConfig';
+import { useDefaultTheme } from '../../hooks/useDefaultTheme';
 import { Col, ColorPicker, type ColorPickerProps, Row, theme } from 'antd';
 import { ComponentTokenMap } from 'antd/es/theme/interface';
 import { AliasToken } from 'antd/lib/theme/internal';
@@ -24,11 +24,10 @@ const ThemeColorPicker: React.FC<ThemeColorPickerSettingItemProps> = ({
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { getThemeValue, updateUserCustomThemeConfig } =
-    useUserCustomThemeConfig();
+  const { getDefaultThemeValue, updateDefaultTheme } = useDefaultTheme();
 
-  const lightModeColor = getThemeValue<string>(`light.${tokenName}`);
-  const darkModeColor = getThemeValue<string>(`dark.${tokenName}`);
+  const lightModeColor = getDefaultThemeValue<string>(`light.${tokenName}`);
+  const darkModeColor = getDefaultThemeValue<string>(`dark.${tokenName}`);
 
   const defaultLightTokens = theme.getDesignToken({
     algorithm: theme.defaultAlgorithm,
@@ -59,10 +58,7 @@ const ThemeColorPicker: React.FC<ThemeColorPickerSettingItemProps> = ({
                 _.get(defaultLightTokens, _.last(_.split(tokenName, '.')) || '')
               }
               onChangeComplete={(value) => {
-                updateUserCustomThemeConfig(
-                  `light.${tokenName}`,
-                  value.toHexString(),
-                );
+                updateDefaultTheme(`light.${tokenName}`, value.toHexString());
               }}
               style={{ minWidth: 110 }}
             />
@@ -83,10 +79,7 @@ const ThemeColorPicker: React.FC<ThemeColorPickerSettingItemProps> = ({
                 _.get(defaultDarkTokens, _.last(_.split(tokenName, '.')) || '')
               }
               onChangeComplete={(value) => {
-                updateUserCustomThemeConfig(
-                  `dark.${tokenName}`,
-                  value.toHexString(),
-                );
+                updateDefaultTheme(`dark.${tokenName}`, value.toHexString());
               }}
               style={{ minWidth: 110 }}
             />

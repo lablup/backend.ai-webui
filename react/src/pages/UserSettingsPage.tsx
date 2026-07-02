@@ -83,7 +83,7 @@ const UserPreferencesPage = () => {
   const { themeMode, setThemeMode } = useThemeMode();
   const {
     family: themeFamily,
-    setFamily: setThemeFamily,
+    setActiveThemeFamily: setThemeFamily,
     families,
   } = useThemeFamily();
 
@@ -182,9 +182,10 @@ const UserPreferencesPage = () => {
             }
           },
         },
-        // Only offer the family selector when the operator ships more than the
-        // built-in `default` family (theme.json `families`).
-        Object.keys(families).length > 1
+        // Theme (family) / primary color customization is operator-gated
+        // (config.toml `allowThemeMode`). The family selector additionally
+        // needs more than the built-in `default` family in the catalog.
+        baiClient._config.allowThemeMode && Object.keys(families).length > 1
           ? {
               'data-testid': 'items-theme-family',
               type: 'select',
@@ -207,13 +208,15 @@ const UserPreferencesPage = () => {
               },
             }
           : null,
-        {
-          'data-testid': 'items-theme-accent',
-          type: 'custom',
-          title: t('userSettings.ThemeAccentColor'),
-          description: t('userSettings.DescThemeAccentColor'),
-          children: <ThemeAccentColorPicker />,
-        },
+        baiClient._config.allowThemeMode
+          ? {
+              'data-testid': 'items-theme-accent',
+              type: 'custom',
+              title: t('userSettings.ThemeAccentColor'),
+              description: t('userSettings.DescThemeAccentColor'),
+              children: <ThemeAccentColorPicker />,
+            }
+          : null,
         {
           'data-testid': 'items-desktop-notification',
           type: 'checkbox',

@@ -2,8 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
-import { useUserCustomThemeConfig } from '../../hooks/useUserCustomThemeConfig';
+import { useDefaultTheme } from '../../hooks/useDefaultTheme';
 import { Col, Row, theme, Typography } from 'antd';
 import { BAIFlex, BAIUncontrolledInput } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
@@ -38,16 +37,20 @@ const LogoSizeSettingItem: React.FC<LogoSizeSettingItemProps> = ({
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { getThemeValue, updateUserCustomThemeConfig } =
-    useUserCustomThemeConfig();
+  const { getDefaultThemeValue, updateDefaultTheme } = useDefaultTheme();
 
-  const themeConfig = useCustomThemeConfig();
   const { key: sizeKey, defaultSize } = LOGO_SIZE_CONFIG[logoType];
-  const rawSize = getThemeValue<{ width?: number; height?: number }>(sizeKey);
+  const rawSize = getDefaultThemeValue<{ width?: number; height?: number }>(
+    sizeKey,
+  );
 
   // For about logo, fall back to deprecated aboutModalSize before defaults
   const deprecatedAboutSize =
-    logoType === 'about' ? themeConfig?.logo?.aboutModalSize : undefined;
+    logoType === 'about'
+      ? getDefaultThemeValue<{ width?: number; height?: number }>(
+          'logo.aboutModalSize',
+        )
+      : undefined;
 
   const logoSizeConfig = {
     width: rawSize?.width ?? deprecatedAboutSize?.width ?? defaultSize.width,
@@ -71,7 +74,7 @@ const LogoSizeSettingItem: React.FC<LogoSizeSettingItemProps> = ({
               type="number"
               defaultValue={logoSizeConfig.width?.toString() ?? ''}
               onCommit={(v) => {
-                updateUserCustomThemeConfig(
+                updateDefaultTheme(
                   `${sizeKey}.width`,
                   v ? Number(v) : undefined,
                 );
@@ -93,7 +96,7 @@ const LogoSizeSettingItem: React.FC<LogoSizeSettingItemProps> = ({
               type="number"
               defaultValue={logoSizeConfig.height?.toString() ?? ''}
               onCommit={(v) => {
-                updateUserCustomThemeConfig(
+                updateDefaultTheme(
                   `${sizeKey}.height`,
                   v ? Number(v) : undefined,
                 );
