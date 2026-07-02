@@ -62,12 +62,7 @@ export function getOverallReclamationColor(
 
 interface SessionReclamationStatusCellProps {
   sessionFrgmt: SessionReclamationStatusCellFragment$key | null;
-  /**
-   * Idle timeout (seconds) from the keypair resource policy. Fetched once at
-   * the session-list level and passed down (all sessions in the user console
-   * share one policy), so the cell needs no per-row query. When provided, it
-   * labels the averaging window in the tooltip title.
-   */
+  /** Idle timeout (seconds) from the keypair resource policy; labels the tooltip averaging window when set. */
   idleTimeout?: number | null;
 }
 
@@ -97,7 +92,6 @@ const SessionReclamationStatusCell: React.FC<
   const extra = utilization?.extra;
   const resources = extra?.resources;
 
-  // No utilization idle checker configured for this session → nothing to show.
   if (!utilization || !resources) {
     return <>-</>;
   }
@@ -133,8 +127,6 @@ const SessionReclamationStatusCell: React.FC<
   };
   const { token: badgeColor, label, legend } = colorMap[overallColor];
 
-  // Label the averaging window from the policy idle timeout when known;
-  // otherwise fall back to a generic "recent average" title.
   const tooltipTitle = idleTimeout
     ? t('session.ReclamationStatusTooltipTitleWithWindow', {
         duration: dayjs.duration(idleTimeout, 'seconds').humanize(),

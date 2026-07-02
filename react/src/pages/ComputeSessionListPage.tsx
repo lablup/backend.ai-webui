@@ -84,9 +84,6 @@ const ComputeSessionListPage = () => {
   const currentProject = useCurrentProjectValue();
 
   const userRole = useCurrentUserRole();
-  // Fetched once for the whole list: all sessions in the user console share the
-  // current keypair resource policy, so the reclamation column reads its idle
-  // timeout from here instead of querying per row.
   const [{ keypairResourcePolicy }] =
     useCurrentKeyPairResourcePolicyLazyLoadQuery();
 
