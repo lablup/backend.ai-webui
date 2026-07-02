@@ -530,6 +530,45 @@ export const useAppDownloadMap = () => {
   };
 };
 
+export const useCliDownloadMap = () => {
+  'use memo';
+  const baiClient = useSuspendedBackendaiClient();
+  const cliDownloadUrl = baiClient?._config?.cliDownloadUrl || '';
+
+  // The Backend.AI CLI is distributed as SCIE (Self-Contained Installable
+  // Executables) — a single binary bundling the Python interpreter + CLI +
+  // dependencies. Asset names follow `backendai-client-<os>-<arch>` (see the
+  // `lablup/backend.ai` GitHub releases). There is no Windows SCIE, and macOS
+  // ships only an Apple-Silicon (aarch64) build.
+  const cliDownloadMap = {
+    Linux: { os: 'linux', architectures: ['x86_64', 'aarch64'] },
+    MacOS: { os: 'macos', architectures: ['aarch64'] },
+  } as const;
+
+  const detectedOS = getOS();
+  const initialOS = detectedOS === 'Windows' ? 'Linux' : detectedOS;
+  const [selectedOS, setSelectedOS] =
+    useState<keyof typeof cliDownloadMap>(initialOS);
+
+  const getDownloadLink = (architecture: 'x86_64' | 'aarch64'): string => {
+    const { os } = cliDownloadMap[selectedOS];
+    // The base URL defaults to the backend.ai core GitHub `latest/download`
+    // (overridable via the `cliDownloadUrl` config), which redirects to the
+    // newest release's asset, so no version segment is needed here. The
+    // fully self-contained "-fat-" variant is also published if preferred.
+    return `${cliDownloadUrl}/backendai-client-${os}-${architecture}`;
+  };
+
+  return {
+    cliDownloadUrl,
+    selectedOS,
+    setSelectedOS,
+    OS: _.keys(cliDownloadMap) as Array<keyof typeof cliDownloadMap>,
+    architectures: cliDownloadMap[selectedOS]?.architectures ?? [],
+    getDownloadLink,
+  };
+};
+
 type BackendAIConfig = {
   _apiVersionMajor: string;
   _apiVersion: string;
@@ -575,6 +614,7 @@ type BackendAIConfig = {
   enableContainerCommit: boolean;
   enableModelFolders: boolean;
   appDownloadUrl: string;
+  cliDownloadUrl: string;
   systemSSHImage: string;
   defaultFileBrowserImage: string;
   fasttrackEndpoint: string;
@@ -596,4 +636,5 @@ type BackendAIConfig = {
   proxyURL: string;
   allowCustomResourceAllocation: boolean;
   allowAppDownloadPanel: boolean;
+  allowCLIDownloadPanel: boolean;
 };
