@@ -14,26 +14,12 @@
 #   FR-2751 for follow-up build caching that makes this efficient at
 #   archive count >= 2.
 #
-# Triggers:
-#   1. Automatic — `push` to a release-line branch whose name is a bare
-#      `<MAJOR>.<MINOR>` (e.g. `26.4`, `25.15`) that touches the docs
-#      source (`packages/backend.ai-webui-docs/src/**`). This keeps the
-#      `docs-archive/<minor>` snapshot in lockstep with docs changes
-#      landed on a maintenance branch (e.g. a doc fix backported to
-#      `26.4`), so the live site's `26.4` version always reflects the
-#      latest docs on that release line — no manual step per patch.
-#      The `minor_label` is the branch name and the `source_ref` is the
-#      pushed commit SHA.
-#   2. Automatic — `release` (published, non-prerelease). Seeds/refreshes
-#      the archive for that release's minor at publish time, deriving the
-#      minor from the tag (`v26.5.0` -> `26.5`) and snapshotting the tag.
-#      Complements trigger 1: it fires once at release time even when no
-#      docs push landed on the release branch (e.g. the very first release
-#      of a new minor). Pre-releases are skipped by the job-level `if:`.
-#   3. Manual — `workflow_dispatch`. The operator picks any tagged
-#      commit / SHA whose docs source should be parked, plus the minor
-#      label it represents. Use this for one-off backfills (e.g.
-#      re-snapshotting a specific release tag) or a dry run.
+# Triggers (all resolve to a minor + a source ref, then snapshot):
+#   1. push to a bare `<MAJOR>.<MINOR>` branch (e.g. `26.4`) touching
+#      `src/**` — keeps the archive in step with docs fixes on that line.
+#   2. release (published, non-prerelease) — seeds/refreshes the tag's
+#      minor at publish time (fires even if no docs push landed).
+#   3. workflow_dispatch — manual backfill / dry run of any ref + minor.
 #
 # Output: a `docs-archive/<minor>` branch containing ONLY:
 #   src/                          # markdown + book.config.yaml
@@ -52,22 +38,17 @@ name: docs-archive-orphan-branch
 
 on:
   push:
-    # Release-line branches are named as a bare `<MAJOR>.<MINOR>` (e.g.
-    # `26.4`, `25.15`). GitHub filter patterns support `+` as "one or
-    # more of the preceding character", so `[0-9]+.[0-9]+` matches
-    # exactly two dot-separated numeric segments and (being anchored to
-    # the whole ref) will NOT match a three-segment name like `26.4.1`.
+    # Bare `<MAJOR>.<MINOR>` release branches only. In GitHub filter
+    # patterns `+` means "one or more", and the match is whole-ref
+    # anchored, so `[0-9]+.[0-9]+` hits `26.4`/`25.15` but not `26.4.1`.
     branches:
       - "[0-9]+.[0-9]+"
-    # Only re-snapshot when the docs source itself changed. `src/`
-    # holds the markdown + `book.config.yaml` that the archive parks;
-    # unrelated app changes on the release branch must not churn it.
+    # Only when the archived docs source changed.
     paths:
       - "packages/backend.ai-webui-docs/src/**"
   release:
-    # Seed/refresh the archive for a release's minor at publish time. The
-    # minor is derived from the tag in the resolve step; pre-releases are
-    # filtered by the job-level `if:` below.
+    # Minor derived from the tag in the resolve step; pre-releases skipped
+    # by the job-level `if:`.
     types: [published]
   workflow_dispatch:
     inputs:
@@ -88,15 +69,11 @@ on:
 permissions:
   contents: write
 
-# Serialize runs per target so that when several docs changes land on a
-# release branch in quick succession, an older run's force-push to
-# `docs-archive/<minor>` can't overwrite a newer snapshot. Keyed on the
-# branch name (push), the release tag (release), or the input minor
-# (dispatch), so distinct targets still archive in parallel;
-# `cancel-in-progress` lets the newest run win. (GitHub expressions can't
-# split `v26.5.0` into `26.5`, so the release key is the full tag — still
-# unique per release, and a same-minor push/release overlap is rare and
-# produces near-identical source.)
+# Serialize per target (branch / release tag / input minor) so a slower
+# older run can't force-push a stale `docs-archive/<minor>` over a newer
+# one; distinct targets still run in parallel. (The release key is the full
+# tag since GitHub expressions can't split `v26.5.0` into `26.5` — fine, a
+# same-minor push/release overlap is rare and near-identical.)
 concurrency:
   group: ${{ github.workflow }}-${{ github.event_name == 'push' && github.ref_name || github.event_name == 'release' && github.event.release.tag_name || inputs.minor_label }}
   cancel-in-progress: true
@@ -111,12 +88,10 @@ jobs:
     steps:
       - name: Resolve archive parameters (push / release / manual dispatch)
         id: resolve
-        # Derive the three event-agnostic values from whichever trigger
-        # fired: a release-line push (minor = branch name, ref = SHA), a
-        # published release (minor = tag's MAJOR.MINOR, ref = tag), or a
-        # manual dispatch (operator inputs verbatim). A push/release always
-        # publishes (never a dry run). Values flow through env vars (NOT
-        # inline interpolation) to avoid command injection.
+        # Map each trigger to (minor, source_ref): push → (branch, SHA),
+        # release → (tag's MAJOR.MINOR, tag), dispatch → operator inputs.
+        # Values pass via env vars (not inline interpolation) to avoid
+        # command injection.
         env:
           EVENT_NAME: ${{ github.event_name }}
           PUSH_REF_NAME: ${{ github.ref_name }}

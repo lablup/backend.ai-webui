@@ -1,37 +1,22 @@
 #!/usr/bin/env node
-// Bump the `pdfTag` of an existing archived-minor entry in
-// `docs-toolkit.config.yaml` to a given release tag.
+// Bump the `pdfTag` of an existing archived-minor `versions:` entry in
+// `docs-toolkit.config.yaml`.
 //
-// Usage:  node scripts/set-version-pdftag.mjs v26.4.10
-// Tests:  pnpm run test:scripts   (see set-version-pdftag.test.mjs)
+//   node scripts/set-version-pdftag.mjs v26.4.10   # CLI
+//   pnpm run test:scripts                          # tests
 //
-// Why a line-surgical edit instead of a YAML round-trip: the config file
-// carries ~40 lines of hand-written guidance comments in the `versions:`
-// block. A full parse+restringify (even with a comment-preserving lib) can
-// reflow those; here we only ever rewrite the single `pdfTag:` line of the
-// matching entry, so every comment, key order, and quote style is untouched.
-//
-// The edit logic is a pure function (`bumpPdfTag`) so it is unit-testable
-// against fixtures and the real config without touching the filesystem — the
-// committed tests also guard the format coupling: if the config's line shape
-// ever changes, a test fails loudly instead of the script silently no-op'ing.
-//
-// Scope (intentional): this ONLY bumps the `pdfTag` of a minor that ALREADY
-// has a `versions:` entry — the exact drift that let 26.4 fall from
-// v26.4.7 to v26.4.10 unnoticed. Introducing a brand-new minor (and moving
-// `latest: true`) is a release-strategy decision and stays a manual edit
-// (see RELEASE-RUNBOOK.md). When the released minor has no entry, this
-// makes no change and says so — the caller then opens no PR.
+// Rewrites only the matching entry's single `pdfTag:` line (no YAML
+// round-trip) to preserve the block's ~40 lines of guidance comments.
+// Only bumps a minor that already has an entry — adding a new minor and
+// moving `latest:` is a manual release decision (see RELEASE-RUNBOOK.md).
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { dirname, resolve } from "node:path";
 
 /**
- * Normalize a release tag and derive its MAJOR.MINOR.
- * Accepts `v26.4.10` or `26.4.10`. Throws on anything that is not a
- * vMAJOR.MINOR.PATCH tag. `pdfTag` is stored WITH the leading `v`.
- * @returns {{ tag: string, minor: string }}
+ * Normalize `v26.4.10` or `26.4.10` to `{ tag: "v26.4.10", minor: "26.4" }`.
+ * Throws on anything that is not a vMAJOR.MINOR.PATCH tag.
  */
 export function deriveMinor(rawTag) {
   if (!rawTag) throw new Error("missing release tag argument (e.g. v26.4.10)");
@@ -45,13 +30,9 @@ export function deriveMinor(rawTag) {
 
 /**
  * Rewrite the `pdfTag:` line of the `versions:` entry whose `label:` matches
- * the tag's minor. Pure — takes and returns text, touches nothing else.
- *
- * `label:`/`pdfTag:` only occur inside `versions:` (the header comment's
- * example `pdfTag:` sits before `versions:` and is skipped by the gate).
- *
- * @returns {{ changed: boolean, matched: boolean, minor: string,
- *             previousTag: string|null, newTag: string, text: string }}
+ * the tag's minor. Pure — returns the new text plus what happened. The
+ * `versions:` gate skips the example `pdfTag:` in the header comment.
+ * @returns {{ changed, matched, minor, previousTag, newTag, text }}
  */
 export function bumpPdfTag(text, rawTag) {
   const { tag, minor } = deriveMinor(rawTag);
@@ -107,9 +88,8 @@ export function bumpPdfTag(text, rawTag) {
   };
 }
 
-// --- CLI ---------------------------------------------------------------
-// Exit 0 on well-formed input (whether or not it changed the file — the
-// caller detects a change via `git diff`); exit 1 only on a usage/IO error.
+// CLI: exit 0 whether or not the file changed (caller detects via `git
+// diff`); exit 1 only on a usage/IO error.
 function main(argv) {
   const configPath = resolve(
     dirname(fileURLToPath(import.meta.url)),
