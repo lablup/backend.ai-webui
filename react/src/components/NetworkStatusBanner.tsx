@@ -71,15 +71,11 @@ const NetworkStatusBanner = () => {
 
   const browserOffline = !network.online;
 
-  // `navigator.onLine` (via ahooks `useNetwork`) is only a heuristic and is
-  // frequently a false positive on VPNs, captive portals, or virtualized
-  // networks. Before concluding the user is offline, confirm with a plain
-  // fetch to the endpoint's `/health`, bounded so a genuinely unreachable
-  // endpoint surfaces the banner within ~5s instead of hanging.
+  // `navigator.onLine` is only a heuristic (false positives on VPNs, captive
+  // portals, virtualized networks), so confirm with the endpoint's `/health`
+  // before concluding the user is offline.
   const probeEndpointReachability = useEffectEvent(async () => {
     try {
-      // Same `endpoint + path` join convention as the client's own requests
-      // (`new URL('/health', endpoint)` would drop any path prefix).
       const resp = await fetch(`${client._config.endpoint}/health`, {
         signal: AbortSignal.timeout(REACHABILITY_PROBE_TIMEOUT_MS),
       });
@@ -89,11 +85,6 @@ const NetworkStatusBanner = () => {
     }
   });
 
-  // Probe only while the browser reports offline: once immediately, then
-  // periodically so the banner reflects the current endpoint reachability.
-  // The cleanup both drops in-flight results (`disposed`) and resets the
-  // state so the next offline episode starts with the banner hidden instead
-  // of flashing a stale failure from the previous episode.
   useEffect(
     function probeEndpointWhileBrowserOffline() {
       if (!browserOffline) {
@@ -111,15 +102,13 @@ const NetworkStatusBanner = () => {
       return function cleanupProbe() {
         disposed = true;
         clearInterval(intervalId);
+        // Reset so the next offline episode doesn't flash a stale failure.
         setEndpointUnreachable(false);
       };
     },
     [browserOffline],
   );
 
-  // Show the offline banner only when the browser reports offline AND the
-  // endpoint probe confirms it is actually unreachable. While the probe is in
-  // flight (before its first failure) the banner stays hidden.
   const shouldOpenOfflineAlert = browserOffline && endpointUnreachable;
   const shouldOpenSoftAlert =
     !shouldOpenOfflineAlert && debouncedShowAlert && !dismissSoftTimeoutAlert;
