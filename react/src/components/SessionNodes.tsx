@@ -65,6 +65,12 @@ interface SessionNodesProps extends Omit<
   sessionsFrgmt: SessionNodesFragment$key;
   onClickSessionName?: (session: SessionNodeInList) => void;
   disableSorter?: boolean;
+  /**
+   * Idle timeout (seconds) of the current keypair resource policy, fetched
+   * once by the page and shared by every row (the opt-in reclamation-status
+   * column labels its averaging window with it).
+   */
+  idleTimeout?: number | null;
   onChangeOrder?: (
     order: (typeof availableSessionSorterValues)[number] | null,
   ) => void;
@@ -74,6 +80,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
   sessionsFrgmt,
   onClickSessionName,
   disableSorter,
+  idleTimeout,
   onChangeOrder,
   ...tableProps
 }) => {
@@ -214,7 +221,10 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         title: t('session.ReclamationStatus'),
         defaultHidden: true,
         render: (__, session) => (
-          <SessionReclamationStatusCell sessionFrgmt={session} />
+          <SessionReclamationStatusCell
+            sessionFrgmt={session}
+            idleTimeout={idleTimeout}
+          />
         ),
       },
       {

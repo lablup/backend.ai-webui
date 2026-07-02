@@ -2190,6 +2190,7 @@
     "ReclamationStatusLegendYellow": "Utilisasi rendah tetapi belum mencapai ambang batas reklamasi. Aman untuk sekarang, tetapi berisiko jika terus turun.",
     "ReclamationStatusSafe": "Aman",
     "ReclamationStatusTooltipTitle": "Rata-rata utilisasi terkini / ambang batas reklamasi (%)",
+    "ReclamationStatusTooltipTitleWithWindow": "Rata-rata utilisasi selama {{duration}} terakhir / ambang batas reklamasi (%)",
     "ReclamationStatusWarning": "Peringatan",
     "RequestContainerCommit": "Permintaan Komitmen Kontainer",
     "Reservation": "Reservasi",

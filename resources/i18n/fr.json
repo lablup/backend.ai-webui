@@ -2191,6 +2191,7 @@
     "ReclamationStatusLegendYellow": "L'utilisation est faible mais n'a pas encore atteint le seuil de réclamation. Sûr pour l'instant, mais à risque si cela continue à baisser.",
     "ReclamationStatusSafe": "Sûr",
     "ReclamationStatusTooltipTitle": "Utilisation moyenne récente / seuil de réclamation (%)",
+    "ReclamationStatusTooltipTitleWithWindow": "Utilisation moyenne sur les derniers {{duration}} / seuil de réclamation (%)",
     "ReclamationStatusWarning": "Avertissement",
     "RequestContainerCommit": "Demande de conteneur Engagement",
     "Reservation": "Réservation",

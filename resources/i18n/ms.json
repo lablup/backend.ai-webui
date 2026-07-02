@@ -2187,6 +2187,7 @@
     "ReclamationStatusLegendYellow": "Penggunaan adalah rendah tetapi belum mencapai ambang tuntutan semula. Selamat buat masa ini, tetapi berisiko jika terus menurun.",
     "ReclamationStatusSafe": "Selamat",
     "ReclamationStatusTooltipTitle": "Purata penggunaan terkini / ambang tuntutan semula (%)",
+    "ReclamationStatusTooltipTitleWithWindow": "Purata penggunaan dalam {{duration}} terakhir / ambang tuntutan semula (%)",
     "ReclamationStatusWarning": "Amaran",
     "RequestContainerCommit": "Minta Komit Kontena",
     "Reservation": "Tempahan",

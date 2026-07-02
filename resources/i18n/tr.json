@@ -2187,6 +2187,7 @@
     "ReclamationStatusLegendYellow": "Kullanım düşük ancak henüz geri alma eşiğine ulaşmamış. Şimdilik güvenli, ancak daha da düşerse risk altında.",
     "ReclamationStatusSafe": "Güvenli",
     "ReclamationStatusTooltipTitle": "Son ortalama kullanım / geri alma eşiği (%)",
+    "ReclamationStatusTooltipTitleWithWindow": "Son {{duration}} içindeki ortalama kullanım / geri alma eşiği (%)",
     "ReclamationStatusWarning": "Uyarı",
     "RequestContainerCommit": "Konteyner Taahhüdü İste",
     "Reservation": "Rezervasyon",

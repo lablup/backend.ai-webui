@@ -2188,6 +2188,7 @@
     "ReclamationStatusLegendYellow": "Ашиглалт бага байгаа боловч нөхөн авалтын босгонд хүрч ороогүй байна. Одоохондоо аюулгүй, харин цаашид буурвал эрсдэлтэй.",
     "ReclamationStatusSafe": "Аюулгүй",
     "ReclamationStatusTooltipTitle": "Сүүлийн үеийн дундаж ашиглалт / нөхөн авалтын босго (%)",
+    "ReclamationStatusTooltipTitleWithWindow": "Сүүлийн {{duration}} дахь дундаж ашиглалт / нөхөн авалтын босго (%)",
     "ReclamationStatusWarning": "Анхааруулга",
     "RequestContainerCommit": "Контейнерын үүрэг хүлээнэ үү",
     "Reservation": "Захиалга",

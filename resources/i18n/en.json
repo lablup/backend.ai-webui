@@ -2200,6 +2200,7 @@
     "ReclamationStatusLegendYellow": "Utilization is low but not yet at the reclamation threshold. Safe for now, but at risk if it drops further.",
     "ReclamationStatusSafe": "Safe",
     "ReclamationStatusTooltipTitle": "Recent average utilization / reclamation threshold (%)",
+    "ReclamationStatusTooltipTitleWithWindow": "Average utilization over the last {{duration}} / reclamation threshold (%)",
     "ReclamationStatusWarning": "Warning",
     "RequestContainerCommit": "Request Container Commit",
     "Reservation": "Reservation",

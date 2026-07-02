@@ -57,6 +57,7 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useLocation } from 'react-router-dom';
 import { useCurrentUserRole } from 'src/hooks/backendai';
+import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from 'src/hooks/hooksUsingRelay';
 import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 import { useCSVExport } from 'src/hooks/useCSVExport';
 
@@ -83,6 +84,11 @@ const ComputeSessionListPage = () => {
   const currentProject = useCurrentProjectValue();
 
   const userRole = useCurrentUserRole();
+  // Fetched once for the whole list: all sessions in the user console share the
+  // current keypair resource policy, so the reclamation column reads its idle
+  // timeout from here instead of querying per row.
+  const [{ keypairResourcePolicy }] =
+    useCurrentKeyPairResourcePolicyLazyLoadQuery();
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -497,6 +503,11 @@ const ComputeSessionListPage = () => {
           {computeSessionNodeResult.ok ? (
             <SessionNodes
               order={queryParams.order}
+              idleTimeout={
+                keypairResourcePolicy?.idle_timeout != null
+                  ? Number(keypairResourcePolicy.idle_timeout)
+                  : undefined
+              }
               onClickSessionName={(session) => {
                 // Set sessionDetailDrawerFrgmt in location state via webUINavigate
                 // instead of directly setting sessionDetailId query param

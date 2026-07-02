@@ -2187,6 +2187,7 @@
     "ReclamationStatusLegendYellow": "A utilização está baixa, mas ainda não atingiu o limite de reaproveitamento. Seguro por enquanto, mas em risco se cair ainda mais.",
     "ReclamationStatusSafe": "Seguro",
     "ReclamationStatusTooltipTitle": "Utilização média recente / limite de reaproveitamento (%)",
+    "ReclamationStatusTooltipTitleWithWindow": "Utilização média nos últimos {{duration}} / limite de reaproveitamento (%)",
     "ReclamationStatusWarning": "Aviso",
     "RequestContainerCommit": "Pedido de autorização do contentor",
     "Reservation": "Reserva",

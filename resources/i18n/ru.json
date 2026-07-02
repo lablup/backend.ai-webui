@@ -2187,6 +2187,7 @@
     "ReclamationStatusLegendYellow": "Утилизация низкая, но ещё не достигла порога рекламации. Безопасно пока, но под угрозой, если продолжит снижаться.",
     "ReclamationStatusSafe": "Безопасно",
     "ReclamationStatusTooltipTitle": "Недавняя средняя утилизация / порог рекламации (%)",
+    "ReclamationStatusTooltipTitleWithWindow": "Средняя утилизация за последние {{duration}} / порог рекламации (%)",
     "ReclamationStatusWarning": "Предупреждение",
     "RequestContainerCommit": "Запрос контейнера Commit",
     "Reservation": "Бронирование",

@@ -2189,6 +2189,7 @@
     "ReclamationStatusLegendYellow": "Die Auslastung ist gering, aber noch nicht am Rückgewinnungsschwellenwert. Derzeit sicher, aber gefährdet, wenn sie weiter sinkt.",
     "ReclamationStatusSafe": "Sicher",
     "ReclamationStatusTooltipTitle": "Aktuelle durchschnittliche Auslastung / Rückgewinnungsschwellenwert (%)",
+    "ReclamationStatusTooltipTitleWithWindow": "Durchschnittliche Auslastung der letzten {{duration}} / Rückgewinnungsschwellenwert (%)",
     "ReclamationStatusWarning": "Warnung",
     "RequestContainerCommit": "Container Commit anfordern",
     "Reservation": "Reservierung",

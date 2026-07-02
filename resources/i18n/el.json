@@ -2187,6 +2187,7 @@
     "ReclamationStatusLegendYellow": "Η χρήση είναι χαμηλή αλλά δεν έχει φτάσει ακόμα στο κατώφλι ανάκτησης. Ασφαλές προς το παρόν, αλλά σε κίνδυνο αν μειωθεί περαιτέρω.",
     "ReclamationStatusSafe": "Ασφαλές",
     "ReclamationStatusTooltipTitle": "Πρόσφατη μέση χρήση / κατώφλι ανάκτησης (%)",
+    "ReclamationStatusTooltipTitleWithWindow": "Μέση χρήση τα τελευταία {{duration}} / κατώφλι ανάκτησης (%)",
     "ReclamationStatusWarning": "Προειδοποίηση",
     "RequestContainerCommit": "Αίτηση δέσμευσης εμπορευματοκιβωτίου",
     "Reservation": "Κράτηση",
