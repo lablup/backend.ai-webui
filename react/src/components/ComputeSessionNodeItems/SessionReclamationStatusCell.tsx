@@ -4,7 +4,11 @@
  */
 import { SessionReclamationStatusCellFragment$key } from '../../__generated__/SessionReclamationStatusCellFragment.graphql';
 import { toFixedFloorWithoutTrailingZeros } from '../../helper';
-import { IdleChecks, getUtilizationColorThresholds } from './SessionIdleChecks';
+import {
+  IdleChecks,
+  UtilizationCheckerResult,
+  getUtilizationCheckerColor,
+} from './SessionIdleChecks';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Badge, Tooltip, Typography, theme } from 'antd';
 import {
@@ -16,7 +20,7 @@ import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
-type ReclamationColor = 'red' | 'orange' | 'green';
+type ReclamationColor = UtilizationCheckerResult['color'];
 
 // Severity ordering: red (most severe) < orange < green (least severe).
 const RECLAMATION_SEVERITY: Record<ReclamationColor, number> = {
@@ -39,23 +43,20 @@ const RECLAMATION_SEVERITY: Record<ReclamationColor, number> = {
  *           thresholds, so a single comfortable resource keeps it safe and the
  *           BEST (least severe) resource color wins.
  *
- * Per-resource colors use the shared `getUtilizationColorThresholds` cutoffs so
- * classification and the legend's displayed "%" stay consistent with each other
- * and with `getUtilizationCheckerColor`. Resources with no data (negative
- * utilization, rendered as "-") are excluded.
+ * Each resource is classified via `getUtilizationCheckerColor`, whose result
+ * carries the exact boundary "%" that produced the color, so the legend always
+ * matches the classification. Resources with no data (negative utilization,
+ * rendered as "-") are excluded.
  */
 export function getOverallReclamation(
   resources: Record<string, number[]>,
   thresholds_check_operator: 'and' | 'or',
-): { color: ReclamationColor; threshold: number } | undefined {
-  const entries = Object.values(resources)
-    .filter(([utilization]) => utilization >= 0)
-    .map(([utilization, threshold]) => {
-      const { red, green } = getUtilizationColorThresholds(threshold);
-      const color: ReclamationColor =
-        utilization < red ? 'red' : utilization < green ? 'orange' : 'green';
-      return { threshold, color };
-    });
+): UtilizationCheckerResult | undefined {
+  const entries = _.compact(
+    Object.values(resources)
+      .filter(([utilization]) => utilization >= 0)
+      .map((resource) => getUtilizationCheckerColor(resource)),
+  );
 
   if (_.isEmpty(entries)) {
     return undefined;
@@ -130,13 +131,10 @@ const SessionReclamationStatusCell: React.FC<
   };
   const { token: badgeColor, label, legendKey } = colorMap[overall.color];
 
-  // The color-boundary percentage comes from the same shared thresholds used to
-  // classify the color: red pivots at the `red` cutoff, yellow/green at `green`.
-  // Passed to the legend so it shows the real "%" for this session's threshold.
-  const { red, green } = getUtilizationColorThresholds(overall.threshold);
-  const boundaryPercent = overall.color === 'red' ? red : green;
+  // `boundary` comes from the very helper call that classified the color, so
+  // the legend always shows the exact "%" that produced the badge color.
   const legend = t(legendKey, {
-    value: toFixedFloorWithoutTrailingZeros(boundaryPercent, 1),
+    value: toFixedFloorWithoutTrailingZeros(overall.boundary, 1),
   });
 
   return (

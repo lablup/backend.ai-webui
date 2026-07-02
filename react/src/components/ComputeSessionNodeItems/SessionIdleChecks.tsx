@@ -49,50 +49,47 @@ interface SessionIdleChecksProps {
   fetchKeyForLegacyLoadQuery?: string;
 }
 
-/**
- * Utilization percentages at which a resource's idle-reclamation color changes
- * in the multi-resource check: utilization below `red` → red, below `green` →
- * orange, at or above `green` → green. The `Math.min(... , threshold + n)` caps
- * keep the boundaries from running away for large thresholds. Single source of
- * truth so callers can both classify and display these exact cutoffs.
- */
-export function getUtilizationColorThresholds(threshold: number) {
-  return {
-    red: Math.min(threshold * 2, threshold + 5),
-    green: Math.min(threshold * 10, threshold + 10),
-  };
-}
+export type UtilizationCheckerResult = {
+  color: 'red' | 'orange' | 'green';
+  /**
+   * The utilization percentage the color pivots on: red is bounded above by
+   * this value, orange/green by the green cutoff. Exposed so callers can show
+   * the exact "%" that produced the color.
+   */
+  boundary: number;
+};
 
 export function getUtilizationCheckerColor(
   resources: Record<string, number[]> | number[],
   thresholds_check_operator: 'and' | 'or' | null = null,
-) {
+): UtilizationCheckerResult | undefined {
   // Determine color based on single device utilization.
   // resources: [number, number]
   if (!thresholds_check_operator) {
     const [utilization, threshold] = resources as number[];
     if (utilization < threshold * 2) {
-      return 'red';
+      return { color: 'red', boundary: threshold * 2 };
     } else if (utilization < threshold * 10) {
-      return 'orange';
+      return { color: 'orange', boundary: threshold * 10 };
     } else {
-      return 'green';
+      return { color: 'green', boundary: threshold * 10 };
     }
   }
   // Determine color based on multiple device utilization.
   // resources: Record<string, [number, number]>
-  let color: string | undefined = undefined;
+  let result: UtilizationCheckerResult | undefined = undefined;
   if (thresholds_check_operator === 'and') {
     _.every(resources, ([utilization, threshold]: number[]) => {
-      const { red, green } = getUtilizationColorThresholds(threshold);
-      if (utilization < red) {
-        color = 'red';
+      const redBoundary = Math.min(threshold * 2, threshold + 5);
+      const greenBoundary = Math.min(threshold * 10, threshold + 10);
+      if (utilization < redBoundary) {
+        result = { color: 'red', boundary: redBoundary };
         return true;
-      } else if (utilization < green) {
-        color = 'orange';
+      } else if (utilization < greenBoundary) {
+        result = { color: 'orange', boundary: greenBoundary };
         return true;
       } else {
-        color = 'green';
+        result = { color: 'green', boundary: greenBoundary };
         return true;
       }
     });
@@ -100,21 +97,22 @@ export function getUtilizationCheckerColor(
 
   if (thresholds_check_operator === 'or') {
     _.some(resources, ([utilization, threshold]: number[]) => {
-      const { red, green } = getUtilizationColorThresholds(threshold);
-      if (utilization < red) {
-        color = 'red';
+      const redBoundary = Math.min(threshold * 2, threshold + 5);
+      const greenBoundary = Math.min(threshold * 10, threshold + 10);
+      if (utilization < redBoundary) {
+        result = { color: 'red', boundary: redBoundary };
         return true;
-      } else if (utilization < green) {
-        color = 'orange';
+      } else if (utilization < greenBoundary) {
+        result = { color: 'orange', boundary: greenBoundary };
         return true;
       } else {
-        color = 'green';
+        result = { color: 'green', boundary: greenBoundary };
         return true;
       }
     });
   }
 
-  return color;
+  return result;
 }
 
 export function getIdleChecksTagColor(
@@ -137,7 +135,7 @@ export function getIdleChecksTagColor(
     return getUtilizationCheckerColor(
       result.extra.resources,
       result.extra.thresholds_check_operator,
-    );
+    )?.color;
   }
 
   return undefined;
@@ -234,7 +232,8 @@ const SessionIdleChecks: React.FC<SessionIdleChecksProps> = ({
                             >{`${mergedResourceSlots?.[deviceName]?.human_readable_name}:`}</Typography.Text>
                             <Typography.Text
                               style={{
-                                color: getUtilizationCheckerColor(resource),
+                                color:
+                                  getUtilizationCheckerColor(resource)?.color,
                               }}
                             >
                               {`${utilization >= 0 ? toFixedFloorWithoutTrailingZeros(utilization, 1) : '-'} / ${threshold}`}
