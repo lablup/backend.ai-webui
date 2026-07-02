@@ -49,6 +49,20 @@ interface SessionIdleChecksProps {
   fetchKeyForLegacyLoadQuery?: string;
 }
 
+/**
+ * Utilization percentages at which a resource's idle-reclamation color changes
+ * in the multi-resource check: utilization below `red` → red, below `green` →
+ * orange, at or above `green` → green. The `Math.min(... , threshold + n)` caps
+ * keep the boundaries from running away for large thresholds. Single source of
+ * truth so callers can both classify and display these exact cutoffs.
+ */
+export function getUtilizationColorThresholds(threshold: number) {
+  return {
+    red: Math.min(threshold * 2, threshold + 5),
+    green: Math.min(threshold * 10, threshold + 10),
+  };
+}
+
 export function getUtilizationCheckerColor(
   resources: Record<string, number[]> | number[],
   thresholds_check_operator: 'and' | 'or' | null = null,
@@ -70,10 +84,11 @@ export function getUtilizationCheckerColor(
   let color: string | undefined = undefined;
   if (thresholds_check_operator === 'and') {
     _.every(resources, ([utilization, threshold]: number[]) => {
-      if (utilization < Math.min(threshold * 2, threshold + 5)) {
+      const { red, green } = getUtilizationColorThresholds(threshold);
+      if (utilization < red) {
         color = 'red';
         return true;
-      } else if (utilization < Math.min(threshold * 10, threshold + 10)) {
+      } else if (utilization < green) {
         color = 'orange';
         return true;
       } else {
@@ -85,10 +100,11 @@ export function getUtilizationCheckerColor(
 
   if (thresholds_check_operator === 'or') {
     _.some(resources, ([utilization, threshold]: number[]) => {
-      if (utilization < Math.min(threshold * 2, threshold + 5)) {
+      const { red, green } = getUtilizationColorThresholds(threshold);
+      if (utilization < red) {
         color = 'red';
         return true;
-      } else if (utilization < Math.min(threshold * 10, threshold + 10)) {
+      } else if (utilization < green) {
         color = 'orange';
         return true;
       } else {
