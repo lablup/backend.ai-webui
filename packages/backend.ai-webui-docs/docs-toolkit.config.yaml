@@ -67,6 +67,17 @@ versions:
     latest: true
     pdfTag: "v26.4.10"
 
+# Legacy docs link (FR-3248, renders via FR-2733).
+# Appends a localized "Previous versions" (이전 버전 / 以前のバージョン /
+# เวอร์ชันก่อนหน้า) option at the bottom of the version <select>; picking
+# it opens this URL in a new tab (noopener,noreferrer). Points at the
+# readthedocs-hosted Sphinx manual (project `backendai-console-users-guide`),
+# which moves to this domain when `webui.docs.backend.ai` is taken over by
+# the Amplify deployment of THIS site. A single URL is used for all
+# languages by decision (FR-3248) — readthedocs redirects the root to its
+# default language and offers its own language switcher.
+legacyDocsUrl: "https://webui.docs-archive.backend.ai/"
+
 # Product name for log messages
 productName: "Backend.AI WebUI Docs"
 
