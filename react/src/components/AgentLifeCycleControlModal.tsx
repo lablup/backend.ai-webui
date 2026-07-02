@@ -10,6 +10,7 @@ import {
   BAIFlex,
   BAIModal,
   BAIModalProps,
+  toLocalId,
   useBAILogger,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
@@ -53,7 +54,7 @@ const AgentLifeCycleControlModal: React.FC<AgentLifeCycleControlModalProps> = ({
   const agent = useFragment(
     graphql`
       fragment AgentLifeCycleControlModalFragment on AgentNode {
-        row_id
+        id
       }
     `,
     agentNodeFrgmt,
@@ -86,13 +87,13 @@ const AgentLifeCycleControlModal: React.FC<AgentLifeCycleControlModalProps> = ({
   // etc.) are resolved through getErrorMessage. The client hands back a
   // plain string for text/* responses, so both shapes are handled.
   const handleOk = () => {
-    if (!lifeCycleType || !agent?.row_id) {
+    if (!lifeCycleType || !agent?.id) {
       message.error(t('agent.WatcherActionFailed'));
       onRequestClose();
       return;
     }
     return watcherMutations[lifeCycleType]
-      .mutateAsync(agent.row_id)
+      .mutateAsync(toLocalId(agent.id))
       .then((res: { result?: string; message?: string } | string | null) => {
         if (res && typeof res === 'object' && res.result === 'ok') {
           message.success(t(SUCCESS_KEY[lifeCycleType]));
@@ -140,7 +141,7 @@ const AgentLifeCycleControlModal: React.FC<AgentLifeCycleControlModalProps> = ({
             paddingInline: token.padding,
           }}
         >
-          <div role="listitem">{agent?.row_id}</div>
+          <div role="listitem">{agent?.id && toLocalId(agent.id)}</div>
         </div>
       </BAIFlex>
     </BAIModal>

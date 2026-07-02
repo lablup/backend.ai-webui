@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ed8e265fc74aaf62287f3c01112e98e1>>
+ * @generated SignedSource<<7e2043ab902803c4782f30e879e33d9e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,7 +11,7 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type AgentLifeCycleControlModalFragment$data = {
-  readonly row_id: string | null | undefined;
+  readonly id: string;
   readonly " $fragmentType": "AgentLifeCycleControlModalFragment";
 };
 export type AgentLifeCycleControlModalFragment$key = {
@@ -29,7 +29,7 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "row_id",
+      "name": "id",
       "storageKey": null
     }
   ],
@@ -37,6 +37,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "6006fa0f52cb07ef5f02cc9fd6e3bb5c";
+(node as any).hash = "3be236b836a0598f33f171386a98b49f";
 
 export default node;
