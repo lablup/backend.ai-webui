@@ -24,7 +24,13 @@
 #      latest docs on that release line — no manual step per patch.
 #      The `minor_label` is the branch name and the `source_ref` is the
 #      pushed commit SHA.
-#   2. Manual — `workflow_dispatch`. The operator picks any tagged
+#   2. Automatic — `release` (published, non-prerelease). Seeds/refreshes
+#      the archive for that release's minor at publish time, deriving the
+#      minor from the tag (`v26.5.0` -> `26.5`) and snapshotting the tag.
+#      Complements trigger 1: it fires once at release time even when no
+#      docs push landed on the release branch (e.g. the very first release
+#      of a new minor). Pre-releases are skipped by the job-level `if:`.
+#   3. Manual — `workflow_dispatch`. The operator picks any tagged
 #      commit / SHA whose docs source should be parked, plus the minor
 #      label it represents. Use this for one-off backfills (e.g.
 #      re-snapshotting a specific release tag) or a dry run.
@@ -58,6 +64,11 @@ on:
     # unrelated app changes on the release branch must not churn it.
     paths:
       - "packages/backend.ai-webui-docs/src/**"
+  release:
+    # Seed/refresh the archive for a release's minor at publish time. The
+    # minor is derived from the tag in the resolve step; pre-releases are
+    # filtered by the job-level `if:` below.
+    types: [published]
   workflow_dispatch:
     inputs:
       source_ref:
@@ -77,32 +88,40 @@ on:
 permissions:
   contents: write
 
-# Serialize runs per target minor so that when several docs changes land
-# on a release branch in quick succession, an older run's force-push to
+# Serialize runs per target so that when several docs changes land on a
+# release branch in quick succession, an older run's force-push to
 # `docs-archive/<minor>` can't overwrite a newer snapshot. Keyed on the
-# resolved minor (branch name for push, input for dispatch), so distinct
-# minors still archive in parallel; `cancel-in-progress` lets the newest
-# push win.
+# branch name (push), the release tag (release), or the input minor
+# (dispatch), so distinct targets still archive in parallel;
+# `cancel-in-progress` lets the newest run win. (GitHub expressions can't
+# split `v26.5.0` into `26.5`, so the release key is the full tag — still
+# unique per release, and a same-minor push/release overlap is rare and
+# produces near-identical source.)
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event_name == 'push' && github.ref_name || inputs.minor_label }}
+  group: ${{ github.workflow }}-${{ github.event_name == 'push' && github.ref_name || github.event_name == 'release' && github.event.release.tag_name || inputs.minor_label }}
   cancel-in-progress: true
 
 jobs:
   build-and-archive:
+    # Skip pre-releases (rc/alpha/beta) on the `release` trigger; push and
+    # dispatch always run.
+    if: ${{ github.event_name != 'release' || github.event.release.prerelease == false }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Resolve archive parameters (release-branch push vs manual dispatch)
+      - name: Resolve archive parameters (push / release / manual dispatch)
         id: resolve
-        # For a push to a release-line branch, derive the minor label from
-        # the branch name (`26.4`) and snapshot the pushed commit. For a
-        # manual dispatch, use the operator-supplied inputs verbatim. A
-        # push always publishes (never a dry run). Values flow through env
-        # vars (NOT inline interpolation) to avoid command injection.
+        # Derive the three event-agnostic values from whichever trigger
+        # fired: a release-line push (minor = branch name, ref = SHA), a
+        # published release (minor = tag's MAJOR.MINOR, ref = tag), or a
+        # manual dispatch (operator inputs verbatim). A push/release always
+        # publishes (never a dry run). Values flow through env vars (NOT
+        # inline interpolation) to avoid command injection.
         env:
           EVENT_NAME: ${{ github.event_name }}
           PUSH_REF_NAME: ${{ github.ref_name }}
           PUSH_SHA: ${{ github.sha }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
           DISPATCH_MINOR_LABEL: ${{ inputs.minor_label }}
           DISPATCH_SOURCE_REF: ${{ inputs.source_ref }}
           DISPATCH_DRY_RUN: ${{ inputs.dry_run }}
@@ -110,6 +129,12 @@ jobs:
           if [ "$EVENT_NAME" = "push" ]; then
             MINOR_LABEL="$PUSH_REF_NAME"
             SOURCE_REF="$PUSH_SHA"
+            DRY_RUN="false"
+          elif [ "$EVENT_NAME" = "release" ]; then
+            # v26.5.0 / 26.5.0 -> 26.5 (the Validate step rejects anything
+            # that isn't a clean MAJOR.MINOR).
+            MINOR_LABEL="$(printf '%s' "$RELEASE_TAG" | sed -E 's/^v?([0-9]+\.[0-9]+)\..*$/\1/')"
+            SOURCE_REF="$RELEASE_TAG"
             DRY_RUN="false"
           else
             MINOR_LABEL="$DISPATCH_MINOR_LABEL"
