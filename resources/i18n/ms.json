@@ -1291,6 +1291,7 @@
     "InvalidPluginNamesFix": "Semak bahagian [plugin] dalam config.toml dan betulkan nama plugin yang tidak sah ({{count}} dijumpai).",
     "MissingProxyUrl": "URL Proksi Tidak Dikonfigurasi",
     "MissingProxyUrlDesc": "Tiada wsproxy.proxyURL ditetapkan dalam config.toml. Ciri proksi WebSocket mungkin tidak berfungsi dengan betul.",
+    "NoFailedItems": "Tiada item yang gagal. Semua diagnostik berjaya.",
     "NoResultsToExport": "Tiada keputusan diagnostik untuk dieksport. Sila tunggu sehingga diagnostik selesai.",
     "PlaceholderValue": "Nilai Pemegang Tempat Tidak Diganti",
     "PlaceholderValueDesc": "{{section}} {{field}} ditetapkan kepada \"{{value}}\" yang kelihatan seperti pemegang tempat yang belum diganti daripada config.toml.sample.",

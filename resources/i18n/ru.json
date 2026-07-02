@@ -1291,6 +1291,7 @@
     "InvalidPluginNamesFix": "Проверьте раздел [plugin] в config.toml и исправьте недействительные имена плагинов (найдено {{count}}).",
     "MissingProxyUrl": "URL-адрес прокси не настроен",
     "MissingProxyUrlDesc": "В config.toml не установлен wsproxy.proxyURL. Функции WebSocket-прокси могут работать некорректно.",
+    "NoFailedItems": "Нет элементов с ошибками. Все диагностические проверки пройдены.",
     "NoResultsToExport": "Нет доступных результатов диагностики для экспорта. Пожалуйста, дождитесь завершения диагностики.",
     "PlaceholderValue": "Значение-заполнитель не заменено",
     "PlaceholderValueDesc": "{{section}} {{field}} установлено в \"{{value}}\", что выглядит как незаменённый заполнитель из config.toml.sample.",

@@ -1291,6 +1291,7 @@
     "InvalidPluginNamesFix": "Verifique a seção [plugin] no config.toml e corrija os nomes de plugin inválidos ({{count}} encontrados).",
     "MissingProxyUrl": "URL do proxy não configurada",
     "MissingProxyUrlDesc": "Nenhum wsproxy.proxyURL está definido no config.toml. Os recursos do proxy WebSocket podem não funcionar corretamente.",
+    "NoFailedItems": "Nenhum item com falha. Todos os diagnósticos foram aprovados.",
     "NoResultsToExport": "Nenhum resultado de diagnóstico disponível para exportação. Aguarde a conclusão do diagnóstico.",
     "PlaceholderValue": "Valor de espaço reservado não substituído",
     "PlaceholderValueDesc": "{{section}} {{field}} está definido como \"{{value}}\" que parece um espaço reservado não substituído de config.toml.sample.",

@@ -1291,6 +1291,7 @@
     "InvalidPluginNamesFix": "Ελέγξτε την ενότητα [plugin] στο config.toml και διορθώστε τα μη έγκυρα ονόματα plugin (βρέθηκαν {{count}}).",
     "MissingProxyUrl": "Η διεύθυνση URL proxy δεν έχει ρυθμιστεί",
     "MissingProxyUrlDesc": "Δεν έχει οριστεί wsproxy.proxyURL στο config.toml. Οι λειτουργίες WebSocket proxy ενδέχεται να μην λειτουργούν σωστά.",
+    "NoFailedItems": "Δεν υπάρχουν αποτυχημένα στοιχεία. Όλα τα διαγνωστικά πέρασαν.",
     "NoResultsToExport": "Δεν υπάρχουν αποτελέσματα διαγνωστικών για εξαγωγή. Παρακαλώ περιμένετε να ολοκληρωθούν τα διαγνωστικά.",
     "PlaceholderValue": "Η τιμή placeholder δεν αντικαταστάθηκε",
     "PlaceholderValueDesc": "Το {{section}} {{field}} έχει οριστεί σε \"{{value}}\" που μοιάζει με μη αντικατεστημένο placeholder από το config.toml.sample.",

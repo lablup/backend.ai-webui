@@ -1291,6 +1291,7 @@
     "InvalidPluginNamesFix": "config.toml дахь [plugin] хэсгийг шалгаж, буруу плагины нэрүүдийг засна уу ({{count}} олдсон).",
     "MissingProxyUrl": "Прокси URL тохируулагдаагүй",
     "MissingProxyUrlDesc": "config.toml дахь wsproxy.proxyURL тохируулагдаагүй байна. WebSocket прокси функцүүд зөв ажиллахгүй байж болзошгүй.",
+    "NoFailedItems": "Алдаатай зүйл алга. Бүх оношлогоо амжилттай өнгөрлөө.",
     "NoResultsToExport": "Экспортлох оношлогооны үр дүн байхгүй. Оношлогоо дуусахыг хүлээнэ үү.",
     "PlaceholderValue": "Орлуулагч утга солигдоогүй",
     "PlaceholderValueDesc": "{{section}} {{field}} нь \"{{value}}\" гэж тохируулагдсан бөгөөд config.toml.sample-ийн солигдоогүй орлуулагч утга шиг харагдаж байна.",

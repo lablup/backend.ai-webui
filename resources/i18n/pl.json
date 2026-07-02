@@ -1291,6 +1291,7 @@
     "InvalidPluginNamesFix": "Sprawdź sekcję [plugin] w pliku config.toml i popraw nieprawidłowe nazwy wtyczek (znaleziono {{count}}).",
     "MissingProxyUrl": "Adres URL serwera proxy nie jest skonfigurowany",
     "MissingProxyUrlDesc": "W pliku config.toml nie ustawiono wsproxy.proxyURL. Funkcje serwera proxy WebSocket mogą nie działać poprawnie.",
+    "NoFailedItems": "Brak elementów z błędami. Wszystkie diagnostyki zakończyły się pomyślnie.",
     "NoResultsToExport": "Brak wyników diagnostyki do eksportu. Poczekaj na zakończenie diagnostyki.",
     "PlaceholderValue": "Wartość zastępcza nie została zastąpiona",
     "PlaceholderValueDesc": "{{section}} {{field}} jest ustawione na \"{{value}}\", co wygląda na niezastąpioną wartość zastępczą z config.toml.sample.",

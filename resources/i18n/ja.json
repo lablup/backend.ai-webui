@@ -1293,6 +1293,7 @@
     "InvalidPluginNamesFix": "config.tomlの[plugin]セクションを確認し、無効なプラグイン名を修正してください（{{count}}件検出）。",
     "MissingProxyUrl": "プロキシURLが未設定",
     "MissingProxyUrlDesc": "config.tomlにwsproxy.proxyURLが設定されていません。WebSocketプロキシ機能が正しく動作しない場合があります。",
+    "NoFailedItems": "失敗した項目はありません。すべての診断に合格しました。",
     "NoResultsToExport": "エクスポートできる診断結果がありません。診断が完了するまでお待ちください。",
     "PlaceholderValue": "プレースホルダー値が未置換",
     "PlaceholderValueDesc": "{{section}} {{field}} が \"{{value}}\" に設定されており、config.toml.sample の未置換プレースホルダーのようです。",

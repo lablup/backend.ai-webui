@@ -1291,6 +1291,7 @@
     "InvalidPluginNamesFix": "Kiểm tra phần [plugin] trong config.toml và sửa các tên plugin không hợp lệ (tìm thấy {{count}}).",
     "MissingProxyUrl": "URL Proxy chưa được cấu hình",
     "MissingProxyUrlDesc": "Không có wsproxy.proxyURL được đặt trong config.toml. Các tính năng WebSocket proxy có thể không hoạt động đúng.",
+    "NoFailedItems": "Không có mục lỗi nào. Tất cả chẩn đoán đều đạt.",
     "NoResultsToExport": "Không có kết quả chẩn đoán để xuất. Vui lòng đợi chẩn đoán hoàn tất.",
     "PlaceholderValue": "Giá trị giữ chỗ chưa được thay thế",
     "PlaceholderValueDesc": "{{section}} {{field}} được đặt thành \"{{value}}\" trông giống như một giá trị giữ chỗ chưa được thay thế từ config.toml.sample.",

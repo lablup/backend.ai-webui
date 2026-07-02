@@ -17,6 +17,7 @@ import {
 import {
   Collapse,
   Dropdown,
+  Empty,
   Skeleton,
   Switch,
   Typography,
@@ -261,10 +262,17 @@ const DiagnosticsPage = () => {
     >
       {curTabKey === 'diagnostics' && (
         <BAIFlex direction="column" align="stretch" gap="md">
-          <Collapse
-            defaultActiveKey={['csp', 'storage', 'endpoint', 'config']}
-            items={visibleItems}
-          />
+          {visibleItems.length === 0 ? (
+            <Empty
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+              description={t('diagnostics.NoFailedItems')}
+            />
+          ) : (
+            <Collapse
+              defaultActiveKey={['csp', 'storage', 'endpoint', 'config']}
+              items={visibleItems}
+            />
+          )}
         </BAIFlex>
       )}
     </BAICard>

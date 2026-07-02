@@ -1291,6 +1291,7 @@
     "InvalidPluginNamesFix": "Vérifiez la section [plugin] dans config.toml et corrigez les noms de plugin non valides ({{count}} trouvé(s)).",
     "MissingProxyUrl": "URL de proxy non configurée",
     "MissingProxyUrlDesc": "Aucun wsproxy.proxyURL n'est défini dans config.toml. Les fonctionnalités du proxy WebSocket peuvent ne pas fonctionner correctement.",
+    "NoFailedItems": "Aucun élément en échec. Tous les diagnostics ont réussi.",
     "NoResultsToExport": "Aucun résultat de diagnostic à exporter. Veuillez attendre la fin du diagnostic.",
     "PlaceholderValue": "Valeur de substitution non remplacée",
     "PlaceholderValueDesc": "{{section}} {{field}} est défini sur \"{{value}}\" qui ressemble à une valeur de substitution non remplacée de config.toml.sample.",

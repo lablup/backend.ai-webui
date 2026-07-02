@@ -1291,6 +1291,7 @@
     "InvalidPluginNamesFix": "检查 config.toml 中的 [plugin] 部分，修正无效的插件名称（发现 {{count}} 个）。",
     "MissingProxyUrl": "代理 URL 未配置",
     "MissingProxyUrlDesc": "config.toml 中未设置 wsproxy.proxyURL。WebSocket 代理功能可能无法正常工作。",
+    "NoFailedItems": "没有失败项。所有诊断均已通过。",
     "NoResultsToExport": "没有可导出的诊断结果。请等待诊断完成。",
     "PlaceholderValue": "占位符值未替换",
     "PlaceholderValueDesc": "{{section}} {{field}} 设置为 \"{{value}}\"，看起来像是来自 config.toml.sample 的未替换占位符。",

@@ -1291,6 +1291,7 @@
     "InvalidPluginNamesFix": "Tarkista [plugin]-osio config.toml-tiedostossa ja korjaa virheelliset laajennusnimet (löytyi {{count}}).",
     "MissingProxyUrl": "Välityspalvelimen URL puuttuu",
     "MissingProxyUrlDesc": "config.toml-tiedostossa ei ole asetettu wsproxy.proxyURL-arvoa. WebSocket-välityspalvelimen ominaisuudet eivät välttämättä toimi oikein.",
+    "NoFailedItems": "Ei epäonnistuneita kohteita. Kaikki diagnostiikkatarkistukset läpäisivät.",
     "NoResultsToExport": "Ei vietäviä diagnostiikkatuloksia. Odota, kunnes diagnostiikka on valmis.",
     "PlaceholderValue": "Paikkamerkin arvoa ei korvattu",
     "PlaceholderValueDesc": "{{section}} {{field}} on asetettu arvoon \"{{value}}\", joka näyttää korvaamattomalta paikkamerkiltä tiedostosta config.toml.sample.",
