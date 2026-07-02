@@ -81,6 +81,11 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version-file: ".nvmrc"
+          # The edit script is Node-stdlib only; pnpm is never invoked here.
+          # setup-node's default package-manager cache probes `pnpm store
+          # path`, which fails ("Unable to locate executable file: pnpm")
+          # since pnpm isn't installed in this job. Disable the cache.
+          package-manager-cache: false
 
       - name: Apply pdfTag bump (no-op if entry missing or already current)
         env:
