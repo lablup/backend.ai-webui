@@ -14,10 +14,20 @@
 #   FR-2751 for follow-up build caching that makes this efficient at
 #   archive count >= 2.
 #
-# Trigger: manual (`workflow_dispatch`). The operator picks the tagged
-# commit whose docs source should be parked, and the minor label that
-# represents it. Future iteration may add an on-tag trigger but that is
-# explicitly out of scope here.
+# Triggers:
+#   1. Automatic — `push` to a release-line branch whose name is a bare
+#      `<MAJOR>.<MINOR>` (e.g. `26.4`, `25.15`) that touches the docs
+#      source (`packages/backend.ai-webui-docs/src/**`). This keeps the
+#      `docs-archive/<minor>` snapshot in lockstep with docs changes
+#      landed on a maintenance branch (e.g. a doc fix backported to
+#      `26.4`), so the live site's `26.4` version always reflects the
+#      latest docs on that release line — no manual step per patch.
+#      The `minor_label` is the branch name and the `source_ref` is the
+#      pushed commit SHA.
+#   2. Manual — `workflow_dispatch`. The operator picks any tagged
+#      commit / SHA whose docs source should be parked, plus the minor
+#      label it represents. Use this for one-off backfills (e.g.
+#      re-snapshotting a specific release tag) or a dry run.
 #
 # Output: a `docs-archive/<minor>` branch containing ONLY:
 #   src/                          # markdown + book.config.yaml
@@ -35,6 +45,19 @@
 name: docs-archive-orphan-branch
 
 on:
+  push:
+    # Release-line branches are named as a bare `<MAJOR>.<MINOR>` (e.g.
+    # `26.4`, `25.15`). GitHub filter patterns support `+` as "one or
+    # more of the preceding character", so `[0-9]+.[0-9]+` matches
+    # exactly two dot-separated numeric segments and (being anchored to
+    # the whole ref) will NOT match a three-segment name like `26.4.1`.
+    branches:
+      - "[0-9]+.[0-9]+"
+    # Only re-snapshot when the docs source itself changed. `src/`
+    # holds the markdown + `book.config.yaml` that the archive parks;
+    # unrelated app changes on the release branch must not churn it.
+    paths:
+      - "packages/backend.ai-webui-docs/src/**"
   workflow_dispatch:
     inputs:
       source_ref:
@@ -54,18 +77,59 @@ on:
 permissions:
   contents: write
 
+# Serialize runs per target minor so that when several docs changes land
+# on a release branch in quick succession, an older run's force-push to
+# `docs-archive/<minor>` can't overwrite a newer snapshot. Keyed on the
+# resolved minor (branch name for push, input for dispatch), so distinct
+# minors still archive in parallel; `cancel-in-progress` lets the newest
+# push win.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'push' && github.ref_name || inputs.minor_label }}
+  cancel-in-progress: true
+
 jobs:
   build-and-archive:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
+      - name: Resolve archive parameters (release-branch push vs manual dispatch)
+        id: resolve
+        # For a push to a release-line branch, derive the minor label from
+        # the branch name (`26.4`) and snapshot the pushed commit. For a
+        # manual dispatch, use the operator-supplied inputs verbatim. A
+        # push always publishes (never a dry run). Values flow through env
+        # vars (NOT inline interpolation) to avoid command injection.
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PUSH_REF_NAME: ${{ github.ref_name }}
+          PUSH_SHA: ${{ github.sha }}
+          DISPATCH_MINOR_LABEL: ${{ inputs.minor_label }}
+          DISPATCH_SOURCE_REF: ${{ inputs.source_ref }}
+          DISPATCH_DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          if [ "$EVENT_NAME" = "push" ]; then
+            MINOR_LABEL="$PUSH_REF_NAME"
+            SOURCE_REF="$PUSH_SHA"
+            DRY_RUN="false"
+          else
+            MINOR_LABEL="$DISPATCH_MINOR_LABEL"
+            SOURCE_REF="$DISPATCH_SOURCE_REF"
+            DRY_RUN="${DISPATCH_DRY_RUN:-false}"
+          fi
+          {
+            echo "minor_label=$MINOR_LABEL"
+            echo "source_ref=$SOURCE_REF"
+            echo "dry_run=$DRY_RUN"
+          } >> "$GITHUB_OUTPUT"
+          echo "Resolved: event=$EVENT_NAME minor_label=$MINOR_LABEL source_ref=$SOURCE_REF dry_run=$DRY_RUN"
+
       - name: Validate minor label shape
         # Refuse anything that looks like a full patch (three numeric segments)
         # to mirror the validation in `versions.ts` — the selector lists minors
         # only, never patches. Inputs flow through env vars (NOT shell
         # interpolation) to avoid command injection from malicious input.
         env:
-          MINOR_LABEL: ${{ inputs.minor_label }}
+          MINOR_LABEL: ${{ steps.resolve.outputs.minor_label }}
         run: |
           if [[ "$MINOR_LABEL" =~ ^[0-9]+\.[0-9]+\.[0-9]+ ]]; then
             echo "ERROR: minor_label '$MINOR_LABEL' looks like a patch."
@@ -80,7 +144,7 @@ jobs:
       - name: Checkout source ref
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.source_ref }}
+          ref: ${{ steps.resolve.outputs.source_ref }}
           fetch-depth: 0
 
       - name: Verify docs source exists at source ref
@@ -105,8 +169,8 @@ jobs:
         #   .archive-info.txt
         # Inputs flow through env vars to avoid shell injection.
         env:
-          MINOR_LABEL: ${{ inputs.minor_label }}
-          SOURCE_REF: ${{ inputs.source_ref }}
+          MINOR_LABEL: ${{ steps.resolve.outputs.minor_label }}
+          SOURCE_REF: ${{ steps.resolve.outputs.source_ref }}
           RUN_ID: ${{ github.run_id }}
         run: |
           mkdir -p /tmp/docs-archive/src
@@ -130,10 +194,10 @@ jobs:
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
       - name: Create orphan branch and commit artifacts
-        if: ${{ inputs.dry_run != true }}
+        if: ${{ steps.resolve.outputs.dry_run != 'true' }}
         env:
-          MINOR_LABEL: ${{ inputs.minor_label }}
-          SOURCE_REF: ${{ inputs.source_ref }}
+          MINOR_LABEL: ${{ steps.resolve.outputs.minor_label }}
+          SOURCE_REF: ${{ steps.resolve.outputs.source_ref }}
         run: |
           BRANCH="docs-archive/$MINOR_LABEL"
           # Use a fresh worktree so we don't disturb the main checkout.
@@ -155,10 +219,10 @@ jobs:
           git push --force origin "$BRANCH"
 
       - name: Dry-run summary
-        if: ${{ inputs.dry_run == true }}
+        if: ${{ steps.resolve.outputs.dry_run == 'true' }}
         env:
-          MINOR_LABEL: ${{ inputs.minor_label }}
-          SOURCE_REF: ${{ inputs.source_ref }}
+          MINOR_LABEL: ${{ steps.resolve.outputs.minor_label }}
+          SOURCE_REF: ${{ steps.resolve.outputs.source_ref }}
         run: |
           echo "Dry-run mode: orphan branch was NOT pushed."
           echo "Would push: docs-archive/$MINOR_LABEL"
