@@ -303,7 +303,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   useEffect(() => {
     _.isFunction(onChangeAutoMountedFolders) &&
       onChangeAutoMountedFolders(autoMountedFolderNames);
-    // Do not need to run when `autoMountedFolderNames` changes
+    // Omit `onChangeAutoMountedFolders` from deps so a parent re-render doesn't retrigger this effect
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoMountedFolderNames]);
 

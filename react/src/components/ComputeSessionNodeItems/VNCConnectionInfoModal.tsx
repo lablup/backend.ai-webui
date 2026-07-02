@@ -19,7 +19,6 @@ const VNCConnectionInfoModal: React.FC<VNCConnectionInfoModalProps> = ({
   'use memo';
   const { t } = useTranslation();
   const vncDisplayUrl = `vnc://${host}:${port}`;
-  // Note: Original code uses ssh:// in href but displays vnc://
   const vncHref = `vnc://${host}:${port}`;
 
   return (

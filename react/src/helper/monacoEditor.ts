@@ -5,7 +5,8 @@
 
 // Self-host Monaco from /resources/monaco/vs instead of the default jsDelivr
 // CDN, so the editor works in offline and air-gapped environments. The tree
-// is served by the craco dev server (mapped to react/node_modules/monaco-
+// is served by the Vite dev server (monacoStaticPlugin in vite.config.ts,
+// mapped to react/node_modules/monaco-
 // editor/min/vs) and copied to build/web/resources/monaco/vs during the
 // production build (see root `copymonaco` script). The `/resources` prefix
 // is used to nest Monaco inside the existing static-asset namespace (same

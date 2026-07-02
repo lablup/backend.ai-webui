@@ -434,9 +434,9 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
   const missingRequired = validatedRows.filter(
     (r) => !r.email || !r.username || !r.password,
   ).length;
-  // Categorise off the same conditions the validator uses (lines ~321-324),
-  // not by string-matching the localised error message — that breaks in every
-  // non-English locale.
+  // Categorise off the same conditions the validator uses above (email/role/
+  // status/project checks), not by string-matching the localised error
+  // message — that breaks in every non-English locale.
   const invalidEmail = validatedRows.filter(
     (r) => r.email && !EMAIL_PATTERN.test(r.email),
   ).length;

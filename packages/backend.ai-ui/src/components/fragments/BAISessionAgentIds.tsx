@@ -10,8 +10,8 @@ import { graphql, useFragment } from 'react-relay';
 
 interface BAISessionAgentIdsProps {
   sessionFrgmt: BAISessionAgentIdsFragment$key;
-  maxInline?: number; // New prop to control max inline display
-  emptyText?: string; // New prop for empty state text
+  maxInline?: number;
+  emptyText?: string;
 }
 const BAISessionAgentIds: React.FC<BAISessionAgentIdsProps> = ({
   sessionFrgmt,

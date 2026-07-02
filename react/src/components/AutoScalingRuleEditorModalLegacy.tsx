@@ -149,7 +149,6 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
     `);
 
   const handleOk = () => {
-    // TODO: apply mutationToAddAutoScalingRule request
     return formRef.current
       ?.validateFields()
       .then((values) => {
@@ -164,7 +163,8 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
           max_replicas: values.max_replicas,
         };
 
-        // set min and max replicas as same value to avoid validation error
+        // Omit the unused replica bound (min for scale-out, max for scale-in)
+        // so the mutation doesn't fail validation on a field the form doesn't collect
         if (values.type === 'out') {
           delete props.min_replicas;
         } else {

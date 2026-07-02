@@ -109,8 +109,6 @@ const SessionInfoCell: React.FC<{
 
   const isPendingRename = mutation.isPending || optimisticName !== session.name;
 
-  // sessions[objectKey].icon = this._getKernelIcon(session.image);
-  //         sessions[objectKey].sessionTags = this._getKernelInfo(session.image);
   return (
     <Form ref={formRef}>
       {editing ? (

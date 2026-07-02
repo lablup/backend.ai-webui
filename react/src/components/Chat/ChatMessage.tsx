@@ -6,7 +6,6 @@ import {
   ChatMessageContainer,
   ChatMessagePlacement,
 } from './ChatMessageContainer';
-// ES 2015
 import ChatMessageContent from './ChatMessageContent';
 import { UIMessage } from '@ai-sdk/react';
 import { FileCard } from '@ant-design/x';
