@@ -5,6 +5,10 @@ description: Analyze component changes and check Storybook story coverage
 on:
   workflow_dispatch:
 
+engine:
+  id: copilot
+  model: claude-sonnet-4.5
+
 permissions:
   pull-requests: read
   contents: read
