@@ -77,6 +77,16 @@ on:
 permissions:
   contents: write
 
+# Serialize runs per target minor so that when several docs changes land
+# on a release branch in quick succession, an older run's force-push to
+# `docs-archive/<minor>` can't overwrite a newer snapshot. Keyed on the
+# resolved minor (branch name for push, input for dispatch), so distinct
+# minors still archive in parallel; `cancel-in-progress` lets the newest
+# push win.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'push' && github.ref_name || inputs.minor_label }}
+  cancel-in-progress: true
+
 jobs:
   build-and-archive:
     runs-on: ubuntu-latest
