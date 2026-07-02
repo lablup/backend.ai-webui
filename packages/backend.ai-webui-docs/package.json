@@ -34,7 +34,8 @@
     "agents": "docs-toolkit agents",
     "agents:force": "docs-toolkit agents --force",
     "build:terminology": "node scripts/generate-terminology.mjs",
-    "check:terminology-md": "node scripts/generate-terminology.mjs --check"
+    "check:terminology-md": "node scripts/generate-terminology.mjs --check",
+    "test:scripts": "node --test \"scripts/*.test.mjs\""
   },
   "devDependencies": {
     "backend.ai-docs-toolkit": "workspace:*",
