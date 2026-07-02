@@ -82,11 +82,20 @@ const useStyles = createStyles(({ css, token }) => {
         border-color: ${token.colorWarning} !important;
       }
 
+      /*
+       * The drag-handle header is absolutely positioned at the panel's top-left.
+       * The panel content's sticky BAIBoardItemTitle (z-index 50) overlaps that
+       * same strip, so at z-index 1 the title wins the hit-test and the handle
+       * cannot start a pointer drag (it only worked for panels whose handle
+       * happened to sit left of the title text). Lift the header above the
+       * sticky title (50) — but below the active outline ::before (60) — so the
+       * handle is always the topmost, draggable element across every panel.
+       */
       & > div:first-child > div:first-child > div:first-child {
         margin-bottom: ${token.margin}px;
         background-color: ${token.colorBgContainer} !important;
         position: absolute;
-        z-index: 1;
+        z-index: 51;
       }
     `,
     disableBorder: css`

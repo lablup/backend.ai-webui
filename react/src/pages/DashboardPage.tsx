@@ -6,6 +6,7 @@ import { DashboardPageQuery } from '../__generated__/DashboardPageQuery.graphql'
 import ActiveAgents from '../components/ActiveAgents';
 import AgentStats from '../components/AgentStats';
 import BAIBoard, { BAIBoardItem } from '../components/BAIBoard';
+import DashboardEditToggleButton from '../components/DashboardEditToggleButton';
 import MyResource from '../components/MyResource';
 import MyResourceWithinResourceGroup from '../components/MyResourceWithinResourceGroup';
 import QuotaPerStorageVolumeDashboardItem from '../components/QuotaPerStorageVolumeDashboardItem';
@@ -15,6 +16,8 @@ import StorageStatusPanelCard from '../components/StorageStatusPanelCard';
 import TotalResourceWithinResourceGroup, {
   useIsAvailableTotalResourceWithinResourceGroup,
 } from '../components/TotalResourceWithinResourceGroup';
+import { breadcrumbExtraAtom } from '../components/breadcrumbExtraAtom';
+import { dashboardEditModeAtom } from '../components/dashboardEditModeAtom';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -30,12 +33,14 @@ import {
   useFetchKey,
   useInterval,
 } from 'backend.ai-ui';
+import { useAtomValue, useSetAtom } from 'jotai';
 import * as _ from 'lodash-es';
-import { Suspense, useTransition } from 'react';
+import { Suspense, useEffect, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const DashboardPage: React.FC = () => {
+  'use memo';
   const { token } = theme.useToken();
   const { t } = useTranslation();
 
@@ -51,6 +56,18 @@ const DashboardPage: React.FC = () => {
 
   const [localStorageBoardItems, setLocalStorageBoardItems] =
     useBAISettingUserState('dashboard_board_items');
+
+  // Edit-mode gate: the board is locked by default. Only when edit mode is on are
+  // the board items draggable/resizable. Toggled from the breadcrumb.
+  const editMode = useAtomValue(dashboardEditModeAtom);
+  const setBreadcrumbExtra = useSetAtom(breadcrumbExtraAtom);
+
+  // Teleport the "Edit" toggle into the breadcrumb right slot while this page is
+  // mounted; clear it on unmount.
+  useEffect(() => {
+    setBreadcrumbExtra(<DashboardEditToggleButton />);
+    return () => setBreadcrumbExtra(null);
+  }, [setBreadcrumbExtra]);
 
   const isAvailableTotalResourcePanel =
     useIsAvailableTotalResourceWithinResourceGroup();
@@ -315,39 +332,61 @@ const DashboardPage: React.FC = () => {
     },
   ]);
 
-  // TODO: Issue occurs when newly added items in new webui version are not saved in localStorage
-  // and thus not displayed on screen.
-  // Opted-out items should also be stored separately in localStorage, and newly added items
-  // should be included in initialBoardItems.
-  const newlyAddedItems = _.filter(
+  // Single unified ordered layout source for the board.
+  //
+  // Cloudscape <Board> is controlled: the `items` prop on the next render must
+  // equal the order + spans + columnOffset that onItemsChange last reported, or
+  // the board snaps back ("revert"). So ORDER and LAYOUT live in ONE persisted
+  // list (`dashboard_board_items`); content is resolved by id every render.
+
+  // Content-by-id for the whole board.
+  const contentById = new Map<string, BAIBoardItem['data']>();
+  _.forEach(initialBoardItems, (item) => {
+    contentById.set(item.id, item.data);
+  });
+
+  // Default layout (id + spans + offset, no content) for every renderable id, in
+  // seed order. Used only to seed ids that have no entry in the persisted unified
+  // list yet (e.g. a new webui version added a built-in item).
+  const defaultLayout: Array<Omit<BAIBoardItem, 'data'>> = _.map(
     initialBoardItems,
-    (item) =>
-      !_.find(
-        localStorageBoardItems,
-        (itemInStorage) => itemInStorage.id === item.id,
-      ),
+    (item) => _.omit(item, 'data'),
   );
-  const localstorageBoardItemsWithData = filterOutEmpty(
-    _.map(localStorageBoardItems, (item) => {
-      const matchedData = _.find(
-        initialBoardItems,
-        (initialItem) => initialItem.id === item.id,
-      )?.data;
-      return matchedData ? { ...item, data: matchedData } : undefined;
+
+  // The set of ids that are renderable right now (have content). A persisted
+  // entry for an id that no longer exists (e.g. a removed custom panel, or an
+  // item gated off by role) is dropped so the controlled `items` stays valid.
+  const persistedLayout = localStorageBoardItems ?? [];
+  const persistedIds = new Set(_.map(persistedLayout, (item) => item.id));
+
+  // Unified order: persisted order first (filtered to ids that still render),
+  // then any default-layout ids not yet persisted, appended in seed order.
+  const orderedLayout: Array<Omit<BAIBoardItem, 'data'>> = [
+    ..._.filter(persistedLayout, (item) => contentById.has(item.id)),
+    ..._.filter(defaultLayout, (item) => !persistedIds.has(item.id)),
+  ];
+
+  // Attach content by id to produce the controlled board items.
+  const boardItems: Array<BAIBoardItem> = filterOutEmpty(
+    _.map(orderedLayout, (item) => {
+      const data = contentById.get(item.id);
+      return data ? { ...item, data } : undefined;
     }),
   );
-  const boardItems = [...localstorageBoardItemsWithData, ...newlyAddedItems];
 
   return (
     <BAIBoard
-      movable
-      resizable
+      movable={editMode}
+      resizable={editMode}
       bordered
       items={boardItems}
       onItemsChange={(event) => {
-        const changedItems = [...event.detail.items];
+        // event.detail.items is the COMPLETE board in its new order, with updated
+        // spans + columnOffset (Cloudscape's transformItems). Persist it verbatim
+        // (minus runtime `data`) as the unified layout. Because the next render
+        // rebuilds `items` in exactly this order, the controlled board never reverts.
         setLocalStorageBoardItems(
-          _.map(changedItems, (item) => _.omit(item, 'data')),
+          _.map(event.detail.items, (item) => _.omit(item, 'data')),
         );
       }}
     />
