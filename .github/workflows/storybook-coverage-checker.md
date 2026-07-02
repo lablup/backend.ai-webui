@@ -16,7 +16,7 @@ permissions:
 tools:
   github:
     toolsets: [pull_requests, repos]
-  bash: true
+  bash: ["cat", "date", "echo", "grep", "head", "ls", "pwd", "sort", "tail", "uniq", "wc", "yq"]
 
 safe-outputs:
   add-comment:
