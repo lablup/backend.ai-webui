@@ -27,6 +27,11 @@
     "    rule and remember /<lang>/ paths never collide with the new",
     "    site's own URLs (those all live under /<version>/... or",
     "    /assets/...).",
+    "  - Bare language paths (/ko, /ko/) get EXPLICIT rules per language.",
+    "    Amplify matches sources literally (no trailing-slash",
+    "    normalization), and /<lang>/<*> is not guaranteed to match the",
+    "    bare or slash-only path — so /<lang> and /<lang>/ are spelled",
+    "    out. Keep the exact rules BEFORE that language's wildcard rule.",
     "",
     "Status codes:",
     "  301 — Permanent redirect. Used for the root because /26.4/ is",
@@ -44,8 +49,28 @@
       "status": "301"
     },
     {
+      "source": "/en",
+      "target": "/26.4/en/",
+      "status": "302"
+    },
+    {
+      "source": "/en/",
+      "target": "/26.4/en/",
+      "status": "302"
+    },
+    {
       "source": "/en/<*>",
       "target": "/26.4/en/",
+      "status": "302"
+    },
+    {
+      "source": "/ko",
+      "target": "/26.4/ko/",
+      "status": "302"
+    },
+    {
+      "source": "/ko/",
+      "target": "/26.4/ko/",
       "status": "302"
     },
     {
@@ -54,8 +79,28 @@
       "status": "302"
     },
     {
+      "source": "/ja",
+      "target": "/26.4/ja/",
+      "status": "302"
+    },
+    {
+      "source": "/ja/",
+      "target": "/26.4/ja/",
+      "status": "302"
+    },
+    {
       "source": "/ja/<*>",
       "target": "/26.4/ja/",
+      "status": "302"
+    },
+    {
+      "source": "/th",
+      "target": "/26.4/th/",
+      "status": "302"
+    },
+    {
+      "source": "/th/",
+      "target": "/26.4/th/",
       "status": "302"
     },
     {
