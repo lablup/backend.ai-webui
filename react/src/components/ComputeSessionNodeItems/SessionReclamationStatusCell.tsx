@@ -26,8 +26,10 @@ const RECLAMATION_SEVERITY: Record<ReclamationColor, number> = {
 };
 
 /**
- * Derive a single overall reclamation-risk color from the per-resource
- * utilization/threshold pairs, honoring `thresholds_check_operator`.
+ * Derive the overall reclamation-risk color — and the deciding resource's
+ * threshold — from the per-resource utilization/threshold pairs, honoring
+ * `thresholds_check_operator`. The threshold lets callers compute the actual
+ * color-boundary percentage (×2 / ×10) shown in the legend.
  *
  * The idle reclamation checker deletes a session when the operator condition is
  * met across resources:
@@ -41,22 +43,23 @@ const RECLAMATION_SEVERITY: Record<ReclamationColor, number> = {
  * so the thresholds stay consistent with the session-detail idle-check display.
  * Resources with no data (negative utilization, rendered as "-") are excluded.
  */
-export function getOverallReclamationColor(
+export function getOverallReclamation(
   resources: Record<string, number[]>,
   thresholds_check_operator: 'and' | 'or',
-): ReclamationColor | undefined {
-  const colors = Object.values(resources)
+): { color: ReclamationColor; threshold: number } | undefined {
+  const entries = Object.values(resources)
     .filter(([utilization]) => utilization >= 0)
-    .map(
-      (resource) => getUtilizationCheckerColor(resource) as ReclamationColor,
-    );
+    .map((resource) => ({
+      threshold: resource[1],
+      color: getUtilizationCheckerColor(resource) as ReclamationColor,
+    }));
 
-  if (_.isEmpty(colors)) {
+  if (_.isEmpty(entries)) {
     return undefined;
   }
 
   const pick = thresholds_check_operator === 'or' ? _.minBy : _.maxBy;
-  return pick(colors, (color) => RECLAMATION_SEVERITY[color]);
+  return pick(entries, (entry) => RECLAMATION_SEVERITY[entry.color]);
 }
 
 interface SessionReclamationStatusCellProps {
@@ -93,36 +96,45 @@ const SessionReclamationStatusCell: React.FC<
     return <>-</>;
   }
 
-  const overallColor = getOverallReclamationColor(
+  const overall = getOverallReclamation(
     resources,
     extra.thresholds_check_operator,
   );
 
-  if (!overallColor) {
+  if (!overall) {
     return <>-</>;
   }
 
   const colorMap: Record<
     ReclamationColor,
-    { token: string; label: string; legend: string }
+    { token: string; label: string; legendKey: string }
   > = {
     red: {
       token: token.colorError,
       label: t('session.ReclamationStatusAtRisk'),
-      legend: t('session.ReclamationStatusLegendRed'),
+      legendKey: 'session.ReclamationStatusLegendRed',
     },
     orange: {
       token: token.colorWarning,
       label: t('session.ReclamationStatusWarning'),
-      legend: t('session.ReclamationStatusLegendYellow'),
+      legendKey: 'session.ReclamationStatusLegendYellow',
     },
     green: {
       token: token.colorSuccess,
       label: t('session.ReclamationStatusSafe'),
-      legend: t('session.ReclamationStatusLegendGreen'),
+      legendKey: 'session.ReclamationStatusLegendGreen',
     },
   };
-  const { token: badgeColor, label, legend } = colorMap[overallColor];
+  const { token: badgeColor, label, legendKey } = colorMap[overall.color];
+
+  // Color-boundary percentage straight from the formula: red pivots at 2× the
+  // threshold, yellow/green at 10×. Passed to the legend so it shows the real
+  // "%" for this session's threshold instead of a hardcoded number.
+  const boundaryPercent =
+    overall.color === 'red' ? overall.threshold * 2 : overall.threshold * 10;
+  const legend = t(legendKey, {
+    value: toFixedFloorWithoutTrailingZeros(boundaryPercent, 1),
+  });
 
   return (
     <BAIFlex gap="xxs" align="center">
