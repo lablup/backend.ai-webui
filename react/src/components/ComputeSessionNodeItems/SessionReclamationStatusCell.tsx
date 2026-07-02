@@ -3,18 +3,21 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { SessionReclamationStatusCellFragment$key } from '../../__generated__/SessionReclamationStatusCellFragment.graphql';
+import { SessionReclamationStatusCellPolicyQuery } from '../../__generated__/SessionReclamationStatusCellPolicyQuery.graphql';
 import { toFixedFloorWithoutTrailingZeros } from '../../helper';
+import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
 import { IdleChecks, getUtilizationCheckerColor } from './SessionIdleChecks';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { Badge, Tooltip, Typography, theme } from 'antd';
+import { Badge, Spin, Tooltip, Typography, theme } from 'antd';
 import {
   useResourceSlotsDetails,
   useMemoizedJSONParse,
   BAIFlex,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment } from 'react-relay';
+import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
 type ReclamationColor = 'red' | 'orange' | 'green';
 
@@ -59,6 +62,50 @@ export function getOverallReclamationColor(
   return pick(colors, (color) => RECLAMATION_SEVERITY[color]);
 }
 
+/**
+ * Lazily fetches the session's keypair resource policy `idle_timeout` (network
+ * idle timeout, in seconds). Mounted only when the tooltip opens, so the query
+ * fires on first hover; the enclosing <Suspense> renders the loading state.
+ *
+ * Single round-trip: `keypair(access_key)` yields the policy name, and
+ * `keypair_resource_policies` yields every policy's idle_timeout, matched
+ * client-side by name (avoids a name → policy waterfall).
+ */
+const SessionReclamationPolicyInfo: React.FC<{ accessKey: string }> = ({
+  accessKey,
+}) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { token } = theme.useToken();
+
+  const data = useLazyLoadQuery<SessionReclamationStatusCellPolicyQuery>(
+    graphql`
+      query SessionReclamationStatusCellPolicyQuery($accessKey: String) {
+        keypair(access_key: $accessKey) {
+          resource_policy
+        }
+        keypair_resource_policies {
+          name
+          idle_timeout
+        }
+      }
+    `,
+    { accessKey },
+    { fetchPolicy: 'store-or-network' },
+  );
+
+  const idleTimeout = _.find(
+    data.keypair_resource_policies,
+    (policy) => policy?.name === data.keypair?.resource_policy,
+  )?.idle_timeout;
+
+  return (
+    <Typography.Text style={{ color: token.colorWhite }}>
+      {`${t('session.IdleTimeout')}: ${idleTimeout != null ? `${idleTimeout}s` : '-'}`}
+    </Typography.Text>
+  );
+};
+
 interface SessionReclamationStatusCellProps {
   sessionFrgmt: SessionReclamationStatusCellFragment$key | null;
 }
@@ -70,11 +117,14 @@ const SessionReclamationStatusCell: React.FC<
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { mergedResourceSlots } = useResourceSlotsDetails();
+  // Latched to true on the first tooltip hover so the policy query mounts once.
+  const [tooltipOpened, setTooltipOpened] = useState(false);
 
   const session = useFragment(
     graphql`
       fragment SessionReclamationStatusCellFragment on ComputeSessionNode {
         id
+        access_key
         idle_checks @since(version: "24.12.0")
       }
     `,
@@ -130,6 +180,9 @@ const SessionReclamationStatusCell: React.FC<
       <Badge color={badgeColor} />
       <Typography.Text>{label}</Typography.Text>
       <Tooltip
+        onOpenChange={(open) => {
+          if (open) setTooltipOpened(true);
+        }}
         title={
           <BAIFlex direction="column" align="stretch" gap="xxs">
             <Typography.Text style={{ color: token.colorWhite }}>
@@ -154,6 +207,24 @@ const SessionReclamationStatusCell: React.FC<
             <Typography.Text style={{ color: token.colorWhite }}>
               {legend}
             </Typography.Text>
+            {tooltipOpened && session?.access_key ? (
+              <ErrorBoundaryWithNullFallback>
+                <Suspense
+                  fallback={
+                    <BAIFlex gap="xs">
+                      <Spin size="small" />
+                      <Typography.Text style={{ color: token.colorWhite }}>
+                        {`${t('session.IdleTimeout')}: …`}
+                      </Typography.Text>
+                    </BAIFlex>
+                  }
+                >
+                  <SessionReclamationPolicyInfo
+                    accessKey={session.access_key}
+                  />
+                </Suspense>
+              </ErrorBoundaryWithNullFallback>
+            ) : null}
           </BAIFlex>
         }
       >
