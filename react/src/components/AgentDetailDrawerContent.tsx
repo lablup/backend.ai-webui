@@ -8,6 +8,7 @@ import AgentActionButtons from './AgentNodeItems/AgentActionButtons';
 import AgentComputePlugins from './AgentNodeItems/AgentComputePlugins';
 import AgentResources from './AgentNodeItems/AgentResources';
 import AgentStatusTag from './AgentNodeItems/AgentStatusTag';
+import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { Descriptions, Grid, Tabs, theme, Typography } from 'antd';
 import {
@@ -150,7 +151,11 @@ const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
           {
             key: 'resources',
             label: t('agent.Resources'),
-            children: <AgentResources agentNodeFrgmt={agent} />,
+            children: (
+              <ErrorBoundaryWithNullFallback>
+                <AgentResources agentNodeFrgmt={agent} />
+              </ErrorBoundaryWithNullFallback>
+            ),
           },
         ]}
       />
