@@ -125,7 +125,7 @@ export interface BAISelectProps<
   bottomLoading?: boolean;
   header?: React.ReactNode;
   footer?: React.ReactNode;
-  endReached?: () => void; // New prop for endReached
+  endReached?: () => void;
   searchAction?: (value: string) => Promise<void>;
 }
 
@@ -141,7 +141,7 @@ function BAISelect<
   atBottomStateChange,
   header,
   footer,
-  endReached, // Destructure the new prop
+  endReached,
   searchAction,
   ...selectProps
 }: BAISelectProps<ValueType, OptionType>): React.ReactElement {
@@ -231,11 +231,8 @@ function BAISelect<
         popupRender={
           header || footer
             ? (menu) => {
-                // Process with custom popupRender if provided
-                // const renderedMenu = selectProps.popupRender
-                //   ? selectProps.popupRender(menu)
-                //   : menu;
-
+                // Note: a caller-supplied `popupRender` is ignored when
+                // `header`/`footer` is set; only `menu` is rendered here.
                 return (
                   <BAIFlex direction="column" align="stretch">
                     {header ? (

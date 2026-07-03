@@ -13,7 +13,7 @@ import React, { Suspense } from 'react';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
 interface MountedVFolderLinksProps {
-  sessionFrgmt: MountedVFolderLinksFragment$key; // Replace with actual type if available
+  sessionFrgmt: MountedVFolderLinksFragment$key;
 }
 
 const MountedVFolderLinks: React.FC<MountedVFolderLinksProps> = ({

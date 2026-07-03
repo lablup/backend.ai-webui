@@ -328,7 +328,7 @@ const ImportArtifactRevisionToFolderModal = ({
           toggleIsOpenCreateModal();
           if (result) {
             // Set the created folder as the selected value in the vfolderId
-            // TODO: FolderCreateModal returns id without '-'.
+            // TODO: FolderCreateModalV2 returns id without '-'.
             formRef.current?.setFieldsValue({
               vfolderId: toGlobalId(
                 'VirtualFolderNode',

@@ -92,7 +92,6 @@ const BAIDynamicUnitInputNumberWithSlider: React.FC<
           max={max}
           units={units}
           defaultUnit={defaultUnit}
-          // set value to 0mib when min value overs max value
           value={value}
           onChange={(nextValue) => {
             setValue(nextValue);

@@ -41,11 +41,9 @@ interface EduAppLauncherProps {
 }
 
 /**
- * Classified session-creation error categories.
- *
- * FR-2487 will map these to per-step Card UI messages. For now the state
- * is produced but not rendered; the legacy notification path still fires
- * alongside so the user still sees feedback in this intermediate PR.
+ * Classified session-creation error categories, mapped to the per-step Card
+ * UI Alert (see the errorTitle/errorDetail switch and the <Alert> rendered
+ * in this component's error branch).
  */
 export type EduAppSessionErrorCategory =
   | 'resource-exhausted'
@@ -59,8 +57,8 @@ export type EduAppSessionErrorCategory =
  *
  * Stages progress:
  *   idle -> session -> launching -> done
- * Any stage may transition to `error` with a step label. The Card UI
- * (FR-2487) consumes this state; FR-2484 introduces the machine only.
+ * Any stage may transition to `error` with a step label. This state drives
+ * the Steps/Alert Card UI rendered below.
  *
  * Authentication is owned by the route-level `STokenLoginBoundary` wrapper —
  * by the time this component mounts, `globalThis.backendaiclient` is already

@@ -41,10 +41,6 @@ interface ManageImageResourceLimitModalProps extends BAIModalProps {
 const ManageImageResourceLimitModal: React.FC<
   ManageImageResourceLimitModalProps
 > = ({ imageFrgmt, open, onRequestClose, ...BAIModalProps }) => {
-  // Differentiate default max value based on manager version.
-  // The difference between validating a variable type as undefined or none for an unsupplied field value.
-  // [Associated PR links] : https://github.com/lablup/backend.ai/pull/1941
-
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const formRef = useRef<FormInstance>(null);

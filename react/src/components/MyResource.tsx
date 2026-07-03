@@ -60,8 +60,6 @@ const MyResource: React.FC<MyResourceProps> = ({
     const cpuSlot = resourceSlotsDetails?.resourceSlotsInRG?.['cpu'];
     const memSlot = resourceSlotsDetails?.resourceSlotsInRG?.['mem'];
 
-    // Helper function to process memory values
-
     const cpuData = cpuSlot
       ? {
           used: {
