@@ -10,7 +10,7 @@ import {
   getUtilizationCheckerColor,
 } from './SessionIdleChecks';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { Badge, Tooltip, Typography, theme } from 'antd';
+import { Badge, Divider, Popover, Typography, theme } from 'antd';
 import {
   useResourceSlotsDetails,
   useMemoizedJSONParse,
@@ -29,11 +29,16 @@ const RECLAMATION_SEVERITY: Record<ReclamationColor, number> = {
   green: 2,
 };
 
+// Legend rows in display order: safe (green), at risk (red), warning (yellow).
+const RECLAMATION_LEGENDS: { color: ReclamationColor; descKey: string }[] = [
+  { color: 'green', descKey: 'session.ReclamationStatusLegendGreen' },
+  { color: 'red', descKey: 'session.ReclamationStatusLegendRed' },
+  { color: 'orange', descKey: 'session.ReclamationStatusLegendYellow' },
+];
+
 /**
- * Derive the overall reclamation-risk color — and the deciding resource's
- * threshold — from the per-resource utilization/threshold pairs, honoring
- * `thresholds_check_operator`. The threshold lets callers compute the actual
- * color-boundary percentage (×2 / ×10) shown in the legend.
+ * Derive the overall reclamation-risk color from the per-resource
+ * utilization/threshold pairs, honoring `thresholds_check_operator`.
  *
  * The idle reclamation checker deletes a session when the operator condition is
  * met across resources:
@@ -43,10 +48,8 @@ const RECLAMATION_SEVERITY: Record<ReclamationColor, number> = {
  *           thresholds, so a single comfortable resource keeps it safe and the
  *           BEST (least severe) resource color wins.
  *
- * Each resource is classified via `getUtilizationCheckerColor`, whose result
- * carries the exact boundary "%" that produced the color, so the legend always
- * matches the classification. Resources with no data (negative utilization,
- * rendered as "-") are excluded.
+ * Each resource is classified via `getUtilizationCheckerColor`; resources with
+ * no data (negative utilization, rendered as "-") are excluded.
  */
 export function getOverallReclamation(
   resources: Record<string, number[]>,
@@ -109,70 +112,83 @@ const SessionReclamationStatusCell: React.FC<
     return <>-</>;
   }
 
-  const colorMap: Record<
-    ReclamationColor,
-    { token: string; label: string; legendKey: string }
-  > = {
+  const colorMap: Record<ReclamationColor, { token: string; label: string }> = {
     red: {
       token: token.colorError,
       label: t('session.ReclamationStatusAtRisk'),
-      legendKey: 'session.ReclamationStatusLegendRed',
     },
     orange: {
       token: token.colorWarning,
       label: t('session.ReclamationStatusWarning'),
-      legendKey: 'session.ReclamationStatusLegendYellow',
     },
     green: {
       token: token.colorSuccess,
       label: t('session.ReclamationStatusSafe'),
-      legendKey: 'session.ReclamationStatusLegendGreen',
     },
   };
-  const { token: badgeColor, label, legendKey } = colorMap[overall.color];
-
-  // `boundary` comes from the very helper call that classified the color, so
-  // the legend always shows the exact "%" that produced the badge color.
-  const legend = t(legendKey, {
-    value: toFixedFloorWithoutTrailingZeros(overall.boundary, 1),
-  });
+  const { token: badgeColor, label } = colorMap[overall.color];
 
   return (
     <BAIFlex gap="xxs" align="center">
       <Badge color={badgeColor} />
       <Typography.Text>{label}</Typography.Text>
-      <Tooltip
-        title={
+      <Popover
+        content={
           <BAIFlex direction="column" align="stretch" gap="xxs">
-            <Typography.Text style={{ color: token.colorWhite }}>
-              {t('session.ReclamationStatusTooltipTitle')}
+            <Typography.Text>
+              {extra.thresholds_check_operator === 'or'
+                ? t('session.ReclamationStatusConditionAnyDesc')
+                : t('session.ReclamationStatusConditionAllDesc')}
             </Typography.Text>
             {_.map(resources, (resource, key) => {
               const deviceName = ['cpu_util', 'mem'].includes(key)
                 ? _.split(key, '_')[0]
                 : _.split(key, '_').slice(0, -1).join('-') + '.device';
               const [util, threshold] = resource;
+              const resourceStatus =
+                util >= 0 ? getUtilizationCheckerColor(resource) : undefined;
+              const resourceMeta = resourceStatus
+                ? colorMap[resourceStatus.color]
+                : undefined;
               return (
-                <BAIFlex key={key} gap="xs">
-                  <Typography.Text style={{ color: token.colorWhite }}>
-                    {`${mergedResourceSlots?.[deviceName]?.human_readable_name ?? deviceName}:`}
+                <BAIFlex key={key} gap="xxs" align="center">
+                  <Badge
+                    color={resourceMeta?.token ?? token.colorTextDisabled}
+                  />
+                  <Typography.Text>
+                    {`${mergedResourceSlots?.[deviceName]?.human_readable_name ?? deviceName} ${resourceMeta?.label ?? '-'}`}
                   </Typography.Text>
-                  <Typography.Text style={{ color: token.colorWhite }}>
-                    {`${util >= 0 ? toFixedFloorWithoutTrailingZeros(util, 1) : '-'} / ${threshold}`}
+                  <Typography.Text type="secondary">
+                    {t('session.ReclamationStatusCurrentVsThreshold', {
+                      current:
+                        util >= 0
+                          ? toFixedFloorWithoutTrailingZeros(util, 1)
+                          : '-',
+                      threshold,
+                    })}
                   </Typography.Text>
                 </BAIFlex>
               );
             })}
-            <Typography.Text style={{ color: token.colorWhite }}>
-              {legend}
+            <Divider style={{ margin: `${token.marginXXS}px 0` }} />
+            <Typography.Text type="secondary">
+              {t('session.ReclamationStatusLegendTitle')}
             </Typography.Text>
+            {RECLAMATION_LEGENDS.map(({ color, descKey }) => (
+              <BAIFlex key={color} gap="xxs" align="center">
+                <Badge color={colorMap[color].token} />
+                <Typography.Text>
+                  {`${colorMap[color].label}: ${t(descKey)}`}
+                </Typography.Text>
+              </BAIFlex>
+            ))}
           </BAIFlex>
         }
       >
         <InfoCircleOutlined
           style={{ color: token.colorTextSecondary, cursor: 'pointer' }}
         />
-      </Tooltip>
+      </Popover>
     </BAIFlex>
   );
 };
