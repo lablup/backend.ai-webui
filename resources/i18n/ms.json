@@ -2415,7 +2415,7 @@
     "IdleTimeoutSec": "Tamat waktu tunggu (sek.)",
     "Keypair": "Pasangan kekunci",
     "KeypairResourcePolicy": "Dasar Sumber Keypair",
-    "MaxConcurrentLogins": "Sesi Log Masuk Bersamaan Max",
+    "MaxConcurrentLogins": "Log Masuk Serentak Maksimum",
     "MaxConcurrentSFTPSessions": "Sesi SFTP bersamaan Max",
     "MaxCustomizedImageCount": "Kiraan Imej Tersuai Maks",
     "MaxFolderCount": "Kiraan Folder Maks",

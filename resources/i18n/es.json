@@ -2415,7 +2415,7 @@
     "IdleTimeoutSec": "Tiempo de espera (seg.)",
     "Keypair": "Par de claves",
     "KeypairResourcePolicy": "Política de recursos de Keypair",
-    "MaxConcurrentLogins": "Sesiones de inicio de sesión concurrentes máximas",
+    "MaxConcurrentLogins": "Máx. de inicios de sesión simultáneos",
     "MaxConcurrentSFTPSessions": "Sesiones SFTP concurrentes máximas",
     "MaxCustomizedImageCount": "Número máximo de imágenes personalizadas",
     "MaxFolderCount": "Número máximo de carpetas",

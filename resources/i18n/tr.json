@@ -2415,7 +2415,7 @@
     "IdleTimeoutSec": "Boşta kalma zaman aşımı (sn.)",
     "Keypair": "Anahtar çifti",
     "KeypairResourcePolicy": "Keypair Kaynak Politikası",
-    "MaxConcurrentLogins": "Maksimum eşzamanlı oturum açma oturumları",
+    "MaxConcurrentLogins": "Maksimum eşzamanlı oturum açma",
     "MaxConcurrentSFTPSessions": "Maksimum eşzamanlı SFTP oturumları",
     "MaxCustomizedImageCount": "Maksimum Özelleştirilmiş Görüntü Sayısı",
     "MaxFolderCount": "Maksimum Klasör Sayısı",

@@ -2417,7 +2417,7 @@
     "IdleTimeoutSec": "空闲超时（秒）",
     "Keypair": "密钥对",
     "KeypairResourcePolicy": "密钥对资源策略",
-    "MaxConcurrentLogins": "最大并发登录会话",
+    "MaxConcurrentLogins": "最大并发登录数",
     "MaxConcurrentSFTPSessions": "最大并发SFTP会话",
     "MaxCustomizedImageCount": "最大自定义图像数量",
     "MaxFolderCount": "最大文件夹数",

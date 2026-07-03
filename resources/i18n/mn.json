@@ -2416,7 +2416,7 @@
     "IdleTimeoutSec": "Сул зогсолт (сек.)",
     "Keypair": "Товчлуур",
     "KeypairResourcePolicy": "Keypair нөөцийн бодлого",
-    "MaxConcurrentLogins": "Макс тохиролцсон нэвтрэх хуралдаанууд",
+    "MaxConcurrentLogins": "Хамгийн их зэрэгцээ нэвтрэлт",
     "MaxConcurrentSFTPSessions": "Макс тохиролцсон SFTP хуралдаанууд",
     "MaxCustomizedImageCount": "Хамгийн их тохируулсан зургийн тоо",
     "MaxFolderCount": "Хамгийн их хавтасны тоо",

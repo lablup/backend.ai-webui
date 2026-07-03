@@ -2415,7 +2415,7 @@
     "IdleTimeoutSec": "Тайм-аут простоя (сек.)",
     "Keypair": "Ключевая пара",
     "KeypairResourcePolicy": "Политика ресурсов Keypair",
-    "MaxConcurrentLogins": "Максимальные параллельные сеансы входа",
+    "MaxConcurrentLogins": "Максимум одновременных входов",
     "MaxConcurrentSFTPSessions": "Максимальные параллельные сеансы SFTP",
     "MaxCustomizedImageCount": "Максимальное количество индивидуальных изображений",
     "MaxFolderCount": "Максимальное количество папок",

@@ -29,18 +29,18 @@ import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
-interface Props extends Omit<BAIModalProps, 'onOk' | 'onCancel'> {
+interface UserResourcePolicyV2SettingModalProps extends Omit<
+  BAIModalProps,
+  'onOk' | 'onCancel'
+> {
   userResourcePolicyFrgmt: UserResourcePolicyV2SettingModalFragment$key | null;
   onOk: () => void;
   onCancel: () => void;
 }
 
-const UserResourcePolicyV2SettingModal: React.FC<Props> = ({
-  userResourcePolicyFrgmt = null,
-  onOk,
-  onCancel,
-  ...baiModalProps
-}) => {
+const UserResourcePolicyV2SettingModal: React.FC<
+  UserResourcePolicyV2SettingModalProps
+> = ({ userResourcePolicyFrgmt = null, onOk, onCancel, ...baiModalProps }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();

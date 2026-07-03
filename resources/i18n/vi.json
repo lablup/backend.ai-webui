@@ -2417,7 +2417,7 @@
     "IdleTimeoutSec": "Thời gian chờ không hoạt động (giây)",
     "Keypair": "Cặp khóa",
     "KeypairResourcePolicy": "Chính sách tài nguyên Keypair",
-    "MaxConcurrentLogins": "Phiên đăng nhập đồng thời tối đa",
+    "MaxConcurrentLogins": "Số lần đăng nhập đồng thời tối đa",
     "MaxConcurrentSFTPSessions": "Phiên SFTP đồng thời tối đa",
     "MaxCustomizedImageCount": "Số lượng hình ảnh tùy chỉnh tối đa",
     "MaxFolderCount": "Số lượng thư mục tối đa",

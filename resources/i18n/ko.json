@@ -2420,7 +2420,7 @@
     "IdleTimeoutSec": "유휴 대기 시간 (초)",
     "Keypair": "키페어",
     "KeypairResourcePolicy": "키페어 자원 정책",
-    "MaxConcurrentLogins": "최대 동시 로그인 세션",
+    "MaxConcurrentLogins": "최대 동시 로그인",
     "MaxConcurrentSFTPSessions": "최대 동시 SFTP 세션",
     "MaxCustomizedImageCount": "최대 사용자 정의 이미지 수",
     "MaxFolderCount": "최대 폴더 수",

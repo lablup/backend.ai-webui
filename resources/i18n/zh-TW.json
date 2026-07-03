@@ -2419,7 +2419,7 @@
     "IdleTimeoutSec": "空閒超時（秒）",
     "Keypair": "密鑰對",
     "KeypairResourcePolicy": "密鑰對資源策略",
-    "MaxConcurrentLogins": "最大並發登入會話",
+    "MaxConcurrentLogins": "最大並發登入數",
     "MaxConcurrentSFTPSessions": "最大並發SFTP會話",
     "MaxCustomizedImageCount": "最大自訂圖像數量",
     "MaxFolderCount": "最大資料夾數",

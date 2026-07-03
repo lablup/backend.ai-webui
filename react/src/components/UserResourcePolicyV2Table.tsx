@@ -6,7 +6,7 @@ import type {
   UserResourcePolicyV2TableFragment$data,
   UserResourcePolicyV2TableFragment$key,
 } from '../__generated__/UserResourcePolicyV2TableFragment.graphql';
-import { convertToBinaryUnit } from '../helper';
+import { convertToDecimalUnit } from '../helper';
 import {
   BAIColumnsType,
   BAIColumnType,
@@ -125,8 +125,8 @@ const UserResourcePolicyV2Table = ({
         render: (__, row) =>
           row.maxQuotaScopeSize.value === -1
             ? '∞'
-            : convertToBinaryUnit(row.maxQuotaScopeSize.value, 'auto')
-                ?.displayValue,
+            : (convertToDecimalUnit(row.maxQuotaScopeSize.value, 'auto')
+                ?.displayValue ?? '-'),
       },
       {
         title: t('resourcePolicy.MaxCustomizedImageCount'),

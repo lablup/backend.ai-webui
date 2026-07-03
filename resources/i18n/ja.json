@@ -2420,7 +2420,7 @@
     "IdleTimeoutSec": "アイドルタイムアウト（秒）",
     "Keypair": "キーペア",
     "KeypairResourcePolicy": "キーペアリソースポリシー",
-    "MaxConcurrentLogins": "Max Concurrent ログインセッション",
+    "MaxConcurrentLogins": "最大同時ログイン数",
     "MaxConcurrentSFTPSessions": "Max Concurrent SFTPセッション",
     "MaxCustomizedImageCount": "カスタマイズされた画像の最大数",
     "MaxFolderCount": "最大フォルダ数",

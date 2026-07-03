@@ -2405,7 +2405,7 @@
     "IdleTimeoutSec": "Idle timeout (sec.)",
     "Keypair": "Keypair",
     "KeypairResourcePolicy": "Keypair Resource Policy",
-    "MaxConcurrentLogins": "Max Concurrent Login Sessions",
+    "MaxConcurrentLogins": "Max Concurrent Logins",
     "MaxConcurrentSFTPSessions": "Max Concurrent SFTP Sessions",
     "MaxCustomizedImageCount": "Max Customized Image Count",
     "MaxFolderCount": "Max Folder Count",

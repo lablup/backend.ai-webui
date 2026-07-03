@@ -2420,7 +2420,7 @@
     "IdleTimeoutSec": "หมดเวลาเมื่อไม่มีการใช้งาน (วินาที)",
     "Keypair": "คู่คีย์",
     "KeypairResourcePolicy": "นโยบายทรัพยากร Keypair",
-    "MaxConcurrentLogins": "เซสชันเข้าสู่ระบบที่เกิดขึ้นพร้อมกันสูงสุด",
+    "MaxConcurrentLogins": "จำนวนการเข้าสู่ระบบพร้อมกันสูงสุด",
     "MaxConcurrentSFTPSessions": "เซสชัน SFTP ที่เกิดขึ้นพร้อมกันสูงสุด",
     "MaxCustomizedImageCount": "จำนวนอิมเมจที่กำหนดเองสูงสุด",
     "MaxFolderCount": "จำนวนโฟลเดอร์สูงสุด",

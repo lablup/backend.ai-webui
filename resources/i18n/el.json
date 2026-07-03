@@ -2415,7 +2415,7 @@
     "IdleTimeoutSec": "Χρονικό όριο αδράνειας (δευτ.)",
     "Keypair": "Keypair",
     "KeypairResourcePolicy": "Πολιτική πόρων Keypair",
-    "MaxConcurrentLogins": "Max ταυτόχρονες συνεδρίες σύνδεσης",
+    "MaxConcurrentLogins": "Μέγιστες ταυτόχρονες συνδέσεις",
     "MaxConcurrentSFTPSessions": "Max ταυτόχρονες συνεδρίες SFTP",
     "MaxCustomizedImageCount": "Μέγιστος προσαρμοσμένος αριθμός εικόνων",
     "MaxFolderCount": "Μέγιστος αριθμός φακέλων",

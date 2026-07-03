@@ -2417,7 +2417,7 @@
     "IdleTimeoutSec": "Limit czasu bezczynności (sek.)",
     "Keypair": "Para kluczy",
     "KeypairResourcePolicy": "Polityka zasobów Keypair",
-    "MaxConcurrentLogins": "Max równoległe sesje logowania",
+    "MaxConcurrentLogins": "Maks. liczba równoczesnych logowań",
     "MaxConcurrentSFTPSessions": "Max równoległe sesje SFTP",
     "MaxCustomizedImageCount": "Maksymalna dostosowana liczba obrazów",
     "MaxFolderCount": "Maksymalna liczba folderów",
