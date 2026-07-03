@@ -2,12 +2,19 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { SessionReclamationStatusPopoverFragment$key } from '../../__generated__/SessionReclamationStatusPopoverFragment.graphql';
 import { toFixedFloorWithoutTrailingZeros } from '../../helper';
+import type { IdleChecks } from './SessionIdleChecks';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Badge, Divider, Popover, Typography, theme } from 'antd';
-import { useResourceSlotsDetails, BAIFlex } from 'backend.ai-ui';
+import {
+  useResourceSlotsDetails,
+  useMemoizedJSONParse,
+  BAIFlex,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
+import { graphql, useFragment } from 'react-relay';
 
 export type UtilizationCheckerResult = {
   color: 'red' | 'orange' | 'green';
@@ -139,30 +146,49 @@ export const useReclamationColorMap = (): Record<
 };
 
 interface SessionReclamationStatusPopoverProps {
-  resources: Record<string, number[]>;
-  thresholdsCheckOperator: 'and' | 'or';
+  sessionFrgmt: SessionReclamationStatusPopoverFragment$key | null | undefined;
 }
 
 /**
  * Info icon opening a popover that explains the idle-reclamation state: an
  * operator-aware condition sentence, one traffic-light row per resource with
  * its current average vs. threshold, and a legend describing each level.
- * Presentational on purpose — both the session list cell and the session
- * detail's idle checks already hold the parsed `idle_checks.utilization.extra`
- * (the detail view can also come from a legacy non-Relay query), so this takes
- * plain props instead of a Relay fragment.
+ * Renders nothing while the utilization checker has no measurement data yet
+ * (e.g. during the grace period).
  */
 const SessionReclamationStatusPopover: React.FC<
   SessionReclamationStatusPopoverProps
-> = ({ resources, thresholdsCheckOperator }) => {
+> = ({ sessionFrgmt }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { mergedResourceSlots } = useResourceSlotsDetails();
   const colorMap = useReclamationColorMap();
 
+  const session = useFragment(
+    graphql`
+      fragment SessionReclamationStatusPopoverFragment on ComputeSessionNode {
+        id
+        idle_checks
+      }
+    `,
+    sessionFrgmt,
+  );
+
+  const idleChecks: IdleChecks = useMemoizedJSONParse(session?.idle_checks, {
+    fallbackValue: {},
+  });
+
+  const extra = idleChecks.utilization?.extra;
+  if (!extra) {
+    return null;
+  }
+  const { resources, thresholds_check_operator: thresholdsCheckOperator } =
+    extra;
+
   return (
     <Popover
+      mouseEnterDelay={0.5}
       content={
         <BAIFlex direction="column" align="stretch" gap="xxs">
           <Typography.Text>

@@ -78,6 +78,7 @@ const SessionIdleChecks: React.FC<SessionIdleChecksProps> = ({
       fragment SessionIdleChecksNodeFragment on ComputeSessionNode {
         id
         idle_checks
+        ...SessionReclamationStatusPopoverFragment
       }
     `,
     sessionNodeFrgmt,
@@ -118,13 +119,8 @@ const SessionIdleChecks: React.FC<SessionIdleChecksProps> = ({
           >
             <BAIFlex gap={'xxs'}>
               <Typography.Text>{getIdleCheckTitle(key)}</Typography.Text>
-              {key === 'utilization' && value.extra && (
-                <SessionReclamationStatusPopover
-                  resources={value.extra.resources}
-                  thresholdsCheckOperator={
-                    value.extra.thresholds_check_operator
-                  }
-                />
+              {key === 'utilization' && (
+                <SessionReclamationStatusPopover sessionFrgmt={sessionNode} />
               )}
             </BAIFlex>
 

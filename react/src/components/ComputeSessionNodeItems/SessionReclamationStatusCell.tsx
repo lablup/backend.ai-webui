@@ -27,6 +27,7 @@ const SessionReclamationStatusCell: React.FC<
       fragment SessionReclamationStatusCellFragment on ComputeSessionNode {
         id
         idle_checks
+        ...SessionReclamationStatusPopoverFragment
       }
     `,
     sessionFrgmt,
@@ -59,10 +60,7 @@ const SessionReclamationStatusCell: React.FC<
     <BAIFlex gap="xxs" align="center">
       <Badge color={badgeColor} />
       <Typography.Text>{label}</Typography.Text>
-      <SessionReclamationStatusPopover
-        resources={resources}
-        thresholdsCheckOperator={extra.thresholds_check_operator}
-      />
+      <SessionReclamationStatusPopover sessionFrgmt={session} />
     </BAIFlex>
   );
 };
