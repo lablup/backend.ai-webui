@@ -9,6 +9,7 @@ import {
 } from '../__generated__/AdminComputeSessionListPageQuery.graphql';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
+import ModifySessionModal from '../components/ComputeSessionNodeItems/ModifySessionModal';
 import TerminateSessionModal from '../components/ComputeSessionNodeItems/TerminateSessionModal';
 import SessionNodes, {
   availableSessionSorterValues,
@@ -20,10 +21,12 @@ import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
+import { SettingOutlined } from '@ant-design/icons';
 import { Alert, App, Badge, Button, theme, Tooltip } from 'antd';
 import {
   BAIFetchKeyButton,
   BAIFlex,
+  BAIUnmountAfterClose,
   BAIPropertyFilter,
   BAISelectionLabel,
   filterOutEmpty,
@@ -72,6 +75,7 @@ const AdminComputeSessionListPage = () => {
     Array<SessionNode>
   >([]);
   const [isOpenTerminateModal, setOpenTerminateModal] = useState(false);
+  const [isOpenModifyModal, setOpenModifyModal] = useState(false);
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.AdminComputeSessionListPage',
@@ -164,6 +168,7 @@ const AdminComputeSessionListPage = () => {
                 name @required(action: THROW)
                 ...SessionNodesFragment
                 ...TerminateSessionModalFragment
+                ...ModifySessionModalFragment
               }
             }
             count
@@ -348,6 +353,16 @@ const AdminComputeSessionListPage = () => {
                   count={selectedSessionList.length}
                   onClearSelection={() => setSelectedSessionList([])}
                 />
+                <Tooltip title={t('button.Edit')} placement="topLeft">
+                  <Button
+                    icon={
+                      <SettingOutlined style={{ color: token.colorInfo }} />
+                    }
+                    onClick={() => {
+                      setOpenModifyModal(true);
+                    }}
+                  />
+                </Tooltip>
                 <Tooltip
                   title={t('session.TerminateSession')}
                   placement="topLeft"
@@ -498,6 +513,18 @@ const AdminComputeSessionListPage = () => {
           }
         }}
       />
+      <BAIUnmountAfterClose>
+        <ModifySessionModal
+          open={isOpenModifyModal}
+          sessionFrgmts={selectedSessionList}
+          onRequestClose={(success) => {
+            setOpenModifyModal(false);
+            if (success) {
+              setSelectedSessionList([]);
+            }
+          }}
+        />
+      </BAIUnmountAfterClose>
     </BAIFlex>
   );
 };

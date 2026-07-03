@@ -7,14 +7,15 @@ import {
   SessionNodesFragment$key,
 } from '../__generated__/SessionNodesFragment.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
+import { useCurrentUserInfo } from '../hooks/backendai';
 import AppLauncherModal from './ComputeSessionNodeItems/AppLauncherModal';
-import EditableSessionPriority from './ComputeSessionNodeItems/EditableSessionPriority';
+import ModifySessionModal from './ComputeSessionNodeItems/ModifySessionModal';
 import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
 import SessionSlotCell from './ComputeSessionNodeItems/SessionSlotCell';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
 import TerminateSessionModal from './ComputeSessionNodeItems/TerminateSessionModal';
 import ImageNodeSimpleTag from './ImageNodeSimpleTag';
+import { SettingOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import {
   filterOutEmpty,
@@ -63,6 +64,9 @@ interface SessionNodesProps extends Omit<
   'dataSource' | 'columns' | 'onChangeOrder'
 > {
   sessionsFrgmt: SessionNodesFragment$key;
+  customizeColumns?: (
+    baseColumns: BAIColumnType<SessionNodeInList>[],
+  ) => BAIColumnType<SessionNodeInList>[];
   onClickSessionName?: (session: SessionNodeInList) => void;
   disableSorter?: boolean;
   onChangeOrder?: (
@@ -70,8 +74,14 @@ interface SessionNodesProps extends Omit<
   ) => void;
 }
 
+/**
+ * @deprecated Session queries will migrate to the v2 query. Since v2 queries
+ * are scoped, this component will be split into separate user and admin
+ * components.
+ */
 const SessionNodes: React.FC<SessionNodesProps> = ({
   sessionsFrgmt,
+  customizeColumns,
   onClickSessionName,
   disableSorter,
   onChangeOrder,
@@ -79,13 +89,15 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const userRole = useCurrentUserRole();
   const baiClient = useSuspendedBackendaiClient();
   const [userInfo] = useCurrentUserInfo();
   const [terminateTarget, setTerminateTarget] =
     useState<SessionNodeInList | null>(null);
   const [appLauncherTarget, setAppLauncherTarget] =
     useState<SessionNodeInList | null>(null);
+  const [modifyTarget, setModifyTarget] = useState<SessionNodeInList | null>(
+    null,
+  );
 
   const sessions = useFragment(
     graphql`
@@ -95,6 +107,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         name
         status
         type
+        priority
         service_ports
         user_id
         agent_ids
@@ -108,7 +121,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         ...BAISessionClusterModeFragment
         ...AppLauncherModalFragment
         ...TerminateSessionModalFragment
-        ...EditableSessionPriorityFragment
+        ...ModifySessionModalFragment
         kernel_nodes {
           edges {
             node {
@@ -149,7 +162,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
 
   const filteredSessions = filterOutNullAndUndefined(sessions);
 
-  const columns = _.map(
+  const baseColumns = _.map(
     filterOutEmpty<BAIColumnType<SessionNodeInList>>([
       {
         key: 'name',
@@ -192,6 +205,13 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
                   disabled: !isActive,
                   onClick: () => setTerminateTarget(session),
                 },
+                {
+                  key: 'modify',
+                  title: t('button.Edit'),
+                  icon: <SettingOutlined />,
+                  showInMenu: 'always' as const,
+                  onClick: () => setModifyTarget(session),
+                },
               ])}
             />
           );
@@ -208,6 +228,15 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
           // TODO: Display idle checker if imminentExpirationTime as Icon(clock-alert).
           return <SessionStatusTag sessionFrgmt={session} />;
         },
+      },
+      {
+        key: 'priority',
+        dataIndex: 'priority',
+        title: t('session.Priority'),
+        defaultHidden: true,
+        exportKey: 'priority',
+        // Nullish coalescing (not `||`) so a valid priority of 0 still renders.
+        render: (__, session) => session.priority ?? '-',
       },
       // This column will be added back when the session list column setting ui is ready
       // {
@@ -357,16 +386,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         defaultHidden: true,
         render: (project_id: string) => project_id || '-',
       },
-      (userRole === 'superadmin' || userRole === 'admin') && {
-        key: 'priority',
-        title: t('session.Priority'),
-        defaultHidden: true,
-        exportKey: 'priority',
-        render: (__, session) => (
-          <EditableSessionPriority sessionFrgmt={session} />
-        ),
-      },
-      (userRole === 'superadmin' || !baiClient._config.hideAgents) && {
+      {
         key: 'agent',
         dataIndex: 'agent_ids',
         title: t('session.Agent'),
@@ -375,19 +395,22 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         sorter: isEnableSorter('agent_ids'),
         render: (__, session) => <BAISessionAgentIds sessionFrgmt={session} />,
       },
-      userRole === 'superadmin' &&
-        baiClient.isManagerVersionCompatibleWith('25.13.0') && {
-          key: 'owner',
-          title: t('session.launcher.OwnerEmail'),
-          defaultHidden: false,
-          exportKey: 'user_email',
-          render: (__, session) => session.owner?.email || '-',
-        },
+      baiClient.isManagerVersionCompatibleWith('25.13.0') && {
+        key: 'owner',
+        title: t('session.launcher.OwnerEmail'),
+        defaultHidden: false,
+        exportKey: 'user_email',
+        render: (__, session) => session.owner?.email || '-',
+      },
     ]),
     (column) => {
       return disableSorter ? _.omit(column, 'sorter') : column;
     },
   );
+
+  const allColumns = customizeColumns
+    ? customizeColumns(baseColumns)
+    : baseColumns;
 
   return (
     <>
@@ -396,7 +419,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         rowKey={'id'}
         size="small"
         dataSource={filteredSessions}
-        columns={columns}
+        columns={allColumns}
         scroll={{ x: 'max-content' }}
         onChangeOrder={(order) => {
           onChangeOrder?.(
@@ -419,6 +442,13 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         open={!!terminateTarget}
         onRequestClose={() => setTerminateTarget(null)}
       />
+      <BAIUnmountAfterClose>
+        <ModifySessionModal
+          sessionFrgmts={modifyTarget ? [modifyTarget] : []}
+          open={!!modifyTarget}
+          onRequestClose={() => setModifyTarget(null)}
+        />
+      </BAIUnmountAfterClose>
     </>
   );
 };

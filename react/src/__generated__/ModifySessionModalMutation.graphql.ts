@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2010b94487f876140be25f2e546ef6c4>>
+ * @generated SignedSource<<c120f951336c49b0b9d7eb23f412fd77>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,20 +15,21 @@ export type ModifyComputeSessionInput = {
   name?: string | null | undefined;
   priority?: number | null | undefined;
 };
-export type EditableSessionPriorityMutation$variables = {
+export type ModifySessionModalMutation$variables = {
   input: ModifyComputeSessionInput;
 };
-export type EditableSessionPriorityMutation$data = {
+export type ModifySessionModalMutation$data = {
   readonly modify_compute_session: {
     readonly item: {
       readonly id: string;
+      readonly name: string | null | undefined;
       readonly priority: number | null | undefined;
     } | null | undefined;
   } | null | undefined;
 };
-export type EditableSessionPriorityMutation = {
-  response: EditableSessionPriorityMutation$data;
-  variables: EditableSessionPriorityMutation$variables;
+export type ModifySessionModalMutation = {
+  response: ModifySessionModalMutation$data;
+  variables: ModifySessionModalMutation$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -73,6 +74,13 @@ v1 = [
             "alias": null,
             "args": null,
             "kind": "ScalarField",
+            "name": "name",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "priority",
             "storageKey": null
           }
@@ -88,7 +96,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "EditableSessionPriorityMutation",
+    "name": "ModifySessionModalMutation",
     "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -97,20 +105,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "EditableSessionPriorityMutation",
+    "name": "ModifySessionModalMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "0619ada4837434d86fa54501f653617e",
+    "cacheID": "dd4c449546cdc3a9941675480b8640ba",
     "id": null,
     "metadata": {},
-    "name": "EditableSessionPriorityMutation",
+    "name": "ModifySessionModalMutation",
     "operationKind": "mutation",
-    "text": "mutation EditableSessionPriorityMutation(\n  $input: ModifyComputeSessionInput!\n) {\n  modify_compute_session(input: $input) {\n    item {\n      id\n      priority\n    }\n  }\n}\n"
+    "text": "mutation ModifySessionModalMutation(\n  $input: ModifyComputeSessionInput!\n) {\n  modify_compute_session(input: $input) {\n    item {\n      id\n      name\n      priority\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "4f53dd5dc2d3adf7a2c73d80cf5b76a4";
+(node as any).hash = "e26c9f14da7d96ee1ea8061afe67e44f";
 
 export default node;

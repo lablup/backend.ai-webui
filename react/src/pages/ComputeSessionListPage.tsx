@@ -80,6 +80,10 @@ const CARD_MIN_HEIGHT = 200;
 const NOT_FINISHED_STATUS_FILTER =
   'status != "TERMINATED" & status != "CANCELLED"';
 
+// This page is strictly personal, so admin-oriented columns are hidden
+// regardless of the current user's role.
+const DISABLED_COLUMN_KEYS = ['priority', 'agent', 'owner'];
+
 const ComputeSessionListPage = () => {
   'use memo';
   const currentProject = useCurrentProjectValue();
@@ -531,6 +535,12 @@ const ComputeSessionListPage = () => {
           </BAIFlex>
           {computeSessionNodeResult.ok ? (
             <SessionNodes
+              customizeColumns={(baseColumns) =>
+                baseColumns.filter(
+                  (column) =>
+                    !DISABLED_COLUMN_KEYS.includes(column.key as string),
+                )
+              }
               order={queryParams.order}
               onClickSessionName={(session) => {
                 // Set sessionDetailDrawerFrgmt in location state via webUINavigate

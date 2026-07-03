@@ -19,6 +19,10 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
 import { useQueryParam, StringParam } from 'use-query-params';
 
+// This board item lists only the current user's own sessions, so
+// admin-oriented columns are hidden regardless of the user's role.
+const DISABLED_COLUMN_KEYS = ['priority', 'agent', 'owner'];
+
 interface RecentlyCreatedSessionProps {
   queryRef: RecentlyCreatedSessionFragment$key;
   isRefetching?: boolean;
@@ -111,6 +115,12 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
           }}
         >
           <SessionNodes
+            customizeColumns={(baseColumns) =>
+              baseColumns.filter(
+                (column) =>
+                  !DISABLED_COLUMN_KEYS.includes(column.key as string),
+              )
+            }
             sessionsFrgmt={filterOutNullAndUndefined(
               data.compute_session_nodes?.edges.map((e) => e?.node),
             )}
