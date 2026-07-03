@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { SessionIdleChecksNodeFragment$key } from '../../__generated__/SessionIdleChecksNodeFragment.graphql';
-import { SessionIdleChecksQuery } from '../../__generated__/SessionIdleChecksQuery.graphql';
 import { formatDurationAsDays } from '../../helper';
 import SessionReclamationStatusPopover, {
   getUtilizationCheckerColor,
@@ -12,7 +11,7 @@ import { Typography } from 'antd';
 import { useMemoizedJSONParse, BAIFlex, BAIDoubleTag } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 type BaseExtra = null;
 type UtilizationExtra = {
@@ -40,7 +39,6 @@ export type IdleChecks = {
 interface SessionIdleChecksProps {
   sessionNodeFrgmt: SessionIdleChecksNodeFragment$key | null;
   direction?: 'row' | 'column';
-  fetchKeyForLegacyLoadQuery?: string;
 }
 
 export function getIdleChecksTagColor(
@@ -72,7 +70,6 @@ export function getIdleChecksTagColor(
 const SessionIdleChecks: React.FC<SessionIdleChecksProps> = ({
   sessionNodeFrgmt = null,
   direction = 'row',
-  fetchKeyForLegacyLoadQuery,
 }) => {
   const { t } = useTranslation();
 
@@ -80,32 +77,14 @@ const SessionIdleChecks: React.FC<SessionIdleChecksProps> = ({
     graphql`
       fragment SessionIdleChecksNodeFragment on ComputeSessionNode {
         id
-        idle_checks @since(version: "24.12.0")
+        idle_checks
       }
     `,
     sessionNodeFrgmt,
   );
 
-  const { session } = useLazyLoadQuery<SessionIdleChecksQuery>(
-    graphql`
-      query SessionIdleChecksQuery($sessionID: UUID!) {
-        session: compute_session(id: $sessionID) {
-          id
-          idle_checks @since(version: "24.09.0")
-        }
-      }
-    `,
-    {
-      sessionID: sessionNode?.id || '',
-    },
-    {
-      fetchKey: fetchKeyForLegacyLoadQuery,
-      fetchPolicy: sessionNode?.idle_checks ? 'store-only' : 'network-only',
-    },
-  );
-
   const idleChecks: IdleChecks = useMemoizedJSONParse(
-    sessionNode?.idle_checks || session?.idle_checks,
+    sessionNode?.idle_checks,
     {
       fallbackValue: {},
     },

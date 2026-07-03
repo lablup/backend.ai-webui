@@ -26,7 +26,7 @@ const SessionReclamationStatusCell: React.FC<
     graphql`
       fragment SessionReclamationStatusCellFragment on ComputeSessionNode {
         id
-        idle_checks @since(version: "24.12.0")
+        idle_checks
       }
     `,
     sessionFrgmt,

@@ -402,7 +402,6 @@ const SessionDetailContent: React.FC<{
                 <SessionIdleChecks
                   sessionNodeFrgmt={session}
                   direction={md ? 'row' : 'column'}
-                  fetchKeyForLegacyLoadQuery={fetchKey}
                 />
               </Suspense>
             </Descriptions.Item>
