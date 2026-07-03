@@ -2368,3 +2368,72 @@ ${noscriptItems}
  * same release that introduces the rename.
  */
 export const buildLanguagePickerPage = buildRootRedirectIndexPage;
+
+/**
+ * Build a per-language redirect stub for `dist/web/<lang>/index.html`
+ * (FR-3247). Versioned mode only.
+ *
+ * Why this exists: in versioned mode nothing physically lives at
+ * `/<lang>/` — real pages live at `/<version>/<lang>/...`. Bare
+ * language URLs (`/ko/`, `/en/`) are what readers bookmark and what the
+ * pre-Amplify readthedocs manual used as its entry points, and covering
+ * them with hosting-level redirect rules alone is fragile: the rules
+ * live in the Amplify console, are applied manually, and silently
+ * drift from `amplify-redirects.json` (the exact failure FR-3247
+ * hit in production). This stub is part of the build artifact, so it
+ * deploys atomically with the site and re-points itself on every
+ * `latest: true` flip with zero console interaction.
+ *
+ * This builder owns only the HTML shell; the caller computes `target`
+ * from `canonicalPathFor` (versions.ts) so the versioned-layout
+ * knowledge stays in its single source of truth. The target must be
+ * relative so the page works under any host or path prefix.
+ * `location.replace` keeps the stub out of the browser history; the
+ * `<meta http-equiv="refresh">` covers JS-disabled clients, and a
+ * plain link covers clients that honor neither. `noindex` keeps
+ * crawlers on the real canonical pages.
+ */
+export interface LangRedirectStubPageOptions {
+  title: string;
+  /** Language directory name, e.g. `ko`. Must match the on-disk dir. */
+  lang: string;
+  /**
+   * Relative redirect target as seen from `dist/web/<lang>/index.html`,
+   * e.g. `../26.4/ko/index.html`. Derive it from `canonicalPathFor` —
+   * do not hand-assemble the versioned layout at call sites.
+   */
+  target: string;
+}
+
+export function buildLangRedirectStubPage(
+  opts: LangRedirectStubPageOptions,
+): string {
+  const { title, lang, target } = opts;
+  // Defense-in-depth shape check (same spirit as buildRootRedirectIndexPage):
+  // `lang` names the on-disk directory and lands in the `lang` attribute,
+  // so reject anything that could produce a path breakout.
+  if (!/^[A-Za-z0-9][A-Za-z0-9_-]*$/.test(lang)) {
+    throw new Error(
+      `buildLangRedirectStubPage: invalid lang ${JSON.stringify(lang)}`,
+    );
+  }
+  const safeTitle = escapeHtml(title);
+  const safeTarget = escapeHtml(target);
+  const targetJson = safeJsonForScript(target);
+  return `<!DOCTYPE html>
+<html lang="${escapeHtml(lang)}">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>${safeTitle}</title>
+  <meta name="robots" content="noindex" />
+  <meta http-equiv="refresh" content="0; url=${safeTarget}" />
+  <script>window.location.replace(${targetJson});</script>
+</head>
+<body>
+  <p style="font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;max-width:30rem;margin:4rem auto;padding:2rem;">
+    <a href="${safeTarget}">${safeTitle}</a>
+  </p>
+</body>
+</html>`;
+}

@@ -19,6 +19,7 @@ import {
   buildWebPage,
   buildHomePage,
   buildRootRedirectIndexPage,
+  buildLangRedirectStubPage,
   applyImageAttributes,
 } from "./website-builder.js";
 import { buildSearchIndex } from "./search-index-builder.js";
@@ -842,6 +843,41 @@ export async function generateWebsite(
     console.log(
       `Written: index.html (root redirect${loadedVersions.latest ? ` → ${loadedVersions.latest.label}` : ""})`,
     );
+  }
+
+  // Per-language redirect stubs (FR-3247). Versioned mode only: emit
+  // `dist/web/<lang>/index.html` for each language of the latest
+  // version, redirecting to the latest version's language index. This
+  // makes bare `/<lang>/` URLs (reader bookmarks; the legacy
+  // readthedocs entry points) work as a build artifact — deployed
+  // atomically with the site and re-pointed automatically on every
+  // `latest: true` flip — instead of depending on manually-applied
+  // hosting redirect rules. In flat mode `/<lang>/` IS the real
+  // content, so no stub. Collision safety: version labels are
+  // `MAJOR.MINOR` digits or the literal `next` (versions.ts
+  // validator), so a language directory can never clash with a
+  // version directory.
+  if (loadedVersions.enabled && loadedVersions.latest) {
+    for (const stubLang of redirectLanguages) {
+      const stubPath = path.join(distBase, stubLang, "index.html");
+      fs.mkdirSync(path.dirname(stubPath), { recursive: true });
+      fs.writeFileSync(
+        stubPath,
+        buildLangRedirectStubPage({
+          title,
+          lang: stubLang,
+          // canonicalPathFor owns the versioned layout; the stub sits
+          // one level below the site root, hence the single `../`.
+          target: `../${canonicalPathFor(loadedVersions, stubLang, "index")}`,
+        }),
+        "utf-8",
+      );
+    }
+    if (redirectLanguages.length > 0) {
+      console.log(
+        `Written: <lang>/index.html redirect stubs (${redirectLanguages.join(", ")} → ${loadedVersions.latest.label})`,
+      );
+    }
   }
 
   console.log(`Website generated at: ${distBase}`);
