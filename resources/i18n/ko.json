@@ -1875,19 +1875,16 @@
   },
   "loginHistory": {
     "Domain": "도메인",
-    "FailReason": "실패 사유",
     "LoginTime": "로그인 시각",
     "Result": "결과"
   },
   "loginSession": {
     "AccessKey": "액세스 키",
     "CreatedAt": "생성 시각",
-    "InvalidatedAt": "무효화 시각",
     "RevokeFailed": "로그인 세션 해지에 실패했습니다.",
     "RevokeSession": "세션 해지",
     "RevokeSessionConfirm": "이 로그인 세션을 해지하시겠습니까?",
-    "RevokeSucceeded": "로그인 세션을 해지했습니다.",
-    "User": "사용자"
+    "RevokeSucceeded": "로그인 세션을 해지했습니다."
   },
   "logs": {
     "ErrorMessage": "에러 메시지",

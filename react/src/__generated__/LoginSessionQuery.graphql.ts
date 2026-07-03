@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9d3b7c031ddff78d5efed59f5c6a56d8>>
+ * @generated SignedSource<<bc76c96312e15186a8c19266351133d9>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -78,7 +78,7 @@ export type LoginSessionQuery$data = {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
-        readonly " $fragmentSpreads": FragmentRefs<"LoginSessionTableFragment">;
+        readonly " $fragmentSpreads": FragmentRefs<"BAILoginSessionTableFragment">;
       };
     }>;
   } | null | undefined;
@@ -185,7 +185,7 @@ return {
                   {
                     "args": null,
                     "kind": "FragmentSpread",
-                    "name": "LoginSessionTableFragment"
+                    "name": "BAILoginSessionTableFragment"
                   }
                 ],
                 "storageKey": null
@@ -300,16 +300,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "686eb15e0a919f1ab37d88a35a348fbe",
+    "cacheID": "3c52e1ab1acbf8872809ee9723190991",
     "id": null,
     "metadata": {},
     "name": "LoginSessionQuery",
     "operationKind": "query",
-    "text": "query LoginSessionQuery(\n  $filter: LoginSessionFilter\n  $orderBy: [LoginSessionOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  myLoginSessionsV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...LoginSessionTableFragment\n        id\n      }\n    }\n  }\n}\n\nfragment LoginSessionTableFragment on LoginSessionV2 {\n  id\n  accessKey\n  createdAt\n  invalidatedAt\n  user {\n    id\n    basicInfo {\n      email\n    }\n  }\n}\n"
+    "text": "query LoginSessionQuery(\n  $filter: LoginSessionFilter\n  $orderBy: [LoginSessionOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  myLoginSessionsV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...BAILoginSessionTableFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAILoginSessionTableFragment on LoginSessionV2 {\n  id\n  accessKey\n  createdAt\n  invalidatedAt\n  user {\n    id\n    basicInfo {\n      email\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "fa4f30598187103fd53bd68dba96d2ce";
+(node as any).hash = "8e94abd053b13ae1aec108d68c4eec30";
 
 export default node;

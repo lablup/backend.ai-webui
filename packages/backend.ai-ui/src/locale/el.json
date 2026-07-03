@@ -202,6 +202,18 @@
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Επιλέξτε ζεύγος κλειδιών"
   },
+  "comp:BAILoginHistoryTable": {
+    "Domain": "Τομέας",
+    "FailReason": "Αιτία αποτυχίας",
+    "LoginTime": "Ώρα σύνδεσης",
+    "Result": "Αποτέλεσμα"
+  },
+  "comp:BAILoginSessionTable": {
+    "AccessKey": "Κλειδί πρόσβασης",
+    "CreatedAt": "Δημιουργήθηκε στο",
+    "InvalidatedAt": "Ακυρώθηκε στο",
+    "User": "Χρήστης"
+  },
   "comp:BAIModal": {
     "ExitFullscreen": "Exit fullscreen",
     "Fullscreen": "Fullscreen",
@@ -385,6 +397,15 @@
   },
   "comp:BAITestButton": {
     "Test": "δοκιμή"
+  },
+  "comp:BAIUserResourcePolicyV2Table": {
+    "CreatedAt": "Δημιουργήθηκε στο",
+    "MaxConcurrentLogins": "Μέγιστες ταυτόχρονες συνδέσεις",
+    "MaxCustomizedImageCount": "Μέγιστος προσαρμοσμένος αριθμός εικόνων",
+    "MaxQuotaScopeSize": "Μέγιστο μέγεθος εύρους ορίου",
+    "MaxSessionCountPerModelSession": "Μέγιστος αριθμός περιόδων σύνδεσης ανά περίοδο λειτουργίας μοντέλου",
+    "MaxVFolderCount": "Μέγιστος αριθμός φακέλων",
+    "Name": "Ονομα"
   },
   "comp:BAIUserSelect": {
     "SelectUser": "Επιλογή χρήστη"

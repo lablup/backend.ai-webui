@@ -1872,19 +1872,16 @@
   },
   "loginHistory": {
     "Domain": "Miền",
-    "FailReason": "Lý do thất bại",
     "LoginTime": "Thời gian đăng nhập",
     "Result": "Kết quả"
   },
   "loginSession": {
     "AccessKey": "Khóa truy cập",
     "CreatedAt": "Được tạo tại",
-    "InvalidatedAt": "Bị vô hiệu tại",
     "RevokeFailed": "Không thể thu hồi phiên đăng nhập.",
     "RevokeSession": "Thu hồi phiên",
     "RevokeSessionConfirm": "Bạn có chắc chắn muốn thu hồi phiên đăng nhập này không?",
-    "RevokeSucceeded": "Phiên đăng nhập đã được thu hồi thành công.",
-    "User": "Người dùng"
+    "RevokeSucceeded": "Phiên đăng nhập đã được thu hồi thành công."
   },
   "logs": {
     "ErrorMessage": "Thông báo lỗi",

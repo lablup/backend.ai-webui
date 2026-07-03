@@ -10,9 +10,6 @@ import type {
 import { convertToOrderBy } from '../helper';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import UserResourcePolicyV2SettingModal from './UserResourcePolicyV2SettingModal';
-import UserResourcePolicyV2Table, {
-  type UserResourcePolicyV2TableProps,
-} from './UserResourcePolicyV2Table';
 import { DeleteFilled, SettingOutlined } from '@ant-design/icons';
 import { App } from 'antd';
 import {
@@ -22,6 +19,8 @@ import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
+  BAIUserResourcePolicyV2Table,
+  type BAIUserResourcePolicyV2TableProps,
   filterOutNullAndUndefined,
   useFetchKey,
 } from 'backend.ai-ui';
@@ -55,7 +54,7 @@ export const UserResourcePolicyV2Query = graphql`
         node {
           id
           name
-          ...UserResourcePolicyV2TableFragment
+          ...BAIUserResourcePolicyV2TableFragment
           ...UserResourcePolicyV2SettingModalFragment
         }
       }
@@ -72,7 +71,7 @@ type UserResourcePolicyV2Node = NonNullable<
 >;
 
 export interface UserResourcePolicyV2Props extends Omit<
-  UserResourcePolicyV2TableProps,
+  BAIUserResourcePolicyV2TableProps,
   | 'userResourcePoliciesFrgmt'
   | 'loading'
   | 'order'
@@ -212,7 +211,7 @@ const UserResourcePolicyV2 = ({
           </BAIButton>
         </BAIFlex>
       </BAIFlex>
-      <UserResourcePolicyV2Table
+      <BAIUserResourcePolicyV2Table
         loading={isRefetching}
         tableSettings={{
           columnOverrides,

@@ -1,11 +1,3 @@
-/**
- @license
- Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
- */
-import type {
-  LoginSessionTableFragment$data,
-  LoginSessionTableFragment$key,
-} from '../__generated__/LoginSessionTableFragment.graphql';
 import {
   BAIColumnsType,
   BAIColumnType,
@@ -14,14 +6,18 @@ import {
   BAIText,
   filterOutEmpty,
   filterOutNullAndUndefined,
-} from 'backend.ai-ui';
+} from '..';
+import type {
+  BAILoginSessionTableFragment$data,
+  BAILoginSessionTableFragment$key,
+} from '../__generated__/BAILoginSessionTableFragment.graphql';
+import { useBAIi18n } from '../hooks/useBAIi18n';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 export type LoginSessionNodeInList = NonNullable<
-  LoginSessionTableFragment$data[number]
+  BAILoginSessionTableFragment$data[number]
 >;
 
 const availableLoginSessionSorterKeys = ['createdAt'] as const;
@@ -35,11 +31,11 @@ const isEnableSorter = (key: string) => {
   return _.includes(availableLoginSessionSorterKeys, key);
 };
 
-export interface LoginSessionTableProps extends Omit<
+export interface BAILoginSessionTableProps extends Omit<
   BAITableProps<LoginSessionNodeInList>,
   'dataSource' | 'columns' | 'onChangeOrder'
 > {
-  loginSessionsFrgmt: LoginSessionTableFragment$key;
+  loginSessionsFrgmt: BAILoginSessionTableFragment$key;
   disableSorter?: boolean;
   customizeColumns?: (
     baseColumns: BAIColumnsType<LoginSessionNodeInList>,
@@ -50,25 +46,25 @@ export interface LoginSessionTableProps extends Omit<
 }
 
 /**
- * LoginSessionTable - Presentational table over a `LoginSessionV2` plural
+ * BAILoginSessionTable - Presentational table over a `LoginSessionV2` plural
  * fragment. Renders every login-session column; filter, pagination, and query
  * orchestration (plus row-level actions such as revoke) live in the consuming
  * surface via the `customizeColumns` prop. Mirrors the `*Nodes` idiom
  * (`BAIAuditLogNodes`, `SessionNodes`).
  */
-const LoginSessionTable = ({
+const BAILoginSessionTable = ({
   loginSessionsFrgmt,
   disableSorter,
   customizeColumns,
   onChangeOrder,
   ...tableProps
-}: LoginSessionTableProps) => {
+}: BAILoginSessionTableProps) => {
   'use memo';
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
 
-  const loginSessions = useFragment<LoginSessionTableFragment$key>(
+  const loginSessions = useFragment<BAILoginSessionTableFragment$key>(
     graphql`
-      fragment LoginSessionTableFragment on LoginSessionV2
+      fragment BAILoginSessionTableFragment on LoginSessionV2
       @relay(plural: true) {
         id
         accessKey
@@ -91,13 +87,13 @@ const LoginSessionTable = ({
     filterOutEmpty<BAIColumnType<LoginSessionNodeInList>>([
       {
         key: 'user',
-        title: t('loginSession.User'),
+        title: t('comp:BAILoginSessionTable.User'),
         fixed: 'left',
         render: (__, record) => record.user?.basicInfo.email || '-',
       },
       {
         key: 'accessKey',
-        title: t('loginSession.AccessKey'),
+        title: t('comp:BAILoginSessionTable.AccessKey'),
         dataIndex: 'accessKey',
         render: (__, record) =>
           record.accessKey ? (
@@ -110,7 +106,7 @@ const LoginSessionTable = ({
       },
       {
         key: 'createdAt',
-        title: t('loginSession.CreatedAt'),
+        title: t('comp:BAILoginSessionTable.CreatedAt'),
         dataIndex: 'createdAt',
         sorter: isEnableSorter('createdAt'),
         render: (__, record) =>
@@ -118,7 +114,7 @@ const LoginSessionTable = ({
       },
       {
         key: 'invalidatedAt',
-        title: t('loginSession.InvalidatedAt'),
+        title: t('comp:BAILoginSessionTable.InvalidatedAt'),
         dataIndex: 'invalidatedAt',
         render: (__, record) =>
           record.invalidatedAt
@@ -153,4 +149,4 @@ const LoginSessionTable = ({
   );
 };
 
-export default LoginSessionTable;
+export default BAILoginSessionTable;

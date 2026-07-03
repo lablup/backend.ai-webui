@@ -8,17 +8,16 @@ import type {
 } from '../__generated__/LoginSessionQuery.graphql';
 import type { LoginSessionRevokeMutation } from '../__generated__/LoginSessionRevokeMutation.graphql';
 import { convertToOrderBy } from '../helper';
-import LoginSessionTable, {
-  type LoginSessionNodeInList,
-  type LoginSessionTableProps,
-} from './LoginSessionTable';
 import { LogoutOutlined } from '@ant-design/icons';
 import { App } from 'antd';
 import {
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
+  BAILoginSessionTable,
+  type BAILoginSessionTableProps,
   BAINameActionCell,
+  type LoginSessionNodeInList,
   filterOutEmpty,
   filterOutNullAndUndefined,
   toLocalId,
@@ -50,7 +49,7 @@ export const LoginSessionQuery = graphql`
       count
       edges {
         node {
-          ...LoginSessionTableFragment
+          ...BAILoginSessionTableFragment
         }
       }
     }
@@ -58,7 +57,7 @@ export const LoginSessionQuery = graphql`
 `;
 
 export interface LoginSessionProps extends Omit<
-  LoginSessionTableProps,
+  BAILoginSessionTableProps,
   | 'loginSessionsFrgmt'
   | 'loading'
   | 'order'
@@ -76,7 +75,7 @@ export interface LoginSessionProps extends Omit<
 
 /**
  * LoginSession - Reads a preloaded `myLoginSessionsV2` query and renders it as a
- * `LoginSessionTable` with a filter bar and a refresh button. The consumer owns
+ * `BAILoginSessionTable` with a filter bar and a refresh button. The consumer owns
  * `useQueryLoader` / `loadQuery`; this view reads the `queryRef` via
  * `usePreloadedQuery` and re-runs filter / sort / refresh through `onReload`.
  * Reading the *deferred* `queryRef` keeps the previous rows visible while the
@@ -174,7 +173,7 @@ const LoginSession = ({
           autoUpdateDelay={7_000}
         />
       </BAIFlex>
-      <LoginSessionTable
+      <BAILoginSessionTable
         resizable
         loading={isRefetching}
         order={order}

@@ -202,6 +202,18 @@
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Valitse avainpari"
   },
+  "comp:BAILoginHistoryTable": {
+    "Domain": "Toimialue",
+    "FailReason": "Epäonnistumisen syy",
+    "LoginTime": "Kirjautumisaika",
+    "Result": "Tulos"
+  },
+  "comp:BAILoginSessionTable": {
+    "AccessKey": "Pääsyavain",
+    "CreatedAt": "Luotu klo",
+    "InvalidatedAt": "Mitätöity klo",
+    "User": "Käyttäjä"
+  },
   "comp:BAIModal": {
     "ExitFullscreen": "Exit fullscreen",
     "Fullscreen": "Fullscreen",
@@ -385,6 +397,15 @@
   },
   "comp:BAITestButton": {
     "Test": "testi"
+  },
+  "comp:BAIUserResourcePolicyV2Table": {
+    "CreatedAt": "Luotu klo",
+    "MaxConcurrentLogins": "Samanaikaisten kirjautumisten enimmäismäärä",
+    "MaxCustomizedImageCount": "Suurin mukautettu kuvien määrä",
+    "MaxQuotaScopeSize": "Kiintiön enimmäiskoko",
+    "MaxSessionCountPerModelSession": "Maksimi istuntojen määrä malliistuntoa kohti",
+    "MaxVFolderCount": "Kansioiden enimmäismäärä",
+    "Name": "Nimi"
   },
   "comp:BAIUserSelect": {
     "SelectUser": "Valitse käyttäjä"

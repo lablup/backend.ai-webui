@@ -202,6 +202,18 @@
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "키페어를 선택해주세요"
   },
+  "comp:BAILoginHistoryTable": {
+    "Domain": "도메인",
+    "FailReason": "실패 사유",
+    "LoginTime": "로그인 시각",
+    "Result": "결과"
+  },
+  "comp:BAILoginSessionTable": {
+    "AccessKey": "액세스 키",
+    "CreatedAt": "생성 시각",
+    "InvalidatedAt": "무효화 시각",
+    "User": "사용자"
+  },
   "comp:BAIModal": {
     "ExitFullscreen": "전체 화면 종료",
     "Fullscreen": "전체 화면",
@@ -385,6 +397,15 @@
   },
   "comp:BAITestButton": {
     "Test": "테스트"
+  },
+  "comp:BAIUserResourcePolicyV2Table": {
+    "CreatedAt": "생성 날짜",
+    "MaxConcurrentLogins": "최대 동시 로그인",
+    "MaxCustomizedImageCount": "최대 사용자 정의 이미지 수",
+    "MaxQuotaScopeSize": "최대 할당량 범위 크기",
+    "MaxSessionCountPerModelSession": "모델 세션당 최대 세션 수",
+    "MaxVFolderCount": "최대 폴더 수",
+    "Name": "이름"
   },
   "comp:BAIUserSelect": {
     "SelectUser": "사용자를 선택해주세요"

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<23a461d99df76e30a95df93556e3e46e>>
+ * @generated SignedSource<<e7995cb3b3eb34db39cd45c699771514>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -77,7 +77,7 @@ export type UserResourcePolicyV2Query$data = {
       readonly node: {
         readonly id: string;
         readonly name: string;
-        readonly " $fragmentSpreads": FragmentRefs<"UserResourcePolicyV2SettingModalFragment" | "UserResourcePolicyV2TableFragment">;
+        readonly " $fragmentSpreads": FragmentRefs<"BAIUserResourcePolicyV2TableFragment" | "UserResourcePolicyV2SettingModalFragment">;
       };
     }>;
   } | null | undefined;
@@ -193,7 +193,7 @@ return {
                   {
                     "args": null,
                     "kind": "FragmentSpread",
-                    "name": "UserResourcePolicyV2TableFragment"
+                    "name": "BAIUserResourcePolicyV2TableFragment"
                   },
                   {
                     "args": null,
@@ -316,16 +316,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "2106261634fe74a52ed38aa59070d67f",
+    "cacheID": "3105ea3f8b227a34485cb87ffd0f2508",
     "id": null,
     "metadata": {},
     "name": "UserResourcePolicyV2Query",
     "operationKind": "query",
-    "text": "query UserResourcePolicyV2Query(\n  $filter: UserResourcePolicyV2Filter\n  $orderBy: [UserResourcePolicyV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminUserResourcePoliciesV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        name\n        ...UserResourcePolicyV2TableFragment\n        ...UserResourcePolicyV2SettingModalFragment\n      }\n    }\n  }\n}\n\nfragment UserResourcePolicyV2SettingModalFragment on UserResourcePolicyV2 {\n  id\n  name\n  maxVfolderCount\n  maxConcurrentLogins\n  maxSessionCountPerModelSession\n  maxQuotaScopeSize {\n    value\n  }\n  maxCustomizedImageCount\n}\n\nfragment UserResourcePolicyV2TableFragment on UserResourcePolicyV2 {\n  id\n  name\n  createdAt\n  maxVfolderCount\n  maxConcurrentLogins\n  maxSessionCountPerModelSession\n  maxQuotaScopeSize {\n    value\n  }\n  maxCustomizedImageCount\n}\n"
+    "text": "query UserResourcePolicyV2Query(\n  $filter: UserResourcePolicyV2Filter\n  $orderBy: [UserResourcePolicyV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminUserResourcePoliciesV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        name\n        ...BAIUserResourcePolicyV2TableFragment\n        ...UserResourcePolicyV2SettingModalFragment\n      }\n    }\n  }\n}\n\nfragment BAIUserResourcePolicyV2TableFragment on UserResourcePolicyV2 {\n  id\n  name\n  createdAt\n  maxVfolderCount\n  maxConcurrentLogins\n  maxSessionCountPerModelSession\n  maxQuotaScopeSize {\n    value\n  }\n  maxCustomizedImageCount\n}\n\nfragment UserResourcePolicyV2SettingModalFragment on UserResourcePolicyV2 {\n  id\n  name\n  maxVfolderCount\n  maxConcurrentLogins\n  maxSessionCountPerModelSession\n  maxQuotaScopeSize {\n    value\n  }\n  maxCustomizedImageCount\n}\n"
   }
 };
 })();
 
-(node as any).hash = "8027d12199b032d16363a3d646f72117";
+(node as any).hash = "0eca06ab39c8e6b871b0fff606e5f9a6";
 
 export default node;

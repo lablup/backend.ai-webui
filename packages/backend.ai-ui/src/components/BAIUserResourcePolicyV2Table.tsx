@@ -1,28 +1,24 @@
-/**
- @license
- Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
- */
-import type {
-  UserResourcePolicyV2TableFragment$data,
-  UserResourcePolicyV2TableFragment$key,
-} from '../__generated__/UserResourcePolicyV2TableFragment.graphql';
-import { convertToDecimalUnit } from '../helper';
 import {
   BAIColumnsType,
   BAIColumnType,
   BAIId,
   BAITable,
   BAITableProps,
+  convertToDecimalUnit,
   filterOutEmpty,
   filterOutNullAndUndefined,
-} from 'backend.ai-ui';
+} from '..';
+import type {
+  BAIUserResourcePolicyV2TableFragment$data,
+  BAIUserResourcePolicyV2TableFragment$key,
+} from '../__generated__/BAIUserResourcePolicyV2TableFragment.graphql';
+import { useBAIi18n } from '../hooks/useBAIi18n';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 export type UserResourcePolicyV2InList = NonNullable<
-  UserResourcePolicyV2TableFragment$data[number]
+  BAIUserResourcePolicyV2TableFragment$data[number]
 >;
 
 const availableUserResourcePolicySorterKeys = [
@@ -44,11 +40,11 @@ const isEnableSorter = (key: string) => {
   return _.includes(availableUserResourcePolicySorterKeys, key);
 };
 
-export interface UserResourcePolicyV2TableProps extends Omit<
+export interface BAIUserResourcePolicyV2TableProps extends Omit<
   BAITableProps<UserResourcePolicyV2InList>,
   'dataSource' | 'columns' | 'onChangeOrder'
 > {
-  userResourcePoliciesFrgmt: UserResourcePolicyV2TableFragment$key;
+  userResourcePoliciesFrgmt: BAIUserResourcePolicyV2TableFragment$key;
   disableSorter?: boolean;
   customizeColumns?: (
     baseColumns: BAIColumnsType<UserResourcePolicyV2InList>,
@@ -58,20 +54,20 @@ export interface UserResourcePolicyV2TableProps extends Omit<
   ) => void;
 }
 
-const UserResourcePolicyV2Table = ({
+const BAIUserResourcePolicyV2Table = ({
   userResourcePoliciesFrgmt,
   disableSorter,
   customizeColumns,
   onChangeOrder,
   ...tableProps
-}: UserResourcePolicyV2TableProps) => {
+}: BAIUserResourcePolicyV2TableProps) => {
   'use memo';
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
 
   const userResourcePolicies =
-    useFragment<UserResourcePolicyV2TableFragment$key>(
+    useFragment<BAIUserResourcePolicyV2TableFragment$key>(
       graphql`
-        fragment UserResourcePolicyV2TableFragment on UserResourcePolicyV2
+        fragment BAIUserResourcePolicyV2TableFragment on UserResourcePolicyV2
         @relay(plural: true) {
           id
           name
@@ -91,34 +87,36 @@ const UserResourcePolicyV2Table = ({
   const baseColumns = _.map(
     filterOutEmpty<BAIColumnType<UserResourcePolicyV2InList>>([
       {
-        title: t('resourcePolicy.Name'),
+        title: t('comp:BAIUserResourcePolicyV2Table.Name'),
         dataIndex: 'name',
         key: 'name',
         fixed: 'left',
         sorter: isEnableSorter('name'),
       },
       {
-        title: t('resourcePolicy.MaxVFolderCount'),
+        title: t('comp:BAIUserResourcePolicyV2Table.MaxVFolderCount'),
         dataIndex: 'maxVfolderCount',
         key: 'maxVfolderCount',
         sorter: isEnableSorter('maxVfolderCount'),
         render: (text) => (_.toNumber(text) === 0 ? '∞' : text),
       },
       {
-        title: t('resourcePolicy.MaxConcurrentLogins'),
+        title: t('comp:BAIUserResourcePolicyV2Table.MaxConcurrentLogins'),
         dataIndex: 'maxConcurrentLogins',
         key: 'maxConcurrentLogins',
         sorter: isEnableSorter('maxConcurrentLogins'),
         render: (text) => (_.isNil(text) ? '∞' : text),
       },
       {
-        title: t('resourcePolicy.MaxSessionCountPerModelSession'),
+        title: t(
+          'comp:BAIUserResourcePolicyV2Table.MaxSessionCountPerModelSession',
+        ),
         dataIndex: 'maxSessionCountPerModelSession',
         key: 'maxSessionCountPerModelSession',
         sorter: isEnableSorter('maxSessionCountPerModelSession'),
       },
       {
-        title: t('resourcePolicy.MaxQuotaScopeSize'),
+        title: t('comp:BAIUserResourcePolicyV2Table.MaxQuotaScopeSize'),
         dataIndex: 'maxQuotaScopeSize',
         key: 'maxQuotaScopeSize',
         sorter: isEnableSorter('maxQuotaScopeSize'),
@@ -129,7 +127,7 @@ const UserResourcePolicyV2Table = ({
                 ?.displayValue ?? '-'),
       },
       {
-        title: t('resourcePolicy.MaxCustomizedImageCount'),
+        title: t('comp:BAIUserResourcePolicyV2Table.MaxCustomizedImageCount'),
         dataIndex: 'maxCustomizedImageCount',
         key: 'maxCustomizedImageCount',
         sorter: isEnableSorter('maxCustomizedImageCount'),
@@ -142,7 +140,7 @@ const UserResourcePolicyV2Table = ({
         render: (id: string) => <BAIId globalId={id} />,
       },
       {
-        title: t('resourcePolicy.CreatedAt'),
+        title: t('comp:BAIUserResourcePolicyV2Table.CreatedAt'),
         dataIndex: 'createdAt',
         key: 'createdAt',
         sorter: isEnableSorter('createdAt'),
@@ -177,4 +175,4 @@ const UserResourcePolicyV2Table = ({
   );
 };
 
-export default UserResourcePolicyV2Table;
+export default BAIUserResourcePolicyV2Table;

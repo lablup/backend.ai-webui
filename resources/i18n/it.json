@@ -1870,19 +1870,16 @@
   },
   "loginHistory": {
     "Domain": "Dominio",
-    "FailReason": "Motivo dell'errore",
     "LoginTime": "Ora di accesso",
     "Result": "Risultato"
   },
   "loginSession": {
     "AccessKey": "Chiave di accesso",
     "CreatedAt": "Creato a",
-    "InvalidatedAt": "Invalidato a",
     "RevokeFailed": "Impossibile revocare la sessione di accesso.",
     "RevokeSession": "Revoca sessione",
     "RevokeSessionConfirm": "Sei sicuro di voler revocare questa sessione di accesso?",
-    "RevokeSucceeded": "Sessione di accesso revocata con successo.",
-    "User": "Utente"
+    "RevokeSucceeded": "Sessione di accesso revocata con successo."
   },
   "logs": {
     "ErrorMessage": "Messaggio di errore",

@@ -202,6 +202,18 @@
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "选择密钥对"
   },
+  "comp:BAILoginHistoryTable": {
+    "Domain": "域",
+    "FailReason": "失败原因",
+    "LoginTime": "登录时间",
+    "Result": "结果"
+  },
+  "comp:BAILoginSessionTable": {
+    "AccessKey": "访问密钥",
+    "CreatedAt": "创建于",
+    "InvalidatedAt": "失效于",
+    "User": "用户"
+  },
   "comp:BAIModal": {
     "ExitFullscreen": "退出全屏",
     "Fullscreen": "全屏",
@@ -385,6 +397,15 @@
   },
   "comp:BAITestButton": {
     "Test": "测试"
+  },
+  "comp:BAIUserResourcePolicyV2Table": {
+    "CreatedAt": "创建于",
+    "MaxConcurrentLogins": "最大并发登录数",
+    "MaxCustomizedImageCount": "最大自定义图像数量",
+    "MaxQuotaScopeSize": "最大配额范围大小",
+    "MaxSessionCountPerModelSession": "每个模型会话的最大会话计数",
+    "MaxVFolderCount": "最大文件夹数",
+    "Name": "名称"
   },
   "comp:BAIUserSelect": {
     "SelectUser": "选择用户"

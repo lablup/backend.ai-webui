@@ -1871,19 +1871,16 @@
   },
   "loginHistory": {
     "Domain": "Domena",
-    "FailReason": "Przyczyna błędu",
     "LoginTime": "Czas logowania",
     "Result": "Wynik"
   },
   "loginSession": {
     "AccessKey": "Klucz dostępu",
     "CreatedAt": "Utworzono o godz",
-    "InvalidatedAt": "Unieważniono o godz",
     "RevokeFailed": "Nie udało się odwołać sesji logowania.",
     "RevokeSession": "Odwołaj sesję",
     "RevokeSessionConfirm": "Czy na pewno chcesz odwołać tę sesję logowania?",
-    "RevokeSucceeded": "Sesja logowania została pomyślnie odwołana.",
-    "User": "Użytkownik"
+    "RevokeSucceeded": "Sesja logowania została pomyślnie odwołana."
   },
   "logs": {
     "ErrorMessage": "Komunikat o błędzie",

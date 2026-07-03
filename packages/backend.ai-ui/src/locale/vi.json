@@ -202,6 +202,18 @@
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Chọn cặp khóa"
   },
+  "comp:BAILoginHistoryTable": {
+    "Domain": "Miền",
+    "FailReason": "Lý do thất bại",
+    "LoginTime": "Thời gian đăng nhập",
+    "Result": "Kết quả"
+  },
+  "comp:BAILoginSessionTable": {
+    "AccessKey": "Khóa truy cập",
+    "CreatedAt": "Được tạo tại",
+    "InvalidatedAt": "Bị vô hiệu tại",
+    "User": "Người dùng"
+  },
   "comp:BAIModal": {
     "ExitFullscreen": "Exit fullscreen",
     "Fullscreen": "Fullscreen",
@@ -385,6 +397,15 @@
   },
   "comp:BAITestButton": {
     "Test": "kiểm tra"
+  },
+  "comp:BAIUserResourcePolicyV2Table": {
+    "CreatedAt": "Được tạo tại",
+    "MaxConcurrentLogins": "Số lần đăng nhập đồng thời tối đa",
+    "MaxCustomizedImageCount": "Số lượng hình ảnh tùy chỉnh tối đa",
+    "MaxQuotaScopeSize": "Kích thước phạm vi hạn ngạch tối đa",
+    "MaxSessionCountPerModelSession": "Số phiên tối đa trên mỗi phiên mô hình",
+    "MaxVFolderCount": "Số lượng thư mục tối đa",
+    "Name": "Tên"
   },
   "comp:BAIUserSelect": {
     "SelectUser": "Chọn người dùng"

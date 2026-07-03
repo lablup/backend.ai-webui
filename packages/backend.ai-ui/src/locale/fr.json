@@ -202,6 +202,18 @@
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Sélectionner une paire de clés"
   },
+  "comp:BAILoginHistoryTable": {
+    "Domain": "Domaine",
+    "FailReason": "Raison de l'échec",
+    "LoginTime": "Heure de connexion",
+    "Result": "Résultat"
+  },
+  "comp:BAILoginSessionTable": {
+    "AccessKey": "Clé d'accès",
+    "CreatedAt": "Créé à",
+    "InvalidatedAt": "Invalidé à",
+    "User": "Utilisateur"
+  },
   "comp:BAIModal": {
     "ExitFullscreen": "Exit fullscreen",
     "Fullscreen": "Fullscreen",
@@ -385,6 +397,15 @@
   },
   "comp:BAITestButton": {
     "Test": "test"
+  },
+  "comp:BAIUserResourcePolicyV2Table": {
+    "CreatedAt": "Créé à",
+    "MaxConcurrentLogins": "Connexions simultanées max.",
+    "MaxCustomizedImageCount": "Nombre maximal d'images personnalisées",
+    "MaxQuotaScopeSize": "Taille maximale de la portée du quota",
+    "MaxSessionCountPerModelSession": "Nombre maximum de sessions par session de modèle",
+    "MaxVFolderCount": "Nombre maximum de dossiers",
+    "Name": "Nom"
   },
   "comp:BAIUserSelect": {
     "SelectUser": "Sélectionner un utilisateur"

@@ -1871,19 +1871,16 @@
   },
   "loginHistory": {
     "Domain": "Домэйн",
-    "FailReason": "Амжилтгүй болсон шалтгаан",
     "LoginTime": "Нэвтэрсэн цаг",
     "Result": "Үр дүн"
   },
   "loginSession": {
     "AccessKey": "Хандалтын түлхүүр",
     "CreatedAt": "Үүсгэсэн",
-    "InvalidatedAt": "Хүчингүй болгосон",
     "RevokeFailed": "Нэвтрэх сессийг цуцлахад алдаа гарлаа.",
     "RevokeSession": "Сессийг цуцлах",
     "RevokeSessionConfirm": "Энэ нэвтрэх сессийг цуцлахдаа итгэлтэй байна уу?",
-    "RevokeSucceeded": "Нэвтрэх сессийг амжилттай цуцаллаа.",
-    "User": "Хэрэглэгч"
+    "RevokeSucceeded": "Нэвтрэх сессийг амжилттай цуцаллаа."
   },
   "logs": {
     "ErrorMessage": "Алдааны зурвас",

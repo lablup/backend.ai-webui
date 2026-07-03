@@ -1872,19 +1872,16 @@
   },
   "loginHistory": {
     "Domain": "域",
-    "FailReason": "失败原因",
     "LoginTime": "登录时间",
     "Result": "结果"
   },
   "loginSession": {
     "AccessKey": "访问密钥",
     "CreatedAt": "创建于",
-    "InvalidatedAt": "失效于",
     "RevokeFailed": "撤销登录会话失败。",
     "RevokeSession": "撤销会话",
     "RevokeSessionConfirm": "您确定要撤销此登录会话吗？",
-    "RevokeSucceeded": "登录会话已成功撤销。",
-    "User": "用户"
+    "RevokeSucceeded": "登录会话已成功撤销。"
   },
   "logs": {
     "ErrorMessage": "错误信息",

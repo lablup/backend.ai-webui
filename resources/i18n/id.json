@@ -1873,19 +1873,16 @@
   },
   "loginHistory": {
     "Domain": "Domain",
-    "FailReason": "Alasan Kegagalan",
     "LoginTime": "Waktu Login",
     "Result": "Hasil"
   },
   "loginSession": {
     "AccessKey": "Kunci Akses",
     "CreatedAt": "Dibuat Pada",
-    "InvalidatedAt": "Dibatalkan Pada",
     "RevokeFailed": "Gagal mencabut sesi login.",
     "RevokeSession": "Cabut Sesi",
     "RevokeSessionConfirm": "Apakah Anda yakin ingin mencabut sesi login ini?",
-    "RevokeSucceeded": "Sesi login berhasil dicabut.",
-    "User": "Pengguna"
+    "RevokeSucceeded": "Sesi login berhasil dicabut."
   },
   "logs": {
     "ErrorMessage": "Pesan Galat",

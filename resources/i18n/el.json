@@ -1870,19 +1870,16 @@
   },
   "loginHistory": {
     "Domain": "Τομέας",
-    "FailReason": "Αιτία αποτυχίας",
     "LoginTime": "Ώρα σύνδεσης",
     "Result": "Αποτέλεσμα"
   },
   "loginSession": {
     "AccessKey": "Κλειδί πρόσβασης",
     "CreatedAt": "Δημιουργήθηκε στο",
-    "InvalidatedAt": "Ακυρώθηκε στο",
     "RevokeFailed": "Αποτυχία ανάκλησης της συνεδρίας σύνδεσης.",
     "RevokeSession": "Ανάκληση συνεδρίας",
     "RevokeSessionConfirm": "Είστε βέβαιοι ότι θέλετε να ανακαλέσετε αυτή τη συνεδρία σύνδεσης;",
-    "RevokeSucceeded": "Η συνεδρία σύνδεσης ανακλήθηκε με επιτυχία.",
-    "User": "Χρήστης"
+    "RevokeSucceeded": "Η συνεδρία σύνδεσης ανακλήθηκε με επιτυχία."
   },
   "logs": {
     "ErrorMessage": "Μήνυμα λάθους",

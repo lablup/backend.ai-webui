@@ -1875,19 +1875,16 @@
   },
   "loginHistory": {
     "Domain": "ドメイン",
-    "FailReason": "失敗の理由",
     "LoginTime": "ログイン日時",
     "Result": "結果"
   },
   "loginSession": {
     "AccessKey": "アクセスキー",
     "CreatedAt": "作成日",
-    "InvalidatedAt": "無効化日",
     "RevokeFailed": "ログインセッションの無効化に失敗しました。",
     "RevokeSession": "セッションを無効化",
     "RevokeSessionConfirm": "このログインセッションを無効化してもよろしいですか？",
-    "RevokeSucceeded": "ログインセッションを無効化しました。",
-    "User": "ユーザー"
+    "RevokeSucceeded": "ログインセッションを無効化しました。"
   },
   "logs": {
     "ErrorMessage": "エラーメッセージ",

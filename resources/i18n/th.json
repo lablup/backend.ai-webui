@@ -1875,19 +1875,16 @@
   },
   "loginHistory": {
     "Domain": "โดเมน",
-    "FailReason": "สาเหตุที่ล้มเหลว",
     "LoginTime": "เวลาเข้าสู่ระบบ",
     "Result": "ผลลัพธ์"
   },
   "loginSession": {
     "AccessKey": "คีย์การเข้าถึง",
     "CreatedAt": "สร้างเมื่อ",
-    "InvalidatedAt": "ถูกยกเลิกเมื่อ",
     "RevokeFailed": "ไม่สามารถเพิกถอนเซสชันเข้าสู่ระบบได้",
     "RevokeSession": "เพิกถอนเซสชัน",
     "RevokeSessionConfirm": "คุณแน่ใจหรือไม่ว่าต้องการเพิกถอนเซสชันเข้าสู่ระบบนี้?",
-    "RevokeSucceeded": "เพิกถอนเซสชันเข้าสู่ระบบสำเร็จ",
-    "User": "ผู้ใช้"
+    "RevokeSucceeded": "เพิกถอนเซสชันเข้าสู่ระบบสำเร็จ"
   },
   "logs": {
     "ErrorMessage": "ข้อความแสดงข้อผิดพลาด",

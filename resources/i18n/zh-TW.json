@@ -1873,19 +1873,16 @@
   },
   "loginHistory": {
     "Domain": "網域",
-    "FailReason": "失敗原因",
     "LoginTime": "登入時間",
     "Result": "結果"
   },
   "loginSession": {
     "AccessKey": "存取密鑰",
     "CreatedAt": "創建於",
-    "InvalidatedAt": "失效於",
     "RevokeFailed": "撤銷登入工作階段失敗。",
     "RevokeSession": "撤銷工作階段",
     "RevokeSessionConfirm": "您確定要撤銷此登入工作階段嗎？",
-    "RevokeSucceeded": "登入工作階段已成功撤銷。",
-    "User": "使用者"
+    "RevokeSucceeded": "登入工作階段已成功撤銷。"
   },
   "logs": {
     "ErrorMessage": "錯誤信息",

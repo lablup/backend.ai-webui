@@ -1872,19 +1872,16 @@
   },
   "loginHistory": {
     "Domain": "Domain",
-    "FailReason": "Fehlergrund",
     "LoginTime": "Anmeldezeit",
     "Result": "Ergebnis"
   },
   "loginSession": {
     "AccessKey": "Zugriffsschlüssel",
     "CreatedAt": "Erstellt am",
-    "InvalidatedAt": "Ungültig seit",
     "RevokeFailed": "Widerruf der Anmeldesitzung fehlgeschlagen.",
     "RevokeSession": "Sitzung widerrufen",
     "RevokeSessionConfirm": "Möchten Sie diese Anmeldesitzung wirklich widerrufen?",
-    "RevokeSucceeded": "Anmeldesitzung erfolgreich widerrufen.",
-    "User": "Benutzer"
+    "RevokeSucceeded": "Anmeldesitzung erfolgreich widerrufen."
   },
   "logs": {
     "ErrorMessage": "Fehlermeldung",

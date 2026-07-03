@@ -202,6 +202,18 @@
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Түлхүүрийн хос сонгох"
   },
+  "comp:BAILoginHistoryTable": {
+    "Domain": "Домэйн",
+    "FailReason": "Амжилтгүй болсон шалтгаан",
+    "LoginTime": "Нэвтэрсэн цаг",
+    "Result": "Үр дүн"
+  },
+  "comp:BAILoginSessionTable": {
+    "AccessKey": "Хандалтын түлхүүр",
+    "CreatedAt": "Үүсгэсэн",
+    "InvalidatedAt": "Хүчингүй болгосон",
+    "User": "Хэрэглэгч"
+  },
   "comp:BAIModal": {
     "ExitFullscreen": "Exit fullscreen",
     "Fullscreen": "Fullscreen",
@@ -385,6 +397,15 @@
   },
   "comp:BAITestButton": {
     "Test": "турших"
+  },
+  "comp:BAIUserResourcePolicyV2Table": {
+    "CreatedAt": "Үүсгэсэн",
+    "MaxConcurrentLogins": "Хамгийн их зэрэгцээ нэвтрэлт",
+    "MaxCustomizedImageCount": "Хамгийн их тохируулсан зургийн тоо",
+    "MaxQuotaScopeSize": "Хамгийн их квот хамрах хүрээний хэмжээ",
+    "MaxSessionCountPerModelSession": "Загвар бүрийн хамгийн их сеанс тоо",
+    "MaxVFolderCount": "Хамгийн их хавтасны тоо",
+    "Name": "Нэр"
   },
   "comp:BAIUserSelect": {
     "SelectUser": "Хэрэглэгч сонгох"

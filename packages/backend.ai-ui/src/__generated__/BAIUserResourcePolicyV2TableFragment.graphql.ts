@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4c4a2397ba59fa6eeea54c8e013e5f41>>
+ * @generated SignedSource<<f6aaa185557648583d67828b3b0976f4>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,7 +10,7 @@
 
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type UserResourcePolicyV2TableFragment$data = ReadonlyArray<{
+export type BAIUserResourcePolicyV2TableFragment$data = ReadonlyArray<{
   readonly createdAt: string | null | undefined;
   readonly id: string;
   readonly maxConcurrentLogins: number | null | undefined;
@@ -21,11 +21,11 @@ export type UserResourcePolicyV2TableFragment$data = ReadonlyArray<{
   readonly maxSessionCountPerModelSession: number;
   readonly maxVfolderCount: number;
   readonly name: string;
-  readonly " $fragmentType": "UserResourcePolicyV2TableFragment";
+  readonly " $fragmentType": "BAIUserResourcePolicyV2TableFragment";
 }>;
-export type UserResourcePolicyV2TableFragment$key = ReadonlyArray<{
-  readonly " $data"?: UserResourcePolicyV2TableFragment$data;
-  readonly " $fragmentSpreads": FragmentRefs<"UserResourcePolicyV2TableFragment">;
+export type BAIUserResourcePolicyV2TableFragment$key = ReadonlyArray<{
+  readonly " $data"?: BAIUserResourcePolicyV2TableFragment$data;
+  readonly " $fragmentSpreads": FragmentRefs<"BAIUserResourcePolicyV2TableFragment">;
 }>;
 
 const node: ReaderFragment = {
@@ -34,7 +34,7 @@ const node: ReaderFragment = {
   "metadata": {
     "plural": true
   },
-  "name": "UserResourcePolicyV2TableFragment",
+  "name": "BAIUserResourcePolicyV2TableFragment",
   "selections": [
     {
       "alias": null,
@@ -108,6 +108,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "5cf92959f3697cab417fbab8c568dab8";
+(node as any).hash = "96a28c4f4a3e5c312e5561d50c3bcb73";
 
 export default node;

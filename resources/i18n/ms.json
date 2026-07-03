@@ -1870,19 +1870,16 @@
   },
   "loginHistory": {
     "Domain": "Domain",
-    "FailReason": "Sebab Kegagalan",
     "LoginTime": "Masa Log Masuk",
     "Result": "Keputusan"
   },
   "loginSession": {
     "AccessKey": "Kunci Akses",
     "CreatedAt": "Dicipta Pada",
-    "InvalidatedAt": "Tidak Sah Pada",
     "RevokeFailed": "Gagal membatalkan sesi log masuk.",
     "RevokeSession": "Batalkan Sesi",
     "RevokeSessionConfirm": "Adakah anda pasti mahu membatalkan sesi log masuk ini?",
-    "RevokeSucceeded": "Sesi log masuk berjaya dibatalkan.",
-    "User": "Pengguna"
+    "RevokeSucceeded": "Sesi log masuk berjaya dibatalkan."
   },
   "logs": {
     "ErrorMessage": "Mesej Ralat",

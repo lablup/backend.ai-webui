@@ -1871,19 +1871,16 @@
   },
   "loginHistory": {
     "Domain": "Domaine",
-    "FailReason": "Raison de l'échec",
     "LoginTime": "Heure de connexion",
     "Result": "Résultat"
   },
   "loginSession": {
     "AccessKey": "Clé d'accès",
     "CreatedAt": "Créé à",
-    "InvalidatedAt": "Invalidé à",
     "RevokeFailed": "Échec de la révocation de la session de connexion.",
     "RevokeSession": "Révoquer la session",
     "RevokeSessionConfirm": "Êtes-vous sûr de vouloir révoquer cette session de connexion ?",
-    "RevokeSucceeded": "Session de connexion révoquée avec succès.",
-    "User": "Utilisateur"
+    "RevokeSucceeded": "Session de connexion révoquée avec succès."
   },
   "logs": {
     "ErrorMessage": "Message d'erreur",

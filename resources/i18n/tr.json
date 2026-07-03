@@ -1870,19 +1870,16 @@
   },
   "loginHistory": {
     "Domain": "Alan Adı",
-    "FailReason": "Hata Nedeni",
     "LoginTime": "Oturum Açma Zamanı",
     "Result": "Sonuç"
   },
   "loginSession": {
     "AccessKey": "Erişim Anahtarı",
     "CreatedAt": "Oluşturulma Tarihi",
-    "InvalidatedAt": "Geçersizleştirilme Tarihi",
     "RevokeFailed": "Oturum açma oturumu iptal edilemedi.",
     "RevokeSession": "Oturumu İptal Et",
     "RevokeSessionConfirm": "Bu oturum açma oturumunu iptal etmek istediğinizden emin misiniz?",
-    "RevokeSucceeded": "Oturum açma oturumu başarıyla iptal edildi.",
-    "User": "Kullanıcı"
+    "RevokeSucceeded": "Oturum açma oturumu başarıyla iptal edildi."
   },
   "logs": {
     "ErrorMessage": "Hata mesajı",

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a3055ee85da450ac405c1543624dc841>>
+ * @generated SignedSource<<071a8e61632da75f29d4e2d5f4e626e6>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -70,7 +70,7 @@ export type LoginHistoryQuery$data = {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
-        readonly " $fragmentSpreads": FragmentRefs<"LoginHistoryTableFragment">;
+        readonly " $fragmentSpreads": FragmentRefs<"BAILoginHistoryTableFragment">;
       };
     }>;
   } | null | undefined;
@@ -170,7 +170,7 @@ return {
                   {
                     "args": null,
                     "kind": "FragmentSpread",
-                    "name": "LoginHistoryTableFragment"
+                    "name": "BAILoginHistoryTableFragment"
                   }
                 ],
                 "storageKey": null
@@ -268,16 +268,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "87a2e20e056f29b101fd53083de25d21",
+    "cacheID": "d3adafeb86e63588f4380d9b4c4e9374",
     "id": null,
     "metadata": {},
     "name": "LoginHistoryQuery",
     "operationKind": "query",
-    "text": "query LoginHistoryQuery(\n  $filter: LoginHistoryFilter\n  $orderBy: [LoginHistoryOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  myLoginHistoryV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...LoginHistoryTableFragment\n        id\n      }\n    }\n  }\n}\n\nfragment LoginHistoryTableFragment on LoginHistoryV2 {\n  id\n  result\n  domainName\n  failReason\n  createdAt\n}\n"
+    "text": "query LoginHistoryQuery(\n  $filter: LoginHistoryFilter\n  $orderBy: [LoginHistoryOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  myLoginHistoryV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...BAILoginHistoryTableFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAILoginHistoryTableFragment on LoginHistoryV2 {\n  id\n  result\n  domainName\n  failReason\n  createdAt\n}\n"
   }
 };
 })();
 
-(node as any).hash = "97281b824d5d55f0864367353b2cac86";
+(node as any).hash = "e87d7bf9cea51106011c02a4e6b6a633";
 
 export default node;

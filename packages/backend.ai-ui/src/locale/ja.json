@@ -202,6 +202,18 @@
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "キーペアを選択"
   },
+  "comp:BAILoginHistoryTable": {
+    "Domain": "ドメイン",
+    "FailReason": "失敗の理由",
+    "LoginTime": "ログイン日時",
+    "Result": "結果"
+  },
+  "comp:BAILoginSessionTable": {
+    "AccessKey": "アクセスキー",
+    "CreatedAt": "作成日",
+    "InvalidatedAt": "無効化日",
+    "User": "ユーザー"
+  },
   "comp:BAIModal": {
     "ExitFullscreen": "全画面終了",
     "Fullscreen": "全画面",
@@ -385,6 +397,15 @@
   },
   "comp:BAITestButton": {
     "Test": "テスト"
+  },
+  "comp:BAIUserResourcePolicyV2Table": {
+    "CreatedAt": "作成日",
+    "MaxConcurrentLogins": "最大同時ログイン数",
+    "MaxCustomizedImageCount": "カスタマイズされた画像の最大数",
+    "MaxQuotaScopeSize": "最大クォータ スコープ サイズ",
+    "MaxSessionCountPerModelSession": "モデルセッションごとの最大セッション数",
+    "MaxVFolderCount": "最大フォルダ数",
+    "Name": "名前"
   },
   "comp:BAIUserSelect": {
     "SelectUser": "ユーザーを選択"
