@@ -29,11 +29,11 @@ const RECLAMATION_SEVERITY: Record<ReclamationColor, number> = {
   green: 2,
 };
 
-// Legend rows in display order: safe (green), at risk (red), warning (yellow).
+// Legend rows in display order: safe (green), warning (yellow), at risk (red).
 const RECLAMATION_LEGENDS: { color: ReclamationColor; descKey: string }[] = [
   { color: 'green', descKey: 'session.ReclamationStatusLegendGreen' },
-  { color: 'red', descKey: 'session.ReclamationStatusLegendRed' },
   { color: 'orange', descKey: 'session.ReclamationStatusLegendYellow' },
+  { color: 'red', descKey: 'session.ReclamationStatusLegendRed' },
 ];
 
 /**
