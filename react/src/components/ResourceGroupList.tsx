@@ -280,7 +280,7 @@ const ResourceGroupList: React.FC = () => {
             },
           ]}
         />
-        <BAIFlex gap="sm">
+        <BAIFlex gap="xs">
           <BAIFetchKeyButton
             loading={isPendingRefetch}
             value={fetchKey}
@@ -295,7 +295,7 @@ const ResourceGroupList: React.FC = () => {
             icon={<PlusIcon />}
             onClick={() => toggleOpenCreateModal()}
           >
-            {t('button.Create')}
+            {t('resourceGroup.CreateResourceGroup')}
           </BAIButton>
         </BAIFlex>
       </BAIFlex>

@@ -441,7 +441,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
                 message.error(t('environment.AlreadyInstalledImage'));
               }}
             >
-              {t('environment.Install')}
+              {t('environment.InstallImage')}
             </Button>
           </BAIFlex>
         </BAIFlex>

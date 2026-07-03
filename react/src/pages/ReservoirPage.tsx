@@ -348,7 +348,7 @@ const ReservoirPage: React.FC = () => {
                 ]}
               />
             </BAIFlex>
-            <BAIFlex gap={'sm'} align="center">
+            <BAIFlex gap={'xs'} align="center">
               {selectedArtifactIdList.length > 0 && (
                 <BAIFlex gap="xs">
                   <BAISelectionLabel

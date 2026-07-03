@@ -226,7 +226,7 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
             }}
           />
         </BAIFlex>
-        <BAIFlex gap={'sm'}>
+        <BAIFlex gap={'xs'}>
           {selectedSessionList.length > 0 && (
             <>
               <BAISelectionLabel

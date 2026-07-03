@@ -350,7 +350,7 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
               }}
             />
           </BAIFlex>
-          <BAIFlex gap={'sm'}>
+          <BAIFlex gap={'xs'}>
             {selectedFolderList.length > 0 &&
               queryParams.statusCategory === 'active' && (
                 <>

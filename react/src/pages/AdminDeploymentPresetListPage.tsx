@@ -177,7 +177,7 @@ const AdminDeploymentPresetListPage: React.FC = () => {
             }}
           />
         </BAIFlex>
-        <BAIFlex gap={'sm'}>
+        <BAIFlex gap={'xs'}>
           <BAIFetchKeyButton
             loading={isLoading}
             value={fetchKey}

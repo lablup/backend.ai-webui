@@ -284,7 +284,7 @@ const DeploymentAutoScalingCardContent: React.FC<
   return (
     <>
       <BAIFlex direction="column" align="stretch" gap="sm">
-        <BAIFlex align="center" gap="sm">
+        <BAIFlex align="center" gap="xs">
           <BAIGraphQLPropertyFilter
             style={{ flex: 1 }}
             filterProperties={[

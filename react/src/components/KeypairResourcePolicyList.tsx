@@ -323,7 +323,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
               setIsCreatingPolicySetting(true);
             }}
           >
-            {t('button.Create')}
+            {t('resourcePolicy.CreatePolicy')}
           </BAIButton>
         </BAIFlex>
       </BAIFlex>

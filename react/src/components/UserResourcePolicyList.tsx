@@ -244,7 +244,7 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
               setIsCreatingPolicySetting(true);
             }}
           >
-            {t('button.Create')}
+            {t('resourcePolicy.CreatePolicy')}
           </BAIButton>
         </BAIFlex>
       </BAIFlex>
