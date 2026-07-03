@@ -139,8 +139,15 @@ When `latest: true` moves to a new minor:
   as step 3 is fine).
 - Amplify does **not** read this file from the repo — after the PR
   merges, re-apply the rules in the Amplify console ("App settings →
-  Rewrites and redirects") or via
-  `aws amplify update-app --custom-rules file://packages/backend.ai-webui-docs/amplify-redirects.json`.
+  Rewrites and redirects", "Open text editor") or via the AWS CLI. The
+  CLI's `--custom-rules` expects a bare JSON **array** of rules, not
+  this file's `{ "_comment": [...], "customRules": [...] }` wrapper —
+  extract the `customRules` value first:
+
+  ```bash
+  aws amplify update-app --app-id <APP_ID> \
+    --custom-rules "$(jq -c '.customRules' packages/backend.ai-webui-docs/amplify-redirects.json)"
+  ```
 
 ---
 
