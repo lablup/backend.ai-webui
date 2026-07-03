@@ -391,6 +391,7 @@ const AdminComputeSessionListPage = () => {
         </BAIFlex>
         {computeSessionNodeResult.ok ? (
           <SessionNodes
+            showEditAction
             order={queryParams.order}
             onClickSessionName={(session) => {
               const newSearchParams = new URLSearchParams(location.search);

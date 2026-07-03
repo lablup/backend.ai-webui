@@ -68,6 +68,12 @@ interface SessionNodesProps extends Omit<
     baseColumns: BAIColumnType<SessionNodeInList>[],
   ) => BAIColumnType<SessionNodeInList>[];
   onClickSessionName?: (session: SessionNodeInList) => void;
+  /**
+   * Shows the "Edit" entry (ModifySessionModal) in the name cell's more
+   * menu. Off by default — enable only on admin surfaces; the
+   * modify_compute_session mutation is admin-only server-side.
+   */
+  showEditAction?: boolean;
   disableSorter?: boolean;
   onChangeOrder?: (
     order: (typeof availableSessionSorterValues)[number] | null,
@@ -83,6 +89,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
   sessionsFrgmt,
   customizeColumns,
   onClickSessionName,
+  showEditAction,
   disableSorter,
   onChangeOrder,
   ...tableProps
@@ -205,7 +212,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
                   disabled: !isActive,
                   onClick: () => setTerminateTarget(session),
                 },
-                {
+                showEditAction && {
                   key: 'modify',
                   title: t('button.Edit'),
                   icon: <SettingOutlined />,
