@@ -77,38 +77,29 @@ export function getUtilizationCheckerColor(
   }
   // Determine color based on multiple device utilization.
   // resources: Record<string, [number, number]>
+  const classify = ([utilization, threshold]: number[]) => {
+    const redBoundary = Math.min(threshold * 2, threshold + 5);
+    const greenBoundary = Math.min(threshold * 10, threshold + 10);
+    if (utilization < redBoundary) {
+      return { color: 'red', boundary: redBoundary } as const;
+    } else if (utilization < greenBoundary) {
+      return { color: 'orange', boundary: greenBoundary } as const;
+    }
+    return { color: 'green', boundary: greenBoundary } as const;
+  };
+
   let result: UtilizationCheckerResult | undefined = undefined;
   if (thresholds_check_operator === 'and') {
-    _.every(resources, ([utilization, threshold]: number[]) => {
-      const redBoundary = Math.min(threshold * 2, threshold + 5);
-      const greenBoundary = Math.min(threshold * 10, threshold + 10);
-      if (utilization < redBoundary) {
-        result = { color: 'red', boundary: redBoundary };
-        return true;
-      } else if (utilization < greenBoundary) {
-        result = { color: 'orange', boundary: greenBoundary };
-        return true;
-      } else {
-        result = { color: 'green', boundary: greenBoundary };
-        return true;
-      }
+    _.every(resources, (resource: number[]) => {
+      result = classify(resource);
+      return true;
     });
   }
 
   if (thresholds_check_operator === 'or') {
-    _.some(resources, ([utilization, threshold]: number[]) => {
-      const redBoundary = Math.min(threshold * 2, threshold + 5);
-      const greenBoundary = Math.min(threshold * 10, threshold + 10);
-      if (utilization < redBoundary) {
-        result = { color: 'red', boundary: redBoundary };
-        return true;
-      } else if (utilization < greenBoundary) {
-        result = { color: 'orange', boundary: greenBoundary };
-        return true;
-      } else {
-        result = { color: 'green', boundary: greenBoundary };
-        return true;
-      }
+    _.some(resources, (resource: number[]) => {
+      result = classify(resource);
+      return true;
     });
   }
 
