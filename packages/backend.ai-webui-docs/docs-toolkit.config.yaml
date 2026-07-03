@@ -60,11 +60,16 @@ versions:
   - label: "next"
     source:
       kind: workspace
+  - label: "26.7"
+    source:
+      kind: archive-branch
+      ref: docs-archive/26.7
+    latest: true
+    pdfTag: "v26.7.0"
   - label: "26.4"
     source:
       kind: archive-branch
       ref: docs-archive/26.4
-    latest: true
     pdfTag: "v26.4.10"
 
 # Legacy docs link (FR-3248, renders via FR-2733).

@@ -78,16 +78,27 @@ Workflow file: `.github/workflows/package.yml` (job: `build_docs`).
 
 ### 3. Update `versions:` in `docs-toolkit.config.yaml` on `main`
 
-> **Partially automated since FR-3246.** For a minor that **already has a
-> `versions:` entry** (i.e. a subsequent patch on an existing line), the
-> `docs-version-pdftag-pr.yml` workflow auto-opens a PR bumping that entry's
-> `pdfTag` to the new tag on release — just review and merge it (merging
-> triggers the Amplify rebuild). You only need the manual edit below when
-> **introducing a brand-new minor**, which the automation intentionally does
-> not handle (adding the entry and moving `latest:` is a release-strategy
-> decision).
+> **Automated since FR-3246 (both cases).** On a stable release the
+> `docs-version-pdftag-pr.yml` workflow auto-opens a PR against `main` that
+> syncs the released minor into `versions:` — **just review and merge it**
+> (merging triggers the Amplify rebuild):
+>
+> - **Brand-new minor** → the workflow ADDS an `archive-branch` entry
+>   immediately below `next` (source `docs-archive/<minor>`, `pdfTag` set to
+>   the release tag) and promotes it to `latest: true` **iff it is newer than
+>   the current latest**. An older-minor backfill is added *without* moving
+>   `latest:`.
+> - **Existing minor** (a later patch on a listed line) → the workflow bumps
+>   that entry's `pdfTag` only; `latest:` is untouched.
+>
+> The add/promote policy lives in `scripts/set-version-pdftag.mjs`
+> (`syncVersionEntry`, covered by `pnpm run test:scripts`). The manual edit
+> below is now only a **fallback** — e.g. reordering entries, retiring an old
+> minor, or a promotion the semver rule wouldn't make. To re-run the
+> automation for an already-published tag, dispatch the workflow manually:
+> `gh workflow run docs-version-pdftag-pr.yml -f tag=v26.7.0`.
 
-Open a small PR against `main` that edits
+Manual fallback — open a small PR against `main` that edits
 `packages/backend.ai-webui-docs/docs-toolkit.config.yaml`:
 
 - Add a new entry under `versions:` for the new minor, with

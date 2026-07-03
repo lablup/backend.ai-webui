@@ -1,10 +1,15 @@
-# On a published release, open a PR bumping the released minor's `pdfTag` in
-# `docs-toolkit.config.yaml`. A PR (not a direct commit) because merging to
-# `main` is what triggers the docs Amplify rebuild, and the merge stays the
-# human gate. Only bumps a minor that already has an entry; the edit lives in
+# On a published stable release, open a PR that syncs the released minor into
+# `versions:` in `docs-toolkit.config.yaml`:
+#   - brand-new minor  → ADD an archive-branch entry below `next`, promoting it
+#     to `latest: true` iff it is newer than the current latest (older-minor
+#     backfills are added without moving `latest:`);
+#   - existing minor   → bump that entry's `pdfTag` only (`latest:` untouched).
+# A PR (not a direct commit) because merging to `main` is what triggers the
+# docs Amplify rebuild, and the merge stays the human gate. The edit lives in
 # `scripts/set-version-pdftag.mjs`. Companion `docs-archive-orphan-branch.yml`
-# refreshes the archived SOURCE on the same event. (FR-3246, follow-up to
-# FR-3242; replaces RELEASE-RUNBOOK.md step 3.)
+# seeds/refreshes the `docs-archive/<minor>` SOURCE on the same event — the
+# entry added here points at that branch. (FR-3246, follow-up to FR-3242;
+# automates RELEASE-RUNBOOK.md step 3 for both the add and the bump cases.)
 
 name: docs-version-pdftag-pr
 
@@ -14,7 +19,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: "Release tag to sync pdfTag from (e.g. v26.4.10)"
+        description: "Release tag to sync into versions: (e.g. v26.7.0)"
         required: true
         type: string
 
@@ -29,9 +34,9 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  bump-pdftag-pr:
-    # Skip pre-releases (rc/alpha/beta); only a stable release should move
-    # the site's PDF pointer. Manual dispatch always runs.
+  sync-version-pr:
+    # Skip pre-releases (rc/alpha/beta); only a stable release should touch the
+    # site's version selector / PDF pointer. Manual dispatch always runs.
     if: ${{ github.event_name != 'release' || github.event.release.prerelease == false }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -71,7 +76,10 @@ jobs:
           # isn't installed here, so the default would fail).
           package-manager-cache: false
 
-      - name: Apply pdfTag bump (no-op if entry missing or already current)
+      # Emits `action` (added|bumped|noop), `minor`, `tag`, `promoted` to
+      # $GITHUB_OUTPUT. No-op (empty diff) when the entry is already current.
+      - name: Sync versions entry (add new minor or bump existing pdfTag)
+        id: apply
         env:
           TAG: ${{ steps.resolve.outputs.tag }}
         run: node packages/backend.ai-webui-docs/scripts/set-version-pdftag.mjs "$TAG"
@@ -81,19 +89,34 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ steps.resolve.outputs.tag }}
           MINOR: ${{ steps.resolve.outputs.minor }}
+          ACTION: ${{ steps.apply.outputs.action }}
+          PROMOTED: ${{ steps.apply.outputs.promoted }}
         run: |
           set -euo pipefail
           CONFIG=packages/backend.ai-webui-docs/docs-toolkit.config.yaml
           if git diff --quiet -- "$CONFIG"; then
-            echo "No pdfTag change needed for ${MINOR} (${TAG}); not opening a PR."
+            echo "No change needed for ${MINOR} (${TAG}); not opening a PR."
             exit 0
           fi
-          BRANCH="automation/docs-pdftag-${MINOR}"
+
+          # Word the PR by what the script actually did.
+          if [ "$ACTION" = "added" ] && [ "$PROMOTED" = "true" ]; then
+            TITLE="feat(docs): publish ${MINOR} to docs version selector (${TAG})"
+            SUMMARY="Adds a ${MINOR} entry to versions: in docs-toolkit.config.yaml (source docs-archive/${MINOR}, pdfTag ${TAG}) and moves latest: onto it, so ${MINOR} becomes the default /latest/ version in the selector."
+          elif [ "$ACTION" = "added" ]; then
+            TITLE="chore(docs): add ${MINOR} to docs version selector (${TAG})"
+            SUMMARY="Adds a ${MINOR} entry to versions: in docs-toolkit.config.yaml (source docs-archive/${MINOR}, pdfTag ${TAG}) as an archived minor. latest: is unchanged because ${MINOR} is not newer than the current latest (older-minor backfill)."
+          else
+            TITLE="chore(docs): bump ${MINOR} pdfTag to ${TAG}"
+            SUMMARY="Bumps the existing ${MINOR} entry's pdfTag in docs-toolkit.config.yaml so the docs site's ${MINOR} version links the ${TAG} release PDFs. latest: is untouched."
+          fi
+
+          BRANCH="automation/docs-version-${MINOR}"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git switch -c "$BRANCH"
           git add "$CONFIG"
-          git commit -m "chore(docs): bump ${MINOR} pdfTag to ${TAG}"
+          git commit -m "$TITLE"
           # Force-push so a later patch on the same minor refreshes the branch.
           git push --force origin "$BRANCH"
           # Open a PR only if one isn't already open for this head branch.
@@ -105,12 +128,12 @@ jobs:
             BODY=$(printf '%s\n' \
               "Automated by docs-version-pdftag-pr.yml (FR-3246) on release ${TAG}." \
               "" \
-              "Bumps the ${MINOR} entry's pdfTag in docs-toolkit.config.yaml so the docs site's ${MINOR} version links the latest release PDFs. Merging this PR triggers the docs Amplify rebuild." \
+              "${SUMMARY}" \
               "" \
-              "The archived docs source is refreshed separately by docs-archive-orphan-branch.yml on the same release. Brand-new minors (adding a versions: entry + moving latest:) are not handled here by design; see RELEASE-RUNBOOK.md." \
+              "Merging this PR triggers the docs Amplify rebuild. The archived docs source is seeded/refreshed separately by docs-archive-orphan-branch.yml on the same release." \
               "" \
               "Note: PRs opened by GITHUB_TOKEN do not spawn Actions check runs, so required checks may show as pending; merge with admin if branch protection blocks.")
             gh pr create --base main --head "$BRANCH" \
-              --title "chore(docs): bump ${MINOR} pdfTag to ${TAG}" \
+              --title "$TITLE" \
               --body "$BODY"
           fi
