@@ -4,18 +4,12 @@
  */
 import { SessionIdleChecksNodeFragment$key } from '../../__generated__/SessionIdleChecksNodeFragment.graphql';
 import { SessionIdleChecksQuery } from '../../__generated__/SessionIdleChecksQuery.graphql';
-import {
-  formatDurationAsDays,
-  toFixedFloorWithoutTrailingZeros,
-} from '../../helper';
-import { InfoCircleOutlined } from '@ant-design/icons';
-import { Tooltip, Typography, theme } from 'antd';
-import {
-  useResourceSlotsDetails,
-  useMemoizedJSONParse,
-  BAIFlex,
-  BAIDoubleTag,
-} from 'backend.ai-ui';
+import { formatDurationAsDays } from '../../helper';
+import SessionReclamationStatusPopover, {
+  getUtilizationCheckerColor,
+} from './SessionReclamationStatusPopover';
+import { Typography } from 'antd';
+import { useMemoizedJSONParse, BAIFlex, BAIDoubleTag } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
@@ -47,63 +41,6 @@ interface SessionIdleChecksProps {
   sessionNodeFrgmt: SessionIdleChecksNodeFragment$key | null;
   direction?: 'row' | 'column';
   fetchKeyForLegacyLoadQuery?: string;
-}
-
-export type UtilizationCheckerResult = {
-  color: 'red' | 'orange' | 'green';
-  /**
-   * The utilization percentage the color pivots on: red is bounded above by
-   * this value, orange/green by the green cutoff. Exposed so callers can show
-   * the exact "%" that produced the color.
-   */
-  boundary: number;
-};
-
-export function getUtilizationCheckerColor(
-  resources: Record<string, number[]> | number[],
-  thresholds_check_operator: 'and' | 'or' | null = null,
-): UtilizationCheckerResult | undefined {
-  // Determine color based on single device utilization.
-  // resources: [number, number]
-  if (!thresholds_check_operator) {
-    const [utilization, threshold] = resources as number[];
-    if (utilization < threshold * 2) {
-      return { color: 'red', boundary: threshold * 2 };
-    } else if (utilization < threshold * 10) {
-      return { color: 'orange', boundary: threshold * 10 };
-    } else {
-      return { color: 'green', boundary: threshold * 10 };
-    }
-  }
-  // Determine color based on multiple device utilization.
-  // resources: Record<string, [number, number]>
-  const classify = ([utilization, threshold]: number[]) => {
-    const redBoundary = Math.min(threshold * 2, threshold + 5);
-    const greenBoundary = Math.min(threshold * 10, threshold + 10);
-    if (utilization < redBoundary) {
-      return { color: 'red', boundary: redBoundary } as const;
-    } else if (utilization < greenBoundary) {
-      return { color: 'orange', boundary: greenBoundary } as const;
-    }
-    return { color: 'green', boundary: greenBoundary } as const;
-  };
-
-  let result: UtilizationCheckerResult | undefined = undefined;
-  if (thresholds_check_operator === 'and') {
-    _.every(resources, (resource: number[]) => {
-      result = classify(resource);
-      return true;
-    });
-  }
-
-  if (thresholds_check_operator === 'or') {
-    _.some(resources, (resource: number[]) => {
-      result = classify(resource);
-      return true;
-    });
-  }
-
-  return result;
 }
 
 export function getIdleChecksTagColor(
@@ -138,8 +75,6 @@ const SessionIdleChecks: React.FC<SessionIdleChecksProps> = ({
   fetchKeyForLegacyLoadQuery,
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
-  const { mergedResourceSlots } = useResourceSlotsDetails();
 
   const sessionNode = useFragment(
     graphql`
@@ -204,45 +139,13 @@ const SessionIdleChecks: React.FC<SessionIdleChecksProps> = ({
           >
             <BAIFlex gap={'xxs'}>
               <Typography.Text>{getIdleCheckTitle(key)}</Typography.Text>
-              {key === 'utilization' && (
-                <Tooltip
-                  title={
-                    <>
-                      {`${t('session.Utilization')} / ${t('session.Threshold')} (%)`}
-                      <br />
-                      {_.map(value.extra?.resources, (resource, key) => {
-                        const deviceName = ['cpu_util', 'mem'].includes(key)
-                          ? _.split(key, '_')[0]
-                          : _.split(key, '_').slice(0, -1).join('-') +
-                            '.device';
-                        const [utilization, threshold] = resource;
-                        return (
-                          <BAIFlex key={key} gap={'xs'}>
-                            <Typography.Text
-                              style={{ color: token.colorWhite }}
-                            >{`${mergedResourceSlots?.[deviceName]?.human_readable_name}:`}</Typography.Text>
-                            <Typography.Text
-                              style={{
-                                color:
-                                  getUtilizationCheckerColor(resource)?.color,
-                              }}
-                            >
-                              {`${utilization >= 0 ? toFixedFloorWithoutTrailingZeros(utilization, 1) : '-'} / ${threshold}`}
-                            </Typography.Text>
-                            <br />
-                          </BAIFlex>
-                        );
-                      })}
-                    </>
+              {key === 'utilization' && value.extra && (
+                <SessionReclamationStatusPopover
+                  resources={value.extra.resources}
+                  thresholdsCheckOperator={
+                    value.extra.thresholds_check_operator
                   }
-                >
-                  <InfoCircleOutlined
-                    style={{
-                      color: token.colorTextSecondary,
-                      cursor: 'pointer',
-                    }}
-                  />
-                </Tooltip>
+                />
               )}
             </BAIFlex>
 
