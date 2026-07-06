@@ -622,6 +622,12 @@ class Client {
       this._features['scheduler-opts'] = true;
       this._features['session-lifetime'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('26.7.0')) {
+      // Single-string `command` + nullable `shell` on the model-service config
+      // (FR-3205 / BA-6551). Older managers only accept the deprecated
+      // `startCommand` token list.
+      this._features['model-service-command-string'] = true;
+    }
   }
 
   /**

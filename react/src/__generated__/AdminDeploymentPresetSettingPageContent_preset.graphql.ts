@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2e2eed56717cd3ccab54e1ba0c9b1e06>>
+ * @generated SignedSource<<a17bc5633f80a9b2ca3b96f83b639e22>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -53,6 +53,7 @@ export type AdminDeploymentPresetSettingPageContent_preset$data = {
       readonly modelPath: string;
       readonly name: string;
       readonly service: {
+        readonly command: string | null | undefined;
         readonly healthCheck: {
           readonly enable: boolean;
           readonly expectedStatusCode: number;
@@ -398,6 +399,13 @@ return {
                   "alias": null,
                   "args": null,
                   "kind": "ScalarField",
+                  "name": "command",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
                   "name": "startCommand",
                   "storageKey": null
                 },
@@ -586,6 +594,6 @@ return {
 };
 })();
 
-(node as any).hash = "c83c328cdcc552d536aa078349408feb";
+(node as any).hash = "365bb99e33b267cb0450074bdb85afa9";
 
 export default node;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0f6035bc86ada9fa10cde721d6f610f2>>
+ * @generated SignedSource<<9ef310e2e9b0a8bb581bb184a2545b9a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -41,6 +41,7 @@ export type DeploymentRevisionDetail_revision$data = {
       readonly modelPath: string;
       readonly name: string;
       readonly service: {
+        readonly command: string | null | undefined;
         readonly healthCheck: {
           readonly expectedStatusCode: number;
           readonly initialDelay: number;
@@ -495,6 +496,13 @@ return {
                   "alias": null,
                   "args": null,
                   "kind": "ScalarField",
+                  "name": "command",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
                   "name": "startCommand",
                   "storageKey": null
                 },
@@ -605,6 +613,6 @@ return {
 };
 })();
 
-(node as any).hash = "2089b3e0f5f1bade4cac6ca6fe0ca065";
+(node as any).hash = "d514d2971b8f8abda996c7eb0230b037";
 
 export default node;

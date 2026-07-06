@@ -30,14 +30,21 @@ export type ModelServiceFormValue = {
   // single-string `command`), but this form still emits `startCommand`, so it
   // stays required at the UI level.
   //
-  // `shell` is NOT exposed in the form UI: it only affects the deprecated
-  // string `command` path and is a silent no-op for the list `startCommand`
-  // this form submits, so the field is hidden pending a shell/command UX
-  // decision (FR-3221). It is still typed (optional, `string | undefined` —
-  // never null, to stay assignable to the create input which forbids null) so
-  // an existing value round-trips on edit via `form.getFieldsValue(true)`.
+  // `startCommand` holds the raw command string typed by the user. On 26.7.0+
+  // it is submitted as the single-string `command` (with `shell` derived from
+  // the Basic/Advanced + Execution controls); on older managers it is tokenized
+  // into the deprecated `startCommand` list (FR-3205).
+  //
+  // `shell` is the shell binary for Advanced → Shell execution; it stays
+  // `string | undefined` (never null) so an existing value round-trips on edit
+  // and to stay assignable to the create input which forbids null.
+  //
+  // `commandAdvanced` backs the FR-3205 Start Command Basic/Advanced switch:
+  // Basic uses the implicit default shell (`/bin/bash`), Advanced reveals the
+  // shell selector. Presets always run under a shell, so there is no Exec mode.
   port: number;
   shell?: string;
+  commandAdvanced?: boolean;
   startCommand: string;
   preStartActions?: PreStartActionFormValue[];
   enableHealthCheck?: boolean;
