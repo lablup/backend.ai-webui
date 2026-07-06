@@ -8,6 +8,7 @@ import {
 } from '../../__generated__/SessionActionButtonsFragment.graphql';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserInfo } from '../../hooks/backendai';
+import { useSuspendedAppTemplateConfig } from '../../hooks/useAppTemplate';
 import { useBackendAIAppLauncher } from '../../hooks/useBackendAIAppLauncher';
 import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
 import AppLauncherModal from './AppLauncherModal';
@@ -88,6 +89,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
+  const { hideAppsOnBatchSession } = useSuspendedAppTemplateConfig();
 
   const session = useFragment(
     graphql`
@@ -133,6 +135,16 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
     if (
       ['appLauncher', 'terminal', 'containerCommit'].includes(key) &&
       session?.type === 'system'
+    ) {
+      return false;
+    }
+
+    // Hide the app launcher and terminal for batch sessions when configured
+    // to do so.
+    if (
+      (key === 'appLauncher' || key === 'terminal') &&
+      hideAppsOnBatchSession &&
+      session?.type === 'batch'
     ) {
       return false;
     }

@@ -8,6 +8,7 @@ import {
 } from '../__generated__/SessionNodesFragment.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
+import { useSuspendedAppTemplateConfig } from '../hooks/useAppTemplate';
 import AppLauncherModal from './ComputeSessionNodeItems/AppLauncherModal';
 import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
 import SessionSlotCell from './ComputeSessionNodeItems/SessionSlotCell';
@@ -80,6 +81,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
   const { t } = useTranslation();
   const userRole = useCurrentUserRole();
   const baiClient = useSuspendedBackendaiClient();
+  const { hideAppsOnBatchSession } = useSuspendedAppTemplateConfig();
   const [userInfo] = useCurrentUserInfo();
   const [terminateTarget, setTerminateTarget] =
     useState<SessionNodeInList | null>(null);
@@ -175,13 +177,14 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
                   : undefined
               }
               actions={filterOutEmpty([
-                session.type !== 'system' && {
-                  key: 'appLauncher',
-                  title: t('session.SeeAppDialog'),
-                  icon: <BAIAppIcon />,
-                  disabled: !isAppSupported || !isActive || !isOwner,
-                  onClick: () => setAppLauncherTarget(session),
-                },
+                session.type !== 'system' &&
+                  !(hideAppsOnBatchSession && session.type === 'batch') && {
+                    key: 'appLauncher',
+                    title: t('session.SeeAppDialog'),
+                    icon: <BAIAppIcon />,
+                    disabled: !isAppSupported || !isActive || !isOwner,
+                    onClick: () => setAppLauncherTarget(session),
+                  },
                 {
                   key: 'terminate',
                   title: t('session.TerminateSession'),
