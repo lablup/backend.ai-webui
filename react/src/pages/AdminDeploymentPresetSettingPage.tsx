@@ -11,6 +11,10 @@ import AdminDeploymentPresetSettingPageContent, {
   type AdminDeploymentPresetFormValue,
   type ModelDefinitionFormValue,
 } from '../components/AdminDeploymentPresetSettingPageContent';
+import {
+  DEFAULT_MODEL_SERVICE_SHELL,
+  resolveCommandShell,
+} from '../helper/modelServiceCommand';
 import { tokenizeShellCommand } from '../helper/parseCliCommand';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { type RuntimeVariantPresetValueEntry } from '../hooks/useRuntimeParameterSchema';
@@ -26,6 +30,9 @@ const buildModelDefinitionInput = (
   // 26.4.4rc7+ managers accept the `enable` flag on ModelHealthCheckInput;
   // older managers reject it, so we keep the legacy null-when-disabled shape.
   supportsHealthCheckEnable: boolean,
+  // 26.7.0+ managers accept the single-string `command` + `shell` fields;
+  // older managers only understand the deprecated `startCommand` token list.
+  supportsCommandShell: boolean,
 ) => {
   // The model definition is optional: the card's switch (`enabled`) gates it,
   // so when off we omit it entirely (`modelDefinition: null`).
@@ -52,13 +59,27 @@ const buildModelDefinitionInput = (
           modelPath: m.modelPath,
           service: {
             port: service.port,
-            // `shell` has no UI field (see AdminDeploymentPresetModelConfigItem)
-            // but still round-trips: on edit, an existing value flows back
-            // through `form.getFieldsValue(true)`. Omit empty/whitespace-only
-            // values so create applies the server default `/bin/bash` and a
-            // blank never lands as `''`.
-            shell: service.shell?.trim() || undefined,
-            startCommand: tokenizeShellCommand(service.startCommand),
+            // Start Command (FR-3205): on 26.7.0+ send the raw command string in
+            // `command` plus a `shell` derived from the Basic/Advanced controls
+            // (Basic → /bin/bash, Advanced → selected shell). On older managers
+            // fall back to the deprecated tokenized `startCommand`. Never send
+            // both — the backend prefers `command`. Presets always run under a
+            // shell (`PresetModelServiceConfigInput.shell` is non-null), so the
+            // Exec (no-shell) mode is not offered here and `shell` is never null.
+            ...(supportsCommandShell
+              ? {
+                  command: service.startCommand,
+                  // Presets always run under a shell (input `shell` is
+                  // non-null), so pass Shell explicitly (no Exec mode) — the
+                  // `??` only satisfies the non-null type, never triggers.
+                  shell:
+                    resolveCommandShell({
+                      advanced: !!service.commandAdvanced,
+                      execution: 'shell',
+                      shell: service.shell,
+                    }) ?? DEFAULT_MODEL_SERVICE_SHELL,
+                }
+              : { startCommand: tokenizeShellCommand(service.startCommand) }),
             preStartActions: (service.preStartActions ?? []).map((a) => ({
               action: a.action,
               args: (() => {
@@ -133,6 +154,12 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
   const baiClient = useSuspendedBackendaiClient();
   const supportsHealthCheckEnable = baiClient.supports(
     'model-health-check-enable',
+  );
+  // 26.7.0+ managers accept the single-string `command` + `shell` fields on the
+  // preset service config (FR-3205); older managers only understand the
+  // deprecated `startCommand` token list.
+  const supportsCommandShell = baiClient.supports(
+    'model-service-command-string',
   );
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -319,6 +346,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
             modelDefinition: buildModelDefinitionInput(
               values.modelDefinition,
               supportsHealthCheckEnable,
+              supportsCommandShell,
             ),
             openToPublic: values.openToPublic ?? null,
             replicaCount: values.replicaCount ?? null,
@@ -362,6 +390,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
             modelDefinition: buildModelDefinitionInput(
               values.modelDefinition,
               supportsHealthCheckEnable,
+              supportsCommandShell,
             ),
             openToPublic: values.openToPublic ?? null,
             replicaCount: values.replicaCount!,

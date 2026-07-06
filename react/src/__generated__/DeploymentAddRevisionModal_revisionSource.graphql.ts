@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<07c37c790793b542333551ba7308d475>>
+ * @generated SignedSource<<8580526ea487c91ff9e6b2d137cf9465>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -32,6 +32,7 @@ export type DeploymentAddRevisionModal_revisionSource$data = {
       readonly modelPath: string;
       readonly name: string;
       readonly service: {
+        readonly command: string | null | undefined;
         readonly healthCheck: {
           readonly enable: boolean;
           readonly expectedStatusCode: number;
@@ -42,13 +43,14 @@ export type DeploymentAddRevisionModal_revisionSource$data = {
           readonly path: string;
         } | null | undefined;
         readonly port: number;
+        readonly shell: string | null | undefined;
         readonly startCommand: ReadonlyArray<string> | null | undefined;
       } | null | undefined;
     }>;
   } | null | undefined;
   readonly modelMountConfig: {
-    readonly definitionPath: string;
     readonly mountDestination: string;
+    readonly subpath: string | null | undefined;
     readonly vfolderId: string;
   } | null | undefined;
   readonly modelRuntimeConfig: {
@@ -304,7 +306,7 @@ return {
           "alias": null,
           "args": null,
           "kind": "ScalarField",
-          "name": "definitionPath",
+          "name": "subpath",
           "storageKey": null
         }
       ],
@@ -342,6 +344,20 @@ return {
               "name": "service",
               "plural": false,
               "selections": [
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "command",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "shell",
+                  "storageKey": null
+                },
                 {
                   "alias": null,
                   "args": null,
@@ -474,6 +490,6 @@ return {
 };
 })();
 
-(node as any).hash = "94f9806003b984d4534543e7895a61e8";
+(node as any).hash = "00d507b0a5e04fae7153a40260bf99f4";
 
 export default node;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6e61c5307ef99ee2010b20d02072c16a>>
+ * @generated SignedSource<<0d12890608027a8d7582ac6ce602c96b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -473,6 +473,13 @@ v14 = [
                 "alias": null,
                 "args": null,
                 "kind": "ScalarField",
+                "name": "command",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
                 "name": "startCommand",
                 "storageKey": null
               },
@@ -692,12 +699,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "484c885f3fb5c0c9f4a4e12f257a49e6",
+    "cacheID": "888fd63fab3a79112cc2131befd0a2d2",
     "id": null,
     "metadata": {},
     "name": "DeploymentRevisionHistoryTabActivateMutation",
     "operationKind": "mutation",
-    "text": "mutation DeploymentRevisionHistoryTabActivateMutation(\n  $input: ActivateRevisionInput!\n) {\n  activateDeploymentRevision(input: $input) {\n    deployment {\n      id\n      currentRevisionId\n      deployingRevisionId\n      currentRevision @since(version: \"26.4.3\") {\n        id\n        ...DeploymentRevisionDetail_revision\n      }\n      deployingRevision @since(version: \"26.4.3\") {\n        id\n        ...DeploymentRevisionDetail_revision\n      }\n    }\n    previousRevisionId\n    activatedRevisionId\n  }\n}\n\nfragment DeploymentRevisionDetail_revision on ModelRevision {\n  id\n  revisionNumber\n  createdAt\n  clusterConfig {\n    mode\n    size\n  }\n  resourceSlots @since(version: \"26.4.2\") {\n    slotName\n    quantity\n  }\n  resourceConfig {\n    resourceOpts {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelRuntimeConfig {\n    runtimeVariant {\n      name\n      id\n    }\n    inferenceRuntimeConfig\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n    runtimeVariantPresetValues @since(version: \"26.4.4rc9\") {\n      presetId\n      value\n      preset {\n        name\n        displayName\n        targetSpec {\n          key\n        }\n        id\n      }\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    mountDestination\n    definitionPath\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n    mountPerm\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  imageV2 @since(version: \"26.4.3\") {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        startCommand\n        shell\n        port\n        preStartActions {\n          action\n          args\n        }\n        healthCheck {\n          path\n          initialDelay\n          maxRetries\n          interval\n          maxWaitTime\n          expectedStatusCode\n        }\n      }\n    }\n  }\n}\n\nfragment FolderLink_vfolderNode on VirtualFolderNode {\n  row_id\n  name\n  ...VFolderNodeIdenticonFragment\n}\n\nfragment VFolderNodeIdenticonFragment on VirtualFolderNode {\n  id\n}\n"
+    "text": "mutation DeploymentRevisionHistoryTabActivateMutation(\n  $input: ActivateRevisionInput!\n) {\n  activateDeploymentRevision(input: $input) {\n    deployment {\n      id\n      currentRevisionId\n      deployingRevisionId\n      currentRevision @since(version: \"26.4.3\") {\n        id\n        ...DeploymentRevisionDetail_revision\n      }\n      deployingRevision @since(version: \"26.4.3\") {\n        id\n        ...DeploymentRevisionDetail_revision\n      }\n    }\n    previousRevisionId\n    activatedRevisionId\n  }\n}\n\nfragment DeploymentRevisionDetail_revision on ModelRevision {\n  id\n  revisionNumber\n  createdAt\n  clusterConfig {\n    mode\n    size\n  }\n  resourceSlots @since(version: \"26.4.2\") {\n    slotName\n    quantity\n  }\n  resourceConfig {\n    resourceOpts {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelRuntimeConfig {\n    runtimeVariant {\n      name\n      id\n    }\n    inferenceRuntimeConfig\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n    runtimeVariantPresetValues @since(version: \"26.4.4rc9\") {\n      presetId\n      value\n      preset {\n        name\n        displayName\n        targetSpec {\n          key\n        }\n        id\n      }\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    mountDestination\n    definitionPath\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n    mountPerm\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  imageV2 @since(version: \"26.4.3\") {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        command @since(version: \"26.7.0\")\n        startCommand\n        shell\n        port\n        preStartActions {\n          action\n          args\n        }\n        healthCheck {\n          path\n          initialDelay\n          maxRetries\n          interval\n          maxWaitTime\n          expectedStatusCode\n        }\n      }\n    }\n  }\n}\n\nfragment FolderLink_vfolderNode on VirtualFolderNode {\n  row_id\n  name\n  ...VFolderNodeIdenticonFragment\n}\n\nfragment VFolderNodeIdenticonFragment on VirtualFolderNode {\n  id\n}\n"
   }
 };
 })();

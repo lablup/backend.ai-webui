@@ -932,6 +932,17 @@ export class Client {
       // rc9 so the flag also activates against the staging manager (BA-6520).
       // TODO(FR-3139): simplify to '26.4.4' once rc builds are out of use.
       this._features['model-runtime-variant-preset-values'] = true;
+      // ModelMountConfigInput / ExtraVFolderMountInput gained `subpath` in
+      // 26.4.4 (BA-6242): mount a subfolder inside the model vfolder instead of
+      // its root. Older managers reject the unknown input field, so the key is
+      // omitted from the mutation entirely on them.
+      this._features['model-mount-subpath'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('26.7.0')) {
+      // Single-string `command` + nullable `shell` on the model-service config
+      // (FR-3205 / BA-6551). Older managers only accept the deprecated
+      // `startCommand` token list.
+      this._features['model-service-command-string'] = true;
     }
     if (this.isManagerVersionCompatibleWith('26.7.0')) {
       // Strawberry V2 filter inputs gained the AND/OR/NOT sub-filter
