@@ -2112,6 +2112,7 @@
     "RoleMember": "Участник"
   },
   "projectSelect": {
+    "AskAdminForProjectAccess": "Попросите администратора предоставить вам доступ к проекту.",
     "GoToProject": "Перейти к {{project}}",
     "NoAccessibleProjects": "Нет доступных проектов.",
     "ProjectAdminBadge": "Администратор проекта",
