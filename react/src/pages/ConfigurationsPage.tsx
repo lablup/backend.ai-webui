@@ -4,8 +4,8 @@
  */
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import ConfigurationsSettingList from '../components/ConfigurationsSettingList';
-import { Card, Skeleton } from 'antd';
-import { filterOutEmpty } from 'backend.ai-ui';
+import { Skeleton } from 'antd';
+import { BAICard, filterOutEmpty } from 'backend.ai-ui';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
@@ -19,7 +19,7 @@ const ConfigurationsPage = () => {
   const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
 
   return (
-    <Card
+    <BAICard
       activeTabKey={curTabKey}
       onTabChange={(key) => setCurTabKey(key as TabKey)}
       tabList={filterOutEmpty([
@@ -36,7 +36,7 @@ const ConfigurationsPage = () => {
           </BAIErrorBoundary>
         )}
       </Suspense>
-    </Card>
+    </BAICard>
   );
 };
 
