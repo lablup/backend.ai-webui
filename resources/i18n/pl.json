@@ -3531,7 +3531,7 @@
       "MyAccount": "Zmień informacje o użytkowniku",
       "MyAccountInformation": "Zmień informacje o użytkowniku",
       "MyEnvironments": "Moje Środowiska",
-      "MyResources": "Mój całkowity limit zasobów",
+      "MyResources": "Moje całkowite zużycie i limit zasobów",
       "MyResourcesDescription": "<p>Ten panel wyświetla całkowitą liczbę aktualnie używanych i wolnych zasobów we wszystkich projektach i grupach zasobów.</p><p>W przypadku zastosowania wielu limitów (takich jak domena, projekt lub para kluczy) do obliczeń używany jest najbardziej restrykcyjny limit wolnych zasobów.</p>",
       "MyResourcesIn": "Moje zasoby",
       "MyResourcesInResourceGroup": "Moje zasoby w grupie zasobów",

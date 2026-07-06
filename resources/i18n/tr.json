@@ -3528,7 +3528,7 @@
       "MyAccount": "Kullanıcı Bilgilerini Değiştir",
       "MyAccountInformation": "Kullanıcı Bilgilerini Değiştir",
       "MyEnvironments": "Ortamlarım",
-      "MyResources": "Toplam kaynak sınırım",
+      "MyResources": "Toplam kaynak kullanımım ve sınırım",
       "MyResourcesDescription": "<p>Bu panel, tüm projelerde ve kaynak gruplarında halihazırda kullanılan ve ücretsiz olan toplam kaynaklarınızı görüntüler.</p><p>Birden fazla sınır uygulandığında (etki alanı, proje veya anahtar çifti gibi), hesaplama en kısıtlayıcı ücretsiz kaynak sınırını kullanır.</p>",
       "MyResourcesIn": "Kaynaklarım",
       "MyResourcesInResourceGroup": "Kaynak Grubundaki Kaynaklarım",

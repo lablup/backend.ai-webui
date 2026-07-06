@@ -3528,7 +3528,7 @@
       "MyAccount": "Oma tili",
       "MyAccountInformation": "Tilini tiedot",
       "MyEnvironments": "Omat ympäristöt",
-      "MyResources": "Kokonaisresurssini rajoittavat",
+      "MyResources": "Kokonaisresurssieni käyttö ja raja",
       "MyResourcesDescription": "<p>Tässä paneelissa näytetään tällä hetkellä käytetyt ja vapaat resurssit kaikissa projekteissa ja resurssiryhmissä.</p><p>Kun käytetään useita rajoituksia (kuten verkkotunnus, projekti tai avainpari), laskennassa käytetään kaikkein rajoittavinta ilmaisten resurssien rajaa.</p>",
       "MyResourcesIn": "Resurssini",
       "MyResourcesInResourceGroup": "Resurssini resurssiryhmässä",

@@ -3533,7 +3533,7 @@
       "MyAccount": "ユーザー情報の変更",
       "MyAccountInformation": "ユーザー情報の変更",
       "MyEnvironments": "利用環境",
-      "MyResources": "私の総リソース制限",
+      "MyResources": "私の総リソース使用量と制限",
       "MyResourcesDescription": "<p>このパネルには、すべてのプロジェクトおよびリソース グループにわたって現在使用されているリソースと空きリソースの合計が表示されます。</p><p>複数の制限が適用されている場合 (ドメイン、プロジェクト、キーペアなど)、計算では最も制限の厳しい無料リソース制限が使用されます。</p>",
       "MyResourcesIn": "私のリソース",
       "MyResourcesInResourceGroup": "リソースグループの私のリソース",

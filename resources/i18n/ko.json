@@ -3534,7 +3534,7 @@
       "MyAccount": "사용자 정보 변경",
       "MyAccountInformation": "사용자 정보 변경",
       "MyEnvironments": "나의 실행 환경",
-      "MyResources": "나의 총자원 제한",
+      "MyResources": "나의 총자원 사용량과 제한",
       "MyResourcesDescription": "<p>이 패널에서는 모든 프로젝트와 자원 그룹의 자원 중 현재 사용 중인 양과 사용 가능한 양을 합산해서 보여줍니다.</p><p>여러 제한(도메인, 프로젝트, 키페어 등)이 복합적으로 적용될 경우, 가장 엄격한 제한 기준에 따라 사용 가능 자원이 계산됩니다.</p>",
       "MyResourcesIn": "자원 그룹별 나의 자원",
       "MyResourcesInResourceGroup": "자원 그룹 내 나의 자원",

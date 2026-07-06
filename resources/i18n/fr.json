@@ -3531,7 +3531,7 @@
       "MyAccount": "Modifier les informations utilisateur",
       "MyAccountInformation": "Modifier les informations utilisateur",
       "MyEnvironments": "Mes environnements",
-      "MyResources": "Ma limite totale de ressources",
+      "MyResources": "Utilisation et limite totales de mes ressources",
       "MyResourcesDescription": "<p>Ce panneau affiche le total de vos ressources actuellement utilisées et disponibles sur tous les projets et groupes de ressources.</p><p>Lorsque plusieurs limites sont appliquées (telles qu'un domaine, un projet ou une paire de clés), le calcul utilise la limite de ressources gratuites la plus restrictive.</p>",
       "MyResourcesIn": "Mes ressources dans",
       "MyResourcesInResourceGroup": "Mes ressources dans le groupe de ressources",

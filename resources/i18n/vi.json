@@ -3530,7 +3530,7 @@
       "MyAccount": "Thay đổi thông tin người dùng",
       "MyAccountInformation": "Thay đổi thông tin người dùng",
       "MyEnvironments": "Môi trường của tôi",
-      "MyResources": "Tổng giới hạn tài nguyên của tôi",
+      "MyResources": "Mức sử dụng và giới hạn tổng tài nguyên của tôi",
       "MyResourcesDescription": "<p>Bảng này hiển thị tổng tài nguyên hiện đang được sử dụng và miễn phí trên tất cả các dự án và nhóm tài nguyên.</p><p>Khi áp dụng nhiều giới hạn (chẳng hạn như miền, dự án hoặc cặp khóa), phép tính sẽ sử dụng giới hạn tài nguyên miễn phí hạn chế nhất.</p>",
       "MyResourcesIn": "Tài nguyên của tôi trong",
       "MyResourcesInResourceGroup": "Tài nguyên của tôi trong nhóm tài nguyên",

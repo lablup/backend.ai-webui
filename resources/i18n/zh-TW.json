@@ -3532,7 +3532,7 @@
       "MyAccount": "更改用戶信息",
       "MyAccountInformation": "更改用戶信息",
       "MyEnvironments": "我的環境",
-      "MyResources": "我的總資源限制",
+      "MyResources": "我的總資源使用量和限制",
       "MyResourcesDescription": "<p>此面板顯示您當前在所有項目和資源組中使用和免費的總資源。 </p><p>應用多個限制（例如域、項目或密鑰對）時，計算將使用最嚴格的免費資源限制。 </p>",
       "MyResourcesIn": "我的資源",
       "MyResourcesInResourceGroup": "我在資源組中的資源",

@@ -3528,7 +3528,7 @@
       "MyAccount": "Mi cuenta",
       "MyAccountInformation": "Información de mi cuenta",
       "MyEnvironments": "Mis ambientes",
-      "MyResources": "Mi límite de recursos totales",
+      "MyResources": "Mi uso y límite de recursos totales",
       "MyResourcesDescription": "<p>Este panel muestra el total de recursos actualmente utilizados y gratuitos en todos los proyectos y grupos de recursos.</p><p>Cuando se aplican varios límites (como dominio, proyecto o par de claves), el cálculo utiliza el límite de recursos gratuitos más restrictivo.</p>",
       "MyResourcesIn": "Mis recursos en",
       "MyResourcesInResourceGroup": "Mis recursos en el grupo de recursos",

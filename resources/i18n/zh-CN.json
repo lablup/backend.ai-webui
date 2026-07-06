@@ -3530,7 +3530,7 @@
       "MyAccount": "更改用户信息",
       "MyAccountInformation": "更改用户信息",
       "MyEnvironments": "我的环境",
-      "MyResources": "我的总资源限制",
+      "MyResources": "我的总资源使用量和限制",
       "MyResourcesDescription": "<p>此面板显示您当前在所有项目和资源组中使用和免费的总资源。</p><p>应用多个限制（例如域、项目或密钥对）时，计算将使用最严格的免费资源限制。</p>",
       "MyResourcesIn": "我的资源",
       "MyResourcesInResourceGroup": "我在资源组中的资源",

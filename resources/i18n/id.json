@@ -3532,7 +3532,7 @@
       "MyAccount": "Akun Saya",
       "MyAccountInformation": "Informasi Akun Saya",
       "MyEnvironments": "Lingkungan Saya",
-      "MyResources": "Batas Total Sumber Daya Saya",
+      "MyResources": "Penggunaan dan Batas Total Sumber Daya Saya",
       "MyResourcesDescription": "<p>Panel ini menampilkan total sumber daya yang saat ini digunakan dan gratis di semua proyek dan grup sumber daya.</p><p>Jika beberapa batasan diterapkan (seperti domain, proyek, atau pasangan kunci), penghitungan akan menggunakan batas sumber daya gratis yang paling ketat.</p>",
       "MyResourcesIn": "Sumber daya saya di",
       "MyResourcesInResourceGroup": "Sumber Daya Saya dalam Grup Sumber Daya",

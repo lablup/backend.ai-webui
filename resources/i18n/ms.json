@@ -3528,7 +3528,7 @@
       "MyAccount": "Tukar Maklumat Pengguna",
       "MyAccountInformation": "Tukar Maklumat Pengguna",
       "MyEnvironments": "Persekitaran Saya",
-      "MyResources": "Had jumlah sumber saya",
+      "MyResources": "Penggunaan dan had jumlah sumber saya",
       "MyResourcesDescription": "<p> Panel ini memaparkan jumlah sumber anda yang digunakan dan percuma di semua projek dan kumpulan sumber. </P> <p> Apabila beberapa had digunakan (seperti domain, projek, atau keypair), pengiraan menggunakan had sumber bebas yang paling ketat. </P>",
       "MyResourcesIn": "Sumber saya di",
       "MyResourcesInResourceGroup": "Sumber saya dalam kumpulan sumber",

@@ -3530,7 +3530,7 @@
       "MyAccount": "Benutzerinformationen ändern",
       "MyAccountInformation": "Benutzerinformationen ändern",
       "MyEnvironments": "Meine Umgebungen",
-      "MyResources": "Meine Gesamtressourcengrenze",
+      "MyResources": "Meine gesamte Ressourcennutzung und -grenze",
       "MyResourcesDescription": "<p>In diesem Bereich werden die gesamten derzeit genutzten und freien Ressourcen aller Projekte und Ressourcengruppen angezeigt.</p><p>Wenn mehrere Grenzwerte angewendet werden (z. B. Domäne, Projekt oder Schlüsselpaar), verwendet die Berechnung den restriktivsten Grenzwert für freie Ressourcen.</p>",
       "MyResourcesIn": "Meine Ressourcen in",
       "MyResourcesInResourceGroup": "Meine Ressourcen in der Ressourcengruppe",
