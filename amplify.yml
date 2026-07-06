@@ -156,14 +156,27 @@ applications:
             # `<projectRoot>/.docs-archive/<sanitized-ref>`. With the
             # appRoot set to this package, `<projectRoot>` IS the cwd,
             # so the worktree path is simply
-            # `.docs-archive/<sanitized-ref>`. The list is hardcoded
-            # to `26.4` for v1; future archived minors must be added
-            # here in lockstep with the `versions:` config until a
-            # toolkit helper does it dynamically.
+            # `.docs-archive/<sanitized-ref>`.
+            #
+            # ARCHIVE_REFS is derived DIRECTLY from the config's
+            # `versions:` block (FR-3255) — every `ref: docs-archive/X.Y`
+            # line — so adding a minor to `docs-toolkit.config.yaml`
+            # (which the `docs-version-pdftag-pr.yml` release automation
+            # now does automatically) is picked up here with ZERO
+            # lockstep edits. The `^\s*ref:` anchor matches only real
+            # archive-branch refs, never the `docs-archive/…` mentions
+            # in the surrounding config comments. The
+            # `${ARR[@]+"${ARR[@]}"}` expansion is empty-array-safe under
+            # `set -u` (older bash errors on a bare `"${ARR[@]}"`).
             - |
               set -euo pipefail
-              ARCHIVE_REFS=(docs-archive/26.4)
-              for ref in "${ARCHIVE_REFS[@]}"; do
+              mapfile -t ARCHIVE_REFS < <(
+                grep -oE '^[[:space:]]*ref:[[:space:]]*docs-archive/[0-9]+\.[0-9]+[[:space:]]*$' \
+                  docs-toolkit.config.yaml \
+                  | grep -oE 'docs-archive/[0-9]+\.[0-9]+' | sort -u
+              )
+              echo "Archive refs from config: ${ARCHIVE_REFS[*]:-(none)}"
+              for ref in ${ARCHIVE_REFS[@]+"${ARCHIVE_REFS[@]}"}; do
                 sanitized="${ref//\//__}"
                 worktree=".docs-archive/${sanitized}"
                 # Idempotency check: a plain `[ -d "${worktree}" ]` is
