@@ -343,6 +343,19 @@ body {
   display: none;
 }
 
+/* Wraps the brand anchor + version pill (FR-3265). The pill is a link
+   of its own now, so it must sit OUTSIDE the brand <a> (nested anchors
+   are invalid HTML); the wrapper reproduces the brand's 12px gap so the
+   sub-label→pill spacing stays pixel-identical to the pre-split layout
+   (12px gap + the pill's own 4px margin-left). flex-shrink: 0 keeps the
+   brand block from compressing at mid widths. */
+.bai-topbar__brandgroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
 .bai-topbar__brand {
   display: inline-flex;
   align-items: center;
@@ -400,6 +413,15 @@ body {
   padding: 2px 7px;
   border-radius: 999px;
   margin-left: 4px;
+  text-decoration: none;
+}
+
+/* When the pill is a release-notes link (repoUrl / releaseNotesUrl set)
+   give it the same primary-tint hover affordance as .bai-iconbtn:hover. */
+a.bai-brand-version:hover {
+  border-color: var(--bai-primary);
+  color: var(--bai-primary);
+  text-decoration: none;
 }
 
 /* Topbar search — hosts \`#search-input\` (which the existing search.js
@@ -675,6 +697,135 @@ body.bai-palette-open .bai-palette {
 .bai-palette__panel #search-results .search-result-snippet {
   color: var(--bai-text-3);
   font-size: 12px;
+}
+
+/* Custom switcher listbox (FR-3265). interactions.js upgrades the two
+   native switcher <select>s (topbar lang, sidebar version) to an APG
+   listbox: the select gets .bai-select--enhanced and is hidden, a
+   .bai-select__trigger button takes its place, and a .bai-select__list
+   popup renders the options. Pages without interactions.js never add
+   the class, so the native controls keep their original chrome (see
+   .lang-switcher__select / .doc-sidebar-version .version-switcher).
+   Panel chrome mirrors the search palette family (--bai-bg, 1px
+   --bai-border, radius, --bai-shadow-md, short fade/translate) so the
+   overlays read as one design; everything is token-driven so dark
+   mode needs no extra rules. */
+.lang-switcher__select.bai-select--enhanced,
+.doc-sidebar-version .version-switcher.bai-select--enhanced {
+  display: none;
+}
+
+.bai-select__trigger {
+  /* Buttons don't inherit typography; the variant rules below (and
+     the extended pill block for the version variant) set sizes. */
+  font: inherit;
+}
+
+/* Lang trigger: a transparent hit-area overlay standing in for the
+   (now hidden) transparent select — the sibling SVG icon keeps
+   painting on top, so the closed state is pixel-identical to the
+   native version. Focus/hover feedback stays on the .lang-switcher
+   :focus-within / :hover rules; suppress the UA focus ring so the
+   wrapper outline isn't doubled. */
+.bai-select__trigger--lang {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  outline: none;
+}
+
+.bai-select__list {
+  position: absolute;
+  top: calc(100% + 6px);
+  /* Above the drawer sidebar (101) / scrim (100), below the palette
+     (200) — see the z-index ladder at .bai-topbar. Inside the topbar
+     (z 50, its own stacking context) any positive value also paints
+     over the z-auto TOC rail, matching the search dropdown. */
+  z-index: 110;
+  min-width: 100%;
+  background: var(--bai-bg);
+  border: 1px solid var(--bai-border);
+  border-radius: var(--bai-radius);
+  box-shadow: var(--bai-shadow-md);
+  padding: 4px;
+  /* The 60vh clamp keeps the version popup inside the sider's
+     overflow:hidden box on very short viewports. */
+  max-height: min(280px, 60vh);
+  overflow-y: auto;
+  animation: bai-palette-in 120ms ease-out;
+}
+
+.bai-select__list[hidden] {
+  display: none;
+}
+
+/* Right-aligned under the topbar's right-edge icon button; width from
+   the longest language label. */
+.bai-select__list--lang {
+  right: 0;
+  min-width: max-content;
+}
+
+/* The version popup anchors to the whole .doc-sidebar-version row (the
+   positioned ancestor); right: 24px matches the row's horizontal
+   padding so the popup's right edge lines up with the pill's. The row
+   has 10px bottom padding below the pill, so top: calc(100% - 4px)
+   yields the same ~6px visual gap as the lang popup. */
+.bai-select__list--version {
+  top: calc(100% - 4px);
+  right: 24px;
+  min-width: 132px;
+  max-width: calc(100% - 48px);
+}
+
+.bai-select__option {
+  position: relative;
+  /* 28px left slot reserves room for the selected-option checkmark. */
+  padding: 6px 10px 6px 28px;
+  border-radius: var(--bai-radius-sm);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--bai-text);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.bai-select__list--version .bai-select__option {
+  font-size: 12px;
+}
+
+/* .is-active tracks aria-activedescendant (keyboard); :hover covers
+   the pointer. Same row treatment as the palette results. */
+.bai-select__option.is-active,
+.bai-select__option:hover {
+  background: var(--bai-bg-muted);
+}
+
+.bai-select__option[aria-selected="true"] {
+  color: var(--bai-primary);
+  font-weight: 600;
+}
+
+/* Checkmark via mask + currentColor: CSS vars don't resolve inside
+   url() (see the version pill's chevron note), but a mask filled with
+   currentColor picks up --bai-primary in both themes for free. */
+.bai-select__option[aria-selected="true"]::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  width: 13px;
+  height: 13px;
+  transform: translateY(-50%);
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'><polyline points='20 6 9 17 4 12'/></svg>") center / contain no-repeat;
+  mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'><polyline points='20 6 9 17 4 12'/></svg>") center / contain no-repeat;
 }
 
 /* Mobile drawer scrim (Phase 4). Created lazily by interactions.js
@@ -980,6 +1131,9 @@ body.bai-drawer-open .bai-scrim {
   flex: 0 0 auto;
   padding: 14px 24px 10px;
   border-bottom: 1px solid var(--bai-border-soft, var(--bai-border));
+  /* FR-3265: positioning anchor for the .bai-select__list--version
+     popup injected by interactions.js. */
+  position: relative;
 }
 .doc-sidebar-version__label {
   font-size: 10.5px;
@@ -989,7 +1143,12 @@ body.bai-drawer-open .bai-scrim {
   color: var(--bai-text-2);
   flex: 0 0 auto;
 }
-.doc-sidebar-version .version-switcher {
+/* FR-3265: the .bai-select__trigger--version button injected by
+   interactions.js shares every pill rule below so the enhanced closed
+   state is pixel-equivalent to the native select (same 30px height,
+   132px min-width, chevron background image, hover/focus treatment). */
+.doc-sidebar-version .version-switcher,
+.doc-sidebar-version .bai-select__trigger--version {
   flex: 0 0 auto;
   /* FR-2768: native <select> auto-sizes to its longest option, which
      for short version labels (e.g., "next") renders much narrower
@@ -1020,11 +1179,14 @@ body.bai-drawer-open .bai-scrim {
   cursor: pointer;
   transition: border-color 120ms ease;
 }
-.doc-sidebar-version .version-switcher:hover {
+.doc-sidebar-version .version-switcher:hover,
+.doc-sidebar-version .bai-select__trigger--version:hover {
   border-color: var(--bai-primary);
 }
 .doc-sidebar-version .version-switcher:focus,
-.doc-sidebar-version .version-switcher:focus-visible {
+.doc-sidebar-version .version-switcher:focus-visible,
+.doc-sidebar-version .bai-select__trigger--version:focus,
+.doc-sidebar-version .bai-select__trigger--version:focus-visible {
   outline: 2px solid var(--bai-primary);
   outline-offset: 1px;
 }

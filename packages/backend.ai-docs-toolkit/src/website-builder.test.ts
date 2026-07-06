@@ -13,6 +13,7 @@
 
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
+import fs from "fs";
 import path from "path";
 import vm from "node:vm";
 import {
@@ -197,6 +198,50 @@ describe("buildWebPage — FR-2726 surfaces", () => {
     assert.match(html, /class="bai-topbar__brand"/);
     assert.match(html, />Manual</); // sub-label
     assert.match(html, />v26\.5\.0</); // version pill
+    // FR-3265: with repoUrl set the pill is a release-notes link that
+    // defaults to `${repoUrl}/releases`.
+    assert.match(
+      html,
+      /<a class="bai-brand-version" href="https:\/\/github\.com\/owner\/repo\/releases"[^>]*rel="noopener noreferrer"[^>]*aria-label="Release notes for v26\.5\.0"/,
+    );
+    // The pill now lives OUTSIDE the brand anchor (nested <a> is invalid
+    // HTML); the brand anchor's own markup must not contain it.
+    const brandAnchor = html.match(
+      /<a class="bai-topbar__brand"[\s\S]*?<\/a>/,
+    );
+    assert.ok(brandAnchor, "brand anchor not found");
+    assert.doesNotMatch(brandAnchor[0], /bai-brand-version/);
+    assert.match(html, /class="bai-topbar__brandgroup"/);
+  });
+
+  it("renders the version pill as a plain span when no release-notes target exists", () => {
+    // No repoUrl and no releaseNotesUrl → no URL to derive, pill stays
+    // a non-link span (same degradation as the GitHub icon).
+    const ctx = makeContext();
+    ctx.config = {
+      ...ctx.config,
+      website: { editBaseUrl: ctx.config.website?.editBaseUrl },
+    };
+    const html = buildWebPage(ctx);
+    assert.match(html, /<span class="bai-brand-version">v26\.5\.0<\/span>/);
+    assert.doesNotMatch(html, /<a class="bai-brand-version"/);
+  });
+
+  it("honors website.releaseNotesUrl over the repoUrl-derived default", () => {
+    const ctx = makeContext();
+    ctx.config = {
+      ...ctx.config,
+      website: {
+        ...ctx.config.website,
+        releaseNotesUrl: "https://example.com/changelog",
+      },
+    };
+    const html = buildWebPage(ctx);
+    assert.match(
+      html,
+      /<a class="bai-brand-version" href="https:\/\/example\.com\/changelog"/,
+    );
+    assert.doesNotMatch(html, /href="https:\/\/github\.com\/owner\/repo\/releases"/);
   });
 
   it("emits brand logo light/dark sources", () => {
@@ -1697,6 +1742,110 @@ describe("buildRootRedirectIndexPage — FR-2753 root redirect index", () => {
       }
     });
   });
+
+  describe("OG/Twitter meta (FR-3265)", () => {
+    const baseSeo = {
+      description: "Multilingual user manual by Lablup Inc.",
+      siteName: "Backend.AI WebUI User Guide",
+      baseUrl: "https://webui.docs.backend.ai",
+      ogImageRelUrl: "assets/og-default.png",
+      pagePath: "",
+    };
+    const withSeo = (
+      seoOverrides: Partial<typeof baseSeo> = {},
+      basePath?: string,
+    ) =>
+      buildRootRedirectIndexPage({
+        title: "Backend.AI WebUI User Guide",
+        productName: "Backend.AI WebUI",
+        languages: baseLanguages,
+        fallback: "en",
+        latestVersion: "26.4",
+        basePath,
+        seo: { ...baseSeo, ...seoOverrides },
+      });
+
+    it("emits og:type=website + absolute og:url/og:image on the root page", () => {
+      const html = withSeo();
+      assert.match(html, /<meta property="og:type" content="website" \/>/);
+      assert.match(
+        html,
+        /<meta property="og:title" content="Backend\.AI WebUI User Guide" \/>/,
+      );
+      // joinBaseUrl(base, "") must yield the bare root WITH a trailing
+      // slash — asserted here rather than assumed (finding risk #5).
+      assert.match(
+        html,
+        /<meta property="og:url" content="https:\/\/webui\.docs\.backend\.ai\/" \/>/,
+      );
+      assert.match(
+        html,
+        /<meta property="og:image" content="https:\/\/webui\.docs\.backend\.ai\/assets\/og-default\.png" \/>/,
+      );
+      assert.match(
+        html,
+        /<meta property="og:site_name" content="Backend\.AI WebUI User Guide" \/>/,
+      );
+      assert.match(
+        html,
+        /<meta name="twitter:card" content="summary_large_image" \/>/,
+      );
+      assert.match(
+        html,
+        /<meta name="twitter:image" content="https:\/\/webui\.docs\.backend\.ai\/assets\/og-default\.png" \/>/,
+      );
+      assert.match(
+        html,
+        /<meta name="description" content="Multilingual user manual by Lablup Inc\." \/>/,
+      );
+      // noindex must survive the injection (FR-2753: stay out of
+      // search indexes; OG scrapers ignore robots meta anyway).
+      assert.match(html, /<meta name="robots" content="noindex" \/>/);
+    });
+
+    it("emits the mounted page's own og:url for the latest/ alias", () => {
+      const html = withSeo({ pagePath: "latest/" }, "latest");
+      assert.match(
+        html,
+        /og:url" content="https:\/\/webui\.docs\.backend\.ai\/latest\/"/,
+      );
+    });
+
+    it("omits og:url/og:image entirely when baseUrl is unset (no relative URLs for crawlers)", () => {
+      const html = withSeo({ baseUrl: undefined });
+      assert.doesNotMatch(html, /og:url/);
+      assert.doesNotMatch(html, /og:image/);
+      assert.doesNotMatch(html, /twitter:image/);
+      // The URL-independent tags still ship.
+      assert.match(html, /og:type" content="website"/);
+      assert.match(html, /og:site_name/);
+    });
+
+    it("leaves the page byte-identical when seo is absent (deprecated alias contract)", () => {
+      const html = buildRootRedirectIndexPage({
+        title: "Docs",
+        productName: "Docs",
+        languages: baseLanguages,
+        fallback: "en",
+        latestVersion: "26.4",
+      });
+      // <title> must be immediately followed by the robots meta — no
+      // injected lines, not even blank ones.
+      assert.match(
+        html,
+        /<title>Docs<\/title>\n {2}<meta name="robots" content="noindex" \/>/,
+      );
+      assert.doesNotMatch(html, /og:|twitter:|name="description"/);
+    });
+
+    it("keeps the redirect script as the first <script> and functional (meta-only injection)", () => {
+      const html = withSeo();
+      assert.equal(
+        runRedirectScript({ html, pathname: "/" }),
+        "./26.4/en/index.html",
+      );
+    });
+  });
 });
 
 describe("buildLangRedirectStubPage — FR-3247 per-language redirect stubs", () => {
@@ -1745,5 +1894,92 @@ describe("buildLangRedirectStubPage — FR-3247 per-language redirect stubs", ()
         /invalid lang/,
       );
     }
+  });
+
+  it("emits OG/Twitter meta with the stub's own absolute og:url (FR-3265)", () => {
+    const html = buildLangRedirectStubPage({
+      title: "Backend.AI WebUI User Guide",
+      lang: "ko",
+      target: "../26.4/ko/index.html",
+      seo: {
+        description: "Multilingual user manual by Lablup Inc.",
+        siteName: "Backend.AI WebUI User Guide",
+        baseUrl: "https://webui.docs.backend.ai",
+        ogImageRelUrl: "assets/og-default.png",
+        pagePath: "ko/",
+      },
+    });
+    assert.match(html, /og:type" content="website"/);
+    assert.match(
+      html,
+      /og:url" content="https:\/\/webui\.docs\.backend\.ai\/ko\/"/,
+    );
+    assert.match(
+      html,
+      /og:image" content="https:\/\/webui\.docs\.backend\.ai\/assets\/og-default\.png"/,
+    );
+    // The redirect mechanisms and noindex must survive the injection.
+    assert.match(html, /<meta name="robots" content="noindex" \/>/);
+    assert.match(
+      html,
+      /window\.location\.replace\("\.\.\/26\.4\/ko\/index\.html"\);/,
+    );
+  });
+
+  it("leaves the stub byte-identical when seo is absent", () => {
+    const html = buildLangRedirectStubPage({
+      title: "Docs",
+      lang: "en",
+      target: "../26.4/en/index.html",
+    });
+    assert.match(
+      html,
+      /<title>Docs<\/title>\n {2}<meta name="robots" content="noindex" \/>/,
+    );
+    assert.doesNotMatch(html, /og:|twitter:/);
+  });
+});
+
+describe("interactions.js template — FR-3265 switcher listbox enhancer", () => {
+  // Everywhere else in this suite interactions.js is treated as an
+  // opaque hashed asset (see the PageAssets fixtures above). These
+  // assertions pin the enhancer's hook strings so a refactor of the
+  // template can't silently drop the progressive enhancement — or,
+  // worse, start duplicating the navigation logic that MUST stay in
+  // the selects' validated inline handlers (website-builder.ts).
+  const interactionsSource = fs.readFileSync(
+    new URL("../templates/assets/interactions.js", import.meta.url),
+    "utf8",
+  );
+
+  it("wires the enhancer to both switcher selects", () => {
+    assert.match(interactionsSource, /enhanceSelect\(/);
+    assert.match(interactionsSource, /\.lang-switcher__select/);
+    assert.match(interactionsSource, /getElementById\("version-switcher"\)/);
+  });
+
+  it("keeps the native select as the value store (bubbling change)", () => {
+    // Committing a choice must go through the select so the existing
+    // inline handlers (availability probe, __legacy__ noopener branch,
+    // sessionStorage notice flag, location.assign) keep firing.
+    assert.match(
+      interactionsSource,
+      /new Event\("change", \{ bubbles: true \}\)/,
+    );
+    assert.match(interactionsSource, /bai-select--enhanced/);
+  });
+
+  it("implements the APG listbox surface", () => {
+    assert.match(interactionsSource, /"aria-haspopup", "listbox"/);
+    assert.match(interactionsSource, /"aria-expanded"/);
+    assert.match(interactionsSource, /"role", "listbox"/);
+    assert.match(interactionsSource, /"role", "option"/);
+    assert.match(interactionsSource, /aria-activedescendant/);
+  });
+
+  it("never duplicates navigation logic from the inline handlers", () => {
+    assert.doesNotMatch(interactionsSource, /location\.assign/);
+    assert.doesNotMatch(interactionsSource, /window\.open/);
+    assert.doesNotMatch(interactionsSource, /docs\.notice\.notInVersion/);
   });
 });
