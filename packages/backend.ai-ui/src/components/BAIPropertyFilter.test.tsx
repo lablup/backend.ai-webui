@@ -1,6 +1,7 @@
 import BAIPropertyFilter, {
   mergeFilterValues,
   parseFilterValue,
+  type FilterProperty,
 } from './BAIPropertyFilter';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useState } from 'react';
@@ -525,5 +526,166 @@ describe('BAIPropertyFilter tag removal (FR-2965)', () => {
     await waitFor(() => {
       expect(onChange).toHaveBeenCalledWith('description ilike "%beta%"');
     });
+  });
+});
+
+// FR-3258: a `renderInput` control committing via `onAddCondition` — the
+// contract `BAIGraphQLPropertyFilter` adopts in FR-3011 (#8082). Plain buttons
+// call `onAddCondition(value)` to exercise commit-on-select without a real
+// picker.
+const ownerCustomProperties: Array<FilterProperty> = [
+  {
+    key: 'owner',
+    propertyLabel: 'Owner',
+    type: 'string',
+    defaultOperator: '==',
+    renderInput: ({ onAddCondition }) => (
+      <>
+        <button type="button" onClick={() => onAddCondition('uuid-alice')}>
+          pick-alice
+        </button>
+        <button type="button" onClick={() => onAddCondition('uuid-bob')}>
+          pick-bob
+        </button>
+      </>
+    ),
+  },
+];
+
+// FR-3258: a `renderInput` control whose committed value is opaque (a UUID)
+// but which passes the human-readable label as the second `onAddCondition`
+// argument, mirroring `BAIUserSelect` with `valuePropName="id"` forwarding
+// `option.label`.
+const ownerLabeledProperties: Array<FilterProperty> = [
+  {
+    key: 'owner',
+    propertyLabel: 'Owner',
+    type: 'string',
+    defaultOperator: '==',
+    renderInput: ({ onAddCondition }) => (
+      <button
+        type="button"
+        onClick={() => onAddCondition('uuid-alice', 'alice@example.com')}
+      >
+        pick-alice
+      </button>
+    ),
+  },
+];
+
+const ControlledCustom = ({
+  onFilterChange,
+  filterProperties: customProperties = ownerCustomProperties,
+}: {
+  onFilterChange?: (value: string) => void;
+  filterProperties?: Array<FilterProperty>;
+}) => {
+  const [value, setValue] = useState<string | undefined>();
+  return (
+    <BAIPropertyFilter
+      filterProperties={customProperties}
+      value={value}
+      onChange={(next) => {
+        setValue(next);
+        onFilterChange?.(next);
+      }}
+    />
+  );
+};
+
+describe('BAIPropertyFilter custom renderInput', () => {
+  it('commits a condition as soon as the controlled input emits a value', async () => {
+    const onFilterChange = vi.fn();
+    render(<ControlledCustom onFilterChange={onFilterChange} />);
+
+    fireEvent.click(screen.getByText('pick-alice'));
+
+    // The emitted value is serialized with the property's default operator.
+    await waitFor(() => {
+      expect(onFilterChange).toHaveBeenCalledWith('owner == "uuid-alice"');
+    });
+    // The tag shows the committed raw value.
+    expect(screen.getByText(/Owner.*uuid-alice/)).toBeVisible();
+  });
+
+  it('stacks each emitted value as a separate tag (AND of filters)', async () => {
+    const onFilterChange = vi.fn();
+    render(<ControlledCustom onFilterChange={onFilterChange} />);
+
+    fireEvent.click(screen.getByText('pick-alice'));
+    await waitFor(() => {
+      expect(screen.getByText(/Owner.*uuid-alice/)).toBeVisible();
+    });
+
+    fireEvent.click(screen.getByText('pick-bob'));
+    await waitFor(() => {
+      expect(screen.getByText(/Owner.*uuid-bob/)).toBeVisible();
+    });
+
+    // Both filters are kept as separate tags and ANDed in the value.
+    expect(screen.getByText(/Owner.*uuid-alice/)).toBeVisible();
+    expect(document.querySelectorAll('.ant-tag')).toHaveLength(2);
+    expect(onFilterChange).toHaveBeenLastCalledWith(
+      'owner == "uuid-alice" & owner == "uuid-bob"',
+    );
+  });
+
+  it('displays the renderInput-supplied label in the tag while keeping the raw value in the filter', async () => {
+    const onFilterChange = vi.fn();
+    render(
+      <ControlledCustom
+        onFilterChange={onFilterChange}
+        filterProperties={ownerLabeledProperties}
+      />,
+    );
+
+    fireEvent.click(screen.getByText('pick-alice'));
+
+    // The filter string still carries the opaque value (UUID), not the label.
+    await waitFor(() => {
+      expect(onFilterChange).toHaveBeenCalledWith('owner == "uuid-alice"');
+    });
+    // The tag shows the human-readable label, not the UUID.
+    expect(screen.getByText(/Owner.*alice@example\.com/)).toBeVisible();
+    expect(screen.queryByText(/uuid-alice/)).not.toBeInTheDocument();
+  });
+
+  it('keeps the label lookup working across the ilike %value% wrapping round-trip', async () => {
+    // The label map is keyed on the raw committed value, while an
+    // `ilike`-serialized filter stores `%value%`; the tag lookup strips the
+    // wrapping via trimFilterValue, so the key must still match.
+    const ilikeLabeledProperties: Array<FilterProperty> = [
+      {
+        key: 'owner',
+        propertyLabel: 'Owner',
+        type: 'string',
+        defaultOperator: 'ilike',
+        renderInput: ({ onAddCondition }) => (
+          <button
+            type="button"
+            onClick={() => onAddCondition('uuid-alice', 'alice@example.com')}
+          >
+            pick-alice
+          </button>
+        ),
+      },
+    ];
+    const onFilterChange = vi.fn();
+    render(
+      <ControlledCustom
+        onFilterChange={onFilterChange}
+        filterProperties={ilikeLabeledProperties}
+      />,
+    );
+
+    fireEvent.click(screen.getByText('pick-alice'));
+
+    // The filter string carries the %-wrapped raw value.
+    await waitFor(() => {
+      expect(onFilterChange).toHaveBeenCalledWith('owner ilike "%uuid-alice%"');
+    });
+    // The tag still resolves the label despite the wrapping.
+    expect(screen.getByText(/Owner.*alice@example\.com/)).toBeVisible();
+    expect(screen.queryByText(/uuid-alice/)).not.toBeInTheDocument();
   });
 });

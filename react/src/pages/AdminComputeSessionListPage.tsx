@@ -22,6 +22,7 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
 import { Alert, App, Badge, Button, theme, Tooltip } from 'antd';
 import {
+  BAIAdminProjectSelect,
   BAIFetchKeyButton,
   BAIFlex,
   BAIPropertyFilter,
@@ -312,6 +313,30 @@ const AdminComputeSessionListPage = () => {
             />
             <BAIPropertyFilter
               filterProperties={filterOutEmpty([
+                {
+                  // `project_id` is the compute_session queryfilter field
+                  // mapped to the session's group (project) UUID.
+                  key: 'project_id',
+                  propertyLabel: t('data.Project'),
+                  type: 'string',
+                  defaultOperator: '==',
+                  renderInput: ({ onAddCondition }) => (
+                    <BAIAdminProjectSelect
+                      value={null}
+                      style={{ minWidth: 200 }}
+                      onChange={(value, option) => {
+                        // The picker emits the project UUID; forward the
+                        // option label (project name) so the condition tag
+                        // stays readable.
+                        const label = _.castArray(option)[0]?.label;
+                        onAddCondition(
+                          value as string | undefined,
+                          _.isString(label) ? label : undefined,
+                        );
+                      }}
+                    />
+                  ),
+                },
                 {
                   key: 'name',
                   propertyLabel: t('session.SessionName'),

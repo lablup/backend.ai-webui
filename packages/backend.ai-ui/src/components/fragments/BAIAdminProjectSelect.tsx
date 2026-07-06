@@ -50,7 +50,7 @@ const BAIAdminProjectSelect: React.FC<BAIAdminProjectSelectProps> = ({
   const { t } = useBAIi18n();
   const selectRef = useRef<GetRef<typeof BAISelect>>(null);
   const [controllableValue, setControllableValue] = useControllableValue<
-    string | string[] | undefined
+    string | string[] | null | undefined
   >(selectProps);
   const [controllableOpen, setControllableOpen] = useControllableValue<boolean>(
     selectProps,
@@ -194,10 +194,14 @@ const BAIAdminProjectSelect: React.FC<BAIAdminProjectSelectProps> = ({
   // chips.
   const controllableValueWithLabel = !_.isEmpty(deferredControllableValue)
     ? _.castArray(deferredControllableValue).map((value) => ({
-        label: selectedNameByLocalId.get(value) ?? value,
+        label: (value && selectedNameByLocalId.get(value)) ?? value,
         value: value,
       }))
-    : undefined;
+    : // Empty: forward the incoming value as-is. `null` keeps the Select
+      // controlled (and cleared) per antd semantics; `undefined` leaves it
+      // uncontrolled — the consumer decides which by the value it passes
+      // (e.g. `value={null}` for commit-and-clear filter inputs).
+      deferredControllableValue;
 
   const [optimisticValueWithLabel, setOptimisticValueWithLabel] = useState(
     controllableValueWithLabel,

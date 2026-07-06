@@ -16,13 +16,7 @@ import {
   theme,
 } from 'antd';
 import * as _ from 'lodash-es';
-import React, {
-  ComponentProps,
-  ReactNode,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { ComponentProps, ReactNode, useRef, useState } from 'react';
 
 //github.com/lablup/backend.ai/blob/main/src/ai/backend/manager/models/minilang/queryfilter.py
 export type FilterProperty = {
@@ -38,6 +32,25 @@ export type FilterProperty = {
     message: string;
     validate: (value: string) => boolean;
   };
+  // Replaces the default AutoComplete input with a controlled control (e.g.
+  // `BAIStorageHostSelect`). Calling `onAddCondition(value)` commits the value
+  // as a condition immediately — one condition per call — serialized with the
+  // property's `defaultOperator` (or the type default). Pass `value={null}` to
+  // the control (antd's controlled-empty value, since `value={undefined}` is
+  // treated as uncontrolled) so it stays controlled and clears after each
+  // commit.
+  //
+  // When the committed value is opaque to the user (e.g. a UUID emitted by
+  // `BAIUserSelect` with `valuePropName="id"`), pass the human-readable
+  // label as the optional second argument, e.g.
+  // `onChange={(value, option) => onAddCondition(value, option.label)}`.
+  // The label is shown in the condition tag while the raw value still
+  // serializes into the filter string unchanged. Omit it to display the
+  // value as-is. Same contract as the one `BAIGraphQLPropertyFilter` adopts
+  // in FR-3011 (#8082), so controls become interchangeable once both land.
+  renderInput?: (props: {
+    onAddCondition: (value: string | undefined, label?: string) => void;
+  }) => ReactNode;
 };
 
 export interface BAIPropertyFilterProps extends Omit<
@@ -244,6 +257,7 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
   defaultValue,
   ...containerProps
 }) => {
+  'use memo';
   const [search, setSearch] = useState<string>();
   const autoCompleteRef = useRef<GetRef<typeof AutoComplete>>(null);
   const [isOpenAutoComplete, setIsOpenAutoComplete] = useState(false);
@@ -254,6 +268,18 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
     onChange: propOnChange,
   });
 
+  // Maps a committed filter value to a human-readable label supplied via a
+  // `renderInput` control's `onAddCondition` (e.g. user UUID -> email).
+  // Filters are re-derived from the `value` string on every render and only
+  // carry the raw value, so the label is kept here and looked up when
+  // rendering tags. Keyed by `${property}::${value}`. Entries are kept for
+  // the component's lifetime (not pruned on tag removal) — the map is
+  // bounded by the values the user actually committed, and keeping them
+  // lets a re-added identical condition show its label again.
+  const [valueLabelMap, setValueLabelMap] = useState<Record<string, string>>(
+    {},
+  );
+
   const generateValueLabel = (label: ReactNode) => {
     // Generate a label for the filter value,
     // if the label is a string or number, return its string representation.
@@ -263,7 +289,7 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
       : undefined;
   };
 
-  const filtersFromValue = useMemo(() => {
+  const filtersFromValue = (() => {
     if (value === undefined || value === '') return [];
     const filters = value.split('&').map((filter) => filter.trim());
     return filters.map((filter, index) => {
@@ -281,12 +307,17 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
         property,
         operator,
         value,
-        valueLabel: generateValueLabel(option?.label),
+        // Prefer an option label, then a renderInput-supplied label, so
+        // opaque values (e.g. UUIDs) display as something the user
+        // recognizes (e.g. an email).
+        valueLabel:
+          generateValueLabel(option?.label) ??
+          valueLabelMap[`${property}::${trimFilterValue(value)}`],
         propertyLabel: filterProperty?.propertyLabel || property,
         type: filterProperty?.type || 'string',
       };
     });
-  }, [value, filterProperties]);
+  })();
 
   const { t } = useBAIi18n();
   const options = _.map(filterProperties, (filterProperty) => ({
@@ -325,6 +356,20 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
 
   const resetList = () => {
     updateFiltersValue([]);
+  };
+
+  // Persist the value -> label pair supplied to `onAddCondition` so the
+  // condition tag can show the label (e.g. email) instead of the opaque
+  // committed value (e.g. UUID).
+  const rememberValueLabel = (
+    property: string,
+    value: string,
+    label: string,
+  ) => {
+    setValueLabelMap((prev) => ({
+      ...prev,
+      [`${property}::${value}`]: label,
+    }));
   };
 
   const onSearch = (value: string) => {
@@ -383,50 +428,63 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
           }}
           aria-label="Filter property selector"
         />
-        <Tooltip
-          title={isValid || !isFocused ? '' : selectedProperty.rule?.message}
-          open={!isValid && isFocused}
-          color="red"
-        >
-          <AutoComplete
-            ref={autoCompleteRef}
-            value={search}
-            open={isOpenAutoComplete}
-            onOpenChange={setIsOpenAutoComplete}
-            onSelect={onSearch}
-            onChange={(value) => {
-              setIsValid(true);
-              setSearch(value);
-            }}
-            style={{
-              minWidth: 200,
-            }}
-            // @ts-ignore
-            options={_.filter(
-              selectedProperty.options ||
-                DEFAULT_OPTIONS_OF_TYPES[selectedProperty.type],
-              (option) => {
-                return !search
-                  ? true
-                  : option.label?.toString().includes(search);
-              },
-            )}
-            placeholder={t('comp:BAIPropertyFilter.PlaceHolder')}
-            onBlur={() => {
-              setIsFocused(false);
-            }}
-            onFocus={() => {
-              setIsFocused(true);
-            }}
+        {selectedProperty.renderInput ? (
+          selectedProperty.renderInput({
+            onAddCondition: (value, label) => {
+              // Truthy guard: an empty-string label would blank the tag
+              // (`valueLabel ?? …` treats '' as present).
+              if (value != null && label) {
+                rememberValueLabel(selectedProperty.key, value, label);
+              }
+              onSearch(value ?? '');
+            },
+          })
+        ) : (
+          <Tooltip
+            title={isValid || !isFocused ? '' : selectedProperty.rule?.message}
+            open={!isValid && isFocused}
+            color="red"
           >
-            <Input.Search
-              onSearch={onSearch}
-              allowClear
-              status={!isValid && isFocused ? 'error' : undefined}
-              aria-label="Filter value search"
-            />
-          </AutoComplete>
-        </Tooltip>
+            <AutoComplete
+              ref={autoCompleteRef}
+              value={search}
+              open={isOpenAutoComplete}
+              onOpenChange={setIsOpenAutoComplete}
+              onSelect={onSearch}
+              onChange={(value) => {
+                setIsValid(true);
+                setSearch(value);
+              }}
+              style={{
+                minWidth: 200,
+              }}
+              // @ts-ignore
+              options={_.filter(
+                selectedProperty.options ||
+                  DEFAULT_OPTIONS_OF_TYPES[selectedProperty.type],
+                (option) => {
+                  return !search
+                    ? true
+                    : option.label?.toString().includes(search);
+                },
+              )}
+              placeholder={t('comp:BAIPropertyFilter.PlaceHolder')}
+              onBlur={() => {
+                setIsFocused(false);
+              }}
+              onFocus={() => {
+                setIsFocused(true);
+              }}
+            >
+              <Input.Search
+                onSearch={onSearch}
+                allowClear
+                status={!isValid && isFocused ? 'error' : undefined}
+                aria-label="Filter value search"
+              />
+            </AutoComplete>
+          </Tooltip>
+        )}
       </Space.Compact>
       {filtersFromValue.length > 0 && (
         <BAIFlex
