@@ -1,5 +1,6 @@
 import BAIPropertyFilter from './BAIPropertyFilter';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Select } from 'antd';
 
 // import { action } from '@storybook/addon-actions';
 
@@ -16,9 +17,10 @@ const meta: Meta<typeof BAIPropertyFilter> = {
 
 - **Multiple property types**: String and boolean properties with type-specific operators
 - **Dynamic query building**: Visual interface for constructing filter expressions
-- **Autocomplete support**: Predefined options and suggestions for property values  
+- **Autocomplete support**: Predefined options and suggestions for property values
 - **Validation rules**: Custom validation for property values
 - **Query language**: Based on Backend.AI's query filter minilang specification
+- **Custom input via \`renderInput\`**: Replace the default AutoComplete input with any controlled control (e.g., a user or storage-host picker). The control commits a condition via \`onAddCondition(value, label?)\` as soon as a value is selected; pass a human-readable \`label\` when the committed value is opaque (e.g. a UUID) so the condition tag shows the label instead. Give the control \`value={null}\` so it stays controlled and clears after each commit. Same contract as the one \`BAIGraphQLPropertyFilter\` adopts in FR-3011 (#8082), so controls become interchangeable once both land.
 
 The component generates filter query strings that can be used with Backend.AI's query system, enabling powerful data filtering capabilities across the platform.
 
@@ -221,6 +223,57 @@ export const LoadingState: Story = {
       },
     ],
     loading: true,
+    onChange: () => console.log('Filter changed'),
+  },
+};
+
+const sampleOwnerOptions = [
+  { label: 'alice@example.com', value: 'owner-uuid-0001' },
+  { label: 'bob@example.com', value: 'owner-uuid-0002' },
+  { label: 'carol@example.com', value: 'owner-uuid-0003' },
+];
+
+export const WithRenderInput: Story = {
+  name: 'Custom Input via renderInput',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'When `renderInput` is provided, the default AutoComplete is replaced with a custom control. The control commits a condition via `onAddCondition(value, label?)` as soon as it emits a non-empty value; keep it controlled with `value={null}` so it clears after each commit. Pass the option label as the second argument so the condition tag shows a human-readable label (e.g. an email) instead of the opaque committed value (e.g. a UUID). Same contract as the one `BAIGraphQLPropertyFilter` adopts in FR-3011 (#8082), so controls become interchangeable once both land.',
+      },
+    },
+  },
+  args: {
+    filterProperties: [
+      {
+        key: 'name',
+        propertyLabel: 'Name',
+        type: 'string',
+        defaultOperator: 'ilike',
+      },
+      {
+        key: 'owner',
+        propertyLabel: 'Owner',
+        type: 'string',
+        defaultOperator: '==',
+        renderInput: ({ onAddCondition }) => (
+          <Select
+            showSearch
+            placeholder="Select owner"
+            style={{ minWidth: 220 }}
+            value={null}
+            optionFilterProp="label"
+            options={sampleOwnerOptions}
+            onChange={(next) =>
+              onAddCondition(
+                next ?? undefined,
+                sampleOwnerOptions.find((o) => o.value === next)?.label,
+              )
+            }
+          />
+        ),
+      },
+    ],
     onChange: () => console.log('Filter changed'),
   },
 };

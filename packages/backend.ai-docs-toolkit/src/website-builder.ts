@@ -2211,6 +2211,16 @@ export interface RootRedirectIndexPageOptions {
    * flat-mode builds (FR-2710 F1 contract).
    */
   latestVersion?: string;
+  /**
+   * Single path segment the page is mounted under instead of the site
+   * root, e.g. `latest` for `dist/web/latest/index.html` (FR-3247's
+   * version-agnostic alias). Affects two things: the loop-safety guard
+   * accepts `/<basePath>/` pathnames instead of `/`, and the redirect
+   * targets / `<noscript>` hrefs climb one level (`../<version>/...`
+   * instead of `./<version>/...`). Leave undefined for the site-root
+   * page.
+   */
+  basePath?: string;
 }
 
 /** @deprecated Renamed to {@link RootRedirectIndexPageOptions}. */
@@ -2241,12 +2251,27 @@ function safeJsonForScript(value: unknown): string {
 export function buildRootRedirectIndexPage(
   opts: RootRedirectIndexPageOptions,
 ): string {
-  const { title, productName, languages, fallback, latestVersion } = opts;
+  const { title, productName, languages, fallback, latestVersion, basePath } =
+    opts;
   if (languages.length === 0) {
     throw new Error(
       `buildRootRedirectIndexPage: \`languages\` must contain at least one entry`,
     );
   }
+  // Same shape guard as `latestVersion` below: `basePath` is interpolated
+  // into URLs and into the loop-safety guard's regex source, so reject
+  // anything that could break out of a single path segment.
+  if (
+    basePath !== undefined &&
+    !/^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(basePath)
+  ) {
+    throw new Error(
+      `buildRootRedirectIndexPage: invalid basePath ${JSON.stringify(basePath)}`,
+    );
+  }
+  // Mounted pages (`dist/web/<basePath>/index.html`) sit one level below
+  // the site root, so their version-dir targets climb one level.
+  const hrefBase = basePath ? "../" : "./";
   const safeTitle = escapeHtml(title);
   const safeProduct = escapeHtml(productName);
   // BCP-47 tags are case-insensitive (`zh-CN` ≡ `zh-cn`). The redirect
@@ -2288,9 +2313,16 @@ export function buildRootRedirectIndexPage(
   const noscriptItems = languages
     .map(
       (l) =>
-        `      <li><a hreflang="${escapeHtml(l.lang)}" lang="${escapeHtml(l.lang)}" href="./${versionHrefSegment}${escapeHtml(l.lang)}/index.html">${escapeHtml(l.label)}</a></li>`,
+        `      <li><a hreflang="${escapeHtml(l.lang)}" lang="${escapeHtml(l.lang)}" href="${hrefBase}${versionHrefSegment}${escapeHtml(l.lang)}/index.html">${escapeHtml(l.label)}</a></li>`,
     )
     .join("\n");
+  // Loop-safety guard regex source (see comment inside the script).
+  // For a mounted page the accepted pathnames are `/<basePath>`,
+  // `/<basePath>/`, and `/<basePath>/index.html`; only `.` in the
+  // validated basePath charset is regex-significant, so escape it.
+  const guardSource = basePath
+    ? `^\\/${basePath.replace(/\./g, "\\.")}\\/?(?:index\\.html)?$`
+    : `^\\/?(?:index\\.html)?$`;
 
   // The script is intentionally tiny and CSP-friendly. No fetch, no CDN,
   // no eval. It is placed at the top of <head> so it runs synchronously
@@ -2302,6 +2334,7 @@ export function buildRootRedirectIndexPage(
   var HREFS=${supportedHrefMapJson};
   var FALLBACK=${fallbackJson};
   var VERSION_PREFIX=${versionPrefixJson};
+  var HREF_BASE=${safeJsonForScript(hrefBase)};
   function pick(){
     try{
       var ls=window.localStorage&&window.localStorage.getItem("lang");
@@ -2323,19 +2356,20 @@ export function buildRootRedirectIndexPage(
     }
     return FALLBACK;
   }
-  // Loop-safety guard: only fire from the actual site root (\`/\` or
-  // \`/index.html\`). Anything else — e.g. /26.3/ served by a hosting
-  // 404 fallback that preserves the requested URL — must NOT trigger
-  // the redirect, because \`location.replace("./...")\` would resolve
-  // the relative target against the bogus URL and land the user on a
-  // doubly-broken path.
+  // Loop-safety guard: only fire from the page's own mount point (the
+  // site root, or /<basePath>/ for mounted alias pages). Anything else
+  // — e.g. /26.3/ served by a hosting 404 fallback that preserves the
+  // requested URL — must NOT trigger the redirect, because
+  // \`location.replace(HREF_BASE+"...")\` would resolve the relative
+  // target against the bogus URL and land the user on a doubly-broken
+  // path.
   var p=window.location.pathname||"";
-  if(!/^\\/?(?:index\\.html)?$/i.test(p))return;
+  if(!/${guardSource}/i.test(p))return;
   var picked=pick();
   // Map the matched (lower-cased) tag back to its original config
   // casing so the URL hits the actual on-disk directory name.
   var dir=Object.prototype.hasOwnProperty.call(HREFS,picked)?HREFS[picked]:HREFS[FALLBACK];
-  window.location.replace("./"+VERSION_PREFIX+dir+"/index.html");
+  window.location.replace(HREF_BASE+VERSION_PREFIX+dir+"/index.html");
 })();`;
 
   return `<!DOCTYPE html>
@@ -2368,3 +2402,72 @@ ${noscriptItems}
  * same release that introduces the rename.
  */
 export const buildLanguagePickerPage = buildRootRedirectIndexPage;
+
+/**
+ * Build a per-language redirect stub for `dist/web/<lang>/index.html`
+ * (FR-3247). Versioned mode only.
+ *
+ * Why this exists: in versioned mode nothing physically lives at
+ * `/<lang>/` — real pages live at `/<version>/<lang>/...`. Bare
+ * language URLs (`/ko/`, `/en/`) are what readers bookmark and what the
+ * pre-Amplify readthedocs manual used as its entry points, and covering
+ * them with hosting-level redirect rules alone is fragile: the rules
+ * live in the Amplify console, are applied manually, and silently
+ * drift from `amplify-redirects.json` (the exact failure FR-3247
+ * hit in production). This stub is part of the build artifact, so it
+ * deploys atomically with the site and re-points itself on every
+ * `latest: true` flip with zero console interaction.
+ *
+ * This builder owns only the HTML shell; the caller computes `target`
+ * from `canonicalPathFor` (versions.ts) so the versioned-layout
+ * knowledge stays in its single source of truth. The target must be
+ * relative so the page works under any host or path prefix.
+ * `location.replace` keeps the stub out of the browser history; the
+ * `<meta http-equiv="refresh">` covers JS-disabled clients, and a
+ * plain link covers clients that honor neither. `noindex` keeps
+ * crawlers on the real canonical pages.
+ */
+export interface LangRedirectStubPageOptions {
+  title: string;
+  /** Language directory name, e.g. `ko`. Must match the on-disk dir. */
+  lang: string;
+  /**
+   * Relative redirect target as seen from `dist/web/<lang>/index.html`,
+   * e.g. `../26.4/ko/index.html`. Derive it from `canonicalPathFor` —
+   * do not hand-assemble the versioned layout at call sites.
+   */
+  target: string;
+}
+
+export function buildLangRedirectStubPage(
+  opts: LangRedirectStubPageOptions,
+): string {
+  const { title, lang, target } = opts;
+  // Defense-in-depth shape check (same spirit as buildRootRedirectIndexPage):
+  // `lang` names the on-disk directory and lands in the `lang` attribute,
+  // so reject anything that could produce a path breakout.
+  if (!/^[A-Za-z0-9][A-Za-z0-9_-]*$/.test(lang)) {
+    throw new Error(
+      `buildLangRedirectStubPage: invalid lang ${JSON.stringify(lang)}`,
+    );
+  }
+  const safeTitle = escapeHtml(title);
+  const safeTarget = escapeHtml(target);
+  const targetJson = safeJsonForScript(target);
+  return `<!DOCTYPE html>
+<html lang="${escapeHtml(lang)}">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>${safeTitle}</title>
+  <meta name="robots" content="noindex" />
+  <meta http-equiv="refresh" content="0; url=${safeTarget}" />
+  <script>window.location.replace(${targetJson});</script>
+</head>
+<body>
+  <p style="font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;max-width:30rem;margin:4rem auto;padding:2rem;">
+    <a href="${safeTarget}">${safeTitle}</a>
+  </p>
+</body>
+</html>`;
+}

@@ -243,7 +243,7 @@ const ProjectResourcePolicyList: React.FC<
               setIsCreatingPolicySetting(true);
             }}
           >
-            {t('button.Create')}
+            {t('resourcePolicy.CreatePolicy')}
           </BAIButton>
         </BAIFlex>
       </BAIFlex>

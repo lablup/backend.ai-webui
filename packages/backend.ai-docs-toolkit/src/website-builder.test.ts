@@ -19,6 +19,7 @@ import {
   applyImageAttributes,
   buildHomePage,
   buildIndexPage,
+  buildLangRedirectStubPage,
   buildLanguagePickerPage,
   buildRootRedirectIndexPage,
   buildWebPage,
@@ -1619,5 +1620,130 @@ describe("buildRootRedirectIndexPage — FR-2753 root redirect index", () => {
     // The old name is re-exported as an alias so external callers do
     // not break in the same release that introduces the rename.
     assert.equal(buildLanguagePickerPage, buildRootRedirectIndexPage);
+  });
+
+  describe("basePath mount (FR-3247 `/latest/` alias)", () => {
+    const mounted = () =>
+      buildRootRedirectIndexPage({
+        title: "Docs",
+        productName: "Docs",
+        languages: baseLanguages,
+        fallback: "en",
+        latestVersion: "26.4",
+        basePath: "latest",
+      });
+
+    it("climbs one level in redirect targets and noscript hrefs", () => {
+      const html = mounted();
+      assert.equal(
+        runRedirectScript({ html, pathname: "/latest/" }),
+        "../26.4/en/index.html",
+      );
+      assert.match(html, /href="\.\.\/26\.4\/ko\/index\.html"/);
+      // Root-relative `./26.4/...` hrefs must NOT appear — from
+      // /latest/ they would resolve to /latest/26.4/... (404).
+      assert.doesNotMatch(html, /href="\.\/26\.4\//);
+    });
+
+    it("fires only from the mount point, not from `/` or other paths", () => {
+      const html = mounted();
+      assert.equal(
+        runRedirectScript({ html, pathname: "/latest" }),
+        "../26.4/en/index.html",
+      );
+      assert.equal(
+        runRedirectScript({ html, pathname: "/latest/index.html" }),
+        "../26.4/en/index.html",
+      );
+      for (const pathname of ["/", "/index.html", "/26.3/", "/latest/ko/"]) {
+        assert.equal(
+          runRedirectScript({ html, pathname }),
+          null,
+          `script must NOT fire from ${pathname}`,
+        );
+      }
+    });
+
+    it("does not change behavior when basePath is omitted", () => {
+      const html = buildRootRedirectIndexPage({
+        title: "Docs",
+        productName: "Docs",
+        languages: baseLanguages,
+        fallback: "en",
+        latestVersion: "26.4",
+      });
+      assert.equal(
+        runRedirectScript({ html, pathname: "/" }),
+        "./26.4/en/index.html",
+      );
+      assert.equal(runRedirectScript({ html, pathname: "/latest/" }), null);
+    });
+
+    it("rejects path-breakout basePath values", () => {
+      for (const bad of ["..", ".", "../x", "a/b", ".hidden"]) {
+        assert.throws(
+          () =>
+            buildRootRedirectIndexPage({
+              title: "Docs",
+              productName: "Docs",
+              languages: baseLanguages,
+              fallback: "en",
+              latestVersion: "26.4",
+              basePath: bad,
+            }),
+          /invalid basePath/,
+          `expected ${JSON.stringify(bad)} to be rejected`,
+        );
+      }
+    });
+  });
+});
+
+describe("buildLangRedirectStubPage — FR-3247 per-language redirect stubs", () => {
+  it("redirects `<lang>/index.html` to the given target via all three mechanisms", () => {
+    const html = buildLangRedirectStubPage({
+      title: "Backend.AI WebUI User Guide",
+      lang: "ko",
+      target: "../26.4/ko/index.html",
+    });
+    // JS clients: location.replace keeps the stub out of history.
+    assert.match(
+      html,
+      /window\.location\.replace\("\.\.\/26\.4\/ko\/index\.html"\);/,
+    );
+    // JS-disabled clients: meta refresh.
+    assert.match(
+      html,
+      /<meta http-equiv="refresh" content="0; url=\.\.\/26\.4\/ko\/index\.html" \/>/,
+    );
+    // Neither: a plain link.
+    assert.match(html, /href="\.\.\/26\.4\/ko\/index\.html"/);
+    // Crawlers must stay on the real canonical pages.
+    assert.match(html, /<meta name="robots" content="noindex" \/>/);
+    assert.match(html, /<html lang="ko">/);
+  });
+
+  it("escapes the title in HTML context", () => {
+    const html = buildLangRedirectStubPage({
+      title: `Docs <script>alert("x")</script>`,
+      lang: "en",
+      target: "../26.4/en/index.html",
+    });
+    assert.doesNotMatch(html, /<script>alert/);
+    assert.match(html, /&lt;script&gt;/);
+  });
+
+  it("rejects path-breakout lang values", () => {
+    for (const lang of ["..", ".", "../x", "a/b", ".en"]) {
+      assert.throws(
+        () =>
+          buildLangRedirectStubPage({
+            title: "Docs",
+            lang,
+            target: "../26.4/en/index.html",
+          }),
+        /invalid lang/,
+      );
+    }
   });
 });

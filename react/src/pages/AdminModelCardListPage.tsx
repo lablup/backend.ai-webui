@@ -370,7 +370,7 @@ const AdminModelCardListPage: React.FC = () => {
             }}
           />
         </BAIFlex>
-        <BAIFlex gap={'sm'}>
+        <BAIFlex gap={'xs'}>
           {selectedModelCards.length > 0 && (
             <>
               <BAISelectionLabel

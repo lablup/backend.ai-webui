@@ -115,7 +115,6 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
             icon={
               isTransitional(session) ? <LoadingOutlined spin /> : undefined
             }
-            // Comment out to match the legacy tag style temporarily
             style={{
               borderRadius: 11,
               paddingLeft: token.paddingSM,

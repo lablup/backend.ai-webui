@@ -1,4 +1,4 @@
-// RowWrapWithDividers.tsx
+// BAIRowWrapWithDividers.tsx
 import { theme } from 'antd';
 import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
 

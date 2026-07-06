@@ -78,16 +78,27 @@ Workflow file: `.github/workflows/package.yml` (job: `build_docs`).
 
 ### 3. Update `versions:` in `docs-toolkit.config.yaml` on `main`
 
-> **Partially automated since FR-3246.** For a minor that **already has a
-> `versions:` entry** (i.e. a subsequent patch on an existing line), the
-> `docs-version-pdftag-pr.yml` workflow auto-opens a PR bumping that entry's
-> `pdfTag` to the new tag on release — just review and merge it (merging
-> triggers the Amplify rebuild). You only need the manual edit below when
-> **introducing a brand-new minor**, which the automation intentionally does
-> not handle (adding the entry and moving `latest:` is a release-strategy
-> decision).
+> **Automated since FR-3246 (both cases).** On a stable release the
+> `docs-version-pdftag-pr.yml` workflow auto-opens a PR against `main` that
+> syncs the released minor into `versions:` — **just review and merge it**
+> (merging triggers the Amplify rebuild):
+>
+> - **Brand-new minor** → the workflow ADDS an `archive-branch` entry
+>   immediately below `next` (source `docs-archive/<minor>`, `pdfTag` set to
+>   the release tag) and promotes it to `latest: true` **iff it is newer than
+>   the current latest**. An older-minor backfill is added *without* moving
+>   `latest:`.
+> - **Existing minor** (a later patch on a listed line) → the workflow bumps
+>   that entry's `pdfTag` only; `latest:` is untouched.
+>
+> The add/promote policy lives in `scripts/set-version-pdftag.mjs`
+> (`syncVersionEntry`, covered by `pnpm run test:scripts`). The manual edit
+> below is now only a **fallback** — e.g. reordering entries, retiring an old
+> minor, or a promotion the semver rule wouldn't make. To re-run the
+> automation for an already-published tag, dispatch the workflow manually:
+> `gh workflow run docs-version-pdftag-pr.yml -f tag=v26.7.0`.
 
-Open a small PR against `main` that edits
+Manual fallback — open a small PR against `main` that edits
 `packages/backend.ai-webui-docs/docs-toolkit.config.yaml`:
 
 - Add a new entry under `versions:` for the new minor, with
@@ -128,19 +139,30 @@ PR title format: `feat(FR-XXXX): publish 26.5 to docs site` (replace
 `FR-XXXX` with the Jira ticket created for the release-publish task and
 `26.5` with the actual minor).
 
-### 4. Update `amplify-redirects.json` and re-apply it in the Amplify console
+### 4. Redirects: nothing to do on a release (release-invariant since FR-3247)
 
-`packages/backend.ai-webui-docs/amplify-redirects.json` hardcodes the
-latest minor in its redirect targets (the root rule `/` → `/26.4/` and,
-since FR-3248, the legacy deep-link rules `/<lang>/<*>` → `/26.4/<lang>/`).
-When `latest: true` moves to a new minor:
+`packages/backend.ai-webui-docs/amplify-redirects.json` targets only the
+version-agnostic `/latest/...` alias, which the docs build emits as part
+of the site artifact and re-points to the `latest: true` minor on every
+deploy. Flipping `latest: true` (step 3) therefore requires **no change
+to the redirect rules and no Amplify console action** — the merged
+config PR's Amplify build updates the alias automatically.
 
-- Update every `/26.4/...` target in the file to the new minor (same PR
-  as step 3 is fine).
-- Amplify does **not** read this file from the repo — after the PR
-  merges, re-apply the rules in the Amplify console ("App settings →
-  Rewrites and redirects") or via
-  `aws amplify update-app --custom-rules file://packages/backend.ai-webui-docs/amplify-redirects.json`.
+The rules need (re)application only when the rule **set** itself changes
+in `amplify-redirects.json` (new/removed/edited rules — rare). In that
+case, apply via the Amplify console ("App settings → Rewrites and
+redirects" → "Open text editor", pasting the `customRules` array — not
+the whole file) or via the AWS CLI, whose `--custom-rules` expects a
+bare JSON **array**, not the file's `{ "_comment": ..., "customRules":
+... }` wrapper:
+
+```bash
+aws amplify update-app --app-id <APP_ID> \
+  --custom-rules "$(jq -c '.customRules' packages/backend.ai-webui-docs/amplify-redirects.json)"
+```
+
+Do **not** reintroduce version numbers (e.g. `/26.4/`) into rule targets
+— that recreates the manual-reapplication step this design removed.
 
 ---
 

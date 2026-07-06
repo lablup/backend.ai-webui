@@ -160,7 +160,7 @@ const PrometheusPresetTab: React.FC = () => {
             icon={<PlusIcon />}
             onClick={() => setIsOpenEditorModal(true)}
           >
-            {t('prometheusQueryPreset.AddPreset')}
+            {t('prometheusQueryPreset.CreatePreset')}
           </BAIButton>
         </BAIFlex>
       </BAIFlex>

@@ -276,7 +276,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
         >
           <Radio.Group
             onChange={() => {
-              // Only validate name field if it has a value to prevent excessive validation
+              // Only validate name/type fields if they have a value, to prevent excessive validation
               if (formRef.current?.getFieldValue('name')) {
                 formRef.current.validateFields(['name']);
               }

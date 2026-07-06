@@ -388,7 +388,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                 }}
               />
             </BAIFlex>
-            <BAIFlex gap={'sm'}>
+            <BAIFlex gap={'xs'}>
               {selectedFolderList.length > 0 &&
                 queryParams.statusCategory === 'active' && (
                   <>

@@ -933,6 +933,18 @@ body.bai-drawer-open .bai-scrim {
   line-height: 1.4;
 }
 
+/* Query-term highlight inside search-result titles/snippets. Rendered as
+   <mark class="search-highlight"> by search.js; the primary-tinted
+   background keeps the term legible in both light and dark themes without
+   the browser default yellow. */
+.search-result-item mark.search-highlight {
+  background: color-mix(in srgb, var(--ifm-color-primary) 22%, transparent);
+  color: inherit;
+  font-weight: 600;
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
 .search-no-results {
   padding: 0.8rem;
   font-size: 0.85rem;

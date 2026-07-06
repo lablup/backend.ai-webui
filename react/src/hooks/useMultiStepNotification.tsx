@@ -520,7 +520,6 @@ export function useMultiStepNotification(
 
         const step = steps[i];
 
-        // Update step to pending
         stepStatesRef.current[i] = { status: 'pending' };
         syncState('running', i);
 

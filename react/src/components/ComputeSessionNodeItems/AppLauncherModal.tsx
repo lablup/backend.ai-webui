@@ -5,14 +5,14 @@
 import { AppLauncherModalFragment$key } from '../../__generated__/AppLauncherModalFragment.graphql';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import {
-  TCP_APPS,
-  useBackendAIAppLauncher,
-} from '../../hooks/useBackendAIAppLauncher';
-import {
   ServicePort,
   TemplateItem,
   useSuspendedFilteredAppTemplate,
-} from '../../hooks/useSuspendedFilteredAppTemplate';
+} from '../../hooks/useAppTemplate';
+import {
+  TCP_APPS,
+  useBackendAIAppLauncher,
+} from '../../hooks/useBackendAIAppLauncher';
 import AppLaunchConfirmationModal from './AppLaunchConfirmationModal';
 import SFTPConnectionInfoModal from './SFTPConnectionInfoModal';
 import TCPConnectionInfoModal from './TCPConnectionInfoModal';

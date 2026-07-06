@@ -12,7 +12,7 @@ import {
 } from 'antd';
 import React, { use, useRef } from 'react';
 
-// FIXME: After migrate BAIModal into backend.ai-ui, should be use BAIModal instead of Antd's Modal
+// TODO: swap to BAIModal (already available in this package) instead of antd's Modal
 interface CreateDirectoryModalProps extends ModalProps {
   onRequestClose: (success: boolean) => void;
 }

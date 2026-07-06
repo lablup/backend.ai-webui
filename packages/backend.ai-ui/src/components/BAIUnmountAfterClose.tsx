@@ -63,7 +63,7 @@ const BAIUnmountAfterClose: React.FC<BAIUnmountModalAfterCloseProps> = ({
     if (originalAfterClose) {
       originalAfterClose(...args);
     }
-    // Set internal state to false after the exit animation completes
+    // Mark as closed after the exit animation completes
     setAfterClosed(true);
   };
 
@@ -75,7 +75,7 @@ const BAIUnmountAfterClose: React.FC<BAIUnmountModalAfterCloseProps> = ({
     if (originalAfterOpenChange) {
       originalAfterOpenChange(open);
     }
-    // Set internal state to false after the exit animation completes
+    // Mark as closed after the exit animation completes
     if (!open) {
       setAfterClosed(true);
     }

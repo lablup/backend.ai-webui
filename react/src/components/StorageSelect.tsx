@@ -44,7 +44,7 @@ interface Props extends Omit<BAISelectProps, 'value' | 'onChange'> {
   value?: string;
   onChange?: (v?: string, vInfo?: VolumeInfo) => void;
 }
-// TODO: use React.forwardRef
+// TODO: forward a ref to the inner Select (React 19 accepts `ref` as a prop; no forwardRef needed)
 const StorageSelect: React.FC<Props> = ({
   autoSelectType,
   showUsageStatus,

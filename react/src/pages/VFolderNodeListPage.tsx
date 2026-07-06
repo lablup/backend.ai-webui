@@ -465,7 +465,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                 }}
               />
             </BAIFlex>
-            <BAIFlex gap={'sm'}>
+            <BAIFlex gap={'xs'}>
               {selectedFolderList.length > 0 &&
                 queryParams.statusCategory === 'active' && (
                   <>

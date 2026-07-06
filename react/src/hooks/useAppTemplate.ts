@@ -18,6 +18,16 @@ export type AppTemplate = {
   [key: string]: TemplateItem[];
 };
 
+export type AppTemplateConfig = {
+  appTemplate: AppTemplate;
+  /**
+   * When true, the app launcher (app control modal) is hidden for batch-type
+   * sessions across the session list, notifications, and the session detail
+   * drawer.
+   */
+  hideAppsOnBatchSession: boolean;
+};
+
 export type ServicePort = {
   container_ports: number[];
   host_ports: number[];
@@ -26,18 +36,33 @@ export type ServicePort = {
   protocol: string;
 };
 
-export const useSuspendedFilteredAppTemplate = (
-  servicePorts?: ServicePort[] | null,
-) => {
-  const { data: appTemplate = {} } = useSuspenseTanQuery<AppTemplate>({
+/**
+ * Reads `resources/app_template.json` and exposes its top-level config: the
+ * `appTemplate` map plus feature flags such as `hideAppsOnBatchSession`. The
+ * raw JSON is cached under a single query key so this hook and
+ * `useSuspendedFilteredAppTemplate` share one fetch.
+ */
+export const useSuspendedAppTemplateConfig = (): AppTemplateConfig => {
+  const { data } = useSuspenseTanQuery<AppTemplateConfig>({
     queryKey: ['backendai-app-template'],
     queryFn: () => {
       return fetch('resources/app_template.json')
         .then((res) => res.json())
-        .then((res) => res.appTemplate);
+        .then((res) => ({
+          appTemplate: res.appTemplate ?? {},
+          hideAppsOnBatchSession: res.hideAppsOnBatchSession ?? false,
+        }));
     },
     staleTime: 1000 * 60 * 60 * 24,
   });
+  return data;
+};
+
+export const useSuspendedFilteredAppTemplate = (
+  servicePorts?: ServicePort[] | null,
+) => {
+  'use memo';
+  const { appTemplate } = useSuspendedAppTemplateConfig();
 
   const baiClient = useSuspendedBackendaiClient();
   const allowTCPApps =

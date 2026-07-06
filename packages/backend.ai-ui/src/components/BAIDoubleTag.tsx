@@ -8,7 +8,7 @@ import React from 'react';
 export type DoubleTagObjectValue = {
   label: string;
   color?: string;
-  style?: React.CSSProperties; // style 속성 추가
+  style?: React.CSSProperties;
 };
 
 export interface BAIDoubleTagProps {
