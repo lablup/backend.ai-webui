@@ -35,6 +35,7 @@ const AgentSettingModal: React.FC<AgentSettingModalProps> = ({
   onRequestClose,
   ...modalProps
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
   const baiClient = useSuspendedBackendaiClient();

@@ -25,6 +25,7 @@ const BAIGeneralNotificationItem: React.FC<{
   ) => void;
   showDate?: boolean;
 }> = ({ notification, onClickAction, showDate }) => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [showExtraDescription, setShowExtraDescription] = useState(false);

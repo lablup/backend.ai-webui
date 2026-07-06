@@ -117,6 +117,7 @@ const BAIBoard = <T extends BAIBoardDataType>({
   bordered = false,
   ...BoardProps
 }: BAIBoardProps<T>) => {
+  'use memo';
   const { styles } = useStyles();
   return (
     <Board<T>

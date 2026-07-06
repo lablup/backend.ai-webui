@@ -40,6 +40,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
   onRequestClose,
   ...modalProps
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { mergedResourceSlots } = useResourceSlotsDetails();

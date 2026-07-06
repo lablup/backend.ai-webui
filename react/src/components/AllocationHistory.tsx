@@ -13,6 +13,7 @@ export type Period = '1D' | '1W';
 const periodParam = withDefault(createEnumParam<Period>(['1D', '1W']), '1D');
 
 const AllocationHistory: React.FC = () => {
+  'use memo';
   const [selectedPeriod, setSelectedPeriod] = useQueryParam(
     'period',
     periodParam,
