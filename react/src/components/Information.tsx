@@ -125,11 +125,11 @@ const Information: React.FC<InformationProps> = () => {
               >
                 {/* TODO: accountChanged  */}
                 {true ? (
-                  <CheckOutlined title="Yes" />
+                  <CheckOutlined title={t('button.Yes')} />
                 ) : (
                   <WarningOutlined
                     style={{ color: token.colorWarning }}
-                    title="No"
+                    title={t('button.No')}
                   />
                 )}
               </Descriptions.Item>
@@ -142,11 +142,11 @@ const Information: React.FC<InformationProps> = () => {
                 }
               >
                 {baiClient?._config.endpoint.startsWith('https:') ? (
-                  <CheckOutlined title="Yes" />
+                  <CheckOutlined title={t('button.Yes')} />
                 ) : (
                   <WarningOutlined
                     style={{ color: token.colorWarning }}
-                    title="No"
+                    title={t('button.No')}
                   />
                 )}
               </Descriptions.Item>

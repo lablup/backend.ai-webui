@@ -209,7 +209,10 @@ const AllocationHistoryStatistics: React.FC<
 
   return (
     <BAIFlex direction="column" align="start" gap="md">
-      <GraphCard title="Sessions" tooltipText={t('statistics.SessionsDesc')}>
+      <GraphCard
+        title={t('statistics.Sessions')}
+        tooltipText={t('statistics.SessionsDesc')}
+      >
         <UsageBarChart
           data={data}
           dataKey="num_sessions"
@@ -219,7 +222,10 @@ const AllocationHistoryStatistics: React.FC<
           unitType="count"
         />
       </GraphCard>
-      <GraphCard title="CPU" tooltipText={t('statistics.CPUDesc')}>
+      <GraphCard
+        title={t('statistics.CPU')}
+        tooltipText={t('statistics.CPUDesc')}
+      >
         <UsageBarChart
           data={data}
           dataKey="cpu_allocated"
@@ -229,7 +235,10 @@ const AllocationHistoryStatistics: React.FC<
           unitType="count"
         />
       </GraphCard>
-      <GraphCard title="Memory" tooltipText={t('statistics.MemoryDesc')}>
+      <GraphCard
+        title={t('statistics.Memory')}
+        tooltipText={t('statistics.MemoryDesc')}
+      >
         <UsageBarChart
           data={data}
           dataKey="mem_allocated"
@@ -239,7 +248,10 @@ const AllocationHistoryStatistics: React.FC<
           unitType="byte"
         />
       </GraphCard>
-      <GraphCard title="GPU" tooltipText={t('statistics.GPUDesc')}>
+      <GraphCard
+        title={t('statistics.GPU')}
+        tooltipText={t('statistics.GPUDesc')}
+      >
         <UsageBarChart
           data={data}
           dataKey="gpu_allocated"
@@ -251,7 +263,10 @@ const AllocationHistoryStatistics: React.FC<
       </GraphCard>
       {!baiClient?.supports('user-metrics') ? (
         <>
-          <GraphCard title="IO-Read" tooltipText={t('statistics.IOReadDesc')}>
+          <GraphCard
+            title={t('statistics.IORead')}
+            tooltipText={t('statistics.IOReadDesc')}
+          >
             <UsageBarChart
               data={data}
               dataKey="io_read_bytes"
@@ -261,7 +276,10 @@ const AllocationHistoryStatistics: React.FC<
               unitType="decimal"
             />
           </GraphCard>
-          <GraphCard title="IO-Write" tooltipText={t('statistics.IOWriteDesc')}>
+          <GraphCard
+            title={t('statistics.IOWrite')}
+            tooltipText={t('statistics.IOWriteDesc')}
+          >
             <UsageBarChart
               data={data}
               dataKey="io_write_bytes"

@@ -164,7 +164,7 @@ const StorageProxyList = () => {
             <BAIDoubleTag
               values={[
                 {
-                  label: 'Backend',
+                  label: t('agent.Backend'),
                 },
                 {
                   label: value,

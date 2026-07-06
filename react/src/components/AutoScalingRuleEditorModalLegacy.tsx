@@ -314,11 +314,11 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
             }}
             options={[
               {
-                label: 'Inference Framework',
+                label: t('autoScalingRule.MetricSourceInferenceFramework'),
                 value: 'INFERENCE_FRAMEWORK',
               },
               {
-                label: 'Kernel',
+                label: t('autoScalingRule.MetricSourceKernel'),
                 value: 'KERNEL',
               },
             ]}
