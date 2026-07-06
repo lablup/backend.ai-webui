@@ -173,7 +173,7 @@ Each row lists one forbidden term, its canonical replacement, and the reason. Pa
 | group (for project) | project | Ambiguous |
 | key pair | keypair | Incorrect spelling |
 | key-pair | keypair | Incorrect spelling |
-| organization | domain | Not used in Backend.AI |
+| organization (for the Backend.AI domain concept) | domain | Not used in Backend.AI |
 | scaling group | resource group | Deprecated term |
 | worker node | agent node | Reserve "worker node" for model serving context only |
 | 레플리카 | 복제본 | Use the Korean translation, not the transliteration, for consistency |

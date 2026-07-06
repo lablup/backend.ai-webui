@@ -566,7 +566,7 @@
       "useInstead": "domain",
       "reason": "Not used in Backend.AI",
       "lang": "en",
-      "context": null,
+      "context": "for the Backend.AI domain concept",
       "conceptId": "domain"
     },
     {
