@@ -8,14 +8,29 @@ import {
 import { test, expect, Page } from '@playwright/test';
 
 /**
- * Expand the endpoint section if not already visible and fill the endpoint.
+ * Fill the endpoint input if the login form exposes one.
+ * Mirrors the robust flow in test-util's login(): the dialog renders an
+ * 'Endpoint' input per login-mode panel (even `exact: true` matches 2, one
+ * hidden), the input appears asynchronously after the config fetch, and
+ * servers that pre-configure `apiEndpoint` never show it at all.
  */
 async function fillEndpoint(page: Page, endpoint: string): Promise<void> {
-  const endpointInput = page.getByLabel('Endpoint');
-  if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
-    await page.getByText('Advanced').click();
+  const endpointInput = page
+    .getByLabel('Endpoint', { exact: true })
+    .filter({ visible: true });
+  const endpointVisible = await endpointInput
+    .waitFor({ state: 'visible', timeout: 8000 })
+    .then(() => true)
+    .catch(() => false);
+  if (endpointVisible) {
+    await endpointInput.fill(endpoint);
+  } else {
+    const advanced = page.getByText('Advanced');
+    if (await advanced.isVisible().catch(() => false)) {
+      await advanced.click();
+      await endpointInput.fill(endpoint);
+    }
   }
-  await endpointInput.fill(endpoint);
 }
 
 test.beforeEach(async ({ page, request }) => {
@@ -32,28 +47,36 @@ test.beforeEach(async ({ page, request }) => {
 
 test.describe(
   'Before Login',
+  // bare @smoke (no role tag): this describe performs no login, so it runs
+  // under every smoke role.
   { tag: ['@smoke', '@auth', '@functional'] },
   () => {
     test('should display the login form', async ({ page }) => {
       await expect(page.getByLabel('Email or Username')).toBeVisible();
-      await expect(page.getByLabel('Password')).toBeVisible();
+      // exact: true — 2FA-enabled servers also render a 'One-time password'
+      // input that a substring match strict-mode-collides with.
+      await expect(page.getByLabel('Password', { exact: true })).toBeVisible();
       await expect(page.getByLabel('Login', { exact: true })).toBeVisible();
     });
   },
 );
 
-test.describe('Login', { tag: ['@smoke', '@auth', '@functional'] }, () => {
-  test.beforeEach(async ({ page, request }) => {
-    await loginAsAdmin(page, request);
-  });
+test.describe(
+  'Login',
+  { tag: ['@smoke', '@smoke-admin', '@auth', '@functional'] },
+  () => {
+    test.beforeEach(async ({ page, request }) => {
+      await loginAsAdmin(page, request);
+    });
 
-  test('should redirect to the Summary', async ({ page }) => {
-    await expect(page).toHaveURL(/\/start/);
-    await expect(
-      page.getByTestId('webui-breadcrumb').getByText('Start'),
-    ).toBeVisible();
-  });
-});
+    test('should redirect to the Summary', async ({ page }) => {
+      await expect(page).toHaveURL(/\/start/);
+      await expect(
+        page.getByTestId('webui-breadcrumb').getByText('Start'),
+      ).toBeVisible();
+    });
+  },
+);
 
 /**
  * Regression tests for FR-2199: endpoint URL normalization.

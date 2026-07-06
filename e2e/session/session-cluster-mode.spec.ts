@@ -49,7 +49,7 @@ test.describe(
 
     test(
       'User sees warning when selecting Multi Node with cluster size 1',
-      { tag: ['@smoke', '@regression', '@requires-webui-v26.4'] },
+      { tag: ['@regression', '@requires-webui-v26.4'] },
       async ({ page }) => {
         // NOTE: This test requires ClusterModeFormItems.tsx (feat/FR-2381),
         // which was introduced in the main branch after v26.3.0.
@@ -166,7 +166,7 @@ test.describe(
 
     test(
       'User dismisses warning by switching from Multi Node to Single Node',
-      { tag: ['@smoke', '@regression', '@requires-webui-v26.4'] },
+      { tag: ['@regression', '@requires-webui-v26.4'] },
       async ({ page }) => {
         // NOTE: Requires ClusterModeFormItems.tsx (feat/FR-2381) — see note above.
         await navigateToClusterModeSection(page);
@@ -238,7 +238,7 @@ test.describe(
 
     test(
       'User sees no warning with Single Node mode and cluster size 1',
-      { tag: ['@smoke', '@regression'] },
+      { tag: ['@smoke', '@smoke-user', '@regression'] },
       async ({ page }) => {
         // Navigate to step 2: Environments & Resource Allocation
         await navigateToClusterModeSection(page);
