@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6330ce33fc5811401cfdb391eba62950>>
+ * @generated SignedSource<<c64121d94df0d2feb62183843a8ea2c1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,7 +11,8 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type AgentActionButtonsFragment$data = {
-  readonly " $fragmentSpreads": FragmentRefs<"AgentSettingModalFragment">;
+  readonly status: string | null | undefined;
+  readonly " $fragmentSpreads": FragmentRefs<"AgentLifeCycleControlModalFragment" | "AgentSettingModalFragment">;
   readonly " $fragmentType": "AgentActionButtonsFragment";
 };
 export type AgentActionButtonsFragment$key = {
@@ -26,15 +27,27 @@ const node: ReaderFragment = {
   "name": "AgentActionButtonsFragment",
   "selections": [
     {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "status",
+      "storageKey": null
+    },
+    {
       "args": null,
       "kind": "FragmentSpread",
       "name": "AgentSettingModalFragment"
+    },
+    {
+      "args": null,
+      "kind": "FragmentSpread",
+      "name": "AgentLifeCycleControlModalFragment"
     }
   ],
   "type": "AgentNode",
   "abstractKey": null
 };
 
-(node as any).hash = "4d1cf046e347690661f3066dc0343f87";
+(node as any).hash = "91839e2c961d0267044baf054740c45c";
 
 export default node;

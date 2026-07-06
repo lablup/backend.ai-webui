@@ -233,7 +233,15 @@
     "Status": "Статус",
     "StatusChanged": "Өөрчлөгдсөн",
     "Terminated": "Цуцлагдсан",
-    "Utilization": "Ашиглалт"
+    "Utilization": "Ашиглалт",
+    "WatcherActionFailed": "Агентыг удирдахад алдаа гарлаа.",
+    "WatcherActionWarning": "Энэ агент дээр ажиллаж буй сессүүд нөлөөлөлд өртөж болзошгүй.",
+    "WatcherRestart": "Агентыг дахин эхлүүлэх",
+    "WatcherRestartRequested": "Агентыг дахин эхлүүлэх хүсэлт илгээгдлээ.",
+    "WatcherStart": "Агентыг эхлүүлэх",
+    "WatcherStartRequested": "Агентыг эхлүүлэх хүсэлт илгээгдлээ.",
+    "WatcherStop": "Агентыг зогсоох",
+    "WatcherStopRequested": "Агентыг зогсоох хүсэлт илгээгдлээ."
   },
   "agentStats": {
     "AgentStats": "Ашиг олгогчийн статистик",

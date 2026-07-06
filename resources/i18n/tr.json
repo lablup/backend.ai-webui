@@ -233,7 +233,15 @@
     "Status": "Durum",
     "StatusChanged": "Değiştirildi",
     "Terminated": "Sonlandırılmış",
-    "Utilization": "Kullanım"
+    "Utilization": "Kullanım",
+    "WatcherActionFailed": "Ajan kontrol edilemedi.",
+    "WatcherActionWarning": "Bu ajanda çalışan oturumlar etkilenebilir.",
+    "WatcherRestart": "Ajanı Yeniden Başlat",
+    "WatcherRestartRequested": "Ajan yeniden başlatma isteği gönderildi.",
+    "WatcherStart": "Ajanı Başlat",
+    "WatcherStartRequested": "Ajan başlatma isteği gönderildi.",
+    "WatcherStop": "Ajanı Durdur",
+    "WatcherStopRequested": "Ajan durdurma isteği gönderildi."
   },
   "agentStats": {
     "AgentStats": "Temsilci İstatistikleri",

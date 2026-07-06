@@ -233,7 +233,15 @@
     "Status": "สถานะ",
     "StatusChanged": "เปลี่ยนแปลงแล้ว",
     "Terminated": "ยุติแล้ว",
-    "Utilization": "การใช้งาน"
+    "Utilization": "การใช้งาน",
+    "WatcherActionFailed": "ไม่สามารถควบคุมตัวแทนได้",
+    "WatcherActionWarning": "เซสชันที่กำลังทำงานบนตัวแทนนี้อาจได้รับผลกระทบ",
+    "WatcherRestart": "รีสตาร์ทตัวแทน",
+    "WatcherRestartRequested": "ส่งคำขอรีสตาร์ทตัวแทนแล้ว",
+    "WatcherStart": "เริ่มตัวแทน",
+    "WatcherStartRequested": "ส่งคำขอเริ่มตัวแทนแล้ว",
+    "WatcherStop": "หยุดตัวแทน",
+    "WatcherStopRequested": "ส่งคำขอหยุดตัวแทนแล้ว"
   },
   "agentStats": {
     "AgentStats": "สถิติตัวแทน",

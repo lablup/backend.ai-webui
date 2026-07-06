@@ -233,7 +233,15 @@
     "Status": "Status",
     "StatusChanged": "Diubah",
     "Terminated": "Dihentikan",
-    "Utilization": "Pemanfaatan"
+    "Utilization": "Pemanfaatan",
+    "WatcherActionFailed": "Gagal mengontrol agen.",
+    "WatcherActionWarning": "Sesi yang berjalan pada agen ini mungkin terpengaruh.",
+    "WatcherRestart": "Mulai Ulang Agen",
+    "WatcherRestartRequested": "Permintaan mulai ulang agen telah dikirim.",
+    "WatcherStart": "Mulai Agen",
+    "WatcherStartRequested": "Permintaan mulai agen telah dikirim.",
+    "WatcherStop": "Hentikan Agen",
+    "WatcherStopRequested": "Permintaan hentikan agen telah dikirim."
   },
   "agentStats": {
     "AgentStats": "Statistik Agen",

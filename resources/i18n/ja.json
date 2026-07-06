@@ -233,7 +233,15 @@
     "Status": "状態",
     "StatusChanged": "変更済み",
     "Terminated": "終了しました",
-    "Utilization": "使用量"
+    "Utilization": "使用量",
+    "WatcherActionFailed": "エージェントの制御に失敗しました。",
+    "WatcherActionWarning": "このエージェントで実行中のセッションに影響する場合があります。",
+    "WatcherRestart": "エージェントを再起動",
+    "WatcherRestartRequested": "エージェントの再起動がリクエストされました。",
+    "WatcherStart": "エージェントを起動",
+    "WatcherStartRequested": "エージェントの起動がリクエストされました。",
+    "WatcherStop": "エージェントを停止",
+    "WatcherStopRequested": "エージェントの停止がリクエストされました。"
   },
   "agentStats": {
     "AgentStats": "エージェントの統計",

@@ -215,187 +215,192 @@ const AgentResources: React.FC<AgentResourcesProps> = ({ agentNodeFrgmt }) => {
             </BAIFlex>
           }
         >
-          <Row gutter={[16, 16]}>
-            <Col xs={24} sm={12} key={'cpu_util'}>
-              <SimpleProgressWithLabel
-                key={'cpu_util'}
-                size="default"
-                title={mergedResourceSlots?.cpu?.human_readable_name}
-                percent={(
-                  Math.min(
-                    _.toFinite(parsedLiveStat?.node?.cpu_util?.pct) /
-                      100 /
-                      (_.keys(parsedLiveStat?.devices?.cpu_util).length || 1),
-                    1,
-                  ) * 100
-                ).toString()}
-                description={`${toFixedFloorWithoutTrailingZeros(
-                  Math.min(
-                    _.toFinite(parsedLiveStat?.node?.cpu_util?.pct) /
-                      100 /
-                      (_.keys(parsedLiveStat?.devices?.cpu_util).length || 1),
-                    1,
-                  ) * 100,
-                  2,
-                )}%`}
-              />
-            </Col>
-            <Col xs={24} sm={12} key={'mem'}>
-              <SimpleProgressWithLabel
-                key={'mem'}
-                size="default"
-                title={mergedResourceSlots?.mem?.human_readable_name}
-                percent={toFixedFloorWithoutTrailingZeros(
-                  (parsedLiveStat?.node?.mem?.current /
-                    (parsedAvailableSlots?.mem ||
-                      parsedLiveStat?.node?.mem?.capacity)) *
-                    100 || 0,
-                  2,
-                )}
-                description={`${toFixedFloorWithoutTrailingZeros(
-                  convertToBinaryUnit(
-                    parsedLiveStat?.node?.mem?.current || '0',
-                    convertUnitValue(
-                      _.toString(parsedLiveStat?.node?.mem.capacity),
-                      'auto',
-                    )?.unit || 'g',
-                  )?.number || 0,
-                  2,
-                )} / ${toFixedFloorWithoutTrailingZeros(
-                  convertToBinaryUnit(
-                    parsedAvailableSlots?.mem ||
-                      parsedLiveStat?.node?.mem?.capacity ||
-                      '0',
-                    convertUnitValue(
-                      _.toString(
-                        parsedAvailableSlots?.mem ||
-                          parsedLiveStat?.node?.mem.capacity,
-                      ),
-                      'auto',
-                    )?.unit || 'g',
-                  )?.number || 0,
-                  2,
-                )}${
-                  convertToBinaryUnit(
-                    parsedLiveStat?.node?.mem?.capacity || '0',
-                    convertUnitValue(
-                      _.toString(parsedLiveStat?.node?.mem.capacity),
-                      'auto',
-                    )?.unit || 'g',
-                  )?.displayUnit
-                }  (${toFixedFloorWithoutTrailingZeros(
-                  parsedLiveStat?.node?.mem?.pct || 0,
-                  2,
-                )}%)`}
-              />
-            </Col>
-            {_.map(_.keys(parsedLiveStat?.node), (statKey) => {
-              if (['cpu_util', 'mem', 'disk'].includes(statKey)) {
-                return null;
-              }
-              if (_.includes(statKey, '_util')) {
-                const deviceName =
-                  _.split(statKey, '_').slice(0, -1).join('-') + '.device';
-                const current = _.toFinite(
-                  parsedLiveStat?.node?.[statKey]?.current,
-                );
-                const capacity =
-                  _.toFinite(parsedLiveStat?.node?.[statKey]?.capacity) || 100;
-                const percent = (current / capacity) * 100 || 0;
-                return (
-                  <Col xs={24} sm={12} key={statKey}>
-                    <SimpleProgressWithLabel
-                      size="default"
-                      title={`${mergedResourceSlots?.[deviceName]?.human_readable_name}(util)`}
-                      percent={toFixedFloorWithoutTrailingZeros(percent, 1)}
-                      description={`${toFixedFloorWithoutTrailingZeros(percent, 1)}%`}
-                    />
-                  </Col>
-                );
-              }
-              if (_.includes(statKey, '_mem')) {
-                const deviceName =
-                  _.split(statKey, '_').slice(0, -1).join('-') + '.device';
-                const current = _.toFinite(
-                  parsedLiveStat?.node?.[statKey]?.current,
-                );
-                const capacity = _.toFinite(
-                  parsedLiveStat?.node?.[statKey]?.capacity,
-                );
-                const baseUnit =
-                  convertUnitValue(_.toString(capacity), 'auto')?.unit || 'g';
-                const percent = (current / capacity) * 100 || 0;
-                return (
-                  <Col xs={24} sm={12} key={statKey}>
-                    <SimpleProgressWithLabel
-                      size="default"
-                      title={`${mergedResourceSlots?.[deviceName]?.human_readable_name}(mem)`}
-                      percent={toFixedFloorWithoutTrailingZeros(percent, 1)}
-                      description={`${
-                        convertToBinaryUnit(_.toString(current), baseUnit)
-                          ?.numberFixed
-                      } / ${
-                        convertToBinaryUnit(_.toString(capacity), baseUnit)
-                          ?.displayValue
-                      }`}
-                    />
-                  </Col>
-                );
-              }
-              if (_.includes(statKey, '_power')) {
-                const deviceName =
-                  _.split(statKey, '_').slice(0, -1).join('-') + '.device';
-                const humanReadableName =
-                  mergedResourceSlots?.[deviceName]?.human_readable_name;
+          {_.isEmpty(parsedLiveStat?.node) ? (
+            <BAIText type="secondary">-</BAIText>
+          ) : (
+            <Row gutter={[16, 16]}>
+              <Col xs={24} sm={12} key={'cpu_util'}>
+                <SimpleProgressWithLabel
+                  key={'cpu_util'}
+                  size="default"
+                  title={mergedResourceSlots?.cpu?.human_readable_name}
+                  percent={(
+                    Math.min(
+                      _.toFinite(parsedLiveStat?.node?.cpu_util?.pct) /
+                        100 /
+                        (_.keys(parsedLiveStat?.devices?.cpu_util).length || 1),
+                      1,
+                    ) * 100
+                  ).toString()}
+                  description={`${toFixedFloorWithoutTrailingZeros(
+                    Math.min(
+                      _.toFinite(parsedLiveStat?.node?.cpu_util?.pct) /
+                        100 /
+                        (_.keys(parsedLiveStat?.devices?.cpu_util).length || 1),
+                      1,
+                    ) * 100,
+                    2,
+                  )}%`}
+                />
+              </Col>
+              <Col xs={24} sm={12} key={'mem'}>
+                <SimpleProgressWithLabel
+                  key={'mem'}
+                  size="default"
+                  title={mergedResourceSlots?.mem?.human_readable_name}
+                  percent={toFixedFloorWithoutTrailingZeros(
+                    (parsedLiveStat?.node?.mem?.current /
+                      (parsedAvailableSlots?.mem ||
+                        parsedLiveStat?.node?.mem?.capacity)) *
+                      100 || 0,
+                    2,
+                  )}
+                  description={`${toFixedFloorWithoutTrailingZeros(
+                    convertToBinaryUnit(
+                      parsedLiveStat?.node?.mem?.current || '0',
+                      convertUnitValue(
+                        _.toString(parsedLiveStat?.node?.mem?.capacity),
+                        'auto',
+                      )?.unit || 'g',
+                    )?.number || 0,
+                    2,
+                  )} / ${toFixedFloorWithoutTrailingZeros(
+                    convertToBinaryUnit(
+                      parsedAvailableSlots?.mem ||
+                        parsedLiveStat?.node?.mem?.capacity ||
+                        '0',
+                      convertUnitValue(
+                        _.toString(
+                          parsedAvailableSlots?.mem ||
+                            parsedLiveStat?.node?.mem?.capacity,
+                        ),
+                        'auto',
+                      )?.unit || 'g',
+                    )?.number || 0,
+                    2,
+                  )}${
+                    convertToBinaryUnit(
+                      parsedLiveStat?.node?.mem?.capacity || '0',
+                      convertUnitValue(
+                        _.toString(parsedLiveStat?.node?.mem?.capacity),
+                        'auto',
+                      )?.unit || 'g',
+                    )?.displayUnit
+                  }  (${toFixedFloorWithoutTrailingZeros(
+                    parsedLiveStat?.node?.mem?.pct || 0,
+                    2,
+                  )}%)`}
+                />
+              </Col>
+              {_.map(_.keys(parsedLiveStat?.node), (statKey) => {
+                if (['cpu_util', 'mem', 'disk'].includes(statKey)) {
+                  return null;
+                }
+                if (_.includes(statKey, '_util')) {
+                  const deviceName =
+                    _.split(statKey, '_').slice(0, -1).join('-') + '.device';
+                  const current = _.toFinite(
+                    parsedLiveStat?.node?.[statKey]?.current,
+                  );
+                  const capacity =
+                    _.toFinite(parsedLiveStat?.node?.[statKey]?.capacity) ||
+                    100;
+                  const percent = (current / capacity) * 100 || 0;
+                  return (
+                    <Col xs={24} sm={12} key={statKey}>
+                      <SimpleProgressWithLabel
+                        size="default"
+                        title={`${mergedResourceSlots?.[deviceName]?.human_readable_name}(util)`}
+                        percent={toFixedFloorWithoutTrailingZeros(percent, 1)}
+                        description={`${toFixedFloorWithoutTrailingZeros(percent, 1)}%`}
+                      />
+                    </Col>
+                  );
+                }
+                if (_.includes(statKey, '_mem')) {
+                  const deviceName =
+                    _.split(statKey, '_').slice(0, -1).join('-') + '.device';
+                  const current = _.toFinite(
+                    parsedLiveStat?.node?.[statKey]?.current,
+                  );
+                  const capacity = _.toFinite(
+                    parsedLiveStat?.node?.[statKey]?.capacity,
+                  );
+                  const baseUnit =
+                    convertUnitValue(_.toString(capacity), 'auto')?.unit || 'g';
+                  const percent = (current / capacity) * 100 || 0;
+                  return (
+                    <Col xs={24} sm={12} key={statKey}>
+                      <SimpleProgressWithLabel
+                        size="default"
+                        title={`${mergedResourceSlots?.[deviceName]?.human_readable_name}(mem)`}
+                        percent={toFixedFloorWithoutTrailingZeros(percent, 1)}
+                        description={`${
+                          convertToBinaryUnit(_.toString(current), baseUnit)
+                            ?.numberFixed
+                        } / ${
+                          convertToBinaryUnit(_.toString(capacity), baseUnit)
+                            ?.displayValue
+                        }`}
+                      />
+                    </Col>
+                  );
+                }
+                if (_.includes(statKey, '_power')) {
+                  const deviceName =
+                    _.split(statKey, '_').slice(0, -1).join('-') + '.device';
+                  const humanReadableName =
+                    mergedResourceSlots?.[deviceName]?.human_readable_name;
+                  return (
+                    <Col xs={24} sm={12} key={statKey}>
+                      <BAIFlex justify="between" gap="xxs">
+                        <BAIText>{`${humanReadableName}(power)`}</BAIText>
+                        <BAIText>{`${toFixedFloorWithoutTrailingZeros(parsedLiveStat?.node?.[statKey]?.current, 2)} ${parsedLiveStat?.node?.[statKey]?.unit_hint ?? ''}`}</BAIText>
+                      </BAIFlex>
+                    </Col>
+                  );
+                }
+                if (_.includes(statKey, '_temperature')) {
+                  const deviceName =
+                    _.split(statKey, '_').slice(0, -1).join('-') + '.device';
+                  const humanReadableName =
+                    mergedResourceSlots?.[deviceName]?.human_readable_name;
+                  return (
+                    <Col xs={24} sm={12} key={statKey}>
+                      <BAIFlex justify="between" gap="xxs">
+                        <BAIText>{`${humanReadableName}(temp)`}</BAIText>
+                        <BAIText>{`${toFixedFloorWithoutTrailingZeros(parsedLiveStat?.node?.[statKey]?.current, 2)} °C`}</BAIText>
+                      </BAIFlex>
+                    </Col>
+                  );
+                }
+                if (['net_rx', 'net_tx'].includes(statKey)) {
+                  const convertedValue = convertToDecimalUnit(
+                    parsedLiveStat?.node?.[statKey]?.current,
+                    'auto',
+                  );
+                  return (
+                    <Col xs={24} sm={12} key={statKey}>
+                      <BAIFlex justify="between" gap="xxs">
+                        <BAIText>
+                          {statKey === 'net_rx' ? 'Net Rx' : 'Net Tx'}
+                        </BAIText>
+                        <BAIText>{`${convertedValue?.numberFixed ?? 0} ${convertedValue?.unit.toUpperCase() ?? ''}bps`}</BAIText>
+                      </BAIFlex>
+                    </Col>
+                  );
+                }
                 return (
                   <Col xs={24} sm={12} key={statKey}>
                     <BAIFlex justify="between" gap="xxs">
-                      <BAIText>{`${humanReadableName}(power)`}</BAIText>
-                      <BAIText>{`${toFixedFloorWithoutTrailingZeros(parsedLiveStat?.node?.[statKey]?.current, 2)} ${parsedLiveStat?.node?.[statKey]?.unit_hint ?? ''}`}</BAIText>
+                      <BAIText>{statKey}</BAIText>
+                      <BAIText>{`${toFixedFloorWithoutTrailingZeros(parsedLiveStat?.node?.[statKey]?.current ?? 0, 2)}${parsedLiveStat?.node?.[statKey]?.unit_hint ? ` ${parsedLiveStat?.node?.[statKey]?.unit_hint}` : ''}`}</BAIText>
                     </BAIFlex>
                   </Col>
                 );
-              }
-              if (_.includes(statKey, '_temperature')) {
-                const deviceName =
-                  _.split(statKey, '_').slice(0, -1).join('-') + '.device';
-                const humanReadableName =
-                  mergedResourceSlots?.[deviceName]?.human_readable_name;
-                return (
-                  <Col xs={24} sm={12} key={statKey}>
-                    <BAIFlex justify="between" gap="xxs">
-                      <BAIText>{`${humanReadableName}(temp)`}</BAIText>
-                      <BAIText>{`${toFixedFloorWithoutTrailingZeros(parsedLiveStat?.node?.[statKey]?.current, 2)} °C`}</BAIText>
-                    </BAIFlex>
-                  </Col>
-                );
-              }
-              if (['net_rx', 'net_tx'].includes(statKey)) {
-                const convertedValue = convertToDecimalUnit(
-                  parsedLiveStat?.node?.[statKey]?.current,
-                  'auto',
-                );
-                return (
-                  <Col xs={24} sm={12} key={statKey}>
-                    <BAIFlex justify="between" gap="xxs">
-                      <BAIText>
-                        {statKey === 'net_rx' ? 'Net Rx' : 'Net Tx'}
-                      </BAIText>
-                      <BAIText>{`${convertedValue?.numberFixed ?? 0} ${convertedValue?.unit.toUpperCase() ?? ''}bps`}</BAIText>
-                    </BAIFlex>
-                  </Col>
-                );
-              }
-              return (
-                <Col xs={24} sm={12} key={statKey}>
-                  <BAIFlex justify="between" gap="xxs">
-                    <BAIText>{statKey}</BAIText>
-                    <BAIText>{`${toFixedFloorWithoutTrailingZeros(parsedLiveStat?.node?.[statKey]?.current ?? 0, 2)}${parsedLiveStat?.node?.[statKey]?.unit_hint ? ` ${parsedLiveStat?.node?.[statKey]?.unit_hint}` : ''}`}</BAIText>
-                  </BAIFlex>
-                </Col>
-              );
-            })}
-          </Row>
+              })}
+            </Row>
+          )}
         </Descriptions.Item>
       </Descriptions>
       <AgentDetailModal
