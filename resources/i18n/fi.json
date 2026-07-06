@@ -2086,6 +2086,7 @@
     "RoleMember": "Jäsen"
   },
   "projectSelect": {
+    "AskAdminForProjectAccess": "Pyydä järjestelmänvalvojaa myöntämään sinulle pääsy projektiin.",
     "GoToProject": "Siirry projektiin {{project}}",
     "NoAccessibleProjects": "Ei saatavilla olevia projekteja.",
     "ProjectAdminBadge": "Projektin ylläpitäjä",

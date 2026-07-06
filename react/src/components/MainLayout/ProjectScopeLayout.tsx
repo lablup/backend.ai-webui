@@ -8,11 +8,12 @@ import {
   useCurrentProjectValue,
   useSetCurrentProject,
 } from '../../hooks/useCurrentProject';
-import { Button, Result } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { getRouteScopeAndKey } from '../../hooks/useRouteScope';
+import ProjectScopeErrorState from './ProjectScopeErrorState';
+import { Button } from 'antd';
 import React, { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Outlet, useParams } from 'react-router-dom';
+import { Outlet, useLocation, useParams } from 'react-router-dom';
 
 interface BackendAIClientGroups {
   groups?: string[];
@@ -51,6 +52,7 @@ const ProjectScopeLayout: React.FC = () => {
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
   const { projectName: rawProjectName } = useParams<{ projectName: string }>();
+  const location = useLocation();
   const currentProject = useCurrentProjectValue();
   const setCurrentProject = useSetCurrentProject();
   const webuiNavigate = useWebUINavigate();
@@ -85,19 +87,7 @@ const ProjectScopeLayout: React.FC = () => {
     // No groups at all: the user belongs to no project. Render a terminal
     // "no accessible projects" status.
     if (groups.length === 0) {
-      return (
-        <BAIFlex
-          direction="column"
-          align="center"
-          justify="center"
-          style={{ width: '100%', height: '100%' }}
-        >
-          <Result
-            status="warning"
-            title={t('projectSelect.NoAccessibleProjects')}
-          />
-        </BAIFlex>
-      );
+      return <ProjectScopeErrorState variant="no-projects" />;
     }
 
     // Invalid / inaccessible project name while the user DOES have other
@@ -111,30 +101,21 @@ const ProjectScopeLayout: React.FC = () => {
         ? currentProject.name
         : groups[0];
     return (
-      <BAIFlex
-        direction="column"
-        align="center"
-        justify="center"
-        style={{ width: '100%', height: '100%' }}
-      >
-        <Result
-          status="404"
-          title={t('projectSelect.ProjectNotFoundOrNoAccess', {
-            project: projectName,
-          })}
-          subTitle={t('projectSelect.SwitchToAccessibleProject')}
-          extra={
-            <Button
-              type="primary"
-              onClick={() =>
-                webuiNavigate(buildPath('project', 'session', ownProject))
-              }
-            >
-              {t('projectSelect.GoToProject', { project: ownProject })}
-            </Button>
-          }
-        />
-      </BAIFlex>
+      <ProjectScopeErrorState
+        variant="not-found"
+        projectName={projectName}
+        featureKey={getRouteScopeAndKey(location.pathname).featureKey}
+        extra={
+          <Button
+            type="primary"
+            onClick={() =>
+              webuiNavigate(buildPath('project', 'session', ownProject))
+            }
+          >
+            {t('projectSelect.GoToProject', { project: ownProject })}
+          </Button>
+        }
+      />
     );
   }
 

@@ -2090,6 +2090,7 @@
     "RoleMember": "成員"
   },
   "projectSelect": {
+    "AskAdminForProjectAccess": "請聯絡管理員為您授予專案存取權限。",
     "GoToProject": "前往 {{project}}",
     "NoAccessibleProjects": "沒有可存取的專案。",
     "ProjectAdminBadge": "專案管理員",

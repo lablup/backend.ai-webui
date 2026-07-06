@@ -2089,6 +2089,7 @@
     "RoleMember": "Anggota"
   },
   "projectSelect": {
+    "AskAdminForProjectAccess": "Minta administrator Anda untuk memberikan akses ke sebuah proyek.",
     "GoToProject": "Buka {{project}}",
     "NoAccessibleProjects": "Tidak ada proyek yang dapat diakses.",
     "ProjectAdminBadge": "Admin Proyek",

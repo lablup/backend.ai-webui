@@ -2086,6 +2086,7 @@
     "RoleMember": "Membro"
   },
   "projectSelect": {
+    "AskAdminForProjectAccess": "Chiedi al tuo amministratore di concederti l'accesso a un progetto.",
     "GoToProject": "Vai al progetto {{project}}",
     "NoAccessibleProjects": "Nessun progetto accessibile.",
     "ProjectAdminBadge": "Amministratore del progetto",

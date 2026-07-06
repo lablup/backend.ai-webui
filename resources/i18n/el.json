@@ -2086,6 +2086,7 @@
     "RoleMember": "Μέλος"
   },
   "projectSelect": {
+    "AskAdminForProjectAccess": "Ζητήστε από τον διαχειριστή σας να σας παραχωρήσει πρόσβαση σε ένα έργο.",
     "GoToProject": "Μετάβαση στο {{project}}",
     "NoAccessibleProjects": "Δεν υπάρχουν προσβάσιμα έργα.",
     "ProjectAdminBadge": "Διαχειριστής έργου",

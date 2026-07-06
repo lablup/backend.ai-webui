@@ -2088,6 +2088,7 @@
     "RoleMember": "成员"
   },
   "projectSelect": {
+    "AskAdminForProjectAccess": "请联系管理员为您授予项目访问权限。",
     "GoToProject": "前往 {{project}}",
     "NoAccessibleProjects": "没有可访问的项目。",
     "ProjectAdminBadge": "项目管理员",

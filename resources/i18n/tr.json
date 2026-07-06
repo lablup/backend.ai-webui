@@ -2086,6 +2086,7 @@
     "RoleMember": "Üye"
   },
   "projectSelect": {
+    "AskAdminForProjectAccess": "Yöneticinizden bir projeye erişim izni vermesini isteyin.",
     "GoToProject": "{{project}} projesine git",
     "NoAccessibleProjects": "Erişilebilir proje bulunmuyor.",
     "ProjectAdminBadge": "Proje Yöneticisi",

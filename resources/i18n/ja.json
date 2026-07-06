@@ -2091,6 +2091,7 @@
     "RoleMember": "メンバー"
   },
   "projectSelect": {
+    "AskAdminForProjectAccess": "管理者にプロジェクトへのアクセス権を依頼してください。",
     "GoToProject": "{{project}} へ移動",
     "NoAccessibleProjects": "アクセス可能なプロジェクトがありません。",
     "ProjectAdminBadge": "プロジェクト管理者",
