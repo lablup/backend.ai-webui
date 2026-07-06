@@ -28,7 +28,7 @@ Always consult these before writing or editing documentation:
 
 - Step-by-step procedures use numbered lists
 - Form fields use bullet lists with bold field names: `- **Field Name**: Description`
-- Notes/warnings are indented blocks (3 spaces) with no prefix markers
+- Notes/warnings use admonitions (`:::note`, `:::tip`, `:::warning`, `:::danger`, etc.) — 3-space indented blocks are a legacy convention; do not use them for new content
 - Images: `![](images/filename.png)` placed after introductory text
 - Cross-references: `[Display Text](#anchor-id)` — never use `<>` in link URLs
 - Inline code for UI elements, paths, config values: backticks
@@ -125,6 +125,7 @@ When converting from reST to Markdown, follow these general steps:
  
 ### Terminology
 
+- **Single source of truth**: `packages/backend.ai-webui-docs/terminology.json`. The tables in `TERMINOLOGY.md` are generated from it — to add or change a term, edit `terminology.json` and run `pnpm run build:terminology`; never hand-edit between the `<!-- terminology:auto:... -->` markers
 - Use "compute session" (not "container" for runtime)
 - Use "storage folder" / "vfolder" (not "data folder")
 - Use "resource group" (not "scaling group")
@@ -138,7 +139,7 @@ When converting from reST to Markdown, follow these general steps:
 - Always write English (`en/`) first
 - Keep all 4 language versions structurally identical
 - Verify UI labels against `resources/i18n/{lang}.json`
-- Images are shared across languages (same filenames)
+- Images share the same filenames across languages, but each language directory must contain a **separate capture taken in that language's UI locale** (see `SCREENSHOT-GUIDELINES.md`); copying one capture across languages is allowed only for images with no UI text (diagrams, CLI output)
 - New pages require navigation entries in `book.config.yaml` for all languages
 
 #### Korean Language Rules

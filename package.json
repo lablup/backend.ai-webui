@@ -122,6 +122,9 @@
     "resources/i18n/*.json": [
       "eslint --max-warnings=0 --cache",
       "prettier --write"
+    ],
+    "packages/backend.ai-webui-docs/@(terminology.json|TERMINOLOGY.md)": [
+      "node packages/backend.ai-webui-docs/scripts/generate-terminology.mjs --check"
     ]
   },
   "husky": {

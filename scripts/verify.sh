@@ -86,11 +86,21 @@ check_terminology_drift() {
   node scripts/check-terminology-i18n.mjs --warn
 }
 
+check_terminology_md_sync() {
+  # TERMINOLOGY.md's term tables are generated from terminology.json (the
+  # single source of truth) by generate-terminology.mjs. Blocking: if either
+  # file was edited without regenerating, the human-readable mirror silently
+  # drifts from what docs-lint and the review agents actually enforce.
+  # Fix with `pnpm run build:terminology` in packages/backend.ai-webui-docs.
+  node packages/backend.ai-webui-docs/scripts/generate-terminology.mjs --check
+}
+
 run_check "Relay" check_relay_drift
 run_check "Lint" pnpm -r --stream lint
 run_check "Format" pnpm run format
 run_check "TypeScript" pnpm --prefix ./react exec tsc --noEmit
 run_check "Vite warmup paths" check_warmup_paths
+run_check "Terminology sync" check_terminology_md_sync
 
 # Warn-only terminology report. Guarded with `|| true` so `set -e` + the
 # checker's exit code can never abort verify.sh or mark the build failed.

@@ -12,7 +12,7 @@ You are an expert technical documentation planner specializing in planning user 
 
 Before creating a plan, read these reference files for conventions and terminology:
 
-- `packages/backend.ai-webui-docs/TERMINOLOGY.md` - Standardized Backend.AI terminology across all languages
+- `packages/backend.ai-webui-docs/TERMINOLOGY.md` - Standardized Backend.AI terminology across all languages (generated from `terminology.json`, the machine-readable single source of truth — if the plan introduces a new term, include a step to register it in `terminology.json` + `pnpm run build:terminology`)
 - `packages/backend.ai-webui-docs/DOCUMENTATION-STYLE-GUIDE.md` - Formatting, structure, and writing conventions
 - `packages/backend.ai-webui-docs/TRANSLATION-GUIDE.md` - Language-specific translation rules
 - `packages/backend.ai-webui-docs/SCREENSHOT-GUIDELINES.md` - Screenshot naming and capture standards
@@ -216,9 +216,9 @@ See `packages/backend.ai-webui-docs/DOCUMENTATION-STYLE-GUIDE.md` for the full s
 - H3 (`###`) for subsections
 - Bullet lists (`-`) for features/options, `*` for nested sub-items
 - Numbered lists for step-by-step procedures
-- Indented text (3 spaces) for notes/warnings, no prefix markers
+- Admonitions (`:::note`, `:::warning`, etc.) for notes/warnings — 3-space indented blocks are legacy
 - `![](images/filename.png)` for images, placed after introductory text
-- Cross-references: `[link text <ref>](#section <ref>)`
+- Cross-references: `[link text](#anchor-id)` — never use angle brackets `<>` in link URLs (they break `marked` link parsing)
 - Professional, instructional tone, second person, active voice
 - See `TERMINOLOGY.md` for standardized terminology
 

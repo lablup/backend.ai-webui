@@ -54,7 +54,7 @@ Each language directory mirrors the same structure:
 The full agent set:
 
 - **`docs-lead`** (skill, main context) — Triage, prioritization, decision gates, worker orchestration, accumulating state in `.agent-output/docs-state.md`. The single entry point. Adopts Karpathy's LLM Wiki Ingest + Lint operations (Query is intentionally not adopted — the manual stays human-curated).
-- **`docs-lint`** (subagent, diagnosis-only) — Health diagnosis across five checks: terminology drift (parses `TERMINOLOGY.md` "Terms to Avoid"), translation parity gap, stale screenshot candidates, broken cross-ref / image link, PR coverage gap. Writes `.agent-output/docs-lint-report.md` with a 10-run rolling history. **Never modifies docs.**
+- **`docs-lint`** (subagent, diagnosis-only) — Health diagnosis across five checks: terminology drift (reads the `avoid[]` array in `terminology.json`, the machine-readable single source of truth — not `TERMINOLOGY.md` prose), translation parity gap, stale screenshot candidates, broken cross-ref / image link, PR coverage gap. Writes `.agent-output/docs-lint-report.md` with a 10-run rolling history. **Never modifies docs.**
 - **`docs-update-planner`** (subagent) — Analyzes PR changes or feature descriptions to create a documentation update plan (`.agent-output/docs-update-plan-{topic}.md`)
 - **`docs-update-writer`** (subagent) — Writes documentation content across all 4 languages following the plan
 - **`docs-update-reviewer`** (subagent) — Reviews for accuracy, consistency, style, and translation quality; auto-fixes issues (`.agent-output/docs-review-report-{topic}.md`)
@@ -86,6 +86,7 @@ Read these before writing or editing documentation:
 
 - Always write English (`en/`) first, then translate to other languages
 - Use terminology from `TERMINOLOGY.md` consistently
+- **Terminology changes go to `terminology.json` first.** It is the single machine-readable source of truth (agents and checkers parse it). To add or change a term or an avoid-rule: edit `terminology.json`, then run `pnpm run build:terminology` to regenerate the term tables in `TERMINOLOGY.md`. Never hand-edit the regions between the `<!-- terminology:auto:... -->` markers — `scripts/verify.sh` ("Terminology sync") and the pre-commit hook fail on drift. Prose outside the markers is human-curated and safe to edit.
 - Follow `DOCUMENTATION-STYLE-GUIDE.md` for all formatting
 - Check `resources/i18n/{lang}.json` in the main project for actual UI label translations
 - Images are shared naming across languages: `![](images/filename.png)`

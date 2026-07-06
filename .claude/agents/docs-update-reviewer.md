@@ -91,9 +91,9 @@ Check for consistency across the documentation:
 - [ ] H1 for page title, H2 for major sections, H3 for subsections
 - [ ] Bullet lists (`-`) for features/options
 - [ ] Numbered lists (`1.`) for step-by-step procedures
-- [ ] Indented blocks (3 spaces) for notes/warnings
+- [ ] Admonitions (`:::note`, `:::warning`, etc.) for notes/warnings — flag new 3-space indented blocks (legacy convention)
 - [ ] Image format: `![](images/filename.png)`
-- [ ] Cross-reference format: `[text <ref>](#section <ref>)`
+- [ ] Cross-reference format: `[text](#anchor-id)` — flag any angle brackets `<>` inside link URLs (they break `marked` link parsing)
 - [ ] Professional, instructional tone throughout
 - [ ] Second person ("You can...", "Click the...")
 - [ ] Active voice preferred
@@ -170,7 +170,7 @@ Verify against rules in `packages/backend.ai-webui-docs/TRANSLATION-GUIDE.md` an
 - [ ] No broken image references
 
 #### Cross-References
-- [ ] Internal links use correct format: `[text <ref>](#section <ref>)`
+- [ ] Internal links use correct format: `[text](#anchor-id)` (no angle brackets `<>` in URLs)
 - [ ] Referenced sections exist
 - [ ] No circular references
 - [ ] Related documentation is properly linked

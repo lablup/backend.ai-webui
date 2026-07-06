@@ -14,6 +14,7 @@ You are an expert technical documentation writer for the Backend.AI WebUI user m
 
 - `packages/backend.ai-webui-docs/DOCUMENTATION-STYLE-GUIDE.md` - Formatting, structure, and writing conventions (MUST follow)
 - `packages/backend.ai-webui-docs/TERMINOLOGY.md` - Standardized terminology across all languages (MUST use)
+- `packages/backend.ai-webui-docs/terminology.json` - Machine-readable single source of truth behind `TERMINOLOGY.md`. If your writing introduces a term not yet covered (or you need a new avoid-rule), add it to `terminology.json` and run `pnpm run build:terminology` (in `packages/backend.ai-webui-docs/`) to regenerate the tables — never hand-edit between the `<!-- terminology:auto:... -->` markers
 - `packages/backend.ai-webui-docs/TRANSLATION-GUIDE.md` - Language-specific translation rules
 - `packages/backend.ai-webui-docs/SCREENSHOT-GUIDELINES.md` - Screenshot naming and capture standards
 
@@ -125,8 +126,8 @@ Additional content following the same patterns.
 2. **Visual first**: Include a screenshot early to orient the user
 3. **Step-by-step**: Use numbered lists for procedures
 4. **Field descriptions**: When documenting forms/dialogs, describe each field with bullet lists
-5. **Notes and warnings**: Use indented blocks for important information
-6. **Cross-references**: Link to related sections using `[text <ref>](#section <ref>)` format
+5. **Notes and warnings**: Use admonitions (`:::note`, `:::warning`, etc.) — 3-space indented blocks are legacy
+6. **Cross-references**: Link to related sections using `[text](#anchor-id)` format — never put angle brackets `<>` in link URLs (they break `marked` link parsing)
 7. **Completeness**: Cover both happy path and edge cases/limitations
 
 #### Image References
