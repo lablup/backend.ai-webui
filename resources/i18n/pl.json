@@ -317,10 +317,12 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "AuditLog": "Dziennik audytu",
     "Operation": "Operacja",
     "Status": "Status",
     "Time": "Czas",
-    "TriggeredBy": "Wywołane przez"
+    "TriggeredBy": "Wywołane przez",
+    "TriggeredByFilterPlaceholder": "Szukaj według ID"
   },
   "autoScalingRule": {
     "AddAutoScalingRule": "Dodaj regułę automatycznego skalowania",
@@ -1519,6 +1521,7 @@
     "Filename": "Nazwa pliku",
     "FolderNotFoundOrNoAccess": "Folder nie został znaleziony ani nie ma dostępu",
     "InputTooShort": "Wejście zbyt krótkie",
+    "Metadata": "Metadane",
     "NoExplorerSupportForUnmanagedFolder": "Foldery niezarządzane nie obsługują eksploratora plików.",
     "NoPermissions": "Brak uprawnień do dostępu do tego folderu",
     "ProcessingUpload": "Twój plik jest przesyłany. \nProszę poczekaj.",
@@ -1958,6 +1961,7 @@
     "HealthCheck": "URL kontroli zdrowia",
     "HealthCheckTooltip": "Ścieżka URL używana do sprawdzenia, czy usługa działa (np. /health).",
     "Image": "Obraz",
+    "ImageRequired": "Obraz jest wymagany.",
     "InitialDelay": "Okres karencji przy uruchomieniu",
     "InitialDelayTooltip": "Okres karencji (w sekundach) po uruchomieniu usługi, w którym nieudane kontrole zdrowia są ignorowane; replika staje się aktywna, gdy kontrola zdrowia po raz pierwszy zakończy się sukcesem.",
     "Interval": "Interwał (s)",

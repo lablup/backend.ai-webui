@@ -317,10 +317,12 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "AuditLog": "Journal d'audit",
     "Operation": "Opération",
     "Status": "Statut",
     "Time": "Heure",
-    "TriggeredBy": "Déclenché par"
+    "TriggeredBy": "Déclenché par",
+    "TriggeredByFilterPlaceholder": "Rechercher par ID"
   },
   "autoScalingRule": {
     "AddAutoScalingRule": "Ajouter la règle de mise à l'échelle automatique",
@@ -1519,6 +1521,7 @@
     "Filename": "Nom de fichier",
     "FolderNotFoundOrNoAccess": "Dossier non trouvé ou accès refusé",
     "InputTooShort": "Entrée Trop Courte",
+    "Metadata": "Métadonnées",
     "NoExplorerSupportForUnmanagedFolder": "Les dossiers non gérés ne prennent pas en charge l'explorateur de fichiers.",
     "NoPermissions": "Aucune autorisation pour accéder à ce dossier",
     "ProcessingUpload": "Votre fichier est téléchargé. \nS'il vous plaît, attendez.",
@@ -1958,6 +1961,7 @@
     "HealthCheck": "URL de bilan de santé",
     "HealthCheckTooltip": "Le chemin URL utilisé pour vérifier que le service est en cours d'exécution (p. ex. /health).",
     "Image": "Image",
+    "ImageRequired": "L'image est obligatoire.",
     "InitialDelay": "Délai de grâce au démarrage",
     "InitialDelayTooltip": "Délai de grâce (en secondes) après le démarrage du service pendant lequel les contrôles de santé échoués sont ignorés ; le réplica devient actif dès qu'un contrôle de santé réussit pour la première fois.",
     "Interval": "Intervalle (s)",

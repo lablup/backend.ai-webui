@@ -317,10 +317,12 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "AuditLog": "Registro di controllo",
     "Operation": "Operazione",
     "Status": "Stato",
     "Time": "Ora",
-    "TriggeredBy": "Attivato da"
+    "TriggeredBy": "Attivato da",
+    "TriggeredByFilterPlaceholder": "Ricerca per ID"
   },
   "autoScalingRule": {
     "AddAutoScalingRule": "Aggiungi regola di ridimensionamento automatico",
@@ -1518,6 +1520,7 @@
     "Filename": "Nome del file",
     "FolderNotFoundOrNoAccess": "Cartella non trovata o accesso negata",
     "InputTooShort": "Inputtroppo corto",
+    "Metadata": "Metadati",
     "NoExplorerSupportForUnmanagedFolder": "Le cartelle non gestite non supportano l'esploratore dei file.",
     "NoPermissions": "Nessuna autorizzazione per accedere a questa cartella",
     "ProcessingUpload": "Il tuo file viene caricato. \nAttendere prego.",
@@ -1957,6 +1960,7 @@
     "HealthCheck": "URL di controllo della salute",
     "HealthCheckTooltip": "Il percorso URL utilizzato per verificare se il servizio è in esecuzione (es. /health).",
     "Image": "Immagine",
+    "ImageRequired": "L'immagine è obbligatoria.",
     "InitialDelay": "Periodo di grazia all'avvio",
     "InitialDelayTooltip": "Periodo di grazia (in secondi) dopo l'avvio del servizio durante il quale i controlli di integrità falliti vengono ignorati; la replica diventa attiva non appena un controllo di integrità ha successo per la prima volta.",
     "Interval": "Intervallo (s)",

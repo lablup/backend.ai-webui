@@ -317,10 +317,12 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "AuditLog": "Denetim Günlüğü",
     "Operation": "İşlem",
     "Status": "Durum",
     "Time": "Zaman",
-    "TriggeredBy": "Tetikleyen"
+    "TriggeredBy": "Tetikleyen",
+    "TriggeredByFilterPlaceholder": "ID'ye göre ara"
   },
   "autoScalingRule": {
     "AddAutoScalingRule": "Otomatik ölçeklendirme kuralı ekleyin",
@@ -1518,6 +1520,7 @@
     "Filename": "Dosya adı",
     "FolderNotFoundOrNoAccess": "Klasör bulunamadı veya erişim reddedildi",
     "InputTooShort": "GirişÇok Kısa",
+    "Metadata": "Meta Veri",
     "NoExplorerSupportForUnmanagedFolder": "Yönetilmeyen klasörler Dosya Gezgini'ni desteklemez.",
     "NoPermissions": "Bu klasöre erişmek için izin yok",
     "ProcessingUpload": "Dosyanız yükleniyor. \nLütfen bekleyin.",
@@ -1957,6 +1960,7 @@
     "HealthCheck": "Sağlık kontrolü URL'si",
     "HealthCheckTooltip": "Hizmetin çalışıp çalışmadığını kontrol etmek için kullanılan URL yolu (ör. /health).",
     "Image": "Resim",
+    "ImageRequired": "İmaj zorunludur.",
     "InitialDelay": "Başlangıç Tolerans Süresi",
     "InitialDelayTooltip": "Hizmet başladıktan sonra başarısız sağlık denetimlerinin göz ardı edildiği tolerans süresi (saniye cinsinden); ilk sağlık denetimi başarılı olduğunda replika etkin hale gelir.",
     "Interval": "Aralık (s)",

@@ -1962,6 +1962,7 @@
     "HealthCheck": "ヘルスチェック URL",
     "HealthCheckTooltip": "サービスが稼働しているかどうかを確認するために使用するURLパスです（例: /health）。",
     "Image": "イメージ",
+    "ImageRequired": "イメージは必須です。",
     "InitialDelay": "起動猶予期間",
     "InitialDelayTooltip": "サービス起動後にヘルスチェックの失敗を無視する猶予期間（秒）です。この期間中に初めてヘルスチェックが成功すると、レプリカがアクティブになります。",
     "Interval": "インターバル (s)",

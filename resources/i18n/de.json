@@ -317,10 +317,12 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "AuditLog": "Audit-Protokoll",
     "Operation": "Vorgang",
     "Status": "Status",
     "Time": "Zeit",
-    "TriggeredBy": "Ausgelöst von"
+    "TriggeredBy": "Ausgelöst von",
+    "TriggeredByFilterPlaceholder": "Suche mit ID"
   },
   "autoScalingRule": {
     "AddAutoScalingRule": "Automatische Skalierungsregel hinzufügen",
@@ -1518,6 +1520,7 @@
     "Filename": "Dateiname",
     "FolderNotFoundOrNoAccess": "Ordner, der nicht gefunden oder zugänglich ist verweigert",
     "InputTooShort": "EingabeTooShort",
+    "Metadata": "Metadaten",
     "NoExplorerSupportForUnmanagedFolder": "Nicht verwaltete Ordner unterstützen den Datei -Explorer nicht.",
     "NoPermissions": "Keine Berechtigungen für den Zugriff auf diesen Ordner",
     "ProcessingUpload": "Ihre Datei wird hochgeladen. \nBitte warten.",
@@ -1959,6 +1962,7 @@
     "HealthCheck": "Gesundheitscheck-URL",
     "HealthCheckTooltip": "Der URL-Pfad, der verwendet wird, um zu überprüfen, ob der Dienst läuft (z. B. /health).",
     "Image": "Bild",
+    "ImageRequired": "Image ist erforderlich.",
     "InitialDelay": "Starttoleranzzeit",
     "InitialDelayTooltip": "Toleranzfenster (in Sekunden) nach dem Start des Dienstes, in dem fehlgeschlagene Gesundheitsprüfungen ignoriert werden; das Replikat wird aktiv, sobald ein Gesundheitscheck zum ersten Mal erfolgreich ist.",
     "Interval": "Intervall (s)",

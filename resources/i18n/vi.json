@@ -317,10 +317,12 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "AuditLog": "Nhật ký kiểm tra",
     "Operation": "Thao tác",
     "Status": "Trạng thái",
     "Time": "Thời gian",
-    "TriggeredBy": "Thực hiện bởi"
+    "TriggeredBy": "Thực hiện bởi",
+    "TriggeredByFilterPlaceholder": "Tìm kiếm theo ID"
   },
   "autoScalingRule": {
     "AddAutoScalingRule": "Thêm quy tắc tỷ lệ tự động",
@@ -1518,6 +1520,7 @@
     "Filename": "Tên tệp",
     "FolderNotFoundOrNoAccess": "Thư mục không tìm thấy hoặc truy cập bị từ chối",
     "InputTooShort": "InputTooShort",
+    "Metadata": "Siêu dữ liệu",
     "NoExplorerSupportForUnmanagedFolder": "Các thư mục không được quản lý không hỗ trợ trình thám hiểm tệp.",
     "NoPermissions": "Không có quyền truy cập thư mục này",
     "ProcessingUpload": "Tệp của bạn đang được tải lên. \nVui lòng chờ.",
@@ -1959,6 +1962,7 @@
     "HealthCheck": "URL kiểm tra sức khỏe",
     "HealthCheckTooltip": "Đường dẫn URL dùng để kiểm tra xem dịch vụ có đang hoạt động hay không (vd. /health).",
     "Image": "Hình ảnh",
+    "ImageRequired": "Image là bắt buộc.",
     "InitialDelay": "Thời gian ân hạn khởi động",
     "InitialDelayTooltip": "Thời gian ân hạn (tính bằng giây) sau khi dịch vụ khởi động, trong đó các lần kiểm tra sức khỏe thất bại bị bỏ qua; bản sao trở nên hoạt động ngay khi lần kiểm tra sức khỏe đầu tiên thành công.",
     "Interval": "Khoảng thời gian (s)",

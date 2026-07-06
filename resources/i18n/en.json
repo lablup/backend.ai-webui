@@ -1947,6 +1947,7 @@
     "HealthCheck": "Health Check URL",
     "HealthCheckTooltip": "The URL path used to check if the service is running (e.g., /health).",
     "Image": "Image",
+    "ImageRequired": "Image is required.",
     "InitialDelay": "Startup Grace Period",
     "InitialDelayTooltip": "Grace period (in seconds) after the service starts during which failed health checks are ignored; the replica becomes active as soon as a health check first succeeds.",
     "Interval": "Interval (s)",

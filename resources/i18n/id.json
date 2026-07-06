@@ -317,10 +317,12 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "AuditLog": "Log Audit",
     "Operation": "Operasi",
     "Status": "Status",
     "Time": "Waktu",
-    "TriggeredBy": "Dipicu oleh"
+    "TriggeredBy": "Dipicu oleh",
+    "TriggeredByFilterPlaceholder": "Cari berdasarkan ID"
   },
   "autoScalingRule": {
     "AddAutoScalingRule": "Tambahkan aturan penskalaan otomatis",
@@ -1519,6 +1521,7 @@
     "Filename": "Nama File",
     "FolderNotFoundOrNoAccess": "Folder tidak ditemukan atau akses ditolak",
     "InputTooShort": "MasukanTerlaluPendek",
+    "Metadata": "Metadata",
     "NoExplorerSupportForUnmanagedFolder": "Folder yang tidak dikelola tidak mendukung file explorer.",
     "NoPermissions": "Tidak ada izin untuk mengakses folder ini",
     "ProcessingUpload": "File Anda sedang diunggah. \nHarap tunggu.",
@@ -1960,6 +1963,7 @@
     "HealthCheck": "URL cek kesehatan",
     "HealthCheckTooltip": "Jalur URL yang digunakan untuk memeriksa apakah layanan sedang berjalan (mis. /health).",
     "Image": "Gambar",
+    "ImageRequired": "Image wajib diisi.",
     "InitialDelay": "Periode Toleransi Startup",
     "InitialDelayTooltip": "Periode toleransi (dalam detik) setelah layanan dimulai di mana kegagalan pemeriksaan kesehatan diabaikan; replika menjadi aktif segera setelah pemeriksaan kesehatan pertama kali berhasil.",
     "Interval": "Interval (s)",

@@ -317,10 +317,12 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "AuditLog": "审计日志",
     "Operation": "操作",
     "Status": "状态",
     "Time": "时间",
-    "TriggeredBy": "触发者"
+    "TriggeredBy": "触发者",
+    "TriggeredByFilterPlaceholder": "按 ID 搜索"
   },
   "autoScalingRule": {
     "AddAutoScalingRule": "添加自动缩放规则",
@@ -1518,6 +1520,7 @@
     "Filename": "文件名",
     "FolderNotFoundOrNoAccess": "未找到或拒绝访问的文件夹",
     "InputTooShort": "输入太短",
+    "Metadata": "元数据",
     "NoExplorerSupportForUnmanagedFolder": "未管理的文件夹不支持文件资源管理器。",
     "NoPermissions": "无权访问此文件夹",
     "ProcessingUpload": "您的文件正在上传。\n请稍等。",
@@ -1959,6 +1962,7 @@
     "HealthCheck": "健康检查 URL",
     "HealthCheckTooltip": "用于检查服务是否正在运行的 URL 路径（例如 /health）。",
     "Image": "图片",
+    "ImageRequired": "镜像为必填项。",
     "InitialDelay": "启动宽限期",
     "InitialDelayTooltip": "服务启动后的宽限期（秒），在此期间健康检查失败将被忽略；一旦健康检查首次成功，副本即变为活跃状态。",
     "Interval": "检查间隔 (s)",

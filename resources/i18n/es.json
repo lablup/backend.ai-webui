@@ -317,10 +317,12 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "AuditLog": "Registro de auditoría",
     "Operation": "Operación",
     "Status": "Estado",
     "Time": "Hora",
-    "TriggeredBy": "Iniciado por"
+    "TriggeredBy": "Iniciado por",
+    "TriggeredByFilterPlaceholder": "Buscar por ID"
   },
   "autoScalingRule": {
     "AddAutoScalingRule": "Agregar regla de escala automática",
@@ -1518,6 +1520,7 @@
     "Filename": "Nombre del archivo",
     "FolderNotFoundOrNoAccess": "Carpeta no encontrada ni de acceso denegada",
     "InputTooShort": "InputTooShort",
+    "Metadata": "Metadatos",
     "NoExplorerSupportForUnmanagedFolder": "Las carpetas no administradas no admiten el explorador de archivos.",
     "NoPermissions": "No hay permisos para acceder a esta carpeta",
     "ProcessingUpload": "Se está cargando su archivo. \nEspere por favor.",
@@ -1957,6 +1960,7 @@
     "HealthCheck": "URL de verificación de salud",
     "HealthCheckTooltip": "La ruta URL utilizada para comprobar si el servicio está en ejecución (p. ej., /health).",
     "Image": "Imagen",
+    "ImageRequired": "La imagen es obligatoria.",
     "InitialDelay": "Período de gracia de inicio",
     "InitialDelayTooltip": "Período de gracia (en segundos) tras el inicio del servicio durante el cual se ignoran los chequeos de salud fallidos; la réplica se activa en cuanto un chequeo de salud tiene éxito por primera vez.",
     "Interval": "Intervalo (s)",

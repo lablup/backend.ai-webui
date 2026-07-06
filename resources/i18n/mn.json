@@ -317,10 +317,12 @@
     "TopP": "Top P"
   },
   "auditLog": {
+    "AuditLog": "Аудитын бүртгэл",
     "Operation": "Үйлдэл",
     "Status": "Статус",
     "Time": "Цаг",
-    "TriggeredBy": "Гүйцэтгэсэн"
+    "TriggeredBy": "Гүйцэтгэсэн",
+    "TriggeredByFilterPlaceholder": "ID-ээр хайх"
   },
   "autoScalingRule": {
     "AddAutoScalingRule": "Автомат масштабыг нэмэх",
@@ -1518,6 +1520,7 @@
     "Filename": "Хөдөлгөөний нэр",
     "FolderNotFoundOrNoAccess": "Фолдер олдсонгүй эсвэл хандалтыг үгүйсгэв",
     "InputTooShort": "Хэт богино байна",
+    "Metadata": "Метадата",
     "NoExplorerSupportForUnmanagedFolder": "НҮБ-нээгүй хавтас нь файлын Explorer-ийг дэмждэггүй.",
     "NoPermissions": "Энэ хавтсанд нэвтрэх зөвшөөрөл байхгүй байна",
     "ProcessingUpload": "Таны файлыг байршуулж байна. \nТүр хүлээнэ үү",
@@ -1958,6 +1961,7 @@
     "HealthCheck": "Эрүүл мэндийн үзлэгийн URL",
     "HealthCheckTooltip": "Үйлчилгээ ажиллаж байгааг шалгахад ашиглах URL зам (жш нь: /health).",
     "Image": "Зураг",
+    "ImageRequired": "Дүрс заавал шаардлагатай.",
     "InitialDelay": "Эхлүүлэх тэвчих хугацаа",
     "InitialDelayTooltip": "Үйлчилгээ эхэлсний дараа эрүүл мэндийн шалгалтын амжилтгүй үр дүнг үл тоох тэвчих хугацаа (секунд). Энэ хугацаанд эрүүл мэндийн шалгалт анх удаа амжилттай болмогц хуулбар идэвхтэй болно.",
     "Interval": "Давтамж (s)",
