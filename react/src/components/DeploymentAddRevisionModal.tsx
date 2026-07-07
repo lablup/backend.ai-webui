@@ -7,6 +7,7 @@ import type {
   DeploymentAddRevisionModalAddMutation$data,
 } from '../__generated__/DeploymentAddRevisionModalAddMutation.graphql';
 import { DeploymentAddRevisionModalImageNameQuery } from '../__generated__/DeploymentAddRevisionModalImageNameQuery.graphql';
+import type { DeploymentAddRevisionModalManualImageQuery } from '../__generated__/DeploymentAddRevisionModalManualImageQuery.graphql';
 import type { DeploymentAddRevisionModalPresetCountQuery } from '../__generated__/DeploymentAddRevisionModalPresetCountQuery.graphql';
 import type { DeploymentAddRevisionModalPresetDetailQuery } from '../__generated__/DeploymentAddRevisionModalPresetDetailQuery.graphql';
 import type {
@@ -365,6 +366,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   // modal so it can be rendered in the modal footer. Both modes forward
   // the value via `AddRevisionOptions.autoActivate` on `addModelRevision`.
   const [autoActivate, setAutoActivate] = useState(true);
+
+  // Resolving a manually entered image name to its registered image id
+  // (Custom mode) is an async pre-step before the mutation; surface it in the
+  // submit button loading state alongside `isAddInFlight`.
+  const [isResolvingImage, setIsResolvingImage] = useState(false);
 
   const [mode, setMode] = useBAISettingUserState(
     'deploymentRevisionCreationMode',
@@ -1012,15 +1018,15 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     );
   };
 
-  const handleCustomFinish = (values: FormValues): void => {
+  const handleCustomFinish = async (values: FormValues): Promise<void> => {
     // `setFields` raises an error programmatically — antd's
     // `scrollToFirstError` only fires from `onFinishFailed`, so we have
     // to nudge the scroll explicitly here.
-    const flagImageRequired = () => {
+    const flagImageError = (messageKey: string) => {
       customForm.setFields([
         {
           name: ['environments', 'version'],
-          errors: [t('modelService.ImageRequired')],
+          errors: [t(messageKey)],
         },
       ]);
       customForm.scrollToField(['environments', 'version'], {
@@ -1029,15 +1035,60 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       });
     };
 
-    const imageId = values.environments?.image?.id;
+    // The revision mutation only references an image by id (`ImageInput.id`).
+    // The image field has two input modes (see `ImageEnvironmentSelectFormItems`):
+    //   - picking from the Environments/Version dropdown populates
+    //     `environments.image` (an object carrying `id`);
+    //   - typing a name into the "Manual image name" field populates
+    //     `environments.manual` (a string) and clears `environments.image`.
+    // Interactive session creation accepts the manual string directly (REST),
+    // but the deployment mutation needs an id — so resolve the manually entered
+    // reference to a registered image id here before committing (FR-3278).
+    let imageId = values.environments?.image?.id;
+    const manualImageName = values.environments?.manual?.trim();
+    if (!imageId && manualImageName) {
+      // Manual names may carry an `@architecture` suffix (same convention the
+      // session launcher splits on); pass it through so the lookup matches the
+      // exact image instead of the manager's default architecture.
+      const [reference, architecture] = manualImageName.split('@');
+      setIsResolvingImage(true);
+      try {
+        const result =
+          await fetchQuery<DeploymentAddRevisionModalManualImageQuery>(
+            relayEnvironment,
+            graphql`
+              query DeploymentAddRevisionModalManualImageQuery(
+                $reference: String!
+                $architecture: String
+              ) {
+                image(reference: $reference, architecture: $architecture) {
+                  id
+                }
+              }
+            `,
+            { reference, architecture: architecture || null },
+            { fetchPolicy: 'network-only' },
+          ).toPromise();
+        imageId = result?.image?.id ?? undefined;
+      } catch {
+        imageId = undefined;
+      } finally {
+        setIsResolvingImage(false);
+      }
+      if (!imageId) {
+        flagImageError('modelService.ManualImageNotFound');
+        return;
+      }
+    }
+
     if (!imageId) {
-      flagImageRequired();
+      flagImageError('modelService.ImageRequired');
       return;
     }
     // `ImageInput.id` is declared as `ID!` but parsed as `UUID!` server-side.
     const decodedImageId = safeDecodeUuid(imageId);
     if (!decodedImageId) {
-      flagImageRequired();
+      flagImageError('modelService.ImageRequired');
       return;
     }
 
@@ -1355,7 +1406,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             </Button>
             <Button
               type="primary"
-              loading={isAddInFlight}
+              loading={isAddInFlight || isResolvingImage}
               onClick={handleOk}
               disabled={effectiveMode === 'preset' && hasNoPresets}
             >
@@ -1365,7 +1416,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         </BAIFlex>
       }
       onCancel={() => onRequestClose()}
-      confirmLoading={isAddInFlight}
+      confirmLoading={isAddInFlight || isResolvingImage}
       destroyOnHidden
       {...restModalProps}
     >

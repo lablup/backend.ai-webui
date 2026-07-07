@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-06-22
+> **Last Updated:** 2026-07-07
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -292,6 +292,20 @@
 | Chat test link                                          | ❌     | -                                                                                                                                                      |
 
 **Coverage: 🔶 9/20 features**
+
+---
+
+### 7b. Deployment — Add Revision (`/deployments/:deploymentId`)
+
+**Test files:** [`e2e/serving/add-revision-manual-image.spec.ts`](serving/add-revision-manual-image.spec.ts) (integration; requires a live backend with an existing deployment)
+
+**Modal:** `DeploymentAddRevisionModal` (Advanced/Custom mode)
+
+| Feature                                                                      | Status | Test                                                                     |
+| ---------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------ |
+| Manual image name accepted → revision mutation carries resolved id (FR-3278) | ✅     | `a manually entered image is accepted and submitted as a resolved image` |
+
+**Coverage: 🔶 1 feature (regression guard for FR-3278)**
 
 ---
 
@@ -659,24 +673,24 @@
 **Row actions:** Edit → `UserSettingModal`, Delete → Popconfirm
 **Bulk actions:** Bulk edit → `UpdateUsersModal`, Bulk delete → `PurgeUsersModal`
 
-| Feature                                             | Status | Test                                                                                                                        |
-| --------------------------------------------------- | ------ | --------------------------------------------------------------------------------------------------------------------------- |
-| Create user → UserSettingModal                      | ✅     | `Admin can create a new user`                                                                                               |
-| Bulk create users → UserSettingModal                | ✅     | `Admin can bulk create multiple users`                                                                                      |
-| Bulk create single user                             | ✅     | `Admin can bulk create a single user`                                                                                       |
-| Bulk create modal open/cancel                       | ✅     | `Admin can open bulk create modal from dropdown` / `Admin can cancel bulk user creation`                                    |
-| Bulk create users from CSV (client-side validation) | ✅     | `bulk-create-from-csv.spec.ts` (preview stats + submit enable/disable)                                                      |
-| Bulk create users from CSV → real submit + purge cleanup | ✅ | `bulk-create-from-csv-submit.spec.ts` (creates users on backend, then deactivates + purges)                            |
-| Update user → UserSettingModal                      | ✅     | `Admin can update user information`                                                                                         |
-| Deactivate user                                     | ✅     | `Admin can deactivate a user`                                                                                               |
-| Reactivate user                                     | ✅     | `Admin can reactivate an inactive user`                                                                                     |
-| Purge user → PurgeUsersModal                        | ✅     | `Admin can deactivate and permanently delete`                                                                               |
-| Deleted user login blocked                          | ✅     | `Deleted user cannot log in`                                                                                                |
-| Allowed IP restriction enforcement (active session) | ✅     | `User can access pages when their current IP is in the allowed list` / `User is denied access after admin revokes their IP` |
-| User name click → UserInfoModal                     | ❌     | -                                                                                                                           |
-| Bulk edit → UpdateUsersModal                        | ❌     | -                                                                                                                           |
-| User table filtering                                | ❌     | -                                                                                                                           |
-| User table sorting                                  | ❌     | -                                                                                                                           |
+| Feature                                                  | Status | Test                                                                                                                        |
+| -------------------------------------------------------- | ------ | --------------------------------------------------------------------------------------------------------------------------- |
+| Create user → UserSettingModal                           | ✅     | `Admin can create a new user`                                                                                               |
+| Bulk create users → UserSettingModal                     | ✅     | `Admin can bulk create multiple users`                                                                                      |
+| Bulk create single user                                  | ✅     | `Admin can bulk create a single user`                                                                                       |
+| Bulk create modal open/cancel                            | ✅     | `Admin can open bulk create modal from dropdown` / `Admin can cancel bulk user creation`                                    |
+| Bulk create users from CSV (client-side validation)      | ✅     | `bulk-create-from-csv.spec.ts` (preview stats + submit enable/disable)                                                      |
+| Bulk create users from CSV → real submit + purge cleanup | ✅     | `bulk-create-from-csv-submit.spec.ts` (creates users on backend, then deactivates + purges)                                 |
+| Update user → UserSettingModal                           | ✅     | `Admin can update user information`                                                                                         |
+| Deactivate user                                          | ✅     | `Admin can deactivate a user`                                                                                               |
+| Reactivate user                                          | ✅     | `Admin can reactivate an inactive user`                                                                                     |
+| Purge user → PurgeUsersModal                             | ✅     | `Admin can deactivate and permanently delete`                                                                               |
+| Deleted user login blocked                               | ✅     | `Deleted user cannot log in`                                                                                                |
+| Allowed IP restriction enforcement (active session)      | ✅     | `User can access pages when their current IP is in the allowed list` / `User is denied access after admin revokes their IP` |
+| User name click → UserInfoModal                          | ❌     | -                                                                                                                           |
+| Bulk edit → UpdateUsersModal                             | ❌     | -                                                                                                                           |
+| User table filtering                                     | ❌     | -                                                                                                                           |
+| User table sorting                                       | ❌     | -                                                                                                                           |
 
 #### Credentials Tab
 
