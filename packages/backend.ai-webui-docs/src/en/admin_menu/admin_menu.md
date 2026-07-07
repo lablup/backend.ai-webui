@@ -1517,8 +1517,6 @@ Backend.AI supports a wide range of AI accelerators across multiple vendors:
   - LPU
 - **Cerebras**
   - WSE-3
-- **SambaNova**
-  - SN40L
 
 ![](../images/system_setting_about_scaling_plugins.png)
 

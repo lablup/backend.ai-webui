@@ -1251,8 +1251,6 @@ Backend.AI는 다양한 벤더의 AI 가속기를 폭넓게 지원합니다:
   - LPU
 - **Cerebras**
   - WSE-3
-- **SambaNova**
-  - SN40L
 
 ![](../images/system_setting_about_scaling_plugins.png)
 

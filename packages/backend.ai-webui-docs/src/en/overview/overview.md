@@ -82,11 +82,11 @@ achieves more intuitive use.
   delivers the messages. If the WebUI app loses its connection to `wsproxy` or
   the `wsproxy` server is dead, it will not be possible to access services such as
   Jupyter Notebook and Terminal.
-- Web `wsproxy`: In the case of the WebUI provided in a web, the built-in
-  server cannot be used due to the nature of the browser. In this case, you
-  can use services such as Jupyter Notebook, Terminal, etc. in the web
-  environment by making the `wsproxy` server as a separate web server
-  so that the WebUI app can see the web `wsproxy`.
+- Web App Proxy: In the case of the WebUI provided in a web, the built-in
+  server cannot be used due to the nature of the browser. In this case, the App Proxy
+  is served as a standalone, separate web server that the WebUI app points to,
+  so that you can use services such as Jupyter Notebook, Terminal, etc. in the web
+  environment.
 
 
 <a id="backend-ai-feature-details"></a>
@@ -106,7 +106,6 @@ achieves more intuitive use.
 | Intel | Gaudi 2 and 3 | Memory usage based automatic idle resource reclamation |
 | NVIDIA support | CUDA compute capability 7.5 or later<br>- Model inference: NVIDIA Hopper or later (depending on the target quantization)<br>- Model training: NVIDIA Ampere or later | (Enterprise) Fractional GPU virtualization and sharing for containers<br>Container-level multi GPU<br>Multiple CUDA library version support<br>GPUDirect storage support<br>NGC (NVIDIA GPU Cloud) image integration<br>GPU-GPU Network auto configuration |
 | Rebellions           | ATOM / ATOM+ / ATOM-Max                             |                                                       |
-| SambaNova            | SN30/40L                                 |                                                       |
 | Sapeon               | X220 / X330                              |                                                       |
 | Tenstorrent          | Wormhole                                 |                                                       |
 
