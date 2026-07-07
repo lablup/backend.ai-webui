@@ -227,7 +227,7 @@ and files.
 
 ![](../images/filebrowser_with_new_window.png)
 
-When user clicks `EXECUTE FILEBROWSER` button, Backend.AI automatically creates a
+When user clicks `Execute filebrowser` button, Backend.AI automatically creates a
 dedicated compute session for the app. So, in the Sessions page, you should see
 FileBrowser compute session. It is user's responsibility to delete this compute
 session.
@@ -242,7 +242,7 @@ FileBrowser compute session.
 
 ![](../images/app_dialog_with_filebrowser.png)
 
-When you click `EXECUTE FILEBROWSER` button again in the storage folder
+When you click `Execute filebrowser` button again in the storage folder
 explorer, a new compute session will be created and a total of two
 FileBrowser sessions will appear.
 :::
@@ -315,7 +315,7 @@ You can move files or directories by following steps below.
 
 ![](../images/select_the_destination.png)
 
-4. Click `MOVE` button
+4. Click `Move` button
 
 You will see that moving operation is successfully finished.
 
