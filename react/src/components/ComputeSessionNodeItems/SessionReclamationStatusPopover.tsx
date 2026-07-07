@@ -188,7 +188,7 @@ const SessionReclamationStatusPopover: React.FC<
 
   return (
     <Popover
-      mouseEnterDelay={0.5}
+      mouseEnterDelay={0}
       content={
         <BAIFlex direction="column" align="stretch" gap="xxs">
           <Typography.Text>
