@@ -179,25 +179,29 @@
       items.push(item);
     });
 
-    // The version trigger shows the committed option's label; the lang
-    // trigger is a transparent overlay under the existing SVG icon, so
-    // it carries no visible text — instead its aria-label appends the
-    // committed option ("Language switcher: English") so screen readers
-    // can tell the current language in the closed state, like the
-    // native select used to announce. Read from the select AFTER
-    // dispatch too — the __legacy__ inline handler resets select.value
-    // synchronously.
+    // Fold the committed option into the trigger's aria-label for BOTH
+    // variants ("Version switcher: v26.7.0" / "Language switcher:
+    // English") so screen readers announce the current value in the
+    // closed state, like the native <select> used to. aria-label wins
+    // over textContent in the accessible-name computation, so the
+    // version variant — which ALSO renders the value as visible pill
+    // text — would otherwise announce just the static "Version
+    // switcher" and drop the value. The lang trigger is a transparent
+    // overlay under the existing SVG icon and carries no visible text.
+    // Read from the select AFTER dispatch too — the __legacy__ inline
+    // handler resets select.value synchronously.
     function syncTriggerLabel() {
       var opt = select.options[select.selectedIndex];
       var label = opt ? opt.textContent : "";
-      if (variant === "lang") {
+      if (selectLabel) {
         trigger.setAttribute(
           "aria-label",
-          selectLabel ? selectLabel + ": " + label : label,
+          label ? selectLabel + ": " + label : selectLabel,
         );
-        return;
+      } else if (label) {
+        trigger.setAttribute("aria-label", label);
       }
-      trigger.textContent = label;
+      if (variant === "version") trigger.textContent = label;
     }
 
     function setActive(i) {
