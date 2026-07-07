@@ -218,6 +218,29 @@ jobs:
           # docs corrections that should land in the archive.
           git push --force origin "$BRANCH"
 
+      # The live site renders every archive at Amplify build time, but
+      # Amplify only builds on pushes to `main`. Without this step, a
+      # docs-only push to a release branch refreshes the archive branch
+      # yet the deployed /<minor>/ pages stay stale until an unrelated
+      # `main` merge happens to land (FR-3275). POSTing the Amplify
+      # incoming webhook starts a rebuild of the main-HEAD pipeline so
+      # the refreshed archive is re-rendered immediately. The release
+      # path already rebuilds via the auto-opened pdfTag PR merge
+      # (FR-3246); this covers the push/dispatch paths. Skips with a
+      # warning when the secret is not configured, preserving the
+      # previous behavior.
+      - name: Trigger Amplify docs rebuild
+        if: ${{ steps.resolve.outputs.dry_run != 'true' }}
+        env:
+          WEBHOOK: ${{ secrets.AMPLIFY_DOCS_WEBHOOK_URL }}
+        run: |
+          if [ -z "$WEBHOOK" ]; then
+            echo "::warning::AMPLIFY_DOCS_WEBHOOK_URL secret not set — docs-archive branch was updated, but the live site stays stale until the next main build. Create an Amplify incoming webhook (docs app → Build settings → Incoming webhooks) and store its URL in this secret."
+            exit 0
+          fi
+          curl -fsS -X POST "$WEBHOOK" -H 'Content-Type: application/json' -d '{}'
+          echo "Amplify rebuild triggered."
+
       - name: Dry-run summary
         if: ${{ steps.resolve.outputs.dry_run == 'true' }}
         env:

@@ -48,6 +48,17 @@ root cause before continuing — do **not** edit the orphan branch by hand.
 
 Workflow file: `.github/workflows/docs-archive-orphan-branch.yml`.
 
+> **Live-site propagation (FR-3275).** Amplify builds only on pushes to
+> `main`, and each build re-renders every archive branch. After refreshing
+> an archive, the workflow's final step POSTs the Amplify incoming webhook
+> (repo secret `AMPLIFY_DOCS_WEBHOOK_URL`) so the live `/<minor>/` pages
+> re-render immediately — otherwise they stay stale until the next
+> unrelated `main` merge. One-time setup: Amplify console → docs app →
+> App settings → Build settings → **Incoming webhooks** → create a webhook
+> for the branch Amplify builds (`main`), then store its URL as the
+> `AMPLIFY_DOCS_WEBHOOK_URL` repository secret. When the secret is missing
+> the step logs a warning and the workflow still succeeds.
+
 ### 2. Verify FR-2719's `build_docs` job in `package.yml` succeeded
 
 The `build_docs` job in `.github/workflows/package.yml` runs automatically
