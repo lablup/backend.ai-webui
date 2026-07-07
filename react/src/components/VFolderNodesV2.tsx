@@ -8,6 +8,7 @@ import {
   VFolderNodesV2Fragment$key,
 } from '../__generated__/VFolderNodesV2Fragment.graphql';
 import { VFolderNodesV2RestoreMutation } from '../__generated__/VFolderNodesV2RestoreMutation.graphql';
+import { normalizeVFolderHostUsagePercent } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useSuspenseTanQuery, useTanQuery } from '../hooks/reactQueryAlias';
@@ -275,7 +276,7 @@ const VFolderHostCell: React.FC<VFolderHostCellProps> = ({ host }) => {
 
   const volumeInfo = vhostInfo?.volume_info?.[host];
   const usage = volumeInfo?.usage;
-  const usagePercent = usage?.percentage;
+  const usagePercent = normalizeVFolderHostUsagePercent(usage?.percentage);
   // Match `StorageSelect`'s gating: render the badge whenever the backend
   // attaches a `usage` object — even an empty `{}` — so rows render a neutral
   // (uncolored) marker while percentage data is unavailable. Color is derived

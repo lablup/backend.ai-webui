@@ -328,6 +328,16 @@ export const addQuotaScopeTypePrefix = (type: QuotaScopeType, str: string) => {
   return `${type}:${str}`;
 };
 
+// WORKAROUND: manager >= 26.3 returns `volume_info[<host>].usage.percentage`
+// from `vfolder.list_hosts()` as a 0-1 fraction (missing `* 100`, see
+// lablup/backend.ai#12632); normalize so thresholds on a 0-100 scale keep
+// working against both fixed and unfixed managers. A genuinely <=1%-full host
+// from a fixed manager is misread as a fraction, which is harmless (<=1% is
+// "Adequate" either way). Remove once managers older than the upstream fix
+// are out of support.
+export const normalizeVFolderHostUsagePercent = (percentage?: number) =>
+  percentage !== undefined && percentage <= 1 ? percentage * 100 : percentage;
+
 export const usageIndicatorColor = (percentage: number | undefined) => {
   return percentage === undefined
     ? undefined

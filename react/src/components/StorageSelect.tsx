@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { normalizeVFolderHostUsagePercent } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState_deprecated from '../hooks/useControllableState';
@@ -88,7 +89,10 @@ const StorageSelect: React.FC<Props> = ({
           host,
           volume_info: vhostInfo?.volume_info?.[host],
         })),
-        'volume_info.usage.percentage',
+        // Normalize so fraction-scaled (manager >= 26.3) and 0-100 scaled
+        // percentages sort on the same scale. See `normalizeVFolderHostUsagePercent`.
+        (item) =>
+          normalizeVFolderHostUsagePercent(item.volume_info?.usage?.percentage),
       )?.host;
       nextHost = lowestUsageHost || nextHost;
     }
@@ -122,7 +126,9 @@ const StorageSelect: React.FC<Props> = ({
       }
       optionLabelProp={showUsageStatus ? 'label' : 'value'}
       options={_.map(vhostInfo?.allowed, (host) => {
-        const usagePercent = vhostInfo?.volume_info?.[host]?.usage?.percentage;
+        const usagePercent = normalizeVFolderHostUsagePercent(
+          vhostInfo?.volume_info?.[host]?.usage?.percentage,
+        );
         const usageLabel =
           usagePercent === undefined
             ? t('data.usage.Unknown')

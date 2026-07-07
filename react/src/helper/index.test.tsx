@@ -24,6 +24,7 @@ import {
   toFixedWithTypeValidation,
   addNumberWithUnits,
   subNumberWithUnits,
+  normalizeVFolderHostUsagePercent,
 } from './index';
 
 describe('isOutsideRange', () => {
@@ -1051,5 +1052,30 @@ describe('subNumberWithUnits', () => {
   it('should handle negative results', () => {
     const result = subNumberWithUnits('2g', '5g', 'g');
     expect(result).toBe('-3g');
+  });
+});
+
+describe('normalizeVFolderHostUsagePercent', () => {
+  it('should scale a 0-1 fraction (manager >= 26.3) up to 0-100', () => {
+    expect(normalizeVFolderHostUsagePercent(0.42)).toBeCloseTo(42);
+    expect(normalizeVFolderHostUsagePercent(0.999)).toBeCloseTo(99.9);
+  });
+
+  it('should treat exactly 1 as a fraction (100%)', () => {
+    expect(normalizeVFolderHostUsagePercent(1)).toBe(100);
+  });
+
+  it('should pass through values already on a 0-100 scale', () => {
+    expect(normalizeVFolderHostUsagePercent(42)).toBe(42);
+    expect(normalizeVFolderHostUsagePercent(99.9)).toBe(99.9);
+    expect(normalizeVFolderHostUsagePercent(100)).toBe(100);
+  });
+
+  it('should pass through 0 unchanged', () => {
+    expect(normalizeVFolderHostUsagePercent(0)).toBe(0);
+  });
+
+  it('should return undefined when the percentage is missing', () => {
+    expect(normalizeVFolderHostUsagePercent(undefined)).toBeUndefined();
   });
 });
