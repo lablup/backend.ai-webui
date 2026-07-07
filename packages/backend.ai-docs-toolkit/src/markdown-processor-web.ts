@@ -23,6 +23,7 @@ import {
   parseShellSessionLines,
   escapeHtml,
   stripHtmlTags,
+  decodeHtmlEntities,
   getFigureLabel,
   parseImageSizeHint,
 } from "./markdown-extensions.js";
@@ -353,7 +354,7 @@ function buildWebRenderer(
 
   return {
     heading(text: string, level: number, _raw: string): string {
-      const plainText = stripHtmlTags(text);
+      const plainText = decodeHtmlEntities(stripHtmlTags(text));
       const id = `${chapterSlug}-${slugify(plainText)}`;
       headings.push({ level, text: plainText, id });
       const escapedPlainText = escapeHtml(plainText);

@@ -239,3 +239,33 @@ export function stripHtmlTags(str: string): string {
   } while (result !== prev);
   return result;
 }
+
+/**
+ * Decode the small set of HTML entities that `marked` emits when it
+ * escapes inline text (`&` `<` `>` `"` `'`), plus generic numeric
+ * character references (`&#NN;` / `&#xHH;`).
+ *
+ * Used to recover the plain-text form of a heading before slugifying
+ * it. Without this, an escaped apostrophe (`&#39;`) survives
+ * `stripHtmlTags` and `slugify` — which drops `&`, `#` and `;` but
+ * keeps digits — turns `user&#39;s` into the broken anchor `user39s`
+ * instead of `users`. Decoding first yields the correct `users`.
+ * `&amp;` is decoded last so double-encoded input collapses one level
+ * at a time rather than mangling a literal `&amp;` mid-string.
+ */
+export function decodeHtmlEntities(str: string): string {
+  return str
+    .replace(/&#x([0-9a-fA-F]+);/g, (m, hex) => {
+      const cp = parseInt(hex, 16);
+      return cp > 0 && cp <= 0x10ffff ? String.fromCodePoint(cp) : m;
+    })
+    .replace(/&#(\d+);/g, (m, dec) => {
+      const cp = parseInt(dec, 10);
+      return cp > 0 && cp <= 0x10ffff ? String.fromCodePoint(cp) : m;
+    })
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
+    .replace(/&amp;/g, '&');
+}

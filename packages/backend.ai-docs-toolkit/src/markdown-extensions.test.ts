@@ -11,7 +11,11 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseShellSessionLines } from "./markdown-extensions.js";
+import {
+  parseShellSessionLines,
+  decodeHtmlEntities,
+  stripHtmlTags,
+} from "./markdown-extensions.js";
 
 test("parseShellSessionLines — empty input yields no rows", () => {
   assert.deepEqual(parseShellSessionLines(""), []);
@@ -90,4 +94,36 @@ test("parseShellSessionLines — output containing $ mid-line stays as output", 
   assert.deepEqual(parseShellSessionLines("error: cannot expand $HOME"), [
     { type: "output", text: "error: cannot expand $HOME" },
   ]);
+});
+
+test("decodeHtmlEntities — decodes the entities marked emits", () => {
+  assert.equal(
+    decodeHtmlEntities("Manage User&#39;s Keypairs"),
+    "Manage User's Keypairs",
+  );
+  assert.equal(decodeHtmlEntities("a &amp; b"), "a & b");
+  assert.equal(
+    decodeHtmlEntities("&lt;tag&gt; &quot;x&quot; &#x27;y&#x27; &apos;z&apos;"),
+    "<tag> \"x\" 'y' 'z'",
+  );
+});
+
+test("decodeHtmlEntities — collapses double encoding one level (amp last)", () => {
+  // A literal, single-encoded "&#39;" must survive rather than becoming "'".
+  assert.equal(decodeHtmlEntities("&amp;#39;"), "&#39;");
+});
+
+test("decodeHtmlEntities — leaves plain text and invalid refs untouched", () => {
+  assert.equal(decodeHtmlEntities("no entities here"), "no entities here");
+  assert.equal(decodeHtmlEntities("100% & rising"), "100% & rising");
+});
+
+test("decodeHtmlEntities — recovers a clean slug source for escaped apostrophes", () => {
+  // Regression guard: without decoding, `stripHtmlTags` leaves `&#39;`,
+  // which slugify turns into the broken `user39s` anchor. Decoding first
+  // yields the plain apostrophe that slugify then drops → `User's` → `users`.
+  const rendered = "Manage User&#39;s Keypairs";
+  const plain = decodeHtmlEntities(stripHtmlTags(rendered));
+  assert.equal(plain, "Manage User's Keypairs");
+  assert.ok(!/\d9s/.test(plain), "must not contain entity-derived digits");
 });
