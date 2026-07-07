@@ -51,7 +51,7 @@ navigation:
           path: installation/installation.md
         - title: Login
           path: login/login.md
-        - title: Header
+        - title: Top Bar
           path: header/header.md
         - title: Start
           path: start/start.md
@@ -73,11 +73,11 @@ navigation:
           path: my_environments/my_environments.md
     - category: Storage & Data
       items:
-        - title: Vfolder
+        - title: Storage Folders
           path: vfolder/vfolder.md
-        - title: Mount Vfolder
+        - title: Mount Storage Folders
           path: mount_vfolder/mount_vfolder.md
-        - title: Share Vfolder
+        - title: Share Storage Folders
           path: share_vfolder/share_vfolder.md
         - title: SFTP to Container
           path: sftp_to_container/sftp_to_container.md
@@ -97,7 +97,7 @@ navigation:
           path: admin_menu/admin_menu.md
     - category: Reference
       items:
-        - title: Trouble Shooting
+        - title: Troubleshooting
           path: trouble_shooting/trouble_shooting.md
         - title: Appendix
           path: appendix/appendix.md
@@ -118,7 +118,7 @@ navigation:
           path: installation/installation.md
         - title: ログイン
           path: login/login.md
-        - title: ヘッダー
+        - title: トップバー
           path: header/header.md
         - title: スタート
           path: start/start.md
@@ -185,7 +185,7 @@ navigation:
           path: installation/installation.md
         - title: 로그인
           path: login/login.md
-        - title: 헤더
+        - title: 상단 바
           path: header/header.md
         - title: 시작 페이지
           path: start/start.md
@@ -252,7 +252,7 @@ navigation:
           path: installation/installation.md
         - title: การเข้าสู่ระบบ
           path: login/login.md
-        - title: ส่วนหัว
+        - title: แถบด้านบน
           path: header/header.md
         - title: เริ่มต้น
           path: start/start.md

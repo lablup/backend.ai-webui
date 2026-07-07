@@ -42,6 +42,25 @@ Detailed content...
 - Always leave a blank line before and after headings
 - Never skip heading levels (e.g., H1 directly to H3)
 
+### Sidebar Nav Label vs Page H1
+
+The sidebar label (`src/book.config.yaml` navigation `title:`) and the page
+H1 serve different purposes and MAY differ **by design, never by accident**:
+
+- **Sidebar label** — a short navigation label: ≤ 3 words / ~24 chars for
+  English, ~12 chars for CJK. Example: `SFTP to Container`.
+- **H1** — the full descriptive title. Example:
+  `SSH/SFTP Connection to a Compute Session`.
+- The label must remain a recognizable shortening of the H1 (they share a
+  meaningful word/substring). Zero-relation pairs like the historical
+  `Sessions All` label on the `Compute Sessions` page are drift, not design.
+- Enforced by `pnpm run check:nav-titles`
+  (`scripts/check-nav-titles.mjs`, runs in CI via `docs-checks.yml`).
+  Intentional exceptions go in that script's `ALLOWLIST` with a comment.
+- When renaming a page H1, update the nav label in **all four languages**
+  of `book.config.yaml` (and the language's `index.md` table of contents)
+  in the same change.
+
 ## Formatting Elements
 
 ### Inline Formatting
