@@ -72,9 +72,9 @@ GUI 클라이언트입니다. Backend.AI 서버에 접속하여 연산 자원을
   WebUI 앱 간의 일반 HTTP 요청을 websocket으로 변환하여 메시지를 전달합니다.
   WebUI 앱과 `wsproxy` 간의 연결이 끊기거나 `wsproxy` 서버가 중단되면 Jupyter
   Notebook, Terminal 등의 서비스에 접속할 수 없습니다.
-- 웹 `wsproxy`: 웹 형태로 제공되는 WebUI의 경우, 브라우저의 특성상 내장 서버를
-  사용할 수 없습니다. 이 경우 `wsproxy` 서버를 별도의 웹 서버로 구성하여 WebUI
-  앱이 웹 `wsproxy`를 바라보게 함으로써, 웹 환경에서도 Jupyter Notebook, Terminal
+- 웹 App Proxy: 웹 형태로 제공되는 WebUI의 경우, 브라우저의 특성상 내장 서버를
+  사용할 수 없습니다. 이 경우 App Proxy를 별도의 독립 웹 서버로 제공하고 WebUI
+  앱이 이를 바라보게 함으로써, 웹 환경에서도 Jupyter Notebook, Terminal
   등의 서비스를 사용할 수 있습니다.
 
 
@@ -95,7 +95,6 @@ GUI 클라이언트입니다. Backend.AI 서버에 접속하여 연산 자원을
 | Intel | Gaudi 2 및 3 | 메모리 사용 기반 자동 유휴 자원 회수 |
 | NVIDIA 지원 | CUDA compute capability 7.5 이상<br>- 모델 추론: NVIDIA Hopper 이상 (대상 양자화에 따라 다름)<br>- 모델 학습: NVIDIA Ampere 이상 | (엔터프라이즈) 컨테이너를 위한 분할 GPU(fGPU) 가상화 및 공유<br>컨테이너 레벨 멀티 GPU<br>여러 CUDA 라이브러리 버전 지원<br>GPUDirect 스토리지 지원<br>NGC (NVIDIA GPU Cloud) 이미지 통합<br>GPU-GPU 네트워크 자동 구성 |
 | Rebellions | ATOM / ATOM+ / ATOM-Max |  |
-| SambaNova | SN30/40L |  |
 | Sapeon | X220 / X330 |  |
 | Tenstorrent | Wormhole |  |
 

@@ -7,7 +7,7 @@ Backend.AI supports dedicated storage to preserve user's files. Since the files
 and directories of a compute session are deleted upon session termination, it is
 recommended to save them in a storage folder. List of storage folders can be
 found by selecting the Data page on the sidebar. You can see the information
-such as the folder name and ID, the NFS host name where the folder is located
+such as the folder name and ID, the storage host name where the folder is located
 (Location), and folder access rights (Permission).
 
 
@@ -52,7 +52,7 @@ The meaning of each field in the creation dialog is as follows.
    * Auto Mount: Folders automatically mounted when a session is created. If selected, the folder name must start with a dot ('.').
 
 - **Folder name**: The name of the folder (up to 64 characters).
-- **Location**: Select the NFS host where the folder will be created. If there are multiple hosts, choose one. An indicator will show if there is enough available space.
+- **Location**: Select the storage host where the folder will be created. If there are multiple hosts, choose one. An indicator will show if there is enough available space.
 - **Type**: Determines the type of folder to be created. It can be set as User or Project. The User folder is a folder that users can create and use alone and the Project folder is a folder created by admin and shared by users in the project.
 - **Project**: Shown only when you select Project type. The folder belongs to the project currently selected in the top bar — there is no separate project selector, and a confirmation message indicates which project will own the folder. This field has no effect when creating a User folder.
 - **Permission**: The mount permission applied when the folder is mounted into a compute session. **Read & Write** allows writing to the folder inside sessions; **Read only** prevents it. This applies to both User and Project folders; for a Project folder it governs access for all project members.
