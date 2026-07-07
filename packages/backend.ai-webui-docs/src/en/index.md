@@ -33,7 +33,7 @@ The latest versions of this document can be found from sites below:
 - [User Settings](user_settings/user_settings.md)
 - [Cluster Session](cluster_session/cluster_session.md)
 - [Admin Menu](admin_menu/admin_menu.md)
-- [Trouble Shooting](trouble_shooting/trouble_shooting.md)
+- [Troubleshooting](trouble_shooting/trouble_shooting.md)
 - [Appendix](appendix/appendix.md)
 - [License Agreement](license_agreement/license_agreement.md)
 - [References](references/references.md)
