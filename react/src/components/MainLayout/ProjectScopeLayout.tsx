@@ -97,10 +97,9 @@ const ProjectScopeLayout: React.FC = () => {
     // explicit "not found / no access" status. The header project selector
     // shows no selection for this invalid project, and a convenience button
     // navigates to one of the user's own projects on an explicit click.
-    const ownProject =
-      currentProject.name && groups.includes(currentProject.name)
-        ? currentProject.name
-        : groups[0];
+    // Offer the alphabetically-first accessible project as the escape hatch —
+    // a stable, predictable target regardless of what the atom last held.
+    const ownProject = [...groups].sort((a, b) => a.localeCompare(b))[0];
     return (
       <ProjectScopeErrorState
         variant="not-found"
