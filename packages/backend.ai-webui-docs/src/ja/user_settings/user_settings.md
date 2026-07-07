@@ -222,7 +222,7 @@ PPKキーに変換する必要がある場合があります。
 
 Backend.AI WebUIは、プライベートリポジトリへのアクセスなどの柔軟性を提供するために、
 独自のSSHキーペアの追加をサポートしています。独自のSSHキーペアを追加するには、
-`Enter Manually`ボタンをクリックしてください。
+`直接入力する`ボタンをクリックしてください。
 「public」キーと「private」キーに対応する2つのテキストエリアが表示されます。
 
 ![](../images/add_ssh_keypair_manually_dialog.png)

@@ -227,7 +227,7 @@ and files.
 
 ![](../images/filebrowser_with_new_window.png)
 
-When user clicks `Execute FileBrowser` button, Backend.AI automatically creates a
+When user clicks `Execute filebrowser` button, Backend.AI automatically creates a
 dedicated compute session for the app. So, in the Sessions page, you should see
 FileBrowser compute session. It is user's responsibility to delete this compute
 session.
@@ -242,7 +242,7 @@ FileBrowser compute session.
 
 ![](../images/app_dialog_with_filebrowser.png)
 
-When you click `Execute FileBrowser` button again in the storage folder
+When you click `Execute filebrowser` button again in the storage folder
 explorer, a new compute session will be created and a total of two
 FileBrowser sessions will appear.
 :::
