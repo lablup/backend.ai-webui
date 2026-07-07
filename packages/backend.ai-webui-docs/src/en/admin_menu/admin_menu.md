@@ -701,7 +701,7 @@ About details of each option in resource policy dialog, see the description belo
   - CUDA-capable GPU (fractional): Fractional GPU (fGPU) is literally split a single
     GPU to multiple partitions in order to use GPU efficiently. Notice that the minimum
     amount of fGPU required is differed by each image. If fractional GPU is not enabled
-    by the server, this settings has no effect. (max value: 256)
+    by the server, this setting has no effect. (max value: 256)
 
 - Sessions
   - Cluster Size: Set the maximum limit for the number of multi-containers or
