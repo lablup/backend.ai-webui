@@ -29,7 +29,7 @@ The latest versions of this document can be found from sites below:
 - [My Environments](my_environments/my_environments.md)
 - [Agent Summary](agent_summary/agent_summary.md)
 - [Statistics](statistics/statistics.md)
-- [Sftp To Container](sftp_to_container/sftp_to_container.md)
+- [SFTP to Container](sftp_to_container/sftp_to_container.md)
 - [User Settings](user_settings/user_settings.md)
 - [Cluster Session](cluster_session/cluster_session.md)
 - [Admin Menu](admin_menu/admin_menu.md)
