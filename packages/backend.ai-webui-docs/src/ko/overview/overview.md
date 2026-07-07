@@ -11,7 +11,7 @@ Backend.AI는 머신러닝 및 고성능 컴퓨팅 클러스터에 적합한 성
 Control-Panel, GPU 가상화 플러그인 기능을 추가적으로 지원합니다.
 
 Backend.AI 서버가 지원하는 기능을 손쉽게 활용할 수 있도록 GUI 클라이언트 패키지도
-함께 제공하고 있습니다. Backend.AI Web-UI는 웹 서비스 또는 독립 실행형 앱 형태의
+함께 제공하고 있습니다. Backend.AI WebUI는 웹 서비스 또는 독립 실행형 앱 형태의
 GUI 클라이언트입니다. Backend.AI 서버에 접속하여 연산 자원을 활용하고 환경을
 관리할 수 있는 편리한 그래픽 인터페이스를 제공합니다. Backend.AI는 별도의 프로그램
 설치 없이 즉시 연산 세션을 생성할 수 있는 사전 구성된 이미지를 제공합니다.
@@ -63,17 +63,17 @@ GUI 클라이언트입니다. Backend.AI 서버에 접속하여 연산 자원을
 - 애플리케이션 서비스, 서비스 포트: 연산 세션 내에서 실행되는 다양한 사용자
   애플리케이션(예: DIGITS, Jupyter Notebook, 쉘 터미널, TensorBoard 등)에 접속할 수
   있게 해주는 기능입니다. 컨테이너의 주소 및 포트 번호를 직접 알 필요 없이, 제공되는
-  CLI 클라이언트 또는 GUI Web-UI를 이용하여 원하는 세션의 데몬에 바로 접속할 수
+  CLI 클라이언트 또는 GUI WebUI를 이용하여 원하는 세션의 데몬에 바로 접속할 수
   있습니다.
-- Web-UI: 웹 또는 독립 실행형 앱으로 제공되는 GUI 클라이언트입니다. Backend.AI
+- WebUI: 웹 또는 독립 실행형 앱으로 제공되는 GUI 클라이언트입니다. Backend.AI
   서버의 주소를 지정하고 사용자 계정 정보를 입력하여 로그인한 후 서비스를 사용할
   수 있습니다.
-- 로컬 `wsproxy`: Web-UI 앱에 내장된 프록시 서버입니다. 로컬 `wsproxy`는 서버와
-  Web-UI 앱 간의 일반 HTTP 요청을 websocket으로 변환하여 메시지를 전달합니다.
-  Web-UI 앱과 `wsproxy` 간의 연결이 끊기거나 `wsproxy` 서버가 중단되면 Jupyter
+- 로컬 `wsproxy`: WebUI 앱에 내장된 프록시 서버입니다. 로컬 `wsproxy`는 서버와
+  WebUI 앱 간의 일반 HTTP 요청을 websocket으로 변환하여 메시지를 전달합니다.
+  WebUI 앱과 `wsproxy` 간의 연결이 끊기거나 `wsproxy` 서버가 중단되면 Jupyter
   Notebook, Terminal 등의 서비스에 접속할 수 없습니다.
-- 웹 `wsproxy`: 웹 형태로 제공되는 Web-UI의 경우, 브라우저의 특성상 내장 서버를
-  사용할 수 없습니다. 이 경우 `wsproxy` 서버를 별도의 웹 서버로 구성하여 Web-UI
+- 웹 `wsproxy`: 웹 형태로 제공되는 WebUI의 경우, 브라우저의 특성상 내장 서버를
+  사용할 수 없습니다. 이 경우 `wsproxy` 서버를 별도의 웹 서버로 구성하여 WebUI
   앱이 웹 `wsproxy`를 바라보게 함으로써, 웹 환경에서도 Jupyter Notebook, Terminal
   등의 서비스를 사용할 수 있습니다.
 

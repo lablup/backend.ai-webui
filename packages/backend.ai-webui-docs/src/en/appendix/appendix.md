@@ -74,7 +74,7 @@ the resources become available again, the pended request is resumed to
 create a compute session.
 
 You can check the operation of the job scheduler in a simple way from the
-user Web-UI. When the GPU host can allocate up to 2 fGPUs,
+user WebUI. When the GPU host can allocate up to 2 fGPUs,
 let's create 3 compute sessions at the same time requesting
 allocation of 1 fGPU, respectively. In the Custom allocation section of the session launch
 dialog, there are GPU and Sessions sliders. If you specify a value greater than
@@ -205,7 +205,7 @@ optimal performance, just double the amount of each resources.
 The essential host dependent packages that must be pre-installed before installing
 each service are:
 
-- Web-UI: Operating system that can run the latest browsers (Windows, Mac
+- WebUI: Operating system that can run the latest browsers (Windows, Mac
   OS, Ubuntu, etc.)
 - Manager: Python (≥3.8), pyenv/pyenv-virtualenv (≥1.2)
 - Agent: docker (≥19.03), CUDA/CUDA Toolkit (≥8, 11 recommend),
