@@ -164,7 +164,7 @@ const SessionIdleChecks: React.FC<SessionIdleChecksProps> = ({
                 )}
               </BAIFlex>
             ) : (
-              <Typography.Text type="danger">
+              <Typography.Text type="warning">
                 {t('session.ReclamationStatusChecking')}
               </Typography.Text>
             )}
