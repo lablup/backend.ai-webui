@@ -11,6 +11,7 @@ import {
 import { getRouteScopeAndKey } from '../../hooks/useRouteScope';
 import ProjectScopeErrorState from './ProjectScopeErrorState';
 import { Button } from 'antd';
+import { ArrowRightIcon } from 'lucide-react';
 import React, { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useLocation, useParams } from 'react-router-dom';
@@ -108,6 +109,9 @@ const ProjectScopeLayout: React.FC = () => {
         extra={
           <Button
             type="primary"
+            size="large"
+            icon={<ArrowRightIcon size="1em" />}
+            iconPosition="end"
             onClick={() =>
               webuiNavigate(buildPath('project', 'session', ownProject))
             }
