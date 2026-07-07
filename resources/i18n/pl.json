@@ -1466,7 +1466,7 @@
     "AuthenticationFailed": "Uwierzytelnianie nie powiodło się. Sprawdź informacje i status menedżera.",
     "CannotChangeVirtualFolderOption": "Nie można zmienić opcji folderu v, który nie jest moją własnością.",
     "CannotConnectToServer": "Nie można połączyć się z serwerem. Sprawdź adres punktu końcowego i połączenie sieciowe.",
-    "CannotSharePrivateAutomountFolder": "Nie można udostępniać folderów vfolder automount zgodnie z zasadami.",
+    "CannotSharePrivateAutomountFolder": "Nie można udostępniać folderów VFolder automount zgodnie z zasadami.",
     "ErrorFetchingExternalContent": "Błąd podczas pobierania treści zewnętrznej:",
     "FailedToLoadTableData": "Wystąpił błąd podczas ładowania listy.",
     "FolderSharingNotAvailableToUser": "Udostępnianie folderów nie jest dostępne dla żądanych użytkowników.",
