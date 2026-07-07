@@ -189,7 +189,7 @@ Docker image.
 
 <a id="backend-ai-server-installation-guide"></a>
 
-## Backend.AI Server Installation Guide
+## Backend.AI server installation guide
 
 For Backend.AI Server daemons/services, following hardware specification should be met. For
 optimal performance, just double the amount of each resources.

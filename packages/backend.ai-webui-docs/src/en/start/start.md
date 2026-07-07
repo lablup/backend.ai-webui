@@ -7,7 +7,7 @@ external URLs.
 
 ![](../images/start_page.png)
 
-## Announcement Banner
+## Announcement banner
 
 If your system administrator has published an announcement, it appears as a
 banner at the top of the Start page. The announcement supports Markdown
@@ -16,7 +16,7 @@ or usage guidelines. You can dismiss the banner by clicking the close icon.
 
 ![](../images/start_announcement_banner.png)
 
-## Action Cards
+## Action cards
 
 The Start page displays the following action cards by default:
 
@@ -39,12 +39,12 @@ may not be available. If you want to use these features, please contact your
 system administrator.
 :::
 
-## Start From URL
+## Start from URL
 
 The **Start From URL** card allows you to import and run projects directly from
 external sources. Clicking the card opens a dialog with three tabs.
 
-### Import Notebook
+### Import notebook
 
 ![](../images/start_from_url_notebook.png)
 
@@ -79,7 +79,7 @@ You must be logged in before generating the badge code. Otherwise, log in first
 and try again.
 :::
 
-### Import GitHub Repository
+### Import GitHub repository
 
 ![](../images/start_from_url_github.png)
 
@@ -91,7 +91,7 @@ and try again.
 The imported repository is converted to a storage folder that can be mounted
 when starting a session.
 
-### Import GitLab Repository
+### Import GitLab repository
 
 ![](../images/start_from_url_gitlab.png)
 
@@ -101,7 +101,7 @@ when starting a session.
 4. Optionally set the **Folder Usage Mode** (General or Models)
 5. Click **Get To Folder** to clone the repository into a new storage folder
 
-## Customizing Card Layout
+## Customizing card layout
 
 You can rearrange the action cards on the Start page by dragging and dropping
 them. Each card has a drag handle at the top-left corner that you can grab to

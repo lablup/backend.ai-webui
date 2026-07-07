@@ -11,7 +11,7 @@ Once started, the session provides access to interactive applications, terminals
 
 <a id="resource-summary-panels"></a>
 
-## Resource Summary Panels
+## Resource summary panels
 
 At the top of the 'Sessions' page, you can find panels displaying your available computing resources such as CPU, RAM, and AI Accelerators.
 Different panel views — 'My Total Resources Limit', 'My Resources in Resource Group', and 'Total Resources in Resource Group' — can be selected depending on
@@ -24,7 +24,7 @@ For more detailed information about resource panels and their metrics, please re
 
 <a id="session-list"></a>
 
-## Session List
+## Session list
 
 The personal Sessions page displays only your own active and completed compute sessions.
 You can filter sessions by type — `All`, `Interactive`, `Batch`, `Inference`, or `Upload Sessions` — and switch between

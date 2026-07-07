@@ -1,7 +1,5 @@
 # Backend.AI WebUI ユーザーガイド
 
-Backend.AI WebUIのユーザーガイドです。
-
 Backend.AI WebUIは、Backend.AIサーバーと連携するための使いやすいGUIインターフェースを提供するウェブまたはアプリです。
 
 このドキュメントの最新バージョンは、以下のサイトから見つけることができます:
