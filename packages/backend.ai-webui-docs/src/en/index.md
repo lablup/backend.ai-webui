@@ -23,7 +23,7 @@ The latest versions of this document can be found from sites below:
 - [Dashboard](dashboard/dashboard.md)
 - [Vfolder](vfolder/vfolder.md)
 - [Session Page](session_page/session_page.md)
-- [Sessions All](sessions_all/sessions_all.md)
+- [Compute Sessions](sessions_all/sessions_all.md)
 - [Mount Vfolder](mount_vfolder/mount_vfolder.md)
 - [Share Vfolder](share_vfolder/share_vfolder.md)
 - [Deployment](deployment/deployment.md)

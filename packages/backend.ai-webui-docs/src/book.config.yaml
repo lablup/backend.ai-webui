@@ -61,7 +61,7 @@ navigation:
       items:
         - title: Session Page
           path: session_page/session_page.md
-        - title: Sessions All
+        - title: Compute Sessions
           path: sessions_all/sessions_all.md
         - title: Cluster Session
           path: cluster_session/cluster_session.md
@@ -128,7 +128,7 @@ navigation:
       items:
         - title: セッションページ
           path: session_page/session_page.md
-        - title: 全セッション
+        - title: コンピュートセッション
           path: sessions_all/sessions_all.md
         - title: クラスターセッション
           path: cluster_session/cluster_session.md
@@ -195,7 +195,7 @@ navigation:
       items:
         - title: 세션 페이지
           path: session_page/session_page.md
-        - title: 전체 세션
+        - title: 연산 세션
           path: sessions_all/sessions_all.md
         - title: 클러스터 세션
           path: cluster_session/cluster_session.md
@@ -262,7 +262,7 @@ navigation:
       items:
         - title: หน้าเซสชัน
           path: session_page/session_page.md
-        - title: เซสชันทั้งหมด
+        - title: เซสชันการคำนวณ
           path: sessions_all/sessions_all.md
         - title: เซสชันคลัสเตอร์
           path: cluster_session/cluster_session.md
