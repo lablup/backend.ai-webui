@@ -1478,7 +1478,7 @@ Backend.AI supports a wide range of AI accelerators across multiple vendors:
 
 - **NVIDIA**
   - Spark (GB10)
-  - Blackwell (B300, B200, RTX Pro 6000, etc.)
+  - Blackwell (B300, B200, RTX PRO 6000, etc.)
   - Hopper (H200, H100 NVL, etc.)
   - Grace Superchip (GB300, GB200, GH200, etc.)
   - Turing (Titan RTX, RTX 8000, T4)

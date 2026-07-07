@@ -79,7 +79,7 @@ navigation:
           path: mount_vfolder/mount_vfolder.md
         - title: Share Vfolder
           path: share_vfolder/share_vfolder.md
-        - title: Sftp To Container
+        - title: SFTP to Container
           path: sftp_to_container/sftp_to_container.md
     - category: Administration
       items:

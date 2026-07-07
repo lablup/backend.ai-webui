@@ -1212,7 +1212,7 @@ Backend.AI는 다양한 벤더의 AI 가속기를 폭넓게 지원합니다:
 
 - **NVIDIA**
   - Spark (GB10)
-  - Blackwell (B300, B200, RTX Pro 6000 등)
+  - Blackwell (B300, B200, RTX PRO 6000 등)
   - Hopper (H200, H100 NVL 등)
   - Grace Superchip (GB300, GB200, GH200 등)
   - Turing (Titan RTX, RTX 8000, T4)

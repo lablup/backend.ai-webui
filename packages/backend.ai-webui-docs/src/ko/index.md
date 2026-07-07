@@ -1,6 +1,6 @@
 # Backend.AI WebUI User Guide
 
-Backend.AI Web-UI는 웹 또는 앱 형태의 GUI 클라이언트로, Backend.AI 서버에 접속하여 연산 자원을 활용하고 자신의 환경을 관리할 수 있는 편리한 그래픽 인터페이스를 제공합니다.
+Backend.AI WebUI는 웹 또는 앱 형태의 GUI 클라이언트로, Backend.AI 서버에 접속하여 연산 자원을 활용하고 자신의 환경을 관리할 수 있는 편리한 그래픽 인터페이스를 제공합니다.
 
 이 문서의 최신 버전은 아래 사이트에서 볼 수 있습니다:
 
