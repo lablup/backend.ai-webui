@@ -43,8 +43,10 @@ gh workflow run docs-archive-orphan-branch.yml \
 ```
 
 Verify success: a new commit appears on `docs-archive/26.5` containing the
-built site files (not the source tree). If the workflow fails, fix the
-root cause before continuing — do **not** edit the orphan branch by hand.
+docs **source** tree (`src/` + `.archive-info.txt`), not built site files —
+the current toolkit on `main` re-renders this source at Amplify build time.
+If the workflow fails, fix the root cause before continuing — do **not**
+edit the orphan branch by hand.
 
 Workflow file: `.github/workflows/docs-archive-orphan-branch.yml`.
 

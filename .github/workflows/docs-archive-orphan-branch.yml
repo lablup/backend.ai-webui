@@ -238,8 +238,16 @@ jobs:
             echo "::warning::AMPLIFY_DOCS_WEBHOOK_URL secret not set — docs-archive branch was updated, but the live site stays stale until the next main build. Create an Amplify incoming webhook (docs app → Build settings → Incoming webhooks) and store its URL in this secret."
             exit 0
           fi
-          curl -fsS -X POST "$WEBHOOK" -H 'Content-Type: application/json' -d '{}'
-          echo "Amplify rebuild triggered."
+          # The archive force-push above already succeeded, so a flaky
+          # webhook must not fail the workflow. Bound the request (timeout
+          # + retries) and downgrade any failure to a warning — the live
+          # site will still refresh on the next main build.
+          if curl -fsS --max-time 30 --retry 3 --retry-delay 5 --retry-all-errors \
+               -X POST "$WEBHOOK" -H 'Content-Type: application/json' -d '{}'; then
+            echo "Amplify rebuild triggered."
+          else
+            echo "::warning::Amplify webhook POST failed after retries — the docs-archive branch is already updated, so the live site will refresh on the next main build. Re-run this workflow (or POST the webhook manually) to force it sooner."
+          fi
 
       - name: Dry-run summary
         if: ${{ steps.resolve.outputs.dry_run == 'true' }}
