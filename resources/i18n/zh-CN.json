@@ -2088,8 +2088,12 @@
     "RoleMember": "成员"
   },
   "projectSelect": {
+    "AskAdminForProjectAccess": "请联系管理员为您授予项目访问权限。",
+    "GoToProject": "前往 {{project}}",
     "NoAccessibleProjects": "没有可访问的项目。",
-    "ProjectAdminBadge": "项目管理员"
+    "ProjectAdminBadge": "项目管理员",
+    "ProjectNotFoundOrNoAccess": "项目 '{{project}}' 未找到或您没有访问权限。",
+    "SwitchToAccessibleProject": "请从页面顶部的项目选择器中选择一个可访问的项目。"
   },
   "prometheusQueryPreset": {
     "AddPreset": "添加预设",

@@ -2086,8 +2086,12 @@
     "RoleMember": "Ahli"
   },
   "projectSelect": {
+    "AskAdminForProjectAccess": "Minta pentadbir anda memberikan akses kepada projek.",
+    "GoToProject": "Pergi ke {{project}}",
     "NoAccessibleProjects": "Tiada projek yang boleh diakses.",
-    "ProjectAdminBadge": "Pentadbir Projek"
+    "ProjectAdminBadge": "Pentadbir Projek",
+    "ProjectNotFoundOrNoAccess": "Projek '{{project}}' tidak ditemui atau anda tidak mempunyai akses kepadanya.",
+    "SwitchToAccessibleProject": "Pilih projek yang boleh diakses daripada pemilih projek di bahagian atas halaman."
   },
   "prometheusQueryPreset": {
     "AddPreset": "Tambah Pratetap",

@@ -14,11 +14,10 @@ import DeploymentReplicasCard from '../components/DeploymentReplicasCard';
 import DeploymentRevisionCard from '../components/DeploymentRevisionCard';
 import DeploymentRevisionDetailDrawer from '../components/DeploymentRevisionDetailDrawer';
 import SwitchToProjectButton from '../components/SwitchToProjectButton';
-import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { useActiveProjectName } from '../hooks/useRouteScope';
+import { useActiveProjectName, useProjectPath } from '../hooks/useRouteScope';
 import {
   getPathFromMenuKey,
   useWebUIMenuItems,
@@ -56,7 +55,7 @@ const DeploymentDetailPage: React.FC = () => {
   const webuiNavigate = useWebUINavigate();
   const baiClient = useSuspendedBackendaiClient();
   const currentProject = useCurrentProjectValue();
-  const activeProjectName = useActiveProjectName();
+  const buildProjectPath = useProjectPath();
   const isChatBlocked = !!baiClient?._config?.blockList?.includes('chat');
 
   const { deploymentId: deploymentIdParam } = useParams<{
@@ -311,7 +310,7 @@ const DeploymentDetailPage: React.FC = () => {
                 icon={<BotMessageSquareIcon size={token.fontSizeLG} />}
                 onClick={() => {
                   webuiNavigate({
-                    pathname: buildPath('project', 'chat', activeProjectName),
+                    pathname: buildProjectPath('chat', { scope: 'project' }),
                     search: new URLSearchParams({
                       endpointId: deploymentId,
                     }).toString(),

@@ -2086,8 +2086,12 @@
     "RoleMember": "Jäsen"
   },
   "projectSelect": {
+    "AskAdminForProjectAccess": "Pyydä järjestelmänvalvojaa myöntämään sinulle pääsy projektiin.",
+    "GoToProject": "Siirry projektiin {{project}}",
     "NoAccessibleProjects": "Ei saatavilla olevia projekteja.",
-    "ProjectAdminBadge": "Projektin ylläpitäjä"
+    "ProjectAdminBadge": "Projektin ylläpitäjä",
+    "ProjectNotFoundOrNoAccess": "Projektia '{{project}}' ei löydy tai sinulla ei ole siihen pääsyä.",
+    "SwitchToAccessibleProject": "Valitse käytettävissä oleva projekti sivun yläreunassa olevasta projektin valitsimesta."
   },
   "prometheusQueryPreset": {
     "AddPreset": "Lisää esiasetus",

@@ -2,19 +2,27 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import RouteErrorContent, {
+  RouteErrorSegment,
+} from '../components/RouteErrorContent';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useActiveProjectName } from '../hooks/useRouteScope';
 import {
   getPathFromMenuKey,
   useWebUIMenuItems,
 } from '../hooks/useWebUIMenuItems';
-import { Button, Typography } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { Button } from 'antd';
+import { ArrowRightIcon } from 'lucide-react';
 import { Trans, useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
+
+const MAX_SEGMENTS = 4;
 
 const Page404 = () => {
+  'use memo';
   const { t } = useTranslation();
   const webuiNavigate = useWebUINavigate();
+  const location = useLocation();
   const { firstAvailableMenuItem } = useWebUIMenuItems();
   const activeProjectName = useActiveProjectName();
   useSuspendedBackendaiClient(); //monkey patch for flickering
@@ -25,44 +33,36 @@ const Page404 = () => {
   const defaultPageTitle =
     firstAvailableMenuItem?.labelText ?? t('webui.menu.FirstPageNameAlias');
 
+  // The pill shows the unknown path with its LAST segment marked broken —
+  // that is the part the router could not resolve. Long paths are capped
+  // with a leading ellipsis so detail-page URLs stay readable.
+  const rawSegments = location.pathname.split('/').filter(Boolean);
+  const capped =
+    rawSegments.length > MAX_SEGMENTS
+      ? ['…', ...rawSegments.slice(-(MAX_SEGMENTS - 1))]
+      : rawSegments;
+  const segments: RouteErrorSegment[] = capped.map((text, i) => ({
+    text,
+    broken: i === capped.length - 1,
+  }));
+
   return (
-    <BAIFlex
-      direction="column"
-      justify="center"
-      align="center"
-      style={{
-        height: 'calc(100vh - 150px)',
-      }}
-      wrap="wrap"
-    >
-      <BAIFlex wrap="wrap" justify="center">
-        <img
-          src="/resources/images/404_not_found.svg"
-          // style="width:500px;margin:20px;"
-          style={{
-            width: 500,
-            margin: 20,
-          }}
-          alt="404 Not Found"
-        />
-        <BAIFlex direction="column" align="start" gap={'lg'}>
-          <Typography.Title level={2} style={{ margin: 0 }}>
-            {/* t('webui.NotFound') */}
-            <Trans i18nKey={'webui.NotFound'} />
-          </Typography.Title>
-          <Typography.Text type="secondary" style={{ margin: 0 }}>
-            {t('webui.DescNotFound')}
-          </Typography.Text>
-          <Button
-            size="large"
-            type="primary"
-            onClick={() => webuiNavigate(defaultPagePath)}
-          >
-            {t('button.GoBackToStartPage', { title: defaultPageTitle })}
-          </Button>
-        </BAIFlex>
-      </BAIFlex>
-    </BAIFlex>
+    <RouteErrorContent
+      segments={segments.length ? segments : undefined}
+      title={<Trans i18nKey={'webui.NotFound'} />}
+      description={t('webui.DescNotFound')}
+      extra={
+        <Button
+          type="primary"
+          size="large"
+          icon={<ArrowRightIcon size="1em" />}
+          iconPosition="end"
+          onClick={() => webuiNavigate(defaultPagePath)}
+        >
+          {t('button.GoBackToStartPage', { title: defaultPageTitle })}
+        </Button>
+      }
+    />
   );
 };
 

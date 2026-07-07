@@ -2086,8 +2086,12 @@
     "RoleMember": "Üye"
   },
   "projectSelect": {
+    "AskAdminForProjectAccess": "Yöneticinizden bir projeye erişim izni vermesini isteyin.",
+    "GoToProject": "{{project}} projesine git",
     "NoAccessibleProjects": "Erişilebilir proje bulunmuyor.",
-    "ProjectAdminBadge": "Proje Yöneticisi"
+    "ProjectAdminBadge": "Proje Yöneticisi",
+    "ProjectNotFoundOrNoAccess": "'{{project}}' projesi bulunamadı veya erişim izniniz yok.",
+    "SwitchToAccessibleProject": "Sayfanın üstündeki proje seçicisinden erişilebilir bir proje seçin."
   },
   "prometheusQueryPreset": {
     "AddPreset": "Ön ayar ekle",

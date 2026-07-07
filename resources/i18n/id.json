@@ -2089,8 +2089,12 @@
     "RoleMember": "Anggota"
   },
   "projectSelect": {
+    "AskAdminForProjectAccess": "Minta administrator Anda untuk memberikan akses ke sebuah proyek.",
+    "GoToProject": "Buka {{project}}",
     "NoAccessibleProjects": "Tidak ada proyek yang dapat diakses.",
-    "ProjectAdminBadge": "Admin Proyek"
+    "ProjectAdminBadge": "Admin Proyek",
+    "ProjectNotFoundOrNoAccess": "Proyek '{{project}}' tidak ditemukan atau Anda tidak memiliki akses ke proyek tersebut.",
+    "SwitchToAccessibleProject": "Pilih proyek yang dapat diakses dari pemilih proyek di bagian atas halaman."
   },
   "prometheusQueryPreset": {
     "AddPreset": "Tambah Preset",

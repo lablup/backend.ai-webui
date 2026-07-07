@@ -2088,8 +2088,12 @@
     "RoleMember": "Thành viên"
   },
   "projectSelect": {
+    "AskAdminForProjectAccess": "Hãy yêu cầu quản trị viên cấp cho bạn quyền truy cập vào một dự án.",
+    "GoToProject": "Đi đến {{project}}",
     "NoAccessibleProjects": "Không có dự án nào có thể truy cập.",
-    "ProjectAdminBadge": "Quản trị dự án"
+    "ProjectAdminBadge": "Quản trị dự án",
+    "ProjectNotFoundOrNoAccess": "Dự án '{{project}}' không được tìm thấy hoặc bạn không có quyền truy cập vào nó.",
+    "SwitchToAccessibleProject": "Chọn một dự án có thể truy cập từ bộ chọn dự án ở đầu trang."
   },
   "prometheusQueryPreset": {
     "AddPreset": "Thêm cài đặt sẵn",
