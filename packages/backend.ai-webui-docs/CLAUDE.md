@@ -79,8 +79,8 @@ Read these before writing or editing documentation:
 
 ## Configuration
 
-- **Navigation**: `src/book.config.yaml` - Defines page ordering and titles for each language
-- **Adding a new page**: Create the `.md` file under each language directory, then add navigation entries for all 4 languages in `book.config.yaml`
+- **Navigation**: `src/book.config.yaml` - Defines page ordering (structure only) for each language; sidebar labels live in each page's frontmatter `navTitle` (FR-3277), falling back to the page H1
+- **Adding a new page**: Create the `.md` file under each language directory (with a frontmatter `navTitle:` sidebar label), then add path-only navigation entries for all 4 languages in `book.config.yaml`
 
 ## Quick Rules
 

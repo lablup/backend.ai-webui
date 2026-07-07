@@ -306,7 +306,7 @@ function buildWebsiteSidebar(
       // always match because both are derived from the same flattened
       // navigation. If they don't, render a plain text entry rather than
       // throwing — keeps the build alive while the mismatch is debugged.
-      return `<li><span>${num}. ${escapeHtml(item.title)}</span></li>`;
+      return `<li><span>${num}. ${escapeHtml(item.title ?? item.path)}</span></li>`;
     }
     const isActive = globalIndex === currentIndex;
     const href = `./${chapter.slug}.html`;

@@ -1,3 +1,7 @@
+---
+navTitle: 클러스터 세션
+---
+
 # Backend.AI 클러스터 연산 세션
 
 <a id="backendai-cluster-compute-session"></a>

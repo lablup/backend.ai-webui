@@ -1,3 +1,7 @@
+---
+navTitle: Appendix
+---
+
 # Appendix
 
 <a id="gpu-virtualization-and-fractional-gpu-allocation"></a>

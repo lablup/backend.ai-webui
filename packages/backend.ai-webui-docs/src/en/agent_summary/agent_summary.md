@@ -1,3 +1,7 @@
+---
+navTitle: Agent Summary
+---
+
 # Agent Summary
 
 The Agent Summary page gives you a read-only overview of the compute **agents** (agent nodes) available to your project and how their resources are currently allocated. Use it to check how much CPU, memory, and accelerator capacity remains before you create a compute session.

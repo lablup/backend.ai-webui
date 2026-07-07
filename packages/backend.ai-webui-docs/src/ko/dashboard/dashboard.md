@@ -1,3 +1,7 @@
+---
+navTitle: 대시보드
+---
+
 <a id="dashboard"></a>
 
 # 대시보드

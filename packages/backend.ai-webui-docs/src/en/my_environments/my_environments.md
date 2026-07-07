@@ -1,3 +1,7 @@
+---
+navTitle: My Environments
+---
+
 <a id="my-environments"></a>
 
 # My Environments

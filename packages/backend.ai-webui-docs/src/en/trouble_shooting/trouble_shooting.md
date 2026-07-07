@@ -1,3 +1,7 @@
+---
+navTitle: Troubleshooting
+---
+
 # FAQs & Troubleshooting
 
 ## User troubleshooting guide

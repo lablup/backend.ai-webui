@@ -1,3 +1,7 @@
+---
+navTitle: SFTP to Container
+---
+
 <a id="ssh-sftp-container"></a>
 
 # SSH/SFTP Connection to a Compute Session

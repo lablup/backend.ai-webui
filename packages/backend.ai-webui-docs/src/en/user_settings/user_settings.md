@@ -1,3 +1,7 @@
+---
+navTitle: User Settings
+---
+
 <a id="user-settings"></a>
 
 # User Settings

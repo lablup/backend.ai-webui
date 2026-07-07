@@ -1,3 +1,7 @@
+---
+navTitle: セッションページ
+---
+
 <a id="session-page"></a>
 
 # セッションページ

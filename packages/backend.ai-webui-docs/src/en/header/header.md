@@ -1,3 +1,7 @@
+---
+navTitle: Top Bar
+---
+
 # Top Bar Features
 
 
