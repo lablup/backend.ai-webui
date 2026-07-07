@@ -198,11 +198,12 @@ describe("buildWebPage — FR-2726 surfaces", () => {
     assert.match(html, /class="bai-topbar__brand"/);
     assert.match(html, />Manual</); // sub-label
     assert.match(html, />v26\.5\.0</); // version pill
-    // FR-3265: with repoUrl set the pill is a release-notes link that
-    // defaults to `${repoUrl}/releases`.
+    // FR-3265: with repoUrl set but no derivable release tag (the
+    // fixture metadata carries none), the pill links to the repository
+    // itself — a tagless build is the repo's default-branch tip.
     assert.match(
       html,
-      /<a class="bai-brand-version" href="https:\/\/github\.com\/owner\/repo\/releases"[^>]*rel="noopener noreferrer"[^>]*aria-label="Release notes for v26\.5\.0"/,
+      /<a class="bai-brand-version" href="https:\/\/github\.com\/owner\/repo"[^>]*rel="noopener noreferrer"[^>]*aria-label="Source repository for v26\.5\.0"/,
     );
     // The pill now lives OUTSIDE the brand anchor (nested <a> is invalid
     // HTML); the brand anchor's own markup must not contain it.
@@ -230,7 +231,7 @@ describe("buildWebPage — FR-2726 surfaces", () => {
   it("deep-links the version pill to the release tag when metadata.releaseTag is set", () => {
     // Archive minors (and stable workspace builds) carry a real release
     // tag, so the pill targets that version's own release-notes page
-    // instead of the generic listing.
+    // instead of the tagless repository fallback.
     const ctx = makeContext();
     ctx.metadata = { ...ctx.metadata, releaseTag: "v26.4.10" };
     const html = buildWebPage(ctx);

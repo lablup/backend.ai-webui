@@ -1384,22 +1384,31 @@ function buildBaiTopbar(
 
   // Version pill (FR-3265): links to this version's release-notes page
   // when its tag is known (`metadata.releaseTag` — pdfTag for archive
-  // minors, stable workspace tag otherwise), else to the generic
-  // releases listing. `metadata.version` alone is NOT a safe tag source:
-  // next/flat builds render "vX.Y.Z-pre (sha)", which has no release.
-  // An explicit `website.releaseNotesUrl` overrides both.
+  // minors, stable workspace tag otherwise). Without a tag (pre-release
+  // `next` builds — those ARE the repo's default-branch tip) the pill
+  // links to the repository itself rather than the releases listing,
+  // since no listed release corresponds to what the reader is viewing.
+  // `metadata.version` alone is NOT a safe tag source: next/flat builds
+  // render "vX.Y.Z-pre (sha)", which has no release. An explicit
+  // `website.releaseNotesUrl` overrides both derivations.
   const repoUrl = config.website?.repoUrl;
   const repoUrlTrimmed = repoUrl?.replace(/\/$/, "");
-  const releaseNotesUrl =
+  const pillUrl =
     config.website?.releaseNotesUrl ??
     (repoUrlTrimmed
       ? metadata.releaseTag
         ? `${repoUrlTrimmed}/releases/tag/${encodeURIComponent(metadata.releaseTag)}`
-        : `${repoUrlTrimmed}/releases`
+        : repoUrlTrimmed
       : undefined);
+  // The label reflects the actual target: release notes when a tag (or
+  // explicit URL) is set, the source repository otherwise.
+  const pillAriaPrefix =
+    config.website?.releaseNotesUrl || metadata.releaseTag
+      ? "Release notes for"
+      : "Source repository for";
   const versionText = escapeHtml(metadata.version);
-  const versionPillHtml = releaseNotesUrl
-    ? `<a class="bai-brand-version" href="${escapeHtml(releaseNotesUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Release notes for ${versionText}">${versionText}</a>`
+  const versionPillHtml = pillUrl
+    ? `<a class="bai-brand-version" href="${escapeHtml(pillUrl)}" target="_blank" rel="noopener noreferrer" aria-label="${pillAriaPrefix} ${versionText}">${versionText}</a>`
     : `<span class="bai-brand-version">${versionText}</span>`;
 
   // Search input (existing search.js binds via #search-input). Placeholder

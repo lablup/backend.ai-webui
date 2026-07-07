@@ -402,8 +402,8 @@ export function pickDisplayVersion(args: {
 /**
  * Choose the GitHub release tag the topbar version pill should deep-link
  * to (`<repoUrl>/releases/tag/<tag>`), or `undefined` when no tag can be
- * derived — the pill then falls back to the generic releases listing
- * (FR-3265).
+ * derived — the pill then falls back to the repository URL itself, since
+ * a tagless build is the repo's default-branch tip (FR-3265).
  *
  *   - Archive-branch version: `pdfTag` IS a published release tag
  *     (`v26.4.10`) — use it. No `pdfTag` → no deep link.
