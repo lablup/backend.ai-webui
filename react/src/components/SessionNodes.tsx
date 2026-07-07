@@ -9,6 +9,7 @@ import {
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import AppLauncherModal from './ComputeSessionNodeItems/AppLauncherModal';
+import SessionReclamationStatusCell from './ComputeSessionNodeItems/SessionReclamationStatusCell';
 import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
 import SessionSlotCell from './ComputeSessionNodeItems/SessionSlotCell';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
@@ -100,6 +101,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         ...SessionStatusTagFragment
         ...SessionReservationFragment
         ...SessionSlotCellFragment
+        ...SessionReclamationStatusCellFragment
         ...SessionUsageMonitorFragment
         ...SessionDetailDrawerFragment
         ...BAISessionAgentIdsFragment
@@ -207,23 +209,14 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
           return <SessionStatusTag sessionFrgmt={session} />;
         },
       },
-      // This column will be added back when the session list column setting ui is ready
-      // {
-      //   key: 'utils',
-      //   title: t('session.Utilization'),
-      //   render: (__, session) => {
-      //     return (
-      //       <BAIFlex
-      //         style={{
-      //           paddingLeft: token.paddingXS,
-      //         }}
-      //       >
-      //         <SessionUsageMonitor size="small" sessionFrgmt={session} />
-      //       </BAIFlex>
-      //     );
-      //   },
-      //   defaultHidden: true,
-      // },
+      {
+        key: 'reclamationStatus',
+        title: t('session.ReclamationStatus'),
+        defaultHidden: true,
+        render: (__, session) => (
+          <SessionReclamationStatusCell sessionFrgmt={session} />
+        ),
+      },
       {
         key: 'accelerator',
         title: t('session.launcher.AIAccelerator'),
