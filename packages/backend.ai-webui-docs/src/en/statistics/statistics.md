@@ -1,6 +1,6 @@
 # Statistics Page
 
-## Allocation History
+## Allocation history
 
 On the Statistics page, under the Allocation History tab, you can check simple statistics related to the use of
 compute sessions via graphs. You can select the display period using the **Period**
@@ -23,7 +23,7 @@ Also, one week statistics may not be shown for users whose account was created l
 
 ![](../images/usage_panel.png)
 
-## User Session History
+## User session history
 
 :::note
 The User Session History tab is only available when the backend supports user metrics.

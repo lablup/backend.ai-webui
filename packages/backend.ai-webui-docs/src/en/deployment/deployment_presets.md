@@ -10,7 +10,7 @@ A **Deployment Preset** is a reusable, administrator-curated bundle of deploymen
 This page lives under the **Administration** section because only administrators can create, edit, and delete deployment presets. End users cannot manage presets themselves, but they can **apply** any preset that has been published to their project when they deploy a model. The two halves of this page reflect that split: [Managing Deployment Presets](#managing-deployment-presets) describes the admin workflow, and [Using a Preset When Deploying a Model](#using-a-preset-when-deploying-a-model) describes the end-user workflow. Preset-aware revision creation is also documented on the [Deployments](#model-serving) page.
 :::
 
-## What Is a Deployment Preset?
+## What is a deployment preset?
 
 A Deployment Preset captures the defaults of a model deployment so that:
 
@@ -34,7 +34,7 @@ Each preset stores the following deployment defaults:
 
 <a id="managing-deployment-presets"></a>
 
-## Managing Deployment Presets
+## Managing deployment presets
 
 Only administrators can create, edit, or delete deployment presets. Administrators manage them from the **Deployment Presets** tab on the Admin Deployments page.
 
@@ -51,7 +51,7 @@ The following columns are visible by default: **Name**, **Runtime**, **Image** (
 
 Additional columns can be shown or hidden using the column visibility gear button (⚙) at the right of the table header: **Description**, **Startup Command** (truncated with a tooltip for long values, copyable), **Cluster**, **Strategy**, **Open to Public** (shown as a Public/Private tag), **Revision History Limit**, and **Rank** (sortable).
 
-### Create a Deployment Preset
+### Create a deployment preset
 
 1. Click the **Create Preset** button at the top right of the preset list.
 2. Fill in the fields in the *Create Preset* dialog. The dialog is organized into the following sections:
@@ -89,7 +89,7 @@ Administrators can mark individual Runtime Parameters as required. Required para
 The **Enable Health Check** toggle also applies to the vLLM/SGLang Advanced Mode runtime parameters.
 :::
 
-### Edit a Deployment Preset
+### Edit a deployment preset
 
 1. From the preset list, open the action menu on the preset row (or open the preset's detail view) and select **Edit Preset**.
 2. The *Edit Preset* dialog opens with the preset's current values pre-filled. The available sections are identical to the *Create Preset* dialog, including the **Runtime Parameters** section for vLLM and SGLang runtimes.
@@ -99,7 +99,7 @@ The **Enable Health Check** toggle also applies to the vLLM/SGLang Advanced Mode
 
 Editing a preset only changes the defaults for **future** deployments. Existing deployments that were already created from this preset are not modified.
 
-### Delete a Deployment Preset
+### Delete a deployment preset
 
 1. From the preset list (or the preset's detail view), open the action menu on the preset and select **Delete Preset**.
 2. A typed-confirmation dialog appears asking you to type the preset's name to confirm. The **OK** button stays disabled until the typed value matches the preset name exactly.
@@ -109,7 +109,7 @@ Editing a preset only changes the defaults for **future** deployments. Existing 
 Deleting a deployment preset is **irreversible**. The preset itself is removed, but deployments that were already created from it continue to run unaffected. Future deployments can no longer reference this preset.
 :::
 
-## Using a Preset When Deploying a Model
+## Using a preset when deploying a model
 
 End users apply a deployment preset through the **VFolder Deploy** modal, which opens when you deploy a model from a storage folder on the Data page.
 
@@ -130,7 +130,7 @@ End users apply a deployment preset through the **VFolder Deploy** modal, which 
 The active preset, tab key, and other navigation state are preserved in the URL via `URLSearchParams`. You can share a link to a specific preset's detail view, and the recipient lands on the same screen.
 :::
 
-## Pre-Populated Launcher Fields
+## Pre-populated launcher fields
 
 When you choose the manual-deploy path, the deployment launcher opens with every field pre-filled from the selected preset:
 
@@ -147,7 +147,7 @@ You can edit any pre-populated field before deploying. Editing a field does **no
 If the auto-selected resource preset is the right one for your workload, leave it as-is. The launcher preserves the auto-selection across the initial-values pass, so you do not need to re-select it after switching presets.
 :::
 
-## Filtering by Tags
+## Filtering by tags
 
 Both the user-facing preset list and the admin preset list support **clickable tag chips** that filter the list to presets sharing the clicked tag.
 

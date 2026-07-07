@@ -51,7 +51,7 @@ email/username field in `Session` mode, or the **API Key** field in `API` mode.
 
 <a id="connection-mode"></a>
 
-### Connection Mode
+### Connection mode
 
 If enabled by your administrator, a mode selector appears at the top of the
 login dialog allowing you to choose between `Session` mode and `API` mode.
@@ -63,7 +63,7 @@ login dialog allowing you to choose between `Session` mode and `API` mode.
 
 <a id="api-endpoint"></a>
 
-### API Endpoint
+### API endpoint
 
 Click the `Advanced` link to expand the endpoint configuration section. In the
 API Endpoint field, enter the URL of the Backend.AI Webserver that relays
@@ -82,7 +82,7 @@ know the user's password.
 
 <a id="sso-login"></a>
 
-### SSO Login (SAML / OpenID)
+### SSO login (SAML / OpenID)
 
 If your administrator has configured Single Sign-On (SSO), additional login
 buttons may appear below the standard `Login` button:
@@ -101,7 +101,7 @@ SSO login options are only visible when enabled by your system administrator.
 
 <a id="otp-login"></a>
 
-### OTP Login (Two-Factor Authentication)
+### OTP login (two-factor authentication)
 
 If two-factor authentication (2FA) is enabled for your account, an additional
 OTP (One-Time Password) field appears after you enter your email and password.
@@ -113,7 +113,7 @@ or Bitwarden) and enter the 6-digit code in the OTP field to complete login.
 
 <a id="totp-setup-on-login"></a>
 
-### TOTP Setup on First Login
+### TOTP setup on first login
 
 If your administrator requires two-factor authentication and you have not yet
 set up TOTP, a setup dialog will appear automatically after your first
@@ -131,7 +131,7 @@ refer to the [2FA Setup](#2fa-setup) section in Top Bar Features.
 
 <a id="concurrent-session-detection"></a>
 
-### Concurrent Session Detection
+### Concurrent session detection
 
 If you attempt to log in while your account is already logged in from another
 browser or device, a confirmation dialog will appear informing you that an
@@ -162,7 +162,7 @@ logged out when the timer expires. For details, see the
 
 <a id="when-you-forgot-your-password"></a>
 
-## When You Forgot Your Password
+## When you forgot your password
 
 If you have forgotten your password, click the `Forgot password?` text and
 then the `Change` link on the login panel. A dialog will appear where you can
@@ -186,7 +186,7 @@ your system administrator.
 
 <a id="sidebar-menus"></a>
 
-## Sidebar Menus
+## Sidebar menus
 
 Change the size of the sidebar via the buttons on the right side of the sidebar.
 Click it to significantly reduce the width of the sidebar, giving you a wider view of its contents.

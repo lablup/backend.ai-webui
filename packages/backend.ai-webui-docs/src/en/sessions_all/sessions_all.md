@@ -1,6 +1,5 @@
 # Compute Sessions
 
-The most visited pages in the Backend.AI WebUI would be the 'Sessions' and 'Data' pages.
 This document will cover how to query and create container-based compute sessions and utilize various web applications on the 'Sessions' page.
 
 <a id="start-a-new-session"></a>
@@ -21,7 +20,7 @@ Click the `START` button to start a new compute session.
 
 <a id="session-type"></a>
 
-### Session Type
+### Session type
 
 In the first page, users can select the type of session, 'interactive' or 'batch'.
 If needed, setting the name of the session (optional) is also available.
@@ -77,7 +76,7 @@ You can also select a project and resource group.
 
 <a id="environments-and-resource-allocation"></a>
 
-### Environments & Resource allocation
+### Environments & resource allocation
 
 
 Click the `Next` button below, or the `Environments & Resource allocation` menu on the right
@@ -197,7 +196,7 @@ The Agent Select feature may not be available depending on the server environmen
 <a id="data-and-storage"></a>
 <a id="session-mounts"></a>
 
-### Data & Storage
+### Data & storage
 
 
 Click the `Next` button below, or the `Data & Storage` menu on the right to proceed to the next page.
@@ -235,7 +234,7 @@ On this page, Network configuration can be done such as Preopen Ports.
 
 <a id="confirm-and-launch"></a>
 
-### Confirm and Launch
+### Confirm and launch
 
 
 If you are done with the network setting, click the `Next` button below, or
@@ -291,7 +290,7 @@ By clicking the app dialog button on the far left, you can view the available ap
 ![](../images/app_dialog.png)
 
 
-### Recent History
+### Recent history
 
 
 'Session Launcher' page provides a set of options for creating sessions. The
@@ -320,7 +319,7 @@ browser.
 
 <a id="session-detail-panel"></a>
 
-## Session Detail Panel
+## Session detail panel
 
 For detailed information on the session, click the session name in the session list.
 The session details panel shows the information of the session, such as the
@@ -343,7 +342,7 @@ the [Session Scheduling History](#session-scheduling-history) section.
 
 <a id="session-scheduling-history"></a>
 
-### Session Scheduling History
+### Session scheduling history
 
 The Session Scheduling History modal provides transparency into the internal scheduling lifecycle of a
 compute session. It displays a detailed record of every scheduling phase the session went through,
@@ -352,7 +351,7 @@ useful for understanding why a session is delayed, stuck in `PENDING`, or has fa
 
 ![](../images/session_scheduling_history_modal.png)
 
-#### Filter Bar
+#### Filter bar
 
 At the top of the modal, a filter bar allows you to narrow down the scheduling history records. You can
 filter by the following properties:
@@ -369,7 +368,7 @@ filter by the following properties:
 
 A refresh button is also available next to the filter bar to reload the scheduling history data.
 
-#### History Table
+#### History table
 
 The scheduling history table displays records with the following columns:
 
@@ -385,7 +384,7 @@ The scheduling history table displays records with the following columns:
 You can sort the table by the **Created At** or **Updated At** columns to view records in your
 preferred order.
 
-#### History Table Pagination
+#### History table pagination
 
 The scheduling history table is paginated with offset-based pagination. The default page size is 10
 records per page. Changing a filter or the sort order automatically resets the view back to page 1.
@@ -395,7 +394,7 @@ The **Expand errors only** mode (described below) applies only to the records vi
 page, not to the entire history.
 :::
 
-#### Expandable Sub-Steps
+#### Expandable sub-steps
 
 Some history records contain detailed sub-steps. When sub-steps are available, an expand arrow appears
 on the left side of the row. Click it to reveal a nested table showing the individual sub-steps of
@@ -412,7 +411,7 @@ The sub-steps table includes the following columns:
 - **Started At**: When the sub-step began
 - **Ended At**: When the sub-step completed
 
-#### Expand / Collapse Control
+#### Expand / collapse control
 
 A kebab menu (⋮) in the expand-column header opens the **Expand options** menu, which lets you control
 how rows are expanded across the entire table. Three view modes are available:
@@ -426,7 +425,7 @@ how rows are expanded across the entire table. Three view modes are available:
 The selected mode is remembered per user and persists across modal opens. You can still manually
 expand or collapse individual rows at any time, regardless of the active mode.
 
-#### Result Badge Colors
+#### Result badge colors
 
 Each scheduling step and sub-step displays a color-coded result badge indicating its outcome:
 
@@ -442,7 +441,7 @@ Each scheduling step and sub-step displays a color-coded result badge indicating
 
 <a id="session-audit-log"></a>
 
-### Session Audit Log
+### Session audit log
 
 The **Audit Log** tab appears at the bottom of the session detail panel alongside the **Kernels**
 tab. It provides a chronological record of every action taken on the session — such as status
@@ -456,7 +455,7 @@ The Audit Log is enforced by the backend and may be visible only to superadmins.
 may see an empty result even when the tab is accessible.
 :::
 
-#### Audit Log Columns
+#### Audit log columns
 
 The Audit Log table includes the following columns:
 
@@ -466,7 +465,7 @@ The Audit Log table includes the following columns:
 - **Status**: The outcome of the action (`SUCCESS`, `ERROR`, `RUNNING`, or `UNKNOWN`)
 - **Time**: When the action occurred
 
-#### Audit Log Filters
+#### Audit log filters
 
 Use the filter bar above the table to narrow down the log entries:
 

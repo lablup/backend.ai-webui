@@ -2,7 +2,7 @@
 
 # Deployments
 
-## Deployment Overview
+## Deployment overview
 
 Backend.AI lets you deploy AI models as inference services through the **Deployments** feature. A deployment exposes a model behind a stable endpoint URL that end-user applications (mobile apps, web service backends, internal tools, and so on) can call to run inference.
 
@@ -10,7 +10,7 @@ Backend.AI lets you deploy AI models as inference services through the **Deploym
 
 A deployment extends a regular compute session with automated maintenance, replica scaling, and a permanent endpoint address that does not change as replicas come and go. You only specify the scaling parameters you want; Backend.AI creates, monitors, and terminates the underlying inference sessions automatically so you do not have to manage them by hand.
 
-## Deployments Page
+## Deployments page
 
 The Deployments page displays a list of all deployments in the current project. You can access it by clicking **Deployments** in the sidebar menu.
 
@@ -27,7 +27,7 @@ Click the `New Deployment` button to open the **Create Deployment** modal.
 
 <a id="create-deployment"></a>
 
-## Creating a Deployment
+## Creating a deployment
 
 Creating a deployment is a two-step flow:
 
@@ -36,7 +36,7 @@ Creating a deployment is a two-step flow:
 
 Each deployment can hold many revisions. Only one revision is *current* (serving traffic) at a time, and you can switch between revisions from the Revisions tab on the Deployment Detail Page.
 
-### Create Deployment Modal
+### Create deployment modal
 
 Click the `New Deployment` button on the Deployments page to open the **Create Deployment** modal. The modal collects only deployment-level metadata; no revision is created at this point.
 
@@ -54,7 +54,7 @@ Click `Create Deployment` to create the deployment. You are then taken to the De
 
 <a id="add-revision"></a>
 
-### Add Revision
+### Add revision
 
 A revision captures every setting needed to run the inference server — image, start command, resources, model mounts, and environment variables. From the Deployment Detail Page, click `Add Revision` to open the modal.
 
@@ -64,7 +64,7 @@ Use the **Preset Mode** / **Advanced Mode** switcher in the modal title to selec
 
 When the deployment already has a current revision, a **Load current revision** banner appears above the form in both modes. Click **Load current revision** to pre-fill the form with the current revision's configuration as a starting point; the modal switches to Advanced Mode automatically if needed. The banner is not shown when the deployment has no current revision yet, and it disappears once you load the configuration.
 
-#### Preset Mode
+#### Preset mode
 
 Quickly add a revision using a pre-defined deployment preset.
 
@@ -73,7 +73,7 @@ Quickly add a revision using a pre-defined deployment preset.
 
 If no presets are available for the deployment's resource group, an informational message is shown. Switch to Advanced Mode to configure the revision manually.
 
-#### Advanced Mode
+#### Advanced mode
 
 Configure every revision setting directly.
 
@@ -86,15 +86,15 @@ The form contains the following sections:
 
 At the bottom of the modal, check **Apply immediately after adding** to activate the new revision immediately upon creation. If unchecked, the revision is saved in an inactive state and you can apply it later from the Revisions tab.
 
-### Add Revision: Field Reference
+### Add revision: field reference
 
 The subsections below describe revision-level fields in detail. They apply both when adding a revision manually in **Advanced Mode** and when you want to understand what each field controls.
 
-#### Model Definition Mode (Custom Runtime Only)
+#### Model definition mode (custom runtime only)
 
 When you select the **Custom** runtime variant, a **Model Definition Mode** segmented control appears at the top of the form. It lets you choose how the inference server startup is defined:
 
-##### Enter Command Mode
+##### Enter command mode
 
 Select **Enter Command** to define the startup directly as a CLI command. The following fields are available:
 
@@ -128,7 +128,7 @@ The Review step (step 4 of the wizard) renders the start command and bootstrap s
    * **Expected Status Code**: The HTTP response status code that indicates a healthy service.
    * **Startup Grace Period**: Grace period in seconds after container startup during which failed health checks are tolerated; the replica becomes active on the first successful check. Increase this for large models that take longer to load.
 
-##### Use Config File Mode
+##### Use config file mode
 
 Select **Use Config File** to load the startup configuration from a `model-definition.yaml` file stored in the model storage folder. The following fields are available:
 
@@ -137,7 +137,7 @@ Select **Use Config File** to load the startup configuration from a `model-defin
 
 For instructions on creating a model definition file, refer to the [Creating a Model Definition File](#model-definition-guide) section.
 
-#### Runtime Parameters (vLLM / SGLang)
+#### Runtime parameters (vLLM / SGLang)
 
 When you select the `vLLM` or `SGLang` runtime variant, a **Runtime Parameters** section appears in place of the Model Definition Mode selector. This section lets you configure the serving framework without editing configuration files manually.
 
@@ -204,13 +204,13 @@ The **Environments** section is present for all runtime variants.
 - **Environment / Version**: The container image used for the inference server. Selecting a runtime variant filters this list to images that are compatible with that runtime.
 - **Environment Variables**: Key/value pairs passed to the inference server container. For `vLLM` and `SGLang`, a set of runtime-specific variables (listed above) are pre-populated. You can add, edit, or remove entries freely.
 
-#### Cluster and Resources
+#### Cluster and resources
 
 The **Cluster and Resources** section lets you specify the compute resources to allocate to each replica.
 
 - **Resource Preset**: A pre-configured bundle of CPU, memory, and accelerator allocations. Available presets are filtered by the deployment's resource group. You can also configure resources manually (CPU, memory, GPU) without selecting a preset.
 
-#### Advanced Settings
+#### Advanced settings
 
 Expand the **Advanced Settings** collapse panel to mount additional storage folders alongside the model storage folder.
 
@@ -218,11 +218,11 @@ Expand the **Advanced Settings** collapse panel to mount additional storage fold
 
 <a id="custom-runtime-config-files"></a>
 
-### Configuration Files for Custom Runtime
+### Configuration files for custom runtime
 
 <a id="model-definition-guide"></a>
 
-#### Creating a Model Definition File
+#### Creating a model definition file
 
 :::note
 You can configure the model definition file name. But if you don't
@@ -363,7 +363,7 @@ synchronized with the status displayed in the user interface.
    - `args/message`: Specify the message to be displayed in the logs.
    -  `debug`: Set to `True` if it is in debug mode, otherwise set to `False`.
 
-#### Uploading Model Definition File to Model Type Folder
+#### Uploading model definition file to model type folder
 
 To upload the model definition file (`model-definition.yml`) to the
 model type folder, you need to create a virtual folder. When creating
@@ -385,7 +385,7 @@ please refer to the [Explore Folder](#explore-folder) section.
 
 <a id="service-definition-file"></a>
 
-#### Pre-configuring a Deployment (`deployment-config.yaml`)
+#### Pre-configuring a deployment (`deployment-config.yaml`)
 
 You can place a `deployment-config.yaml` file in a model folder to pre-configure the resources, environment, and runtime settings used when a deployment is created from that model. When the file is present, its values are used as **defaults**; anything you set at deployment time (in the Add Revision form or the API request) overrides them.
 
@@ -445,7 +445,7 @@ For a vLLM deployment, the root defaults are merged with the `vllm` section (var
 
 <a id="quick-deploy"></a>
 
-## Quick Deployment
+## Quick deployment
 
 Preset-based quick deploy lets you create a deployment without a separate configuration file. You can start a quick deploy from two entry points:
 
@@ -456,11 +456,11 @@ For the full model deployment flow, see [Model Store](#model-store).
 
 <a id="deployment-detail-page"></a>
 
-## Deployment Detail Page
+## Deployment detail page
 
 Click on a deployment name in the Deployments list to view detailed information about the deployment.
 
-### Deployment Alerts
+### Deployment alerts
 
 The Deployment Detail Page shows contextual alert banners at the top, reflecting the current state of the deployment:
 
@@ -472,7 +472,7 @@ The Deployment Detail Page shows contextual alert banners at the top, reflecting
 
 - **Not In Project**: Shown when the deployment belongs to a different project than the currently selected one. The Edit button is disabled while this alert is active. Click the **Switch Project** button in the alert to switch to the correct project and manage the deployment.
 
-### Service Information
+### Service information
 
 The Service Info card displays the following details:
 
@@ -490,7 +490,7 @@ The Service Info card displays the following details:
 
 ![](../images/endpoint_detail_visibility.png)
 
-#### More Menu (Edit and Delete)
+#### More menu (edit and delete)
 
 The Service Info card's header exposes an **Edit** button alongside a **More** menu. The More menu currently contains the **Delete Deployment** action.
 
@@ -498,11 +498,11 @@ The Service Info card's header exposes an **Edit** button alongside a **More** m
 
 <a id="revisions-tab"></a>
 
-### Revisions Tab
+### Revisions tab
 
 The **Revisions** card on the deployment detail page has three tabs: **Current Revision**, **Revision History**, and **Audit Log**. The `Add Revision` button at the top of the card is available from all tabs and opens the Add Revision modal (see [Add Revision](#add-revision)).
 
-#### Current Revision Tab
+#### Current revision tab
 
 The **Current Revision** tab shows the full configuration of the revision that is currently active and serving traffic.
 
@@ -537,7 +537,7 @@ While a different revision is being applied, the **Current Revision** tab shows 
 
 If no revision has been deployed yet, the tab shows: *"No revision is deployed — add a revision to activate this service."*
 
-#### Revision History Tab
+#### Revision history tab
 
 The **Revision History** tab lists all revisions added to the deployment, sorted from newest to oldest by default.
 
@@ -571,7 +571,7 @@ Clicking the revision number in any row opens the revision detail drawer, which 
 The **Runtime Parameters** field also appears in the revision detail drawer for `vLLM` and `SGLang` revisions, showing the same preset parameter values as the Current Revision tab.
 :::
 
-#### Audit Log Tab
+#### Audit log tab
 
 The **Audit Log** tab shows a chronological record of all actions taken on this deployment. Use it to track who changed the deployment and when.
 
@@ -607,7 +607,7 @@ If a replica has encountered an error, clicking the error indicator on the row o
 
 ![](../images/route_error_json_viewer.png)
 
-### Auto Scaling Rules
+### Auto scaling rules
 
 Auto Scaling Rules automatically increase or decrease the number of replicas for a model service based on live metrics. This conserves resources during low usage and prevents request delays or failures during high usage.
 
@@ -646,7 +646,7 @@ Click the `Add Rules` button to open the **Add Auto Scaling Rule** editor. To mo
 
 <a id="generating-tokens"></a>
 
-### Generating Tokens
+### Generating tokens
 
 Once the deployment is `HEALTHY`, you can click on its name in the Deployments list to open the Deployment Detail Page. The **Service Endpoint** URL is shown in the Service Info card. If **Open To Public** is enabled, end users can access the deployment without a token. If it is disabled, generate and share a token as described below.
 
@@ -667,15 +667,15 @@ item to copy the token, and add it as the value of the following key.
 | Content-Type  | application/json |
 | Authorization | BackendAI        |
 
-### Terminating a Deployment
+### Terminating a deployment
 
 When a deployment is no longer needed, it is recommended to terminate it to free up scheduler resources. To terminate the deployment, open the **More** menu on the Service Info card and select **Delete Deployment**. A typed-confirmation modal appears — type the deployment name to enable the **Permanently Delete** button. The terminated deployment then appears in the **Destroyed** filter view.
 
 ![](../images/terminate_model_service_dialog.png)
 
-## Accessing Your Deployment
+## Accessing your deployment
 
-### Making API Requests
+### Making API requests
 
 To allow end users to call your deployment, share the deployment URL with them. If the **Open To Public** option is enabled, you can share the **Service Endpoint** URL from the Deployment Detail Page directly. If the deployment is private, share the URL along with an access token.
 
@@ -693,7 +693,7 @@ curl -H "Content-Type: application/json" -X GET \
 By default, end users must be on a network that can reach the deployment URL. If the deployment was created in a closed network, only end users with access to that network can reach the service.
 :::
 
-### LLM Chat Test
+### LLM chat test
 
 If you have created a Large Language Model (LLM) service, you can test the LLM in real-time.
 When the deployment is ready, a `Test in Chat` button appears in the **Deployment is ready** banner at the top of the Deployment Detail Page. Click it to start the test.
@@ -728,7 +728,7 @@ The Model Store provides a card-based gallery of pre-configured models that you 
 
 ![](../images/model_store_page_v2.png)
 
-### Browsing and Searching Models
+### Browsing and searching models
 
 The page uses a search and sort layout at the top:
 
@@ -747,7 +747,7 @@ If the `MODEL_STORE` project is not set up on the server, the page shows a *Mode
 
 The list is paginated at the bottom. You can change the page size between `10`, `20`, and `50` entries.
 
-### Model Card Details
+### Model card details
 
 Click a card to open the model card drawer on the right side of the page. The drawer shows the model title and description at the top, followed by the task, category, labels, and license tags, and then a details list with the following items:
 
@@ -763,7 +763,7 @@ If the model card includes a README, it is rendered as a `README.md` card at the
 
 ![](../images/model_card_detail_drawer.png)
 
-### Deploying a Model
+### Deploying a model
 
 Click the **Deploy** button in the drawer header to deploy the model as a service. The deploy flow behaves in one of two ways:
 

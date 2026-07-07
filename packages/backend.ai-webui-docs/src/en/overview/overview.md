@@ -25,7 +25,7 @@ achieves more intuitive use.
 
 <a id="key-concepts"></a>
 
-## Key Concepts
+## Key concepts
 
 ![](../images/key_concepts_2209.png)
 
@@ -91,7 +91,7 @@ achieves more intuitive use.
 
 <a id="backend-ai-feature-details"></a>
 
-## Backend.AI Feature Details
+## Backend.AI feature details
 
 **Accelerator Support**
 

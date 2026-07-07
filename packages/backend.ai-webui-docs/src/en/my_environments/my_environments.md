@@ -21,7 +21,7 @@ compute sessions. The table displays the following metadata for each image:
 
 ![](../images/my_environments.png)
 
-## Searching and Refreshing the Image List
+## Searching and refreshing the image list
 
 You can filter the image list by typing a keyword in the search bar at the top
 of the table. The list updates in real time as you type, showing only the
@@ -29,7 +29,7 @@ images that match your search term.
 
 To refresh the image list, click the reload button next to the search bar.
 
-## Copying the Image Path
+## Copying the image path
 
 You can copy the full image path and use it to create a session with a manual
 image name.
@@ -43,7 +43,7 @@ image name.
 
 <a id="delete-customized-image"></a>
 
-## Deleting a Customized Image
+## Deleting a customized image
 
 To delete an image, click the red trash icon in the **Control** column.
 
@@ -52,7 +52,7 @@ Deleting an image is irreversible. After deletion, you will not be able to
 create a new session using that image.
 :::
 
-## Customizing Table Columns
+## Customizing table columns
 
 If you want to hide or show certain columns, click the gear icon at the
 bottom right of the table. A dialog appears where you can select which
