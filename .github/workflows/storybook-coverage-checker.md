@@ -44,7 +44,7 @@ You are a Storybook coverage analyzer. When a PR is ready for review, analyze ch
 
 ### Step 1: Find the PR
 
-Use the GitHub MCP server tools (configured via `tools.github.toolsets: [pull_requests, repos]`) to find the pull request for the current branch. Query open pull requests whose head ref matches the current branch name and select the most recent one.
+Use the GitHub MCP server tools (configured via `tools.github.toolsets: [pull_requests, repos]`) to find the pull request for the current branch. Query open pull requests whose head ref matches the current branch name and select the most recent one. **Remember this PR number** — because this workflow runs via `workflow_dispatch` (no triggering PR context), you must pass it explicitly as `item_number` when you call `add_comment` (see Important Notes below).
 
 ### Step 2: Get Changed Component Files
 
@@ -139,7 +139,7 @@ loading: {
    - `-propName`: Removed prop (in story, not in component)
    - `~propName`: Changed prop (type mismatch)
 4. **BAI-specific props**: Focus on props defined in the component's own interface, not inherited from Ant Design
-5. **Use `add_comment`**: This safe-output tool will automatically comment on the relevant pull request when configured with `target: "*"`, so `item_number` is not required
+5. **Use `add_comment`**: Because `safe-outputs.add-comment` is configured with `target: "*"` (this workflow is dispatched, so it has no triggering PR), you **must** set `item_number` in the `add_comment` output to the pull request number you identified in Step 1. Omitting it makes the safe-output handler fail with "no specific item number was provided".
 
 ## Example Analysis
 
