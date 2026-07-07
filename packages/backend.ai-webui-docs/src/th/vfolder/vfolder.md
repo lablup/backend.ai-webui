@@ -198,7 +198,7 @@ Backend.AI รองรับ [FileBrowser](https://filebrowser.org) FileBrowser
 
 ![](../images/filebrowser_with_new_window.png)
 
-เมื่อผู้ใช้คลิกปุ่ม 'EXECUTE FILEBROWSER' ระบบ Backend.AI จะสร้างเซสชันการคำนวณเฉพาะสำหรับแอปโดยอัตโนมัติ ดังนั้นในหน้าเซสชัน คุณควรเห็นเซสชันการคำนวณ FileBrowser เป็นความรับผิดชอบของผู้ใช้ในการลบเซสชันการคำนวณนี้
+เมื่อผู้ใช้คลิกปุ่ม 'Execute FileBrowser' ระบบ Backend.AI จะสร้างเซสชันการคำนวณเฉพาะสำหรับแอปโดยอัตโนมัติ ดังนั้นในหน้าเซสชัน คุณควรเห็นเซสชันการคำนวณ FileBrowser เป็นความรับผิดชอบของผู้ใช้ในการลบเซสชันการคำนวณนี้
 
 ![](../images/filebrowser_in_session_page.png)
 
@@ -208,7 +208,7 @@ Backend.AI รองรับ [FileBrowser](https://filebrowser.org) FileBrowser
 
 ![](../images/app_dialog_with_filebrowser.png)
 
-เมื่อคุณคลิกที่ปุ่ม 'EXECUTE FILEBROWSER' อีกครั้งในตัวสำรวจโฟลเดอร์จัดเก็บ จะมีการสร้างเซสชันการคำนวณใหม่และจะมีการแสดงเซสชัน FileBrowser ทั้งหมดสองรายการ
+เมื่อคุณคลิกที่ปุ่ม 'Execute FileBrowser' อีกครั้งในตัวสำรวจโฟลเดอร์จัดเก็บ จะมีการสร้างเซสชันการคำนวณใหม่และจะมีการแสดงเซสชัน FileBrowser ทั้งหมดสองรายการ
 :::
 
 ### สร้างเซสชันการคำนวณด้วยภาพ FileBrowser

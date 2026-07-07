@@ -201,7 +201,7 @@ FileBrowserが新しいウィンドウで開かれているのがわかります
 
 ![](../images/filebrowser_with_new_window.png)
 
-ユーザーが `EXECUTE FILEBROWSER` ボタンをクリックすると、Backend.AI はそのアプリ専用のコンピュートセッションを自動で作成します。したがって、セッションページで FileBrowser のコンピュートセッションが表示されるはずです。このコンピュートセッションを削除するかどうかはユーザーの責任です。
+ユーザーが `Execute FileBrowser` ボタンをクリックすると、Backend.AI はそのアプリ専用のコンピュートセッションを自動で作成します。したがって、セッションページで FileBrowser のコンピュートセッションが表示されるはずです。このコンピュートセッションを削除するかどうかはユーザーの責任です。
 
 ![](../images/filebrowser_in_session_page.png)
 
@@ -211,7 +211,7 @@ FileBrowserが新しいウィンドウで開かれているのがわかります
 
 ![](../images/app_dialog_with_filebrowser.png)
 
-ストレージフォルダーエクスプローラーで `EXECUTE FILEBROWSER` ボタンを再度クリックすると、新しいコンピュートセッションが作成され、合計で2つのFileBrowserセッションが表示されます。
+ストレージフォルダーエクスプローラーで `Execute FileBrowser` ボタンを再度クリックすると、新しいコンピュートセッションが作成され、合計で2つのFileBrowserセッションが表示されます。
 :::
 
 ### FileBrowserイメージでコンピュートセッションを作成する
