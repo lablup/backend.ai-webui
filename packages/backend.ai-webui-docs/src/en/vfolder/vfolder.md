@@ -16,7 +16,7 @@ such as the folder name and ID, the NFS host name where the folder is located
 There are two types of storage folders: `User` and `Project`. You can
 distinguish between them in the 'Type' column.
 
-## Invitation Badge and Entry Point
+## Invitation badge and entry point
 
 When another user invites you to share one of their storage folders, a small
 invitation badge appears on the Data page entry in the sidebar and next to the
@@ -35,7 +35,7 @@ list is reachable from the folder status summary.
 <a id="create-storage-folder"></a>
 <a id="create_storage_folder"></a>
 
-## Create Storage Folder
+## Create storage folder
 
 
 To create a new folder, click `Create Folder` on the Data page. Fill in the fields in
@@ -65,7 +65,7 @@ directory will not be deleted when the compute session is terminated.
 
 <a id="explore-folder"></a>
 
-## Explore Folder
+## Explore folder
 
 
 Click the folder name to open the folder explorer and view the contents of the folder.
@@ -85,7 +85,7 @@ On wide (xl) screens a draggable divider separates the two panels so you can res
 
 ![](../images/split_panel_folder_explorer.png)
 
-### File Operations
+### File operations
 
 Inside the left panel you can see all directories and files in the folder. Click a directory name in the Name column to navigate into it. Use the buttons in the Actions column to download or delete a file or directory. You can rename a file or directory as well. For more detailed file operations, you can mount this folder when creating a compute session and then use a service like Terminal or Jupyter Notebook.
 
@@ -117,7 +117,7 @@ not be shown on the screen. In such cases, please use the terminal or other appl
 in the directory.
 :::
 
-### Edit Text Files
+### Edit text files
 
 You can edit text files directly in the folder explorer. Click the folder name to open the file explorer, then click the **Edit File** button in the Control column for any text file.
 
@@ -133,7 +133,7 @@ The editor supports both light and dark themes matching your UI preferences. You
 The Edit File button is only available when your access to this storage folder includes the `write_content` permission (granted via folder sharing permission or your role on the folder). Storage-host level settings in the control panel do not affect this. If the file fails to load, an error message will be displayed.
 :::
 
-### Audit Log Tab
+### Audit log tab
 
 The **Audit Log** tab in the right panel shows a chronological list of all operations performed on this storage folder (create, update, delete events, and more).
 
@@ -150,7 +150,7 @@ The audit log shows the following columns, in order:
 
 You can filter the log by **Time**, **Operation**, **Status**, and **Triggered By**.
 
-## Rename Folder
+## Rename folder
 
 
 If you have permission to rename the storage folder, open the folder's detail
@@ -160,7 +160,7 @@ inside the detail drawer.
 ![](../images/rename_vfolder.png)
 
 
-## Delete Folder
+## Delete folder
 
 
 If you have permission to delete the storage folder, you can send the folder to the `Trash`
@@ -209,7 +209,7 @@ You can access FileBrowser in two ways.
 - Launch a compute session directly from a FileBrowser image on Sessions page.
 
 
-### Execute FileBrowser From Folder Explorer Dialog
+### Execute FileBrowser from folder explorer dialog
 
 Go to the Data page and open the file explorer dialog of target
 storage folder. Click the folder name to open the file explorer.
@@ -247,7 +247,7 @@ explorer, a new compute session will be created and a total of two
 FileBrowser sessions will appear.
 :::
 
-### Create a Compute Session With FileBrowser Image
+### Create a compute session with FileBrowser image
 
 You can directly create a compute session with FileBrowser supported images.
 You need to mount at least one or more storage folders to access them. You can use
@@ -260,7 +260,7 @@ The root directory of FileBrowser will be `/home/work`. Therefore, you
 can access any mounted storage folders for the compute session.
 :::
 
-### Basic Usage Examples of FileBrowser
+### Basic usage examples of FileBrowser
 
 Here, we present some basic usage examples of FileBrowser in Backend.AI. Most
 of the FileBrowser operations are intuitive, but if you need more detailed
@@ -328,7 +328,7 @@ We are planning to update FileBrowser so that it can run independently
 without creating a session.
 :::
 
-## Using SFTP Server
+## Using SFTP server
 
 
 Backend.AI supports SSH / SFTP file upload from both desktop app and
@@ -341,7 +341,7 @@ Depending on the system settings, running SFTP server from the file dialog may n
 be allowed.
 :::
 
-### Execute SFTP Server From Folder Explorer Dialog in Data Page
+### Execute SFTP server from folder explorer dialog in Data page
 
 Go to the Data page and open the file explorer dialog of target storage folder.
 Click the folder button or the folder name to open the file explorer.
@@ -370,7 +370,7 @@ want to connect via SSH to your container. Please refer to
 [managing user's SSH keypair](#user-ssh-keypair-management).
 :::
 
-## Pipeline Folders
+## Pipeline folders
 
 This tab shows the list of folders that are automatically created when executing a
 pipeline in FastTrack. When a pipeline is created, a new folder is created and mounted
@@ -378,7 +378,7 @@ under `/pipeline` for each instance of work (computing session).
 
 <a id="automount-folder"></a>
 
-## Automount Folders
+## Automount folders
 
 
 Data page has an Automount Folders tab. Click this tab to see a

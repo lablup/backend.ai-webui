@@ -6,7 +6,7 @@ sharing feature.
 
 <a id="share-storage-folders-with-other-users"></a>
 
-## Share Storage Folders With Other Users
+## Share storage folders with other users
 
 Let's learn how to share your personal storage folder with other users. First,
 log in to User A's account and go to the Data page. There are several
@@ -89,7 +89,7 @@ For details, go to [sharing a project storage folder with project members](#shar
 
 <a id="adjust-permission-for-shared-folders"></a>
 
-## Adjust Permission for Shared Folders
+## Adjust permission for shared folders
 
 You can modify the permissions of shared users from the Share Folder modal.
 The **Shared Users** section displays a table listing all users who have accepted
@@ -110,7 +110,7 @@ include renaming the folder.
 
 <a id="stop-sharing-a-folder"></a>
 
-## Stop Sharing a Folder
+## Stop sharing a folder
 
 To stop sharing a folder as the inviter, open the Share Folder modal by
 clicking the share button in the Control column of the folder list. In the

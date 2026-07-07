@@ -6,7 +6,7 @@ A **Project Admin** is a user who has been granted administrative authority over
 
 <a id="identifying-project-admin-projects"></a>
 
-## Identifying Project Admin Projects
+## Identifying Project Admin projects
 
 When you open the project dropdown in the header, projects in which you have the project-admin role are marked with a shield-shaped badge next to the project name. Hovering the badge displays a **Project Admin** tooltip, confirming that selecting this project will reveal the project-admin sidebar entries described below.
 
@@ -16,7 +16,7 @@ Switching to a different project from the header's project selector re-evaluates
 
 <a id="the-project-admin-sidebar"></a>
 
-## The Project Admin Sidebar
+## The Project Admin sidebar
 
 When you select a project in which you are a project admin, the sidebar's **Operations** section displays four entries dedicated to managing that project:
 
@@ -63,7 +63,7 @@ The page provides the following controls:
 
 - **Property filter**: Filter the list using the standard storage-folder property filter.
 
-### Create a Folder
+### Create a folder
 
 To create a new folder from this page:
 
@@ -81,7 +81,7 @@ Only **project-owned** folders can be created from the Project Admin Data page. 
 
 For details about folder usage modes, permissions, and quota, see the [Storage Folders](#vfolders) chapter.
 
-### Restore or Permanently Delete a Folder
+### Restore or permanently delete a folder
 
 Switch to the **Trash** tab to see folders that have been soft-deleted. Select one or more folders using the row checkboxes, then use the header action buttons that appear next to the selection count:
 
@@ -107,7 +107,7 @@ The page provides the following controls:
 - **Running / Finished** segmented control: Toggle between currently running sessions and sessions that have already finished.
 - **Property filter and sorting**: Filter the list by ID, Session Name, or Owner UUID. Click a sortable column header to sort the table.
 
-### Terminate Sessions
+### Terminate sessions
 
 To terminate one or more sessions:
 
@@ -144,7 +144,7 @@ The table displays the deployment's Name, Revision, Status, Replicas, Model, Cre
 
 The **Revision** column shows the deployment's current revision as a clickable `#N` link. Click it to open a drawer that displays the details of the current revision.
 
-### Deployment Actions
+### Deployment actions
 
 The following actions are available on each deployment row:
 

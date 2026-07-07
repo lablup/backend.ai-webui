@@ -1,6 +1,6 @@
 # Terms of License Agreement
 
-## Backend.AI License (Software)
+## Backend.AI license (Software)
 
 This document defines the terms of the license agreement for the Backend.AI
 software. The usage fee and support plan of Backend.AI Cloud service provided by

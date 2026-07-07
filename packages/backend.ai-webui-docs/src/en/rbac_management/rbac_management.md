@@ -10,7 +10,7 @@ To access the RBAC Management page, click **RBAC Management** in the **Admin Set
 
 <a id="role-list"></a>
 
-## Role List
+## Role list
 
 The Role List page displays all roles in a table format. You can filter, search, and sort roles using the controls at the top of the page.
 
@@ -29,14 +29,14 @@ The table displays the following columns:
 - **Created At**: The date and time when the role was created.
 - **Updated At**: The date and time when the role was last modified.
 
-### System vs Custom Roles
+### System vs custom roles
 
 Roles are categorized into two source types:
 
 - **System**: Automatically generated roles. You cannot edit their name or description, but you can manage their user assignments and permissions.
 - **Custom**: Roles created by superadmins. These are fully editable, including name, description, assignments, scopes, and permissions.
 
-## Create a Role
+## Create a role
 
 Creating a role requires you to define its **scopes** upfront. A scope binds the role to a specific resource entity (such as a domain, project, or user) so that every permission you later add to the role is confined to the scopes defined here.
 
@@ -60,7 +60,7 @@ The **Scope Type** and **Target** you define when creating a role do not grant a
 Scopes are defined at role creation time and cannot be edited afterwards through the role detail drawer. Plan the scopes carefully before creating the role.
 :::
 
-## View Role Details
+## View role details
 
 To view detailed information about a role, click the role name in the table. A detail drawer opens on the right side of the page.
 
@@ -77,7 +77,7 @@ Below the metadata, three tabs are available: **Scopes**, **Permissions**, and *
 
 ![](../images/rbac_role_detail_drawer.png)
 
-### Edit a Role
+### Edit a role
 
 To edit a custom role's name, description, or auto-assignment setting:
 
@@ -95,7 +95,7 @@ To edit a custom role's name, description, or auto-assignment setting:
 The Edit button is only available for Custom roles. System roles cannot have their name or description modified. Scopes cannot be modified after role creation in either case.
 :::
 
-## View Role Scopes
+## View role scopes
 
 The **Scopes** tab in the role detail drawer lists the scope entries that were assigned to the role at creation time. Each entry constrains the set of targets that permissions on this role can reference.
 
@@ -115,13 +115,13 @@ Scopes are read-only in this tab. To change a role's scopes, you must create a n
 
 <a id="manage-permissions"></a>
 
-## Manage Permissions
+## Manage permissions
 
 The **Permissions** tab in the role detail drawer shows the fine-grained permissions configured for the role.
 
 ![](../images/rbac_permissions_tab.png)
 
-### Understanding Permissions
+### Understanding permissions
 
 Each permission consists of four components:
 
@@ -136,7 +136,7 @@ Each permission consists of four components:
 The combined **Scope Type / Target** of each permission is inherited from the role's scope entries. When you add a permission, you can only pick from the scopes that were defined when the role was created. To broaden a role's reach, create a new role with additional scopes.
 :::
 
-### Permission Examples
+### Permission examples
 
 Here are some common permission configurations to help you understand how the four components work together. The **Scope Type / Target** column shows the role-level scope that the permission reuses.
 
@@ -149,7 +149,7 @@ Here are some common permission configurations to help you understand how the fo
 
 <a id="add-a-permission"></a>
 
-### Add a Permission
+### Add a permission
 
 1. Open the role detail drawer and select the **Permissions** tab
 2. Click the **Add Permission** button
@@ -161,7 +161,7 @@ Here are some common permission configurations to help you understand how the fo
 
 ![](../images/rbac_permission_modal.png)
 
-### Remove a Permission
+### Remove a permission
 
 1. In the **Permissions** tab, click the **Remove Permission** button next to the permission you want to remove
 2. A small confirmation popup appears anchored to the button. Click **OK** to confirm, or **Cancel** to dismiss.
@@ -170,7 +170,7 @@ Removing a permission from a role only detaches it from the role's permission se
 
 <a id="manage-user-assignments"></a>
 
-## Manage User Assignments
+## Manage user assignments
 
 The **Role Assignments** tab in the role detail drawer shows which users are assigned to the role.
 
@@ -178,7 +178,7 @@ The **Role Assignments** tab in the role detail drawer shows which users are ass
 
 <a id="add-users-to-a-role"></a>
 
-### Add Users to a Role
+### Add users to a role
 
 1. Open the role detail drawer and select the **Role Assignments** tab
 2. Click the **Add User** button
@@ -192,7 +192,7 @@ Adding users is a bulk operation — you can select several users in a single pa
 
 <a id="revoke-users-from-a-role"></a>
 
-### Revoke Users from a Role
+### Revoke users from a role
 
 You can revoke a single user or several users at once.
 
@@ -219,7 +219,7 @@ Revoking a role assignment can be reversed by re-adding the user to the role fro
 
 <a id="grant-project-admin"></a>
 
-## Grant Project Admin Authority
+## Grant Project Admin authority
 
 Creating a project also creates a dedicated role named `project-<project_id>-admin`, where `<project_id>` is the UUID of that project. Assigning a user to this role grants them [Project Admin](#project-admin-features) authority over that specific project — they can manage the project's users, sessions, deployments, and storage folders without holding system-wide superadmin privileges.
 

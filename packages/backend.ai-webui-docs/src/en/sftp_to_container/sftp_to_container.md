@@ -205,7 +205,7 @@ Backend.AI Client package, this process is relatively simple to configure.
 
 <a id="prepare-backendai-client-package"></a>
 
-### Prepare Backend.AI Client package
+### Prepare Backend.AI client package
 
 <a id="prepare-with-docker-image"></a>
 
@@ -335,7 +335,7 @@ Password:
 
 <a id="sshscp-connection-to-computation-session"></a>
 
-### SSH/SCP Connection to Computation Session
+### SSH/SCP connection to computation session
 
 Create a compute session from the browser by mounting the folder where you want
 to copy the data. You can create the session using CLI as well, but for

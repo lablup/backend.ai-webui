@@ -1,7 +1,5 @@
 # Backend.AI WebUI User Guide
 
-User's guide for the Backend.AI WebUI.
-
 Backend.AI WebUI is a web or app that provides easy-to-use GUI interface
 to work with the Backend.AI server.
 

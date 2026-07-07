@@ -7,7 +7,7 @@ The top bar includes various features that support use of the WebUI.
 
 <a id="project-selector"></a>
 
-## Project Selector
+## Project selector
 
 
 Users can switch between projects using the project selector provided in the top bar.
@@ -16,7 +16,7 @@ Since each project may have different resource policies, switching projects may 
 
 <a id="login-session-timer"></a>
 
-## Login Session Timer
+## Login session timer
 
 When login session management is enabled, the top bar displays the remaining
 time until automatic logout along with an extend button. The timer shows the
@@ -45,7 +45,7 @@ Press the shortcut key (`]`) to open and close the notification area.
 
 <a id="theme-mode"></a>
 
-## Theme Mode
+## Theme mode
 
 
 You can change the theme mode of the WebUI via the dark mode button on the
@@ -63,7 +63,7 @@ You will be directed to the appropriate documentation based on the page you are 
 
 <a id="responsive-layout"></a>
 
-## Responsive Layout
+## Responsive layout
 
 On smaller screens, the top bar adjusts its layout for better usability. When
 the screen width is narrow, the sidebar toggle is replaced with a menu icon
@@ -73,7 +73,7 @@ small screens.
 
 <a id="user-menu"></a>
 
-## User Menu
+## User menu
 
 
 Click the user icon on the right side of the top bar to see the user menu.
@@ -101,7 +101,7 @@ Below the user information, the following action items are available.
 
 <a id="my-account"></a>
 
-### My Account
+### My account
 
 If you click `My Account`, the My Account Information dialog appears.
 
@@ -129,7 +129,7 @@ In that case, please contact the administrator of your system.
 
 <a id="2fa-setup"></a>
 
-### 2FA Setup
+### 2FA setup
 
 If you activate the `2FA Enabled` switch, the following dialog appears.
 

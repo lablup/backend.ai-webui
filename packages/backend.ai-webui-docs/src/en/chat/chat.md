@@ -16,7 +16,7 @@ You can dismiss this banner by clicking the close button, and it will not reappe
 
 <a id="selecting-models"></a>
 
-## Selecting Models
+## Selecting models
 
 Users can select the deployment and model from the top left corner of each chat card on the Chat page.
 Clicking the **Deployment** field (indicated by a deployment icon prefix) opens a dropdown showing available deployments under a "Deployment" header.
@@ -47,7 +47,7 @@ Refer to the description below for the necessary inputs to configure custom mode
 
 <a id="add-or-remove-comparison-chat-cards"></a>
 
-## Add or Remove Comparison Chat Cards
+## Add or remove comparison chat cards
 
 To add new comparison chat cards, click the comparison icon button located in the top right corner.
 
@@ -61,7 +61,7 @@ Please be cautious as this will delete all entered content.
 
 <a id="clear-chat-history"></a>
 
-## Clear Chat History
+## Clear chat history
 
 Clicking the `more` button will reveal the `Clear chat` option.
 By selecting this, users will erase all chat history associated with the card,
@@ -71,7 +71,7 @@ although the card session itself will remain active.
 
 <a id="synchronize-input"></a>
 
-## Synchronize Input
+## Synchronize input
 
 The `Sync Input` button, located at the top right, enables the synchronization of input across chat cards where the option is enabled.
 Enabling 'Sync input' means that pressing `Enter` or clicking the `Send` button on
@@ -82,7 +82,7 @@ This functionality is beneficial for comparing the outputs of various models usi
 
 <a id="parameter-adjustment"></a>
 
-## Parameter Adjustment
+## Parameter adjustment
 
 Click the parameter button in the top-right corner to adjust the parameters for each model. Users can set various values such as Max Tokens, Temperature, Top P, and Top K.
 Using the synchronize feature, users can apply different parameters to the same model and then compare the results.
@@ -91,7 +91,7 @@ Using the synchronize feature, users can apply different parameters to the same 
 
 <a id="chat-history"></a>
 
-## Chat History
+## Chat history
 
 To start new chat, click the `+` button located in the top right corner.
 

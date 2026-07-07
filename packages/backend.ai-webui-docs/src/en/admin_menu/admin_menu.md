@@ -81,7 +81,7 @@ The user create/update dialog contains the following fields:
 
 <a id="bulk-create-users"></a>
 
-### Bulk Create Users
+### Bulk create users
 
 When you need to create multiple user accounts at once, you can use the Bulk Create
 Users feature. An ellipsis (`...`) dropdown button appears
@@ -137,13 +137,13 @@ successfully created and how many failed.
 
 <a id="bulk-create-users-from-csv"></a>
 
-### Bulk Create Users from CSV
+### Bulk create users from CSV
 
 Instead of bulk-creating users directly, you can also create users by uploading a CSV file. Click the ellipsis (`...`) dropdown next to the **Create User** button and select **Bulk Create Users from CSV** to open the CSV upload dialog.
 
 ![](../images/bulk_create_user_csv_dropdown.png)
 
-#### Preparing the CSV File
+#### Preparing the CSV file
 
 The CSV file must use UTF-8 encoding. The first row must be a header row. Header names are matched case-insensitively. You can download a ready-to-use template by clicking **Download CSV Template** inside the dialog.
 
@@ -164,7 +164,7 @@ The CSV file must use UTF-8 encoding. The first row must be a header row. Header
 - **resource_policy**: The name of the resource policy to assign.
 - **project**: The name of the project to add the user to.
 
-#### Uploading and Reviewing
+#### Uploading and reviewing
 
 After selecting your CSV file, the dialog shows a preview table listing all rows with the following indicators:
 
@@ -174,7 +174,7 @@ After selecting your CSV file, the dialog shows a preview table listing all rows
 
 ![](../images/bulk_create_user_csv_modal.png)
 
-#### Creating the Users
+#### Creating the users
 
 Once you have reviewed the preview and confirmed that all rows are valid, click **Create** to submit. If some rows fail on the server side (for example, because an email or username already exists), the dialog remains open and lists the per-row errors so you can identify and resolve the conflicts.
 
@@ -211,7 +211,7 @@ described below.
 
 <a id="purge-inactive-users"></a>
 
-### Purge Inactive Users
+### Purge inactive users
 
 Superadmins can permanently delete (purge) user accounts that have already been
 deactivated. Purging is available **only** for users in the **Inactive** tab —
@@ -254,7 +254,7 @@ users before confirming.
 
 <a id="manage-users-keypairs"></a>
 
-## Manage User's Keypairs
+## Manage user's keypairs
 
 Each user account usually have one or more keypairs. A keypair is used for API
 authentication to the Backend.AI server, after user logs in. Login requires
@@ -339,12 +339,12 @@ also displayed in the Permission panel.
 
 <a id="admin-features"></a>
 
-## Model Deployment
+## Model deployment
 
 <a id="admin-deployments-page"></a>
 <a id="admin-serving-page"></a>
 
-### Admin Deployments Page
+### Admin deployments page
 
 Administrators and superadmins can access the Admin Deployments page at `/admin-deployments`, which provides a cross-project view of every deployment in the cluster. The **Project** column is available in the deployment list but is hidden by default; you can enable it using the column settings.
 
@@ -361,7 +361,7 @@ The Admin Deployments page has up to four tabs:
 Each individual admin deployment has its own dedicated route at `/admin-deployments/:id`. When you open a deployment from the Admin Deployments page, the URL changes to this path so that the deployment detail can be linked to or bookmarked directly.
 :::
 
-#### Deployment Detail Page
+#### Deployment detail page
 
 When you open a deployment from the Admin Deployments page, the **Revisions** card on the Deployment Detail Page provides three tabs: **Current Revision**, **Revision History**, and **Audit Log**. These behave the same as on the user-facing Deployments page — for the full description of each tab, see the [Revisions Tab](#revisions-tab) section in the Model Deployment documentation.
 
@@ -382,7 +382,7 @@ You can filter entries by **Status**, **Operation**, **Triggered By**, and a **T
 
 <a id="admin-model-store-management"></a>
 
-### Admin Model Store Management
+### Admin Model Store management
 
 Superadmins can manage model cards through the **Model Store Management** tab on the Admin Deployments page.
 
@@ -410,7 +410,7 @@ Edit and delete action icons are shown directly in the **Name** cell of each row
 
 To delete multiple model cards at once, select the rows you want to remove using the checkboxes and click the red trash-bin button next to the selection count. A confirmation dialog appears before the cards are deleted.
 
-#### Creating a Model Card
+#### Creating a model card
 
 Click the `Create Model Card` button to open the creation modal. Fill in the following fields:
 
@@ -436,11 +436,11 @@ Click the `Create Model Card` button to open the creation modal. Fill in the fol
 
 ![](../images/model_card_create_modal.png)
 
-#### Editing a Model Card
+#### Editing a model card
 
 Click the edit icon next to the model card name to modify an existing model card. The edit modal opens with previously entered fields already filled in.
 
-#### Deleting Model Cards
+#### Deleting model cards
 
 You can delete an individual model card by clicking the delete icon next to its name, or perform bulk deletion by selecting multiple model cards with the row checkboxes and clicking the red trash-bin button next to the selection count.
 
@@ -455,7 +455,7 @@ The same behavior applies to **bulk deletion** (the label becomes **Also delete 
 
 <a id="prometheus-query-presets"></a>
 
-## Prometheus Query Presets
+## Prometheus query presets
 
 Backend.AI lets administrators define reusable **Prometheus query presets** that auto-scaling rules and other monitoring features can reference by name. A preset bundles a metric name, a PromQL query template, an optional time window, and optional filter / group labels so operators do not have to retype the same query for every rule.
 
@@ -469,7 +469,7 @@ When a superadmin opens the Auto Scaling Rule editor for a deployment, sets **Me
 
 <a id="prometheus-preset-list-and-filter"></a>
 
-### List & Filter
+### List & filter
 
 The preset table lists all Prometheus query presets across the cluster. Each row shows:
 
@@ -486,13 +486,13 @@ You can search and narrow the list with the property filter above the table, and
 
 <a id="prometheus-preset-column-settings"></a>
 
-### Column Settings Persistence
+### Column settings persistence
 
 The table includes a column-settings control that lets you hide columns you do not need and reorder the visible columns. Your choices are **persisted across sessions** per browser, so the table opens with your preferred layout the next time you visit the tab. Resetting the column settings restores the default Backend.AI layout.
 
 <a id="prometheus-preset-create"></a>
 
-### Create a Preset
+### Create a preset
 
 Click **Add Preset** at the top right of the table to open the **Create Preset** modal.
 
@@ -513,7 +513,7 @@ Click **Create** to save the preset. On success, the preset appears in the list 
 
 <a id="prometheus-preset-edit"></a>
 
-### Edit a Preset
+### Edit a preset
 
 Click the **Edit** action in the **Name** cell of a preset row to open the **Edit Preset** modal. The modal is pre-populated with the preset's current values and exposes the same fields as the Create dialog, including the live preview area for the Query Template.
 
@@ -523,7 +523,7 @@ Click **Save** to apply your changes. Consumers of the preset (for example, auto
 
 <a id="prometheus-preset-delete"></a>
 
-### Delete a Preset
+### Delete a preset
 
 Click the **Delete** action in the **Name** cell of a preset row to open the deletion confirmation modal.
 
@@ -535,13 +535,13 @@ Because deletion is irreversible, the dialog requires you to **type the preset's
 
 <a id="deployment-presets"></a>
 
-## Deployment Presets
+## Deployment presets
 
 A **Deployment Preset** is a reusable, administrator-curated bundle of deployment settings — image, runtime, resource slots, cluster mode, environment variables, startup command, replica count, visibility, and other defaults — that end users can apply when they create a model deployment from a storage folder. Presets let administrators publish a small set of vetted, known-good deployment shapes (for example, *vLLM-GPU-Large* or *SGLang-CPU-Small*) so that end users can deploy a model without having to choose every advanced field from scratch.
 
 ![](../images/deployment_preset_list.png)
 
-### What Is a Deployment Preset?
+### What is a deployment preset?
 
 A Deployment Preset captures the defaults of a model deployment so that:
 
@@ -563,7 +563,7 @@ Each preset stores the following deployment defaults:
 
 <a id="managing-deployment-presets"></a>
 
-### Managing Deployment Presets
+### Managing deployment presets
 
 Only administrators can create, edit, or delete deployment presets. Administrators manage them from the **Deployment Presets** tab on the Admin Deployments page.
 
@@ -579,7 +579,7 @@ The following columns are visible by default: **Name** (with inline edit and del
 
 Additional columns are hidden by default and can be shown using the column-settings gear button (⚙) at the right of the table header: **Description**, **Startup Command**, **Cluster**, **Strategy**, **Open to Public** (shown as a Public/Private tag), and **Revision History Limit**. Your column choices are persisted per browser across sessions.
 
-#### Create a Deployment Preset
+#### Create a deployment preset
 
 1. Click the **Create Preset** button at the top right of the preset list.
 2. Fill in the fields in the *Create Preset* dialog. The dialog is organized into the following cards, presented across two steps:
@@ -611,7 +611,7 @@ Additional columns are hidden by default and can be shown using the column-setti
 If a required field is missing or invalid, the **Create Preset** button stays disabled until the error is resolved. Required fields show inline validation messages as you type.
 :::
 
-#### Edit a Deployment Preset
+#### Edit a deployment preset
 
 1. From the preset list, open the action menu on the preset row (or open the preset's detail view) and select **Edit Preset**.
 2. The *Edit Preset* dialog opens with the preset's current values pre-filled. The available sections are identical to the *Create Preset* dialog.
@@ -621,7 +621,7 @@ If a required field is missing or invalid, the **Create Preset** button stays di
 
 Editing a preset only changes the defaults for **future** deployments. Existing deployments that were already created from this preset are not modified.
 
-#### Delete a Deployment Preset
+#### Delete a deployment preset
 
 1. From the preset list (or the preset's detail view), open the action menu on the preset and select **Delete Preset**.
 2. A typed-confirmation dialog appears asking you to type the preset's name to confirm. The **OK** button stays disabled until the typed value matches the preset name exactly.
@@ -633,7 +633,7 @@ Deleting a deployment preset is **irreversible**. The preset itself is removed, 
 
 <a id="using-a-preset-when-deploying-a-model"></a>
 
-### Using a Preset When Deploying a Model
+### Using a preset when deploying a model
 
 End users apply a deployment preset through the **Create New Deployment with Preset** modal, which opens when you deploy a model from a storage folder on the Data page.
 
@@ -654,11 +654,11 @@ For advanced configuration, go to the Deployments page and create a new deployme
 
 <a id="manage-resource-policy"></a>
 
-## Manage Resource Policies
+## Manage resource policies
 
 <a id="keypair-resource-policy"></a>
 
-#### Keypair Resource Policy
+#### Keypair resource policy
 
 In Backend.AI, administrators have the ability to set limits on the total resources available for each keypair, user, and project.
 Resource policies enable you to define the maximum allowed resources and other compute session-related settings.
@@ -769,7 +769,7 @@ table. This will bring up a dialog where you can select the columns you want to 
 
 <a id="user-resource-policy"></a>
 
-#### User Resource Policy
+#### User resource policy
 
 Backend.AI supports user resource policy management. While each
 user can have multiple keypairs, a user can only have one user resource policy. In the user
@@ -812,7 +812,7 @@ clicking the `Setting (Gear)` button at the bottom right of the table.
 
 <a id="project-resource-policy"></a>
 
-#### Project Resource Policy
+#### Project resource policy
 
 Backend.AI supports project resource policy management. Project
 resource policies manage storage space (quota) and folder-related limitations for projects.
@@ -863,7 +863,7 @@ Exported CSV files include a UTF-8 BOM at the start of the file, so Microsoft Ex
 
 <a id="unified-view-for-pending-sessions"></a>
 
-## Unified View for Pending Sessions
+## Unified view for pending sessions
 
 The Admin Session page provides a unified view of all pending sessions within a
 selected resource group. The index number displayed next to the status indicates the queue position in
@@ -874,7 +874,7 @@ which the session will be created once sufficient resources become available.
 Similar to the Session page, you can click the session name to open a drawer that
 displays detailed information about the session.
 
-## Fair Share Scheduler
+## Fair share scheduler
 
 The Fair Share Scheduler page is available in the
 **Admin Settings** menu. This feature allows administrators to manage fair share scheduling weights
@@ -921,7 +921,7 @@ At each step, the following common features are available:
 - **Pagination**: Navigate through results with configurable page size.
 - **Auto-refresh**: Data refreshes automatically every 7 seconds. A manual refresh button is also available.
 
-### Resource Group
+### Resource group
 
 The Resource Group step displays a table of all resource groups with their fair share configuration.
 
@@ -938,7 +938,7 @@ The table includes the following columns:
 - **Half Life**: The period (in days) over which the usage reflection rate decreases by half.
 - **Lookback**: The range (in days) of usage history reflected in calculations.
 
-### Resource Group Fair Share Settings
+### Resource group fair share settings
 
 Click the settings (gear) button in the Control column of a resource group to open the
 Fair Share Settings modal.
@@ -1010,7 +1010,7 @@ The table includes the following columns:
 
 The same bulk operations (Usage Graph and Bulk Edit) are available when rows are selected.
 
-### Editing Fair Share Weights
+### Editing fair share weights
 
 To edit the fair share weight for a domain, project, or user, click the settings (gear) button
 in the Control column of the desired row. This opens the weight setting modal.
@@ -1037,7 +1037,7 @@ If the selected resource group does not have its scheduler type set to `FAIR_SHA
 a warning alert is displayed in the modal.
 :::
 
-### Viewing Usage History
+### Viewing usage history
 
 To view the usage history for domains, projects, or users, select the desired rows using
 the checkboxes in the table, then click the Usage Graph (chart icon) button. This opens
@@ -1055,7 +1055,7 @@ The modal displays the following:
 
 <a id="manage-images"></a>
 
-## Manage Images
+## Manage images
 
 Admins can manage images, which are used in creating a compute session, in the
 Images tab of the Environments page. In the tab, meta information of all images
@@ -1151,7 +1151,7 @@ button. The registry creation dialog contains the following fields:
 
 
 
-### GitLab Container Registry Configuration
+### GitLab container registry configuration
 
 When adding a GitLab container registry, you must specify the `api_endpoint`
 in the Extra Information field. This is required because GitLab uses separate
@@ -1342,7 +1342,7 @@ Detail Drawer**, where capacity (quota) and folder permissions are configured.
 
 <a id="storage-host-detail-drawer"></a>
 
-#### Storage Host Detail Drawer
+#### Storage host detail drawer
 
 The Storage Host Detail Drawer is the single place to inspect and manage a
 storage host. You can open it by clicking the host name in the Storages list. The
@@ -1364,7 +1364,7 @@ The drawer contains the following tabs:
 
 <a id="project-folder-permission"></a>
 
-#### Project Folder Permissions
+#### Project folder permissions
 
 The **Project Folder Permissions** tab of the [Storage Host Detail Drawer](#storage-host-detail-drawer) lets administrators view and manage the permissions of the project folders created on the selected storage host.
 
@@ -1379,7 +1379,7 @@ You can select multiple rows (using the row checkboxes) in the Domains, Projects
 
 <a id="user-folder-permission"></a>
 
-#### User Folder Permissions
+#### User folder permissions
 
 User folder permissions are the permissions configured in the keypair resource policy. When you select a user with the user selector on the right, only the keypair resource policies assigned to that user's keypairs are filtered and shown. The **Assigned Keypairs** column shows the user's main access key.
 
@@ -1388,7 +1388,7 @@ User folder permissions are the permissions configured in the keypair resource p
 
 <a id="quota-settings"></a>
 
-#### Quota Settings
+#### Quota settings
 
 Please remind that quota setting is only available in storage that provides quota setting
 (e.g. XFS, CephFS, NetApp, Purestorage, etc.). Although you can see the usage of storage
@@ -1397,7 +1397,7 @@ support quota configuration internally.
 
 <a id="set-user-quota"></a>
 
-#### Set User Quota
+#### Set user quota
 
 In Backend.AI, there are two types of vfolders created by user and admin(project). In this section,
 we would like to show how to check current quota setting per-user and how to configure it.
@@ -1415,7 +1415,7 @@ Click the Edit button in the Quota Scope ID column to open the modal for configu
 
 <a id="set-project-quota"></a>
 
-#### Set Project Quota
+#### Set project quota
 
 Setting a quota on project-folder is similar to setting a user quota. The difference between setting
 project quota and user quota is to confirm setting the project quota requires one more procedure,
@@ -1427,7 +1427,7 @@ As in the picture below, you need to first select the domain, and then select th
 
 <a id="unset-quota"></a>
 
-#### Unset Quota
+#### Unset quota
 
 We also provides the feature to unset the quota. Please remind that after removing the quota setting, quota will automatically follows
 user or project default quota, which cannot be set in WebUI. If you want to change the default quota setting, you may need to access to admin-only page.
@@ -1582,7 +1582,7 @@ removing unused images or registering periodic maintenance schedules.
 
 <a id="detailed-information"></a>
 
-## Detailed Information
+## Detailed information
 
 In Information page, you can see several detailed information and status of each feature.
 To see Manager version and API version, check the Core panel. To see whether each component
@@ -1594,7 +1594,7 @@ This page is only for showing current information.
 
 ![](../images/information_page.png)
 
-## RBAC Management
+## RBAC management
 
 RBAC (Role-Based Access Control) Management allows superadmins to define roles with fine-grained permissions and assign them to users. You can control which actions specific users are allowed to perform on various resources throughout the Backend.AI system.
 

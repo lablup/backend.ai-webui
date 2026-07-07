@@ -12,14 +12,14 @@ experimental features.
 
 <a id="general-tab"></a>
 
-## General Tab
+## General tab
 
 ![](../images/user_settings_page.png)
 
 The General tab contains all preference settings organized into groups:
 **Preferences**, **Shell Environments**, and **Experimental features**.
 
-### Searching and Filtering Settings
+### Searching and filtering settings
 
 At the top of the settings area, you can use the **search bar** to quickly find
 a specific setting by name. Type a keyword, and only matching settings will be
@@ -29,7 +29,7 @@ You can also check the **Display Only Changes** checkbox to filter the list
 and show only settings that have been modified from their default values. This
 is useful for reviewing all customizations you have made at a glance.
 
-### Resetting Settings to Default
+### Resetting settings to default
 
 To restore all settings to their default values, click the **Reset to Default**
 button at the top of the settings area. A confirmation dialog will appear before
@@ -39,7 +39,7 @@ Each individual setting also has its own reset button (displayed when the value
 differs from the default), allowing you to reset a single setting without
 affecting others.
 
-### Theme Mode
+### Theme mode
 
 Select the display mode for the WebUI. You can choose from:
 
@@ -48,7 +48,7 @@ Select the display mode for the WebUI. You can choose from:
 - **Light Mode**: Always use the light theme.
 - **Dark Mode**: Always use the dark theme.
 
-### Enables Desktop Notifications
+### Enables desktop notifications
 
 Enables or disables the desktop notification feature. When turned on, Backend.AI
 uses the operating system's notification system in addition to in-app
@@ -56,7 +56,7 @@ notifications. Turning this off does not affect notifications within the web UI.
 Depending on the operating system, notification permissions may need to be
 enabled in system settings.
 
-### Set Compact Sidebar as Default
+### Set compact sidebar as default
 
 When this option is on, the left sidebar will be shown in a compact form
 (narrower width). The change is applied when the browser is refreshed. If you
@@ -87,7 +87,7 @@ WebUI is open sourced, anyone willing to help improve translations
 can contribute: https://github.com/lablup/backend.ai-webui.
 :::
 
-### Keep Login Session Information while Logout
+### Keep login session information while logout
 
 :::note
 This setting is only available in the Electron (desktop) app.
@@ -97,19 +97,19 @@ When enabled, the WebUI app preserves your current login session information
 for the next app launch. If the option is turned off, login information will be
 cleared each time you log out.
 
-### Automatic Update Check
+### Automatic update check
 
 A notification window pops up when a new WebUI version is detected. It works
 only in an environment where Internet access is available. If the feature is
 automatically disabled, clicking the toggle again will resume update checks.
 
-### Auto Logout
+### Auto logout
 
 Log out automatically when all Backend.AI WebUI pages are closed except for
 pages created to run apps in a session (e.g. Jupyter Notebook, web terminal,
 etc.).
 
-### My Keypair Information
+### My keypair information
 
 Every user has at least one keypair. You can view your access key and secret key
 by clicking the `Config` button. Remember that only one main access keypair exists.
@@ -119,7 +119,7 @@ by clicking the `Config` button. Remember that only one main access keypair exis
 At the top of the dialog, the **Main Access Key** banner shows your current main
 access key. Click the copy icon next to it to copy the key to your clipboard.
 
-#### Browsing Your Keypairs
+#### Browsing your keypairs
 
 The dialog lists your keypairs in a table. Use the controls above the table to
 narrow down what is shown:
@@ -143,7 +143,7 @@ The table includes the following columns:
 - **Modified At**: When the keypair was last modified. This column is hidden by
   default; you can show it through the table column settings.
 
-#### Issuing a New Keypair
+#### Issuing a new keypair
 
 Click the **Issue New Keypair** button to create a new keypair. After the
 keypair is issued, the **Keypair Credential Information** dialog appears, showing
@@ -166,7 +166,7 @@ CSV before you close the dialog — there is no way to retrieve the secret key
 afterward.
 :::
 
-#### Managing Active Keypairs
+#### Managing active keypairs
 
 For each active keypair, the **Controls** column provides these actions:
 
@@ -189,7 +189,7 @@ in again to apply the change."* Log out and sign in again so that the new main
 access key is applied to your session.
 :::
 
-#### Managing Inactive Keypairs
+#### Managing inactive keypairs
 
 Switch to the **Inactive** view to manage deactivated keypairs. Each inactive
 keypair provides these actions:
@@ -208,7 +208,7 @@ into the confirmation field before the delete is allowed.
 
 <a id="user-ssh-keypair-management"></a>
 
-### SSH Keypair Management
+### SSH keypair management
 
 When using the WebUI app, you can create SSH/SFTP connections directly to a
 compute session. Once you sign up for Backend.AI, a public keypair is
@@ -239,12 +239,12 @@ session using your own key.
 
 ![](../images/ssh_keypair_dialog_after.png)
 
-### Max Concurrent File Upload Limit
+### Max concurrent file upload limit
 
 Limits the number of files that can be uploaded simultaneously through the
 File Explorer. You can select a value between 2 and 5. The default value is 2.
 
-### Edit Bootstrap Script
+### Edit bootstrap script
 
 If you want to execute a one-time script just after your compute session
 starts, write down the contents here.
@@ -259,7 +259,7 @@ better to remove them from the bootstrap script and run them in a terminal
 app.
 :::
 
-### Edit User Config Script
+### Edit user config script
 
 You can write config scripts to replace the default ones in a compute
 session. Files like `.bashrc`, `.tmux.conf.local`, `.vimrc`, etc. can be
@@ -275,7 +275,7 @@ the script.
 
 ![](../images/edit_user_config_script.png)
 
-### Experimental Features
+### Experimental features
 
 Access new experimental features early -- these may change or be removed in
 future updates.
@@ -286,7 +286,7 @@ future updates.
   capabilities within the WebUI. When turned on, AI agent functionality becomes
   available for use in your sessions.
 
-## Logs Tab
+## Logs tab
 
 Displays detailed information of various logs recorded on the client side. You
 can visit this page to find out more about errors that occurred.
