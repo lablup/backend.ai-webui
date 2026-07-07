@@ -4,9 +4,9 @@
  */
 import { SessionIdleChecksNodeFragment$key } from '../../__generated__/SessionIdleChecksNodeFragment.graphql';
 import { formatDurationAsDays } from '../../helper';
-import SessionReclamationStatusPopover, {
-  getUtilizationCheckerColor,
-} from './SessionReclamationStatusPopover';
+import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
+import SessionReclamationStatusCell from './SessionReclamationStatusCell';
+import { getUtilizationCheckerColor } from './SessionReclamationStatusPopover';
 import { Typography } from 'antd';
 import { useMemoizedJSONParse, BAIFlex, BAIDoubleTag } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -78,7 +78,7 @@ const SessionIdleChecks: React.FC<SessionIdleChecksProps> = ({
       fragment SessionIdleChecksNodeFragment on ComputeSessionNode {
         id
         idle_checks
-        ...SessionReclamationStatusPopoverFragment
+        ...SessionReclamationStatusCellFragment
       }
     `,
     sessionNodeFrgmt,
@@ -118,40 +118,54 @@ const SessionIdleChecks: React.FC<SessionIdleChecksProps> = ({
             align="stretch"
           >
             <BAIFlex gap={'xxs'}>
-              <Typography.Text>{getIdleCheckTitle(key)}</Typography.Text>
-              {key === 'utilization' && (
-                <SessionReclamationStatusPopover sessionFrgmt={sessionNode} />
+              {key === 'utilization' ? (
+                <SessionReclamationStatusCell sessionFrgmt={sessionNode} />
+              ) : (
+                <Typography.Text>{getIdleCheckTitle(key)}</Typography.Text>
               )}
             </BAIFlex>
 
+            {/* TODO: support real-time update by using useIntervalValue when idle_checks returns remaining time as date */}
             {value.remaining >= 0 ? (
-              // TODO: support real-time update by using useIntervalValue when idle_checks returns remaining time as date
-              <BAIDoubleTag
-                values={[
-                  {
-                    label: getRemainingTimeTypeLabel(value.remaining_time_type),
-                    color: getIdleChecksTagColor(
-                      value,
-                      key === 'utilization' ? 'utilization' : 'remaining',
-                    ),
-                  },
-                  {
-                    label: formatDurationAsDays(
-                      new Date().toISOString(),
-                      new Date(
-                        new Date().getTime() + (value.remaining || 0) * 1000,
-                      ).toISOString(),
-                    ),
-                    color: getIdleChecksTagColor(
-                      value,
-                      key === 'utilization' ? 'utilization' : 'remaining',
-                    ),
-                  },
-                ]}
-              />
+              <BAIFlex gap="xxs" align="center">
+                <BAIDoubleTag
+                  values={[
+                    {
+                      label: getRemainingTimeTypeLabel(
+                        value.remaining_time_type,
+                      ),
+                      color: getIdleChecksTagColor(
+                        value,
+                        key === 'utilization' ? 'utilization' : 'remaining',
+                      ),
+                    },
+                    {
+                      label: formatDurationAsDays(
+                        new Date().toISOString(),
+                        new Date(
+                          new Date().getTime() + (value.remaining || 0) * 1000,
+                        ).toISOString(),
+                      ),
+                      color: getIdleChecksTagColor(
+                        value,
+                        key === 'utilization' ? 'utilization' : 'remaining',
+                      ),
+                    },
+                  ]}
+                />
+                {value.remaining_time_type === 'grace_period' && (
+                  <QuestionIconWithTooltip
+                    title={
+                      <div style={{ whiteSpace: 'pre-line' }}>
+                        {t('session.GracePeriodTooltip')}
+                      </div>
+                    }
+                  />
+                )}
+              </BAIFlex>
             ) : (
               <Typography.Text type="danger">
-                {t('session.TimeoutExceeded')}
+                {t('session.ReclamationStatusChecking')}
               </Typography.Text>
             )}
           </BAIFlex>

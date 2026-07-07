@@ -13,7 +13,7 @@ import { useMemoizedJSONParse, BAIFlex } from 'backend.ai-ui';
 import { graphql, useFragment } from 'react-relay';
 
 interface SessionReclamationStatusCellProps {
-  sessionFrgmt: SessionReclamationStatusCellFragment$key | null;
+  sessionFrgmt: SessionReclamationStatusCellFragment$key | null | undefined;
 }
 
 const SessionReclamationStatusCell: React.FC<
