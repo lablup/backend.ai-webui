@@ -227,6 +227,23 @@ describe("buildWebPage — FR-2726 surfaces", () => {
     assert.doesNotMatch(html, /<a class="bai-brand-version"/);
   });
 
+  it("deep-links the version pill to the release tag when metadata.releaseTag is set", () => {
+    // Archive minors (and stable workspace builds) carry a real release
+    // tag, so the pill targets that version's own release-notes page
+    // instead of the generic listing.
+    const ctx = makeContext();
+    ctx.metadata = { ...ctx.metadata, releaseTag: "v26.4.10" };
+    const html = buildWebPage(ctx);
+    assert.match(
+      html,
+      /<a class="bai-brand-version" href="https:\/\/github\.com\/owner\/repo\/releases\/tag\/v26\.4\.10"/,
+    );
+    assert.doesNotMatch(
+      html,
+      /href="https:\/\/github\.com\/owner\/repo\/releases"/,
+    );
+  });
+
   it("honors website.releaseNotesUrl over the repoUrl-derived default", () => {
     const ctx = makeContext();
     ctx.config = {
@@ -236,12 +253,14 @@ describe("buildWebPage — FR-2726 surfaces", () => {
         releaseNotesUrl: "https://example.com/changelog",
       },
     };
+    // The explicit URL wins even when a release tag is available.
+    ctx.metadata = { ...ctx.metadata, releaseTag: "v26.4.10" };
     const html = buildWebPage(ctx);
     assert.match(
       html,
       /<a class="bai-brand-version" href="https:\/\/example\.com\/changelog"/,
     );
-    assert.doesNotMatch(html, /href="https:\/\/github\.com\/owner\/repo\/releases"/);
+    assert.doesNotMatch(html, /href="https:\/\/github\.com\/owner\/repo\/releases/);
   });
 
   it("emits brand logo light/dark sources", () => {

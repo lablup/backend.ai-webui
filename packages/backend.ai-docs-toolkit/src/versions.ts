@@ -400,6 +400,36 @@ export function pickDisplayVersion(args: {
 }
 
 /**
+ * Choose the GitHub release tag the topbar version pill should deep-link
+ * to (`<repoUrl>/releases/tag/<tag>`), or `undefined` when no tag can be
+ * derived — the pill then falls back to the generic releases listing
+ * (FR-3265).
+ *
+ *   - Archive-branch version: `pdfTag` IS a published release tag
+ *     (`v26.4.10`) — use it. No `pdfTag` → no deep link.
+ *   - Workspace source (`next`) / flat mode: the workspace version is a
+ *     release tag only when it is a plain stable `vX.Y.Z`. Pre-release
+ *     checkouts render as `vX.Y.Z-pre (sha)` (see `getDocVersion`),
+ *     which has no corresponding tag, so anything beyond stable form
+ *     yields `undefined`.
+ */
+export function pickReleaseTag(args: {
+  workspaceVersion: string;
+  versionLabel: string | null;
+  versionEntry: Version | null | undefined;
+}): string | undefined {
+  const { workspaceVersion, versionLabel, versionEntry } = args;
+  if (versionLabel && versionEntry) {
+    if (versionEntry.source.kind === "archive-branch") {
+      return versionEntry.pdfTag ?? undefined;
+    }
+  }
+  return /^v\d+\.\d+\.\d+$/.test(workspaceVersion)
+    ? workspaceVersion
+    : undefined;
+}
+
+/**
  * Cross-version slug map: for a given slug, which versions contain it.
  * The header version selector uses this to fall back to the version's
  * index page when a slug doesn't exist there.

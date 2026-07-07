@@ -60,6 +60,7 @@ import {
 import {
   loadVersions,
   pickDisplayVersion,
+  pickReleaseTag,
   resolveVersionSource,
   VersionPageRegistry,
   type LoadedVersions,
@@ -1056,16 +1057,20 @@ async function buildLanguage(args: {
   const availableLanguages = bookConfig.languages;
   // FR-2754 Fix 2: choose what the brand version pill shows for THIS
   // version. See `pickDisplayVersion` for the exact rule.
-  const displayVersion = pickDisplayVersion({
+  const pillVersionArgs = {
     workspaceVersion: version,
     versionLabel,
     versionEntry: versionLabel
       ? (loadedVersions.entries.find((v) => v.label === versionLabel) ?? null)
       : null,
-  });
+  };
+  const displayVersion = pickDisplayVersion(pillVersionArgs);
   const metadata: WebsiteMetadata = {
     title,
     version: displayVersion,
+    // FR-3265: tag for the pill's /releases/tag/<tag> deep link;
+    // undefined (pre-release next builds) falls back to /releases.
+    releaseTag: pickReleaseTag(pillVersionArgs),
     lang,
     availableLanguages,
   };

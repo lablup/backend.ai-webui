@@ -142,6 +142,14 @@ export interface PageSeoContext {
 export interface WebsiteMetadata {
   title: string;
   version: string;
+  /**
+   * GitHub release tag matching `version` (e.g. `v26.4.10`), when one
+   * exists. Drives the topbar version pill's `/releases/tag/<tag>` deep
+   * link; absent (pre-release `next` builds, missing `pdfTag`) the pill
+   * links to the generic releases listing instead. See
+   * `pickReleaseTag` in versions.ts for the derivation rule (FR-3265).
+   */
+  releaseTag?: string;
   lang: string;
   /**
    * All languages declared in `book.config.yaml`. Used to emit
@@ -1374,16 +1382,21 @@ function buildBaiTopbar(
     ? `<span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">${escapeHtml(subLabel)}</span>`
     : "";
 
-  // Version pill (FR-3265): links to release notes when a target URL is
-  // known. `metadata.version` is the display string (pdfTag for archive
-  // minors, `getDocVersion().display` for next/flat — the latter may be
-  // "vX.Y.Z-pre (sha)" with no matching release tag), so we deliberately
-  // point at the generic releases listing rather than string-building a
-  // /releases/tag/<pill> deep link that could be dead.
+  // Version pill (FR-3265): links to this version's release-notes page
+  // when its tag is known (`metadata.releaseTag` — pdfTag for archive
+  // minors, stable workspace tag otherwise), else to the generic
+  // releases listing. `metadata.version` alone is NOT a safe tag source:
+  // next/flat builds render "vX.Y.Z-pre (sha)", which has no release.
+  // An explicit `website.releaseNotesUrl` overrides both.
   const repoUrl = config.website?.repoUrl;
+  const repoUrlTrimmed = repoUrl?.replace(/\/$/, "");
   const releaseNotesUrl =
     config.website?.releaseNotesUrl ??
-    (repoUrl ? `${repoUrl.replace(/\/$/, "")}/releases` : undefined);
+    (repoUrlTrimmed
+      ? metadata.releaseTag
+        ? `${repoUrlTrimmed}/releases/tag/${encodeURIComponent(metadata.releaseTag)}`
+        : `${repoUrlTrimmed}/releases`
+      : undefined);
   const versionText = escapeHtml(metadata.version);
   const versionPillHtml = releaseNotesUrl
     ? `<a class="bai-brand-version" href="${escapeHtml(releaseNotesUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Release notes for ${versionText}">${versionText}</a>`
