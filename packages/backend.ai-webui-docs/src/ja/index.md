@@ -23,7 +23,7 @@ Backend.AI WebUIは、Backend.AIサーバーと連携するための使いやす
 - [ダッシュボード](dashboard/dashboard.md)
 - [ストレージフォルダ](vfolder/vfolder.md)
 - [セッションページ](session_page/session_page.md)
-- [全セッション](sessions_all/sessions_all.md)
+- [コンピュートセッション](sessions_all/sessions_all.md)
 - [ストレージフォルダのマウント](mount_vfolder/mount_vfolder.md)
 - [ストレージフォルダの共有](share_vfolder/share_vfolder.md)
 - [デプロイ](deployment/deployment.md)

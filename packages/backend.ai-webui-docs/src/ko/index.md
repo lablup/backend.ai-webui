@@ -22,7 +22,7 @@ Backend.AI Web-UI는 웹 또는 앱 형태의 GUI 클라이언트로, Backend.AI
 - [대시보드](dashboard/dashboard.md)
 - [스토리지 폴더](vfolder/vfolder.md)
 - [세션 페이지](session_page/session_page.md)
-- [전체 세션](sessions_all/sessions_all.md)
+- [연산 세션](sessions_all/sessions_all.md)
 - [스토리지 폴더 마운트](mount_vfolder/mount_vfolder.md)
 - [스토리지 폴더 공유](share_vfolder/share_vfolder.md)
 - [배포](deployment/deployment.md)

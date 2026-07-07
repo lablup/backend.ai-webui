@@ -22,7 +22,7 @@ Backend.AI WebUI เป็นเว็บหรือแอปที่ให้
 - [แดชบอร์ด](dashboard/dashboard.md)
 - [โฟลเดอร์จัดเก็บ](vfolder/vfolder.md)
 - [หน้าเซสชัน](session_page/session_page.md)
-- [เซสชันทั้งหมด](sessions_all/sessions_all.md)
+- [เซสชันการคำนวณ](sessions_all/sessions_all.md)
 - [การเมาท์โฟลเดอร์จัดเก็บ](mount_vfolder/mount_vfolder.md)
 - [การแชร์โฟลเดอร์จัดเก็บ](share_vfolder/share_vfolder.md)
 - [การปรับใช้](deployment/deployment.md)
