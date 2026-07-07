@@ -229,7 +229,7 @@ this into a PPK key.
 
 Backend.AI WebUI supports adding your own SSH keypair to provide flexibility
 such as accessing a private repository. To add your own SSH keypair, click the
-`ENTER MANUALLY` button. You will then see two text areas
+`Enter Manually` button. You will then see two text areas
 corresponding to the "public" and "private" keys.
 
 ![](../images/add_ssh_keypair_manually_dialog.png)

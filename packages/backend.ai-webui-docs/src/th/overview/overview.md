@@ -40,13 +40,7 @@ Backend.AI มีการปรับแต่งที่มุ่งเน้
 | Groq | Groqcard |  |
 | HyperAccel | LPU |  |
 | Intel | Gaudi 2 และ 3 | การเรียกคืนทรัพยากรที่ไม่ได้ใช้งานอัตโนมัติตามการใช้หน่วยความจำ |
-| การสนับสนุน NVIDIA | CUDA compute capability 7.5 ขึ้นไป | (องค์กร) การจำลองเสมือนและการแชร์ GPU แบบเศษส่วน (fGPU) สำหรับคอนเทนเนอร์ |
-|  | - การอนุมานโมเดล: NVIDIA Hopper ขึ้นไป (ขึ้นอยู่กับการควอนไทซ์เป้าหมาย) |  |
-|  | - การฝึกโมเดล: NVIDIA Ampere ขึ้นไป | มัลติ GPU ระดับคอนเทนเนอร์ |
-|  |  | รองรับ CUDA หลายเวอร์ชัน |
-|  |  | รองรับ GPUDirect Storage |
-|  |  | การรวม NGC (NVIDIA GPU Cloud) |
-|  |  | การกำหนดค่าเครือข่าย GPU-GPU อัตโนมัติ |
+| การสนับสนุน NVIDIA | CUDA compute capability 7.5 ขึ้นไป<br>- การอนุมานโมเดล: NVIDIA Hopper ขึ้นไป (ขึ้นอยู่กับการควอนไทซ์เป้าหมาย)<br>- การฝึกโมเดล: NVIDIA Ampere ขึ้นไป | (องค์กร) การจำลองเสมือนและการแชร์ GPU แบบเศษส่วน (fGPU) สำหรับคอนเทนเนอร์<br>มัลติ GPU ระดับคอนเทนเนอร์<br>รองรับ CUDA หลายเวอร์ชัน<br>รองรับ GPUDirect Storage<br>การรวม NGC (NVIDIA GPU Cloud)<br>การกำหนดค่าเครือข่าย GPU-GPU อัตโนมัติ |
 | Rebellions | ATOM / ATOM+ / ATOM-Max |  |
 | SambaNova | SN30/40L |  |
 | Sapeon | X220 / X330 |  |

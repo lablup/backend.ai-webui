@@ -104,16 +104,7 @@ achieves more intuitive use.
 | Groq | Groqcard |  |
 | HyperAccel | LPU |  |
 | Intel | Gaudi 2 and 3 | Memory usage based automatic idle resource reclamation |
-| NVIDIA support       | CUDA compute capability 7.5 or later     | (Enterprise) Fractional GPU virtualization and sharing |
-|                      |                                          | for containers                                        |
-|                      | - Model inference: NVIDIA Hopper or later|                                                       |
-|                      |   (depending on the target quantization) |                                                       |
-|                      | - Model training: NVIDIA Ampere or later |                                                       |
-|                      |                                          | Container-level multi GPU                             |
-|                      |                                          | Multiple CUDA library version support                 |
-|                      |                                          | GPUDirect storage support                             |
-|                      |                                          | NGC (NVIDIA GPU Cloud) image integration              |
-|                      |                                          | GPU-GPU Network auto configuration                    |
+| NVIDIA support | CUDA compute capability 7.5 or later<br>- Model inference: NVIDIA Hopper or later (depending on the target quantization)<br>- Model training: NVIDIA Ampere or later | (Enterprise) Fractional GPU virtualization and sharing for containers<br>Container-level multi GPU<br>Multiple CUDA library version support<br>GPUDirect storage support<br>NGC (NVIDIA GPU Cloud) image integration<br>GPU-GPU Network auto configuration |
 | Rebellions           | ATOM / ATOM+ / ATOM-Max                             |                                                       |
 | SambaNova            | SN30/40L                                 |                                                       |
 | Sapeon               | X220 / X330                              |                                                       |

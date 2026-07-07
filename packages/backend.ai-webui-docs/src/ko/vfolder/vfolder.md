@@ -269,7 +269,7 @@ FileBrowser에서 스토리지 폴더 내의 파일이나 디렉토리를 이동
 
 ![](../images/select_the_destination.png)
 
-4. `MOVE` 버튼을 클릭합니다.
+4. `Move` 버튼을 클릭합니다.
 
 이동 작업이 정상적으로 완료된 것을 확인할 수 있습니다.
 
