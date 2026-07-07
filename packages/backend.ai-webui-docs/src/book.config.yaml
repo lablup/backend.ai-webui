@@ -73,11 +73,11 @@ navigation:
           path: my_environments/my_environments.md
     - category: Storage & Data
       items:
-        - title: Vfolder
+        - title: VFolder
           path: vfolder/vfolder.md
-        - title: Mount Vfolder
+        - title: Mount VFolder
           path: mount_vfolder/mount_vfolder.md
-        - title: Share Vfolder
+        - title: Share VFolder
           path: share_vfolder/share_vfolder.md
         - title: SFTP to Container
           path: sftp_to_container/sftp_to_container.md
