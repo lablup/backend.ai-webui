@@ -21,6 +21,7 @@ import {
   findLatest,
   canonicalPathFor,
   pickDisplayVersion,
+  pickReleaseTag,
   resolveVersionSource,
   VersionPageRegistry,
   type Version,
@@ -652,6 +653,84 @@ describe("pickDisplayVersion — FR-2754 brand version pill", () => {
         versionEntry: null,
       }),
       ws,
+    );
+  });
+});
+
+describe("pickReleaseTag — FR-3265 version-pill release deep link", () => {
+  const archive26: Version = {
+    label: "26.4",
+    source: { kind: "archive-branch", ref: "docs-archive/26.4" },
+    isLatest: true,
+    outDir: "26.4",
+    pdfTag: "v26.4.7",
+  };
+  const archive26NoTag: Version = {
+    label: "26.3",
+    source: { kind: "archive-branch", ref: "docs-archive/26.3" },
+    isLatest: false,
+    outDir: "26.3",
+  };
+  const workspaceNext: Version = {
+    label: "next",
+    source: { kind: "workspace" },
+    isLatest: false,
+    outDir: "next",
+  };
+  const wsPre = "v26.5.0-alpha.0 (be6c92b05)";
+
+  it("returns the pdfTag for archive-branch versions", () => {
+    assert.equal(
+      pickReleaseTag({
+        workspaceVersion: wsPre,
+        versionLabel: "26.4",
+        versionEntry: archive26,
+      }),
+      "v26.4.7",
+    );
+  });
+
+  it("returns undefined for archive-branch versions without a pdfTag", () => {
+    // The bare minor label ("26.3") is NOT a release tag — deep-linking
+    // /releases/tag/26.3 would be dead, so no tag is derived.
+    assert.equal(
+      pickReleaseTag({
+        workspaceVersion: wsPre,
+        versionLabel: "26.3",
+        versionEntry: archive26NoTag,
+      }),
+      undefined,
+    );
+  });
+
+  it("returns undefined for pre-release workspace builds (`next`)", () => {
+    // "vX.Y.Z-pre (sha)" has no corresponding GitHub release.
+    assert.equal(
+      pickReleaseTag({
+        workspaceVersion: wsPre,
+        versionLabel: "next",
+        versionEntry: workspaceNext,
+      }),
+      undefined,
+    );
+  });
+
+  it("returns the workspace version for stable builds (flat and workspace-source)", () => {
+    assert.equal(
+      pickReleaseTag({
+        workspaceVersion: "v26.5.0",
+        versionLabel: null,
+        versionEntry: null,
+      }),
+      "v26.5.0",
+    );
+    assert.equal(
+      pickReleaseTag({
+        workspaceVersion: "v26.5.0",
+        versionLabel: "next",
+        versionEntry: workspaceNext,
+      }),
+      "v26.5.0",
     );
   });
 });

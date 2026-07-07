@@ -143,6 +143,13 @@ export interface OgTagOptions {
   pageUrl?: string;
   siteName?: string;
   locale?: string;
+  /**
+   * Open Graph object type. Chapter pages are `article` (the default,
+   * preserved for existing callers); the redirect index pages emitted
+   * at the site root / `latest/` / bare-language URLs pass `website`
+   * (FR-3265) — they represent the site, not a document.
+   */
+  type?: "article" | "website";
 }
 
 /**
@@ -153,10 +160,10 @@ export interface OgTagOptions {
  */
 export function buildOgTags(opts: OgTagOptions): string[] {
   const lines: string[] = [];
-  // og:type is always "article" for chapter pages — F2 emits these per
-  // chapter only. The site index page (F1) uses "website" but is
-  // assembled by F1, not F2.
-  lines.push(`<meta property="og:type" content="article" />`);
+  // Defaults to "article" (chapter pages) — changing the default would
+  // silently alter every chapter page, so only explicit callers (the
+  // redirect index pages, FR-3265) opt into "website".
+  lines.push(`<meta property="og:type" content="${opts.type ?? "article"}" />`);
   lines.push(
     `<meta property="og:title" content="${escapeHtml(opts.title)}" />`,
   );

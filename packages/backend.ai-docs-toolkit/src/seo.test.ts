@@ -29,10 +29,7 @@ test("extractDescription — strips HTML, decodes entities, picks first paragrap
     <p>Second paragraph.</p>
   `;
   const desc = extractDescription(html);
-  assert.equal(
-    desc,
-    'This is the first paragraph with "quotes" and code.',
-  );
+  assert.equal(desc, 'This is the first paragraph with "quotes" and code.');
 });
 
 test("extractDescription — skips empty <p> blocks", () => {
@@ -63,7 +60,8 @@ test("truncateForDescription — prefers sentence boundary", () => {
 });
 
 test("truncateForDescription — falls back to word boundary", () => {
-  const text = "alpha beta gamma delta epsilon zeta eta theta iota kappa lambda";
+  const text =
+    "alpha beta gamma delta epsilon zeta eta theta iota kappa lambda";
   const result = truncateForDescription(text, 50);
   // Should end at a word boundary, with ellipsis.
   assert.ok(result.endsWith("…"));
@@ -88,6 +86,17 @@ test("buildOgTags — emits article type and required fields", () => {
   assert.ok(tags.some((t) => t.includes("og:image")));
   assert.ok(tags.some((t) => t.includes("og:site_name")));
   assert.ok(tags.some((t) => t.includes("og:locale")));
+});
+
+test("buildOgTags — emits website type when requested (FR-3265 redirect pages)", () => {
+  const tags = buildOgTags({
+    type: "website",
+    title: "Backend.AI WebUI User Guide",
+    pageUrl: "https://webui.docs.backend.ai/",
+  });
+  assert.ok(tags[0].includes('og:type" content="website"'));
+  // The explicit type must not disturb the rest of the tag order.
+  assert.ok(tags[1].includes("og:title"));
 });
 
 test("buildOgTags — omits optional fields when undefined", () => {
@@ -186,8 +195,12 @@ test("buildSitemapXml — versioned mode emits per-version <loc>", () => {
     baseUrl: "https://docs.example.com",
     lastModFor: () => undefined,
   });
-  assert.ok(xml.includes("<loc>https://docs.example.com/26.03/en/a.html</loc>"));
-  assert.ok(xml.includes("<loc>https://docs.example.com/25.16/en/a.html</loc>"));
+  assert.ok(
+    xml.includes("<loc>https://docs.example.com/26.03/en/a.html</loc>"),
+  );
+  assert.ok(
+    xml.includes("<loc>https://docs.example.com/25.16/en/a.html</loc>"),
+  );
   // No <lastmod> when the resolver returns undefined.
   assert.ok(!xml.includes("<lastmod>"));
 });
