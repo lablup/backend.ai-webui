@@ -9,6 +9,7 @@ import {
   parseShellSessionLines,
   escapeHtml as escapeHtmlExt,
   stripHtmlTags,
+  decodeHtmlEntities,
   getFigureLabel,
   parseImageSizeHint,
 } from './markdown-extensions.js';
@@ -456,7 +457,7 @@ export async function processMarkdownFiles(
     const marked = new Marked();
     const renderer = {
       heading(text: string, level: number, _raw: string): string {
-        const plainText = stripHtmlTags(text);
+        const plainText = decodeHtmlEntities(stripHtmlTags(text));
         const id = `${chapterSlug}-${slugify(plainText)}`;
 
         if (level === 1) {
@@ -585,7 +586,7 @@ export async function processCatalogMarkdownForPdf(
     const marked = new Marked();
     const renderer = {
       heading(text: string, level: number, _raw: string): string {
-        const plainText = stripHtmlTags(text);
+        const plainText = decodeHtmlEntities(stripHtmlTags(text));
         const id = `${chapterSlug}-${slugify(plainText)}`;
         headings.push({ level, text: plainText, id });
         return `<h${level} id="${id}">${text}</h${level}>\n`;
