@@ -150,14 +150,22 @@ type BaseFilterProperty = {
   valueMode?: 'scalar' | 'operator';
   // For UI/tag display when valueMode='scalar', use this operator symbol (default 'equals').
   implicitOperator?: FilterOperator;
-  // Custom input renderer. When provided, replaces the default AutoComplete input.
-  // Call onConfirm(value) to add the condition. `isValid` and `errorMessage`
-  // reflect the latest `rule.validate` outcome so the custom input can surface
-  // the same error UX the default AutoComplete shows via Tooltip.
+  // Replaces the default AutoComplete input with a controlled control (e.g.
+  // `BAIStorageHostSelect`). Calling `onAddCondition(value)` commits the value
+  // as a condition immediately — one condition per call. Pass `value={null}`
+  // to the control (antd's controlled-empty value, since `value={undefined}`
+  // is treated as uncontrolled) so it stays controlled and clears after each
+  // commit.
+  //
+  // When the committed value is opaque to the user (e.g. a UUID emitted by
+  // `BAIUserSelect` with `valuePropName="id"`), pass the human-readable
+  // label as the optional second argument, e.g.
+  // `onChange={(value, option) => onAddCondition(value, option.label)}`.
+  // The label is shown in the condition tag while the raw value still
+  // serializes into the GraphQL filter unchanged. Omit it to display the
+  // value as-is.
   renderInput?: (props: {
-    onConfirm: (value: string) => void;
-    isValid: boolean;
-    errorMessage?: string;
+    onAddCondition: (value: string | undefined, label?: string) => void;
   }) => React.ReactNode;
 };
 
@@ -179,6 +187,12 @@ export interface BAIGraphQLPropertyFilterProps extends Omit<
   filterProperties: Array<FilterProperty>;
   loading?: boolean;
   combinationMode?: 'AND' | 'OR';
+  // Whether each property holds a single condition. When false (the default)
+  // each committed value adds a new condition (the historical accumulate
+  // behavior). When true, committing a value overrides the existing condition
+  // for that property instead of appending another — applied to every
+  // property.
+  singleCondition?: boolean;
 }
 
 interface FilterCondition {
@@ -329,7 +343,9 @@ function convertConditionsToGraphQLFilter(
         filterValue = condition.value;
       }
     } else if (condition.operator === 'in' || condition.operator === 'notIn') {
-      const values = condition.value.split(',').map((v: string) => v.trim());
+      const values = Array.isArray(condition.value)
+        ? condition.value
+        : condition.value.split(',').map((v: string) => v.trim());
       filterValue = {
         [condition.operator]:
           propertyConfig?.type === 'number' ? values.map(Number) : values,
@@ -473,6 +489,7 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
   onChange: propOnChange,
   defaultValue,
   combinationMode = 'AND',
+  singleCondition = false,
   ...containerProps
 }) => {
   'use memo';
@@ -512,6 +529,14 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
 
   const [search, setSearch] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | null>(null);
+  // Maps a committed condition value to a human-readable label supplied via a
+  // `renderInput` control's `onAddCondition` (e.g. user UUID -> email). Conditions are
+  // re-derived from the `value` filter on every render and only carry the raw
+  // value, so the label is kept here and looked up when rendering tags. Keyed by
+  // `${property}::${value}`.
+  const [valueLabelMap, setValueLabelMap] = useState<Record<string, string>>(
+    {},
+  );
   const [selectedProperty, setSelectedProperty] = useState<FilterProperty>(
     filterProperties[0],
   );
@@ -599,6 +624,20 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
     return false;
   }, [selectedProperty]);
 
+  // Persist the value -> label pair supplied to `onAddCondition` so the
+  // condition tag can show the label (e.g. email) instead of the opaque
+  // committed value (e.g. UUID).
+  const rememberValueLabel = (
+    property: string,
+    value: string,
+    label: string,
+  ) => {
+    setValueLabelMap((prev) => ({
+      ...prev,
+      [`${property}::${value}`]: label,
+    }));
+  };
+
   const addCondition = (value: string) => {
     if (_.isEmpty(value)) return;
 
@@ -628,7 +667,12 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
       type: selectedProperty.type,
     };
 
-    updateConditions([...conditions, newCondition]);
+    // With `singleCondition`, committing overrides any existing condition(s)
+    // for this property; otherwise (default) conditions accumulate.
+    const baseConditions = singleCondition
+      ? conditions.filter((c) => c.property !== selectedProperty.key)
+      : conditions;
+    updateConditions([...baseConditions, newCondition]);
     setSearch('');
   };
 
@@ -646,12 +690,19 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
   ): React.ReactElement => {
     const operatorShortLabel =
       OPERATOR_SHORT_LABELS[condition.operator] || condition.operator;
+    // Prefer a renderInput-supplied label over the raw value so opaque values
+    // (e.g. UUIDs) display as something the user recognizes (e.g. an email).
+    const resolveLabel = (v: string) =>
+      valueLabelMap[`${condition.property}::${v}`] ?? v;
+    const mappedLabel =
+      valueLabelMap[`${condition.property}::${condition.value}`];
     const displayValue =
       condition.operator === 'in' || condition.operator === 'notIn'
-        ? `[${condition.value}]`
-        : condition.type === 'datetime' && dayjs(condition.value).isValid()
-          ? dayjs(condition.value).format('YYYY-MM-DD HH:mm')
-          : condition.value;
+        ? `[${String(condition.value).split(', ').map(resolveLabel).join(', ')}]`
+        : (mappedLabel ??
+          (condition.type === 'datetime' && dayjs(condition.value).isValid()
+            ? dayjs(condition.value).format('YYYY-MM-DD HH:mm')
+            : condition.value));
 
     return (
       <Tag
@@ -668,7 +719,7 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
           removeCondition(condition.id);
         }}
         style={{ margin: 0 }}
-        title={`${condition.propertyLabel} ${getOperatorLabel(condition.operator)} ${condition.value}`}
+        title={`${condition.propertyLabel} ${getOperatorLabel(condition.operator)} ${displayValue}`}
       >
         {condition.propertyLabel} {operatorShortLabel} {displayValue}
       </Tag>
@@ -730,9 +781,12 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
         )}
         {selectedProperty?.renderInput ? (
           selectedProperty.renderInput({
-            onConfirm: addCondition,
-            isValid,
-            errorMessage: selectedProperty.rule?.message,
+            onAddCondition: (value, label) => {
+              if (value != null && label !== undefined) {
+                rememberValueLabel(selectedProperty.key, value, label);
+              }
+              addCondition(value ?? '');
+            },
           })
         ) : selectedProperty?.type === 'datetime' ? (
           <DatePicker
@@ -756,7 +810,7 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
               value={search}
               open={isOpenAutoComplete}
               onOpenChange={setIsOpenAutoComplete}
-              onSelect={addCondition}
+              onSelect={(value) => addCondition(value)}
               onChange={(value) => {
                 setIsValid(true);
                 setSearch(value);
@@ -773,7 +827,7 @@ const BAIGraphQLPropertyFilter: React.FC<BAIGraphQLPropertyFilterProps> = ({
               onFocus={() => setIsFocused(true)}
             >
               <Input.Search
-                onSearch={addCondition}
+                onSearch={(value) => addCondition(value)}
                 allowClear
                 status={!isValid && isFocused ? 'error' : undefined}
               />

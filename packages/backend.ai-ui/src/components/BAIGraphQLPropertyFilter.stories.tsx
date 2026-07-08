@@ -23,7 +23,7 @@ const meta: Meta<typeof BAIGraphQLPropertyFilter> = {
 New in this version:
 - **DateTime support**: When a property has type 'datetime', a DatePicker with time selection is rendered instead of a text input. Values are serialized as ISO strings and displayed in filter tags as 'YYYY-MM-DD HH:mm'.
 - **UUID support**: UUID type properties use \`equals\`, \`notEquals\`, \`in\`, \`notIn\` operators and support validation rules.
-- **Custom input via renderInput**: Replace the default AutoComplete input with any component (e.g., an async select). Call \`onConfirm(value)\` to add the condition.
+- **Custom input via \`renderInput\`**: Replace the default AutoComplete input with any controlled control (e.g., a user/domain picker or async select). The control commits a condition via \`onAddCondition(value, label?)\` as soon as a value is selected (so a single-select picker confirms on selection); pass a human-readable \`label\` when the committed value is opaque (e.g. a UUID) so the condition tag shows the label instead. Give the control \`value={null}\` so it stays controlled and clears after each commit. Keep using a built-in \`type\` (e.g. \`uuid\`) that matches what the control emits.
 - Operatorless fields via valueMode: 'scalar' for properties that should emit direct scalar values (e.g., { isUrgent: true }). Use implicitOperator (defaults to 'equals') to control how tags are displayed in the UI.
 
 The component generates GraphQL-compatible filter objects that can be directly used in GraphQL queries, enabling powerful and flexible data filtering across the platform.
@@ -88,13 +88,15 @@ FilterProperty = {
   valueMode?: 'scalar' | 'operator';
   // Visual operator for UI tags when valueMode='scalar' (default 'equals')
   implicitOperator?: FilterOperator;
-  // Custom input renderer — replaces the default AutoComplete.
-  // Call onConfirm(value) to submit the condition. \`isValid\` / \`errorMessage\`
-  // reflect the latest rule.validate outcome so custom inputs can show errors.
+  // Custom input renderer — replaces the default AutoComplete with a controlled
+  // control (e.g. BAIUserSelect). \`onAddCondition(value, label?)\` commits the
+  // value as a condition immediately (single-select pickers confirm on
+  // selection) and serializes it per the property's \`type\`. Pass a
+  // human-readable \`label\` when the value is opaque (e.g. a UUID) so the
+  // condition tag stays readable. Give the control \`value={null}\` so it
+  // stays controlled and clears after each commit.
   renderInput?: (props: {
-    onConfirm: (value: string) => void;
-    isValid: boolean;
-    errorMessage?: string;
+    onAddCondition: (value: string | undefined, label?: string) => void;
   }) => ReactNode;
 }
         `,
@@ -844,7 +846,7 @@ export const WithRenderInput: Story = {
     docs: {
       description: {
         story:
-          'When `renderInput` is provided, the default AutoComplete is replaced with a custom component. Call `onConfirm(value)` to add the condition. Useful for async selects (e.g., fetching options from an API).',
+          'When `renderInput` is provided, the default AutoComplete is replaced with a custom control. The control commits a condition via `onAddCondition(value, label?)` as soon as it emits a non-empty value; keep it controlled with `value={null}` so it clears after each commit. Useful for async selects (e.g., fetching options from an API).',
       },
     },
   },
@@ -861,18 +863,17 @@ export const WithRenderInput: Story = {
         propertyLabel: 'Storage Host',
         type: 'string',
         defaultOperator: 'equals',
-        renderInput: ({ onConfirm }) => (
+        renderInput: ({ onAddCondition }) => (
           <Select
             placeholder="Select storage host"
             style={{ minWidth: 180 }}
+            value={null}
             options={[
               { label: 'local:volume1', value: 'local:volume1' },
               { label: 'local:volume2', value: 'local:volume2' },
               { label: 'nfs:data', value: 'nfs:data' },
             ]}
-            onChange={(value) => {
-              if (value) onConfirm(value);
-            }}
+            onChange={(next) => onAddCondition(next ?? undefined)}
           />
         ),
       },
@@ -918,5 +919,53 @@ export const WithScalarValueModeOnString: Story = {
       AND: [{ slugExact: 'hello-world' }, { isPublished: true }],
     },
     onChange: action('Scalar mode (string) filter changed'),
+  },
+};
+
+// --- Custom input (onAddCondition) -------------------------------------------
+
+const sampleOwnerOptions = [
+  { label: 'alice@example.com', value: 'owner-uuid-0001' },
+  { label: 'bob@example.com', value: 'owner-uuid-0002' },
+  { label: 'carol@example.com', value: 'owner-uuid-0003' },
+];
+
+export const WithCustomType: Story = {
+  name: 'Custom input (onAddCondition)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "A property whose input is a controlled antd Select supplied via `renderInput`. Selecting an option calls `onAddCondition(value, label)` — the filter commits the value as a condition serialized per `type: 'uuid'` → `{ owner: { id: { equals: <id> } } }`, while the condition tag shows the label (email) instead of the opaque UUID.",
+      },
+    },
+  },
+  args: {
+    filterProperties: [
+      {
+        key: 'owner.id',
+        propertyLabel: 'Owner',
+        type: 'uuid',
+        fixedOperator: 'equals',
+        renderInput: ({ onAddCondition }) => (
+          <Select
+            showSearch
+            placeholder="Select owner"
+            style={{ minWidth: 220 }}
+            value={null}
+            optionFilterProp="label"
+            options={sampleOwnerOptions}
+            onChange={(next) =>
+              onAddCondition(
+                next ?? undefined,
+                sampleOwnerOptions.find((o) => o.value === next)?.label,
+              )
+            }
+          />
+        ),
+      },
+    ],
+    combinationMode: 'AND',
+    onChange: action('custom input filter changed'),
   },
 };

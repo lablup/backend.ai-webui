@@ -10,7 +10,6 @@ import { ModelStoreListPageV2_ModelCardV2Fragment$key } from '../__generated__/M
 import AuthorIcon from '../components/AuthorIcon';
 import ModelBrandIcon from '../components/ModelBrandIcon';
 import ModelCardDrawer from '../components/ModelCardDrawer';
-import StorageHostFilterInput from '../components/StorageHostFilterInput';
 import TextHighlighter from '../components/TextHighlighter';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useModelStoreProject } from '../hooks/useModelStoreProject';
@@ -32,6 +31,7 @@ import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAISelect,
+  BAIStorageHostSelect,
   type GraphQLFilter,
   safeDecodeUuid,
   useUpdatableState,
@@ -421,8 +421,15 @@ const ModelStoreListPageV2: React.FC = () => {
                 type: 'string',
                 operators: ['equals', 'notEquals'],
                 defaultOperator: 'equals',
-                renderInput: ({ onConfirm }) => (
-                  <StorageHostFilterInput onConfirm={onConfirm} />
+                renderInput: ({ onAddCondition }) => (
+                  <BAIStorageHostSelect
+                    value={null}
+                    onChange={(value) =>
+                      // Single-select mode (no `mode` prop) always emits a
+                      // single value.
+                      onAddCondition(value as string | undefined)
+                    }
+                  />
                 ),
               },
             ]}
