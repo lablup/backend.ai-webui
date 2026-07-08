@@ -5,7 +5,7 @@
 import { ResourceSlotName } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
-import { Segmented, theme } from 'antd';
+import { theme } from 'antd';
 import {
   BAIBoardItemTitle,
   BAIFlex,
@@ -158,16 +158,6 @@ const MyResource: React.FC<MyResourceProps> = ({
         tooltip={<Trans i18nKey={'webui.menu.MyResourcesDescription'} />}
         extra={
           <BAIFlex gap={'xs'}>
-            <Segmented
-              size="small"
-              options={[
-                {
-                  label: t('dashboard.Used'),
-                  value: 'used',
-                },
-              ]}
-              value={'used'}
-            />
             <BAIFetchKeyButton
               size="small"
               loading={isPending || refetching}
