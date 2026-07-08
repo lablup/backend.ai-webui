@@ -1057,9 +1057,12 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     //     `environments.image` (an object carrying `id`);
     //   - typing a name into the "Manual image name" field populates
     //     `environments.manual` (a string) and clears `environments.image`.
-    // Interactive session creation accepts the manual string directly (REST),
-    // but the deployment mutation needs an id — so resolve the manually entered
-    // reference to a registered image id here before committing (FR-3278).
+    // The mutation needs an id, so resolve the manually entered reference to a
+    // registered image id here before committing (FR-3278).
+    //
+    // This client-side resolve is a workaround for the id-only mutation input;
+    // the deeper fix is BA-6774 (accept an image by reference server-side),
+    // after which this step can be dropped behind a manager-version gate.
     let imageId = values.environments?.image?.id;
     const manualImageName = values.environments?.manual?.trim();
     if (!imageId && manualImageName) {
