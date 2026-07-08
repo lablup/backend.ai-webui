@@ -16,7 +16,7 @@ const IdleCheckDescriptionModal: React.FC<IdleCheckDescriptionModalProps> = ({
 
   return (
     <BAIModal
-      title={t('session.IdleChecks')}
+      title={t('session.ReclamationStatus')}
       footer={null}
       width={700}
       {...modalProps}

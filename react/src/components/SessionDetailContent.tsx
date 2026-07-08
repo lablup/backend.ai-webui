@@ -387,7 +387,7 @@ const SessionDetailContent: React.FC<{
             <Descriptions.Item
               label={
                 <BAIFlex gap="xxs">
-                  {t('session.IdleChecks')}
+                  {t('session.ReclamationStatus')}
                   <Tooltip title={t('button.ClickForMoreDetails')}>
                     <QuestionCircleOutlined
                       style={{ cursor: 'pointer' }}

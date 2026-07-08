@@ -212,7 +212,6 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
       {
         key: 'reclamationStatus',
         title: t('session.ReclamationStatus'),
-        defaultHidden: true,
         render: (__, session) => (
           <SessionReclamationStatusCell sessionFrgmt={session} />
         ),
