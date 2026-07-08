@@ -1,0 +1,39 @@
+# Backend.AI WebUI User Guide
+
+Backend.AI WebUI is a web or app that provides easy-to-use GUI interface
+to work with the Backend.AI server.
+
+The latest versions of this document can be found from sites below:
+
+- https://webui.docs.backend.ai/en/latest (English)
+- https://webui.docs.backend.ai/ko/latest (Korean)
+
+
+## Table of Contents
+
+- [Quickstart](quickstart.md)
+- [Disclaimer](disclaimer.md)
+- [Overview](overview/overview.md)
+- [Installation](installation/installation.md)
+- [Login](login/login.md)
+- [Top Bar](header/header.md)
+- [Start](start/start.md)
+- [Dashboard](dashboard/dashboard.md)
+- [Storage Folders](vfolder/vfolder.md)
+- [Session Page](session_page/session_page.md)
+- [Compute Sessions](sessions_all/sessions_all.md)
+- [Mount Storage Folders](mount_vfolder/mount_vfolder.md)
+- [Share Storage Folders](share_vfolder/share_vfolder.md)
+- [Deployment](deployment/deployment.md)
+- [Chat](chat/chat.md)
+- [My Environments](my_environments/my_environments.md)
+- [Agent Summary](agent_summary/agent_summary.md)
+- [Statistics](statistics/statistics.md)
+- [SFTP to Container](sftp_to_container/sftp_to_container.md)
+- [User Settings](user_settings/user_settings.md)
+- [Cluster Session](cluster_session/cluster_session.md)
+- [Admin Menu](admin_menu/admin_menu.md)
+- [Troubleshooting](trouble_shooting/trouble_shooting.md)
+- [Appendix](appendix/appendix.md)
+- [License Agreement](license_agreement/license_agreement.md)
+- [References](references/references.md)
