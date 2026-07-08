@@ -1463,7 +1463,7 @@
     "APINotSupported": "APIはサポートされていません。最新バージョンのBackend.AIマネージャが必要です。",
     "AllowsPositiveNumberOnly": "正の数のみを許可します。",
     "AuthenticationFailed": "認証に失敗しました。情報とマネージャーのステータスを確認してください。",
-    "CannotChangeVirtualFolderOption": "自分が所有していないvfolderのオプションを変更することはできません。",
+    "CannotChangeVirtualFolderOption": "自分が所有していないVFolderのオプションを変更することはできません。",
     "CannotConnectToServer": "サーバーに接続できません。エンドポイントのアドレスとネットワーク接続を確認してください。",
     "CannotSharePrivateAutomountFolder": "ポリシーに従って自動マウントVフォルダーを共有できない。",
     "ErrorFetchingExternalContent": "外部コンテンツの取得エラー:",
