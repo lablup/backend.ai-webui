@@ -2,12 +2,12 @@ import { BAIProjectBulkEditModalFragment$key } from '../../__generated__/BAIProj
 import { BAIProjectBulkEditModalProjectMutation } from '../../__generated__/BAIProjectBulkEditModalProjectMutation.graphql';
 import { useMutationWithPromise } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
-import BAIAlert from '../BAIAlert';
 import BAIFlex from '../BAIFlex';
+import BAIListAlert from '../BAIListAlert';
 import BAIModal, { BAIModalProps } from '../BAIModal';
 import BAISelect from '../BAISelect';
 import BAIProjectResourcePolicySelect from './BAIProjectResourcePolicySelect';
-import { Form, theme } from 'antd';
+import { Form } from 'antd';
 import * as _ from 'lodash-es';
 import { Suspense, useState } from 'react';
 import { graphql, useFragment } from 'react-relay';
@@ -21,7 +21,6 @@ const BAIProjectBulkEditModal = ({
   ...tableProps
 }: BAIProjectBulkEditModalProps) => {
   const { t } = useBAIi18n();
-  const { token } = theme.useToken();
   const [form] = Form.useForm();
   const [isSaving, setIsSaving] = useState(false);
   const mutateProjectWithPromise =
@@ -77,27 +76,17 @@ const BAIProjectBulkEditModal = ({
       destroyOnHidden
     >
       <BAIFlex direction="column" align="stretch" gap="md">
-        <BAIAlert
+        <BAIListAlert
           type="info"
           showIcon
           ghostInfoBg={false}
           title={t(
             'comp:BAIProjectBulkEditModal.FollowingProjectsWillBeUpdated',
           )}
-          description={
-            <ul
-              style={{
-                margin: 0,
-                padding: 0,
-                paddingTop: token.paddingXXS,
-                listStyle: 'circle',
-              }}
-            >
-              {_.map(selectedProjects, (project) => (
-                <li key={project.row_id}>{project.name}</li>
-              ))}
-            </ul>
-          }
+          items={_.map(selectedProjects, (project) => ({
+            key: project.row_id,
+            content: project.name,
+          }))}
         />
         <Form form={form}>
           <Suspense

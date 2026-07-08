@@ -6,10 +6,10 @@ import { DeleteVFolderModalFragment$key } from '../__generated__/DeleteVFolderMo
 import { VFolderNodesFragment$data } from '../__generated__/VFolderNodesFragment.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { Typography, message, theme } from 'antd';
+import { Typography, message } from 'antd';
 import {
-  BAIAlert,
   BAIFlex,
+  BAIListAlert,
   BAIModal,
   BAIModalProps,
   toLocalId,
@@ -36,7 +36,6 @@ const DeleteVFolderModal: React.FC<DeleteVFolderModalProps> = ({
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
   const { getErrorMessage } = useErrorMessageResolver();
-  const { token } = theme.useToken();
 
   const vfolders = useFragment(
     graphql`
@@ -128,26 +127,16 @@ const DeleteVFolderModal: React.FC<DeleteVFolderModalProps> = ({
       <BAIFlex direction="column" gap={'sm'} align="stretch">
         {vfolders &&
           vfolders.length !== foldersByPermission.deletable?.length && (
-            <BAIAlert
+            <BAIListAlert
               showIcon
               ghostInfoBg={false}
               title={t('data.folders.ExcludedFolders', {
                 count: foldersByPermission.undeletable?.length || 0,
               })}
-              description={
-                <ul
-                  style={{
-                    margin: 0,
-                    padding: 0,
-                    paddingTop: token.paddingXXS,
-                    listStyle: 'circle',
-                  }}
-                >
-                  {_.map(foldersByPermission.undeletable, (vfolder) => (
-                    <li key={vfolder.id}>{vfolder.name}</li>
-                  ))}
-                </ul>
-              }
+              items={_.map(foldersByPermission.undeletable, (vfolder) => ({
+                key: vfolder.id,
+                content: vfolder.name,
+              }))}
             />
           )}
         <Typography.Text>
