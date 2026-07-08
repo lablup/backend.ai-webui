@@ -1,3 +1,7 @@
+---
+navTitle: Project Admin Features
+---
+
 <a id="project-admin-features"></a>
 
 # Project Admin Features

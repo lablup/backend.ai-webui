@@ -1,3 +1,7 @@
+---
+navTitle: 채팅
+---
+
 <a id="chat-page"></a>
 
 # 채팅 페이지

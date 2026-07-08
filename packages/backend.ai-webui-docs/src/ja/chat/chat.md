@@ -1,3 +1,7 @@
+---
+navTitle: チャット
+---
+
 <a id="chat-page"></a>
 
 # チャットページ

@@ -135,6 +135,30 @@ navigation:
   );
 });
 
+test("loadBookConfig — keeps title-less entries (FR-3277 frontmatter navTitle)", () => {
+  withSrcDir(
+    `
+id: x
+title: T
+languages: [en]
+navigation:
+  en:
+    - { title: Labeled, path: labeled.md }
+    - { path: unlabeled.md }
+`,
+    (dir) => {
+      const cfg = loadBookConfig(dir);
+      assert.deepEqual(
+        cfg.navigation.en.map((it) => ({ title: it.title, path: it.path })),
+        [
+          { title: "Labeled", path: "labeled.md" },
+          { title: undefined, path: "unlabeled.md" },
+        ],
+      );
+    },
+  );
+});
+
 test("loadBookConfig — supports per-language differing forms (en grouped, ko flat)", () => {
   withSrcDir(
     `

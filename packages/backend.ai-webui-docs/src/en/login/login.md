@@ -1,3 +1,7 @@
+---
+navTitle: Login
+---
+
 # Sign up and Log in
 
 <a id="sign-up"></a>

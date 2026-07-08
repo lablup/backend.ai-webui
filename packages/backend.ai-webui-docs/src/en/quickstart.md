@@ -1,3 +1,7 @@
+---
+navTitle: Quickstart
+---
+
 # Quickstart
 
 Welcome to Quickstart guide of Backend.AI WebUI.

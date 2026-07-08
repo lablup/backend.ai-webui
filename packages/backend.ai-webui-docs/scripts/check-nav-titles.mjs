@@ -88,18 +88,46 @@ const navigation = config?.navigation ?? {};
 const violations = [];
 let checked = 0;
 
+/**
+ * Split a page into its frontmatter `navTitle` and body (FR-3277). The
+ * label now lives with the page; a `title:` on the config nav item is
+ * the legacy fallback (still honored by the toolkit so archived
+ * snapshots keep rendering).
+ */
+function splitFrontmatter(markdown) {
+  const m = markdown.match(/^---\r?\n([\s\S]*?)\r?\n---[ \t]*\r?\n?/);
+  if (!m) return { navTitle: undefined, body: markdown };
+  let navTitle;
+  try {
+    const fm = parse(m[1]);
+    const v = fm && typeof fm === "object" ? fm.navTitle : undefined;
+    navTitle = typeof v === "string" && v.trim() ? v.trim() : undefined;
+  } catch {
+    return { navTitle: undefined, body: markdown };
+  }
+  return { navTitle, body: markdown.slice(m[0].length) };
+}
+
 for (const [lang, entries] of Object.entries(navigation)) {
-  for (const { title, path: navPath } of flattenNav(entries)) {
+  for (const { title: configTitle, path: navPath } of flattenNav(entries)) {
     const mdFile = path.join(srcDir, lang, navPath);
     if (!fs.existsSync(mdFile)) {
-      violations.push(`${lang}/${navPath}: file missing (nav label "${title}")`);
+      violations.push(`${lang}/${navPath}: file missing from navigation`);
       continue;
     }
-    const h1 = firstH1(fs.readFileSync(mdFile, "utf8"));
+    const { navTitle, body } = splitFrontmatter(
+      fs.readFileSync(mdFile, "utf8"),
+    );
+    // Same precedence as the toolkit: frontmatter navTitle → config title.
+    // When neither exists the build falls back to the H1 itself, which
+    // trivially matches — nothing to check.
+    const title = navTitle ?? configTitle;
+    const h1 = firstH1(body);
     if (!h1) {
       violations.push(`${lang}/${navPath}: no H1 found (nav label "${title}")`);
       continue;
     }
+    if (title === undefined) continue;
     checked++;
 
     const key = `${lang}/${navPath}`;

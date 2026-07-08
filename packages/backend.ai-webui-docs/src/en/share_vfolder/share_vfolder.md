@@ -1,3 +1,7 @@
+---
+navTitle: Share Storage Folders
+---
+
 # Sharing Storage Folders and Access Control
 
 You may need to share the contents of storage folders with other users or project

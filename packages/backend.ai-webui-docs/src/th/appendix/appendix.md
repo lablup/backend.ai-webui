@@ -1,3 +1,7 @@
+---
+navTitle: ภาคผนวก
+---
+
 # ภาคผนวก
 
 <a id="gpu-virtualization-and-fractional-gpu-allocation"></a>
