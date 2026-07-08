@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ccd0b42128ee9876a6c925d590346f83>>
+ * @generated SignedSource<<e33887fd0a9719629ac8fe014f4766c5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,6 +10,9 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type DeploymentRevisionPresetFilter = {
+  AND?: ReadonlyArray<DeploymentRevisionPresetFilter> | null | undefined;
+  NOT?: ReadonlyArray<DeploymentRevisionPresetFilter> | null | undefined;
+  OR?: ReadonlyArray<DeploymentRevisionPresetFilter> | null | undefined;
   id?: UUIDFilter | null | undefined;
   name?: StringFilter | null | undefined;
   runtimeVariantId?: UUIDFilter | null | undefined;

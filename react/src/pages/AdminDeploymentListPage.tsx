@@ -36,7 +36,6 @@ import {
   BAINameActionCell,
   BAIUnmountAfterClose,
   DeploymentOrderValue,
-  GraphQLFilter,
   INITIAL_FETCH_KEY,
   availableDeploymentSorterValues,
   filterOutEmpty,
@@ -89,10 +88,10 @@ const AdminDeploymentListPageContent: React.FC = () => {
 
   const [queryParams, setQueryParams] = useQueryStates(
     {
-      filter: parseAsJson<GraphQLFilter>((value) =>
+      filter: parseAsJson<DeploymentFilter>((value) =>
         typeof value === 'object' && value !== null && !Array.isArray(value)
-          ? (value as GraphQLFilter)
-          : ({} as GraphQLFilter),
+          ? (value as DeploymentFilter)
+          : ({} as DeploymentFilter),
       ),
       order: parseAsStringLiteral(availableDeploymentSorterValues),
       statusCategory: parseAsStringLiteral<DeploymentStatusCategory>([
@@ -118,7 +117,7 @@ const AdminDeploymentListPageContent: React.FC = () => {
   const sort = parseDeploymentOrder(queryParams.order);
   const queryVariables = {
     filter: {
-      ...((queryParams.filter ?? {}) as DeploymentFilter),
+      ...(queryParams.filter ?? {}),
       ...statusCategoryFilter,
     },
     orderBy: sort
@@ -285,7 +284,7 @@ const AdminDeploymentListPageContent: React.FC = () => {
                 },
               ]}
             />
-            <BAIGraphQLPropertyFilter
+            <BAIGraphQLPropertyFilter<DeploymentFilter>
               filterProperties={filterProperties}
               value={queryParams.filter ?? undefined}
               onChange={(value) => {
