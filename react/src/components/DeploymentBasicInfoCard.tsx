@@ -8,7 +8,9 @@ import type {
   DeploymentBasicInfoCard_deployment$key,
 } from '../__generated__/DeploymentBasicInfoCard_deployment.graphql';
 import { DeploymentSchedulingHistoryModalQuery } from '../__generated__/DeploymentSchedulingHistoryModalQuery.graphql';
+import { buildPath } from '../helper/pathBuilder';
 import { useWebUINavigate } from '../hooks';
+import { useActiveProjectName, useRouteScope } from '../hooks/useRouteScope';
 import DeploymentSchedulingHistoryModal, {
   DeploymentSchedulingHistoryQuery,
 } from './DeploymentSchedulingHistoryModal';
@@ -50,7 +52,6 @@ import type { BAIDeploymentStatus } from 'backend.ai-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation, useQueryLoader } from 'react-relay';
-import { useLocation } from 'react-router-dom';
 
 interface DeploymentBasicInfoCardProps {
   deploymentFrgmt: DeploymentBasicInfoCard_deployment$key | null;
@@ -85,7 +86,8 @@ const DeploymentOverviewContent: React.FC<{
   'use memo';
   const { t } = useTranslation();
   const webuiNavigate = useWebUINavigate();
-  const location = useLocation();
+  const routeScope = useRouteScope();
+  const activeProjectName = useActiveProjectName();
 
   const projectName =
     deployment?.metadata.projectV2?.basicInfo?.name ??
@@ -187,17 +189,16 @@ const DeploymentOverviewContent: React.FC<{
           metadataFrgmt={deployment?.metadata ?? null}
           onTagClick={(tag) => {
             // Stay within the same deployment-list URL space the user came
-            // from (`/admin-deployments`, `/project-admin-deployments`, or
-            // the user-facing `/deployments`) so breadcrumb / back navigation
-            // remain coherent — see FR-2847 (admin) and FR-2930 (project
-            // admin) for the per-scope detail-route precedent.
-            const targetPathname = location.pathname.startsWith(
-              '/admin-deployments',
-            )
-              ? '/admin-deployments'
-              : location.pathname.startsWith('/project-admin-deployments')
-                ? '/project-admin-deployments'
-                : '/deployments';
+            // from (admin / project-admin / user `deployments`) so breadcrumb /
+            // back navigation remain coherent — see FR-2847 (admin) and
+            // FR-2930 (project admin) for the per-scope detail-route precedent.
+            // The current scope (from the route handle) plus the active project
+            // name yield the correct scope-aware list path via `buildPath`.
+            const targetPathname = buildPath(
+              routeScope,
+              'deployments',
+              activeProjectName,
+            );
             webuiNavigate({
               pathname: targetPathname,
               search: new URLSearchParams({
@@ -236,7 +237,8 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const webuiNavigate = useWebUINavigate();
-  const location = useLocation();
+  const routeScope = useRouteScope();
+  const activeProjectName = useActiveProjectName();
 
   const deployment = useFragment(
     graphql`
@@ -295,11 +297,10 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
   // Derive the stopped-category guard locally from this component's own
   // fragment status (rather than threading a boolean prop down from the page).
   const deploymentStatus = deployment?.metadata.status;
-  const listPath = location.pathname.startsWith('/admin-deployments')
-    ? '/admin-deployments'
-    : location.pathname.startsWith('/project-admin-deployments')
-      ? '/project-admin-deployments'
-      : '/deployments';
+  // Scope-aware deployment-list path for back navigation. The current route
+  // scope (admin / projectAdmin / project, from the route handle) plus the
+  // active project name produce the correct list URL via `buildPath`.
+  const listPath = buildPath(routeScope, 'deployments', activeProjectName);
 
   const handleDelete = () => {
     if (!deployment?.id) return;

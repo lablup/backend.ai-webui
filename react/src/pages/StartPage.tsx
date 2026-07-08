@@ -11,6 +11,7 @@ import ThemeSecondaryProvider from '../components/ThemeSecondaryProvider';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { useProjectPath } from '../hooks/useRouteScope';
 import { useVFolderInvitations } from '../hooks/useVFolderInvitations';
 import { MenuKeys } from '../hooks/useWebUIMenuItems';
 import { SessionLauncherFormValue } from './SessionLauncherPage';
@@ -49,6 +50,7 @@ const StartPage: React.FC = () => {
   const enableModelFolders = baiClient?._config?.enableModelFolders ?? false;
 
   const webuiNavigate = useWebUINavigate();
+  const buildProjectPath = useProjectPath();
   const [isOpenCreateModal, setIsOpenCreateModal] = useState<boolean>(false);
   const [isOpenStartURLModal, setIsOpenStartURLModal] =
     useState<boolean>(false);
@@ -176,7 +178,7 @@ const StartPage: React.FC = () => {
             description={t('start.StartSessionDesc')}
             buttonText={t('start.button.StartSession')}
             icon={<BAIInteractiveSessionIcon />}
-            onClick={() => webuiNavigate('/session/start')}
+            onClick={() => webuiNavigate(buildProjectPath('session/start'))}
           />
         ),
       },
@@ -201,7 +203,9 @@ const StartPage: React.FC = () => {
               const params = new URLSearchParams();
               params.set('step', '0');
               params.set('formValues', JSON.stringify(launcherValue));
-              webuiNavigate(`/session/start?${params.toString()}`);
+              webuiNavigate(
+                `${buildProjectPath('session/start')}?${params.toString()}`,
+              );
             }}
           />
         ),
@@ -221,7 +225,7 @@ const StartPage: React.FC = () => {
               description={t('start.StartDeploymentDesc')}
               buttonText={t('start.button.StartDeployment')}
               icon={<AppstoreAddOutlined />}
-              onClick={() => webuiNavigate('/deployments')}
+              onClick={() => webuiNavigate(buildProjectPath('deployments'))}
             />
           </ThemeSecondaryProvider>
         ),
@@ -301,7 +305,7 @@ const StartPage: React.FC = () => {
           onRequestClose={(response) => {
             setIsOpenCreateModal(false);
             if (response) {
-              webuiNavigate('/data');
+              webuiNavigate(buildProjectPath('data'));
             }
           }}
         />

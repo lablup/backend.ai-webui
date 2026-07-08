@@ -7,6 +7,7 @@ import { baiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useSuspenseTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useProjectPath } from '../hooks/useRouteScope';
 import {
   CloudUploadOutlined,
   FilterOutlined,
@@ -108,6 +109,7 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
     throw new Error('Project ID is required for ImportFromHuggingFaceModal');
   }
   const webuiNavigate = useWebUINavigate();
+  const buildProjectPath = useProjectPath();
   const [isImportOnly, { toggle: toggleIsImportOnly }] = useToggle(false);
   const [huggingFaceURL, setHuggingFaceURL] = useState<string | undefined>();
   const [typedURL, setTypedURL] = useState<string>('');
@@ -430,7 +432,7 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
                       }
                       onClick={() => {
                         webuiNavigate({
-                          pathname: '/data',
+                          pathname: buildProjectPath('data'),
                           search: new URLSearchParams({
                             tab: 'model',
                             folder: importResult.folder.id,

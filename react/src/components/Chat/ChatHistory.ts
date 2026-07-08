@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useWebUINavigate } from '../../hooks';
+import { useProjectPath } from '../../hooks/useRouteScope';
 import {
   DEFAULT_CHAT_PARAMETERS,
   type ChatData,
@@ -92,6 +93,7 @@ export function useHistory(id: string, provider: ChatProviderData) {
   const [history, setHistory] = useState<ChatHistoryData[]>([]);
   const [chat, setChat] = useState<ChatHistoryData | undefined>(undefined);
   const webuiNavigate = useWebUINavigate();
+  const buildProjectPath = useProjectPath();
 
   const removeHistory = useCallback((id: string) => {
     chatHistoryCache.delete(id);
@@ -131,13 +133,13 @@ export function useHistory(id: string, provider: ChatProviderData) {
 
       if (!getChatById(id)) {
         updateHistory({ ...chat });
-        webuiNavigate(`/chat/${chat.id}`, { replace: true });
+        webuiNavigate(buildProjectPath(`chat/${chat.id}`), { replace: true });
         return;
       }
 
       updateHistory({ ...chat });
     },
-    [chat, webuiNavigate, updateHistory, logger],
+    [chat, webuiNavigate, buildProjectPath, updateHistory, logger],
   );
 
   const removeChatData = useCallback(
@@ -181,10 +183,10 @@ export function useHistory(id: string, provider: ChatProviderData) {
         updateHistory(currentChat);
       } else {
         updateHistory({ ...chat });
-        webuiNavigate(`/chat/${chat.id}`, { replace: true });
+        webuiNavigate(buildProjectPath(`chat/${chat.id}`), { replace: true });
       }
     },
-    [chat, updateHistory, webuiNavigate, logger],
+    [chat, updateHistory, webuiNavigate, buildProjectPath, logger],
   );
 
   const saveChatMessage = useCallback(
@@ -242,10 +244,10 @@ export function useHistory(id: string, provider: ChatProviderData) {
         updateHistory(currentChat);
       } else {
         updateHistory({ ...chat });
-        webuiNavigate(`/chat/${chat.id}`, { replace: true });
+        webuiNavigate(buildProjectPath(`chat/${chat.id}`), { replace: true });
       }
     },
-    [chat, updateHistory, webuiNavigate, logger],
+    [chat, updateHistory, webuiNavigate, buildProjectPath, logger],
   );
 
   const clearChatMessage = useCallback(

@@ -5,6 +5,7 @@
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import PendingSessionNodeList from '../components/PendingSessionNodeList';
 import SessionDetailAndContainerLogOpenerLegacy from '../components/SessionDetailAndContainerLogOpenerLegacy';
+import { buildPath } from '../helper/pathBuilder';
 import { useWebUINavigate } from '../hooks';
 import { Skeleton } from 'antd';
 import { BAICard, filterOutEmpty } from 'backend.ai-ui';
@@ -34,7 +35,7 @@ const AdminSessionPage: React.FC = () => {
         activeTabKey={queryParam.tab}
         onTabChange={(key) => {
           webUINavigate({
-            pathname: '/admin-session',
+            pathname: buildPath('admin', 'session'),
             search: new URLSearchParams({
               tab: key,
             }).toString(),

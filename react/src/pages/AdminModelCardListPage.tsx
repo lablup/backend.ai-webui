@@ -14,6 +14,7 @@ import { useFolderExplorerOpener } from '../components/FolderExplorerOpener';
 import StorageHostFilterInput from '../components/StorageHostFilterInput';
 import VFolderNodeIdenticonV2 from '../components/VFolderNodeIdenticonV2';
 import { convertToOrderBy, handleRowSelectionChange } from '../helper';
+import { buildPath } from '../helper/pathBuilder';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -545,7 +546,7 @@ const AdminModelCardListPage: React.FC = () => {
                       type: 'success',
                       message: t('adminModelCard.ModelCardAndFolderDeleted'),
                       to: {
-                        pathname: '/admin-data',
+                        pathname: buildPath('admin', 'data'),
                         search: folderTrashSearch,
                       },
                       toText: t('adminModelCard.GoToTrash'),
@@ -688,7 +689,7 @@ const AdminModelCardListPage: React.FC = () => {
                       { count: successes.length },
                     ),
                     to: {
-                      pathname: '/admin-data',
+                      pathname: buildPath('admin', 'data'),
                       search: new URLSearchParams({
                         statusCategory: 'deleted',
                       }).toString(),

@@ -12,6 +12,7 @@ import AdminDeploymentPresetSettingPageContent, {
   type ModelDefinitionFormValue,
 } from '../components/AdminDeploymentPresetSettingPageContent';
 import { tokenizeShellCommand } from '../helper/parseCliCommand';
+import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { type RuntimeVariantPresetValueEntry } from '../hooks/useRuntimeParameterSchema';
 import { App, Form, Typography, theme } from 'antd';
@@ -266,7 +267,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
     const params = new URLSearchParams();
     params.set('tab', 'deployment-presets');
     webuiNavigate({
-      pathname: '/admin-deployments',
+      pathname: buildPath('admin', 'deployments'),
       search: params.toString(),
     });
   };

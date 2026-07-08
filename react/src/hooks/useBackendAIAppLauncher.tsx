@@ -6,6 +6,7 @@ import { useSuspendedBackendaiClient, useWebUINavigate } from '.';
 import { useBackendAIAppLauncherFragment$key } from '../__generated__/useBackendAIAppLauncherFragment.graphql';
 import { requestLocalProxyToken } from '../helper/localProxyToken';
 import { useSetBAINotification } from './useBAINotification';
+import { useProjectPath } from './useRouteScope';
 import { BAILink, useBAILogger, useErrorMessageResolver } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
@@ -26,6 +27,7 @@ export const useBackendAIAppLauncher = (
   const { upsertNotification } = useSetBAINotification();
   const { getErrorMessage } = useErrorMessageResolver();
   const webuiNavigate = useWebUINavigate();
+  const buildProjectPath = useProjectPath();
   const baiClient = useSuspendedBackendaiClient();
   const { logger } = useBAILogger();
 
@@ -704,7 +706,7 @@ export const useBackendAIAppLauncher = (
               const newSearchParams = new URLSearchParams(location.search);
               newSearchParams.set('sessionDetail', session?.row_id || '');
               webuiNavigate({
-                pathname: `/session`,
+                pathname: buildProjectPath('session'),
                 search: newSearchParams.toString(),
               });
             }}
