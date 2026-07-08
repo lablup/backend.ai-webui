@@ -1036,19 +1036,19 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   };
 
   const handleCustomFinish = async (values: FormValues): Promise<void> => {
-    // The image error must surface on `environments.version`, a field owned by
-    // the shared `ImageEnvironmentSelectFormItems`, so the modal raises it with
-    // `setFields` rather than a `rules` validator it can't attach. Reuse
-    // `handleFinishFailed` for the scroll so this error scrolls exactly like
-    // every other error in the modal (DOM order, not `scrollToFirstError`).
-    const flagImageError = (messageKey: string) => {
-      customForm.setFields([
-        {
-          name: ['environments', 'version'],
-          errors: [t(messageKey)],
-        },
-      ]);
-      handleFinishFailed();
+    // Surface the image error on the field the user actually used — the
+    // "Image Name (Manual)" input when they typed a name, otherwise the
+    // Environments/Version dropdown. Both are owned by the shared
+    // `ImageEnvironmentSelectFormItems`, so the modal raises the error with
+    // `setFields` (it can't attach a `rules` validator to them) and scrolls that
+    // specific field into view with antd's `scrollToField` (the setFields error
+    // is raised post-submit, so `scrollToFirstError` never fires for it).
+    const flagImageError = (
+      name: ['environments', 'manual'] | ['environments', 'version'],
+      messageKey: string,
+    ) => {
+      customForm.setFields([{ name, errors: [t(messageKey)] }]);
+      customForm.scrollToField(name, { behavior: 'smooth', block: 'center' });
     };
 
     // The revision mutation only references an image by id (`ImageInput.id`).
@@ -1065,6 +1065,13 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     // after which this step can be dropped behind a manager-version gate.
     let imageId = values.environments?.image?.id;
     const manualImageName = values.environments?.manual?.trim();
+    // Image errors are shown on the manual-name input if the user typed one,
+    // otherwise on the Environments/Version dropdown.
+    const imageFieldName:
+      | ['environments', 'manual']
+      | ['environments', 'version'] = manualImageName
+      ? ['environments', 'manual']
+      : ['environments', 'version'];
     if (!imageId && manualImageName) {
       // Manual names may carry an `@architecture` suffix; pass it through so the
       // lookup matches the exact image instead of the manager's default
@@ -1104,19 +1111,19 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         setIsResolvingImage(false);
       }
       if (!imageId) {
-        flagImageError('modelService.ManualImageNotFound');
+        flagImageError(imageFieldName, 'modelService.ManualImageNotFound');
         return;
       }
     }
 
     if (!imageId) {
-      flagImageError('modelService.ImageRequired');
+      flagImageError(imageFieldName, 'modelService.ImageRequired');
       return;
     }
     // `ImageInput.id` is declared as `ID!` but parsed as `UUID!` server-side.
     const decodedImageId = safeDecodeUuid(imageId);
     if (!decodedImageId) {
-      flagImageError('modelService.ImageRequired');
+      flagImageError(imageFieldName, 'modelService.ImageRequired');
       return;
     }
 
