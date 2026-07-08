@@ -1,8 +1,7 @@
 import BAIPropertyFilter from './BAIPropertyFilter';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Select } from 'antd';
-
-// import { action } from '@storybook/addon-actions';
+import { useState } from 'react';
 
 const meta: Meta<typeof BAIPropertyFilter> = {
   title: 'Filter/BAIPropertyFilter',
@@ -63,6 +62,28 @@ The component generates filter query strings that can be used with Backend.AI's 
       },
     },
   },
+  // BAIPropertyFilter is a controlled component: it renders exactly what
+  // `value` holds and reports changes through `onChange`. Storybook args are
+  // static, so unless each change is written back into `value` the filter
+  // looks frozen — searching can't add a tag and the close/reset buttons
+  // can't remove one. We hold the value in local state per story instance so
+  // every story is independently interactive. NOTE: do not use Storybook
+  // `useArgs` here — in the autodocs page only the Primary story's
+  // `updateArgs` is wired, so every other story would stay frozen. `useState`
+  // works for every instance in both the Canvas and Docs views.
+  render: (args) => {
+    const [value, setValue] = useState(args.value);
+    return (
+      <BAIPropertyFilter
+        {...args}
+        value={value}
+        onChange={(next) => {
+          args.onChange?.(next);
+          setValue(next);
+        }}
+      />
+    );
+  },
 };
 
 export default meta;
@@ -98,8 +119,7 @@ export const Default: Story = {
         type: 'boolean',
       },
     ],
-    onChange: () => console.log('Filter changed'),
-    value: 'name ilike %test% & active == true',
+    value: 'name ilike "%test%" & active == true',
   },
 };
 
@@ -136,7 +156,6 @@ export const WithCustomValidation: Story = {
         strictSelection: true,
       },
     ],
-    onChange: () => console.log('Filter changed'),
   },
 };
 
@@ -175,8 +194,7 @@ export const WithAutocompleteOptions: Story = {
         strictSelection: true,
       },
     ],
-    onChange: () => console.log('Filter changed'),
-    value: 'department ilike %engineering%',
+    value: 'department ilike "%engineering%"',
   },
 };
 
@@ -201,7 +219,6 @@ export const EmptyState: Story = {
         type: 'boolean',
       },
     ],
-    onChange: () => console.log('Filter changed'),
   },
 };
 
@@ -223,7 +240,6 @@ export const LoadingState: Story = {
       },
     ],
     loading: true,
-    onChange: () => console.log('Filter changed'),
   },
 };
 
