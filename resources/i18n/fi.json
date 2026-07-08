@@ -1123,6 +1123,7 @@
     "ReplicaSummaryTooltip": "Tällä hetkellä käynnissä olevien terveiden replikoiden määrä suhteessa haluttuun replikamäärään.",
     "Replicas": "Replikat",
     "ResourceGroup": "Resurssiryhmä",
+    "ResourceGroupCannotBeChanged": "Luonnin yhteydessä valittua resurssiryhmää ei voi muuttaa.",
     "ResourcePreset": "Resurssiesiasetukset",
     "Resources": "Resurssit",
     "Result": "Tulos",

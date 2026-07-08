@@ -1123,6 +1123,7 @@
     "ReplicaSummaryTooltip": "当前正在运行的健康副本数量与期望副本数量之比。",
     "Replicas": "副本",
     "ResourceGroup": "资源组",
+    "ResourceGroupCannotBeChanged": "创建时选择的资源组无法更改。",
     "ResourcePreset": "资源预设",
     "Resources": "资源",
     "Result": "结果",

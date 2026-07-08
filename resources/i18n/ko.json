@@ -1123,6 +1123,7 @@
     "ReplicaSummaryTooltip": "원하는 복제본 수 대비 현재 정상적으로 실행 중인 복제본 수입니다.",
     "Replicas": "복제본",
     "ResourceGroup": "자원 그룹",
+    "ResourceGroupCannotBeChanged": "생성 시 선택한 자원 그룹은 변경할 수 없습니다.",
     "ResourcePreset": "리소스 프리셋",
     "Resources": "리소스",
     "Result": "결과",

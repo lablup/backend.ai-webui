@@ -1123,6 +1123,7 @@
     "ReplicaSummaryTooltip": "Jumlah replika sehat yang sedang berjalan dari jumlah replika yang diinginkan.",
     "Replicas": "Replika",
     "ResourceGroup": "Grup Sumber Daya",
+    "ResourceGroupCannotBeChanged": "Grup Sumber Daya yang dipilih saat pembuatan tidak dapat diubah.",
     "ResourcePreset": "Preset Sumber Daya",
     "Resources": "Sumber Daya",
     "Result": "Hasil",

@@ -257,6 +257,12 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
             <Form.Item
               label={t('modelStore.ResourceGroup')}
               tooltip={t('modelStore.ResourceGroupTooltip')}
+              required
+              extra={
+                <Typography.Text type="warning">
+                  {t('deployment.ResourceGroupCannotBeChanged')}
+                </Typography.Text>
+              }
             >
               {currentResourceGroup ? (
                 <Typography.Text>{currentResourceGroup}</Typography.Text>
@@ -270,6 +276,11 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
               label={t('modelStore.ResourceGroup')}
               tooltip={t('modelStore.ResourceGroupTooltip')}
               rules={[{ required: true }]}
+              extra={
+                <Typography.Text type="warning">
+                  {t('deployment.ResourceGroupCannotBeChanged')}
+                </Typography.Text>
+              }
             >
               <BAIProjectResourceGroupSelect
                 projectName={projectName ?? ''}

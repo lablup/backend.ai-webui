@@ -1124,6 +1124,7 @@
     "ReplicaSummaryTooltip": "目前正在執行的健康副本數量與期望副本數量之比。",
     "Replicas": "副本",
     "ResourceGroup": "資源群組",
+    "ResourceGroupCannotBeChanged": "建立時選擇的資源群組無法變更。",
     "ResourcePreset": "資源預設",
     "Resources": "資源",
     "Result": "結果",

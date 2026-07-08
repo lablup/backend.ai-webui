@@ -1123,6 +1123,7 @@
     "ReplicaSummaryTooltip": "Anzahl der derzeit laufenden gesunden Replikate im Verhältnis zur gewünschten Replikatanzahl.",
     "Replicas": "Replikate",
     "ResourceGroup": "Ressourcengruppe",
+    "ResourceGroupCannotBeChanged": "Die bei der Erstellung ausgewählte Ressourcengruppe kann nicht geändert werden.",
     "ResourcePreset": "Ressourcen-Voreinstellung",
     "Resources": "Ressourcen",
     "Result": "Ergebnis",

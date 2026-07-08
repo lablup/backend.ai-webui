@@ -1123,6 +1123,7 @@
     "ReplicaSummaryTooltip": "Liczba zdrowych replik aktualnie działających spośród żądanej liczby replik.",
     "Replicas": "Repliki",
     "ResourceGroup": "Grupa zasobów",
+    "ResourceGroupCannotBeChanged": "Grupa zasobów wybrana podczas tworzenia nie może zostać zmieniona.",
     "ResourcePreset": "Preset zasobów",
     "Resources": "Zasoby",
     "Result": "Wynik",

@@ -1123,6 +1123,7 @@
     "ReplicaSummaryTooltip": "Số bản sao khỏe mạnh đang chạy hiện tại so với số lượng bản sao mong muốn.",
     "Replicas": "Bản sao",
     "ResourceGroup": "Nhóm tài nguyên",
+    "ResourceGroupCannotBeChanged": "Không thể thay đổi nhóm tài nguyên đã chọn khi tạo.",
     "ResourcePreset": "Cài đặt sẵn tài nguyên",
     "Resources": "Tài nguyên",
     "Result": "Kết quả",

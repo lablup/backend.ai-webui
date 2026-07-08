@@ -1123,6 +1123,7 @@
     "ReplicaSummaryTooltip": "Numero di repliche sane attualmente in esecuzione rispetto al numero di repliche desiderato.",
     "Replicas": "Repliche",
     "ResourceGroup": "Gruppo di risorse",
+    "ResourceGroupCannotBeChanged": "Il gruppo di risorse selezionato alla creazione non può essere modificato.",
     "ResourcePreset": "Preset risorse",
     "Resources": "Risorse",
     "Result": "Risultato",

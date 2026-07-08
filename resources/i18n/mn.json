@@ -1123,6 +1123,7 @@
     "ReplicaSummaryTooltip": "Хүссэн репликийн тооноос одоогоор ажиллаж байгаа эрүүл репликийн тоо.",
     "Replicas": "Репликүүд",
     "ResourceGroup": "Нөөцийн бүлэг",
+    "ResourceGroupCannotBeChanged": "Үүсгэх үед сонгосон нөөцийн бүлгийг өөрчлөх боломжгүй.",
     "ResourcePreset": "Нөөцийн урьдчилсан тохиргоо",
     "Resources": "Нөөцүүд",
     "Result": "Гаралт",

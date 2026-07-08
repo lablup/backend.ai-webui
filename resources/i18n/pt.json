@@ -1123,6 +1123,7 @@
     "ReplicaSummaryTooltip": "Número de réplicas saudáveis atualmente em execução face ao número de réplicas pretendido.",
     "Replicas": "Réplicas",
     "ResourceGroup": "Grupo de recursos",
+    "ResourceGroupCannotBeChanged": "O grupo de recursos selecionado na criação não pode ser alterado.",
     "ResourcePreset": "Predefinição de recursos",
     "Resources": "Recursos",
     "Result": "Resultado",

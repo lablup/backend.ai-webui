@@ -1123,6 +1123,7 @@
     "ReplicaSummaryTooltip": "Bilangan replika sihat yang sedang berjalan daripada jumlah replika yang dikehendaki.",
     "Replicas": "Replika",
     "ResourceGroup": "Kumpulan Sumber",
+    "ResourceGroupCannotBeChanged": "Kumpulan Sumber yang dipilih semasa penciptaan tidak boleh diubah.",
     "ResourcePreset": "Pratetap Sumber",
     "Resources": "Sumber",
     "Result": "Hasil",

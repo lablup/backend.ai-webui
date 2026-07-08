@@ -1123,6 +1123,7 @@
     "ReplicaSummaryTooltip": "希望するレプリカ数に対して、現在実行中の正常なレプリカの数。",
     "Replicas": "レプリカ",
     "ResourceGroup": "リソースグループ",
+    "ResourceGroupCannotBeChanged": "作成時に選択したリソースグループは変更できません。",
     "ResourcePreset": "リソースプリセット",
     "Resources": "リソース",
     "Result": "結果",

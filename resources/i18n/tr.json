@@ -1123,6 +1123,7 @@
     "ReplicaSummaryTooltip": "İstenen replika sayısından şu anda çalışan sağlıklı replika sayısı.",
     "Replicas": "Replikalar",
     "ResourceGroup": "Kaynak Grubu",
+    "ResourceGroupCannotBeChanged": "Oluşturma sırasında seçilen kaynak grubu değiştirilemez.",
     "ResourcePreset": "Kaynak Ön Ayarı",
     "Resources": "Kaynaklar",
     "Result": "Sonuç",

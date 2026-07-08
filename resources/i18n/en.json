@@ -1110,6 +1110,7 @@
     "ReplicaSummaryTooltip": "Number of healthy replicas currently running out of the desired replica count.",
     "Replicas": "Replicas",
     "ResourceGroup": "Resource Group",
+    "ResourceGroupCannotBeChanged": "The resource group selected at creation cannot be changed.",
     "ResourcePreset": "Resource Preset",
     "Resources": "Resources",
     "Result": "Result",
