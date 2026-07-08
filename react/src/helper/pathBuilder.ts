@@ -130,38 +130,3 @@ export const MENU_KEY_TO_SCOPE_FEATURE: Record<string, ScopeFeature> = {
   branding: { scope: 'admin', featureKey: 'branding' },
   information: { scope: 'admin', featureKey: 'information' },
 };
-
-/**
- * Inverse lookup table built from `MENU_KEY_TO_SCOPE_FEATURE`. Keyed by
- * `"<scope>:<featureKey>"`. Alias menu keys (`summary`, `job`) are intentionally
- * skipped so the inverse resolves to the canonical menu key
- * (`dashboard`, `session`).
- */
-const ALIAS_MENU_KEYS: ReadonlySet<string> = new Set(['summary', 'job']);
-
-const SCOPE_FEATURE_TO_MENU_KEY: Record<string, string> = (() => {
-  const table: Record<string, string> = {};
-  for (const [menuKey, { scope, featureKey }] of Object.entries(
-    MENU_KEY_TO_SCOPE_FEATURE,
-  )) {
-    if (ALIAS_MENU_KEYS.has(menuKey)) {
-      continue;
-    }
-    table[`${scope}:${featureKey}`] = menuKey;
-  }
-  return table;
-})();
-
-/**
- * Resolves a `{scope, featureKey}` pair back to its canonical menu key, or
- * `undefined` if the combination is not a known route.
- *
- * e.g. `scopeFeatureToMenuKey('admin', 'session')` -> `'admin-session'`,
- *      `scopeFeatureToMenuKey('project', 'session')` -> `'session'`.
- */
-export const scopeFeatureToMenuKey = (
-  scope: RouteScope,
-  featureKey: FeatureKey,
-): string | undefined => {
-  return SCOPE_FEATURE_TO_MENU_KEY[`${scope}:${featureKey}`];
-};

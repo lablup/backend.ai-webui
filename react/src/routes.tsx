@@ -14,6 +14,7 @@ import LoginView from './components/LoginView';
 import AdminScopeLayout from './components/MainLayout/AdminScopeLayout';
 import MainLayout from './components/MainLayout/MainLayout';
 import ProjectScopeLayout from './components/MainLayout/ProjectScopeLayout';
+import RouteErrorBoundary from './components/RouteErrorBoundary';
 import { STokenLoginBoundary } from './components/STokenLoginBoundary';
 import StorageHostFetchErrorBoundary from './components/StorageHostFetchErrorBoundary';
 import WebUINavigate from './components/WebUINavigate';
@@ -23,15 +24,13 @@ import { useAutoDiagnostics } from './hooks/useAutoDiagnostics';
 import { useBAISettingUserState } from './hooks/useBAISetting';
 import { LogoutEventHandler } from './hooks/useLogout';
 import { useSToken } from './hooks/useSToken';
-import {
-  useWebUIMenuItems,
-  populateRouterPaths,
-} from './hooks/useWebUIMenuItems';
+import { useWebUIMenuItems } from './hooks/useWebUIMenuItems';
 import { pluginApiEndpointState } from './hooks/useWebUIPluginState';
 import { AdminRedirect, ProjectScopedRedirect } from './legacyRedirects';
 // High priority to import the component
 import ComputeSessionListPage from './pages/ComputeSessionListPage';
 import Page404 from './pages/Page404';
+import UnknownRoutePage from './pages/UnknownRoutePage';
 import VFolderNodeListPage from './pages/VFolderNodeListPage';
 import { Skeleton, theme } from 'antd';
 import { BAIFlex, BAICard } from 'backend.ai-ui';
@@ -173,6 +172,9 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     path: 'project/:projectName',
     element: <ProjectScopeLayout />,
     children: [
+      // Router-owned 404: any URL unmatched within this scope falls here
+      // (plugin-aware — see UnknownRoutePage).
+      { path: '*', Component: UnknownRoutePage },
       {
         path: 'start',
         element: (
@@ -410,6 +412,9 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       {
         path: 'admin',
         children: [
+          // Router-owned 404: any URL unmatched within this scope falls here
+          // (plugin-aware — see UnknownRoutePage).
+          { path: '*', Component: UnknownRoutePage },
           {
             path: 'session',
             Component: () => {
@@ -508,6 +513,9 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     path: 'admin',
     element: <AdminScopeLayout />,
     children: [
+      // Router-owned 404: any URL unmatched within this scope falls here
+      // (plugin-aware — see UnknownRoutePage).
+      { path: '*', Component: UnknownRoutePage },
       {
         path: 'session',
         element: (
@@ -1262,13 +1270,12 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     handle: { hideBreadcrumb: true },
     Component: Page404,
   },
-  // Catch-all route for unknown paths
-  // Returns empty element to allow Lit components to handle plugin pages.
-  // The PageAccessGuard in MainLayout checks if the current path is valid
-  // and shows Page404 for truly unknown paths after plugins are loaded.
+  // Router-owned 404: any path that matches no route above falls here.
+  // UnknownRoutePage waits for the plugin list and renders nothing for Lit
+  // plugin pages (they have no React routes); everything else is a real 404.
   {
     path: '*',
-    element: <></>,
+    Component: UnknownRoutePage,
   },
 ];
 
@@ -1521,121 +1528,13 @@ export const routes: RouteObject[] = [
         </DefaultProvidersForReactRoot>
       </BAIErrorBoundary>
     ),
-    children: mainLayoutChildRoutes,
+    children: [
+      {
+        // Pathless boundary: thrown Response errors (404/401/403) from pages
+        // or future loaders render INSIDE the shell via RouteErrorBoundary.
+        errorElement: <RouteErrorBoundary />,
+        children: mainLayoutChildRoutes,
+      },
+    ],
   },
 ];
-
-/**
- * Extract all valid route paths from the route configuration.
- * This includes both static paths and dynamic route patterns.
- */
-function extractRoutePaths(
-  routeObjects: RouteObject[],
-  parentPath = '',
-): { staticPaths: Set<string>; dynamicPatterns: RegExp[] } {
-  const staticPaths = new Set<string>();
-  const dynamicPatterns: RegExp[] = [];
-
-  for (const route of routeObjects) {
-    if (!route.path) {
-      // Index routes or routes without path
-      if (route.children) {
-        const childResult = extractRoutePaths(route.children, parentPath);
-        childResult.staticPaths.forEach((p) => staticPaths.add(p));
-        dynamicPatterns.push(...childResult.dynamicPatterns);
-      }
-      continue;
-    }
-
-    // Skip catch-all routes
-    if (route.path === '*') continue;
-
-    // Build full path
-    let fullPath = route.path;
-    if (!fullPath.startsWith('/') && parentPath) {
-      fullPath = `${parentPath}/${fullPath}`;
-    }
-    // Remove leading slash for consistency with currentPathKey comparison
-    const normalizedPath = fullPath.replace(/^\//, '');
-
-    // Check if path has dynamic segments (e.g., :id, :hostname)
-    if (normalizedPath.includes(':')) {
-      // Convert route pattern to regex
-      // e.g., "serving/:serviceId" -> /^serving\/[^/]+$/
-      // e.g., "chat/:id?" -> /^chat(\/[^/]+)?$/
-      const regexPattern = normalizedPath
-        .split('/')
-        .map((segment) => {
-          if (segment.startsWith(':') && segment.endsWith('?')) {
-            // Optional parameter (e.g., :id?)
-            return `(\\/[^/]+)?`;
-          }
-          if (segment.startsWith(':')) {
-            // Required parameter (e.g., :id)
-            return '[^/]+';
-          }
-          // Static segment
-          return segment;
-        })
-        .join('\\/');
-      dynamicPatterns.push(new RegExp(`^${regexPattern}$`));
-    } else {
-      // Static path - extract first segment for comparison
-      const firstSegment = normalizedPath.split('/')[0];
-      if (firstSegment) {
-        staticPaths.add(firstSegment);
-      }
-    }
-
-    // Recursively process children
-    if (route.children) {
-      const childResult = extractRoutePaths(route.children, fullPath);
-      childResult.staticPaths.forEach((p) => staticPaths.add(p));
-      dynamicPatterns.push(...childResult.dynamicPatterns);
-    }
-  }
-
-  return { staticPaths, dynamicPatterns };
-}
-
-// Populate the shared routerPaths registry so useWebUIMenuItems can read
-// valid paths without importing routes.tsx directly (which would create a
-// circular dependency: routes → useWebUIMenuItems → routes).
-//
-// IMPORTANT (scope-aware routing): the registry must contain the FEATURE
-// segment (e.g. `session`, `data`, `users`, `deployments/:deploymentId`), NOT
-// the scope prefix (`project`/`admin`). `useWebUIMenuItems` derives the current
-// feature/menu key via `useCurrentMenuKey()` (route handle) and validates it
-// against this registry, so feeding it the raw first segment (`project`/
-// `admin`) would break 404 detection. We therefore run `extractRoutePaths` over
-// the un-nested feature route arrays (relative paths == feature keys) plus the
-// legacy redirect shims (so old flat URLs remain "valid" during the transition).
-//
-// The feature route arrays are read back out of the inline `mainLayoutChildRoutes`
-// tree: the `project/:projectName` and `admin` scope subtrees' own `children`
-// (relative feature paths), and the legacy redirect shims that sit between the
-// `admin` subtree and the global `/usersettings` route.
-const projectScopeChildren =
-  mainLayoutChildRoutes.find((route) => route.path === 'project/:projectName')
-    ?.children ?? [];
-const adminScopeChildren =
-  mainLayoutChildRoutes.find((route) => route.path === 'admin')?.children ?? [];
-const legacyRedirectStartIndex =
-  mainLayoutChildRoutes.findIndex((route) => route.path === 'admin') + 1;
-const legacyRedirectEndIndex = mainLayoutChildRoutes.findIndex(
-  (route) => route.path === '/usersettings',
-);
-const legacyRedirectRoutes = mainLayoutChildRoutes.slice(
-  legacyRedirectStartIndex,
-  legacyRedirectEndIndex,
-);
-const staticPaths = new Set<string>();
-const dynamicPatterns: RegExp[] = [];
-[projectScopeChildren, adminScopeChildren, legacyRedirectRoutes].forEach(
-  (routeArray) => {
-    const result = extractRoutePaths(routeArray);
-    result.staticPaths.forEach((p) => staticPaths.add(p));
-    dynamicPatterns.push(...result.dynamicPatterns);
-  },
-);
-populateRouterPaths(staticPaths, dynamicPatterns);
