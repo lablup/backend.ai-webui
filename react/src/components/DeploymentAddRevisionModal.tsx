@@ -1066,9 +1066,9 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     let imageId = values.environments?.image?.id;
     const manualImageName = values.environments?.manual?.trim();
     if (!imageId && manualImageName) {
-      // Manual names may carry an `@architecture` suffix (same convention the
-      // session launcher splits on); pass it through so the lookup matches the
-      // exact image instead of the manager's default architecture.
+      // Manual names may carry an `@architecture` suffix; pass it through so the
+      // lookup matches the exact image instead of the manager's default
+      // architecture.
       const [reference, architecture] = manualImageName.split('@');
       setIsResolvingImage(true);
       try {
@@ -1089,8 +1089,17 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             { fetchPolicy: 'network-only' },
           ).toPromise();
         imageId = result?.image?.id ?? undefined;
-      } catch {
-        imageId = undefined;
+      } catch (error) {
+        // A thrown error here is a transport/GraphQL failure — an unmatched
+        // reference resolves to `null`, not an error. Surface and log it as a
+        // generic failure so a transient error isn't mislabeled as
+        // "image not found".
+        logger.error(
+          '[DeploymentAddRevisionModal] failed to resolve manual image reference',
+          error,
+        );
+        message.error(t('general.ErrorOccurred'));
+        return;
       } finally {
         setIsResolvingImage(false);
       }
