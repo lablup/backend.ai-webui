@@ -146,18 +146,30 @@ const UserFolderPermissionPanelV2: React.FC<
               style={{ flex: 1 }}
               value={userFilter}
               onChange={setUserFilter}
+              // Re-picking a user replaces the existing condition instead of
+              // appending — `selectedUserId` is derived from the single
+              // `keypair.userId.equals` condition above.
+              singleCondition
               filterProperties={[
                 {
                   key: 'keypair.userId',
                   propertyLabel: t('storageHost.permission.User'),
                   type: 'uuid',
                   fixedOperator: 'equals',
-                  singleSelect: true,
-                  renderInput: ({ value, onChange }) => (
+                  renderInput: ({ onAddCondition }) => (
                     <BAIUserSelect
                       valuePropName="id"
-                      value={value}
-                      onChange={onChange}
+                      value={null}
+                      onChange={(value, option) =>
+                        // Single-select mode (no `mode` prop) always emits a
+                        // single value. Pass the option label (email) so the
+                        // condition tag stays human-readable while the UUID
+                        // serializes into the GraphQL filter.
+                        onAddCondition(
+                          value as string | undefined,
+                          option?.label,
+                        )
+                      }
                       style={{ minWidth: 200 }}
                     />
                   ),
