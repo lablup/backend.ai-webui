@@ -1,3 +1,7 @@
+---
+navTitle: Mount Storage Folders
+---
+
 # Mounting Folders to a Compute Session
 
 <a id="session-mounts"></a>

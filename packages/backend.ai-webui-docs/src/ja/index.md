@@ -16,7 +16,7 @@ Backend.AI WebUIは、Backend.AIサーバーと連携するための使いやす
 - [概要](overview/overview.md)
 - [インストール](installation/installation.md)
 - [ログイン](login/login.md)
-- [ヘッダー](header/header.md)
+- [トップバー](header/header.md)
 - [スタート](start/start.md)
 - [ダッシュボード](dashboard/dashboard.md)
 - [ストレージフォルダ](vfolder/vfolder.md)

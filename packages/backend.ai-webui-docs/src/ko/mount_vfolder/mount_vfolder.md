@@ -1,3 +1,7 @@
+---
+navTitle: 스토리지 폴더 마운트
+---
+
 # 연산 세션에 폴더 마운트
 
 <a id="session-mounts"></a>

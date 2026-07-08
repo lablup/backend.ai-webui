@@ -1,3 +1,7 @@
+---
+navTitle: マイ環境
+---
+
 <a id="my-environments"></a>
 
 # マイ環境

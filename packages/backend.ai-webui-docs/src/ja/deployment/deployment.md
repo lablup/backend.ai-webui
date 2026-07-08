@@ -1,3 +1,7 @@
+---
+navTitle: デプロイ
+---
+
 <a id="model-serving"></a>
 
 # デプロイ

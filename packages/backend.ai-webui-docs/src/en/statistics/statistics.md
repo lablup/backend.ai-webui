@@ -1,3 +1,7 @@
+---
+navTitle: Statistics
+---
+
 # Statistics Page
 
 ## Allocation history

@@ -1,3 +1,7 @@
+---
+navTitle: เซสชันคลัสเตอร์
+---
+
 # เซสชันการคอมพิวเตอร์คลัสเตอร์ Backend.AI
 
 <a id="backendai-cluster-compute-session"></a>

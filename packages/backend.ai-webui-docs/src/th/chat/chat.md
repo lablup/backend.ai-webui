@@ -1,3 +1,7 @@
+---
+navTitle: แชท
+---
+
 <a id="chat-page"></a>
 
 # หน้าแชท

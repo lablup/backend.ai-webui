@@ -1,3 +1,7 @@
+---
+navTitle: 参考資料
+---
+
 # 参考文献
 
 - Backend.AI ドキュメント: https://docs.backend.ai

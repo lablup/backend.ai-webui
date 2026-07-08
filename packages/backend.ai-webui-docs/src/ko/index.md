@@ -15,7 +15,7 @@ Backend.AI WebUI는 웹 또는 앱 형태의 GUI 클라이언트로, Backend.AI 
 - [개요](overview/overview.md)
 - [설치](installation/installation.md)
 - [로그인](login/login.md)
-- [헤더](header/header.md)
+- [상단 바](header/header.md)
 - [시작 페이지](start/start.md)
 - [대시보드](dashboard/dashboard.md)
 - [스토리지 폴더](vfolder/vfolder.md)

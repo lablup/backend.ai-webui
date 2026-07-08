@@ -1,3 +1,7 @@
+---
+navTitle: References
+---
+
 # References
 
 - Backend.AI Documentation: https://docs.backend.ai

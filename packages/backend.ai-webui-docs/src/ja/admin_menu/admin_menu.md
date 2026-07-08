@@ -1,3 +1,7 @@
+---
+navTitle: 管理者機能
+---
+
 <a id="admin-menus"></a>
 
 # 管理者機能

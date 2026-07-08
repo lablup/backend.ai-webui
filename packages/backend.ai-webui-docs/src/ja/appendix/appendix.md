@@ -1,3 +1,7 @@
+---
+navTitle: 付録
+---
+
 # 付録
 
 <a id="gpu-virtualization-and-fractional-gpu-allocation"></a>
