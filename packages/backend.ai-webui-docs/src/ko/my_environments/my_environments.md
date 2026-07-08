@@ -1,3 +1,7 @@
+---
+navTitle: 내 환경
+---
+
 <a id="my-environments"></a>
 
 # 나의 실행 환경

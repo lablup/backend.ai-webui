@@ -1,3 +1,7 @@
+---
+navTitle: Start
+---
+
 # Start Page
 
 The Start page provides quick access to frequently used WebUI features through

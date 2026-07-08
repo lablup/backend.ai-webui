@@ -1,3 +1,7 @@
+---
+navTitle: Compute Sessions
+---
+
 # Compute Sessions
 
 This document will cover how to query and create container-based compute sessions and utilize various web applications on the 'Sessions' page.

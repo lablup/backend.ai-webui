@@ -1,3 +1,7 @@
+---
+navTitle: 연산 세션에 대한 SFTP 연결
+---
+
 <a id="ssh-sftp-container"></a>
 
 # 연산 세션에 SSH/SFTP 접속하기

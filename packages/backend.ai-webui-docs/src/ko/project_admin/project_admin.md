@@ -1,3 +1,7 @@
+---
+navTitle: 프로젝트 관리자 기능
+---
+
 <a id="project-admin-features"></a>
 
 # 프로젝트 관리자 기능

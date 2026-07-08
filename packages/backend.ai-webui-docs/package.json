@@ -35,10 +35,12 @@
     "agents:force": "docs-toolkit agents --force",
     "build:terminology": "node scripts/generate-terminology.mjs",
     "check:terminology-md": "node scripts/generate-terminology.mjs --check",
+    "check:nav-titles": "node scripts/check-nav-titles.mjs",
     "test:scripts": "node --test \"scripts/*.test.mjs\""
   },
   "devDependencies": {
     "backend.ai-docs-toolkit": "workspace:*",
-    "playwright": "^1.58.2"
+    "playwright": "^1.58.2",
+    "yaml": "^2.8.3"
   }
 }

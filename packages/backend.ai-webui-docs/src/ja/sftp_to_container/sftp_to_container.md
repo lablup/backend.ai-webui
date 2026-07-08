@@ -1,3 +1,7 @@
+---
+navTitle: コンピュートセッションへのSFTP接続
+---
+
 <a id="ssh-sftp-container"></a>
 
 # SSH/SFTP によるコンピュートセッションへの接続

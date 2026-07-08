@@ -218,6 +218,37 @@ jobs:
           # docs corrections that should land in the archive.
           git push --force origin "$BRANCH"
 
+      # The live site renders every archive at Amplify build time, but
+      # Amplify only builds on pushes to `main`. Without this step, a
+      # docs-only push to a release branch refreshes the archive branch
+      # yet the deployed /<minor>/ pages stay stale until an unrelated
+      # `main` merge happens to land (FR-3275). POSTing the Amplify
+      # incoming webhook starts a rebuild of the main-HEAD pipeline so
+      # the refreshed archive is re-rendered immediately. The release
+      # path already rebuilds via the auto-opened pdfTag PR merge
+      # (FR-3246); this covers the push/dispatch paths. Skips with a
+      # warning when the secret is not configured, preserving the
+      # previous behavior.
+      - name: Trigger Amplify docs rebuild
+        if: ${{ steps.resolve.outputs.dry_run != 'true' }}
+        env:
+          WEBHOOK: ${{ secrets.AMPLIFY_DOCS_WEBHOOK_URL }}
+        run: |
+          if [ -z "$WEBHOOK" ]; then
+            echo "::warning::AMPLIFY_DOCS_WEBHOOK_URL secret not set — docs-archive branch was updated, but the live site stays stale until the next main build. Create an Amplify incoming webhook (docs app → Build settings → Incoming webhooks) and store its URL in this secret."
+            exit 0
+          fi
+          # The archive force-push above already succeeded, so a flaky
+          # webhook must not fail the workflow. Bound the request (timeout
+          # + retries) and downgrade any failure to a warning — the live
+          # site will still refresh on the next main build.
+          if curl -fsS --max-time 30 --retry 3 --retry-delay 5 --retry-all-errors \
+               -X POST "$WEBHOOK" -H 'Content-Type: application/json' -d '{}'; then
+            echo "Amplify rebuild triggered."
+          else
+            echo "::warning::Amplify webhook POST failed after retries — the docs-archive branch is already updated, so the live site will refresh on the next main build. Re-run this workflow (or POST the webhook manually) to force it sooner."
+          fi
+
       - name: Dry-run summary
         if: ${{ steps.resolve.outputs.dry_run == 'true' }}
         env:

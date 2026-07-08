@@ -1,3 +1,7 @@
+---
+navTitle: 통계
+---
+
 # 통계 (Statistics) 페이지
 
 ## 할당 기록

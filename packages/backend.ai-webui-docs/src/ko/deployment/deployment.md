@@ -1,3 +1,7 @@
+---
+navTitle: 배포
+---
+
 <a id="model-serving"></a>
 
 # 배포

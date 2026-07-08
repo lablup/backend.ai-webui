@@ -15,6 +15,8 @@ import {
   parseShellSessionLines,
   decodeHtmlEntities,
   stripHtmlTags,
+  parseFrontmatter,
+  frontmatterString,
 } from "./markdown-extensions.js";
 
 test("parseShellSessionLines — empty input yields no rows", () => {
@@ -126,4 +128,45 @@ test("decodeHtmlEntities — recovers a clean slug source for escaped apostrophe
   const plain = decodeHtmlEntities(stripHtmlTags(rendered));
   assert.equal(plain, "Manage User's Keypairs");
   assert.ok(!/\d9s/.test(plain), "must not contain entity-derived digits");
+});
+
+test("parseFrontmatter — no frontmatter returns input untouched", () => {
+  const md = "# Title\n\nBody.\n";
+  assert.deepEqual(parseFrontmatter(md), { attributes: {}, body: md });
+  // A --- later in the file is a horizontal rule, not frontmatter.
+  const hr = "# Title\n\n---\n\nBody.\n";
+  assert.deepEqual(parseFrontmatter(hr), { attributes: {}, body: hr });
+});
+
+test("parseFrontmatter — extracts navTitle and strips the block", () => {
+  const md = "---\nnavTitle: Storage Folders\n---\n\n# Handling Data & Storage Folders\n";
+  const { attributes, body } = parseFrontmatter(md);
+  assert.equal(attributes.navTitle, "Storage Folders");
+  assert.equal(body, "\n# Handling Data & Storage Folders\n");
+});
+
+test("parseFrontmatter — empty block strips cleanly with no attributes", () => {
+  const { attributes, body } = parseFrontmatter("---\n\n---\n# T\n");
+  assert.deepEqual(attributes, {});
+  assert.equal(body, "# T\n");
+});
+
+test("parseFrontmatter — unterminated or malformed YAML leaves input visible", () => {
+  const unterminated = "---\nnavTitle: X\n# T\n";
+  assert.deepEqual(parseFrontmatter(unterminated), {
+    attributes: {},
+    body: unterminated,
+  });
+  const malformed = "---\nnavTitle: [unclosed\n---\n# T\n";
+  assert.deepEqual(parseFrontmatter(malformed), {
+    attributes: {},
+    body: malformed,
+  });
+});
+
+test("frontmatterString — string coercion rules", () => {
+  assert.equal(frontmatterString({ navTitle: " Top Bar " }, "navTitle"), "Top Bar");
+  assert.equal(frontmatterString({ navTitle: "" }, "navTitle"), undefined);
+  assert.equal(frontmatterString({ navTitle: 42 }, "navTitle"), undefined);
+  assert.equal(frontmatterString({}, "navTitle"), undefined);
 });

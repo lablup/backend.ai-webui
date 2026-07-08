@@ -1,3 +1,7 @@
+---
+navTitle: Dashboard
+---
+
 # Dashboard
 
 The **Dashboard** provides an at-a-glance summary of your current resource usage,

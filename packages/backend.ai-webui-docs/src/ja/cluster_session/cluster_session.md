@@ -1,3 +1,7 @@
+---
+navTitle: クラスターセッション
+---
+
 # Backend.AI クラスターコンピュートセッション
 
 <a id="backendai-cluster-compute-session"></a>

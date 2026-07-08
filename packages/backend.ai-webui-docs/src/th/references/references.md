@@ -1,3 +1,7 @@
+---
+navTitle: อ้างอิง
+---
+
 # อ้างอิง
 
 - เอกสาร Backend.AI: https://docs.backend.ai

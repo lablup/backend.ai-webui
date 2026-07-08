@@ -1,3 +1,7 @@
+---
+navTitle: 참고 자료
+---
+
 # 참고 자료
 
 - Backend.AI 문서: https://docs.backend.ai

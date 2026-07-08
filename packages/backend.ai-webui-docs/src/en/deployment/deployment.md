@@ -1,3 +1,7 @@
+---
+navTitle: Deployments
+---
+
 <a id="model-serving"></a>
 
 # Deployments

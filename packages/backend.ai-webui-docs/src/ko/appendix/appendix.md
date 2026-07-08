@@ -1,3 +1,7 @@
+---
+navTitle: 부록
+---
+
 # 부록
 
 <a id="gpu-virtualization-and-fractional-gpu-allocation"></a>
