@@ -7,6 +7,7 @@ import { RBACManagementPageDeactivateRoleMutation } from '../__generated__/RBACM
 import { RBACManagementPagePurgeRoleMutation } from '../__generated__/RBACManagementPagePurgeRoleMutation.graphql';
 import {
   RBACManagementPageQuery,
+  RoleFilter,
   RoleOrderBy,
 } from '../__generated__/RBACManagementPageQuery.graphql';
 import BAIRadioGroup from '../components/BAIRadioGroup';
@@ -29,7 +30,6 @@ import {
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
   filterOutEmpty,
-  type GraphQLFilter,
   INITIAL_FETCH_KEY,
   toLocalId,
   useBAILogger,
@@ -66,7 +66,7 @@ const RBACManagementPage: React.FC = () => {
     {
       status: parseAsStringLiteral(statusFilterValues).withDefault('ACTIVE'),
       order: parseAsStringLiteral(availableRoleSorterValues),
-      filter: parseAsJson<GraphQLFilter>((value) => value as GraphQLFilter),
+      filter: parseAsJson<RoleFilter>((value) => value as RoleFilter),
     },
     {
       history: 'replace',
@@ -243,7 +243,7 @@ const RBACManagementPage: React.FC = () => {
                 { label: t('rbac.Inactive'), value: 'DELETED' },
               ]}
             />
-            <BAIGraphQLPropertyFilter
+            <BAIGraphQLPropertyFilter<RoleFilter>
               filterProperties={[
                 {
                   key: 'name',

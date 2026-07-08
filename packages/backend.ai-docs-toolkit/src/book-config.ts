@@ -48,7 +48,12 @@ import { parse as parseYaml } from "yaml";
 
 /** Single navigation item — same in both flat and grouped forms. */
 export interface NavItem {
-  title: string;
+  /**
+   * Optional sidebar label (FR-3277). When omitted, the page's
+   * frontmatter `navTitle` — falling back to its H1 — supplies the
+   * label at build time, so `book.config.yaml` can hold structure only.
+   */
+  title?: string;
   path: string;
 }
 
@@ -201,14 +206,17 @@ function normalizePerLangNavigation(
         continue;
       }
       const validItems = items.filter((it): it is NavItem => {
+        // `title` is optional since FR-3277 (frontmatter `navTitle` / H1
+        // supply the label); only `path` is structurally required.
         if (
           typeof it !== "object" ||
           it === null ||
-          typeof (it as NavItem).title !== "string" ||
-          typeof (it as NavItem).path !== "string"
+          typeof (it as NavItem).path !== "string" ||
+          ((it as NavItem).title !== undefined &&
+            typeof (it as NavItem).title !== "string")
         ) {
           console.warn(
-            `[book.config.yaml] navigation.${lang}/${category}: dropping item missing title/path: ${JSON.stringify(it)}`,
+            `[book.config.yaml] navigation.${lang}/${category}: dropping item missing path (or non-string title): ${JSON.stringify(it)}`,
           );
           return false;
         }
@@ -231,14 +239,16 @@ function normalizePerLangNavigation(
   // visually-flat fallback path in `buildWebsiteSidebar`.
   const flat: NavItem[] = [];
   for (const entry of raw) {
+    // `title` is optional since FR-3277 — see the grouped-form filter above.
     if (
       typeof entry !== "object" ||
       entry === null ||
-      typeof (entry as NavItem).title !== "string" ||
-      typeof (entry as NavItem).path !== "string"
+      typeof (entry as NavItem).path !== "string" ||
+      ((entry as NavItem).title !== undefined &&
+        typeof (entry as NavItem).title !== "string")
     ) {
       console.warn(
-        `[book.config.yaml] navigation.${lang}: dropping flat entry missing title/path: ${JSON.stringify(entry)}`,
+        `[book.config.yaml] navigation.${lang}: dropping flat entry missing path (or non-string title): ${JSON.stringify(entry)}`,
       );
       continue;
     }

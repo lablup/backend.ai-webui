@@ -2,12 +2,30 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { UserFolderPermissionPanelV2Query } from '../__generated__/UserFolderPermissionPanelV2Query.graphql';
+import {
+  UserFolderPermissionPanelV2Query,
+  type KeypairResourcePolicyV2Filter,
+} from '../__generated__/UserFolderPermissionPanelV2Query.graphql';
 import { UserFolderPermissionPanelV2_storageVolumeFrgmt$key } from '../__generated__/UserFolderPermissionPanelV2_storageVolumeFrgmt.graphql';
+import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import KeypairResourcePolicyStoragePermissionTableV2 from './KeypairResourcePolicyStoragePermissionTableV2';
-import { BAIAlert, BAICard, BAIFlex, BAIUserSelect } from 'backend.ai-ui';
+import {
+  BAIAlert,
+  BAICard,
+  BAIFetchKeyButton,
+  BAIFlex,
+  BAIGraphQLPropertyFilter,
+  BAIUserSelect,
+  INITIAL_FETCH_KEY,
+  useFetchKey,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import React, { useState } from 'react';
+import React, {
+  useDeferredValue,
+  useEffect,
+  useEffectEvent,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
@@ -15,16 +33,6 @@ interface UserFolderPermissionPanelV2Props {
   storageVolumeFrgmt: UserFolderPermissionPanelV2_storageVolumeFrgmt$key;
 }
 
-/**
- * "User Folder Permissions" tab. Permissions applied to a user's personal
- * folders are controlled by the keypair resource policies their keypairs are
- * bound to.
- *
- * With no user selected the table pages through every keypair resource policy
- * (`adminKeypairResourcePoliciesV2` offset pagination). Selecting a user filters
- * the table to the policies that govern that user's keypairs (via the
- * `keypair.userId` nested filter) and reveals each policy's assigned keypairs.
- */
 const UserFolderPermissionPanelV2: React.FC<
   UserFolderPermissionPanelV2Props
 > = ({ storageVolumeFrgmt }) => {
@@ -40,26 +48,85 @@ const UserFolderPermissionPanelV2: React.FC<
     storageVolumeFrgmt,
   );
 
-  const { vfolder_host_permissions } =
+  const [userFilter, setUserFilter] = useState<
+    KeypairResourcePolicyV2Filter | undefined
+  >();
+  // Extract the picked user's UUID to scope the keypairs connection (Assigned
+  // Keypairs column); the `equals` operator is nullable, so guard down to a
+  // string.
+  const rawUserId = userFilter?.keypair?.userId?.equals;
+  const selectedUserId = _.isString(rawUserId) ? rawUserId : undefined;
+
+  const {
+    baiPaginationOption,
+    tablePaginationOption,
+    setTablePaginationOption,
+  } = useBAIPaginationOptionState({ current: 1, pageSize: 10 });
+
+  // The user filter narrows the result set, so reset to the first page when it
+  // changes to avoid landing on an out-of-range offset.
+  const resetToFirstPage = useEffectEvent(() => {
+    setTablePaginationOption({
+      current: 1,
+      pageSize: tablePaginationOption.pageSize,
+    });
+  });
+  useEffect(() => {
+    resetToFirstPage();
+  }, [selectedUserId]);
+
+  const [fetchKey, updateFetchKey] = useFetchKey();
+  const deferredFetchKey = useDeferredValue(fetchKey);
+
+  const includeKeypairs = !!selectedUserId;
+  const queryVariables = {
+    filter: userFilter ?? null,
+    limit: baiPaginationOption.limit,
+    offset: baiPaginationOption.offset,
+    includeKeypairs,
+    // Scope each policy's `keypairs` connection to the selected user too, so the
+    // Assigned Keypairs column (access keys + `+N` count) reflects only that
+    // user's keypairs governed by the policy — not every keypair on the policy.
+    keypairFilter: selectedUserId
+      ? { userId: { equals: selectedUserId } }
+      : null,
+  };
+  const deferredQueryVariables = useDeferredValue(queryVariables);
+
+  const { adminKeypairResourcePoliciesV2 } =
     useLazyLoadQuery<UserFolderPermissionPanelV2Query>(
       graphql`
-        query UserFolderPermissionPanelV2Query {
-          vfolder_host_permissions {
-            vfolder_host_permission_list
+        query UserFolderPermissionPanelV2Query(
+          $filter: KeypairResourcePolicyV2Filter
+          $limit: Int!
+          $offset: Int!
+          $includeKeypairs: Boolean!
+          $keypairFilter: KeypairFilter
+        ) {
+          adminKeypairResourcePoliciesV2(
+            filter: $filter
+            limit: $limit
+            offset: $offset
+            orderBy: [{ field: NAME, direction: ASC }]
+          ) {
+            count
+            edges {
+              node {
+                ...KeypairResourcePolicyStoragePermissionTableV2_nodeFrgmt
+              }
+            }
           }
         }
       `,
-      {},
-      { fetchPolicy: 'store-and-network' },
+      deferredQueryVariables,
+      {
+        fetchKey: deferredFetchKey,
+        fetchPolicy:
+          deferredFetchKey === INITIAL_FETCH_KEY
+            ? 'store-and-network'
+            : 'network-only',
+      },
     );
-  const permissionKeys: string[] = _.compact(
-    vfolder_host_permissions?.vfolder_host_permission_list ?? [],
-  );
-
-  // Local user id (UUID) of the selected user, or undefined to show all
-  // policies. `BAIUserSelect` with `valuePropName="id"` yields the local id
-  // that `keypair.userId` (a `UUIDFilter`) expects.
-  const [selectedUserId, setSelectedUserId] = useState<string | undefined>();
 
   return (
     <BAIFlex direction="column" align="stretch" gap="md">
@@ -71,27 +138,69 @@ const UserFolderPermissionPanelV2: React.FC<
 
       <BAICard
         title={t('storageHost.permission.KeypairResourcePolicies')}
-        extra={
-          <BAIUserSelect
-            valuePropName="id"
-            excludeInactive
-            allowClear
-            value={selectedUserId}
-            onChange={(value) =>
-              setSelectedUserId(
-                _.isArray(value) ? value[0] : (value ?? undefined),
-              )
-            }
-            style={{ width: 320 }}
-          />
-        }
         styles={{ body: { paddingTop: 0 } }}
       >
-        <KeypairResourcePolicyStoragePermissionTableV2
-          storageVolumeFrgmt={storageVolume}
-          userId={selectedUserId}
-          permissionKeys={permissionKeys}
-        />
+        <BAIFlex direction="column" align="stretch" gap="sm">
+          <BAIFlex align="start" justify="between" gap="md" wrap="wrap">
+            <BAIGraphQLPropertyFilter<KeypairResourcePolicyV2Filter>
+              style={{ flex: 1 }}
+              value={userFilter}
+              onChange={setUserFilter}
+              // Re-picking a user replaces the existing condition instead of
+              // appending — `selectedUserId` is derived from the single
+              // `keypair.userId.equals` condition above.
+              singleCondition
+              filterProperties={[
+                {
+                  key: 'keypair.userId',
+                  propertyLabel: t('storageHost.permission.User'),
+                  type: 'uuid',
+                  fixedOperator: 'equals',
+                  renderInput: ({ onAddCondition }) => (
+                    <BAIUserSelect
+                      valuePropName="id"
+                      value={null}
+                      onChange={(value, option) =>
+                        // Single-select mode (no `mode` prop) always emits a
+                        // single value. Pass the option label (email) so the
+                        // condition tag stays human-readable while the UUID
+                        // serializes into the GraphQL filter.
+                        onAddCondition(
+                          value as string | undefined,
+                          option?.label,
+                        )
+                      }
+                      style={{ minWidth: 200 }}
+                    />
+                  ),
+                },
+              ]}
+            />
+            <BAIFetchKeyButton
+              value={fetchKey}
+              onChange={updateFetchKey}
+              loading={deferredFetchKey !== fetchKey}
+            />
+          </BAIFlex>
+          <KeypairResourcePolicyStoragePermissionTableV2
+            storageVolumeFrgmt={storageVolume}
+            policiesFrgmt={_.compact(
+              adminKeypairResourcePoliciesV2?.edges?.map((edge) => edge?.node),
+            )}
+            selectedUserId={selectedUserId}
+            loading={
+              deferredFetchKey !== fetchKey ||
+              deferredQueryVariables !== queryVariables
+            }
+            pagination={{
+              pageSize: tablePaginationOption.pageSize,
+              current: tablePaginationOption.current,
+              total: adminKeypairResourcePoliciesV2?.count ?? 0,
+              onChange: (current, pageSize) =>
+                setTablePaginationOption({ current, pageSize }),
+            }}
+          />
+        </BAIFlex>
       </BAICard>
     </BAIFlex>
   );

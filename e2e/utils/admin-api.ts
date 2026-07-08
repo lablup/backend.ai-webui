@@ -46,7 +46,7 @@ export async function createAdminApiContext(): Promise<APIRequestContext> {
  * Runs an admin GraphQL operation and returns its `data`. Throws on transport
  * errors or GraphQL `errors`, so callers can decide whether to swallow them.
  */
-async function gqlAdmin<T = any>(
+export async function gqlAdmin<T = any>(
   api: APIRequestContext,
   query: string,
   variables?: Record<string, unknown>,

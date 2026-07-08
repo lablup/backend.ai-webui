@@ -220,6 +220,9 @@ export type BackendAIClient = {
     delete: (key: string, prefix: boolean) => Promise<any>;
   };
   get_resource_slots: () => Promise<any>;
+  start_watcher_agent: (agentId: string) => Promise<any>;
+  stop_watcher_agent: (agentId: string) => Promise<any>;
+  restart_watcher_agent: (agentId: string) => Promise<any>;
   current_group_id: () => string;
   current_group: string;
   user_uuid: string;

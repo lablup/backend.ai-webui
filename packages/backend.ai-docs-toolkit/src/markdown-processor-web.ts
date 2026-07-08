@@ -23,8 +23,11 @@ import {
   parseShellSessionLines,
   escapeHtml,
   stripHtmlTags,
+  decodeHtmlEntities,
   getFigureLabel,
   parseImageSizeHint,
+  parseFrontmatter,
+  frontmatterString,
 } from "./markdown-extensions.js";
 import type { ResolvedDocConfig } from "./config.js";
 import { DEFAULT_CODE_LIGHT_THEME } from "./config.js";
@@ -33,7 +36,8 @@ import { highlight as shikiHighlight } from "./shiki-highlighter.js";
 export type { Chapter, Heading };
 
 interface NavEntry {
-  title: string;
+  /** Optional since FR-3277 — frontmatter `navTitle` / H1 supply the label. */
+  title?: string;
   path: string;
 }
 
@@ -353,7 +357,7 @@ function buildWebRenderer(
 
   return {
     heading(text: string, level: number, _raw: string): string {
-      const plainText = stripHtmlTags(text);
+      const plainText = decodeHtmlEntities(stripHtmlTags(text));
       const id = `${chapterSlug}-${slugify(plainText)}`;
       headings.push({ level, text: plainText, id });
       const escapedPlainText = escapeHtml(plainText);
@@ -636,6 +640,12 @@ export async function processMarkdownFilesForWeb(
 
     chapterIndex++;
     let markdown = fs.readFileSync(mdPath, "utf-8");
+    // Frontmatter (FR-3277): strip before any preprocessing and surface
+    // `navTitle` — the short sidebar label co-located with the page.
+    const { attributes: frontmatter, body: markdownBody } =
+      parseFrontmatter(markdown);
+    markdown = markdownBody;
+    const fmNavTitle = frontmatterString(frontmatter, "navTitle");
     const chapterSlug = slugFromNavPath(nav.path);
 
     // Pre-processing pipeline (reused from PDF processor)
@@ -668,8 +678,17 @@ export async function processMarkdownFilesForWeb(
 
     const htmlContent = await marked.parse(markdown);
 
+    // Sidebar label precedence (FR-3277): frontmatter `navTitle` →
+    // book.config `title` → page H1 → nav path. Config titles remain
+    // supported so archived snapshots (pre-migration src) keep rendering.
+    const chapterTitle =
+      fmNavTitle ??
+      nav.title ??
+      headings.find((h) => h.level === 1)?.text ??
+      nav.path;
+
     rendered.push({
-      chapter: { title: nav.title, slug: chapterSlug, htmlContent, headings },
+      chapter: { title: chapterTitle, slug: chapterSlug, htmlContent, headings },
       filePath: nav.path,
     });
   }

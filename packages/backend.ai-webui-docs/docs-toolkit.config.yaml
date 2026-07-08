@@ -110,6 +110,22 @@ branding:
     ja: "マニュアル"
     th: "คู่มือ"
 
+# Open Graph / SEO (FR-3265).
+# `baseUrl` is load-bearing: it makes canonical URLs and og:url
+# absolute on every page (crawlers reject relative og:image/og:url),
+# enables sitemap.xml emission plus the Sitemap line in robots.txt,
+# and gives the redirect pages (/, /latest/, /<lang>/) real link
+# previews. Must start with http(s):// and match the live host; a
+# trailing slash is stripped at load time.
+# `imagePath` is resolved relative to THIS package's directory and is
+# copied verbatim to dist/web/assets/og-default.png at build time. A
+# committed 1200×630 PNG keeps the build deterministic — the Playwright
+# fallback renderer needs browser binaries that CI does not install.
+og:
+  baseUrl: "https://webui.docs.backend.ai"
+  siteName: "Backend.AI WebUI User Guide"
+  imagePath: "assets/og-image.png"
+
 # Code-block presentation (F4 — Shiki syntax highlighting).
 # FR-2726 Phase 3 paints code blocks with a BAI dark frame, so the
 # Shiki theme is set to `github-dark` here so token colors read on

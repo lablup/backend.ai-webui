@@ -60,7 +60,7 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
   const { t } = useBAIi18n();
   const selectRef = useRef<GetRef<typeof BAISelect>>(null);
   const [controllableValue, setControllableValue] = useControllableValue<
-    string | string[] | undefined
+    string | string[] | null | undefined
   >(selectProps, {
     valuePropName: 'value',
     trigger: 'onChange',
@@ -239,7 +239,10 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
           label: value,
           value: value,
         }))
-      : undefined;
+      : // Empty: forward the incoming value as-is. `null` keeps the Select
+        // controlled (and cleared) per antd semantics; `undefined` leaves it
+        // uncontrolled — the consumer decides which by the value it passes.
+        deferredControllableValue;
 
   const [optimisticValueWithLabel, setOptimisticValueWithLabel] = useState(
     controllableValueWithLabel,

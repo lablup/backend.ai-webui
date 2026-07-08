@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<00b5f49d48305034d64cb2df5ddd7689>>
+ * @generated SignedSource<<c9536429df51c278c01cc5f4c0f64fdc>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,6 +14,8 @@ export type KeypairResourcePolicyListQuery$variables = Record<PropertyKey, never
 export type KeypairResourcePolicyListQuery$data = {
   readonly keypair_resource_policies: ReadonlyArray<{
     readonly allowed_vfolder_hosts: string | null | undefined;
+    readonly created_at: string | null | undefined;
+    readonly default_for_unspecified: string | null | undefined;
     readonly idle_timeout: any | null | undefined;
     readonly max_concurrent_sessions: number | null | undefined;
     readonly max_concurrent_sftp_sessions: number | null | undefined;
@@ -42,56 +44,70 @@ v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "total_resource_slots",
+  "name": "default_for_unspecified",
   "storageKey": null
 },
 v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "max_session_lifetime",
+  "name": "total_resource_slots",
   "storageKey": null
 },
 v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "max_concurrent_sessions",
+  "name": "max_session_lifetime",
   "storageKey": null
 },
 v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "max_containers_per_session",
+  "name": "max_concurrent_sessions",
   "storageKey": null
 },
 v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "idle_timeout",
+  "name": "max_containers_per_session",
   "storageKey": null
 },
 v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "allowed_vfolder_hosts",
+  "name": "idle_timeout",
   "storageKey": null
 },
 v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "max_pending_session_count",
+  "name": "allowed_vfolder_hosts",
   "storageKey": null
 },
 v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
+  "name": "max_pending_session_count",
+  "storageKey": null
+},
+v9 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
   "name": "max_concurrent_sftp_sessions",
+  "storageKey": null
+},
+v10 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "created_at",
   "storageKey": null
 };
 return {
@@ -118,6 +134,8 @@ return {
           (v6/*: any*/),
           (v7/*: any*/),
           (v8/*: any*/),
+          (v9/*: any*/),
+          (v10/*: any*/),
           {
             "args": null,
             "kind": "FragmentSpread",
@@ -163,20 +181,8 @@ return {
           (v6/*: any*/),
           (v7/*: any*/),
           (v8/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "default_for_unspecified",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "created_at",
-            "storageKey": null
-          },
+          (v9/*: any*/),
+          (v10/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -190,16 +196,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "f3f71df356260fd014ca2d56a9651a93",
+    "cacheID": "8aa6fd2edaf33010f00f1159caae20e3",
     "id": null,
     "metadata": {},
     "name": "KeypairResourcePolicyListQuery",
     "operationKind": "query",
-    "text": "query KeypairResourcePolicyListQuery {\n  keypair_resource_policies {\n    name\n    total_resource_slots\n    max_session_lifetime\n    max_concurrent_sessions\n    max_containers_per_session\n    idle_timeout\n    allowed_vfolder_hosts\n    max_pending_session_count @since(version: \"24.03.4\")\n    max_concurrent_sftp_sessions @since(version: \"24.03.4\")\n    ...KeypairResourcePolicySettingModalFragment\n    ...KeypairResourcePolicyInfoModalFragment\n    ...BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment\n  }\n}\n\nfragment BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment on KeyPairResourcePolicy {\n  allowed_vfolder_hosts\n}\n\nfragment KeypairResourcePolicyInfoModalFragment on KeyPairResourcePolicy {\n  name\n  created_at\n  default_for_unspecified\n  total_resource_slots\n  max_session_lifetime\n  max_concurrent_sessions\n  max_containers_per_session\n  idle_timeout\n  allowed_vfolder_hosts\n  max_pending_session_count @since(version: \"24.03.4\")\n  max_concurrent_sftp_sessions @since(version: \"24.03.4\")\n  max_pending_session_resource_slots @since(version: \"24.03.4\")\n  ...BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment\n}\n\nfragment KeypairResourcePolicySettingModalFragment on KeyPairResourcePolicy {\n  name\n  default_for_unspecified\n  total_resource_slots\n  max_session_lifetime\n  max_concurrent_sessions\n  max_containers_per_session\n  idle_timeout\n  allowed_vfolder_hosts\n  max_pending_session_count @since(version: \"24.03.4\")\n  max_concurrent_sftp_sessions @since(version: \"24.03.4\")\n}\n"
+    "text": "query KeypairResourcePolicyListQuery {\n  keypair_resource_policies {\n    name\n    default_for_unspecified\n    total_resource_slots\n    max_session_lifetime\n    max_concurrent_sessions\n    max_containers_per_session\n    idle_timeout\n    allowed_vfolder_hosts\n    max_pending_session_count @since(version: \"24.03.4\")\n    max_concurrent_sftp_sessions @since(version: \"24.03.4\")\n    created_at\n    ...KeypairResourcePolicySettingModalFragment\n    ...KeypairResourcePolicyInfoModalFragment\n    ...BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment\n  }\n}\n\nfragment BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment on KeyPairResourcePolicy {\n  allowed_vfolder_hosts\n}\n\nfragment KeypairResourcePolicyInfoModalFragment on KeyPairResourcePolicy {\n  name\n  created_at\n  default_for_unspecified\n  total_resource_slots\n  max_session_lifetime\n  max_concurrent_sessions\n  max_containers_per_session\n  idle_timeout\n  allowed_vfolder_hosts\n  max_pending_session_count @since(version: \"24.03.4\")\n  max_concurrent_sftp_sessions @since(version: \"24.03.4\")\n  max_pending_session_resource_slots @since(version: \"24.03.4\")\n  ...BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment\n}\n\nfragment KeypairResourcePolicySettingModalFragment on KeyPairResourcePolicy {\n  name\n  default_for_unspecified\n  total_resource_slots\n  max_session_lifetime\n  max_concurrent_sessions\n  max_containers_per_session\n  idle_timeout\n  allowed_vfolder_hosts\n  max_pending_session_count @since(version: \"24.03.4\")\n  max_concurrent_sftp_sessions @since(version: \"24.03.4\")\n}\n"
   }
 };
 })();
 
-(node as any).hash = "d74582c3e52a0e9e508fc25b9debe2c8";
+(node as any).hash = "82203a46b35856249641eb2e7cc9f9c0";
 
 export default node;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<20f2d6fcb470e62d08c07b83a1caea9d>>
+ * @generated SignedSource<<54e75e80e21e939f803e3767e95d62ab>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,6 +14,9 @@ export type PresetTarget = "ARGS" | "ENV" | "%future added value";
 export type PresetValueType = "BOOL" | "FLAG" | "FLOAT" | "INT" | "STR" | "%future added value";
 export type RuntimeVariantPresetOrderField = "CREATED_AT" | "NAME" | "RANK" | "%future added value";
 export type RuntimeVariantPresetFilter = {
+  AND?: ReadonlyArray<RuntimeVariantPresetFilter> | null | undefined;
+  NOT?: ReadonlyArray<RuntimeVariantPresetFilter> | null | undefined;
+  OR?: ReadonlyArray<RuntimeVariantPresetFilter> | null | undefined;
   name?: StringFilter | null | undefined;
   runtimeVariantId?: UUIDFilter | null | undefined;
 };

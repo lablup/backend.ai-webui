@@ -1,8 +1,10 @@
 /**
  * Shared markdown extension processors.
- * Handles admonitions, code block titles, and line highlighting
- * for both PDF and web preview pipelines.
+ * Handles frontmatter, admonitions, code block titles, and line
+ * highlighting for both PDF and web preview pipelines.
  */
+
+import { parse as parseYamlBlock } from 'yaml';
 
 export const ADMONITION_TYPES = ['note', 'tip', 'info', 'warning', 'caution', 'danger'] as const;
 export type AdmonitionType = (typeof ADMONITION_TYPES)[number];
@@ -221,6 +223,61 @@ export function parseShellSessionLines(code: string): ShellSessionLine[] {
   });
 }
 
+export interface Frontmatter {
+  /** Parsed YAML mapping; empty object when no frontmatter is present. */
+  attributes: Record<string, unknown>;
+  /** Markdown with the frontmatter block stripped. */
+  body: string;
+}
+
+/**
+ * Parse and strip an optional YAML frontmatter block (FR-3277).
+ *
+ * A frontmatter block is a `---` line at the very start of the file,
+ * followed by YAML, terminated by another `---` line. Recognized fields
+ * (currently `navTitle` — the short sidebar label; see
+ * DOCUMENTATION-STYLE-GUIDE.md "Sidebar Nav Label vs Page H1") are
+ * surfaced via `attributes`; the block itself never reaches the
+ * markdown renderer.
+ *
+ * Deliberately conservative: when the block is unterminated or its YAML
+ * is malformed, the input is returned untouched — the raw `---` lines
+ * then render visibly in the page, which is the signal authors need to
+ * fix the block (a silent drop would hide the mistake).
+ */
+export function parseFrontmatter(markdown: string): Frontmatter {
+  const match = markdown.match(/^---\r?\n([\s\S]*?)\r?\n---[ \t]*\r?\n?/);
+  if (!match) return { attributes: {}, body: markdown };
+  let parsed: unknown;
+  try {
+    parsed = parseYamlBlock(match[1]);
+  } catch {
+    console.warn(
+      'parseFrontmatter: malformed YAML frontmatter — leaving block in place',
+    );
+    return { attributes: {}, body: markdown };
+  }
+  const body = markdown.slice(match[0].length);
+  if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) {
+    return { attributes: {}, body };
+  }
+  return { attributes: parsed as Record<string, unknown>, body };
+}
+
+/**
+ * Extract a non-empty string field from parsed frontmatter attributes.
+ * Returns `undefined` for missing, non-string, or blank values.
+ */
+export function frontmatterString(
+  attributes: Record<string, unknown>,
+  key: string,
+): string | undefined {
+  const value = attributes[key];
+  if (typeof value !== 'string') return undefined;
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : undefined;
+}
+
 export function escapeHtml(str: string): string {
   return str
     .replace(/&/g, '&amp;')
@@ -238,4 +295,34 @@ export function stripHtmlTags(str: string): string {
     result = result.replace(/<[^>]*>?/g, '');
   } while (result !== prev);
   return result;
+}
+
+/**
+ * Decode the small set of HTML entities that `marked` emits when it
+ * escapes inline text (`&` `<` `>` `"` `'`), plus generic numeric
+ * character references (`&#NN;` / `&#xHH;`).
+ *
+ * Used to recover the plain-text form of a heading before slugifying
+ * it. Without this, an escaped apostrophe (`&#39;`) survives
+ * `stripHtmlTags` and `slugify` — which drops `&`, `#` and `;` but
+ * keeps digits — turns `user&#39;s` into the broken anchor `user39s`
+ * instead of `users`. Decoding first yields the correct `users`.
+ * `&amp;` is decoded last so double-encoded input collapses one level
+ * at a time rather than mangling a literal `&amp;` mid-string.
+ */
+export function decodeHtmlEntities(str: string): string {
+  return str
+    .replace(/&#x([0-9a-fA-F]+);/g, (m, hex) => {
+      const cp = parseInt(hex, 16);
+      return cp > 0 && cp <= 0x10ffff ? String.fromCodePoint(cp) : m;
+    })
+    .replace(/&#(\d+);/g, (m, dec) => {
+      const cp = parseInt(dec, 10);
+      return cp > 0 && cp <= 0x10ffff ? String.fromCodePoint(cp) : m;
+    })
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
+    .replace(/&amp;/g, '&');
 }

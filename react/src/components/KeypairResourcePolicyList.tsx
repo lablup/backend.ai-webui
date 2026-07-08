@@ -34,7 +34,9 @@ import {
   BAIResourceNumberWithIcon,
   BAINameActionCell,
   BAIDeleteConfirmModal,
+  BAIQuestionIconWithTooltip,
 } from 'backend.ai-ui';
+import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { PlusIcon } from 'lucide-react';
 import React, { Suspense, useState, useTransition } from 'react';
@@ -73,6 +75,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
         query KeypairResourcePolicyListQuery {
           keypair_resource_policies {
             name
+            default_for_unspecified
             total_resource_slots
             max_session_lifetime
             max_concurrent_sessions
@@ -81,6 +84,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
             allowed_vfolder_hosts
             max_pending_session_count @since(version: "24.03.4")
             max_concurrent_sftp_sessions @since(version: "24.03.4")
+            created_at
             ...KeypairResourcePolicySettingModalFragment
             ...KeypairResourcePolicyInfoModalFragment
             ...BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment
@@ -148,6 +152,28 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
           ]}
         />
       ),
+    },
+    {
+      title: (
+        <BAIFlex gap="xxs" align="center">
+          {t('resourcePolicy.DefaultForUnspecified')}
+          <BAIQuestionIconWithTooltip
+            title={
+              <>
+                {t('resourcePolicy.DefaultForUnspecifiedTooltipDesc1')}
+                <br />
+                <br />
+                {t('resourcePolicy.DefaultForUnspecifiedTooltipDesc2')}
+              </>
+            }
+          />
+        </BAIFlex>
+      ),
+      dataIndex: 'default_for_unspecified',
+      key: 'default_for_unspecified',
+      sorter: (a, b) =>
+        localeCompare(a?.default_for_unspecified, b?.default_for_unspecified),
+      render: (text) => text ?? '-',
     },
     {
       title: t('resourcePolicy.ResourcePolicy'),
@@ -257,6 +283,13 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
         ),
       render: (text) => (text ? text : '∞'),
     },
+    {
+      title: t('resourcePolicy.CreatedAt'),
+      dataIndex: 'created_at',
+      key: 'created_at',
+      sorter: (a, b) => localeCompare(a?.created_at, b?.created_at),
+      render: (text) => (text ? dayjs(text).format('lll') : '-'),
+    },
   ]);
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
@@ -297,6 +330,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
         max_session_lifetime: (text) => (text ? text : '-'),
         allowed_vfolder_hosts: (text) =>
           _.isEmpty(text) ? '-' : _.keys(JSON.parse(text)).join(', '),
+        created_at: (text) => (text ? dayjs(text).format('lll') : '-'),
       },
     );
   };

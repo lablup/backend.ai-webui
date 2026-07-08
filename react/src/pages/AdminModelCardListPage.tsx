@@ -7,11 +7,11 @@ import type { AdminModelCardListPageDeleteMutation } from '../__generated__/Admi
 import type {
   AdminModelCardListPageQuery,
   AdminModelCardListPageQuery$data,
+  ModelCardV2Filter,
   ModelCardV2OrderBy,
 } from '../__generated__/AdminModelCardListPageQuery.graphql';
 import AdminModelCardSettingModal from '../components/AdminModelCardSettingModal';
 import { useFolderExplorerOpener } from '../components/FolderExplorerOpener';
-import StorageHostFilterInput from '../components/StorageHostFilterInput';
 import VFolderNodeIdenticonV2 from '../components/VFolderNodeIdenticonV2';
 import { convertToOrderBy, handleRowSelectionChange } from '../helper';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -34,13 +34,13 @@ import {
   BAILink,
   BAINameActionCell,
   BAISelectionLabel,
+  BAIStorageHostSelect,
   BAITable,
   BAIText,
   BAITag,
   BAIUnmountAfterClose,
   filterOutEmpty,
   filterOutNullAndUndefined,
-  type GraphQLFilter,
   INITIAL_FETCH_KEY,
   isValidUUID,
   toLocalId,
@@ -105,7 +105,9 @@ const AdminModelCardListPage: React.FC = () => {
   const [queryParams, setQueryParams] = useQueryStates(
     {
       order: parseAsString,
-      filter: parseAsJson<GraphQLFilter>((value) => value as GraphQLFilter),
+      filter: parseAsJson<ModelCardV2Filter>(
+        (value) => value as ModelCardV2Filter,
+      ),
     },
     {
       history: 'replace',
@@ -331,7 +333,7 @@ const AdminModelCardListPage: React.FC = () => {
     <BAIFlex direction="column" align="stretch" gap={'sm'}>
       <BAIFlex justify="between" wrap="wrap" gap={'sm'}>
         <BAIFlex gap={'sm'} align="start" wrap="wrap" style={{ flexShrink: 1 }}>
-          <BAIGraphQLPropertyFilter
+          <BAIGraphQLPropertyFilter<ModelCardV2Filter>
             filterProperties={[
               {
                 key: 'name',
@@ -358,8 +360,15 @@ const AdminModelCardListPage: React.FC = () => {
                 type: 'string',
                 operators: ['equals', 'notEquals'],
                 defaultOperator: 'equals',
-                renderInput: ({ onConfirm }) => (
-                  <StorageHostFilterInput onConfirm={onConfirm} />
+                renderInput: ({ onAddCondition }) => (
+                  <BAIStorageHostSelect
+                    value={null}
+                    onChange={(value) =>
+                      // Single-select mode (no `mode` prop) always emits a
+                      // single value.
+                      onAddCondition(value as string | undefined)
+                    }
+                  />
                 ),
               },
             ]}

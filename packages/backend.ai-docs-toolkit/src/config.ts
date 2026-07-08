@@ -107,6 +107,15 @@ export interface WebsiteConfig {
   outDir?: string;
   /** Base path for deployment (e.g., '/docs/'). Default: '/' */
   basePath?: string;
+  /**
+   * Absolute URL for the topbar version-pill link. Default (when
+   * `repoUrl` is set): the version's own release page
+   * (`${repoUrl}/releases/tag/<tag>`) when a release tag is derivable,
+   * else `repoUrl` itself (pre-release `next` builds are the repo's
+   * default-branch tip). When neither this nor `repoUrl` is set the
+   * pill stays a plain non-link span.
+   */
+  releaseNotesUrl?: string;
 }
 
 // ── SEO / Open Graph schema (F2 / FR-2714) ────────────────────────

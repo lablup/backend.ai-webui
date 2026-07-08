@@ -31,22 +31,32 @@ All 4 language versions must have:
 
 ### Navigation Updates
 
-When adding a new page, update `src/book.config.yaml` for all 4 languages simultaneously:
+When adding a new page, add a **path-only** navigation entry to
+`src/book.config.yaml` for all 4 languages simultaneously (FR-3277 —
+`book.config.yaml` holds structure only):
 
 ```yaml
 navigation:
   en:
-    - title: New Feature
-      path: new_feature/new_feature.md
+    - path: new_feature/new_feature.md
   ko:
-    - title: 새 기능
-      path: new_feature/new_feature.md
+    - path: new_feature/new_feature.md
   ja:
-    - title: 新機能
-      path: new_feature/new_feature.md
+    - path: new_feature/new_feature.md
   th:
-    - title: ฟีเจอร์ใหม่
-      path: new_feature/new_feature.md
+    - path: new_feature/new_feature.md
+```
+
+The sidebar label lives in each page's **frontmatter `navTitle`** (falling
+back to the page H1 when omitted), so each language's label is translated
+in that language's own file:
+
+```markdown
+---
+navTitle: 새 기능
+---
+
+# 새 기능 사용하기
 ```
 
 ## UI Label Verification

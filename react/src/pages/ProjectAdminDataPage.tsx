@@ -5,6 +5,7 @@
 import type {
   ProjectAdminDataPageQuery,
   ProjectAdminDataPageQuery$data,
+  VFolderFilter,
   VFolderOrderBy,
 } from '../__generated__/ProjectAdminDataPageQuery.graphql';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
@@ -38,7 +39,6 @@ import {
   BAIVFolderDeleteButtonV2,
   filterOutEmpty,
   filterOutNullAndUndefined,
-  type GraphQLFilter,
   INITIAL_FETCH_KEY,
   useFetchKey,
 } from 'backend.ai-ui';
@@ -138,7 +138,7 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
       order: parseAsStringLiteral(availableVFolderSorterValues).withDefault(
         '-created_at',
       ),
-      filter: parseAsJson<GraphQLFilter>((value) => value as GraphQLFilter),
+      filter: parseAsJson<VFolderFilter>((value) => value as VFolderFilter),
       statusCategory:
         parseAsStringLiteral(statusCategoryValues).withDefault('active'),
       mode: parseAsStringLiteral(modeValues).withDefault('all'),
@@ -325,7 +325,7 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
                 },
               ])}
             />
-            <BAIGraphQLPropertyFilter
+            <BAIGraphQLPropertyFilter<VFolderFilter>
               data-testid="vfolder-filter"
               // TODO(needs-backend): V2 `VFolderFilter` does not expose
               // ownership_type or mount-permission filters; only

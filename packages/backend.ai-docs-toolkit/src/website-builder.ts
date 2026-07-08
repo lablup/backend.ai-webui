@@ -142,6 +142,14 @@ export interface PageSeoContext {
 export interface WebsiteMetadata {
   title: string;
   version: string;
+  /**
+   * GitHub release tag matching `version` (e.g. `v26.4.10`), when one
+   * exists. Drives the topbar version pill's `/releases/tag/<tag>` deep
+   * link; absent (pre-release `next` builds, missing `pdfTag`) the pill
+   * links to the generic releases listing instead. See
+   * `pickReleaseTag` in versions.ts for the derivation rule (FR-3265).
+   */
+  releaseTag?: string;
   lang: string;
   /**
    * All languages declared in `book.config.yaml`. Used to emit
@@ -298,7 +306,7 @@ function buildWebsiteSidebar(
       // always match because both are derived from the same flattened
       // navigation. If they don't, render a plain text entry rather than
       // throwing — keeps the build alive while the mismatch is debugged.
-      return `<li><span>${num}. ${escapeHtml(item.title)}</span></li>`;
+      return `<li><span>${num}. ${escapeHtml(item.title ?? item.path)}</span></li>`;
     }
     const isActive = globalIndex === currentIndex;
     const href = `./${chapter.slug}.html`;
@@ -1218,6 +1226,7 @@ function buildVersionSwitcher(context: WebPageContext): string {
   return `<select
       id="version-switcher"
       class="version-switcher"
+      aria-label="Version switcher"
       data-current="${escapeHtml(ver.current)}"
       data-lang="${escapeHtml(context.metadata.lang)}"
       data-slug="${escapeHtml(ver.slug)}"
@@ -1373,7 +1382,34 @@ function buildBaiTopbar(
     ? `<span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">${escapeHtml(subLabel)}</span>`
     : "";
 
-  const versionPillHtml = `<span class="bai-brand-version">${escapeHtml(metadata.version)}</span>`;
+  // Version pill (FR-3265): links to this version's release-notes page
+  // when its tag is known (`metadata.releaseTag` — pdfTag for archive
+  // minors, stable workspace tag otherwise). Without a tag (pre-release
+  // `next` builds — those ARE the repo's default-branch tip) the pill
+  // links to the repository itself rather than the releases listing,
+  // since no listed release corresponds to what the reader is viewing.
+  // `metadata.version` alone is NOT a safe tag source: next/flat builds
+  // render "vX.Y.Z-pre (sha)", which has no release. An explicit
+  // `website.releaseNotesUrl` overrides both derivations.
+  const repoUrl = config.website?.repoUrl;
+  const repoUrlTrimmed = repoUrl?.replace(/\/$/, "");
+  const pillUrl =
+    config.website?.releaseNotesUrl ??
+    (repoUrlTrimmed
+      ? metadata.releaseTag
+        ? `${repoUrlTrimmed}/releases/tag/${encodeURIComponent(metadata.releaseTag)}`
+        : repoUrlTrimmed
+      : undefined);
+  // The label reflects the actual target: release notes when a tag (or
+  // explicit URL) is set, the source repository otherwise.
+  const pillAriaPrefix =
+    config.website?.releaseNotesUrl || metadata.releaseTag
+      ? "Release notes for"
+      : "Source repository for";
+  const versionText = escapeHtml(metadata.version);
+  const versionPillHtml = pillUrl
+    ? `<a class="bai-brand-version" href="${escapeHtml(pillUrl)}" target="_blank" rel="noopener noreferrer" aria-label="${pillAriaPrefix} ${versionText}">${versionText}</a>`
+    : `<span class="bai-brand-version">${versionText}</span>`;
 
   // Search input (existing search.js binds via #search-input). Placeholder
   // and noResults message localized via WEBSITE_LABELS.
@@ -1446,9 +1482,9 @@ function buildBaiTopbar(
   // threaded into `buildWebsiteSidebar`; the topbar leaves the slot
   // empty rather than emitting a duplicate.
 
-  // GitHub link — derived from website.repoUrl. When unset, the icon is
-  // omitted so we don't ship a dead link.
-  const repoUrl = config.website?.repoUrl;
+  // GitHub link — derived from website.repoUrl (read above for the
+  // version pill). When unset, the icon is omitted so we don't ship a
+  // dead link.
   const githubIconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56 0-.27-.01-1.16-.02-2.1-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.36.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.16 1.18a10.95 10.95 0 0 1 5.76 0c2.2-1.49 3.16-1.18 3.16-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.41-5.27 5.69.41.36.78 1.06.78 2.13 0 1.54-.01 2.78-.01 3.16 0 .31.21.67.8.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5Z"/></svg>`;
   const githubLinkHtml = repoUrl
     ? `<a class="bai-iconbtn" href="${escapeHtml(repoUrl)}" target="_blank" rel="noopener noreferrer" aria-label="GitHub">${githubIconSvg}</a>`
@@ -1473,11 +1509,13 @@ function buildBaiTopbar(
 
   return `<header class="bai-topbar" role="banner">
   <button class="bai-iconbtn bai-topbar__menu" type="button" aria-label="Toggle navigation">${menuIconSvg}</button>
-  <a class="bai-topbar__brand" href="./index.html">
-    ${brandLogoHtml}
-    ${subLabelHtml}
+  <div class="bai-topbar__brandgroup">
+    <a class="bai-topbar__brand" href="./index.html">
+      ${brandLogoHtml}
+      ${subLabelHtml}
+    </a>
     ${versionPillHtml}
-  </a>
+  </div>
   ${searchHtml}
   <div class="bai-topbar__actions">
     ${langSwitcherHtml}
@@ -2189,6 +2227,90 @@ ${interactionsScript}
 }
 
 /**
+ * Optional OG/Twitter meta inputs for the redirect pages (FR-3265).
+ *
+ * The redirect pages (site root, `latest/`, bare `/<lang>/` stubs) are
+ * exactly the URLs people paste into chat — and link unfurlers do not
+ * execute the redirect, so whatever `<meta>` is on THESE pages is the
+ * card users see. `noindex` stays: OG scrapers ignore robots meta, and
+ * the redirect must remain out of search indexes (FR-2753).
+ *
+ * Only `<meta>` tags are ever emitted from this — never a `<script>` —
+ * because downstream tooling (and the test harness) treats the first
+ * inline `<script>` in the page as the redirect script.
+ */
+export interface RedirectPageSeoOptions {
+  description?: string;
+  siteName?: string;
+  /** Absolute site origin (`og.baseUrl`); when unset, og:url and og:image are omitted entirely. */
+  baseUrl?: string;
+  /** Site-root-relative OG image path (e.g. `assets/og-default.png`). */
+  ogImageRelUrl?: string;
+  /**
+   * Site-root-relative path of the redirect page itself (`""`,
+   * `"latest/"`, `"ko/"`, `"latest/ko/"`). Joined onto `baseUrl` to
+   * form the absolute `og:url`.
+   */
+  pagePath: string;
+}
+
+/**
+ * Assemble the `<meta>` lines (description + Open Graph + Twitter
+ * Card) for a redirect page. `og:url` / `og:image` must be ABSOLUTE
+ * for crawlers — when `baseUrl` is unset, `joinBaseUrl` yields
+ * `undefined` and both tags are dropped rather than emitted as
+ * relative paths (a relative `og:image` is invalid per the OG spec).
+ */
+function buildRedirectPageMetaLines(
+  title: string,
+  seo: RedirectPageSeoOptions,
+): string[] {
+  const pageUrlAbs = joinBaseUrl(seo.baseUrl, seo.pagePath);
+  const ogImageAbs = seo.ogImageRelUrl
+    ? joinBaseUrl(seo.baseUrl, seo.ogImageRelUrl)
+    : undefined;
+  const lines: string[] = [];
+  if (seo.description) {
+    lines.push(
+      `<meta name="description" content="${escapeHtml(seo.description)}" />`,
+    );
+  }
+  lines.push(
+    ...buildOgTags({
+      type: "website",
+      title,
+      description: seo.description,
+      imageUrl: ogImageAbs,
+      pageUrl: pageUrlAbs,
+      siteName: seo.siteName,
+    }),
+    ...buildTwitterCard({
+      title,
+      description: seo.description,
+      imageUrl: ogImageAbs,
+    }),
+  );
+  return lines;
+}
+
+/**
+ * Render `RedirectPageSeoOptions` into the `<head>` template slot
+ * between `<title>` and the robots meta. Returns `""` when `seo` is
+ * absent so the page output stays byte-identical for callers that do
+ * not pass it (the deprecated `buildLanguagePickerPage` alias has
+ * external consumers).
+ */
+function redirectPageSeoBlock(
+  title: string,
+  seo: RedirectPageSeoOptions | undefined,
+): string {
+  if (!seo) return "";
+  return buildRedirectPageMetaLines(title, seo)
+    .map((line) => `  ${line}\n`)
+    .join("");
+}
+
+/**
  * Build the site-root `dist/web/index.html` redirect page (FR-2753).
  *
  * Picks a language (`localStorage.lang` → `navigator.languages` →
@@ -2204,6 +2326,11 @@ export interface RootRedirectIndexPageOptions {
   productName: string;
   languages: Array<{ lang: string; label: string }>;
   fallback: string;
+  /**
+   * OG/Twitter meta for link unfurlers (FR-3265). Optional; when
+   * absent the page output is unchanged.
+   */
+  seo?: RedirectPageSeoOptions;
   /**
    * When set, the redirect target and `<noscript>` hrefs are prefixed
    * with `./<latestVersion>/`. Used in versioned mode (FR-2729) where
@@ -2378,7 +2505,7 @@ export function buildRootRedirectIndexPage(
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>${safeTitle}</title>
-  <meta name="robots" content="noindex" />
+${redirectPageSeoBlock(title, opts.seo)}  <meta name="robots" content="noindex" />
   <script>${script}</script>
 </head>
 <body>
@@ -2437,6 +2564,12 @@ export interface LangRedirectStubPageOptions {
    * do not hand-assemble the versioned layout at call sites.
    */
   target: string;
+  /**
+   * OG/Twitter meta for link unfurlers (FR-3265). Optional; when
+   * absent the page output is unchanged. `pagePath` should be the
+   * stub's own mount (`"ko/"`, `"latest/ko/"`).
+   */
+  seo?: RedirectPageSeoOptions;
 }
 
 export function buildLangRedirectStubPage(
@@ -2460,7 +2593,7 @@ export function buildLangRedirectStubPage(
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>${safeTitle}</title>
-  <meta name="robots" content="noindex" />
+${redirectPageSeoBlock(title, opts.seo)}  <meta name="robots" content="noindex" />
   <meta http-equiv="refresh" content="0; url=${safeTarget}" />
   <script>window.location.replace(${targetJson});</script>
 </head>

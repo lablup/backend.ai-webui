@@ -12,10 +12,10 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useThemeMode } from '../hooks/useThemeMode';
 import AgentDetailDrawer from './AgentDetailDrawer';
 import BAIRadioGroup from './BAIRadioGroup';
-import { ReloadOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
-import { Button, type TableProps, Tag, theme, Tooltip } from 'antd';
+import { type TableProps, Tag, theme } from 'antd';
 import {
+  BAIFetchKeyButton,
   BAIFlex,
   BAIPropertyFilter,
   BAIFlexProps,
@@ -262,13 +262,17 @@ const AgentList: React.FC<AgentListProps> = ({
           />
         </BAIFlex>
         <BAIFlex gap="xs">
-          <Tooltip title={t('button.Refresh')}>
-            <Button
-              loading={deferredFetchKey !== fetchKey}
-              onClick={() => updateFetchKey()}
-              icon={<ReloadOutlined />}
-            ></Button>
-          </Tooltip>
+          <BAIFetchKeyButton
+            loading={
+              deferredFetchKey !== fetchKey ||
+              deferredQueryVariables !== queryVariables
+            }
+            autoUpdateDelay={15_000}
+            value={fetchKey}
+            onChange={() => {
+              updateFetchKey();
+            }}
+          />
         </BAIFlex>
       </BAIFlex>
       <BAIAgentTable

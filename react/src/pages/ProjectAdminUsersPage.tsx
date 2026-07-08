@@ -4,6 +4,7 @@
  */
 import type {
   ProjectAdminUsersPageQuery,
+  UserV2Filter,
   UserV2OrderBy,
 } from '../__generated__/ProjectAdminUsersPageQuery.graphql';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
@@ -20,7 +21,6 @@ import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAIAdminUserV2Table,
-  GraphQLFilter,
   INITIAL_FETCH_KEY,
   useFetchKey,
 } from 'backend.ai-ui';
@@ -54,7 +54,7 @@ const ProjectAdminUsersContent: React.FC<ProjectAdminUsersContentProps> = ({
     {
       status: parseAsStringLiteral(statusFilterValues).withDefault('ACTIVE'),
       order: parseAsStringLiteral(availableUserV2SorterValues),
-      filter: parseAsJson<GraphQLFilter>((value) => value as GraphQLFilter),
+      filter: parseAsJson<UserV2Filter>((value) => value as UserV2Filter),
     },
     {
       history: 'replace',
@@ -143,7 +143,7 @@ const ProjectAdminUsersContent: React.FC<ProjectAdminUsersContentProps> = ({
               { label: t('general.Inactive'), value: 'INACTIVE' },
             ]}
           />
-          <BAIGraphQLPropertyFilter
+          <BAIGraphQLPropertyFilter<UserV2Filter>
             filterProperties={[
               {
                 key: 'email',

@@ -60,6 +60,7 @@ import {
 import {
   loadVersions,
   pickDisplayVersion,
+  pickReleaseTag,
   resolveVersionSource,
   VersionPageRegistry,
   type LoadedVersions,
@@ -823,6 +824,18 @@ export async function generateWebsite(
     loadedVersions.enabled && latestVersionLanguages
       ? latestVersionLanguages
       : languages;
+  // OG/Twitter meta for every redirect page (FR-3265). Unfurlers fetch
+  // these URLs (site root, /latest/, bare /<lang>/) and never follow
+  // the redirect, so the card meta must live on the redirect pages
+  // themselves. `pagePath` is the page's site-root-relative mount —
+  // joined onto `og.baseUrl` to form an absolute og:url per page.
+  const redirectSeoFor = (pagePath: string) => ({
+    description: bookConfig.description || undefined,
+    siteName,
+    baseUrl,
+    ogImageRelUrl: ogImage?.relUrl,
+    pagePath,
+  });
   if (redirectLanguages.length === 0) {
     console.warn(
       "Skipped: index.html (no built languages for the redirect target)",
@@ -838,6 +851,7 @@ export async function generateWebsite(
       languages: peerLangsForRedirect,
       fallback: redirectLanguages.includes("en") ? "en" : redirectLanguages[0],
       latestVersion: loadedVersions.latest?.label,
+      seo: redirectSeoFor(""),
     });
     fs.writeFileSync(path.join(distBase, "index.html"), redirectHtml, "utf-8");
     console.log(
@@ -879,6 +893,7 @@ export async function generateWebsite(
           // canonicalPathFor owns the versioned layout; the stub sits
           // one level below the site root, hence the single `../`.
           target: `../${canonicalPathFor(loadedVersions, stubLang, "index")}`,
+          seo: redirectSeoFor(`${stubLang}/`),
         }),
         "utf-8",
       );
@@ -912,6 +927,7 @@ export async function generateWebsite(
           : redirectLanguages[0],
         latestVersion: loadedVersions.latest.label,
         basePath: "latest",
+        seo: redirectSeoFor("latest/"),
       }),
       "utf-8",
     );
@@ -925,6 +941,7 @@ export async function generateWebsite(
           lang: stubLang,
           // Two levels below the site root (latest/<lang>/), hence ../../.
           target: `../../${canonicalPathFor(loadedVersions, stubLang, "index")}`,
+          seo: redirectSeoFor(`latest/${stubLang}/`),
         }),
         "utf-8",
       );
@@ -1040,16 +1057,20 @@ async function buildLanguage(args: {
   const availableLanguages = bookConfig.languages;
   // FR-2754 Fix 2: choose what the brand version pill shows for THIS
   // version. See `pickDisplayVersion` for the exact rule.
-  const displayVersion = pickDisplayVersion({
+  const pillVersionArgs = {
     workspaceVersion: version,
     versionLabel,
     versionEntry: versionLabel
       ? (loadedVersions.entries.find((v) => v.label === versionLabel) ?? null)
       : null,
-  });
+  };
+  const displayVersion = pickDisplayVersion(pillVersionArgs);
   const metadata: WebsiteMetadata = {
     title,
     version: displayVersion,
+    // FR-3265: tag for the pill's /releases/tag/<tag> deep link;
+    // undefined (pre-release next builds) falls back to /releases.
+    releaseTag: pickReleaseTag(pillVersionArgs),
     lang,
     availableLanguages,
   };
