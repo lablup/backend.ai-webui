@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { CreatePermissionModalPermissionMatrixQuery } from '../__generated__/CreatePermissionModalPermissionMatrixQuery.graphql';
 import { CreatePermissionModal_roleScopeFragment$key } from '../__generated__/CreatePermissionModal_roleScopeFragment.graphql';
 import { RolePermissionTabDeleteMutation } from '../__generated__/RolePermissionTabDeleteMutation.graphql';
 import { RolePermissionTabFragment$key } from '../__generated__/RolePermissionTabFragment.graphql';
@@ -11,7 +12,9 @@ import {
 } from '../__generated__/RolePermissionTabRefetchQuery.graphql';
 import { convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
-import CreatePermissionModal from './CreatePermissionModal';
+import CreatePermissionModal, {
+  PermissionMatrixQuery,
+} from './CreatePermissionModal';
 import { DeleteFilled } from '@ant-design/icons';
 import { App, Tag } from 'antd';
 import {
@@ -22,6 +25,7 @@ import {
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
   BAITable,
+  BAIUnmountAfterClose,
   toLocalId,
   useBAILogger,
   useMutationWithPromise,
@@ -35,7 +39,13 @@ import {
 } from 'nuqs';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useRefetchableFragment } from 'react-relay';
+import {
+  fetchQuery,
+  graphql,
+  useQueryLoader,
+  useRefetchableFragment,
+  useRelayEnvironment,
+} from 'react-relay';
 
 interface EditingPermission {
   id: string;
@@ -120,6 +130,11 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
   const supportsRbacFilterWrapper = baiClient.supports('rbac-filter-wrapper');
   const { message } = App.useApp();
   const { logger } = useBAILogger();
+  const relayEnvironment = useRelayEnvironment();
+  const [matrixQueryRef, loadMatrixQuery] =
+    useQueryLoader<CreatePermissionModalPermissionMatrixQuery>(
+      PermissionMatrixQuery,
+    );
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingPermission, setEditingPermission] =
     useState<EditingPermission | null>(null);
@@ -276,21 +291,43 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
     doRefetch();
   };
 
+  // Render-as-you-fetch: warm the store before opening so the modal's
+  // usePreloadedQuery renders synchronously (no Suspense fallback flash);
+  // the awaiting trigger button shows its own loading state meanwhile.
+  const openPermissionModal = async (editing: EditingPermission | null) => {
+    try {
+      await fetchQuery<CreatePermissionModalPermissionMatrixQuery>(
+        relayEnvironment,
+        PermissionMatrixQuery,
+        {},
+      ).toPromise();
+    } catch (error) {
+      logger.error('Failed to load permission matrix', error);
+      message.error(t('general.ErrorOccurred'));
+      return;
+    }
+    loadMatrixQuery({});
+    if (editing) {
+      setEditingPermission(editing);
+    } else {
+      setIsCreateModalOpen(true);
+    }
+  };
+
   const handleEdit = (record: {
     id: string;
     scopeType: string;
     scopeId: string;
     entityType: string;
     operation: string;
-  }) => {
-    setEditingPermission({
+  }) =>
+    openPermissionModal({
       id: toLocalId(record.id),
       scopeType: record.scopeType,
       scopeId: record.scopeId,
       entityType: record.entityType,
       operation: record.operation,
     });
-  };
 
   const handleDelete = (
     record: {
@@ -374,7 +411,7 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
           <BAIButton
             type="primary"
             icon={<PlusIcon />}
-            onClick={() => setIsCreateModalOpen(true)}
+            action={() => openPermissionModal(null)}
           >
             {t('rbac.CreatePermission')}
           </BAIButton>
@@ -427,7 +464,7 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
                       key: 'edit',
                       title: t('button.Edit'),
                       icon: <EditIcon />,
-                      onClick: () => handleEdit(record),
+                      action: () => handleEdit(record),
                     },
                     {
                       key: 'delete',
@@ -462,20 +499,25 @@ const RolePermissionTab: React.FC<RolePermissionTabProps> = ({
           },
         ]}
       />
-      <CreatePermissionModal
-        open={isCreateModalOpen || !!editingPermission}
-        roleId={roleId}
-        roleScopeFrgmt={roleScopeFrgmt}
-        editingPermission={editingPermission}
-        onRequestClose={(success) => {
-          setIsCreateModalOpen(false);
-          setEditingPermission(null);
-          if (success) {
-            handleRefresh();
-            onPermissionChange?.();
-          }
-        }}
-      />
+      {matrixQueryRef != null && (
+        <BAIUnmountAfterClose>
+          <CreatePermissionModal
+            open={isCreateModalOpen || !!editingPermission}
+            roleId={roleId}
+            queryRef={matrixQueryRef}
+            roleScopeFrgmt={roleScopeFrgmt}
+            editingPermission={editingPermission}
+            onRequestClose={(success) => {
+              setIsCreateModalOpen(false);
+              setEditingPermission(null);
+              if (success) {
+                handleRefresh();
+                onPermissionChange?.();
+              }
+            }}
+          />
+        </BAIUnmountAfterClose>
+      )}
       <BAIDeleteConfirmModal
         open={!!deletingPermission}
         title={t('rbac.RemovePermission')}

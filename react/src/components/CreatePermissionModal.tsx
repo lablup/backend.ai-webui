@@ -23,8 +23,9 @@ import { useTranslation } from 'react-i18next';
 import {
   graphql,
   useFragment,
-  useLazyLoadQuery,
   useMutation,
+  usePreloadedQuery,
+  type PreloadedQuery,
 } from 'react-relay';
 
 const DIRECT_OPERATIONS: ReadonlyArray<OperationType> = [
@@ -51,8 +52,24 @@ interface EditingPermission {
   operation: string;
 }
 
+export const PermissionMatrixQuery = graphql`
+  query CreatePermissionModalPermissionMatrixQuery {
+    rbacPermissionMatrix {
+      scopeType
+      entities {
+        entityType
+        actions {
+          requiredPermission
+        }
+      }
+    }
+  }
+`;
+
 interface CreatePermissionModalProps extends BAIModalProps {
   roleId: string;
+  /** Preloaded query reference produced by the opener via `useQueryLoader`. */
+  queryRef: PreloadedQuery<CreatePermissionModalPermissionMatrixQuery>;
   roleScopeFrgmt?: CreatePermissionModal_roleScopeFragment$key | null;
   editingPermission?: EditingPermission | null;
   onRequestClose: (success: boolean) => void;
@@ -60,6 +77,7 @@ interface CreatePermissionModalProps extends BAIModalProps {
 
 const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
   roleId,
+  queryRef,
   roleScopeFrgmt,
   editingPermission,
   onRequestClose,
@@ -153,22 +171,9 @@ const CreatePermissionModal: React.FC<CreatePermissionModalProps> = ({
     | undefined;
 
   const { rbacPermissionMatrix } =
-    useLazyLoadQuery<CreatePermissionModalPermissionMatrixQuery>(
-      graphql`
-        query CreatePermissionModalPermissionMatrixQuery {
-          rbacPermissionMatrix {
-            scopeType
-            entities {
-              entityType
-              actions {
-                requiredPermission
-              }
-            }
-          }
-        }
-      `,
-      {},
-      { fetchPolicy: 'store-and-network' },
+    usePreloadedQuery<CreatePermissionModalPermissionMatrixQuery>(
+      PermissionMatrixQuery,
+      queryRef,
     );
 
   // Scope types available for the fallback free-pick UI (role has no scopes):
