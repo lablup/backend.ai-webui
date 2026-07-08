@@ -4,21 +4,13 @@
  */
 import { useSuspendedBackendaiClient } from '.';
 import WebUILink from '../components/WebUILink';
-import {
-  buildPath,
-  MENU_KEY_TO_SCOPE_FEATURE,
-  scopeFeatureToMenuKey,
-} from '../helper/pathBuilder';
+import { buildPath, MENU_KEY_TO_SCOPE_FEATURE } from '../helper/pathBuilder';
 import { useCurrentUserRole } from './backendai';
 import { useDiagnosticsBadgeSeverity } from './useAutoDiagnostics';
 import { useBAISettingUserState } from './useBAISetting';
 import { useEffectiveAdminRole } from './useCurrentUserProjectRoles';
 import { useCustomThemeConfig } from './useCustomThemeConfig';
-import {
-  getRouteScopeAndKey,
-  useActiveProjectName,
-  useCurrentMenuKey,
-} from './useRouteScope';
+import { useActiveProjectName, useCurrentMenuKey } from './useRouteScope';
 import {
   PluginPage,
   useWebUIPluginLoadedValue,
@@ -65,23 +57,6 @@ import {
 } from 'lucide-react';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router-dom';
-
-// Mutable registry populated by routes.tsx at module initialization time.
-// Using mutable objects (Set / Array) means importers share the same reference
-// and see values added after their own import statement runs.
-export const ROUTER_STATIC_PATHS = new Set<string>();
-export const ROUTER_DYNAMIC_PATTERNS: RegExp[] = [];
-
-export function populateRouterPaths(
-  staticPaths: Set<string>,
-  dynamicPatterns: RegExp[],
-): void {
-  ROUTER_STATIC_PATHS.clear();
-  ROUTER_DYNAMIC_PATTERNS.length = 0;
-  staticPaths.forEach((p) => ROUTER_STATIC_PATHS.add(p));
-  dynamicPatterns.forEach((p) => ROUTER_DYNAMIC_PATTERNS.push(p));
-}
 
 export type MenuGroupName =
   | 'none'
@@ -277,7 +252,6 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   const currentUserRole = useCurrentUserRole();
   const effectiveAdminRole = useEffectiveAdminRole();
 
-  const location = useLocation();
   // Scope-aware current menu key (legacy hyphenated key, e.g. 'admin-session',
   // 'project-data', 'session'). Derived from the matched route `handle.menuKey`
   // (with a pathname-parse fallback) so it stays correct under the new
@@ -872,7 +846,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   // Check if current page is in blocklist.
   // `currentMenuKeyFromRoute` is the scope-aware legacy menu key (from the
   // matched route handle), so it equals the feature key for general pages and
-  // the hyphenated admin key for admin pages — exactly what `allValidPaths`,
+  // the hyphenated admin key for admin pages — exactly what
   // `ALL_ADMIN_PAGE_KEYS` and `PROJECT_ADMIN_PAGE_KEY_SET` are keyed on. Empty
   // (`''`) means "root / no feature matched" and is treated as always valid.
   const currentPathKey = currentMenuKeyFromRoute ?? '';
@@ -880,82 +854,6 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   // Root path '/' should not be blocked (it redirects to first available menu)
   const isCurrentPageBlocked =
     currentPathKey !== '' && _.includes(blockList, currentMenuKey);
-
-  // Compute all valid paths from menu items + plugins + static routes
-  const allValidPaths = (() => {
-    const paths = new Set<string>();
-
-    // Add paths from all menus
-    [generalMenu, adminMenu].forEach((menu) => {
-      menu?.forEach((item) => {
-        if (item && 'key' in item && item.key) {
-          paths.add(item.key as string);
-        }
-      });
-    });
-
-    // Add all admin page keys regardless of role, so they are treated as
-    // 401 (unauthorized) rather than 404 (not found) for unprivileged users.
-    ALL_ADMIN_PAGE_KEYS.forEach((key) => paths.add(key));
-
-    // Add plugin pages
-    plugins?.page?.forEach((page) => {
-      if (page?.url) {
-        paths.add(page.url);
-      }
-    });
-
-    // Add static routes from router configuration
-    ROUTER_STATIC_PATHS.forEach((route) => paths.add(route));
-
-    return paths;
-  })();
-
-  // Check if current page matches dynamic route patterns from router configuration
-  const fullPath = location.pathname.slice(1); // Remove leading '/'
-  const matchesDynamicRoute = ROUTER_DYNAMIC_PATTERNS.some((pattern) =>
-    pattern.test(fullPath),
-  );
-
-  // Check if current page is not found
-  // Only check after plugins are loaded to avoid false positives
-  const isCurrentPageNotFound = (() => {
-    // Root path is always valid (redirects to first available menu)
-    if (currentPathKey === '') return false;
-
-    // If plugins haven't loaded yet, assume page is valid to prevent flickering
-    if (!isPluginLoaded) return false;
-
-    // Scope-aware 404: under the `/admin/<feature>` and
-    // `/project/:name/<feature>` (incl. `/project/:name/admin/<feature>`)
-    // namespaces, a feature key that is valid in a *different* scope
-    // (e.g. `/admin/start` where `start` is a user feature, or
-    // `/project/x/agent` where `agent` is admin-only) matches no route and the
-    // scope subtree renders an empty <Outlet/>. Treat such cross-scope URLs as
-    // 404 instead of a blank page.
-    const { scope: pathScope, featureKey: pathFeatureKey } =
-      getRouteScopeAndKey(location.pathname);
-    const hasScopePrefix =
-      location.pathname.startsWith('/admin/') ||
-      location.pathname.startsWith('/project/');
-    if (
-      hasScopePrefix &&
-      pathFeatureKey &&
-      !scopeFeatureToMenuKey(pathScope, pathFeatureKey) &&
-      !matchesDynamicRoute &&
-      !plugins?.page?.some((page) => page?.url === pathFeatureKey)
-    ) {
-      return true;
-    }
-
-    // Check if path is in valid paths set
-    if (allValidPaths.has(currentPathKey)) return false;
-
-    // Check if path matches a dynamic route pattern
-    if (matchesDynamicRoute) return false;
-
-    return true;
-  })();
 
   // Check if current page requires higher permission than user has.
   // Uses static key sets (not role-filtered adminMenu) to ensure correct 401 responses.
@@ -1022,7 +920,6 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     firstAvailableAdminMenuItem,
     defaultMenuPath,
     isCurrentPageBlocked,
-    isCurrentPageNotFound,
     isCurrentPageUnauthorized,
     isPluginLoaded,
     blockList,

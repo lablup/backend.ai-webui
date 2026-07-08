@@ -9,15 +9,9 @@
  * - buildPath() produces correct URLs for each scope
  * - buildPath() encodes project names (spaces / dots / unicode / slashes)
  * - MENU_KEY_TO_SCOPE_FEATURE covers every VALID_MENU_KEYS entry
- * - scopeFeatureToMenuKey() inverts the map to canonical (non-alias) keys
- * - round-trip: menu key -> {scope, feature} -> canonical menu key
  */
 import { VALID_MENU_KEYS } from '../hooks/useWebUIMenuItems';
-import {
-  buildPath,
-  MENU_KEY_TO_SCOPE_FEATURE,
-  scopeFeatureToMenuKey,
-} from './pathBuilder';
+import { buildPath, MENU_KEY_TO_SCOPE_FEATURE } from './pathBuilder';
 
 describe('buildPath', () => {
   it('builds admin paths without a project name', () => {
@@ -146,44 +140,5 @@ describe('MENU_KEY_TO_SCOPE_FEATURE', () => {
     expect(MENU_KEY_TO_SCOPE_FEATURE['job']).toEqual(
       MENU_KEY_TO_SCOPE_FEATURE['session'],
     );
-  });
-});
-
-describe('scopeFeatureToMenuKey', () => {
-  it('inverts the map for canonical keys', () => {
-    expect(scopeFeatureToMenuKey('project', 'session')).toBe('session');
-    expect(scopeFeatureToMenuKey('admin', 'session')).toBe('admin-session');
-    expect(scopeFeatureToMenuKey('projectAdmin', 'session')).toBe(
-      'project-admin-session',
-    );
-    expect(scopeFeatureToMenuKey('admin', 'users')).toBe('credential');
-    expect(scopeFeatureToMenuKey('projectAdmin', 'users')).toBe(
-      'project-admin-users',
-    );
-    expect(scopeFeatureToMenuKey('projectAdmin', 'data')).toBe('project-data');
-    expect(scopeFeatureToMenuKey('admin', 'data')).toBe('admin-data');
-  });
-
-  it('resolves dashboard/session to the canonical key, not the alias', () => {
-    expect(scopeFeatureToMenuKey('project', 'dashboard')).toBe('dashboard');
-    expect(scopeFeatureToMenuKey('project', 'session')).toBe('session');
-  });
-
-  it('returns undefined for unknown combinations', () => {
-    expect(scopeFeatureToMenuKey('admin', 'start')).toBeUndefined();
-    expect(scopeFeatureToMenuKey('project', 'nonexistent')).toBeUndefined();
-    expect(scopeFeatureToMenuKey('projectAdmin', 'agent')).toBeUndefined();
-  });
-
-  it('round-trips every non-alias menu key through scope/feature', () => {
-    const aliases = new Set(['summary', 'job']);
-    for (const [menuKey, { scope, featureKey }] of Object.entries(
-      MENU_KEY_TO_SCOPE_FEATURE,
-    )) {
-      if (aliases.has(menuKey)) {
-        continue;
-      }
-      expect(scopeFeatureToMenuKey(scope, featureKey)).toBe(menuKey);
-    }
   });
 });

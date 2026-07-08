@@ -297,7 +297,8 @@ function MainLayout() {
  * Component that guards page access based on permissions and route validity.
  * - Unauthorized (401): User lacks permission (e.g., regular user accessing admin page)
  * - Blocked (404): Page is in the blocklist configuration (treated as not found)
- * - Not Found (404): Page path is not valid (not in menu, not a plugin page, not a static route)
+ * - Not Found (404) is NOT decided here anymore: unknown paths fall into the
+ *   router-owned scoped catch-all routes (see UnknownRoutePage in routes.tsx).
  *
  * @param emptyErrorPage - If true, renders nothing instead of error pages (401/404)
  */
@@ -308,14 +309,10 @@ const PageAccessGuard = ({
   children: React.ReactNode;
   emptyErrorPage?: boolean;
 }) => {
-  const {
-    isCurrentPageBlocked,
-    isCurrentPageNotFound,
-    isCurrentPageUnauthorized,
-  } = useWebUIMenuItems();
+  const { isCurrentPageBlocked, isCurrentPageUnauthorized } =
+    useWebUIMenuItems();
 
-  const hasError =
-    isCurrentPageUnauthorized || isCurrentPageBlocked || isCurrentPageNotFound;
+  const hasError = isCurrentPageUnauthorized || isCurrentPageBlocked;
 
   if (hasError && emptyErrorPage) {
     return null;
@@ -325,7 +322,7 @@ const PageAccessGuard = ({
     return <Page401 />;
   }
 
-  if (isCurrentPageBlocked || isCurrentPageNotFound) {
+  if (isCurrentPageBlocked) {
     return <Page404 />;
   }
 
