@@ -1018,10 +1018,29 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     );
   };
 
+  // antd's built-in `scrollToFirstError` walks `errorFields` in field
+  // *registration* order, not DOM order. Walk the DOM instead and scroll to
+  // whichever errored Form.Item is highest on screen.
+  const handleFinishFailed = () => {
+    requestAnimationFrame(() => {
+      const firstErrorEl = document.querySelector<HTMLElement>(
+        '.ant-modal-body .ant-form-item-has-error',
+      );
+      if (firstErrorEl) {
+        firstErrorEl.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+      }
+    });
+  };
+
   const handleCustomFinish = async (values: FormValues): Promise<void> => {
-    // `setFields` raises an error programmatically — antd's
-    // `scrollToFirstError` only fires from `onFinishFailed`, so we have
-    // to nudge the scroll explicitly here.
+    // The image error must surface on `environments.version`, a field owned by
+    // the shared `ImageEnvironmentSelectFormItems`, so the modal raises it with
+    // `setFields` rather than a `rules` validator it can't attach. Reuse
+    // `handleFinishFailed` for the scroll so this error scrolls exactly like
+    // every other error in the modal (DOM order, not `scrollToFirstError`).
     const flagImageError = (messageKey: string) => {
       customForm.setFields([
         {
@@ -1029,10 +1048,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           errors: [t(messageKey)],
         },
       ]);
-      customForm.scrollToField(['environments', 'version'], {
-        behavior: 'smooth',
-        block: 'center',
-      });
+      handleFinishFailed();
     };
 
     // The revision mutation only references an image by id (`ImageInput.id`).
@@ -1327,23 +1343,6 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             : (error.message ?? t('general.ErrorOccurred')),
         );
       },
-    });
-  };
-
-  // antd's built-in `scrollToFirstError` walks `errorFields` in field
-  // *registration* order, not DOM order. Walk the DOM instead and scroll to
-  // whichever errored Form.Item is highest on screen.
-  const handleFinishFailed = () => {
-    requestAnimationFrame(() => {
-      const firstErrorEl = document.querySelector<HTMLElement>(
-        '.ant-modal-body .ant-form-item-has-error',
-      );
-      if (firstErrorEl) {
-        firstErrorEl.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start',
-        });
-      }
     });
   };
 
