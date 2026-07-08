@@ -7,6 +7,7 @@ import type {
   DeploymentAddRevisionModalAddMutation$data,
 } from '../__generated__/DeploymentAddRevisionModalAddMutation.graphql';
 import { DeploymentAddRevisionModalImageNameQuery } from '../__generated__/DeploymentAddRevisionModalImageNameQuery.graphql';
+import type { DeploymentAddRevisionModalManualImageQuery } from '../__generated__/DeploymentAddRevisionModalManualImageQuery.graphql';
 import type { DeploymentAddRevisionModalPresetCountQuery } from '../__generated__/DeploymentAddRevisionModalPresetCountQuery.graphql';
 import type { DeploymentAddRevisionModalPresetDetailQuery } from '../__generated__/DeploymentAddRevisionModalPresetDetailQuery.graphql';
 import type {
@@ -365,6 +366,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   // modal so it can be rendered in the modal footer. Both modes forward
   // the value via `AddRevisionOptions.autoActivate` on `addModelRevision`.
   const [autoActivate, setAutoActivate] = useState(true);
+
+  // Resolving a manually entered image name to its registered image id
+  // (Custom mode) is an async pre-step before the mutation; surface it in the
+  // submit button loading state alongside `isAddInFlight`.
+  const [isResolvingImage, setIsResolvingImage] = useState(false);
 
   const [mode, setMode] = useBAISettingUserState(
     'deploymentRevisionCreationMode',
@@ -1012,32 +1018,112 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     );
   };
 
-  const handleCustomFinish = (values: FormValues): void => {
-    // `setFields` raises an error programmatically — antd's
-    // `scrollToFirstError` only fires from `onFinishFailed`, so we have
-    // to nudge the scroll explicitly here.
-    const flagImageRequired = () => {
-      customForm.setFields([
-        {
-          name: ['environments', 'version'],
-          errors: [t('modelService.ImageRequired')],
-        },
-      ]);
-      customForm.scrollToField(['environments', 'version'], {
-        behavior: 'smooth',
-        block: 'center',
-      });
+  // antd's built-in `scrollToFirstError` walks `errorFields` in field
+  // *registration* order, not DOM order. Walk the DOM instead and scroll to
+  // whichever errored Form.Item is highest on screen.
+  const handleFinishFailed = () => {
+    requestAnimationFrame(() => {
+      const firstErrorEl = document.querySelector<HTMLElement>(
+        '.ant-modal-body .ant-form-item-has-error',
+      );
+      if (firstErrorEl) {
+        firstErrorEl.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+      }
+    });
+  };
+
+  const handleCustomFinish = async (values: FormValues): Promise<void> => {
+    // Surface the image error on the field the user actually used — the
+    // "Image Name (Manual)" input when they typed a name, otherwise the
+    // Environments/Version dropdown. Both are owned by the shared
+    // `ImageEnvironmentSelectFormItems`, so the modal raises the error with
+    // `setFields` (it can't attach a `rules` validator to them) and scrolls that
+    // specific field into view with antd's `scrollToField` (the setFields error
+    // is raised post-submit, so `scrollToFirstError` never fires for it).
+    const flagImageError = (
+      name: ['environments', 'manual'] | ['environments', 'version'],
+      messageKey: string,
+    ) => {
+      customForm.setFields([{ name, errors: [t(messageKey)] }]);
+      customForm.scrollToField(name, { behavior: 'smooth', block: 'center' });
     };
 
-    const imageId = values.environments?.image?.id;
+    // The revision mutation only references an image by id (`ImageInput.id`).
+    // The image field has two input modes (see `ImageEnvironmentSelectFormItems`):
+    //   - picking from the Environments/Version dropdown populates
+    //     `environments.image` (an object carrying `id`);
+    //   - typing a name into the "Manual image name" field populates
+    //     `environments.manual` (a string) and clears `environments.image`.
+    // The mutation needs an id, so resolve the manually entered reference to a
+    // registered image id here before committing (FR-3278).
+    //
+    // This client-side resolve is a workaround for the id-only mutation input;
+    // the deeper fix is BA-6774 (accept an image by reference server-side),
+    // after which this step can be dropped behind a manager-version gate.
+    let imageId = values.environments?.image?.id;
+    const manualImageName = values.environments?.manual?.trim();
+    // Image errors are shown on the manual-name input if the user typed one,
+    // otherwise on the Environments/Version dropdown.
+    const imageFieldName:
+      | ['environments', 'manual']
+      | ['environments', 'version'] = manualImageName
+      ? ['environments', 'manual']
+      : ['environments', 'version'];
+    if (!imageId && manualImageName) {
+      // Manual names may carry an `@architecture` suffix; pass it through so the
+      // lookup matches the exact image instead of the manager's default
+      // architecture.
+      const [reference, architecture] = manualImageName.split('@');
+      setIsResolvingImage(true);
+      try {
+        const result =
+          await fetchQuery<DeploymentAddRevisionModalManualImageQuery>(
+            relayEnvironment,
+            graphql`
+              query DeploymentAddRevisionModalManualImageQuery(
+                $reference: String!
+                $architecture: String
+              ) {
+                image(reference: $reference, architecture: $architecture) {
+                  id
+                }
+              }
+            `,
+            { reference, architecture: architecture || null },
+            { fetchPolicy: 'network-only' },
+          ).toPromise();
+        imageId = result?.image?.id ?? undefined;
+      } catch (error) {
+        // A thrown error here is a transport/GraphQL failure — an unmatched
+        // reference resolves to `null`, not an error. Surface and log it as a
+        // generic failure so a transient error isn't mislabeled as
+        // "image not found".
+        logger.error(
+          '[DeploymentAddRevisionModal] failed to resolve manual image reference',
+          error,
+        );
+        message.error(t('general.ErrorOccurred'));
+        return;
+      } finally {
+        setIsResolvingImage(false);
+      }
+      if (!imageId) {
+        flagImageError(imageFieldName, 'modelService.ManualImageNotFound');
+        return;
+      }
+    }
+
     if (!imageId) {
-      flagImageRequired();
+      flagImageError(imageFieldName, 'modelService.ImageRequired');
       return;
     }
     // `ImageInput.id` is declared as `ID!` but parsed as `UUID!` server-side.
     const decodedImageId = safeDecodeUuid(imageId);
     if (!decodedImageId) {
-      flagImageRequired();
+      flagImageError(imageFieldName, 'modelService.ImageRequired');
       return;
     }
 
@@ -1279,23 +1365,6 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     });
   };
 
-  // antd's built-in `scrollToFirstError` walks `errorFields` in field
-  // *registration* order, not DOM order. Walk the DOM instead and scroll to
-  // whichever errored Form.Item is highest on screen.
-  const handleFinishFailed = () => {
-    requestAnimationFrame(() => {
-      const firstErrorEl = document.querySelector<HTMLElement>(
-        '.ant-modal-body .ant-form-item-has-error',
-      );
-      if (firstErrorEl) {
-        firstErrorEl.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start',
-        });
-      }
-    });
-  };
-
   const handleOk = async () => {
     // Explicitly `validateFields()` before triggering the mutation. The
     // subsequent `form.submit()` will also validate, but routing through
@@ -1355,7 +1424,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             </Button>
             <Button
               type="primary"
-              loading={isAddInFlight}
+              loading={isAddInFlight || isResolvingImage}
               onClick={handleOk}
               disabled={effectiveMode === 'preset' && hasNoPresets}
             >
@@ -1365,7 +1434,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         </BAIFlex>
       }
       onCancel={() => onRequestClose()}
-      confirmLoading={isAddInFlight}
+      confirmLoading={isAddInFlight || isResolvingImage}
       destroyOnHidden
       {...restModalProps}
     >

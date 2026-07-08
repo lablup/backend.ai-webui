@@ -1953,6 +1953,7 @@
     "InitialDelayTooltip": "Grace period (in seconds) after the service starts during which failed health checks are ignored; the replica becomes active as soon as a health check first succeeds.",
     "Interval": "Interval (s)",
     "IntervalTooltip": "Seconds between consecutive health check attempts.",
+    "ManualImageNotFound": "The manually entered image could not be found. Enter a registered image reference, or pick one from the list.",
     "MaxRetries": "Max Retries",
     "MaxRetriesTooltip": "Maximum number of health check attempts before the service is considered failed.",
     "MaxWaitTime": "Max Wait Time (s)",

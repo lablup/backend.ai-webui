@@ -1969,6 +1969,7 @@
     "InitialDelayTooltip": "Periode toleransi (dalam detik) setelah layanan dimulai di mana kegagalan pemeriksaan kesehatan diabaikan; replika menjadi aktif segera setelah pemeriksaan kesehatan pertama kali berhasil.",
     "Interval": "Interval (s)",
     "IntervalTooltip": "Detik antara percobaan pemeriksaan kesehatan yang berurutan.",
+    "ManualImageNotFound": "Image yang dimasukkan secara manual tidak dapat ditemukan. Masukkan referensi image yang terdaftar, atau pilih salah satu dari daftar.",
     "MaxRetries": "Percobaan Ulang Maks",
     "MaxRetriesTooltip": "Jumlah maksimum percobaan pemeriksaan kesehatan sebelum layanan dianggap gagal.",
     "MaxWaitTime": "Waktu Tunggu Maks (s)",

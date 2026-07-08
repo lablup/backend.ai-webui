@@ -1967,6 +1967,7 @@
     "InitialDelayTooltip": "Okres karencji (w sekundach) po uruchomieniu usługi, w którym nieudane kontrole zdrowia są ignorowane; replika staje się aktywna, gdy kontrola zdrowia po raz pierwszy zakończy się sukcesem.",
     "Interval": "Interwał (s)",
     "IntervalTooltip": "Sekundy między kolejnymi próbami kontroli zdrowia.",
+    "ManualImageNotFound": "Nie można znaleźć ręcznie wprowadzonego obrazu. Wprowadź odwołanie do zarejestrowanego obrazu lub wybierz jeden z listy.",
     "MaxRetries": "Maksymalna liczba ponownych prób",
     "MaxRetriesTooltip": "Maksymalna liczba prób kontroli zdrowia przed uznaniem usługi za niedziałającą.",
     "MaxWaitTime": "Maksymalny czas oczekiwania (s)",

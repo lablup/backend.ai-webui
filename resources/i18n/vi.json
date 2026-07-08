@@ -1968,6 +1968,7 @@
     "InitialDelayTooltip": "Thời gian ân hạn (tính bằng giây) sau khi dịch vụ khởi động, trong đó các lần kiểm tra sức khỏe thất bại bị bỏ qua; bản sao trở nên hoạt động ngay khi lần kiểm tra sức khỏe đầu tiên thành công.",
     "Interval": "Khoảng thời gian (s)",
     "IntervalTooltip": "Số giây giữa các lần thử kiểm tra sức khỏe liên tiếp.",
+    "ManualImageNotFound": "Không tìm thấy image được nhập thủ công. Hãy nhập tham chiếu image đã đăng ký, hoặc chọn một image từ danh sách.",
     "MaxRetries": "Số lần thử lại tối đa",
     "MaxRetriesTooltip": "Số lần thử kiểm tra sức khỏe tối đa trước khi dịch vụ được coi là thất bại.",
     "MaxWaitTime": "Thời gian chờ tối đa (s)",

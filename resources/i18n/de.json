@@ -1968,6 +1968,7 @@
     "InitialDelayTooltip": "Toleranzfenster (in Sekunden) nach dem Start des Dienstes, in dem fehlgeschlagene Gesundheitsprüfungen ignoriert werden; das Replikat wird aktiv, sobald ein Gesundheitscheck zum ersten Mal erfolgreich ist.",
     "Interval": "Intervall (s)",
     "IntervalTooltip": "Sekunden zwischen aufeinanderfolgenden Gesundheitscheck-Versuchen.",
+    "ManualImageNotFound": "Das manuell eingegebene Image konnte nicht gefunden werden. Geben Sie eine registrierte Image-Referenz ein oder wählen Sie eines aus der Liste.",
     "MaxRetries": "Max. Wiederholungsversuche",
     "MaxRetriesTooltip": "Maximale Anzahl von Gesundheitscheck-Versuchen, bevor der Dienst als fehlgeschlagen gilt.",
     "MaxWaitTime": "Max. Wartezeit (s)",

@@ -1966,6 +1966,7 @@
     "InitialDelayTooltip": "Hizmet başladıktan sonra başarısız sağlık denetimlerinin göz ardı edildiği tolerans süresi (saniye cinsinden); ilk sağlık denetimi başarılı olduğunda replika etkin hale gelir.",
     "Interval": "Aralık (s)",
     "IntervalTooltip": "Ardışık sağlık kontrolü denemeleri arasındaki saniye sayısı.",
+    "ManualImageNotFound": "Manuel olarak girilen imaj bulunamadı. Kayıtlı bir imaj referansı girin veya listeden birini seçin.",
     "MaxRetries": "Maksimum Yeniden Deneme Sayısı",
     "MaxRetriesTooltip": "Hizmet başarısız sayılmadan önce gerçekleştirilebilecek maksimum sağlık kontrolü deneme sayısı.",
     "MaxWaitTime": "Maksimum Bekleme Süresi (s)",
