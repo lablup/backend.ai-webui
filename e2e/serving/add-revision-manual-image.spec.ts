@@ -16,14 +16,9 @@
 // manual image is accepted (no image-required error) and the `addModelRevision`
 // mutation is dispatched carrying the resolved image id — i.e. the manual entry
 // behaves identically to selecting the image from the dropdown.
-import {
-  loginAsAdmin,
-  modifyConfigToml,
-  navigateTo,
-  userInfo,
-  webServerEndpoint,
-} from '../utils/test-util';
-import { test, expect, APIRequestContext } from '@playwright/test';
+import { createAdminApiContext, gqlAdmin } from '../utils/admin-api';
+import { loginAsAdmin, modifyConfigToml, navigateTo } from '../utils/test-util';
+import { test, expect } from '@playwright/test';
 
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -45,18 +40,21 @@ interface ServableDeployment {
  * Prefers a READY deployment, falling back to any deployment that has a current
  * revision. Returns null when the backend has none.
  */
-async function findServableDeployment(
-  request: APIRequestContext,
-): Promise<ServableDeployment | null> {
-  await request.post(`${webServerEndpoint}/server/login`, {
-    data: {
-      username: userInfo.admin.email,
-      password: userInfo.admin.password,
-    },
-  });
-  const res = await request.post(`${webServerEndpoint}/func/admin/gql`, {
-    data: {
-      query: `query {
+async function findServableDeployment(): Promise<ServableDeployment | null> {
+  type Node = {
+    id: string;
+    metadata: { status: string };
+    currentRevision: {
+      imageV2: { identity: { canonicalName: string; architecture?: string } };
+    } | null;
+  };
+  const api = await createAdminApiContext();
+  try {
+    const data = await gqlAdmin<{
+      myDeployments: { edges: Array<{ node: Node }> };
+    }>(
+      api,
+      `query {
         myDeployments(limit: 200, offset: 0) {
           edges {
             node {
@@ -69,36 +67,28 @@ async function findServableDeployment(
           }
         }
       }`,
-    },
-  });
-  if (!res.ok()) return null;
+    );
+    const nodes = (data?.myDeployments?.edges ?? [])
+      .map((e) => e.node)
+      .filter((n) => n?.currentRevision?.imageV2?.identity?.canonicalName);
+    const node = nodes.find((n) => n.metadata.status === 'READY') ?? nodes[0];
+    if (!node) return null;
 
-  type Node = {
-    id: string;
-    metadata: { status: string };
-    currentRevision: {
-      imageV2: { identity: { canonicalName: string; architecture?: string } };
-    } | null;
-  };
-  const json = await res.json();
-  const nodes: Node[] = (json?.data?.myDeployments?.edges ?? [])
-    .map((e: { node: Node }) => e.node)
-    .filter((n: Node) => n?.currentRevision?.imageV2?.identity?.canonicalName);
-  const node = nodes.find((n) => n.metadata.status === 'READY') ?? nodes[0];
-  if (!node) return null;
-
-  const { canonicalName, architecture } =
-    node.currentRevision!.imageV2.identity;
-  // Global id is base64 of "ModelDeployment:<uuid>"; the detail route uses the
-  // decoded local UUID.
-  const deploymentId =
-    Buffer.from(node.id, 'base64').toString('utf8').split(':')[1] ?? '';
-  return {
-    deploymentId,
-    imageReference: architecture
-      ? `${canonicalName}@${architecture}`
-      : canonicalName,
-  };
+    const { canonicalName, architecture } =
+      node.currentRevision!.imageV2.identity;
+    // Global id is base64 of "ModelDeployment:<uuid>"; the detail route uses
+    // the decoded local UUID.
+    const deploymentId =
+      Buffer.from(node.id, 'base64').toString('utf8').split(':')[1] ?? '';
+    return {
+      deploymentId,
+      imageReference: architecture
+        ? `${canonicalName}@${architecture}`
+        : canonicalName,
+    };
+  } finally {
+    await api.dispose();
+  }
 }
 
 test.describe('Model Serving — Add Revision with manual image name (FR-3278)', () => {
@@ -106,7 +96,7 @@ test.describe('Model Serving — Add Revision with manual image name (FR-3278)',
     page,
     request,
   }) => {
-    const servable = await findServableDeployment(request);
+    const servable = await findServableDeployment();
     test.skip(
       !servable,
       'No deployment with a current revision is available on this backend',
