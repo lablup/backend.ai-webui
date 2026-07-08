@@ -1,0 +1,43 @@
+# Deterministic checks for the user-manual package (FR-3276).
+#
+# Runs the docs package's script-based lints on any PR that touches the
+# manual. These previously existed only as local npm scripts with no CI
+# teeth:
+#   - check:terminology-md — TERMINOLOGY.md is in sync with terminology.json
+#   - check:nav-titles     — sidebar nav labels relate to their page H1s
+#     (guards against "Sessions All"-style label/title drift; see
+#     packages/backend.ai-webui-docs/scripts/check-nav-titles.mjs)
+name: docs-checks
+
+on:
+  pull_request:
+    paths:
+      - "packages/backend.ai-webui-docs/**"
+      - ".github/workflows/docs-checks.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  docs-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # pnpm must be installed before setup-node so that node's
+      # package-manager cache resolution (`pnpm store path`) works.
+      - uses: pnpm/action-setup@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+
+      - name: Install docs package dependencies
+        run: pnpm install --filter backend.ai-webui-docs --frozen-lockfile
+
+      - name: Terminology table in sync
+        run: pnpm --filter backend.ai-webui-docs run check:terminology-md
+
+      - name: Nav labels relate to page H1s
+        run: pnpm --filter backend.ai-webui-docs run check:nav-titles

@@ -1,3 +1,7 @@
+---
+navTitle: Storage Folders
+---
+
 <a id="vfolders"></a>
 
 # Handling Data & Storage Folders

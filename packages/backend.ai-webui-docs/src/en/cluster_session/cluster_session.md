@@ -1,3 +1,7 @@
+---
+navTitle: Cluster Session
+---
+
 # Backend.AI Cluster Compute Session
 
 <a id="backendai-cluster-compute-session"></a>

@@ -1,3 +1,7 @@
+---
+navTitle: Session Page
+---
+
 <a id="session-page"></a>
 
 # Session Page

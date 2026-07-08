@@ -1,3 +1,7 @@
+---
+navTitle: Admin Features
+---
+
 <a id="admin-menus"></a>
 
 # Admin Features

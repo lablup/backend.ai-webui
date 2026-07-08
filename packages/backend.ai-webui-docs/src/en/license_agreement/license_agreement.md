@@ -1,3 +1,7 @@
+---
+navTitle: License Agreement
+---
+
 # Terms of License Agreement
 
 ## Backend.AI license (Software)

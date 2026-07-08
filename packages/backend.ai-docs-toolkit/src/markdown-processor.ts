@@ -10,6 +10,8 @@ import {
   escapeHtml as escapeHtmlExt,
   stripHtmlTags,
   decodeHtmlEntities,
+  parseFrontmatter,
+  frontmatterString,
   getFigureLabel,
   parseImageSizeHint,
 } from './markdown-extensions.js';
@@ -104,7 +106,8 @@ export interface Chapter {
 }
 
 interface NavEntry {
-  title: string;
+  /** Optional since FR-3277 — frontmatter `navTitle` / H1 supply the label. */
+  title?: string;
   path: string;
 }
 
@@ -433,6 +436,12 @@ export async function processMarkdownFiles(
 
     chapterIndex++;
     let markdown = fs.readFileSync(mdPath, 'utf-8');
+    // Frontmatter (FR-3277): strip before any preprocessing and surface
+    // `navTitle` — the short sidebar label co-located with the page.
+    const { attributes: frontmatter, body: markdownBody } =
+      parseFrontmatter(markdown);
+    markdown = markdownBody;
+    const fmNavTitle = frontmatterString(frontmatter, 'navTitle');
     const chapterSlug = slugFromNavPath(nav.path);
 
     // Pre-processing pipeline
@@ -556,7 +565,9 @@ export async function processMarkdownFiles(
     htmlContent = processCrossReferences(htmlContent, chapterSlug);
 
     chapters.push({
-      title: h1Title || nav.title,
+      // PDF keeps preferring the full H1; frontmatter navTitle and the
+      // legacy config title are fallbacks for H1-less pages (FR-3277).
+      title: h1Title || fmNavTitle || nav.title || nav.path,
       slug: chapterSlug,
       htmlContent,
       headings,

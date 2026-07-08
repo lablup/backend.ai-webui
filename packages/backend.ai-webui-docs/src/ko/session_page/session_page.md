@@ -1,3 +1,7 @@
+---
+navTitle: 세션 페이지
+---
+
 <a id="session-page"></a>
 
 # 세션 페이지
