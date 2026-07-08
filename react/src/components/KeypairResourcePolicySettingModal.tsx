@@ -517,7 +517,7 @@ const KeypairResourcePolicySettingModal: React.FC<
               >
                 <FormItemWithUnlimited
                   name={'max_concurrent_sessions'}
-                  label={t('resourcePolicy.ConcurrentJobs')}
+                  label={t('resourcePolicy.Concurrency')}
                   unlimitedValue={0}
                   style={{ margin: 0, width: '100%' }}
                 >
