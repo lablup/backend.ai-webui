@@ -80,6 +80,8 @@ export { default as BAIDynamicUnitInputNumberWithSlider } from './BAIDynamicUnit
 export type { BAIDynamicUnitInputNumberWithSliderProps } from './BAIDynamicUnitInputNumberWithSlider';
 export { default as BAIAlert } from './BAIAlert';
 export type { BAIAlertProps } from './BAIAlert';
+export { default as BAIListAlert } from './BAIListAlert';
+export type { BAIListAlertProps, BAIListAlertItem } from './BAIListAlert';
 export { default as BAIProjectResourceGroupSelect } from './BAIProjectResourceGroupSelect';
 export { default as BAITextHighlighter } from './BAITextHighlighter';
 export { default as BooleanTag } from './BooleanTag';

@@ -13,9 +13,9 @@ import UserResourcePolicySelect from './UserResourcePolicySelect';
 import { App, Form, InputNumber, theme } from 'antd';
 import { FormInstance } from 'antd/lib';
 import {
-  BAIAlert,
   BAIDomainSelect,
   BAIFlex,
+  BAIListAlert,
   BAIModal,
   BAIModalProps,
   BAISelect,
@@ -178,27 +178,14 @@ const UpdateUsersModal = ({
       }}
     >
       <BAIFlex direction="column" align="stretch">
-        <BAIAlert
+        <BAIListAlert
           type="warning"
           showIcon
           title={t('credential.UpdateUsersWarningAlertTitle')}
-          description={
-            <ul
-              style={{
-                margin: 0,
-                padding: 0,
-                paddingTop: token.paddingXXS,
-                listStyle: 'circle',
-                listStylePosition: 'inside',
-                maxHeight: 165,
-                overflowY: 'auto',
-              }}
-            >
-              {_.map(users, (user) => (
-                <li key={user.id}>{user.basicInfo.email}</li>
-              ))}
-            </ul>
-          }
+          items={_.map(users, (user) => ({
+            key: user.id,
+            content: user.basicInfo.email,
+          }))}
           style={{ marginBottom: token.marginSM }}
         />
         {/* TODO: We need to create a Form.Item component that can distinguish between keeping the default value and clearing the value. */}
