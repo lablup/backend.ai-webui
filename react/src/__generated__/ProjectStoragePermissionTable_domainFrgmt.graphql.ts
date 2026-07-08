@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<07d3a321c54efbdbdd07d48f9d713e55>>
+ * @generated SignedSource<<b20994f670127cc8bad994ed44ee794c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,6 +12,7 @@ import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type ProjectStoragePermissionTable_domainFrgmt$data = {
   readonly allowed_vfolder_hosts: string | null | undefined;
+  readonly name: string | null | undefined;
   readonly " $fragmentType": "ProjectStoragePermissionTable_domainFrgmt";
 };
 export type ProjectStoragePermissionTable_domainFrgmt$key = {
@@ -29,6 +30,13 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
+      "name": "name",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "allowed_vfolder_hosts",
       "storageKey": null
     }
@@ -37,6 +45,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "e50bd79276075388e1d7fa37245a993e";
+(node as any).hash = "1673f3173292dd216a80e445fe2eafbf";
 
 export default node;

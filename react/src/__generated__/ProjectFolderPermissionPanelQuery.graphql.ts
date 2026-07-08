@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4114d20b9a1f049fa5f4fbf45968cea1>>
+ * @generated SignedSource<<bdff4ef8e97e99adb4c047c6a1618c52>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,9 +17,6 @@ export type ProjectFolderPermissionPanelQuery$variables = {
 export type ProjectFolderPermissionPanelQuery$data = {
   readonly domain?: {
     readonly " $fragmentSpreads": FragmentRefs<"DomainStoragePermissionTable_domainFrgmt" | "ProjectStoragePermissionTable_domainFrgmt">;
-  } | null | undefined;
-  readonly vfolder_host_permissions: {
-    readonly vfolder_host_permission_list: ReadonlyArray<string | null | undefined> | null | undefined;
   } | null | undefined;
 };
 export type ProjectFolderPermissionPanelQuery = {
@@ -40,25 +37,7 @@ var v0 = [
     "name": "skipDomain"
   }
 ],
-v1 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "PredefinedAtomicPermission",
-  "kind": "LinkedField",
-  "name": "vfolder_host_permissions",
-  "plural": false,
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "vfolder_host_permission_list",
-      "storageKey": null
-    }
-  ],
-  "storageKey": null
-},
-v2 = [
+v1 = [
   {
     "kind": "Variable",
     "name": "name",
@@ -72,7 +51,6 @@ return {
     "metadata": null,
     "name": "ProjectFolderPermissionPanelQuery",
     "selections": [
-      (v1/*: any*/),
       {
         "condition": "skipDomain",
         "kind": "Condition",
@@ -80,7 +58,7 @@ return {
         "selections": [
           {
             "alias": null,
-            "args": (v2/*: any*/),
+            "args": (v1/*: any*/),
             "concreteType": "Domain",
             "kind": "LinkedField",
             "name": "domain",
@@ -111,7 +89,6 @@ return {
     "kind": "Operation",
     "name": "ProjectFolderPermissionPanelQuery",
     "selections": [
-      (v1/*: any*/),
       {
         "condition": "skipDomain",
         "kind": "Condition",
@@ -119,7 +96,7 @@ return {
         "selections": [
           {
             "alias": null,
-            "args": (v2/*: any*/),
+            "args": (v1/*: any*/),
             "concreteType": "Domain",
             "kind": "LinkedField",
             "name": "domain",
@@ -147,16 +124,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "8c969e4ac87a0e7752c19b13cf22a49e",
+    "cacheID": "0a2c06f42cb22706f72e40a7739de903",
     "id": null,
     "metadata": {},
     "name": "ProjectFolderPermissionPanelQuery",
     "operationKind": "query",
-    "text": "query ProjectFolderPermissionPanelQuery(\n  $domainName: String\n  $skipDomain: Boolean!\n) {\n  vfolder_host_permissions {\n    vfolder_host_permission_list\n  }\n  domain(name: $domainName) @skip(if: $skipDomain) {\n    ...DomainStoragePermissionTable_domainFrgmt\n    ...ProjectStoragePermissionTable_domainFrgmt\n  }\n}\n\nfragment DomainStoragePermissionTable_domainFrgmt on Domain {\n  name\n  allowed_vfolder_hosts\n}\n\nfragment ProjectStoragePermissionTable_domainFrgmt on Domain {\n  allowed_vfolder_hosts\n}\n"
+    "text": "query ProjectFolderPermissionPanelQuery(\n  $domainName: String\n  $skipDomain: Boolean!\n) {\n  domain(name: $domainName) @skip(if: $skipDomain) {\n    ...DomainStoragePermissionTable_domainFrgmt\n    ...ProjectStoragePermissionTable_domainFrgmt\n  }\n}\n\nfragment DomainStoragePermissionTable_domainFrgmt on Domain {\n  name\n  allowed_vfolder_hosts\n}\n\nfragment ProjectStoragePermissionTable_domainFrgmt on Domain {\n  name\n  allowed_vfolder_hosts\n}\n"
   }
 };
 })();
 
-(node as any).hash = "1e3c4b45d7fb84a3e2a8c2205c985208";
+(node as any).hash = "2c9e3593adf4cf22598b733adfb05687";
 
 export default node;
