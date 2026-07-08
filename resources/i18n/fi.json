@@ -1965,6 +1965,7 @@
     "InitialDelayTooltip": "Siirtymäaika (sekunteina) palvelun käynnistymisen jälkeen, jonka aikana epäonnistuneet terveystarkastukset ohitetaan; replikasta tulee aktiivinen heti kun terveystarkastus onnistuu ensimmäistä kertaa.",
     "Interval": "Aikaväli (s)",
     "IntervalTooltip": "Sekuntia peräkkäisten terveystarkastusyritysten välillä.",
+    "ManualImageNotFound": "Manuaalisesti syötettyä kuvaa ei löytynyt. Syötä rekisteröity kuvaviite tai valitse yksi luettelosta.",
     "MaxRetries": "Max Uudelleenyritykset",
     "MaxRetriesTooltip": "Enimmäismäärä terveystarkastusyrityksiä ennen kuin palvelu katsotaan epäonnistuneeksi.",
     "MaxWaitTime": "Enimmäisodotusaika (s)",

@@ -1965,6 +1965,7 @@
     "InitialDelayTooltip": "Tempoh peralihan (dalam saat) selepas perkhidmatan dimulakan di mana kegagalan semakan kesihatan diabaikan; replika menjadi aktif sebaik sahaja semakan kesihatan pertama kali berjaya.",
     "Interval": "Selang (s)",
     "IntervalTooltip": "Saat antara percubaan semakan kesihatan yang berturutan.",
+    "ManualImageNotFound": "Imej yang dimasukkan secara manual tidak dapat ditemui. Masukkan rujukan imej berdaftar, atau pilih satu daripada senarai.",
     "MaxRetries": "Max Cuba Semula",
     "MaxRetriesTooltip": "Bilangan maksimum percubaan semakan kesihatan sebelum perkhidmatan dianggap gagal.",
     "MaxWaitTime": "Masa Tunggu Maks (s)",

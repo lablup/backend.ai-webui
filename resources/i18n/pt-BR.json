@@ -1965,6 +1965,7 @@
     "InitialDelayTooltip": "Período de carência (em segundos) após o início do serviço durante o qual as verificações de integridade com falha são ignoradas; a réplica fica ativa assim que uma verificação de integridade é bem-sucedida pela primeira vez.",
     "Interval": "Intervalo (s)",
     "IntervalTooltip": "Segundos entre tentativas consecutivas de verificação de integridade.",
+    "ManualImageNotFound": "Não foi possível encontrar a imagem inserida manualmente. Insira uma referência de imagem registrada ou selecione uma na lista.",
     "MaxRetries": "Máximo de tentativas",
     "MaxRetriesTooltip": "Número máximo de tentativas de verificação de integridade antes de o serviço ser considerado falho.",
     "MaxWaitTime": "Tempo máx. de espera (s)",

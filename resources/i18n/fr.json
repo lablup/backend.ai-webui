@@ -1966,6 +1966,7 @@
     "InitialDelayTooltip": "Délai de grâce (en secondes) après le démarrage du service pendant lequel les contrôles de santé échoués sont ignorés ; le réplica devient actif dès qu'un contrôle de santé réussit pour la première fois.",
     "Interval": "Intervalle (s)",
     "IntervalTooltip": "Secondes entre les tentatives consécutives de contrôle de santé.",
+    "ManualImageNotFound": "L'image saisie manuellement est introuvable. Saisissez une référence d'image enregistrée, ou choisissez-en une dans la liste.",
     "MaxRetries": "Nombre maximal de tentatives",
     "MaxRetriesTooltip": "Nombre maximum de tentatives de contrôle de santé avant que le service soit considéré comme défaillant.",
     "MaxWaitTime": "Temps d'attente max. (s)",

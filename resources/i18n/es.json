@@ -1965,6 +1965,7 @@
     "InitialDelayTooltip": "Período de gracia (en segundos) tras el inicio del servicio durante el cual se ignoran los chequeos de salud fallidos; la réplica se activa en cuanto un chequeo de salud tiene éxito por primera vez.",
     "Interval": "Intervalo (s)",
     "IntervalTooltip": "Segundos entre intentos consecutivos de chequeo de salud.",
+    "ManualImageNotFound": "No se pudo encontrar la imagen introducida manualmente. Introduzca una referencia de imagen registrada o seleccione una de la lista.",
     "MaxRetries": "Reintentos máximos",
     "MaxRetriesTooltip": "Número máximo de intentos de chequeo de salud antes de considerar que el servicio ha fallado.",
     "MaxWaitTime": "Tiempo máx. de espera (s)",

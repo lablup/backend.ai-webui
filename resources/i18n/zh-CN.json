@@ -1967,6 +1967,7 @@
     "InitialDelayTooltip": "服务启动后的宽限期（秒），在此期间健康检查失败将被忽略；一旦健康检查首次成功，副本即变为活跃状态。",
     "Interval": "检查间隔 (s)",
     "IntervalTooltip": "连续健康检查尝试之间的间隔秒数。",
+    "ManualImageNotFound": "未找到手动输入的镜像。请输入已注册的镜像引用，或从列表中选择一个。",
     "MaxRetries": "最大重试次数",
     "MaxRetriesTooltip": "服务被判定为失败之前，健康检查的最大尝试次数。",
     "MaxWaitTime": "最大等待时间 (s)",

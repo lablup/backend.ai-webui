@@ -1965,6 +1965,7 @@
     "InitialDelayTooltip": "Periodo di grazia (in secondi) dopo l'avvio del servizio durante il quale i controlli di integrità falliti vengono ignorati; la replica diventa attiva non appena un controllo di integrità ha successo per la prima volta.",
     "Interval": "Intervallo (s)",
     "IntervalTooltip": "Secondi tra i tentativi consecutivi di controllo di integrità.",
+    "ManualImageNotFound": "L'immagine inserita manualmente non è stata trovata. Inserisci un riferimento a un'immagine registrata, oppure selezionane una dall'elenco.",
     "MaxRetries": "Numero massimo di tentativi",
     "MaxRetriesTooltip": "Numero massimo di tentativi di controllo di integrità prima che il servizio venga considerato non funzionante.",
     "MaxWaitTime": "Tempo di attesa massimo (s)",
