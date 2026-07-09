@@ -15,7 +15,7 @@ import {
 } from '../utils/test-util';
 import { test, expect, type Page } from '@playwright/test';
 
-// Routes noted in the test plan as slow to hydrate on the QA264 cluster
+// Routes noted in the test plan as slow to hydrate on the shared QA cluster
 // (5-15s of real wall-clock time before their landmark renders). Everything
 // else uses DEFAULT_LANDMARK_TIMEOUT.
 //
@@ -47,8 +47,8 @@ const IGNORED_URL_SUBSTRINGS = [
 ];
 
 // QA-cluster TLS certificate mismatch on the per-endpoint wildcard subdomain
-// (`*.inference.qa264.test.backend.ai`) - only fires on /chat when an
-// inference endpoint is selected. Not a WebUI regression.
+// (e.g. `*.inference.<cluster>.test.backend.ai`) - only fires on /chat when
+// an inference endpoint is selected. Not a WebUI regression.
 const IGNORED_CONSOLE_PATTERNS = [/ERR_CERT_COMMON_NAME_INVALID/];
 
 function isIgnoredUrl(url: string): boolean {
@@ -366,7 +366,7 @@ function getCommonRoutes(dashboardWidgetTitle: string): RouteLandmark[] {
     {
       id: 'C2',
       path: 'dashboard',
-      description: `Dashboard — "${dashboardWidgetTitle}" session-count widget (slow to hydrate: GraphQL-backed widget, observed ~12s on QA264)`,
+      description: `Dashboard — "${dashboardWidgetTitle}" session-count widget (slow to hydrate: GraphQL-backed widget, observed ~12s on the shared QA cluster)`,
       verifyLandmark: async (page) => {
         await expectBreadcrumb(page, 'Dashboard', SLOW_LANDMARK_TIMEOUT);
         await expect(
@@ -392,7 +392,7 @@ function getCommonRoutes(dashboardWidgetTitle: string): RouteLandmark[] {
       id: 'C4',
       path: 'session',
       description:
-        'Sessions — Start Session control and session-type tablist (slow to hydrate: "All" tab observed ~11s on QA264)',
+        'Sessions — Start Session control and session-type tablist (slow to hydrate: "All" tab observed ~11s on the shared QA cluster)',
       verifyLandmark: async (page) => {
         await expectBreadcrumb(page, 'Sessions', SLOW_LANDMARK_TIMEOUT);
         await expect(
