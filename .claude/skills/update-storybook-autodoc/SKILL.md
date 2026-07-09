@@ -1,5 +1,9 @@
 ---
+name: update-storybook-autodoc
+description: Update React components with JSDoc and enhanced Storybook stories with autodoc functionality.
+argument-hint: "<component-path>"
 model: sonnet
+disable-model-invocation: true
 ---
 
 # Update Storybook with Autodoc

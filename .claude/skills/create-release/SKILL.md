@@ -1,3 +1,11 @@
+---
+name: create-release
+description: Create a release branch, tag, and GitHub release for Backend.AI WebUI.
+argument-hint: "[26.4.0 | 26.4.0-alpha.1 | 26.4.0-beta.0]"
+model: sonnet
+disable-model-invocation: true
+---
+
 # Create Release
 
 Create a release branch, tag, and GitHub release for Backend.AI WebUI.

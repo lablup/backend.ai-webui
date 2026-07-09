@@ -1,5 +1,9 @@
 ---
+name: enhance-component-docs
+description: Enhance React component documentation with JSDoc, improved Storybook stories, and autodoc configuration.
+argument-hint: "<component-files...>"
 model: sonnet
+disable-model-invocation: true
 ---
 
 # Enhance Component Documentation

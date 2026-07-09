@@ -1,6 +1,8 @@
 ---
+name: manage-bui-component-story
 description: Create or Update BUI Component Story (project)
 model: sonnet
+disable-model-invocation: true
 ---
 
 # Create or Update BUI Component Story
