@@ -626,7 +626,7 @@ const SessionLauncherPreview: React.FC<{
         </BAIFlex>
       </BAICard>
       <BAICard
-        title="Network"
+        title={t('session.launcher.Network')}
         showDivider
         size="small"
         status={form.getFieldError('ports').length > 0 ? 'error' : undefined}

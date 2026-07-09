@@ -619,6 +619,7 @@ const DefaultErrorCard: React.FC<{
         status={isInteractiveKind ? 'default' : 'error'}
         title={title}
         style={{ maxWidth: 520, width: '100%' }}
+        styles={{ body: { paddingTop: 0 } }}
       >
         <BAIFlex direction="column" gap="md" align="stretch">
           <Typography.Paragraph style={{ margin: 0 }}>

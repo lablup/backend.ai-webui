@@ -194,7 +194,6 @@ const ChatInput: React.FC<ChatInputProps> = ({
       <BAIFlex style={ChatInputStyle} direction="column" align="center">
         <ChatSender
           disabled={disabled}
-          placeholder="Say something..."
           autoFocus
           value={input}
           items={files}

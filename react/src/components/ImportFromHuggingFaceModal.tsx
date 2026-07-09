@@ -264,7 +264,7 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
         {...baiModalProps}
       >
         <Form ref={formRef} preserve={false} layout="vertical">
-          <Form.Item label="Hugging Face URL" required>
+          <Form.Item label={t('data.modelStore.HuggingFaceUrl')} required>
             <Space.Compact style={{ width: '100%' }}>
               <Form.Item
                 noStyle

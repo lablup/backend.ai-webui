@@ -55,6 +55,7 @@ type Keypair = NonNullable<
 >;
 
 const AdminUserCredentialList: React.FC = () => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message } = App.useApp();

@@ -33,6 +33,7 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
   itemRole = 'user',
   style,
 }) => {
+  'use memo';
   const { token } = theme.useToken();
   const containerRef = useRef<HTMLDivElement>(null);
   const colorPrimaryWithAlpha = `rgba(${parseInt(token.colorPrimary.slice(1, 3), 16)}, ${parseInt(token.colorPrimary.slice(3, 5), 16)}, ${parseInt(token.colorPrimary.slice(5, 7), 16)}, 0.15)`;

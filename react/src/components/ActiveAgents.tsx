@@ -19,6 +19,7 @@ const ActiveAgents: React.FC<ActiveAgentsProps> = ({
   fetchKey,
   onChangeFetchKey,
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [isPendingRefetch, startRefetchTransition] = useTransition();

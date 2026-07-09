@@ -19,6 +19,7 @@ const AccessKeySelect: React.FC<AccessKeySelectProps> = ({
   fetchKey,
   ...selectProps
 }) => {
+  'use memo';
   const { t } = useTranslation();
 
   const { keypairs } = useLazyLoadQuery<AccessKeySelectQuery>(

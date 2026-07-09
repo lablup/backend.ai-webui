@@ -12,6 +12,7 @@ import React from 'react';
 
 interface Props extends BAIAlertProps {}
 const AnnouncementAlert: React.FC<Props> = ({ ...otherProps }) => {
+  'use memo';
   const baiClient = useSuspendedBackendaiClient();
   const { token } = theme.useToken();
   const { data: announcement } = useSuspenseTanQuery({

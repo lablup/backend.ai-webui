@@ -21,6 +21,7 @@ const AliasedImageDoubleTags: React.FC<AliasedImageDoubleTagsProps> = ({
   highlightKeyword,
   ...doubleTagProps
 }) => {
+  'use memo';
   const images = useFragment(
     graphql`
       fragment AliasedImageDoubleTagsFragment on ImageNode {

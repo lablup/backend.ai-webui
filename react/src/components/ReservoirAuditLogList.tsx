@@ -7,8 +7,7 @@ import { BAIPropertyFilter, BAIFlex, BAITable, BAIText } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { Activity, CheckCircle, XCircle } from 'lucide-react';
 import React from 'react';
-
-// import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 
 interface ReservoirAuditLogListProps {
   auditLogs: any[];
@@ -33,7 +32,7 @@ const ReservoirAuditLogList: React.FC<ReservoirAuditLogListProps> = ({
   onFilterChange,
   pagination,
 }) => {
-  // const { t } = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <BAIFlex direction="column" align="stretch" gap={'sm'}>
@@ -49,39 +48,39 @@ const ReservoirAuditLogList: React.FC<ReservoirAuditLogListProps> = ({
           filterProperties={[
             {
               key: 'artifactName',
-              propertyLabel: 'Artifact',
+              propertyLabel: t('reservoirPage.Artifact'),
               type: 'string',
             },
             {
               key: 'operation',
-              propertyLabel: 'Operation',
+              propertyLabel: t('auditLog.Operation'),
               type: 'string',
               strictSelection: true,
               defaultOperator: '==',
               options: [
-                { label: 'Pull', value: 'pull' },
-                { label: 'Install', value: 'install' },
-                { label: 'Uninstall', value: 'uninstall' },
-                { label: 'Update', value: 'update' },
-                { label: 'Verify', value: 'verify' },
-                { label: 'Delete', value: 'delete' },
+                { label: t('reservoirPage.Pull'), value: 'pull' },
+                { label: t('reservoirPage.Install'), value: 'install' },
+                { label: t('reservoirPage.Uninstall'), value: 'uninstall' },
+                { label: t('reservoirPage.Update'), value: 'update' },
+                { label: t('reservoirPage.Verify'), value: 'verify' },
+                { label: t('reservoirPage.Delete'), value: 'delete' },
               ],
             },
             {
               key: 'modifier',
-              propertyLabel: 'Modifier',
+              propertyLabel: t('reservoirPage.Modifier'),
               type: 'string',
             },
             {
               key: 'status',
-              propertyLabel: 'Status',
+              propertyLabel: t('reservoirPage.Status'),
               type: 'string',
               strictSelection: true,
               defaultOperator: '==',
               options: [
-                { label: 'Success', value: 'success' },
-                { label: 'Failed', value: 'failed' },
-                { label: 'In Progress', value: 'in_progress' },
+                { label: t('reservoirPage.Success'), value: 'success' },
+                { label: t('reservoirPage.Failed'), value: 'failed' },
+                { label: t('reservoirPage.InProgress'), value: 'in_progress' },
               ],
             },
           ]}
@@ -96,7 +95,7 @@ const ReservoirAuditLogList: React.FC<ReservoirAuditLogListProps> = ({
         loading={loading}
         columns={[
           {
-            title: 'Artifact',
+            title: t('reservoirPage.Artifact'),
             dataIndex: 'artifactName',
             key: 'artifactName',
             render: (artifactName: string) => (
@@ -105,21 +104,21 @@ const ReservoirAuditLogList: React.FC<ReservoirAuditLogListProps> = ({
             sorter: true,
           },
           {
-            title: 'Version',
+            title: t('reservoirPage.Version'),
             dataIndex: 'artifactVersion',
             key: 'artifactVersion',
             render: (version: string) =>
               version ? <BAIText monospace>{version}</BAIText> : '-',
           },
           {
-            title: 'Operation',
+            title: t('auditLog.Operation'),
             dataIndex: 'operation',
             key: 'operation',
             render: (operation: string) => <Tag>{operation.toUpperCase()}</Tag>,
             sorter: true,
           },
           {
-            title: 'Modifier',
+            title: t('reservoirPage.Modifier'),
             dataIndex: 'modifier',
             key: 'modifier',
             render: (modifier: string) => (
@@ -128,7 +127,7 @@ const ReservoirAuditLogList: React.FC<ReservoirAuditLogListProps> = ({
             sorter: true,
           },
           {
-            title: 'Timestamp',
+            title: t('reservoirPage.Timestamp'),
             dataIndex: 'timestamp',
             key: 'timestamp',
             render: (timestamp: string) => (
@@ -146,7 +145,9 @@ const ReservoirAuditLogList: React.FC<ReservoirAuditLogListProps> = ({
           expandedRowRender: (record) => (
             <BAIFlex direction="column" gap="xs" style={{ padding: '8px 0' }}>
               <BAIFlex align="center" gap="xs">
-                <Typography.Text strong>Status:</Typography.Text>
+                <Typography.Text strong>
+                  {t('reservoirPage.Status')}:
+                </Typography.Text>
                 <Tag
                   color={
                     record.status === 'success'
@@ -170,7 +171,9 @@ const ReservoirAuditLogList: React.FC<ReservoirAuditLogListProps> = ({
               </BAIFlex>
               {record.details && (
                 <BAIFlex align="start" gap="xs">
-                  <Typography.Text strong>Details:</Typography.Text>
+                  <Typography.Text strong>
+                    {t('reservoirPage.Details')}:
+                  </Typography.Text>
                   <Typography.Text type="secondary">
                     {record.details}
                   </Typography.Text>

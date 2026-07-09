@@ -875,6 +875,7 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
       <BAICard
         title={t('eduapi.AppLaunch')}
         style={{ width: '100%', maxWidth: 560 }}
+        styles={{ body: { paddingTop: 0 } }}
       >
         <Steps
           orientation="vertical"

@@ -32,6 +32,7 @@ interface BAIMenuProps extends MenuProps {
 }
 
 const BAIMenu: React.FC<BAIMenuProps> = ({ collapsed, ...props }) => {
+  'use memo';
   const { styles } = useStyle();
   const { token } = theme.useToken();
   const colorPrimaryWithAlpha = `rgba(${parseInt(token.colorPrimary.slice(1, 3), 16)}, ${parseInt(token.colorPrimary.slice(3, 5), 16)}, ${parseInt(token.colorPrimary.slice(5, 7), 16)}, 0.15)`;

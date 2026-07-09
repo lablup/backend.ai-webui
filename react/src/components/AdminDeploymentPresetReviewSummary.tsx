@@ -93,12 +93,10 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
       {/* Basic Info */}
       <BAICard
         size="small"
-        className={basicInfoHasError ? 'bai-card-error' : ''}
-        style={
-          basicInfoHasError ? { borderColor: token.colorError } : undefined
-        }
+        status={basicInfoHasError ? 'error' : undefined}
         title={t('adminDeploymentPreset.step.BasicInfo')}
         extra={editLink(0, 'preset-form-card-basic')}
+        styles={{ body: { paddingTop: 0 } }}
       >
         <Descriptions column={1} size="small">
           <Descriptions.Item label={t('adminDeploymentPreset.Name')}>
@@ -144,12 +142,10 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
       {/* Resources */}
       <BAICard
         size="small"
-        className={resourcesHasError ? 'bai-card-error' : ''}
-        style={
-          resourcesHasError ? { borderColor: token.colorError } : undefined
-        }
+        status={resourcesHasError ? 'error' : undefined}
         title={t('adminDeploymentPreset.step.Resources')}
         extra={editLink(0, 'preset-form-card-resources')}
+        styles={{ body: { paddingTop: 0 } }}
       >
         <Descriptions column={1} size="small">
           <Descriptions.Item label={t('adminDeploymentPreset.ResourceSlots')}>
@@ -200,12 +196,10 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
       {/* Deployment */}
       <BAICard
         size="small"
-        className={deploymentHasError ? 'bai-card-error' : ''}
-        style={
-          deploymentHasError ? { borderColor: token.colorError } : undefined
-        }
+        status={deploymentHasError ? 'error' : undefined}
         title={t('adminDeploymentPreset.step.Deployment')}
         extra={editLink(0, 'preset-form-card-deployment')}
+        styles={{ body: { paddingTop: 0 } }}
       >
         <Descriptions column={2} size="small">
           <Descriptions.Item label={t('adminDeploymentPreset.Replicas')}>
@@ -229,10 +223,10 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
       {/* Model & Execution */}
       <BAICard
         size="small"
-        className={step2HasError ? 'bai-card-error' : ''}
-        style={step2HasError ? { borderColor: token.colorError } : undefined}
+        status={step2HasError ? 'error' : undefined}
         title={t('adminDeploymentPreset.step.ModelAndExecution')}
         extra={editLink(1, 'preset-form-card-model')}
+        styles={{ body: { paddingTop: 0 } }}
       >
         <Descriptions column={1} size="small">
           <Descriptions.Item label={t('adminDeploymentPreset.StartupCommand')}>
@@ -283,7 +277,12 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
               {t('adminDeploymentPreset.ModelDefinition')}
             </Typography.Text>
             {values.modelDefinition.models.filter(Boolean).map((m, i) => (
-              <BAICard key={i} size="small" title={m.name}>
+              <BAICard
+                key={i}
+                size="small"
+                title={m.name}
+                styles={{ body: { paddingTop: 0 } }}
+              >
                 <Descriptions column={1} size="small">
                   <Descriptions.Item
                     label={t('adminDeploymentPreset.modelDef.ModelPath')}

@@ -5,8 +5,8 @@
 import { CSSTokenVariables } from '../components/MainLayout/MainLayout';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
-import { Button, Card, Descriptions } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import { Button, Descriptions } from 'antd';
+import { BAICard, BAIFlex } from 'backend.ai-ui';
 import { Suspense, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
@@ -51,7 +51,10 @@ const Children = () => {
       justify="center"
       style={{ position: 'fixed', inset: 0, zIndex: 10001 }}
     >
-      <Card title={t('interactiveLogin.InteractiveLoginWithBackendAI')}>
+      <BAICard
+        title={t('interactiveLogin.InteractiveLoginWithBackendAI')}
+        styles={{ body: { paddingTop: 0 } }}
+      >
         <BAIFlex direction="column" gap={'sm'} align="stretch">
           {t('interactiveLogin.ConfirmLoginMessage', {
             username: userInfo.username,
@@ -121,7 +124,7 @@ const Children = () => {
             </Button>
           </BAIFlex>
         </BAIFlex>
-      </Card>
+      </BAICard>
     </BAIFlex>
   );
 };

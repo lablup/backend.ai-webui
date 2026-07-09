@@ -986,7 +986,9 @@ const SessionLauncherPage = () => {
                 )}
 
                 {sessionType === 'inference' && (
-                  <Card title="Inference Mode Configuration">
+                  <Card
+                    title={t('session.launcher.InferenceModeConfiguration')}
+                  >
                     <Form.Item
                       name={['inference', 'vFolderName']}
                       label={t('session.launcher.ModelStorageToMount')}
