@@ -1,6 +1,22 @@
 // spec: e2e/.agent-output/test-plan-project-switcher.md
 // scenarios: 1 (Project Switcher Display), 2 (Project Switcher Dropdown Contents),
 //            3 (Switching Project Scopes Data), 4 (Project Selection Persistence)
+//
+// Project names, project counts, and folder names are all account/cluster-
+// specific data -- an earlier version of this file hardcoded them (e.g. the
+// admin's active project as "RB테스트", a specific pre-existing folder
+// "bai-quota-sanity-2", and an assertion that no "bai-test-*" project was
+// present), which silently breaks on any account or cluster where that exact
+// data doesn't hold. Every test below instead reads the logged-in account's
+// actual project membership from the client (`current_group` / `groups`,
+// the same source components read via `useCurrentProjectValue()` /
+// `baiClient.current_group` -- see feature-gate-util.ts) and asserts the UI
+// matches that real data, rather than a guessed fixed value. The data-scope
+// test (3) goes further: instead of asserting a specific expected folder
+// count/name per project, it compares the *set* of visible folder names
+// before and after switching, which proves re-scoping happened without
+// needing to know or create any specific folder.
+import { getClientProperty } from '../utils/feature-gate-util';
 import { loginAsAdmin, loginAsUser, navigateTo } from '../utils/test-util';
 import { test, expect, type Page } from '@playwright/test';
 
@@ -27,6 +43,42 @@ async function switchProject(page: Page, projectName: string) {
   await expect(getProjectSwitcher(page)).toContainText(projectName, {
     timeout: HYDRATION_TIMEOUT,
   });
+}
+
+/**
+ * Reads the logged-in client's active project and full project membership
+ * list -- the same source of truth the switcher UI itself renders from
+ * (`baiClient.current_group` / `baiClient.groups`), so assertions compare
+ * the UI against the account's real, current data instead of a guess.
+ *
+ * `current_group`/`groups` are not populated on the client immediately
+ * after navigation -- observed live to lag behind page hydration by a
+ * variable amount (not tied to any single visible element, so no ordinary
+ * `expect(...).toBeVisible()` elsewhere in a test reliably gates it). Poll
+ * until `groups` is actually populated instead of reading it once, which
+ * would otherwise intermittently observe an empty array.
+ *
+ * Note `groups` reflects real backend project membership only -- it does
+ * NOT include the "model-store" catalog entry the switcher also renders
+ * (confirmed live: `groups` stayed at the real memberships even once fully
+ * populated, while the dropdown additionally showed "model-store"). Callers
+ * that need to know about that entry should check the rendered dropdown
+ * directly rather than this list.
+ */
+async function getProjectMembership(
+  page: Page,
+): Promise<{ current: string; all: string[] }> {
+  await expect
+    .poll(
+      async () =>
+        ((await getClientProperty(page, 'groups')) as string[] | undefined)
+          ?.length ?? 0,
+      { timeout: HYDRATION_TIMEOUT },
+    )
+    .toBeGreaterThan(0);
+  const current = (await getClientProperty(page, 'current_group')) as string;
+  const all = (await getClientProperty(page, 'groups')) as string[];
+  return { current, all };
 }
 
 test.describe(
@@ -60,8 +112,10 @@ test.describe(
         // The switcher displays the static label "Project" above the current project name.
         await expect(page.getByText('Project', { exact: true })).toBeVisible();
 
-        // The current project name text matches the account's currently active project.
-        await expect(switcher).toContainText('RB테스트');
+        // The current project name text matches the account's actual active
+        // project, read from the client rather than assumed.
+        const { current } = await getProjectMembership(page);
+        await expect(switcher).toContainText(current);
 
         // A down-arrow icon is rendered next to the name, indicating it is a dropdown trigger.
         await expect(switcher.getByRole('img', { name: 'down' })).toBeVisible();
@@ -81,10 +135,11 @@ test.describe(
         const switcher = getProjectSwitcher(page);
         await expect(switcher).toBeVisible({ timeout: HYDRATION_TIMEOUT });
 
-        // The switcher renders identically to the admin case, showing the
-        // current project name - "default" for this user account, different
-        // from the admin account's default of "RB테스트".
-        await expect(switcher).toContainText('default');
+        // The switcher renders identically to the admin case, showing this
+        // account's actual current project (its own membership may differ
+        // from the admin account's).
+        const { current } = await getProjectMembership(page);
+        await expect(switcher).toContainText(current);
       });
     });
 
@@ -109,29 +164,38 @@ test.describe(
         const listbox = page.getByRole('listbox');
         await expect(listbox).toBeVisible();
 
-        // The dropdown opens showing option-group headers "Model Store" and "General".
-        await expect(listbox.getByText('Model Store')).toBeVisible();
-        await expect(listbox.getByText('General')).toBeVisible();
+        const { current, all } = await getProjectMembership(page);
 
-        // Under "Model Store": one option, model-store.
-        await expect(
-          listbox.getByRole('option', { name: 'model-store' }),
-        ).toBeVisible();
+        // Every project this account's own client state reports membership
+        // in appears in the dropdown -- not a guessed fixed set, since
+        // project membership is account/cluster-specific. (The dropdown may
+        // also show the system-level "model-store" catalog entry alongside
+        // these, which isn't real group membership -- checked separately
+        // below via the rendered content itself, not via `all`.)
+        for (const projectName of all) {
+          await expect(
+            listbox.getByRole('option', { name: projectName, exact: true }),
+          ).toBeVisible();
+        }
 
-        // Under "General": two options, RB테스트 and default; the currently
-        // active project (RB테스트) carries the selected state.
-        const rbTestOption = listbox.getByRole('option', { name: 'RB테스트' });
-        await expect(rbTestOption).toBeVisible();
-        await expect(rbTestOption).toHaveAttribute('aria-selected', 'true');
+        // The currently active project carries the selected state.
         await expect(
-          listbox.getByRole('option', { name: 'default' }),
-        ).toBeVisible();
+          listbox.getByRole('option', { name: current, exact: true }),
+        ).toHaveAttribute('aria-selected', 'true');
 
-        // The bai-test-* projects visible on the /project admin page are not
-        // in this list, since the admin account is not a member of them.
-        await expect(
-          listbox.getByRole('option', { name: /bai-test-/ }),
-        ).toHaveCount(0);
+        // If the "model-store" catalog entry is present, it renders under
+        // its own "Model Store" header, separate from the account's real
+        // memberships under "General".
+        const modelStoreOption = listbox.getByRole('option', {
+          name: 'model-store',
+          exact: true,
+        });
+        if ((await modelStoreOption.count()) > 0) {
+          await expect(listbox.getByText('Model Store')).toBeVisible();
+        }
+        if (all.length > 0) {
+          await expect(listbox.getByText('General')).toBeVisible();
+        }
 
         // A search input is present inside the combobox (it is filterable).
         await expect(
@@ -159,16 +223,35 @@ test.describe(
         const listbox = page.getByRole('listbox');
         await expect(listbox).toBeVisible();
 
-        // The dropdown opens showing a single option, "default", marked selected.
-        const defaultOption = listbox.getByRole('option', { name: 'default' });
-        await expect(defaultOption).toBeVisible();
-        await expect(defaultOption).toHaveAttribute('aria-selected', 'true');
-        await expect(listbox.getByRole('option')).toHaveCount(1);
+        const { current, all } = await getProjectMembership(page);
 
-        // No option-group header text is rendered - consistent with there
-        // being only one project to show (differs from the admin case).
-        await expect(listbox.getByText('Model Store')).not.toBeVisible();
-        await expect(listbox.getByText('General')).not.toBeVisible();
+        // This account's real memberships all appear, with the active one
+        // marked selected.
+        for (const projectName of all) {
+          await expect(
+            listbox.getByRole('option', { name: projectName, exact: true }),
+          ).toBeVisible();
+        }
+        const currentOption = listbox.getByRole('option', {
+          name: current,
+          exact: true,
+        });
+        await expect(currentOption).toHaveAttribute('aria-selected', 'true');
+
+        // When the account belongs to exactly one project AND the
+        // system-level "model-store" catalog entry isn't also shown, no
+        // group-header text is rendered (distinct from the multi-project
+        // admin case, which always shows headers) -- checked against the
+        // dropdown's actual content rather than assumed.
+        const modelStoreOption = listbox.getByRole('option', {
+          name: 'model-store',
+          exact: true,
+        });
+        const hasModelStore = (await modelStoreOption.count()) > 0;
+        if (all.length === 1 && !hasModelStore) {
+          await expect(listbox.getByText('Model Store')).not.toBeVisible();
+          await expect(listbox.getByText('General')).not.toBeVisible();
+        }
 
         // Close the dropdown without changing the selection.
         await page.keyboard.press('Escape');
@@ -186,69 +269,58 @@ test.describe(
           // 1. Login as admin and navigate to /data.
           await loginAsAdmin(page, request);
           await navigateTo(page, 'data');
-
-          // 2. Note the "Active N" folder count and row list (baseline: 3
-          // active folders, all User-type/personally owned, under "RB테스트").
-          const activeTabWithCount = (count: number) =>
-            page.getByRole('tab', { name: `Active ${count}`, exact: true });
-          await expect(activeTabWithCount(3)).toBeVisible({
+          await expect(page.getByRole('tab', { name: /^Active/ })).toBeVisible({
             timeout: HYDRATION_TIMEOUT,
           });
-          const personalFolderRow = page.getByRole('row', {
-            name: 'VFolder Identicon bai-quota-sanity-2',
-          });
-          await expect(personalFolderRow).toBeVisible();
 
           // Environment data gate (FR-3114): exercising the scope switch
-          // requires the admin account to belong to 2+ projects. Inspect the
-          // dropdown's option count and skip with an auditable reason if the
-          // precondition no longer holds on this cluster.
-          await getProjectSwitcher(page).click();
-          const projectOptionCount = await page
-            .getByRole('listbox')
-            .getByRole('option')
-            .count();
-          await page.keyboard.press('Escape');
+          // requires the admin account to belong to 2+ projects. Read the
+          // account's actual membership and skip with an auditable reason if
+          // the precondition doesn't hold on this cluster, rather than
+          // assuming a specific second project by name.
+          const { current: originalProject, all } =
+            await getProjectMembership(page);
+          const otherProject = all.find((name) => name !== originalProject);
           test.skip(
-            projectOptionCount < 2,
+            !otherProject,
             'Requires the admin account to belong to 2+ projects to exercise project switching (@requires-seeded-data)',
           );
 
-          // 3. Open the project switcher and select `default`.
-          await switchProject(page, 'default');
+          // 2. Note the folder names visible under the original project --
+          // whatever they actually are; this test does not assume any
+          // specific pre-existing folder name or count.
+          const readVisibleFolderNames = () =>
+            page
+              .getByRole('cell', { name: /VFolder Identicon/ })
+              .allTextContents();
+          const originalFolders = await readVisibleFolderNames();
 
-          // 4. Remain on /data (do not navigate away) and observe the folder
-          // list update: the Active count increases and a new Project-type
-          // folder (llama-server, owned by "Project user group / default") appears.
-          await expect(activeTabWithCount(4)).toBeVisible({
-            timeout: HYDRATION_TIMEOUT,
-          });
-          const projectFolderRow = page.getByRole('row', {
-            name: 'VFolder Identicon llama-server',
-          });
-          await expect(projectFolderRow).toBeVisible({
-            timeout: HYDRATION_TIMEOUT,
-          });
-          await expect(projectFolderRow.getByText('Project')).toBeVisible();
+          // 3. Open the project switcher and select the other project.
+          await switchProject(page, otherProject as string);
 
-          // The pre-existing User-type (personal) folder row remains visible
-          // and unchanged across the switch.
-          await expect(personalFolderRow).toBeVisible();
-
-          // The browser URL does not change during the switch - no navigation/reload.
+          // 4. Remain on /data (do not navigate away) and wait for the
+          // folder list to actually change -- the deterministic proof that
+          // the switch re-scoped the query, without needing to know what
+          // either project's real folder set is. A generous timeout: this
+          // refetch was directly observed live to take a few seconds, and
+          // longer still under concurrent worker load on the shared QA
+          // cluster (observed live as an occasional, transient cause of a
+          // tighter timeout here flaking), matching this file's convention
+          // elsewhere (HYDRATION_TIMEOUT) but with extra margin since this
+          // wait is for a full list refetch, not just a single element.
+          const SCOPE_CHANGE_TIMEOUT = 30_000;
+          await expect
+            .poll(readVisibleFolderNames, { timeout: SCOPE_CHANGE_TIMEOUT })
+            .not.toEqual(originalFolders);
           await expect(page).toHaveURL(/\/data$/);
 
-          // 5. Re-open the project switcher and switch back to `RB테스트`.
-          await switchProject(page, 'RB테스트');
+          // 5. Switch back to the original project.
+          await switchProject(page, originalProject);
 
-          // The folder list and count return to the step-2 baseline.
-          await expect(activeTabWithCount(3)).toBeVisible({
-            timeout: HYDRATION_TIMEOUT,
-          });
-          await expect(projectFolderRow).toBeHidden({
-            timeout: HYDRATION_TIMEOUT,
-          });
-          await expect(personalFolderRow).toBeVisible();
+          // The folder list returns to the step-2 baseline.
+          await expect
+            .poll(readVisibleFolderNames, { timeout: SCOPE_CHANGE_TIMEOUT })
+            .toEqual(originalFolders);
         },
       );
     });
@@ -261,32 +333,40 @@ test.describe(
         page,
         request,
       }) => {
-        // 1. Login as admin, land on `/start` (default project "RB테스트").
+        // 1. Login as admin, land on `/start`.
         await loginAsAdmin(page, request);
         await navigateTo(page, 'start');
         const switcher = getProjectSwitcher(page);
         await expect(switcher).toBeVisible({ timeout: HYDRATION_TIMEOUT });
-        await expect(switcher).toContainText('RB테스트');
 
-        // 2. Switch the project to `default` via the switcher.
-        await switchProject(page, 'default');
+        const { current: originalProject, all } =
+          await getProjectMembership(page);
+        const otherProject = all.find((name) => name !== originalProject);
+        test.skip(
+          !otherProject,
+          'Requires the admin account to belong to 2+ projects to exercise project switching',
+        );
+        await expect(switcher).toContainText(originalProject);
+
+        // 2. Switch the project to the other one via the switcher.
+        await switchProject(page, otherProject as string);
 
         // 3. Navigate to `/data` via a full route change, not just a
         // client-state update.
         await navigateTo(page, 'data');
 
         // 4. Inspect the project switcher's displayed value - it still shows
-        // `default`, so the selection is not reset by route changes within
-        // the same session.
+        // the switched-to project, so the selection is not reset by route
+        // changes within the same session.
         await expect(switcher).toBeVisible({ timeout: HYDRATION_TIMEOUT });
-        await expect(switcher).toContainText('default', {
+        await expect(switcher).toContainText(otherProject as string, {
           timeout: HYDRATION_TIMEOUT,
         });
 
-        // Restore the admin account's default project selection so this test
-        // does not leak state into a later run (the selection is account-
-        // scoped, not just per-tab).
-        await switchProject(page, 'RB테스트');
+        // Restore the admin account's original project selection so this
+        // test does not leak state into a later run (the selection is
+        // account-scoped, not just per-tab).
+        await switchProject(page, originalProject);
       });
     });
   },
