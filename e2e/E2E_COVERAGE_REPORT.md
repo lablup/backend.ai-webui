@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-07-07
+> **Last Updated:** 2026-07-09
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -48,7 +48,8 @@
 | Plugin System            | (config-based)                         |    12    |   12    | ✅ 100% |
 | RBAC Management          | `/rbac`                                |    22    |   21    | 🔶 95%  |
 | Auto Scaling Rule Preset | `/admin-serving?tab=auto-scaling-rule` |    33    |   32    | 🔶 97%  |
-| **Total**                |                                        | **452**  | **307** | **68%** |
+| Deployments              | `/deployments`, `/deployments/:id`     |    16    |   12    | 🔶 75%  |
+| **Total**                |                                        | **468**  | **319** | **68%** |
 
 ---
 
@@ -1104,6 +1105,57 @@
 
 ---
 
+### 30. Deployments (`/deployments`, `/deployments/:id`)
+
+**Test files:** [`e2e/serving/deployment-lifecycle.spec.ts`](serving/deployment-lifecycle.spec.ts), [`e2e/serving/deployment-access-token.spec.ts`](serving/deployment-access-token.spec.ts)
+
+**Requires:** Superadmin login; `deployment-preset` feature flag (manager ≥ 26.4.x) for the revision-attach and access-token tests (they skip with an auditable reason otherwise), plus at least one `bai/ngc-pytorch` or python image. No hand-seeded preset or folder is required — [`e2e/utils/deployment-fixtures.ts`](utils/deployment-fixtures.ts) self-provisions the preset (find-or-create) and model folder per run.
+**Primary action:** "Create Deployment" → detail page → "Add Revision" (`Preset` / `Advanced` mode)
+
+#### List Page
+
+| Feature                                                                   | Status | Test                                                                     |
+| ------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------ |
+| List columns, Running/Terminated toggle, reload & Create controls         | ✅     | `Admin can view the deployments list with expected columns and controls` |
+| Create deployment (defaults, auto-redirect) + typed-name permanent delete | ✅     | `Admin can create a new deployment and permanently delete it`            |
+
+#### Detail Page
+
+| Feature                                                                                                            | Status | Test                                                                                          |
+| ------------------------------------------------------------------------------------------------------------------ | ------ | --------------------------------------------------------------------------------------------- |
+| Basic Information card, revision tabs, Replicas / Auto-scaling sections, Access Tokens disabled without a revision | ✅     | `Admin can view the Basic Information and empty-state sections of a newly created deployment` |
+| Edit deployment — Desired Replicas save persists; Cancel does not                                                  | ✅     | `Admin can update a deployment's Desired Replicas via the Edit modal`                         |
+| Revision History tab — URL tab param, filter, table structure, empty state                                         | ✅     | `Admin can view the Revision History tab structure`                                           |
+
+#### Add Revision Modal
+
+| Feature                                                        | Status | Test                                                                  |
+| -------------------------------------------------------------- | ------ | --------------------------------------------------------------------- |
+| Preset Mode field set renders                                  | ✅     | `Admin can view Preset Mode fields in the Add Revision modal`         |
+| Advanced Mode field set renders                                | ✅     | `Admin can view Advanced Mode fields in the Add Revision modal`       |
+| Add revision in Preset Mode (found-or-created preset + folder) | ✅     | `Admin can add a revision in Preset Mode and see it attached`         |
+| Add revision manually in Advanced Mode (no preset)             | ✅     | `Admin can add a revision manually in Advanced Mode without a preset` |
+
+#### Auto-scaling
+
+| Feature                                           | Status | Test                                                    |
+| ------------------------------------------------- | ------ | ------------------------------------------------------- |
+| Add Auto Scaling Rule modal field set renders     | ✅     | `Admin can view the Add Auto Scaling Rule modal fields` |
+| Create + delete an auto-scaling rule (`cpu_util`) | ✅     | `Admin can create and then delete an auto-scaling rule` |
+
+#### Access Tokens
+
+| Feature                                                                            | Status | Test                                                                                                                     |
+| ---------------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------ |
+| Create Access Token disabled without a revision → enabled after one → token issued | ✅     | `Admin can issue an access token after adding a revision to a deployment`                                                |
+| Issued token appears as a table row / revoke                                       | ❌     | Deferred — list-refresh is non-deterministic while the deployment is still Deploying; belongs to backend-surface testing |
+| Replica scheduling completion (Lifecycle leaves Pending → replica scheduled)       | ❌     | Deferred — measured ~40s–20min+ on the shared cluster; out of scope for webui e2e                                        |
+| Revision rollback / promote from Revision History                                  | ❌     | -                                                                                                                        |
+
+**Coverage: 🔶 12/16 features (4 deferred to backend-surface testing or future work)**
+
+---
+
 ## Visual Regression Tests
 
 Visual regression tests exist for most pages but only capture screenshots, not functional behavior.
@@ -1220,6 +1272,7 @@ To efficiently build new E2E tests, these POMs should be created:
 | `/serving/:serviceId`                  |        🔶        |      ❌      |    P3    |
 | `/service/start`                       |        ❌        |      ❌      |  **P1**  |
 | `/service/update/:endpointId`          |        ❌        |      ❌      |    P3    |
+| `/deployments`, `/deployments/:id`     |        🔶        |      ❌      |    -     |
 | `/data`                                |        🔶        |      ✅      |    P2    |
 | `/model-store`                         |        ❌        |      ❌      |    P3    |
 | `/storage-settings/:hostname`          |        ❌        |      ❌      |    P3    |

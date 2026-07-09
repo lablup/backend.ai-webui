@@ -159,3 +159,97 @@ export async function sweepProfileTestUsersViaApi(
   }
   return purged;
 }
+
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/**
+ * Strawberry Node ids are base64 `TypeName:<uuid>` global ids, but
+ * `deleteModelDeployment`'s input takes the raw UUID (the same decode
+ * documented on `toRawUUID` in deployment-fixtures.ts — duplicated here
+ * rather than imported so this foundational, dependency-free module doesn't
+ * take on a dependency on a higher-level fixture module).
+ */
+function toRawUUID(id: string): string {
+  if (UUID_RE.test(id)) return id;
+  const decoded = Buffer.from(id, 'base64').toString('utf-8');
+  const raw = decoded.split(':').pop() ?? '';
+  if (!UUID_RE.test(raw)) {
+    throw new Error(`Cannot extract a raw UUID from id "${id}" ("${decoded}")`);
+  }
+  return raw;
+}
+
+/**
+ * Lists every deployment whose display name matches `pattern`. `limit: 300`
+ * comfortably covers realistic leak volumes without needing offset
+ * pagination.
+ */
+export async function listDeploymentsByPattern(
+  api: APIRequestContext,
+  pattern: RegExp,
+): Promise<Array<{ id: string; name: string }>> {
+  const data = await gqlAdmin<{
+    adminDeployments: {
+      edges: Array<{ node: { id: string; metadata: { name: string } } }>;
+    };
+  }>(
+    api,
+    `query { adminDeployments(limit: 300) { edges { node { id metadata { name } } } } }`,
+  );
+  return (data.adminDeployments?.edges ?? [])
+    .map((e) => ({ id: e.node.id, name: e.node.metadata.name }))
+    .filter((d) => pattern.test(d.name));
+}
+
+/**
+ * Deletes a single deployment by its (possibly base64 global) id via
+ * `deleteModelDeployment`. This is a soft-delete on the manager side (status
+ * transitions to STOPPED), so it is safe to call even on an
+ * already-terminated deployment. Defensive: swallows a GraphQL error and
+ * returns `false` rather than throwing, so one bad id never blocks the rest
+ * of a sweep.
+ */
+export async function deleteDeploymentViaApi(
+  api: APIRequestContext,
+  id: string,
+): Promise<boolean> {
+  try {
+    await gqlAdmin(
+      api,
+      `mutation($id: ID!) { deleteModelDeployment(input: { id: $id }) { id } }`,
+      { id: toRawUUID(id) },
+    );
+    return true;
+  } catch (error) {
+    console.warn(`[admin-api] could not delete deployment id=${id}:`, error);
+    return false;
+  }
+}
+
+/**
+ * Sweep-deletes every deployment whose display name matches `pattern` — by
+ * default the `e2e-plan-*` / `e2e-token-*` shells the deployment specs
+ * create (deployment-lifecycle.spec.ts / deployment-access-token.spec.ts).
+ * These names are NOT covered by sweepServices'/sweepVFolders' `/e2e-svc-/`
+ * `/e2e-mod-/` patterns in global-cleanup.teardown.ts, and the per-test
+ * `cleanupDeploymentSafely` (a UI-delete flow, same fragility as the test
+ * body it backstops) can itself fail when a test already failed mid-modal —
+ * leaking a PENDING deployment with no other safety net. API-based and
+ * pagination-immune for the same reason `sweepProfileTestUsersViaApi` is.
+ * Returns the number of deployments deleted.
+ */
+export async function sweepLeftoverDeploymentsViaApi(
+  api: APIRequestContext,
+  pattern: RegExp = /^e2e-(plan|token)-/i,
+): Promise<number> {
+  const matches = await listDeploymentsByPattern(api, pattern);
+  let deleted = 0;
+  for (const { id } of matches) {
+    if (await deleteDeploymentViaApi(api, id)) deleted++;
+  }
+  if (deleted > 0) {
+    console.log(`Swept ${deleted} leftover deployment(s) matching ${pattern}`);
+  }
+  return deleted;
+}

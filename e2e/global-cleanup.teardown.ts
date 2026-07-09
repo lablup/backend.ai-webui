@@ -22,11 +22,16 @@
  * dot-prefixed auto-mount folder, etc.). Broad matching is safe HERE — unlike in
  * a per-test `sweepVFolders` call — because the teardown runs after every other
  * project has finished, so no parallel test owns a live `e2e-*` folder.
+ *
+ * It also purges any leftover `e2e-*` fixture user and `e2e-plan-*` /
+ * `e2e-token-*` deployment via the admin GraphQL API (no browser UI involved),
+ * so those sweeps cannot fail the same way a per-test UI-based cleanup can.
  */
 import {
   createAdminApiContext,
   listUsersByPattern,
   purgeUserViaApi,
+  sweepLeftoverDeploymentsViaApi,
 } from './utils/admin-api';
 import { sweepServices, sweepVFolders } from './utils/cleanup-util';
 import { loginAsAdmin, loginAsUser } from './utils/test-util';
@@ -63,6 +68,28 @@ async function sweepLeftoverE2EUsers(): Promise<void> {
     if (purged > 0) {
       console.log(`[global-cleanup] purged ${purged} leftover e2e-* user(s).`);
     }
+  } finally {
+    await api.dispose();
+  }
+}
+
+/**
+ * Belt-and-suspenders deployment sweep. deployment-lifecycle.spec.ts and
+ * deployment-access-token.spec.ts name their throwaway shells `e2e-plan-*` /
+ * `e2e-token-*`, which neither sweepServices' `/e2e-svc-/` nor sweepVFolders'
+ * `/e2e-/` folder pattern matches — deployments were the one e2e-provisioned
+ * resource this teardown didn't cover. Each spec's own `cleanupDeploymentSafely`
+ * (a UI-delete flow) is the primary cleanup path, but it can fail for the same
+ * reason the test body already failed (e.g. mid-modal, a stuck locator),
+ * leaking a `PENDING` deployment with no other backstop. This purges any
+ * leftover via the admin GraphQL API instead of the UI, so it cannot fail the
+ * same way. API-based, so it does not use `page`; guard it directly (like
+ * sweepLeftoverE2EUsers) so a failure never reds the run.
+ */
+async function sweepLeftoverDeployments(): Promise<void> {
+  const api = await createAdminApiContext();
+  try {
+    await sweepLeftoverDeploymentsViaApi(api);
   } finally {
     await api.dispose();
   }
@@ -118,6 +145,17 @@ test.describe('Global e2e cleanup', () => {
       await sweepLeftoverE2EUsers();
     } catch (error) {
       console.warn('[global-cleanup] user sweep failed (ignored):', error);
+    }
+    // Purge any e2e-plan-*/e2e-token-* deployment a per-spec afterEach failed
+    // to reap. API-based, so it does not use `page`; guard it directly so a
+    // failure never reds the run.
+    try {
+      await sweepLeftoverDeployments();
+    } catch (error) {
+      console.warn(
+        '[global-cleanup] deployment sweep failed (ignored):',
+        error,
+      );
     }
   });
 });

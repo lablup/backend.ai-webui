@@ -77,7 +77,12 @@ export class FolderCreationModal {
     const RadioContainer = this.modal.locator(
       `.ant-form-item-row:has-text("${label}")`,
     );
-    await expect(RadioContainer).toBeVisible();
+    // The modal shell becomes visible before its form body finishes
+    // mounting, and on a busy shared cluster that hydration was directly
+    // observed to exceed the 5s default expect timeout — give the first
+    // form-row lookup the same generous margin the deployment/session specs
+    // use for form hydration.
+    await expect(RadioContainer).toBeVisible({ timeout: 20000 });
     return RadioContainer;
   }
 
