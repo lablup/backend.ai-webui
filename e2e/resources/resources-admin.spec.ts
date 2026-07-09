@@ -13,7 +13,7 @@ import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import { test, expect } from '@playwright/test';
 
 // The Resources and Scheduler routes render inside the "Admin Settings"
-// nested layout, which is consistently slow to hydrate on the shared QA264
+// nested layout, which is consistently slow to hydrate on the shared QA
 // cluster (confirmed live, and matches e2e/crawl/route-crawl.spec.ts's
 // SLOW_LANDMARK_TIMEOUT for these exact two routes) -- a bare 5s default
 // `expect` times out flakily on the first landmark of each route, so the
