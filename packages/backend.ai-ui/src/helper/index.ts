@@ -1,7 +1,31 @@
 import { theme } from 'antd';
+import type { DefaultOptionType } from 'antd/es/select';
 import { SorterResult } from 'antd/es/table/interface';
 import Big from 'big.js';
 import * as _ from 'lodash-es';
+
+/**
+ * Group deployment-preset options by runtime variant for a `Select`. Renders a
+ * flat list when only one variant is present, otherwise an optgroup per variant
+ * (the group label falls back to the raw variant id when the joined runtime
+ * variant name is missing, e.g. the variant row was deleted). Used by
+ * `BAIAvailablePresetSelect`.
+ */
+export interface RuntimeVariantOption extends DefaultOptionType {
+  runtimeVariantId?: string | null;
+  runtimeVariantName?: string | null;
+}
+export function groupOptionsByRuntimeVariant<T extends RuntimeVariantOption>(
+  options: T[],
+): Array<T | DefaultOptionType> {
+  const grouped = _.groupBy(options, 'runtimeVariantId');
+  const variantIds = Object.keys(grouped);
+  if (variantIds.length <= 1) return options;
+  return variantIds.map((variantId) => ({
+    label: grouped[variantId][0]?.runtimeVariantName ?? variantId,
+    options: grouped[variantId],
+  }));
+}
 
 export function transformSorterToOrderString<T = any>(
   sorter: SorterResult<T> | Array<SorterResult<T>>,

@@ -1,6 +1,11 @@
+import { BAIAvailablePresetSelectCardScopedQuery } from '../../__generated__/BAIAvailablePresetSelectCardScopedQuery.graphql';
 import { BAIAvailablePresetSelectPaginatedQuery } from '../../__generated__/BAIAvailablePresetSelectPaginatedQuery.graphql';
 import { BAIAvailablePresetSelectValueQuery } from '../../__generated__/BAIAvailablePresetSelectValueQuery.graphql';
-import { convertToUUID, toLocalId } from '../../helper';
+import {
+  convertToUUID,
+  groupOptionsByRuntimeVariant,
+  toLocalId,
+} from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useFetchKey } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
@@ -39,12 +44,21 @@ export interface BAIAvailablePresetSelectProps extends Omit<
   'options' | 'labelInValue' | 'ref'
 > {
   runtimeVariantId?: string;
+  /**
+   * When set, scope the options to the presets a specific model card is
+   * resource-compatible with, via the top-level `modelCardAvailablePresets`
+   * query (Added in 26.4.2) — the same server-filtered subset a model card
+   * deploys against. When omitted, the options are the project-wide
+   * `deploymentRevisionPresets` list. Pass a raw model-card UUID (local id).
+   */
+  modelCardId?: string;
   ref?: React.Ref<BAIAvailablePresetSelectRef>;
 }
 
 const BAIAvailablePresetSelect: React.FC<BAIAvailablePresetSelectProps> = ({
   loading,
   runtimeVariantId,
+  modelCardId,
   ref,
   ...selectProps
 }) => {
@@ -142,54 +156,122 @@ const BAIAvailablePresetSelect: React.FC<BAIAvailablePresetSelectProps> = ({
         }
       : null;
 
-  const { paginationData, result, loadNext, isLoadingNext } =
-    useLazyPaginatedQuery<
-      BAIAvailablePresetSelectPaginatedQuery,
-      DeploymentRevisionPresetNode
-    >(
-      graphql`
-        query BAIAvailablePresetSelectPaginatedQuery(
-          $offset: Int!
-          $limit: Int!
-          $filter: DeploymentRevisionPresetFilter
+  // The preset list has two mutually-exclusive sources, each its own
+  // self-fetching paginated query: the project-wide `deploymentRevisionPresets`
+  // (default) and, when a model card is selected, its resource-compatible
+  // subset via `modelCardAvailablePresets`. Only the active source runs on the
+  // network; the other stays `store-only` so its query never fires — the same
+  // gating `ModelCardSelect` uses to keep an unscoped `projectId` off the wire.
+  const isCardScoped = !!modelCardId;
+
+  const projectScopedPresets = useLazyPaginatedQuery<
+    BAIAvailablePresetSelectPaginatedQuery,
+    DeploymentRevisionPresetNode
+  >(
+    graphql`
+      query BAIAvailablePresetSelectPaginatedQuery(
+        $offset: Int!
+        $limit: Int!
+        $filter: DeploymentRevisionPresetFilter
+      ) {
+        deploymentRevisionPresets(
+          offset: $offset
+          limit: $limit
+          filter: $filter
+          orderBy: [{ field: RANK, direction: "ASC" }]
         ) {
-          deploymentRevisionPresets(
-            offset: $offset
-            limit: $limit
-            filter: $filter
-            orderBy: [{ field: RANK, direction: "ASC" }]
-          ) {
-            count
-            edges {
-              node {
-                id
+          count
+          edges {
+            node {
+              id
+              name
+              description
+              rank
+              runtimeVariantId
+              runtimeVariant {
                 name
-                description
-                rank
-                runtimeVariantId
-                runtimeVariant {
-                  name
-                }
               }
             }
           }
         }
-      `,
-      { limit: 10 },
-      {
-        filter: mergedFilter,
-      },
-      {
-        fetchPolicy: deferredOpen ? 'network-only' : 'store-only',
-        fetchKey: deferredFetchKey,
-      },
-      {
-        getTotal: (r) => r.deploymentRevisionPresets?.count ?? undefined,
-        getItem: (r) =>
-          r.deploymentRevisionPresets?.edges?.map((edge) => edge?.node),
-        getId: (item) => item?.id,
-      },
-    );
+      }
+    `,
+    { limit: 10 },
+    {
+      filter: mergedFilter,
+    },
+    {
+      fetchPolicy: !isCardScoped && deferredOpen ? 'network-only' : 'store-only',
+      fetchKey: deferredFetchKey,
+    },
+    {
+      getTotal: (r) => r.deploymentRevisionPresets?.count ?? undefined,
+      getItem: (r) =>
+        r.deploymentRevisionPresets?.edges?.map((edge) => edge?.node),
+      getId: (item) => item?.id,
+    },
+  );
+
+  const cardScopedPresets = useLazyPaginatedQuery<
+    BAIAvailablePresetSelectCardScopedQuery,
+    DeploymentRevisionPresetNode
+  >(
+    graphql`
+      query BAIAvailablePresetSelectCardScopedQuery(
+        $offset: Int!
+        $limit: Int!
+        $filter: DeploymentRevisionPresetFilter
+        $scope: ModelCardAvailablePresetsScope!
+      ) {
+        modelCardAvailablePresets(
+          scope: $scope
+          offset: $offset
+          limit: $limit
+          filter: $filter
+          orderBy: [{ field: RANK, direction: "ASC" }]
+        ) {
+          count
+          edges {
+            node {
+              id
+              name
+              description
+              rank
+              runtimeVariantId
+              runtimeVariant {
+                name
+              }
+            }
+          }
+        }
+      }
+    `,
+    { limit: 10 },
+    {
+      filter: mergedFilter,
+      // `modelCardId ?? ''` is only ever an empty string when this query is
+      // `store-only` (no card selected), so the empty value never reaches the
+      // server for coercion.
+      scope: { modelCardId: modelCardId ? convertToUUID(modelCardId) : '' },
+    },
+    {
+      fetchPolicy: isCardScoped && deferredOpen ? 'network-only' : 'store-only',
+      fetchKey: deferredFetchKey,
+    },
+    {
+      getTotal: (r) => r.modelCardAvailablePresets?.count ?? undefined,
+      getItem: (r) =>
+        r.modelCardAvailablePresets?.edges?.map((edge) => edge?.node),
+      getId: (item) => item?.id,
+    },
+  );
+
+  const { paginationData, loadNext, isLoadingNext } = isCardScoped
+    ? cardScopedPresets
+    : projectScopedPresets;
+  const activePresetConnection = isCardScoped
+    ? cardScopedPresets.result.modelCardAvailablePresets
+    : projectScopedPresets.result.deploymentRevisionPresets;
 
   // Expose refetch function through ref
   useImperativeHandle(
@@ -223,23 +305,9 @@ const BAIAvailablePresetSelect: React.FC<BAIAvailablePresetSelectProps> = ({
     }),
   );
 
-  // Group options by runtime variant. When only one variant is present in the
-  // current page we render a flat list — otherwise an optgroup per variant.
-  const grouped = _.groupBy(flatOptions, 'runtimeVariantId');
-  const variantIds = Object.keys(grouped);
-  const availableOptions: DefaultOptionType[] =
-    variantIds.length <= 1
-      ? flatOptions
-      : variantIds.map((variantId) => {
-          const group = grouped[variantId];
-          // Fall back to the variant id when the joined `runtimeVariant` is
-          // missing (e.g., the variant row was deleted).
-          const variantLabel = group[0]?.runtimeVariantName ?? variantId;
-          return {
-            label: variantLabel,
-            options: group,
-          };
-        });
+  // Group options by runtime variant (flat when only one variant is present,
+  // otherwise an optgroup per variant).
+  const availableOptions = groupOptionsByRuntimeVariant(flatOptions);
 
   // Whether the underlying Select is multi-select. In single mode antd's
   // `labelInValue` expects a single `{label, value}` object, not an array;
@@ -354,11 +422,11 @@ const BAIAvailablePresetSelect: React.FC<BAIAvailablePresetSelectProps> = ({
         ) : undefined
       }
       footer={
-        _.isNumber(result.deploymentRevisionPresets?.count) &&
-        result.deploymentRevisionPresets.count > 0 ? (
+        _.isNumber(activePresetConnection?.count) &&
+        activePresetConnection.count > 0 ? (
           <TotalFooter
             loading={isLoadingNext}
-            total={result.deploymentRevisionPresets.count}
+            total={activePresetConnection.count}
           />
         ) : undefined
       }
