@@ -11,7 +11,14 @@
  *
  * FR-3310 completion on top of the FR-3309 skeleton:
  *  - multi-signal v2 anchors (selector + data-testid + text snippet +
- *    bbox-fraction rect), backward-compatible with v1 fragments
+ *    bbox-fraction rect), backward-compatible with v1 fragments.
+ *    Spec §7 deviation (conscious): the 4th signal — screenshot crop — is
+ *    NOT part of the anchor payload. The anchor rides a URL hash fragment
+ *    inside the Teams message, so even a tiny thumbnail would blow the
+ *    deep-link far past practical URL/message limits, and in-browser
+ *    crop-matching would need CV we don't have. The full element screenshot
+ *    is instead attached to the Teams reply itself (hostedContents), which
+ *    covers the crop's human-disambiguation role.
  *  - element screenshots (vendored SVG-foreignObject capture — this file is
  *    served raw outside the Vite module graph, so no npm imports; approach
  *    follows html-to-image's foreignObject technique, MIT)
@@ -123,11 +130,17 @@
     return b64encode(JSON.stringify(anchor));
   }
 
+  // anchor.p feeds location.assign(); a decoded reply is teammate-authored
+  // content, so only accept a /-rooted, non-protocol-relative path — never
+  // an absolute/off-origin URL.
+  const isSafePath = (p) => typeof p === 'string' && /^\/(?!\/)/.test(p);
+
   /** Accepts v1 ({s: string}) and v2 ({s: string|null}) payloads. */
   function decodeAnchor(b64) {
     try {
       const obj = JSON.parse(b64decode(b64));
       if (!obj || typeof obj !== 'object') return null;
+      if (obj.p != null && !isSafePath(obj.p)) return null;
       if ((obj.v || 1) >= 2) {
         return typeof obj.s === 'string' || obj.s === null ? obj : null;
       }
@@ -148,9 +161,36 @@
     return t.includes(txt) || txt.includes(t.slice(0, 64));
   };
 
+  // anchor.tag comes from a decoded (teammate-authored) reply — only use it
+  // as a selector when it looks like a real tag name, else scan everything.
+  const safeTag = (tag) => (/^[a-z][a-z0-9-]*$/.test(tag || '') ? tag : '*');
+
   /**
-   * Cheap signal check (selector → unique testid). Used by render-time
-   * classification and pin repositioning — no expensive text scan here.
+   * Percentage-rect signal (spec §7, 3rd signal): project the stored
+   * fractional rect onto the landmark container's current bbox and hit-test
+   * the element at its center. Best-effort — the projected point must be in
+   * the viewport (elementFromPoint constraint) and the hit must live inside
+   * the container; otherwise fall back to the container itself.
+   */
+  function rectProjectedTarget(container, anchor) {
+    const r = anchor.rect;
+    if (!r) return null;
+    const cr = container.getBoundingClientRect();
+    if (!cr.width || !cr.height) return null;
+    const cx = cr.left + (r.x + (r.w || 0) / 2) * cr.width;
+    const cy = cr.top + (r.y + (r.h || 0) / 2) * cr.height;
+    if (cx < 0 || cy < 0 || cx >= window.innerWidth || cy >= window.innerHeight)
+      return null;
+    const hit = document.elementFromPoint(cx, cy);
+    if (!hit || hit === host || host.contains(hit) || !container.contains(hit))
+      return null;
+    return hit;
+  }
+
+  /**
+   * Cheap signal check (selector → unique testid + fractional-rect
+   * projection). Used by render-time classification and pin repositioning —
+   * no expensive text scan here.
    */
   function quickFindTarget(anchor) {
     if (!anchor || typeof anchor.s !== 'string') return null;
@@ -166,9 +206,9 @@
       );
       if (byTid.length === 1) {
         const container = byTid[0];
-        if (!anchor.rect && textMatches(container, anchor.txt))
-          return container;
-        return container; // approximate: the landmark container itself
+        // Project the stored fractional rect inside the landmark when
+        // present; otherwise the container itself is the (approximate) hit.
+        return rectProjectedTarget(container, anchor) || container;
       }
     }
     return null;
@@ -177,7 +217,8 @@
   /**
    * Full multi-signal resolution, in priority order:
    *  1. exact selector (validated against the text snippet when present)
-   *  2. unique data-testid landmark (descendant text scan inside it)
+   *  2. unique data-testid landmark (descendant text scan inside it, then
+   *     fractional-rect projection)
    *  3. document-wide text scan over anchor.tag elements (smallest match)
    *  4. unvalidated selector hit as a last resort
    */
@@ -195,7 +236,7 @@
     }
     const scanScope = (scope) => {
       if (!anchor.txt) return null;
-      const cands = scope.querySelectorAll(anchor.tag || '*');
+      const cands = scope.querySelectorAll(safeTag(anchor.tag));
       let best = null;
       for (let i = 0; i < cands.length && i < 5000; i++) {
         const c = cands[i];
@@ -213,6 +254,8 @@
         const container = byTid[0];
         const inner = scanScope(container);
         if (inner) return inner;
+        const projected = rectProjectedTarget(container, anchor);
+        if (projected) return projected;
         if (textMatches(container, anchor.txt)) return container;
       }
     }
@@ -887,6 +930,10 @@
         pageBtn.title = '이 코멘트의 페이지로 이동';
         pageBtn.addEventListener('click', () => {
           if (anchor.p && anchor.p !== location.pathname) {
+            if (!isSafePath(anchor.p)) {
+              showToast('이 코멘트의 페이지 경로가 올바르지 않아요');
+              return;
+            }
             location.assign(`${anchor.p}#${HASH_KEY}=${anchorKey}`);
           } else {
             showToast('이 페이지 전체에 대한 코멘트예요');
@@ -1044,6 +1091,10 @@
 
   function resolveAnchor(anchor, anchorKey, attempt = 0) {
     if (anchor.p && anchor.p !== location.pathname && attempt === 0) {
+      if (!isSafePath(anchor.p)) {
+        showToast('이 코멘트의 페이지 경로가 올바르지 않아요');
+        return;
+      }
       // Cross-page anchor: navigate there with the fragment; the deep-link
       // boot resolves it after the (full) load.
       showToast(`다른 페이지의 코멘트예요 — 이동합니다: ${anchor.p}`);
