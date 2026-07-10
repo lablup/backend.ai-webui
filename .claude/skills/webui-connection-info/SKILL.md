@@ -17,13 +17,22 @@ The WebUI dev server runs under [Portless](https://github.com/vercel-labs/portle
 - Branch contains an `FR-XXXX` token → `http://fr-XXXX.localhost:1355` (e.g. `04-24-feat_fr-2701_...` → `fr-2701.localhost`).
 - Otherwise → `<branch>.<project>.localhost:1355` (Portless's default `run` form).
 
-To find the actual URL for a running instance, run `portless list` or check the `pnpm run dev` terminal output.
+**Never assume port `1355`**: when another Portless daemon is already bound there (another Claude session / worktree), the server lands on 1356, 1357, … — always confirm the real port from one of the sources below.
+
+To find the actual URL for a running instance, check these sources in order:
+
+1. **The team dev-server registry** (fw plugin `dev-server-registry` skill, when installed) — the richest source: its `query <PR>` op scans the merged shards (`registry/boxes/*.json` in lablup/frontend-board) and returns, per server, the dev URL with the *real* port, the branch/PR/Jira key it serves, the backend endpoint + login it was booted with, and which box runs it. The team board (each member's own local app at `http://localhost:7777`, `?pr=<N>` deep links) renders the same data. Registry entries carry per-session metadata that `portless list` lacks — prefer them when both exist, and cross-check that the entry's branch/PR matches what you're testing (an entry may be stale until its box re-registers).
+2. `portless list` — live routes on this box.
+3. The `pnpm run dev` terminal output — Portless prints the full URL on startup.
 
 If no dev server is running, tell the user to start it with `pnpm run dev` (requires Portless: `npm install -g portless`).
 
 ## API Endpoint & Credentials
 
-Read `e2e/envs/.env.playwright` to get the current server endpoint and login credentials.
+Two sources, in order:
+
+1. **The dev-server registry entry** (source 1 above), when this box or a teammate's box registered the server: its `backend.endpoint` and `backend.login` are exactly what the running dev server was booted against — no guessing.
+2. Read `e2e/envs/.env.playwright` to get the current server endpoint and login credentials.
 
 Key variables:
 - `E2E_WEBSERVER_ENDPOINT` — Backend.AI API server URL
