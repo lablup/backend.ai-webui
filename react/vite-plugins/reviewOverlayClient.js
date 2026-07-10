@@ -61,7 +61,9 @@
   }
 
   function encodeAnchor(selector) {
-    return b64encode(JSON.stringify({ v: 1, s: selector, p: location.pathname }));
+    return b64encode(
+      JSON.stringify({ v: 1, s: selector, p: location.pathname }),
+    );
   }
 
   function decodeAnchor(b64) {
@@ -73,19 +75,9 @@
     }
   }
 
-  function buildDeepLink(selector) {
-    return (
-      location.origin +
-      location.pathname +
-      location.search +
-      `#${HASH_KEY}=` +
-      encodeAnchor(selector)
-    );
-  }
-
-  function anchorFromText(text) {
+  function anchorKeyFromText(text) {
     const m = /#bai-review=([A-Za-z0-9+/=_-]+)/.exec(text || '');
-    return m ? decodeAnchor(m[1]) : null;
+    return m ? m[1] : null;
   }
 
   // ---------------------------------------------------------------- host UI
@@ -152,7 +144,7 @@
       margin: -11px 0 0 -11px; border-radius: 50% 50% 50% 0;
       transform: rotate(-45deg); background: #ff7a00; color: #fff;
       display: flex; align-items: center; justify-content: center;
-      font-size: 11px; font-weight: 700; cursor: default;
+      font-size: 11px; font-weight: 700; cursor: default; pointer-events: auto;
       box-shadow: 0 1px 4px rgba(0,0,0,.35);
     }
     .pin > span { transform: rotate(45deg); }
@@ -174,7 +166,6 @@
       font-size: 12px; padding: 8px 14px; border-radius: 16px; display: none;
       max-width: 70vw;
     }
-    .flash { outline: 3px solid #ff7a00 !important; outline-offset: 2px; }
   `;
   root.appendChild(style);
 
@@ -240,25 +231,62 @@
   // ---------------------------------------------------------------- pins
 
   let pinSeq = 0;
-  function dropPin(target) {
+  function dropPin(target, anchorKey) {
     const rect = target.getBoundingClientRect();
     const pin = el('div', 'pin');
     pin.append(el('span', '', String(++pinSeq)));
     pin.style.left = `${rect.left + window.scrollX + 6}px`;
     pin.style.top = `${rect.top + window.scrollY + 6}px`;
     pinLayer.appendChild(pin);
+    if (anchorKey) linkPin(pin, anchorKey);
     return pin;
   }
 
+  /** pin→message: clicking a linked pin reveals its reply in the panel. */
+  function linkPin(pin, anchorKey) {
+    if (pin.dataset.anchorKey) return;
+    pin.dataset.anchorKey = anchorKey;
+    pin.style.cursor = 'pointer';
+    pin.title = '이 핀의 코멘트 보기';
+    pin.addEventListener('click', () => revealReply(anchorKey));
+  }
+
+  function revealReply(anchorKey) {
+    if (!panel.classList.contains('open')) {
+      openPanel();
+      toggle.classList.add('active');
+    }
+    const item = repliesBox.querySelector(
+      `.reply[data-anchor-key="${anchorKey}"]`,
+    );
+    if (item) {
+      item.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      flash(item);
+    } else {
+      showToast('해당 코멘트를 아직 불러오지 못했어요');
+    }
+  }
+
+  // `.flash`-style class rules in the shadow-root <style> cannot style
+  // light-DOM host-app elements, so highlight via inline styles instead.
   function flash(target) {
-    target.classList.add('flash');
-    setTimeout(() => target.classList.remove('flash'), 2400);
+    const prev = {
+      outline: target.style.outline,
+      outlineOffset: target.style.outlineOffset,
+    };
+    target.style.outline = '3px solid #ff7a00';
+    target.style.outlineOffset = '2px';
+    setTimeout(() => {
+      target.style.outline = prev.outline;
+      target.style.outlineOffset = prev.outlineOffset;
+    }, 2400);
   }
 
   // ---------------------------------------------------------------- picking
 
   let picking = false;
   let pickTarget = null;
+  let pickPin = null; // pin dropped at pick time, linked to its reply on send
 
   function isOwn(evt) {
     return evt.composedPath().includes(host);
@@ -289,7 +317,7 @@
     if (!(t instanceof Element)) return;
     stopPicking();
     pickTarget = t;
-    dropPin(t);
+    pickPin = dropPin(t);
     openCompose(evt.clientX, evt.clientY);
   }
 
@@ -332,6 +360,7 @@
   function closeCompose() {
     compose.style.display = 'none';
     pickTarget = null;
+    pickPin = null;
   }
 
   compose.addEventListener('click', async (evt) => {
@@ -347,7 +376,13 @@
         return;
       }
       const selector = pickTarget ? buildSelector(pickTarget) : null;
-      const deepLink = selector ? buildDeepLink(selector) : undefined;
+      const anchorKey = selector ? encodeAnchor(selector) : null;
+      const deepLink = anchorKey
+        ? location.origin +
+          location.pathname +
+          location.search +
+          `#${HASH_KEY}=${anchorKey}`
+        : undefined;
       evt.target.disabled = true;
       try {
         const res = await fetch(`${RELAY}/api/teams/reply`, {
@@ -363,10 +398,12 @@
         }
         const data = await res.json().catch(() => ({}));
         if (!res.ok) {
-          composeErr.textContent = data.error || `릴레이 오류 (HTTP ${res.status})`;
+          composeErr.textContent =
+            data.error || `릴레이 오류 (HTTP ${res.status})`;
           composeErr.style.display = 'block';
           return;
         }
+        if (pickPin && anchorKey) linkPin(pickPin, anchorKey);
         closeCompose();
         showToast('Teams 스레드에 전송됐어요 ✅');
         pollReplies();
@@ -397,13 +434,19 @@
       const author = el('span', 'author');
       author.textContent = r.author || '(unknown)';
       const when = el('span');
-      when.textContent = (r.createdDateTime || '').replace('T', ' ').slice(0, 16);
+      when.textContent = (r.createdDateTime || '')
+        .replace('T', ' ')
+        .slice(0, 16);
       meta.append(author, when);
-      const anchor = anchorFromText(r.text) || anchorFromText(r.html);
+      const anchorKey = anchorKeyFromText(r.text) || anchorKeyFromText(r.html);
+      const anchor = anchorKey ? decodeAnchor(anchorKey) : null;
       if (anchor) {
+        item.dataset.anchorKey = anchorKey;
         const pinBtn = el('button', 'pinbtn', '📍');
         pinBtn.title = '이 코멘트의 위치로 이동';
-        pinBtn.addEventListener('click', () => resolveAnchor(anchor));
+        pinBtn.addEventListener('click', () =>
+          resolveAnchor(anchor, anchorKey),
+        );
         meta.appendChild(pinBtn);
       }
       const body = el('div', 'body');
@@ -486,7 +529,7 @@
 
   // ------------------------------------------------------- anchor resolve
 
-  function resolveAnchor(anchor, attempt = 0) {
+  function resolveAnchor(anchor, anchorKey, attempt = 0) {
     if (anchor.p && anchor.p !== location.pathname && attempt === 0) {
       showToast(`다른 페이지의 코멘트예요: ${anchor.p}`);
     }
@@ -499,12 +542,12 @@
     if (target) {
       target.scrollIntoView({ block: 'center', behavior: 'smooth' });
       flash(target);
-      dropPin(target);
+      dropPin(target, anchorKey);
       return;
     }
     if (attempt < 20) {
       // SPA content renders asynchronously — retry briefly.
-      setTimeout(() => resolveAnchor(anchor, attempt + 1), 500);
+      setTimeout(() => resolveAnchor(anchor, anchorKey, attempt + 1), 500);
     } else {
       showToast('앵커 요소를 찾지 못했어요 — UI가 바뀌었을 수 있어요');
     }
@@ -513,7 +556,7 @@
   const hashMatch = /[#&]bai-review=([A-Za-z0-9+/=_-]+)/.exec(location.hash);
   if (hashMatch) {
     const anchor = decodeAnchor(hashMatch[1]);
-    if (anchor) resolveAnchor(anchor);
+    if (anchor) resolveAnchor(anchor, hashMatch[1]);
     else showToast('딥링크 앵커를 해석하지 못했어요');
   }
 })();
