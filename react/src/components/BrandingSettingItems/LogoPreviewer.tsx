@@ -2,8 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
-import { useUserCustomThemeConfig } from '../../hooks/useUserCustomThemeConfig';
+import { useDefaultTheme } from '../../hooks/useDefaultTheme';
 import { App, Image, Space, Tooltip, Typography, Upload } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIButton, BAIFlex, BAIUncontrolledInput } from 'backend.ai-ui';
@@ -43,14 +42,15 @@ const LogoPreviewer: React.FC<LogoPreviewerProps> = ({ mode }) => {
   const { styles } = useStyles();
   const { message } = App.useApp();
 
-  const themeConfig = useCustomThemeConfig();
-  const { getThemeValue, updateUserCustomThemeConfig } =
-    useUserCustomThemeConfig();
+  const { getDefaultThemeValue, updateDefaultTheme, resetDefaultTheme } =
+    useDefaultTheme();
   const logoThemeKey = getLogoThemeKey(mode);
   const fallbackKey = getLogoFallbackKey(mode);
   const currentLogoPath =
-    getThemeValue<string>(`logo.${logoThemeKey}`) ??
-    (fallbackKey ? getThemeValue<string>(`logo.${fallbackKey}`) : undefined);
+    getDefaultThemeValue<string>(`logo.${logoThemeKey}`) ??
+    (fallbackKey
+      ? getDefaultThemeValue<string>(`logo.${fallbackKey}`)
+      : undefined);
 
   return (
     <BAIFlex gap="sm" align="stretch" direction="column">
@@ -62,7 +62,7 @@ const LogoPreviewer: React.FC<LogoPreviewerProps> = ({ mode }) => {
           <BAIUncontrolledInput
             defaultValue={currentLogoPath}
             onCommit={(value) => {
-              updateUserCustomThemeConfig(`logo.${logoThemeKey}`, value);
+              updateDefaultTheme(`logo.${logoThemeKey}`, value);
             }}
           />
           <Tooltip title={t('userSettings.logo.CreateURLWithImage')}>
@@ -81,7 +81,7 @@ const LogoPreviewer: React.FC<LogoPreviewerProps> = ({ mode }) => {
                 const reader = new FileReader();
                 reader.onload = (e) => {
                   const base64 = e.target?.result as string;
-                  updateUserCustomThemeConfig(`logo.${logoThemeKey}`, base64);
+                  updateDefaultTheme(`logo.${logoThemeKey}`, base64);
                 };
                 reader.onerror = () => {
                   message.error(t('userSettings.logo.FailedToReadFile'));
@@ -91,10 +91,7 @@ const LogoPreviewer: React.FC<LogoPreviewerProps> = ({ mode }) => {
                 return false;
               }}
               onRemove={() => {
-                updateUserCustomThemeConfig(
-                  `logo.${logoThemeKey}`,
-                  themeConfig?.logo?.[logoThemeKey],
-                );
+                resetDefaultTheme([`logo.${logoThemeKey}`]);
               }}
               onPreview={() => false}
             >

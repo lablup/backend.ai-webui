@@ -13,14 +13,19 @@ import MyKeypairManagementModal from '../components/MyKeypairManagementModal';
 import SSHKeypairManagementModal from '../components/SSHKeypairManagementModal';
 import SettingList, { SettingGroup } from '../components/SettingList';
 import ShellScriptEditModal from '../components/ShellScriptEditModal';
+import ThemeAccentColorPicker from '../components/ThemeAccentColorPicker';
 import { useSuspendedBackendaiClient } from '../hooks';
 import {
   useBAISettingGeneralState,
   useBAISettingUserState,
 } from '../hooks/useBAISetting';
+import {
+  DEFAULT_THEME_FAMILY,
+  useCustomThemeConfig,
+} from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
 import { SettingOutlined } from '@ant-design/icons';
-import { useToggle } from 'ahooks';
+import { useSessionStorageState, useToggle } from 'ahooks';
 import { App, Button, Skeleton, Typography } from 'antd';
 import { BAICard, filterOutEmpty } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -79,6 +84,20 @@ const UserPreferencesPage = () => {
   );
 
   const { themeMode, setThemeMode } = useThemeMode();
+  const {
+    activeThemeFamily: themeFamily,
+    setActiveThemeFamily: setThemeFamily,
+    themeFamilies: families,
+  } = useCustomThemeConfig();
+  const [themeAccent, setThemeAccent] = useBAISettingUserState(
+    'custom_primary_color',
+  );
+  // Branding preview mode shows the edited default theme as-is, so the theme
+  // (family) and primary color settings are hidden there (useCustomThemeConfig
+  // ignores them in that mode).
+  const [isThemePreviewMode] = useSessionStorageState('isThemePreviewMode', {
+    defaultValue: false,
+  });
 
   const [desktopNotification, setDesktopNotification] = useBAISettingUserState(
     'desktop_notification',
@@ -175,6 +194,52 @@ const UserPreferencesPage = () => {
             }
           },
         },
+        // Theme (family) / primary color customization is operator-gated
+        // (config.toml `allowThemeMode`). The family selector additionally
+        // needs more than the `default` family in the catalog (a theme.json
+        // without a `families` block yields a single-entry catalog).
+        baiClient._config.allowThemeMode &&
+        !isThemePreviewMode &&
+        Object.keys(families).length > 1
+          ? {
+              'data-testid': 'items-theme-family',
+              type: 'select',
+              title: t('userSettings.ThemeFamily'),
+              description: t('userSettings.DescThemeFamily'),
+              selectProps: {
+                // Family display names come from theme.json `label` (operator-
+                // provided brand names like "Stained"); the built-in `default`
+                // family falls back to a humanized key ("Default").
+                options: _.map(families, (config, key) => ({
+                  label: config.label ?? _.startCase(key),
+                  value: key,
+                })),
+              },
+              defaultValue: DEFAULT_THEME_FAMILY,
+              value: themeFamily,
+              onChange: (value: string | number | undefined) => {
+                if (typeof value === 'string') {
+                  setThemeFamily(value);
+                }
+              },
+              // Clear the stored selection instead of writing the default key
+              // so resolution keeps following the `default` family.
+              onReset: () => setThemeFamily(undefined),
+            }
+          : null,
+        baiClient._config.allowThemeMode && !isThemePreviewMode
+          ? {
+              'data-testid': 'items-theme-accent',
+              type: 'custom',
+              title: t('userSettings.ThemeAccentColor'),
+              description: t('userSettings.DescThemeAccentColor'),
+              // No defaultValue: unset means "follow the theme.json colors";
+              // reset clears the per-scheme overrides back to that state.
+              value: themeAccent,
+              onReset: () => setThemeAccent(undefined),
+              children: <ThemeAccentColorPicker />,
+            }
+          : null,
         {
           'data-testid': 'items-desktop-notification',
           type: 'checkbox',

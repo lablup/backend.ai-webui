@@ -59,7 +59,6 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
   const { isSelectedAdminCategoryMenu, defaultMenuPath } = useWebUIMenuItems();
   const effectiveAdminRole = useEffectiveAdminRole();
   const { projectAdminIds } = useCurrentUserProjectRoles();
-
   // Last visited general page — shared with WebUISider's "go back" button so
   // that exiting admin mode returns the user to where they were last. See
   // WebUISider.tsx (`backendaiwebui.last_visited_general_path`).
@@ -108,7 +107,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
         paddingLeft: token.marginLG,
         color: token.colorBgBase,
       }}
-      className={styles.webuiHeader}
+      className={`${styles.webuiHeader} bai-webui-header`}
     >
       <BAIFlex data-testid="label-selector-project" direction="row" gap={'sm'}>
         <ReverseThemeProvider>

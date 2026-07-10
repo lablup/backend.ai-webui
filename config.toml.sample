@@ -35,6 +35,7 @@ directoryBasedUsage = false             # If true, display the amount of usage p
 isDirectorySizeVisible = true           # If false, directory size in folder explorer will show `-`. default value is set to true.
 maxCountForPreopenPorts = 10            # The maximum allowed number of preopen ports. If you set this option to 0, the feature of preopen ports is disabled.
 allowCustomResourceAllocation = true    # If true, display the custom allocation on the session launcher.
+allowThemeMode = false                  # If true, users can select a theme (family) and customize its primary color in user settings. The light/dark theme mode selector is always available regardless of this flag.
 eduAppNamePrefix = ""                   # The prefix of edu applauncher's app name. If the app name starts with this prefix, split it by '-' and use the tail as the name of image.
 enableExtendLoginSession = false        # If true, enables login session extension UI. (From Backend.AI 24.09)
 enableImportFromHuggingFace = false     # Enable import from Hugging Face feature. (From Backend.AI 24.09)

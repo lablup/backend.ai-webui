@@ -599,4 +599,5 @@ type BackendAIConfig = {
   proxyURL: string;
   allowCustomResourceAllocation: boolean;
   allowAppDownloadPanel: boolean;
+  allowThemeMode: boolean;
 };

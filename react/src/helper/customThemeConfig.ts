@@ -45,10 +45,27 @@ export type BrandingConfig = {
   companyName?: string;
   brandName?: string;
 };
+export type ThemeFamilyConfig = {
+  /** Ant Design theme config for the light scheme of this family. */
+  light: ThemeConfig;
+  /** Ant Design theme config for the dark scheme of this family. */
+  dark: ThemeConfig;
+  /** Human-readable label shown in the family selector. Falls back to the key. */
+  label?: string;
+};
+
 export type CustomThemeConfig = {
   fontFamily?: string;
   light: ThemeConfig;
   dark: ThemeConfig;
+  /**
+   * Selectable theme families keyed by family id (e.g. `stained`, `glass`).
+   * The `default` family is always synthesized from the top-level
+   * `light`/`dark` above — a `default` key here is ignored — so pre-family
+   * theme.json files (no `families` block) keep working as a single-entry
+   * catalog.
+   */
+  families?: Record<string, ThemeFamilyConfig>;
   logo: LogoConfig;
   sider?: SiderConfig;
   branding?: BrandingConfig;
@@ -57,6 +74,26 @@ export type CustomThemeConfig = {
 let _customTheme: CustomThemeConfig | undefined;
 
 export const getCustomTheme = () => _customTheme;
+
+/**
+ * Keep only structurally valid family entries (each must carry both `light`
+ * and `dark` theme configs) so a malformed `families` block in theme.json
+ * degrades to fewer families instead of a broken catalog.
+ */
+export function pickValidThemeFamilies(
+  input: unknown,
+): Record<string, ThemeFamilyConfig> | undefined {
+  if (!_.isPlainObject(input)) {
+    return undefined;
+  }
+  return _.pickBy(
+    input as Record<string, ThemeFamilyConfig>,
+    (family) =>
+      _.isPlainObject(family) &&
+      _.isPlainObject(family.light) &&
+      _.isPlainObject(family.dark),
+  );
+}
 
 const GENERIC_FAMILIES = new Set([
   'serif',

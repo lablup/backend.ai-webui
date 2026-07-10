@@ -13,8 +13,8 @@ import {
 import { useDeviceMetaData } from '../hooks/backendai';
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
-import NotificationHost from './NotificationHost';
 import '../index.css';
+import NotificationHost from './NotificationHost';
 import createCache from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -276,7 +276,7 @@ export const DefaultProvidersForReactRoot: React.FC<{
   const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();
 
-  const themeConfig = useCustomThemeConfig();
+  const { themeConfig } = useCustomThemeConfig();
 
   const currentLocale =
     buiLanguages[lang as keyof typeof buiLanguages] ?? buiLanguages['en'];

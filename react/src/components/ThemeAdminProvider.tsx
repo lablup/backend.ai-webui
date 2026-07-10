@@ -14,7 +14,8 @@ import * as _ from 'lodash-es';
 import React, { useContext } from 'react';
 
 const ThemeAdminProvider: React.FC<ConfigProviderProps> = ({ ...props }) => {
-  const themeConfig = useCustomThemeConfig();
+  'use memo';
+  const { themeConfig } = useCustomThemeConfig();
   const config = useContext(ConfigProvider.ConfigContext);
   const isParentDark = config.theme?.algorithm === theme.darkAlgorithm;
   const primaryColors = usePrimaryColors();

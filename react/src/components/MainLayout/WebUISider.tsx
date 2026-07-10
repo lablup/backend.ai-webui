@@ -45,7 +45,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const themeConfig = useCustomThemeConfig();
+  const { themeConfig } = useCustomThemeConfig();
 
   const config = useContext(ConfigProvider.ConfigContext);
   const currentSiderTheme =
@@ -366,7 +366,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
 };
 
 const WebUISiderWithCustomTheme: React.FC<WebUISiderProps> = (props) => {
-  const themeConfig = useCustomThemeConfig();
+  const { themeConfig } = useCustomThemeConfig();
   const config = useContext(ConfigProvider.ConfigContext);
   const isParentDark = config.theme?.algorithm === theme.darkAlgorithm;
 

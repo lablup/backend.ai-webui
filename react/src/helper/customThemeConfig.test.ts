@@ -32,6 +32,21 @@ describe('customThemeConfig', () => {
     vi.clearAllMocks();
   });
 
+  // Route the fetch mock by URL; each entry in `themes` feeds one
+  // `loadCustomThemeConfig` call.
+  const mockThemeFetch = (...themes: unknown[]) => {
+    const themeQueue = [...themes];
+    fetchMock.mockImplementation((url: string) => {
+      if (url === 'resources/theme.json') {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(themeQueue.shift()),
+        } as unknown as Response);
+      }
+      return Promise.reject(new Error(`Unexpected fetch: ${url}`));
+    });
+  };
+
   describe('getCustomTheme', () => {
     it('should return undefined when no theme is loaded', () => {
       const theme = getCustomTheme();
@@ -50,10 +65,7 @@ describe('customThemeConfig', () => {
         },
       };
 
-      fetchMock.mockResolvedValueOnce({
-        ok: true,
-        json: vi.fn().mockResolvedValueOnce(mockTheme),
-      } as unknown as Response);
+      mockThemeFetch(mockTheme);
 
       loadCustomThemeConfig();
 
@@ -77,10 +89,7 @@ describe('customThemeConfig', () => {
         },
       };
 
-      fetchMock.mockResolvedValueOnce({
-        ok: true,
-        json: vi.fn().mockResolvedValueOnce(mockLegacyTheme),
-      } as unknown as Response);
+      mockThemeFetch(mockLegacyTheme);
 
       loadCustomThemeConfig();
 
@@ -119,10 +128,7 @@ describe('customThemeConfig', () => {
         },
       };
 
-      fetchMock.mockResolvedValueOnce({
-        ok: true,
-        json: vi.fn().mockResolvedValueOnce(mockTheme),
-      } as unknown as Response);
+      mockThemeFetch(mockTheme);
 
       loadCustomThemeConfig();
 
@@ -153,10 +159,7 @@ describe('customThemeConfig', () => {
         },
       };
 
-      fetchMock.mockResolvedValueOnce({
-        ok: true,
-        json: vi.fn().mockResolvedValueOnce(mockTheme),
-      } as unknown as Response);
+      mockThemeFetch(mockTheme);
 
       loadCustomThemeConfig();
 
@@ -177,10 +180,7 @@ describe('customThemeConfig', () => {
         },
       };
 
-      fetchMock.mockResolvedValueOnce({
-        ok: true,
-        json: vi.fn().mockResolvedValueOnce(mockTheme),
-      } as unknown as Response);
+      mockThemeFetch(mockTheme);
 
       loadCustomThemeConfig();
 
@@ -211,10 +211,7 @@ describe('customThemeConfig', () => {
         logo: logoConfig,
       };
 
-      fetchMock.mockResolvedValueOnce({
-        ok: true,
-        json: vi.fn().mockResolvedValueOnce(mockTheme),
-      } as unknown as Response);
+      mockThemeFetch(mockTheme);
 
       loadCustomThemeConfig();
 
@@ -237,10 +234,7 @@ describe('customThemeConfig', () => {
         },
       };
 
-      fetchMock.mockResolvedValueOnce({
-        ok: true,
-        json: vi.fn().mockResolvedValueOnce(mockTheme),
-      } as unknown as Response);
+      mockThemeFetch(mockTheme);
 
       loadCustomThemeConfig();
 
@@ -264,10 +258,7 @@ describe('customThemeConfig', () => {
         },
       };
 
-      fetchMock.mockResolvedValueOnce({
-        ok: true,
-        json: vi.fn().mockResolvedValueOnce(mockTheme),
-      } as unknown as Response);
+      mockThemeFetch(mockTheme);
 
       loadCustomThemeConfig();
 
@@ -318,10 +309,7 @@ describe('customThemeConfig', () => {
         },
       };
 
-      fetchMock.mockResolvedValueOnce({
-        ok: true,
-        json: vi.fn().mockResolvedValueOnce(mockTheme),
-      } as unknown as Response);
+      mockThemeFetch(mockTheme);
 
       loadCustomThemeConfig();
 
@@ -353,15 +341,7 @@ describe('customThemeConfig', () => {
         },
       };
 
-      fetchMock
-        .mockResolvedValueOnce({
-          ok: true,
-          json: vi.fn().mockResolvedValueOnce(mockTheme1),
-        } as unknown as Response)
-        .mockResolvedValueOnce({
-          ok: true,
-          json: vi.fn().mockResolvedValueOnce(mockTheme2),
-        } as unknown as Response);
+      mockThemeFetch(mockTheme1, mockTheme2);
 
       loadCustomThemeConfig();
       await new Promise((resolve) => setTimeout(resolve, 100));
@@ -369,7 +349,9 @@ describe('customThemeConfig', () => {
       loadCustomThemeConfig();
       await new Promise((resolve) => setTimeout(resolve, 100));
 
-      expect(fetchMock).toHaveBeenCalledTimes(2);
+      expect(
+        fetchMock.mock.calls.filter(([url]) => url === 'resources/theme.json'),
+      ).toHaveLength(2);
       expect(dispatchEventSpy).toHaveBeenCalledTimes(2);
     });
 
@@ -393,10 +375,7 @@ describe('customThemeConfig', () => {
         },
       };
 
-      fetchMock.mockResolvedValueOnce({
-        ok: true,
-        json: vi.fn().mockResolvedValueOnce(mockTheme),
-      } as unknown as Response);
+      mockThemeFetch(mockTheme);
 
       loadCustomThemeConfig();
 
@@ -437,10 +416,7 @@ describe('customThemeConfig', () => {
         },
       };
 
-      fetchMock.mockResolvedValueOnce({
-        ok: true,
-        json: vi.fn().mockResolvedValueOnce(mockTheme),
-      } as unknown as Response);
+      mockThemeFetch(mockTheme);
 
       loadCustomThemeConfig();
 

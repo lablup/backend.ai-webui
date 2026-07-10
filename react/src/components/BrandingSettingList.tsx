@@ -2,8 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
-import { useUserCustomThemeConfig } from '../hooks/useUserCustomThemeConfig';
+import { useDefaultTheme } from '../hooks/useDefaultTheme';
 import FontFamilySettingItem from './BrandingSettingItems/FontFamilySettingItem';
 import LogoPreviewer, {
   getLogoThemeKey,
@@ -22,7 +21,6 @@ import {
   BAIFlex,
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
-import * as _ from 'lodash-es';
 import { Fullscreen } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -36,26 +34,14 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
 
   const [openThemeConfigModal, setOpenThemeConfigModal] = useState(false);
 
-  const themeConfig = useCustomThemeConfig();
-  const { updateUserCustomThemeConfig, resetThemeConfig } =
-    useUserCustomThemeConfig();
+  const { resetDefaultTheme } = useDefaultTheme();
 
   const resetColorThemeConfig = (tokenName: ThemeConfigPath) => {
-    updateUserCustomThemeConfig(
-      'light.' + tokenName,
-      _.get(themeConfig?.light, tokenName) ?? undefined,
-    );
-    updateUserCustomThemeConfig(
-      'dark.' + tokenName,
-      _.get(themeConfig?.dark, tokenName) ?? undefined,
-    );
+    resetDefaultTheme([`light.${tokenName}`, `dark.${tokenName}`]);
   };
 
   const resetLogoThemeConfig = (mode: LogoPreviewerMode) => {
-    updateUserCustomThemeConfig(
-      'logo.' + getLogoThemeKey(mode),
-      _.get(themeConfig?.logo, getLogoThemeKey(mode)) ?? undefined,
-    );
+    resetDefaultTheme([`logo.${getLogoThemeKey(mode)}`]);
   };
 
   const resetLogoSizeConfig = (
@@ -67,32 +53,18 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
       login: 'loginLogoSize',
       about: 'aboutLogoSize',
     } as const;
-    const key = keyMap[logoType];
-    updateUserCustomThemeConfig(
-      `logo.${key}`,
-      _.get(themeConfig?.logo, key) ?? undefined,
-    );
-    if (logoType === 'about') {
-      updateUserCustomThemeConfig(
-        'logo.aboutModalSize',
-        _.get(themeConfig?.logo, 'aboutModalSize') ?? undefined,
-      );
-    }
+    resetDefaultTheme([
+      `logo.${keyMap[logoType]}`,
+      ...(logoType === 'about' ? ['logo.aboutModalSize'] : []),
+    ]);
   };
 
   const resetFontFamilyConfig = () => {
-    updateUserCustomThemeConfig(
+    resetDefaultTheme([
       'fontFamily',
-      themeConfig?.fontFamily ?? undefined,
-    );
-    updateUserCustomThemeConfig(
       'light.token.fontFamily',
-      themeConfig?.fontFamily ?? undefined,
-    );
-    updateUserCustomThemeConfig(
       'dark.token.fontFamily',
-      themeConfig?.fontFamily ?? undefined,
-    );
+    ]);
   };
 
   const settingGroups: Array<SettingGroup> = [
@@ -316,7 +288,7 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
         showSearchBar
         showResetButton
         onReset={() => {
-          resetThemeConfig();
+          resetDefaultTheme();
         }}
         settingGroups={settingGroups}
         primaryButton={

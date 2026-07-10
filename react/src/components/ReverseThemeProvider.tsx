@@ -13,7 +13,8 @@ interface ReverseThemeProviderProps extends ConfigProviderProps {
 const ReverseThemeProvider: React.FC<ReverseThemeProviderProps> = ({
   ...props
 }) => {
-  const themeConfig = useCustomThemeConfig();
+  'use memo';
+  const { themeConfig } = useCustomThemeConfig();
   const config = useContext(ConfigProvider.ConfigContext);
   const isParentDark = config.theme?.algorithm === theme.darkAlgorithm;
 

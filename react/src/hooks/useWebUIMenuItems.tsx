@@ -926,7 +926,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   })();
 
   // Get theme config for custom logo href
-  const themeConfig = useCustomThemeConfig();
+  const { themeConfig } = useCustomThemeConfig();
 
   // Default menu path considering theme config's logo href
   // Priority: themeConfig.logo.href > firstAvailableMenuItem path > '/start'

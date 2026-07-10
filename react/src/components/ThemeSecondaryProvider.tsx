@@ -16,7 +16,8 @@ import React, { useContext } from 'react';
 const ThemeSecondaryProvider: React.FC<ConfigProviderProps> = ({
   ...props
 }) => {
-  const themeConfig = useCustomThemeConfig();
+  'use memo';
+  const { themeConfig } = useCustomThemeConfig();
   const config = useContext(ConfigProvider.ConfigContext);
   const isParentDark = config.theme?.algorithm === theme.darkAlgorithm;
   const primaryColors = usePrimaryColors();
