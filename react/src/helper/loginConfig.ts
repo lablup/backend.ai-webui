@@ -72,6 +72,8 @@ export interface LoginConfigState {
   enableContainerCommit: boolean;
   appDownloadUrl: string;
   allowAppDownloadPanel: boolean;
+  cliDownloadUrl: string;
+  allowCLIDownloadPanel: boolean;
   systemSSHImage: string;
   defaultFileBrowserImage: string;
   hideAgents: boolean;
@@ -138,6 +140,9 @@ export function getDefaultLoginConfig(): LoginConfigState {
     appDownloadUrl:
       'https://github.com/lablup/backend.ai-webui/releases/download',
     allowAppDownloadPanel: true,
+    cliDownloadUrl:
+      'https://github.com/lablup/backend.ai/releases/latest/download',
+    allowCLIDownloadPanel: true,
     systemSSHImage: '',
     defaultFileBrowserImage: '',
     hideAgents: true,
@@ -318,6 +323,23 @@ export function refreshConfigFromToml(config: any): LoginConfigState {
     valueType: 'boolean',
     defaultValue: true,
     value: g?.allowAppDownloadPanel,
+  }) as boolean;
+
+  // NOTE: these read `cliDownloadUrl` / `allowCLIDownloadPanel` from the
+  // webserver-provided config.toml when present, but the webserver does not
+  // ship them in its config yet, so today they typically resolve from the
+  // defaults below. They may also be migrated to appConfig later. FR-3226.
+  state.cliDownloadUrl = getConfigValueByExists(g, {
+    valueType: 'string',
+    defaultValue:
+      'https://github.com/lablup/backend.ai/releases/latest/download',
+    value: g?.cliDownloadUrl,
+  }) as string;
+
+  state.allowCLIDownloadPanel = getConfigValueByExists(g, {
+    valueType: 'boolean',
+    defaultValue: true,
+    value: g?.allowCLIDownloadPanel,
   }) as boolean;
 
   state.systemSSHImage = getConfigValueByExists(g, {
@@ -634,6 +656,8 @@ export function applyConfigToClient(cfg: LoginConfigState): void {
   client._config.enableContainerCommit = cfg.enableContainerCommit;
   client._config.appDownloadUrl = cfg.appDownloadUrl;
   client._config.allowAppDownloadPanel = cfg.allowAppDownloadPanel;
+  client._config.cliDownloadUrl = cfg.cliDownloadUrl;
+  client._config.allowCLIDownloadPanel = cfg.allowCLIDownloadPanel;
   client._config.systemSSHImage = cfg.systemSSHImage;
   client._config.defaultFileBrowserImage = cfg.defaultFileBrowserImage;
   client._config.fasttrackEndpoint = cfg.fasttrackEndpoint;
