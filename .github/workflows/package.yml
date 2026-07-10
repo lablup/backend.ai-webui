@@ -333,6 +333,9 @@ jobs:
             echo "::warning::No PDFs were produced; nothing to upload."
           fi
 
+      - name: Mark workspace as Git safe directory
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
       - name: Upload PDF release assets
         if: inputs.dry_run != true
         run: node upload-release.js app
