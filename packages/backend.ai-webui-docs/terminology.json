@@ -1,11 +1,6 @@
 {
   "version": 1,
-  "languages": [
-    "en",
-    "ko",
-    "ja",
-    "th"
-  ],
+  "languages": ["en", "ko", "ja", "th"],
   "concepts": [
     {
       "id": "compute-session",
@@ -632,6 +627,88 @@
       "lang": "ko",
       "context": null,
       "conceptId": "role-superadmin"
+    }
+  ],
+  "verbs": [
+    {
+      "id": "verb-cancel",
+      "intent": "cancel",
+      "context": "Stop an in-flight or not-yet-committed operation (request, draft, running deployment rollout).",
+      "preferred": { "en": "Cancel" },
+      "avoid": ["Abort", "Discard"],
+      "reversible": "reversible",
+      "decidingFR": "FR-3052",
+      "description": "Use \"Cancel\" for stopping an action that has not yet had a permanent effect (a pending request, a model-service request, an unsaved form). Does not destroy persisted data. Maps to i18n `button.Cancel` / `modelService.Cancel`."
+    },
+    {
+      "id": "verb-delete",
+      "intent": "delete",
+      "context": "Permanently remove a standalone resource the user owns (storage folder, image, token, resource preset).",
+      "preferred": { "en": "Delete" },
+      "avoid": ["Destroy", "Erase", "Wipe"],
+      "reversible": "irreversible",
+      "decidingFR": "FR-3052",
+      "description": "Use \"Delete\" for permanent removal of a resource that exists on its own. Maps to i18n `button.Delete`, `data.folders.Delete`, `environment.Delete`. NOTE: lexical only — whether a given Delete needs a typed-confirm modal is decided by destructive-confirmation.md from the action's reversibility, NOT from this word."
+    },
+    {
+      "id": "verb-remove",
+      "intent": "remove",
+      "context": "Detach an item from a collection / relationship without destroying the item itself (permission from a role, version from a list, member from a project).",
+      "preferred": { "en": "Remove" },
+      "avoid": ["Delete", "Unlink"],
+      "reversible": "reversible",
+      "decidingFR": "FR-3052",
+      "description": "Use \"Remove\" for taking an item out of a list or breaking an association — the underlying entity survives elsewhere. \"Remove from list\" is NOT \"Delete permanently\". Maps to i18n `rbac.RemovePermission`, `model.RemoveSelectedVersions`. Reserve \"Delete\" for destroying the standalone resource."
+    },
+    {
+      "id": "verb-terminate",
+      "intent": "terminate",
+      "context": "End a running compute session (interactive / batch / inference) or model-service endpoint.",
+      "preferred": { "en": "Terminate" },
+      "avoid": ["Kill", "Destroy", "End"],
+      "reversible": "irreversible",
+      "decidingFR": "FR-3052",
+      "description": "Use \"Terminate\" for ending a running session/endpoint and releasing its resources. Maps to i18n `session.Terminate`, `session.TerminateSession`, `session.ForceTerminate`. Do not use \"Stop\" for this; \"Stop\" is reserved for pausable workloads."
+    },
+    {
+      "id": "verb-stop",
+      "intent": "stop",
+      "context": "Halt a process that can later be resumed or restarted (a service replica, a pausable job).",
+      "preferred": { "en": "Stop" },
+      "avoid": ["Pause", "Halt", "Terminate"],
+      "reversible": "reversible",
+      "decidingFR": "FR-3052",
+      "description": "Use \"Stop\" only when the workload can be started again afterward. If the resources are released and the session ends, use \"Terminate\" instead."
+    },
+    {
+      "id": "verb-inactivate",
+      "intent": "inactivate",
+      "context": "Disable an account/credential/project/role so it can no longer be used, while keeping its data for later reactivation.",
+      "preferred": { "en": "Deactivate" },
+      "avoid": ["Inactivate", "Disable", "Suspend"],
+      "reversible": "reversible",
+      "decidingFR": "FR-3052",
+      "description": "Approved verb is \"Deactivate\" (not \"Inactivate\"): the UI uses \"Deactivate\" 13x vs \"Inactivate\" 1x. Maps to i18n `credential.Deactivate`, `project.Deactivate`, `rbac.Deactivate`, `resourceGroup.Deactivate`. The single `usersettings.InactivateTheFollowingUsers` value is the drift this entry pins. Reversible: pair with Activate."
+    },
+    {
+      "id": "verb-purge",
+      "intent": "purge",
+      "context": "Permanently and irrecoverably erase an already-deactivated account/project/role and all its records.",
+      "preferred": { "en": "Purge" },
+      "avoid": ["Delete", "Wipe", "Destroy"],
+      "reversible": "irreversible",
+      "decidingFR": "FR-3052",
+      "description": "Use \"Purge\" for the final, irreversible erase that follows \"Deactivate\". Distinct from \"Delete\": Purge implies the entity was first deactivated and now has its records expunged. Maps to i18n `project.Purge`, `project.PurgeProject`, `rbac.PurgeRole`."
+    },
+    {
+      "id": "verb-hide",
+      "intent": "hide",
+      "context": "Make an item invisible in the UI without deleting it (hide a column, hide a notice, hide a list entry).",
+      "preferred": { "en": "Hide" },
+      "avoid": ["Remove", "Delete", "Dismiss"],
+      "reversible": "reversible",
+      "decidingFR": "FR-3052",
+      "description": "Use \"Hide\" for purely cosmetic visibility changes that keep the underlying data intact and can be reversed by un-hiding. Never use \"Hide\" when data is actually removed."
     }
   ]
 }

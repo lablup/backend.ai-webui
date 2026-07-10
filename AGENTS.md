@@ -190,6 +190,10 @@ Production build (`pnpm run build`) runs these steps sequentially:
 - **Documentation**: `docs-writing-guide` skill (fw plugin; user manual structure, terminology, multilingual rules)
 - **Relay**: `relay-patterns` skill (fragment architecture, naming conventions, query optimization)
 
+### Terminology Precedence
+
+When terms disagree, precedence is: (1) the live UI i18n label in `resources/i18n/{lang}.json`, (2) `terminology.json`, (3) `DOCUMENTATION-STYLE-GUIDE.md`. The higher-precedence source wins; fix the lower one to match (or open an FR to change the label). See `packages/backend.ai-webui-docs/TERMINOLOGY.md` for the term owner, new-term gate, and the atomic rename/deprecation checklist.
+
 ### Auto-Applied Instructions (loaded when editing matching files)
 
 - `react.instructions.md` → `react/**/*.tsx,react/**/*.ts`
