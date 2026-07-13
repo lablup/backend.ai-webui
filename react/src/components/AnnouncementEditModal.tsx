@@ -9,9 +9,7 @@ import BAICodeEditor from './BAICodeEditor';
 import { SyntaxHighlighter } from './Chat/SyntaxHighlighter';
 import {
   BoldOutlined,
-  ClearOutlined,
   CodeOutlined,
-  DeleteOutlined,
   FontSizeOutlined,
   ItalicOutlined,
   LinkOutlined,
@@ -26,7 +24,6 @@ import {
   App,
   Button,
   Dropdown,
-  Popconfirm,
   Skeleton,
   theme,
   Tooltip,
@@ -290,13 +287,6 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
     );
   };
 
-  // Reset only clears the editor content locally so the admin can start over;
-  // it does not touch the server. Publish stays disabled until a non-empty
-  // message exists again.
-  const handleReset = () => {
-    setMessageDraft('');
-  };
-
   const handleDelete = async () => {
     try {
       await deleteMutation.mutateAsync();
@@ -338,28 +328,21 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
           gap="sm"
           style={{ width: '100%' }}
         >
-          {/* Delete clears the published announcement. Disabled when there is
-              nothing stored to delete. Restore the Enabled checkbox here once
-              the backend can persist a disabled-but-present announcement:
+          {/* Delete clears the published announcement, placed at the footer's
+              bottom-left like other edit modals' destroy action. Disabled when
+              there is nothing stored to delete. Restore the Enabled checkbox
+              here once the backend can persist a disabled-but-present
+              announcement:
           <Checkbox
             checked={enabled}
             onChange={(e) => setEnabledDraft(e.target.checked)}
           >
             {t('summary.AnnouncementEnabled')}
           </Checkbox> */}
-          <BAIFlex gap="xs" align="center">
-            <Popconfirm
-              title={t('dialog.ask.DoYouWantToResetChanges')}
-              okButtonProps={{ danger: true }}
-              onConfirm={handleReset}
-            >
-              <Button icon={<ClearOutlined />} disabled={isLoading}>
-                {t('button.Reset')}
-              </Button>
-            </Popconfirm>
+          <BAIFlex>
             <Button
+              type="text"
               danger
-              icon={<DeleteOutlined />}
               disabled={isLoading || !announcement?.enabled}
               loading={deleteMutation.isPending}
               onClick={confirmDelete}

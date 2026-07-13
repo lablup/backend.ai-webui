@@ -1914,11 +1914,13 @@
     "UpTo3000Logs": "(Fino a 3000 registri recenti)"
   },
   "maintenance": {
+    "Announcement": "Annuncio",
     "CleanupImages": "Immagini di pulizia",
     "CleanupOldImages": "Pulisci le vecchie immagini",
     "DescCleanupOldImages": "Pulisci le vecchie immagini dall'elenco delle immagini della finestra mobile.",
     "DescMatchDatabase": "Ricalcola il database di utilizzo con lo stato corrente. Utile se la finestra mobile si guasta per errore o alcune sessioni sono state terminate forzatamente.",
     "DescRescanImageList": "Riscansiona l'elenco delle immagini dai repository registrati. Potrebbe volerci molto tempo, quindi attendere dopo l'esecuzione.",
+    "DescSystemAnnouncement": "Crea o modifica il banner degli annunci mostrato a tutti gli utenti nella parte superiore della pagina.",
     "Fix": "Correzione",
     "ImagesEnvironment": "Immagini / Ambiente",
     "MatchDatabase": "Abbina il database di utilizzo allo stato attuale",
@@ -1931,7 +1933,8 @@
     "RescanImageList": "Riscansiona l'elenco delle immagini dal repository",
     "RescanImageScanning": "Nuova scansione...",
     "RescanImages": "Nuova scansione delle immagini",
-    "Scanning": "Scansione in corso..."
+    "Scanning": "Scansione in corso...",
+    "SystemAnnouncement": "Annuncio di sistema"
   },
   "maxLength": {
     "200chars": "(massimo 200 caratteri)",

@@ -1916,11 +1916,13 @@
     "UpTo3000Logs": "(Bis zu 3000 aktuelle Protokolle)"
   },
   "maintenance": {
+    "Announcement": "Ankündigung",
     "CleanupImages": "Bilder bereinigen",
     "CleanupOldImages": "Alte Bilder bereinigen",
     "DescCleanupOldImages": "Bereinigen Sie alte Images aus der Docker-Image-Liste.",
     "DescMatchDatabase": "Berechnen Sie die Nutzungsdatenbank mit dem aktuellen Status neu. Nützlich, wenn Docker versehentlich fehlschlägt oder einige Sitzungen zwangsweise beendet wurden.",
     "DescRescanImageList": "Bildliste aus registrierten Repositorys erneut scannen. Es kann lange dauern, also warten Sie bitte nach der Ausführung.",
+    "DescSystemAnnouncement": "Erstellen oder bearbeiten Sie das Ankündigungsbanner, das allen Benutzern oben auf der Seite angezeigt wird.",
     "Fix": "Fix",
     "ImagesEnvironment": "Bilder / Umgebung",
     "MatchDatabase": "Nutzungsdatenbank mit aktuellem Status abgleichen",
@@ -1933,7 +1935,8 @@
     "RescanImageList": "Bilderliste aus Repository erneut scannen",
     "RescanImageScanning": "Erneut scannen...",
     "RescanImages": "Bilder erneut scannen",
-    "Scanning": "Scannen..."
+    "Scanning": "Scannen...",
+    "SystemAnnouncement": "Systemankündigung"
   },
   "maxLength": {
     "200chars": "(maximal 200 Zeichen)",

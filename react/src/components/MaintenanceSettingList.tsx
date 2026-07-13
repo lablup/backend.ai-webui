@@ -4,15 +4,19 @@
  */
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
+import AnnouncementEditModal from './AnnouncementEditModal';
 import SettingList, { SettingGroup } from './SettingList';
-import { RedoOutlined } from '@ant-design/icons';
+import { NotificationOutlined, RedoOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
+import { BAIUnmountAfterClose } from 'backend.ai-ui';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const MaintenanceSettingList = () => {
+  'use memo';
   const [isRecalculating, setIsRecalculating] = useState(false);
   const [isRescanning, setIsRescanning] = useState(false);
+  const [isAnnouncementModalOpen, setIsAnnouncementModalOpen] = useState(false);
 
   const { t } = useTranslation();
   const { upsertNotification } = useSetBAINotification();
@@ -130,9 +134,39 @@ const MaintenanceSettingList = () => {
         },
       ],
     },
+    {
+      'data-testid': 'maintenance-announcement',
+      title: t('maintenance.Announcement'),
+      settingItems: [
+        {
+          type: 'custom',
+          title: t('maintenance.SystemAnnouncement'),
+          description: t('maintenance.DescSystemAnnouncement'),
+          children: (
+            <Button
+              icon={<NotificationOutlined />}
+              onClick={() => setIsAnnouncementModalOpen(true)}
+            >
+              {t('summary.EditAnnouncement')}
+            </Button>
+          ),
+          showResetButton: false,
+        },
+      ],
+    },
   ];
 
-  return <SettingList settingGroups={settingGroupList} showSearchBar />;
+  return (
+    <>
+      <SettingList settingGroups={settingGroupList} showSearchBar />
+      <BAIUnmountAfterClose>
+        <AnnouncementEditModal
+          open={isAnnouncementModalOpen}
+          onRequestClose={() => setIsAnnouncementModalOpen(false)}
+        />
+      </BAIUnmountAfterClose>
+    </>
+  );
 };
 
 export default MaintenanceSettingList;

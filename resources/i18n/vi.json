@@ -1916,11 +1916,13 @@
     "UpTo3000Logs": "(Lên đến 3000 nhật ký gần đây)"
   },
   "maintenance": {
+    "Announcement": "Thông báo",
     "CleanupImages": "Dọn dẹp hình ảnh",
     "CleanupOldImages": "Xóa hình ảnh cũ",
     "DescCleanupOldImages": "Dọn dẹp hình ảnh cũ khỏi danh sách hình ảnh docker.",
     "DescMatchDatabase": "Tính toán lại cơ sở dữ liệu sử dụng với trạng thái hiện tại. Hữu ích nếu docker bị lỗi do vô tình hoặc một số phiên đã bị buộc phải chấm dứt.",
     "DescRescanImageList": "Quét lại danh sách hình ảnh từ các kho đã đăng ký. Có thể mất nhiều thời gian, vì vậy vui lòng đợi sau khi thực hiện.",
+    "DescSystemAnnouncement": "Tạo hoặc chỉnh sửa banner thông báo được hiển thị cho tất cả người dùng ở đầu trang.",
     "Fix": "Sửa chữa",
     "ImagesEnvironment": "Hình ảnh / Môi trường",
     "MatchDatabase": "Khớp cơ sở dữ liệu sử dụng với trạng thái hiện tại",
@@ -1933,7 +1935,8 @@
     "RescanImageList": "Quét lại danh sách hình ảnh từ kho lưu trữ",
     "RescanImageScanning": "Đang quét lại ...",
     "RescanImages": "Quét lại hình ảnh",
-    "Scanning": "Đang quét ..."
+    "Scanning": "Đang quét ...",
+    "SystemAnnouncement": "Thông báo hệ thống"
   },
   "maxLength": {
     "200chars": "(tối đa 200 ký tự)",

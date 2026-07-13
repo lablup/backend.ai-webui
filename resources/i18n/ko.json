@@ -1916,11 +1916,13 @@
     "UpTo3000Logs": "(최근 3000개의 로그)"
   },
   "maintenance": {
+    "Announcement": "공지사항",
     "CleanupImages": "이미지 정리",
     "CleanupOldImages": "오래된 계산 환경 이미지 정리",
     "DescCleanupOldImages": "Docker 이미지 리스트에서 오래된 이미지를 정리하고 삭제합니다.",
     "DescMatchDatabase": "사용 통계 데이터베이스를 현재 상태 기반으로 재계산합니다. Docker가 사고로 인해 중단되었거나, 몇몇 세션이 강제 종료 되었을 때 유용합니다.",
     "DescRescanImageList": "등록된 컨테이너 이미지 저장소로부터 이미지 목록을 새로 읽습니다. 오랜 시간이 걸리므로, 실행 후 종료시까지 기다려주시기 바랍니다.",
+    "DescSystemAnnouncement": "모든 사용자에게 페이지 상단에 표시되는 공지사항 배너를 생성하거나 수정합니다.",
     "Fix": "문제 해결",
     "ImagesEnvironment": "세션 이미지 / 환경",
     "MatchDatabase": "사용 통계 데이터베이스를 현재 상태와 동기화",
@@ -1933,7 +1935,8 @@
     "RescanImageList": "저장소로부터 이미지 목록 새로 읽기",
     "RescanImageScanning": "리스캔중...",
     "RescanImages": "이미지 리스캔",
-    "Scanning": "스캐닝 작업중..."
+    "Scanning": "스캐닝 작업중...",
+    "SystemAnnouncement": "시스템 공지사항"
   },
   "maxLength": {
     "200chars": "(최대 길이 200자)",

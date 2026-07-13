@@ -1914,11 +1914,13 @@
     "UpTo3000Logs": "(Enintään 3000 viimeisintä lokia)"
   },
   "maintenance": {
+    "Announcement": "Ilmoitus",
     "CleanupImages": "Siivous Kuvat",
     "CleanupOldImages": "Vanhojen kuvien siivoaminen",
     "DescCleanupOldImages": "Vanhojen kuvien siivoaminen docker-kuvaluettelosta.",
     "DescMatchDatabase": "Laske käyttötietokanta uudelleen senhetkisen tilan mukaan. Hyödyllinen, jos docker epäonnistuu vahingossa tai jotkin istunnot on lopetettu väkisin.",
     "DescRescanImageList": "Skannaa kuvaluettelo rekisteröidyistä arkistoista. Se voi kestää kauan, joten odota suorituksen jälkeen.",
+    "DescSystemAnnouncement": "Luo tai muokkaa ilmoitusbanneria, joka näytetään kaikille käyttäjille sivun yläosassa.",
     "Fix": "Korjaa",
     "ImagesEnvironment": "Kuvat / Ympäristö",
     "MatchDatabase": "Sovita käyttötietokanta nykyiseen tilaan",
@@ -1931,7 +1933,8 @@
     "RescanImageList": "Kuvaluettelon uudelleenetsintä arkistosta",
     "RescanImageScanning": "Uudelleen skannaus...",
     "RescanImages": "Kuvien uudelleenkuvaus",
-    "Scanning": "Skannaus..."
+    "Scanning": "Skannaus...",
+    "SystemAnnouncement": "Järjestelmäilmoitus"
   },
   "maxLength": {
     "200chars": "(enintään 200 merkkiä)",

@@ -1914,11 +1914,13 @@
     "UpTo3000Logs": "(3000'e kadar son kayıt)"
   },
   "maintenance": {
+    "Announcement": "Duyuru",
     "CleanupImages": "Temizleme Görüntüleri",
     "CleanupOldImages": "Eski görüntüleri temizle",
     "DescCleanupOldImages": "Docker görüntü listesinden eski görüntüleri temizleyin.",
     "DescMatchDatabase": "Mevcut durumla kullanım veritabanını yeniden hesaplayın. Docker kazayla başarısız olursa veya bazı oturumlar zorla sonlandırılırsa kullanışlıdır.",
     "DescRescanImageList": "Kayıtlı depolardan görüntü listesini yeniden tarayın. Uzun zaman alabilir, bu yüzden lütfen uygulamadan sonra bekleyin.",
+    "DescSystemAnnouncement": "Tüm kullanıcılara sayfanın üstünde gösterilen duyuru banner'ını oluşturun veya düzenleyin.",
     "Fix": "Düzelt",
     "ImagesEnvironment": "Görüntüler / Çevre",
     "MatchDatabase": "Kullanım veritabanını mevcut durumla eşleştirin",
@@ -1931,7 +1933,8 @@
     "RescanImageList": "Depodan görüntü listesini yeniden tara",
     "RescanImageScanning": "Yeniden taranıyor...",
     "RescanImages": "Resimleri Yeniden Tara",
-    "Scanning": "Tarama..."
+    "Scanning": "Tarama...",
+    "SystemAnnouncement": "Sistem duyurusu"
   },
   "maxLength": {
     "200chars": "(maksimum 200 karakter)",

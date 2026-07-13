@@ -1917,11 +1917,13 @@
     "UpTo3000Logs": "(Hingga 3000 log terbaru)"
   },
   "maintenance": {
+    "Announcement": "Pengumuman",
     "CleanupImages": "Bereskan Image",
     "CleanupOldImages": "Bereskan image lama",
     "DescCleanupOldImages": "Pemberesan image lama dari daftar image docker.",
     "DescMatchDatabase": "Hitung ulang database penggunaan dengan kondisi saat ini. Berguna jika docker gagal secara tidak sengaja, atau jika beberapa sesi telah dihentikan secara paksa.",
     "DescRescanImageList": "Pindai ulang daftar image dari repositori terdaftar. Mungkin butuh waktu lama, jadi harap tunggu setelah eksekusi.",
+    "DescSystemAnnouncement": "Buat atau edit banner pengumuman yang ditampilkan kepada semua pengguna di bagian atas halaman.",
     "Fix": "Perbaiki",
     "ImagesEnvironment": "Image / Lingkungan",
     "MatchDatabase": "Cocokkan database penggunaan dengan status saat ini",
@@ -1934,7 +1936,8 @@
     "RescanImageList": "Pindai ulang daftar image dari repositori",
     "RescanImageScanning": "Memindai ulang...",
     "RescanImages": "Pindai Ulang Image",
-    "Scanning": "Memindai..."
+    "Scanning": "Memindai...",
+    "SystemAnnouncement": "Pengumuman sistem"
   },
   "maxLength": {
     "200chars": "(maksimum 200 karakter)",

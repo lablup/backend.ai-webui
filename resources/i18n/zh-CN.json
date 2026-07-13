@@ -1916,11 +1916,13 @@
     "UpTo3000Logs": "（最多 3000 个最近的日志）"
   },
   "maintenance": {
+    "Announcement": "公告",
     "CleanupImages": "清理图像",
     "CleanupOldImages": "清理旧图像",
     "DescCleanupOldImages": "清理 docker 镜像列表中的旧镜像。",
     "DescMatchDatabase": "使用当前状态重新计算使用情况数据库。 如果 docker 意外失败或某些会话已被强制终止，则很有用。",
     "DescRescanImageList": "从注册的存储库重新扫描图像列表。 可能需要很长时间，执行后请稍等。",
+    "DescSystemAnnouncement": "创建或编辑显示在页面顶部给所有用户的公告横幅。",
     "Fix": "使固定",
     "ImagesEnvironment": "图像/环境",
     "MatchDatabase": "将使用情况数据库与当前状态匹配",
@@ -1933,7 +1935,8 @@
     "RescanImageList": "从存储库重新扫描图像列表",
     "RescanImageScanning": "正在重新扫描...",
     "RescanImages": "重新扫描图像",
-    "Scanning": "扫描..."
+    "Scanning": "扫描...",
+    "SystemAnnouncement": "系统公告"
   },
   "maxLength": {
     "200chars": "（最多 200 个字符）",
