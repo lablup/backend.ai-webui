@@ -17,12 +17,28 @@ const useStyles = createStyles(({ css }) => ({
   `,
 }));
 
-export interface BAIUncontrolledInputProps
-  extends Omit<InputProps, 'value' | 'defaultValue' | 'onChange'> {
+export interface BAIUncontrolledInputProps extends Omit<
+  InputProps,
+  'value' | 'defaultValue' | 'onChange'
+> {
+  /** Initial value. Changing it remounts the input and discards uncommitted edits. */
   defaultValue?: string;
+  /** Called with the current value when the user commits by pressing Enter or blurring. */
   onCommit?: (value: string) => void;
 }
 
+/**
+ * An intentionally uncontrolled Input that commits its value on Enter or
+ * blur — not on every keystroke.
+ *
+ * `value`/`onChange` are removed from the props to steer expensive commit
+ * side effects (e.g. persisting to localStorage) toward `onCommit`, which
+ * fires only when the user finishes editing. This is the intended commit
+ * path rather than an enforced restriction — per-keystroke handlers
+ * inherited from `InputProps` (such as `onInput`/`onKeyUp`) still pass
+ * through. While focused, an Enter (⏎) icon is shown as an explicit cue
+ * that the value is applied on Enter (or blur).
+ */
 const BAIUncontrolledInput: React.FC<BAIUncontrolledInputProps> = ({
   defaultValue,
   onCommit,
@@ -62,6 +78,7 @@ const BAIUncontrolledInput: React.FC<BAIUncontrolledInputProps> = ({
         if (e.key === 'Enter') {
           inputRef.current?.blur();
         }
+        inputProps?.onKeyDown?.(e);
       }}
     />
   );

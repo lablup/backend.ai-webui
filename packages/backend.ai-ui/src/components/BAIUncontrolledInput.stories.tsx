@@ -4,10 +4,11 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 
 /**
- * BAIUncontrolledInput is an uncontrolled input with commit-on-blur behavior.
+ * BAIUncontrolledInput is an intentionally uncontrolled input that commits
+ * its value only on Enter or blur — not on every keystroke.
  *
  * Key features:
- * - Uncontrolled mode (uses defaultValue instead of value)
+ * - value/onChange are removed by design (uses defaultValue + onCommit)
  * - Commits value on blur or Enter key press
  * - Shows Enter icon hint when focused
  * - Hides number input spinners
@@ -23,20 +24,29 @@ const meta: Meta<typeof BAIUncontrolledInput> = {
     docs: {
       description: {
         component: `
-**BAIUncontrolledInput** extends [Ant Design Input](https://ant.design/components/input) as an uncontrolled component.
+**BAIUncontrolledInput** extends [Ant Design Input](https://ant.design/components/input) as an **intentionally uncontrolled** component.
+
+## Purpose
+This component exists to keep expensive commit side effects — such as persisting to localStorage — from running on every keystroke. The \`value\`/\`onChange\` props are deliberately removed from its API to steer consumers toward \`onCommit\`, the intended commit path: the new value is delivered only when the user finishes editing. (Per-keystroke handlers inherited from Ant Design Input, such as \`onInput\`/\`onKeyUp\`, still pass through — this is a convention, not an enforced restriction.)
+
+- **Enter key** — commits the value (internally triggers blur)
+- **Blur** — clicking/tabbing away commits the value
+
+While focused, an Enter (⏎) icon appears in the suffix as an explicit visual cue that the value is applied on Enter (or blur), so users understand typing alone does not save.
 
 ## BAI-Specific Features
-- **Uncontrolled mode**: Uses \`defaultValue\` instead of \`value\` prop
+- **Uncontrolled by design**: \`value\`/\`onChange\` are excluded from props; uses \`defaultValue\` + \`onCommit\`
 - **Commit on blur/Enter**: Triggers \`onCommit\` callback when input loses focus or Enter is pressed
-- **Enter icon hint**: Shows ⏎ icon when focused to indicate Enter key support
+- **Enter icon hint**: Shows ⏎ icon when focused to signal the commit-on-Enter behavior
 - **No number spinners**: Hides spinner arrows for number input type
+- **Reset on external change**: Changing \`defaultValue\` remounts the input (via \`key\`), discarding uncommitted edits
 
 ## Usage
 \`\`\`tsx
-// Basic usage
+// Persist a setting only when the user finishes editing
 <BAIUncontrolledInput
-  defaultValue="Initial value"
-  onCommit={(value) => console.log('Committed:', value)}
+  defaultValue={storedValue}
+  onCommit={(value) => saveToLocalStorage(value)}
 />
 
 // Number input without spinners
@@ -50,15 +60,17 @@ const meta: Meta<typeof BAIUncontrolledInput> = {
 ## Props
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
-| \`defaultValue\` | \`string\` | - | Initial value (uncontrolled) |
+| \`defaultValue\` | \`string\` | - | Initial value (uncontrolled). Changing it resets the input |
 | \`onCommit\` | \`(value: string) => void\` | - | Callback when value is committed (blur or Enter) |
 
-For all other props, refer to [Ant Design Input](https://ant.design/components/input).
+\`value\` and \`onChange\` are intentionally not available. For all other props, refer to [Ant Design Input](https://ant.design/components/input).
 
 ## When to Use
-- When you need to defer value updates until the user finishes editing
+- When committing the value has side effects that must not run per keystroke (e.g. localStorage writes, network requests)
 - For form fields that should only update on blur/Enter (not on every keystroke)
 - When you want to avoid re-renders on every character typed
+
+Use a regular controlled \`Input\` when the UI must react to the value as the user types (live filtering, character counters, inline validation while typing).
         `,
       },
     },
