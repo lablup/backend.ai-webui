@@ -18,13 +18,19 @@ const MonacoEditor: React.LazyExoticComponent<React.FC<EditorProps>> =
 
 // Language alias preserved from the previous codemirror-based API so existing
 // call sites keep working. Extend as needed when adding new languages.
-export type BAICodeEditorLanguage = 'json' | 'sh' | 'yaml' | 'toml';
+export type BAICodeEditorLanguage =
+  | 'json'
+  | 'sh'
+  | 'yaml'
+  | 'toml'
+  | 'markdown';
 
 const MONACO_LANGUAGE_MAP: Record<BAICodeEditorLanguage, string> = {
   json: 'json',
   sh: 'shell',
   yaml: 'yaml',
   toml: 'plaintext',
+  markdown: 'markdown',
 };
 
 interface BAICodeEditorProps extends Omit<
