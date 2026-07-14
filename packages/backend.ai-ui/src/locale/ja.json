@@ -154,7 +154,12 @@
     "SelectDomain": "ドメインを選択"
   },
   "comp:BAIFetchKeyButton": {
+    "AutoRefresh": "自動更新",
+    "EveryHours": "{{count}}時間",
+    "EveryMinutes": "{{count}}分",
+    "EverySeconds": "{{count}}秒",
     "LastUpdated": "最終更新",
+    "Off": "オフ",
     "Refresh": "更新"
   },
   "comp:BAIGraphQLPropertyFilter": {

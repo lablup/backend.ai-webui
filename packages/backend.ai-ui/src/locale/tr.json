@@ -154,7 +154,12 @@
     "SelectDomain": "Etki Alanı Seçin"
   },
   "comp:BAIFetchKeyButton": {
+    "AutoRefresh": "Otomatik yenileme",
+    "EveryHours": "{{count}}sa",
+    "EveryMinutes": "{{count}}dk",
+    "EverySeconds": "{{count}}sn",
     "LastUpdated": "Son güncelleme",
+    "Off": "Kapalı",
     "Refresh": "Yenile"
   },
   "comp:BAIGraphQLPropertyFilter": {
