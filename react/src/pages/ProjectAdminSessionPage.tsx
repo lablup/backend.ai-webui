@@ -246,6 +246,7 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
           )}
           <AutoUpdateFetchKeyButton
             settingId="project-admin-session"
+            defaultAutoUpdateDelay={15_000}
             loading={isLoading}
             value={fetchKey}
             onChange={(next) => updateFetchKey(next)}

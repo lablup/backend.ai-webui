@@ -253,6 +253,7 @@ const DeploymentListPageContent: React.FC = () => {
           <BAIFlex gap="xs" align="center">
             <AutoUpdateFetchKeyButton
               settingId="deployment-list"
+              defaultAutoUpdateDelay={15_000}
               value={fetchKey}
               onChange={updateFetchKey}
               loading={isPending}

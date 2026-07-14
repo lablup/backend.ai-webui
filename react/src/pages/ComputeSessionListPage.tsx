@@ -517,6 +517,7 @@ const ComputeSessionListPage = () => {
               )}
               <AutoUpdateFetchKeyButton
                 settingId="session-list"
+                defaultAutoUpdateDelay={15_000}
                 loading={
                   deferredQueryVariables !== queryVariables ||
                   deferredFetchKey !== fetchKey

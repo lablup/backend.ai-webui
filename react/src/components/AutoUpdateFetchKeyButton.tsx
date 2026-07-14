@@ -1,4 +1,7 @@
-import { useBAISettingUserState } from '../hooks/useBAISetting';
+import {
+  hasStoredUserSetting,
+  useBAISettingUserState,
+} from '../hooks/useBAISetting';
 import { BAIFetchKeyButton } from 'backend.ai-ui';
 import React, { ComponentProps } from 'react';
 
@@ -22,6 +25,7 @@ export type FetchKeyAutoUpdateSettingId =
   | 'deployment-list'
   | 'admin-deployment-list'
   | 'project-admin-deployments'
+  | 'deployment-replicas'
   // VFolder lists
   | 'vfolder-list'
   | 'admin-vfolder-list'
@@ -64,6 +68,15 @@ interface AutoUpdateFetchKeyButtonProps extends Omit<
    * compile time.
    */
   settingId: FetchKeyAutoUpdateSettingId;
+  /**
+   * Interval (ms) used the first time this consumer renders, before the user
+   * has ever picked anything from the dropdown. Once the user picks an
+   * interval (including "Off"), that choice is persisted and always wins over
+   * this default. Pass the consumer's pre-FR-3147 fixed interval here so
+   * pages that already auto-refreshed keep doing so; omit (defaults to `null`
+   * / Off) for consumers newly gaining auto-refresh.
+   */
+  defaultAutoUpdateDelay?: number | null;
 }
 
 /**
@@ -71,8 +84,9 @@ interface AutoUpdateFetchKeyButtonProps extends Omit<
  * interval dropdown (FR-3147) and persists the chosen interval via
  * `useBAISetting`, keyed per consumer by `settingId`.
  *
- * Auto-refresh is off by default; it only runs once the user picks an interval
- * from the dropdown, and the choice is remembered per consumer across reloads.
+ * Auto-refresh starts at `defaultAutoUpdateDelay` (or off, if omitted) until
+ * the user picks an interval from the dropdown; from then on their choice is
+ * remembered per consumer across reloads and always wins over the default.
  *
  * The dropdown shows the default presets ({@link AUTO_UPDATE_DELAY_OPTIONS} in
  * BAIFetchKeyButton). A consumer can offer a different cadence by passing
@@ -81,16 +95,24 @@ interface AutoUpdateFetchKeyButtonProps extends Omit<
  */
 const AutoUpdateFetchKeyButton: React.FC<AutoUpdateFetchKeyButtonProps> = ({
   settingId,
+  defaultAutoUpdateDelay = null,
   ...props
 }) => {
   'use memo';
-  const [autoUpdateDelay, setAutoUpdateDelay] = useBAISettingUserState(
-    `fetchKeyAutoUpdateDelay.${settingId}`,
-  );
+  const settingName = `fetchKeyAutoUpdateDelay.${settingId}` as const;
+  const [autoUpdateDelay, setAutoUpdateDelay] =
+    useBAISettingUserState(settingName);
+  // Only fall back to `defaultAutoUpdateDelay` before the user has ever
+  // touched the dropdown for this consumer. Once they have (including
+  // explicitly choosing "Off"), the persisted value is `null` too, but it
+  // must not be re-overridden by the default on every subsequent render.
+  const resolvedAutoUpdateDelay = hasStoredUserSetting(settingName)
+    ? (autoUpdateDelay ?? null)
+    : defaultAutoUpdateDelay;
   return (
     <BAIFetchKeyButton
       {...props}
-      autoUpdateDelay={autoUpdateDelay ?? null}
+      autoUpdateDelay={resolvedAutoUpdateDelay}
       onChangeAutoUpdateDelay={setAutoUpdateDelay}
     />
   );

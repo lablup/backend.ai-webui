@@ -77,6 +77,23 @@ export const useBAISettingUserState = <K extends keyof UserSettings>(
   return useAtom<UserSettings[K]>(SettingAtomFamily('user.' + name));
 };
 
+/**
+ * Whether a user setting has ever been explicitly written to `localStorage`.
+ * Needed because `useBAISettingUserState` collapses "never set" and
+ * "explicitly set to `null`" into the same `null` return value — callers that
+ * need a fallback-only-when-unset default (e.g. a per-consumer auto-refresh
+ * interval where the user can legitimately choose "off") can't tell the two
+ * apart from the hook's value alone.
+ */
+export const hasStoredUserSetting = <K extends keyof UserSettings>(
+  name: K,
+): boolean => {
+  if (typeof window === 'undefined') return false;
+  return (
+    window.localStorage.getItem('backendaiwebui.settings.user.' + name) !== null
+  );
+};
+
 export const useBAISettingGeneralState = <K extends keyof GeneralSettings>(
   name: K,
 ): [GeneralSettings[K], (newValue: GeneralSettings[K]) => void] => {
