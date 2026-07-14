@@ -755,6 +755,18 @@ export default defineConfig(({ command, mode }) => {
         allow: [projectRoot, ...(pnpmStorePath ? [pnpmStorePath] : [])],
       },
       watch: {
+        // Opt-in escape hatch (`VITE_WATCH_USE_POLLING=1` in
+        // `.env.development.local`) for machines whose macOS `fseventsd`
+        // chronically drops FSEvents client streams
+        // (kFSEventStreamEventFlagUserDropped) under filesystem-event
+        // pressure. chokidar 3 + fsevents has no recovery path from a
+        // dropped stream — the watcher goes permanently silent while the
+        // dev server keeps serving stale module transforms ("HMR dead AND
+        // full refresh still shows old code until a dev-server restart").
+        // Stat-polling bypasses FSEvents entirely, at the cost of steady
+        // background CPU, so it stays off unless a machine needs it.
+        usePolling: process.env.VITE_WATCH_USE_POLLING === '1',
+        interval: 500,
         ignored: [
           '**/node_modules/**',
           '**/build/**',
