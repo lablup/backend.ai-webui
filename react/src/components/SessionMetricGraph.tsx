@@ -244,7 +244,7 @@ const SessionMetricGraph: React.FC<PrometheusMetricGraphProps> = ({
             <Line
               type="monotone"
               dataKey="used"
-              stroke={token.colorPrimary}
+              stroke={token.colorError}
               strokeWidth={2}
               dot={{ r: 0 }}
             />
