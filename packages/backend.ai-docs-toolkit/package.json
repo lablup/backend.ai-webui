@@ -1,10 +1,11 @@
 {
   "name": "backend.ai-docs-toolkit",
-  "version": "0.1.0",
+  "version": "26.5.0-alpha.0",
   "description": "A reusable documentation toolkit for generating PDFs and web previews from Markdown content",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lablup/backend.ai-webui/tree/main/packages/backend.ai-docs-toolkit"
+    "url": "git+https://github.com/lablup/backend.ai-webui.git",
+    "directory": "packages/backend.ai-docs-toolkit"
   },
   "bugs": {
     "url": "https://github.com/lablup/backend.ai-webui/issues"
@@ -23,7 +24,7 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "docs-toolkit": "./bin/docs-toolkit.js"
+    "docs-toolkit": "bin/docs-toolkit.js"
   },
   "exports": {
     ".": {
