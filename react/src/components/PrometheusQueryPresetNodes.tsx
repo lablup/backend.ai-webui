@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { PrometheusQueryPresetEditorModalFragment$key } from '../__generated__/PrometheusQueryPresetEditorModalFragment.graphql';
 import {
   PrometheusQueryPresetNodesFragment$data,
   PrometheusQueryPresetNodesFragment$key,
@@ -51,7 +50,7 @@ interface PrometheusQueryPresetNodesProps extends Omit<
 > {
   presetsFrgmt: PrometheusQueryPresetNodesFragment$key;
   onDeletePreset?: (preset: PrometheusQueryPresetNodeInList) => void;
-  onEditPreset?: (preset: PrometheusQueryPresetEditorModalFragment$key) => void;
+  onEditPreset?: (preset: PrometheusQueryPresetNodeInList) => void;
   customizeColumns?: (
     baseColumns: BAIColumnsType<PrometheusQueryPresetNodeInList>,
   ) => BAIColumnsType<PrometheusQueryPresetNodeInList>;
