@@ -7,7 +7,7 @@ import {
   EndpointSelectQuery$data,
 } from '../../__generated__/EndpointSelectQuery.graphql';
 import { EndpointSelectValueQuery } from '../../__generated__/EndpointSelectValueQuery.graphql';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
+import { useWebUINavigate } from '../../hooks';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
 import TotalFooter from '../TotalFooter';
 import { useControllableValue } from 'ahooks';
@@ -19,7 +19,12 @@ import {
   Space,
   Tooltip,
 } from 'antd';
-import { BAIEndpointsIcon, BAIFlex, BAISelect } from 'backend.ai-ui';
+import {
+  BAIEndpointsIcon,
+  BAIFlex,
+  BAISelect,
+  mergeFilterValues,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { InfoIcon } from 'lucide-react';
 import React, { useDeferredValue, useEffect, useRef, useState } from 'react';
@@ -35,7 +40,6 @@ export interface EndpointSelectProps extends Omit<
   'options' | 'labelInValue'
 > {
   fetchKey?: string;
-  lifecycleStageFilter?: LifecycleStage[];
   showDetailPageButton?: boolean;
 }
 
@@ -47,18 +51,20 @@ type LifecycleStage =
   | 'destroying'
   | 'destroyed';
 
+// Terminated lifecycle stages: a deployment in one of these has no serving
+// replica. Everything else may still have a replica serving traffic.
+const TERMINATED_LIFECYCLE_STAGES: LifecycleStage[] = [
+  'destroying',
+  'destroyed',
+];
+
 const EndpointSelect: React.FC<EndpointSelectProps> = ({
   fetchKey,
-  lifecycleStageFilter = ['ready', 'created'],
   showDetailPageButton: showInfoButton,
   loading,
   ...selectPropsWithoutLoading
 }) => {
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
-  lifecycleStageFilter = baiClient.supports('endpoint-lifecycle-ready-stage')
-    ? ['ready', 'created']
-    : ['created'];
 
   const [controllableValue, setControllableValue] = useControllableValue<
     string | undefined
@@ -77,9 +83,15 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
 
   const selectRef = useRef<GetRef<typeof BAISelect> | null>(null);
 
-  const lifecycleStageFilterStr = lifecycleStageFilter
-    .map((v) => `lifecycle_stage == "${v}"`)
-    .join(' | ');
+  // Show every deployment that is not terminated, so a deployment whose replica
+  // is still alive stays selectable while a new revision is rolling out (e.g.
+  // deploying/pending). Filtering on ready/created alone hid such deployments.
+  // TODO(FR-3303): once the endpoint connection supports nested filters, list
+  // deployments that have at least one replica with an active traffic status
+  // instead of relying on the endpoint-level lifecycle_stage.
+  const lifecycleStageFilterStr = mergeFilterValues(
+    TERMINATED_LIFECYCLE_STAGES.map((stage) => `lifecycle_stage != "${stage}"`),
+  );
 
   const { endpoint: selectedEndpoint } =
     useLazyLoadQuery<EndpointSelectValueQuery>(
@@ -138,13 +150,10 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
       limit: 10,
     },
     {
-      filter: [
+      filter: mergeFilterValues([
         lifecycleStageFilterStr,
         deferredSearchStr ? `name ilike "%${deferredSearchStr}%"` : undefined,
-      ]
-        .filter(Boolean)
-        .map((v) => `(${v})`)
-        .join(' & '),
+      ]),
     },
     // TODO: skip fetch when the option popover is closed
     {

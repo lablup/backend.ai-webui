@@ -12,7 +12,7 @@ import {
 } from '../components/Chat/ChatHistory';
 import { type ChatProviderData } from '../components/Chat/ChatModel';
 import WebUINavigate from '../components/WebUINavigate';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useWebUINavigate } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import {
   Alert,
@@ -25,7 +25,13 @@ import {
   Typography,
 } from 'antd';
 import { createStyles } from 'antd-style';
-import { BAIButton, BAIFlex, BAICard, BAITable } from 'backend.ai-ui';
+import {
+  BAIButton,
+  BAIFlex,
+  BAICard,
+  BAITable,
+  mergeFilterValues,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
 import * as _ from 'lodash-es';
@@ -46,8 +52,6 @@ const useStyles = createStyles(({ css }) => ({
 }));
 
 function useDefaultEndpointId() {
-  const baiClient = useSuspendedBackendaiClient();
-
   const { endpoint_list } = useLazyLoadQuery<ChatPageQuery>(
     graphql`
       query ChatPageQuery($filter: String) {
@@ -59,9 +63,17 @@ function useDefaultEndpointId() {
       }
     `,
     {
-      filter: baiClient.supports('endpoint-lifecycle-ready-stage')
-        ? 'lifecycle_stage == "ready" | lifecycle_stage == "created"'
-        : 'lifecycle_stage == "created"',
+      // Pick any deployment that is not terminated, so its replica can still be
+      // chatted with. Filtering on ready/created alone skipped deployments while
+      // a new revision was rolling out (e.g. deploying/pending) even though a
+      // previous revision's replica was still alive.
+      // TODO(FR-3303): once the endpoint connection supports nested filters,
+      // pick a deployment that has at least one replica with an active traffic
+      // status instead of relying on the endpoint-level lifecycle_stage.
+      filter: mergeFilterValues([
+        'lifecycle_stage != "destroyed"',
+        'lifecycle_stage != "destroying"',
+      ]),
     },
   );
 
