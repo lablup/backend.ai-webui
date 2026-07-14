@@ -1081,7 +1081,6 @@
     "ModelDefinitionPath": "Đường dẫn tệp định nghĩa mô hình",
     "ModelFolder": "Thư mục mô hình",
     "ModelFolderTooltip": "Thư mục mô hình được gắn kết vào mỗi bản sao. Chỉ các thư mục ở chế độ sử dụng MODEL với trạng thái READY mới được liệt kê.",
-    "ModelMountDestination": "Điểm gắn kết cho thư mục mô hình",
     "ModelVersion": "Tên mô hình",
     "Name": "Tên",
     "NamePlaceholder": "Nhập tên triển khai",

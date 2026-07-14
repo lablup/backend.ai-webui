@@ -1081,7 +1081,6 @@
     "ModelDefinitionPath": "Ścieżka pliku definicji modelu",
     "ModelFolder": "Folder modelu",
     "ModelFolderTooltip": "Folder modelu montowany w każdej replice. Wyświetlane są tylko foldery w trybie użycia MODEL ze statusem GOTOWY.",
-    "ModelMountDestination": "Cel montowania dla folderu modelu",
     "ModelVersion": "Nazwa modelu",
     "Name": "Nazwa",
     "NamePlaceholder": "Wprowadź nazwę wdrożenia",

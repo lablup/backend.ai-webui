@@ -1081,7 +1081,6 @@
     "ModelDefinitionPath": "เส้นทางไฟล์นิยามโมเดล",
     "ModelFolder": "โฟลเดอร์โมเดล",
     "ModelFolderTooltip": "โฟลเดอร์โมเดลที่ติดตั้งในแต่ละแบบจำลอง แสดงเฉพาะโฟลเดอร์ในโหมดการใช้งาน MODEL ที่มีสถานะ READY เท่านั้น",
-    "ModelMountDestination": "ปลายทางการเมาท์สำหรับโฟลเดอร์โมเดล",
     "ModelVersion": "ชื่อโมเดล",
     "Name": "ชื่อ",
     "NamePlaceholder": "กรอกชื่อการปรับใช้",

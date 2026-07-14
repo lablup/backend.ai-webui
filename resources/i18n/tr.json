@@ -1081,7 +1081,6 @@
     "ModelDefinitionPath": "Model Tanım Dosyası Yolu",
     "ModelFolder": "Model Klasörü",
     "ModelFolderTooltip": "Her kopyaya bağlanan model klasörü. Yalnızca MODEL kullanım modundaki ve HAZIR durumundaki klasörler listelenir.",
-    "ModelMountDestination": "Model Klasörü için Bağlama Hedefi",
     "ModelVersion": "Model Adı",
     "Name": "Ad",
     "NamePlaceholder": "Bir dağıtım adı girin",

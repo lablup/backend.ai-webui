@@ -1081,7 +1081,6 @@
     "ModelDefinitionPath": "Percorso file di definizione modello",
     "ModelFolder": "Cartella modello",
     "ModelFolderTooltip": "La cartella del modello montata in ogni replica. Vengono elencate solo le cartelle in modalità di utilizzo MODELLO con stato PRONTO.",
-    "ModelMountDestination": "Destinazione mount per cartella modello",
     "ModelVersion": "Nome modello",
     "Name": "Nome",
     "NamePlaceholder": "Inserisci un nome distribuzione",

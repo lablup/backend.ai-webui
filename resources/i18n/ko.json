@@ -1081,7 +1081,6 @@
     "ModelDefinitionPath": "모델 정의 파일 경로",
     "ModelFolder": "모델 폴더",
     "ModelFolderTooltip": "각 복제본에 마운트되는 모델 폴더입니다. 모델 용도로 지정되었고 준비(READY) 상태인 폴더만 표시됩니다.",
-    "ModelMountDestination": "모델 폴더 마운트 대상",
     "ModelVersion": "모델 버전",
     "Name": "이름",
     "NamePlaceholder": "배포 이름을 입력하세요",

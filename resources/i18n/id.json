@@ -1081,7 +1081,6 @@
     "ModelDefinitionPath": "Jalur File Definisi Model",
     "ModelFolder": "Folder Model",
     "ModelFolderTooltip": "Folder model yang dipasang di setiap replika. Hanya folder dalam mode penggunaan MODEL dengan status SIAP yang ditampilkan.",
-    "ModelMountDestination": "Tujuan Mount untuk Folder Model",
     "ModelVersion": "Nama Model",
     "Name": "Nama",
     "NamePlaceholder": "Masukkan nama penerapan",

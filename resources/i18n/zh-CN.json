@@ -1081,7 +1081,6 @@
     "ModelDefinitionPath": "模型定义文件路径",
     "ModelFolder": "模型文件夹",
     "ModelFolderTooltip": "挂载到每个副本的模型文件夹。仅列出处于 MODEL 使用模式且状态为 READY 的文件夹。",
-    "ModelMountDestination": "模型文件夹挂载目标",
     "ModelVersion": "模型名称",
     "Name": "名称",
     "NamePlaceholder": "输入部署名称",

@@ -1081,7 +1081,6 @@
     "ModelDefinitionPath": "Ruta del archivo de definición del modelo",
     "ModelFolder": "Carpeta del modelo",
     "ModelFolderTooltip": "La carpeta del modelo montada en cada réplica. Solo se listan las carpetas en modo de uso MODELO con estado LISTO.",
-    "ModelMountDestination": "Destino de montaje para la carpeta del modelo",
     "ModelVersion": "Nombre del modelo",
     "Name": "Nombre",
     "NamePlaceholder": "Ingrese un nombre de despliegue",

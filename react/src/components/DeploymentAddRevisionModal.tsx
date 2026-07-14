@@ -1784,7 +1784,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                         <BAIFlex gap="sm">
                           <Form.Item
                             name="mountDestination"
-                            label={t('deployment.ModelMountDestination')}
+                            label={t('modelService.ModelMountDestination')}
                             tooltip={t('modelService.ModelMountTooltip')}
                             rules={[{ required: true }]}
                             style={{ flex: 1 }}

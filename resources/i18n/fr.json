@@ -1081,7 +1081,6 @@
     "ModelDefinitionPath": "Chemin du fichier de définition du modèle",
     "ModelFolder": "Dossier du modèle",
     "ModelFolderTooltip": "Le dossier de modèle monté dans chaque réplique. Seuls les dossiers en mode d'utilisation MODÈLE avec le statut PRÊT sont listés.",
-    "ModelMountDestination": "Destination de montage pour le dossier du modèle",
     "ModelVersion": "Nom du modèle",
     "Name": "Nom",
     "NamePlaceholder": "Saisir un nom de déploiement",

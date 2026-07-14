@@ -1081,7 +1081,6 @@
     "ModelDefinitionPath": "モデル定義ファイルパス",
     "ModelFolder": "モデルフォルダー",
     "ModelFolderTooltip": "各レプリカにマウントされるモデルフォルダー。MODELの使用モードでREADY状態のフォルダーのみが表示されます。",
-    "ModelMountDestination": "モデルフォルダーのマウント先",
     "ModelVersion": "モデル名",
     "Name": "名前",
     "NamePlaceholder": "デプロイ名を入力",

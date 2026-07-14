@@ -1081,7 +1081,6 @@
     "ModelDefinitionPath": "Mallimäärittelytiedoston polku",
     "ModelFolder": "Mallikansio",
     "ModelFolderTooltip": "Mallikansio, joka liitetään jokaiseen replikaan. Luettelossa näkyvät vain MALLI-käyttötilassa olevat kansiot, joiden tila on VALMIS.",
-    "ModelMountDestination": "Mallikansion liitäntäkohde",
     "ModelVersion": "Mallin nimi",
     "Name": "Nimi",
     "NamePlaceholder": "Anna käyttöönoton nimi",

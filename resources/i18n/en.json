@@ -1068,7 +1068,6 @@
     "ModelDefinitionPath": "Model Definition File Path",
     "ModelFolder": "Model Folder",
     "ModelFolderTooltip": "The model folder mounted into each replica. Only folders in MODEL usage mode and READY status are listed.",
-    "ModelMountDestination": "Mount Destination For Model Folder",
     "ModelVersion": "Model Name",
     "Name": "Name",
     "NamePlaceholder": "Enter a deployment name",

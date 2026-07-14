@@ -1081,7 +1081,6 @@
     "ModelDefinitionPath": "Caminho do ficheiro de definição do modelo",
     "ModelFolder": "Pasta do modelo",
     "ModelFolderTooltip": "A pasta do modelo montada em cada réplica. Apenas as pastas no modo de utilização MODELO com estado PRONTO são listadas.",
-    "ModelMountDestination": "Destino de montagem para a pasta do modelo",
     "ModelVersion": "Nome do modelo",
     "Name": "Nome",
     "NamePlaceholder": "Introduza um nome de implementação",
