@@ -43,7 +43,7 @@ check_warmup_paths() {
       echo "  missing: $path (resolved: $resolved)"
       missing=1
     fi
-  done < <(awk '/warmup: \{/,/^\s*\},/' "$config" \
+  done < <(awk '/warmup: \{/,/^[[:space:]]*\},/' "$config" \
     | grep -oE "'[^']+'" \
     | tr -d "'" \
     | grep -v '^clientFiles$')
