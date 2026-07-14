@@ -7,7 +7,9 @@ const path = require('path')
  * Environment variables
  * GITHUB_TOKEN (Required): GitHub authentication token
  * REPOSITORY: Target repository to upload release asset. defaults to lablup/backend.ai-webui
- * RELEASE_TAG: Release tag, defaults to latest tag
+ * RELEASE_TAG: Release tag. When unset, falls back to GITHUB_REF_NAME if the run is
+ *              on a tag ref (GITHUB_REF_TYPE === 'tag'), and otherwise — e.g. a
+ *              workflow_dispatch on a branch — to the latest tag via `git describe`.
  */
 
 const [OWNER, REPOSITORY] = (process.env.REPOSITORY || 'lablup/backend.ai-webui').split('/')
@@ -33,6 +35,16 @@ const execCommand = async (command, ...args) => {
 const getLatestTag = async () => {
     const [stdout, _] = await execCommand('/usr/bin/env', 'git', 'describe', '--tags', '--abbrev=0')
     return stdout.trim()
+}
+
+// `release: published` events always run on the tag ref, so GITHUB_REF_NAME is
+// the release tag. Prefer it over `git describe`, which cannot run when the
+// job executes inside a container whose UID does not own the checkout
+// ("detected dubious ownership", FR-3322).
+const resolveTag = async () => {
+    if (process.env.RELEASE_TAG) return process.env.RELEASE_TAG
+    if (process.env.GITHUB_REF_TYPE === 'tag' && process.env.GITHUB_REF_NAME) return process.env.GITHUB_REF_NAME
+    return await getLatestTag()
 }
 
 const getReleaseIdFromTag = async (tag) => {
@@ -61,7 +73,7 @@ const main = async () => {
 
     console.log(`found ${assets.length} asset(s): ${assets}`)
 
-    const tag = process.env.RELEASE_TAG || (await getLatestTag())
+    const tag = await resolveTag()
     const releaseId = await getReleaseIdFromTag(tag)
     // Fetch the upload URL once — it's constant per release. Calling
     // getUploadURL() per asset wastes API quota and risks rate limiting.
