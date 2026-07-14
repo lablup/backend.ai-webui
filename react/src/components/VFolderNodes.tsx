@@ -697,10 +697,12 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
           />
         </BAIUnmountAfterClose>
       </Suspense>
-      <DeploymentSettingModal
-        open={isCreateDeploymentOpen}
-        onRequestClose={toggleCreateDeployment}
-      />
+      <BAIUnmountAfterClose>
+        <DeploymentSettingModal
+          open={isCreateDeploymentOpen}
+          onRequestClose={toggleCreateDeployment}
+        />
+      </BAIUnmountAfterClose>
     </>
   );
 };

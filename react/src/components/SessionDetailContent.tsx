@@ -63,6 +63,7 @@ import {
   BAISessionClusterMode,
   INITIAL_FETCH_KEY,
   BAIButton,
+  BAIUnmountAfterClose,
   useResourceSlotsDetails,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -723,11 +724,13 @@ const SessionDetailContent: React.FC<{
         }
         onCancel={toggleOpenCodeHighlighterModal}
       />
-      <SessionSchedulingHistoryModal
-        sessionId={id}
-        open={openSessionSchedulingHistoryModal}
-        onCancel={toggleOpenSessionSchedulingHistoryModal}
-      />
+      <BAIUnmountAfterClose>
+        <SessionSchedulingHistoryModal
+          sessionId={id}
+          open={openSessionSchedulingHistoryModal}
+          onCancel={toggleOpenSessionSchedulingHistoryModal}
+        />
+      </BAIUnmountAfterClose>
       <SessionStatusDetailModal
         sessionFrgmt={session}
         open={openStatusDetailModal}

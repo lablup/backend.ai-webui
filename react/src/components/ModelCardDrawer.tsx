@@ -359,10 +359,12 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
           />
         </BAIUnmountAfterClose>
       </Suspense>
-      <DeploymentSettingModal
-        open={isCreateDeploymentOpen}
-        onRequestClose={toggleCreateDeployment}
-      />
+      <BAIUnmountAfterClose>
+        <DeploymentSettingModal
+          open={isCreateDeploymentOpen}
+          onRequestClose={toggleCreateDeployment}
+        />
+      </BAIUnmountAfterClose>
     </>
   );
 };

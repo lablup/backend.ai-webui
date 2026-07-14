@@ -9,7 +9,12 @@ import AgentLifeCycleControlModal, {
 import AgentSettingModal from '../AgentSettingModal';
 import { PlayCircleOutlined, SettingOutlined } from '@ant-design/icons';
 import { Space, Tooltip, theme } from 'antd';
-import { BAIButton, BAIButtonProps, BAITerminateIcon } from 'backend.ai-ui';
+import {
+  BAIButton,
+  BAIButtonProps,
+  BAITerminateIcon,
+  BAIUnmountAfterClose,
+} from 'backend.ai-ui';
 import { RefreshCw } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -86,13 +91,15 @@ const AgentActionButtons: React.FC<AgentActionButtonsProps> = ({
         </Tooltip>
       </Space.Compact>
 
-      <AgentSettingModal
-        agentNodeFrgmt={agent}
-        open={openSettingModal}
-        onRequestClose={() => {
-          setOpenSettingModal(false);
-        }}
-      />
+      <BAIUnmountAfterClose>
+        <AgentSettingModal
+          agentNodeFrgmt={agent}
+          open={openSettingModal}
+          onRequestClose={() => {
+            setOpenSettingModal(false);
+          }}
+        />
+      </BAIUnmountAfterClose>
       <AgentLifeCycleControlModal
         open={!!lifeCycleType}
         lifeCycleType={lifeCycleType}

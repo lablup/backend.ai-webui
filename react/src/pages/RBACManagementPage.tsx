@@ -29,6 +29,7 @@ import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
+  BAIUnmountAfterClose,
   filterOutEmpty,
   INITIAL_FETCH_KEY,
   toLocalId,
@@ -381,15 +382,17 @@ const RBACManagementPage: React.FC = () => {
           }}
         />
       </BAIFlex>
-      <RoleFormModal
-        open={isCreateModalOpen}
-        onRequestClose={(success) => {
-          setIsCreateModalOpen(false);
-          if (success) {
-            updateFetchKey();
-          }
-        }}
-      />
+      <BAIUnmountAfterClose>
+        <RoleFormModal
+          open={isCreateModalOpen}
+          onRequestClose={(success) => {
+            setIsCreateModalOpen(false);
+            if (success) {
+              updateFetchKey();
+            }
+          }}
+        />
+      </BAIUnmountAfterClose>
       <RoleDetailDrawer
         open={!!selectedRole}
         roleFrgmt={selectedRole}

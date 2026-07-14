@@ -399,14 +399,16 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
           }
         />
       </BAICard>
-      <DeploymentSettingModal
-        open={settingModalOpen}
-        deploymentFrgmt={deployment}
-        onRequestClose={(success) => {
-          setSettingModalOpen(false);
-          if (success) onRefetch();
-        }}
-      />
+      <BAIUnmountAfterClose>
+        <DeploymentSettingModal
+          open={settingModalOpen}
+          deploymentFrgmt={deployment}
+          onRequestClose={(success) => {
+            setSettingModalOpen(false);
+            if (success) onRefetch();
+          }}
+        />
+      </BAIUnmountAfterClose>
       <BAIDeleteConfirmModal
         open={isDeleteModalOpen}
         title={t('deployment.DeleteDeployment')}

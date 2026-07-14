@@ -27,7 +27,7 @@ import { useThemeMode } from '../hooks/useThemeMode';
 import { SettingOutlined } from '@ant-design/icons';
 import { useSessionStorageState, useToggle } from 'ahooks';
 import { App, Button, Skeleton, Typography } from 'antd';
-import { BAICard, filterOutEmpty } from 'backend.ai-ui';
+import { BAICard, BAIUnmountAfterClose, filterOutEmpty } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Suspense, useEffect, useEffectEvent, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
@@ -537,10 +537,12 @@ const UserPreferencesPage = () => {
         </Suspense>
       </BAICard>
       {baiClient?.supports('my-keypairs') ? (
-        <MyKeypairManagementModal
-          open={isOpenSSHKeypairInfoModal}
-          onRequestClose={toggleSSHKeypairInfoModal}
-        />
+        <BAIUnmountAfterClose>
+          <MyKeypairManagementModal
+            open={isOpenSSHKeypairInfoModal}
+            onRequestClose={toggleSSHKeypairInfoModal}
+          />
+        </BAIUnmountAfterClose>
       ) : (
         <MyKeypairInfoModalLegacy
           open={isOpenSSHKeypairInfoModal}

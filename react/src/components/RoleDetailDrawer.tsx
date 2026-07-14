@@ -12,6 +12,7 @@ import {
   BAIButton,
   BAIFetchKeyButton,
   BAIFlex,
+  BAIUnmountAfterClose,
   useFetchKey,
 } from 'backend.ai-ui';
 import { EditIcon } from 'lucide-react';
@@ -106,13 +107,15 @@ const RoleDetailDrawer: React.FC<RoleDetailDrawerProps> = ({
               )}
             </BAIFlex>
             <RoleDetailDrawerContent roleNodeFrgmt={role} />
-            <RoleFormModal
-              open={isEditModalOpen}
-              roleNodeFrgmt={role}
-              onRequestClose={() => {
-                setIsEditModalOpen(false);
-              }}
-            />
+            <BAIUnmountAfterClose>
+              <RoleFormModal
+                open={isEditModalOpen}
+                roleNodeFrgmt={role}
+                onRequestClose={() => {
+                  setIsEditModalOpen(false);
+                }}
+              />
+            </BAIUnmountAfterClose>
           </BAIFlex>
         )}
       </Suspense>

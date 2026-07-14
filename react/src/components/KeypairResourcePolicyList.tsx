@@ -35,6 +35,7 @@ import {
   BAINameActionCell,
   BAIDeleteConfirmModal,
   BAIQuestionIconWithTooltip,
+  BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -381,23 +382,25 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
         }}
       />
       <Suspense>
-        <KeypairResourcePolicySettingModal
-          existingPolicyNames={_.map(
-            keypair_resource_policies,
-            (policy) => policy?.name || '',
-          )}
-          open={!!editingKeypairResourcePolicy || isCreatingPolicySetting}
-          keypairResourcePolicyFrgmt={editingKeypairResourcePolicy || null}
-          onRequestClose={(success) => {
-            setEditingKeypairResourcePolicy(null);
-            setIsCreatingPolicySetting(false);
-            if (success) {
-              startRefetchTransition(() => {
-                updateKeypairResourcePolicyFetchKey();
-              });
-            }
-          }}
-        />
+        <BAIUnmountAfterClose>
+          <KeypairResourcePolicySettingModal
+            existingPolicyNames={_.map(
+              keypair_resource_policies,
+              (policy) => policy?.name || '',
+            )}
+            open={!!editingKeypairResourcePolicy || isCreatingPolicySetting}
+            keypairResourcePolicyFrgmt={editingKeypairResourcePolicy || null}
+            onRequestClose={(success) => {
+              setEditingKeypairResourcePolicy(null);
+              setIsCreatingPolicySetting(false);
+              if (success) {
+                startRefetchTransition(() => {
+                  updateKeypairResourcePolicyFetchKey();
+                });
+              }
+            }}
+          />
+        </BAIUnmountAfterClose>
       </Suspense>
       <KeypairResourcePolicyInfoModal
         open={!!currentResourcePolicy || isPendingInfoModalOpen}

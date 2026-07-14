@@ -449,14 +449,16 @@ const AdminDeploymentListPageContent: React.FC = () => {
           }}
         />
       </BAIFlex>
-      <DeploymentSettingModal
-        open={!!editingDeployment}
-        deploymentFrgmt={editingDeployment ?? null}
-        onRequestClose={(success) => {
-          setEditingDeploymentId(null);
-          if (success) updateFetchKey();
-        }}
-      />
+      <BAIUnmountAfterClose>
+        <DeploymentSettingModal
+          open={!!editingDeployment}
+          deploymentFrgmt={editingDeployment ?? null}
+          onRequestClose={(success) => {
+            setEditingDeploymentId(null);
+            if (success) updateFetchKey();
+          }}
+        />
+      </BAIUnmountAfterClose>
       <BAIDeleteConfirmModal
         open={!!deletingDeployment}
         title={t('deployment.DeleteDeployment')}

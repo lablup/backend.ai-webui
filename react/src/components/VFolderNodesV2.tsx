@@ -873,10 +873,12 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
           />
         </BAIUnmountAfterClose>
       </Suspense>
-      <DeploymentSettingModal
-        open={isCreateDeploymentOpen}
-        onRequestClose={toggleCreateDeployment}
-      />
+      <BAIUnmountAfterClose>
+        <DeploymentSettingModal
+          open={isCreateDeploymentOpen}
+          onRequestClose={toggleCreateDeployment}
+        />
+      </BAIUnmountAfterClose>
       <HostQuotaModal
         open={isHostQuotaModalOpen}
         onCancel={() => setIsHostQuotaModalOpen(false)}
