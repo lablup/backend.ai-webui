@@ -295,6 +295,7 @@ const AdminDeploymentListPageContent: React.FC = () => {
           </BAIFlex>
           <AutoUpdateFetchKeyButton
             settingId="admin-deployment-list"
+            defaultAutoUpdateDelay={15_000}
             value={fetchKey}
             onChange={updateFetchKey}
             loading={isLoading}

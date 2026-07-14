@@ -68,6 +68,7 @@ const SessionDetailDrawer: React.FC<SessionDetailDrawerProps> = ({
       extra={
         <AutoUpdateFetchKeyButton
           settingId="session-detail"
+          defaultAutoUpdateDelay={10_000}
           loading={isPendingReload}
           value={fetchKey}
           onChange={(newFetchKey) => {

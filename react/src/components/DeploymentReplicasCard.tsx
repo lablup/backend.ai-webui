@@ -11,6 +11,7 @@ import type { DeploymentRevisionDetail_revision$key } from '../__generated__/Dep
 import { RouteSchedulingHistoryModalQuery } from '../__generated__/RouteSchedulingHistoryModalQuery.graphql';
 import { convertToOrderBy } from '../helper';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import BAIRadioGroup from './BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
@@ -25,7 +26,6 @@ import {
   BAIButton,
   BAICard,
   BAIColumnType,
-  BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAIId,
@@ -556,7 +556,9 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
             }}
           />
         </BAIFlex>
-        <BAIFetchKeyButton
+        <AutoUpdateFetchKeyButton
+          settingId="deployment-replicas"
+          defaultAutoUpdateDelay={10_000}
           loading={isPending}
           value=""
           onChange={() => {

@@ -267,6 +267,7 @@ const AgentList: React.FC<AgentListProps> = ({
             // Heavier cluster-wide query — keep the original ~15s as the
             // fastest option instead of the default set's 5s/10s.
             autoUpdateDelayOptions={[15_000, 30_000, 60_000, 300_000]}
+            defaultAutoUpdateDelay={15_000}
             loading={
               deferredFetchKey !== fetchKey ||
               deferredQueryVariables !== queryVariables

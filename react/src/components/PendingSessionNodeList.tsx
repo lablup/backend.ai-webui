@@ -119,6 +119,7 @@ const PendingSessionNodeList: React.FC = () => {
         </Form.Item>
         <AutoUpdateFetchKeyButton
           settingId="pending-session-list"
+          defaultAutoUpdateDelay={10_000}
           loading={
             deferredQueryVariables !== queryVariables ||
             deferredFetchKey !== fetchKey

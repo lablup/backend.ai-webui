@@ -388,6 +388,7 @@ const AdminComputeSessionListPage = () => {
             )}
             <AutoUpdateFetchKeyButton
               settingId="admin-session-list"
+              defaultAutoUpdateDelay={15_000}
               loading={
                 deferredQueryVariables !== queryVariables ||
                 deferredFetchKey !== fetchKey

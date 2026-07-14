@@ -258,6 +258,7 @@ const ProjectAdminDeploymentsContent: React.FC<
           </BAIFlex>
           <AutoUpdateFetchKeyButton
             settingId="project-admin-deployments"
+            defaultAutoUpdateDelay={15_000}
             loading={isLoading}
             value={fetchKey}
             onChange={(next) => updateFetchKey(next)}
