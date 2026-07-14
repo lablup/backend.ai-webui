@@ -11,7 +11,7 @@ import {
 import { PrometheusQueryPresetEditorModalUpdateMutation } from '../__generated__/PrometheusQueryPresetEditorModalUpdateMutation.graphql';
 import { useCurrentUserRole } from '../hooks/backendai';
 import PrometheusQueryTemplatePreview from './PrometheusQueryTemplatePreview';
-import { App, Form, Input } from 'antd';
+import { App, Form, type FormInstance, Input } from 'antd';
 import {
   BAIModal,
   BAIModalProps,
@@ -20,7 +20,7 @@ import {
   useBAILogger,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import React, { useDeferredValue } from 'react';
+import React, { useDeferredValue, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -144,8 +144,12 @@ const PrometheusQueryPresetEditorModal: React.FC<
     }),
   );
 
-  const [form] = Form.useForm<PrometheusQueryPresetFormValues>();
-  const watchedQueryTemplate = Form.useWatch('queryTemplate', form);
+  // Ref-based form (not `Form.useForm()`) so the form instance is owned by the
+  // `<Form>` element itself: `destroyOnHidden` then discards it on close and a
+  // fresh instance re-applies `initialValues` on every open (FR-3326). This
+  // resets stale values without unmounting the modal — the latter would
+  // re-suspend the categories query and flicker the surrounding list.
+  const formRef = useRef<FormInstance<PrometheusQueryPresetFormValues>>(null);
 
   const [commitCreateMutation, isInflightCreate] =
     useMutation<PrometheusQueryPresetEditorModalCreateMutation>(graphql`
@@ -197,8 +201,8 @@ const PrometheusQueryPresetEditorModal: React.FC<
     `);
 
   const handleOk = () => {
-    return form
-      .validateFields()
+    return formRef.current
+      ?.validateFields()
       .then((values) => {
         if (preset) {
           // Edit mode: compute diff and send only changed fields.
@@ -332,7 +336,7 @@ const PrometheusQueryPresetEditorModal: React.FC<
       confirmLoading={isInflightCreate || isInflightUpdate}
     >
       <Form
-        form={form}
+        ref={formRef}
         layout="vertical"
         preserve={false}
         scrollToFirstError
@@ -395,16 +399,30 @@ const PrometheusQueryPresetEditorModal: React.FC<
           ]}
           extra={
             currentUserRole === 'superadmin' ? (
-              <PrometheusQueryTemplatePreview
-                queryTemplate={
-                  // `Form.useWatch` returns `undefined` on the very first render
-                  // before `initialValues` are applied. In edit mode that would
-                  // hide the preview for a tick and then trigger the 800ms
-                  // debounce; falling back to the fragment value lets the
-                  // preview start fetching the existing template immediately.
-                  watchedQueryTemplate ?? preset?.queryTemplate ?? ''
+              // Subscribe to the live `queryTemplate` value through the form
+              // context (`getFieldValue`) instead of `Form.useWatch(name, form)`,
+              // which is unreliable with a ref-based form whose instance is null
+              // on the first render. `shouldUpdate` re-renders the preview only
+              // when the template changes.
+              <Form.Item
+                noStyle
+                shouldUpdate={(prev, cur) =>
+                  prev.queryTemplate !== cur.queryTemplate
                 }
-              />
+              >
+                {({ getFieldValue }) => (
+                  <PrometheusQueryTemplatePreview
+                    // Fall back to the fragment value so edit mode starts
+                    // fetching the existing template immediately instead of
+                    // waiting for the first field update.
+                    queryTemplate={
+                      getFieldValue('queryTemplate') ??
+                      preset?.queryTemplate ??
+                      ''
+                    }
+                  />
+                )}
+              </Form.Item>
             ) : undefined
           }
         >
