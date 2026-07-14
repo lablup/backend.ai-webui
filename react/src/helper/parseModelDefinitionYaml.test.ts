@@ -84,7 +84,7 @@ models:
     const result = parseModelDefinitionYaml(yaml);
     expect(result).not.toBeNull();
     expect(result!.healthCheckPath).toBe('/health');
-    expect(result!.initialDelay).toBe(60);
+    expect(result!.initialDelay).toBe(600);
     expect(result!.maxRetries).toBe(10);
     expect(result!.modelMountDestination).toBe('/data');
   });

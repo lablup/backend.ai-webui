@@ -75,7 +75,7 @@ export function parseModelDefinitionYaml(
       initialDelay:
         typeof healthCheck.initial_delay === 'number'
           ? healthCheck.initial_delay
-          : 60,
+          : 600,
       maxRetries:
         typeof healthCheck.max_retries === 'number'
           ? healthCheck.max_retries
