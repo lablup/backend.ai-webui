@@ -14,14 +14,13 @@
 # and isn't actionable for external contributors.
 
 # Default owner — every PR auto-requests at least one maintainer.
-*                                            @yomybaby
+*                                            @yomybaby @agatha197
 
 # Component library
-/packages/backend.ai-ui/                     @nowgnuesLee
+/packages/backend.ai-ui/                     @nowgnuesLee @agatha197
 
 # Documentation tooling and content
 /packages/backend.ai-docs-toolkit/           @yomybaby
-/packages/backend.ai-docs-toolkit-example/   @yomybaby
 /packages/backend.ai-webui-docs/             @yomybaby
 
 # Translations
