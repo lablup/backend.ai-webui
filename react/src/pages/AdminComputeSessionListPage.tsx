@@ -7,6 +7,7 @@ import {
   AdminComputeSessionListPageQuery$data,
   AdminComputeSessionListPageQuery$variables,
 } from '../__generated__/AdminComputeSessionListPageQuery.graphql';
+import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
 import TerminateSessionModal from '../components/ComputeSessionNodeItems/TerminateSessionModal';
@@ -23,7 +24,6 @@ import { useCSVExport } from '../hooks/useCSVExport';
 import { Alert, App, Badge, Button, theme, Tooltip } from 'antd';
 import {
   BAIAdminProjectSelect,
-  BAIFetchKeyButton,
   BAIFlex,
   BAIPropertyFilter,
   BAISelectionLabel,
@@ -386,12 +386,12 @@ const AdminComputeSessionListPage = () => {
                 </Tooltip>
               </>
             )}
-            <BAIFetchKeyButton
+            <AutoUpdateFetchKeyButton
+              settingId="admin-session-list"
               loading={
                 deferredQueryVariables !== queryVariables ||
                 deferredFetchKey !== fetchKey
               }
-              autoUpdateDelay={15_000}
               value={fetchKey}
               onChange={(newFetchKey) => {
                 updateFetchKey(newFetchKey);

@@ -11,11 +11,11 @@ import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginati
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useThemeMode } from '../hooks/useThemeMode';
 import AgentDetailDrawer from './AgentDetailDrawer';
+import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import BAIRadioGroup from './BAIRadioGroup';
 import { useControllableValue } from 'ahooks';
 import { type TableProps, Tag, theme } from 'antd';
 import {
-  BAIFetchKeyButton,
   BAIFlex,
   BAIPropertyFilter,
   BAIFlexProps,
@@ -262,12 +262,15 @@ const AgentList: React.FC<AgentListProps> = ({
           />
         </BAIFlex>
         <BAIFlex gap="xs">
-          <BAIFetchKeyButton
+          <AutoUpdateFetchKeyButton
+            settingId="agent-list"
+            // Heavier cluster-wide query — keep the original ~15s as the
+            // fastest option instead of the default set's 5s/10s.
+            autoUpdateDelayOptions={[15_000, 30_000, 60_000, 300_000]}
             loading={
               deferredFetchKey !== fetchKey ||
               deferredQueryVariables !== queryVariables
             }
-            autoUpdateDelay={15_000}
             value={fetchKey}
             onChange={() => {
               updateFetchKey();

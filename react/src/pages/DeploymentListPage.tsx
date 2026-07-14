@@ -10,6 +10,7 @@ import {
   DeploymentStatus,
 } from '../__generated__/DeploymentListPageQuery.graphql';
 import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
+import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from '../components/DeploymentRevisionDetailDrawer';
 import DeploymentSettingModal from '../components/DeploymentSettingModal';
@@ -24,7 +25,6 @@ import {
   BAICard,
   BAIDeleteConfirmModal,
   BAIDeploymentTagChips,
-  BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLFilterProperty,
   BAIGraphQLPropertyFilter,
@@ -251,8 +251,8 @@ const DeploymentListPageContent: React.FC = () => {
             />
           </BAIFlex>
           <BAIFlex gap="xs" align="center">
-            <BAIFetchKeyButton
-              autoUpdateDelay={15_000}
+            <AutoUpdateFetchKeyButton
+              settingId="deployment-list"
               value={fetchKey}
               onChange={updateFetchKey}
               loading={isPending}

@@ -43,6 +43,10 @@ export interface UserSettings {
   [key: `hiddenColumnKeys.${string}`]: Array<string>;
   [key: `table_column_overrides.${string}`]: BAITableColumnOverrideRecord;
   [key: `projectGroup.${string}`]: string;
+  // Per-consumer auto-refresh interval (ms) chosen via BAIFetchKeyButton's
+  // interval dropdown. `null` (or absent) means auto-refresh is off. Keyed by a
+  // stable consumer id (see AutoUpdateFetchKeyButton's `settingId`).
+  [key: `fetchKeyAutoUpdateDelay.${string}`]: number | null;
 
   max_concurrent_uploads?: number;
   container_log_auto_refresh_enabled?: boolean;

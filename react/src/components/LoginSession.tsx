@@ -8,6 +8,7 @@ import type {
 } from '../__generated__/LoginSessionQuery.graphql';
 import type { LoginSessionRevokeMutation } from '../__generated__/LoginSessionRevokeMutation.graphql';
 import { convertToOrderBy } from '../helper';
+import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import LoginSessionTable, {
   type LoginSessionNodeInList,
   type LoginSessionTableProps,
@@ -15,7 +16,6 @@ import LoginSessionTable, {
 import { LogoutOutlined } from '@ant-design/icons';
 import { App } from 'antd';
 import {
-  BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
@@ -165,13 +165,13 @@ const LoginSession = ({
             },
           ]}
         />
-        <BAIFetchKeyButton
+        <AutoUpdateFetchKeyButton
+          settingId="login-session"
           value=""
           onChange={() => {
             onReload(queryRef.variables, { fetchPolicy: 'network-only' });
           }}
           loading={isRefetching}
-          autoUpdateDelay={7_000}
         />
       </BAIFlex>
       <LoginSessionTable

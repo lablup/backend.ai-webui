@@ -8,6 +8,7 @@ import {
   ReservoirPageQuery$variables,
   ArtifactType,
 } from '../__generated__/ReservoirPageQuery.graphql';
+import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import ScanArtifactModelsFromHuggingFaceModal from '../components/ScanArtifactModelsFromHuggingFaceModal';
 import { useWebUINavigate } from '../hooks';
@@ -23,7 +24,6 @@ import {
   BAICard,
   BAIDeactivateArtifactsModal,
   BAIDeactivateArtifactsModalArtifactsFragmentKey,
-  BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAIHuggingFaceIcon,
@@ -388,9 +388,9 @@ const ReservoirPage: React.FC = () => {
                   </Tooltip>
                 </BAIFlex>
               )}
-              <BAIFetchKeyButton
+              <AutoUpdateFetchKeyButton
+                settingId="reservoir"
                 value={fetchKey}
-                autoUpdateDelay={15_000}
                 loading={deferredFetchKey !== fetchKey}
                 onChange={() => {
                   updateFetchKey();

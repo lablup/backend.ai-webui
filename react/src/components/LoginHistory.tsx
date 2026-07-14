@@ -7,12 +7,12 @@ import type {
   LoginHistoryQuery as LoginHistoryQueryType,
 } from '../__generated__/LoginHistoryQuery.graphql';
 import { convertToOrderBy } from '../helper';
+import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import LoginHistoryTable, {
   loginResultFilterOptions,
   type LoginHistoryTableProps,
 } from './LoginHistoryTable';
 import {
-  BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   filterOutNullAndUndefined,
@@ -137,13 +137,13 @@ const LoginHistory = ({
             },
           ]}
         />
-        <BAIFetchKeyButton
+        <AutoUpdateFetchKeyButton
+          settingId="login-history"
           value=""
           onChange={() => {
             onReload(queryRef.variables, { fetchPolicy: 'network-only' });
           }}
           loading={isRefetching}
-          autoUpdateDelay={7_000}
         />
       </BAIFlex>
       <LoginHistoryTable

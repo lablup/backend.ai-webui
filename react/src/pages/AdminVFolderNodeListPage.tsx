@@ -7,6 +7,7 @@ import type {
   AdminVFolderNodeListPageQuery$data,
   AdminVFolderNodeListPageQuery$variables,
 } from '../__generated__/AdminVFolderNodeListPageQuery.graphql';
+import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
 import DeleteVFolderModal from '../components/DeleteVFolderModal';
@@ -23,7 +24,6 @@ import { Badge, theme, Tooltip } from 'antd';
 import {
   BAIButton,
   BAICard,
-  BAIFetchKeyButton,
   BAIFlex,
   BAIPropertyFilter,
   BAIRestoreIcon,
@@ -434,12 +434,12 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                     </Tooltip>
                   </>
                 )}
-              <BAIFetchKeyButton
+              <AutoUpdateFetchKeyButton
+                settingId="admin-vfolder-list"
                 loading={
                   deferredQueryVariables !== queryVariables ||
                   deferredFetchKey !== fetchKey
                 }
-                autoUpdateDelay={15_000}
                 value={fetchKey}
                 onChange={(newFetchKey) => {
                   updateFetchKey(newFetchKey);

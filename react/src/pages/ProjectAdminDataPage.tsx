@@ -8,6 +8,7 @@ import type {
   VFolderFilter,
   VFolderOrderBy,
 } from '../__generated__/ProjectAdminDataPageQuery.graphql';
+import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
@@ -30,7 +31,6 @@ import { Badge, Skeleton, theme, Tooltip } from 'antd';
 import {
   BAIButton,
   BAICard,
-  BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAIPurgeIcon,
@@ -408,12 +408,12 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
                   </Tooltip>
                 </>
               )}
-            <BAIFetchKeyButton
+            <AutoUpdateFetchKeyButton
+              settingId="project-admin-data"
               loading={
                 deferredQueryVariables !== queryVariables ||
                 deferredFetchKey !== fetchKey
               }
-              autoUpdateDelay={15_000}
               value={fetchKey}
               onChange={(newFetchKey) => {
                 updateFetchKey(newFetchKey);
