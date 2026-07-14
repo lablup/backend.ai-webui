@@ -1,17 +1,14 @@
 import { omitNullAndUndefinedFields } from '../helper';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import { useInterval, useIntervalValue } from '../hooks/useIntervalValue';
-import {
-  CaretDownOutlined,
-  CaretUpOutlined,
-  CheckOutlined,
-  ReloadOutlined,
-} from '@ant-design/icons';
+import BAICountdownBorder from './BAICountdownBorder';
+import { CheckOutlined, ReloadOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
 import {
   Button,
   Dropdown,
   Space,
+  theme,
   Tooltip,
   type ButtonProps,
   type MenuProps,
@@ -19,6 +16,7 @@ import {
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import * as _ from 'lodash-es';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import React, {
   useEffect,
   useEffectEvent,
@@ -74,6 +72,11 @@ export interface BAIFetchKeyButtonProps extends Omit<
    * Defaults to {@link AUTO_UPDATE_DELAY_OPTIONS}.
    */
   autoUpdateDelayOptions?: readonly number[];
+  /**
+   * Whether to show the animated countdown border that fills the control while
+   * auto-refresh is on. Defaults to `true`.
+   */
+  showCountdownBorder?: boolean;
 }
 
 /**
@@ -90,6 +93,7 @@ export interface BAIFetchKeyButtonProps extends Omit<
  * @param pauseWhenHidden - When true, pauses auto-update when button is hidden
  * @param onChangeAutoUpdateDelay - Callback fired when the user picks an interval (or "Off"); providing it shows the interval-selection dropdown
  * @param autoUpdateDelayOptions - Interval presets (ms) shown in the dropdown
+ * @param showCountdownBorder - When true (default), shows the animated countdown border while auto-refresh is on
  */
 const BAIFetchKeyButton: React.FC<BAIFetchKeyButtonProps> = ({
   loading,
@@ -102,6 +106,7 @@ const BAIFetchKeyButton: React.FC<BAIFetchKeyButtonProps> = ({
   pauseWhenHidden = true,
   onChangeAutoUpdateDelay,
   autoUpdateDelayOptions = AUTO_UPDATE_DELAY_OPTIONS,
+  showCountdownBorder = true,
   ...buttonProps
 }) => {
   'use memo';
@@ -153,7 +158,6 @@ const BAIFetchKeyButton: React.FC<BAIFetchKeyButtonProps> = ({
         turnOffTimeoutRef.current = null;
       }
       loadingStartTimeRef.current = Date.now();
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDisplayLoading(true);
     } else if (loadingStartTimeRef.current !== null) {
       // loading finished: keep the icon visible for at least 700ms total
@@ -192,13 +196,25 @@ const BAIFetchKeyButton: React.FC<BAIFetchKeyButtonProps> = ({
     }
   }, [loading, setLastLoadTime]);
 
+  // Single entry point for every refresh, manual or automatic. Bumping
+  // `cycleKey` re-anchors both the auto-refresh interval (via `useInterval`'s
+  // `resetKey`) and the countdown border animation (via `BAICountdownBorder`'s
+  // `resetKey`) to this exact moment, so a mid-cycle manual refresh restarts
+  // the countdown instead of leaving it to fire on its stale schedule, and the
+  // animation never drifts out of sync with the real reload — each refresh,
+  // whichever triggered it, resets both clocks together.
+  const [cycleKey, setCycleKey] = useState(0);
+  const triggerRefresh = () => {
+    onChange(new Date().toISOString());
+    setCycleKey((key) => key + 1);
+  };
+
   useInterval(
-    () => {
-      onChange(new Date().toISOString());
-    },
+    triggerRefresh,
     // only start auto-updating after the previous loading is false(done).
     loading ? null : selectedDelay,
     pauseWhenHidden,
+    cycleKey,
   );
 
   const tooltipTitle = showLastLoadTime ? loadTimeMessage : undefined;
@@ -233,12 +249,27 @@ const BAIFetchKeyButton: React.FC<BAIFetchKeyButtonProps> = ({
       loading={displayLoading}
       size={size}
       icon={<ReloadOutlined />}
-      onClick={() => {
-        onChange(new Date().toISOString());
-      }}
+      onClick={triggerRefresh}
       {...buttonProps}
     />
   );
+
+  // While auto-refresh is on (and `showCountdownBorder`), wrap the control in
+  // `BAICountdownBorder` so its border fills clockwise, once per selected
+  // interval, restarting exactly on `cycleKey` (see `triggerRefresh` above) so
+  // it never drifts out of sync with the real refresh — whether the cycle was
+  // completed automatically or cut short by a manual click.
+  const withCountdownBorder = (node: React.ReactNode) =>
+    isAutoRefreshOn && showCountdownBorder ? (
+      <BAICountdownBorder
+        durationMs={selectedDelay as number}
+        resetKey={cycleKey}
+      >
+        {node}
+      </BAICountdownBorder>
+    ) : (
+      node
+    );
 
   if (hidden) {
     return null;
@@ -248,16 +279,16 @@ const BAIFetchKeyButton: React.FC<BAIFetchKeyButtonProps> = ({
   // tooltip-wrapped refresh button. No layout or behavior change for the
   // existing consumers.
   if (!isAutoUpdateConfigurable) {
-    return (
+    return withCountdownBorder(
       <Tooltip title={tooltipTitle} placement="topLeft">
         {refreshButton}
-      </Tooltip>
+      </Tooltip>,
     );
   }
 
-  // Feature enabled: a Space.Compact group of the refresh button + a caret
+  // Feature enabled: a Space.Compact group of the refresh button + a chevron
   // dropdown trigger to pick the auto-refresh interval (or turn it off). The
-  // trigger shows the selected interval ("Ns") next to the caret; the active
+  // trigger shows the selected interval ("Ns") next to the chevron; the active
   // menu option carries a check mark. Inactive options render the same icon
   // hidden so every row stays aligned without a hardcoded spacer width.
   const checkMark = (active: boolean) => (
@@ -306,7 +337,9 @@ const BAIFetchKeyButton: React.FC<BAIFetchKeyButtonProps> = ({
     })),
   ];
 
-  return (
+  const { token } = theme.useToken();
+
+  return withCountdownBorder(
     <Space.Compact>
       <Tooltip title={tooltipTitle} placement="topLeft">
         {refreshButton}
@@ -320,17 +353,25 @@ const BAIFetchKeyButton: React.FC<BAIFetchKeyButtonProps> = ({
       >
         <Tooltip title={t('comp:BAIFetchKeyButton.AutoRefresh')}>
           <Button
-            {...buttonProps}
             size={size}
-            iconPosition="end"
-            icon={isDropdownOpen ? <CaretUpOutlined /> : <CaretDownOutlined />}
+            style={{
+              paddingInline: token.paddingXS,
+            }}
+            iconPlacement="end"
+            icon={
+              isDropdownOpen ? (
+                <ChevronUp size={16} />
+              ) : (
+                <ChevronDown size={16} />
+              )
+            }
             aria-label={t('comp:BAIFetchKeyButton.AutoRefresh')}
           >
             {isAutoRefreshOn ? formatInterval(selectedDelay as number) : null}
           </Button>
         </Tooltip>
       </Dropdown>
-    </Space.Compact>
+    </Space.Compact>,
   );
 };
 

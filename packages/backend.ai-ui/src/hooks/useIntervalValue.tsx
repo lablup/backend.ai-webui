@@ -6,11 +6,13 @@ import { useEffect, useEffectEvent, useState } from 'react';
  * @param callback The function to be executed at the specified interval.
  * @param delay The delay (in milliseconds) between each execution of the callback function. If `null`, the interval is cleared(pause).
  * @param pauseWhenHidden Whether to pause the interval when the page becomes hidden. Defaults to true.
+ * @param resetKey When this value changes identity, the interval's schedule restarts from that moment (as if just mounted) instead of continuing on its prior schedule. Use it to re-anchor the countdown to an out-of-band trigger, e.g. a manual refresh that should push back the next automatic tick.
  */
 export function useInterval(
   callback: () => void,
   delay: number | null,
   pauseWhenHidden: boolean = true,
+  resetKey?: unknown,
 ) {
   const [isPageVisible, setIsPageVisible] = useState(() =>
     typeof document === 'undefined' ? true : !document.hidden,
@@ -38,13 +40,14 @@ export function useInterval(
   // Determine the effective delay based on page visibility
   const effectiveDelay = pauseWhenHidden && !isPageVisible ? null : delay;
 
-  // Set up the interval
+  // Set up the interval. Restarts whenever `effectiveDelay` or `resetKey`
+  // changes, so a caller can re-anchor the schedule on demand.
   useEffect(() => {
     if (effectiveDelay !== null) {
       const id = setInterval(tick, effectiveDelay);
       return () => clearInterval(id);
     }
-  }, [effectiveDelay]);
+  }, [effectiveDelay, resetKey]);
 }
 
 /**

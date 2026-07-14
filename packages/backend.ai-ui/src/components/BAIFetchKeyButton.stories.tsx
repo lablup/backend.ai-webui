@@ -1,6 +1,7 @@
 import BAIFetchKeyButton from './BAIFetchKeyButton';
 import BAIFlex from './BAIFlex';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Switch } from 'antd';
 import { useState } from 'react';
 
 const meta: Meta<typeof BAIFetchKeyButton> = {
@@ -29,6 +30,7 @@ A refresh button that manages fetch keys for data refetching with auto-update ca
 | \`pauseWhenHidden\` | \`boolean\` | \`true\` | Pauses auto-update when button is hidden |
 | \`onChangeAutoUpdateDelay\` | \`(delayMs: number \\| null) => void\` | - | Fired when the user picks an interval; **providing it shows the dropdown** |
 | \`autoUpdateDelayOptions\` | \`number[]\` | \`[5000, 10000, 15000, 30000, 60000]\` | Interval presets (ms); "Off" is auto-prepended |
+| \`showCountdownBorder\` | \`boolean\` | \`true\` | Show the animated countdown border while auto-refresh is on |
 
 For all other props, refer to [Ant Design Button](https://ant.design/components/button).
         `,
@@ -114,6 +116,15 @@ For all other props, refer to [Ant Design Button](https://ant.design/components/
       table: {
         type: { summary: 'number[]' },
         defaultValue: { summary: '[5000, 10000, 15000, 30000, 60000]' },
+      },
+    },
+    showCountdownBorder: {
+      control: { type: 'boolean' },
+      description:
+        'Show the animated countdown border that fills the control while auto-refresh is on',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'true' },
       },
     },
   },
@@ -234,7 +245,7 @@ export const IntervalDropdown: Story = {
     docs: {
       description: {
         story:
-          'Providing `onChangeAutoUpdateDelay` opts the button into the interval dropdown: a caret trigger next to the refresh button lets the user pick an auto-refresh interval or turn it off. Auto-refresh is off by default; once an interval is selected it shows as a label (e.g. "15s") on the dropdown trigger button.',
+          'Providing `onChangeAutoUpdateDelay` opts the button into the interval dropdown: a chevron trigger next to the refresh button lets the user pick an auto-refresh interval or turn it off. Auto-refresh is off by default; once an interval is selected it shows as a label (e.g. "15s") on the dropdown trigger button.',
       },
     },
   },
@@ -268,6 +279,53 @@ export const IntervalDropdown: Story = {
           />
           <span>Refresh count: {counter}</span>
         </BAIFlex>
+        <div style={{ fontSize: '12px', color: '#666' }}>
+          Selected interval: {delay === null ? 'Off' : `${delay / 1000}s`}
+        </div>
+      </BAIFlex>
+    );
+  },
+};
+
+export const CountdownBorder: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'While auto-refresh is on, an animated border fills the control clockwise once per interval (top-left → top-right → bottom-right → bottom-left → back), resetting each cycle. Toggle `showCountdownBorder` to turn the animation on/off — auto-refresh keeps working either way.',
+      },
+    },
+  },
+  render: () => {
+    const [fetchKey, setFetchKey] = useState(new Date().toISOString());
+    const [loading, setLoading] = useState(false);
+    const [delay, setDelay] = useState<number | null>(5000);
+    const [showBorder, setShowBorder] = useState(true);
+
+    const handleChange = (newKey: string) => {
+      setLoading(true);
+      setFetchKey(newKey);
+      setTimeout(() => {
+        setLoading(false);
+      }, 800);
+    };
+
+    return (
+      <BAIFlex direction="column" gap="md" align="start">
+        <BAIFlex gap="sm" align="center">
+          <Switch checked={showBorder} onChange={setShowBorder} />
+          <span>
+            <code>showCountdownBorder</code>: {String(showBorder)}
+          </span>
+        </BAIFlex>
+        <BAIFetchKeyButton
+          value={fetchKey}
+          loading={loading}
+          onChange={handleChange}
+          autoUpdateDelay={delay}
+          onChangeAutoUpdateDelay={setDelay}
+          showCountdownBorder={showBorder}
+        />
         <div style={{ fontSize: '12px', color: '#666' }}>
           Selected interval: {delay === null ? 'Off' : `${delay / 1000}s`}
         </div>
