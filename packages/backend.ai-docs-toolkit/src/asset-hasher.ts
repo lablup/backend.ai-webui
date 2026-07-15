@@ -45,7 +45,17 @@ export function writeHashedAsset(
   const hash = contentHash(bytes);
   const hashedName = hashedFilename(logicalName, hash);
   fs.mkdirSync(assetsDir, { recursive: true });
-  fs.writeFileSync(path.join(assetsDir, hashedName), bytes);
+  // `logicalName` can carry `../` segments (e.g. a malformed branding config
+  // path); resolve and confirm the write target stays inside `assetsDir`
+  // before touching the filesystem.
+  const resolvedAssetsDir = path.resolve(assetsDir);
+  const targetPath = path.resolve(resolvedAssetsDir, hashedName);
+  if (targetPath !== resolvedAssetsDir && !targetPath.startsWith(resolvedAssetsDir + path.sep)) {
+    throw new Error(
+      `writeHashedAsset: refusing to write outside assetsDir (logicalName: ${JSON.stringify(logicalName)})`,
+    );
+  }
+  fs.writeFileSync(targetPath, bytes);
   manifest[logicalName] = hashedName;
   return hashedName;
 }

@@ -82,6 +82,23 @@ test("writeHashedAsset — different bytes for the same logical name produce dif
   }
 });
 
+test("writeHashedAsset — rejects a logicalName that escapes assetsDir via path traversal", () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "hasher-"));
+  try {
+    const manifest: AssetManifest = {};
+    assert.throws(
+      () => writeHashedAsset(dir, "../../../../etc/passwd", "pwned", manifest),
+      /refusing to write outside assetsDir/,
+    );
+    // The throw happens before the manifest is updated, and assetsDir
+    // itself stays empty — nothing was written anywhere.
+    assert.deepEqual(manifest, {});
+    assert.deepEqual(fs.readdirSync(dir), []);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
 test("resolveAsset — returns the hashed name for a registered asset", () => {
   const manifest: AssetManifest = { "search.js": "search.cafef00d.js" };
   assert.equal(resolveAsset(manifest, "search.js"), "search.cafef00d.js");
