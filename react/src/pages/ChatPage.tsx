@@ -12,7 +12,7 @@ import {
 } from '../components/Chat/ChatHistory';
 import { type ChatProviderData } from '../components/Chat/ChatModel';
 import WebUINavigate from '../components/WebUINavigate';
-import { useWebUINavigate } from '../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import {
   Alert,
@@ -30,7 +30,7 @@ import {
   BAIFlex,
   BAICard,
   BAITable,
-  mergeFilterValues,
+  toLocalId,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
@@ -52,32 +52,48 @@ const useStyles = createStyles(({ css }) => ({
 }));
 
 function useDefaultEndpointId() {
-  const { endpoint_list } = useLazyLoadQuery<ChatPageQuery>(
+  'use memo';
+  const baiClient = useSuspendedBackendaiClient();
+
+  const { myDeployments } = useLazyLoadQuery<ChatPageQuery>(
     graphql`
-      query ChatPageQuery($filter: String) {
-        endpoint_list(limit: 1, offset: 0, filter: $filter) {
-          items {
-            endpoint_id
+      query ChatPageQuery($filter: DeploymentFilter) {
+        myDeployments(filter: $filter, limit: 1, offset: 0) {
+          edges {
+            node {
+              id
+            }
           }
         }
       }
     `,
     {
-      // Pick any deployment that is not terminated, so its replica can still be
-      // chatted with. Filtering on ready/created alone skipped deployments while
-      // a new revision was rolling out (e.g. deploying/pending) even though a
-      // previous revision's replica was still alive.
-      // TODO(FR-3303): once the endpoint connection supports nested filters,
-      // pick a deployment that has at least one replica with an active traffic
-      // status instead of relying on the endpoint-level lifecycle_stage.
-      filter: mergeFilterValues([
-        'lifecycle_stage != "destroyed"',
-        'lifecycle_stage != "destroying"',
-      ]),
+      // Select a deployment with an actively-serving replica. When the manager
+      // supports the nested replica filter, filter on replica traffic status;
+      // otherwise (25.19.0–<26.8.0) fall back to excluding terminated
+      // deployments (the interim FR-3303 behavior). The version gate lives in
+      // the client `deployment-replica-nested-filter` support flag rather than a
+      // hardcoded version compare here. The whole deployment-selection surface
+      // targets the Strawberry v2 Deployments API (myDeployments/DeploymentFilter,
+      // manager ≥25.19.0), same baseline as the FR-2664 Deployments UI.
+      //
+      // NOTE: This is intentionally left without a current-project scope. The
+      // legacy endpoint_list query wasn't project-scoped either — it declared a
+      // `project` arg but never passed a value (always null) — so this preserves
+      // the prior behavior rather than changing it here. It does diverge from
+      // DeploymentListPage, which scopes myDeployments by
+      // `projectId: { equals: currentProject.id }`.
+      // TODO(FR-3332): investigate why Chat endpoint selection has never been
+      // project-scoped and decide whether it should align with the new
+      // Deployments UI.
+      filter: baiClient.supports('deployment-replica-nested-filter')
+        ? { replicas: { some: { trafficStatus: { equals: 'ACTIVE' } } } }
+        : { status: { notIn: ['STOPPING', 'STOPPED'] } },
     },
   );
 
-  return endpoint_list?.items[0]?.endpoint_id || undefined;
+  const deploymentId = myDeployments?.edges[0]?.node?.id;
+  return deploymentId ? toLocalId(deploymentId) : undefined;
 }
 
 export function useChatProviderData(
