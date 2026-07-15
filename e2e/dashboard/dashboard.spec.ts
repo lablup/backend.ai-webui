@@ -38,7 +38,7 @@ test.describe(
         await expect(
           page
             .locator('.bai_grid_item')
-            .filter({ hasText: 'My Total Resources Limit' })
+            .filter({ hasText: 'My Total Resource Usage' })
             .first(),
         ).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
@@ -103,7 +103,7 @@ test.describe(
         await expect(
           page
             .locator('.bai_grid_item')
-            .filter({ hasText: 'My Total Resources Limit' })
+            .filter({ hasText: 'My Total Resource Usage' })
             .first(),
         ).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
@@ -196,7 +196,7 @@ test.describe(
         // 1. Locate the "My Resources" widget
         const widget = page
           .locator('.bai_grid_item')
-          .filter({ hasText: 'My Total Resources Limit' })
+          .filter({ hasText: 'My Total Resource Usage' })
           .first();
         await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
@@ -213,7 +213,7 @@ test.describe(
         // 1. Locate the "My Resources" widget
         const widget = page
           .locator('.bai_grid_item')
-          .filter({ hasText: 'My Total Resources Limit' })
+          .filter({ hasText: 'My Total Resource Usage' })
           .first();
         await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
