@@ -131,7 +131,7 @@ export type { BAIUncontrolledInputProps } from './BAIUncontrolledInput';
 export { default as BAIUncontrolledInput } from './BAIUncontrolledInput';
 export { default as BAITag } from './BAITag';
 export { default as BAITagList } from './BAITagList';
-export type { BAITagListProps } from './BAITagList';
+export type { BAITagListProps, BAITagListItem } from './BAITagList';
 export {
   default as BAIDeploymentStatusTag,
   isDeploymentInStoppedCategory,
