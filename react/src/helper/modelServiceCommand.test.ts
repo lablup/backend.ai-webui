@@ -9,24 +9,35 @@ import {
 } from './modelServiceCommand';
 
 describe('deriveCommandModeState', () => {
-  it('falls back to Basic + reconstructed command when only the legacy startCommand list exists', () => {
+  it('reconstructs a legacy startCommand list as Exec (argv, no shell)', () => {
     expect(
       deriveCommandModeState({ startCommand: ['python', 'service.py'] }),
     ).toEqual({
       command: 'python service.py',
-      advanced: false,
-      execution: 'shell',
+      advanced: true,
+      execution: 'exec',
       shell: DEFAULT_MODEL_SERVICE_SHELL,
     });
   });
 
-  it('treats an empty new command as absent and falls back to startCommand', () => {
+  it('treats an empty new command as absent and falls back to startCommand (Exec)', () => {
     expect(
       deriveCommandModeState({ command: '', startCommand: ['vllm', 'serve'] }),
     ).toEqual({
       command: 'vllm serve',
-      advanced: false,
-      execution: 'shell',
+      advanced: true,
+      execution: 'exec',
+      shell: DEFAULT_MODEL_SERVICE_SHELL,
+    });
+  });
+
+  it('treats an empty-string shell as Exec (no shell wrapping)', () => {
+    expect(
+      deriveCommandModeState({ command: 'vllm serve /models', shell: '' }),
+    ).toEqual({
+      command: 'vllm serve /models',
+      advanced: true,
+      execution: 'exec',
       shell: DEFAULT_MODEL_SERVICE_SHELL,
     });
   });
