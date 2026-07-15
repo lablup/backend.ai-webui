@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { defaultTheme, loadTheme, resolveHeaderFooter } from "./theme.js";
+import { defaultTheme, loadTheme, resolveHeaderFooter, resolveTheme } from "./theme.js";
 
 test("loadTheme — returns the default theme when name is omitted", () => {
   const theme = loadTheme();
@@ -52,4 +52,38 @@ test("resolveHeaderFooter — replaces every occurrence of {{TITLE}}", () => {
   };
   const out = resolveHeaderFooter(themeWithMultipleTitles, "T");
   assert.equal(out.headerHtml, "<a>T</a><b>T</b>");
+});
+
+test("resolveTheme — undefined and string forms delegate to loadTheme", () => {
+  assert.equal(resolveTheme(), defaultTheme);
+  assert.equal(resolveTheme("default"), defaultTheme);
+});
+
+test("resolveTheme — partial object merges over the default theme", () => {
+  const theme = resolveTheme({ brandColor: "#1677FF", fontFamily: "NanumSquare" });
+  assert.equal(theme.brandColor, "#1677FF");
+  assert.equal(theme.fontFamily, "NanumSquare");
+  // Untouched fields keep their defaults.
+  assert.equal(theme.baseFontSize, defaultTheme.baseFontSize);
+  assert.equal(theme.headerHtml, defaultTheme.headerHtml);
+  assert.equal(theme.name, "custom");
+});
+
+test("resolveTheme — keeps an explicit name from the override", () => {
+  assert.equal(resolveTheme({ name: "fasttrack" }).name, "fasttrack");
+});
+
+test("resolveTheme — validates font family fields against CSS injection", () => {
+  assert.throws(
+    () => resolveTheme({ fontFamily: 'X"; } body { color: red' }),
+    /theme\.fontFamily/,
+  );
+  assert.throws(
+    () => resolveTheme({ coverTitleFontFamily: "X;}" }),
+    /theme\.coverTitleFontFamily/,
+  );
+});
+
+test("resolveTheme — trims validated font family values", () => {
+  assert.equal(resolveTheme({ fontFamily: " NanumSquare " }).fontFamily, "NanumSquare");
 });

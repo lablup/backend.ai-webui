@@ -87,6 +87,19 @@ pdfMetadata:
   subject: "Documentation"
   creator: "docs-toolkit PDF Generator"
 
+# Optional: register @font-face fonts for the PDF and reference them from
+# the theme override (`cjkFontPaths` above covers header/footer stamping).
+pdfFontFaces:
+  - family: "MyFont"
+    path: "assets/fonts/MyFont-Regular.ttf"
+    weight: 400
+  - family: "MyFont"
+    path: "assets/fonts/MyFont-Bold.ttf"
+    weight: 700
+theme: # partial override merged over the default PDF theme
+  fontFamily: "MyFont" # body text
+  coverTitleFontFamily: "MyFont" # cover H1
+
 # Claude AI agent template variables (optional)
 agents:
   projectTitle: "My Project"

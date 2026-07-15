@@ -7,7 +7,7 @@ import {
 } from "./markdown-processor.js";
 import { buildFullDocument } from "./html-builder.js";
 import { renderPdf } from "./pdf-renderer.js";
-import { loadTheme } from "./theme.js";
+import { loadTheme, resolveTheme } from "./theme.js";
 import { buildThemeInfoChapter } from "./sample-content.js";
 import { getDocVersion } from "./version.js";
 import type { ResolvedDocConfig } from "./config.js";
@@ -206,7 +206,11 @@ export async function startPreviewServer(
     config.versionSource,
     config.version,
   );
-  const theme = loadTheme(args.theme);
+  // Same theme precedence as generate-pdf.ts so the preview matches the PDF.
+  const theme =
+    args.theme && args.theme !== 'default'
+      ? loadTheme(args.theme)
+      : resolveTheme(config.theme);
   const title = bookConfig.title;
 
   let currentEtag = Date.now().toString(36);

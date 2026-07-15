@@ -71,12 +71,34 @@ export interface DocConfig {
   /** Additional CJK font search paths */
   cjkFontPaths?: string[];
 
+  /**
+   * `@font-face` registrations for the PDF stylesheet; reference the
+   * families from `theme.fontFamily` / `theme.coverTitleFontFamily`.
+   * Independent from `cjkFontPaths`, which feeds the pdf-lib header/footer
+   * stamping pass (drawn outside Chromium).
+   */
+  pdfFontFaces?: PdfFontFace[];
+
   /** Non-ASCII path fallbacks for book.config.yaml entries */
   pathFallbacks?: Record<string, string>;
   /** Product name for log messages */
   productName?: string;
-  /** PDF theme override */
-  theme?: string | PdfTheme;
+  /**
+   * PDF theme override: a built-in theme name, or a partial override
+   * merged over the default theme. An explicit CLI `--theme` wins.
+   */
+  theme?: string | Partial<PdfTheme>;
+}
+
+/** One `@font-face` registration for the PDF stylesheet. */
+export interface PdfFontFace {
+  family: string;
+  /** Font file path, relative to `projectRoot`. */
+  path: string;
+  /** `font-weight` descriptor (e.g. `700` or `"100 900"`). */
+  weight?: string | number;
+  /** `font-style` descriptor (e.g. `"italic"`). */
+  style?: string;
 }
 
 /** Agent template configuration */
@@ -611,8 +633,14 @@ export interface ResolvedDocConfig {
   pdfMetadata: { author: string; subject: string; creator: string };
   cjkFontPaths: string[];
 
+  /** Family names validated, font paths absolutized against `projectRoot`. */
+  pdfFontFaces: ResolvedPdfFontFace[];
+
   pathFallbacks: Record<string, string>;
   productName: string;
+
+  /** Raw theme override, resolved by `generate-pdf.ts` via `resolveTheme`. */
+  theme?: string | Partial<PdfTheme>;
 
   agents?: AgentConfig;
   website?: WebsiteConfig;
@@ -711,6 +739,36 @@ export function validateCssColor(value: string, field: string): string {
   return trimmed;
 }
 
+/** Resolved `@font-face` registration — family validated, path absolute. */
+export interface ResolvedPdfFontFace {
+  family: string;
+  path: string;
+  weight?: string | number;
+  style?: string;
+}
+
+/**
+ * Validate a font family name before it is interpolated into the generated
+ * stylesheet — the narrow grammar keeps a misconfigured value from
+ * terminating the declaration and injecting CSS (cf. `validateCssColor`).
+ */
+export function validateFontFamily(
+  value: string,
+  field = 'pdfFontFaces[].family',
+): string {
+  const trimmed = value.trim();
+  if (!trimmed) {
+    throw new Error(`${field}: empty font family name`);
+  }
+  if (!/^[a-zA-Z0-9 _-]+$/.test(trimmed)) {
+    throw new Error(
+      `${field}: invalid font family "${value}" ` +
+        '(expected letters, digits, spaces, hyphens, underscores)',
+    );
+  }
+  return trimmed;
+}
+
 /** Resolved code-block config — all defaults applied. */
 export interface ResolvedCodeConfig {
   lightTheme: string;
@@ -793,9 +851,16 @@ export function resolveConfig(config: ToolkitConfig): ResolvedDocConfig {
       creator: config.pdfMetadata?.creator ?? "docs-toolkit PDF Generator",
     },
     cjkFontPaths: config.cjkFontPaths ?? [],
+    pdfFontFaces: (config.pdfFontFaces ?? []).map((face) => ({
+      family: validateFontFamily(face.family),
+      path: path.resolve(projectRoot, face.path),
+      weight: face.weight,
+      style: face.style,
+    })),
 
     pathFallbacks: config.pathFallbacks ?? {},
     productName: config.productName ?? config.title,
+    theme: config.theme,
 
     agents: config.agents,
     website: config.website,

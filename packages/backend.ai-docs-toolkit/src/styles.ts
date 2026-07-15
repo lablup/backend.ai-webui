@@ -1,11 +1,32 @@
+import { pathToFileURL } from 'url';
+import type { ResolvedPdfFontFace } from './config.js';
 import type { PdfTheme } from './theme.js';
 import { defaultTheme } from './theme.js';
 
 const CJK_LANGS = new Set(['ko', 'ja', 'zh', 'zh-CN', 'zh-TW']);
 
-export function generatePdfStyles(theme: PdfTheme, lang?: string): string {
+/**
+ * `file://` font URLs work because the document itself loads from a
+ * `file://` temp file; family names are validated at config-resolve time.
+ */
+function buildFontFaceCss(fontFaces: ResolvedPdfFontFace[]): string {
+  return fontFaces
+    .map((face) => `@font-face {
+  font-family: "${face.family}";
+  src: url("${pathToFileURL(face.path).href}");${face.weight !== undefined ? `\n  font-weight: ${face.weight};` : ''}${face.style ? `\n  font-style: ${face.style};` : ''}
+}`)
+    .join('\n\n');
+}
+
+export function generatePdfStyles(
+  theme: PdfTheme,
+  lang?: string,
+  fontFaces: ResolvedPdfFontFace[] = [],
+): string {
   const isCjk = lang ? CJK_LANGS.has(lang) : false;
+  const custom = theme.fontFamily ? `"${theme.fontFamily}", ` : '';
   return `
+${buildFontFaceCss(fontFaces)}
 /* ==========================================================================
    Base
    ========================================================================== */
@@ -19,7 +40,7 @@ export function generatePdfStyles(theme: PdfTheme, lang?: string): string {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
+  font-family: ${custom}-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
     "Noto Sans KR", "Noto Sans CJK KR",
     "Noto Sans JP", "Noto Sans CJK JP",
     "Noto Sans TC", "Noto Sans CJK TC",
@@ -40,14 +61,14 @@ body {
  * Noto CJK face first (KR/JP/TC differ in kanji/hanja glyph style). The
  * <html lang="..."> attribute is set by html-builder.ts. */
 :lang(ja) {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
+  font-family: ${custom}-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
     "Noto Sans JP", "Noto Sans CJK JP",
     "Noto Sans KR", "Noto Sans CJK KR",
     Helvetica, Arial, sans-serif;
 }
 
 :lang(th) {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
+  font-family: ${custom}-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
     "Noto Sans Thai", "Loma", "Garuda",
     Helvetica, Arial, sans-serif;
 }
@@ -80,6 +101,7 @@ body {
 }
 
 .cover-title {
+  ${theme.coverTitleFontFamily ? `font-family: "${theme.coverTitleFontFamily}", ${custom}Helvetica, Arial, sans-serif;` : ''}
   font-size: ${theme.coverTitleSize};
   font-weight: 700;
   color: ${theme.textPrimary};

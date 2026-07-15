@@ -4,7 +4,7 @@ import { chromium } from 'playwright';
 import { processMarkdownFiles } from './markdown-processor.js';
 import { buildFullDocument } from './html-builder.js';
 import { renderPdf } from './pdf-renderer.js';
-import { loadTheme } from './theme.js';
+import { loadTheme, resolveTheme } from './theme.js';
 import { getDocVersion } from './version.js';
 import { loadBookConfig } from './book-config.js';
 import type { ResolvedDocConfig } from './config.js';
@@ -64,7 +64,10 @@ export async function generatePdf(
   // the cover page.
   const bookConfig = loadBookConfig(config.srcDir);
 
-  const theme = loadTheme(args.theme ?? 'default');
+  const theme =
+    args.theme && args.theme !== 'default'
+      ? loadTheme(args.theme)
+      : resolveTheme(config.theme);
   const { display: version, filename: versionForFilename } = getDocVersion(
     config.versionSource,
     config.version,

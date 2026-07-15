@@ -157,7 +157,7 @@ export function buildFullDocument(
   const coverHtml = buildCoverHtml(metadata, logoSvg, config);
   const tocHtml = buildTocHtml(chapters, metadata.lang, config);
   const contentHtml = buildContentHtml(chapters);
-  const styles = generatePdfStyles(theme, metadata.lang);
+  const styles = generatePdfStyles(theme, metadata.lang, config.pdfFontFaces);
 
   return `<!DOCTYPE html>
 <html lang="${metadata.lang}">

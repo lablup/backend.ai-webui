@@ -22,6 +22,7 @@ import {
   resolveConfig,
   resolveLegacyDocsUrl,
   validateCssColor,
+  validateFontFamily,
 } from "./config.js";
 
 describe("validateCssColor", () => {
@@ -276,5 +277,91 @@ describe("resolveConfig — legacyDocsUrl (FR-2733)", () => {
         }),
       /legacyDocsUrl/,
     );
+  });
+});
+
+describe("validateFontFamily", () => {
+  it("accepts letters, digits, spaces, hyphens, underscores", () => {
+    assert.equal(validateFontFamily("NanumSquare"), "NanumSquare");
+    assert.equal(validateFontFamily("Noto Sans KR"), "Noto Sans KR");
+    assert.equal(validateFontFamily("My_Font-2"), "My_Font-2");
+  });
+
+  it("trims surrounding whitespace", () => {
+    assert.equal(validateFontFamily("  NanumSquare  "), "NanumSquare");
+  });
+
+  it("rejects empty values", () => {
+    assert.throws(() => validateFontFamily(""), /empty/);
+    assert.throws(() => validateFontFamily("   "), /empty/);
+  });
+
+  it("rejects CSS-injection vectors", () => {
+    assert.throws(() => validateFontFamily('X"; } body { color: red'), /invalid/);
+    assert.throws(() => validateFontFamily("X;}"), /invalid/);
+    assert.throws(() => validateFontFamily("X</style>"), /invalid/);
+  });
+
+  it("labels the error with the caller-provided field name", () => {
+    assert.throws(
+      () => validateFontFamily(";", "theme.fontFamily"),
+      /theme\.fontFamily/,
+    );
+  });
+});
+
+describe("resolveConfig — pdfFontFaces & theme", () => {
+  const projectRoot = path.resolve("/tmp/fake-project-root");
+  const baseConfig = {
+    title: "Docs",
+    company: "Lablup",
+    projectRoot,
+  };
+
+  it("defaults pdfFontFaces to an empty array", () => {
+    const resolved = resolveConfig({ ...baseConfig });
+    assert.deepEqual(resolved.pdfFontFaces, []);
+  });
+
+  it("absolutizes font paths against projectRoot and keeps descriptors", () => {
+    const resolved = resolveConfig({
+      ...baseConfig,
+      pdfFontFaces: [
+        {
+          family: "NanumSquare",
+          path: "./assets/fonts/NanumSquareRegular.ttf",
+          weight: 400,
+          style: "normal",
+        },
+      ],
+    });
+    assert.deepEqual(resolved.pdfFontFaces, [
+      {
+        family: "NanumSquare",
+        path: path.join(projectRoot, "assets/fonts/NanumSquareRegular.ttf"),
+        weight: 400,
+        style: "normal",
+      },
+    ]);
+  });
+
+  it("rejects an injection-shaped family name at resolve time", () => {
+    assert.throws(
+      () =>
+        resolveConfig({
+          ...baseConfig,
+          pdfFontFaces: [{ family: 'X"; }', path: "./x.ttf" }],
+        }),
+      /invalid font family/,
+    );
+  });
+
+  it("passes the raw theme override through", () => {
+    const resolved = resolveConfig({
+      ...baseConfig,
+      theme: { fontFamily: "NanumSquare" },
+    });
+    assert.deepEqual(resolved.theme, { fontFamily: "NanumSquare" });
+    assert.equal(resolveConfig({ ...baseConfig }).theme, undefined);
   });
 });
