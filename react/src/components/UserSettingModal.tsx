@@ -164,7 +164,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { modal } = App.useApp();
-  const formRef = useRef<FormInstance<FormValues | BulkFormValues>>(null);
+  const formRef = useRef<FormInstance<FormValues>>(null);
   const { logger } = useBAILogger();
 
   const currentUserRole = useCurrentUserRole();
@@ -355,7 +355,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
       ?.validateFields()
       .then(async (values) => {
         if (bulkCreate) {
-          const bulkValues = values as BulkFormValues;
+          const bulkValues = values as unknown as BulkFormValues;
           const users = _.range(1, bulkValues.user_count + 1).map((i) => ({
             email: formatBulkEmail(
               bulkValues.email_prefix,

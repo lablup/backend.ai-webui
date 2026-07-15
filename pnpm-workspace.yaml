@@ -3,13 +3,13 @@ packages:
   - packages/*
 
 catalog:
-  "@ant-design/icons": ^6.1.1
-  "@babel/core": ^7.29.0
-  "@babel/preset-typescript": ^7.28.5
+  "@ant-design/icons": ^6.3.2
+  "@babel/core": ^7.29.7
+  "@babel/preset-typescript": ^7.29.7
   "@eslint/js": ^9.39.4
   "@jest/expect": 30.3.0
   "@jest/globals": 30.3.0
-  "@tanstack/react-query": ^5.99.0
+  "@tanstack/react-query": ^5.101.2
   "@testing-library/jest-dom": ^6.9.1
   "@testing-library/react": ^16.3.2
   "@testing-library/user-event": ^14.6.1
@@ -18,29 +18,29 @@ catalog:
   "@types/jest": ^30.0.0
   "@types/lodash": ^4.17.24
   "@types/lodash-es": ^4.17.12
-  "@types/node": ^22.19.17
-  "@types/react": ^19.2.14
+  "@types/node": ^22.20.0
+  "@types/react": ^19.2.17
   "@types/react-copy-to-clipboard": ^5.0.7
   "@types/react-dom": ^19.2.3
   "@types/react-relay": ^18.2.1
   "@types/relay-runtime": ^19.0.3
   "@types/relay-test-utils": ^19.0.0
   ahooks: ^3.9.7
-  antd: ^6.3.5
+  antd: ^6.5.0
   antd-style: ^3.7.1
   babel-jest: ^30.3.0
   babel-plugin-react-compiler: ^1.0.0
   big.js: ^7.0.1
   classnames: ^2.5.1
-  dayjs: ^1.11.20
-  dompurify: ^3.4.0
+  dayjs: ^1.11.21
+  dompurify: ^3.4.11
   eslint: ^9.39.4
   eslint-plugin-import: ^2.32.0
   eslint-plugin-json-schema-validator: ^5.5.1
   eslint-plugin-react: ^7.37.5
-  eslint-plugin-react-hooks: ^7.0.1
+  eslint-plugin-react-hooks: ^7.1.1
   globals: ^16.5.0
-  graphql: ^16.13.2
+  graphql: ^16.14.2
   i18next: ^25.10.10
   jest: ^30.3.0
   jest-environment-jsdom: ^30.3.0
@@ -48,22 +48,22 @@ catalog:
   lodash-es: ^4.18.1
   lucide-react: ^0.552.0
   marked: ^16.4.2
-  prettier: ^3.8.2
+  prettier: ^3.9.4
   prettier-plugin-sort-json: ^4.2.0
-  react: ^19.2.6
+  react: ^19.2.7
   react-copy-to-clipboard: ^5.1.1
-  react-dom: ^19.2.6
+  react-dom: ^19.2.7
   react-i18next: ^16.6.6
   react-relay: ^20.1.1
   react-router-dom: ^6.30.4
   relay-compiler: ^20.1.1
   relay-runtime: ^20.1.1
   relay-test-utils: ^20.1.1
-  smol-toml: ^1.6.1
+  smol-toml: ^1.7.0
   ts-jest: ^29.4.9
   tus-js-client: ^4.3.1
-  typescript-eslint: ^8.58.2
-  uuid: ^13.0.1
+  typescript-eslint: ^8.63.0
+  uuid: ^13.0.2
   webpack: ^5.106.1
 
 # Dependencies hard-link into a global store outside this repo
@@ -109,28 +109,28 @@ overrides:
   # the production bundle to the first Dependabot-recommended patched
   # version. Remove an entry when every upstream consumer ranges to the
   # patched version on its own.
-  js-cookie: ^3.0.7                                # GHSA-… prototype hijack (alert #385)
-  mermaid: ^11.15.0                                # HTML/CSS injection + DoS (alerts #379–382)
-  serialize-javascript: ^7.0.5                     # RCE via RegExp.flags, CPU DoS (#279, #386)
-  "uuid@^11": ^11.1.1                              # buffer bounds check (#387) v11 line
-  "uuid@^13": ^13.0.1                              # buffer bounds check (#374) — @lobehub/ui pulls 13.0.0
-  dompurify: ^3.4.0                                # align transitives with catalog bump
+  js-cookie: ^3.0.7 # GHSA-… prototype hijack (alert #385)
+  mermaid: ^11.15.0 # HTML/CSS injection + DoS (alerts #379–382)
+  serialize-javascript: ^7.0.5 # RCE via RegExp.flags, CPU DoS (#279, #386)
+  "uuid@^11": ^11.1.1 # buffer bounds check (#387) v11 line
+  "uuid@^13": ^13.0.1 # buffer bounds check (#374) — @lobehub/ui pulls 13.0.0
+  dompurify: ^3.4.11 # align transitives with catalog bump
   # Dev-only transitive security overrides — FR-3014. These ship only in
   # dev/build tooling (not the production bundle), but Dependabot still
   # surfaces them. Remove an entry when every upstream consumer ranges to
   # the patched version on its own.
-  qs: ^6.15.2                                      # crash on null in comma-format arrays (alert #388)
-  "@babel/plugin-transform-modules-systemjs": ^7.29.4  # arbitrary code on malicious input (#378 high)
-  "fast-uri@^3": ^3.1.2                            # host confusion + path traversal (#376, #377 high)
-  postcss: ^8.5.10                                 # XSS via unescaped </style> (#372)
-  "@xmldom/xmldom": ^0.8.13                        # XML injection (#318, #368, #369, #371 high)
-  "picomatch@^2": ^2.3.2                           # method injection in POSIX char classes (#296)
-  "picomatch@^4": ^4.0.4                           # same (#294)
-  "minimatch@^3": ^3.1.4                           # ReDoS (#267, #274, #278 high)
-  "js-yaml@^4": ^4.1.1                             # prototype pollution in merge (#226)
-  "flatted@^3": ^3.4.2                             # prototype pollution via parse() (#291 high)
-  "yaml@^1": ^1.10.3                               # stack overflow on deeply nested YAML (#292)
-  lodash: ^4.18.0                                  # _.template RCE + _.unset prototype pollution (#321, #322 high)
+  qs: ^6.15.2 # crash on null in comma-format arrays (alert #388)
+  "@babel/plugin-transform-modules-systemjs": ^7.29.4 # arbitrary code on malicious input (#378 high)
+  "fast-uri@^3": ^3.1.2 # host confusion + path traversal (#376, #377 high)
+  postcss: ^8.5.10 # XSS via unescaped </style> (#372)
+  "@xmldom/xmldom": ^0.8.13 # XML injection (#318, #368, #369, #371 high)
+  "picomatch@^2": ^2.3.2 # method injection in POSIX char classes (#296)
+  "picomatch@^4": ^4.0.4 # same (#294)
+  "minimatch@^3": ^3.1.4 # ReDoS (#267, #274, #278 high)
+  "js-yaml@^4": ^4.1.1 # prototype pollution in merge (#226)
+  "flatted@^3": ^3.4.2 # prototype pollution via parse() (#291 high)
+  "yaml@^1": ^1.10.3 # stack overflow on deeply nested YAML (#292)
+  lodash: ^4.18.0 # _.template RCE + _.unset prototype pollution (#321, #322 high)
 
 patchedDependencies:
   "@cloudscape-design/board-components@3.0.176": react/patches/@cloudscape-design__board-components@3.0.176.patch

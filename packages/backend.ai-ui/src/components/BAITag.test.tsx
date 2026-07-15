@@ -17,7 +17,9 @@ describe('BAITag', () => {
     it('should render tag with closable property', () => {
       render(<BAITag closable>Closable Tag</BAITag>);
       expect(screen.getByText('Closable Tag')).toBeInTheDocument();
-      expect(screen.getByRole('img', { name: /close/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /close/i }),
+      ).toBeInTheDocument();
     });
   });
 
@@ -65,7 +67,7 @@ describe('BAITag', () => {
           Closable
         </BAITag>,
       );
-      const closeButton = screen.getByRole('img', { name: /close/i });
+      const closeButton = screen.getByRole('button', { name: /close/i });
       act(() => {
         closeButton.click();
       });
@@ -75,7 +77,7 @@ describe('BAITag', () => {
     it('should not show close button when closable is false', () => {
       render(<BAITag closable={false}>Not Closable</BAITag>);
       expect(
-        screen.queryByRole('img', { name: /close/i }),
+        screen.queryByRole('button', { name: /close/i }),
       ).not.toBeInTheDocument();
     });
   });
@@ -161,13 +163,13 @@ describe('BAITag', () => {
           Accessible Tag
         </BAITag>,
       );
-      const closeButton = screen.getByRole('img', { name: /close/i });
+      const closeButton = screen.getByRole('button', { name: /close/i });
       expect(closeButton).toBeInTheDocument();
     });
 
     it('should have proper aria attributes for close button', () => {
       render(<BAITag closable>Closable</BAITag>);
-      const closeButton = screen.getByRole('img', { name: /close/i });
+      const closeButton = screen.getByRole('button', { name: /close/i });
       expect(closeButton).toBeInTheDocument();
     });
   });
@@ -199,7 +201,7 @@ describe('BAITag', () => {
           </BAITag>
         </>,
       );
-      const closeButtons = screen.getAllByRole('img', { name: /close/i });
+      const closeButtons = screen.getAllByRole('button', { name: /close/i });
       expect(closeButtons).toHaveLength(2);
       act(() => {
         closeButtons[0].click();
@@ -227,7 +229,7 @@ describe('BAITag', () => {
           Closable
         </BAITag>,
       );
-      const closeButton = screen.getByRole('img', { name: /close/i });
+      const closeButton = screen.getByRole('button', { name: /close/i });
       act(() => {
         closeButton.click();
       });

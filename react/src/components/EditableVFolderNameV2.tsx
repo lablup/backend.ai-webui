@@ -40,11 +40,11 @@ type EditableVFolderNameV2Props = {
 } & (
   | ({ component?: typeof Typography.Text } & Omit<
       GetProps<typeof Typography.Text>,
-      'children'
+      'children' | 'component'
     >)
   | ({ component: typeof Typography.Title } & Omit<
       GetProps<typeof Typography.Title>,
-      'children'
+      'children' | 'component'
     >)
 );
 

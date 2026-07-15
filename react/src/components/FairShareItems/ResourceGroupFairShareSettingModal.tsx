@@ -79,7 +79,7 @@ const ResourceGroupFairShareSettingModal: React.FC<
   const formRef =
     useRef<
       FormInstance<
-        ResourceGroupFairShareSettingModalMutation$variables['input'] | null
+        ResourceGroupFairShareSettingModalMutation$variables['input']
       >
     >(null);
 
