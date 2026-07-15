@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5eb3296e2d8ca3f3e8238deb88289160>>
+ * @generated SignedSource<<811ff03f3e75f4d11a86581713adde6f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -112,6 +112,7 @@ export type ScopedRolePermissionCardQuery$data = {
           } | null | undefined;
           readonly scopeId: string;
           readonly scopeType: RBACElementType;
+          readonly " $fragmentSpreads": FragmentRefs<"RoleScopePermissionEditModal_scopesFragment">;
         };
       }>;
     } | null | undefined;
@@ -458,6 +459,11 @@ return {
                       (v9/*: any*/),
                       (v10/*: any*/),
                       {
+                        "args": null,
+                        "kind": "FragmentSpread",
+                        "name": "RoleScopePermissionEditModal_scopesFragment"
+                      },
+                      {
                         "alias": null,
                         "args": null,
                         "concreteType": null,
@@ -673,16 +679,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "d548971f0a7dff2f9087b468d0ff0bd2",
+    "cacheID": "754af13a9aab98bcdda0fc2b9679180f",
     "id": null,
     "metadata": {},
     "name": "ScopedRolePermissionCardQuery",
     "operationKind": "query",
-    "text": "query ScopedRolePermissionCardQuery(\n  $roleId: UUID!\n  $scopeFilter: EntityFilter\n  $scopeLimit: Int\n  $scopeOffset: Int\n  $permissionFilter: PermissionFilter\n  $permissionLimit: Int\n) {\n  adminRole(id: $roleId) {\n    scopes(filter: $scopeFilter, limit: $scopeLimit, offset: $scopeOffset) {\n      count\n      edges {\n        node {\n          scopeType\n          scopeId\n          scope {\n            __typename\n            ... on DomainV2 {\n              basicInfo {\n                domainName: name\n              }\n            }\n            ... on ProjectV2 {\n              basicInfo {\n                projectName: name\n              }\n            }\n            ... on UserV2 {\n              basicInfo {\n                email\n              }\n            }\n            ... on VirtualFolderNode {\n              vfolderName: name\n            }\n            ... on SessionV2 {\n              metadata {\n                sessionName: name\n              }\n            }\n            ... on ModelDeployment {\n              metadata {\n                deploymentName: name\n              }\n            }\n            ... on ResourceGroup {\n              resourceGroupName: name\n            }\n            ... on ContainerRegistryV2 {\n              registryName\n              project\n            }\n            ... on Node {\n              __isNode: __typename\n              id\n            }\n            ... on ArtifactRegistry {\n              id\n            }\n          }\n          id\n        }\n      }\n    }\n    permissions(filter: $permissionFilter, limit: $permissionLimit) {\n      edges {\n        node {\n          scopeId\n          entityType\n          operation\n          ...RoleScopePermissionEditModal_permissionsFragment\n          id\n        }\n      }\n    }\n    id\n  }\n}\n\nfragment RoleScopePermissionEditModal_permissionsFragment on Permission {\n  id\n  scopeId\n  entityType\n  operation\n}\n"
+    "text": "query ScopedRolePermissionCardQuery(\n  $roleId: UUID!\n  $scopeFilter: EntityFilter\n  $scopeLimit: Int\n  $scopeOffset: Int\n  $permissionFilter: PermissionFilter\n  $permissionLimit: Int\n) {\n  adminRole(id: $roleId) {\n    scopes(filter: $scopeFilter, limit: $scopeLimit, offset: $scopeOffset) {\n      count\n      edges {\n        node {\n          scopeType\n          scopeId\n          ...RoleScopePermissionEditModal_scopesFragment\n          scope {\n            __typename\n            ... on DomainV2 {\n              basicInfo {\n                domainName: name\n              }\n            }\n            ... on ProjectV2 {\n              basicInfo {\n                projectName: name\n              }\n            }\n            ... on UserV2 {\n              basicInfo {\n                email\n              }\n            }\n            ... on VirtualFolderNode {\n              vfolderName: name\n            }\n            ... on SessionV2 {\n              metadata {\n                sessionName: name\n              }\n            }\n            ... on ModelDeployment {\n              metadata {\n                deploymentName: name\n              }\n            }\n            ... on ResourceGroup {\n              resourceGroupName: name\n            }\n            ... on ContainerRegistryV2 {\n              registryName\n              project\n            }\n            ... on Node {\n              __isNode: __typename\n              id\n            }\n            ... on ArtifactRegistry {\n              id\n            }\n          }\n          id\n        }\n      }\n    }\n    permissions(filter: $permissionFilter, limit: $permissionLimit) {\n      edges {\n        node {\n          scopeId\n          entityType\n          operation\n          ...RoleScopePermissionEditModal_permissionsFragment\n          id\n        }\n      }\n    }\n    id\n  }\n}\n\nfragment RoleScopePermissionEditModal_permissionsFragment on Permission {\n  id\n  scopeId\n  entityType\n  operation\n}\n\nfragment RoleScopePermissionEditModal_scopesFragment on EntityRef {\n  scopeType\n  scopeId\n  scope {\n    __typename\n    ... on DomainV2 {\n      basicInfo {\n        domainName: name\n      }\n    }\n    ... on ProjectV2 {\n      basicInfo {\n        projectName: name\n      }\n    }\n    ... on UserV2 {\n      basicInfo {\n        email\n      }\n    }\n    ... on VirtualFolderNode {\n      vfolderName: name\n    }\n    ... on SessionV2 {\n      metadata {\n        sessionName: name\n      }\n    }\n    ... on ModelDeployment {\n      metadata {\n        deploymentName: name\n      }\n    }\n    ... on ResourceGroup {\n      resourceGroupName: name\n    }\n    ... on ContainerRegistryV2 {\n      registryName\n      project\n    }\n    ... on Node {\n      __isNode: __typename\n      id\n    }\n    ... on ArtifactRegistry {\n      id\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "db95614e77ab43da113fbe0cbf60f3a9";
+(node as any).hash = "bcd211b0f515a5921d41af8cac282cf3";
 
 export default node;

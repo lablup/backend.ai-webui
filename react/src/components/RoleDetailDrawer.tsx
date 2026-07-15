@@ -59,7 +59,10 @@ const RoleDetailDrawer: React.FC<RoleDetailDrawerProps> = ({
   return (
     <Drawer
       title={t('rbac.RoleDetailInfo')}
-      size="large"
+      // Slightly wider than antd's `size="large"` (736px): the Detailed
+      // Permissions cards host a filter row, selection actions, and a
+      // three-column table.
+      size={800}
       extra={
         <BAIFetchKeyButton
           loading={isPendingReload}

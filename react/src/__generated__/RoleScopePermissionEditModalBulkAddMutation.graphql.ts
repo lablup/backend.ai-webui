@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<680f0cf4e9fb746ef8d276650c61493f>>
+ * @generated SignedSource<<bd429ee1ebc4a117a75c7788931b6af1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -30,6 +30,7 @@ export type RoleScopePermissionEditModalBulkAddMutation$data = {
       readonly entityType: string;
       readonly message: string;
       readonly operation: string;
+      readonly scopeId: string;
     }>;
     readonly items: ReadonlyArray<{
       readonly entityType: RBACElementType;
@@ -57,17 +58,24 @@ v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "entityType",
+  "name": "scopeId",
   "storageKey": null
 },
 v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
+  "name": "entityType",
+  "storageKey": null
+},
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
   "name": "operation",
   "storageKey": null
 },
-v3 = [
+v4 = [
   {
     "alias": null,
     "args": [
@@ -104,15 +112,9 @@ v3 = [
             "name": "scopeType",
             "storageKey": null
           },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "scopeId",
-            "storageKey": null
-          },
           (v1/*: any*/),
-          (v2/*: any*/)
+          (v2/*: any*/),
+          (v3/*: any*/)
         ],
         "storageKey": null
       },
@@ -126,6 +128,7 @@ v3 = [
         "selections": [
           (v1/*: any*/),
           (v2/*: any*/),
+          (v3/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -146,7 +149,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "RoleScopePermissionEditModalBulkAddMutation",
-    "selections": (v3/*: any*/),
+    "selections": (v4/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
@@ -155,19 +158,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "RoleScopePermissionEditModalBulkAddMutation",
-    "selections": (v3/*: any*/)
+    "selections": (v4/*: any*/)
   },
   "params": {
-    "cacheID": "a7b77b1a4f8a0ae2ed6c5b8c37189283",
+    "cacheID": "42260fc6c93be99534c8da6f57d445d5",
     "id": null,
     "metadata": {},
     "name": "RoleScopePermissionEditModalBulkAddMutation",
     "operationKind": "mutation",
-    "text": "mutation RoleScopePermissionEditModalBulkAddMutation(\n  $input: BulkAddRolePermissionsInput!\n) {\n  adminBulkAddRolePermissions(input: $input) {\n    items {\n      id\n      scopeType\n      scopeId\n      entityType\n      operation\n    }\n    failed {\n      entityType\n      operation\n      message\n    }\n  }\n}\n"
+    "text": "mutation RoleScopePermissionEditModalBulkAddMutation(\n  $input: BulkAddRolePermissionsInput!\n) {\n  adminBulkAddRolePermissions(input: $input) {\n    items {\n      id\n      scopeType\n      scopeId\n      entityType\n      operation\n    }\n    failed {\n      scopeId\n      entityType\n      operation\n      message\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "89f7bb4744ee1cb5d945e16cf21d31c2";
+(node as any).hash = "645cfe960d1d54f95e061f266d877ab2";
 
 export default node;

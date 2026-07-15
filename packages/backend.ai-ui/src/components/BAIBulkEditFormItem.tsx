@@ -198,18 +198,26 @@ const BAIBulkEditFormItem: React.FC<BAIBulkEditFormItemProps> = ({
           }
         />
       ) : null}
-      <Form.Item
-        name={name}
-        {...formItemProps}
-        noStyle
-        hidden={mode !== 'edit'}
-      >
-        {children && (
-          <ControlWrapper ref={controlRef} onBlur={handleControlBlur}>
-            {children}
-          </ControlWrapper>
-        )}
-      </Form.Item>
+      {/* Unmounted (not just hidden) while in keep mode so the field only
+          registers when the user switches into edit/clear — this is what lets
+          a consumer-provided `initialValue` apply at that moment (e.g. a bulk
+          checkbox starting checked) instead of at form mount, which would mark
+          every field as edited. Clear mode stays mounted (hidden) so its
+          `null` value is still collected by validateFields/getFieldsValue. */}
+      {mode !== 'keep' && (
+        <Form.Item
+          name={name}
+          {...formItemProps}
+          noStyle
+          hidden={mode !== 'edit'}
+        >
+          {children && (
+            <ControlWrapper ref={controlRef} onBlur={handleControlBlur}>
+              {children}
+            </ControlWrapper>
+          )}
+        </Form.Item>
+      )}
     </Form.Item>
   );
 };

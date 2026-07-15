@@ -7,6 +7,7 @@ import {
   type EntityFilter,
   RBACElementType,
   ScopedRolePermissionCardQuery,
+  ScopedRolePermissionCardQuery$data,
 } from '../__generated__/ScopedRolePermissionCardQuery.graphql';
 import { ScopedRolePermissionCard_rbacPermissionMatrixFragment$key } from '../__generated__/ScopedRolePermissionCard_rbacPermissionMatrixFragment.graphql';
 import {
@@ -15,9 +16,9 @@ import {
 } from '../helper/rbacGrantState';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import RoleScopePermissionEditModal, {
-  type RoleScopePermissionEditModalScope,
+  resolveScopeName,
 } from './RoleScopePermissionEditModal';
-import { Tag, Tooltip } from 'antd';
+import { Button, Tag, Tooltip } from 'antd';
 import {
   BAICard,
   type BAIColumnsType,
@@ -26,6 +27,7 @@ import {
   BAIGraphQLPropertyFilter,
   BAIId,
   BAINameActionCell,
+  BAISelectionLabel,
   BAITable,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
@@ -40,71 +42,34 @@ import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
 /**
  * Upper bound of permission rows fetched per card. The tag state of every
- * visible scope row AND the edit modal's pre-checked grid (via
+ * visible scope row AND the edit modal's grid (via
  * `RoleScopePermissionEditModal_permissionsFragment`) are computed from this
  * set (filtered by roleId + scopeType), so it must cover the role's grants for
- * the scope type. A role realistically holds far fewer than this; if a role
- * ever exceeds it, tag colors and the modal's initial checks for the overflow
- * could be understated (never overstated). Exact paging is possible on 26.8.0
- * via `PermissionFilter.scopeId: { in: [...] }` against the visible rows'
- * scope ids, but needs a second data-dependent fetch after the scopes
+ * the scope type — in bulk mode the modal reconciles every selected scope
+ * against it. The bound is far above what a role can realistically hold
+ * (worst case = matrix cells per scope × granted scopes of the type); if it
+ * were ever exceeded, tag colors and the modal's initial checks for the
+ * overflow could be understated (never overstated). Exact paging is possible
+ * on 26.8.0 via `PermissionFilter.scopeId: { in: [...] }` against the visible
+ * rows' scope ids, but needs a second data-dependent fetch after the scopes
  * resolve — deferred as a follow-up.
  */
-const PERMISSION_FETCH_LIMIT = 100;
-
-interface ScopeNameRecord {
-  scopeType: string;
-  scope?: {
-    basicInfo?: {
-      domainName?: string | null;
-      projectName?: string | null;
-      email?: string | null;
-    } | null;
-    vfolderName?: string | null;
-    metadata?: {
-      sessionName?: string | null;
-      deploymentName?: string | null;
-    } | null;
-    resourceGroupName?: string | null;
-    registryName?: string | null;
-    project?: string | null;
-  } | null;
-}
-
-const resolveScopeName = (
-  record: ScopeNameRecord,
-): string | null | undefined => {
-  const scope = record?.scope;
-  if (!scope) return null;
-  switch (record.scopeType) {
-    case 'DOMAIN':
-      return scope.basicInfo?.domainName;
-    case 'PROJECT':
-      return scope.basicInfo?.projectName;
-    case 'USER':
-      return scope.basicInfo?.email;
-    case 'VFOLDER':
-      return scope.vfolderName;
-    case 'SESSION':
-      return scope.metadata?.sessionName;
-    case 'MODEL_DEPLOYMENT':
-      return scope.metadata?.deploymentName;
-    case 'RESOURCE_GROUP':
-      return scope.resourceGroupName;
-    case 'CONTAINER_REGISTRY':
-      return scope.project
-        ? `${scope.registryName} - ${scope.project}`
-        : scope.registryName;
-    default:
-      return null;
-  }
-};
+const PERMISSION_FETCH_LIMIT = 500;
 
 const GRANT_STATE_TAG_COLOR: Record<RBACGrantState, string | undefined> = {
   full: 'success',
   partial: 'warning',
   none: undefined,
 };
+
+/** A scope row node as returned by this card's query. */
+type ScopeRowNode = NonNullable<
+  NonNullable<
+    NonNullable<
+      NonNullable<ScopedRolePermissionCardQuery$data['adminRole']>['scopes']
+    >['edges']
+  >[number]
+>['node'];
 
 export interface ScopedRolePermissionCardProps {
   roleNodeFrgmt: ScopedRolePermissionCardFragment$key;
@@ -177,11 +142,31 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
     EntityFilter | undefined
   >();
   const [fetchKey, updateFetchKey] = useFetchKey();
-  // The scope row currently being edited (drives the FR-6 permission edit
-  // modal); `null` while the modal is closed. On save, `updateFetchKey`
-  // recomputes the tag colors from the true post-save permission state.
-  const [editingScope, setEditingScope] =
-    useState<RoleScopePermissionEditModalScope | null>(null);
+  // Selected scope row nodes, straight from `rowSelection.onChange`. Survives
+  // pagination: `preserveSelectedRowKeys` makes antd cache off-page selected
+  // records and keep handing them back through `onChange`'s `rows`. Doubles
+  // as the edit modal's target list when the modal is opened from the
+  // selection.
+  const [selectedScopes, setSelectedScopes] = useState<ScopeRowNode[]>([]);
+  // The single scope row being edited via its inline Edit action; `null`
+  // while that path is closed. Kept apart from the selection so an inline
+  // edit never disturbs it.
+  const [inlineEditingScope, setInlineEditingScope] =
+    useState<ScopeRowNode | null>(null);
+  // Whether the modal is open for the current row selection (bulk when 2+
+  // scopes are selected). A successful selection-originated save clears the
+  // selection; an inline edit leaves it untouched.
+  const [isSelectionEditOpen, setIsSelectionEditOpen] = useState(false);
+
+  // The modal's target scopes: the live selection when opened from it, the
+  // inline row otherwise. Safe to derive (no snapshot copy) — the modal
+  // captures the list at mount and the mask blocks selection changes while
+  // it is open.
+  const editingScopes = isSelectionEditOpen
+    ? selectedScopes
+    : inlineEditingScope
+      ? [inlineEditingScope]
+      : [];
 
   const queryVariables: ScopedRolePermissionCardQuery['variables'] = {
     roleId: toLocalId(role.id),
@@ -225,6 +210,7 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
               node {
                 scopeType
                 scopeId
+                ...RoleScopePermissionEditModal_scopesFragment
                 scope {
                   ... on DomainV2 {
                     basicInfo {
@@ -342,11 +328,7 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
                 key: 'edit',
                 title: t('button.Edit'),
                 icon: <EditIcon />,
-                onClick: () =>
-                  setEditingScope({
-                    scopeId: record.scopeId,
-                    scopeName,
-                  }),
+                onClick: () => setInlineEditingScope(record),
               },
             ]}
             style={{ maxWidth: 150 }}
@@ -418,6 +400,9 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
               // The filter narrows the result set — land back on page 1 so the
               // offset stays in range.
               setTablePaginationOption({ current: 1 });
+              // Drop the selection so stale, now-hidden rows can't survive a
+              // filter change and get bulk-edited unintentionally.
+              setSelectedScopes([]);
             }}
             filterProperties={[
               {
@@ -427,22 +412,49 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
               },
             ]}
           />
-          <BAIFetchKeyButton
-            value={fetchKey}
-            onChange={updateFetchKey}
-            loading={
-              deferredFetchKey !== fetchKey ||
-              deferredQueryVariables !== queryVariables
-            }
-          />
+          <BAIFlex gap="xs" align="center">
+            {selectedScopes.length > 0 && (
+              <>
+                <BAISelectionLabel
+                  count={selectedScopes.length}
+                  onClearSelection={() => setSelectedScopes([])}
+                />
+                {/* Icon-only with a tooltip — the row above already hosts the
+                    filter, so a labeled button crowds it (same pattern as the
+                    session list's bulk actions). */}
+                <Tooltip title={t('rbac.EditScopePermissions')}>
+                  <Button
+                    icon={<EditIcon />}
+                    onClick={() => setIsSelectionEditOpen(true)}
+                  />
+                </Tooltip>
+              </>
+            )}
+            <BAIFetchKeyButton
+              value={fetchKey}
+              onChange={updateFetchKey}
+              loading={
+                deferredFetchKey !== fetchKey ||
+                deferredQueryVariables !== queryVariables
+              }
+            />
+          </BAIFlex>
         </BAIFlex>
         <BAITable<(typeof scopeRows)[number]>
-          rowKey={(record) => `${record.scopeType}|${record.scopeId}`}
+          rowKey="scopeId"
           dataSource={scopeRows}
           columns={columns}
           loading={deferredQueryVariables !== queryVariables}
           size="small"
           scroll={{ x: 'max-content' }}
+          rowSelection={{
+            type: 'checkbox',
+            selectedRowKeys: selectedScopes.map((scope) => scope.scopeId),
+            onChange: (_keys, rows) => setSelectedScopes(_.compact(rows)),
+            // Keep selections made on other pages: antd caches their records
+            // and keeps handing them back through `onChange`'s `rows`.
+            preserveSelectedRowKeys: true,
+          }}
           pagination={{
             pageSize: tablePaginationOption.pageSize,
             current: tablePaginationOption.current,
@@ -457,17 +469,23 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
           the currently-granted permissions on every open. */}
       <BAIUnmountAfterClose>
         <RoleScopePermissionEditModal
-          open={!!editingScope}
+          open={editingScopes.length > 0}
           roleNodeFrgmt={role}
           rbacPermissionMatrixFrgmt={rbacPermissionMatrix}
           permissionsFrgmt={permissionNodes}
-          scopeType={scopeType}
-          editingScope={editingScope}
+          scopesFrgmt={editingScopes}
           onRequestClose={(success) => {
-            setEditingScope(null);
+            const wasFromSelection = isSelectionEditOpen;
+            setIsSelectionEditOpen(false);
+            setInlineEditingScope(null);
             if (success) {
               // Recompute tag colors from the true post-save permission state.
               updateFetchKey();
+              // A selection-originated edit consumed the selection; clear it
+              // on success. Inline edits leave the selection untouched.
+              if (wasFromSelection) {
+                setSelectedScopes([]);
+              }
             }
           }}
         />

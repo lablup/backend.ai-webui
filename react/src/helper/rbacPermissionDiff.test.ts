@@ -11,7 +11,11 @@
  * - A cell present in both stays untouched even when other cells change
  * - Empty initial (grant everything) / empty edited (revoke everything)
  */
-import { diffPermissionCells } from './rbacPermissionDiff';
+import {
+  applyBulkPermissionCells,
+  type BulkCellState,
+  diffPermissionCells,
+} from './rbacPermissionDiff';
 
 describe('diffPermissionCells', () => {
   it('returns an empty diff when nothing changed', () => {
@@ -61,6 +65,72 @@ describe('diffPermissionCells', () => {
     expect(diffPermissionCells(initial, new Set())).toEqual({
       toCreate: [],
       toDelete: ['VFOLDER|READ', 'VFOLDER|GRANT_READ'],
+    });
+  });
+});
+
+describe('applyBulkPermissionCells', () => {
+  it('returns an empty diff when no cells were modified (all "Keep as is")', () => {
+    const initial = new Set(['SESSION|CREATE', 'SESSION|READ']);
+    expect(applyBulkPermissionCells(initial, new Map())).toEqual({
+      toCreate: [],
+      toDelete: [],
+    });
+  });
+
+  // Spec FR-6 acceptance criterion: project1 has SESSION CREATE+READ, project2
+  // has SESSION READ. Only the SESSION × CREATE cell is modified to checked;
+  // CREATE is added to project2 only, everything else is left untouched.
+  describe('the project1 / project2 SESSION CREATE scenario', () => {
+    const modifiedCells = new Map<string, BulkCellState>([
+      ['SESSION|CREATE', 'checked'],
+    ]);
+
+    it('adds nothing to project1, which already grants SESSION CREATE', () => {
+      const project1Initial = new Set(['SESSION|CREATE', 'SESSION|READ']);
+      expect(applyBulkPermissionCells(project1Initial, modifiedCells)).toEqual({
+        toCreate: [],
+        toDelete: [],
+      });
+    });
+
+    it('adds only SESSION CREATE to project2, keeping its existing SESSION READ', () => {
+      const project2Initial = new Set(['SESSION|READ']);
+      expect(applyBulkPermissionCells(project2Initial, modifiedCells)).toEqual({
+        toCreate: ['SESSION|CREATE'],
+        toDelete: [],
+      });
+    });
+  });
+
+  it('does not touch cells left as "Keep as is", even when other cells change', () => {
+    // SESSION READ is granted and never modified → it must survive untouched
+    // while an unchecked CREATE is revoked and a checked UPDATE is added.
+    const initial = new Set(['SESSION|CREATE', 'SESSION|READ']);
+    const modifiedCells = new Map<string, BulkCellState>([
+      ['SESSION|CREATE', 'unchecked'],
+      ['SESSION|UPDATE', 'checked'],
+    ]);
+    const { toCreate, toDelete } = applyBulkPermissionCells(
+      initial,
+      modifiedCells,
+    );
+    expect(toCreate).toEqual(['SESSION|UPDATE']);
+    expect(toDelete).toEqual(['SESSION|CREATE']);
+  });
+
+  it('revokes a modified-to-unchecked cell only where the scope currently grants it', () => {
+    const modifiedCells = new Map<string, BulkCellState>([
+      ['VFOLDER|READ', 'unchecked'],
+    ]);
+    // Scope that grants VFOLDER READ → it is revoked.
+    expect(
+      applyBulkPermissionCells(new Set(['VFOLDER|READ']), modifiedCells),
+    ).toEqual({ toCreate: [], toDelete: ['VFOLDER|READ'] });
+    // Scope that never granted it → nothing to do (skipped).
+    expect(applyBulkPermissionCells(new Set(), modifiedCells)).toEqual({
+      toCreate: [],
+      toDelete: [],
     });
   });
 });
