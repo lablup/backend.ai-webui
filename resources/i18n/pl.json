@@ -2080,6 +2080,7 @@
     "CreateProject": "Utwórz projekt",
     "Deactivate": "Dezaktywuj",
     "DeactivateProject": "Dezaktywuj projekt",
+    "DescSetProjectAdmin": "Nadanie uprawnienia administratora projektu automatycznie dodaje projekt do listy dozwolonych projektów użytkownika, dzięki czemu użytkownik będzie mógł uzyskać dostęp do tego projektu.",
     "Domain": "Domena",
     "EditProject": "Edytuj",
     "FailedToActivateProject": "Nie udało się aktywować projektu.",
@@ -2088,13 +2089,16 @@
     "Name": "Nazwa",
     "Project": "Projekt",
     "ProjectActivated": "Projekt został aktywowany.",
+    "ProjectAdminRoleNotFound": "Nie można znaleźć roli administratora projektu dla projektu '{{project}}'.",
     "ProjectDeactivated": "Projekt został dezaktywowany.",
     "ProjectID": "ID projektu",
     "ProjectIDFilterRuleMessage": "Nieprawidłowy UUID.",
     "ProjectPurged": "Projekt został trwale usunięty.",
     "Purge": "Wyczyść",
     "PurgeProject": "Trwale usuń projekt",
-    "ResourcePolicy": "Polityka zasobów"
+    "ResourcePolicy": "Polityka zasobów",
+    "RevokeProjectAdmin": "Odwołaj uprawnienie administratora",
+    "SetProjectAdmin": "Ustaw administratora projektu"
   },
   "projectMembers": {
     "Email": "E-mail",

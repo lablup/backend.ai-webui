@@ -2078,6 +2078,7 @@
     "CreateProject": "Proje Oluştur",
     "Deactivate": "Devre dışı bırak",
     "DeactivateProject": "Projeyi devre dışı bırak",
+    "DescSetProjectAdmin": "Proje yöneticisi izni verildiğinde, proje otomatik olarak kullanıcının izin verilen projeler listesine eklenir ve kullanıcı bu projeye erişebilir hale gelir.",
     "Domain": "Etki Alanı",
     "EditProject": "Düzenle",
     "FailedToActivateProject": "Proje etkinleştirilemedi.",
@@ -2086,13 +2087,16 @@
     "Name": "Ad",
     "Project": "Proje",
     "ProjectActivated": "Proje etkinleştirildi.",
+    "ProjectAdminRoleNotFound": "'{{project}}' projesi için proje yöneticisi rolü bulunamadı.",
     "ProjectDeactivated": "Proje devre dışı bırakıldı.",
     "ProjectID": "Proje Kimliği",
     "ProjectIDFilterRuleMessage": "Geçersiz UUID.",
     "ProjectPurged": "Proje kalıcı olarak silindi.",
     "Purge": "Temizle",
     "PurgeProject": "Projeyi Temizle",
-    "ResourcePolicy": "Kaynak Politikası"
+    "ResourcePolicy": "Kaynak Politikası",
+    "RevokeProjectAdmin": "Yönetici İznini İptal Et",
+    "SetProjectAdmin": "Proje Yöneticisini Ayarla"
   },
   "projectMembers": {
     "Email": "E-posta",

@@ -2079,6 +2079,7 @@
     "CreateProject": "Төсөл үүсгэх",
     "Deactivate": "Идэвхгүй болгох",
     "DeactivateProject": "Төслийг идэвхгүй болгох",
+    "DescSetProjectAdmin": "Төслийн администраторын зөвшөөрлийг олгосноор тухайн төсөл нь хэрэглэгчийн зөвшөөрөгдсөн төслийн жагсаалтад автоматаар нэмэгдэх бөгөөд, ингэснээр хэрэглэгч тухайн төсөлд хандах боломжтой болно.",
     "Domain": "Домен",
     "EditProject": "Засах",
     "FailedToActivateProject": "Төслийг идэвхжүүлэхэд амжилтгүй боллоо.",
@@ -2087,13 +2088,16 @@
     "Name": "Нэр",
     "Project": "Төсөл",
     "ProjectActivated": "Төсөл идэвхжлээ.",
+    "ProjectAdminRoleNotFound": "'{{project}}' төслийн төслийн администратор үүрэг олдсонгүй.",
     "ProjectDeactivated": "Төсөл идэвхгүй боллоо.",
     "ProjectID": "Төслийн ID",
     "ProjectIDFilterRuleMessage": "UUID хүчин төгөлдөргүй.",
     "ProjectPurged": "Төсөл бүрмөсөн устгагдсан.",
     "Purge": "Устгах",
     "PurgeProject": "Төслийг бүрэн устгах",
-    "ResourcePolicy": "Ресурсийн бодлого"
+    "ResourcePolicy": "Ресурсийн бодлого",
+    "RevokeProjectAdmin": "Админ зөвшөөрлийг цуцлах",
+    "SetProjectAdmin": "Төслийн администратор тохируулах"
   },
   "projectMembers": {
     "Email": "Имэйл",

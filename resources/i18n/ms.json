@@ -2078,6 +2078,7 @@
     "CreateProject": "Buat Projek",
     "Deactivate": "Nyahaktifkan",
     "DeactivateProject": "Nyahaktifkan Projek",
+    "DescSetProjectAdmin": "Memberikan kebenaran Pentadbir Projek secara automatik menambahkan projek tersebut ke dalam senarai Projek Dibenarkan pengguna, dan pengguna tersebut kemudiannya akan dapat mengakses projek tersebut.",
     "Domain": "Domain",
     "EditProject": "Sunting",
     "FailedToActivateProject": "Gagal mengaktifkan projek.",
@@ -2086,13 +2087,16 @@
     "Name": "Nama",
     "Project": "Projek",
     "ProjectActivated": "Projek ini telah diaktifkan.",
+    "ProjectAdminRoleNotFound": "Tidak dapat mencari peranan Pentadbir Projek untuk projek '{{project}}'.",
     "ProjectDeactivated": "Projek ini telah dinyahaktifkan.",
     "ProjectID": "ID Projek",
     "ProjectIDFilterRuleMessage": "UUID tidak sah.",
     "ProjectPurged": "Projek telah dipadam",
     "Purge": "Padam",
     "PurgeProject": "Padam Projek",
-    "ResourcePolicy": "Dasar Sumber"
+    "ResourcePolicy": "Dasar Sumber",
+    "RevokeProjectAdmin": "Batalkan Kebenaran Pentadbir",
+    "SetProjectAdmin": "Tetapkan Pentadbir Projek"
   },
   "projectMembers": {
     "Email": "E-mel",

@@ -2078,6 +2078,7 @@
     "CreateProject": "Luo projekti",
     "Deactivate": "Poista käytöstä",
     "DeactivateProject": "Poista projekti käytöstä",
+    "DescSetProjectAdmin": "Projektin ylläpitäjän käyttöoikeuden myöntäminen lisää projektin automaattisesti käyttäjän sallittujen projektien luetteloon, minkä jälkeen käyttäjä pääsee käsiksi kyseiseen projektiin.",
     "Domain": "Toimialue",
     "EditProject": "Muokkaa",
     "FailedToActivateProject": "Projektin käyttöönotto epäonnistui.",
@@ -2086,13 +2087,16 @@
     "Name": "Nimi",
     "Project": "Projekti",
     "ProjectActivated": "Projekti on otettu käyttöön.",
+    "ProjectAdminRoleNotFound": "Projektin ylläpitäjän roolia ei löytynyt projektille '{{project}}'.",
     "ProjectDeactivated": "Projekti on poistettu käytöstä.",
     "ProjectID": "Projektin tunnus",
     "ProjectIDFilterRuleMessage": "Virheellinen UUID.",
     "ProjectPurged": "Projekti on poistettu pysyvästi.",
     "Purge": "Tyhjennä",
     "PurgeProject": "Poista projekti pysyvästi",
-    "ResourcePolicy": "Resurssipolitiikka"
+    "ResourcePolicy": "Resurssipolitiikka",
+    "RevokeProjectAdmin": "Peruuta ylläpitäjän käyttöoikeus",
+    "SetProjectAdmin": "Aseta projektin ylläpitäjä"
   },
   "projectMembers": {
     "Email": "Sähköposti",

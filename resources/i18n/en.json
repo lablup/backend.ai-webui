@@ -2065,6 +2065,7 @@
     "CreateProject": "Create Project",
     "Deactivate": "Deactivate",
     "DeactivateProject": "Deactivate Project",
+    "DescSetProjectAdmin": "Granting project admin permission automatically adds the project to the user's allowed project list, and the user will then be able to access that project.",
     "Domain": "Domain",
     "EditProject": "Edit",
     "FailedToActivateProject": "Failed to activate the project.",
@@ -2073,13 +2074,16 @@
     "Name": "Name",
     "Project": "Project",
     "ProjectActivated": "The project has been activated.",
+    "ProjectAdminRoleNotFound": "Could not find the project admin role for project '{{project}}'.",
     "ProjectDeactivated": "The project has been deactivated.",
     "ProjectID": "Project ID",
     "ProjectIDFilterRuleMessage": "Invalid UUID.",
     "ProjectPurged": "The project has been purged.",
     "Purge": "Purge",
     "PurgeProject": "Purge Project",
-    "ResourcePolicy": "Resource Policy"
+    "ResourcePolicy": "Resource Policy",
+    "RevokeProjectAdmin": "Revoke admin permission",
+    "SetProjectAdmin": "Set Project Admin"
   },
   "projectMembers": {
     "Email": "Email",

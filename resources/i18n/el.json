@@ -2078,6 +2078,7 @@
     "CreateProject": "Δημιουργία έργου",
     "Deactivate": "Απενεργοποίηση",
     "DeactivateProject": "Απενεργοποίηση έργου",
+    "DescSetProjectAdmin": "Η παραχώρηση δικαιώματος διαχειριστή έργου προσθέτει αυτόματα το έργο στη λίστα επιτρεπόμενων έργων του χρήστη, και ο χρήστης θα μπορεί στη συνέχεια να έχει πρόσβαση σε αυτό το έργο.",
     "Domain": "Τομέας",
     "EditProject": "Επεξεργασία",
     "FailedToActivateProject": "Η ενεργοποίηση του έργου απέτυχε.",
@@ -2086,13 +2087,16 @@
     "Name": "Όνομα",
     "Project": "Έργο",
     "ProjectActivated": "Το έργο έχει ενεργοποιηθεί.",
+    "ProjectAdminRoleNotFound": "Δεν ήταν δυνατή η εύρεση του ρόλου διαχειριστή έργου για το έργο '{{project}}'.",
     "ProjectDeactivated": "Το έργο έχει απενεργοποιηθεί.",
     "ProjectID": "ID έργου",
     "ProjectIDFilterRuleMessage": "Μη έγκυρο UUID.",
     "ProjectPurged": "Το projecth έχει διαγραφεί.",
     "Purge": "Εκκαθάριση",
     "PurgeProject": "Μόνιμη διαγραφή έργου",
-    "ResourcePolicy": "Πολιτική πόρων"
+    "ResourcePolicy": "Πολιτική πόρων",
+    "RevokeProjectAdmin": "Ανάκληση δικαιώματος διαχειριστή",
+    "SetProjectAdmin": "Ορισμός διαχειριστή έργου"
   },
   "projectMembers": {
     "Email": "Email",

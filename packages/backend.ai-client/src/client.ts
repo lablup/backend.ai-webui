@@ -945,6 +945,9 @@ export class Client {
       // bytes as a decimal string, round-trippable into BinarySizeInput.expr)
       // in the 26.8.0 supergraph. Older managers only serve `value`.
       this._features['binary-size-expr'] = true;
+      // RoleFilter gained `mappedScope` (RoleMappedScopeNestedFilter) — look
+      // up roles registered to a specific scope. FR-3317.
+      this._features['role-mapped-scope-filter'] = true;
     }
   }
 

@@ -2082,6 +2082,7 @@
     "CreateProject": "建立專案",
     "Deactivate": "停用",
     "DeactivateProject": "停用專案",
+    "DescSetProjectAdmin": "授予專案管理員權限後，系統會自動將該專案新增至使用者的允許專案清單中，此後該使用者即可存取該專案。",
     "Domain": "網域",
     "EditProject": "編輯",
     "FailedToActivateProject": "無法啟用專案。",
@@ -2090,13 +2091,16 @@
     "Name": "名稱",
     "Project": "專案",
     "ProjectActivated": "該專案已啟用。",
+    "ProjectAdminRoleNotFound": "找不到專案 '{{project}}' 的專案管理員角色。",
     "ProjectDeactivated": "該專案已停用。",
     "ProjectID": "專案 ID",
     "ProjectIDFilterRuleMessage": "無效的 UUID。",
     "ProjectPurged": "專案「projecth」已被清除",
     "Purge": "清除",
     "PurgeProject": "永久刪除專案",
-    "ResourcePolicy": "資源策略"
+    "ResourcePolicy": "資源策略",
+    "RevokeProjectAdmin": "撤銷管理員權限",
+    "SetProjectAdmin": "設定專案管理員"
   },
   "projectMembers": {
     "Email": "電子郵件",

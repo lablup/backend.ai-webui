@@ -2081,6 +2081,7 @@
     "CreateProject": "Buat Proyek",
     "Deactivate": "Nonaktifkan",
     "DeactivateProject": "Nonaktifkan Proyek",
+    "DescSetProjectAdmin": "Memberikan izin Admin Proyek akan secara otomatis menambahkan proyek tersebut ke daftar Proyek yang Diizinkan milik pengguna, sehingga pengguna tersebut kemudian dapat mengakses proyek tersebut.",
     "Domain": "Domain",
     "EditProject": "Edit",
     "FailedToActivateProject": "Gagal mengaktifkan proyek.",
@@ -2089,13 +2090,16 @@
     "Name": "Nama",
     "Project": "Proyek",
     "ProjectActivated": "Proyek telah diaktifkan.",
+    "ProjectAdminRoleNotFound": "Tidak dapat menemukan peran Admin Proyek untuk proyek '{{project}}'.",
     "ProjectDeactivated": "Proyek telah dinonaktifkan.",
     "ProjectID": "ID Proyek",
     "ProjectIDFilterRuleMessage": "UUID tidak valid.",
     "ProjectPurged": "Proyek telah dihapus secara permanen.",
     "Purge": "Bersihkan",
     "PurgeProject": "Hapus Proyek Secara Permanen",
-    "ResourcePolicy": "Kebijakan Sumber Daya"
+    "ResourcePolicy": "Kebijakan Sumber Daya",
+    "RevokeProjectAdmin": "Cabut Izin Admin",
+    "SetProjectAdmin": "Atur Admin Proyek"
   },
   "projectMembers": {
     "Email": "Email",

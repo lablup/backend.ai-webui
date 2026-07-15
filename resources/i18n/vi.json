@@ -2080,6 +2080,7 @@
     "CreateProject": "Tạo dự án",
     "Deactivate": "Vô hiệu hóa",
     "DeactivateProject": "Vô hiệu hóa dự án",
+    "DescSetProjectAdmin": "Việc cấp quyền quản trị dự án sẽ tự động thêm dự án vào danh sách dự án được phép của người dùng, và người dùng đó sau đó sẽ có thể truy cập vào dự án đó.",
     "Domain": "Miền",
     "EditProject": "Chỉnh sửa",
     "FailedToActivateProject": "Không thể kích hoạt dự án.",
@@ -2088,13 +2089,16 @@
     "Name": "Tên",
     "Project": "Dự án",
     "ProjectActivated": "Dự án đã được kích hoạt.",
+    "ProjectAdminRoleNotFound": "Không thể tìm thấy vai trò quản trị dự án cho dự án '{{project}}'.",
     "ProjectDeactivated": "Dự án đã bị vô hiệu hóa.",
     "ProjectID": "ID dự án",
     "ProjectIDFilterRuleMessage": "UUID không hợp lệ.",
     "ProjectPurged": "Dự án đã bị xóa vĩnh viễn",
     "Purge": "Xóa sạch",
     "PurgeProject": "Xóa vĩnh viễn dự án",
-    "ResourcePolicy": "Chính sách tài nguyên"
+    "ResourcePolicy": "Chính sách tài nguyên",
+    "RevokeProjectAdmin": "Thu hồi quyền quản trị viên",
+    "SetProjectAdmin": "Đặt quản trị dự án"
   },
   "projectMembers": {
     "Email": "Email",

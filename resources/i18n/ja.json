@@ -2080,6 +2080,7 @@
     "CreateProject": "プロジェクトを作成",
     "Deactivate": "無効化",
     "DeactivateProject": "プロジェクトを無効化",
+    "DescSetProjectAdmin": "プロジェクト管理者権限を付与すると、そのプロジェクトがユーザーの許可されたプロジェクトリストに自動的に追加され、以降そのユーザーはそのプロジェクトにアクセスできるようになります。",
     "Domain": "ドメイン",
     "EditProject": "編集",
     "FailedToActivateProject": "プロジェクトの有効化に失敗しました。",
@@ -2088,13 +2089,16 @@
     "Name": "名前",
     "Project": "プロジェクト",
     "ProjectActivated": "プロジェクトは有効化されました。",
+    "ProjectAdminRoleNotFound": "プロジェクト '{{project}}' のプロジェクト管理者ロールが見つかりませんでした。",
     "ProjectDeactivated": "プロジェクトは無効化されました。",
     "ProjectID": "プロジェクトID",
     "ProjectIDFilterRuleMessage": "無効なUUIDです。",
     "ProjectPurged": "プロジェクトは完全に削除されました",
     "Purge": "パージ",
     "PurgeProject": "プロジェクトを完全に削除",
-    "ResourcePolicy": "リソースポリシー"
+    "ResourcePolicy": "リソースポリシー",
+    "RevokeProjectAdmin": "管理者権限を無効化",
+    "SetProjectAdmin": "プロジェクト管理者を設定"
   },
   "projectMembers": {
     "Email": "メール",

@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { ProjectAdminSettingModalQuery } from '../__generated__/ProjectAdminSettingModalQuery.graphql';
 import { ProjectPageDeactivateMutation } from '../__generated__/ProjectPageDeactivateMutation.graphql';
 import { ProjectPageModifyMutation } from '../__generated__/ProjectPageModifyMutation.graphql';
 import { ProjectPagePurgeMutation } from '../__generated__/ProjectPagePurgeMutation.graphql';
@@ -11,6 +12,10 @@ import {
   ProjectPageQuery$variables,
 } from '../__generated__/ProjectPageQuery.graphql';
 import BAIRadioGroup from '../components/BAIRadioGroup';
+import ProjectAdminSettingModal, {
+  ProjectAdminSettingQuery,
+} from '../components/ProjectAdminSettingModal';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCSVExport } from '../hooks/useCSVExport';
 import { DeleteFilled, SettingOutlined } from '@ant-design/icons';
@@ -29,6 +34,7 @@ import {
   BAIProjectTable,
   BAIPropertyFilter,
   BAISelectionLabel,
+  BAIUnmountAfterClose,
   filterOutEmpty,
   INITIAL_FETCH_KEY,
   isValidUUID,
@@ -39,11 +45,18 @@ import {
   useUpdatableState,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
+import { BanIcon, PlusIcon, ShieldUserIcon, UndoIcon } from 'lucide-react';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
+import {
+  fetchQuery,
+  graphql,
+  useLazyLoadQuery,
+  useMutation,
+  useQueryLoader,
+  useRelayEnvironment,
+} from 'react-relay';
 
 type ProjectNode = NonNullable<
   NonNullable<
@@ -59,6 +72,13 @@ const ProjectPage = () => {
   const { message } = App.useApp();
   const { token } = theme.useToken();
   const { getErrorMessage } = useErrorMessageResolver();
+  const relayEnvironment = useRelayEnvironment();
+  const baiClient = useSuspendedBackendaiClient();
+  // RoleFilter.mappedScope (the role lookup this action relies on) exists
+  // from manager 26.8.0; hide the action on older managers.
+  const supportsProjectAdminSetting = baiClient.supports(
+    'role-mapped-scope-filter',
+  );
   const [openSettingModal, { toggle: toggleSettingModal }] = useToggle(false);
   const [openBulkEditModal, { toggle: toggleBulkEditModal }] = useToggle(false);
   const [selectedProjectList, setSelectedProjectList] = useState<ProjectNode[]>(
@@ -70,6 +90,11 @@ const ProjectPage = () => {
   const [purgingProject, setPurgingProject] = useState<ProjectInList | null>(
     null,
   );
+  const [projectAdminModalProjectId, setProjectAdminModalProjectId] = useState<
+    string | null
+  >(null);
+  const [projectAdminQueryRef, loadProjectAdminQuery] =
+    useQueryLoader<ProjectAdminSettingModalQuery>(ProjectAdminSettingQuery);
   const {
     baiPaginationOption,
     tablePaginationOption,
@@ -179,6 +204,59 @@ const ProjectPage = () => {
       }
     }
   `);
+
+  // Open the project admin setting modal with a preloaded query so the row
+  // action button (not the modal) carries the initial loading state: the
+  // click event awaits `fetchQuery` to warm the store, then `loadQuery`
+  // resolves from it instantly.
+  const openProjectAdminSettingModal = async (project: ProjectInList) => {
+    if (!project.row_id) {
+      return;
+    }
+    const variables: ProjectAdminSettingModalQuery['variables'] = {
+      filter: {
+        source: { equals: 'SYSTEM' },
+        status: { equals: 'ACTIVE' },
+        mappedScope: {
+          scopeType: { equals: 'PROJECT' },
+          scopeId: { equals: project.row_id },
+        },
+      },
+      limit: 100,
+      offset: 0,
+    };
+    let roleData: ProjectAdminSettingModalQuery['response'] | undefined;
+    try {
+      roleData = await fetchQuery<ProjectAdminSettingModalQuery>(
+        relayEnvironment,
+        ProjectAdminSettingQuery,
+        variables,
+      ).toPromise();
+    } catch (error) {
+      logger.error(error);
+      message.error(
+        error instanceof Error ? error.message : t('general.ErrorOccurred'),
+      );
+      return;
+    }
+    // The project admin role is resolved here, before the modal opens; a
+    // project without one only gets an error message. The project scope
+    // carries a member/admin SYSTEM role pair — the admin one is identified
+    // by its name suffix.
+    const hasProjectAdminRole = _.some(roleData?.adminRoles?.edges, (edge) =>
+      _.endsWith(edge?.node?.name, 'admin'),
+    );
+    if (!hasProjectAdminRole) {
+      message.error(
+        t('project.ProjectAdminRoleNotFound', {
+          project: project.name ?? project.row_id,
+        }),
+      );
+      return;
+    }
+    loadProjectAdminQuery(variables, { fetchPolicy: 'store-or-network' });
+    setProjectAdminModalProjectId(project.row_id);
+  };
 
   const removeFromSelection = (projectId: string) => {
     setSelectedProjectList((prev) =>
@@ -432,6 +510,18 @@ const ProjectPage = () => {
                           title={record.name}
                           showActions="always"
                           actions={[
+                            ...(supportsProjectAdminSetting
+                              ? [
+                                  {
+                                    key: 'set-project-admin',
+                                    title: t('project.SetProjectAdmin'),
+                                    icon: <ShieldUserIcon />,
+                                    disabled: isModelStore,
+                                    action: () =>
+                                      openProjectAdminSettingModal(record),
+                                  },
+                                ]
+                              : []),
                             {
                               key: 'edit',
                               title: t('project.EditProject'),
@@ -555,6 +645,17 @@ const ProjectPage = () => {
             toggleBulkEditModal();
           }}
         />
+        {projectAdminQueryRef != null && (
+          <BAIUnmountAfterClose>
+            <ProjectAdminSettingModal
+              open={!!projectAdminModalProjectId}
+              queryRef={projectAdminQueryRef}
+              projectId={projectAdminModalProjectId ?? ''}
+              onReload={loadProjectAdminQuery}
+              onCancel={() => setProjectAdminModalProjectId(null)}
+            />
+          </BAIUnmountAfterClose>
+        )}
         <BAIDeleteConfirmModal
           open={!!purgingProject}
           title={t('project.PurgeProject')}

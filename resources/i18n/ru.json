@@ -2078,6 +2078,7 @@
     "CreateProject": "Создать проект",
     "Deactivate": "Деактивировать",
     "DeactivateProject": "Деактивировать проект",
+    "DescSetProjectAdmin": "Предоставление разрешения администратора проекта автоматически добавляет проект в список разрешённых проектов пользователя, после чего пользователь сможет получить доступ к этому проекту.",
     "Domain": "Домен",
     "EditProject": "Изменить",
     "FailedToActivateProject": "Не удалось активировать проект.",
@@ -2086,13 +2087,16 @@
     "Name": "Имя",
     "Project": "Проект",
     "ProjectActivated": "Проект активирован.",
+    "ProjectAdminRoleNotFound": "Не удалось найти роль администратора проекта для проекта '{{project}}'.",
     "ProjectDeactivated": "Проект деактивирован.",
     "ProjectID": "ID проекта",
     "ProjectIDFilterRuleMessage": "Неверный UUID.",
     "ProjectPurged": "Проект был окончательно удалён.",
     "Purge": "Очистить",
     "PurgeProject": "Полностью удалить проект",
-    "ResourcePolicy": "Политика ресурсов"
+    "ResourcePolicy": "Политика ресурсов",
+    "RevokeProjectAdmin": "Отозвать разрешение администратора",
+    "SetProjectAdmin": "Установить администратора проекта"
   },
   "projectMembers": {
     "Email": "Электронная почта",

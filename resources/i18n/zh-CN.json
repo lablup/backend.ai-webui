@@ -2080,6 +2080,7 @@
     "CreateProject": "创建项目",
     "Deactivate": "停用",
     "DeactivateProject": "停用项目",
+    "DescSetProjectAdmin": "授予项目管理员权限后，系统会自动将该项目添加到用户的允许项目列表中，此后该用户即可访问该项目。",
     "Domain": "域",
     "EditProject": "编辑",
     "FailedToActivateProject": "无法激活该项目。",
@@ -2088,13 +2089,16 @@
     "Name": "名称",
     "Project": "项目",
     "ProjectActivated": "该项目已激活。",
+    "ProjectAdminRoleNotFound": "未能找到项目 '{{project}}' 的项目管理员角色。",
     "ProjectDeactivated": "该项目已被停用。",
     "ProjectID": "项目 ID",
     "ProjectIDFilterRuleMessage": "无效的 UUID。",
     "ProjectPurged": "项目 \"projecth\" 已被清除",
     "Purge": "清除",
     "PurgeProject": "永久删除项目",
-    "ResourcePolicy": "资源策略"
+    "ResourcePolicy": "资源策略",
+    "RevokeProjectAdmin": "撤销管理员权限",
+    "SetProjectAdmin": "设置项目管理员"
   },
   "projectMembers": {
     "Email": "邮箱",
