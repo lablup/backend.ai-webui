@@ -57,9 +57,11 @@ export const useModelDefinitionPlaceholders = (
       }
     },
     enabled: enabled && !!vfolderId,
-    // Cache per vfolder for the modal's lifetime so re-renders and mode
-    // toggles don't re-download the same definition file.
-    staleTime: Infinity,
+    // Revalidate once per modal open so an edited definition file is picked
+    // up on reopen. `staleTime: 0` only refetches on mount / vfolder change —
+    // re-renders and mode toggles reuse the cached parse, so this stays a
+    // single lightweight read per open, not a per-render download.
+    staleTime: 0,
   });
 
   return { defaults: data ?? null, isLoading: isFetching };
