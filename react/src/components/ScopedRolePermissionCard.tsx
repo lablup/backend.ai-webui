@@ -8,11 +8,15 @@ import {
   RBACElementType,
   ScopedRolePermissionCardQuery,
 } from '../__generated__/ScopedRolePermissionCardQuery.graphql';
+import { ScopedRolePermissionCard_rbacPermissionMatrixFragment$key } from '../__generated__/ScopedRolePermissionCard_rbacPermissionMatrixFragment.graphql';
 import {
   computeRBACGrantState,
   type RBACGrantState,
 } from '../helper/rbacGrantState';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
+import RoleScopePermissionEditModal, {
+  type RoleScopePermissionEditModalScope,
+} from './RoleScopePermissionEditModal';
 import { Tag, Tooltip } from 'antd';
 import {
   BAICard,
@@ -23,37 +27,30 @@ import {
   BAIId,
   BAINameActionCell,
   BAITable,
+  BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
   toLocalId,
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { EditIcon } from 'lucide-react';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
 /**
- * Upper bound of permission rows fetched per card for tag computation. The tag
- * state of every visible scope row is computed from this set (filtered by
- * roleId + scopeType), so it must cover the role's grants for the scope type.
- * A role realistically holds far fewer than this; if a role ever exceeds it,
- * tag colors for the overflow could be understated (never overstated). Exact
- * paging is possible on 26.8.0 via `PermissionFilter.scopeId: { in: [...] }`
- * against the visible rows' scope ids, but needs a second data-dependent
- * fetch after the scopes resolve — deferred as a follow-up.
+ * Upper bound of permission rows fetched per card. The tag state of every
+ * visible scope row AND the edit modal's pre-checked grid (via
+ * `RoleScopePermissionEditModal_permissionsFragment`) are computed from this
+ * set (filtered by roleId + scopeType), so it must cover the role's grants for
+ * the scope type. A role realistically holds far fewer than this; if a role
+ * ever exceeds it, tag colors and the modal's initial checks for the overflow
+ * could be understated (never overstated). Exact paging is possible on 26.8.0
+ * via `PermissionFilter.scopeId: { in: [...] }` against the visible rows'
+ * scope ids, but needs a second data-dependent fetch after the scopes
+ * resolve — deferred as a follow-up.
  */
 const PERMISSION_FETCH_LIMIT = 100;
-
-/**
- * A scope type's selectable entity types and, for each, the full set of
- * operations the permission matrix defines. Derived from `rbacPermissionMatrix`
- * by the parent tab and handed to each card.
- */
-export interface ScopeEntityMatrixEntry {
-  entityType: string;
-  /** All operations (`requiredPermission`) the matrix lists for this entity. */
-  operations: string[];
-}
 
 interface ScopeNameRecord {
   scopeType: string;
@@ -111,14 +108,14 @@ const GRANT_STATE_TAG_COLOR: Record<RBACGrantState, string | undefined> = {
 
 export interface ScopedRolePermissionCardProps {
   roleNodeFrgmt: ScopedRolePermissionCardFragment$key;
+  rbacPermissionMatrixFrgmt: ScopedRolePermissionCard_rbacPermissionMatrixFragment$key;
   scopeType: RBACElementType;
-  entityMatrix: ScopeEntityMatrixEntry[];
 }
 
 const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
   roleNodeFrgmt,
+  rbacPermissionMatrixFrgmt,
   scopeType,
-  entityMatrix,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -127,10 +124,43 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
     graphql`
       fragment ScopedRolePermissionCardFragment on Role {
         id
+        ...RoleScopePermissionEditModalFragment
       }
     `,
     roleNodeFrgmt,
   );
+
+  const rbacPermissionMatrix = useFragment(
+    graphql`
+      fragment ScopedRolePermissionCard_rbacPermissionMatrixFragment on ScopeEntityOperationCombination
+      @relay(plural: true) {
+        scopeType
+        entities {
+          entityType
+          actions {
+            requiredPermission
+          }
+        }
+        ...RoleScopePermissionEditModal_rbacPermissionMatrixFragment
+      }
+    `,
+    rbacPermissionMatrixFrgmt,
+  );
+
+  // This card's configurable entity × operation set — the tag columns and the
+  // full-grant baseline the grant-state colors compare against.
+  const entityMatrix = (
+    rbacPermissionMatrix.find(
+      (combination) => combination.scopeType === scopeType,
+    )?.entities ?? []
+  )
+    .filter((entity) => entity.actions.length > 0)
+    .map((entity) => ({
+      entityType: entity.entityType,
+      operations: _.uniq(
+        entity.actions.map((action) => action.requiredPermission),
+      ),
+    }));
 
   const {
     baiPaginationOption,
@@ -147,6 +177,11 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
     EntityFilter | undefined
   >();
   const [fetchKey, updateFetchKey] = useFetchKey();
+  // The scope row currently being edited (drives the FR-6 permission edit
+  // modal); `null` while the modal is closed. On save, `updateFetchKey`
+  // recomputes the tag colors from the true post-save permission state.
+  const [editingScope, setEditingScope] =
+    useState<RoleScopePermissionEditModalScope | null>(null);
 
   const queryVariables: ScopedRolePermissionCardQuery['variables'] = {
     roleId: toLocalId(role.id),
@@ -236,6 +271,7 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
                 scopeId
                 entityType
                 operation
+                ...RoleScopePermissionEditModal_permissionsFragment
               }
             }
           }
@@ -258,12 +294,17 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
     (data.adminRole?.scopes?.edges ?? []).map((edge) => edge?.node),
   );
 
+  // The role's permission rows for this scope type — tag state is computed
+  // from them here, and the edit modal reads them via its fragment to pre-check
+  // its grid, so both views always agree.
+  const permissionNodes = _.compact(
+    (data.adminRole?.permissions?.edges ?? []).map((edge) => edge?.node),
+  );
+
   // Granted operations indexed by `${scopeId}|${entityType}` for O(1) lookup
   // per row × entity when computing tag state.
   const grantedByScopeEntity = new Map<string, Set<string>>();
-  data.adminRole?.permissions?.edges?.forEach((edge) => {
-    const node = edge?.node;
-    if (!node) return;
+  permissionNodes.forEach((node) => {
     const key = `${node.scopeId}|${node.entityType}`;
     let operations = grantedByScopeEntity.get(key);
     if (!operations) {
@@ -283,17 +324,43 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
     {
       key: 'name',
       title: t('rbac.Name'),
+      width: 150,
       render: (_value, record) => {
-        const displayName = resolveScopeName(record) || record.scopeId || '-';
-        // Name column is rendered via BAINameActionCell so the FR-6 edit
-        // action (PR 2) can attach here without a structural change.
-        return <BAINameActionCell title={displayName} />;
+        const scopeName = resolveScopeName(record);
+        const displayName = scopeName || record.scopeId || '-';
+        // The edit action opens the scope-level permission edit modal (FR-6)
+        // for this single scope row.
+        return (
+          <BAINameActionCell
+            title={displayName}
+            // Edit is the row's only action, so keep it visible (not
+            // hover-only) for discoverability — parity with the removed
+            // RolePermissionTab.
+            showActions="always"
+            actions={[
+              {
+                key: 'edit',
+                title: t('button.Edit'),
+                icon: <EditIcon />,
+                onClick: () =>
+                  setEditingScope({
+                    scopeId: record.scopeId,
+                    scopeName,
+                  }),
+              },
+            ]}
+            style={{ maxWidth: 150 }}
+          />
+        );
       },
     },
     {
       key: 'scopeId',
       title: t('general.ID'),
-      render: (_value, record) => <BAIId uuid={record.scopeId} />,
+      width: 100,
+      render: (_value, record) => (
+        <BAIId uuid={record.scopeId} style={{ maxWidth: 100 }} />
+      ),
     },
     {
       key: 'permissions',
@@ -386,6 +453,25 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
           }}
         />
       </BAIFlex>
+      {/* Unmount per close so the modal's checked-state re-initializes from
+          the currently-granted permissions on every open. */}
+      <BAIUnmountAfterClose>
+        <RoleScopePermissionEditModal
+          open={!!editingScope}
+          roleNodeFrgmt={role}
+          rbacPermissionMatrixFrgmt={rbacPermissionMatrix}
+          permissionsFrgmt={permissionNodes}
+          scopeType={scopeType}
+          editingScope={editingScope}
+          onRequestClose={(success) => {
+            setEditingScope(null);
+            if (success) {
+              // Recompute tag colors from the true post-save permission state.
+              updateFetchKey();
+            }
+          }}
+        />
+      </BAIUnmountAfterClose>
     </BAICard>
   );
 };

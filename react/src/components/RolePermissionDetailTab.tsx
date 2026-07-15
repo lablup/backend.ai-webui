@@ -4,9 +4,7 @@
  */
 import { RolePermissionDetailTabMatrixQuery } from '../__generated__/RolePermissionDetailTabMatrixQuery.graphql';
 import { RolePermissionDetailTab_roleScopeFragment$key } from '../__generated__/RolePermissionDetailTab_roleScopeFragment.graphql';
-import ScopedRolePermissionCard, {
-  type ScopeEntityMatrixEntry,
-} from './ScopedRolePermissionCard';
+import ScopedRolePermissionCard from './ScopedRolePermissionCard';
 import { Empty, Skeleton } from 'antd';
 import { BAICard, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -51,14 +49,7 @@ const RolePermissionDetailTab: React.FC<RolePermissionDetailTabProps> = ({
         query RolePermissionDetailTabMatrixQuery {
           rbacPermissionMatrix {
             scopeType
-            entities {
-              entityType
-              actions {
-                operation
-                description
-                requiredPermission
-              }
-            }
+            ...ScopedRolePermissionCard_rbacPermissionMatrixFragment
           }
         }
       `,
@@ -66,25 +57,12 @@ const RolePermissionDetailTab: React.FC<RolePermissionDetailTabProps> = ({
       { fetchPolicy: 'store-and-network' },
     );
 
-  // One card candidate per matrix scope type, carrying its configurable
-  // entity × operation set. The scope types come from the server as-is —
-  // nothing is hardcoded client-side.
-  const formattedPermissionMartixs = _.uniqBy(
-    rbacPermissionMatrix ?? [],
-    (combination) => combination.scopeType,
-  ).map((combination) => ({
-    scopeType: combination.scopeType,
-    entityMatrix: combination.entities
-      .filter((entity) => entity.actions.length > 0)
-      .map(
-        (entity): ScopeEntityMatrixEntry => ({
-          entityType: entity.entityType,
-          operations: _.uniq(
-            entity.actions.map((action) => action.requiredPermission),
-          ),
-        }),
-      ),
-  }));
+  // One card candidate per matrix scope type. The scope types come from the
+  // server as-is — nothing is hardcoded client-side. Each card derives its own
+  // entity × operation set from the matrix fragment.
+  const scopeTypes = _.uniq(
+    (rbacPermissionMatrix ?? []).map((combination) => combination.scopeType),
+  );
 
   if (role.totalScopes?.count === 0) {
     return (
@@ -100,12 +78,12 @@ const RolePermissionDetailTab: React.FC<RolePermissionDetailTabProps> = ({
   return (
     <BAIFlex direction="column" align="stretch" gap="md">
       <Suspense fallback={<Skeleton active />}>
-        {_.map(formattedPermissionMartixs, ({ scopeType, entityMatrix }) => (
+        {_.map(scopeTypes, (scopeType) => (
           <ScopedRolePermissionCard
             key={scopeType}
             roleNodeFrgmt={role}
+            rbacPermissionMatrixFrgmt={rbacPermissionMatrix ?? []}
             scopeType={scopeType}
-            entityMatrix={entityMatrix}
           />
         ))}
       </Suspense>

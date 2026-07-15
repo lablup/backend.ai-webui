@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d48d8864638a4fe0880c9cf09337fdc2>>
+ * @generated SignedSource<<1871a4118915a5c74ceef13377973743>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,6 +12,7 @@ import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type ScopedRolePermissionCardFragment$data = {
   readonly id: string;
+  readonly " $fragmentSpreads": FragmentRefs<"RoleScopePermissionEditModalFragment">;
   readonly " $fragmentType": "ScopedRolePermissionCardFragment";
 };
 export type ScopedRolePermissionCardFragment$key = {
@@ -31,12 +32,17 @@ const node: ReaderFragment = {
       "kind": "ScalarField",
       "name": "id",
       "storageKey": null
+    },
+    {
+      "args": null,
+      "kind": "FragmentSpread",
+      "name": "RoleScopePermissionEditModalFragment"
     }
   ],
   "type": "Role",
   "abstractKey": null
 };
 
-(node as any).hash = "06e3de04e26adf1318279e300ad69f66";
+(node as any).hash = "5d16c315cce80be8e7b6b09902e244a5";
 
 export default node;
