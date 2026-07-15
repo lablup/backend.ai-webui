@@ -433,6 +433,7 @@
     "PushToImage": "Enviar sessão para imagem personalizada",
     "Refresh": "Atualizar",
     "RefreshModelInformation": "Atualizar informações sobre o modelo",
+    "Remove": "Remover",
     "Reset": "Reiniciar",
     "Retry": "Tentar novamente",
     "Revoke": "Revogar",
@@ -2404,7 +2405,8 @@
     "SelectDomain": "Selecione o domínio",
     "SelectScheduler": "Selecione o Agendador",
     "TimeoutSeconds": "Segundos",
-    "TypeResourceGroupNameToDelete": "Digite o nome do grupo de recursos para excluir"
+    "TypeResourceGroupNameToDelete": "Digite o nome do grupo de recursos para excluir",
+    "UpdateResourceGroups": "Atualizar Grupos de Recursos"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Você está prestes a excluir esta política de recursos:",
@@ -3213,6 +3215,15 @@
       "ProjectFolderPermissions": "Permissões de pasta de projeto",
       "UserFolderPermissions": "Permissões de pasta de usuário"
     }
+  },
+  "storageProxy": {
+    "ConfirmRemoveSFTPProxiesContent": "Os grupos de recursos selecionados deixarão de usar esses proxies de armazenamento para SFTP: <code>{{proxies}}</code>. Continuar?",
+    "ConfirmRemoveSFTPProxiesTitle": "Remover a configuração de proxy de armazenamento SFTP?",
+    "FailedToUpdateSFTPResourceGroups": "Falha ao atualizar os grupos de recursos SFTP.",
+    "FollowingResourceGroupsWillBeConfigured": "Os seguintes grupos de recursos serão atualizados:",
+    "SFTPResourceGroupsUpdated": "Grupos de recursos SFTP atualizados.",
+    "SFTPStorageProxies": "Proxies de armazenamento SFTP",
+    "SFTPStorageProxiesDescription": "Proxies de armazenamento usados quando os usuários deste grupo de recursos transferem arquivos para suas pastas via SFTP."
   },
   "summary": {
     "ATOMEnabled": "ATOM NPU Ativado",

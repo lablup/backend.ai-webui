@@ -433,6 +433,7 @@
     "PushToImage": "Prześlij sesję do spersonalizowanego obrazu",
     "Refresh": "Odświeżać",
     "RefreshModelInformation": "Odświeżanie informacji o modelu",
+    "Remove": "Usuń",
     "Reset": "Reset",
     "Retry": "Ponów",
     "Revoke": "Odwołaj",
@@ -2406,7 +2407,8 @@
     "SelectDomain": "Wybierz domenę",
     "SelectScheduler": "Wybierz harmonogram",
     "TimeoutSeconds": "sekundy",
-    "TypeResourceGroupNameToDelete": "Wpisz nazwę grupy zasobów do usunięcia"
+    "TypeResourceGroupNameToDelete": "Wpisz nazwę grupy zasobów do usunięcia",
+    "UpdateResourceGroups": "Aktualizuj grupy zasobów"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Zamierzasz usunąć tę zasadę dotyczącą zasobów:",
@@ -3216,6 +3218,15 @@
       "ProjectFolderPermissions": "Uprawnienia folderu projektu",
       "UserFolderPermissions": "Uprawnienia folderu użytkownika"
     }
+  },
+  "storageProxy": {
+    "ConfirmRemoveSFTPProxiesContent": "Wybrane grupy zasobów przestaną używać tych serwerów proxy pamięci masowej do SFTP: <code>{{proxies}}</code>. Kontynuować?",
+    "ConfirmRemoveSFTPProxiesTitle": "Usunąć ustawienie serwera proxy pamięci masowej SFTP?",
+    "FailedToUpdateSFTPResourceGroups": "Nie udało się zaktualizować grup zasobów SFTP.",
+    "FollowingResourceGroupsWillBeConfigured": "Następujące grupy zasobów zostaną zaktualizowane:",
+    "SFTPResourceGroupsUpdated": "Grupy zasobów SFTP zostały zaktualizowane.",
+    "SFTPStorageProxies": "Serwery proxy pamięci masowej SFTP",
+    "SFTPStorageProxiesDescription": "Serwery proxy pamięci masowej używane, gdy użytkownicy tej grupy zasobów przesyłają pliki do swoich folderów przez SFTP."
   },
   "summary": {
     "ATOMEnabled": "ATOM NPU Enabled",

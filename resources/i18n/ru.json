@@ -433,6 +433,7 @@
     "PushToImage": "Отправить сеанс на настроенное изображение",
     "Refresh": "Обновить",
     "RefreshModelInformation": "Обновить информацию о модели",
+    "Remove": "Удалить",
     "Reset": "Перезагрузить",
     "Retry": "Повторить",
     "Revoke": "Отозвать",
@@ -2404,7 +2405,8 @@
     "SelectDomain": "Выбрать домен",
     "SelectScheduler": "Выберите планировщик",
     "TimeoutSeconds": "Секунды",
-    "TypeResourceGroupNameToDelete": "Введите имя группы ресурсов для удаления"
+    "TypeResourceGroupNameToDelete": "Введите имя группы ресурсов для удаления",
+    "UpdateResourceGroups": "Обновить группы ресурсов"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Вы собираетесь удалить эту политику ресурсов:",
@@ -3213,6 +3215,15 @@
       "ProjectFolderPermissions": "Права доступа к папкам проекта",
       "UserFolderPermissions": "Права доступа к папкам пользователя"
     }
+  },
+  "storageProxy": {
+    "ConfirmRemoveSFTPProxiesContent": "Выбранные группы ресурсов больше не будут использовать эти прокси хранилища для SFTP: <code>{{proxies}}</code>. Продолжить?",
+    "ConfirmRemoveSFTPProxiesTitle": "Удалить настройку прокси хранилища SFTP?",
+    "FailedToUpdateSFTPResourceGroups": "Не удалось обновить группы ресурсов SFTP.",
+    "FollowingResourceGroupsWillBeConfigured": "Следующие группы ресурсов будут обновлены:",
+    "SFTPResourceGroupsUpdated": "Группы ресурсов SFTP обновлены.",
+    "SFTPStorageProxies": "Прокси хранилища SFTP",
+    "SFTPStorageProxiesDescription": "Прокси хранилища, используемые, когда пользователи этой группы ресурсов передают файлы в свои папки по SFTP."
   },
   "summary": {
     "ATOMEnabled": "ATOM NPU Включено",

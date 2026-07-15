@@ -433,6 +433,7 @@
     "PushToImage": "将会话推送到自定义镜像",
     "Refresh": "刷新",
     "RefreshModelInformation": "刷新机型信息",
+    "Remove": "移除",
     "Reset": "重置",
     "Retry": "重试",
     "Revoke": "撤销",
@@ -2406,7 +2407,8 @@
     "SelectDomain": "选择域",
     "SelectScheduler": "选择调度程序",
     "TimeoutSeconds": "秒",
-    "TypeResourceGroupNameToDelete": "输入要删除的资源组名称"
+    "TypeResourceGroupNameToDelete": "输入要删除的资源组名称",
+    "UpdateResourceGroups": "更新资源组"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "您即将删除此资源策略：",
@@ -3215,6 +3217,15 @@
       "ProjectFolderPermissions": "项目文件夹权限",
       "UserFolderPermissions": "用户文件夹权限"
     }
+  },
+  "storageProxy": {
+    "ConfirmRemoveSFTPProxiesContent": "所选资源组将不再使用以下存储代理进行 SFTP: <code>{{proxies}}</code>。是否继续？",
+    "ConfirmRemoveSFTPProxiesTitle": "移除 SFTP 存储代理设置？",
+    "FailedToUpdateSFTPResourceGroups": "更新 SFTP 资源组失败。",
+    "FollowingResourceGroupsWillBeConfigured": "以下资源组将被更新:",
+    "SFTPResourceGroupsUpdated": "SFTP 资源组已更新。",
+    "SFTPStorageProxies": "SFTP 存储代理",
+    "SFTPStorageProxiesDescription": "此资源组中的用户通过 SFTP 将文件传输到其文件夹时使用的存储代理。"
   },
   "summary": {
     "ATOMEnabled": "已启用 ATOM NPU",

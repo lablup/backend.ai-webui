@@ -433,6 +433,7 @@
     "PushToImage": "ผลักดันเซสชันไปยังอิมเมจที่กำหนดเอง",
     "Refresh": "รีเฟรช",
     "RefreshModelInformation": "รีเฟรชข้อมูลโมเดล",
+    "Remove": "ลบ",
     "Reset": "รีเซ็ต",
     "Retry": "ลองใหม่",
     "Revoke": "เพิกถอน",
@@ -2406,7 +2407,8 @@
     "SelectDomain": "เลือกโดเมน",
     "SelectScheduler": "เลือกตัวจัดกำหนดการ",
     "TimeoutSeconds": "วินาที",
-    "TypeResourceGroupNameToDelete": "พิมพ์ชื่อกลุ่มทรัพยากรเพื่อลบ"
+    "TypeResourceGroupNameToDelete": "พิมพ์ชื่อกลุ่มทรัพยากรเพื่อลบ",
+    "UpdateResourceGroups": "อัปเดตกลุ่มทรัพยากร"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "คุณกำลังจะลบนโยบายทรัพยากรนี้: ",
@@ -3215,6 +3217,15 @@
       "ProjectFolderPermissions": "สิทธิ์โฟลเดอร์โครงการ",
       "UserFolderPermissions": "สิทธิ์โฟลเดอร์ผู้ใช้"
     }
+  },
+  "storageProxy": {
+    "ConfirmRemoveSFTPProxiesContent": "กลุ่มทรัพยากรที่เลือกจะไม่ใช้พร็อกซีที่เก็บข้อมูลเหล่านี้สำหรับ SFTP อีกต่อไป: <code>{{proxies}}</code> ดำเนินการต่อหรือไม่?",
+    "ConfirmRemoveSFTPProxiesTitle": "นำการตั้งค่าพร็อกซีที่เก็บข้อมูล SFTP ออกหรือไม่?",
+    "FailedToUpdateSFTPResourceGroups": "ไม่สามารถอัปเดตกลุ่มทรัพยากร SFTP ได้",
+    "FollowingResourceGroupsWillBeConfigured": "กลุ่มทรัพยากรต่อไปนี้จะได้รับการอัปเดต:",
+    "SFTPResourceGroupsUpdated": "อัปเดตกลุ่มทรัพยากร SFTP เรียบร้อยแล้ว",
+    "SFTPStorageProxies": "พร็อกซีที่เก็บข้อมูล SFTP",
+    "SFTPStorageProxiesDescription": "พร็อกซีที่เก็บข้อมูลที่ใช้เมื่อผู้ใช้ในกลุ่มทรัพยากรนี้ถ่ายโอนไฟล์ไปยังโฟลเดอร์ของตนผ่าน SFTP"
   },
   "summary": {
     "ATOMEnabled": "เปิดใช้งาน ATOM NPU",

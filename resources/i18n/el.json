@@ -433,6 +433,7 @@
     "PushToImage": "Σπρώξτε τη συνεδρία σε προσαρμοσμένη εικόνα",
     "Refresh": "Φρεσκάρω",
     "RefreshModelInformation": "Ανανέωση πληροφοριών μοντέλου",
+    "Remove": "Αφαίρεση",
     "Reset": "Επαναφορά",
     "Retry": "Επανάληψη",
     "Revoke": "Ανάκληση",
@@ -2404,7 +2405,8 @@
     "SelectDomain": "Επιλέξτε τομέα",
     "SelectScheduler": "Επιλέξτε Προγραμματιστής",
     "TimeoutSeconds": "δευτερόλεπτα",
-    "TypeResourceGroupNameToDelete": "Πληκτρολογήστε όνομα ομάδας πόρων για διαγραφή"
+    "TypeResourceGroupNameToDelete": "Πληκτρολογήστε όνομα ομάδας πόρων για διαγραφή",
+    "UpdateResourceGroups": "Ενημέρωση ομάδων πόρων"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Πρόκειται να διαγράψετε αυτήν την πολιτική πόρων:",
@@ -3213,6 +3215,15 @@
       "ProjectFolderPermissions": "Άδειες φακέλου έργου",
       "UserFolderPermissions": "Άδειες φακέλου χρήστη"
     }
+  },
+  "storageProxy": {
+    "ConfirmRemoveSFTPProxiesContent": "Οι επιλεγμένες ομάδες πόρων δεν θα χρησιμοποιούν πλέον αυτούς τους διακομιστές μεσολάβησης αποθήκευσης για SFTP: <code>{{proxies}}</code>. Συνέχεια;",
+    "ConfirmRemoveSFTPProxiesTitle": "Αφαίρεση ρύθμισης Proxy αποθήκευσης SFTP;",
+    "FailedToUpdateSFTPResourceGroups": "Αποτυχία ενημέρωσης ομάδων πόρων SFTP.",
+    "FollowingResourceGroupsWillBeConfigured": "Οι ακόλουθες ομάδες πόρων θα ενημερωθούν:",
+    "SFTPResourceGroupsUpdated": "Οι ομάδες πόρων SFTP ενημερώθηκαν.",
+    "SFTPStorageProxies": "Proxy αποθήκευσης SFTP",
+    "SFTPStorageProxiesDescription": "Διακομιστές μεσολάβησης αποθήκευσης που χρησιμοποιούνται όταν οι χρήστες αυτής της ομάδας πόρων μεταφέρουν αρχεία στους φακέλους τους μέσω SFTP."
   },
   "summary": {
     "ATOMEnabled": "ATOM NPU Ενεργοποιημένη",

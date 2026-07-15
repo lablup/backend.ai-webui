@@ -367,6 +367,9 @@
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Хадгалах хост сонгох"
   },
+  "comp:BAIStorageProxySelect": {
+    "SelectStorageProxy": "Хадгалалтын прокси сонгох"
+  },
   "comp:BAISubStepNodes": {
     "EndedAt": "Дууссан цаг",
     "ErrorCode": "Алдааны код",

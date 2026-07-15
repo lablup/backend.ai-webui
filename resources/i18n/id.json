@@ -433,6 +433,7 @@
     "PushToImage": "Sesi dorong ke gambar yang disesuaikan",
     "Refresh": "Segarkan",
     "RefreshModelInformation": "Menyegarkan Informasi Model",
+    "Remove": "Hapus",
     "Reset": "Atur Ulang",
     "Retry": "Coba lagi",
     "Revoke": "Cabut",
@@ -2407,7 +2408,8 @@
     "SelectDomain": "Pilih Domain",
     "SelectScheduler": "Pilih Penjadwal",
     "TimeoutSeconds": "Detik",
-    "TypeResourceGroupNameToDelete": "Ketik nama grup sumber daya yang akan dihapus"
+    "TypeResourceGroupNameToDelete": "Ketik nama grup sumber daya yang akan dihapus",
+    "UpdateResourceGroups": "Perbarui Grup Sumber Daya"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Anda akan menghapus kebijakan sumber daya ini:",
@@ -3217,6 +3219,15 @@
       "ProjectFolderPermissions": "Izin Folder Proyek",
       "UserFolderPermissions": "Izin Folder Pengguna"
     }
+  },
+  "storageProxy": {
+    "ConfirmRemoveSFTPProxiesContent": "Grup sumber daya yang dipilih tidak akan lagi menggunakan proksi penyimpanan ini untuk SFTP: <code>{{proxies}}</code>. Lanjutkan?",
+    "ConfirmRemoveSFTPProxiesTitle": "Hapus pengaturan Proksi Penyimpanan SFTP?",
+    "FailedToUpdateSFTPResourceGroups": "Gagal memperbarui grup sumber daya SFTP.",
+    "FollowingResourceGroupsWillBeConfigured": "Grup sumber daya berikut akan diperbarui:",
+    "SFTPResourceGroupsUpdated": "Grup sumber daya SFTP telah diperbarui.",
+    "SFTPStorageProxies": "Proksi Penyimpanan SFTP",
+    "SFTPStorageProxiesDescription": "Proksi penyimpanan yang digunakan saat pengguna dalam grup sumber daya ini mentransfer berkas ke folder mereka melalui SFTP."
   },
   "summary": {
     "ATOMEnabled": "ATOM NPU Diaktifkan",

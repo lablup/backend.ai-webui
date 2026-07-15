@@ -420,6 +420,7 @@
     "PushToImage": "Push session to customized image",
     "Refresh": "Refresh",
     "RefreshModelInformation": "Refresh Model Information",
+    "Remove": "Remove",
     "Reset": "Reset",
     "Retry": "Retry",
     "Revoke": "Revoke",
@@ -2391,7 +2392,8 @@
     "SelectDomain": "Select Domain",
     "SelectScheduler": "Select Scheduler",
     "TimeoutSeconds": "Seconds",
-    "TypeResourceGroupNameToDelete": "Type resource group name to delete"
+    "TypeResourceGroupNameToDelete": "Type resource group name to delete",
+    "UpdateResourceGroups": "Update Resource Groups"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "You are about to delete this resource policy: ",
@@ -3200,6 +3202,15 @@
       "ProjectFolderPermissions": "Project Folder Permissions",
       "UserFolderPermissions": "User Folder Permissions"
     }
+  },
+  "storageProxy": {
+    "ConfirmRemoveSFTPProxiesContent": "The selected resource groups will no longer use these storage proxies for SFTP: <code>{{proxies}}</code>. Continue?",
+    "ConfirmRemoveSFTPProxiesTitle": "Remove SFTP storage proxy setting?",
+    "FailedToUpdateSFTPResourceGroups": "Failed to update SFTP resource groups.",
+    "FollowingResourceGroupsWillBeConfigured": "The following resource groups will be updated:",
+    "SFTPResourceGroupsUpdated": "SFTP resource groups updated.",
+    "SFTPStorageProxies": "SFTP Storage Proxies",
+    "SFTPStorageProxiesDescription": "Storage proxies used when users in this resource group transfer files to their folders over SFTP."
   },
   "summary": {
     "ATOMEnabled": "ATOM NPU Enabled",

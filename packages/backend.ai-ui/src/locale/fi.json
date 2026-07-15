@@ -367,6 +367,9 @@
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Valitse tallennuspalvelin"
   },
+  "comp:BAIStorageProxySelect": {
+    "SelectStorageProxy": "Valitse tallennusvälityspalvelin"
+  },
   "comp:BAISubStepNodes": {
     "EndedAt": "Päättymisaika",
     "ErrorCode": "Virhekoodi",

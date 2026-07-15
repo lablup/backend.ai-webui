@@ -7,7 +7,13 @@ import { ResourceGroupSettingModalCreateMutation } from '../__generated__/Resour
 import { ResourceGroupSettingModalFragment$key } from '../__generated__/ResourceGroupSettingModalFragment.graphql';
 import { ResourceGroupSettingModalUpdateMutation } from '../__generated__/ResourceGroupSettingModalUpdateMutation.graphql';
 import { newLineToBrElement } from '../helper';
-import { useCurrentDomainValue } from '../hooks';
+import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
+import {
+  computeProxyDelta,
+  proxiesServingGroups,
+  useSFTPProxyResourceGroupsQuery,
+  useSFTPResourceGroups,
+} from '../hooks/useSFTPResourceGroups';
 import { ScalingGroupOpts } from './ResourceGroupList';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import {
@@ -31,9 +37,11 @@ import {
   BAICard,
   BAIFlex,
   BAIDomainSelect,
+  BAIStorageProxySelect,
+  useBAILogger,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { Suspense, useMemo, useRef } from 'react';
+import React, { Suspense, useDeferredValue, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
@@ -49,6 +57,7 @@ type FormInputType = {
   scheduler: string;
   pendingTimeout: number;
   retriesToSkip: number;
+  sftpProxies: string[];
 };
 
 interface ResourceGroupCreateModalProps extends ModalProps {
@@ -61,10 +70,14 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
   onRequestClose,
   ...modalProps
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message } = App.useApp();
+  const { logger } = useBAILogger();
+  const baiClient = useSuspendedBackendaiClient();
   const currentDomain = useCurrentDomainValue();
+  const { applyGroupProxyDelta } = useSFTPResourceGroups();
   const formRef = useRef<FormInstance>(null);
 
   const resourceGroup = useFragment(
@@ -82,6 +95,23 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
     `,
     resourceGroupFrgmt,
   );
+
+  // Superadmin-only SFTP proxy membership for this group, read from etcd without
+  // suspending: gate on a deferred `open` so enabling runs in a transition. The
+  // field below skeletons until the map resolves, then mounts with its prefill
+  // as the Form.Item `initialValue` — the rest of the form renders immediately.
+  const deferredOpen = useDeferredValue(modalProps.open);
+  const { data: proxyResourceGroups, isFetching: isSftpMapFetching } =
+    useSFTPProxyResourceGroupsQuery({
+      enabled: baiClient.is_superadmin && !!deferredOpen,
+    });
+  const currentSftpProxies = proxiesServingGroups(
+    proxyResourceGroups,
+    resourceGroup?.name ? [resourceGroup.name] : [],
+  );
+  const isSftpMapLoading =
+    proxyResourceGroups === undefined || isSftpMapFetching;
+
   const [commitUpdateResourceGroup, isInFlightCommitUpdateResourceGroup] =
     useMutation<ResourceGroupSettingModalUpdateMutation>(graphql`
       mutation ResourceGroupSettingModalUpdateMutation(
@@ -192,6 +222,40 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
               wsproxy_api_token: values.wsProxyAPIToken,
             };
 
+            // After the group is saved, sync its SFTP proxy membership to the
+            // selected proxies (add to newly-selected proxies, remove from
+            // deselected ones, preserving other groups on each proxy).
+            // Deselection here removes without a separate confirm — unlike the
+            // bulk modal — because Update is an explicit, per-group edit.
+            // Superadmin-only.
+            const applySftpProxies = (groupName: string): Promise<void> => {
+              if (!baiClient.is_superadmin) {
+                return Promise.resolve();
+              }
+              const { added, removed } = computeProxyDelta(
+                currentSftpProxies,
+                values.sftpProxies ?? [],
+              );
+              return applyGroupProxyDelta([groupName], added, removed).then(
+                (results) => {
+                  const failed = results.filter((r) => r.status === 'rejected');
+                  if (failed.length > 0) {
+                    failed.forEach((r) => {
+                      if (r.status === 'rejected') {
+                        logger.error(
+                          'Failed to update SFTP storage proxies:',
+                          r.reason,
+                        );
+                      }
+                    });
+                    message.error(
+                      t('storageProxy.FailedToUpdateSFTPResourceGroups'),
+                    );
+                  }
+                },
+              );
+            };
+
             if (resourceGroup) {
               commitUpdateResourceGroup({
                 variables: {
@@ -214,7 +278,9 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                     return;
                   }
                   message.success(t('resourceGroup.ResourceGroupModified'));
-                  onRequestClose?.(true);
+                  applySftpProxies(resourceGroup.name).finally(() =>
+                    onRequestClose?.(true),
+                  );
                 },
                 onError: (err) => {
                   message.error(err.message);
@@ -267,7 +333,9 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                     }
 
                     message.success(t('resourceGroup.ResourceGroupCreated'));
-                    onRequestClose?.(true);
+                    applySftpProxies(values.name).finally(() =>
+                      onRequestClose?.(true),
+                    );
                   },
                   onError: (err) => {
                     message.error(err.message);
@@ -357,6 +425,28 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
           >
             <Input.Password placeholder={t('resourceGroup.EnterAPIToken')} />
           </Form.Item>
+          {baiClient.is_superadmin ? (
+            isSftpMapLoading ? (
+              <Form.Item label={t('storageProxy.SFTPStorageProxies')}>
+                <Select loading />
+              </Form.Item>
+            ) : (
+              // Wrap the Form.Item (not the select — that would break Form's
+              // value/onChange binding) in Suspense: BAIStorageProxySelect's
+              // proxy-options query suspends. The prefill is registered as the
+              // Form.Item `initialValue`, computed from the now-resolved map.
+              <Suspense fallback={<Select loading />}>
+                <Form.Item
+                  label={t('storageProxy.SFTPStorageProxies')}
+                  name="sftpProxies"
+                  initialValue={currentSftpProxies}
+                  tooltip={t('storageProxy.SFTPStorageProxiesDescription')}
+                >
+                  <BAIStorageProxySelect mode="multiple" allowClear />
+                </Form.Item>
+              </Suspense>
+            )
+          ) : null}
           <Row>
             <Col span={12}>
               <Form.Item

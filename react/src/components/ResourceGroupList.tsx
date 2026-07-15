@@ -8,9 +8,13 @@ import {
   ResourceGroupListQuery$data,
 } from '../__generated__/ResourceGroupListQuery.graphql';
 import { ResourceGroupListUpdateMutation } from '../__generated__/ResourceGroupListUpdateMutation.graphql';
+import { useSuspendedBackendaiClient } from '../hooks';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { useSFTPProxyResourceGroupsQuery } from '../hooks/useSFTPResourceGroups';
 import BAIRadioGroup from './BAIRadioGroup';
 import ResourceGroupInfoModal from './ResourceGroupInfoModal';
 import ResourceGroupSettingModal from './ResourceGroupSettingModal';
+import UpdateResourceGroupsModal from './UpdateResourceGroupsModal';
 import {
   CheckOutlined,
   CloseOutlined,
@@ -19,7 +23,7 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { App, theme } from 'antd';
+import { App, Tag, Tooltip, theme } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import {
   useUpdatableState,
@@ -31,10 +35,13 @@ import {
   BAIDeleteConfirmModal,
   BAIFetchKeyButton,
   BAINameActionCell,
+  BAIQuestionIconWithTooltip,
+  BAISelectionLabel,
+  BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
-import { useState, useTransition } from 'react';
+import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 import { PayloadError } from 'relay-runtime';
@@ -55,17 +62,40 @@ type ResourceGroup = NonNullable<
 >;
 
 const ResourceGroupList: React.FC = () => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message } = App.useApp();
+  const baiClient = useSuspendedBackendaiClient();
   const [activeType, setActiveType] = useState<'active' | 'inactive'>('active');
   const [openCreateModal, { toggle: toggleOpenCreateModal }] = useToggle(false);
   const [openInfoModal, { toggle: toggleOpenInfoModal }] = useToggle(false);
+  const [openSFTPModal, setOpenSFTPModal] = useState(false);
   const [selectedResourceGroup, setSelectedResourceGroup] =
     useState<ResourceGroup>();
   const [selectedResourceGroupName, setSelectedResourceGroupName] =
     useState<string>();
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
+    'table_column_overrides.ResourceGroupList',
+  );
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
+  // Read the `proxy -> resource group names` map from etcd (superadmin-only),
+  // non-blocking (the table renders without waiting on it) and invalidated on
+  // every SFTP write so it stays fresh. Inverted to `group name -> proxies`
+  // to show, per row, which storage proxies handle that group's SFTP.
+  const { data: proxyResourceGroups } = useSFTPProxyResourceGroupsQuery({
+    enabled: baiClient.is_superadmin,
+  });
+  const proxiesByGroupName = _.mapValues(
+    _.groupBy(
+      _.flatMap(_.entries(proxyResourceGroups ?? {}), ([proxy, groupNames]) =>
+        _.map(groupNames, (groupName) => ({ proxy, groupName })),
+      ),
+      'groupName',
+    ),
+    (pairs) => _.map(pairs, 'proxy'),
+  );
   const [isActiveTypePending, startActiveTypeTransition] = useTransition();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
 
@@ -208,15 +238,21 @@ const ResourceGroupList: React.FC = () => {
                 },
               },
             },
-            {
-              key: 'delete',
-              title: t('button.Delete'),
-              icon: <DeleteFilled />,
-              type: 'danger',
-              onClick: () => {
-                setSelectedResourceGroupName(record?.name || '');
-              },
-            },
+            // Deletion is only offered for deactivated groups (Inactive tab);
+            // active groups are deactivated first.
+            ...(activeType === 'inactive'
+              ? [
+                  {
+                    key: 'delete',
+                    title: t('button.Delete'),
+                    icon: <DeleteFilled />,
+                    type: 'danger' as const,
+                    onClick: () => {
+                      setSelectedResourceGroupName(record?.name || '');
+                    },
+                  },
+                ]
+              : []),
           ]}
         />
       ),
@@ -236,6 +272,35 @@ const ResourceGroupList: React.FC = () => {
           <CheckOutlined style={{ color: token.colorSuccess }} />
         ) : (
           <CloseOutlined style={{ color: token.colorTextSecondary }} />
+        );
+      },
+    },
+    {
+      key: 'sftp',
+      title: (
+        <BAIFlex gap="xxs">
+          {t('storageProxy.SFTPStorageProxies')}
+          <BAIQuestionIconWithTooltip
+            title={t('storageProxy.SFTPStorageProxiesDescription')}
+          />
+        </BAIFlex>
+      ),
+      // Reading the assignment needs superadmin (raw etcd), so only they see it.
+      hidden: !baiClient.is_superadmin,
+      render: (_value, record) => {
+        const proxies = record.name
+          ? (proxiesByGroupName[record.name] ?? [])
+          : [];
+        return proxies.length > 0 ? (
+          <BAIFlex gap="xxs" wrap="wrap">
+            {_.map(proxies, (proxy) => (
+              <Tag key={proxy} color="blue">
+                {proxy}
+              </Tag>
+            ))}
+          </BAIFlex>
+        ) : (
+          '-'
         );
       },
     },
@@ -266,6 +331,7 @@ const ResourceGroupList: React.FC = () => {
           onChange={(value) => {
             startActiveTypeTransition(() => {
               setActiveType(value.target.value);
+              setSelectedRowKeys([]);
             });
           }}
           optionType="button"
@@ -281,6 +347,21 @@ const ResourceGroupList: React.FC = () => {
           ]}
         />
         <BAIFlex gap="xs">
+          {baiClient.is_superadmin && selectedRowKeys.length > 0 && (
+            <BAIFlex align="center" gap="xs">
+              <BAISelectionLabel
+                count={selectedRowKeys.length}
+                onClearSelection={() => setSelectedRowKeys([])}
+              />
+              <Tooltip title={t('button.Settings')}>
+                <BAIButton
+                  icon={<SettingOutlined style={{ color: token.colorInfo }} />}
+                  style={{ backgroundColor: token.colorInfoBg }}
+                  onClick={() => setOpenSFTPModal(true)}
+                />
+              </Tooltip>
+            </BAIFlex>
+          )}
           <BAIFetchKeyButton
             loading={isPendingRefetch}
             value={fetchKey}
@@ -308,6 +389,19 @@ const ResourceGroupList: React.FC = () => {
         columns={columns}
         dataSource={filterOutNullAndUndefined(scaling_groups)}
         loading={isActiveTypePending}
+        rowSelection={
+          baiClient.is_superadmin
+            ? {
+                type: 'checkbox',
+                selectedRowKeys,
+                onChange: (keys) => setSelectedRowKeys(keys),
+              }
+            : undefined
+        }
+        tableSettings={{
+          columnOverrides,
+          onColumnOverridesChange: setColumnOverrides,
+        }}
       />
 
       <BAIDeleteConfirmModal
@@ -380,6 +474,18 @@ const ResourceGroupList: React.FC = () => {
           }
         }}
       />
+      <BAIUnmountAfterClose>
+        <UpdateResourceGroupsModal
+          open={openSFTPModal}
+          resourceGroupNames={selectedRowKeys as string[]}
+          onRequestClose={(success) => {
+            setOpenSFTPModal(false);
+            if (success) {
+              setSelectedRowKeys([]);
+            }
+          }}
+        />
+      </BAIUnmountAfterClose>
     </BAIFlex>
   );
 };

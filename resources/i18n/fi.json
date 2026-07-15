@@ -433,6 +433,7 @@
     "PushToImage": "Työnnä istunto mukautettuun kuvaan",
     "Refresh": "Päivitä",
     "RefreshModelInformation": "Päivitä mallin tiedot",
+    "Remove": "Poista",
     "Reset": "Nollaa",
     "Retry": "Yritä uudelleen",
     "Revoke": "Peruuta",
@@ -2404,7 +2405,8 @@
     "SelectDomain": "Valitse verkkotunnus",
     "SelectScheduler": "Valitse Ajastin",
     "TimeoutSeconds": "Sekuntia",
-    "TypeResourceGroupNameToDelete": "Kirjoita poistettavan resurssiryhmän nimi"
+    "TypeResourceGroupNameToDelete": "Kirjoita poistettavan resurssiryhmän nimi",
+    "UpdateResourceGroups": "Päivitä resurssiryhmät"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Olet poistamassa tätä resurssikäytäntöä:",
@@ -3213,6 +3215,15 @@
       "ProjectFolderPermissions": "Projektikansion oikeudet",
       "UserFolderPermissions": "Käyttäjäkansion oikeudet"
     }
+  },
+  "storageProxy": {
+    "ConfirmRemoveSFTPProxiesContent": "Valitut resurssiryhmät eivät enää käytä näitä tallennusvälityspalvelimia SFTP:tä varten: <code>{{proxies}}</code>. Jatketaanko?",
+    "ConfirmRemoveSFTPProxiesTitle": "Poistetaanko SFTP-tallennusvälityspalvelimen asetus?",
+    "FailedToUpdateSFTPResourceGroups": "SFTP-resurssiryhmien päivittäminen epäonnistui.",
+    "FollowingResourceGroupsWillBeConfigured": "Seuraavat resurssiryhmät päivitetään:",
+    "SFTPResourceGroupsUpdated": "SFTP-resurssiryhmät päivitetty.",
+    "SFTPStorageProxies": "SFTP-tallennusvälityspalvelimet",
+    "SFTPStorageProxiesDescription": "Tallennusvälityspalvelimet, joita käytetään, kun tämän resurssiryhmän käyttäjät siirtävät tiedostoja kansioihinsa SFTP:n kautta."
   },
   "summary": {
     "ATOMEnabled": "ATOM NPU käytössä",

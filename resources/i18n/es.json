@@ -433,6 +433,7 @@
     "PushToImage": "Enviar sesión a una imagen personalizada",
     "Refresh": "Actualizar",
     "RefreshModelInformation": "Actualizar información del modelo",
+    "Remove": "Quitar",
     "Reset": "Restablecer",
     "Retry": "Reintentar",
     "Revoke": "Revocar",
@@ -2404,7 +2405,8 @@
     "SelectDomain": "Seleccionar dominio",
     "SelectScheduler": "Seleccione Programador",
     "TimeoutSeconds": "Segundos",
-    "TypeResourceGroupNameToDelete": "Escriba el nombre del grupo de recursos que desea eliminar"
+    "TypeResourceGroupNameToDelete": "Escriba el nombre del grupo de recursos que desea eliminar",
+    "UpdateResourceGroups": "Actualizar grupos de recursos"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Está a punto de eliminar esta política de recursos:",
@@ -3213,6 +3215,15 @@
       "ProjectFolderPermissions": "Permisos de carpeta de proyecto",
       "UserFolderPermissions": "Permisos de carpeta de usuario"
     }
+  },
+  "storageProxy": {
+    "ConfirmRemoveSFTPProxiesContent": "Los grupos de recursos seleccionados ya no usarán estos proxies de almacenamiento para SFTP: <code>{{proxies}}</code>. ¿Continuar?",
+    "ConfirmRemoveSFTPProxiesTitle": "¿Quitar la configuración de proxy de almacenamiento SFTP?",
+    "FailedToUpdateSFTPResourceGroups": "Error al actualizar los grupos de recursos SFTP.",
+    "FollowingResourceGroupsWillBeConfigured": "Se actualizarán los siguientes grupos de recursos:",
+    "SFTPResourceGroupsUpdated": "Grupos de recursos SFTP actualizados.",
+    "SFTPStorageProxies": "Proxies de almacenamiento SFTP",
+    "SFTPStorageProxiesDescription": "Proxies de almacenamiento que se usan cuando los usuarios de este grupo de recursos transfieren archivos a sus carpetas mediante SFTP."
   },
   "summary": {
     "ATOMEnabled": "NPU ATOM Activada",

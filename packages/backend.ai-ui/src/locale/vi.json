@@ -367,6 +367,9 @@
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Chọn máy chủ lưu trữ"
   },
+  "comp:BAIStorageProxySelect": {
+    "SelectStorageProxy": "Chọn proxy lưu trữ"
+  },
   "comp:BAISubStepNodes": {
     "EndedAt": "Kết thúc lúc",
     "ErrorCode": "Mã lỗi",

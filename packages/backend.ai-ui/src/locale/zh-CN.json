@@ -367,6 +367,9 @@
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "选择存储主机"
   },
+  "comp:BAIStorageProxySelect": {
+    "SelectStorageProxy": "选择存储代理"
+  },
   "comp:BAISubStepNodes": {
     "EndedAt": "结束时间",
     "ErrorCode": "错误代码",

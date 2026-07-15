@@ -78,6 +78,8 @@ export { default as BAIProjectResourcePolicySelect } from './BAIProjectResourceP
 export type { BAIProjectResourcePolicySelectProps } from './BAIProjectResourcePolicySelect';
 export { default as BAIResourceGroupSelect } from './BAIResourceGroupSelect';
 export type { BAIResourceGroupSelectProps } from './BAIResourceGroupSelect';
+export { default as BAIStorageProxySelect } from './BAIStorageProxySelect';
+export type { BAIStorageProxySelectProps } from './BAIStorageProxySelect';
 export { default as BAIProjectBulkEditModal } from './BAIProjectBulkEditModal';
 export type { BAIProjectBulkEditModalProps } from './BAIProjectBulkEditModal';
 export { default as BAIAgentTable } from './BAIAgentTable';

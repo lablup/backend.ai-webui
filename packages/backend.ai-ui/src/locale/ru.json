@@ -367,6 +367,9 @@
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Выберите хост хранилища"
   },
+  "comp:BAIStorageProxySelect": {
+    "SelectStorageProxy": "Выберите прокси хранилища"
+  },
   "comp:BAISubStepNodes": {
     "EndedAt": "Завершено в",
     "ErrorCode": "Код ошибки",

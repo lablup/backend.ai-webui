@@ -433,6 +433,7 @@
     "PushToImage": "Đẩy phiên sang hình ảnh tùy chỉnh",
     "Refresh": "Làm tươi",
     "RefreshModelInformation": "Làm mới thông tin mô hình",
+    "Remove": "Xóa",
     "Reset": "Cài lại",
     "Retry": "Thử lại",
     "Revoke": "Thu hồi",
@@ -2406,7 +2407,8 @@
     "SelectDomain": "Chọn miền",
     "SelectScheduler": "Chọn bộ lập lịch",
     "TimeoutSeconds": "Giây",
-    "TypeResourceGroupNameToDelete": "Nhập tên nhóm tài nguyên để xóa"
+    "TypeResourceGroupNameToDelete": "Nhập tên nhóm tài nguyên để xóa",
+    "UpdateResourceGroups": "Cập nhật nhóm tài nguyên"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Bạn sắp xóa chính sách tài nguyên này:",
@@ -3215,6 +3217,15 @@
       "ProjectFolderPermissions": "Quyền thư mục dự án",
       "UserFolderPermissions": "Quyền thư mục người dùng"
     }
+  },
+  "storageProxy": {
+    "ConfirmRemoveSFTPProxiesContent": "Các nhóm tài nguyên đã chọn sẽ không còn sử dụng các proxy lưu trữ này cho SFTP: <code>{{proxies}}</code>. Tiếp tục?",
+    "ConfirmRemoveSFTPProxiesTitle": "Xóa cài đặt proxy lưu trữ SFTP?",
+    "FailedToUpdateSFTPResourceGroups": "Không thể cập nhật nhóm tài nguyên SFTP.",
+    "FollowingResourceGroupsWillBeConfigured": "Các nhóm tài nguyên sau sẽ được cập nhật:",
+    "SFTPResourceGroupsUpdated": "Đã cập nhật nhóm tài nguyên SFTP.",
+    "SFTPStorageProxies": "Proxy lưu trữ SFTP",
+    "SFTPStorageProxiesDescription": "Các proxy lưu trữ được dùng khi người dùng trong nhóm tài nguyên này truyền tệp đến thư mục của họ qua SFTP."
   },
   "summary": {
     "ATOMEnabled": "Đã bật NPU ATOM",

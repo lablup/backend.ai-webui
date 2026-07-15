@@ -77,6 +77,7 @@ type StorageVolume = NonNullable<
 >;
 
 const StorageProxyList = () => {
+  'use memo';
   const { token } = theme.useToken();
   const { t } = useTranslation();
   const [drawerStorageHostId, setDrawerStorageHostId] = useState<string | null>(

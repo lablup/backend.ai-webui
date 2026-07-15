@@ -433,6 +433,7 @@
     "PushToImage": "Sesi tolak ke imej tersuai",
     "Refresh": "Segarkan",
     "RefreshModelInformation": "Refresh Model Maklumat",
+    "Remove": "Buang",
     "Reset": "Tetapkan semula",
     "Retry": "Cuba semula",
     "Revoke": "Batalkan",
@@ -2404,7 +2405,8 @@
     "SelectDomain": "Pilih Domain",
     "SelectScheduler": "Pilih Penjadual",
     "TimeoutSeconds": "Detik",
-    "TypeResourceGroupNameToDelete": "Taipkan nama kumpulan sumber untuk dipadamkan"
+    "TypeResourceGroupNameToDelete": "Taipkan nama kumpulan sumber untuk dipadamkan",
+    "UpdateResourceGroups": "Kemas kini Kumpulan Sumber"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Anda akan memadamkan dasar sumber ini:",
@@ -3213,6 +3215,15 @@
       "ProjectFolderPermissions": "Kebenaran Folder Projek",
       "UserFolderPermissions": "Kebenaran Folder Pengguna"
     }
+  },
+  "storageProxy": {
+    "ConfirmRemoveSFTPProxiesContent": "Kumpulan sumber yang dipilih tidak akan lagi menggunakan proksi storan ini untuk SFTP: <code>{{proxies}}</code>. Teruskan?",
+    "ConfirmRemoveSFTPProxiesTitle": "Buang tetapan Proksi Storan SFTP?",
+    "FailedToUpdateSFTPResourceGroups": "Gagal mengemas kini kumpulan sumber SFTP.",
+    "FollowingResourceGroupsWillBeConfigured": "Kumpulan sumber berikut akan dikemas kini:",
+    "SFTPResourceGroupsUpdated": "Kumpulan sumber SFTP telah dikemas kini.",
+    "SFTPStorageProxies": "Proksi Storan SFTP",
+    "SFTPStorageProxiesDescription": "Proksi storan yang digunakan apabila pengguna dalam kumpulan sumber ini memindahkan fail ke folder mereka melalui SFTP."
   },
   "summary": {
     "ATOMEnabled": "ATOM NPU Didayakan",

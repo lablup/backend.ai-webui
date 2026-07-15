@@ -367,6 +367,9 @@
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Sélectionner un hôte de stockage"
   },
+  "comp:BAIStorageProxySelect": {
+    "SelectStorageProxy": "Sélectionner un proxy de stockage"
+  },
   "comp:BAISubStepNodes": {
     "EndedAt": "Terminé le",
     "ErrorCode": "Code d'erreur",

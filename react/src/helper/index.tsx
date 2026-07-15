@@ -23,7 +23,7 @@ export const newLineToBrElement = (
   });
 };
 
-export const baiSignedRequestWithPromise = ({
+export const baiSignedRequestWithPromise = <ResponseType = any,>({
   method,
   url,
   body = null,
@@ -33,14 +33,14 @@ export const baiSignedRequestWithPromise = ({
   url: string;
   body?: any;
   client: any;
-}) => {
+}): Promise<ResponseType> => {
   const request = client?.newSignedRequest(method, url, body, null);
   return client?._wrapWithPromise(request);
 };
 
 export const useBaiSignedRequestWithPromise = () => {
   const baiClient = useSuspendedBackendaiClient();
-  return ({
+  return <ResponseType = any,>({
     method,
     url,
     body = null,
@@ -48,8 +48,8 @@ export const useBaiSignedRequestWithPromise = () => {
     method: string;
     url: string;
     body?: any;
-  }) =>
-    baiSignedRequestWithPromise({
+  }): Promise<ResponseType> =>
+    baiSignedRequestWithPromise<ResponseType>({
       method,
       url,
       body,

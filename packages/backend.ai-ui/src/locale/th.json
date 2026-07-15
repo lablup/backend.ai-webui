@@ -367,6 +367,9 @@
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "เลือกโฮสต์จัดเก็บข้อมูล"
   },
+  "comp:BAIStorageProxySelect": {
+    "SelectStorageProxy": "เลือกพร็อกซีที่เก็บข้อมูล"
+  },
   "comp:BAISubStepNodes": {
     "EndedAt": "สิ้นสุดเมื่อ",
     "ErrorCode": "รหัสข้อผิดพลาด",

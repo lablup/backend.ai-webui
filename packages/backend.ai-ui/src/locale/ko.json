@@ -367,6 +367,9 @@
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "스토리지 호스트를 선택해주세요"
   },
+  "comp:BAIStorageProxySelect": {
+    "SelectStorageProxy": "스토리지 프록시를 선택해주세요"
+  },
   "comp:BAISubStepNodes": {
     "EndedAt": "종료일",
     "ErrorCode": "오류 코드",

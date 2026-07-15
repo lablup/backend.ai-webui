@@ -367,6 +367,9 @@
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "選擇儲存主機"
   },
+  "comp:BAIStorageProxySelect": {
+    "SelectStorageProxy": "選擇儲存代理"
+  },
   "comp:BAISubStepNodes": {
     "EndedAt": "結束時間",
     "ErrorCode": "錯誤代碼",

@@ -433,6 +433,7 @@
     "PushToImage": "Тохируулсан зураг руу түлхэх сесс",
     "Refresh": "Сэргээх",
     "RefreshModelInformation": "Загварын мэдээллийг шинэчлэх",
+    "Remove": "Хасах",
     "Reset": "Дахин тохируулах",
     "Retry": "Дахин оролдох",
     "Revoke": "Цуцлах",
@@ -2405,7 +2406,8 @@
     "SelectDomain": "Домэйн сонгоно уу",
     "SelectScheduler": "Цагийн хуваарийг сонгоно уу",
     "TimeoutSeconds": "Секунд",
-    "TypeResourceGroupNameToDelete": "Устгахын тулд нөөцийн бүлгийн нэрийг бичнэ үү"
+    "TypeResourceGroupNameToDelete": "Устгахын тулд нөөцийн бүлгийн нэрийг бичнэ үү",
+    "UpdateResourceGroups": "Нөөцийн бүлгүүдийг шинэчлэх"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Та энэ нөөцийн бодлогыг устгах гэж байна:",
@@ -3215,6 +3217,15 @@
       "ProjectFolderPermissions": "Төслийн хавтасны зөвшөөрлүүд",
       "UserFolderPermissions": "Хэрэглэгчийн хавтасны зөвшөөрлүүд"
     }
+  },
+  "storageProxy": {
+    "ConfirmRemoveSFTPProxiesContent": "Сонгосон нөөцийн бүлгүүд эдгээр хадгалалтын проксийг SFTP-д цаашид ашиглахгүй болно: <code>{{proxies}}</code>. Үргэлжлүүлэх үү?",
+    "ConfirmRemoveSFTPProxiesTitle": "SFTP хадгалалтын проксийн тохиргоог хасах уу?",
+    "FailedToUpdateSFTPResourceGroups": "SFTP нөөцийн бүлгүүдийг шинэчлэхэд алдаа гарлаа.",
+    "FollowingResourceGroupsWillBeConfigured": "Дараах нөөцийн бүлгүүдийг шинэчилнэ:",
+    "SFTPResourceGroupsUpdated": "SFTP нөөцийн бүлгүүд шинэчлэгдлээ.",
+    "SFTPStorageProxies": "SFTP хадгалалтын прокси",
+    "SFTPStorageProxiesDescription": "Энэ нөөцийн бүлгийн хэрэглэгчид SFTP-ээр хавтас руугаа файл дамжуулахад ашигладаг хадгалалтын прокси."
   },
   "summary": {
     "ATOMEnabled": "ATOM NPU-г идэвхжүүлсэн",

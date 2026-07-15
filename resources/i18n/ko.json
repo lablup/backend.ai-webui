@@ -433,6 +433,7 @@
     "PushToImage": "세션을 사용자 정의된 이미지로 푸시",
     "Refresh": "새로고침",
     "RefreshModelInformation": "모델 정보 새로고침",
+    "Remove": "제거",
     "Reset": "초기화",
     "Retry": "재시도",
     "Revoke": "해지",
@@ -2406,7 +2407,8 @@
     "SelectDomain": "도메인 선택",
     "SelectScheduler": "스케줄러 선택",
     "TimeoutSeconds": "초",
-    "TypeResourceGroupNameToDelete": "삭제하려는 자원 그룹 이름을 다시 한번 입력하세요."
+    "TypeResourceGroupNameToDelete": "삭제하려는 자원 그룹 이름을 다시 한번 입력하세요.",
+    "UpdateResourceGroups": "자원 그룹 업데이트"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "아래의 자원 정책을 삭제하려고 합니다: ",
@@ -3216,6 +3218,15 @@
       "ProjectFolderPermissions": "프로젝트 폴더 권한",
       "UserFolderPermissions": "사용자 폴더 권한"
     }
+  },
+  "storageProxy": {
+    "ConfirmRemoveSFTPProxiesContent": "선택한 자원 그룹이 다음 스토리지 프록시에서 SFTP용으로 더 이상 사용되지 않습니다: <code>{{proxies}}</code>. 계속하시겠습니까?",
+    "ConfirmRemoveSFTPProxiesTitle": "SFTP 스토리지 프록시 설정을 해제할까요?",
+    "FailedToUpdateSFTPResourceGroups": "SFTP 자원 그룹 업데이트에 실패했습니다.",
+    "FollowingResourceGroupsWillBeConfigured": "다음 자원 그룹을 업데이트합니다:",
+    "SFTPResourceGroupsUpdated": "SFTP 자원 그룹이 업데이트되었습니다.",
+    "SFTPStorageProxies": "SFTP 스토리지 프록시",
+    "SFTPStorageProxiesDescription": "이 자원 그룹의 사용자가 SFTP로 폴더에 파일을 전송할 때 사용하는 스토리지 프록시입니다."
   },
   "summary": {
     "ATOMEnabled": "ATOM NPU 사용 중",

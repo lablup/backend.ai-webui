@@ -367,6 +367,9 @@
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Wybierz host pamięci masowej"
   },
+  "comp:BAIStorageProxySelect": {
+    "SelectStorageProxy": "Wybierz serwer proxy pamięci masowej"
+  },
   "comp:BAISubStepNodes": {
     "EndedAt": "Zakończono o",
     "ErrorCode": "Kod błędu",

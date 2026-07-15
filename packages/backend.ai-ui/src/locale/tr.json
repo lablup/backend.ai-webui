@@ -367,6 +367,9 @@
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Depolama Sunucusu Seç"
   },
+  "comp:BAIStorageProxySelect": {
+    "SelectStorageProxy": "Depolama Proxy'si Seç"
+  },
   "comp:BAISubStepNodes": {
     "EndedAt": "Bitiş Zamanı",
     "ErrorCode": "Hata Kodu",

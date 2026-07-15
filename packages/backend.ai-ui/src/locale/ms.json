@@ -367,6 +367,9 @@
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Pilih Hos Storan"
   },
+  "comp:BAIStorageProxySelect": {
+    "SelectStorageProxy": "Pilih Proksi Storan"
+  },
   "comp:BAISubStepNodes": {
     "EndedAt": "Berakhir pada",
     "ErrorCode": "Kod Ralat",

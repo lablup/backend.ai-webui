@@ -367,6 +367,9 @@
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Επιλέξτε κεντρικό αποθηκευτικό χώρο"
   },
+  "comp:BAIStorageProxySelect": {
+    "SelectStorageProxy": "Επιλέξτε proxy αποθήκευσης"
+  },
   "comp:BAISubStepNodes": {
     "EndedAt": "Έληξε στις",
     "ErrorCode": "Κωδικός σφάλματος",

@@ -433,6 +433,7 @@
     "PushToImage": "セッションをカスタマイズされたイメージにプッシュする",
     "Refresh": "更新",
     "RefreshModelInformation": "モデル情報の更新",
+    "Remove": "削除",
     "Reset": "初期化",
     "Retry": "再試行",
     "Revoke": "無効化",
@@ -2406,7 +2407,8 @@
     "SelectDomain": "ドメインを選択",
     "SelectScheduler": "スケジューラを選択",
     "TimeoutSeconds": "秒",
-    "TypeResourceGroupNameToDelete": "削除するリソースグループ名を入力します"
+    "TypeResourceGroupNameToDelete": "削除するリソースグループ名を入力します",
+    "UpdateResourceGroups": "リソースグループを更新"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "このリソースポリシーを削除しようとしています。",
@@ -3215,6 +3217,15 @@
       "ProjectFolderPermissions": "プロジェクトフォルダーの権限",
       "UserFolderPermissions": "ユーザーフォルダーの権限"
     }
+  },
+  "storageProxy": {
+    "ConfirmRemoveSFTPProxiesContent": "選択したリソースグループは、これらのストレージプロキシをSFTP用として使用しなくなります: <code>{{proxies}}</code>。続行しますか？",
+    "ConfirmRemoveSFTPProxiesTitle": "SFTPストレージプロキシの設定を解除しますか？",
+    "FailedToUpdateSFTPResourceGroups": "SFTPリソースグループの更新に失敗しました。",
+    "FollowingResourceGroupsWillBeConfigured": "以下のリソースグループを更新します:",
+    "SFTPResourceGroupsUpdated": "SFTPリソースグループが更新されました。",
+    "SFTPStorageProxies": "SFTPストレージプロキシ",
+    "SFTPStorageProxiesDescription": "このリソースグループのユーザーがSFTPでフォルダーにファイルを転送するときに使用するストレージプロキシです。"
   },
   "summary": {
     "ATOMEnabled": "ATOM NPU使用中",

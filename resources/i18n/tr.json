@@ -433,6 +433,7 @@
     "PushToImage": "Oturumu özelleştirilmiş resme aktarın",
     "Refresh": "Yenile",
     "RefreshModelInformation": "Model Bilgilerini Yenile",
+    "Remove": "Kaldır",
     "Reset": "Sıfırla",
     "Retry": "Yeniden Dene",
     "Revoke": "İptal Et",
@@ -2404,7 +2405,8 @@
     "SelectDomain": "Etki Alanı Seç",
     "SelectScheduler": "Zamanlayıcı Seç",
     "TimeoutSeconds": "saniye",
-    "TypeResourceGroupNameToDelete": "Silmek için kaynak grubu adını yazın"
+    "TypeResourceGroupNameToDelete": "Silmek için kaynak grubu adını yazın",
+    "UpdateResourceGroups": "Kaynak Gruplarını Güncelle"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Bu kaynak politikasını silmek üzeresiniz:",
@@ -3213,6 +3215,15 @@
       "ProjectFolderPermissions": "Proje Klasörü İzinleri",
       "UserFolderPermissions": "Kullanıcı Klasörü İzinleri"
     }
+  },
+  "storageProxy": {
+    "ConfirmRemoveSFTPProxiesContent": "Seçili kaynak grupları bu depolama proxy'lerini artık SFTP için kullanmayacak: <code>{{proxies}}</code>. Devam edilsin mi?",
+    "ConfirmRemoveSFTPProxiesTitle": "SFTP Depolama Proxy'si ayarı kaldırılsın mı?",
+    "FailedToUpdateSFTPResourceGroups": "SFTP kaynak grupları güncellenemedi.",
+    "FollowingResourceGroupsWillBeConfigured": "Aşağıdaki kaynak grupları güncellenecektir:",
+    "SFTPResourceGroupsUpdated": "SFTP kaynak grupları güncellendi.",
+    "SFTPStorageProxies": "SFTP Depolama Proxy'leri",
+    "SFTPStorageProxiesDescription": "Bu kaynak grubundaki kullanıcılar SFTP ile klasörlerine dosya aktarırken kullanılan depolama proxy'leri."
   },
   "summary": {
     "ATOMEnabled": "ATOM NPU Etkin",
