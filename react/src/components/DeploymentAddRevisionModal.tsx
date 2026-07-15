@@ -312,7 +312,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         vfolderId
         mountDestination
         definitionPath
-        subpath @since(version: "26.4.4rc9")
+        subpath @since(version: "26.4.4")
       }
       modelDefinition {
         models {

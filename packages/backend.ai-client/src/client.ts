@@ -932,6 +932,8 @@ export class Client {
       // rc9 so the flag also activates against the staging manager (BA-6520).
       // TODO(FR-3139): simplify to '26.4.4' once rc builds are out of use.
       this._features['model-runtime-variant-preset-values'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('26.4.4')) {
       // ModelMountConfigInput / ExtraVFolderMountInput gained `subpath` in
       // 26.4.4 (BA-6242): mount a subfolder inside the model vfolder instead of
       // its root. Older managers reject the unknown input field, so the key is

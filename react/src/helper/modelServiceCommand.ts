@@ -77,14 +77,21 @@ export function deriveCommandModeState(params: {
     : formatShellCommand(startCommand ?? []);
 
   if (!usingNewCommand) {
+    // A legacy `startCommand` was an argv array run WITHOUT a shell. Reconstruct
+    // it as an Exec command (shell submitted as null) so the tokens round-trip
+    // via `shlex.split` without shell interpretation — Shell mode would wrap the
+    // reconstructed string and re-interpret operators / expand `$VAR`.
     return {
       command: commandString,
-      advanced: false,
-      execution: 'shell',
+      advanced: true,
+      execution: 'exec',
       shell: DEFAULT_MODEL_SERVICE_SHELL,
     };
   }
-  if (shell == null) {
+  // The backend treats a null OR empty shell as "no shell wrapping" (Exec), so
+  // both prefill as Exec (an empty string must not become Advanced/Shell with an
+  // empty required field).
+  if (shell == null || shell.trim() === '') {
     return {
       command: commandString,
       advanced: true,
