@@ -2098,7 +2098,8 @@
     "PurgeProject": "Projekt bereinigen",
     "ResourcePolicy": "Ressourcenrichtlinie",
     "RevokeProjectAdmin": "Administratorberechtigung widerrufen",
-    "SetProjectAdmin": "Projektadministrator festlegen"
+    "SetProjectAdmin": "Projektadministrator festlegen",
+    "ViewRBACPermissions": "RBAC-Berechtigungen anzeigen"
   },
   "projectMembers": {
     "Email": "E-Mail",
@@ -2210,6 +2211,7 @@
     "Source": "Quelle",
     "Status": "Status",
     "System": "System",
+    "SystemRoleNoAssignments": "Bei Rollen, die automatisch vom System erstellt wurden, können Benutzer nicht direkt zugewiesen oder entfernt werden.",
     "UserAlreadyAssigned": "Benutzer ist dieser Rolle bereits zugewiesen.",
     "UserAssigned": "Benutzer wurde der Rolle erfolgreich zugewiesen.",
     "UserNotAssigned": "Benutzer ist dieser Rolle nicht zugewiesen.",

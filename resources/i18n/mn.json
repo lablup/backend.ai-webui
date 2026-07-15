@@ -2097,7 +2097,8 @@
     "PurgeProject": "Төслийг бүрэн устгах",
     "ResourcePolicy": "Ресурсийн бодлого",
     "RevokeProjectAdmin": "Админ зөвшөөрлийг цуцлах",
-    "SetProjectAdmin": "Төслийн администратор тохируулах"
+    "SetProjectAdmin": "Төслийн администратор тохируулах",
+    "ViewRBACPermissions": "RBAC зөвшөөрлийг үзэх"
   },
   "projectMembers": {
     "Email": "Имэйл",
@@ -2209,6 +2210,7 @@
     "Source": "Эх сурвалж",
     "Status": "Төлөв",
     "System": "Систем",
+    "SystemRoleNoAssignments": "Системээр автоматаар үүсгэгдсэн үүрэгт хэрэглэгчийг шууд оноох буюу хасах боломжгүй.",
     "UserAlreadyAssigned": "Хэрэглэгч энэ үүрэгт аль хэдийн оноогдсон байна.",
     "UserAssigned": "Хэрэглэгч үүрэгт амжилттай оноогдлоо.",
     "UserNotAssigned": "Хэрэглэгч энэ үүрэгт оноогдоогүй байна.",

@@ -2096,7 +2096,8 @@
     "PurgeProject": "Μόνιμη διαγραφή έργου",
     "ResourcePolicy": "Πολιτική πόρων",
     "RevokeProjectAdmin": "Ανάκληση δικαιώματος διαχειριστή",
-    "SetProjectAdmin": "Ορισμός διαχειριστή έργου"
+    "SetProjectAdmin": "Ορισμός διαχειριστή έργου",
+    "ViewRBACPermissions": "Προβολή δικαιωμάτων RBAC"
   },
   "projectMembers": {
     "Email": "Email",
@@ -2208,6 +2209,7 @@
     "Source": "Πηγή",
     "Status": "Κατάσταση",
     "System": "Σύστημα",
+    "SystemRoleNoAssignments": "Σε ρόλους που δημιουργούνται αυτόματα από το σύστημα δεν είναι δυνατή η απευθείας ανάθεση ή αφαίρεση χρηστών.",
     "UserAlreadyAssigned": "Ο χρήστης έχει ήδη ανατεθεί σε αυτόν τον ρόλο.",
     "UserAssigned": "Ο χρήστης ανατέθηκε επιτυχώς στον ρόλο.",
     "UserNotAssigned": "Ο χρήστης δεν είναι ανατεθειμένος σε αυτόν τον ρόλο.",

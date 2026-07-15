@@ -2098,7 +2098,8 @@
     "PurgeProject": "永久删除项目",
     "ResourcePolicy": "资源策略",
     "RevokeProjectAdmin": "撤销管理员权限",
-    "SetProjectAdmin": "设置项目管理员"
+    "SetProjectAdmin": "设置项目管理员",
+    "ViewRBACPermissions": "查看 RBAC 权限"
   },
   "projectMembers": {
     "Email": "邮箱",
@@ -2210,6 +2211,7 @@
     "Source": "来源",
     "Status": "状态",
     "System": "系统",
+    "SystemRoleNoAssignments": "系统自动创建的角色不能直接分配或移除用户。",
     "UserAlreadyAssigned": "用户已分配到此角色。",
     "UserAssigned": "用户已成功分配到角色。",
     "UserNotAssigned": "用户未分配到此角色。",

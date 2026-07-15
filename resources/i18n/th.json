@@ -2098,7 +2098,8 @@
     "PurgeProject": "ลบโปรเจกต์อย่างถาวร",
     "ResourcePolicy": "นโยบายทรัพยากร",
     "RevokeProjectAdmin": "เพิกถอนสิทธิ์ผู้ดูแลระบบ",
-    "SetProjectAdmin": "ตั้งค่าผู้ดูแลโปรเจกต์"
+    "SetProjectAdmin": "ตั้งค่าผู้ดูแลโปรเจกต์",
+    "ViewRBACPermissions": "ดูสิทธิ์ RBAC"
   },
   "projectMembers": {
     "Email": "อีเมล",
@@ -2210,6 +2211,7 @@
     "Source": "แหล่งที่มา",
     "Status": "สถานะ",
     "System": "ระบบ",
+    "SystemRoleNoAssignments": "บทบาทที่ระบบสร้างขึ้นโดยอัตโนมัติไม่สามารถมอบหมายหรือนำผู้ใช้ออกได้โดยตรง",
     "UserAlreadyAssigned": "ผู้ใช้ถูกมอบหมายให้กับบทบาทนี้แล้ว",
     "UserAssigned": "มอบหมายผู้ใช้ให้กับบทบาทเรียบร้อยแล้ว",
     "UserNotAssigned": "ผู้ใช้ไม่ได้ถูกมอบหมายให้กับบทบาทนี้",

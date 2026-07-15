@@ -2098,7 +2098,8 @@
     "PurgeProject": "Purger le projet",
     "ResourcePolicy": "Politique de ressources",
     "RevokeProjectAdmin": "Révoquer la permission d'administrateur",
-    "SetProjectAdmin": "Définir l'administrateur de projet"
+    "SetProjectAdmin": "Définir l'administrateur de projet",
+    "ViewRBACPermissions": "Voir les permissions RBAC"
   },
   "projectMembers": {
     "Email": "E-mail",
@@ -2210,6 +2211,7 @@
     "Source": "Source",
     "Status": "Statut",
     "System": "Système",
+    "SystemRoleNoAssignments": "Les rôles créés automatiquement par le système ne peuvent pas avoir d'utilisateurs directement attribués ou retirés.",
     "UserAlreadyAssigned": "L'utilisateur est déjà attribué à ce rôle.",
     "UserAssigned": "Utilisateur attribué au rôle avec succès.",
     "UserNotAssigned": "L'utilisateur n'est pas attribué à ce rôle.",

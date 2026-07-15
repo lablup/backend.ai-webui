@@ -2096,7 +2096,8 @@
     "PurgeProject": "Poista projekti pysyvästi",
     "ResourcePolicy": "Resurssipolitiikka",
     "RevokeProjectAdmin": "Peruuta ylläpitäjän käyttöoikeus",
-    "SetProjectAdmin": "Aseta projektin ylläpitäjä"
+    "SetProjectAdmin": "Aseta projektin ylläpitäjä",
+    "ViewRBACPermissions": "Näytä RBAC-käyttöoikeudet"
   },
   "projectMembers": {
     "Email": "Sähköposti",
@@ -2208,6 +2209,7 @@
     "Source": "Lähde",
     "Status": "Tila",
     "System": "Järjestelmä",
+    "SystemRoleNoAssignments": "Järjestelmän automaattisesti luomiin rooleihin ei voi suoraan määrittää tai poistaa käyttäjiä.",
     "UserAlreadyAssigned": "Käyttäjä on jo määritetty tähän rooliin.",
     "UserAssigned": "Käyttäjä määritetty rooliin onnistuneesti.",
     "UserNotAssigned": "Käyttäjää ei ole määritetty tähän rooliin.",

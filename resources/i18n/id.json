@@ -2099,7 +2099,8 @@
     "PurgeProject": "Hapus Proyek Secara Permanen",
     "ResourcePolicy": "Kebijakan Sumber Daya",
     "RevokeProjectAdmin": "Cabut Izin Admin",
-    "SetProjectAdmin": "Atur Admin Proyek"
+    "SetProjectAdmin": "Atur Admin Proyek",
+    "ViewRBACPermissions": "Lihat Izin RBAC"
   },
   "projectMembers": {
     "Email": "Email",
@@ -2211,6 +2212,7 @@
     "Source": "Sumber",
     "Status": "Status",
     "System": "Sistem",
+    "SystemRoleNoAssignments": "Peran yang dibuat secara otomatis oleh sistem tidak dapat memiliki pengguna yang ditetapkan atau dihapus secara langsung.",
     "UserAlreadyAssigned": "Pengguna sudah ditetapkan ke peran ini.",
     "UserAssigned": "Pengguna berhasil ditetapkan ke peran.",
     "UserNotAssigned": "Pengguna tidak ditetapkan ke peran ini.",

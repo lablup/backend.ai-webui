@@ -2083,7 +2083,8 @@
     "PurgeProject": "Purge Project",
     "ResourcePolicy": "Resource Policy",
     "RevokeProjectAdmin": "Revoke admin permission",
-    "SetProjectAdmin": "Set Project Admin"
+    "SetProjectAdmin": "Set Project Admin",
+    "ViewRBACPermissions": "View RBAC permissions"
   },
   "projectMembers": {
     "Email": "Email",
@@ -2195,6 +2196,7 @@
     "Source": "Source",
     "Status": "Status",
     "System": "System",
+    "SystemRoleNoAssignments": "Roles automatically created by the system cannot have users directly assigned or unassigned.",
     "UserAlreadyAssigned": "User is already assigned to this role.",
     "UserAssigned": "User assigned to role successfully.",
     "UserNotAssigned": "User is not assigned to this role.",

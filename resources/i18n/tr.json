@@ -2096,7 +2096,8 @@
     "PurgeProject": "Projeyi Temizle",
     "ResourcePolicy": "Kaynak Politikası",
     "RevokeProjectAdmin": "Yönetici İznini İptal Et",
-    "SetProjectAdmin": "Proje Yöneticisini Ayarla"
+    "SetProjectAdmin": "Proje Yöneticisini Ayarla",
+    "ViewRBACPermissions": "RBAC İzinlerini Görüntüle"
   },
   "projectMembers": {
     "Email": "E-posta",
@@ -2208,6 +2209,7 @@
     "Source": "Kaynak",
     "Status": "Durum",
     "System": "Sistem",
+    "SystemRoleNoAssignments": "Sistem tarafından otomatik olarak oluşturulan rollere kullanıcılar doğrudan atanamaz veya rolden çıkarılamaz.",
     "UserAlreadyAssigned": "Kullanıcı zaten bu role atanmış.",
     "UserAssigned": "Kullanıcı role başarıyla atandı.",
     "UserNotAssigned": "Kullanıcı bu role atanmamış.",

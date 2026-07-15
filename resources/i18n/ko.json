@@ -2098,7 +2098,8 @@
     "PurgeProject": "프로젝트 삭제",
     "ResourcePolicy": "자원 정책",
     "RevokeProjectAdmin": "관리자 권한 해제",
-    "SetProjectAdmin": "프로젝트 관리자 권한 설정"
+    "SetProjectAdmin": "프로젝트 관리자 권한 설정",
+    "ViewRBACPermissions": "RBAC 권한 확인"
   },
   "projectMembers": {
     "Email": "이메일",
@@ -2210,6 +2211,7 @@
     "Source": "소스",
     "Status": "상태",
     "System": "시스템",
+    "SystemRoleNoAssignments": "시스템에 의해 자동으로 생성된 역할은 사용자를 직접 할당하거나 할당 해제할 수 없습니다.",
     "UserAlreadyAssigned": "사용자가 이미 이 역할에 할당되어 있습니다.",
     "UserAssigned": "사용자가 역할에 할당되었습니다.",
     "UserNotAssigned": "사용자가 이 역할에 할당되어 있지 않습니다.",

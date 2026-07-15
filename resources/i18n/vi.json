@@ -2098,7 +2098,8 @@
     "PurgeProject": "Xóa vĩnh viễn dự án",
     "ResourcePolicy": "Chính sách tài nguyên",
     "RevokeProjectAdmin": "Thu hồi quyền quản trị viên",
-    "SetProjectAdmin": "Đặt quản trị dự án"
+    "SetProjectAdmin": "Đặt quản trị dự án",
+    "ViewRBACPermissions": "Xem quyền RBAC"
   },
   "projectMembers": {
     "Email": "Email",
@@ -2210,6 +2211,7 @@
     "Source": "Nguồn",
     "Status": "Trạng thái",
     "System": "Hệ thống",
+    "SystemRoleNoAssignments": "Các vai trò được hệ thống tự động tạo không thể có người dùng được phân công hoặc xóa trực tiếp.",
     "UserAlreadyAssigned": "Người dùng đã được phân công cho vai trò này.",
     "UserAssigned": "Người dùng đã được phân công cho vai trò thành công.",
     "UserNotAssigned": "Người dùng chưa được phân công cho vai trò này.",

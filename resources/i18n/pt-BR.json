@@ -2096,7 +2096,8 @@
     "PurgeProject": "Excluir projeto",
     "ResourcePolicy": "Política de Recursos",
     "RevokeProjectAdmin": "Revogar permissão de administrador",
-    "SetProjectAdmin": "Definir administrador do projeto"
+    "SetProjectAdmin": "Definir administrador do projeto",
+    "ViewRBACPermissions": "Ver permissões RBAC"
   },
   "projectMembers": {
     "Email": "E-mail",
@@ -2208,6 +2209,7 @@
     "Source": "Origem",
     "Status": "Status",
     "System": "Sistema",
+    "SystemRoleNoAssignments": "Funções criadas automaticamente pelo sistema não podem ter usuários atribuídos ou removidos diretamente.",
     "UserAlreadyAssigned": "O usuário já está atribuído a esta função.",
     "UserAssigned": "Usuário atribuído à função com sucesso.",
     "UserNotAssigned": "O usuário não está atribuído a esta função.",

@@ -2098,7 +2098,8 @@
     "PurgeProject": "プロジェクトを完全に削除",
     "ResourcePolicy": "リソースポリシー",
     "RevokeProjectAdmin": "管理者権限を無効化",
-    "SetProjectAdmin": "プロジェクト管理者を設定"
+    "SetProjectAdmin": "プロジェクト管理者を設定",
+    "ViewRBACPermissions": "RBAC権限を表示"
   },
   "projectMembers": {
     "Email": "メール",
@@ -2210,6 +2211,7 @@
     "Source": "ソース",
     "Status": "ステータス",
     "System": "システム",
+    "SystemRoleNoAssignments": "システムによって自動的に作成されたロールには、ユーザーを直接割り当てたり外したりすることはできません。",
     "UserAlreadyAssigned": "ユーザーはすでにこのロールに割り当てられています。",
     "UserAssigned": "ユーザーがロールに正常に割り当てられました。",
     "UserNotAssigned": "ユーザーはこのロールに割り当てられていません。",

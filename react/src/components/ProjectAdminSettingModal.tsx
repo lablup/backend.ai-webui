@@ -5,6 +5,7 @@
 import { ProjectAdminSettingModalAssignMutation } from '../__generated__/ProjectAdminSettingModalAssignMutation.graphql';
 import { ProjectAdminSettingModalQuery } from '../__generated__/ProjectAdminSettingModalQuery.graphql';
 import { ProjectAdminSettingModalRevokeMutation } from '../__generated__/ProjectAdminSettingModalRevokeMutation.graphql';
+import { useWebUINavigate } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { App, Form, FormInstance, Tooltip } from 'antd';
 import {
@@ -23,7 +24,7 @@ import {
   useMutationWithPromise,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { XIcon } from 'lucide-react';
+import { SquareArrowOutUpRightIcon, XIcon } from 'lucide-react';
 import { Suspense, useDeferredValue, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -102,6 +103,7 @@ const ProjectAdminSettingModal = ({
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const { upsertNotification } = useSetBAINotification();
+  const webuiNavigate = useWebUINavigate();
   const formRef = useRef<FormInstance<{ userIds: string[] }>>(null);
 
   // Keep the previous result visible while a reload is in flight so the table
@@ -227,7 +229,29 @@ const ProjectAdminSettingModal = ({
 
   return (
     <BAIModal
-      title={t('project.SetProjectAdmin')}
+      title={
+        <BAIFlex align="center">
+          {t('project.SetProjectAdmin')}
+          {role && (
+            <Tooltip title={t('project.ViewRBACPermissions')}>
+              <BAIButton
+                type="text"
+                size="small"
+                icon={<SquareArrowOutUpRightIcon />}
+                onClick={() => {
+                  const searchParams = new URLSearchParams({
+                    filter: JSON.stringify({
+                      name: { iContains: role.name },
+                    }),
+                    roleDetail: role.id,
+                  });
+                  webuiNavigate(`/rbac?${searchParams.toString()}`);
+                }}
+              />
+            </Tooltip>
+          )}
+        </BAIFlex>
+      }
       open={open}
       width={600}
       footer={null}

@@ -7,6 +7,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import RoleAssignmentTab from './RoleAssignmentTab';
 import RolePermissionDetailTab from './RolePermissionDetailTab';
 import { Descriptions, Skeleton, Tabs, Tag } from 'antd';
+import { BAIAlert } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -110,7 +111,15 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
             label: t('rbac.RoleAssignments'),
             children: (
               <Suspense fallback={<Skeleton active />}>
-                <RoleAssignmentTab roleNodeFrgmt={role} />
+                {role.source === 'SYSTEM' ? (
+                  <BAIAlert
+                    type="warning"
+                    showIcon
+                    description={t('rbac.SystemRoleNoAssignments')}
+                  />
+                ) : (
+                  <RoleAssignmentTab roleNodeFrgmt={role} />
+                )}
               </Suspense>
             ),
           },
