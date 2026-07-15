@@ -25,6 +25,15 @@ body {
     "Noto Sans TC", "Noto Sans CJK TC",
     "Noto Sans Thai",
     Helvetica, Arial, sans-serif;
+  font-size: ${theme.baseFontSize};
+  line-height: 1.6;
+  color: ${theme.textPrimary};
+  margin: 0;
+  padding: 0;
+  text-align: justify;
+  text-wrap: pretty;
+  ${isCjk ? 'word-break: keep-all;' : '-webkit-hyphens: auto; hyphens: auto;'}
+  overflow-wrap: break-word;
 }
 
 /* Per-language font priorities so Chromium picks the language-appropriate
@@ -41,15 +50,6 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
     "Noto Sans Thai", "Loma", "Garuda",
     Helvetica, Arial, sans-serif;
-  font-size: ${theme.baseFontSize};
-  line-height: 1.6;
-  color: ${theme.textPrimary};
-  margin: 0;
-  padding: 0;
-  text-align: justify;
-  text-wrap: pretty;
-  ${isCjk ? 'word-break: keep-all;' : '-webkit-hyphens: auto; hyphens: auto;'}
-  overflow-wrap: break-word;
 }
 
 /* ==========================================================================
@@ -61,7 +61,11 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
+  /* A4 297mm − 25mm/20mm print margins (PDF_OPTIONS) − 2mm rounding slack.
+   * Not 100vh: print-viewport height tracks the paper size, not the content
+   * box, so a 100vh cover spills a blank page 2 before the TOC. */
+  height: 250mm;
+  overflow: hidden;
   text-align: center;
   padding: 60px 40px;
 }

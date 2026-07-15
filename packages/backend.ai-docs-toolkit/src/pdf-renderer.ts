@@ -233,7 +233,9 @@ async function embedFontFromPath(
     fontBytes = extractFontFromTtc(fontBytes, subIndex);
   }
 
-  const font = await pdfDoc.embedFont(fontBytes, { subset: true });
+  // Never subset: @pdf-lib/fontkit's TrueType subsetter drops composite-glyph
+  // components, rendering subset-embedded CJK fonts as mostly-blank text.
+  const font = await pdfDoc.embedFont(fontBytes, { subset: false });
   return font;
 }
 
@@ -338,6 +340,10 @@ const PDF_OPTIONS = {
   format: 'A4' as const,
   printBackground: true,
   margin: { top: '25mm', bottom: '20mm', left: '20mm', right: '20mm' },
+  // Chromium emits /Outlines (reader-sidebar bookmarks) only for tagged
+  // PDFs — `outline: true` alone produces nothing.
+  tagged: true,
+  outline: true,
 };
 
 const PRINT_WIDTH_PX = Math.round(170 * 96 / 25.4); // 643
@@ -511,6 +517,13 @@ async function getAllSections(
  */
 function pickFontForText(text: string, candidates: EmbeddedFont[]): EmbeddedFont {
   if (candidates.length === 1) return candidates[0];
+  // Pure-ASCII text draws with the Latin font (last candidate) so it never
+  // falls to a CJK face that merely also covers ASCII.
+  let asciiOnly = true;
+  for (const ch of text) {
+    if (ch.codePointAt(0)! > 0x7e) { asciiOnly = false; break; }
+  }
+  if (asciiOnly) return candidates[candidates.length - 1];
   for (const font of candidates) {
     // pdf-lib does not expose hasGlyphForCodePoint publicly, but the
     // underlying fontkit instance is reachable via the embedder.
