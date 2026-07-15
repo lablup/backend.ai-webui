@@ -651,7 +651,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
           onOk={() => {
             togglePurgeUsersModal();
             setSelectedUserList([]);
-            // updateFetchKey();
+            updateFetchKey();
           }}
           onCancel={() => {
             togglePurgeUsersModal();
