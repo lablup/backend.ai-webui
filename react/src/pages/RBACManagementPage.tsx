@@ -107,6 +107,7 @@ const RBACManagementPage: React.FC = () => {
             node {
               id
               ...RoleNodesFragment
+              ...RoleDetailDrawerFragment
             }
           }
         }
@@ -212,6 +213,10 @@ const RBACManagementPage: React.FC = () => {
   };
 
   const roleNodes = queryRef.adminRoles?.edges?.map((edge) => edge?.node) ?? [];
+  // The drawer renders from the selected node's fragment ref — no id-based
+  // fetch of its own. If the node has drifted off the current page (rare:
+  // reload after list churn), the drawer simply stays closed.
+  const selectedRole = roleNodes.find((role) => role?.id === selectedRoleId);
 
   return (
     <BAICard
@@ -386,8 +391,8 @@ const RBACManagementPage: React.FC = () => {
         }}
       />
       <RoleDetailDrawer
-        open={!!selectedRoleId}
-        roleId={selectedRoleId || undefined}
+        open={!!selectedRole}
+        roleFrgmt={selectedRole}
         onClose={() => setRoleDetailParam({ roleDetail: null })}
       />
       <BAIDeleteConfirmModal

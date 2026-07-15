@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<eaacc06dfb23486897498bd174aa1b2a>>
+ * @generated SignedSource<<0d317c25d8cbea83f3b1c4ed9274105e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -101,12 +101,15 @@ export type RoleAssignmentOrderBy = {
 };
 export type RoleAssignmentTabRefetchQuery$variables = {
   filter?: RoleAssignmentFilter | null | undefined;
+  id: string;
   limit?: number | null | undefined;
   offset?: number | null | undefined;
   orderBy?: ReadonlyArray<RoleAssignmentOrderBy> | null | undefined;
 };
 export type RoleAssignmentTabRefetchQuery$data = {
-  readonly " $fragmentSpreads": FragmentRefs<"RoleAssignmentTabFragment">;
+  readonly node: {
+    readonly " $fragmentSpreads": FragmentRefs<"RoleAssignmentTabFragment">;
+  } | null | undefined;
 };
 export type RoleAssignmentTabRefetchQuery = {
   response: RoleAssignmentTabRefetchQuery$data;
@@ -114,29 +117,39 @@ export type RoleAssignmentTabRefetchQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = [
+var v0 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "filter"
+},
+v1 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "id"
+},
+v2 = {
+  "defaultValue": 10,
+  "kind": "LocalArgument",
+  "name": "limit"
+},
+v3 = {
+  "defaultValue": 0,
+  "kind": "LocalArgument",
+  "name": "offset"
+},
+v4 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "orderBy"
+},
+v5 = [
   {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "filter"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "limit"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "offset"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "orderBy"
+    "kind": "Variable",
+    "name": "id",
+    "variableName": "id"
   }
 ],
-v1 = [
+v6 = [
   {
     "kind": "Variable",
     "name": "filter",
@@ -158,7 +171,7 @@ v1 = [
     "variableName": "orderBy"
   }
 ],
-v2 = {
+v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -167,15 +180,32 @@ v2 = {
 };
 return {
   "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v0/*: any*/),
+      (v1/*: any*/),
+      (v2/*: any*/),
+      (v3/*: any*/),
+      (v4/*: any*/)
+    ],
     "kind": "Fragment",
     "metadata": null,
     "name": "RoleAssignmentTabRefetchQuery",
     "selections": [
       {
-        "args": (v1/*: any*/),
-        "kind": "FragmentSpread",
-        "name": "RoleAssignmentTabFragment"
+        "alias": null,
+        "args": (v5/*: any*/),
+        "concreteType": null,
+        "kind": "LinkedField",
+        "name": "node",
+        "plural": false,
+        "selections": [
+          {
+            "args": (v6/*: any*/),
+            "kind": "FragmentSpread",
+            "name": "RoleAssignmentTabFragment"
+          }
+        ],
+        "storageKey": null
       }
     ],
     "type": "Query",
@@ -183,92 +213,177 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v0/*: any*/),
+      (v2/*: any*/),
+      (v3/*: any*/),
+      (v4/*: any*/),
+      (v1/*: any*/)
+    ],
     "kind": "Operation",
     "name": "RoleAssignmentTabRefetchQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "RoleAssignmentConnection",
+        "args": (v5/*: any*/),
+        "concreteType": null,
         "kind": "LinkedField",
-        "name": "adminRoleAssignments",
+        "name": "node",
         "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "count",
+            "name": "__typename",
             "storageKey": null
           },
+          (v7/*: any*/),
           {
-            "alias": null,
-            "args": null,
-            "concreteType": "RoleAssignmentEdge",
-            "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
+            "kind": "InlineFragment",
             "selections": [
               {
-                "alias": null,
-                "args": null,
-                "concreteType": "RoleAssignment",
+                "alias": "firstScope",
+                "args": [
+                  {
+                    "kind": "Literal",
+                    "name": "first",
+                    "value": 1
+                  }
+                ],
+                "concreteType": "EntityConnection",
                 "kind": "LinkedField",
-                "name": "node",
+                "name": "scopes",
                 "plural": false,
                 "selections": [
-                  (v2/*: any*/),
                   {
                     "alias": null,
                     "args": null,
-                    "kind": "ScalarField",
-                    "name": "userId",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "grantedBy",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "grantedAt",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "UserV2",
+                    "concreteType": "EntityRefEdge",
                     "kind": "LinkedField",
-                    "name": "user",
-                    "plural": false,
+                    "name": "edges",
+                    "plural": true,
                     "selections": [
-                      (v2/*: any*/),
                       {
                         "alias": null,
                         "args": null,
-                        "concreteType": "UserV2BasicInfo",
+                        "concreteType": "EntityRef",
                         "kind": "LinkedField",
-                        "name": "basicInfo",
+                        "name": "node",
                         "plural": false,
                         "selections": [
                           {
                             "alias": null,
                             "args": null,
                             "kind": "ScalarField",
-                            "name": "email",
+                            "name": "scopeType",
                             "storageKey": null
                           },
                           {
                             "alias": null,
                             "args": null,
                             "kind": "ScalarField",
-                            "name": "fullName",
+                            "name": "scopeId",
+                            "storageKey": null
+                          },
+                          (v7/*: any*/)
+                        ],
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": "scopes(first:1)"
+              },
+              {
+                "alias": null,
+                "args": (v6/*: any*/),
+                "concreteType": "RoleAssignmentConnection",
+                "kind": "LinkedField",
+                "name": "users",
+                "plural": false,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "count",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "RoleAssignmentEdge",
+                    "kind": "LinkedField",
+                    "name": "edges",
+                    "plural": true,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "RoleAssignment",
+                        "kind": "LinkedField",
+                        "name": "node",
+                        "plural": false,
+                        "selections": [
+                          (v7/*: any*/),
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "userId",
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "grantedBy",
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "grantedAt",
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "UserV2",
+                            "kind": "LinkedField",
+                            "name": "user",
+                            "plural": false,
+                            "selections": [
+                              (v7/*: any*/),
+                              {
+                                "alias": null,
+                                "args": null,
+                                "concreteType": "UserV2BasicInfo",
+                                "kind": "LinkedField",
+                                "name": "basicInfo",
+                                "plural": false,
+                                "selections": [
+                                  {
+                                    "alias": null,
+                                    "args": null,
+                                    "kind": "ScalarField",
+                                    "name": "email",
+                                    "storageKey": null
+                                  },
+                                  {
+                                    "alias": null,
+                                    "args": null,
+                                    "kind": "ScalarField",
+                                    "name": "fullName",
+                                    "storageKey": null
+                                  }
+                                ],
+                                "storageKey": null
+                              }
+                            ],
                             "storageKey": null
                           }
                         ],
@@ -281,7 +396,8 @@ return {
                 "storageKey": null
               }
             ],
-            "storageKey": null
+            "type": "Role",
+            "abstractKey": null
           }
         ],
         "storageKey": null
@@ -289,16 +405,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "e5a5e2796b062ad2b8c08b6d74aa9483",
+    "cacheID": "e0f84306e5926664a1ba3b6b4732125a",
     "id": null,
     "metadata": {},
     "name": "RoleAssignmentTabRefetchQuery",
     "operationKind": "query",
-    "text": "query RoleAssignmentTabRefetchQuery(\n  $filter: RoleAssignmentFilter\n  $limit: Int\n  $offset: Int\n  $orderBy: [RoleAssignmentOrderBy!]\n) {\n  ...RoleAssignmentTabFragment_40cQ3G\n}\n\nfragment RoleAssignmentTabFragment_40cQ3G on Query {\n  adminRoleAssignments(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        userId\n        grantedBy\n        grantedAt\n        user {\n          id\n          basicInfo {\n            email\n            fullName\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query RoleAssignmentTabRefetchQuery(\n  $filter: RoleAssignmentFilter\n  $limit: Int = 10\n  $offset: Int = 0\n  $orderBy: [RoleAssignmentOrderBy!]\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...RoleAssignmentTabFragment_40cQ3G\n    id\n  }\n}\n\nfragment RoleAssignmentTabFragment_40cQ3G on Role {\n  id\n  firstScope: scopes(first: 1) {\n    edges {\n      node {\n        scopeType\n        scopeId\n        id\n      }\n    }\n  }\n  users(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        userId\n        grantedBy\n        grantedAt\n        user {\n          id\n          basicInfo {\n            email\n            fullName\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "bf36b8299ebdff587af398b75688cba1";
+(node as any).hash = "409010db642c0926546832b7d5e21e2f";
 
 export default node;

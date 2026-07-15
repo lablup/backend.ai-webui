@@ -9,9 +9,7 @@ import {
   RoleAssignmentFilter,
   RoleAssignmentOrderBy,
 } from '../__generated__/RoleAssignmentTabRefetchQuery.graphql';
-import { RoleAssignmentTab_roleScopeFragment$key } from '../__generated__/RoleAssignmentTab_roleScopeFragment.graphql';
 import { convertToOrderBy } from '../helper';
-import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import AssignRoleModal from './AssignRoleModal';
 import { DeleteFilled } from '@ant-design/icons';
@@ -25,52 +23,34 @@ import {
   BAINameActionCell,
   BAISelectionLabel,
   BAITable,
+  toLocalId,
   useBAILogger,
   useMutationWithPromise,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { PlusIcon } from 'lucide-react';
-import {
-  parseAsInteger,
-  parseAsJson,
-  parseAsStringLiteral,
-  useQueryStates,
-} from 'nuqs';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  graphql,
-  useFragment,
-  useRefetchableFragment,
-  useMutation,
-} from 'react-relay';
+import { graphql, useRefetchableFragment, useMutation } from 'react-relay';
 
-const assignmentOrderValues = [
-  'EMAIL_ASC',
-  'EMAIL_DESC',
-  'USERNAME_ASC',
-  'USERNAME_DESC',
-  'GRANTED_AT_ASC',
-  'GRANTED_AT_DESC',
-] as const;
+type AssignmentOrder =
+  | 'EMAIL_ASC'
+  | 'EMAIL_DESC'
+  | 'USERNAME_ASC'
+  | 'USERNAME_DESC'
+  | 'GRANTED_AT_ASC'
+  | 'GRANTED_AT_DESC';
 
 interface RoleAssignmentTabProps {
-  queryRef: RoleAssignmentTabFragment$key;
-  roleId: string;
-  roleScopeFrgmt?: RoleAssignmentTab_roleScopeFragment$key | null;
-  onAssignmentChange?: () => void;
+  roleNodeFrgmt: RoleAssignmentTabFragment$key;
 }
 
 const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
-  queryRef,
-  roleId,
-  roleScopeFrgmt,
-  onAssignmentChange,
+  roleNodeFrgmt,
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
   const { token } = theme.useToken();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
@@ -82,46 +62,19 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
   >(null);
   const [isPendingRefetch, startRefetchTransition] = useTransition();
 
-  const roleScope = useFragment(
-    graphql`
-      fragment RoleAssignmentTab_roleScopeFragment on Role {
-        scopes(first: 1) {
-          edges {
-            node {
-              scopeType
-              scopeId
-            }
-          }
-        }
-      }
-    `,
-    roleScopeFrgmt ?? null,
-  );
-
-  const projectScopeId =
-    roleScope?.scopes?.edges?.[0]?.node?.scopeType === 'PROJECT'
-      ? roleScope.scopes.edges[0].node.scopeId
-      : undefined;
-
-  const [queryParams, setQueryParams] = useQueryStates(
-    {
-      current: parseAsInteger.withDefault(1),
-      pageSize: parseAsInteger.withDefault(10),
-      order: parseAsStringLiteral(assignmentOrderValues),
-      filter: parseAsJson<RoleAssignmentFilter>(
-        (value) => value as RoleAssignmentFilter,
-      ),
-    },
-    {
-      history: 'replace',
-      urlKeys: {
-        current: 'aCurrent',
-        pageSize: 'aPageSize',
-        order: 'aOrder',
-        filter: 'aFilter',
-      },
-    },
-  );
+  // Pagination / order / filter live in local React state (not the URL);
+  // they reset whenever the drawer content remounts.
+  const [queryParams, setQueryParams] = useState<{
+    current: number;
+    pageSize: number;
+    order: AssignmentOrder | null;
+    filter: RoleAssignmentFilter | null;
+  }>({
+    current: 1,
+    pageSize: 10,
+    order: null,
+    filter: null,
+  });
 
   const limit = queryParams.pageSize;
   const offset =
@@ -129,15 +82,27 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
 
   const [data, refetch] = useRefetchableFragment(
     graphql`
-      fragment RoleAssignmentTabFragment on Query
+      fragment RoleAssignmentTabFragment on Role
       @argumentDefinitions(
         filter: { type: "RoleAssignmentFilter" }
         orderBy: { type: "[RoleAssignmentOrderBy!]" }
-        limit: { type: "Int" }
-        offset: { type: "Int" }
+        limit: { type: "Int", defaultValue: 10 }
+        offset: { type: "Int", defaultValue: 0 }
       )
       @refetchable(queryName: "RoleAssignmentTabRefetchQuery") {
-        adminRoleAssignments(
+        id
+        # Aliased: RoleNodesFragment selects scopes(first: 3) on the same list
+        # nodes the drawer fragment now composes with, and unaliased fields
+        # with different arguments conflict in one query.
+        firstScope: scopes(first: 1) {
+          edges {
+            node {
+              scopeType
+              scopeId
+            }
+          }
+        }
+        users(
           filter: $filter
           orderBy: $orderBy
           limit: $limit
@@ -162,8 +127,15 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
         }
       }
     `,
-    queryRef,
+    roleNodeFrgmt,
   );
+
+  const roleId = toLocalId(data.id);
+
+  const projectScopeId =
+    data.firstScope?.edges?.[0]?.node?.scopeType === 'PROJECT'
+      ? data.firstScope.edges[0].node.scopeId
+      : undefined;
 
   const [commitBulkAssignRole, isInFlightBulkAssign] =
     useMutation<RoleAssignmentTabBulkAssignMutation>(graphql`
@@ -202,8 +174,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
       }
     `);
 
-  const assignments =
-    data.adminRoleAssignments?.edges?.map((edge) => edge?.node) ?? [];
+  const assignments = data.users?.edges?.map((edge) => edge?.node) ?? [];
 
   const doRefetch = (overrides?: {
     filter?: RoleAssignmentFilter | null;
@@ -214,14 +185,10 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
     startRefetchTransition(() => {
       refetch(
         {
-          filter: {
-            roleId: (baiClient.supports('rbac-filter-wrapper')
-              ? { equals: roleId }
-              : roleId) as { equals: string },
-            ...(overrides?.filter !== undefined
+          filter:
+            overrides?.filter !== undefined
               ? overrides.filter
-              : queryParams.filter),
-          },
+              : queryParams.filter,
           orderBy: convertToOrderBy<RoleAssignmentOrderBy>(
             overrides?.order !== undefined
               ? overrides.order
@@ -236,7 +203,11 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
   };
 
   const handleFilterChange = (newFilter: RoleAssignmentFilter | undefined) => {
-    setQueryParams({ filter: newFilter ?? null, current: 1 });
+    setQueryParams((prev) => ({
+      ...prev,
+      filter: newFilter ?? null,
+      current: 1,
+    }));
     doRefetch({ filter: newFilter ?? null, offset: 0 });
   };
 
@@ -278,7 +249,6 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
         }
         setIsAssignModalOpen(false);
         handleRefresh();
-        onAssignmentChange?.();
       },
       onError: (error) => {
         logger.error(error);
@@ -372,9 +342,9 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
         pagination={{
           pageSize: queryParams.pageSize,
           current: queryParams.current,
-          total: data.adminRoleAssignments?.count ?? 0,
+          total: data.users?.count ?? 0,
           onChange: (current, pageSize) => {
-            setQueryParams({ current, pageSize });
+            setQueryParams((prev) => ({ ...prev, current, pageSize }));
             const newOffset = current > 1 ? (current - 1) * pageSize : 0;
             doRefetch({ limit: pageSize, offset: newOffset });
           },
@@ -386,9 +356,10 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
         }}
         order={queryParams.order}
         onChangeOrder={(newOrder) => {
-          setQueryParams({
-            order: (newOrder as (typeof assignmentOrderValues)[number]) ?? null,
-          });
+          setQueryParams((prev) => ({
+            ...prev,
+            order: (newOrder as AssignmentOrder) ?? null,
+          }));
           doRefetch({ order: newOrder ?? null });
         }}
         columns={[
@@ -483,7 +454,6 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
               setRevokingTargets(null);
               setSelectedRowKeys([]);
               handleRefresh();
-              onAssignmentChange?.();
             })
             .catch((error) => {
               logger.error('Failed to bulk revoke role', error);

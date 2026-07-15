@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2eb7b95a4257d01cdd77e0204ccd82e6>>
+ * @generated SignedSource<<4cbde0bcaa070123567a8e30e9fed770>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -22,7 +22,7 @@ export type RoleDetailDrawerContentFragment$data = {
   readonly source: RoleSource;
   readonly status: RoleStatus;
   readonly updatedAt: string;
-  readonly " $fragmentSpreads": FragmentRefs<"CreatePermissionModal_roleScopeFragment" | "RoleAssignmentTab_roleScopeFragment">;
+  readonly " $fragmentSpreads": FragmentRefs<"RoleAssignmentTabFragment" | "RolePermissionDetailTab_roleScopeFragment">;
   readonly " $fragmentType": "RoleDetailDrawerContentFragment";
 };
 export type RoleDetailDrawerContentFragment$key = {
@@ -102,18 +102,18 @@ const node: ReaderFragment = {
     {
       "args": null,
       "kind": "FragmentSpread",
-      "name": "RoleAssignmentTab_roleScopeFragment"
+      "name": "RoleAssignmentTabFragment"
     },
     {
       "args": null,
       "kind": "FragmentSpread",
-      "name": "CreatePermissionModal_roleScopeFragment"
+      "name": "RolePermissionDetailTab_roleScopeFragment"
     }
   ],
   "type": "Role",
   "abstractKey": null
 };
 
-(node as any).hash = "fa0ede4a21d9db9b5767a162382da41f";
+(node as any).hash = "e07e130735e8328646d153b6ddb6f7a7";
 
 export default node;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<738cbc758feea25f751a4d1edbeaa64c>>
+ * @generated SignedSource<<fa49f46e953299826be69ba4c28da01d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,11 +11,13 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type OperationType = "CREATE" | "GRANT_ALL" | "GRANT_HARD_DELETE" | "GRANT_READ" | "GRANT_SOFT_DELETE" | "GRANT_UPDATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
 export type RBACElementType = "AGENT" | "APP_CONFIG" | "APP_CONFIG_ALLOW_LIST" | "APP_CONFIG_DEFINITION" | "APP_CONFIG_FRAGMENT" | "ARTIFACT" | "ARTIFACT_REGISTRY" | "ARTIFACT_REVISION" | "AUDIT_LOG" | "CONTAINER_REGISTRY" | "DEPLOYMENT_POLICY" | "DEPLOYMENT_REVISION" | "DEPLOYMENT_TOKEN" | "DOMAIN" | "DOMAIN_ADMIN_PAGE" | "EVENT_LOG" | "IMAGE" | "IMAGE_ALIAS" | "KERNEL" | "KEYPAIR" | "KEYPAIR_RESOURCE_POLICY" | "MODEL_CARD" | "MODEL_DEPLOYMENT" | "NETWORK" | "NOTIFICATION_CHANNEL" | "NOTIFICATION_RULE" | "PROJECT" | "PROJECT_ADMIN_PAGE" | "PROJECT_RESOURCE_POLICY" | "RESOURCE_GROUP" | "RESOURCE_PRESET" | "ROLE" | "ROLE_ASSIGNMENT" | "ROUTING" | "SESSION" | "SESSION_APP_SERVICE" | "SESSION_TEMPLATE" | "STORAGE_HOST" | "USER" | "USER_EMAIL" | "USER_RESOURCE_POLICY" | "VFOLDER" | "VFOLDER_DATA" | "%future added value";
-export type CreatePermissionModalPermissionMatrixQuery$variables = Record<PropertyKey, never>;
-export type CreatePermissionModalPermissionMatrixQuery$data = {
+export type RolePermissionDetailTabMatrixQuery$variables = Record<PropertyKey, never>;
+export type RolePermissionDetailTabMatrixQuery$data = {
   readonly rbacPermissionMatrix: ReadonlyArray<{
     readonly entities: ReadonlyArray<{
       readonly actions: ReadonlyArray<{
+        readonly description: string;
+        readonly operation: string;
         readonly requiredPermission: OperationType;
       }>;
       readonly entityType: RBACElementType;
@@ -23,9 +25,9 @@ export type CreatePermissionModalPermissionMatrixQuery$data = {
     readonly scopeType: RBACElementType;
   }> | null | undefined;
 };
-export type CreatePermissionModalPermissionMatrixQuery = {
-  response: CreatePermissionModalPermissionMatrixQuery$data;
-  variables: CreatePermissionModalPermissionMatrixQuery$variables;
+export type RolePermissionDetailTabMatrixQuery = {
+  response: RolePermissionDetailTabMatrixQuery$data;
+  variables: RolePermissionDetailTabMatrixQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -72,6 +74,20 @@ var v0 = [
                 "alias": null,
                 "args": null,
                 "kind": "ScalarField",
+                "name": "operation",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "description",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
                 "name": "requiredPermission",
                 "storageKey": null
               }
@@ -90,7 +106,7 @@ return {
     "argumentDefinitions": [],
     "kind": "Fragment",
     "metadata": null,
-    "name": "CreatePermissionModalPermissionMatrixQuery",
+    "name": "RolePermissionDetailTabMatrixQuery",
     "selections": (v0/*: any*/),
     "type": "Query",
     "abstractKey": null
@@ -99,20 +115,20 @@ return {
   "operation": {
     "argumentDefinitions": [],
     "kind": "Operation",
-    "name": "CreatePermissionModalPermissionMatrixQuery",
+    "name": "RolePermissionDetailTabMatrixQuery",
     "selections": (v0/*: any*/)
   },
   "params": {
-    "cacheID": "5d0bbd780b2ba228c0d6098902a8ee0d",
+    "cacheID": "c33c2ba782ac62d12661a4aaf098d1d3",
     "id": null,
     "metadata": {},
-    "name": "CreatePermissionModalPermissionMatrixQuery",
+    "name": "RolePermissionDetailTabMatrixQuery",
     "operationKind": "query",
-    "text": "query CreatePermissionModalPermissionMatrixQuery {\n  rbacPermissionMatrix {\n    scopeType\n    entities {\n      entityType\n      actions {\n        requiredPermission\n      }\n    }\n  }\n}\n"
+    "text": "query RolePermissionDetailTabMatrixQuery {\n  rbacPermissionMatrix {\n    scopeType\n    entities {\n      entityType\n      actions {\n        operation\n        description\n        requiredPermission\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "d78dd66554cfbae40e48ffae5f823415";
+(node as any).hash = "7d31ffa4e95175f8bf1c3039329e1856";
 
 export default node;

@@ -2,8 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { RBACElementType } from '../__generated__/CreatePermissionModalCreateMutation.graphql';
-import { RoleFormModalCreateMutation } from '../__generated__/RoleFormModalCreateMutation.graphql';
+import {
+  RBACElementType,
+  RoleFormModalCreateMutation,
+} from '../__generated__/RoleFormModalCreateMutation.graphql';
 import { RoleFormModalDomainQuery } from '../__generated__/RoleFormModalDomainQuery.graphql';
 import { RoleFormModalFragment$key } from '../__generated__/RoleFormModalFragment.graphql';
 import { RoleFormModalPermissionMatrixQuery } from '../__generated__/RoleFormModalPermissionMatrixQuery.graphql';
@@ -41,8 +43,8 @@ import {
 } from 'react-relay';
 
 // Scope types that have a UI-side scopeId selector implemented.
-// Used as the whitelist for both role scope selection and permission scope selection;
-// CreatePermissionModal imports this and intersects with rbacPermissionMatrix at usage time.
+// Used as the whitelist for role scope selection, intersected with
+// rbacPermissionMatrix at usage time.
 export const RBAC_ELEMENT_TYPES: ReadonlyArray<RBACElementType> = [
   // Scope ID select implemented
   'DOMAIN',
@@ -301,12 +303,12 @@ const ScopeRow: React.FC<ScopeRowProps> = ({
 };
 
 interface RoleFormModalProps extends BAIModalProps {
-  editingRoleFrgmt?: RoleFormModalFragment$key | null;
+  roleNodeFrgmt?: RoleFormModalFragment$key | null;
   onRequestClose: (success: boolean) => void;
 }
 
 const RoleFormModal: React.FC<RoleFormModalProps> = ({
-  editingRoleFrgmt,
+  roleNodeFrgmt,
   onRequestClose,
   ...baiModalProps
 }) => {
@@ -356,7 +358,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
         autoAssign @since(version: "26.4.4")
       }
     `,
-    editingRoleFrgmt ?? null,
+    roleNodeFrgmt ?? null,
   );
 
   const isEditMode = !!editingRole;

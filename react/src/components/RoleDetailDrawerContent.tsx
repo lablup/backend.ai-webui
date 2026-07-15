@@ -2,81 +2,29 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { RoleAssignmentTabFragment$key } from '../__generated__/RoleAssignmentTabFragment.graphql';
 import { RoleDetailDrawerContentFragment$key } from '../__generated__/RoleDetailDrawerContentFragment.graphql';
-import { RolePermissionTabFragment$key } from '../__generated__/RolePermissionTabFragment.graphql';
-import { RoleScopeTabFragment$key } from '../__generated__/RoleScopeTabFragment.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import RoleAssignmentTab from './RoleAssignmentTab';
-import RolePermissionTab from './RolePermissionTab';
-import RoleScopeTab from './RoleScopeTab';
+import RolePermissionDetailTab from './RolePermissionDetailTab';
 import { Descriptions, Skeleton, Tabs, Tag } from 'antd';
-import { toLocalId } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import { parseAsString, useQueryStates } from 'nuqs';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 interface RoleDetailDrawerContentProps {
-  roleDetailFrgmt: RoleDetailDrawerContentFragment$key;
-  scopeQueryRef: RoleScopeTabFragment$key;
-  assignmentQueryRef: RoleAssignmentTabFragment$key;
-  permissionQueryRef: RolePermissionTabFragment$key;
-  onTabReset?: () => void;
-  onDataChange?: () => void;
+  roleNodeFrgmt: RoleDetailDrawerContentFragment$key;
 }
 
 const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
-  roleDetailFrgmt,
-  scopeQueryRef,
-  assignmentQueryRef,
-  permissionQueryRef,
-  onTabReset: _onTabReset,
-  onDataChange,
+  roleNodeFrgmt,
 }) => {
   'use memo';
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
   // Auto-assign is only supported on managers >= 26.4.4.
   const supportsAutoAssign = baiClient.supports('role-auto-assign');
-  const [activeTab, setActiveTab] = useState('scopes');
-
-  const [, resetTabParams] = useQueryStates(
-    {
-      sCurrent: parseAsString,
-      sPageSize: parseAsString,
-      sOrder: parseAsString,
-      sFilter: parseAsString,
-      pCurrent: parseAsString,
-      pPageSize: parseAsString,
-      pOrder: parseAsString,
-      pFilter: parseAsString,
-      aCurrent: parseAsString,
-      aPageSize: parseAsString,
-      aOrder: parseAsString,
-      aFilter: parseAsString,
-    },
-    { history: 'replace' },
-  );
-
-  const handleTabChange = (key: string) => {
-    setActiveTab(key);
-    resetTabParams({
-      sCurrent: null,
-      sPageSize: null,
-      sOrder: null,
-      sFilter: null,
-      pCurrent: null,
-      pPageSize: null,
-      pOrder: null,
-      pFilter: null,
-      aCurrent: null,
-      aPageSize: null,
-      aOrder: null,
-      aFilter: null,
-    });
-  };
+  const [activeTab, setActiveTab] = useState('detailedPermissions');
 
   const role = useFragment(
     graphql`
@@ -90,23 +38,12 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
         createdAt
         updatedAt
         deletedAt
-        ...RoleAssignmentTab_roleScopeFragment
-        ...CreatePermissionModal_roleScopeFragment
+        ...RoleAssignmentTabFragment
+        ...RolePermissionDetailTab_roleScopeFragment
       }
     `,
-    roleDetailFrgmt,
+    roleNodeFrgmt,
   );
-
-  const roleId = toLocalId(role.id);
-
-  const source = role.source ?? 'CUSTOM';
-  const status = role.status ?? 'ACTIVE';
-  const sourceColor = source === 'SYSTEM' ? 'default' : 'green';
-  const statusColorMap: Record<string, string> = {
-    ACTIVE: 'green',
-    INACTIVE: 'orange',
-    DELETED: 'red',
-  };
 
   return (
     <>
@@ -117,17 +54,21 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
         style={{ marginBottom: 16 }}
       >
         <Descriptions.Item label={t('rbac.Source')}>
-          <Tag color={sourceColor}>
-            {source === 'SYSTEM' ? t('rbac.System') : t('rbac.Custom')}
+          <Tag color={role.source === 'SYSTEM' ? 'default' : 'green'}>
+            {role.source === 'SYSTEM' ? t('rbac.System') : t('rbac.Custom')}
           </Tag>
         </Descriptions.Item>
         <Descriptions.Item label={t('rbac.Status')}>
-          <Tag color={statusColorMap[status] || 'default'}>
-            {status === 'ACTIVE'
-              ? t('rbac.Active')
-              : status === 'INACTIVE'
-                ? t('rbac.Inactive')
-                : t('rbac.Inactive')}
+          <Tag
+            color={
+              role.status === 'ACTIVE'
+                ? 'green'
+                : role.status === 'INACTIVE'
+                  ? 'orange'
+                  : 'red'
+            }
+          >
+            {role.status === 'ACTIVE' ? t('rbac.Active') : t('rbac.Inactive')}
           </Tag>
         </Descriptions.Item>
         <Descriptions.Item label={t('general.CreatedAt')}>
@@ -153,28 +94,14 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
       </Descriptions>
       <Tabs
         activeKey={activeTab}
-        onChange={handleTabChange}
+        onChange={setActiveTab}
         items={[
           {
-            key: 'scopes',
-            label: t('rbac.RoleScopes'),
-            children: (
-              <Suspense fallback={<Skeleton active />}>
-                <RoleScopeTab queryRef={scopeQueryRef} />
-              </Suspense>
-            ),
-          },
-          {
-            key: 'permissions',
+            key: 'detailedPermissions',
             label: t('rbac.Permissions'),
             children: (
               <Suspense fallback={<Skeleton active />}>
-                <RolePermissionTab
-                  queryRef={permissionQueryRef}
-                  roleId={roleId}
-                  roleScopeFrgmt={role}
-                  onPermissionChange={onDataChange}
-                />
+                <RolePermissionDetailTab roleNodeFrgmt={role} />
               </Suspense>
             ),
           },
@@ -183,12 +110,7 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
             label: t('rbac.RoleAssignments'),
             children: (
               <Suspense fallback={<Skeleton active />}>
-                <RoleAssignmentTab
-                  queryRef={assignmentQueryRef}
-                  roleId={roleId}
-                  roleScopeFrgmt={role}
-                  onAssignmentChange={onDataChange}
-                />
+                <RoleAssignmentTab roleNodeFrgmt={role} />
               </Suspense>
             ),
           },
