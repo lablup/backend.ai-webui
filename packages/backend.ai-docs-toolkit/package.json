@@ -44,7 +44,7 @@
     "prepublishOnly": "pnpm build"
   },
   "dependencies": {
-    "@pdf-lib/fontkit": "^1.1.1",
+    "fontkit": "^2.0.4",
     "handlebars": "^4.7.9",
     "marked": "^12.0.2",
     "pdf-lib": "^1.17.1",
@@ -64,6 +64,7 @@
     }
   },
   "devDependencies": {
+    "@types/fontkit": "^2.0.9",
     "playwright": "^1.58.2",
     "sharp": "^0.34.5",
     "tsx": "^4.21.0",

@@ -23,6 +23,8 @@ import {
   resolveLegacyDocsUrl,
   validateCssColor,
   validateFontFamily,
+  validateFontWeight,
+  validateFontStyle,
 } from "./config.js";
 
 describe("validateCssColor", () => {
@@ -306,6 +308,59 @@ describe("validateFontFamily", () => {
     assert.throws(
       () => validateFontFamily(";", "theme.fontFamily"),
       /theme\.fontFamily/,
+    );
+  });
+});
+
+describe("validateFontWeight", () => {
+  it("passes finite numbers through", () => {
+    assert.equal(validateFontWeight(400), 400);
+    assert.equal(validateFontWeight(700), 700);
+  });
+
+  it("accepts CSS weight keywords and numeric ranges", () => {
+    assert.equal(validateFontWeight("normal"), "normal");
+    assert.equal(validateFontWeight("bold"), "bold");
+    assert.equal(validateFontWeight("100 900"), "100 900");
+    assert.equal(validateFontWeight("  600  "), "600");
+  });
+
+  it("rejects the relative keywords bolder/lighter (invalid in @font-face)", () => {
+    assert.throws(() => validateFontWeight("bolder"), /invalid font weight/);
+    assert.throws(() => validateFontWeight("lighter"), /invalid font weight/);
+  });
+
+  it("rejects non-finite numbers and CSS-injection vectors", () => {
+    assert.throws(() => validateFontWeight(Number.NaN), /invalid font weight/);
+    assert.throws(() => validateFontWeight("700; }"), /invalid font weight/);
+    assert.throws(
+      () => validateFontWeight("400 } body { color: red"),
+      /invalid font weight/,
+    );
+  });
+});
+
+describe("validateFontStyle", () => {
+  it("accepts normal, italic, and oblique within the -90deg..90deg range", () => {
+    assert.equal(validateFontStyle("normal"), "normal");
+    assert.equal(validateFontStyle("italic"), "italic");
+    assert.equal(validateFontStyle("oblique"), "oblique");
+    assert.equal(validateFontStyle("oblique 10deg"), "oblique 10deg");
+    assert.equal(validateFontStyle("oblique -90deg"), "oblique -90deg");
+    assert.equal(validateFontStyle("oblique 90deg"), "oblique 90deg");
+    assert.equal(validateFontStyle("  italic  "), "italic");
+  });
+
+  it("rejects oblique angles outside the -90deg..90deg range", () => {
+    assert.throws(() => validateFontStyle("oblique 1000deg"), /between -90deg and 90deg/);
+    assert.throws(() => validateFontStyle("oblique -91deg"), /between -90deg and 90deg/);
+  });
+
+  it("rejects CSS-injection vectors", () => {
+    assert.throws(() => validateFontStyle("italic; }"), /invalid font style/);
+    assert.throws(
+      () => validateFontStyle('normal"; } body { color: red'),
+      /invalid font style/,
     );
   });
 });

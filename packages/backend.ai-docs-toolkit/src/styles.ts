@@ -6,8 +6,27 @@ import { defaultTheme } from './theme.js';
 const CJK_LANGS = new Set(['ko', 'ja', 'zh', 'zh-CN', 'zh-TW']);
 
 /**
+ * Built-in body font stack: Latin system fonts followed by the full Noto CJK
+ * + Thai families so every script has glyph coverage before the final
+ * Helvetica/Arial fallback. Shared by the `body` rule and the `.cover-title`
+ * fallback so a custom `coverTitleFontFamily` that lacks CJK coverage still
+ * falls back to a CJK face (not straight to Latin-only Helvetica, which would
+ * render Hangul/Kana/Han as tofu). The `:lang(ja)` / `:lang(th)` rules below
+ * re-order this stack per language and are intentionally kept inline.
+ */
+const BUILTIN_FONT_STACK =
+  '-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", ' +
+  '"Noto Sans KR", "Noto Sans CJK KR", ' +
+  '"Noto Sans JP", "Noto Sans CJK JP", ' +
+  '"Noto Sans TC", "Noto Sans CJK TC", ' +
+  '"Noto Sans Thai", ' +
+  'Helvetica, Arial, sans-serif';
+
+/**
  * `file://` font URLs work because the document itself loads from a
- * `file://` temp file; family names are validated at config-resolve time.
+ * `file://` temp file; family names, weights, and styles are validated at
+ * config-resolve time (see `validateFontFamily` / `validateFontWeight` /
+ * `validateFontStyle`).
  */
 function buildFontFaceCss(fontFaces: ResolvedPdfFontFace[]): string {
   return fontFaces
@@ -40,12 +59,7 @@ ${buildFontFaceCss(fontFaces)}
 }
 
 body {
-  font-family: ${custom}-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
-    "Noto Sans KR", "Noto Sans CJK KR",
-    "Noto Sans JP", "Noto Sans CJK JP",
-    "Noto Sans TC", "Noto Sans CJK TC",
-    "Noto Sans Thai",
-    Helvetica, Arial, sans-serif;
+  font-family: ${custom}${BUILTIN_FONT_STACK};
   font-size: ${theme.baseFontSize};
   line-height: 1.6;
   color: ${theme.textPrimary};
@@ -101,7 +115,7 @@ body {
 }
 
 .cover-title {
-  ${theme.coverTitleFontFamily ? `font-family: "${theme.coverTitleFontFamily}", ${custom}Helvetica, Arial, sans-serif;` : ''}
+  ${theme.coverTitleFontFamily ? `font-family: "${theme.coverTitleFontFamily}", ${custom}${BUILTIN_FONT_STACK};` : ''}
   font-size: ${theme.coverTitleSize};
   font-weight: 700;
   color: ${theme.textPrimary};

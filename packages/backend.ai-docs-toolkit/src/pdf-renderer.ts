@@ -2,12 +2,68 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import { pathToFileURL } from 'url';
+import { Readable } from 'stream';
 import { chromium, type Browser } from 'playwright';
 import { PDFDocument, PDFName, PDFArray, PDFDict, PDFRef, rgb, StandardFonts } from 'pdf-lib';
-import fontkit from '@pdf-lib/fontkit';
+import * as upstreamFontkit from 'fontkit';
 import type { PdfTheme } from './theme.js';
 import { defaultTheme } from './theme.js';
 import type { ResolvedDocConfig } from './config.js';
+
+/** The fontkit shape pdf-lib's `registerFontkit` expects (a `.create()` factory). */
+type PdfLibFontkit = Parameters<PDFDocument['registerFontkit']>[0];
+
+/**
+ * Adapter that lets pdf-lib drive the actively-maintained upstream `fontkit`
+ * (2.x) instead of the abandoned `@pdf-lib/fontkit` (1.1.1, last published in
+ * 2020). The old subsetter corrupts CJK subsets — it drops composite-glyph
+ * components in TrueType fonts (blank glyphs) and mis-encodes CFF subsets
+ * (invalid embedded font) — which is why CJK header/footer stamps previously
+ * had to be embedded whole (`subset: false`), inflating every localized PDF by
+ * the full font (~18 MB for NotoSansCJK). Upstream fontkit subsets both
+ * flavors correctly, so the stamp can be subset again.
+ *
+ * The only API gap: pdf-lib's subset embedder calls `subset.encodeStream()`
+ * (a Node stream), while upstream exposes the synchronous
+ * `subset.encode(): Uint8Array`. We bridge it with a one-shot `Readable`.
+ * Both `pdfDoc.registerFontkit(fontkit)` and the direct `fontkit.create()`
+ * used for TTC sub-font enumeration go through this adapter.
+ */
+function patchSubsetEncodeStream<T>(font: T): T {
+  const f = font as {
+    createSubset?: () => {
+      encode?: () => Uint8Array;
+      encodeStream?: () => unknown;
+    };
+    __encodeStreamPatched?: boolean;
+  };
+  if (typeof f.createSubset === 'function' && !f.__encodeStreamPatched) {
+    const originalCreateSubset = f.createSubset.bind(f);
+    f.createSubset = () => {
+      const subset = originalCreateSubset();
+      if (
+        typeof subset.encodeStream !== 'function' &&
+        typeof subset.encode === 'function'
+      ) {
+        subset.encodeStream = () =>
+          Readable.from([Buffer.from(subset.encode!())]);
+      }
+      return subset;
+    };
+    f.__encodeStreamPatched = true;
+  }
+  return font;
+}
+
+const fontkit = {
+  create(bytes: Buffer, ...rest: unknown[]) {
+    const create = upstreamFontkit.create as (
+      b: Buffer,
+      ...r: unknown[]
+    ) => unknown;
+    return patchSubsetEncodeStream(create(bytes, ...rest));
+  },
+} as unknown as PdfLibFontkit;
 
 /**
  * Default font path candidates for the header/footer stamp, grouped by
@@ -29,8 +85,8 @@ import type { ResolvedDocConfig } from './config.js';
  * CJK coverage) before user-installed Korean-only fonts like Nanum.
  *
  * We load only the candidates needed for the current language. Loading
- * unused fonts wastes memory and (more importantly) can trigger latent
- * fontkit subsetting bugs in fonts whose glyphs are never actually drawn.
+ * unused fonts wastes memory and registers extra fontkit instances for no
+ * benefit, since only one embedded stamp font is drawn per document.
  */
 
 /** Korean: prefer Nanum (good Hangul) then broad-coverage fallbacks. */
@@ -233,9 +289,12 @@ async function embedFontFromPath(
     fontBytes = extractFontFromTtc(fontBytes, subIndex);
   }
 
-  // Never subset: @pdf-lib/fontkit's TrueType subsetter drops composite-glyph
-  // components, rendering subset-embedded CJK fonts as mostly-blank text.
-  const font = await pdfDoc.embedFont(fontBytes, { subset: false });
+  // Subset the stamp font: upstream fontkit (registered above via the
+  // `fontkit` adapter) subsets TrueType and CFF CJK fonts correctly, so the
+  // embedded stamp carries only the glyphs actually drawn instead of the whole
+  // ~18 MB face. (The abandoned @pdf-lib/fontkit forced `subset: false` here
+  // because its subsetter produced blank/invalid CJK glyphs.)
+  const font = await pdfDoc.embedFont(fontBytes, { subset: true });
   return font;
 }
 
@@ -246,9 +305,9 @@ async function embedFontFromPath(
  *
  * Loading is language-scoped: only CJK candidates are tried for ko/ja/zh,
  * only Thai candidates for th, and English builds skip non-Latin fonts
- * entirely. Loading every candidate up-front would waste memory and (more
- * importantly) can trigger latent fontkit subsetting bugs in fonts whose
- * glyphs are never actually drawn on the final PDF.
+ * entirely. Loading every candidate up-front would waste memory and register
+ * extra fontkit instances for fonts whose glyphs are never actually drawn on
+ * the final PDF.
  *
  * When no candidate is available, returns an empty array and the caller
  * falls back to Latin-only Helvetica with a warning logged.
@@ -286,10 +345,8 @@ async function loadStampFallbackFonts(
         console.log(`  Stamp font loaded: ${path.basename(filePath)}`);
         loaded.push(font);
         // Stop after the first successfully-loaded font for this language —
-        // the glyph-coverage check at draw time only needs one good
-        // candidate, and avoiding extra subsetters dodges the CFF-subset
-        // bug in @pdf-lib/fontkit (RangeError in CFFSubset.encode) when a
-        // font is registered but its glyphs are never actually drawn.
+        // the glyph-coverage check at draw time only needs one good candidate,
+        // and loading fewer fonts keeps the embed pass lean.
         break;
       }
     } catch (e) {

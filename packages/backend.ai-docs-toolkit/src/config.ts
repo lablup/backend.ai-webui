@@ -633,8 +633,13 @@ export interface ResolvedDocConfig {
   pdfMetadata: { author: string; subject: string; creator: string };
   cjkFontPaths: string[];
 
-  /** Family names validated, font paths absolutized against `projectRoot`. */
-  pdfFontFaces: ResolvedPdfFontFace[];
+  /**
+   * Family names validated, font paths absolutized against `projectRoot`.
+   * Optional on the type so existing `satisfies ResolvedDocConfig` fixtures
+   * (and external consumers) need not spell it out; `resolveConfig` always
+   * populates it (defaulting to `[]`), so it is present at runtime.
+   */
+  pdfFontFaces?: ResolvedPdfFontFace[];
 
   pathFallbacks: Record<string, string>;
   productName: string;
@@ -769,6 +774,69 @@ export function validateFontFamily(
   return trimmed;
 }
 
+/**
+ * Validate a `font-weight` descriptor before it is interpolated into an
+ * `@font-face` rule. Numbers pass through; strings must be a CSS weight
+ * keyword or one/two numeric values (a variable-font range like `"100 900"`).
+ * Same rationale as `validateFontFamily` — keep a misconfigured value from
+ * terminating the declaration and injecting CSS.
+ */
+export function validateFontWeight(
+  value: string | number,
+  field = 'pdfFontFaces[].weight',
+): string | number {
+  if (typeof value === 'number') {
+    if (!Number.isFinite(value)) {
+      throw new Error(`${field}: invalid font weight "${value}"`);
+    }
+    return value;
+  }
+  const trimmed = value.trim();
+  // `@font-face` `font-weight` only accepts `normal`, `bold`, a number, or a
+  // two-number range (variable fonts). The relative keywords `bolder` /
+  // `lighter` are valid on elements but NOT in an `@font-face` descriptor.
+  if (!/^(?:normal|bold|\d{1,4}(?: \d{1,4})?)$/.test(trimmed)) {
+    throw new Error(
+      `${field}: invalid font weight "${value}" ` +
+        '(expected a number, "normal"/"bold", or a numeric range like "100 900")',
+    );
+  }
+  return trimmed;
+}
+
+/**
+ * Validate a `font-style` descriptor before it is interpolated into an
+ * `@font-face` rule: `normal`, `italic`, or `oblique` with an optional angle
+ * (e.g. `oblique 10deg`). Same injection-hardening rationale as above.
+ */
+export function validateFontStyle(
+  value: string,
+  field = 'pdfFontFaces[].style',
+): string {
+  const trimmed = value.trim();
+  if (trimmed === 'normal' || trimmed === 'italic') {
+    return trimmed;
+  }
+  // `oblique` may carry an angle, which CSS bounds to the -90deg..90deg range.
+  const oblique = /^oblique(?: (-?\d+(?:\.\d+)?)deg)?$/.exec(trimmed);
+  if (oblique) {
+    if (oblique[1] !== undefined) {
+      const angle = Number(oblique[1]);
+      if (angle < -90 || angle > 90) {
+        throw new Error(
+          `${field}: invalid font style "${value}" ` +
+            '(oblique angle must be between -90deg and 90deg)',
+        );
+      }
+    }
+    return trimmed;
+  }
+  throw new Error(
+    `${field}: invalid font style "${value}" ` +
+      '(expected "normal", "italic", or "oblique [-90deg..90deg]")',
+  );
+}
+
 /** Resolved code-block config — all defaults applied. */
 export interface ResolvedCodeConfig {
   lightTheme: string;
@@ -854,8 +922,8 @@ export function resolveConfig(config: ToolkitConfig): ResolvedDocConfig {
     pdfFontFaces: (config.pdfFontFaces ?? []).map((face) => ({
       family: validateFontFamily(face.family),
       path: path.resolve(projectRoot, face.path),
-      weight: face.weight,
-      style: face.style,
+      weight: face.weight === undefined ? undefined : validateFontWeight(face.weight),
+      style: face.style === undefined ? undefined : validateFontStyle(face.style),
     })),
 
     pathFallbacks: config.pathFallbacks ?? {},

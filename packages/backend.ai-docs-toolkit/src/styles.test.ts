@@ -68,4 +68,8 @@ test("generatePdfStyles — cover title falls back through theme.fontFamily", ()
   const css = generatePdfStyles(theme, "en");
   const coverBlock = css.match(/\.cover-title \{[^}]*\}/)?.[0] ?? "";
   assert.ok(coverBlock.includes('font-family: "CoverFace", "BodyFace",'));
+  // The cover title keeps the built-in CJK fallback so a Latin-only custom
+  // cover face does not render Hangul/Kana/Han as tofu.
+  assert.ok(coverBlock.includes('"Noto Sans KR"'));
+  assert.ok(coverBlock.includes("Helvetica, Arial, sans-serif"));
 });
