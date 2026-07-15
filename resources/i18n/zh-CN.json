@@ -1949,7 +1949,6 @@
     "CommandAdvancedModeTooltip": "高级模式允许您选择命令的执行方式（Shell 或 Exec）以及使用的 shell。",
     "CommandArgvLabel": "命令 (argv)",
     "CommandExecHelper": "无法使用 shell 运算符（; && | $VAR、重定向等）。请输入以空格分隔的各个参数。",
-    "CommandExecOperatorWarning": "在 Exec 模式下无法使用 shell 运算符（; && | $VAR、重定向等）。请切换到 Shell 模式以使用它们。",
     "CommandShellHelper": "可以使用 shell 运算符（; && | $VAR、重定向等）。",
     "Controls": "控制装置",
     "CreateNewDeploymentWithPreset": "使用预设创建新部署",

@@ -1948,7 +1948,6 @@
     "CommandAdvancedModeTooltip": "Tryb zaawansowany pozwala wybrać sposób wykonania polecenia (Shell lub Exec) oraz używaną powłokę.",
     "CommandArgvLabel": "Polecenie (argv)",
     "CommandExecHelper": "Nie można używać operatorów powłoki (; && | $VAR, przekierowania itp.). Wprowadź każdy argument oddzielony spacjami.",
-    "CommandExecOperatorWarning": "Operatory powłoki (; && | $VAR, przekierowania itp.) nie mogą być używane w trybie Exec. Przełącz się na tryb Shell, aby ich używać.",
     "CommandShellHelper": "Można używać operatorów powłoki (; && | $VAR, przekierowania itp.).",
     "Controls": "Elementy sterujące",
     "CreateNewDeploymentWithPreset": "Utwórz nowe wdrożenie z presetem",

@@ -1949,7 +1949,6 @@
     "CommandAdvancedModeTooltip": "고급 모드에서는 명령어 실행 방식(Shell 또는 Exec)과 사용할 셸을 선택할 수 있습니다.",
     "CommandArgvLabel": "명령어 (argv)",
     "CommandExecHelper": "셸 연산자(; && | $VAR, 리다이렉션 등)를 사용할 수 없습니다. 각 인자를 공백으로 구분하여 입력하세요.",
-    "CommandExecOperatorWarning": "Exec 모드에서는 셸 연산자(; && | $VAR, 리다이렉션 등)를 사용할 수 없습니다. 사용하려면 Shell 모드로 전환하세요.",
     "CommandShellHelper": "셸 연산자(; && | $VAR, 리다이렉션 등)를 사용할 수 있습니다.",
     "Controls": "제어",
     "CreateNewDeploymentWithPreset": "프리셋으로 새 배포 생성",

@@ -1949,7 +1949,6 @@
     "CommandAdvancedModeTooltip": "詳細モードでは、コマンドの実行方式（ShellまたはExec）と使用するシェルを選択できます。",
     "CommandArgvLabel": "コマンド (argv)",
     "CommandExecHelper": "シェル演算子（; && | $VAR、リダイレクトなど）は使用できません。各引数をスペースで区切って入力してください。",
-    "CommandExecOperatorWarning": "Execモードではシェル演算子（; && | $VAR、リダイレクトなど）を使用できません。使用するにはShellモードに切り替えてください。",
     "CommandShellHelper": "シェル演算子（; && | $VAR、リダイレクトなど）を使用できます。",
     "Controls": "操作",
     "CreateNewDeploymentWithPreset": "プリセットで新規デプロイメント作成",

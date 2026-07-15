@@ -23,7 +23,6 @@ import { convertToBinaryUnit } from '../helper';
 import {
   COMMAND_SHELL_OPTIONS,
   DEFAULT_MODEL_SERVICE_SHELL,
-  SHELL_OPERATOR_PATTERN,
   type CommandExecutionMode,
   deriveCommandModeState,
   resolveCommandShell,
@@ -2048,13 +2047,6 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                               return (
                                 <Form.Item
                                   name="startCommand"
-                                  // Re-validate when the mode changes so
-                                  // the exec-only operator error clears
-                                  // when switching back to Shell.
-                                  dependencies={[
-                                    'commandExecution',
-                                    'commandAdvanced',
-                                  ]}
                                   // Exec splits the input into an argv
                                   // vector, so label it "Command (argv)"
                                   // to distinguish it from a shell command.
@@ -2073,40 +2065,14 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                                         : t('modelService.CommandShellHelper')
                                       : undefined
                                   }
-                                  rules={[
-                                    // Optional — a definition-path-based
-                                    // service (`definitionPath` in Advanced
-                                    // Settings) can supply the command
-                                    // instead of this field.
-                                    { whitespace: true },
-                                    // Exec = shlex.split (no shell), so
-                                    // shell operators are passed literally
-                                    // and never interpreted — block them.
-                                    ...(isExec
-                                      ? [
-                                          {
-                                            validator: async (
-                                              _rule: unknown,
-                                              value: string,
-                                            ) => {
-                                              if (
-                                                value &&
-                                                SHELL_OPERATOR_PATTERN.test(
-                                                  value,
-                                                )
-                                              ) {
-                                                return Promise.reject(
-                                                  t(
-                                                    'modelService.CommandExecOperatorWarning',
-                                                  ),
-                                                );
-                                              }
-                                              return Promise.resolve();
-                                            },
-                                          },
-                                        ]
-                                      : []),
-                                  ]}
+                                  // The command is sent to the server as the
+                                  // raw string the user typed; the WebUI does
+                                  // not pre-validate shell operators (Exec runs
+                                  // it via shlex.split, where quoted operators
+                                  // are valid argv content). The Exec helper
+                                  // text explains that unquoted operators are
+                                  // not interpreted.
+                                  rules={[{ whitespace: true }]}
                                 >
                                   {!supportsCommandShell ? (
                                     // Legacy (<26.7.0): plain single-line

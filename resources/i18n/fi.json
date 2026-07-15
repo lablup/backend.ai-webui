@@ -1947,7 +1947,6 @@
     "CommandAdvancedModeTooltip": "Lisäasetustilassa voit valita, miten komento suoritetaan (Shell tai Exec) ja mitä shelliä käytetään.",
     "CommandArgvLabel": "Komento (argv)",
     "CommandExecHelper": "Shell-operaattoreita (; && | $VAR, uudelleenohjaus jne.) ei voida käyttää. Syötä jokainen argumentti välilyönnillä erotettuna.",
-    "CommandExecOperatorWarning": "Shell-operaattoreita (; && | $VAR, uudelleenohjaus jne.) ei voida käyttää Exec-tilassa. Vaihda Shell-tilaan käyttääksesi niitä.",
     "CommandShellHelper": "Shell-operaattoreita (; && | $VAR, uudelleenohjaus jne.) voidaan käyttää.",
     "Controls": "Ohjaimet",
     "CreateNewDeploymentWithPreset": "Luo uusi käyttöönotto esiasetuksella",

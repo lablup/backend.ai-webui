@@ -1950,7 +1950,6 @@
     "CommandAdvancedModeTooltip": "Mode lanjutan memungkinkan Anda memilih cara perintah dijalankan (Shell atau Exec) dan shell mana yang digunakan.",
     "CommandArgvLabel": "Perintah (argv)",
     "CommandExecHelper": "Operator shell (; && | $VAR, pengalihan, dll.) tidak dapat digunakan. Masukkan setiap argumen yang dipisahkan oleh spasi.",
-    "CommandExecOperatorWarning": "Operator shell (; && | $VAR, pengalihan, dll.) tidak dapat digunakan dalam mode Exec. Beralihlah ke mode Shell untuk menggunakannya.",
     "CommandShellHelper": "Operator shell (; && | $VAR, pengalihan, dll.) dapat digunakan.",
     "Controls": "Kontrol",
     "CreateNewDeploymentWithPreset": "Buat Deployment Baru dengan Preset",

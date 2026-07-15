@@ -1947,7 +1947,6 @@
     "CommandAdvancedModeTooltip": "Mod lanjutan membolehkan anda memilih cara arahan dilaksanakan (Shell atau Exec) dan shell yang hendak digunakan.",
     "CommandArgvLabel": "Arahan (argv)",
     "CommandExecHelper": "Operator shell (; && | $VAR, pengalihan, dll.) tidak boleh digunakan. Masukkan setiap argumen dipisahkan dengan ruang.",
-    "CommandExecOperatorWarning": "Operator shell (; && | $VAR, pengalihan, dll.) tidak boleh digunakan dalam mod Exec. Tukar ke mod Shell untuk menggunakannya.",
     "CommandShellHelper": "Operator shell (; && | $VAR, pengalihan, dll.) boleh digunakan.",
     "Controls": "Kawalan",
     "CreateNewDeploymentWithPreset": "Cipta Penggunaan Baharu dengan Praset",

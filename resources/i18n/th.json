@@ -1949,7 +1949,6 @@
     "CommandAdvancedModeTooltip": "โหมดขั้นสูงช่วยให้คุณเลือกวิธีการรันคำสั่ง (Shell หรือ Exec) และเชลล์ที่จะใช้",
     "CommandArgvLabel": "คำสั่ง (argv)",
     "CommandExecHelper": "ไม่สามารถใช้ตัวดำเนินการเชลล์ (; && | $VAR, การเปลี่ยนทิศทาง เป็นต้น) ได้ ให้ป้อนแต่ละอาร์กิวเมนต์โดยคั่นด้วยช่องว่าง",
-    "CommandExecOperatorWarning": "ไม่สามารถใช้ตัวดำเนินการเชลล์ (; && | $VAR, การเปลี่ยนทิศทาง เป็นต้น) ในโหมด Exec ได้ สลับไปที่โหมด Shell เพื่อใช้งาน",
     "CommandShellHelper": "สามารถใช้ตัวดำเนินการเชลล์ (; && | $VAR, การเปลี่ยนทิศทาง เป็นต้น) ได้",
     "Controls": "การควบคุม",
     "CreateNewDeploymentWithPreset": "สร้าง Deployment ใหม่ด้วย Preset",

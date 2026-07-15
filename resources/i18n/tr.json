@@ -1947,7 +1947,6 @@
     "CommandAdvancedModeTooltip": "Gelişmiş mod, komutun nasıl çalıştırılacağını (Shell veya Exec) ve hangi kabuğun kullanılacağını seçmenizi sağlar.",
     "CommandArgvLabel": "Komut (argv)",
     "CommandExecHelper": "Kabuk operatörleri (; && | $VAR, yönlendirme vb.) kullanılamaz. Her argümanı boşlukla ayırarak girin.",
-    "CommandExecOperatorWarning": "Exec modunda kabuk operatörleri (; && | $VAR, yönlendirme vb.) kullanılamaz. Bunları kullanmak için Shell moduna geçin.",
     "CommandShellHelper": "Kabuk operatörleri (; && | $VAR, yönlendirme vb.) kullanılabilir.",
     "Controls": "Kontroller",
     "CreateNewDeploymentWithPreset": "Ön Ayar ile Yeni Dağıtım Oluştur",

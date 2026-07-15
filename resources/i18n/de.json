@@ -1949,7 +1949,6 @@
     "CommandAdvancedModeTooltip": "Im erweiterten Modus können Sie festlegen, wie der Befehl ausgeführt wird (Shell oder Exec) und welche Shell verwendet wird.",
     "CommandArgvLabel": "Befehl (argv)",
     "CommandExecHelper": "Shell-Operatoren (; && | $VAR, Umleitung usw.) können nicht verwendet werden. Geben Sie jedes Argument durch Leerzeichen getrennt ein.",
-    "CommandExecOperatorWarning": "Shell-Operatoren (; && | $VAR, Umleitung usw.) können im Exec-Modus nicht verwendet werden. Wechseln Sie in den Shell-Modus, um sie zu verwenden.",
     "CommandShellHelper": "Shell-Operatoren (; && | $VAR, Umleitung usw.) können verwendet werden.",
     "Controls": "Kontrolliert",
     "CreateNewDeploymentWithPreset": "Neue Bereitstellung mit Preset erstellen",

@@ -36,13 +36,6 @@ export const COMMAND_SHELL_OPTIONS: Array<{ value: string }> = [
 
 export type CommandExecutionMode = 'shell' | 'exec';
 
-/**
- * Shell operators / expansions that only work under a shell (Execution = Shell).
- * Used to warn when they appear in an Exec-mode command, where they are passed
- * literally to `execve` and never interpreted.
- */
-export const SHELL_OPERATOR_PATTERN = /[;&|<>$`]/;
-
 export interface CommandModeState {
   /** Raw command string shown in the command input. */
   command: string;

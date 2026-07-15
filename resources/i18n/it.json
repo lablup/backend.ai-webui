@@ -1947,7 +1947,6 @@
     "CommandAdvancedModeTooltip": "La modalità avanzata consente di scegliere come viene eseguito il comando (Shell o Exec) e quale shell utilizzare.",
     "CommandArgvLabel": "Comando (argv)",
     "CommandExecHelper": "Non è possibile utilizzare operatori shell (; && | $VAR, reindirizzamento, ecc.). Inserisci ciascun argomento separato da spazi.",
-    "CommandExecOperatorWarning": "Gli operatori shell (; && | $VAR, reindirizzamento, ecc.) non possono essere utilizzati in modalità Exec. Passa alla modalità Shell per usarli.",
     "CommandShellHelper": "È possibile utilizzare operatori shell (; && | $VAR, reindirizzamento, ecc.).",
     "Controls": "Controlli",
     "CreateNewDeploymentWithPreset": "Crea nuova distribuzione con preset",

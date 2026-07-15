@@ -1934,7 +1934,6 @@
     "CommandAdvancedModeTooltip": "Advanced mode lets you choose how the command is executed (Shell or Exec) and which shell to use.",
     "CommandArgvLabel": "Command (argv)",
     "CommandExecHelper": "Shell operators (; && | $VAR, redirection, etc.) cannot be used. Enter each argument separated by spaces.",
-    "CommandExecOperatorWarning": "Shell operators (; && | $VAR, redirection, etc.) cannot be used in Exec mode. Switch to Shell mode to use them.",
     "CommandShellHelper": "Shell operators (; && | $VAR, redirection, etc.) can be used.",
     "Controls": "Controls",
     "CreateNewDeploymentWithPreset": "Create New Deployment with Preset",

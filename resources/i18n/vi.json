@@ -1949,7 +1949,6 @@
     "CommandAdvancedModeTooltip": "Chế độ nâng cao cho phép bạn chọn cách lệnh được thực thi (Shell hoặc Exec) và shell nào sẽ được sử dụng.",
     "CommandArgvLabel": "Lệnh (argv)",
     "CommandExecHelper": "Không thể sử dụng các toán tử shell (; && | $VAR, chuyển hướng, v.v.). Nhập từng đối số cách nhau bằng dấu cách.",
-    "CommandExecOperatorWarning": "Không thể sử dụng các toán tử shell (; && | $VAR, chuyển hướng, v.v.) ở chế độ Exec. Hãy chuyển sang chế độ Shell để sử dụng chúng.",
     "CommandShellHelper": "Có thể sử dụng các toán tử shell (; && | $VAR, chuyển hướng, v.v.).",
     "Controls": "Điều khiển",
     "CreateNewDeploymentWithPreset": "Tạo triển khai mới với Preset",

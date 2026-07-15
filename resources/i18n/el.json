@@ -1947,7 +1947,6 @@
     "CommandAdvancedModeTooltip": "Η προηγμένη λειτουργία σάς επιτρέπει να επιλέξετε πώς εκτελείται η εντολή (Shell ή Exec) και ποιο shell θα χρησιμοποιηθεί.",
     "CommandArgvLabel": "Εντολή (argv)",
     "CommandExecHelper": "Δεν μπορούν να χρησιμοποιηθούν τελεστές shell (; && | $VAR, ανακατεύθυνση κ.λπ.). Εισαγάγετε κάθε όρισμα χωρισμένο με κενά.",
-    "CommandExecOperatorWarning": "Οι τελεστές shell (; && | $VAR, ανακατεύθυνση κ.λπ.) δεν μπορούν να χρησιμοποιηθούν σε λειτουργία Exec. Μεταβείτε σε λειτουργία Shell για να τους χρησιμοποιήσετε.",
     "CommandShellHelper": "Μπορούν να χρησιμοποιηθούν τελεστές shell (; && | $VAR, ανακατεύθυνση κ.λπ.).",
     "Controls": "Έλεγχοι",
     "CreateNewDeploymentWithPreset": "Δημιουργία νέου Deployment με Preset",
