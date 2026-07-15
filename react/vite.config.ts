@@ -19,6 +19,8 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import { VitePWA } from 'vite-plugin-pwa';
 import svgr from 'vite-plugin-svgr';
 
+import { devReviewOverlayPlugin } from './vite-plugins/reviewOverlay';
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const projectRoot = resolve(__dirname, '..');
 const require = createRequire(import.meta.url);
@@ -849,6 +851,10 @@ export default defineConfig(({ command, mode }) => {
       projectRootStaticPlugin(devCspHeaders),
       cspBundleNoncePlugin(),
       devAssetsReloadPlugin(),
+      // FR-3309: dev-only (apply: 'serve') review overlay injection. Must
+      // come after projectRootStaticPlugin — its 'pre' HTML handler discards
+      // earlier transforms (see reviewOverlay.ts).
+      devReviewOverlayPlugin(),
 
       react({
         babel: (id) => {
