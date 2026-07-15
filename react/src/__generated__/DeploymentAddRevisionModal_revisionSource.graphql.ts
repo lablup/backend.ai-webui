@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8580526ea487c91ff9e6b2d137cf9465>>
+ * @generated SignedSource<<6fdc9c750b978d36a0f4c4af09e52f3d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -49,6 +49,7 @@ export type DeploymentAddRevisionModal_revisionSource$data = {
     }>;
   } | null | undefined;
   readonly modelMountConfig: {
+    readonly definitionPath: string;
     readonly mountDestination: string;
     readonly subpath: string | null | undefined;
     readonly vfolderId: string;
@@ -306,6 +307,13 @@ return {
           "alias": null,
           "args": null,
           "kind": "ScalarField",
+          "name": "definitionPath",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "subpath",
           "storageKey": null
         }
@@ -490,6 +498,6 @@ return {
 };
 })();
 
-(node as any).hash = "00d507b0a5e04fae7153a40260bf99f4";
+(node as any).hash = "ad18ad3b9bd4f66da4692bc0456ffb16";
 
 export default node;

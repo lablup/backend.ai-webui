@@ -122,10 +122,13 @@ export type FormValues = ImageEnvironmentFormInput &
     // Mount config for the selected model folder (FR-3205): the container mount
     // destination and an optional subpath inside the model folder, rendered as
     // plain inputs beneath the model folder selector. Replaces the former
-    // per-mode `mountDestination` / `commandModelMount` fields and the removed
-    // config-file `definitionPath`.
+    // per-mode `mountDestination` / `commandModelMount` fields.
     modelMountDestination?: string;
     modelSubpath?: string;
+    // Path (within the model folder) to a model-definition YAML the backend
+    // reads service config from as an alternative to the explicit Start
+    // Command below; optional, so it can be set alone or alongside a command.
+    definitionPath?: string;
     startCommand?: string;
     // Start Command shell semantics (FR-3205). `commandAdvanced` toggles the
     // Basic/Advanced controls; in Advanced mode `commandExecution` chooses
@@ -308,6 +311,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       modelMountConfig {
         vfolderId
         mountDestination
+        definitionPath
         subpath @since(version: "26.4.4rc9")
       }
       modelDefinition {
@@ -921,6 +925,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       modelMountDestination:
         rev.modelMountConfig?.mountDestination ?? undefined,
       modelSubpath: rev.modelMountConfig?.subpath ?? undefined,
+      definitionPath: rev.modelMountConfig?.definitionPath || undefined,
       // `ImageEnvironmentSelectFormItems` matches the form's
       // `environments.version` against its image catalog by full name
       // (`registry/namespace:tag@architecture`); the architecture suffix is
@@ -1341,10 +1346,10 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           modelMountConfig: {
             vfolderId: selectedModelFolderUuid,
             mountDestination: modelMountDestination,
+            definitionPath: values.definitionPath?.trim() || null,
             // `subpath` (mount a subfolder inside the model vfolder) was added
             // in 26.4.4; omit the key entirely on older managers, which reject
-            // unknown input fields. `definitionPath` is no longer sent — the
-            // config-file mode was removed and the backend defaults it to null.
+            // unknown input fields.
             ...(supportsMountSubpath && { subpath: modelMountSubpath }),
           },
           modelDefinition,
@@ -2069,7 +2074,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                                       : undefined
                                   }
                                   rules={[
-                                    { required: true, whitespace: true },
+                                    // Optional — a definition-path-based
+                                    // service (`definitionPath` in Advanced
+                                    // Settings) can supply the command
+                                    // instead of this field.
+                                    { whitespace: true },
                                     // Exec = shlex.split (no shell), so
                                     // shell operators are passed literally
                                     // and never interpreted — block them.
@@ -2299,6 +2308,14 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 label: t('session.launcher.AdvancedSettings'),
                 children: (
                   <Suspense fallback={<Skeleton active />}>
+                    <Form.Item
+                      name="definitionPath"
+                      label={t('deployment.ModelDefinitionPath')}
+                      tooltip={t('modelService.ModelDefinitionPathTooltip')}
+                      rules={[{ whitespace: true }]}
+                    >
+                      <Input allowClear placeholder="model-definition.yaml" />
+                    </Form.Item>
                     <Form.Item
                       noStyle
                       dependencies={[

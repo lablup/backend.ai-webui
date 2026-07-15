@@ -1977,6 +1977,7 @@
     "MaxWaitTimeTooltip": "Saat maksimum yang dimiliki perkhidmatan untuk bertindak balas terhadap semakan kesihatan tunggal sebelum dianggap sebagai kegagalan.",
     "ModelDefinition": "Definisi Model",
     "ModelDefinitionPath": "Laluan Fail Definisi Model",
+    "ModelDefinitionPathTooltip": "Laluan relatif ke fail YAML definisi model di dalam folder model (cth. model-definition.yaml). Lalai kepada model-definition.yaml jika dibiarkan kosong.",
     "ModelMount": "Pemasangan Model",
     "ModelMountDestination": "Lekapkan Destinasi Untuk Folder Model",
     "ModelMountTooltip": "Laluan tempat folder model dipasang di dalam bekas.",

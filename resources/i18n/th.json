@@ -1979,6 +1979,7 @@
     "MaxWaitTimeTooltip": "จำนวนวินาทีสูงสุดที่บริการมีในการตอบสนองต่อการตรวจสอบสถานะครั้งเดียวก่อนที่จะถือว่าล้มเหลว",
     "ModelDefinition": "คำนิยามโมเดล",
     "ModelDefinitionPath": "เส้นทางไฟล์กำหนดโมเดล",
+    "ModelDefinitionPathTooltip": "เส้นทางสัมพัทธ์ไปยังไฟล์ YAML คำนิยามโมเดลภายในโฟลเดอร์โมเดล (เช่น model-definition.yaml) หากเว้นว่างจะใช้ model-definition.yaml เป็นค่าเริ่มต้น",
     "ModelMount": "การเมานต์โมเดล",
     "ModelMountDestination": "ปลายทางการเมาท์สำหรับโฟลเดอร์โมเดล",
     "ModelMountTooltip": "เส้นทางที่โฟลเดอร์โมเดลถูกเมานต์ภายในคอนเทนเนอร์",

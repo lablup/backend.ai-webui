@@ -1981,6 +1981,7 @@
     "MaxWaitTimeTooltip": "服務回應單次健康檢查的最大秒數，超過此時間將視為失敗。",
     "ModelDefinition": "模型定義",
     "ModelDefinitionPath": "模型定義檔路徑",
+    "ModelDefinitionPathTooltip": "模型資料夾內模型定義 YAML 檔的相對路徑（例如 model-definition.yaml）。若留空，預設使用 model-definition.yaml。",
     "ModelMount": "模型掛載",
     "ModelMountDestination": "模型資料夾的安裝目標",
     "ModelMountTooltip": "模型資料夾在容器內部掛載的路徑。",

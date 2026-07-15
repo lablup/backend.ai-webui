@@ -1977,6 +1977,7 @@
     "MaxWaitTimeTooltip": "Sekuntien enimmäismäärä, jonka palvelulla on aikaa vastata yksittäiseen terveystarkastukseen ennen kuin se katsotaan epäonnistuneeksi.",
     "ModelDefinition": "Mallin määritelmä",
     "ModelDefinitionPath": "Mallin määritelmän tiedostopolku",
+    "ModelDefinitionPathTooltip": "Suhteellinen polku mallin määritelmän YAML-tiedostoon mallikansiossa (esim. model-definition.yaml). Oletusarvona käytetään model-definition.yaml, jos kenttä jätetään tyhjäksi.",
     "ModelMount": "Mallin liittäminen",
     "ModelMountDestination": "Kiinnityskohde mallikansioon",
     "ModelMountTooltip": "Polku, johon mallikansio on liitetty kontin sisällä.",

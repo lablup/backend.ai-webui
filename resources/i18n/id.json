@@ -1980,6 +1980,7 @@
     "MaxWaitTimeTooltip": "Detik maksimum yang dimiliki layanan untuk merespons satu pemeriksaan kesehatan sebelum dianggap gagal.",
     "ModelDefinition": "Definisi Model",
     "ModelDefinitionPath": "Jalur File Definisi Model",
+    "ModelDefinitionPathTooltip": "Jalur relatif ke file YAML definisi model di dalam folder model (mis. model-definition.yaml). Default ke model-definition.yaml jika dikosongkan.",
     "ModelMount": "Mount Model",
     "ModelMountDestination": "Pasang Tujuan Untuk Folder Model",
     "ModelMountTooltip": "Jalur tempat folder model di-mount di dalam container.",

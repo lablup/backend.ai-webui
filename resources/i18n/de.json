@@ -1979,6 +1979,7 @@
     "MaxWaitTimeTooltip": "Maximale Sekunden, die der Dienst hat, um auf einen einzelnen Gesundheitscheck zu antworten, bevor er als Fehler gewertet wird.",
     "ModelDefinition": "Modelldefinition",
     "ModelDefinitionPath": "Pfad der Modelldefinitionsdatei",
+    "ModelDefinitionPathTooltip": "Relativer Pfad zur YAML-Datei der Modelldefinition im Modellordner (z. B. model-definition.yaml). Standardmäßig wird model-definition.yaml verwendet, wenn das Feld leer bleibt.",
     "ModelMount": "Modell-Mount",
     "ModelMountDestination": "Mount-Ziel für Modellordner",
     "ModelMountTooltip": "Der Pfad, an dem der Modellordner innerhalb des Containers gemountet wird.",

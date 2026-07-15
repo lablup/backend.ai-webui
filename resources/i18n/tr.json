@@ -1977,6 +1977,7 @@
     "MaxWaitTimeTooltip": "Hizmetin tek bir sağlık kontrolüne yanıt vermesi için ayrılan maksimum saniye sayısı. Bu süre aşılırsa başarısız kabul edilir.",
     "ModelDefinition": "Model tanımı",
     "ModelDefinitionPath": "Model Tanımı Dosya Yolu",
+    "ModelDefinitionPathTooltip": "Model klasöründeki model tanımı YAML dosyasının göreli yolu (örn. model-definition.yaml). Boş bırakılırsa varsayılan olarak model-definition.yaml kullanılır.",
     "ModelMount": "Model bağlama",
     "ModelMountDestination": "Model Klasörü İçin Montaj Hedefi",
     "ModelMountTooltip": "Model klasörünün container içinde bağlandığı yol.",

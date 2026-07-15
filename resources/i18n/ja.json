@@ -1979,6 +1979,7 @@
     "MaxWaitTimeTooltip": "1回のヘルスチェックに対してサービスが応答するための最大秒数です。この時間を超えると失敗と判断されます。",
     "ModelDefinition": "モデル定義",
     "ModelDefinitionPath": "モデル定義ファイルのパス",
+    "ModelDefinitionPathTooltip": "モデルフォルダ内にあるモデル定義 YAML ファイルへの相対パスです（例: model-definition.yaml）。空欄のままにするとデフォルトで model-definition.yaml が使用されます。",
     "ModelMount": "モデルマウント",
     "ModelMountDestination": "モデルフォルダーのマウント先",
     "ModelMountTooltip": "コンテナ内にモデルフォルダがマウントされるパスです。",

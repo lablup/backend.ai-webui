@@ -1978,6 +1978,7 @@
     "MaxWaitTimeTooltip": "Maksymalna liczba sekund, jaką usługa ma na odpowiedź na pojedynczą kontrolę zdrowia, zanim zostanie uznana za nieudaną.",
     "ModelDefinition": "Definicja modelu",
     "ModelDefinitionPath": "Ścieżka pliku definicji modelu",
+    "ModelDefinitionPathTooltip": "Względna ścieżka do pliku YAML definicji modelu w folderze modelu (np. model-definition.yaml). Domyślnie model-definition.yaml, jeśli pole pozostanie puste.",
     "ModelMount": "Montowanie modelu",
     "ModelMountDestination": "Miejsce docelowe montażu dla folderu modelu",
     "ModelMountTooltip": "Ścieżka, pod którą folder modelu jest montowany wewnątrz kontenera.",
