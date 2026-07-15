@@ -1883,19 +1883,16 @@
   },
   "loginHistory": {
     "Domain": "Domain",
-    "FailReason": "Sebab Kegagalan",
     "LoginTime": "Masa Log Masuk",
     "Result": "Keputusan"
   },
   "loginSession": {
     "AccessKey": "Kunci Akses",
     "CreatedAt": "Dicipta Pada",
-    "InvalidatedAt": "Tidak Sah Pada",
     "RevokeFailed": "Gagal membatalkan sesi log masuk.",
     "RevokeSession": "Batalkan Sesi",
     "RevokeSessionConfirm": "Adakah anda pasti mahu membatalkan sesi log masuk ini?",
-    "RevokeSucceeded": "Sesi log masuk berjaya dibatalkan.",
-    "User": "Pengguna"
+    "RevokeSucceeded": "Sesi log masuk berjaya dibatalkan."
   },
   "logs": {
     "ErrorMessage": "Mesej Ralat",
@@ -2433,13 +2430,15 @@
     "IdleTimeoutSec": "Tamat waktu tunggu (sek.)",
     "Keypair": "Pasangan kekunci",
     "KeypairResourcePolicy": "Dasar Sumber Keypair",
+    "MaxConcurrentLogins": "Log Masuk Serentak Maksimum",
     "MaxConcurrentSFTPSessions": "Sesi SFTP bersamaan Max",
     "MaxCustomizedImageCount": "Kiraan Imej Tersuai Maks",
     "MaxFolderCount": "Kiraan Folder Maks",
     "MaxNetworkCount": "Kiraan Rangkaian Maks",
     "MaxPendingSessionCount": "Kiraan sesi maksimum yang belum selesai",
     "MaxPendingSessionResourceSlots": "Slot sumber sesi maksimum yang belum selesai",
-    "MaxQuotaScopeSize": "Saiz Skop Kuota Maks (GB)",
+    "MaxQuotaScopeSize": "Saiz Skop Kuota Maks",
+    "MaxQuotaScopeSizeGB": "Saiz Skop Kuota Maks (GB)",
     "MaxSessionCountPerModelSession": "Kiraan Sesi Maks Setiap Sesi Model",
     "MaxSessionLifetime": "Sepanjang Hayat Sesi (saat)",
     "MaxVFolderCount": "Kiraan Folder Maks",
@@ -2452,7 +2451,10 @@
     "Project": "Projek",
     "ProjectResourcePolicy": "Dasar Sumber Projek",
     "ResourcePolicy": "Dasar Sumber",
+    "ResourcePolicyCreated": "Dasar sumber telah dibuat.",
+    "ResourcePolicyDeleted": "Dasar sumber telah dipadam.",
     "ResourcePolicyNameAlreadyExists": "Nama dasar sumber sudah wujud. \nSila tukar nama untuk ditambah.",
+    "ResourcePolicyUpdated": "Dasar sumber telah dikemas kini.",
     "Resources": "Sumber",
     "Sessions": "Sesi",
     "StorageNodes": "Nod Penyimpanan",

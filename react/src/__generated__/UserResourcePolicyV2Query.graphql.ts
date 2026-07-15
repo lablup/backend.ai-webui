@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<071a8e61632da75f29d4e2d5f4e626e6>>
+ * @generated SignedSource<<200e6326ec5656895da2dc14ce90da14>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,16 +10,19 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type LoginAttemptResult = "EVICTED" | "EXPIRED" | "FAILED_BLOCKED" | "FAILED_INVALID_CREDENTIALS" | "FAILED_PASSWORD_EXPIRED" | "FAILED_REJECTED_BY_HOOK" | "FAILED_SESSION_ALREADY_EXISTS" | "FAILED_USER_INACTIVE" | "LOGOUT" | "REVOKED_BY_ADMIN" | "REVOKED_BY_USER" | "SUCCESS" | "%future added value";
-export type LoginHistoryOrderField = "CREATED_AT" | "DOMAIN_NAME" | "RESULT" | "%future added value";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
-export type LoginHistoryFilter = {
-  AND?: ReadonlyArray<LoginHistoryFilter> | null | undefined;
-  NOT?: ReadonlyArray<LoginHistoryFilter> | null | undefined;
-  OR?: ReadonlyArray<LoginHistoryFilter> | null | undefined;
+export type UserResourcePolicyV2OrderField = "CREATED_AT" | "MAX_CONCURRENT_LOGINS" | "MAX_CUSTOMIZED_IMAGE_COUNT" | "MAX_QUOTA_SCOPE_SIZE" | "MAX_SESSION_COUNT_PER_MODEL_SESSION" | "MAX_VFOLDER_COUNT" | "NAME" | "%future added value";
+export type UserResourcePolicyV2Filter = {
+  AND?: ReadonlyArray<UserResourcePolicyV2Filter> | null | undefined;
+  NOT?: ReadonlyArray<UserResourcePolicyV2Filter> | null | undefined;
+  OR?: ReadonlyArray<UserResourcePolicyV2Filter> | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
-  domainName?: StringFilter | null | undefined;
-  result?: LoginHistoryResultFilter | null | undefined;
+  maxConcurrentLogins?: IntFilter | null | undefined;
+  maxCustomizedImageCount?: IntFilter | null | undefined;
+  maxQuotaScopeSize?: IntFilter | null | undefined;
+  maxSessionCountPerModelSession?: IntFilter | null | undefined;
+  maxVfolderCount?: IntFilter | null | undefined;
+  name?: StringFilter | null | undefined;
 };
 export type StringFilter = {
   contains?: string | null | undefined;
@@ -43,41 +46,45 @@ export type StringFilter = {
   notStartsWith?: string | null | undefined;
   startsWith?: string | null | undefined;
 };
-export type LoginHistoryResultFilter = {
-  equals?: LoginAttemptResult | null | undefined;
-  in?: ReadonlyArray<LoginAttemptResult> | null | undefined;
-  notEquals?: LoginAttemptResult | null | undefined;
-  notIn?: ReadonlyArray<LoginAttemptResult> | null | undefined;
-};
 export type DateTimeFilter = {
   after?: string | null | undefined;
   before?: string | null | undefined;
   equals?: string | null | undefined;
   notEquals?: string | null | undefined;
 };
-export type LoginHistoryOrderBy = {
-  direction?: OrderDirection;
-  field: LoginHistoryOrderField;
+export type IntFilter = {
+  equals?: number | null | undefined;
+  greaterThan?: number | null | undefined;
+  greaterThanOrEqual?: number | null | undefined;
+  lessThan?: number | null | undefined;
+  lessThanOrEqual?: number | null | undefined;
+  notEquals?: number | null | undefined;
 };
-export type LoginHistoryQuery$variables = {
-  filter?: LoginHistoryFilter | null | undefined;
+export type UserResourcePolicyV2OrderBy = {
+  direction?: OrderDirection;
+  field?: UserResourcePolicyV2OrderField;
+};
+export type UserResourcePolicyV2Query$variables = {
+  filter?: UserResourcePolicyV2Filter | null | undefined;
   limit?: number | null | undefined;
   offset?: number | null | undefined;
-  orderBy?: ReadonlyArray<LoginHistoryOrderBy> | null | undefined;
+  orderBy?: ReadonlyArray<UserResourcePolicyV2OrderBy> | null | undefined;
 };
-export type LoginHistoryQuery$data = {
-  readonly myLoginHistoryV2: {
+export type UserResourcePolicyV2Query$data = {
+  readonly adminUserResourcePoliciesV2: {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
-        readonly " $fragmentSpreads": FragmentRefs<"BAILoginHistoryTableFragment">;
+        readonly id: string;
+        readonly name: string;
+        readonly " $fragmentSpreads": FragmentRefs<"BAIUserResourcePolicyV2TableFragment" | "UserResourcePolicyV2SettingModalFragment">;
       };
     }>;
   } | null | undefined;
 };
-export type LoginHistoryQuery = {
-  response: LoginHistoryQuery$data;
-  variables: LoginHistoryQuery$variables;
+export type UserResourcePolicyV2Query = {
+  response: UserResourcePolicyV2Query$data;
+  variables: UserResourcePolicyV2Query$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -129,6 +136,20 @@ v5 = {
   "kind": "ScalarField",
   "name": "count",
   "storageKey": null
+},
+v6 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v7 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
 };
 return {
   "fragment": {
@@ -140,21 +161,21 @@ return {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "LoginHistoryQuery",
+    "name": "UserResourcePolicyV2Query",
     "selections": [
       {
         "alias": null,
         "args": (v4/*: any*/),
-        "concreteType": "LoginHistoryV2Connection",
+        "concreteType": "UserResourcePolicyV2Connection",
         "kind": "LinkedField",
-        "name": "myLoginHistoryV2",
+        "name": "adminUserResourcePoliciesV2",
         "plural": false,
         "selections": [
           (v5/*: any*/),
           {
             "alias": null,
             "args": null,
-            "concreteType": "LoginHistoryV2Edge",
+            "concreteType": "UserResourcePolicyV2Edge",
             "kind": "LinkedField",
             "name": "edges",
             "plural": true,
@@ -162,15 +183,22 @@ return {
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "LoginHistoryV2",
+                "concreteType": "UserResourcePolicyV2",
                 "kind": "LinkedField",
                 "name": "node",
                 "plural": false,
                 "selections": [
+                  (v6/*: any*/),
+                  (v7/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
-                    "name": "BAILoginHistoryTableFragment"
+                    "name": "BAIUserResourcePolicyV2TableFragment"
+                  },
+                  {
+                    "args": null,
+                    "kind": "FragmentSpread",
+                    "name": "UserResourcePolicyV2SettingModalFragment"
                   }
                 ],
                 "storageKey": null
@@ -194,21 +222,21 @@ return {
       (v2/*: any*/)
     ],
     "kind": "Operation",
-    "name": "LoginHistoryQuery",
+    "name": "UserResourcePolicyV2Query",
     "selections": [
       {
         "alias": null,
         "args": (v4/*: any*/),
-        "concreteType": "LoginHistoryV2Connection",
+        "concreteType": "UserResourcePolicyV2Connection",
         "kind": "LinkedField",
-        "name": "myLoginHistoryV2",
+        "name": "adminUserResourcePoliciesV2",
         "plural": false,
         "selections": [
           (v5/*: any*/),
           {
             "alias": null,
             "args": null,
-            "concreteType": "LoginHistoryV2Edge",
+            "concreteType": "UserResourcePolicyV2Edge",
             "kind": "LinkedField",
             "name": "edges",
             "plural": true,
@@ -216,44 +244,64 @@ return {
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "LoginHistoryV2",
+                "concreteType": "UserResourcePolicyV2",
                 "kind": "LinkedField",
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "id",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "result",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "domainName",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "failReason",
-                    "storageKey": null
-                  },
+                  (v6/*: any*/),
+                  (v7/*: any*/),
                   {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
                     "name": "createdAt",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "maxVfolderCount",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "maxConcurrentLogins",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "maxSessionCountPerModelSession",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "BinarySizeInfo",
+                    "kind": "LinkedField",
+                    "name": "maxQuotaScopeSize",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "expr",
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "maxCustomizedImageCount",
                     "storageKey": null
                   }
                 ],
@@ -268,16 +316,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "d3adafeb86e63588f4380d9b4c4e9374",
+    "cacheID": "b4d6a4d0afeee1c1a05504fd9268ed2c",
     "id": null,
     "metadata": {},
-    "name": "LoginHistoryQuery",
+    "name": "UserResourcePolicyV2Query",
     "operationKind": "query",
-    "text": "query LoginHistoryQuery(\n  $filter: LoginHistoryFilter\n  $orderBy: [LoginHistoryOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  myLoginHistoryV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...BAILoginHistoryTableFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAILoginHistoryTableFragment on LoginHistoryV2 {\n  id\n  result\n  domainName\n  failReason\n  createdAt\n}\n"
+    "text": "query UserResourcePolicyV2Query(\n  $filter: UserResourcePolicyV2Filter\n  $orderBy: [UserResourcePolicyV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminUserResourcePoliciesV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        name\n        ...BAIUserResourcePolicyV2TableFragment\n        ...UserResourcePolicyV2SettingModalFragment\n      }\n    }\n  }\n}\n\nfragment BAIUserResourcePolicyV2TableFragment on UserResourcePolicyV2 {\n  id\n  name\n  createdAt\n  maxVfolderCount\n  maxConcurrentLogins\n  maxSessionCountPerModelSession\n  maxQuotaScopeSize {\n    expr\n  }\n  maxCustomizedImageCount\n}\n\nfragment UserResourcePolicyV2SettingModalFragment on UserResourcePolicyV2 {\n  id\n  name\n  maxVfolderCount\n  maxConcurrentLogins\n  maxSessionCountPerModelSession\n  maxQuotaScopeSize {\n    expr\n  }\n  maxCustomizedImageCount\n}\n"
   }
 };
 })();
 
-(node as any).hash = "e87d7bf9cea51106011c02a4e6b6a633";
+(node as any).hash = "0eca06ab39c8e6b871b0fff606e5f9a6";
 
 export default node;

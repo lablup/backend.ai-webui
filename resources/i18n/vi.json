@@ -1885,19 +1885,16 @@
   },
   "loginHistory": {
     "Domain": "Miền",
-    "FailReason": "Lý do thất bại",
     "LoginTime": "Thời gian đăng nhập",
     "Result": "Kết quả"
   },
   "loginSession": {
     "AccessKey": "Khóa truy cập",
     "CreatedAt": "Được tạo tại",
-    "InvalidatedAt": "Bị vô hiệu tại",
     "RevokeFailed": "Không thể thu hồi phiên đăng nhập.",
     "RevokeSession": "Thu hồi phiên",
     "RevokeSessionConfirm": "Bạn có chắc chắn muốn thu hồi phiên đăng nhập này không?",
-    "RevokeSucceeded": "Phiên đăng nhập đã được thu hồi thành công.",
-    "User": "Người dùng"
+    "RevokeSucceeded": "Phiên đăng nhập đã được thu hồi thành công."
   },
   "logs": {
     "ErrorMessage": "Thông báo lỗi",
@@ -2435,13 +2432,15 @@
     "IdleTimeoutSec": "Thời gian chờ không hoạt động (giây)",
     "Keypair": "Cặp khóa",
     "KeypairResourcePolicy": "Chính sách tài nguyên Keypair",
+    "MaxConcurrentLogins": "Số lần đăng nhập đồng thời tối đa",
     "MaxConcurrentSFTPSessions": "Phiên SFTP đồng thời tối đa",
     "MaxCustomizedImageCount": "Số lượng hình ảnh tùy chỉnh tối đa",
     "MaxFolderCount": "Số lượng thư mục tối đa",
     "MaxNetworkCount": "Số lượng mạng tối đa",
     "MaxPendingSessionCount": "Số lượng phiên đang chờ xử lý tối đa",
     "MaxPendingSessionResourceSlots": "Các khe cắm tài nguyên phiên đang chờ xử lý tối đa",
-    "MaxQuotaScopeSize": "Kích thước phạm vi hạn ngạch tối đa (GB)",
+    "MaxQuotaScopeSize": "Kích thước phạm vi hạn ngạch tối đa",
+    "MaxQuotaScopeSizeGB": "Kích thước phạm vi hạn ngạch tối đa (GB)",
     "MaxSessionCountPerModelSession": "Số phiên tối đa trên mỗi phiên mô hình",
     "MaxSessionLifetime": "Thời gian tồn tại của phiên (giây)",
     "MaxVFolderCount": "Số lượng thư mục tối đa",
@@ -2454,7 +2453,10 @@
     "Project": "Dự án",
     "ProjectResourcePolicy": "Chính sách tài nguyên dự án",
     "ResourcePolicy": "Chính sách tài nguyên",
+    "ResourcePolicyCreated": "Chính sách tài nguyên đã được tạo.",
+    "ResourcePolicyDeleted": "Chính sách tài nguyên đã được xóa.",
     "ResourcePolicyNameAlreadyExists": "Tên chính sách tài nguyên đã tồn tại. \nVui lòng thay đổi tên để thêm.",
+    "ResourcePolicyUpdated": "Chính sách tài nguyên đã được cập nhật.",
     "Resources": "Tài nguyên",
     "Sessions": "Phiên",
     "StorageNodes": "Nút lưu trữ",

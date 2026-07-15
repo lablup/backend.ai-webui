@@ -1885,19 +1885,16 @@
   },
   "loginHistory": {
     "Domain": "Domain",
-    "FailReason": "Fehlergrund",
     "LoginTime": "Anmeldezeit",
     "Result": "Ergebnis"
   },
   "loginSession": {
     "AccessKey": "Zugriffsschlüssel",
     "CreatedAt": "Erstellt am",
-    "InvalidatedAt": "Ungültig seit",
     "RevokeFailed": "Widerruf der Anmeldesitzung fehlgeschlagen.",
     "RevokeSession": "Sitzung widerrufen",
     "RevokeSessionConfirm": "Möchten Sie diese Anmeldesitzung wirklich widerrufen?",
-    "RevokeSucceeded": "Anmeldesitzung erfolgreich widerrufen.",
-    "User": "Benutzer"
+    "RevokeSucceeded": "Anmeldesitzung erfolgreich widerrufen."
   },
   "logs": {
     "ErrorMessage": "Fehlermeldung",
@@ -2435,13 +2432,15 @@
     "IdleTimeoutSec": "Leerlauf-Timeout (Sek.)",
     "Keypair": "Schlüsselpaar",
     "KeypairResourcePolicy": "Schlüsselpaar-Ressourcenrichtlinie",
+    "MaxConcurrentLogins": "Max. gleichzeitige Anmeldungen",
     "MaxConcurrentSFTPSessions": "Max gleichzeitige SFTP -Sitzungen",
     "MaxCustomizedImageCount": "Maximale Anzahl benutzerdefinierter Bilder",
     "MaxFolderCount": "Maximale Ordneranzahl",
     "MaxNetworkCount": "Maximale Netzwerkanzahl",
     "MaxPendingSessionCount": "Maximal ausstehende Sitzungsanzahl",
     "MaxPendingSessionResourceSlots": "Maxe ausstehende Sitzungsressourcenschlitze",
-    "MaxQuotaScopeSize": "Maximale Kontingentumfangsgröße (GB)",
+    "MaxQuotaScopeSize": "Maximale Kontingentumfangsgröße",
+    "MaxQuotaScopeSizeGB": "Maximale Kontingentumfangsgröße (GB)",
     "MaxSessionCountPerModelSession": "Maximale Sitzungsanzahl pro Modellsitzung",
     "MaxSessionLifetime": "Lebensdauer der Sitzung (Sek.)",
     "MaxVFolderCount": "Maximale Ordneranzahl",
@@ -2454,7 +2453,10 @@
     "Project": "Projekt",
     "ProjectResourcePolicy": "Projekt-Ressourcenrichtlinie",
     "ResourcePolicy": "Ressourcenrichtlinie",
+    "ResourcePolicyCreated": "Die Ressourcenrichtlinie wurde erstellt.",
+    "ResourcePolicyDeleted": "Die Ressourcenrichtlinie wurde gelöscht.",
     "ResourcePolicyNameAlreadyExists": "Der Name der Ressourcenrichtlinie ist bereits vorhanden. \nBitte ändern Sie den hinzuzufügenden Namen.",
+    "ResourcePolicyUpdated": "Die Ressourcenrichtlinie wurde aktualisiert.",
     "Resources": "Ressourcen",
     "Sessions": "Sitzungen",
     "StorageNodes": "Speicherknoten",

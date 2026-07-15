@@ -1883,19 +1883,16 @@
   },
   "loginHistory": {
     "Domain": "Домен",
-    "FailReason": "Причина сбоя",
     "LoginTime": "Время входа",
     "Result": "Результат"
   },
   "loginSession": {
     "AccessKey": "Ключ доступа",
     "CreatedAt": "Создано в",
-    "InvalidatedAt": "Аннулировано в",
     "RevokeFailed": "Не удалось отозвать сеанс входа.",
     "RevokeSession": "Отозвать сеанс",
     "RevokeSessionConfirm": "Вы уверены, что хотите отозвать этот сеанс входа?",
-    "RevokeSucceeded": "Сеанс входа успешно отозван.",
-    "User": "Пользователь"
+    "RevokeSucceeded": "Сеанс входа успешно отозван."
   },
   "logs": {
     "ErrorMessage": "Сообщение об ошибке",
@@ -2433,13 +2430,15 @@
     "IdleTimeoutSec": "Тайм-аут простоя (сек.)",
     "Keypair": "Ключевая пара",
     "KeypairResourcePolicy": "Политика ресурсов Keypair",
+    "MaxConcurrentLogins": "Максимум одновременных входов",
     "MaxConcurrentSFTPSessions": "Максимальные параллельные сеансы SFTP",
     "MaxCustomizedImageCount": "Максимальное количество индивидуальных изображений",
     "MaxFolderCount": "Максимальное количество папок",
     "MaxNetworkCount": "Максимальное количество сетей",
     "MaxPendingSessionCount": "Максимальный счет в ожидании сессии",
     "MaxPendingSessionResourceSlots": "Максимальный ожидающий сессионные слоты ресурсов",
-    "MaxQuotaScopeSize": "Максимальный размер квоты (ГБ)",
+    "MaxQuotaScopeSize": "Максимальный размер квоты",
+    "MaxQuotaScopeSizeGB": "Максимальный размер квоты (ГБ)",
     "MaxSessionCountPerModelSession": "Максимальное количество сеансов на модельный сеанс",
     "MaxSessionLifetime": "Время жизни сеанса (сек.)",
     "MaxVFolderCount": "Максимальное количество папок",
@@ -2452,7 +2451,10 @@
     "Project": "Проект",
     "ProjectResourcePolicy": "Политика ресурсов проекта",
     "ResourcePolicy": "Политика ресурсов",
+    "ResourcePolicyCreated": "Политика ресурсов создана.",
+    "ResourcePolicyDeleted": "Политика ресурсов удалена.",
     "ResourcePolicyNameAlreadyExists": "Название политики ресурсов уже существует. \nПожалуйста, измените имя, чтобы добавить.",
+    "ResourcePolicyUpdated": "Политика ресурсов обновлена.",
     "Resources": "Ресурсы",
     "Sessions": "Сессии",
     "StorageNodes": "Узлы хранения",

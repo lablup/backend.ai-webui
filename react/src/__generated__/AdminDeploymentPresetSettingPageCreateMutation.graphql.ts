@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<837892dcee88bb7a9639eb8158ad2d86>>
+ * @generated SignedSource<<5fd4151c93dbeed64db2bc9a56772a03>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -62,7 +62,7 @@ export type PresetModelServiceConfigInput = {
   healthCheck?: PresetModelHealthCheckInput | null | undefined;
   port: number;
   preStartActions: ReadonlyArray<PreStartActionInput>;
-  shell?: string;
+  shell?: string | null | undefined;
   startCommand?: ReadonlyArray<string> | null | undefined;
 };
 export type PreStartActionInput = {

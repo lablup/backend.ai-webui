@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d1ac80d7bfeb1c2ed44c030fb89b6d1a>>
+ * @generated SignedSource<<a93e1a6494032d03a9087faa6439351b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,6 +19,8 @@ export type EntityFilter = {
   OR?: ReadonlyArray<EntityFilter> | null | undefined;
   entityId?: StringFilter | null | undefined;
   entityType?: RBACElementTypeFilter | null | undefined;
+  scopeId?: StringFilter | null | undefined;
+  scopeType?: RBACElementTypeFilter | null | undefined;
 };
 export type RBACElementTypeFilter = {
   equals?: RBACElementType | null | undefined;

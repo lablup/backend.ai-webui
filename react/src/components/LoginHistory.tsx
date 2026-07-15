@@ -8,13 +8,12 @@ import type {
 } from '../__generated__/LoginHistoryQuery.graphql';
 import { convertToOrderBy } from '../helper';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
-import LoginHistoryTable, {
-  loginResultFilterOptions,
-  type LoginHistoryTableProps,
-} from './LoginHistoryTable';
 import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
+  BAILoginHistoryTable,
+  type BAILoginHistoryTableProps,
+  loginResultFilterOptions,
   filterOutNullAndUndefined,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -43,7 +42,7 @@ export const LoginHistoryQuery = graphql`
       count
       edges {
         node {
-          ...LoginHistoryTableFragment
+          ...BAILoginHistoryTableFragment
         }
       }
     }
@@ -51,7 +50,7 @@ export const LoginHistoryQuery = graphql`
 `;
 
 export interface LoginHistoryProps extends Omit<
-  LoginHistoryTableProps,
+  BAILoginHistoryTableProps,
   | 'loginHistoryFrgmt'
   | 'loading'
   | 'order'
@@ -69,7 +68,7 @@ export interface LoginHistoryProps extends Omit<
 
 /**
  * LoginHistory - Reads a preloaded `myLoginHistoryV2` query and renders it as a
- * `LoginHistoryTable` with a filter bar and a refresh button. The consumer owns
+ * `BAILoginHistoryTable` with a filter bar and a refresh button. The consumer owns
  * `useQueryLoader` / `loadQuery`; this view reads the `queryRef` via
  * `usePreloadedQuery` and re-runs filter / sort / refresh / paging through
  * `onReload`. Reading the *deferred* `queryRef` keeps the previous rows visible
@@ -146,7 +145,7 @@ const LoginHistory = ({
           loading={isRefetching}
         />
       </BAIFlex>
-      <LoginHistoryTable
+      <BAILoginHistoryTable
         resizable
         loading={isRefetching}
         order={order}

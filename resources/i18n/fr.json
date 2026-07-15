@@ -1884,19 +1884,16 @@
   },
   "loginHistory": {
     "Domain": "Domaine",
-    "FailReason": "Raison de l'échec",
     "LoginTime": "Heure de connexion",
     "Result": "Résultat"
   },
   "loginSession": {
     "AccessKey": "Clé d'accès",
     "CreatedAt": "Créé à",
-    "InvalidatedAt": "Invalidé à",
     "RevokeFailed": "Échec de la révocation de la session de connexion.",
     "RevokeSession": "Révoquer la session",
     "RevokeSessionConfirm": "Êtes-vous sûr de vouloir révoquer cette session de connexion ?",
-    "RevokeSucceeded": "Session de connexion révoquée avec succès.",
-    "User": "Utilisateur"
+    "RevokeSucceeded": "Session de connexion révoquée avec succès."
   },
   "logs": {
     "ErrorMessage": "Message d'erreur",
@@ -2435,13 +2432,15 @@
     "IdleTimeoutSec": "Délai d'inactivité (sec.)",
     "Keypair": "Paire de clés",
     "KeypairResourcePolicy": "Politique de ressources Keypair",
+    "MaxConcurrentLogins": "Connexions simultanées max.",
     "MaxConcurrentSFTPSessions": "Sessions SFTP max simultanées",
     "MaxCustomizedImageCount": "Nombre maximal d'images personnalisées",
     "MaxFolderCount": "Nombre maximum de dossiers",
     "MaxNetworkCount": "Nombre maximum de réseaux",
     "MaxPendingSessionCount": "Compte de session en attente maximum",
     "MaxPendingSessionResourceSlots": "Emplacements de ressources de session en attente maximale",
-    "MaxQuotaScopeSize": "Taille maximale de la portée du quota (Go)",
+    "MaxQuotaScopeSize": "Taille maximale de la portée du quota",
+    "MaxQuotaScopeSizeGB": "Taille maximale de la portée du quota (Go)",
     "MaxSessionCountPerModelSession": "Nombre maximum de sessions par session de modèle",
     "MaxSessionLifetime": "Durée de vie de la session (sec.)",
     "MaxVFolderCount": "Nombre maximum de dossiers",
@@ -2454,7 +2453,10 @@
     "Project": "Projet",
     "ProjectResourcePolicy": "Politique de ressources projet",
     "ResourcePolicy": "Politique de ressources",
+    "ResourcePolicyCreated": "La politique de ressources a été créée.",
+    "ResourcePolicyDeleted": "La politique de ressources a été supprimée.",
     "ResourcePolicyNameAlreadyExists": "Le nom de la stratégie de ressources existe déjà. \nVeuillez modifier le nom à ajouter.",
+    "ResourcePolicyUpdated": "La politique de ressources a été mise à jour.",
     "Resources": "Ressources",
     "Sessions": "Séances",
     "StorageNodes": "Nœuds de stockage",

@@ -1884,19 +1884,16 @@
   },
   "loginHistory": {
     "Domain": "Domena",
-    "FailReason": "Przyczyna błędu",
     "LoginTime": "Czas logowania",
     "Result": "Wynik"
   },
   "loginSession": {
     "AccessKey": "Klucz dostępu",
     "CreatedAt": "Utworzono o godz",
-    "InvalidatedAt": "Unieważniono o godz",
     "RevokeFailed": "Nie udało się odwołać sesji logowania.",
     "RevokeSession": "Odwołaj sesję",
     "RevokeSessionConfirm": "Czy na pewno chcesz odwołać tę sesję logowania?",
-    "RevokeSucceeded": "Sesja logowania została pomyślnie odwołana.",
-    "User": "Użytkownik"
+    "RevokeSucceeded": "Sesja logowania została pomyślnie odwołana."
   },
   "logs": {
     "ErrorMessage": "Komunikat o błędzie",
@@ -2435,13 +2432,15 @@
     "IdleTimeoutSec": "Limit czasu bezczynności (sek.)",
     "Keypair": "Para kluczy",
     "KeypairResourcePolicy": "Polityka zasobów Keypair",
+    "MaxConcurrentLogins": "Maks. liczba równoczesnych logowań",
     "MaxConcurrentSFTPSessions": "Max równoległe sesje SFTP",
     "MaxCustomizedImageCount": "Maksymalna dostosowana liczba obrazów",
     "MaxFolderCount": "Maksymalna liczba folderów",
     "MaxNetworkCount": "Maksymalna liczba sieci",
     "MaxPendingSessionCount": "Max oczekujący na liczbę sesji",
     "MaxPendingSessionResourceSlots": "Max oczekujący szczeliny zasobów sesji",
-    "MaxQuotaScopeSize": "Maksymalny rozmiar zakresu przydziału (GB)",
+    "MaxQuotaScopeSize": "Maksymalny rozmiar zakresu przydziału",
+    "MaxQuotaScopeSizeGB": "Maksymalny rozmiar zakresu przydziału (GB)",
     "MaxSessionCountPerModelSession": "Maksymalna liczba sesji na sesję modelu",
     "MaxSessionLifetime": "Czas trwania sesji (sek.)",
     "MaxVFolderCount": "Maksymalna liczba folderów",
@@ -2454,7 +2453,10 @@
     "Project": "Projekt",
     "ProjectResourcePolicy": "Polityka zasobów projektu",
     "ResourcePolicy": "Polityka zasobów",
+    "ResourcePolicyCreated": "Zasady zasobów zostały utworzone.",
+    "ResourcePolicyDeleted": "Zasady zasobów zostały usunięte.",
     "ResourcePolicyNameAlreadyExists": "Nazwa zasady zasobów już istnieje. \nAby dodać, zmień nazwę.",
+    "ResourcePolicyUpdated": "Zasady zasobów zostały zaktualizowane.",
     "Resources": "Zasoby",
     "Sessions": "Sesje",
     "StorageNodes": "Węzły magazynowania",

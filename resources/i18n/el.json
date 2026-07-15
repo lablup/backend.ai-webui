@@ -1883,19 +1883,16 @@
   },
   "loginHistory": {
     "Domain": "Τομέας",
-    "FailReason": "Αιτία αποτυχίας",
     "LoginTime": "Ώρα σύνδεσης",
     "Result": "Αποτέλεσμα"
   },
   "loginSession": {
     "AccessKey": "Κλειδί πρόσβασης",
     "CreatedAt": "Δημιουργήθηκε στο",
-    "InvalidatedAt": "Ακυρώθηκε στο",
     "RevokeFailed": "Αποτυχία ανάκλησης της συνεδρίας σύνδεσης.",
     "RevokeSession": "Ανάκληση συνεδρίας",
     "RevokeSessionConfirm": "Είστε βέβαιοι ότι θέλετε να ανακαλέσετε αυτή τη συνεδρία σύνδεσης;",
-    "RevokeSucceeded": "Η συνεδρία σύνδεσης ανακλήθηκε με επιτυχία.",
-    "User": "Χρήστης"
+    "RevokeSucceeded": "Η συνεδρία σύνδεσης ανακλήθηκε με επιτυχία."
   },
   "logs": {
     "ErrorMessage": "Μήνυμα λάθους",
@@ -2433,13 +2430,15 @@
     "IdleTimeoutSec": "Χρονικό όριο αδράνειας (δευτ.)",
     "Keypair": "Keypair",
     "KeypairResourcePolicy": "Πολιτική πόρων Keypair",
+    "MaxConcurrentLogins": "Μέγιστες ταυτόχρονες συνδέσεις",
     "MaxConcurrentSFTPSessions": "Max ταυτόχρονες συνεδρίες SFTP",
     "MaxCustomizedImageCount": "Μέγιστος προσαρμοσμένος αριθμός εικόνων",
     "MaxFolderCount": "Μέγιστος αριθμός φακέλων",
     "MaxNetworkCount": "Μέγιστος αριθμός δικτύου",
     "MaxPendingSessionCount": "Μέγιστο μέτρο εκκρεμούσης",
     "MaxPendingSessionResourceSlots": "Max εκκρεμείς υποδοχές πόρων συνεδρίας",
-    "MaxQuotaScopeSize": "Μέγιστο μέγεθος εύρους ορίου (GB)",
+    "MaxQuotaScopeSize": "Μέγιστο μέγεθος εύρους ορίου",
+    "MaxQuotaScopeSizeGB": "Μέγιστο μέγεθος εύρους ορίου (GB)",
     "MaxSessionCountPerModelSession": "Μέγιστος αριθμός περιόδων σύνδεσης ανά περίοδο λειτουργίας μοντέλου",
     "MaxSessionLifetime": "Διάρκεια ζωής συνόδου (sec.)",
     "MaxVFolderCount": "Μέγιστος αριθμός φακέλων",
@@ -2452,7 +2451,10 @@
     "Project": "Εργο",
     "ProjectResourcePolicy": "Πολιτική πόρων έργου",
     "ResourcePolicy": "Πολιτική πόρων",
+    "ResourcePolicyCreated": "Η πολιτική πόρων δημιουργήθηκε.",
+    "ResourcePolicyDeleted": "Η πολιτική πόρων διαγράφηκε.",
     "ResourcePolicyNameAlreadyExists": "Το όνομα της πολιτικής πόρων υπάρχει ήδη. \nΑλλάξτε το όνομα για προσθήκη.",
+    "ResourcePolicyUpdated": "Η πολιτική πόρων ενημερώθηκε.",
     "Resources": "Πόροι",
     "Sessions": "Συνεδρίες",
     "StorageNodes": "Κόμβοι αποθήκευσης",

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6104a8a2f7d14791c8e5216a5dedf4ef>>
+ * @generated SignedSource<<53568254ff3c580c8d2fa5096bddcec3>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,7 +10,7 @@
 
 import { ReaderFragment } from 'relay-runtime';
 export type ClusterMode = "MULTI_NODE" | "SINGLE_NODE" | "%future added value";
-export type SessionV2Status = "CANCELLED" | "CREATING" | "DEPRIORITIZING" | "PENDING" | "PREPARED" | "PREPARING" | "RUNNING" | "SCHEDULED" | "TERMINATED" | "TERMINATING" | "%future added value";
+export type SessionV2Status = "CANCELLED" | "CREATING" | "DEPRIORITIZING" | "PENDING" | "PREEMPTED" | "PREPARED" | "PREPARING" | "RUNNING" | "SCHEDULED" | "TERMINATED" | "TERMINATING" | "%future added value";
 export type SessionV2Type = "BATCH" | "INFERENCE" | "INTERACTIVE" | "SYSTEM" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type BAISessionNodesV2Fragment$data = ReadonlyArray<{

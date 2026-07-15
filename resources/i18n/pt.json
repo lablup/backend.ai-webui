@@ -1885,19 +1885,16 @@
   },
   "loginHistory": {
     "Domain": "Domínio",
-    "FailReason": "Motivo da falha",
     "LoginTime": "Hora do login",
     "Result": "Resultado"
   },
   "loginSession": {
     "AccessKey": "Chave de acesso",
     "CreatedAt": "Criado em",
-    "InvalidatedAt": "Invalidado em",
     "RevokeFailed": "Falha ao revogar a sessão de login.",
     "RevokeSession": "Revogar sessão",
     "RevokeSessionConfirm": "Tem certeza de que deseja revogar esta sessão de login?",
-    "RevokeSucceeded": "Sessão de login revogada com sucesso.",
-    "User": "Usuário"
+    "RevokeSucceeded": "Sessão de login revogada com sucesso."
   },
   "logs": {
     "ErrorMessage": "Mensagem de erro",
@@ -2435,13 +2432,15 @@
     "IdleTimeoutSec": "Tempo limite ocioso (seg.)",
     "Keypair": "Par de chaves",
     "KeypairResourcePolicy": "Política de recursos de Keypair",
+    "MaxConcurrentLogins": "Máx. de logins simultâneos",
     "MaxConcurrentSFTPSessions": "Sessões SFTP simultâneas máximas",
     "MaxCustomizedImageCount": "Contagem máxima de imagens personalizadas",
     "MaxFolderCount": "Contagem máxima de pastas",
     "MaxNetworkCount": "Contagem máxima de rede",
     "MaxPendingSessionCount": "Contagem máxima de sessão pendente",
     "MaxPendingSessionResourceSlots": "Slots de recurso de sessão pendente máximo",
-    "MaxQuotaScopeSize": "Tamanho máximo do escopo da cota (GB)",
+    "MaxQuotaScopeSize": "Tamanho máximo do escopo da cota",
+    "MaxQuotaScopeSizeGB": "Tamanho máximo do escopo da cota (GB)",
     "MaxSessionCountPerModelSession": "Contagem máxima de sessões por sessão de modelo",
     "MaxSessionLifetime": "Tempo de vida da sessão (seg.)",
     "MaxVFolderCount": "Contagem máxima de pastas",
@@ -2454,7 +2453,10 @@
     "Project": "Projeto",
     "ProjectResourcePolicy": "Política de recursos de projeto",
     "ResourcePolicy": "Política de Recursos",
+    "ResourcePolicyCreated": "A política de recursos foi criada.",
+    "ResourcePolicyDeleted": "A política de recursos foi eliminada.",
     "ResourcePolicyNameAlreadyExists": "O nome da política de recursos já existe. \nPor favor, altere o nome para adicionar.",
+    "ResourcePolicyUpdated": "A política de recursos foi atualizada.",
     "Resources": "Recursos",
     "Sessions": "Sessões",
     "StorageNodes": "Nós de Armazenamento",

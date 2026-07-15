@@ -1,11 +1,3 @@
-/**
- @license
- Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
- */
-import type {
-  LoginHistoryTableFragment$data,
-  LoginHistoryTableFragment$key,
-} from '../__generated__/LoginHistoryTableFragment.graphql';
 import {
   BAIColumnsType,
   BAIColumnType,
@@ -15,14 +7,18 @@ import {
   filterOutEmpty,
   filterOutNullAndUndefined,
   type SemanticColor,
-} from 'backend.ai-ui';
+} from '..';
+import type {
+  BAILoginHistoryTableFragment$data,
+  BAILoginHistoryTableFragment$key,
+} from '../__generated__/BAILoginHistoryTableFragment.graphql';
+import { useBAIi18n } from '../hooks/useBAIi18n';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 export type LoginHistoryNodeInList = NonNullable<
-  LoginHistoryTableFragment$data[number]
+  BAILoginHistoryTableFragment$data[number]
 >;
 
 type LoginAttemptResult = LoginHistoryNodeInList['result'];
@@ -89,11 +85,11 @@ const loginHistoryResultColorMap: Record<LoginAttemptResult, SemanticColor> = {
   '%future added value': 'default',
 };
 
-export interface LoginHistoryTableProps extends Omit<
+export interface BAILoginHistoryTableProps extends Omit<
   BAITableProps<LoginHistoryNodeInList>,
   'dataSource' | 'columns' | 'onChangeOrder'
 > {
-  loginHistoryFrgmt: LoginHistoryTableFragment$key;
+  loginHistoryFrgmt: BAILoginHistoryTableFragment$key;
   disableSorter?: boolean;
   customizeColumns?: (
     baseColumns: BAIColumnsType<LoginHistoryNodeInList>,
@@ -104,26 +100,26 @@ export interface LoginHistoryTableProps extends Omit<
 }
 
 /**
- * LoginHistoryTable - Presentational table over a `LoginHistoryV2` plural
+ * BAILoginHistoryTable - Presentational table over a `LoginHistoryV2` plural
  * fragment. Renders every login-history column; filter, pagination, and query
  * orchestration live in the consuming surface via the `customizeColumns` prop.
- * Login history is read-only, so unlike `LoginSessionTable` it exposes no
- * row-level actions. Mirrors the `*Nodes` idiom (`LoginSessionTable`,
+ * Login history is read-only, so unlike `BAILoginSessionTable` it exposes no
+ * row-level actions. Mirrors the `*Nodes` idiom (`BAILoginSessionTable`,
  * `SessionNodes`).
  */
-const LoginHistoryTable = ({
+const BAILoginHistoryTable = ({
   loginHistoryFrgmt,
   disableSorter,
   customizeColumns,
   onChangeOrder,
   ...tableProps
-}: LoginHistoryTableProps) => {
+}: BAILoginHistoryTableProps) => {
   'use memo';
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
 
-  const loginHistory = useFragment<LoginHistoryTableFragment$key>(
+  const loginHistory = useFragment<BAILoginHistoryTableFragment$key>(
     graphql`
-      fragment LoginHistoryTableFragment on LoginHistoryV2
+      fragment BAILoginHistoryTableFragment on LoginHistoryV2
       @relay(plural: true) {
         id
         result
@@ -139,7 +135,7 @@ const LoginHistoryTable = ({
     filterOutEmpty<BAIColumnType<LoginHistoryNodeInList>>([
       {
         key: 'result',
-        title: t('loginHistory.Result'),
+        title: t('comp:BAILoginHistoryTable.Result'),
         dataIndex: 'result',
         fixed: 'left',
         sorter: isEnableSorter('result'),
@@ -153,14 +149,14 @@ const LoginHistoryTable = ({
       },
       {
         key: 'domainName',
-        title: t('loginHistory.Domain'),
+        title: t('comp:BAILoginHistoryTable.Domain'),
         dataIndex: 'domainName',
         sorter: isEnableSorter('domainName'),
         render: (__, record) => record.domainName || '-',
       },
       {
         key: 'createdAt',
-        title: t('loginHistory.LoginTime'),
+        title: t('comp:BAILoginHistoryTable.LoginTime'),
         dataIndex: 'createdAt',
         sorter: isEnableSorter('createdAt'),
         render: (__, record) =>
@@ -168,7 +164,7 @@ const LoginHistoryTable = ({
       },
       {
         key: 'failReason',
-        title: t('loginHistory.FailReason'),
+        title: t('comp:BAILoginHistoryTable.FailReason'),
         dataIndex: 'failReason',
         render: (__, record) => record.failReason || '-',
       },
@@ -200,4 +196,4 @@ const LoginHistoryTable = ({
   );
 };
 
-export default LoginHistoryTable;
+export default BAILoginHistoryTable;

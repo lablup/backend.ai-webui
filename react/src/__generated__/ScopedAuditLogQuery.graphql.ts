@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<54032a84831af405cd4a1c2588e2214b>>
+ * @generated SignedSource<<7cf00c57a8593f157fa52843b81d7d5a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -29,6 +29,7 @@ export type AuditLogFilter = {
   AND?: ReadonlyArray<AuditLogFilter> | null | undefined;
   NOT?: ReadonlyArray<AuditLogFilter> | null | undefined;
   OR?: ReadonlyArray<AuditLogFilter> | null | undefined;
+  actedAs?: UUIDFilter | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
   entityId?: StringFilter | null | undefined;
   entityType?: StringFilter | null | undefined;
@@ -69,6 +70,12 @@ export type DateTimeFilter = {
   before?: string | null | undefined;
   equals?: string | null | undefined;
   notEquals?: string | null | undefined;
+};
+export type UUIDFilter = {
+  equals?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
 };
 export type AuditLogOrderBy = {
   direction?: OrderDirection;

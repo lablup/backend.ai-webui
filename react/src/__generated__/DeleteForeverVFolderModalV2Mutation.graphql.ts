@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d39ed56195bf60b52197ce2e391ea950>>
+ * @generated SignedSource<<ecaa4617adf02ae47a598cc533cd4a46>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,6 +15,7 @@ export type BulkPurgeVFoldersV2Input = {
 };
 export type PurgeVFolderOptionsInput = {
   cascadeModelCard?: boolean;
+  force?: boolean;
 };
 export type DeleteForeverVFolderModalV2Mutation$variables = {
   input: BulkPurgeVFoldersV2Input;

@@ -1885,19 +1885,16 @@
   },
   "loginHistory": {
     "Domain": "域",
-    "FailReason": "失败原因",
     "LoginTime": "登录时间",
     "Result": "结果"
   },
   "loginSession": {
     "AccessKey": "访问密钥",
     "CreatedAt": "创建于",
-    "InvalidatedAt": "失效于",
     "RevokeFailed": "撤销登录会话失败。",
     "RevokeSession": "撤销会话",
     "RevokeSessionConfirm": "您确定要撤销此登录会话吗？",
-    "RevokeSucceeded": "登录会话已成功撤销。",
-    "User": "用户"
+    "RevokeSucceeded": "登录会话已成功撤销。"
   },
   "logs": {
     "ErrorMessage": "错误信息",
@@ -2435,13 +2432,15 @@
     "IdleTimeoutSec": "空闲超时（秒）",
     "Keypair": "密钥对",
     "KeypairResourcePolicy": "密钥对资源策略",
+    "MaxConcurrentLogins": "最大并发登录数",
     "MaxConcurrentSFTPSessions": "最大并发SFTP会话",
     "MaxCustomizedImageCount": "最大自定义图像数量",
     "MaxFolderCount": "最大文件夹数",
     "MaxNetworkCount": "最大网络数",
     "MaxPendingSessionCount": "最大待定会话计数",
     "MaxPendingSessionResourceSlots": "最大待处理会话资源插槽",
-    "MaxQuotaScopeSize": "最大配额范围大小 (GB)",
+    "MaxQuotaScopeSize": "最大配额范围大小",
+    "MaxQuotaScopeSizeGB": "最大配额范围大小 (GB)",
     "MaxSessionCountPerModelSession": "每个模型会话的最大会话计数",
     "MaxSessionLifetime": "会话寿命（秒）",
     "MaxVFolderCount": "最大文件夹数",
@@ -2454,7 +2453,10 @@
     "Project": "项目",
     "ProjectResourcePolicy": "项目资源策略",
     "ResourcePolicy": "资源政策",
+    "ResourcePolicyCreated": "资源策略已创建。",
+    "ResourcePolicyDeleted": "资源策略已删除。",
     "ResourcePolicyNameAlreadyExists": "资源策略名称已存在。\n请更改名称以添加。",
+    "ResourcePolicyUpdated": "资源策略已更新。",
     "Resources": "资源",
     "Sessions": "会话",
     "StorageNodes": "存储节点",

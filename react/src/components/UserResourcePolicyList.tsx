@@ -153,7 +153,7 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
         (b?.max_session_count_per_model_session ?? 0),
     },
     {
-      title: t('resourcePolicy.MaxQuotaScopeSize'),
+      title: t('resourcePolicy.MaxQuotaScopeSizeGB'),
       dataIndex: 'max_quota_scope_size',
       key: 'max_quota_scope_size',
       render: (text) => (text === -1 ? '∞' : bytesToGB(text)),

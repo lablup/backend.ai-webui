@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<67b7235f2f1d1a7c30db4da44ea3542e>>
+ * @generated SignedSource<<912024bcd6acb5081645b86f04c75967>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -117,6 +117,8 @@ export type EntityFilter = {
   OR?: ReadonlyArray<EntityFilter> | null | undefined;
   entityId?: StringFilter | null | undefined;
   entityType?: RBACElementTypeFilter | null | undefined;
+  scopeId?: StringFilter | null | undefined;
+  scopeType?: RBACElementTypeFilter | null | undefined;
 };
 export type EntityOrderBy = {
   direction?: OrderDirection;

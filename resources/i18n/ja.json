@@ -1885,19 +1885,16 @@
   },
   "loginHistory": {
     "Domain": "ドメイン",
-    "FailReason": "失敗の理由",
     "LoginTime": "ログイン日時",
     "Result": "結果"
   },
   "loginSession": {
     "AccessKey": "アクセスキー",
     "CreatedAt": "作成日",
-    "InvalidatedAt": "無効化日",
     "RevokeFailed": "ログインセッションの無効化に失敗しました。",
     "RevokeSession": "セッションを無効化",
     "RevokeSessionConfirm": "このログインセッションを無効化してもよろしいですか？",
-    "RevokeSucceeded": "ログインセッションを無効化しました。",
-    "User": "ユーザー"
+    "RevokeSucceeded": "ログインセッションを無効化しました。"
   },
   "logs": {
     "ErrorMessage": "エラーメッセージ",
@@ -2435,13 +2432,15 @@
     "IdleTimeoutSec": "アイドルタイムアウト（秒）",
     "Keypair": "キーペア",
     "KeypairResourcePolicy": "キーペアリソースポリシー",
+    "MaxConcurrentLogins": "最大同時ログイン数",
     "MaxConcurrentSFTPSessions": "Max Concurrent SFTPセッション",
     "MaxCustomizedImageCount": "カスタマイズされた画像の最大数",
     "MaxFolderCount": "最大フォルダ数",
     "MaxNetworkCount": "最大ネットワーク数",
     "MaxPendingSessionCount": "最大保留中のセッションカウント",
     "MaxPendingSessionResourceSlots": "最大保留中のセッションリソーススロット",
-    "MaxQuotaScopeSize": "最大クォータ スコープ サイズ (GB)",
+    "MaxQuotaScopeSize": "最大クォータ スコープ サイズ",
+    "MaxQuotaScopeSizeGB": "最大クォータ スコープ サイズ (GB)",
     "MaxSessionCountPerModelSession": "モデルセッションごとの最大セッション数",
     "MaxSessionLifetime": "セッションの最大実行時間",
     "MaxVFolderCount": "最大フォルダ数",
@@ -2454,7 +2453,10 @@
     "Project": "プロジェクト",
     "ProjectResourcePolicy": "プロジェクトリソースポリシー",
     "ResourcePolicy": "リソースポリシー",
+    "ResourcePolicyCreated": "リソースポリシーが作成されました。",
+    "ResourcePolicyDeleted": "リソースポリシーが削除されました。",
     "ResourcePolicyNameAlreadyExists": "リソースポリシー名はすでに存在します。\n追加する名前を変更してください。",
+    "ResourcePolicyUpdated": "リソースポリシーが更新されました。",
     "Resources": "リソース",
     "Sessions": "セッション",
     "StorageNodes": "ストレージノード",

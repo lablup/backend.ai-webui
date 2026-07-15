@@ -207,6 +207,18 @@
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Выберите пару ключей"
   },
+  "comp:BAILoginHistoryTable": {
+    "Domain": "Домен",
+    "FailReason": "Причина сбоя",
+    "LoginTime": "Время входа",
+    "Result": "Результат"
+  },
+  "comp:BAILoginSessionTable": {
+    "AccessKey": "Ключ доступа",
+    "CreatedAt": "Создано в",
+    "InvalidatedAt": "Аннулировано в",
+    "User": "Пользователь"
+  },
   "comp:BAIModal": {
     "ExitFullscreen": "Exit fullscreen",
     "Fullscreen": "Fullscreen",
@@ -393,6 +405,15 @@
   },
   "comp:BAITestButton": {
     "Test": "тест"
+  },
+  "comp:BAIUserResourcePolicyV2Table": {
+    "CreatedAt": "Создан в",
+    "MaxConcurrentLogins": "Максимум одновременных входов",
+    "MaxCustomizedImageCount": "Максимальное количество индивидуальных изображений",
+    "MaxQuotaScopeSize": "Максимальный размер папки",
+    "MaxSessionCountPerModelSession": "Максимальное количество сеансов на модельный сеанс",
+    "MaxVFolderCount": "Максимальное количество папок",
+    "Name": "Имя"
   },
   "comp:BAIUserSelect": {
     "SelectUser": "Выберите пользователя"

@@ -1884,19 +1884,16 @@
   },
   "loginHistory": {
     "Domain": "Домэйн",
-    "FailReason": "Амжилтгүй болсон шалтгаан",
     "LoginTime": "Нэвтэрсэн цаг",
     "Result": "Үр дүн"
   },
   "loginSession": {
     "AccessKey": "Хандалтын түлхүүр",
     "CreatedAt": "Үүсгэсэн",
-    "InvalidatedAt": "Хүчингүй болгосон",
     "RevokeFailed": "Нэвтрэх сессийг цуцлахад алдаа гарлаа.",
     "RevokeSession": "Сессийг цуцлах",
     "RevokeSessionConfirm": "Энэ нэвтрэх сессийг цуцлахдаа итгэлтэй байна уу?",
-    "RevokeSucceeded": "Нэвтрэх сессийг амжилттай цуцаллаа.",
-    "User": "Хэрэглэгч"
+    "RevokeSucceeded": "Нэвтрэх сессийг амжилттай цуцаллаа."
   },
   "logs": {
     "ErrorMessage": "Алдааны зурвас",
@@ -2434,13 +2431,15 @@
     "IdleTimeoutSec": "Сул зогсолт (сек.)",
     "Keypair": "Товчлуур",
     "KeypairResourcePolicy": "Keypair нөөцийн бодлого",
+    "MaxConcurrentLogins": "Хамгийн их зэрэгцээ нэвтрэлт",
     "MaxConcurrentSFTPSessions": "Макс тохиролцсон SFTP хуралдаанууд",
     "MaxCustomizedImageCount": "Хамгийн их тохируулсан зургийн тоо",
     "MaxFolderCount": "Хамгийн их хавтасны тоо",
     "MaxNetworkCount": "Хамгийн их сүлжээний тоо",
     "MaxPendingSessionCount": "Макс хүлээгдэж буй хуралдааны тоо",
     "MaxPendingSessionResourceSlots": "Макс хүлээгдэж буй сешний нөөцийн слотууд",
-    "MaxQuotaScopeSize": "Хамгийн их квот хамрах хүрээний хэмжээ (ГБ)",
+    "MaxQuotaScopeSize": "Хамгийн их квот хамрах хүрээний хэмжээ",
+    "MaxQuotaScopeSizeGB": "Хамгийн их квот хамрах хүрээний хэмжээ (ГБ)",
     "MaxSessionCountPerModelSession": "Загвар бүрийн хамгийн их сеанс тоо",
     "MaxSessionLifetime": "Сеанс үргэлжлэх хугацаа (сек.)",
     "MaxVFolderCount": "Хамгийн их хавтасны тоо",
@@ -2453,7 +2452,10 @@
     "Project": "Төсөл",
     "ProjectResourcePolicy": "Төслийн нөөцийн бодлого",
     "ResourcePolicy": "Нөөцийн бодлого",
+    "ResourcePolicyCreated": "Нөөцийн бодлого үүсгэгдлээ.",
+    "ResourcePolicyDeleted": "Нөөцийн бодлого устгагдлаа.",
     "ResourcePolicyNameAlreadyExists": "Нөөцийн бодлогын нэр аль хэдийн байна. \nНэмэх нэрээ өөрчилнө үү.",
+    "ResourcePolicyUpdated": "Нөөцийн бодлого шинэчлэгдлээ.",
     "Resources": "Нөөц",
     "Sessions": "Чуулган",
     "StorageNodes": "Хадгалах цэгүүд",

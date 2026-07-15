@@ -1883,19 +1883,16 @@
   },
   "loginHistory": {
     "Domain": "Alan Adı",
-    "FailReason": "Hata Nedeni",
     "LoginTime": "Oturum Açma Zamanı",
     "Result": "Sonuç"
   },
   "loginSession": {
     "AccessKey": "Erişim Anahtarı",
     "CreatedAt": "Oluşturulma Tarihi",
-    "InvalidatedAt": "Geçersizleştirilme Tarihi",
     "RevokeFailed": "Oturum açma oturumu iptal edilemedi.",
     "RevokeSession": "Oturumu İptal Et",
     "RevokeSessionConfirm": "Bu oturum açma oturumunu iptal etmek istediğinizden emin misiniz?",
-    "RevokeSucceeded": "Oturum açma oturumu başarıyla iptal edildi.",
-    "User": "Kullanıcı"
+    "RevokeSucceeded": "Oturum açma oturumu başarıyla iptal edildi."
   },
   "logs": {
     "ErrorMessage": "Hata mesajı",
@@ -2433,13 +2430,15 @@
     "IdleTimeoutSec": "Boşta kalma zaman aşımı (sn.)",
     "Keypair": "Anahtar çifti",
     "KeypairResourcePolicy": "Keypair Kaynak Politikası",
+    "MaxConcurrentLogins": "Maksimum eşzamanlı oturum açma",
     "MaxConcurrentSFTPSessions": "Maksimum eşzamanlı SFTP oturumları",
     "MaxCustomizedImageCount": "Maksimum Özelleştirilmiş Görüntü Sayısı",
     "MaxFolderCount": "Maksimum Klasör Sayısı",
     "MaxNetworkCount": "Maksimum Ağ Sayısı",
     "MaxPendingSessionCount": "Max bekleyen oturum sayısı",
     "MaxPendingSessionResourceSlots": "Max Bekleyen Oturum Kaynak Yuvaları",
-    "MaxQuotaScopeSize": "Maksimum Kota Kapsamı Boyutu (GB)",
+    "MaxQuotaScopeSize": "Maksimum Kota Kapsamı Boyutu",
+    "MaxQuotaScopeSizeGB": "Maksimum Kota Kapsamı Boyutu (GB)",
     "MaxSessionCountPerModelSession": "Model Oturumu Başına Maksimum Oturum Sayısı",
     "MaxSessionLifetime": "Oturum Ömrü (sn.)",
     "MaxVFolderCount": "Maksimum Klasör Sayısı",
@@ -2452,7 +2451,10 @@
     "Project": "Proje",
     "ProjectResourcePolicy": "Proje Kaynak Politikası",
     "ResourcePolicy": "Kaynak Politikası",
+    "ResourcePolicyCreated": "Kaynak politikası oluşturuldu.",
+    "ResourcePolicyDeleted": "Kaynak politikası silindi.",
     "ResourcePolicyNameAlreadyExists": "Kaynak politikası adı zaten mevcut. \nLütfen eklenecek adı değiştirin.",
+    "ResourcePolicyUpdated": "Kaynak politikası güncellendi.",
     "Resources": "Kaynaklar",
     "Sessions": "Oturumlar",
     "StorageNodes": "Depolama Düğümleri",

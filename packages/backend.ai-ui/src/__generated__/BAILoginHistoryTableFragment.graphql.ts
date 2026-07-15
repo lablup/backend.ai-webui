@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ae9d24b12118cc4abcd9da38a807d7eb>>
+ * @generated SignedSource<<b46502ce6db2a4e97c42f8343a01d795>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,17 +11,17 @@
 import { ReaderFragment } from 'relay-runtime';
 export type LoginAttemptResult = "EVICTED" | "EXPIRED" | "FAILED_BLOCKED" | "FAILED_INVALID_CREDENTIALS" | "FAILED_PASSWORD_EXPIRED" | "FAILED_REJECTED_BY_HOOK" | "FAILED_SESSION_ALREADY_EXISTS" | "FAILED_USER_INACTIVE" | "LOGOUT" | "REVOKED_BY_ADMIN" | "REVOKED_BY_USER" | "SUCCESS" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
-export type LoginHistoryTableFragment$data = ReadonlyArray<{
+export type BAILoginHistoryTableFragment$data = ReadonlyArray<{
   readonly createdAt: string;
   readonly domainName: string;
   readonly failReason: string | null | undefined;
   readonly id: string;
   readonly result: LoginAttemptResult;
-  readonly " $fragmentType": "LoginHistoryTableFragment";
+  readonly " $fragmentType": "BAILoginHistoryTableFragment";
 }>;
-export type LoginHistoryTableFragment$key = ReadonlyArray<{
-  readonly " $data"?: LoginHistoryTableFragment$data;
-  readonly " $fragmentSpreads": FragmentRefs<"LoginHistoryTableFragment">;
+export type BAILoginHistoryTableFragment$key = ReadonlyArray<{
+  readonly " $data"?: BAILoginHistoryTableFragment$data;
+  readonly " $fragmentSpreads": FragmentRefs<"BAILoginHistoryTableFragment">;
 }>;
 
 const node: ReaderFragment = {
@@ -30,7 +30,7 @@ const node: ReaderFragment = {
   "metadata": {
     "plural": true
   },
-  "name": "LoginHistoryTableFragment",
+  "name": "BAILoginHistoryTableFragment",
   "selections": [
     {
       "alias": null,
@@ -72,6 +72,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "4dfc2f6ccb6413b8af45b3902aa77534";
+(node as any).hash = "7e66ffc2186bbcd9be2f6196b9467f1c";
 
 export default node;

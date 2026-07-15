@@ -207,6 +207,18 @@
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Pilih Pasangan Kunci"
   },
+  "comp:BAILoginHistoryTable": {
+    "Domain": "Domain",
+    "FailReason": "Sebab Kegagalan",
+    "LoginTime": "Masa Log Masuk",
+    "Result": "Keputusan"
+  },
+  "comp:BAILoginSessionTable": {
+    "AccessKey": "Kunci Akses",
+    "CreatedAt": "Dicipta Pada",
+    "InvalidatedAt": "Tidak Sah Pada",
+    "User": "Pengguna"
+  },
   "comp:BAIModal": {
     "ExitFullscreen": "Exit fullscreen",
     "Fullscreen": "Fullscreen",
@@ -393,6 +405,15 @@
   },
   "comp:BAITestButton": {
     "Test": "ujian"
+  },
+  "comp:BAIUserResourcePolicyV2Table": {
+    "CreatedAt": "Dicipta Pada",
+    "MaxConcurrentLogins": "Log Masuk Serentak Maksimum",
+    "MaxCustomizedImageCount": "Kiraan Imej Tersuai Maks",
+    "MaxQuotaScopeSize": "Saiz Folder Maks",
+    "MaxSessionCountPerModelSession": "Kiraan Sesi Maks Setiap Sesi Model",
+    "MaxVFolderCount": "Kiraan Folder Maks",
+    "Name": "Nama"
   },
   "comp:BAIUserSelect": {
     "SelectUser": "Pilih Pengguna"

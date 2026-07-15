@@ -207,6 +207,18 @@
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "เลือกคู่คีย์"
   },
+  "comp:BAILoginHistoryTable": {
+    "Domain": "โดเมน",
+    "FailReason": "สาเหตุที่ล้มเหลว",
+    "LoginTime": "เวลาเข้าสู่ระบบ",
+    "Result": "ผลลัพธ์"
+  },
+  "comp:BAILoginSessionTable": {
+    "AccessKey": "คีย์การเข้าถึง",
+    "CreatedAt": "สร้างเมื่อ",
+    "InvalidatedAt": "ถูกยกเลิกเมื่อ",
+    "User": "ผู้ใช้"
+  },
   "comp:BAIModal": {
     "ExitFullscreen": "Exit fullscreen",
     "Fullscreen": "Fullscreen",
@@ -393,6 +405,15 @@
   },
   "comp:BAITestButton": {
     "Test": "ทดสอบ"
+  },
+  "comp:BAIUserResourcePolicyV2Table": {
+    "CreatedAt": "สร้างเมื่อ",
+    "MaxConcurrentLogins": "จำนวนการเข้าสู่ระบบพร้อมกันสูงสุด",
+    "MaxCustomizedImageCount": "จำนวนอิมเมจที่กำหนดเองสูงสุด",
+    "MaxQuotaScopeSize": "ขนาดโฟลเดอร์สูงสุด",
+    "MaxSessionCountPerModelSession": "จำนวนเซสชันสูงสุดต่อเซสชันโมเดล",
+    "MaxVFolderCount": "จำนวนโฟลเดอร์สูงสุด",
+    "Name": "ชื่อ"
   },
   "comp:BAIUserSelect": {
     "SelectUser": "เลือกผู้ใช้"

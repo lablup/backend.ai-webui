@@ -1870,19 +1870,16 @@
   },
   "loginHistory": {
     "Domain": "Domain",
-    "FailReason": "Failure Reason",
     "LoginTime": "Login Time",
     "Result": "Result"
   },
   "loginSession": {
     "AccessKey": "Access Key",
     "CreatedAt": "Created At",
-    "InvalidatedAt": "Invalidated At",
     "RevokeFailed": "Failed to revoke login session.",
     "RevokeSession": "Revoke Session",
     "RevokeSessionConfirm": "Are you sure you want to revoke this login session?",
-    "RevokeSucceeded": "Login session revoked.",
-    "User": "User"
+    "RevokeSucceeded": "Login session revoked."
   },
   "logs": {
     "ErrorMessage": "Error Message",
@@ -2420,13 +2417,15 @@
     "IdleTimeoutSec": "Idle timeout (sec.)",
     "Keypair": "Keypair",
     "KeypairResourcePolicy": "Keypair Resource Policy",
+    "MaxConcurrentLogins": "Max Concurrent Logins",
     "MaxConcurrentSFTPSessions": "Max Concurrent SFTP Sessions",
     "MaxCustomizedImageCount": "Max Customized Image Count",
     "MaxFolderCount": "Max Folder Count",
     "MaxNetworkCount": "Max Network Count",
     "MaxPendingSessionCount": "Max Pending Session Count",
     "MaxPendingSessionResourceSlots": "Max Pending Session Resource Slots",
-    "MaxQuotaScopeSize": "Max Quota Scope Size (GB)",
+    "MaxQuotaScopeSize": "Max Quota Scope Size",
+    "MaxQuotaScopeSizeGB": "Max Quota Scope Size (GB)",
     "MaxSessionCountPerModelSession": "Max Session Count Per Model Session",
     "MaxSessionLifetime": "Session Lifetime (sec.)",
     "MaxVFolderCount": "Max Folder Count",
@@ -2439,7 +2438,10 @@
     "Project": "Project",
     "ProjectResourcePolicy": "Project Resource Policy",
     "ResourcePolicy": "Resource Policy",
+    "ResourcePolicyCreated": "Resource policy created.",
+    "ResourcePolicyDeleted": "Resource policy deleted.",
     "ResourcePolicyNameAlreadyExists": "Resource policy name already exists. Please change the name to add.",
+    "ResourcePolicyUpdated": "Resource policy updated.",
     "Resources": "Resources",
     "Sessions": "Sessions",
     "StorageNodes": "Storage Nodes",

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1e504c0fa59eb73844de24c968db5e42>>
+ * @generated SignedSource<<3bf8c18c092c8207b75fa939ee3288e8>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,7 +10,7 @@
 
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type LoginSessionTableFragment$data = ReadonlyArray<{
+export type BAILoginSessionTableFragment$data = ReadonlyArray<{
   readonly accessKey: string;
   readonly createdAt: string;
   readonly id: string;
@@ -21,11 +21,11 @@ export type LoginSessionTableFragment$data = ReadonlyArray<{
     };
     readonly id: string;
   } | null | undefined;
-  readonly " $fragmentType": "LoginSessionTableFragment";
+  readonly " $fragmentType": "BAILoginSessionTableFragment";
 }>;
-export type LoginSessionTableFragment$key = ReadonlyArray<{
-  readonly " $data"?: LoginSessionTableFragment$data;
-  readonly " $fragmentSpreads": FragmentRefs<"LoginSessionTableFragment">;
+export type BAILoginSessionTableFragment$key = ReadonlyArray<{
+  readonly " $data"?: BAILoginSessionTableFragment$data;
+  readonly " $fragmentSpreads": FragmentRefs<"BAILoginSessionTableFragment">;
 }>;
 
 const node: ReaderFragment = (function(){
@@ -42,7 +42,7 @@ return {
   "metadata": {
     "plural": true
   },
-  "name": "LoginSessionTableFragment",
+  "name": "BAILoginSessionTableFragment",
   "selections": [
     (v0/*: any*/),
     {
@@ -102,6 +102,6 @@ return {
 };
 })();
 
-(node as any).hash = "50839f84a9d0104a9f97588cd573d626";
+(node as any).hash = "694171fd979eb4444dc4d4e07bfb034e";
 
 export default node;

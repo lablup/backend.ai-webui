@@ -1886,19 +1886,16 @@
   },
   "loginHistory": {
     "Domain": "Domain",
-    "FailReason": "Alasan Kegagalan",
     "LoginTime": "Waktu Login",
     "Result": "Hasil"
   },
   "loginSession": {
     "AccessKey": "Kunci Akses",
     "CreatedAt": "Dibuat Pada",
-    "InvalidatedAt": "Dibatalkan Pada",
     "RevokeFailed": "Gagal mencabut sesi login.",
     "RevokeSession": "Cabut Sesi",
     "RevokeSessionConfirm": "Apakah Anda yakin ingin mencabut sesi login ini?",
-    "RevokeSucceeded": "Sesi login berhasil dicabut.",
-    "User": "Pengguna"
+    "RevokeSucceeded": "Sesi login berhasil dicabut."
   },
   "logs": {
     "ErrorMessage": "Pesan Galat",
@@ -2436,13 +2433,15 @@
     "IdleTimeoutSec": "Waktu tunggu menganggur (dtk.)",
     "Keypair": "pasangan kunci",
     "KeypairResourcePolicy": "Kebijakan Sumber Daya Keypair",
+    "MaxConcurrentLogins": "Login Bersamaan Maksimum",
     "MaxConcurrentSFTPSessions": "Sesi SFTP Max Concurrent",
     "MaxCustomizedImageCount": "Jumlah Gambar Khusus Maksimum",
     "MaxFolderCount": "Jumlah Folder Maks",
     "MaxNetworkCount": "Jumlah Jaringan Maks",
     "MaxPendingSessionCount": "Hitungan sesi Max Tertunda",
     "MaxPendingSessionResourceSlots": "Slot sumber daya sesi maks yang tertunda",
-    "MaxQuotaScopeSize": "Ukuran Cakupan Kuota Maks (GB)",
+    "MaxQuotaScopeSize": "Ukuran Cakupan Kuota Maks",
+    "MaxQuotaScopeSizeGB": "Ukuran Cakupan Kuota Maks (GB)",
     "MaxSessionCountPerModelSession": "Jumlah Sesi Maks Per Sesi Model",
     "MaxSessionLifetime": "Sesi Seumur Hidup (detik)",
     "MaxVFolderCount": "Jumlah Folder Maks",
@@ -2455,7 +2454,10 @@
     "Project": "Proyek",
     "ProjectResourcePolicy": "Kebijakan Sumber Daya Proyek",
     "ResourcePolicy": "Kebijakan Sumber Daya",
+    "ResourcePolicyCreated": "Kebijakan sumber daya telah dibuat.",
+    "ResourcePolicyDeleted": "Kebijakan sumber daya telah dihapus.",
     "ResourcePolicyNameAlreadyExists": "Nama kebijakan sumber daya sudah ada. \nSilakan ubah nama untuk ditambahkan.",
+    "ResourcePolicyUpdated": "Kebijakan sumber daya telah diperbarui.",
     "Resources": "Sumber daya",
     "Sessions": "Sesi",
     "StorageNodes": "Node Penyimpanan",
