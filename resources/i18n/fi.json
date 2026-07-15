@@ -2078,6 +2078,7 @@
     "CreateProject": "Luo projekti",
     "Deactivate": "Poista käytöstä",
     "DeactivateProject": "Poista projekti käytöstä",
+    "DescRevokeProjectAdmin": "Projektin ylläpitäjän käyttöoikeuden peruminen ei poista projektia automaattisesti käyttäjän sallittujen projektien luettelosta. Peru pääsy projektiin poistamalla se luettelosta manuaalisesti.",
     "DescSetProjectAdmin": "Projektin ylläpitäjän käyttöoikeuden myöntäminen lisää projektin automaattisesti käyttäjän sallittujen projektien luetteloon, minkä jälkeen käyttäjä pääsee käsiksi kyseiseen projektiin.",
     "Domain": "Toimialue",
     "EditProject": "Muokkaa",

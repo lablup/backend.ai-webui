@@ -2078,6 +2078,7 @@
     "CreateProject": "Buat Projek",
     "Deactivate": "Nyahaktifkan",
     "DeactivateProject": "Nyahaktifkan Projek",
+    "DescRevokeProjectAdmin": "Membatalkan kebenaran Pentadbir Projek tidak akan secara automatik mengeluarkan projek tersebut daripada senarai Projek Dibenarkan pengguna. Untuk membatalkan akses kepada projek tersebut, keluarkannya secara manual daripada senarai.",
     "DescSetProjectAdmin": "Memberikan kebenaran Pentadbir Projek secara automatik menambahkan projek tersebut ke dalam senarai Projek Dibenarkan pengguna, dan pengguna tersebut kemudiannya akan dapat mengakses projek tersebut.",
     "Domain": "Domain",
     "EditProject": "Sunting",

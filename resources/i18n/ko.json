@@ -2080,6 +2080,7 @@
     "CreateProject": "프로젝트 생성",
     "Deactivate": "비활성화",
     "DeactivateProject": "프로젝트 비활성화",
+    "DescRevokeProjectAdmin": "프로젝트 관리자 권한을 해제해도 사용자의 허용 프로젝트 목록에서 해당 프로젝트가 자동으로 제거되지 않습니다. 프로젝트 접근을 차단하려면 목록에서 직접 제거해야 합니다.",
     "DescSetProjectAdmin": "프로젝트 관리자 권한을 부여하면 사용자의 허용 프로젝트 목록에 해당 프로젝트가 자동으로 추가되며, 이후 사용자는 해당 프로젝트에 접근할 수 있습니다.",
     "Domain": "도메인",
     "EditProject": "수정",

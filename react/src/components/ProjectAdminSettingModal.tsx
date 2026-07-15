@@ -7,9 +7,8 @@ import { ProjectAdminSettingModalQuery } from '../__generated__/ProjectAdminSett
 import { ProjectAdminSettingModalRevokeMutation } from '../__generated__/ProjectAdminSettingModalRevokeMutation.graphql';
 import { useWebUINavigate } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { App, Form, FormInstance, Tooltip } from 'antd';
+import { Alert, App, Form, FormInstance, Tooltip } from 'antd';
 import {
-  BAIAlert,
   BAIButton,
   BAIFlex,
   BAIId,
@@ -24,7 +23,7 @@ import {
   useMutationWithPromise,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { SquareArrowOutUpRightIcon, XIcon } from 'lucide-react';
+import { ShieldCheckIcon, XIcon } from 'lucide-react';
 import { Suspense, useDeferredValue, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -237,7 +236,7 @@ const ProjectAdminSettingModal = ({
               <BAIButton
                 type="text"
                 size="small"
-                icon={<SquareArrowOutUpRightIcon />}
+                icon={<ShieldCheckIcon />}
                 onClick={() => {
                   const searchParams = new URLSearchParams({
                     filter: JSON.stringify({
@@ -259,10 +258,11 @@ const ProjectAdminSettingModal = ({
       {...modalProps}
     >
       <BAIFlex direction="column" align="stretch" gap="sm">
-        <BAIAlert
-          type="info"
+        <Alert type="info" showIcon title={t('project.DescSetProjectAdmin')} />
+        <Alert
+          type="warning"
           showIcon
-          description={t('project.DescSetProjectAdmin')}
+          title={t('project.DescRevokeProjectAdmin')}
         />
         <Form ref={formRef}>
           <BAIFlex gap="xs" align="start">

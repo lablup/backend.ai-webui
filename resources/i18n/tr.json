@@ -2078,6 +2078,7 @@
     "CreateProject": "Proje Oluştur",
     "Deactivate": "Devre dışı bırak",
     "DeactivateProject": "Projeyi devre dışı bırak",
+    "DescRevokeProjectAdmin": "Proje yöneticisi izni geri alındığında, proje kullanıcının izin verilen projeler listesinden otomatik olarak kaldırılmaz. Projeye erişimi geri almak için projeyi listeden manuel olarak kaldırın.",
     "DescSetProjectAdmin": "Proje yöneticisi izni verildiğinde, proje otomatik olarak kullanıcının izin verilen projeler listesine eklenir ve kullanıcı bu projeye erişebilir hale gelir.",
     "Domain": "Etki Alanı",
     "EditProject": "Düzenle",

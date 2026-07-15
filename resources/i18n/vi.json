@@ -2080,6 +2080,7 @@
     "CreateProject": "Tạo dự án",
     "Deactivate": "Vô hiệu hóa",
     "DeactivateProject": "Vô hiệu hóa dự án",
+    "DescRevokeProjectAdmin": "Việc thu hồi quyền quản trị dự án sẽ không tự động xóa dự án khỏi danh sách dự án được phép của người dùng. Để thu hồi quyền truy cập vào dự án, hãy xóa dự án khỏi danh sách theo cách thủ công.",
     "DescSetProjectAdmin": "Việc cấp quyền quản trị dự án sẽ tự động thêm dự án vào danh sách dự án được phép của người dùng, và người dùng đó sau đó sẽ có thể truy cập vào dự án đó.",
     "Domain": "Miền",
     "EditProject": "Chỉnh sửa",

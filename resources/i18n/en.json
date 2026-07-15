@@ -2065,6 +2065,7 @@
     "CreateProject": "Create Project",
     "Deactivate": "Deactivate",
     "DeactivateProject": "Deactivate Project",
+    "DescRevokeProjectAdmin": "Revoking project admin permission does not automatically remove the project from the user's allowed project list. To revoke access to the project, remove it from the list manually.",
     "DescSetProjectAdmin": "Granting project admin permission automatically adds the project to the user's allowed project list, and the user will then be able to access that project.",
     "Domain": "Domain",
     "EditProject": "Edit",

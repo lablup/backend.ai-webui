@@ -2081,6 +2081,7 @@
     "CreateProject": "Buat Proyek",
     "Deactivate": "Nonaktifkan",
     "DeactivateProject": "Nonaktifkan Proyek",
+    "DescRevokeProjectAdmin": "Mencabut izin Admin Proyek tidak akan secara otomatis menghapus proyek tersebut dari daftar Proyek yang Diizinkan milik pengguna. Untuk mencabut akses ke proyek tersebut, hapus secara manual dari daftar.",
     "DescSetProjectAdmin": "Memberikan izin Admin Proyek akan secara otomatis menambahkan proyek tersebut ke daftar Proyek yang Diizinkan milik pengguna, sehingga pengguna tersebut kemudian dapat mengakses proyek tersebut.",
     "Domain": "Domain",
     "EditProject": "Edit",

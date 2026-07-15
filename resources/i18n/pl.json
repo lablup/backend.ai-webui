@@ -2080,6 +2080,7 @@
     "CreateProject": "Utwórz projekt",
     "Deactivate": "Dezaktywuj",
     "DeactivateProject": "Dezaktywuj projekt",
+    "DescRevokeProjectAdmin": "Odebranie uprawnienia administratora projektu nie usuwa automatycznie projektu z listy dozwolonych projektów użytkownika. Aby odebrać dostęp do projektu, usuń go ręcznie z listy.",
     "DescSetProjectAdmin": "Nadanie uprawnienia administratora projektu automatycznie dodaje projekt do listy dozwolonych projektów użytkownika, dzięki czemu użytkownik będzie mógł uzyskać dostęp do tego projektu.",
     "Domain": "Domena",
     "EditProject": "Edytuj",

@@ -2082,6 +2082,7 @@
     "CreateProject": "建立專案",
     "Deactivate": "停用",
     "DeactivateProject": "停用專案",
+    "DescRevokeProjectAdmin": "撤銷專案管理員權限後，系統不會自動將該專案從使用者的允許專案清單中移除。如需撤銷對該專案的存取，請手動將其從清單中移除。",
     "DescSetProjectAdmin": "授予專案管理員權限後，系統會自動將該專案新增至使用者的允許專案清單中，此後該使用者即可存取該專案。",
     "Domain": "網域",
     "EditProject": "編輯",

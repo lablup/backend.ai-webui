@@ -2080,6 +2080,7 @@
     "CreateProject": "Criar projeto",
     "Deactivate": "Desativar",
     "DeactivateProject": "Desativar projeto",
+    "DescRevokeProjectAdmin": "Revogar a permissão de administrador do projeto não remove automaticamente o projeto da lista de projetos permitidos do utilizador. Para revogar o acesso ao projeto, remova-o manualmente da lista.",
     "DescSetProjectAdmin": "Conceder a permissão de administrador do projeto adiciona automaticamente o projeto à lista de projetos permitidos do utilizador, e o utilizador poderá então aceder a esse projeto.",
     "Domain": "Domínio",
     "EditProject": "Editar",

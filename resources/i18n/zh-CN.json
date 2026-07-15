@@ -2080,6 +2080,7 @@
     "CreateProject": "创建项目",
     "Deactivate": "停用",
     "DeactivateProject": "停用项目",
+    "DescRevokeProjectAdmin": "撤销项目管理员权限后，系统不会自动将该项目从用户的允许项目列表中移除。如需撤销对该项目的访问，请手动将其从列表中移除。",
     "DescSetProjectAdmin": "授予项目管理员权限后，系统会自动将该项目添加到用户的允许项目列表中，此后该用户即可访问该项目。",
     "Domain": "域",
     "EditProject": "编辑",

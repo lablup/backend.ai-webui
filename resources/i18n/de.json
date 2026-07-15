@@ -2080,6 +2080,7 @@
     "CreateProject": "Projekt erstellen",
     "Deactivate": "Deaktivieren",
     "DeactivateProject": "Projekt deaktivieren",
+    "DescRevokeProjectAdmin": "Durch den Entzug der Projektadministrator-Berechtigung wird das Projekt nicht automatisch aus der Liste der zugelassenen Projekte des Benutzers entfernt. Um den Zugriff auf das Projekt zu entziehen, entfernen Sie es manuell aus der Liste.",
     "DescSetProjectAdmin": "Durch die Vergabe der Projektadministrator-Berechtigung wird das Projekt automatisch zur Liste der zugelassenen Projekte des Benutzers hinzugefügt, und der Benutzer kann anschließend auf dieses Projekt zugreifen.",
     "Domain": "Domäne",
     "EditProject": "Bearbeiten",
