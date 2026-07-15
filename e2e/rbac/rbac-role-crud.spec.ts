@@ -36,6 +36,13 @@ test.describe.serial(
       ).toBeVisible({ timeout: 10000 });
     }
 
+    // Scope status-filter clicks to the radiogroup — the AutoAssign column
+    // also renders per-row "Active"/"Inactive" tags, which collide with a
+    // bare getByText locator (strict-mode violation).
+    function statusFilterOption(page: Page, status: 'Active' | 'Inactive') {
+      return page.getByRole('radiogroup').getByText(status, { exact: true });
+    }
+
     async function clearRoleSearch(page: Page) {
       // Remove any active filter chip — scope to the filter-chip area so we
       // don't accidentally click tag close icons in the table itself.
@@ -52,7 +59,7 @@ test.describe.serial(
 
     async function cleanupTestRole(page: Page, roleName: string) {
       // Check Active tab first
-      await page.getByText('Active', { exact: true }).click();
+      await statusFilterOption(page, 'Active').click();
       await clearRoleSearch(page);
       const activeRow = page.getByRole('row').filter({ hasText: roleName });
       const isActiveVisible = await activeRow
@@ -75,7 +82,7 @@ test.describe.serial(
       }
 
       // Check Inactive tab
-      await page.getByText('Inactive', { exact: true }).click();
+      await statusFilterOption(page, 'Inactive').click();
       await clearRoleSearch(page);
       const inactiveRow = page.getByRole('row').filter({ hasText: roleName });
       const isInactiveVisible = await inactiveRow
@@ -100,7 +107,7 @@ test.describe.serial(
       }
 
       // Return to Active tab
-      await page.getByText('Active', { exact: true }).click();
+      await statusFilterOption(page, 'Active').click();
       await clearRoleSearch(page);
     }
 
@@ -306,7 +313,7 @@ test.describe.serial(
       await navigateTo(page, 'rbac');
 
       // 3. Ensure "Active" filter is selected
-      await page.getByText('Active', { exact: true }).click();
+      await statusFilterOption(page, 'Active').click();
 
       // 4. Search for the test role by name (using the edited name from previous test)
       await searchForRole(page, ROLE_NAME_EDITED);
@@ -337,7 +344,7 @@ test.describe.serial(
       ).toBeVisible({ timeout: 10000 });
 
       // 8. Click the "Inactive" filter to verify the role appears there
-      await page.getByText('Inactive', { exact: true }).click();
+      await statusFilterOption(page, 'Inactive').click();
       await searchForRole(page, ROLE_NAME_EDITED);
     });
 
@@ -352,7 +359,7 @@ test.describe.serial(
       await navigateTo(page, 'rbac');
 
       // 3. Click the "Inactive" filter button
-      await page.getByText('Inactive', { exact: true }).click();
+      await statusFilterOption(page, 'Inactive').click();
 
       // 4. Search for the test role by name and locate the row
       await searchForRole(page, ROLE_NAME_EDITED);
@@ -388,7 +395,7 @@ test.describe.serial(
       await expect(inactiveRoleRow).toBeHidden({ timeout: 10000 });
 
       // 9. Click the "Active" filter and verify the role reappears there
-      await page.getByText('Active', { exact: true }).click();
+      await statusFilterOption(page, 'Active').click();
       await searchForRole(page, ROLE_NAME_EDITED);
     });
 
@@ -403,7 +410,7 @@ test.describe.serial(
       await navigateTo(page, 'rbac');
 
       // 3. Deactivate the role first (so it's in the Inactive state for purging)
-      await page.getByText('Active', { exact: true }).click();
+      await statusFilterOption(page, 'Active').click();
       await searchForRole(page, ROLE_NAME_EDITED);
       const activeRoleRow = page
         .getByRole('row')
@@ -423,7 +430,7 @@ test.describe.serial(
       await expect(activeRoleRow).toBeHidden({ timeout: 10000 });
 
       // 4. Switch to Inactive filter
-      await page.getByText('Inactive', { exact: true }).click();
+      await statusFilterOption(page, 'Inactive').click();
 
       // 5. Search for and locate the deleted test role row
       await searchForRole(page, ROLE_NAME_EDITED);
@@ -472,7 +479,7 @@ test.describe.serial(
       await expect(inactiveRoleRow).toBeHidden({ timeout: 10000 });
 
       // 13. Verify the role also doesn't appear in the Active list
-      await page.getByText('Active', { exact: true }).click();
+      await statusFilterOption(page, 'Active').click();
       await expect(
         page.getByRole('row').filter({ hasText: ROLE_NAME_EDITED }),
       ).toBeHidden({ timeout: 5000 });

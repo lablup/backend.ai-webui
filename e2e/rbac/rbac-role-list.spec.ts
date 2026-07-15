@@ -30,9 +30,17 @@ test.describe(
         page.getByRole('button', { name: 'Create Role' }),
       ).toBeEnabled();
 
-      // 5. Verify the status filter shows "Active" and "Inactive" options
-      await expect(page.getByText('Active', { exact: true })).toBeVisible();
-      await expect(page.getByText('Inactive', { exact: true })).toBeVisible();
+      // 5. Verify the status filter shows "Active" and "Inactive" options.
+      // Scope to the status filter's radiogroup — the AutoAssign column also
+      // renders per-row "Active"/"Inactive" tags, which collide with a bare
+      // getByText locator (strict-mode violation).
+      const statusFilter = page.getByRole('radiogroup');
+      await expect(
+        statusFilter.getByText('Active', { exact: true }),
+      ).toBeVisible();
+      await expect(
+        statusFilter.getByText('Inactive', { exact: true }),
+      ).toBeVisible();
 
       // 6. Verify the role table is rendered with expected column headers
       await expect(
@@ -77,15 +85,19 @@ test.describe(
         .filter({ hasNot: page.getByRole('columnheader') });
       await expect(activeRows.first()).toBeVisible({ timeout: 10000 });
 
-      // 4. Click the "Inactive" filter button
-      await page.getByText('Inactive', { exact: true }).click();
+      // 4. Click the "Inactive" filter button.
+      // Scope to the status filter's radiogroup — the AutoAssign column also
+      // renders per-row "Active"/"Inactive" tags, which collide with a bare
+      // getByText locator (strict-mode violation).
+      const statusFilter = page.getByRole('radiogroup');
+      await statusFilter.getByText('Inactive', { exact: true }).click();
 
       // 5. Verify the table updates (shows deleted roles or empty state message)
       // Either the table shows rows or an empty state — we only check that there's no error
       await expect(page.locator('.ant-table')).toBeVisible({ timeout: 10000 });
 
       // 6. Click the "Active" filter button
-      await page.getByText('Active', { exact: true }).click();
+      await statusFilter.getByText('Active', { exact: true }).click();
 
       // 7. Verify the table updates back to showing active roles
       await expect(activeRows.first()).toBeVisible({ timeout: 10000 });

@@ -103,6 +103,13 @@ async function clearRoleSearch(page: Page) {
   }
 }
 
+// Scope status-filter clicks to the radiogroup — the AutoAssign column also
+// renders per-row "Active"/"Inactive" tags, which collide with a bare
+// getByText locator (strict-mode violation).
+function statusFilterOption(page: Page, status: 'Active' | 'Inactive') {
+  return page.getByRole('radiogroup').getByText(status, { exact: true });
+}
+
 async function cleanupTestRole(page: Page) {
   // Close any lingering drawer from a previous test so it doesn't block clicks.
   const openDrawer = page.locator('.ant-drawer-open');
@@ -112,7 +119,7 @@ async function cleanupTestRole(page: Page) {
   }
 
   // Check Active tab first
-  await page.getByText('Active', { exact: true }).click();
+  await statusFilterOption(page, 'Active').click();
   await clearRoleSearch(page);
   // Use name filter to find the role even if it's on a later page
   const filterContainer = page.locator('.ant-space-compact').first();
@@ -156,7 +163,7 @@ async function cleanupTestRole(page: Page) {
   }
 
   // Check Inactive tab
-  await page.getByText('Inactive', { exact: true }).click();
+  await statusFilterOption(page, 'Inactive').click();
   await clearRoleSearch(page);
   const inactivePropertySelect = filterContainer.locator('.ant-select').first();
   await inactivePropertySelect.click();
@@ -199,7 +206,7 @@ async function cleanupTestRole(page: Page) {
   }
 
   // Return to Active tab and clear any search filters
-  await page.getByText('Active', { exact: true }).click();
+  await statusFilterOption(page, 'Active').click();
   await clearRoleSearch(page);
 }
 
