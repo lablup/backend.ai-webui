@@ -55,6 +55,8 @@ export type {
 } from './BAINotificationItem';
 export { default as BAIModal } from './BAIModal';
 export type { BAIModalProps } from './BAIModal';
+export { default as BAIBulkErrorModal } from './BAIBulkErrorModal';
+export type { BAIBulkErrorModalProps } from './BAIBulkErrorModal';
 export { default as BAIDeleteConfirmModal } from './BAIDeleteConfirmModal';
 export type {
   BAIDeleteConfirmModalProps,

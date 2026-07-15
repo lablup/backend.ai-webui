@@ -91,6 +91,10 @@
     "KeepAsIs": "保持原樣",
     "UndoChanges": "撤銷更改"
   },
+  "comp:BAIBulkErrorModal": {
+    "ActionExecutionFailed": "執行錯誤",
+    "ErrorOccurred": "發生錯誤"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "選擇容器映像倉庫"
   },

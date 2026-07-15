@@ -91,6 +91,10 @@
     "KeepAsIs": "그대로 유지",
     "UndoChanges": "변경 취소"
   },
+  "comp:BAIBulkErrorModal": {
+    "ActionExecutionFailed": "실행 오류",
+    "ErrorOccurred": "문제가 발생했습니다."
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "컨테이너 레지스트리를 선택해주세요"
   },

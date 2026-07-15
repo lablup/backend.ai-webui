@@ -24,6 +24,7 @@ import {
 import { App, Checkbox, Empty, Form, theme, Tooltip, Typography } from 'antd';
 import {
   BAIBulkEditFormItem,
+  BAIBulkErrorModal,
   type BAIColumnsType,
   BAIFlex,
   BAIListAlert,
@@ -71,6 +72,18 @@ const makeCellKey = (entityType: string, operation: string) =>
 interface EditingScope {
   scopeId: string;
   scopeName?: string | null;
+}
+
+/**
+ * One failed bulk request, shaped for the shared `BAIBulkErrorModal` table —
+ * one row per request the server rejected (FR-3334).
+ */
+interface FailedPermissionRequest {
+  key: string;
+  scopeLabel: string;
+  permissionLabel: string;
+  action: 'grant' | 'revoke';
+  message: string;
 }
 
 /**
@@ -179,7 +192,7 @@ const RoleScopePermissionEditModal: React.FC<
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { message, notification } = App.useApp();
+  const { message } = App.useApp();
   const { logger } = useBAILogger();
 
   const role = useFragment(
@@ -347,6 +360,15 @@ const RoleScopePermissionEditModal: React.FC<
       ),
     }));
 
+  // Cells already reconciled by earlier partially-failed saves, keyed by
+  // scopeId → cellKey → new permission id (granted) or null (revoked). The
+  // permissions fragment stays stale until the parent refetches on close, so
+  // these overrides layer the true backend state on top of it — a retry then
+  // re-submits only the cells that actually failed (FR-3334).
+  const [appliedCellOverrides, setAppliedCellOverrides] = useState<
+    ReadonlyMap<string, ReadonlyMap<string, string | null>>
+  >(new Map());
+
   // The role's currently-granted cells grouped by scope, plus each cell's
   // permission id (needed to delete on uncheck) — bulk save reconciles every
   // selected scope against its own initial state.
@@ -367,6 +389,30 @@ const RoleScopePermissionEditModal: React.FC<
     }
     idByCell.set(cellKey, toLocalId(permission.id));
   });
+  // Layer the already-applied cells (from earlier partially-failed saves) on
+  // top of the fragment-derived state. Last write wins per cell, so a cell
+  // granted then revoked (or vice versa) across retries resolves correctly.
+  appliedCellOverrides.forEach((cells, overrideScopeId) => {
+    let keys = initialKeysByScopeId.get(overrideScopeId);
+    let idByCell = permissionIdByScopeCell.get(overrideScopeId);
+    cells.forEach((permissionId, cellKey) => {
+      if (permissionId === null) {
+        keys?.delete(cellKey);
+        idByCell?.delete(cellKey);
+      } else {
+        if (!keys) {
+          keys = new Set<string>();
+          initialKeysByScopeId.set(overrideScopeId, keys);
+        }
+        if (!idByCell) {
+          idByCell = new Map<string, string>();
+          permissionIdByScopeCell.set(overrideScopeId, idByCell);
+        }
+        keys.add(cellKey);
+        idByCell.set(cellKey, permissionId);
+      }
+    });
+  });
 
   const singleScopeId = !isBulk ? scopeList[0]?.scopeId : undefined;
 
@@ -383,6 +429,16 @@ const RoleScopePermissionEditModal: React.FC<
   // edit mode hold the checkbox boolean.
   const [bulkForm] = Form.useForm<Record<string, boolean | undefined>>();
   const [isSaving, setIsSaving] = useState(false);
+  // Per-request errors of the last save, surfaced through the shared
+  // bulk-error modal. The rows persist after the error modal closes (only the
+  // open flag flips) so the table doesn't empty out mid close-animation.
+  const [failedRequests, setFailedRequests] = useState<
+    FailedPermissionRequest[]
+  >([]);
+  const [isFailureModalOpen, setIsFailureModalOpen] = useState(false);
+  // Whether any change already reached the backend (partial success). The
+  // parent must refetch on close even if the user then cancels.
+  const hasAppliedChanges = appliedCellOverrides.size > 0;
 
   const toggleCell = (key: string, checked: boolean) => {
     setEditedKeys((previous) => {
@@ -409,16 +465,16 @@ const RoleScopePermissionEditModal: React.FC<
       : operationLabel(baseOperation);
   };
 
-  const describeCell = (key: string, scope?: EditingScope) => {
+  /** Human-readable "Entity / Operation" label of a grid cell. */
+  const permissionCellLabel = (key: string) => {
     const [entityType, operation] = key.split(CELL_KEY_SEPARATOR);
-    const base = `${t(`rbac.types.${entityType}`, {
+    return `${t(`rbac.types.${entityType}`, {
       defaultValue: entityType,
     })} / ${operationLabel(operation)}`;
-    // Bulk failures need to say WHICH scope failed.
-    return isBulk && scope
-      ? `${scope.scopeName || scope.scopeId}: ${base}`
-      : base;
   };
+
+  const scopeLabelOf = (scope: EditingScope | undefined, fallback: string) =>
+    scope?.scopeName || scope?.scopeId || fallback;
 
   const handleSave = async () => {
     if (!scopeType || scopeList.length === 0) {
@@ -509,61 +565,159 @@ const RoleScopePermissionEditModal: React.FC<
           : Promise.resolve(null),
       ]);
 
-      const failedLabels: string[] = [];
+      const failures: FailedPermissionRequest[] = [];
+      // Cells the backend actually reconciled in this save — layered onto
+      // `appliedCellOverrides` on partial failure so a retry skips them.
+      const appliedUpdates = new Map<string, Map<string, string | null>>();
+      const recordApplied = (
+        appliedScopeId: string,
+        cellKey: string,
+        permissionId: string | null,
+      ) => {
+        let cells = appliedUpdates.get(appliedScopeId);
+        if (!cells) {
+          cells = new Map<string, string | null>();
+          appliedUpdates.set(appliedScopeId, cells);
+        }
+        cells.set(cellKey, permissionId);
+      };
+      // useMutationWithPromise rejects GraphQL-level failures with the raw
+      // PayloadError[], so unwrap per-error messages instead of String().
+      const reasonMessage = (reason: unknown): string => {
+        if (reason instanceof Error) {
+          return reason.message;
+        }
+        if (Array.isArray(reason)) {
+          const messages = reason
+            .map((item) =>
+              item !== null && typeof item === 'object' && 'message' in item
+                ? String(item.message)
+                : String(item),
+            )
+            .filter(Boolean);
+          if (messages.length > 0) {
+            return messages.join('\n');
+          }
+        }
+        return String(reason);
+      };
+
       if (addResult.status === 'fulfilled') {
-        addResult.value?.adminBulkAddRolePermissions?.failed.forEach(
-          (failure) => {
-            logger.error('Failed to add permission', failure.message);
-            failedLabels.push(
-              describeCell(
-                makeCellKey(failure.entityType, failure.operation),
-                scopeById.get(failure.scopeId),
-              ),
-            );
-          },
-        );
+        const addPayload = addResult.value?.adminBulkAddRolePermissions;
+        // Successfully-created rows carry their new permission id — record it
+        // so a later uncheck of the same cell can delete it without a refetch.
+        addPayload?.items.forEach((item) => {
+          recordApplied(
+            item.scopeId,
+            makeCellKey(item.entityType, item.operation),
+            toLocalId(item.id),
+          );
+        });
+        addPayload?.failed.forEach((failure) => {
+          logger.error('Failed to add permission', failure.message);
+          const cellKey = makeCellKey(failure.entityType, failure.operation);
+          failures.push({
+            key: `grant-${failure.scopeId}-${cellKey}`,
+            scopeLabel: scopeLabelOf(
+              scopeById.get(failure.scopeId),
+              failure.scopeId,
+            ),
+            permissionLabel: permissionCellLabel(cellKey),
+            action: 'grant',
+            message: failure.message,
+          });
+        });
       } else {
         logger.error('Failed to add permissions', addResult.reason);
-        failedLabels.push(
-          ...createEntries.map(({ scope, key }) => describeCell(key, scope)),
-        );
-      }
-      if (removeResult.status === 'fulfilled') {
-        removeResult.value?.adminBulkRemoveRolePermissions?.failed.forEach(
-          (failure) => {
-            logger.error('Failed to remove permission', failure.message);
-            const entry = entryByPermissionId.get(String(failure.permissionId));
-            failedLabels.push(
-              entry
-                ? describeCell(entry.key, entry.scope)
-                : String(failure.permissionId),
-            );
-          },
-        );
-      } else {
-        logger.error('Failed to remove permissions', removeResult.reason);
-        failedLabels.push(
-          ...deleteEntries.map(({ scope, key }) => describeCell(key, scope)),
-        );
-      }
-
-      if (failedLabels.length === 0) {
-        message.success(t('rbac.PermissionsSaved'));
-      } else {
-        notification.error({
-          title: t('rbac.PermissionsPartialFailure', {
-            count: failedLabels.length,
-          }),
-          description: failedLabels.join(', '),
+        // A wholly-rejected request counts its entire batch as failed.
+        createEntries.forEach(({ scope, key }) => {
+          failures.push({
+            key: `grant-${scope.scopeId}-${key}`,
+            scopeLabel: scopeLabelOf(scope, scope.scopeId),
+            permissionLabel: permissionCellLabel(key),
+            action: 'grant',
+            message: reasonMessage(addResult.reason),
+          });
         });
       }
+      if (removeResult.status === 'fulfilled') {
+        const removePayload =
+          removeResult.value?.adminBulkRemoveRolePermissions;
+        const failedRemoveIds = new Set(
+          (removePayload?.failed ?? []).map((failure) =>
+            String(failure.permissionId),
+          ),
+        );
+        // Requested deletions not reported as failed were applied.
+        deleteEntries.forEach((entry) => {
+          if (!failedRemoveIds.has(entry.permissionId)) {
+            recordApplied(entry.scope.scopeId, entry.key, null);
+          }
+        });
+        removePayload?.failed.forEach((failure) => {
+          logger.error('Failed to remove permission', failure.message);
+          const entry = entryByPermissionId.get(String(failure.permissionId));
+          failures.push({
+            key: `revoke-${failure.permissionId}`,
+            scopeLabel: entry
+              ? scopeLabelOf(entry.scope, entry.scope.scopeId)
+              : String(failure.permissionId),
+            permissionLabel: entry ? permissionCellLabel(entry.key) : '-',
+            action: 'revoke',
+            message: failure.message,
+          });
+        });
+      } else {
+        logger.error('Failed to remove permissions', removeResult.reason);
+        deleteEntries.forEach(({ scope, key }) => {
+          failures.push({
+            key: `revoke-${scope.scopeId}-${key}`,
+            scopeLabel: scopeLabelOf(scope, scope.scopeId),
+            permissionLabel: permissionCellLabel(key),
+            action: 'revoke',
+            message: reasonMessage(removeResult.reason),
+          });
+        });
+      }
+
+      if (failures.length === 0) {
+        message.success(t('rbac.PermissionsSaved'));
+        // Close and let the section refetch so tags reflect the true state.
+        onRequestClose(true);
+        return;
+      }
+
+      // Partial failure: keep this modal — and the user's edits — alive for a
+      // retry (FR-3334). The applied cells are layered onto the initial state
+      // so the next save re-submits only what actually failed; the per-request
+      // errors are surfaced through the shared bulk-error modal.
+      if (appliedUpdates.size > 0) {
+        setAppliedCellOverrides((previous) => {
+          const next = new Map(
+            Array.from(
+              previous,
+              ([prevScopeId, cells]) => [prevScopeId, new Map(cells)] as const,
+            ),
+          );
+          appliedUpdates.forEach((cells, updatedScopeId) => {
+            let target = next.get(updatedScopeId);
+            if (!target) {
+              target = new Map<string, string | null>();
+              next.set(updatedScopeId, target);
+            }
+            const targetCells = target;
+            cells.forEach((permissionId, cellKey) => {
+              targetCells.set(cellKey, permissionId);
+            });
+          });
+          return next;
+        });
+      }
+      setFailedRequests(failures);
+      setIsFailureModalOpen(true);
     } finally {
       setIsSaving(false);
     }
-
-    // Close and let the section refetch so tags reflect the true state, even on
-    // a partial failure.
-    onRequestClose(true);
   };
 
   // Every OperationType renders a cell; combinations absent from the
@@ -647,6 +801,33 @@ const RoleScopePermissionEditModal: React.FC<
     },
   ];
 
+  // Failed-request table shown in the shared bulk-error modal — one row per
+  // rejected grant/revoke request.
+  const failureColumns: BAIColumnsType<FailedPermissionRequest> = [
+    {
+      key: 'scope',
+      title: t('rbac.ScopeId'),
+      dataIndex: 'scopeLabel',
+    },
+    {
+      key: 'permission',
+      title: t('rbac.Permission'),
+      dataIndex: 'permissionLabel',
+    },
+    {
+      key: 'action',
+      title: t('rbac.Action'),
+      dataIndex: 'action',
+      render: (action: FailedPermissionRequest['action']) =>
+        action === 'grant' ? t('rbac.Grant') : t('rbac.Revoke'),
+    },
+    {
+      key: 'message',
+      title: t('rbac.ErrorMessage'),
+      dataIndex: 'message',
+    },
+  ];
+
   return (
     <BAIModal
       {...baiModalProps}
@@ -684,7 +865,10 @@ const RoleScopePermissionEditModal: React.FC<
       okText={t('button.Save')}
       onOk={handleSave}
       confirmLoading={isSaving}
-      onCancel={() => onRequestClose(false)}
+      // After a partial failure some changes did reach the backend, so even a
+      // cancel must report success=true — the parent then refetches and the
+      // tags reflect the true state.
+      onCancel={() => onRequestClose(hasAppliedChanges)}
       // Bulk cells render a 'Keep as is' placeholder input per operation
       // column, so the grid needs considerably more room than the
       // checkbox-only single-scope grid. antd's own `max-width:
@@ -724,6 +908,17 @@ const RoleScopePermissionEditModal: React.FC<
           )}
         </BAIFlex>
       </Form>
+      {/* Per-request errors of a partially-failed save (FR-3334). Rendered
+          inside the edit modal so both live one open cycle under the parent's
+          `BAIUnmountAfterClose`; the edit modal (and the user's edits) stays
+          open behind it for a retry. */}
+      <BAIBulkErrorModal<FailedPermissionRequest>
+        open={isFailureModalOpen}
+        description={t('rbac.PermissionsPartialFailureDescription')}
+        columns={failureColumns}
+        dataSource={failedRequests}
+        onRequestClose={() => setIsFailureModalOpen(false)}
+      />
     </BAIModal>
   );
 };
