@@ -683,7 +683,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
           port: values.commandPort ?? 8000,
           healthCheckPath: values.commandHealthCheck ?? '/health',
           modelMountDestination: values.commandModelMount ?? '/models',
-          initialDelay: values.commandInitialDelay ?? 60,
+          initialDelay: values.commandInitialDelay ?? 600,
           maxRetries: values.commandMaxRetries ?? 10,
         });
 
@@ -1013,7 +1013,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                 port: values.commandPort ?? 8000,
                 healthCheckPath: values.commandHealthCheck ?? '/health',
                 modelMountDestination,
-                initialDelay: values.commandInitialDelay ?? 60,
+                initialDelay: values.commandInitialDelay ?? 600,
                 maxRetries: values.commandMaxRetries ?? 10,
               });
 
@@ -1315,13 +1315,13 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
                     startCommand,
                     commandPort: svc.port ?? 8000,
                     commandHealthCheck: svc.healthCheck?.path ?? '/health',
-                    commandInitialDelay: svc.healthCheck?.initialDelay ?? 60,
+                    commandInitialDelay: svc.healthCheck?.initialDelay ?? 600,
                     commandMaxRetries: svc.healthCheck?.maxRetries ?? 10,
                   }
                 : {
                     commandPort: 8000,
                     commandHealthCheck: '/health',
-                    commandInitialDelay: 60,
+                    commandInitialDelay: 600,
                     commandMaxRetries: 10,
                   }),
             };
@@ -1342,7 +1342,7 @@ const ServiceLauncherPageContent: React.FC<ServiceLauncherPageContentProps> = ({
         commandModelMount: '/models',
         commandPort: 8000,
         commandHealthCheck: '/health',
-        commandInitialDelay: 60,
+        commandInitialDelay: 600,
         commandMaxRetries: 10,
         ...RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
         ...(baiClient._config?.default_session_environment && {
