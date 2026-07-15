@@ -101,7 +101,7 @@
     "workbox-routing": "^7.4.0",
     "workbox-strategies": "^7.4.0",
     "workbox-sw": "^7.4.0",
-    "ws": "^8.19.0"
+    "ws": "^8.21.0"
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
