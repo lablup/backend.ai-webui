@@ -15,10 +15,12 @@ async function createPreset(
 ): Promise<void> {
   await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
   await page.waitForLoadState('domcontentloaded');
-  await expect(page.getByRole('button', { name: /Add Preset/i })).toBeVisible({
+  await expect(
+    page.getByRole('button', { name: /Create Preset/i }),
+  ).toBeVisible({
     timeout: 60000,
   });
-  await page.getByRole('button', { name: /Add Preset/i }).click();
+  await page.getByRole('button', { name: /Create Preset/i }).click();
   // In this version of Ant Design, .ant-modal itself has role="dialog"
   const modal = page.getByRole('dialog');
   await expect(modal).toBeVisible();
@@ -84,9 +86,9 @@ test.describe(
         page.getByRole('combobox', { name: 'Search' }),
       ).toBeVisible();
 
-      // Verify the "Add Preset" button is visible
+      // Verify the "Create Preset" button is visible
       await expect(
-        page.getByRole('button', { name: /Add Preset/i }),
+        page.getByRole('button', { name: /Create Preset/i }),
       ).toBeVisible();
 
       // Verify the refresh (reload) button is visible
@@ -168,8 +170,8 @@ test.describe(
       // Navigate to the prometheus preset tab
       await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
 
-      // Click the "Add Preset" button
-      await page.getByRole('button', { name: /Add Preset/i }).click();
+      // Click the "Create Preset" button
+      await page.getByRole('button', { name: /Create Preset/i }).click();
 
       // Verify the modal opens with title "Create Preset"
       // In this version of Ant Design, .ant-modal itself has role="dialog"
@@ -226,8 +228,8 @@ test.describe(
       // Navigate to the prometheus preset tab
       await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
 
-      // Click the "Add Preset" button
-      await page.getByRole('button', { name: /Add Preset/i }).click();
+      // Click the "Create Preset" button
+      await page.getByRole('button', { name: /Create Preset/i }).click();
       // In this version of Ant Design, .ant-modal itself has role="dialog"
       const modal = page.getByRole('dialog');
       await expect(modal).toBeVisible();
@@ -278,9 +280,9 @@ test.describe(
       await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
       await page.waitForLoadState('domcontentloaded');
       await expect(
-        page.getByRole('button', { name: /Add Preset/i }),
+        page.getByRole('button', { name: /Create Preset/i }),
       ).toBeVisible({ timeout: 60000 });
-      await page.getByRole('button', { name: /Add Preset/i }).click();
+      await page.getByRole('button', { name: /Create Preset/i }).click();
       // In this version of Ant Design, .ant-modal itself has role="dialog"
       const modal = page.getByRole('dialog');
       await expect(modal).toBeVisible();
@@ -360,7 +362,7 @@ test.describe(
     }) => {
       // Navigate and open modal
       await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
-      await page.getByRole('button', { name: /Add Preset/i }).click();
+      await page.getByRole('button', { name: /Create Preset/i }).click();
       // In this version of Ant Design, .ant-modal itself has role="dialog"
       const modal = page.getByRole('dialog');
       await expect(modal).toBeVisible();
@@ -390,7 +392,7 @@ test.describe(
     }) => {
       // Navigate and open modal
       await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
-      await page.getByRole('button', { name: /Add Preset/i }).click();
+      await page.getByRole('button', { name: /Create Preset/i }).click();
       // In this version of Ant Design, .ant-modal itself has role="dialog"
       const modal = page.getByRole('dialog');
       await expect(modal).toBeVisible();
@@ -420,7 +422,7 @@ test.describe(
     }) => {
       // Navigate and open modal
       await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
-      await page.getByRole('button', { name: /Add Preset/i }).click();
+      await page.getByRole('button', { name: /Create Preset/i }).click();
       // In this version of Ant Design, .ant-modal itself has role="dialog"
       const modal = page.getByRole('dialog');
       await expect(modal).toBeVisible();
@@ -462,9 +464,9 @@ test.describe(
       await expect(paginationInfo).toBeVisible({ timeout: 60000 });
       // Open modal and fill fields
       await expect(
-        page.getByRole('button', { name: /Add Preset/i }),
+        page.getByRole('button', { name: /Create Preset/i }),
       ).toBeVisible({ timeout: 60000 });
-      await page.getByRole('button', { name: /Add Preset/i }).click();
+      await page.getByRole('button', { name: /Create Preset/i }).click();
       // In this version of Ant Design, .ant-modal itself has role="dialog"
       const modal = page.getByRole('dialog');
       await expect(modal).toBeVisible();
@@ -506,7 +508,7 @@ test.describe(
       ).toBeVisible({ timeout: 60000 });
 
       // Attempt to create second preset with same name
-      await page.getByRole('button', { name: /Add Preset/i }).click();
+      await page.getByRole('button', { name: /Create Preset/i }).click();
       // In this version of Ant Design, .ant-modal itself has role="dialog"
       const modal = page.getByRole('dialog');
       await expect(modal).toBeVisible();

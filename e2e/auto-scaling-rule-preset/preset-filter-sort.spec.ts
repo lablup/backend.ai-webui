@@ -15,10 +15,12 @@ async function createPreset(
 ): Promise<void> {
   await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
   await page.waitForLoadState('domcontentloaded');
-  await expect(page.getByRole('button', { name: /Add Preset/i })).toBeVisible({
+  await expect(
+    page.getByRole('button', { name: /Create Preset/i }),
+  ).toBeVisible({
     timeout: 60000,
   });
-  await page.getByRole('button', { name: /Add Preset/i }).click();
+  await page.getByRole('button', { name: /Create Preset/i }).click();
   const modal = page.getByRole('dialog');
   await expect(modal).toBeVisible();
   const nameInput = modal.getByRole('textbox', { name: 'Name', exact: true });
@@ -38,7 +40,9 @@ async function createPreset(
 async function deletePreset(page: Page, presetName: string): Promise<void> {
   await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
   await page.waitForLoadState('domcontentloaded');
-  await expect(page.getByRole('button', { name: /Add Preset/i })).toBeVisible({
+  await expect(
+    page.getByRole('button', { name: /Create Preset/i }),
+  ).toBeVisible({
     timeout: 60000,
   });
   const row = page.getByRole('row').filter({ hasText: presetName });
@@ -120,7 +124,7 @@ test.describe(
       await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
       await page.waitForLoadState('domcontentloaded');
       await expect(
-        page.getByRole('button', { name: /Add Preset/i }),
+        page.getByRole('button', { name: /Create Preset/i }),
       ).toBeVisible({ timeout: 60000 });
 
       // Apply name filter using the unique timestamp part
@@ -149,7 +153,7 @@ test.describe(
       await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
       await page.waitForLoadState('domcontentloaded');
       await expect(
-        page.getByRole('button', { name: /Add Preset/i }),
+        page.getByRole('button', { name: /Create Preset/i }),
       ).toBeVisible({ timeout: 60000 });
 
       // Apply a filter guaranteed not to match any preset
@@ -177,7 +181,7 @@ test.describe(
       await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
       await page.waitForLoadState('domcontentloaded');
       await expect(
-        page.getByRole('button', { name: /Add Preset/i }),
+        page.getByRole('button', { name: /Create Preset/i }),
       ).toBeVisible({ timeout: 60000 });
 
       // Apply a non-matching filter so the table shows 0 results

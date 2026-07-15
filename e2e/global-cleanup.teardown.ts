@@ -111,10 +111,14 @@ async function safeSweep(
 test.describe('Global e2e cleanup', () => {
   // The sweep may have to trash + delete-forever several leftover folders, each
   // a multi-step navigate/filter/confirm flow, and a stuck folder now fails its
-  // action at the 30s actionTimeout before being skipped. Give the cleanup more
-  // room than the default 180s so it can drain a backlog instead of timing out
-  // mid-sweep and leaving the rest behind.
-  test.describe.configure({ timeout: 300_000 });
+  // action at the 30s actionTimeout before being skipped. `sweepVFolders` bounds
+  // itself to `maxIterations` (default 20) per phase, but on a large backlog
+  // (up to 20 Active + 20 Trash iterations, each a full navigate/verify round
+  // trip) the 300s budget can still be exhausted mid-sweep, leaving the rest of
+  // the backlog behind. Give the cleanup more headroom than the default 180s
+  // (and the previous 300s) so it can drain a larger backlog instead of timing
+  // out mid-sweep.
+  test.describe.configure({ timeout: 600_000 });
 
   test('sweep leftover e2e vfolders (user)', async ({ page, request }) => {
     await loginAsUser(page, request);
