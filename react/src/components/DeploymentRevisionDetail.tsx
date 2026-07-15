@@ -111,6 +111,7 @@ const DeploymentRevisionDetail: React.FC<{
           vfolderId
           mountDestination
           definitionPath
+          subpath @since(version: "26.4.4rc9")
           vfolder {
             id
             name
@@ -348,6 +349,11 @@ const DeploymentRevisionDetail: React.FC<{
           {mountConfig.mountDestination && (
             <Typography.Text type="secondary">
               {mountConfig.mountDestination}
+            </Typography.Text>
+          )}
+          {mountConfig.subpath && (
+            <Typography.Text type="secondary">
+              {`${t('modelService.Subpath')}: ${mountConfig.subpath}`}
             </Typography.Text>
           )}
         </BAIFlex>

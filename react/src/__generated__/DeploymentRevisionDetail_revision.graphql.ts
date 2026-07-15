@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9ef310e2e9b0a8bb581bb184a2545b9a>>
+ * @generated SignedSource<<a6cd104c7bd2ed9fb143b44ee73cf41e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -63,6 +63,7 @@ export type DeploymentRevisionDetail_revision$data = {
   readonly modelMountConfig: {
     readonly definitionPath: string;
     readonly mountDestination: string;
+    readonly subpath: string | null | undefined;
     readonly vfolder: {
       readonly id: string;
       readonly name: string | null | undefined;
@@ -398,6 +399,13 @@ return {
           "name": "definitionPath",
           "storageKey": null
         },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "subpath",
+          "storageKey": null
+        },
         (v6/*: any*/)
       ],
       "storageKey": null
@@ -613,6 +621,6 @@ return {
 };
 })();
 
-(node as any).hash = "d514d2971b8f8abda996c7eb0230b037";
+(node as any).hash = "7079df2c232127627e140d8659e159a6";
 
 export default node;
