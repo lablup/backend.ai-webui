@@ -22,6 +22,12 @@ import type { Plugin } from 'vite';
  *    (`script-src 'self'`; the relay call is covered by the dev
  *    `connect-src … http:`).
  *
+ * Opt-in: the overlay is OFF by default so a plain `pnpm dev` never shows the
+ * floating review button. Enable it per-session with `VITE_DEV_REVIEW_OVERLAY`
+ * set to a truthy value (`1` / `true` / `on`) — e.g. in `.env.development.local`
+ * or as a shell var. When unset/falsy the plugin registers no middleware and
+ * injects no script, so it is a complete no-op.
+ *
  * Registration note: must be registered AFTER `projectRootStaticPlugin` in
  * the plugins array — that plugin's `order: 'pre'` transformIndexHtml
  * handler discards the incoming html and re-reads the template, so anything
@@ -36,7 +42,22 @@ const clientFile = resolve(
   'reviewOverlayClient.js',
 );
 
+/**
+ * The overlay is opt-in. `loadEnv()` in `vite.config.ts` runs before the
+ * plugins array is built, so `process.env.VITE_DEV_REVIEW_OVERLAY` reflects any
+ * value from `.env*` files (not just shell vars) by the time this factory runs.
+ */
+function isReviewOverlayEnabled(): boolean {
+  const flag = (process.env.VITE_DEV_REVIEW_OVERLAY ?? '').toLowerCase();
+  return flag === '1' || flag === 'true' || flag === 'on';
+}
+
 export function devReviewOverlayPlugin(): Plugin {
+  // Off by default: return an inert plugin so a plain `pnpm dev` shows no
+  // floating review button. Opt in with VITE_DEV_REVIEW_OVERLAY=1.
+  if (!isReviewOverlayEnabled()) {
+    return { name: 'bai-dev-review-overlay', apply: 'serve' };
+  }
   return {
     name: 'bai-dev-review-overlay',
     apply: 'serve',
