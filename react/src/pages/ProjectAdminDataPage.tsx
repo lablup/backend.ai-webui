@@ -150,7 +150,6 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
     [queryParams.statusCategory]: { queryParams, tablePaginationOption },
   });
 
-  // eslint-disable-next-line react-hooks/refs
   queryMapRef.current[queryParams.statusCategory] = {
     queryParams,
     tablePaginationOption,

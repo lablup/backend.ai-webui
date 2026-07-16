@@ -56,8 +56,7 @@ const ChatTokenCounter: React.FC<ChatTokenCounterProps> = ({
     lastAssistantMessage?.role === 'assistant'
       ? (
           lastAssistantMessage?.metadata as
-            | { outputTokens?: number }
-            | undefined
+            { outputTokens?: number } | undefined
         )?.outputTokens
       : undefined;
   const lastAssistantTokenCount =
@@ -78,7 +77,6 @@ const ChatTokenCounter: React.FC<ChatTokenCounterProps> = ({
   // last value instead of decaying; the final value at endTime is unaffected.
   const [measuredAt, setMeasuredAt] = useState<number | null>(null);
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- capture the wall-clock instant the token count was observed; it cannot be derived in render without reintroducing the compiler-frozen Date.now()
     setMeasuredAt(Date.now());
   }, [lastAssistantTokenCount]);
 

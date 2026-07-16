@@ -40,7 +40,7 @@ const FormItemWithUnlimited: React.FC<FormItemWithUnlimitedProps> = ({
       unlimitedValue === undefined || unlimitedValue === null
         ? fieldValue === undefined || fieldValue === null
         : fieldValue === unlimitedValue;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+
     setIsUnlimited(isFieldUnlimited);
   }, [form, name, unlimitedValue]);
 

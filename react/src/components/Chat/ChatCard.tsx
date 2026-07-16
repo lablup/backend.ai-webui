@@ -392,14 +392,12 @@ const PureChatCard: React.FC<ChatCardProps> = ({
   // vLLM, Ollama, NVIDIA GenAI-Perf, etc.
   useEffect(() => {
     if (status === 'streaming' && startTime === null) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- TPS timer; pre-existing in FR-2854 scope, refactor in follow-up
       setStartTime(Date.now());
     }
   }, [status, startTime]);
 
   useEffect(() => {
     if (!isStreaming && startTime !== null && endTime === null) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- TPS timer; pre-existing in FR-2854 scope, refactor in follow-up
       setEndTime(Date.now());
     }
   }, [isStreaming, startTime, endTime]);
