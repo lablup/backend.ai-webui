@@ -22,7 +22,7 @@ jobs:
   docs-checks:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # pnpm must be installed before setup-node so that node's
       # package-manager cache resolution (`pnpm store path`) works.

@@ -142,7 +142,7 @@ jobs:
           fi
 
       - name: Checkout source ref
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ steps.resolve.outputs.source_ref }}
           fetch-depth: 0
