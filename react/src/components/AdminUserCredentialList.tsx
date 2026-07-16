@@ -172,7 +172,6 @@ const AdminUserCredentialList: React.FC = () => {
 
   useEffect(() => {
     if (action === 'add') {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setOpenUserKeypairSettingModal(true);
 
       setAction(undefined);

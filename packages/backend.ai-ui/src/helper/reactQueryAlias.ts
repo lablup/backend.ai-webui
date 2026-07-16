@@ -49,7 +49,6 @@ export const useSuspenseTanQuery = <
     fetchKey,
   });
 
-  // eslint-disable-next-line react-hooks/refs
   if (fetchKey !== promiseInfoRef.current.fetchKey) {
     const observer = new QueryObserver(queryClient, {
       queryKey: options.queryKey,
@@ -57,11 +56,11 @@ export const useSuspenseTanQuery = <
     queryClient.invalidateQueries({
       queryKey: options.queryKey,
     });
-    // eslint-disable-next-line react-hooks/refs
+
     promiseInfoRef.current.fetchKey = fetchKey;
-    // eslint-disable-next-line react-hooks/refs
+
     promiseInfoRef.current.resolved = false;
-    // eslint-disable-next-line react-hooks/refs
+
     promiseInfoRef.current.promise = new Promise((resolve) => {
       const unsubscribe = observer.subscribe((result) => {
         unsubscribe();
@@ -72,9 +71,8 @@ export const useSuspenseTanQuery = <
       });
     });
   }
-  // eslint-disable-next-line react-hooks/refs
+
   if (promiseInfoRef.current?.promise && !promiseInfoRef.current.resolved) {
-    // eslint-disable-next-line react-hooks/refs
     throw promiseInfoRef.current.promise;
   }
 

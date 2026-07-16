@@ -259,7 +259,6 @@ const ControlWrapper = React.forwardRef<ControlWrapperRef, ControlWrapperProps>(
       },
     }));
 
-    // eslint-disable-next-line react-hooks/refs
     const clonedChild = cloneElement(children, {
       ...props,
       // @ts-ignore

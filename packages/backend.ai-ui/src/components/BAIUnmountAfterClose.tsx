@@ -41,7 +41,6 @@ const BAIUnmountAfterClose: React.FC<BAIUnmountModalAfterCloseProps> = ({
   // Reset the afterClosed state to false whenever the modal is opened, so it can be unmounted after the next close.
   useEffect(() => {
     if (isOpen) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setAfterClosed(false);
     }
   }, [isOpen]);
