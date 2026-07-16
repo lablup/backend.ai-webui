@@ -1,6 +1,7 @@
 name: Publish Backend.ai-docs-toolkit to npm registry
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - packages/backend.ai-docs-toolkit/**
