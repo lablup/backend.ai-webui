@@ -7,7 +7,7 @@ import { AutoScalingRuleListLegacyDeleteMutation } from '../__generated__/AutoSc
 import AutoScalingRuleEditorModalLegacy, {
   COMPARATOR_LABELS,
 } from './AutoScalingRuleEditorModalLegacy';
-import { DeleteFilled, SettingOutlined } from '@ant-design/icons';
+import { DeleteFilled } from '@ant-design/icons';
 import { App, Button, Tag, Tooltip, Typography, theme } from 'antd';
 import {
   BAIButton,
@@ -19,7 +19,12 @@ import {
 } from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
 import * as _ from 'lodash-es';
-import { CircleArrowDownIcon, CircleArrowUpIcon, PlusIcon } from 'lucide-react';
+import {
+  CircleArrowDownIcon,
+  CircleArrowUpIcon,
+  PlusIcon,
+  SquarePenIcon,
+} from 'lucide-react';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useMutation } from 'react-relay';
@@ -164,7 +169,7 @@ const AutoScalingRuleListLegacy: React.FC<AutoScalingRuleListLegacyProps> = ({
                 <BAIFlex direction="row" align="stretch">
                   <Button
                     type="text"
-                    icon={<SettingOutlined />}
+                    icon={<SquarePenIcon />}
                     style={
                       isEndpointDestroying || !isOwnedByCurrentUser
                         ? {

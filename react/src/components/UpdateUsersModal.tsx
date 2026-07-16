@@ -95,7 +95,7 @@ const UpdateUsersModal = ({
   return (
     <BAIModal
       title={t('credential.UpdateUsers')}
-      okText={t('button.Update')}
+      okText={t('button.Save')}
       confirmLoading={isPending || isInFlightBulkUpdate}
       {...modalProps}
       okButtonProps={{

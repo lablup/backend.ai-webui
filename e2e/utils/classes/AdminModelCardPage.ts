@@ -446,8 +446,8 @@ export class AdminModelCardPage {
     return this.getEditModal().getByRole('textbox', { name: 'Name' });
   }
 
-  getEditModalUpdateButton(): Locator {
-    return this.getEditModal().getByRole('button', { name: 'Update' });
+  getEditModalSaveButton(): Locator {
+    return this.getEditModal().getByRole('button', { name: 'Save' });
   }
 
   getEditModalCancelButton(): Locator {

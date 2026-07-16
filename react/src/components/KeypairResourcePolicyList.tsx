@@ -19,7 +19,6 @@ import {
   DeleteFilled,
   InfoCircleOutlined,
   ReloadOutlined,
-  SettingOutlined,
 } from '@ant-design/icons';
 import { App, Button, Tooltip } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
@@ -38,7 +37,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { PlusIcon } from 'lucide-react';
+import { PlusIcon, SquarePenIcon } from 'lucide-react';
 import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
@@ -135,7 +134,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
             {
               key: 'settings',
               title: t('button.Settings'),
-              icon: <SettingOutlined />,
+              icon: <SquarePenIcon />,
               onClick: () => {
                 setEditingKeypairResourcePolicy(row);
               },

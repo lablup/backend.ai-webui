@@ -207,6 +207,9 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
           ? t('resourcePolicy.CreateProjectResourcePolicy')
           : t('resourcePolicy.UpdateProjectResourcePolicy')
       }
+      okText={
+        projectResourcePolicy === null ? t('button.Create') : t('button.Save')
+      }
       onOk={handleOk}
       onCancel={() => onRequestClose()}
       destroyOnHidden

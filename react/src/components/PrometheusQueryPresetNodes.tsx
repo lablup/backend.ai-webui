@@ -7,7 +7,7 @@ import {
   PrometheusQueryPresetNodesFragment$data,
   PrometheusQueryPresetNodesFragment$key,
 } from '../__generated__/PrometheusQueryPresetNodesFragment.graphql';
-import { DeleteFilled, EditOutlined } from '@ant-design/icons';
+import { DeleteFilled } from '@ant-design/icons';
 import { Tag } from 'antd';
 import {
   BAIColumnsType,
@@ -21,6 +21,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
+import { SquarePenIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -114,7 +115,7 @@ const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
             {
               key: 'edit',
               title: t('button.Edit'),
-              icon: <EditOutlined />,
+              icon: <SquarePenIcon />,
               onClick: () => onEditPreset?.(row),
             },
             {

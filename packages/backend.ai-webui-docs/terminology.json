@@ -709,6 +709,16 @@
       "reversible": "reversible",
       "decidingFR": "FR-3052",
       "description": "Use \"Hide\" for purely cosmetic visibility changes that keep the underlying data intact and can be reversed by un-hiding. Never use \"Hide\" when data is actually removed."
+    },
+    {
+      "id": "verb-edit",
+      "intent": "edit",
+      "context": "Modify values of an existing entity that was created with initial values (resource group, user, role, preset, deployment, registry, resource policy).",
+      "preferred": { "en": "Edit" },
+      "avoid": ["Modify", "Update"],
+      "reversible": "reversible",
+      "decidingFR": "FR-3331",
+      "description": "Use \"Edit\" (KO: 수정) for actions that open or title a form modifying a previously created entity's values — modal titles, row actions, icon tooltips. Maps to i18n `button.Edit`, `credential.ModifyUserDetail` (\"Edit User Detail\"), `resourceGroup.ModifyResourceGroup` (\"Edit Resource Group\"). Do NOT use \"Edit\" for feature configuration — that stays \"Settings\" (KO: 설정, e.g., fair share settings) — nor for text/content editing where KO keeps 편집 (e.g., the vfolder file editor). The submit button of an edit form is \"Save\" (KO: 저장, i18n `button.Save`), not \"Edit\" or \"Update\"."
     }
   ]
 }

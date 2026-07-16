@@ -14,7 +14,7 @@ import {
   BAIFlex,
   useFetchKey,
 } from 'backend.ai-ui';
-import { EditIcon } from 'lucide-react';
+import { SquarePenIcon } from 'lucide-react';
 import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
@@ -99,7 +99,7 @@ const RoleDetailDrawer: React.FC<RoleDetailDrawerProps> = ({
                 <Tooltip title={t('rbac.EditRole')}>
                   <BAIButton
                     size="large"
-                    icon={<EditIcon style={{ color: token.colorInfo }} />}
+                    icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
                     onClick={() => setIsEditModalOpen(true)}
                   />
                 </Tooltip>

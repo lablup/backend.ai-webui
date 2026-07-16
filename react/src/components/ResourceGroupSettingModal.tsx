@@ -189,7 +189,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
       onCancel={() => {
         onRequestClose?.(false);
       }}
-      okText={resourceGroup ? t('button.Update') : t('button.Create')}
+      okText={resourceGroup ? t('button.Save') : t('button.Create')}
       okButtonProps={{
         loading:
           isInFlightCommitCreateResourceGroup ||

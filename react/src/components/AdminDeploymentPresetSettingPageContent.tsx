@@ -1150,7 +1150,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                   disabled={reviewHasError}
                   action={onSubmit}
                 >
-                  {mode === 'edit' ? t('button.Update') : t('button.Create')}
+                  {mode === 'edit' ? t('button.Save') : t('button.Create')}
                 </BAIButton>
               )
             ) : (

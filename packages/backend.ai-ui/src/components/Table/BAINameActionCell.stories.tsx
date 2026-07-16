@@ -6,13 +6,13 @@ import type { BAINameActionCellAction } from './BAINameActionCell';
 import {
   CopyOutlined,
   DeleteOutlined,
-  EditOutlined,
   FolderOutlined,
   ShareAltOutlined,
 } from '@ant-design/icons';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import enUS from 'antd/locale/en_US';
 import koKR from 'antd/locale/ko_KR';
+import { SquarePenIcon } from 'lucide-react';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
@@ -139,7 +139,7 @@ const sampleActions: BAINameActionCellAction[] = [
   {
     key: 'edit',
     title: 'Edit',
-    icon: <EditOutlined />,
+    icon: <SquarePenIcon />,
     onClick: () => console.log('Edit clicked'),
   },
   {
@@ -366,7 +366,7 @@ export const MenuOnlyActions: Story = {
       {
         key: 'edit',
         title: 'Edit',
-        icon: <EditOutlined />,
+        icon: <SquarePenIcon />,
         onClick: () => console.log('Edit clicked'),
       },
       {

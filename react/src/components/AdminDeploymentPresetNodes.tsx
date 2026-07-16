@@ -6,7 +6,7 @@ import type {
   AdminDeploymentPresetNodesFragment$data,
   AdminDeploymentPresetNodesFragment$key,
 } from '../__generated__/AdminDeploymentPresetNodesFragment.graphql';
-import { DeleteFilled, SettingOutlined } from '@ant-design/icons';
+import { DeleteFilled } from '@ant-design/icons';
 import {
   BAIColumnType,
   BAINameActionCell,
@@ -20,6 +20,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
+import { SquarePenIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -125,7 +126,7 @@ const AdminDeploymentPresetNodes: React.FC<AdminDeploymentPresetNodesProps> = ({
               {
                 key: 'edit',
                 title: t('button.Edit'),
-                icon: <SettingOutlined />,
+                icon: <SquarePenIcon />,
                 onClick: () => onEdit?.(preset),
               },
               {

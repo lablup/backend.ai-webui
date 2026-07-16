@@ -25,7 +25,6 @@ import {
   DeleteFilled,
   EllipsisOutlined,
   InfoCircleOutlined,
-  SettingOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { App, Button, Dropdown, Space, theme } from 'antd';
@@ -49,7 +48,7 @@ import {
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { BanIcon, EditIcon, PlusIcon, UndoIcon } from 'lucide-react';
+import { BanIcon, PlusIcon, SquarePenIcon, UndoIcon } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, { useState, useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -225,7 +224,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
           {
             key: 'edit',
             title: t('button.Edit'),
-            icon: <SettingOutlined />,
+            icon: <SquarePenIcon />,
             onClick: () => {
               setSelectedUserForSettingModal(findUserNode(record.id));
             },
@@ -458,7 +457,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
                 onClearSelection={() => setSelectedUserList([])}
               />
               <BAIButton
-                icon={<EditIcon style={{ color: token.colorInfo }} />}
+                icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
                 style={{
                   backgroundColor: token.colorInfoBg,
                 }}

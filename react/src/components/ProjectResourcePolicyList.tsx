@@ -17,11 +17,7 @@ import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import ProjectResourcePolicySettingModal from './ProjectResourcePolicySettingModal';
-import {
-  DeleteFilled,
-  ReloadOutlined,
-  SettingOutlined,
-} from '@ant-design/icons';
+import { DeleteFilled, ReloadOutlined } from '@ant-design/icons';
 import { App, Button, Tooltip } from 'antd';
 import type { ColumnType } from 'antd/es/table';
 import {
@@ -36,7 +32,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { PlusIcon } from 'lucide-react';
+import { PlusIcon, SquarePenIcon } from 'lucide-react';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
@@ -119,7 +115,7 @@ const ProjectResourcePolicyList: React.FC<
             {
               key: 'settings',
               title: t('button.Settings'),
-              icon: <SettingOutlined />,
+              icon: <SquarePenIcon />,
               onClick: () => {
                 setEditingProjectResourcePolicy(row);
               },

@@ -6,13 +6,14 @@ import { QuotaScopeTableQuery as QuotaScopeTableQueryType } from '../__generated
 import { QuotaScopeTableUnsetMutation } from '../__generated__/QuotaScopeTableUnsetMutation.graphql';
 import { bytesToGB } from '../helper/index';
 import QuotaSettingModal from './QuotaSettingModal';
-import { CloseOutlined, EditFilled } from '@ant-design/icons';
+import { CloseOutlined } from '@ant-design/icons';
 import { App, Empty } from 'antd';
 import {
   BAINameActionCell,
   BAITable,
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
+import { SquarePenIcon } from 'lucide-react';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
@@ -126,7 +127,7 @@ const QuotaScopeTable: React.FC<Props> = ({ scopeId, hostName }) => {
                   {
                     key: 'edit',
                     title: t('button.Edit'),
-                    icon: <EditFilled />,
+                    icon: <SquarePenIcon />,
                     onClick: () => setIsQuotaSettingModalOpen(true),
                     disabled: queryVariables !== deferredQueryVariables, // Disable edit button while loading new data
                   },

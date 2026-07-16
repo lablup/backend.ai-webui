@@ -20,7 +20,7 @@ import { useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { DeleteFilled, EditOutlined } from '@ant-design/icons';
+import { DeleteFilled } from '@ant-design/icons';
 import { App, Skeleton, Typography } from 'antd';
 import {
   BAICard,
@@ -43,6 +43,7 @@ import {
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { SquarePenIcon } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -338,7 +339,7 @@ const ProjectAdminDeploymentsContent: React.FC<
                             {
                               key: 'edit',
                               title: t('deployment.EditDeployment'),
-                              icon: <EditOutlined />,
+                              icon: <SquarePenIcon />,
                               disabled: destroying,
                               onClick: () => setEditingDeploymentId(record.id),
                             },

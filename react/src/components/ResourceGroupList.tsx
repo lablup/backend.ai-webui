@@ -20,7 +20,6 @@ import {
   CloseOutlined,
   DeleteFilled,
   InfoCircleOutlined,
-  SettingOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { App, Tag, Tooltip, theme } from 'antd';
@@ -40,7 +39,7 @@ import {
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
+import { BanIcon, PlusIcon, SquarePenIcon, UndoIcon } from 'lucide-react';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
@@ -170,7 +169,7 @@ const ResourceGroupList: React.FC = () => {
             {
               key: 'settings',
               title: t('button.Settings'),
-              icon: <SettingOutlined />,
+              icon: <SquarePenIcon />,
               onClick: () => {
                 setSelectedResourceGroup(record);
                 toggleOpenCreateModal();
@@ -355,7 +354,7 @@ const ResourceGroupList: React.FC = () => {
               />
               <Tooltip title={t('button.Settings')}>
                 <BAIButton
-                  icon={<SettingOutlined style={{ color: token.colorInfo }} />}
+                  icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
                   style={{ backgroundColor: token.colorInfoBg }}
                   onClick={() => setOpenSFTPModal(true)}
                 />

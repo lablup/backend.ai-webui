@@ -22,7 +22,7 @@ import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginati
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import AdminDeploymentPresetListPage from './AdminDeploymentPresetListPage';
 import AdminModelCardListPage from './AdminModelCardListPage';
-import { DeleteFilled, EditOutlined } from '@ant-design/icons';
+import { DeleteFilled } from '@ant-design/icons';
 import { App, Skeleton, Typography } from 'antd';
 import type { CardTabListType } from 'antd/es/card';
 import {
@@ -48,6 +48,7 @@ import {
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { SquarePenIcon } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -375,7 +376,7 @@ const AdminDeploymentListPageContent: React.FC = () => {
                             {
                               key: 'edit',
                               title: t('deployment.EditDeployment'),
-                              icon: <EditOutlined />,
+                              icon: <SquarePenIcon />,
                               disabled: destroying,
                               onClick: () => setEditingDeploymentId(record.id),
                             },

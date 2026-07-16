@@ -22,11 +22,7 @@ import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOption
 import StoragePermissionEditModal, {
   type PermissionEditTarget,
 } from './StoragePermissionEditModal';
-import {
-  CheckCircleOutlined,
-  CloseCircleOutlined,
-  SettingOutlined,
-} from '@ant-design/icons';
+import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { Tooltip, Typography, theme } from 'antd';
 import {
   BAIButton,
@@ -42,6 +38,7 @@ import {
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { SquarePenIcon } from 'lucide-react';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -337,7 +334,7 @@ const ProjectStoragePermissionTable: React.FC<
                 title={t('storageHost.permission.EditPermissionsAction')}
               >
                 <BAIButton
-                  icon={<SettingOutlined style={{ color: token.colorInfo }} />}
+                  icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
                   style={{ backgroundColor: token.colorInfoBg }}
                   onClick={() =>
                     setEditingRows(
@@ -420,7 +417,7 @@ const ProjectStoragePermissionTable: React.FC<
                   {
                     key: 'edit',
                     title: t('storageHost.permission.EditPermissionsAction'),
-                    icon: <SettingOutlined />,
+                    icon: <SquarePenIcon />,
                     onClick: () => setEditingRows([row]),
                   },
                 ]}

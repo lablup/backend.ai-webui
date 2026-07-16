@@ -38,6 +38,7 @@ import {
   INITIAL_FETCH_KEY,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { SquarePenIcon } from 'lucide-react';
 import { parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { Key, useDeferredValue, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -283,7 +284,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           <Button
             type="text"
             icon={
-              <SettingOutlined
+              <SquarePenIcon
                 style={{
                   color: token.colorInfo,
                 }}

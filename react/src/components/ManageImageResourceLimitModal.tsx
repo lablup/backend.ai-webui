@@ -137,6 +137,7 @@ const ManageImageResourceLimitModal: React.FC<
       confirmLoading={isInFlightModifyImageInput}
       centered
       title={t('environment.ModifyMinimumImageResourceLimit')}
+      okText={t('button.Save')}
       {...BAIModalProps}
     >
       <Alert

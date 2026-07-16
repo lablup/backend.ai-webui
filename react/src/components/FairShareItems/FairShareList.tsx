@@ -37,7 +37,6 @@ import UserFairShareTable, {
   UserFairShare,
 } from './UserFairShareTable';
 import UserResourceGroupAlert from './UserResourceGroupAlert';
-import { SettingOutlined } from '@ant-design/icons';
 import { Alert, Skeleton, Steps, theme, Tooltip, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import { StepsProps } from 'antd/lib';
@@ -55,7 +54,7 @@ import {
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { Ban, ChartNoAxesCombined } from 'lucide-react';
+import { Ban, ChartNoAxesCombined, SquarePenIcon } from 'lucide-react';
 import {
   parseAsJson,
   parseAsString,
@@ -644,9 +643,7 @@ const FairShareList: React.FC = () => {
                 </Tooltip>
                 <Tooltip title={t('general.BulkEdit')} placement="topLeft">
                   <BAIButton
-                    icon={
-                      <SettingOutlined style={{ color: token.colorInfo }} />
-                    }
+                    icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
                     onClick={() => {
                       setOpenWeightSettingModal(true);
                     }}

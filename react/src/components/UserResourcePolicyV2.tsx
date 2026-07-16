@@ -10,7 +10,7 @@ import type {
 import { convertToOrderBy } from '../helper';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import UserResourcePolicyV2SettingModal from './UserResourcePolicyV2SettingModal';
-import { DeleteFilled, SettingOutlined } from '@ant-design/icons';
+import { DeleteFilled } from '@ant-design/icons';
 import { App } from 'antd';
 import {
   BAIButton,
@@ -25,7 +25,7 @@ import {
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { PlusIcon } from 'lucide-react';
+import { PlusIcon, SquarePenIcon } from 'lucide-react';
 import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -256,7 +256,7 @@ const UserResourcePolicyV2 = ({
                         {
                           key: 'settings',
                           title: t('button.Settings'),
-                          icon: <SettingOutlined />,
+                          icon: <SquarePenIcon />,
                           onClick: () => {
                             setEditingUserResourcePolicy(
                               _.find(userResourcePolicies, {

@@ -18,7 +18,6 @@ import {
   DeleteFilled,
   InfoCircleOutlined,
   ReloadOutlined,
-  SettingOutlined,
 } from '@ant-design/icons';
 import { App, Button, Tag, Tooltip, Typography, theme } from 'antd';
 import {
@@ -37,7 +36,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
+import { BanIcon, PlusIcon, SquarePenIcon, UndoIcon } from 'lucide-react';
 import { useDeferredValue, useEffect, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
@@ -302,7 +301,7 @@ const AdminUserCredentialList: React.FC = () => {
                 {
                   key: 'settings',
                   title: t('button.Settings'),
-                  icon: <SettingOutlined />,
+                  icon: <SquarePenIcon />,
                   onClick: () => {
                     startSettingModalOpenTransition(() => {
                       setKeypairSettingModalFrgmt(record);

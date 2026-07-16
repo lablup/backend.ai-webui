@@ -297,6 +297,9 @@ const KeypairResourcePolicySettingModal: React.FC<
           ? t('resourcePolicy.CreateKeypairResourcePolicy')
           : t('resourcePolicy.UpdateKeypairResourcePolicy')
       }
+      okText={
+        keypairResourcePolicy === null ? t('button.Create') : t('button.Save')
+      }
       onOk={handleOk}
       onCancel={() => onRequestClose()}
       destroyOnHidden

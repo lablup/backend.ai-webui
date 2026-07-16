@@ -18,11 +18,7 @@ import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginati
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import {
-  DeleteFilled,
-  ExclamationCircleFilled,
-  SettingOutlined,
-} from '@ant-design/icons';
+import { DeleteFilled, ExclamationCircleFilled } from '@ant-design/icons';
 import { App, Checkbox, Tooltip, Typography, theme } from 'antd';
 import {
   BAIButton,
@@ -50,7 +46,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { PlusIcon } from 'lucide-react';
+import { PlusIcon, SquarePenIcon } from 'lucide-react';
 import { parseAsJson, parseAsString, useQueryStates } from 'nuqs';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -255,7 +251,7 @@ const AdminModelCardListPage: React.FC = () => {
             {
               key: 'edit',
               title: t('button.Edit'),
-              icon: <SettingOutlined />,
+              icon: <SquarePenIcon />,
               onClick: () => handleOpenEditModal(modelCard),
             },
             {

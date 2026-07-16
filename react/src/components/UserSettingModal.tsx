@@ -543,6 +543,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             ? t('credential.BulkCreateUser')
             : t('credential.CreateUser')
       }
+      okText={user ? t('button.Save') : t('button.Create')}
       destroyOnHidden
       onOk={handleOk}
       confirmLoading={

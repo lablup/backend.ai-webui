@@ -202,6 +202,9 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
           ? t('resourcePolicy.CreateUserResourcePolicy')
           : t('resourcePolicy.UpdateUserResourcePolicy')
       }
+      okText={
+        userResourcePolicy === null ? t('button.Create') : t('button.Save')
+      }
       onOk={handleOk}
       onCancel={() => onRequestClose()}
       destroyOnHidden

@@ -77,6 +77,7 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
           ? t('credential.ModifyKeypairResourcePolicy')
           : t('credential.AddCredential')
       }
+      okText={keypair ? t('button.Save') : t('button.Create')}
       width={500}
       destroyOnHidden
       onOk={() => {

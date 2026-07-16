@@ -88,7 +88,7 @@ const AgentEditorModal: React.FC<AgentEditorModalProps> = ({
   const okLabel = isBuiltin
     ? t('aiAgent.SaveAsCopy')
     : isEditing
-      ? t('button.Update')
+      ? t('button.Save')
       : t('button.Create');
 
   const existingBinding = agent ? getEndpointBinding(agent.id) : undefined;

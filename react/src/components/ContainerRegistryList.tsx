@@ -38,7 +38,7 @@ import {
   INITIAL_FETCH_KEY,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { PlusIcon } from 'lucide-react';
+import { PlusIcon, SquarePenIcon } from 'lucide-react';
 import { useState, useDeferredValue, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
@@ -275,7 +275,7 @@ const ContainerRegistryList: React.FC<{
             {
               key: 'edit',
               title: t('button.Edit'),
-              icon: <SettingOutlined />,
+              icon: <SquarePenIcon />,
               onClick: () => {
                 setEditingRegistry(record);
               },

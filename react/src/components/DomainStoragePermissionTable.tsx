@@ -12,11 +12,7 @@ import {
   parseAllowedHosts,
 } from '../helper/storageHostPermission';
 import StoragePermissionEditModal from './StoragePermissionEditModal';
-import {
-  CheckCircleOutlined,
-  CloseCircleOutlined,
-  SettingOutlined,
-} from '@ant-design/icons';
+import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { Typography, theme } from 'antd';
 import {
   BAINameActionCell,
@@ -25,6 +21,7 @@ import {
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { SquarePenIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -189,7 +186,7 @@ const DomainStoragePermissionTable: React.FC<
                   {
                     key: 'edit',
                     title: t('storageHost.permission.EditPermissionsAction'),
-                    icon: <SettingOutlined />,
+                    icon: <SquarePenIcon />,
                     onClick: () => setIsEditing(true),
                   },
                 ]}

@@ -5,11 +5,11 @@
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useSuspenseGetAnnouncement } from '../hooks/useSuspenseGetAnnouncement';
 import AnnouncementEditModal from './AnnouncementEditModal';
-import { EditOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { Button, theme } from 'antd';
 import { BAIAlert, BAIAlertProps, BAIUnmountAfterClose } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { SquarePenIcon } from 'lucide-react';
 import Markdown from 'markdown-to-jsx';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -51,7 +51,7 @@ const AnnouncementAlert: React.FC<Props> = ({ ...otherProps }) => {
             <Button
               type="text"
               size="small"
-              icon={<EditOutlined />}
+              icon={<SquarePenIcon />}
               onClick={toggleEditModal}
             >
               {t('button.Edit')}

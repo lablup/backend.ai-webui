@@ -35,7 +35,7 @@ import {
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { EditIcon } from 'lucide-react';
+import { SquarePenIcon } from 'lucide-react';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
@@ -327,7 +327,7 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
               {
                 key: 'edit',
                 title: t('button.Edit'),
-                icon: <EditIcon />,
+                icon: <SquarePenIcon />,
                 onClick: () => setInlineEditingScope(record),
               },
             ]}
@@ -424,7 +424,7 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
                     session list's bulk actions). */}
                 <Tooltip title={t('rbac.EditScopePermissions')}>
                   <Button
-                    icon={<EditIcon />}
+                    icon={<SquarePenIcon />}
                     onClick={() => setIsSelectionEditOpen(true)}
                   />
                 </Tooltip>

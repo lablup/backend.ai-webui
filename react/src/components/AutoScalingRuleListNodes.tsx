@@ -6,7 +6,7 @@ import {
   AutoScalingRuleListNodesFragment$data,
   AutoScalingRuleListNodesFragment$key,
 } from '../__generated__/AutoScalingRuleListNodesFragment.graphql';
-import { DeleteFilled, SettingOutlined } from '@ant-design/icons';
+import { DeleteFilled } from '@ant-design/icons';
 import { Tag, Tooltip, Typography } from 'antd';
 import {
   BAIQuestionIconWithTooltip,
@@ -17,6 +17,7 @@ import {
 } from 'backend.ai-ui';
 import type { BAITableProps } from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
+import { SquarePenIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -180,7 +181,7 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
                   {
                     key: 'edit',
                     title: t('button.Edit'),
-                    icon: <SettingOutlined />,
+                    icon: <SquarePenIcon />,
                     disabled: isEndpointDestroying || !isOwnedByCurrentUser,
                     onClick: () => onEditRule(row.id),
                   },

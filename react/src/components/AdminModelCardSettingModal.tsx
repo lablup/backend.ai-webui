@@ -293,7 +293,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
         onCancel={() => {
           onRequestClose?.(false);
         }}
-        okText={isEditMode ? t('button.Update') : t('button.Create')}
+        okText={isEditMode ? t('button.Save') : t('button.Create')}
         onOk={handleOk}
         okButtonProps={{
           ...modalProps.okButtonProps,

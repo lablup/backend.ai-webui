@@ -18,7 +18,7 @@ import ProjectAdminSettingModal, {
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCSVExport } from '../hooks/useCSVExport';
-import { DeleteFilled, SettingOutlined } from '@ant-design/icons';
+import { DeleteFilled } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { App, theme, Tooltip } from 'antd';
 import {
@@ -45,7 +45,13 @@ import {
   useUpdatableState,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { BanIcon, PlusIcon, ShieldUserIcon, UndoIcon } from 'lucide-react';
+import {
+  BanIcon,
+  PlusIcon,
+  ShieldUserIcon,
+  SquarePenIcon,
+  UndoIcon,
+} from 'lucide-react';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -449,9 +455,7 @@ const ProjectPage = () => {
                 />
                 <Tooltip title={t('project.BulkEdit')}>
                   <BAIButton
-                    icon={
-                      <SettingOutlined style={{ color: token.colorInfo }} />
-                    }
+                    icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
                     style={{ backgroundColor: token.colorInfoBg }}
                     onClick={toggleBulkEditModal}
                   />
@@ -525,7 +529,7 @@ const ProjectPage = () => {
                             {
                               key: 'edit',
                               title: t('project.EditProject'),
-                              icon: <SettingOutlined />,
+                              icon: <SquarePenIcon />,
                               disabled: isModelStore,
                               onClick: () => {
                                 const node = group_nodes?.edges.find(

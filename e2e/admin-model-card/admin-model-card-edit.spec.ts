@@ -145,8 +145,8 @@ test.describe(
       // Verify Domain field shows plain text (not a select dropdown)
       await expect(modal.getByText('default')).toBeVisible();
 
-      // Verify the modal footer shows an "Update" button
-      await expect(adminModelCardPage.getEditModalUpdateButton()).toBeVisible();
+      // Verify the modal footer shows a "Save" button
+      await expect(adminModelCardPage.getEditModalSaveButton()).toBeVisible();
     });
 
     // 4.2 Superadmin can update a model card's metadata fields
@@ -200,8 +200,8 @@ test.describe(
       await publicOption.scrollIntoViewIfNeeded();
       await publicOption.click();
 
-      // Click Update
-      await adminModelCardPage.getEditModalUpdateButton().click();
+      // Click Save
+      await adminModelCardPage.getEditModalSaveButton().click();
 
       // Verify success message
       await expect(page.getByText('Model card has been updated.')).toBeVisible({
@@ -250,10 +250,10 @@ test.describe(
       await adminModelCardPage.getEditModalNameInput().clear();
 
       // Wait for the form to stabilize after clearing (avoids DOM detachment)
-      await expect(adminModelCardPage.getEditModalUpdateButton()).toBeVisible();
+      await expect(adminModelCardPage.getEditModalSaveButton()).toBeVisible();
 
-      // Click Update
-      await adminModelCardPage.getEditModalUpdateButton().click();
+      // Click Save
+      await adminModelCardPage.getEditModalSaveButton().click();
 
       // Verify validation error "Name is required."
       await expect(modal.getByText('Name is required.')).toBeVisible();

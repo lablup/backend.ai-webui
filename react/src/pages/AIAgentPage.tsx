@@ -6,12 +6,7 @@ import AgentEditorModal from '../components/AgentEditorModal';
 import { FluentEmojiIcon } from '../components/FluentEmojiIcon';
 import { useWebUINavigate } from '../hooks';
 import { AIAgent, useAIAgent } from '../hooks/useAIAgent';
-import {
-  DeleteFilled,
-  EditOutlined,
-  MoreOutlined,
-  UndoOutlined,
-} from '@ant-design/icons';
+import { DeleteFilled, MoreOutlined, UndoOutlined } from '@ant-design/icons';
 import {
   Button,
   Col,
@@ -31,7 +26,7 @@ import {
   BAIDeleteConfirmModal,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { PlusIcon } from 'lucide-react';
+import { PlusIcon, SquarePenIcon } from 'lucide-react';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -76,7 +71,7 @@ const AIAgentCard: React.FC<AIAgentCardProps> = ({
     onEdit && {
       key: 'edit',
       label: t('button.Edit'),
-      icon: <EditOutlined />,
+      icon: <SquarePenIcon />,
       onClick: (e: { domEvent: React.MouseEvent | React.KeyboardEvent }) => {
         e.domEvent.stopPropagation();
         onEdit(agent);

@@ -13,12 +13,7 @@ import DeploymentSchedulingHistoryModal, {
   DeploymentSchedulingHistoryQuery,
 } from './DeploymentSchedulingHistoryModal';
 import DeploymentSettingModal from './DeploymentSettingModal';
-import {
-  DeleteFilled,
-  EditOutlined,
-  HistoryOutlined,
-  MoreOutlined,
-} from '@ant-design/icons';
+import { DeleteFilled, HistoryOutlined, MoreOutlined } from '@ant-design/icons';
 import {
   App,
   Button,
@@ -47,6 +42,7 @@ import {
   useConnectedBAIClient,
 } from 'backend.ai-ui';
 import type { BAIDeploymentStatus } from 'backend.ai-ui';
+import { SquarePenIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation, useQueryLoader } from 'react-relay';
@@ -340,7 +336,7 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
             />
             <Space.Compact>
               <BAIButton
-                icon={<EditOutlined />}
+                icon={<SquarePenIcon />}
                 disabled={isDeploymentInStoppedCategory(deploymentStatus)}
                 action={async () => {
                   setSettingModalOpen(true);
