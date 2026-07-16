@@ -28,11 +28,23 @@
     "./dist/locale/*": {
       "import": "./dist/locale/*.js",
       "types": "./dist/locale/*.d.ts"
+    },
+    "./branding-schema": {
+      "import": "./dist/branding-schema/index.js",
+      "types": "./dist/branding-schema/index.d.ts"
+    },
+    "./branding-schema/schema.json": "./dist/branding-schema/schema.json",
+    "./branding-schema/examples/*": "./dist/branding-schema/examples/*",
+    "./app-shell": {
+      "import": "./dist/app-shell/index.js",
+      "types": "./dist/app-shell/index.d.ts"
     }
   },
   "files": [
     "dist",
-    "dist/locale"
+    "dist/locale",
+    "dist/branding-schema",
+    "dist/app-shell"
   ],
   "scripts": {
     "dev": "vite build --watch --mode development",

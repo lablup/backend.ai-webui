@@ -1,0 +1,32 @@
+{
+  "$schema": "../schema.json",
+  "logo": {
+    "src": "/manifest/backend.ai-webui-white.svg",
+    "srcDark": "/manifest/backend.ai-webui-black.svg",
+    "srcCollapsed": "/manifest/backend.ai-brand-simple-white.svg",
+    "srcCollapsedDark": "/manifest/backend.ai-brand-simple-black.svg",
+    "size": { "width": 159, "height": 24 },
+    "sizeCollapsed": { "width": 34, "height": 34 },
+    "href": "/start",
+    "alt": "Backend.AI"
+  },
+  "branding": {
+    "companyName": "Lablup Inc.",
+    "brandName": "Backend.AI"
+  },
+  "colors": {
+    "light": {
+      "primary": "#FF7A00",
+      "headerBg": "#FF9729",
+      "headerText": "#FFFFFF",
+      "siderActiveBg": "#FFF1E0",
+      "siderActiveText": "#FF7A00"
+    },
+    "dark": {
+      "primary": "#DC6B03",
+      "headerBg": "#1F1F1F",
+      "headerText": "#FFFFFF"
+    }
+  },
+  "fontFamily": "'Ubuntu', Roboto, sans-serif"
+}

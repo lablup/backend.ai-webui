@@ -1,0 +1,36 @@
+{
+  "$schema": "../schema.json",
+  "logo": {
+    "src": "/static/manifest/backend.ai-fasttrack-white.svg",
+    "srcDark": "/static/manifest/backend.ai-fasttrack-black.svg",
+    "srcCollapsed": "/static/manifest/backend.ai-brand-simple-white.svg",
+    "srcCollapsedDark": "/static/manifest/backend.ai-brand-simple-dark.svg",
+    "size": { "width": 159, "height": 30 },
+    "sizeCollapsed": { "width": 32, "height": 32 },
+    "href": "/",
+    "alt": "Backend.AI FastTrack"
+  },
+  "branding": {
+    "companyName": "Lablup Inc.",
+    "brandName": "Backend.AI",
+    "productName": "FastTrack"
+  },
+  "colors": {
+    "light": {
+      "primary": "#1677FF",
+      "headerBg": "#1677FF",
+      "headerText": "#FFFFFF",
+      "siderActiveBg": "#E6F4FF",
+      "siderActiveText": "#1677FF",
+      "siderBorder": "#DEE1E7"
+    },
+    "dark": {
+      "primary": "#4096FF",
+      "headerBg": "#141414",
+      "headerText": "#FFFFFF",
+      "siderActiveBg": "#111B26",
+      "siderActiveText": "#4096FF"
+    }
+  },
+  "fontFamily": "'Ubuntu', system-ui, -apple-system, sans-serif"
+}
