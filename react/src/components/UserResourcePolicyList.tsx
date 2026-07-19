@@ -108,8 +108,8 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
           showActions="always"
           actions={[
             {
-              key: 'settings',
-              title: t('button.Settings'),
+              key: 'edit',
+              title: t('button.Edit'),
               icon: <SquarePenIcon />,
               onClick: () => {
                 setEditingUserResourcePolicy(row);

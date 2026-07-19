@@ -299,8 +299,8 @@ const AdminUserCredentialList: React.FC = () => {
                   },
                 },
                 {
-                  key: 'settings',
-                  title: t('button.Settings'),
+                  key: 'edit',
+                  title: t('button.Edit'),
                   icon: <SquarePenIcon />,
                   onClick: () => {
                     startSettingModalOpenTransition(() => {

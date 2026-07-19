@@ -167,8 +167,8 @@ const ResourceGroupList: React.FC = () => {
               },
             },
             {
-              key: 'settings',
-              title: t('button.Settings'),
+              key: 'edit',
+              title: t('button.Edit'),
               icon: <SquarePenIcon />,
               onClick: () => {
                 setSelectedResourceGroup(record);
@@ -352,7 +352,7 @@ const ResourceGroupList: React.FC = () => {
                 count={selectedRowKeys.length}
                 onClearSelection={() => setSelectedRowKeys([])}
               />
-              <Tooltip title={t('button.Settings')}>
+              <Tooltip title={t('general.BulkEdit')}>
                 <BAIButton
                   icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
                   style={{ backgroundColor: token.colorInfoBg }}

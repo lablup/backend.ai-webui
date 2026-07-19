@@ -132,8 +132,8 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
               },
             },
             {
-              key: 'settings',
-              title: t('button.Settings'),
+              key: 'edit',
+              title: t('button.Edit'),
               icon: <SquarePenIcon />,
               onClick: () => {
                 setEditingKeypairResourcePolicy(row);
