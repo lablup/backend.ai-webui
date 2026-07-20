@@ -47,10 +47,10 @@ export interface BAILoginSessionTableProps extends Omit<
 
 /**
  * BAILoginSessionTable - Presentational table over a `LoginSessionV2` plural
- * fragment. Renders every login-session column; filter, pagination, and query
- * orchestration (plus row-level actions such as revoke) live in the consuming
- * surface via the `customizeColumns` prop. Mirrors the `*Nodes` idiom
- * (`BAIAuditLogNodes`, `SessionNodes`).
+ * fragment. Renders the user, access key, and created-at columns; filter,
+ * pagination, and query orchestration (plus row-level actions such as revoke)
+ * live in the consuming surface via the `customizeColumns` prop. Mirrors the
+ * `*Nodes` idiom (`BAIAuditLogNodes`, `SessionNodes`).
  */
 const BAILoginSessionTable = ({
   loginSessionsFrgmt,
@@ -71,7 +71,6 @@ const BAILoginSessionTable = ({
         # status is intentionally not selected: the backend does not write it
         # yet, so it is neither displayed nor filterable here.
         createdAt
-        invalidatedAt
         user {
           id
           basicInfo {
@@ -112,15 +111,17 @@ const BAILoginSessionTable = ({
         render: (__, record) =>
           record.createdAt ? dayjs(record.createdAt).format('ll LTS') : '-',
       },
-      {
-        key: 'invalidatedAt',
-        title: t('comp:BAILoginSessionTable.InvalidatedAt'),
-        dataIndex: 'invalidatedAt',
-        render: (__, record) =>
-          record.invalidatedAt
-            ? dayjs(record.invalidatedAt).format('ll LTS')
-            : '-',
-      },
+      // invalidatedAt currently receives no value at all, so this column is
+      // disabled until it carries meaningful data.
+      // {
+      //   key: 'invalidatedAt',
+      //   title: t('comp:BAILoginSessionTable.InvalidatedAt'),
+      //   dataIndex: 'invalidatedAt',
+      //   render: (__, record) =>
+      //     record.invalidatedAt
+      //       ? dayjs(record.invalidatedAt).format('ll LTS')
+      //       : '-',
+      // },
     ]),
     (column) => {
       return disableSorter ? _.omit(column, 'sorter') : column;

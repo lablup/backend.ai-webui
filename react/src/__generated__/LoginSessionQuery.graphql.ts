@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<bc76c96312e15186a8c19266351133d9>>
+ * @generated SignedSource<<27c7f5a1b4759ab59e3d9f793bf3f457>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -254,13 +254,6 @@ return {
                   {
                     "alias": null,
                     "args": null,
-                    "kind": "ScalarField",
-                    "name": "invalidatedAt",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
                     "concreteType": "UserV2",
                     "kind": "LinkedField",
                     "name": "user",
@@ -300,12 +293,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "3c52e1ab1acbf8872809ee9723190991",
+    "cacheID": "3e0d75c6f9a233d90ba58b2e40228b66",
     "id": null,
     "metadata": {},
     "name": "LoginSessionQuery",
     "operationKind": "query",
-    "text": "query LoginSessionQuery(\n  $filter: LoginSessionFilter\n  $orderBy: [LoginSessionOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  myLoginSessionsV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...BAILoginSessionTableFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAILoginSessionTableFragment on LoginSessionV2 {\n  id\n  accessKey\n  createdAt\n  invalidatedAt\n  user {\n    id\n    basicInfo {\n      email\n    }\n  }\n}\n"
+    "text": "query LoginSessionQuery(\n  $filter: LoginSessionFilter\n  $orderBy: [LoginSessionOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  myLoginSessionsV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...BAILoginSessionTableFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAILoginSessionTableFragment on LoginSessionV2 {\n  id\n  accessKey\n  createdAt\n  user {\n    id\n    basicInfo {\n      email\n    }\n  }\n}\n"
   }
 };
 })();
