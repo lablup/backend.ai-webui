@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<97be3b6e29fc900ef744db82679bf44d>>
+ * @generated SignedSource<<b1b8205d1d8293a400c5d3d3c4cb2636>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -63,6 +63,7 @@ export type DeploymentAddRevisionModal_revisionSource$data = {
     } | null | undefined;
     readonly runtimeVariant: {
       readonly name: string;
+      readonly readsVfolderConfigFiles: boolean;
     } | null | undefined;
     readonly runtimeVariantId: string;
     readonly runtimeVariantPresetValues: ReadonlyArray<{
@@ -246,7 +247,14 @@ return {
           "name": "runtimeVariant",
           "plural": false,
           "selections": [
-            (v0/*: any*/)
+            (v0/*: any*/),
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "readsVfolderConfigFiles",
+              "storageKey": null
+            }
           ],
           "storageKey": null
         },
@@ -498,6 +506,6 @@ return {
 };
 })();
 
-(node as any).hash = "ae8efd8d8b497259cd95035bcf60ca84";
+(node as any).hash = "99342d594fca10c3ba24bfa9982aa6ab";
 
 export default node;

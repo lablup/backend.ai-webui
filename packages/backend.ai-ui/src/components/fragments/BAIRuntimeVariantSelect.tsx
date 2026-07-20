@@ -37,19 +37,26 @@ export interface BAIRuntimeVariantSelectProps extends Omit<
   'options' | 'labelInValue' | 'ref'
 > {
   /**
-   * Notifies the parent of resolved id→name pairs as the paginated list and
-   * selected-value point lookup fan in. The parent typically merges these
-   * into a local map so it can resolve the *currently selected* variant id
-   * back to its name elsewhere in the form (e.g., for `variantName === 'custom'`
-   * branching) without re-querying.
+   * Notifies the parent of resolved variant metadata as the paginated list
+   * and selected-value point lookup fan in, keyed by vfolder UUID (the
+   * dash-stripped local id of the node's global id). The parent typically
+   * merges these into a local map so it can resolve the *currently selected*
+   * variant id back to its `name` and its `readsVfolderConfigFiles` flag
+   * elsewhere in the form (e.g., to branch on whether the variant reads the
+   * vfolder config files) without re-querying.
    */
-  onResolvedNamesChange?: (nameMap: Record<string, string>) => void;
+  onResolvedVariantsChange?: (
+    variantMap: Record<
+      string,
+      { name: string; readsVfolderConfigFiles: boolean }
+    >,
+  ) => void;
   ref?: React.Ref<BAIRuntimeVariantSelectRef>;
 }
 
 const BAIRuntimeVariantSelect: React.FC<BAIRuntimeVariantSelectProps> = ({
   loading,
-  onResolvedNamesChange,
+  onResolvedVariantsChange,
   ref,
   ...selectProps
 }) => {
@@ -92,6 +99,11 @@ const BAIRuntimeVariantSelect: React.FC<BAIRuntimeVariantSelectProps> = ({
           runtimeVariant(id: $id) @skip(if: $skip) {
             id
             name
+            # 26.8.0 is NEXT_RELEASE_VERSION per backend meta.py / committed
+            # docs; if the field first ships in an rc, re-pin to that exact rc
+            # string (PEP440 rc < final) before merge — see
+            # useRuntimeParameterSchema.ts required @since 26.4.4rc9 precedent.
+            readsVfolderConfigFiles @since(version: "26.8.0")
           }
         }
       `,
@@ -133,6 +145,7 @@ const BAIRuntimeVariantSelect: React.FC<BAIRuntimeVariantSelectProps> = ({
               node {
                 id
                 name
+                readsVfolderConfigFiles @since(version: "26.8.0")
               }
             }
           }
@@ -165,27 +178,41 @@ const BAIRuntimeVariantSelect: React.FC<BAIRuntimeVariantSelectProps> = ({
     [updateFetchKey, startRefetchTransition],
   );
 
-  // Notify parent of resolved id→name pairs. We feed *both* the currently
-  // selected variant (from the point lookup) and the visible page (from the
-  // paginated list), so callers get name resolution as soon as either lands.
-  const notifyResolvedNames = useEffectEvent(() => {
-    if (!onResolvedNamesChange) return;
-    const nameMap: Record<string, string> = {};
+  // Notify parent of resolved variant metadata (name +
+  // readsVfolderConfigFiles). We feed *both* the currently selected variant
+  // (from the point lookup) and the visible page (from the paginated list), so
+  // callers get resolution as soon as either lands. `readsVfolderConfigFiles`
+  // is stripped on old managers (< 26.8.0) via @since → undefined → false.
+  const notifyResolvedVariants = useEffectEvent(() => {
+    if (!onResolvedVariantsChange) return;
+    const variantMap: Record<
+      string,
+      { name: string; readsVfolderConfigFiles: boolean }
+    > = {};
     if (selectedVariant?.id && selectedVariant.name) {
       const uuid = toLocalId(selectedVariant.id);
-      if (uuid) nameMap[uuid] = selectedVariant.name;
+      if (uuid)
+        variantMap[uuid] = {
+          name: selectedVariant.name,
+          readsVfolderConfigFiles:
+            selectedVariant.readsVfolderConfigFiles ?? false,
+        };
     }
     for (const node of paginationData ?? []) {
       if (node?.id && node.name) {
         const uuid = toLocalId(node.id);
-        if (uuid) nameMap[uuid] = node.name;
+        if (uuid)
+          variantMap[uuid] = {
+            name: node.name,
+            readsVfolderConfigFiles: node.readsVfolderConfigFiles ?? false,
+          };
       }
     }
-    if (!_.isEmpty(nameMap)) onResolvedNamesChange(nameMap);
+    if (!_.isEmpty(variantMap)) onResolvedVariantsChange(variantMap);
   });
 
   useEffect(() => {
-    notifyResolvedNames();
+    notifyResolvedVariants();
   }, [selectedVariant, paginationData]);
 
   const availableOptions = _.map(paginationData, (item) => ({

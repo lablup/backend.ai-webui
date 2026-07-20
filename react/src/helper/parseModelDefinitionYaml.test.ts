@@ -2,7 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { parseModelDefinitionYaml } from './parseModelDefinitionYaml';
+import {
+  modelDefinitionFromGraphQL,
+  parseModelDefinitionYaml,
+} from './parseModelDefinitionYaml';
 
 describe('parseModelDefinitionYaml', () => {
   it('should parse a standard model-definition.yaml with array start_command', () => {
@@ -136,5 +139,88 @@ models:
     const result = parseModelDefinitionYaml(yaml);
     expect(result).not.toBeNull();
     expect(result!.port).toBe(8000);
+  });
+});
+
+describe('modelDefinitionFromGraphQL', () => {
+  it('should map a full GraphQL default model definition', () => {
+    const result = modelDefinitionFromGraphQL({
+      models: [
+        {
+          name: 'model',
+          modelPath: '/models',
+          service: {
+            command: 'vllm serve /models/my-model',
+            shell: '/bin/bash',
+            port: 8080,
+            healthCheck: {
+              path: '/v1/health',
+              initialDelay: 30,
+              maxRetries: 5,
+            },
+          },
+        },
+      ],
+    });
+    expect(result).toEqual({
+      startCommand: 'vllm serve /models/my-model',
+      port: 8080,
+      healthCheckPath: '/v1/health',
+      modelMountDestination: '/models',
+      initialDelay: 30,
+      maxRetries: 5,
+    });
+  });
+
+  it('should surface the raw command with NO re-quoting (shell operators, quotes)', () => {
+    const rawCommand = `sh -c 'python app.py && echo "done"; sleep 1'`;
+    const result = modelDefinitionFromGraphQL({
+      models: [
+        {
+          name: 'model',
+          modelPath: '/models',
+          service: {
+            command: rawCommand,
+            shell: null,
+            port: 8000,
+            healthCheck: null,
+          },
+        },
+      ],
+    });
+    expect(result).not.toBeNull();
+    // Passed through verbatim: no added escaping / quoting / tokenize round-trip.
+    expect(result!.startCommand).toBe(rawCommand);
+  });
+
+  it('should preserve && and ; and pipe operators unchanged', () => {
+    const rawCommand = 'a && b; c | d';
+    const result = modelDefinitionFromGraphQL({
+      models: [{ service: { command: rawCommand } }],
+    });
+    expect(result!.startCommand).toBe(rawCommand);
+  });
+
+  it('should apply defaults when service fields are missing', () => {
+    const result = modelDefinitionFromGraphQL({
+      models: [{ name: 'model', modelPath: null, service: {} }],
+    });
+    expect(result).toEqual({
+      startCommand: '',
+      port: 8000,
+      healthCheckPath: '/health',
+      modelMountDestination: '/models',
+      initialDelay: 60,
+      maxRetries: 10,
+    });
+  });
+
+  it('should return null when there is no first model service', () => {
+    expect(modelDefinitionFromGraphQL(null)).toBeNull();
+    expect(modelDefinitionFromGraphQL(undefined)).toBeNull();
+    expect(modelDefinitionFromGraphQL({ models: [] })).toBeNull();
+    expect(
+      modelDefinitionFromGraphQL({ models: [{ service: null }] }),
+    ).toBeNull();
   });
 });

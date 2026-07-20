@@ -85,3 +85,72 @@ export function parseModelDefinitionYaml(
     return null;
   }
 }
+
+/**
+ * Minimal shape of the GraphQL `RuntimeVariantModelDefinition` selection
+ * consumed by {@link modelDefinitionFromGraphQL}. Kept intentionally loose
+ * (all fields nullable) so it structurally accepts the Relay-generated
+ * response type without importing it here.
+ */
+export interface GraphQLModelDefinitionNode {
+  models?: ReadonlyArray<{
+    name?: string | null;
+    modelPath?: string | null;
+    service?: {
+      command?: string | null;
+      shell?: string | null;
+      port?: number | null;
+      healthCheck?: {
+        path?: string | null;
+        interval?: number | null;
+        maxRetries?: number | null;
+        maxWaitTime?: number | null;
+        expectedStatusCode?: number | null;
+        initialDelay?: number | null;
+      } | null;
+    } | null;
+  } | null> | null;
+}
+
+/**
+ * Normalize a GraphQL `defaultModelDefinition` struct (from a runtime
+ * variant's DB baseline, FR-3205/FR-3342) into the SAME
+ * {@link ParsedModelDefinition} shape the YAML parser produces, so both the
+ * DB baseline and the vfolder `model-definition.yaml` feed the placeholder
+ * merge through one type.
+ *
+ * The command is surfaced RAW — the GraphQL `command` is a plain string
+ * (the deprecated `start_command` projected via alias) and is passed through
+ * with NO tokenize/join round-trip and NO re-quoting (FR-3205
+ * stop-tokenizing principle). The sibling `shell` carries the exec-vs-shell
+ * distinction but does not alter the surfaced command text.
+ *
+ * Returns `null` when there is no first model / service to map.
+ */
+export function modelDefinitionFromGraphQL(
+  node: GraphQLModelDefinitionNode | null | undefined,
+): ParsedModelDefinition | null {
+  const model = node?.models?.[0];
+  const service = model?.service;
+  if (!service) {
+    return null;
+  }
+
+  const healthCheck = service.healthCheck ?? {};
+
+  return {
+    // Raw command string, verbatim. No shell tokenization / re-quoting.
+    startCommand: service.command ?? '',
+    port: typeof service.port === 'number' ? service.port : 8000,
+    healthCheckPath:
+      typeof healthCheck.path === 'string' ? healthCheck.path : '/health',
+    modelMountDestination:
+      typeof model?.modelPath === 'string' ? model.modelPath : '/models',
+    initialDelay:
+      typeof healthCheck.initialDelay === 'number'
+        ? healthCheck.initialDelay
+        : 60,
+    maxRetries:
+      typeof healthCheck.maxRetries === 'number' ? healthCheck.maxRetries : 10,
+  };
+}
