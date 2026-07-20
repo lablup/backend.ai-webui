@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import EndpointTokenSelect from './EndpointTokenSelect';
-import { ReloadOutlined } from '@ant-design/icons';
+import { LoadingOutlined, ReloadOutlined } from '@ant-design/icons';
 import useResizeObserver from '@react-hook/resize-observer';
 import { Alert, Button, Form, Input, theme } from 'antd';
 import type { FormInstance } from 'antd';
@@ -23,6 +23,7 @@ type CustomModelFormProps = {
   token?: string;
   endpointId?: string | null;
   loading: boolean;
+  isConnecting?: boolean;
   hasNoDesiredReplicas?: boolean;
   onSubmit?: (formData: CustomModelFormValues) => void;
 };
@@ -33,9 +34,11 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
   token,
   endpointId,
   loading,
+  isConnecting,
   hasNoDesiredReplicas,
   onSubmit,
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const { token: themeToken } = theme.useToken();
   const formRef = useRef<FormInstance>(null);
@@ -80,7 +83,24 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
           </div>
         ) : null}
         <div style={{ marginBottom: themeToken.size }}>
-          <Alert type="warning" showIcon title={t('chatui.CannotFindModel')} />
+          {isConnecting ? (
+            // While the endpoint's /models fetch is still in flight, surface a
+            // neutral "connecting" status instead of the "not found" warning so
+            // a slow-but-healthy endpoint does not read as a failure. The
+            // base-path / token inputs below stay reachable throughout the wait.
+            <Alert
+              type="info"
+              showIcon
+              icon={<LoadingOutlined />}
+              title={t('chatui.ConnectingToModelServer')}
+            />
+          ) : (
+            <Alert
+              type="warning"
+              showIcon
+              title={t('chatui.CannotFindModel')}
+            />
+          )}
         </div>
         <Form.Item label={t('modelService.BasePath')} name="basePath">
           <Input

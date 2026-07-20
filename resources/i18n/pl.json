@@ -453,6 +453,7 @@
     "Attachments": "Załączniki",
     "CannotFindModel": "Nie znaleziono modeli LLM. Sprawdź ścieżkę podstawową i zgodność tokena z OpenAI, a następnie naciśnij \"Odśwież modele\".",
     "CompareWithOtherModels": "Porównaj z innymi modelami",
+    "ConnectingToModelServer": "Łączenie z serwerem modelu… (do 30 s)",
     "CreateCompareChat": "Dodaj czat porównawczy",
     "DeleteChatHistory": "Przejrzysty czat",
     "DeleteChattingSession": "Usuń czat",

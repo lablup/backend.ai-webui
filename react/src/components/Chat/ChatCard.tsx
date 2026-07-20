@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ChatCardQuery } from '../../__generated__/ChatCardQuery.graphql';
-import { useSuspenseTanQuery } from '../../hooks/reactQueryAlias';
+import { useTanQuery } from '../../hooks/reactQueryAlias';
 import { useAIAgent } from '../../hooks/useAIAgent';
 import PureChatHeader from './ChatHeader';
 import PureChatInput from './ChatInput';
@@ -122,7 +122,7 @@ function useModels(
     }
   };
 
-  const { data: modelsResult } = useSuspenseTanQuery<{
+  const { data: modelsResult, isLoading: isLoadingModels } = useTanQuery<{
     data: Array<ChatModel>;
     error?: number;
   }>({
@@ -183,13 +183,19 @@ function useModels(
       ? provider.modelId
       : (modelsResult?.data?.[0]?.id ?? 'custom');
 
-  const modelsError =
-    modelsResult.error && getModelsErrorMessage(modelsResult.error);
+  const modelsError = modelsResult?.error
+    ? getModelsErrorMessage(modelsResult.error)
+    : undefined;
 
   return {
-    models: modelsResult?.data,
+    // useTanQuery leaves `data` undefined until the query settles; normalize to
+    // an empty array so consumers (ChatHeader, the CustomModelForm gate) keep a
+    // stable `ChatModel[]` shape. `isLoadingModels` distinguishes the in-flight
+    // window from a genuinely empty result.
+    models: modelsResult?.data ?? [],
     modelId,
     modelsError,
+    isLoadingModels,
   } as const;
 }
 
@@ -276,7 +282,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
     chat.provider.basePath,
     agentEndpointUrl || endpoint?.url,
   );
-  const { models, modelId, modelsError } = useModels(
+  const { models, modelId, modelsError, isLoadingModels } = useModels(
     chat.provider,
     fetchKey,
     baseURL,
@@ -562,6 +568,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
           token={effectiveApiKey}
           endpointId={endpoint?.endpoint_id}
           loading={isPendingUpdate}
+          isConnecting={isLoadingModels}
           hasNoDesiredReplicas={hasNoDesiredReplicas}
           onSubmit={(data) => {
             startUpdateTransition(() => {
@@ -604,7 +611,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
         endTime={endTime}
       />
       <ChatInput
-        disabled={!baseURL || !!modelsError}
+        disabled={!baseURL || !!modelsError || isLoadingModels}
         sync={chat.sync}
         input={input}
         setInput={setInput}

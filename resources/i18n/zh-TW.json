@@ -453,6 +453,7 @@
     "Attachments": "附件",
     "CannotFindModel": "未找到 LLM 模型。验证基本路径和令牌与 OpenAI 的兼容性，然后按 \"刷新模型",
     "CompareWithOtherModels": "與其他型號比較",
+    "ConnectingToModelServer": "正在連接模型伺服器…（最長 30 秒）",
     "CreateCompareChat": "添加对比聊天",
     "DeleteChatHistory": "清晰聊天",
     "DeleteChattingSession": "删除聊天",

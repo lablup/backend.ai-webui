@@ -453,6 +453,7 @@
     "Attachments": "Liitteet",
     "CannotFindModel": "LLM-malleja ei löydy. Tarkista peruspolku ja tokenin yhteensopivuus OpenAI:n kanssa ja paina sitten 'Päivitä mallit'.",
     "CompareWithOtherModels": "Vertaa muihin malleihin",
+    "ConnectingToModelServer": "Yhdistetään mallipalvelimeen… (enintään 30 s)",
     "CreateCompareChat": "Lisää vertailukeskustelu",
     "DeleteChatHistory": "Selkeä keskustelu",
     "DeleteChattingSession": "Poista keskustelu",

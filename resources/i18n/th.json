@@ -453,6 +453,7 @@
     "Attachments": "ไฟล์แนบ",
     "CannotFindModel": "ไม่พบรุ่น LLM \nตรวจสอบเส้นทางพื้นฐานและความเข้ากันได้ของโทเค็นกับ OpenAI จากนั้นกด 'Refresh Models'",
     "CompareWithOtherModels": "เปรียบเทียบกับรุ่นอื่นๆ",
+    "ConnectingToModelServer": "กำลังเชื่อมต่อกับเซิร์ฟเวอร์โมเดล… (สูงสุด 30 วินาที)",
     "CreateCompareChat": "เพิ่มแชทเปรียบเทียบ",
     "DeleteChatHistory": "เคลียร์แชท",
     "DeleteChattingSession": "ลบแชท",

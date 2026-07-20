@@ -453,6 +453,7 @@
     "Attachments": "Pièces jointes",
     "CannotFindModel": "Les modèles LLM ne sont pas trouvés. Vérifiez le chemin de base et la compatibilité des jetons avec OpenAI, puis cliquez sur \"Actualiser les modèles\".",
     "CompareWithOtherModels": "Comparez avec d'autres modèles",
+    "ConnectingToModelServer": "Connexion au serveur de modèle… (jusqu'à 30 s)",
     "CreateCompareChat": "Ajouter un chat de comparaison",
     "DeleteChatHistory": "Chat clair",
     "DeleteChattingSession": "Supprimer le chat",

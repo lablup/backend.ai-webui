@@ -453,6 +453,7 @@
     "Attachments": "添付ファイル",
     "CannotFindModel": "LLM モデルが見つかりません。ベースパスと OpenAI とのトークンの互換性を確認し、'Refresh Models' を押してください。",
     "CompareWithOtherModels": "他モデルとの比較",
+    "ConnectingToModelServer": "モデルサーバーに接続しています…（最大30秒）",
     "CreateCompareChat": "比較チャットの追加",
     "DeleteChatHistory": "クリア・チャット",
     "DeleteChattingSession": "チャット削除",

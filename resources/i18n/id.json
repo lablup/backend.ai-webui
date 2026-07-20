@@ -453,6 +453,7 @@
     "Attachments": "Lampiran",
     "CannotFindModel": "Model LLM tidak ditemukan. Verifikasi jalur dasar dan kompatibilitas token dengan OpenAI, lalu tekan 'Refresh Models'",
     "CompareWithOtherModels": "Bandingkan dengan model lain",
+    "ConnectingToModelServer": "Menghubungkan ke server model… (hingga 30 dtk)",
     "CreateCompareChat": "Tambahkan obrolan perbandingan",
     "DeleteChatHistory": "Hapus Obrolan",
     "DeleteChattingSession": "Menghapus Obrolan",

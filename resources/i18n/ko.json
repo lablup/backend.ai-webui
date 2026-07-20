@@ -453,6 +453,7 @@
     "Attachments": "첨부파일",
     "CannotFindModel": "LLM 모델 정보를 찾을 수 없습니다. OpenAI 호환 기본 경로와 토큰을 확인후 '모델 정보 새로고침' 버튼을 눌러주세요.",
     "CompareWithOtherModels": "다른 모델과 비교하기",
+    "ConnectingToModelServer": "모델 서버에 연결하는 중… (최대 30초)",
     "CreateCompareChat": "비교 채팅 추가",
     "DeleteChatHistory": "채팅 지우기",
     "DeleteChattingSession": "채팅 삭제",
