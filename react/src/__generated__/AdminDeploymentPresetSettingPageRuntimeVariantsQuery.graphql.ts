@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c1d09e666153f4e98c655abc9048877d>>
+ * @generated SignedSource<<4cb02aa3f1a4bf84048b8bc83f59a680>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,6 +16,7 @@ export type AdminDeploymentPresetSettingPageRuntimeVariantsQuery$data = {
       readonly node: {
         readonly id: string;
         readonly name: string;
+        readonly readsVfolderConfigFiles: boolean;
       };
     }>;
   } | null | undefined;
@@ -70,6 +71,13 @@ var v0 = [
                 "kind": "ScalarField",
                 "name": "name",
                 "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "readsVfolderConfigFiles",
+                "storageKey": null
               }
             ],
             "storageKey": null
@@ -99,16 +107,16 @@ return {
     "selections": (v0/*: any*/)
   },
   "params": {
-    "cacheID": "303456b9197e50b38faf484f9b6531f8",
+    "cacheID": "90d316137f9a6db8bab220567b910f76",
     "id": null,
     "metadata": {},
     "name": "AdminDeploymentPresetSettingPageRuntimeVariantsQuery",
     "operationKind": "query",
-    "text": "query AdminDeploymentPresetSettingPageRuntimeVariantsQuery {\n  runtimeVariants(limit: 100) {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
+    "text": "query AdminDeploymentPresetSettingPageRuntimeVariantsQuery {\n  runtimeVariants(limit: 100) {\n    edges {\n      node {\n        id\n        name\n        readsVfolderConfigFiles @since(version: \"26.8.0\")\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "ea81894e4891b01705b4f65a6e8577ee";
+(node as any).hash = "b6c7581f0a2465ead5b7a6db6a372ca3";
 
 export default node;

@@ -200,6 +200,12 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
               node {
                 id
                 name
+                # 26.8.0 is NEXT_RELEASE_VERSION per backend meta.py / committed
+                # docs; if the field first ships in an rc, re-pin to that exact
+                # rc string (PEP440 rc < final) before merge — see
+                # useRuntimeParameterSchema.ts required @since 26.4.4rc9
+                # precedent.
+                readsVfolderConfigFiles @since(version: "26.8.0")
               }
             }
           }
