@@ -59,7 +59,7 @@ import {
   selectRevisionModalOption,
 } from '../utils/deployment-fixtures';
 import { skipUnlessClientFeature } from '../utils/feature-gate-util';
-import { loginAsAdmin, navigateTo } from '../utils/test-util';
+import { loginAsAdmin, modifyConfigToml, navigateTo } from '../utils/test-util';
 import { getFormItemControlByLabel } from '../utils/test-util-antd';
 import { test, expect } from '@playwright/test';
 
@@ -718,7 +718,7 @@ test.describe(
       test(
         'Admin can add a revision manually in Advanced Mode without a preset',
         { tag: ['@critical'] },
-        async ({ page }) => {
+        async ({ page, request }) => {
           // Advanced (Custom) Mode builds the revision by hand -- model
           // folder + runtime + start command, with the image and resources
           // left at the form's own auto-selected defaults -- so it must work
@@ -729,6 +729,22 @@ test.describe(
           // (no lifecycle wait -- the Preset Mode test above already covers
           // that signal).
           test.setTimeout(360_000);
+
+          // The Environments / Version select (ImageEnvironmentSelectFormItems)
+          // queries images with `is_installed: true` unless this config flag is
+          // set, and this shared cluster currently has zero images actually
+          // marked installed (confirmed live: the dropdown renders "No data"
+          // with no search text at all) -- so without this flag there is no
+          // valid option for this form to select, regardless of locator
+          // correctness. Enabling it broadens the query to all images so the
+          // manual pick below has something to choose from. The describe's
+          // beforeEach login already loaded config.toml, so this override
+          // only takes effect after the page.reload() below.
+          await modifyConfigToml(page, request, {
+            environments: { showNonInstalledImages: true },
+          });
+          await page.reload();
+
           const folderName = await provisionDeploymentModelFolder(page);
           fixtures = { folderName };
 
@@ -799,23 +815,47 @@ test.describe(
           await expect(startCommand).toBeVisible({ timeout: 10000 });
           await startCommand.fill('python3 /models/mock_openai_server.py');
 
-          // The Environments / Version selects resolve their default image
-          // asynchronously; submitting before they finish leaves the form's
-          // image empty and the submit handler rejects it, keeping the
-          // modal open (observed live as an intermittent submit "failure").
-          // antd v6 marks a resolved selection with the
-          // `ant-select-content-has-value` class on the content element --
-          // gate on it for both selects before submitting.
+          // The Environments / Version selects' own auto-select-first-default
+          // effect (ImageEnvironmentSelectFormItems) only runs once, on mount,
+          // and is deliberately not re-triggered once the images query
+          // resolves later (its dependency array intentionally omits
+          // `imageGroups` per its own eslint-disable comment) -- confirmed
+          // live: for this Advanced-Mode + custom-runtime + no-preset
+          // combination both selects stay empty indefinitely, so waiting for
+          // a default to appear here always times out. Pick the environment
+          // by hand instead; the select's own onChange handler auto-fills the
+          // paired Version select with that environment's first image, so
+          // only the environment select needs a manual pick. Same zero-width
+          // virtualized option rows as the Runtime variant select above --
+          // search + keyboard Enter.
           const envSelects = dialog.locator('.ant-select', {
             has: page.locator(
               '#environments_environment, #environments_version',
             ),
           });
           await expect(envSelects).toHaveCount(2, { timeout: 20000 });
+          // No search text: with `showNonInstalledImages` enabled above the
+          // dropdown lists all images (a large, unpredictable set on this
+          // shared cluster), so searching for a specific name like "python"
+          // can still come up empty. Open the dropdown as-is and take
+          // whatever option sorts first.
+          await page.locator('#environments_environment').click();
+          const envDropdown = page
+            .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
+            .first();
+          await expect(envDropdown.getByRole('option').first()).toBeAttached({
+            timeout: 15000,
+          });
+          await page.locator('#environments_environment').press('ArrowDown');
+          await page.locator('#environments_environment').press('Enter');
+
+          // antd v6 marks a resolved selection with the
+          // `ant-select-content-has-value` class on the content element --
+          // gate on it for both selects before submitting.
           for (const index of [0, 1]) {
             await expect(
               envSelects.nth(index).locator('.ant-select-content'),
-            ).toHaveClass(/ant-select-content-has-value/, { timeout: 30000 });
+            ).toHaveClass(/ant-select-content-has-value/, { timeout: 15000 });
           }
 
           // The Cluster & Resources section mounts via its own

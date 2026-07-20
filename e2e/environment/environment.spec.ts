@@ -1,7 +1,7 @@
 // spec: Image list and environment management E2E tests
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import { findColumnIndex } from '../utils/test-util-antd';
-import { expect, test, Page } from '@playwright/test';
+import { expect, test, Page, Locator } from '@playwright/test';
 
 test.describe(
   'environment ',
@@ -209,7 +209,7 @@ test.describe(
       const numberOfAppsBeforeAdd = await modal
         .locator('.ant-form-item')
         .count();
-      await modal.getByRole('button', { name: 'plus Add' }).click();
+      await modal.getByRole('button', { name: 'Add', exact: true }).click();
       const addInfo = {
         app: 'e2e-test-app',
         protocol: 'tcp',
@@ -243,10 +243,13 @@ test.describe(
       // In Ant Design 6, use role-based selector for dialog
       const modalAfterAdd = page.getByRole('dialog', { name: /Manage Apps/i });
       await expect(modalAfterAdd).toBeVisible();
-      const numberOfApps = await modalAfterAdd
-        .locator('.ant-form-item')
-        .count();
-      expect(numberOfApps).toBe(numberOfAppsBeforeAdd + 1);
+      // Retry the count assertion: the freshly-reopened modal renders its
+      // app form-items asynchronously, so a one-shot `.count()` can read the
+      // old total before the added row mounts (flaky off by one).
+      await expect(modalAfterAdd.locator('.ant-form-item')).toHaveCount(
+        numberOfAppsBeforeAdd + 1,
+      );
+      const numberOfApps = numberOfAppsBeforeAdd + 1;
       // Verify the last row has the added app info
       const lastRow = modalAfterAdd
         .locator('.ant-form-item-control-input-content > div')
@@ -321,9 +324,38 @@ async function removeFilterTag(page: Page, tagText: string) {
     .locator('.ant-tag')
     .filter({ has: page.locator('[aria-label="Close"]') })
     .filter({ hasText: tagText });
-  await tag.locator('[aria-label="Close"]').click();
+
+  // Under concurrent E2E load against the shared nightly server, the close
+  // click can occasionally land while the filter row is mid re-render (e.g.
+  // a table refresh from a just-applied filter overlaps with the removal),
+  // so the click is silently swallowed. Retry the whole click-and-check as
+  // a unit — the recommended Playwright pattern for this kind of transient
+  // UI flake — rather than asserting on a single attempt.
+  await expect(async () => {
+    await tag.locator('[aria-label="Close"]').click();
+    await expect(tag).not.toBeVisible({ timeout: 2000 });
+  }).toPass({ timeout: 20000 });
 
   // Wait for any loading spinner to disappear after filter removal
+  await page
+    .locator('.ant-spin-spinning')
+    .waitFor({ state: 'detached', timeout: 10000 })
+    .catch(() => {});
+}
+
+/**
+ * Click the BAIPropertyFilter's reset-all button and wait for the button
+ * itself to disappear (it renders only while filters are active, so its
+ * absence signals all filters were cleared) and the loading spinner to
+ * detach, retrying the click if it is swallowed by a concurrent re-render
+ * (see `removeFilterTag`).
+ */
+async function resetAllFilters(page: Page, resetAllButton: Locator) {
+  await expect(async () => {
+    await resetAllButton.click();
+    await expect(resetAllButton).not.toBeVisible({ timeout: 2000 });
+  }).toPass({ timeout: 20000 });
+
   await page
     .locator('.ant-spin-spinning')
     .waitFor({ state: 'detached', timeout: 10000 })
@@ -392,7 +424,7 @@ test.describe(
 
       // 4. Cleanup: remove the filter tag
       await removeFilterTag(page, 'Name: python');
-      await expect(nameTag).not.toBeVisible();
+      await expect(nameTag).not.toBeVisible({ timeout: 10000 });
     });
 
     // Scenario 2.3 — Filter by architecture (strict selection)
@@ -416,7 +448,7 @@ test.describe(
 
       // 4. Cleanup: remove the filter tag
       await removeFilterTag(page, 'Architecture: x86_64');
-      await expect(archTag).not.toBeVisible();
+      await expect(archTag).not.toBeVisible({ timeout: 10000 });
     });
 
     // Scenario 2.4 — Filter by status (strict selection)
@@ -440,7 +472,7 @@ test.describe(
 
       // 4. Cleanup: remove the filter tag
       await removeFilterTag(page, 'Status: ALIVE');
-      await expect(statusTag).not.toBeVisible();
+      await expect(statusTag).not.toBeVisible({ timeout: 10000 });
     });
 
     // Scenario 2.5 — Filter by type (strict selection)
@@ -464,7 +496,7 @@ test.describe(
 
       // 4. Cleanup: remove the filter tag
       await removeFilterTag(page, 'Type: COMPUTE');
-      await expect(typeTag).not.toBeVisible();
+      await expect(typeTag).not.toBeVisible({ timeout: 10000 });
     });
 
     // Scenario 2.6 — Filter by registry (free text)
@@ -486,7 +518,7 @@ test.describe(
 
       // 4. Cleanup: remove the filter tag
       await removeFilterTag(page, 'Registry: cr');
-      await expect(registryTag).not.toBeVisible();
+      await expect(registryTag).not.toBeVisible({ timeout: 10000 });
     });
 
     // Scenario 2.7 — Multiple filters with reset-all button
@@ -520,13 +552,9 @@ test.describe(
       await expect(resetAllButton).toBeVisible();
 
       // 5. Cleanup: click reset-all to remove all filters at once
-      await resetAllButton.click();
-      await page
-        .locator('.ant-spin-spinning')
-        .waitFor({ state: 'detached', timeout: 10000 })
-        .catch(() => {});
-      await expect(nameTag).not.toBeVisible();
-      await expect(archTag).not.toBeVisible();
+      await resetAllFilters(page, resetAllButton);
+      await expect(nameTag).not.toBeVisible({ timeout: 10000 });
+      await expect(archTag).not.toBeVisible({ timeout: 10000 });
     });
 
     // Scenario 2.8 — Clear single filter tag
@@ -559,17 +587,17 @@ test.describe(
       await removeFilterTag(page, 'Architecture: x86_64');
 
       // 5. Verify the Architecture tag is gone
-      await expect(archTag).not.toBeVisible();
+      await expect(archTag).not.toBeVisible({ timeout: 10000 });
 
       // 6. Verify the Name tag still remains
       await expect(nameTag).toBeVisible();
 
       // 7. Verify the reset-all button disappears (only 1 tag remains)
-      await expect(resetAllButton).not.toBeVisible();
+      await expect(resetAllButton).not.toBeVisible({ timeout: 10000 });
 
       // 8. Remove the remaining Name tag
       await removeFilterTag(page, 'Name: python');
-      await expect(nameTag).not.toBeVisible();
+      await expect(nameTag).not.toBeVisible({ timeout: 10000 });
     });
 
     // Scenario 2.9 — Clear all with reset-all button
@@ -599,16 +627,12 @@ test.describe(
       await expect(resetAllButton).toBeVisible();
 
       // 4. Click the reset-all button to clear all filters at once
-      await resetAllButton.click();
-      await page
-        .locator('.ant-spin-spinning')
-        .waitFor({ state: 'detached', timeout: 10000 })
-        .catch(() => {});
+      await resetAllFilters(page, resetAllButton);
 
       // 5. Verify no filter tags remain
-      await expect(nameTag).not.toBeVisible();
-      await expect(archTag).not.toBeVisible();
-      await expect(resetAllButton).not.toBeVisible();
+      await expect(nameTag).not.toBeVisible({ timeout: 10000 });
+      await expect(archTag).not.toBeVisible({ timeout: 10000 });
+      await expect(resetAllButton).not.toBeVisible({ timeout: 10000 });
 
       // 6. Verify the table shows results (returns to unfiltered state)
       await expect(

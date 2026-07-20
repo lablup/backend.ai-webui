@@ -86,7 +86,7 @@ export class AdminModelCardPage {
   }
 
   async clearFilter(): Promise<void> {
-    const closeIcon = this.page.getByRole('img', { name: 'Close' }).first();
+    const closeIcon = this.page.getByRole('button', { name: 'Close' }).first();
     await closeIcon.click();
   }
 
