@@ -999,6 +999,7 @@
   },
   "deployment": {
     "AccessToken": "Διακριτικό πρόσβασης",
+    "AccessTokenSettings": "Ρυθμίσεις διακριτικού πρόσβασης",
     "AccessTokens": "Διακριτικά πρόσβασης",
     "ActivePool": "Ενεργή Ομάδα",
     "ActivePoolDescription": "Αντίγραφα που λαμβάνουν τρέχουσα κίνηση μέσω App Proxy.",

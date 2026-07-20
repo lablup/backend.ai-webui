@@ -999,6 +999,7 @@
   },
   "deployment": {
     "AccessToken": "Хандалтын токен",
+    "AccessTokenSettings": "Хандалтын токены тохиргоо",
     "AccessTokens": "Хандалтын токенууд",
     "ActivePool": "Идэвхтэй сан",
     "ActivePoolDescription": "App Proxy-р дамжуулан одоогоор трафик хүлээн авч буй репликүүд.",

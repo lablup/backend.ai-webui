@@ -999,6 +999,7 @@
   },
   "deployment": {
     "AccessToken": "Pääsytunnus",
+    "AccessTokenSettings": "Pääsytunnuksen asetukset",
     "AccessTokens": "Pääsytunnukset",
     "ActivePool": "Aktiivinen allas",
     "ActivePoolDescription": "Replikat, jotka vastaanottavat liikennettä App Proxyn kautta.",

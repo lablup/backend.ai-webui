@@ -999,6 +999,7 @@
   },
   "deployment": {
     "AccessToken": "โทเค็นการเข้าถึง",
+    "AccessTokenSettings": "การตั้งค่าโทเค็นการเข้าถึง",
     "AccessTokens": "โทเค็นการเข้าถึง",
     "ActivePool": "แอ็กทีฟพูล",
     "ActivePoolDescription": "เรพลิกาที่กำลังรับทราฟฟิกผ่าน App Proxy ในขณะนี้",

@@ -999,6 +999,7 @@
   },
   "deployment": {
     "AccessToken": "Token de acceso",
+    "AccessTokenSettings": "Configuración del token de acceso",
     "AccessTokens": "Tokens de acceso",
     "ActivePool": "Pool Activo",
     "ActivePoolDescription": "Réplicas que actualmente reciben tráfico a través de App Proxy.",

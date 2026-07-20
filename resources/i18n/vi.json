@@ -999,6 +999,7 @@
   },
   "deployment": {
     "AccessToken": "Mã thông báo truy cập",
+    "AccessTokenSettings": "Cài đặt mã thông báo truy cập",
     "AccessTokens": "Mã thông báo truy cập",
     "ActivePool": "Pool Hoạt Động",
     "ActivePoolDescription": "Các bản sao đang nhận lưu lượng truy cập qua App Proxy.",

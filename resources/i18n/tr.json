@@ -999,6 +999,7 @@
   },
   "deployment": {
     "AccessToken": "Erişim Jetonu",
+    "AccessTokenSettings": "Erişim Jetonu Ayarları",
     "AccessTokens": "Erişim Jetonları",
     "ActivePool": "Aktif Havuz",
     "ActivePoolDescription": "App Proxy aracılığıyla şu anda trafik alan replikalar.",

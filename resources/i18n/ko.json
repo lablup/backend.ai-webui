@@ -999,6 +999,7 @@
   },
   "deployment": {
     "AccessToken": "액세스 토큰",
+    "AccessTokenSettings": "액세스 토큰 설정",
     "AccessTokens": "액세스 토큰",
     "ActivePool": "활성 풀",
     "ActivePoolDescription": "App Proxy를 통해 현재 트래픽을 수신 중인 복제본입니다.",

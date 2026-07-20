@@ -999,6 +999,7 @@
   },
   "deployment": {
     "AccessToken": "Токен доступа",
+    "AccessTokenSettings": "Настройки токена доступа",
     "AccessTokens": "Токены доступа",
     "ActivePool": "Активный пул",
     "ActivePoolDescription": "Реплики, в настоящее время получающие трафик через App Proxy.",
