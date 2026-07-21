@@ -218,9 +218,6 @@ const VariantDefaultModelDefinitionLoader: React.FC<{
       ) {
         runtimeVariant(id: $id) @skip(if: $skip) {
           id
-          # 26.8.0 is NEXT_RELEASE_VERSION per backend meta.py / committed docs;
-          # if the field first ships in an rc, re-pin to that exact rc string
-          # (PEP440 rc < final) before merge.
           defaultModelDefinition @since(version: "26.8.0") {
             models {
               name
@@ -369,10 +366,6 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         runtimeVariantId
         runtimeVariant {
           name
-          # 26.8.0 is NEXT_RELEASE_VERSION per backend meta.py / committed docs;
-          # if the field first ships in an rc, re-pin to that exact rc string
-          # (PEP440 rc < final) before merge — see useRuntimeParameterSchema.ts
-          # required @since 26.4.4rc9 precedent.
           readsVfolderConfigFiles @since(version: "26.8.0")
         }
         environ {
