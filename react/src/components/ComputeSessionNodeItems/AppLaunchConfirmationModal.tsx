@@ -13,6 +13,9 @@ interface AppLaunchConfirmationModalProps extends BAIModalProps {
   sessionFrgmt: AppLaunchConfirmationModalFragment$key;
   appName: string;
   onRequestClose: () => void;
+  port?: number;
+  openToPublic?: boolean;
+  allowedClientIps?: Array<string>;
 }
 
 /**
@@ -26,6 +29,9 @@ const AppLaunchConfirmationModal: React.FC<AppLaunchConfirmationModalProps> = ({
   sessionFrgmt,
   appName,
   onRequestClose,
+  port,
+  openToPublic,
+  allowedClientIps,
   ...modalProps
 }) => {
   'use memo';
@@ -51,6 +57,9 @@ const AppLaunchConfirmationModal: React.FC<AppLaunchConfirmationModalProps> = ({
 
     await launchAppWithNotification({
       app: appName,
+      port,
+      openToPublic,
+      allowedClientIps,
       onPrepared(workerInfo) {
         // Open app in new window after preparation
         if (workerInfo.appConnectUrl) {

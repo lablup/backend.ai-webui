@@ -20,11 +20,17 @@ import { useBackendAIAppLauncher } from 'src/hooks/useBackendAIAppLauncher';
 interface TensorboardPathModalProps extends BAIModalProps {
   sessionFrgmt: TensorboardPathModalFragment$key;
   onRequestClose: () => void;
+  port?: number;
+  openToPublic?: boolean;
+  allowedClientIps?: Array<string>;
 }
 
 const TensorboardPathModal: React.FC<TensorboardPathModalProps> = ({
   sessionFrgmt,
   onRequestClose,
+  port,
+  openToPublic,
+  allowedClientIps,
   ...modalProps
 }) => {
   'use memo';
@@ -71,6 +77,9 @@ const TensorboardPathModal: React.FC<TensorboardPathModalProps> = ({
       await launchAppWithNotification({
         app: 'tensorboard',
         args: { '--logdir': path },
+        port,
+        openToPublic,
+        allowedClientIps,
         onPrepared(workerInfo) {
           // Open tensorboard in new window
           if (workerInfo.appConnectUrl) {

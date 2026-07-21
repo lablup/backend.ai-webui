@@ -18,7 +18,6 @@ import VSCodeDesktopConnectionModal from './VSCodeDesktopConnectionModal';
 import XRDPConnectionInfoModal from './XRDPConnectionInfoModal';
 import {
   App,
-  Button,
   Checkbox,
   Col,
   Form,
@@ -110,6 +109,8 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
       const values = await formRef.current?.validateFields().catch(() => {
         return;
       });
+      const allowedClientIps = openToPublic ? values?.clientIps : undefined;
+      const preferredPort = tryPreferredPort ? values?.preferredPort : undefined;
 
       // Handle special apps that require confirmation before launching (nniboard, mlflow-ui)
       // These apps need to run before tunneling, so show confirmation dialog first
@@ -117,6 +118,9 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
         setConfirmationModalState({
           open: true,
           appName: app?.name ?? '',
+          port: preferredPort,
+          openToPublic,
+          allowedClientIps,
         });
         return;
       }
@@ -124,7 +128,12 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
       // Tensorboard - show path input modal BEFORE starting proxy
       // This matches legacy behavior where modal is shown first, then proxy starts after path submission
       if (app.name === 'tensorboard') {
-        setOpenTensorboardModal(true);
+        setTensorboardModalState({
+          open: true,
+          port: preferredPort,
+          openToPublic,
+          allowedClientIps,
+        });
         return;
       }
 
@@ -132,9 +141,9 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
       // Errors are handled by the notification system in launchApp
       await launchAppWithNotification({
         app: app?.name ?? '',
-        port: tryPreferredPort ? values?.preferredPort : undefined,
-        openToPublic: openToPublic,
-        allowedClientIps: openToPublic ? values?.clientIps : undefined,
+        port: preferredPort,
+        openToPublic,
+        allowedClientIps,
         onPrepared(workerInfo) {
           // SFTP (SSH) connection
           if (app.name === 'sshd') {
@@ -180,7 +189,12 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
           // because tensorboard should be handled before launchAppWithNotification
           if (app.name === 'tensorboard') {
             logger.warn('Tensorboard reached onPrepared callback unexpectedly');
-            setOpenTensorboardModal(true);
+            setTensorboardModalState({
+              open: true,
+              port: preferredPort,
+              openToPublic,
+              allowedClientIps,
+            });
             return;
           }
 
@@ -234,14 +248,27 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
     host: '127.0.0.1',
     port: 0,
   });
-  const [openTensorboardModal, setOpenTensorboardModal] = useState(false);
+  const [tensorboardModalState, setTensorboardModalState] = useState<{
+    open: boolean;
+    port?: number;
+    openToPublic?: boolean;
+    allowedClientIps?: Array<string>;
+  }>({
+    open: false,
+  });
   const [tcpModalState, setTcpModalState] = useState({
     open: false,
     appName: '',
     host: '127.0.0.1',
     port: 0,
   });
-  const [confirmationModalState, setConfirmationModalState] = useState({
+  const [confirmationModalState, setConfirmationModalState] = useState<{
+    open: boolean;
+    appName: string;
+    port?: number;
+    openToPublic?: boolean;
+    allowedClientIps?: Array<string>;
+  }>({
     open: false,
     appName: '',
   });
@@ -301,11 +328,7 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                                 style={{ height: 36, width: 36 }}
                               />
                             }
-                            action={async () => {
-                              await handleAppLaunch(app);
-                              setOpenToPublic(false);
-                              setTryPreferredPort(false);
-                            }}
+                            action={() => handleAppLaunch(app)}
                             style={{ height: 72, width: 72 }}
                           />
                           <Typography.Text style={{ textAlign: 'center' }}>
@@ -337,7 +360,7 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                         gap={'xs'}
                         style={{ height: '100%' }}
                       >
-                        <Button
+                        <BAIButton
                           icon={
                             <Image
                               src={app?.src}
@@ -346,9 +369,7 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                               style={{ height: 36, width: 36 }}
                             />
                           }
-                          onClick={() => {
-                            handleAppLaunch(app);
-                          }}
+                          action={() => handleAppLaunch(app)}
                           style={{ height: 72, width: 72 }}
                         />
                         <Typography.Text style={{ textAlign: 'center' }}>
@@ -372,7 +393,7 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                 label={
                   <BAIFlex gap={'xs'}>
                     <Checkbox
-                      value={openToPublic}
+                      checked={openToPublic}
                       onChange={(value) =>
                         setOpenToPublic(value.target.checked)
                       }
@@ -398,7 +419,7 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                 label={
                   <BAIFlex gap={'xs'}>
                     <Checkbox
-                      value={tryPreferredPort}
+                      checked={tryPreferredPort}
                       onChange={(value) =>
                         setTryPreferredPort(value.target.checked)
                       }
@@ -430,11 +451,10 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
             {globalThis?.backendaiwebui?.debug ? (
               <>
                 <Form.Item
-                  name="subDomain"
                   label={
                     <BAIFlex gap={'xs'}>
                       <Checkbox
-                        value={useSubDomain}
+                        checked={useSubDomain}
                         onChange={(value) =>
                           setUseSubDomain(value.target.checked)
                         }
@@ -450,8 +470,9 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                     onChange={(e) => setSubDomainValue(e.target.value)}
                   />
                 </Form.Item>
-                <Form.Item name={'forceUseV1Proxy'}>
+                <Form.Item>
                   <Checkbox
+                    checked={forceUseV1Proxy}
                     disabled={forceUseV2Proxy}
                     onChange={(value) =>
                       setForceUseV1Proxy(value.target.checked)
@@ -460,8 +481,9 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                     {t('session.ForceUseV1Proxy')}
                   </Checkbox>
                 </Form.Item>
-                <Form.Item name={'forceUseV2Proxy'}>
+                <Form.Item>
                   <Checkbox
+                    checked={forceUseV2Proxy}
                     disabled={forceUseV1Proxy}
                     onChange={(value) =>
                       setForceUseV2Proxy(value.target.checked)
@@ -528,12 +550,15 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
           <BAIUnmountAfterClose>
             <TensorboardPathModal
               sessionFrgmt={session}
-              open={openTensorboardModal}
+              open={tensorboardModalState.open}
+              port={tensorboardModalState.port}
+              openToPublic={tensorboardModalState.openToPublic}
+              allowedClientIps={tensorboardModalState.allowedClientIps}
               onRequestClose={() => {
-                setOpenTensorboardModal(false);
+                setTensorboardModalState((prev) => ({ ...prev, open: false }));
               }}
               onCancel={() => {
-                setOpenTensorboardModal(false);
+                setTensorboardModalState((prev) => ({ ...prev, open: false }));
               }}
             />
           </BAIUnmountAfterClose>
@@ -558,17 +583,14 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
               sessionFrgmt={session}
               open={confirmationModalState.open}
               appName={confirmationModalState.appName}
+              port={confirmationModalState.port}
+              openToPublic={confirmationModalState.openToPublic}
+              allowedClientIps={confirmationModalState.allowedClientIps}
               onRequestClose={() => {
-                setConfirmationModalState({
-                  open: false,
-                  appName: '',
-                });
+                setConfirmationModalState((prev) => ({ ...prev, open: false }));
               }}
               onCancel={() => {
-                setConfirmationModalState({
-                  open: false,
-                  appName: '',
-                });
+                setConfirmationModalState((prev) => ({ ...prev, open: false }));
               }}
             />
           </BAIUnmountAfterClose>
