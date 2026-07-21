@@ -84,15 +84,22 @@ test.describe(
         imageListTable,
         'Control',
       );
+      // FR-3331 replaced the resource-limit action's settings-cog icon with a
+      // lucide SquarePenIcon (aria-hidden, no accessible name), so it can no
+      // longer be located via getByRole('button', { name: 'setting' }). It is
+      // the first of the two Control-column buttons (the second is "Manage
+      // Apps", whose antd `appstore` icon still carries its accessible name).
       await firstRow
         .locator('.ant-table-cell')
         .nth(controlColumnIndex)
-        .getByRole('button', { name: 'setting' })
+        .locator('button')
+        .first()
         .click();
-      await page.waitForLoadState('networkidle');
       // get resource limit from control modal
       const resourceLimitControlModal = page.getByRole('dialog', {
-        name: /Modify Minimum Image Resource Limit/i,
+        // FR-3339 renamed the modal from "Modify ..." to "Edit ..." as part of
+        // unifying edit terminology across the app.
+        name: /Edit Minimum Image Resource Limit/i,
       });
 
       await expect(resourceLimitControlModal).toBeVisible();
@@ -119,9 +126,9 @@ test.describe(
       await expect(cpuFormItemInput).toHaveValue(CPU_CORE);
       await memoryFormItemInput.fill(MEMORY_SIZE + 'g');
       await expect(memoryFormItemInput).toHaveValue(MEMORY_SIZE);
-      // click ok button
+      // click the modal's submit button (renamed "OK" -> "Save" by FR-3339)
       await resourceLimitControlModal
-        .getByRole('button', { name: 'OK' })
+        .getByRole('button', { name: 'Save' })
         .click();
       const reinstallationText = await page
         .getByText('Image reinstallation required')
@@ -133,12 +140,14 @@ test.describe(
       await firstRow
         .locator('.ant-table-cell')
         .nth(controlColumnIndex)
-        .getByRole('button', { name: 'setting' })
+        .locator('button')
+        .first()
         .click();
-      await page.waitForLoadState('networkidle');
       // In Ant Design 6, use role-based selector for dialog
       const modifiedResourceLimitControlModal = page.getByRole('dialog', {
-        name: /Modify Minimum Image Resource Limit/i,
+        // FR-3339 renamed the modal from "Modify ..." to "Edit ..." as part of
+        // unifying edit terminology across the app.
+        name: /Edit Minimum Image Resource Limit/i,
       });
       await expect(modifiedResourceLimitControlModal).toBeVisible();
       const modifiedCpuFormItemInput =
@@ -173,9 +182,9 @@ test.describe(
       await page
         .locator(`.ant-select-item-option-content:has-text("${memorySize}")`)
         .click();
-      // click ok button
+      // click the modal's submit button (renamed "OK" -> "Save" by FR-3339)
       await modifiedResourceLimitControlModal
-        .getByRole('button', { name: 'OK' })
+        .getByRole('button', { name: 'Save' })
         .click();
       const reinstallationTextAfterReset = await page
         .getByText('Image reinstallation required')

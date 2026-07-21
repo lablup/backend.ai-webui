@@ -297,11 +297,14 @@ test.describe(
       await expect(page.getByText('Pending').first()).toBeVisible();
 
       // Basic Information card
-      await expect(page.getByRole('button', { name: 'edit Edit' })).toBeVisible(
-        {
-          timeout: 20000,
-        },
-      );
+      // FR-3331/FR-3315 replaced the settings-cog icon with a lucide edit icon
+      // (no accessible name of its own), leaving the button's accessible name
+      // as just "Edit" instead of the old icon-name-prefixed "edit Edit".
+      await expect(
+        page.getByRole('button', { name: 'Edit', exact: true }),
+      ).toBeVisible({
+        timeout: 20000,
+      });
       await expect(page.getByRole('button', { name: 'More' })).toBeVisible();
       await expect(
         page.getByRole('rowheader', { name: 'Lifecycle' }),
@@ -957,7 +960,7 @@ test.describe(
       createdDeploymentName = deploymentName;
 
       // 1. Click "Edit" in the "Basic Information" card.
-      await page.getByRole('button', { name: 'edit Edit' }).click();
+      await page.getByRole('button', { name: 'Edit', exact: true }).click();
 
       // 2. Inspect the modal fields.
       const dialog = page.getByRole('dialog', { name: 'Edit Deployment' });
@@ -997,7 +1000,7 @@ test.describe(
 
       // 5. Click "Cancel" instead of "Save" on a repeat run to confirm no changes
       // persist when cancelled.
-      await page.getByRole('button', { name: 'edit Edit' }).click();
+      await page.getByRole('button', { name: 'Edit', exact: true }).click();
       const dialog2 = page.getByRole('dialog', { name: 'Edit Deployment' });
       await expect(dialog2).toBeVisible({ timeout: 20000 });
       const replicasInput2 = dialog2.getByRole('spinbutton', {

@@ -261,29 +261,32 @@ test.describe(
         await expect(page).toHaveURL(/sessionType.*batch|batch.*sessionType/);
       });
 
-      test('Admin can navigate to the Model Service creation page from the "Start Model Service" card', async ({
+      test('Admin can navigate to the Deployments page from the "Start Deployment" card', async ({
         page,
       }) => {
         const startPage = new StartPage(page);
 
-        // Declarative config gate (FR-3112): the "Start Model Service" card is
-        // rendered only when `enableModelFolders = true` in config.toml
-        // (StartPage.tsx reads `baiClient._config.enableModelFolders`).
+        // Declarative config gate (FR-3112): the "Start Deployment" card
+        // (formerly titled "Start Model Service") is rendered only when
+        // `enableModelFolders = true` in config.toml (StartPage.tsx reads
+        // `baiClient._config.enableModelFolders`).
         await skipUnlessClientConfig(
           page,
           'enableModelFolders',
-          'Start Model Service card requires `enableModelFolders = true` in config.toml',
+          'Start Deployment card requires `enableModelFolders = true` in config.toml',
         );
 
         // 1. The config enables the feature — the card MUST be present; absence is a failure.
-        const card = startPage.getModelServiceCard();
+        const card = startPage.getDeploymentCard();
         await expect(card).toBeVisible({ timeout: CARD_TIMEOUT });
 
-        // 2. Click the "Start Service" button within the card
-        await startPage.getStartServiceButton(card).click();
+        // 2. Click the "Create Deployment" button within the card (renamed
+        // from "Start Service").
+        await startPage.getCreateDeploymentButton(card).click();
 
-        // 3. Verify the URL changes to /service/start
-        await expect(page).toHaveURL(/\/service\/start/);
+        // 3. Verify the URL changes to /deployments (this card no longer
+        // routes through /service/start).
+        await expect(page).toHaveURL(/\/deployments/);
       });
     });
 

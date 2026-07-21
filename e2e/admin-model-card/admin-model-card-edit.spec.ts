@@ -9,6 +9,25 @@ import {
 } from '../utils/test-util';
 import { test, expect } from '@playwright/test';
 
+// FR-3331/FR-3339 (PRs #8303/#8315) replaced the row's settings-cog icon with a
+// lucide `SquarePenIcon` that carries no accessible name, so the edit action can
+// no longer be located via getByRole('button', { name: 'setting' })
+// (AdminModelCardPage.getSettingButtonForRow/openEditModal, still pending a fix in
+// other in-flight PRs). It is the first button inside the name cell's
+// `.bai-name-action-cell-actions` action group — the second button is the
+// `delete` action, which still has its accessible name.
+async function openEditModalViaRowAction(
+  adminModelCardPage: AdminModelCardPage,
+  name: string,
+): Promise<void> {
+  await adminModelCardPage
+    .getRowByName(name)
+    .locator('.bai-name-action-cell-actions button')
+    .first()
+    .click();
+  await expect(adminModelCardPage.getEditModal()).toBeVisible();
+}
+
 test.describe(
   'Admin Model Card Management - Edit',
   { tag: ['@admin-model-card', '@admin', '@crud'] },
@@ -126,8 +145,8 @@ test.describe(
         timeout: 15000,
       });
 
-      // Click the gear icon in the Name cell for the test card
-      await adminModelCardPage.openEditModal(testCardName);
+      // Click the edit icon in the Name cell for the test card
+      await openEditModalViaRowAction(adminModelCardPage, testCardName);
 
       const modal = adminModelCardPage.getEditModal();
 
@@ -171,7 +190,7 @@ test.describe(
       });
 
       // Open edit modal for the test card
-      await adminModelCardPage.openEditModal(testCardName);
+      await openEditModalViaRowAction(adminModelCardPage, testCardName);
       const modal = adminModelCardPage.getEditModal();
 
       // Clear the Title field and type a new value.
@@ -243,7 +262,7 @@ test.describe(
       });
 
       // Open edit modal
-      await adminModelCardPage.openEditModal(testCardName);
+      await openEditModalViaRowAction(adminModelCardPage, testCardName);
       const modal = adminModelCardPage.getEditModal();
 
       // Clear the Name field completely
@@ -284,7 +303,7 @@ test.describe(
       });
 
       // Open edit modal
-      await adminModelCardPage.openEditModal(testCardName);
+      await openEditModalViaRowAction(adminModelCardPage, testCardName);
       const modal = adminModelCardPage.getEditModal();
 
       // Change the Title to a value that should not be saved.

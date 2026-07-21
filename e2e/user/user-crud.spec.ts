@@ -16,6 +16,22 @@ import {
 } from '../utils/test-util';
 import test, { expect } from '@playwright/test';
 
+// FR-3331/FR-3339 (PRs #8303/#8315) renamed the User Setting modal's submit
+// button from "OK" to "Create" (create mode) / "Save" (edit mode).
+// UserSettingModal.getOkButton()/clickOk() still target the stale "OK" name
+// (a fix is pending in another in-flight PR touching that shared page
+// object), so this spec clicks the modal's submit button directly instead of
+// going through clickOk()/createUser().
+async function submitUserSettingModal(
+  modal: UserSettingModal,
+  label: 'Create' | 'Save',
+): Promise<void> {
+  await modal
+    .getModal()
+    .getByRole('button', { name: label, exact: true })
+    .click();
+}
+
 // Generate unique identifiers for this test run to avoid conflicts
 const TEST_RUN_ID = Date.now().toString(36);
 const EMAIL = `e2e-test-user-${TEST_RUN_ID}@lablup.com`;
@@ -99,7 +115,9 @@ test.describe.serial(
 
       // 6. Create user using the modal class
       const userSettingModal = new UserSettingModal(page);
-      await userSettingModal.createUser(EMAIL, USERNAME, PASSWORD);
+      await userSettingModal.waitForVisible();
+      await userSettingModal.fillRequiredFields(EMAIL, USERNAME, PASSWORD);
+      await submitUserSettingModal(userSettingModal, 'Create');
 
       // 7. Handle the key pair modal that appears after user creation
       const keyPairModal = new KeyPairModal(page);
@@ -148,15 +166,23 @@ test.describe.serial(
         .nth(1)
         .click();
 
-      // 6. Update user name and password using the modal class
-      const editModal = UserSettingModal.forEdit(page);
-      await editModal.waitForVisible();
-      await editModal.fillUserName(MODIFIED_USERNAME);
-      await editModal.fillNewPasswords(NEW_PASSWORD);
-      await editModal.clickOk();
+      // 6. Update user name and password.
+      // FR-3339 renamed this dialog from "Modify User Detail" to "Edit User
+      // Detail" as part of unifying edit terminology across the app.
+      // UserSettingModal.forEdit() still targets the stale dialog name (a fix
+      // is pending in another in-flight PR touching that shared page
+      // object), so this test locates the dialog directly instead.
+      const editDialog = page.getByRole('dialog', { name: 'Edit User Detail' });
+      await expect(editDialog).toBeVisible();
+      const editUserNameInput = editDialog.getByLabel('User Name');
+      await editUserNameInput.fill(MODIFIED_USERNAME);
+      await expect(editUserNameInput).toHaveValue(MODIFIED_USERNAME);
+      await editDialog.getByLabel(/^New Password/).fill(NEW_PASSWORD);
+      await editDialog.getByLabel(/^New password \(again\)/).fill(NEW_PASSWORD);
+      await editDialog.getByRole('button', { name: 'Save' }).click();
 
       // 7. Wait for modal to close
-      await editModal.waitForHidden();
+      await expect(editDialog).toBeHidden({ timeout: 10000 });
 
       // 8. Verify success by checking user info.
       // The info button is the 1st button (index 0) in the action cell.
