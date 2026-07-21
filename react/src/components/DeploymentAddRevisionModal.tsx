@@ -1550,6 +1550,14 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     watchedVariant?.readsVfolderConfigFiles ??
     watchedVariant?.name === 'custom';
 
+  // 26.8.0+ treats `readsVfolderConfigFiles` as authoritative in either Preset
+  // or Custom mode. Pre-26.8.0 (field stripped → `name === 'custom'` fallback)
+  // keeps the legacy Custom-mode-only gate.
+  const readsVfolderConfigFilesInMode =
+    readsVfolderConfigFiles &&
+    (baiClient.isManagerVersionCompatibleWith('26.8.0') ||
+      effectiveMode === 'custom');
+
   // Read the selected model folder's `model-definition.yaml` and use its parsed
   // values as placeholders (display-only hints) on the command fields. Enabled
   // only for a config-reading variant with a folder selected; failures fall
@@ -1557,21 +1565,19 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   const { defaults: vfolderModelDefinitionDefaults } =
     useModelDefinitionPlaceholders(
       watchedModelFolderId,
-      effectiveMode === 'custom' && readsVfolderConfigFiles,
+      readsVfolderConfigFilesInMode,
     );
 
   // Low-priority placeholder layer: the runtime variant's DB
   // `defaultModelDefinition` baseline (always present). Loaded by
   // `VariantDefaultModelDefinitionLoader` (a Suspense-wrapped side query fired
-  // only when the variant reads the vfolder config files, in Custom mode) and
-  // pushed here via `onLoaded`. Keyed by variantId so a variant change replaces
-  // it; cleared to null when the loader unmounts / the variant has no baseline.
+  // only when the variant reads the vfolder config files) and pushed here via
+  // `onLoaded`. Keyed by variantId so a variant change replaces it; cleared to
+  // null when the loader unmounts / the variant has no baseline.
   const [dbModelDefinitionDefaults, setDbModelDefinitionDefaults] =
     useState<ParsedModelDefinition | null>(null);
   const shouldLoadVariantDefault =
-    effectiveMode === 'custom' &&
-    readsVfolderConfigFiles &&
-    !!watchedRuntimeVariantId;
+    readsVfolderConfigFilesInMode && !!watchedRuntimeVariantId;
 
   // When the loader is not rendered (mode switched away, variant cleared, or a
   // non-config-reading variant selected), drop the stale DB baseline so it does
