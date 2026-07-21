@@ -457,6 +457,13 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   // was added in 26.4.4 (FR-3205); older managers reject the unknown input
   // field, so the key is omitted from the mutation entirely on them.
   const supportsMountSubpath = baiClient.supports('model-mount-subpath');
+  // 26.8.0+ managers report `readsVfolderConfigFiles` / `defaultModelDefinition`
+  // on RuntimeVariant (FR-3342); older managers omit them, so the flag is only
+  // authoritative when supported (otherwise the legacy `name === 'custom'`
+  // heuristic decides).
+  const supportsRuntimeVariantConfigReads = baiClient.supports(
+    'model-runtime-variant-reads-vfolder-config-files',
+  );
 
   // Refs to refetch each form's model folder select after creating a new
   // model-usage folder, or via the manual refresh button. Two refs because
@@ -1548,8 +1555,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   // keeps the legacy Custom-mode-only gate.
   const readsVfolderConfigFilesInMode =
     readsVfolderConfigFiles &&
-    (baiClient.isManagerVersionCompatibleWith('26.8.0') ||
-      effectiveMode === 'custom');
+    (supportsRuntimeVariantConfigReads || effectiveMode === 'custom');
 
   // Read the selected model folder's `model-definition.yaml` and use its parsed
   // values as placeholders (display-only hints) on the command fields. Enabled
