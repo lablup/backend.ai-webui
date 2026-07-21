@@ -2254,11 +2254,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                             <InputNumber
                               min={2}
                               max={65535}
-                              placeholder={
-                                modelDefinitionDefaults?.port !== undefined
-                                  ? String(modelDefinitionDefaults.port)
-                                  : undefined
-                              }
+                              placeholder={modelDefinitionDefaults?.port?.toString()}
                               style={{ width: '100%' }}
                             />
                           </Form.Item>
@@ -2322,11 +2318,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                     >
                       <InputNumber
                         min={1}
-                        placeholder={
-                          modelDefinitionDefaults?.maxRetries !== undefined
-                            ? String(modelDefinitionDefaults.maxRetries)
-                            : undefined
-                        }
+                        placeholder={modelDefinitionDefaults?.maxRetries?.toString()}
                         style={{ width: '100%' }}
                       />
                     </Form.Item>
@@ -2373,11 +2365,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                     >
                       <InputNumber
                         min={0}
-                        placeholder={
-                          modelDefinitionDefaults?.initialDelay !== undefined
-                            ? String(modelDefinitionDefaults.initialDelay)
-                            : undefined
-                        }
+                        placeholder={modelDefinitionDefaults?.initialDelay?.toString()}
                         suffix={t('time.Sec')}
                         style={{ width: '100%' }}
                       />
