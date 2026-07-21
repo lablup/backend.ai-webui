@@ -1,6 +1,7 @@
 // spec: e2e/user/bulk-user-creation.spec.ts
 import { BulkCreateUserModal } from '../utils/classes/user/BulkCreateUserModal';
 import { PurgeUsersModal } from '../utils/classes/user/PurgeUsersModal';
+import { KeyPairModal } from '../utils/classes/user/UserSettingModal';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import test, { expect, type Page } from '@playwright/test';
 
@@ -104,12 +105,19 @@ test.describe(
         await page.getByRole('button', { name: 'ellipsis' }).click();
 
         // 6. Verify the dropdown menu appears containing the item "Bulk Create Users"
+        // exact: true avoids a strict-mode collision with the sibling
+        // "Bulk Create Users from CSV" menu item.
         await expect(
-          page.getByRole('menuitem', { name: 'Bulk Create Users' }),
+          page.getByRole('menuitem', {
+            name: 'Bulk Create Users',
+            exact: true,
+          }),
         ).toBeVisible();
 
         // 7. Click "Bulk Create Users"
-        await page.getByRole('menuitem', { name: 'Bulk Create Users' }).click();
+        await page
+          .getByRole('menuitem', { name: 'Bulk Create Users', exact: true })
+          .click();
 
         // 8. Verify a dialog with the title "Bulk Create Users" is visible
         const modal = new BulkCreateUserModal(page);
@@ -171,7 +179,7 @@ test.describe(
 
           // 5. Click "Bulk Create Users"
           await page
-            .getByRole('menuitem', { name: 'Bulk Create Users' })
+            .getByRole('menuitem', { name: 'Bulk Create Users', exact: true })
             .click();
 
           // 6. Verify the "Bulk Create Users" dialog is visible
@@ -199,7 +207,15 @@ test.describe(
             page.locator('.ant-message').getByText(/Successfully created/),
           ).toBeVisible({ timeout: 30000 });
 
-          // 13. Verify the modal is no longer visible (confirms mutation completed)
+          // 13. A successful bulk create reveals the generated keypairs in a
+          // follow-up "Keypair for new users" dialog (secret keys are only
+          // shown once) — close it before the Bulk Create Users modal itself
+          // hides.
+          const keyPairModal = new KeyPairModal(page);
+          await keyPairModal.waitForVisible();
+          await keyPairModal.close();
+
+          // 14. Verify the modal is no longer visible (confirms mutation completed)
           await modal.waitForHidden();
 
           // 14. Verify the Users table contains all 3 created users
@@ -276,7 +292,9 @@ test.describe(
 
         // 3. Click the "ellipsis" dropdown button and select "Bulk Create Users"
         await page.getByRole('button', { name: 'ellipsis' }).click();
-        await page.getByRole('menuitem', { name: 'Bulk Create Users' }).click();
+        await page
+          .getByRole('menuitem', { name: 'Bulk Create Users', exact: true })
+          .click();
 
         // 5. Verify the "Bulk Create Users" dialog is visible
         const modal = new BulkCreateUserModal(page);
@@ -332,7 +350,7 @@ test.describe(
           // 3. Click the "ellipsis" dropdown button and select "Bulk Create Users"
           await page.getByRole('button', { name: 'ellipsis' }).click();
           await page
-            .getByRole('menuitem', { name: 'Bulk Create Users' })
+            .getByRole('menuitem', { name: 'Bulk Create Users', exact: true })
             .click();
 
           // 4. Verify the "Bulk Create Users" dialog is visible
@@ -360,6 +378,14 @@ test.describe(
           await expect(
             page.locator('.ant-message').getByText(/Successfully created/),
           ).toBeVisible({ timeout: 30000 });
+
+          // 11b. A successful bulk create reveals the generated keypairs in a
+          // follow-up "Keypair for new users" dialog (secret keys are only
+          // shown once) — close it before the Bulk Create Users modal itself
+          // hides.
+          const keyPairModal = new KeyPairModal(page);
+          await keyPairModal.waitForVisible();
+          await keyPairModal.close();
 
           // 12. Verify the modal closes (confirms mutation completed)
           await modal.waitForHidden();

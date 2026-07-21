@@ -86,14 +86,24 @@ export class AdminModelCardPage {
   }
 
   async clearFilter(): Promise<void> {
-    const closeIcon = this.page.getByRole('button', { name: 'Close' }).first();
-    await closeIcon.click();
+    // The filter chip's close affordance is a button labeled "Close" (not an
+    // icon-only `img` role) as of the row-action UI refresh in FR-3331.
+    const closeButton = this.page
+      .getByRole('button', { name: 'Close' })
+      .first();
+    await closeButton.click();
   }
 
   // ── Row actions ──────────────────────────────────────────────────────────
 
   getSettingButtonForRow(name: string): Locator {
-    return this.getRowByName(name).getByRole('button', { name: 'setting' });
+    // The row edit action is a lucide `SquarePenIcon` (FR-3331) with the
+    // action title exposed as the button's `aria-label` by BAINameActionCell,
+    // so it can be targeted by its accessible name.
+    return this.getRowByName(name).getByRole('button', {
+      name: 'Edit',
+      exact: true,
+    });
   }
 
   getTrashButtonForRow(name: string): Locator {

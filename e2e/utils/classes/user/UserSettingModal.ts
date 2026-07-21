@@ -206,10 +206,15 @@ export class UserSettingModal {
   // =====================
 
   /**
-   * Get the OK button
+   * Get the OK (submit) button.
+   * The modal's submit button was relabeled from "OK" to "Save" (edit mode)
+   * / "Create" (create mode) — see `okText={user ? t('button.Save') :
+   * t('button.Create')}` in `UserSettingModal.tsx` (FR-3331).
    */
   getOkButton(): Locator {
-    return this.modal.getByRole('button', { name: 'OK' });
+    return this.modal.getByRole('button', {
+      name: this.mode === 'edit' ? 'Save' : 'Create',
+    });
   }
 
   /**

@@ -403,6 +403,7 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
                 type="text"
                 size="small"
                 icon={action.icon}
+                aria-label={action.title}
                 disabled={action.disabled}
                 className={buttonClassName}
                 style={action.style}

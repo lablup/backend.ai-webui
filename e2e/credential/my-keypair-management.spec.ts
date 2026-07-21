@@ -939,8 +939,31 @@ test.describe(
           name: 'My Keypair Management',
         });
 
-        // Switch to Inactive tab
+        // Switch to Inactive tab. The table's data source updates via a
+        // deferred transition, so immediately after switching it can still
+        // show the previous (Active) tab's rows — and a stale Active row
+        // (which also has an `.ant-btn-dangerous` Deactivate button) could
+        // be mistaken for a seeded inactive keypair. Synchronize on the
+        // actual Inactive query (`myKeypairs` with `isActive: false`)
+        // completing instead of polling row counts, so a slow request
+        // cannot slip stale rows past the check.
+        const inactiveQueryResponse = page.waitForResponse((response) => {
+          const postData = response.request().postData() ?? '';
+          return (
+            postData.includes('MyKeypairManagementModalQuery') &&
+            postData.includes('"isActive":false')
+          );
+        });
         await modal.locator('label').filter({ hasText: 'Inactive' }).click();
+        await expect(
+          modal.getByRole('radio', { name: 'Inactive' }),
+        ).toBeChecked();
+        await inactiveQueryResponse;
+
+        // The table shows its loading overlay while the deferred query
+        // variables lag the committed ones; once the spinner is gone, the
+        // rendered rows are the committed Inactive dataset.
+        await expect(modal.locator('.ant-spin-spinning')).toBeHidden();
 
         const inactiveRows = getKeypairTableRows(page);
         const count = await inactiveRows.count();

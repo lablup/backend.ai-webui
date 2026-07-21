@@ -36,11 +36,13 @@ async function cleanupTestProject(page: Page, projectName: string) {
     .catch(() => false);
 
   if (isActiveVisible) {
-    // Deactivate first (Popconfirm flow)
+    // Deactivate first (Popconfirm flow). Row actions expose their title as
+    // the button's `aria-label` (BAINameActionCell), so target by name —
+    // index-based selection breaks when optional actions (e.g. "Set Project
+    // Admin" on managers >= 26.8) are prepended.
     await activeProjectRow.hover();
     await activeProjectRow
-      .locator('.bai-name-action-cell-actions button')
-      .nth(1)
+      .getByRole('button', { name: 'Deactivate', exact: true })
       .click();
     const deactivatePopconfirm = page.locator('.ant-popconfirm');
     await expect(deactivatePopconfirm).toBeVisible({ timeout: 5000 });
@@ -65,10 +67,8 @@ async function cleanupTestProject(page: Page, projectName: string) {
 
   if (isInactiveVisible) {
     await inactiveProjectRow.hover();
-    // In Inactive tab: buttons are [setting(0), activate(1), purge(2)]
     await inactiveProjectRow
-      .locator('.bai-name-action-cell-actions button')
-      .nth(2)
+      .getByRole('button', { name: 'Purge', exact: true })
       .click();
     const purgeDialog = page.getByRole('dialog', { name: 'Purge Project' });
     await expect(purgeDialog).toBeVisible({ timeout: 5000 });
@@ -202,11 +202,16 @@ test.describe(
       await createProject(page, name, PROJECT_DESCRIPTION);
 
       // Find the test project row, hover to reveal BAINameActionCell action
-      // buttons, then click the setting (edit) button.
+      // buttons, then click the edit button. The row edit action is a lucide
+      // `SquarePenIcon` (FR-3331) whose action title ("Edit") is exposed as
+      // the button's `aria-label` by BAINameActionCell, so it can be
+      // targeted by its accessible name regardless of action ordering.
       const projectRow = page.getByRole('row').filter({ hasText: name });
       await expect(projectRow).toBeVisible();
       await projectRow.hover();
-      await projectRow.getByRole('button', { name: 'setting' }).click();
+      await projectRow
+        .getByRole('button', { name: 'Edit', exact: true })
+        .click();
 
       // Verify Update Project dialog appears
       const modal = page.locator('.ant-modal');
@@ -293,12 +298,11 @@ test.describe(
 
       // The project lifecycle is Active → Deactivated → Purged.
       // Step 1: Deactivate — hover the row to reveal the BAINameActionCell
-      // action buttons, then click the deactivate button (index 1 in the
-      // Active tab; index 0 is the setting/edit button).
+      // action buttons, then click the deactivate button by its accessible
+      // name (the action title is exposed as the button's `aria-label`).
       await projectRow.hover();
       await projectRow
-        .locator('.bai-name-action-cell-actions button')
-        .nth(1)
+        .getByRole('button', { name: 'Deactivate', exact: true })
         .click();
 
       // Confirm the antd Popconfirm for deactivation
@@ -323,12 +327,10 @@ test.describe(
         .filter({ hasText: name });
       await expect(inactiveProjectRow).toBeVisible({ timeout: 10000 });
 
-      // Hover the row and click the Purge button (index 2 in the
-      // Inactive tab: setting(0), activate(1), purge(2))
+      // Hover the row and click the Purge button by its accessible name
       await inactiveProjectRow.hover();
       await inactiveProjectRow
-        .locator('.bai-name-action-cell-actions button')
-        .nth(2)
+        .getByRole('button', { name: 'Purge', exact: true })
         .click();
 
       // Verify the Purge Project confirmation dialog appears
