@@ -4,6 +4,7 @@
  */
 import { ImportArtifactRevisionToFolderModalArtifactRevisionFragment$key } from '../__generated__/ImportArtifactRevisionToFolderModalArtifactRevisionFragment.graphql';
 import {
+  ArtifactRevisionFilter,
   ArtifactStatus,
   ReservoirArtifactDetailPageQuery,
   ReservoirArtifactDetailPageQuery$data,
@@ -12,7 +13,7 @@ import {
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import ImportArtifactRevisionToFolderButton from '../components/ImportArtifactRevisionToFolderButton';
 import ImportArtifactRevisionToFolderModal from '../components/ImportArtifactRevisionToFolderModal';
-import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
+import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { Button, Typography, Descriptions, theme, Tooltip } from 'antd';
 import {
@@ -41,11 +42,11 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import * as _ from 'lodash-es';
 import { Download } from 'lucide-react';
+import { parseAsJson, useQueryStates } from 'nuqs';
 import { useDeferredValue, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useParams } from 'react-router-dom';
-import { JsonParam, useQueryParams, withDefault } from 'use-query-params';
 
 dayjs.extend(relativeTime);
 
@@ -77,15 +78,20 @@ const ReservoirArtifactDetailPage = () => {
     useState<ImportArtifactRevisionToFolderModalArtifactRevisionFragment$key>(
       [],
     );
-  const [queryParams, setQuery] = useQueryParams({
-    filter: withDefault(JsonParam, {}),
-  });
+  const [queryParams, setQuery] = useQueryStates(
+    {
+      filter: parseAsJson<ArtifactRevisionFilter>(
+        (value) => value as ArtifactRevisionFilter,
+      ).withDefault({}),
+    },
+    { history: 'replace' },
+  );
   const jsonStringFilter = JSON.stringify(queryParams.filter);
   const {
     baiPaginationOption,
     tablePaginationOption,
     setTablePaginationOption,
-  } = useBAIPaginationOptionStateOnSearchParamLegacy({
+  } = useBAIPaginationOptionStateOnSearchParam({
     current: 1,
     pageSize: 10,
   });
@@ -414,7 +420,7 @@ const ReservoirArtifactDetailPage = () => {
             <BAIGraphQLPropertyFilter
               combinationMode="AND"
               onChange={(value) => {
-                setQuery({ filter: value ?? {} }, 'replaceIn');
+                setQuery({ filter: value ?? {} });
               }}
               filterProperties={[
                 {

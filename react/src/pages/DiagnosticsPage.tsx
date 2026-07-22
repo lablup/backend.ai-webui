@@ -24,20 +24,20 @@ import {
   message,
 } from 'antd';
 import { BAIButton, BAICard, BAIFlex, useFetchKey } from 'backend.ai-ui';
+import { parseAsString, useQueryState } from 'nuqs';
 import { Suspense, useCallback, useRef, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
 type TabKey = 'diagnostics';
 type SectionKey = 'csp' | 'storage' | 'endpoint' | 'config';
 
-const tabParam = withDefault(StringParam, 'diagnostics');
+const tabParam = parseAsString.withDefault('diagnostics');
 
 const DiagnosticsPage = () => {
   'use memo';
 
   const { t } = useTranslation();
-  const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
+  const [curTabKey, setCurTabKey] = useQueryState('tab', tabParam);
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [isPending, startTransition] = useTransition();
   const [showOnlyFailed, setShowOnlyFailed] = useState(false);

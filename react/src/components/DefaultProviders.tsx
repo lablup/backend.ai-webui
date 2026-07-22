@@ -64,8 +64,6 @@ import React, {
 import { useTranslation, initReactI18next } from 'react-i18next';
 import { RelayEnvironmentProvider } from 'react-relay/hooks';
 import { useLocation } from 'react-router-dom';
-import { QueryParamProvider } from 'use-query-params';
-import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 
 export const jotaiStore = createStore();
 dayjs.extend(weekday);
@@ -346,42 +344,40 @@ export const DefaultProvidersForReactRoot: React.FC<{
                * useBAIi18n.ts.
                */}
               <BAIMetaDataWrapper>
-                <QueryParamProvider adapter={ReactRouter6Adapter}>
-                  <App {...commonAppProps}>
-                    {/* Single app-wide notification renderer. Lives outside
+                <App {...commonAppProps}>
+                  {/* Single app-wide notification renderer. Lives outside
                         the Suspense below so toasts work on every route and
                         in both anonymous and authenticated states. Renders
                         null, so its position relative to the emotion caches
                         below is irrelevant. */}
-                    <NotificationHost />
-                    {/*
-                     * Two separate emotion caches are needed for CSP nonce
-                     * coverage:
-                     *
-                     * 1. StyleProvider (antd-style's custom EmotionContext):
-                     *    covers createStyles() and the antd-style css() helper.
-                     *    The nonce is passed directly as a prop.
-                     *
-                     * 2. CacheProvider (@emotion/react's CacheContext):
-                     *    covers createGlobalStyle(), which uses @emotion/react's
-                     *    Global component internally. Global reads the nonce from
-                     *    cache.sheet.nonce — it does NOT read antd-style's custom
-                     *    EmotionContext. Without this wrapper, style tags emitted
-                     *    by createGlobalStyle (e.g. ScrollbarGlobalStyle) carry no
-                     *    nonce and are blocked by `style-src 'nonce-...'` CSP.
-                     */}
-                    <CacheProvider value={emotionGlobalCache}>
-                      <StyleProvider nonce={globalThis.baiNonce}>
-                        <Suspense>
-                          {/* <BrowserRouter> */}
-                          {/* <RoutingEventHandler /> */}
-                          {children}
-                          {/* </BrowserRouter> */}
-                        </Suspense>
-                      </StyleProvider>
-                    </CacheProvider>
-                  </App>
-                </QueryParamProvider>
+                  <NotificationHost />
+                  {/*
+                   * Two separate emotion caches are needed for CSP nonce
+                   * coverage:
+                   *
+                   * 1. StyleProvider (antd-style's custom EmotionContext):
+                   *    covers createStyles() and the antd-style css() helper.
+                   *    The nonce is passed directly as a prop.
+                   *
+                   * 2. CacheProvider (@emotion/react's CacheContext):
+                   *    covers createGlobalStyle(), which uses @emotion/react's
+                   *    Global component internally. Global reads the nonce from
+                   *    cache.sheet.nonce — it does NOT read antd-style's custom
+                   *    EmotionContext. Without this wrapper, style tags emitted
+                   *    by createGlobalStyle (e.g. ScrollbarGlobalStyle) carry no
+                   *    nonce and are blocked by `style-src 'nonce-...'` CSP.
+                   */}
+                  <CacheProvider value={emotionGlobalCache}>
+                    <StyleProvider nonce={globalThis.baiNonce}>
+                      <Suspense>
+                        {/* <BrowserRouter> */}
+                        {/* <RoutingEventHandler /> */}
+                        {children}
+                        {/* </BrowserRouter> */}
+                      </Suspense>
+                    </StyleProvider>
+                  </CacheProvider>
+                </App>
               </BAIMetaDataWrapper>
             </BAIConfigProvider>
           </QueryClientProvider>

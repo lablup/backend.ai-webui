@@ -16,7 +16,7 @@ import RestoreVFolderModal from '../components/RestoreVFolderModal';
 import VFolderNodes, { VFolderNodeInList } from '../components/VFolderNodes';
 import { handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
+import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useVFolderInvitations } from '../hooks/useVFolderInvitations';
@@ -37,15 +37,10 @@ import {
   useUpdatableState,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { parseAsString, useQueryState, useQueryStates } from 'nuqs';
 import React, { useDeferredValue, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import {
-  StringParam,
-  useQueryParam,
-  useQueryParams,
-  withDefault,
-} from 'use-query-params';
 
 export const isDeletedCategory = (status?: string | null) => {
   return _.includes(
@@ -99,7 +94,10 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   const currentProject = useCurrentProjectValue();
   const baiClient = useSuspendedBackendaiClient();
   const [invitations] = useVFolderInvitations();
-  const [, setInvitationOpen] = useQueryParam('invitation', StringParam);
+  const [, setInvitationOpen] = useQueryState(
+    'invitation',
+    parseAsString.withOptions({ history: 'replace' }),
+  );
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.VFolderNodeListPage',
@@ -123,17 +121,20 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
     baiPaginationOption,
     tablePaginationOption,
     setTablePaginationOption,
-  } = useBAIPaginationOptionStateOnSearchParamLegacy({
+  } = useBAIPaginationOptionStateOnSearchParam({
     current: 1,
     pageSize: 10,
   });
 
-  const [queryParams, setQuery] = useQueryParams({
-    order: withDefault(StringParam, '-created_at'),
-    filter: withDefault(StringParam, undefined),
-    statusCategory: withDefault(StringParam, 'active'),
-    mode: withDefault(StringParam, 'all'),
-  });
+  const [queryParams, setQuery] = useQueryStates(
+    {
+      order: parseAsString.withDefault('-created_at'),
+      filter: parseAsString,
+      statusCategory: parseAsString.withDefault('active'),
+      mode: parseAsString.withDefault('all'),
+    },
+    { history: 'replace' },
+  );
 
   const queryMapRef = useRef({
     [queryParams.statusCategory]: { queryParams, tablePaginationOption },
@@ -286,13 +287,14 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             const storedQuery = queryMapRef.current[key] || {
               mode: 'all',
             };
-            setQuery(
-              {
-                ...storedQuery.queryParams,
-                statusCategory: key as 'active' | 'deleted',
-              },
-              'replace',
-            );
+            // Reset the whole group first: nuqs partial updates merge, so
+            // without this the previous tab's filter/order/mode leak into a
+            // tab that has no cached state (legacy 'replace' cleared them).
+            setQuery(null);
+            setQuery({
+              ...storedQuery.queryParams,
+              statusCategory: key as 'active' | 'deleted',
+            });
             setTablePaginationOption(
               storedQuery.tablePaginationOption || { current: 1 },
             );
@@ -303,7 +305,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
               <BAILink
                 type="hover"
                 onClick={() => {
-                  setInvitationOpen('true', 'replaceIn');
+                  setInvitationOpen('true');
                 }}
               >
                 {`${t('data.invitation.PendingInvitations')} (${invitations.length})`}
@@ -361,7 +363,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                 optionType="button"
                 value={queryParams.mode}
                 onChange={(e) => {
-                  setQuery({ mode: e.target.value }, 'replaceIn');
+                  setQuery({ mode: e.target.value });
                   setTablePaginationOption({ current: 1 });
                   setSelectedFolderList([]);
                 }}
@@ -457,9 +459,9 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                     type: 'string',
                   },
                 ]}
-                value={queryParams.filter || undefined}
+                value={queryParams.filter ?? undefined}
                 onChange={(value) => {
-                  setQuery({ filter: value }, 'replaceIn');
+                  setQuery({ filter: value ?? null });
                   setTablePaginationOption({ current: 1 });
                   setSelectedFolderList([]);
                 }}
@@ -563,7 +565,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
               },
             }}
             onChangeOrder={(order) => {
-              setQuery({ order }, 'replaceIn');
+              setQuery({ order: order ?? null });
             }}
             onRemoveRow={(removedId) => {
               setSelectedFolderList((prevSelected) =>

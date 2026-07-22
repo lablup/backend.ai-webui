@@ -9,20 +9,19 @@ import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Button, Result, Skeleton, theme, Tooltip } from 'antd';
 import { BAICard, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { parseAsString, useQueryStates } from 'nuqs';
+import { parseAsString, useQueryState, useQueryStates } from 'nuqs';
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
-import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
-const tabParam = withDefault(StringParam, 'fair-share');
+const tabParam = parseAsString.withDefault('fair-share');
 
 interface SchedulerPageProps {}
 
 const SchedulerPage: React.FC<SchedulerPageProps> = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const [curTabKey] = useQueryParam('tab', tabParam);
+  const [curTabKey] = useQueryState('tab', tabParam);
   const webUINavigate = useWebUINavigate();
 
   return (

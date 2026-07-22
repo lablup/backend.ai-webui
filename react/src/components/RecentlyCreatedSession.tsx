@@ -14,10 +14,10 @@ import {
   BAIFetchKeyButton,
   BAIBoardItemTitle,
 } from 'backend.ai-ui';
+import { parseAsString, useQueryState } from 'nuqs';
 import { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
-import { useQueryParam, StringParam } from 'use-query-params';
 
 interface RecentlyCreatedSessionProps {
   queryRef: RecentlyCreatedSessionFragment$key;
@@ -30,9 +30,11 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const [sessionDetailId, setSessionDetailId] = useQueryParam(
+  const [sessionDetailId, setSessionDetailId] = useQueryState(
     'sessionDetail',
-    StringParam,
+    // Push so Back closes the drawer (nuqs defaults to replace; the legacy
+    // param pushed history on open/close).
+    parseAsString.withOptions({ history: 'push' }),
   );
   const [isPendingRefetch, startRefetchTransition] = useTransition();
 
@@ -128,7 +130,7 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
           open={!!sessionDetailId}
           sessionId={sessionDetailId || undefined}
           onClose={() => {
-            setSessionDetailId(undefined, 'pushIn');
+            setSessionDetailId(null);
           }}
         />
       </BAIUnmountAfterClose>

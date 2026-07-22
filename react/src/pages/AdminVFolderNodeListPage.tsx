@@ -16,7 +16,7 @@ import RestoreVFolderModal from '../components/RestoreVFolderModal';
 import VFolderNodes, { VFolderNodeInList } from '../components/VFolderNodes';
 import { handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
+import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { isDeletedCategory } from './VFolderNodeListPage';
 import { useToggle } from 'ahooks';
@@ -36,10 +36,10 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { PlusIcon } from 'lucide-react';
+import { parseAsString, useQueryStates } from 'nuqs';
 import React, { useDeferredValue, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 
 type VFolderNodesType = NonNullableNodeOnEdges<
   AdminVFolderNodeListPageQuery$data['vfolder_nodes']
@@ -86,17 +86,20 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
     baiPaginationOption,
     tablePaginationOption,
     setTablePaginationOption,
-  } = useBAIPaginationOptionStateOnSearchParamLegacy({
+  } = useBAIPaginationOptionStateOnSearchParam({
     current: 1,
     pageSize: 10,
   });
 
-  const [queryParams, setQuery] = useQueryParams({
-    order: withDefault(StringParam, '-created_at'),
-    filter: withDefault(StringParam, undefined),
-    statusCategory: withDefault(StringParam, 'active'),
-    mode: withDefault(StringParam, 'all'),
-  });
+  const [queryParams, setQuery] = useQueryStates(
+    {
+      order: parseAsString.withDefault('-created_at'),
+      filter: parseAsString,
+      statusCategory: parseAsString.withDefault('active'),
+      mode: parseAsString.withDefault('all'),
+    },
+    { history: 'replace' },
+  );
 
   const queryMapRef = useRef({
     [queryParams.statusCategory]: { queryParams, tablePaginationOption },
@@ -231,13 +234,14 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
             const storedQuery = queryMapRef.current[key] || {
               mode: 'all',
             };
-            setQuery(
-              {
-                ...storedQuery.queryParams,
-                statusCategory: key as 'active' | 'deleted',
-              },
-              'replace',
-            );
+            // Reset the whole group first: nuqs partial updates merge, so
+            // without this the previous tab's filter/order/mode leak into a
+            // tab that has no cached state (legacy 'replace' cleared them).
+            setQuery(null);
+            setQuery({
+              ...storedQuery.queryParams,
+              statusCategory: key as 'active' | 'deleted',
+            });
             setTablePaginationOption(
               storedQuery.tablePaginationOption || { current: 1 },
             );
@@ -294,7 +298,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                 optionType="button"
                 value={queryParams.mode}
                 onChange={(e) => {
-                  setQuery({ mode: e.target.value }, 'replaceIn');
+                  setQuery({ mode: e.target.value });
                   setTablePaginationOption({ current: 1 });
                   setSelectedFolderList([]);
                 }}
@@ -380,9 +384,9 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                     ],
                   },
                 ]}
-                value={queryParams.filter || undefined}
+                value={queryParams.filter ?? undefined}
                 onChange={(value) => {
-                  setQuery({ filter: value }, 'replaceIn');
+                  setQuery({ filter: value ?? null });
                   setTablePaginationOption({ current: 1 });
                   setSelectedFolderList([]);
                 }}
@@ -494,7 +498,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
               },
             }}
             onChangeOrder={(order) => {
-              setQuery({ order }, 'replaceIn');
+              setQuery({ order: order ?? null });
             }}
             onRemoveRow={(removedId) => {
               setSelectedFolderList((prevSelected) =>

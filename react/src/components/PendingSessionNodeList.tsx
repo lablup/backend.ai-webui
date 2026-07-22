@@ -7,7 +7,7 @@ import {
   PendingSessionNodeListQuery$variables,
 } from '../__generated__/PendingSessionNodeListQuery.graphql';
 import { useWebUINavigate } from '../hooks';
-import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
+import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
@@ -46,7 +46,7 @@ const PendingSessionNodeList: React.FC = () => {
     baiPaginationOption,
     tablePaginationOption,
     setTablePaginationOption,
-  } = useBAIPaginationOptionStateOnSearchParamLegacy({
+  } = useBAIPaginationOptionStateOnSearchParam({
     current: 1,
     pageSize: 10,
   });

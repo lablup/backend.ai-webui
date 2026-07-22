@@ -52,7 +52,7 @@ The work splits into 5 dependency-ordered sub-tasks plus one optional polish tas
 - **Description**:
   - Replace the placeholder `AutoScalingRulePresetTab` body with a real query orchestrator that runs `prometheusQueryPresets(filter, orderBy, limit, offset)` via `useLazyLoadQuery`.
   - Render results in a `BAITable` with columns: `name`, `metricName`, `queryTemplate` (truncated with tooltip showing full PromQL), `timeWindow`, `createdAt`, `updatedAt`. Use existing date formatting helpers.
-  - Add `BAIPropertyFilter` for the `name` field (the only filter the schema currently exposes — `QueryDefinitionFilter`). Wire filter + offset/limit pagination through `useBAIPaginationOptionStateOnSearchParamLegacy` and `useQueryStates` (mirror `ServingTabContent`).
+  - Add `BAIPropertyFilter` for the `name` field (the only filter the schema currently exposes — `QueryDefinitionFilter`). Wire filter + offset/limit pagination through `useBAIPaginationOptionStateOnSearchParam` and `useQueryStates` (mirror `ServingTabContent`).
   - Add a `BAIFetchKeyButton` reload control + transition-driven loading state.
   - Add a disabled "Add Preset" toolbar button (real handler comes in Sub-task 3) so the toolbar layout is finalized once.
   - Use a Relay fragment for each row (`PrometheusQueryPresetRowFragment`) with the fields needed for both display and the (later) Edit modal.

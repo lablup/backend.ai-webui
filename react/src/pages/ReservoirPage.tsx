@@ -7,12 +7,13 @@ import {
   ReservoirPageQuery$data,
   ReservoirPageQuery$variables,
   ArtifactType,
+  ArtifactFilter,
 } from '../__generated__/ReservoirPageQuery.graphql';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import ScanArtifactModelsFromHuggingFaceModal from '../components/ScanArtifactModelsFromHuggingFaceModal';
 import { useWebUINavigate } from '../hooks';
-import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
+import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useToggle } from 'ahooks';
@@ -39,15 +40,10 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { BanIcon, Brain, UndoIcon } from 'lucide-react';
+import { parseAsJson, parseAsString, useQueryStates } from 'nuqs';
 import React, { useMemo, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import {
-  withDefault,
-  JsonParam,
-  StringParam,
-  useQueryParams,
-} from 'use-query-params';
 
 const getStatusFilter = (status: string) => {
   return { availability: [status] };
@@ -96,15 +92,20 @@ const ReservoirPage: React.FC = () => {
     baiPaginationOption,
     tablePaginationOption,
     setTablePaginationOption,
-  } = useBAIPaginationOptionStateOnSearchParamLegacy({
+  } = useBAIPaginationOptionStateOnSearchParam({
     current: 1,
     pageSize: 10,
   });
 
-  const [queryParams, setQuery] = useQueryParams({
-    filter: withDefault(JsonParam, {}),
-    mode: withDefault(StringParam, 'ALIVE'),
-  });
+  const [queryParams, setQuery] = useQueryStates(
+    {
+      filter: parseAsJson<ArtifactFilter>(
+        (value) => value as ArtifactFilter,
+      ).withDefault({}),
+      mode: parseAsString.withDefault('ALIVE'),
+    },
+    { history: 'replace' },
+  );
   const jsonStringFilter = JSON.stringify(queryParams.filter);
 
   const queryVariables: ReservoirPageQuery$variables = useMemo(
@@ -226,7 +227,7 @@ const ReservoirPage: React.FC = () => {
   //   return { type: { eq: type } };
   // };
   // const handleStatisticCardClick = (type: 'IMAGE' | 'PACKAGE' | 'MODEL') => {
-  //   setQuery({ filter: typeFilterGenerator(type) }, 'replaceIn');
+  //   setQuery({ filter: typeFilterGenerator(type) });
   // };
 
   return (
@@ -293,7 +294,7 @@ const ReservoirPage: React.FC = () => {
                 ]}
                 value={queryParams.mode}
                 onChange={(e) => {
-                  setQuery({ mode: e.target.value }, 'replaceIn');
+                  setQuery({ mode: e.target.value });
                   setTablePaginationOption({ current: 1 });
                   setSelectedArtifactIdList([]);
                   setSelectedArtifacts([]);
@@ -303,7 +304,7 @@ const ReservoirPage: React.FC = () => {
               <BAIGraphQLPropertyFilter
                 combinationMode="AND"
                 onChange={(value) => {
-                  setQuery({ filter: value ?? {} }, 'replaceIn');
+                  setQuery({ filter: value ?? {} });
                 }}
                 value={queryParams.filter}
                 filterProperties={[
@@ -511,7 +512,7 @@ const ReservoirPage: React.FC = () => {
               loading={false}
               filterValue={queryParams.auditFilter}
               onFilterChange={(value) => {
-                setQuery({ auditFilter: value }, 'replaceIn');
+                setQuery({ auditFilter: value });
               }}
               pagination={{
                 pageSize: tablePaginationOption.pageSize,
@@ -530,7 +531,7 @@ const ReservoirPage: React.FC = () => {
               }}
               order={queryParams.auditOrder}
               onChangeOrder={(order) => {
-                setQuery({ auditOrder: order }, 'replaceIn');
+                setQuery({ auditOrder: order });
               }}
             />
           </Suspense>

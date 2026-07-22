@@ -12,7 +12,7 @@ import {
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { ResourceSlotName } from '../hooks/backendai';
-import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
+import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useResourceGroupsForCurrentProject } from '../hooks/useCurrentProject';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
@@ -40,10 +40,10 @@ import {
   INITIAL_FETCH_KEY,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { parseAsString, useQueryStates } from 'nuqs';
 import React, { useDeferredValue, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 
 type AgentSummary = NonNullable<
   AgentSummaryListQuery$data['agent_summary_list']
@@ -68,16 +68,19 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
     baiPaginationOption,
     tablePaginationOption,
     setTablePaginationOption,
-  } = useBAIPaginationOptionStateOnSearchParamLegacy({
+  } = useBAIPaginationOptionStateOnSearchParam({
     current: 1,
     pageSize: 20,
   });
 
-  const [queryParams, setQuery] = useQueryParams({
-    order: withDefault(StringParam, undefined),
-    filter: withDefault(StringParam, undefined),
-    status: withDefault(StringParam, 'ALIVE'),
-  });
+  const [queryParams, setQuery] = useQueryStates(
+    {
+      order: parseAsString,
+      filter: parseAsString,
+      status: parseAsString.withDefault('ALIVE'),
+    },
+    { history: 'replace' },
+  );
 
   const [fetchKey, updateFetchKey] = useFetchKey();
   const { sftpResourceGroups } = useResourceGroupsForCurrentProject();
@@ -386,7 +389,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
             value={queryParams.status}
             onChange={(e) => {
               const value = e.target.value;
-              setQuery({ status: value }, 'replaceIn');
+              setQuery({ status: value });
             }}
           />
 
@@ -413,9 +416,9 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
                 ],
               },
             ]}
-            value={queryParams.filter}
+            value={queryParams.filter ?? undefined}
             onChange={(value) => {
-              setQuery({ filter: value }, 'replaceIn');
+              setQuery({ filter: value ?? null });
               setTablePaginationOption({ current: 1 });
             }}
           />
@@ -453,7 +456,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
           },
         }}
         onChangeOrder={(order) => {
-          setQuery({ order }, 'replaceIn');
+          setQuery({ order: order ?? null });
         }}
         tableSettings={{
           columnOverrides: columnOverrides,

@@ -950,9 +950,6 @@ importers:
       typescript:
         specifier: ~6.0.3
         version: 6.0.3
-      use-query-params:
-        specifier: ^2.2.2
-        version: 2.2.2(react-dom@19.2.7(react@19.2.7))(react-router-dom@6.30.4(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
       uuid:
         specifier: 'catalog:'
         version: 13.0.2
@@ -10748,9 +10745,6 @@ packages:
     resolution: {integrity: sha512-YAy8Od6KV+uuwUuU50np8fGB/Aues6Y0nAhA9y/hId74PlKUcme4pXcBD46NWKr1Q4osN/iseZ17YqO1XfmI8g==}
     engines: {node: '>=20.0.0'}
 
-  serialize-query-params@2.0.4:
-    resolution: {integrity: sha512-y9WzzDj3BsGgKLCh0ugiinufS//YqOfao/yVJjkXA4VLuyNCfHOLU/cbulGPxs3aeCqhvROw7qPL04JSZnCo0w==}
-
   serve-handler@6.1.7:
     resolution: {integrity: sha512-CinAq1xWb0vR3twAv9evEU8cNWkXCb9kd5ePAHUKJBkOsUpR1wt/CvGdeca7vqumL1U5cSaeVQ6zZMxiJ3yWsg==}
 
@@ -11690,19 +11684,6 @@ packages:
     resolution: {integrity: sha512-DXgG0kkgJN45TcyoXL49vJnn55LehnrmoHc7MbKi+QDBvr8dsesqws8UlyIWGHMR+JXgxc1nvY+jDGMlycsUcw==}
     peerDependencies:
       react: '>= 16.x'
-
-  use-query-params@2.2.2:
-    resolution: {integrity: sha512-OwGab8u8/x2xZp9uSyBsx0kXlkR9IR436zbygsYVGikPYY3OJosvve6IJVGwIJPcfyb/YHwvPrUNu65/JR++Kw==}
-    peerDependencies:
-      '@reach/router': ^1.2.1
-      react: '>=16.8.0'
-      react-dom: '>=16.8.0'
-      react-router-dom: '>=5'
-    peerDependenciesMeta:
-      '@reach/router':
-        optional: true
-      react-router-dom:
-        optional: true
 
   use-sync-external-store@1.6.0:
     resolution: {integrity: sha512-Pp6GSwGP/NrPIrxVFAIkOQeyw8lFenOHijQWkUTrDvrF4ALqylP2C/KCkeS9dpUM3KvYRQhna5vt7IL95+ZQ9w==}
@@ -23762,8 +23743,6 @@ snapshots:
 
   serialize-javascript@7.0.7: {}
 
-  serialize-query-params@2.0.4: {}
-
   serve-handler@6.1.7:
     dependencies:
       bytes: 3.0.0
@@ -24894,14 +24873,6 @@ snapshots:
     dependencies:
       react: 19.2.7
 
-  use-query-params@2.2.2(react-dom@19.2.7(react@19.2.7))(react-router-dom@6.30.4(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7):
-    dependencies:
-      react: 19.2.7
-      react-dom: 19.2.7(react@19.2.7)
-      serialize-query-params: 2.0.4
-    optionalDependencies:
-      react-router-dom: 6.30.4(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-
   use-sync-external-store@1.6.0(react@19.2.7):
     dependencies:
       react: 19.2.7
@@ -25855,7 +25826,6 @@ time:
   typescript@5.5.4: '2024-07-22T23:02:51.857Z'
   typescript@5.9.3: '2025-09-30T21:19:38.784Z'
   typescript@6.0.3: '2026-04-16T23:38:27.905Z'
-  use-query-params@2.2.2: '2025-11-22T00:59:50.369Z'
   utf-8-validate@6.0.6: '2025-12-18T16:38:00.865Z'
   uuid@13.0.2: '2026-05-04T13:37:27.339Z'
   vite-plugin-checker@0.9.3: '2025-05-06T09:44:27.688Z'

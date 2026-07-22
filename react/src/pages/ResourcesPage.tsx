@@ -8,21 +8,21 @@ import ResourceGroupList from '../components/ResourceGroupList';
 import StorageProxyList from '../components/StorageProxyList';
 import { Skeleton } from 'antd';
 import { BAICard } from 'backend.ai-ui';
+import { parseAsString, useQueryState } from 'nuqs';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
 type TabKey = 'agents' | 'storages' | 'resourceGroup';
 
 interface ResourcesPageProps {}
 
-const tabParam = withDefault(StringParam, 'agents');
+const tabParam = parseAsString
+  .withDefault('agents')
+  .withOptions({ history: 'replace' });
 
 const ResourcesPage: React.FC<ResourcesPageProps> = () => {
   const { t } = useTranslation();
-  const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam, {
-    updateType: 'replace',
-  });
+  const [curTabKey, setCurTabKey] = useQueryState('tab', tabParam);
 
   return (
     <BAICard

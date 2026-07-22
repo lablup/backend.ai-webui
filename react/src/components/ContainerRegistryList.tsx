@@ -9,7 +9,7 @@ import {
   ContainerRegistryListQuery$data,
 } from '../__generated__/ContainerRegistryListQuery.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
+import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import { usePainKiller } from '../hooks/usePainKiller';
@@ -39,10 +39,10 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { PlusIcon, SquarePenIcon } from 'lucide-react';
+import { parseAsString, useQueryStates } from 'nuqs';
 import { useState, useDeferredValue, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
-import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 
 export type ContainerRegistry = NonNullable<
   NonNullable<
@@ -64,16 +64,19 @@ const ContainerRegistryList: React.FC<{
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
     useToggle();
 
-  const [queryParams, setQueryParams] = useQueryParams({
-    filter: withDefault(StringParam, undefined),
-    order: withDefault(StringParam, undefined),
-  });
+  const [queryParams, setQueryParams] = useQueryStates(
+    {
+      filter: parseAsString,
+      order: parseAsString,
+    },
+    { history: 'replace' },
+  );
 
   const {
     baiPaginationOption,
     tablePaginationOption,
     setTablePaginationOption,
-  } = useBAIPaginationOptionStateOnSearchParamLegacy({
+  } = useBAIPaginationOptionStateOnSearchParam({
     current: 1,
     pageSize: 20,
   });
@@ -432,9 +435,9 @@ const ContainerRegistryList: React.FC<{
               type: 'string',
             },
           ]}
-          value={queryParams.filter}
+          value={queryParams.filter ?? undefined}
           onChange={(value) => {
-            setQueryParams({ filter: value }, 'replaceIn');
+            setQueryParams({ filter: value ?? null });
           }}
         />
         <BAIFlex gap="xs">
@@ -485,7 +488,7 @@ const ContainerRegistryList: React.FC<{
           ),
         }}
         onChangeOrder={(order) => {
-          setQueryParams({ order }, 'replaceIn');
+          setQueryParams({ order: order ?? null });
         }}
         loading={
           deferredQueryVariables !== queryVariables ||

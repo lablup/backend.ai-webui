@@ -28,7 +28,6 @@ Patterns from FR-1683 (#4646) migration to nuqs, FR-1431 (#4252), FR-1412
 - **Without `useDeferredValue` on `queryVariables`**, `useLazyLoadQuery` suspends on every keystroke/sort/page change — Suspense fallback flashes. This is the whole FR-1683 motivation.
 - **`useBAIPaginationOptionStateOnSearchParam` uses its own `useQueryStates`** — it doesn't share context with your page-level `useQueryStates`. Both write cleanly to URL but are independent.
 - **Batched setters in the same tick merge**, not overwrite. `setQueryParams({ a: 1 }); setQueryParams({ b: 2 })` → `{ a: 1, b: 2 }`, not `{ b: 2 }`.
-- **`useBAIPaginationOptionStateOnSearchParamLegacy` still exists** — don't introduce new usages; legacy only.
 
 ## 1. Import and hook shape
 
@@ -224,8 +223,9 @@ const [params, setParams] = useQueryStates({
 }, { history: 'replace' });
 ```
 
-`useBAIPaginationOptionStateOnSearchParamLegacy` still exists for backward
-compat — prefer the non-legacy variant (nuqs-based) for anything new.
+`useBAIPaginationOptionStateOnSearchParam` is the single URL-backed pagination
+hook (the former `...Legacy` variant was removed when its call sites were
+consolidated).
 
 ## 8. Typing URL-sized enums with `parseAsStringLiteral`
 
@@ -267,4 +267,3 @@ URL state is for: what someone else pasting the URL should see.
 - [ ] Query variables and fetchKey wrapped in `useDeferredValue` when feeding `useLazyLoadQuery`.
 - [ ] Pagination binds through `useBAIPaginationOptionStateOnSearchParam`, not hand-rolled.
 - [ ] Tab-scoped per-tab state cached via `useRef`, with a `setQueryParams(null)` reset before applying stored values.
-- [ ] `useBAIPaginationOptionStateOnSearchParamLegacy` not introduced in new code.

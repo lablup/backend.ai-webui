@@ -91,6 +91,12 @@ import {
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
 import * as _ from 'lodash-es';
+import {
+  parseAsInteger,
+  parseAsJson,
+  parseAsString,
+  useQueryStates,
+} from 'nuqs';
 import React, {
   Suspense,
   useEffect,
@@ -102,13 +108,6 @@ import React, {
 import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-import {
-  JsonParam,
-  NumberParam,
-  StringParam,
-  useQueryParams,
-  withDefault,
-} from 'use-query-params';
 
 type SessionLauncherFormData = Omit<
   Required<OptionalFieldsOnly<SessionLauncherFormValue>>,
@@ -221,9 +220,13 @@ const SessionLauncherPage = () => {
 
   const { startSession, defaultFormValues, upsertSessionNotification } =
     useStartSession();
-  const StepParam = withDefault(NumberParam, 0);
-  const FormValuesParam = withDefault(JsonParam, defaultFormValues);
-  const AppOptionParam = withDefault(JsonParam, {});
+  const StepParam = parseAsInteger.withDefault(0);
+  const FormValuesParam = parseAsJson<DeepPartial<SessionLauncherFormValue>>(
+    (value) => value as DeepPartial<SessionLauncherFormValue>,
+  ).withDefault(defaultFormValues);
+  const AppOptionParam = parseAsJson<AppOption>(
+    (value) => value as AppOption,
+  ).withDefault({});
   const [
     {
       step: currentStep,
@@ -233,12 +236,15 @@ const SessionLauncherPage = () => {
       // appOption: appOptionFromQueryParams,
     },
     setQuery,
-  ] = useQueryParams({
-    step: StepParam,
-    formValues: FormValuesParam,
-    redirectTo: StringParam,
-    appOption: AppOptionParam,
-  });
+  ] = useQueryStates(
+    {
+      step: StepParam,
+      formValues: FormValuesParam,
+      redirectTo: parseAsString,
+      appOption: AppOptionParam,
+    },
+    { history: 'replace' },
+  );
 
   const { search } = useLocation();
   const webuiNavigate = useWebUINavigate();
@@ -252,23 +258,20 @@ const SessionLauncherPage = () => {
       // To sync the latest form values to URL,
       // 'trailing' is set to true, and get the form values here."
       const currentValue = form.getFieldsValue();
-      setQuery(
-        {
-          formValues: _.assign(
-            _.omit(form.getFieldsValue(), [
-              'environments.image',
-              'environments.customizedTag',
-              'autoMountedFolderNames',
-              'owner',
-              'envvars',
-            ]),
-            {
-              envvars: sanitizeSensitiveEnv(currentValue.envvars),
-            },
-          ),
-        },
-        'replaceIn',
-      );
+      setQuery({
+        formValues: _.assign(
+          _.omit(form.getFieldsValue(), [
+            'environments.image',
+            'environments.customizedTag',
+            'autoMountedFolderNames',
+            'owner',
+            'envvars',
+          ]),
+          {
+            envvars: sanitizeSensitiveEnv(currentValue.envvars),
+          },
+        ),
+      });
     },
     {
       leading: false,
@@ -282,7 +285,7 @@ const SessionLauncherPage = () => {
       {
         step: nextStep,
       },
-      'pushIn',
+      { history: 'push' },
     );
   };
   const { token } = theme.useToken();
@@ -325,7 +328,7 @@ const SessionLauncherPage = () => {
       defaultFormValues,
       RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
       formValuesFromQueryParams,
-    );
+    ) as SessionLauncherFormValue;
   }, [defaultFormValues, formValuesFromQueryParams]);
 
   // ScrollTo top when step is changed
@@ -1231,7 +1234,12 @@ const SessionLauncherPage = () => {
                       title={t('button.Reset')}
                       description={t('session.launcher.ResetFormConfirm')}
                       onConfirm={() => {
-                        setQuery({}, 'replace');
+                        setQuery({
+                          step: null,
+                          formValues: null,
+                          redirectTo: null,
+                          appOption: null,
+                        });
                         setIsQueryReset(true);
                       }}
                       icon={

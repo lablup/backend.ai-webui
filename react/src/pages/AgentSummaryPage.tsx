@@ -5,21 +5,21 @@
 import AgentSummaryList from '../components/AgentSummaryList';
 import { Skeleton, theme } from 'antd';
 import { BAICard } from 'backend.ai-ui';
+import { parseAsString, useQueryState } from 'nuqs';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
 type TabKey = 'agent-summary';
 
 interface ResourcesPageProps {}
 
-const tabParam = withDefault(StringParam, 'agent-summary');
+const tabParam = parseAsString
+  .withDefault('agent-summary')
+  .withOptions({ history: 'replace' });
 
 const ResourcesPage: React.FC<ResourcesPageProps> = () => {
   const { t } = useTranslation();
-  const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam, {
-    updateType: 'replace',
-  });
+  const [curTabKey, setCurTabKey] = useQueryState('tab', tabParam);
 
   const { token } = theme.useToken();
 

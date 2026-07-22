@@ -78,7 +78,6 @@
     "ts-md5": "^2.0.1",
     "tus-js-client": "catalog:",
     "typescript": "~6.0.3",
-    "use-query-params": "^2.2.2",
     "uuid": "catalog:",
     "web-vitals": "^3.5.2",
     "yaml": "^2.9.0",

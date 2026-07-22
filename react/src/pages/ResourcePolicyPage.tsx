@@ -13,18 +13,18 @@ import UserResourcePolicyV2, {
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { Skeleton } from 'antd';
 import { filterOutEmpty, BAICard } from 'backend.ai-ui';
+import { parseAsString, useQueryState } from 'nuqs';
 import React, { Suspense, useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryLoader } from 'react-relay';
-import { withDefault, StringParam, useQueryParam } from 'use-query-params';
 
-const tabParam = withDefault(StringParam, 'keypair');
+const tabParam = parseAsString.withDefault('keypair');
 
 interface ResourcePolicyPageProps {}
 const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
   'use memo';
   const { t } = useTranslation();
-  const [curTabKey] = useQueryParam('tab', tabParam);
+  const [curTabKey] = useQueryState('tab', tabParam);
   const webUINavigate = useWebUINavigate();
   const baiClient = useSuspendedBackendaiClient();
   const supportsSubFilter = baiClient.supports('sub-filter');

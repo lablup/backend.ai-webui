@@ -36,10 +36,10 @@ import dayjs from 'dayjs';
 import { t } from 'i18next';
 import * as _ from 'lodash-es';
 import { HistoryIcon, PlusIcon, TrashIcon } from 'lucide-react';
+import { parseAsString, useQueryStates } from 'nuqs';
 import { Suspense, useState } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useParams } from 'react-router-dom';
-import { StringParam, useQueryParams } from 'use-query-params';
 
 const useStyles = createStyles(({ css }) => ({
   fixEditableVerticalAlign: css`
@@ -83,11 +83,11 @@ function useDefaultEndpointId() {
 export function useChatProviderData(
   defaultEndpointId?: string,
 ): ChatProviderData {
-  const [{ endpointId, modelId, agentId, apiKey }] = useQueryParams({
-    endpointId: StringParam,
-    agentId: StringParam,
-    modelId: StringParam,
-    apiKey: StringParam,
+  const [{ endpointId, modelId, agentId, apiKey }] = useQueryStates({
+    endpointId: parseAsString,
+    agentId: parseAsString,
+    modelId: parseAsString,
+    apiKey: parseAsString,
   });
 
   return {

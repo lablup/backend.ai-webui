@@ -26,15 +26,10 @@ import {
   BAIAlert,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { parseAsJson, parseAsString, useQueryStates } from 'nuqs';
 import { useEffect, useState, useMemo, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-import {
-  useQueryParams,
-  withDefault,
-  StringParam,
-  JsonParam,
-} from 'use-query-params';
 
 interface StartPageBoardItem extends BAIBoardItem {
   requiredMenuKey: MenuKeys;
@@ -65,10 +60,15 @@ const StartPage: React.FC = () => {
   const [vFolderInvitations] = useVFolderInvitations();
 
   // Parse query parameters
-  const [queryParams, setQueryParams] = useQueryParams({
-    type: withDefault(StringParam, undefined),
-    data: withDefault(JsonParam, undefined),
-  });
+  const [queryParams, setQueryParams] = useQueryStates(
+    {
+      type: parseAsString,
+      data: parseAsJson<{ url?: string; branch?: string }>(
+        (value) => value as { url?: string; branch?: string },
+      ),
+    },
+    { history: 'replace' },
+  );
 
   // Handle legacy GitHub URL format (for backward compatibility)
   const legacyGithubPath = useMemo(() => {
@@ -98,8 +98,8 @@ const StartPage: React.FC = () => {
       setIsOpenStartURLModal(true);
 
       setQueryParams({
-        type: undefined,
-        data: undefined,
+        type: null,
+        data: null,
       });
     } else if (legacyGithubPath) {
       // Handle legacy format: /github?owner/repo/path/notebook.ipynb (via redirect)
@@ -111,14 +111,12 @@ const StartPage: React.FC = () => {
       });
       setIsOpenStartURLModal(true);
 
-      // clear legacy query parameter
-      setQueryParams(
-        {
-          type: undefined,
-          data: undefined,
-        },
-        // clear legacy query parameter
-        'replace',
+      // Clear the entire query string: the legacy `?owner/repo/...` entry is
+      // an unmanaged bare key, so clearing type/data alone would leave it in
+      // the URL and reopen the modal on reload (legacy 'replace' cleared all).
+      webuiNavigate(
+        { pathname: location.pathname, search: '' },
+        { replace: true },
       );
     }
   });

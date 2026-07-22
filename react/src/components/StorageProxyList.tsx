@@ -8,7 +8,7 @@ import {
   convertUnitValue,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
-import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
+import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import StorageHostDetailDrawer from './StorageHostDetailDrawer';
 import { type TableColumnsType, Tag, theme, Typography } from 'antd';
@@ -87,7 +87,7 @@ const StorageProxyList = () => {
     baiPaginationOption,
     tablePaginationOption,
     setTablePaginationOption,
-  } = useBAIPaginationOptionStateOnSearchParamLegacy({
+  } = useBAIPaginationOptionStateOnSearchParam({
     current: 1,
     pageSize: 10,
   });

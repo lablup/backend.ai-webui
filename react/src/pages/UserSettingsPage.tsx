@@ -29,15 +29,15 @@ import { useSessionStorageState, useToggle } from 'ahooks';
 import { App, Button, Skeleton, Typography } from 'antd';
 import { BAICard, filterOutEmpty } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { parseAsString, useQueryState } from 'nuqs';
 import { Suspense, useEffect, useEffectEvent, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useQueryLoader } from 'react-relay';
-import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
 type TabKey = 'general' | 'logs' | 'login-sessions' | 'login-history';
 export type ShellScriptType = 'bootstrap' | 'userconfig' | undefined;
 
-const tabParam = withDefault(StringParam, 'general');
+const tabParam = parseAsString.withDefault('general');
 
 const UserPreferencesPage = () => {
   'use memo';
@@ -45,7 +45,7 @@ const UserPreferencesPage = () => {
   const { t } = useTranslation();
   const { message } = App.useApp();
   const baiClient = useSuspendedBackendaiClient();
-  const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
+  const [curTabKey, setCurTabKey] = useQueryState('tab', tabParam);
 
   const [loginSessionQueryRef, loadLoginSessionQuery] =
     useQueryLoader<LoginSessionQueryType>(LoginSessionQuery);
