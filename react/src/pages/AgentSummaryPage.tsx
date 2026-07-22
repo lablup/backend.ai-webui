@@ -5,32 +5,29 @@
 import AgentSummaryList from '../components/AgentSummaryList';
 import { Skeleton, theme } from 'antd';
 import { BAICard } from 'backend.ai-ui';
-import { parseAsString, useQueryState } from 'nuqs';
+import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 
-type TabKey = 'agent-summary';
-
 interface ResourcesPageProps {}
 
-const tabParam = parseAsString
-  .withDefault('agent-summary')
-  .withOptions({ history: 'replace' });
-
 const ResourcesPage: React.FC<ResourcesPageProps> = () => {
+  'use memo';
   const { t } = useTranslation();
-  const [curTabKey, setCurTabKey] = useQueryState('tab', tabParam);
+  const [curTabKey] = useQueryState(
+    'tab',
+    parseAsStringLiteral(['agent-summary']).withDefault('agent-summary'),
+  );
 
   const { token } = theme.useToken();
 
   return (
     <BAICard
       activeTabKey={curTabKey}
-      onTabChange={(key) => setCurTabKey(key as TabKey)}
       tabList={[
         {
           key: 'agent-summary',
-          tab: t('webui.menu.AgentSummary'),
+          label: t('webui.menu.AgentSummary'),
         },
       ]}
     >

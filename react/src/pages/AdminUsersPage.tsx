@@ -5,19 +5,23 @@
 import AdminUserCredentialList from '../components/AdminUserCredentialList';
 import AdminUserManagement from '../components/AdminUserManagement';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
-import { useWebUINavigate } from '../hooks';
+import { useTabQuerySnapshot } from '../hooks';
 import { Skeleton } from 'antd';
 import { CardTabListType } from 'antd/es/card';
 import { BAIFlex, BAICard } from 'backend.ai-ui';
+import { parseAsStringLiteral } from 'nuqs';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSearchParams } from 'react-router-dom';
+
+const tabParser = parseAsStringLiteral(['users', 'credentials']).withDefault(
+  'users',
+);
 
 const AdminUsersPage: React.FC = () => {
+  'use memo';
   const { t } = useTranslation();
-  const [searchParams] = useSearchParams();
-  const currentTab = searchParams.get('tab') || 'users';
-  const navigate = useWebUINavigate();
+  const { currentTab, onTabChange } = useTabQuerySnapshot(tabParser);
+
   const tabItems: CardTabListType[] = [
     {
       key: 'users',
@@ -32,12 +36,7 @@ const AdminUsersPage: React.FC = () => {
   return (
     <BAICard
       activeTabKey={currentTab}
-      onTabChange={(key) =>
-        navigate({
-          pathname: '/credential',
-          search: `?tab=${key}`,
-        })
-      }
+      onTabChange={onTabChange}
       tabList={tabItems}
     >
       <Suspense fallback={<Skeleton active />}>

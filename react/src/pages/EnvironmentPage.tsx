@@ -6,24 +6,29 @@ import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import ContainerRegistryList from '../components/ContainerRegistryList';
 import ImageList from '../components/ImageList';
 import ResourcePresetList from '../components/ResourcePresetList';
-import { useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient, useTabQuerySnapshot } from '../hooks';
 import { Skeleton } from 'antd';
 import { BAICard } from 'backend.ai-ui';
-import { parseAsString, useQueryState } from 'nuqs';
+import { parseAsStringLiteral } from 'nuqs';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const tabParam = parseAsString.withDefault('image');
+const tabParser = parseAsStringLiteral([
+  'image',
+  'preset',
+  'registry',
+]).withDefault('image');
 
 const EnvironmentPage = () => {
+  'use memo';
   const { t } = useTranslation();
-  const [curTabKey, setCurTabKey] = useQueryState('tab', tabParam);
+  const { currentTab, onTabChange } = useTabQuerySnapshot(tabParser);
   const baiClient = useSuspendedBackendaiClient();
 
   return (
     <BAICard
-      activeTabKey={curTabKey}
-      onTabChange={setCurTabKey}
+      activeTabKey={currentTab}
+      onTabChange={onTabChange}
       tabList={[
         {
           key: 'image',
@@ -44,17 +49,17 @@ const EnvironmentPage = () => {
       ]}
     >
       <Suspense fallback={<Skeleton active />}>
-        {curTabKey === 'image' && (
+        {currentTab === 'image' && (
           <BAIErrorBoundary>
             <ImageList />
           </BAIErrorBoundary>
         )}
-        {curTabKey === 'preset' && (
+        {currentTab === 'preset' && (
           <BAIErrorBoundary>
             <ResourcePresetList />
           </BAIErrorBoundary>
         )}
-        {curTabKey === 'registry' && (
+        {currentTab === 'registry' && (
           <BAIErrorBoundary>
             <ContainerRegistryList />
           </BAIErrorBoundary>

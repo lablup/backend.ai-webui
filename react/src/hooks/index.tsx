@@ -6,9 +6,10 @@ import { getOS, preserveDotStartCase } from '../helper';
 import { useSuspenseTanQuery } from './reactQueryAlias';
 import { MenuKeys } from './useWebUIMenuItems';
 import * as _ from 'lodash-es';
-import { useEffect, useMemo, useState } from 'react';
+import type { SingleParserBuilder } from 'nuqs';
+import { useEffect, useMemo, useRef, useState } from 'react';
 // eslint-disable-next-line no-restricted-imports
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 /**
  * Thin wrapper around `useNavigate` from react-router-dom.
@@ -23,6 +24,49 @@ import { useNavigate } from 'react-router-dom';
  * future cross-cutting navigation concerns.
  */
 export const useWebUINavigate = () => useNavigate();
+
+/**
+ * Thin wrapper around `useLocation` from react-router-dom, paired with
+ * `useWebUINavigate`. Kept as a project-level abstraction point so
+ * cross-cutting location concerns can be added in one place.
+ */
+export const useWebUILocation = () => useLocation();
+
+/**
+ * Per-tab query-string snapshot/restore for page-like tab hosts
+ * (tab-url-state A-ii). Reads the tab from router location, not nuqs —
+ * nuqs applies external URL changes in a transition that can hang on the
+ * incoming tab's Suspense.
+ */
+export const useTabQuerySnapshot = <T extends string>(
+  tabParser: ReturnType<SingleParserBuilder<T>['withDefault']>,
+) => {
+  'use memo';
+  const location = useWebUILocation();
+  const navigate = useWebUINavigate();
+
+  const currentTab =
+    tabParser.parse(new URLSearchParams(location.search).get('tab') ?? '') ??
+    tabParser.defaultValue;
+
+  const queryMapRef = useRef<Record<string, string>>({
+    [currentTab]: location.search,
+  });
+
+  useEffect(() => {
+    queryMapRef.current[currentTab] = location.search;
+  }, [currentTab, location.search]);
+
+  const onTabChange = (key: string) => {
+    // No pathname — a partial { search } resolves against the current location.
+    navigate({
+      search:
+        queryMapRef.current[key] ?? `?${new URLSearchParams({ tab: key })}`,
+    });
+  };
+
+  return { currentTab, onTabChange };
+};
 
 export const useBackendAIConnectedState = () => {
   const [time, setTime] = useState<string>();

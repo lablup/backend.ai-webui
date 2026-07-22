@@ -5,10 +5,10 @@
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import PendingSessionNodeList from '../components/PendingSessionNodeList';
 import SessionDetailAndContainerLogOpenerLegacy from '../components/SessionDetailAndContainerLogOpenerLegacy';
-import { useWebUINavigate } from '../hooks';
+import { useTabQuerySnapshot } from '../hooks';
 import { Skeleton } from 'antd';
 import { BAICard, filterOutEmpty } from 'backend.ai-ui';
-import { parseAsString, useQueryStates } from 'nuqs';
+import { parseAsStringLiteral } from 'nuqs';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -16,31 +16,22 @@ const AdminComputeSessionListPage = React.lazy(
   () => import('./AdminComputeSessionListPage'),
 );
 
+const tabParser = parseAsStringLiteral([
+  'compute-sessions',
+  'pending-sessions',
+]).withDefault('compute-sessions');
+
 const AdminSessionPage: React.FC = () => {
   'use memo';
 
   const { t } = useTranslation();
-  const [queryParam, setQueryParam] = useQueryStates(
-    {
-      tab: parseAsString.withDefault('compute-sessions'),
-    },
-    { history: 'push' },
-  );
-  const webUINavigate = useWebUINavigate();
+  const { currentTab, onTabChange } = useTabQuerySnapshot(tabParser);
 
   return (
     <>
       <BAICard
-        activeTabKey={queryParam.tab}
-        onTabChange={(key) => {
-          webUINavigate({
-            pathname: '/admin-session',
-            search: new URLSearchParams({
-              tab: key,
-            }).toString(),
-          });
-          setQueryParam({ tab: key });
-        }}
+        activeTabKey={currentTab}
+        onTabChange={onTabChange}
         tabList={filterOutEmpty([
           {
             key: 'compute-sessions',
@@ -53,12 +44,12 @@ const AdminSessionPage: React.FC = () => {
         ])}
       >
         <Suspense fallback={<Skeleton active />}>
-          {queryParam.tab === 'compute-sessions' && (
+          {currentTab === 'compute-sessions' && (
             <BAIErrorBoundary>
               <AdminComputeSessionListPage />
             </BAIErrorBoundary>
           )}
-          {queryParam.tab === 'pending-sessions' && (
+          {currentTab === 'pending-sessions' && (
             <BAIErrorBoundary>
               <PendingSessionNodeList />
             </BAIErrorBoundary>

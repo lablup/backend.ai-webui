@@ -10,14 +10,17 @@ import type {
   DeploymentStatus,
   OrderDirection,
 } from '../__generated__/AdminDeploymentListPageQuery.graphql';
-import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from '../components/DeploymentRevisionDetailDrawer';
 import DeploymentSettingModal from '../components/DeploymentSettingModal';
 import PrometheusPresetTab from '../components/PrometheusPresetTab';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import {
+  useSuspendedBackendaiClient,
+  useTabQuerySnapshot,
+  useWebUINavigate,
+} from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import AdminDeploymentPresetListPage from './AdminDeploymentPresetListPage';
@@ -53,7 +56,6 @@ import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
-import { useSearchParams } from 'react-router-dom';
 
 type DeploymentStatusCategory = 'running' | 'finished';
 
@@ -71,8 +73,9 @@ const AdminDeploymentListPageContent: React.FC = () => {
   const [deletingDeploymentId, setDeletingDeploymentId] = useState<
     string | null
   >(null);
-  const [drawerRevisionFrgmt, setDrawerRevisionFrgmt] =
-    useState<DeploymentRevisionDetail_revision$key | null>(null);
+  const [revisionDrawerDeploymentId, setRevisionDrawerDeploymentId] = useState<
+    string | null
+  >(null);
 
   const supportsExtendedFilter = baiClient.supports(
     'model-deployment-extended-filter',
@@ -192,6 +195,11 @@ const AdminDeploymentListPageContent: React.FC = () => {
     deletingDeploymentId == null
       ? null
       : (deploymentNodes.find((n) => n.id === deletingDeploymentId) ?? null);
+  const drawerRevisionFrgmt =
+    revisionDrawerDeploymentId == null
+      ? null
+      : (deploymentNodes.find((n) => n.id === revisionDrawerDeploymentId)
+          ?.currentRevision ?? null);
 
   const isLoading =
     deferredQueryVariables !== queryVariables || deferredFetchKey !== fetchKey;
@@ -397,14 +405,9 @@ const AdminDeploymentListPageContent: React.FC = () => {
                   next = {
                     ...col,
                     render: (_value, record) => {
-                      // `record` here is narrowed to BAIModelDeploymentNodesFragment;
-                      // recover the wider node (with `...DeploymentRevisionDetail_revision`
-                      // on `currentRevision`) from the page-level query result
-                      // so the drawer receives a fragment ref it can consume.
-                      const wider = deploymentNodes.find(
+                      const revision = deploymentNodes.find(
                         (n) => n.id === record.id,
-                      );
-                      const revision = wider?.currentRevision;
+                      )?.currentRevision;
                       if (revision?.revisionNumber == null) {
                         return (
                           <Typography.Text type="secondary">-</Typography.Text>
@@ -412,7 +415,9 @@ const AdminDeploymentListPageContent: React.FC = () => {
                       }
                       return (
                         <Typography.Link
-                          onClick={() => setDrawerRevisionFrgmt(revision)}
+                          onClick={() =>
+                            setRevisionDrawerDeploymentId(record.id)
+                          }
                         >{`#${revision.revisionNumber}`}</Typography.Link>
                       );
                     },
@@ -508,19 +513,24 @@ const AdminDeploymentListPageContent: React.FC = () => {
         <DeploymentRevisionDetailDrawer
           open={!!drawerRevisionFrgmt}
           revisionFrgmt={drawerRevisionFrgmt}
-          onClose={() => setDrawerRevisionFrgmt(null)}
+          onClose={() => setRevisionDrawerDeploymentId(null)}
         />
       </BAIUnmountAfterClose>
     </>
   );
 };
 
+const tabParser = parseAsStringLiteral([
+  'deployments',
+  'model-store-management',
+  'prometheus-preset',
+  'deployment-presets',
+]).withDefault('deployments');
+
 const AdminDeploymentListPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
-  const [searchParams] = useSearchParams();
-  const currentTab = searchParams.get('tab') || 'deployments';
-  const navigate = useWebUINavigate();
+  const { currentTab, onTabChange } = useTabQuerySnapshot(tabParser);
   const baiClient = useSuspendedBackendaiClient();
   const isPrometheusPresetSupported = baiClient.supports(
     'prometheus-query-preset',
@@ -550,12 +560,7 @@ const AdminDeploymentListPage: React.FC = () => {
     <BAICard
       variant="borderless"
       activeTabKey={currentTab}
-      onTabChange={(key) =>
-        navigate({
-          pathname: '/admin-deployments',
-          search: `?tab=${key}`,
-        })
-      }
+      onTabChange={onTabChange}
       tabList={tabItems}
     >
       <Suspense fallback={<Skeleton active />}>

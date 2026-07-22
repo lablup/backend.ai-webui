@@ -10,22 +10,25 @@ import UserResourcePolicyList from '../components/UserResourcePolicyList';
 import UserResourcePolicyV2, {
   UserResourcePolicyV2Query,
 } from '../components/UserResourcePolicyV2';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useSuspendedBackendaiClient, useTabQuerySnapshot } from '../hooks';
 import { Skeleton } from 'antd';
 import { filterOutEmpty, BAICard } from 'backend.ai-ui';
-import { parseAsString, useQueryState } from 'nuqs';
+import { parseAsStringLiteral } from 'nuqs';
 import React, { Suspense, useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryLoader } from 'react-relay';
 
-const tabParam = parseAsString.withDefault('keypair');
-
 interface ResourcePolicyPageProps {}
+const tabParser = parseAsStringLiteral([
+  'keypair',
+  'user',
+  'project',
+]).withDefault('keypair');
+
 const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
   'use memo';
   const { t } = useTranslation();
-  const [curTabKey] = useQueryState('tab', tabParam);
-  const webUINavigate = useWebUINavigate();
+  const { currentTab, onTabChange } = useTabQuerySnapshot(tabParser);
   const baiClient = useSuspendedBackendaiClient();
   const supportsSubFilter = baiClient.supports('sub-filter');
   const supportsBinarySizeExpr = baiClient.supports('binary-size-expr');
@@ -37,7 +40,7 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
     if (
       supportsSubFilter &&
       supportsBinarySizeExpr &&
-      curTabKey === 'user' &&
+      currentTab === 'user' &&
       !userResourcePolicyQueryRef
     ) {
       loadUserResourcePolicyQuery(
@@ -54,20 +57,13 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
     function loadUserResourcePolicyOnTabActivation() {
       ensureUserResourcePolicyLoaded();
     },
-    [curTabKey],
+    [currentTab],
   );
 
   return (
     <BAICard
-      activeTabKey={curTabKey}
-      onTabChange={(key) => {
-        webUINavigate({
-          pathname: '/resource-policy',
-          search: new URLSearchParams({
-            tab: key,
-          }).toString(),
-        });
-      }}
+      activeTabKey={currentTab}
+      onTabChange={onTabChange}
       tabList={filterOutEmpty([
         {
           key: 'keypair',
@@ -84,12 +80,12 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
       ])}
     >
       <Suspense fallback={<Skeleton active />}>
-        {curTabKey === 'keypair' && (
+        {currentTab === 'keypair' && (
           <BAIErrorBoundary>
             <KeypairResourcePolicyList />
           </BAIErrorBoundary>
         )}
-        {curTabKey === 'user' && (
+        {currentTab === 'user' && (
           <BAIErrorBoundary>
             {supportsSubFilter && supportsBinarySizeExpr ? (
               userResourcePolicyQueryRef ? (
@@ -105,7 +101,7 @@ const ResourcePolicyPage: React.FC<ResourcePolicyPageProps> = () => {
             )}
           </BAIErrorBoundary>
         )}
-        {curTabKey === 'project' && (
+        {currentTab === 'project' && (
           <BAIErrorBoundary>
             <ProjectResourcePolicyList />
           </BAIErrorBoundary>

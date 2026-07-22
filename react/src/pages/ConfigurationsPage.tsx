@@ -4,30 +4,29 @@
  */
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import ConfigurationsSettingList from '../components/ConfigurationsSettingList';
-import { Card, Skeleton } from 'antd';
-import { filterOutEmpty } from 'backend.ai-ui';
-import { parseAsString, useQueryState } from 'nuqs';
+import { Skeleton } from 'antd';
+import { BAICard } from 'backend.ai-ui';
+import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 
-type TabKey = 'configurations';
-
-const tabParam = parseAsString.withDefault('configurations');
-
 const ConfigurationsPage = () => {
+  'use memo';
   const { t } = useTranslation();
-  const [curTabKey, setCurTabKey] = useQueryState('tab', tabParam);
+  const [curTabKey] = useQueryState(
+    'tab',
+    parseAsStringLiteral(['configurations']).withDefault('configurations'),
+  );
 
   return (
-    <Card
+    <BAICard
       activeTabKey={curTabKey}
-      onTabChange={(key) => setCurTabKey(key as TabKey)}
-      tabList={filterOutEmpty([
+      tabList={[
         {
           key: 'configurations',
-          tab: t('webui.menu.Configurations'),
+          label: t('webui.menu.Configurations'),
         },
-      ])}
+      ]}
     >
       <Suspense fallback={<Skeleton active />}>
         {curTabKey === 'configurations' && (
@@ -36,7 +35,7 @@ const ConfigurationsPage = () => {
           </BAIErrorBoundary>
         )}
       </Suspense>
-    </Card>
+    </BAICard>
   );
 };
 

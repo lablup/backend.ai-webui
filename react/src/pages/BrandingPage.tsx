@@ -6,26 +6,26 @@ import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import BrandingSettingList from '../components/BrandingSettingList';
 import { Skeleton } from 'antd';
 import { BAICard } from 'backend.ai-ui';
-import { parseAsString, useQueryState } from 'nuqs';
+import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-
-const tabParam = parseAsString.withDefault('branding');
 
 const BrandingPage: React.FC = () => {
   'use memo';
 
   const { t } = useTranslation();
-  const [curTabKey, setCurTabKey] = useQueryState('tab', tabParam);
+  const [curTabKey] = useQueryState(
+    'tab',
+    parseAsStringLiteral(['branding']).withDefault('branding'),
+  );
 
   return (
     <BAICard
       activeTabKey={curTabKey}
-      onTabChange={(key) => setCurTabKey(key)}
       tabList={[
         {
           key: 'branding',
-          tab: t('webui.menu.Branding'),
+          label: t('webui.menu.Branding'),
         },
       ]}
     >

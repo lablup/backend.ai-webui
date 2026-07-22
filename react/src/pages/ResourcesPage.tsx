@@ -6,55 +6,57 @@ import AgentList from '../components/AgentList';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import ResourceGroupList from '../components/ResourceGroupList';
 import StorageProxyList from '../components/StorageProxyList';
+import { useTabQuerySnapshot } from '../hooks';
 import { Skeleton } from 'antd';
 import { BAICard } from 'backend.ai-ui';
-import { parseAsString, useQueryState } from 'nuqs';
+import { parseAsStringLiteral } from 'nuqs';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 
-type TabKey = 'agents' | 'storages' | 'resourceGroup';
-
 interface ResourcesPageProps {}
 
-const tabParam = parseAsString
-  .withDefault('agents')
-  .withOptions({ history: 'replace' });
+const tabParser = parseAsStringLiteral([
+  'agents',
+  'storages',
+  'resourceGroup',
+]).withDefault('agents');
 
 const ResourcesPage: React.FC<ResourcesPageProps> = () => {
+  'use memo';
   const { t } = useTranslation();
-  const [curTabKey, setCurTabKey] = useQueryState('tab', tabParam);
+  const { currentTab, onTabChange } = useTabQuerySnapshot(tabParser);
 
   return (
     <BAICard
-      activeTabKey={curTabKey}
-      onTabChange={(key) => setCurTabKey(key as TabKey)}
+      activeTabKey={currentTab}
+      onTabChange={onTabChange}
       tabList={[
         {
           key: 'agents',
-          tab: t('agent.Agent'),
+          label: t('agent.Agent'),
         },
         {
           key: 'storages',
-          tab: t('general.StorageProxies'),
+          label: t('general.StorageProxies'),
         },
         {
           key: 'resourceGroup',
-          tab: t('general.ResourceGroup'),
+          label: t('general.ResourceGroup'),
         },
       ]}
     >
       <Suspense fallback={<Skeleton active />}>
-        {curTabKey === 'agents' && (
+        {currentTab === 'agents' && (
           <BAIErrorBoundary>
             <AgentList />
           </BAIErrorBoundary>
         )}
-        {curTabKey === 'storages' && (
+        {currentTab === 'storages' && (
           <BAIErrorBoundary>
             <StorageProxyList />
           </BAIErrorBoundary>
         )}
-        {curTabKey === 'resourceGroup' && (
+        {currentTab === 'resourceGroup' && (
           <BAIErrorBoundary>
             <ResourceGroupList />
           </BAIErrorBoundary>

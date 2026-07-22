@@ -5,39 +5,40 @@
 import AllocationHistory from '../components/AllocationHistory';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import UserSessionsMetrics from '../components/UserSessionsMetrics';
-import { useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient, useTabQuerySnapshot } from '../hooks';
 import { Skeleton, theme } from 'antd';
 import { filterOutEmpty, BAICard } from 'backend.ai-ui';
-import { parseAsString, useQueryState } from 'nuqs';
+import { parseAsStringLiteral } from 'nuqs';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface ResourcesPageProps {}
 
-const tabParam = parseAsString.withDefault('allocation-history');
+const tabParser = parseAsStringLiteral([
+  'allocation-history',
+  'user-session-history',
+]).withDefault('allocation-history');
 
 const ResourcesPage: React.FC<ResourcesPageProps> = () => {
+  'use memo';
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
   const { token } = theme.useToken();
 
-  const [curTabKey, setCurTabKey] = useQueryState(
-    'tab',
-    tabParam.withOptions({ history: 'replace' }),
-  );
+  const { currentTab, onTabChange } = useTabQuerySnapshot(tabParser);
 
   return (
     <BAICard
-      activeTabKey={curTabKey}
-      onTabChange={(key) => setCurTabKey(key)}
+      activeTabKey={currentTab}
+      onTabChange={onTabChange}
       tabList={filterOutEmpty([
         {
           key: 'allocation-history',
-          tab: t('webui.menu.UsageHistory'),
+          label: t('webui.menu.UsageHistory'),
         },
         baiClient?.supports('user-metrics') && {
           key: 'user-session-history',
-          tab: t('webui.menu.UserSessionHistory'),
+          label: t('webui.menu.UserSessionHistory'),
         },
       ])}
       styles={{
@@ -46,7 +47,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
         },
       }}
     >
-      {curTabKey === 'allocation-history' ? (
+      {currentTab === 'allocation-history' ? (
         <BAIErrorBoundary>
           <Suspense
             fallback={
@@ -60,7 +61,7 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
           </Suspense>
         </BAIErrorBoundary>
       ) : null}
-      {curTabKey === 'user-session-history' ? (
+      {currentTab === 'user-session-history' ? (
         <BAIErrorBoundary>
           <Suspense
             fallback={

@@ -4,41 +4,38 @@
  */
 import { type ErrorWithGraphQL } from '../components/BAIErrorBoundary';
 import FairShareList from '../components/FairShareItems/FairShareList';
-import { useWebUINavigate } from '../hooks';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Button, Result, Skeleton, theme, Tooltip } from 'antd';
 import { BAICard, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { parseAsString, useQueryState, useQueryStates } from 'nuqs';
+import {
+  parseAsString,
+  parseAsStringLiteral,
+  useQueryState,
+  useQueryStates,
+} from 'nuqs';
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
 
-const tabParam = parseAsString.withDefault('fair-share');
-
 interface SchedulerPageProps {}
 
 const SchedulerPage: React.FC<SchedulerPageProps> = () => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const [curTabKey] = useQueryState('tab', tabParam);
-  const webUINavigate = useWebUINavigate();
+  const [currentTab] = useQueryState(
+    'tab',
+    parseAsStringLiteral(['fair-share']).withDefault('fair-share'),
+  );
 
   return (
     <BAICard
-      activeTabKey={curTabKey}
-      onTabChange={(key) => {
-        webUINavigate({
-          pathname: '/fair-share',
-          search: new URLSearchParams({
-            tab: key,
-          }).toString(),
-        });
-      }}
+      activeTabKey={currentTab}
       tabList={[
         {
           key: 'fair-share',
-          tab: (
+          label: (
             <BAIFlex gap="xxs">
               {t('fairShare.FairShareSetting')}
               <Tooltip
@@ -52,7 +49,7 @@ const SchedulerPage: React.FC<SchedulerPageProps> = () => {
       ]}
     >
       <Suspense fallback={<Skeleton active />}>
-        {curTabKey === 'fair-share' && (
+        {currentTab === 'fair-share' && (
           <ErrorBoundary
             fallbackRender={({ error, resetErrorBoundary }) => {
               const gqlError = error as ErrorWithGraphQL;

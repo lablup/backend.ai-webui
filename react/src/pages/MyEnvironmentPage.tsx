@@ -5,20 +5,21 @@
 import CustomizedImageList from '../components/CustomizedImageList';
 import FlexActivityIndicator from '../components/FlexActivityIndicator';
 import { BAICard } from 'backend.ai-ui';
-import { parseAsString, useQueryState } from 'nuqs';
+import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const tabParam = parseAsString.withDefault('image');
-
 const MyEnvironmentPage = () => {
+  'use memo';
   const { t } = useTranslation();
-  const [curTabKey, setCurTabKey] = useQueryState('tab', tabParam);
+  const [curTabKey] = useQueryState(
+    'tab',
+    parseAsStringLiteral(['image']).withDefault('image'),
+  );
 
   return (
     <BAICard
       activeTabKey={curTabKey}
-      onTabChange={setCurTabKey}
       tabList={[
         {
           key: 'image',

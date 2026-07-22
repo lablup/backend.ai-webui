@@ -155,31 +155,10 @@ This is the whole transition contract. FR-1683's motivation was that `nuqs`
 
 When tabs represent independent views (session type all/interactive/batch…)
 and each tab should remember its own filter/order/page, cache the per-tab
-queryParams in a ref:
-
-```tsx
-const queryMapRef = useRef({
-  [queryParams.type]: { queryParams, tablePaginationOption },
-});
-
-useEffect(() => {
-  queryMapRef.current[queryParams.type] = { queryParams, tablePaginationOption };
-}, [queryParams, tablePaginationOption]);
-
-<BAITabs
-  activeKey={queryParams.type}
-  onChange={(key) => {
-    const stored = queryMapRef.current[key] || { queryParams: {} };
-    setQueryParams(null);                  // reset to defaults first
-    setQueryParams({ ...stored.queryParams, type: key as TypeFilterType });
-    setTablePaginationOption(stored.tablePaginationOption || { current: 1 });
-  }}
-/>
-```
-
-The `setQueryParams(null)` reset-to-defaults line is important — without it,
-values from the previous tab leak into the next (e.g. filtering by "email"
-stays applied when switching to a tab without that column).
+queryParams in a ref and reset-then-restore on tab change. The full pattern
+(and the page-like vs widget-tab decision that governs when to use it) is
+owned by the **`tab-url-state`** skill — see its Pattern A. Canonical
+implementation: `AdminComputeSessionListPage.tsx`.
 
 ## 6. Controlled modals via URL (deep-link support)
 
@@ -254,6 +233,7 @@ URL state is for: what someone else pasting the URL should see.
 
 ## Related Skills
 
+- **`tab-url-state`** — per-tab URL state policy for tabbed pages/cards (owns the `queryMapRef` save/restore pattern)
 - **`react-suspense-fetching`** — pairing deferred URL variables with `useLazyLoadQuery`
 - **`react-relay-table`** — table pagination / filter / order as URL state
 - **`react-modal-drawer`** — deep-linking a modal via query param
@@ -266,4 +246,5 @@ URL state is for: what someone else pasting the URL should see.
 - [ ] Defaults either live in `.withDefault()` (when omission means the default) or in the derived `queryVariables` (for sort keys that should fall back without appearing in URL).
 - [ ] Query variables and fetchKey wrapped in `useDeferredValue` when feeding `useLazyLoadQuery`.
 - [ ] Pagination binds through `useBAIPaginationOptionStateOnSearchParam`, not hand-rolled.
-- [ ] Tab-scoped per-tab state cached via `useRef`, with a `setQueryParams(null)` reset before applying stored values.
+- [ ] Tab-scoped per-tab state follows the `tab-url-state` skill (Pattern A: `useRef` cache + `setQueryParams(null)` reset before applying stored values).
+- [ ] `useBAIPaginationOptionStateOnSearchParamLegacy` not introduced in new code.

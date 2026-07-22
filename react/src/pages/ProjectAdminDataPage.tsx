@@ -249,6 +249,8 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
           const storedQuery = queryMapRef.current[key] || {
             mode: 'all',
           };
+          // Set to null first to reset to default values
+          setQuery(null);
           setQuery(
             {
               ...storedQuery.queryParams,
@@ -257,7 +259,10 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
             { history: 'replace' },
           );
           setTablePaginationOption(
-            storedQuery.tablePaginationOption || { current: 1 },
+            // pagination is a separate nuqs group that setQuery(null) does not
+            // reset, so an unvisited tab must reset current AND pageSize to
+            // defaults — otherwise it inherits the departing tab's pageSize.
+            storedQuery.tablePaginationOption || { current: 1, pageSize: 10 },
           );
           setSelectedFolderList([]);
         }}

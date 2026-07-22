@@ -14,7 +14,7 @@ import SSHKeypairManagementModal from '../components/SSHKeypairManagementModal';
 import SettingList, { SettingGroup } from '../components/SettingList';
 import ShellScriptEditModal from '../components/ShellScriptEditModal';
 import ThemeAccentColorPicker from '../components/ThemeAccentColorPicker';
-import { useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient, useTabQuerySnapshot } from '../hooks';
 import {
   useBAISettingGeneralState,
   useBAISettingUserState,
@@ -29,15 +29,19 @@ import { useSessionStorageState, useToggle } from 'ahooks';
 import { App, Button, Skeleton, Typography } from 'antd';
 import { BAICard, filterOutEmpty } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { parseAsString, useQueryState } from 'nuqs';
+import { parseAsStringLiteral } from 'nuqs';
 import { Suspense, useEffect, useEffectEvent, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useQueryLoader } from 'react-relay';
 
-type TabKey = 'general' | 'logs' | 'login-sessions' | 'login-history';
 export type ShellScriptType = 'bootstrap' | 'userconfig' | undefined;
 
-const tabParam = parseAsString.withDefault('general');
+const tabParser = parseAsStringLiteral([
+  'general',
+  'logs',
+  'login-sessions',
+  'login-history',
+]).withDefault('general');
 
 const UserPreferencesPage = () => {
   'use memo';
@@ -45,7 +49,7 @@ const UserPreferencesPage = () => {
   const { t } = useTranslation();
   const { message } = App.useApp();
   const baiClient = useSuspendedBackendaiClient();
-  const [curTabKey, setCurTabKey] = useQueryState('tab', tabParam);
+  const { currentTab, onTabChange } = useTabQuerySnapshot(tabParser);
 
   const [loginSessionQueryRef, loadLoginSessionQuery] =
     useQueryLoader<LoginSessionQueryType>(LoginSessionQuery);
@@ -55,7 +59,7 @@ const UserPreferencesPage = () => {
   // click and a direct `?tab=...` URL restore), so neither query runs while the
   // General/Logs tabs are shown.
   const ensureActiveTabQueryLoaded = useEffectEvent(() => {
-    if (curTabKey === 'login-sessions' && !loginSessionQueryRef) {
+    if (currentTab === 'login-sessions' && !loginSessionQueryRef) {
       loadLoginSessionQuery(
         {
           orderBy: [{ field: 'CREATED_AT', direction: 'DESC' }],
@@ -65,7 +69,7 @@ const UserPreferencesPage = () => {
         { fetchPolicy: 'store-and-network' },
       );
     }
-    if (curTabKey === 'login-history' && !loginHistoryQueryRef) {
+    if (currentTab === 'login-history' && !loginHistoryQueryRef) {
       loadLoginHistoryQuery(
         {
           orderBy: [{ field: 'CREATED_AT', direction: 'DESC' }],
@@ -80,7 +84,7 @@ const UserPreferencesPage = () => {
     function loadActiveTabQueryOnActivation() {
       ensureActiveTabQueryLoaded();
     },
-    [curTabKey],
+    [currentTab],
   );
 
   const { themeMode, setThemeMode } = useThemeMode();
@@ -473,8 +477,8 @@ const UserPreferencesPage = () => {
   return (
     <>
       <BAICard
-        activeTabKey={curTabKey}
-        onTabChange={(key) => setCurTabKey(key as TabKey)}
+        activeTabKey={currentTab}
+        onTabChange={onTabChange}
         tabList={[
           {
             key: 'general',
@@ -495,7 +499,7 @@ const UserPreferencesPage = () => {
         ]}
       >
         <Suspense fallback={<Skeleton active />}>
-          {curTabKey === 'general' && (
+          {currentTab === 'general' && (
             <BAIErrorBoundary>
               <SettingList
                 settingGroups={settingGroups}
@@ -505,12 +509,12 @@ const UserPreferencesPage = () => {
               />
             </BAIErrorBoundary>
           )}
-          {curTabKey === 'logs' && (
+          {currentTab === 'logs' && (
             <BAIErrorBoundary>
               <ErrorLogList />
             </BAIErrorBoundary>
           )}
-          {curTabKey === 'login-sessions' && (
+          {currentTab === 'login-sessions' && (
             <BAIErrorBoundary>
               {loginSessionQueryRef ? (
                 <LoginSession
@@ -522,7 +526,7 @@ const UserPreferencesPage = () => {
               )}
             </BAIErrorBoundary>
           )}
-          {curTabKey === 'login-history' && (
+          {currentTab === 'login-history' && (
             <BAIErrorBoundary>
               {loginHistoryQueryRef ? (
                 <LoginHistory
