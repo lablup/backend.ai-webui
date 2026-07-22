@@ -140,8 +140,52 @@ export async function login(
     await page.getByText('Advanced').click();
   }
   await endpointInput.fill(endpoint);
-  await page.getByLabel('Login', { exact: true }).click();
-  await page.waitForSelector('[data-testid="user-dropdown-button"]');
+  // A busy shared test backend can transiently reject a *valid* login (the
+  // manager surfaces an internal error, the UI renders it as "Login
+  // information mismatch"). Retry the submit a couple of times with a
+  // backoff before giving up, so a short server hiccup doesn't fail the
+  // whole (often serial) suite at a random beforeEach.
+  const maxAttempts = 3;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    await page.getByLabel('Login', { exact: true }).click();
+    try {
+      await page.waitForSelector('[data-testid="user-dropdown-button"]', {
+        timeout: 30000,
+      });
+      return;
+    } catch (error) {
+      const stillOnLoginForm = await page
+        .getByLabel('Login', { exact: true })
+        .isVisible()
+        .catch(() => false);
+      if (!stillOnLoginForm) {
+        // The login was accepted (the form is gone) and the app is just
+        // booting slowly — keep waiting instead of re-submitting.
+        await page.waitForSelector('[data-testid="user-dropdown-button"]', {
+          timeout: 60000,
+        });
+        return;
+      }
+      // Diagnostic: surface the server's actual rejection reason (the UI
+      // collapses every failure into "Login information mismatch").
+      try {
+        const probe = await page.request.post(`${endpoint}/server/login`, {
+          data: { username, password },
+        });
+        console.log(
+          `[login] attempt ${attempt} rejected for ${username}; direct API login → ${probe.status()} ${(await probe.text()).slice(0, 300)}`,
+        );
+      } catch (probeError) {
+        console.log(
+          `[login] attempt ${attempt} rejected for ${username}; probe failed: ${String(probeError).slice(0, 200)}`,
+        );
+      }
+      if (attempt === maxAttempts) {
+        throw error;
+      }
+      await page.waitForTimeout(5000);
+    }
+  }
 }
 
 export const userInfo = {

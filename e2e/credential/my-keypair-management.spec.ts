@@ -14,10 +14,30 @@ import test, { expect, type APIRequestContext } from '@playwright/test';
 // Helper to open the My Keypair Management modal
 async function openKeypairModal(page: import('@playwright/test').Page) {
   await navigateTo(page, 'usersettings');
-  await page
+  const configButton = page
     .getByTestId('items-my-keypair-info')
-    .getByRole('button', { name: /Config/i })
-    .click();
+    .getByRole('button', { name: /Config/i });
+  // navigateTo is a full page load, so the SPA re-bootstraps and restores the
+  // login session against the backend. On a remote test backend that restore
+  // can transiently fail and drop the user back to the login screen. Wait for
+  // the page to reach the logged-in state; if it never does, log in again
+  // once instead of letting the Config click time out. (Don't key off the
+  // login form's presence — it also flashes briefly during a *successful*
+  // session restore, so seeing it is not proof of being logged out.)
+  const loggedIn = await configButton
+    .waitFor({ state: 'visible', timeout: 30000 })
+    .then(() => true)
+    .catch(() => false);
+  if (!loggedIn) {
+    await loginAsCreatedAccount(
+      page,
+      page.context().request,
+      FIXTURE_EMAIL,
+      FIXTURE_PASSWORD,
+    );
+    await navigateTo(page, 'usersettings');
+  }
+  await configButton.click();
   await expect(
     page.getByRole('dialog', { name: 'My Keypair Management' }),
   ).toBeVisible();
@@ -129,9 +149,14 @@ test.describe(
       try {
         await loginAsAdmin(adminPage, adminRequest);
         await navigateTo(adminPage, 'credential');
-        await expect(
-          adminPage.getByRole('tab', { name: 'Users' }),
-        ).toBeVisible();
+        // navigateTo is a full page load, so the SPA re-bootstraps (session
+        // restore + config + initial queries) before the page renders. On a
+        // remote test backend that boot takes ~5s after goto() returns —
+        // right at the 5s default expect timeout — so give it explicit
+        // headroom like the sanity check below already does.
+        await expect(adminPage.getByRole('tab', { name: 'Users' })).toBeVisible(
+          { timeout: 15000 },
+        );
         await adminPage.getByRole('button', { name: 'Create User' }).click();
         const userSettingModal = new UserSettingModal(adminPage);
         await userSettingModal.createUser(
@@ -960,13 +985,39 @@ test.describe(
         ).toBeChecked();
         await inactiveQueryResponse;
 
-        // The table shows its loading overlay while the deferred query
-        // variables lag the committed ones; once the spinner is gone, the
-        // rendered rows are the committed Inactive dataset.
-        await expect(modal.locator('.ant-spin-spinning')).toBeHidden();
-
+        // The tab switch is a React transition: the table keeps rendering the
+        // previous (Active) dataset until the Inactive query result commits,
+        // so right after the click the rows in the DOM can still be Active
+        // keypairs. The Controls cell follows the *rendered dataset* (it is
+        // keyed off the deferred filter in MyKeypairManagementModal), so the
+        // Restore (undo) icon only ever appears on genuinely-committed
+        // Inactive rows — which makes it a reliable settle signal. Poll until
+        // the table reaches a stable Inactive state: either genuinely empty,
+        // or its first row is an actual Inactive row. The row count is
+        // captured in the same atomic retry loop because the data gate below
+        // needs the value that satisfied the condition.
         const inactiveRows = getKeypairTableRows(page);
-        const count = await inactiveRows.count();
+        let count = 0;
+        await expect
+          .poll(
+            async () => {
+              count = await inactiveRows.count();
+              if (count === 0) return true;
+              const hasRestoreIcon = await inactiveRows
+                .first()
+                .locator('td')
+                .nth(1)
+                .locator('.lucide-undo')
+                .count();
+              return hasRestoreIcon > 0;
+            },
+            {
+              timeout: 10000,
+              message:
+                'Table kept showing a stale Active-tab row after switching to Inactive',
+            },
+          )
+          .toBe(true);
 
         // Environment data gate (FR-3114): needs at least one pre-existing
         // inactive keypair on the e2e user account. Seeding it is an infra
