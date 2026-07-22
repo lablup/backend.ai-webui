@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
-  parseModelDefinitionYaml,
+  parseModelDefinitionYamlPartial,
   type ParsedModelDefinition,
 } from '../helper/parseModelDefinitionYaml';
 import { useSuspendedBackendaiClient } from './index';
@@ -28,7 +28,10 @@ const MODEL_DEFINITION_FILENAME = 'model-definition.yaml';
 export const useModelDefinitionPlaceholders = (
   modelFolderId: string | undefined,
   enabled: boolean,
-): { defaults: ParsedModelDefinition | null; isLoading: boolean } => {
+): {
+  defaults: Partial<ParsedModelDefinition> | null;
+  isLoading: boolean;
+} => {
   'use memo';
   const baiClient = useSuspendedBackendaiClient();
 
@@ -39,7 +42,7 @@ export const useModelDefinitionPlaceholders = (
 
   const { data, isFetching } = useTanQuery({
     queryKey: ['modelDefinitionDefaults', vfolderId],
-    queryFn: async (): Promise<ParsedModelDefinition | null> => {
+    queryFn: async (): Promise<Partial<ParsedModelDefinition> | null> => {
       if (!vfolderId) return null;
       try {
         const tokenResponse = await baiClient.vfolder.request_download_token(
@@ -51,7 +54,10 @@ export const useModelDefinitionPlaceholders = (
         const response = await fetch(downloadUrl);
         if (!response.ok) return null;
         const content = await (await response.blob()).text();
-        return parseModelDefinitionYaml(content);
+        // Partial parse: only fields the YAML actually defines, so omitted
+        // fields fall through to the DB baseline in the placeholder merge
+        // instead of being overwritten with static defaults.
+        return parseModelDefinitionYamlPartial(content);
       } catch {
         return null;
       }

@@ -206,7 +206,7 @@ const pickDefined = <T extends object>(
 // so the modal chrome / form never blank while it resolves.
 const VariantDefaultModelDefinitionLoader: React.FC<{
   variantId: string;
-  onLoaded: (defaults: ParsedModelDefinition | null) => void;
+  onLoaded: (defaults: ParsedModelDefinition | null, variantId: string) => void;
 }> = ({ variantId, onLoaded }) => {
   'use memo';
   const uuid = convertToUUID(variantId);
@@ -249,6 +249,7 @@ const VariantDefaultModelDefinitionLoader: React.FC<{
   const notifyLoaded = useEffectEvent(() => {
     onLoaded(
       modelDefinitionFromGraphQL(data.runtimeVariant?.defaultModelDefinition),
+      variantId,
     );
   });
   useEffect(() => {
@@ -1571,12 +1572,23 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   // `defaultModelDefinition` baseline (always present). Loaded by
   // `VariantDefaultModelDefinitionLoader` (a Suspense-wrapped side query fired
   // only when the variant reads the vfolder config files) and pushed here via
-  // `onLoaded`. Keyed by variantId so a variant change replaces it; cleared to
-  // null when the loader unmounts / the variant has no baseline.
-  const [dbModelDefinitionDefaults, setDbModelDefinitionDefaults] =
-    useState<ParsedModelDefinition | null>(null);
+  // `onLoaded`. Tagged with the loaded `variantId` so that while switching
+  // between two config-reading variants — the new loader suspends but
+  // `shouldLoadVariantDefault` stays true, so the clearing effect below never
+  // fires — the merge can ignore the previous variant's stale baseline instead
+  // of briefly showing its values as placeholders.
+  const [dbModelDefinitionDefaults, setDbModelDefinitionDefaults] = useState<{
+    variantId: string;
+    defaults: ParsedModelDefinition | null;
+  } | null>(null);
   const shouldLoadVariantDefault =
     readsVfolderConfigFilesInMode && !!watchedRuntimeVariantId;
+  // Use the loaded DB baseline only while it belongs to the currently watched
+  // variant; otherwise treat it as absent until the matching loader reports.
+  const activeDbModelDefinitionDefaults =
+    dbModelDefinitionDefaults?.variantId === watchedRuntimeVariantId
+      ? dbModelDefinitionDefaults.defaults
+      : null;
 
   // When the loader is not rendered (mode switched away, variant cleared, or a
   // non-config-reading variant selected), drop the stale DB baseline so it does
@@ -1589,16 +1601,19 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
 
   // Placeholder precedence: DB `defaultModelDefinition` (low) < vfolder
   // `model-definition.yaml` (high). Merged field-by-field so the vfolder yaml
-  // overrides only the fields it actually defines. The lower Advanced "Model
+  // overrides only the fields it actually defines — the vfolder layer is a
+  // *partial* parse (`parseModelDefinitionYamlPartial`), so a YAML that sets
+  // only `start_command` keeps the DB baseline's port / health-check values
+  // instead of stomping them with static defaults. The lower Advanced "Model
   // Definition File Path" field is intentionally NOT part of this read (its
   // value must not feed back into placeholders of fields above it). Keyed on
   // variantId + folderId, so placeholders update when either changes.
-  const modelDefinitionDefaults: ParsedModelDefinition | null =
-    dbModelDefinitionDefaults || vfolderModelDefinitionDefaults
-      ? ({
-          ...dbModelDefinitionDefaults,
+  const modelDefinitionDefaults: Partial<ParsedModelDefinition> | null =
+    activeDbModelDefinitionDefaults || vfolderModelDefinitionDefaults
+      ? {
+          ...activeDbModelDefinitionDefaults,
           ...pickDefined(vfolderModelDefinitionDefaults),
-        } as ParsedModelDefinition)
+        }
       : null;
 
   const handleOk = async () => {
@@ -2479,7 +2494,9 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           <VariantDefaultModelDefinitionLoader
             key={watchedRuntimeVariantId}
             variantId={watchedRuntimeVariantId}
-            onLoaded={setDbModelDefinitionDefaults}
+            onLoaded={(defaults, variantId) =>
+              setDbModelDefinitionDefaults({ variantId, defaults })
+            }
           />
         </Suspense>
       ) : null}

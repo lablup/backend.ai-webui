@@ -178,7 +178,9 @@ const BAIRuntimeVariantSelect: React.FC<BAIRuntimeVariantSelectProps> = ({
   // readsVfolderConfigFiles). We feed *both* the currently selected variant
   // (from the point lookup) and the visible page (from the paginated list), so
   // callers get resolution as soon as either lands. `readsVfolderConfigFiles`
-  // is stripped on old managers (< 26.8.0) via @since → undefined → false.
+  // is stripped on old managers (< 26.8.0) via @since → undefined; fall back to
+  // the legacy `name === 'custom'` heuristic (NEVER `?? false`, which would
+  // pre-empt the caller-side fallback and hide Service Configuration).
   const notifyResolvedVariants = useEffectEvent(() => {
     if (!onResolvedVariantsChange) return;
     const variantMap: Record<
@@ -191,7 +193,8 @@ const BAIRuntimeVariantSelect: React.FC<BAIRuntimeVariantSelectProps> = ({
         variantMap[uuid] = {
           name: selectedVariant.name,
           readsVfolderConfigFiles:
-            selectedVariant.readsVfolderConfigFiles ?? false,
+            selectedVariant.readsVfolderConfigFiles ??
+            selectedVariant.name === 'custom',
         };
     }
     for (const node of paginationData ?? []) {
@@ -200,7 +203,8 @@ const BAIRuntimeVariantSelect: React.FC<BAIRuntimeVariantSelectProps> = ({
         if (uuid)
           variantMap[uuid] = {
             name: node.name,
-            readsVfolderConfigFiles: node.readsVfolderConfigFiles ?? false,
+            readsVfolderConfigFiles:
+              node.readsVfolderConfigFiles ?? node.name === 'custom',
           };
       }
     }

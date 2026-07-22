@@ -22,12 +22,20 @@ export interface ParsedModelDefinition {
 }
 
 /**
- * Parse a model-definition.yaml string and return form-ready values.
- * Returns `null` if parsing fails or the structure is unexpected.
+ * Parse a model-definition.yaml string, returning ONLY the fields the YAML
+ * actually defines (no static defaults filled in). `startCommand` is always
+ * present on a non-null return (it is the gating field). Returns `null` if
+ * parsing fails, the structure is unexpected, or no start command is found.
+ *
+ * Use this when omitted fields must fall through to a lower-priority baseline
+ * (e.g. the placeholder merge in the add-revision modal, where a vfolder YAML
+ * that only sets `start_command` must NOT override the DB baseline's port /
+ * health-check values with static defaults). For a fully-materialized result
+ * with defaults applied, use {@link parseModelDefinitionYaml}.
  */
-export function parseModelDefinitionYaml(
+export function parseModelDefinitionYamlPartial(
   yamlContent: string,
-): ParsedModelDefinition | null {
+): Partial<ParsedModelDefinition> | null {
   try {
     const doc = parseYaml(yamlContent);
     if (!doc?.models || !Array.isArray(doc.models) || doc.models.length === 0) {
@@ -61,29 +69,51 @@ export function parseModelDefinitionYaml(
       return null;
     }
 
-    const port =
-      typeof service.port === 'number' ? service.port : parseInt(service.port);
-    const healthCheck = service.health_check ?? {};
+    const result: Partial<ParsedModelDefinition> = { startCommand };
 
-    return {
-      startCommand,
-      port: isNaN(port) ? 8000 : port,
-      healthCheckPath:
-        typeof healthCheck.path === 'string' ? healthCheck.path : '/health',
-      modelMountDestination:
-        typeof model.model_path === 'string' ? model.model_path : '/models',
-      initialDelay:
-        typeof healthCheck.initial_delay === 'number'
-          ? healthCheck.initial_delay
-          : 60,
-      maxRetries:
-        typeof healthCheck.max_retries === 'number'
-          ? healthCheck.max_retries
-          : 10,
-    };
+    if (service.port !== undefined && service.port !== null) {
+      const port =
+        typeof service.port === 'number'
+          ? service.port
+          : parseInt(service.port);
+      if (!isNaN(port)) result.port = port;
+    }
+    const healthCheck = service.health_check ?? {};
+    if (typeof healthCheck.path === 'string')
+      result.healthCheckPath = healthCheck.path;
+    if (typeof model.model_path === 'string')
+      result.modelMountDestination = model.model_path;
+    if (typeof healthCheck.initial_delay === 'number')
+      result.initialDelay = healthCheck.initial_delay;
+    if (typeof healthCheck.max_retries === 'number')
+      result.maxRetries = healthCheck.max_retries;
+
+    return result;
   } catch {
     return null;
   }
+}
+
+/**
+ * Parse a model-definition.yaml string and return form-ready values, filling
+ * every field with a static default when the YAML omits it. Returns `null` if
+ * parsing fails or the structure is unexpected.
+ */
+export function parseModelDefinitionYaml(
+  yamlContent: string,
+): ParsedModelDefinition | null {
+  const partial = parseModelDefinitionYamlPartial(yamlContent);
+  if (!partial?.startCommand) {
+    return null;
+  }
+  return {
+    startCommand: partial.startCommand,
+    port: partial.port ?? 8000,
+    healthCheckPath: partial.healthCheckPath ?? '/health',
+    modelMountDestination: partial.modelMountDestination ?? '/models',
+    initialDelay: partial.initialDelay ?? 60,
+    maxRetries: partial.maxRetries ?? 10,
+  };
 }
 
 /**

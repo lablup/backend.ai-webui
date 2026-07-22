@@ -5,6 +5,7 @@
 import {
   modelDefinitionFromGraphQL,
   parseModelDefinitionYaml,
+  parseModelDefinitionYamlPartial,
 } from './parseModelDefinitionYaml';
 
 describe('parseModelDefinitionYaml', () => {
@@ -139,6 +140,60 @@ models:
     const result = parseModelDefinitionYaml(yaml);
     expect(result).not.toBeNull();
     expect(result!.port).toBe(8000);
+  });
+});
+
+describe('parseModelDefinitionYamlPartial', () => {
+  it('should include ONLY the fields the YAML actually defines (no static defaults)', () => {
+    const yaml = `
+models:
+  - name: "model"
+    service:
+      start_command:
+        - python
+        - app.py
+`;
+    const result = parseModelDefinitionYamlPartial(yaml);
+    // Only start_command is present → omitted fields must NOT be materialized,
+    // so they fall through to the DB baseline in the placeholder merge.
+    expect(result).toEqual({ startCommand: 'python app.py' });
+    expect(result).not.toHaveProperty('port');
+    expect(result).not.toHaveProperty('healthCheckPath');
+    expect(result).not.toHaveProperty('modelMountDestination');
+    expect(result).not.toHaveProperty('initialDelay');
+    expect(result).not.toHaveProperty('maxRetries');
+  });
+
+  it('should include fields that are present and omit a non-numeric port', () => {
+    const yaml = `
+models:
+  - name: "model"
+    model_path: "/data"
+    service:
+      start_command: "vllm serve"
+      port: not-a-number
+      health_check:
+        path: /v1/health
+`;
+    const result = parseModelDefinitionYamlPartial(yaml);
+    expect(result).toEqual({
+      startCommand: 'vllm serve',
+      healthCheckPath: '/v1/health',
+      modelMountDestination: '/data',
+    });
+    // A non-numeric port is dropped (not coerced to 8000) so the DB baseline
+    // port survives the merge.
+    expect(result).not.toHaveProperty('port');
+  });
+
+  it('should return null when start_command is missing', () => {
+    const yaml = `
+models:
+  - name: "model"
+    service:
+      port: 8080
+`;
+    expect(parseModelDefinitionYamlPartial(yaml)).toBeNull();
   });
 });
 
