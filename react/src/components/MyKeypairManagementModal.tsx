@@ -187,15 +187,6 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
 
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
-  // The table renders the dataset fetched with deferredQueryVariables, which
-  // lags activeFilter during the tab-switch transition. Row-level UI (Controls
-  // cell, empty text) must follow the rendered dataset, not the pending
-  // filter — otherwise still-rendered Active rows briefly show the Inactive
-  // controls (Restore/Delete) and vice versa.
-  const deferredActiveFilter: ActiveFilter = deferredQueryVariables.filter
-    .isActive
-    ? 'active'
-    : 'inactive';
 
   const data = useLazyLoadQuery<MyKeypairManagementModalQuery>(
     graphql`
@@ -484,7 +475,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                 title: t('credential.Controls'),
                 fixed: 'right' as const,
                 render: (_: unknown, record: KeypairNode) => {
-                  if (deferredActiveFilter === 'active') {
+                  if (activeFilter === 'active') {
                     const isMain = record.accessKey === mainAccessKey;
                     return (
                       <BAIFlex gap="xxs">
@@ -620,7 +611,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                 <Empty
                   image={Empty.PRESENTED_IMAGE_SIMPLE}
                   description={
-                    deferredActiveFilter === 'active'
+                    activeFilter === 'active'
                       ? t('credential.NoActiveKeypairs')
                       : t('credential.NoInactiveKeypairs')
                   }
