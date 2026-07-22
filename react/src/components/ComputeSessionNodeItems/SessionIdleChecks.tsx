@@ -7,7 +7,7 @@ import { SessionReclamationStatusCellFragment$key } from '../../__generated__/Se
 import { formatDurationAsDays } from '../../helper';
 import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
 import SessionReclamationStatusCell from './SessionReclamationStatusCell';
-import { getUtilizationCheckerColor } from './SessionReclamationStatusPopover';
+import { getOverallReclamation } from './SessionReclamationStatusPopover';
 import { Typography } from 'antd';
 import {
   useMemoizedJSONParse,
@@ -64,9 +64,10 @@ export function getIdleChecksTagColor(
     }
   }
 
-  // Determine color based on utilization.
+  // Determine color based on utilization, matching the overall badge color
+  // shown by SessionReclamationStatusCell.
   if (result.extra && (!result.remaining || result.remaining < 3600 * 4)) {
-    return getUtilizationCheckerColor(
+    return getOverallReclamation(
       result.extra.resources,
       result.extra.thresholds_check_operator,
     )?.color;
