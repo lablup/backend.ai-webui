@@ -69,8 +69,9 @@
     "SelectStrategy": "Valitse strategia",
     "Shmem": "Jaettu muisti",
     "SingleNode": "Yksittäinen solmu",
-    "StartupCommand": "Käynnistyskomento",
-    "StartupCommandPlaceholder": "Syötä päättelypalvelimen käynnistyskomento.",
+    "StartupCommand": "Valmistelukomento",
+    "StartupCommandPlaceholder": "esim. pip install vllm",
+    "StartupCommandTooltip": "Komento, joka valmistelee ympäristön ennen mallikehyksen käynnistymistä (esim. pakettien, kuten vllm, asennus).",
     "Strategy": "Käyttöönottostrategia",
     "TabTitle": "Käyttöönottoesiasetuukset",
     "modelDef": {

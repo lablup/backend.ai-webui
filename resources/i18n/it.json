@@ -69,8 +69,9 @@
     "SelectStrategy": "Seleziona strategia",
     "Shmem": "Memoria Condivisa",
     "SingleNode": "Nodo singolo",
-    "StartupCommand": "Comando di avvio",
-    "StartupCommandPlaceholder": "Inserisci il comando di avvio per il server di inferenza.",
+    "StartupCommand": "Comando di preparazione",
+    "StartupCommandPlaceholder": "ad es. pip install vllm",
+    "StartupCommandTooltip": "Comando che prepara l'ambiente prima dell'avvio del framework del modello (ad es. installazione di pacchetti come vllm).",
     "Strategy": "Strategia di Distribuzione",
     "TabTitle": "Preimpostazioni di Distribuzione",
     "modelDef": {

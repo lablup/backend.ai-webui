@@ -69,8 +69,9 @@
     "SelectStrategy": "Sélectionner une stratégie",
     "Shmem": "Mémoire Partagée",
     "SingleNode": "Nœud unique",
-    "StartupCommand": "Commande de démarrage",
-    "StartupCommandPlaceholder": "Entrez la commande de démarrage pour le serveur d'inférence.",
+    "StartupCommand": "Commande de préparation",
+    "StartupCommandPlaceholder": "p. ex. pip install vllm",
+    "StartupCommandTooltip": "Commande qui prépare l'environnement avant le démarrage du framework du modèle (p. ex. installation de paquets comme vllm).",
     "Strategy": "Stratégie de Déploiement",
     "TabTitle": "Préréglages de Déploiement",
     "modelDef": {

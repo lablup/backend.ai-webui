@@ -70,7 +70,8 @@
     "Shmem": "Memori Dikongsi",
     "SingleNode": "Nod Tunggal",
     "StartupCommand": "Perintah permulaan",
-    "StartupCommandPlaceholder": "Masukkan perintah permulaan untuk pelayan inferens.",
+    "StartupCommandPlaceholder": "cth. pip install vllm",
+    "StartupCommandTooltip": "Perintah yang menyediakan persekitaran sebelum rangka kerja model dimulakan (cth. memasang pakej seperti vllm).",
     "Strategy": "Strategi Penggunaan",
     "TabTitle": "Praset Penggunaan",
     "modelDef": {

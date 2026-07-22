@@ -70,7 +70,8 @@
     "Shmem": "Хуваалцсан санах ой",
     "SingleNode": "Нэг зангилаа",
     "StartupCommand": "Эхлэх тушаал",
-    "StartupCommandPlaceholder": "Дүгнэлтийн серверийн эхлэх тушаалыг оруулна уу.",
+    "StartupCommandPlaceholder": "жишээ нь: pip install vllm",
+    "StartupCommandTooltip": "Загварын фреймворк эхлэхээс өмнө орчныг бэлтгэх тушаал (жишээ нь: vllm гэх мэт багц суулгах).",
     "Strategy": "Байршуулалтын стратеги",
     "TabTitle": "Байршуулалтын урьдчилсан тохиргоо",
     "modelDef": {

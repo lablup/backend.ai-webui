@@ -70,7 +70,8 @@
     "Shmem": "Paylaşılan Bellek",
     "SingleNode": "Tek düğümlü",
     "StartupCommand": "Başlatma komutu",
-    "StartupCommandPlaceholder": "Çıkarım sunucusu için başlatma komutunu girin.",
+    "StartupCommandPlaceholder": "örn. pip install vllm",
+    "StartupCommandTooltip": "Model çerçevesi başlatılmadan önce ortamı hazırlayan komut (örn. vllm gibi paketlerin kurulumu).",
     "Strategy": "Dağıtım Stratejisi",
     "TabTitle": "Dağıtım Ön Ayarları",
     "modelDef": {

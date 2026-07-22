@@ -69,8 +69,9 @@
     "SelectStrategy": "Selecionar estratégia",
     "Shmem": "Memória Partilhada",
     "SingleNode": "Nó único",
-    "StartupCommand": "Comando de arranque",
-    "StartupCommandPlaceholder": "Introduza o comando de arranque para o servidor de inferência.",
+    "StartupCommand": "Comando de preparação",
+    "StartupCommandPlaceholder": "por ex., pip install vllm",
+    "StartupCommandTooltip": "Comando que prepara o ambiente antes de o framework do modelo arrancar (por ex., instalar pacotes como o vllm).",
     "Strategy": "Estratégia de Implementação",
     "TabTitle": "Predefinições de Implementação",
     "modelDef": {

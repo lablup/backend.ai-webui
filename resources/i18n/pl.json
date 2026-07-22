@@ -70,7 +70,8 @@
     "Shmem": "Pamięć współdzielona",
     "SingleNode": "Jednowęzłowy",
     "StartupCommand": "Polecenie uruchamiania",
-    "StartupCommandPlaceholder": "Wprowadź polecenie uruchamiania serwera wnioskowania.",
+    "StartupCommandPlaceholder": "np. pip install vllm",
+    "StartupCommandTooltip": "Polecenie przygotowujące środowisko przed uruchomieniem frameworka modelu (np. instalacja pakietów takich jak vllm).",
     "Strategy": "Strategia wdrożenia",
     "TabTitle": "Ustawienia Wstępne Wdrożenia",
     "modelDef": {

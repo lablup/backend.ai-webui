@@ -69,8 +69,9 @@
     "SelectStrategy": "Επιλέξτε στρατηγική",
     "Shmem": "Κοινή Μνήμη",
     "SingleNode": "Μεμονωμένος κόμβος",
-    "StartupCommand": "Εντολή εκκίνησης",
-    "StartupCommandPlaceholder": "Εισάγετε την εντολή εκκίνησης για τον διακομιστή συμπερασμού.",
+    "StartupCommand": "Εντολή προετοιμασίας",
+    "StartupCommandPlaceholder": "π.χ. pip install vllm",
+    "StartupCommandTooltip": "Εντολή που προετοιμάζει το περιβάλλον πριν από την εκκίνηση του πλαισίου του μοντέλου (π.χ. εγκατάσταση πακέτων όπως το vllm).",
     "Strategy": "Στρατηγική Ανάπτυξης",
     "TabTitle": "Προεπιλογές Ανάπτυξης",
     "modelDef": {

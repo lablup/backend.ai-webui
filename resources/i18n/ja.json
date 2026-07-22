@@ -69,8 +69,9 @@
     "SelectStrategy": "戦略を選択",
     "Shmem": "共有メモリ",
     "SingleNode": "シングルノード",
-    "StartupCommand": "起動コマンド",
-    "StartupCommandPlaceholder": "推論サーバーの起動コマンドを入力してください。",
+    "StartupCommand": "スタートアップコマンド",
+    "StartupCommandPlaceholder": "例: pip install vllm",
+    "StartupCommandTooltip": "モデルフレームワークを起動する前に環境を準備するコマンドです（例: vllm のインストール）。",
     "Strategy": "デプロイメント戦略",
     "TabTitle": "デプロイメントプリセット",
     "modelDef": {

@@ -69,8 +69,9 @@
     "SelectStrategy": "Выбрать стратегию",
     "Shmem": "Общая память",
     "SingleNode": "Одноузловой",
-    "StartupCommand": "Команда запуска",
-    "StartupCommandPlaceholder": "Введите команду запуска для сервера вывода.",
+    "StartupCommand": "Команда подготовки",
+    "StartupCommandPlaceholder": "например, pip install vllm",
+    "StartupCommandTooltip": "Команда, которая подготавливает окружение перед запуском фреймворка модели (например, установка пакетов, таких как vllm).",
     "Strategy": "Стратегия развёртывания",
     "TabTitle": "Предустановки развёртывания",
     "modelDef": {

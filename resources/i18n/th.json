@@ -69,8 +69,9 @@
     "SelectStrategy": "เลือกกลยุทธ์",
     "Shmem": "หน่วยความจำที่ใช้ร่วมกัน",
     "SingleNode": "โหนดเดียว",
-    "StartupCommand": "คำสั่งเริ่มต้น",
-    "StartupCommandPlaceholder": "ป้อนคำสั่งเริ่มต้นสำหรับเซิร์ฟเวอร์อนุมาน",
+    "StartupCommand": "คำสั่งเตรียมสภาพแวดล้อม",
+    "StartupCommandPlaceholder": "เช่น pip install vllm",
+    "StartupCommandTooltip": "คำสั่งที่ใช้เตรียมสภาพแวดล้อมก่อนที่เฟรมเวิร์กของโมเดลจะเริ่มทำงาน (เช่น การติดตั้งแพ็กเกจอย่าง vllm)",
     "Strategy": "กลยุทธ์การปรับใช้",
     "TabTitle": "ค่าตั้งล่วงหน้าการปรับใช้",
     "modelDef": {

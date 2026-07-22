@@ -69,8 +69,9 @@
     "SelectStrategy": "Chọn chiến lược",
     "Shmem": "Bộ nhớ chia sẻ",
     "SingleNode": "Nút đơn",
-    "StartupCommand": "Lệnh khởi động",
-    "StartupCommandPlaceholder": "Nhập lệnh khởi động cho máy chủ suy luận.",
+    "StartupCommand": "Lệnh chuẩn bị",
+    "StartupCommandPlaceholder": "ví dụ: pip install vllm",
+    "StartupCommandTooltip": "Lệnh chuẩn bị môi trường trước khi khung mô hình khởi động (ví dụ: cài đặt các gói như vllm).",
     "Strategy": "Chiến lược triển khai",
     "TabTitle": "Cài đặt sẵn triển khai",
     "modelDef": {

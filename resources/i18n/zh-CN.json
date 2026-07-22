@@ -69,8 +69,9 @@
     "SelectStrategy": "选择策略",
     "Shmem": "共享内存",
     "SingleNode": "单节点",
-    "StartupCommand": "启动命令",
-    "StartupCommandPlaceholder": "输入推理服务器的启动命令。",
+    "StartupCommand": "启动准备命令",
+    "StartupCommandPlaceholder": "例如：pip install vllm",
+    "StartupCommandTooltip": "在模型框架启动之前准备环境的命令（例如：安装 vllm）。",
     "Strategy": "部署策略",
     "TabTitle": "部署预设",
     "modelDef": {

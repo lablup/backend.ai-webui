@@ -70,7 +70,8 @@
     "Shmem": "Shared Memory",
     "SingleNode": "Single-Node",
     "StartupCommand": "Startup Command",
-    "StartupCommandPlaceholder": "Enter the startup command for the inference server.",
+    "StartupCommandPlaceholder": "e.g., pip install vllm",
+    "StartupCommandTooltip": "The command that prepares the environment before the model framework starts (e.g., installing packages such as vllm).",
     "Strategy": "Deployment Strategy",
     "TabTitle": "Deployment Presets",
     "modelDef": {

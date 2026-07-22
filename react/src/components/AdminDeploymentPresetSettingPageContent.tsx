@@ -975,7 +975,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             <Form.Item
               name="startupCommand"
               label={t('adminDeploymentPreset.StartupCommand')}
-              tooltip={t('modelService.StartCommandTooltip')}
+              tooltip={t('adminDeploymentPreset.StartupCommandTooltip')}
               extra={t('modelService.StartCommandHelperShell')}
             >
               <Input.TextArea

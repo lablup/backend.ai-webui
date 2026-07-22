@@ -70,7 +70,8 @@
     "Shmem": "Memori Bersama",
     "SingleNode": "Single-Node",
     "StartupCommand": "Perintah startup",
-    "StartupCommandPlaceholder": "Masukkan perintah startup untuk server inferensi.",
+    "StartupCommandPlaceholder": "mis. pip install vllm",
+    "StartupCommandTooltip": "Perintah yang menyiapkan lingkungan sebelum framework model dimulai (mis. menginstal paket seperti vllm).",
     "Strategy": "Strategi Deployment",
     "TabTitle": "Preset Deployment",
     "modelDef": {

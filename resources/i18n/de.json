@@ -69,8 +69,9 @@
     "SelectStrategy": "Strategie auswählen",
     "Shmem": "Gemeinsamer Speicher",
     "SingleNode": "Single-Node",
-    "StartupCommand": "Startbefehl",
-    "StartupCommandPlaceholder": "Startbefehl für den Inferenzserver eingeben.",
+    "StartupCommand": "Vorbereitungsbefehl",
+    "StartupCommandPlaceholder": "z. B. pip install vllm",
+    "StartupCommandTooltip": "Befehl, der die Umgebung vorbereitet, bevor das Modell-Framework startet (z. B. Installation von Paketen wie vllm).",
     "Strategy": "Bereitstellungsstrategie",
     "TabTitle": "Bereitstellungsvoreinstellungen",
     "modelDef": {
