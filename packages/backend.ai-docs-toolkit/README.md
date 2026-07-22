@@ -4,7 +4,7 @@ Reusable documentation engine for converting multilingual Markdown into producti
 
 ## Getting started — copy the example
 
-The fastest way to evaluate the toolkit is to copy the [example/boilerplate package](../backend.ai-docs-toolkit-example/) and edit it. It is a minimal, runnable project that exercises every consumer-tunable knob (custom logo, brand color, multi-version selector, grouped sidebar, en + ko content for CJK font verification).
+The fastest way to evaluate the toolkit is to copy the [example/boilerplate package](https://github.com/lablup/backend.ai-webui/tree/main/packages/backend.ai-docs-toolkit-example) and edit it. It is a minimal, runnable project that exercises every consumer-tunable knob (custom logo, brand color, multi-version selector, grouped sidebar, en + ko content for CJK font verification).
 
 Run the commands below **from the monorepo root** (`backend.ai-webui/`):
 
@@ -16,7 +16,7 @@ pnpm install
 pnpm build:web
 ```
 
-> See the example's [`README.md`](../backend.ai-docs-toolkit-example/README.md#using-the-example-outside-this-monorepo) for the standalone-repo recipe (the `pnpm --filter` build step needs to be replaced).
+> See the example's [`README.md`](https://github.com/lablup/backend.ai-webui/blob/main/packages/backend.ai-docs-toolkit-example/README.md#using-the-example-outside-this-monorepo) for the standalone-repo recipe (the `pnpm --filter` build step needs to be replaced).
 
 ### Troubleshooting: `docs-toolkit: not found`
 
