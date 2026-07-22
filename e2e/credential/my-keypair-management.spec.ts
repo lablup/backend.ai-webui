@@ -962,11 +962,38 @@ test.describe(
 
         // The table shows its loading overlay while the deferred query
         // variables lag the committed ones; once the spinner is gone, the
-        // rendered rows are the committed Inactive dataset.
-        await expect(modal.locator('.ant-spin-spinning')).toBeHidden();
-
+        // rendered rows are *usually* the committed Inactive dataset — but
+        // the dataSource commit can still lag a beat behind the spinner
+        // disappearing, briefly leaving a genuine (non-placeholder,
+        // non-measure-row) Active-tab `<tr>` in the DOM. That row still has
+        // an `.ant-btn-dangerous` button (Deactivate/disabled-Ban), so a bare
+        // row-count check can be fooled into treating it as a seeded
+        // inactive keypair. Poll until the table reaches a stable state:
+        // either genuinely empty, or its first row is an actual Inactive row
+        // — identifiable by the Restore (undo) icon that only Inactive rows
+        // render in their Controls cell.
         const inactiveRows = getKeypairTableRows(page);
-        const count = await inactiveRows.count();
+        let count = 0;
+        await expect
+          .poll(
+            async () => {
+              count = await inactiveRows.count();
+              if (count === 0) return true;
+              const hasRestoreIcon = await inactiveRows
+                .first()
+                .locator('td')
+                .nth(1)
+                .locator('.lucide-undo')
+                .count();
+              return hasRestoreIcon > 0;
+            },
+            {
+              timeout: 5000,
+              message:
+                'Table kept showing a stale Active-tab row after switching to Inactive',
+            },
+          )
+          .toBe(true);
 
         // Environment data gate (FR-3114): needs at least one pre-existing
         // inactive keypair on the e2e user account. Seeding it is an infra
