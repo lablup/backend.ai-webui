@@ -1586,7 +1586,8 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   // Use the loaded DB baseline only while it belongs to the currently watched
   // variant; otherwise treat it as absent until the matching loader reports.
   const activeDbModelDefinitionDefaults =
-    dbModelDefinitionDefaults?.variantId === watchedRuntimeVariantId
+    dbModelDefinitionDefaults &&
+    dbModelDefinitionDefaults.variantId === watchedRuntimeVariantId
       ? dbModelDefinitionDefaults.defaults
       : null;
 
