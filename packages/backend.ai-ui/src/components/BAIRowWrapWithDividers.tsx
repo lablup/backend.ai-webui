@@ -33,8 +33,8 @@ const BAIRowWrapWithDividers: React.FC<BAIRowWrapWithDividersProps> = ({
   className,
 }) => {
   const { token } = theme.useToken();
-  rowGap = rowGap ?? token.marginXL;
-  columnGap = columnGap ?? token.marginXXL;
+  const resolvedRowGap = rowGap ?? token.marginXL;
+  const resolvedColumnGap = columnGap ?? token.marginXXL;
   const color = dividerColor ?? token.colorBorderSecondary;
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -49,8 +49,10 @@ const BAIRowWrapWithDividers: React.FC<BAIRowWrapWithDividersProps> = ({
   // Expose columnGap as a CSS variable to overlay the divider within the gap (item width unchanged)
   const gapVar = useMemo(
     () =>
-      typeof columnGap === 'number' ? `${columnGap}px` : String(columnGap),
-    [columnGap],
+      typeof resolvedColumnGap === 'number'
+        ? `${resolvedColumnGap}px`
+        : String(resolvedColumnGap),
+    [resolvedColumnGap],
   );
 
   const measure = () => {
@@ -111,8 +113,8 @@ const BAIRowWrapWithDividers: React.FC<BAIRowWrapWithDividersProps> = ({
         {
           display: 'flex',
           flexWrap: wrap ? 'wrap' : 'nowrap',
-          columnGap,
-          rowGap,
+          columnGap: resolvedColumnGap,
+          rowGap: resolvedRowGap,
           alignItems: 'stretch',
           // Provide gap CSS variable for children
           '--bai-gap': gapVar,

@@ -32,8 +32,6 @@ import React, {
   useRef,
   useState,
   useCallback,
-  useEffect,
-  useEffectEvent,
   useContext,
   useMemo,
 } from 'react';
@@ -281,7 +279,11 @@ const BAITableSettingModal: React.FC<TableSettingProps> = ({
     order: initialColumnOrder ?? null,
   });
 
-  const resyncDataSource = useEffectEvent(() => {
+  // `dataSource` is already initialized with the ordered options, so the
+  // initial signature needs no resync — only later changes do.
+  const [prevSyncSignature, setPrevSyncSignature] = useState(syncSignature);
+  if (syncSignature !== prevSyncSignature) {
+    setPrevSyncSignature(syncSignature);
     if (initialColumnOrder) {
       const orderedOptions = [...columnOptions];
       orderedOptions.sort((a, b) => {
@@ -296,11 +298,7 @@ const BAITableSettingModal: React.FC<TableSettingProps> = ({
     } else {
       setDataSource(columnOptions);
     }
-  });
-
-  useEffect(() => {
-    resyncDataSource();
-  }, [syncSignature]);
+  }
 
   const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;

@@ -67,15 +67,13 @@ export function useIntervalValue<T>(
 ): T {
   const [result, setResult] = useState<T>(calculator());
 
-  const updateCalculator = useEffectEvent(() => {
-    setResult(calculator());
-  });
-
-  useEffect(() => {
+  const [prevTriggerKey, setPrevTriggerKey] = useState(triggerKey);
+  if (triggerKey !== prevTriggerKey) {
+    setPrevTriggerKey(triggerKey);
     if (triggerKey) {
-      updateCalculator();
+      setResult(calculator());
     }
-  }, [triggerKey]);
+  }
 
   useInterval(
     () => {

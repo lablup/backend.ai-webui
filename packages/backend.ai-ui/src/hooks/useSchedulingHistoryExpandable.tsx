@@ -5,7 +5,7 @@ import { Dropdown, theme, Tooltip } from 'antd';
 import * as _ from 'lodash-es';
 import { EllipsisVerticalIcon } from 'lucide-react';
 import * as React from 'react';
-import { useEffect, useEffectEvent, useState } from 'react';
+import { useState } from 'react';
 
 /**
  * Minimal shape shared by every scheduling-history row type
@@ -23,9 +23,7 @@ export interface SchedulingHistoryExpandableRow {
  * the caller (so it can be persisted across reloads / navigations).
  */
 export type SchedulingHistoryExpandMode =
-  | 'expand-all'
-  | 'collapse-all'
-  | 'errors-only';
+  'expand-all' | 'collapse-all' | 'errors-only';
 
 export const DEFAULT_SCHEDULING_HISTORY_EXPAND_MODE: SchedulingHistoryExpandMode =
   'errors-only';
@@ -110,24 +108,15 @@ export const useSchedulingHistoryExpandable = <
     )
     .join('|');
 
-  const resetToDefault = useEffectEvent(() => {
+  // Manual per-row toggles persist until a refetch (data signature) or a
+  // `mode` change re-applies the master mode.
+  const [prevDataSignature, setPrevDataSignature] = useState(dataSignature);
+  const [prevMode, setPrevMode] = useState(mode);
+  if (dataSignature !== prevDataSignature || mode !== prevMode) {
+    setPrevDataSignature(dataSignature);
+    setPrevMode(mode);
     setExpandedRowKeys(computeExpandedRowKeysForMode(dataSource, mode));
-  });
-
-  useEffect(() => {
-    resetToDefault();
-  }, [dataSignature]);
-
-  // Re-apply the master mode whenever the controlled mode prop changes so
-  // selecting a menu item immediately re-expands / collapses. `dataSource` is
-  // read fresh via the effect event without being a reactive dependency.
-  const applyMode = useEffectEvent(() => {
-    setExpandedRowKeys(computeExpandedRowKeysForMode(dataSource, mode));
-  });
-
-  useEffect(() => {
-    applyMode();
-  }, [mode]);
+  }
 
   const expandableRowKeys = dataSource
     .filter(isRowExpandable)

@@ -100,6 +100,9 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
   const { token } = theme.useToken();
 
   const [isDragMode, setIsDragMode] = useState(false);
+  // The container ref is parent-owned; capture its element when dragging starts.
+  const [dragPortalContainer, setDragPortalContainer] =
+    useState<HTMLElement | null>(null);
   const [selectedItems, setSelectedItems] = useState<Array<VFolderFile>>([]);
   const [selectedSingleItem, setSelectedSingleItem] =
     useState<VFolderFile | null>(null);
@@ -270,6 +273,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
   useEffect(() => {
     const handleDragEnter = (e: DragEvent) => {
       e.preventDefault();
+      setDragPortalContainer(fileDropContainerRef?.current ?? null);
       setIsDragMode(true);
     };
     const handleDragLeave = (e: DragEvent) => {
@@ -297,7 +301,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
       document.removeEventListener('dragover', handleDragOver);
       document.removeEventListener('drop', handleDrop);
     };
-  }, []);
+  }, [fileDropContainerRef]);
 
   return (
     <FolderInfoContext.Provider
@@ -309,7 +313,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
     >
       {isDragMode && enableUpload && (
         <DragAndDrop
-          portalContainer={fileDropContainerRef?.current || undefined}
+          portalContainer={dragPortalContainer || undefined}
           onUpload={(files, currentPath) => onUpload(files, currentPath)}
         />
       )}

@@ -96,73 +96,76 @@ const FileUploadManager: React.FC = () => {
   // cycle's notification would be re-fired whenever an unrelated folder
   // updates state.
   const notifiedCyclesRef = useRef<Set<string>>(new Set());
-  const throttledUploadRequests = _.throttle(
-    (vFolderId: string, fileName: string) => {
-      const accumulatedDelta = pendingDeltaBytesRef.current[vFolderId] || 0;
-      pendingDeltaBytesRef.current[vFolderId] = 0;
-
-      setUploadStatus((prev) => {
-        const cycleKey = prev[vFolderId]?.cycleKey;
-        if (!cycleKey) return prev;
-
-        const uploadedFilesCount = prev[vFolderId]?.completedFiles?.length || 0;
-        const totalUploadedFilesCount =
-          (prev[vFolderId]?.completedFiles?.length || 0) +
-          (prev[vFolderId]?.failedFiles?.length || 0) +
-          (prev[vFolderId]?.pendingFiles?.length || 0);
-
-        const totalExpectedSize = prev[vFolderId]?.totalExpectedSize || 0;
-        const currentCompletedBytes =
-          (prev[vFolderId]?.completedBytes || 0) + accumulatedDelta;
-
-        upsertNotification({
-          key: cycleKey,
-          backgroundTask: {
-            status: 'pending',
-            percent:
-              totalExpectedSize > 0
-                ? (currentCompletedBytes / totalExpectedSize) * 100
-                : 0,
-            onChange: {
-              pending: {
-                description: (
-                  <BAIFlex direction="column" align="start">
-                    <Typography.Text>
-                      {t('explorer.UploadingFiles')} ( {uploadedFilesCount} /{' '}
-                      {totalUploadedFilesCount} )
-                    </Typography.Text>
-                    <Typography.Text
-                      ellipsis
-                      type="secondary"
-                      style={{
-                        fontSize: token.fontSizeSM,
-                        maxWidth: '300px',
-                      }}
-                    >
-                      {fileName}
-                    </Typography.Text>
-                  </BAIFlex>
-                ),
-              },
-            },
-          },
-        });
-
-        return {
-          ...prev,
-          [vFolderId]: {
-            ...prev[vFolderId],
-            completedBytes: currentCompletedBytes,
-          },
-        };
-      });
-    },
-    200,
-    { leading: true, trailing: true },
-  );
 
   useEffect(() => {
     if (uploadRequests.length === 0 || !baiClient) return;
+
+    // Created inside the effect so its ref reads happen outside render.
+    const throttledUploadRequests = _.throttle(
+      (vFolderId: string, fileName: string) => {
+        const accumulatedDelta = pendingDeltaBytesRef.current[vFolderId] || 0;
+        pendingDeltaBytesRef.current[vFolderId] = 0;
+
+        setUploadStatus((prev) => {
+          const cycleKey = prev[vFolderId]?.cycleKey;
+          if (!cycleKey) return prev;
+
+          const uploadedFilesCount =
+            prev[vFolderId]?.completedFiles?.length || 0;
+          const totalUploadedFilesCount =
+            (prev[vFolderId]?.completedFiles?.length || 0) +
+            (prev[vFolderId]?.failedFiles?.length || 0) +
+            (prev[vFolderId]?.pendingFiles?.length || 0);
+
+          const totalExpectedSize = prev[vFolderId]?.totalExpectedSize || 0;
+          const currentCompletedBytes =
+            (prev[vFolderId]?.completedBytes || 0) + accumulatedDelta;
+
+          upsertNotification({
+            key: cycleKey,
+            backgroundTask: {
+              status: 'pending',
+              percent:
+                totalExpectedSize > 0
+                  ? (currentCompletedBytes / totalExpectedSize) * 100
+                  : 0,
+              onChange: {
+                pending: {
+                  description: (
+                    <BAIFlex direction="column" align="start">
+                      <Typography.Text>
+                        {t('explorer.UploadingFiles')} ( {uploadedFilesCount} /{' '}
+                        {totalUploadedFilesCount} )
+                      </Typography.Text>
+                      <Typography.Text
+                        ellipsis
+                        type="secondary"
+                        style={{
+                          fontSize: token.fontSizeSM,
+                          maxWidth: '300px',
+                        }}
+                      >
+                        {fileName}
+                      </Typography.Text>
+                    </BAIFlex>
+                  ),
+                },
+              },
+            },
+          });
+
+          return {
+            ...prev,
+            [vFolderId]: {
+              ...prev[vFolderId],
+              completedBytes: currentCompletedBytes,
+            },
+          };
+        });
+      },
+      200,
+      { leading: true, trailing: true },
+    );
 
     uploadRequests.forEach((uploadRequest) => {
       const { vFolderId, vFolderName, uploadFileInfo } = uploadRequest;

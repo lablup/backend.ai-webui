@@ -25,10 +25,7 @@ export const DEFAULT_BAI_MODAL_Z_INDEX = 1001;
 export type WindowState = 'default' | 'minimized' | 'maximized' | 'fullscreen';
 export type WindowAction = 'minimize' | 'maximize' | 'fullscreen';
 export type MinimizedPlacement =
-  | 'bottomRight'
-  | 'bottomLeft'
-  | 'topRight'
-  | 'topLeft';
+  'bottomRight' | 'bottomLeft' | 'topRight' | 'topLeft';
 
 /**
  * Footer render-function form, re-typed from antd's `ModalProps['footer']`.
@@ -132,8 +129,9 @@ const useStyles = createStyles(
         ${type === 'warning' ? `color: ${colorWarning};` : ''}
         ${type === 'error' ? `color: ${colorError};` : ''}
       }
-      ${stickyTitle
-        ? `
+      ${
+        stickyTitle
+          ? `
         .ant-modal-header {
           position: sticky;
           top: 0;
@@ -141,10 +139,12 @@ const useStyles = createStyles(
           background: var(--ant-color-bg-elevated, #fff);
         }
       `
-        : ''}
+          : ''
+      }
 
-      ${windowState === 'maximized'
-        ? `
+      ${
+        windowState === 'maximized'
+          ? `
         &.ant-modal {
           width: calc(100vw - ${marginLG * 2}px) !important;
           max-width: calc(100vw - ${marginLG * 2}px) !important;
@@ -165,10 +165,12 @@ const useStyles = createStyles(
           overflow: auto;
         }
       `
-        : ''}
+          : ''
+      }
 
-      ${windowState === 'fullscreen'
-        ? `
+      ${
+        windowState === 'fullscreen'
+          ? `
         &.ant-modal {
           width: 100vw !important;
           max-width: 100vw !important;
@@ -190,10 +192,12 @@ const useStyles = createStyles(
           overflow: auto;
         }
       `
-        : ''}
+          : ''
+      }
 
-      ${windowState === 'minimized'
-        ? `
+      ${
+        windowState === 'minimized'
+          ? `
         &.ant-modal {
           width: min(320px, calc(100vw - ${marginLG * 2}px)) !important;
           max-width: min(320px, calc(100vw - ${marginLG * 2}px)) !important;
@@ -226,7 +230,8 @@ const useStyles = createStyles(
           overflow: hidden;
         }
       `
-        : ''}
+          : ''
+      }
 
       .ant-modal-content {
         transition:
@@ -302,6 +307,7 @@ const BAIModal: React.FC<BAIModalProps> = ({
   // Reset window state when the modal is closed programmatically (e.g., parent sets open={false})
   useEffect(() => {
     if (!modalProps.open && windowState !== 'default') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- parent callback can't run during render; a prop-driven close has no event handler
       setWindowState('default');
       onWindowStateChange?.('default');
     }

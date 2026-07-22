@@ -194,11 +194,7 @@ export type AppOption = {
 };
 
 export type SessionLauncherStepKey =
-  | 'sessionType'
-  | 'environment'
-  | 'storage'
-  | 'network'
-  | 'review';
+  'sessionType' | 'environment' | 'storage' | 'network' | 'review';
 
 type StepItem = NonNullable<StepsProps['items']>[number];
 
@@ -257,6 +253,7 @@ const SessionLauncherPage = () => {
     () => {
       // To sync the latest form values to URL,
       // 'trailing' is set to true, and get the form values here."
+      // eslint-disable-next-line react-hooks/immutability -- forward reference to a later declaration kept as-is
       const currentValue = form.getFieldsValue();
       setQuery({
         formValues: _.assign(
@@ -410,6 +407,7 @@ const SessionLauncherPage = () => {
   useEffect(() => {
     if (finalStepLastValidateTime !== 'first') {
       if (hasError) {
+        // eslint-disable-next-line react-hooks/immutability -- forward reference to a later declaration kept as-is
         setValidationTourOpen(true);
       } else {
         setValidationTourOpen(false);
@@ -428,6 +426,7 @@ const SessionLauncherPage = () => {
   useLayoutEffect(() => {
     if (isQueryReset) {
       form.resetFields();
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- legacy query-reset flow kept as-is
       setIsQueryReset(false);
     }
   }, [isQueryReset, form]);

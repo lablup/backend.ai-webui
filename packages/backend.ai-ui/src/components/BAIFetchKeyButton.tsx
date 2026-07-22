@@ -17,13 +17,7 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import * as _ from 'lodash-es';
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import React, {
-  useEffect,
-  useEffectEvent,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 dayjs.extend(duration);
 
@@ -158,6 +152,7 @@ const BAIFetchKeyButton: React.FC<BAIFetchKeyButtonProps> = ({
         turnOffTimeoutRef.current = null;
       }
       loadingStartTimeRef.current = Date.now();
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- immediate icon-on preserves the min-700ms anti-flicker timing
       setDisplayLoading(true);
     } else if (loadingStartTimeRef.current !== null) {
       // loading finished: keep the icon visible for at least 700ms total
@@ -227,7 +222,13 @@ const BAIFetchKeyButton: React.FC<BAIFetchKeyButtonProps> = ({
   // switches to another interval — it must not vanish the way a transient
   // injection would. The consumer's `autoUpdateDelayOptions` is never mutated.
   const [seenOffListDelays, setSeenOffListDelays] = useState<number[]>([]);
-  const trackOffListDelay = useEffectEvent(() => {
+  // The `undefined` sentinel (which `selectedDelay: number | null` never
+  // equals) guarantees the first render is evaluated too.
+  const [trackedDelay, setTrackedDelay] = useState<number | null | undefined>(
+    undefined,
+  );
+  if (selectedDelay !== trackedDelay) {
+    setTrackedDelay(selectedDelay);
     if (
       selectedDelay !== null &&
       !autoUpdateDelayOptions.includes(selectedDelay)
@@ -236,10 +237,7 @@ const BAIFetchKeyButton: React.FC<BAIFetchKeyButtonProps> = ({
         prev.includes(selectedDelay) ? prev : [...prev, selectedDelay],
       );
     }
-  });
-  useEffect(() => {
-    trackOffListDelay();
-  }, [selectedDelay]);
+  }
 
   // Icon-only refresh button. When the interval dropdown is shown, the selected
   // interval label ("Ns") lives on the dropdown trigger, not here.

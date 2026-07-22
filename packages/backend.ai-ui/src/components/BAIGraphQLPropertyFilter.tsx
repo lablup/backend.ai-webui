@@ -90,12 +90,7 @@ export type GraphQLFilter = BaseFilter & {
 };
 
 export type FilterPropertyType =
-  | 'string'
-  | 'number'
-  | 'boolean'
-  | 'enum'
-  | 'uuid'
-  | 'datetime';
+  'string' | 'number' | 'boolean' | 'enum' | 'uuid' | 'datetime';
 
 export type FilterOperator =
   // String operators
@@ -743,11 +738,17 @@ const BAIGraphQLPropertyFilter = <
     }
   });
 
-  useEffect(() => {
-    if (selectedDate) {
-      updateSelectedDateEvent(selectedDate);
-    }
-  }, [selectedDate]);
+  // The DatePicker "Now" button fires onChange twice per click; committing
+  // from state adds exactly one condition per pick.
+  useEffect(
+    function commitSelectedDate() {
+      if (selectedDate) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- dedupes the "Now" double onChange
+        updateSelectedDateEvent(selectedDate);
+      }
+    },
+    [selectedDate],
+  );
 
   return (
     <BAIFlex direction="column" gap="xs" align="start" {...containerProps}>

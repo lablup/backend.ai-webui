@@ -186,10 +186,15 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
     actions?.filter((a) => a.showInMenu === 'always') ?? [];
   const autoActionCount = autoActions.length;
 
-  // Reset visibleCount when auto actions change
-  useEffect(() => {
+  // The `undefined` sentinel makes the reset also run on the first render;
+  // the ResizeObserver effect then recomputes the width-constrained count.
+  const [prevAutoActionCount, setPrevAutoActionCount] = useState<
+    number | undefined
+  >(undefined);
+  if (autoActionCount !== prevAutoActionCount) {
+    setPrevAutoActionCount(autoActionCount);
     setVisibleCount(autoActionCount);
-  }, [autoActionCount]);
+  }
 
   const calculateVisibleActions = useEventNotStable(
     (containerWidth: number) => {

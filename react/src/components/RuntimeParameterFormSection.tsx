@@ -185,6 +185,7 @@ const RuntimeParameterFormSection: React.FC<
   // mutation). The initial* prop is read inside initializeValues via
   // useEffectEvent, so it always reflects the latest closure.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- form hydration must run post-mount
     initializeValues();
   }, [runtimeVariant, groups]);
 

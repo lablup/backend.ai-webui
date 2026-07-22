@@ -107,11 +107,12 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
     Array<VFolderNodesType>
   >([]);
 
-  useEffect(() => {
+  // Reset selectedRowKeys when currentProject changes
+  const [prevProjectId, setPrevProjectId] = useState(currentProject.id);
+  if (prevProjectId !== currentProject.id) {
+    setPrevProjectId(currentProject.id);
     setSelectedFolderList([]);
-
-    // Reset selectedRowKeys when currentProject changes
-  }, [currentProject.id]);
+  }
 
   const [isOpenCreateModal, { toggle: toggleCreateModal }] = useToggle(false);
   const [isOpenDeleteModal, { toggle: toggleDeleteModal }] = useToggle(false);
@@ -139,10 +140,12 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   const queryMapRef = useRef({
     [queryParams.statusCategory]: { queryParams, tablePaginationOption },
   });
-  queryMapRef.current[queryParams.statusCategory] = {
-    queryParams,
-    tablePaginationOption,
-  };
+  useEffect(() => {
+    queryMapRef.current[queryParams.statusCategory] = {
+      queryParams,
+      tablePaginationOption,
+    };
+  }, [queryParams, tablePaginationOption]);
 
   function getUsageModeFilter(mode: string) {
     switch (mode) {

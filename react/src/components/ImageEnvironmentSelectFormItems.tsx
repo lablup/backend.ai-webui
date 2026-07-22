@@ -98,12 +98,15 @@ const isPrivateImage = (image: Image) => {
 const ImageEnvironmentSelectFormItems: React.FC<
   ImageEnvironmentSelectFormItemsProps
 > = ({ filter, showPrivate, searchPrefill }) => {
+  'use memo';
   const form = Form.useFormInstance<ImageEnvironmentFormInput>();
   const environments = Form.useWatch('environments', { form, preserve: true });
   const baiClient = useSuspendedBackendaiClient();
   const supportExtendedImageInfo = baiClient?.supports('extended-image-info');
 
-  const [environmentSearch, setEnvironmentSearch] = useState('');
+  const [environmentSearch, setEnvironmentSearch] = useState(
+    searchPrefill ?? '',
+  );
   const [versionSearch, setVersionSearch] = useState('');
   const { t } = useTranslation();
   const [metadata, { getBaseVersion, getImageMeta, tagAlias }] =
@@ -114,23 +117,31 @@ const ImageEnvironmentSelectFormItems: React.FC<
   const envSelectRef = useRef<RefSelectProps>(null);
   const versionSelectRef = useRef<RefSelectProps>(null);
   const [envSelectOpen, setEnvSelectOpen] = useState<boolean | undefined>(
-    undefined,
+    searchPrefill ? true : undefined,
   );
 
-  useEffect(() => {
-    if (!searchPrefill) {
+  const [prevSearchPrefill, setPrevSearchPrefill] = useState(searchPrefill);
+  if (prevSearchPrefill !== searchPrefill) {
+    setPrevSearchPrefill(searchPrefill);
+    if (searchPrefill) {
+      setEnvironmentSearch(searchPrefill);
+      setEnvSelectOpen(true);
+    } else {
       setEnvironmentSearch('');
       setEnvSelectOpen(undefined);
-      return;
     }
+  }
 
-    setEnvironmentSearch(searchPrefill);
-    // Force open the dropdown and focus the select
-    setEnvSelectOpen(true);
-    queueMicrotask(() => {
-      envSelectRef.current?.focus();
-    });
-  }, [searchPrefill]);
+  useEffect(
+    function focusEnvironmentSelectOnPrefill() {
+      if (searchPrefill) {
+        queueMicrotask(() => {
+          envSelectRef.current?.focus();
+        });
+      }
+    },
+    [searchPrefill],
+  );
 
   const imageEnvironmentSelectFormItemsVariables = baiClient?._config
     ?.showNonInstalledImages
@@ -174,6 +185,69 @@ const ImageEnvironmentSelectFormItems: React.FC<
     },
   );
 
+  const imageGroups: ImageGroup[] = _.sortBy(
+    _.map(
+      _.groupBy(
+        _.filter(images, (image) => {
+          return (
+            (showPrivate ? true : !isPrivateImage(image)) &&
+            (filter ? filter(image) : true)
+          );
+        }),
+        (image) => {
+          // group by using `group` property of image info
+          return (
+            metadata?.imageInfo[getImageMeta(getImageFullName(image) || '').key]
+              ?.group || 'Custom Environments'
+          );
+        },
+      ),
+      (images, groupName) => {
+        return {
+          groupName,
+          groupSortKey: metadata?.groupSortKeyMap?.[groupName] || groupName,
+          environmentGroups: _.sortBy(
+            _.map(
+              // sub group by using (environment) `name` property of image info
+              _.groupBy(images, (image) => {
+                return (
+                  // metadata?.imageInfo[
+                  //   getImageMeta(getImageFullName(image) || "").key
+                  // ]?.name || image?.name
+                  `${image?.registry}/${
+                    supportExtendedImageInfo ? image?.namespace : image?.name
+                  }`
+                );
+              }),
+              (images, environmentName) => {
+                const imageKey = environmentName.split('/')?.[2];
+                const displayName =
+                  (imageKey && metadata?.imageInfo[imageKey]?.name) ||
+                  (_.last(environmentName.split('/')) as string);
+
+                return {
+                  environmentName,
+                  displayName,
+                  prefix: environmentName.split('/').slice(1, -1).join('/'),
+                  images: images.sort(
+                    (a, b) =>
+                      compareVersions(
+                        // latest version comes first
+                        b?.tag?.split('-')?.[0] ?? '',
+                        a?.tag?.split('-')?.[0] ?? '',
+                      ) || localeCompare(a?.architecture, b?.architecture),
+                  ),
+                };
+              },
+            ),
+            (item) => item.displayName,
+          ),
+        };
+      },
+    ),
+    (item) => item.groupSortKey,
+  );
+
   // If not initial value, select first value
   // auto select when relative field is changed
   useEffect(() => {
@@ -192,8 +266,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
     }
 
     let matchedEnvironmentByVersion:
-      | ImageGroup['environmentGroups'][0]
-      | undefined;
+      ImageGroup['environmentGroups'][0] | undefined;
     let matchedImageByVersion: Image | undefined;
     const version = form.getFieldValue('environments')?.version;
 
@@ -319,83 +392,11 @@ const ImageEnvironmentSelectFormItems: React.FC<
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [environments?.version, environments?.manual]); // environments?.environment,
 
-  const imageGroups: ImageGroup[] = useMemo(
-    () =>
-      _.sortBy(
-        _.map(
-          _.groupBy(
-            _.filter(images, (image) => {
-              return (
-                (showPrivate ? true : !isPrivateImage(image)) &&
-                (filter ? filter(image) : true)
-              );
-            }),
-            (image) => {
-              // group by using `group` property of image info
-              return (
-                metadata?.imageInfo[
-                  getImageMeta(getImageFullName(image) || '').key
-                ]?.group || 'Custom Environments'
-              );
-            },
-          ),
-          (images, groupName) => {
-            return {
-              groupName,
-              groupSortKey: metadata?.groupSortKeyMap?.[groupName] || groupName,
-              environmentGroups: _.sortBy(
-                _.map(
-                  // sub group by using (environment) `name` property of image info
-                  _.groupBy(images, (image) => {
-                    return (
-                      // metadata?.imageInfo[
-                      //   getImageMeta(getImageFullName(image) || "").key
-                      // ]?.name || image?.name
-                      `${image?.registry}/${
-                        supportExtendedImageInfo
-                          ? image?.namespace
-                          : image?.name
-                      }`
-                    );
-                  }),
-                  (images, environmentName) => {
-                    const imageKey = environmentName.split('/')?.[2];
-                    const displayName =
-                      (imageKey && metadata?.imageInfo[imageKey]?.name) ||
-                      (_.last(environmentName.split('/')) as string);
-
-                    return {
-                      environmentName,
-                      displayName,
-                      prefix: environmentName.split('/').slice(1, -1).join('/'),
-                      images: images.sort(
-                        (a, b) =>
-                          compareVersions(
-                            // latest version comes first
-                            b?.tag?.split('-')?.[0] ?? '',
-                            a?.tag?.split('-')?.[0] ?? '',
-                          ) || localeCompare(a?.architecture, b?.architecture),
-                      ),
-                    };
-                  },
-                ),
-                (item) => item.displayName,
-              ),
-            };
-          },
-        ),
-        (item) => item.groupSortKey,
-      ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [images, metadata, filter, showPrivate],
-  );
-
   // support search image by full name
   const { fullNameMatchedImage } = useMemo(() => {
     let fullNameMatchedImage: Image | undefined;
     let fullNameMatchedImageGroup:
-      | ImageGroup['environmentGroups'][0]
-      | undefined;
+      ImageGroup['environmentGroups'][0] | undefined;
     if (environmentSearch.length) {
       imageGroups
         .flatMap((group) => group.environmentGroups)
@@ -625,8 +626,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
       >
         {({ getFieldValue }) => {
           let selectedEnvironmentGroup:
-            | ImageGroup['environmentGroups'][0]
-            | undefined;
+            ImageGroup['environmentGroups'][0] | undefined;
           _.find(imageGroups, (group) => {
             return _.find(group.environmentGroups, (environment) => {
               if (

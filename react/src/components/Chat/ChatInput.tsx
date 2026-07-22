@@ -98,6 +98,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
 
   // If the `inputAttachment` prop exists, the `files` state has to follow it.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- atom-driven files sync kept per review
     setFilesFromInputAttachment(synchronizedAttachment);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [synchronizedAttachment]);

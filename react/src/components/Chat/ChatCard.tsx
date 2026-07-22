@@ -36,14 +36,7 @@ import {
 } from 'backend.ai-ui';
 import classNames from 'classnames';
 import * as _ from 'lodash-es';
-import React, {
-  memo,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  useTransition,
-} from 'react';
+import React, { memo, useEffect, useRef, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -112,6 +105,7 @@ function useModels(
   baseURL?: string,
   effectiveApiKey?: string,
 ) {
+  'use memo';
   const { t } = useTranslation();
   const getModelsErrorMessage = (status?: number) => {
     switch (status) {
@@ -183,14 +177,11 @@ function useModels(
     },
   });
 
-  const modelId = useMemo(
-    () =>
-      provider.modelId &&
-      _.includes(_.map(modelsResult?.data || [], 'id'), provider.modelId)
-        ? provider.modelId
-        : (modelsResult?.data?.[0]?.id ?? 'custom'),
-    [modelsResult?.data, provider.modelId],
-  );
+  const modelId =
+    provider.modelId &&
+    _.includes(_.map(modelsResult?.data || [], 'id'), provider.modelId)
+      ? provider.modelId
+      : (modelsResult?.data?.[0]?.id ?? 'custom');
 
   const modelsError =
     modelsResult.error && getModelsErrorMessage(modelsResult.error);

@@ -35,6 +35,7 @@ export function useLazyPaginatedQuery<
   const previousOtherVariablesRef = useRef(otherVariables);
 
   const isNewOtherVariables = !_.isEqual(
+    // eslint-disable-next-line react-hooks/refs -- render-phase previous-page tracking kept per review
     previousOtherVariablesRef.current,
     otherVariables,
   );
@@ -53,10 +54,11 @@ export function useLazyPaginatedQuery<
   const data = useMemo(() => {
     const items = getItem(result);
     if (isNewOtherVariables) {
+      // eslint-disable-next-line react-hooks/refs -- render-phase previous-page tracking kept per review
       previousResult.current = [];
     }
     return items
-      ? _.uniqBy([...previousResult.current, ...items], getId)
+      ? _.uniqBy([...previousResult.current, ...items], getId) // eslint-disable-line react-hooks/refs
       : undefined;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [result]);
@@ -76,6 +78,7 @@ export function useLazyPaginatedQuery<
     // Reset the offset and limit when otherVariables change after success rendering
     if (isNewOtherVariables) {
       previousOtherVariablesRef.current = otherVariables;
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- offset reset on variable change kept per review
       setOffset(0);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

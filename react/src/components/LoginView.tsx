@@ -187,9 +187,15 @@ const LoginView: React.FC<{
     loadConfig();
   }, [loadConfig]);
 
-  // When config finishes loading from the atom, apply it to local state
-  useEffect(() => {
-    if (!isConfigLoaded || !atomLoginConfig) return;
+  const [appliedLoginConfig, setAppliedLoginConfig] = useState<
+    typeof atomLoginConfig | null
+  >(null);
+  if (
+    isConfigLoaded &&
+    atomLoginConfig &&
+    appliedLoginConfig !== atomLoginConfig
+  ) {
+    setAppliedLoginConfig(atomLoginConfig);
 
     const newCfg = atomLoginConfig;
     setLoginConfig(newCfg);
@@ -209,7 +215,7 @@ const LoginView: React.FC<{
       setShowEndpointInput(false);
       setIsEndpointDisabled(true);
     }
-  }, [isConfigLoaded, atomLoginConfig]);
+  }
 
   // Load login plugin when config is ready.
   // Mirrors `PluginLoader.tsx`'s URL resolution so login plugins follow
@@ -454,91 +460,6 @@ const LoginView: React.FC<{
     [endpoints, postConnectSetup],
   );
 
-  const connectUsingSession = useCallback(
-    async (showError = true, endpointOverride?: string) => {
-      const ep = (endpointOverride ?? apiEndpoint).trim();
-      if (ep === '') {
-        setIsBlockPanelOpen(false);
-        open();
-        return;
-      }
-
-      const userId = (form.getFieldValue('user_id') || '').trim();
-      const password = form.getFieldValue('password') || '';
-      const otp = form.getFieldValue('otp') || '';
-
-      const { client } = createBackendAIClient(userId, password, ep, 'SESSION');
-      clientRef.current = client;
-
-      try {
-        await client.get_manager_version();
-      } catch {
-        setIsBlockPanelOpen(false);
-        open();
-        setIsLoading(false);
-        if (showError) {
-          notification(t('error.CannotConnectToServer'));
-        }
-        return;
-      }
-
-      // Check if already logged in
-      let isLogon = false;
-      try {
-        isLogon = !!(await client.check_login());
-      } catch {
-        isLogon = false;
-      }
-
-      if (isLogon) {
-        try {
-          await doGQLConnect(client);
-        } catch (err: unknown) {
-          handleGQLError(err, showError);
-        }
-        return;
-      }
-
-      // Not yet authenticated. Show block panel while connecting (only for user-initiated login).
-      if (showError) {
-        block(t('login.PleaseWait'), t('login.ConnectingToCluster'));
-      }
-
-      // sToken (SSO) URL entry is handled entirely by STokenLoginBoundary
-      // at the route level (see routes.tsx `STokenGuard`). LoginView no
-      // longer reads sToken from the URL; when a token is present the
-      // boundary mounts LoginView only after authentication succeeds.
-
-      // Do session login
-      // client.login() returns only on success (authenticated === true).
-      // All failure cases throw: login errors carry `isLoginError: true` with
-      // `data.type` for classification; server errors carry `isError: true`
-      // with structured info from _wrapWithPromise.
-      try {
-        await client.login(otp, forceLoginApprovedRef.current);
-        await doGQLConnect(client);
-        return;
-      } catch (err: unknown) {
-        setIsBlockPanelOpen(false);
-
-        const handled = handleLoginError(err, showError, userId, password);
-        if (handled === 'keep-open') {
-          // A dedicated modal (password reset, TOTP registration) was opened.
-          // Keep the login panel open to preserve form values for child modals.
-          setIsLoading(false);
-          return;
-        }
-      }
-
-      setIsBlockPanelOpen(false);
-      open();
-      setIsLoading(false);
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [apiEndpoint, form, endpoints, doGQLConnect, block, open, notification, t],
-  );
-  connectUsingSessionRef.current = connectUsingSession;
-
   /**
    * Unified login error handler. Classifies errors from client.login() and
    * shows the appropriate notification or opens a dedicated modal.
@@ -776,6 +697,97 @@ const LoginView: React.FC<{
       setIsLoading(false);
     },
     [notification, t, open],
+  );
+
+  const connectUsingSession = useCallback(
+    async (showError = true, endpointOverride?: string) => {
+      const ep = (endpointOverride ?? apiEndpoint).trim();
+      if (ep === '') {
+        setIsBlockPanelOpen(false);
+        open();
+        return;
+      }
+
+      const userId = (form.getFieldValue('user_id') || '').trim();
+      const password = form.getFieldValue('password') || '';
+      const otp = form.getFieldValue('otp') || '';
+
+      const { client } = createBackendAIClient(userId, password, ep, 'SESSION');
+      clientRef.current = client;
+
+      try {
+        await client.get_manager_version();
+      } catch {
+        setIsBlockPanelOpen(false);
+        open();
+        setIsLoading(false);
+        if (showError) {
+          notification(t('error.CannotConnectToServer'));
+        }
+        return;
+      }
+
+      // Check if already logged in
+      let isLogon = false;
+      try {
+        isLogon = !!(await client.check_login());
+      } catch {
+        isLogon = false;
+      }
+
+      if (isLogon) {
+        try {
+          await doGQLConnect(client);
+        } catch (err: unknown) {
+          handleGQLError(err, showError);
+        }
+        return;
+      }
+
+      // Not yet authenticated. Show block panel while connecting (only for user-initiated login).
+      if (showError) {
+        block(t('login.PleaseWait'), t('login.ConnectingToCluster'));
+      }
+
+      // sToken (SSO) URL entry is handled entirely by STokenLoginBoundary
+      // at the route level (see routes.tsx `STokenGuard`). LoginView no
+      // longer reads sToken from the URL; when a token is present the
+      // boundary mounts LoginView only after authentication succeeds.
+
+      // Do session login
+      // client.login() returns only on success (authenticated === true).
+      // All failure cases throw: login errors carry `isLoginError: true` with
+      // `data.type` for classification; server errors carry `isError: true`
+      // with structured info from _wrapWithPromise.
+      try {
+        await client.login(otp, forceLoginApprovedRef.current);
+        await doGQLConnect(client);
+        return;
+      } catch (err: unknown) {
+        setIsBlockPanelOpen(false);
+
+        const handled = handleLoginError(err, showError, userId, password);
+        if (handled === 'keep-open') {
+          // A dedicated modal (password reset, TOTP registration) was opened.
+          // Keep the login panel open to preserve form values for child modals.
+          setIsLoading(false);
+          return;
+        }
+      }
+
+      setIsBlockPanelOpen(false);
+      open();
+      setIsLoading(false);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [apiEndpoint, form, endpoints, doGQLConnect, block, open, notification, t],
+  );
+  // The concurrent-session modal's onOk (in handleLoginError) calls this ref.
+  useEffect(
+    function syncConnectUsingSessionRef() {
+      connectUsingSessionRef.current = connectUsingSession;
+    },
+    [connectUsingSession],
   );
 
   const connectUsingAPI = useCallback(
@@ -1076,6 +1088,12 @@ const LoginView: React.FC<{
     loginWithOpenID(client);
   }, [apiEndpoint]);
 
+  // Credentials are intentionally held in a ref (not state) to keep plaintext
+  // out of React state/DevTools; the ref is set alongside setNeedToResetPassword
+  // which drives the render that reads it here.
+  // eslint-disable-next-line react-hooks/refs -- see comment above
+  const expiredCredentials = expiredCredentialsRef.current;
+
   // Wrapper creates a stacking context above the splash overlay (z-index 10001 > splash 10000).
   // Zero-sized so it doesn't intercept pointer events. Child modals use
   // position:fixed internally so they are visible and interactive.
@@ -1120,7 +1138,7 @@ const LoginView: React.FC<{
             needsOtpRegistration={needsOtpRegistration}
             totpRegistrationToken={totpRegistrationToken}
             needToResetPassword={needToResetPassword}
-            expiredCredentials={expiredCredentialsRef.current}
+            expiredCredentials={expiredCredentials}
             showSignupModal={showSignupModal}
             signupPreloadedToken={signupPreloadedToken}
             showEndpointInput={showEndpointInput}

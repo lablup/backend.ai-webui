@@ -12,12 +12,15 @@ export const useMemoWithPrevious = <T,>(
   const prevRef = useRef(initialPrev);
   const [prevResetKey, setPrevResetKey] = useState({});
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // Generic utility: `deps` is caller-provided and dynamic, so it cannot be an
+  // array literal as react-hooks/use-memo requires.
+  // eslint-disable-next-line react-hooks/exhaustive-deps, react-hooks/use-memo
   const current = useMemo(factory, deps);
   const memoizedPrev = useMemo(() => {
     return prevRef.current;
-    // Only update when the reset key changes and deps change
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Only update when the reset key changes and deps change.
+    // `deps` is caller-provided and dynamic, so this cannot be an array literal.
+    // eslint-disable-next-line react-hooks/exhaustive-deps, react-hooks/use-memo
   }, [...deps, prevResetKey]);
 
   useEffect(() => {

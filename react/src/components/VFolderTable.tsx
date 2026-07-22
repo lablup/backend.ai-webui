@@ -113,6 +113,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   onValidateSelectedRowKeys,
   ...tableProps
 }) => {
+  'use memo';
   const { generateFolderPath } = useFolderExplorerOpener();
   const getRowKey = React.useMemo(() => {
     return (record: VFolder) => {
@@ -317,26 +318,18 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   }, [currentProject.id]);
 
   const [searchKey, setSearchKey] = useState('');
-  const displayingFolders = useMemo(() => {
-    return _.filter(mountableFoldersByPermission, (vf) => {
-      // Apply external filter for display
-      if (rowFilter && !rowFilter(vf)) {
-        return false;
-      }
-      // Always show selected items
-      if (selectedRowKeys.includes(getRowKey(vf))) {
-        return true;
-      }
-      // Apply search filter
-      return !searchKey || vf.name.includes(searchKey);
-    });
-  }, [
-    mountableFoldersByPermission,
-    rowFilter,
-    selectedRowKeys,
-    getRowKey,
-    searchKey,
-  ]);
+  const displayingFolders = _.filter(mountableFoldersByPermission, (vf) => {
+    // Apply external filter for display
+    if (rowFilter && !rowFilter(vf)) {
+      return false;
+    }
+    // Always show selected items
+    if (selectedRowKeys.includes(getRowKey(vf))) {
+      return true;
+    }
+    // Apply search filter
+    return !searchKey || vf.name.includes(searchKey);
+  });
 
   /**
    * Converts the input path to an aliased path based on the provided name and input.

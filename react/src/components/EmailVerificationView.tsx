@@ -56,6 +56,7 @@ const EmailVerificationView: React.FC<EmailVerificationViewProps> = ({
           setVerificationState('failed');
         });
     } else {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- missing-token failure state kept per review
       setVerificationState('failed');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

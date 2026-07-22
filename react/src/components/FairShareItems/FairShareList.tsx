@@ -513,12 +513,12 @@ const FairShareList: React.FC = () => {
     urlInitialLoadEffect();
   }, []);
 
-  const resetSelectedRowsEffect = useEffectEvent(() => {
+  const [prevStepQueryParams, setPrevStepQueryParams] =
+    useState(stepQueryParams);
+  if (prevStepQueryParams !== stepQueryParams) {
+    setPrevStepQueryParams(stepQueryParams);
     setSelectedRows([]);
-  });
-  useEffect(() => {
-    resetSelectedRowsEffect();
-  }, [stepQueryParams]);
+  }
 
   return (
     <BAIFlex direction="column" gap="md" align="stretch">

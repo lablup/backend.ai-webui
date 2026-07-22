@@ -182,9 +182,12 @@ const UserSessionsMetrics: React.FC<UserSessionsMetricsProps> = () => {
   const [boardItems, setBoardItems] =
     useState<Array<BAIBoardItem>>(initialBoardItems);
 
-  useEffect(() => {
+  const [prevInitialBoardItems, setPrevInitialBoardItems] =
+    useState(initialBoardItems);
+  if (prevInitialBoardItems !== initialBoardItems) {
+    setPrevInitialBoardItems(initialBoardItems);
     setBoardItems(initialBoardItems);
-  }, [initialBoardItems]);
+  }
 
   return (
     <BAIFlex direction="column" align="stretch" gap="md">

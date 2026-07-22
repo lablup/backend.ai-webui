@@ -200,12 +200,11 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
     id: string;
     name: string;
   } | null>(null);
-  // Discard a stale resolution if the value moves on to something else.
-  useEffect(() => {
-    if (resolvedFallback && resolvedFallback.id !== value) {
-      setResolvedFallback(null);
-    }
-  }, [value, resolvedFallback]);
+  // A stale resolution converges (the next render sees `null`), so the
+  // render-time discard cannot loop.
+  if (resolvedFallback && resolvedFallback.id !== value) {
+    setResolvedFallback(null);
+  }
   const needsRelayLookup =
     !currentValueIsInFilteredOptions &&
     !fallbackFolder &&

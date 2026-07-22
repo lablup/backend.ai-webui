@@ -252,7 +252,6 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
   `;
 
   const loadGroups = useEffectEvent((domainName: string) => {
-    setGroupsLoaded(false);
     fetchQuery<BulkCreateUserFromCSVModalGroupsQuery>(
       relayEnvironment,
       groupsQuery,
@@ -274,6 +273,15 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
         logger.error('Failed to load groups for name resolution', err);
       });
   });
+
+  // A domain change disables validation until the new fetch resolves.
+  const [prevGroupsDomainName, setPrevGroupsDomainName] = useState(
+    globalDefaults.domainName,
+  );
+  if (prevGroupsDomainName !== globalDefaults.domainName) {
+    setPrevGroupsDomainName(globalDefaults.domainName);
+    setGroupsLoaded(false);
+  }
 
   useEffect(() => {
     loadGroups(globalDefaults.domainName);

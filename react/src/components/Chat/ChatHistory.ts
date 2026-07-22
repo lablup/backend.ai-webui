@@ -152,6 +152,7 @@ export function useHistory(id: string, provider: ChatProviderData) {
         return;
       }
 
+      // eslint-disable-next-line react-hooks/immutability -- intentional in-place mutation of cached chat data
       chat.chats = chat.chats.filter((chat) => chat.id !== id);
 
       updateHistory({ ...chat });
@@ -172,6 +173,7 @@ export function useHistory(id: string, provider: ChatProviderData) {
         return;
       }
 
+      // eslint-disable-next-line react-hooks/immutability -- intentional in-place mutation of cached chat data
       chat.chats[index] = _.merge({}, chat.chats[index], data);
 
       const currentChat = getChatById(chat.id);
@@ -205,6 +207,7 @@ export function useHistory(id: string, provider: ChatProviderData) {
 
       // Overwrite the last message if it is the same message
       if (lastMessage?.id === id) {
+        // eslint-disable-next-line react-hooks/immutability -- intentional in-place mutation of cached chat data
         chat.chats[index].messages = [
           ...chatData.messages.slice(0, -1),
           _.merge({}, lastMessage, {
@@ -231,6 +234,7 @@ export function useHistory(id: string, provider: ChatProviderData) {
 
         // Only update label if there's actual text content
         if (textContent) {
+          // eslint-disable-next-line react-hooks/immutability -- intentional in-place mutation of cached chat data
           chat.label = textContent;
         }
       }
@@ -267,6 +271,7 @@ export function useHistory(id: string, provider: ChatProviderData) {
         return;
       }
 
+      // eslint-disable-next-line react-hooks/immutability -- intentional in-place mutation of cached chat data
       chat.chats[index].messages = [];
 
       updateHistory({ ...chat });
@@ -279,6 +284,7 @@ export function useHistory(id: string, provider: ChatProviderData) {
     const cachedChat = getChatById(id);
     const chat = cachedChat ? cachedChat : createChat({ provider });
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- legacy id-change re-init kept as-is
     setChat(chat);
     setHistory([...chatHistoryCache.getAll().sort(sortHistoryByUpdatedAt)]);
     // eslint-disable-next-line react-hooks/exhaustive-deps

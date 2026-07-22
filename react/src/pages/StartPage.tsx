@@ -122,6 +122,7 @@ const StartPage: React.FC = () => {
   });
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- mount-only URL-param handling; must run as an effect
     badgeEventHandler();
   }, []);
 

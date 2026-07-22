@@ -101,12 +101,12 @@ function MainLayout() {
   const isHiddenBreadcrumb = _.last(matches)?.handle?.hideBreadcrumb ?? false;
   const { styles } = useStyle();
 
-  useEffect(() => {
-    if (sideCollapsed !== compactSidebarActive) {
-      setSideCollapsed(!!compactSidebarActive);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [compactSidebarActive]);
+  const [prevCompactSidebarActive, setPrevCompactSidebarActive] =
+    useState(compactSidebarActive);
+  if (prevCompactSidebarActive !== compactSidebarActive) {
+    setPrevCompactSidebarActive(compactSidebarActive);
+    setSideCollapsed(!!compactSidebarActive);
+  }
 
   useKeyboardShortcut(
     (event) => {

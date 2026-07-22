@@ -11,7 +11,7 @@ import { createStyles } from 'antd-style';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { BAIFlex, BAIModal, type BAIModalProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import React, { useEffect, useEffectEvent, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 // `.ant-modal-title` shrinks to its content by default, so an inner flex's
@@ -85,17 +85,15 @@ const StoragePermissionEditModal: React.FC<Props> = ({
   const [editedKeys, setEditedKeys] = useState<string[]>(initialKeys);
   const [isSaving, setIsSaving] = useState<boolean>(false);
 
-  // Reset editable state when the modal (re-)opens. `targets`/`permissionKeys`
-  // are read via an effect event so a new array identity from the parent does
-  // not spuriously re-fire the reset while the modal is open.
-  const resetState = useEffectEvent(() => {
-    setEditedKeys(initialKeys());
-  });
-  useEffect(() => {
+  // Tracks `open` (not the arrays) so a new `targets`/`permissionKeys`
+  // identity from the parent does not re-fire the reset while open.
+  const [prevOpen, setPrevOpen] = useState(open);
+  if (prevOpen !== open) {
+    setPrevOpen(open);
     if (open) {
-      resetState();
+      setEditedKeys(initialKeys());
     }
-  }, [open]);
+  }
 
   const handleOk = async (): Promise<void> => {
     if (hasMountWithoutFileOps(new Set(editedKeys))) {

@@ -55,6 +55,7 @@ const BAIProjectResourceGroupSelect: React.FC<
       resourceGroups.length > 0 &&
       !_.some(resourceGroups, (item) => item.name === controllableValue)
     ) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- transition-wrapped parent sync; can't run during render, no user event to move into
       setControllableValueWithTransition(undefined);
     }
   }, [resourceGroups, controllableValue, setControllableValueWithTransition]);
@@ -72,6 +73,7 @@ const BAIProjectResourceGroupSelect: React.FC<
 
   useEffect(() => {
     if (autoSelectDefault && autoSelectedOption && !controllableValue) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- transition-wrapped auto-select; can't run during render, no user event to move into
       setControllableValueWithTransition(
         autoSelectedOption.value,
         autoSelectedOption,

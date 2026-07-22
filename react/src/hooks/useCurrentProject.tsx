@@ -187,6 +187,10 @@ export const useSetCurrentProject = () => {
   const baiClient = useSuspendedBackendaiClient();
   const { writeRecentProjectGroup } = useRecentProjectGroup();
 
+  // The returned callback syncs the selected project to the external Backend.AI
+  // client singleton (an imperative API, not React state); the mutation is
+  // intentional and only runs from an event handler.
+  // eslint-disable-next-line react-hooks/immutability
   return useCallback(
     ({
       projectName,

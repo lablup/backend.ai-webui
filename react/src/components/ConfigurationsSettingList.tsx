@@ -142,6 +142,7 @@ const ConfigurationsSettingList = () => {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- mount-only settings fetch; setState only runs in the async response callbacks
     updateSettings();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

@@ -66,6 +66,7 @@ function useControllableState_deprecated<T = any>(
 
   const stateRef = useRef(initialValue);
   if (isControlled) {
+    // eslint-disable-next-line react-hooks/refs -- ref-backed state of this deprecated hook kept per review
     stateRef.current = value;
   }
 
@@ -83,6 +84,7 @@ function useControllableState_deprecated<T = any>(
     }
   }
 
+  // eslint-disable-next-line react-hooks/refs -- ref-backed state of this deprecated hook kept per review
   return [stateRef.current, useMemoizedFn(setState)] as const;
 }
 
@@ -102,7 +104,6 @@ function useMemoizedFn<T extends noop>(fn: T) {
 
   const memoizedFn = useRef<PickFunction<T>>(null);
   if (!memoizedFn.current) {
-    // eslint-disable-next-line react-hooks/unsupported-syntax
     memoizedFn.current = function (this, ...args) {
       return fnRef.current.apply(this, args);
     };

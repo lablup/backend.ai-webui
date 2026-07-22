@@ -968,6 +968,10 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
 
   useEffect(() => {
     if (effectiveMode === 'custom') {
+      // These prefill helpers call setFieldsValue on the freshly-mounted form
+      // (which only sticks post-mount) alongside tracking-state updates, so they
+      // must run in this mode-transition effect rather than during render.
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- setState is coupled to post-mount form prefill and must run in this effect
       consumePresetTransferPrefill();
       applySourcePrefillOnce();
       applyPendingLoadCurrent();
@@ -1068,8 +1072,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     // Image errors are shown on the manual-name input if the user typed one,
     // otherwise on the Environments/Version dropdown.
     const imageFieldName:
-      | ['environments', 'manual']
-      | ['environments', 'version'] = manualImageName
+      ['environments', 'manual'] | ['environments', 'version'] = manualImageName
       ? ['environments', 'manual']
       : ['environments', 'version'];
     if (!imageId && manualImageName) {
