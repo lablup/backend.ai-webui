@@ -121,9 +121,10 @@ test.describe(
       const firstRow = page.locator('.ant-table-tbody .ant-table-row').first();
       await expect(firstRow).toBeVisible();
 
-      // Edit (setting icon)
+      // Edit. The action is a lucide `SquarePenIcon` (FR-3331) whose title
+      // is exposed as the button's `aria-label` by BAINameActionCell.
       await expect(
-        firstRow.getByRole('button', { name: 'setting' }),
+        firstRow.getByRole('button', { name: 'Edit', exact: true }),
       ).toBeVisible();
       // Delete
       await expect(
@@ -277,9 +278,14 @@ test.describe(
         .filter({ hasText: REGISTRY_NAME });
       await expect(registryRow).toBeVisible();
 
-      // Open edit modal
-      await registryRow.getByRole('button', { name: 'setting' }).click();
-      const dialog = page.getByRole('dialog', { name: 'Modify Registry' });
+      // Open edit modal via the edit action's accessible name (the action
+      // title is exposed as `aria-label` by BAINameActionCell).
+      await registryRow
+        .getByRole('button', { name: 'Edit', exact: true })
+        .click();
+      // FR-3331 unified edit terminology: the modal title changed from
+      // "Modify Registry" to "Edit Registry".
+      const dialog = page.getByRole('dialog', { name: 'Edit Registry' });
       await expect(dialog).toBeVisible();
 
       // Verify Registry Name is disabled
@@ -563,9 +569,12 @@ test.describe(
       const firstRow = page.locator('.ant-table-tbody .ant-table-row').first();
       await expect(firstRow).toBeVisible();
 
-      // Open edit modal
-      await firstRow.getByRole('button', { name: 'setting' }).click();
-      const dialog = page.getByRole('dialog', { name: 'Modify Registry' });
+      // Open edit modal via the edit action's accessible name (the action
+      // title is exposed as `aria-label` by BAINameActionCell).
+      await firstRow.getByRole('button', { name: 'Edit', exact: true }).click();
+      // FR-3331 unified edit terminology: the modal title changed from
+      // "Modify Registry" to "Edit Registry".
+      const dialog = page.getByRole('dialog', { name: 'Edit Registry' });
       await expect(dialog).toBeVisible();
 
       // Registry Name is disabled
@@ -595,9 +604,13 @@ test.describe(
       page,
     }) => {
       const firstRow = page.locator('.ant-table-tbody .ant-table-row').first();
-      await firstRow.getByRole('button', { name: 'setting' }).click();
+      // Open the edit modal via the edit action's accessible name (the
+      // action title is exposed as `aria-label` by BAINameActionCell).
+      await firstRow.getByRole('button', { name: 'Edit', exact: true }).click();
 
-      const dialog = page.getByRole('dialog', { name: 'Modify Registry' });
+      // FR-3331 unified edit terminology: the modal title changed from
+      // "Modify Registry" to "Edit Registry".
+      const dialog = page.getByRole('dialog', { name: 'Edit Registry' });
       await expect(dialog).toBeVisible();
 
       // Password is disabled initially

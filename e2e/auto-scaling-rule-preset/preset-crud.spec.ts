@@ -582,7 +582,9 @@ test.describe(
       // Locate the preset row and click the Edit button
       const row = page.getByRole('row').filter({ hasText: presetName });
       await expect(row).toBeVisible({ timeout: 60000 });
-      await row.locator('button:has(.anticon-edit)').click();
+      // The edit action is a lucide `SquarePenIcon` (FR-3331) whose title
+      // is exposed as the button's `aria-label` by BAINameActionCell.
+      await row.getByRole('button', { name: 'Edit', exact: true }).click();
 
       // Verify modal opens with title "Edit Preset"
       // In this version of Ant Design, .ant-modal itself has role="dialog"
@@ -629,7 +631,9 @@ test.describe(
       // Locate the preset row and click Edit
       const row = page.getByRole('row').filter({ hasText: presetName });
       await expect(row).toBeVisible({ timeout: 60000 });
-      await row.locator('button:has(.anticon-edit)').click();
+      // The edit action is a lucide `SquarePenIcon` (FR-3331) whose title
+      // is exposed as the button's `aria-label` by BAINameActionCell.
+      await row.getByRole('button', { name: 'Edit', exact: true }).click();
 
       // In this version of Ant Design, .ant-modal itself has role="dialog"
       const modal = page.getByRole('dialog');
@@ -680,7 +684,9 @@ test.describe(
       // Locate the preset row and click Edit
       const row = page.getByRole('row').filter({ hasText: presetName });
       await expect(row).toBeVisible({ timeout: 60000 });
-      await row.locator('button:has(.anticon-edit)').click();
+      // The edit action is a lucide `SquarePenIcon` (FR-3331) whose title
+      // is exposed as the button's `aria-label` by BAINameActionCell.
+      await row.getByRole('button', { name: 'Edit', exact: true }).click();
 
       // In this version of Ant Design, .ant-modal itself has role="dialog"
       const modal = page.getByRole('dialog');
@@ -731,7 +737,9 @@ test.describe(
       // Locate the preset row and click Edit
       const row = page.getByRole('row').filter({ hasText: presetName });
       await expect(row).toBeVisible({ timeout: 60000 });
-      await row.locator('button:has(.anticon-edit)').click();
+      // The edit action is a lucide `SquarePenIcon` (FR-3331) whose title
+      // is exposed as the button's `aria-label` by BAINameActionCell.
+      await row.getByRole('button', { name: 'Edit', exact: true }).click();
 
       // In this version of Ant Design, .ant-modal itself has role="dialog"
       const modal = page.getByRole('dialog');
@@ -789,7 +797,9 @@ test.describe(
       // Locate the preset row and click Edit
       const row = page.getByRole('row').filter({ hasText: presetName });
       await expect(row).toBeVisible({ timeout: 60000 });
-      await row.locator('button:has(.anticon-edit)').click();
+      // The edit action is a lucide `SquarePenIcon` (FR-3331) whose title
+      // is exposed as the button's `aria-label` by BAINameActionCell.
+      await row.getByRole('button', { name: 'Edit', exact: true }).click();
 
       // In this version of Ant Design, .ant-modal itself has role="dialog"
       const modal = page.getByRole('dialog');
@@ -826,7 +836,9 @@ test.describe(
       // Locate the preset row and click Edit
       const row = page.getByRole('row').filter({ hasText: presetName });
       await expect(row).toBeVisible({ timeout: 60000 });
-      await row.locator('button:has(.anticon-edit)').click();
+      // The edit action is a lucide `SquarePenIcon` (FR-3331) whose title
+      // is exposed as the button's `aria-label` by BAINameActionCell.
+      await row.getByRole('button', { name: 'Edit', exact: true }).click();
 
       // In this version of Ant Design, .ant-modal itself has role="dialog"
       const modal = page.getByRole('dialog');
@@ -866,7 +878,9 @@ test.describe(
       // Locate the preset row and click Edit
       const row = page.getByRole('row').filter({ hasText: presetName });
       await expect(row).toBeVisible({ timeout: 60000 });
-      await row.locator('button:has(.anticon-edit)').click();
+      // The edit action is a lucide `SquarePenIcon` (FR-3331) whose title
+      // is exposed as the button's `aria-label` by BAINameActionCell.
+      await row.getByRole('button', { name: 'Edit', exact: true }).click();
 
       // In this version of Ant Design, .ant-modal itself has role="dialog"
       const modal = page.getByRole('dialog');

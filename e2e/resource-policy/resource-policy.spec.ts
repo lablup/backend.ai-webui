@@ -15,7 +15,14 @@ async function cleanupPolicy(page: Page, policyName: string) {
     const confirmInput = page.locator('#confirmText');
     await expect(confirmInput).toBeVisible();
     await confirmInput.fill(policyName);
-    await page.getByRole('button', { name: 'Delete', exact: true }).click();
+    // Scope to the confirm dialog: FR-3331 exposes each row's delete action
+    // title as aria-label="Delete" (BAINameActionCell), so a page-wide
+    // name:'Delete' now also matches every table row's delete button. The
+    // modal's Delete button is the intended target.
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: 'Delete', exact: true })
+      .click();
     await expect(row).toBeHidden({ timeout: 10000 });
   }
 }
@@ -50,7 +57,7 @@ async function createKeypairPolicy(page: Page, name: string) {
   });
   await expect(modal).toBeVisible();
   await modal.getByRole('textbox', { name: 'Name' }).fill(name);
-  await modal.getByRole('button', { name: 'OK' }).click();
+  await modal.getByRole('button', { name: 'Create' }).click();
   await expect(modal).toBeHidden({ timeout: 10000 });
   await expect(page.getByRole('row').filter({ hasText: name })).toBeVisible({
     timeout: 10000,
@@ -72,7 +79,7 @@ async function createUserPolicy(page: Page, name: string) {
   await modal
     .getByRole('spinbutton', { name: 'Max Customized Image Count' })
     .fill('3');
-  await modal.getByRole('button', { name: 'OK' }).click();
+  await modal.getByRole('button', { name: 'Create' }).click();
   // User policy creation makes an API call that may take time.
   await expect(modal).toBeHidden({ timeout: 30000 });
   await expect(page.getByRole('row').filter({ hasText: name })).toBeVisible({
@@ -87,7 +94,7 @@ async function createProjectPolicy(page: Page, name: string) {
   const modal = page.getByRole('dialog');
   await expect(modal).toBeVisible();
   await modal.getByRole('textbox', { name: 'Name' }).fill(name);
-  await modal.getByRole('button', { name: 'OK' }).click();
+  await modal.getByRole('button', { name: 'Create' }).click();
   await expect(modal).toBeHidden({ timeout: 10000 });
   await expect(page.getByRole('row').filter({ hasText: name })).toBeVisible({
     timeout: 10000,
@@ -108,7 +115,14 @@ async function deletePolicyAndVerify(page: Page, name: string) {
   await expect(confirmInput).toBeVisible();
   await confirmInput.fill(name);
 
-  await page.getByRole('button', { name: 'Delete', exact: true }).click();
+  // Scope to the confirm dialog: FR-3331 exposes each row's delete action
+  // title as aria-label="Delete" (BAINameActionCell), so a page-wide
+  // name:'Delete' now also matches every table row's delete button. The
+  // modal's Delete button is the intended target.
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: 'Delete', exact: true })
+    .click();
 
   await expect(page.getByRole('row').filter({ hasText: name })).toBeHidden({
     timeout: 10000,
@@ -147,14 +161,20 @@ test.describe(
         page.getByRole('columnheader', { name: 'Name' }),
       ).toBeVisible();
       await expect(
-        page.getByRole('columnheader', { name: 'Concurrency' }),
+        page.getByRole('columnheader', { name: 'Concurrent Sessions' }),
       ).toBeVisible();
       await expect(
         page.getByRole('columnheader', { name: 'Cluster Size' }),
       ).toBeVisible();
 
       // Verify default policy row exists
-      const defaultRow = page.getByRole('row').filter({ hasText: 'default' });
+      // Scope to tbody rows: a column header tooltip also contains the text
+      // "Default" (e.g. "Default For Unspecified"), which a plain
+      // getByRole('row') filter would match too via case-insensitive substring
+      // matching, causing a strict-mode violation.
+      const defaultRow = page
+        .locator('.ant-table-tbody .ant-table-row')
+        .filter({ hasText: 'default' });
       await expect(defaultRow).toBeVisible();
     });
 
@@ -177,11 +197,15 @@ test.describe(
       // Provision this test's own policy so it doesn't depend on the create test.
       await createKeypairPolicy(page, name);
 
-      // Find the test policy row, hover to reveal actions, and click setting
+      // Find the test policy row, hover to reveal actions, and click the
+      // edit action by its accessible name (the action title is exposed as
+      // the button's `aria-label` by BAINameActionCell — FR-3331).
       const policyRow = page.getByRole('row').filter({ hasText: name });
       await expect(policyRow).toBeVisible();
       await policyRow.getByRole('cell').first().hover();
-      await policyRow.getByRole('button', { name: 'setting' }).click();
+      await policyRow
+        .getByRole('button', { name: 'Edit', exact: true })
+        .click();
 
       // Verify Update dialog appears
       const modal = page.getByRole('dialog');
@@ -193,8 +217,8 @@ test.describe(
       });
       await clusterSizeInput.fill('2');
 
-      // Click OK
-      await modal.getByRole('button', { name: 'OK' }).click();
+      // Click Save (FR-3331 switched edit-form submits from "OK" to "Save")
+      await modal.getByRole('button', { name: 'Save' }).click();
 
       // Verify modal closes
       await expect(modal).toBeHidden({ timeout: 10000 });
@@ -240,7 +264,13 @@ test.describe(
       ).toBeVisible();
 
       // Verify default policy row exists
-      const defaultRow = page.getByRole('row').filter({ hasText: 'default' });
+      // Scope to tbody rows: a column header tooltip also contains the text
+      // "Default" (e.g. "Default For Unspecified"), which a plain
+      // getByRole('row') filter would match too via case-insensitive substring
+      // matching, causing a strict-mode violation.
+      const defaultRow = page
+        .locator('.ant-table-tbody .ant-table-row')
+        .filter({ hasText: 'default' });
       await expect(defaultRow).toBeVisible();
     });
 
@@ -287,7 +317,13 @@ test.describe(
       ).toBeVisible();
 
       // Verify default policy row
-      const defaultRow = page.getByRole('row').filter({ hasText: 'default' });
+      // Scope to tbody rows: a column header tooltip also contains the text
+      // "Default" (e.g. "Default For Unspecified"), which a plain
+      // getByRole('row') filter would match too via case-insensitive substring
+      // matching, causing a strict-mode violation.
+      const defaultRow = page
+        .locator('.ant-table-tbody .ant-table-row')
+        .filter({ hasText: 'default' });
       await expect(defaultRow).toBeVisible();
     });
 

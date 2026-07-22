@@ -97,9 +97,11 @@ test.describe(
       const firstRow = adminModelCardPage.getRowByName(cardName);
       await expect(firstRow).toBeVisible({ timeout: 15000 });
 
-      // Verify the name cell has setting and delete buttons
+      // Verify the name cell has edit and delete buttons. The edit action is
+      // a lucide `SquarePenIcon` (FR-3331) whose title is exposed as the
+      // button's `aria-label` by BAINameActionCell.
       await expect(
-        firstRow.getByRole('button', { name: 'setting' }),
+        firstRow.getByRole('button', { name: 'Edit', exact: true }),
       ).toBeVisible();
       await expect(
         firstRow.getByRole('button', { name: 'delete' }),
