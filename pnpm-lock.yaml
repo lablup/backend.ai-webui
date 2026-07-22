@@ -186,7 +186,7 @@ overrides:
   serialize-javascript: ^7.0.5
   uuid@^11: ^11.1.1
   uuid@^13: ^13.0.1
-  dompurify: ^3.4.11
+  dompurify: ^3.4.12
   qs: ^6.15.2
   '@babel/plugin-transform-modules-systemjs': ^7.29.4
   fast-uri@^3: ^3.1.2
@@ -825,8 +825,8 @@ importers:
         specifier: 'catalog:'
         version: 1.11.21
       dompurify:
-        specifier: ^3.4.11
-        version: 3.4.11
+        specifier: ^3.4.12
+        version: 3.4.12
       es-toolkit:
         specifier: ^1.49.0
         version: 1.49.0
@@ -7064,8 +7064,8 @@ packages:
     resolution: {integrity: sha512-IGBwjF7tNk3cwypFNH/7bfzBcgSCbaMOD3GsaY1AU/JRrnHnYgEM0+9kQt52iZxjNsjBtJYtao146V+f8jFZNw==}
     engines: {node: '>=10'}
 
-  dompurify@3.4.11:
-    resolution: {integrity: sha512-zhlUV12GsaRzMsf9q5M254YhA4+VuF0fG+QFqu6aYpoGlKtz+w8//jBcGVYBgQkR5GHjUomejY84AV+/uPbWdw==}
+  dompurify@3.4.12:
+    resolution: {integrity: sha512-zQvGet8Z2sWbQhCmfFz/T5QWH2oBmjnqK3qvOjaqaNLrLEF912WamU+ohnTp0TCep/MFVHpdJuCZEdFOdTnEFg==}
 
   dot-case@3.0.4:
     resolution: {integrity: sha512-Kv5nKlh6yRrdrGvxeJ2e5y2eRUpkUosIW4A2AS38zwSz27zu7ufDwQPi5Jhs3XAlGNetl3bmnGhQsMtkKJnj3w==}
@@ -18950,7 +18950,7 @@ snapshots:
 
   domain-browser@4.22.0: {}
 
-  dompurify@3.4.11:
+  dompurify@3.4.12:
     optionalDependencies:
       '@types/trusted-types': 2.0.7
 
@@ -21695,7 +21695,7 @@ snapshots:
       d3-sankey: 0.12.3
       dagre-d3-es: 7.0.14
       dayjs: 1.11.21
-      dompurify: 3.4.11
+      dompurify: 3.4.12
       es-toolkit: 1.49.0
       katex: 0.16.47
       khroma: 2.1.0
@@ -22103,7 +22103,7 @@ snapshots:
 
   monaco-editor@0.55.1:
     dependencies:
-      dompurify: 3.4.11
+      dompurify: 3.4.12
       marked: 14.0.0
 
   motion-dom@12.42.2:
@@ -25758,7 +25758,7 @@ time:
   cors@2.8.6: '2026-01-22T14:41:30.223Z'
   crypto-es@2.1.0: '2023-10-24T14:53:04.505Z'
   dayjs@1.11.21: '2026-05-26T05:46:12.427Z'
-  dompurify@3.4.11: '2026-06-17T10:33:28.065Z'
+  dompurify@3.4.12: '2026-07-11T12:11:29.337Z'
   dotenv@16.6.1: '2025-06-27T16:45:01.088Z'
   electron@39.8.10: '2026-05-05T20:55:08.499Z'
   es-toolkit@1.49.0: '2026-06-26T00:26:01.050Z'
