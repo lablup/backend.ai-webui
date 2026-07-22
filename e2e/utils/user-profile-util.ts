@@ -105,7 +105,16 @@ export async function removeAllIpTags(container: Locator) {
   // Backspace removes the last selected tag in an antd Select. Keep pressing
   // until none remain, with a safety cap so a stuck DOM can't cause an infinite
   // loop. The cap is generous enough for any realistic Allowed Client IP list.
-  const tags = formItem.locator('.ant-select-selection-item');
+  //
+  // The Allowed Client IP field uses a custom `tagRender` (see
+  // UserProfileSettingModal.tsx / UserSettingModal.tsx) that renders each
+  // selected value as a plain antd `<Tag>` (`.ant-tag`) instead of the
+  // default `.ant-select-selection-item` markup. Using the default selector
+  // here made `tags.count()` always resolve to 0, so the loop exited before
+  // ever pressing Backspace — a silent no-op that left the form untouched,
+  // caused the "no changes" message instead of a real update, and left the
+  // modal open (blocking any subsequent reopen click).
+  const tags = formItem.locator('.ant-tag');
   for (let safety = 0; safety < 100; safety++) {
     const remaining = await tags.count();
     if (remaining === 0) break;
