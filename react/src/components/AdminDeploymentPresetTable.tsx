@@ -3,9 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type {
-  AdminDeploymentPresetNodesFragment$data,
-  AdminDeploymentPresetNodesFragment$key,
-} from '../__generated__/AdminDeploymentPresetNodesFragment.graphql';
+  AdminDeploymentPresetTableFragment$data,
+  AdminDeploymentPresetTableFragment$key,
+} from '../__generated__/AdminDeploymentPresetTableFragment.graphql';
 import { DeleteFilled } from '@ant-design/icons';
 import {
   BAIColumnType,
@@ -26,7 +26,7 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 export type DeploymentPresetNodeInList = NonNullable<
-  AdminDeploymentPresetNodesFragment$data[number]
+  AdminDeploymentPresetTableFragment$data[number]
 >;
 
 const availablePresetSorterKeys = ['name', 'rank', 'createdAt'] as const;
@@ -40,11 +40,11 @@ const isEnableSorter = (key: string) => {
   return _.includes(availablePresetSorterKeys, key);
 };
 
-interface AdminDeploymentPresetNodesProps extends Omit<
+interface AdminDeploymentPresetTableProps extends Omit<
   BAITableProps<DeploymentPresetNodeInList>,
   'dataSource' | 'columns' | 'onChangeOrder'
 > {
-  presetsFrgmt: AdminDeploymentPresetNodesFragment$key;
+  presetsFrgmt: AdminDeploymentPresetTableFragment$key;
   customizeColumns?: (
     baseColumns: BAIColumnType<DeploymentPresetNodeInList>[],
   ) => BAIColumnType<DeploymentPresetNodeInList>[];
@@ -56,7 +56,7 @@ interface AdminDeploymentPresetNodesProps extends Omit<
   ) => void;
 }
 
-const AdminDeploymentPresetNodes: React.FC<AdminDeploymentPresetNodesProps> = ({
+const AdminDeploymentPresetTable: React.FC<AdminDeploymentPresetTableProps> = ({
   presetsFrgmt,
   customizeColumns,
   disableSorter,
@@ -70,7 +70,7 @@ const AdminDeploymentPresetNodes: React.FC<AdminDeploymentPresetNodesProps> = ({
 
   const presets = useFragment(
     graphql`
-      fragment AdminDeploymentPresetNodesFragment on DeploymentRevisionPreset
+      fragment AdminDeploymentPresetTableFragment on DeploymentRevisionPreset
       @relay(plural: true) {
         id @required(action: NONE)
         name @required(action: NONE)
@@ -273,4 +273,4 @@ const AdminDeploymentPresetNodes: React.FC<AdminDeploymentPresetNodesProps> = ({
   );
 };
 
-export default AdminDeploymentPresetNodes;
+export default AdminDeploymentPresetTable;

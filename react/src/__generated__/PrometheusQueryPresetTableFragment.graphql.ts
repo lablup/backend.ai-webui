@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d2f56a439e57ee8869789ab739f9fbbb>>
+ * @generated SignedSource<<3a607f622c3ae558059d3c14c9f86daa>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,7 +10,7 @@
 
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type PrometheusQueryPresetNodesFragment$data = ReadonlyArray<{
+export type PrometheusQueryPresetTableFragment$data = ReadonlyArray<{
   readonly category: {
     readonly id: string;
     readonly name: string;
@@ -30,11 +30,11 @@ export type PrometheusQueryPresetNodesFragment$data = ReadonlyArray<{
   readonly timeWindow: string | null | undefined;
   readonly updatedAt: string;
   readonly " $fragmentSpreads": FragmentRefs<"PrometheusQueryPresetEditorModalFragment">;
-  readonly " $fragmentType": "PrometheusQueryPresetNodesFragment";
+  readonly " $fragmentType": "PrometheusQueryPresetTableFragment";
 }>;
-export type PrometheusQueryPresetNodesFragment$key = ReadonlyArray<{
-  readonly " $data"?: PrometheusQueryPresetNodesFragment$data;
-  readonly " $fragmentSpreads": FragmentRefs<"PrometheusQueryPresetNodesFragment">;
+export type PrometheusQueryPresetTableFragment$key = ReadonlyArray<{
+  readonly " $data"?: PrometheusQueryPresetTableFragment$data;
+  readonly " $fragmentSpreads": FragmentRefs<"PrometheusQueryPresetTableFragment">;
 }>;
 
 const node: ReaderFragment = (function(){
@@ -58,7 +58,7 @@ return {
   "metadata": {
     "plural": true
   },
-  "name": "PrometheusQueryPresetNodesFragment",
+  "name": "PrometheusQueryPresetTableFragment",
   "selections": [
     (v0/*: any*/),
     (v1/*: any*/),
@@ -167,6 +167,6 @@ return {
 };
 })();
 
-(node as any).hash = "455118fe7944c6138727a6f6acfd47cb";
+(node as any).hash = "ccd8a8037083c18deb8d492b261cd634";
 
 export default node;

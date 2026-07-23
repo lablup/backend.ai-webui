@@ -24,7 +24,43 @@ import {
   toFixedWithTypeValidation,
   addNumberWithUnits,
   subNumberWithUnits,
+  convertFirstOrderByToString,
 } from './index';
+
+describe('convertFirstOrderByToString', () => {
+  it('returns null for empty, null, or undefined input', () => {
+    expect(convertFirstOrderByToString(undefined)).toBeNull();
+    expect(convertFirstOrderByToString(null)).toBeNull();
+    expect(convertFirstOrderByToString([])).toBeNull();
+    expect(convertFirstOrderByToString([{}])).toBeNull();
+  });
+  it('converts an ASC entry to a camelCase string with no prefix', () => {
+    expect(convertFirstOrderByToString([{ field: 'NAME', direction: 'ASC' }])).toBe(
+      'name',
+    );
+  });
+  it('prefixes a DESC entry with a minus sign', () => {
+    expect(convertFirstOrderByToString([{ field: 'NAME', direction: 'DESC' }])).toBe(
+      '-name',
+    );
+  });
+  it('camelCases SCREAMING_SNAKE_CASE enum fields', () => {
+    expect(
+      convertFirstOrderByToString([{ field: 'CREATED_AT', direction: 'ASC' }]),
+    ).toBe('createdAt');
+    expect(
+      convertFirstOrderByToString([{ field: 'CREATED_AT', direction: 'DESC' }]),
+    ).toBe('-createdAt');
+  });
+  it('uses only the first entry', () => {
+    expect(
+      convertFirstOrderByToString([
+        { field: 'NAME', direction: 'DESC' },
+        { field: 'CREATED_AT', direction: 'ASC' },
+      ]),
+    ).toBe('-name');
+  });
+});
 
 describe('isOutsideRange', () => {
   it('should return true if the value is less than the minimum', () => {

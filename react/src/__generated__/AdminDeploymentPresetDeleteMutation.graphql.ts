@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e2b0d12e9ee241317cf98b6b287954f0>>
+ * @generated SignedSource<<0d6ed3264e903db10a5568bf8035f68d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,20 +9,17 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type DeleteDeploymentInput = {
+export type AdminDeploymentPresetDeleteMutation$variables = {
   id: string;
 };
-export type AdminDeploymentListPageDeleteMutation$variables = {
-  input: DeleteDeploymentInput;
-};
-export type AdminDeploymentListPageDeleteMutation$data = {
-  readonly deleteModelDeployment: {
+export type AdminDeploymentPresetDeleteMutation$data = {
+  readonly adminDeleteDeploymentRevisionPreset: {
     readonly id: string;
   } | null | undefined;
 };
-export type AdminDeploymentListPageDeleteMutation = {
-  response: AdminDeploymentListPageDeleteMutation$data;
-  variables: AdminDeploymentListPageDeleteMutation$variables;
+export type AdminDeploymentPresetDeleteMutation = {
+  response: AdminDeploymentPresetDeleteMutation$data;
+  variables: AdminDeploymentPresetDeleteMutation$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -30,7 +27,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "input"
+    "name": "id"
   }
 ],
 v1 = [
@@ -39,13 +36,13 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "input",
-        "variableName": "input"
+        "name": "id",
+        "variableName": "id"
       }
     ],
-    "concreteType": "DeleteDeploymentPayload",
+    "concreteType": "DeleteDeploymentRevisionPresetPayload",
     "kind": "LinkedField",
-    "name": "deleteModelDeployment",
+    "name": "adminDeleteDeploymentRevisionPreset",
     "plural": false,
     "selections": [
       {
@@ -64,7 +61,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "AdminDeploymentListPageDeleteMutation",
+    "name": "AdminDeploymentPresetDeleteMutation",
     "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -73,20 +70,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "AdminDeploymentListPageDeleteMutation",
+    "name": "AdminDeploymentPresetDeleteMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "102d0bf1e8e60917d9d011759a41790c",
+    "cacheID": "9802c9f782ff33a151e9214c57ff7bc1",
     "id": null,
     "metadata": {},
-    "name": "AdminDeploymentListPageDeleteMutation",
+    "name": "AdminDeploymentPresetDeleteMutation",
     "operationKind": "mutation",
-    "text": "mutation AdminDeploymentListPageDeleteMutation(\n  $input: DeleteDeploymentInput!\n) {\n  deleteModelDeployment(input: $input) {\n    id\n  }\n}\n"
+    "text": "mutation AdminDeploymentPresetDeleteMutation(\n  $id: UUID!\n) {\n  adminDeleteDeploymentRevisionPreset(id: $id) {\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "2ecece6de837bfaf9eb7065300b85fba";
+(node as any).hash = "47a4cad7e6f8ed1b0d096523f1b3aadf";
 
 export default node;

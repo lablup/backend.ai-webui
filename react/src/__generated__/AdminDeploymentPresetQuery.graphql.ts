@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<079c40ad13707c84813ca28db8024f88>>
+ * @generated SignedSource<<f27ae6a82121f2077d921d9a02c909be>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -51,27 +51,27 @@ export type DeploymentRevisionPresetOrderBy = {
   direction?: string;
   field: DeploymentRevisionPresetOrderField;
 };
-export type AdminDeploymentPresetListPageQuery$variables = {
+export type AdminDeploymentPresetQuery$variables = {
   filter?: DeploymentRevisionPresetFilter | null | undefined;
   limit?: number | null | undefined;
   offset?: number | null | undefined;
   orderBy?: ReadonlyArray<DeploymentRevisionPresetOrderBy> | null | undefined;
 };
-export type AdminDeploymentPresetListPageQuery$data = {
+export type AdminDeploymentPresetQuery$data = {
   readonly deploymentRevisionPresets: {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly id: string;
         readonly name: string;
-        readonly " $fragmentSpreads": FragmentRefs<"AdminDeploymentPresetNodesFragment">;
+        readonly " $fragmentSpreads": FragmentRefs<"AdminDeploymentPresetTableFragment">;
       };
     }>;
   } | null | undefined;
 };
-export type AdminDeploymentPresetListPageQuery = {
-  response: AdminDeploymentPresetListPageQuery$data;
-  variables: AdminDeploymentPresetListPageQuery$variables;
+export type AdminDeploymentPresetQuery = {
+  response: AdminDeploymentPresetQuery$data;
+  variables: AdminDeploymentPresetQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -148,7 +148,7 @@ return {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "AdminDeploymentPresetListPageQuery",
+    "name": "AdminDeploymentPresetQuery",
     "selections": [
       {
         "alias": null,
@@ -180,7 +180,7 @@ return {
                   {
                     "args": null,
                     "kind": "FragmentSpread",
-                    "name": "AdminDeploymentPresetNodesFragment"
+                    "name": "AdminDeploymentPresetTableFragment"
                   }
                 ],
                 "storageKey": null
@@ -204,7 +204,7 @@ return {
       (v2/*: any*/)
     ],
     "kind": "Operation",
-    "name": "AdminDeploymentPresetListPageQuery",
+    "name": "AdminDeploymentPresetQuery",
     "selections": [
       {
         "alias": null,
@@ -412,16 +412,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "e010668333406a1ca2d16b2541b6a1d3",
+    "cacheID": "0268564a49c64dda3487228965ad3b7f",
     "id": null,
     "metadata": {},
-    "name": "AdminDeploymentPresetListPageQuery",
+    "name": "AdminDeploymentPresetQuery",
     "operationKind": "query",
-    "text": "query AdminDeploymentPresetListPageQuery(\n  $filter: DeploymentRevisionPresetFilter\n  $orderBy: [DeploymentRevisionPresetOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  deploymentRevisionPresets(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        name\n        ...AdminDeploymentPresetNodesFragment\n      }\n    }\n  }\n}\n\nfragment AdminDeploymentPresetNodesFragment on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n  }\n  image @since(version: \"26.4.4\") {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n  }\n  deploymentDefaults {\n    replicaCount\n    deploymentStrategy\n    openToPublic\n    revisionHistoryLimit\n  }\n  createdAt\n  updatedAt\n}\n"
+    "text": "query AdminDeploymentPresetQuery(\n  $filter: DeploymentRevisionPresetFilter\n  $orderBy: [DeploymentRevisionPresetOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  deploymentRevisionPresets(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        name\n        ...AdminDeploymentPresetTableFragment\n      }\n    }\n  }\n}\n\nfragment AdminDeploymentPresetTableFragment on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n  }\n  image @since(version: \"26.4.4\") {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n  }\n  deploymentDefaults {\n    replicaCount\n    deploymentStrategy\n    openToPublic\n    revisionHistoryLimit\n  }\n  createdAt\n  updatedAt\n}\n"
   }
 };
 })();
 
-(node as any).hash = "5fad3136d3763515c67dc5ad55ab6323";
+(node as any).hash = "1000908b843d647fc0cb73e6ed4c0da2";
 
 export default node;

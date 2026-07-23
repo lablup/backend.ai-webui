@@ -2,34 +2,22 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { AdminDeploymentListPageDeleteMutation } from '../__generated__/AdminDeploymentListPageDeleteMutation.graphql';
+import type { AdminDeploymentDeleteMutation } from '../__generated__/AdminDeploymentDeleteMutation.graphql';
 import type {
-  AdminDeploymentListPageQuery,
+  AdminDeploymentQuery as AdminDeploymentQueryType,
   DeploymentFilter,
   DeploymentOrderField,
   DeploymentStatus,
   OrderDirection,
-} from '../__generated__/AdminDeploymentListPageQuery.graphql';
-import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
-import BAIErrorBoundary from '../components/BAIErrorBoundary';
-import BAIRadioGroup from '../components/BAIRadioGroup';
-import DeploymentRevisionDetailDrawer from '../components/DeploymentRevisionDetailDrawer';
-import DeploymentSettingModal from '../components/DeploymentSettingModal';
-import PrometheusPresetTab from '../components/PrometheusPresetTab';
-import {
-  useSuspendedBackendaiClient,
-  useTabQuerySnapshot,
-  useWebUINavigate,
-} from '../hooks';
-import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
-import { useBAISettingUserState } from '../hooks/useBAISetting';
-import AdminDeploymentPresetListPage from './AdminDeploymentPresetListPage';
-import AdminModelCardListPage from './AdminModelCardListPage';
+} from '../__generated__/AdminDeploymentQuery.graphql';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
+import BAIRadioGroup from './BAIRadioGroup';
+import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
+import DeploymentSettingModal from './DeploymentSettingModal';
 import { DeleteFilled } from '@ant-design/icons';
-import { App, Skeleton, Typography } from 'antd';
-import type { CardTabListType } from 'antd/es/card';
+import { App, Typography } from 'antd';
 import {
-  BAICard,
   BAIDeleteConfirmModal,
   BAIDeploymentTagChips,
   BAIFlex,
@@ -37,10 +25,9 @@ import {
   BAIGraphQLPropertyFilter,
   BAIModelDeploymentNodes,
   BAINameActionCell,
+  type BAITableSettings,
   BAIUnmountAfterClose,
   DeploymentOrderValue,
-  INITIAL_FETCH_KEY,
-  availableDeploymentSorterValues,
   filterOutEmpty,
   filterOutNullAndUndefined,
   isDeploymentInStoppedCategory,
@@ -48,18 +35,77 @@ import {
   parseDeploymentOrder,
   toLocalId,
   useBAILogger,
-  useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { SquarePenIcon } from 'lucide-react';
-import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
-import React, { Suspense, useDeferredValue, useState } from 'react';
+import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
+import {
+  graphql,
+  PreloadedQuery,
+  useMutation,
+  usePreloadedQuery,
+  UseQueryLoaderLoadQueryOptions,
+} from 'react-relay';
 
 type DeploymentStatusCategory = 'running' | 'finished';
 
-const AdminDeploymentListPageContent: React.FC = () => {
+export const AdminDeploymentQuery = graphql`
+  query AdminDeploymentQuery(
+    $filter: DeploymentFilter
+    $orderBy: [DeploymentOrderBy!]
+    $limit: Int
+    $offset: Int
+  ) {
+    adminDeployments(
+      filter: $filter
+      orderBy: $orderBy
+      limit: $limit
+      offset: $offset
+    ) {
+      count
+      edges {
+        node {
+          id
+          ...BAIModelDeploymentNodesFragment
+          ...DeploymentSettingModal_deployment
+          metadata {
+            name
+            status
+          }
+          currentRevision @since(version: "26.4.3") {
+            id
+            revisionNumber
+            ...DeploymentRevisionDetail_revision
+          }
+        }
+      }
+    }
+  }
+`;
+
+export interface AdminDeploymentProps {
+  queryRef: PreloadedQuery<AdminDeploymentQueryType>;
+  onReload: (
+    variables: AdminDeploymentQueryType['variables'],
+    options?: UseQueryLoaderLoadQueryOptions,
+  ) => void;
+  tableSettings: BAITableSettings;
+}
+
+const finishedStatuses: ReadonlyArray<DeploymentStatus> = ['STOPPED'];
+const statusCategoryFilterFor = (
+  category: DeploymentStatusCategory,
+): DeploymentFilter =>
+  category === 'finished'
+    ? { status: { in: finishedStatuses } }
+    : { status: { notIn: finishedStatuses } };
+
+const AdminDeployment = ({
+  queryRef,
+  onReload,
+  tableSettings,
+}: AdminDeploymentProps) => {
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
@@ -73,114 +119,35 @@ const AdminDeploymentListPageContent: React.FC = () => {
   const [deletingDeploymentId, setDeletingDeploymentId] = useState<
     string | null
   >(null);
-  const [revisionDrawerDeploymentId, setRevisionDrawerDeploymentId] = useState<
-    string | null
-  >(null);
+  const [drawerRevisionId, setDrawerRevisionId] = useState<string | null>(null);
 
   const supportsExtendedFilter = baiClient.supports(
     'model-deployment-extended-filter',
   );
 
-  const {
-    baiPaginationOption,
-    tablePaginationOption,
-    setTablePaginationOption,
-  } = useBAIPaginationOptionStateOnSearchParam({
-    current: 1,
-    pageSize: 10,
-  });
+  const mergedFilter = queryRef.variables.filter as DeploymentFilter | undefined;
+  const statusCategory: DeploymentStatusCategory = mergedFilter?.status?.in?.includes(
+    'STOPPED',
+  )
+    ? 'finished'
+    : 'running';
+  const userFilter = _.omit(mergedFilter, 'status') as DeploymentFilter;
 
-  const [queryParams, setQueryParams] = useQueryStates(
-    {
-      filter: parseAsJson<DeploymentFilter>((value) =>
-        typeof value === 'object' && value !== null && !Array.isArray(value)
-          ? (value as DeploymentFilter)
-          : ({} as DeploymentFilter),
-      ),
-      order: parseAsStringLiteral(availableDeploymentSorterValues),
-      statusCategory: parseAsStringLiteral<DeploymentStatusCategory>([
-        'running',
-        'finished',
-      ]).withDefault('running'),
-    },
-    { history: 'replace' },
-  );
+  const orderEntry = queryRef.variables.orderBy?.[0];
+  const order = orderEntry
+    ? (`${orderEntry.direction === 'DESC' ? '-' : ''}${orderEntry.field}` as DeploymentOrderValue)
+    : undefined;
 
-  const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
-    'table_column_overrides.AdminDeploymentListPage',
-  );
+  const pageSize = queryRef.variables.limit ?? 10;
+  const offset = queryRef.variables.offset ?? 0;
+  const current = pageSize ? Math.floor(offset / pageSize) + 1 : 1;
 
-  const [fetchKey, updateFetchKey] = useFetchKey();
+  const deferredQueryRef = useDeferredValue(queryRef);
+  const isRefetching = deferredQueryRef !== queryRef;
 
-  const finishedStatuses: ReadonlyArray<DeploymentStatus> = ['STOPPED'];
-  const statusCategoryFilter: DeploymentFilter =
-    queryParams.statusCategory === 'finished'
-      ? { status: { in: finishedStatuses } }
-      : { status: { notIn: finishedStatuses } };
-
-  const sort = parseDeploymentOrder(queryParams.order);
-  const queryVariables = {
-    filter: {
-      ...(queryParams.filter ?? {}),
-      ...statusCategoryFilter,
-    },
-    orderBy: sort
-      ? [
-          {
-            field: sort.field as DeploymentOrderField,
-            direction: sort.direction as OrderDirection,
-          },
-        ]
-      : undefined,
-    limit: baiPaginationOption.limit,
-    offset: baiPaginationOption.offset,
-  };
-
-  const deferredQueryVariables = useDeferredValue(queryVariables);
-  const deferredFetchKey = useDeferredValue(fetchKey);
-
-  const { adminDeployments } = useLazyLoadQuery<AdminDeploymentListPageQuery>(
-    graphql`
-      query AdminDeploymentListPageQuery(
-        $filter: DeploymentFilter
-        $orderBy: [DeploymentOrderBy!]
-        $limit: Int
-        $offset: Int
-      ) {
-        adminDeployments(
-          filter: $filter
-          orderBy: $orderBy
-          limit: $limit
-          offset: $offset
-        ) {
-          count
-          edges {
-            node {
-              id
-              ...BAIModelDeploymentNodesFragment
-              ...DeploymentSettingModal_deployment
-              metadata {
-                name
-                status
-              }
-              currentRevision @since(version: "26.4.3") {
-                id
-                revisionNumber
-                ...DeploymentRevisionDetail_revision
-              }
-            }
-          }
-        }
-      }
-    `,
-    deferredQueryVariables,
-    {
-      fetchPolicy:
-        deferredFetchKey === INITIAL_FETCH_KEY
-          ? 'store-and-network'
-          : 'network-only',
-      fetchKey: deferredFetchKey,
-    },
+  const { adminDeployments } = usePreloadedQuery<AdminDeploymentQueryType>(
+    AdminDeploymentQuery,
+    deferredQueryRef,
   );
 
   const deploymentNodes = filterOutNullAndUndefined(
@@ -195,18 +162,15 @@ const AdminDeploymentListPageContent: React.FC = () => {
     deletingDeploymentId == null
       ? null
       : (deploymentNodes.find((n) => n.id === deletingDeploymentId) ?? null);
-  const drawerRevisionFrgmt =
-    revisionDrawerDeploymentId == null
+  const drawerRevision =
+    drawerRevisionId == null
       ? null
-      : (deploymentNodes.find((n) => n.id === revisionDrawerDeploymentId)
+      : (deploymentNodes.find((n) => n.id === drawerRevisionId)
           ?.currentRevision ?? null);
 
-  const isLoading =
-    deferredQueryVariables !== queryVariables || deferredFetchKey !== fetchKey;
-
   const [commitDeleteMutation, isInFlightDeleteMutation] =
-    useMutation<AdminDeploymentListPageDeleteMutation>(graphql`
-      mutation AdminDeploymentListPageDeleteMutation(
+    useMutation<AdminDeploymentDeleteMutation>(graphql`
+      mutation AdminDeploymentDeleteMutation(
         $input: DeleteDeploymentInput!
       ) {
         deleteModelDeployment(input: $input) {
@@ -280,10 +244,21 @@ const AdminDeploymentListPageContent: React.FC = () => {
         <BAIFlex justify="between" wrap="wrap" gap="sm">
           <BAIFlex gap="sm" align="start" wrap="wrap" style={{ flexShrink: 1 }}>
             <BAIRadioGroup
-              value={queryParams.statusCategory}
+              value={statusCategory}
               onChange={(e) => {
-                setQueryParams({ statusCategory: e.target.value });
-                setTablePaginationOption({ current: 1 });
+                const nextCategory = e.target
+                  .value as DeploymentStatusCategory;
+                onReload(
+                  {
+                    ...queryRef.variables,
+                    filter: {
+                      ...userFilter,
+                      ...statusCategoryFilterFor(nextCategory),
+                    },
+                    offset: 0,
+                  },
+                  { fetchPolicy: 'network-only' },
+                );
               }}
               options={[
                 { label: t('deployment.Running'), value: 'running' },
@@ -295,43 +270,73 @@ const AdminDeploymentListPageContent: React.FC = () => {
             />
             <BAIGraphQLPropertyFilter<DeploymentFilter>
               filterProperties={filterProperties}
-              value={queryParams.filter ?? undefined}
+              value={userFilter ?? undefined}
               onChange={(value) => {
-                setQueryParams({ filter: value ?? null });
-                setTablePaginationOption({ current: 1 });
+                onReload(
+                  {
+                    ...queryRef.variables,
+                    filter: {
+                      ...(value ?? {}),
+                      ...statusCategoryFilterFor(statusCategory),
+                    },
+                    offset: 0,
+                  },
+                  { fetchPolicy: 'network-only' },
+                );
               }}
             />
           </BAIFlex>
           <AutoUpdateFetchKeyButton
             settingId="admin-deployment-list"
             defaultAutoUpdateDelay={15_000}
-            value={fetchKey}
-            onChange={updateFetchKey}
-            loading={isLoading}
+            onChange={() =>
+              onReload(queryRef.variables, { fetchPolicy: 'network-only' })
+            }
+            loading={isRefetching}
           />
         </BAIFlex>
         <BAIModelDeploymentNodes
           deploymentsFrgmt={deploymentNodes}
-          loading={isLoading}
-          order={queryParams.order}
-          onChangeOrder={(order) => {
-            setQueryParams({ order: (order as DeploymentOrderValue) ?? null });
+          loading={isRefetching}
+          order={order}
+          onChangeOrder={(nextOrder) => {
+            const sort = parseDeploymentOrder(nextOrder ?? undefined);
+            onReload(
+              {
+                ...queryRef.variables,
+                orderBy: sort
+                  ? [
+                      {
+                        field: sort.field as DeploymentOrderField,
+                        direction: sort.direction as OrderDirection,
+                      },
+                    ]
+                  : undefined,
+                offset: 0,
+              },
+              { fetchPolicy: 'network-only' },
+            );
           }}
           pagination={{
-            current: tablePaginationOption.current,
-            pageSize: tablePaginationOption.pageSize,
+            current,
+            pageSize,
             total,
-            onChange: (current, pageSize) =>
-              setTablePaginationOption({ current, pageSize }),
+            onChange: (nextCurrent, nextPageSize) =>
+              onReload(
+                {
+                  ...queryRef.variables,
+                  limit: nextPageSize,
+                  offset:
+                    nextCurrent > 1 ? (nextCurrent - 1) * nextPageSize : 0,
+                },
+                { fetchPolicy: 'network-only' },
+              ),
           }}
-          tableSettings={{
-            columnOverrides,
-            onColumnOverridesChange: setColumnOverrides,
-          }}
-          // Mirror the column set the legacy `DeploymentList` (mode="admin")
-          // exposed: drop newly-introduced keys (replicas / currentRevisionId
-          // / preferredDomainName / strategyType) and restore the original
-          // default-visible set, including `owner`.
+          tableSettings={tableSettings}
+          // Drop the replicas / currentRevisionId / preferredDomainName /
+          // strategyType columns entirely and show `owner` by default,
+          // alongside name/currentRevisionNumber/status/replicaSummary/
+          // model/createdAt.
           customizeColumns={(base) => {
             const allowedKeys = [
               'name',
@@ -362,9 +367,8 @@ const AdminDeploymentListPageContent: React.FC = () => {
             return base
               .filter((col) => allowedKeys.includes(col.key as string))
               .map((col) => {
-                let next = col;
                 if (col.key === 'name') {
-                  next = {
+                  return {
                     ...col,
                     render: (_value, record) => {
                       const destroying = isDeploymentInStoppedCategory(
@@ -401,30 +405,35 @@ const AdminDeploymentListPageContent: React.FC = () => {
                       );
                     },
                   };
-                } else if (col.key === 'currentRevisionNumber') {
-                  next = {
+                }
+                const defaultHidden = !defaultVisibleKeys.has(
+                  col.key as string,
+                );
+                if (col.key === 'currentRevisionNumber') {
+                  return {
                     ...col,
+                    defaultHidden,
                     render: (_value, record) => {
-                      const revision = deploymentNodes.find(
+                      const revisionNumber = deploymentNodes.find(
                         (n) => n.id === record.id,
-                      )?.currentRevision;
-                      if (revision?.revisionNumber == null) {
+                      )?.currentRevision?.revisionNumber;
+                      if (revisionNumber == null) {
                         return (
                           <Typography.Text type="secondary">-</Typography.Text>
                         );
                       }
                       return (
                         <Typography.Link
-                          onClick={() =>
-                            setRevisionDrawerDeploymentId(record.id)
-                          }
-                        >{`#${revision.revisionNumber}`}</Typography.Link>
+                          onClick={() => setDrawerRevisionId(record.id)}
+                        >{`#${revisionNumber}`}</Typography.Link>
                       );
                     },
                   };
-                } else if (col.key === 'tags') {
-                  next = {
+                }
+                if (col.key === 'tags') {
+                  return {
                     ...col,
+                    defaultHidden,
                     render: (_value, record) => (
                       <BAIDeploymentTagChips
                         metadataFrgmt={record.metadata}
@@ -446,11 +455,7 @@ const AdminDeploymentListPageContent: React.FC = () => {
                     ),
                   };
                 }
-                if (col.key === 'name') return next;
-                return {
-                  ...next,
-                  defaultHidden: !defaultVisibleKeys.has(col.key as string),
-                };
+                return { ...col, defaultHidden };
               });
           }}
         />
@@ -460,7 +465,9 @@ const AdminDeploymentListPageContent: React.FC = () => {
         deploymentFrgmt={editingDeployment ?? null}
         onRequestClose={(success) => {
           setEditingDeploymentId(null);
-          if (success) updateFetchKey();
+          if (success) {
+            onReload(queryRef.variables, { fetchPolicy: 'network-only' });
+          }
         }}
       />
       <BAIDeleteConfirmModal
@@ -499,7 +506,7 @@ const AdminDeploymentListPageContent: React.FC = () => {
               }
               message.success(t('deployment.DeploymentDeleted'));
               setDeletingDeploymentId(null);
-              updateFetchKey();
+              onReload(queryRef.variables, { fetchPolicy: 'network-only' });
             },
             onError: (error) => {
               logger.error('Failed to delete deployment', error);
@@ -511,82 +518,13 @@ const AdminDeploymentListPageContent: React.FC = () => {
       />
       <BAIUnmountAfterClose>
         <DeploymentRevisionDetailDrawer
-          open={!!drawerRevisionFrgmt}
-          revisionFrgmt={drawerRevisionFrgmt}
-          onClose={() => setRevisionDrawerDeploymentId(null)}
+          open={!!drawerRevision}
+          revisionFrgmt={drawerRevision}
+          onClose={() => setDrawerRevisionId(null)}
         />
       </BAIUnmountAfterClose>
     </>
   );
 };
 
-const tabParser = parseAsStringLiteral([
-  'deployments',
-  'model-store-management',
-  'prometheus-preset',
-  'deployment-presets',
-]).withDefault('deployments');
-
-const AdminDeploymentListPage: React.FC = () => {
-  'use memo';
-  const { t } = useTranslation();
-  const { currentTab, onTabChange } = useTabQuerySnapshot(tabParser);
-  const baiClient = useSuspendedBackendaiClient();
-  const isPrometheusPresetSupported = baiClient.supports(
-    'prometheus-query-preset',
-  );
-  const isDeploymentPresetSupported = baiClient.supports('deployment-preset');
-
-  const tabItems: CardTabListType[] = filterOutEmpty([
-    {
-      key: 'deployments',
-      label: t('webui.menu.Deployments'),
-    },
-    {
-      key: 'model-store-management',
-      label: t('adminModelCard.ModelStoreManagement'),
-    },
-    isPrometheusPresetSupported && {
-      key: 'prometheus-preset',
-      label: t('webui.menu.PrometheusPreset'),
-    },
-    isDeploymentPresetSupported && {
-      key: 'deployment-presets',
-      label: t('adminDeploymentPreset.TabTitle'),
-    },
-  ]);
-
-  return (
-    <BAICard
-      variant="borderless"
-      activeTabKey={currentTab}
-      onTabChange={onTabChange}
-      tabList={tabItems}
-    >
-      <Suspense fallback={<Skeleton active />}>
-        {currentTab === 'deployments' && (
-          <BAIErrorBoundary>
-            <AdminDeploymentListPageContent />
-          </BAIErrorBoundary>
-        )}
-        {currentTab === 'model-store-management' && (
-          <BAIErrorBoundary>
-            <AdminModelCardListPage />
-          </BAIErrorBoundary>
-        )}
-        {currentTab === 'prometheus-preset' && isPrometheusPresetSupported && (
-          <BAIErrorBoundary>
-            <PrometheusPresetTab />
-          </BAIErrorBoundary>
-        )}
-        {currentTab === 'deployment-presets' && isDeploymentPresetSupported && (
-          <BAIErrorBoundary>
-            <AdminDeploymentPresetListPage />
-          </BAIErrorBoundary>
-        )}
-      </Suspense>
-    </BAICard>
-  );
-};
-
-export default AdminDeploymentListPage;
+export default AdminDeployment;

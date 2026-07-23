@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<93b75220d353e7ee0714bd0ab441e8ca>>
+ * @generated SignedSource<<566c191f2dcf1be4dda04f34b888b77c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,18 +12,18 @@ import { ConcreteRequest } from 'relay-runtime';
 export type DeleteModelCardV2Options = {
   deleteAssociatedVfolder?: boolean;
 };
-export type AdminModelCardListPageDeleteMutation$variables = {
+export type AdminModelCardTableDeleteMutation$variables = {
   id: string;
   options?: DeleteModelCardV2Options | null | undefined;
 };
-export type AdminModelCardListPageDeleteMutation$data = {
+export type AdminModelCardTableDeleteMutation$data = {
   readonly adminDeleteModelCardV2: {
     readonly id: string;
   } | null | undefined;
 };
-export type AdminModelCardListPageDeleteMutation = {
-  response: AdminModelCardListPageDeleteMutation$data;
-  variables: AdminModelCardListPageDeleteMutation$variables;
+export type AdminModelCardTableDeleteMutation = {
+  response: AdminModelCardTableDeleteMutation$data;
+  variables: AdminModelCardTableDeleteMutation$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -75,7 +75,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "AdminModelCardListPageDeleteMutation",
+    "name": "AdminModelCardTableDeleteMutation",
     "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -84,20 +84,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "AdminModelCardListPageDeleteMutation",
+    "name": "AdminModelCardTableDeleteMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "6ea2d9087d639c271482822ea5f5afa4",
+    "cacheID": "04868dfdeba9bdca08f35c320ad8c48c",
     "id": null,
     "metadata": {},
-    "name": "AdminModelCardListPageDeleteMutation",
+    "name": "AdminModelCardTableDeleteMutation",
     "operationKind": "mutation",
-    "text": "mutation AdminModelCardListPageDeleteMutation(\n  $id: UUID!\n  $options: DeleteModelCardV2Options\n) {\n  adminDeleteModelCardV2(id: $id, options: $options) {\n    id\n  }\n}\n"
+    "text": "mutation AdminModelCardTableDeleteMutation(\n  $id: UUID!\n  $options: DeleteModelCardV2Options\n) {\n  adminDeleteModelCardV2(id: $id, options: $options) {\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "5f8217e5136af15e1406d703c47af5b4";
+(node as any).hash = "2b62822b4d304967b469220cf47ca93c";
 
 export default node;

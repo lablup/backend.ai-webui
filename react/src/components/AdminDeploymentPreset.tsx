@@ -2,20 +2,17 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { AdminDeploymentPresetListPageDeleteMutation } from '../__generated__/AdminDeploymentPresetListPageDeleteMutation.graphql';
+import type { AdminDeploymentPresetDeleteMutation } from '../__generated__/AdminDeploymentPresetDeleteMutation.graphql';
 import type {
-  AdminDeploymentPresetListPageQuery,
+  AdminDeploymentPresetQuery as AdminDeploymentPresetQueryType,
   DeploymentRevisionPresetFilter,
   DeploymentRevisionPresetOrderBy,
-} from '../__generated__/AdminDeploymentPresetListPageQuery.graphql';
-import AdminDeploymentPresetNodes, {
-  availablePresetSorterValues,
+} from '../__generated__/AdminDeploymentPresetQuery.graphql';
+import AdminDeploymentPresetTable, {
   type DeploymentPresetNodeInList,
-} from '../components/AdminDeploymentPresetNodes';
+} from '../components/AdminDeploymentPresetTable';
 import { convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
-import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
-import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { App, theme } from 'antd';
 import {
   BAIButton,
@@ -23,20 +20,62 @@ import {
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
-  INITIAL_FETCH_KEY,
+  type BAITableSettings,
   toLocalId,
   useBAILogger,
-  useFetchKey,
   filterOutNullAndUndefined,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { PlusIcon } from 'lucide-react';
-import { parseAsJson, parseAsString, useQueryStates } from 'nuqs';
-import React, { useDeferredValue, useState } from 'react';
+import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
+import {
+  graphql,
+  PreloadedQuery,
+  useMutation,
+  usePreloadedQuery,
+  UseQueryLoaderLoadQueryOptions,
+} from 'react-relay';
 
-const AdminDeploymentPresetListPage: React.FC = () => {
+export const AdminDeploymentPresetQuery = graphql`
+  query AdminDeploymentPresetQuery(
+    $filter: DeploymentRevisionPresetFilter
+    $orderBy: [DeploymentRevisionPresetOrderBy!]
+    $limit: Int
+    $offset: Int
+  ) {
+    deploymentRevisionPresets(
+      filter: $filter
+      orderBy: $orderBy
+      limit: $limit
+      offset: $offset
+    ) {
+      count
+      edges {
+        node {
+          id
+          name
+          ...AdminDeploymentPresetTableFragment
+        }
+      }
+    }
+  }
+`;
+
+export interface AdminDeploymentPresetProps {
+  queryRef: PreloadedQuery<AdminDeploymentPresetQueryType>;
+  onReload: (
+    variables: AdminDeploymentPresetQueryType['variables'],
+    options?: UseQueryLoaderLoadQueryOptions,
+  ) => void;
+  tableSettings: BAITableSettings;
+}
+
+const AdminDeploymentPreset = ({
+  queryRef,
+  onReload,
+  tableSettings,
+}: AdminDeploymentPresetProps) => {
   'use memo';
 
   const { t } = useTranslation();
@@ -46,86 +85,26 @@ const AdminDeploymentPresetListPage: React.FC = () => {
   const baiClient = useSuspendedBackendaiClient();
   const webuiNavigate = useWebUINavigate();
 
-  const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
-    'table_column_overrides.AdminDeploymentPresetListPage',
-  );
-
   const [deletingPreset, setDeletingPreset] =
     useState<DeploymentPresetNodeInList | null>(null);
 
-  const {
-    baiPaginationOption,
-    tablePaginationOption,
-    setTablePaginationOption,
-  } = useBAIPaginationOptionStateOnSearchParam({
-    current: 1,
-    pageSize: 10,
-  });
+  const filter = queryRef.variables.filter ?? undefined;
+  const pageSize = queryRef.variables.limit ?? 10;
+  const offset = queryRef.variables.offset ?? 0;
+  const current = pageSize ? Math.floor(offset / pageSize) + 1 : 1;
 
-  const [queryParams, setQueryParams] = useQueryStates(
-    {
-      order: parseAsString.withDefault('-createdAt'),
-      filter: parseAsJson<DeploymentRevisionPresetFilter>(
-        (value) => value as DeploymentRevisionPresetFilter,
-      ),
-    },
-    {
-      history: 'replace',
-    },
-  );
+  const deferredQueryRef = useDeferredValue(queryRef);
+  const isRefetching = deferredQueryRef !== queryRef;
 
-  const [fetchKey, updateFetchKey] = useFetchKey();
-
-  const queryVariables = {
-    filter: queryParams.filter ?? undefined,
-    orderBy: convertToOrderBy<DeploymentRevisionPresetOrderBy>(
-      queryParams.order,
-    ),
-    limit: baiPaginationOption.limit,
-    offset: baiPaginationOption.offset,
-  };
-
-  const deferredQueryVariables = useDeferredValue(queryVariables);
-  const deferredFetchKey = useDeferredValue(fetchKey);
-
-  const queryRef = useLazyLoadQuery<AdminDeploymentPresetListPageQuery>(
-    graphql`
-      query AdminDeploymentPresetListPageQuery(
-        $filter: DeploymentRevisionPresetFilter
-        $orderBy: [DeploymentRevisionPresetOrderBy!]
-        $limit: Int
-        $offset: Int
-      ) {
-        deploymentRevisionPresets(
-          filter: $filter
-          orderBy: $orderBy
-          limit: $limit
-          offset: $offset
-        ) {
-          count
-          edges {
-            node {
-              id
-              name
-              ...AdminDeploymentPresetNodesFragment
-            }
-          }
-        }
-      }
-    `,
-    deferredQueryVariables,
-    {
-      fetchPolicy:
-        deferredFetchKey === INITIAL_FETCH_KEY
-          ? 'store-and-network'
-          : 'network-only',
-      fetchKey: deferredFetchKey,
-    },
-  );
+  const { deploymentRevisionPresets } =
+    usePreloadedQuery<AdminDeploymentPresetQueryType>(
+      AdminDeploymentPresetQuery,
+      deferredQueryRef,
+    );
 
   const [commitDeletePreset] =
-    useMutation<AdminDeploymentPresetListPageDeleteMutation>(graphql`
-      mutation AdminDeploymentPresetListPageDeleteMutation($id: UUID!) {
+    useMutation<AdminDeploymentPresetDeleteMutation>(graphql`
+      mutation AdminDeploymentPresetDeleteMutation($id: UUID!) {
         adminDeleteDeploymentRevisionPreset(id: $id) {
           id
         }
@@ -148,9 +127,6 @@ const AdminDeploymentPresetListPage: React.FC = () => {
 
   const isSupported = baiClient.supports('deployment-preset');
 
-  const isLoading =
-    deferredQueryVariables !== queryVariables || deferredFetchKey !== fetchKey;
-
   return (
     <BAIFlex direction="column" align="stretch" gap={'sm'}>
       <BAIFlex justify="between" wrap="wrap" gap={'sm'}>
@@ -169,20 +145,21 @@ const AdminDeploymentPresetListPage: React.FC = () => {
                 fixedOperator: 'equals',
               },
             ]}
-            value={queryParams.filter ?? undefined}
+            value={filter as DeploymentRevisionPresetFilter | undefined}
             onChange={(value) => {
-              setQueryParams({ filter: value ?? null });
-              setTablePaginationOption({ current: 1 });
+              onReload(
+                { ...queryRef.variables, filter: value ?? undefined, offset: 0 },
+                { fetchPolicy: 'network-only' },
+              );
             }}
           />
         </BAIFlex>
         <BAIFlex gap={'xs'}>
           <BAIFetchKeyButton
-            loading={isLoading}
-            value={fetchKey}
-            onChange={(newFetchKey) => {
-              updateFetchKey(newFetchKey);
-            }}
+            loading={isRefetching}
+            onChange={() =>
+              onReload(queryRef.variables, { fetchPolicy: 'network-only' })
+            }
           />
           <BAIButton
             type="primary"
@@ -194,30 +171,41 @@ const AdminDeploymentPresetListPage: React.FC = () => {
         </BAIFlex>
       </BAIFlex>
       {isSupported ? (
-        <AdminDeploymentPresetNodes
+        <AdminDeploymentPresetTable
           presetsFrgmt={filterOutNullAndUndefined(
-            _.map(queryRef.deploymentRevisionPresets?.edges, 'node'),
+            _.map(deploymentRevisionPresets?.edges, 'node'),
           )}
-          loading={isLoading}
+          loading={isRefetching}
           onEdit={handleEditPreset}
           onDelete={handleDeletePreset}
-          tableSettings={{
-            columnOverrides: columnOverrides,
-            onColumnOverridesChange: setColumnOverrides,
-          }}
+          tableSettings={tableSettings}
           pagination={{
-            pageSize: tablePaginationOption.pageSize,
-            current: tablePaginationOption.current,
-            total: queryRef.deploymentRevisionPresets?.count ?? 0,
-            onChange: (current, pageSize) => {
-              setTablePaginationOption({ current, pageSize });
+            pageSize,
+            current,
+            total: deploymentRevisionPresets?.count ?? 0,
+            onChange: (nextCurrent, nextPageSize) => {
+              onReload(
+                {
+                  ...queryRef.variables,
+                  limit: nextPageSize,
+                  offset:
+                    nextCurrent > 1 ? (nextCurrent - 1) * nextPageSize : 0,
+                },
+                { fetchPolicy: 'network-only' },
+              );
             },
           }}
           onChangeOrder={(order) => {
-            setQueryParams({
-              order:
-                (order as (typeof availablePresetSorterValues)[number]) || null,
-            });
+            onReload(
+              {
+                ...queryRef.variables,
+                orderBy: convertToOrderBy<DeploymentRevisionPresetOrderBy>(
+                  order ?? undefined,
+                ),
+                offset: 0,
+              },
+              { fetchPolicy: 'network-only' },
+            );
           }}
         />
       ) : (
@@ -250,7 +238,7 @@ const AdminDeploymentPresetListPage: React.FC = () => {
                   }
                   message.success(t('adminDeploymentPreset.PresetDeleted'));
                   setDeletingPreset(null);
-                  updateFetchKey();
+                  onReload(queryRef.variables, { fetchPolicy: 'network-only' });
                   resolve();
                 },
                 onError: (error) => {
@@ -268,4 +256,4 @@ const AdminDeploymentPresetListPage: React.FC = () => {
   );
 };
 
-export default AdminDeploymentPresetListPage;
+export default AdminDeploymentPreset;
