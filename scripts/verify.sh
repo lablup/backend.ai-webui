@@ -75,15 +75,25 @@ check_relay_drift() {
 check_terminology_drift() {
   # Deterministic i18n terminology checker (read-only). Scans i18n VALUES against
   # packages/backend.ai-webui-docs/terminology.json `avoid[]` (CHECK 1). See
-  # scripts/check-terminology-i18n.mjs. (CHECK 2, key->two-values divergence, is
-  # OFF by default — too noisy today; opt in with `pnpm run lint:terminology -- --check2`.)
+  # scripts/check-terminology-i18n.mjs. (CHECK 2, near-duplicate divergence, is
+  # OFF by default — report-only regardless; opt in with `pnpm run lint:terminology -- --check2`.)
   #
-  # NON-BLOCKING by design: this runs in --warn mode and is invoked OUTSIDE
-  # run_check, so it never sets FAIL and never flips `=== ALL PASS ===`.
-  # Run `pnpm run lint:terminology` for the standalone report. Flipping this to
-  # blocking (via `node scripts/check-terminology-i18n.mjs --strict`) is a
-  # separate future task once the warn-mode findings have been triaged.
-  node scripts/check-terminology-i18n.mjs --warn
+  # BLOCKING (FR-3049, team sign-off required): runs in --strict and is invoked
+  # INSIDE run_check, so a blocking CHECK 1 finding sets FAIL and prevents
+  # `=== ALL PASS ===`. Only bare-English, context-free avoid rows are
+  # error-severity (checker `runCheck1`); context-qualified and all non-English
+  # rows stay WARN and never block (severity logic unchanged). CHECK 2/3 never
+  # affect the exit code. To unblock a legitimate false positive without
+  # reverting: add the value/key to scripts/terminology-i18n.allowlist.json
+  # (ignoreValues/ignoreKeys) or append `[[i18n-term-ok]]` inline. To fully
+  # disable: change --strict back to --warn and move this out of run_check.
+  #
+  # NOTE: verify.sh is NOT run in CI (it is the local/agent harness), so this
+  # flip blocks local + agent runs, not PR merges. A true CI merge-gate would be
+  # a separate workflow — see the FR-3049 PR body for why that must be
+  # diff-aware (fail only on findings a PR introduces), so a pre-existing drift
+  # elsewhere cannot block an unrelated PR.
+  node scripts/check-terminology-i18n.mjs --strict
 }
 
 run_check "Relay" check_relay_drift
@@ -91,19 +101,16 @@ run_check "Lint" pnpm -r --stream lint
 run_check "Format" pnpm run format
 run_check "TypeScript" pnpm --prefix ./react exec tsc --noEmit
 run_check "Vite warmup paths" check_warmup_paths
+run_check "Terminology" check_terminology_drift
 
-# Warn-only terminology report. Guarded with `|| true` so `set -e` + the
-# checker's exit code can never abort verify.sh or mark the build failed.
-echo "=== Terminology (warn-only) ==="
-check_terminology_drift || true
 # Non-English avoid-row precision self-test (FR-3051). Report-only HERE so that
-# i18n CONTENT drift stays warn-only in verify.sh (a new drifting value can
-# breach a row's live falsePositiveBudget — that is CHECK 1's warn job). The
-# same script runs as a HARD gate in CI (terminology-selftest.yml), triggered
-# ONLY by the termbase / checker / fixtures paths — never by docs prose or
-# i18n content — which is where bad avoid-row DATA is blocked.
+# i18n CONTENT drift stays warn-only in verify.sh — CHECK 1 (above) owns the
+# blocking decision for content. The self-test runs as a HARD gate in CI
+# (terminology-selftest.yml), triggered ONLY by the termbase / checker /
+# fixtures paths — never by docs prose or i18n content — which is where bad
+# avoid-row DATA is blocked.
+echo "=== Terminology self-test (report-only here; hard gate in CI) ==="
 node scripts/check-terminology-i18n.selftest.mjs || true
-echo "--- Terminology: WARN-ONLY (does not affect build status) ---"
 echo ""
 
 if [ $FAIL -eq 0 ]; then
