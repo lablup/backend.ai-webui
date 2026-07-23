@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useResourceSlotsDetails } from '../../hooks/backendai';
 import { ResourceGroupFairShareSettingModalFragment$key } from '../../__generated__/ResourceGroupFairShareSettingModalFragment.graphql';
 import {
   ResourceGroupFairShareSettingModalMutation,
@@ -17,7 +18,6 @@ import {
   BAIModal,
   BAIModalProps,
   useBAILogger,
-  useResourceSlotsDetails,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useRef } from 'react';

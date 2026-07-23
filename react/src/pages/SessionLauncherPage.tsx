@@ -36,7 +36,10 @@ import VFolderTableFormItem, {
 } from '../components/VFolderTableFormItem';
 import { formatDuration, convertToBinaryUnit } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
-import { useCurrentUserRole } from '../hooks/backendai';
+import {
+  useCurrentUserRole,
+  useResourceSlotsDetails,
+} from '../hooks/backendai';
 import { useCurrentResourceGroupState } from '../hooks/useCurrentProject';
 import { useRecentSessionHistory } from '../hooks/useRecentSessionHistory';
 import { useStartSession } from '../hooks/useStartSession';
@@ -86,7 +89,6 @@ import {
   BAIUnmountAfterClose,
   useUpdatableState,
   BAIIntervalView,
-  useResourceSlotsDetails,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';

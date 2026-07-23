@@ -8,7 +8,7 @@ import {
   convertUnitValue,
   toFixedFloorWithoutTrailingZeros,
 } from '../../helper';
-import { useBAILogger, useResourceSlotsDetails } from '../../hooks';
+import { useBAILogger } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIAlertIconWithTooltip from '../BAIAlertIconWithTooltip';
 import BAIDoubleTag from '../BAIDoubleTag';
@@ -21,6 +21,7 @@ import BAITag from '../BAITag';
 import BAIText from '../BAIText';
 import { BAIColumnType, BAITable, BAITableProps } from '../Table';
 import { ResourceSlotName, useConnectedBAIClient } from '../provider';
+import useBAIMetaData from '../provider/BAIMetaDataProvider/hooks/useBAIMetaData';
 import { CheckCircleOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { theme, Typography } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
@@ -84,7 +85,7 @@ const CellErrorBoundary: React.FC<
 const AllocationCell: React.FC<{ record: AgentNodeInList }> = ({ record }) => {
   'use memo';
   const { token } = theme.useToken();
-  const { mergedResourceSlots } = useResourceSlotsDetails();
+  const { mergedResourceSlots } = useBAIMetaData();
   const parsedOccupiedSlots: {
     [key in ResourceSlotName]: string | undefined;
   } = JSON.parse(record?.occupied_slots || '{}');
@@ -240,7 +241,7 @@ const UtilizationCell: React.FC<{
 }> = ({ value, record }) => {
   'use memo';
   const { t } = useBAIi18n();
-  const { mergedResourceSlots } = useResourceSlotsDetails();
+  const { mergedResourceSlots } = useBAIMetaData();
   const parsedValue = JSON.parse(value || '{}');
   const available_slots = JSON.parse(record?.available_slots || '{}');
   if (record?.status === 'ALIVE') {
@@ -599,9 +600,11 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
   customizeColumns,
   ...tableProps
 }) => {
+  'use memo';
   const { t } = useBAIi18n();
   const { token } = theme.useToken();
   const baiClient = useConnectedBAIClient();
+
 
   const agents = useFragment(
     graphql`
