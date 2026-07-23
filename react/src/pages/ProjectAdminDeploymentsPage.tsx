@@ -6,9 +6,8 @@ import type { DeploymentRevisionDetail_revision$key } from '../__generated__/Dep
 import type { ProjectAdminDeploymentsPageDeleteMutation } from '../__generated__/ProjectAdminDeploymentsPageDeleteMutation.graphql';
 import type {
   DeploymentFilter,
-  DeploymentOrderField,
+  DeploymentOrderBy,
   DeploymentStatus,
-  OrderDirection,
   ProjectAdminDeploymentsPageQuery,
 } from '../__generated__/ProjectAdminDeploymentsPageQuery.graphql';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
@@ -16,6 +15,7 @@ import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from '../components/DeploymentRevisionDetailDrawer';
 import DeploymentSettingModal from '../components/DeploymentSettingModal';
+import { convertToOrderBy } from '../helper';
 import { useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -37,7 +37,6 @@ import {
   availableDeploymentSorterValues,
   filterOutNullAndUndefined,
   isDeploymentInStoppedCategory,
-  parseDeploymentOrder,
   toLocalId,
   useBAILogger,
   useFetchKey,
@@ -110,21 +109,13 @@ const ProjectAdminDeploymentsContent: React.FC<
       ? { status: { in: finishedStatuses } }
       : { status: { notIn: finishedStatuses } };
 
-  const sort = parseDeploymentOrder(queryParams.order);
   const queryVariables = {
     projectId,
     filter: {
       ...(queryParams.filter ?? {}),
       ...statusCategoryFilter,
     },
-    orderBy: sort
-      ? [
-          {
-            field: sort.field as DeploymentOrderField,
-            direction: sort.direction as OrderDirection,
-          },
-        ]
-      : undefined,
+    orderBy: convertToOrderBy<DeploymentOrderBy>(queryParams.order),
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
   };

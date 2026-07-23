@@ -9,8 +9,7 @@ import type {
 import type {
   AdminDeploymentQuery as AdminDeploymentQueryType,
   DeploymentFilter,
-  DeploymentOrderField,
-  OrderDirection,
+  DeploymentOrderBy,
 } from '../__generated__/AdminDeploymentQuery.graphql';
 import type {
   AdminModelCardTableQuery as AdminModelCardTableQueryType,
@@ -40,7 +39,7 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { Skeleton } from 'antd';
 import type { CardTabListType } from 'antd/es/card';
-import { BAICard, filterOutEmpty, parseDeploymentOrder } from 'backend.ai-ui';
+import { BAICard, filterOutEmpty } from 'backend.ai-ui';
 import {
   parseAsJson,
   parseAsString,
@@ -84,18 +83,6 @@ const DEFAULT_ORDER_BY_TAB: Record<TabKey, string | null> = {
 type DeploymentTabQueryParams = {
   filter: unknown;
   order: string | null;
-};
-
-// Convert a single `orderBy` entry back into the `DeploymentOrderValue` string
-// the deployments table speaks. The deployment order enum is already in the
-// server's shape (e.g. `CREATED_AT`), so this is a plain sign-prefix, not the
-// camelCase `convertOrderByToString` used by the other tabs.
-const deploymentOrderToString = (
-  orderBy: AdminDeploymentQueryType['variables']['orderBy'],
-): string | null => {
-  const entry = orderBy?.[0];
-  if (!entry) return null;
-  return `${entry.direction === 'DESC' ? '-' : ''}${entry.field}`;
 };
 
 const AdminDeploymentPage: React.FC = () => {
@@ -176,7 +163,7 @@ const AdminDeploymentPage: React.FC = () => {
     const nextOffset = variables.offset ?? 0;
     setQueryParams({
       filter: variables.filter ?? null,
-      order: deploymentOrderToString(variables.orderBy),
+      order: convertOrderByToString(variables.orderBy),
     });
     setTablePaginationOption({
       pageSize: nextLimit,
@@ -271,22 +258,14 @@ const AdminDeploymentPage: React.FC = () => {
         ? (pagination.current - 1) * pagination.pageSize
         : 0;
     switch (tab) {
-      case 'deployments': {
+      case 'deployments':
         if (!deploymentQueryRef) {
-          const sort = parseDeploymentOrder(params.order);
           loadDeploymentQuery(
             {
               filter:
                 (params.filter as DeploymentFilter | null) ??
                 DEPLOYMENT_RUNNING_FILTER,
-              orderBy: sort
-                ? [
-                    {
-                      field: sort.field as DeploymentOrderField,
-                      direction: sort.direction as OrderDirection,
-                    },
-                  ]
-                : undefined,
+              orderBy: convertToOrderBy<DeploymentOrderBy>(params.order),
               limit,
               offset,
             },
@@ -294,7 +273,6 @@ const AdminDeploymentPage: React.FC = () => {
           );
         }
         break;
-      }
       case 'model-store-management': {
         const currentProjectId = currentProject.id;
         // Reload when nothing is loaded yet or the active project changed (the
