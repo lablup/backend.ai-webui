@@ -948,6 +948,9 @@ export class Client {
       // RoleFilter gained `mappedScope` (RoleMappedScopeNestedFilter) — look
       // up roles registered to a specific scope. FR-3317.
       this._features['role-mapped-scope-filter'] = true;
+      // BA-6809 / backend PR #12708 — RuntimeVariantPreset.runtimeVariant
+      // nested field (DataLoader-resolved name/description). FR-3256.
+      this._features['runtime-variant-preset-runtime-variant-field'] = true;
     }
   }
 

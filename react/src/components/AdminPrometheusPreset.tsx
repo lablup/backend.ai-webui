@@ -2,130 +2,111 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { PrometheusPresetTabDeleteMutation } from '../__generated__/PrometheusPresetTabDeleteMutation.graphql';
+import { AdminPrometheusPresetDeleteMutation } from '../__generated__/AdminPrometheusPresetDeleteMutation.graphql';
 import {
-  PrometheusPresetTabQuery,
-  PrometheusPresetTabQuery$variables,
-  QueryDefinitionFilter,
-} from '../__generated__/PrometheusPresetTabQuery.graphql';
+  AdminPrometheusPresetQuery as AdminPrometheusPresetQueryType,
+} from '../__generated__/AdminPrometheusPresetQuery.graphql';
 import { PrometheusQueryPresetEditorModalFragment$key } from '../__generated__/PrometheusQueryPresetEditorModalFragment.graphql';
-import { convertToOrderBy } from '../helper';
-import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
-import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { convertOrderByToString, convertToOrderBy } from '../helper';
 import AutoUpdateFetchKeyButton, {
   LONG_AUTO_UPDATE_DELAY_OPTIONS,
 } from './AutoUpdateFetchKeyButton';
 import PrometheusQueryPresetEditorModal from './PrometheusQueryPresetEditorModal';
-import PrometheusQueryPresetNodes from './PrometheusQueryPresetNodes';
+import PrometheusQueryPresetTable from './PrometheusQueryPresetTable';
 import { App } from 'antd';
 import {
   BAIButton,
   BAIDeleteConfirmModal,
   BAIFlex,
   BAIGraphQLPropertyFilter,
-  INITIAL_FETCH_KEY,
+  type BAITableSettings,
   toLocalId,
-  useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { PlusIcon } from 'lucide-react';
-import { parseAsJson, parseAsString, useQueryStates } from 'nuqs';
-import React, { useDeferredValue, useState } from 'react';
+import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
+import {
+  graphql,
+  PreloadedQuery,
+  useMutation,
+  usePreloadedQuery,
+  UseQueryLoaderLoadQueryOptions,
+} from 'react-relay';
+
+export const AdminPrometheusPresetQuery = graphql`
+  query AdminPrometheusPresetQuery(
+    $offset: Int
+    $limit: Int
+    $filter: QueryDefinitionFilter
+    $orderBy: [QueryDefinitionOrderBy!]
+  ) {
+    prometheusQueryPresets(
+      offset: $offset
+      limit: $limit
+      filter: $filter
+      orderBy: $orderBy
+    ) {
+      count
+      edges {
+        node {
+          id
+          ...PrometheusQueryPresetTableFragment
+        }
+      }
+    }
+  }
+`;
 
 type DeletingPresetTarget = { id: string; name: string };
 
-const PrometheusPresetTab: React.FC = () => {
+export interface AdminPrometheusPresetProps {
+  queryRef: PreloadedQuery<AdminPrometheusPresetQueryType>;
+  onReload: (
+    variables: AdminPrometheusPresetQueryType['variables'],
+    options?: UseQueryLoaderLoadQueryOptions,
+  ) => void;
+  tableSettings: BAITableSettings;
+}
+
+const AdminPrometheusPreset = ({
+  queryRef,
+  onReload,
+  tableSettings,
+}: AdminPrometheusPresetProps) => {
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
 
-  const [queryParam, setQueryParam] = useQueryStates(
-    {
-      filter: parseAsJson<QueryDefinitionFilter>(
-        (value) => value as QueryDefinitionFilter,
-      ),
-      order: parseAsString,
-    },
-    { history: 'replace' },
-  );
-
-  const {
-    baiPaginationOption,
-    tablePaginationOption,
-    setTablePaginationOption,
-  } = useBAIPaginationOptionStateOnSearchParam({
-    current: 1,
-    pageSize: 10,
-  });
-
-  const [fetchKey, updateFetchKey] = useFetchKey();
   const [isOpenEditorModal, setIsOpenEditorModal] = useState(false);
   const [editingPreset, setEditingPreset] =
     useState<PrometheusQueryPresetEditorModalFragment$key | null>(null);
   const [deletingPreset, setDeletingPreset] =
     useState<DeletingPresetTarget | null>(null);
-  const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
-    'table_column_overrides.PrometheusPresetTab',
-  );
+
+  const filter = queryRef.variables.filter ?? undefined;
+  const order = convertOrderByToString(queryRef.variables.orderBy);
+  const pageSize = queryRef.variables.limit ?? 10;
+  const offset = queryRef.variables.offset ?? 0;
+  const current = pageSize ? Math.floor(offset / pageSize) + 1 : 1;
+
+  const deferredQueryRef = useDeferredValue(queryRef);
+  const isRefetching = deferredQueryRef !== queryRef;
+
+  const { prometheusQueryPresets } =
+    usePreloadedQuery<AdminPrometheusPresetQueryType>(
+      AdminPrometheusPresetQuery,
+      deferredQueryRef,
+    );
 
   const [commitDeleteMutation, isInflightDelete] =
-    useMutation<PrometheusPresetTabDeleteMutation>(graphql`
-      mutation PrometheusPresetTabDeleteMutation($id: ID!) {
+    useMutation<AdminPrometheusPresetDeleteMutation>(graphql`
+      mutation AdminPrometheusPresetDeleteMutation($id: ID!) {
         adminDeletePrometheusQueryPreset(id: $id) {
           id
         }
       }
     `);
-
-  const queryVariables: PrometheusPresetTabQuery$variables = {
-    offset: baiPaginationOption.offset,
-    limit: baiPaginationOption.limit,
-    filter: queryParam.filter,
-    orderBy: convertToOrderBy(queryParam.order),
-  };
-
-  const deferredQueryVariables = useDeferredValue(queryVariables);
-  const deferredFetchKey = useDeferredValue(fetchKey);
-
-  const { prometheusQueryPresets } = useLazyLoadQuery<PrometheusPresetTabQuery>(
-    graphql`
-      query PrometheusPresetTabQuery(
-        $offset: Int
-        $limit: Int
-        $filter: QueryDefinitionFilter
-        $orderBy: [QueryDefinitionOrderBy!]
-      ) {
-        prometheusQueryPresets(
-          offset: $offset
-          limit: $limit
-          filter: $filter
-          orderBy: $orderBy
-        ) {
-          count
-          edges {
-            node {
-              id
-              ...PrometheusQueryPresetNodesFragment
-            }
-          }
-        }
-      }
-    `,
-    deferredQueryVariables,
-    {
-      fetchPolicy:
-        deferredFetchKey === INITIAL_FETCH_KEY
-          ? 'store-and-network'
-          : 'network-only',
-      fetchKey:
-        deferredFetchKey === INITIAL_FETCH_KEY ? undefined : deferredFetchKey,
-    },
-  );
-
-  const isPending =
-    deferredQueryVariables !== queryVariables || deferredFetchKey !== fetchKey;
 
   const presetNodes = _.compact(
     _.map(prometheusQueryPresets?.edges, (edge) => edge?.node),
@@ -134,11 +115,14 @@ const PrometheusPresetTab: React.FC = () => {
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
       <BAIFlex direction="row" justify="between" wrap="wrap" gap="sm">
-        <BAIGraphQLPropertyFilter<QueryDefinitionFilter>
+        <BAIGraphQLPropertyFilter
           combinationMode="AND"
-          value={queryParam.filter ?? undefined}
+          value={filter}
           onChange={(value) => {
-            setQueryParam({ filter: value ?? null });
+            onReload(
+              { ...queryRef.variables, filter: value ?? undefined, offset: 0 },
+              { fetchPolicy: 'network-only' },
+            );
           }}
           filterProperties={[
             {
@@ -157,9 +141,10 @@ const PrometheusPresetTab: React.FC = () => {
           <AutoUpdateFetchKeyButton
             settingId="prometheus-preset"
             autoUpdateDelayOptions={LONG_AUTO_UPDATE_DELAY_OPTIONS}
-            value={fetchKey}
-            onChange={updateFetchKey}
-            loading={isPending}
+            onChange={() =>
+              onReload(queryRef.variables, { fetchPolicy: 'network-only' })
+            }
+            loading={isRefetching}
           />
           <BAIButton
             type="primary"
@@ -170,27 +155,39 @@ const PrometheusPresetTab: React.FC = () => {
           </BAIButton>
         </BAIFlex>
       </BAIFlex>
-      <PrometheusQueryPresetNodes
+      <PrometheusQueryPresetTable
         presetsFrgmt={presetNodes}
-        loading={isPending}
+        loading={isRefetching}
         pagination={{
-          pageSize: tablePaginationOption.pageSize,
-          current: tablePaginationOption.current,
+          pageSize,
+          current,
           total: prometheusQueryPresets?.count,
-          onChange(current, pageSize) {
-            if (_.isNumber(current) && _.isNumber(pageSize)) {
-              setTablePaginationOption({ current, pageSize });
+          onChange(nextCurrent, nextPageSize) {
+            if (_.isNumber(nextCurrent) && _.isNumber(nextPageSize)) {
+              onReload(
+                {
+                  ...queryRef.variables,
+                  limit: nextPageSize,
+                  offset:
+                    nextCurrent > 1 ? (nextCurrent - 1) * nextPageSize : 0,
+                },
+                { fetchPolicy: 'network-only' },
+              );
             }
           },
         }}
-        order={queryParam.order}
-        onChangeOrder={(order) => {
-          setQueryParam({ order: order });
+        order={order}
+        onChangeOrder={(nextOrder) => {
+          onReload(
+            {
+              ...queryRef.variables,
+              orderBy: convertToOrderBy(nextOrder ?? undefined),
+              offset: 0,
+            },
+            { fetchPolicy: 'network-only' },
+          );
         }}
-        tableSettings={{
-          columnOverrides,
-          onColumnOverridesChange: setColumnOverrides,
-        }}
+        tableSettings={tableSettings}
         onEditPreset={(preset) => {
           setIsOpenEditorModal(true);
           setEditingPreset(preset);
@@ -206,7 +203,7 @@ const PrometheusPresetTab: React.FC = () => {
           setIsOpenEditorModal(false);
           setEditingPreset(null);
           if (success) {
-            updateFetchKey();
+            onReload(queryRef.variables, { fetchPolicy: 'network-only' });
           }
         }}
       />
@@ -239,7 +236,7 @@ const PrometheusPresetTab: React.FC = () => {
               }
               message.success(t('prometheusQueryPreset.SuccessfullyDeleted'));
               setDeletingPreset(null);
-              updateFetchKey();
+              onReload(queryRef.variables, { fetchPolicy: 'network-only' });
             },
             onError: (error) => {
               message.error(error.message);
@@ -252,4 +249,4 @@ const PrometheusPresetTab: React.FC = () => {
   );
 };
 
-export default PrometheusPresetTab;
+export default AdminPrometheusPreset;

@@ -72,8 +72,8 @@ const DeploymentListPage = React.lazy(
 const DeploymentDetailPage = React.lazy(
   () => import('./pages/DeploymentDetailPage'),
 );
-const AdminDeploymentListPage = React.lazy(
-  () => import('./pages/AdminDeploymentListPage'),
+const AdminDeploymentPage = React.lazy(
+  () => import('./pages/AdminDeploymentPage'),
 );
 const InteractiveLoginPage = React.lazy(
   () => import('./pages/InteractiveLoginPage'),
@@ -439,7 +439,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
           return (
             <BAIErrorBoundary>
               <Suspense fallback={<BAICard loading />}>
-                <AdminDeploymentListPage />
+                <AdminDeploymentPage />
               </Suspense>
             </BAIErrorBoundary>
           );
