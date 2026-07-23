@@ -4,7 +4,7 @@
  */
 import type { AdminDeploymentPresetSettingPageContent_preset$key } from '../__generated__/AdminDeploymentPresetSettingPageContent_preset.graphql';
 import EnvVarFormList from '../components/EnvVarFormList';
-import { formatShellCommand } from '../helper/parseCliCommand';
+import { deriveCommandModeState } from '../helper/modelServiceCommand';
 import {
   buildRuntimeVariantPresetValues,
   collectTouchedRuntimePresetParams,
@@ -253,6 +253,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                 action
                 args
               }
+              command @since(version: "26.7.0")
               startCommand
               shell
               port
@@ -470,64 +471,76 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
         modelDefinition: preset.modelDefinition?.models?.length
           ? {
               enabled: true,
-              models: preset.modelDefinition.models.map((m) => ({
-                name: m.name,
-                modelPath: m.modelPath,
-                service: m.service
-                  ? {
-                      port: m.service.port,
-                      // 26.7.0: `shell` is nullable on the output. Normalize
-                      // null → undefined so the (now optional) form field shows
-                      // blank and the user can clear it.
-                      shell: m.service.shell ?? undefined,
-                      startCommand: formatShellCommand(
-                        m.service.startCommand ?? [],
-                      ),
-                      // 26.4.4rc7+: `enable` is authoritative; older managers
-                      // omit it, so fall back to the object's presence.
-                      enableHealthCheck:
-                        m.service.healthCheck?.enable ??
-                        !!m.service.healthCheck,
-                      healthCheck: m.service.healthCheck
-                        ? {
-                            path: m.service.healthCheck.path,
-                            interval: m.service.healthCheck.interval,
-                            maxRetries: m.service.healthCheck.maxRetries,
-                            maxWaitTime: m.service.healthCheck.maxWaitTime,
-                            expectedStatusCode:
-                              m.service.healthCheck.expectedStatusCode,
-                            initialDelay: m.service.healthCheck.initialDelay,
-                          }
-                        : undefined,
-                      preStartActions:
-                        m.service.preStartActions?.map((a) => ({
-                          action: a.action,
-                          args: JSON.stringify(a.args),
-                        })) ?? [],
-                    }
-                  : undefined,
-                metadata: m.metadata
-                  ? {
-                      author: m.metadata.author ?? undefined,
-                      title: m.metadata.title ?? undefined,
-                      version:
-                        m.metadata.version != null
-                          ? String(m.metadata.version)
+              models: preset.modelDefinition.models.map((m) => {
+                // Start Command (FR-3205): reconstruct the raw command string
+                // and Basic/Advanced mode from whichever field the preset
+                // carries — the new single-string `command` (26.7.0+) or the
+                // deprecated `startCommand` token list. Presets always run
+                // under a shell, so the Exec (no-shell) mode never applies.
+                const commandModeState = deriveCommandModeState({
+                  command: m.service?.command,
+                  shell: m.service?.shell,
+                  startCommand: m.service?.startCommand,
+                });
+                return {
+                  name: m.name,
+                  modelPath: m.modelPath,
+                  service: m.service
+                    ? {
+                        port: m.service.port,
+                        // 26.7.0: `shell` is nullable on the output. Normalize
+                        // null → undefined so the (now optional) form field
+                        // shows blank and the user can clear it. Advanced mode
+                        // is on whenever the stored shell differs from default.
+                        shell: m.service.shell ?? undefined,
+                        startCommand: commandModeState.command,
+                        commandAdvanced: commandModeState.advanced,
+                        // 26.4.4rc7+: `enable` is authoritative; older managers
+                        // omit it, so fall back to the object's presence.
+                        enableHealthCheck:
+                          m.service.healthCheck?.enable ??
+                          !!m.service.healthCheck,
+                        healthCheck: m.service.healthCheck
+                          ? {
+                              path: m.service.healthCheck.path,
+                              interval: m.service.healthCheck.interval,
+                              maxRetries: m.service.healthCheck.maxRetries,
+                              maxWaitTime: m.service.healthCheck.maxWaitTime,
+                              expectedStatusCode:
+                                m.service.healthCheck.expectedStatusCode,
+                              initialDelay: m.service.healthCheck.initialDelay,
+                            }
                           : undefined,
-                      description: m.metadata.description ?? undefined,
-                      task: m.metadata.task ?? undefined,
-                      category: m.metadata.category ?? undefined,
-                      architecture: m.metadata.architecture ?? undefined,
-                      framework: m.metadata.framework
-                        ? [...m.metadata.framework]
-                        : undefined,
-                      label: m.metadata.label
-                        ? [...m.metadata.label]
-                        : undefined,
-                      license: m.metadata.license ?? undefined,
-                    }
-                  : undefined,
-              })),
+                        preStartActions:
+                          m.service.preStartActions?.map((a) => ({
+                            action: a.action,
+                            args: JSON.stringify(a.args),
+                          })) ?? [],
+                      }
+                    : undefined,
+                  metadata: m.metadata
+                    ? {
+                        author: m.metadata.author ?? undefined,
+                        title: m.metadata.title ?? undefined,
+                        version:
+                          m.metadata.version != null
+                            ? String(m.metadata.version)
+                            : undefined,
+                        description: m.metadata.description ?? undefined,
+                        task: m.metadata.task ?? undefined,
+                        category: m.metadata.category ?? undefined,
+                        architecture: m.metadata.architecture ?? undefined,
+                        framework: m.metadata.framework
+                          ? [...m.metadata.framework]
+                          : undefined,
+                        label: m.metadata.label
+                          ? [...m.metadata.label]
+                          : undefined,
+                        license: m.metadata.license ?? undefined,
+                      }
+                    : undefined,
+                };
+              }),
             }
           : // No model on the preset → switch off, but seed one empty model so
             // it is ready when the switch is turned on.

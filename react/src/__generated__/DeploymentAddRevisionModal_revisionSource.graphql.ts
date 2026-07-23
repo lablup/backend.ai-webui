@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<07c37c790793b542333551ba7308d475>>
+ * @generated SignedSource<<97be3b6e29fc900ef744db82679bf44d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -32,6 +32,7 @@ export type DeploymentAddRevisionModal_revisionSource$data = {
       readonly modelPath: string;
       readonly name: string;
       readonly service: {
+        readonly command: string | null | undefined;
         readonly healthCheck: {
           readonly enable: boolean;
           readonly expectedStatusCode: number;
@@ -42,6 +43,7 @@ export type DeploymentAddRevisionModal_revisionSource$data = {
           readonly path: string;
         } | null | undefined;
         readonly port: number;
+        readonly shell: string | null | undefined;
         readonly startCommand: ReadonlyArray<string> | null | undefined;
       } | null | undefined;
     }>;
@@ -49,6 +51,7 @@ export type DeploymentAddRevisionModal_revisionSource$data = {
   readonly modelMountConfig: {
     readonly definitionPath: string;
     readonly mountDestination: string;
+    readonly subpath: string | null | undefined;
     readonly vfolderId: string;
   } | null | undefined;
   readonly modelRuntimeConfig: {
@@ -306,6 +309,13 @@ return {
           "kind": "ScalarField",
           "name": "definitionPath",
           "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "subpath",
+          "storageKey": null
         }
       ],
       "storageKey": null
@@ -342,6 +352,20 @@ return {
               "name": "service",
               "plural": false,
               "selections": [
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "command",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "shell",
+                  "storageKey": null
+                },
                 {
                   "alias": null,
                   "args": null,
@@ -474,6 +498,6 @@ return {
 };
 })();
 
-(node as any).hash = "94f9806003b984d4534543e7895a61e8";
+(node as any).hash = "ae8efd8d8b497259cd95035bcf60ca84";
 
 export default node;

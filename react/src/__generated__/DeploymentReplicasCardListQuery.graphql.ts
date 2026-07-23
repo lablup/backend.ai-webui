@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c9106ec0b5de2c38b791a46250087f4d>>
+ * @generated SignedSource<<fff76c789c7cf76e06484169def8411a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -632,6 +632,13 @@ return {
                                 "name": "definitionPath",
                                 "storageKey": null
                               },
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "subpath",
+                                "storageKey": null
+                              },
                               (v22/*: any*/)
                             ],
                             "storageKey": null
@@ -726,6 +733,13 @@ return {
                                     "name": "service",
                                     "plural": false,
                                     "selections": [
+                                      {
+                                        "alias": null,
+                                        "args": null,
+                                        "kind": "ScalarField",
+                                        "name": "command",
+                                        "storageKey": null
+                                      },
                                       {
                                         "alias": null,
                                         "args": null,
@@ -854,12 +868,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "79f688ce3d9ffc3c72881648d7d76eab",
+    "cacheID": "fc6eabffb8c4f1a4dbbc57e23edd5a21",
     "id": null,
     "metadata": {},
     "name": "DeploymentReplicasCardListQuery",
     "operationKind": "query",
-    "text": "query DeploymentReplicasCardListQuery(\n  $deploymentId: ID!\n  $filter: ReplicaFilter\n  $orderBy: [ReplicaOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  deployment(id: $deploymentId) {\n    replicas(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n      count\n      edges {\n        node {\n          id\n          sessionId\n          revisionId\n          status\n          trafficStatus\n          healthStatus\n          createdAt\n          revision {\n            id\n            revisionNumber\n            ...DeploymentRevisionDetail_revision\n          }\n          sessionV2 @since(version: \"26.4.3\") {\n            id\n            metadata {\n              name\n            }\n          }\n        }\n      }\n    }\n    id\n  }\n}\n\nfragment DeploymentRevisionDetail_revision on ModelRevision {\n  id\n  revisionNumber\n  createdAt\n  clusterConfig {\n    mode\n    size\n  }\n  resourceSlots @since(version: \"26.4.2\") {\n    slotName\n    quantity\n  }\n  resourceConfig {\n    resourceOpts {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelRuntimeConfig {\n    runtimeVariant {\n      name\n      id\n    }\n    inferenceRuntimeConfig\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n    runtimeVariantPresetValues @since(version: \"26.4.4rc9\") {\n      presetId\n      value\n      preset {\n        name\n        displayName\n        targetSpec {\n          key\n        }\n        id\n      }\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    mountDestination\n    definitionPath\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n    mountPerm\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  imageV2 @since(version: \"26.4.3\") {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        startCommand\n        shell\n        port\n        preStartActions {\n          action\n          args\n        }\n        healthCheck {\n          path\n          initialDelay\n          maxRetries\n          interval\n          maxWaitTime\n          expectedStatusCode\n        }\n      }\n    }\n  }\n}\n\nfragment FolderLink_vfolderNode on VirtualFolderNode {\n  row_id\n  name\n  ...VFolderNodeIdenticonFragment\n}\n\nfragment VFolderNodeIdenticonFragment on VirtualFolderNode {\n  id\n}\n"
+    "text": "query DeploymentReplicasCardListQuery(\n  $deploymentId: ID!\n  $filter: ReplicaFilter\n  $orderBy: [ReplicaOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  deployment(id: $deploymentId) {\n    replicas(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n      count\n      edges {\n        node {\n          id\n          sessionId\n          revisionId\n          status\n          trafficStatus\n          healthStatus\n          createdAt\n          revision {\n            id\n            revisionNumber\n            ...DeploymentRevisionDetail_revision\n          }\n          sessionV2 @since(version: \"26.4.3\") {\n            id\n            metadata {\n              name\n            }\n          }\n        }\n      }\n    }\n    id\n  }\n}\n\nfragment DeploymentRevisionDetail_revision on ModelRevision {\n  id\n  revisionNumber\n  createdAt\n  clusterConfig {\n    mode\n    size\n  }\n  resourceSlots @since(version: \"26.4.2\") {\n    slotName\n    quantity\n  }\n  resourceConfig {\n    resourceOpts {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelRuntimeConfig {\n    runtimeVariant {\n      name\n      id\n    }\n    inferenceRuntimeConfig\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n    runtimeVariantPresetValues @since(version: \"26.4.4rc9\") {\n      presetId\n      value\n      preset {\n        name\n        displayName\n        targetSpec {\n          key\n        }\n        id\n      }\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    mountDestination\n    definitionPath\n    subpath @since(version: \"26.4.4\")\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n    mountPerm\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  imageV2 @since(version: \"26.4.3\") {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        command @since(version: \"26.7.0\")\n        startCommand\n        shell\n        port\n        preStartActions {\n          action\n          args\n        }\n        healthCheck {\n          path\n          initialDelay\n          maxRetries\n          interval\n          maxWaitTime\n          expectedStatusCode\n        }\n      }\n    }\n  }\n}\n\nfragment FolderLink_vfolderNode on VirtualFolderNode {\n  row_id\n  name\n  ...VFolderNodeIdenticonFragment\n}\n\nfragment VFolderNodeIdenticonFragment on VirtualFolderNode {\n  id\n}\n"
   }
 };
 })();

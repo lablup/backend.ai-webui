@@ -2,17 +2,29 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import {
+  COMMAND_SHELL_OPTIONS,
+  DEFAULT_MODEL_SERVICE_SHELL,
+} from '../helper/modelServiceCommand';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { MinusCircleOutlined } from '@ant-design/icons';
 import {
+  AutoComplete,
   Checkbox,
   Collapse,
   Form,
   Input,
   InputNumber,
   Select,
+  Switch,
   theme,
 } from 'antd';
-import { BAIButton, BAICard, BAIFlex } from 'backend.ai-ui';
+import {
+  BAIButton,
+  BAICard,
+  BAIFlex,
+  BAIQuestionIconWithTooltip,
+} from 'backend.ai-ui';
 import { PlusIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -26,6 +38,12 @@ const ModelConfigItem: React.FC<{
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const baiClient = useSuspendedBackendaiClient();
+  // 26.7.0+: render the Start Command Basic/Advanced + Shell controls (FR-3205);
+  // older managers fall back to the plain single-line command input.
+  const supportsCommandShell = baiClient.supports(
+    'model-service-command-string',
+  );
 
   // Rendered only when the model-definition switch is ON, so sub-fields are
   // unconditionally required here; the switch lives in the parent card.
@@ -67,16 +85,6 @@ const ModelConfigItem: React.FC<{
         showDivider
       >
         <BAIFlex direction="column" align="stretch" gap="xs">
-          {/*
-            `shell` is intentionally not exposed here. It only affects the
-            deprecated single-string `command` path; this form always submits
-            the list `startCommand`, on which the backend silently ignores
-            `shell` (see `_wrap_str_start_command_into_argv`). Showing a field
-            that is a no-op in this flow — and whose value otherwise defaults to
-            `/bin/bash` — is more confusing than helpful, so it stays hidden
-            until the shell/command UX is decided. Any existing value still
-            round-trips on edit via `form.getFieldsValue(true)`. (FR-3221)
-          */}
           <Form.Item
             {...restField}
             name={[listItemName, 'service', 'port']}
@@ -92,20 +100,107 @@ const ModelConfigItem: React.FC<{
               placeholder={t('general.Example', { value: '8080' })}
             />
           </Form.Item>
-          <Form.Item
-            {...restField}
-            name={[listItemName, 'service', 'startCommand']}
-            label={t('adminDeploymentPreset.modelDef.StartCommand')}
-            tooltip={t('modelService.StartCommandTooltip')}
-            extra={t('modelService.StartCommandHelperShell')}
-            rules={[{ required: true }]}
-          >
-            <Input
-              placeholder={t(
-                'adminDeploymentPreset.modelDef.StartCommandPlaceholder',
+          {/*
+            Start Command (FR-3205). On 26.7.0+ the raw command is submitted as
+            the single-string `command` and `shell` is derived from the
+            Basic/Advanced controls. Presets always run under a shell
+            (`PresetModelServiceConfigInput.shell` is non-null), so the Exec
+            (no-shell) mode is not offered here — Advanced only reveals the
+            shell selector. On older managers the command is tokenized into the
+            deprecated `startCommand` list, and the classic single-line input is
+            shown instead.
+          */}
+          <BAIFlex direction="column" align="stretch" gap="xs">
+            {/* Basic/Advanced switch + shell selector are only shown on 26.7.0+
+                (Exec mode is not offered for presets — shell is non-null). */}
+            {supportsCommandShell && (
+              <>
+                <BAIFlex justify="end" align="center" gap="xxs">
+                  <Form.Item
+                    {...restField}
+                    name={[listItemName, 'service', 'commandAdvanced']}
+                    valuePropName="checked"
+                    noStyle
+                  >
+                    <Switch
+                      size="small"
+                      checkedChildren={t('general.Advanced')}
+                      unCheckedChildren={t('general.Basic')}
+                    />
+                  </Form.Item>
+                  <BAIQuestionIconWithTooltip
+                    title={t('modelService.CommandAdvancedModeTooltip')}
+                  />
+                </BAIFlex>
+                <Form.Item
+                  noStyle
+                  dependencies={[
+                    [
+                      'modelDefinition',
+                      'models',
+                      listItemName,
+                      'service',
+                      'commandAdvanced',
+                    ],
+                  ]}
+                >
+                  {({ getFieldValue }) =>
+                    getFieldValue([
+                      'modelDefinition',
+                      'models',
+                      listItemName,
+                      'service',
+                      'commandAdvanced',
+                    ]) ? (
+                      <Form.Item
+                        {...restField}
+                        name={[listItemName, 'service', 'shell']}
+                        label={t('modelService.Shell')}
+                        tooltip={t('modelService.ShellTooltip')}
+                        required
+                        rules={[{ required: true, whitespace: true }]}
+                      >
+                        <AutoComplete
+                          placeholder={DEFAULT_MODEL_SERVICE_SHELL}
+                          options={COMMAND_SHELL_OPTIONS}
+                          allowClear
+                        />
+                      </Form.Item>
+                    ) : null
+                  }
+                </Form.Item>
+              </>
+            )}
+            <Form.Item
+              {...restField}
+              name={[listItemName, 'service', 'startCommand']}
+              label={t('adminDeploymentPreset.modelDef.StartCommand')}
+              tooltip={t('modelService.StartCommandTooltip')}
+              // 26.7.0+ accepts multi-line shell scripts; older managers get the
+              // classic single-line input.
+              extra={
+                supportsCommandShell
+                  ? t('modelService.CommandShellHelper')
+                  : t('modelService.StartCommandHelperShell')
+              }
+              rules={[{ required: true }]}
+            >
+              {supportsCommandShell ? (
+                <Input.TextArea
+                  placeholder={t(
+                    'adminDeploymentPreset.modelDef.StartCommandPlaceholder',
+                  )}
+                  autoSize={{ minRows: 2 }}
+                />
+              ) : (
+                <Input
+                  placeholder={t(
+                    'adminDeploymentPreset.modelDef.StartCommandPlaceholder',
+                  )}
+                />
               )}
-            />
-          </Form.Item>
+            </Form.Item>
+          </BAIFlex>
 
           <Form.Item
             label={t('adminDeploymentPreset.modelDef.PreStartActions')}
