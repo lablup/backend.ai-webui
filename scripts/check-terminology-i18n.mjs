@@ -1273,7 +1273,17 @@ export {
 
 // Run the CLI only when this file is executed directly
 // (`node scripts/check-terminology-i18n.mjs ...`), not when imported.
-const invokedPath = process.argv[1] ? path.resolve(process.argv[1]) : "";
+// realpathSync so a symlinked invocation still matches __filename (which node
+// resolves to the real path when loading the entry module).
+const invokedPath = (() => {
+  if (!process.argv[1]) return "";
+  const resolved = path.resolve(process.argv[1]);
+  try {
+    return fs.realpathSync(resolved);
+  } catch {
+    return resolved;
+  }
+})();
 if (invokedPath === __filename) {
   process.exit(main());
 }

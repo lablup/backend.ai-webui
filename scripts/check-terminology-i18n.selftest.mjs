@@ -6,8 +6,8 @@
  *
  * WHY THIS EXISTS: ko/ja/th have no reliable word boundaries, so CHECK 1
  * matches non-Latin avoid terms by plain SUBSTRING. That makes a bare concept
- * noun catastrophic as an avoid term — ko "세션" appears in ~186 legitimate
- * values, ja "セッション" in ~181 — every one would fire. Non-English avoid
+ * noun catastrophic as an avoid term — ko "세션" appears in ~201 legitimate
+ * values, ja "セッション" in ~196 — every one would fire. Non-English avoid
  * rows must therefore be PRECISE multi-token compounds (e.g. "스케일링 그룹",
  * "スケーリンググループ") or unambiguous deprecated spellings ("레플리카",
  * "슈퍼어드민"), and this harness is the hard gate that keeps a noisy row from
@@ -35,12 +35,14 @@
  *                   firing, the gate itself has silently broken.
  *
  * SEVERITY MODEL (unchanged by this script): this harness gates the DATA
- * (terminology.json curation) and is a HARD gate in CI (docs-checks.yml) when
- * the termbase/checker files change. The drift scan over i18n CONTENT stays
- * WARN-only — in scripts/verify.sh this script runs inside the warn-only
- * terminology section precisely so that new content drift never hard-blocks a
- * build (that is CHECK 1's warn job), while a bad avoid ROW is still caught in
- * CI before it lands.
+ * (terminology.json curation) and is a HARD gate in CI
+ * (.github/workflows/terminology-selftest.yml) — triggered ONLY by the
+ * termbase / fixtures / checker paths, never by docs prose or i18n content,
+ * so pre-existing content drift can never hard-block an unrelated PR. The
+ * drift scan over i18n CONTENT stays WARN-only — in scripts/verify.sh this
+ * script runs inside the warn-only terminology section precisely so that new
+ * content drift never hard-blocks a build (that is CHECK 1's warn job), while
+ * a bad avoid ROW is still caught in CI before it lands.
  *
  * Usage: node scripts/check-terminology-i18n.selftest.mjs
  *        (also: pnpm run lint:terminology:selftest)
@@ -112,7 +114,26 @@ function main() {
       : 0;
 
   // ---- 1. COVERAGE: rows <-> fixtures must be exactly in sync -------------
+  // Fixtures entries must carry string lang+avoid keys and be unique —
+  // a blank key would only surface as a cryptic "stale entry" failure, and
+  // duplicates would silently collapse in the Map index below.
+  for (const fixture of fixtureRows) {
+    assertThat(
+      typeof fixture.lang === "string" &&
+        fixture.lang.length > 0 &&
+        typeof fixture.avoid === "string" &&
+        fixture.avoid.length > 0,
+      `[fixtures] a fixtures entry is missing its string lang/avoid key: ${JSON.stringify(
+        { lang: fixture.lang, avoid: fixture.avoid },
+      )}`,
+    );
+  }
   const fixturesByKey = new Map(fixtureRows.map((f) => [keyOf(f), f]));
+  assertThat(
+    fixturesByKey.size === fixtureRows.length,
+    `[fixtures] ${fixtureRows.length - fixturesByKey.size} duplicate lang+avoid fixtures entr(y/ies) collapse in the index`,
+    "each non-en avoid row must have exactly one fixtures entry",
+  );
   const rowKeys = new Set(nonEnRows.map((r) => keyOf(r)));
   for (const row of nonEnRows) {
     assertThat(
@@ -195,9 +216,17 @@ function main() {
     const match = buildTermMatcher(row, approvedCompounds);
 
     if (fixture) {
-      const positives = Array.isArray(fixture.positiveFixtures)
+      // Fixtures must be strings: a non-string positive would crash inside
+      // runCheck1 with a misleading stack, and a non-string negative would
+      // silently PASS the precision gate (regex coercion never matches).
+      const rawPositives = Array.isArray(fixture.positiveFixtures)
         ? fixture.positiveFixtures
         : [];
+      const positives = rawPositives.filter((s) => typeof s === "string");
+      assertThat(
+        positives.length === rawPositives.length,
+        `[fixtures] "${row.avoid}" (${row.lang}) has ${rawPositives.length - positives.length} non-string positiveFixtures entr(y/ies)`,
+      );
       assertThat(
         positives.length > 0,
         `[detectable] "${row.avoid}" (${row.lang}) has no positiveFixtures`,
@@ -234,9 +263,14 @@ function main() {
         );
       }
 
-      const negatives = Array.isArray(fixture.negativeFixtures)
+      const rawNegatives = Array.isArray(fixture.negativeFixtures)
         ? fixture.negativeFixtures
         : [];
+      const negatives = rawNegatives.filter((s) => typeof s === "string");
+      assertThat(
+        negatives.length === rawNegatives.length,
+        `[fixtures] "${row.avoid}" (${row.lang}) has ${rawNegatives.length - negatives.length} non-string negativeFixtures entr(y/ies)`,
+      );
       assertThat(
         negatives.length > 0,
         `[precise] "${row.avoid}" (${row.lang}) has no negativeFixtures`,
@@ -252,7 +286,7 @@ function main() {
 
     // The live-budget gate runs even when the fixtures entry is missing —
     // a noisy row must blow up on its hit-count, not hide behind the
-    // coverage failure (e.g. bare ko "세션" ≈ 186 live values, budget 0).
+    // coverage failure (e.g. bare ko "세션" ≈ 200 live values, budget 0).
     const budget =
       fixture && typeof fixture.falsePositiveBudget === "number"
         ? fixture.falsePositiveBudget

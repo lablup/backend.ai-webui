@@ -99,8 +99,9 @@ check_terminology_drift || true
 # Non-English avoid-row precision self-test (FR-3051). Report-only HERE so that
 # i18n CONTENT drift stays warn-only in verify.sh (a new drifting value can
 # breach a row's live falsePositiveBudget — that is CHECK 1's warn job). The
-# same script runs as a HARD gate in CI (docs-checks.yml) when the termbase /
-# checker / fixtures files change, which is where bad avoid-row DATA is blocked.
+# same script runs as a HARD gate in CI (terminology-selftest.yml), triggered
+# ONLY by the termbase / checker / fixtures paths — never by docs prose or
+# i18n content — which is where bad avoid-row DATA is blocked.
 node scripts/check-terminology-i18n.selftest.mjs || true
 echo "--- Terminology: WARN-ONLY (does not affect build status) ---"
 echo ""

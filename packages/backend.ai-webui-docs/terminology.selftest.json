@@ -1,5 +1,5 @@
 {
-  "$comment": "Precision fixtures for the NON-ENGLISH avoid[] rows in terminology.json (FR-3051). Consumed by scripts/check-terminology-i18n.selftest.mjs, which exercises the REAL CHECK 1 matcher. Every non-en avoid row MUST have exactly one entry here (keyed by lang+avoid); the harness fails on missing or stale entries. positiveFixtures are synthetic strings the row MUST match (detectability); negativeFixtures are legitimate strings it must NOT match (precision) — always include the known longer preferred compounds the term could collide with. falsePositiveBudget caps the row's live hit-count over the CURRENT i18n stores (default: defaultFalsePositiveBudget); a bare concept noun like ko \"세션\" (~186 live values) can never fit the budget, which is exactly the gate that keeps noisy rows out of the termbase. negativeControls are known-bad bare-noun rows the harness intentionally evaluates and REQUIRES to exceed the budget — if a control stops exceeding it, the gate has lost its teeth.",
+  "$comment": "Precision fixtures for the NON-ENGLISH avoid[] rows in terminology.json (FR-3051). Consumed by scripts/check-terminology-i18n.selftest.mjs, which exercises the REAL CHECK 1 matcher. Every non-en avoid row MUST have exactly one entry here (keyed by lang+avoid); the harness fails on missing or stale entries. positiveFixtures are synthetic strings the row MUST match (detectability); negativeFixtures are legitimate strings it must NOT match (precision) — always include the known longer preferred compounds the term could collide with. falsePositiveBudget caps the row's live hit-count over the CURRENT i18n stores (default: defaultFalsePositiveBudget); a bare concept noun like ko \"세션\" (~200 live values) can never fit the budget, which is exactly the gate that keeps noisy rows out of the termbase. negativeControls are known-bad bare-noun rows the harness intentionally evaluates and REQUIRES to exceed the budget — if a control stops exceeding it, the gate has lost its teeth.",
   "defaultFalsePositiveBudget": 0,
   "rows": [
     {
@@ -73,13 +73,13 @@
       "lang": "ko",
       "avoid": "세션",
       "expectAtLeastLiveHits": 50,
-      "$comment": "Bare concept noun; substring of the preferred compounds 연산 세션 / 배치 세션 / 추론 세션. Measured ~186 legitimate ko values at FR-3051 authoring time — a row like this MUST always blow the falsePositiveBudget."
+      "$comment": "Bare concept noun; substring of the preferred compounds 연산 세션 / 배치 세션 / 추론 세션. Measured 201 legitimate ko values (resources/i18n + BUI locale) at FR-3051 authoring time — a row like this MUST always blow the falsePositiveBudget. The floor of 50 is intentionally conservative (~25% of measured) so a legitimate large-scale i18n refactor cannot false-trip the teeth gate."
     },
     {
       "lang": "ja",
       "avoid": "セッション",
       "expectAtLeastLiveHits": 50,
-      "$comment": "Bare concept noun; substring of コンピュートセッション and every session-type compound. Measured ~181 legitimate ja values at FR-3051 authoring time."
+      "$comment": "Bare concept noun; substring of コンピュートセッション and every session-type compound. Measured 196 legitimate ja values at FR-3051 authoring time; floor 50 is intentionally conservative, same rationale as the ko control."
     }
   ]
 }
