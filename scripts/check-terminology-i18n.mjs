@@ -1266,6 +1266,7 @@ export {
   readJson,
   collectLeaves,
   listLocaleFiles,
+  hasUpper,
   buildTermMatcher,
   buildApprovedCompounds,
   runCheck1,

@@ -124,8 +124,8 @@
           "minLength": 1
         },
         "lang": {
-          "$ref": "#/definitions/language",
-          "description": "Language the avoid rule applies to. The i18n checker applies the row only to that language's stores. Non-English rows are always WARN-severity (never hard-block) and require a fixtures entry in terminology.selftest.json (FR-3051)."
+          "allOf": [{ "$ref": "#/definitions/language" }],
+          "description": "Language the avoid rule applies to. The i18n checker applies the row only to that language's stores. Non-English rows are always WARN-severity (never hard-block) and require a fixtures entry in terminology.selftest.json (FR-3051). (allOf wrapper: draft-07 ignores sibling keywords next to $ref, so a bare $ref would drop this description.)"
         },
         "context": {
           "description": "Optional parenthetical qualifier (e.g. \"for project\", \"as a UI label\"), or null.",

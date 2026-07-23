@@ -62,6 +62,7 @@ import {
   readJson,
   collectLeaves,
   listLocaleFiles,
+  hasUpper,
   buildTermMatcher,
   buildApprovedCompounds,
   runCheck1,
@@ -173,6 +174,12 @@ function main() {
   // ---- 2. CURATION: avoid term must not hide inside a preferred term -----
   const concepts = Array.isArray(termbase.concepts) ? termbase.concepts : [];
   for (const row of nonEnRows) {
+    // Mirror the real matcher's case policy (buildTermMatcher): a term with
+    // no uppercase ASCII matches case-INsensitively, so a Latin lowercase
+    // avoid term (e.g. "app proxy" in a ko row) must also be caught inside
+    // the differently-cased preferred value ("App Proxy").
+    const caseSensitive = hasUpper(row.avoid);
+    const needle = caseSensitive ? row.avoid : row.avoid.toLowerCase();
     for (const concept of concepts) {
       const preferred =
         concept && concept.preferred ? concept.preferred[row.lang] : undefined;
@@ -181,8 +188,9 @@ function main() {
       for (const part of preferred.split(/[,/]/)) {
         const candidate = part.trim();
         if (!candidate) continue;
+        const hay = caseSensitive ? candidate : candidate.toLowerCase();
         assertThat(
-          !candidate.includes(row.avoid),
+          !hay.includes(needle),
           `[curation] avoid row "${row.avoid}" (${row.lang}) is a substring of preferred "${candidate}" (concept ${concept.id})`,
           "a bare token inside a preferred compound would flag every legitimate use; use a precise compound or drop the row",
         );
