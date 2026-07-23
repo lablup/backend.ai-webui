@@ -196,6 +196,14 @@
     "VFolder": "VFolder",
     "VFolderRequired": "VFolder là bắt buộc."
   },
+  "adminRuntimeVariantPreset": {
+    "CreatePreset": "Tạo cài đặt sẵn",
+    "Name": "Tên",
+    "PresetDeleted": "Cài đặt sẵn biến thể thời gian chạy đã được xóa.",
+    "RuntimeVariantId": "ID biến thể thời gian chạy",
+    "RuntimeVariantPreset": "Cài đặt sẵn biến thể thời gian chạy",
+    "TabTitle": "Cài đặt sẵn biến thể thời gian chạy"
+  },
   "adminSession": {
     "PendingSessions": "Phiên đang chờ",
     "PendingSessionsScopedToResourceGroup": "Đang hiển thị các phiên đang chờ chỉ cho nhóm tài nguyên đã chọn. Chuyển đổi nhóm tài nguyên để xem các phiên trong các nhóm khác."

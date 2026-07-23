@@ -196,6 +196,14 @@
     "VFolder": "VFolder",
     "VFolderRequired": "VFolder on pakollinen."
   },
+  "adminRuntimeVariantPreset": {
+    "CreatePreset": "Luo esiasetus",
+    "Name": "Nimi",
+    "PresetDeleted": "Suoritusaikamuunnoksen esiasetus on poistettu.",
+    "RuntimeVariantId": "Suoritusaikamuunnoksen tunnus",
+    "RuntimeVariantPreset": "Suoritusaikamuunnoksen esiasetus",
+    "TabTitle": "Suoritusaikamuunnosten esiasetukset"
+  },
   "adminSession": {
     "PendingSessions": "Odotuksessa olevat istunnot",
     "PendingSessionsScopedToResourceGroup": "Näytetään vain valitun resurssiryhmän odottavat istunnot. Vaihda resurssiryhmää nähdäksesi istunnot muissa ryhmissä."

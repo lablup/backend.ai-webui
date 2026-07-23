@@ -196,6 +196,14 @@
     "VFolder": "VFolder",
     "VFolderRequired": "VFolder diperlukan."
   },
+  "adminRuntimeVariantPreset": {
+    "CreatePreset": "Cipta Pratetap",
+    "Name": "Nama",
+    "PresetDeleted": "Pratetap varian masa jalan telah dipadam.",
+    "RuntimeVariantId": "ID Varian Masa Jalan",
+    "RuntimeVariantPreset": "Pratetap Varian Masa Jalan",
+    "TabTitle": "Pratetap Varian Masa Jalan"
+  },
   "adminSession": {
     "PendingSessions": "Sesi Tertunda",
     "PendingSessionsScopedToResourceGroup": "Menunjukkan sesi tertunda untuk kumpulan sumber yang dipilih sahaja. Tukar kumpulan sumber untuk melihat sesi dalam kumpulan lain."

@@ -196,6 +196,14 @@
     "VFolder": "VFolder",
     "VFolderRequired": "VFolder 為必填項。"
   },
+  "adminRuntimeVariantPreset": {
+    "CreatePreset": "建立預設",
+    "Name": "名稱",
+    "PresetDeleted": "執行環境預設已刪除。",
+    "RuntimeVariantId": "執行環境變體 ID",
+    "RuntimeVariantPreset": "執行環境變體預設",
+    "TabTitle": "執行環境變體預設"
+  },
   "adminSession": {
     "PendingSessions": "待處理工作階段",
     "PendingSessionsScopedToResourceGroup": "僅顯示所選資源組的待處理工作階段。切換資源組以查看其他組中的工作階段。"

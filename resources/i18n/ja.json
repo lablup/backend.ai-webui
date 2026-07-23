@@ -196,6 +196,14 @@
     "VFolder": "VFolder",
     "VFolderRequired": "VFolderは必須です。"
   },
+  "adminRuntimeVariantPreset": {
+    "CreatePreset": "プリセットを作成",
+    "Name": "名前",
+    "PresetDeleted": "ランタイムバリアントプリセットが削除されました。",
+    "RuntimeVariantId": "ランタイムバリアント ID",
+    "RuntimeVariantPreset": "ランタイムバリアントプリセット",
+    "TabTitle": "ランタイムバリアントプリセット"
+  },
   "adminSession": {
     "PendingSessions": "保留中のセッション",
     "PendingSessionsScopedToResourceGroup": "選択したリソースグループの保留中のセッションのみを表示しています。他のグループのセッションを表示するにはリソースグループを切り替えてください。"

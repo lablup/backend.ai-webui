@@ -138,14 +138,14 @@ export function useRuntimeParameterSchema(
               rank
               category
               displayName
-              # Version-gated: stripped from the request on managers older than
-              # the capability cutoff (runtime-variant-preset-required in
-              # client.ts, which turns on at 26.4.4rc9) so the presets query
-              # stays valid on legacy backends. Must match that flag's version —
-              # gating at the final "26.4.4" would strip the field on every
-              # 26.4.4rc manager (rc < final in PEP440), even though the field
-              # already exists there from rc9 onward.
-              required @since(version: "26.4.4rc9")
+              # Version-gated per the schema: required was added in 26.4.4
+              # (see data/schema.graphql), so it is stripped from the request
+              # on older managers to keep the presets query valid on legacy
+              # backends. We follow the schema version, not the capability
+              # flag's rc pin (runtime-variant-preset-required in client.ts,
+              # at 26.4.4rc9); FR-3056 will simplify that flag to the final
+              # tag. Pre-final 26.4.4rc managers are intentionally not covered.
+              required @since(version: "26.4.4")
               targetSpec {
                 presetTarget
                 valueType
