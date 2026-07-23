@@ -192,13 +192,6 @@ interface DeploymentAddRevisionModalProps extends BAIModalProps {
 
 type RevisionPrefillData = DeploymentAddRevisionModal_revisionSource$data;
 
-// Return only the keys of a partial whose values are defined, so a merge
-// `{ ...low, ...pickDefined(high) }` lets `high` override `low` field-by-field
-// without an `undefined` in `high` clobbering a real value from `low`.
-const pickDefined = <T extends object>(
-  obj: T | null | undefined,
-): Partial<T> => (obj ? _.pickBy(obj, (v) => v !== undefined) : {});
-
 // Suspense-wrapped side query that resolves the selected runtime variant's DB
 // `defaultModelDefinition` baseline (FR-3205/FR-3342) and pushes the parsed
 // result up via `onLoaded`. Runs only when the variant reads the vfolder
@@ -206,7 +199,10 @@ const pickDefined = <T extends object>(
 // so the modal chrome / form never blank while it resolves.
 const VariantDefaultModelDefinitionLoader: React.FC<{
   variantId: string;
-  onLoaded: (defaults: ParsedModelDefinition | null, variantId: string) => void;
+  onLoaded: (
+    defaults: Partial<ParsedModelDefinition> | null,
+    variantId: string,
+  ) => void;
 }> = ({ variantId, onLoaded }) => {
   'use memo';
   const uuid = convertToUUID(variantId);
@@ -916,11 +912,16 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       service?.healthCheck && service.healthCheck.enable !== false
         ? service.healthCheck
         : undefined;
-    // Command-mode prefill: key off whether the saved revision actually carries
-    // a command (the new single-string `command` (26.7.0+) or the deprecated
-    // `startCommand` token list), NOT the variant name. A revision that
-    // serializes to a null `modelDefinition` (no command) indicates file mode.
+    // Command-mode prefill: ONLY for a source variant that reads the vfolder
+    // config files — the Service Configuration (command) fields apply only to
+    // those variants. Gate on the variant's capability
+    // (`readsVfolderConfigFiles`, with the legacy `name === 'custom'` fallback)
+    // so a non-reading variant's stored default command never prefills these
+    // fields and then leaks across a later variant switch. Within that, key off
+    // whether the revision actually carries a command (the single-string
+    // `command` (26.7.0+) or the deprecated `startCommand` token list).
     const hasCustomCommand =
+      readsVfolderConfigFiles &&
       !!service &&
       (!!service.command || (service.startCommand?.length ?? 0) > 0);
     // Reconstruct the command string and Basic/Advanced + Execution + Shell UI
@@ -1579,26 +1580,22 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   // of briefly showing its values as placeholders.
   const [dbModelDefinitionDefaults, setDbModelDefinitionDefaults] = useState<{
     variantId: string;
-    defaults: ParsedModelDefinition | null;
+    defaults: Partial<ParsedModelDefinition> | null;
   } | null>(null);
   const shouldLoadVariantDefault =
     readsVfolderConfigFilesInMode && !!watchedRuntimeVariantId;
-  // Use the loaded DB baseline only while it belongs to the currently watched
-  // variant; otherwise treat it as absent until the matching loader reports.
+  // Use the loaded DB baseline only while it is still relevant: the variant must
+  // still be config-reading in the current mode (`shouldLoadVariantDefault`) AND
+  // the baseline must belong to the currently watched variant. Deriving
+  // relevance here — rather than clearing the state in an effect — keeps a stale
+  // baseline from a previous variant / mode from leaking into placeholders
+  // without a setState-in-effect (the loader re-populates the state when active).
   const activeDbModelDefinitionDefaults =
+    shouldLoadVariantDefault &&
     dbModelDefinitionDefaults &&
     dbModelDefinitionDefaults.variantId === watchedRuntimeVariantId
       ? dbModelDefinitionDefaults.defaults
       : null;
-
-  // When the loader is not rendered (mode switched away, variant cleared, or a
-  // non-config-reading variant selected), drop the stale DB baseline so it does
-  // not leak into placeholders. The loader itself re-populates it while active.
-  useEffect(() => {
-    if (!shouldLoadVariantDefault) {
-      setDbModelDefinitionDefaults(null);
-    }
-  }, [shouldLoadVariantDefault, watchedRuntimeVariantId]);
 
   // Placeholder precedence: DB `defaultModelDefinition` (low) < vfolder
   // `model-definition.yaml` (high). Merged field-by-field so the vfolder yaml
@@ -1613,7 +1610,10 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     activeDbModelDefinitionDefaults || vfolderModelDefinitionDefaults
       ? {
           ...activeDbModelDefinitionDefaults,
-          ...pickDefined(vfolderModelDefinitionDefaults),
+          // `vfolderModelDefinitionDefaults` is a partial parse that omits
+          // absent fields (never `undefined` values), so a plain spread already
+          // overrides the DB baseline field-by-field without clobbering.
+          ...vfolderModelDefinitionDefaults,
         }
       : null;
 
