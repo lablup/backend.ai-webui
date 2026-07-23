@@ -702,6 +702,22 @@
       "lang": "ko",
       "context": null,
       "conceptId": "role-superadmin"
+    },
+    {
+      "avoid": "스케일링 그룹",
+      "useInstead": "자원 그룹",
+      "reason": "Deprecated term (\"scaling group\"); the UI and docs use \"자원 그룹\"",
+      "lang": "ko",
+      "context": null,
+      "conceptId": "resource-group"
+    },
+    {
+      "avoid": "スケーリンググループ",
+      "useInstead": "リソースグループ",
+      "reason": "Deprecated term (\"scaling group\"); the UI and docs use \"リソースグループ\"",
+      "lang": "ja",
+      "context": null,
+      "conceptId": "resource-group"
     }
   ],
   "verbs": [

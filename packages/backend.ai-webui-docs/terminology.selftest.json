@@ -1,0 +1,85 @@
+{
+  "$comment": "Precision fixtures for the NON-ENGLISH avoid[] rows in terminology.json (FR-3051). Consumed by scripts/check-terminology-i18n.selftest.mjs, which exercises the REAL CHECK 1 matcher. Every non-en avoid row MUST have exactly one entry here (keyed by lang+avoid); the harness fails on missing or stale entries. positiveFixtures are synthetic strings the row MUST match (detectability); negativeFixtures are legitimate strings it must NOT match (precision) — always include the known longer preferred compounds the term could collide with. falsePositiveBudget caps the row's live hit-count over the CURRENT i18n stores (default: defaultFalsePositiveBudget); a bare concept noun like ko \"세션\" (~200 live values) can never fit the budget, which is exactly the gate that keeps noisy rows out of the termbase. negativeControls are known-bad bare-noun rows the harness intentionally evaluates and REQUIRES to exceed the budget — if a control stops exceeding it, the gate has lost its teeth.",
+  "defaultFalsePositiveBudget": 0,
+  "rows": [
+    {
+      "lang": "ko",
+      "avoid": "레플리카",
+      "positiveFixtures": [
+        "레플리카 수를 조정합니다.",
+        "실행 중인 레플리카가 없습니다."
+      ],
+      "negativeFixtures": [
+        "복제본 수를 조정합니다.",
+        "원하는 복제본 수: {{count}}"
+      ]
+    },
+    {
+      "lang": "ko",
+      "avoid": "자동 스케일링",
+      "positiveFixtures": [
+        "자동 스케일링 규칙을 추가합니다.",
+        "이 배포에는 자동 스케일링이 설정되어 있습니다."
+      ],
+      "negativeFixtures": [
+        "오토스케일링 규칙을 추가합니다.",
+        "오토스케일링 규칙 이름을 입력하세요."
+      ]
+    },
+    {
+      "lang": "ko",
+      "avoid": "슈퍼관리자",
+      "positiveFixtures": ["슈퍼관리자 권한이 필요합니다."],
+      "negativeFixtures": [
+        "슈퍼 관리자 권한이 필요합니다.",
+        "슈퍼 관리자만 이 설정을 변경할 수 있습니다."
+      ]
+    },
+    {
+      "lang": "ko",
+      "avoid": "슈퍼어드민",
+      "positiveFixtures": ["슈퍼어드민만 접근할 수 있습니다."],
+      "negativeFixtures": ["슈퍼 관리자만 접근할 수 있습니다."]
+    },
+    {
+      "lang": "ko",
+      "avoid": "스케일링 그룹",
+      "positiveFixtures": [
+        "스케일링 그룹을 선택하세요.",
+        "이 스케일링 그룹에는 에이전트가 없습니다."
+      ],
+      "negativeFixtures": [
+        "자원 그룹을 선택하세요.",
+        "오토스케일링 규칙을 수정합니다.",
+        "자원 그룹의 스케줄러를 설정합니다."
+      ]
+    },
+    {
+      "lang": "ja",
+      "avoid": "スケーリンググループ",
+      "positiveFixtures": [
+        "スケーリンググループを選択してください。",
+        "このスケーリンググループにはエージェントがありません。"
+      ],
+      "negativeFixtures": [
+        "リソースグループを選択してください。",
+        "自動スケーリングルールを追加します。",
+        "リソースグループのスケジューラを設定します。"
+      ]
+    }
+  ],
+  "negativeControls": [
+    {
+      "lang": "ko",
+      "avoid": "세션",
+      "expectAtLeastLiveHits": 50,
+      "$comment": "Bare concept noun; substring of the preferred compounds 연산 세션 / 배치 세션 / 추론 세션. Measured 201 legitimate ko values (resources/i18n + BUI locale) at FR-3051 authoring time — a row like this MUST always blow the falsePositiveBudget. The floor of 50 is intentionally conservative (~25% of measured) so a legitimate large-scale i18n refactor cannot false-trip the teeth gate."
+    },
+    {
+      "lang": "ja",
+      "avoid": "セッション",
+      "expectAtLeastLiveHits": 50,
+      "$comment": "Bare concept noun; substring of コンピュートセッション and every session-type compound. Measured 196 legitimate ja values at FR-3051 authoring time; floor 50 is intentionally conservative, same rationale as the ko control."
+    }
+  ]
+}

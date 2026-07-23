@@ -173,25 +173,29 @@ These terms match sidebar menu items. Keep documentation references consistent w
 
 ## Terms to Avoid
 
-Each row lists one forbidden term, its canonical replacement, and the reason. Parenthetical qualifiers in the **Avoid** column (e.g. "group (for project)") indicate the context in which the term is disallowed.
+Each row lists one forbidden term, the language it applies to, its canonical replacement, and the reason. Parenthetical qualifiers in the **Avoid** column (e.g. "group (for project)") indicate the context in which the term is disallowed. A row applies **only to its `Lang`** — the i18n checker scans each language's stores against that language's rows, and non-English rows are always WARN-severity (they never hard-block).
+
+**Non-English curation rule (FR-3051).** ko/ja/th have no reliable word boundaries, so the checker matches non-Latin avoid terms by plain **substring**. A non-English `avoid` term must therefore be a **precise multi-token compound** (e.g. `스케일링 그룹`, `スケーリンググループ`) or an **unambiguous deprecated spelling** (e.g. `레플리카`, `슈퍼어드민`) — **never a bare concept noun** (ko `세션` appears in ~200 legitimate values; every one would fire), and never a substring of any `concepts[].preferred[lang]` value. Every non-English row must ship with positive/negative fixtures and a live false-positive budget (default 0) in `terminology.selftest.json`; `pnpm run lint:terminology:selftest` (`scripts/check-terminology-i18n.selftest.mjs`, run as a hard CI gate by `terminology-selftest.yml` on termbase/fixtures/checker changes only) enforces the rule and rejects noisy rows.
 
 <!-- terminology:auto:avoid START -->
 
-| Avoid | Use Instead | Reason |
-|---|---|---|
-| WSProxy (as a UI label) | App Proxy | Renamed in FR-2841; `wsproxy` (code style) survives only as internal identifiers (DB columns, API route, constants), not a daemon |
-| compute node | agent node | Non-standard in docs |
-| data folder | storage folder / vfolder | Non-standard |
-| group (for project) | project | Ambiguous |
-| key pair | keypair | Incorrect spelling |
-| key-pair | keypair | Incorrect spelling |
-| organization | domain | Not used in Backend.AI |
-| scaling group | resource group | Deprecated term |
-| worker node | agent node | Reserve "worker node" for model serving context only |
-| 레플리카 | 복제본 | Use the Korean translation, not the transliteration, for consistency |
-| 슈퍼관리자 | 슈퍼 관리자 | Use the spaced form for consistency |
-| 슈퍼어드민 | 슈퍼 관리자 | Use the Korean translation, not the transliteration |
-| 자동 스케일링 (auto scaling rule) | 오토스케일링 | Match the UI label; the autoScalingRule i18n keys use "오토스케일링" |
+| Avoid | Lang | Use Instead | Reason |
+|---|---|---|---|
+| WSProxy (as a UI label) | en | App Proxy | Renamed in FR-2841; `wsproxy` (code style) survives only as internal identifiers (DB columns, API route, constants), not a daemon |
+| compute node | en | agent node | Non-standard in docs |
+| data folder | en | storage folder / vfolder | Non-standard |
+| group (for project) | en | project | Ambiguous |
+| key pair | en | keypair | Incorrect spelling |
+| key-pair | en | keypair | Incorrect spelling |
+| organization | en | domain | Not used in Backend.AI |
+| scaling group | en | resource group | Deprecated term |
+| worker node | en | agent node | Reserve "worker node" for model serving context only |
+| スケーリンググループ | ja | リソースグループ | Deprecated term ("scaling group"); the UI and docs use "リソースグループ" |
+| 레플리카 | ko | 복제본 | Use the Korean translation, not the transliteration, for consistency |
+| 슈퍼관리자 | ko | 슈퍼 관리자 | Use the spaced form for consistency |
+| 슈퍼어드민 | ko | 슈퍼 관리자 | Use the Korean translation, not the transliteration |
+| 스케일링 그룹 | ko | 자원 그룹 | Deprecated term ("scaling group"); the UI and docs use "자원 그룹" |
+| 자동 스케일링 (auto scaling rule) | ko | 오토스케일링 | Match the UI label; the autoScalingRule i18n keys use "오토스케일링" |
 
 <!-- terminology:auto:avoid END -->
 
@@ -248,7 +252,7 @@ Enforcement is **best-effort, not a substitute for review.** `scripts/check-term
 
 Renaming or deprecating an established term is **atomic**: the termbase, all UI locales, and all doc languages change together, in one Graphite stack. A partial rename leaves the live label and the termbase disagreeing — and because [Precedence](#precedence) says the label wins, a half-done rename silently reverts the decision. Run every step below before submitting.
 
-1. **Deprecate in `terminology.json`.** Set the old concept's `status` to `deprecated`, point `preferred` at the new term (or add the new concept), and add an `avoid[]` row (`avoid` = old term, `useInstead` = new term, plus `reason`, `lang`, and `conceptId`). Set `decidingFR` on the changed concept(s) — the new-term gate requires it.
+1. **Deprecate in `terminology.json`.** Set the old concept's `status` to `deprecated`, point `preferred` at the new term (or add the new concept), and add an `avoid[]` row (`avoid` = old term, `useInstead` = new term, plus `reason`, `lang`, and `conceptId`). Set `decidingFR` on the changed concept(s) — the new-term gate requires it. For a **non-English** avoid row, also add its fixtures entry to `terminology.selftest.json` and confirm `pnpm run lint:terminology:selftest` passes (see the non-English curation rule above).
 2. **Retranslate the UI locales.** Update all 21 files in `resources/i18n/*.json` **and** all 21 in `packages/backend.ai-ui/src/locale/*.json`. Edit `en.json` by hand, then propagate the other 20 with the `fw` i18n-translator (`/fw:i18n`).
 3. **Update the 4 doc languages.** Replace prose occurrences of the old term under `src/{en,ko,ja,th}/`.
 4. **Regenerate the term tables.** Run `pnpm run build:terminology` to refresh the `<!-- terminology:auto:* -->` regions of this file, then `pnpm run check:terminology-md` (confirms the tables match `terminology.json`) and `pnpm run lint:terminology` (confirms no live label still uses the deprecated term).

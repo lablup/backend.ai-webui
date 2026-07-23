@@ -191,15 +191,17 @@ function renderAvoid(data) {
   });
 
   const lines = [];
-  lines.push("| Avoid | Use Instead | Reason |");
-  lines.push("|---|---|---|");
+  // The Lang column is semantic, not cosmetic: the i18n checker applies each
+  // row ONLY to the stores of that language (FR-3051 introduced non-en rows).
+  lines.push("| Avoid | Lang | Use Instead | Reason |");
+  lines.push("|---|---|---|---|");
   for (const r of rows) {
     const avoidLabel =
       typeof r.context === "string" && r.context.length > 0
         ? `${r.avoid} (${r.context})`
         : String(r.avoid);
     lines.push(
-      `| ${cell(avoidLabel)} | ${cell(r.useInstead)} | ${cell(r.reason)} |`,
+      `| ${cell(avoidLabel)} | ${cell(r.lang ?? "en")} | ${cell(r.useInstead)} | ${cell(r.reason)} |`,
     );
   }
   return lines.join("\n");
