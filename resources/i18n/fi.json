@@ -2178,7 +2178,7 @@
     "PermissionNotAssignable": "Tätä käyttöoikeutta ei voi määrittää.",
     "PermissionType": "Käyttöoikeuden tyyppi",
     "Permissions": "Käyttöoikeudet",
-    "PermissionsPartialFailureDescription": "Epäonnistuneet muutokset säilyvät lomakkeella. Korjaa ne ja tallenna uudelleen – jo sovellettuja muutoksia ei lähetetä uudelleen.",
+    "PermissionsPartialFailureDescription": "Osa käyttöoikeusmuutoksista epäonnistui. Tarkista kohteet.",
     "PermissionsSaved": "Käyttöoikeudet tallennettu onnistuneesti.",
     "PleaseSelectUsers": "Valitse vähintään yksi käyttäjä.",
     "ProjectScopeTooltip": "Valinnainen. Jätä tyhjäksi globaalia roolia varten.",

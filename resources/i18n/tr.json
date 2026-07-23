@@ -2178,7 +2178,7 @@
     "PermissionNotAssignable": "Bu izin atanamaz.",
     "PermissionType": "İzin Türü",
     "Permissions": "İzinler",
-    "PermissionsPartialFailureDescription": "Başarısız değişiklikler formda tutulur. Düzeltip yeniden kaydedin — uygulanmış değişiklikler yeniden gönderilmez.",
+    "PermissionsPartialFailureDescription": "Bazı izin değişiklikleri başarısız oldu. Lütfen öğeleri kontrol edin.",
     "PermissionsSaved": "İzinler başarıyla kaydedildi.",
     "PleaseSelectUsers": "Lütfen en az bir kullanıcı seçin.",
     "ProjectScopeTooltip": "İsteğe bağlı. Genel rol için boş bırakın.",

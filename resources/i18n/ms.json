@@ -2178,7 +2178,7 @@
     "PermissionNotAssignable": "Kebenaran ini tidak boleh ditugaskan.",
     "PermissionType": "Jenis Kebenaran",
     "Permissions": "Kebenaran",
-    "PermissionsPartialFailureDescription": "Perubahan yang gagal kekal dalam borang. Betulkan dan simpan semula — perubahan yang telah digunakan tidak akan dihantar semula.",
+    "PermissionsPartialFailureDescription": "Beberapa perubahan kebenaran gagal. Sila semak item berkenaan.",
     "PermissionsSaved": "Kebenaran berjaya disimpan.",
     "PleaseSelectUsers": "Sila pilih sekurang-kurangnya seorang pengguna.",
     "ProjectScopeTooltip": "Pilihan. Biarkan kosong untuk peranan global.",

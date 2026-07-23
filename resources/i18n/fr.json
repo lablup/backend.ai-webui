@@ -2180,7 +2180,7 @@
     "PermissionNotAssignable": "Cette permission ne peut pas être attribuée.",
     "PermissionType": "Type de permission",
     "Permissions": "Permissions",
-    "PermissionsPartialFailureDescription": "Les modifications en échec sont conservées dans le formulaire. Corrigez-les puis enregistrez à nouveau — les modifications déjà appliquées ne seront pas soumises à nouveau.",
+    "PermissionsPartialFailureDescription": "Certaines modifications de permissions ont échoué. Veuillez vérifier les éléments.",
     "PermissionsSaved": "Permissions enregistrées avec succès.",
     "PleaseSelectUsers": "Veuillez sélectionner au moins un utilisateur.",
     "ProjectScopeTooltip": "Facultatif. Laissez vide pour un rôle global.",

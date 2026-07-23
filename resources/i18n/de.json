@@ -2180,7 +2180,7 @@
     "PermissionNotAssignable": "Diese Berechtigung kann nicht zugewiesen werden.",
     "PermissionType": "Berechtigungstyp",
     "Permissions": "Berechtigungen",
-    "PermissionsPartialFailureDescription": "Fehlgeschlagene Änderungen bleiben im Formular erhalten. Korrigieren Sie sie und speichern Sie erneut – bereits angewendete Änderungen werden nicht erneut übermittelt.",
+    "PermissionsPartialFailureDescription": "Einige Berechtigungsänderungen sind fehlgeschlagen. Bitte überprüfen Sie die Einträge.",
     "PermissionsSaved": "Berechtigungen erfolgreich gespeichert.",
     "PleaseSelectUsers": "Bitte wählen Sie mindestens einen Benutzer aus.",
     "ProjectScopeTooltip": "Optional. Leer lassen für eine globale Rolle.",

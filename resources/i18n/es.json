@@ -2178,7 +2178,7 @@
     "PermissionNotAssignable": "Este permiso no se puede asignar.",
     "PermissionType": "Tipo de permiso",
     "Permissions": "Permisos",
-    "PermissionsPartialFailureDescription": "Los cambios fallidos se conservan en el formulario. Corríjalos y guarde de nuevo; los cambios ya aplicados no se volverán a enviar.",
+    "PermissionsPartialFailureDescription": "Algunos cambios de permisos han fallado. Compruebe los elementos.",
     "PermissionsSaved": "Permisos guardados correctamente.",
     "PleaseSelectUsers": "Por favor, seleccione al menos un usuario.",
     "ProjectScopeTooltip": "Opcional. Déjelo vacío para un rol global.",

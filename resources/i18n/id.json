@@ -2181,7 +2181,7 @@
     "PermissionNotAssignable": "Izin ini tidak dapat ditetapkan.",
     "PermissionType": "Jenis Izin",
     "Permissions": "Izin",
-    "PermissionsPartialFailureDescription": "Perubahan yang gagal tetap dipertahankan di formulir. Perbaiki lalu simpan lagi — perubahan yang sudah diterapkan tidak akan dikirim ulang.",
+    "PermissionsPartialFailureDescription": "Beberapa perubahan izin gagal. Silakan periksa itemnya.",
     "PermissionsSaved": "Izin berhasil disimpan.",
     "PleaseSelectUsers": "Silakan pilih setidaknya satu pengguna.",
     "ProjectScopeTooltip": "Opsional. Kosongkan untuk peran global.",

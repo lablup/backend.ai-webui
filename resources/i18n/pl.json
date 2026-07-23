@@ -2180,7 +2180,7 @@
     "PermissionNotAssignable": "Tego uprawnienia nie można przypisać.",
     "PermissionType": "Typ uprawnienia",
     "Permissions": "Uprawnienia",
-    "PermissionsPartialFailureDescription": "Nieudane zmiany pozostają w formularzu. Popraw je i zapisz ponownie — zastosowane już zmiany nie zostaną przesłane ponownie.",
+    "PermissionsPartialFailureDescription": "Niektóre zmiany uprawnień nie powiodły się. Sprawdź pozycje.",
     "PermissionsSaved": "Uprawnienia zapisane pomyślnie.",
     "PleaseSelectUsers": "Proszę wybrać co najmniej jednego użytkownika.",
     "ProjectScopeTooltip": "Opcjonalne. Pozostaw puste dla roli globalnej.",

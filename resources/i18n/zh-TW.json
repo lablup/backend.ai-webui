@@ -2182,7 +2182,7 @@
     "PermissionNotAssignable": "此權限無法分配。",
     "PermissionType": "權限類型",
     "Permissions": "權限",
-    "PermissionsPartialFailureDescription": "失敗的變更會保留在表單中。請修正後重新儲存——已套用的變更不會重複提交。",
+    "PermissionsPartialFailureDescription": "部分權限設定失敗。請檢查相關項目。",
     "PermissionsSaved": "權限儲存成功。",
     "PleaseSelectUsers": "請至少選擇一個使用者。",
     "ProjectScopeTooltip": "選填。留空表示全域角色。",

@@ -2180,7 +2180,7 @@
     "PermissionNotAssignable": "ไม่สามารถมอบหมายสิทธิ์นี้ได้",
     "PermissionType": "ประเภทสิทธิ์",
     "Permissions": "สิทธิ์",
-    "PermissionsPartialFailureDescription": "การเปลี่ยนแปลงที่ล้มเหลวจะยังคงอยู่ในฟอร์ม แก้ไขแล้วบันทึกอีกครั้ง — การเปลี่ยนแปลงที่นำไปใช้แล้วจะไม่ถูกส่งซ้ำ",
+    "PermissionsPartialFailureDescription": "การเปลี่ยนแปลงสิทธิ์บางรายการล้มเหลว โปรดตรวจสอบรายการ",
     "PermissionsSaved": "บันทึกสิทธิ์สำเร็จแล้ว",
     "PleaseSelectUsers": "กรุณาเลือกผู้ใช้อย่างน้อยหนึ่งคน",
     "ProjectScopeTooltip": "ไม่บังคับ ปล่อยว่างไว้สำหรับบทบาทระดับโกลบอล",

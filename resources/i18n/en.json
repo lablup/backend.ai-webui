@@ -2165,7 +2165,7 @@
     "PermissionNotAssignable": "This permission cannot be assigned.",
     "PermissionType": "Permission Type",
     "Permissions": "Permissions",
-    "PermissionsPartialFailureDescription": "The failed changes are kept in the form. Fix them and save again — changes that were already applied will not be re-submitted.",
+    "PermissionsPartialFailureDescription": "Some permission changes failed. Please check the items.",
     "PermissionsSaved": "Permissions saved successfully.",
     "PleaseSelectUsers": "Please select at least one user.",
     "ProjectScopeTooltip": "Optional. Leave empty for a global role.",

@@ -2180,7 +2180,7 @@
     "PermissionNotAssignable": "此权限无法分配。",
     "PermissionType": "权限类型",
     "Permissions": "权限",
-    "PermissionsPartialFailureDescription": "失败的更改将保留在表单中。请修正后重新保存——已应用的更改不会重复提交。",
+    "PermissionsPartialFailureDescription": "部分权限设置失败。请检查相关条目。",
     "PermissionsSaved": "权限保存成功。",
     "PleaseSelectUsers": "请至少选择一个用户。",
     "ProjectScopeTooltip": "可选。留空表示全局角色。",

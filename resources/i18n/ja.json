@@ -2180,7 +2180,7 @@
     "PermissionNotAssignable": "この権限は割り当てできません。",
     "PermissionType": "権限タイプ",
     "Permissions": "権限",
-    "PermissionsPartialFailureDescription": "失敗した変更はフォームに保持されています。修正して再度保存してください。すでに適用された変更は再送信されません。",
+    "PermissionsPartialFailureDescription": "一部の権限設定に失敗しました。項目を確認してください。",
     "PermissionsSaved": "権限を保存しました。",
     "PleaseSelectUsers": "少なくとも1人のユーザーを選択してください。",
     "ProjectScopeTooltip": "任意。グローバルロールの場合は空のままにしてください。",

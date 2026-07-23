@@ -18,13 +18,13 @@ import {
 import {
   applyBulkPermissionCells,
   type BulkCellState,
-  diffPermissionCells,
   type PermissionCellDiff,
 } from '../helper/rbacPermissionDiff';
-import { App, Checkbox, Empty, Form, theme, Tooltip, Typography } from 'antd';
+import { App, Empty, Form, theme, Tooltip, Typography } from 'antd';
 import {
   BAIBulkEditFormItem,
   BAIBulkErrorModal,
+  BAICheckbox,
   type BAIColumnsType,
   BAIDoubleTag,
   BAIFlex,
@@ -434,31 +434,18 @@ const RoleScopePermissionEditModal: React.FC<
 
   const singleScopeId = !isBulk ? scopeList[0]?.scopeId : undefined;
 
-  // Single-scope edit: the one scope's grants are pre-checked and the grid is
-  // diffed against them on save.
-  const [editedKeys, setEditedKeys] = useState<Set<string>>(() =>
-    initialKeysOf(singleScopeId),
-  );
-  // Bulk edit: each editable cell is a `BAIBulkEditFormItem` field on this
-  // form. Cells left as 'Keep as is' hold `undefined`; cells switched into
-  // edit mode hold the checkbox boolean.
-  const [bulkForm] = Form.useForm<Record<string, boolean | undefined>>();
+  // Single-scope edit: the one scope's currently-granted cells, used to
+  // pre-check the grid via each cell's Form.Item `initialValue`.
+  const singleInitialKeys = initialKeysOf(singleScopeId);
+  // Every grid cell is a boolean field on this form, keyed by its cell key.
+  // Single-scope: every rendered cell registers at mount, pre-checked with
+  // the scope's granted state. Bulk: only cells switched into edit mode
+  // register (`BAIBulkEditFormItem`); 'Keep as is' cells stay `undefined`.
+  const [form] = Form.useForm<Record<string, boolean | undefined>>();
   const [isSaving, setIsSaving] = useState(false);
   const [failedRequests, setFailedRequests] = useState<
     FailedPermissionRequest[]
   >([]);
-
-  const toggleCell = (key: string, checked: boolean) => {
-    setEditedKeys((previous) => {
-      const next = new Set(previous);
-      if (checked) {
-        next.add(key);
-      } else {
-        next.delete(key);
-      }
-      return next;
-    });
-  };
 
   const operationLabel = (operation: string) =>
     t(`rbac.operations.${operation}`, { defaultValue: operation });
@@ -482,13 +469,13 @@ const RoleScopePermissionEditModal: React.FC<
       return;
     }
 
-    // Bulk edit: only the cells the user switched into edit mode carry a
-    // boolean; cells left as 'Keep as is' stay `undefined` and are skipped.
-    const bulkValues: Record<string, boolean | undefined> = isBulk
-      ? bulkForm.getFieldsValue(true)
-      : {};
+    // Cells the grid defines: single-scope registers every rendered cell as
+    // a boolean; bulk registers only the cells switched into edit mode
+    // ('Keep as is' cells stay `undefined` and are skipped).
+    const cellValues: Record<string, boolean | undefined> =
+      form.getFieldsValue(true);
     const modifiedCells = new Map<string, BulkCellState>();
-    Object.entries(bulkValues).forEach(([key, value]) => {
+    Object.entries(cellValues).forEach(([key, value]) => {
       if (value === true) {
         modifiedCells.set(key, 'checked');
       } else if (value === false) {
@@ -496,11 +483,10 @@ const RoleScopePermissionEditModal: React.FC<
       }
     });
 
-    // Per-target reconciliation: single-scope diffs the grid against its
-    // pre-checked state; bulk applies only the user-modified cells to every
-    // selected scope's own initial state ('Keep as is' cells untouched,
-    // already-satisfied scopes skipped) — both share the dirty-tracking core
-    // in `rbacPermissionDiff`.
+    // Per-target reconciliation: the grid cells apply to every selected
+    // scope's own initial state — already-satisfied cells produce no request,
+    // and cells absent from the form ('Keep as is', or grants the grid does
+    // not render) keep each scope's existing value.
     const createEntries: Array<{
       scope: EditingScope;
       key: string;
@@ -512,9 +498,10 @@ const RoleScopePermissionEditModal: React.FC<
     }> = [];
     scopeList.forEach((scope) => {
       const scopeInitial = initialKeysOf(scope.scopeId);
-      const diff: PermissionCellDiff = isBulk
-        ? applyBulkPermissionCells(scopeInitial, modifiedCells)
-        : diffPermissionCells(scopeInitial, editedKeys);
+      const diff: PermissionCellDiff = applyBulkPermissionCells(
+        scopeInitial,
+        modifiedCells,
+      );
       diff.toCreate.forEach((key) => createEntries.push({ scope, key }));
       // toDelete ⊆ the scope's initial keys, which are exactly the recorded
       // permission ids' keys, so the lookup cannot miss.
@@ -683,6 +670,21 @@ const RoleScopePermissionEditModal: React.FC<
         });
       }
       setFailedRequests(failures);
+      // An empty-string field error flags the failed cells (= field names)
+      // with error status without printing a message under the cell — an
+      // empty explain row has no height and the cell items keep
+      // `marginBottom: 0`, so the grid layout is untouched; the messages
+      // live in the error modal table. Set over every form field so cells
+      // that succeeded on a retry drop their previous mark.
+      const failedCellKeys = new Set(
+        _.compact(failures.map((failure) => failure.cellKey)),
+      );
+      form.setFields(
+        Object.keys(cellValues).map((name) => ({
+          name,
+          errors: failedCellKeys.has(name) ? [''] : [],
+        })),
+      );
     } finally {
       setIsSaving(false);
     }
@@ -716,15 +718,20 @@ const RoleScopePermissionEditModal: React.FC<
           // switched into edit mode — the checkbox starts checked.
           initialValue={true}
         >
-          <Checkbox />
+          <BAICheckbox />
         </BAIBulkEditFormItem>
       );
     }
     return (
-      <Checkbox
-        checked={editedKeys.has(key)}
-        onChange={(event) => toggleCell(key, event.target.checked)}
-      />
+      <Form.Item
+        name={key}
+        valuePropName="checked"
+        // Pre-checked with the scope's currently-granted state.
+        initialValue={singleInitialKeys.has(key)}
+        style={{ marginBottom: 0 }}
+      >
+        <BAICheckbox />
+      </Form.Item>
     );
   };
 
@@ -814,7 +821,7 @@ const RoleScopePermissionEditModal: React.FC<
       // calc(100vw - 32px)` keeps it inside the viewport on small screens.
       width={isBulk ? 900 : 760}
     >
-      <Form form={bulkForm} component={false}>
+      <Form form={form} component={false}>
         <BAIFlex direction="column" align="stretch" gap="sm">
           {isBulk && (
             // Keep-as-is semantics + the concrete scopes this edit will touch
