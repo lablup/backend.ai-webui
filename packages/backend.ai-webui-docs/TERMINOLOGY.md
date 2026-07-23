@@ -41,15 +41,20 @@ The tables below list the approved term for each concept, per language, grouped 
 
 | Concept | EN | KO | JA | TH | Context | Deciding FR | Description |
 |---|---|---|---|---|---|---|---|
+| active-pool | Active Pool | 활성 풀 | アクティブプール | แอ็กทีฟพูล | — | FR-3302 | The set of model-service replicas currently receiving traffic through App Proxy. Membership tracks traffic and is independent of a replica's health status. See app-proxy. |
 | app-proxy | App Proxy | App Proxy | App Proxy | App Proxy | — | FR-2841 | The standalone, per-resource-group proxy service that relays in-container application traffic directly between the user's browser and the compute session's Agent. Renamed from WSProxy to App Proxy in the UI in FR-2841. Use "App Proxy" only; do not reference the old "WSProxy" name in user-facing documentation. UI label stays in English across all locales. |
 | app-proxy-api-token | App Proxy API Token | App Proxy API 토큰 | App Proxy APIトークン | โทเค็น API ของ App Proxy | Field label (Resource Group settings) | FR-2841 | Resource Group settings field label for the App Proxy API token. |
 | app-proxy-server-address | App Proxy Server Address | App Proxy 서버 주소 | App Proxy サーバアドレス | ที่อยู่เซิร์ฟเวอร์ App Proxy | Field label (Resource Group settings) | FR-2841 | Resource Group settings field label for the App Proxy server address. |
 | autoscaling-rule | Auto Scaling Rule | 오토스케일링 규칙 | 自動スケーリングルール | กฎการปรับขนาดอัตโนมัติ | — | FR-3207 | The rule that automatically adjusts a deployment's replica count based on live metrics. Match the UI label exactly: KO uses "오토스케일링" (the autoScalingRule i18n keys), NOT "자동 스케일링". Documentation section: deployment/deployment.md |
 | container | Container | — | — | — | — | — | The runtime environment of a compute session. Do NOT use "container" and "kernel" interchangeably. |
 | endpoint | Endpoint | — | — | — | — | — | The access point created for a served model. |
+| fair-share | Fair Share | Fair Share | 公平配分 | การจัดสรรแบบเป็นธรรม | — | FR-3302 | The scheduling policy that balances resource-allocation fairness across users within a resource group. The KO UI keeps the English label "Fair Share" (webui.menu.FairShare). |
+| fair-share-scheduler | Fair Share Scheduler | — | — | — | — | FR-3302 | The scheduler component that computes Fair Share priorities. Appears in Fair Share setting descriptions; no dedicated per-language UI label (documentation term). |
 | inference | Inference | — | — | — | — | — | The operation of running predictions through a served model. |
 | kernel-image | Kernel image / Container image | — | — | — | — | — | The base image (snapshot) from which containers are created. Do NOT use "container" and "kernel" interchangeably. |
 | model-serving | Model Service / Model Serving | — | — | — | — | — | The feature name (page title, menu item). |
+| model-store | Model Store | 모델 스토어 | モデルストア | คลังโมเดล | — | FR-3302 | The Model Store feature/page for browsing and importing published models into a project. |
+| rate-limit | Rate Limit | 최대 요청수 | レート制限 | ขีดจำกัดอัตรา | — | FR-3302 | The keypair/credential setting capping API request frequency. The KO UI label is "최대 요청수" (credential.RateLimit). |
 | rbac | RBAC | RBAC | RBAC | RBAC | — | — | Role-Based Access Control. Keep as abbreviation across all languages. |
 | rbac-permission | permission | 세부 권한 | 権限 | สิทธิ์ | — | — | A fine-grained access rule within a role. "세부 권한" is used specifically for fine-grained permissions within a role. |
 | rbac-permission-type | permission type | 권한 타입 | 権限タイプ | ประเภทสิทธิ์ | — | — | The category of resource a permission controls. |
@@ -57,6 +62,7 @@ The tables below list the approved term for each concept, per language, grouped 
 | rbac-role-assignment | role assignment | 권한 할당 | ロール割り当て | การมอบหมายบทบาท | — | — | The association of a user to a role. |
 | rbac-scope-type | scope type | 적용 범위 타입 | スコープタイプ | ประเภทขอบเขต | — | — | The level at which a permission applies. |
 | replica | replica | 복제본 | レプリカ | เรพลิกา | — | — | An individual running instance of a deployed model service. The desired/active count of these is managed by the deployment and auto-scaling rules. Documentation section: deployment/deployment.md |
+| resource-policy | Resource Policy | 자원 정책 | リソースポリシー | นโยบายทรัพยากร | — | FR-3302 | A named policy defining resource limits (CPU, memory, GPU, session count). WebUI has distinct keypair, user, and project resource policies. KO uses "자원 정책" (consistent with 자원 그룹). |
 
 ### User Roles
 
