@@ -2135,7 +2135,6 @@
     "UpdatedAt": "Atualizado em"
   },
   "rbac": {
-    "Action": "Ação",
     "Activate": "Ativar",
     "ActivateRole": "Ativar perfil",
     "Active": "Ativo",
@@ -2165,7 +2164,6 @@
     "ErrorMessage": "Mensagem de erro",
     "FKConstraintViolation": "Não é possível excluir permanentemente esta função. Remova todas as atribuições e permissões primeiro.",
     "FullyAllowed": "Totalmente permitido",
-    "Grant": "Conceder",
     "GrantedAt": "Concedido em",
     "Inactive": "Inativo",
     "Name": "Nome",
@@ -2185,7 +2183,6 @@
     "PleaseSelectUsers": "Selecione pelo menos um usuário.",
     "ProjectScopeTooltip": "Opcional. Deixe em branco para um papel global.",
     "PurgeRole": "Excluir função permanentemente",
-    "Revoke": "Revogar",
     "RevokeUser": "Remover Usuário do Papel",
     "RoleActivated": "Função ativada com sucesso.",
     "RoleAssignments": "Atribuições de papéis",

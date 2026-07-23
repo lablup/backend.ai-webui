@@ -2137,7 +2137,6 @@
     "UpdatedAt": "更新时间"
   },
   "rbac": {
-    "Action": "操作",
     "Activate": "激活",
     "ActivateRole": "激活角色",
     "Active": "活跃",
@@ -2167,7 +2166,6 @@
     "ErrorMessage": "错误信息",
     "FKConstraintViolation": "无法清除此角色。请先移除所有分配和权限。",
     "FullyAllowed": "完全允许",
-    "Grant": "授予",
     "GrantedAt": "授予时间",
     "Inactive": "非活跃",
     "Name": "名称",
@@ -2187,7 +2185,6 @@
     "PleaseSelectUsers": "请至少选择一个用户。",
     "ProjectScopeTooltip": "可选。留空表示全局角色。",
     "PurgeRole": "永久删除角色",
-    "Revoke": "撤销",
     "RevokeUser": "从角色移除用户",
     "RoleActivated": "角色已成功激活。",
     "RoleAssignments": "角色分配",

@@ -2135,7 +2135,6 @@
     "UpdatedAt": "Päivitetty"
   },
   "rbac": {
-    "Action": "Toiminto",
     "Activate": "Aktivoi",
     "ActivateRole": "Aktivoi rooli",
     "Active": "Aktiivinen",
@@ -2165,7 +2164,6 @@
     "ErrorMessage": "Virheilmoitus",
     "FKConstraintViolation": "Roolia ei voi poistaa pysyvästi. Poista ensin kaikki määritykset ja käyttöoikeudet.",
     "FullyAllowed": "Täysin sallittu",
-    "Grant": "Myönnä",
     "GrantedAt": "Myönnetty",
     "Inactive": "Ei-aktiivinen",
     "Name": "Nimi",
@@ -2185,7 +2183,6 @@
     "PleaseSelectUsers": "Valitse vähintään yksi käyttäjä.",
     "ProjectScopeTooltip": "Valinnainen. Jätä tyhjäksi globaalia roolia varten.",
     "PurgeRole": "Poista rooli pysyvästi",
-    "Revoke": "Peruuta",
     "RevokeUser": "Poista Käyttäjä Roolista",
     "RoleActivated": "Rooli aktivoitu onnistuneesti.",
     "RoleAssignments": "Roolimääritykset",

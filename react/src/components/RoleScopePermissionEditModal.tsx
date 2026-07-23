@@ -26,6 +26,7 @@ import {
   BAIBulkEditFormItem,
   BAIBulkErrorModal,
   type BAIColumnsType,
+  BAIDoubleTag,
   BAIFlex,
   BAIListAlert,
   BAIModal,
@@ -35,6 +36,7 @@ import {
   useBAILogger,
   useMutationWithPromise,
 } from 'backend.ai-ui';
+import _ from 'lodash';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -101,9 +103,13 @@ const reasonMessage = (reason: unknown): string => {
  */
 interface FailedPermissionRequest {
   key: string;
+  /** Scope display name (falls back to the raw scope id). */
   scopeLabel: string;
-  permissionLabel: string;
-  action: 'grant' | 'revoke';
+  /**
+   * Grid cell key of the failed permission; absent when a failed row cannot
+   * be mapped back to a requested cell (e.g. an unknown permission id).
+   */
+  cellKey?: string;
   message: string;
 }
 
@@ -438,16 +444,9 @@ const RoleScopePermissionEditModal: React.FC<
   // edit mode hold the checkbox boolean.
   const [bulkForm] = Form.useForm<Record<string, boolean | undefined>>();
   const [isSaving, setIsSaving] = useState(false);
-  // Per-request errors of the last save, surfaced through the shared
-  // bulk-error modal. The rows persist after the error modal closes (only the
-  // open flag flips) so the table doesn't empty out mid close-animation.
   const [failedRequests, setFailedRequests] = useState<
     FailedPermissionRequest[]
   >([]);
-  const [isFailureModalOpen, setIsFailureModalOpen] = useState(false);
-  // Whether any change already reached the backend (partial success). The
-  // parent must refetch on close even if the user then cancels.
-  const hasAppliedChanges = appliedCellOverrides.size > 0;
 
   const toggleCell = (key: string, checked: boolean) => {
     setEditedKeys((previous) => {
@@ -472,12 +471,6 @@ const RoleScopePermissionEditModal: React.FC<
     return baseOperation === 'ALL'
       ? t('general.All')
       : operationLabel(baseOperation);
-  };
-
-  /** Human-readable "Entity / Operation" label of a grid cell. */
-  const permissionCellLabel = (key: string) => {
-    const [entityType, operation] = key.split(CELL_KEY_SEPARATOR);
-    return `${rbacTypeLabel(entityType)} / ${operationLabel(operation)}`;
   };
 
   const scopeLabelOf = (scope: EditingScope | undefined, fallback: string) =>
@@ -606,8 +599,7 @@ const RoleScopePermissionEditModal: React.FC<
               scopeList.find((scope) => scope.scopeId === failure.scopeId),
               failure.scopeId,
             ),
-            permissionLabel: permissionCellLabel(cellKey),
-            action: 'grant',
+            cellKey,
             message: failure.message,
           });
         });
@@ -618,8 +610,7 @@ const RoleScopePermissionEditModal: React.FC<
           failures.push({
             key: `grant-${scope.scopeId}-${key}`,
             scopeLabel: scopeLabelOf(scope, scope.scopeId),
-            permissionLabel: permissionCellLabel(key),
-            action: 'grant',
+            cellKey: key,
             message: reasonMessage(addResult.reason),
           });
         });
@@ -649,8 +640,7 @@ const RoleScopePermissionEditModal: React.FC<
             scopeLabel: entry
               ? scopeLabelOf(entry.scope, entry.scope.scopeId)
               : String(failure.permissionId),
-            permissionLabel: entry ? permissionCellLabel(entry.key) : '-',
-            action: 'revoke',
+            cellKey: entry?.key,
             message: failure.message,
           });
         });
@@ -660,8 +650,7 @@ const RoleScopePermissionEditModal: React.FC<
           failures.push({
             key: `revoke-${scope.scopeId}-${key}`,
             scopeLabel: scopeLabelOf(scope, scope.scopeId),
-            permissionLabel: permissionCellLabel(key),
-            action: 'revoke',
+            cellKey: key,
             message: reasonMessage(removeResult.reason),
           });
         });
@@ -694,7 +683,6 @@ const RoleScopePermissionEditModal: React.FC<
         });
       }
       setFailedRequests(failures);
-      setIsFailureModalOpen(true);
     } finally {
       setIsSaving(false);
     }
@@ -779,33 +767,6 @@ const RoleScopePermissionEditModal: React.FC<
     })),
   ];
 
-  // Failed-request table shown in the shared bulk-error modal — one row per
-  // rejected grant/revoke request.
-  const failureColumns: BAIColumnsType<FailedPermissionRequest> = [
-    {
-      key: 'scope',
-      title: t('rbac.ScopeId'),
-      dataIndex: 'scopeLabel',
-    },
-    {
-      key: 'permission',
-      title: t('rbac.Permission'),
-      dataIndex: 'permissionLabel',
-    },
-    {
-      key: 'action',
-      title: t('rbac.Action'),
-      dataIndex: 'action',
-      render: (action: FailedPermissionRequest['action']) =>
-        action === 'grant' ? t('rbac.Grant') : t('rbac.Revoke'),
-    },
-    {
-      key: 'message',
-      title: t('rbac.ErrorMessage'),
-      dataIndex: 'message',
-    },
-  ];
-
   return (
     <BAIModal
       {...baiModalProps}
@@ -846,7 +807,7 @@ const RoleScopePermissionEditModal: React.FC<
       // After a partial failure some changes did reach the backend, so even a
       // cancel must report success=true — the parent then refetches and the
       // tags reflect the true state.
-      onCancel={() => onRequestClose(hasAppliedChanges)}
+      onCancel={() => onRequestClose(appliedCellOverrides.size > 0)}
       // Bulk cells render a 'Keep as is' placeholder input per operation
       // column, so the grid needs considerably more room than the
       // checkbox-only single-scope grid. antd's own `max-width:
@@ -891,11 +852,49 @@ const RoleScopePermissionEditModal: React.FC<
           `BAIUnmountAfterClose`; the edit modal (and the user's edits) stays
           open behind it for a retry. */}
       <BAIBulkErrorModal<FailedPermissionRequest>
-        open={isFailureModalOpen}
+        open={!_.isEmpty(failedRequests)}
         description={t('rbac.PermissionsPartialFailureDescription')}
-        columns={failureColumns}
         dataSource={failedRequests}
-        onRequestClose={() => setIsFailureModalOpen(false)}
+        onRequestClose={() => setFailedRequests([])}
+        columns={[
+          {
+            key: 'scope',
+            title: t('rbac.ScopeId'),
+            dataIndex: 'scopeLabel',
+            render: (scopeLabel: string) => (
+              <BAIDoubleTag
+                values={[
+                  { label: scopeTypeLabel, color: 'blue' },
+                  { label: scopeLabel, color: 'default' },
+                ]}
+              />
+            ),
+          },
+          {
+            key: 'permission',
+            title: t('rbac.Permission'),
+            dataIndex: 'cellKey',
+            render: (cellKey: FailedPermissionRequest['cellKey']) => {
+              if (!cellKey) {
+                return '-';
+              }
+              const [entityType, operation] = cellKey.split(CELL_KEY_SEPARATOR);
+              return (
+                <BAIDoubleTag
+                  values={[
+                    { label: rbacTypeLabel(entityType), color: 'blue' },
+                    { label: operationLabel(operation), color: 'default' },
+                  ]}
+                />
+              );
+            },
+          },
+          {
+            key: 'message',
+            title: t('rbac.ErrorMessage'),
+            dataIndex: 'message',
+          },
+        ]}
       />
     </BAIModal>
   );

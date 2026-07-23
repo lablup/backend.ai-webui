@@ -2138,7 +2138,6 @@
     "UpdatedAt": "Diperbarui Pada"
   },
   "rbac": {
-    "Action": "Tindakan",
     "Activate": "Aktifkan",
     "ActivateRole": "Aktifkan Peran",
     "Active": "Aktif",
@@ -2168,7 +2167,6 @@
     "ErrorMessage": "Pesan Galat",
     "FKConstraintViolation": "Tidak dapat menghapus peran ini secara permanen. Hapus semua penetapan dan izin terlebih dahulu.",
     "FullyAllowed": "Diizinkan sepenuhnya",
-    "Grant": "Berikan",
     "GrantedAt": "Diberikan Pada",
     "Inactive": "Tidak Aktif",
     "Name": "Nama",
@@ -2188,7 +2186,6 @@
     "PleaseSelectUsers": "Silakan pilih setidaknya satu pengguna.",
     "ProjectScopeTooltip": "Opsional. Kosongkan untuk peran global.",
     "PurgeRole": "Hapus Peran Secara Permanen",
-    "Revoke": "Cabut",
     "RevokeUser": "Hapus Pengguna dari Peran",
     "RoleActivated": "Peran berhasil diaktifkan.",
     "RoleAssignments": "Penetapan Peran",

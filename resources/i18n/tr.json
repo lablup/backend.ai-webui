@@ -2135,7 +2135,6 @@
     "UpdatedAt": "Güncellenme tarihi"
   },
   "rbac": {
-    "Action": "İşlem",
     "Activate": "Etkinleştir",
     "ActivateRole": "Rolü Etkinleştir",
     "Active": "Aktif",
@@ -2165,7 +2164,6 @@
     "ErrorMessage": "Hata mesajı",
     "FKConstraintViolation": "Bu rol kalıcı olarak silinemez. Lütfen önce tüm atamaları ve izinleri kaldırın.",
     "FullyAllowed": "Tamamen izin verildi",
-    "Grant": "Ver",
     "GrantedAt": "Verilme Tarihi",
     "Inactive": "Pasif",
     "Name": "Ad",
@@ -2185,7 +2183,6 @@
     "PleaseSelectUsers": "Lütfen en az bir kullanıcı seçin.",
     "ProjectScopeTooltip": "İsteğe bağlı. Genel rol için boş bırakın.",
     "PurgeRole": "Rolü Kalıcı Olarak Sil",
-    "Revoke": "İptal Et",
     "RevokeUser": "Kullanıcıyı Rolden Çıkar",
     "RoleActivated": "Rol başarıyla etkinleştirildi.",
     "RoleAssignments": "Rol Atamaları",

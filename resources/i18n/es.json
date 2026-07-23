@@ -2135,7 +2135,6 @@
     "UpdatedAt": "Actualizado el"
   },
   "rbac": {
-    "Action": "Acción",
     "Activate": "Activar",
     "ActivateRole": "Activar rol",
     "Active": "Activo",
@@ -2165,7 +2164,6 @@
     "ErrorMessage": "Mensaje de error",
     "FKConstraintViolation": "No se puede eliminar permanentemente este rol. Primero elimine todas las asignaciones y permisos.",
     "FullyAllowed": "Totalmente permitido",
-    "Grant": "Conceder",
     "GrantedAt": "Concedido el",
     "Inactive": "Inactivo",
     "Name": "Nombre",
@@ -2185,7 +2183,6 @@
     "PleaseSelectUsers": "Por favor, seleccione al menos un usuario.",
     "ProjectScopeTooltip": "Opcional. Déjelo vacío para un rol global.",
     "PurgeRole": "Eliminar rol permanentemente",
-    "Revoke": "Revocar",
     "RevokeUser": "Quitar Usuario del Rol",
     "RoleActivated": "Rol activado con éxito.",
     "RoleAssignments": "Asignaciones de roles",

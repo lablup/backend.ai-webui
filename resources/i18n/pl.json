@@ -2137,7 +2137,6 @@
     "UpdatedAt": "Zaktualizowano"
   },
   "rbac": {
-    "Action": "Akcja",
     "Activate": "Aktywuj",
     "ActivateRole": "Aktywuj rolę",
     "Active": "Aktywny",
@@ -2167,7 +2166,6 @@
     "ErrorMessage": "Komunikat o błędzie",
     "FKConstraintViolation": "Nie można trwale usunąć tej roli. Najpierw usuń wszystkie przypisania i uprawnienia.",
     "FullyAllowed": "W pełni dozwolone",
-    "Grant": "Przyznaj",
     "GrantedAt": "Przyznano",
     "Inactive": "Nieaktywny",
     "Name": "Nazwa",
@@ -2187,7 +2185,6 @@
     "PleaseSelectUsers": "Proszę wybrać co najmniej jednego użytkownika.",
     "ProjectScopeTooltip": "Opcjonalne. Pozostaw puste dla roli globalnej.",
     "PurgeRole": "Trwale usuń rolę",
-    "Revoke": "Odwołaj",
     "RevokeUser": "Usuń Użytkownika z Roli",
     "RoleActivated": "Rola została pomyślnie aktywowana.",
     "RoleAssignments": "Przypisania ról",

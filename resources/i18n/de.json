@@ -2137,7 +2137,6 @@
     "UpdatedAt": "Aktualisiert am"
   },
   "rbac": {
-    "Action": "Aktion",
     "Activate": "Aktivieren",
     "ActivateRole": "Rolle aktivieren",
     "Active": "Aktiv",
@@ -2167,7 +2166,6 @@
     "ErrorMessage": "Fehlermeldung",
     "FKConstraintViolation": "Diese Rolle kann nicht gelöscht werden. Bitte entfernen Sie zuerst alle Zuweisungen und Berechtigungen.",
     "FullyAllowed": "Vollständig erlaubt",
-    "Grant": "Gewähren",
     "GrantedAt": "Gewährt am",
     "Inactive": "Inaktiv",
     "Name": "Name",
@@ -2187,7 +2185,6 @@
     "PleaseSelectUsers": "Bitte wählen Sie mindestens einen Benutzer aus.",
     "ProjectScopeTooltip": "Optional. Leer lassen für eine globale Rolle.",
     "PurgeRole": "Rolle dauerhaft löschen",
-    "Revoke": "Widerrufen",
     "RevokeUser": "Benutzer aus Rolle entfernen",
     "RoleActivated": "Rolle wurde erfolgreich aktiviert.",
     "RoleAssignments": "Rollenzuweisungen",

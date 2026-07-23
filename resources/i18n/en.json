@@ -2122,7 +2122,6 @@
     "UpdatedAt": "Updated At"
   },
   "rbac": {
-    "Action": "Action",
     "Activate": "Activate",
     "ActivateRole": "Activate Role",
     "Active": "Active",
@@ -2152,7 +2151,6 @@
     "ErrorMessage": "Error Message",
     "FKConstraintViolation": "Cannot purge this role. Please remove all assignments and permissions first.",
     "FullyAllowed": "Fully allowed",
-    "Grant": "Grant",
     "GrantedAt": "Granted At",
     "Inactive": "Inactive",
     "Name": "Name",
@@ -2172,7 +2170,6 @@
     "PleaseSelectUsers": "Please select at least one user.",
     "ProjectScopeTooltip": "Optional. Leave empty for a global role.",
     "PurgeRole": "Purge Role",
-    "Revoke": "Revoke",
     "RevokeUser": "Revoke User",
     "RoleActivated": "Role activated successfully.",
     "RoleAssignments": "Role Assignments",

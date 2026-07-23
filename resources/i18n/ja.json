@@ -2137,7 +2137,6 @@
     "UpdatedAt": "更新日時"
   },
   "rbac": {
-    "Action": "アクション",
     "Activate": "有効化",
     "ActivateRole": "ロールを有効化",
     "Active": "アクティブ",
@@ -2167,7 +2166,6 @@
     "ErrorMessage": "エラーメッセージ",
     "FKConstraintViolation": "このロールを完全に削除できません。まずすべての割り当てと権限を削除してください。",
     "FullyAllowed": "すべて許可",
-    "Grant": "付与",
     "GrantedAt": "付与日時",
     "Inactive": "非アクティブ",
     "Name": "名前",
@@ -2187,7 +2185,6 @@
     "PleaseSelectUsers": "少なくとも1人のユーザーを選択してください。",
     "ProjectScopeTooltip": "任意。グローバルロールの場合は空のままにしてください。",
     "PurgeRole": "ロールを完全に削除",
-    "Revoke": "取り消し",
     "RevokeUser": "ロールからユーザーを外す",
     "RoleActivated": "ロールが正常に有効化されました。",
     "RoleAssignments": "ロール割り当て",

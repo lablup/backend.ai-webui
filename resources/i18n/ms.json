@@ -2135,7 +2135,6 @@
     "UpdatedAt": "Dikemas Kini Pada"
   },
   "rbac": {
-    "Action": "Tindakan",
     "Activate": "Aktifkan",
     "ActivateRole": "Aktifkan Peranan",
     "Active": "Aktif",
@@ -2165,7 +2164,6 @@
     "ErrorMessage": "Mesej Ralat",
     "FKConstraintViolation": "Tidak dapat mengalih keluar peranan ini secara kekal. Sila alih keluar semua tugasan dan kebenaran terlebih dahulu.",
     "FullyAllowed": "Dibenarkan sepenuhnya",
-    "Grant": "Beri",
     "GrantedAt": "Diberikan Pada",
     "Inactive": "Tidak Aktif",
     "Name": "Nama",
@@ -2185,7 +2183,6 @@
     "PleaseSelectUsers": "Sila pilih sekurang-kurangnya seorang pengguna.",
     "ProjectScopeTooltip": "Pilihan. Biarkan kosong untuk peranan global.",
     "PurgeRole": "Alih Keluar Peranan Secara Kekal",
-    "Revoke": "Batalkan",
     "RevokeUser": "Buang Pengguna dari Peranan",
     "RoleActivated": "Peranan berjaya diaktifkan.",
     "RoleAssignments": "Tugasan Peranan",
