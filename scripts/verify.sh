@@ -103,12 +103,13 @@ run_check "TypeScript" pnpm --prefix ./react exec tsc --noEmit
 run_check "Vite warmup paths" check_warmup_paths
 run_check "Terminology" check_terminology_drift
 
-# Non-English avoid-row precision self-test (FR-3051). Report-only HERE so that
-# i18n CONTENT drift stays warn-only in verify.sh — CHECK 1 (above) owns the
-# blocking decision for content. The self-test runs as a HARD gate in CI
-# (terminology-selftest.yml), triggered ONLY by the termbase / checker /
-# fixtures paths — never by docs prose or i18n content — which is where bad
-# avoid-row DATA is blocked.
+# Non-English avoid-row precision self-test (FR-3051). This gates the avoid-row
+# DATA (are the non-English rows precise?), a separate axis from CHECK 1 above
+# (which gates i18n CONTENT and now BLOCKS on bare-English drift). It is
+# report-only HERE so that the DATA gate lives in exactly one place — the CI
+# workflow terminology-selftest.yml, triggered ONLY by the termbase / checker /
+# fixtures paths (never by docs prose or i18n content) — rather than also
+# hard-failing this local/agent harness on the live-store budget probe.
 echo "=== Terminology self-test (report-only here; hard gate in CI) ==="
 node scripts/check-terminology-i18n.selftest.mjs || true
 echo ""
