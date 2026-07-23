@@ -30,8 +30,7 @@ export interface ParsedModelDefinition {
  * Use this when omitted fields must fall through to a lower-priority baseline
  * (e.g. the placeholder merge in the add-revision modal, where a vfolder YAML
  * that only sets `start_command` must NOT override the DB baseline's port /
- * health-check values with static defaults). For a fully-materialized result
- * with defaults applied, use {@link parseModelDefinitionYaml}.
+ * health-check values with static defaults).
  */
 export function parseModelDefinitionYamlPartial(
   yamlContent: string,
@@ -95,28 +94,6 @@ export function parseModelDefinitionYamlPartial(
 }
 
 /**
- * Parse a model-definition.yaml string and return form-ready values, filling
- * every field with a static default when the YAML omits it. Returns `null` if
- * parsing fails or the structure is unexpected.
- */
-export function parseModelDefinitionYaml(
-  yamlContent: string,
-): ParsedModelDefinition | null {
-  const partial = parseModelDefinitionYamlPartial(yamlContent);
-  if (!partial?.startCommand) {
-    return null;
-  }
-  return {
-    startCommand: partial.startCommand,
-    port: partial.port ?? 8000,
-    healthCheckPath: partial.healthCheckPath ?? '/health',
-    modelMountDestination: partial.modelMountDestination ?? '/models',
-    initialDelay: partial.initialDelay ?? 60,
-    maxRetries: partial.maxRetries ?? 10,
-  };
-}
-
-/**
  * Minimal shape of the GraphQL `RuntimeVariantModelDefinition` selection
  * consumed by {@link modelDefinitionFromGraphQL}. Kept intentionally loose
  * (all fields nullable) so it structurally accepts the Relay-generated
@@ -144,10 +121,14 @@ export interface GraphQLModelDefinitionNode {
 
 /**
  * Normalize a GraphQL `defaultModelDefinition` struct (from a runtime
- * variant's DB baseline, FR-3205/FR-3342) into the SAME
- * {@link ParsedModelDefinition} shape the YAML parser produces, so both the
- * DB baseline and the vfolder `model-definition.yaml` feed the placeholder
- * merge through one type.
+ * variant's DB baseline, FR-3205/FR-3342) into the same PARTIAL shape
+ * {@link parseModelDefinitionYamlPartial} produces — only the fields the DB
+ * default actually defines, omitting the rest — so both the DB baseline and
+ * the vfolder `model-definition.yaml` feed the placeholder merge through one
+ * type. Now that the backend projects real defaults via GraphQL, we surface
+ * ONLY values that will truly apply; omitted fields are left absent (no
+ * hardcoded 8000 / /health / /models / 60 / 10) so they fall through instead
+ * of masking the true absence of a default with a static convenience hint.
  *
  * The command is surfaced RAW — the GraphQL `command` is a plain string
  * (the deprecated `start_command` projected via alias) and is passed through
@@ -159,7 +140,7 @@ export interface GraphQLModelDefinitionNode {
  */
 export function modelDefinitionFromGraphQL(
   node: GraphQLModelDefinitionNode | null | undefined,
-): ParsedModelDefinition | null {
+): Partial<ParsedModelDefinition> | null {
   const model = node?.models?.[0];
   const service = model?.service;
   if (!service) {
@@ -168,19 +149,21 @@ export function modelDefinitionFromGraphQL(
 
   const healthCheck = service.healthCheck ?? {};
 
-  return {
-    // Raw command string, verbatim. No shell tokenization / re-quoting.
-    startCommand: service.command ?? '',
-    port: typeof service.port === 'number' ? service.port : 8000,
-    healthCheckPath:
-      typeof healthCheck.path === 'string' ? healthCheck.path : '/health',
-    modelMountDestination:
-      typeof model?.modelPath === 'string' ? model.modelPath : '/models',
-    initialDelay:
-      typeof healthCheck.initialDelay === 'number'
-        ? healthCheck.initialDelay
-        : 60,
-    maxRetries:
-      typeof healthCheck.maxRetries === 'number' ? healthCheck.maxRetries : 10,
-  };
+  // Include ONLY the fields the DB default actually defines; omit the rest so
+  // they fall through the placeholder merge instead of injecting static
+  // defaults (mirrors parseModelDefinitionYamlPartial).
+  const result: Partial<ParsedModelDefinition> = {};
+  // Raw command string, verbatim. No shell tokenization / re-quoting.
+  if (service.command) result.startCommand = service.command;
+  if (typeof service.port === 'number') result.port = service.port;
+  if (typeof healthCheck.path === 'string')
+    result.healthCheckPath = healthCheck.path;
+  if (typeof model?.modelPath === 'string')
+    result.modelMountDestination = model.modelPath;
+  if (typeof healthCheck.initialDelay === 'number')
+    result.initialDelay = healthCheck.initialDelay;
+  if (typeof healthCheck.maxRetries === 'number')
+    result.maxRetries = healthCheck.maxRetries;
+
+  return result;
 }
