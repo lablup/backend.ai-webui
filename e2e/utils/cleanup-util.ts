@@ -123,7 +123,12 @@ async function firstActionableVFolderName(
     if (!name || skip.has(name)) continue;
 
     if (requireEnabledDelete) {
-      const deleteBtn = row.getByRole('button', { name: 'delete' }).first();
+      // BAINameActionCell exposes the action's `title` (not the icon name) as
+      // the button's accessible name; the "Move to trash" action's title is
+      // t('data.folders.MoveToTrash') = "Move to trash bin".
+      const deleteBtn = row
+        .getByRole('button', { name: 'Move to trash bin' })
+        .first();
       // Read the button's enabled state directly. The move-to-trash button's
       // disabled flag is derived from data that arrives with the row itself
       // (`vfolder.permissions` → `delete_vfolder`), so it is correct as soon as

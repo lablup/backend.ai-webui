@@ -6,19 +6,17 @@ import { navigateTo } from './test-util';
 import { expect, type Page, type Locator } from '@playwright/test';
 
 /**
- * Map of action titles to their Ant Design / Lucide icon selectors.
- * BAINameActionCell renders icon-only buttons, so we locate by icon class.
- */
-const ACTION_ICON_SELECTORS: Record<string, string> = {
-  Edit: '[aria-label="setting"]',
-  'User Detail': '[aria-label="info-circle"]',
-  Deactivate: '.lucide-ban',
-  Activate: '.lucide-undo-2',
-};
-
-/**
  * Clicks a BAINameActionCell action by its title.
  * Handles both directly visible icon buttons and overflow dropdown menu items.
+ *
+ * BAINameActionCell exposes each action's `title` (not the icon name) as the
+ * visible button's accessible name (`aria-label={action.title}`), e.g. the
+ * "Edit" action's title is t('button.Edit') = "Edit", "User Detail" is
+ * t('credential.UserDetail') = "User Detail", etc. The caller's
+ * `actionTitle` argument already matches these titles exactly, so a direct
+ * role-based lookup replaces the older icon-class-based lookup (which broke
+ * once BAINameActionCell started deriving the aria-label from the action
+ * title instead of the icon).
  */
 export async function clickRowAction(
   page: Page,
@@ -39,12 +37,10 @@ export async function clickRowAction(
     await page.keyboard.press('Escape');
   }
 
-  // Case 2: Actions are directly visible — find by icon selector
-  const iconSelector = ACTION_ICON_SELECTORS[actionTitle];
-  if (iconSelector) {
-    const icon = row.locator(iconSelector);
-    await icon.waitFor({ state: 'visible', timeout: 5000 });
-    await icon.click();
+  // Case 2: Actions are directly visible — find by accessible name
+  const button = row.getByRole('button', { name: actionTitle, exact: true });
+  if (await button.isVisible({ timeout: 5000 }).catch(() => false)) {
+    await button.click();
     return;
   }
 

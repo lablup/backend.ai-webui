@@ -130,9 +130,11 @@ test.describe(
       await expect(
         firstRow.getByRole('button', { name: 'delete' }),
       ).toBeVisible();
-      // Rescan (sync icon)
+      // Rescan. BAINameActionCell exposes the action's `title` (not the icon
+      // name) as the button's accessible name; the rescan action's title is
+      // t('maintenance.RescanImages') = "Rescan Images".
       await expect(
-        firstRow.getByRole('button', { name: 'sync' }),
+        firstRow.getByRole('button', { name: 'Rescan Images' }),
       ).toBeVisible();
     });
   },
@@ -700,10 +702,6 @@ test.describe(
     test('Admin can clear the filter tag and restore the full registry list', async ({
       page,
     }) => {
-      // Get unfiltered row count
-      const unfilteredRows = page.locator('.ant-table-tbody .ant-table-row');
-      const unfilteredCount = await unfilteredRows.count();
-
       // Apply filter
       await applyRegistryFilter(page, 'cr');
       const filterTag = page
@@ -712,14 +710,33 @@ test.describe(
         .filter({ hasText: 'Registry Name: cr' });
       await expect(filterTag).toBeVisible();
 
+      // Snapshot the filtered row count right before removing the tag. The
+      // "cr" filter can only ever narrow the list, so the restored count
+      // must be >= this snapshot. Comparing against a count captured before
+      // the filter was applied (the original approach) raced against the
+      // Registry CRUD suite running concurrently in another worker, which
+      // adds/deletes its own registry mid-test and shrinks the pre-filter
+      // window's validity.
+      const filteredCount = await page
+        .locator('.ant-table-tbody .ant-table-row')
+        .count();
+
       // Remove the filter tag
       await removeRegistryFilterTag(page, 'Registry Name: cr');
       await expect(filterTag).toBeHidden();
 
-      // Table shows full list again
-      const restoredRows = page.locator('.ant-table-tbody .ant-table-row');
-      const restoredCount = await restoredRows.count();
-      expect(restoredCount).toBeGreaterThanOrEqual(unfilteredCount);
+      // Table shows full list again. Poll instead of a single read: the
+      // table refetch after removing the tag is async and may not have
+      // re-rendered all rows the instant the filter tag/spinner disappear.
+      await expect
+        .poll(
+          async () => page.locator('.ant-table-tbody .ant-table-row').count(),
+          {
+            message: 'Waiting for the full registry list to be restored',
+            timeout: 10000,
+          },
+        )
+        .toBeGreaterThanOrEqual(filteredCount);
     });
 
     // 4.4

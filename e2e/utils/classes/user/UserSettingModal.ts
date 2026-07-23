@@ -14,7 +14,10 @@ export class UserSettingModal {
     this.modal =
       mode === 'create'
         ? page.getByRole('dialog', { name: 'Create User' })
-        : page.getByRole('dialog', { name: 'Modify User Detail' });
+        : // FR-3331 unified edit terminology: the modal title changed from
+          // "Modify User Detail" to "Edit User Detail"
+          // (t('credential.ModifyUserDetail')).
+          page.getByRole('dialog', { name: 'Edit User Detail' });
     this.page = page;
   }
 
