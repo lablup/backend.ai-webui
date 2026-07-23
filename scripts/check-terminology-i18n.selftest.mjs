@@ -100,10 +100,31 @@ function main() {
   const selftest = readJson(SELFTEST_PATH, true);
   if (!termbase || !selftest) return 1; // readJson already printed the error
 
-  const nonEnRows = (
-    Array.isArray(termbase.avoid) ? termbase.avoid : []
-  ).filter(
-    (r) => r && typeof r.avoid === "string" && r.lang && r.lang !== "en",
+  // Well-formedness first: terminology.schema.json is documentation-only
+  // (nothing in the repo runs a schema validator), so this harness is the
+  // executable gate. A malformed row (non-string avoid, blank lang) must
+  // fail loudly here — silently dropping it from the filter below would
+  // let it skip every fixtures/precision check.
+  const allAvoidRows = Array.isArray(termbase.avoid) ? termbase.avoid : [];
+  for (const [i, r] of allAvoidRows.entries()) {
+    assertThat(
+      !!r &&
+        typeof r.avoid === "string" &&
+        r.avoid.length > 0 &&
+        typeof r.lang === "string" &&
+        r.lang.length > 0,
+      `[data] avoid[${i}] is malformed — avoid/lang must be non-empty strings: ${JSON.stringify(
+        { avoid: r && r.avoid, lang: r && r.lang },
+      )}`,
+    );
+  }
+  const nonEnRows = allAvoidRows.filter(
+    (r) =>
+      r &&
+      typeof r.avoid === "string" &&
+      typeof r.lang === "string" &&
+      r.lang &&
+      r.lang !== "en",
   );
   const fixtureRows = Array.isArray(selftest.rows) ? selftest.rows : [];
   const controls = Array.isArray(selftest.negativeControls)

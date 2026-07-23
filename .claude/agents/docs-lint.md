@@ -87,9 +87,12 @@ Write to `packages/backend.ai-webui-docs/.agent-output/docs-lint-report.md`.
    - All other terms — flag unconditionally.
 4. Report each hit as `path:line — <avoid> → <useInstead>` grouped by avoid term, annotating with the entry's `reason` where useful.
 5. Non-English (ko / ja / th) is **best-effort**. Non-`en` `avoid[]` rows exist (ko and ja as of FR-3051) and are guaranteed by the curation rule to be precise multi-token compounds or unambiguous deprecated spellings (see TERMINOLOGY.md "Non-English curation rule"; enforced by `pnpm run lint:terminology:selftest`), so a plain **substring** grep — NOT `grep -w`, which is meaningless for CJK — is safe per row:
+
    ```bash
    grep -rn --include="*.md" -F "<term>" packages/backend.ai-webui-docs/src/<lang>/
    ```
+
+   Mirror the checker's case policy (`hasUpper` in `scripts/check-terminology-i18n.mjs`): add `-i` when the term contains **no** uppercase ASCII (CJK/Thai terms and lowercase Latin spellings match case-insensitively); keep the grep case-sensitive when the term carries uppercase (e.g. a `WSProxy`-style canonical casing).
    Additionally, for a language that HAS avoid rows, use `concepts[].preferred.{ko,ja,th}` to enrich those findings (spot drift away from the preferred per-language term near a hit). Emit findings under a `### Non-English (best-effort)` subsection with one `#### {lang}` block per language that has **at least one applicable `avoid[]` row** — the covered/skipped decision is based on avoid rows ONLY, because preferred terms alone cannot identify a deprecated variant (every language has `preferred` data, so a preferred-based condition would mark everything covered). For a language with **no** avoid rows (e.g. `th` today, despite its `preferred.th` values), emit the literal per-language fallback `#### {lang} (skipped — see roadmap)` inside that subsection so the coverage gap stays visible. If no language has an avoid row, fall back to the whole-subsection heading `### Non-English (skipped — see roadmap)`. Never propose adding a bare-noun non-English avoid row from these findings — a new non-en row must carry fixtures in `terminology.selftest.json` and pass the self-test.
 
 ### 2. Translation parity gap
