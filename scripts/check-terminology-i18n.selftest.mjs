@@ -135,6 +135,13 @@ function main() {
     "each non-en avoid row must have exactly one fixtures entry",
   );
   const rowKeys = new Set(nonEnRows.map((r) => keyOf(r)));
+  // Duplicate (lang, avoid) termbase rows would collapse in this Set and pass
+  // the stale-fixture cross-check; a duplicate avoid row is an authoring error.
+  assertThat(
+    rowKeys.size === nonEnRows.length,
+    `[fixtures] ${nonEnRows.length - rowKeys.size} duplicate (lang, avoid) row(s) in terminology.json avoid[]`,
+    "deduplicate the termbase rows so coverage stays one-to-one",
+  );
   for (const row of nonEnRows) {
     assertThat(
       fixturesByKey.has(keyOf(row)),
@@ -188,11 +195,18 @@ function main() {
       stores.push({ file, label: glob.label, lang, leaves });
     }
   }
-  assertThat(
-    stores.length > 0 || langsNeeded.size === 0,
-    "[wiring] no i18n stores found for the languages under test",
-    `looked for langs [${[...langsNeeded].join(", ")}] under the configured I18N_GLOBS`,
-  );
+  // Every configured store must be present for every language under test —
+  // a missing or unparseable locale file would silently shrink the live
+  // corpus and let the budget/teeth gates pass on incomplete data.
+  for (const glob of I18N_GLOBS) {
+    for (const lang of langsNeeded) {
+      assertThat(
+        stores.some((s) => s.label === glob.label && s.lang === lang),
+        `[wiring] no ${lang} store loaded from ${glob.label}`,
+        "the live false-positive budget would be computed from incomplete data (missing or unparseable locale file)",
+      );
+    }
+  }
 
   const allowRaw = readJson(ALLOWLIST_PATH, false) || {};
   const allow = {
@@ -318,6 +332,23 @@ function main() {
       hits >= wanted,
       `[teeth] negative control "${control.avoid}" (${control.lang}) fired on only ${hits} live value(s); expected >= ${wanted}`,
       "the false-positive budget gate has lost its teeth — the matcher or the stores changed in a way that hides bare-noun noise",
+    );
+    // The control must also beat every budget actually configured — otherwise
+    // raising defaultFalsePositiveBudget (or a per-row budget) past the
+    // control's hit-count would defang the gate: a row exactly this noisy
+    // would fit the budget while the teeth check still "passed".
+    const maxConfiguredBudget = Math.max(
+      defaultBudget,
+      ...fixtureRows.map((f) =>
+        typeof f.falsePositiveBudget === "number"
+          ? f.falsePositiveBudget
+          : defaultBudget,
+      ),
+    );
+    assertThat(
+      hits > maxConfiguredBudget,
+      `[teeth] negative control "${control.avoid}" (${control.lang}) fired on ${hits} live value(s), which fits the largest configured falsePositiveBudget (${maxConfiguredBudget})`,
+      "a real row this noisy would be ACCEPTED by the budget gate — lower the budgets or reconsider the control",
     );
   }
 
