@@ -36,31 +36,37 @@ Write to `packages/backend.ai-webui-docs/.agent-output/docs-lint-report.md`.
 
 ```markdown
 ---RUN---
+
 # docs-lint report — <ISO-8601 timestamp, e.g. 2026-05-16T13:42:11+09:00>
 
 ## Summary
 
-| Check | Count |
-|---|---|
-| Terminology drift | <N> |
-| Translation parity gap | <N> |
-| Stale screenshot candidates | <N> |
-| Broken cross-ref / image link | <N> |
-| PR coverage gap | <N> |
+| Check                         | Count |
+| ----------------------------- | ----- |
+| Terminology drift             | <N>   |
+| Translation parity gap        | <N>   |
+| Stale screenshot candidates   | <N>   |
+| Broken cross-ref / image link | <N>   |
+| PR coverage gap               | <N>   |
 
 ## 1. Terminology drift
+
 <one-line "No issues." OR a bulleted list of `path:line — <avoid> → <use_instead>` entries grouped by avoid term>
 
 ## 2. Translation parity gap
+
 <one-line "No issues." OR area-by-area diff of missing/extra H2/H3 headings between en and {ko,ja,th}>
 
 ## 3. Stale screenshot candidates
+
 <one-line "No issues." OR list with signal type (MD5 collision / i18n key drift) and file path>
 
 ## 4. Broken cross-ref / image link
+
 <one-line "No issues." OR `path:line — broken target: <ref>` entries>
 
 ## 5. PR coverage gap
+
 <one-line "No issues." OR table of `#<PR> | <title> | merged <date>` for user-facing PRs without docs changes>
 ```
 
@@ -84,7 +90,7 @@ Write to `packages/backend.ai-webui-docs/.agent-output/docs-lint-report.md`.
    ```bash
    grep -rn --include="*.md" -F "<term>" packages/backend.ai-webui-docs/src/<lang>/
    ```
-   Additionally, use `concepts[].preferred.{ko,ja,th}` to spot drift away from the preferred per-language term. Emit findings under a `### Non-English (best-effort)` subsection with one `#### {lang}` block per language that has applicable avoid/preferred data; for a language with **no** applicable rows (e.g. `th` today), emit the literal per-language fallback `#### {lang} (skipped — see roadmap)` inside that subsection so the coverage gap stays visible. If every language lacks data, fall back to the whole-subsection heading `### Non-English (skipped — see roadmap)`. Never propose adding a bare-noun non-English avoid row from these findings — a new non-en row must carry fixtures in `terminology.selftest.json` and pass the self-test.
+   Additionally, for a language that HAS avoid rows, use `concepts[].preferred.{ko,ja,th}` to enrich those findings (spot drift away from the preferred per-language term near a hit). Emit findings under a `### Non-English (best-effort)` subsection with one `#### {lang}` block per language that has **at least one applicable `avoid[]` row** — the covered/skipped decision is based on avoid rows ONLY, because preferred terms alone cannot identify a deprecated variant (every language has `preferred` data, so a preferred-based condition would mark everything covered). For a language with **no** avoid rows (e.g. `th` today, despite its `preferred.th` values), emit the literal per-language fallback `#### {lang} (skipped — see roadmap)` inside that subsection so the coverage gap stays visible. If no language has an avoid row, fall back to the whole-subsection heading `### Non-English (skipped — see roadmap)`. Never propose adding a bare-noun non-English avoid row from these findings — a new non-en row must carry fixtures in `terminology.selftest.json` and pass the self-test.
 
 ### 2. Translation parity gap
 

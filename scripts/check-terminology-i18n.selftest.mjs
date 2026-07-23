@@ -113,6 +113,19 @@ function main() {
       ? selftest.defaultFalsePositiveBudget
       : 0;
 
+  // The teeth gate must not be deletable: every language that has non-en
+  // avoid rows needs at least one negative control, otherwise removing the
+  // controls (or the only control for one language) would silently turn the
+  // budget gate's self-check off for that language.
+  const controlLangs = new Set(controls.map((c) => c && c.lang));
+  for (const lang of new Set(nonEnRows.map((r) => r.lang))) {
+    assertThat(
+      controlLangs.has(lang),
+      `[teeth] no negative control for language "${lang}" (which has non-en avoid rows)`,
+      "every tested language needs a known-bad bare-noun control in terminology.selftest.json negativeControls so the budget gate provably has teeth there",
+    );
+  }
+
   // ---- 1. COVERAGE: rows <-> fixtures must be exactly in sync -------------
   // Fixtures entries must carry string lang+avoid keys and be unique —
   // a blank key would only surface as a cryptic "stale entry" failure, and
