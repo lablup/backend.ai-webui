@@ -2169,6 +2169,7 @@
     "GrantedAt": "Gewährt am",
     "Inactive": "Inaktiv",
     "Name": "Name",
+    "NoChangesMade": "Es wurden keine Änderungen vorgenommen.",
     "NoPermissionsToDisplay": "Keine Berechtigungen vorhanden",
     "NoRolesToDisplay": "Keine Rollen vorhanden",
     "NoScopesToDisplay": "Für diese Rolle sind keine Bereiche konfiguriert",

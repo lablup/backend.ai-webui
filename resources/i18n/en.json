@@ -2154,6 +2154,7 @@
     "GrantedAt": "Granted At",
     "Inactive": "Inactive",
     "Name": "Name",
+    "NoChangesMade": "No changes made.",
     "NoPermissionsToDisplay": "No permissions to display",
     "NoRolesToDisplay": "No roles to display",
     "NoScopesToDisplay": "No scopes are configured for this role",
