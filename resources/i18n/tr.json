@@ -196,6 +196,14 @@
     "VFolder": "VFolder",
     "VFolderRequired": "VFolder zorunludur."
   },
+  "adminRuntimeVariantPreset": {
+    "CreatePreset": "Ön Ayar Oluştur",
+    "Name": "Ad",
+    "PresetDeleted": "Çalışma zamanı varyantı ön ayarı silindi.",
+    "RuntimeVariantId": "Çalışma Zamanı Varyantı ID",
+    "RuntimeVariantPreset": "Çalışma Zamanı Varyantı Ön Ayarı",
+    "TabTitle": "Çalışma Zamanı Varyantı Ön Ayarları"
+  },
   "adminSession": {
     "PendingSessions": "Bekleyen Oturumlar",
     "PendingSessionsScopedToResourceGroup": "Yalnızca seçili kaynak grubuna ait bekleyen oturumlar gösterilmektedir. Diğer gruplardaki oturumları görüntülemek için kaynak gruplarını değiştirin."

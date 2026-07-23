@@ -196,6 +196,14 @@
     "VFolder": "VFolder",
     "VFolderRequired": "VFolder is required."
   },
+  "adminRuntimeVariantPreset": {
+    "CreatePreset": "Create Preset",
+    "Name": "Name",
+    "PresetDeleted": "Runtime variant preset has been deleted.",
+    "RuntimeVariantId": "Runtime Variant ID",
+    "RuntimeVariantPreset": "Runtime Variant Preset",
+    "TabTitle": "Runtime Variant Presets"
+  },
   "adminSession": {
     "PendingSessions": "Pending Sessions",
     "PendingSessionsScopedToResourceGroup": "Showing pending sessions for the selected resource group only. Switch resource groups to view sessions in other groups."

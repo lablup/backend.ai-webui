@@ -196,6 +196,14 @@
     "VFolder": "VFolder",
     "VFolderRequired": "VFolder 为必填项。"
   },
+  "adminRuntimeVariantPreset": {
+    "CreatePreset": "创建预设",
+    "Name": "名称",
+    "PresetDeleted": "运行时变体预设已删除。",
+    "RuntimeVariantId": "运行时变体 ID",
+    "RuntimeVariantPreset": "运行时变体预设",
+    "TabTitle": "运行时变体预设"
+  },
   "adminSession": {
     "PendingSessions": "待处理会话",
     "PendingSessionsScopedToResourceGroup": "仅显示所选资源组的待处理会话。切换资源组以查看其他组中的会话。"

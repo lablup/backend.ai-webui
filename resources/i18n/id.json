@@ -196,6 +196,14 @@
     "VFolder": "VFolder",
     "VFolderRequired": "VFolder wajib diisi."
   },
+  "adminRuntimeVariantPreset": {
+    "CreatePreset": "Buat Preset",
+    "Name": "Nama",
+    "PresetDeleted": "Preset varian runtime telah dihapus.",
+    "RuntimeVariantId": "ID Varian Runtime",
+    "RuntimeVariantPreset": "Preset Varian Runtime",
+    "TabTitle": "Preset Varian Runtime"
+  },
   "adminSession": {
     "PendingSessions": "Sesi Tertunda",
     "PendingSessionsScopedToResourceGroup": "Menampilkan sesi tertunda hanya untuk grup sumber daya yang dipilih. Alihkan grup sumber daya untuk melihat sesi di grup lain."

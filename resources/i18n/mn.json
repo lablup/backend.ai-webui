@@ -196,6 +196,14 @@
     "VFolder": "VFolder",
     "VFolderRequired": "VFolder шаардлагатай."
   },
+  "adminRuntimeVariantPreset": {
+    "CreatePreset": "Урьдчилсан тохиргоо үүсгэх",
+    "Name": "Нэр",
+    "PresetDeleted": "Ажиллах орчны урьдчилсан тохиргоо устгагдлаа.",
+    "RuntimeVariantId": "Ажиллах орчны ID",
+    "RuntimeVariantPreset": "Ажиллах орчны урьдчилсан тохиргоо",
+    "TabTitle": "Ажиллах орчны урьдчилсан тохиргоонууд"
+  },
   "adminSession": {
     "PendingSessions": "Хүлээгдэж буй сессүүд",
     "PendingSessionsScopedToResourceGroup": "Зөвхөн сонгосон нөөцийн бүлгийн хүлээгдэж буй сессүүдийг харуулж байна. Бусад бүлгийн сессүүдийг харахын тулд нөөцийн бүлгийг сэлгэнэ үү."
