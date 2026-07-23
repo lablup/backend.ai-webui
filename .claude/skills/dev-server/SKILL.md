@@ -11,15 +11,18 @@ description: >
   URL reflects the session name (falls back to FR-XXXX from the branch, then
   to the current PR number). When the current branch's PR description names
   a backend test server (bare IP, `host:port`, or full URL), set
-  VITE_DEFAULT_API_ENDPOINT so the login screen pre-fills that endpoint and
-  any stale session targeting a different backend is logged out.
+  VITE_DEFAULT_API_ENDPOINT so the login screen pre-fills that endpoint; when a
+  live session is connected to a different backend a dev-only banner flags the
+  mismatch instead of forcing a logout. When the user supplies dev test
+  credentials, set VITE_DEFAULT_EMAIL / VITE_DEFAULT_PASSWORD to pre-fill the
+  login form too.
   Trigger on: "start dev server", "run dev", "pnpm dev 띄워", "개발 서버 띄워",
   "dev 서버 시작", "boot the dev environment", "실행해줘 dev".
 ---
 
 # Dev Server
 
-Starts the dev server with optional `VITE_THEME_HEADER_COLOR`, `PORTLESS_APP_NAME`, and `VITE_DEFAULT_API_ENDPOINT` derived from this Claude Code session's `/color` / `/rename` history and the current branch's PR description.
+Starts the dev server with optional `VITE_THEME_HEADER_COLOR`, `PORTLESS_APP_NAME`, `VITE_DEFAULT_API_ENDPOINT`, and (when the user supplies them) `VITE_DEFAULT_EMAIL` / `VITE_DEFAULT_PASSWORD`, derived from this Claude Code session's `/color` / `/rename` history, the current branch's PR description, and the user's stated test credentials.
 
 ## 1. Decide the command
 
@@ -95,8 +98,8 @@ Do not invent additional names or alternate hex values. If the user's `/color` a
 
 `react/src/components/LoginView.tsx` reads `VITE_DEFAULT_API_ENDPOINT` (only when `import.meta.env.DEV` is true) and:
 
-- pre-fills the login form's API endpoint with that value, **overriding** any value in `localStorage.backendaiwebui.api_endpoint` and any `api_endpoint` baked into `config.toml`;
-- when an existing in-memory session targets a different backend, logs that session out and shows the login panel instead of attempting silent re-login.
+- pre-fills the login form's API endpoint with that value for a **fresh login** (it also overrides any `api_endpoint` baked into `config.toml` on first entry);
+- does **not** override a live session's backend: if a stored session targets a different server, the app silently reconnects to that server (no bounce to the login screen) and a **dev-only banner** (`DevApiEndpointMismatchAlert`) announces "connected to X, but configured for Y" so multi-server testing doesn't get confusing. There is intentionally no auto-logout on mismatch.
 
 This skill auto-derives the value from the current branch's PR description so dev sessions land on the right per-PR backend without the user re-typing the endpoint on every cold start. Pick a value with this priority:
 
@@ -148,7 +151,22 @@ If the matched candidate is rejected, keep scanning (within the same pass) for t
 
 Silent misconfiguration is the worst failure mode here — it sends the dev session to the wrong backend without anyone noticing.
 
-If the resolved value matches the existing default backend the WebUI would otherwise use (i.e. it has no effect), still pass it — being explicit avoids the auto-logout silently disagreeing with the form on edge cases.
+If the resolved value matches the existing default backend the WebUI would otherwise use (i.e. it has no effect), still pass it — being explicit keeps the login form's pre-fill and the dev mismatch banner in agreement on edge cases.
+
+## 2d. Decide the default login credentials (webui only, optional)
+
+`LoginView.tsx` also reads `VITE_DEFAULT_EMAIL` / `VITE_DEFAULT_PASSWORD` (dev only) and pre-fills the SESSION-mode email + password fields, so a local dev session can sign in without retyping test credentials. These are a pure convenience pre-fill — they do **not** auto-submit the login form.
+
+**Resolve them conservatively — never guess:**
+
+1. **User explicitly supplied credentials** in the prompt or conversation (e.g. "log in as `admin@lablup.com` / `wJalrXUt`", "use the domain-admin test account") → set both vars from what they said.
+2. **A shared team test server's credentials are already known** to this session — e.g. the `dev-server-registry` skill's `--backend-user` / `--backend-password` for the resolved endpoint, or credentials the user pasted earlier for that box → reuse them.
+3. **Otherwise omit both.** Do **not** scrape passwords out of the PR body, invent credentials, or reuse `e2e/envs/.env.playwright` values unless the user pointed you at them. Set the email alone (without a password) only if that is all the user gave.
+
+**Security caveats (state them when you use these):**
+
+- `VITE_DEFAULT_PASSWORD` bakes a **plaintext password into the dev bundle** at build time. It is dev-only (`import.meta.env.DEV`), but still: only ever pass it on the command line or via the user's git-ignored `.env.development.local` — never write it to a committed file, and never for a production build.
+- Prefer non-privileged / disposable test accounts. If the user asks to pre-fill a real admin password, confirm they intend the plaintext-in-dev-bundle tradeoff before doing it.
 
 ## 3. Compose the run
 
@@ -167,8 +185,12 @@ If step **2b** picked a Portless app name from `/rename` or a PR number, also pr
 
 If step **2c** resolved a default API endpoint, also prefix `VITE_DEFAULT_API_ENDPOINT='<url>'`. If 2c resolved nothing, **omit** the variable entirely — do not pass an empty string.
 
+If step **2d** resolved login credentials, also prefix `VITE_DEFAULT_EMAIL='<email>'` and `VITE_DEFAULT_PASSWORD='<password>'`. If 2d resolved nothing, **omit** both. Never pass an empty string, and never fabricate a value to "fill the slot."
+
+**Shell-escape every interpolated value.** The endpoint, email, and especially the password come from user/conversation text and may contain an apostrophe or shell metacharacters — interpolating them raw inside `'...'` breaks the command and can turn the rest of the value into executable shell. Before building the command line, quote each value shell-safely (e.g. Bash `printf '%q'`), or set them via the user's git-ignored `.env.development.local` instead of the command line. Do not hand-concatenate an untrusted password into a single-quoted string.
+
 ```bash
-VITE_THEME_HEADER_COLOR='#2563EB' PORTLESS_APP_NAME='iphoto-disk-cleanup' VITE_DEFAULT_API_ENDPOINT='http://10.0.1.5:8090' pnpm dev
+VITE_THEME_HEADER_COLOR='#2563EB' PORTLESS_APP_NAME='iphoto-disk-cleanup' VITE_DEFAULT_API_ENDPOINT='http://10.0.1.5:8090' VITE_DEFAULT_EMAIL='admin@lablup.com' VITE_DEFAULT_PASSWORD='wJalrXUt' pnpm dev
 ```
 
 For non-webui projects, substitute the discovered command and package manager. Use whatever color env var the project actually reads (check `vite.config.*`, `next.config.*`, etc., or grep for `*THEME_HEADER_COLOR` / `*_THEME_COLOR`). Apply the prefix only when (a) a color is actually resolved AND (b) the project really consumes that env var. If either is false, skip the prefix. `PORTLESS_APP_NAME` and `VITE_DEFAULT_API_ENDPOINT` are webui-specific.
@@ -222,7 +244,7 @@ After a successful boot — i.e. right after step 5, once the **actual** Portles
 
 ## 7. Edge cases
 
-- **User overrides via env (webui)**: Vite's `loadEnv()` reads `VITE_THEME_HEADER_COLOR`, `VITE_DEFAULT_API_ENDPOINT` from `.env.development.local` and from the shell automatically. If the user already has any of them set, do not override — the user-set value wins. For `PORTLESS_APP_NAME`, the same rule applies: if it's already exported in the inherited env, treat the user-set value as authoritative.
+- **User overrides via env (webui)**: Vite's `loadEnv()` reads `VITE_THEME_HEADER_COLOR`, `VITE_DEFAULT_API_ENDPOINT`, `VITE_DEFAULT_EMAIL`, `VITE_DEFAULT_PASSWORD` from `.env.development.local` and from the shell automatically. If the user already has any of them set, do not override — the user-set value wins. For `PORTLESS_APP_NAME`, the same rule applies: if it's already exported in the inherited env, treat the user-set value as authoritative.
 - **User overrides via prompt**: if the user says "use a green header" or "no color this time" or "name the dev URL <foo>" or "ignore the PR's IP, use 10.0.0.7 instead", honor their words over the conversation-history and PR-description values.
 - **Multiple Claude windows / worktrees**: each Claude Code session has its own conversation, so both color and app name are naturally session-scoped. Don't try to read either from disk — there's no shared state (built-in `/color` and `/rename` are in-memory only). For `VITE_DEFAULT_API_ENDPOINT`, the *PR* is the shared source of truth; reading it via `gh pr view` works the same from any worktree on that branch.
 - **No `/color` in history but user mentioned a color**: treat the user's mention as the source of truth. If they said "use orange", map `orange` → `#EA580C` and prefix accordingly.

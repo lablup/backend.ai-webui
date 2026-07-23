@@ -13,6 +13,7 @@ import Page401 from '../../pages/Page401';
 import Page404 from '../../pages/Page404';
 import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
 import BAIErrorBoundary from '../BAIErrorBoundary';
+import DevApiEndpointMismatchAlert from '../DevApiEndpointMismatchAlert';
 import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
 import ForceTOTPChecker from '../ForceTOTPChecker';
 import NetworkStatusBanner from '../NetworkStatusBanner';
@@ -227,6 +228,14 @@ function MainLayout() {
                     align="stretch"
                     className={styles.alertWrapper}
                   >
+                    {/* Dev-only: warn when the connected backend differs from
+                        VITE_DEFAULT_API_ENDPOINT. Guarded by import.meta.env.DEV
+                        so it is dead-code eliminated from production builds. */}
+                    {import.meta.env.DEV && (
+                      <ErrorBoundaryWithNullFallback>
+                        <DevApiEndpointMismatchAlert />
+                      </ErrorBoundaryWithNullFallback>
+                    )}
                     <ErrorBoundaryWithNullFallback>
                       <ThemePreviewModeAlert />
                     </ErrorBoundaryWithNullFallback>

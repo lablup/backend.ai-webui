@@ -14,6 +14,11 @@
  * firstUpdated() logic.
  */
 import {
+  devApiEndpointOverride,
+  devEmailOverride,
+  devPasswordOverride,
+} from '../helper/devLoginOverrides';
+import {
   getDefaultLoginConfig,
   type LoginConfigState,
 } from '../helper/loginConfig';
@@ -35,7 +40,7 @@ import { pluginApiEndpointState } from '../hooks/useWebUIPluginState';
 import { preloadPostLoginChunks } from '../preload';
 import { jotaiStore } from './DefaultProviders';
 import LoginFormPanel from './LoginFormPanel';
-import { App, Button, ConfigProvider, Form, type MenuProps } from 'antd';
+import { App, Button, ConfigProvider, Form, type MenuProps, Tag } from 'antd';
 import { BAIModal, BAIFlex, useBAILogger } from 'backend.ai-ui';
 import { useAtomValue, useSetAtom } from 'jotai';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -52,24 +57,6 @@ const extractErrorType = (typeUrl?: string): string => {
   const parts = typeUrl.split('/');
   return parts[parts.length - 1] || '';
 };
-
-/**
- * Dev-only override for the API endpoint shown on the login screen.
- *
- * Set `VITE_DEFAULT_API_ENDPOINT` to a full URL (e.g. `http://1.2.3.4:8090`)
- * to pre-fill the login endpoint field and skip silent re-login when a
- * stale session targets a different backend. The dev-server skill derives
- * this value from the current branch's PR description automatically; see
- * `.claude/skills/dev-server/SKILL.md`.
- *
- * Production builds (`import.meta.env.DEV === false`) ignore the variable.
- */
-const devApiEndpointOverride: string | undefined =
-  import.meta.env.DEV &&
-  typeof import.meta.env.VITE_DEFAULT_API_ENDPOINT === 'string' &&
-  import.meta.env.VITE_DEFAULT_API_ENDPOINT.trim() !== ''
-    ? import.meta.env.VITE_DEFAULT_API_ENDPOINT.trim().replace(/\/+$/, '')
-    : undefined;
 
 const STORED_API_ENDPOINT_KEY = 'backendaiwebui.api_endpoint';
 
@@ -116,20 +103,18 @@ const LoginView: React.FC<{
   const [connectionMode, setConnectionMode] =
     useState<ConnectionMode>('SESSION');
   const [apiEndpoint, setApiEndpoint] = useState(() => {
-    if (devApiEndpointOverride) return devApiEndpointOverride;
+    // A stored endpoint means a session may be live against that backend, so
+    // it wins over the dev override: silent re-login then reconnects to the
+    // *actual* session server instead of bouncing to the login screen when
+    // VITE_DEFAULT_API_ENDPOINT points elsewhere. The override only fills the
+    // field here when nothing is stored (a genuinely fresh login) — it is never
+    // re-applied after mount, so it can't clobber an endpoint the user types by
+    // hand. A dev-only banner (`DevApiEndpointMismatchAlert`) surfaces any
+    // mismatch once inside the app so multi-server testing doesn't get confusing.
     const stored = localStorage.getItem(STORED_API_ENDPOINT_KEY);
-    return stored ? stored.replace(/^"+|"+$/g, '') : '';
+    const storedEndpoint = stored ? stored.replace(/^"+|"+$/g, '') : '';
+    return storedEndpoint || devApiEndpointOverride || '';
   });
-  // Persist the dev override so other modules that read
-  // backendaiwebui.api_endpoint (e.g., orchestration's Electron fallback)
-  // observe it too. Kept in an effect — not the useState initializer — so
-  // the initializer stays pure and StrictMode's double-invocation can't
-  // surprise future readers.
-  useEffect(() => {
-    if (devApiEndpointOverride) {
-      localStorage.setItem(STORED_API_ENDPOINT_KEY, devApiEndpointOverride);
-    }
-  }, []);
   const [otpRequired, setOtpRequired] = useState(false);
   const [needsOtpRegistration, setNeedsOtpRegistration] = useState(false);
   const [totpRegistrationToken, setTotpRegistrationToken] = useState('');
@@ -200,11 +185,13 @@ const LoginView: React.FC<{
     const newCfg = atomLoginConfig;
     setLoginConfig(newCfg);
     setConnectionMode(newCfg.connection_mode);
-    // The dev-only env-var override (VITE_DEFAULT_API_ENDPOINT) wins over
-    // both the config.toml api_endpoint and the previously-stored value so
-    // that PR-targeted dev sessions land on the right backend.
+    // An already-resolved endpoint (a stored session's server, kept in `prev`)
+    // wins so a dev override never clobbers the backend a live session targets
+    // — that would re-introduce the login-screen bounce. Fall back to the
+    // config.toml value, then the dev override as a last-resort pre-fill for a
+    // fresh login.
     setApiEndpoint(
-      (prev) => devApiEndpointOverride || newCfg.api_endpoint || prev,
+      (prev) => prev || newCfg.api_endpoint || devApiEndpointOverride || '',
     );
 
     // Handle endpoint visibility
@@ -259,6 +246,18 @@ const LoginView: React.FC<{
       form.setFieldsValue({ api_endpoint: apiEndpoint });
     }
   }, [apiEndpoint, form]);
+
+  // Dev-only: pre-fill SESSION credentials from VITE_DEFAULT_EMAIL /
+  // VITE_DEFAULT_PASSWORD so local dev sessions log in without retyping test
+  // credentials. Runs once on mount; both overrides are `undefined` in
+  // production builds, so this is a no-op there.
+  useEffect(() => {
+    if (devEmailOverride) form.setFieldsValue({ user_id: devEmailOverride });
+    if (devPasswordOverride)
+      form.setFieldsValue({ password: devPasswordOverride });
+    // Mount-only: the override constants are build-time frozen, so no deps.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Language initialization: bridge selected_language -> general.language
   // (replaces Lit shell's connectedCallback language setup)
@@ -1032,11 +1031,42 @@ const LoginView: React.FC<{
     [endpoints],
   );
 
+  // Dev-only: pin the VITE_DEFAULT_API_ENDPOINT value at the top of the endpoint
+  // history so it is always selectable (even before the first login) and clearly
+  // tagged as coming from the env — distinct from manually-saved endpoints, which
+  // keep their Delete action. `devApiEndpointOverride` is `undefined` in
+  // production builds, so this whole branch is dead-code eliminated there.
+  const savedEndpoints = devApiEndpointOverride
+    ? endpoints.filter((ep) => ep !== devApiEndpointOverride)
+    : endpoints;
+
   const endpointMenuItems: MenuProps['items'] = [
     { key: 'header', label: t('login.EndpointHistory'), disabled: true },
-    ...(endpoints.length === 0
-      ? [{ key: 'empty', label: t('login.NoEndpointSaved') }]
-      : endpoints.map((ep) => ({
+    ...(devApiEndpointOverride
+      ? [
+          {
+            key: devApiEndpointOverride,
+            label: (
+              <BAIFlex
+                justify="between"
+                align="center"
+                gap="sm"
+                style={{ minWidth: 300 }}
+              >
+                <span>{devApiEndpointOverride}</span>
+                <Tag color="blue" style={{ marginInlineEnd: 0 }}>
+                  env
+                </Tag>
+              </BAIFlex>
+            ),
+          },
+        ]
+      : []),
+    ...(savedEndpoints.length === 0
+      ? devApiEndpointOverride
+        ? []
+        : [{ key: 'empty', label: t('login.NoEndpointSaved') }]
+      : savedEndpoints.map((ep) => ({
           key: ep,
           label: (
             <BAIFlex justify="between" align="center" style={{ minWidth: 300 }}>
