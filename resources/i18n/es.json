@@ -196,6 +196,14 @@
     "VFolder": "VFolder",
     "VFolderRequired": "El VFolder es obligatorio."
   },
+  "adminRuntimeVariantPreset": {
+    "CreatePreset": "Crear Preset",
+    "Name": "Nombre",
+    "PresetDeleted": "El preset de runtime ha sido eliminado.",
+    "RuntimeVariantId": "ID de Runtime",
+    "RuntimeVariantPreset": "Preset de Runtime",
+    "TabTitle": "Presets de Runtime"
+  },
   "adminSession": {
     "PendingSessions": "Sesiones pendientes",
     "PendingSessionsScopedToResourceGroup": "Se muestran solo las sesiones pendientes del grupo de recursos seleccionado. Cambie de grupo de recursos para ver sesiones en otros grupos."

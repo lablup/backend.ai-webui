@@ -196,6 +196,14 @@
     "VFolder": "VFolder",
     "VFolderRequired": "VFolder обязателен."
   },
+  "adminRuntimeVariantPreset": {
+    "CreatePreset": "Создать пресет",
+    "Name": "Имя",
+    "PresetDeleted": "Пресет варианта среды выполнения удалён.",
+    "RuntimeVariantId": "ID варианта среды выполнения",
+    "RuntimeVariantPreset": "Пресет варианта среды выполнения",
+    "TabTitle": "Пресеты вариантов среды выполнения"
+  },
   "adminSession": {
     "PendingSessions": "Ожидающие сессии",
     "PendingSessionsScopedToResourceGroup": "Отображаются только ожидающие сессии для выбранной группы ресурсов. Переключайтесь между группами ресурсов для просмотра сессий в других группах."

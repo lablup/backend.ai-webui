@@ -196,6 +196,14 @@
     "VFolder": "VFolder",
     "VFolderRequired": "Le VFolder est obligatoire."
   },
+  "adminRuntimeVariantPreset": {
+    "CreatePreset": "Créer un préréglage",
+    "Name": "Nom",
+    "PresetDeleted": "Le préréglage de variante d'exécution a été supprimé.",
+    "RuntimeVariantId": "ID de la variante d'exécution",
+    "RuntimeVariantPreset": "Préréglage de variante d'exécution",
+    "TabTitle": "Préréglages de variante d'exécution"
+  },
   "adminSession": {
     "PendingSessions": "Sessions en attente",
     "PendingSessionsScopedToResourceGroup": "Affichage des sessions en attente pour le groupe de ressources sélectionné uniquement. Changez de groupe de ressources pour afficher les sessions dans d'autres groupes."
