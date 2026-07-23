@@ -80,7 +80,11 @@ Write to `packages/backend.ai-webui-docs/.agent-output/docs-lint-report.md`.
    - Any entry whose `context` mentions a "running / start / launch"-style session qualifier (e.g. a `container` or `directory` avoid entry, if present) — only flag when the term is adjacent to "running" / "start" / "launch" and not inside a code block.
    - All other terms — flag unconditionally.
 4. Report each hit as `path:line — <avoid> → <useInstead>` grouped by avoid term, annotating with the entry's `reason` where useful.
-5. Non-English (ko / ja / th) is **best-effort**. For each non-`en` `avoid[]` entry (when such entries exist), grep the matching `src/{lang}/**/*.md` tree the same way and, additionally, use `concepts[].preferred.{ko,ja,th}` to spot drift away from the preferred per-language term. Because most `avoid[]` rows are English-only today, treat absence of a non-English row as "nothing to check for that language" rather than a gap. Emit findings under a `### Non-English (best-effort)` subsection; when no non-English avoid/preferred data applies, fall back to the literal heading `### Non-English (skipped — see roadmap)` so the coverage gap stays visible.
+5. Non-English (ko / ja / th) is **best-effort**. Non-`en` `avoid[]` rows exist (ko and ja as of FR-3051) and are guaranteed by the curation rule to be precise multi-token compounds or unambiguous deprecated spellings (see TERMINOLOGY.md "Non-English curation rule"; enforced by `pnpm run lint:terminology:selftest`), so a plain **substring** grep — NOT `grep -w`, which is meaningless for CJK — is safe per row:
+   ```bash
+   grep -rn --include="*.md" -F "<term>" packages/backend.ai-webui-docs/src/<lang>/
+   ```
+   Additionally, use `concepts[].preferred.{ko,ja,th}` to spot drift away from the preferred per-language term. Emit findings under a `### Non-English (best-effort)` subsection with one `#### {lang}` block per language that has applicable avoid/preferred data; for a language with **no** applicable rows (e.g. `th` today), emit the literal per-language fallback `#### {lang} (skipped — see roadmap)` inside that subsection so the coverage gap stays visible. If every language lacks data, fall back to the whole-subsection heading `### Non-English (skipped — see roadmap)`. Never propose adding a bare-noun non-English avoid row from these findings — a new non-en row must carry fixtures in `terminology.selftest.json` and pass the self-test.
 
 ### 2. Translation parity gap
 

@@ -1254,4 +1254,26 @@ function main() {
   return 0;
 }
 
-process.exit(main());
+// Exported for scripts/check-terminology-i18n.selftest.mjs (FR-3051): the
+// non-English avoid-row precision harness must exercise the REAL matcher and
+// CHECK 1 pipeline, not a copy of them. Importing this module does not run the
+// CLI — see the entry guard below.
+export {
+  REPO_ROOT,
+  TERMINOLOGY_PATH,
+  ALLOWLIST_PATH,
+  I18N_GLOBS,
+  readJson,
+  collectLeaves,
+  listLocaleFiles,
+  buildTermMatcher,
+  buildApprovedCompounds,
+  runCheck1,
+};
+
+// Run the CLI only when this file is executed directly
+// (`node scripts/check-terminology-i18n.mjs ...`), not when imported.
+const invokedPath = process.argv[1] ? path.resolve(process.argv[1]) : "";
+if (invokedPath === __filename) {
+  process.exit(main());
+}

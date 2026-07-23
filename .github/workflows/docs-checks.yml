@@ -7,12 +7,20 @@
 #   - check:nav-titles     — sidebar nav labels relate to their page H1s
 #     (guards against "Sessions All"-style label/title drift; see
 #     packages/backend.ai-webui-docs/scripts/check-nav-titles.mjs)
+#   - lint:terminology:selftest — non-English avoid[] rows are precise
+#     compounds within their false-positive budget (FR-3051; HARD gate on
+#     termbase DATA — the i18n content drift scan stays warn-only in
+#     verify.sh, which is why the checker/fixtures paths below trigger this
+#     workflow but resources/i18n/** deliberately does NOT)
 name: docs-checks
 
 on:
   pull_request:
     paths:
       - "packages/backend.ai-webui-docs/**"
+      - "scripts/check-terminology-i18n.mjs"
+      - "scripts/check-terminology-i18n.selftest.mjs"
+      - "scripts/terminology-i18n.allowlist.json"
       - ".github/workflows/docs-checks.yml"
 
 permissions:
@@ -41,3 +49,7 @@ jobs:
 
       - name: Nav labels relate to page H1s
         run: pnpm --filter backend.ai-webui-docs run check:nav-titles
+
+      # Dependency-free (native Node only) — needs no pnpm install.
+      - name: Non-English terminology precision self-test
+        run: node scripts/check-terminology-i18n.selftest.mjs
