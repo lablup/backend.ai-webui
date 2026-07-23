@@ -14,6 +14,7 @@ import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from '../components/DeploymentRevisionDetailDrawer';
 import DeploymentSettingModal from '../components/DeploymentSettingModal';
+import { convertToOrderBy } from '../helper';
 import { useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -36,7 +37,6 @@ import {
   availableDeploymentSorterValues,
   filterOutNullAndUndefined,
   isDeploymentInStoppedCategory,
-  parseDeploymentOrder,
   toLocalId,
   useBAILogger,
   useFetchKey,
@@ -98,15 +98,7 @@ const DeploymentListPageContent: React.FC = () => {
 
   const currentProject = useCurrentProjectValue();
 
-  const sort = parseDeploymentOrder(queryParams.order);
-  const orderBy: DeploymentOrderBy[] | undefined = sort
-    ? [
-        {
-          field: sort.field as DeploymentOrderBy['field'],
-          direction: sort.direction as DeploymentOrderBy['direction'],
-        },
-      ]
-    : undefined;
+  const orderBy = convertToOrderBy<DeploymentOrderBy>(queryParams.order);
   const finishedStatuses: ReadonlyArray<DeploymentStatus> = ['STOPPED'];
   const statusCategoryFilter: DeploymentFilter =
     queryParams.statusCategory === 'finished'
