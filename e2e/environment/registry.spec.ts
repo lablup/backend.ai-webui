@@ -702,18 +702,12 @@ test.describe(
     test('Admin can clear the filter tag and restore the full registry list', async ({
       page,
     }) => {
-      // Pick an anchor row the "cr" filter will exclude, before filtering.
-      // Its disappearance under the filter and reappearance after clearing
-      // the tag prove the list was genuinely refetched — row-count
-      // comparisons can't tell a restored list from a stale filtered
-      // render, and comparing against a pre-filter count races the
-      // Registry CRUD suite adding/deleting its own registry in another
-      // worker. Volatile e2e-created registries are ineligible anchors for
-      // the same reason.
+      // Pick an anchor row the "cr" filter will exclude before filtering:
+      // its disappear/reappear proves a genuine refetch, where row counts
+      // can't tell a restored list from a stale filtered render. Volatile
+      // e2e-created registries (concurrent CRUD suite) are ineligible.
       const rows = page.locator('.ant-table-tbody .ant-table-row');
-      const rowNames = await rows.evaluateAll((els) =>
-        els.map((el) => el.querySelector('td')?.textContent?.trim() ?? ''),
-      );
+      const rowNames = await rows.locator('td:first-child').allInnerTexts();
       const anchorName = rowNames.find(
         (name) => name && !/cr/i.test(name) && !name.startsWith('e2e-'),
       );
@@ -736,7 +730,6 @@ test.describe(
       await removeRegistryFilterTag(page, 'Registry Name: cr');
       await expect(filterTag).toBeHidden();
 
-      // The excluded anchor row reappearing proves the full list is back
       await expect(anchorRow.first()).toBeVisible({ timeout: 10000 });
     });
 
