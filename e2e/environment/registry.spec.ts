@@ -702,41 +702,42 @@ test.describe(
     test('Admin can clear the filter tag and restore the full registry list', async ({
       page,
     }) => {
-      // Apply filter
+      // Pick an anchor row the "cr" filter will exclude, before filtering.
+      // Its disappearance under the filter and reappearance after clearing
+      // the tag prove the list was genuinely refetched — row-count
+      // comparisons can't tell a restored list from a stale filtered
+      // render, and comparing against a pre-filter count races the
+      // Registry CRUD suite adding/deleting its own registry in another
+      // worker. Volatile e2e-created registries are ineligible anchors for
+      // the same reason.
+      const rows = page.locator('.ant-table-tbody .ant-table-row');
+      const rowNames = await rows.evaluateAll((els) =>
+        els.map((el) => el.querySelector('td')?.textContent?.trim() ?? ''),
+      );
+      const anchorName = rowNames.find(
+        (name) => name && !/cr/i.test(name) && !name.startsWith('e2e-'),
+      );
+      test.skip(
+        !anchorName,
+        'Needs a stable registry whose name does not contain "cr" to verify the list is restored after clearing the filter',
+      );
+      const anchorRow = rows.filter({ hasText: anchorName });
+
+      // Apply filter — the anchor row must be filtered out
       await applyRegistryFilter(page, 'cr');
       const filterTag = page
         .locator('.ant-tag')
         .filter({ has: page.locator('[aria-label="Close"]') })
         .filter({ hasText: 'Registry Name: cr' });
       await expect(filterTag).toBeVisible();
-
-      // Snapshot the filtered row count right before removing the tag. The
-      // "cr" filter can only ever narrow the list, so the restored count
-      // must be >= this snapshot. Comparing against a count captured before
-      // the filter was applied (the original approach) raced against the
-      // Registry CRUD suite running concurrently in another worker, which
-      // adds/deletes its own registry mid-test and shrinks the pre-filter
-      // window's validity.
-      const filteredCount = await page
-        .locator('.ant-table-tbody .ant-table-row')
-        .count();
+      await expect(anchorRow).toBeHidden();
 
       // Remove the filter tag
       await removeRegistryFilterTag(page, 'Registry Name: cr');
       await expect(filterTag).toBeHidden();
 
-      // Table shows full list again. Poll instead of a single read: the
-      // table refetch after removing the tag is async and may not have
-      // re-rendered all rows the instant the filter tag/spinner disappear.
-      await expect
-        .poll(
-          async () => page.locator('.ant-table-tbody .ant-table-row').count(),
-          {
-            message: 'Waiting for the full registry list to be restored',
-            timeout: 10000,
-          },
-        )
-        .toBeGreaterThanOrEqual(filteredCount);
+      // The excluded anchor row reappearing proves the full list is back
+      await expect(anchorRow.first()).toBeVisible({ timeout: 10000 });
     });
 
     // 4.4
