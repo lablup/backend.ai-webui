@@ -49,8 +49,6 @@ export interface UserSettings {
   [key: `fetchKeyAutoUpdateDelay.${string}`]: number | null;
 
   max_concurrent_uploads?: number;
-  container_log_auto_refresh_enabled?: boolean;
-  container_log_auto_refresh_interval?: number;
   custom_theme_config?: CustomThemeConfig;
   custom_primary_color?: { light?: string; dark?: string };
   deploymentRevisionCreationMode?: 'preset' | 'custom';
