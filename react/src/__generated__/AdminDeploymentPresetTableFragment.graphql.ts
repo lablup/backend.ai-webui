@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f61bb2628b3f3d9819e81a484c24203d>>
+ * @generated SignedSource<<e205c5c49e72a3073c4ad46aca823944>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,7 +11,7 @@
 import { ReaderFragment } from 'relay-runtime';
 export type DeploymentStrategyType = "BLUE_GREEN" | "ROLLING" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
-export type AdminDeploymentPresetNodesFragment$data = ReadonlyArray<{
+export type AdminDeploymentPresetTableFragment$data = ReadonlyArray<{
   readonly cluster: {
     readonly clusterMode: string;
     readonly clusterSize: number;
@@ -43,11 +43,11 @@ export type AdminDeploymentPresetNodesFragment$data = ReadonlyArray<{
   } | null | undefined;
   readonly runtimeVariantId: string;
   readonly updatedAt: string | null | undefined;
-  readonly " $fragmentType": "AdminDeploymentPresetNodesFragment";
+  readonly " $fragmentType": "AdminDeploymentPresetTableFragment";
 } | null | undefined>;
-export type AdminDeploymentPresetNodesFragment$key = ReadonlyArray<{
-  readonly " $data"?: AdminDeploymentPresetNodesFragment$data;
-  readonly " $fragmentSpreads": FragmentRefs<"AdminDeploymentPresetNodesFragment">;
+export type AdminDeploymentPresetTableFragment$key = ReadonlyArray<{
+  readonly " $data"?: AdminDeploymentPresetTableFragment$data;
+  readonly " $fragmentSpreads": FragmentRefs<"AdminDeploymentPresetTableFragment">;
 }>;
 
 const node: ReaderFragment = (function(){
@@ -71,7 +71,7 @@ return {
   "metadata": {
     "plural": true
   },
-  "name": "AdminDeploymentPresetNodesFragment",
+  "name": "AdminDeploymentPresetTableFragment",
   "selections": [
     {
       "kind": "RequiredField",
@@ -256,6 +256,6 @@ return {
 };
 })();
 
-(node as any).hash = "a4e1509007a42bdd70eac53b4710e1dc";
+(node as any).hash = "ddc54a723142b6774ad34cfe74fc2123";
 
 export default node;

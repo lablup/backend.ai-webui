@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<aeac13974911866c4f620592b52ecb86>>
+ * @generated SignedSource<<5c2bf73ca54fe57875c562e3a071fbd3>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,17 +9,17 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type PrometheusPresetTabDeleteMutation$variables = {
+export type AdminPrometheusPresetDeleteMutation$variables = {
   id: string;
 };
-export type PrometheusPresetTabDeleteMutation$data = {
+export type AdminPrometheusPresetDeleteMutation$data = {
   readonly adminDeletePrometheusQueryPreset: {
     readonly id: string;
   } | null | undefined;
 };
-export type PrometheusPresetTabDeleteMutation = {
-  response: PrometheusPresetTabDeleteMutation$data;
-  variables: PrometheusPresetTabDeleteMutation$variables;
+export type AdminPrometheusPresetDeleteMutation = {
+  response: AdminPrometheusPresetDeleteMutation$data;
+  variables: AdminPrometheusPresetDeleteMutation$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -61,7 +61,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "PrometheusPresetTabDeleteMutation",
+    "name": "AdminPrometheusPresetDeleteMutation",
     "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -70,20 +70,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "PrometheusPresetTabDeleteMutation",
+    "name": "AdminPrometheusPresetDeleteMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "935b661e74d3b19998c03edb04064cbb",
+    "cacheID": "b36af27d5e2d8eb384beacc072fda555",
     "id": null,
     "metadata": {},
-    "name": "PrometheusPresetTabDeleteMutation",
+    "name": "AdminPrometheusPresetDeleteMutation",
     "operationKind": "mutation",
-    "text": "mutation PrometheusPresetTabDeleteMutation(\n  $id: ID!\n) {\n  adminDeletePrometheusQueryPreset(id: $id) {\n    id\n  }\n}\n"
+    "text": "mutation AdminPrometheusPresetDeleteMutation(\n  $id: ID!\n) {\n  adminDeletePrometheusQueryPreset(id: $id) {\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "35c4c5d3701db82305c38c36c1375003";
+(node as any).hash = "83b31f89a1ea2a1e314fa98a8be6a6df";
 
 export default node;

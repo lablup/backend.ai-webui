@@ -843,7 +843,7 @@ const BAIGraphQLPropertyFilter = <
           <Tooltip
             title={isValid || !isFocused ? '' : selectedProperty.rule?.message}
             open={!isValid && isFocused}
-            color={token.colorError}
+            color="red"
           >
             <AutoComplete
               ref={autoCompleteRef}

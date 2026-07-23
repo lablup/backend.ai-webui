@@ -987,3 +987,30 @@ export const convertToOrderBy = <
     } as TOrderBy,
   ];
 };
+
+/**
+ * Reverses `convertToOrderBy`: converts the first entry of a GraphQL v2
+ * OrderBy array back to a UI order string (e.g., for a `BAITable`'s `order`
+ * prop, or to persist the current sort to the URL).
+ *
+ * @param orderBy - An OrderBy array (or its first entry's `field`/`direction`).
+ * @returns The order string, or `null` if `orderBy` is empty/undefined.
+ *
+ * @example
+ * convertOrderByToString([{ field: 'NAME', direction: 'ASC' }])
+ * // => 'name'
+ *
+ * @example
+ * convertOrderByToString([{ field: 'CREATED_AT', direction: 'DESC' }])
+ * // => '-createdAt'
+ */
+export const convertOrderByToString = (
+  orderBy:
+    | ReadonlyArray<{ field?: string; direction?: string }>
+    | null
+    | undefined,
+): string | null => {
+  const first = orderBy?.[0];
+  if (!first?.field) return null;
+  return `${first.direction === 'DESC' ? '-' : ''}${_.camelCase(first.field)}`;
+};
