@@ -6,10 +6,10 @@ import type { AdminDeploymentDeleteMutation } from '../__generated__/AdminDeploy
 import type {
   AdminDeploymentQuery as AdminDeploymentQueryType,
   DeploymentFilter,
-  DeploymentOrderField,
+  DeploymentOrderBy,
   DeploymentStatus,
-  OrderDirection,
 } from '../__generated__/AdminDeploymentQuery.graphql';
+import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
@@ -33,7 +33,6 @@ import {
   filterOutNullAndUndefined,
   isDeploymentInStoppedCategory,
   isValidUUID,
-  parseDeploymentOrder,
   toLocalId,
   useBAILogger,
 } from 'backend.ai-ui';
@@ -132,10 +131,10 @@ const AdminDeployment = ({
     mergedFilter?.status?.in?.includes('STOPPED') ? 'finished' : 'running';
   const userFilter = _.omit(mergedFilter, 'status') as DeploymentFilter;
 
-  const orderEntry = queryRef.variables.orderBy?.[0];
-  const order = orderEntry
-    ? (`${orderEntry.direction === 'DESC' ? '-' : ''}${orderEntry.field}` as DeploymentOrderValue)
-    : undefined;
+  const order =
+    (convertFirstOrderByToString(
+      queryRef.variables.orderBy,
+    ) as DeploymentOrderValue | null) ?? undefined;
 
   const pageSize = queryRef.variables.limit ?? 10;
   const offset = queryRef.variables.offset ?? 0;
@@ -296,18 +295,12 @@ const AdminDeployment = ({
           loading={isRefetching}
           order={order}
           onChangeOrder={(nextOrder) => {
-            const sort = parseDeploymentOrder(nextOrder ?? undefined);
             onReload(
               {
                 ...queryRef.variables,
-                orderBy: sort
-                  ? [
-                      {
-                        field: sort.field as DeploymentOrderField,
-                        direction: sort.direction as OrderDirection,
-                      },
-                    ]
-                  : undefined,
+                orderBy: convertToOrderBy<DeploymentOrderBy>(
+                  nextOrder ?? undefined,
+                ),
                 offset: 0,
               },
               { fetchPolicy: 'network-only' },
