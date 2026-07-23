@@ -2215,6 +2215,7 @@
     "SystemRoleNoAssignments": "系統自動建立的角色不能直接分配或移除使用者。",
     "UserAlreadyAssigned": "使用者已分配到此角色。",
     "UserAssigned": "使用者已成功分配到角色。",
+    "UserAssignmentsPartialFailureDescription": "部分使用者指派失敗。請檢查相關項目。",
     "UserNotAssigned": "使用者未分配到此角色。",
     "UserRevoked": "使用者已成功從角色中移除。",
     "UsersAssigned": "使用者已成功分配到角色。",

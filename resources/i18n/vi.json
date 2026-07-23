@@ -2213,6 +2213,7 @@
     "SystemRoleNoAssignments": "Các vai trò được hệ thống tự động tạo không thể có người dùng được phân công hoặc xóa trực tiếp.",
     "UserAlreadyAssigned": "Người dùng đã được phân công cho vai trò này.",
     "UserAssigned": "Người dùng đã được phân công cho vai trò thành công.",
+    "UserAssignmentsPartialFailureDescription": "Một số phân công người dùng không thành công. Vui lòng kiểm tra các mục.",
     "UserNotAssigned": "Người dùng chưa được phân công cho vai trò này.",
     "UserRevoked": "Người dùng đã được xóa khỏi vai trò thành công.",
     "UsersAssigned": "Người dùng đã được phân công cho vai trò thành công.",

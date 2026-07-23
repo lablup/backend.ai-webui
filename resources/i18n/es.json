@@ -2211,6 +2211,7 @@
     "SystemRoleNoAssignments": "A los roles creados automáticamente por el sistema no se les pueden asignar ni quitar usuarios directamente.",
     "UserAlreadyAssigned": "El usuario ya está asignado a este rol.",
     "UserAssigned": "Usuario asignado al rol correctamente.",
+    "UserAssignmentsPartialFailureDescription": "Algunas asignaciones de usuarios han fallado. Compruebe los elementos.",
     "UserNotAssigned": "El usuario no está asignado a este rol.",
     "UserRevoked": "Usuario eliminado del rol correctamente.",
     "UsersAssigned": "Usuarios asignados al rol correctamente.",

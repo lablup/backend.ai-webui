@@ -2211,6 +2211,7 @@
     "SystemRoleNoAssignments": "Järjestelmän automaattisesti luomiin rooleihin ei voi suoraan määrittää tai poistaa käyttäjiä.",
     "UserAlreadyAssigned": "Käyttäjä on jo määritetty tähän rooliin.",
     "UserAssigned": "Käyttäjä määritetty rooliin onnistuneesti.",
+    "UserAssignmentsPartialFailureDescription": "Osa käyttäjämäärityksistä epäonnistui. Tarkista kohteet.",
     "UserNotAssigned": "Käyttäjää ei ole määritetty tähän rooliin.",
     "UserRevoked": "Käyttäjä poistettu roolista onnistuneesti.",
     "UsersAssigned": "Käyttäjät määritetty rooliin onnistuneesti.",

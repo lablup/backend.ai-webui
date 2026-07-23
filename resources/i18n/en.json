@@ -2198,6 +2198,7 @@
     "SystemRoleNoAssignments": "Roles automatically created by the system cannot have users directly assigned or unassigned.",
     "UserAlreadyAssigned": "User is already assigned to this role.",
     "UserAssigned": "User assigned to role successfully.",
+    "UserAssignmentsPartialFailureDescription": "Some user assignments failed. Please check the items.",
     "UserNotAssigned": "User is not assigned to this role.",
     "UserRevoked": "User removed from role successfully.",
     "UsersAssigned": "Users assigned to role successfully.",
