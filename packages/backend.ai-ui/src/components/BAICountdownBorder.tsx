@@ -41,6 +41,13 @@ export interface BAICountdownBorderProps {
    */
   resetKey?: React.Key;
   /**
+   * When true, freezes the fill animation at its current position
+   * (`animation-play-state: paused`) instead of advancing. Use it to hold the
+   * countdown while the wrapped control's refresh is in flight, so the border
+   * does not complete or loop before the real refresh happens.
+   */
+  paused?: boolean;
+  /**
    * Style for the wrapper element. The border's own appearance is taken from
    * the same object via standard CSS properties:
    * - `stroke` — border color (default `colorPrimaryHover`)
@@ -72,6 +79,7 @@ const BAICountdownBorder: React.FC<BAICountdownBorderProps> = ({
   className,
   style,
   resetKey,
+  paused = false,
 }) => {
   'use memo';
   const { token } = theme.useToken();
@@ -136,7 +144,10 @@ const BAICountdownBorder: React.FC<BAICountdownBorderProps> = ({
             pathLength={100}
             strokeDasharray={100}
             className={styles.fill}
-            style={{ animationDuration: `${durationMs}ms` }}
+            style={{
+              animationDuration: `${durationMs}ms`,
+              animationPlayState: paused ? 'paused' : 'running',
+            }}
           />
         </svg>
       )}
