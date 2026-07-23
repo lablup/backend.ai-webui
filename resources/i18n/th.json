@@ -196,6 +196,14 @@
     "VFolder": "VFolder",
     "VFolderRequired": "ต้องระบุ VFolder"
   },
+  "adminRuntimeVariantPreset": {
+    "CreatePreset": "สร้างพรีเซต",
+    "Name": "ชื่อ",
+    "PresetDeleted": "ลบพรีเซตตัวแปรรันไทม์เรียบร้อยแล้ว",
+    "RuntimeVariantId": "รหัสตัวแปรรันไทม์",
+    "RuntimeVariantPreset": "พรีเซตตัวแปรรันไทม์",
+    "TabTitle": "พรีเซตตัวแปรรันไทม์"
+  },
   "adminSession": {
     "PendingSessions": "เซสชันที่รอดำเนินการ",
     "PendingSessionsScopedToResourceGroup": "แสดงเซสชันที่รอดำเนินการสำหรับกลุ่มทรัพยากรที่เลือกเท่านั้น สลับกลุ่มทรัพยากรเพื่อดูเซสชันในกลุ่มอื่น"

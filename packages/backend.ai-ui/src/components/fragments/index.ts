@@ -165,6 +165,16 @@ export type {
 export { default as BAIRouteNodes } from './BAIRouteNodes';
 export type { BAIRouteNodesProps, RouteNodeInList } from './BAIRouteNodes';
 export {
+  default as BAIRuntimeVariantPresetTable,
+  availablePresetSorterValues,
+} from './BAIRuntimeVariantPresetTable';
+export type {
+  BAIRuntimeVariantPresetTableProps,
+  RuntimeVariantPresetNodeInList,
+} from './BAIRuntimeVariantPresetTable';
+export { default as BAIRuntimeVariantPresetSettingModal } from './BAIRuntimeVariantPresetSettingModal';
+export type { BAIRuntimeVariantPresetSettingModalProps } from './BAIRuntimeVariantPresetSettingModal';
+export {
   default as BAIModelDeploymentNodes,
   availableDeploymentSorterValues,
 } from './BAIModelDeploymentNodes';

@@ -196,6 +196,14 @@
     "VFolder": "VFolder",
     "VFolderRequired": "VFolder는 필수입니다."
   },
+  "adminRuntimeVariantPreset": {
+    "CreatePreset": "프리셋 생성",
+    "Name": "이름",
+    "PresetDeleted": "런타임 프리셋이 삭제되었습니다.",
+    "RuntimeVariantId": "런타임 ID",
+    "RuntimeVariantPreset": "런타임 프리셋",
+    "TabTitle": "런타임 프리셋"
+  },
   "adminSession": {
     "PendingSessions": "대기 세션",
     "PendingSessionsScopedToResourceGroup": "선택한 자원 그룹의 대기 세션만 표시하고 있습니다. 다른 그룹의 세션을 보려면 자원 그룹을 전환하세요."
