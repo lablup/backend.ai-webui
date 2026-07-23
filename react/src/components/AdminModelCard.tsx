@@ -2,23 +2,24 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { AdminModelCardListPageBulkDeleteMutation } from '../__generated__/AdminModelCardListPageBulkDeleteMutation.graphql';
-import type { AdminModelCardListPageDeleteMutation } from '../__generated__/AdminModelCardListPageDeleteMutation.graphql';
+import type { AdminModelCardBulkDeleteMutation } from '../__generated__/AdminModelCardBulkDeleteMutation.graphql';
+import type { AdminModelCardDeleteMutation } from '../__generated__/AdminModelCardDeleteMutation.graphql';
 import type {
-  AdminModelCardListPageQuery,
-  AdminModelCardListPageQuery$data,
+  AdminModelCardQuery as AdminModelCardQueryType,
+  AdminModelCardQuery$data,
   ModelCardV2Filter,
   ModelCardV2OrderBy,
-} from '../__generated__/AdminModelCardListPageQuery.graphql';
-import AdminModelCardSettingModal from '../components/AdminModelCardSettingModal';
-import { useFolderExplorerOpener } from '../components/FolderExplorerOpener';
-import VFolderNodeIdenticonV2 from '../components/VFolderNodeIdenticonV2';
-import { convertToOrderBy, handleRowSelectionChange } from '../helper';
+} from '../__generated__/AdminModelCardQuery.graphql';
+import {
+  convertFirstOrderByToString,
+  convertToOrderBy,
+  handleRowSelectionChange,
+} from '../helper';
 import { buildPath } from '../helper/pathBuilder';
-import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import AdminModelCardSettingModal from './AdminModelCardSettingModal';
+import { useFolderExplorerOpener } from './FolderExplorerOpener';
+import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
 import { DeleteFilled, ExclamationCircleFilled } from '@ant-design/icons';
 import { App, Checkbox, Tooltip, Typography, theme } from 'antd';
 import {
@@ -33,28 +34,32 @@ import {
   BAISelectionLabel,
   BAIStorageHostSelect,
   BAITable,
+  type BAITableSettings,
   BAIText,
   BAITag,
   BAIUnmountAfterClose,
   filterOutEmpty,
   filterOutNullAndUndefined,
-  INITIAL_FETCH_KEY,
   isValidUUID,
   toLocalId,
   useBAILogger,
-  useFetchKey,
   BAIAlert,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { PlusIcon, SquarePenIcon } from 'lucide-react';
-import { parseAsJson, parseAsString, useQueryStates } from 'nuqs';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
+import {
+  graphql,
+  PreloadedQuery,
+  useMutation,
+  usePreloadedQuery,
+  UseQueryLoaderLoadQueryOptions,
+} from 'react-relay';
 
 type ModelCardNode = NonNullableNodeOnEdges<
-  AdminModelCardListPageQuery$data['adminModelCardsV2']
+  AdminModelCardQuery$data['adminModelCardsV2']
 >;
 
 const availableModelCardSorterKeys = ['name', 'created_at'] as const;
@@ -64,7 +69,70 @@ export const availableModelCardSorterValues = [
   ...availableModelCardSorterKeys.map((key) => `-${key}` as const),
 ] as const;
 
-const AdminModelCardListPage: React.FC = () => {
+export const AdminModelCardQuery = graphql`
+  query AdminModelCardQuery(
+    $filter: ModelCardV2Filter
+    $orderBy: [ModelCardV2OrderBy!]
+    $limit: Int
+    $offset: Int
+    $currentProjectId: UUID!
+  ) {
+    adminModelCardsV2(
+      filter: $filter
+      orderBy: $orderBy
+      limit: $limit
+      offset: $offset
+    ) {
+      count
+      edges {
+        node {
+          id
+          name
+          vfolderId
+          vfolder {
+            id
+            metadata {
+              name
+            }
+            ...VFolderNodeIdenticonV2Fragment
+          }
+          domainName
+          projectId
+          accessLevel
+          createdAt
+          metadata {
+            title
+            category
+            task
+          }
+          ...AdminModelCardSettingModalFragment
+        }
+      }
+    }
+    group(id: $currentProjectId) {
+      type
+    }
+    groups(is_active: true, type: ["MODEL_STORE"]) {
+      id
+      name
+    }
+  }
+`;
+
+export interface AdminModelCardProps {
+  queryRef: PreloadedQuery<AdminModelCardQueryType>;
+  onReload: (
+    variables: AdminModelCardQueryType['variables'],
+    options?: UseQueryLoaderLoadQueryOptions,
+  ) => void;
+  tableSettings: BAITableSettings;
+}
+
+const AdminModelCard: React.FC<AdminModelCardProps> = ({
+  queryRef,
+  onReload,
+  tableSettings,
+}) => {
   'use memo';
 
   const { t } = useTranslation();
@@ -73,10 +141,6 @@ const AdminModelCardListPage: React.FC = () => {
   const { logger } = useBAILogger();
   const { upsertNotification } = useSetBAINotification();
   const { generateFolderPath } = useFolderExplorerOpener();
-  const currentProject = useCurrentProjectValue();
-  const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
-    'table_column_overrides.AdminModelCardListPage',
-  );
 
   const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
   const [editingModelCardId, setEditingModelCardId] = useState<string | null>(
@@ -90,103 +154,25 @@ const AdminModelCardListPage: React.FC = () => {
   const [alsoDeleteFolder, setAlsoDeleteFolder] = useState(false);
   const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
   const [alsoDeleteFoldersBulk, setAlsoDeleteFoldersBulk] = useState(false);
-  const {
-    baiPaginationOption,
-    tablePaginationOption,
-    setTablePaginationOption,
-  } = useBAIPaginationOptionStateOnSearchParam({
-    current: 1,
-    pageSize: 10,
-  });
 
-  const [queryParams, setQueryParams] = useQueryStates(
-    {
-      order: parseAsString,
-      filter: parseAsJson<ModelCardV2Filter>(
-        (value) => value as ModelCardV2Filter,
-      ),
-    },
-    {
-      history: 'replace',
-    },
-  );
+  const filter = queryRef.variables.filter ?? undefined;
+  const order = convertFirstOrderByToString(queryRef.variables.orderBy);
+  const pageSize = queryRef.variables.limit ?? 10;
+  const offset = queryRef.variables.offset ?? 0;
+  const current = pageSize ? Math.floor(offset / pageSize) + 1 : 1;
 
-  const [fetchKey, updateFetchKey] = useFetchKey();
+  const deferredQueryRef = useDeferredValue(queryRef);
+  const isRefetching = deferredQueryRef !== queryRef;
 
-  const queryVariables = {
-    filter: queryParams.filter,
-    orderBy: convertToOrderBy<ModelCardV2OrderBy>(queryParams.order),
-    limit: baiPaginationOption.limit,
-    offset: baiPaginationOption.offset,
-    currentProjectId: currentProject.id!,
-  };
+  const { adminModelCardsV2, group, groups } =
+    usePreloadedQuery<AdminModelCardQueryType>(
+      AdminModelCardQuery,
+      deferredQueryRef,
+    );
 
-  const deferredQueryVariables = useDeferredValue(queryVariables);
-  const deferredFetchKey = useDeferredValue(fetchKey);
-
-  const queryRef = useLazyLoadQuery<AdminModelCardListPageQuery>(
+  const [commitDeleteModelCard] = useMutation<AdminModelCardDeleteMutation>(
     graphql`
-      query AdminModelCardListPageQuery(
-        $filter: ModelCardV2Filter
-        $orderBy: [ModelCardV2OrderBy!]
-        $limit: Int
-        $offset: Int
-        $currentProjectId: UUID!
-      ) {
-        adminModelCardsV2(
-          filter: $filter
-          orderBy: $orderBy
-          limit: $limit
-          offset: $offset
-        ) {
-          count
-          edges {
-            node {
-              id
-              name
-              vfolderId
-              vfolder {
-                id
-                metadata {
-                  name
-                }
-                ...VFolderNodeIdenticonV2Fragment
-              }
-              domainName
-              projectId
-              accessLevel
-              createdAt
-              metadata {
-                title
-                category
-                task
-              }
-              ...AdminModelCardSettingModalFragment
-            }
-          }
-        }
-        group(id: $currentProjectId) {
-          type @since(version: "24.03.0")
-        }
-        groups(is_active: true, type: ["MODEL_STORE"]) {
-          id
-          name
-        }
-      }
-    `,
-    deferredQueryVariables,
-    {
-      fetchPolicy:
-        deferredFetchKey === INITIAL_FETCH_KEY
-          ? 'store-and-network'
-          : 'network-only',
-      fetchKey: deferredFetchKey,
-    },
-  );
-
-  const [commitDeleteModelCard] =
-    useMutation<AdminModelCardListPageDeleteMutation>(graphql`
-      mutation AdminModelCardListPageDeleteMutation(
+      mutation AdminModelCardDeleteMutation(
         $id: UUID!
         $options: DeleteModelCardV2Options
       ) {
@@ -194,11 +180,12 @@ const AdminModelCardListPage: React.FC = () => {
           id
         }
       }
-    `);
+    `,
+  );
 
   const [commitBulkDeleteModelCards, isBulkDeleteInFlight] =
-    useMutation<AdminModelCardListPageBulkDeleteMutation>(graphql`
-      mutation AdminModelCardListPageBulkDeleteMutation(
+    useMutation<AdminModelCardBulkDeleteMutation>(graphql`
+      mutation AdminModelCardBulkDeleteMutation(
         $input: BulkDeleteModelCardsV2Input!
       ) {
         adminBulkDeleteModelCardsV2(input: $input) {
@@ -231,7 +218,7 @@ const AdminModelCardListPage: React.FC = () => {
   };
 
   const modelCards =
-    queryRef.adminModelCardsV2?.edges?.map((edge) => edge?.node) ?? [];
+    adminModelCardsV2?.edges?.map((edge) => edge?.node) ?? [];
 
   const editingModelCard = editingModelCardId
     ? modelCards.find((mc) => mc?.id === editingModelCardId)
@@ -369,10 +356,16 @@ const AdminModelCardListPage: React.FC = () => {
                 ),
               },
             ]}
-            value={queryParams.filter ?? undefined}
+            value={filter}
             onChange={(value) => {
-              setQueryParams({ filter: value ?? null });
-              setTablePaginationOption({ current: 1 });
+              onReload(
+                {
+                  ...queryRef.variables,
+                  filter: value ?? undefined,
+                  offset: 0,
+                },
+                { fetchPolicy: 'network-only' },
+              );
             }}
           />
         </BAIFlex>
@@ -391,14 +384,10 @@ const AdminModelCardListPage: React.FC = () => {
             </>
           )}
           <BAIFetchKeyButton
-            loading={
-              deferredQueryVariables !== queryVariables ||
-              deferredFetchKey !== fetchKey
+            loading={isRefetching}
+            onChange={() =>
+              onReload(queryRef.variables, { fetchPolicy: 'network-only' })
             }
-            value={fetchKey}
-            onChange={(newFetchKey) => {
-              updateFetchKey(newFetchKey);
-            }}
           />
           <BAIButton
             type="primary"
@@ -414,7 +403,8 @@ const AdminModelCardListPage: React.FC = () => {
         dataSource={modelCards as ModelCardNode[]}
         columns={columns}
         scroll={{ x: 'max-content' }}
-        loading={deferredQueryVariables !== queryVariables}
+        loading={isRefetching}
+        order={order}
         rowSelection={{
           type: 'checkbox',
           preserveSelectedRowKeys: true,
@@ -428,22 +418,30 @@ const AdminModelCardListPage: React.FC = () => {
           selectedRowKeys: _.map(selectedModelCards, (i) => i.id),
         }}
         onChangeOrder={(order) => {
-          setQueryParams({
-            order:
-              (order as (typeof availableModelCardSorterValues)[number]) ||
-              null,
-          });
+          onReload(
+            {
+              ...queryRef.variables,
+              orderBy: convertToOrderBy<ModelCardV2OrderBy>(order),
+              offset: 0,
+            },
+            { fetchPolicy: 'network-only' },
+          );
         }}
-        tableSettings={{
-          columnOverrides: columnOverrides,
-          onColumnOverridesChange: setColumnOverrides,
-        }}
+        tableSettings={tableSettings}
         pagination={{
-          pageSize: tablePaginationOption.pageSize,
-          current: tablePaginationOption.current,
-          total: queryRef.adminModelCardsV2?.count ?? 0,
-          onChange: (current, pageSize) => {
-            setTablePaginationOption({ current, pageSize });
+          pageSize,
+          current,
+          total: adminModelCardsV2?.count ?? 0,
+          onChange: (nextCurrent, nextPageSize) => {
+            onReload(
+              {
+                ...queryRef.variables,
+                limit: nextPageSize,
+                offset:
+                  nextCurrent > 1 ? (nextCurrent - 1) * nextPageSize : 0,
+              },
+              { fetchPolicy: 'network-only' },
+            );
           },
         }}
       />
@@ -451,13 +449,13 @@ const AdminModelCardListPage: React.FC = () => {
         <AdminModelCardSettingModal
           open={isSettingModalOpen}
           modelCardFrgmt={editingModelCard ?? null}
-          isModelStoreProject={queryRef.group?.type === 'MODEL_STORE'}
-          modelStoreProject={queryRef.groups?.[0] ?? null}
+          isModelStoreProject={group?.type === 'MODEL_STORE'}
+          modelStoreProject={groups?.[0] ?? null}
           onRequestClose={(success) => {
             setIsSettingModalOpen(false);
             setEditingModelCardId(null);
             if (success) {
-              updateFetchKey();
+              onReload(queryRef.variables, { fetchPolicy: 'network-only' });
             }
           }}
         />
@@ -565,7 +563,9 @@ const AdminModelCardListPage: React.FC = () => {
 
                   setDeletingModelCard(null);
                   setAlsoDeleteFolder(false);
-                  updateFetchKey();
+                  onReload(queryRef.variables, {
+                    fetchPolicy: 'network-only',
+                  });
                   resolve();
                 },
                 onError: (error) => {
@@ -713,7 +713,7 @@ const AdminModelCardListPage: React.FC = () => {
                 }
                 setAlsoDeleteFoldersBulk(false);
                 setIsBulkDeleteOpen(false);
-                updateFetchKey();
+                onReload(queryRef.variables, { fetchPolicy: 'network-only' });
                 resolve();
               },
               onError: (error) => {
@@ -733,4 +733,4 @@ const AdminModelCardListPage: React.FC = () => {
   );
 };
 
-export default AdminModelCardListPage;
+export default AdminModelCard;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d5f6aa9a5e5d6228347e3365ff37ab30>>
+ * @generated SignedSource<<aa410523e17105c412fdc223ae016f3a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -53,14 +53,14 @@ export type ModelCardV2OrderBy = {
   direction?: string;
   field: ModelCardV2OrderField;
 };
-export type AdminModelCardListPageQuery$variables = {
+export type AdminModelCardQuery$variables = {
   currentProjectId: string;
   filter?: ModelCardV2Filter | null | undefined;
   limit?: number | null | undefined;
   offset?: number | null | undefined;
   orderBy?: ReadonlyArray<ModelCardV2OrderBy> | null | undefined;
 };
-export type AdminModelCardListPageQuery$data = {
+export type AdminModelCardQuery$data = {
   readonly adminModelCardsV2: {
     readonly count: number;
     readonly edges: ReadonlyArray<{
@@ -96,9 +96,9 @@ export type AdminModelCardListPageQuery$data = {
     readonly name: string | null | undefined;
   } | null | undefined> | null | undefined;
 };
-export type AdminModelCardListPageQuery = {
-  response: AdminModelCardListPageQuery$data;
-  variables: AdminModelCardListPageQuery$variables;
+export type AdminModelCardQuery = {
+  response: AdminModelCardQuery$data;
+  variables: AdminModelCardQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -299,7 +299,7 @@ return {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "AdminModelCardListPageQuery",
+    "name": "AdminModelCardQuery",
     "selections": [
       {
         "alias": null,
@@ -395,7 +395,7 @@ return {
       (v0/*: any*/)
     ],
     "kind": "Operation",
-    "name": "AdminModelCardListPageQuery",
+    "name": "AdminModelCardQuery",
     "selections": [
       {
         "alias": null,
@@ -526,16 +526,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "6763d668d504d9021f5bd0cf7aa7196f",
+    "cacheID": "466fb7e5efb3d335e10a442d73e64031",
     "id": null,
     "metadata": {},
-    "name": "AdminModelCardListPageQuery",
+    "name": "AdminModelCardQuery",
     "operationKind": "query",
-    "text": "query AdminModelCardListPageQuery(\n  $filter: ModelCardV2Filter\n  $orderBy: [ModelCardV2OrderBy!]\n  $limit: Int\n  $offset: Int\n  $currentProjectId: UUID!\n) {\n  adminModelCardsV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        name\n        vfolderId\n        vfolder {\n          id\n          metadata {\n            name\n          }\n          ...VFolderNodeIdenticonV2Fragment\n        }\n        domainName\n        projectId\n        accessLevel\n        createdAt\n        metadata {\n          title\n          category\n          task\n        }\n        ...AdminModelCardSettingModalFragment\n      }\n    }\n  }\n  group(id: $currentProjectId) {\n    type @since(version: \"24.03.0\")\n  }\n  groups(is_active: true, type: [\"MODEL_STORE\"]) {\n    id\n    name\n  }\n}\n\nfragment AdminModelCardSettingModalFragment on ModelCardV2 {\n  id\n  name\n  vfolderId\n  vfolder {\n    metadata {\n      name\n    }\n    ...VFolderNodeIdenticonV2Fragment\n    id\n  }\n  domainName\n  projectId\n  readme\n  accessLevel\n  metadata {\n    author\n    title\n    modelVersion\n    description\n    task\n    category\n    architecture\n    framework\n    label\n    license\n  }\n}\n\nfragment VFolderNodeIdenticonV2Fragment on VFolder {\n  id\n}\n"
+    "text": "query AdminModelCardQuery(\n  $filter: ModelCardV2Filter\n  $orderBy: [ModelCardV2OrderBy!]\n  $limit: Int\n  $offset: Int\n  $currentProjectId: UUID!\n) {\n  adminModelCardsV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        name\n        vfolderId\n        vfolder {\n          id\n          metadata {\n            name\n          }\n          ...VFolderNodeIdenticonV2Fragment\n        }\n        domainName\n        projectId\n        accessLevel\n        createdAt\n        metadata {\n          title\n          category\n          task\n        }\n        ...AdminModelCardSettingModalFragment\n      }\n    }\n  }\n  group(id: $currentProjectId) {\n    type\n  }\n  groups(is_active: true, type: [\"MODEL_STORE\"]) {\n    id\n    name\n  }\n}\n\nfragment AdminModelCardSettingModalFragment on ModelCardV2 {\n  id\n  name\n  vfolderId\n  vfolder {\n    metadata {\n      name\n    }\n    ...VFolderNodeIdenticonV2Fragment\n    id\n  }\n  domainName\n  projectId\n  readme\n  accessLevel\n  metadata {\n    author\n    title\n    modelVersion\n    description\n    task\n    category\n    architecture\n    framework\n    label\n    license\n  }\n}\n\nfragment VFolderNodeIdenticonV2Fragment on VFolder {\n  id\n}\n"
   }
 };
 })();
 
-(node as any).hash = "dffcdfde3a00eee2eacc92d15a8da12e";
+(node as any).hash = "6db7f942cab000050425e544b23f63f5";
 
 export default node;
