@@ -212,6 +212,20 @@ const BAIFetchKeyButton: React.FC<BAIFetchKeyButtonProps> = ({
     cycleKey,
   );
 
+  // When a consumer-supplied `loading` refresh finishes, re-anchor the countdown
+  // to this moment. `useInterval` already restarts the paused interval on the
+  // same `loading` true->false transition (its delay flips from null back to
+  // `selectedDelay`); bumping `cycleKey` here restarts the border animation from
+  // empty at the same instant, so the newly exposed countdown stays accurate
+  // instead of finishing early on its request-start anchor.
+  const [prevLoading, setPrevLoading] = useState(loading);
+  if (loading !== prevLoading) {
+    setPrevLoading(loading);
+    if (!loading) {
+      setCycleKey((key) => key + 1);
+    }
+  }
+
   const tooltipTitle = showLastLoadTime ? loadTimeMessage : undefined;
   const isAutoRefreshOn = selectedDelay !== null;
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -228,6 +242,16 @@ const BAIFetchKeyButton: React.FC<BAIFetchKeyButtonProps> = ({
     undefined,
   );
   if (selectedDelay !== trackedDelay) {
+    // On a real interval change (not the initial render), re-anchor the
+    // countdown to this moment: `useInterval` already restarts its schedule on
+    // the new delay, so bump `cycleKey` to remount `BAICountdownBorder` and
+    // refill from empty over the new duration — instead of morphing the
+    // in-flight fill to the new speed mid-cycle. `undefined` (the initial
+    // `trackedDelay`) means "first render", where the border mounts fresh
+    // anyway, so skip the bump there.
+    if (trackedDelay !== undefined) {
+      setCycleKey((key) => key + 1);
+    }
     setTrackedDelay(selectedDelay);
     if (
       selectedDelay !== null &&
@@ -256,12 +280,17 @@ const BAIFetchKeyButton: React.FC<BAIFetchKeyButtonProps> = ({
   // `BAICountdownBorder` so its border fills clockwise, once per selected
   // interval, restarting exactly on `cycleKey` (see `triggerRefresh` above) so
   // it never drifts out of sync with the real refresh — whether the cycle was
-  // completed automatically or cut short by a manual click.
+  // completed automatically or cut short by a manual click. While a
+  // consumer-supplied `loading` refresh is in flight the border is frozen
+  // (`paused={loading}`) instead of advancing, and it is re-anchored (via the
+  // `cycleKey` bump on the `loading` true->false edge above) when the refresh
+  // completes, so it never finishes or loops ahead of the real reload.
   const withCountdownBorder = (node: React.ReactNode) =>
     isAutoRefreshOn && showCountdownBorder ? (
       <BAICountdownBorder
         durationMs={selectedDelay as number}
         resetKey={cycleKey}
+        paused={loading}
       >
         {node}
       </BAICountdownBorder>

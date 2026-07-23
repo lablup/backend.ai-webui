@@ -334,6 +334,57 @@ export const CountdownBorder: Story = {
   },
 };
 
+export const CountdownBorderPausesWhileLoading: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Reproduces FR-3354: with a short auto-refresh interval (3s) but a `loading` refresh that stays in flight LONGER than the interval (~6s), the countdown border does not complete or loop while loading. Instead it freezes (`animation-play-state: paused`) at its current position for the whole request, then re-anchors and restarts from empty the instant `loading` returns to false — so the exposed countdown stays in sync with the real (end-anchored) refresh. Click the button (or wait for an auto-refresh) to trigger the long load and watch the border pause.',
+      },
+    },
+  },
+  render: () => {
+    const [fetchKey, setFetchKey] = useState(new Date().toISOString());
+    const [loading, setLoading] = useState(false);
+    // Short interval (3s) but a long in-flight load (6s) — the load outlasts a
+    // full countdown cycle, so without the fix the border would complete/loop
+    // while the real refresh is still pending.
+    const [delay] = useState<number | null>(3000);
+    const [counter, setCounter] = useState(0);
+
+    const handleChange = (newKey: string) => {
+      setLoading(true);
+      setFetchKey(newKey);
+      setCounter((prev) => prev + 1);
+      // Simulate a slow API call that outlasts the 3s interval.
+      setTimeout(() => {
+        setLoading(false);
+      }, 6000);
+    };
+
+    return (
+      <BAIFlex direction="column" gap="md" align="start">
+        <BAIFlex gap="sm" align="center">
+          <span style={{ width: 220 }}>3s interval, 6s load:</span>
+          <BAIFetchKeyButton
+            value={fetchKey}
+            loading={loading}
+            onChange={handleChange}
+            autoUpdateDelay={delay}
+            showLastLoadTime={true}
+          />
+          <span>Refresh count: {counter}</span>
+        </BAIFlex>
+        <div style={{ fontSize: '12px', color: '#666' }}>
+          {loading
+            ? 'Loading… border is FROZEN (paused) until the load finishes.'
+            : 'Idle — border fills over 3s, then restarts fresh after each load.'}
+        </div>
+      </BAIFlex>
+    );
+  },
+};
+
 export const CustomOptions: Story = {
   parameters: {
     docs: {
