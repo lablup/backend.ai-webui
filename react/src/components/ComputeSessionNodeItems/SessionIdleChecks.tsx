@@ -3,22 +3,23 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { SessionIdleChecksNodeFragment$key } from '../../__generated__/SessionIdleChecksNodeFragment.graphql';
-import { SessionIdleChecksQuery } from '../../__generated__/SessionIdleChecksQuery.graphql';
+import { SessionReclamationStatusCellFragment$key } from '../../__generated__/SessionReclamationStatusCellFragment.graphql';
+import { formatDurationAsDays } from '../../helper';
+import SessionReclamationStatusCell from './SessionReclamationStatusCell';
+import { getOverallReclamation } from './SessionReclamationStatusPopover';
+import { Typography } from 'antd';
 import {
-  formatDurationAsDays,
-  toFixedFloorWithoutTrailingZeros,
-} from '../../helper';
-import { InfoCircleOutlined } from '@ant-design/icons';
-import { Tooltip, Typography, theme } from 'antd';
-import {
-  useResourceSlotsDetails,
   useMemoizedJSONParse,
   BAIFlex,
   BAIDoubleTag,
+  BAIIntervalView,
+  BAIQuestionIconWithTooltip,
 } from 'backend.ai-ui';
+import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 type BaseExtra = null;
 type UtilizationExtra = {
@@ -46,59 +47,6 @@ export type IdleChecks = {
 interface SessionIdleChecksProps {
   sessionNodeFrgmt: SessionIdleChecksNodeFragment$key | null;
   direction?: 'row' | 'column';
-  fetchKeyForLegacyLoadQuery?: string;
-}
-
-export function getUtilizationCheckerColor(
-  resources: Record<string, number[]> | number[],
-  thresholds_check_operator: 'and' | 'or' | null = null,
-) {
-  // Determine color based on single device utilization.
-  // resources: [number, number]
-  if (!thresholds_check_operator) {
-    const [utilization, threshold] = resources as number[];
-    if (utilization < threshold * 2) {
-      return 'red';
-    } else if (utilization < threshold * 10) {
-      return 'orange';
-    } else {
-      return 'green';
-    }
-  }
-  // Determine color based on multiple device utilization.
-  // resources: Record<string, [number, number]>
-  let color: string | undefined = undefined;
-  if (thresholds_check_operator === 'and') {
-    _.every(resources, ([utilization, threshold]: number[]) => {
-      if (utilization < Math.min(threshold * 2, threshold + 5)) {
-        color = 'red';
-        return true;
-      } else if (utilization < Math.min(threshold * 10, threshold + 10)) {
-        color = 'orange';
-        return true;
-      } else {
-        color = 'green';
-        return true;
-      }
-    });
-  }
-
-  if (thresholds_check_operator === 'or') {
-    _.some(resources, ([utilization, threshold]: number[]) => {
-      if (utilization < Math.min(threshold * 2, threshold + 5)) {
-        color = 'red';
-        return true;
-      } else if (utilization < Math.min(threshold * 10, threshold + 10)) {
-        color = 'orange';
-        return true;
-      } else {
-        color = 'green';
-        return true;
-      }
-    });
-  }
-
-  return color;
 }
 
 export function getIdleChecksTagColor(
@@ -116,60 +64,27 @@ export function getIdleChecksTagColor(
     }
   }
 
-  // Determine color based on utilization.
+  // Determine color based on utilization, matching the overall badge color
+  // shown by SessionReclamationStatusCell.
   if (result.extra && (!result.remaining || result.remaining < 3600 * 4)) {
-    return getUtilizationCheckerColor(
+    return getOverallReclamation(
       result.extra.resources,
       result.extra.thresholds_check_operator,
-    );
+    )?.color;
   }
 
   return undefined;
 }
 
-const SessionIdleChecks: React.FC<SessionIdleChecksProps> = ({
-  sessionNodeFrgmt = null,
-  direction = 'row',
-  fetchKeyForLegacyLoadQuery,
-}) => {
+const SessionIdleCheckItem: React.FC<{
+  checkKey: keyof IdleChecks;
+  value: IdleCheckItem;
+  sessionFrgmt: SessionReclamationStatusCellFragment$key | null | undefined;
+}> = ({ checkKey, value, sessionFrgmt }) => {
+  'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
-  const { mergedResourceSlots } = useResourceSlotsDetails();
 
-  const sessionNode = useFragment(
-    graphql`
-      fragment SessionIdleChecksNodeFragment on ComputeSessionNode {
-        id
-        idle_checks @since(version: "24.12.0")
-      }
-    `,
-    sessionNodeFrgmt,
-  );
-
-  const { session } = useLazyLoadQuery<SessionIdleChecksQuery>(
-    graphql`
-      query SessionIdleChecksQuery($sessionID: UUID!) {
-        session: compute_session(id: $sessionID) {
-          id
-          idle_checks @since(version: "24.09.0")
-        }
-      }
-    `,
-    {
-      sessionID: sessionNode?.id || '',
-    },
-    {
-      fetchKey: fetchKeyForLegacyLoadQuery,
-      fetchPolicy: sessionNode?.idle_checks ? 'store-only' : 'network-only',
-    },
-  );
-
-  const idleChecks: IdleChecks = useMemoizedJSONParse(
-    sessionNode?.idle_checks || session?.idle_checks,
-    {
-      fallbackValue: {},
-    },
-  );
+  const remaining = value.remaining ?? 0;
 
   const getIdleCheckTitle = (key: keyof IdleChecks) => {
     if (key === 'network_timeout') return t('session.NetworkIdleTimeout');
@@ -185,92 +100,107 @@ const SessionIdleChecks: React.FC<SessionIdleChecksProps> = ({
     }
   };
 
+  const tagColor = getIdleChecksTagColor(
+    value,
+    checkKey === 'utilization' ? 'utilization' : 'remaining',
+  );
+
+  // Anchor the countdown to a fixed deadline so the timer ticks down toward it
+  // as wall-clock time advances. `idle_checks` returns the remaining seconds
+  // relative to fetch time, so the deadline is only recomputed when that value
+  // changes (e.g. on refetch), not on every one-second interval tick.
+  const deadline = useMemo(
+    () => dayjs().add(remaining, 'second').toISOString(),
+    [remaining],
+  );
+
+  return (
+    <BAIFlex style={{ flex: 1 }} direction="column" align="stretch">
+      <BAIFlex gap={'xxs'}>
+        {checkKey === 'utilization' ? (
+          <SessionReclamationStatusCell sessionFrgmt={sessionFrgmt} />
+        ) : (
+          <Typography.Text>{getIdleCheckTitle(checkKey)}</Typography.Text>
+        )}
+      </BAIFlex>
+
+      {remaining >= 0 ? (
+        <BAIFlex gap="xxs" align="center">
+          <BAIIntervalView
+            delay={1000}
+            callback={() =>
+              dayjs(deadline).diff() > 0
+                ? formatDurationAsDays(dayjs().toISOString(), deadline)
+                : '00:00:00'
+            }
+            render={(remainingTime) => (
+              <BAIDoubleTag
+                values={[
+                  {
+                    label: getRemainingTimeTypeLabel(value.remaining_time_type),
+                    color: tagColor,
+                  },
+                  {
+                    label: remainingTime,
+                    color: tagColor,
+                  },
+                ]}
+              />
+            )}
+          />
+          {value.remaining_time_type === 'grace_period' && (
+            <BAIQuestionIconWithTooltip
+              title={
+                <div style={{ whiteSpace: 'pre-line' }}>
+                  {t('session.GracePeriodTooltip')}
+                </div>
+              }
+            />
+          )}
+        </BAIFlex>
+      ) : (
+        <Typography.Text type="warning">
+          {t('session.ReclamationStatusChecking')}
+        </Typography.Text>
+      )}
+    </BAIFlex>
+  );
+};
+
+const SessionIdleChecks: React.FC<SessionIdleChecksProps> = ({
+  sessionNodeFrgmt = null,
+  direction = 'row',
+}) => {
+  const sessionNode = useFragment(
+    graphql`
+      fragment SessionIdleChecksNodeFragment on ComputeSessionNode {
+        id
+        idle_checks
+        ...SessionReclamationStatusCellFragment
+      }
+    `,
+    sessionNodeFrgmt,
+  );
+
+  const idleChecks: IdleChecks = useMemoizedJSONParse(
+    sessionNode?.idle_checks,
+    {
+      fallbackValue: {},
+    },
+  );
+
   return (
     <BAIFlex direction={direction} align="stretch" gap="sm">
       {_.map(idleChecks, (value: IdleCheckItem, key: keyof IdleChecks) => {
         if (!value.remaining) return null;
 
         return (
-          <BAIFlex
+          <SessionIdleCheckItem
             key={key}
-            style={{ flex: 1 }}
-            direction="column"
-            align="stretch"
-          >
-            <BAIFlex gap={'xxs'}>
-              <Typography.Text>{getIdleCheckTitle(key)}</Typography.Text>
-              {key === 'utilization' && (
-                <Tooltip
-                  title={
-                    <>
-                      {`${t('session.Utilization')} / ${t('session.Threshold')} (%)`}
-                      <br />
-                      {_.map(value.extra?.resources, (resource, key) => {
-                        const deviceName = ['cpu_util', 'mem'].includes(key)
-                          ? _.split(key, '_')[0]
-                          : _.split(key, '_').slice(0, -1).join('-') +
-                            '.device';
-                        const [utilization, threshold] = resource;
-                        return (
-                          <BAIFlex key={key} gap={'xs'}>
-                            <Typography.Text
-                              style={{ color: token.colorWhite }}
-                            >{`${mergedResourceSlots?.[deviceName]?.human_readable_name}:`}</Typography.Text>
-                            <Typography.Text
-                              style={{
-                                color: getUtilizationCheckerColor(resource),
-                              }}
-                            >
-                              {`${utilization >= 0 ? toFixedFloorWithoutTrailingZeros(utilization, 1) : '-'} / ${threshold}`}
-                            </Typography.Text>
-                            <br />
-                          </BAIFlex>
-                        );
-                      })}
-                    </>
-                  }
-                >
-                  <InfoCircleOutlined
-                    style={{
-                      color: token.colorTextSecondary,
-                      cursor: 'pointer',
-                    }}
-                  />
-                </Tooltip>
-              )}
-            </BAIFlex>
-
-            {value.remaining >= 0 ? (
-              // TODO: support real-time update by using useIntervalValue when idle_checks returns remaining time as date
-              <BAIDoubleTag
-                values={[
-                  {
-                    label: getRemainingTimeTypeLabel(value.remaining_time_type),
-                    color: getIdleChecksTagColor(
-                      value,
-                      key === 'utilization' ? 'utilization' : 'remaining',
-                    ),
-                  },
-                  {
-                    label: formatDurationAsDays(
-                      new Date().toISOString(),
-                      new Date(
-                        new Date().getTime() + (value.remaining || 0) * 1000,
-                      ).toISOString(),
-                    ),
-                    color: getIdleChecksTagColor(
-                      value,
-                      key === 'utilization' ? 'utilization' : 'remaining',
-                    ),
-                  },
-                ]}
-              />
-            ) : (
-              <Typography.Text type="danger">
-                {t('session.TimeoutExceeded')}
-              </Typography.Text>
-            )}
-          </BAIFlex>
+            checkKey={key}
+            value={value}
+            sessionFrgmt={sessionNode}
+          />
         );
       })}
     </BAIFlex>

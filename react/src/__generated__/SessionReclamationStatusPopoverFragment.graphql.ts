@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1730d4f6383847bae535416b993c3a61>>
+ * @generated SignedSource<<23d2d47c3f730a311a7f980aaabbff69>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,22 +10,21 @@
 
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type SessionIdleChecksNodeFragment$data = {
+export type SessionReclamationStatusPopoverFragment$data = {
   readonly id: string;
   readonly idle_checks: string | null | undefined;
-  readonly " $fragmentSpreads": FragmentRefs<"SessionReclamationStatusCellFragment">;
-  readonly " $fragmentType": "SessionIdleChecksNodeFragment";
+  readonly " $fragmentType": "SessionReclamationStatusPopoverFragment";
 };
-export type SessionIdleChecksNodeFragment$key = {
-  readonly " $data"?: SessionIdleChecksNodeFragment$data;
-  readonly " $fragmentSpreads": FragmentRefs<"SessionIdleChecksNodeFragment">;
+export type SessionReclamationStatusPopoverFragment$key = {
+  readonly " $data"?: SessionReclamationStatusPopoverFragment$data;
+  readonly " $fragmentSpreads": FragmentRefs<"SessionReclamationStatusPopoverFragment">;
 };
 
 const node: ReaderFragment = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
-  "name": "SessionIdleChecksNodeFragment",
+  "name": "SessionReclamationStatusPopoverFragment",
   "selections": [
     {
       "alias": null,
@@ -40,17 +39,12 @@ const node: ReaderFragment = {
       "kind": "ScalarField",
       "name": "idle_checks",
       "storageKey": null
-    },
-    {
-      "args": null,
-      "kind": "FragmentSpread",
-      "name": "SessionReclamationStatusCellFragment"
     }
   ],
   "type": "ComputeSessionNode",
   "abstractKey": null
 };
 
-(node as any).hash = "cd0692b3021358f17c5abea99afd29d2";
+(node as any).hash = "d7a7bb56a5b623bd90c657125ecd162a";
 
 export default node;
