@@ -167,6 +167,10 @@ data/merged_schema.graphql
 # webui release download temp directories (safe to delete)
 scripts/temp-releases/
 
+# derived type-check tsconfig generated at dev startup (FR-3214): excludes the
+# machine-specific pnpm store path from vite-plugin-checker's TS watch program
+react/tsconfig.checker.json
+
 # ignore playwright mcp test files
 .playwright-mcp/
 
