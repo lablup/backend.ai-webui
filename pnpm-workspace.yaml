@@ -79,6 +79,7 @@ minimumReleaseAge: 10080
 minimumReleaseAgeExclude:
   - react@19.2.6
   - react-dom@19.2.6
+  - nuqs@2.9.1
 minimumReleaseAgeIgnoreMissingTime: false
 resolutionMode: time-based
 
@@ -137,4 +138,5 @@ patchedDependencies:
   "@lobehub/fluent-emoji@2.0.0": react/patches/lobehub__fluent-emoji@2.0.0.patch
   "@rc-component/form": react/patches/@rc-component__form.patch
   ansi_up@6.0.6: react/patches/ansi_up@6.0.6.patch
+  nuqs@2.9.1: react/patches/nuqs@2.9.1.patch
   relay-runtime@20.1.1: react/patches/relay-runtime@20.1.1.patch

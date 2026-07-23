@@ -1,0 +1,33 @@
+diff --git a/dist/index.js b/dist/index.js
+index 7db6e2df00f85c3bced74950e4817aaf7b7a53f4..913b6cccf0627ab977699b4a71abd497bfc0c717 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -3,7 +3,7 @@ import { c as debounce, i as createEmitter, l as defaultRateLimit, n as useQueue
+ import { i as warn, t as debug } from "./debug-BYu5qEae.js";
+ import { a as useAdapterProcessUrlSearchParams, c as renderQueryString, i as useAdapterDefaultOptions, o as globalSingleton, r as useAdapter } from "./context-DnRmlnQ4.js";
+ import { t as compareQuery } from "./compare-DGz2TUZl.js";
+-import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
++import { startTransition as reactStartTransition, useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+ //#region src/loader.ts
+ function createLoader(parsers, { urlKeys = {} } = {}) {
+ 	function loadSearchParams(input, { strict = false } = {}) {
+@@ -499,6 +499,19 @@ function useQueryStates(keyMap, options = {}) {
+ 	}
+ 	useEffect(() => {
+ 		committedPathnameRef.current = adapter.pathname ?? location.pathname;
++		// PATCH(backend.ai-webui): a render discarded mid-transition (e.g. a
++		// suspending lazy query behind useQueryState) loses the render-phase
++		// setInternalState issued by reconcile(), while the eager mutations to
++		// queryRef/lastSyncKeyRef/stateRef survive. The hook then stays
++		// permanently desynced from the URL because every later reconcile()
++		// bails on the poisoned cache. Committed paths always keep
++		// internalState === stateRef.current by identity, so a divergence here
++		// means exactly one thing: a lost render-phase update. Re-apply it.
++		// Wrapped in startTransition so content that is still suspending
++		// retries as a transition instead of forcing the nearest fallback.
++		if (stateRef.current !== internalState) reactStartTransition(() => {
++			setInternalState(stateRef.current);
++		});
+ 		reconcile();
+ 	}, [searchParamsSyncKey, adapter.pathname]);
+ 	useEffect(() => {
