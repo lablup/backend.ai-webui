@@ -167,7 +167,6 @@ export type { BAIRouteNodesProps, RouteNodeInList } from './BAIRouteNodes';
 export {
   default as BAIModelDeploymentNodes,
   availableDeploymentSorterValues,
-  parseDeploymentOrder,
 } from './BAIModelDeploymentNodes';
 export type {
   BAIModelDeploymentNodesProps,
