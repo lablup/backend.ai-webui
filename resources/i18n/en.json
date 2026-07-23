@@ -1479,7 +1479,7 @@
     "UnexpectedError": "An unexpected error occurred. Please try again later or contact support if the problem persists.",
     "UnknownError": "An unknown error occurred. Please try again.",
     "UpdateError": "Update error",
-    "UserHasNoGroup": "User has no group. Please contact administrator to fix it.",
+    "UserHasNoGroup": "User has no project. Please contact administrator to fix it.",
     "UserNameAlreadyExist": "Username already exists. It cannot be duplicated.",
     "VirtualFolderAlreadyExist": "A virtual folder with the same name already exists. Delete your own folder or decline the invitation.",
     "WrongAPIServerAddress": "Wrong API server address."
