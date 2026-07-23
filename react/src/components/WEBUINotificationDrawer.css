@@ -1,0 +1,9 @@
+/*
+ * Static global styles for <WEBUINotificationDrawer>. Extracted from an inline
+ * <style> element (forbidden under strict CSP); a same-origin stylesheet is
+ * covered by `style-src 'self'` and needs no nonce.
+ */
+.ant-drawer-header-title .ant-drawer-close,
+.ant-drawer-header .ant-drawer-extra {
+  -webkit-app-region: no-drag;
+}

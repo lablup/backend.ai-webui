@@ -1,0 +1,173 @@
+// spec: Suite 5: Upload to Subdirectory
+import { FolderExplorerModal } from '../utils/classes/vfolder/FolderExplorerModal';
+import { cleanupVFolderSafely } from '../utils/cleanup-util';
+import {
+  loginAsUser,
+  navigateTo,
+  createVFolderAndVerify,
+  selectPropertyFilter,
+  clearAllFilters,
+} from '../utils/test-util';
+import { test, expect, Page } from '@playwright/test';
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
+
+const openFolderExplorer = async (
+  page: Page,
+  folderName: string,
+): Promise<FolderExplorerModal> => {
+  await navigateTo(page, 'data');
+  await clearAllFilters(page);
+  await selectPropertyFilter(page, 'Name', folderName);
+  const folderLink = page.getByRole('link', { name: folderName }).first();
+  await expect(folderLink).toBeVisible({ timeout: 15000 });
+  await folderLink.click();
+  const modal = new FolderExplorerModal(page);
+  await modal.waitForOpen();
+  await modal.verifyFileExplorerLoaded();
+  return modal;
+};
+
+// Not serial: single test — no ordering dependency.
+test.describe(
+  'Upload to Subdirectory',
+  { tag: ['@critical', '@vfolder', '@functional'] },
+  () => {
+    test.describe.configure({ timeout: 90_000 });
+    const testFolderName = 'e2e-test-subdir-upload-' + Date.now();
+    const subfolderName = 'test-subfolder';
+    let tmpDir: string;
+    let testFilePath: string;
+
+    test.beforeAll(async () => {
+      // Create temporary directory and test file
+      tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'e2e-subdir-'));
+
+      testFilePath = path.join(tmpDir, 'test-file-in-subfolder.txt');
+      fs.writeFileSync(
+        testFilePath,
+        'This is a test file uploaded to a subdirectory',
+      );
+    });
+
+    test.beforeEach(async ({ page, request }) => {
+      await loginAsUser(page, request);
+      await navigateTo(page, 'data');
+    });
+
+    test.afterAll(async ({ browser, request }) => {
+      test.setTimeout(180_000);
+      // Cleanup: delete VFolder
+      const context = await browser.newContext();
+      const page = await context.newPage();
+
+      await loginAsUser(page, request);
+
+      await cleanupVFolderSafely(page, testFolderName);
+
+      await context.close();
+
+      // Cleanup: delete temporary test files
+      try {
+        if (tmpDir && fs.existsSync(tmpDir)) {
+          fs.rmSync(tmpDir, { recursive: true, force: true });
+        }
+      } catch {
+        console.log(`Could not delete temporary directory ${tmpDir}`);
+      }
+    });
+
+    test('User can upload a file to a subdirectory', async ({ page }) => {
+      // 1. Create a VFolder with Read & Write permissions
+      await createVFolderAndVerify(
+        page,
+        testFolderName,
+        'general',
+        'user',
+        'rw',
+      );
+
+      // 2. Open the VFolder in FolderExplorerModal
+      const modal = await openFolderExplorer(page, testFolderName);
+
+      // 3. Verify file explorer loaded
+      await modal.verifyFileExplorerLoaded();
+
+      // 4. Create a new folder using the "Create" button
+      const createButton = await modal.getCreateFolderButton();
+      await createButton.click();
+
+      // Wait for create folder dialog to appear (nested dialog)
+      const createFolderDialog = page.getByRole('dialog').last();
+      await expect(createFolderDialog).toBeVisible();
+
+      // Enter folder name in the input field
+      const folderNameInput = createFolderDialog.getByRole('textbox');
+      await folderNameInput.fill(subfolderName);
+
+      // Click Create button to create the folder
+      await createFolderDialog.getByRole('button', { name: 'Create' }).click();
+
+      // Verify the subfolder appears in the file table (this implicitly waits for folder creation)
+      await modal.verifyFileVisible(subfolderName);
+
+      // 5. Navigate into the newly created folder by clicking the folder name link
+      // inside the Name cell. Clicking the cell itself only triggers row selection
+      // (onRow handler); the actual navigation is on the Typography.Text element
+      // wrapping the folder icon + name (BAIFileExplorer's onClick handler).
+      const folderNameCell = page
+        .getByRole('dialog')
+        .first()
+        .getByRole('cell')
+        .filter({ hasText: subfolderName })
+        .first();
+      await expect(folderNameCell).toBeVisible({ timeout: 10000 });
+      await folderNameCell.getByText(subfolderName).click();
+
+      // 6. Verify breadcrumb shows the subdirectory path (waits for navigation)
+      await expect(
+        page
+          .getByRole('dialog')
+          .first()
+          .locator('.ant-breadcrumb')
+          .getByText(subfolderName),
+      ).toBeVisible({ timeout: 10000 });
+
+      // 7. Upload a file via Upload button
+      const uploadButton = await modal.getUploadButton();
+      await uploadButton.click();
+
+      const [fileChooser] = await Promise.all([
+        page.waitForEvent('filechooser'),
+        page.getByRole('button', { name: 'file-add Upload Files' }).click(),
+      ]);
+
+      await fileChooser.setFiles([testFilePath]);
+
+      // 8. Verify the file appears in the subdirectory's file table
+      const fileName = path.basename(testFilePath);
+      await modal.verifyFileVisible(fileName);
+
+      // 9. Navigate back to root (click home in breadcrumb)
+      // The breadcrumb has a home icon at the beginning; scope to the dialog
+      // to avoid matching the page-level breadcrumb.
+      const breadcrumb = page
+        .getByRole('dialog')
+        .first()
+        .locator('.ant-breadcrumb');
+      await breadcrumb.locator('a').first().click();
+
+      // 10. Verify navigation back to root by checking subfolder is visible again
+      await modal.verifyFileVisible(subfolderName);
+
+      // The uploaded file should NOT be visible at the root level
+      await expect(
+        page.getByRole('cell', { name: fileName, exact: true }),
+      ).toHaveCount(0);
+
+      // Close modal
+      await modal.close();
+    });
+  },
+);

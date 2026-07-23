@@ -1,0 +1,21 @@
+{
+  "name": "eslint-config-bai",
+  "version": "1.0.0",
+  "description": "Shared ESLint 9 flat config for Backend.AI WebUI",
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js"
+  },
+  "files": [
+    "*.js"
+  ],
+  "peerDependencies": {
+    "eslint": "catalog:",
+    "@eslint/js": "catalog:",
+    "typescript-eslint": "catalog:",
+    "eslint-plugin-react": "catalog:",
+    "eslint-plugin-react-hooks": "catalog:",
+    "eslint-plugin-import": "catalog:"
+  }
+}

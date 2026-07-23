@@ -1,0 +1,575 @@
+{
+  "$schema": "../../i18n.schema.json",
+  "comp:AgentTable": {
+    "Allocation": "Zuweisung",
+    "Architecture": "Architektur",
+    "DiskPerc": "Festplattenauslastung %",
+    "Endpoint": "Endpunkt",
+    "FailedToLoadCellData": "Daten konnten nicht geladen werden.",
+    "NoAvailableLiveStat": "Keine Live-Statistik verfügbar",
+    "Region": "Region",
+    "ResourceGroup": "Ressourcengruppe",
+    "Running": "Läuft",
+    "Schedulable": "Planbar",
+    "Starts": "Startvorgänge",
+    "Status": "Status",
+    "Utilization": "Auslastung"
+  },
+  "comp:AllowedVfolderHostsWithPermission": {
+    "Allowed": "Erlaubt",
+    "Permission": "Berechtigung"
+  },
+  "comp:BAIActivateArtifactsModal": {
+    "Activate": "Aktivieren",
+    "ActivateArtifacts": "Artefakte aktivieren",
+    "AreYouSureYouWantToActivateOne": "Sind Sie sicher, dass Sie {{name}} aktivieren möchten?",
+    "AreYouSureYouWantToActivateSome": "Sind Sie sicher, dass Sie {{count}} Artefakte aktivieren möchten?",
+    "FailedToActivateArtifacts": "Es wurden Artefakte nicht aktiviert.",
+    "SuccessfullyActivated": "Erfolgreich aktivierte Artefakte."
+  },
+  "comp:BAIAdminKeypairResourcePolicySelect": {
+    "SelectKeypairResourcePolicy": "Keypair-Ressourcenrichtlinie auswählen"
+  },
+  "comp:BAIAdminModelServiceSelect": {
+    "SelectModelService": "Modell-Service auswählen"
+  },
+  "comp:BAIAdminResourceGroupSelect": {
+    "PlaceHolder": "Ressourcengruppe auswählen"
+  },
+  "comp:BAIAdminSessionSelect": {
+    "SelectSession": "Sitzung auswählen"
+  },
+  "comp:BAIArtifactDescriptions": {
+    "Description": "Beschreibung",
+    "Name": "Name",
+    "Source": "Quelle",
+    "Type": "Typ"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "Control": "Kontrolle",
+    "LatestVersion": "Neueste Version",
+    "Name": "Name",
+    "Size": "Größe",
+    "Status": "Status",
+    "Updated": "Aktualisiert",
+    "Version": "Version"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "Aktion",
+    "Activate": "Aktivieren",
+    "Controls": "Kontrollen",
+    "Deactivate": "Deaktivieren",
+    "PullLatestVersion": "Die neueste Version ziehen",
+    "Registry": "Registry",
+    "Scanned": "Gescannt",
+    "Size": "Größe",
+    "Source": "Quelle",
+    "Updated": "Aktualisiert",
+    "Version": "Version"
+  },
+  "comp:BAIAuditLogNodes": {
+    "ActionId": "Aktions-ID",
+    "Actor": "Akteur",
+    "Description": "Beschreibung",
+    "Duration": "Dauer",
+    "EntityId": "Entitäts-ID",
+    "EntityType": "Entitätstyp",
+    "Operation": "Vorgang",
+    "RequestId": "Anfragen-ID",
+    "Status": "Status",
+    "Time": "Zeit",
+    "TriggeredBy": "Ausgelöst von"
+  },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Voreinstellung auswählen"
+  },
+  "comp:BAIBoardItemErrorBoundary": {
+    "UnexpectedError": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut oder kontaktieren Sie den Support, wenn das Problem weiterhin besteht."
+  },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "Löschen",
+    "KeepAsIs": "Unverändert lassen",
+    "UndoChanges": "Änderungen rückgängig machen"
+  },
+  "comp:BAIBulkErrorModal": {
+    "ActionExecutionFailed": "Ausführung fehlgeschlagen",
+    "ErrorOccurred": "Ein Fehler ist aufgetreten"
+  },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Container-Registry auswählen"
+  },
+  "comp:BAIDeactivateArtifactsModal": {
+    "AreYouSureYouWantToDeactivateOne": "Sind Sie sicher, dass Sie {{name}} deaktivieren möchten?",
+    "AreYouSureYouWantToDeactivateSome": "Sind Sie sicher, dass Sie {{count}} Artefakte deaktivieren möchten?",
+    "Deactivate": "Deaktivieren",
+    "DeactivateArtifacts": "Deaktivieren Artefakte",
+    "FailedToDeactivateArtifacts": "Kaum die Artefakte deaktivieren.",
+    "SuccessfullyDeactivated": "Erfolgreich deaktivierte Artefakte."
+  },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}} Versionen sind ausgeschlossen.",
+    "FailedToRemoveVersions": "Versionen nicht entfernen.",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "Es können nur Versionen entfernt werden, die nicht im Ziehen oder beim Durchsuchen sind.",
+    "RemoveVersions": "Versionen entfernen",
+    "Size": "Größe",
+    "SuccessFullyRemoved": "Erfolgreich entfernt {{count}} Versionen.",
+    "Version": "Version"
+  },
+  "comp:BAIDeleteConfirmModal": {
+    "AreYouSureToDelete": "Sind Sie sicher, dass Sie löschen möchten?",
+    "AreYouSureToPermanentlyDeleteTarget": "Möchten Sie {{target}} wirklich dauerhaft löschen?",
+    "CannotBeUndone": "Diese Aktion kann nicht rückgängig gemacht werden.",
+    "DeleteItem": "Löschen",
+    "DeleteNItems": "{{count}} Elemente löschen",
+    "TypeToConfirm": "Geben Sie <code>{{confirmText}}</code> ein, um zu bestätigen."
+  },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "Erstellt von"
+  },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "Versuche",
+    "Category": "Kategorie",
+    "CreatedAt": "Erstellt am",
+    "ErrorCode": "Fehlercode",
+    "From": "Ausgangsstatus",
+    "Message": "Nachricht",
+    "Phase": "Phase",
+    "Result": "Ergebnis",
+    "To": "Zielstatus",
+    "UpdatedAt": "Aktualisiert am"
+  },
+  "comp:BAIDeploymentSelect": {
+    "SelectDeployment": "Deployment auswählen"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "Beeinträchtigt",
+    "Deploying": "Wird bereitgestellt",
+    "Healthy": "Fehlerfrei",
+    "NotChecked": "Nicht geprüft",
+    "Pending": "Ausstehend",
+    "Ready": "Bereit",
+    "Scaling": "Wird skaliert",
+    "Stopped": "Gestoppt",
+    "Stopping": "Wird gestoppt",
+    "Terminated": "Beendet",
+    "Unhealthy": "Fehlerhaft"
+  },
+  "comp:BAIDomainSelect": {
+    "SelectDomain": "Domäne auswählen"
+  },
+  "comp:BAIFetchKeyButton": {
+    "AutoRefresh": "Automatische Aktualisierung",
+    "EveryHours": "{{count}}h",
+    "EveryMinutes": "{{count}}m",
+    "EverySeconds": "{{count}}s",
+    "LastUpdated": "Zuletzt aktualisiert",
+    "Off": "Aus",
+    "Refresh": "Aktualisieren"
+  },
+  "comp:BAIGraphQLPropertyFilter": {
+    "SelectDateTime": "Datum und Uhrzeit auswählen",
+    "operator": {
+      "After": "nach",
+      "Before": "vor",
+      "Equals": "gleich",
+      "GreaterThan": "größer als",
+      "GreaterThanOrEqual": "größer oder gleich",
+      "IContains": "enthält",
+      "IEndsWith": "endet mit",
+      "IEquals": "gleich",
+      "INotContains": "enthält nicht",
+      "INotEndsWith": "endet nicht mit",
+      "INotEquals": "ungleich",
+      "INotStartsWith": "beginnt nicht mit",
+      "IStartsWith": "beginnt mit",
+      "In": "enthalten in",
+      "LessThan": "kleiner als",
+      "LessThanOrEqual": "kleiner oder gleich",
+      "NotEquals": "ungleich",
+      "NotIn": "nicht enthalten in"
+    }
+  },
+  "comp:BAIHuggingFaceRegistrySettingModal": {
+    "EnterToken": "Enter your HuggingFace token",
+    "HuggingFaceSettings": "Hugging Face Settings",
+    "Token": "Token",
+    "TokenUpdatedSuccessfully": "Token updated successfully."
+  },
+  "comp:BAIImageSelect": {
+    "SelectImage": "Bild auswählen"
+  },
+  "comp:BAIImportArtifactModal": {
+    "ExcludedVersions": "{{count}} Versionen sind ausgeschlossen.",
+    "FailedToPullVersions": "Versäumte, Versionen zu ziehen.",
+    "OnlySCANNEDVersionsCanBePulled": "Es können nur gescannte Versionen gezogen werden.",
+    "Pull": "Ziehen",
+    "PullVersion": "Pull -Version",
+    "Size": "Größe",
+    "SuccessFullyPulled": "Erfolgreich angeforderte Pull für {{count}} -Versionen.",
+    "Version": "Version"
+  },
+  "comp:BAIKeypairSelect": {
+    "SelectKeypair": "Schlüsselpaar auswählen"
+  },
+  "comp:BAILoginHistoryTable": {
+    "Domain": "Domain",
+    "FailReason": "Fehlergrund",
+    "LoginTime": "Anmeldezeit",
+    "Result": "Ergebnis"
+  },
+  "comp:BAILoginSessionTable": {
+    "AccessKey": "Zugriffsschlüssel",
+    "CreatedAt": "Erstellt am",
+    "InvalidatedAt": "Ungültig seit",
+    "User": "Benutzer"
+  },
+  "comp:BAIModal": {
+    "ExitFullscreen": "Exit fullscreen",
+    "Fullscreen": "Fullscreen",
+    "Maximize": "Maximize",
+    "Minimize": "Minimize",
+    "Restore": "Restore"
+  },
+  "comp:BAIModelDeploymentNodes": {
+    "AreYouSureToDeleteDeployment": "Möchten Sie das Deployment \"{{deploymentName}}\" wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "CreatedAt": "Erstellt am",
+    "CreatedUser": "Autor",
+    "CurrentRevisionID": "Aktuelle Revisions-ID",
+    "Delete": "Löschen",
+    "DeleteDeployment": "Deployment löschen",
+    "DeploymentDeleted": "Deployment gelöscht.",
+    "DeploymentID": "Deployment-ID",
+    "DomainName": "Domain",
+    "EndpointURL": "Endpunkt URL",
+    "FailedToDeleteDeployment": "Fehler beim Löschen des Deployments.",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Lifecycle": "Lebenszyklus",
+    "Model": "Modell",
+    "Name": "Name",
+    "OpenToPublic": "Öffentlich",
+    "Owner": "Eigentümer",
+    "PreferredDomainName": "Bevorzugte Domain",
+    "Project": "Projekt",
+    "ProjectID": "Projekt-ID",
+    "ReplicaSummary": "Replikate",
+    "ReplicaSummaryTooltip": "Laufende Replikate im Verhältnis zur gewünschten Anzahl.",
+    "Replicas": "Replikate",
+    "ResourceGroup": "Ressourcengruppe",
+    "RevisionNumber": "Revision",
+    "RevisionNumberTooltip": "Die aktuelle Revisionsnummer des Deployments.",
+    "StrategyType": "Strategie",
+    "Tags": "Stichworte",
+    "UpdatedAt": "Aktualisiert am"
+  },
+  "comp:BAIProjectBulkEditModal": {
+    "FollowingProjectsWillBeUpdated": "Die folgenden Projekte werden aktualisiert.",
+    "ProjectResourcePolicy": "Projektressourcenrichtlinie",
+    "UpdateMultipleProjects": "Mehrere Projekte aktualisieren"
+  },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "Projekt auswählen"
+  },
+  "comp:BAIProjectSettingModal": {
+    "AllowedFolderHosts": "Zugelassene Hosts für Ordner",
+    "AllowedResourceGroups": "Zugelassene Ressourcengruppen",
+    "ContainerMustBeSpecified": "Eine Container-Registry muss angegeben werden, in der vom Benutzer hochgeladene Container-Images gespeichert werden.",
+    "ContainerRegistryForImageCommit": "Container-Registry für Image-Commit",
+    "CreateProject": "Projekt erstellen",
+    "Description": "Beschreibung",
+    "Domain": "Domäne",
+    "FailedToCreateProject": "Projekt konnte nicht erstellt werden.",
+    "FailedToUpdateProject": "Aktualisierung des Projekts fehlgeschlagen",
+    "IsActive": "Aktiv?",
+    "MaxAllowedResourceSlots": "Max. zulässige {{resourceKey}}",
+    "MemorySizeShouldBeLessThan300PiB": "Die Speichergröße muss weniger als 300 PiB betragen.",
+    "Name": "Name",
+    "PleaseEnterBothRegistryAndProject": "Bitte geben Sie sowohl die Registry als auch das Projekt ein.",
+    "Project": "Projekt",
+    "ProjectCreated": "Das Projekt wurde erstellt.",
+    "ProjectResourcePolicy": "Ressourcenrichtlinie",
+    "ProjectUpdated": "Das Projekt wurde aktualisiert.",
+    "Registry": "Registry",
+    "UpdateProject": "Projekt aktualisieren"
+  },
+  "comp:BAIProjectTable": {
+    "ContainerRegistry": "Container-Registry",
+    "ContainerRegistryProject": "Container-Registry-Projekt",
+    "CreatedAt": "Erstellt am",
+    "Description": "Beschreibung",
+    "Domain": "Domäne",
+    "IntegrationID": "Integrations‑ID",
+    "Name": "Name",
+    "Project": "Projekt",
+    "ProjectID": "Projekt‑ID",
+    "Registry": "Registry",
+    "ResourcePolicy": "Ressourcenrichtlinie",
+    "ScalingGroups": "Ressourcengruppen",
+    "StorageNodes": "Speicherknoten",
+    "TotalResourceSlots": "Gesamtanzahl der Ressourcen-Slots",
+    "Type": "Typ"
+  },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Ordner auswählen"
+  },
+  "comp:BAIPropertyFilter": {
+    "PlaceHolder": "Suche",
+    "ResetFilter": "Filter zurücksetzen"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "Zivil ziehen",
+    "CancelingWillRestartThePulling": "Das Abbrechen startet das Ziehen neu",
+    "FailedToCancelThePulling": "Das Ziehen versäumte es, das Ziehen abzubrechen.",
+    "VersionIsPullingNow": "{{version}} Version zieht jetzt.",
+    "VersionPullCanceledSuccessfully": "Pull of {{version}} Version erfolgreich abgebrochen.",
+    "WARNING": "WARNUNG",
+    "YouAreAboutToCancelThisVersion": "Sie sind kurz davor, diese Version abzusagen"
+  },
+  "comp:BAIResourceGroupSelect": {
+    "SelectResourceGroup": "Ressourcengruppe auswählen"
+  },
+  "comp:BAIResourceNumberWithIcon": {
+    "AllocatedVsRequested": "Zugewiesen / Angefordert"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Unbegrenzt"
+  },
+  "comp:BAIRouteNodes": {
+    "CreatedAt": "Erstellt am",
+    "HealthStatus": "Gesundheitsstatus",
+    "RouteId": "Routen-ID",
+    "SchedulingHistory": "Planungsverlauf",
+    "SessionId": "Sitzungs-ID",
+    "Status": "Status",
+    "TrafficRatio": "Traffic-Anteil",
+    "TrafficStatus": "Datenverkehrsstatus"
+  },
+  "comp:BAIRouteSchedulingHistoryNodes": {
+    "Attempts": "Versuche",
+    "Category": "Kategorie",
+    "CreatedAt": "Erstellt am",
+    "ErrorCode": "Fehlercode",
+    "From": "Ausgangsstatus",
+    "Message": "Nachricht",
+    "Phase": "Phase",
+    "Result": "Ergebnis",
+    "To": "Zielstatus",
+    "UpdatedAt": "Aktualisiert am"
+  },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "Laufzeitvariante auswählen"
+  },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "Versuche",
+    "Category": "Kategorie",
+    "CreatedAt": "Erstellt am",
+    "ErrorCode": "Fehlercode",
+    "From": "Ausgangsstatus",
+    "Message": "Nachricht",
+    "Phase": "Phase",
+    "Result": "Ergebnis",
+    "To": "Zielstatus",
+    "UpdatedAt": "Aktualisiert am"
+  },
+  "comp:BAISessionAgentIds": {
+    "Agent": "Agent"
+  },
+  "comp:BAISessionClusterMode": {
+    "MultiNodeShort": "Multi",
+    "SingleNodeShort": "Einzel"
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "Unbegrenzt"
+  },
+  "comp:BAIStorageHostSelect": {
+    "SelectStorageHost": "Speicher-Host auswählen"
+  },
+  "comp:BAIStorageProxySelect": {
+    "SelectStorageProxy": "Speicher-Proxy auswählen"
+  },
+  "comp:BAISubStepNodes": {
+    "EndedAt": "Beendet um",
+    "ErrorCode": "Fehlercode",
+    "Message": "Nachricht",
+    "Result": "Ergebnis",
+    "StartedAt": "Gestartet am",
+    "Step": "Schritt"
+  },
+  "comp:BAITable": {
+    "CollapseAll": "Alle einklappen",
+    "ExpandAll": "Alle ausklappen",
+    "ExpandErrorsOnly": "Nur Fehler ausklappen",
+    "ExpandOptions": "Ausklappoptionen",
+    "Export": "Exportieren",
+    "ExportCSV": "Als CSV exportieren",
+    "GoToFirstPage": "Zur ersten Seite",
+    "InvalidPageNumber": "Ungültige Seitenzahl",
+    "SearchTableColumn": "Suchtabellenspalten",
+    "SelectColumnToDisplay": "Wählen Sie Spalten aus, um angezeigt zu werden",
+    "SettingTable": "Tabelleneinstellungen"
+  },
+  "comp:BAITestButton": {
+    "Test": "test"
+  },
+  "comp:BAIUserResourcePolicyV2Table": {
+    "CreatedAt": "Hergestellt in",
+    "MaxConcurrentLogins": "Max. gleichzeitige Anmeldungen",
+    "MaxCustomizedImageCount": "Maximale Anzahl benutzerdefinierter Bilder",
+    "MaxQuotaScopeSize": "Maximale Größe des Ordners",
+    "MaxSessionCountPerModelSession": "Maximale Sitzungsanzahl pro Modellsitzung",
+    "MaxVFolderCount": "Maximale Ordneranzahl",
+    "Name": "Name"
+  },
+  "comp:BAIUserSelect": {
+    "SelectUser": "Benutzer auswählen"
+  },
+  "comp:BAIVFolderMountConfigInput": {
+    "AliasInvalid": "Ungültiges Pfadformat.",
+    "AliasOverlapping": "Der Einhängepfad überschneidet sich mit einem anderen Ordner.",
+    "AliasPlaceholder": "Einhängepfad",
+    "AutoMountedFolders": "Automatisch eingehängte Ordner",
+    "Name": "Name",
+    "PathAndAlias": "Pfad & Alias",
+    "PathAndAliasTooltip": "Der Pfad im Container, in den der Ordner eingehängt wird. Leer lassen, um den Standardpfad zu verwenden.",
+    "RemoveFolder": "Entfernen",
+    "Subpath": "Unterpfad",
+    "SubpathInvalid": "Der Unterpfad muss ein relativer Pfad sein und darf '..' nicht enthalten.",
+    "SubpathPlaceholder": "z. B. dataset/train (optional)",
+    "SubpathTooltip": "Hängt einen Unterordner innerhalb des Ordners als Quelle ein, anstatt dessen Wurzel. Leer lassen, um die Wurzel einzuhängen."
+  },
+  "comp:BAIVFolderSelect": {
+    "SelectFolder": "Ordner auswählen"
+  },
+  "comp:FileExplorer": {
+    "ArchiveDownloadStarted": "Der Download von {{count}} Element(en) wurde gestartet.",
+    "ChangeFileExtension": "Dateierweiterung ändern",
+    "ChangeFileExtensionDesc": "Das Ändern der Dateierweiterung kann dazu führen, dass die Datei unbrauchbar oder falsch geöffnet wird. \nMöchten Sie fortfahren?",
+    "Controls": "Kontrollen",
+    "CreateANewFile": "Create a new file",
+    "CreateANewFolder": "Erstellen Sie einen neuen Ordner",
+    "CreateFile": "Create File",
+    "CreateFolder": "Create Folder",
+    "CreatedAt": "Erstellt at",
+    "DeleteSelectedItemDesc": "Löschte Dateien und Ordner können nicht wiederhergestellt werden. \nMöchten Sie fortfahren?",
+    "DeleteSelectedItemsDialog": "Bestätigung löschen",
+    "DownloadSelected": "Herunterladen",
+    "DownloadStarted": "Die Datei \"{{fileName}}\" wurde gestartet.",
+    "DragAndDropDesc": "Ziehen Sie Dateien in diesen Bereich zum Hochladen.",
+    "DuplicatedFiles": "Überschreibung der Bestätigung",
+    "DuplicatedFilesDesc": "Die Datei oder der Ordner mit demselben Namen existieren bereits. \nMöchten Sie überschreiben?",
+    "EditFile": "Datei bearbeiten",
+    "FileCreatedSuccessfully": "File created successfully.",
+    "FileName": "File Name",
+    "FileNamePlaceholder": "e.g. model-definition.yaml",
+    "FileTooLargeToEdit": "Die Bearbeitung im Browser ist eingeschränkt, da die Dateigröße {{size}}MB überschreitet.",
+    "FolderCreatedSuccessfully": "Ordner erfolgreich erstellt.",
+    "FolderName": "Ordner Name",
+    "InvalidFileNameCharacters": "File name must not contain path separators (/ or \\\\).",
+    "MaxFileNameLength": "File name must be 255 characters or less.",
+    "MaxFolderNameLength": "Der Ordnername muss 255 Zeichen oder weniger betragen.",
+    "ModifiedAt": "Modifiziert bei",
+    "MoreOptions": "Weitere Optionen",
+    "Name": "Name",
+    "NoUploadPermissionForHost": "Sie haben keine Hochlade-Berechtigung für diesen Host.",
+    "PleaseEnterAFileName": "Please enter the file name.",
+    "PleaseEnterAFolderName": "Bitte geben Sie den Ordneramen ein.",
+    "RenameSuccess": "Der Name wurde erfolgreich geändert.",
+    "SelectedItemsDeletedSuccessfully": "Ausgewählte Dateien und Ordner wurden erfolgreich gelöscht.",
+    "Size": "Größe",
+    "TypeDeleteToConfirm": "Geben Sie zur Bestätigung „Löschen“ ein.",
+    "TypeFolderNameToDelete": "Geben Sie den Namen des zu löschenden Ordners oder der Datei ein.",
+    "UnsupportedFileFormat": "Dieses Dateiformat unterstützt keine Bearbeitung.",
+    "UploadFiles": "Dateien hochladen",
+    "UploadFolder": "Ordner hochladen",
+    "error": {
+      "DuplicatedName": "Dieser Name ist bereits verwendet. \nBitte geben Sie einen anderen Namen ein.",
+      "FileNameRequired": "Bitte geben Sie einen Datei- oder Ordnernamen ein."
+    }
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{end}} von {{total}} Elementen"
+  },
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "Keine Ressourcendaten verfügbar"
+  },
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "AI-Beschleuniger",
+    "CPU": "CPU",
+    "ClusterMode": "Cluster-Modus",
+    "CreatedAt": "Erstellt am",
+    "ElapsedTime": "Verstrichene Zeit",
+    "Environments": "Umgebungen",
+    "Memory": "Arbeitsspeicher",
+    "OwnerEmail": "E-Mail des Eigentümers",
+    "Project": "Projekt",
+    "ResourceGroup": "Ressourcengruppe",
+    "SessionId": "Sitzungs-ID",
+    "SessionName": "Sitzungsname",
+    "SessionType": "Sitzungstyp",
+    "Status": "Status",
+    "TerminateSession": "Sitzung beenden"
+  },
+  "comp:UserNodes": {
+    "AllowedClientIps": "Zugelassene Client-IPs",
+    "ContainerGIDs": "Ergänzende GIDs",
+    "ContainerGIDsTooltip": "Zusätzliche numerische Gruppen-IDs für Containerprozesse",
+    "ContainerMainGID": "Container-GID",
+    "ContainerMainGIDTooltip": "Standardmäßige numerische Gruppen‑ID (GID), die Prozessen im Container zugewiesen wird",
+    "ContainerUID": "Container-UID",
+    "ContainerUIDTooltip": "Numerische Benutzer‑ID, die Prozessen im Container zugewiesen wird",
+    "CreatedAt": "Erstellt am",
+    "Description": "Beschreibung",
+    "Disabled": "Deaktiviert",
+    "DomainName": "Domäne",
+    "Email": "E-Mail",
+    "Enabled": "Aktiviert",
+    "FullName": "Vollständiger Name",
+    "IntegrationName": "Integrationsname",
+    "MainAccessKey": "Hauptzugriffsschlüssel",
+    "ModifiedAt": "Geändert am",
+    "NeedPasswordChange": "Passwortänderung erforderlich",
+    "Project": "Projekt",
+    "ResourcePolicy": "Ressourcenrichtlinie",
+    "Role": "Rolle",
+    "Status": "Status",
+    "StatusInfo": "Statusinfo",
+    "SudoSessionEnabled": "Sudo-Sitzung aktiviert",
+    "TwoFA": "Zwei-Faktor-Authentifizierung",
+    "TwoFAActivatedAt": "2FA aktiviert am",
+    "UserID": "Benutzer-ID",
+    "Username": "Benutzername"
+  },
+  "error": {
+    "UnknownError": "Ein unbekannter Fehler ist aufgetreten. \nBitte versuchen Sie es erneut."
+  },
+  "general": {
+    "DeselectAll": "Alle abwählen",
+    "File": "Datei",
+    "NSelected": "{{count}} ausgewählt",
+    "Optional": "Optional",
+    "Project": "Projekt",
+    "TotalItems": "Total {{total}} Elemente",
+    "button": {
+      "Cancel": "Stornieren",
+      "Close": "Schließen",
+      "Collapse": "Zusammenbruch",
+      "Copied": "Kopiert",
+      "CopyAll": "Alle kopieren",
+      "Create": "Erstellen",
+      "Delete": "Löschen",
+      "Edit": "Bearbeiten",
+      "Expand": "Expandieren",
+      "Remove": "Entfernen",
+      "Save": "Speichern",
+      "Upload": "Hochladen"
+    },
+    "modal": {
+      "DeleteForeverDesc": "ACHTUNG: Ausgewählte Elemente werden endgültig gelöscht und nicht wiederhergestellt.",
+      "ItemSelectedWithCount": "{{count}} Elemente ausgewählt.",
+      "PleaseTypeToConfirm": "Bitte geben Sie zur Bestätigung {{ confirmText }} ein."
+    },
+    "validation": {
+      "LetterNumber-_dot": "Es sind nur Buchstaben, Ziffern, '-', '_' und '.' erlaubt.",
+      "LetterNumber:/-_dot": "Nur Buchstaben (A–Z, a–z), Ziffern, '-', '_', ':', '/' und '.' sind erlaubt."
+    }
+  }
+}

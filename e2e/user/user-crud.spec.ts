@@ -1,0 +1,399 @@
+// spec: e2e/credential/user_crud.test-plan.md
+import { PurgeUsersModal } from '../utils/classes/user/PurgeUsersModal';
+import {
+  KeyPairModal,
+  UserInfoModal,
+  UserSettingModal,
+} from '../utils/classes/user/UserSettingModal';
+import {
+  loginAsAdmin,
+  loginAsCreatedAccount,
+  logout,
+  modifyConfigToml,
+  navigateTo,
+  webServerEndpoint,
+  webuiEndpoint,
+} from '../utils/test-util';
+import test, { expect } from '@playwright/test';
+
+// FR-3331/FR-3339 (PRs #8303/#8315) renamed the User Setting modal's submit
+// button from "OK" to "Create" (create mode) / "Save" (edit mode).
+// UserSettingModal.getOkButton()/clickOk() still target the stale "OK" name
+// (a fix is pending in another in-flight PR touching that shared page
+// object), so this spec clicks the modal's submit button directly instead of
+// going through clickOk()/createUser().
+async function submitUserSettingModal(
+  modal: UserSettingModal,
+  label: 'Create' | 'Save',
+): Promise<void> {
+  await modal
+    .getModal()
+    .getByRole('button', { name: label, exact: true })
+    .click();
+}
+
+// Generate unique identifiers for this test run to avoid conflicts
+const TEST_RUN_ID = Date.now().toString(36);
+const EMAIL = `e2e-test-user-${TEST_RUN_ID}@lablup.com`;
+const USERNAME = `e2e-test-user-${TEST_RUN_ID}`;
+const PASSWORD = 'testing@123';
+const NEW_PASSWORD = 'new-password@123';
+const MODIFIED_USERNAME = `modified-e2e-user-${TEST_RUN_ID}`;
+
+// Keep serial: lifecycle chain on a single user (EMAIL) — create → update
+// password → deactivate → reactivate → purge → login-denied all carry the
+// user's credentials and active/inactive state forward between tests.
+test.describe.serial(
+  'User CRUD',
+  { tag: ['@critical', '@user', '@functional'] },
+  () => {
+    // Cleanup function to delete the test user if it exists
+    async function cleanupTestUser(page: any) {
+      // Check if user exists in Active users
+      const userRow = page.getByRole('row').filter({ hasText: EMAIL });
+      const isVisible = await userRow
+        .isVisible({ timeout: 2000 })
+        .catch(() => false);
+
+      if (isVisible) {
+        // Deactivate the user.
+        // The Deactivate action uses a lucide BanIcon which has no accessible name,
+        // so we target it by its position (3rd button) in the actions area.
+        // Hover first so that hover-only action cells reveal their buttons.
+        await userRow.hover();
+        await userRow
+          .locator('.bai-name-action-cell-actions button')
+          .nth(2)
+          .click();
+        const popconfirm = page.locator('.ant-popconfirm');
+        await popconfirm.getByRole('button', { name: 'Deactivate' }).click();
+        // Wait for user to disappear from the Active list
+        await expect(userRow).toBeHidden({ timeout: 10000 });
+      }
+
+      // Switch to Inactive filter and check if user exists there
+      await page.getByText('Inactive', { exact: true }).click();
+      const inactiveUserRow = page.getByRole('row').filter({ hasText: EMAIL });
+      const isInactiveVisible = await inactiveUserRow
+        .isVisible({ timeout: 2000 })
+        .catch(() => false);
+
+      if (isInactiveVisible) {
+        // Permanently delete the user
+        await inactiveUserRow.getByRole('checkbox').click();
+        // The purge button uses <DeleteFilled /> icon whose aria-label is "delete".
+        // Use .first() to target the selection-area bulk delete button.
+        await page.getByRole('button', { name: 'delete' }).first().click();
+
+        const purgeModal = new PurgeUsersModal(page);
+        await purgeModal.waitForVisible();
+        await purgeModal.confirmDeletion();
+
+        // Wait for user to disappear from the list after deletion
+        await expect(inactiveUserRow).toBeHidden({ timeout: 10000 });
+      }
+
+      // Return to Active filter
+      await page.getByText('Active', { exact: true }).click();
+    }
+
+    test('Admin can create a new user', async ({ page, request }) => {
+      // 1. Login as admin
+      await loginAsAdmin(page, request);
+
+      // 2. Navigate to credential page
+      await navigateTo(page, 'credential');
+
+      // 3. Wait for Users tab to be visible
+      await expect(page.getByRole('tab', { name: 'Users' })).toBeVisible();
+
+      // 4. Clean up any existing test user from previous runs
+      await cleanupTestUser(page);
+
+      // 5. Click "Create User" button
+      await page.getByRole('button', { name: 'Create User' }).click();
+
+      // 6. Create user using the modal class
+      const userSettingModal = new UserSettingModal(page);
+      await userSettingModal.waitForVisible();
+      await userSettingModal.fillRequiredFields(EMAIL, USERNAME, PASSWORD);
+      await submitUserSettingModal(userSettingModal, 'Create');
+
+      // 7. Handle the key pair modal that appears after user creation
+      const keyPairModal = new KeyPairModal(page);
+      await keyPairModal.waitForVisible();
+      await keyPairModal.close();
+
+      // 8. Verify user setting modal is also closed
+      await userSettingModal.waitForHidden();
+
+      // 9. Verify new user appears in the Active users list
+      await expect(page.getByRole('cell', { name: EMAIL })).toBeVisible({
+        timeout: 10000,
+      });
+
+      // 10. Logout and login as the created user to verify account works
+      await logout(page);
+      await loginAsCreatedAccount(page, request, EMAIL, PASSWORD);
+
+      // 11. Verify login was successful by checking user dropdown is visible
+      await expect(page.getByTestId('user-dropdown-button')).toBeVisible();
+    });
+
+    test('Admin can update user information (password change)', async ({
+      page,
+      request,
+    }) => {
+      // 1. Login as admin
+      await loginAsAdmin(page, request);
+
+      // 2. Navigate to credential page
+      await navigateTo(page, 'credential');
+
+      // 3. Wait for the Users tab to confirm the page has fully loaded
+      await expect(page.getByRole('tab', { name: 'Users' })).toBeVisible();
+
+      // 4. Locate the user in the table
+      const userRow = page.getByRole('row').filter({ hasText: EMAIL });
+      await expect(userRow).toBeVisible();
+
+      // 5. Click the Edit button to open the modify modal.
+      // The edit action is the 2nd button (index 1) in the action cell.
+      // Hover first so that hover-only action cells reveal their buttons.
+      await userRow.hover();
+      await userRow
+        .locator('.bai-name-action-cell-actions button')
+        .nth(1)
+        .click();
+
+      // 6. Update user name and password.
+      // FR-3339 renamed this dialog from "Modify User Detail" to "Edit User
+      // Detail" as part of unifying edit terminology across the app.
+      // UserSettingModal.forEdit() still targets the stale dialog name (a fix
+      // is pending in another in-flight PR touching that shared page
+      // object), so this test locates the dialog directly instead.
+      const editDialog = page.getByRole('dialog', { name: 'Edit User Detail' });
+      await expect(editDialog).toBeVisible();
+      const editUserNameInput = editDialog.getByLabel('User Name');
+      await editUserNameInput.fill(MODIFIED_USERNAME);
+      await expect(editUserNameInput).toHaveValue(MODIFIED_USERNAME);
+      await editDialog.getByLabel(/^New Password/).fill(NEW_PASSWORD);
+      await editDialog.getByLabel(/^New password \(again\)/).fill(NEW_PASSWORD);
+      await editDialog.getByRole('button', { name: 'Save' }).click();
+
+      // 7. Wait for modal to close
+      await expect(editDialog).toBeHidden({ timeout: 10000 });
+
+      // 8. Verify success by checking user info.
+      // The info button is the 1st button (index 0) in the action cell.
+      // Hover first so that hover-only action cells reveal their buttons.
+      await userRow.hover();
+      await userRow
+        .locator('.bai-name-action-cell-actions button')
+        .nth(0)
+        .click();
+      const userInfoModal = new UserInfoModal(page);
+      await userInfoModal.waitForVisible();
+      await userInfoModal.verifyUserName(MODIFIED_USERNAME);
+      await userInfoModal.close();
+
+      // 9. Verify the new password works by logging in
+      await logout(page);
+      await loginAsCreatedAccount(page, request, EMAIL, NEW_PASSWORD);
+      await expect(page.getByTestId('user-dropdown-button')).toBeVisible();
+    });
+
+    test('Admin can deactivate a user', async ({ page, request }) => {
+      // 1. Login as admin
+      await loginAsAdmin(page, request);
+
+      // 2. Navigate to credential page
+      await navigateTo(page, 'credential');
+
+      // 3. Ensure "Active" filter is selected (should be default)
+      // Wait for Users tab to confirm page has fully loaded before interacting with filter
+      await expect(page.getByRole('tab', { name: 'Users' })).toBeVisible();
+      await page.getByText('Active', { exact: true }).click();
+
+      // 4. Locate the user to deactivate in the table
+      const userRow = page.getByRole('row').filter({ hasText: EMAIL });
+      await expect(userRow).toBeVisible();
+
+      // 5. Click the "Deactivate" button (Ban icon) in the Control column.
+      // The Deactivate action uses a lucide BanIcon which has no accessible name,
+      // so we target it by its position (3rd button) in the actions area.
+      // Hover first so that hover-only action cells reveal their buttons.
+      await userRow.hover();
+      await userRow
+        .locator('.bai-name-action-cell-actions button')
+        .nth(2)
+        .click();
+
+      // 6. Verify popconfirm dialog appears
+      const popconfirm = page.locator('.ant-popconfirm');
+      await expect(popconfirm.getByText('Deactivate User')).toBeVisible();
+
+      // 7. Confirm deactivation
+      await popconfirm.getByRole('button', { name: 'Deactivate' }).click();
+
+      // 8. Verify user disappears from Active users list
+      await expect(page.getByRole('row').filter({ hasText: EMAIL })).toBeHidden(
+        {
+          timeout: 10000,
+        },
+      );
+
+      // 10. Switch to "Inactive" filter and verify the deactivated user appears there
+      await page.getByText('Inactive', { exact: true }).click();
+      await expect(page.getByRole('cell', { name: EMAIL })).toBeVisible({
+        timeout: 10000,
+      });
+    });
+
+    test('Admin can reactivate an inactive user', async ({ page, request }) => {
+      // 1. Login as admin
+      await loginAsAdmin(page, request);
+
+      // 2. Navigate to credential page
+      await navigateTo(page, 'credential');
+
+      // 3. Switch to "Inactive" filter
+      await page.getByText('Inactive', { exact: true }).click();
+
+      // 4. Locate the inactive user in the table
+      const userRow = page.getByRole('row').filter({ hasText: EMAIL });
+      await expect(userRow).toBeVisible();
+
+      // 5. Click the "Activate" button (Undo icon) in the Control column.
+      // The Activate action uses a lucide UndoIcon which has no accessible name,
+      // so we target it by its position (3rd button) in the actions area.
+      // Hover first so that hover-only action cells reveal their buttons.
+      await userRow.hover();
+      await userRow
+        .locator('.bai-name-action-cell-actions button')
+        .nth(2)
+        .click();
+
+      // 6. Verify popconfirm dialog appears
+      const popconfirm = page.locator('.ant-popconfirm');
+      await expect(popconfirm.getByText('Activate User')).toBeVisible();
+
+      // 7. Confirm activation
+      await popconfirm.getByRole('button', { name: 'Activate' }).click();
+
+      // 8. Verify user disappears from Inactive users list
+      await expect(page.getByRole('row').filter({ hasText: EMAIL })).toBeHidden(
+        {
+          timeout: 10000,
+        },
+      );
+
+      // 10. Switch to "Active" filter and verify the activated user appears there
+      await page.getByText('Active', { exact: true }).click();
+      await expect(page.getByRole('cell', { name: EMAIL })).toBeVisible({
+        timeout: 10000,
+      });
+
+      // 11. Verify the reactivated user can log in
+      await logout(page);
+      await loginAsCreatedAccount(page, request, EMAIL, NEW_PASSWORD);
+      await expect(page.getByTestId('user-dropdown-button')).toBeVisible();
+    });
+
+    test('Admin can deactivate and permanently delete (purge) a user', async ({
+      page,
+      request,
+    }) => {
+      // 1. Login as admin
+      await loginAsAdmin(page, request);
+
+      // 2. Navigate to credential page
+      await navigateTo(page, 'credential');
+
+      // 3. Deactivate the user first (required before purging).
+      // The Deactivate action uses a lucide BanIcon which has no accessible name,
+      // so we target it by its position (3rd button) in the actions area.
+      // Hover first so that hover-only action cells reveal their buttons.
+      const userRow = page.getByRole('row').filter({ hasText: EMAIL });
+      await expect(userRow).toBeVisible();
+      await userRow.hover();
+      await userRow
+        .locator('.bai-name-action-cell-actions button')
+        .nth(2)
+        .click();
+      const popconfirm = page.locator('.ant-popconfirm');
+      await popconfirm.getByRole('button', { name: 'Deactivate' }).click();
+      // Wait for user to disappear from Active list before switching filters
+      await expect(userRow).toBeHidden({ timeout: 10000 });
+
+      // 4. Switch to "Inactive" filter
+      await page.getByText('Inactive', { exact: true }).click();
+
+      // 5. Wait for the inactive users list to load
+      await expect(page.getByRole('cell', { name: EMAIL })).toBeVisible({
+        timeout: 10000,
+      });
+
+      // 6. Select the user by clicking its checkbox
+      const inactiveUserRow = page.getByRole('row').filter({ hasText: EMAIL });
+      await inactiveUserRow.getByRole('checkbox').click();
+
+      // 7. Verify selection count appears
+      await expect(page.getByText('1 selected')).toBeVisible();
+
+      // 8. Click the bulk-delete (purge selected) button to open purge modal.
+      // The purge button uses <DeleteFilled /> icon whose aria-label is "delete".
+      // Use .first() to target the selection-area bulk delete button, not row-level purge buttons.
+      await page.getByRole('button', { name: 'delete' }).first().click();
+
+      // 9. Use PurgeUsersModal class to handle the deletion
+      const purgeModal = new PurgeUsersModal(page);
+      await purgeModal.waitForVisible();
+
+      // 10. Confirm the deletion
+      // Note: BAIDeleteConfirmModal only shows the item list when deleting >1 items,
+      // so we cannot verify the email directly in the modal for a single-user deletion.
+      await purgeModal.confirmDeletion();
+
+      // 12. Verify success message appears
+      await expect(
+        page.getByText(/Permanently deleted \d+ out of \d+ users/),
+      ).toBeVisible({ timeout: 10000 });
+
+      // 13. Verify user completely disappears from inactive users list
+      await expect(page.getByRole('row').filter({ hasText: EMAIL })).toBeHidden(
+        {
+          timeout: 10000,
+        },
+      );
+    });
+
+    test('Deleted user cannot log in', async ({ page, request }) => {
+      // 1. Modify config.toml to enable session-based login with manual endpoint input
+      await modifyConfigToml(page, request, {
+        general: {
+          connectionMode: 'SESSION',
+          apiEndpoint: '',
+          apiEndpointText: '',
+        },
+      });
+
+      // 2. Attempt to login as the deleted user
+      await page.goto(webuiEndpoint);
+      await page.getByLabel('Email or Username').fill(EMAIL);
+      await page.getByRole('textbox', { name: 'Password' }).fill(NEW_PASSWORD);
+      await page
+        .getByRole('textbox', { name: 'Endpoint' })
+        .fill(webServerEndpoint);
+      await page.getByLabel('Login', { exact: true }).click();
+
+      // 3. Verify "Login information mismatch" error notification appears
+      await expect(
+        page.getByRole('alert').getByText('Login information mismatch'),
+      ).toBeVisible({ timeout: 10000 });
+
+      // 4. Verify user is still on login page
+      await expect(page.getByLabel('Email or Username')).toBeVisible();
+    });
+  },
+);

@@ -1,0 +1,134 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import { ImageNodeSimpleTagFragment$key } from '../__generated__/ImageNodeSimpleTagFragment.graphql';
+import { preserveDotStartCase } from '../helper';
+import { useBackendAIImageMetaData } from '../hooks';
+import ImageMetaIcon from './ImageMetaIcon';
+import { Divider, Tag, Typography, theme } from 'antd';
+import { BAIDoubleTag, BAIFlex } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
+import React from 'react';
+import { graphql, useFragment } from 'react-relay';
+
+interface ImageNodeSimpleTagProps {
+  imageFrgmt: ImageNodeSimpleTagFragment$key | null;
+  withoutTag?: boolean;
+  copyable?: boolean;
+}
+
+const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
+  imageFrgmt,
+  withoutTag = false,
+  copyable = true,
+}) => {
+  const [, { tagAlias }] = useBackendAIImageMetaData();
+  const { token } = theme.useToken();
+  const image = useFragment(
+    graphql`
+      fragment ImageNodeSimpleTagFragment on ImageNode {
+        base_image_name
+        version
+        architecture
+        name
+        tags {
+          key
+          value
+        }
+        labels {
+          key @required(action: NONE)
+          value
+        }
+        registry
+        namespace
+        tag
+      }
+    `,
+    imageFrgmt,
+  );
+
+  if (!image) return null;
+
+  const fullName = `${image.registry}/${image.namespace}:${image.tag}@${image.architecture}`;
+
+  return (
+    <BAIFlex direction="row" gap={'xs'} wrap="wrap">
+      <ImageMetaIcon image={fullName} />
+      <Typography.Text>{tagAlias(image.base_image_name || '')}</Typography.Text>
+      <Divider
+        orientation="vertical"
+        style={{
+          marginInline: 0,
+        }}
+      />
+      <Typography.Text>{image.version}</Typography.Text>
+      <Divider
+        orientation="vertical"
+        style={{
+          marginInline: 0,
+        }}
+      />
+      <Typography.Text>{image.architecture}</Typography.Text>
+      {withoutTag ? null : (
+        <>
+          <Divider
+            orientation="vertical"
+            style={{
+              marginInline: 0,
+            }}
+          />
+          {_.map(image.tags, (tag, index) => {
+            if (!tag) return null;
+            const isCustomized = tag.key && _.includes(tag.key, 'customized_');
+            const tagValue =
+              (isCustomized
+                ? _.find(image?.labels, {
+                    key: 'ai.backend.customized-image.name',
+                  })?.value
+                : tag?.value) || '';
+            const aliasedTag = tag?.key
+              ? tagAlias(tag.key + tagValue)
+              : undefined;
+            return tag?.key &&
+              _.isEqual(
+                aliasedTag,
+                preserveDotStartCase(tag.key + tagValue),
+              ) ? (
+              <BAIDoubleTag
+                key={`${tag.key}-${index}`}
+                values={[
+                  {
+                    label: tagAlias(tag.key),
+                    color: isCustomized ? 'cyan' : undefined,
+                  },
+                  {
+                    label: tagValue,
+                    color: isCustomized ? 'cyan' : undefined,
+                  },
+                ]}
+              />
+            ) : (
+              <Tag
+                key={`${tag.key}-${index}`}
+                color={isCustomized ? 'cyan' : undefined}
+              >
+                {aliasedTag}
+              </Tag>
+            );
+          })}
+        </>
+      )}
+      {copyable && (
+        <Typography.Text
+          style={{ color: token.colorLink }}
+          copyable={{
+            text: fullName,
+          }}
+        />
+      )}
+    </BAIFlex>
+  );
+};
+
+export default ImageNodeSimpleTag;

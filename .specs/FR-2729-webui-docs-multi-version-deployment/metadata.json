@@ -1,0 +1,85 @@
+{
+  "epic": "FR-2729",
+  "epic_title": "Backend.AI WebUI Docs — Multi-version Deployment v1",
+  "spec_task": "FR-2730",
+  "spec_task_title": "Define WebUI docs multi-version deployment v1 feature spec",
+  "predecessors_done": ["FR-2710", "FR-2719"],
+  "future_followups": ["overlay-build", "backfill-pre-toolkit-archives"],
+  "production_domain": "https://webui.docs.backend.ai",
+  "legacy_docs_env_var": "LEGACY_DOCS_URL",
+  "created": "2026-04-26",
+  "subtasks": [
+    {
+      "key": "FR-2731",
+      "title": "Toolkit: add pdfTag field to versions schema",
+      "type": "code",
+      "owner": "dev",
+      "wave": 1,
+      "blocks": ["FR-2732", "FR-2734"]
+    },
+    {
+      "key": "FR-2732",
+      "title": "Toolkit: render per-version PDF download card on landing page",
+      "type": "code",
+      "owner": "dev",
+      "wave": 2,
+      "blocked_by": ["FR-2731"],
+      "blocks": ["FR-2734"]
+    },
+    {
+      "key": "FR-2733",
+      "title": "Toolkit: 'Previous versions' selector tail with LEGACY_DOCS_URL env var",
+      "type": "code",
+      "owner": "dev",
+      "wave": 1,
+      "blocks": ["FR-2739"]
+    },
+    {
+      "key": "FR-2734",
+      "title": "webui-docs: declare versions: in docs-toolkit.config.yaml and update pdfFilenameTemplate",
+      "type": "code",
+      "owner": "dev",
+      "wave": 3,
+      "blocked_by": ["FR-2731", "FR-2732"]
+    },
+    {
+      "key": "FR-2735",
+      "title": "Repo: add amplify.yml with build, paths-filter, and root redirect rules",
+      "type": "code",
+      "owner": "dev",
+      "wave": 1,
+      "relates": ["FR-2737"]
+    },
+    {
+      "key": "FR-2736",
+      "title": "Docs: update release runbook with multi-version deployment steps",
+      "type": "code",
+      "owner": "dev",
+      "wave": 1
+    },
+    {
+      "key": "FR-2737",
+      "title": "Operational: provision AWS Amplify app, custom domain, HTTPS cert",
+      "type": "operational",
+      "owner": "devops",
+      "wave": 1,
+      "blocks": ["FR-2739"]
+    },
+    {
+      "key": "FR-2738",
+      "title": "Operational: dispatch docs-archive-orphan-branch.yml for v26.4.7 → docs-archive/26.4",
+      "type": "operational",
+      "owner": "release-manager",
+      "wave": 4,
+      "relates": ["FR-2734"]
+    },
+    {
+      "key": "FR-2739",
+      "title": "Operational: set LEGACY_DOCS_URL env var in Amplify (deferrable)",
+      "type": "operational",
+      "owner": "devops",
+      "wave": "post-launch",
+      "blocked_by": ["FR-2733", "FR-2737"]
+    }
+  ]
+}

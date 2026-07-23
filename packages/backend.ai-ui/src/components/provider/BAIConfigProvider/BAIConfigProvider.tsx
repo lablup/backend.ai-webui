@@ -1,0 +1,110 @@
+import { BAILocale, i18n } from '../../../locale';
+import { type BAIClient, BAIClientProvider } from '../BAIClientProvider';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ConfigProvider, type ConfigProviderProps } from 'antd';
+import dayjs from 'dayjs';
+import 'dayjs/locale/de';
+import 'dayjs/locale/el';
+import 'dayjs/locale/es';
+import 'dayjs/locale/fi';
+import 'dayjs/locale/fr';
+import 'dayjs/locale/id';
+import 'dayjs/locale/it';
+import 'dayjs/locale/ja';
+import 'dayjs/locale/ko';
+import 'dayjs/locale/mn';
+import 'dayjs/locale/ms';
+import 'dayjs/locale/pl';
+import 'dayjs/locale/pt';
+import 'dayjs/locale/pt-br';
+import 'dayjs/locale/ru';
+import 'dayjs/locale/th';
+import 'dayjs/locale/tr';
+import 'dayjs/locale/vi';
+import 'dayjs/locale/zh-cn';
+import 'dayjs/locale/zh-tw';
+import duration from 'dayjs/plugin/duration';
+import localeData from 'dayjs/plugin/localeData';
+import localizedFormat from 'dayjs/plugin/localizedFormat';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
+import weekday from 'dayjs/plugin/weekday';
+import { useEffect } from 'react';
+
+dayjs.extend(weekday);
+dayjs.extend(localeData);
+dayjs.extend(localizedFormat);
+dayjs.extend(relativeTime);
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.extend(duration);
+
+export interface BAIConfigProviderBaseProps extends Omit<
+  ConfigProviderProps,
+  'locale'
+> {
+  locale?: BAILocale;
+}
+
+export type BAIConfigProviderProps = BAIConfigProviderBaseProps &
+  (
+    | {
+        clientPromise: Promise<BAIClient>;
+        anonymousClientFactory: (api_endpoint: string) => BAIClient;
+      }
+    | {
+        clientPromise?: never;
+        anonymousClientFactory?: never;
+      }
+  );
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: false,
+    },
+  },
+});
+
+const BAIConfigProvider = ({
+  children,
+  locale,
+  clientPromise,
+  anonymousClientFactory,
+  ...props
+}: BAIConfigProviderProps) => {
+  // Sync BUI's i18n + dayjs locale to the prop. BUI components access
+  // `buiI18n` *explicitly* via `useBAIi18n()` (which calls
+  // `useTranslation(undefined, { i18n: buiI18n })`), so we do NOT wrap
+  // children with `<I18nextProvider i18n={buiI18n}>` — that would shadow
+  // the host's i18n React Context and break host components' translations
+  // (FR-2987). Explicit instance binding is enough to keep BUI translations
+  // working without leaking into the host's Context.
+  useEffect(() => {
+    if (locale?.lang) {
+      i18n.changeLanguage(locale.lang);
+      dayjs.locale(locale.lang);
+    }
+  }, [locale?.lang]);
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ConfigProvider locale={locale?.antdLocale} {...props}>
+        {clientPromise && anonymousClientFactory ? (
+          <BAIClientProvider
+            clientPromise={clientPromise}
+            anonymousClientFactory={anonymousClientFactory}
+          >
+            {children}
+          </BAIClientProvider>
+        ) : (
+          children
+        )}
+      </ConfigProvider>
+    </QueryClientProvider>
+  );
+};
+
+export default BAIConfigProvider;

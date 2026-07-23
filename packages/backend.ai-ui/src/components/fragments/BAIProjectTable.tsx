@@ -1,0 +1,216 @@
+import {
+  BAIProjectTableFragment$data,
+  BAIProjectTableFragment$key,
+} from '../../__generated__/BAIProjectTableFragment.graphql';
+import { toLocalId } from '../../helper';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
+import BAIResourceNumberWithIcon from '../BAIResourceNumberWithIcon';
+import BAIText from '../BAIText';
+import { BAIColumnsType, BAITable, BAITableProps } from '../Table';
+import AllowedVfolderHostsWithPermission from './BAIAllowedVfolderHostsWithPermission';
+import { Tag } from 'antd';
+import dayjs from 'dayjs';
+import * as _ from 'lodash-es';
+import { graphql, useFragment } from 'react-relay';
+
+export const availableProjectSorterKeys = [
+  'name',
+  'id',
+  'domain_name',
+  'created_at',
+  'is_active',
+  'resource_policy',
+] as const;
+
+export const availableProjectSorterValues = [
+  ...availableProjectSorterKeys,
+  ...availableProjectSorterKeys.map((key) => `-${key}` as const),
+] as const;
+
+const isEnableSorter = (key: string) => {
+  return _.includes(availableProjectSorterKeys, key);
+};
+
+export type ProjectInList = NonNullable<
+  NonNullable<BAIProjectTableFragment$data>[number]
+>;
+
+export interface BAIProjectTableProps extends Omit<
+  BAITableProps<ProjectInList>,
+  'dataSource' | 'columns' | 'rowKey' | 'onChangeOrder'
+> {
+  projectFragment: BAIProjectTableFragment$key;
+  /**
+   * Customize the base columns (insert, filter, reorder, or override a
+   * column's `render`). Receives the base columns array and returns the
+   * modified array. The page composes the per-row action list (edit /
+   * deactivate / activate / purge) by overriding the `name` column's
+   * `render` here, so the action logic stays in the app layer rather than
+   * being injected through individual callback props.
+   */
+  customizeColumns?: (
+    baseColumns: BAIColumnsType<ProjectInList>,
+  ) => BAIColumnsType<ProjectInList>;
+  onChangeOrder?: (
+    order: (typeof availableProjectSorterValues)[number] | null,
+  ) => void;
+}
+
+const BAIProjectTable = ({
+  projectFragment,
+  customizeColumns,
+  onChangeOrder,
+  ...tableProps
+}: BAIProjectTableProps) => {
+  'use memo';
+  const { t } = useBAIi18n();
+
+  const projects = useFragment<BAIProjectTableFragment$key>(
+    graphql`
+      fragment BAIProjectTableFragment on GroupNode @relay(plural: true) {
+        id
+        row_id
+        name
+        domain_name
+        description
+        is_active
+        created_at
+        total_resource_slots
+        integration_id
+        resource_policy
+        type
+        container_registry
+        scaling_groups
+        ...BAIAllowedVfolderHostsWithPermissionFromGroupFragment
+      }
+    `,
+    projectFragment,
+  );
+
+  const columns: BAIColumnsType<ProjectInList> = [
+    {
+      key: 'name',
+      title: t('comp:BAIProjectTable.Name'),
+      dataIndex: 'name',
+      fixed: 'left',
+      sorter: isEnableSorter('name'),
+    },
+    {
+      key: 'domain',
+      title: t('comp:BAIProjectTable.Domain'),
+      dataIndex: 'domain_name',
+      sorter: isEnableSorter('domain_name'),
+    },
+    {
+      key: 'description',
+      title: t('comp:BAIProjectTable.Description'),
+      dataIndex: 'description',
+      render: (value) => value || '-',
+    },
+    {
+      key: 'created_at',
+      title: t('comp:BAIProjectTable.CreatedAt'),
+      dataIndex: 'created_at',
+      render: (value) => dayjs(value).format('lll'),
+      sorter: isEnableSorter('created_at'),
+    },
+    {
+      key: 'type',
+      title: t('comp:BAIProjectTable.Type'),
+      dataIndex: 'type',
+      render: (value) =>
+        value === 'GENERAL' ? (
+          <Tag>{value}</Tag>
+        ) : (
+          <Tag color="blue">{value}</Tag>
+        ),
+    },
+    {
+      key: 'total_resource_slots',
+      title: t('comp:BAIProjectTable.TotalResourceSlots'),
+      dataIndex: 'total_resource_slots',
+      render: (value) => {
+        const parsedValue = JSON.parse(value);
+        if (_.isEmpty(parsedValue)) {
+          return '-';
+        }
+        return _.map(parsedValue, (v, type) => (
+          <BAIResourceNumberWithIcon
+            key={type}
+            type={type}
+            value={_.toString(v)}
+          />
+        ));
+      },
+    },
+    {
+      key: 'resource_policy',
+      title: t('comp:BAIProjectTable.ResourcePolicy'),
+      dataIndex: 'resource_policy',
+      exportKey: 'resource_policy_name',
+      sorter: isEnableSorter('resource_policy'),
+    },
+    {
+      key: 'allowed_vfolder_hosts',
+      title: t('comp:BAIProjectTable.StorageNodes'),
+      exportKey: 'allowed_vfolder_hosts',
+      render: (_value, row) => (
+        <AllowedVfolderHostsWithPermission
+          allowedHostPermissionFrgmtFromGroup={row}
+        />
+      ),
+    },
+    {
+      key: 'scaling_groups',
+      title: t('comp:BAIProjectTable.ScalingGroups'),
+      dataIndex: 'scaling_groups',
+      exportKey: 'scaling_group_name',
+      render: (value) => _.join(value, ', ') || '-',
+    },
+    {
+      key: 'registry',
+      title: t('comp:BAIProjectTable.ContainerRegistry'),
+      dataIndex: 'container_registry',
+      exportKey: 'container_registry',
+      render: (value) => _.get(JSON.parse(value), 'registry') || '-',
+    },
+    {
+      key: 'project',
+      title: t('comp:BAIProjectTable.ContainerRegistryProject'),
+      dataIndex: 'container_registry',
+      render: (value) => _.get(JSON.parse(value), 'project') || '-',
+    },
+    {
+      key: 'id',
+      title: t('comp:BAIProjectTable.ProjectID'),
+      dataIndex: 'id',
+      render: (value) => <BAIText copyable>{toLocalId(value) || '-'}</BAIText>,
+      sorter: isEnableSorter('id'),
+    },
+    {
+      key: 'integration_id',
+      title: t('comp:BAIProjectTable.IntegrationID'),
+      dataIndex: 'integration_id',
+      render: (value) => value || '-',
+    },
+  ];
+
+  const allColumns = customizeColumns ? customizeColumns(columns) : columns;
+
+  return (
+    <BAITable<ProjectInList>
+      scroll={{ x: 'max-content' }}
+      {...tableProps}
+      rowKey={(record) => record.id}
+      dataSource={projects}
+      columns={allColumns}
+      onChangeOrder={(order) => {
+        onChangeOrder?.(
+          (order as (typeof availableProjectSorterValues)[number]) || null,
+        );
+      }}
+    />
+  );
+};
+
+export default BAIProjectTable;

@@ -1,0 +1,575 @@
+{
+  "$schema": "../../i18n.schema.json",
+  "comp:AgentTable": {
+    "Allocation": "分配",
+    "Architecture": "架构",
+    "DiskPerc": "磁盘使用率 %",
+    "Endpoint": "端点",
+    "FailedToLoadCellData": "数据加载失败。",
+    "NoAvailableLiveStat": "暂无可用实时统计",
+    "Region": "区域",
+    "ResourceGroup": "资源组",
+    "Running": "运行中",
+    "Schedulable": "可调度",
+    "Starts": "启动次数",
+    "Status": "状态",
+    "Utilization": "利用率"
+  },
+  "comp:AllowedVfolderHostsWithPermission": {
+    "Allowed": "已允许",
+    "Permission": "权限"
+  },
+  "comp:BAIActivateArtifactsModal": {
+    "Activate": "激活",
+    "ActivateArtifacts": "激活工件",
+    "AreYouSureYouWantToActivateOne": "您确定要激活{{name}}吗？",
+    "AreYouSureYouWantToActivateSome": "您确定要激活{{count}}伪像吗？",
+    "FailedToActivateArtifacts": "未能激活伪影。",
+    "SuccessfullyActivated": "成功激活的工件。"
+  },
+  "comp:BAIAdminKeypairResourcePolicySelect": {
+    "SelectKeypairResourcePolicy": "选择密钥对资源策略"
+  },
+  "comp:BAIAdminModelServiceSelect": {
+    "SelectModelService": "选择模型服务"
+  },
+  "comp:BAIAdminResourceGroupSelect": {
+    "PlaceHolder": "选择资源组"
+  },
+  "comp:BAIAdminSessionSelect": {
+    "SelectSession": "选择会话"
+  },
+  "comp:BAIArtifactDescriptions": {
+    "Description": "描述",
+    "Name": "姓名",
+    "Source": "来源",
+    "Type": "类型"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "Control": "控制",
+    "LatestVersion": "最新版本",
+    "Name": "姓名",
+    "Size": "尺寸",
+    "Status": "地位",
+    "Updated": "更新",
+    "Version": "版本"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "行动",
+    "Activate": "激活",
+    "Controls": "控件",
+    "Deactivate": "停用",
+    "PullLatestVersion": "拉最新版本",
+    "Registry": "镜像仓库",
+    "Scanned": "扫描",
+    "Size": "尺寸",
+    "Source": "来源",
+    "Updated": "更新",
+    "Version": "版本"
+  },
+  "comp:BAIAuditLogNodes": {
+    "ActionId": "操作 ID",
+    "Actor": "执行者",
+    "Description": "描述",
+    "Duration": "持续时间",
+    "EntityId": "实体 ID",
+    "EntityType": "实体类型",
+    "Operation": "操作",
+    "RequestId": "请求 ID",
+    "Status": "状态",
+    "Time": "时间",
+    "TriggeredBy": "触发者"
+  },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "选择预设"
+  },
+  "comp:BAIBoardItemErrorBoundary": {
+    "UnexpectedError": "发生意外错误。请稍后重试，若问题仍然存在，请联系支持。"
+  },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "清除",
+    "KeepAsIs": "保持原样",
+    "UndoChanges": "撤销更改"
+  },
+  "comp:BAIBulkErrorModal": {
+    "ActionExecutionFailed": "执行错误",
+    "ErrorOccurred": "发生错误"
+  },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "选择容器镜像仓库"
+  },
+  "comp:BAIDeactivateArtifactsModal": {
+    "AreYouSureYouWantToDeactivateOne": "您确定要停用{{name}}吗？",
+    "AreYouSureYouWantToDeactivateSome": "您确定要停用{{count}}文物吗？",
+    "Deactivate": "停用",
+    "DeactivateArtifacts": "停用伪影",
+    "FailedToDeactivateArtifacts": "未能停用伪影。",
+    "SuccessfullyDeactivated": "成功停用的伪影。"
+  },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}}版本被排除在外。",
+    "FailedToRemoveVersions": "无法删除版本。",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "只能删除不进行拉或扫描的版本。",
+    "RemoveVersions": "删除版本",
+    "Size": "尺寸",
+    "SuccessFullyRemoved": "成功删除了{{count}}版本。",
+    "Version": "版本"
+  },
+  "comp:BAIDeleteConfirmModal": {
+    "AreYouSureToDelete": "您确定要删除吗？",
+    "AreYouSureToPermanentlyDeleteTarget": "确定要永久删除{{target}}吗？",
+    "CannotBeUndone": "此操作无法撤销。",
+    "DeleteItem": "删除",
+    "DeleteNItems": "删除 {{count}} 个项目",
+    "TypeToConfirm": "输入 <code>{{confirmText}}</code> 以确认。"
+  },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "创建者"
+  },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "尝试次数",
+    "Category": "类别",
+    "CreatedAt": "创建时间",
+    "ErrorCode": "错误代码",
+    "From": "起始状态",
+    "Message": "消息",
+    "Phase": "阶段",
+    "Result": "结果",
+    "To": "目标状态",
+    "UpdatedAt": "更新时间"
+  },
+  "comp:BAIDeploymentSelect": {
+    "SelectDeployment": "选择部署"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "已降级",
+    "Deploying": "部署中",
+    "Healthy": "正常",
+    "NotChecked": "未检查",
+    "Pending": "等待中",
+    "Ready": "就绪",
+    "Scaling": "扩缩容中",
+    "Stopped": "已停止",
+    "Stopping": "停止中",
+    "Terminated": "已终止",
+    "Unhealthy": "异常"
+  },
+  "comp:BAIDomainSelect": {
+    "SelectDomain": "选择域"
+  },
+  "comp:BAIFetchKeyButton": {
+    "AutoRefresh": "自动刷新",
+    "EveryHours": "{{count}}小时",
+    "EveryMinutes": "{{count}}分",
+    "EverySeconds": "{{count}}秒",
+    "LastUpdated": "最后更新",
+    "Off": "关闭",
+    "Refresh": "刷新"
+  },
+  "comp:BAIGraphQLPropertyFilter": {
+    "SelectDateTime": "选择日期和时间",
+    "operator": {
+      "After": "之后",
+      "Before": "之前",
+      "Equals": "等于",
+      "GreaterThan": "大于",
+      "GreaterThanOrEqual": "大于或等于",
+      "IContains": "包含",
+      "IEndsWith": "以...结尾",
+      "IEquals": "等于",
+      "INotContains": "不包含",
+      "INotEndsWith": "不以...结尾",
+      "INotEquals": "不等于",
+      "INotStartsWith": "不以...开头",
+      "IStartsWith": "以...开头",
+      "In": "在...中",
+      "LessThan": "小于",
+      "LessThanOrEqual": "小于或等于",
+      "NotEquals": "不等于",
+      "NotIn": "不在...中"
+    }
+  },
+  "comp:BAIHuggingFaceRegistrySettingModal": {
+    "EnterToken": "Enter your HuggingFace token",
+    "HuggingFaceSettings": "Hugging Face Settings",
+    "Token": "Token",
+    "TokenUpdatedSuccessfully": "Token updated successfully."
+  },
+  "comp:BAIImageSelect": {
+    "SelectImage": "选择镜像"
+  },
+  "comp:BAIImportArtifactModal": {
+    "ExcludedVersions": "{{count}}版本被排除在外。",
+    "FailedToPullVersions": "未能拉动版本。",
+    "OnlySCANNEDVersionsCanBePulled": "只能拉出扫描版本。",
+    "Pull": "拉",
+    "PullVersion": "拉版本",
+    "Size": "尺寸",
+    "SuccessFullyPulled": "成功请求{{count}}版本的拉动。",
+    "Version": "版本"
+  },
+  "comp:BAIKeypairSelect": {
+    "SelectKeypair": "选择密钥对"
+  },
+  "comp:BAILoginHistoryTable": {
+    "Domain": "域",
+    "FailReason": "失败原因",
+    "LoginTime": "登录时间",
+    "Result": "结果"
+  },
+  "comp:BAILoginSessionTable": {
+    "AccessKey": "访问密钥",
+    "CreatedAt": "创建于",
+    "InvalidatedAt": "失效于",
+    "User": "用户"
+  },
+  "comp:BAIModal": {
+    "ExitFullscreen": "退出全屏",
+    "Fullscreen": "全屏",
+    "Maximize": "最大化",
+    "Minimize": "最小化",
+    "Restore": "还原"
+  },
+  "comp:BAIModelDeploymentNodes": {
+    "AreYouSureToDeleteDeployment": "确定要删除部署 \"{{deploymentName}}\" 吗？此操作无法撤销。",
+    "CreatedAt": "创建时间",
+    "CreatedUser": "作者",
+    "CurrentRevisionID": "当前修订版本ID",
+    "Delete": "删除",
+    "DeleteDeployment": "删除部署",
+    "DeploymentDeleted": "部署已删除。",
+    "DeploymentID": "部署ID",
+    "DomainName": "域",
+    "EndpointURL": "端点URL",
+    "FailedToDeleteDeployment": "删除部署失败。",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Lifecycle": "生命周期",
+    "Model": "模型",
+    "Name": "名称",
+    "OpenToPublic": "公开",
+    "Owner": "所有者",
+    "PreferredDomainName": "首选域",
+    "Project": "项目",
+    "ProjectID": "项目ID",
+    "ReplicaSummary": "副本数",
+    "ReplicaSummaryTooltip": "正在运行的副本数与所需副本数之比。",
+    "Replicas": "副本数",
+    "ResourceGroup": "资源组",
+    "RevisionNumber": "修订版本",
+    "RevisionNumberTooltip": "部署的当前修订版本号。",
+    "StrategyType": "策略",
+    "Tags": "标签",
+    "UpdatedAt": "更新时间"
+  },
+  "comp:BAIProjectBulkEditModal": {
+    "FollowingProjectsWillBeUpdated": "以下项目将被更新。",
+    "ProjectResourcePolicy": "项目资源策略",
+    "UpdateMultipleProjects": "批量更新项目"
+  },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "选择项目"
+  },
+  "comp:BAIProjectSettingModal": {
+    "AllowedFolderHosts": "允许的文件夹主机",
+    "AllowedResourceGroups": "允许的资源组",
+    "ContainerMustBeSpecified": "必须指定一个容器镜像仓库来存储用户提交的容器镜像。",
+    "ContainerRegistryForImageCommit": "用于提交镜像的容器镜像仓库",
+    "CreateProject": "创建项目",
+    "Description": "描述",
+    "Domain": "域",
+    "FailedToCreateProject": "创建项目失败",
+    "FailedToUpdateProject": "更新项目失败",
+    "IsActive": "是否启用？",
+    "MaxAllowedResourceSlots": "允许的最大{{resourceKey}}",
+    "MemorySizeShouldBeLessThan300PiB": "内存大小应小于 300 PiB。",
+    "Name": "名称",
+    "PleaseEnterBothRegistryAndProject": "请同时输入镜像仓库和项目。",
+    "Project": "项目",
+    "ProjectCreated": "项目已创建",
+    "ProjectResourcePolicy": "资源策略",
+    "ProjectUpdated": "项目已更新。",
+    "Registry": "镜像仓库",
+    "UpdateProject": "更新项目"
+  },
+  "comp:BAIProjectTable": {
+    "ContainerRegistry": "容器镜像仓库",
+    "ContainerRegistryProject": "容器镜像仓库项目",
+    "CreatedAt": "创建时间",
+    "Description": "描述",
+    "Domain": "域",
+    "IntegrationID": "集成 ID",
+    "Name": "名称",
+    "Project": "项目",
+    "ProjectID": "项目ID",
+    "Registry": "镜像仓库",
+    "ResourcePolicy": "资源策略",
+    "ScalingGroups": "资源组",
+    "StorageNodes": "存储节点",
+    "TotalResourceSlots": "资源插槽总数",
+    "Type": "类型"
+  },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "选择文件夹"
+  },
+  "comp:BAIPropertyFilter": {
+    "PlaceHolder": "搜索",
+    "ResetFilter": "重置过滤器"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "取消拉力",
+    "CancelingWillRestartThePulling": "取消将重新启动拉动",
+    "FailedToCancelThePulling": "未能取消拉力。",
+    "VersionIsPullingNow": "{{version}}版本现在正在拉动。",
+    "VersionPullCanceledSuccessfully": "{{version}}版本的拉力成功取消了。",
+    "WARNING": "警告",
+    "YouAreAboutToCancelThisVersion": "您即将取消此版本"
+  },
+  "comp:BAIResourceGroupSelect": {
+    "SelectResourceGroup": "选择资源组"
+  },
+  "comp:BAIResourceNumberWithIcon": {
+    "AllocatedVsRequested": "已分配 / 请求"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "无限"
+  },
+  "comp:BAIRouteNodes": {
+    "CreatedAt": "创建时间",
+    "HealthStatus": "健康状态",
+    "RouteId": "路由 ID",
+    "SchedulingHistory": "调度历史",
+    "SessionId": "会话 ID",
+    "Status": "状态",
+    "TrafficRatio": "流量比例",
+    "TrafficStatus": "流量状态"
+  },
+  "comp:BAIRouteSchedulingHistoryNodes": {
+    "Attempts": "尝试次数",
+    "Category": "类别",
+    "CreatedAt": "创建时间",
+    "ErrorCode": "错误代码",
+    "From": "起始状态",
+    "Message": "消息",
+    "Phase": "阶段",
+    "Result": "结果",
+    "To": "目标状态",
+    "UpdatedAt": "更新时间"
+  },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "选择运行时变体"
+  },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "尝试次数",
+    "Category": "类别",
+    "CreatedAt": "创建时间",
+    "ErrorCode": "错误代码",
+    "From": "起始状态",
+    "Message": "消息",
+    "Phase": "阶段",
+    "Result": "结果",
+    "To": "目标状态",
+    "UpdatedAt": "更新时间"
+  },
+  "comp:BAISessionAgentIds": {
+    "Agent": "代理人"
+  },
+  "comp:BAISessionClusterMode": {
+    "MultiNodeShort": "多",
+    "SingleNodeShort": "单节点"
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "无限"
+  },
+  "comp:BAIStorageHostSelect": {
+    "SelectStorageHost": "选择存储主机"
+  },
+  "comp:BAIStorageProxySelect": {
+    "SelectStorageProxy": "选择存储代理"
+  },
+  "comp:BAISubStepNodes": {
+    "EndedAt": "结束时间",
+    "ErrorCode": "错误代码",
+    "Message": "消息",
+    "Result": "结果",
+    "StartedAt": "开始时间",
+    "Step": "步骤"
+  },
+  "comp:BAITable": {
+    "CollapseAll": "收起全部",
+    "ExpandAll": "展开全部",
+    "ExpandErrorsOnly": "仅展开错误",
+    "ExpandOptions": "展开选项",
+    "Export": "导出",
+    "ExportCSV": "导出 CSV",
+    "GoToFirstPage": "转到第一页",
+    "InvalidPageNumber": "无效的页码",
+    "SearchTableColumn": "搜索表列",
+    "SelectColumnToDisplay": "选择要显示的列",
+    "SettingTable": "表设置"
+  },
+  "comp:BAITestButton": {
+    "Test": "测试"
+  },
+  "comp:BAIUserResourcePolicyV2Table": {
+    "CreatedAt": "创建于",
+    "MaxConcurrentLogins": "最大并发登录数",
+    "MaxCustomizedImageCount": "最大自定义图像数量",
+    "MaxQuotaScopeSize": "文件夹最大尺寸",
+    "MaxSessionCountPerModelSession": "每个模型会话的最大会话计数",
+    "MaxVFolderCount": "最大文件夹数",
+    "Name": "名称"
+  },
+  "comp:BAIUserSelect": {
+    "SelectUser": "选择用户"
+  },
+  "comp:BAIVFolderMountConfigInput": {
+    "AliasInvalid": "路径格式无效。",
+    "AliasOverlapping": "挂载路径与另一个文件夹重叠。",
+    "AliasPlaceholder": "挂载路径",
+    "AutoMountedFolders": "自动挂载文件夹",
+    "Name": "名称",
+    "PathAndAlias": "路径 & 别名",
+    "PathAndAliasTooltip": "文件夹在容器内的挂载路径。留空则使用默认路径。",
+    "RemoveFolder": "移除",
+    "Subpath": "子路径",
+    "SubpathInvalid": "子路径必须是相对路径，且不能包含 '..'。",
+    "SubpathPlaceholder": "例如 dataset/train（可选）",
+    "SubpathTooltip": "将文件夹内的子文件夹作为挂载源，而非文件夹根目录。留空则挂载根目录。"
+  },
+  "comp:BAIVFolderSelect": {
+    "SelectFolder": "选择文件夹"
+  },
+  "comp:FileExplorer": {
+    "ArchiveDownloadStarted": "已开始下载 {{count}} 个项目。",
+    "ChangeFileExtension": "更改文件扩展名",
+    "ChangeFileExtensionDesc": "更改文件扩展名可能会导致文件变得无法使用或不正确打开。\n你想继续吗？",
+    "Controls": "控件",
+    "CreateANewFile": "Create a new file",
+    "CreateANewFolder": "创建一个新文件夹",
+    "CreateFile": "Create File",
+    "CreateFolder": "Create Folder",
+    "CreatedAt": "创建在",
+    "DeleteSelectedItemDesc": "删除的文件和文件夹无法恢复。\n你想继续吗？",
+    "DeleteSelectedItemsDialog": "删除确认",
+    "DownloadSelected": "下载",
+    "DownloadStarted": "文件“ {{fileName}}”下载已开始。",
+    "DragAndDropDesc": "将文件拖到此区域上传。",
+    "DuplicatedFiles": "覆盖确认",
+    "DuplicatedFilesDesc": "具有相同名称的文件或文件夹已经存在。\n你想覆盖吗？",
+    "EditFile": "编辑文件",
+    "FileCreatedSuccessfully": "File created successfully.",
+    "FileName": "File Name",
+    "FileNamePlaceholder": "e.g. model-definition.yaml",
+    "FileTooLargeToEdit": "由于文件大小超过{{size}}MB,浏览器内编辑受到限制。",
+    "FolderCreatedSuccessfully": "文件夹成功创建了。",
+    "FolderName": "文件夹名称",
+    "InvalidFileNameCharacters": "File name must not contain path separators (/ or \\\\).",
+    "MaxFileNameLength": "File name must be 255 characters or less.",
+    "MaxFolderNameLength": "文件夹名称必须为255个字符或更小。",
+    "ModifiedAt": "修改为",
+    "MoreOptions": "更多选项",
+    "Name": "姓名",
+    "NoUploadPermissionForHost": "您没有此存储主机的上传权限。",
+    "PleaseEnterAFileName": "Please enter the file name.",
+    "PleaseEnterAFolderName": "请输入文件夹名称。",
+    "RenameSuccess": "该名称已成功更改。",
+    "SelectedItemsDeletedSuccessfully": "选定的文件和文件夹已成功删除。",
+    "Size": "尺寸",
+    "TypeDeleteToConfirm": "输入“删除”进行确认。",
+    "TypeFolderNameToDelete": "输入要删除的文件夹或文件名.",
+    "UnsupportedFileFormat": "此文件格式不支持编辑。",
+    "UploadFiles": "上传文件",
+    "UploadFolder": "上传文件夹",
+    "error": {
+      "DuplicatedName": "此名称已经在使用中。\n请输入其他名称。",
+      "FileNameRequired": "请输入文件或文件夹名称。"
+    }
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{end}} {{total}}项目"
+  },
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "没有可用的资源数据"
+  },
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "AI加速器",
+    "CPU": "CPU",
+    "ClusterMode": "集群模式",
+    "CreatedAt": "创建时间",
+    "ElapsedTime": "已用时间",
+    "Environments": "环境",
+    "Memory": "内存",
+    "OwnerEmail": "所有者邮箱",
+    "Project": "项目",
+    "ResourceGroup": "资源组",
+    "SessionId": "会话 ID",
+    "SessionName": "会话名称",
+    "SessionType": "会话类型",
+    "Status": "状态",
+    "TerminateSession": "终止会话"
+  },
+  "comp:UserNodes": {
+    "AllowedClientIps": "允许的客户端IP",
+    "ContainerGIDs": "附加GID",
+    "ContainerGIDsTooltip": "分配给容器进程的额外数字组 ID",
+    "ContainerMainGID": "容器GID",
+    "ContainerMainGIDTooltip": "分配给容器内进程的默认数值组 ID",
+    "ContainerUID": "容器UID",
+    "ContainerUIDTooltip": "分配给容器内进程的数值用户 ID",
+    "CreatedAt": "创建时间",
+    "Description": "描述",
+    "Disabled": "已禁用",
+    "DomainName": "域",
+    "Email": "电子邮件",
+    "Enabled": "已启用",
+    "FullName": "全名",
+    "IntegrationName": "集成名称",
+    "MainAccessKey": "主访问密钥",
+    "ModifiedAt": "修改时间",
+    "NeedPasswordChange": "需要更改密码",
+    "Project": "项目",
+    "ResourcePolicy": "资源策略",
+    "Role": "角色",
+    "Status": "状态",
+    "StatusInfo": "状态信息",
+    "SudoSessionEnabled": "Sudo会话已启用",
+    "TwoFA": "双因素认证",
+    "TwoFAActivatedAt": "双因素认证激活时间",
+    "UserID": "用户 ID",
+    "Username": "用户名"
+  },
+  "error": {
+    "UnknownError": "发生了未知错误。\n请重试。"
+  },
+  "general": {
+    "DeselectAll": "取消全选",
+    "File": "文件",
+    "NSelected": "{{count}}选择",
+    "Optional": "可选",
+    "Project": "项目",
+    "TotalItems": "总计{{total}}项目",
+    "button": {
+      "Cancel": "取消",
+      "Close": "关闭",
+      "Collapse": "坍塌",
+      "Copied": "已复制",
+      "CopyAll": "复制全部",
+      "Create": "创造",
+      "Delete": "删除",
+      "Edit": "编辑",
+      "Expand": "扩张",
+      "Remove": "消除",
+      "Save": "保存",
+      "Upload": "上传"
+    },
+    "modal": {
+      "DeleteForeverDesc": "警告：所选项目将被永久删除且无法恢复。",
+      "ItemSelectedWithCount": "已选择 {{count}} 项。",
+      "PleaseTypeToConfirm": "请输入{{ confirmText }}进行确认。"
+    },
+    "validation": {
+      "LetterNumber-_dot": "仅允许字母、数字、'-'、'_' 和 '.'。",
+      "LetterNumber:/-_dot": "仅允许字母 (A–Z、a–z)、数字、'-'、'_'、':'、'/' 和 '.'。"
+    }
+  }
+}

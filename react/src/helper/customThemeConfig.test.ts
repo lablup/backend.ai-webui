@@ -1,0 +1,434 @@
+import {
+  getCustomTheme,
+  loadCustomThemeConfig,
+  type CustomThemeConfig,
+  type LogoConfig,
+} from './customThemeConfig';
+import type { Mock, MockInstance } from 'vitest';
+
+describe('customThemeConfig', () => {
+  let fetchMock: Mock;
+  let originalFetch: typeof global.fetch;
+  let dispatchEventSpy: MockInstance;
+
+  beforeEach(() => {
+    // Save original values
+    originalFetch = global.fetch;
+
+    // Setup fetch mock
+    fetchMock = vi.fn();
+    global.fetch = fetchMock as unknown as typeof global.fetch;
+
+    // Setup event dispatcher spy
+    dispatchEventSpy = vi.spyOn(document, 'dispatchEvent');
+  });
+
+  afterEach(() => {
+    // Restore original values
+    global.fetch = originalFetch;
+    // Vitest 4 / Node 20+ make `process.env.NODE_ENV` non-configurable, so
+    // `Object.defineProperty` throws. `vi.stubEnv` is the supported way.
+    vi.unstubAllEnvs();
+    vi.clearAllMocks();
+  });
+
+  // Route the fetch mock by URL; each entry in `themes` feeds one
+  // `loadCustomThemeConfig` call.
+  const mockThemeFetch = (...themes: unknown[]) => {
+    const themeQueue = [...themes];
+    fetchMock.mockImplementation((url: string) => {
+      if (url === 'resources/theme.json') {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(themeQueue.shift()),
+        } as unknown as Response);
+      }
+      return Promise.reject(new Error(`Unexpected fetch: ${url}`));
+    });
+  };
+
+  describe('getCustomTheme', () => {
+    it('should return undefined when no theme is loaded', () => {
+      const theme = getCustomTheme();
+      expect(theme).toBeUndefined();
+    });
+  });
+
+  describe('loadCustomThemeConfig', () => {
+    it('should fetch theme configuration from resources/theme.json', async () => {
+      const mockTheme: CustomThemeConfig = {
+        light: { token: { colorPrimary: '#1890ff' } },
+        dark: { token: { colorPrimary: '#177ddc' } },
+        logo: {
+          src: '/logo.png',
+          srcCollapsed: '/logo-small.png',
+        },
+      };
+
+      mockThemeFetch(mockTheme);
+
+      loadCustomThemeConfig();
+
+      // Wait for async operations
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      expect(fetchMock).toHaveBeenCalledWith('resources/theme.json');
+      expect(dispatchEventSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'custom-theme-loaded',
+        }),
+      );
+    });
+
+    it('should handle legacy theme format (no light/dark separation)', async () => {
+      const mockLegacyTheme = {
+        token: { colorPrimary: '#1890ff' },
+        logo: {
+          src: '/logo.png',
+          srcCollapsed: '/logo-small.png',
+        },
+      };
+
+      mockThemeFetch(mockLegacyTheme);
+
+      loadCustomThemeConfig();
+
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      const theme = getCustomTheme();
+      expect(theme).toBeDefined();
+      expect(theme?.light).toEqual({
+        token: { colorPrimary: '#1890ff' },
+        logo: { src: '/logo.png', srcCollapsed: '/logo-small.png' },
+      });
+      expect(theme?.dark).toEqual({
+        token: { colorPrimary: '#1890ff' },
+        logo: { src: '/logo.png', srcCollapsed: '/logo-small.png' },
+      });
+      expect(theme?.logo).toEqual(mockLegacyTheme.logo);
+    });
+
+    it('should apply VITE_THEME_HEADER_COLOR in development environment', async () => {
+      vi.stubEnv('MODE', 'development');
+      vi.stubEnv('DEV', true);
+      vi.stubEnv('VITE_THEME_HEADER_COLOR', '#ff0000');
+
+      const mockTheme: CustomThemeConfig = {
+        light: {
+          token: { colorPrimary: '#1890ff' },
+          components: { Layout: {} },
+        },
+        dark: {
+          token: { colorPrimary: '#177ddc' },
+          components: { Layout: {} },
+        },
+        logo: {
+          src: '/logo.png',
+          srcCollapsed: '/logo-small.png',
+        },
+      };
+
+      mockThemeFetch(mockTheme);
+
+      loadCustomThemeConfig();
+
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      const theme = getCustomTheme();
+      expect(theme?.light.components?.Layout?.headerBg).toBe('#ff0000');
+      expect(theme?.dark.components?.Layout?.headerBg).toBe('#ff0000');
+    });
+
+    it('should not apply VITE_THEME_HEADER_COLOR in production environment', async () => {
+      vi.stubEnv('MODE', 'production');
+      vi.stubEnv('DEV', false);
+      vi.stubEnv('VITE_THEME_HEADER_COLOR', '#ff0000');
+
+      const mockTheme: CustomThemeConfig = {
+        light: {
+          token: { colorPrimary: '#1890ff' },
+          components: { Layout: {} },
+        },
+        dark: {
+          token: { colorPrimary: '#177ddc' },
+          components: { Layout: {} },
+        },
+        logo: {
+          src: '/logo.png',
+          srcCollapsed: '/logo-small.png',
+        },
+      };
+
+      mockThemeFetch(mockTheme);
+
+      loadCustomThemeConfig();
+
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      const theme = getCustomTheme();
+      expect(theme?.light.components?.Layout?.headerBg).toBeUndefined();
+      expect(theme?.dark.components?.Layout?.headerBg).toBeUndefined();
+    });
+
+    it('should dispatch custom-theme-loaded event after loading', async () => {
+      const mockTheme: CustomThemeConfig = {
+        light: { token: { colorPrimary: '#1890ff' } },
+        dark: { token: { colorPrimary: '#177ddc' } },
+        logo: {
+          src: '/logo.png',
+          srcCollapsed: '/logo-small.png',
+        },
+      };
+
+      mockThemeFetch(mockTheme);
+
+      loadCustomThemeConfig();
+
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      expect(dispatchEventSpy).toHaveBeenCalledTimes(1);
+      const event = dispatchEventSpy.mock.calls[0][0];
+      expect(event).toBeInstanceOf(CustomEvent);
+      expect((event as CustomEvent).type).toBe('custom-theme-loaded');
+    });
+
+    it('should handle theme with complete logo configuration', async () => {
+      const logoConfig: LogoConfig = {
+        src: '/logo.png',
+        srcCollapsed: '/logo-small.png',
+        srcDark: '/logo-dark.png',
+        srcCollapsedDark: '/logo-small-dark.png',
+        alt: 'Company Logo',
+        href: 'https://example.com',
+        size: { width: 200, height: 50 },
+        sizeCollapsed: { width: 50, height: 50 },
+        aboutModalSize: { width: 300, height: 100 },
+      };
+
+      const mockTheme: CustomThemeConfig = {
+        light: { token: { colorPrimary: '#1890ff' } },
+        dark: { token: { colorPrimary: '#177ddc' } },
+        logo: logoConfig,
+      };
+
+      mockThemeFetch(mockTheme);
+
+      loadCustomThemeConfig();
+
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      const theme = getCustomTheme();
+      expect(theme?.logo).toEqual(logoConfig);
+    });
+
+    it('should handle theme with sider configuration', async () => {
+      const mockTheme: CustomThemeConfig = {
+        light: { token: { colorPrimary: '#1890ff' } },
+        dark: { token: { colorPrimary: '#177ddc' } },
+        logo: {
+          src: '/logo.png',
+          srcCollapsed: '/logo-small.png',
+        },
+        sider: {
+          theme: 'dark',
+        },
+      };
+
+      mockThemeFetch(mockTheme);
+
+      loadCustomThemeConfig();
+
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      const theme = getCustomTheme();
+      expect(theme?.sider?.theme).toBe('dark');
+    });
+
+    it('should handle theme with branding configuration', async () => {
+      const mockTheme: CustomThemeConfig = {
+        light: { token: { colorPrimary: '#1890ff' } },
+        dark: { token: { colorPrimary: '#177ddc' } },
+        logo: {
+          src: '/logo.png',
+          srcCollapsed: '/logo-small.png',
+        },
+        branding: {
+          companyName: 'Example Corp',
+          brandName: 'Product Name',
+        },
+      };
+
+      mockThemeFetch(mockTheme);
+
+      loadCustomThemeConfig();
+
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      const theme = getCustomTheme();
+      expect(theme?.branding?.companyName).toBe('Example Corp');
+      expect(theme?.branding?.brandName).toBe('Product Name');
+    });
+
+    it('should handle nested theme token configuration', async () => {
+      const mockTheme: CustomThemeConfig = {
+        light: {
+          token: {
+            colorPrimary: '#1890ff',
+            colorSuccess: '#52c41a',
+            borderRadius: 4,
+          },
+          components: {
+            Button: {
+              primaryColor: '#ffffff',
+            },
+            Layout: {
+              headerBg: '#001529',
+              siderBg: '#ffffff',
+            },
+          },
+        },
+        dark: {
+          token: {
+            colorPrimary: '#177ddc',
+            colorSuccess: '#49aa19',
+            borderRadius: 4,
+          },
+          components: {
+            Button: {
+              primaryColor: '#ffffff',
+            },
+            Layout: {
+              headerBg: '#141414',
+              siderBg: '#1f1f1f',
+            },
+          },
+        },
+        logo: {
+          src: '/logo.png',
+          srcCollapsed: '/logo-small.png',
+        },
+      };
+
+      mockThemeFetch(mockTheme);
+
+      loadCustomThemeConfig();
+
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      const theme = getCustomTheme();
+      expect(theme?.light.token?.colorPrimary).toBe('#1890ff');
+      expect(theme?.light.components?.Layout?.headerBg).toBe('#001529');
+      expect(theme?.dark.token?.colorPrimary).toBe('#177ddc');
+      expect(theme?.dark.components?.Layout?.headerBg).toBe('#141414');
+    });
+
+    it('should handle multiple calls to loadCustomThemeConfig', async () => {
+      const mockTheme1: CustomThemeConfig = {
+        light: { token: { colorPrimary: '#1890ff' } },
+        dark: { token: { colorPrimary: '#177ddc' } },
+        logo: {
+          src: '/logo1.png',
+          srcCollapsed: '/logo-small1.png',
+        },
+      };
+
+      const mockTheme2: CustomThemeConfig = {
+        light: { token: { colorPrimary: '#ff0000' } },
+        dark: { token: { colorPrimary: '#cc0000' } },
+        logo: {
+          src: '/logo2.png',
+          srcCollapsed: '/logo-small2.png',
+        },
+      };
+
+      mockThemeFetch(mockTheme1, mockTheme2);
+
+      loadCustomThemeConfig();
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      loadCustomThemeConfig();
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      expect(
+        fetchMock.mock.calls.filter(([url]) => url === 'resources/theme.json'),
+      ).toHaveLength(2);
+      expect(dispatchEventSpy).toHaveBeenCalledTimes(2);
+    });
+
+    it('should only apply VITE_THEME_HEADER_COLOR when both development mode and env var are set', async () => {
+      vi.stubEnv('MODE', 'development');
+      vi.stubEnv('DEV', true);
+      vi.stubEnv('VITE_THEME_HEADER_COLOR', '');
+
+      const mockTheme: CustomThemeConfig = {
+        light: {
+          token: { colorPrimary: '#1890ff' },
+          components: { Layout: {} },
+        },
+        dark: {
+          token: { colorPrimary: '#177ddc' },
+          components: { Layout: {} },
+        },
+        logo: {
+          src: '/logo.png',
+          srcCollapsed: '/logo-small.png',
+        },
+      };
+
+      mockThemeFetch(mockTheme);
+
+      loadCustomThemeConfig();
+
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      const theme = getCustomTheme();
+      expect(theme?.light.components?.Layout?.headerBg).toBeUndefined();
+      expect(theme?.dark.components?.Layout?.headerBg).toBeUndefined();
+    });
+
+    it('should preserve existing Layout component settings when applying VITE_THEME_HEADER_COLOR', async () => {
+      vi.stubEnv('MODE', 'development');
+      vi.stubEnv('DEV', true);
+      vi.stubEnv('VITE_THEME_HEADER_COLOR', '#ff0000');
+
+      const mockTheme: CustomThemeConfig = {
+        light: {
+          token: { colorPrimary: '#1890ff' },
+          components: {
+            Layout: {
+              siderBg: '#ffffff',
+              bodyBg: '#f0f0f0',
+            },
+          },
+        },
+        dark: {
+          token: { colorPrimary: '#177ddc' },
+          components: {
+            Layout: {
+              siderBg: '#1f1f1f',
+              bodyBg: '#141414',
+            },
+          },
+        },
+        logo: {
+          src: '/logo.png',
+          srcCollapsed: '/logo-small.png',
+        },
+      };
+
+      mockThemeFetch(mockTheme);
+
+      loadCustomThemeConfig();
+
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      const theme = getCustomTheme();
+      expect(theme?.light.components?.Layout?.headerBg).toBe('#ff0000');
+      expect(theme?.light.components?.Layout?.siderBg).toBe('#ffffff');
+      expect(theme?.light.components?.Layout?.bodyBg).toBe('#f0f0f0');
+      expect(theme?.dark.components?.Layout?.headerBg).toBe('#ff0000');
+      expect(theme?.dark.components?.Layout?.siderBg).toBe('#1f1f1f');
+      expect(theme?.dark.components?.Layout?.bodyBg).toBe('#141414');
+    });
+  });
+});

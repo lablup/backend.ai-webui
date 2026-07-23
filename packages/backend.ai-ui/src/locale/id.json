@@ -1,0 +1,575 @@
+{
+  "$schema": "../../i18n.schema.json",
+  "comp:AgentTable": {
+    "Allocation": "Alokasi",
+    "Architecture": "Arsitektur",
+    "DiskPerc": "Disk %",
+    "Endpoint": "Endpoint",
+    "FailedToLoadCellData": "Gagal memuat data.",
+    "NoAvailableLiveStat": "Tidak ada statistik langsung yang tersedia",
+    "Region": "Wilayah",
+    "ResourceGroup": "Grup Sumber Daya",
+    "Running": "Berjalan",
+    "Schedulable": "Dapat dijadwalkan",
+    "Starts": "Mulai",
+    "Status": "Status",
+    "Utilization": "Utilisasi"
+  },
+  "comp:AllowedVfolderHostsWithPermission": {
+    "Allowed": "Diizinkan",
+    "Permission": "Izin"
+  },
+  "comp:BAIActivateArtifactsModal": {
+    "Activate": "Mengaktifkan",
+    "ActivateArtifacts": "Aktifkan artefak",
+    "AreYouSureYouWantToActivateOne": "Anda yakin ingin mengaktifkan {{name}}?",
+    "AreYouSureYouWantToActivateSome": "Anda yakin ingin mengaktifkan {{count}} artefak?",
+    "FailedToActivateArtifacts": "Gagal mengaktifkan artefak.",
+    "SuccessfullyActivated": "Artefak yang berhasil diaktifkan."
+  },
+  "comp:BAIAdminKeypairResourcePolicySelect": {
+    "SelectKeypairResourcePolicy": "Pilih Kebijakan Sumber Daya Keypair"
+  },
+  "comp:BAIAdminModelServiceSelect": {
+    "SelectModelService": "Pilih Layanan Model"
+  },
+  "comp:BAIAdminResourceGroupSelect": {
+    "PlaceHolder": "Pilih grup sumber daya"
+  },
+  "comp:BAIAdminSessionSelect": {
+    "SelectSession": "Pilih sesi"
+  },
+  "comp:BAIArtifactDescriptions": {
+    "Description": "Keterangan",
+    "Name": "Nama",
+    "Source": "Sumber",
+    "Type": "Jenis"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "Control": "Kontrol",
+    "LatestVersion": "Versi Terbaru",
+    "Name": "Nama",
+    "Size": "Ukuran",
+    "Status": "Status",
+    "Updated": "Diperbarui",
+    "Version": "Versi"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "Tindakan",
+    "Activate": "Mengaktifkan",
+    "Controls": "Kontrol",
+    "Deactivate": "Menonaktifkan",
+    "PullLatestVersion": "Tarik versi terbaru",
+    "Registry": "Registri",
+    "Scanned": "Dipindai",
+    "Size": "Ukuran",
+    "Source": "Sumber",
+    "Updated": "Diperbarui",
+    "Version": "Versi"
+  },
+  "comp:BAIAuditLogNodes": {
+    "ActionId": "ID Tindakan",
+    "Actor": "Pelaku",
+    "Description": "Deskripsi",
+    "Duration": "Durasi",
+    "EntityId": "ID Entitas",
+    "EntityType": "Jenis Entitas",
+    "Operation": "Operasi",
+    "RequestId": "ID Permintaan",
+    "Status": "Status",
+    "Time": "Waktu",
+    "TriggeredBy": "Dipicu oleh"
+  },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Pilih Preset"
+  },
+  "comp:BAIBoardItemErrorBoundary": {
+    "UnexpectedError": "Terjadi kesalahan tak terduga. Silakan coba lagi nanti atau hubungi dukungan jika masalah berlanjut."
+  },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "Hapus",
+    "KeepAsIs": "Pertahankan",
+    "UndoChanges": "Batalkan perubahan"
+  },
+  "comp:BAIBulkErrorModal": {
+    "ActionExecutionFailed": "Eksekusi gagal",
+    "ErrorOccurred": "Terjadi kesalahan"
+  },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Pilih Registri Container"
+  },
+  "comp:BAIDeactivateArtifactsModal": {
+    "AreYouSureYouWantToDeactivateOne": "Anda yakin ingin menonaktifkan {{name}}?",
+    "AreYouSureYouWantToDeactivateSome": "Anda yakin ingin menonaktifkan artefak {{count}}?",
+    "Deactivate": "Menonaktifkan",
+    "DeactivateArtifacts": "Nonaktifkan artefak",
+    "FailedToDeactivateArtifacts": "Gagal menonaktifkan artefak.",
+    "SuccessfullyDeactivated": "Berhasil menonaktifkan artefak."
+  },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}} versi dikecualikan.",
+    "FailedToRemoveVersions": "Gagal menghapus versi.",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "Hanya versi yang tidak menarik atau dipindai yang dapat dilepas.",
+    "RemoveVersions": "Hapus versi",
+    "Size": "Ukuran",
+    "SuccessFullyRemoved": "Berhasil menghapus {{count}} versi.",
+    "Version": "Versi"
+  },
+  "comp:BAIDeleteConfirmModal": {
+    "AreYouSureToDelete": "Apakah Anda yakin ingin menghapus?",
+    "AreYouSureToPermanentlyDeleteTarget": "Apakah Anda yakin ingin menghapus {{target}} secara permanen?",
+    "CannotBeUndone": "Tindakan ini tidak dapat dibatalkan.",
+    "DeleteItem": "Hapus",
+    "DeleteNItems": "Hapus {{count}} item",
+    "TypeToConfirm": "Ketik <code>{{confirmText}}</code> untuk mengonfirmasi."
+  },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "Dibuat oleh"
+  },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "Percobaan",
+    "Category": "Kategori",
+    "CreatedAt": "Dibuat pada",
+    "ErrorCode": "Kode Kesalahan",
+    "From": "Status asal",
+    "Message": "Pesan",
+    "Phase": "Tahap",
+    "Result": "Hasil",
+    "To": "Status tujuan",
+    "UpdatedAt": "Diperbarui pada"
+  },
+  "comp:BAIDeploymentSelect": {
+    "SelectDeployment": "Pilih Deployment"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "Terdegradasi",
+    "Deploying": "Sedang Diterapkan",
+    "Healthy": "Sehat",
+    "NotChecked": "Belum Diperiksa",
+    "Pending": "Tertunda",
+    "Ready": "Siap",
+    "Scaling": "Sedang Diskalakan",
+    "Stopped": "Dihentikan",
+    "Stopping": "Sedang Dihentikan",
+    "Terminated": "Diakhiri",
+    "Unhealthy": "Tidak Sehat"
+  },
+  "comp:BAIDomainSelect": {
+    "SelectDomain": "Pilih Domain"
+  },
+  "comp:BAIFetchKeyButton": {
+    "AutoRefresh": "Penyegaran otomatis",
+    "EveryHours": "{{count}}h",
+    "EveryMinutes": "{{count}}m",
+    "EverySeconds": "{{count}}s",
+    "LastUpdated": "Terakhir diperbarui",
+    "Off": "Mati",
+    "Refresh": "Segarkan"
+  },
+  "comp:BAIGraphQLPropertyFilter": {
+    "SelectDateTime": "Pilih tanggal dan waktu",
+    "operator": {
+      "After": "setelah",
+      "Before": "sebelum",
+      "Equals": "sama dengan",
+      "GreaterThan": "lebih besar dari",
+      "GreaterThanOrEqual": "lebih besar atau sama",
+      "IContains": "mengandung",
+      "IEndsWith": "diakhiri dengan",
+      "IEquals": "sama dengan",
+      "INotContains": "tidak berisi",
+      "INotEndsWith": "tidak diakhiri dengan",
+      "INotEquals": "tidak sama dengan",
+      "INotStartsWith": "tidak dimulai dengan",
+      "IStartsWith": "dimulai dengan",
+      "In": "dalam",
+      "LessThan": "kurang dari",
+      "LessThanOrEqual": "kurang dari atau sama",
+      "NotEquals": "tidak sama dengan",
+      "NotIn": "tidak dalam"
+    }
+  },
+  "comp:BAIHuggingFaceRegistrySettingModal": {
+    "EnterToken": "Enter your HuggingFace token",
+    "HuggingFaceSettings": "Hugging Face Settings",
+    "Token": "Token",
+    "TokenUpdatedSuccessfully": "Token updated successfully."
+  },
+  "comp:BAIImageSelect": {
+    "SelectImage": "Pilih Gambar"
+  },
+  "comp:BAIImportArtifactModal": {
+    "ExcludedVersions": "{{count}} versi dikecualikan.",
+    "FailedToPullVersions": "Gagal menarik versi.",
+    "OnlySCANNEDVersionsCanBePulled": "Hanya versi yang dipindai yang bisa ditarik.",
+    "Pull": "Menarik",
+    "PullVersion": "Tarik versi",
+    "Size": "Ukuran",
+    "SuccessFullyPulled": "Berhasil meminta tarik untuk versi {{count}}.",
+    "Version": "Versi"
+  },
+  "comp:BAIKeypairSelect": {
+    "SelectKeypair": "Pilih Keypair"
+  },
+  "comp:BAILoginHistoryTable": {
+    "Domain": "Domain",
+    "FailReason": "Alasan Kegagalan",
+    "LoginTime": "Waktu Login",
+    "Result": "Hasil"
+  },
+  "comp:BAILoginSessionTable": {
+    "AccessKey": "Kunci Akses",
+    "CreatedAt": "Dibuat pada",
+    "InvalidatedAt": "Dibatalkan Pada",
+    "User": "Pengguna"
+  },
+  "comp:BAIModal": {
+    "ExitFullscreen": "Exit fullscreen",
+    "Fullscreen": "Fullscreen",
+    "Maximize": "Maximize",
+    "Minimize": "Minimize",
+    "Restore": "Restore"
+  },
+  "comp:BAIModelDeploymentNodes": {
+    "AreYouSureToDeleteDeployment": "Apakah Anda yakin ingin menghapus penerapan \"{{deploymentName}}\"? Tindakan ini tidak dapat dibatalkan.",
+    "CreatedAt": "Dibuat pada",
+    "CreatedUser": "Penulis",
+    "CurrentRevisionID": "ID Revisi Saat Ini",
+    "Delete": "Menghapus",
+    "DeleteDeployment": "Hapus Penerapan",
+    "DeploymentDeleted": "Penerapan berhasil dihapus.",
+    "DeploymentID": "ID Penerapan",
+    "DomainName": "Domain",
+    "EndpointURL": "URL Titik Akhir",
+    "FailedToDeleteDeployment": "Gagal menghapus penerapan.",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Lifecycle": "Siklus Hidup",
+    "Model": "Model",
+    "Name": "Nama",
+    "OpenToPublic": "Terbuka untuk Umum",
+    "Owner": "Pemilik",
+    "PreferredDomainName": "Domain Pilihan",
+    "Project": "Proyek",
+    "ProjectID": "ID Proyek",
+    "ReplicaSummary": "Replika",
+    "ReplicaSummaryTooltip": "Replika yang berjalan dari jumlah replika yang diinginkan.",
+    "Replicas": "Replika",
+    "ResourceGroup": "Grup Sumber Daya",
+    "RevisionNumber": "Revisi",
+    "RevisionNumberTooltip": "Nomor revisi saat ini dari penerapan.",
+    "StrategyType": "Strategi",
+    "Tags": "Tag",
+    "UpdatedAt": "Diperbarui pada"
+  },
+  "comp:BAIProjectBulkEditModal": {
+    "FollowingProjectsWillBeUpdated": "Proyek berikut akan diperbarui.",
+    "ProjectResourcePolicy": "Kebijakan Sumber Daya Proyek",
+    "UpdateMultipleProjects": "Perbarui Beberapa Proyek"
+  },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "Pilih Proyek"
+  },
+  "comp:BAIProjectSettingModal": {
+    "AllowedFolderHosts": "Host Folder yang Diizinkan",
+    "AllowedResourceGroups": "Grup Sumber Daya yang Diizinkan",
+    "ContainerMustBeSpecified": "Sebuah registri kontainer harus ditentukan untuk menyimpan image kontainer yang di-commit oleh pengguna.",
+    "ContainerRegistryForImageCommit": "Registry Kontainer untuk Commit Image",
+    "CreateProject": "Buat Proyek",
+    "Description": "Deskripsi",
+    "Domain": "Domain",
+    "FailedToCreateProject": "Gagal membuat proyek",
+    "FailedToUpdateProject": "Gagal memperbarui proyek",
+    "IsActive": "Aktif?",
+    "MaxAllowedResourceSlots": "Maksimum {{resourceKey}} yang diizinkan",
+    "MemorySizeShouldBeLessThan300PiB": "Ukuran memori harus kurang dari 300 PiB",
+    "Name": "Nama",
+    "PleaseEnterBothRegistryAndProject": "Harap masukkan registri dan proyek.",
+    "Project": "Proyek",
+    "ProjectCreated": "Proyek berhasil dibuat.",
+    "ProjectResourcePolicy": "Kebijakan Sumber Daya",
+    "ProjectUpdated": "Proyek telah diperbarui.",
+    "Registry": "Registri",
+    "UpdateProject": "Perbarui Proyek"
+  },
+  "comp:BAIProjectTable": {
+    "ContainerRegistry": "Registri Kontainer",
+    "ContainerRegistryProject": "Proyek Registri Kontainer",
+    "CreatedAt": "Dibuat pada",
+    "Description": "Deskripsi",
+    "Domain": "Domain",
+    "IntegrationID": "ID Integrasi",
+    "Name": "Nama",
+    "Project": "Proyek",
+    "ProjectID": "ID Proyek",
+    "Registry": "Registri",
+    "ResourcePolicy": "Kebijakan Sumber Daya",
+    "ScalingGroups": "Grup Sumber Daya",
+    "StorageNodes": "Node Penyimpanan",
+    "TotalResourceSlots": "Jumlah Slot Sumber Daya",
+    "Type": "Tipe"
+  },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Pilih Folder"
+  },
+  "comp:BAIPropertyFilter": {
+    "PlaceHolder": "Pencarian",
+    "ResetFilter": "Setel ulang filter"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "Batalkan Tarik",
+    "CancelingWillRestartThePulling": "Membatalkan akan memulai kembali penarikan",
+    "FailedToCancelThePulling": "Gagal membatalkan penarikan.",
+    "VersionIsPullingNow": "{{version}} versi menarik sekarang.",
+    "VersionPullCanceledSuccessfully": "Tarik {{version}} versi berhasil dibatalkan.",
+    "WARNING": "PERINGATAN",
+    "YouAreAboutToCancelThisVersion": "Anda akan membatalkan versi ini"
+  },
+  "comp:BAIResourceGroupSelect": {
+    "SelectResourceGroup": "Pilih Grup Sumber Daya"
+  },
+  "comp:BAIResourceNumberWithIcon": {
+    "AllocatedVsRequested": "Dialokasikan / Diminta"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Tak terbatas"
+  },
+  "comp:BAIRouteNodes": {
+    "CreatedAt": "Dibuat pada",
+    "HealthStatus": "Status Kesehatan",
+    "RouteId": "ID Rute",
+    "SchedulingHistory": "Riwayat Penjadwalan",
+    "SessionId": "ID Sesi",
+    "Status": "Status",
+    "TrafficRatio": "Rasio Lalu Lintas",
+    "TrafficStatus": "Status Trafik"
+  },
+  "comp:BAIRouteSchedulingHistoryNodes": {
+    "Attempts": "Percobaan",
+    "Category": "Kategori",
+    "CreatedAt": "Dibuat pada",
+    "ErrorCode": "Kode Kesalahan",
+    "From": "Status asal",
+    "Message": "Pesan",
+    "Phase": "Tahap",
+    "Result": "Hasil",
+    "To": "Status tujuan",
+    "UpdatedAt": "Diperbarui pada"
+  },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "Pilih Varian Runtime"
+  },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "Percobaan",
+    "Category": "Kategori",
+    "CreatedAt": "Dibuat pada",
+    "ErrorCode": "Kode Kesalahan",
+    "From": "Status asal",
+    "Message": "Pesan",
+    "Phase": "Tahap",
+    "Result": "Hasil",
+    "To": "Status tujuan",
+    "UpdatedAt": "Diperbarui pada"
+  },
+  "comp:BAISessionAgentIds": {
+    "Agent": "Agen"
+  },
+  "comp:BAISessionClusterMode": {
+    "MultiNodeShort": "Multi",
+    "SingleNodeShort": "Lajang"
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "Tak terbatas"
+  },
+  "comp:BAIStorageHostSelect": {
+    "SelectStorageHost": "Pilih Host Penyimpanan"
+  },
+  "comp:BAIStorageProxySelect": {
+    "SelectStorageProxy": "Pilih Proksi Penyimpanan"
+  },
+  "comp:BAISubStepNodes": {
+    "EndedAt": "Berakhir pada",
+    "ErrorCode": "Kode Kesalahan",
+    "Message": "Pesan",
+    "Result": "Hasil",
+    "StartedAt": "Dimulai pada",
+    "Step": "Langkah"
+  },
+  "comp:BAITable": {
+    "CollapseAll": "Ciutkan semua",
+    "ExpandAll": "Perluas semua",
+    "ExpandErrorsOnly": "Perluas hanya kesalahan",
+    "ExpandOptions": "Opsi perluasan",
+    "Export": "Ekspor",
+    "ExportCSV": "Ekspor CSV",
+    "GoToFirstPage": "Ke halaman pertama",
+    "InvalidPageNumber": "Nomor halaman tidak valid",
+    "SearchTableColumn": "Kolom Tabel Cari",
+    "SelectColumnToDisplay": "Pilih kolom untuk ditampilkan",
+    "SettingTable": "Pengaturan Tabel"
+  },
+  "comp:BAITestButton": {
+    "Test": "tes"
+  },
+  "comp:BAIUserResourcePolicyV2Table": {
+    "CreatedAt": "Dibuat di",
+    "MaxConcurrentLogins": "Login Bersamaan Maksimum",
+    "MaxCustomizedImageCount": "Jumlah Gambar Khusus Maksimum",
+    "MaxQuotaScopeSize": "Ukuran Folder Maks",
+    "MaxSessionCountPerModelSession": "Jumlah Sesi Maks Per Sesi Model",
+    "MaxVFolderCount": "Jumlah Folder Maks",
+    "Name": "Nama"
+  },
+  "comp:BAIUserSelect": {
+    "SelectUser": "Pilih Pengguna"
+  },
+  "comp:BAIVFolderMountConfigInput": {
+    "AliasInvalid": "Format jalur tidak valid.",
+    "AliasOverlapping": "Jalur mount bertumpang tindih dengan folder lain.",
+    "AliasPlaceholder": "Jalur mount",
+    "AutoMountedFolders": "Folder mount otomatis",
+    "Name": "Nama",
+    "PathAndAlias": "Jalur & Alias",
+    "PathAndAliasTooltip": "Jalur di dalam container tempat folder akan di-mount. Kosongkan untuk menggunakan jalur default.",
+    "RemoveFolder": "Hapus",
+    "Subpath": "Subjal",
+    "SubpathInvalid": "Subjalur harus berupa jalur relatif dan tidak boleh mengandung '..'.",
+    "SubpathPlaceholder": "mis. dataset/train (opsional)",
+    "SubpathTooltip": "Mount subfolder di dalam folder sebagai sumber, bukan dari direktori root-nya. Kosongkan untuk mount dari root."
+  },
+  "comp:BAIVFolderSelect": {
+    "SelectFolder": "Pilih Folder"
+  },
+  "comp:FileExplorer": {
+    "ArchiveDownloadStarted": "Unduhan {{count}} item telah dimulai.",
+    "ChangeFileExtension": "Ubah ekstensi file",
+    "ChangeFileExtensionDesc": "Mengubah ekstensi file dapat menyebabkan file menjadi tidak dapat digunakan atau dibuka secara tidak benar. \nApakah Anda ingin melanjutkan?",
+    "Controls": "Kontrol",
+    "CreateANewFile": "Create a new file",
+    "CreateANewFolder": "Buat folder baru",
+    "CreateFile": "Create File",
+    "CreateFolder": "Create Folder",
+    "CreatedAt": "Dibuat di",
+    "DeleteSelectedItemDesc": "File dan folder yang dihapus tidak dapat dipulihkan. \nApakah Anda ingin melanjutkan?",
+    "DeleteSelectedItemsDialog": "Hapus Konfirmasi",
+    "DownloadSelected": "Unduh",
+    "DownloadStarted": "File \"{{fileName}}\" unduhan telah dimulai.",
+    "DragAndDropDesc": "Seret dan jatuhkan file ke area ini untuk diunggah.",
+    "DuplicatedFiles": "Timpa konfirmasi",
+    "DuplicatedFilesDesc": "File atau folder dengan nama yang sama sudah ada. \nApakah Anda ingin menimpa?",
+    "EditFile": "Edit File",
+    "FileCreatedSuccessfully": "File created successfully.",
+    "FileName": "File Name",
+    "FileNamePlaceholder": "e.g. model-definition.yaml",
+    "FileTooLargeToEdit": "Pengeditan di browser dibatasi karena ukuran file melebihi {{size}}MB.",
+    "FolderCreatedSuccessfully": "Folder berhasil dibuat.",
+    "FolderName": "Nama folder",
+    "InvalidFileNameCharacters": "File name must not contain path separators (/ or \\\\).",
+    "MaxFileNameLength": "File name must be 255 characters or less.",
+    "MaxFolderNameLength": "Nama folder harus 255 karakter atau kurang.",
+    "ModifiedAt": "Dimodifikasi di",
+    "MoreOptions": "Opsi lainnya",
+    "Name": "Nama",
+    "NoUploadPermissionForHost": "Anda tidak memiliki izin unggah untuk host ini.",
+    "PleaseEnterAFileName": "Please enter the file name.",
+    "PleaseEnterAFolderName": "Harap masukkan nama folder.",
+    "RenameSuccess": "Namanya telah berhasil diubah.",
+    "SelectedItemsDeletedSuccessfully": "File dan folder yang dipilih telah berhasil dihapus.",
+    "Size": "Ukuran",
+    "TypeDeleteToConfirm": "Ketik 'Menghapus' untuk mengonfirmasi.",
+    "TypeFolderNameToDelete": "Ketik folder atau nama file yang ingin dihapus.",
+    "UnsupportedFileFormat": "Format file ini tidak mendukung pengeditan.",
+    "UploadFiles": "Unggah file",
+    "UploadFolder": "Unggah folder",
+    "error": {
+      "DuplicatedName": "Nama ini sudah digunakan. \nHarap masukkan nama yang berbeda.",
+      "FileNameRequired": "Harap masukkan file atau nama folder."
+    }
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{end}} dari {{total}} item"
+  },
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "Tidak ada data sumber daya yang tersedia"
+  },
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "Akselerator AI",
+    "CPU": "CPU",
+    "ClusterMode": "Mode Kluster",
+    "CreatedAt": "Dibuat pada",
+    "ElapsedTime": "Waktu Berlalu",
+    "Environments": "Lingkungan",
+    "Memory": "Memori",
+    "OwnerEmail": "Email Pemilik",
+    "Project": "Proyek",
+    "ResourceGroup": "Grup Sumber Daya",
+    "SessionId": "ID Sesi",
+    "SessionName": "Nama Sesi",
+    "SessionType": "Jenis Sesi",
+    "Status": "Status",
+    "TerminateSession": "Hentikan Sesi"
+  },
+  "comp:UserNodes": {
+    "AllowedClientIps": "IP Klien yang Diizinkan",
+    "ContainerGIDs": "GID tambahan",
+    "ContainerGIDsTooltip": "ID grup numerik tambahan yang ditetapkan pada proses kontainer",
+    "ContainerMainGID": "GID kontainer",
+    "ContainerMainGIDTooltip": "ID grup numerik default yang ditetapkan untuk proses di dalam kontainer",
+    "ContainerUID": "UID kontainer",
+    "ContainerUIDTooltip": "ID pengguna numerik yang ditetapkan untuk proses di dalam kontainer",
+    "CreatedAt": "Dibuat pada",
+    "Description": "Deskripsi",
+    "Disabled": "Nonaktif",
+    "DomainName": "Domain",
+    "Email": "Email",
+    "Enabled": "Aktif",
+    "FullName": "Nama Lengkap",
+    "IntegrationName": "Nama integrasi",
+    "MainAccessKey": "Kunci Akses Utama",
+    "ModifiedAt": "Dimodifikasi pada",
+    "NeedPasswordChange": "Perlu Ganti Kata Sandi",
+    "Project": "Proyek",
+    "ResourcePolicy": "Kebijakan Sumber Daya",
+    "Role": "Peran",
+    "Status": "Status",
+    "StatusInfo": "Info Status",
+    "SudoSessionEnabled": "Sesi Sudo Diaktifkan",
+    "TwoFA": "Autentikasi Dua Faktor",
+    "TwoFAActivatedAt": "2FA Diaktifkan Pada",
+    "UserID": "ID Pengguna",
+    "Username": "Nama Pengguna"
+  },
+  "error": {
+    "UnknownError": "Terjadi kesalahan yang tidak diketahui. \nTolong coba lagi."
+  },
+  "general": {
+    "DeselectAll": "Batalkan semua pilihan",
+    "File": "Berkas",
+    "NSelected": "{{count}} dipilih",
+    "Optional": "Opsional",
+    "Project": "Proyek",
+    "TotalItems": "Total {{total}} item",
+    "button": {
+      "Cancel": "Membatalkan",
+      "Close": "Menutup",
+      "Collapse": "Runtuh",
+      "Copied": "Disalin",
+      "CopyAll": "Salin semua",
+      "Create": "Membuat",
+      "Delete": "Menghapus",
+      "Edit": "Edit",
+      "Expand": "Memperluas",
+      "Remove": "Menghapus",
+      "Save": "Simpan",
+      "Upload": "Mengunggah"
+    },
+    "modal": {
+      "DeleteForeverDesc": "PERINGATAN: Item yang dipilih akan dihapus selamanya dan tidak dapat dipulihkan.",
+      "ItemSelectedWithCount": "{{count}} item dipilih.",
+      "PleaseTypeToConfirm": "Silakan ketik {{ confirmText }} untuk mengonfirmasi."
+    },
+    "validation": {
+      "LetterNumber-_dot": "Hanya huruf, angka, '-', '_', dan '.' yang diperbolehkan.",
+      "LetterNumber:/-_dot": "Hanya huruf (A–Z, a–z), angka, '-', '_', ':', '/' dan '.' yang diizinkan."
+    }
+  }
+}

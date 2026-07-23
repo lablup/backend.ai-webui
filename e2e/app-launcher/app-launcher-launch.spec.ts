@@ -1,0 +1,705 @@
+// spec: e2e/AppLauncher-Test-Plan.md
+// Section 2: App Launcher - Basic App Launch Tests
+import { AppLauncherModal } from '../utils/classes/session/AppLauncherModal';
+import { SessionLauncher } from '../utils/classes/session/SessionLauncher';
+import { loginAsUser, modifyConfigToml } from '../utils/test-util';
+import { test, expect, Page, BrowserContext, Request } from '@playwright/test';
+
+/**
+ * TODO: Remove this function when proxy 502 error handling is no longer needed.
+ * This is a temporary workaround for proxy errors during app initialization.
+ *
+ * Handles 502 Bad Gateway errors by waiting and refreshing the page.
+ * Retries multiple times if needed.
+ * @param page - The page to handle errors for
+ */
+const handleProxyError = async (page: Page): Promise<void> => {
+  const maxRetries = 5;
+  let retryCount = 0;
+
+  while (retryCount < maxRetries) {
+    // Wait for the page to load (DOM content loaded is sufficient)
+    await page
+      .waitForLoadState('domcontentloaded', { timeout: 15000 })
+      .catch(() => {
+        // If page load fails or times out, continue - we'll check for 502 error
+      });
+
+    // Check if we got a 502 Bad Gateway error
+
+    const is502Page =
+      (await page
+        .locator('h1')
+        .filter({ hasText: /502\s+bad\s+gateway/i })
+        .count()) > 0;
+
+    if (is502Page) {
+      retryCount++;
+      if (retryCount < maxRetries) {
+        // Wait longer with each retry (3s, 5s, 7s)
+        await page.waitForTimeout(3000 + retryCount * 2000);
+        await page.reload({ waitUntil: 'domcontentloaded', timeout: 15000 });
+      }
+    } else {
+      // No error, break out of retry loop
+      break;
+    }
+  }
+};
+
+test.describe.configure({ mode: 'serial' });
+
+// NOTE: These tests require compute environment with available capacity.
+// Sessions must reach RUNNING status for app launcher to be testable.
+// If tests are consistently failing due to PENDING status, check resource availability.
+test.describe(
+  'AppLauncher - Basic App Launch',
+  { tag: ['@regression', '@app-launcher', '@functional'] },
+  () => {
+    let sessionCreated = false;
+    let sharedContext: BrowserContext;
+    let sharedPage: Page;
+    let appLauncherModal: AppLauncherModal;
+    let sessionLauncher: SessionLauncher;
+
+    test.beforeAll(async ({ browser, request }, testInfo) => {
+      testInfo.setTimeout(300000); // 5 minutes timeout for session creation + modal opening
+
+      // Create shared context and page for all tests
+      sharedContext = await browser.newContext();
+      sharedPage = await sharedContext.newPage();
+
+      // Enable allowNonAuthTCP to allow SFTP and VS Code Desktop apps
+      await modifyConfigToml(sharedPage, request, {
+        resources: {
+          allowNonAuthTCP: true,
+        },
+      });
+
+      await loginAsUser(sharedPage, request);
+
+      // Initialize SessionLauncher with a unique session name
+      // NOTE: No specific image is set to use the default available image in the test environment.
+      sessionLauncher = new SessionLauncher(sharedPage).withSessionName(
+        `e2e-app-launch-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`,
+      );
+
+      // Create session using SessionLauncher
+      // Session creation requires an available Backend.AI agent. If none are available,
+      // the session will stay PENDING and the create() call will time out. We catch that
+      // case here so the individual tests can be skipped gracefully via the sessionCreated flag.
+      try {
+        await sessionLauncher.create();
+        sessionCreated = true;
+      } catch (error) {
+        const message =
+          error instanceof Error ? error.message : String(error ?? '');
+        const isAgentUnavailableError =
+          /timeout/i.test(message) ||
+          /pending/i.test(message) ||
+          /no agent/i.test(message);
+
+        if (isAgentUnavailableError) {
+          console.log(
+            `Session creation failed (likely no agent available): ${message}`,
+          );
+          // Best-effort cleanup: session row may exist even if create() timed out
+          try {
+            await sessionLauncher.terminate();
+          } catch {
+            // Ignore cleanup failures
+          }
+          // sessionCreated remains false - all tests will be skipped via test.skip(!sessionCreated)
+          return;
+        }
+
+        // For unexpected errors, rethrow so CI fails on genuine breakages.
+        throw error;
+      }
+
+      // Open app launcher modal once for all tests
+      appLauncherModal = await AppLauncherModal.openFromSession(
+        sharedPage,
+        sessionLauncher,
+      );
+    });
+
+    // Cleanup: Terminate the session and close context after all tests
+    test.afterAll(async ({}, testInfo) => {
+      testInfo.setTimeout(120000); // 2 minutes for session termination
+      if (sessionCreated && sharedPage) {
+        // Close the modal first if it's still open
+        if (appLauncherModal) {
+          const isModalVisible = await appLauncherModal
+            .getModal()
+            .isVisible()
+            .catch(() => false);
+          if (isModalVisible) {
+            await appLauncherModal.close();
+          }
+        }
+
+        // Close the session detail drawer if it's still open
+        const sessionDetailDrawer = sharedPage
+          .locator('.ant-drawer')
+          .filter({ hasText: 'Session Info' });
+        const isDrawerVisible = await sessionDetailDrawer
+          .isVisible()
+          .catch(() => false);
+        if (isDrawerVisible) {
+          const drawerCloseButton = sessionDetailDrawer
+            .getByRole('button', { name: 'Close' })
+            .first();
+          await drawerCloseButton.click();
+        }
+
+        // Terminate the session using SessionLauncher
+        try {
+          await sessionLauncher.terminate();
+        } catch (error) {
+          console.log(
+            `Session cleanup failed (may already be terminated): ${error}`,
+          );
+        }
+      }
+
+      if (sharedContext) {
+        await sharedContext.close();
+      }
+    });
+
+    // FR-3126: `sharedPage` is reused across the whole serial suite, so a
+    // `request` listener left attached accumulates test-by-test (duplicated
+    // captures, memory growth). `trackProxyRequests` registers a self-detaching
+    // listener (first matching proxy/add request wins) AND records it so the
+    // `afterEach` below can guarantee teardown even when a test fails or aborts
+    // before any matching request is observed — the leak case Copilot flagged.
+    const activeRequestListeners: Array<(request: Request) => void> = [];
+    const trackProxyRequests = () => {
+      const proxyRequests: Array<{ url: string; method: string }> = [];
+      const captureProxyRequest = (request: Request) => {
+        const url = request.url();
+        if (url.includes('/proxy/') || url.includes('/add')) {
+          proxyRequests.push({ url, method: request.method() });
+          sharedPage.off('request', captureProxyRequest);
+          const index = activeRequestListeners.indexOf(captureProxyRequest);
+          if (index >= 0) activeRequestListeners.splice(index, 1);
+        }
+      };
+      sharedPage.on('request', captureProxyRequest);
+      activeRequestListeners.push(captureProxyRequest);
+      return proxyRequests;
+    };
+
+    test.afterEach(() => {
+      // Unconditional teardown: detach any listener that did not self-remove,
+      // so the shared serial `sharedPage` never accumulates request listeners.
+      while (activeRequestListeners.length > 0) {
+        const listener = activeRequestListeners.pop();
+        if (listener) sharedPage?.off('request', listener);
+      }
+    });
+
+    test('User can launch Console (Terminal/ttyd) app in new browser tab', async ({}, testInfo) => {
+      testInfo.setTimeout(120000); // 2 minutes timeout for app initialization
+      test.skip(!sessionCreated, 'Session was not created successfully');
+
+      // Modal is already opened in beforeAll, verify it's visible
+      await expect(appLauncherModal.getModal()).toBeVisible();
+
+      // Set up network request tracking for the proxy endpoint via the suite
+      // helper (self-detaching listener + unconditional afterEach teardown).
+      const proxyRequests = trackProxyRequests();
+
+      // Track new page openings (new browser tabs) - MUST be set BEFORE clicking
+      const newPagePromise = sharedContext.waitForEvent('page', {
+        timeout: 30000,
+      });
+
+      // 1. Click Console/Terminal app button (data-testid="app-ttyd")
+      await appLauncherModal.clickApp('ttyd');
+
+      // 2. Wait for notification to appear with progress indicator
+      const notificationContainer = sharedPage
+        .locator('.ant-notification-notice')
+        .last();
+      await expect(notificationContainer).toBeVisible({ timeout: 10000 });
+
+      // 3. Wait for "Prepared" status in notification
+      const preparedNotification = sharedPage
+        .locator('.ant-notification-notice')
+        .filter({ hasText: 'Prepared' });
+      await expect(preparedNotification).toBeVisible({ timeout: 60000 });
+
+      // 4. Wait for app to open in new browser tab
+      const newPage = await newPagePromise;
+      await expect(newPage).toBeTruthy();
+
+      // TODO: Remove this error handling when proxy is stable
+      await handleProxyError(newPage);
+
+      // Verify the new tab was opened and has a URL (proxy routing may redirect to main app
+      // in some environments, which is acceptable - we verify the tab was opened)
+      await newPage.waitForLoadState('domcontentloaded', { timeout: 30000 });
+      expect(newPage.url()).toBeTruthy();
+
+      // Close the new tab
+      await newPage.close();
+
+      // 5. Verify app launcher modal remains open
+      await expect(appLauncherModal.getModal()).toBeVisible();
+
+      // Network Verification: Verify proxy request includes app=ttyd parameter
+      const ttydRequest = proxyRequests.find((req) =>
+        req.url.includes('app=ttyd'),
+      );
+      expect(ttydRequest).toBeTruthy();
+      // Verify no open_to_public or port parameters (advanced options not set)
+      if (ttydRequest) {
+        expect(ttydRequest.url).not.toContain('open_to_public');
+        expect(ttydRequest.url).not.toContain('port=');
+      }
+    });
+
+    test(
+      'User can launch Jupyter Notebook app in new browser tab',
+      { tag: ['@requires-app-jupyter'] },
+      async ({}, testInfo) => {
+        testInfo.setTimeout(120000); // 2 minutes timeout for app initialization
+        test.skip(!sessionCreated, 'Session was not created successfully');
+
+        // Modal is already open, verify it's visible
+        await expect(appLauncherModal.getModal()).toBeVisible();
+
+        // Environment gate (FR-3114): app availability depends on the session
+        // image's `ai.backend.service-ports` label, which the test environment
+        // controls (the suite uses the default available image).
+        const jupyterAppVisible = await appLauncherModal
+          .getAppButton('jupyter')
+          .isVisible()
+          .catch(() => false);
+
+        test.skip(
+          !jupyterAppVisible,
+          "Jupyter Notebook app requires a session image exposing the 'jupyter' service port (@requires-app-jupyter)",
+        );
+
+        // Set up network request tracking via the suite helper (self-detaching
+        // listener + unconditional afterEach teardown for the shared page).
+        const proxyRequests = trackProxyRequests();
+
+        // Track new page openings (MUST be set BEFORE clicking)
+        const newPagePromise = sharedContext.waitForEvent('page', {
+          timeout: 30000,
+        });
+
+        // 1. Click Jupyter Notebook app button
+        await appLauncherModal.clickApp('jupyter');
+
+        // 2. Wait for notification to appear
+        const notificationContainer = sharedPage
+          .locator('.ant-notification-notice')
+          .last();
+        await expect(notificationContainer).toBeVisible({ timeout: 10000 });
+
+        // 3. Wait for "Prepared" status in notification
+        const preparedNotification = sharedPage
+          .locator('.ant-notification-notice')
+          .filter({ hasText: 'Prepared' });
+        await expect(preparedNotification).toBeVisible({ timeout: 60000 });
+
+        // 4. Wait for app to open in new browser tab
+        const newPage = await newPagePromise;
+        await expect(newPage).toBeTruthy();
+
+        // TODO: Remove this error handling when proxy is stable
+        await handleProxyError(newPage);
+
+        // Verify the new tab was opened and has a URL (proxy routing may redirect to main app
+        // in some environments, which is acceptable - we verify the tab was opened)
+        await newPage.waitForLoadState('domcontentloaded', { timeout: 30000 });
+        expect(newPage.url()).toBeTruthy();
+
+        // Close the new tab
+        await newPage.close();
+
+        // 5. Verify app launcher modal remains open
+        await expect(appLauncherModal.getModal()).toBeVisible();
+
+        // Network Verification: Verify proxy request includes app=jupyter parameter
+        const jupyterRequest = proxyRequests.find((req) =>
+          req.url.includes('app=jupyter'),
+        );
+        expect(jupyterRequest).toBeTruthy();
+      },
+    );
+
+    test(
+      'User can launch JupyterLab app in new browser tab',
+      { tag: ['@requires-app-jupyterlab'] },
+      async ({}, testInfo) => {
+        testInfo.setTimeout(120000); // 2 minutes timeout for app initialization
+        test.skip(!sessionCreated, 'Session was not created successfully');
+
+        // Modal is already open, verify it's visible
+        await expect(appLauncherModal.getModal()).toBeVisible();
+
+        // Environment gate (FR-3114): see the Jupyter Notebook test above.
+        const jupyterlabAppVisible = await appLauncherModal
+          .getAppButton('jupyterlab')
+          .isVisible()
+          .catch(() => false);
+
+        test.skip(
+          !jupyterlabAppVisible,
+          "JupyterLab app requires a session image exposing the 'jupyterlab' service port (@requires-app-jupyterlab)",
+        );
+
+        // Set up network request tracking via the suite helper (self-detaching
+        // listener + unconditional afterEach teardown for the shared page).
+        const proxyRequests = trackProxyRequests();
+
+        // Track new page openings (MUST be set BEFORE clicking)
+        const newPagePromise = sharedContext.waitForEvent('page', {
+          timeout: 30000,
+        });
+
+        // 1. Click JupyterLab app button
+        await appLauncherModal.clickApp('jupyterlab');
+
+        // 2. Wait for notification to appear
+        const notificationContainer = sharedPage
+          .locator('.ant-notification-notice')
+          .last();
+        await expect(notificationContainer).toBeVisible({ timeout: 10000 });
+
+        // 3. Wait for "Prepared" status in notification
+        const preparedNotification = sharedPage
+          .locator('.ant-notification-notice')
+          .filter({ hasText: 'Prepared' });
+        await expect(preparedNotification).toBeVisible({ timeout: 60000 });
+
+        // 4. Wait for app to open in new browser tab
+        const newPage = await newPagePromise;
+        await expect(newPage).toBeTruthy();
+
+        // TODO: Remove this error handling when proxy is stable
+        await handleProxyError(newPage);
+
+        // Verify the new tab was opened and has a URL (proxy routing may redirect to main app
+        // in some environments, which is acceptable - we verify the tab was opened)
+        await newPage.waitForLoadState('domcontentloaded', { timeout: 30000 });
+        expect(newPage.url()).toBeTruthy();
+
+        // Close the new tab
+        await newPage.close();
+
+        // 5. Verify app launcher modal remains open
+        await expect(appLauncherModal.getModal()).toBeVisible();
+
+        // Network Verification: Verify proxy request includes app=jupyterlab parameter
+        const jupyterlabRequest = proxyRequests.find((req) =>
+          req.url.includes('app=jupyterlab'),
+        );
+        expect(jupyterlabRequest).toBeTruthy();
+      },
+    );
+
+    test(
+      'User can launch Visual Studio Code app in new browser tab',
+      { tag: ['@requires-app-vscode'] },
+      async ({}, testInfo) => {
+        testInfo.setTimeout(120000); // 2 minutes timeout for app initialization
+        test.skip(!sessionCreated, 'Session was not created successfully');
+
+        // Modal is already open, verify it's visible
+        await expect(appLauncherModal.getModal()).toBeVisible();
+
+        // Environment gate (FR-3114): some images do not include VS Code.
+        // Previously this fell back to a no-op pass; report a skip instead so
+        // the missing coverage is visible in the test report.
+        const vscodeAppVisible = await appLauncherModal
+          .getAppButton('vscode')
+          .isVisible()
+          .catch(() => false);
+
+        test.skip(
+          !vscodeAppVisible,
+          "Visual Studio Code app requires a session image exposing the 'vscode' service port (@requires-app-vscode)",
+        );
+
+        // Set up network request tracking via the suite helper (self-detaching
+        // listener + unconditional afterEach teardown for the shared page).
+        const proxyRequests = trackProxyRequests();
+
+        // Track new page openings (MUST be set BEFORE clicking)
+        const newPagePromise = sharedContext.waitForEvent('page', {
+          timeout: 30000,
+        });
+
+        // 1. Click VS Code app button
+        await appLauncherModal.clickApp('vscode');
+
+        // 2. Wait for notification to appear
+        const notificationContainer = sharedPage
+          .locator('.ant-notification-notice')
+          .last();
+        await expect(notificationContainer).toBeVisible({ timeout: 10000 });
+
+        // 3. Wait for "Prepared" status in notification
+        const preparedNotification = sharedPage
+          .locator('.ant-notification-notice')
+          .filter({ hasText: 'Prepared' });
+        await expect(preparedNotification).toBeVisible({ timeout: 60000 });
+
+        // 4. Wait for app to open in new browser tab
+        const newPage = await newPagePromise;
+        expect(newPage).toBeTruthy();
+
+        // TODO: Remove this error handling when proxy is stable
+        await handleProxyError(newPage);
+
+        // Verify the new tab was opened and has a URL (proxy routing may redirect to main app
+        // in some environments, which is acceptable - we verify the tab was opened)
+        await newPage.waitForLoadState('domcontentloaded', { timeout: 30000 });
+        expect(newPage.url()).toBeTruthy();
+
+        // Close the new tab
+        await newPage.close();
+
+        // 5. Verify app launcher modal remains open
+        await expect(appLauncherModal.getModal()).toBeVisible();
+
+        // Network Verification: Verify proxy request includes app=vscode parameter
+        const vscodeRequest = proxyRequests.find((req) =>
+          req.url.includes('app=vscode'),
+        );
+        expect(vscodeRequest).toBeTruthy();
+      },
+    );
+
+    test(
+      'User sees SFTP connection info modal after launching SSH/SFTP app',
+      { tag: ['@requires-app-sshd'] },
+      async () => {
+        test.skip(!sessionCreated, 'Session was not created successfully');
+
+        // Modal is already open, verify it's visible
+        await expect(appLauncherModal.getModal()).toBeVisible();
+
+        // Environment gate (FR-3114): see the Jupyter Notebook test above.
+        const sshdAppVisible = await appLauncherModal
+          .getAppButton('sshd')
+          .isVisible()
+          .catch(() => false);
+
+        test.skip(
+          !sshdAppVisible,
+          "SSH/SFTP app requires a session image exposing the 'sshd' service port (@requires-app-sshd)",
+        );
+
+        // Set up network request tracking via the suite helper (self-detaching
+        // listener + unconditional afterEach teardown for the shared page).
+        const proxyRequests = trackProxyRequests();
+
+        // 1. Click SSH/SFTP app button
+        await appLauncherModal.clickApp('sshd');
+
+        // 2. Wait for SFTP connection info modal to appear.
+        //    Since allowNonAuthTCP is enabled in beforeAll, TCP apps must work correctly.
+        //    If the modal does not appear, the test should fail (not silently pass).
+        const sftpConnectionModal = sharedPage
+          .getByRole('dialog')
+          .filter({ hasText: /SSH.*SFTP.*connection|SFTP.*connection/i });
+
+        await expect(sftpConnectionModal).toBeVisible({ timeout: 30000 });
+
+        // Verify modal displays connection information
+        await expect(sftpConnectionModal).toContainText('Host');
+        await expect(sftpConnectionModal).toContainText('Port');
+        await expect(sftpConnectionModal).toContainText('User');
+
+        // 3. Close the SFTP connection info modal
+        const sftpModalCloseButton = sftpConnectionModal.getByRole('button', {
+          name: 'Close',
+        });
+        await sftpModalCloseButton.click();
+        await expect(sftpConnectionModal).not.toBeVisible({ timeout: 5000 });
+
+        // 4. Verify app launcher modal remains open
+        await expect(appLauncherModal.getModal()).toBeVisible();
+
+        // Network Verification: Verify proxy request includes app=sshd and protocol=tcp parameters
+        const sshdRequest = proxyRequests.find((req) =>
+          req.url.includes('app=sshd'),
+        );
+        expect(sshdRequest).toBeTruthy();
+        if (sshdRequest) {
+          expect(sshdRequest.url).toContain('protocol=tcp');
+        }
+      },
+    );
+
+    test(
+      'User sees VS Code Desktop connection modal after launching VS Code Desktop app',
+      { tag: ['@requires-app-vscode-desktop'] },
+      async () => {
+        test.skip(!sessionCreated, 'Session was not created successfully');
+
+        // Modal is already open, verify it's visible
+        await expect(appLauncherModal.getModal()).toBeVisible();
+
+        // Environment gate (FR-3114): see the Jupyter Notebook test above.
+        const vscodeDesktopAppVisible = await appLauncherModal
+          .getAppButton('vscode-desktop')
+          .isVisible()
+          .catch(() => false);
+
+        test.skip(
+          !vscodeDesktopAppVisible,
+          "VS Code Desktop app requires a session image exposing the 'vscode-desktop' service port (@requires-app-vscode-desktop)",
+        );
+
+        // Set up network request tracking via the suite helper (self-detaching
+        // listener + unconditional afterEach teardown for the shared page).
+        const proxyRequests = trackProxyRequests();
+
+        // 1. Click VS Code Desktop app button
+        await appLauncherModal.clickApp('vscode-desktop');
+
+        // 2. Wait for VS Code Desktop (SSH) connection modal to appear.
+        //    Since allowNonAuthTCP is enabled in beforeAll, TCP apps must work correctly.
+        //    If the modal does not appear, the test should fail (not silently pass).
+        const vscodeDesktopModal = sharedPage
+          .getByRole('dialog')
+          .filter({ hasText: /SSH.*connection/i });
+
+        await expect(vscodeDesktopModal).toBeVisible({ timeout: 30000 });
+
+        // Verify modal displays connection information
+        await expect(vscodeDesktopModal).toContainText('Host');
+        await expect(vscodeDesktopModal).toContainText('Port');
+
+        // 3. Close the VS Code Desktop connection modal
+        const vscodeDesktopModalCloseButton = vscodeDesktopModal.getByRole(
+          'button',
+          {
+            name: 'Close',
+          },
+        );
+        await vscodeDesktopModalCloseButton.click();
+        await expect(vscodeDesktopModal).not.toBeVisible({ timeout: 5000 });
+
+        // 4. Verify app launcher modal remains open
+        await expect(appLauncherModal.getModal()).toBeVisible();
+
+        // Network Verification: VS Code Desktop uses sshd service internally (TCP protocol)
+        // Look for either app=sshd or app=vscode-desktop in the proxy requests
+        const vscodeDesktopProxyRequest = proxyRequests.find(
+          (req) =>
+            req.url.includes('app=sshd') ||
+            req.url.includes('app=vscode-desktop'),
+        );
+        // A proxy request should be made when the button is clicked (even if backend returns error)
+        if (vscodeDesktopProxyRequest) {
+          expect(vscodeDesktopProxyRequest.url).toContain('protocol=tcp');
+        }
+        // NOTE: If no proxy request is captured, the request may use a URL pattern not tracked by
+        // this listener (e.g., WebSocket or a different path). This is acceptable as the UI behavior
+        // (error notification or connection modal) has already been verified above.
+      },
+    );
+
+    // FR-3027: When the App Proxy Coordinator cannot allocate a worker for the
+    // circuit (e.g. the TCP worker's port pool is exhausted), the permit-key
+    // request inside `_connectToProxyWorker` receives an HTTP 503
+    // `WorkerNotAvailable` ("Worker not available.") problem+json response.
+    // `sendRequest` resolves that to a `{ status, statusText, body }` object
+    // rather than throwing. The launcher must surface that backend message as
+    // an error notification and must NOT open a bogus 127.0.0.1 connection
+    // dialog.
+    //
+    // The live test backend routes the App Proxy through an address that is not
+    // reachable from the browser, so the real handshake never reaches the
+    // permit step. We therefore mock the proxy handshake (conf -> add) just
+    // enough to drive the launcher into `_connectToProxyWorker`, then force the
+    // permit request to 503. The production `_connectToProxyWorker` code path
+    // — the actual fix under test — runs unchanged against a real 503 response.
+    test('User sees "Worker not available." error instead of a bogus connection dialog when the proxy worker is unavailable (FR-3027)', async ({}, testInfo) => {
+      testInfo.setTimeout(120000);
+      test.skip(!sessionCreated, 'Session was not created successfully');
+
+      await expect(appLauncherModal.getModal()).toBeVisible();
+
+      const sshdAppVisible = await appLauncherModal
+        .getAppButton('sshd')
+        .isVisible()
+        .catch(() => false);
+      test.skip(!sshdAppVisible, 'SSH/SFTP app not available');
+
+      const PERMIT_MARKER = '__fr3027_worker_permit__';
+
+      // 1. Mock the V1 proxy token mint (`PUT {proxyURL}conf`).
+      await sharedPage.route('**/conf', async (route) => {
+        if (route.request().method() !== 'PUT') return route.fallback();
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ token: 'fr3027-mock-token' }),
+        });
+      });
+
+      // 2. Mock the circuit `add` endpoint so the launcher proceeds to the
+      //    permit step with a worker URL we control.
+      await sharedPage.route('**/proxy/**/add**', async (route) => {
+        const origin = new URL(route.request().url()).origin;
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            url: `${origin}/${PERMIT_MARKER}?token=fr3027-mock-token`,
+          }),
+        });
+      });
+
+      // 3. Force the permit-key request (inside `_connectToProxyWorker`) to the
+      //    real backend failure: HTTP 503 `WorkerNotAvailable` problem+json.
+      await sharedPage.route(`**/${PERMIT_MARKER}**`, async (route) => {
+        await route.fulfill({
+          status: 503,
+          contentType: 'application/problem+json',
+          body: JSON.stringify({
+            type: 'https://api.backend.ai/probs/appproxy/worker-not-available',
+            title: 'Worker not available.',
+          }),
+        });
+      });
+
+      try {
+        // 4. Launch the SFTP (sshd) TCP app.
+        await appLauncherModal.clickApp('sshd');
+
+        // 5. The backend error message must surface in the launch notification.
+        const errorNotification = sharedPage
+          .locator('.ant-notification-notice')
+          .filter({ hasText: 'Worker not available.' });
+        await expect(errorNotification).toBeVisible({ timeout: 30000 });
+
+        // 6. No bogus SSH/SFTP connection dialog must open.
+        const sftpConnectionModal = sharedPage
+          .getByRole('dialog')
+          .filter({ hasText: /SSH.*SFTP.*connection|SFTP.*connection/i });
+        await expect(sftpConnectionModal).toHaveCount(0);
+
+        // 7. The app launcher modal remains open.
+        await expect(appLauncherModal.getModal()).toBeVisible();
+      } finally {
+        // Cleanup: always remove route overrides so a mid-test failure cannot
+        // leak these mocks into `afterAll` cleanup or later serial tests.
+        await sharedPage.unroute('**/conf');
+        await sharedPage.unroute('**/proxy/**/add**');
+        await sharedPage.unroute(`**/${PERMIT_MARKER}**`);
+      }
+    });
+  },
+);

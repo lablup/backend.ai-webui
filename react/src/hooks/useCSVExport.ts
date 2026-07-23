@@ -1,0 +1,93 @@
+import { useSuspendedBackendaiClient } from '.';
+import { downloadCSV } from '../helper/csv-util';
+import { useCurrentUserRole } from './backendai';
+import { useSuspenseTanQuery } from './reactQueryAlias';
+import {
+  ErrorResponse,
+  useBAISignedRequestWithPromise,
+  useErrorMessageResolver,
+} from 'backend.ai-ui';
+import * as _ from 'lodash-es';
+import { useTranslation } from 'react-i18next';
+
+type SupportedNodeKeys = 'sessions' | 'users' | 'projects' | 'audit-logs';
+
+type ReportResponse = {
+  report: {
+    report_key: string;
+    name: string;
+    description: string;
+    fields: Array<{
+      key: string;
+      name: string;
+      description: string;
+      field_type: string;
+    }>;
+  };
+};
+
+export const useCSVExport = (nodeKey: SupportedNodeKeys) => {
+  'use memo';
+
+  const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
+  const baiRequestWithPromise = useBAISignedRequestWithPromise();
+  const { getErrorMessage } = useErrorMessageResolver();
+  const userRole = useCurrentUserRole();
+
+  const isAdmin = userRole === 'superadmin' || userRole === 'admin';
+  const isExportCSVSupported = baiClient.supports('export-csv');
+
+  const { data: supportedFields } = useSuspenseTanQuery<Array<string>>({
+    queryKey: [
+      'CSVExport',
+      'supportedFields',
+      nodeKey,
+      isAdmin,
+      isExportCSVSupported,
+    ],
+    queryFn: () => {
+      if (!isAdmin || !isExportCSVSupported) return [];
+      return baiRequestWithPromise({
+        method: 'GET',
+        url: `/export/reports/${nodeKey}`,
+      }).then((res: ReportResponse) =>
+        _.map(res.report.fields, (field) => field.key),
+      );
+    },
+  });
+
+  const exportCSV = async (
+    selectedExportKeys: string[],
+    filter?: Record<string, unknown>,
+  ) => {
+    return await baiRequestWithPromise({
+      method: 'POST',
+      url: `/export/${nodeKey}/csv`,
+      body: {
+        fields: selectedExportKeys,
+        ...(filter && { filter }),
+      },
+    })
+      .then((res: string) => {
+        const timestamp = new Date()
+          .toISOString()
+          .replace(/[:.]/g, '-')
+          .slice(0, -5);
+        const filename = `${nodeKey}_export_${timestamp}.csv`;
+
+        downloadCSV(res, filename);
+        return Promise.resolve();
+      })
+      .catch((err: ErrorResponse) => {
+        return Promise.reject(
+          getErrorMessage(err, t('general.FailedToExportCSV')),
+        );
+      });
+  };
+
+  return {
+    supportedFields,
+    exportCSV,
+  };
+};

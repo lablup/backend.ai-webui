@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    "target": "ES2016",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "types": ["node"],
+    "paths": {
+      "backend.ai-ui": ["../packages/backend.ai-ui/src/index.ts"],
+      "backend.ai-ui/*": ["../packages/backend.ai-ui/src/*"],
+      "backend.ai-ui/dist/locale/*": ["../packages/backend.ai-ui/src/locale/*"],
+      "backend.ai-client": ["../packages/backend.ai-client/src/index.ts"],
+      "backend.ai-client/*": ["../packages/backend.ai-client/src/*"],
+      "react": ["./node_modules/@types/react"],
+      "react/*": ["./node_modules/@types/react/*"],
+      "react-dom": ["./node_modules/@types/react-dom"],
+      "react-dom/*": ["./node_modules/@types/react-dom/*"]
+    }
+  },
+  "include": [
+    "src",
+    "../packages/backend.ai-ui/src",
+    "../packages/backend.ai-client/src"
+  ],
+  "exclude": [
+    "../packages/backend.ai-ui/src/**/*.test.*",
+    "../packages/backend.ai-ui/src/**/*.stories.*",
+    "../packages/backend.ai-ui/src/**/*.spec.*"
+  ]
+}

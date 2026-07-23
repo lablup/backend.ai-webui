@@ -1,0 +1,127 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import { type ErrorWithGraphQL } from '../components/BAIErrorBoundary';
+import FairShareList from '../components/FairShareItems/FairShareList';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Button, Result, Skeleton, theme, Tooltip } from 'antd';
+import { BAICard, BAIFlex } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
+import {
+  parseAsString,
+  parseAsStringLiteral,
+  useQueryState,
+  useQueryStates,
+} from 'nuqs';
+import { Suspense } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { Trans, useTranslation } from 'react-i18next';
+
+interface SchedulerPageProps {}
+
+const SchedulerPage: React.FC<SchedulerPageProps> = () => {
+  'use memo';
+  const { t } = useTranslation();
+  const { token } = theme.useToken();
+  const [currentTab] = useQueryState(
+    'tab',
+    parseAsStringLiteral(['fair-share']).withDefault('fair-share'),
+  );
+
+  return (
+    <BAICard
+      activeTabKey={currentTab}
+      tabList={[
+        {
+          key: 'fair-share',
+          label: (
+            <BAIFlex gap="xxs">
+              {t('fairShare.FairShareSetting')}
+              <Tooltip
+                title={<Trans i18nKey={t('fairShare.SchedulerDescription')} />}
+              >
+                <QuestionCircleOutlined style={{ fontSize: token.fontSize }} />
+              </Tooltip>
+            </BAIFlex>
+          ),
+        },
+      ]}
+    >
+      <Suspense fallback={<Skeleton active />}>
+        {currentTab === 'fair-share' && (
+          <ErrorBoundary
+            fallbackRender={({ error, resetErrorBoundary }) => {
+              const gqlError = error as ErrorWithGraphQL;
+              // FIXME: @required(action: THROW) can detect invalid URL params, but cannot distinguish other errors that cause null. Needs a better approach later.
+              // Check for invalid query parameters causing GraphQL errors
+              const isWrongParameterError =
+                _.includes(gqlError?.message, 'domainFairShares') ||
+                _.includes(gqlError?.message, 'projectFairShares') ||
+                _.includes(gqlError?.message, 'userFairShares');
+
+              return (
+                <FairShareErrorFallback
+                  isInvalidURLParameterError={isWrongParameterError}
+                  onReset={resetErrorBoundary}
+                />
+              );
+            }}
+          >
+            <FairShareList />
+          </ErrorBoundary>
+        )}
+      </Suspense>
+    </BAICard>
+  );
+};
+
+export default SchedulerPage;
+
+const FairShareErrorFallback: React.FC<{
+  isInvalidURLParameterError: boolean;
+  onReset: () => void;
+}> = ({ isInvalidURLParameterError, onReset }) => {
+  const { t } = useTranslation();
+  const [, setStepQueryParams] = useQueryStates(
+    {
+      resourceGroup: parseAsString,
+      domain: parseAsString,
+      project: parseAsString,
+      user: parseAsString,
+    },
+    { history: 'push' },
+  );
+
+  return (
+    <Result
+      status="warning"
+      title={
+        isInvalidURLParameterError
+          ? t('fairShare.InvalidParameterTitle')
+          : t('fairShare.UnknownErrorOccurred')
+      }
+      subTitle={
+        isInvalidURLParameterError
+          ? t('fairShare.InvalidParameterDescription')
+          : t('fairShare.UnknownErrorDescription')
+      }
+      extra={
+        <Button
+          type="primary"
+          onClick={() => {
+            setStepQueryParams({
+              resourceGroup: null,
+              domain: null,
+              project: null,
+              user: null,
+            });
+            onReset();
+          }}
+        >
+          {t('fairShare.GoBackToFirstStep')}
+        </Button>
+      }
+    />
+  );
+};

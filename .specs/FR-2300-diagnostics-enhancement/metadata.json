@@ -1,0 +1,9 @@
+{
+  "epicKey": "FR-2300",
+  "epicUrl": "https://lablup.atlassian.net/browse/FR-2300",
+  "slug": "diagnostics-enhancement",
+  "specTaskKey": "FR-2301",
+  "stories": [],
+  "sourceIssues": ["FR-1957"],
+  "createdAt": "2026-03-13T00:00:00.000Z"
+}

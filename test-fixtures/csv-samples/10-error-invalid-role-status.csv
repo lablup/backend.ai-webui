@@ -1,0 +1,5 @@
+email,username,password,role,status
+bad-role@example.com,bad-role,Password!23,superuser,active
+bad-status@example.com,bad-status,Password!23,user,disabled
+both-bad@example.com,both-bad,Password!23,manager,suspended
+valid@example.com,valid-row,Password!23,user,active

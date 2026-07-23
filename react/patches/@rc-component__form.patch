@@ -1,0 +1,13 @@
+diff --git a/es/namePathType.d.ts b/es/namePathType.d.ts
+index d9373da14af3612eca3c55c380deecf8e3587e03..e8b67d793d4d71c8cbf8c1f0d4667841b239be30 100644
+--- a/es/namePathType.d.ts
++++ b/es/namePathType.d.ts
+@@ -3,7 +3,7 @@ type BaseNamePath = string | number | boolean | (string | number | boolean)[];
+  * Store: The store type from `FormInstance<Store>`
+  * ParentNamePath: Auto generate by nest logic. Do not fill manually.
+  */
+-export type DeepNamePath<Store = any, ParentNamePath extends any[] = []> = ParentNamePath['length'] extends 5 ? never : true extends (Store extends BaseNamePath ? true : false) ? ParentNamePath['length'] extends 0 ? Store | BaseNamePath : Store extends any[] ? [...ParentNamePath, number] : never : Store extends any[] ? // Connect path. e.g. { a: { b: string }[] }
++export type DeepNamePath<Store = any, ParentNamePath extends any[] = []> = ParentNamePath['length'] extends 3 ? never : true extends (Store extends BaseNamePath ? true : false) ? ParentNamePath['length'] extends 0 ? Store | BaseNamePath : Store extends any[] ? [...ParentNamePath, number] : never : Store extends any[] ? // Connect path. e.g. { a: { b: string }[] }
+ [
+     ...ParentNamePath,
+     number

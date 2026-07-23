@@ -1,0 +1,119 @@
+const child_process = require('child_process')
+const fs = require('fs')
+const { Octokit } = require("octokit")
+const path = require('path')
+
+/**
+ * Environment variables
+ * GITHUB_TOKEN (Required): GitHub authentication token
+ * REPOSITORY: Target repository to upload release asset. defaults to lablup/backend.ai-webui
+ * RELEASE_TAG: Release tag. When unset, falls back to GITHUB_REF_NAME if the run is
+ *              on a tag ref (GITHUB_REF_TYPE === 'tag'), and otherwise — e.g. a
+ *              workflow_dispatch on a branch — to the latest tag via `git describe`.
+ */
+
+const [OWNER, REPOSITORY] = (process.env.REPOSITORY || 'lablup/backend.ai-webui').split('/')
+const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN })
+
+const execCommand = async (command, ...args) => {
+    return await new Promise((res, rej) => {
+        const proc = child_process.spawn(command, args)
+        let stdout = ''
+        let stderr = ''
+        proc.stdout.on('data', (d) => {
+            stdout += d.toString()
+        })
+        proc.stderr.on('data', (d) => {
+            stderr += d.toString()
+        })
+        proc.on('close', (code) => {
+            if (code === 0) res([stdout, stderr])
+            else rej([stdout, stderr])
+        })
+    })
+}
+const getLatestTag = async () => {
+    const [stdout, _] = await execCommand('/usr/bin/env', 'git', 'describe', '--tags', '--abbrev=0')
+    return stdout.trim()
+}
+
+// `release: published` events always run on the tag ref, so GITHUB_REF_NAME is
+// the release tag. Prefer it over `git describe`, which cannot run when the
+// job executes inside a container whose UID does not own the checkout
+// ("detected dubious ownership", FR-3322).
+const resolveTag = async () => {
+    if (process.env.RELEASE_TAG) return process.env.RELEASE_TAG
+    if (process.env.GITHUB_REF_TYPE === 'tag' && process.env.GITHUB_REF_NAME) return process.env.GITHUB_REF_NAME
+    return await getLatestTag()
+}
+
+const getReleaseIdFromTag = async (tag) => {
+    const { data: { id } } = await octokit.rest.repos.getReleaseByTag({ owner: OWNER, repo: REPOSITORY, tag })
+    return id
+}
+
+const getUploadURL = async (releaseId) => {
+    const { data: { upload_url } } = await octokit.rest.repos.getRelease({ owner: OWNER, repo: REPOSITORY, release_id: releaseId })
+    return upload_url
+}
+
+const main = async () => {
+    if (process.argv.length !== 3) {
+        console.error('usage: node upload-release.js <folder containing DMG/ZIP/PDF files>')
+        process.exit(1)
+    }
+    const folder = process.argv[2]
+    let assets = []
+    try {
+        assets = (await fs.promises.readdir(folder)).filter((s) => !s.startsWith('.') && (s.endsWith('.dmg') || s.endsWith('.zip') || s.endsWith('.pdf')))
+    } catch (e) {
+        console.error(e.message)
+        process.exit(1)
+    }
+
+    console.log(`found ${assets.length} asset(s): ${assets}`)
+
+    const tag = await resolveTag()
+    const releaseId = await getReleaseIdFromTag(tag)
+    // Fetch the upload URL once — it's constant per release. Calling
+    // getUploadURL() per asset wastes API quota and risks rate limiting.
+    const uploadUrl = await getUploadURL(releaseId)
+
+    // Upload files concurrently (up to 4 at a time) for faster release publishing
+    const CONCURRENCY = 4
+    const uploadFile = async (filename) => {
+        console.log(`Uploading file ${filename} to https://github.com/${OWNER}/${REPOSITORY}/releases/${tag}`)
+        const buf = await fs.promises.readFile(path.join(folder, filename))
+        try {
+            await octokit.request({
+                method: 'POST',
+                url: uploadUrl,
+                headers: {
+                    'content-type': 'application/octet-stream',
+                },
+                data: buf,
+                name: filename,
+            })
+            console.log(`completed uploading file: ${filename}`)
+        } catch (e) {
+            if (e.response && e.response.data) {
+                console.error(`error while uploading file ${filename}:`, e.response.data.errors)
+            } else {
+                console.error(`unknown error while uploading file ${filename}:`)
+                console.error(e)
+            }
+        }
+    }
+
+    // Process uploads in batches to avoid overwhelming the API
+    for (let i = 0; i < assets.length; i += CONCURRENCY) {
+        const batch = assets.slice(i, i + CONCURRENCY)
+        await Promise.all(batch.map(uploadFile))
+    }
+}
+
+main()
+.catch((e) => {
+    console.error(e)
+    process.exit(1)
+})

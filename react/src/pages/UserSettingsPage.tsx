@@ -1,0 +1,574 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import type { LoginHistoryQuery as LoginHistoryQueryType } from '../__generated__/LoginHistoryQuery.graphql';
+import type { LoginSessionQuery as LoginSessionQueryType } from '../__generated__/LoginSessionQuery.graphql';
+import BAIErrorBoundary from '../components/BAIErrorBoundary';
+import ErrorLogList from '../components/ErrorLogList';
+import LoginHistory, { LoginHistoryQuery } from '../components/LoginHistory';
+import LoginSession, { LoginSessionQuery } from '../components/LoginSession';
+import MyKeypairInfoModalLegacy from '../components/MyKeypairInfoModalLegacy';
+import MyKeypairManagementModal from '../components/MyKeypairManagementModal';
+import SSHKeypairManagementModal from '../components/SSHKeypairManagementModal';
+import SettingList, { SettingGroup } from '../components/SettingList';
+import ShellScriptEditModal from '../components/ShellScriptEditModal';
+import ThemeAccentColorPicker from '../components/ThemeAccentColorPicker';
+import { useSuspendedBackendaiClient, useTabQuerySnapshot } from '../hooks';
+import {
+  useBAISettingGeneralState,
+  useBAISettingUserState,
+} from '../hooks/useBAISetting';
+import {
+  DEFAULT_THEME_FAMILY,
+  useCustomThemeConfig,
+} from '../hooks/useCustomThemeConfig';
+import { useThemeMode } from '../hooks/useThemeMode';
+import { SettingOutlined } from '@ant-design/icons';
+import { useSessionStorageState, useToggle } from 'ahooks';
+import { App, Button, Skeleton, Typography } from 'antd';
+import { BAICard, filterOutEmpty } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
+import { parseAsStringLiteral } from 'nuqs';
+import { Suspense, useEffect, useEffectEvent, useState } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
+import { useQueryLoader } from 'react-relay';
+
+export type ShellScriptType = 'bootstrap' | 'userconfig' | undefined;
+
+const tabParser = parseAsStringLiteral([
+  'general',
+  'logs',
+  'login-sessions',
+  'login-history',
+]).withDefault('general');
+
+const UserPreferencesPage = () => {
+  'use memo';
+
+  const { t } = useTranslation();
+  const { message } = App.useApp();
+  const baiClient = useSuspendedBackendaiClient();
+  const { currentTab, onTabChange } = useTabQuerySnapshot(tabParser);
+
+  const [loginSessionQueryRef, loadLoginSessionQuery] =
+    useQueryLoader<LoginSessionQueryType>(LoginSessionQuery);
+  const [loginHistoryQueryRef, loadLoginHistoryQuery] =
+    useQueryLoader<LoginHistoryQueryType>(LoginHistoryQuery);
+  // Lazily fetch a tab's data only once it becomes active (covers both a tab
+  // click and a direct `?tab=...` URL restore), so neither query runs while the
+  // General/Logs tabs are shown.
+  const ensureActiveTabQueryLoaded = useEffectEvent(() => {
+    if (currentTab === 'login-sessions' && !loginSessionQueryRef) {
+      loadLoginSessionQuery(
+        {
+          orderBy: [{ field: 'CREATED_AT', direction: 'DESC' }],
+          limit: 10,
+          offset: 0,
+        },
+        { fetchPolicy: 'store-and-network' },
+      );
+    }
+    if (currentTab === 'login-history' && !loginHistoryQueryRef) {
+      loadLoginHistoryQuery(
+        {
+          orderBy: [{ field: 'CREATED_AT', direction: 'DESC' }],
+          limit: 10,
+          offset: 0,
+        },
+        { fetchPolicy: 'store-and-network' },
+      );
+    }
+  });
+  useEffect(
+    function loadActiveTabQueryOnActivation() {
+      ensureActiveTabQueryLoaded();
+    },
+    [currentTab],
+  );
+
+  const { themeMode, setThemeMode } = useThemeMode();
+  const {
+    activeThemeFamily: themeFamily,
+    setActiveThemeFamily: setThemeFamily,
+    themeFamilies: families,
+  } = useCustomThemeConfig();
+  const [themeAccent, setThemeAccent] = useBAISettingUserState(
+    'custom_primary_color',
+  );
+  // Branding preview mode shows the edited default theme as-is, so the theme
+  // (family) and primary color settings are hidden there (useCustomThemeConfig
+  // ignores them in that mode).
+  const [isThemePreviewMode] = useSessionStorageState('isThemePreviewMode', {
+    defaultValue: false,
+  });
+
+  const [desktopNotification, setDesktopNotification] = useBAISettingUserState(
+    'desktop_notification',
+  );
+  const [compactSidebar, setCompactSidebar] =
+    useBAISettingUserState('compact_sidebar');
+  const [selectedLanguage, setSelectedLanguage] =
+    useBAISettingUserState('selected_language');
+  const [, setLanguage] = useBAISettingGeneralState('language');
+  const [autoAutomaticUpdateCheck, setAutoAutomaticUpdateCheck] =
+    useBAISettingUserState('automatic_update_check');
+  const [autoLogout, setAutoLogout] = useBAISettingUserState('auto_logout');
+  const [isOpenSSHKeypairInfoModal, { toggle: toggleSSHKeypairInfoModal }] =
+    useToggle(false);
+  const [
+    isOpenSSHKeypairManagementModal,
+    { toggle: toggleSSHKeypairManagementModal },
+  ] = useToggle(false);
+  const [preserveLogin, setPreserveLogin] =
+    useBAISettingUserState('preserve_login');
+  const [experimentalAIAgents, setExperimentalAIAgents] =
+    useBAISettingUserState('experimental_ai_agents');
+  const [shellInfo, setShellInfo] = useState<ShellScriptType>('bootstrap');
+  const [isOpenShellScriptEditModal, { toggle: toggleShellScriptEditModal }] =
+    useToggle(false);
+  const [maxConcurrentUpload, setMaxConcurrentUpload] = useBAISettingUserState(
+    'max_concurrent_uploads',
+  );
+
+  const languageOptions = [
+    { label: t('language.English'), value: 'en' },
+    { label: t('language.Korean'), value: 'ko' },
+    { label: t('language.Brazilian'), value: 'pt-BR' },
+    { label: t('language.SimplifiedChinese'), value: 'zh-CN' },
+    {
+      label: t('language.TraditionalChinese'),
+      value: 'zh-TW',
+    },
+    { label: t('language.French'), value: 'fr' },
+    { label: t('language.Finnish'), value: 'fi' },
+    { label: t('language.German'), value: 'de' },
+    { label: t('language.Greek'), value: 'el' },
+    { label: t('language.Indonesian'), value: 'id' },
+    { label: t('language.Italian'), value: 'it' },
+    { label: t('language.Japanese'), value: 'ja' },
+    { label: t('language.Mongolian'), value: 'mn' },
+    { label: t('language.Polish'), value: 'pl' },
+    { label: t('language.Portuguese'), value: 'pt' },
+    { label: t('language.Russian'), value: 'ru' },
+    { label: t('language.Spanish'), value: 'es' },
+    { label: t('language.Thai'), value: 'th' },
+    { label: t('language.Turkish'), value: 'tr' },
+    { label: t('language.Vietnamese'), value: 'vi' },
+  ];
+  let defaultLanguage = globalThis.navigator.language;
+  defaultLanguage = _.includes(['zh-CN', 'zh-TW', 'pt-BR'], defaultLanguage)
+    ? defaultLanguage
+    : defaultLanguage.split('-')[0];
+  defaultLanguage =
+    languageOptions.find((item) => item.value === defaultLanguage)?.value ??
+    'en';
+
+  const settingGroups: Array<SettingGroup> = [
+    {
+      'data-testid': 'group-preferences',
+      title: t('userSettings.Preferences'),
+      settingItems: filterOutEmpty([
+        {
+          'data-testid': 'items-theme-mode',
+          type: 'select',
+          title: t('userSettings.ThemeMode'),
+          description: t('userSettings.DescThemeMode'),
+          selectProps: {
+            options: [
+              {
+                label: t('userSettings.FollowSystem'),
+                value: 'system',
+              },
+              {
+                label: t('userSettings.LightTheme'),
+                value: 'light',
+              },
+              {
+                label: t('userSettings.DarkTheme'),
+                value: 'dark',
+              },
+            ],
+          },
+          defaultValue: 'system',
+          value: themeMode,
+          onChange: (value: string | number | undefined) => {
+            if (value === 'system' || value === 'light' || value === 'dark') {
+              setThemeMode(value);
+            }
+          },
+        },
+        // Theme (family) / primary color customization is operator-gated
+        // (config.toml `allowThemeMode`). The family selector additionally
+        // needs more than the `default` family in the catalog (a theme.json
+        // without a `families` block yields a single-entry catalog).
+        baiClient._config.allowThemeMode &&
+        !isThemePreviewMode &&
+        Object.keys(families).length > 1
+          ? {
+              'data-testid': 'items-theme-family',
+              type: 'select',
+              title: t('userSettings.ThemeFamily'),
+              description: t('userSettings.DescThemeFamily'),
+              selectProps: {
+                // Family display names come from theme.json `label` (operator-
+                // provided brand names like "Stained"); the built-in `default`
+                // family falls back to a humanized key ("Default").
+                options: _.map(families, (config, key) => ({
+                  label: config.label ?? _.startCase(key),
+                  value: key,
+                })),
+              },
+              defaultValue: DEFAULT_THEME_FAMILY,
+              value: themeFamily,
+              onChange: (value: string | number | undefined) => {
+                if (typeof value === 'string') {
+                  setThemeFamily(value);
+                }
+              },
+              // Clear the stored selection instead of writing the default key
+              // so resolution keeps following the `default` family.
+              onReset: () => setThemeFamily(undefined),
+            }
+          : null,
+        baiClient._config.allowThemeMode && !isThemePreviewMode
+          ? {
+              'data-testid': 'items-theme-accent',
+              type: 'custom',
+              title: t('userSettings.ThemeAccentColor'),
+              description: t('userSettings.DescThemeAccentColor'),
+              // No defaultValue: unset means "follow the theme.json colors";
+              // reset clears the per-scheme overrides back to that state.
+              value: themeAccent,
+              onReset: () => setThemeAccent(undefined),
+              children: <ThemeAccentColorPicker />,
+            }
+          : null,
+        {
+          'data-testid': 'items-desktop-notification',
+          type: 'checkbox',
+          title: t('userSettings.DesktopNotification'),
+          description: <Trans i18nKey="userSettings.DescDesktopNotification" />,
+          defaultValue: false,
+          value: desktopNotification,
+          onChange: (value) => {
+            setDesktopNotification(value);
+
+            // Request permission for desktop notifications
+            if (!value || Notification.permission === 'granted') return;
+            if (!('Notification' in window)) {
+              message.error(t('desktopNotification.NotSupported'));
+              setDesktopNotification(false);
+              return;
+            }
+            if (Notification.permission === 'denied') {
+              message.error(t('desktopNotification.PermissionDenied'));
+              setDesktopNotification(false);
+              return;
+            }
+            Notification.requestPermission().then((permission) => {
+              if (permission === 'denied') {
+                message.error(t('desktopNotification.PermissionDenied'));
+                setDesktopNotification(false);
+              }
+            });
+          },
+        },
+        {
+          'data-testid': 'items-use-compact-sidebar',
+          type: 'checkbox',
+          title: t('userSettings.UseCompactSidebar'),
+          description: <Trans i18nKey="userSettings.DescUseCompactSidebar" />,
+          defaultValue: false,
+          value: compactSidebar,
+          onChange: setCompactSidebar,
+        },
+        {
+          'data-testid': 'items-language-select',
+          type: 'select',
+          title: t('userSettings.Language'),
+          description: t('userSettings.DescLanguage'),
+          selectProps: {
+            options: languageOptions.map((item) =>
+              item.value === defaultLanguage
+                ? {
+                    ...item,
+                    label: (
+                      <>
+                        {item.label}&nbsp;
+                        <Typography.Text type="secondary">
+                          ({t('userSettings.Default')})
+                        </Typography.Text>
+                      </>
+                    ),
+                    filterValue: item.label,
+                  }
+                : {
+                    ...item,
+                    filterValue: item.label,
+                  },
+            ),
+            showSearch: true,
+            optionFilterProp: 'filterValue',
+          },
+          defaultValue: defaultLanguage,
+          value: selectedLanguage || defaultLanguage,
+          onChange: (value: any) => {
+            setSelectedLanguage(value);
+            setLanguage(value);
+            const event = new CustomEvent('langChanged', {
+              detail: {
+                lang: value,
+              },
+            });
+            window.dispatchEvent(event);
+          },
+        },
+        globalThis.isElectron && {
+          'data-testid': 'items-keep-login-session-information',
+          type: 'checkbox',
+          title: t('userSettings.KeepLoginSessionInformation'),
+          description: (
+            <Trans i18nKey="userSettings.DescKeepLoginSessionInformation" />
+          ),
+          defaultValue: false,
+          value: preserveLogin,
+          onChange: setPreserveLogin,
+        },
+        {
+          'data-testid': 'items-automatic-update-check',
+          type: 'checkbox',
+          title: t('userSettings.AutomaticUpdateCheck'),
+          description: (
+            <Trans i18nKey="userSettings.DescAutomaticUpdateCheck" />
+          ),
+          defaultValue: false,
+          value: autoAutomaticUpdateCheck,
+          onChange: setAutoAutomaticUpdateCheck,
+        },
+        {
+          'data-testid': 'items-auto-logout',
+          type: 'checkbox',
+          title: t('userSettings.AutoLogout'),
+          description: t('userSettings.DescAutoLogout'),
+          defaultValue: false,
+          value: autoLogout,
+          onChange: setAutoLogout,
+        },
+        {
+          'data-testid': 'items-my-keypair-info',
+          type: 'custom',
+          title: t('userSettings.MyKeypairInfo'),
+          description: t('userSettings.DescMyKeypairInfo'),
+          children: (
+            <Button
+              icon={<SettingOutlined />}
+              onClick={() => toggleSSHKeypairInfoModal()}
+            >
+              {t('button.Config')}
+            </Button>
+          ),
+          showResetButton: false,
+        },
+        {
+          'data-testid': 'items-ssh-keypair-management',
+          type: 'custom',
+          title: t('userSettings.SSHKeypairManagement'),
+          description: t('userSettings.DescSSHKeypairManagement'),
+          children: (
+            <Button
+              icon={<SettingOutlined />}
+              onClick={() => toggleSSHKeypairManagementModal()}
+            >
+              {t('button.Config')}
+            </Button>
+          ),
+          showResetButton: false,
+        },
+        {
+          'data-testid': 'items-max-concurrent-uploads',
+          type: 'select',
+          title: t('userSettings.MaxConcurrentUploads'),
+          description: t('userSettings.DescMaxConcurrentUploads'),
+          selectProps: {
+            options: _.map([2, 3, 4, 5], (num) =>
+              num === 2
+                ? {
+                    label: (
+                      <>
+                        {num}&nbsp;
+                        <Typography.Text type="secondary">
+                          ({t('userSettings.Default')})
+                        </Typography.Text>
+                      </>
+                    ),
+                    value: num,
+                  }
+                : {
+                    label: num.toString(),
+                    value: num,
+                  },
+            ),
+          },
+          defaultValue: 2,
+          value: maxConcurrentUpload || 2,
+          onChange: (value) => setMaxConcurrentUpload(_.toNumber(value)),
+        },
+      ]),
+    },
+    {
+      'data-testid': 'group-shell-environments',
+      title: t('userSettings.ShellEnvironments'),
+      settingItems: [
+        {
+          'data-testid': 'items-edit-bootstrap-script',
+          type: 'custom',
+          title: t('userSettings.EditBootstrapScript'),
+          children: (
+            <Button
+              icon={<SettingOutlined />}
+              onClick={() => {
+                setShellInfo('bootstrap');
+                toggleShellScriptEditModal();
+              }}
+            >
+              {t('button.Config')}
+            </Button>
+          ),
+          showResetButton: false,
+        },
+        {
+          'data-testid': 'items-edit-user-config-script',
+          type: 'custom',
+          title: t('userSettings.EditUserConfigScript'),
+          children: (
+            <Button
+              icon={<SettingOutlined />}
+              onClick={() => {
+                setShellInfo('userconfig');
+                toggleShellScriptEditModal();
+              }}
+            >
+              {t('button.Config')}
+            </Button>
+          ),
+          showResetButton: false,
+        },
+      ],
+    },
+    {
+      'data-testid': 'group-experimental-features',
+      title: t('userSettings.ExperimentalFeatures'),
+      description: t('userSettings.ExperimentalFeaturesDesc'),
+      settingItems: [
+        {
+          'data-testid': 'items-experimental-ai-agents',
+          type: 'checkbox',
+          title: t('userSettings.AIAgents'),
+          description: t('general.Enabled'),
+          defaultValue: false,
+          value: experimentalAIAgents,
+          onChange: setExperimentalAIAgents,
+        },
+      ],
+    },
+  ];
+
+  return (
+    <>
+      <BAICard
+        activeTabKey={currentTab}
+        onTabChange={onTabChange}
+        tabList={[
+          {
+            key: 'general',
+            label: t('userSettings.General'),
+          },
+          {
+            key: 'logs',
+            label: t('userSettings.Logs'),
+          },
+          {
+            key: 'login-sessions',
+            label: t('userSettings.LoginSessions'),
+          },
+          {
+            key: 'login-history',
+            label: t('userSettings.LoginHistory'),
+          },
+        ]}
+      >
+        <Suspense fallback={<Skeleton active />}>
+          {currentTab === 'general' && (
+            <BAIErrorBoundary>
+              <SettingList
+                settingGroups={settingGroups}
+                showChangedOptionFilter
+                showResetButton
+                showSearchBar
+              />
+            </BAIErrorBoundary>
+          )}
+          {currentTab === 'logs' && (
+            <BAIErrorBoundary>
+              <ErrorLogList />
+            </BAIErrorBoundary>
+          )}
+          {currentTab === 'login-sessions' && (
+            <BAIErrorBoundary>
+              {loginSessionQueryRef ? (
+                <LoginSession
+                  queryRef={loginSessionQueryRef}
+                  onReload={loadLoginSessionQuery}
+                />
+              ) : (
+                <Skeleton active />
+              )}
+            </BAIErrorBoundary>
+          )}
+          {currentTab === 'login-history' && (
+            <BAIErrorBoundary>
+              {loginHistoryQueryRef ? (
+                <LoginHistory
+                  queryRef={loginHistoryQueryRef}
+                  onReload={loadLoginHistoryQuery}
+                />
+              ) : (
+                <Skeleton active />
+              )}
+            </BAIErrorBoundary>
+          )}
+        </Suspense>
+      </BAICard>
+      {baiClient?.supports('my-keypairs') ? (
+        <MyKeypairManagementModal
+          open={isOpenSSHKeypairInfoModal}
+          onRequestClose={toggleSSHKeypairInfoModal}
+        />
+      ) : (
+        <MyKeypairInfoModalLegacy
+          open={isOpenSSHKeypairInfoModal}
+          onRequestClose={toggleSSHKeypairInfoModal}
+        />
+      )}
+      <SSHKeypairManagementModal
+        open={isOpenSSHKeypairManagementModal}
+        onRequestClose={toggleSSHKeypairManagementModal}
+      />
+      {shellInfo && (
+        <ShellScriptEditModal
+          open={isOpenShellScriptEditModal}
+          shellInfo={shellInfo}
+          onRequestClose={() => {
+            toggleShellScriptEditModal();
+          }}
+          afterClose={() => {
+            setShellInfo(undefined);
+          }}
+        />
+      )}
+    </>
+  );
+};
+
+export default UserPreferencesPage;

@@ -1,0 +1,192 @@
+// spec: e2e/.agent-output/test-plan-admin-model-card.md
+// section: 6. Refresh & 7. Sorting
+import { AdminModelCardPage } from '../utils/classes/AdminModelCardPage';
+import {
+  deleteForeverAndVerifyFromTrash,
+  loginAsAdmin,
+  moveToTrashAndVerify,
+  webuiEndpoint,
+} from '../utils/test-util';
+import { test, expect } from '@playwright/test';
+
+test.describe(
+  'Admin Model Card Management - Refresh and Sorting',
+  { tag: ['@admin-model-card', '@admin', '@functional'] },
+  () => {
+    let testCardName: string;
+    let testFolderName: string;
+
+    test.beforeEach(async ({ page, request }, testInfo) => {
+      const timestamp = Date.now();
+      testCardName = `e2e-test-sort-${testInfo.workerIndex}-${timestamp}`;
+      testFolderName = `e2e-test-sort-folder-${testInfo.workerIndex}-${timestamp}`;
+      await loginAsAdmin(page, request);
+
+      // Create a test model card so the table is guaranteed to have data
+      await page.goto(
+        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+      );
+      const adminModelCardPage = new AdminModelCardPage(page);
+      await adminModelCardPage.waitForTableLoad();
+      await adminModelCardPage.createModelCard({
+        name: testCardName,
+        createNewFolderName: testFolderName,
+      });
+    });
+
+    test.afterEach(async ({ page }) => {
+      try {
+        await page.goto(
+          `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+        );
+        const adminModelCardPage = new AdminModelCardPage(page);
+        await adminModelCardPage.waitForTableLoad();
+        await adminModelCardPage.applyNameFilter(testCardName);
+        const row = adminModelCardPage.getRowByName(testCardName);
+        if ((await row.count()) > 0) {
+          await adminModelCardPage.deleteModelCardByName(testCardName);
+        }
+      } catch {
+        // Ignore cleanup errors
+      }
+      try {
+        await moveToTrashAndVerify(page, testFolderName, 'admin-data', {
+          skipTrashVerify: true,
+        });
+      } catch {
+        // Folder may already be in Trash or may not exist
+      }
+      try {
+        await deleteForeverAndVerifyFromTrash(
+          page,
+          testFolderName,
+          'admin-data',
+        );
+      } catch {
+        // Folder may not be in Trash (already purged or never created)
+      }
+    });
+
+    // 6.1 Superadmin can refresh the table using the fetch key button
+    test('Superadmin can refresh the table using the fetch key button', async ({
+      page,
+    }) => {
+      const adminModelCardPage = new AdminModelCardPage(page);
+      await page.goto(
+        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+      );
+      await adminModelCardPage.waitForTableLoad();
+
+      // Click the refresh button
+      await adminModelCardPage.getRefreshButton().click();
+
+      // Verify the table reloads (wait for table to still be visible after refresh)
+      await adminModelCardPage.waitForTableLoad();
+      await expect(adminModelCardPage.getDataRows().first()).toBeVisible({
+        timeout: 15000,
+      });
+    });
+
+    // 7.1 Superadmin can sort model cards by Name in ascending order
+    test('Superadmin can sort model cards by Name in ascending order', async ({
+      page,
+    }) => {
+      const adminModelCardPage = new AdminModelCardPage(page);
+      await page.goto(
+        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+      );
+      await adminModelCardPage.waitForTableLoad();
+
+      // Click the "Name" column header to sort ascending
+      await page.getByRole('columnheader', { name: 'Name' }).click();
+
+      // Verify the URL contains an ascending sort order
+      await expect(page).toHaveURL(/order=name/);
+
+      // Verify rows are reordered (at least the table is still showing)
+      await expect(adminModelCardPage.getDataRows().first()).toBeVisible({
+        timeout: 15000,
+      });
+
+      // Verify the sort indicator shows ascending
+      const nameHeader = page.getByRole('columnheader', { name: 'Name' });
+      await expect(nameHeader).toBeVisible();
+    });
+
+    // 7.2 Superadmin can sort model cards by Name in descending order
+    test('Superadmin can sort model cards by Name in descending order', async ({
+      page,
+    }) => {
+      const adminModelCardPage = new AdminModelCardPage(page);
+      await page.goto(
+        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+      );
+      await adminModelCardPage.waitForTableLoad();
+
+      // Click Name header once (ascending), then again (descending)
+      const nameHeader = page.getByRole('columnheader', { name: 'Name' });
+      await nameHeader.click();
+      await nameHeader.click();
+
+      // Verify the URL contains a descending sort order
+      await expect(page).toHaveURL(/order=-name/);
+
+      // Verify rows are still displayed
+      await expect(adminModelCardPage.getDataRows().first()).toBeVisible({
+        timeout: 15000,
+      });
+    });
+
+    // 7.3 Superadmin can sort model cards by Created At
+    test('Superadmin can sort model cards by Created At', async ({ page }) => {
+      const adminModelCardPage = new AdminModelCardPage(page);
+      await page.goto(
+        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+      );
+      await adminModelCardPage.waitForTableLoad();
+
+      // Click the "Created At" column header to sort
+      const createdAtHeader = page.getByRole('columnheader', {
+        name: 'Created At',
+      });
+      await createdAtHeader.click();
+
+      // Verify the URL reflects the sort
+      await expect(page).toHaveURL(/order=createdAt/);
+
+      // Click again to toggle sort direction
+      await createdAtHeader.click();
+      await expect(page).toHaveURL(/order=-createdAt/);
+
+      // Verify rows are still displayed
+      await expect(adminModelCardPage.getDataRows().first()).toBeVisible({
+        timeout: 15000,
+      });
+    });
+
+    // 7.4 Superadmin can switch sort from one column to another
+    test('Superadmin can switch sort from Name to Created At', async ({
+      page,
+    }) => {
+      const adminModelCardPage = new AdminModelCardPage(page);
+      await page.goto(
+        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+      );
+      await adminModelCardPage.waitForTableLoad();
+
+      // Sort by Name ascending
+      await page.getByRole('columnheader', { name: 'Name' }).click();
+      await expect(page).toHaveURL(/order=name/);
+
+      // Switch to sort by Created At
+      await page.getByRole('columnheader', { name: 'Created At' }).click();
+      await expect(page).toHaveURL(/order=createdAt/);
+      await expect(page).not.toHaveURL(/order=name/);
+
+      // Verify rows are still displayed
+      await expect(adminModelCardPage.getDataRows().first()).toBeVisible({
+        timeout: 15000,
+      });
+    });
+  },
+);

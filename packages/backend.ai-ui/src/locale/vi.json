@@ -1,0 +1,575 @@
+{
+  "$schema": "../../i18n.schema.json",
+  "comp:AgentTable": {
+    "Allocation": "Phân bổ",
+    "Architecture": "Kiến trúc",
+    "DiskPerc": "Sử dụng đĩa (%)",
+    "Endpoint": "Điểm cuối",
+    "FailedToLoadCellData": "Không thể tải dữ liệu.",
+    "NoAvailableLiveStat": "Không có số liệu trực tiếp",
+    "Region": "Khu vực",
+    "ResourceGroup": "Nhóm tài nguyên",
+    "Running": "Đang chạy",
+    "Schedulable": "Có thể lên lịch",
+    "Starts": "Bắt đầu",
+    "Status": "Trạng thái",
+    "Utilization": "Mức sử dụng"
+  },
+  "comp:AllowedVfolderHostsWithPermission": {
+    "Allowed": "Được phép",
+    "Permission": "Quyền"
+  },
+  "comp:BAIActivateArtifactsModal": {
+    "Activate": "Kích hoạt",
+    "ActivateArtifacts": "Kích hoạt hiện vật",
+    "AreYouSureYouWantToActivateOne": "Bạn có chắc là bạn muốn kích hoạt {{name}}?",
+    "AreYouSureYouWantToActivateSome": "Bạn có chắc là bạn muốn kích hoạt {{count}} Artifacts không?",
+    "FailedToActivateArtifacts": "Không thể kích hoạt hiện vật.",
+    "SuccessfullyActivated": "Cổ vật được kích hoạt thành công."
+  },
+  "comp:BAIAdminKeypairResourcePolicySelect": {
+    "SelectKeypairResourcePolicy": "Chọn chính sách tài nguyên Keypair"
+  },
+  "comp:BAIAdminModelServiceSelect": {
+    "SelectModelService": "Chọn dịch vụ mô hình"
+  },
+  "comp:BAIAdminResourceGroupSelect": {
+    "PlaceHolder": "Chọn nhóm tài nguyên"
+  },
+  "comp:BAIAdminSessionSelect": {
+    "SelectSession": "Chọn phiên"
+  },
+  "comp:BAIArtifactDescriptions": {
+    "Description": "Sự miêu tả",
+    "Name": "Tên",
+    "Source": "Nguồn",
+    "Type": "Kiểu"
+  },
+  "comp:BAIArtifactRevisionTable": {
+    "Control": "Điều khiển",
+    "LatestVersion": "Phiên bản mới nhất",
+    "Name": "Tên",
+    "Size": "Kích cỡ",
+    "Status": "Trạng thái",
+    "Updated": "Cập nhật",
+    "Version": "Phiên bản"
+  },
+  "comp:BAIArtifactTable": {
+    "Action": "Hoạt động",
+    "Activate": "Kích hoạt",
+    "Controls": "Kiểm soát",
+    "Deactivate": "Vô hiệu hóa",
+    "PullLatestVersion": "Kéo phiên bản mới nhất",
+    "Registry": "Kho chứa",
+    "Scanned": "Quét",
+    "Size": "Kích cỡ",
+    "Source": "Nguồn",
+    "Updated": "Cập nhật",
+    "Version": "Phiên bản"
+  },
+  "comp:BAIAuditLogNodes": {
+    "ActionId": "ID hành động",
+    "Actor": "Người thực hiện",
+    "Description": "Mô tả",
+    "Duration": "Thời lượng",
+    "EntityId": "ID thực thể",
+    "EntityType": "Loại thực thể",
+    "Operation": "Thao tác",
+    "RequestId": "ID yêu cầu",
+    "Status": "Trạng thái",
+    "Time": "Thời gian",
+    "TriggeredBy": "Kích hoạt bởi"
+  },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Chọn cài đặt sẵn"
+  },
+  "comp:BAIBoardItemErrorBoundary": {
+    "UnexpectedError": "Đã xảy ra lỗi bất ngờ. Vui lòng thử lại sau hoặc liên hệ bộ phận hỗ trợ nếu vấn đề vẫn tiếp diễn."
+  },
+  "comp:BAIBulkEditFormItem": {
+    "Clear": "Xóa",
+    "KeepAsIs": "Giữ nguyên",
+    "UndoChanges": "Hoàn tác thay đổi"
+  },
+  "comp:BAIBulkErrorModal": {
+    "ActionExecutionFailed": "Thực thi thất bại",
+    "ErrorOccurred": "Đã xảy ra lỗi"
+  },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Chọn kho lưu trữ container"
+  },
+  "comp:BAIDeactivateArtifactsModal": {
+    "AreYouSureYouWantToDeactivateOne": "Bạn có chắc bạn muốn hủy kích hoạt {{name}}?",
+    "AreYouSureYouWantToDeactivateSome": "Bạn có chắc là bạn muốn hủy kích hoạt {{count}} Artifacts?",
+    "Deactivate": "Vô hiệu hóa",
+    "DeactivateArtifacts": "Vô hiệu hóa tạo tác",
+    "FailedToDeactivateArtifacts": "Không thể hủy kích hoạt các tạo tác.",
+    "SuccessfullyDeactivated": "Thành công vô hiệu hóa các tạo tác."
+  },
+  "comp:BAIDeleteArtifactModal": {
+    "ExcludedVersions": "{{count}} Các phiên bản được loại trừ.",
+    "FailedToRemoveVersions": "Không thể loại bỏ các phiên bản.",
+    "OnlyVersionsNotInPULLINGOrSCANNED": "Chỉ các phiên bản không kéo hoặc quét mới có thể được loại bỏ.",
+    "RemoveVersions": "Xóa các phiên bản",
+    "Size": "Kích cỡ",
+    "SuccessFullyRemoved": "Đã loại bỏ thành công các phiên bản {{count}}.",
+    "Version": "Phiên bản"
+  },
+  "comp:BAIDeleteConfirmModal": {
+    "AreYouSureToDelete": "Bạn có chắc chắn muốn xóa không?",
+    "AreYouSureToPermanentlyDeleteTarget": "Bạn có chắc muốn xóa vĩnh viễn {{target}} không?",
+    "CannotBeUndone": "Hành động này không thể hoàn tác.",
+    "DeleteItem": "Xóa",
+    "DeleteNItems": "Xóa {{count}} mục",
+    "TypeToConfirm": "Nhập <code>{{confirmText}}</code> để xác nhận."
+  },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "Được tạo bởi"
+  },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "Số lần thử",
+    "Category": "Danh mục",
+    "CreatedAt": "Ngày tạo",
+    "ErrorCode": "Mã lỗi",
+    "From": "Trạng thái nguồn",
+    "Message": "Tin nhắn",
+    "Phase": "Giai đoạn",
+    "Result": "Kết quả",
+    "To": "Trạng thái đích",
+    "UpdatedAt": "Cập nhật lúc"
+  },
+  "comp:BAIDeploymentSelect": {
+    "SelectDeployment": "Chọn triển khai"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "Bị suy giảm",
+    "Deploying": "Đang triển khai",
+    "Healthy": "Bình thường",
+    "NotChecked": "Chưa kiểm tra",
+    "Pending": "Đang chờ",
+    "Ready": "Sẵn sàng",
+    "Scaling": "Đang mở rộng",
+    "Stopped": "Đã dừng",
+    "Stopping": "Đang dừng",
+    "Terminated": "Đã kết thúc",
+    "Unhealthy": "Không bình thường"
+  },
+  "comp:BAIDomainSelect": {
+    "SelectDomain": "Chọn miền"
+  },
+  "comp:BAIFetchKeyButton": {
+    "AutoRefresh": "Tự động làm mới",
+    "EveryHours": "{{count}}h",
+    "EveryMinutes": "{{count}}m",
+    "EverySeconds": "{{count}}s",
+    "LastUpdated": "Cập nhật lần cuối",
+    "Off": "Tắt",
+    "Refresh": "Làm mới"
+  },
+  "comp:BAIGraphQLPropertyFilter": {
+    "SelectDateTime": "Chọn ngày và giờ",
+    "operator": {
+      "After": "sau",
+      "Before": "trước",
+      "Equals": "bằng",
+      "GreaterThan": "lớn hơn",
+      "GreaterThanOrEqual": "lớn hơn hoặc bằng",
+      "IContains": "chứa",
+      "IEndsWith": "kết thúc bằng",
+      "IEquals": "bằng",
+      "INotContains": "không chứa",
+      "INotEndsWith": "không kết thúc bằng",
+      "INotEquals": "không bằng",
+      "INotStartsWith": "không bắt đầu bằng",
+      "IStartsWith": "bắt đầu bằng",
+      "In": "trong",
+      "LessThan": "nhỏ hơn",
+      "LessThanOrEqual": "nhỏ hơn hoặc bằng",
+      "NotEquals": "không bằng",
+      "NotIn": "không trong"
+    }
+  },
+  "comp:BAIHuggingFaceRegistrySettingModal": {
+    "EnterToken": "Enter your HuggingFace token",
+    "HuggingFaceSettings": "Hugging Face Settings",
+    "Token": "Token",
+    "TokenUpdatedSuccessfully": "Token updated successfully."
+  },
+  "comp:BAIImageSelect": {
+    "SelectImage": "Chọn Ảnh"
+  },
+  "comp:BAIImportArtifactModal": {
+    "ExcludedVersions": "{{count}} Các phiên bản được loại trừ.",
+    "FailedToPullVersions": "Không thể kéo phiên bản.",
+    "OnlySCANNEDVersionsCanBePulled": "Chỉ các phiên bản được quét mới có thể được kéo.",
+    "Pull": "Sự lôi kéo",
+    "PullVersion": "Phiên bản kéo",
+    "Size": "Kích cỡ",
+    "SuccessFullyPulled": "Yêu cầu kéo thành công cho các phiên bản {{count}}.",
+    "Version": "Phiên bản"
+  },
+  "comp:BAIKeypairSelect": {
+    "SelectKeypair": "Chọn cặp khóa"
+  },
+  "comp:BAILoginHistoryTable": {
+    "Domain": "Miền",
+    "FailReason": "Lý do thất bại",
+    "LoginTime": "Thời gian đăng nhập",
+    "Result": "Kết quả"
+  },
+  "comp:BAILoginSessionTable": {
+    "AccessKey": "Khóa truy cập",
+    "CreatedAt": "Được tạo tại",
+    "InvalidatedAt": "Bị vô hiệu tại",
+    "User": "Người dùng"
+  },
+  "comp:BAIModal": {
+    "ExitFullscreen": "Exit fullscreen",
+    "Fullscreen": "Fullscreen",
+    "Maximize": "Maximize",
+    "Minimize": "Minimize",
+    "Restore": "Restore"
+  },
+  "comp:BAIModelDeploymentNodes": {
+    "AreYouSureToDeleteDeployment": "Bạn có chắc chắn muốn xóa triển khai \"{{deploymentName}}\"? Hành động này không thể hoàn tác.",
+    "CreatedAt": "Ngày tạo",
+    "CreatedUser": "Tác giả",
+    "CurrentRevisionID": "ID phiên bản hiện tại",
+    "Delete": "Xóa",
+    "DeleteDeployment": "Xóa triển khai",
+    "DeploymentDeleted": "Đã xóa triển khai.",
+    "DeploymentID": "ID triển khai",
+    "DomainName": "Tên miền",
+    "EndpointURL": "URL điểm cuối",
+    "FailedToDeleteDeployment": "Không thể xóa triển khai.",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Lifecycle": "Vòng đời",
+    "Model": "Mô hình",
+    "Name": "Tên",
+    "OpenToPublic": "Mở cho công khai",
+    "Owner": "Chủ sở hữu",
+    "PreferredDomainName": "Tên miền ưa thích",
+    "Project": "Dự án",
+    "ProjectID": "ID dự án",
+    "ReplicaSummary": "Số bản sao",
+    "ReplicaSummaryTooltip": "Số bản sao đang chạy so với số bản sao mong muốn.",
+    "Replicas": "Số bản sao",
+    "ResourceGroup": "Nhóm tài nguyên",
+    "RevisionNumber": "Phiên bản",
+    "RevisionNumberTooltip": "Số phiên bản hiện tại của triển khai.",
+    "StrategyType": "Chiến lược",
+    "Tags": "Thẻ",
+    "UpdatedAt": "Ngày cập nhật"
+  },
+  "comp:BAIProjectBulkEditModal": {
+    "FollowingProjectsWillBeUpdated": "Dự án sau sẽ được cập nhật.",
+    "ProjectResourcePolicy": "Chính sách tài nguyên dự án",
+    "UpdateMultipleProjects": "Cập nhật nhiều dự án"
+  },
+  "comp:BAIProjectSelect": {
+    "SelectProject": "Chọn dự án"
+  },
+  "comp:BAIProjectSettingModal": {
+    "AllowedFolderHosts": "Máy chủ thư mục được cho phép",
+    "AllowedResourceGroups": "Nhóm tài nguyên được phép",
+    "ContainerMustBeSpecified": "Phải chỉ định một container registry để lưu trữ các container image do người dùng commit.",
+    "ContainerRegistryForImageCommit": "Container Registry cho việc commit image",
+    "CreateProject": "Tạo dự án",
+    "Description": "Mô tả",
+    "Domain": "Miền",
+    "FailedToCreateProject": "Không thể tạo dự án",
+    "FailedToUpdateProject": "Không thể cập nhật dự án",
+    "IsActive": "Đang hoạt động?",
+    "MaxAllowedResourceSlots": "Tối đa cho phép {{resourceKey}}",
+    "MemorySizeShouldBeLessThan300PiB": "Dung lượng bộ nhớ phải nhỏ hơn 300 PiB",
+    "Name": "Tên",
+    "PleaseEnterBothRegistryAndProject": "Vui lòng nhập cả registry và dự án.",
+    "Project": "Dự án",
+    "ProjectCreated": "Dự án đã được tạo.",
+    "ProjectResourcePolicy": "Chính sách tài nguyên",
+    "ProjectUpdated": "Dự án đã được cập nhật.",
+    "Registry": "Kho lưu trữ",
+    "UpdateProject": "Cập nhật dự án"
+  },
+  "comp:BAIProjectTable": {
+    "ContainerRegistry": "Kho lưu trữ container",
+    "ContainerRegistryProject": "Dự án kho lưu trữ container",
+    "CreatedAt": "Ngày tạo",
+    "Description": "Mô tả",
+    "Domain": "Miền",
+    "IntegrationID": "ID tích hợp",
+    "Name": "Tên",
+    "Project": "Dự án",
+    "ProjectID": "ID dự án",
+    "Registry": "Kho chứa",
+    "ResourcePolicy": "Chính sách tài nguyên",
+    "ScalingGroups": "Nhóm tài nguyên",
+    "StorageNodes": "Nút lưu trữ",
+    "TotalResourceSlots": "Tổng số khe tài nguyên",
+    "Type": "Loại"
+  },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Chọn thư mục"
+  },
+  "comp:BAIPropertyFilter": {
+    "PlaceHolder": "Tìm kiếm",
+    "ResetFilter": "Đặt lại bộ lọc"
+  },
+  "comp:BAIPullingArtifactRevisionAlert": {
+    "CancelPull": "Hủy kéo",
+    "CancelingWillRestartThePulling": "Hủy sẽ khởi động lại việc kéo",
+    "FailedToCancelThePulling": "Không thể hủy bỏ kéo.",
+    "VersionIsPullingNow": "{{version}} phiên bản hiện đang kéo.",
+    "VersionPullCanceledSuccessfully": "Kéo phiên bản {{version}} bị hủy thành công.",
+    "WARNING": "CẢNH BÁO",
+    "YouAreAboutToCancelThisVersion": "Bạn sắp hủy phiên bản này"
+  },
+  "comp:BAIResourceGroupSelect": {
+    "SelectResourceGroup": "Chọn nhóm tài nguyên"
+  },
+  "comp:BAIResourceNumberWithIcon": {
+    "AllocatedVsRequested": "Đã cấp phát / Đã yêu cầu"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Không giới hạn"
+  },
+  "comp:BAIRouteNodes": {
+    "CreatedAt": "Ngày tạo",
+    "HealthStatus": "Trạng thái sức khỏe",
+    "RouteId": "ID tuyến",
+    "SchedulingHistory": "Lịch sử lập lịch",
+    "SessionId": "ID phiên",
+    "Status": "Trạng thái",
+    "TrafficRatio": "Tỷ lệ lưu lượng",
+    "TrafficStatus": "Trạng thái lưu lượng"
+  },
+  "comp:BAIRouteSchedulingHistoryNodes": {
+    "Attempts": "Số lần thử",
+    "Category": "Danh mục",
+    "CreatedAt": "Ngày tạo",
+    "ErrorCode": "Mã lỗi",
+    "From": "Trạng thái nguồn",
+    "Message": "Tin nhắn",
+    "Phase": "Giai đoạn",
+    "Result": "Kết quả",
+    "To": "Trạng thái đích",
+    "UpdatedAt": "Cập nhật lúc"
+  },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "Chọn biến thể runtime"
+  },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "Số lần thử",
+    "Category": "Danh mục",
+    "CreatedAt": "Ngày tạo",
+    "ErrorCode": "Mã lỗi",
+    "From": "Trạng thái nguồn",
+    "Message": "Tin nhắn",
+    "Phase": "Giai đoạn",
+    "Result": "Kết quả",
+    "To": "Trạng thái đích",
+    "UpdatedAt": "Cập nhật lúc"
+  },
+  "comp:BAISessionAgentIds": {
+    "Agent": "Đại lý"
+  },
+  "comp:BAISessionClusterMode": {
+    "MultiNodeShort": "Đa",
+    "SingleNodeShort": "Đơn"
+  },
+  "comp:BAIStatistic": {
+    "Unlimited": "Không giới hạn"
+  },
+  "comp:BAIStorageHostSelect": {
+    "SelectStorageHost": "Chọn máy chủ lưu trữ"
+  },
+  "comp:BAIStorageProxySelect": {
+    "SelectStorageProxy": "Chọn proxy lưu trữ"
+  },
+  "comp:BAISubStepNodes": {
+    "EndedAt": "Kết thúc lúc",
+    "ErrorCode": "Mã lỗi",
+    "Message": "Tin nhắn",
+    "Result": "Kết quả",
+    "StartedAt": "Bắt đầu lúc",
+    "Step": "Bước"
+  },
+  "comp:BAITable": {
+    "CollapseAll": "Thu gọn tất cả",
+    "ExpandAll": "Mở rộng tất cả",
+    "ExpandErrorsOnly": "Chỉ mở rộng lỗi",
+    "ExpandOptions": "Tùy chọn mở rộng",
+    "Export": "Xuất",
+    "ExportCSV": "Xuất CSV",
+    "GoToFirstPage": "Đến trang đầu",
+    "InvalidPageNumber": "Số trang không hợp lệ",
+    "SearchTableColumn": "Các cột bảng tìm kiếm",
+    "SelectColumnToDisplay": "Chọn các cột để hiển thị",
+    "SettingTable": "Cài đặt bảng"
+  },
+  "comp:BAITestButton": {
+    "Test": "kiểm tra"
+  },
+  "comp:BAIUserResourcePolicyV2Table": {
+    "CreatedAt": "Được tạo tại",
+    "MaxConcurrentLogins": "Số lần đăng nhập đồng thời tối đa",
+    "MaxCustomizedImageCount": "Số lượng hình ảnh tùy chỉnh tối đa",
+    "MaxQuotaScopeSize": "Kích thước thư mục tối đa",
+    "MaxSessionCountPerModelSession": "Số phiên tối đa trên mỗi phiên mô hình",
+    "MaxVFolderCount": "Số lượng thư mục tối đa",
+    "Name": "Tên"
+  },
+  "comp:BAIUserSelect": {
+    "SelectUser": "Chọn người dùng"
+  },
+  "comp:BAIVFolderMountConfigInput": {
+    "AliasInvalid": "Định dạng đường dẫn không hợp lệ.",
+    "AliasOverlapping": "Đường dẫn mount trùng lặp với thư mục khác.",
+    "AliasPlaceholder": "Đường dẫn mount",
+    "AutoMountedFolders": "Thư mục tự động mount",
+    "Name": "Tên",
+    "PathAndAlias": "Đường dẫn & Bí danh",
+    "PathAndAliasTooltip": "Đường dẫn bên trong container nơi thư mục sẽ được mount. Để trống để sử dụng đường dẫn mặc định.",
+    "RemoveFolder": "Xóa",
+    "Subpath": "Đường dẫn con",
+    "SubpathInvalid": "Đường dẫn con phải là đường dẫn tương đối và không được chứa '..'.",
+    "SubpathPlaceholder": "vd. dataset/train (tùy chọn)",
+    "SubpathTooltip": "Mount một thư mục con bên trong thư mục làm nguồn thay vì thư mục gốc. Để trống để mount từ thư mục gốc."
+  },
+  "comp:BAIVFolderSelect": {
+    "SelectFolder": "Chọn thư mục"
+  },
+  "comp:FileExplorer": {
+    "ArchiveDownloadStarted": "Đã bắt đầu tải xuống {{count}} mục.",
+    "ChangeFileExtension": "Thay đổi phần mở rộng tệp",
+    "ChangeFileExtensionDesc": "Thay đổi tiện ích mở rộng tệp có thể khiến tệp trở nên không thể sử dụng hoặc mở không chính xác. \nBạn có muốn tiếp tục không?",
+    "Controls": "Kiểm soát",
+    "CreateANewFile": "Create a new file",
+    "CreateANewFolder": "Tạo một thư mục mới",
+    "CreateFile": "Create File",
+    "CreateFolder": "Create Folder",
+    "CreatedAt": "Được tạo ra tại",
+    "DeleteSelectedItemDesc": "Các tệp và thư mục đã xóa không thể được khôi phục. \nBạn có muốn tiếp tục không?",
+    "DeleteSelectedItemsDialog": "Xóa xác nhận",
+    "DownloadSelected": "Tải xuống",
+    "DownloadStarted": "Tệp \"{{fileName}}\" đã bắt đầu.",
+    "DragAndDropDesc": "Kéo và thả các tập tin vào khu vực này để tải lên.",
+    "DuplicatedFiles": "Ghi đè xác nhận",
+    "DuplicatedFilesDesc": "Tệp hoặc thư mục có cùng tên đã tồn tại. \nBạn có muốn ghi đè lên?",
+    "EditFile": "Chỉnh sửa tệp",
+    "FileCreatedSuccessfully": "File created successfully.",
+    "FileName": "File Name",
+    "FileNamePlaceholder": "e.g. model-definition.yaml",
+    "FileTooLargeToEdit": "Chỉnh sửa trên trình duyệt bị hạn chế vì kích thước tệp vượt quá {{size}}MB.",
+    "FolderCreatedSuccessfully": "Thư mục đã tạo thành công.",
+    "FolderName": "Tên thư mục",
+    "InvalidFileNameCharacters": "File name must not contain path separators (/ or \\\\).",
+    "MaxFileNameLength": "File name must be 255 characters or less.",
+    "MaxFolderNameLength": "Tên thư mục phải là 255 ký tự hoặc ít hơn.",
+    "ModifiedAt": "Sửa đổi tại",
+    "MoreOptions": "Thêm tùy chọn",
+    "Name": "Tên",
+    "NoUploadPermissionForHost": "Bạn không có quyền tải lên cho máy chủ lưu trữ này.",
+    "PleaseEnterAFileName": "Please enter the file name.",
+    "PleaseEnterAFolderName": "Vui lòng nhập tên thư mục.",
+    "RenameSuccess": "Tên đã được thay đổi thành công.",
+    "SelectedItemsDeletedSuccessfully": "Các tập tin và thư mục được chọn đã bị xóa thành công.",
+    "Size": "Kích cỡ",
+    "TypeDeleteToConfirm": "Nhập 'Xóa bỏ' để xác nhận.",
+    "TypeFolderNameToDelete": "Gõ tên thư mục hoặc file cần xóa.",
+    "UnsupportedFileFormat": "Định dạng tệp này không hỗ trợ chỉnh sửa.",
+    "UploadFiles": "Tải lên tệp",
+    "UploadFolder": "Tải lên thư mục",
+    "error": {
+      "DuplicatedName": "Tên này đã được sử dụng. \nVui lòng nhập một tên khác.",
+      "FileNameRequired": "Vui lòng nhập tên tệp hoặc thư mục."
+    }
+  },
+  "comp:PaginationInfoText": {
+    "Total": "{{start}} - {{end}} của {{total}}"
+  },
+  "comp:ResourceStatistics": {
+    "NoResourcesData": "Không có dữ liệu tài nguyên"
+  },
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "Bộ gia tốc AI",
+    "CPU": "CPU",
+    "ClusterMode": "Chế độ Cluster",
+    "CreatedAt": "Ngày tạo",
+    "ElapsedTime": "Thời gian đã trôi",
+    "Environments": "Môi trường",
+    "Memory": "Bộ nhớ",
+    "OwnerEmail": "Email chủ sở hữu",
+    "Project": "Dự án",
+    "ResourceGroup": "Nhóm tài nguyên",
+    "SessionId": "ID phiên",
+    "SessionName": "Tên phiên",
+    "SessionType": "Loại phiên",
+    "Status": "Trạng thái",
+    "TerminateSession": "Kết thúc phiên"
+  },
+  "comp:UserNodes": {
+    "AllowedClientIps": "IP khách hàng được phép",
+    "ContainerGIDs": "GID bổ sung",
+    "ContainerGIDsTooltip": "Các ID nhóm số bổ sung được gán cho các tiến trình của container",
+    "ContainerMainGID": "GID container",
+    "ContainerMainGIDTooltip": "ID nhóm số mặc định được gán cho các tiến trình trong container",
+    "ContainerUID": "UID container",
+    "ContainerUIDTooltip": "ID người dùng số được gán cho các tiến trình trong container",
+    "CreatedAt": "Tạo lúc",
+    "Description": "Mô tả",
+    "Disabled": "Đã tắt",
+    "DomainName": "Miền",
+    "Email": "Email",
+    "Enabled": "Đã bật",
+    "FullName": "Họ và tên",
+    "IntegrationName": "Tên tích hợp",
+    "MainAccessKey": "Khóa truy cập chính",
+    "ModifiedAt": "Sửa lúc",
+    "NeedPasswordChange": "Cần đổi mật khẩu",
+    "Project": "Dự án",
+    "ResourcePolicy": "Chính sách tài nguyên",
+    "Role": "Vai trò",
+    "Status": "Trạng thái",
+    "StatusInfo": "Thông tin trạng thái",
+    "SudoSessionEnabled": "Phiên Sudo đã bật",
+    "TwoFA": "Xác thực hai yếu tố",
+    "TwoFAActivatedAt": "2FA được kích hoạt lúc",
+    "UserID": "ID người dùng",
+    "Username": "Tên người dùng"
+  },
+  "error": {
+    "UnknownError": "Một lỗi không xác định xảy ra. \nHãy thử lại."
+  },
+  "general": {
+    "DeselectAll": "Bỏ chọn tất cả",
+    "File": "Tệp",
+    "NSelected": "{{count}} Đã chọn",
+    "Optional": "Không bắt buộc",
+    "Project": "Dự án",
+    "TotalItems": "Tổng số {{total}} các mục",
+    "button": {
+      "Cancel": "Hủy bỏ",
+      "Close": "Đóng",
+      "Collapse": "Sụp đổ",
+      "Copied": "Đã sao chép",
+      "CopyAll": "Sao chép tất cả",
+      "Create": "Tạo nên",
+      "Delete": "Xóa bỏ",
+      "Edit": "Chỉnh sửa",
+      "Expand": "Mở rộng",
+      "Remove": "Di dời",
+      "Save": "Lưu",
+      "Upload": "Tải lên"
+    },
+    "modal": {
+      "DeleteForeverDesc": "CẢNH BÁO: Các mục đã chọn sẽ bị xóa vĩnh viễn và không được khôi phục.",
+      "ItemSelectedWithCount": "Đã chọn {{count}} mục.",
+      "PleaseTypeToConfirm": "Vui lòng nhập {{ confirmText }} để xác nhận."
+    },
+    "validation": {
+      "LetterNumber-_dot": "Chỉ cho phép chữ cái, chữ số, '-', '_' và '.'.",
+      "LetterNumber:/-_dot": "Chỉ cho phép các chữ cái (A–Z, a–z), chữ số, '-', '_', ':', '/' và '.'."
+    }
+  }
+}

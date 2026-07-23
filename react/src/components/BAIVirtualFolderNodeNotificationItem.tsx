@@ -1,0 +1,148 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import { BAIVirtualFolderNodeNotificationItemFragment$key } from '../__generated__/BAIVirtualFolderNodeNotificationItemFragment.graphql';
+import {
+  NotificationState,
+  useSetBAINotification,
+} from '../hooks/useBAINotification';
+import BAINotificationBackgroundProgress from './BAINotificationBackgroundProgress';
+import { useFolderExplorerOpener } from './FolderExplorerOpener';
+import { useToggle } from 'ahooks';
+import { Card, List, theme, Typography } from 'antd';
+import { BAIFlex, BAILink, BAINotificationItem, BAIText } from 'backend.ai-ui';
+import dayjs from 'dayjs';
+import * as _ from 'lodash-es';
+import { useTranslation } from 'react-i18next';
+import { graphql, useFragment } from 'react-relay';
+
+interface BAIVirtualFolderNodeNotificationItemProps {
+  notification: NotificationState;
+  virtualFolderNodeFrgmt: BAIVirtualFolderNodeNotificationItemFragment$key | null;
+  showDate?: boolean;
+}
+
+/**
+ * @deprecated Renders V1 `VirtualFolderNode` notifications. The V2 counterpart
+ * `BAIVirtualFolderNodeNotificationItemV2` (operating on `VFolder implements Node` from
+ * the Strawberry GraphQL API, FR-2573) is the preferred path going forward.
+ * This component will be removed once all V1 callers migrate.
+ */
+const BAIVirtualFolderNodeNotificationItem: React.FC<
+  BAIVirtualFolderNodeNotificationItemProps
+> = ({ notification, virtualFolderNodeFrgmt, showDate }) => {
+  'use memo';
+
+  const { open: openFolderExplorer } = useFolderExplorerOpener();
+  const { t } = useTranslation();
+  const { token } = theme.useToken();
+  const { closeNotification } = useSetBAINotification();
+  const [showExtraDescription, { toggle: toggleShowExtraDescription }] =
+    useToggle(false);
+
+  const node = useFragment(
+    graphql`
+      fragment BAIVirtualFolderNodeNotificationItemFragment on VirtualFolderNode {
+        row_id
+        id
+        name
+        status
+      }
+    `,
+    virtualFolderNodeFrgmt,
+  );
+
+  return (
+    node && (
+      <BAINotificationItem
+        title={
+          <BAIText ellipsis>
+            {t('general.Folder')}:&nbsp;
+            <BAILink
+              style={{
+                fontWeight: 'normal',
+              }}
+              title={node.name || ''}
+              onClick={() => {
+                if (node.row_id) {
+                  openFolderExplorer(node.row_id);
+                }
+                closeNotification(notification.key);
+              }}
+            >
+              {node.name}
+            </BAILink>
+          </BAIText>
+        }
+        description={
+          <List.Item>
+            <BAIFlex direction="column" align="stretch" gap={'xxs'}>
+              <BAIFlex
+                direction="row"
+                align="end"
+                gap={'xxs'}
+                justify="between"
+              >
+                {_.isString(notification.description) ? (
+                  <BAIText style={{ flex: 1, minWidth: 0 }}>
+                    {_.truncate(notification.description, { length: 300 })}
+                  </BAIText>
+                ) : (
+                  notification.description
+                )}
+
+                {notification.extraDescription && !notification?.onCancel ? (
+                  <BAIFlex style={{ flexShrink: 0 }}>
+                    <Typography.Link
+                      style={{ whiteSpace: 'nowrap' }}
+                      onClick={() => {
+                        toggleShowExtraDescription();
+                      }}
+                    >
+                      {showExtraDescription
+                        ? t('notification.SeeSummary')
+                        : t('notification.SeeDetail')}
+                    </Typography.Link>
+                  </BAIFlex>
+                ) : null}
+              </BAIFlex>
+
+              {notification.extraDescription && showExtraDescription ? (
+                <Card
+                  size="small"
+                  style={{
+                    maxHeight: '300px',
+                    overflow: 'auto',
+                    overflowX: 'hidden',
+                    marginTop: token.marginSM,
+                  }}
+                >
+                  {_.isString(notification.extraDescription) ? (
+                    <Typography.Text type="secondary" copyable>
+                      {notification.extraDescription}
+                    </Typography.Text>
+                  ) : (
+                    notification.extraDescription
+                  )}
+                </Card>
+              ) : null}
+
+              {notification.backgroundTask && (
+                <BAINotificationBackgroundProgress
+                  backgroundTask={notification.backgroundTask}
+                  showDate={showDate}
+                />
+              )}
+            </BAIFlex>
+          </List.Item>
+        }
+        footer={
+          showDate ? dayjs(notification.created).format('lll') : undefined
+        }
+      />
+    )
+  );
+};
+
+export default BAIVirtualFolderNodeNotificationItem;

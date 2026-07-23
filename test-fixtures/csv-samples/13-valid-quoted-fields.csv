@@ -1,0 +1,4 @@
+email,username,password,full_name,description
+quoted1@example.com,quoted1,Password!23,"Kim, Jinhee","Works on ""AI"" projects"
+quoted2@example.com,quoted2,Password!23,"Lee, Minji","Description with, comma inside"
+quoted3@example.com,quoted3,Password!23,Park Jisoo,Plain description

@@ -1,0 +1,57 @@
+import { BAIArtifactRevisionDeleteButtonFragment$key } from '../../__generated__/BAIArtifactRevisionDeleteButtonFragment.graphql';
+import BAIButton, { BAIButtonProps } from '../BAIButton';
+import { DeleteFilled } from '@ant-design/icons';
+import { theme } from 'antd';
+import * as _ from 'lodash-es';
+import { graphql, useFragment } from 'react-relay';
+
+export interface BAIArtifactRevisionDeleteButtonProps extends Omit<
+  BAIButtonProps,
+  'icon'
+> {
+  revisionsFrgmt: BAIArtifactRevisionDeleteButtonFragment$key;
+  loading?: boolean;
+}
+
+const BAIArtifactRevisionDeleteButton = ({
+  revisionsFrgmt,
+  ...buttonProps
+}: BAIArtifactRevisionDeleteButtonProps) => {
+  const { token } = theme.useToken();
+
+  const revisions = useFragment<BAIArtifactRevisionDeleteButtonFragment$key>(
+    graphql`
+      fragment BAIArtifactRevisionDeleteButtonFragment on ArtifactRevision
+      @relay(plural: true) {
+        status
+      }
+    `,
+    revisionsFrgmt,
+  );
+
+  const isDeletable = revisions.some(
+    (revision) =>
+      revision.status !== 'SCANNED' && revision.status !== 'PULLING',
+  );
+
+  const isDisabled =
+    buttonProps.disabled || buttonProps.loading || !isDeletable;
+
+  return (
+    <BAIButton
+      icon={<DeleteFilled />}
+      disabled={isDisabled}
+      type="text"
+      style={{
+        color: isDisabled ? token.colorTextDisabled : token.colorError,
+        background: isDisabled
+          ? token.colorBgContainerDisabled
+          : token.colorErrorBg,
+        ...buttonProps.style,
+      }}
+      {..._.omit(buttonProps, ['style', 'disabled', 'loading'])}
+    />
+  );
+};
+
+export default BAIArtifactRevisionDeleteButton;

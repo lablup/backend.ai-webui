@@ -1,0 +1,187 @@
+import { BAIAllowedVfolderHostsWithPermissionFromGroupFragment$key } from '../../__generated__/BAIAllowedVfolderHostsWithPermissionFromGroupFragment.graphql';
+import { BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment$key } from '../../__generated__/BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment.graphql';
+import { BAIAllowedVfolderHostsWithPermissionQuery } from '../../__generated__/BAIAllowedVfolderHostsWithPermissionQuery.graphql';
+import { SemanticColor } from '../../helper';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
+import BAIFlex from '../BAIFlex';
+import BAILink from '../BAILink';
+import BAIModal from '../BAIModal';
+import { BAITable } from '../Table';
+import { CheckCircleFilled, StopFilled } from '@ant-design/icons';
+import { theme } from 'antd';
+import * as _ from 'lodash-es';
+import { LockIcon, LockOpenIcon } from 'lucide-react';
+import React from 'react';
+import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
+
+export type BAIAllowedVfolderHostsWithPermissionProps =
+  | {
+      allowedHostPermissionFrgmtFromKeyPair: BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment$key;
+      allowedHostPermissionFrgmtFromGroup?: never;
+    }
+  | {
+      allowedHostPermissionFrgmtFromKeyPair?: never;
+      allowedHostPermissionFrgmtFromGroup: BAIAllowedVfolderHostsWithPermissionFromGroupFragment$key;
+    };
+
+const BAIAllowedVfolderHostsWithPermission: React.FC<
+  BAIAllowedVfolderHostsWithPermissionProps
+> = ({
+  allowedHostPermissionFrgmtFromKeyPair,
+  allowedHostPermissionFrgmtFromGroup,
+}) => {
+  const { t } = useBAIi18n();
+  const { token } = theme.useToken();
+  const [storageHost, setStorageHost] = React.useState<string | null>();
+
+  const keypairResourcePolicy =
+    useFragment<BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment$key>(
+      graphql`
+        fragment BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment on KeyPairResourcePolicy {
+          allowed_vfolder_hosts
+        }
+      `,
+      allowedHostPermissionFrgmtFromKeyPair,
+    );
+
+  const groupNode =
+    useFragment<BAIAllowedVfolderHostsWithPermissionFromGroupFragment$key>(
+      graphql`
+        fragment BAIAllowedVfolderHostsWithPermissionFromGroupFragment on GroupNode {
+          allowed_vfolder_hosts
+        }
+      `,
+      allowedHostPermissionFrgmtFromGroup,
+    );
+
+  const allowedVfolderHosts = JSON.parse(
+    keypairResourcePolicy?.allowed_vfolder_hosts ||
+      groupNode?.allowed_vfolder_hosts ||
+      '{}',
+  );
+
+  const { vfolder_host_permissions } =
+    useLazyLoadQuery<BAIAllowedVfolderHostsWithPermissionQuery>(
+      graphql`
+        query BAIAllowedVfolderHostsWithPermissionQuery {
+          vfolder_host_permissions {
+            vfolder_host_permission_list
+          }
+        }
+      `,
+      {},
+    );
+
+  const getColor = (vfolderHost: string): SemanticColor => {
+    if (
+      _.isEqual(
+        new Set(allowedVfolderHosts[vfolderHost]),
+        new Set(vfolder_host_permissions?.vfolder_host_permission_list || null),
+      )
+    ) {
+      return 'success';
+    } else if (allowedVfolderHosts[vfolderHost]?.length > 0) {
+      return 'warning';
+    } else {
+      return 'error';
+    }
+  };
+
+  return (
+    <>
+      <BAIFlex gap="xs" wrap="wrap">
+        {_.map(_.keys(allowedVfolderHosts), (storageHost) => {
+          const color = getColor(storageHost);
+          return (
+            <BAILink
+              key={storageHost}
+              onClick={() => {
+                setStorageHost(storageHost);
+              }}
+              type="hover"
+            >
+              <BAIFlex gap="xxs" align="center">
+                {color === 'error' ? (
+                  <LockIcon
+                    size={14}
+                    aria-hidden="true"
+                    focusable={false}
+                    style={{ color: token.colorError }}
+                  />
+                ) : (
+                  <LockOpenIcon
+                    size={14}
+                    aria-hidden="true"
+                    focusable={false}
+                    style={{
+                      color:
+                        color === 'success'
+                          ? token.colorSuccess
+                          : token.colorWarning,
+                    }}
+                  />
+                )}
+                {storageHost}
+              </BAIFlex>
+            </BAILink>
+          );
+        })}
+      </BAIFlex>
+      <BAIModal
+        centered
+        title={`${storageHost} ${t('comp:AllowedVfolderHostsWithPermission.Permission')}`}
+        open={!_.isEmpty(storageHost)}
+        onCancel={() => setStorageHost(null)}
+        footer={null}
+      >
+        <BAITable
+          pagination={false}
+          size="small"
+          dataSource={_.map(
+            vfolder_host_permissions?.vfolder_host_permission_list,
+            (permission) => ({
+              key: permission,
+              permission,
+              isAllowed: _.includes(
+                _.get(allowedVfolderHosts, storageHost || ''),
+                permission,
+              ) ? (
+                <BAIFlex justify="center">
+                  <CheckCircleFilled
+                    style={{
+                      color: token.green5,
+                      fontSize: token.fontSizeLG,
+                    }}
+                  />
+                </BAIFlex>
+              ) : (
+                <BAIFlex justify="center">
+                  <StopFilled
+                    style={{
+                      color: token.red5,
+                      fontSize: token.fontSizeLG,
+                    }}
+                  />
+                </BAIFlex>
+              ),
+            }),
+          )}
+          columns={[
+            {
+              title: t('comp:AllowedVfolderHostsWithPermission.Permission'),
+              dataIndex: 'permission',
+              key: 'permission',
+            },
+            {
+              title: t('comp:AllowedVfolderHostsWithPermission.Allowed'),
+              dataIndex: 'isAllowed',
+              key: 'isAllowed',
+            },
+          ]}
+        />
+      </BAIModal>
+    </>
+  );
+};
+
+export default BAIAllowedVfolderHostsWithPermission;

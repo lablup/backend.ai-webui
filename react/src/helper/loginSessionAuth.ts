@@ -1,0 +1,390 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+/**
+ * Login Session Authentication Utilities
+ *
+ * Extracted from backend-ai-login.ts _connectViaGQL method.
+ * Handles post-authentication GQL connection and client setup.
+ */
+import { fetchAndParseConfig } from '../hooks/useWebUIConfig';
+import { applyConfigToClient, type LoginConfigState } from './loginConfig';
+
+/**
+ * Create a Backend.AI client with the given credentials.
+ */
+export function createBackendAIClient(
+  userId: string,
+  password: string,
+  apiEndpoint: string,
+  mode: 'SESSION' | 'API' = 'SESSION',
+): { client: any; clientConfig: any } {
+  const clientConfig = new (globalThis as any).BackendAIClientConfig(
+    userId,
+    password,
+    apiEndpoint,
+    mode === 'SESSION' ? 'SESSION' : undefined,
+  );
+  const client = new (globalThis as any).BackendAIClient(
+    clientConfig,
+    'Backend.AI Console.',
+  );
+  return { client, clientConfig };
+}
+
+/**
+ * Check if the current session is already logged in.
+ */
+export async function checkLoginSession(apiEndpoint: string): Promise<boolean> {
+  if (!apiEndpoint) return false;
+  const { client } = createBackendAIClient('', '', apiEndpoint, 'SESSION');
+  try {
+    await client.get_manager_version();
+    const isLogon = await client.check_login();
+    return !!isLogon;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Perform GQL connection after successful authentication.
+ * Sets up globalThis.backendaiclient with user info, groups, and config.
+ */
+export async function connectViaGQL(
+  client: any,
+  cfg: LoginConfigState,
+  endpoints: string[],
+): Promise<string[]> {
+  const fields = ['user_id', 'resource_policy', 'user'];
+  const q = `query { keypair { ${fields.join(' ')} } }`;
+  const v = {};
+
+  const response = await client.query(q, v);
+
+  (globalThis as any).backendaiclient = client;
+
+  if (!response['keypair']) {
+    await client.logout();
+    throw new Error('Keypair information is missing.');
+  }
+
+  const resourcePolicy = response['keypair'].resource_policy;
+  (globalThis as any).backendaiclient.resource_policy = resourcePolicy;
+  const user = response['keypair'].user;
+
+  // Get user details
+  const userFields = [
+    'username',
+    'email',
+    'full_name',
+    'is_active',
+    'role',
+    'domain_name',
+    'groups {name, id}',
+    'need_password_change',
+    'uuid',
+  ];
+  const userQuery = `query { user{ ${userFields.join(' ')} } }`;
+  const userResponse = await (globalThis as any).backendaiclient.query(
+    userQuery,
+    { uuid: user },
+  );
+
+  const email = userResponse['user'].email;
+  const userGroups = userResponse['user'].groups;
+  const role = userResponse['user'].role;
+  const domainName = userResponse['user'].domain_name;
+
+  (globalThis as any).backendaiclient.email = email;
+  (globalThis as any).backendaiclient.user_uuid = userResponse['user'].uuid;
+  (globalThis as any).backendaiclient.full_name =
+    userResponse['user'].full_name;
+  (globalThis as any).backendaiclient.is_admin = false;
+  (globalThis as any).backendaiclient.is_superadmin = false;
+  (globalThis as any).backendaiclient.need_password_change =
+    userResponse['user'].need_password_change;
+
+  if (['superadmin', 'admin'].includes(role)) {
+    (globalThis as any).backendaiclient.is_admin = true;
+  }
+  if (['superadmin'].includes(role)) {
+    (globalThis as any).backendaiclient.is_superadmin = true;
+  }
+
+  // Get group list
+  const groupResponse = await (globalThis as any).backendaiclient.group.list(
+    true,
+    false,
+    ['id', 'name', 'description', 'is_active'],
+  );
+
+  const groups = groupResponse.groups;
+  const userGroupIds = userGroups.map(({ id }: { id: string }) => id);
+
+  if (groups !== null) {
+    (globalThis as any).backendaiclient.groups = groups
+      .filter((item: any) => userGroupIds.includes(item.id))
+      .map((item: any) => item.name)
+      .sort();
+
+    const groupMap: Record<string, string> = {};
+    groups.forEach((element: any) => {
+      groupMap[element.name] = element.id;
+    });
+    (globalThis as any).backendaiclient.groupIds = groupMap;
+  } else {
+    (globalThis as any).backendaiclient.groups = ['default'];
+  }
+
+  const currentGroup = (
+    globalThis as any
+  ).backendaiutils._readRecentProjectGroup();
+  (globalThis as any).backendaiclient.current_group = currentGroup
+    ? currentGroup
+    : (globalThis as any).backendaiclient.groups[0];
+  (globalThis as any).backendaiclient.current_group_id = () => {
+    return (globalThis as any).backendaiclient.groupIds[
+      (globalThis as any).backendaiclient.current_group
+    ];
+  };
+
+  // Apply config
+  const updatedConfig = { ...cfg, domain_name: domainName };
+  applyConfigToClient(updatedConfig);
+
+  // Manage endpoint history
+  let updatedEndpoints = [...endpoints];
+  const endpoint = (globalThis as any).backendaiclient._config
+    .endpoint as string;
+  if (updatedEndpoints.indexOf(endpoint) === -1) {
+    updatedEndpoints.push(endpoint);
+    if (updatedEndpoints.length > 5) {
+      updatedEndpoints = updatedEndpoints.slice(1, 6);
+    }
+    (globalThis as any).backendaioptions.set('endpoints', updatedEndpoints);
+  }
+
+  return updatedEndpoints;
+}
+
+/**
+ * Structured error thrown by `tokenLogin` when the webserver reports
+ * `authenticated === false`. Carries the raw `fail_reason` string and the
+ * authenticated-probe `type` when available so callers (the
+ * `STokenLoginBoundary` classifier) can discriminate `require-totp-*`,
+ * `active-login-session-exists`, and generic invalid-token cases without
+ * string-matching the user-visible message.
+ *
+ * The prior implementation collapsed every non-success result into a
+ * generic `Error('Cannot authorize session by token.')`, which silently
+ * broke for `{ fail_reason }` returns (`client.token_login` returns an
+ * object in that case — truthy, so the old `!loginSuccess` check passed
+ * through and `connectViaGQL` ran against an unauthenticated client).
+ */
+export class TokenLoginFailedError extends Error {
+  readonly failReason: string | null;
+  readonly failType: string | null;
+  readonly raw: unknown;
+  constructor(
+    failReason: string | null,
+    failType: string | null,
+    raw: unknown,
+  ) {
+    super(failReason ?? 'Cannot authorize session by token.');
+    this.name = 'TokenLoginFailedError';
+    this.failReason = failReason;
+    this.failType = failType;
+    this.raw = raw;
+  }
+}
+
+/**
+ * Perform token-based login (SSO).
+ *
+ * `extraParams` are forwarded to `client.token_login` alongside the explicit
+ * `sToken` argument. Callers typically collect these from URL query parameters
+ * (for example, EduAppLauncher forwards `app`, `session_id`, resource hints)
+ * for the server-side token handler. The `STokenLoginBoundary` also folds
+ * interactive inputs (`otp`, `force`) into this object when retrying after a
+ * TOTP or concurrent-session challenge. LoginView callers that do not need
+ * to forward anything can omit the argument.
+ *
+ * Reserved keys (`sToken`, `stoken`) are stripped from `extraParams` before
+ * forwarding so that the explicit `sToken` argument always wins, regardless
+ * of whether a caller accidentally (or maliciously) included the token in
+ * the forwarded query parameters. `client.token_login` merges `extraParams`
+ * into the request body via `Object.assign`, so an unsanitized map would
+ * otherwise overwrite the authenticated token field.
+ */
+export async function tokenLogin(
+  client: any,
+  sToken: string,
+  cfg: LoginConfigState,
+  endpoints: string[],
+  extraParams?: Record<string, string | boolean>,
+): Promise<string[]> {
+  const sanitizedExtraParams = extraParams
+    ? Object.fromEntries(
+        Object.entries(extraParams).filter(
+          ([key]) => key !== 'sToken' && key !== 'stoken',
+        ),
+      )
+    : {};
+  const result = await client.token_login(sToken, sanitizedExtraParams);
+  // `client.token_login` returns:
+  //   - truthy check_login result object                       → authenticated
+  //   - `{ fail_reason: string, fail_type: string }`           → authenticated: false
+  //   - `false`                                                → authenticated: false, no envelope
+  // Only the first is a successful login.
+  const failed =
+    result === false ||
+    result == null ||
+    (typeof result === 'object' &&
+      ('fail_reason' in result || 'fail_type' in result));
+  if (failed) {
+    const envelope =
+      typeof result === 'object' && result
+        ? (result as { fail_reason?: string; fail_type?: string })
+        : null;
+    throw new TokenLoginFailedError(
+      envelope?.fail_reason ?? null,
+      envelope?.fail_type ?? null,
+      result,
+    );
+  }
+  return connectViaGQL(client, cfg, endpoints);
+}
+
+/**
+ * Persist the state a successful login should leave behind, independent of
+ * which UI surface performed the login (LoginView panel, STokenLoginBoundary,
+ * etc.). Centralized here so every successful login path keeps the same
+ * side effects in lockstep:
+ *
+ *   - `last_login` timestamp + reset of `login_attempt` counter
+ *   - drop any saved username / password / keypair credentials from prior
+ *     signed-out sessions on this device
+ *   - persist the resolved API endpoint into `localStorage` so the next
+ *     cold start can re-use it
+ *   - mark the client `ready` so `useLoginOrchestration` short-circuits on
+ *     subsequent mounts within the same page load
+ *
+ * Callers: the `STokenLoginBoundary` `onSuccess` route handlers (route-level
+ * sToken flow for `/`, `/interactive-login`, `/edu-applauncher`, `/applauncher`).
+ * LoginView's panel-based login still runs its own `postConnectSetup` inline —
+ * unifying both paths through this helper is tracked as a follow-up refactor
+ * once the boundary migrations settle (see PR #6861 review discussion). Kept
+ * separate from `connectViaGQL` because the GQL step also runs for the
+ * non-authenticated paths (e.g. an already-logged-in session refresh) where
+ * the counter and credential-cleanup side effects would be incorrect.
+ */
+export function persistPostLoginState(client: any): void {
+  const options = (globalThis as any).backendaioptions;
+  if (options) {
+    options.set('last_login', Math.floor(Date.now() / 1000), 'general');
+    options.set('login_attempt', 0, 'general');
+  }
+  localStorage.removeItem('backendaiwebui.login.api_key');
+  localStorage.removeItem('backendaiwebui.login.secret_key');
+  localStorage.removeItem('backendaiwebui.login.user_id');
+  localStorage.removeItem('backendaiwebui.login.password');
+  const endpoint = client?._config?.endpoint;
+  if (typeof endpoint === 'string' && endpoint) {
+    localStorage.setItem('backendaiwebui.api_endpoint', endpoint);
+  }
+  if (client) {
+    client.ready = true;
+  }
+}
+
+/**
+ * Load webserver config when the api_endpoint differs from current URL origin.
+ * Uses React's fetchAndParseConfig instead of the Lit shell's _parseConfig.
+ */
+export async function loadConfigFromWebServer(
+  apiEndpoint: string,
+): Promise<void> {
+  if (!window.location.href.startsWith(apiEndpoint)) {
+    // Validate the endpoint URL scheme to prevent fetching config from
+    // unexpected protocols (e.g., javascript:, data:, file:).
+    try {
+      const endpointUrl = new URL(apiEndpoint);
+      if (!['http:', 'https:'].includes(endpointUrl.protocol)) {
+        return;
+      }
+    } catch {
+      return;
+    }
+    const webserverConfigURL = new URL('./config.toml', apiEndpoint).href;
+    const { config } = await fetchAndParseConfig(webserverConfigURL);
+    if (!config) return;
+
+    const backendaiutils = (globalThis as Record<string, any>).backendaiutils;
+    if (!backendaiutils) return;
+
+    const fieldsToExclude = [
+      'general.apiEndpoint',
+      'general.apiEndpointText',
+      'general.appDownloadUrl',
+      'wsproxy',
+    ];
+    fieldsToExclude.forEach((key) => {
+      backendaiutils.deleteNestedKeyFromObject(config, key);
+    });
+
+    // Merge with the current raw config stored in the Jotai atom.
+    // For backward compat, we also try the Lit shell element.
+    const { jotaiStore } = await import('../components/DefaultProviders');
+    const { rawConfigState } = await import('../hooks/useWebUIConfig');
+    const currentConfig = jotaiStore.get(rawConfigState) ?? {};
+    const mergedConfig = backendaiutils.mergeNestedObjects(
+      currentConfig,
+      config,
+    );
+
+    // Update the Jotai store with merged config
+    jotaiStore.set(rawConfigState, mergedConfig);
+
+    // Re-process the merged config
+    const { refreshConfigFromToml } = await import('./loginConfig');
+    const { loginConfigState } = await import('../hooks/useWebUIConfig');
+    const loginConfig = refreshConfigFromToml(mergedConfig);
+    jotaiStore.set(loginConfigState, loginConfig);
+  }
+}
+
+/**
+ * SAML login via form submit.
+ */
+export function loginWithSAML(client: any): void {
+  const rqst = client.newUnsignedRequest('POST', '/saml/login', null);
+  const form = document.createElement('form');
+  const redirectTo = document.createElement('input');
+  form.appendChild(redirectTo);
+  document.body.appendChild(form);
+  form.setAttribute('method', 'POST');
+  form.setAttribute('action', rqst?.uri as string);
+  redirectTo.setAttribute('type', 'hidden');
+  redirectTo.setAttribute('name', 'redirect_to');
+  redirectTo.setAttribute('value', window.location.href);
+  form.submit();
+}
+
+/**
+ * OpenID login via form submit.
+ */
+export function loginWithOpenID(client: any): void {
+  const rqst = client.newUnsignedRequest('POST', '/openid/login', null);
+  const form = document.createElement('form');
+  const redirectTo = document.createElement('input');
+  form.appendChild(redirectTo);
+  document.body.appendChild(form);
+  form.setAttribute('method', 'POST');
+  form.setAttribute('action', rqst?.uri as string);
+  redirectTo.setAttribute('type', 'hidden');
+  redirectTo.setAttribute('name', 'redirect_to');
+  redirectTo.setAttribute('value', window.location.href);
+  form.submit();
+}

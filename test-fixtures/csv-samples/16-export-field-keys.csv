@@ -1,0 +1,4 @@
+email,username,password,full_name,project_name,role,resource_policy,description,status_info,need_password_change
+export1@example.com,export1,Password!23,Export One,default,user,default,Exported user,active,false
+export2@example.com,export2,Password!23,Export Two,default,admin,default,Exported admin,active,true
+export3@example.com,export3,Password!23,Export Three,default,user,default,Inactive exported,inactive,false

@@ -1,0 +1,11 @@
+<svg viewBox="0 0 22 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g transform="translate(2,1.2) scale(0.8)">
+<path d="M20.5714 3.06429H10.9554L7.81339 0.0589285C7.77341 0.0215029 7.72083 0.000469544 7.66607 0H0.857143C0.383036 0 0 0.383036 0 0.857143V16.7143C0 17.1884 0.383036 17.5714 0.857143 17.5714H20.5714C21.0455 17.5714 21.4286 17.1884 21.4286 16.7143V3.92143C21.4286 3.44732 21.0455 3.06429 20.5714 3.06429ZM19.5 15.6429H1.92857V1.92857H6.97768L10.1812 4.99286H19.5V15.6429Z" fill="currentColor" rx="4"/>
+<text x="10.7143" y="11" text-anchor="middle" font-family="Arial, sans-serif" font-size="3.8" font-weight="900" fill="currentColor" letter-spacing="0.2">SFTP</text>
+</g>
+<!-- Network connection lines: ㅗ shape below folder -->
+<line x1="6" y1="17.2" x2="16" y2="17.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+<line x1="11" y1="14.46" x2="11" y2="17.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+<!-- Connection point circle -->
+<circle cx="11" cy="17.2" r="1.5" fill="currentColor"/>
+</svg>

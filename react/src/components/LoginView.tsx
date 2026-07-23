@@ -1,0 +1,1203 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+/**
+ * LoginView - React implementation of the Backend.AI login component.
+ *
+ * Supports SESSION and API connection modes, OTP/TOTP flows,
+ * endpoint configuration, and integrates with existing React child components.
+ *
+ * Config is fetched and parsed entirely within React via useInitializeConfig.
+ * Login flow orchestration (auto-logout, tab counting, initial login) is
+ * handled by the useLoginOrchestration hook, replacing the Lit shell's
+ * firstUpdated() logic.
+ */
+import {
+  devApiEndpointOverride,
+  devEmailOverride,
+  devPasswordOverride,
+} from '../helper/devLoginOverrides';
+import {
+  getDefaultLoginConfig,
+  type LoginConfigState,
+} from '../helper/loginConfig';
+import {
+  createBackendAIClient,
+  connectViaGQL,
+  loadConfigFromWebServer,
+  loginWithSAML,
+  loginWithOpenID,
+} from '../helper/loginSessionAuth';
+import { resolveInitialLanguage } from '../helper/resolveInitialLanguage';
+import { useLoginOrchestration } from '../hooks/useLoginOrchestration';
+import {
+  useInitializeConfig,
+  useConfigRefreshPageEffect,
+  loginPluginState,
+  loginConfigState,
+} from '../hooks/useWebUIConfig';
+import { pluginApiEndpointState } from '../hooks/useWebUIPluginState';
+import { preloadPostLoginChunks } from '../preload';
+import { jotaiStore } from './DefaultProviders';
+import LoginFormPanel from './LoginFormPanel';
+import { App, Button, ConfigProvider, Form, type MenuProps, Tag } from 'antd';
+import { BAIModal, BAIFlex, useBAILogger } from 'backend.ai-ui';
+import i18n from 'i18next';
+import { useAtomValue, useSetAtom } from 'jotai';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+
+type ConnectionMode = 'SESSION' | 'API';
+
+/**
+ * Extract the error type suffix from a Backend.AI problem type URL.
+ * e.g., "https://api.backend.ai/probs/auth-failed" → "auth-failed"
+ */
+const extractErrorType = (typeUrl?: string): string => {
+  if (!typeUrl) return '';
+  const parts = typeUrl.split('/');
+  return parts[parts.length - 1] || '';
+};
+
+const STORED_API_ENDPOINT_KEY = 'backendaiwebui.api_endpoint';
+
+const LoginView: React.FC<{
+  /**
+   * When true, delays closing the login panel until MainLayout signals
+   * readiness (`main-layout-ready` event) to prevent a blank screen flash.
+   * Set to false for routes without MainLayout (e.g. /interactive-login).
+   * @default true
+   */
+  waitForMainLayout?: boolean;
+}> = ({ waitForMainLayout = true }) => {
+  'use memo';
+
+  const { t } = useTranslation();
+  const { modal } = App.useApp();
+  const { logger } = useBAILogger();
+
+  // Preload commonly needed lazy chunks while the user is on the login screen.
+  // This runs during browser idle time so the JS bundles are already cached
+  // by the time login completes and MainLayout renders.
+  useEffect(() => {
+    preloadPostLoginChunks();
+  }, []);
+
+  // Initialize config from config.toml (replaces Lit shell's _parseConfig + loadConfig)
+  const {
+    isLoaded: isConfigLoaded,
+    loginConfig: atomLoginConfig,
+    loadConfig,
+  } = useInitializeConfig();
+
+  // Set up proxy URL on backend client when connected
+  useConfigRefreshPageEffect();
+
+  // Login plugin name from config
+  const loginPlugin = useAtomValue(loginPluginState);
+  const setPluginApiEndpoint = useSetAtom(pluginApiEndpointState);
+
+  // State
+  const [loginConfig, setLoginConfig] = useState<LoginConfigState>(() =>
+    getDefaultLoginConfig(),
+  );
+  const [connectionMode, setConnectionMode] =
+    useState<ConnectionMode>('SESSION');
+  const [apiEndpoint, setApiEndpoint] = useState(() => {
+    // A stored endpoint means a session may be live against that backend, so
+    // it wins over the dev override: silent re-login then reconnects to the
+    // *actual* session server instead of bouncing to the login screen when
+    // VITE_DEFAULT_API_ENDPOINT points elsewhere. The override only fills the
+    // field here when nothing is stored (a genuinely fresh login) — it is never
+    // re-applied after mount, so it can't clobber an endpoint the user types by
+    // hand. A dev-only banner (`DevApiEndpointMismatchAlert`) surfaces any
+    // mismatch once inside the app so multi-server testing doesn't get confusing.
+    const stored = localStorage.getItem(STORED_API_ENDPOINT_KEY);
+    const storedEndpoint = stored ? stored.replace(/^"+|"+$/g, '') : '';
+    return storedEndpoint || devApiEndpointOverride || '';
+  });
+  const [otpRequired, setOtpRequired] = useState(false);
+  const [needsOtpRegistration, setNeedsOtpRegistration] = useState(false);
+  const [totpRegistrationToken, setTotpRegistrationToken] = useState('');
+  const [needToResetPassword, setNeedToResetPassword] = useState(false);
+  // Use useRef instead of useState to avoid exposing plaintext credentials
+  // in React DevTools and to prevent unnecessary re-renders.
+  const expiredCredentialsRef = useRef<{
+    username: string;
+    password: string;
+  } | null>(null);
+  const [showSignupModal, setShowSignupModal] = useState(false);
+  const [signupPreloadedToken, setSignupPreloadedToken] = useState<
+    string | undefined
+  >();
+  const [isLoginPanelOpen, setIsLoginPanelOpen] = useState(false);
+  const [isBlockPanelOpen, setIsBlockPanelOpen] = useState(false);
+  const [blockMessage, setBlockMessage] = useState('');
+  const [blockType, setBlockType] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [loginError, setLoginError] = useState<{
+    message: string;
+    description?: string;
+  } | null>(null);
+  const [endpoints, setEndpoints] = useState<string[]>(() => {
+    return (globalThis as any).backendaioptions?.get('endpoints', []) ?? [];
+  });
+  const [showEndpointInput, setShowEndpointInput] = useState(true);
+  const [isEndpointDisabled, setIsEndpointDisabled] = useState(false);
+
+  const [form] = Form.useForm();
+  const clientRef =
+    useRef<ReturnType<typeof createBackendAIClient>['client']>(null);
+  const configRef = useRef<LoginConfigState>(loginConfig);
+  const blockTimerRef = useRef<ReturnType<typeof setTimeout>>(null);
+  const connectUsingSessionRef =
+    useRef<(showError?: boolean, endpointOverride?: string) => Promise<void>>(
+      null,
+    );
+  // Remembers that the user approved force-login (concurrent session override).
+  // Persists across retries (e.g., TOTP expiration after force approval) so
+  // the next login attempt automatically includes force=true.
+  // Reset when credentials or endpoint change to prevent unintended force-login
+  // against a different user/endpoint.
+  const forceLoginApprovedRef = useRef(false);
+
+  // Reset force-login approval when credentials or endpoint change
+  const watchedUserId = Form.useWatch('user_id', form);
+  const watchedPassword = Form.useWatch('password', form);
+  useEffect(() => {
+    forceLoginApprovedRef.current = false;
+  }, [apiEndpoint, watchedUserId, watchedPassword]);
+
+  // Trigger config loading on mount
+  useEffect(() => {
+    loadConfig();
+  }, [loadConfig]);
+
+  const [appliedLoginConfig, setAppliedLoginConfig] = useState<
+    typeof atomLoginConfig | null
+  >(null);
+  if (
+    isConfigLoaded &&
+    atomLoginConfig &&
+    appliedLoginConfig !== atomLoginConfig
+  ) {
+    setAppliedLoginConfig(atomLoginConfig);
+
+    const newCfg = atomLoginConfig;
+    setLoginConfig(newCfg);
+    setConnectionMode(newCfg.connection_mode);
+    // An already-resolved endpoint (a stored session's server, kept in `prev`)
+    // wins so a dev override never clobbers the backend a live session targets
+    // — that would re-introduce the login-screen bounce. Fall back to the
+    // config.toml value, then the dev override as a last-resort pre-fill for a
+    // fresh login.
+    setApiEndpoint(
+      (prev) => prev || newCfg.api_endpoint || devApiEndpointOverride || '',
+    );
+
+    // Handle endpoint visibility
+    if (newCfg.api_endpoint === '' || devApiEndpointOverride) {
+      setShowEndpointInput(true);
+      setIsEndpointDisabled(false);
+    } else {
+      setShowEndpointInput(false);
+      setIsEndpointDisabled(true);
+    }
+  }
+
+  // Load login plugin when config is ready.
+  // Mirrors `PluginLoader.tsx`'s URL resolution so login plugins follow
+  // the same deployment model as page plugins: the file is served by the
+  // backend WebServer (or a Vite/static host that mounts `/dist/plugins/`).
+  // No build-time bundling — plugins can be deployed independently of the
+  // WebUI bundle.
+  useEffect(() => {
+    if (!isConfigLoaded || !loginPlugin) return;
+
+    // Sanitize the plugin name to prevent path traversal attacks.
+    // Only allow alphanumeric characters, hyphens, and underscores.
+    const sanitizedPlugin = loginPlugin.replace(/[^a-zA-Z0-9_-]/g, '');
+    if (!sanitizedPlugin || sanitizedPlugin !== loginPlugin) return;
+
+    const isElectronEnv = (globalThis as Record<string, unknown>).isElectron;
+    const pluginUrl =
+      isElectronEnv && apiEndpoint
+        ? `${apiEndpoint}/dist/plugins/${sanitizedPlugin}.js`
+        : `/dist/plugins/${sanitizedPlugin}.js`;
+
+    // `@vite-ignore` opts out of Vite's static analysis. The URL is an
+    // absolute path (no relative `..` traversal), so esbuild's
+    // optimizeDeps scanner does not treat it as a module specifier.
+    import(/* @vite-ignore */ pluginUrl).catch(() => {
+      setLoginError({ message: t('error.LoginPluginLoadFailed') });
+    });
+  }, [isConfigLoaded, loginPlugin, apiEndpoint, t]);
+
+  // Keep configRef in sync
+  useEffect(() => {
+    configRef.current = loginConfig;
+  }, [loginConfig]);
+
+  // Sync apiEndpoint state changes to the form field.
+  // Ant Design's initialValues only applies on first render, so subsequent
+  // state updates (from config loading, localStorage restoration, etc.)
+  // must be explicitly synced to the form.
+  useEffect(() => {
+    if (apiEndpoint) {
+      form.setFieldsValue({ api_endpoint: apiEndpoint });
+    }
+  }, [apiEndpoint, form]);
+
+  // Dev-only: pre-fill SESSION credentials from VITE_DEFAULT_EMAIL /
+  // VITE_DEFAULT_PASSWORD so local dev sessions log in without retyping test
+  // credentials. Runs once on mount; both overrides are `undefined` in
+  // production builds, so this is a no-op there.
+  useEffect(() => {
+    if (devEmailOverride) form.setFieldsValue({ user_id: devEmailOverride });
+    if (devPasswordOverride)
+      form.setFieldsValue({ password: devPasswordOverride });
+    // Mount-only: the override constants are build-time frozen, so no deps.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Language initialization: bridge selected_language -> general.language
+  // (replaces Lit shell's connectedCallback language setup).
+  //
+  // Shares its supported-language list and detection logic with i18n init
+  // in `DefaultProviders.tsx` via `resolveInitialLanguage`, so the login
+  // screen renders in the browser's language on first paint even when no
+  // value has been persisted yet (incognito / first-visit).
+  useEffect(() => {
+    // `selected_language` is the "user explicitly chose this" signal that
+    // overrides browser detection. If it isn't an explicit supported
+    // choice, fall back to browser detection via the shared helper.
+    const selectedLang = (globalThis as any).backendaioptions?.get(
+      'selected_language',
+    );
+    const lang = resolveInitialLanguage(selectedLang);
+
+    (globalThis as any).backendaioptions.set('language', lang, 'general');
+
+    // Defensive sync: i18n was already initialized with the same resolver
+    // in DefaultProviders.tsx, so this usually matches. Trigger a switch
+    // only when it doesn't (e.g. a stored explicit choice was added between
+    // init and mount).
+    if (i18n.language !== lang) {
+      i18n.changeLanguage(lang);
+    }
+  }, []);
+
+  const notification = useCallback((text: string, detail?: string) => {
+    setLoginError({ message: text, description: detail });
+  }, []);
+
+  const open = useCallback(() => {
+    // Cancel any pending block timer so the block modal doesn't overlay
+    // the login panel (and any error notifications) after a login failure.
+    if (blockTimerRef.current) {
+      clearTimeout(blockTimerRef.current);
+      blockTimerRef.current = null;
+    }
+    setIsLoginPanelOpen(true);
+    setIsBlockPanelOpen(false);
+    // Logged-out: turn the splash into the login backdrop (keep the weave +
+    // version/copyright metadata, hide the loader). The login modal renders
+    // above it. Fall back to full dismissal on older index.html shells that
+    // don't expose __enterLoginBackdrop.
+    const splashApi = globalThis as unknown as {
+      __enterLoginBackdrop?: () => void;
+      __dismissSplash?: () => void;
+    };
+    if (typeof splashApi.__enterLoginBackdrop === 'function') {
+      splashApi.__enterLoginBackdrop();
+    } else {
+      splashApi.__dismissSplash?.();
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const tokenParam = urlParams.get('token');
+    if (
+      loginConfig.signup_support &&
+      apiEndpoint !== '' &&
+      tokenParam !== undefined &&
+      tokenParam !== null
+    ) {
+      setSignupPreloadedToken(tokenParam);
+      setShowSignupModal(true);
+    }
+  }, [loginConfig.signup_support, apiEndpoint]);
+
+  const close = useCallback(() => {
+    // Cancel any pending block timer so a delayed timer from block()
+    // doesn't re-open the block panel after a successful login.
+    if (blockTimerRef.current) {
+      clearTimeout(blockTimerRef.current);
+      blockTimerRef.current = null;
+    }
+    setIsLoginPanelOpen(false);
+    setIsBlockPanelOpen(false);
+    setLoginError(null);
+  }, []);
+
+  const block = useCallback((message = '', type = '') => {
+    setBlockMessage(message);
+    setBlockType(type);
+
+    // Clear any existing block timer to prevent a stale timer from firing.
+    if (blockTimerRef.current) {
+      clearTimeout(blockTimerRef.current);
+    }
+
+    blockTimerRef.current = setTimeout(() => {
+      blockTimerRef.current = null;
+      // Use the functional updater pattern to read the current isLoginPanelOpen
+      // value at callback time, avoiding the stale closure that previously caused
+      // the block modal to overlay error notifications after a login failure.
+      setIsLoginPanelOpen((currentIsLoginPanelOpen) => {
+        if (!currentIsLoginPanelOpen) {
+          setIsBlockPanelOpen(true);
+        }
+        // Return unchanged value — this is a read-only check, not a state change.
+        return currentIsLoginPanelOpen;
+      });
+    }, 2000);
+  }, []);
+
+  const clearSavedLoginInfo = useCallback(() => {
+    localStorage.removeItem('backendaiwebui.login.api_key');
+    localStorage.removeItem('backendaiwebui.login.secret_key');
+    localStorage.removeItem('backendaiwebui.login.user_id');
+    localStorage.removeItem('backendaiwebui.login.password');
+  }, []);
+
+  // Shared post-connection setup used by both the regular session login
+  // (doGQLConnect) and the sToken SSO path. Keeps the two flows consistent:
+  // login_attempt/last_login counters, saved-credentials cleanup, panel
+  // close, connected-event dispatch, and endpoint persistence.
+  const postConnectSetup = useCallback(
+    (client: ReturnType<typeof createBackendAIClient>['client']) => {
+      const currentTime = Math.floor(Date.now() / 1000);
+      (globalThis as any).backendaioptions.set(
+        'last_login',
+        currentTime,
+        'general',
+      );
+      (globalThis as any).backendaioptions.set('login_attempt', 0, 'general');
+
+      const event = new CustomEvent('backend-ai-connected', {
+        detail: client,
+      });
+      document.dispatchEvent(event);
+      // Delay closing the login panel until MainLayout has rendered to avoid
+      // a blank screen flash between the login modal and the main UI.
+      // Routes without MainLayout (e.g. /interactive-login) pass
+      // waitForMainLayout={false} so the panel closes immediately.
+      if (!waitForMainLayout || (globalThis as any).__mainLayoutReady) {
+        close();
+      } else {
+        document.addEventListener('main-layout-ready', () => close(), {
+          once: true,
+        });
+      }
+      forceLoginApprovedRef.current = false;
+      clearSavedLoginInfo();
+      // Read the endpoint from the connected client to avoid stale closure
+      // values. When handleLogin calls setApiEndpoint(ep) then immediately
+      // invokes connectUsingSession, the closure still captures the OLD
+      // apiEndpoint (often "" on first launch). The client object always
+      // has the correct endpoint that was used for the connection.
+      const connectedEndpoint =
+        (globalThis as any).backendaiclient?._config?.endpoint || apiEndpoint;
+      localStorage.setItem('backendaiwebui.api_endpoint', connectedEndpoint);
+      setPluginApiEndpoint(connectedEndpoint);
+    },
+    [
+      close,
+      clearSavedLoginInfo,
+      apiEndpoint,
+      setPluginApiEndpoint,
+      waitForMainLayout,
+    ],
+  );
+
+  const doGQLConnect = useCallback(
+    async (client: ReturnType<typeof createBackendAIClient>['client']) => {
+      // Read directly from Jotai store to get the latest config synchronously,
+      // including any merged webserver config from loadConfigFromWebServer().
+      // Using configRef.current here would return stale config because React
+      // hasn't re-rendered yet after the Jotai atom update.
+      const cfg = jotaiStore.get(loginConfigState) ?? configRef.current;
+
+      const updatedEndpoints = await connectViaGQL(client, cfg, endpoints);
+      setEndpoints(updatedEndpoints);
+
+      postConnectSetup(client);
+    },
+    [endpoints, postConnectSetup],
+  );
+
+  /**
+   * Unified login error handler. Classifies errors from client.login() and
+   * shows the appropriate notification or opens a dedicated modal.
+   *
+   * Returns 'keep-open' when a child modal (password reset, TOTP registration)
+   * needs the login panel to stay open (to preserve form values). Returns
+   * 'reopen' for all other cases so the caller reopens the login panel.
+   */
+  const handleLoginError = useCallback(
+    (
+      err: unknown,
+      showError: boolean,
+      userId: string,
+      password: string,
+    ): 'keep-open' | 'reopen' => {
+      const e = err as {
+        isLoginError?: boolean;
+        isError?: boolean;
+        type?: string;
+        title?: string;
+        message?: string;
+        description?: string;
+        statusCode?: number;
+        data?: Record<string, unknown>;
+      };
+
+      // --- Login errors (envelope responses from /server/login) ---
+      if (e.isLoginError && e.data) {
+        const errorType = extractErrorType(e.data.type as string);
+        const details = ((e.data.details as string) || '') as string;
+
+        switch (errorType) {
+          case 'password-expired':
+            expiredCredentialsRef.current = { username: userId, password };
+            setNeedToResetPassword(true);
+            return 'keep-open';
+
+          case 'require-totp-registration':
+            setTotpRegistrationToken(
+              e.data.two_factor_registration_token as string,
+            );
+            setNeedsOtpRegistration(true);
+            return 'keep-open';
+
+          case 'require-totp-authentication':
+            if (showError && otpRequired) {
+              notification(t('login.PleaseInputOTPCode'));
+            }
+            setOtpRequired(true);
+            setIsLoading(false);
+            return 'reopen';
+
+          case 'rejected-by-hook':
+            if (
+              details.includes('Invalid TOTP code provided') ||
+              details.includes('Failed to validate OTP')
+            ) {
+              setOtpRequired(true);
+              form.setFieldValue('otp', '');
+              setIsLoading(false);
+              if (showError) {
+                notification(t('totp.InvalidTotpCode'));
+              }
+            } else if (showError) {
+              notification(t('error.LoginFailed'), details);
+            }
+            return 'reopen';
+
+          case 'active-login-session-exists':
+            if (forceLoginApprovedRef.current) {
+              // Force-login was already approved but server still returned 409.
+              logger.error(
+                'Force login failed: server returned 409 after force approval',
+              );
+            }
+            if (showError) {
+              modal.confirm({
+                title: t('login.ConcurrentSessionTitle'),
+                content: t('login.ConcurrentSessionDetected'),
+                okText: t('login.Login'),
+                cancelText: t('button.Cancel'),
+                centered: true,
+                zIndex: 10001,
+                onOk: () => {
+                  forceLoginApprovedRef.current = true;
+                  setIsLoading(true);
+                  connectUsingSessionRef.current?.();
+                },
+              });
+            }
+            return 'reopen';
+
+          case 'login-session-expired':
+            if (showError) {
+              notification(t('login.SessionExpired'));
+            }
+            return 'reopen';
+
+          case 'auth-failed':
+            if (showError) {
+              if (details.toLowerCase().includes('email verification')) {
+                notification(t('login.EmailVerificationRequired'));
+              } else {
+                notification(t('error.LoginInformationMismatch'));
+              }
+            }
+            return 'reopen';
+
+          case 'monitor-role-login-forbidden':
+            if (showError) {
+              notification(t('login.MonitorRoleLoginForbidden'));
+            }
+            return 'reopen';
+
+          default:
+            // Legacy string-based fallbacks for backward compatibility
+            // with older backends that may not send a `type` field.
+            if (details.includes('User credential mismatch.')) {
+              if (showError) {
+                notification(t('error.LoginInformationMismatch'));
+              }
+            } else if (
+              details.includes('You must register Two-Factor Authentication.')
+            ) {
+              setTotpRegistrationToken(
+                e.data.two_factor_registration_token as string,
+              );
+              setNeedsOtpRegistration(true);
+              return 'keep-open';
+            } else if (
+              details.includes(
+                'You must authenticate using Two-Factor Authentication.',
+              ) ||
+              details.includes('OTP not provided')
+            ) {
+              if (showError && otpRequired) {
+                notification(t('login.PleaseInputOTPCode'));
+              }
+              setOtpRequired(true);
+              setIsLoading(false);
+              return 'reopen';
+            } else if (
+              details.includes('Invalid TOTP code provided') ||
+              details.includes('Failed to validate OTP')
+            ) {
+              setOtpRequired(true);
+              form.setFieldValue('otp', '');
+              setIsLoading(false);
+              if (showError) {
+                notification(t('totp.InvalidTotpCode'));
+              }
+              return 'reopen';
+            } else if (details.indexOf('Password expired on ') === 0) {
+              expiredCredentialsRef.current = { username: userId, password };
+              setNeedToResetPassword(true);
+              return 'keep-open';
+            } else if (showError) {
+              const fallbackMessage =
+                (typeof e.title === 'string' && e.title.trim()) ||
+                (typeof e.message === 'string' && e.message.trim()) ||
+                t('error.UnknownError');
+              notification(fallbackMessage);
+            }
+            return 'reopen';
+        }
+      }
+
+      // --- Server errors (429, 502, 503, etc. from _wrapWithPromise) ---
+      if (e.isError && e.type) {
+        const errorType = extractErrorType(e.type);
+        if (showError) {
+          switch (errorType) {
+            case 'login-blocked':
+            case 'too-many-requests':
+            case 'rate-limit-exceeded':
+              notification(t('error.TooManyLoginFailures'));
+              break;
+            case 'server-frozen':
+              notification(t('login.ServerMaintenance'));
+              break;
+            case 'bad-gateway':
+              notification(t('login.ServerUnreachable'));
+              break;
+            case 'invalid-api-params':
+            case 'generic-bad-request':
+              notification(e.title || t('error.LoginFailed'));
+              break;
+            default:
+              notification(
+                e.title || t('error.LoginFailed'),
+                e.description || e.message,
+              );
+              break;
+          }
+        }
+        return 'reopen';
+      }
+
+      // --- Unstructured errors (network failures, etc.) ---
+      if (showError) {
+        if (e.message) {
+          notification(e.title || t('error.LoginFailed'), e.message);
+        } else {
+          notification(t('error.LoginInformationMismatch'));
+        }
+      }
+      return 'reopen';
+    },
+    [notification, t, otpRequired, form, modal, logger],
+  );
+
+  const handleGQLError = useCallback(
+    (err: unknown, showError: boolean) => {
+      setIsBlockPanelOpen(false);
+      if (showError) {
+        const e = err as {
+          title?: string;
+          message?: string;
+          status?: number;
+        };
+        if (e.message) {
+          if (e.status === 408) {
+            notification(
+              t('error.LoginSucceededManagerNotResponding'),
+              e.message,
+            );
+          } else {
+            notification(e.title || t('error.LoginFailed'), e.message);
+          }
+        } else {
+          notification(t('error.LoginInformationMismatch'));
+        }
+      }
+      open();
+      setIsLoading(false);
+    },
+    [notification, t, open],
+  );
+
+  const connectUsingSession = useCallback(
+    async (showError = true, endpointOverride?: string) => {
+      const ep = (endpointOverride ?? apiEndpoint).trim();
+      if (ep === '') {
+        setIsBlockPanelOpen(false);
+        open();
+        return;
+      }
+
+      const userId = (form.getFieldValue('user_id') || '').trim();
+      const password = form.getFieldValue('password') || '';
+      const otp = form.getFieldValue('otp') || '';
+
+      const { client } = createBackendAIClient(userId, password, ep, 'SESSION');
+      clientRef.current = client;
+
+      try {
+        await client.get_manager_version();
+      } catch {
+        setIsBlockPanelOpen(false);
+        open();
+        setIsLoading(false);
+        if (showError) {
+          notification(t('error.CannotConnectToServer'));
+        }
+        return;
+      }
+
+      // Check if already logged in
+      let isLogon = false;
+      try {
+        isLogon = !!(await client.check_login());
+      } catch {
+        isLogon = false;
+      }
+
+      if (isLogon) {
+        try {
+          await doGQLConnect(client);
+        } catch (err: unknown) {
+          handleGQLError(err, showError);
+        }
+        return;
+      }
+
+      // Not yet authenticated. Show block panel while connecting (only for user-initiated login).
+      if (showError) {
+        block(t('login.PleaseWait'), t('login.ConnectingToCluster'));
+      }
+
+      // sToken (SSO) URL entry is handled entirely by STokenLoginBoundary
+      // at the route level (see routes.tsx `STokenGuard`). LoginView no
+      // longer reads sToken from the URL; when a token is present the
+      // boundary mounts LoginView only after authentication succeeds.
+
+      // Do session login
+      // client.login() returns only on success (authenticated === true).
+      // All failure cases throw: login errors carry `isLoginError: true` with
+      // `data.type` for classification; server errors carry `isError: true`
+      // with structured info from _wrapWithPromise.
+      try {
+        await client.login(otp, forceLoginApprovedRef.current);
+        await doGQLConnect(client);
+        return;
+      } catch (err: unknown) {
+        setIsBlockPanelOpen(false);
+
+        const handled = handleLoginError(err, showError, userId, password);
+        if (handled === 'keep-open') {
+          // A dedicated modal (password reset, TOTP registration) was opened.
+          // Keep the login panel open to preserve form values for child modals.
+          setIsLoading(false);
+          return;
+        }
+      }
+
+      setIsBlockPanelOpen(false);
+      open();
+      setIsLoading(false);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [apiEndpoint, form, endpoints, doGQLConnect, block, open, notification, t],
+  );
+  // The concurrent-session modal's onOk (in handleLoginError) calls this ref.
+  useEffect(
+    function syncConnectUsingSessionRef() {
+      connectUsingSessionRef.current = connectUsingSession;
+    },
+    [connectUsingSession],
+  );
+
+  const connectUsingAPI = useCallback(
+    async (_showError = true, endpointOverride?: string) => {
+      const ep = (endpointOverride ?? apiEndpoint).trim();
+      const apiKey = form.getFieldValue('api_key') || '';
+      const secretKey = form.getFieldValue('secret_key') || '';
+
+      const { client } = createBackendAIClient(apiKey, secretKey, ep, 'API');
+      clientRef.current = client;
+      client.ready = false;
+
+      try {
+        await client.get_manager_version();
+        await doGQLConnect(client);
+      } catch {
+        notification(t('error.CannotConnectToServer'));
+        setIsLoading(false);
+      }
+    },
+    [apiEndpoint, form, doGQLConnect, notification, t],
+  );
+
+  const handleLogin = useCallback(async () => {
+    setLoginError(null);
+
+    const loginAttempt = (globalThis as any).backendaioptions.get(
+      'login_attempt',
+      0,
+      'general',
+    );
+    const lastLogin = (globalThis as any).backendaioptions.get(
+      'last_login',
+      Math.floor(Date.now() / 1000),
+      'general',
+    );
+
+    const currentTime = Math.floor(Date.now() / 1000);
+
+    if (
+      loginAttempt >= loginConfig.login_attempt_limit &&
+      currentTime - lastLogin > loginConfig.login_block_time
+    ) {
+      (globalThis as any).backendaioptions.set(
+        'last_login',
+        currentTime,
+        'general',
+      );
+      (globalThis as any).backendaioptions.set('login_attempt', 0, 'general');
+    } else if (loginAttempt >= loginConfig.login_attempt_limit) {
+      (globalThis as any).backendaioptions.set(
+        'last_login',
+        currentTime,
+        'general',
+      );
+      (globalThis as any).backendaioptions.set(
+        'login_attempt',
+        loginAttempt + 1,
+        'general',
+      );
+
+      notification(t('login.TooManyAttempt'));
+      return;
+    } else {
+      (globalThis as any).backendaioptions.set(
+        'login_attempt',
+        loginAttempt + 1,
+        'general',
+      );
+    }
+
+    const epInput = form.getFieldValue('api_endpoint') || apiEndpoint;
+    const ep = epInput.replace(/\/+$/, '').trim();
+    setApiEndpoint(ep);
+
+    if (ep === '') {
+      notification(t('login.APIEndpointEmpty'));
+      return;
+    }
+
+    setIsLoading(true);
+
+    if ((globalThis as Record<string, unknown>).isElectron) {
+      await loadConfigFromWebServer(ep);
+    }
+
+    if (connectionMode === 'SESSION') {
+      const userId = (form.getFieldValue('user_id') || '').trim();
+      const password = form.getFieldValue('password') || '';
+
+      if (
+        !userId ||
+        userId === 'undefined' ||
+        !password ||
+        password === 'undefined'
+      ) {
+        notification(t('login.PleaseInputLoginInfo'));
+        setIsLoading(false);
+        return;
+      }
+      await connectUsingSession(true, ep);
+    } else {
+      const apiKey = form.getFieldValue('api_key') || '';
+      const secretKey = form.getFieldValue('secret_key') || '';
+
+      if (
+        !apiKey ||
+        apiKey === 'undefined' ||
+        !secretKey ||
+        secretKey === 'undefined'
+      ) {
+        notification(t('login.PleaseInputLoginInfo'));
+        setIsLoading(false);
+        return;
+      }
+      await connectUsingAPI(true, ep);
+    }
+  }, [
+    loginConfig,
+    form,
+    apiEndpoint,
+    connectionMode,
+    connectUsingSession,
+    connectUsingAPI,
+    notification,
+    t,
+  ]);
+
+  // Resolve the effective API endpoint from state or localStorage.
+  const resolveEndpoint = useCallback((): string => {
+    let ep = apiEndpoint;
+    if (ep === '') {
+      const stored = localStorage.getItem('backendaiwebui.api_endpoint');
+      if (stored) {
+        ep = stored.replace(/^"+|"+$/g, '');
+        setApiEndpoint(ep);
+      }
+    }
+    return ep.trim().replace(/\/+$/, '');
+  }, [apiEndpoint]);
+
+  // Login method: attempts silent or interactive login depending on mode.
+  // Used by the orchestration hook as `onLogin`.
+  const login = useCallback(
+    async (showError = true) => {
+      const ep = resolveEndpoint();
+      if ((globalThis as Record<string, unknown>).isElectron) {
+        await loadConfigFromWebServer(ep);
+      }
+      if (connectionMode === 'SESSION') {
+        await connectUsingSession(showError, ep);
+      } else if (connectionMode === 'API') {
+        await connectUsingAPI(showError, ep);
+      } else {
+        open();
+      }
+    },
+    [
+      resolveEndpoint,
+      connectionMode,
+      connectUsingSession,
+      connectUsingAPI,
+      open,
+    ],
+  );
+
+  // Check if a session login exists on the server.
+  // Used by the orchestration hook as `onCheckLogin`.
+  const checkLogin = useCallback(async (): Promise<boolean> => {
+    const ep = resolveEndpoint();
+    if ((globalThis as Record<string, unknown>).isElectron) {
+      await loadConfigFromWebServer(ep);
+    }
+    if (connectionMode === 'SESSION') {
+      if (ep === '') return false;
+      const { client } = createBackendAIClient('', '', ep, 'SESSION');
+      clientRef.current = client;
+      try {
+        await client.get_manager_version();
+        const isLogon = await client.check_login();
+        return !!isLogon;
+      } catch {
+        return false;
+      }
+    }
+    return false;
+  }, [resolveEndpoint, connectionMode]);
+
+  // Log out the current session on the server.
+  // Used by the orchestration hook as `onLogoutSession`.
+  const logoutSession = useCallback(async (): Promise<void> => {
+    if (clientRef.current) {
+      await clientRef.current.logout();
+    }
+  }, []);
+
+  // Orchestrate the initial login flow (auto-logout, tab counting, etc.)
+  // This replaces the Lit shell's firstUpdated() login orchestration.
+  useLoginOrchestration({
+    onLogin: login,
+    onOpen: open,
+    onBlock: block,
+    onCheckLogin: checkLogin,
+    onLogoutSession: logoutSession,
+    apiEndpoint,
+    connectionMode,
+  });
+
+  const handleConnectionModeChange = useCallback(
+    (mode: ConnectionMode) => {
+      if (!loginConfig.change_signin_support) return;
+      setConnectionMode(mode);
+      setLoginError(null);
+      localStorage.setItem('backendaiwebui.connection_mode', mode);
+    },
+    [loginConfig.change_signin_support],
+  );
+
+  const showSignupDialog = useCallback(
+    (preloadToken?: string) => {
+      const ep =
+        (form.getFieldValue('api_endpoint') || '').replace(/\/+$/, '') ||
+        apiEndpoint.trim();
+      if (ep === '') {
+        notification(t('error.APIEndpointIsEmpty'));
+        return;
+      }
+      setApiEndpoint(ep);
+      setSignupPreloadedToken(preloadToken);
+      setShowSignupModal(true);
+    },
+    [form, apiEndpoint, notification, t],
+  );
+
+  const deleteEndpoint = useCallback(
+    (endpoint: string) => {
+      const updated = endpoints.filter((e) => e !== endpoint);
+      setEndpoints(updated);
+
+      (globalThis as any).backendaioptions.set('endpoints', updated);
+    },
+    [endpoints],
+  );
+
+  // Dev-only: pin the VITE_DEFAULT_API_ENDPOINT value at the top of the endpoint
+  // history so it is always selectable (even before the first login) and clearly
+  // tagged as coming from the env — distinct from manually-saved endpoints, which
+  // keep their Delete action. `devApiEndpointOverride` is `undefined` in
+  // production builds, so this whole branch is dead-code eliminated there.
+  const savedEndpoints = devApiEndpointOverride
+    ? endpoints.filter((ep) => ep !== devApiEndpointOverride)
+    : endpoints;
+
+  const endpointMenuItems: MenuProps['items'] = [
+    { key: 'header', label: t('login.EndpointHistory'), disabled: true },
+    ...(devApiEndpointOverride
+      ? [
+          {
+            key: devApiEndpointOverride,
+            label: (
+              <BAIFlex
+                justify="between"
+                align="center"
+                gap="sm"
+                style={{ minWidth: 300 }}
+              >
+                <span>{devApiEndpointOverride}</span>
+                <Tag color="blue" style={{ marginInlineEnd: 0 }}>
+                  env
+                </Tag>
+              </BAIFlex>
+            ),
+          },
+        ]
+      : []),
+    ...(savedEndpoints.length === 0
+      ? devApiEndpointOverride
+        ? []
+        : [{ key: 'empty', label: t('login.NoEndpointSaved') }]
+      : savedEndpoints.map((ep) => ({
+          key: ep,
+          label: (
+            <BAIFlex justify="between" align="center" style={{ minWidth: 300 }}>
+              <span>{ep}</span>
+              <Button
+                type="text"
+                size="small"
+                danger
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteEndpoint(ep);
+                }}
+              >
+                {t('button.Delete')}
+              </Button>
+            </BAIFlex>
+          ),
+        }))),
+  ];
+
+  const handleEndpointMenuClick: MenuProps['onClick'] = useCallback(
+    ({ key }: { key: string }) => {
+      if (key !== 'header' && key !== 'empty') {
+        setApiEndpoint(key);
+        form.setFieldValue('api_endpoint', key);
+      }
+    },
+    [form],
+  );
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        handleLogin();
+      }
+    },
+    [handleLogin],
+  );
+
+  const handleSAMLLogin = useCallback(() => {
+    const ep = apiEndpoint.trim();
+    const { client } = createBackendAIClient('', '', ep, 'SESSION');
+    loginWithSAML(client);
+  }, [apiEndpoint]);
+
+  const handleOpenIDLogin = useCallback(() => {
+    const ep = apiEndpoint.trim();
+    const { client } = createBackendAIClient('', '', ep, 'SESSION');
+    loginWithOpenID(client);
+  }, [apiEndpoint]);
+
+  // Credentials are intentionally held in a ref (not state) to keep plaintext
+  // out of React state/DevTools; the ref is set alongside setNeedToResetPassword
+  // which drives the render that reads it here.
+  // eslint-disable-next-line react-hooks/refs -- see comment above
+  const expiredCredentials = expiredCredentialsRef.current;
+
+  // Wrapper creates a stacking context above the splash overlay (z-index 10001 > splash 10000).
+  // Zero-sized so it doesn't intercept pointer events. Child modals use
+  // position:fixed internally so they are visible and interactive.
+  return (
+    // antd's plain ConfigProvider is used here (not BAIConfigProvider) so we
+    // don't re-introduce BUI's <I18nextProvider i18n={buiI18n}> shadow inside
+    // the host tree. Purpose is purely to override Message z-index for error
+    // notifications so they appear above the block panel (z-index 10000)
+    // instead of behind it.
+    <ConfigProvider
+      theme={{
+        components: {
+          Message: { zIndexPopup: 10001 },
+        },
+      }}
+    >
+      <App>
+        {/* The login screen background (Diagonal Weave + version/copyright
+            metadata) is the persisted splash element from index.html, switched
+            to backdrop mode via __enterLoginBackdrop(). It sits at z-index
+            10000, below the login panel wrapper (10001). */}
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: 0,
+            height: 0,
+            zIndex: 10001,
+            overflow: 'visible',
+          }}
+        >
+          <LoginFormPanel
+            isOpen={isLoginPanelOpen}
+            isLoading={isLoading}
+            loginError={loginError}
+            onClearLoginError={() => setLoginError(null)}
+            connectionMode={connectionMode}
+            loginConfig={loginConfig}
+            apiEndpoint={apiEndpoint}
+            otpRequired={otpRequired}
+            needsOtpRegistration={needsOtpRegistration}
+            totpRegistrationToken={totpRegistrationToken}
+            needToResetPassword={needToResetPassword}
+            expiredCredentials={expiredCredentials}
+            showSignupModal={showSignupModal}
+            signupPreloadedToken={signupPreloadedToken}
+            showEndpointInput={showEndpointInput}
+            isEndpointDisabled={isEndpointDisabled}
+            form={form}
+            endpointMenuItems={endpointMenuItems}
+            onEndpointMenuClick={handleEndpointMenuClick}
+            onKeyDown={handleKeyDown}
+            onLogin={handleLogin}
+            onConnectionModeChange={handleConnectionModeChange}
+            onShowSignupDialog={showSignupDialog}
+            onSAMLLogin={handleSAMLLogin}
+            onOpenIDLogin={handleOpenIDLogin}
+            onSetApiEndpoint={setApiEndpoint}
+            onSetOtpRequired={setOtpRequired}
+            onSetNeedsOtpRegistration={setNeedsOtpRegistration}
+            onSetNeedToResetPassword={(v: boolean) => {
+              setNeedToResetPassword(v);
+              if (!v) expiredCredentialsRef.current = null;
+            }}
+            onSetShowSignupModal={setShowSignupModal}
+          />
+
+          {/* Block/Error Panel */}
+          <BAIModal
+            open={isBlockPanelOpen && blockMessage !== ''}
+            title={blockType || undefined}
+            footer={
+              <Button
+                block
+                onClick={() => {
+                  setIsBlockPanelOpen(false);
+                  open();
+                }}
+              >
+                {t('login.CancelLogin')}
+              </Button>
+            }
+            closable={false}
+            mask={{ closable: false }}
+            getContainer={false}
+            destroyOnHidden
+          >
+            <div style={{ textAlign: 'center', paddingTop: 15 }}>
+              {blockMessage}
+            </div>
+          </BAIModal>
+        </div>
+      </App>
+    </ConfigProvider>
+  );
+};
+
+export default LoginView;

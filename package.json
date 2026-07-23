@@ -1,0 +1,133 @@
+{
+  "name": "backend.ai-webui",
+  "productName": "Backend.AI Desktop",
+  "version": "26.8.0-alpha.0",
+  "repository": "https://github.com/lablup/backend.ai-webui.git",
+  "author": "Lablup Inc. <contact@lablup.com>",
+  "license": "LGPL-3.0-or-later",
+  "engines": {
+    "pnpm": "^11.0.0"
+  },
+  "packageManager": "pnpm@11.1.1",
+  "scripts": {
+    "lint": "eslint src --quiet; exit 0",
+    "lint-fix": "eslint src --quiet --fix; exit 0",
+    "format": "prettier --check 'src/**/*.{js, ts}'",
+    "format-fix": "prettier --write 'src/**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
+    "format-fix:all": "prettier --write 'src/**/*.{js,jsx,ts,tsx,json,css,scss,md}' 'react/src/**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
+    "format-fix:i18n": "prettier --write 'resources/i18n/*.json'",
+    "lint:terminology": "node scripts/check-terminology-i18n.mjs",
+    "lint:terminology:strict": "node scripts/check-terminology-i18n.mjs --strict",
+    "lint:terminology:selftest": "node scripts/check-terminology-i18n.selftest.mjs",
+    "test": "vitest run",
+    "vitest": "vitest run",
+    "vitest:watch": "vitest",
+    "wsproxy": "node ./src/wsproxy/local_proxy.js",
+    "build": "rm -rf build/web dist && mkdir -p build/web && pnpm run copyindex && pnpm run copyresource && pnpm run copyconfig && pnpm run copymonaco && tsc && pnpm run -r --stream build",
+    "build:react-only": "pnpm run --prefix ./react build:only",
+    "server:p": "serve build/web",
+    "dev": "node scripts/dev.mjs",
+    "electron:d": "electron build/electron-app --dev",
+    "electron:d:hmr": "LIVE_DEBUG=1 electron build/electron-app --dev",
+    "relay": "relay-compiler",
+    "relay:watch": "nodemon --watch data/schema.graphql --watch data/client-directives.graphql --exec 'pnpm run relay --watch'",
+    "copyresource": "cp -Rp resources build/web && cp -Rp manifest build/web",
+    "copyconfig": "./scripts/copy-config.js && cp version.json build/web && cp manifest.json build/web",
+    "copyindex": "cp index.html build/web",
+    "copymonaco": "mkdir -p build/web/resources/monaco/vs && cp -R react/node_modules/monaco-editor/min/vs/. build/web/resources/monaco/vs/",
+    "prepare": "husky",
+    "theme-schema:update": "node scripts/gen-theme-schema.cjs"
+  },
+  "dependencies": {
+    "@iarna/toml": "^2.2.5",
+    "bufferutil": "^4.1.0",
+    "commander": "^12.1.0",
+    "dotenv": "^16.6.1",
+    "https-proxy-agent": "^7.0.6",
+    "mime-types": "^2.1.35",
+    "octokit": "^5.0.5",
+    "utf-8-validate": "^6.0.6",
+    "winston": "^3.19.0"
+  },
+  "devDependencies": {
+    "@babel/core": "catalog:",
+    "@babel/preset-typescript": "catalog:",
+    "@electron/packager": "^18.4.4",
+    "@eslint/js": "catalog:",
+    "@jest/expect": "catalog:",
+    "@jest/globals": "catalog:",
+    "@playwright/test": "^1.58.2",
+    "@trivago/prettier-plugin-sort-imports": "catalog:",
+    "@types/estree": "1.0.5",
+    "@types/hammerjs": "^2.0.46",
+    "@types/jest": "catalog:",
+    "@types/lodash": "catalog:",
+    "@types/node": "catalog:",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "@yao-pkg/pkg": "^6.14.1",
+    "buffer": "^6.0.3",
+    "cli-color": "^2.0.4",
+    "concurrently": "^8.2.2",
+    "cors": "^2.8.6",
+    "crypto-es": "^2.1.0",
+    "electron": "^39.8.5",
+    "eslint": "catalog:",
+    "eslint-config-bai": "workspace:*",
+    "eslint-config-google": "^0.14.0",
+    "eslint-config-prettier": "^9.1.2",
+    "eslint-plugin-json-schema-validator": "catalog:",
+    "eslint-plugin-prettier": "^5.5.5",
+    "express": "^4.22.1",
+    "express-rate-limit": "^7.4.0",
+    "globals": "catalog:",
+    "husky": "^9.1.7",
+    "i18next-scanner": "^4.6.0",
+    "jsonc-eslint-parser": "catalog:",
+    "lint-staged": "^15.5.2",
+    "lodash": "^4.18.0",
+    "nodemon": "^3.1.14",
+    "portless": "^0.10.3",
+    "prettier": "catalog:",
+    "prettier-plugin-sort-json": "catalog:",
+    "relay-compiler": "catalog:",
+    "serve": "^14.2.6",
+    "tslib": "^2.8.1",
+    "typescript": "~5.5.4",
+    "vitest": "^4.1.4",
+    "@vitest/coverage-v8": "^4.1.4",
+    "webpack": "catalog:",
+    "webpack-cli": "^6.0.1",
+    "workbox-expiration": "^7.4.0",
+    "workbox-routing": "^7.4.0",
+    "workbox-strategies": "^7.4.0",
+    "workbox-sw": "^7.4.0",
+    "ws": "^8.21.0"
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --write"
+    ],
+    "react/src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "pnpm run --prefix ./react lint --cache",
+      "prettier --write"
+    ],
+    "packages/backend.ai-ui/src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "pnpm run --prefix ./packages/backend.ai-ui lint --cache",
+      "prettier --write"
+    ],
+    "e2e/**/*.ts": [
+      "eslint --config e2e/eslint.config.mjs --max-warnings=0 --cache",
+      "prettier --write"
+    ],
+    "resources/i18n/*.json": [
+      "eslint --max-warnings=0 --cache",
+      "prettier --write"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  }
+}
