@@ -2,12 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { EndpointSelectQuery } from '../../__generated__/EndpointSelectQuery.graphql';
 import {
-  EndpointSelectQuery,
-  EndpointSelectQuery$data,
-} from '../../__generated__/EndpointSelectQuery.graphql';
-import { EndpointSelectValueQuery } from '../../__generated__/EndpointSelectValueQuery.graphql';
-import { useWebUINavigate } from '../../hooks';
+  EndpointSelectValueQuery,
+  EndpointSelectValueQuery$data,
+} from '../../__generated__/EndpointSelectValueQuery.graphql';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
 import TotalFooter from '../TotalFooter';
 import { useControllableValue } from 'ahooks';
@@ -19,21 +19,14 @@ import {
   Space,
   Tooltip,
 } from 'antd';
-import {
-  BAIEndpointsIcon,
-  BAIFlex,
-  BAISelect,
-  mergeFilterValues,
-} from 'backend.ai-ui';
+import { BAIEndpointsIcon, BAIFlex, BAISelect, toLocalId } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { InfoIcon } from 'lucide-react';
 import React, { useDeferredValue, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-export type Endpoint = NonNullable<
-  NonNullableItem<EndpointSelectQuery$data['endpoint_list']>
->;
+export type Endpoint = NonNullable<EndpointSelectValueQuery$data['endpoint']>;
 
 export interface EndpointSelectProps extends Omit<
   SelectProps,
@@ -43,28 +36,15 @@ export interface EndpointSelectProps extends Omit<
   showDetailPageButton?: boolean;
 }
 
-type LifecycleStage =
-  | 'pending'
-  | 'created' // Deprecated, use READY instead from 25.13.0
-  | 'scaling'
-  | 'ready'
-  | 'destroying'
-  | 'destroyed';
-
-// Terminated lifecycle stages: a deployment in one of these has no serving
-// replica. Everything else may still have a replica serving traffic.
-const TERMINATED_LIFECYCLE_STAGES: LifecycleStage[] = [
-  'destroying',
-  'destroyed',
-];
-
 const EndpointSelect: React.FC<EndpointSelectProps> = ({
   fetchKey,
   showDetailPageButton: showInfoButton,
   loading,
   ...selectPropsWithoutLoading
 }) => {
+  'use memo';
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
 
   const [controllableValue, setControllableValue] = useControllableValue<
     string | undefined
@@ -83,15 +63,33 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
 
   const selectRef = useRef<GetRef<typeof BAISelect> | null>(null);
 
-  // Show every deployment that is not terminated, so a deployment whose replica
-  // is still alive stays selectable while a new revision is rolling out (e.g.
-  // deploying/pending). Filtering on ready/created alone hid such deployments.
-  // TODO(FR-3303): once the endpoint connection supports nested filters, list
-  // deployments that have at least one replica with an active traffic status
-  // instead of relying on the endpoint-level lifecycle_stage.
-  const lifecycleStageFilterStr = mergeFilterValues(
-    TERMINATED_LIFECYCLE_STAGES.map((stage) => `lifecycle_stage != "${stage}"`),
-  );
+  // Select deployments with an actively-serving replica. When the manager
+  // supports the nested replica filter, filter on replica traffic status;
+  // otherwise (25.19.0–<26.8.0) fall back to excluding terminated deployments
+  // (the interim FR-3303 behavior). The version gate lives in the client
+  // `deployment-replica-nested-filter` support flag rather than a hardcoded
+  // version compare here. The whole deployment-selection surface targets the
+  // Strawberry v2 Deployments API (myDeployments/DeploymentFilter, manager
+  // ≥25.19.0), same baseline as the FR-2664 Deployments UI.
+  //
+  // NOTE: This is intentionally left without a current-project scope. The legacy
+  // endpoint_list query wasn't project-scoped either — it declared a `project`
+  // arg but never passed a value (always null) — so this preserves the prior
+  // behavior rather than changing it here. It does diverge from
+  // DeploymentListPage, which scopes myDeployments by
+  // `projectId: { equals: currentProject.id }`.
+  // TODO(FR-3332): investigate why Chat endpoint selection has never been
+  // project-scoped and decide whether it should align with the new Deployments UI.
+  const nameFilter = deferredSearchStr
+    ? { name: { iContains: deferredSearchStr } }
+    : undefined;
+  const deploymentFilter: EndpointSelectQuery['variables']['filter'] =
+    baiClient.supports('deployment-replica-nested-filter')
+      ? {
+          replicas: { some: { trafficStatus: { equals: 'ACTIVE' } } },
+          ...nameFilter,
+        }
+      : { status: { notIn: ['STOPPING', 'STOPPED'] }, ...nameFilter };
 
   const { endpoint: selectedEndpoint } =
     useLazyLoadQuery<EndpointSelectValueQuery>(
@@ -115,33 +113,35 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
 
   const {
     paginationData,
-    result: { endpoint_list },
+    result: { myDeployments },
     loadNext,
     isLoadingNext,
   } = useLazyPaginatedQuery<
     EndpointSelectQuery,
     NonNullable<
-      EndpointSelectQuery['response']['endpoint_list']
-    >['items'][number]
+      NonNullable<
+        EndpointSelectQuery['response']['myDeployments']
+      >['edges'][number]
+    >['node']
   >(
     graphql`
       query EndpointSelectQuery(
         $offset: Int!
         $limit: Int!
-        $projectID: UUID
-        $filter: String
+        $filter: DeploymentFilter
       ) {
-        endpoint_list(
-          offset: $offset
-          limit: $limit
-          project: $projectID
-          filter: $filter
-        ) {
-          total_count
-          items {
-            name
-            endpoint_id @required(action: NONE)
-            url
+        myDeployments(offset: $offset, limit: $limit, filter: $filter) {
+          count
+          edges {
+            node {
+              id
+              metadata {
+                name
+              }
+              networkAccess {
+                endpointUrl
+              }
+            }
           }
         }
       }
@@ -150,10 +150,7 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
       limit: 10,
     },
     {
-      filter: mergeFilterValues([
-        lifecycleStageFilterStr,
-        deferredSearchStr ? `name ilike "%${deferredSearchStr}%"` : undefined,
-      ]),
+      filter: deploymentFilter,
     },
     // TODO: skip fetch when the option popover is closed
     {
@@ -161,17 +158,23 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
       fetchPolicy: deferredOpen ? 'network-only' : 'store-only',
     },
     {
-      getTotal: (result) => result.endpoint_list?.total_count,
-      getItem: (result) => result.endpoint_list?.items,
-      getId: (item) => item?.endpoint_id,
+      getTotal: (result) => result.myDeployments?.count,
+      getItem: (result) =>
+        result.myDeployments?.edges?.map((edge) => edge?.node),
+      getId: (node) => (node?.id ? toLocalId(node.id) : undefined),
     },
   );
 
-  const selectOptions = _.map(paginationData, (item) => {
+  const selectOptions = _.map(paginationData, (node) => {
+    const endpointId = node?.id ? toLocalId(node.id) : undefined;
     return {
-      label: item?.name,
-      value: item?.endpoint_id,
-      endpoint: item,
+      label: node?.metadata.name,
+      value: endpointId,
+      endpoint: {
+        name: node?.metadata.name,
+        endpoint_id: endpointId,
+        url: node?.networkAccess.endpointUrl,
+      },
     };
   });
 
@@ -243,11 +246,10 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
             ) : undefined
           }
           footer={
-            _.isNumber(endpoint_list?.total_count) &&
-            endpoint_list.total_count > 0 ? (
+            _.isNumber(myDeployments?.count) && myDeployments.count > 0 ? (
               <TotalFooter
                 loading={isLoadingNext}
-                total={endpoint_list?.total_count}
+                total={myDeployments?.count}
               />
             ) : undefined
           }
