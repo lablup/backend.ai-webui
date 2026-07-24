@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { PrometheusQueryPresetEditorModalCategoriesQuery } from '../__generated__/PrometheusQueryPresetEditorModalCategoriesQuery.graphql';
 import { PrometheusQueryPresetEditorModalCreateMutation } from '../__generated__/PrometheusQueryPresetEditorModalCreateMutation.graphql';
 import {
   PrometheusQueryPresetEditorModalFragment$data,
@@ -10,6 +9,7 @@ import {
 } from '../__generated__/PrometheusQueryPresetEditorModalFragment.graphql';
 import { PrometheusQueryPresetEditorModalUpdateMutation } from '../__generated__/PrometheusQueryPresetEditorModalUpdateMutation.graphql';
 import { useCurrentUserRole } from '../hooks/backendai';
+import PrometheusCategorySelect from './PrometheusCategorySelect';
 import PrometheusQueryTemplatePreview from './PrometheusQueryTemplatePreview';
 import { App, Form, Input } from 'antd';
 import {
@@ -20,14 +20,9 @@ import {
   useBAILogger,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import React, { useDeferredValue } from 'react';
+import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  graphql,
-  useFragment,
-  useLazyLoadQuery,
-  useMutation,
-} from 'react-relay';
+import { graphql, useFragment, useMutation } from 'react-relay';
 
 const { TextArea } = Input;
 
@@ -89,7 +84,6 @@ const PrometheusQueryPresetEditorModal: React.FC<
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const currentUserRole = useCurrentUserRole();
-  const deferredOpen = useDeferredValue(baiModalProps.open);
 
   const preset = useFragment(
     graphql`
@@ -110,40 +104,9 @@ const PrometheusQueryPresetEditorModal: React.FC<
     presetFrgmt ?? null,
   );
 
-  // Only hit the network once the deferred-open state stabilizes; until then
-  // 'store-only' returns cached data (or null) without suspending so the
-  // BAIModal stays mounted and shows its built-in loading state via the
-  // `loading={deferredOpen !== baiModalProps.open}` prop below.
-  const { prometheusQueryPresetCategories } =
-    useLazyLoadQuery<PrometheusQueryPresetEditorModalCategoriesQuery>(
-      graphql`
-        query PrometheusQueryPresetEditorModalCategoriesQuery {
-          prometheusQueryPresetCategories {
-            id
-            name
-          }
-        }
-      `,
-      {},
-      {
-        fetchPolicy:
-          deferredOpen && baiModalProps.open
-            ? 'store-and-network'
-            : 'store-only',
-      },
-    );
-
-  // The list query may legitimately return an empty array in dev environments
-  // where no categories are seeded; the form must still submit fine with
-  // categoryId left null.
-  const categoryOptions = _.map(
-    prometheusQueryPresetCategories ?? [],
-    (category) => ({
-      label: category.name,
-      value: category.id,
-    }),
-  );
-
+  // The parent unmounts this modal on close via `BAIUnmountAfterClose`, so a
+  // fresh form instance re-applies `initialValues` on every open — stale values
+  // are never carried across reopens (FR-3326).
   const [form] = Form.useForm<PrometheusQueryPresetFormValues>();
   const watchedQueryTemplate = Form.useWatch('queryTemplate', form);
 
@@ -321,8 +284,6 @@ const PrometheusQueryPresetEditorModal: React.FC<
       onOk={handleOk}
       onCancel={handleCancel}
       centered
-      destroyOnHidden
-      loading={deferredOpen !== baiModalProps.open}
       title={
         preset
           ? t('prometheusQueryPreset.EditPreset')
@@ -334,7 +295,6 @@ const PrometheusQueryPresetEditorModal: React.FC<
       <Form
         form={form}
         layout="vertical"
-        preserve={false}
         scrollToFirstError
         initialValues={getInitialValues(preset ?? null)}
       >
@@ -359,17 +319,28 @@ const PrometheusQueryPresetEditorModal: React.FC<
           <TextArea autoSize={{ minRows: 2, maxRows: 4 }} />
         </Form.Item>
 
-        <Form.Item
-          label={t('prometheusQueryPreset.Category')}
-          name="categoryId"
+        <Suspense
+          fallback={
+            <Form.Item label={t('prometheusQueryPreset.Category')}>
+              <BAISelect
+                loading
+                disabled
+                placeholder={t('prometheusQueryPreset.NoCategory')}
+              />
+            </Form.Item>
+          }
         >
-          <BAISelect
-            allowClear
-            placeholder={t('prometheusQueryPreset.NoCategory')}
-            options={categoryOptions}
-            notFoundContent={t('prometheusQueryPreset.NoCategory')}
-          />
-        </Form.Item>
+          <Form.Item
+            label={t('prometheusQueryPreset.Category')}
+            name="categoryId"
+          >
+            <PrometheusCategorySelect
+              allowClear
+              placeholder={t('prometheusQueryPreset.NoCategory')}
+              notFoundContent={t('prometheusQueryPreset.NoCategory')}
+            />
+          </Form.Item>
+        </Suspense>
 
         <Form.Item
           label={t('prometheusQueryPreset.MetricName')}
