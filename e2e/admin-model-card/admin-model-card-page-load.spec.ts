@@ -121,7 +121,9 @@ test.describe(
       // Cleanup: delete the created model card, then purge the folder
       await adminModelCardPage.deleteModelCardByName(cardName);
       try {
-        await moveToTrashAndVerify(page, folderName, 'admin-data');
+        await moveToTrashAndVerify(page, folderName, 'admin-data', {
+          skipTrashVerify: true,
+        });
       } catch {
         // Folder may already be in Trash or may not exist
       }
