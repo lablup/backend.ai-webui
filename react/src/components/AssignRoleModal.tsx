@@ -5,7 +5,7 @@
 import { AssignRoleModalBulkAssignMutation } from '../__generated__/AssignRoleModalBulkAssignMutation.graphql';
 import { AssignRoleModalQuery } from '../__generated__/AssignRoleModalQuery.graphql';
 import { reasonMessage } from '../helper/mutationError';
-import { App, Form, Tooltip, Typography } from 'antd';
+import { App, Form, theme, Tooltip, Typography } from 'antd';
 import {
   BAIBulkErrorModal,
   type BAIColumnsType,
@@ -51,6 +51,7 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const [form] = Form.useForm<{ userIds: string[] }>();
@@ -66,6 +67,9 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
   // Whether any assignment already reached the backend (partial success) —
   // the parent must refetch on close even if the user then cancels.
   const [hasAssignedAny, setHasAssignedAny] = useState(false);
+  // How many of the last save's requests the backend accepted — shown next to
+  // the partial-failure notice as "(Success: n, Failed: m)".
+  const [succeededRequestCount, setSucceededRequestCount] = useState(0);
   // Labels of every user selected so far, for failure rows — the options
   // list only holds the current search results, so failed users may no
   // longer be in it when the failure arrives.
@@ -121,13 +125,21 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
 
   // Keep only the failed users selected (error border via a field error) so
   // the next Assign retries exactly what failed.
-  const markFailures = (failures: FailedAssignment[], failedIds: string[]) => {
+  const markFailures = (
+    failures: FailedAssignment[],
+    failedIds: string[],
+    succeededCount: number,
+  ) => {
     setSelectedUserIds(failedIds);
     form.setFieldsValue({ userIds: failedIds });
     // Empty-string error: error status (red border) without printing a
     // message under the select — details live in the error modal. Changing
     // the selection revalidates the `required` rule and clears it.
     form.setFields([{ name: 'userIds', errors: [''] }]);
+    // Immediate failure notice as a toast on top of the detail modal — the
+    // modal carries the per-request table, the message the at-a-glance cue.
+    message.error(t('rbac.UserAssignmentsPartialFailureDescription'));
+    setSucceededRequestCount(succeededCount);
     setFailedAssignments(failures);
   };
 
@@ -147,7 +159,8 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
         onRequestClose(true);
         return;
       }
-      if ((result.adminBulkAssignRole?.assigned ?? []).length > 0) {
+      const assignedCount = (result.adminBulkAssignRole?.assigned ?? []).length;
+      if (assignedCount > 0) {
         setHasAssignedAny(true);
       }
       failed.forEach((failure) =>
@@ -160,6 +173,7 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
           message: failure.message,
         })),
         failed.map((failure) => failure.userId),
+        assignedCount,
       );
     } catch (error) {
       // A wholly-rejected request counts every requested user as failed.
@@ -171,6 +185,7 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
           message: reasonMessage(error),
         })),
         selectedUserIds,
+        0,
       );
     } finally {
       setIsAssigning(false);
@@ -220,6 +235,7 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
         setSearch('');
         setFailedAssignments([]);
         setHasAssignedAny(false);
+        setSucceededRequestCount(0);
         userLabelsRef.current.clear();
         form.resetFields();
       }}
@@ -296,7 +312,22 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
           it for a retry. */}
       <BAIBulkErrorModal<FailedAssignment>
         open={!_.isEmpty(failedAssignments)}
-        description={t('rbac.UserAssignmentsPartialFailureDescription')}
+        alertDescription={
+          <>
+            {t('rbac.UserAssignmentsPartialFailureDescription')}{' '}
+            <Typography.Text
+              style={{
+                color: token.colorTextSecondary,
+                fontSize: token.fontSizeSM,
+              }}
+            >
+              {t('rbac.PermissionsPartialFailureCounts', {
+                succeeded: succeededRequestCount,
+                failed: failedAssignments.length,
+              })}
+            </Typography.Text>
+          </>
+        }
         columns={failureColumns}
         dataSource={failedAssignments}
         onRequestClose={() => setFailedAssignments([])}
