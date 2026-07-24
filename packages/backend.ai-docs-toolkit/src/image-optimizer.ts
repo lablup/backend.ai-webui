@@ -34,13 +34,16 @@ export const SIZE_THRESHOLD_BYTES = 50 * 1024;
 const CACHE_DIRNAME = ".image-optimizer-cache";
 
 /**
- * Lazy-loaded handle to the `sharp` module. Resolved on first use; if the
- * load fails we cache `null` so subsequent calls also return `null`
- * without re-throwing. We stash the actual module type behind `unknown`
- * to keep this file compilable even when `sharp` is not installed in
- * the consumer's `node_modules` (the package is an optional peer dep).
+ * Lazy-loaded handle to the `sharp` constructor. Resolved on first use; if
+ * the load fails we cache `null` so subsequent calls also return `null`
+ * without re-throwing.
+ *
+ * sharp >= 0.35 publishes real ESM whose namespace is *not* callable — the
+ * constructor is the default export. Older CJS builds exposed the callable
+ * as the namespace itself, which is what the `?? mod` fallback in
+ * `loadSharp` covers.
  */
-type SharpModule = typeof import("sharp");
+type SharpModule = (typeof import("sharp"))["default"];
 let sharpCache: SharpModule | null | undefined;
 
 async function loadSharp(): Promise<SharpModule | null> {
