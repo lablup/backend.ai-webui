@@ -2169,6 +2169,7 @@
     "GrantedAt": "授予时间",
     "Inactive": "非活跃",
     "Name": "名称",
+    "NoChangesMade": "未进行任何更改。",
     "NoPermissionsToDisplay": "没有可显示的权限",
     "NoRolesToDisplay": "没有可显示的角色",
     "NoScopesToDisplay": "此角色未配置任何范围",

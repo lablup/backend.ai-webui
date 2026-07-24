@@ -525,10 +525,13 @@ const RoleScopePermissionEditModal: React.FC<
       });
     });
 
-    // Dirty tracking: nothing changed anywhere → close without any request
-    // (FR-6).
+    // Dirty tracking: nothing changed anywhere → tell the user and close
+    // without any request (FR-6). Report success (→ parent refetch) only
+    // when an earlier partially-failed save already applied changes, same
+    // as the cancel handler — a pristine no-op must not trigger a refetch.
     if (createEntries.length === 0 && deleteEntries.length === 0) {
-      onRequestClose(true);
+      message.info(t('rbac.NoChangesMade'));
+      onRequestClose(appliedCellOverrides.size > 0);
       return;
     }
 

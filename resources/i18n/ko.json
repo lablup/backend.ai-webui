@@ -2169,6 +2169,7 @@
     "GrantedAt": "부여 일시",
     "Inactive": "비활성",
     "Name": "이름",
+    "NoChangesMade": "변경사항이 없습니다.",
     "NoPermissionsToDisplay": "표시할 세부 권한이 없습니다",
     "NoRolesToDisplay": "표시할 역할이 없습니다",
     "NoScopesToDisplay": "역할이 적용될 범위가 설정되지 않았습니다",

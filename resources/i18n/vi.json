@@ -2169,6 +2169,7 @@
     "GrantedAt": "Được cấp lúc",
     "Inactive": "Không hoạt động",
     "Name": "Tên",
+    "NoChangesMade": "Không có thay đổi.",
     "NoPermissionsToDisplay": "Không có quyền để hiển thị",
     "NoRolesToDisplay": "Không có vai trò để hiển thị",
     "NoScopesToDisplay": "Chưa có phạm vi nào được cấu hình cho vai trò này",

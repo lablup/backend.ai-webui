@@ -2169,6 +2169,7 @@
     "GrantedAt": "付与日時",
     "Inactive": "非アクティブ",
     "Name": "名前",
+    "NoChangesMade": "変更はありません。",
     "NoPermissionsToDisplay": "表示する権限がありません",
     "NoRolesToDisplay": "表示するロールがありません",
     "NoScopesToDisplay": "このロールにはスコープが設定されていません",

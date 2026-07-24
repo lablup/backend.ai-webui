@@ -2169,6 +2169,7 @@
     "GrantedAt": "Przyznano",
     "Inactive": "Nieaktywny",
     "Name": "Nazwa",
+    "NoChangesMade": "Nie wprowadzono żadnych zmian.",
     "NoPermissionsToDisplay": "Brak uprawnień do wyświetlenia",
     "NoRolesToDisplay": "Brak ról do wyświetlenia",
     "NoScopesToDisplay": "Dla tej roli nie skonfigurowano żadnych zakresów",
