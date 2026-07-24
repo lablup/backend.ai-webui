@@ -195,7 +195,11 @@ export async function sweepVFolders(
     );
     if (!name) break;
     try {
-      await moveToTrashAndVerify(page, name, dataPath);
+      // skipTrashVerify: the immediate deleteForeverAndVerifyFromTrash call
+      // re-asserts the folder in Trash, so the extra verify pass is redundant.
+      await moveToTrashAndVerify(page, name, dataPath, {
+        skipTrashVerify: true,
+      });
       await deleteForeverAndVerifyFromTrash(page, name, dataPath);
       removed++;
     } catch (error) {
@@ -270,7 +274,12 @@ export async function cleanupVFolderSafely(
   dataPath: string = 'data',
 ): Promise<void> {
   try {
-    await moveToTrashAndVerify(page, folderName, dataPath);
+    // skipTrashVerify: deleteForeverAndVerifyFromTrash asserts the folder's
+    // presence in Trash itself, so the intermediate verification pass (a full
+    // page reload + filter cycle) would be pure overhead here.
+    await moveToTrashAndVerify(page, folderName, dataPath, {
+      skipTrashVerify: true,
+    });
     await deleteForeverAndVerifyFromTrash(page, folderName, dataPath);
     return;
   } catch (error) {
