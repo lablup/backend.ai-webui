@@ -961,6 +961,13 @@ export class Client {
       // RoleFilter gained `mappedScope` (RoleMappedScopeNestedFilter) — look
       // up roles registered to a specific scope. FR-3317.
       this._features['role-mapped-scope-filter'] = true;
+      // RuntimeVariant gained `readsVfolderConfigFiles` (whether the variant
+      // reads its model config from the mounted vfolder) and
+      // `defaultModelDefinition` in 26.8.0 (FR-3342). Older managers omit both,
+      // so call sites treat `readsVfolderConfigFiles` as authoritative only
+      // when this flag is set and otherwise fall back to the legacy
+      // `name === 'custom'` heuristic.
+      this._features['model-runtime-variant-reads-vfolder-config-files'] = true;
     }
   }
 

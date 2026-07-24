@@ -200,6 +200,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
               node {
                 id
                 name
+                readsVfolderConfigFiles @since(version: "26.8.0")
               }
             }
           }

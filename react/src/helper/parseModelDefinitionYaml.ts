@@ -22,12 +22,19 @@ export interface ParsedModelDefinition {
 }
 
 /**
- * Parse a model-definition.yaml string and return form-ready values.
- * Returns `null` if parsing fails or the structure is unexpected.
+ * Parse a model-definition.yaml string, returning ONLY the fields the YAML
+ * actually defines (no static defaults filled in). `startCommand` is always
+ * present on a non-null return (it is the gating field). Returns `null` if
+ * parsing fails, the structure is unexpected, or no start command is found.
+ *
+ * Use this when omitted fields must fall through to a lower-priority baseline
+ * (e.g. the placeholder merge in the add-revision modal, where a vfolder YAML
+ * that only sets `start_command` must NOT override the DB baseline's port /
+ * health-check values with static defaults).
  */
-export function parseModelDefinitionYaml(
+export function parseModelDefinitionYamlPartial(
   yamlContent: string,
-): ParsedModelDefinition | null {
+): Partial<ParsedModelDefinition> | null {
   try {
     const doc = parseYaml(yamlContent);
     if (!doc?.models || !Array.isArray(doc.models) || doc.models.length === 0) {
@@ -61,27 +68,102 @@ export function parseModelDefinitionYaml(
       return null;
     }
 
-    const port =
-      typeof service.port === 'number' ? service.port : parseInt(service.port);
-    const healthCheck = service.health_check ?? {};
+    const result: Partial<ParsedModelDefinition> = { startCommand };
 
-    return {
-      startCommand,
-      port: isNaN(port) ? 8000 : port,
-      healthCheckPath:
-        typeof healthCheck.path === 'string' ? healthCheck.path : '/health',
-      modelMountDestination:
-        typeof model.model_path === 'string' ? model.model_path : '/models',
-      initialDelay:
-        typeof healthCheck.initial_delay === 'number'
-          ? healthCheck.initial_delay
-          : 60,
-      maxRetries:
-        typeof healthCheck.max_retries === 'number'
-          ? healthCheck.max_retries
-          : 10,
-    };
+    if (service.port !== undefined && service.port !== null) {
+      const port =
+        typeof service.port === 'number'
+          ? service.port
+          : parseInt(service.port);
+      if (!isNaN(port)) result.port = port;
+    }
+    const healthCheck = service.health_check ?? {};
+    if (typeof healthCheck.path === 'string')
+      result.healthCheckPath = healthCheck.path;
+    if (typeof model.model_path === 'string')
+      result.modelMountDestination = model.model_path;
+    if (typeof healthCheck.initial_delay === 'number')
+      result.initialDelay = healthCheck.initial_delay;
+    if (typeof healthCheck.max_retries === 'number')
+      result.maxRetries = healthCheck.max_retries;
+
+    return result;
   } catch {
     return null;
   }
+}
+
+/**
+ * Minimal shape of the GraphQL `RuntimeVariantModelDefinition` selection
+ * consumed by {@link modelDefinitionFromGraphQL}. Kept intentionally loose
+ * (all fields nullable) so it structurally accepts the Relay-generated
+ * response type without importing it here.
+ */
+export interface GraphQLModelDefinitionNode {
+  models?: ReadonlyArray<{
+    name?: string | null;
+    modelPath?: string | null;
+    service?: {
+      command?: string | null;
+      shell?: string | null;
+      port?: number | null;
+      healthCheck?: {
+        path?: string | null;
+        interval?: number | null;
+        maxRetries?: number | null;
+        maxWaitTime?: number | null;
+        expectedStatusCode?: number | null;
+        initialDelay?: number | null;
+      } | null;
+    } | null;
+  } | null> | null;
+}
+
+/**
+ * Normalize a GraphQL `defaultModelDefinition` struct (from a runtime
+ * variant's DB baseline, FR-3205/FR-3342) into the same PARTIAL shape
+ * {@link parseModelDefinitionYamlPartial} produces — only the fields the DB
+ * default actually defines, omitting the rest — so both the DB baseline and
+ * the vfolder `model-definition.yaml` feed the placeholder merge through one
+ * type. Now that the backend projects real defaults via GraphQL, we surface
+ * ONLY values that will truly apply; omitted fields are left absent (no
+ * hardcoded 8000 / /health / /models / 60 / 10) so they fall through instead
+ * of masking the true absence of a default with a static convenience hint.
+ *
+ * The command is surfaced RAW — the GraphQL `command` is a plain string
+ * (the deprecated `start_command` projected via alias) and is passed through
+ * with NO tokenize/join round-trip and NO re-quoting (FR-3205
+ * stop-tokenizing principle). The sibling `shell` carries the exec-vs-shell
+ * distinction but does not alter the surfaced command text.
+ *
+ * Returns `null` when there is no first model / service to map.
+ */
+export function modelDefinitionFromGraphQL(
+  node: GraphQLModelDefinitionNode | null | undefined,
+): Partial<ParsedModelDefinition> | null {
+  const model = node?.models?.[0];
+  const service = model?.service;
+  if (!service) {
+    return null;
+  }
+
+  const healthCheck = service.healthCheck ?? {};
+
+  // Include ONLY the fields the DB default actually defines; omit the rest so
+  // they fall through the placeholder merge instead of injecting static
+  // defaults (mirrors parseModelDefinitionYamlPartial).
+  const result: Partial<ParsedModelDefinition> = {};
+  // Raw command string, verbatim. No shell tokenization / re-quoting.
+  if (service.command) result.startCommand = service.command;
+  if (typeof service.port === 'number') result.port = service.port;
+  if (typeof healthCheck.path === 'string')
+    result.healthCheckPath = healthCheck.path;
+  if (typeof model?.modelPath === 'string')
+    result.modelMountDestination = model.modelPath;
+  if (typeof healthCheck.initialDelay === 'number')
+    result.initialDelay = healthCheck.initialDelay;
+  if (typeof healthCheck.maxRetries === 'number')
+    result.maxRetries = healthCheck.maxRetries;
+
+  return result;
 }

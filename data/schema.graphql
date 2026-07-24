@@ -17521,6 +17521,90 @@ type RuntimeVariant implements Node
 
   """Timestamp of the last modification to this runtime variant."""
   updatedAt: DateTime
+
+  """
+  Added in 26.8.0. Whether this runtime variant reads configuration files
+  (deployment-config.yaml, model-definition.yaml) from the model vfolder during
+  revision resolution. Currently true only for the 'custom' variant.
+  """
+  readsVfolderConfigFiles: Boolean!
+
+  """
+  Added in 26.8.0. The runtime variant's built-in default model definition,
+  projected from the DB regardless of readsVfolderConfigFiles.
+  """
+  defaultModelDefinition: RuntimeVariantModelDefinition!
+}
+
+"""Added in 26.8.0. Default model definition bundled with a runtime variant."""
+type RuntimeVariantModelDefinition
+  @join__type(graph: STRAWBERRY)
+{
+  """The list of model entries in the default definition."""
+  models: [RuntimeVariantModelConfig!]
+}
+
+"""Added in 26.8.0. A single model entry in a runtime variant's default model definition."""
+type RuntimeVariantModelConfig
+  @join__type(graph: STRAWBERRY)
+{
+  """Model name."""
+  name: String
+
+  """Path where the model is mounted inside the container."""
+  modelPath: String
+
+  """Service configuration for this model."""
+  service: RuntimeVariantModelServiceConfig
+
+  """Metadata describing this model entry."""
+  metadata: ModelMetadata
+}
+
+"""Added in 26.8.0. Service configuration in a runtime variant's default model definition."""
+type RuntimeVariantModelServiceConfig
+  @join__type(graph: STRAWBERRY)
+{
+  """Pre-start actions to run before the service starts."""
+  preStartActions: [PreStartAction!]
+
+  """The default start command (surfaced from the deprecated start_command)."""
+  command: String
+
+  """The shell used to run the command; null runs the command without a shell."""
+  shell: String
+
+  """The service port."""
+  port: Int
+
+  """Health check configuration."""
+  healthCheck: RuntimeVariantModelHealthCheck
+}
+
+"""Added in 26.8.0. Health check configuration in a runtime variant's default model definition."""
+type RuntimeVariantModelHealthCheck
+  @join__type(graph: STRAWBERRY)
+{
+  """Whether the route is health-checked."""
+  enable: Boolean
+
+  """Interval in seconds between health checks."""
+  interval: Float
+
+  """Path to check for health status."""
+  path: String
+
+  """Maximum number of retries for health check."""
+  maxRetries: Int
+
+  """Maximum time in seconds to wait for a health check response."""
+  maxWaitTime: Float
+
+  """Expected HTTP status code for a healthy response."""
+  expectedStatusCode: Int
+
+  """Initial delay in seconds before the first health check."""
+  initialDelay: Float
 }
 
 """Added in 26.4.2. Paginated list of runtime variants."""

@@ -14,6 +14,7 @@ import type {
   DeploymentAddRevisionModalSelectedPresetQuery,
   DeploymentAddRevisionModalSelectedPresetQuery$data,
 } from '../__generated__/DeploymentAddRevisionModalSelectedPresetQuery.graphql';
+import type { DeploymentAddRevisionModalVariantDefaultQuery } from '../__generated__/DeploymentAddRevisionModalVariantDefaultQuery.graphql';
 import type { DeploymentAddRevisionModal_deployment$key } from '../__generated__/DeploymentAddRevisionModal_deployment.graphql';
 import type {
   DeploymentAddRevisionModal_revisionSource$data,
@@ -28,6 +29,10 @@ import {
   resolveCommandShell,
 } from '../helper/modelServiceCommand';
 import { tokenizeShellCommand } from '../helper/parseCliCommand';
+import {
+  modelDefinitionFromGraphQL,
+  type ParsedModelDefinition,
+} from '../helper/parseModelDefinitionYaml';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -187,6 +192,69 @@ interface DeploymentAddRevisionModalProps extends BAIModalProps {
 
 type RevisionPrefillData = DeploymentAddRevisionModal_revisionSource$data;
 
+// Suspense-wrapped side query that resolves the selected runtime variant's DB
+// `defaultModelDefinition` baseline (FR-3205/FR-3342) and pushes the parsed
+// result up via `onLoaded`. Runs only when the variant reads the vfolder
+// config files (Custom mode); rendered inside a `<Suspense fallback={null}>`
+// so the modal chrome / form never blank while it resolves.
+const VariantDefaultModelDefinitionLoader: React.FC<{
+  variantId: string;
+  onLoaded: (
+    defaults: Partial<ParsedModelDefinition> | null,
+    variantId: string,
+  ) => void;
+}> = ({ variantId, onLoaded }) => {
+  'use memo';
+  const uuid = convertToUUID(variantId);
+  const data = useLazyLoadQuery<DeploymentAddRevisionModalVariantDefaultQuery>(
+    graphql`
+      query DeploymentAddRevisionModalVariantDefaultQuery(
+        $id: UUID!
+        $skip: Boolean!
+      ) {
+        runtimeVariant(id: $id) @skip(if: $skip) {
+          id
+          defaultModelDefinition @since(version: "26.8.0") {
+            models {
+              name
+              modelPath
+              service {
+                command
+                shell
+                port
+                healthCheck {
+                  path
+                  interval
+                  maxRetries
+                  maxWaitTime
+                  expectedStatusCode
+                  initialDelay
+                }
+              }
+            }
+          }
+        }
+      }
+    `,
+    { id: uuid, skip: !uuid },
+    { fetchPolicy: 'store-or-network' },
+  );
+
+  // Push the parsed baseline (or null) up as soon as it resolves; re-fires when
+  // the resolved struct changes (i.e., a different variant).
+  const notifyLoaded = useEffectEvent(() => {
+    onLoaded(
+      modelDefinitionFromGraphQL(data.runtimeVariant?.defaultModelDefinition),
+      variantId,
+    );
+  });
+  useEffect(() => {
+    notifyLoaded();
+  }, [data.runtimeVariant?.defaultModelDefinition]);
+
+  return null;
+};
+
 const SectionHeader: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
@@ -295,6 +363,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         runtimeVariantId
         runtimeVariant {
           name
+          readsVfolderConfigFiles @since(version: "26.8.0")
         }
         environ {
           entries {
@@ -385,6 +454,13 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   // was added in 26.4.4 (FR-3205); older managers reject the unknown input
   // field, so the key is omitted from the mutation entirely on them.
   const supportsMountSubpath = baiClient.supports('model-mount-subpath');
+  // 26.8.0+ managers report `readsVfolderConfigFiles` / `defaultModelDefinition`
+  // on RuntimeVariant (FR-3342); older managers omit them, so the flag is only
+  // authoritative when supported (otherwise the legacy `name === 'custom'`
+  // heuristic decides).
+  const supportsRuntimeVariantConfigReads = baiClient.supports(
+    'model-runtime-variant-reads-vfolder-config-files',
+  );
 
   // Refs to refetch each form's model folder select after creating a new
   // model-usage folder, or via the manual refresh button. Two refs because
@@ -445,13 +521,15 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   // its own Relay query keyed by this id.
   const [presetDetailId, setPresetDetailId] = useState<string | null>(null);
 
-  // Map of runtime variant id → name, populated by `BAIRuntimeVariantSelect`
-  // as it resolves the currently selected value (via its `runtimeVariant(id:)`
-  // point lookup) and the visible page of the paginated list. Used by the
-  // form to branch on `variantName === 'custom'` and to look up the human-
-  // readable name at submit time, without owning the variant list here.
-  const [runtimeVariantNameMap, setRuntimeVariantNameMap] = useState<
-    Record<string, string>
+  // Map of runtime variant id → { name, readsVfolderConfigFiles }, populated by
+  // `BAIRuntimeVariantSelect` as it resolves the currently selected value (via
+  // its `runtimeVariant(id:)` point lookup) and the visible page of the
+  // paginated list. Used by the form to branch on whether the variant reads the
+  // vfolder config files (see the `readsVfolderConfigFiles` derivation sites)
+  // and to look up the human-readable name at submit time, without owning the
+  // variant list here.
+  const [runtimeVariantMap, setRuntimeVariantMap] = useState<
+    Record<string, { name: string; readsVfolderConfigFiles: boolean }>
   >({});
 
   // Runtime parameter values live in `customForm` under the `runtimeParams`
@@ -805,19 +883,25 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       (e) => e.name === 'shmem',
     );
 
-    // The query selects `modelRuntimeConfig.runtimeVariant.name`, so the
-    // prefill path knows the variant name without waiting for
-    // `BAIRuntimeVariantSelect` to resolve it.
+    // The query selects `modelRuntimeConfig.runtimeVariant.name` and
+    // `readsVfolderConfigFiles`, so the prefill path knows the variant metadata
+    // without waiting for `BAIRuntimeVariantSelect` to resolve it.
     const variantName = rev.modelRuntimeConfig?.runtimeVariant?.name ?? '';
-    const isCustom = variantName === 'custom';
-    // Seed `runtimeVariantNameMap` so submit and any other consumers can
-    // resolve `runtimeVariantId → name` immediately, without waiting for
-    // `BAIRuntimeVariantSelect`'s point lookup to finish.
+    // `readsVfolderConfigFiles` (26.8.0+) is stripped on older managers →
+    // undefined. Fall back to the legacy `name === 'custom'` heuristic — NEVER
+    // `?? false` — so pre-26.8.0 managers keep identical custom-variant
+    // behavior.
+    const readsVfolderConfigFiles =
+      rev.modelRuntimeConfig?.runtimeVariant?.readsVfolderConfigFiles ??
+      variantName === 'custom';
+    // Seed `runtimeVariantMap` so submit and any other consumers can resolve
+    // `runtimeVariantId → { name, readsVfolderConfigFiles }` immediately,
+    // without waiting for `BAIRuntimeVariantSelect`'s point lookup to finish.
     const variantId = rev.modelRuntimeConfig?.runtimeVariantId;
     if (variantId && variantName) {
-      setRuntimeVariantNameMap((prev) => ({
+      setRuntimeVariantMap((prev) => ({
         ...prev,
-        [variantId]: variantName,
+        [variantId]: { name: variantName, readsVfolderConfigFiles },
       }));
     }
     const service = rev.modelDefinition?.models?.[0]?.service;
@@ -828,13 +912,16 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       service?.healthCheck && service.healthCheck.enable !== false
         ? service.healthCheck
         : undefined;
-    // For custom + command mode: the saved revision carries a populated
-    // `modelDefinition` with either the new single-string `command` (26.7.0+)
-    // or the deprecated `startCommand` token list. For custom + file mode the
-    // form serializes to a null `modelDefinition`, so the absence of both
-    // indicates file mode.
+    // Command-mode prefill: ONLY for a source variant that reads the vfolder
+    // config files — the Service Configuration (command) fields apply only to
+    // those variants. Gate on the variant's capability
+    // (`readsVfolderConfigFiles`, with the legacy `name === 'custom'` fallback)
+    // so a non-reading variant's stored default command never prefills these
+    // fields and then leaks across a later variant switch. Within that, key off
+    // whether the revision actually carries a command (the single-string
+    // `command` (26.7.0+) or the deprecated `startCommand` token list).
     const hasCustomCommand =
-      isCustom &&
+      readsVfolderConfigFiles &&
       !!service &&
       (!!service.command || (service.startCommand?.length ?? 0) > 0);
     // Reconstruct the command string and Basic/Advanced + Execution + Shell UI
@@ -858,7 +945,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     // (non-custom variants). Preset values are their own field now — no longer
     // encoded into `environ` / EXTRA_ARGS — so we feed them through directly,
     // keyed by preset id.
-    if (!isCustom && variantName) {
+    if (!readsVfolderConfigFiles && variantName) {
       const presetValues = rev.modelRuntimeConfig?.runtimeVariantPresetValues;
       setInitialRuntimePresetValues(
         presetValues && presetValues.length > 0
@@ -1217,8 +1304,14 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       };
     });
 
-    const variantName = runtimeVariantNameMap[values.runtimeVariantId] ?? '';
-    const isCustom = variantName === 'custom';
+    const variant = runtimeVariantMap[values.runtimeVariantId];
+    const variantName = variant?.name ?? '';
+    // `readsVfolderConfigFiles` (26.8.0+) drives whether this variant reads the
+    // vfolder config files (command / modelDefinition override). On pre-26.8.0
+    // managers the field is stripped → undefined, so fall back to the legacy
+    // `name === 'custom'` heuristic — NEVER `?? false` — to preserve behavior.
+    const readsVfolderConfigFiles =
+      variant?.readsVfolderConfigFiles ?? variantName === 'custom';
 
     // Resolve the model folder's mount destination + subpath from the plain
     // inputs beneath the folder selector (FR-3205). An empty destination falls
@@ -1268,9 +1361,10 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
 
     // Runtime-variant preset values are their own list (kept out of `environ`),
     // sent via `modelRuntimeConfig.runtimeVariantPresetValues`. Only collected
-    // for non-custom variants on managers that support the field.
+    // for variants that do NOT read the vfolder config files, on managers that
+    // support the field.
     const runtimeVariantPresetValues =
-      isCustom || !supportsRuntimeVariantPresetValues
+      readsVfolderConfigFiles || !supportsRuntimeVariantPresetValues
         ? []
         : collectRuntimeVariantPresetValues(values.runtimeParams);
 
@@ -1294,7 +1388,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       : { startCommand: tokenizeShellCommand(rawCommand) };
 
     const modelDefinition =
-      isCustom && values.startCommand
+      readsVfolderConfigFiles && values.startCommand
         ? {
             models: [
               {
@@ -1448,25 +1542,90 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   // which naturally disables the read.
   const watchedModelFolderId = Form.useWatch('modelFolderId', customForm);
   const watchedRuntimeVariantId = Form.useWatch('runtimeVariantId', customForm);
-  const isCustomVariant =
-    runtimeVariantNameMap[watchedRuntimeVariantId ?? ''] === 'custom';
+  const watchedVariant = runtimeVariantMap[watchedRuntimeVariantId ?? ''];
+  // Whether the watched variant reads the vfolder config files (command /
+  // service-config fields, placeholders). `readsVfolderConfigFiles` (26.8.0+)
+  // is stripped on older managers → undefined; fall back to the legacy
+  // `name === 'custom'` heuristic — NEVER `?? false` — so pre-26.8.0 managers
+  // keep identical custom-variant behavior.
+  const readsVfolderConfigFiles =
+    watchedVariant?.readsVfolderConfigFiles ??
+    watchedVariant?.name === 'custom';
+
+  // 26.8.0+ treats `readsVfolderConfigFiles` as authoritative in either Preset
+  // or Custom mode. Pre-26.8.0 (field stripped → `name === 'custom'` fallback)
+  // keeps the legacy Custom-mode-only gate.
+  const readsVfolderConfigFilesInMode =
+    readsVfolderConfigFiles &&
+    (supportsRuntimeVariantConfigReads || effectiveMode === 'custom');
+
+  // The "Model Definition File Path" (the vfolder path to model-definition.yaml)
+  // only applies to variants that read the vfolder config files. Decide via the
+  // client feature flag rather than a raw manager-version check: on 26.8.0+
+  // (`supportsRuntimeVariantConfigReads`) use the authoritative
+  // `readsVfolderConfigFiles` (hidden when false); on older managers (flag
+  // absent) show it whenever the runtime variant is Custom.
+  const showModelDefinitionPath = supportsRuntimeVariantConfigReads
+    ? !!watchedVariant?.readsVfolderConfigFiles
+    : watchedVariant?.name === 'custom';
 
   // Read the selected model folder's `model-definition.yaml` and use its parsed
-  // values as placeholders (display-only hints) on the custom command fields.
-  // Enabled only for the custom variant with a folder selected; failures fall
-  // back to the static placeholders below.
-  //
-  // TODO(FR-3205): once the backend exposes runtime-variant fields
-  // (default_model_definition, read_vfolder_config_files) on the GraphQL
-  // RuntimeVariant type, drive placeholders from the DB default_model_definition
-  // (only when read_vfolder_config_files is true) and OVERRIDE with the vfolder
-  // model-definition.yaml. For now placeholders come only from the custom
-  // variant's model-definition.yaml. When the variant changes, non-user-entered
-  // placeholders should update dynamically.
-  const { defaults: modelDefinitionDefaults } = useModelDefinitionPlaceholders(
-    watchedModelFolderId,
-    effectiveMode === 'custom' && isCustomVariant,
-  );
+  // values as placeholders (display-only hints) on the command fields. Enabled
+  // only for a config-reading variant with a folder selected; failures fall
+  // back to the DB baseline / static placeholders below.
+  const { defaults: vfolderModelDefinitionDefaults } =
+    useModelDefinitionPlaceholders(
+      watchedModelFolderId,
+      readsVfolderConfigFilesInMode,
+    );
+
+  // Low-priority placeholder layer: the runtime variant's DB
+  // `defaultModelDefinition` baseline (always present). Loaded by
+  // `VariantDefaultModelDefinitionLoader` (a Suspense-wrapped side query fired
+  // only when the variant reads the vfolder config files) and pushed here via
+  // `onLoaded`. Tagged with the loaded `variantId` so that while switching
+  // between two config-reading variants — the new loader suspends but
+  // `shouldLoadVariantDefault` stays true, so the clearing effect below never
+  // fires — the merge can ignore the previous variant's stale baseline instead
+  // of briefly showing its values as placeholders.
+  const [dbModelDefinitionDefaults, setDbModelDefinitionDefaults] = useState<{
+    variantId: string;
+    defaults: Partial<ParsedModelDefinition> | null;
+  } | null>(null);
+  const shouldLoadVariantDefault =
+    readsVfolderConfigFilesInMode && !!watchedRuntimeVariantId;
+  // Use the loaded DB baseline only while it is still relevant: the variant must
+  // still be config-reading in the current mode (`shouldLoadVariantDefault`) AND
+  // the baseline must belong to the currently watched variant. Deriving
+  // relevance here — rather than clearing the state in an effect — keeps a stale
+  // baseline from a previous variant / mode from leaking into placeholders
+  // without a setState-in-effect (the loader re-populates the state when active).
+  const activeDbModelDefinitionDefaults =
+    shouldLoadVariantDefault &&
+    dbModelDefinitionDefaults &&
+    dbModelDefinitionDefaults.variantId === watchedRuntimeVariantId
+      ? dbModelDefinitionDefaults.defaults
+      : null;
+
+  // Placeholder precedence: DB `defaultModelDefinition` (low) < vfolder
+  // `model-definition.yaml` (high). Merged field-by-field so the vfolder yaml
+  // overrides only the fields it actually defines — the vfolder layer is a
+  // *partial* parse (`parseModelDefinitionYamlPartial`), so a YAML that sets
+  // only `start_command` keeps the DB baseline's port / health-check values
+  // instead of stomping them with static defaults. The lower Advanced "Model
+  // Definition File Path" field is intentionally NOT part of this read (its
+  // value must not feed back into placeholders of fields above it). Keyed on
+  // variantId + folderId, so placeholders update when either changes.
+  const modelDefinitionDefaults: Partial<ParsedModelDefinition> | null =
+    activeDbModelDefinitionDefaults || vfolderModelDefinitionDefaults
+      ? {
+          ...activeDbModelDefinitionDefaults,
+          // `vfolderModelDefinitionDefaults` is a partial parse that omits
+          // absent fields (never `undefined` values), so a plain spread already
+          // overrides the DB baseline field-by-field without clobbering.
+          ...vfolderModelDefinitionDefaults,
+        }
+      : null;
 
   const handleOk = async () => {
     // Explicitly `validateFields()` before triggering the mutation. The
@@ -1805,8 +1964,14 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 {
                   warningOnly: true,
                   validator: async (_rule, value: string) => {
-                    const variantName = runtimeVariantNameMap[value];
-                    if (variantName && variantName !== 'custom') {
+                    const v = runtimeVariantMap[value];
+                    // Warn for variants that do NOT read the vfolder config
+                    // files: their default command is applied by the backend.
+                    // Fall back to the legacy `name === 'custom'` heuristic on
+                    // pre-26.8.0 managers (field stripped → undefined).
+                    const reads =
+                      v?.readsVfolderConfigFiles ?? v?.name === 'custom';
+                    if (v && !reads) {
                       return Promise.reject(
                         t(
                           'modelService.RuntimeVariantDefaultCommandAppliedNote',
@@ -1819,8 +1984,8 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               ]}
             >
               <BAIRuntimeVariantSelect
-                onResolvedNamesChange={(map) =>
-                  setRuntimeVariantNameMap((prev) => ({ ...prev, ...map }))
+                onResolvedVariantsChange={(map) =>
+                  setRuntimeVariantMap((prev) => ({ ...prev, ...map }))
                 }
               />
             </Form.Item>
@@ -1829,8 +1994,14 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           <Form.Item dependencies={['runtimeVariantId']} noStyle>
             {({ getFieldValue }: FormInstance<FormValues>) => {
               const variantId = getFieldValue('runtimeVariantId');
-              const variantName = runtimeVariantNameMap[variantId];
-              if (!variantName || variantName === 'custom') return null;
+              const v = runtimeVariantMap[variantId];
+              const variantName = v?.name;
+              // Runtime-parameter presets apply only to variants that do NOT
+              // read the vfolder config files. Legacy fallback on pre-26.8.0
+              // managers: `name === 'custom'` (field stripped → undefined).
+              const reads =
+                v?.readsVfolderConfigFiles ?? variantName === 'custom';
+              if (!variantName || reads) return null;
               return (
                 <div style={{ marginBottom: token.marginMD }}>
                   <Suspense fallback={null}>
@@ -1853,8 +2024,13 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           <Form.Item dependencies={['runtimeVariantId']} noStyle>
             {({ getFieldValue }: FormInstance<FormValues>) => {
               const variantId = getFieldValue('runtimeVariantId');
-              const variantName = runtimeVariantNameMap[variantId];
-              if (variantName !== 'custom') {
+              const v = runtimeVariantMap[variantId];
+              // Service Configuration (command / port / etc.) is shown only for
+              // variants that read the vfolder config files. Legacy fallback on
+              // pre-26.8.0 managers: `name === 'custom'` (field stripped →
+              // undefined).
+              const reads = v?.readsVfolderConfigFiles ?? v?.name === 'custom';
+              if (!reads) {
                 return null;
               }
               return (
@@ -2110,11 +2286,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                             <InputNumber
                               min={2}
                               max={65535}
-                              placeholder={
-                                modelDefinitionDefaults?.port !== undefined
-                                  ? String(modelDefinitionDefaults.port)
-                                  : undefined
-                              }
+                              placeholder={modelDefinitionDefaults?.port?.toString()}
                               style={{ width: '100%' }}
                             />
                           </Form.Item>
@@ -2178,11 +2350,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                     >
                       <InputNumber
                         min={1}
-                        placeholder={
-                          modelDefinitionDefaults?.maxRetries !== undefined
-                            ? String(modelDefinitionDefaults.maxRetries)
-                            : undefined
-                        }
+                        placeholder={modelDefinitionDefaults?.maxRetries?.toString()}
                         style={{ width: '100%' }}
                       />
                     </Form.Item>
@@ -2229,11 +2397,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                     >
                       <InputNumber
                         min={0}
-                        placeholder={
-                          modelDefinitionDefaults?.initialDelay !== undefined
-                            ? String(modelDefinitionDefaults.initialDelay)
-                            : undefined
-                        }
+                        placeholder={modelDefinitionDefaults?.initialDelay?.toString()}
                         suffix={t('time.Sec')}
                         style={{ width: '100%' }}
                       />
@@ -2274,14 +2438,17 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 label: t('session.launcher.AdvancedSettings'),
                 children: (
                   <Suspense fallback={<Skeleton active />}>
-                    <Form.Item
-                      name="definitionPath"
-                      label={t('deployment.ModelDefinitionPath')}
-                      tooltip={t('modelService.ModelDefinitionPathTooltip')}
-                      rules={[{ whitespace: true }]}
-                    >
-                      <Input allowClear placeholder="model-definition.yaml" />
-                    </Form.Item>
+                    {showModelDefinitionPath && (
+                      <Form.Item
+                        name="definitionPath"
+                        label={t('deployment.ModelDefinitionPath')}
+                        tooltip={t('modelService.ModelDefinitionPathTooltip')}
+                        rules={[{ whitespace: true }]}
+                        preserve={false}
+                      >
+                        <Input allowClear placeholder="model-definition.yaml" />
+                      </Form.Item>
+                    )}
                     <Form.Item
                       noStyle
                       dependencies={[
@@ -2331,6 +2498,22 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           />
         </Suspense>
       )}
+      {/* DB `defaultModelDefinition` baseline loader (FR-3205). Renders nothing;
+          resolves the variant's built-in definition and pushes it into
+          `dbModelDefinitionDefaults` for the placeholder merge. Keyed by
+          variantId so switching variants remounts a fresh query. Wrapped in
+          Suspense so the modal chrome / form never blank while it resolves. */}
+      {shouldLoadVariantDefault && watchedRuntimeVariantId ? (
+        <Suspense fallback={null}>
+          <VariantDefaultModelDefinitionLoader
+            key={watchedRuntimeVariantId}
+            variantId={watchedRuntimeVariantId}
+            onLoaded={(defaults, variantId) =>
+              setDbModelDefinitionDefaults({ variantId, defaults })
+            }
+          />
+        </Suspense>
+      ) : null}
       <FolderCreateModalV2
         open={isModelFolderCreateModalOpen}
         initialValues={{ usage_mode: 'model' }}

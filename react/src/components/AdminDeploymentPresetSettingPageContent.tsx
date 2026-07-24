@@ -92,7 +92,14 @@ export interface AdminDeploymentPresetSettingPageContentProps {
   form: FormInstance<AdminDeploymentPresetFormValue>;
   presetFrgmt?: AdminDeploymentPresetSettingPageContent_preset$key | null;
   /** Runtime variants fetched by the parent page layout. */
-  runtimeVariants?: ReadonlyArray<{ id: string; name: string }>;
+  runtimeVariants?: ReadonlyArray<{
+    id: string;
+    name: string;
+    // `readsVfolderConfigFiles` (26.8.0+) is stripped on older managers →
+    // undefined; call sites fall back to the legacy `name === 'custom'`
+    // heuristic — NEVER `?? false`.
+    readsVfolderConfigFiles?: boolean | null;
+  }>;
   /** Resource slot type definitions for dynamic slot key selector. */
   resourceSlotTypes?: ReadonlyArray<ResourceSlotTypeInfo>;
   /**
@@ -764,10 +771,17 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                 getFieldValue,
               }: FormInstance<AdminDeploymentPresetFormValue>) => {
                 const variantId = getFieldValue('runtimeVariantId');
-                const variantName = runtimeVariants.find(
+                const variant = runtimeVariants.find(
                   (rt) => toLocalId(rt.id) === variantId,
-                )?.name;
-                if (!variantName || variantName === 'custom') return null;
+                );
+                const variantName = variant?.name;
+                // Runtime-parameter presets apply only to variants that do NOT
+                // read the vfolder config files. `readsVfolderConfigFiles`
+                // (26.8.0+) is stripped on older managers → undefined; fall back
+                // to the legacy `name === 'custom'` heuristic — NEVER `?? false`.
+                const reads =
+                  variant?.readsVfolderConfigFiles ?? variantName === 'custom';
+                if (!variantName || reads) return null;
                 return (
                   // Pull the section up under the Runtime selector (the
                   // selector's default Form.Item marginBottom leaves too large a
