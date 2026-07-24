@@ -18,13 +18,15 @@ import {
 import {
   applyBulkPermissionCells,
   type BulkCellState,
-  diffPermissionCells,
   type PermissionCellDiff,
 } from '../helper/rbacPermissionDiff';
-import { App, Checkbox, Empty, Form, theme, Tooltip, Typography } from 'antd';
+import { App, Empty, Form, theme, Tooltip, Typography } from 'antd';
 import {
   BAIBulkEditFormItem,
+  BAIBulkErrorModal,
+  BAICheckbox,
   type BAIColumnsType,
+  BAIDoubleTag,
   BAIFlex,
   BAIListAlert,
   BAIModal,
@@ -34,6 +36,7 @@ import {
   useBAILogger,
   useMutationWithPromise,
 } from 'backend.ai-ui';
+import _ from 'lodash';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -71,6 +74,43 @@ const makeCellKey = (entityType: string, operation: string) =>
 interface EditingScope {
   scopeId: string;
   scopeName?: string | null;
+}
+
+// useMutationWithPromise rejects GraphQL-level failures with the raw
+// PayloadError[], so unwrap per-error messages instead of String().
+const reasonMessage = (reason: unknown): string => {
+  if (reason instanceof Error) {
+    return reason.message;
+  }
+  if (Array.isArray(reason)) {
+    const messages = reason
+      .map((item) =>
+        item !== null && typeof item === 'object' && 'message' in item
+          ? String(item.message)
+          : String(item),
+      )
+      .filter(Boolean);
+    if (messages.length > 0) {
+      return messages.join('\n');
+    }
+  }
+  return String(reason);
+};
+
+/**
+ * One failed bulk request, shaped for the shared `BAIBulkErrorModal` table —
+ * one row per request the server rejected (FR-3334).
+ */
+interface FailedPermissionRequest {
+  key: string;
+  /** Scope display name (falls back to the raw scope id). */
+  scopeLabel: string;
+  /**
+   * Grid cell key of the failed permission; absent when a failed row cannot
+   * be mapped back to a requested cell (e.g. an unknown permission id).
+   */
+  cellKey?: string;
+  message: string;
 }
 
 /**
@@ -179,7 +219,7 @@ const RoleScopePermissionEditModal: React.FC<
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { message, notification } = App.useApp();
+  const { message } = App.useApp();
   const { logger } = useBAILogger();
 
   const role = useFragment(
@@ -322,13 +362,10 @@ const RoleScopePermissionEditModal: React.FC<
     scopeName: resolveScopeName(node),
   }));
   const isBulk = scopeList.length > 1;
-  const scopeById = new Map(
-    scopeList.map((scope) => [scope.scopeId, scope] as const),
-  );
-  // Falls back to the raw scope type when no i18n label is registered.
-  const scopeTypeLabel = t(`rbac.types.${scopeType}`, {
-    defaultValue: scopeType ?? '',
-  });
+  // Falls back to the raw RBAC type name when no i18n label is registered.
+  const rbacTypeLabel = (type: string) =>
+    t(`rbac.types.${type}`, { defaultValue: type });
+  const scopeTypeLabel = scopeType ? rbacTypeLabel(scopeType) : '';
   const displayName = scopeList[0]?.scopeName || scopeList[0]?.scopeId || '-';
 
   // Configurable entity × operation grid for this scope type. Cells are keyed by
@@ -347,19 +384,22 @@ const RoleScopePermissionEditModal: React.FC<
       ),
     }));
 
-  // The role's currently-granted cells grouped by scope, plus each cell's
-  // permission id (needed to delete on uncheck) — bulk save reconciles every
-  // selected scope against its own initial state.
-  const initialKeysByScopeId = new Map<string, Set<string>>();
+  // Cells already reconciled by earlier partially-failed saves, keyed by
+  // scopeId → cellKey → new permission id (granted) or null (revoked). The
+  // permissions fragment stays stale until the parent refetches on close, so
+  // these overrides layer the true backend state on top of it — a retry then
+  // re-submits only the cells that actually failed (FR-3334).
+  const [appliedCellOverrides, setAppliedCellOverrides] = useState<
+    ReadonlyMap<string, ReadonlyMap<string, string | null>>
+  >(new Map());
+
+  // The role's currently-granted cells grouped by scope, each mapped to its
+  // permission id (needed to delete on uncheck) — a scope's granted cell keys
+  // are exactly this map's inner keys, and bulk save reconciles every selected
+  // scope against its own initial state.
   const permissionIdByScopeCell = new Map<string, Map<string, string>>();
   permissions.forEach((permission) => {
     const cellKey = makeCellKey(permission.entityType, permission.operation);
-    let keys = initialKeysByScopeId.get(permission.scopeId);
-    if (!keys) {
-      keys = new Set<string>();
-      initialKeysByScopeId.set(permission.scopeId, keys);
-    }
-    keys.add(cellKey);
     let idByCell = permissionIdByScopeCell.get(permission.scopeId);
     if (!idByCell) {
       idByCell = new Map<string, string>();
@@ -367,34 +407,48 @@ const RoleScopePermissionEditModal: React.FC<
     }
     idByCell.set(cellKey, toLocalId(permission.id));
   });
+  // Layer the already-applied cells (from earlier partially-failed saves) on
+  // top of the fragment-derived state. Last write wins per cell, so a cell
+  // granted then revoked (or vice versa) across retries resolves correctly.
+  appliedCellOverrides.forEach((cells, overrideScopeId) => {
+    let idByCell = permissionIdByScopeCell.get(overrideScopeId);
+    cells.forEach((permissionId, cellKey) => {
+      if (permissionId === null) {
+        idByCell?.delete(cellKey);
+      } else {
+        if (!idByCell) {
+          idByCell = new Map<string, string>();
+          permissionIdByScopeCell.set(overrideScopeId, idByCell);
+        }
+        idByCell.set(cellKey, permissionId);
+      }
+    });
+  });
+  /** The cell keys a scope currently grants (initial state for the diff). */
+  const initialKeysOf = (targetScopeId: string | undefined) =>
+    new Set(
+      targetScopeId
+        ? (permissionIdByScopeCell.get(targetScopeId)?.keys() ?? [])
+        : [],
+    );
 
   const singleScopeId = !isBulk ? scopeList[0]?.scopeId : undefined;
 
-  // Single-scope edit: the one scope's grants are pre-checked and the grid is
-  // diffed against them on save.
-  const [editedKeys, setEditedKeys] = useState<Set<string>>(
-    () =>
-      new Set(
-        singleScopeId ? (initialKeysByScopeId.get(singleScopeId) ?? []) : [],
-      ),
-  );
-  // Bulk edit: each editable cell is a `BAIBulkEditFormItem` field on this
-  // form. Cells left as 'Keep as is' hold `undefined`; cells switched into
-  // edit mode hold the checkbox boolean.
-  const [bulkForm] = Form.useForm<Record<string, boolean | undefined>>();
+  // Single-scope edit: the one scope's currently-granted cells, used to
+  // pre-check the grid via each cell's Form.Item `initialValue`.
+  const singleInitialKeys = initialKeysOf(singleScopeId);
+  // Every grid cell is a boolean field on this form, keyed by its cell key.
+  // Single-scope: every rendered cell registers at mount, pre-checked with
+  // the scope's granted state. Bulk: only cells switched into edit mode
+  // register (`BAIBulkEditFormItem`); 'Keep as is' cells stay `undefined`.
+  const [form] = Form.useForm<Record<string, boolean | undefined>>();
   const [isSaving, setIsSaving] = useState(false);
-
-  const toggleCell = (key: string, checked: boolean) => {
-    setEditedKeys((previous) => {
-      const next = new Set(previous);
-      if (checked) {
-        next.add(key);
-      } else {
-        next.delete(key);
-      }
-      return next;
-    });
-  };
+  const [failedRequests, setFailedRequests] = useState<
+    FailedPermissionRequest[]
+  >([]);
+  // How many of the last save's requests the backend accepted — shown next to
+  // the partial-failure notice as "(Success: n, Failed: m)".
+  const [succeededRequestCount, setSucceededRequestCount] = useState(0);
 
   const operationLabel = (operation: string) =>
     t(`rbac.operations.${operation}`, { defaultValue: operation });
@@ -409,29 +463,29 @@ const RoleScopePermissionEditModal: React.FC<
       : operationLabel(baseOperation);
   };
 
-  const describeCell = (key: string, scope?: EditingScope) => {
-    const [entityType, operation] = key.split(CELL_KEY_SEPARATOR);
-    const base = `${t(`rbac.types.${entityType}`, {
-      defaultValue: entityType,
-    })} / ${operationLabel(operation)}`;
-    // Bulk failures need to say WHICH scope failed.
-    return isBulk && scope
-      ? `${scope.scopeName || scope.scopeId}: ${base}`
-      : base;
+  const scopeLabelOf = (scope: EditingScope | undefined, fallback: string) =>
+    scope?.scopeName || scope?.scopeId || fallback;
+
+  // A changed cell value is a fresh attempt, no longer the one the server
+  // rejected — drop the cell's failed mark. `BAICheckbox` only paints the
+  // error status; clearing it is this owner's call.
+  const clearCellError = (cellKey: string) => {
+    form.setFields([{ name: cellKey, errors: [] }]);
   };
 
   const handleSave = async () => {
-    if (!scopeType || scopeList.length === 0) {
+    // No scope nodes → nothing to derive the scope type from, nothing to save.
+    if (!scopeType) {
       return;
     }
 
-    // Bulk edit: only the cells the user switched into edit mode carry a
-    // boolean; cells left as 'Keep as is' stay `undefined` and are skipped.
-    const bulkValues: Record<string, boolean | undefined> = isBulk
-      ? bulkForm.getFieldsValue(true)
-      : {};
+    // Cells the grid defines: single-scope registers every rendered cell as
+    // a boolean; bulk registers only the cells switched into edit mode
+    // ('Keep as is' cells stay `undefined` and are skipped).
+    const cellValues: Record<string, boolean | undefined> =
+      form.getFieldsValue(true);
     const modifiedCells = new Map<string, BulkCellState>();
-    Object.entries(bulkValues).forEach(([key, value]) => {
+    Object.entries(cellValues).forEach(([key, value]) => {
       if (value === true) {
         modifiedCells.set(key, 'checked');
       } else if (value === false) {
@@ -439,11 +493,10 @@ const RoleScopePermissionEditModal: React.FC<
       }
     });
 
-    // Per-target reconciliation: single-scope diffs the grid against its
-    // pre-checked state; bulk applies only the user-modified cells to every
-    // selected scope's own initial state ('Keep as is' cells untouched,
-    // already-satisfied scopes skipped) — both share the dirty-tracking core
-    // in `rbacPermissionDiff`.
+    // Per-target reconciliation: the grid cells apply to every selected
+    // scope's own initial state — already-satisfied cells produce no request,
+    // and cells absent from the form ('Keep as is', or grants the grid does
+    // not render) keep each scope's existing value.
     const createEntries: Array<{
       scope: EditingScope;
       key: string;
@@ -454,14 +507,14 @@ const RoleScopePermissionEditModal: React.FC<
       permissionId: string;
     }> = [];
     scopeList.forEach((scope) => {
-      const scopeInitial =
-        initialKeysByScopeId.get(scope.scopeId) ?? new Set<string>();
-      const diff: PermissionCellDiff = isBulk
-        ? applyBulkPermissionCells(scopeInitial, modifiedCells)
-        : diffPermissionCells(scopeInitial, editedKeys);
+      const scopeInitial = initialKeysOf(scope.scopeId);
+      const diff: PermissionCellDiff = applyBulkPermissionCells(
+        scopeInitial,
+        modifiedCells,
+      );
       diff.toCreate.forEach((key) => createEntries.push({ scope, key }));
-      // toDelete ⊆ the scope's initial keys, and every initial key has its
-      // permission id recorded, so the lookup cannot miss.
+      // toDelete ⊆ the scope's initial keys, which are exactly the recorded
+      // permission ids' keys, so the lookup cannot miss.
       diff.toDelete.forEach((key) => {
         const permissionId = permissionIdByScopeCell
           .get(scope.scopeId)
@@ -490,9 +543,6 @@ const RoleScopePermissionEditModal: React.FC<
       };
     });
     const deleteIds = deleteEntries.map((entry) => entry.permissionId);
-    const entryByPermissionId = new Map(
-      deleteEntries.map((entry) => [entry.permissionId, entry] as const),
-    );
 
     setIsSaving(true);
     try {
@@ -509,61 +559,152 @@ const RoleScopePermissionEditModal: React.FC<
           : Promise.resolve(null),
       ]);
 
-      const failedLabels: string[] = [];
+      const failures: FailedPermissionRequest[] = [];
+      // Cells the backend actually reconciled in this save — layered onto
+      // `appliedCellOverrides` on partial failure so a retry skips them.
+      const appliedUpdates = new Map<string, Map<string, string | null>>();
+      const recordApplied = (
+        appliedScopeId: string,
+        cellKey: string,
+        permissionId: string | null,
+      ) => {
+        let cells = appliedUpdates.get(appliedScopeId);
+        if (!cells) {
+          cells = new Map<string, string | null>();
+          appliedUpdates.set(appliedScopeId, cells);
+        }
+        cells.set(cellKey, permissionId);
+      };
+
       if (addResult.status === 'fulfilled') {
-        addResult.value?.adminBulkAddRolePermissions?.failed.forEach(
-          (failure) => {
-            logger.error('Failed to add permission', failure.message);
-            failedLabels.push(
-              describeCell(
-                makeCellKey(failure.entityType, failure.operation),
-                scopeById.get(failure.scopeId),
-              ),
-            );
-          },
-        );
+        const addPayload = addResult.value?.adminBulkAddRolePermissions;
+        // Successfully-created rows carry their new permission id — record it
+        // so a later uncheck of the same cell can delete it without a refetch.
+        addPayload?.items.forEach((item) => {
+          recordApplied(
+            item.scopeId,
+            makeCellKey(item.entityType, item.operation),
+            toLocalId(item.id),
+          );
+        });
+        addPayload?.failed.forEach((failure) => {
+          logger.error('Failed to add permission', failure.message);
+          const cellKey = makeCellKey(failure.entityType, failure.operation);
+          failures.push({
+            key: `grant-${failure.scopeId}-${cellKey}`,
+            scopeLabel: scopeLabelOf(
+              scopeList.find((scope) => scope.scopeId === failure.scopeId),
+              failure.scopeId,
+            ),
+            cellKey,
+            message: failure.message,
+          });
+        });
       } else {
         logger.error('Failed to add permissions', addResult.reason);
-        failedLabels.push(
-          ...createEntries.map(({ scope, key }) => describeCell(key, scope)),
-        );
-      }
-      if (removeResult.status === 'fulfilled') {
-        removeResult.value?.adminBulkRemoveRolePermissions?.failed.forEach(
-          (failure) => {
-            logger.error('Failed to remove permission', failure.message);
-            const entry = entryByPermissionId.get(String(failure.permissionId));
-            failedLabels.push(
-              entry
-                ? describeCell(entry.key, entry.scope)
-                : String(failure.permissionId),
-            );
-          },
-        );
-      } else {
-        logger.error('Failed to remove permissions', removeResult.reason);
-        failedLabels.push(
-          ...deleteEntries.map(({ scope, key }) => describeCell(key, scope)),
-        );
-      }
-
-      if (failedLabels.length === 0) {
-        message.success(t('rbac.PermissionsSaved'));
-      } else {
-        notification.error({
-          title: t('rbac.PermissionsPartialFailure', {
-            count: failedLabels.length,
-          }),
-          description: failedLabels.join(', '),
+        // A wholly-rejected request counts its entire batch as failed.
+        createEntries.forEach(({ scope, key }) => {
+          failures.push({
+            key: `grant-${scope.scopeId}-${key}`,
+            scopeLabel: scopeLabelOf(scope, scope.scopeId),
+            cellKey: key,
+            message: reasonMessage(addResult.reason),
+          });
         });
       }
+      if (removeResult.status === 'fulfilled') {
+        const removePayload =
+          removeResult.value?.adminBulkRemoveRolePermissions;
+        const failedRemoveIds = new Set(
+          (removePayload?.failed ?? []).map((failure) =>
+            String(failure.permissionId),
+          ),
+        );
+        // Requested deletions not reported as failed were applied.
+        deleteEntries.forEach((entry) => {
+          if (!failedRemoveIds.has(entry.permissionId)) {
+            recordApplied(entry.scope.scopeId, entry.key, null);
+          }
+        });
+        removePayload?.failed.forEach((failure) => {
+          logger.error('Failed to remove permission', failure.message);
+          const entry = deleteEntries.find(
+            (candidate) =>
+              candidate.permissionId === String(failure.permissionId),
+          );
+          failures.push({
+            key: `revoke-${failure.permissionId}`,
+            scopeLabel: entry
+              ? scopeLabelOf(entry.scope, entry.scope.scopeId)
+              : String(failure.permissionId),
+            cellKey: entry?.key,
+            message: failure.message,
+          });
+        });
+      } else {
+        logger.error('Failed to remove permissions', removeResult.reason);
+        deleteEntries.forEach(({ scope, key }) => {
+          failures.push({
+            key: `revoke-${scope.scopeId}-${key}`,
+            scopeLabel: scopeLabelOf(scope, scope.scopeId),
+            cellKey: key,
+            message: reasonMessage(removeResult.reason),
+          });
+        });
+      }
+
+      if (failures.length === 0) {
+        message.success(t('rbac.PermissionsSaved'));
+        // Close and let the section refetch so tags reflect the true state.
+        onRequestClose(true);
+        return;
+      }
+
+      // Partial failure: keep this modal — and the user's edits — alive for a
+      // retry (FR-3334). The applied cells are layered onto the initial state
+      // so the next save re-submits only what actually failed; the per-request
+      // errors are surfaced through the shared bulk-error modal.
+      if (appliedUpdates.size > 0) {
+        setAppliedCellOverrides((previous) => {
+          // Copy-on-write per scope: untouched scopes keep their (readonly)
+          // cell maps; updated scopes get a merged copy, new cells last so
+          // they win per cell key.
+          const next = new Map(previous);
+          appliedUpdates.forEach((cells, updatedScopeId) => {
+            next.set(
+              updatedScopeId,
+              new Map([...(previous.get(updatedScopeId) ?? []), ...cells]),
+            );
+          });
+          return next;
+        });
+      }
+      // Immediate failure notice as a toast on top of the detail modal — the
+      // modal carries the per-request table, the message the at-a-glance cue.
+      message.error(t('rbac.PermissionsPartialFailureDescription'));
+      // Every request is either a failure row or accepted by the backend.
+      setSucceededRequestCount(
+        createEntries.length + deleteEntries.length - failures.length,
+      );
+      setFailedRequests(failures);
+      // An empty-string field error flags the failed cells (= field names)
+      // with error status without printing a message under the cell — an
+      // empty explain row has no height and the cell items keep
+      // `marginBottom: 0`, so the grid layout is untouched; the messages
+      // live in the error modal table. Set over every form field so cells
+      // that succeeded on a retry drop their previous mark.
+      const failedCellKeys = new Set(
+        _.compact(failures.map((failure) => failure.cellKey)),
+      );
+      form.setFields(
+        Object.keys(cellValues).map((name) => ({
+          name,
+          errors: failedCellKeys.has(name) ? [''] : [],
+        })),
+      );
     } finally {
       setIsSaving(false);
     }
-
-    // Close and let the section refetch so tags reflect the true state, even on
-    // a partial failure.
-    onRequestClose(true);
   };
 
   // Every OperationType renders a cell; combinations absent from the
@@ -594,57 +735,60 @@ const RoleScopePermissionEditModal: React.FC<
           // switched into edit mode — the checkbox starts checked.
           initialValue={true}
         >
-          <Checkbox />
+          <BAICheckbox onChange={() => clearCellError(key)} />
         </BAIBulkEditFormItem>
       );
     }
     return (
-      <Checkbox
-        checked={editedKeys.has(key)}
-        onChange={(event) => toggleCell(key, event.target.checked)}
-      />
+      <Form.Item
+        name={key}
+        valuePropName="checked"
+        // Pre-checked with the scope's currently-granted state.
+        initialValue={singleInitialKeys.has(key)}
+        style={{ marginBottom: 0 }}
+      >
+        <BAICheckbox onChange={() => clearCellError(key)} />
+      </Form.Item>
     );
   };
 
+  const operationGroups = [
+    {
+      key: 'direct',
+      title: t('rbac.operationGroups.Direct'),
+      operations: DIRECT_OPERATIONS,
+      columnTitle: operationLabel,
+    },
+    {
+      key: 'delegate',
+      title: t('rbac.operationGroups.Delegate'),
+      operations: DELEGATE_OPERATIONS,
+      columnTitle: delegateOperationColumnLabel,
+    },
+  ];
   const columns: BAIColumnsType<(typeof entities)[number]> = [
     {
       key: 'entityType',
       title: t('rbac.PermissionType'),
       fixed: 'left',
       render: (_value, entity) => (
-        <Typography.Text>
-          {t(`rbac.types.${entity.entityType}`, {
-            defaultValue: entity.entityType,
-          })}
-        </Typography.Text>
+        <Typography.Text>{rbacTypeLabel(entity.entityType)}</Typography.Text>
       ),
     },
-    {
-      key: 'direct',
-      title: t('rbac.operationGroups.Direct'),
-      children: DIRECT_OPERATIONS.map((operation) => ({
+    ...operationGroups.map((group) => ({
+      key: group.key,
+      title: group.title,
+      children: group.operations.map((operation) => ({
         key: operation,
-        title: operationLabel(operation),
-        align: 'center',
+        title: group.columnTitle(operation),
+        align: 'center' as const,
         // Bulk cells host the 'Keep as is' placeholder input, which needs a
         // stable column width (checkbox-only cells size themselves).
         width: isBulk ? 120 : undefined,
         render: (_value: unknown, entity: (typeof entities)[number]) =>
           renderPermissionCell(entity, operation),
       })),
-    },
-    {
-      key: 'delegate',
-      title: t('rbac.operationGroups.Delegate'),
-      children: DELEGATE_OPERATIONS.map((operation) => ({
-        key: operation,
-        title: delegateOperationColumnLabel(operation),
-        align: 'center',
-        width: isBulk ? 120 : undefined,
-        render: (_value: unknown, entity: (typeof entities)[number]) =>
-          renderPermissionCell(entity, operation),
-      })),
-    },
+    })),
   ];
 
   return (
@@ -684,14 +828,17 @@ const RoleScopePermissionEditModal: React.FC<
       okText={t('button.Save')}
       onOk={handleSave}
       confirmLoading={isSaving}
-      onCancel={() => onRequestClose(false)}
+      // After a partial failure some changes did reach the backend, so even a
+      // cancel must report success=true — the parent then refetches and the
+      // tags reflect the true state.
+      onCancel={() => onRequestClose(appliedCellOverrides.size > 0)}
       // Bulk cells render a 'Keep as is' placeholder input per operation
       // column, so the grid needs considerably more room than the
       // checkbox-only single-scope grid. antd's own `max-width:
       // calc(100vw - 32px)` keeps it inside the viewport on small screens.
       width={isBulk ? 900 : 760}
     >
-      <Form form={bulkForm} component={false}>
+      <Form form={form} component={false}>
         <BAIFlex direction="column" align="stretch" gap="sm">
           {isBulk && (
             // Keep-as-is semantics + the concrete scopes this edit will touch
@@ -724,6 +871,70 @@ const RoleScopePermissionEditModal: React.FC<
           )}
         </BAIFlex>
       </Form>
+      {/* Per-request errors of a partially-failed save (FR-3334). Rendered
+          inside the edit modal so both live one open cycle under the parent's
+          `BAIUnmountAfterClose`; the edit modal (and the user's edits) stays
+          open behind it for a retry. */}
+      <BAIBulkErrorModal<FailedPermissionRequest>
+        open={!_.isEmpty(failedRequests)}
+        alertDescription={
+          <>
+            {t('rbac.PermissionsPartialFailureDescription')}{' '}
+            <Typography.Text
+              style={{
+                color: token.colorTextSecondary,
+                fontSize: token.fontSizeSM,
+              }}
+            >
+              {t('rbac.PermissionsPartialFailureCounts', {
+                succeeded: succeededRequestCount,
+                failed: failedRequests.length,
+              })}
+            </Typography.Text>
+          </>
+        }
+        dataSource={failedRequests}
+        onRequestClose={() => setFailedRequests([])}
+        columns={[
+          {
+            key: 'scope',
+            title: t('rbac.ScopeId'),
+            dataIndex: 'scopeLabel',
+            render: (scopeLabel: string) => (
+              <BAIDoubleTag
+                values={[
+                  { label: scopeTypeLabel, color: 'blue' },
+                  { label: scopeLabel, color: 'default' },
+                ]}
+              />
+            ),
+          },
+          {
+            key: 'permission',
+            title: t('rbac.Permission'),
+            dataIndex: 'cellKey',
+            render: (cellKey: FailedPermissionRequest['cellKey']) => {
+              if (!cellKey) {
+                return '-';
+              }
+              const [entityType, operation] = cellKey.split(CELL_KEY_SEPARATOR);
+              return (
+                <BAIDoubleTag
+                  values={[
+                    { label: rbacTypeLabel(entityType), color: 'blue' },
+                    { label: operationLabel(operation), color: 'default' },
+                  ]}
+                />
+              );
+            },
+          },
+          {
+            key: 'message',
+            title: t('rbac.ErrorMessage'),
+            dataIndex: 'message',
+          },
+        ]}
+      />
     </BAIModal>
   );
 };

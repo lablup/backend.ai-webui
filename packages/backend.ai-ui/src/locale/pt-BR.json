@@ -91,6 +91,10 @@
     "KeepAsIs": "Manter como está",
     "UndoChanges": "Desfazer alterações"
   },
+  "comp:BAIBulkErrorModal": {
+    "ActionExecutionFailed": "Falha na execução",
+    "ErrorOccurred": "Ocorreu um erro"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Selecionar registro de contêiner"
   },

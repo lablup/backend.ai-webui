@@ -91,6 +91,10 @@
     "KeepAsIs": "Kekalkan seperti semula",
     "UndoChanges": "Batal perubahan"
   },
+  "comp:BAIBulkErrorModal": {
+    "ActionExecutionFailed": "Pelaksanaan gagal",
+    "ErrorOccurred": "Ralat berlaku"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Pilih Registri Kontena"
   },

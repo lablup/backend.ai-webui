@@ -91,6 +91,10 @@
     "KeepAsIs": "Оставить как есть",
     "UndoChanges": "Отменить изменения"
   },
+  "comp:BAIBulkErrorModal": {
+    "ActionExecutionFailed": "Ошибка выполнения",
+    "ErrorOccurred": "Произошла ошибка"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Выберите реестр контейнеров"
   },

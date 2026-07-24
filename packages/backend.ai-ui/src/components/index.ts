@@ -55,6 +55,8 @@ export type {
 } from './BAINotificationItem';
 export { default as BAIModal } from './BAIModal';
 export type { BAIModalProps } from './BAIModal';
+export { default as BAIBulkErrorModal } from './BAIBulkErrorModal';
+export type { BAIBulkErrorModalProps } from './BAIBulkErrorModal';
 export { default as BAIDeleteConfirmModal } from './BAIDeleteConfirmModal';
 export type {
   BAIDeleteConfirmModalProps,
@@ -62,6 +64,8 @@ export type {
 } from './BAIDeleteConfirmModal';
 export { default as BAIButton } from './BAIButton';
 export type { BAIButtonProps } from './BAIButton';
+export { default as BAICheckbox } from './BAICheckbox';
+export type { BAICheckboxProps } from './BAICheckbox';
 export { default as BAISelectionLabel } from './BAISelectionLabel';
 export type { BAISelectionLabelProps } from './BAISelectionLabel';
 export { default as BAIFetchKeyButton } from './BAIFetchKeyButton';

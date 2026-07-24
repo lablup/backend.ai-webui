@@ -91,6 +91,10 @@
     "KeepAsIs": "Хэвээр үлдээх",
     "UndoChanges": "Өөрчлөлтийг буцаах"
   },
+  "comp:BAIBulkErrorModal": {
+    "ActionExecutionFailed": "Гүйцэтгэл амжилтгүй боллоо",
+    "ErrorOccurred": "Алдаа гарлаа"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Контейнер бүртгэл сонгох"
   },
