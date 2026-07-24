@@ -10,6 +10,7 @@ import BAITable, { type BAIColumnsType } from './Table/BAITable';
 import { theme } from 'antd';
 import type { AnyObject } from 'antd/es/_util/type';
 import { TriangleAlert } from 'lucide-react';
+import type { ReactNode } from 'react';
 
 export interface BAIBulkErrorModalProps<RecordType = AnyObject> extends Omit<
   BAIModalProps,
@@ -29,9 +30,10 @@ export interface BAIBulkErrorModalProps<RecordType = AnyObject> extends Omit<
   /**
    * Optional guidance rendered as the body of a `BAIAlert` above the table
    * (e.g. how to retry), under a fixed localized "Error Occurred" alert
-   * title. No default — the caller injects operation-specific copy.
+   * title. No default — the caller injects operation-specific copy. Any
+   * `ReactNode` works (the underlying antd `Alert.description` accepts one).
    */
-  alertDescription?: string;
+  alertDescription?: ReactNode;
   /** Called when the user dismisses the modal (header X, mask, Esc). */
   onRequestClose: () => void;
 }
