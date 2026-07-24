@@ -1559,6 +1559,16 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     readsVfolderConfigFiles &&
     (supportsRuntimeVariantConfigReads || effectiveMode === 'custom');
 
+  // The "Model Definition File Path" (the vfolder path to model-definition.yaml)
+  // only applies to variants that read the vfolder config files. Decide via the
+  // client feature flag rather than a raw manager-version check: on 26.8.0+
+  // (`supportsRuntimeVariantConfigReads`) use the authoritative
+  // `readsVfolderConfigFiles` (hidden when false); on older managers (flag
+  // absent) show it whenever the runtime variant is Custom.
+  const showModelDefinitionPath = supportsRuntimeVariantConfigReads
+    ? !!watchedVariant?.readsVfolderConfigFiles
+    : watchedVariant?.name === 'custom';
+
   // Read the selected model folder's `model-definition.yaml` and use its parsed
   // values as placeholders (display-only hints) on the command fields. Enabled
   // only for a config-reading variant with a folder selected; failures fall
@@ -2428,14 +2438,17 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 label: t('session.launcher.AdvancedSettings'),
                 children: (
                   <Suspense fallback={<Skeleton active />}>
-                    <Form.Item
-                      name="definitionPath"
-                      label={t('deployment.ModelDefinitionPath')}
-                      tooltip={t('modelService.ModelDefinitionPathTooltip')}
-                      rules={[{ whitespace: true }]}
-                    >
-                      <Input allowClear placeholder="model-definition.yaml" />
-                    </Form.Item>
+                    {showModelDefinitionPath && (
+                      <Form.Item
+                        name="definitionPath"
+                        label={t('deployment.ModelDefinitionPath')}
+                        tooltip={t('modelService.ModelDefinitionPathTooltip')}
+                        rules={[{ whitespace: true }]}
+                        preserve={false}
+                      >
+                        <Input allowClear placeholder="model-definition.yaml" />
+                      </Form.Item>
+                    )}
                     <Form.Item
                       noStyle
                       dependencies={[
