@@ -398,6 +398,64 @@ export async function selectPropertyFilter(
   await page.getByRole('button', { name: 'search' }).click();
 }
 
+/**
+ * Locates the table refresh button (BAIFetchKeyButton, ReloadOutlined icon).
+ * Clicking it bumps the list's fetchKey, forcing a network-only refetch.
+ */
+export function getTableRefreshButton(page: Page) {
+  return page
+    .locator('button')
+    .filter({ has: page.locator('.anticon-reload') })
+    .first();
+}
+
+/**
+ * Runs `assertion` up to `attempts` times, clicking the table refresh button
+ * between failures. The vfolder list never refetches on its own after the
+ * initial (filtered) response, so when the backend lags a mutation the ONLY
+ * way a row can appear/disappear/change is a new request — waiting longer on
+ * the DOM is pure dead time. Short assertion windows + an explicit refetch
+ * converge much faster than the old 10s visibility windows (FR-3361).
+ */
+async function retryWithTableRefresh(
+  page: Page,
+  assertion: () => Promise<void>,
+  attempts = 6,
+) {
+  let refreshFailures = 0;
+  for (let attempt = 0; ; attempt++) {
+    try {
+      await assertion();
+      return;
+    } catch (error) {
+      if (attempt >= attempts - 1) throw error;
+      // A single click failure is tolerated: a closing modal's mask or a
+      // toast can briefly intercept pointer events, and mutation-driven
+      // refetches (updateFetchKey) may still land during the next window.
+      // But if the button is unavailable twice in a row the loop would just
+      // poll stale DOM, so fail fast with the real page-state problem
+      // instead of burning the remaining budget on a foregone conclusion.
+      const refreshed = await getTableRefreshButton(page)
+        .click({ timeout: 2000 })
+        .then(() => true)
+        .catch(() => false);
+      refreshFailures = refreshed ? 0 : refreshFailures + 1;
+      if (refreshFailures >= 2) {
+        throw new Error(
+          'Table refresh button unavailable while polling the vfolder list; ' +
+            `last assertion failure: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
+    }
+  }
+}
+
+export function getVFolderRow(page: Page, folderName: string) {
+  return page
+    .getByRole('row', { name: `VFolder Identicon ${folderName}` })
+    .first();
+}
+
 export async function verifyVFolder(
   page: Page,
   folderName: string,
@@ -409,27 +467,10 @@ export async function verifyVFolder(
   await page.getByRole('tab', { name: statusTab }).click();
   await clearAllFilters(page);
   await selectPropertyFilter(page, 'Name', folderName);
-  const cell = page
-    .getByRole('cell', { name: `VFolder Identicon ${folderName}` })
-    .filter({ hasText: folderName })
-    .first();
-  // Eventual consistency: the list may lag behind the mutation. Retry by
-  // re-applying the filter up to 3 times with 10s windows before failing.
-  let found = false;
-  for (let attempt = 0; attempt < 3; attempt++) {
-    try {
-      await expect(cell).toBeVisible({ timeout: 10000 });
-      found = true;
-      break;
-    } catch {
-      await clearAllFilters(page);
-      await page.waitForTimeout(500);
-      await selectPropertyFilter(page, 'Name', folderName);
-    }
-  }
-  if (!found) {
-    await expect(cell).toBeVisible({ timeout: 10000 });
-  }
+  const row = getVFolderRow(page, folderName);
+  await retryWithTableRefresh(page, () =>
+    expect(row).toBeVisible({ timeout: 2500 }),
+  );
   await removeSearchButton(page, folderName);
 }
 
@@ -485,7 +526,6 @@ export async function moveToTrashAndVerify(
   page: Page,
   folderName: string,
   dataPath: string = 'data',
-  options: { skipTrashVerify?: boolean } = {},
 ) {
   // Use navigateTo to ensure a clean navigation to the data page regardless of current state
   await navigateTo(page, dataPath);
@@ -496,21 +536,18 @@ export async function moveToTrashAndVerify(
   // a test already moved it to Trash. The Playwright config does not set a global
   // actionTimeout, so a bare .click() on a non-existent row would hang for the
   // entire test timeout, defeating the try/catch in callers.
-  const folderRow = page.getByRole('row', {
-    name: `VFolder Identicon ${folderName}`,
-  });
+  const folderRow = getVFolderRow(page, folderName);
   await expect(folderRow).toBeVisible({ timeout: 10000 });
 
   // Bound the move-to-trash button before clicking it. On pages where the
   // current account cannot delete the folder (e.g. a project-type folder shown
-  // on the regular user's /data), the button stays disabled. The Playwright
-  // config sets no global actionTimeout, so a bare .click() on a disabled
-  // button would retry until the entire 180s test timeout, hanging the caller.
-  // The best-effort sweep relies on this assertion failing fast (a catchable
-  // error) so it can skip the un-deletable row instead of stranding cleanup.
-  // BAINameActionCell now sets aria-label={action.title} unconditionally
-  // (PR #8320); the move-to-trash action's title is
-  // t('data.folders.MoveToTrash') = "Move to trash bin", not "delete".
+  // on the regular user's /data), the button stays disabled — this assertion
+  // failing fast (a catchable error) lets the best-effort sweep skip the
+  // un-deletable row instead of stranding cleanup.
+  // BAINameActionCell sets aria-label to the action's title
+  // (t('data.folders.MoveToTrash') = "Move to trash bin"), not the icon's
+  // implicit "delete" name (changed in #8320) — a `name: 'delete'` locator
+  // never matches and burns its whole timeout.
   const moveToTrashButton = folderRow.getByRole('button', {
     name: 'Move to trash bin',
   });
@@ -522,9 +559,8 @@ export async function moveToTrashAndVerify(
     .locator('.ant-modal-confirm')
     .getByRole('button', { name: 'Confirm' });
   await expect(confirmButton).toBeVisible();
-  // Wait for the DELETE /folders API response before navigating away.
-  // Without this, page.goto() in verifyVFolder would cancel the in-flight
-  // request and the folder would never move to Trash.
+  // Wait for the DELETE /folders API response so a rejected request fails
+  // here with the status/body instead of surfacing as a row-gone timeout.
   const deletionResponsePromise = page.waitForResponse(
     (response) =>
       response.url().includes('/folders') &&
@@ -538,15 +574,15 @@ export async function moveToTrashAndVerify(
       `DELETE /folders returned ${deletionResponse.status()}: ${await deletionResponse.text()}`,
     );
   }
+  // Verify in place: with the name filter still applied, the row must leave
+  // the Active list. This replaces the old verifyVFolder(..., 'Trash') pass
+  // (a full page reload + filter cycle + retry loop); Trash membership is
+  // asserted by whichever helper operates on the Trash tab next
+  // (deleteForeverAndVerifyFromTrash / restoreVFolderAndVerify).
+  await retryWithTableRefresh(page, () =>
+    expect(folderRow).toBeHidden({ timeout: 2500 }),
+  );
   await removeSearchButton(page, folderName);
-  // Callers that immediately follow with deleteForeverAndVerifyFromTrash (e.g.
-  // cleanupVFolderSafely) can skip this verification pass: that helper already
-  // asserts the folder's presence in Trash before deleting, so verifying here
-  // would add a full page reload + filter cycle for no extra signal. The
-  // successful DELETE /folders response above still guards the move itself.
-  if (!options.skipTrashVerify) {
-    await verifyVFolder(page, folderName, 'Trash', dataPath);
-  }
 }
 
 export async function deleteForeverAndVerifyFromTrash(
@@ -564,17 +600,25 @@ export async function deleteForeverAndVerifyFromTrash(
   // Set filter to search by Name
   await selectPropertyFilter(page, 'Name', folderName);
 
-  // Verify the folder row exists before attempting deletion
-  const folderRowToDelete = page.getByRole('row', {
-    name: `VFolder Identicon ${folderName}`,
+  // Verify the folder row exists before attempting deletion. The Trash tab
+  // may briefly lag the DELETE /folders mutation (the status flip to
+  // delete-pending is asynchronous on the backend), so poll with explicit
+  // refetches instead of one long DOM wait.
+  const folderRowToDelete = getVFolderRow(page, folderName);
+  await retryWithTableRefresh(page, () =>
+    expect(folderRowToDelete).toBeVisible({ timeout: 2500 }),
+  );
+
+  // Wait for the "Delete forever" button (aria-label "Delete" from its action
+  // title — position-independent, unlike the old `.nth(1)`) to be enabled:
+  // the folder must reach 'delete-pending' status, which may also require a
+  // refetch to observe.
+  const deleteForeverButton = folderRowToDelete.getByRole('button', {
+    name: 'Delete',
   });
-
-  await expect(folderRowToDelete).toBeVisible({ timeout: 15000 });
-
-  // Wait for the "Delete forever" button to be enabled (status must be 'delete-pending').
-  // After moving to trash, the folder may briefly show other statuses before becoming delete-pending.
-  const deleteForeverButton = folderRowToDelete.getByRole('button').nth(1);
-  await expect(deleteForeverButton).toBeEnabled({ timeout: 15000 });
+  await retryWithTableRefresh(page, () =>
+    expect(deleteForeverButton).toBeEnabled({ timeout: 2500 }),
+  );
 
   // Click the delete forever button
   await deleteForeverButton.click();
@@ -587,29 +631,14 @@ export async function deleteForeverAndVerifyFromTrash(
   await confirmInput.fill(folderName);
   await page.getByRole('button', { name: 'Delete forever' }).click();
 
-  // Wait for the deletion success notification to appear.
-  // This confirms the backend accepted the delete request.
-  // i18n key: data.folders.FolderDeletedForever → "Permanently deleted the ... folder."
-  // antd 6 message.success() renders a plain <div> (no ARIA role="alert"),
-  // so we use a text-based locator scoped to the antd message container.
-  // Don't wait for the toast to disappear: antd messages auto-dismiss after
-  // ~3s, so a toBeHidden wait adds fixed dead time to every deletion, and the
-  // message layer doesn't intercept pointer events outside its own box. The
-  // row-gone assertion below is the authoritative deletion signal.
-  const deletionNotification = page
-    .locator('.ant-message-notice')
-    .filter({ hasText: /permanently deleted/i });
-  await expect(deletionNotification).toBeVisible({ timeout: 15000 });
-
-  // After the "Delete forever" button is clicked, verify the folder row is
-  // gone from the Trash tab — re-applying the Name filter forces a fresh
-  // fetch, making this the authoritative check that the backend deleted it.
-  await clearAllFilters(page);
-  await selectPropertyFilter(page, 'Name', folderName);
-  const folderRowAfterDelete = page.getByRole('row').filter({
-    has: page.getByRole('cell', { name: `VFolder Identicon ${folderName}` }),
-  });
-  await expect(folderRowAfterDelete).toBeHidden({ timeout: 30000 });
+  // Deletion is verified by the filtered table emptying out below — the
+  // success toast is transient and adds no extra signal, so it is not
+  // asserted (the old visible+hidden waits added up to 30s of dead time).
+  // With the Name filter still applied, the row disappearing from the Trash
+  // tab is the authoritative signal that the backend deleted the folder.
+  await retryWithTableRefresh(page, () =>
+    expect(folderRowToDelete).toBeHidden({ timeout: 2500 }),
+  );
 
   // Clean up the search filter
   await removeSearchButton(page, folderName);
@@ -869,15 +898,22 @@ export async function restoreVFolderAndVerify(page: Page, folderName: string) {
   await clearAllFilters(page);
   await selectPropertyFilter(page, 'Name', folderName);
 
-  // Find the folder row and wait for it
-  const folderRowToRestore = page.getByRole('row', {
-    name: `VFolder Identicon ${folderName}`,
-  });
-  await expect(folderRowToRestore).toBeVisible({ timeout: 10000 });
+  // Find the folder row and wait for it (poll with refetches — the Trash tab
+  // may lag the move-to-trash mutation).
+  const folderRowToRestore = getVFolderRow(page, folderName);
+  await retryWithTableRefresh(page, () =>
+    expect(folderRowToRestore).toBeVisible({ timeout: 2500 }),
+  );
 
-  // Wait for the Restore button to be enabled (folder must reach DELETE_PENDING status)
-  const restoreButton = folderRowToRestore.getByRole('button').first();
-  await expect(restoreButton).toBeEnabled({ timeout: 15000 });
+  // Wait for the Restore button (aria-label from its action title) to be
+  // enabled — the folder must reach DELETE_PENDING status, which may require
+  // a refetch to observe.
+  const restoreButton = folderRowToRestore.getByRole('button', {
+    name: 'Restore',
+  });
+  await retryWithTableRefresh(page, () =>
+    expect(restoreButton).toBeEnabled({ timeout: 2500 }),
+  );
   await restoreButton.click();
 
   // The Restore button is wrapped in a Popconfirm — click the OK button to confirm.

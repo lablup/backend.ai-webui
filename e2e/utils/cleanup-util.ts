@@ -81,8 +81,9 @@ export async function sweepServices(
 
 /**
  * Returns the exact name of the first vfolder row matching `pattern` on the
- * current tab that is actionable (not in `skip`, and — when
- * `requireEnabledDelete` is set — whose move-to-trash button is enabled), or
+ * current tab that is actionable (not in `skip`, carrying the phase's action
+ * button, and — when `action.requireEnabled` is set — with that button
+ * enabled), or
  * null when none qualifies. The name is read from the row's identicon name cell
  * (`VFolder Identicon <name>`); the identicon is an <img> (no text), so the
  * cell's text content is just the folder name — exactly the string the
@@ -103,9 +104,19 @@ async function firstActionableVFolderName(
   page: Page,
   pattern: RegExp,
   skip: Set<string>,
-  requireEnabledDelete: boolean,
+  action: { buttonName: 'Move to trash bin' | 'Delete'; requireEnabled: boolean },
 ): Promise<string | null> {
-  const rows = page.getByRole('row').filter({ hasText: pattern });
+  // Require the phase's action button ("Move to trash bin" on Active, "Delete"
+  // on Trash — BAINameActionCell labels buttons with their action title) to
+  // be present in the row, not just the name pattern. This also guards
+  // against the tab-switch race: right after clicking a tab the table keeps
+  // rendering the previous tab's rows while the new query is in flight
+  // (useDeferredValue), so an Active row could otherwise be misread as a
+  // Trash orphan and send the sweep down a dead path.
+  const rows = page
+    .getByRole('row')
+    .filter({ hasText: pattern })
+    .filter({ has: page.getByRole('button', { name: action.buttonName }) });
   const appeared = await rows
     .first()
     .waitFor({ state: 'visible', timeout: 5000 })
@@ -122,12 +133,9 @@ async function firstActionableVFolderName(
     const name = (await nameCell.textContent().catch(() => null))?.trim();
     if (!name || skip.has(name)) continue;
 
-    if (requireEnabledDelete) {
-      // BAINameActionCell now sets aria-label={action.title} unconditionally
-      // (PR #8320); the move-to-trash action's title is
-      // t('data.folders.MoveToTrash') = "Move to trash bin", not "delete".
-      const deleteBtn = row
-        .getByRole('button', { name: 'Move to trash bin' })
+    if (action.requireEnabled) {
+      const actionBtn = row
+        .getByRole('button', { name: action.buttonName })
         .first();
       // Read the button's enabled state directly. The move-to-trash button's
       // disabled flag is derived from data that arrives with the row itself
@@ -138,7 +146,7 @@ async function firstActionableVFolderName(
       // folders on /admin-data); a slow per-row wait there can exhaust the
       // teardown's time budget. A genuinely un-deletable folder is skipped so
       // the sweep still never hangs on it.
-      const enabled = await deleteBtn
+      const enabled = await actionBtn
         .isEnabled({ timeout: 2000 })
         .catch(() => false);
       if (!enabled) {
@@ -192,19 +200,13 @@ export async function sweepVFolders(
       .getByRole('tab', { name: 'Active' })
       .click()
       .catch(() => {});
-    const name = await firstActionableVFolderName(
-      page,
-      pattern,
-      activeSkip,
-      true,
-    );
+    const name = await firstActionableVFolderName(page, pattern, activeSkip, {
+      buttonName: 'Move to trash bin',
+      requireEnabled: true,
+    });
     if (!name) break;
     try {
-      // skipTrashVerify: the immediate deleteForeverAndVerifyFromTrash call
-      // re-asserts the folder in Trash, so the extra verify pass is redundant.
-      await moveToTrashAndVerify(page, name, dataPath, {
-        skipTrashVerify: true,
-      });
+      await moveToTrashAndVerify(page, name, dataPath);
       await deleteForeverAndVerifyFromTrash(page, name, dataPath);
       removed++;
     } catch (error) {
@@ -226,12 +228,10 @@ export async function sweepVFolders(
       .getByRole('tab', { name: 'Trash' })
       .click()
       .catch(() => {});
-    const name = await firstActionableVFolderName(
-      page,
-      pattern,
-      trashSkip,
-      false,
-    );
+    const name = await firstActionableVFolderName(page, pattern, trashSkip, {
+      buttonName: 'Delete',
+      requireEnabled: false,
+    });
     if (!name) break;
     try {
       await deleteForeverAndVerifyFromTrash(page, name, dataPath);
@@ -279,12 +279,7 @@ export async function cleanupVFolderSafely(
   dataPath: string = 'data',
 ): Promise<void> {
   try {
-    // skipTrashVerify: deleteForeverAndVerifyFromTrash asserts the folder's
-    // presence in Trash itself, so the intermediate verification pass (a full
-    // page reload + filter cycle) would be pure overhead here.
-    await moveToTrashAndVerify(page, folderName, dataPath, {
-      skipTrashVerify: true,
-    });
+    await moveToTrashAndVerify(page, folderName, dataPath);
     await deleteForeverAndVerifyFromTrash(page, folderName, dataPath);
     return;
   } catch (error) {
