@@ -1,7 +1,13 @@
 import react from '@vitejs/plugin-react';
 import compression from 'compression';
 import { execSync } from 'node:child_process';
-import { createReadStream, existsSync, readFileSync, statSync } from 'node:fs';
+import {
+  createReadStream,
+  existsSync,
+  readFileSync,
+  statSync,
+  writeFileSync,
+} from 'node:fs';
 import { createRequire } from 'node:module';
 import {
   basename,
@@ -13,7 +19,7 @@ import {
   resolve,
 } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { defineConfig, loadEnv, type Plugin } from 'vite';
+import { defineConfig, loadEnv, normalizePath, type Plugin } from 'vite';
 import checker from 'vite-plugin-checker';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -68,6 +74,64 @@ function resolvePnpmStorePath(): string | undefined {
       err instanceof Error ? err.message : err,
     );
     return undefined;
+  }
+}
+
+// vite-plugin-checker runs `tsc` in a watch worker that, on this platform,
+// installs a per-file kqueue watcher (1 open FD per file) over EVERY file in
+// the TS program — including the thousands of immutable dependency `.d.ts`
+// under the pnpm store. Those decls never change during dev, so watching them
+// is pure FD cost: a single dev process holds ~5,900 open files, ~3,800 of
+// them store `.d.ts`. Running several repos' dev servers at once multiplies
+// that toward the kernel/launchd open-file limit and fails with EMFILE ("too
+// many watched files"). See FR-3214.
+//
+// The fix is to tell the checker's TS watch program not to *watch* the store.
+// It still *reads* every decl to type-check — `watchOptions` excludes only drop
+// the file watcher, not the read — so type-checking stays complete and source
+// files keep their normal fast per-file watch. vite-plugin-checker has no
+// inline watchOptions API (it calls `ts.createWatchCompilerHost` without a
+// `watchOptionsToExtend` arg), so the only injection point is the tsconfig file
+// it reads. And the exclude spec must be an ABSOLUTE store path: TS anchors
+// `**/`-globs under the project basePath via `combinePaths()`, so they can
+// never match the store realpath, which lives outside the repo
+// (`~/Library/pnpm/store/...`). Since that path is machine-specific it can't
+// live in the committed tsconfig — we derive it at dev startup and write a
+// gitignored `tsconfig.checker.json` that extends the base config.
+//
+// Returns the path the checker should read: the derived config when a store
+// root is known, otherwise the base `tsconfig.json` (npm/yarn flat installs, or
+// store-resolution / write failure → no-op, original behavior preserved).
+function resolveCheckerTsconfigPath(storeRoot: string | undefined): string {
+  const baseTsconfig = resolve(__dirname, 'tsconfig.json');
+  if (!storeRoot) {
+    return baseTsconfig;
+  }
+  const checkerTsconfig = resolve(__dirname, 'tsconfig.checker.json');
+  // TS watchOptions globs use forward slashes, even on Windows.
+  const storeGlob = `${normalizePath(storeRoot)}/**`;
+  try {
+    writeFileSync(
+      checkerTsconfig,
+      JSON.stringify(
+        {
+          extends: './tsconfig.json',
+          watchOptions: {
+            excludeDirectories: [storeGlob],
+            excludeFiles: [storeGlob],
+          },
+        },
+        null,
+        2,
+      ) + '\n',
+    );
+    return checkerTsconfig;
+  } catch (err) {
+    console.warn(
+      '[vite] could not write tsconfig.checker.json; the type-check worker will watch pnpm-store .d.ts files and may hit EMFILE under multi-repo dev:',
+      err instanceof Error ? err.message : err,
+    );
+    return baseTsconfig;
   }
 }
 
@@ -921,12 +985,15 @@ export default defineConfig(({ command, mode }) => {
       // terminal and as a browser overlay during `vite dev`. Vite itself
       // only strips types via esbuild, so without this plugin type
       // errors are visible only in the IDE or via `scripts/verify.sh`.
-      // `tsconfigPath` pins the checker to the consumer's tsconfig
-      // (which has the `paths` workaround for pnpm-global-virtual-store
-      // type resolution — see FR-2925).
+      // `tsconfigPath` pins the checker to the consumer's tsconfig (which has
+      // the `paths` workaround for pnpm-global-virtual-store type resolution —
+      // see FR-2925). During dev it is the derived `tsconfig.checker.json`
+      // that excludes the pnpm store from the watch program (FR-3214) — see
+      // `resolveCheckerTsconfigPath` above; for `vite build` it is the plain
+      // base tsconfig.
       checker({
         typescript: {
-          tsconfigPath: resolve(__dirname, 'tsconfig.json'),
+          tsconfigPath: resolveCheckerTsconfigPath(pnpmStorePath),
         },
       }),
 
