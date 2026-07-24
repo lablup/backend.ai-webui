@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { Checkbox, Form } from 'antd';
+import { Checkbox } from 'antd';
 import type { CheckboxProps } from 'antd';
 import { createStyles } from 'antd-style';
 import { FormItemInputContext } from 'antd/es/form/context';
@@ -27,34 +27,26 @@ export interface BAICheckboxProps extends CheckboxProps {}
  * a field error leaves it visually unchanged. `BAICheckbox` reads the status
  * from the same context and paints the error state itself.
  *
- * Changing an errored checkbox also clears the owning field's error — the new
- * value is a fresh attempt, no longer the rejected one. The field name comes
- * from `FormItemInputContext` (populated by antd v6's `StatusProvider`,
- * including noStyle fields), so no extra prop is needed at the call site.
+ * Painting is all it does: it never mutates form state. Whether changing an
+ * errored checkbox clears the field error is the owner's decision — some flows
+ * must keep the mark — so clear it from the call site's `onChange` (e.g.
+ * `form.setFields([{ name, errors: [] }])`) when that is the desired UX.
  *
  * Outside a `Form.Item` the context is empty, so it behaves exactly like a
  * plain antd `Checkbox`.
  */
 const BAICheckbox: React.FC<BAICheckboxProps> = ({
   className,
-  onChange,
   ...checkboxProps
 }) => {
   'use memo';
   const { styles, cx } = useStyles();
-  const form = Form.useFormInstance();
-  const { status, name } = use(FormItemInputContext);
+  const { status } = use(FormItemInputContext);
 
   return (
     <Checkbox
       {...checkboxProps}
       className={cx(className, status === 'error' && styles.errorCheckbox)}
-      onChange={(event) => {
-        if (status === 'error' && name !== undefined) {
-          form.setFields([{ name, errors: [] }]);
-        }
-        onChange?.(event);
-      }}
     />
   );
 };

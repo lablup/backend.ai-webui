@@ -463,6 +463,13 @@ const RoleScopePermissionEditModal: React.FC<
   const scopeLabelOf = (scope: EditingScope | undefined, fallback: string) =>
     scope?.scopeName || scope?.scopeId || fallback;
 
+  // A changed cell value is a fresh attempt, no longer the one the server
+  // rejected — drop the cell's failed mark. `BAICheckbox` only paints the
+  // error status; clearing it is this owner's call.
+  const clearCellError = (cellKey: string) => {
+    form.setFields([{ name: cellKey, errors: [] }]);
+  };
+
   const handleSave = async () => {
     // No scope nodes → nothing to derive the scope type from, nothing to save.
     if (!scopeType) {
@@ -669,6 +676,9 @@ const RoleScopePermissionEditModal: React.FC<
           return next;
         });
       }
+      // Immediate failure notice as a toast on top of the detail modal — the
+      // modal carries the per-request table, the message the at-a-glance cue.
+      message.error(t('rbac.PermissionsPartialFailureDescription'));
       setFailedRequests(failures);
       // An empty-string field error flags the failed cells (= field names)
       // with error status without printing a message under the cell — an
@@ -718,7 +728,7 @@ const RoleScopePermissionEditModal: React.FC<
           // switched into edit mode — the checkbox starts checked.
           initialValue={true}
         >
-          <BAICheckbox />
+          <BAICheckbox onChange={() => clearCellError(key)} />
         </BAIBulkEditFormItem>
       );
     }
@@ -730,7 +740,7 @@ const RoleScopePermissionEditModal: React.FC<
         initialValue={singleInitialKeys.has(key)}
         style={{ marginBottom: 0 }}
       >
-        <BAICheckbox />
+        <BAICheckbox onChange={() => clearCellError(key)} />
       </Form.Item>
     );
   };

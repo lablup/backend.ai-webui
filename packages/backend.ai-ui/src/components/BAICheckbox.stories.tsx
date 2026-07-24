@@ -12,7 +12,7 @@ const meta: Meta<typeof BAICheckbox> = {
     docs: {
       description: {
         component:
-          'A Checkbox that renders the surrounding Form.Item error status (antd Checkbox ignores it). Changing an errored checkbox clears the field error.',
+          "A Checkbox that renders the surrounding Form.Item error status (antd Checkbox ignores it). Painting only — clearing the field error is the caller's job, typically from `onChange`.",
       },
     },
   },
@@ -38,7 +38,13 @@ const FormErrorExample = () => {
           initialValue={true}
           style={{ marginBottom: 0 }}
         >
-          <BAICheckbox>Toggle me to clear the error</BAICheckbox>
+          {/* BAICheckbox only paints the error status; the caller decides
+              when to clear it — here, on any change. */}
+          <BAICheckbox
+            onChange={() => form.setFields([{ name: 'agree', errors: [] }])}
+          >
+            Toggle me to clear the error
+          </BAICheckbox>
         </Form.Item>
         <Button
           onClick={() => form.setFields([{ name: 'agree', errors: [''] }])}
