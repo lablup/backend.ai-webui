@@ -125,9 +125,14 @@ test.describe(
           modal.getByText('Service Configuration', { exact: true }),
         ).toHaveCount(0);
 
-        // Runtime Parameters section shows for a preset-driven variant.
+        // Runtime Parameters section shows for a preset-driven variant. Match
+        // loosely (substring, not exact): RuntimeParameterFormSection renders
+        // the title with a conditional trailing "(Optional)" span when the
+        // manager lacks required-field support, so the element text can be
+        // "Runtime Parameters (Optional)" — an { exact: true } match would miss
+        // it and fail version-dependently.
         await expect(
-          modal.getByText('Runtime Parameters', { exact: true }),
+          modal.getByText(/Runtime Parameters/).first(),
         ).toBeVisible({ timeout: 10000 });
 
         // The "default start command will be applied" warning note appears
@@ -138,6 +143,15 @@ test.describe(
               'The default start command for the selected inference runtime will be applied automatically.',
           }),
         ).toBeVisible({ timeout: 10000 });
+
+        // The "Model Definition File Path" is gated on the variant reading
+        // vfolder config files (showModelDefinitionPath), so it is NOT rendered
+        // at all for a non-config-reading variant — regardless of the Advanced
+        // Settings collapse. (Its shown counterpart is asserted for the custom
+        // variant in add-revision-command-shell.spec.ts.)
+        await expect(
+          modal.getByLabel('Model Definition File Path'),
+        ).toHaveCount(0);
       } finally {
         await cleanupDeploymentSafely(page, name);
       }
@@ -198,11 +212,14 @@ test.describe(
       // provisioned folder whose seeded yaml carries values distinct from the
       // mocked DB baseline, proving the HIGH layer overrides the low one.
       //
-      // Note on granularity: because `parseModelDefinitionYaml` always returns a
-      // fully-populated object, a present-and-parseable yaml wins on every field
-      // it maps — the per-field DB fallback only surfaces when the vfolder read
-      // yields null entirely (missing/invalid file, or a non-config-reading
-      // variant), which the DB-baseline test above already exercises.
+      // Note on granularity: `useModelDefinitionDefaults` now parses the yaml
+      // via `parseModelDefinitionYamlPartial`, which returns ONLY the fields the
+      // yaml actually defines; the modal then merges field-by-field (DB baseline
+      // < partial vfolder parse), rather than overwriting the whole object. The
+      // seeded fixture yaml defines command, port, AND max_retries, so it
+      // overrides all three placeholders asserted below — but any field the yaml
+      // omitted would instead fall through to the DB baseline. That per-field
+      // fallthrough is not exercised by this fully-populated fixture.
       test.setTimeout(240_000);
       const name = `e2e-fr3342-vfolder-override-${Date.now()}`;
       let folderName: string | undefined;
