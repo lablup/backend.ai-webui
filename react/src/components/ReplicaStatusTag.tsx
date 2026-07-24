@@ -5,7 +5,7 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import type { TagProps } from 'antd';
-import { BAITag, type SemanticColor } from 'backend.ai-ui';
+import { BAITag } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -36,13 +36,30 @@ export interface ReplicaStatusTagProps extends Omit<TagProps, 'color'> {
   showTooltip?: boolean;
 }
 
-const replicaStatusColorMap: Record<ReplicaStatus, SemanticColor> = {
+/**
+ * Antd `Tag` preset status colors. Only these five values are recognized by
+ * antd as status presets (`success | processing | error | warning | default`)
+ * and therefore resolve to theme tokens (`colorSuccess`, `colorInfo`, …) that
+ * adapt to dark mode. `'info'` is NOT an antd status preset — passing it makes
+ * antd treat the tag as a custom color and fall back to hardcoded white text,
+ * which glares in dark mode. Use `'processing'` for info-colored states: it
+ * maps to the `colorInfo` token and `BAITag` already renders its background
+ * transparent via the `colorInfoBg` override.
+ */
+type TagPresetStatusColor =
+  | 'success'
+  | 'processing'
+  | 'error'
+  | 'warning'
+  | 'default';
+
+const replicaStatusColorMap: Record<ReplicaStatus, TagPresetStatusColor> = {
   HEALTHY: 'success',
   UNHEALTHY: 'error',
   DEGRADED: 'warning',
   NOT_CHECKED: 'default',
-  PROVISIONING: 'info',
-  WARMING_UP: 'info',
+  PROVISIONING: 'processing',
+  WARMING_UP: 'processing',
   RUNNING: 'success',
   TERMINATING: 'warning',
   TERMINATED: 'default',
@@ -77,9 +94,9 @@ const ReplicaStatusTag: React.FC<ReplicaStatusTagProps> = ({
     ? t(`replicaStatus.tooltip.${i18nKey}`, { defaultValue: '' })
     : undefined;
 
-  // WARMING_UP and PROVISIONING share the `info` semantic color; render a
-  // spinner on WARMING_UP so the two states stay visually distinct in the
-  // status column.
+  // WARMING_UP and PROVISIONING share the `processing` (info) status color;
+  // render a spinner on WARMING_UP so the two states stay visually distinct in
+  // the status column.
   const icon = status === 'WARMING_UP' ? <LoadingOutlined spin /> : undefined;
 
   const tag = (
