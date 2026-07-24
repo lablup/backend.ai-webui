@@ -29,6 +29,7 @@ import {
   BAIPropertyFilter,
   BAINameActionCell,
   BAIDeleteConfirmModal,
+  BAISelectionLabel,
   useBAILogger,
   useUpdatableState,
   BAIText,
@@ -51,7 +52,7 @@ type Keypair = NonNullable<
 const AdminUserCredentialList: React.FC = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
   const { logger } = useBAILogger();
 
   const [action, setAction] = useQueryState('action', parseAsString);
@@ -76,6 +77,8 @@ const AdminUserCredentialList: React.FC = () => {
   const [isPendingSettingModalOpen, startSettingModalOpenTransition] =
     useTransition();
   const [deletingKeypair, setDeletingKeypair] = useState<Keypair | null>(null);
+  const [selectedKeypairs, setSelectedKeypairs] = useState<Keypair[]>([]);
+  const [isBulkDeactivating, setIsBulkDeactivating] = useState(false);
 
   const {
     baiPaginationOption,
@@ -167,6 +170,68 @@ const AdminUserCredentialList: React.FC = () => {
       }
     `);
 
+  const handleBulkDeactivate = () => {
+    modal.confirm({
+      title: t('credential.BulkDeactivateCredentials'),
+      content: t('credential.BulkDeactivateCredentialsDescription', {
+        count: selectedKeypairs.length,
+      }),
+      okButtonProps: {
+        danger: true,
+      },
+      okText: t('credential.Deactivate'),
+      cancelText: t('button.Cancel'),
+      onOk: async () => {
+        setIsBulkDeactivating(true);
+        const results = await Promise.allSettled(
+          selectedKeypairs.map(
+            (keypair) =>
+              new Promise<void>((resolve, reject) => {
+                commitModifyKeypair({
+                  variables: {
+                    access_key: keypair.access_key ?? '',
+                    props: {
+                      is_active: false,
+                    },
+                  },
+                  onCompleted: (res, errors) => {
+                    if (!res?.modify_keypair?.ok || errors) {
+                      reject(new Error(res?.modify_keypair?.msg ?? ''));
+                      return;
+                    }
+                    resolve();
+                  },
+                  onError: (error) => {
+                    logger.error(error);
+                    reject(error);
+                  },
+                });
+              }),
+          ),
+        );
+        setIsBulkDeactivating(false);
+        const failedCount = results.filter(
+          (r) => r.status === 'rejected',
+        ).length;
+        const successCount = results.length - failedCount;
+        if (failedCount > 0) {
+          message.error(
+            t('credential.BulkDeactivatePartialFailure', {
+              successCount,
+              failCount: failedCount,
+            }),
+          );
+        } else {
+          message.success(
+            t('credential.BulkDeactivateSuccess', { count: successCount }),
+          );
+        }
+        setSelectedKeypairs([]);
+        updateFetchKey();
+      },
+    });
+  };
+
   useEffect(() => {
     if (action === 'add') {
       // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -188,6 +253,7 @@ const AdminUserCredentialList: React.FC = () => {
                 current: 1,
                 pageSize: tablePaginationOption.pageSize,
               });
+              setSelectedKeypairs([]);
             }}
             optionType="button"
             options={[
@@ -239,10 +305,30 @@ const AdminUserCredentialList: React.FC = () => {
             value={queryParams.filter ?? undefined}
             onChange={(value) => {
               setQueryParams({ filter: value ?? null });
+              setSelectedKeypairs([]);
             }}
           />
         </BAIFlex>
         <BAIFlex gap={'xs'}>
+          {selectedKeypairs.length > 0 && (
+            <BAIFlex gap="xs">
+              <BAISelectionLabel
+                count={selectedKeypairs.length}
+                onClearSelection={() => setSelectedKeypairs([])}
+              />
+              <Tooltip title={t('credential.BulkDeactivateCredentials')}>
+                <BAIButton
+                  icon={<BanIcon />}
+                  style={{
+                    color: token.colorError,
+                    background: token.colorErrorBg,
+                  }}
+                  loading={isBulkDeactivating}
+                  onClick={handleBulkDeactivate}
+                />
+              </Tooltip>
+            </BAIFlex>
+          )}
           <Tooltip title={t('button.Refresh')}>
             <Button
               loading={deferredFetchKey !== fetchKey}
@@ -268,6 +354,24 @@ const AdminUserCredentialList: React.FC = () => {
         scroll={{ x: 'max-content' }}
         loading={deferredQueryVariables !== queryVariables}
         dataSource={filterOutNullAndUndefined(keypair_list?.items)}
+        rowSelection={
+          queryParams.activeType === 'active'
+            ? {
+                type: 'checkbox',
+                selectedRowKeys: _.compact(
+                  selectedKeypairs.map((keypair) => keypair.id),
+                ),
+                onChange: (keys) => {
+                  const items = filterOutNullAndUndefined(keypair_list?.items);
+                  setSelectedKeypairs(
+                    items.filter(
+                      (keypair) => keypair.id && keys.includes(keypair.id),
+                    ),
+                  );
+                },
+              }
+            : undefined
+        }
         columns={filterOutEmpty([
           {
             key: 'accessKey',
@@ -526,11 +630,13 @@ const AdminUserCredentialList: React.FC = () => {
                 current,
                 pageSize,
               });
+              setSelectedKeypairs([]);
             }
           },
         }}
         onChangeOrder={(nextOrder) => {
           setQueryParams({ order: nextOrder ?? null });
+          setSelectedKeypairs([]);
         }}
       />
       <KeypairInfoModal
