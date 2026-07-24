@@ -146,6 +146,10 @@ export function variantDefaultModelDefinitionMock() {
             modelPath: MOCK_DB_DEFAULT_MODEL_PATH,
             service: {
               command: MOCK_DB_DEFAULT_COMMAND,
+              // `shell` is intentionally inert for the placeholder path:
+              // `modelDefinitionFromGraphQL` surfaces only `command` (raw) and
+              // ignores `shell`, so this value never drives any placeholder/UI.
+              // Kept here only to keep the mocked service shape schema-complete.
               shell: '/bin/bash',
               port: MOCK_DB_DEFAULT_PORT,
               healthCheck: {

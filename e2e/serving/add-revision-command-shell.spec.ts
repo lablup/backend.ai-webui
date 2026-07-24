@@ -154,6 +154,17 @@ test.describe(
         ).toBeVisible();
         await expect(modal.locator('#commandShell')).toBeVisible();
 
+        // 3b. Advanced defaults Execution to Shell → the command control is a
+        //     multi-line TextArea (shell scripts span lines) and the shell
+        //     helper (operators allowed) is shown.
+        await expect(modal.locator('textarea#startCommand')).toBeVisible();
+        await expect(
+          modal.getByText(
+            'Shell operators (; && | $VAR, redirection, etc.) can be used.',
+            { exact: true },
+          ),
+        ).toBeVisible();
+
         // 4. Switch Execution to Exec → the Shell input is hidden and the
         //    command field is relabeled "Command (argv)". Non-exact text match:
         //    the Form.Item <label> wraps a tooltip icon so its text node is not
@@ -162,6 +173,18 @@ test.describe(
         await modal.getByRole('radio', { name: 'Exec', exact: true }).click();
         await expect(modal.locator('#commandShell')).toHaveCount(0);
         await expect(modal.getByText('Command (argv)')).toBeVisible();
+
+        // 4b. Exec swaps the command control to a single-line Input (argv is one
+        //     token vector, not a script) and switches the helper text to warn
+        //     that shell operators are NOT interpreted.
+        await expect(modal.locator('input#startCommand')).toBeVisible();
+        await expect(modal.locator('textarea#startCommand')).toHaveCount(0);
+        await expect(
+          modal.getByText(
+            'Shell operators (; && | $VAR, redirection, etc.) cannot be used. Enter each argument separated by spaces.',
+            { exact: true },
+          ),
+        ).toBeVisible();
       } finally {
         await cleanupDeploymentSafely(page, name);
       }
@@ -350,6 +373,54 @@ test.describe(
         // Exec → shell is explicitly null (the key IS present, value null).
         expect('shell' in service).toBe(true);
         expect(service.shell).toBeNull();
+      } finally {
+        await cleanupDeploymentSafely(page, name);
+        if (folderName) {
+          await cleanupDeploymentFixtures(page, { folderName });
+        }
+      }
+    });
+
+    test('Admin submits shell = /bin/bash (the default) when Advanced Shell mode is left unchanged', async ({
+      page,
+      request,
+    }) => {
+      const name = `e2e-fr3205-advshell-default-${Date.now()}`;
+      let folderName: string | undefined;
+      try {
+        const setup = await setupCommandScenario(page, request, name, {
+          withModelFolder: true,
+        });
+        folderName = setup.folderName;
+        const { modal, capture } = setup;
+
+        // Select the folder first (see the override test) to keep the Shell
+        // AutoComplete's dropdown from overlapping the folder option list.
+        await selectRevisionModalOption(page, '#modelFolderId', folderName!);
+
+        await modal.locator('#startCommand').first().fill('run-server');
+        // Advanced mode → Execution defaults to Shell → the Shell input is
+        // prefilled with the default /bin/bash (form initialValues). Leave it
+        // UNTOUCHED so the submitted `shell` is the default, not an override —
+        // the companion override test proves a changed value is honored.
+        await modal.getByText('Advanced', { exact: true }).click();
+        const shellInput = modal.locator('#commandShell');
+        await expect(shellInput).toBeVisible();
+        await expect(shellInput).toHaveValue('/bin/bash');
+
+        await fillManualImageName(modal, MOCK_MANUAL_IMAGE_REFERENCE);
+        await disableAutoApply(modal);
+        await submitAddRevision(modal);
+
+        await expect
+          .poll(() => capture.input, { timeout: 30000 })
+          .not.toBeNull();
+
+        const service = capture.input?.modelDefinition?.models?.[0]?.service;
+        expect(service).toBeTruthy();
+        expect(service.command).toBe('run-server');
+        // Advanced + Shell, unchanged → DEFAULT_MODEL_SERVICE_SHELL is submitted.
+        expect(service.shell).toBe('/bin/bash');
       } finally {
         await cleanupDeploymentSafely(page, name);
         if (folderName) {
