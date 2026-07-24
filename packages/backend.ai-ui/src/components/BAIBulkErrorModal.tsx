@@ -32,16 +32,16 @@ export interface BAIBulkErrorModalProps<RecordType = AnyObject> extends Omit<
    * title. No default — the caller injects operation-specific copy.
    */
   alertDescription?: string;
-  /** Called when the user dismisses the modal (Close button, X, mask, Esc). */
+  /** Called when the user dismisses the modal (header X, mask, Esc). */
   onRequestClose: () => void;
 }
 
 /**
  * Shared modal that surfaces per-request errors of a bulk operation in a
- * table — one row per failed request (FR-3334). Purely informational: the
- * footer carries a single Close button, and dismissal is reported through the
- * `onRequestClose` convention so the caller decides what happens next
- * (typically keeping its own form open for a retry).
+ * table — one row per failed request (FR-3334). Purely informational: it has
+ * no footer — dismissal happens through the header X (or mask / Esc) and is
+ * reported through the `onRequestClose` convention so the caller decides what
+ * happens next (typically keeping its own form open for a retry).
  *
  * The title defaults to a localized "Action execution failed" with an error
  * icon; pass `title` to replace it verbatim with operation-specific copy.
@@ -70,12 +70,10 @@ const BAIBulkErrorModal = <RecordType extends AnyObject = AnyObject>({
           </BAIFlex>
         )
       }
-      okText={t('general.button.Close')}
-      onOk={() => onRequestClose()}
       onCancel={() => onRequestClose()}
-      // Informational modal — a lone Close button; a Cancel twin would be
-      // meaningless here.
-      footer={(_originNode, { OkBtn }) => <OkBtn />}
+      // Informational modal — the header X is enough; a footer button would
+      // only duplicate it.
+      footer={null}
     >
       <BAIFlex direction="column" align="stretch" gap="sm">
         {alertDescription && (

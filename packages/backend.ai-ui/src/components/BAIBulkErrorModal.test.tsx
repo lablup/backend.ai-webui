@@ -17,7 +17,6 @@ vi.mock('react-i18next', async () => {
           'comp:BAIBulkErrorModal.ActionExecutionFailed':
             'Action execution failed',
           'comp:BAIBulkErrorModal.ErrorOccurred': 'Error Occurred',
-          'general.button.Close': 'Close',
         };
         return translations[key] || key;
       },
@@ -115,13 +114,9 @@ describe('BAIBulkErrorModal', () => {
       />,
     );
 
-    // Both the header X and the footer button are named "Close"; the footer
-    // button is the one that carries the visible text.
-    const footerCloseButton = screen
-      .getAllByRole('button', { name: 'Close' })
-      .find((button) => button.textContent?.includes('Close'));
-    expect(footerCloseButton).toBeDefined();
-    await user.click(footerCloseButton as HTMLElement);
+    // No footer — the header X (aria-label "Close") is the only dismissal
+    // control.
+    await user.click(screen.getByRole('button', { name: 'Close' }));
     expect(onRequestClose).toHaveBeenCalledTimes(1);
   });
 });

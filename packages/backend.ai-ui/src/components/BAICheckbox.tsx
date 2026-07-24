@@ -14,7 +14,7 @@ const useStyles = createStyles(({ css, token }) => ({
       border-color: ${token.colorError} !important;
     }
     .ant-checkbox-checked {
-      background-color: ${token['red-4']} !important;
+      background-color: ${token.colorErrorHover} !important;
     }
   `,
 }));
