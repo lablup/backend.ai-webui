@@ -599,7 +599,9 @@ export async function cleanupDeploymentFixtures(
 
   if (fixtures.folderName) {
     try {
-      await moveToTrashAndVerify(page, fixtures.folderName);
+      await moveToTrashAndVerify(page, fixtures.folderName, 'data', {
+        skipTrashVerify: true,
+      });
       await deleteForeverAndVerifyFromTrash(page, fixtures.folderName);
     } catch (error) {
       console.warn(

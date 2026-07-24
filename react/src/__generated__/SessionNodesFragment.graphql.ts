@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a32169342045bb0052f889492f651ec1>>
+ * @generated SignedSource<<3e1d467f4611b7d53aa7ffb58cdb048c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -52,7 +52,7 @@ export type SessionNodesFragment$data = ReadonlyArray<{
   readonly status: string | null | undefined;
   readonly type: string | null | undefined;
   readonly user_id: string | null | undefined;
-  readonly " $fragmentSpreads": FragmentRefs<"AppLauncherModalFragment" | "BAISessionAgentIdsFragment" | "BAISessionClusterModeFragment" | "BAISessionTypeTagFragment" | "SessionDetailDrawerFragment" | "SessionReservationFragment" | "SessionSlotCellFragment" | "SessionStatusTagFragment" | "SessionUsageMonitorFragment" | "TerminateSessionModalFragment">;
+  readonly " $fragmentSpreads": FragmentRefs<"AppLauncherModalFragment" | "BAISessionAgentIdsFragment" | "BAISessionClusterModeFragment" | "BAISessionTypeTagFragment" | "SessionDetailDrawerFragment" | "SessionReclamationStatusCellFragment" | "SessionReservationFragment" | "SessionSlotCellFragment" | "SessionStatusTagFragment" | "SessionUsageMonitorFragment" | "TerminateSessionModalFragment">;
   readonly " $fragmentType": "SessionNodesFragment";
 } | null | undefined>;
 export type SessionNodesFragment$key = ReadonlyArray<{
@@ -182,6 +182,11 @@ return {
       "args": null,
       "kind": "FragmentSpread",
       "name": "SessionSlotCellFragment"
+    },
+    {
+      "args": null,
+      "kind": "FragmentSpread",
+      "name": "SessionReclamationStatusCellFragment"
     },
     {
       "args": null,
@@ -332,6 +337,6 @@ return {
 };
 })();
 
-(node as any).hash = "05aa110842533333a4df313aef3b484e";
+(node as any).hash = "e9c6f30d972123bb2505ff8ec9dc74b2";
 
 export default node;

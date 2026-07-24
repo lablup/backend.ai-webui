@@ -6,20 +6,10 @@ import { ContainerLogModalFragment$key } from '../../__generated__/ContainerLogM
 import { downloadBlob } from '../../helper/csv-util';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useTanQuery } from '../../hooks/reactQueryAlias';
-import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useMemoWithPrevious } from '../../hooks/useMemoWithPrevious';
-import AutoRefreshSwitch from '../AutoRefreshSwitch';
-import { ReloadOutlined } from '@ant-design/icons';
+import AutoUpdateFetchKeyButton from '../AutoUpdateFetchKeyButton';
 import { LazyLog, ScrollFollow } from '@melloware/react-logviewer';
-import {
-  Button,
-  Divider,
-  Grid,
-  InputNumber,
-  theme,
-  Tooltip,
-  Typography,
-} from 'antd';
+import { Button, Divider, Grid, theme, Tooltip, Typography } from 'antd';
 import { BAIFlex, BAIModal, BAIModalProps, BAISelect } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { DownloadIcon } from 'lucide-react';
@@ -40,14 +30,6 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
   'use memo';
   const baiClient = useSuspendedBackendaiClient();
   const { token } = theme.useToken();
-
-  const [autoRefreshEnabled, setAutoRefreshEnabled] = useBAISettingUserState(
-    'container_log_auto_refresh_enabled',
-  );
-  const [autoRefreshInterval, setAutoRefreshInterval] = useBAISettingUserState(
-    'container_log_auto_refresh_interval',
-  );
-  const autoRefreshIntervalValue = autoRefreshInterval || 5_000;
 
   const session = useFragment(
     graphql`
@@ -108,7 +90,6 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
         .get_logs(session?.row_id, session?.access_key, selectedKernelId, 15000)
         .then((req: any) => req.result.logs);
     },
-    staleTime: autoRefreshIntervalValue,
   });
 
   const [lastLineNumbers, { resetPrevious: resetPreviousLineNumber }] =
@@ -213,38 +194,19 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
               }}
             />
           </Tooltip>
-          <Tooltip title={t('button.Refresh')}>
-            <Button
-              size="middle"
-              loading={isPending || isRefetching}
-              icon={<ReloadOutlined />}
-              onClick={() => refetch()}
-            />
-          </Tooltip>
-          <BAIFlex gap="xs" align="center">
-            <AutoRefreshSwitch
-              checked={autoRefreshEnabled}
-              onChange={setAutoRefreshEnabled}
-              interval={isRefetching ? null : autoRefreshIntervalValue}
-              onRefresh={() => {
-                refetch();
-              }}
-            >
-              {t('button.AutoRefresh')}:
-            </AutoRefreshSwitch>
-            <InputNumber
-              min={3}
-              disabled={!autoRefreshEnabled}
-              value={(autoRefreshIntervalValue ?? 1000) / 1000}
-              onChange={(value) => {
-                if (typeof value === 'number') {
-                  setAutoRefreshInterval(value * 1000);
-                }
-              }}
-              suffix={t('time.Sec')}
-              style={{ maxWidth: 150 }}
-            />
-          </BAIFlex>
+          <AutoUpdateFetchKeyButton
+            settingId="container-log"
+            // Logs are the archetypal live-watch surface: the modal is opened
+            // precisely to watch new lines arrive, so poll by default until the
+            // user picks their own interval (including "Off").
+            defaultAutoUpdateDelay={10_000}
+            size="middle"
+            value=""
+            loading={isPending || isRefetching}
+            onChange={() => {
+              refetch();
+            }}
+          />
         </BAIFlex>
 
         <div

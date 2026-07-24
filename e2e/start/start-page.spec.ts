@@ -147,7 +147,9 @@ test.describe(
         test.afterEach(async ({ page }) => {
           if (folderCreated) {
             try {
-              await moveToTrashAndVerify(page, folderName);
+              await moveToTrashAndVerify(page, folderName, 'data', {
+                skipTrashVerify: true,
+              });
               await deleteForeverAndVerifyFromTrash(page, folderName);
             } catch {
               /* ignore cleanup errors */

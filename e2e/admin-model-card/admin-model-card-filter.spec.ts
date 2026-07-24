@@ -54,7 +54,9 @@ test.describe(
         // Ignore cleanup errors
       }
       try {
-        await moveToTrashAndVerify(page, filterFolderName, 'admin-data');
+        await moveToTrashAndVerify(page, filterFolderName, 'admin-data', {
+          skipTrashVerify: true,
+        });
       } catch {
         // Folder may already be in Trash or may not exist
       }

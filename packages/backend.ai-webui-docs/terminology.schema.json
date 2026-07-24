@@ -110,7 +110,7 @@
       "properties": {
         "avoid": {
           "type": "string",
-          "description": "The single forbidden term.",
+          "description": "The single forbidden term. For non-English (ko/ja/th) rows this MUST be a precise multi-token compound (e.g. \"스케일링 그룹\", \"スケーリンググループ\") or an unambiguous deprecated spelling (e.g. \"레플리카\") — never a bare concept noun, and never a substring of any concepts[].preferred[<lang>] value: non-Latin matching is substring-based (no word boundaries), so a bare noun would flag every legitimate use. Enforced by scripts/check-terminology-i18n.selftest.mjs against the fixtures + falsePositiveBudget in terminology.selftest.json (FR-3051).",
           "minLength": 1
         },
         "useInstead": {
@@ -124,8 +124,8 @@
           "minLength": 1
         },
         "lang": {
-          "$ref": "#/definitions/language",
-          "description": "Language the avoid rule applies to."
+          "allOf": [{ "$ref": "#/definitions/language" }],
+          "description": "Language the avoid rule applies to. The i18n checker applies the row only to that language's stores. Non-English rows are always WARN-severity (never hard-block) and require a fixtures entry in terminology.selftest.json (FR-3051). (allOf wrapper: draft-07 ignores sibling keywords next to $ref, so a bare $ref would drop this description.)"
         },
         "context": {
           "description": "Optional parenthetical qualifier (e.g. \"for project\", \"as a UI label\"), or null.",

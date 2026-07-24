@@ -11,6 +11,7 @@
 // access them via BUI's internal i18next instance (`useBAIi18n` /
 // `BAITrans`), so the host has no reason to hold a second copy. See
 // FR-2986 / packages/backend.ai-ui/src/hooks/useBAIi18n.ts.
+import type { SupportedLanguage } from './resolveInitialLanguage';
 import de_DE from 'backend.ai-ui/dist/locale/de_DE';
 import el_GR from 'backend.ai-ui/dist/locale/el_GR';
 import en_US from 'backend.ai-ui/dist/locale/en_US';
@@ -33,7 +34,12 @@ import vi_VN from 'backend.ai-ui/dist/locale/vi_VN';
 import zh_CN from 'backend.ai-ui/dist/locale/zh_CN';
 import zh_TW from 'backend.ai-ui/dist/locale/zh_TW';
 
-// languages which are supported by backend.ai-ui
+// languages which are supported by backend.ai-ui.
+// The `satisfies` clause below is a compile-time guard that keeps this map
+// in exact two-way sync with `SUPPORTED_LANGUAGES` in
+// `helper/resolveInitialLanguage.ts` (a missing key or an extra key is a
+// type error). Type-only import, so the Vitest mock of this module is
+// unaffected.
 export const buiLanguages = {
   de: de_DE,
   el: el_GR,
@@ -56,4 +62,4 @@ export const buiLanguages = {
   vi: vi_VN,
   'zh-CN': zh_CN,
   'zh-TW': zh_TW,
-};
+} satisfies Record<SupportedLanguage, typeof en_US>;

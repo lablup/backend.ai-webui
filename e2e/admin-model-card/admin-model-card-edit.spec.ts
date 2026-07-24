@@ -109,7 +109,9 @@ test.describe(
 
       // Cleanup: purge the VFolder created in beforeEach
       try {
-        await moveToTrashAndVerify(page, testFolderName, 'admin-data');
+        await moveToTrashAndVerify(page, testFolderName, 'admin-data', {
+          skipTrashVerify: true,
+        });
       } catch {
         // Folder may already be in Trash or may not exist
       }

@@ -5,6 +5,7 @@
 import { RelayEnvironment } from '../RelayEnvironment';
 import { backendaiOptions } from '../global-stores';
 import { buiLanguages } from '../helper/bui-language';
+import { resolveInitialLanguage } from '../helper/resolveInitialLanguage';
 import {
   backendaiClientPromise,
   createAnonymousBackendaiClient,
@@ -100,6 +101,24 @@ if (typeof window !== 'undefined') {
   };
 }
 
+// Stored-language candidates for `resolveInitialLanguage`, in precedence
+// order. `BackendAISettingsStore` seeds its in-memory options with
+// `'general.language': 'en'`, so `get('language', …, 'general')` alone cannot
+// tell "a language was persisted on a previous visit" apart from "fresh store
+// default" — and treating the seed as an explicit choice would disable
+// browser-language detection entirely (the FR-2981 bug). So:
+//   1. `user.selected_language` — the user's explicit settings-page choice.
+//      Unseeded; `get()` returns null when the user never chose.
+//   2. `general.language` — the last resolved language, but only when the
+//      localStorage key actually exists (i.e. it was persisted, not seeded).
+const getStoredLanguageCandidates = (): Array<string | null | undefined> => [
+  backendaiOptions?.get('selected_language'),
+  typeof localStorage !== 'undefined' &&
+  localStorage.getItem('backendaiwebui.settings.general.language') !== null
+    ? backendaiOptions?.get('language', undefined, 'general')
+    : undefined,
+];
+
 i18n
   .use(initReactI18next) // passes i18n down to react-i18next
   .use(Backend)
@@ -145,7 +164,11 @@ i18n
     },
     postProcess:
       process.env.NODE_ENV === 'development' ? ['copyableI18nKey'] : [],
-    lng: backendaiOptions?.get('language', 'default', 'general') || 'en',
+    // Resolve the initial language so first-paint screens (notably the login
+    // page) render in the user's browser language even when nothing has been
+    // persisted yet (e.g. private / incognito browsing). See
+    // `helper/resolveInitialLanguage.ts` for the supported-language list.
+    lng: resolveInitialLanguage(...getStoredLanguageCandidates()),
     fallbackLng: 'en',
     interpolation: {
       escapeValue: false, // react already safes from xss => https://www.i18next.com/translation-function/interpolation#unescape
@@ -193,8 +216,15 @@ if (import.meta.hot) {
 }
 
 export const useCurrentLanguage = () => {
+  // Resolve through the same helper as the i18n init above. On first visit
+  // the stored value is absent (legacy code may also have persisted the
+  // 'default' sentinel), and the mount effect below re-applies `lang` via
+  // `changeLanguage`. Without this resolution the effect would bounce i18n
+  // back to 'default' right after init — undoing the browser-language
+  // detection on the login screen — and set `dayjs.locale('default')` /
+  // `<html lang="default">` along the way.
   const [lang, _setLang] = useState(
-    backendaiOptions?.get('language', 'default', 'general') || 'en',
+    resolveInitialLanguage(...getStoredLanguageCandidates()),
   );
   const { i18n } = useTranslation();
 

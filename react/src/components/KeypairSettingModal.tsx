@@ -6,10 +6,10 @@ import { KeypairSettingModalCreateMutation } from '../__generated__/KeypairSetti
 import { KeypairSettingModalFragment$key } from '../__generated__/KeypairSettingModalFragment.graphql';
 import { KeypairSettingModalModifyMutation } from '../__generated__/KeypairSettingModalModifyMutation.graphql';
 import KeypairResourcePolicySelect from './KeypairResourcePolicySelect';
-import { App, Col, Form, Input, InputNumber, type ModalProps, Row } from 'antd';
+import { App, Col, Form, InputNumber, type ModalProps, Row } from 'antd';
 import { FormInstance } from 'antd/lib';
-import { BAIModal } from 'backend.ai-ui';
-import { useRef } from 'react';
+import { BAIModal, BAISelect, BAIUserSelect } from 'backend.ai-ui';
+import { Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
@@ -144,34 +144,76 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
         initialValues={keypair ? { ...keypair } : {}}
       >
         {!keypair && (
-          <Form.Item
-            name="user_id"
-            label={t('credential.UserIDAsEmail')}
-            rules={[
-              {
-                required: true,
-              },
-              {
-                type: 'email',
-              },
-            ]}
+          // `BAIUserSelect` is the direct child of `Form.Item` so antd binds
+          // its value/onChange automatically. The fallback mirrors the same
+          // `Form.Item` to keep the field and its required rule registered
+          // while the select fetches. Same shape as `ProjectAdminSettingModal`.
+          <Suspense
+            fallback={
+              <Form.Item
+                name="user_id"
+                label={t('general.User')}
+                rules={[
+                  {
+                    required: true,
+                    message: t('credential.UserIDRequired'),
+                  },
+                ]}
+              >
+                <BAISelect loading style={{ width: '100%' }} />
+              </Form.Item>
+            }
           >
-            <Input />
-          </Form.Item>
-        )}
-        <Row gutter={16}>
-          <Col span={12}>
             <Form.Item
-              name="resource_policy"
-              label={t('credential.ResourcePolicy')}
+              name="user_id"
+              label={t('general.User')}
               rules={[
                 {
                   required: true,
+                  message: t('credential.UserIDRequired'),
                 },
               ]}
             >
-              <KeypairResourcePolicySelect />
+              <BAIUserSelect
+                placeholder={t('credential.SelectUser')}
+                style={{ width: '100%' }}
+              />
             </Form.Item>
+          </Suspense>
+        )}
+        <Row gutter={16}>
+          <Col span={12}>
+            {/* Same Suspense shape as the user field: `KeypairResourcePolicySelect`
+                is the direct child of `Form.Item` (auto value/onChange binding),
+                and the fallback mirrors the same `Form.Item` so the field and its
+                required rule stay registered while the query loads. */}
+            <Suspense
+              fallback={
+                <Form.Item
+                  name="resource_policy"
+                  label={t('credential.ResourcePolicy')}
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <BAISelect loading style={{ width: '100%' }} />
+                </Form.Item>
+              }
+            >
+              <Form.Item
+                name="resource_policy"
+                label={t('credential.ResourcePolicy')}
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <KeypairResourcePolicySelect />
+              </Form.Item>
+            </Suspense>
           </Col>
           <Col span={12}>
             <Form.Item
@@ -185,6 +227,7 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
                   type: 'number',
                   min: 0,
                   max: 50000,
+                  message: t('credential.RateLimitValidation'),
                 },
                 {
                   validator(_rule, value) {
@@ -199,7 +242,7 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
                 },
               ]}
             >
-              <InputNumber min={0} max={50000} style={{ width: '100%' }} />
+              <InputNumber style={{ width: '100%' }} />
             </Form.Item>
           </Col>
         </Row>

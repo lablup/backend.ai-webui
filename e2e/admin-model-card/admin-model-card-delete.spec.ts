@@ -61,7 +61,9 @@ test.describe(
       //      we catch and continue.
       for (const folderName of foldersToClean) {
         try {
-          await moveToTrashAndVerify(page, folderName, 'admin-data');
+          await moveToTrashAndVerify(page, folderName, 'admin-data', {
+            skipTrashVerify: true,
+          });
         } catch {
           // Folder may already be in Trash or may not exist
         }

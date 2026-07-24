@@ -17,15 +17,19 @@
  *     identifiers / URLs / paths / config keys / backticked tokens / {{interp}}
  *     are skipped. An inline allowlist file silences legitimate strings.
  *
- *   CHECK 2 (key -> two-values divergence, needs NO termbase) — OFF by default:
- *     Within each i18n file, flags any leaf-key final segment that maps to two
- *     or more DIFFERENT string values across the file's namespaces. It surfaced
- *     real drift (AppProxy / AutoScalingRules / VFolder / ko ResourceGroup) but
- *     in its current segment-across-namespace form it also flags thousands of
- *     benign phrasing differences, so it is OFF by default — enable with
- *     --check2. List-only / report; never blocks. Refining it into a high-signal
- *     check (e.g. near-duplicate values only, or termbase-linked segments) is a
- *     tracked follow-up.
+ *   CHECK 2 (near-duplicate value divergence, needs NO termbase) — OFF by default:
+ *     Within each i18n file, flags a leaf-key final segment whose values include
+ *     a NEAR-DUPLICATE: two or more distinct raw values that collapse to the same
+ *     normalized form (lowercase, whitespace/hyphen/punctuation stripped) — i.e.
+ *     the same term spelled inconsistently ("Auto Scaling" vs "Auto-scaling",
+ *     "Grupo de recursos" vs "Grupo de Recursos", "セッションID" vs "セッション ID").
+ *     Genuinely different values normalize apart and are NOT flagged, so this is
+ *     high-signal (FR-3050 redesign replaced the old "any 2 distinct values" form
+ *     that emitted thousands of benign phrasing differences). List-only / report;
+ *     never blocks. Still OFF by default (enable with --check2): the findings are
+ *     a real cross-locale casing-consistency backlog to triage, mostly in the
+ *     non-English stores; promoting it to a default warn is a follow-up once that
+ *     backlog is cleared.
  *
  *   CHECK 3 (unknown capitalized user-facing noun, needs the termbase) — OFF by
  *   default; opt in with --check3:
@@ -510,6 +514,42 @@ function runCheck1(stores, avoidRows, allow, approvedCompounds) {
 // ---------------------------------------------------------------------------
 
 /**
+ * Normalize a value for near-duplicate comparison: lowercase, then strip all
+ * whitespace, hyphens, underscores, slashes, and common ASCII punctuation. Two
+ * values that differ ONLY by case / spacing / hyphenation / punctuation collapse
+ * to the same key; genuinely different wording stays distinct. Interpolation
+ * braces `{{ }}` are left intact so placeholders do not collapse together.
+ * @param {string} s
+ */
+function normalizeForNearDup(s) {
+  return s.toLowerCase().replace(/[\s\-_./,;:!?'"`()[\]]+/g, "");
+}
+
+/**
+ * Given the distinct raw values that collapsed to one normalized form, report
+ * which normalization dimension(s) explain the collision, so consumers can tell
+ * a case-only inconsistency from a spacing/hyphen one. Applies the same
+ * dimensions cumulatively (matching normalizeForNearDup) and records each one
+ * whose addition actually reduces the distinct-value count.
+ * @param {string[]} rawValues
+ * @returns {string[]} subset of ["case","whitespace","hyphen","punctuation"]
+ */
+function nearDupReasons(rawValues) {
+  const reasons = [];
+  let prev = new Set(rawValues);
+  const step = (fn, name) => {
+    const next = new Set([...prev].map(fn));
+    if (next.size < prev.size) reasons.push(name);
+    prev = next;
+  };
+  step((v) => v.toLowerCase(), "case");
+  step((v) => v.replace(/\s+/g, ""), "whitespace");
+  step((v) => v.replace(/[-_]+/g, ""), "hyphen");
+  step((v) => v.replace(/[./,;:!?'"`()[\]]+/g, ""), "punctuation");
+  return reasons;
+}
+
+/**
  * @param {Array<{file:string,label:string,leaves:Array<{key:string,segment:string,value:string}>,lang:string}>} stores
  * @param {{ignoreSegments: Set<string>}} allow
  */
@@ -518,15 +558,22 @@ function runCheck2(stores, allow) {
   const findings = [];
 
   for (const store of stores) {
-    // segment -> Map(value -> [keyPaths])
-    /** @type {Map<string, Map<string, string[]>>} */
+    // segment -> Map(normalized -> Map(rawValue -> [keyPaths]))
+    /** @type {Map<string, Map<string, Map<string, string[]>>>} */
     const bySegment = new Map();
     for (const leaf of store.leaves) {
       if (allow.ignoreSegments.has(leaf.segment)) continue;
-      let valMap = bySegment.get(leaf.segment);
+      const norm = normalizeForNearDup(leaf.value);
+      if (!norm) continue; // empty / all-punctuation after normalizing
+      let normMap = bySegment.get(leaf.segment);
+      if (!normMap) {
+        normMap = new Map();
+        bySegment.set(leaf.segment, normMap);
+      }
+      let valMap = normMap.get(norm);
       if (!valMap) {
         valMap = new Map();
-        bySegment.set(leaf.segment, valMap);
+        normMap.set(norm, valMap);
       }
       let keys = valMap.get(leaf.value);
       if (!keys) {
@@ -536,28 +583,44 @@ function runCheck2(stores, allow) {
       keys.push(leaf.key);
     }
 
-    for (const [segment, valMap] of bySegment) {
-      if (valMap.size < 2) continue;
-      const variants = [...valMap.entries()].map(([value, keys]) => ({
-        value,
-        keys,
-      }));
+    for (const [segment, normMap] of bySegment) {
+      // A near-duplicate cluster is one normalized form reached by >=2 DISTINCT
+      // raw values (the same word spelled inconsistently — "Auto Scaling" vs
+      // "Auto-scaling", "Grupo de recursos" vs "Grupo de Recursos"). Values that
+      // are genuinely different normalize apart and are NOT flagged — that is
+      // what makes this high-signal versus the old "any 2 distinct values".
+      const clusters = [];
+      for (const [normalized, valMap] of normMap) {
+        if (valMap.size < 2) continue;
+        clusters.push({
+          normalized,
+          reasons: nearDupReasons([...valMap.keys()]),
+          variants: [...valMap.entries()].map(([value, keys]) => ({
+            value,
+            keys,
+          })),
+        });
+      }
+      if (clusters.length === 0) continue;
+      const variants = clusters.flatMap((cl) => cl.variants);
+      const reasons = [...new Set(clusters.flatMap((cl) => cl.reasons))];
       findings.push({
-        check: "key-divergence",
+        check: "near-duplicate",
         severity: "report", // always report-only; never affects exit code
         file: store.file,
         fileLabel: store.label,
         lang: store.lang,
         segment,
-        distinct: valMap.size,
+        reasons,
+        distinct: variants.length,
+        clusters,
         variants,
       });
     }
   }
 
-  // Sort highest-signal first: fewest distinct variants (near-duplicates like
-  // "Auto-scaling Rules" vs "Auto Scaling Rules") rank above broad spreads, then
-  // by file then segment for determinism.
+  // Sort highest-signal first: fewest variants (a clean 2-way case/hyphen split)
+  // rank above larger clusters, then by file / lang / segment for determinism.
   findings.sort(
     (a, b) =>
       a.distinct - b.distinct ||
@@ -875,11 +938,11 @@ function printTextReport(check1, check2, check3, opts) {
   if (opts.runCheck2) {
     console.log(
       c.bold(
-        "CHECK 2 — key -> two-values divergence (report-only, no termbase)",
+        "CHECK 2 — near-duplicate value divergence (report-only, no termbase)",
       ),
     );
     if (check2.length === 0) {
-      console.log(c.dim("  no divergent final-segments found."));
+      console.log(c.dim("  no near-duplicate values found."));
     } else {
       // In --summary mode show only the top N highest-signal findings (fewest
       // distinct variants first; runCheck2 already sorted them that way).
@@ -889,7 +952,11 @@ function printTextReport(check1, check2, check3, opts) {
         console.log(
           `  ${c.yellow("report")} [${f.fileLabel}/${f.lang}] segment ${c.cyan(
             f.segment,
-          )} -> ${f.distinct} distinct values`,
+          )} -> ${f.distinct} near-duplicate value(s)${
+            f.reasons && f.reasons.length
+              ? c.dim(" [" + f.reasons.join(", ") + "]")
+              : ""
+          }`,
         );
         for (const v of f.variants) {
           console.log(
@@ -911,7 +978,7 @@ function printTextReport(check1, check2, check3, opts) {
     }
     console.log("");
     console.log(
-      c.dim(`  CHECK 2 summary: ${check2.length} divergent segments.`),
+      c.dim(`  CHECK 2 summary: ${check2.length} near-duplicate segment(s).`),
     );
     console.log("");
   }
@@ -952,7 +1019,7 @@ function printTextReport(check1, check2, check3, opts) {
       (opts.strict ? "" : c.dim("  (warn mode: not enforced)")),
   );
   console.log(`  warn-only terminology findings: ${warnCount}`);
-  console.log(`  key-divergence findings (report): ${check2.length}`);
+  console.log(`  near-duplicate findings (report): ${check2.length}`);
   console.log(`  unknown-noun findings (report): ${check3.length}`);
 }
 
@@ -1187,4 +1254,37 @@ function main() {
   return 0;
 }
 
-process.exit(main());
+// Exported for scripts/check-terminology-i18n.selftest.mjs (FR-3051): the
+// non-English avoid-row precision harness must exercise the REAL matcher and
+// CHECK 1 pipeline, not a copy of them. Importing this module does not run the
+// CLI — see the entry guard below.
+export {
+  REPO_ROOT,
+  TERMINOLOGY_PATH,
+  ALLOWLIST_PATH,
+  I18N_GLOBS,
+  readJson,
+  collectLeaves,
+  listLocaleFiles,
+  hasUpper,
+  buildTermMatcher,
+  buildApprovedCompounds,
+  runCheck1,
+};
+
+// Run the CLI only when this file is executed directly
+// (`node scripts/check-terminology-i18n.mjs ...`), not when imported.
+// realpathSync so a symlinked invocation still matches __filename (which node
+// resolves to the real path when loading the entry module).
+const invokedPath = (() => {
+  if (!process.argv[1]) return "";
+  const resolved = path.resolve(process.argv[1]);
+  try {
+    return fs.realpathSync(resolved);
+  } catch {
+    return resolved;
+  }
+})();
+if (invokedPath === __filename) {
+  process.exit(main());
+}

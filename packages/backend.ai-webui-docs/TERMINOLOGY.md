@@ -41,15 +41,20 @@ The tables below list the approved term for each concept, per language, grouped 
 
 | Concept | EN | KO | JA | TH | Context | Deciding FR | Description |
 |---|---|---|---|---|---|---|---|
+| active-pool | Active Pool | 활성 풀 | アクティブプール | แอ็กทีฟพูล | — | FR-3302 | The set of model-service replicas currently receiving traffic through App Proxy. Membership tracks traffic and is independent of a replica's health status. See app-proxy. |
 | app-proxy | App Proxy | App Proxy | App Proxy | App Proxy | — | FR-2841 | The standalone, per-resource-group proxy service that relays in-container application traffic directly between the user's browser and the compute session's Agent. Renamed from WSProxy to App Proxy in the UI in FR-2841. Use "App Proxy" only; do not reference the old "WSProxy" name in user-facing documentation. UI label stays in English across all locales. |
 | app-proxy-api-token | App Proxy API Token | App Proxy API 토큰 | App Proxy APIトークン | โทเค็น API ของ App Proxy | Field label (Resource Group settings) | FR-2841 | Resource Group settings field label for the App Proxy API token. |
 | app-proxy-server-address | App Proxy Server Address | App Proxy 서버 주소 | App Proxy サーバアドレス | ที่อยู่เซิร์ฟเวอร์ App Proxy | Field label (Resource Group settings) | FR-2841 | Resource Group settings field label for the App Proxy server address. |
 | autoscaling-rule | Auto Scaling Rule | 오토스케일링 규칙 | 自動スケーリングルール | กฎการปรับขนาดอัตโนมัติ | — | FR-3207 | The rule that automatically adjusts a deployment's replica count based on live metrics. Match the UI label exactly: KO uses "오토스케일링" (the autoScalingRule i18n keys), NOT "자동 스케일링". Documentation section: deployment/deployment.md |
 | container | Container | — | — | — | — | — | The runtime environment of a compute session. Do NOT use "container" and "kernel" interchangeably. |
 | endpoint | Endpoint | — | — | — | — | — | The access point created for a served model. |
+| fair-share | Fair Share | Fair Share | 公平配分 | การจัดสรรแบบเป็นธรรม | — | FR-3302 | The scheduling policy that balances resource-allocation fairness across users within a resource group. The KO UI keeps the English label "Fair Share" (webui.menu.FairShare). |
+| fair-share-scheduler | Fair Share Scheduler | — | — | — | — | FR-3302 | The scheduler component that computes Fair Share priorities. Appears in Fair Share setting descriptions; no dedicated per-language UI label (documentation term). |
 | inference | Inference | — | — | — | — | — | The operation of running predictions through a served model. |
 | kernel-image | Kernel image / Container image | — | — | — | — | — | The base image (snapshot) from which containers are created. Do NOT use "container" and "kernel" interchangeably. |
 | model-serving | Model Service / Model Serving | — | — | — | — | — | The feature name (page title, menu item). |
+| model-store | Model Store | 모델 스토어 | モデルストア | คลังโมเดล | — | FR-3302 | The Model Store feature/page for browsing and importing published models into a project. |
+| rate-limit | Rate Limit | 최대 요청수 | レート制限 | ขีดจำกัดอัตรา | — | FR-3302 | The keypair/credential setting capping API request frequency. The KO UI label is "최대 요청수" (credential.RateLimit). |
 | rbac | RBAC | RBAC | RBAC | RBAC | — | — | Role-Based Access Control. Keep as abbreviation across all languages. |
 | rbac-permission | permission | 세부 권한 | 権限 | สิทธิ์ | — | — | A fine-grained access rule within a role. "세부 권한" is used specifically for fine-grained permissions within a role. |
 | rbac-permission-type | permission type | 권한 타입 | 権限タイプ | ประเภทสิทธิ์ | — | — | The category of resource a permission controls. |
@@ -57,6 +62,7 @@ The tables below list the approved term for each concept, per language, grouped 
 | rbac-role-assignment | role assignment | 권한 할당 | ロール割り当て | การมอบหมายบทบาท | — | — | The association of a user to a role. |
 | rbac-scope-type | scope type | 적용 범위 타입 | スコープタイプ | ประเภทขอบเขต | — | — | The level at which a permission applies. |
 | replica | replica | 복제본 | レプリカ | เรพลิกา | — | — | An individual running instance of a deployed model service. The desired/active count of these is managed by the deployment and auto-scaling rules. Documentation section: deployment/deployment.md |
+| resource-policy | Resource Policy | 자원 정책 | リソースポリシー | นโยบายทรัพยากร | — | FR-3302 | A named policy defining resource limits (CPU, memory, GPU, session count). WebUI has distinct keypair, user, and project resource policies. KO uses "자원 정책" (consistent with 자원 그룹). |
 
 ### User Roles
 
@@ -167,25 +173,29 @@ These terms match sidebar menu items. Keep documentation references consistent w
 
 ## Terms to Avoid
 
-Each row lists one forbidden term, its canonical replacement, and the reason. Parenthetical qualifiers in the **Avoid** column (e.g. "group (for project)") indicate the context in which the term is disallowed.
+Each row lists one forbidden term, the language it applies to, its canonical replacement, and the reason. Parenthetical qualifiers in the **Avoid** column (e.g. "group (for project)") indicate the context in which the term is disallowed. A row applies **only to its `Lang`** — the i18n checker scans each language's stores against that language's rows, and non-English rows are always WARN-severity (they never hard-block).
+
+**Non-English curation rule (FR-3051).** ko/ja/th have no reliable word boundaries, so the checker matches non-Latin avoid terms by plain **substring**. A non-English `avoid` term must therefore be a **precise multi-token compound** (e.g. `스케일링 그룹`, `スケーリンググループ`) or an **unambiguous deprecated spelling** (e.g. `레플리카`, `슈퍼어드민`) — **never a bare concept noun** (ko `세션` appears in ~200 legitimate values; every one would fire), and never a substring of any `concepts[].preferred[lang]` value. Every non-English row must ship with positive/negative fixtures and a live false-positive budget (default 0) in `terminology.selftest.json`; `pnpm run lint:terminology:selftest` (`scripts/check-terminology-i18n.selftest.mjs`, run as a hard CI gate by `terminology-selftest.yml` on termbase/fixtures/checker changes only) enforces the rule and rejects noisy rows.
 
 <!-- terminology:auto:avoid START -->
 
-| Avoid | Use Instead | Reason |
-|---|---|---|
-| WSProxy (as a UI label) | App Proxy | Renamed in FR-2841; `wsproxy` (code style) survives only as internal identifiers (DB columns, API route, constants), not a daemon |
-| compute node | agent node | Non-standard in docs |
-| data folder | storage folder / vfolder | Non-standard |
-| group (for project) | project | Ambiguous |
-| key pair | keypair | Incorrect spelling |
-| key-pair | keypair | Incorrect spelling |
-| organization | domain | Not used in Backend.AI |
-| scaling group | resource group | Deprecated term |
-| worker node | agent node | Reserve "worker node" for model serving context only |
-| 레플리카 | 복제본 | Use the Korean translation, not the transliteration, for consistency |
-| 슈퍼관리자 | 슈퍼 관리자 | Use the spaced form for consistency |
-| 슈퍼어드민 | 슈퍼 관리자 | Use the Korean translation, not the transliteration |
-| 자동 스케일링 (auto scaling rule) | 오토스케일링 | Match the UI label; the autoScalingRule i18n keys use "오토스케일링" |
+| Avoid | Lang | Use Instead | Reason |
+|---|---|---|---|
+| WSProxy (as a UI label) | en | App Proxy | Renamed in FR-2841; `wsproxy` (code style) survives only as internal identifiers (DB columns, API route, constants), not a daemon |
+| compute node | en | agent node | Non-standard in docs |
+| data folder | en | storage folder / vfolder | Non-standard |
+| group (for project) | en | project | Ambiguous |
+| key pair | en | keypair | Incorrect spelling |
+| key-pair | en | keypair | Incorrect spelling |
+| organization | en | domain | Not used in Backend.AI |
+| scaling group | en | resource group | Deprecated term |
+| worker node | en | agent node | Reserve "worker node" for model serving context only |
+| スケーリンググループ | ja | リソースグループ | Deprecated term ("scaling group"); the UI and docs use "リソースグループ" |
+| 레플리카 | ko | 복제본 | Use the Korean translation, not the transliteration, for consistency |
+| 슈퍼관리자 | ko | 슈퍼 관리자 | Use the spaced form for consistency |
+| 슈퍼어드민 | ko | 슈퍼 관리자 | Use the Korean translation, not the transliteration |
+| 스케일링 그룹 | ko | 자원 그룹 | Deprecated term ("scaling group"); the UI and docs use "자원 그룹" |
+| 자동 스케일링 (auto scaling rule) | ko | 오토스케일링 | Match the UI label; the autoScalingRule i18n keys use "오토스케일링" |
 
 <!-- terminology:auto:avoid END -->
 
@@ -242,7 +252,7 @@ Enforcement is **best-effort, not a substitute for review.** `scripts/check-term
 
 Renaming or deprecating an established term is **atomic**: the termbase, all UI locales, and all doc languages change together, in one Graphite stack. A partial rename leaves the live label and the termbase disagreeing — and because [Precedence](#precedence) says the label wins, a half-done rename silently reverts the decision. Run every step below before submitting.
 
-1. **Deprecate in `terminology.json`.** Set the old concept's `status` to `deprecated`, point `preferred` at the new term (or add the new concept), and add an `avoid[]` row (`avoid` = old term, `useInstead` = new term, plus `reason`, `lang`, and `conceptId`). Set `decidingFR` on the changed concept(s) — the new-term gate requires it.
+1. **Deprecate in `terminology.json`.** Set the old concept's `status` to `deprecated`, point `preferred` at the new term (or add the new concept), and add an `avoid[]` row (`avoid` = old term, `useInstead` = new term, plus `reason`, `lang`, and `conceptId`). Set `decidingFR` on the changed concept(s) — the new-term gate requires it. For a **non-English** avoid row, also add its fixtures entry to `terminology.selftest.json` and confirm `pnpm run lint:terminology:selftest` passes (see the non-English curation rule above).
 2. **Retranslate the UI locales.** Update all 21 files in `resources/i18n/*.json` **and** all 21 in `packages/backend.ai-ui/src/locale/*.json`. Edit `en.json` by hand, then propagate the other 20 with the `fw` i18n-translator (`/fw:i18n`).
 3. **Update the 4 doc languages.** Replace prose occurrences of the old term under `src/{en,ko,ja,th}/`.
 4. **Regenerate the term tables.** Run `pnpm run build:terminology` to refresh the `<!-- terminology:auto:* -->` regions of this file, then `pnpm run check:terminology-md` (confirms the tables match `terminology.json`) and `pnpm run lint:terminology` (confirms no live label still uses the deprecated term).

@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-07-09
+> **Last Updated:** 2026-07-23
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 307 / 452 features covered (68%)**
+**Overall (in-scope routes): 308 / 453 features covered (68%)**
 
 | Page                     | Route                                  | Features | Covered | Status  |
 | ------------------------ | -------------------------------------- | :------: | :-----: | :-----: |
@@ -25,7 +25,7 @@
 | Serving                  | `/serving`                             |    7     |    2    | 🔶 29%  |
 | Endpoint Detail          | `/serving/:serviceId`                  |    20    |    9    | 🔶 45%  |
 | Service Launcher         | `/service/start`                       |    5     |    1    | 🔶 20%  |
-| VFolder / Data           | `/data`                                |    47    |   34    | 🔶 72%  |
+| VFolder / Data           | `/data`                                |    48    |   35    | 🔶 73%  |
 | Model Store              | `/model-store`                         |    6     |    6    | ✅ 100% |
 | Admin Model Store        | `/admin-model-store`                   |    28    |   28    | ✅ 100% |
 | Storage Host             | `/storage-settings/:hostname`          |    3     |    0    |  ❌ 0%  |
@@ -49,7 +49,7 @@
 | RBAC Management          | `/rbac`                                |    22    |   21    | 🔶 95%  |
 | Auto Scaling Rule Preset | `/admin-serving?tab=auto-scaling-rule` |    33    |   32    | 🔶 97%  |
 | Deployments              | `/deployments`, `/deployments/:id`     |    16    |   12    | 🔶 75%  |
-| **Total**                |                                        | **468**  | **319** | **68%** |
+| **Total**                |                                        | **469**  | **320** | **68%** |
 
 ---
 
@@ -328,7 +328,7 @@
 
 ### 9. Data / VFolder (`/data`)
 
-**Test files:** [`e2e/vfolder/vfolder-crud.spec.ts`](vfolder/vfolder-crud.spec.ts), [`e2e/vfolder/vfolder-explorer-modal.spec.ts`](vfolder/vfolder-explorer-modal.spec.ts), [`e2e/vfolder/vfolder-consecutive-deletion.spec.ts`](vfolder/vfolder-consecutive-deletion.spec.ts), [`e2e/vfolder/file-upload.spec.ts`](vfolder/file-upload.spec.ts), [`e2e/vfolder/file-upload-dnd.spec.ts`](vfolder/file-upload-dnd.spec.ts), [`e2e/vfolder/file-upload-duplicate.spec.ts`](vfolder/file-upload-duplicate.spec.ts), [`e2e/vfolder/file-upload-permissions.spec.ts`](vfolder/file-upload-permissions.spec.ts), [`e2e/vfolder/file-upload-subdirectory.spec.ts`](vfolder/file-upload-subdirectory.spec.ts), [`e2e/vfolder/file-create.spec.ts`](vfolder/file-create.spec.ts), [`e2e/vfolder/vfolder-type-selection.spec.ts`](vfolder/vfolder-type-selection.spec.ts)
+**Test files:** [`e2e/vfolder/vfolder-crud.spec.ts`](vfolder/vfolder-crud.spec.ts), [`e2e/vfolder/vfolder-explorer-modal.spec.ts`](vfolder/vfolder-explorer-modal.spec.ts), [`e2e/vfolder/vfolder-consecutive-deletion.spec.ts`](vfolder/vfolder-consecutive-deletion.spec.ts), [`e2e/vfolder/file-upload.spec.ts`](vfolder/file-upload.spec.ts), [`e2e/vfolder/file-upload-dnd.spec.ts`](vfolder/file-upload-dnd.spec.ts), [`e2e/vfolder/file-upload-duplicate.spec.ts`](vfolder/file-upload-duplicate.spec.ts), [`e2e/vfolder/file-upload-permissions.spec.ts`](vfolder/file-upload-permissions.spec.ts), [`e2e/vfolder/file-upload-subdirectory.spec.ts`](vfolder/file-upload-subdirectory.spec.ts), [`e2e/vfolder/file-create.spec.ts`](vfolder/file-create.spec.ts), [`e2e/vfolder/vfolder-type-selection.spec.ts`](vfolder/vfolder-type-selection.spec.ts), [`e2e/vfolder/vfolder-explorer-url-desync.spec.ts`](vfolder/vfolder-explorer-url-desync.spec.ts)
 
 **Tabs:** Active | Deleted
 **Filter (Active tab):** all | general | pipeline | automount | model
@@ -363,6 +363,7 @@
 | Explorer modal (file browser)                                           | ✅     | `User can access File Browser from VFolder explorer`                                                                                   |
 | Explorer modal (file browser fallback, `defaultFileBrowserImage` unset) | ✅     | `File Browser button falls back to an installed image when defaultFileBrowserImage is unset` (env-gated `@requires-image-filebrowser`) |
 | Explorer modal (details view)                                           | ✅     | `User can view VFolder details in the explorer`                                                                                        |
+| Explorer modal (opens despite suspending detail query, URL-param desync) | ✅     | `clicking a folder opens the explorer even when the detail query suspends inside the nuqs transition` (FR-3358 regression)              |
 | File creation (Create File button)                                      | ✅     | `User can see Create File button in file explorer`                                                                                     |
 | File creation (new file)                                                | ✅     | `User can create a new file in the file explorer`                                                                                      |
 | File creation (yaml config)                                             | ✅     | `User can create a yaml configuration file`                                                                                            |
@@ -388,7 +389,7 @@
 | Shared folder permission → SharedFolderPermissionInfoModal              | ❌     | -                                                                                                                                      |
 | File download                                                           | ❌     | -                                                                                                                                      |
 
-**Coverage: 🔶 32/45 features (includes 1 skipped)**
+**Coverage: 🔶 33/46 features (includes 1 skipped)**
 
 ---
 

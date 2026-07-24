@@ -62,9 +62,12 @@ test.describe(
       );
       await expect(dataRows.first()).toBeVisible({ timeout: 10000 });
 
-      // Click the info button on the first keypair row
+      // Click the info button on the first keypair row.
+      // BAINameActionCell now sets aria-label={action.title} unconditionally
+      // (PR #8320); the info action's title is t('button.Info') = "Info",
+      // not the icon name "info-circle".
       const firstRow = dataRows.first();
-      await firstRow.getByRole('button', { name: 'info-circle' }).click();
+      await firstRow.getByRole('button', { name: 'Info' }).click();
 
       // Verify Keypair Detail dialog appears
       const modal = page.getByRole('dialog', { name: /Keypair Detail/ });

@@ -521,6 +521,81 @@
         "ja": "RBAC管理"
       },
       "description": "Sidebar menu item. Documentation section: rbac_management/rbac_management.md"
+    },
+    {
+      "id": "fair-share",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": "FR-3302",
+      "preferred": {
+        "en": "Fair Share",
+        "ko": "Fair Share",
+        "ja": "公平配分",
+        "th": "การจัดสรรแบบเป็นธรรม"
+      },
+      "description": "The scheduling policy that balances resource-allocation fairness across users within a resource group. The KO UI keeps the English label \"Fair Share\" (webui.menu.FairShare)."
+    },
+    {
+      "id": "fair-share-scheduler",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": "FR-3302",
+      "preferred": {
+        "en": "Fair Share Scheduler"
+      },
+      "description": "The scheduler component that computes Fair Share priorities. Appears in Fair Share setting descriptions; no dedicated per-language UI label (documentation term)."
+    },
+    {
+      "id": "rate-limit",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": "FR-3302",
+      "preferred": {
+        "en": "Rate Limit",
+        "ko": "최대 요청수",
+        "ja": "レート制限",
+        "th": "ขีดจำกัดอัตรา"
+      },
+      "description": "The keypair/credential setting capping API request frequency. The KO UI label is \"최대 요청수\" (credential.RateLimit)."
+    },
+    {
+      "id": "active-pool",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": "FR-3302",
+      "preferred": {
+        "en": "Active Pool",
+        "ko": "활성 풀",
+        "ja": "アクティブプール",
+        "th": "แอ็กทีฟพูล"
+      },
+      "description": "The set of model-service replicas currently receiving traffic through App Proxy. Membership tracks traffic and is independent of a replica's health status. See app-proxy."
+    },
+    {
+      "id": "model-store",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": "FR-3302",
+      "preferred": {
+        "en": "Model Store",
+        "ko": "모델 스토어",
+        "ja": "モデルストア",
+        "th": "คลังโมเดล"
+      },
+      "description": "The Model Store feature/page for browsing and importing published models into a project."
+    },
+    {
+      "id": "resource-policy",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": "FR-3302",
+      "preferred": {
+        "en": "Resource Policy",
+        "ko": "자원 정책",
+        "ja": "リソースポリシー",
+        "th": "นโยบายทรัพยากร"
+      },
+      "description": "A named policy defining resource limits (CPU, memory, GPU, session count). WebUI has distinct keypair, user, and project resource policies. KO uses \"자원 정책\" (consistent with 자원 그룹)."
     }
   ],
   "avoid": [
@@ -627,6 +702,22 @@
       "lang": "ko",
       "context": null,
       "conceptId": "role-superadmin"
+    },
+    {
+      "avoid": "스케일링 그룹",
+      "useInstead": "자원 그룹",
+      "reason": "Deprecated term (\"scaling group\"); the UI and docs use \"자원 그룹\"",
+      "lang": "ko",
+      "context": null,
+      "conceptId": "resource-group"
+    },
+    {
+      "avoid": "スケーリンググループ",
+      "useInstead": "リソースグループ",
+      "reason": "Deprecated term (\"scaling group\"); the UI and docs use \"リソースグループ\"",
+      "lang": "ja",
+      "context": null,
+      "conceptId": "resource-group"
     }
   ],
   "verbs": [
@@ -634,7 +725,9 @@
       "id": "verb-cancel",
       "intent": "cancel",
       "context": "Stop an in-flight or not-yet-committed operation (request, draft, running deployment rollout).",
-      "preferred": { "en": "Cancel" },
+      "preferred": {
+        "en": "Cancel"
+      },
       "avoid": ["Abort", "Discard"],
       "reversible": "reversible",
       "decidingFR": "FR-3052",
@@ -644,7 +737,9 @@
       "id": "verb-delete",
       "intent": "delete",
       "context": "Permanently remove a standalone resource the user owns (storage folder, image, token, resource preset).",
-      "preferred": { "en": "Delete" },
+      "preferred": {
+        "en": "Delete"
+      },
       "avoid": ["Destroy", "Erase", "Wipe"],
       "reversible": "irreversible",
       "decidingFR": "FR-3052",
@@ -654,7 +749,9 @@
       "id": "verb-remove",
       "intent": "remove",
       "context": "Detach an item from a collection / relationship without destroying the item itself (permission from a role, version from a list, member from a project).",
-      "preferred": { "en": "Remove" },
+      "preferred": {
+        "en": "Remove"
+      },
       "avoid": ["Delete", "Unlink"],
       "reversible": "reversible",
       "decidingFR": "FR-3052",
@@ -664,7 +761,9 @@
       "id": "verb-terminate",
       "intent": "terminate",
       "context": "End a running compute session (interactive / batch / inference) or model-service endpoint.",
-      "preferred": { "en": "Terminate" },
+      "preferred": {
+        "en": "Terminate"
+      },
       "avoid": ["Kill", "Destroy", "End"],
       "reversible": "irreversible",
       "decidingFR": "FR-3052",
@@ -674,7 +773,9 @@
       "id": "verb-stop",
       "intent": "stop",
       "context": "Halt a process that can later be resumed or restarted (a service replica, a pausable job).",
-      "preferred": { "en": "Stop" },
+      "preferred": {
+        "en": "Stop"
+      },
       "avoid": ["Pause", "Halt", "Terminate"],
       "reversible": "reversible",
       "decidingFR": "FR-3052",
@@ -684,7 +785,9 @@
       "id": "verb-inactivate",
       "intent": "inactivate",
       "context": "Disable an account/credential/project/role so it can no longer be used, while keeping its data for later reactivation.",
-      "preferred": { "en": "Deactivate" },
+      "preferred": {
+        "en": "Deactivate"
+      },
       "avoid": ["Inactivate", "Disable", "Suspend"],
       "reversible": "reversible",
       "decidingFR": "FR-3052",
@@ -694,7 +797,9 @@
       "id": "verb-purge",
       "intent": "purge",
       "context": "Permanently and irrecoverably erase an already-deactivated account/project/role and all its records.",
-      "preferred": { "en": "Purge" },
+      "preferred": {
+        "en": "Purge"
+      },
       "avoid": ["Delete", "Wipe", "Destroy"],
       "reversible": "irreversible",
       "decidingFR": "FR-3052",
@@ -704,7 +809,9 @@
       "id": "verb-hide",
       "intent": "hide",
       "context": "Make an item invisible in the UI without deleting it (hide a column, hide a notice, hide a list entry).",
-      "preferred": { "en": "Hide" },
+      "preferred": {
+        "en": "Hide"
+      },
       "avoid": ["Remove", "Delete", "Dismiss"],
       "reversible": "reversible",
       "decidingFR": "FR-3052",

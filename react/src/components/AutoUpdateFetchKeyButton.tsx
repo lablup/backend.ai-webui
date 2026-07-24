@@ -21,6 +21,7 @@ export type FetchKeyAutoUpdateSettingId =
   | 'project-admin-session'
   | 'pending-session-list'
   | 'session-detail'
+  | 'container-log'
   // Deployment lists
   | 'deployment-list'
   | 'admin-deployment-list'

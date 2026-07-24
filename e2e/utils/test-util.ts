@@ -485,6 +485,7 @@ export async function moveToTrashAndVerify(
   page: Page,
   folderName: string,
   dataPath: string = 'data',
+  options: { skipTrashVerify?: boolean } = {},
 ) {
   // Use navigateTo to ensure a clean navigation to the data page regardless of current state
   await navigateTo(page, dataPath);
@@ -538,7 +539,14 @@ export async function moveToTrashAndVerify(
     );
   }
   await removeSearchButton(page, folderName);
-  await verifyVFolder(page, folderName, 'Trash', dataPath);
+  // Callers that immediately follow with deleteForeverAndVerifyFromTrash (e.g.
+  // cleanupVFolderSafely) can skip this verification pass: that helper already
+  // asserts the folder's presence in Trash before deleting, so verifying here
+  // would add a full page reload + filter cycle for no extra signal. The
+  // successful DELETE /folders response above still guards the move itself.
+  if (!options.skipTrashVerify) {
+    await verifyVFolder(page, folderName, 'Trash', dataPath);
+  }
 }
 
 export async function deleteForeverAndVerifyFromTrash(
@@ -584,17 +592,18 @@ export async function deleteForeverAndVerifyFromTrash(
   // i18n key: data.folders.FolderDeletedForever → "Permanently deleted the ... folder."
   // antd 6 message.success() renders a plain <div> (no ARIA role="alert"),
   // so we use a text-based locator scoped to the antd message container.
+  // Don't wait for the toast to disappear: antd messages auto-dismiss after
+  // ~3s, so a toBeHidden wait adds fixed dead time to every deletion, and the
+  // message layer doesn't intercept pointer events outside its own box. The
+  // row-gone assertion below is the authoritative deletion signal.
   const deletionNotification = page
     .locator('.ant-message-notice')
     .filter({ hasText: /permanently deleted/i });
   await expect(deletionNotification).toBeVisible({ timeout: 15000 });
-  await expect(deletionNotification).toBeHidden({ timeout: 15000 });
 
-  // After the "Delete forever" button is clicked, wait for the folder to
-  // disappear from the Trash tab. The success toast is too transient to assert
-  // reliably; the row-gone check is the authoritative signal that the deletion
-  // was accepted by the backend.
-  // After the notification is hidden, verify the folder row is gone
+  // After the "Delete forever" button is clicked, verify the folder row is
+  // gone from the Trash tab — re-applying the Name filter forces a fresh
+  // fetch, making this the authoritative check that the backend deleted it.
   await clearAllFilters(page);
   await selectPropertyFilter(page, 'Name', folderName);
   const folderRowAfterDelete = page.getByRole('row').filter({

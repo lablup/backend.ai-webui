@@ -466,7 +466,9 @@ test.describe(
       }
 
       try {
-        await moveToTrashAndVerify(page, VFOLDER_NAME);
+        await moveToTrashAndVerify(page, VFOLDER_NAME, 'data', {
+          skipTrashVerify: true,
+        });
         await deleteForeverAndVerifyFromTrash(page, VFOLDER_NAME);
       } catch {
         console.log(`Could not delete vfolder ${VFOLDER_NAME}`);

@@ -1,0 +1,47 @@
+# Hard CI gate for the non-English terminology avoid-row DATA (FR-3051).
+#
+# Runs scripts/check-terminology-i18n.selftest.mjs, which asserts every
+# non-English terminology.json avoid[] row is a precise compound within its
+# live false-positive budget (see the script header for the full gate list).
+#
+# Deliberately triggered ONLY by the termbase / fixtures / checker paths —
+# never by docs prose (packages/backend.ai-webui-docs/src/**) and never by
+# i18n content (resources/i18n/**). The self-test's budget gate reads the
+# CURRENT i18n stores, so a broader trigger would let pre-existing content
+# drift hard-block PRs unrelated to the termbase. Content drift stays
+# warn-only (CHECK 1, wired report-only into scripts/verify.sh); only a PR
+# that touches the termbase DATA itself must pass this gate — and if such a
+# PR fails on pre-existing drift, fixing/allowlisting that drift first is
+# the intended curation-time behavior.
+name: terminology-selftest
+
+on:
+  pull_request:
+    paths:
+      - "packages/backend.ai-webui-docs/terminology.json"
+      - "packages/backend.ai-webui-docs/terminology.selftest.json"
+      - "packages/backend.ai-webui-docs/terminology.schema.json"
+      - "scripts/check-terminology-i18n.mjs"
+      - "scripts/check-terminology-i18n.selftest.mjs"
+      - "scripts/terminology-i18n.allowlist.json"
+      - ".github/workflows/terminology-selftest.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  terminology-selftest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # The self-test is dependency-free (native Node only) — no pnpm install.
+      # package-manager-cache must be off: with pnpm absent from the job, the
+      # default cache resolution (`pnpm store path`) would fail setup-node.
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: ".nvmrc"
+          package-manager-cache: false
+
+      - name: Non-English terminology precision self-test
+        run: node scripts/check-terminology-i18n.selftest.mjs

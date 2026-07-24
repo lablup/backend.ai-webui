@@ -76,7 +76,9 @@ test.describe(
       await modal.close();
 
       // 9. Cleanup
-      await moveToTrashAndVerify(page, rwFolderName);
+      await moveToTrashAndVerify(page, rwFolderName, 'data', {
+        skipTrashVerify: true,
+      });
       await deleteForeverAndVerifyFromTrash(page, rwFolderName);
     });
 
@@ -112,7 +114,9 @@ test.describe(
       await modal.close();
 
       // 8. Cleanup
-      await moveToTrashAndVerify(page, roFolderName);
+      await moveToTrashAndVerify(page, roFolderName, 'data', {
+        skipTrashVerify: true,
+      });
       await deleteForeverAndVerifyFromTrash(page, roFolderName);
     });
 
