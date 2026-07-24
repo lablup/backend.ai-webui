@@ -547,30 +547,73 @@ export const useBackendAIAppLauncher = (
           const redirectCheckUrl = new URL(appConnectUrl.href);
           redirectCheckUrl.searchParams.set('do-not-redirect', 'true');
 
+          // The worker's /setup endpoint answers TCP circuits with
+          // `{ redirectURI: '...?directTCP=true&gateway=tcp://host:port' }`.
+          // Any failure here used to be swallowed, letting the launcher render
+          // a bogus `127.0.0.1:undefined` connection dialog — surface each
+          // failure as a launch error instead, like the Lit-era launcher did.
+          // (FR-3359)
+          let redirectURI: string | undefined;
           try {
             const result = await fetch(redirectCheckUrl.href);
             const body = await result.json();
-            const { redirectURI } = body;
-
-            if (redirectURI) {
-              const redirectURL = new URL(redirectURI);
-
-              // Check if directTCP is supported
-              const directTCPParam = redirectURL.searchParams.get('directTCP');
-              directTCPSupported = directTCPParam === 'true';
-
-              // Extract gateway URI
-              const gatewayURI = redirectURL.searchParams.get('gateway');
-
-              if (directTCPSupported && gatewayURI) {
-                // Parse gateway URL (format: tcp://host:port)
-                const gatewayURL = new URL(gatewayURI.replace('tcp', 'http'));
-                tcpHost = gatewayURL.hostname;
-                tcpPort = gatewayURL.port;
-              }
-            }
+            redirectURI = body?.redirectURI;
           } catch (error) {
             logger.error('Failed to fetch TCP connection info:', error);
+            throw new AppLaunchError(
+              t('session.launcher.ProxyNotReady'),
+              'connecting',
+              error instanceof Error ? error : undefined,
+            );
+          }
+          if (!redirectURI) {
+            throw new AppLaunchError(
+              t('session.launcher.ProxyNotReady'),
+              'connecting',
+            );
+          }
+
+          let redirectURL: URL;
+          try {
+            redirectURL = new URL(redirectURI);
+          } catch (error) {
+            throw new AppLaunchError(
+              t('session.InvalidRedirectURL'),
+              'connecting',
+              error instanceof Error ? error : undefined,
+            );
+          }
+
+          // Check if directTCP is supported
+          directTCPSupported =
+            redirectURL.searchParams.get('directTCP') === 'true';
+          if (!directTCPSupported) {
+            throw new AppLaunchError(
+              t('session.launcher.ProxyDirectTCPNotSupported'),
+              'connecting',
+            );
+          }
+
+          // Extract gateway URI
+          const gatewayURI = redirectURL.searchParams.get('gateway');
+          if (!gatewayURI) {
+            throw new AppLaunchError(
+              t('session.launcher.ProxyNotReady'),
+              'connecting',
+            );
+          }
+
+          try {
+            // Parse gateway URL (format: tcp://host:port)
+            const gatewayURL = new URL(gatewayURI.replace('tcp', 'http'));
+            tcpHost = gatewayURL.hostname;
+            tcpPort = gatewayURL.port;
+          } catch (error) {
+            throw new AppLaunchError(
+              t('session.InvalidRedirectURL'),
+              'connecting',
+              error instanceof Error ? error : undefined,
+            );
           }
         } else {
           // Reused connection: Use appConnectUrl directly
@@ -581,8 +624,13 @@ export const useBackendAIAppLauncher = (
       }
     }
 
-    // Handle generic TCP apps (non-standard protocols)
-    if (response.url?.includes('protocol=tcp') && redirectUrl) {
+    // Handle generic TCP apps (non-standard protocols). TCP_APPS are already
+    // fully resolved above, so skip them here to avoid a redundant fetch.
+    if (
+      !TCP_APPS.includes(app) &&
+      response.url?.includes('protocol=tcp') &&
+      redirectUrl
+    ) {
       try {
         const redirectResponse = await fetch(redirectUrl);
         const redirectBody = await redirectResponse.json();
@@ -608,20 +656,36 @@ export const useBackendAIAppLauncher = (
         }
       } catch (error) {
         logger.error('Failed to parse generic TCP app URL:', error);
+        throw new AppLaunchError(
+          t('session.launcher.ProxyNotReady'),
+          'connecting',
+          error instanceof Error ? error : undefined,
+        );
+      }
+      // The TCP connection dialog is useless without a resolved gateway —
+      // fail the launch instead of showing `127.0.0.1:undefined`. (FR-3359)
+      if (!tcpHost || !tcpPort) {
+        throw new AppLaunchError(
+          t('session.launcher.ProxyNotReady'),
+          'connecting',
+        );
       }
     }
 
-    // Validate TCP connection info before returning
+    // Validate TCP connection info before returning. Reaching this point
+    // without a host/port means the connection dialog would render
+    // `127.0.0.1:undefined` — fail the launch visibly instead. (FR-3359)
     if (TCP_APPS.includes(app) && (!tcpHost || !tcpPort)) {
-      logger.warn(
-        `TCP connection info not available for ${app}. Using defaults.`,
-        {
-          tcpHost,
-          tcpPort,
-          directTCPSupported,
-          isElectron: globalThis.isElectron,
-          reused,
-        },
+      logger.error(`TCP connection info not available for ${app}.`, {
+        tcpHost,
+        tcpPort,
+        directTCPSupported,
+        isElectron: globalThis.isElectron,
+        reused,
+      });
+      throw new AppLaunchError(
+        t('session.launcher.ProxyNotReady'),
+        'connecting',
       );
     }
 
