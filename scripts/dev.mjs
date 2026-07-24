@@ -68,8 +68,62 @@ const args = [
   `${portlessSpec}-- pnpm --prefix ./react run start`,
 ];
 
-const child = spawn('concurrently', args, { stdio: 'inherit', env, shell: false });
-const forward = (sig) => child.kill(sig);
-process.on('SIGINT', forward);
-process.on('SIGTERM', forward);
-child.on('exit', (code, signal) => process.exit(signal ? 1 : (code ?? 0)));
+// Spawn concurrently as the leader of its own process group (`detached`).
+// The watch tree below it is deep (concurrently → pnpm → nodemon → pnpm →
+// relay binary), and per-PID signal forwarding breaks at the nodemon hop:
+// killing only `child.pid` orphans the relay watch chain, which then keeps
+// thousands of file-watcher FDs open forever (FR-3214). Signaling the
+// negative PID (= the whole group) reaches every descendant directly, no
+// matter how deep the chain is or whether intermediate layers forward.
+const detached = process.platform !== 'win32';
+const child = spawn('concurrently', args, { stdio: 'inherit', env, shell: false, detached });
+
+// Signal every process in the group (negative PID = the whole group), falling
+// back to a direct kill when the group is already reaped. Win32 has no process
+// groups, so there the whole fix degrades to the plain per-PID kill.
+const signalTree = detached
+  ? (sig) => {
+      try {
+        process.kill(-child.pid, sig);
+      } catch {
+        child.kill(sig); // group already reaped — best-effort direct kill (no-throw)
+      }
+    }
+  : (sig) => child.kill(sig);
+const treeAlive = () => {
+  if (!detached) return false;
+  try {
+    process.kill(-child.pid, 0); // probe: throws ESRCH when no member survives
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+// Guarantee the group dies even when graceful shutdown hangs (e.g. the relay
+// binary swallowing SIGINT while its parents wait on it): from the first
+// shutdown signal, poll for survivors and escalate to SIGKILL once the grace
+// period runs out. Nothing in this group may outlive dev.mjs.
+const SIGKILL_GRACE_MS = 5000;
+let escalation = null;
+const escalate = async () => {
+  const deadline = Date.now() + SIGKILL_GRACE_MS;
+  while (treeAlive() && Date.now() < deadline) {
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+  if (treeAlive()) signalTree('SIGKILL');
+};
+const shutdown = (sig) => {
+  signalTree(sig); // repeated Ctrl+C re-signals; the escalation only starts once
+  return (escalation ??= escalate());
+};
+process.on('SIGINT', () => shutdown('SIGINT'));
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGHUP', () => shutdown('SIGHUP')); // terminal close no longer HUPs the detached group
+
+child.on('exit', async (code, signal) => {
+  // concurrently is gone; anything still alive in its group is an orphan
+  // (leaked grandchild mid-shutdown). Sweep it before exiting.
+  if (treeAlive()) await shutdown('SIGTERM');
+  process.exit(signal ? 1 : (code ?? 0));
+});
