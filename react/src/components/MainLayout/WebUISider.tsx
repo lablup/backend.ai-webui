@@ -32,7 +32,7 @@ import {
 import { filterOutEmpty, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { ArrowLeftIcon, ShieldUserIcon } from 'lucide-react';
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { use, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
@@ -47,7 +47,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const { token } = theme.useToken();
   const { themeConfig } = useCustomThemeConfig();
 
-  const config = useContext(ConfigProvider.ConfigContext);
+  const config = use(ConfigProvider.ConfigContext);
   const currentSiderTheme =
     config.theme?.algorithm === theme.darkAlgorithm ? 'dark' : 'light';
 
@@ -367,7 +367,7 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
 
 const WebUISiderWithCustomTheme: React.FC<WebUISiderProps> = (props) => {
   const { themeConfig } = useCustomThemeConfig();
-  const config = useContext(ConfigProvider.ConfigContext);
+  const config = use(ConfigProvider.ConfigContext);
   const isParentDark = config.theme?.algorithm === theme.darkAlgorithm;
 
   const shouldReverse =

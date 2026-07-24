@@ -28,13 +28,7 @@ import {
 import type { TableColumnsType } from 'antd';
 import { FormInstance } from 'antd/lib';
 import * as _ from 'lodash-es';
-import React, {
-  useRef,
-  useState,
-  useCallback,
-  useContext,
-  useMemo,
-} from 'react';
+import React, { use, useRef, useState, useCallback, useMemo } from 'react';
 
 /**
  * Form values interface for the table setting modal
@@ -102,7 +96,7 @@ const RowContext = React.createContext<RowContextProps>({});
  */
 const DragHandle: React.FC<{ disabled?: boolean }> = ({ disabled }) => {
   'use memo';
-  const { setActivatorNodeRef, listeners } = useContext(RowContext);
+  const { setActivatorNodeRef, listeners } = use(RowContext);
   const { token } = theme.useToken();
   return (
     <Typography.Text

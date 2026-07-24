@@ -11,7 +11,7 @@ import {
   createAnonymousBackendaiClient,
   useWebUINavigate,
 } from '../hooks';
-import { useDeviceMetaData } from '../hooks/backendai';
+import { useDeviceMetaData, useImageMetaData } from '../hooks/backendai';
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
 import '../index.css';
@@ -262,11 +262,18 @@ const commonAppProps: AppProps = {
   },
 };
 
-const BAIMetaDataWrapper = ({ children }: { children: ReactNode }) => {
-  const { data } = useDeviceMetaData();
+const BAIMetaDataProviderWrapper = ({ children }: { children: ReactNode }) => {
+  const { data: deviceMetaData } = useDeviceMetaData();
+  const { data: imageMetaData } = useImageMetaData();
 
   return (
-    <BAIMetaDataProvider deviceMetaData={data}>{children}</BAIMetaDataProvider>
+    <BAIMetaDataProvider
+      deviceMetaData={deviceMetaData}
+      imageMetaData={imageMetaData}
+      imagePath="resources/icons"
+    >
+      {children}
+    </BAIMetaDataProvider>
   );
 };
 
@@ -373,7 +380,7 @@ export const DefaultProvidersForReactRoot: React.FC<{
                * unchanged. See FR-2986 / packages/backend.ai-ui/src/hooks/
                * useBAIi18n.ts.
                */}
-              <BAIMetaDataWrapper>
+              <BAIMetaDataProviderWrapper>
                 <App {...commonAppProps}>
                   {/* Single app-wide notification renderer. Lives outside
                         the Suspense below so toasts work on every route and
@@ -408,7 +415,7 @@ export const DefaultProvidersForReactRoot: React.FC<{
                     </StyleProvider>
                   </CacheProvider>
                 </App>
-              </BAIMetaDataWrapper>
+              </BAIMetaDataProviderWrapper>
             </BAIConfigProvider>
           </QueryClientProvider>
         </RelayEnvironmentProvider>

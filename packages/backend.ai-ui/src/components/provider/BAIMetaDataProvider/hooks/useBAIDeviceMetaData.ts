@@ -1,11 +1,12 @@
 import useBAILogger from '../../../../hooks/useBAILogger';
 import { BAIDeviceMetaDataContext } from '../context';
-import { useContext } from 'react';
+import { use } from 'react';
 
 const useBAIDeviceMetaData = () => {
   const { logger } = useBAILogger();
+  // `use` cannot be called inside try/catch, so read the context first.
+  const context = use(BAIDeviceMetaDataContext);
   try {
-    const context = useContext(BAIDeviceMetaDataContext);
     if (!context) {
       throw new Error(
         'useBAIDeviceMetaData must be used within a BAIMetaDataProvider',

@@ -11,6 +11,7 @@ import {
 } from './reactQueryAlias';
 import { useBAISettingUserState, UserSettings } from './useBAISetting';
 import {
+  ImageMetaData,
   ResourceSlotDetail,
   useUpdatableState,
   useViewer,
@@ -39,8 +40,7 @@ export type KnownAcceleratorResourceSlotName =
   (typeof knownAcceleratorResourceSlotNames)[number];
 
 export type ResourceSlotName =
-  | BaseResourceSlotName
-  | KnownAcceleratorResourceSlotName;
+  BaseResourceSlotName | KnownAcceleratorResourceSlotName;
 export interface QuotaScope {
   id: string;
   quota_scope_id: string;
@@ -80,6 +80,22 @@ export const useDeviceMetaData = (key = 'first') => {
         .then((response) => response.json())
         .then((result) => result?.deviceInfo);
     },
+    staleTime: 1000 * 60 * 60 * 24,
+  });
+};
+
+export const useImageMetaData = () => {
+  return useTanQuery<ImageMetaData>({
+    // Share the cache entry with the legacy `useBackendAIImageMetaData`
+    // (react/src/hooks/index.tsx) so `image_metadata.json` is fetched only
+    // once while both hooks coexist. Keep queryKey/retry in sync with it.
+    queryKey: ['backendai-metadata-for-suspense'],
+    queryFn: () => {
+      return fetch('resources/image_metadata.json').then((response) =>
+        response.json(),
+      );
+    },
+    retry: false,
     staleTime: 1000 * 60 * 60 * 24,
   });
 };

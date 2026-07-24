@@ -1,13 +1,14 @@
 import useBAILogger from '../../../../hooks/useBAILogger';
 import { BAIAnonymousClientContext } from '../context';
 import { BAIClient } from '../types';
-import { useContext } from 'react';
+import { use } from 'react';
 
 const useBAIAnonymousClient = (apiEndpoint: string): BAIClient => {
   const { logger } = useBAILogger();
+  // `use` cannot be called inside try/catch, so read the context first.
+  const baiAnonymousClient = use(BAIAnonymousClientContext);
 
   try {
-    const baiAnonymousClient = useContext(BAIAnonymousClientContext);
     if (!baiAnonymousClient) {
       throw new Error(
         'useBAIAnonymousClient must be used within a BAIClientProvider',

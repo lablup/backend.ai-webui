@@ -144,6 +144,8 @@ export type {
   BAIDeploymentStatus,
 } from './BAIDeploymentStatusTag';
 export { default as BAIIntervalView } from './BAIIntervalView';
+export { default as BAIImageMetaIcon } from './BAIImageMetaIcon';
+export type { BAIImageMetaIconProps } from './BAIImageMetaIcon';
 export { default as BAIDoubleTag } from './BAIDoubleTag';
 export type { DoubleTagObjectValue, BAIDoubleTagProps } from './BAIDoubleTag';
 export { default as BAIProgressWithLabel } from './BAIProgressWithLabel';
