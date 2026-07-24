@@ -508,7 +508,12 @@ export async function moveToTrashAndVerify(
   // button would retry until the entire 180s test timeout, hanging the caller.
   // The best-effort sweep relies on this assertion failing fast (a catchable
   // error) so it can skip the un-deletable row instead of stranding cleanup.
-  const moveToTrashButton = folderRow.getByRole('button', { name: 'delete' });
+  // BAINameActionCell now sets aria-label={action.title} unconditionally
+  // (PR #8320); the move-to-trash action's title is
+  // t('data.folders.MoveToTrash') = "Move to trash bin", not "delete".
+  const moveToTrashButton = folderRow.getByRole('button', {
+    name: 'Move to trash bin',
+  });
   await expect(moveToTrashButton).toBeEnabled({ timeout: 10000 });
   await moveToTrashButton.click();
   // The "Move to trash" confirmation modal uses a standardized "Confirm"
