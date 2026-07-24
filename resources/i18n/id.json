@@ -2214,6 +2214,7 @@
     "SystemRoleNoAssignments": "Peran yang dibuat secara otomatis oleh sistem tidak dapat memiliki pengguna yang ditetapkan atau dihapus secara langsung.",
     "UserAlreadyAssigned": "Pengguna sudah ditetapkan ke peran ini.",
     "UserAssigned": "Pengguna berhasil ditetapkan ke peran.",
+    "UserAssignmentsPartialFailureDescription": "Beberapa penetapan pengguna gagal. Silakan periksa itemnya.",
     "UserNotAssigned": "Pengguna tidak ditetapkan ke peran ini.",
     "UserRevoked": "Pengguna berhasil dihapus dari peran.",
     "UsersAssigned": "Pengguna berhasil ditetapkan ke peran.",

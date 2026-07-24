@@ -2213,6 +2213,7 @@
     "SystemRoleNoAssignments": "Bei Rollen, die automatisch vom System erstellt wurden, können Benutzer nicht direkt zugewiesen oder entfernt werden.",
     "UserAlreadyAssigned": "Benutzer ist dieser Rolle bereits zugewiesen.",
     "UserAssigned": "Benutzer wurde der Rolle erfolgreich zugewiesen.",
+    "UserAssignmentsPartialFailureDescription": "Einige Benutzerzuweisungen sind fehlgeschlagen. Bitte überprüfen Sie die Einträge.",
     "UserNotAssigned": "Benutzer ist dieser Rolle nicht zugewiesen.",
     "UserRevoked": "Benutzer wurde erfolgreich aus der Rolle entfernt.",
     "UsersAssigned": "Benutzer wurden der Rolle erfolgreich zugewiesen.",

@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { RoleAssignmentTabBulkAssignMutation } from '../__generated__/RoleAssignmentTabBulkAssignMutation.graphql';
 import { RoleAssignmentTabBulkRevokeMutation } from '../__generated__/RoleAssignmentTabBulkRevokeMutation.graphql';
 import { RoleAssignmentTabFragment$key } from '../__generated__/RoleAssignmentTabFragment.graphql';
 import {
@@ -32,7 +31,7 @@ import * as _ from 'lodash-es';
 import { PlusIcon } from 'lucide-react';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useRefetchableFragment, useMutation } from 'react-relay';
+import { graphql, useRefetchableFragment } from 'react-relay';
 
 type AssignmentOrder =
   | 'EMAIL_ASC'
@@ -137,26 +136,6 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
       ? data.firstScope.edges[0].node.scopeId
       : undefined;
 
-  const [commitBulkAssignRole, isInFlightBulkAssign] =
-    useMutation<RoleAssignmentTabBulkAssignMutation>(graphql`
-      mutation RoleAssignmentTabBulkAssignMutation(
-        $input: BulkAssignRoleInput!
-      ) {
-        adminBulkAssignRole(input: $input) {
-          assigned {
-            id
-            userId
-            grantedBy
-            grantedAt
-          }
-          failed {
-            userId
-            message
-          }
-        }
-      }
-    `);
-
   const mutateBulkRevokeRole =
     useMutationWithPromise<RoleAssignmentTabBulkRevokeMutation>(graphql`
       mutation RoleAssignmentTabBulkRevokeMutation(
@@ -213,48 +192,6 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
 
   const handleRefresh = () => {
     doRefetch();
-  };
-
-  const handleBulkAssign = (userIds: string[]) => {
-    commitBulkAssignRole({
-      variables: {
-        input: {
-          userIds,
-          roleId,
-          ...(projectScopeId ? { projectId: projectScopeId } : {}),
-        },
-      },
-      onCompleted: (data, errors) => {
-        if (errors && errors.length > 0) {
-          logger.error(errors[0]);
-          message.error(errors[0]?.message || t('general.ErrorOccurred'));
-          return;
-        }
-        const failed = data.adminBulkAssignRole?.failed ?? [];
-        if (failed.length > 0) {
-          message.warning(
-            t('rbac.BulkAssignPartialFailure', { count: failed.length }),
-          );
-          _.forEach(failed, (item) =>
-            upsertNotification({
-              key: `rbac-bulk-assign-failed-${item.userId}`,
-              open: true,
-              duration: 0,
-              type: 'error',
-              message: item.message,
-            }),
-          );
-        } else {
-          message.success(t('rbac.UsersAssigned'));
-        }
-        setIsAssignModalOpen(false);
-        handleRefresh();
-      },
-      onError: (error) => {
-        logger.error(error);
-        message.error(error?.message || t('general.ErrorOccurred'));
-      },
-    });
   };
 
   const handleBulkRevoke = (userIds: string[]) => {
@@ -406,12 +343,12 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
       />
       <AssignRoleModal
         open={isAssignModalOpen}
-        confirmLoading={isInFlightBulkAssign}
-        onRequestClose={(userIds) => {
-          if (userIds) {
-            handleBulkAssign(userIds);
-          } else {
-            setIsAssignModalOpen(false);
+        roleId={roleId}
+        projectId={projectScopeId}
+        onRequestClose={(success) => {
+          setIsAssignModalOpen(false);
+          if (success) {
+            handleRefresh();
           }
         }}
       />

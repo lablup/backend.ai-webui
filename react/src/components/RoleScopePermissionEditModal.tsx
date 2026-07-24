@@ -15,6 +15,7 @@ import {
   RoleScopePermissionEditModal_scopesFragment$data,
   RoleScopePermissionEditModal_scopesFragment$key,
 } from '../__generated__/RoleScopePermissionEditModal_scopesFragment.graphql';
+import { reasonMessage } from '../helper/mutationError';
 import {
   applyBulkPermissionCells,
   type BulkCellState,
@@ -75,27 +76,6 @@ interface EditingScope {
   scopeId: string;
   scopeName?: string | null;
 }
-
-// useMutationWithPromise rejects GraphQL-level failures with the raw
-// PayloadError[], so unwrap per-error messages instead of String().
-const reasonMessage = (reason: unknown): string => {
-  if (reason instanceof Error) {
-    return reason.message;
-  }
-  if (Array.isArray(reason)) {
-    const messages = reason
-      .map((item) =>
-        item !== null && typeof item === 'object' && 'message' in item
-          ? String(item.message)
-          : String(item),
-      )
-      .filter(Boolean);
-    if (messages.length > 0) {
-      return messages.join('\n');
-    }
-  }
-  return String(reason);
-};
 
 /**
  * One failed bulk request, shaped for the shared `BAIBulkErrorModal` table —

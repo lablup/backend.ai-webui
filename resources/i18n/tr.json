@@ -2211,6 +2211,7 @@
     "SystemRoleNoAssignments": "Sistem tarafından otomatik olarak oluşturulan rollere kullanıcılar doğrudan atanamaz veya rolden çıkarılamaz.",
     "UserAlreadyAssigned": "Kullanıcı zaten bu role atanmış.",
     "UserAssigned": "Kullanıcı role başarıyla atandı.",
+    "UserAssignmentsPartialFailureDescription": "Bazı kullanıcı atamaları başarısız oldu. Lütfen öğeleri kontrol edin.",
     "UserNotAssigned": "Kullanıcı bu role atanmamış.",
     "UserRevoked": "Kullanıcı rolden başarıyla kaldırıldı.",
     "UsersAssigned": "Kullanıcılar role başarıyla atandı.",

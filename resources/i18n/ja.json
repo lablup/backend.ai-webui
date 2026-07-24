@@ -2213,6 +2213,7 @@
     "SystemRoleNoAssignments": "システムによって自動的に作成されたロールには、ユーザーを直接割り当てたり外したりすることはできません。",
     "UserAlreadyAssigned": "ユーザーはすでにこのロールに割り当てられています。",
     "UserAssigned": "ユーザーがロールに正常に割り当てられました。",
+    "UserAssignmentsPartialFailureDescription": "一部のユーザー割り当てに失敗しました。項目を確認してください。",
     "UserNotAssigned": "ユーザーはこのロールに割り当てられていません。",
     "UserRevoked": "ユーザーがロールから正常に削除されました。",
     "UsersAssigned": "ユーザーがロールに正常に割り当てられました。",

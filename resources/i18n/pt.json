@@ -2213,6 +2213,7 @@
     "SystemRoleNoAssignments": "Funções criadas automaticamente pelo sistema não podem ter utilizadores atribuídos ou removidos diretamente.",
     "UserAlreadyAssigned": "O utilizador já está atribuído a esta função.",
     "UserAssigned": "Utilizador atribuído à função com sucesso.",
+    "UserAssignmentsPartialFailureDescription": "Algumas atribuições de utilizadores falharam. Verifique os itens.",
     "UserNotAssigned": "O utilizador não está atribuído a esta função.",
     "UserRevoked": "Utilizador removido da função com sucesso.",
     "UsersAssigned": "Utilizadores atribuídos à função com sucesso.",
