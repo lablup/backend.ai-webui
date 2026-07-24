@@ -130,9 +130,11 @@ test.describe(
       await expect(
         firstRow.getByRole('button', { name: 'delete' }),
       ).toBeVisible();
-      // Rescan (sync icon)
+      // Rescan. BAINameActionCell exposes the action's `title` (not the icon
+      // name) as the button's accessible name; the rescan action's title is
+      // t('maintenance.RescanImages') = "Rescan Images".
       await expect(
-        firstRow.getByRole('button', { name: 'sync' }),
+        firstRow.getByRole('button', { name: 'Rescan Images' }),
       ).toBeVisible();
     });
   },
@@ -700,26 +702,35 @@ test.describe(
     test('Admin can clear the filter tag and restore the full registry list', async ({
       page,
     }) => {
-      // Get unfiltered row count
-      const unfilteredRows = page.locator('.ant-table-tbody .ant-table-row');
-      const unfilteredCount = await unfilteredRows.count();
+      // Pick an anchor row the "cr" filter will exclude before filtering:
+      // its disappear/reappear proves a genuine refetch, where row counts
+      // can't tell a restored list from a stale filtered render. Volatile
+      // e2e-created registries (concurrent CRUD suite) are ineligible.
+      const rows = page.locator('.ant-table-tbody .ant-table-row');
+      const rowNames = await rows.locator('td:first-child').allInnerTexts();
+      const anchorName = rowNames.find(
+        (name) => name && !/cr/i.test(name) && !name.startsWith('e2e-'),
+      );
+      test.skip(
+        !anchorName,
+        'Needs a stable registry whose name does not contain "cr" to verify the list is restored after clearing the filter',
+      );
+      const anchorRow = rows.filter({ hasText: anchorName });
 
-      // Apply filter
+      // Apply filter — the anchor row must be filtered out
       await applyRegistryFilter(page, 'cr');
       const filterTag = page
         .locator('.ant-tag')
         .filter({ has: page.locator('[aria-label="Close"]') })
         .filter({ hasText: 'Registry Name: cr' });
       await expect(filterTag).toBeVisible();
+      await expect(anchorRow).toBeHidden();
 
       // Remove the filter tag
       await removeRegistryFilterTag(page, 'Registry Name: cr');
       await expect(filterTag).toBeHidden();
 
-      // Table shows full list again
-      const restoredRows = page.locator('.ant-table-tbody .ant-table-row');
-      const restoredCount = await restoredRows.count();
-      expect(restoredCount).toBeGreaterThanOrEqual(unfilteredCount);
+      await expect(anchorRow.first()).toBeVisible({ timeout: 10000 });
     });
 
     // 4.4

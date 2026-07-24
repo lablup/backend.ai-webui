@@ -508,9 +508,9 @@ export async function moveToTrashAndVerify(
   // button would retry until the entire 180s test timeout, hanging the caller.
   // The best-effort sweep relies on this assertion failing fast (a catchable
   // error) so it can skip the un-deletable row instead of stranding cleanup.
-  // BAINameActionCell now sets aria-label={action.title} unconditionally
-  // (PR #8320); the move-to-trash action's title is
-  // t('data.folders.MoveToTrash') = "Move to trash bin", not "delete".
+  // BAINameActionCell exposes the action's `title` (not the icon name) as the
+  // button's accessible name; the "Move to trash" action's title is
+  // t('data.folders.MoveToTrash') = "Move to trash bin".
   const moveToTrashButton = folderRow.getByRole('button', {
     name: 'Move to trash bin',
   });
