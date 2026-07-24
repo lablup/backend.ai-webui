@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-07-09
+> **Last Updated:** 2026-07-21
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -298,15 +298,33 @@
 
 ### 7b. Deployment — Add Revision (`/deployments/:deploymentId`)
 
-**Test files:** [`e2e/serving/add-revision-manual-image.spec.ts`](serving/add-revision-manual-image.spec.ts) (integration; requires a live backend with an existing deployment)
+**Test files:**
+
+- [`e2e/serving/add-revision-manual-image.spec.ts`](serving/add-revision-manual-image.spec.ts) (integration; requires a live backend with an existing deployment)
+- [`e2e/serving/add-revision-command-shell.spec.ts`](serving/add-revision-command-shell.spec.ts) (hybrid mock — real deployment shell + live model folder, modal-internal GraphQL stubbed; FR-3205)
+- [`e2e/serving/add-revision-runtime-defaults.spec.ts`](serving/add-revision-runtime-defaults.spec.ts) (hybrid mock — real deployment shell, runtime-variant / defaults GraphQL stubbed; FR-3342)
+
+**Shared drivers / mocks:** [`e2e/serving/add-revision-support.ts`](serving/add-revision-support.ts), [`e2e/serving/mocking/add-revision-mock.ts`](serving/mocking/add-revision-mock.ts)
 
 **Modal:** `DeploymentAddRevisionModal` (Advanced/Custom mode)
 
-| Feature                                                                      | Status | Test                                                                     |
-| ---------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------ |
-| Manual image name accepted → revision mutation carries resolved id (FR-3278) | ✅     | `a manually entered image is accepted and submitted as a resolved image` |
+| Feature                                                                                            | Status | Test                                                                                                        |
+| -------------------------------------------------------------------------------------------------- | ------ | ----------------------------------------------------------------------------------------------------------- |
+| Manual image name accepted → revision mutation carries resolved id (FR-3278)                       | ✅     | `a manually entered image is accepted and submitted as a resolved image`                                    |
+| Custom-mode Start Command: Execution (Shell/Exec) + Shell input appear only in Advanced (FR-3205)  | ✅     | `Admin sees Execution and Shell controls only after switching the command to Advanced mode`                 |
+| Start Command is optional — empty submit reaches the mutation (FR-3205)                            | ✅     | `Admin can add a revision with an empty Start Command (the command is optional)`                            |
+| Raw command sent verbatim (no tokenization) + shell omitted in Basic mode (FR-3205)                | ✅     | `Admin submits the raw command verbatim and omits shell in Basic mode`                                      |
+| Advanced Shell mode submits `shell` = the chosen shell binary (FR-3205)                            | ✅     | `Admin submits shell = the chosen shell binary when Advanced Shell mode overrides it`                       |
+| Advanced Exec mode submits `shell` = null (FR-3205)                                                | ✅     | `Admin submits shell = null in Advanced Exec mode`                                                          |
+| Model Definition File Path restored under Advanced Settings, optional (FR-3205)                    | ✅     | `Admin finds the restored Model Definition File Path under Advanced Settings`                               |
+| Config-reading variant shows Service Configuration; hides runtime-parameter presets (FR-3342)      | ✅     | `Admin sees the Service Configuration section for a config-reading variant (custom)`                        |
+| Non-config-reading variant shows runtime presets + default-command warning note (FR-3342)          | ✅     | `Admin sees runtime-parameter presets and the default-command note for a non-config-reading variant (vllm)` |
+| DB `defaultModelDefinition` drives command / port / health-check placeholders (FR-3342)            | ✅     | `Admin sees the variant defaultModelDefinition fill the command / port / health-check placeholders`         |
+| vfolder `model-definition.yaml` overrides DB-default placeholders (two-layer precedence) (FR-3342) | ✅     | `Admin sees a selected model folder’s model-definition.yaml override the DB-default … placeholders`         |
+| Model Definition File Path value does not feed back into the command placeholder (FR-3342)         | ✅     | `Admin sees the Model Definition File Path leave the command placeholder unchanged`                         |
+| Old-manager name-based `readsVfolderConfigFiles` fallback (prefill path)                           | ⏸️     | `test.fixme` — unreachable from a fresh variant select; deferred to a full DeploymentDetailPageQuery mock   |
 
-**Coverage: 🔶 1 feature (regression guard for FR-3278)**
+**Coverage: ✅ 11 features (FR-3278 regression guard + FR-3205 Start Command redesign + FR-3342 runtime-variant defaults); 1 deferred (`test.fixme`)**
 
 ---
 
