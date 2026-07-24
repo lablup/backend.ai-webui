@@ -453,6 +453,7 @@
     "Attachments": "Anexos",
     "CannotFindModel": "Modelos LLM não encontrados. Verifique o caminho de base e a compatibilidade do token com o OpenAI e, em seguida, prima \"Atualizar modelos",
     "CompareWithOtherModels": "Compare com outros modelos",
+    "ConnectingToModelServer": "A ligar ao servidor do modelo… (até 30 s)",
     "CreateCompareChat": "Adicionar chat de comparação",
     "DeleteChatHistory": "Conversa clara",
     "DeleteChattingSession": "Eliminar Chat",

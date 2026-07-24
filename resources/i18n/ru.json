@@ -453,6 +453,7 @@
     "Attachments": "Вложения",
     "CannotFindModel": "Модели LLM не найдены. Проверьте путь к базе и совместимость токена с OpenAI, затем нажмите 'Refresh Models'.",
     "CompareWithOtherModels": "Сравнить с другими моделями",
+    "ConnectingToModelServer": "Подключение к серверу модели… (до 30 с)",
     "CreateCompareChat": "Добавить чат для сравнения",
     "DeleteChatHistory": "Четкий чат",
     "DeleteChattingSession": "Удалить чат",

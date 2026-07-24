@@ -453,6 +453,7 @@
     "Attachments": "Tệp đính kèm",
     "CannotFindModel": "Các mô hình LLM không tìm thấy. \nXác minh đường dẫn cơ sở và khả năng tương thích mã thông báo với OpenAI, sau đó nhấn 'Làm mới các mô hình'",
     "CompareWithOtherModels": "So sánh với các mô hình khác",
+    "ConnectingToModelServer": "Đang kết nối với máy chủ mô hình… (tối đa 30 giây)",
     "CreateCompareChat": "Thêm cuộc trò chuyện so sánh",
     "DeleteChatHistory": "Trò chuyện rõ ràng",
     "DeleteChattingSession": "Xóa trò chuyện",

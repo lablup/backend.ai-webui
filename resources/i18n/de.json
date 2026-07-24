@@ -453,6 +453,7 @@
     "Attachments": "Anhänge",
     "CannotFindModel": "LLM-Modelle nicht gefunden. Überprüfen Sie den Basispfad und die Token-Kompatibilität mit OpenAI und drücken Sie dann auf \"Modelle aktualisieren\".",
     "CompareWithOtherModels": "Vergleichen Sie mit anderen Modellen",
+    "ConnectingToModelServer": "Verbindung zum Modellserver wird hergestellt… (bis zu 30 s)",
     "CreateCompareChat": "Vergleichs-Chat hinzufügen",
     "DeleteChatHistory": "Chat löschen",
     "DeleteChattingSession": "Chat löschen",

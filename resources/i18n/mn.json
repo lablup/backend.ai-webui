@@ -453,6 +453,7 @@
     "Attachments": "Хавсралтууд",
     "CannotFindModel": "Llm загварууд олдсонгүй. \nOpenai-тай баазын болон токентай нийцтэй байдлыг баталгаажуул, дараа нь 'Reedesh Models' товчийг дарна уу.",
     "CompareWithOtherModels": "Бусад загваруудтай харьцуул",
+    "ConnectingToModelServer": "Загварын серверт холбогдож байна… (30 секунд хүртэл)",
     "CreateCompareChat": "Харьцуулах чатыг нэмэх",
     "DeleteChatHistory": "Цэвэр яриа",
     "DeleteChattingSession": "Унцыг устгана уу",

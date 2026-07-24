@@ -453,6 +453,7 @@
     "Attachments": "Ekler",
     "CannotFindModel": "LLM modelleri bulunamadı. OpenAI ile temel yolu ve belirteç uyumluluğunu doğrulayın, ardından 'Modelleri Yenile' düğmesine basın",
     "CompareWithOtherModels": "Diğer modellerle karşılaştırın",
+    "ConnectingToModelServer": "Model sunucusuna bağlanılıyor… (en fazla 30 sn)",
     "CreateCompareChat": "Karşılaştırma sohbeti ekleyin",
     "DeleteChatHistory": "Açık Sohbet",
     "DeleteChattingSession": "Sohbeti Sil",

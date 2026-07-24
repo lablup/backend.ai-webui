@@ -453,6 +453,7 @@
     "Attachments": "Συνημμένα",
     "CannotFindModel": "Τα μοντέλα LLM δεν βρέθηκαν. Επαληθεύστε τη διαδρομή βάσης και τη συμβατότητα του token με το OpenAI και, στη συνέχεια, πατήστε 'Ανανέωση μοντέλων'.",
     "CompareWithOtherModels": "Συγκρίνετε με άλλα μοντέλα",
+    "ConnectingToModelServer": "Σύνδεση με τον διακομιστή μοντέλου… (έως 30 δευτ.)",
     "CreateCompareChat": "Προσθέστε συνομιλία σύγκρισης",
     "DeleteChatHistory": "Καθαρή συνομιλία",
     "DeleteChattingSession": "Διαγραφή συνομιλίας",
