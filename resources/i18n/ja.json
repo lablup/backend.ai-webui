@@ -999,6 +999,7 @@
   },
   "deployment": {
     "AccessToken": "アクセストークン",
+    "AccessTokenSettings": "アクセストークンの設定",
     "AccessTokens": "アクセストークン",
     "ActivePool": "アクティブプール",
     "ActivePoolDescription": "App Proxy を通じてトラフィックを受信中のレプリカです。",

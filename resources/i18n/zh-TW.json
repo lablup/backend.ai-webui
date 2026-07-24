@@ -1000,6 +1000,7 @@
   },
   "deployment": {
     "AccessToken": "存取令牌",
+    "AccessTokenSettings": "存取令牌設置",
     "AccessTokens": "存取令牌",
     "ActivePool": "活躍池",
     "ActivePoolDescription": "目前透過 App Proxy 接收流量的副本。",

@@ -999,6 +999,7 @@
   },
   "deployment": {
     "AccessToken": "访问令牌",
+    "AccessTokenSettings": "访问令牌设置",
     "AccessTokens": "访问令牌",
     "ActivePool": "活跃池",
     "ActivePoolDescription": "当前通过 App Proxy 接收流量的副本。",

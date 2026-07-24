@@ -999,6 +999,7 @@
   },
   "deployment": {
     "AccessToken": "Token dostępu",
+    "AccessTokenSettings": "Ustawienia tokenu dostępu",
     "AccessTokens": "Tokeny dostępu",
     "ActivePool": "Aktywna pula",
     "ActivePoolDescription": "Repliki aktualnie odbierające ruch przez App Proxy.",

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b4c2bd16d169a3749d9ec76613a28da2>>
+ * @generated SignedSource<<80cec6642b351d05b7d470658e2cbe36>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,7 +18,6 @@ export type EndpointTokenSelectQuery$data = {
   readonly endpoint_token_list: Result<{
     readonly items: ReadonlyArray<{
       readonly created_at: string;
-      readonly id: string | null | undefined;
       readonly token: string;
       readonly valid_until: string | null | undefined;
     } | null | undefined>;
@@ -42,70 +41,42 @@ var v0 = [
     "name": "isEmptyEndpointId"
   }
 ],
-v1 = {
+v1 = [
+  {
+    "kind": "Variable",
+    "name": "endpoint_id",
+    "variableName": "endpointId"
+  },
+  {
+    "kind": "Literal",
+    "name": "limit",
+    "value": 100
+  },
+  {
+    "kind": "Literal",
+    "name": "offset",
+    "value": 0
+  }
+],
+v2 = {
   "alias": null,
-  "args": [
-    {
-      "kind": "Variable",
-      "name": "endpoint_id",
-      "variableName": "endpointId"
-    },
-    {
-      "kind": "Literal",
-      "name": "limit",
-      "value": 100
-    },
-    {
-      "kind": "Literal",
-      "name": "offset",
-      "value": 0
-    }
-  ],
-  "concreteType": "EndpointTokenList",
-  "kind": "LinkedField",
-  "name": "endpoint_token_list",
-  "plural": false,
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "EndpointToken",
-      "kind": "LinkedField",
-      "name": "items",
-      "plural": true,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "id",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "token",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "created_at",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "valid_until",
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    }
-  ],
+  "args": null,
+  "kind": "ScalarField",
+  "name": "token",
+  "storageKey": null
+},
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "created_at",
+  "storageKey": null
+},
+v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "valid_until",
   "storageKey": null
 };
 return {
@@ -117,7 +88,31 @@ return {
     "selections": [
       {
         "kind": "CatchField",
-        "field": (v1/*: any*/),
+        "field": {
+          "alias": null,
+          "args": (v1/*: any*/),
+          "concreteType": "EndpointTokenList",
+          "kind": "LinkedField",
+          "name": "endpoint_token_list",
+          "plural": false,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "EndpointToken",
+              "kind": "LinkedField",
+              "name": "items",
+              "plural": true,
+              "selections": [
+                (v2/*: any*/),
+                (v3/*: any*/),
+                (v4/*: any*/)
+              ],
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        },
         "to": "RESULT"
       }
     ],
@@ -130,20 +125,51 @@ return {
     "kind": "Operation",
     "name": "EndpointTokenSelectQuery",
     "selections": [
-      (v1/*: any*/)
+      {
+        "alias": null,
+        "args": (v1/*: any*/),
+        "concreteType": "EndpointTokenList",
+        "kind": "LinkedField",
+        "name": "endpoint_token_list",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "EndpointToken",
+            "kind": "LinkedField",
+            "name": "items",
+            "plural": true,
+            "selections": [
+              (v2/*: any*/),
+              (v3/*: any*/),
+              (v4/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "id",
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
     ]
   },
   "params": {
-    "cacheID": "f8777131f4094de086beaa0e11d6ae09",
+    "cacheID": "84d011fac998c133366cc63a2a96a765",
     "id": null,
     "metadata": {},
     "name": "EndpointTokenSelectQuery",
     "operationKind": "query",
-    "text": "query EndpointTokenSelectQuery(\n  $endpointId: UUID!\n  $isEmptyEndpointId: Boolean!\n) {\n  endpoint_token_list(offset: 0, limit: 100, endpoint_id: $endpointId) @skipOnClient(if: $isEmptyEndpointId) {\n    items {\n      id\n      token\n      created_at\n      valid_until\n    }\n  }\n}\n"
+    "text": "query EndpointTokenSelectQuery(\n  $endpointId: UUID!\n  $isEmptyEndpointId: Boolean!\n) {\n  endpoint_token_list(offset: 0, limit: 100, endpoint_id: $endpointId) @skipOnClient(if: $isEmptyEndpointId) {\n    items {\n      token\n      created_at\n      valid_until\n      id\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "839fdaad7009de6f1d8dc79de4e35a3d";
+(node as any).hash = "9268ac6db314e38aa00ab7825531aae6";
 
 export default node;
