@@ -29,6 +29,7 @@ import {
   loginWithSAML,
   loginWithOpenID,
 } from '../helper/loginSessionAuth';
+import { resolveInitialLanguage } from '../helper/resolveInitialLanguage';
 import { useLoginOrchestration } from '../hooks/useLoginOrchestration';
 import {
   useInitializeConfig,
@@ -42,6 +43,7 @@ import { jotaiStore } from './DefaultProviders';
 import LoginFormPanel from './LoginFormPanel';
 import { App, Button, ConfigProvider, Form, type MenuProps, Tag } from 'antd';
 import { BAIModal, BAIFlex, useBAILogger } from 'backend.ai-ui';
+import i18n from 'i18next';
 import { useAtomValue, useSetAtom } from 'jotai';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -260,54 +262,30 @@ const LoginView: React.FC<{
   }, []);
 
   // Language initialization: bridge selected_language -> general.language
-  // (replaces Lit shell's connectedCallback language setup)
+  // (replaces Lit shell's connectedCallback language setup).
+  //
+  // Shares its supported-language list and detection logic with i18n init
+  // in `DefaultProviders.tsx` via `resolveInitialLanguage`, so the login
+  // screen renders in the browser's language on first paint even when no
+  // value has been persisted yet (incognito / first-visit).
   useEffect(() => {
-    const supportLanguageCodes = [
-      'en',
-      'ko',
-      'de',
-      'el',
-      'es',
-      'fi',
-      'fr',
-      'id',
-      'it',
-      'ja',
-      'mn',
-      'ms',
-      'pl',
-      'pt',
-      'pt-BR',
-      'ru',
-      'th',
-      'tr',
-      'vi',
-      'zh-CN',
-      'zh-TW',
-    ];
+    // `selected_language` is the "user explicitly chose this" signal that
+    // overrides browser detection. If it isn't an explicit supported
+    // choice, fall back to browser detection via the shared helper.
     const selectedLang = (globalThis as any).backendaioptions?.get(
       'selected_language',
     );
+    const lang = resolveInitialLanguage(selectedLang);
 
-    // Try full locale first (e.g., 'zh-CN'), then base language (e.g., 'zh')
-    const browserLang = globalThis.navigator.language;
-    let defaultLang: string;
-    if (supportLanguageCodes.includes(browserLang)) {
-      defaultLang = browserLang;
-    } else {
-      const baseLang = browserLang.split('-')[0];
-      defaultLang = supportLanguageCodes.includes(baseLang) ? baseLang : 'en';
-    }
-
-    let lang: string;
-    if (!selectedLang || selectedLang === 'default') {
-      lang = defaultLang;
-    } else {
-      lang = supportLanguageCodes.includes(selectedLang)
-        ? selectedLang
-        : defaultLang;
-    }
     (globalThis as any).backendaioptions.set('language', lang, 'general');
+
+    // Defensive sync: i18n was already initialized with the same resolver
+    // in DefaultProviders.tsx, so this usually matches. Trigger a switch
+    // only when it doesn't (e.g. a stored explicit choice was added between
+    // init and mount).
+    if (i18n.language !== lang) {
+      i18n.changeLanguage(lang);
+    }
   }, []);
 
   const notification = useCallback((text: string, detail?: string) => {
