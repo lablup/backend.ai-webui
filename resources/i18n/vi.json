@@ -2180,6 +2180,7 @@
     "PermissionNotAssignable": "Quyền này không thể được gán.",
     "PermissionType": "Loại quyền",
     "Permissions": "Quyền",
+    "PermissionsPartialFailureCounts": "(Thành công: {{succeeded}}, Thất bại: {{failed}})",
     "PermissionsPartialFailureDescription": "Một số thay đổi quyền không thành công. Vui lòng kiểm tra các mục.",
     "PermissionsSaved": "Đã lưu quyền thành công.",
     "PleaseSelectUsers": "Vui lòng chọn ít nhất một người dùng.",

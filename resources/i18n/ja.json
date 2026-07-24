@@ -2180,6 +2180,7 @@
     "PermissionNotAssignable": "この権限は割り当てできません。",
     "PermissionType": "権限タイプ",
     "Permissions": "権限",
+    "PermissionsPartialFailureCounts": "(成功: {{succeeded}}, 失敗: {{failed}})",
     "PermissionsPartialFailureDescription": "一部の権限設定に失敗しました。項目を確認してください。",
     "PermissionsSaved": "権限を保存しました。",
     "PleaseSelectUsers": "少なくとも1人のユーザーを選択してください。",

@@ -2178,6 +2178,7 @@
     "PermissionNotAssignable": "Αυτό το δικαίωμα δεν μπορεί να ανατεθεί.",
     "PermissionType": "Τύπος δικαιώματος",
     "Permissions": "Δικαιώματα",
+    "PermissionsPartialFailureCounts": "(Επιτυχία: {{succeeded}}, Αποτυχία: {{failed}})",
     "PermissionsPartialFailureDescription": "Ορισμένες αλλαγές δικαιωμάτων απέτυχαν. Ελέγξτε τα στοιχεία.",
     "PermissionsSaved": "Τα δικαιώματα αποθηκεύτηκαν με επιτυχία.",
     "PleaseSelectUsers": "Παρακαλώ επιλέξτε τουλάχιστον έναν χρήστη.",

@@ -446,6 +446,9 @@ const RoleScopePermissionEditModal: React.FC<
   const [failedRequests, setFailedRequests] = useState<
     FailedPermissionRequest[]
   >([]);
+  // How many of the last save's requests the backend accepted — shown next to
+  // the partial-failure notice as "(Success: n, Failed: m)".
+  const [succeededRequestCount, setSucceededRequestCount] = useState(0);
 
   const operationLabel = (operation: string) =>
     t(`rbac.operations.${operation}`, { defaultValue: operation });
@@ -679,6 +682,10 @@ const RoleScopePermissionEditModal: React.FC<
       // Immediate failure notice as a toast on top of the detail modal — the
       // modal carries the per-request table, the message the at-a-glance cue.
       message.error(t('rbac.PermissionsPartialFailureDescription'));
+      // Every request is either a failure row or accepted by the backend.
+      setSucceededRequestCount(
+        createEntries.length + deleteEntries.length - failures.length,
+      );
       setFailedRequests(failures);
       // An empty-string field error flags the failed cells (= field names)
       // with error status without printing a message under the cell — an
@@ -870,7 +877,22 @@ const RoleScopePermissionEditModal: React.FC<
           open behind it for a retry. */}
       <BAIBulkErrorModal<FailedPermissionRequest>
         open={!_.isEmpty(failedRequests)}
-        alertDescription={t('rbac.PermissionsPartialFailureDescription')}
+        alertDescription={
+          <>
+            {t('rbac.PermissionsPartialFailureDescription')}{' '}
+            <Typography.Text
+              style={{
+                color: token.colorTextSecondary,
+                fontSize: token.fontSizeSM,
+              }}
+            >
+              {t('rbac.PermissionsPartialFailureCounts', {
+                succeeded: succeededRequestCount,
+                failed: failedRequests.length,
+              })}
+            </Typography.Text>
+          </>
+        }
         dataSource={failedRequests}
         onRequestClose={() => setFailedRequests([])}
         columns={[

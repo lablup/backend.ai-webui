@@ -2180,6 +2180,7 @@
     "PermissionNotAssignable": "Diese Berechtigung kann nicht zugewiesen werden.",
     "PermissionType": "Berechtigungstyp",
     "Permissions": "Berechtigungen",
+    "PermissionsPartialFailureCounts": "(Erfolgreich: {{succeeded}}, Fehlgeschlagen: {{failed}})",
     "PermissionsPartialFailureDescription": "Einige Berechtigungsänderungen sind fehlgeschlagen. Bitte überprüfen Sie die Einträge.",
     "PermissionsSaved": "Berechtigungen erfolgreich gespeichert.",
     "PleaseSelectUsers": "Bitte wählen Sie mindestens einen Benutzer aus.",

@@ -2180,6 +2180,7 @@
     "PermissionNotAssignable": "此权限无法分配。",
     "PermissionType": "权限类型",
     "Permissions": "权限",
+    "PermissionsPartialFailureCounts": "(成功: {{succeeded}}, 失败: {{failed}})",
     "PermissionsPartialFailureDescription": "部分权限设置失败。请检查相关条目。",
     "PermissionsSaved": "权限保存成功。",
     "PleaseSelectUsers": "请至少选择一个用户。",

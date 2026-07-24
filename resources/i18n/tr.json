@@ -2178,6 +2178,7 @@
     "PermissionNotAssignable": "Bu izin atanamaz.",
     "PermissionType": "İzin Türü",
     "Permissions": "İzinler",
+    "PermissionsPartialFailureCounts": "(Başarılı: {{succeeded}}, Başarısız: {{failed}})",
     "PermissionsPartialFailureDescription": "Bazı izin değişiklikleri başarısız oldu. Lütfen öğeleri kontrol edin.",
     "PermissionsSaved": "İzinler başarıyla kaydedildi.",
     "PleaseSelectUsers": "Lütfen en az bir kullanıcı seçin.",

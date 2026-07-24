@@ -2178,6 +2178,7 @@
     "PermissionNotAssignable": "Это разрешение нельзя назначить.",
     "PermissionType": "Тип разрешения",
     "Permissions": "Разрешения",
+    "PermissionsPartialFailureCounts": "(Успешно: {{succeeded}}, Ошибки: {{failed}})",
     "PermissionsPartialFailureDescription": "Не удалось применить некоторые изменения разрешений. Проверьте элементы.",
     "PermissionsSaved": "Разрешения успешно сохранены.",
     "PleaseSelectUsers": "Пожалуйста, выберите хотя бы одного пользователя.",

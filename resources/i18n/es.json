@@ -2178,6 +2178,7 @@
     "PermissionNotAssignable": "Este permiso no se puede asignar.",
     "PermissionType": "Tipo de permiso",
     "Permissions": "Permisos",
+    "PermissionsPartialFailureCounts": "(Éxito: {{succeeded}}, Fallidos: {{failed}})",
     "PermissionsPartialFailureDescription": "Algunos cambios de permisos han fallado. Compruebe los elementos.",
     "PermissionsSaved": "Permisos guardados correctamente.",
     "PleaseSelectUsers": "Por favor, seleccione al menos un usuario.",

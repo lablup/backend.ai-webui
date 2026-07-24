@@ -2178,6 +2178,7 @@
     "PermissionNotAssignable": "Kebenaran ini tidak boleh ditugaskan.",
     "PermissionType": "Jenis Kebenaran",
     "Permissions": "Kebenaran",
+    "PermissionsPartialFailureCounts": "(Berjaya: {{succeeded}}, Gagal: {{failed}})",
     "PermissionsPartialFailureDescription": "Beberapa perubahan kebenaran gagal. Sila semak item berkenaan.",
     "PermissionsSaved": "Kebenaran berjaya disimpan.",
     "PleaseSelectUsers": "Sila pilih sekurang-kurangnya seorang pengguna.",

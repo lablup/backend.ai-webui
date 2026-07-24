@@ -2180,6 +2180,7 @@
     "PermissionNotAssignable": "해당 권한은 할당이 불가능합니다.",
     "PermissionType": "권한 타입",
     "Permissions": "권한",
+    "PermissionsPartialFailureCounts": "(성공: {{succeeded}}, 실패: {{failed}})",
     "PermissionsPartialFailureDescription": "일부 권한 설정에 실패했습니다. 항목을 확인해주세요.",
     "PermissionsSaved": "세부 권한이 저장되었습니다.",
     "PleaseSelectUsers": "사용자를 선택해 주세요.",

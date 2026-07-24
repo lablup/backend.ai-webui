@@ -2180,6 +2180,7 @@
     "PermissionNotAssignable": "Tego uprawnienia nie można przypisać.",
     "PermissionType": "Typ uprawnienia",
     "Permissions": "Uprawnienia",
+    "PermissionsPartialFailureCounts": "(Powodzenie: {{succeeded}}, Niepowodzenie: {{failed}})",
     "PermissionsPartialFailureDescription": "Niektóre zmiany uprawnień nie powiodły się. Sprawdź pozycje.",
     "PermissionsSaved": "Uprawnienia zapisane pomyślnie.",
     "PleaseSelectUsers": "Proszę wybrać co najmniej jednego użytkownika.",

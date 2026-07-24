@@ -2165,6 +2165,7 @@
     "PermissionNotAssignable": "This permission cannot be assigned.",
     "PermissionType": "Permission Type",
     "Permissions": "Permissions",
+    "PermissionsPartialFailureCounts": "(Success: {{succeeded}}, Failed: {{failed}})",
     "PermissionsPartialFailureDescription": "Some permission changes failed. Please check the items.",
     "PermissionsSaved": "Permissions saved successfully.",
     "PleaseSelectUsers": "Please select at least one user.",

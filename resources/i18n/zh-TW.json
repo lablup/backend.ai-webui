@@ -2182,6 +2182,7 @@
     "PermissionNotAssignable": "此權限無法分配。",
     "PermissionType": "權限類型",
     "Permissions": "權限",
+    "PermissionsPartialFailureCounts": "(成功: {{succeeded}}, 失敗: {{failed}})",
     "PermissionsPartialFailureDescription": "部分權限設定失敗。請檢查相關項目。",
     "PermissionsSaved": "權限儲存成功。",
     "PleaseSelectUsers": "請至少選擇一個使用者。",

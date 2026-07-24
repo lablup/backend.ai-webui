@@ -2178,6 +2178,7 @@
     "PermissionNotAssignable": "Tätä käyttöoikeutta ei voi määrittää.",
     "PermissionType": "Käyttöoikeuden tyyppi",
     "Permissions": "Käyttöoikeudet",
+    "PermissionsPartialFailureCounts": "(Onnistui: {{succeeded}}, Epäonnistui: {{failed}})",
     "PermissionsPartialFailureDescription": "Osa käyttöoikeusmuutoksista epäonnistui. Tarkista kohteet.",
     "PermissionsSaved": "Käyttöoikeudet tallennettu onnistuneesti.",
     "PleaseSelectUsers": "Valitse vähintään yksi käyttäjä.",

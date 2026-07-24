@@ -2180,6 +2180,7 @@
     "PermissionNotAssignable": "ไม่สามารถมอบหมายสิทธิ์นี้ได้",
     "PermissionType": "ประเภทสิทธิ์",
     "Permissions": "สิทธิ์",
+    "PermissionsPartialFailureCounts": "(สำเร็จ: {{succeeded}}, ล้มเหลว: {{failed}})",
     "PermissionsPartialFailureDescription": "การเปลี่ยนแปลงสิทธิ์บางรายการล้มเหลว โปรดตรวจสอบรายการ",
     "PermissionsSaved": "บันทึกสิทธิ์สำเร็จแล้ว",
     "PleaseSelectUsers": "กรุณาเลือกผู้ใช้อย่างน้อยหนึ่งคน",

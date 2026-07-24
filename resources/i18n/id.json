@@ -2181,6 +2181,7 @@
     "PermissionNotAssignable": "Izin ini tidak dapat ditetapkan.",
     "PermissionType": "Jenis Izin",
     "Permissions": "Izin",
+    "PermissionsPartialFailureCounts": "(Berhasil: {{succeeded}}, Gagal: {{failed}})",
     "PermissionsPartialFailureDescription": "Beberapa perubahan izin gagal. Silakan periksa itemnya.",
     "PermissionsSaved": "Izin berhasil disimpan.",
     "PleaseSelectUsers": "Silakan pilih setidaknya satu pengguna.",

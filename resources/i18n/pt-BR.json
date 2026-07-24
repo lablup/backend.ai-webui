@@ -2178,6 +2178,7 @@
     "PermissionNotAssignable": "Esta permissão não pode ser atribuída.",
     "PermissionType": "Tipo de permissão",
     "Permissions": "Permissões",
+    "PermissionsPartialFailureCounts": "(Sucesso: {{succeeded}}, Falha: {{failed}})",
     "PermissionsPartialFailureDescription": "Algumas alterações de permissões falharam. Verifique os itens.",
     "PermissionsSaved": "Permissões salvas com sucesso.",
     "PleaseSelectUsers": "Selecione pelo menos um usuário.",
