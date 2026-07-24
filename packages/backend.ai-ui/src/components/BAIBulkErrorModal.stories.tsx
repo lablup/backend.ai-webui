@@ -69,7 +69,7 @@ const meta: Meta<typeof BAIBulkErrorModal> = {
       control: false,
       description: 'One record per failed request',
     },
-    description: {
+    alertDescription: {
       control: 'text',
       description:
         'Optional guidance (string) rendered as the body of an error alert above the table',
@@ -162,7 +162,7 @@ export const WithCustomTitleAndDescription: Story = {
         <BAIBulkErrorModal<FailedRequestExample>
           open={open}
           title="3 permission change(s) failed"
-          description="The failed changes are kept in the form. Fix them and save again — changes that were already applied will not be re-submitted."
+          alertDescription="The failed changes are kept in the form. Fix them and save again — changes that were already applied will not be re-submitted."
           columns={exampleColumns}
           dataSource={failedRequests}
           onRequestClose={() => setOpen(false)}

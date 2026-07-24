@@ -31,7 +31,7 @@ export interface BAIBulkErrorModalProps<RecordType = AnyObject> extends Omit<
    * (e.g. how to retry), under a fixed localized "Error Occurred" alert
    * title. No default — the caller injects operation-specific copy.
    */
-  description?: string;
+  alertDescription?: string;
   /** Called when the user dismisses the modal (Close button, X, mask, Esc). */
   onRequestClose: () => void;
 }
@@ -49,7 +49,7 @@ export interface BAIBulkErrorModalProps<RecordType = AnyObject> extends Omit<
 const BAIBulkErrorModal = <RecordType extends AnyObject = AnyObject>({
   columns,
   dataSource,
-  description,
+  alertDescription,
   onRequestClose,
   title,
   ...baiModalProps
@@ -78,12 +78,12 @@ const BAIBulkErrorModal = <RecordType extends AnyObject = AnyObject>({
       footer={(_originNode, { OkBtn }) => <OkBtn />}
     >
       <BAIFlex direction="column" align="stretch" gap="sm">
-        {description && (
+        {alertDescription && (
           <BAIAlert
             type="error"
             showIcon
             title={t('comp:BAIBulkErrorModal.ErrorOccurred')}
-            description={description}
+            description={alertDescription}
           />
         )}
         <BAITable<RecordType>

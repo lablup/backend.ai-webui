@@ -860,7 +860,7 @@ const RoleScopePermissionEditModal: React.FC<
           open behind it for a retry. */}
       <BAIBulkErrorModal<FailedPermissionRequest>
         open={!_.isEmpty(failedRequests)}
-        description={t('rbac.PermissionsPartialFailureDescription')}
+        alertDescription={t('rbac.PermissionsPartialFailureDescription')}
         dataSource={failedRequests}
         onRequestClose={() => setFailedRequests([])}
         columns={[

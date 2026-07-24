@@ -82,7 +82,7 @@ describe('BAIBulkErrorModal', () => {
       <BAIBulkErrorModal<FailedRow>
         open
         title="2 permission change(s) failed"
-        description="Fix the failed items and retry."
+        alertDescription="Fix the failed items and retry."
         columns={columns}
         dataSource={failedRows}
         onRequestClose={vi.fn()}
