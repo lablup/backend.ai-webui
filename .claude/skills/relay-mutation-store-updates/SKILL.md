@@ -1,13 +1,13 @@
 ---
 name: relay-mutation-store-updates
 description: >
-  Use when a create/update/delete mutation completes and you must decide
-  whether to refetch, when writing an `onRequestClose` handler that calls
-  `updateFetchKey()`, when a setting modal handles both create and update
-  behind one fragment prop, or when choosing a mutation's response selection
-  set. Covers when Relay updates the normalized store automatically, when a
-  manual `updater` is required, and when a refetch is genuinely the right
-  answer. Related: FR-3372, FR-3170.
+  Use when writing `if (success) updateFetchKey()`, an `onRequestClose`
+  handler, or any refetch after a mutation; when a setting modal handles both
+  create and update behind one fragment prop; when choosing a mutation's
+  response selection set; or when debugging "the list doesn't refresh after
+  saving" / "why is it fetching twice". Covers when Relay patches the
+  normalized store on its own, when a manual `updater` is required, and when
+  a refetch is genuinely right.
 ---
 
 # Relay Mutation → Store Updates
@@ -15,8 +15,11 @@ description: >
 The rule this skill exists to enforce:
 
 > **A refetch after an update mutation is a bug, not a refresh.**
-> Update mutations should return the changed fields so Relay updates the
+> Update mutations should return the changed fields so Relay patches the
 > normalized store by `id`. Refetch only when **list membership** changes.
+
+`react-async-actions` §6 states the same hierarchy in brief. This skill is the
+detailed treatment: how to tell the cases apart, and what to do in each.
 
 ## Activation Triggers
 
@@ -29,140 +32,48 @@ The rule this skill exists to enforce:
 
 Ask **what changed**, not **did it succeed**.
 
-| What the mutation changed                                             | Does the store need help? | What to do                                                                            |
-| --------------------------------------------------------------------- | ------------------------- | ------------------------------------------------------------------------------------- |
-| **Fields of an entity already in the store** (update)                 | No — if you select them   | Select the changed fields on the returned node. Relay merges by `id`. **No refetch.** |
-| Fields of an entity, but the payload returns only `ok`/`msg` (legacy) | Yes                       | Hand-write `updater:` (see §4). **No refetch.**                                       |
-| **List membership** — a new row (create)                              | Yes                       | `@appendEdge`/`@prependEdge` on the connection, or refetch the list.                  |
-| **List membership** — a row removed (delete/purge)                    | Yes                       | `@deleteRecord`/`@deleteEdge`, or refetch the list.                                   |
-| Server-derived fields you did not send (computed status, timestamps)  | Yes                       | Select those fields too; refetch only if the server cannot return them.               |
-
-**Success is not the question.** `if (success) refetch()` conflates "the request
-worked" with "the cache is stale". Those are different facts.
+| What the mutation changed                                            | What to do                                                                            |
+| -------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| **Fields of an entity already in the store** (update)                | Select the changed fields on the returned node. Relay merges by `id`. **No refetch.** |
+| Same, but the payload returns only `ok`/`msg` (legacy)               | Hand-write `updater:` (§4). **No refetch.**                                           |
+| **List membership** — a row added (create)                           | `@appendEdge`/`@prependEdge` on the connection, or refetch the list (§6).             |
+| **List membership** — a row removed (delete/purge)                   | `@deleteRecord`/`@deleteEdge`, or refetch the list.                                   |
+| Server-derived fields you did not send (computed status, timestamps) | Select those too; refetch only if the server cannot return them (§7).                 |
 
 ## 2. Update: fill the selection set
 
 An update mutation must return the entity **and** every field the calling UI
-reads that the mutation could have changed. Relay then merges the payload into
-the normalized record by `id` — every component holding that fragment
-re-renders, with zero extra network traffic.
+reads that the mutation could have changed. Relay merges the payload into the
+normalized record by `id`, and every component holding that fragment
+re-renders — with no extra network traffic.
 
 ```graphql
-# ❌ Wrong — payload carries no data, so the store is stale
-# and the caller is forced to refetch the whole list.
-mutation UserSettingModalMutation($email: String!, $props: ModifyUserInput!) {
-  modify_user(email: $email, props: $props) {
-    ok
-    msg
-  }
-}
-```
-
-```graphql
-# ✅ Correct — the changed fields come back; Relay merges them by id.
-mutation UserSettingModalMutation($email: String!, $props: ModifyUserInput!) {
-  modify_user(email: $email, props: $props) {
-    ok
-    msg
-    user {
-      id # REQUIRED — without id Relay cannot merge into the record
-      username
-      full_name
-      status
-      role
-      description
-    }
-  }
-}
-```
-
-`id` is mandatory. Relay keys normalized records by the node id; a payload
-without it is written to a detached record and merged nowhere.
-
-Real example of getting this wrong —
-`react/src/components/AutoScalingRuleEditorModalLegacy.tsx:136`:
-
-```graphql
-modify_endpoint_auto_scaling_rule_node(id: $id, props: $props) {
+# ❌ Payload carries no data, so the store goes stale
+# and the caller is forced to requery the whole list.
+modify_user(email: $email, props: $props) {
   ok
   msg
-  rule {
-    # ← no `id`!  Every field below is fetched over the wire
-    metric_name
-    metric_source
-    threshold
-    # …
-  }
 }
 ```
-
-This pays the full network cost of returning the node and still cannot update
-the UI. Adding one line (`id`) makes the whole payload useful.
-
-**Best form** — spread the fragment the UI actually reads, so the selection set
-can never drift out of sync with the component:
 
 ```graphql
-mutation UserSettingModalMutation($email: String!, $props: ModifyUserInput!) {
-  modify_user(email: $email, props: $props) {
-    ok
-    msg
-    user {
-      id
-      ...UserNodes_user # the same fragment the list row renders
-    }
+# ✅ Spread the fragment the UI actually reads, so the selection set
+# cannot drift out of sync with the component.
+modify_user(email: $email, props: $props) {
+  ok
+  msg
+  user {
+    id
+    ...UserNodes_user
   }
 }
 ```
 
-### The working precedent in this repo
-
-`react/src/components/UserSettingModal.tsx` already does this correctly, and is
-the model to copy. Its update mutation returns the node with every field the UI
-reads (`:228-265`):
-
-```graphql
-mutation UserSettingModalUpdateMutation(
-  $userId: UUID!
-  $input: UpdateUserV2Input!
-) {
-  adminUpdateUserV2(userId: $userId, input: $input) {
-    user {
-      id
-      basicInfo {
-        email
-        fullName
-        username
-        description
-        integrationName
-      }
-      organization {
-        domainName
-        role
-        resourcePolicy
-        mainAccessKey
-      }
-      status {
-        status
-        statusInfo
-        needPasswordChange
-      }
-      # …
-    }
-  }
-}
-```
-
-…so the update path deliberately closes **without** asking for a refetch
-(`:468`):
-
-```tsx
-message.success(t("environment.SuccessfullyModified"));
-onRequestClose(false); // store already patched — nothing for the list to do
-```
-
-while the **create** path passes `true`, because a new row appeared that the
-connection doesn't know about. Same modal, same prop, two different exits.
+If the consumer has no reusable fragment, hand-list every field the UI reads —
+including `id`. **`id` is mandatory**: Relay keys normalized records by node id,
+so a payload without it is written to a detached record and merged nowhere.
+`AutoScalingRuleEditorModalLegacy.tsx` gets this wrong — it returns all eight
+`rule` fields but omits `id`, paying full network cost for zero store update.
 
 ### ⚠️ Partial coverage is worse than refetching
 
@@ -170,11 +81,11 @@ Dropping the refetch is only safe if the payload covers **every field the UI
 reads that the mutation could change**. A partial selection set gives you the
 worst of both: no refetch _and_ no store update.
 
-The same `UserSettingModal` demonstrates the trap. It **sends** `groupIds`
-(`:448`) and its fragment **reads** `projects { edges { node { id } } }`
-(`:213`) — but the mutation payload never selects `projects`. Combined with
-`onRequestClose(false)`, changing a user's project membership succeeds on the
-server and leaves the UI showing the old projects until a manual refresh.
+`UserSettingModal` demonstrates the trap. It **sends** `groupIds` and its
+fragment **reads** `projects { edges { node { id } } }`, but the mutation
+payload never selects `projects` — and the update path skips the refetch.
+Changing a user's project membership succeeds on the server and leaves the UI
+showing the old projects until a manual refresh.
 
 Before removing a refetch, diff the two lists:
 
@@ -184,24 +95,15 @@ Before removing a refetch, diff the two lists:
 Anything in (1) that the mutation input can change and (2) omits is a stale-UI
 bug. Add it to the selection set — or keep the refetch and say why.
 
-This is exactly why spreading the consumer's fragment beats hand-listing
-fields: the compiler keeps the two lists in sync for you.
-
 ## 3. Is the node even available? Check the schema first
 
-Most of this backend already returns the node — the frontend just isn't asking
-for it. In `data/schema.graphql`:
+Most of this backend already returns the node; the frontend just isn't asking
+for it. Before concluding a refetch is required, grep the payload type in
+`data/schema.graphql` — if it has a node field, there is no excuse.
 
-- **41 of 50** update-class payloads (`Modify*` / `Update*`) return the entity
-  (`ModifyUser → user`, `UpdateResourcePresetPayload → resourcePreset`, …).
-- **9** return only `ok`/`msg` and cannot auto-update:
-
-  `ModifyAgent`, `ModifyImage`, `ModifyKeyPair`, `ModifyKeyPairResourcePolicy`,
-  `ModifyProjectResourcePolicy`, `ModifyResourcePreset`, `ModifyScalingGroup`,
-  `ModifyUserResourcePolicy`, `UpdateContainerRegistryQuota`
-
-Several of those 9 already have node-returning successors — prefer the newer
-mutation when the backend version allows it:
+A handful of legacy mutations return only `ok`/`msg`. Several already have
+node-returning successors — prefer the newer one when the backend version
+allows it:
 
 | Legacy (`ok`/`msg` only)      | Modern replacement (returns node)    |
 | ----------------------------- | ------------------------------------ |
@@ -211,25 +113,24 @@ mutation when the backend version allows it:
 | `ModifyResourcePreset`        | `UpdateResourcePresetPayload`        |
 | `ModifyScalingGroup`          | `UpdateResourceGroupPayload`         |
 
-Before adding a refetch, grep the payload type in `data/schema.graphql`. If it
-has a node field, there is no excuse for a refetch.
+`ModifyAgent`, `ModifyImage`, and `ModifyKeyPair` have no successor — use §4.
 
 ## 4. Legacy `ok`/`msg` mutations: write an `updater`
 
 When the payload genuinely cannot return the node, write the store update by
-hand. This is still cheaper and more correct than refetching a whole list.
+hand. Still cheaper and more correct than requerying a whole list.
 
 Reference implementation — `react/src/components/AgentSettingModal.tsx`:
 
 ```tsx
 commitModifyAgentSetting({
-  variables: { id: toLocalId(agent?.id ?? ''), props: { ... } },
+  variables: { id: toLocalId(agent?.id ?? ""), props: { ... } },
   updater: (store) => {
-    const agentRecord = store.get(agent?.id || '');
+    const agentRecord = store.get(agent?.id || "");
     if (agentRecord) {
-      agentRecord.setValue(values.schedulable, 'schedulable');
-      if (baiClient?.supports('admin-resource-group-select')) {
-        agentRecord.setValue(values.scaling_group, 'scaling_group');
+      agentRecord.setValue(values.schedulable, "schedulable");
+      if (baiClient?.supports("admin-resource-group-select")) {
+        agentRecord.setValue(values.scaling_group, "scaling_group");
       }
     }
   },
@@ -238,78 +139,83 @@ commitModifyAgentSetting({
 ```
 
 Its call site (`AgentNodeItems/AgentActionButtons.tsx`) correctly does **not**
-refetch — it only closes:
+refetch — it only closes.
+
+Write the `updater` only for fields you sent and know the server accepted
+verbatim. If the server transforms a value, select it instead of guessing.
+
+## 5. Keep `success` honest — decide the refetch at the call site
+
+`onRequestClose(success: boolean)` means **the mutation succeeded**. Pass it
+truthfully.
+
+Do **not** pass `false` after a successful update to suppress a refetch.
+`false` already means "cancelled", so overloading it makes the two
+indistinguishable to the caller — anything the caller later wants to do on
+success (a toast, clearing a selection, closing a drawer) silently stops
+firing after updates. `UserSettingModal` currently does this; it is a bug to
+copy from, not a pattern.
+
+The caller already knows whether it opened create or edit. Put the decision
+there. Two shapes appear in this repo:
+
+**Separate instances** — `AdminUserManagement` renders one `UserSettingModal`
+with `userSettingFrgmt={selectedUser}` and another with `={null}`. The edit
+instance simply doesn't refetch:
 
 ```tsx
-<AgentSettingModal
-  agentNodeFrgmt={agent}
-  open={openSettingModal}
-  onRequestClose={() => setOpenSettingModal(false)}
+<UserSettingModal
+  userSettingFrgmt={selectedUserForSettingModal}
+  onRequestClose={() => {
+    setSelectedUserForSettingModal(null);
+    // no refetch: the update mutation returns the node and Relay patches it
+  }}
 />
 ```
 
-Write the `updater` **only** for fields you sent and know the server accepted
-verbatim. If the server transforms a value, select it instead of guessing.
-
-## 5. `onRequestClose` — redefine the flag as "list changed", not "succeeded"
-
-The project convention is a single `onRequestClose(result?)` callback
-(see `react-modal-drawer`). Keep the shape; fix the **meaning**.
+**One instance for both** — the edit state is already in the handler's closure,
+so no prop change is needed at all:
 
 ```tsx
-// ❌ Wrong — "it worked" is treated as "the cache is stale".
-// Every successful edit refetches the entire list.
-onRequestClose={(success) => {
-  if (success) updateFetchKey();
-  setOpen(false);
-}}
+<ResourcePresetSettingModal
+  resourcePresetFrgmt={editingResourcePreset}
+  open={!!editingResourcePreset || isCreating}
+  onRequestClose={(success) => {
+    const wasCreating = !editingResourcePreset; // closure value, not post-reset
+    setEditingResourcePreset(null);
+    setIsCreating(false);
+    if (success && wasCreating) {
+      startRefetchTransition(() => updateResourcePresetsFetchKey());
+    }
+  }}
+/>
 ```
 
-```tsx
-// ✅ Correct — the modal reports whether LIST MEMBERSHIP changed.
-// Update path resolves via the store and never reaches updateFetchKey().
-onRequestClose={(listChanged) => {
-  if (listChanged) updateFetchKey();
-  setOpen(false);
-}}
-```
-
-Inside a modal that handles both create and update behind one nullable
-fragment prop, the two paths must close differently:
-
-```tsx
-const isEditMode = !!entityFrgmt;
-
-// update → store already merged the payload; nothing for the list to do
-onCompleted: () => onRequestClose();
-
-// create → a new row exists that the connection doesn't know about
-onCompleted: () => onRequestClose(true);
-```
-
-If a modal has both paths, do not let them share one `onRequestClose(true)`
-exit. That single line is the whole bug this skill exists to prevent.
+If a caller genuinely cannot know, enrich the result rather than lying about
+success — `ContainerRegistryEditorModal` already passes
+`onOk('create' | 'modify')`.
 
 ## 6. Create: prefer connection directives over refetch
 
-A refetch after create is _acceptable_ but still coarse. When the list is a
-Relay connection, declare the insert instead:
+A refetch after create is acceptable but coarse. When the list is a Relay
+connection, declare the insert instead:
 
 ```graphql
-mutation ImportArtifactMutation($connectionIds: [ID!]!, ...) {
-  importArtifact(...) {
-    edges @appendEdge(connections: $connectionIds) {
-      node { id ...ArtifactRow_artifact }
+importArtifact(input: $input) {
+  edges @appendEdge(connections: $connectionIds) {
+    node {
+      id
+      ...ArtifactRow_artifact
     }
   }
 }
 ```
 
 See `packages/backend.ai-ui/src/components/fragments/BAIImportArtifactModal.tsx`
-for the working example. Note that filtering, sorting, and pagination can make
-a naive append wrong — when the new row's position depends on server-side
-ordering, a refetch is the honest choice. Say so in a comment rather than
-leaving it ambiguous.
+for the working example. Filtering, sorting, and pagination can make a naive
+append wrong — when the new row's position depends on server-side ordering, a
+refetch is the honest choice. Say so in a comment rather than leaving it
+ambiguous.
 
 ## 7. When a refetch IS correct
 
@@ -326,6 +232,17 @@ Do not over-rotate. Refetch when:
 In each case, leave a one-line comment naming the reason. An unexplained
 refetch reads as the anti-pattern.
 
+## Enforcement (follow-up)
+
+This skill is the interim fix. Docs alone will not hold across ~107
+`updateFetchKey()` call sites — the deeper fix is a lint rule, tracked under
+FR-3170. The landing spot already exists: `react/eslint.config.js` uses
+`no-restricted-syntax` with an AST selector for the CSP `<style>` ban, and the
+`onRequestClose={(success) => { if (success) updateFetchKey(); }}` shape is
+matchable the same way. `eslint-plugin-relay` is also already installed with
+`relay/unused-fields` disabled — the mirror-image check, worth re-evaluating in
+the same pass.
+
 ## Review Checklist
 
 - [ ] No `if (success) updateFetchKey()` where the mutation was an **update**
@@ -333,12 +250,13 @@ refetch reads as the anti-pattern.
 - [ ] Prefer spreading the consumer's fragment over hand-listing fields
 - [ ] Schema checked (`data/schema.graphql`) before concluding a refetch is required
 - [ ] Legacy `ok`/`msg`-only mutation → `updater:` written, not a refetch
-- [ ] Create/update modals do not share one `onRequestClose(true)` exit
+- [ ] `success` is passed truthfully; the refetch decision lives at the call site
 - [ ] Any surviving refetch has a comment naming why the store can't be patched
 
 ## Related
 
+- `react-async-actions` — §6 refetch hierarchy; this skill is its detailed form
 - `relay-patterns` — fragment architecture and naming conventions
-- `react-modal-drawer` — the `onRequestClose` convention this skill refines
-- `react-suspense-fetching` — `fetchKey` / `useUpdatableState` refresh primitive
+- `react-modal-drawer` — the `onRequestClose` convention
+- `react-suspense-fetching` — `fetchKey` / `useFetchKey` refresh primitive
 - FR-3170 — the audit epic; FR-3372 — this analysis
