@@ -104,6 +104,8 @@ Component-authoring patterns (Relay tables, selects, modals, forms, layout) have
 dedicated skills: read `react.instructions.md` for the project deltas, then copy the
 nearest existing sibling component.
 
+- **Relay mutations**: `relay-mutation-store-updates` skill (when a mutation can skip the refetch — update mutations must return their changed fields so Relay patches the normalized store; refetch only when list membership changes)
+
 ### Terminology Precedence
 
 When terms disagree, precedence is: (1) the live UI i18n label in `resources/i18n/{lang}.json`, (2) `terminology.json`, (3) `DOCUMENTATION-STYLE-GUIDE.md`. The higher-precedence source wins; fix the lower one to match (or open an FR to change the label). See `packages/backend.ai-webui-docs/TERMINOLOGY.md` for the term owner, new-term gate, and the atomic rename/deprecation checklist.
@@ -132,35 +134,59 @@ When reviewing PRs (especially agent-generated ones), check:
 - No hardcoded strings, magic numbers, or debug artifacts left behind
 
 <!-- ASTRYX:START -->
+<<<<<<< HEAD
 Astryx v0.5.0 · 163 components
+=======
+
+Astryx v0.3.0 · 155 components
+>>>>>>> 80bcb4abd (docs(FR-3372): add relay-mutation-store-updates skill for refetch-after-mutation audit)
 CLI: run every command as `pnpm exec astryx <cmd>` (shown below as `astryx ...`).
 
 SETUP (once, in your app entry e.g. main.tsx) — without these, components render unstyled:
-  import "@astryxdesign/core/reset.css";
-  import "@astryxdesign/core/astryx.css";
+import "@astryxdesign/core/reset.css";
+import "@astryxdesign/core/astryx.css";
 
 WORKFLOW — discover, don't guess. Before writing UI:
+
 1. `astryx build "<idea>"` — START HERE: returns a kit (closest [page] + [block]s + [component]s). No args = full playbook.
 2. `astryx template <name> [--skeleton]` — scaffold the [page]/[block]s it named, or study their layout. Templates are reference code.
 3. `astryx component <Name>` — props + examples for every component you use.
 
 RULES:
+<<<<<<< HEAD
 - No <div> — components do all layout/spacing, page frame included.
 - Frame first: read `astryx docs layout` before writing any page or screen — page frame, region widths, breakpoint behavior.
 - Dense data = rows (Table, List/Item), never Card-wrapped list items; Card is for standalone widgets. Status = StatusDot/Token; Badge = counts only.
+=======
+
+- No <div> — components do all layout/spacing. Full page → AppShell; sidebar nav → SideNav.
+- Frame first: pick the shell (AppShell / Layout+LayoutPanel) and budget regions in px BEFORE writing content (`astryx docs layout`).
+- Dense data = rows (Table, List/Item) edge-to-edge — never Card-wrapped list items. Card = dashboard widgets, galleries, settings groups only.
+- Status → StatusDot/Token; Badge only for counts and enumerated states, never decoration.
+>>>>>>> 80bcb4abd (docs(FR-3372): add relay-mutation-store-updates skill for refetch-after-mutation audit)
 - Custom styling: component props first; else the xstyle prop / StyleX tokens (@astryxdesign/core/theme/tokens.stylex). No raw hex/px.
 - Tokens for every value (`astryx docs tokens`). Brand/accent belongs in the theme (`astryx theme list` / `theme add <slug>`, or `astryx theme template` for a custom one) — never override --color-* in :root.
 - SELF-CHECK before you finish: re-read the file and replace any className=, style={{…}}, raw <div>/<span> layout, imported .css/@apply, or hardcoded #hex/px with the component or the xstyle prop + a token. If unsure a component/prop exists, run `astryx component <Name>` / `astryx search "<thing>"`; don't hand-roll CSS.
 - MIGRATION RELAXATION (antd → Astryx): the className=/style={{…}} part of the SELF-CHECK is relaxed for files carried over from the antd era, which are still full of `className` / inline `style` and `theme.useToken()` reads. Do not rewrite those wholesale — convert a file's idioms when you are already changing it for another reason. A style that props/xstyle cannot express goes in a co-located `.css` file the component imports (P17), with `var(--…)` Astryx tokens; never a runtime style engine.
 
 MORE CLI:
+<<<<<<< HEAD
   search "<query>"   find any component / hook / doc / template / block
   component --list   163 components by category
   template --list    page + block recipes
   docs <topic>       browser-support, cli-integrations, color, elevation, getting-started, icons, illustrations, internationalization, layout, migration, motion, principles, shape, spacing, styling-libraries, styling, theme, tokens, typography, working-with-ai
   swizzle <Name>     eject component source for deep customization
   upgrade --apply    run after any @astryxdesign/core bump
+=======
+search "<query>" find any component / hook / doc / template / block
+component --list 155 components by category
+template --list page + block recipes
+docs <topic> color, elevation, icons, illustrations, internationalization, layout, migration, motion, principles, shape, spacing, styling, theme, tokens, typography
+swizzle <Name> eject component source for deep customization
+upgrade --apply run after any @astryxdesign/core bump
+>>>>>>> 80bcb4abd (docs(FR-3372): add relay-mutation-store-updates skill for refetch-after-mutation audit)
 <!-- ASTRYX:END -->
+
 The ASTRYX block above is `astryx init --features agents` output (run from `react/`, where the StyleX compiler is detected) in **StyleX mode**, plus the project-specific MIGRATION RELAXATION line. Canonical generated copy: `react/AGENTS.md`. Re-run the init from `react/` on every `@astryxdesign/core` bump and re-sync this block (keeping the relaxation line).
 
 The block's `pnpm exec astryx <cmd>` assumes you are **inside `react/`**. `@astryxdesign/cli` is a devDependency of that workspace only, so the root `node_modules/.bin` has no `astryx` binary — and `pnpm exec` resolves binaries, not package scripts, so it fails at the root with `ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL`. **From the repository root, run `pnpm run astryx <cmd>` instead** (root `package.json` proxies it to the same CLI). Both forms take identical arguments.
