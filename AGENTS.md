@@ -192,6 +192,7 @@ Production build (`pnpm run build`) runs these steps sequentially:
 - **i18n**: `i18n-patterns` skill (fw plugin; translation keys, casing rules, language-specific guidelines)
 - **Documentation**: `docs-writing-guide` skill (fw plugin; user manual structure, terminology, multilingual rules)
 - **Relay**: `relay-patterns` skill (fragment architecture, naming conventions, query optimization)
+- **Relay mutations**: `relay-mutation-store-updates` skill (when a mutation can skip the refetch — update mutations must return their changed fields so Relay patches the normalized store; refetch only when list membership changes)
 
 ### Terminology Precedence
 

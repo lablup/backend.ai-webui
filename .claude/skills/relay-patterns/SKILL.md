@@ -129,6 +129,19 @@ const [data, refetch] = useRefetchableFragment(
 );
 ```
 
+### Mutations and the Normalized Store
+
+Writing data is not covered here — see the **`relay-mutation-store-updates`**
+skill. The short version:
+
+- An **update** mutation must select `id` plus the fields the UI reads (ideally
+  by spreading the consumer's fragment). Relay merges the payload into the
+  normalized record and every subscriber re-renders — **no refetch**.
+- Refetch only when **list membership** changes (create/delete), or when
+  server-computed values cannot be returned.
+- `if (success) updateFetchKey()` after an update is the anti-pattern this
+  project is actively removing (FR-3170).
+
 ### Modern Relay Patterns
 
 - **`@required` directive** - Type-safe null handling in fragments
@@ -204,6 +217,7 @@ query UserSettingsQuery($isNotSupportTotp: Boolean!) {
 
 ### Code Review Checklist
 
+- [ ] Update mutations select `id` + the fields the UI reads; no refetch-after-update
 - [ ] Query orchestrator components separate from fragment components
 - [ ] Fragment refs properly typed with generated `$key` types
 - [ ] Fragment props follow naming conventions (`queryRef` / `{typeName}Frgmt`)
