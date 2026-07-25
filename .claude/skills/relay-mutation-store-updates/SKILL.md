@@ -64,7 +64,7 @@ modify_user(email: $email, props: $props) {
   msg
   user {
     id
-    ...UserNodes_user
+    ...YourListRow_user # ← the fragment your list row already renders
   }
 }
 ```
@@ -201,11 +201,11 @@ A refetch after create is acceptable but coarse. When the list is a Relay
 connection, declare the insert instead:
 
 ```graphql
-importArtifact(input: $input) {
+artifactRevisions {
   edges @appendEdge(connections: $connectionIds) {
     node {
-      id
-      ...ArtifactRow_artifact
+      id # required here too — the new record must be identifiable
+      status
     }
   }
 }
