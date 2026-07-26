@@ -1,21 +1,30 @@
 #!/usr/bin/env node
 // @ts-check
 /**
- * check-terminology-i18n.mjs — deterministic, dependency-free i18n terminology checker.
+ * check-terminology-i18n.mjs — deterministic, dependency-free terminology checker.
  *
  * Closes the central gap: UI string VALUES in the i18n stores are never checked
  * against the documentation termbase today. This script is READ-ONLY — it never
  * writes, reorders, or reformats any JSON. It is meant to run AFTER prettier /
  * prettier-plugin-sort-json and the i18n merge driver, so it must not fight them.
  *
+ * TWO SOURCES feed the checks (see I18N_GLOBS and DOCS_GLOB):
+ *   - the two i18n stores (resources/i18n, packages/backend.ai-ui/src/locale),
+ *   - the user-manual prose (packages/backend.ai-webui-docs/src/{en,ko,ja,th}),
+ *     added in FR-3373 so the termbase also governs the manual it lives in.
+ *     Docs feed CHECK 1 only, and CHECK 1 applies CONTEXT-FREE avoid rows to
+ *     them; disable with --no-docs.
+ *
  * Three independent checks:
  *
  *   CHECK 1 (terminology drift, needs the termbase):
- *     Flags i18n VALUES (never keys) that contain a forbidden term from
- *     terminology.json `avoid[]`. Latin-script terms use whole-word matching;
- *     ko/ja/th terms use careful substring matching. Matches inside obvious
- *     identifiers / URLs / paths / config keys / backticked tokens / {{interp}}
- *     are skipped. An inline allowlist file silences legitimate strings.
+ *     Flags i18n VALUES (never keys) and manual prose LINES that contain a
+ *     forbidden term from terminology.json `avoid[]`. Latin-script terms use
+ *     whole-word matching; ko/ja/th terms use careful substring matching.
+ *     Matches inside obvious identifiers / URLs / paths / config keys /
+ *     backticked tokens / {{interp}} are skipped — and in markdown, so are
+ *     fenced code, inline code, link targets, HTML comments, and front matter.
+ *     An inline allowlist file silences legitimate strings.
  *
  *   CHECK 2 (near-duplicate value divergence, needs NO termbase) — OFF by default:
  *     Within each i18n file, flags a leaf-key final segment whose values include
@@ -31,8 +40,8 @@
  *     non-English stores; promoting it to a default warn is a follow-up once that
  *     backlog is cleared.
  *
- *   CHECK 3 (unknown capitalized user-facing noun, needs the termbase) — OFF by
- *   default; opt in with --check3:
+ *   CHECK 3 (unknown capitalized user-facing noun, needs the termbase) — ON by
+ *   default since FR-3373 (opt out with --no-check3); i18n stores only:
  *     Surfaces a candidate NEW user-facing term that should probably be
  *     registered in the termbase. For each ENGLISH i18n VALUE that reads like
  *     prose (a sentence, not a short label), it mines embedded Title-Case
@@ -45,10 +54,16 @@
  *     isInsideCodeContext() to skip identifiers / URLs / interpolation, and is
  *     compared against the full preferred[] + avoid[] + approved-compound set
  *     (case-insensitive). It is ALWAYS report-only ("warn"): it NEVER affects the
- *     exit code, even under --strict, and stays OFF in verify.sh. Tune false
+ *     exit code, even under --strict. scripts/verify.sh nonetheless turns it
+ *     off (--no-check3): that harness pipes each step through `tail -20`, and
+ *     CHECK 3's always-present section would push a real CHECK 1 finding off
+ *     the top. Tune false
  *     positives via the allowlist `ignoreNouns` array. The output is a manageable
- *     short list, not a wall of label noise; broadening it (e.g. scanning the BUI
- *     locale store too, or non-prose labels) is a tracked follow-up.
+ *     short list, not a wall of label noise. It was promoted from opt-in to
+ *     default-on once FR-3302 drove the candidate backlog to zero, which was the
+ *     precondition recorded on the FR-3311 map. The manual is deliberately NOT
+ *     an input: it is written in Title-Case-label register throughout, so it
+ *     would drown the candidate list this check exists to keep short.
  *
  * Modes:
  *   (default)  WARN  — report findings, exit 0.
@@ -63,8 +78,9 @@
  * Other flags:
  *   --json           Emit machine-readable JSON instead of the text report.
  *   --check2         Enable CHECK 2 (OFF by default — see CHECK 2 note above).
- *   --check3         Enable CHECK 3 (OFF by default — see CHECK 3 note above).
+ *   --no-check3      Disable CHECK 3 (ON by default — see CHECK 3 note above).
  *                    Always report-only; never affects the exit code.
+ *   --no-docs        Skip the user-manual prose source (ON by default).
  *   --no-check1      Skip CHECK 1 (terminology drift).
  *   --help           Print usage.
  *
@@ -86,6 +102,8 @@
  *      `[[i18n-term-ok]]` anywhere in a string value tells CHECK 1 to skip that
  *      value. (CHECK 3 honors the same marker.) Used only when the canonical
  *      termbase genuinely cannot model the exception — prefer the allowlist file.
+ *      In markdown the marker goes on the offending LINE, normally inside a
+ *      trailing HTML comment: `… WSProxy … <!-- [[i18n-term-ok]] -->`.
  *
  * Dependency-free: native Node ESM only. No npm package is imported. The output
  * JSON files (terminology.json, allowlist) are read with fs + JSON.parse — no
@@ -127,6 +145,28 @@ const I18N_GLOBS = [
     keySep: "^",
   },
 ];
+
+// The user-manual prose source (FR-3373) — same termbase, same CHECK 1 matcher,
+// fed by a line-oriented markdown reader instead of the JSON leaf walker above.
+//
+// This closes a half-enforced gate. Before FR-3373 the termbase hard-blocked the
+// i18n stores it governs but never saw the manual it *lives in*: TERMINOLOGY.md's
+// rename checklist had a verification step for the UI locales (step 4's
+// `lint:terminology`) and none for step 3 ("update the 4 doc languages"). The
+// ko manual had drifted to `슈퍼관리자` in two places while i18n stayed clean.
+//
+// Docs stores feed CHECK 1 ONLY:
+//   - CHECK 2 keys off a leaf-key final segment; markdown has no analogue.
+//   - CHECK 3 mines Title-Case nouns out of prose, and the manual is written in
+//     exactly that register ("the **Group Labels** field"), so including it
+//     would drown the candidate list it exists to keep short.
+const DOCS_GLOB = {
+  dir: path.join(REPO_ROOT, "packages", "backend.ai-webui-docs", "src"),
+  label: "packages/backend.ai-webui-docs/src",
+  // One subdirectory per doc language — the directory name IS the lang, which
+  // is what CHECK 1 matches an avoid row's `lang` against.
+  langs: ["en", "ko", "ja", "th"],
+};
 
 // ---------------------------------------------------------------------------
 // Small helpers
@@ -225,6 +265,141 @@ function listLocaleFiles(dir) {
     .filter((f) => f !== "i18n.schema.json" && !f.endsWith(".schema.json"))
     .sort()
     .map((f) => path.join(dir, f));
+}
+
+// ---------------------------------------------------------------------------
+// Markdown prose reader (docs source)
+// ---------------------------------------------------------------------------
+
+/** Replace a run of text with the same number of spaces (index-preserving). */
+function maskRun(s) {
+  return " ".repeat(s.length);
+}
+
+/**
+ * List *.md files under `dir` recursively, sorted for deterministic output.
+ * Returns [] when the directory is absent — a missing docs package must degrade
+ * to "nothing to scan", never crash the harness.
+ * @param {string} dir
+ * @param {string[]} [out]
+ */
+function listMarkdownFiles(dir, out = []) {
+  /** @type {import("node:fs").Dirent[]} */
+  let entries;
+  try {
+    entries = fs.readdirSync(dir, { withFileTypes: true });
+  } catch {
+    return out;
+  }
+  for (const e of [...entries].sort((a, b) => a.name.localeCompare(b.name))) {
+    const p = path.join(dir, e.name);
+    if (e.isDirectory()) listMarkdownFiles(p, out);
+    else if (e.name.endsWith(".md")) out.push(p);
+  }
+  return out;
+}
+
+/**
+ * Blank out the markdown constructs on a line that are NOT prose. Every masked
+ * character is replaced by a SPACE rather than removed, so each surviving
+ * character keeps its original column index and the reported `spans` still
+ * point at the real line.
+ *
+ * This is the markdown analogue of isInsideCodeContext() — same intent
+ * ("backticked tokens are not prose"), applied at line granularity because the
+ * non-prose regions here are markdown syntax rather than value-internal tokens.
+ * @param {string} line
+ */
+function maskMarkdownNonProse(line) {
+  return (
+    line
+      // Inline code spans: `x`, ``x with a ` in it``.
+      .replace(/(`+)[^`]*?\1/g, maskRun)
+      // Inline link / image TARGETS — `](target)`. The link TEXT stays prose.
+      .replace(/\]\([^)]*\)/g, (m) => "]" + maskRun(m.slice(1)))
+      // Reference-style link definitions: `[label]: https://…`.
+      .replace(
+        /^(\s*\[[^\]]+\]:)(.*)$/,
+        (_m, head, rest) => head + maskRun(rest),
+      )
+      // Raw HTML tags and autolinks: <img src="…">, <https://…>, <!-- … -->.
+      .replace(/<[^>]*>/g, maskRun)
+  );
+}
+
+/**
+ * Turn a markdown document into CHECK 1 "leaves", one per prose line.
+ *
+ * Skipped entirely: YAML front matter, fenced code blocks, multi-line HTML
+ * comments, blank/whitespace-only lines, and any line carrying the inline
+ * marker (in markdown, write it inside a trailing `<!-- [[i18n-term-ok]] -->`).
+ *
+ * Each leaf carries the MASKED line as `value` (what CHECK 1 matches against)
+ * and the original line as `raw` (what the report prints). Both have identical
+ * length, so match spans are valid against either.
+ *
+ * @param {string} rawText
+ * @param {string} relPath path relative to the language directory
+ * @param {Array<{key: string, segment: string, value: string, raw: string}>} out
+ */
+function collectMarkdownLines(rawText, relPath, out) {
+  const lines = rawText.split("\n");
+  let inFence = false;
+  let fenceChar = "";
+  let inFrontMatter = false;
+  let inHtmlComment = false;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    // YAML front matter — only when `---` opens the very first line.
+    if (i === 0 && /^---\s*$/.test(line)) {
+      inFrontMatter = true;
+      continue;
+    }
+    if (inFrontMatter) {
+      if (/^---\s*$/.test(line)) inFrontMatter = false;
+      continue;
+    }
+
+    // Fenced code blocks, closed by a fence of the same character.
+    const fence = line.match(/^\s*(`{3,}|~{3,})/);
+    if (fence) {
+      if (!inFence) {
+        inFence = true;
+        fenceChar = fence[1][0];
+      } else if (fence[1][0] === fenceChar) {
+        inFence = false;
+        fenceChar = "";
+      }
+      continue;
+    }
+    if (inFence) continue;
+
+    // The inline escape hatch is checked against the RAW line: in markdown the
+    // marker lives inside an HTML comment, which masking would erase.
+    if (line.includes(INLINE_OK_MARKER)) continue;
+
+    let text = line;
+    // Tail of a comment opened on an earlier line.
+    if (inHtmlComment) {
+      const end = text.indexOf("-->");
+      if (end === -1) continue;
+      text = maskRun(text.slice(0, end + 3)) + text.slice(end + 3);
+      inHtmlComment = false;
+    }
+    // A comment opened on this line and not closed on it.
+    const open = text.lastIndexOf("<!--");
+    if (open !== -1 && text.indexOf("-->", open) === -1) {
+      inHtmlComment = true;
+      text = text.slice(0, open) + maskRun(text.slice(open));
+    }
+
+    const masked = maskMarkdownNonProse(text);
+    if (!masked.trim()) continue;
+    const key = `${relPath}:${i + 1}`;
+    out.push({ key, segment: key, value: masked, raw: line });
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -453,7 +628,7 @@ function buildApprovedCompounds(termbase) {
 const INLINE_OK_MARKER = "[[i18n-term-ok]]";
 
 /**
- * @param {Array<{file: string, label: string, leaves: Array<{key:string,segment:string,value:string}>, lang: string}>} stores
+ * @param {Array<{file: string, label: string, leaves: Array<{key:string,segment:string,value:string,raw?:string}>, lang: string, kind?: string}>} stores
  * @param {Array<any>} avoidRows
  * @param {{ignoreValues: Set<string>, ignoreKeys: Set<string>}} allow
  * @param {Set<string>} approvedCompounds
@@ -485,6 +660,15 @@ function runCheck1(stores, avoidRows, allow, approvedCompounds) {
         // matches the row's lang. Rows without an explicit lang default to 'en'.
         const rowLang = row.lang || "en";
         if (store.lang !== rowLang) continue;
+        // Docs prose sees CONTEXT-FREE rows only. A `context` qualifier means
+        // "this word is only wrong in one sense" — a judgement call, and long-
+        // form prose is full of the legitimate sense: the manual says "group
+        // three GPUs together" and "your organization's SAML provider", neither
+        // of which means a project or a domain. On short UI labels those rows
+        // are worth a warning; over 120 markdown files they are a permanent
+        // false-positive stream that would train readers to ignore the report.
+        // Judgement calls on prose stay with docs-lead / the docs-lint agent.
+        if (store.kind === "docs" && row.context) continue;
 
         const spans = match(value);
         if (spans.length === 0) continue;
@@ -500,7 +684,9 @@ function runCheck1(stores, avoidRows, allow, approvedCompounds) {
           useInstead: row.useInstead,
           reason: row.reason,
           context: row.context || null,
-          value,
+          // Docs leaves match against a masked line but report the original one
+          // (identical length, so `spans` stay valid against either).
+          value: leaf.raw !== undefined ? leaf.raw : value,
           spans,
         });
       }
@@ -908,9 +1094,21 @@ function printTextReport(check1, check2, check3, opts) {
   console.log("");
 
   if (opts.runCheck1) {
-    console.log(c.bold("CHECK 1 — terminology drift (i18n VALUES vs avoid[])"));
+    console.log(
+      c.bold(
+        `CHECK 1 — terminology drift (i18n VALUES${
+          opts.scanDocs ? " + docs prose" : ""
+        } vs avoid[])`,
+      ),
+    );
     if (check1.length === 0) {
-      console.log(c.dim("  no forbidden terms found in i18n values."));
+      console.log(
+        c.dim(
+          `  no forbidden terms found in i18n values${
+            opts.scanDocs ? " or manual prose" : ""
+          }.`,
+        ),
+      );
     } else {
       for (const f of check1) {
         const tag = f.severity === "error" ? c.red("error") : c.yellow("warn ");
@@ -1038,9 +1236,18 @@ function parseArgs(argv) {
     // --check2. Refining it into a high-signal check is tracked as a follow-up.
     runCheck2: false,
     // CHECK 3 (unknown capitalized user-facing noun) is OFF by default: it is a
-    // heuristic candidate-term suggester. Opt in with --check3. It is always
-    // report-only and never affects the exit code (mirrors CHECK 2's gating).
-    runCheck3: false,
+    // CHECK 3 (unknown capitalized user-facing noun) is ON by default since
+    // FR-3373: FR-3302 cleared the candidate backlog to zero, which was the
+    // promotion precondition recorded on the FR-3311 map. It stays always
+    // report-only and never affects the exit code (mirrors CHECK 2's gating),
+    // so default-on costs a line of output and buys drift detection on new
+    // unregistered terms. Opt out with --no-check3.
+    runCheck3: true,
+    // Scan the user-manual prose (packages/backend.ai-webui-docs/src) against
+    // the same avoid[] rows. ON by default so the one gate covers both the
+    // termbase's consumers (i18n) and its home (the manual). Opt out with
+    // --no-docs. Docs stores feed CHECK 1 only — see DOCS_GLOB.
+    scanDocs: true,
     help: false,
     // 0 = unlimited. --summary sets a sane default cap on CHECK 2 output so the
     // verify.sh harness stays readable; the full list is always available via
@@ -1090,6 +1297,12 @@ function parseArgs(argv) {
       case "--no-check3":
         opts.runCheck3 = false;
         break;
+      case "--docs":
+        opts.scanDocs = true;
+        break;
+      case "--no-docs":
+        opts.scanDocs = false;
+        break;
       case "--no-check1":
         opts.runCheck1 = false;
         break;
@@ -1109,7 +1322,8 @@ const USAGE = `check-terminology-i18n.mjs — deterministic i18n terminology che
 Usage:
   node scripts/check-terminology-i18n.mjs [--warn|--strict] [--json] [--summary]
                                           [--limit-check2=N] [--lang=en,ko]
-                                          [--no-check1] [--check2] [--check3]
+                                          [--no-check1] [--check2] [--no-check3]
+                                          [--no-docs]
 
 Modes:
   (default) / --warn   Report findings, always exit 0.
@@ -1121,25 +1335,34 @@ Options:
   --summary            Cap CHECK 2 output at the top 20 highest-signal findings
                        (fewest distinct variants first). For the verify.sh step.
   --limit-check2=N     Cap CHECK 2 output at N findings (0 = unlimited).
-  --lang=en,ko         Restrict scanning to these locale files only.
+  --lang=en,ko         Restrict scanning to these languages only (locale files
+                       and doc-language directories alike).
   --json               Machine-readable output (always full, never capped).
   --check2             Enable CHECK 2 (OFF by default — broad/noisy today).
-  --check3             Enable CHECK 3 (OFF by default — heuristic candidate-term
-                       suggester; English prose only; always report-only).
+  --no-check3          Disable CHECK 3 (ON by default; always report-only).
+  --no-docs            Skip the user-manual prose source (ON by default).
   --no-check1          Skip CHECK 1 (terminology drift).
 
-CHECK 1  Terminology drift: i18n VALUES (never keys) vs terminology.json avoid[].
+Sources
+  i18n stores  resources/i18n + packages/backend.ai-ui/src/locale (all checks).
+  docs prose   packages/backend.ai-webui-docs/src/{en,ko,ja,th}/**/*.md
+               (CHECK 1 only, CONTEXT-FREE avoid rows only). Fenced code, inline
+               code, link targets, HTML comments and front matter are not prose.
+
+CHECK 1  Terminology drift: i18n VALUES (never keys) and manual prose lines vs
+         terminology.json avoid[].
 CHECK 2  Key -> two-values divergence within each file (no termbase needed).
-         OFF by default; enable with --check2. Currently low signal-to-noise.
+         i18n only. OFF by default; enable with --check2. Low signal-to-noise.
 CHECK 3  Unknown capitalized user-facing noun: a Title-Case multiword phrase or
          PascalCase product token in an English prose i18n VALUE with no matching
          terminology.json concept / avoid term — a candidate to register in the
-         termbase. OFF by default; enable with --check3. WARN/report-only.
+         termbase. i18n only. ON by default; WARN/report-only.
 
 Allowlist: scripts/terminology-i18n.allowlist.json (optional)
   ignoreNouns: phrases CHECK 3 must never flag (proper nouns, product names).
 Inline marker: append ${INLINE_OK_MARKER} to a value to skip it in CHECK 1
-  (CHECK 3 honors the same marker).
+  (CHECK 3 honors the same marker). In markdown put it on the offending line,
+  normally inside a trailing HTML comment.
 `;
 
 function main() {
@@ -1187,9 +1410,9 @@ function main() {
     ),
   };
 
-  // Build the flat list of stores (one per locale file), collecting leaves.
-  /** @type {Array<{file:string,label:string,lang:string,leaves:Array<{key:string,segment:string,value:string}>}>} */
-  const stores = [];
+  // Build the flat list of i18n stores (one per locale file), collecting leaves.
+  /** @type {Array<{file:string,label:string,lang:string,kind:string,leaves:Array<{key:string,segment:string,value:string,raw?:string}>}>} */
+  const i18nStores = [];
   for (const glob of I18N_GLOBS) {
     for (const file of listLocaleFiles(glob.dir)) {
       const lang = path.basename(file, ".json"); // en, ko, ja, th, zh-CN, ...
@@ -1199,26 +1422,66 @@ function main() {
       /** @type {Array<{key:string,segment:string,value:string}>} */
       const leaves = [];
       collectLeaves(data, "", glob.keySep, leaves);
-      stores.push({ file, label: glob.label, lang, leaves });
+      i18nStores.push({ file, label: glob.label, lang, leaves, kind: "i18n" });
     }
   }
 
-  if (stores.length === 0) {
-    console.error("error: no i18n locale files found; nothing to check.");
+  // Build the docs stores (one per markdown file). CHECK 1 only.
+  /** @type {typeof i18nStores} */
+  const docsStores = [];
+  if (opts.scanDocs) {
+    for (const lang of DOCS_GLOB.langs) {
+      if (opts.langs && !opts.langs.has(lang)) continue;
+      const langDir = path.join(DOCS_GLOB.dir, lang);
+      for (const file of listMarkdownFiles(langDir)) {
+        let rawText;
+        try {
+          rawText = fs.readFileSync(file, "utf8");
+        } catch {
+          continue;
+        }
+        /** @type {Array<{key:string,segment:string,value:string,raw:string}>} */
+        const leaves = [];
+        collectMarkdownLines(rawText, path.relative(langDir, file), leaves);
+        // The report prints `[label/lang]`, so the label must NOT repeat the
+        // language directory — keys are already relative to it.
+        docsStores.push({
+          file,
+          label: DOCS_GLOB.label,
+          lang,
+          leaves,
+          kind: "docs",
+        });
+      }
+    }
+  }
+
+  if (i18nStores.length === 0 && docsStores.length === 0) {
+    console.error(
+      "error: no i18n or docs source files found; nothing to check.",
+    );
     return 0; // never block; this is a wiring problem, not a content problem
   }
 
   const approvedCompounds = buildApprovedCompounds(termbase);
   const check1 = opts.runCheck1
-    ? runCheck1(stores, avoidRows, allow, approvedCompounds)
+    ? runCheck1(
+        [...i18nStores, ...docsStores],
+        avoidRows,
+        allow,
+        approvedCompounds,
+      )
     : [];
-  const check2 = opts.runCheck2 ? runCheck2(stores, allow) : [];
+  // CHECK 2 and CHECK 3 stay i18n-only — see DOCS_GLOB for why the manual is
+  // the wrong input for a per-segment divergence check and a Title-Case noun
+  // miner.
+  const check2 = opts.runCheck2 ? runCheck2(i18nStores, allow) : [];
   // CHECK 3 needs the termbase (preferred.en) to know what is already "known".
   // If the termbase failed to load, skip CHECK 3 rather than flag everything.
   const check3 =
     opts.runCheck3 && termbase
       ? runCheck3(
-          stores,
+          i18nStores,
           buildCheck3Known(termbase, approvedCompounds, allow.ignoreNouns),
         )
       : [];
@@ -1270,6 +1533,11 @@ export {
   buildTermMatcher,
   buildApprovedCompounds,
   runCheck1,
+  // Docs prose source (FR-3373) — exercised by check-terminology-i18n.docs.test.ts.
+  DOCS_GLOB,
+  listMarkdownFiles,
+  maskMarkdownNonProse,
+  collectMarkdownLines,
 };
 
 // Run the CLI only when this file is executed directly

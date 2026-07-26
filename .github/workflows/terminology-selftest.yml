@@ -8,11 +8,14 @@
 # never by docs prose (packages/backend.ai-webui-docs/src/**) and never by
 # i18n content (resources/i18n/**). The self-test's budget gate reads the
 # CURRENT i18n stores, so a broader trigger would let pre-existing content
-# drift hard-block PRs unrelated to the termbase. Content drift stays
-# warn-only (CHECK 1, wired report-only into scripts/verify.sh); only a PR
-# that touches the termbase DATA itself must pass this gate — and if such a
-# PR fails on pre-existing drift, fixing/allowlisting that drift first is
-# the intended curation-time behavior.
+# drift hard-block PRs unrelated to the termbase. Only a PR that touches the
+# termbase DATA itself must pass this gate — and if such a PR fails on
+# pre-existing drift, fixing/allowlisting that drift first is the intended
+# curation-time behavior.
+#
+# This gate covers the avoid-row DATA. CONTENT drift is a separate axis, gated
+# elsewhere: CHECK 1 runs --strict inside scripts/verify.sh (FR-3049, blocking
+# on bare-English rows) and inside docs-checks.yml for manual prose (FR-3373).
 name: terminology-selftest
 
 on:

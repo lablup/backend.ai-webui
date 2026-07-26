@@ -73,10 +73,19 @@ check_relay_drift() {
 }
 
 check_terminology_drift() {
-  # Deterministic i18n terminology checker (read-only). Scans i18n VALUES against
+  # Deterministic terminology checker (read-only). Scans i18n VALUES *and* the
+  # user manual's prose (FR-3373) against
   # packages/backend.ai-webui-docs/terminology.json `avoid[]` (CHECK 1). See
   # scripts/check-terminology-i18n.mjs. (CHECK 2, near-duplicate divergence, is
   # OFF by default — report-only regardless; opt in with `pnpm run lint:terminology -- --check2`.)
+  #
+  # CHECK 3 is ON by default in the checker since FR-3373, but is turned OFF
+  # here with --no-check3. run_check pipes each step through `tail -20`, and
+  # CHECK 3's always-present section costs ~5 of those lines — enough that a
+  # real CHECK 1 finding would scroll off the top and the harness would report
+  # a failure without showing what failed. CHECK 3 is advisory, so it belongs
+  # in `pnpm run lint:terminology` (where it runs) rather than in the pass/fail
+  # harness.
   #
   # BLOCKING (FR-3049, team sign-off required): runs in --strict and is invoked
   # INSIDE run_check, so a blocking CHECK 1 finding sets FAIL and prevents
@@ -89,11 +98,13 @@ check_terminology_drift() {
   # disable: change --strict back to --warn and move this out of run_check.
   #
   # NOTE: verify.sh is NOT run in CI (it is the local/agent harness), so this
-  # flip blocks local + agent runs, not PR merges. A true CI merge-gate would be
-  # a separate workflow — see the FR-3049 PR body for why that must be
-  # diff-aware (fail only on findings a PR introduces), so a pre-existing drift
-  # elsewhere cannot block an unrelated PR.
-  node scripts/check-terminology-i18n.mjs --strict
+  # flip blocks local + agent runs, not PR merges. The one exception is the
+  # manual: docs-checks.yml runs this same checker on any PR touching
+  # packages/backend.ai-webui-docs/** (FR-3373). A general CI merge-gate for
+  # i18n content would be a separate workflow — see the FR-3049 PR body for why
+  # that must be diff-aware (fail only on findings a PR introduces), so a
+  # pre-existing drift elsewhere cannot block an unrelated PR.
+  node scripts/check-terminology-i18n.mjs --strict --no-check3
 }
 
 run_check "Relay" check_relay_drift
