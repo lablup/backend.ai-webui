@@ -84,33 +84,51 @@ Relay는 노드 id로 정규화 레코드를 식별하므로, `id` 없는 payloa
 
 **분석 한계.** 위 판정은 mutation 타입의 input 필드 기준이라 **호출부가 실제로 무엇을 보내는지까지는 보지 않습니다**. 예로 `RBACManagementPage.tsx:145`의 `adminUpdateRole`은 `id status`만 선택하는데 input 타입상 `name`/`description`도 바꿀 수 있어 후보로 잡혔지만, 실제로는 상태 토글 전용이라 **정상**입니다. 착수 전 건별로 폼이 실제 편집하는 필드를 확인해야 합니다.
 
-### E. 호출부가 성공 시 무조건 refetch
+### E. refetch 호출부 — `react/src` 전수 149곳 분류
 
-`onRequestClose={(x) => { if (x) <refetch> }}` 형태의 호출부는 **38곳**입니다. 이 중 create/delete 전용은 정당하며, 문제는 update가 가능한 모달을 렌더링하는 다음 클러스터입니다.
+`update*FetchKey(...)` 호출은 총 **149곳**입니다. 두 계층으로 나눠 전수 분류했습니다.
+
+| 계층                    | 건수                 | 위반      | 정당       |
+| ----------------------- | -------------------- | --------- | ---------- |
+| `onRequestClose` 핸들러 | 33 (+ 명명 핸들러 5) | 17        | 20         |
+| 그 외 전부              | 116                  | 16        | 100        |
+| **합계**                | **149**              | **약 33** | **약 116** |
+
+정당 116곳의 대부분은 수동 새로고침 버튼(39), 삭제(16), 대량 작업(6), 폴링(2), 필터·탭·업로드 완료 등 이벤트(7)입니다.
+
+#### E-1. `onRequestClose` 계층 — 위반 후보 17곳
 
 **단일 인스턴스가 create/update를 겸하는 곳** (`open={!!editingX || isCreating}`):
+`ResourcePresetList.tsx:239`, `KeypairResourcePolicyList.tsx:390`, `UserResourcePolicyList.tsx:268`, `ProjectResourcePolicyList.tsx:267`, `ResourceGroupList.tsx:465`, `AdminUserCredentialList.tsx:552`, `PrometheusPresetTab.tsx:205`, `AdminModelCardListPage.tsx:456`, `DeploymentListPage.tsx:416`, `AdminDeploymentListPage.tsx:461`, `ProjectAdminDeploymentsPage.tsx:418`, `AutoScalingRuleListLegacy.tsx:285`
 
-- `ResourcePresetList.tsx:239`
-- `KeypairResourcePolicyList.tsx:390`
-- `UserResourcePolicyList.tsx:268`
-- `ProjectResourcePolicyList.tsx:267`
-- `ResourceGroupList.tsx:465`
-- `AdminUserCredentialList.tsx:552`
-- `PrometheusPresetTab.tsx:205`
-- `AdminModelCardListPage.tsx:456`
-- `DeploymentListPage.tsx:416`, `AdminDeploymentListPage.tsx:461`, `ProjectAdminDeploymentsPage.tsx:418`
-- `AutoScalingRuleListLegacy.tsx:285`
+**update 전용인데도 목록 전체를 재조회**: `DeploymentBasicInfoCard.tsx:401`, `ImageList.tsx:511`·`:522`, `FairShareList.tsx:873`, `AdminUserManagement.tsx:614`
 
-**update 전용인데도 목록 전체를 재조회하는 곳**:
+#### E-2. 그 외 계층 — 위반 16곳, 대부분 **행 단위 토글**
 
-- `DeploymentBasicInfoCard.tsx:401` — 단일 필드 수정에 페이지 전체 재조회
-- `ImageList.tsx:511`, `ImageList.tsx:522` — 단일 이미지 수정
-- `FairShareItems/FairShareList.tsx:873`
-- `AdminUserManagement.tsx:614` — edit 전용 인스턴스인데 `success` 기준 refetch
+목록의 한 행을 활성/비활성으로 바꾸면서 목록 전체를 재조회하는 형태가 지배적입니다.
 
-**이미 구분자를 갖고 있으면서도 양쪽 모두 refetch하는 곳**:
+| 위치                                      | 내용                                                       |
+| ----------------------------------------- | ---------------------------------------------------------- |
+| `ResourceGroupList.tsx:227`               | `modify_scaling_group(is_active)` 토글, payload `ok`/`msg` |
+| `AdminUserCredentialList.tsx:340`·`:390`  | `modify_keypair(is_active)` 토글, payload `ok`/`msg`       |
+| `ContainerRegistryList.tsx:390`           | 행 `<Switch>` → `modify_domain`, payload `ok`/`msg`        |
+| `ContainerRegistryList.tsx:520`           | `onOk('create'\|'modify')`를 받고도 양쪽 모두 refetch      |
+| `AdminUserManagement.tsx:255`             | 상태 토글인데 `user { id }`만 반환 (D-1과 동일 건)         |
+| `ProjectPage.tsx:294`·`:337`              | 프로젝트 활성/비활성 토글, payload `ok`/`msg`              |
+| `ProjectPage.tsx:630`                     | `BAIProjectSettingModal onOk` — create/edit 양쪽 refetch   |
+| `MyKeypairManagementModal.tsx:299`·`:315` | `updateMyKeypair` payload에 **`id` 누락**으로 병합 불가    |
+| `RBACManagementPage.tsx:181`              | 소프트 비활성인데 payload가 `status` 미포함                |
+| `FairShareList.tsx:680`                   | `afterUpdate` 콜백 경유, 필드 전용 수정                    |
+| `UserSettingModal.tsx:902`                | REST TOTP 제거 후 무관한 access-key 목록 재조회            |
 
-- `ContainerRegistryList.tsx` — `onOk('create' | 'modify')`를 받으면서 두 경우 모두 `updateFetchKey()`
+#### E-3. 가장 싼 수정 — payload가 **이미** 변경 필드를 반환하는데도 refetch
+
+둘 다 파일을 직접 열어 확인했습니다. mutation selection을 손댈 필요 없이 refetch 호출만 지우면 됩니다.
+
+- **`RBACManagementPage.tsx:202`** — `adminUpdateRole`이 `{ id, status }`를 반환(`:145`)해 Relay가 이미 패치하는데 `updateFetchKey()`를 호출
+- **`ReservoirArtifactDetailPage.tsx:329`** — `cancelImportArtifact`가 `artifactRevision { id status }`를 반환하는데 페이지 전체 재조회
+
+**필터 연동 주의.** 토글 대상이 목록의 필터 조건인 경우(`MyKeypairManagementModal`의 `isActive` 필터, `ProjectPage`의 활성/비활성 탭, `ReservoirPage`의 availability 필터) store 패치만으로는 **행이 목록에서 빠지지 않습니다**. 이때는 refetch가 정당하며, 그 이유를 주석으로 남겨야 합니다.
 
 ### F. 문서가 anti-pattern을 규약으로 기술 — 본 PR에서 수정 완료
 
@@ -163,11 +181,14 @@ if (success && wasCreating) {
 
 의존성이 없어 병렬 진행이 가능하며, 1은 나머지의 참조 구현이 됩니다.
 
-1. **B·C 버그 수정** — `AutoScalingRuleEditorModalLegacy`에 `id` 추가, `UserSettingModal` payload에 `projects` 추가. 작고 독립적이라 먼저 머지
-2. **A 제거** — `UserSettingModal`의 `onRequestClose(false)` 우회를 걷어내고 호출부(`AdminUserManagement`)로 판단 이동
-3. **E 클러스터 — 노드 반환 모달** — payload가 이미 노드를 반환하는 13개 모달의 호출부에서 update 시 refetch 제거. 각 건마다 필드 커버리지 대조 선행
-4. **D — 레거시 mutation** — 후속 mutation 이관 5건, `updater:` 작성 3건
-5. **F 후속** — lint 규칙 (FR-3170의 "구조적 보장" 요구사항)
+1. **죽은 refetch 제거 (E-3)** — `RBACManagementPage.tsx:202`, `ReservoirArtifactDetailPage.tsx:329`. payload가 이미 변경 필드를 반환하므로 호출 한 줄씩만 삭제. 가장 싸고 위험이 없어 먼저 머지
+2. **한 줄 payload 버그 (B) 수정** — `AutoScalingRuleEditorModalLegacy`에 `id` 추가, `MyKeypairManagementModal`의 `updateMyKeypair`에 `id` 추가
+3. **C 수정** — `UserSettingModal` payload에 `projects` 추가
+4. **A 제거** — `UserSettingModal`의 `onRequestClose(false)` 우회를 걷어내고 호출부(`AdminUserManagement`)로 판단 이동
+5. **행 단위 토글 (E-2)** — 토글 mutation의 selection에 `id` + 변경 필드를 넣고 refetch 제거. 단 필터 연동 건은 refetch 유지 + 사유 주석
+6. **D — selection 보강** — `NODE_NOT_SELECTED` 5건은 selection만 채우고, `GAP` 중 D-1 확정 건은 필드 보강 후 호출부 refetch 제거
+7. **D — 레거시 mutation** — 후속 mutation 이관 4종, `updater:` 작성 2종
+8. **F 후속** — lint 규칙 (FR-3170의 "구조적 보장" 요구사항)
 
 ## 검증
 
