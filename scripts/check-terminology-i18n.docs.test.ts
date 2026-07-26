@@ -67,6 +67,28 @@ describe("maskMarkdownNonProse", () => {
     );
   });
 
+  it("masks a multi-backtick span whose content contains a single backtick", () => {
+    // CommonMark: a run of N backticks closes at the next run of exactly N.
+    // A naive /(`+)[^`]*?\1/ backtracks its opening run down to one backtick,
+    // masks only the delimiters, and leaves the span's content exposed.
+    const masked = maskMarkdownNonProse("Run ``scaling group ` here`` now.");
+    expect(masked).not.toContain("scaling group");
+    expect(masked).toContain("Run");
+    expect(masked).toContain("now.");
+  });
+
+  it("leaves an unterminated backtick run as prose", () => {
+    const line = "A stray ` backtick and the word organization.";
+    const masked = maskMarkdownNonProse(line);
+    expect(masked).toBe(line);
+  });
+
+  it("does not let a short inner run close a longer span", () => {
+    const masked = maskMarkdownNonProse("``a ` b`` tail");
+    expect(masked).toContain("tail");
+    expect(masked.slice(0, "``a ` b``".length).trim()).toBe("");
+  });
+
   it("preserves every column index so match spans stay valid", () => {
     const line = "The `code` word organization ends here.";
     const masked = maskMarkdownNonProse(line);
@@ -113,6 +135,23 @@ describe("collectMarkdownLines", () => {
       ].join("\n"),
     );
     expect(values(leaves)).toEqual(["Before.", "After."]);
+  });
+
+  it("does not let a fence inside an HTML comment swallow the rest of the file", () => {
+    // The comment is closed before fence detection runs, so the ``` lines
+    // inside it never flip the fence state and the prose after it is still
+    // scanned. Getting this order wrong hides every finding below the comment.
+    const leaves = prose(
+      [
+        "<!-- commented-out example:",
+        "```bash",
+        "echo hi",
+        "```",
+        "-->",
+        "Prose after the comment.",
+      ].join("\n"),
+    );
+    expect(values(leaves)).toEqual(["Prose after the comment."]);
   });
 
   it("keeps the prose that follows a comment closing mid-line", () => {

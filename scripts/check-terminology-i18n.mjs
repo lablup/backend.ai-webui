@@ -300,6 +300,58 @@ function listMarkdownFiles(dir, out = []) {
 }
 
 /**
+ * Blank out inline code spans, following CommonMark's rule: a run of N
+ * backticks opens a span that closes at the next run of EXACTLY N backticks.
+ * That rule is why this is a hand-rolled scan and not a regex — `/(`+)[^`]*?\1/`
+ * backtracks its opening run down to a shorter one, so in
+ * `` `` a ` b `` `` it would match only the two leading backticks and leave the
+ * span's content exposed to the matcher.
+ * @param {string} line
+ */
+function maskInlineCodeSpans(line) {
+  let out = "";
+  let i = 0;
+  while (i < line.length) {
+    if (line[i] !== "`") {
+      out += line[i];
+      i += 1;
+      continue;
+    }
+    let openEnd = i;
+    while (openEnd < line.length && line[openEnd] === "`") openEnd += 1;
+    const runLength = openEnd - i;
+
+    // Scan forward for a backtick run of exactly the same length.
+    let closeStart = -1;
+    let j = openEnd;
+    while (j < line.length) {
+      if (line[j] !== "`") {
+        j += 1;
+        continue;
+      }
+      let runEnd = j;
+      while (runEnd < line.length && line[runEnd] === "`") runEnd += 1;
+      if (runEnd - j === runLength) {
+        closeStart = j;
+        break;
+      }
+      j = runEnd;
+    }
+
+    if (closeStart === -1) {
+      // Unterminated run — not a code span. Emit the backticks as prose.
+      out += line.slice(i, openEnd);
+      i = openEnd;
+      continue;
+    }
+    const spanEnd = closeStart + runLength;
+    out += maskRun(line.slice(i, spanEnd));
+    i = spanEnd;
+  }
+  return out;
+}
+
+/**
  * Blank out the markdown constructs on a line that are NOT prose. Every masked
  * character is replaced by a SPACE rather than removed, so each surviving
  * character keeps its original column index and the reported `spans` still
@@ -312,9 +364,7 @@ function listMarkdownFiles(dir, out = []) {
  */
 function maskMarkdownNonProse(line) {
   return (
-    line
-      // Inline code spans: `x`, ``x with a ` in it``.
-      .replace(/(`+)[^`]*?\1/g, maskRun)
+    maskInlineCodeSpans(line)
       // Inline link / image TARGETS — `](target)`. The link TEXT stays prose.
       .replace(/\]\([^)]*\)/g, (m) => "]" + maskRun(m.slice(1)))
       // Reference-style link definitions: `[label]: https://…`.
@@ -362,8 +412,21 @@ function collectMarkdownLines(rawText, relPath, out) {
       continue;
     }
 
+    let text = line;
+
+    // Close an HTML comment BEFORE looking for a fence. A commented-out code
+    // block is ordinary comment content, and a ``` inside it must not flip
+    // `inFence` — that would swallow the comment terminator and treat the rest
+    // of the document as code, hiding real drift downstream.
+    if (inHtmlComment) {
+      const end = text.indexOf("-->");
+      if (end === -1) continue;
+      text = maskRun(text.slice(0, end + 3)) + text.slice(end + 3);
+      inHtmlComment = false;
+    }
+
     // Fenced code blocks, closed by a fence of the same character.
-    const fence = line.match(/^\s*(`{3,}|~{3,})/);
+    const fence = text.match(/^\s*(`{3,}|~{3,})/);
     if (fence) {
       if (!inFence) {
         inFence = true;
@@ -380,14 +443,6 @@ function collectMarkdownLines(rawText, relPath, out) {
     // marker lives inside an HTML comment, which masking would erase.
     if (line.includes(INLINE_OK_MARKER)) continue;
 
-    let text = line;
-    // Tail of a comment opened on an earlier line.
-    if (inHtmlComment) {
-      const end = text.indexOf("-->");
-      if (end === -1) continue;
-      text = maskRun(text.slice(0, end + 3)) + text.slice(end + 3);
-      inHtmlComment = false;
-    }
     // A comment opened on this line and not closed on it.
     const open = text.lastIndexOf("<!--");
     if (open !== -1 && text.indexOf("-->", open) === -1) {
@@ -1235,7 +1290,6 @@ function parseArgs(argv) {
     // e.g. ModifiedAt -> "Modificado en" / "Modificado el"). Opt in with
     // --check2. Refining it into a high-signal check is tracked as a follow-up.
     runCheck2: false,
-    // CHECK 3 (unknown capitalized user-facing noun) is OFF by default: it is a
     // CHECK 3 (unknown capitalized user-facing noun) is ON by default since
     // FR-3373: FR-3302 cleared the candidate backlog to zero, which was the
     // promotion precondition recorded on the FR-3311 map. It stays always
