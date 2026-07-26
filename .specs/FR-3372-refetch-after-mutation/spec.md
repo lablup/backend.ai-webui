@@ -51,6 +51,8 @@ Relay는 노드 id로 정규화 레코드를 식별하므로, `id` 없는 payloa
 
 사용자의 프로젝트 소속을 변경하면 서버에는 반영되지만 UI는 이전 값을 계속 보여줍니다. **A/B보다 위험한 형태**로, refetch를 제거할 때 가장 흔히 발생할 수 있는 실패 모드입니다.
 
+> D 분류에서 `UserSettingModal`은 `OK`로 잡힙니다. 축이 다르기 때문입니다 — D는 **테이블(뷰) fragment** 커버리지만 보고, 여기 C는 **모달 자신의 fragment**가 읽는 `projects`를 봅니다. 즉 목록은 최신인데 모달을 다시 열면 옛 값이 보이는 형태입니다. 두 축 모두 확인해야 합니다.
+
 ### D. update mutation의 payload 커버리지 — 35건 전수 분류
 
 판정 기준은 **"테이블(뷰)이 fragment로 읽는 필드를, 같은 타입을 수정하는 mutation이 반환하는가"** 입니다. 스키마의 payload 타입 → 노드 타입 → 해당 타입의 뷰 소유 fragment를 스크립트로 대조했습니다(fragment spread는 재귀 전개).
