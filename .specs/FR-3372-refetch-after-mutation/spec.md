@@ -51,21 +51,36 @@ Relay는 노드 id로 정규화 레코드를 식별하므로, `id` 없는 payloa
 
 사용자의 프로젝트 소속을 변경하면 서버에는 반영되지만 UI는 이전 값을 계속 보여줍니다. **A/B보다 위험한 형태**로, refetch를 제거할 때 가장 흔히 발생할 수 있는 실패 모드입니다.
 
-### D. update mutation이 `ok`/`msg`만 선택 — 10곳
+### D. update mutation의 payload 커버리지 — 35건 전수 분류
 
-모달 컴포넌트 내 update mutation 23개 중 13개는 노드를 선택하고, 10개는 `ok`/`msg`만 선택합니다.
+판정 기준은 **"테이블(뷰)이 fragment로 읽는 필드를, 같은 타입을 수정하는 mutation이 반환하는가"** 입니다. 스키마의 payload 타입 → 노드 타입 → 해당 타입의 뷰 소유 fragment를 스크립트로 대조했습니다(fragment spread는 재귀 전개).
 
-- `KeypairResourcePolicySettingModal.tsx` — `modify_keypair_resource_policy`
-- `ProjectResourcePolicySettingModal.tsx` — `modify_project_resource_policy`
-- `UserResourcePolicySettingModal.tsx` — `modify_user_resource_policy`
-- `ResourcePresetSettingModal.tsx` — `modify_resource_preset` (2곳: name 기준 / id 기준)
-- `ResourceGroupSettingModal.tsx` — `modify_scaling_group`
-- `KeypairSettingModal.tsx` — `modify_keypair`
-- `ManageAppsModal.tsx` — `modify_image`
-- `ManageImageResourceLimitModal.tsx` — `modify_image`
-- `AgentSettingModal.tsx` — `modify_agent` (단, 수동 `updater:`로 보완되어 있어 **정상**)
+| 분류                | 건수 | 의미                                                | 조치                               |
+| ------------------- | ---- | --------------------------------------------------- | ---------------------------------- |
+| `NO_NODE`           | 10   | payload에 노드 필드 자체가 없음 (레거시 `ok`/`msg`) | 후속 mutation 이관 또는 `updater:` |
+| `NODE_NOT_SELECTED` | 5    | payload는 노드를 줄 수 있는데 selection에 없음      | selection set만 채우면 됨          |
+| `GAP`               | 13   | 노드는 선택했으나 뷰가 읽는 필드 일부 누락          | 필드 보강 후 refetch 제거          |
+| `OK`                | 7    | 뷰 fragment를 모두 커버                             | refetch 즉시 제거 가능             |
 
-앞의 5개는 노드를 반환하는 후속 mutation이 이미 스키마에 존재합니다(`UpdateKeypairResourcePolicyPayload`, `UpdateProjectResourcePolicyPayload`, `UpdateUserResourcePolicyPayload`, `UpdateResourcePresetPayload`, `UpdateResourceGroupPayload`). `modify_keypair`·`modify_image`는 후속이 없어 `updater:` 대상입니다.
+**`NO_NODE` (10)** — `modify_keypair_resource_policy`, `modify_project_resource_policy`, `modify_user_resource_policy`, `modify_scaling_group`(2곳), `modify_keypair`(2곳), `modify_image`(2곳), `modify_agent`. 앞 4종은 노드 반환 후속이 스키마에 이미 있습니다(`UpdateKeypairResourcePolicyPayload`, `UpdateProjectResourcePolicyPayload`, `UpdateUserResourcePolicyPayload`, `UpdateResourceGroupPayload`). `modify_keypair`·`modify_image`는 후속이 없어 `updater:` 대상이며, `modify_agent`는 이미 `updater:`로 보완되어 **정상**입니다.
+
+**`NODE_NOT_SELECTED` (5)** — `modify_group`(`BAIProjectBulkEditModal`, `ProjectStoragePermissionTable`, `ProjectPage`), `modify_domain`(`ContainerRegistryList`, `DomainStoragePermissionTable`). 프론트만 고치면 되는 가장 싼 건들입니다.
+
+**`OK` (7)** — `UserSettingModal`, `UserProfileSettingModal`, `UserResourcePolicyV2SettingModal`, `MyKeypairManagementModal`, `ContainerRegistryEditorModal`, `BAIProjectSettingModal`, `BAIHuggingFaceRegistrySettingModal`.
+
+#### D-1. 실질 위험 — 뷰가 읽고, input이 바꿀 수 있는데, 반환하지 않는 필드
+
+`GAP` 13건 중 **mutation input에 존재하는 필드**만으로 좁히면 7건이 남습니다. 이 중 파일을 직접 열어 확인한 확정 건은 다음과 같습니다.
+
+| 위치                                       | mutation 반환               | 뷰가 읽는 누락 필드                                                                                                                     |
+| ------------------------------------------ | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `AdminUserManagement.tsx:189`              | `user { id }`               | `BAIAdminUserV2Table`이 `status.status` 등 14개. **이 mutation이 바로 상태 토글**이라 바꾼 값 자체가 안 돌아옴                          |
+| `DeploymentSettingModal.tsx:103`           | `deployment { id }`         | `BAIModelDeploymentNodes`·`DeploymentBasicInfoCard` 등 8개 fragment가 `metadata.name`, `metadata.tags`, `networkAccess.openToPublic` 등 |
+| `AutoScalingRuleEditorModalLegacy.tsx:136` | `rule { …8개 }` (`id` 없음) | 병합 자체가 불가 — B 항목과 동일 건                                                                                                     |
+| `ResourceGroupFairShareSettingModal.tsx`   | `resourceGroup { id name }` | `ResourceGroupFairShareTable`이 편집 대상인 `fairShareSpec.*` 4개                                                                       |
+| `AdminDeploymentPresetSettingPage.tsx`     | 일부 spread + `id name`     | `AdminDeploymentPresetNodes` 등이 `cluster.*`, `deploymentDefaults.*`, `execution.*` 등 13~15개                                         |
+
+**분석 한계.** 위 판정은 mutation 타입의 input 필드 기준이라 **호출부가 실제로 무엇을 보내는지까지는 보지 않습니다**. 예로 `RBACManagementPage.tsx:145`의 `adminUpdateRole`은 `id status`만 선택하는데 input 타입상 `name`/`description`도 바꿀 수 있어 후보로 잡혔지만, 실제로는 상태 토글 전용이라 **정상**입니다. 착수 전 건별로 폼이 실제 편집하는 필드를 확인해야 합니다.
 
 ### E. 호출부가 성공 시 무조건 refetch
 
