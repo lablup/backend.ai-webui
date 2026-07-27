@@ -261,7 +261,7 @@ test.describe(
       await expect(drawerPanel).toBeHidden({ timeout: 5000 });
     });
 
-    test('Drawer shows "Scopes", "Permissions", and "Role Assignments" tabs', async ({
+    test('Drawer shows "Role Assignments" and "Permissions" tabs', async ({
       page,
       request,
     }) => {
