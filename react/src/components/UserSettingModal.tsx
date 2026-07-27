@@ -266,6 +266,9 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               edges {
                 node {
                   id
+                  basicInfo {
+                    name
+                  }
                 }
               }
             }

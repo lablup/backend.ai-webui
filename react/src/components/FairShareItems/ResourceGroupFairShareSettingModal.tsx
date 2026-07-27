@@ -71,6 +71,7 @@ const ResourceGroupFairShareSettingModal: React.FC<
         resourceGroup {
           id
           name
+          ...ResourceGroupFairShareSettingModalFragment
         }
       }
     }
