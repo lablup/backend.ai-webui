@@ -91,6 +91,10 @@
     "KeepAsIs": "Διατήρηση ως έχει",
     "UndoChanges": "Αναίρεση αλλαγών"
   },
+  "comp:BAIBulkErrorModal": {
+    "ActionExecutionFailed": "Η εκτέλεση απέτυχε",
+    "ErrorOccurred": "Παρουσιάστηκε σφάλμα"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Επιλέξτε μητρώο εμπορευματοκιβωτίων"
   },

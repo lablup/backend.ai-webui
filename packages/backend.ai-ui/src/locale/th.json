@@ -91,6 +91,10 @@
     "KeepAsIs": "เก็บไว้ตามเดิม",
     "UndoChanges": "ยกเลิกการเปลี่ยนแปลง"
   },
+  "comp:BAIBulkErrorModal": {
+    "ActionExecutionFailed": "การดำเนินการล้มเหลว",
+    "ErrorOccurred": "เกิดข้อผิดพลาด"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "เลือกรีจิสทรีคอนเทนเนอร์"
   },

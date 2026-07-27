@@ -91,6 +91,10 @@
     "KeepAsIs": "Pidä ennallaan",
     "UndoChanges": "Kumoa muutokset"
   },
+  "comp:BAIBulkErrorModal": {
+    "ActionExecutionFailed": "Suoritus epäonnistui",
+    "ErrorOccurred": "Tapahtui virhe"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Valitse konttirekisteri"
   },

@@ -91,6 +91,10 @@
     "KeepAsIs": "保持原样",
     "UndoChanges": "撤销更改"
   },
+  "comp:BAIBulkErrorModal": {
+    "ActionExecutionFailed": "执行错误",
+    "ErrorOccurred": "发生错误"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "选择容器镜像仓库"
   },

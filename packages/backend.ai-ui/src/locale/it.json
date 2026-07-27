@@ -91,6 +91,10 @@
     "KeepAsIs": "Mantieni invariato",
     "UndoChanges": "Annulla modifiche"
   },
+  "comp:BAIBulkErrorModal": {
+    "ActionExecutionFailed": "Esecuzione non riuscita",
+    "ErrorOccurred": "Si è verificato un errore"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Seleziona registro container"
   },

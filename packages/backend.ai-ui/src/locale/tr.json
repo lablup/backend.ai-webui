@@ -91,6 +91,10 @@
     "KeepAsIs": "Olduğu gibi bırak",
     "UndoChanges": "Değişiklikleri geri al"
   },
+  "comp:BAIBulkErrorModal": {
+    "ActionExecutionFailed": "Yürütme başarısız oldu",
+    "ErrorOccurred": "Bir hata oluştu"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Konteyner Kayıt Defteri Seç"
   },

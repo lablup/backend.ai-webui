@@ -91,6 +91,10 @@
     "KeepAsIs": "Pozostaw bez zmian",
     "UndoChanges": "Cofnij zmiany"
   },
+  "comp:BAIBulkErrorModal": {
+    "ActionExecutionFailed": "Wykonanie nie powiodło się",
+    "ErrorOccurred": "Wystąpił błąd"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Wybierz rejestr kontenerów"
   },

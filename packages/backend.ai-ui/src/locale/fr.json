@@ -91,6 +91,10 @@
     "KeepAsIs": "Conserver tel quel",
     "UndoChanges": "Annuler les modifications"
   },
+  "comp:BAIBulkErrorModal": {
+    "ActionExecutionFailed": "Échec de l'exécution",
+    "ErrorOccurred": "Une erreur s'est produite"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Sélectionner un registre de conteneurs"
   },

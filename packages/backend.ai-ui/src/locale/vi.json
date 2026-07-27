@@ -91,6 +91,10 @@
     "KeepAsIs": "Giữ nguyên",
     "UndoChanges": "Hoàn tác thay đổi"
   },
+  "comp:BAIBulkErrorModal": {
+    "ActionExecutionFailed": "Thực thi thất bại",
+    "ErrorOccurred": "Đã xảy ra lỗi"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Chọn kho lưu trữ container"
   },

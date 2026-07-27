@@ -91,6 +91,10 @@
     "KeepAsIs": "そのまま維持",
     "UndoChanges": "変更を元に戻す"
   },
+  "comp:BAIBulkErrorModal": {
+    "ActionExecutionFailed": "実行エラー",
+    "ErrorOccurred": "問題が発生しました。"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "コンテナレジストリを選択"
   },
