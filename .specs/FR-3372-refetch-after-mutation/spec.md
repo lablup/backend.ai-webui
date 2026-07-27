@@ -151,7 +151,7 @@ Relay는 노드 id로 정규화 레코드를 식별하므로, `id` 없는 payloa
 
 ### Should Have
 
-- [ ] create는 가능한 경우 `@appendEdge`로 connection에 삽입한다. 서버 정렬에 의존하면 refetch를 유지하고 이유를 남긴다
+- [ ] create/delete는 refetch를 유지한다. connection 지시자(`@appendEdge` 등)로 클라이언트에서 목록을 조작하지 않는다 — 페이지네이션에서 커서 경계가 어긋나 깨진다
 
 ## 수정 방침
 
@@ -208,6 +208,6 @@ onRequestClose={(success) => {
 
 - **레거시 `ok`/`msg` mutation (`NO_NODE` 10건)** — 후속 mutation 이관도, `updater:` 작성도 하지 않고 **refetch를 그대로 둡니다.** 백엔드 payload가 데이터를 주지 않는 이상 프론트에서 깔끔하게 풀 방법이 없고, 후속 mutation 이관은 백엔드 버전 호환까지 얽혀 비용 대비 효과가 낮습니다. 이미 `updater:`로 보완된 `AgentSettingModal`은 그대로 둡니다
 - **lint 규칙 / `verify.sh` 검사** — 이번 범위에서 제외. 가드레일은 `relay-mutation-store-updates` 스킬 문서로만 둡니다
-- delete/purge 경로의 refetch — connection 삭제 지시자 도입은 별도 과제
+- delete/purge 경로의 refetch — 유지가 정답이므로 손대지 않습니다
 - REST(`useTanMutation`) 기반 수정 경로 — Relay store와 무관
 - 목록 쿼리 자체의 통합/축소 — FR-3170의 다른 축
