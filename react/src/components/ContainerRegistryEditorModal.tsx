@@ -108,6 +108,8 @@ const ContainerRegistryEditorModal: React.FC<
         modify_container_registry_node_v2(id: $id, props: $props) {
           container_registry {
             id
+            password
+            ...ContainerRegistryEditorModalFragment
           }
         }
       }

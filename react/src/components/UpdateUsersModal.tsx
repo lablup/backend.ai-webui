@@ -10,6 +10,7 @@ import { UpdateUsersModalFragment$key } from '../__generated__/UpdateUsersModalF
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
+import { useTOTPSupported } from '../hooks/backendai';
 import { theme } from '../theme-shim';
 import BAIFormItem from './BAIFormItem';
 import ProjectSelect from './ProjectSelect';
@@ -67,6 +68,7 @@ const UpdateUsersModal = ({
   const { token } = theme.useToken();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
+  const { isTOTPSupported } = useTOTPSupported();
   const formRef = useRef<FormInstance<UpdateUsersFormValues>>(null);
   const [isPending, setIsPending] = useState(false);
   const users = useFragment(
@@ -85,10 +87,12 @@ const UpdateUsersModal = ({
     useMutation<UpdateUsersModalBulkUpdateMutation>(graphql`
       mutation UpdateUsersModalBulkUpdateMutation(
         $input: BulkUpdateUserV2Input!
+        $isNotSupportTotp: Boolean!
       ) {
         adminBulkUpdateUsersV2(input: $input) {
           updatedUsers {
             id
+            ...BAIAdminUserV2TableFragment
           }
           failed {
             userId
@@ -142,6 +146,7 @@ const UpdateUsersModal = ({
                     input,
                   })),
                 },
+                isNotSupportTotp: !isTOTPSupported,
               },
               onCompleted: (res, errors) => {
                 if (errors && errors.length > 0) {

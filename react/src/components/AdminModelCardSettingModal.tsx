@@ -159,6 +159,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               license
             }
             readme
+            updatedAt
           }
         }
       }
