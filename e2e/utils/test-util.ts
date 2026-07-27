@@ -276,6 +276,26 @@ export async function logout(page: Page) {
   await page.waitForTimeout(1000);
 }
 
+/**
+ * Locator for the route-level "not found" screen (FR-3279/FR-3383).
+ * The legacy image-based Page404 (`<img alt="404 Not Found">`) was replaced by
+ * the shared RouteErrorContent composition, which renders the i18n heading
+ * `webui.NotFound` ("Oops! Page not Found...") instead of an image.
+ */
+export function notFoundPageHeading(page: Page) {
+  return page.getByText('Page not Found');
+}
+
+/**
+ * Locator for the route-level "forbidden" screen (FR-3383).
+ * The legacy image-based Page401 (`<img alt="401 Not Found">`) was replaced by
+ * ForbiddenPage in the shared RouteErrorContent composition, which renders the
+ * i18n heading `webui.UnauthorizedAccess`.
+ */
+export function forbiddenPageHeading(page: Page) {
+  return page.getByText('Unauthorized Access');
+}
+
 export async function navigateTo(page: Page, path: string) {
   //merge the base url with the path
   const url = new URL(path, webuiEndpoint);

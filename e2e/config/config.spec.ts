@@ -2,6 +2,7 @@ import { StartPage } from '../utils/classes/common/StartPage';
 import {
   loginAsAdmin,
   modifyConfigToml,
+  notFoundPageHeading,
   webuiEndpoint,
 } from '../utils/test-util';
 import { test, expect } from '@playwright/test';
@@ -43,20 +44,27 @@ test.describe.parallel(
 
         // check if the pages show 404 content when accessed directly
         await page.goto(`${webuiEndpoint}/start`);
-        await expect(page.getByAltText('404 Not Found')).toBeVisible();
+        await expect(notFoundPageHeading(page)).toBeVisible({
+          timeout: 15_000,
+        });
         await page.goto(`${webuiEndpoint}/serving`);
-        await expect(page.getByAltText('404 Not Found')).toBeVisible();
+        await expect(notFoundPageHeading(page)).toBeVisible({
+          timeout: 15_000,
+        });
         await page.goto(`${webuiEndpoint}/job`);
-        await expect(page.getByAltText('404 Not Found')).toBeVisible();
+        await expect(notFoundPageHeading(page)).toBeVisible({
+          timeout: 15_000,
+        });
 
         requestConfig.menu.blocklist = '';
         await modifyConfigToml(page, request, requestConfig);
         await page.reload();
 
-        // check if the menu items are visible
+        // check if the menu items are visible (the reload is a full app boot,
+        // so give the menu render a generous wait)
         await expect(
           page.getByRole('link', { name: 'Start', exact: true }),
-        ).toBeVisible();
+        ).toBeVisible({ timeout: 15_000 });
         await expect(
           page.getByRole('menuitem', { name: 'Sessions' }),
         ).toBeVisible();
