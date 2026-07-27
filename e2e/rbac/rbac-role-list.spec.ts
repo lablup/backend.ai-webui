@@ -308,12 +308,15 @@ test.describe(
         timeout: 10000,
       });
 
-      // 4. Locate the Refresh button (reload icon)
-      const refreshButton = page
-        .locator('button')
-        .filter({ has: page.locator('.anticon-reload') })
-        .first();
-      await expect(refreshButton).toBeVisible();
+      // 4. Locate the Refresh button by its accessible name. The Ant Design
+      // "reload" icon exposes `aria-label="reload"`, which becomes the
+      // button's accessible name (the `title="Refresh"` attribute set by
+      // BAIFetchKeyButton is only a fallback and isn't used here since the
+      // icon already contributes a name). This avoids matching on the icon's
+      // CSS class directly, which can momentarily disappear while
+      // BAIFetchKeyButton swaps in its loading spinner.
+      const refreshButton = page.getByRole('button', { name: 'reload' });
+      await expect(refreshButton).toBeVisible({ timeout: 10000 });
 
       // 5. Click the Refresh button
       await refreshButton.click();
