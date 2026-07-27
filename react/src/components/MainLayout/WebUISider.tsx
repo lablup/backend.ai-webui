@@ -5,6 +5,7 @@
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
 import usePrimaryColors from '../../hooks/usePrimaryColors';
+import { useRouteAccessDecision } from '../../hooks/useRouteAccess';
 import {
   rewriteProjectNameInPath,
   useActiveProjectName,
@@ -85,12 +86,15 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     groupedAdminMenu,
     isSelectedAdminCategoryMenu,
     isCurrentPathAdminCategory,
-    isCurrentPageUnauthorized,
     firstAvailableAdminMenuItem,
     defaultMenuPath,
   } = useWebUIMenuItems({
     hideGroupName: props.collapsed,
   });
+  // Route-handle-declared access decision (FR-3383): when the current admin
+  // page is unauthorized for this user, the sider falls back to the general
+  // menu (the admin sider would be empty/misleading).
+  const isCurrentPageUnauthorized = useRouteAccessDecision() === 'unauthorized';
 
   const [goBackPath, setGoBackPath] = useSessionStorageState<string>(
     'backendaiwebui.last_visited_general_path',

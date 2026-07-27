@@ -9,6 +9,7 @@ import {
   RBACElementType,
 } from '../__generated__/useCurrentUserProjectRolesQuery.graphql';
 import { useCurrentProjectValue } from './useCurrentProject';
+import { useUrlProjectValidity } from './useUrlProjectValidity';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export interface CurrentUserProjectRolesResult {
@@ -119,23 +120,31 @@ export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
 };
 
 export type EffectiveAdminRole =
-  | 'superadmin'
-  | 'domainAdmin'
-  | 'currentProjectAdmin'
-  | 'none';
+  'superadmin' | 'domainAdmin' | 'currentProjectAdmin' | 'none';
 
 /**
  * Derived hook returning the user's effective admin role with priority:
  * super > domain > project > none.
+ *
+ * Project-admin rights are evaluated against the project the URL names
+ * (`/project/:projectName/*`), falling back to the ambient current-project
+ * atom only on non-project routes. Keying off the atom alone deadlocked
+ * direct entry (FR-3383): entering `/project/B/admin/users` while the atom
+ * still held project A judged the user's rights against A, rendered 401
+ * instead of the page, and thereby prevented `ProjectScopeLayout` — which is
+ * what converges the atom to the URL — from ever mounting.
  */
 export const useEffectiveAdminRole = (): EffectiveAdminRole => {
   const { isSuperAdmin, domainAdminDomains, projectAdminIds } =
     useCurrentUserProjectRoles();
 
+  const { urlProjectName, resolvedId } = useUrlProjectValidity();
   const currentProjectId = useCurrentProjectValue()?.id;
+  const targetProjectId = urlProjectName ? resolvedId : currentProjectId;
+
   if (isSuperAdmin) return 'superadmin';
   if (domainAdminDomains.length > 0) return 'domainAdmin';
-  if (currentProjectId && projectAdminIds.includes(currentProjectId))
+  if (targetProjectId && projectAdminIds.includes(targetProjectId))
     return 'currentProjectAdmin';
   return 'none';
 };

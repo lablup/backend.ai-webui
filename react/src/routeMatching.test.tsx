@@ -64,6 +64,45 @@ describe('real routes still win over the catch-alls', () => {
   });
 });
 
+/**
+ * Deepest `handle.access` declaration for a pathname — the exact lookup
+ * `useRouteAccessDecision` performs (FR-3383).
+ */
+const deepestAccess = (pathname: string): string | undefined => {
+  const matches = matchRoutes(mainLayoutChildRoutes, pathname);
+  if (!matches) return undefined;
+  for (let i = matches.length - 1; i >= 0; i--) {
+    const access = (matches[i]?.route.handle as { access?: string } | undefined)
+      ?.access;
+    if (access) return access;
+  }
+  return undefined;
+};
+
+describe('route-handle access declarations (FR-3383)', () => {
+  it.each([
+    // Bare /admin index relaxes to anyAdmin so its redirect can run.
+    ['/admin', 'anyAdmin'],
+    // Global admin subtree default.
+    ['/admin/session', 'admin'],
+    ['/admin/environment', 'admin'],
+    ['/admin/users', 'admin'],
+    // Superadmin-only leaves override the subtree default.
+    ['/admin/settings', 'superadmin'],
+    ['/admin/deployments', 'superadmin'],
+    ['/admin/dashboard', 'superadmin'],
+    ['/admin/rbac', 'superadmin'],
+    // Project-admin subtree.
+    ['/project/foo/admin/users', 'projectAdmin'],
+    ['/project/foo/admin/session', 'projectAdmin'],
+    // General pages declare nothing.
+    ['/project/foo/start', undefined],
+    ['/usersettings', undefined],
+  ])('%s -> %s', (pathname, expected) => {
+    expect(deepestAccess(pathname)).toBe(expected);
+  });
+});
+
 describe('unicode project names match :projectName', () => {
   it('matches a raw (unencoded) Korean project name', () => {
     expect(matchSignature('/project/한글-프로젝트/session')).toBe(

@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useRouteAccessDecision } from '../hooks/useRouteAccess';
 import { useRouteScope } from '../hooks/useRouteScope';
-import { useUrlProjectValidity } from '../hooks/useUrlProjectValidity';
 import { BAIAlert, BAIAlertProps } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -21,12 +21,12 @@ const ProjectAdminScopeAlert: React.FC<ProjectAdminScopeAlertProps> = (
   // `project` prefix) is the single source of truth for this gate.
   const scope = useRouteScope();
   const isProjectAdminPage = scope === 'projectAdmin';
-  // When the URL names a project that doesn't resolve, ProjectScopeLayout
-  // renders its "not found / no access" state instead of the page — this
+  // Whenever a route-error screen owns the content area — the merged
+  // invalid-project state ('defer') or the forbidden/blocked pages — this
   // page-scoped notice must not appear above it.
-  const { isInvalid: isUrlProjectInvalid } = useUrlProjectValidity();
+  const decision = useRouteAccessDecision();
 
-  if (!isProjectAdminPage || isUrlProjectInvalid) return null;
+  if (!isProjectAdminPage || decision !== 'allowed') return null;
 
   return (
     <BAIAlert
