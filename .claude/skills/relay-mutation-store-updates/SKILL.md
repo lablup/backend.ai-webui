@@ -156,12 +156,41 @@ success (a toast, clearing a selection, closing a drawer) silently stops
 firing after updates. `UserSettingModal` currently does this; it is a bug to
 copy from, not a pattern.
 
-The caller already knows whether it opened create or edit. Put the decision
-there. Two shapes appear in this repo:
+**The fragment prop is the discriminator.** A setting modal that handles both
+paths takes a nullable `*Frgmt` — null means create, non-null means update.
+That prop is passed by the caller, so the caller can branch on it without any
+signature change:
 
-**Separate instances** — `AdminUserManagement` renders one `UserSettingModal`
-with `userSettingFrgmt={selectedUser}` and another with `={null}`. The edit
-instance simply doesn't refetch:
+```tsx
+onRequestClose={(success) => {
+  if (success && entityFrgmt === null) {
+    refetch();   // create → a new row exists; update → the store is already patched
+  }
+  // …close/reset state
+}}
+```
+
+Applied to a real call site — one instance serving both paths:
+
+```tsx
+<ResourcePresetSettingModal
+  resourcePresetFrgmt={editingResourcePreset}
+  open={!!editingResourcePreset || isCreating}
+  onRequestClose={(success) => {
+    // read the fragment BEFORE the resets below; the handler closes over the
+    // render-time value, so check first and reset after.
+    if (success && !editingResourcePreset) {
+      startRefetchTransition(() => updateResourcePresetsFetchKey());
+    }
+    setEditingResourcePreset(null);
+    setIsCreating(false);
+  }}
+/>
+```
+
+When the caller renders **separate instances** for create and edit — as
+`AdminUserManagement` does with `userSettingFrgmt={selectedUser}` and
+`={null}` — the branch collapses: the edit instance simply never refetches.
 
 ```tsx
 <UserSettingModal
@@ -169,24 +198,6 @@ instance simply doesn't refetch:
   onRequestClose={() => {
     setSelectedUserForSettingModal(null);
     // no refetch: the update mutation returns the node and Relay patches it
-  }}
-/>
-```
-
-**One instance for both** — the edit state is already in the handler's closure,
-so no prop change is needed at all:
-
-```tsx
-<ResourcePresetSettingModal
-  resourcePresetFrgmt={editingResourcePreset}
-  open={!!editingResourcePreset || isCreating}
-  onRequestClose={(success) => {
-    const wasCreating = !editingResourcePreset; // closure value, not post-reset
-    setEditingResourcePreset(null);
-    setIsCreating(false);
-    if (success && wasCreating) {
-      startRefetchTransition(() => updateResourcePresetsFetchKey());
-    }
   }}
 />
 ```
