@@ -99,12 +99,12 @@ check_terminology_drift() {
   # disable: change --strict back to --warn and move this out of run_check.
   #
   # NOTE: verify.sh is NOT run in CI (it is the local/agent harness), so this
-  # flip blocks local + agent runs, not PR merges. The one exception is the
-  # manual: docs-checks.yml runs this same checker on any PR touching
-  # packages/backend.ai-webui-docs/** (FR-3373). A general CI merge-gate for
-  # i18n content would be a separate workflow — see the FR-3049 PR body for why
-  # that must be diff-aware (fail only on findings a PR introduces), so a
-  # pre-existing drift elsewhere cannot block an unrelated PR.
+  # step blocks local + agent runs, not PR merges. Merges are gated by two
+  # workflows running this same checker on a path filter: docs-checks.yml for
+  # the manual (FR-3373) and terminology-content.yml for the i18n stores and
+  # the termbase (FR-3375). Both are ABSOLUTE rather than diff-aware — see
+  # terminology-content.yml's header for why that is sound once the baseline is
+  # clean, and for the condition that would justify revisiting it.
   node scripts/check-terminology-i18n.mjs --strict --no-check3
 }
 
