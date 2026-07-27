@@ -1501,7 +1501,7 @@
     "UnexpectedError": "Une erreur inattendue s'est produite. \nVeuillez réessayer plus tard ou contacter le support si le problème persiste.",
     "UnknownError": "Une erreur inconnue s'est produite. Veuillez réessayer.",
     "UpdateError": "Erreur de mise à jour",
-    "UserHasNoGroup": "L'utilisateur n'a pas de groupe. Veuillez contacter l'administrateur pour résoudre ce problème.",
+    "UserHasNoGroup": "L'utilisateur n'a pas de projet. Veuillez contacter l'administrateur pour résoudre ce problème.",
     "UserNameAlreadyExist": "Le nom d'utilisateur existe déjà. Il ne peut pas être dupliqué.",
     "VirtualFolderAlreadyExist": "Un dossier virtuel portant le même nom existe déjà. Supprimez votre propre dossier ou déclinez l'invitation.",
     "WrongAPIServerAddress": "Mauvaise adresse du serveur API."

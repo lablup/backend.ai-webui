@@ -1500,7 +1500,7 @@
     "UnexpectedError": "Si è verificato un errore imprevisto. \nRiprova più tardi o contatta il supporto se il problema persiste.",
     "UnknownError": "Si è verificato un errore sconosciuto. Si prega di riprovare.",
     "UpdateError": "Errore di aggiornamento",
-    "UserHasNoGroup": "L'utente non ha un gruppo. Contattare l'amministratore per risolvere il problema.",
+    "UserHasNoGroup": "L'utente non ha un progetto. Contattare l'amministratore per risolvere il problema.",
     "UserNameAlreadyExist": "Il nome utente esiste già. Non può essere duplicato.",
     "VirtualFolderAlreadyExist": "Esiste già una cartella virtuale con lo stesso nome. Eliminare la propria cartella o declinare l'invito.",
     "WrongAPIServerAddress": "Indirizzo del server API errato."

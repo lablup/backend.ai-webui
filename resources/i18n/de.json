@@ -1500,7 +1500,7 @@
     "UnexpectedError": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut oder kontaktieren Sie den Support, falls das Problem weiterhin besteht.",
     "UnknownError": "Ein unbekannter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
     "UpdateError": "Aktualisierungsfehler",
-    "UserHasNoGroup": "Der Benutzer hat keine Gruppe. Bitte kontaktieren Sie den Administrator, um das Problem zu beheben.",
+    "UserHasNoGroup": "Der Benutzer hat kein Projekt. Bitte kontaktieren Sie den Administrator, um das Problem zu beheben.",
     "UserNameAlreadyExist": "Der Benutzername existiert bereits. Er kann nicht dupliziert werden.",
     "VirtualFolderAlreadyExist": "Es existiert bereits ein virtueller Ordner mit demselben Namen. Löschen Sie Ihren eigenen Ordner oder lehnen Sie die Einladung ab.",
     "WrongAPIServerAddress": "Falsche API-Serveradresse."

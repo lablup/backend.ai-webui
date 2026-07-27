@@ -1500,7 +1500,7 @@
     "UnexpectedError": "예기치 못한 오류가 발생했습니다. 잠시 후 다시 시도하거나 문제가 지속되면 지원팀에 문의하세요.",
     "UnknownError": "알 수 없는 오류가 발생했습니다. 다시 시도해 주세요.",
     "UpdateError": "업데이트 에러",
-    "UserHasNoGroup": "사용자가 어떤 그룹에도 속해있지 않습니다. 관리자에게 문의하세요.",
+    "UserHasNoGroup": "사용자가 어떤 프로젝트에도 속해있지 않습니다. 관리자에게 문의하세요.",
     "UserNameAlreadyExist": "이미 사용하고 있는 사용자 이름입니다.",
     "VirtualFolderAlreadyExist": "같은 이름의 폴더가 이미 존재합니다. 폴더를 삭제하거나 초대를 거절하세요.",
     "WrongAPIServerAddress": "잘못된 API 서버 주소"

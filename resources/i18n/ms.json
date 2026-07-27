@@ -1500,7 +1500,7 @@
     "UnexpectedError": "Kesalahan yang tidak dijangka berlaku. \nCuba sebentar lagi atau hubungi sokongan jika masalah berterusan.",
     "UnknownError": "Kesalahan yang tidak diketahui berlaku. \nSila cuba lagi.",
     "UpdateError": "Ralat kemas kini",
-    "UserHasNoGroup": "Pengguna tidak mempunyai kumpulan. \nSila hubungi pentadbir untuk membetulkannya.",
+    "UserHasNoGroup": "Pengguna tidak mempunyai projek. \nSila hubungi pentadbir untuk membetulkannya.",
     "UserNameAlreadyExist": "Nama pengguna sudah wujud. \nIa tidak boleh ditiru.",
     "VirtualFolderAlreadyExist": "Folder maya dengan nama yang sama sudah wujud. \nPadamkan folder anda sendiri atau tolak jemputan.",
     "WrongAPIServerAddress": "Alamat pelayan API salah."

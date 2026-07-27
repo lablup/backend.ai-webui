@@ -1501,7 +1501,7 @@
     "UnexpectedError": "Wystąpił nieoczekiwany błąd. \nSpróbuj ponownie później lub skontaktuj się z wsparciem, jeśli problem będzie się utrzymywał.",
     "UnknownError": "Wystąpił nieznany błąd. Spróbuj ponownie.",
     "UpdateError": "Błąd aktualizacji",
-    "UserHasNoGroup": "Użytkownik nie ma grupy. Skontaktuj się z administratorem, aby to naprawić.",
+    "UserHasNoGroup": "Użytkownik nie ma projektu. Skontaktuj się z administratorem, aby to naprawić.",
     "UserNameAlreadyExist": "Nazwa użytkownika już istnieje. Nie można jej zduplikować.",
     "VirtualFolderAlreadyExist": "Istnieje już folder wirtualny o tej samej nazwie. Usuń własny folder lub odrzuć zaproszenie.",
     "WrongAPIServerAddress": "Nieprawidłowy adres serwera API."

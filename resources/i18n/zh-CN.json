@@ -1500,7 +1500,7 @@
     "UnexpectedError": "发生意外错误。\n如果问题持续下去，请稍后再试或联系支持。",
     "UnknownError": "出现未知错误。请重试。",
     "UpdateError": "更新错误",
-    "UserHasNoGroup": "用户没有组。请联系管理员修复。",
+    "UserHasNoGroup": "用户没有项目。请联系管理员修复。",
     "UserNameAlreadyExist": "用户名已存在。不能重复。",
     "VirtualFolderAlreadyExist": "已存在同名的虚拟文件夹。删除自己的文件夹或拒绝邀请。",
     "WrongAPIServerAddress": "错误的 API 服务器地址。"

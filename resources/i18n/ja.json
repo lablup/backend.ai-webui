@@ -1500,7 +1500,7 @@
     "UnexpectedError": "予期しないエラーが発生しました。\n問題が続いている場合は、後でもう一度やり直すか、サポートに連絡してください。",
     "UnknownError": "不明なエラーが発生しました。もう一度お試しください。",
     "UpdateError": "更新エラー",
-    "UserHasNoGroup": "ユーザーにグループがありません。管理者に連絡して修正してください。",
+    "UserHasNoGroup": "ユーザーにプロジェクトがありません。管理者に連絡して修正してください。",
     "UserNameAlreadyExist": "ユーザー名はすでに存在します。複製することはできません。",
     "VirtualFolderAlreadyExist": "同じ名前の仮想フォルダがすでに存在します。自分のフォルダを削除するか、招待を断ってください。",
     "WrongAPIServerAddress": "APIサーバーのアドレスが間違っています。"

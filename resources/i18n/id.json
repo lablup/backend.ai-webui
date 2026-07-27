@@ -1501,7 +1501,7 @@
     "UnexpectedError": "Terjadi kesalahan yang tidak terduga. \nSilakan coba lagi nanti atau hubungi dukungan jika masalah tetap ada.",
     "UnknownError": "Terjadi kesalahan yang tidak diketahui. Silakan coba lagi.",
     "UpdateError": "Galat pembaruan",
-    "UserHasNoGroup": "Pengguna tidak memiliki grup. Silakan hubungi administrator untuk memperbaikinya.",
+    "UserHasNoGroup": "Pengguna tidak memiliki proyek. Silakan hubungi administrator untuk memperbaikinya.",
     "UserNameAlreadyExist": "Nama pengguna sudah ada. Nama pengguna tidak dapat diduplikasi.",
     "VirtualFolderAlreadyExist": "Folder virtual dengan nama yang sama sudah ada. Hapus folder Anda sendiri atau tolak undangan.",
     "WrongAPIServerAddress": "Alamat server API salah."

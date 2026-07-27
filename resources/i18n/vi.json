@@ -1500,7 +1500,7 @@
     "UnexpectedError": "Một lỗi không mong muốn đã xảy ra. \nVui lòng thử lại sau hoặc liên hệ với hỗ trợ nếu vấn đề vẫn còn.",
     "UnknownError": "Một lỗi không xác định xảy ra. \nHãy thử lại.",
     "UpdateError": "Cập nhật lỗi",
-    "UserHasNoGroup": "Người dùng không có nhóm. \nHãy liên hệ với quản trị viên để sửa nó.",
+    "UserHasNoGroup": "Người dùng không có dự án. \nHãy liên hệ với quản trị viên để sửa nó.",
     "UserNameAlreadyExist": "Tên này đã có người dùng. \nNó không thể bị trùng lặp.",
     "VirtualFolderAlreadyExist": "Một thư mục ảo có cùng tên đã tồn tại. \nXóa thư mục của riêng bạn hoặc từ chối lời mời.",
     "WrongAPIServerAddress": "Địa chỉ máy chủ API sai."
