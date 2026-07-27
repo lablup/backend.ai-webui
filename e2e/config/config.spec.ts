@@ -60,8 +60,8 @@ test.describe.parallel(
         await modifyConfigToml(page, request, requestConfig);
         await page.reload();
 
-        // check if the menu items are visible (the reload is a full app boot,
-        // so give the menu render a generous wait)
+        // check if the menu items are visible (the reload is a full app
+        // boot against the remote backend, so allow the re-render to settle)
         await expect(
           page.getByRole('link', { name: 'Start', exact: true }),
         ).toBeVisible({ timeout: 15_000 });

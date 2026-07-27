@@ -50,7 +50,9 @@ test.describe(
           page.getByRole('menuitem', { name: 'Sessions' }),
         ).toBeHidden();
 
-        // 5. Navigate directly to /session
+        // 5. Navigate directly to /session (legacy URL). The guard 404s the
+        // blocklisted page at the legacy URL itself — no redirect happens,
+        // so the URL stays /session while the 404 screen renders.
         await page.goto(`${webuiEndpoint}/session`);
 
         // 6. Verify the route-error 404 screen is displayed
@@ -58,10 +60,27 @@ test.describe(
           timeout: 15_000,
         });
 
-        // 7. Navigate directly to /job (sessions page)
+        // 7. Resolve the project name via a NON-blocked shim (/dashboard
+        // replace-redirects to /project/:name/dashboard), then enter the
+        // canonical scope-aware session URL directly (no shim hop) — the
+        // guard must 404 it identically to the legacy entry.
+        await page.goto(`${webuiEndpoint}/dashboard`);
+        await expect(page).toHaveURL(/\/project\/[^/]+\/dashboard/, {
+          timeout: 15_000,
+        });
+        const projectName = new URL(page.url()).pathname.match(
+          /^\/project\/([^/]+)\//,
+        )?.[1];
+        expect(projectName).toBeTruthy();
+        await page.goto(`${webuiEndpoint}/project/${projectName}/session`);
+        await expect(notFoundPageHeading(page)).toBeVisible({
+          timeout: 15_000,
+        });
+
+        // 8. Navigate directly to /job (legacy alias for sessions)
         await page.goto(`${webuiEndpoint}/job`);
 
-        // 8. Verify the route-error 404 screen is displayed
+        // 9. Verify the route-error 404 screen is displayed
         await expect(notFoundPageHeading(page)).toBeVisible({
           timeout: 15_000,
         });
@@ -175,7 +194,8 @@ test.describe(
         await page.reload();
 
         // 6. Verify "Dashboard" menu item is now active (no disabled attribute).
-        // The reload is a full app boot; wait for the menu to render first.
+        // The reload is a full app boot against the remote backend, so wait
+        // for the menu to re-render before asserting its class.
         await expect(dashboardMenuItem).toBeVisible({ timeout: 15_000 });
         await expect(dashboardMenuItem).not.toHaveClass(
           /ant-menu-item-disabled/,
@@ -219,7 +239,8 @@ test.describe(
         // 1. Login as regular user (not admin/superadmin)
         await loginAsUser(page, request);
 
-        // 2. Navigate directly to /credential (Users page - admin)
+        // 2. Navigate directly to /credential (legacy URL; the shim
+        // replace-redirects to the canonical /admin/users)
         await page.goto(`${webuiEndpoint}/credential`);
 
         // 3. Verify the forbidden (401) screen is displayed
@@ -232,6 +253,14 @@ test.describe(
           page.getByText("You don't have permission to access this page."),
         ).toBeVisible();
 
+        // 4b. Enter the canonical admin URL directly (no shim hop) — the
+        // handle-declared access guard must forbid it identically.
+        await expect(page).toHaveURL(/\/admin\/users/, { timeout: 15_000 });
+        await page.goto(`${webuiEndpoint}/admin/users`);
+        await expect(forbiddenPageHeading(page)).toBeVisible({
+          timeout: 15_000,
+        });
+
         // 5. Wait for "Go Back to" button to be visible and click it
         const goBackButton = page.getByRole('button', {
           name: /Go Back to|Go back to/,
@@ -241,6 +270,21 @@ test.describe(
 
         // 6. Verify navigation to first available page
         await expect(forbiddenPageHeading(page)).toBeHidden();
+
+        // 6b. Project-admin scope: enter the canonical project-admin URL for
+        // the user's own project directly. The regular e2e user has no
+        // project-admin RBAC role, so the URL-aware guard must forbid it.
+        await expect(page).toHaveURL(/\/project\/[^/]+\//, {
+          timeout: 15_000,
+        });
+        const projectName = new URL(page.url()).pathname.match(
+          /^\/project\/([^/]+)\//,
+        )?.[1];
+        expect(projectName).toBeTruthy();
+        await page.goto(`${webuiEndpoint}/project/${projectName}/admin/users`);
+        await expect(forbiddenPageHeading(page)).toBeVisible({
+          timeout: 15_000,
+        });
 
         // 7. Navigate directly to /environment (admin page)
         await page.goto(`${webuiEndpoint}/environment`);
@@ -416,6 +460,52 @@ test.describe(
         // 6. Verify user is redirected to first available menu item (not /start since it's blocked)
         await page.waitForURL((url) => !url.pathname.endsWith('/'));
         expect(page.url()).not.toContain('/start');
+      },
+    );
+
+    test(
+      'User sees 404 page when accessing a blocklisted project-admin page',
+      { tag: ['@404', '@blocklist', '@project-admin'] },
+      async ({ page, request }) => {
+        // Blocklist keys stay the legacy menu keys (FR-3383), so the
+        // project-admin Users page is still blocked via `project-admin-users`.
+        // 1. Modify config.toml to blocklist the project-admin Users page
+        await modifyConfigToml(page, request, {
+          menu: {
+            blocklist: 'project-admin-users',
+            inactivelist: '',
+          },
+        });
+
+        // 2. Login as superadmin user (has project-admin access everywhere,
+        // so a 404 here proves the blocklist, not a missing permission)
+        await loginAsAdmin(page, request);
+
+        // 3. Resolve the current project name via the /start shim redirect
+        // (the post-login landing page is not guaranteed to be project-scoped)
+        await page.goto(`${webuiEndpoint}/start`);
+        await expect(page).toHaveURL(/\/project\/[^/]+\/start/, {
+          timeout: 15_000,
+        });
+        const projectName = new URL(page.url()).pathname.match(
+          /^\/project\/([^/]+)\//,
+        )?.[1];
+        expect(projectName).toBeTruthy();
+
+        // 4. Enter the canonical project-admin URL directly (no shim hop)
+        await page.goto(`${webuiEndpoint}/project/${projectName}/admin/users`);
+
+        // 5. Verify the route-error 404 screen is displayed (not 401)
+        await expect(notFoundPageHeading(page)).toBeVisible({
+          timeout: 15_000,
+        });
+        await expect(forbiddenPageHeading(page)).toBeHidden();
+
+        // 6. Enter via the legacy shim URL as well — same 404
+        await page.goto(`${webuiEndpoint}/project-admin-users`);
+        await expect(notFoundPageHeading(page)).toBeVisible({
+          timeout: 15_000,
+        });
       },
     );
   },
@@ -628,7 +718,7 @@ test.describe(
         // 7. Verify "Start" menu item is now visible (post-reload full boot)
         await expect(
           page.getByRole('link', { name: 'Start', exact: true }),
-        ).toBeVisible({ timeout: 15_000 });
+        ).toBeVisible();
 
         // 8. Verify "Dashboard" menu item is now active (not disabled)
         await expect(dashboardMenuItem).not.toHaveClass(
