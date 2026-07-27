@@ -24,19 +24,31 @@ import { isRouteErrorResponse, useRouteError } from 'react-router-dom';
  * expired-login re-login CTA, GraphQL error detail). Only router-thrown
  * `Response`s belong to this boundary.
  */
+/**
+ * Resolves the HTTP status this boundary should handle, or `undefined` for
+ * errors that must be re-thrown to `BAIErrorBoundary`.
+ *
+ * `isRouteErrorResponse` only recognizes the internal ErrorResponseImpl that
+ * react-router creates for loader/action throws; a raw `Response` thrown
+ * during render is a plain Response instance. Accept both. Exported for
+ * direct unit testing (`RouteErrorBoundary.test.ts`).
+ */
+export const getRouteErrorStatus = (error: unknown): number | undefined => {
+  if (isRouteErrorResponse(error)) {
+    return error.status;
+  }
+  if (error instanceof Response) {
+    return error.status;
+  }
+  return undefined;
+};
+
 const RouteErrorBoundary = () => {
   'use memo';
   const { t } = useTranslation();
   const error = useRouteError();
 
-  // `isRouteErrorResponse` only recognizes the internal ErrorResponseImpl that
-  // react-router creates for loader/action throws; a raw `Response` thrown
-  // during render is a plain Response instance. Accept both.
-  const status = isRouteErrorResponse(error)
-    ? error.status
-    : error instanceof Response
-      ? error.status
-      : undefined;
+  const status = getRouteErrorStatus(error);
 
   if (status === undefined) {
     throw error;
