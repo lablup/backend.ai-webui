@@ -6,8 +6,8 @@ description: >
   create and update behind one fragment prop; when choosing a mutation's
   response selection set; or when debugging "the list doesn't refresh after
   saving" / "why is it fetching twice". Covers when Relay patches the
-  normalized store on its own, when a manual `updater` is required, and when
-  a refetch is genuinely right.
+  normalized store on its own, and when a refetch is genuinely the right
+  answer.
 ---
 
 # Relay Mutation → Store Updates
@@ -35,7 +35,7 @@ Ask **what changed**, not **did it succeed**.
 | What the mutation changed                                            | What to do                                                                            |
 | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
 | **Fields of an entity already in the store** (update)                | Select the changed fields on the returned node. Relay merges by `id`. **No refetch.** |
-| Same, but the payload returns only `ok`/`msg` (legacy)               | Hand-write `updater:` (§4). **No refetch.**                                           |
+| Same, but the payload returns only `ok`/`msg` (legacy)               | Keep the refetch and comment why (§4). Nothing to merge.                              |
 | **List membership** — a row added (create)                           | `@appendEdge`/`@prependEdge` on the connection, or refetch the list (§6).             |
 | **List membership** — a row removed (delete/purge)                   | `@deleteRecord`/`@deleteEdge`, or refetch the list.                                   |
 | Server-derived fields you did not send (computed status, timestamps) | Select those too; refetch only if the server cannot return them (§7).                 |
@@ -101,26 +101,22 @@ Most of this backend already returns the node; the frontend just isn't asking
 for it. Before concluding a refetch is required, grep the payload type in
 `data/schema.graphql` — if it has a node field, there is no excuse.
 
-A handful of legacy mutations return only `ok`/`msg`. Several already have
-node-returning successors — prefer the newer one when the backend version
-allows it:
+## 4. Legacy `ok`/`msg` mutations: keep the refetch
 
-| Legacy (`ok`/`msg` only)      | Modern replacement (returns node)    |
-| ----------------------------- | ------------------------------------ |
-| `ModifyKeyPairResourcePolicy` | `UpdateKeypairResourcePolicyPayload` |
-| `ModifyProjectResourcePolicy` | `UpdateProjectResourcePolicyPayload` |
-| `ModifyUserResourcePolicy`    | `UpdateUserResourcePolicyPayload`    |
-| `ModifyResourcePreset`        | `UpdateResourcePresetPayload`        |
-| `ModifyScalingGroup`          | `UpdateResourceGroupPayload`         |
+A handful of mutations (`ModifyAgent`, `ModifyImage`, `ModifyKeyPair`,
+`ModifyScalingGroup`, and the three `Modify*ResourcePolicy`) return only
+`ok`/`msg`. There is nothing for Relay to merge, so **keep the refetch and move
+on** — that is the accepted answer, not a gap to close. Leave a one-line
+comment saying the payload carries no node.
 
-`ModifyAgent`, `ModifyImage`, and `ModifyKeyPair` have no successor — use §4.
+Do not open a migration to their node-returning successors as part of an
+unrelated change: it drags in backend version compatibility for little gain.
+If you are already rewriting one of these call sites for another reason and a
+successor exists (e.g. `ModifyResourcePreset` → `UpdateResourcePresetPayload`),
+using it is a bonus, not a requirement.
 
-## 4. Legacy `ok`/`msg` mutations: write an `updater`
-
-When the payload genuinely cannot return the node, write the store update by
-hand. Still cheaper and more correct than requerying a whole list.
-
-Reference implementation — `react/src/components/AgentSettingModal.tsx`:
+Writing an `updater` by hand is also possible but rarely worth it. One
+component does this today — `react/src/components/AgentSettingModal.tsx`:
 
 ```tsx
 commitModifyAgentSetting({
@@ -138,11 +134,12 @@ commitModifyAgentSetting({
 });
 ```
 
-Its call site (`AgentNodeItems/AgentActionButtons.tsx`) correctly does **not**
-refetch — it only closes.
+Its call site (`AgentNodeItems/AgentActionButtons.tsx`) correspondingly does
+**not** refetch — it only closes. Leave that one as it is.
 
-Write the `updater` only for fields you sent and know the server accepted
-verbatim. If the server transforms a value, select it instead of guessing.
+If you do write an `updater`, cover only fields you sent and know the server
+accepted verbatim. If the server transforms a value, you cannot guess it —
+keep the refetch instead.
 
 ## 5. Keep `success` honest — decide the refetch at the call site
 
@@ -251,7 +248,7 @@ matchable the same way.
 - [ ] Every update mutation payload selects `id` plus the fields the UI reads
 - [ ] Prefer spreading the consumer's fragment over hand-listing fields
 - [ ] Schema checked (`data/schema.graphql`) before concluding a refetch is required
-- [ ] Legacy `ok`/`msg`-only mutation → `updater:` written, not a refetch
+- [ ] Legacy `ok`/`msg`-only mutation → refetch kept, with a comment saying why
 - [ ] `success` is passed truthfully; the refetch decision lives at the call site
 - [ ] Any surviving refetch has a comment naming why the store can't be patched
 
