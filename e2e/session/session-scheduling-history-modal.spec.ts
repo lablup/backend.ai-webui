@@ -119,15 +119,20 @@ test.describe(
       page,
     }) => {
       // 1. Open the Session Detail drawer by clicking the first session row
-      await openSessionDetailDrawer(page);
+      const drawer = await openSessionDetailDrawer(page);
 
-      // 2. Locate the Status row and verify the history button is visible
-      const statusRow = page.getByRole('row', { name: /Status/ });
+      // 2. Locate the Status row and verify the history button is visible.
+      // Scope to the drawer AND anchor the pattern to the start of the
+      // accessible name: within the drawer, a second row -- the table
+      // column-header row "Hostname Status Agent ID" -- also contains the
+      // word "Status" and would otherwise cause a strict-mode violation.
+      // The descriptions row we want has accessible name "Status RUNNING
+      // history", which starts with "Status".
+      const statusRow = drawer.getByRole('row', { name: /^Status/ });
       await expect(statusRow).toBeVisible();
 
       // 3. Verify the "history" button (HistoryOutlined icon) is visible next to the status tag.
       // Scope to the drawer to avoid strict mode violation with React Grab toolbar buttons.
-      const drawer = page.getByRole('dialog', { name: 'Session Info' });
       const historyButton = drawer.getByRole('button', {
         name: 'history',
         exact: true,

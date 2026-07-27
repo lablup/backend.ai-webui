@@ -136,9 +136,10 @@ test.describe(
       await loginAsAdmin(page, request);
       await navigateTo(page, 'project');
 
-      // 2. Verify the Project tab is selected
+      // 2. Verify the Projects tab is selected (BAICard tabList label renamed
+      // "Project" -> "Projects", see webui.menu.Projects in ProjectPage.tsx)
       await expect(
-        page.getByRole('tab', { name: 'Project', selected: true }),
+        page.getByRole('tab', { name: 'Projects', selected: true }),
       ).toBeVisible();
 
       // 3. Verify table columns are visible
