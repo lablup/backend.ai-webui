@@ -419,9 +419,11 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
             deploymentFrgmt={editingDeployment ?? null}
             project={pageProject}
             onRequestClose={(success) => {
+              if (success && !editingDeployment) {
+                updateFetchKey();
+              }
               onCloseCreate();
               setEditingDeploymentId(null);
-              if (success) updateFetchKey();
             }}
           />
         </BAIUnmountAfterClose>

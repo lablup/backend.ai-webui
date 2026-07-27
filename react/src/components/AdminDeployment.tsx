@@ -449,25 +449,13 @@ const AdminDeployment = ({
           }}
         />
       </BAIFlex>
-      {/* Edit-only call site: the deployment already belongs to a project, so
-          the props union rejects a `project` here entirely (ADR-0001). That
-          member requires a non-null fragment, hence the guard. */}
-      {editingDeployment != null && (
-        <DeploymentSettingModal
-          open
-          deploymentFrgmt={editingDeployment}
-          onRequestClose={(success) => {
-            setEditingDeploymentId(null);
-            // A create adds a new row the offset query can't know about, so it
-            // needs a refetch. An update returns every field, so Relay merges
-            // the record by id into the store and the list reflects it without
-            // one.
-            if (success && editingDeployment === null) {
-              onReload(queryRef.variables, { fetchPolicy: 'network-only' });
-            }
-          }}
-        />
-      )}
+      <DeploymentSettingModal
+        open={!!editingDeployment}
+        deploymentFrgmt={editingDeployment ?? null}
+        onRequestClose={() => {
+          setEditingDeploymentId(null);
+        }}
+      />
       <BAIDeleteConfirmModal
         open={!!deletingDeployment}
         title={t('deployment.DeleteDeployment')}
