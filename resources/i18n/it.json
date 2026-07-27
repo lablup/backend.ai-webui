@@ -2175,6 +2175,7 @@
     "GrantedAt": "Concesso il",
     "Inactive": "Inattivo",
     "Name": "Nome",
+    "NoChangesMade": "Nessuna modifica apportata.",
     "NoPermissionsToDisplay": "Nessun permesso da visualizzare",
     "NoRolesToDisplay": "Nessun ruolo da visualizzare",
     "NoScopesToDisplay": "Nessun ambito configurato per questo ruolo",
