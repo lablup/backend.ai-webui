@@ -729,31 +729,42 @@ test.describe(
         const inactiveRows = getKeypairTableRows(page);
         await expect(inactiveRows.first()).toBeVisible({ timeout: 10000 });
 
-        // Find our deactivated keypair row and click Restore in the Controls cell
+        // Find our deactivated keypair row and click Restore in the Controls cell.
+        // A trailing deferred Relay commit can still detach/replace the row's
+        // DOM node between the visibility check and the click (the table's
+        // dataSource commit can lag a beat behind the query settling, the
+        // same race documented in the "cannot delete a keypair without
+        // typing..." test further below in this file), which can detach the
+        // button mid-click and hang. Retry click-then-popconfirm-appears as a
+        // unit so each attempt re-queries the live DOM instead of holding a
+        // stale handle.
         const targetRow = modal
           .locator('tbody tr:not(.ant-table-measure-row)')
           .filter({ hasText: restoredAccessKey });
         await expect(targetRow).toBeVisible();
-        // Use aria-label from Tooltip to find the Restore button
-        const restoreBtn = targetRow
-          .getByRole('button', { name: /undo/i })
-          .first();
-        if ((await restoreBtn.count()) > 0) {
-          await restoreBtn.click();
-        } else {
-          // Fallback: click the first non-dangerous button
-          await targetRow
-            .locator('td')
-            .nth(1)
-            .locator('button:not(.ant-btn-dangerous)')
-            .first()
-            .click();
-        }
 
-        // Verify Popconfirm appears and confirm restoration
-        await expect(page.getByText(/restore this keypair/i)).toBeVisible({
-          timeout: 8000,
-        });
+        await expect(async () => {
+          // Use aria-label from Tooltip to find the Restore button
+          const restoreBtn = targetRow
+            .getByRole('button', { name: /undo/i })
+            .first();
+          if ((await restoreBtn.count()) > 0) {
+            await restoreBtn.click({ timeout: 3000 });
+          } else {
+            // Fallback: click the first non-dangerous button
+            await targetRow
+              .locator('td')
+              .nth(1)
+              .locator('button:not(.ant-btn-dangerous)')
+              .first()
+              .click({ timeout: 3000 });
+          }
+          await expect(page.getByText(/restore this keypair/i)).toBeVisible({
+            timeout: 3000,
+          });
+        }).toPass({ timeout: 15000 });
+
+        // Confirm restoration
         await page.getByRole('button', { name: 'Confirm' }).click();
 
         // Verify the restored keypair no longer appears in Inactive tab

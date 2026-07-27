@@ -289,8 +289,10 @@ test.describe(
       const drawerPanel = page.locator('.ant-drawer-content-wrapper');
       await expect(drawerPanel).toBeVisible({ timeout: 10000 });
 
-      // 4. Verify three tabs are visible: "Scopes", "Permissions", and "Role Assignments"
-      await expect(drawer.getByRole('tab', { name: 'Scopes' })).toBeVisible();
+      // 4. Verify two tabs are visible: "Permissions" and "Role Assignments".
+      // The former separate "Scopes" tab was merged into "Permissions" (now
+      // "Detailed Permissions" internally) — see the docblock on
+      // RolePermissionDetailTab.tsx.
       await expect(
         drawer.getByRole('tab', { name: 'Permissions' }),
       ).toBeVisible();
@@ -298,29 +300,23 @@ test.describe(
         drawer.getByRole('tab', { name: 'Role Assignments' }),
       ).toBeVisible();
 
-      // 5. Verify "Scopes" tab is active by default
-      await expect(drawer.getByRole('tab', { name: 'Scopes' })).toHaveAttribute(
-        'aria-selected',
-        'true',
-      );
-
-      // 6. Verify the active tab content area is visible
-      await expect(drawer.locator('.ant-tabs-tabpane-active')).toBeVisible({
-        timeout: 5000,
-      });
-
-      // 7. Click the "Permissions" tab
-      await drawer.getByRole('tab', { name: 'Permissions' }).click();
-
-      // 8. Verify the Permissions tab becomes active
+      // 5. Verify "Permissions" tab is active by default
       await expect(
         drawer.getByRole('tab', { name: 'Permissions' }),
       ).toHaveAttribute('aria-selected', 'true');
 
-      // 9. Click the "Role Assignments" tab
+      // 6. Verify the active tab content area is visible. Confirmed live
+      // (via DOM inspection) that this antd/rc-tabs version marks the active
+      // pane with `.ant-tabs-content-active` on the `role="tabpanel"`
+      // element itself -- there is no `.ant-tabs-tabpane-active` class here.
+      await expect(drawer.locator('.ant-tabs-content-active')).toBeVisible({
+        timeout: 10000,
+      });
+
+      // 7. Click the "Role Assignments" tab
       await drawer.getByRole('tab', { name: 'Role Assignments' }).click();
 
-      // 10. Verify the Role Assignments tab becomes active
+      // 8. Verify the Role Assignments tab becomes active
       await expect(
         drawer.getByRole('tab', { name: 'Role Assignments' }),
       ).toHaveAttribute('aria-selected', 'true');
