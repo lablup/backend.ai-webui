@@ -36,8 +36,7 @@ Ask **what changed**, not **did it succeed**.
 | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
 | **Fields of an entity already in the store** (update)                | Select the changed fields on the returned node. Relay merges by `id`. **No refetch.** |
 | Same, but the payload returns only `ok`/`msg` (legacy)               | Keep the refetch and comment why (§4). Nothing to merge.                              |
-| **List membership** — a row added (create)                           | `@appendEdge`/`@prependEdge` on the connection, or refetch the list (§6).             |
-| **List membership** — a row removed (delete/purge)                   | `@deleteRecord`/`@deleteEdge`, or refetch the list.                                   |
+| **List membership** — a row added or removed (create/delete)         | Refetch the list (§6). Don't patch the connection.                                    |
 | Server-derived fields you did not send (computed status, timestamps) | Select those too; refetch only if the server cannot return them (§7).                 |
 
 ## 2. Update: fill the selection set
@@ -195,42 +194,37 @@ If a caller genuinely cannot know, enrich the result rather than lying about
 success — `ContainerRegistryEditorModal` already passes
 `onOk('create' | 'modify')`.
 
-## 6. Create: prefer connection directives over refetch
+## 6. Create and delete: refetch
 
-A refetch after create is acceptable but coarse. When the list is a Relay
-connection, declare the insert instead:
+**Refetch the list. Don't patch the connection.**
 
-```graphql
-artifactRevisions {
-  edges @appendEdge(connections: $connectionIds) {
-    node {
-      id # required here too — the new record must be identifiable
-      status
-    }
-  }
-}
-```
+Connection directives (`@appendEdge`, `@deleteRecord`) look like the tidy
+answer, but they break under pagination: appending to a page-sized connection
+pushes rows past the cursor boundary, so the client's idea of the list drifts
+from the server's. Add sorting and filtering — where the new row's position is
+decided server-side — and a client-side insert is simply guessing.
 
-See `packages/backend.ai-ui/src/components/fragments/BAIImportArtifactModal.tsx`
-for the working example. Filtering, sorting, and pagination can make a naive
-append wrong — when the new row's position depends on server-side ordering, a
-refetch is the honest choice. Say so in a comment rather than leaving it
-ambiguous.
+One component uses `@appendEdge` today
+(`packages/backend.ai-ui/src/components/fragments/BAIImportArtifactModal.tsx`).
+Treat it as an exception that predates this rule, not a pattern to copy.
+
+This is why the create path keeps its `updateFetchKey()` while the update path
+drops it — see §5.
 
 ## 7. When a refetch IS correct
 
 Do not over-rotate. Refetch when:
 
-- **List membership changed** and the connection cannot be patched correctly
-  (server-side ordering/filtering decides position).
+- **List membership changed** (create/delete) — always, per §6.
 - The mutation has **side effects on other entities** the payload doesn't cover
   (e.g. changing a resource policy recomputes several users' quotas).
 - **Aggregates** shown alongside the list (counts, totals, usage) are computed
   server-side.
 - **Bulk mutations** where per-record payloads are impractical.
 
-In each case, leave a one-line comment naming the reason. An unexplained
-refetch reads as the anti-pattern.
+Create and delete need no comment — refetching is the rule there. For the other
+three, leave a one-line reason: after an **update**, an unexplained refetch
+reads as the anti-pattern.
 
 ## Enforcement
 
@@ -250,7 +244,8 @@ matchable the same way.
 - [ ] Schema checked (`data/schema.graphql`) before concluding a refetch is required
 - [ ] Legacy `ok`/`msg`-only mutation → refetch kept, with a comment saying why
 - [ ] `success` is passed truthfully; the refetch decision lives at the call site
-- [ ] Any surviving refetch has a comment naming why the store can't be patched
+- [ ] Create/delete refetch the list — no `@appendEdge`/`@deleteRecord` added
+- [ ] A refetch after an **update** has a comment naming why the store can't be patched
 
 ## Related
 
