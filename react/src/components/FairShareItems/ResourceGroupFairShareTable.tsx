@@ -45,17 +45,11 @@ const isEnableSorter = (key: string) => {
 interface ResourceGroupFairShareTableProps extends BAITableProps<ResourceGroup> {
   resourceGroupNodeFragment: ResourceGroupFairShareTableFragment$key | null;
   onClickGroupName?: (resourceGroupName: string) => void;
-  afterUpdate?: (success: boolean) => void;
 }
 
 const ResourceGroupFairShareTable: React.FC<
   ResourceGroupFairShareTableProps
-> = ({
-  resourceGroupNodeFragment,
-  onClickGroupName,
-  afterUpdate,
-  ...tableProps
-}) => {
+> = ({ resourceGroupNodeFragment, onClickGroupName, ...tableProps }) => {
   'use memo';
 
   const { t } = useTranslation();
@@ -313,10 +307,7 @@ const ResourceGroupFairShareTable: React.FC<
         <ResourceGroupFairShareSettingModal
           resourceGroupNodeFrgmt={selectedResourceGroup}
           open={!!selectedResourceGroup}
-          onRequestClose={(success) => {
-            if (success) {
-              afterUpdate?.(true);
-            }
+          onRequestClose={() => {
             setSelectedResourceGroup(null);
           }}
         />
