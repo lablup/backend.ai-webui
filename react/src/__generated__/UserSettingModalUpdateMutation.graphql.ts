@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a0d3314f6330ab3e582a48a90201ecbb>>
+ * @generated SignedSource<<15305a42849b0de68d678aadee0f72d4>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -55,6 +55,13 @@ export type UserSettingModalUpdateMutation$data = {
         readonly resourcePolicy: string;
         readonly role: UserRoleV2 | null | undefined;
       };
+      readonly projects: {
+        readonly edges: ReadonlyArray<{
+          readonly node: {
+            readonly id: string;
+          };
+        }>;
+      } | null | undefined;
       readonly security: {
         readonly allowedClientIp: ReadonlyArray<string> | null | undefined;
         readonly sudoSessionEnabled: boolean;
@@ -89,7 +96,14 @@ v1 = {
   "kind": "LocalArgument",
   "name": "userId"
 },
-v2 = [
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v3 = [
   {
     "alias": null,
     "args": [
@@ -117,13 +131,7 @@ v2 = [
         "name": "user",
         "plural": false,
         "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          },
+          (v2/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -315,6 +323,40 @@ v2 = [
           {
             "alias": null,
             "args": null,
+            "concreteType": "ProjectV2Connection",
+            "kind": "LinkedField",
+            "name": "projects",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ProjectV2Edge",
+                "kind": "LinkedField",
+                "name": "edges",
+                "plural": true,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "ProjectV2",
+                    "kind": "LinkedField",
+                    "name": "node",
+                    "plural": false,
+                    "selections": [
+                      (v2/*: any*/)
+                    ],
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
             "concreteType": "EntityTimestamps",
             "kind": "LinkedField",
             "name": "timestamps",
@@ -353,7 +395,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "UserSettingModalUpdateMutation",
-    "selections": (v2/*: any*/),
+    "selections": (v3/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
@@ -365,19 +407,19 @@ return {
     ],
     "kind": "Operation",
     "name": "UserSettingModalUpdateMutation",
-    "selections": (v2/*: any*/)
+    "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "6d9694c22dd3d159d5a4e20ca653d6e1",
+    "cacheID": "c675da45495ffa45b0a54495c8ab431c",
     "id": null,
     "metadata": {},
     "name": "UserSettingModalUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation UserSettingModalUpdateMutation(\n  $userId: UUID!\n  $input: UpdateUserV2Input!\n) {\n  adminUpdateUserV2(userId: $userId, input: $input) {\n    user {\n      id\n      basicInfo {\n        email\n        fullName\n        username\n        description\n        integrationName\n      }\n      organization {\n        domainName\n        role\n        resourcePolicy\n        mainAccessKey\n      }\n      security {\n        totpActivated\n        totpActivatedAt\n        sudoSessionEnabled\n        allowedClientIp\n      }\n      status {\n        status\n        statusInfo\n        needPasswordChange\n      }\n      container {\n        containerUid\n        containerMainGid\n        containerGids\n      }\n      timestamps {\n        createdAt\n        modifiedAt\n      }\n    }\n  }\n}\n"
+    "text": "mutation UserSettingModalUpdateMutation(\n  $userId: UUID!\n  $input: UpdateUserV2Input!\n) {\n  adminUpdateUserV2(userId: $userId, input: $input) {\n    user {\n      id\n      basicInfo {\n        email\n        fullName\n        username\n        description\n        integrationName\n      }\n      organization {\n        domainName\n        role\n        resourcePolicy\n        mainAccessKey\n      }\n      security {\n        totpActivated\n        totpActivatedAt\n        sudoSessionEnabled\n        allowedClientIp\n      }\n      status {\n        status\n        statusInfo\n        needPasswordChange\n      }\n      container {\n        containerUid\n        containerMainGid\n        containerGids\n      }\n      projects {\n        edges {\n          node {\n            id\n          }\n        }\n      }\n      timestamps {\n        createdAt\n        modifiedAt\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "5846adb6fee8b57f1a573238dea83916";
+(node as any).hash = "d44f2d8eb91006e45a0ca2835a2cb468";
 
 export default node;

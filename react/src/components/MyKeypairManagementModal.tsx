@@ -158,6 +158,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
       ) {
         updateMyKeypair(input: $input) {
           keypair {
+            id
             isActive
           }
         }

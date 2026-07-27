@@ -195,10 +195,10 @@ onRequestClose={(success) => {
 의존성이 없어 병렬 진행이 가능합니다.
 
 1. ~~**죽은 refetch 제거 (E-3)**~~ — **완료. 제거 대상 없음.** `RBACManagementPage.tsx:202`·`:181`, `ReservoirArtifactDetailPage.tsx:329` 모두 바뀌는 필드가 목록의 필터 조건이라 refetch가 정당했습니다. 코드 변경 없이 이 문서만 정정했습니다 (E-3 참조). 나머지 단계는 이 단계를 참조 구현으로 삼지 말고, **먼저 목록 쿼리의 필터 인자부터 확인**하십시오
-2. **한 줄 payload 버그 (B) 수정** — `AutoScalingRuleEditorModalLegacy`에 `id` 추가, `MyKeypairManagementModal`의 `updateMyKeypair`에 `id` 추가
-3. **C 수정** — `UserSettingModal` payload에 `projects` 추가
-4. **A 제거** — `UserSettingModal`의 `onRequestClose(false)` 우회를 걷어내고 호출부(`AdminUserManagement`)로 판단 이동
-5. **행 단위 토글 (E-2)** — 토글 mutation의 selection에 `id` + 변경 필드를 넣고 refetch 제거. 단 필터 연동 건은 refetch 유지 + 사유 주석
+2. ~~**한 줄 payload 버그 (B) 수정**~~ — **완료.** `AutoScalingRuleEditorModalLegacy`의 modify·create 양쪽 `rule`에 `id` 추가(create 쪽도 같은 결함이었습니다), `MyKeypairManagementModal`의 `updateMyKeypair`에 `id` 추가
+3. ~~**C 수정**~~ — **완료.** `UserSettingModal` update payload에 `projects { edges { node { id } } }` 추가. 모달 자신의 fragment와 필드 단위로 일치시켰습니다. create payload는 신규 노드라 대상 아님
+4. ~~**A 제거**~~ — **완료. 단 결과는 refetch 제거가 아니라 버그 수정.** `onRequestClose(false)` 우회를 걷어내 update 성공이 `true`를 반환합니다. 호출부 `AdminUserManagement`는 create/edit **인스턴스를 이미 분리해 렌더링**하므로(`:611`·`:623`) 분기 자체가 필요 없었습니다. 다만 refetch는 **양쪽 다 유지**합니다 — 쿼리 필터에 `status`가 무조건 들어가고(`:119-123`) 모달이 그 `status`를 편집하므로, ACTIVE 탭에서 사용자를 비활성화하면 행이 빠져야 합니다. 즉 기존 `false` 우회는 refetch를 건너뛰어 **stale row를 남기고 있었습니다**
+5. **행 단위 토글 (E-2)** — 토글 mutation의 selection에 `id` + 변경 필드를 넣되, refetch 제거는 **필터 인자 확인 후에만**. 확인된 유지 건: `MyKeypairManagementModal`(쿼리가 `isActive`로 필터)
 6. **D — selection 보강** — `NODE_NOT_SELECTED` 5건은 selection만 채우고, `GAP` 중 D-1 확정 건은 필드 보강 후 호출부 refetch 제거
 
 ## 검증
