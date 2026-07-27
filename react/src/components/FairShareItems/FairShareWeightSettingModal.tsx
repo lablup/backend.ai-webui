@@ -155,6 +155,11 @@ const FairShareWeightSettingModal: React.FC<
         adminUpsertDomainFairShareWeight(input: $input) {
           domainFairShare {
             id
+            spec {
+              weight
+              usesDefault
+            }
+            updatedAt
           }
         }
       }
@@ -182,6 +187,11 @@ const FairShareWeightSettingModal: React.FC<
           adminUpsertProjectFairShareWeight(input: $input) {
             projectFairShare {
               id
+              spec {
+                weight
+                usesDefault
+              }
+              updatedAt
             }
           }
         }
@@ -209,6 +219,11 @@ const FairShareWeightSettingModal: React.FC<
         adminUpsertUserFairShareWeight(input: $input) {
           userFairShare {
             id
+            spec {
+              weight
+              usesDefault
+            }
+            updatedAt
           }
         }
       }
