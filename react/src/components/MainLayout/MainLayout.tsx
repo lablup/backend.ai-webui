@@ -13,6 +13,7 @@ import Page401 from '../../pages/Page401';
 import Page404 from '../../pages/Page404';
 import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
 import BAIErrorBoundary from '../BAIErrorBoundary';
+import { commonAppProps } from '../DefaultProviders';
 import DevApiEndpointMismatchAlert from '../DevApiEndpointMismatchAlert';
 import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
 import ForceTOTPChecker from '../ForceTOTPChecker';
@@ -26,7 +27,7 @@ import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIBreadcrumb from '../WebUIBreadcrumb';
 import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
-import { ConfigProvider, Layout, type LayoutProps, theme } from 'antd';
+import { App, ConfigProvider, Layout, type LayoutProps, theme } from 'antd';
 import { createGlobalStyle, createStyles } from 'antd-style';
 import { BAIFlex } from 'backend.ai-ui';
 import { atom, useSetAtom } from 'jotai';
@@ -359,7 +360,7 @@ const AutoAdminPrimaryColorProvider = ({
           },
         }}
       >
-        {children}
+        <App {...commonAppProps}>{children}</App>
       </ConfigProvider>
     );
   }

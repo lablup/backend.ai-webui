@@ -29,6 +29,7 @@ import {
   BAIPropertyFilter,
   BAINameActionCell,
   BAIDeleteConfirmModal,
+  BAISelectionLabel,
   useBAILogger,
   useUpdatableState,
   BAIText,
@@ -51,7 +52,7 @@ type Keypair = NonNullable<
 const AdminUserCredentialList: React.FC = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
   const { logger } = useBAILogger();
 
   const [action, setAction] = useQueryState('action', parseAsString);
@@ -76,6 +77,8 @@ const AdminUserCredentialList: React.FC = () => {
   const [isPendingSettingModalOpen, startSettingModalOpenTransition] =
     useTransition();
   const [deletingKeypair, setDeletingKeypair] = useState<Keypair | null>(null);
+  const [selectedKeypairs, setSelectedKeypairs] = useState<Keypair[]>([]);
+  const [isBulkUpdating, setIsBulkUpdating] = useState(false);
 
   const {
     baiPaginationOption,
@@ -167,6 +170,81 @@ const AdminUserCredentialList: React.FC = () => {
       }
     `);
 
+  const handleBulkStatusUpdate = (isActive: boolean) => {
+    modal.confirm({
+      title: isActive
+        ? t('credential.BulkActivateCredentials')
+        : t('credential.BulkDeactivateCredentials'),
+      content: isActive
+        ? t('credential.BulkActivateCredentialsDescription', {
+            count: selectedKeypairs.length,
+          })
+        : t('credential.BulkDeactivateCredentialsDescription', {
+            count: selectedKeypairs.length,
+          }),
+      okButtonProps: {
+        danger: !isActive,
+      },
+      okText: isActive ? t('credential.Activate') : t('credential.Deactivate'),
+      cancelText: t('button.Cancel'),
+      onOk: async () => {
+        setIsBulkUpdating(true);
+        const results = await Promise.allSettled(
+          selectedKeypairs.map(
+            (keypair) =>
+              new Promise<void>((resolve, reject) => {
+                commitModifyKeypair({
+                  variables: {
+                    access_key: keypair.access_key ?? '',
+                    props: {
+                      is_active: isActive,
+                    },
+                  },
+                  onCompleted: (res, errors) => {
+                    if (!res?.modify_keypair?.ok || errors) {
+                      reject(new Error(res?.modify_keypair?.msg ?? ''));
+                      return;
+                    }
+                    resolve();
+                  },
+                  onError: (error) => {
+                    logger.error(error);
+                    reject(error);
+                  },
+                });
+              }),
+          ),
+        );
+        setIsBulkUpdating(false);
+        const failedCount = results.filter(
+          (r) => r.status === 'rejected',
+        ).length;
+        const successCount = results.length - failedCount;
+        if (failedCount > 0) {
+          message.error(
+            isActive
+              ? t('credential.BulkActivatePartialFailure', {
+                  successCount,
+                  failCount: failedCount,
+                })
+              : t('credential.BulkDeactivatePartialFailure', {
+                  successCount,
+                  failCount: failedCount,
+                }),
+          );
+        } else {
+          message.success(
+            isActive
+              ? t('credential.BulkActivateSuccess', { count: successCount })
+              : t('credential.BulkDeactivateSuccess', { count: successCount }),
+          );
+        }
+        setSelectedKeypairs([]);
+        updateFetchKey();
+      },
+    });
+  };
+
   useEffect(() => {
     if (action === 'add') {
       // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -188,6 +266,7 @@ const AdminUserCredentialList: React.FC = () => {
                 current: 1,
                 pageSize: tablePaginationOption.pageSize,
               });
+              setSelectedKeypairs([]);
             }}
             optionType="button"
             options={[
@@ -239,10 +318,44 @@ const AdminUserCredentialList: React.FC = () => {
             value={queryParams.filter ?? undefined}
             onChange={(value) => {
               setQueryParams({ filter: value ?? null });
+              setSelectedKeypairs([]);
             }}
           />
         </BAIFlex>
         <BAIFlex gap={'xs'}>
+          {selectedKeypairs.length > 0 && (
+            <BAIFlex gap="xs">
+              <BAISelectionLabel
+                count={selectedKeypairs.length}
+                onClearSelection={() => setSelectedKeypairs([])}
+              />
+              {queryParams.activeType === 'active' ? (
+                <Tooltip title={t('credential.Deactivate')}>
+                  <BAIButton
+                    icon={<BanIcon />}
+                    style={{
+                      color: token.colorError,
+                      background: token.colorErrorBg,
+                    }}
+                    loading={isBulkUpdating}
+                    onClick={() => handleBulkStatusUpdate(false)}
+                  />
+                </Tooltip>
+              ) : (
+                <Tooltip title={t('credential.Activate')}>
+                  <BAIButton
+                    icon={<UndoIcon />}
+                    style={{
+                      color: token.colorSuccess,
+                      background: token.colorSuccessBg,
+                    }}
+                    loading={isBulkUpdating}
+                    onClick={() => handleBulkStatusUpdate(true)}
+                  />
+                </Tooltip>
+              )}
+            </BAIFlex>
+          )}
           <Tooltip title={t('button.Refresh')}>
             <Button
               loading={deferredFetchKey !== fetchKey}
@@ -268,6 +381,20 @@ const AdminUserCredentialList: React.FC = () => {
         scroll={{ x: 'max-content' }}
         loading={deferredQueryVariables !== queryVariables}
         dataSource={filterOutNullAndUndefined(keypair_list?.items)}
+        rowSelection={{
+          type: 'checkbox',
+          selectedRowKeys: _.compact(
+            selectedKeypairs.map((keypair) => keypair.id),
+          ),
+          onChange: (keys) => {
+            const items = filterOutNullAndUndefined(keypair_list?.items);
+            setSelectedKeypairs(
+              items.filter(
+                (keypair) => keypair.id && keys.includes(keypair.id),
+              ),
+            );
+          },
+        }}
         columns={filterOutEmpty([
           {
             key: 'accessKey',
@@ -333,8 +460,12 @@ const AdminUserCredentialList: React.FC = () => {
                                     return;
                                   }
                                   message.success(
-                                    t(
-                                      'credential.KeypairStatusUpdatedSuccessfully',
+                                    t('credential.CredentialStatusUpdated'),
+                                  );
+                                  setSelectedKeypairs((prev) =>
+                                    prev.filter(
+                                      (kp) =>
+                                        kp.access_key !== record.access_key,
                                     ),
                                   );
                                   updateFetchKey();
@@ -383,8 +514,12 @@ const AdminUserCredentialList: React.FC = () => {
                                     return;
                                   }
                                   message.success(
-                                    t(
-                                      'credential.KeypairStatusUpdatedSuccessfully',
+                                    t('credential.CredentialStatusUpdated'),
+                                  );
+                                  setSelectedKeypairs((prev) =>
+                                    prev.filter(
+                                      (kp) =>
+                                        kp.access_key !== record.access_key,
                                     ),
                                   );
                                   updateFetchKey();
@@ -526,11 +661,13 @@ const AdminUserCredentialList: React.FC = () => {
                 current,
                 pageSize,
               });
+              setSelectedKeypairs([]);
             }
           },
         }}
         onChangeOrder={(nextOrder) => {
           setQueryParams({ order: nextOrder ?? null });
+          setSelectedKeypairs([]);
         }}
       />
       <KeypairInfoModal
@@ -585,7 +722,12 @@ const AdminUserCredentialList: React.FC = () => {
                   setDeletingKeypair(null);
                   return;
                 }
-                message.success(t('credential.KeypairSuccessfullyDeleted'));
+                message.success(t('credential.CredentialSuccessfullyDeleted'));
+                setSelectedKeypairs((prev) =>
+                  prev.filter(
+                    (kp) => kp.access_key !== deletingKeypair.access_key,
+                  ),
+                );
                 setDeletingKeypair(null);
                 updateFetchKey();
               },

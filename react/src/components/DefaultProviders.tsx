@@ -256,7 +256,7 @@ export const useCurrentLanguage = () => {
   return [lang] as const;
 };
 
-const commonAppProps: AppProps = {
+export const commonAppProps: AppProps = {
   message: {
     duration: 4,
   },
