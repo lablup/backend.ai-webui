@@ -155,8 +155,13 @@ test.describe(
         });
         await expect(startMenuItem).toHaveClass(/ant-menu-item-disabled/);
 
-        // 5. Verify the page can still be accessed directly (inactive ≠ blocked)
+        // 5. Verify the page can still be accessed directly (inactive ≠
+        // blocked): wait for real Start-page content — a missing 404 heading
+        // alone would pass before the route resolves.
         await page.goto(`${webuiEndpoint}/start`);
+        await expect(page.getByText('Start Interactive Session')).toBeVisible({
+          timeout: 15_000,
+        });
         await expect(notFoundPageHeading(page)).toBeHidden();
       },
     );
@@ -319,34 +324,56 @@ test.describe(
         // 1. Login as superadmin user
         await loginAsAdmin(page, request);
 
-        // 2. Navigate to /credential (admin page)
+        // Each page asserts positive content: the canonical URL settle plus a
+        // visible breadcrumb. The breadcrumb is hidden on route-error screens,
+        // so its presence proves a real page rendered — a missing forbidden
+        // heading alone would pass before the suspended route resolves.
+        const breadcrumb = page.getByTestId('webui-breadcrumb');
+
+        // 2. Navigate to /credential (admin page; shim → /admin/users)
         await page.goto(`${webuiEndpoint}/credential`);
 
-        // 3. Verify page loads successfully (not 401)
+        // 3. Verify the page really renders (not 401)
+        await expect(page).toHaveURL(/\/admin\/users/, { timeout: 15_000 });
+        await expect(breadcrumb).toBeVisible({ timeout: 15_000 });
         await expect(forbiddenPageHeading(page)).toBeHidden();
 
-        // 4. Navigate to /environment (admin page)
+        // 4. Navigate to /environment (admin page; shim → /admin/environment)
         await page.goto(`${webuiEndpoint}/environment`);
 
-        // 5. Verify page loads successfully (not 401)
+        // 5. Verify the page really renders (not 401)
+        await expect(page).toHaveURL(/\/admin\/environment/, {
+          timeout: 15_000,
+        });
+        await expect(breadcrumb).toBeVisible({ timeout: 15_000 });
         await expect(forbiddenPageHeading(page)).toBeHidden();
 
-        // 6. Navigate to /agent (superadmin page)
+        // 6. Navigate to /agent (superadmin page; shim → /admin/agent)
         await page.goto(`${webuiEndpoint}/agent`);
 
-        // 7. Verify page loads successfully (not 401)
+        // 7. Verify the page really renders (not 401)
+        await expect(page).toHaveURL(/\/admin\/agent/, { timeout: 15_000 });
+        await expect(breadcrumb).toBeVisible({ timeout: 15_000 });
         await expect(forbiddenPageHeading(page)).toBeHidden();
 
-        // 8. Navigate to /settings (superadmin page)
+        // 8. Navigate to /settings (superadmin page; shim → /admin/settings)
         await page.goto(`${webuiEndpoint}/settings`);
 
-        // 9. Verify page loads successfully (not 401)
+        // 9. Verify the page really renders (not 401)
+        await expect(page).toHaveURL(/\/admin\/settings/, {
+          timeout: 15_000,
+        });
+        await expect(breadcrumb).toBeVisible({ timeout: 15_000 });
         await expect(forbiddenPageHeading(page)).toBeHidden();
 
-        // 10. Navigate to /maintenance (superadmin page)
+        // 10. Navigate to /maintenance (superadmin page; shim → /admin/maintenance)
         await page.goto(`${webuiEndpoint}/maintenance`);
 
-        // 11. Verify page loads successfully (not 401)
+        // 11. Verify the page really renders (not 401)
+        await expect(page).toHaveURL(/\/admin\/maintenance/, {
+          timeout: 15_000,
+        });
+        await expect(breadcrumb).toBeVisible({ timeout: 15_000 });
         await expect(forbiddenPageHeading(page)).toBeHidden();
       },
     );
@@ -654,6 +681,9 @@ test.describe(
         await expect(page).toHaveURL(/\/project\/[^/]+\/dashboard/, {
           timeout: 15_000,
         });
+        await expect(
+          page.getByTestId('webui-breadcrumb').getByText('Dashboard'),
+        ).toBeVisible({ timeout: 15_000 });
         await expect(notFoundPageHeading(page)).toBeHidden();
 
         // 9. Click disabled "Dashboard" menu item
@@ -715,10 +745,11 @@ test.describe(
         // 6. Reload page
         await page.reload();
 
-        // 7. Verify "Start" menu item is now visible (post-reload full boot)
+        // 7. Verify "Start" menu item is now visible (the reload is a full
+        // app boot, so wait for the menu to re-render)
         await expect(
           page.getByRole('link', { name: 'Start', exact: true }),
-        ).toBeVisible();
+        ).toBeVisible({ timeout: 15_000 });
 
         // 8. Verify "Dashboard" menu item is now active (not disabled)
         await expect(dashboardMenuItem).not.toHaveClass(
@@ -728,7 +759,12 @@ test.describe(
         // 9. Navigate to /start
         await page.goto(`${webuiEndpoint}/start`);
 
-        // 10. Verify Start page loads successfully (not 404)
+        // 10. Verify Start page loads successfully (not 404): wait for real
+        // Start-page content — a missing 404 heading alone would pass before
+        // the route resolves.
+        await expect(page.getByText('Start Interactive Session')).toBeVisible({
+          timeout: 15_000,
+        });
         await expect(notFoundPageHeading(page)).toBeHidden();
       },
     );
