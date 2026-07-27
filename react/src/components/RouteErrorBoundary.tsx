@@ -16,20 +16,37 @@ import { isRouteErrorResponse, useRouteError } from 'react-router-dom';
  * Pages and future loaders/guards can `throw new Response(null, { status })`
  * to converge on the shared route-error language:
  *   404 -> not-found page, 401/403 -> forbidden page,
- *   anything else -> a minimal unexpected-error notice.
+ *   other Response statuses -> a minimal unexpected-error notice.
+ *
+ * Non-Response errors (render/Relay throws) are re-thrown: a route
+ * `errorElement` catches BEFORE the React error boundary wrapping the Outlet,
+ * so handling them here would displace `BAIErrorBoundary` (retry/reset,
+ * expired-login re-login CTA, GraphQL error detail). Only router-thrown
+ * `Response`s belong to this boundary.
  */
 const RouteErrorBoundary = () => {
   'use memo';
   const { t } = useTranslation();
   const error = useRouteError();
 
-  if (isRouteErrorResponse(error)) {
-    if (error.status === 404) {
-      return <Page404 />;
-    }
-    if (error.status === 401 || error.status === 403) {
-      return <Page401 />;
-    }
+  // `isRouteErrorResponse` only recognizes the internal ErrorResponseImpl that
+  // react-router creates for loader/action throws; a raw `Response` thrown
+  // during render is a plain Response instance. Accept both.
+  const status = isRouteErrorResponse(error)
+    ? error.status
+    : error instanceof Response
+      ? error.status
+      : undefined;
+
+  if (status === undefined) {
+    throw error;
+  }
+
+  if (status === 404) {
+    return <Page404 />;
+  }
+  if (status === 401 || status === 403) {
+    return <Page401 />;
   }
 
   return (

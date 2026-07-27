@@ -174,7 +174,11 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     children: [
       // Router-owned 404: any URL unmatched within this scope falls here
       // (plugin-aware — see UnknownRoutePage).
-      { path: '*', Component: UnknownRoutePage },
+      {
+        path: '*',
+        handle: { hideBreadcrumb: true },
+        Component: UnknownRoutePage,
+      },
       {
         path: 'start',
         element: (
@@ -414,7 +418,11 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         children: [
           // Router-owned 404: any URL unmatched within this scope falls here
           // (plugin-aware — see UnknownRoutePage).
-          { path: '*', Component: UnknownRoutePage },
+          {
+            path: '*',
+            handle: { hideBreadcrumb: true },
+            Component: UnknownRoutePage,
+          },
           {
             path: 'session',
             Component: () => {
@@ -515,7 +523,11 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     children: [
       // Router-owned 404: any URL unmatched within this scope falls here
       // (plugin-aware — see UnknownRoutePage).
-      { path: '*', Component: UnknownRoutePage },
+      {
+        path: '*',
+        handle: { hideBreadcrumb: true },
+        Component: UnknownRoutePage,
+      },
       {
         path: 'session',
         element: (
@@ -1275,6 +1287,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
   // plugin pages (they have no React routes); everything else is a real 404.
   {
     path: '*',
+    handle: { hideBreadcrumb: true },
     Component: UnknownRoutePage,
   },
 ];
