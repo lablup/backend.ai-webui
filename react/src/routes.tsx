@@ -23,8 +23,13 @@ import { useSuspendedBackendaiClient } from './hooks';
 import { useAutoDiagnostics } from './hooks/useAutoDiagnostics';
 import { useBAISettingUserState } from './hooks/useBAISetting';
 import { LogoutEventHandler } from './hooks/useLogout';
+import { useActiveProjectName } from './hooks/useRouteScope';
 import { useSToken } from './hooks/useSToken';
-import { useWebUIMenuItems } from './hooks/useWebUIMenuItems';
+import {
+  useWebUIMenuItems,
+  getPathFromMenuKey,
+  PROJECT_ADMIN_PAGE_KEY_SET,
+} from './hooks/useWebUIMenuItems';
 import { pluginApiEndpointState } from './hooks/useWebUIPluginState';
 import { AdminRedirect, ProjectScopedRedirect } from './legacyRedirects';
 // High priority to import the component
@@ -145,6 +150,53 @@ const DefaultMenuRedirect: React.FC = () => {
 };
 
 /**
+ * Index redirect for the bare scope roots `/admin` and
+ * `/project/:name/admin`: send the user to the first menu item valid in that
+ * scope, mirroring what `DefaultMenuRedirect` does for `/` (and for
+ * `/project/:name`, which reuses `DefaultMenuRedirect` directly since its
+ * target is the first *general* menu item).
+ */
+const ScopeIndexRedirect: React.FC<{ scope: 'admin' | 'projectAdmin' }> = ({
+  scope,
+}) => {
+  'use memo';
+  const { firstAvailableAdminMenuItem, defaultMenuPath } = useWebUIMenuItems();
+  const activeProjectName = useActiveProjectName();
+
+  if (scope === 'projectAdmin') {
+    // For project admins the first admin menu item IS a project-admin page.
+    // Super/domain admins carry no project-admin items in their menu (they
+    // see the global equivalents) but can access every project-admin page —
+    // send them to the first one in sider order. Users with no admin role
+    // land on it too and get the regular 401 from PageAccessGuard.
+    const key =
+      firstAvailableAdminMenuItem?.key &&
+      PROJECT_ADMIN_PAGE_KEY_SET.has(firstAvailableAdminMenuItem.key)
+        ? firstAvailableAdminMenuItem.key
+        : 'project-admin-users';
+    return (
+      <WebUINavigate to={getPathFromMenuKey(key, activeProjectName)} replace />
+    );
+  }
+
+  // `/admin`: first admin menu item reachable by the current user; users with
+  // no admin menu at all fall back to their general default page.
+  return (
+    <WebUINavigate
+      to={
+        firstAvailableAdminMenuItem?.key
+          ? getPathFromMenuKey(
+              firstAvailableAdminMenuItem.key,
+              activeProjectName,
+            )
+          : defaultMenuPath
+      }
+      replace
+    />
+  );
+};
+
+/**
  * MainLayout children routes - these are the actual page routes
  */
 export const mainLayoutChildRoutes: RouteObject[] = [
@@ -172,6 +224,9 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     path: 'project/:projectName',
     element: <ProjectScopeLayout />,
     children: [
+      // Bare `/project/:name` -> first available general menu item within
+      // this project (same behavior as the root `/` index).
+      { index: true, Component: DefaultMenuRedirect },
       // Router-owned 404: any URL unmatched within this scope falls here
       // (plugin-aware — see UnknownRoutePage).
       {
@@ -416,6 +471,8 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       {
         path: 'admin',
         children: [
+          // Bare `/project/:name/admin` -> first project-admin menu item.
+          { index: true, element: <ScopeIndexRedirect scope="projectAdmin" /> },
           // Router-owned 404: any URL unmatched within this scope falls here
           // (plugin-aware — see UnknownRoutePage).
           {
@@ -521,6 +578,8 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     path: 'admin',
     element: <AdminScopeLayout />,
     children: [
+      // Bare `/admin` -> first admin menu item reachable by this user.
+      { index: true, element: <ScopeIndexRedirect scope="admin" /> },
       // Router-owned 404: any URL unmatched within this scope falls here
       // (plugin-aware — see UnknownRoutePage).
       {

@@ -68,10 +68,7 @@ export type MenuGroupName =
   | 'mlops';
 
 export type AdminMenuGroupName =
-  | 'none'
-  | 'admin-operations'
-  | 'admin-infrastructure'
-  | 'admin-system';
+  'none' | 'admin-operations' | 'admin-infrastructure' | 'admin-system';
 
 /**
  * Single source of truth for all valid menu keys.
@@ -161,7 +158,7 @@ const PROJECT_ADMIN_PAGE_KEYS = [
   'project-admin-session',
 ] as const;
 
-const PROJECT_ADMIN_PAGE_KEY_SET: ReadonlySet<string> = new Set(
+export const PROJECT_ADMIN_PAGE_KEY_SET: ReadonlySet<string> = new Set(
   PROJECT_ADMIN_PAGE_KEYS,
 );
 
