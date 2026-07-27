@@ -776,6 +776,19 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     return null;
   })();
 
+  // First project-admin page in sider order that survives blocklist /
+  // inactive-list filtering. Computed from the un-role-filtered fullAdminMenu
+  // (super/domain admins' `adminMenu` excludes project-admin items, but they
+  // can access all of them) — the redirect target for `/project/:name/admin`.
+  // `undefined` when the config hides every project-admin page.
+  const firstAvailableProjectAdminMenuKey = _.find(
+    fullAdminMenu,
+    (item) =>
+      PROJECT_ADMIN_PAGE_KEY_SET.has(item.key as string) &&
+      !_.includes(blockList, item.key) &&
+      !_.includes(inactiveList, item.key),
+  )?.key;
+
   const isSelectedAdminCategoryMenu = _.some(adminMenu, (item) => {
     if (item && 'key' in item) {
       return item.key === currentMenuKeyFromRoute;
@@ -861,6 +874,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     isCurrentPathAdminCategory,
     firstAvailableMenuItem,
     firstAvailableAdminMenuItem,
+    firstAvailableProjectAdminMenuKey,
     defaultMenuPath,
     isCurrentPageBlocked,
     isPluginLoaded,

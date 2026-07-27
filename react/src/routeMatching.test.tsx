@@ -81,8 +81,8 @@ const deepestAccess = (pathname: string): string | undefined => {
 
 describe('route-handle access declarations (FR-3383)', () => {
   it.each([
-    // Bare /admin index relaxes to anyAdmin so its redirect can run.
-    ['/admin', 'anyAdmin'],
+    // Bare /admin inherits the subtree requirement (no relaxation).
+    ['/admin', 'admin'],
     // Global admin subtree default.
     ['/admin/session', 'admin'],
     ['/admin/environment', 'admin'],

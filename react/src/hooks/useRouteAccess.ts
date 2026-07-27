@@ -2,10 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import {
-  useCurrentUserProjectRoles,
-  useEffectiveAdminRole,
-} from './useCurrentUserProjectRoles';
+import { useEffectiveAdminRole } from './useCurrentUserProjectRoles';
 import { useUrlProjectValidity } from './useUrlProjectValidity';
 import { useWebUIMenuItems } from './useWebUIMenuItems';
 import { useMatches } from 'react-router-dom';
@@ -19,15 +16,11 @@ import { useMatches } from 'react-router-dom';
  *   - 'admin':        superadmin or domain admin
  *   - 'projectAdmin': superadmin, domain admin, or project admin of the
  *                     project the URL names
- *   - 'anyAdmin':     superadmin, domain admin, or project admin of ANY
- *                     project (used by the bare `/admin` index redirect,
- *                     where there is no URL project to check against)
  *
  * Routes without an `access` handle (own or inherited) are open to every
  * authenticated user.
  */
-export type RouteAccessRequirement =
-  'superadmin' | 'admin' | 'projectAdmin' | 'anyAdmin';
+export type RouteAccessRequirement = 'superadmin' | 'admin' | 'projectAdmin';
 
 export type RouteAccessDecision =
   | 'allowed'
@@ -54,7 +47,6 @@ export const useRouteAccessDecision = (): RouteAccessDecision => {
   'use memo';
   const matches = useMatches();
   const effectiveAdminRole = useEffectiveAdminRole();
-  const { projectAdminIds } = useCurrentUserProjectRoles();
   const { isInvalid: isUrlProjectInvalid } = useUrlProjectValidity();
   const { isCurrentPageBlocked } = useWebUIMenuItems();
 
@@ -73,17 +65,13 @@ export const useRouteAccessDecision = (): RouteAccessDecision => {
   }
 
   if (access) {
-    const isSuperOrDomain =
-      effectiveAdminRole === 'superadmin' ||
-      effectiveAdminRole === 'domainAdmin';
     const allowed =
       access === 'superadmin'
         ? effectiveAdminRole === 'superadmin'
         : access === 'admin'
-          ? isSuperOrDomain
-          : access === 'anyAdmin'
-            ? isSuperOrDomain || projectAdminIds.length > 0
-            : effectiveAdminRole !== 'none';
+          ? effectiveAdminRole === 'superadmin' ||
+            effectiveAdminRole === 'domainAdmin'
+          : effectiveAdminRole !== 'none';
     if (!allowed) {
       return 'unauthorized';
     }

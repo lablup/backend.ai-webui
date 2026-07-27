@@ -23,14 +23,12 @@ import { persistPostLoginState } from './helper/loginSessionAuth';
 import { useSuspendedBackendaiClient } from './hooks';
 import { useAutoDiagnostics } from './hooks/useAutoDiagnostics';
 import { useBAISettingUserState } from './hooks/useBAISetting';
-import { useCurrentUserProjectRoles } from './hooks/useCurrentUserProjectRoles';
 import { LogoutEventHandler } from './hooks/useLogout';
 import { useActiveProjectName } from './hooks/useRouteScope';
 import { useSToken } from './hooks/useSToken';
 import {
   useWebUIMenuItems,
   getPathFromMenuKey,
-  PROJECT_ADMIN_PAGE_KEY_SET,
 } from './hooks/useWebUIMenuItems';
 import { pluginApiEndpointState } from './hooks/useWebUIPluginState';
 import { AdminRedirect, ProjectScopedRedirect } from './legacyRedirects';
@@ -162,47 +160,52 @@ const ScopeIndexRedirect: React.FC<{ scope: 'admin' | 'projectAdmin' }> = ({
   scope,
 }) => {
   'use memo';
-  const { firstAvailableAdminMenuItem, defaultMenuPath } = useWebUIMenuItems();
+  const {
+    firstAvailableAdminMenuItem,
+    firstAvailableProjectAdminMenuKey,
+    defaultMenuPath,
+  } = useWebUIMenuItems();
   const activeProjectName = useActiveProjectName();
-  const { projectAdminIds } = useCurrentUserProjectRoles();
-  const baiClient = useSuspendedBackendaiClient();
 
   if (scope === 'projectAdmin') {
-    // For project admins the first admin menu item IS a project-admin page.
-    // Super/domain admins carry no project-admin items in their menu (they
-    // see the global equivalents) but can access every project-admin page —
-    // send them to the first one in sider order. Users with no admin role
-    // never reach this element (RouteAccessGuard throws 401 first).
-    const key =
-      firstAvailableAdminMenuItem?.key &&
-      PROJECT_ADMIN_PAGE_KEY_SET.has(firstAvailableAdminMenuItem.key)
-        ? firstAvailableAdminMenuItem.key
-        : 'project-admin-users';
+    // First project-admin page in sider order, already narrowed by the
+    // config blocklist / inactive-list (so a hidden Users page falls through
+    // to Data, etc.). Only super/domain admins and project admins of the
+    // URL project reach this element (RouteAccessGuard enforces
+    // `access: 'projectAdmin'`). When the config hides every project-admin
+    // page, fall back to the user's general default page.
     return (
-      <WebUINavigate to={getPathFromMenuKey(key, activeProjectName)} replace />
+      <WebUINavigate
+        to={
+          firstAvailableProjectAdminMenuKey
+            ? getPathFromMenuKey(
+                firstAvailableProjectAdminMenuKey,
+                activeProjectName,
+              )
+            : defaultMenuPath
+        }
+        replace
+      />
     );
   }
 
-  // `/admin`: first admin menu item reachable by the current user. A user
-  // whose only admin capability is project-admin of some OTHER project (the
-  // active project's menu shows no admin items) is routed to that project's
-  // admin home; anyone else without an admin menu falls back to their
-  // general default page.
-  let to = defaultMenuPath;
-  if (firstAvailableAdminMenuItem?.key) {
-    to = getPathFromMenuKey(firstAvailableAdminMenuItem.key, activeProjectName);
-  } else {
-    const groupIds =
-      (baiClient as unknown as { groupIds?: Record<string, string> })
-        .groupIds ?? {};
-    const adminProjectName = Object.keys(groupIds)
-      .sort((a, b) => a.localeCompare(b))
-      .find((name) => projectAdminIds.includes(groupIds[name]));
-    if (adminProjectName) {
-      to = getPathFromMenuKey('project-admin-users', adminProjectName);
-    }
-  }
-  return <WebUINavigate to={to} replace />;
+  // `/admin`: first admin menu item. Only super/domain admins reach this
+  // element (RouteAccessGuard enforces the subtree's 'admin' requirement),
+  // so an admin menu item always exists; defaultMenuPath is a defensive
+  // fallback only.
+  return (
+    <WebUINavigate
+      to={
+        firstAvailableAdminMenuItem?.key
+          ? getPathFromMenuKey(
+              firstAvailableAdminMenuItem.key,
+              activeProjectName,
+            )
+          : defaultMenuPath
+      }
+      replace
+    />
+  );
 };
 
 /**
@@ -593,16 +596,10 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     // Superadmin-only leaves override with `access: 'superadmin'`.
     handle: { access: 'admin' },
     children: [
-      // Bare `/admin` -> first admin menu item reachable by this user.
-      // Declares the WEAKER 'anyAdmin' requirement (overriding the subtree's
-      // 'admin') so project admins are redirected to their own project-admin
-      // home instead of being stopped with a 401; users with no admin
-      // capability anywhere still get the forbidden page.
-      {
-        index: true,
-        handle: { access: 'anyAdmin' },
-        element: <ScopeIndexRedirect scope="admin" />,
-      },
+      // Bare `/admin` -> first admin menu item. Inherits the subtree's
+      // 'admin' requirement, so the /admin namespace (including its root) is
+      // super/domain-admin only — project admins get the forbidden page.
+      { index: true, element: <ScopeIndexRedirect scope="admin" /> },
       // Router-owned 404: any URL unmatched within this scope falls here
       // (plugin-aware — see UnknownRoutePage).
       {
