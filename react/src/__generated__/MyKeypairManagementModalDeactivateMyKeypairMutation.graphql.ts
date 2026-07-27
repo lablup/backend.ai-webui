@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<146b12dd2f519882a8c91ecf66985700>>
+ * @generated SignedSource<<ec523565cf1054a70d213b03992965e8>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,6 +19,7 @@ export type MyKeypairManagementModalDeactivateMyKeypairMutation$variables = {
 export type MyKeypairManagementModalDeactivateMyKeypairMutation$data = {
   readonly updateMyKeypair: {
     readonly keypair: {
+      readonly id: string;
       readonly isActive: boolean | null | undefined;
     };
   } | null | undefined;
@@ -38,49 +39,55 @@ var v0 = [
 ],
 v1 = [
   {
-    "kind": "Variable",
-    "name": "input",
-    "variableName": "input"
-  }
-],
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "isActive",
-  "storageKey": null
-};
-return {
-  "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
-    "kind": "Fragment",
-    "metadata": null,
-    "name": "MyKeypairManagementModalDeactivateMyKeypairMutation",
+    "alias": null,
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "input",
+        "variableName": "input"
+      }
+    ],
+    "concreteType": "UpdateMyKeypairPayload",
+    "kind": "LinkedField",
+    "name": "updateMyKeypair",
+    "plural": false,
     "selections": [
       {
         "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "UpdateMyKeypairPayload",
+        "args": null,
+        "concreteType": "KeyPairV2",
         "kind": "LinkedField",
-        "name": "updateMyKeypair",
+        "name": "keypair",
         "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "KeyPairV2",
-            "kind": "LinkedField",
-            "name": "keypair",
-            "plural": false,
-            "selections": [
-              (v2/*: any*/)
-            ],
+            "kind": "ScalarField",
+            "name": "id",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "isActive",
             "storageKey": null
           }
         ],
         "storageKey": null
       }
     ],
+    "storageKey": null
+  }
+];
+return {
+  "fragment": {
+    "argumentDefinitions": (v0/*: any*/),
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "MyKeypairManagementModalDeactivateMyKeypairMutation",
+    "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
@@ -89,50 +96,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "MyKeypairManagementModalDeactivateMyKeypairMutation",
-    "selections": [
-      {
-        "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "UpdateMyKeypairPayload",
-        "kind": "LinkedField",
-        "name": "updateMyKeypair",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "KeyPairV2",
-            "kind": "LinkedField",
-            "name": "keypair",
-            "plural": false,
-            "selections": [
-              (v2/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "id",
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ]
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "496a879e5b407a736c6d75dc1b4f08ae",
+    "cacheID": "9ee08b66ba5e8114c4df23e5798a1249",
     "id": null,
     "metadata": {},
     "name": "MyKeypairManagementModalDeactivateMyKeypairMutation",
     "operationKind": "mutation",
-    "text": "mutation MyKeypairManagementModalDeactivateMyKeypairMutation(\n  $input: UpdateMyKeypairInput!\n) {\n  updateMyKeypair(input: $input) {\n    keypair {\n      isActive\n      id\n    }\n  }\n}\n"
+    "text": "mutation MyKeypairManagementModalDeactivateMyKeypairMutation(\n  $input: UpdateMyKeypairInput!\n) {\n  updateMyKeypair(input: $input) {\n    keypair {\n      id\n      isActive\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "54d9e1b4ca9e35416b89e78f9737b8c7";
+(node as any).hash = "e61cf4515d8cb590a8a1af0b87f91045";
 
 export default node;

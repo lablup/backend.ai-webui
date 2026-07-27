@@ -362,6 +362,13 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               containerMainGid
               containerGids
             }
+            projects {
+              edges {
+                node {
+                  id
+                }
+              }
+            }
             timestamps {
               createdAt
               modifiedAt
@@ -577,7 +584,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                 return;
               }
               message.success(t('environment.SuccessfullyModified'));
-              onRequestClose(false);
+              onRequestClose(true);
             },
             onError: (err) => {
               message.error(t('dialog.ErrorOccurred'));
@@ -632,7 +639,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                 // Show the created keypair modal (secret key returned once).
                 setCreatedKeypairs([res.adminCreateUserV2.keypair]);
               } else {
-                onRequestClose(false);
+                onRequestClose(true);
               }
             },
             onError: (err) => {
