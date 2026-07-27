@@ -377,7 +377,7 @@ export const CountdownBorderPausesWhileLoading: Story = {
         </BAIFlex>
         <div style={{ fontSize: '12px', color: '#666' }}>
           {loading
-            ? 'Loading… border is FROZEN (paused) until the load finishes.'
+            ? 'Loading… border is HIDDEN until the load finishes.'
             : 'Idle — border fills over 3s, then restarts fresh after each load.'}
         </div>
       </BAIFlex>

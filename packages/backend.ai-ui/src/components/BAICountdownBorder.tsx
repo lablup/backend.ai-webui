@@ -41,10 +41,10 @@ export interface BAICountdownBorderProps {
    */
   resetKey?: React.Key;
   /**
-   * When true, freezes the fill animation at its current position
-   * (`animation-play-state: paused`) instead of advancing. Use it to hold the
-   * countdown while the wrapped control's refresh is in flight, so the border
-   * does not complete or loop before the real refresh happens.
+   * When true, freezes the fill animation (`animation-play-state: paused`) and
+   * hides the border entirely (`visibility: hidden`) instead of advancing. Use
+   * it while the wrapped control's refresh is in flight, so no stale countdown
+   * is visible before the real refresh happens.
    */
   paused?: boolean;
   /**
@@ -128,6 +128,10 @@ const BAICountdownBorder: React.FC<BAICountdownBorderProps> = ({
             overflow: 'visible',
             pointerEvents: 'none',
             zIndex: 1,
+            // While paused (refresh in flight) the border must be fully
+            // invisible — even at offset 100 the dash boundary can render a
+            // tiny stroke sliver at the path start.
+            visibility: paused ? 'hidden' : 'visible',
           }}
         >
           <rect
