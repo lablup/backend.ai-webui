@@ -208,22 +208,18 @@ One component uses `@appendEdge` today
 (`packages/backend.ai-ui/src/components/fragments/BAIImportArtifactModal.tsx`).
 Treat it as an exception that predates this rule, not a pattern to copy.
 
-This is why the create path keeps its `updateFetchKey()` while the update path
-drops it — see §5.
+## 7. When an update may refetch too
 
-## 7. When a refetch IS correct
+Create and delete are settled by §6. An **update** may also legitimately
+refetch when:
 
-Do not over-rotate. Refetch when:
-
-- **List membership changed** (create/delete) — always, per §6.
 - The mutation has **side effects on other entities** the payload doesn't cover
   (e.g. changing a resource policy recomputes several users' quotas).
 - **Aggregates** shown alongside the list (counts, totals, usage) are computed
   server-side.
 - **Bulk mutations** where per-record payloads are impractical.
 
-Create and delete need no comment — refetching is the rule there. For the other
-three, leave a one-line reason: after an **update**, an unexplained refetch
+Leave a one-line reason in these cases. After an update, an unexplained refetch
 reads as the anti-pattern.
 
 ## Enforcement
