@@ -123,14 +123,18 @@ Relay는 노드 id로 정규화 레코드를 식별하므로, `id` 없는 payloa
 | `FairShareList.tsx:680`                   | `afterUpdate` 콜백 경유, 필드 전용 수정                    |
 | `UserSettingModal.tsx:902`                | REST TOTP 제거 후 무관한 access-key 목록 재조회            |
 
-#### E-3. 가장 싼 수정 — payload가 **이미** 변경 필드를 반환하는데도 refetch
+#### E-3. payload가 **이미** 변경 필드를 반환하는데도 refetch — ~~가장 싼 수정~~ **전부 오탐**
 
-둘 다 파일을 직접 열어 확인했습니다. mutation selection을 손댈 필요 없이 refetch 호출만 지우면 됩니다.
+당초 "refetch 호출만 지우면 되는 가장 싼 건"으로 분류했으나, 착수 시 재검증한 결과 **두 건 모두 refetch가 load-bearing**이었습니다. payload가 변경 필드를 반환하는 것은 맞습니다. 그러나 두 경우 모두 **바뀌는 필드가 목록 자신의 서버 측 필터 조건**이라, store를 패치해도 행이 결과 집합에서 빠지지 않습니다.
 
-- **`RBACManagementPage.tsx:202`** — `adminUpdateRole`이 `{ id, status }`를 반환(`:145`)해 Relay가 이미 패치하는데 `updateFetchKey()`를 호출
-- **`ReservoirArtifactDetailPage.tsx:329`** — `cancelImportArtifact`가 `artifactRevision { id status }`를 반환하는데 페이지 전체 재조회
+- **`RBACManagementPage.tsx:202`(활성화)·`:181`(비활성화)** — 쿼리가 `filter: { status: { in: [queryParams.status] } }`로 서버에서 걸러오고(`:80`), 활성화 액션은 `isDeletedFilter`일 때만 노출됩니다(`:305`·`:319`). 즉 활성화한 역할은 보고 있던 DELETED 목록에서 **빠져야** 합니다. `adminUpdateRole`이 `{ id, status }`를 돌려주고 Relay가 레코드를 패치하는 것은 맞지만, offset 페이지네이션 결과 집합에서 edge가 제거되지는 않습니다
+- **`ReservoirArtifactDetailPage.tsx:329`** — 알림 목록은 `filter: { status: { equals: PULLING } }`로 서버 필터링된 `pullingArtifactRevisions` 커넥션에서 옵니다(`:141`). `cancelImportArtifact`가 `artifactRevision { id status }`를 돌려줘 레코드는 갱신되지만 edge는 커넥션에 남아 **취소된 pull의 알림이 사라지지 않습니다**
 
-**필터 연동 주의.** 토글 대상이 목록의 필터 조건인 경우(`MyKeypairManagementModal`의 `isActive` 필터, `ProjectPage`의 활성/비활성 탭, `ReservoirPage`의 availability 필터) store 패치만으로는 **행이 목록에서 빠지지 않습니다**. 이때는 refetch가 정당하며, 그 이유를 주석으로 남겨야 합니다.
+세 곳 모두 코드는 그대로 두었습니다. 즉 E-3은 아래 「필터 연동 주의」의 **반례가 아니라 사례**였습니다.
+
+**감사 절차에 주는 교훈.** "payload가 변경 필드를 반환한다"는 사실만으로는 refetch를 지울 근거가 되지 않습니다. 남은 단계, 특히 E-2의 행 단위 토글은 대부분 `is_active` 계열이라 같은 함정에 그대로 노출됩니다. 건별로 **바뀌는 필드가 목록 쿼리의 필터·정렬 인자에 쓰이는지**를 반드시 함께 확인해야 합니다.
+
+**필터 연동 주의.** 토글 대상이 목록의 필터 조건인 경우(`MyKeypairManagementModal`의 `isActive` 필터, `ProjectPage`의 활성/비활성 탭, `ReservoirPage`의 availability 필터) store 패치만으로는 **행이 목록에서 빠지지 않습니다**. 이때는 refetch가 정당하므로 코드는 그대로 두고, 확인한 근거는 이 문서에 기록합니다 — 손대지 않는 호출부에 감사용 주석을 덧붙이지 않습니다.
 
 ### F. 문서가 anti-pattern을 규약으로 기술 — 본 PR에서 수정 완료
 
@@ -188,9 +192,9 @@ onRequestClose={(success) => {
 
 ## 작업 분해
 
-의존성이 없어 병렬 진행이 가능하며, 1은 나머지의 참조 구현이 됩니다.
+의존성이 없어 병렬 진행이 가능합니다.
 
-1. **죽은 refetch 제거 (E-3)** — `RBACManagementPage.tsx:202`, `ReservoirArtifactDetailPage.tsx:329`. payload가 이미 변경 필드를 반환하므로 호출 한 줄씩만 삭제. 가장 싸고 위험이 없어 먼저 머지
+1. ~~**죽은 refetch 제거 (E-3)**~~ — **완료. 제거 대상 없음.** `RBACManagementPage.tsx:202`·`:181`, `ReservoirArtifactDetailPage.tsx:329` 모두 바뀌는 필드가 목록의 필터 조건이라 refetch가 정당했습니다. 코드 변경 없이 이 문서만 정정했습니다 (E-3 참조). 나머지 단계는 이 단계를 참조 구현으로 삼지 말고, **먼저 목록 쿼리의 필터 인자부터 확인**하십시오
 2. **한 줄 payload 버그 (B) 수정** — `AutoScalingRuleEditorModalLegacy`에 `id` 추가, `MyKeypairManagementModal`의 `updateMyKeypair`에 `id` 추가
 3. **C 수정** — `UserSettingModal` payload에 `projects` 추가
 4. **A 제거** — `UserSettingModal`의 `onRequestClose(false)` 우회를 걷어내고 호출부(`AdminUserManagement`)로 판단 이동
