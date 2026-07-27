@@ -64,7 +64,7 @@ Relay는 노드 id로 정규화 레코드를 식별하므로, `id` 없는 payloa
 | `GAP`               | 13   | 노드는 선택했으나 뷰가 읽는 필드 일부 누락          | 필드 보강 후 refetch 제거          |
 | `OK`                | 7    | 뷰 fragment를 모두 커버                             | refetch 즉시 제거 가능             |
 
-**`NO_NODE` (10)** — `modify_keypair_resource_policy`, `modify_project_resource_policy`, `modify_user_resource_policy`, `modify_scaling_group`(2곳), `modify_keypair`(2곳), `modify_image`(2곳), `modify_agent`. 앞 4종은 노드 반환 후속이 스키마에 이미 있습니다(`UpdateKeypairResourcePolicyPayload`, `UpdateProjectResourcePolicyPayload`, `UpdateUserResourcePolicyPayload`, `UpdateResourceGroupPayload`). `modify_keypair`·`modify_image`는 후속이 없어 `updater:` 대상이며, `modify_agent`는 이미 `updater:`로 보완되어 **정상**입니다.
+**`NO_NODE` (10) — 범위 밖.** `modify_keypair_resource_policy`, `modify_project_resource_policy`, `modify_user_resource_policy`, `modify_scaling_group`(2곳), `modify_keypair`(2곳), `modify_image`(2곳), `modify_agent`. payload가 데이터를 주지 않아 프론트에서 풀 방법이 없으므로 **refetch를 유지**합니다. 앞 4종은 노드 반환 후속이 스키마에 있지만(`UpdateKeypairResourcePolicyPayload` 등) 백엔드 버전 호환이 얽혀 이번 범위에서 제외했습니다. `modify_agent`는 이미 `updater:`로 보완되어 **정상**입니다.
 
 **`NODE_NOT_SELECTED` (5)** — `modify_group`(`BAIProjectBulkEditModal`, `ProjectStoragePermissionTable`, `ProjectPage`), `modify_domain`(`ContainerRegistryList`, `DomainStoragePermissionTable`). 프론트만 고치면 되는 가장 싼 건들입니다.
 
@@ -151,13 +151,7 @@ Relay는 노드 id로 정규화 레코드를 식별하므로, `id` 없는 payloa
 
 ### Should Have
 
-- [ ] `ok`/`msg`만 반환하는 레거시 mutation은 노드 반환 후속 mutation으로 이관한다. 후속이 없으면 `updater:`를 작성한다
 - [ ] create는 가능한 경우 `@appendEdge`로 connection에 삽입한다. 서버 정렬에 의존하면 refetch를 유지하고 이유를 남긴다
-
-### Nice to Have
-
-- [ ] `if (success) updateFetchKey()` 형태를 잡는 lint 규칙 (`react/eslint.config.js`의 `no-restricted-syntax` 활용)
-- [ ] payload가 노드를 반환하면서 `id`를 빠뜨린 경우를 잡는 검사 (`scripts/verify.sh`)
 
 ## 수정 방침
 
@@ -189,8 +183,6 @@ if (success && wasCreating) {
 4. **A 제거** — `UserSettingModal`의 `onRequestClose(false)` 우회를 걷어내고 호출부(`AdminUserManagement`)로 판단 이동
 5. **행 단위 토글 (E-2)** — 토글 mutation의 selection에 `id` + 변경 필드를 넣고 refetch 제거. 단 필터 연동 건은 refetch 유지 + 사유 주석
 6. **D — selection 보강** — `NODE_NOT_SELECTED` 5건은 selection만 채우고, `GAP` 중 D-1 확정 건은 필드 보강 후 호출부 refetch 제거
-7. **D — 레거시 mutation** — 후속 mutation 이관 4종, `updater:` 작성 2종
-8. **F 후속** — lint 규칙 (FR-3170의 "구조적 보장" 요구사항)
 
 ## 검증
 
@@ -201,6 +193,8 @@ if (success && wasCreating) {
 
 ## 범위 밖
 
+- **레거시 `ok`/`msg` mutation (`NO_NODE` 10건)** — 후속 mutation 이관도, `updater:` 작성도 하지 않고 **refetch를 그대로 둡니다.** 백엔드 payload가 데이터를 주지 않는 이상 프론트에서 깔끔하게 풀 방법이 없고, 후속 mutation 이관은 백엔드 버전 호환까지 얽혀 비용 대비 효과가 낮습니다. 이미 `updater:`로 보완된 `AgentSettingModal`은 그대로 둡니다
+- **lint 규칙 / `verify.sh` 검사** — 이번 범위에서 제외. 가드레일은 `relay-mutation-store-updates` 스킬 문서로만 둡니다
 - delete/purge 경로의 refetch — connection 삭제 지시자 도입은 별도 과제
 - REST(`useTanMutation`) 기반 수정 경로 — Relay store와 무관
 - 목록 쿼리 자체의 통합/축소 — FR-3170의 다른 축

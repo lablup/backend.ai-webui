@@ -232,16 +232,15 @@ Do not over-rotate. Refetch when:
 In each case, leave a one-line comment naming the reason. An unexplained
 refetch reads as the anti-pattern.
 
-## Enforcement (follow-up)
+## Enforcement
 
-This skill is the interim fix. Docs alone will not hold across ~107
-`updateFetchKey()` call sites — the deeper fix is a lint rule, tracked under
-FR-3170. The landing spot already exists: `react/eslint.config.js` uses
-`no-restricted-syntax` with an AST selector for the CSP `<style>` ban, and the
+There is none — this skill and code review are the only guardrail, across ~149
+`updateFetchKey()` call sites in `react/src`. A lint rule was considered and
+deliberately left out of scope (FR-3372). If that decision is revisited, the
+landing spot already exists: `react/eslint.config.js` uses `no-restricted-syntax`
+with an AST selector for the CSP `<style>` ban, and the
 `onRequestClose={(success) => { if (success) updateFetchKey(); }}` shape is
-matchable the same way. `eslint-plugin-relay` is also already installed with
-`relay/unused-fields` disabled — the mirror-image check, worth re-evaluating in
-the same pass.
+matchable the same way.
 
 ## Review Checklist
 
