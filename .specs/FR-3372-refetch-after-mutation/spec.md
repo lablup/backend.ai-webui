@@ -155,21 +155,34 @@ Relay는 노드 id로 정규화 레코드를 식별하므로, `id` 없는 payloa
 
 ## 수정 방침
 
-호출부가 create/update를 아는 두 가지 형태가 있고, 둘 다 prop 변경이 필요 없습니다. 표준 형태는 `relay-mutation-store-updates` 스킬 §5에 있으며, 여기서는 방침과 구현 시 주의점만 정리합니다.
-
-- **인스턴스 분리형** (`AdminUserManagement`) — edit 인스턴스는 refetch하지 않습니다.
-- **단일 인스턴스형** (`ResourcePresetList` 등) — 편집 상태가 이미 핸들러 클로저에 있으므로 그대로 사용합니다.
-
-단일 인스턴스형에서 유일한 함정은 **판단 시점**입니다. 상태 초기화보다 먼저 읽어야 합니다.
+**fragment가 판별자입니다.** create/update를 겸하는 setting modal은 nullable `*Frgmt`를 받고, null이면 create·비-null이면 update입니다. 이 prop은 호출부가 넘기므로, 호출부는 시그니처 변경 없이 그대로 분기할 수 있습니다.
 
 ```tsx
-const wasCreating = !editingResourcePreset; // setState 이전 클로저 값으로 먼저 확정
-setEditingResourcePreset(null);
-setIsCreating(false);
-if (success && wasCreating) {
-  /* refetch */
-}
+onRequestClose={(success) => {
+  if (success && entityFrgmt === null) {
+    refetch(); // create → 행 추가됨. update → store가 이미 갱신됨
+  }
+  // …닫기/상태 초기화
+}}
 ```
+
+실제 호출부에 적용하면 이렇습니다. **판단을 상태 초기화보다 먼저** 해야 합니다 — 핸들러는 렌더 시점 값을 클로저로 잡고 있으므로 먼저 검사하고 나중에 리셋합니다.
+
+```tsx
+<ResourcePresetSettingModal
+  resourcePresetFrgmt={editingResourcePreset}
+  open={!!editingResourcePreset || isCreating}
+  onRequestClose={(success) => {
+    if (success && !editingResourcePreset) {
+      startRefetchTransition(() => updateResourcePresetsFetchKey());
+    }
+    setEditingResourcePreset(null);
+    setIsCreating(false);
+  }}
+/>
+```
+
+호출부가 create용·edit용 **인스턴스를 따로 렌더링**하는 경우(`AdminUserManagement`)에는 분기 자체가 사라집니다 — edit 인스턴스는 그냥 refetch하지 않습니다.
 
 호출부가 정말로 알 수 없는 경우에만 결과를 풍부하게 만듭니다(`onOk('create' | 'modify')` 선례 존재). `success`에 거짓을 싣는 방식은 채택하지 않습니다.
 
