@@ -243,7 +243,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       // (plugin-aware — see UnknownRoutePage).
       {
         path: '*',
-        handle: { hideBreadcrumb: true },
+        handle: { hideBreadcrumb: true, notFound: true },
         Component: UnknownRoutePage,
       },
       {
@@ -492,7 +492,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
           // (plugin-aware — see UnknownRoutePage).
           {
             path: '*',
-            handle: { hideBreadcrumb: true },
+            handle: { hideBreadcrumb: true, notFound: true },
             Component: UnknownRoutePage,
           },
           {
@@ -604,7 +604,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       // (plugin-aware — see UnknownRoutePage).
       {
         path: '*',
-        handle: { hideBreadcrumb: true },
+        handle: { hideBreadcrumb: true, notFound: true },
         Component: UnknownRoutePage,
       },
       {
@@ -1384,7 +1384,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
   // plugin pages (they have no React routes); everything else is a real 404.
   {
     path: '*',
-    handle: { hideBreadcrumb: true },
+    handle: { hideBreadcrumb: true, notFound: true },
     Component: UnknownRoutePage,
   },
 ];

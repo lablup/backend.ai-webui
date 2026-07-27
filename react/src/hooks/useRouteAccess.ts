@@ -35,6 +35,13 @@ export type RouteAccessDecision =
 
 interface AccessRouteHandle {
   access?: RouteAccessRequirement;
+  /**
+   * Marks a catch-all (not-found) route. Clears any `access` inherited from
+   * the scope subtree: route existence is decided BEFORE authorization, so
+   * unknown URLs render the router-owned 404 (or the Lit plugin page)
+   * identically for every role instead of a role-dependent 401/404 split.
+   */
+  notFound?: boolean;
 }
 
 /**
@@ -56,10 +63,14 @@ export const useRouteAccessDecision = (): RouteAccessDecision => {
 
   let access: RouteAccessRequirement | undefined;
   for (let i = matches.length - 1; i >= 0; i--) {
-    const handleAccess = (matches[i]?.handle as AccessRouteHandle | undefined)
-      ?.access;
-    if (handleAccess) {
-      access = handleAccess;
+    const handle = matches[i]?.handle as AccessRouteHandle | undefined;
+    if (handle?.notFound) {
+      // Catch-all match: the URL names no real route, so there is nothing
+      // to authorize — UnknownRoutePage owns the screen for every role.
+      break;
+    }
+    if (handle?.access) {
+      access = handle.access;
       break;
     }
   }

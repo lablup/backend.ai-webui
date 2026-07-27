@@ -65,16 +65,19 @@ describe('real routes still win over the catch-alls', () => {
 });
 
 /**
- * Deepest `handle.access` declaration for a pathname — the exact lookup
- * `useRouteAccessDecision` performs (FR-3383).
+ * Effective `handle.access` for a pathname — the exact lookup
+ * `useRouteAccessDecision` performs (FR-3383): walk up from the deepest
+ * match; a `notFound` catch-all clears any access inherited from the scope
+ * subtree (route existence is decided before authorization).
  */
-const deepestAccess = (pathname: string): string | undefined => {
+const effectiveAccess = (pathname: string): string | undefined => {
   const matches = matchRoutes(mainLayoutChildRoutes, pathname);
   if (!matches) return undefined;
   for (let i = matches.length - 1; i >= 0; i--) {
-    const access = (matches[i]?.route.handle as { access?: string } | undefined)
-      ?.access;
-    if (access) return access;
+    const handle = matches[i]?.route.handle as
+      { access?: string; notFound?: boolean } | undefined;
+    if (handle?.notFound) return undefined;
+    if (handle?.access) return handle.access;
   }
   return undefined;
 };
@@ -98,8 +101,14 @@ describe('route-handle access declarations (FR-3383)', () => {
     // General pages declare nothing.
     ['/project/foo/start', undefined],
     ['/usersettings', undefined],
+    // Unknown URLs: the notFound catch-all clears inherited access, so the
+    // router-owned 404 renders identically for every role.
+    ['/admin/bogus', undefined],
+    ['/project/foo/admin/bogus', undefined],
+    ['/project/foo/bogus', undefined],
+    ['/bogus', undefined],
   ])('%s -> %s', (pathname, expected) => {
-    expect(deepestAccess(pathname)).toBe(expected);
+    expect(effectiveAccess(pathname)).toBe(expected);
   });
 });
 
