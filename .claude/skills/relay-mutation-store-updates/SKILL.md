@@ -158,19 +158,11 @@ copy from, not a pattern.
 
 **The fragment prop is the discriminator.** A setting modal that handles both
 paths takes a nullable `*Frgmt` — null means create, non-null means update.
-That prop is passed by the caller, so the caller can branch on it without any
-signature change:
+The caller passes that prop, so it can branch on it with no signature change:
+`if (success && entityFrgmt === null) refetch()`. Create adds a row the
+connection doesn't know about; update has already been patched into the store.
 
-```tsx
-onRequestClose={(success) => {
-  if (success && entityFrgmt === null) {
-    refetch();   // create → a new row exists; update → the store is already patched
-  }
-  // …close/reset state
-}}
-```
-
-Applied to a real call site — one instance serving both paths:
+One instance serving both paths:
 
 ```tsx
 <ResourcePresetSettingModal
