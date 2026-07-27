@@ -27,7 +27,7 @@ jobs:
       backend-ai-ui-changed: ${{ steps.changes.outputs.backend-ai-ui }}
       root-changed: ${{ steps.changes.outputs.root }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: dorny/paths-filter@v3
         id: changes
         with:
@@ -53,7 +53,7 @@ jobs:
       run:
         working-directory: ./react
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: jwalton/gh-find-current-pr@v1
         id: findPr
       - uses: pnpm/action-setup@v5
@@ -99,7 +99,7 @@ jobs:
       run:
         working-directory: ./packages/backend.ai-ui
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v5
         name: Install pnpm
         with:
@@ -140,7 +140,7 @@ jobs:
     if: needs.check-changes.outputs.root-changed == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v5
         name: Install pnpm
         with:

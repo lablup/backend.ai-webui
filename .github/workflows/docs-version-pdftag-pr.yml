@@ -64,7 +64,7 @@ jobs:
       # Check out `main` (NOT the release tag) — we edit main's config and
       # open the PR against main.
       - name: Checkout main
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: main
 

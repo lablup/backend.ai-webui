@@ -41,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - uses: pnpm/action-setup@v5
         name: Install pnpm
@@ -95,7 +95,7 @@ jobs:
     environment: ${{ inputs.dry_run != true && 'app-packaging' || 'app-packaging-dryrun' }}
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - uses: pnpm/action-setup@v5
         name: Install pnpm
@@ -162,7 +162,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - uses: pnpm/action-setup@v5
         name: Install pnpm
@@ -227,7 +227,7 @@ jobs:
       playwright: ${{ steps.pw.outputs.version }}
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - uses: pnpm/action-setup@v5
         name: Install pnpm
@@ -281,7 +281,7 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - uses: pnpm/action-setup@v5
         name: Install pnpm
