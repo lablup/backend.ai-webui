@@ -250,7 +250,7 @@
     "ReplicaSummary": "Réplicas",
     "ReplicaSummaryTooltip": "Réplicas en cours d'exécution par rapport au nombre souhaité de réplicas.",
     "Replicas": "Réplicas",
-    "ResourceGroup": "Groupe de Ressources",
+    "ResourceGroup": "Groupe de ressources",
     "RevisionNumber": "Révision",
     "RevisionNumberTooltip": "Le numéro de révision actuel du déploiement.",
     "StrategyType": "Stratégie",

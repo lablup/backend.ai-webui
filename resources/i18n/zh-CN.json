@@ -783,7 +783,7 @@
       "ClickFilebrowserButton": "要上传文件夹，请单击执行文件浏览器按钮。",
       "CreateANewFolder": "新建一个文件夹",
       "Created": "已创建",
-      "Delete": "删除...",
+      "Delete": "删除",
       "DoYouWantToOverwrite": "你想覆盖吗？",
       "DownloadFile": "下载文件",
       "DownloadNotAllowed": "不允许在此文件夹中下载文件/文件夹。",
@@ -835,7 +835,7 @@
       "StartingSSH/SFTPSession": "开始 SFTP 会话...",
       "StopUploading": "停止上传",
       "TouchToDownload": "轻触下载文件",
-      "UploadFiles": "上传文件...",
+      "UploadFiles": "上传文件",
       "UploadFolder": "上传文件夹",
       "UseNewFileExtension": "用",
       "ValueRequired": "值是必需的",
@@ -1283,7 +1283,7 @@
     "EndpointUnreachable": "API 端点不可访问",
     "EndpointUnreachableDesc": "无法访问 API 端点（{{endpoint}}）：{{error}}。",
     "EndpointUnreachableFix": "请验证 API 端点 URL 是否正确以及后端服务器是否正在运行。",
-    "ExportCSV": "导出CSV",
+    "ExportCSV": "导出 CSV",
     "ImageReferencesPassed": "镜像引用正常",
     "ImageReferencesPassedDesc": "系统镜像引用（SSH、文件浏览器）格式有效。",
     "InvalidBlocklistEntries": "无效的屏蔽列表条目",
@@ -3061,7 +3061,7 @@
     "NoBackgroundTask": "没有任务。",
     "NoNotification": "没有通知。",
     "Notification": "通知",
-    "Running": "跑步..."
+    "Running": "跑步"
   },
   "signUp": {
     "E-mail": "电子邮件",

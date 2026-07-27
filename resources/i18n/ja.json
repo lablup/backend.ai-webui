@@ -783,7 +783,7 @@
       "ClickFilebrowserButton": "フォルダをアップロードするには、[ファイルブラウザの実行]ボタンをクリックしてください。",
       "CreateANewFolder": "新しいフォルダを作成します",
       "Created": "作成日時",
-      "Delete": "削除...",
+      "Delete": "削除",
       "DoYouWantToOverwrite": "上書きしますか？",
       "DownloadFile": "ダウンロードファイル",
       "DownloadNotAllowed": "このフォルダーではファイル/フォルダーのダウンロードは許可されていません。",
@@ -3061,7 +3061,7 @@
     "NoBackgroundTask": "聞かない。",
     "NoNotification": "通知なし。",
     "Notification": "お知らせ",
-    "Running": "ランニング..."
+    "Running": "ランニング"
   },
   "signUp": {
     "E-mail": "Eメール",

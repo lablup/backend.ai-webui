@@ -296,7 +296,7 @@
     "IntegrationID": "集成 ID",
     "Name": "名称",
     "Project": "项目",
-    "ProjectID": "项目 ID",
+    "ProjectID": "项目ID",
     "Registry": "镜像仓库",
     "ResourcePolicy": "资源策略",
     "ScalingGroups": "资源组",

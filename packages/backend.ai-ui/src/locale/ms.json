@@ -215,7 +215,7 @@
   },
   "comp:BAILoginSessionTable": {
     "AccessKey": "Kunci Akses",
-    "CreatedAt": "Dicipta Pada",
+    "CreatedAt": "Dicipta pada",
     "InvalidatedAt": "Tidak Sah Pada",
     "User": "Pengguna"
   },
@@ -228,7 +228,7 @@
   },
   "comp:BAIModelDeploymentNodes": {
     "AreYouSureToDeleteDeployment": "Adakah anda pasti mahu memadamkan penggunaan \"{{deploymentName}}\"? Tindakan ini tidak boleh dibatalkan.",
-    "CreatedAt": "Dicipta Pada",
+    "CreatedAt": "Dicipta pada",
     "CreatedUser": "Pengarang",
     "CurrentRevisionID": "ID Semakan Semasa",
     "Delete": "Padam",
@@ -255,7 +255,7 @@
     "RevisionNumberTooltip": "Nombor semakan semasa penggunaan.",
     "StrategyType": "Strategi",
     "Tags": "Tag",
-    "UpdatedAt": "Dikemas kini Pada"
+    "UpdatedAt": "Dikemas kini pada"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Projek berikut akan dikemas kini.",
@@ -290,7 +290,7 @@
   "comp:BAIProjectTable": {
     "ContainerRegistry": "Registri Kontena",
     "ContainerRegistryProject": "Projek Registri Kontena",
-    "CreatedAt": "Dibuat pada",
+    "CreatedAt": "Dicipta pada",
     "Description": "Keterangan",
     "Domain": "Domain",
     "IntegrationID": "ID Integrasi",
@@ -407,7 +407,7 @@
     "Test": "ujian"
   },
   "comp:BAIUserResourcePolicyV2Table": {
-    "CreatedAt": "Dicipta Pada",
+    "CreatedAt": "Dicipta pada",
     "MaxConcurrentLogins": "Log Masuk Serentak Maksimum",
     "MaxCustomizedImageCount": "Kiraan Imej Tersuai Maks",
     "MaxQuotaScopeSize": "Saiz Folder Maks",
@@ -491,7 +491,7 @@
     "AIAccelerator": "Pemecut AI",
     "CPU": "CPU",
     "ClusterMode": "Mod Kluster",
-    "CreatedAt": "Dicipta Pada",
+    "CreatedAt": "Dicipta pada",
     "ElapsedTime": "Masa Berlalu",
     "Environments": "Persekitaran",
     "Memory": "Memori",
@@ -512,7 +512,7 @@
     "ContainerMainGIDTooltip": "ID kumpulan berangka lalai yang diberikan kepada proses di dalam kontena",
     "ContainerUID": "UID kontena",
     "ContainerUIDTooltip": "ID pengguna berangka yang ditetapkan kepada proses dalam kontena",
-    "CreatedAt": "Dibuat Pada",
+    "CreatedAt": "Dicipta pada",
     "Description": "Penerangan",
     "Disabled": "Dilumpuhkan",
     "DomainName": "Domain",

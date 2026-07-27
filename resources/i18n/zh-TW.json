@@ -783,7 +783,7 @@
       "ClickFilebrowserButton": "要上傳文件夾，請單擊執行文件瀏覽器按鈕。",
       "CreateANewFolder": "新建一個文件夾",
       "Created": "已創建",
-      "Delete": "刪除...",
+      "Delete": "刪除",
       "DoYouWantToOverwrite": "你想覆蓋嗎？",
       "DownloadFile": "下載文件",
       "DownloadNotAllowed": "不允許在此資料夾中下載檔案/資料夾。",
@@ -835,7 +835,7 @@
       "StartingSSH/SFTPSession": "开始 SFTP 会话...",
       "StopUploading": "停止上傳",
       "TouchToDownload": "輕觸下載文件",
-      "UploadFiles": "上傳文件...",
+      "UploadFiles": "上傳文件",
       "UploadFolder": "上传文件夹",
       "UseNewFileExtension": "用",
       "ValueRequired": "值是必需的",
@@ -2439,7 +2439,7 @@
     "DefaultForUnspecifiedTooltipDesc1": "當不請求特定的CPU或內存時，設置默認策略。",
     "DefaultForUnspecifiedTooltipDesc2": "“無限”允許使用代理節點的容量，而“有限”拒絕資源，除非明確設置。在大多數情況下，建議“無限”。",
     "DeletePolicy": "刪除政策",
-    "ExportCSV": "匯出 CSV",
+    "ExportCSV": "匯出CSV",
     "Folders": "文件夾",
     "IdleTimeout": "空閒超時",
     "IdleTimeoutSec": "空閒超時（秒）",
@@ -3063,7 +3063,7 @@
     "NoBackgroundTask": "沒有任務。",
     "NoNotification": "沒有通知。",
     "Notification": "通知",
-    "Running": "跑步..."
+    "Running": "跑步"
   },
   "signUp": {
     "E-mail": "電子郵件",

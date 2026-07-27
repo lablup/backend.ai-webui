@@ -942,7 +942,7 @@
     "invitation": {
       "FailedToAcceptInvitation": "ไม่ยอมรับคำเชิญ",
       "FailedToDeclineInvitation": "ล้มเหลวในการปฏิเสธคำเชิญ",
-      "FolderSharingNotAvailableToUser": "การแชร์โฟลเดอร์ไม่สามารถใช้ได้สำหรับผู้ใช้ที่ร้องขอ: ",
+      "FolderSharingNotAvailableToUser": "การแชร์โฟลเดอร์ไม่สามารถใช้ได้สำหรับผู้ใช้ที่ร้องขอ",
       "InvitationError": "การเชิญล้มเหลว ผู้ใช้อาจได้รับเชิญแล้ว",
       "Invited": "เชิญสำเร็จแล้ว",
       "LeaveSharedFolder": "ออกจากโฟลเดอร์ที่ใช้ร่วมกัน",
@@ -1508,7 +1508,7 @@
   "errorBoundary": {
     "DebugInfo": "ข้อมูลดีบัก:",
     "DisplayOnlyDevEnv": "บล็อกข้อผิดพลาดนี้จะแสดงเฉพาะในสภาพแวดล้อมการพัฒนา WebUI เท่านั้น",
-    "ErrorMessage": "ข้อความแสดงข้อผิดพลาด:",
+    "ErrorMessage": "ข้อความแสดงข้อผิดพลาด",
     "ExpiredLoginSessionReLogin": "เข้าสู่ระบบ",
     "ExpiredLoginSessionTitle": "เซสชั่นการเข้าสู่ระบบของคุณหมดอายุแล้ว",
     "ReloadPage": "โหลดหน้าใหม่",
@@ -2392,7 +2392,7 @@
     "Information": "ข้อมูล",
     "ModifyResourceGroup": "แก้ไขกลุ่มทรัพยากร",
     "Name": "ชื่อ",
-    "NoChangesMade": "ไม่มีการเปลี่ยนแปลง",
+    "NoChangesMade": "ไม่มีการเปลี่ยนแปลง.",
     "NoGroupToDisplay": "ไม่มีกลุ่มที่จะแสดง",
     "NoScalingGroupAssignedToThisProject": "ไม่มีกลุ่มทรัพยากรที่ได้รับมอบหมายให้โครงการนี้ \nการสร้างเซสชันและการสร้างการปรับใช้จะถูก จำกัด",
     "PendingTimeout": "การหมดเวลาที่รออยู่",
@@ -2663,7 +2663,7 @@
     "Port": "ท่าเรือ",
     "PredicateChecks": "การตรวจสอบภาคแสดง",
     "Preparing": "กำลังเตรียมการ...",
-    "PreparingSession": "กำลังเตรียมเซสชัน...",
+    "PreparingSession": "กำลังเตรียมเซสชัน",
     "ReadLess": "อ่านน้อยลง",
     "ReadMore": "อ่านเพิ่มเติม...",
     "RecentlyCreatedSessions": "เซสชันที่สร้างขึ้นเมื่อเร็ว ๆ นี้",
@@ -3061,7 +3061,7 @@
     "NoBackgroundTask": "ไม่มีงาน",
     "NoNotification": "ไม่มีการแจ้งเตือน",
     "Notification": "การแจ้งเตือน",
-    "Running": "กำลังทำงาน..."
+    "Running": "กำลังทำงาน"
   },
   "signUp": {
     "E-mail": "อีเมล",

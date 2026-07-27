@@ -330,7 +330,7 @@
     "Unlimited": "Sınırsız"
   },
   "comp:BAIRouteNodes": {
-    "CreatedAt": "Oluşturulma tarihi",
+    "CreatedAt": "Oluşturulma Tarihi",
     "HealthStatus": "Sağlık Durumu",
     "RouteId": "Rota Kimliği",
     "SchedulingHistory": "Zamanlama Geçmişi",

@@ -144,7 +144,7 @@
     "BulkDeleteModelCards": "Загварын картуудыг устгах",
     "BulkDeleteModelCardsAndFoldersCompleted": "{{count}} загварын карт болон тэдгээрийн хавтасууд хогийн савд шилжсэн.",
     "BulkDeletePartiallyCompleted": "{{successCount}} загварын карт устгагдлаа. {{failureCount}} устгаж чадсангүй.",
-    "Category": "ангилал",
+    "Category": "Ангилал",
     "CategoryPlaceholder": "жнь: LLM",
     "CategoryTooltip": "Загварын ангилал (жнь. LLM, Vision, Audio).",
     "ConfirmBulkDelete": "Сонгосон {{count}} загварын картыг устгахдаа итгэлтэй байна уу?",
@@ -783,7 +783,7 @@
       "ClickFilebrowserButton": "Фолдер (ууд) -ыг байршуулахын тулд файл дарах товчийг ажиллуулах товчийг дарна уу.",
       "CreateANewFolder": "Шинэ хавтас үүсгэх",
       "Created": "Үүсгэсэн",
-      "Delete": "Устгах ...",
+      "Delete": "Устгах",
       "DoYouWantToOverwrite": "Та дарж бичихийг хүсч байна уу?",
       "DownloadFile": "Файлыг татах",
       "DownloadNotAllowed": "Энэ фолдерт файл/хавтас татаж авахыг хориглоно.",
@@ -835,7 +835,7 @@
       "StartingSSH/SFTPSession": "SFTP сессийг эхлүүлж байна...",
       "StopUploading": "Байршуулахаа зогсоох",
       "TouchToDownload": "Файлыг татаж авахын тулд хүрнэ үү",
-      "UploadFiles": "Файл байршуулах ...",
+      "UploadFiles": "Файл байршуулах",
       "UploadFolder": "Хавтас байршуулах",
       "UseNewFileExtension": "Ашиглах",
       "ValueRequired": "Үнэ цэнэ шаардлагатай",
@@ -942,7 +942,7 @@
     "invitation": {
       "FailedToAcceptInvitation": "Урилга хүлээж авч чадсангүй",
       "FailedToDeclineInvitation": "Урилгаас татгалзаж чадсангүй",
-      "FolderSharingNotAvailableToUser": "Хүссэн хэрэглэгчдэд хавтас хуваалцах боломжгүй:",
+      "FolderSharingNotAvailableToUser": "Хүссэн хэрэглэгчдэд хавтас хуваалцах боломжгүй.",
       "InvitationError": "Урилга амжилтгүй боллоо. Хэрэглэгчийг аль хэдийн урьсан байж магадгүй.",
       "Invited": "Амжилттай урилаа",
       "LeaveSharedFolder": "Хуваалцсан фолдерыг орхи",
@@ -1002,7 +1002,7 @@
       "Status": "Статус",
       "StatusOfSelectedHost": "Сонгосон хостын төлөв",
       "Unknown": "Тодорхойгүй",
-      "Used": "ашигласан"
+      "Used": "Ашигласан"
     }
   },
   "deployment": {
@@ -1673,7 +1673,7 @@
       "LetterNumber-_dot": "Үсэг, тоо, -_-ийг зөвшөөрдөг.",
       "NameAlreadyExists": "Бодлогын нэр аль хэдийн байна!",
       "NumbersOnly": "Дугаарыг л зөвшөөрдөг",
-      "PleaseSelectOption": "Нэг сонголтыг сонгоно уу",
+      "PleaseSelectOption": "Нэг сонголтыг сонгоно уу.",
       "PleaseSelectOptions": "Дор хаяж нэг сонголтыг сонгоно уу.",
       "PolicyName": "Бодлогын нэр шаардлагатай.",
       "ValidationFailed": "Баталгаажуулалт амжилтгүй боллоо"
@@ -2025,7 +2025,7 @@
   "modelStore": {
     "Architecture": "Архитектур",
     "Author": "Зохиогч",
-    "Category": "ангилал",
+    "Category": "Ангилал",
     "Created": "Үүсгэсэн",
     "Deploy": "Байршуулах",
     "DeployFailed": "Байршуулалт үүсгэхэд алдаа гарлаа",
@@ -2306,7 +2306,7 @@
     "RegistryURL": "Бүртгэлийн URL",
     "RegistryUpdateFailed": "Бүртгэлийн шинэчлэлт амжилтгүй боллоо.",
     "RegistryUpdateFinished": "Бүртгэлийн шинэчлэлт дууссан.",
-    "RescanFailed": "Дахин шалгаж чадсангүй.",
+    "RescanFailed": "Дахин шалгаж чадсангүй",
     "RescanImages": "Зургуудыг дахин шалгаж байна ...",
     "SSLVerify": "SSL баталгаажуулалт",
     "SSLVerifyDescription": "Энэ бүртгэлд холбогдох үед SSL гэрчилгээг баталгаажуулах",
@@ -2662,7 +2662,7 @@
     "Port": "Далайн боомт",
     "PredicateChecks": "Урьдчилан шалгалт",
     "Preparing": "Бэлтгэж байна ...",
-    "PreparingSession": "Session бэлтгэж байна ...",
+    "PreparingSession": "Session бэлтгэж байна",
     "ReadLess": "Бага унш",
     "ReadMore": "Цааш унших...",
     "RecentlyCreatedSessions": "Саяхан бүтээсэн хуралдаанууд",
@@ -3061,7 +3061,7 @@
     "NoBackgroundTask": "Даалгавар алга.",
     "NoNotification": "Мэдэгдэл алга.",
     "Notification": "Мэдэгдэл",
-    "Running": "Ажиллаж байна ..."
+    "Running": "Ажиллаж байна"
   },
   "signUp": {
     "E-mail": "И-мэйл",
@@ -3072,7 +3072,7 @@
     "EmailVerificationFailedMessage": "Бид таны имэйлийг баталгаажуулах боломжгүй байна. Таны жетон хүчингүй эсвэл хугацаа нь дууссан байж болзошгүй. Имэйл хаягаа бичээд илгээх товч дээр дарж шинэ баталгаажуулах код авна уу.",
     "EmailVerified": "Имэйлийг баталгаажуулсан",
     "EmailVerifiedMessage": "Таны имэйлийг баталгаажуулсан! Одоо та дансаараа нэвтрэх боломжтой боллоо.",
-    "InvalidEmail": "хүчингүй мэйл хаяг",
+    "InvalidEmail": "Хүчингүй мэйл хаяг",
     "InvitationToken": "Урилгын тэмдэг",
     "Password": "Нууц үг",
     "PasswordAgain": "Нууц үг (дахин)",
@@ -3084,7 +3084,7 @@
     "PolicyAgreement_2": " болон",
     "PolicyAgreement_3": ".",
     "PrivacyPolicy": "Нууцлалын бодлого",
-    "Processing": "Боловсруулж байна ...",
+    "Processing": "Боловсруулж байна...",
     "RequestAgreementTermsOfService": "Үргэлжлүүлэхийн тулд үйлчилгээний нөхцлийг уншиж, зөвшөөрч байна уу.",
     "SendEmail": "Баталгаажуулах имэйл илгээх",
     "SendError": "Имэйл илгээх явцад алдаа гарлаа",

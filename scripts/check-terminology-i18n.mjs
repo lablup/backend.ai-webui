@@ -35,10 +35,12 @@
  *     Genuinely different values normalize apart and are NOT flagged, so this is
  *     high-signal (FR-3050 redesign replaced the old "any 2 distinct values" form
  *     that emitted thousands of benign phrasing differences). List-only / report;
- *     never blocks. Still OFF by default (enable with --check2): the findings are
- *     a real cross-locale casing-consistency backlog to triage, mostly in the
- *     non-English stores; promoting it to a default warn is a follow-up once that
- *     backlog is cleared.
+ *     never blocks. ON by default since FR-3376 cleared the backlog it reported
+ *     (449 -> 0) — the promotion precondition recorded on the FR-3311 map. A
+ *     genuinely intentional divergence (the same words in two different UI
+ *     roles) belongs in the allowlist's ignoreSegments, not in a re-widened
+ *     check; see the DeleteForever entry there for the shape. Opt out with
+ *     --no-check2.
  *
  *   CHECK 3 (unknown capitalized user-facing noun, needs the termbase) — ON by
  *   default since FR-3373 (opt out with --no-check3); i18n stores only:
@@ -80,9 +82,9 @@
  *
  * Other flags:
  *   --json           Emit machine-readable JSON instead of the text report.
- *   --check2         Enable CHECK 2 (OFF by default — see CHECK 2 note above).
+ *   --no-check2      Disable CHECK 2 (ON by default — see CHECK 2 note above).
  *   --no-check3      Disable CHECK 3 (ON by default — see CHECK 3 note above).
- *                    Always report-only; never affects the exit code.
+ *                    Both are always report-only; neither affects the exit code.
  *   --no-docs        Skip the user-manual prose source (ON by default).
  *   --no-check1      Skip CHECK 1 (terminology drift).
  *   --help           Print usage.
@@ -1302,11 +1304,13 @@ function parseArgs(argv) {
     strict: false,
     json: false,
     runCheck1: true,
-    // CHECK 2 (key->two-values divergence) is OFF by default: its current
-    // segment-across-namespace form is too broad (thousands of benign hits,
-    // e.g. ModifiedAt -> "Modificado en" / "Modificado el"). Opt in with
-    // --check2. Refining it into a high-signal check is tracked as a follow-up.
-    runCheck2: false,
+    // CHECK 2 (near-duplicate value divergence) is ON by default since FR-3376.
+    // FR-3050 redesigned it from the old "any 2 distinct values" form (thousands
+    // of benign hits) into the near-duplicate check, and FR-3376 then cleared
+    // the resulting backlog from 449 findings to 0 — the promotion precondition
+    // recorded on the FR-3311 map. It stays report-only and never affects the
+    // exit code. Opt out with --no-check2.
+    runCheck2: true,
     // CHECK 3 (unknown capitalized user-facing noun) is ON by default since
     // FR-3373: FR-3302 cleared the candidate backlog to zero, which was the
     // promotion precondition recorded on the FR-3311 map. It stays always
@@ -1393,7 +1397,7 @@ const USAGE = `check-terminology-i18n.mjs — deterministic i18n terminology che
 Usage:
   node scripts/check-terminology-i18n.mjs [--warn|--strict] [--json] [--summary]
                                           [--limit-check2=N] [--lang=en,ko]
-                                          [--no-check1] [--check2] [--no-check3]
+                                          [--no-check1] [--no-check2] [--no-check3]
                                           [--no-docs]
 
 Modes:
@@ -1409,7 +1413,7 @@ Options:
   --lang=en,ko         Restrict scanning to these languages only (locale files
                        and doc-language directories alike).
   --json               Machine-readable output (always full, never capped).
-  --check2             Enable CHECK 2 (OFF by default — broad/noisy today).
+  --no-check2          Disable CHECK 2 (ON by default; always report-only).
   --no-check3          Disable CHECK 3 (ON by default; always report-only).
   --no-docs            Skip the user-manual prose source (ON by default).
   --no-check1          Skip CHECK 1 (terminology drift).
@@ -1422,8 +1426,10 @@ Sources
 
 CHECK 1  Terminology drift: i18n VALUES (never keys) and manual prose lines vs
          terminology.json avoid[].
-CHECK 2  Key -> two-values divergence within each file (no termbase needed).
-         i18n only. OFF by default; enable with --check2. Low signal-to-noise.
+CHECK 2  Near-duplicate value divergence within each file (no termbase needed):
+         one leaf-key segment spelled two ways that differ only by case,
+         spacing, hyphenation or punctuation. i18n only. ON by default;
+         WARN/report-only.
 CHECK 3  Unknown capitalized user-facing noun: a Title-Case multiword phrase or
          PascalCase product token in an English prose i18n VALUE with no matching
          terminology.json concept / avoid term — a candidate to register in the

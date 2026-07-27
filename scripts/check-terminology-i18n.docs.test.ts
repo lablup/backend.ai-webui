@@ -11,9 +11,11 @@
  *      reaches the matcher, and
  *   2. docs prose sees CONTEXT-FREE avoid rows only.
  */
+import { execFileSync } from "node:child_process";
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const {
   listMarkdownFiles,
@@ -333,5 +335,42 @@ describe("CHECK 1 over a docs store", () => {
         "Set `scaling group` via [the API](https://x.test/scaling-group).",
       ),
     ).toHaveLength(0);
+  });
+});
+
+describe("check defaults (which checks a bare invocation runs)", () => {
+  // These defaults are load-bearing: CHECK 2 and CHECK 3 were promoted to
+  // default-on only after their backlogs were driven to zero (FR-3376 and
+  // FR-3373). Nothing else in the suite would notice a silent revert to
+  // opt-in, so pin them here — and pin the opt-outs, because scripts/verify.sh
+  // depends on being able to turn both off.
+  const run = (argv: string[]) =>
+    execFileSync(
+      process.execPath,
+      [
+        fileURLToPath(new URL("./check-terminology-i18n.mjs", import.meta.url)),
+        ...argv,
+      ],
+      { encoding: "utf8", env: { ...process.env, NO_COLOR: "1" } },
+    );
+
+  it("runs CHECK 1, CHECK 2 and CHECK 3 on a bare invocation", () => {
+    const out = run([]);
+    expect(out).toContain("CHECK 1 — terminology drift");
+    expect(out).toContain("CHECK 2 — near-duplicate value divergence");
+    expect(out).toContain("CHECK 3 — unknown capitalized user-facing noun");
+  });
+
+  it("suppresses CHECK 2 with --no-check2 and CHECK 3 with --no-check3", () => {
+    const out = run(["--no-check2", "--no-check3"]);
+    expect(out).toContain("CHECK 1 — terminology drift");
+    expect(out).not.toContain("CHECK 2 — near-duplicate value divergence");
+    expect(out).not.toContain("CHECK 3 — unknown capitalized user-facing noun");
+  });
+
+  it("keeps CHECK 2 and CHECK 3 report-only — neither can fail --strict", () => {
+    // The repo baseline is clean, so this also guards the baseline itself:
+    // a non-zero exit here means real drift landed, not a defaults regression.
+    expect(() => run(["--strict"])).not.toThrow();
   });
 });

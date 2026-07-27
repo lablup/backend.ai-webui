@@ -76,16 +76,17 @@ check_terminology_drift() {
   # Deterministic terminology checker (read-only). Scans i18n VALUES *and* the
   # user manual's prose (FR-3373) against
   # packages/backend.ai-webui-docs/terminology.json `avoid[]` (CHECK 1). See
-  # scripts/check-terminology-i18n.mjs. (CHECK 2, near-duplicate divergence, is
-  # OFF by default — report-only regardless; opt in with `pnpm run lint:terminology -- --check2`.)
+  # scripts/check-terminology-i18n.mjs.
   #
-  # CHECK 3 is ON by default in the checker since FR-3373, but is turned OFF
-  # here with --no-check3. run_check pipes each step through `tail -20`, and
-  # CHECK 3's always-present section costs ~5 of those lines — enough that a
-  # real CHECK 1 finding would scroll off the top and the harness would report
-  # a failure without showing what failed. CHECK 3 is advisory, so it belongs
-  # in `pnpm run lint:terminology` (where it runs) rather than in the pass/fail
-  # harness.
+  # CHECK 2 (near-duplicate divergence, ON by default since FR-3376) and CHECK 3
+  # (unknown capitalized noun, ON since FR-3373) are both turned OFF here. Not
+  # because they are noisy — both sit at 0 findings — but because run_check
+  # pipes every step through `tail -20`, and their always-present sections cost
+  # ~9 of those lines. With them on, a single real CHECK 1 finding scrolls off
+  # the top and the harness reports a failure without showing what failed. Both
+  # are advisory and never affect the exit code, so they belong in
+  # `pnpm run lint:terminology` (where they do run) rather than in the pass/fail
+  # harness. Only CHECK 1 gates here, and CHECK 1 is what can actually block.
   #
   # BLOCKING (FR-3049, team sign-off required): runs in --strict and is invoked
   # INSIDE run_check, so a blocking CHECK 1 finding sets FAIL and prevents
@@ -105,7 +106,7 @@ check_terminology_drift() {
   # the termbase (FR-3375). Both are ABSOLUTE rather than diff-aware — see
   # terminology-content.yml's header for why that is sound once the baseline is
   # clean, and for the condition that would justify revisiting it.
-  node scripts/check-terminology-i18n.mjs --strict --no-check3
+  node scripts/check-terminology-i18n.mjs --strict --no-check2 --no-check3
 }
 
 run_check "Relay" check_relay_drift

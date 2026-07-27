@@ -250,7 +250,7 @@
     "ReplicaSummary": "Réplicas",
     "ReplicaSummaryTooltip": "Réplicas en ejecución sobre el número deseado de réplicas.",
     "Replicas": "Réplicas",
-    "ResourceGroup": "Grupo de Recursos",
+    "ResourceGroup": "Grupo de recursos",
     "RevisionNumber": "Revisión",
     "RevisionNumberTooltip": "El número de revisión actual del despliegue.",
     "StrategyType": "Estrategia",

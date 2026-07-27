@@ -215,7 +215,7 @@
   },
   "comp:BAILoginSessionTable": {
     "AccessKey": "Kunci Akses",
-    "CreatedAt": "Dibuat Pada",
+    "CreatedAt": "Dibuat pada",
     "InvalidatedAt": "Dibatalkan Pada",
     "User": "Pengguna"
   },
@@ -228,7 +228,7 @@
   },
   "comp:BAIModelDeploymentNodes": {
     "AreYouSureToDeleteDeployment": "Apakah Anda yakin ingin menghapus penerapan \"{{deploymentName}}\"? Tindakan ini tidak dapat dibatalkan.",
-    "CreatedAt": "Dibuat Pada",
+    "CreatedAt": "Dibuat pada",
     "CreatedUser": "Penulis",
     "CurrentRevisionID": "ID Revisi Saat Ini",
     "Delete": "Menghapus",
@@ -255,7 +255,7 @@
     "RevisionNumberTooltip": "Nomor revisi saat ini dari penerapan.",
     "StrategyType": "Strategi",
     "Tags": "Tag",
-    "UpdatedAt": "Diperbarui Pada"
+    "UpdatedAt": "Diperbarui pada"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Proyek berikut akan diperbarui.",
@@ -491,7 +491,7 @@
     "AIAccelerator": "Akselerator AI",
     "CPU": "CPU",
     "ClusterMode": "Mode Kluster",
-    "CreatedAt": "Dibuat Pada",
+    "CreatedAt": "Dibuat pada",
     "ElapsedTime": "Waktu Berlalu",
     "Environments": "Lingkungan",
     "Memory": "Memori",
