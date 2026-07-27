@@ -282,13 +282,23 @@ function MainLayout() {
                       )}
                     </RouteAccessBreadcrumbGate>
                   </ErrorBoundaryWithNullFallback>
-                  <BAIErrorBoundary>
-                    <AutoAdminPrimaryColorProvider>
-                      <ResourceSlotsWrapper>
-                        <Outlet />
-                      </ResourceSlotsWrapper>
-                    </AutoAdminPrimaryColorProvider>
-                  </BAIErrorBoundary>
+                  {/* Fills the viewport space left below header/alerts/
+                      breadcrumb so route-error screens (RouteErrorContent
+                      `flex: 1`) center in the Outlet area, identically in
+                      every scope. Taller pages still grow and scroll. */}
+                  <BAIFlex
+                    direction="column"
+                    align="stretch"
+                    style={{ flexGrow: 1 }}
+                  >
+                    <BAIErrorBoundary>
+                      <AutoAdminPrimaryColorProvider>
+                        <ResourceSlotsWrapper>
+                          <Outlet />
+                        </ResourceSlotsWrapper>
+                      </AutoAdminPrimaryColorProvider>
+                    </BAIErrorBoundary>
+                  </BAIFlex>
                 </Suspense>
                 <ErrorBoundaryWithNullFallback>
                   <PluginLoader />
@@ -364,7 +374,12 @@ const AutoAdminPrimaryColorProvider = ({
           },
         }}
       >
-        <App {...commonAppProps}>{children}</App>
+        {/* `display: contents` removes App's structural div from layout so
+            admin-scope Outlet content participates in the same flex context
+            as the other scopes (keeps route-error screens centered). */}
+        <App {...commonAppProps} style={{ display: 'contents' }}>
+          {children}
+        </App>
       </ConfigProvider>
     );
   }
