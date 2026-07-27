@@ -187,7 +187,7 @@ Each row lists one forbidden term, the language it applies to, its canonical rep
 | group (for project) | en | project | Ambiguous |
 | key pair | en | keypair | Incorrect spelling |
 | key-pair | en | keypair | Incorrect spelling |
-| organization | en | domain | Not used in Backend.AI |
+| organization (as a Backend.AI scope) | en | domain | Not a Backend.AI scope name; "organization" as an ordinary English noun (your organization's SSO, your organization's hardware, the license text) is fine |
 | scaling group | en | resource group | Deprecated term |
 | worker node | en | agent node | Reserve "worker node" for model serving context only |
 | スケーリンググループ | ja | リソースグループ | Deprecated term ("scaling group"); the UI and docs use "リソースグループ" |
@@ -246,7 +246,13 @@ The **docs-lead** flow (`.claude/skills/docs-lead/SKILL.md`) is the term owner o
 
 A new user-facing noun or verb requires a `terminology.json` entry — carrying a non-null `decidingFR` — **before it ships**. A label cannot appear in `resources/i18n/{lang}.json` as a user-facing term without a corresponding curated decision in the termbase.
 
-Enforcement is **best-effort, not a substitute for review.** `scripts/check-terminology-i18n.mjs` (wired into `scripts/verify.sh` and `pnpm run lint:terminology`) can WARN when an i18n value uses a term that is *forbidden* (an `avoid[]` row) or *unknown* (no matching `concepts[].preferred`), but the checker is heuristic and warn-only — it never blocks a merge and it cannot judge whether a new term is the *right* term. The gate is satisfied by the docs-lead review that lands the `terminology.json` entry, not by a green checker. Treat a checker warning as a prompt to add (or allowlist) the entry, never as the approval itself.
+Enforcement is **partial, and never a substitute for review.** `scripts/check-terminology-i18n.mjs` (wired into `scripts/verify.sh`, `pnpm run lint:terminology`, and — for the manual — `.github/workflows/docs-checks.yml`) scans both the i18n values and the manual's prose. What it does with a finding depends on the row:
+
+- A **bare English `avoid[]` row** (no `context` qualifier) is **blocking**: since FR-3049 the checker runs `--strict` in `verify.sh`, and since FR-3373 it also runs on any PR touching the manual. A forbidden term such as "scaling group" cannot land.
+- A **context-qualified** row ("group (for project)") or any **non-English** row is **warn-only** — it needs human judgement, so it never blocks. Context-qualified rows are skipped entirely on manual prose, where the ordinary sense of the word ("group three GPUs", "your organization's SSO") is legitimate and would otherwise be a permanent false-positive stream.
+- An **unknown** term (CHECK 3 — no matching `concepts[].preferred`) is always report-only.
+
+So a green checker means "no forbidden term slipped in", not "this is the right term". The gate itself is satisfied by the docs-lead review that lands the `terminology.json` entry. Treat a checker warning as a prompt to add (or allowlist) the entry, never as the approval itself.
 
 ## Rename / Deprecation Checklist
 
@@ -255,7 +261,7 @@ Renaming or deprecating an established term is **atomic**: the termbase, all UI 
 1. **Deprecate in `terminology.json`.** Set the old concept's `status` to `deprecated`, point `preferred` at the new term (or add the new concept), and add an `avoid[]` row (`avoid` = old term, `useInstead` = new term, plus `reason`, `lang`, and `conceptId`). Set `decidingFR` on the changed concept(s) — the new-term gate requires it. For a **non-English** avoid row, also add its fixtures entry to `terminology.selftest.json` and confirm `pnpm run lint:terminology:selftest` passes (see the non-English curation rule above).
 2. **Retranslate the UI locales.** Update all 21 files in `resources/i18n/*.json` **and** all 21 in `packages/backend.ai-ui/src/locale/*.json`. Edit `en.json` by hand, then propagate the other 20 with the `fw` i18n-translator (`/fw:i18n`).
 3. **Update the 4 doc languages.** Replace prose occurrences of the old term under `src/{en,ko,ja,th}/`.
-4. **Regenerate the term tables.** Run `pnpm run build:terminology` to refresh the `<!-- terminology:auto:* -->` regions of this file, then `pnpm run check:terminology-md` (confirms the tables match `terminology.json`) and `pnpm run lint:terminology` (confirms no live label still uses the deprecated term).
+4. **Regenerate the term tables.** Run `pnpm run build:terminology` to refresh the `<!-- terminology:auto:* -->` regions of this file, then `pnpm run check:terminology-md` (confirms the tables match `terminology.json`) and `pnpm run lint:terminology` (confirms no live label **and no manual page** still uses the deprecated term — since FR-3373 the checker reads both, so it verifies steps 2 and 3 together). A non-English or context-qualified row only WARNs, so read the report; do not rely on the exit code alone.
 5. **Ship as one stack.** With `scripts/verify.sh` clean, submit the whole change as a single Graphite stack (`gt submit --stack`). Do not let any step land in a separate PR ahead of the others — the atomicity is the point.
 
 The App Proxy rename (FR-2841) is the cautionary precedent for skipping this: it landed partly in prose and partly in `avoid[]`, which is exactly the split-state this checklist exists to prevent.

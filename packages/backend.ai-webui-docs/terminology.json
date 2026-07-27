@@ -634,9 +634,9 @@
     {
       "avoid": "organization",
       "useInstead": "domain",
-      "reason": "Not used in Backend.AI",
+      "reason": "Not a Backend.AI scope name; \"organization\" as an ordinary English noun (your organization's SSO, your organization's hardware, the license text) is fine",
       "lang": "en",
-      "context": null,
+      "context": "as a Backend.AI scope",
       "conceptId": "domain"
     },
     {
