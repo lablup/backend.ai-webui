@@ -173,9 +173,16 @@ These terms match sidebar menu items. Keep documentation references consistent w
 
 ## Terms to Avoid
 
-Each row lists one forbidden term, the language it applies to, its canonical replacement, and the reason. Parenthetical qualifiers in the **Avoid** column (e.g. "group (for project)") indicate the context in which the term is disallowed. A row applies **only to its `Lang`** — the i18n checker scans each language's stores against that language's rows, and non-English rows are always WARN-severity (they never hard-block).
+Each row lists one forbidden term, the language it applies to, its canonical replacement, and the reason. Parenthetical qualifiers in the **Avoid** column (e.g. "group (for project)") indicate the context in which the term is disallowed. A row applies **only to its `Lang`** — the checker scans each language's stores (and doc pages) against that language's rows. What a match does depends on the **context qualifier, not the language** (FR-3374), and on which surface it was found:
 
-**Non-English curation rule (FR-3051).** ko/ja/th have no reliable word boundaries, so the checker matches non-Latin avoid terms by plain **substring**. A non-English `avoid` term must therefore be a **precise multi-token compound** (e.g. `스케일링 그룹`, `スケーリンググループ`) or an **unambiguous deprecated spelling** (e.g. `레플리카`, `슈퍼어드민`) — **never a bare concept noun** (ko `세션` appears in ~200 legitimate values; every one would fire), and never a substring of any `concepts[].preferred[lang]` value. Every non-English row must ship with positive/negative fixtures and a live false-positive budget (default 0) in `terminology.selftest.json`; `pnpm run lint:terminology:selftest` (`scripts/check-terminology-i18n.selftest.mjs`, run as a hard CI gate by `terminology-selftest.yml` on termbase/fixtures/checker changes only) enforces the rule and rejects noisy rows.
+| Row | In an i18n value | In manual prose |
+|---|---|---|
+| context-free | **blocks** (error) | **blocks** (error) |
+| context-qualified | warns | **not checked at all** |
+
+Context-qualified rows are skipped outright on prose because long-form text is full of the word's legitimate sense ("group three GPUs"), which would make the report useless. Those calls stay with docs-lead review.
+
+**Non-English curation rule (FR-3051).** ko/ja/th have no reliable word boundaries, so the checker matches non-Latin avoid terms by plain **substring**. A non-English `avoid` term must therefore be a **precise multi-token compound** (e.g. `스케일링 그룹`, `スケーリンググループ`) or an **unambiguous deprecated spelling** (e.g. `레플리카`, `슈퍼어드민`) — **never a bare concept noun** (ko `세션` appears in ~200 legitimate values; every one would fire), and never a substring of any `concepts[].preferred[lang]` value. Every non-English row must ship with positive/negative fixtures and a live false-positive budget (default 0) in `terminology.selftest.json`; `pnpm run lint:terminology:selftest` (`scripts/check-terminology-i18n.selftest.mjs`, run as a hard CI gate by `terminology-selftest.yml` on termbase/fixtures/checker changes only) enforces the rule and rejects noisy rows. Since FR-3374 the budget is measured over the **manual as well as** the i18n stores, and a context-free non-English row that clears it is **blocking** — so this harness is what earns a ko/ja/th row its teeth. Adding a row without fixtures, or widening one until the budget breaks, is what the gate exists to stop.
 
 <!-- terminology:auto:avoid START -->
 
@@ -248,8 +255,8 @@ A new user-facing noun or verb requires a `terminology.json` entry — carrying 
 
 Enforcement is **partial, and never a substitute for review.** `scripts/check-terminology-i18n.mjs` (wired into `scripts/verify.sh`, `pnpm run lint:terminology`, and — for the manual — `.github/workflows/docs-checks.yml`) scans both the i18n values and the manual's prose. What it does with a finding depends on the row:
 
-- A **bare English `avoid[]` row** (no `context` qualifier) is **blocking**: since FR-3049 the checker runs `--strict` in `verify.sh`, and since FR-3373 it also runs on any PR touching the manual. A forbidden term such as "scaling group" cannot land.
-- A **context-qualified** row ("group (for project)") or any **non-English** row is **warn-only** — it needs human judgement, so it never blocks. Context-qualified rows are skipped entirely on manual prose, where the ordinary sense of the word ("group three GPUs", "your organization's SSO") is legitimate and would otherwise be a permanent false-positive stream.
+- A **context-free `avoid[]` row** (no `context` qualifier) is **blocking, in every language**: since FR-3049 the checker runs `--strict` in `verify.sh`, and since FR-3373 it also runs on any PR touching the manual. A forbidden term such as "scaling group" — or `슈퍼관리자`, or `スケーリンググループ` — cannot land. Non-English rows were warn-only until FR-3374; they now block on the strength of the FR-3051 self-test, which proves each one clears a zero false-positive budget over the live i18n stores **and** the manual.
+- A **context-qualified** row ("group (for project)") is **warn-only** in every language — the qualifier means the term is wrong in one sense and fine in another, which no matcher can settle. Context-qualified rows are skipped entirely on manual prose, where the ordinary sense of the word ("group three GPUs", "your organization's SSO") is legitimate and would otherwise be a permanent false-positive stream.
 - An **unknown** term (CHECK 3 — no matching `concepts[].preferred`) is always report-only.
 
 So a green checker means "no forbidden term slipped in", not "this is the right term". The gate itself is satisfied by the docs-lead review that lands the `terminology.json` entry. Treat a checker warning as a prompt to add (or allowlist) the entry, never as the approval itself.

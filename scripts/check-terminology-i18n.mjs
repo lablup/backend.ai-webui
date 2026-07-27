@@ -70,10 +70,13 @@
  *   --warn           — same as default (explicit).
  *   --strict         — exit non-zero when there are blocking (error-severity)
  *                      CHECK 1 findings. CHECK 2 and CHECK 3 are always
- *                      report-only and never affect the exit code. Non-English
- *                      and context-qualified terminology findings are
- *                      WARN-severity (never block), because they need human
- *                      judgement.
+ *                      report-only and never affect the exit code. Only
+ *                      CONTEXT-QUALIFIED terminology findings are WARN-severity
+ *                      (never block), because a context qualifier means the term
+ *                      is wrong in one sense and fine in another — a human call.
+ *                      Context-free rows block in every language (FR-3374);
+ *                      their precision is proven by the self-test's live budget
+ *                      over both the i18n stores and the manual.
  *
  * Other flags:
  *   --json           Emit machine-readable JSON instead of the text report.
@@ -695,11 +698,25 @@ function runCheck1(stores, avoidRows, allow, approvedCompounds) {
   // Pre-build matchers once per avoid row.
   const matchers = avoidRows.map((row) => ({
     row,
-    // Context-qualified rows (e.g. "group (for project)", "WSProxy as a UI
-    // label") and any non-English row are WARN-severity: they need human
-    // judgement and must never hard-block a PR. Bare English rows with no
-    // context are blocking in --strict.
-    severity: (row.lang && row.lang !== "en") || row.context ? "warn" : "error",
+    // Severity turns on ONE property: does the row need human judgement?
+    //
+    // A context-qualified row ("group (for project)", "WSProxy as a UI label")
+    // says the word is wrong in one sense and fine in another — no matcher can
+    // settle that, so it stays WARN in every language and never hard-blocks.
+    //
+    // A context-free row is unconditional, and is blocking in --strict.
+    // Language is NOT part of this decision (FR-3374). It used to be: every
+    // non-English row was warn-only because ko/ja/th have no word boundaries,
+    // so non-Latin terms match by substring and a bare concept noun would fire
+    // on every legitimate use. FR-3051 replaced that blanket caution with proof
+    // — each non-English row ships fixtures plus a live false-positive budget
+    // (default 0) measured by check-terminology-i18n.selftest.mjs over the real
+    // stores, and terminology-selftest.yml gates it in CI. FR-3374 extended
+    // that budget to the manual, so precision is now proven on both surfaces
+    // the checker reads. A row that clears it does not need human judgement,
+    // and warn-only severity just meant the curated ko/ja/th rows could not
+    // stop the drift they exist to stop.
+    severity: row.context ? "warn" : "error",
     match: buildTermMatcher(row, approvedCompounds),
   }));
 

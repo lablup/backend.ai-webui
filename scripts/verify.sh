@@ -89,9 +89,10 @@ check_terminology_drift() {
   #
   # BLOCKING (FR-3049, team sign-off required): runs in --strict and is invoked
   # INSIDE run_check, so a blocking CHECK 1 finding sets FAIL and prevents
-  # `=== ALL PASS ===`. Only bare-English, context-free avoid rows are
-  # error-severity (checker `runCheck1`); context-qualified and all non-English
-  # rows stay WARN and never block (severity logic unchanged). CHECK 2/3 never
+  # `=== ALL PASS ===`. Context-FREE avoid rows are error-severity in every
+  # language (checker `runCheck1`); only context-qualified rows stay WARN and
+  # never block. Non-English rows were warn-only until FR-3374 raised them on
+  # the strength of the self-test's live false-positive budget. CHECK 2/3 never
   # affect the exit code. To unblock a legitimate false positive without
   # reverting: add the value/key to scripts/terminology-i18n.allowlist.json
   # (ignoreValues/ignoreKeys) or append `[[i18n-term-ok]]` inline. To fully

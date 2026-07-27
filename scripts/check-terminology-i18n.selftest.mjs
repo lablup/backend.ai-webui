@@ -27,22 +27,33 @@
  *   4. PRECISE    — every negativeFixture (the known longer legitimate
  *                   compounds) produces 0 matches.
  *   5. BUDGET     — the row's live hit-count over the CURRENT i18n stores
- *                   (via the real runCheck1, allowlist applied) is within
- *                   falsePositiveBudget (default 0).
+ *                   AND the user manual (via the real runCheck1, allowlist
+ *                   applied) is within falsePositiveBudget (default 0). The
+ *                   manual joined the corpus in FR-3374, because FR-3373 made
+ *                   it a CHECK 1 source: proving a row precise against short UI
+ *                   labels says nothing about 120 files of long-form prose.
+ *   5b. SEVERITY   — a context-free row yields ERROR findings, a
+ *                   context-qualified row yields WARN findings, through the
+ *                   real runCheck1. This pins FR-3374's severity model.
  *   6. TEETH      — each negativeControls entry (a known-bad bare-noun row,
  *                   e.g. ko "세션") is evaluated the same way and MUST exceed
  *                   the budget by expectAtLeastLiveHits. If a control stops
  *                   firing, the gate itself has silently broken.
  *
- * SEVERITY MODEL (unchanged by this script): this harness gates the DATA
- * (terminology.json curation) and is a HARD gate in CI
- * (.github/workflows/terminology-selftest.yml) — triggered ONLY by the
- * termbase / fixtures / checker paths, never by docs prose or i18n content,
- * so pre-existing content drift can never hard-block an unrelated PR. The
- * drift scan over i18n CONTENT stays WARN-only — in scripts/verify.sh this
- * script runs inside the warn-only terminology section precisely so that new
- * content drift never hard-blocks a build (that is CHECK 1's warn job), while
- * a bad avoid ROW is still caught in CI before it lands.
+ * SEVERITY MODEL: this harness gates the DATA (terminology.json curation) and
+ * is a HARD gate in CI (.github/workflows/terminology-selftest.yml) —
+ * triggered ONLY by the termbase / fixtures / checker paths, never by docs
+ * prose or i18n content, so pre-existing content drift can never hard-block an
+ * unrelated PR. In scripts/verify.sh this script runs report-only; CONTENT
+ * drift is CHECK 1's job, not this harness's.
+ *
+ * Since FR-3374 this harness is also what EARNS a non-English row its teeth.
+ * Severity keys off the row's `context`, not its language: a context-free row
+ * blocks in every language. That is only defensible because gates 3/4/5 prove
+ * the row is precise against both live surfaces. Widening a row until the
+ * budget breaks, or adding one without fixtures, is exactly what this gate
+ * stops — and if it is ever weakened, the severity model must be walked back
+ * with it.
  *
  * Usage: node scripts/check-terminology-i18n.selftest.mjs
  *        (also: pnpm run lint:terminology:selftest)
@@ -51,6 +62,7 @@
  * Dependency-free: native Node ESM only, same as the checker it tests.
  */
 
+import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
 
@@ -58,10 +70,13 @@ import {
   TERMINOLOGY_PATH,
   ALLOWLIST_PATH,
   I18N_GLOBS,
+  DOCS_GLOB,
   REPO_ROOT,
   readJson,
   collectLeaves,
   listLocaleFiles,
+  listMarkdownFiles,
+  collectMarkdownLines,
   hasUpper,
   buildTermMatcher,
   buildApprovedCompounds,
@@ -234,7 +249,36 @@ function main() {
       /** @type {Array<{key:string,segment:string,value:string}>} */
       const leaves = [];
       collectLeaves(data, "", glob.keySep, leaves);
-      stores.push({ file, label: glob.label, lang, leaves });
+      stores.push({ file, label: glob.label, lang, leaves, kind: "i18n" });
+    }
+  }
+  // The user manual is a CHECK 1 source too (FR-3373), so the live corpus must
+  // include it (FR-3374). Otherwise a row's precision is proven against short
+  // UI labels only, while the checker also runs it against 120 markdown files
+  // of long-form prose — and FR-3374 raises context-free non-English rows to
+  // ERROR severity on the strength of exactly this budget.
+  const docsLangsNeeded = [...langsNeeded].filter((lang) =>
+    DOCS_GLOB.langs.includes(lang),
+  );
+  for (const lang of docsLangsNeeded) {
+    const langDir = path.join(DOCS_GLOB.dir, lang);
+    for (const file of listMarkdownFiles(langDir)) {
+      let rawText;
+      try {
+        rawText = fs.readFileSync(file, "utf8");
+      } catch {
+        continue;
+      }
+      /** @type {Array<{key:string,segment:string,value:string,raw:string}>} */
+      const leaves = [];
+      collectMarkdownLines(rawText, path.relative(langDir, file), leaves);
+      stores.push({
+        file,
+        label: DOCS_GLOB.label,
+        lang,
+        leaves,
+        kind: "docs",
+      });
     }
   }
   // Every configured store must be present for every language under test —
@@ -248,6 +292,15 @@ function main() {
         "the live false-positive budget would be computed from incomplete data (missing or unparseable locale file)",
       );
     }
+  }
+  // Same wiring guard for the manual: a language the docs ship must actually
+  // contribute pages, or the budget silently ignores the prose surface.
+  for (const lang of docsLangsNeeded) {
+    assertThat(
+      stores.some((s) => s.kind === "docs" && s.lang === lang),
+      `[wiring] no ${lang} pages loaded from ${DOCS_GLOB.label}`,
+      "the live false-positive budget would omit the manual, the surface FR-3373 added and FR-3374 raises severity on",
+    );
   }
 
   const allowRaw = readJson(ALLOWLIST_PATH, false) || {};
@@ -295,15 +348,22 @@ function main() {
         );
       }
 
-      // Regression-guard the severity model: a non-English row must ALWAYS
-      // yield WARN-severity findings (never "error"), so it can never
-      // hard-block under --strict. Exercised through the real runCheck1
-      // pipeline on a synthetic store built from the first positive fixture.
+      // Regression-guard the severity model (FR-3374). Severity keys off the
+      // row's `context`, not its language: a context-qualified row needs human
+      // judgement and must stay WARN, a context-free row is unconditional and
+      // must be ERROR so it actually blocks under --strict. Before FR-3374
+      // every non-English row was pinned to WARN; the budget gate below (now
+      // covering the manual as well as the i18n stores) is what earns the
+      // stricter severity, so this assertion and that budget must move
+      // together. Exercised through the real runCheck1 pipeline on a synthetic
+      // store built from the first positive fixture.
       if (positives.length > 0) {
+        const expected = row.context ? "warn" : "error";
         const syntheticStore = {
           file: "(fixture)",
           label: "(fixture)",
           lang: row.lang,
+          kind: "i18n",
           leaves: [{ key: "fixture", segment: "fixture", value: positives[0] }],
         };
         const findings = runCheck1(
@@ -313,9 +373,13 @@ function main() {
           approvedCompounds,
         );
         assertThat(
-          findings.length > 0 && findings.every((f) => f.severity === "warn"),
-          `[severity] "${row.avoid}" (${row.lang}) produced a non-warn finding through runCheck1`,
-          `non-English rows must stay WARN-only (got: ${JSON.stringify(findings.map((f) => f.severity))})`,
+          findings.length > 0 && findings.every((f) => f.severity === expected),
+          `[severity] "${row.avoid}" (${row.lang}) did not yield ${expected}-severity findings through runCheck1`,
+          `${
+            row.context
+              ? "context-qualified rows must stay WARN-only"
+              : "context-free rows must be ERROR so --strict blocks them"
+          } (got: ${JSON.stringify(findings.map((f) => f.severity))})`,
         );
       }
 

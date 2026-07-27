@@ -281,10 +281,44 @@ describe("CHECK 1 over a docs store", () => {
     expect(check("en", "You can group three GPUs together.")).toHaveLength(0);
   });
 
-  it("catches the non-English drift the docs source was added for, at warn severity", () => {
+  it("blocks the non-English drift the docs source was added for", () => {
+    // This is the exact drift FR-3373 found in the ko manual. It was warn-only
+    // then — FR-3374 made context-free rows error in every language, so the
+    // gate that found it can now also stop it.
     const findings = check("ko", "슈퍼관리자는 진단 페이지를 열 수 있습니다.");
     expect(findings).toHaveLength(1);
     expect(findings[0].term).toBe("슈퍼관리자");
+    expect(findings[0].severity).toBe("error");
+  });
+
+  it("keeps a context-qualified row warn-only regardless of language", () => {
+    // Severity keys off `context`, not language (FR-3374). The i18n store is
+    // used here because prose skips context-qualified rows entirely.
+    const findings = runCheck1(
+      [
+        {
+          file: "/i18n/ko.json",
+          label: "resources/i18n",
+          lang: "ko",
+          kind: "i18n",
+          leaves: [
+            { key: "fixture", segment: "fixture", value: "자동 스케일링 규칙" },
+          ],
+        },
+      ],
+      [
+        {
+          avoid: "자동 스케일링",
+          useInstead: "오토스케일링",
+          reason: "UI label",
+          lang: "ko",
+          context: "auto scaling rule",
+        },
+      ],
+      allow,
+      compounds,
+    );
+    expect(findings).toHaveLength(1);
     expect(findings[0].severity).toBe("warn");
   });
 
