@@ -9,6 +9,7 @@ import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
 import { useLogoutEventListeners } from '../../hooks/useLogout';
 import usePrimaryColors from '../../hooks/usePrimaryColors';
 import { useCurrentMenuKey, useRouteScope } from '../../hooks/useRouteScope';
+import { useUrlProjectValidity } from '../../hooks/useUrlProjectValidity';
 import { useWebUIMenuItems } from '../../hooks/useWebUIMenuItems';
 import { useSetupWebUIPluginEffect } from '../../hooks/useWebUIPluginState';
 import Page401 from '../../pages/Page401';
@@ -340,6 +341,16 @@ const PageAccessGuard = ({
 }) => {
   const { isCurrentPageBlocked, isCurrentPageUnauthorized } =
     useWebUIMenuItems();
+  const { isInvalid: isUrlProjectInvalid } = useUrlProjectValidity();
+
+  // When the URL names a project that doesn't resolve for this user, whether
+  // the page would be authorized cannot be decided (the roles are relative to
+  // a project we can't identify). Defer entirely to ProjectScopeLayout, which
+  // renders the "not found / no access" state — the same screen for every
+  // role, so project existence is not leaked via a 401/404 difference.
+  if (isUrlProjectInvalid) {
+    return children;
+  }
 
   const hasError = isCurrentPageUnauthorized || isCurrentPageBlocked;
 
