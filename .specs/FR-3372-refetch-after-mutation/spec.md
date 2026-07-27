@@ -64,7 +64,7 @@ Relay는 노드 id로 정규화 레코드를 식별하므로, `id` 없는 payloa
 | `GAP`               | 13   | 노드는 선택했으나 뷰가 읽는 필드 일부 누락          | 필드 보강 후 refetch 제거          |
 | `OK`                | 7    | 뷰 fragment를 모두 커버                             | refetch 즉시 제거 가능             |
 
-**`NO_NODE` (10) — 범위 밖.** `modify_keypair_resource_policy`, `modify_project_resource_policy`, `modify_user_resource_policy`, `modify_scaling_group`(2곳), `modify_keypair`(2곳), `modify_image`(2곳), `modify_agent`. payload가 데이터를 주지 않아 프론트에서 풀 방법이 없으므로 **refetch를 유지**합니다. 앞 4종은 노드 반환 후속이 스키마에 있지만(`UpdateKeypairResourcePolicyPayload` 등) 백엔드 버전 호환이 얽혀 이번 범위에서 제외했습니다. `modify_agent`는 이미 `updater:`로 보완되어 **정상**입니다.
+**`NO_NODE` (10) — 범위 밖, refetch 유지.** `modify_keypair_resource_policy`, `modify_project_resource_policy`, `modify_user_resource_policy`, `modify_scaling_group`(2곳), `modify_keypair`(2곳), `modify_image`(2곳), `modify_agent`. 제외 사유는 「범위 밖」 참조. `modify_agent`는 이미 `updater:`로 보완되어 **정상**입니다.
 
 **`NODE_NOT_SELECTED` (5)** — `modify_group`(`BAIProjectBulkEditModal`, `ProjectStoragePermissionTable`, `ProjectPage`), `modify_domain`(`ContainerRegistryList`, `DomainStoragePermissionTable`). 프론트만 고치면 되는 가장 싼 건들입니다.
 
