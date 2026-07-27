@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4166e0b48fd78db88ec176c9ca6016f3>>
+ * @generated SignedSource<<60d470b0181b2c753fe5a4c0f01fa60b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,10 +14,10 @@ export type BulkAssignRoleInput = {
   roleId: string;
   userIds: ReadonlyArray<string>;
 };
-export type RoleAssignmentTabBulkAssignMutation$variables = {
+export type AssignRoleModalBulkAssignMutation$variables = {
   input: BulkAssignRoleInput;
 };
-export type RoleAssignmentTabBulkAssignMutation$data = {
+export type AssignRoleModalBulkAssignMutation$data = {
   readonly adminBulkAssignRole: {
     readonly assigned: ReadonlyArray<{
       readonly grantedAt: string;
@@ -31,9 +31,9 @@ export type RoleAssignmentTabBulkAssignMutation$data = {
     }>;
   } | null | undefined;
 };
-export type RoleAssignmentTabBulkAssignMutation = {
-  response: RoleAssignmentTabBulkAssignMutation$data;
-  variables: RoleAssignmentTabBulkAssignMutation$variables;
+export type AssignRoleModalBulkAssignMutation = {
+  response: AssignRoleModalBulkAssignMutation$data;
+  variables: AssignRoleModalBulkAssignMutation$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -127,7 +127,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "RoleAssignmentTabBulkAssignMutation",
+    "name": "AssignRoleModalBulkAssignMutation",
     "selections": (v2/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -136,20 +136,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "RoleAssignmentTabBulkAssignMutation",
+    "name": "AssignRoleModalBulkAssignMutation",
     "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "d7d973c8a6ed32514fd821a9a8449550",
+    "cacheID": "545598ab56417816a46c5970a2504d59",
     "id": null,
     "metadata": {},
-    "name": "RoleAssignmentTabBulkAssignMutation",
+    "name": "AssignRoleModalBulkAssignMutation",
     "operationKind": "mutation",
-    "text": "mutation RoleAssignmentTabBulkAssignMutation(\n  $input: BulkAssignRoleInput!\n) {\n  adminBulkAssignRole(input: $input) {\n    assigned {\n      id\n      userId\n      grantedBy\n      grantedAt\n    }\n    failed {\n      userId\n      message\n    }\n  }\n}\n"
+    "text": "mutation AssignRoleModalBulkAssignMutation(\n  $input: BulkAssignRoleInput!\n) {\n  adminBulkAssignRole(input: $input) {\n    assigned {\n      id\n      userId\n      grantedBy\n      grantedAt\n    }\n    failed {\n      userId\n      message\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "399a2ff260a28c97a66e2e5a32d3e0e1";
+(node as any).hash = "551167c7c7372c61b97ff5db472badd4";
 
 export default node;
