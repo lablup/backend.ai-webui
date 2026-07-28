@@ -36,6 +36,7 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
   hasNoDesiredReplicas,
   onSubmit,
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const { token: themeToken } = theme.useToken();
   const formRef = useRef<FormInstance>(null);
@@ -71,26 +72,30 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
         }}
       >
         {hasNoDesiredReplicas ? (
-          <div style={{ marginBottom: themeToken.size }}>
-            <Alert
-              type="warning"
-              showIcon
-              title={t('chatui.NoDesiredReplicas')}
-            />
-          </div>
+          <Alert
+            type="warning"
+            showIcon
+            title={t('chatui.NoDesiredReplicas')}
+            style={{ marginBottom: themeToken.size }}
+          ></Alert>
         ) : null}
-        <div style={{ marginBottom: themeToken.size }}>
-          <Alert type="warning" showIcon title={t('chatui.CannotFindModel')} />
-        </div>
+        <Alert
+          type="warning"
+          showIcon
+          title={t('chatui.CannotFindModel')}
+          style={{ marginBottom: themeToken.size }}
+        ></Alert>
         <Form.Item label={t('modelService.BasePath')} name="basePath">
           <Input
             placeholder="v1"
             prefix={shrinkControlSize ? undefined : endpointUrl}
+            disabled={loading}
           />
         </Form.Item>
         <Form.Item label={t('modelService.Token')} name="token">
           <EndpointTokenSelect
             loading={loading}
+            disabled={loading}
             endpointId={endpointId}
             style={{
               width: shrinkControlSize ? '100%' : '200px',

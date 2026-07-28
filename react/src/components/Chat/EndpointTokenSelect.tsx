@@ -192,6 +192,7 @@ const EndpointTokenSelect: React.FC<EndpointTokenSelectProps> = ({
         value={controllableValue}
         onChange={(e) => setControllableValue(e.target.value)}
         style={props.style}
+        disabled={props.disabled}
       />
     );
   }
