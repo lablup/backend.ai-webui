@@ -308,12 +308,13 @@ test.describe(
         timeout: 10000,
       });
 
-      // 4. Locate the Refresh button (reload icon)
-      const refreshButton = page
-        .locator('button')
-        .filter({ has: page.locator('.anticon-reload') })
-        .first();
-      await expect(refreshButton).toBeVisible();
+      // 4. Locate the Refresh button by its stable `title="Refresh"` attribute
+      // (set by BAIFetchKeyButton). Unlike the reload icon — whose class and
+      // `aria-label` both disappear when BAIFetchKeyButton swaps in its loading
+      // spinner during an in-flight refresh — the `title` attribute stays put,
+      // so the locator keeps matching across the whole refresh cycle.
+      const refreshButton = page.locator('button[title="Refresh"]');
+      await expect(refreshButton).toBeVisible({ timeout: 10000 });
 
       // 5. Click the Refresh button
       await refreshButton.click();
