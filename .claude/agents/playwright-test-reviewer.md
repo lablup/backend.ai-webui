@@ -1,6 +1,6 @@
 ---
 name: playwright-test-reviewer
-description: Use this agent to review newly written or modified Playwright e2e tests for code quality, locator robustness, test isolation, naming conventions, and project-specific best practices. Produces a review report and applies fixes. Examples: <example>Context: Developer has written new e2e tests and wants them reviewed before committing. user: 'Review the e2e tests I just wrote' assistant: 'I'll use the playwright-test-reviewer agent to review and improve the tests.' <commentary> The user wants quality review of newly written e2e tests, which is exactly what this reviewer agent does. </commentary></example><example>Context: After generator or healer agent has run, user wants a quality check. user: 'Check the e2e tests for issues before committing' assistant: 'I'll launch the playwright-test-reviewer to check for locator quality, isolation, and convention issues.' <commentary> Pre-commit review of e2e tests is the core purpose of this agent. </commentary></example>
+description: Review newly written or modified Playwright e2e tests for code quality, locator robustness, test isolation, naming conventions, and project-specific best practices. Produces a review report and applies fixes. Invoke before committing e2e tests or after the generator/healer agents run.
 tools: Glob, Grep, Read, Write, Edit, Bash
 model: sonnet
 color: orange

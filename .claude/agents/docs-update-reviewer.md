@@ -1,6 +1,6 @@
 ---
 name: docs-update-reviewer
-description: Use this agent to review and improve written user manual documentation. It checks for accuracy, consistency, style compliance, translation quality, and completeness across all languages. Examples: <example>Context: Documentation has been written and needs quality review. user: 'Review the docs that were just written' assistant: 'I'll use the docs-update-reviewer agent to review and improve the documentation.' <commentary> The user wants quality review of newly written docs, which is exactly what this reviewer agent does. </commentary></example><example>Context: User wants to verify documentation quality before merging. user: 'Check the documentation changes for any issues before I submit the PR' assistant: 'I'll launch the docs-update-reviewer to check accuracy, consistency, and translation quality.' <commentary> Pre-merge documentation review is the core purpose of this agent. </commentary></example>
+description: Review and improve written user manual documentation. Checks accuracy, consistency, style compliance, translation quality, and completeness across all languages. Invoke after docs are written or before submitting a docs PR.
 tools: Glob, Grep, Read, Write, Edit, Bash
 model: opus
 color: red
