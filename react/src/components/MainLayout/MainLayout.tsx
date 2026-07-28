@@ -9,6 +9,7 @@ import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
 import { useLogoutEventListeners } from '../../hooks/useLogout';
 import usePrimaryColors from '../../hooks/usePrimaryColors';
 import { useCurrentMenuKey, useRouteScope } from '../../hooks/useRouteScope';
+import { useUrlProjectValidity } from '../../hooks/useUrlProjectValidity';
 import { useWebUIMenuItems } from '../../hooks/useWebUIMenuItems';
 import { useSetupWebUIPluginEffect } from '../../hooks/useWebUIPluginState';
 import Page401 from '../../pages/Page401';
@@ -326,7 +327,8 @@ const ResourceSlotsWrapper = ({ children }: { children: React.ReactNode }) => {
  * Component that guards page access based on permissions and route validity.
  * - Unauthorized (401): User lacks permission (e.g., regular user accessing admin page)
  * - Blocked (404): Page is in the blocklist configuration (treated as not found)
- * - Not Found (404): Page path is not valid (not in menu, not a plugin page, not a static route)
+ * - Not Found (404) is NOT decided here anymore: unknown paths fall into the
+ *   router-owned scoped catch-all routes (see UnknownRoutePage in routes.tsx).
  *
  * @param emptyErrorPage - If true, renders nothing instead of error pages (401/404)
  */
@@ -337,14 +339,20 @@ const PageAccessGuard = ({
   children: React.ReactNode;
   emptyErrorPage?: boolean;
 }) => {
-  const {
-    isCurrentPageBlocked,
-    isCurrentPageNotFound,
-    isCurrentPageUnauthorized,
-  } = useWebUIMenuItems();
+  const { isCurrentPageBlocked, isCurrentPageUnauthorized } =
+    useWebUIMenuItems();
+  const { isInvalid: isUrlProjectInvalid } = useUrlProjectValidity();
 
-  const hasError =
-    isCurrentPageUnauthorized || isCurrentPageBlocked || isCurrentPageNotFound;
+  // When the URL names a project that doesn't resolve for this user, whether
+  // the page would be authorized cannot be decided (the roles are relative to
+  // a project we can't identify). Defer entirely to ProjectScopeLayout, which
+  // renders the "not found / no access" state — the same screen for every
+  // role, so project existence is not leaked via a 401/404 difference.
+  if (isUrlProjectInvalid) {
+    return children;
+  }
+
+  const hasError = isCurrentPageUnauthorized || isCurrentPageBlocked;
 
   if (hasError && emptyErrorPage) {
     return null;
@@ -354,7 +362,7 @@ const PageAccessGuard = ({
     return <Page401 />;
   }
 
-  if (isCurrentPageBlocked || isCurrentPageNotFound) {
+  if (isCurrentPageBlocked) {
     return <Page404 />;
   }
 

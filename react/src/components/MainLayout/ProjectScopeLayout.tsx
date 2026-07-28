@@ -3,23 +3,19 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { buildPath } from '../../helper/pathBuilder';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
+import { useWebUINavigate } from '../../hooks';
 import {
   useCurrentProjectValue,
   useSetCurrentProject,
 } from '../../hooks/useCurrentProject';
 import { getRouteScopeAndKey } from '../../hooks/useRouteScope';
+import { useUrlProjectValidity } from '../../hooks/useUrlProjectValidity';
 import ProjectScopeErrorState from './ProjectScopeErrorState';
 import { Button } from 'antd';
 import { ArrowRightIcon } from 'lucide-react';
 import React, { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Outlet, useLocation, useParams } from 'react-router-dom';
-
-interface BackendAIClientGroups {
-  groups?: string[];
-  groupIds?: Record<string, string>;
-}
+import { Outlet, useLocation } from 'react-router-dom';
 
 /**
  * Layout element for the `/project/:projectName/*` subtree (project + project
@@ -51,28 +47,23 @@ interface BackendAIClientGroups {
 const ProjectScopeLayout: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
-  const { projectName: rawProjectName } = useParams<{ projectName: string }>();
   const location = useLocation();
   const currentProject = useCurrentProjectValue();
   const setCurrentProject = useSetCurrentProject();
   const webuiNavigate = useWebUINavigate();
 
-  // `useParams` already decodes percent-encoding; treat a missing param as ''.
-  const projectName = rawProjectName ?? '';
-
-  const clientGroups = baiClient as unknown as BackendAIClientGroups;
-  const groups = clientGroups.groups ?? [];
-  const groupIds = clientGroups.groupIds ?? {};
-
-  const isMember = groups.includes(projectName);
-  const resolvedId = groupIds[projectName];
-  const isValid = isMember && !!resolvedId;
+  // Shared URL-project validation (also consulted by PageAccessGuard and
+  // ProjectAdminScopeAlert so all three agree on "this project doesn't
+  // resolve"). The param is already percent-decoded by react-router.
+  const { urlProjectName, isInvalid, resolvedId, groups } =
+    useUrlProjectValidity();
+  const projectName = urlProjectName ?? '';
+  const isValid = !!urlProjectName && !isInvalid;
 
   // Effect-event reads the latest resolved id / current value; the surrounding
   // effect only re-synchronizes when the URL project name changes.
   const syncProject = useEffectEvent(() => {
-    if (!isValid) {
+    if (!isValid || !resolvedId) {
       return;
     }
     if (currentProject.name !== projectName) {
