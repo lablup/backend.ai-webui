@@ -1,0 +1,112 @@
+# Per-package `tsc --noEmit`. Before this, the only type check in CI was
+# `backend-ai-client-ci.yml`'s, scoped to one package by its path filter;
+# `scripts/verify.sh` covers more but no workflow invokes it, and the Husky
+# hook runs only ESLint + Prettier.
+#
+# One job per package rather than one sweep, so a failure names the package.
+#
+# These checks are advisory. Do not add them to a ruleset without first moving
+# the path filter inside the workflow: an event-level `paths:` miss means the
+# workflow never starts and no check-run is created, so a required check would
+# sit pending and block the merge.
+name: Typecheck
+
+on:
+  pull_request:
+    paths:
+      - "react/**"
+      - "packages/backend.ai-ui/**"
+      - "packages/backend.ai-client/**"
+      - "packages/backend.ai-docs-toolkit/**"
+      - "src/**"
+      - "tsconfig.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - ".github/workflows/typecheck.yml"
+  push:
+    branches: [main]
+    paths:
+      - "react/**"
+      - "packages/backend.ai-ui/**"
+      - "packages/backend.ai-client/**"
+      - "packages/backend.ai-docs-toolkit/**"
+      - "src/**"
+      - "tsconfig.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+
+permissions:
+  contents: read
+
+concurrency:
+  # Keyed by PR number, not branch name: branch names are unique only within a
+  # repository, so two fork PRs both using e.g. `patch-1` would share a group and
+  # cancel each other's runs.
+  group: typecheck-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  typecheck:
+    name: typecheck (${{ matrix.package }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Root `tsconfig.json` covers `src/**` — the Backend.AI client library
+          # and the wsproxy. Its `noEmit` is unset, hence the explicit flag.
+          - package: root
+            command: pnpm exec tsc --noEmit -p tsconfig.json
+            relay: false
+          # `react/tsconfig.json` also pulls in `../packages/backend.ai-{ui,client}/src`
+          # via `paths`, so this job is what catches a BUI change breaking the app.
+          # It excludes BUI's tests/stories, which the backend.ai-ui job below covers.
+          - package: react
+            command: pnpm --prefix ./react exec tsc --noEmit
+            relay: true
+          # BUI's own tsconfig additionally includes its tests, stories,
+          # `vite.config.ts` and `setupTests.ts`.
+          - package: backend.ai-ui
+            command: pnpm --filter backend.ai-ui exec tsc --noEmit
+            relay: true
+          # Overlaps `backend-ai-client-ci.yml`, which type-checks this package
+          # only when its own paths change. Kept here so the package is covered
+          # when something else (e.g. the lockfile) moves its types.
+          - package: backend.ai-client
+            command: pnpm --filter backend.ai-client exec tsc --noEmit
+            relay: false
+          - package: backend.ai-docs-toolkit
+            command: pnpm --filter backend.ai-docs-toolkit exec tsc --noEmit
+            relay: false
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v5
+        name: Install pnpm
+        with:
+          run_install: false
+      - uses: actions/setup-node@v6.4.0
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+      - name: Get pnpm store directory
+        shell: bash
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      - uses: actions/cache@v5
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      # Relay artifacts are committed, so `tsc` would run without this. Compiling
+      # first means the check sees the types the current `graphql` tags actually
+      # produce, not a stale `__generated__` — the same order `vitest.yml` uses.
+      # `relay-drift.yml` reports the drift itself; this keeps it from hiding a
+      # type error behind it.
+      - name: Run relay-compiler
+        if: matrix.relay
+        run: pnpm run relay
+      - name: Typecheck ${{ matrix.package }}
+        run: ${{ matrix.command }}
