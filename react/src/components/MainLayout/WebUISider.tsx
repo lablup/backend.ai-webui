@@ -7,6 +7,7 @@ import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
 import usePrimaryColors from '../../hooks/usePrimaryColors';
 import { useRouteAccessDecision } from '../../hooks/useRouteAccess';
 import {
+  getRouteScopeAndKey,
   rewriteProjectNameInPath,
   useActiveProjectName,
   useCurrentMenuKey,
@@ -141,9 +142,21 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
             // projects while in admin mode, rewrite its `:projectName` segment
             // to the current project so "go back" lands on the active project,
             // not the stale one. Non-project paths pass through unchanged.
+            //
+            // Healing guard: a stored path that itself parses to an admin
+            // scope (e.g. `/admin` polluted by the pre-fix bare-scope-root
+            // bug, possibly persisted in sessionStorage from an older build)
+            // would make "go back" a no-op loop — fall back to the default
+            // general page instead of navigating back into admin.
+            const storedTarget = goBackPath
+              ? rewriteProjectNameInPath(goBackPath, activeProjectName)
+              : undefined;
+            const isStoredTargetAdmin =
+              !!storedTarget &&
+              getRouteScopeAndKey(storedTarget).scope !== 'project';
             webuiNavigate(
-              goBackPath
-                ? rewriteProjectNameInPath(goBackPath, activeProjectName)
+              storedTarget && !isStoredTargetAdmin
+                ? storedTarget
                 : defaultMenuPath,
             );
           }}

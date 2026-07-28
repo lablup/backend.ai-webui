@@ -10,7 +10,11 @@ import { useDiagnosticsBadgeSeverity } from './useAutoDiagnostics';
 import { useBAISettingUserState } from './useBAISetting';
 import { useEffectiveAdminRole } from './useCurrentUserProjectRoles';
 import { useCustomThemeConfig } from './useCustomThemeConfig';
-import { useActiveProjectName, useCurrentMenuKey } from './useRouteScope';
+import {
+  getRouteScopeAndKey,
+  useActiveProjectName,
+  useCurrentMenuKey,
+} from './useRouteScope';
 import {
   PluginPage,
   useWebUIPluginLoadedValue,
@@ -57,6 +61,7 @@ import {
 } from 'lucide-react';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 
 export type MenuGroupName =
   | 'none'
@@ -241,6 +246,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   // `location.pathname.split('/')[1]` would return the scope prefix
   // ('project'/'admin') instead of the feature key.
   const currentMenuKeyFromRoute = useCurrentMenuKey();
+  const routerLocation = useLocation();
   // Active project NAME (URL `:projectName` if present, else current project
   // atom). Used to build scope-aware menu `to` paths via `getPathFromMenuKey` /
   // `buildPath` so every menu link points at `/project/<name>/<feature>` (or
@@ -805,9 +811,17 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   // `/project-admin-users`, or a user switched into a project where they
   // lack admin rights).
   const currentPageMenuKey = currentMenuKeyFromRoute ?? '';
+  // Also treat any admin-scoped URL as admin category, keyed on the URL scope
+  // itself. The menu-key sets alone miss the bare scope roots (`/admin`,
+  // `/project/:name/admin`): their feature key is empty during the index
+  // redirect, which used to classify them as "general" and pollute the
+  // sider's `goBackPath` with `/admin` — making "go back" a no-op loop
+  // (FR-3388, deep-link-then-login repro).
+  const currentUrlScope = getRouteScopeAndKey(routerLocation.pathname).scope;
   const isCurrentPathAdminCategory =
     ALL_ADMIN_PAGE_KEYS.has(currentPageMenuKey) ||
-    PROJECT_ADMIN_PAGE_KEY_SET.has(currentPageMenuKey);
+    PROJECT_ADMIN_PAGE_KEY_SET.has(currentPageMenuKey) ||
+    currentUrlScope !== 'project';
 
   // Get the first available menu item from groupedGeneralMenu
   // (after blocklist filtering, excluding disabled/inactive items)
