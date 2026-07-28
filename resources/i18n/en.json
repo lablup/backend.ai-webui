@@ -2136,6 +2136,7 @@
     "Active": "Active",
     "Assign": "Add",
     "AssignUser": "Add User",
+    "AssignedUser": "Assigned User",
     "Assignments": "Assignments",
     "AtLeastOneScopeRequired": "At least one scope is required.",
     "AutoAssign": "Auto Assign",

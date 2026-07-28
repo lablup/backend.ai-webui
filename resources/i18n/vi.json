@@ -2151,6 +2151,7 @@
     "Active": "Hoạt động",
     "Assign": "Phân công",
     "AssignUser": "Thêm người dùng",
+    "AssignedUser": "Người dùng được phân công",
     "Assignments": "Phân công",
     "AtLeastOneScopeRequired": "Cần ít nhất một phạm vi.",
     "AutoAssign": "Tự động gán",

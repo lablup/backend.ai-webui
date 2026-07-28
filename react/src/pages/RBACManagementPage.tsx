@@ -12,12 +12,13 @@ import {
 } from '../__generated__/RBACManagementPageQuery.graphql';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import RoleDetailDrawer from '../components/RoleDetailDrawer';
-import RoleFormModal from '../components/RoleFormModal';
+import RoleFormModal, { RBAC_ELEMENT_TYPES } from '../components/RoleFormModal';
 import RoleNodes, {
   type RoleNodeInList,
   availableRoleSorterValues,
 } from '../components/RoleNodes';
 import { convertToOrderBy } from '../helper';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { DeleteFilled } from '@ant-design/icons';
 import { App } from 'antd';
@@ -29,6 +30,7 @@ import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
+  BAIUserSelect,
   filterOutEmpty,
   INITIAL_FETCH_KEY,
   toLocalId,
@@ -53,6 +55,7 @@ const RBACManagementPage: React.FC = () => {
   'use memo';
 
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
   const {
     baiPaginationOption,
     tablePaginationOption,
@@ -249,7 +252,7 @@ const RBACManagementPage: React.FC = () => {
               ]}
             />
             <BAIGraphQLPropertyFilter<RoleFilter>
-              filterProperties={[
+              filterProperties={filterOutEmpty([
                 {
                   key: 'name',
                   propertyLabel: t('rbac.RoleName'),
@@ -266,7 +269,44 @@ const RBACManagementPage: React.FC = () => {
                   ],
                   strictSelection: true,
                 },
-              ]}
+                baiClient?.supports('rbac-filter-assigned-user') && {
+                  key: 'assignedUser.userId',
+                  propertyLabel: t('rbac.AssignedUser'),
+                  type: 'uuid',
+                  fixedOperator: 'equals',
+                  renderInput: ({ onAddCondition }) => (
+                    <BAIUserSelect
+                      valuePropName="id"
+                      value={null}
+                      onChange={(value, option) =>
+                        // The picker emits the user UUID; forward the option
+                        // label (email) so the condition tag stays readable.
+                        onAddCondition(
+                          value as string | undefined,
+                          option?.label,
+                        )
+                      }
+                      style={{ minWidth: 200 }}
+                    />
+                  ),
+                },
+                baiClient?.supports('role-mapped-scope-filter') && {
+                  key: 'mappedScope.scopeType',
+                  propertyLabel: t('rbac.ScopeType'),
+                  type: 'enum',
+                  fixedOperator: 'equals',
+                  options: RBAC_ELEMENT_TYPES.map((type) => ({
+                    label: t(`rbac.types.${type}`, { defaultValue: type }),
+                    value: type,
+                  })),
+                  strictSelection: true,
+                },
+                baiClient?.supports('role-mapped-scope-filter') && {
+                  key: 'mappedScope.scopeId',
+                  propertyLabel: t('rbac.ScopeRawId'),
+                  type: 'string',
+                },
+              ])}
               value={queryParams.filter ?? undefined}
               onChange={(value) => {
                 setQueryParams({ filter: value ?? null });

@@ -2151,6 +2151,7 @@
     "Active": "actif",
     "Assign": "Attribuer",
     "AssignUser": "Ajouter un utilisateur",
+    "AssignedUser": "Utilisateur attribué",
     "Assignments": "Attributions",
     "AtLeastOneScopeRequired": "Au moins une portée est requise.",
     "AutoAssign": "Attribution automatique",

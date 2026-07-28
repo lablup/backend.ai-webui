@@ -2153,6 +2153,7 @@
     "Active": "活躍",
     "Assign": "分配",
     "AssignUser": "新增使用者",
+    "AssignedUser": "已分配的使用者",
     "Assignments": "分配",
     "AtLeastOneScopeRequired": "至少需要一個範圍。",
     "AutoAssign": "自動指派",

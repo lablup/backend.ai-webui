@@ -2151,6 +2151,7 @@
     "Active": "Aktiv",
     "Assign": "Zuweisen",
     "AssignUser": "Benutzer hinzufügen",
+    "AssignedUser": "Zugewiesener Benutzer",
     "Assignments": "Zuweisungen",
     "AtLeastOneScopeRequired": "Mindestens ein Geltungsbereich ist erforderlich.",
     "AutoAssign": "Automatisch zuweisen",

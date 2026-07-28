@@ -2149,6 +2149,7 @@
     "Active": "Aktif",
     "Assign": "Ata",
     "AssignUser": "Kullanıcı Ekle",
+    "AssignedUser": "Atanmış Kullanıcı",
     "Assignments": "Atamalar",
     "AtLeastOneScopeRequired": "En az bir kapsam gereklidir.",
     "AutoAssign": "Otomatik Atama",

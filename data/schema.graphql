@@ -1088,6 +1088,126 @@ enum AppConfigDefinitionOrderField
   UPDATED_AT @join__enumValue(graph: STRAWBERRY)
 }
 
+"""
+Added in 26.8.0. One config document written at a single scope, merged by rank at resolve time.
+"""
+type AppConfigFragment implements Node
+  @join__implements(graph: STRAWBERRY, interface: "Node")
+  @join__type(graph: STRAWBERRY)
+{
+  """The Globally Unique ID of this object"""
+  id: ID!
+
+  """Config name the fragment belongs to."""
+  configName: String!
+
+  """Scope the fragment is written at (public | domain | user)."""
+  scopeType: AppConfigScopeType!
+
+  """Scope identifier: the domain id or user id; null for public scope."""
+  scopeId: UUID
+
+  """The fragment's JSON config document."""
+  config: JSON!
+
+  """Creation timestamp (UTC)."""
+  createdAt: DateTime!
+
+  """Last update timestamp (UTC)."""
+  updatedAt: DateTime!
+}
+
+"""Added in 26.8.0. Paginated connection for app config fragments."""
+type AppConfigFragmentConnection
+  @join__type(graph: STRAWBERRY)
+{
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [AppConfigFragmentEdge!]!
+
+  """Total number of app config fragments matching the query criteria."""
+  count: Int!
+}
+
+"""An edge in a connection."""
+type AppConfigFragmentEdge
+  @join__type(graph: STRAWBERRY)
+{
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: AppConfigFragment!
+}
+
+"""Added in 26.8.0. Filter input for querying app config fragments."""
+input AppConfigFragmentFilter
+  @join__type(graph: STRAWBERRY)
+{
+  """Filter by config name."""
+  configName: StringFilter = null
+
+  """Filter by scope type."""
+  scopeType: AppConfigFragmentScopeTypeFilter = null
+
+  """Filter by creation datetime."""
+  createdAt: DateTimeFilter = null
+
+  """Filter by last update datetime."""
+  updatedAt: DateTimeFilter = null
+
+  """Match all of the given sub-filters."""
+  AND: [AppConfigFragmentFilter!] = null
+
+  """Match any of the given sub-filters."""
+  OR: [AppConfigFragmentFilter!] = null
+
+  """Negate the given sub-filters."""
+  NOT: [AppConfigFragmentFilter!] = null
+}
+
+"""Added in 26.8.0. Specifies ordering for app config fragment results."""
+input AppConfigFragmentOrderBy
+  @join__type(graph: STRAWBERRY)
+{
+  """The field to order by."""
+  field: AppConfigFragmentOrderField!
+
+  """Sort direction."""
+  direction: OrderDirection! = ASC
+}
+
+"""
+Added in 26.8.0. Fields available for ordering app config fragment results.
+"""
+enum AppConfigFragmentOrderField
+  @join__type(graph: STRAWBERRY)
+{
+  CONFIG_NAME @join__enumValue(graph: STRAWBERRY)
+  SCOPE_TYPE @join__enumValue(graph: STRAWBERRY)
+  CREATED_AT @join__enumValue(graph: STRAWBERRY)
+  UPDATED_AT @join__enumValue(graph: STRAWBERRY)
+}
+
+"""Added in 26.8.0. Filter input for the fragment scope_type enum field."""
+input AppConfigFragmentScopeTypeFilter
+  @join__type(graph: STRAWBERRY)
+{
+  """Exact scope type match."""
+  equals: AppConfigScopeType = null
+
+  """Match any of the provided scope types."""
+  in: [AppConfigScopeType!] = null
+
+  """Exclude exact scope type match."""
+  notEquals: AppConfigScopeType = null
+
+  """Exclude any of the provided scope types."""
+  notIn: [AppConfigScopeType!] = null
+}
+
 enum AppConfigScopeType
   @join__type(graph: STRAWBERRY)
 {
@@ -3007,6 +3127,16 @@ input ComputeScheduleInput
   kernels: [ComputeScheduleKernelResourceInput!]!
   clusterMode: SessionClusterMode!
   resourceGroupId: ID!
+
+  """
+  Restrict the fitting check to these agents, with the same semantics as the scheduling path. Null means no restriction.
+  """
+  designatedAgentIds: [String!] = null
+
+  """
+  How designated agents are enforced (STRICT fails without capacity, PREFERRED falls back). Null inherits the resource group default.
+  """
+  agentSelectionPolicy: SessionAgentSelectionPolicy = null
 }
 
 """
@@ -3218,6 +3348,16 @@ type ComputeSessionNode implements Node
 
   """Added in 24.09.0."""
   graph(filter: String, order: String, offset: Int, before: String, after: String, first: Int, last: Int): ComputeSessionConnection @join__field(graph: GRAPHENE)
+}
+
+"""
+Added in 26.8.0. How to clean up sessions that conflict with an agent's resource-group change.
+"""
+enum ConflictingSessionCleanupPolicy
+  @join__type(graph: STRAWBERRY)
+{
+  TERMINATE @join__enumValue(graph: STRAWBERRY)
+  RESCHEDULE @join__enumValue(graph: STRAWBERRY)
 }
 
 """Deprecated since 24.09.0. use `ContainerRegistryNode` instead"""
@@ -4385,6 +4525,28 @@ input CreateResourcePresetV2Input
   resourceGroupName: String = null
 }
 
+"""Added in 26.8.0. Create retention policy input."""
+input CreateRetentionPolicyInput
+  @join__type(graph: STRAWBERRY)
+{
+  """Retention category, validated against the fixed catalog."""
+  category: RetentionCategory!
+
+  """Retention period in days."""
+  retentionPeriodDays: Int!
+
+  """Whether this policy is active."""
+  enabled: Boolean! = true
+}
+
+"""Added in 26.8.0. Create retention policy payload."""
+type CreateRetentionPolicyPayload
+  @join__type(graph: STRAWBERRY)
+{
+  """The created retention policy."""
+  policy: RetentionPolicy!
+}
+
 """
 Added in 25.19.0. Input for specifying revision configuration within a deployment.
 """
@@ -5492,6 +5654,14 @@ type DeleteResourcePresetPayload
   id: String!
 }
 
+"""Added in 26.8.0. Delete retention policy payload."""
+type DeleteRetentionPolicyPayload
+  @join__type(graph: STRAWBERRY)
+{
+  """ID of the deleted retention policy."""
+  id: UUID!
+}
+
 """Added in 26.3.0. Input for soft-deleting a role"""
 input DeleteRoleInput
   @join__type(graph: STRAWBERRY)
@@ -5653,6 +5823,9 @@ input DeploymentFilter
   Added in 26.4.3. Filter by deployment destruction datetime. Supports IS NULL / IS NOT NULL.
   """
   destroyedAt: NullableDateTimeFilter = null
+
+  """Added in 26.8.0. Filter by conditions on deployment replicas."""
+  replicas: ReplicaNestedFilter = null
   AND: [DeploymentFilter!] = null
   OR: [DeploymentFilter!] = null
   NOT: [DeploymentFilter!] = null
@@ -7057,6 +7230,9 @@ input EnqueueSessionInput
   """Scheduling priority (0-100)."""
   priority: Int! = 10
 
+  """Scope-local preemption priority among the requester's own sessions."""
+  jobPriority: Int! = 0
+
   """Whether preemptible."""
   isPreemptible: Boolean! = true
 
@@ -7065,6 +7241,11 @@ input EnqueueSessionInput
 
   """Designated agent IDs."""
   agentList: [String!] = null
+
+  """
+  Added in 26.8.0. How agent_list is enforced. null inherits the resource group default.
+  """
+  agentSelectionPolicy: SessionAgentSelectionPolicy = null
 
   """Network UUID to attach."""
   attachNetwork: ID = null
@@ -8472,6 +8653,109 @@ enum KernelResourceAllocationOrderField
   USED @join__enumValue(graph: STRAWBERRY)
 }
 
+"""Added in 26.8.0. Kernel scheduling history record."""
+type KernelSchedulingHistory implements Node
+  @join__implements(graph: STRAWBERRY, interface: "Node")
+  @join__type(graph: STRAWBERRY)
+{
+  """The Globally Unique ID of this object"""
+  id: ID!
+  kernelId: ID!
+  sessionId: ID!
+  phase: String!
+  fromStatus: String
+  toStatus: String
+  result: SchedulingResult!
+  errorCode: String
+  message: String
+  attempts: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""Added in 26.8.0. Kernel scheduling history connection."""
+type KernelSchedulingHistoryConnection
+  @join__type(graph: STRAWBERRY)
+{
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [KernelSchedulingHistoryEdge!]!
+  count: Int!
+}
+
+"""An edge in a connection."""
+type KernelSchedulingHistoryEdge
+  @join__type(graph: STRAWBERRY)
+{
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: KernelSchedulingHistory!
+}
+
+"""Added in 26.8.0. Filter for kernel scheduling history"""
+input KernelSchedulingHistoryFilter
+  @join__type(graph: STRAWBERRY)
+{
+  id: UUIDFilter = null
+  kernelId: UUIDFilter = null
+  sessionId: UUIDFilter = null
+  phase: StringFilter = null
+  fromStatus: [String!] = null
+  toStatus: [String!] = null
+  result: SchedulingResultFilter = null
+  errorCode: StringFilter = null
+  message: StringFilter = null
+  createdAt: DateTimeFilter = null
+  updatedAt: DateTimeFilter = null
+  AND: [KernelSchedulingHistoryFilter!] = null
+  OR: [KernelSchedulingHistoryFilter!] = null
+  NOT: [KernelSchedulingHistoryFilter!] = null
+}
+
+"""Added in 26.8.0. Order by specification for kernel scheduling history"""
+input KernelSchedulingHistoryOrderBy
+  @join__type(graph: STRAWBERRY)
+{
+  field: KernelSchedulingHistoryOrderField!
+  direction: OrderDirection! = DESC
+}
+
+"""
+Added in 26.8.0. Fields available for ordering kernel scheduling history
+"""
+enum KernelSchedulingHistoryOrderField
+  @join__type(graph: STRAWBERRY)
+{
+  CREATED_AT @join__enumValue(graph: STRAWBERRY)
+  UPDATED_AT @join__enumValue(graph: STRAWBERRY)
+  PHASE @join__enumValue(graph: STRAWBERRY)
+  FROM_STATUS @join__enumValue(graph: STRAWBERRY)
+  TO_STATUS @join__enumValue(graph: STRAWBERRY)
+  RESULT @join__enumValue(graph: STRAWBERRY)
+  ATTEMPTS @join__enumValue(graph: STRAWBERRY)
+}
+
+"""
+Added in 26.8.0. Scope for kernel scheduling history query. All items are OR'd; raises an error if every field is empty.
+"""
+input KernelScope
+  @join__type(graph: STRAWBERRY)
+{
+  """
+  Kernel IDs to get history for. The scoped search is single-target for now, so exactly one item is accepted across all fields.
+  """
+  kernel: [UUIDScope!] = null
+
+  """
+  Session IDs to get the history of every owned kernel for. The scoped search is single-target for now, so exactly one item is accepted across all fields.
+  """
+  session: [UUIDScope!] = null
+}
+
 """
 Added in 26.2.0. Represents a kernel (compute container) in Backend.AI.
 """
@@ -8536,6 +8820,11 @@ type KernelV2 implements Node
 
   """Added in 26.3.0. Per-slot resource allocation for this kernel."""
   resourceAllocations(filter: KernelResourceAllocationFilter = null, orderBy: [KernelResourceAllocationOrderBy!] = null, first: Int = null, after: String = null, last: Int = null, before: String = null, limit: Int = null, offset: Int = null): ResourceAllocationConnection
+
+  """
+  Added in 26.8.0. Scheduling history of this kernel with pagination support.
+  """
+  schedulingHistories(filter: KernelSchedulingHistoryFilter = null, orderBy: [KernelSchedulingHistoryOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): KernelSchedulingHistoryConnection
 }
 
 """
@@ -11433,6 +11722,11 @@ type Mutation
   delete_network(network: String!): DeleteNetwork @join__field(graph: GRAPHENE)
 
   """
+  Added in 26.8.0. Change the resource group of an agent (superadmin only). Sessions still running on the agent under the old resource group are cleaned up per the given policy; without force, the change is rejected with a conflict error when such sessions exist.
+  """
+  adminUpdateAgentResourceGroup(input: UpdateAgentResourceGroupInput!): UpdateAgentResourceGroupPayload @join__field(graph: STRAWBERRY)
+
+  """
   Added in 26.7.0. Register a new app config allow-list entry (super admin only).
   """
   adminCreateAppConfigAllowList(input: CreateAppConfigAllowListInput!): CreateAppConfigAllowListPayload @join__field(graph: STRAWBERRY)
@@ -12099,6 +12393,20 @@ type Mutation
 
   """Added in 26.4.2. Delete multiple runtime variants (superadmin only)."""
   adminDeleteRuntimeVariants(input: DeleteRuntimeVariantsInput!): DeleteRuntimeVariantsPayload @join__field(graph: STRAWBERRY)
+
+  """Added in 26.8.0. Create a retention policy (superadmin only)."""
+  adminCreateRetentionPolicy(input: CreateRetentionPolicyInput!): CreateRetentionPolicyPayload @join__field(graph: STRAWBERRY)
+
+  """Added in 26.8.0. Update a retention policy (superadmin only)."""
+  adminUpdateRetentionPolicy(input: UpdateRetentionPolicyInput!): UpdateRetentionPolicyPayload @join__field(graph: STRAWBERRY)
+
+  """Added in 26.8.0. Delete a retention policy (superadmin only)."""
+  adminDeleteRetentionPolicy(id: UUID!): DeleteRetentionPolicyPayload @join__field(graph: STRAWBERRY)
+
+  """
+  Added in 26.8.0. Purge (permanently remove) a retention policy (superadmin only).
+  """
+  adminPurgeRetentionPolicy(id: UUID!): PurgeRetentionPolicyPayload @join__field(graph: STRAWBERRY)
 
   """Added in 26.4.2. Create a runtime variant preset (superadmin only)."""
   adminCreateRuntimeVariantPreset(input: CreateRuntimeVariantPresetInput!): CreateRuntimeVariantPresetPayload @join__field(graph: STRAWBERRY)
@@ -14026,6 +14334,14 @@ type PurgeProjectPayload
   purged: Boolean!
 }
 
+"""Added in 26.8.0. Purge retention policy payload."""
+type PurgeRetentionPolicyPayload
+  @join__type(graph: STRAWBERRY)
+{
+  """ID of the purged retention policy."""
+  id: UUID!
+}
+
 """Added in 26.3.0. Input for purging a role"""
 input PurgeRoleInput
   @join__type(graph: STRAWBERRY)
@@ -14443,7 +14759,7 @@ type Query
   """Added in 25.5.0."""
   total_resource_slot(
     """
-    `statuses` argument is an array of session statuses. Only sessions with the specified statuses will be queried to calculate the sum of total resource slots. The argument should be an array of the following valid status values: ['PENDING', 'DEPRIORITIZING', 'SCHEDULED', 'PREPARING', 'PULLING', 'PREPARED', 'CREATING', 'RUNNING', 'RESTARTING', 'RUNNING_DEGRADED', 'PREEMPTED', 'TERMINATING', 'TERMINATED', 'ERROR', 'CANCELLED'].
+    `statuses` argument is an array of session statuses. Only sessions with the specified statuses will be queried to calculate the sum of total resource slots. The argument should be an array of the following valid status values: ['PENDING', 'DEPRIORITIZING', 'SCHEDULED', 'PREPARING', 'PULLING', 'PREPARED', 'CREATING', 'RUNNING', 'RESTARTING', 'RUNNING_DEGRADED', 'PREEMPTED', 'RESCHEDULING', 'TERMINATING', 'TERMINATED', 'ERROR', 'CANCELLED'].
     Default value is null.
     """
     statuses: [String] = null
@@ -14524,6 +14840,14 @@ type Query
   Added in 26.7.0. Search app config allow-list entries with filtering, ordering, and pagination (super admin only).
   """
   adminAppConfigAllowLists(filter: AppConfigAllowListFilter = null, orderBy: [AppConfigAllowListOrderBy!] = null, first: Int = null, after: String = null, last: Int = null, before: String = null, limit: Int = null, offset: Int = null): AppConfigAllowListConnection @join__field(graph: STRAWBERRY)
+
+  """Added in 26.8.0. Get a single app config fragment by id."""
+  appConfigFragment(id: UUID!): AppConfigFragment @join__field(graph: STRAWBERRY)
+
+  """
+  Added in 26.8.0. Search app config fragments across every scope with filtering, ordering, and pagination (super admin only).
+  """
+  adminAppConfigFragments(filter: AppConfigFragmentFilter = null, orderBy: [AppConfigFragmentOrderBy!] = null, first: Int = null, after: String = null, last: Int = null, before: String = null, limit: Int = null, offset: Int = null): AppConfigFragmentConnection @join__field(graph: STRAWBERRY)
 
   """
   Added in 25.14.0. Retrieve a specific artifact by its ID. Returns detailed information about the artifact including its metadata, registry information, and availability status.
@@ -14650,6 +14974,9 @@ type Query
 
   """Added in 26.4.2. List session scheduling history (admin only)"""
   adminSessionSchedulingHistories(filter: SessionSchedulingHistoryFilter = null, orderBy: [SessionSchedulingHistoryOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): SessionSchedulingHistoryConnection @join__field(graph: STRAWBERRY)
+
+  """Added in 26.8.0. List kernel scheduling history (superadmin only)"""
+  adminKernelSchedulingHistories(filter: KernelSchedulingHistoryFilter = null, orderBy: [KernelSchedulingHistoryOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): KernelSchedulingHistoryConnection @join__field(graph: STRAWBERRY)
 
   """Added in 25.16.0. List all deployments (superadmin only)."""
   adminDeployments(filter: DeploymentFilter = null, orderBy: [DeploymentOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): ModelDeploymentConnection @join__field(graph: STRAWBERRY)
@@ -14932,6 +15259,9 @@ type Query
   """Added in 26.2.0. Get scheduling history for a specific session."""
   sessionScopedSchedulingHistories(scope: SessionScope!, filter: SessionSchedulingHistoryFilter = null, orderBy: [SessionSchedulingHistoryOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): SessionSchedulingHistoryConnection @join__field(graph: STRAWBERRY)
 
+  """Added in 26.8.0. Get scheduling history for a specific kernel."""
+  scopedKernelSchedulingHistories(scope: KernelScope!, filter: KernelSchedulingHistoryFilter = null, orderBy: [KernelSchedulingHistoryOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): KernelSchedulingHistoryConnection @join__field(graph: STRAWBERRY)
+
   """Added in 26.2.0. Get scheduling history for a specific deployment."""
   deploymentScopedSchedulingHistories(scope: DeploymentScope!, filter: DeploymentHistoryFilter = null, orderBy: [DeploymentHistoryOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): DeploymentHistoryConnection @join__field(graph: STRAWBERRY)
 
@@ -15141,6 +15471,14 @@ type Query
 
   """Added in 26.4.2. Get a single runtime variant by ID."""
   runtimeVariant(id: UUID!): RuntimeVariant @join__field(graph: STRAWBERRY)
+
+  """Added in 26.8.0. Search retention policies (superadmin only)."""
+  adminRetentionPolicies(filter: RetentionPolicyFilter = null, orderBy: [RetentionPolicyOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): RetentionPolicyConnection @join__field(graph: STRAWBERRY)
+
+  """
+  Added in 26.8.0. Get a single retention policy by ID (superadmin only).
+  """
+  adminRetentionPolicy(id: UUID!): RetentionPolicy @join__field(graph: STRAWBERRY)
 
   """Added in 26.4.2. Search runtime variant presets."""
   runtimeVariantPresets(filter: RuntimeVariantPresetFilter = null, orderBy: [RuntimeVariantPresetOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): RuntimeVariantPresetConnection @join__field(graph: STRAWBERRY)
@@ -15479,6 +15817,7 @@ enum RBACElementType
   PROJECT_RESOURCE_POLICY @join__enumValue(graph: STRAWBERRY)
   ROLE @join__enumValue(graph: STRAWBERRY)
   AUDIT_LOG @join__enumValue(graph: STRAWBERRY)
+  KERNEL_HISTORY @join__enumValue(graph: STRAWBERRY)
   EVENT_LOG @join__enumValue(graph: STRAWBERRY)
   PROJECT_ADMIN_PAGE @join__enumValue(graph: STRAWBERRY)
   DOMAIN_ADMIN_PAGE @join__enumValue(graph: STRAWBERRY)
@@ -15675,6 +16014,9 @@ input ReplicaFilter
   @join__type(graph: STRAWBERRY)
 {
   status: ReplicaStatusFilter = null
+
+  """Added in 26.8.0. Filter by replica health status."""
+  healthStatus: ReplicaHealthStatusFilter = null
   trafficStatus: TrafficStatusFilter = null
   AND: [ReplicaFilter!] = null
   OR: [ReplicaFilter!] = null
@@ -15691,6 +16033,37 @@ enum ReplicaHealthStatus
   HEALTHY @join__enumValue(graph: STRAWBERRY)
   UNHEALTHY @join__enumValue(graph: STRAWBERRY)
   DEGRADED @join__enumValue(graph: STRAWBERRY)
+}
+
+"""Added in 26.8.0. Filter for replica health status."""
+input ReplicaHealthStatusFilter
+  @join__type(graph: STRAWBERRY)
+{
+  """Health status is in the list."""
+  in: [ReplicaHealthStatus!] = null
+  equals: ReplicaHealthStatus = null
+
+  """Excludes health statuses in the list."""
+  notIn: [ReplicaHealthStatus!] = null
+
+  """Excludes exact health status match."""
+  notEquals: ReplicaHealthStatus = null
+}
+
+"""Added in 26.8.0. Filter deployments by conditions on their replicas."""
+input ReplicaNestedFilter
+  @join__type(graph: STRAWBERRY)
+{
+  """Matches parents with at least one replica satisfying all conditions."""
+  some: ReplicaFilter = null
+
+  """
+  Matches parents where every replica satisfies all conditions (also true when the parent has no replica).
+  """
+  every: ReplicaFilter = null
+
+  """Matches parents with no replica satisfying all conditions."""
+  none: ReplicaFilter = null
 }
 
 """Added in 25.19.0. """
@@ -16468,6 +16841,105 @@ type RestoreVFolderPayload
 {
   """ID of the restored virtual folder"""
   id: UUID!
+}
+
+"""
+Added in 26.8.0. Retention category identifying a code-side cleanup procedure.
+"""
+enum RetentionCategory
+  @join__type(graph: STRAWBERRY)
+{
+  LOGS @join__enumValue(graph: STRAWBERRY)
+  LOGIN @join__enumValue(graph: STRAWBERRY)
+  RECONCILE_HISTORY @join__enumValue(graph: STRAWBERRY)
+  ROLES_INVITATIONS @join__enumValue(graph: STRAWBERRY)
+  DEPLOYMENTS @join__enumValue(graph: STRAWBERRY)
+  SESSIONS @join__enumValue(graph: STRAWBERRY)
+  USAGE_RECORDS @join__enumValue(graph: STRAWBERRY)
+  USAGE_BUCKETS @join__enumValue(graph: STRAWBERRY)
+}
+
+"""
+Added in 26.8.0. A per-category retention policy: admin-tunable cleanup settings for accumulating DB records.
+"""
+type RetentionPolicy implements Node
+  @join__implements(graph: STRAWBERRY, interface: "Node")
+  @join__type(graph: STRAWBERRY)
+{
+  """The Globally Unique ID of this object"""
+  id: ID!
+
+  """Retention category."""
+  category: RetentionCategory!
+
+  """Retention period in days; records older than now - period are purged."""
+  retentionPeriodDays: Int!
+
+  """Whether this policy is active."""
+  enabled: Boolean!
+
+  """When this policy was last swept (read-only observability field)."""
+  lastSweptAt: DateTime
+
+  """Timestamp when this policy was created."""
+  createdAt: DateTime!
+
+  """Timestamp of the last modification."""
+  updatedAt: DateTime!
+}
+
+"""Added in 26.8.0. Paginated list of retention policies."""
+type RetentionPolicyConnection
+  @join__type(graph: STRAWBERRY)
+{
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [RetentionPolicyEdge!]!
+  count: Int!
+}
+
+"""An edge in a connection."""
+type RetentionPolicyEdge
+  @join__type(graph: STRAWBERRY)
+{
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: RetentionPolicy!
+}
+
+"""Added in 26.8.0. Filter for retention policies."""
+input RetentionPolicyFilter
+  @join__type(graph: STRAWBERRY)
+{
+  """Category filter."""
+  category: RetentionCategory = null
+
+  """Enabled filter."""
+  enabled: Boolean = null
+}
+
+"""Added in 26.8.0. Order specification."""
+input RetentionPolicyOrderBy
+  @join__type(graph: STRAWBERRY)
+{
+  """Field to order by."""
+  field: RetentionPolicyOrderField!
+
+  """ASC or DESC."""
+  direction: String! = "ASC"
+}
+
+"""Added in 26.8.0. Order fields for retention policies."""
+enum RetentionPolicyOrderField
+  @join__type(graph: STRAWBERRY)
+{
+  CATEGORY @join__enumValue(graph: STRAWBERRY)
+  CREATED_AT @join__enumValue(graph: STRAWBERRY)
+  LAST_SWEPT_AT @join__enumValue(graph: STRAWBERRY)
 }
 
 """
@@ -17516,6 +17988,16 @@ type RuntimeVariant implements Node
   """
   description: String
 
+  """
+  Added in 26.8.0. Whether legacy model configuration files in the model vfolder participate in revision resolution.
+  """
+  readsVfolderConfigFiles: Boolean!
+
+  """
+  Added in 26.8.0. Model definition defaults stored for this runtime variant.
+  """
+  defaultModelDefinition: RuntimeVariantModelDefinition!
+
   """Timestamp when this runtime variant was registered."""
   createdAt: DateTime!
 
@@ -17569,6 +18051,85 @@ type RuntimeVariantInfo
 {
   name: String
   human_readable_name: String
+}
+
+"""
+Added in 26.8.0. Default model configuration stored for a runtime variant.
+"""
+type RuntimeVariantModelConfig
+  @join__type(graph: STRAWBERRY)
+{
+  """Default model name."""
+  name: String
+
+  """Default model path."""
+  modelPath: String
+
+  """Default model service configuration."""
+  service: RuntimeVariantModelServiceConfig
+
+  """Default model metadata."""
+  metadata: ModelMetadata
+}
+
+"""
+Added in 26.8.0. Model definition defaults stored for a runtime variant.
+"""
+type RuntimeVariantModelDefinition
+  @join__type(graph: STRAWBERRY)
+{
+  """Default model configurations supplied by the runtime variant."""
+  models: [RuntimeVariantModelConfig!]
+}
+
+"""
+Added in 26.8.0. Default health-check settings stored for a runtime variant.
+"""
+type RuntimeVariantModelHealthCheck
+  @join__type(graph: STRAWBERRY)
+{
+  """Whether health checks are enabled."""
+  enable: Boolean
+
+  """Health-check interval in seconds."""
+  interval: Float
+
+  """Health-check endpoint path."""
+  path: String
+
+  """Maximum number of retries."""
+  maxRetries: Int
+
+  """Maximum time to wait for a health check."""
+  maxWaitTime: Float
+
+  """Expected healthy HTTP status code."""
+  expectedStatusCode: Int
+
+  """Initial health-check grace period in seconds."""
+  initialDelay: Float
+}
+
+"""
+Added in 26.8.0. Default model service configuration stored for a runtime variant.
+"""
+type RuntimeVariantModelServiceConfig
+  @join__type(graph: STRAWBERRY)
+{
+  """Actions to run before starting the model service."""
+  preStartActions: [PreStartAction!]
+
+  """Command that starts the model service."""
+  command: String
+
+  """Shell used to run the command."""
+  shell: String
+
+  """Model service port."""
+  port: Int
+
+  """Default model service health-check settings."""
+  healthCheck: RuntimeVariantModelHealthCheck
 }
 
 """Added in 26.4.2. Order specification."""
@@ -18782,6 +19343,7 @@ enum SessionV2Status
   RUNNING @join__enumValue(graph: STRAWBERRY)
   DEPRIORITIZING @join__enumValue(graph: STRAWBERRY)
   PREEMPTED @join__enumValue(graph: STRAWBERRY)
+  RESCHEDULING @join__enumValue(graph: STRAWBERRY)
   TERMINATING @join__enumValue(graph: STRAWBERRY)
   TERMINATED @join__enumValue(graph: STRAWBERRY)
   CANCELLED @join__enumValue(graph: STRAWBERRY)
@@ -19244,9 +19806,6 @@ type UnschedulableReasonHint
 {
   """Subtract these slots to fit the best-fitting node."""
   requiredReduction: [ResourceSlotEntry!]
-
-  """Architectures that actually exist among the scheduling targets."""
-  availableArchs: [String!]
 }
 
 type UnsetQuotaScope
@@ -19266,6 +19825,51 @@ type UntagImageFromRegistry
 
   """Added since 24.03.1."""
   image: ImageNode
+}
+
+"""Added in 26.8.0. Input for changing the resource group of an agent."""
+input UpdateAgentResourceGroupInput
+  @join__type(graph: STRAWBERRY)
+{
+  """ID of the agent to move."""
+  agentId: String!
+
+  """UUID of the target resource group to move the agent into."""
+  resourceGroupId: UUID!
+
+  """
+  How to handle sessions still running on the agent under the old resource group. Defaults to TERMINATE, which is currently the only supported policy.
+  """
+  policy: ConflictingSessionCleanupPolicy = null
+
+  """
+  When false, the change is rejected with a conflict error if the agent still has active sessions. When true, the group is changed anyway and the conflicting sessions are cleaned up per the policy.
+  """
+  force: Boolean! = false
+}
+
+"""Added in 26.8.0. Result of changing the resource group of an agent."""
+type UpdateAgentResourceGroupPayload
+  @join__type(graph: STRAWBERRY)
+{
+  """ID of the agent whose resource group was changed."""
+  agentId: String!
+
+  """UUID of the new resource group."""
+  resourceGroupId: UUID!
+
+  """Cleanup policy applied to the conflicting sessions."""
+  policy: ConflictingSessionCleanupPolicy!
+
+  """
+  IDs of the sessions that were still running on the agent under the old resource group at the time of the change.
+  """
+  conflictingSessionIds: [UUID!]!
+
+  """
+  IDs of the conflicting sessions that were actually transitioned to TERMINATING by the applied policy. Their container cleanup proceeds asynchronously.
+  """
+  terminatingSessionIds: [UUID!]!
 }
 
 """
@@ -20061,6 +20665,31 @@ input UpdateResourcePresetV2Input
 
   """Updated resource group name. Use null to make global."""
   resourceGroupName: String = null
+}
+
+"""Added in 26.8.0. Update retention policy input."""
+input UpdateRetentionPolicyInput
+  @join__type(graph: STRAWBERRY)
+{
+  """Retention policy ID."""
+  id: UUID!
+
+  """New category."""
+  category: RetentionCategory = null
+
+  """New retention period in days."""
+  retentionPeriodDays: Int = null
+
+  """Toggle enabled."""
+  enabled: Boolean = null
+}
+
+"""Added in 26.8.0. Update retention policy payload."""
+type UpdateRetentionPolicyPayload
+  @join__type(graph: STRAWBERRY)
+{
+  """The updated retention policy."""
+  policy: RetentionPolicy!
 }
 
 """Added in 26.3.0. Input for updating a role"""

@@ -2151,6 +2151,7 @@
     "Active": "アクティブ",
     "Assign": "割り当て",
     "AssignUser": "ユーザーを追加",
+    "AssignedUser": "割り当てられたユーザー",
     "Assignments": "割り当て",
     "AtLeastOneScopeRequired": "少なくとも1つのスコープが必要です。",
     "AutoAssign": "自動割り当て",

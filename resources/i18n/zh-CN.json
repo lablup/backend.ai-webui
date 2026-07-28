@@ -2151,6 +2151,7 @@
     "Active": "活跃",
     "Assign": "分配",
     "AssignUser": "添加用户",
+    "AssignedUser": "已分配的用户",
     "Assignments": "分配",
     "AtLeastOneScopeRequired": "至少需要一个范围。",
     "AutoAssign": "自动分配",

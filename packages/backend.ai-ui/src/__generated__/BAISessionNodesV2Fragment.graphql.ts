@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7cec1366267d17cbf491b178a06b167a>>
+ * @generated SignedSource<<bc197cd8380da8401463bd3bdac812b6>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,7 +9,7 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
-export type SessionV2Status = "CANCELLED" | "CREATING" | "DEPRIORITIZING" | "PENDING" | "PREEMPTED" | "PREPARED" | "PREPARING" | "RUNNING" | "SCHEDULED" | "TERMINATED" | "TERMINATING" | "%future added value";
+export type SessionV2Status = "CANCELLED" | "CREATING" | "DEPRIORITIZING" | "PENDING" | "PREEMPTED" | "PREPARED" | "PREPARING" | "RESCHEDULING" | "RUNNING" | "SCHEDULED" | "TERMINATED" | "TERMINATING" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type BAISessionNodesV2Fragment$data = ReadonlyArray<{
   readonly id: string;

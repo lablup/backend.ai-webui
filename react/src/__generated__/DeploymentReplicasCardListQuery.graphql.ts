@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c9106ec0b5de2c38b791a46250087f4d>>
+ * @generated SignedSource<<ec0cfba47b0595fccc05d4b2a209ef92>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,6 +19,7 @@ export type ReplicaFilter = {
   AND?: ReadonlyArray<ReplicaFilter> | null | undefined;
   NOT?: ReadonlyArray<ReplicaFilter> | null | undefined;
   OR?: ReadonlyArray<ReplicaFilter> | null | undefined;
+  healthStatus?: ReplicaHealthStatusFilter | null | undefined;
   status?: ReplicaStatusFilter | null | undefined;
   trafficStatus?: TrafficStatusFilter | null | undefined;
 };
@@ -27,6 +28,12 @@ export type ReplicaStatusFilter = {
   in?: ReadonlyArray<ReplicaStatus> | null | undefined;
   notEquals?: ReplicaStatus | null | undefined;
   notIn?: ReadonlyArray<ReplicaStatus> | null | undefined;
+};
+export type ReplicaHealthStatusFilter = {
+  equals?: ReplicaHealthStatus | null | undefined;
+  in?: ReadonlyArray<ReplicaHealthStatus> | null | undefined;
+  notEquals?: ReplicaHealthStatus | null | undefined;
+  notIn?: ReadonlyArray<ReplicaHealthStatus> | null | undefined;
 };
 export type TrafficStatusFilter = {
   equals?: TrafficStatus | null | undefined;

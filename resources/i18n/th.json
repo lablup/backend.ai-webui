@@ -2151,6 +2151,7 @@
     "Active": "ใช้งานอยู่",
     "Assign": "มอบหมาย",
     "AssignUser": "เพิ่มผู้ใช้",
+    "AssignedUser": "ผู้ใช้ที่ถูกมอบหมาย",
     "Assignments": "การมอบหมาย",
     "AtLeastOneScopeRequired": "ต้องระบุขอบเขตอย่างน้อยหนึ่งรายการ",
     "AutoAssign": "กำหนดอัตโนมัติ",

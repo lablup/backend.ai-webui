@@ -2151,6 +2151,7 @@
     "Active": "활성",
     "Assign": "추가",
     "AssignUser": "사용자 추가",
+    "AssignedUser": "할당된 사용자",
     "Assignments": "할당",
     "AtLeastOneScopeRequired": "하나 이상의 적용 범위가 필요합니다.",
     "AutoAssign": "자동 할당",
