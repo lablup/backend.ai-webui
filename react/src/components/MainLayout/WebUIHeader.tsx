@@ -8,6 +8,7 @@ import {
   useSuspendedBackendaiClient,
   useWebUINavigate,
 } from '../../hooks';
+import { useAccessibleProjects } from '../../hooks/useAccessibleProjects';
 import {
   useCurrentProjectValue,
   useSetCurrentProject,
@@ -22,6 +23,7 @@ import {
   useCurrentMenuKey,
   useRouteScope,
 } from '../../hooks/useRouteScope';
+import { useUrlProjectValidity } from '../../hooks/useUrlProjectValidity';
 import { useWebUIMenuItems } from '../../hooks/useWebUIMenuItems';
 import BAINotificationButton from '../BAINotificationButton';
 import LoginSessionExtendButton from '../LoginSessionExtendButton';
@@ -34,10 +36,11 @@ import { useSessionStorageState } from 'ahooks';
 import { theme, Button, Modal, Typography, Grid, Divider } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIFlex, BAIFlexProps } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import { MenuIcon } from 'lucide-react';
 import { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useMatches } from 'react-router-dom';
 
 const useStyles = createStyles(({ css }) => ({
   webuiHeader: css`
@@ -65,16 +68,32 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
   const gridBreakpoint = Grid.useBreakpoint();
   const webuiNavigate = useWebUINavigate();
   const location = useLocation();
+  const matches = useMatches();
   const routeScope = useRouteScope();
   const currentMenuKey = useCurrentMenuKey();
   // When the URL carries an invalid/inaccessible `:projectName`, the atom keeps
   // the last valid project, which would make the header selector look like that
   // project is selected. Detect this and show the selector unselected instead.
+  // Checked against the selector's own accessible-project source (FR-3388) so
+  // this can never disagree with what the selector renders.
   const activeProjectName = useActiveProjectName();
-  const accessibleProjectNames =
-    (baiClient as unknown as { groups?: string[] })?.groups ?? [];
+  const { accessibleProjects } = useAccessibleProjects();
+  const accessibleProjectNames = _.compact(
+    _.map(accessibleProjects, (project) => project?.name),
+  );
+  // A router-owned 404 outside any project context (e.g. an invalid scope
+  // prefix like `/admi/...`) corresponds to no project at all — show the
+  // selector placeholder there too. Scoped 404s under a valid
+  // `/project/:projectName/*` URL keep their project context (the param is
+  // present), so only the projectless catch-alls blank the selector.
+  const deepestHandle = matches[matches.length - 1]?.handle as
+    { notFound?: boolean } | undefined;
+  const { urlProjectName } = useUrlProjectValidity();
+  const isProjectlessNotFound = !!deepestHandle?.notFound && !urlProjectName;
   const isUrlProjectInvalid =
-    !!activeProjectName && !accessibleProjectNames.includes(activeProjectName);
+    (!!activeProjectName &&
+      !accessibleProjectNames.includes(activeProjectName)) ||
+    isProjectlessNotFound;
   const { isSelectedAdminCategoryMenu } = useWebUIMenuItems();
   const effectiveAdminRole = useEffectiveAdminRole();
   const { projectAdminIds } = useCurrentUserProjectRoles();

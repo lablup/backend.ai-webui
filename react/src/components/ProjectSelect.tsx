@@ -2,9 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { ProjectSelectorQuery } from '../__generated__/ProjectSelectorQuery.graphql';
-import { useSuspendedBackendaiClient } from '../hooks';
-import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
+import { useAccessibleProjects } from '../hooks/useAccessibleProjects';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles';
 import { InfoCircleOutlined } from '@ant-design/icons';
@@ -14,7 +12,6 @@ import * as _ from 'lodash-es';
 import { ShieldUser } from 'lucide-react';
 import React, { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
 
 type ProjectInfo = {
   label: React.ReactNode;
@@ -42,55 +39,18 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const [currentUser] = useCurrentUserInfo();
-  const baiClient = useSuspendedBackendaiClient();
-  const blockList = baiClient?._config?.blockList ?? null;
 
   const [value, setValue] = useControllableState_deprecated(selectProps);
-  const userRole = useCurrentUserRole();
   const { projectAdminIds } = useCurrentUserProjectRoles();
-  const { groups, user } = useLazyLoadQuery<ProjectSelectorQuery>(
-    graphql`
-      query ProjectSelectorQuery(
-        $domain_name: String
-        $email: String
-        $type: [String]
-      ) {
-        groups(domain_name: $domain_name, is_active: true, type: $type) {
-          id
-          is_active
-          name
-          resource_policy
-          type
-        }
-        user(email: $email) {
-          groups {
-            id
-            name
-          }
-        }
-      }
-    `,
-    {
-      domain_name: domain,
-      email: currentUser.email,
-      type:
-        (userRole === 'admin' || userRole === 'superadmin') &&
-        _.includes(blockList, 'model-store')
-          ? ['GENERAL']
-          : ['GENERAL', 'MODEL_STORE'],
-    },
-    {
-      fetchPolicy: 'network-only',
-    },
-  );
+  // Shared accessible-project source (FR-3388): the same hook backs
+  // `useUrlProjectValidity`, so the selector and URL validation cannot
+  // disagree. `network-only` keeps the selector's refresh-on-mount behavior.
+  const { groups, accessibleProjects: memberProjects } = useAccessibleProjects({
+    domain,
+    fetchPolicy: 'network-only',
+  });
 
-  // temporary filtering groups by accessible groups according to user query
-  const accessibleProjects = disableDefaultFilter
-    ? groups
-    : groups?.filter((project) =>
-        user?.groups?.map((group) => group?.id).includes(project?.id),
-      );
+  const accessibleProjects = disableDefaultFilter ? groups : memberProjects;
 
   const lockedProjectIds = !lockedProjectTypes?.length
     ? []

@@ -3,29 +3,33 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 /**
- * Tests for the shared URL-project validation (FR-3279). `isInvalid` decides
- * whether `PageAccessGuard` bypasses authorization and whether the project
- * subtree renders the merged not-found/no-access state, so each membership
- * combination is pinned here.
+ * Tests for the shared URL-project validation (FR-3279, FR-3388). `isInvalid`
+ * decides whether `PageAccessGuard` bypasses authorization and whether the
+ * project subtree renders the merged not-found/no-access state, so each
+ * membership combination is pinned here.
+ *
+ * Since FR-3388 the membership source is `useAccessibleProjects` (the same
+ * GraphQL-backed list the header's `ProjectSelect` renders), not the
+ * login-time `baiClient.groups` list — MODEL_STORE projects are therefore
+ * valid whenever the selector offers them.
  */
 import { useUrlProjectValidity } from './useUrlProjectValidity';
 import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const mockUseSuspendedBackendaiClient = vi.fn();
+const mockUseAccessibleProjects = vi.fn();
 const mockUseMatches = vi.fn();
 
-vi.mock('.', () => ({
-  useSuspendedBackendaiClient: () => mockUseSuspendedBackendaiClient(),
+vi.mock('./useAccessibleProjects', () => ({
+  useAccessibleProjects: () => mockUseAccessibleProjects(),
 }));
 
 vi.mock('react-router-dom', () => ({
   useMatches: () => mockUseMatches(),
 }));
 
-const clientWith = (groups: string[], groupIds: Record<string, string>) => ({
-  groups,
-  groupIds,
+const accessible = (projects: { id: string; name: string }[]) => ({
+  accessibleProjects: projects,
 });
 
 const matchWithProject = (projectName?: string) => [
@@ -39,8 +43,8 @@ describe('useUrlProjectValidity', () => {
   });
 
   it('is not invalid outside project-scoped URLs (no :projectName param)', () => {
-    mockUseSuspendedBackendaiClient.mockReturnValue(
-      clientWith(['alpha'], { alpha: 'id-alpha' }),
+    mockUseAccessibleProjects.mockReturnValue(
+      accessible([{ id: 'id-alpha', name: 'alpha' }]),
     );
     mockUseMatches.mockReturnValue(matchWithProject(undefined));
 
@@ -50,9 +54,12 @@ describe('useUrlProjectValidity', () => {
     expect(result.current.resolvedId).toBeUndefined();
   });
 
-  it('resolves a valid member project (member + id present)', () => {
-    mockUseSuspendedBackendaiClient.mockReturnValue(
-      clientWith(['alpha', 'beta'], { alpha: 'id-alpha', beta: 'id-beta' }),
+  it('resolves a valid accessible project', () => {
+    mockUseAccessibleProjects.mockReturnValue(
+      accessible([
+        { id: 'id-beta', name: 'beta' },
+        { id: 'id-alpha', name: 'alpha' },
+      ]),
     );
     mockUseMatches.mockReturnValue(matchWithProject('beta'));
 
@@ -63,9 +70,9 @@ describe('useUrlProjectValidity', () => {
     expect(result.current.groups).toEqual(['alpha', 'beta']);
   });
 
-  it('is invalid for a project the user is not a member of', () => {
-    mockUseSuspendedBackendaiClient.mockReturnValue(
-      clientWith(['alpha'], { alpha: 'id-alpha' }),
+  it('is invalid for a project the selector does not offer', () => {
+    mockUseAccessibleProjects.mockReturnValue(
+      accessible([{ id: 'id-alpha', name: 'alpha' }]),
     );
     mockUseMatches.mockReturnValue(matchWithProject('ghost'));
 
@@ -74,19 +81,12 @@ describe('useUrlProjectValidity', () => {
     expect(result.current.isInvalid).toBe(true);
   });
 
-  it('is invalid for a member project whose id is missing', () => {
-    mockUseSuspendedBackendaiClient.mockReturnValue(clientWith(['alpha'], {}));
-    mockUseMatches.mockReturnValue(matchWithProject('alpha'));
-
-    const { result } = renderHook(() => useUrlProjectValidity());
-    expect(result.current.urlProjectName).toBe('alpha');
-    expect(result.current.isInvalid).toBe(true);
-    expect(result.current.resolvedId).toBeUndefined();
-  });
-
   it('reads the DEEPEST match carrying a projectName param', () => {
-    mockUseSuspendedBackendaiClient.mockReturnValue(
-      clientWith(['outer', 'inner'], { outer: 'id-o', inner: 'id-i' }),
+    mockUseAccessibleProjects.mockReturnValue(
+      accessible([
+        { id: 'id-o', name: 'outer' },
+        { id: 'id-i', name: 'inner' },
+      ]),
     );
     mockUseMatches.mockReturnValue([
       { params: { projectName: 'outer' } },
@@ -98,8 +98,10 @@ describe('useUrlProjectValidity', () => {
     expect(result.current.resolvedId).toBe('id-i');
   });
 
-  it('tolerates a client without groups/groupIds fields', () => {
-    mockUseSuspendedBackendaiClient.mockReturnValue({});
+  it('tolerates an undefined accessible-project list', () => {
+    mockUseAccessibleProjects.mockReturnValue({
+      accessibleProjects: undefined,
+    });
     mockUseMatches.mockReturnValue(matchWithProject('any'));
 
     const { result } = renderHook(() => useUrlProjectValidity());

@@ -329,7 +329,7 @@ const DeploymentListPageContent: React.FC = () => {
                           title={record.metadata?.name ?? '-'}
                           onTitleClick={() =>
                             webuiNavigate(
-                              `/deployments/${toLocalId(record.id)}`,
+                              `${buildProjectPath('deployments')}/${toLocalId(record.id)}`,
                             )
                           }
                           copyable

@@ -186,14 +186,15 @@ export const useActiveProjectName = (): string | undefined => {
   const matches = useMatches();
   const currentProject = useCurrentProjectValue();
 
-  // Find the deepest match that carries a `projectName` param.
+  // Find the deepest match that carries a `projectName` param. Router params
+  // are already percent-decoded — decoding again would corrupt project names
+  // that contain a literal escape sequence (e.g. `a%20b`).
   for (let i = matches.length - 1; i >= 0; i--) {
     const params = matches[i]?.params as
-      | Record<string, string | undefined>
-      | undefined;
+      Record<string, string | undefined> | undefined;
     const name = params?.projectName;
     if (name) {
-      return decodeSafe(name);
+      return name;
     }
   }
 

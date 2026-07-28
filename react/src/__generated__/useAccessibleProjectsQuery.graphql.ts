@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f1e307e971d3ef542439a5905fd43dd4>>
+ * @generated SignedSource<<e0f6e62cfb2655ac1d4433a24c1d28f6>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,12 +9,12 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type ProjectSelectorQuery$variables = {
+export type useAccessibleProjectsQuery$variables = {
   domain_name?: string | null | undefined;
   email?: string | null | undefined;
   type?: ReadonlyArray<string | null | undefined> | null | undefined;
 };
-export type ProjectSelectorQuery$data = {
+export type useAccessibleProjectsQuery$data = {
   readonly groups: ReadonlyArray<{
     readonly id: string | null | undefined;
     readonly is_active: boolean | null | undefined;
@@ -29,9 +29,9 @@ export type ProjectSelectorQuery$data = {
     } | null | undefined> | null | undefined;
   } | null | undefined;
 };
-export type ProjectSelectorQuery = {
-  response: ProjectSelectorQuery$data;
-  variables: ProjectSelectorQuery$variables;
+export type useAccessibleProjectsQuery = {
+  response: useAccessibleProjectsQuery$data;
+  variables: useAccessibleProjectsQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -141,7 +141,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "ProjectSelectorQuery",
+    "name": "useAccessibleProjectsQuery",
     "selections": [
       (v3/*: any*/),
       {
@@ -164,7 +164,7 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "ProjectSelectorQuery",
+    "name": "useAccessibleProjectsQuery",
     "selections": [
       (v3/*: any*/),
       {
@@ -183,16 +183,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "90dcbb57bf23f0a95ae6e5494e83920f",
+    "cacheID": "0e48f08cbdc9b490c9bcba124fc9fbcf",
     "id": null,
     "metadata": {},
-    "name": "ProjectSelectorQuery",
+    "name": "useAccessibleProjectsQuery",
     "operationKind": "query",
-    "text": "query ProjectSelectorQuery(\n  $domain_name: String\n  $email: String\n  $type: [String]\n) {\n  groups(domain_name: $domain_name, is_active: true, type: $type) {\n    id\n    is_active\n    name\n    resource_policy\n    type\n  }\n  user(email: $email) {\n    groups {\n      id\n      name\n    }\n    id\n  }\n}\n"
+    "text": "query useAccessibleProjectsQuery(\n  $domain_name: String\n  $email: String\n  $type: [String]\n) {\n  groups(domain_name: $domain_name, is_active: true, type: $type) {\n    id\n    is_active\n    name\n    resource_policy\n    type\n  }\n  user(email: $email) {\n    groups {\n      id\n      name\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0167dba03af12a144a7f0768d4ea27f0";
+(node as any).hash = "ec6e98396db0fa4784d652440e9d5886";
 
 export default node;
