@@ -11,6 +11,7 @@ import {
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useDefaultFileBrowserImageWithFallback } from '../hooks/useDefaultImagesWithFallback';
 import { useMergedAllowedStorageHostPermission } from '../hooks/useMergedAllowedStorageHostPermission';
+import { useProjectPath } from '../hooks/useRouteScope';
 import {
   StartSessionWithDefaultValue,
   useStartSession,
@@ -45,6 +46,7 @@ const FileBrowserButtonV2: React.FC<FileBrowserButtonV2Props> = ({
   const { logger } = useBAILogger();
 
   const webuiNavigate = useWebUINavigate();
+  const buildProjectPath = useProjectPath();
 
   const baiClient = useSuspendedBackendaiClient();
   const currentDomain = useCurrentDomainValue();
@@ -176,7 +178,7 @@ const FileBrowserButtonV2: React.FC<FileBrowserButtonV2Props> = ({
                   params.set('formValues', JSON.stringify(launcherValue));
                   params.set('step', '4');
                   webuiNavigate({
-                    pathname: '/session/start',
+                    pathname: buildProjectPath('session/start'),
                     search: params.toString(),
                   });
                 },

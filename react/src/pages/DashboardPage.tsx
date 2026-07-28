@@ -22,6 +22,7 @@ import {
   useCurrentProjectValue,
   useCurrentResourceGroupValue,
 } from '../hooks/useCurrentProject';
+import { useProjectPath } from '../hooks/useRouteScope';
 import { Skeleton, theme } from 'antd';
 import {
   BAIBoardItemErrorBoundary,
@@ -44,6 +45,7 @@ const DashboardPage: React.FC = () => {
   const userRole = useCurrentUserRole();
   const baiClient = useSuspendedBackendaiClient();
   const webuiNavigate = useWebUINavigate();
+  const buildProjectPath = useProjectPath();
 
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [isPendingIntervalRefetch, startIntervalRefetchTransition] =
@@ -193,7 +195,7 @@ const DashboardPage: React.FC = () => {
                 fetchKey={fetchKey}
                 onRequestBadgeClick={() => {
                   webuiNavigate({
-                    pathname: '/data',
+                    pathname: buildProjectPath('data'),
                     search: new URLSearchParams({
                       invitation: 'true',
                     }).toString(),

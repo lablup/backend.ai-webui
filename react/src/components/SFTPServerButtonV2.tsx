@@ -14,6 +14,7 @@ import {
 } from '../hooks/useCurrentProject';
 import { useDefaultSystemSSHImageWithFallback } from '../hooks/useDefaultImagesWithFallback';
 import { useMergedAllowedStorageHostPermission } from '../hooks/useMergedAllowedStorageHostPermission';
+import { useProjectPath } from '../hooks/useRouteScope';
 import {
   StartSessionWithDefaultValue,
   useStartSession,
@@ -48,6 +49,7 @@ const SFTPServerButtonV2: React.FC<SFTPServerButtonV2Props> = ({
   const { message, modal } = App.useApp();
 
   const webuiNavigate = useWebUINavigate();
+  const buildProjectPath = useProjectPath();
 
   const baiClient = useSuspendedBackendaiClient();
   const currentDomain = useCurrentDomainValue();
@@ -195,7 +197,7 @@ const SFTPServerButtonV2: React.FC<SFTPServerButtonV2Props> = ({
                   params.set('formValues', JSON.stringify(launcherValue));
                   params.set('step', '4');
                   webuiNavigate({
-                    pathname: '/session/start',
+                    pathname: buildProjectPath('session/start'),
                     search: params.toString(),
                   });
                 },

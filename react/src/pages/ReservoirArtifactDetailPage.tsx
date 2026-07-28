@@ -13,6 +13,7 @@ import {
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import ImportArtifactRevisionToFolderButton from '../components/ImportArtifactRevisionToFolderButton';
 import ImportArtifactRevisionToFolderModal from '../components/ImportArtifactRevisionToFolderModal';
+import { buildPath } from '../helper/pathBuilder';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { Button, Typography, Descriptions, theme, Tooltip } from 'antd';
@@ -655,7 +656,7 @@ const ReservoirArtifactDetailPage = () => {
                       }),
                       showIcon: true,
                       toText: t('reservoirPage.GoToArtifact'),
-                      to: `/reservoir/${task.artifact.id}`,
+                      to: buildPath('admin', `reservoir/${task.artifact.id}`),
                     };
                   },
                   rejected: (_data, _notification) => {
