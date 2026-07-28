@@ -130,6 +130,15 @@ describe('modelDefinitionFromGraphQL', () => {
     expect(result).toEqual({});
   });
 
+  it('should treat an empty command as undefined, keeping the other fields', () => {
+    const result = modelDefinitionFromGraphQL({
+      models: [{ service: { command: '', port: 8080 } }],
+    });
+    // An empty string is not a usable hint, so it must not survive as a
+    // placeholder — but it must not suppress the fields that are defined.
+    expect(result).toEqual({ port: 8080 });
+  });
+
   it('should return null when there is no first model service', () => {
     expect(modelDefinitionFromGraphQL(null)).toBeNull();
     expect(modelDefinitionFromGraphQL(undefined)).toBeNull();

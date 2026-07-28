@@ -4,6 +4,7 @@
  *
  * Uses the `yaml` package (already a project dependency).
  */
+import * as _ from 'lodash-es';
 import { parse as parseYaml } from 'yaml';
 
 export interface ParsedModelDefinition {
@@ -149,23 +150,22 @@ export function modelDefinitionFromGraphQL(
     return null;
   }
 
-  const healthCheck = service.healthCheck ?? {};
+  const healthCheck = service.healthCheck;
 
-  // An undefined field must stay absent from the result, not become a static
-  // value: absence is what lets the placeholder merge fall through to the other
-  // layer (see the doc comment above).
-  const result: Partial<ParsedModelDefinition> = {};
-  // Raw command string, verbatim. No shell tokenization / re-quoting.
-  if (service.command) result.startCommand = service.command;
-  if (typeof service.port === 'number') result.port = service.port;
-  if (typeof healthCheck.path === 'string')
-    result.healthCheckPath = healthCheck.path;
-  if (typeof model?.modelPath === 'string')
-    result.modelMountDestination = model.modelPath;
-  if (typeof healthCheck.initialDelay === 'number')
-    result.initialDelay = healthCheck.initialDelay;
-  if (typeof healthCheck.maxRetries === 'number')
-    result.maxRetries = healthCheck.maxRetries;
-
-  return result;
+  // `omitBy` drops the keys outright rather than leaving them `undefined`: an
+  // undefined-valued key would still win a spread and blank the other layer of
+  // the placeholder merge, so absence has to be real absence. An empty command
+  // is treated as "not defined" for the same reason — it is not a usable hint.
+  return _.omitBy(
+    {
+      // Raw command string, verbatim. No shell tokenization / re-quoting.
+      startCommand: service.command || undefined,
+      port: service.port,
+      healthCheckPath: healthCheck?.path,
+      modelMountDestination: model?.modelPath,
+      initialDelay: healthCheck?.initialDelay,
+      maxRetries: healthCheck?.maxRetries,
+    },
+    _.isNil,
+  ) as Partial<ParsedModelDefinition>;
 }

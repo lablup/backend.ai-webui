@@ -1442,7 +1442,12 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           modelMountConfig: {
             vfolderId: selectedModelFolderUuid,
             mountDestination: modelMountDestination,
-            definitionPath: values.definitionPath?.trim() || null,
+            // Only variants that read the vfolder config files expose this
+            // field; anything left in the form store for the others is not
+            // theirs to send.
+            definitionPath: readsVfolderConfigFiles
+              ? values.definitionPath?.trim() || null
+              : null,
             // `subpath` (mount a subfolder inside the model vfolder) was added
             // in 26.4.4; omit the key entirely on older managers, which reject
             // unknown input fields.
@@ -1561,16 +1566,6 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   const readsVfolderConfigFilesInMode =
     readsVfolderConfigFiles &&
     (supportsRuntimeVariantConfigReads || effectiveMode === 'custom');
-
-  // The "Model Definition File Path" points at the model-definition.yaml the
-  // server will read, so the field is meaningful only for variants that read the
-  // vfolder config files. Managers that report that capability answer this
-  // directly; on managers that do not, `custom` is the only variant known to
-  // read them and stands in for the answer. The capability is read through the
-  // client feature flag rather than comparing manager versions here.
-  const showModelDefinitionPath = supportsRuntimeVariantConfigReads
-    ? !!watchedVariant?.readsVfolderConfigFiles
-    : watchedVariant?.name === 'custom';
 
   // Read the selected model folder's `model-definition.yaml` and use its parsed
   // values as placeholders (display-only hints) on the command fields. Enabled
@@ -2452,7 +2447,10 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 label: t('session.launcher.AdvancedSettings'),
                 children: (
                   <Suspense fallback={<Skeleton active />}>
-                    {showModelDefinitionPath && (
+                    {/* The path points at the model-definition.yaml the server
+                        will read, so the field means nothing for a variant that
+                        does not read the vfolder config files. */}
+                    {readsVfolderConfigFiles && (
                       <Form.Item
                         name="definitionPath"
                         label={t('deployment.ModelDefinitionPath')}
