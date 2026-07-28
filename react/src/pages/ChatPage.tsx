@@ -52,7 +52,7 @@ const useStyles = createStyles(({ css }) => ({
   `,
 }));
 
-function useDefaultEndpointId() {
+function useDefaultDeploymentId() {
   'use memo';
   const baiClient = useSuspendedBackendaiClient();
 
@@ -110,10 +110,10 @@ function useDefaultEndpointId() {
 }
 
 export function useChatProviderData(
-  defaultEndpointId?: string,
+  defaultDeploymentId?: string,
 ): ChatProviderData {
-  const [{ endpointId, modelId, agentId, apiKey }] = useQueryStates({
-    endpointId: parseAsString,
+  const [{ deploymentId, modelId, agentId, apiKey }] = useQueryStates({
+    deploymentId: parseAsString,
     agentId: parseAsString,
     modelId: parseAsString,
     apiKey: parseAsString,
@@ -122,7 +122,7 @@ export function useChatProviderData(
   return {
     basePath: 'v1', // Use OpenAPI 'v1' for OpenAI compatibility basePath,
     baseURL: '',
-    endpointId: endpointId ?? defaultEndpointId ?? undefined,
+    deploymentId: deploymentId ?? defaultDeploymentId ?? undefined,
     agentId: agentId ?? undefined,
     modelId: modelId ?? undefined,
     apiKey: apiKey ?? undefined,
@@ -221,8 +221,8 @@ const ChatHistoryDrawer = ({
 const PureChatPage = ({ id }: { id: string }) => {
   'use memo';
 
-  const defaultEndpointId = useDefaultEndpointId();
-  const provider = useChatProviderData(defaultEndpointId);
+  const defaultDeploymentId = useDefaultDeploymentId();
+  const provider = useChatProviderData(defaultDeploymentId);
   const { styles } = useStyles();
   const [openHistory, setOpenHistory] = useState(false);
   const [chatIntroAlertDismissed, setChatIntroAlertDismissed] =

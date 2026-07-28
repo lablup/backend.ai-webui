@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b0525c4d71a8c4df4d253016febb9402>>
+ * @generated SignedSource<<67a04953432bd9b61489a464abf3e172>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,10 +10,10 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { Result } from "relay-runtime";
-export type EndpointTokenSelectQuery$variables = {
+export type DeploymentTokenSelectQuery$variables = {
   deploymentId: string;
 };
-export type EndpointTokenSelectQuery$data = {
+export type DeploymentTokenSelectQuery$data = {
   readonly deployment: Result<{
     readonly accessTokens: {
       readonly edges: ReadonlyArray<{
@@ -27,9 +27,9 @@ export type EndpointTokenSelectQuery$data = {
     } | null | undefined;
   } | null | undefined, unknown>;
 };
-export type EndpointTokenSelectQuery = {
-  response: EndpointTokenSelectQuery$data;
-  variables: EndpointTokenSelectQuery$variables;
+export type DeploymentTokenSelectQuery = {
+  response: DeploymentTokenSelectQuery$data;
+  variables: DeploymentTokenSelectQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -125,7 +125,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "EndpointTokenSelectQuery",
+    "name": "DeploymentTokenSelectQuery",
     "selections": [
       {
         "kind": "CatchField",
@@ -151,7 +151,7 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "EndpointTokenSelectQuery",
+    "name": "DeploymentTokenSelectQuery",
     "selections": [
       {
         "alias": null,
@@ -169,16 +169,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "804f425e87909bf310afc6b08603997f",
+    "cacheID": "c83af70fa58b61c9daa4716e6a2a8049",
     "id": null,
     "metadata": {},
-    "name": "EndpointTokenSelectQuery",
+    "name": "DeploymentTokenSelectQuery",
     "operationKind": "query",
-    "text": "query EndpointTokenSelectQuery(\n  $deploymentId: ID!\n) {\n  deployment(id: $deploymentId) {\n    accessTokens(orderBy: [{field: CREATED_AT, direction: DESC}]) {\n      edges {\n        node {\n          id\n          token\n          createdAt\n          expiresAt\n        }\n      }\n    }\n    id\n  }\n}\n"
+    "text": "query DeploymentTokenSelectQuery(\n  $deploymentId: ID!\n) {\n  deployment(id: $deploymentId) {\n    accessTokens(orderBy: [{field: CREATED_AT, direction: DESC}]) {\n      edges {\n        node {\n          id\n          token\n          createdAt\n          expiresAt\n        }\n      }\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "510ee4474805d8ecefee557eab25da84";
+(node as any).hash = "d5448e0f4b2191906c5ba30e7d998fdd";
 
 export default node;
