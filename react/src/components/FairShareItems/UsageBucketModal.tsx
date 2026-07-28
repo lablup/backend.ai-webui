@@ -231,7 +231,6 @@ const UsageBucketModal: React.FC<UsageBucketModalProps> = ({
                       domainFairShares,
                       (d) => d.domain?.basicInfo?.name || '',
                     )}
-                    popoverTitle={t('fairShare.Domain')}
                   />
                 ),
               },
@@ -245,7 +244,6 @@ const UsageBucketModal: React.FC<UsageBucketModalProps> = ({
                       projectFairShares,
                       (p) => p?.project?.basicInfo?.name || '',
                     )}
-                    popoverTitle={t('fairShare.Project')}
                   />
                 ),
               },
@@ -259,7 +257,6 @@ const UsageBucketModal: React.FC<UsageBucketModalProps> = ({
                       userFairShares,
                       (u) => u?.user?.basicInfo?.email || '',
                     )}
-                    popoverTitle={t('fairShare.User')}
                   />
                 ),
               },

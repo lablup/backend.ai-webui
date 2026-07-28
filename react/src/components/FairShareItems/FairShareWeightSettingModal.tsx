@@ -575,7 +575,6 @@ const FairShareWeightSettingModal: React.FC<
                   domainsFairShares,
                   (domain) => domain.domain?.basicInfo?.name || '',
                 )}
-                popoverTitle={t('fairShare.Domain')}
               />
             ) : (
               <Input disabled />
@@ -596,7 +595,6 @@ const FairShareWeightSettingModal: React.FC<
                   projectFairShares,
                   (project) => project.project?.basicInfo?.name || '',
                 )}
-                popoverTitle={t('fairShare.Project')}
               />
             ) : (
               <Input disabled />
@@ -621,7 +619,6 @@ const FairShareWeightSettingModal: React.FC<
                   userFairShares,
                   (user) => user.user?.basicInfo?.email || '',
                 )}
-                popoverTitle={t('fairShare.User')}
               />
             ) : (
               <Input disabled />
