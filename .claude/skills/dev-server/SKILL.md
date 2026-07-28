@@ -15,14 +15,16 @@ description: >
   live session is connected to a different backend a dev-only banner flags the
   mismatch instead of forcing a logout. When the user supplies dev test
   credentials, set VITE_DEFAULT_EMAIL / VITE_DEFAULT_PASSWORD to pre-fill the
-  login form too.
+  login form too. Dev servers run without the resident TypeScript program
+  (~1.3 GB per server) by default; pass VITE_DEV_TYPECHECK=on only when the
+  user explicitly asked for type checking, and say either way in the reply.
   Trigger on: "start dev server", "run dev", "pnpm dev 띄워", "개발 서버 띄워",
   "dev 서버 시작", "boot the dev environment", "실행해줘 dev".
 ---
 
 # Dev Server
 
-Starts the dev server with optional `VITE_THEME_HEADER_COLOR`, `PORTLESS_APP_NAME`, `VITE_DEFAULT_API_ENDPOINT`, and (when the user supplies them) `VITE_DEFAULT_EMAIL` / `VITE_DEFAULT_PASSWORD`, derived from this Claude Code session's `/color` / `/rename` history, the current branch's PR description, and the user's stated test credentials.
+Starts the dev server with optional `VITE_THEME_HEADER_COLOR`, `PORTLESS_APP_NAME`, `VITE_DEFAULT_API_ENDPOINT`, `VITE_DEV_TYPECHECK`, and (when the user supplies them) `VITE_DEFAULT_EMAIL` / `VITE_DEFAULT_PASSWORD`, derived from this Claude Code session's `/color` / `/rename` history, the current branch's PR description, and the user's stated test credentials.
 
 ## 1. Decide the command
 
@@ -168,6 +170,29 @@ If the resolved value matches the existing default backend the WebUI would other
 - `VITE_DEFAULT_PASSWORD` bakes a **plaintext password into the dev bundle** at build time. It is dev-only (`import.meta.env.DEV`), but still: only ever pass it on the command line or via the user's git-ignored `.env.development.local` — never write it to a committed file, and never for a production build.
 - Prefer non-privileged / disposable test accounts. If the user asks to pre-fill a real admin password, confirm they intend the plaintext-in-dev-bundle tradeoff before doing it.
 
+### 2e. Type checking (`VITE_DEV_TYPECHECK`) — off unless asked
+
+**Omit the variable.** Dev servers run without the type checker by default, so there is nothing to pass in the normal case.
+
+**Pass `VITE_DEV_TYPECHECK=on` only on an explicit request** for type checking in this server ("타입체크 켜서 띄워줘", "I want the type errors in the overlay", or a task that is specifically about fixing type errors).
+
+Do not try to infer the answer from how many servers are running, whether the session looks interactive, or who is going to read the output. Those judgments come out differently every session, which is worse than a flat rule with one explicit override.
+
+`vite-plugin-checker` holds a resident TypeScript program so type errors appear in the dev terminal and as a browser overlay. That program is the single most expensive thing in a dev server — measured on this repo's `react/` server, module graph warmed:
+
+| | vite RSS |
+|---|---|
+| checker on | 2,195 MB |
+| checker off | 853 MB |
+
+A dev server here is usually one of several, next to editors, agents, and other worktrees, so that ~1.3 GB decides how many fit on the machine.
+
+This is the behaviour of `react/vite.config.ts` itself, not something this skill imposes — a hand-typed `pnpm dev` is checker-less too.
+
+**Say which mode you started, in your reply, every time.** Checker off: name the fallback — e.g. *"Type checking is off in this server (the default); `bash scripts/verify.sh` before committing, or `pnpm --filter ./react exec tsc --noEmit` for a one-shot check."* Checker on: say so, and that it costs ~1.3 GB. Vite prints a matching warning on startup when the checker is off. Never let a checker-less server be reported as if it were type-clean.
+
+Running without it costs no real type safety: `scripts/verify.sh`, the Husky pre-commit hook, and CI each run one-shot `tsc --noEmit` independently of the dev server, and the IDE's own tsserver still flags errors while editing. What is lost is only the in-terminal / in-browser feedback loop while the server runs. If a specific check is needed on a checker-less server, run `pnpm --filter ./react exec tsc --noEmit` once rather than restarting with the checker enabled — a one-shot check frees its memory when it exits, a resident watcher does not.
+
 ## 3. Compose the run
 
 **Default: no env vars.** If you cannot resolve a color from step 2a (no `/color` in history, or the most recent was `default`, or anything ambiguous), run the command with **no `VITE_THEME_HEADER_COLOR` prefix at all**. Do not invent a color, do not pick a "neutral" default, do not pass an empty string. Just omit the env var. Same goes for `PORTLESS_APP_NAME` from step 2b.
@@ -186,6 +211,8 @@ If step **2b** picked a Portless app name from `/rename` or a PR number, also pr
 If step **2c** resolved a default API endpoint, also prefix `VITE_DEFAULT_API_ENDPOINT='<url>'`. If 2c resolved nothing, **omit** the variable entirely — do not pass an empty string.
 
 If step **2d** resolved login credentials, also prefix `VITE_DEFAULT_EMAIL='<email>'` and `VITE_DEFAULT_PASSWORD='<password>'`. If 2d resolved nothing, **omit** both. Never pass an empty string, and never fabricate a value to "fill the slot."
+
+Per step **2e**, prefix `VITE_DEV_TYPECHECK=on` **only** when the user explicitly asked for type checking; otherwise omit the variable entirely. Either way, say which mode you started in your reply.
 
 **Shell-escape every interpolated value.** The endpoint, email, and especially the password come from user/conversation text and may contain an apostrophe or shell metacharacters — interpolating them raw inside `'...'` breaks the command and can turn the rest of the value into executable shell. Before building the command line, quote each value shell-safely (e.g. Bash `printf '%q'`), or set them via the user's git-ignored `.env.development.local` instead of the command line. Do not hand-concatenate an untrusted password into a single-quoted string.
 

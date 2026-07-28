@@ -138,6 +138,22 @@ function resolveCheckerTsconfigPath(storeRoot: string | undefined): string {
   }
 }
 
+// Dev servers run without the in-process type checker unless asked for it here;
+// `vite build` always type-checks regardless.
+//
+// The checker keeps a resident TypeScript program: `watchOptions` excludes drop
+// the watcher but not the read, so every dependency `.d.ts` is still parsed and
+// held. That is ~1.3 GB per dev server (2,195 MB vs 853 MB measured here), and
+// most servers run next to editors, agents and other worktrees whose callers
+// never read the browser overlay the checker exists to paint.
+//
+// No gate that enforces type safety depends on it — `scripts/verify.sh`, the
+// Husky pre-commit hook and CI each run one-shot `tsc --noEmit`, and the IDE's
+// own tsserver still flags errors while editing. What a checker-less server
+// loses is the in-terminal / in-browser feedback loop, which the startup banner
+// names so such a server can never be mistaken for a type-clean one.
+const isDevTypecheckEnabled = process.env.VITE_DEV_TYPECHECK === 'on';
+
 // `vite-plugin-node-polyfills` injects bare-specifier imports of its own shim
 // paths (`vite-plugin-node-polyfills/shims/{buffer,global,process}`) during
 // production build via `@rollup/plugin-inject`. With
@@ -638,6 +654,21 @@ export default defineConfig(({ command, mode }) => {
   const pnpmStorePath =
     command === 'serve' ? resolvePnpmStorePath() : undefined;
 
+  // Builds always check; dev servers only on request. See the
+  // `isDevTypecheckEnabled` definition above.
+  const runTypeChecker = command !== 'serve' || isDevTypecheckEnabled;
+
+  // Say it out loud. A dev server with no type checker looks identical to one
+  // with a passing checker — both just print "ready in Nms" — so without this
+  // line it is easy to read silence as "no type errors".
+  if (!runTypeChecker) {
+    console.warn(
+      '[vite] no TypeScript checking in this dev server (no terminal errors, no ' +
+        'browser overlay). Start with `VITE_DEV_TYPECHECK=on` to enable it, or run ' +
+        '`bash scripts/verify.sh` before committing.',
+    );
+  }
+
   // Comma-separated list of additional hostnames to whitelist for the dev
   // server's host check (Vite 6 default-blocks anything outside localhost
   // since CVE-2025-30208). Example for SwitchHosts users:
@@ -994,16 +1025,21 @@ export default defineConfig(({ command, mode }) => {
       // that excludes the pnpm store from the watch program (FR-3214) — see
       // `resolveCheckerTsconfigPath` above; for `vite build` it is the plain
       // base tsconfig.
-      checker({
-        typescript: {
-          // Only `serve` owns tsconfig.checker.json; `vite build` reads the base
-          // config and must not write or delete a file a live dev server uses.
-          tsconfigPath:
-            command === 'serve'
-              ? resolveCheckerTsconfigPath(pnpmStorePath)
-              : baseTsconfigPath,
-        },
-      }),
+      ...(runTypeChecker
+        ? [
+            checker({
+              typescript: {
+                // Only `serve` owns tsconfig.checker.json; `vite build` reads
+                // the base config and must not write or delete a file a live
+                // dev server uses.
+                tsconfigPath:
+                  command === 'serve'
+                    ? resolveCheckerTsconfigPath(pnpmStorePath)
+                    : baseTsconfigPath,
+              },
+            }),
+          ]
+        : []),
 
       // Strategy `generateSW` produces a standalone SW file that precaches
       // the build manifest. We opt out of `registerType: 'autoUpdate'` to
