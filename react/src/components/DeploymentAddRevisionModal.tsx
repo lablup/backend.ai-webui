@@ -1856,6 +1856,21 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           style={{ marginTop: token.marginXS }}
           onFinish={handleCustomFinish}
           onFinishFailed={handleFinishFailed}
+          // Collapsing Advanced → Basic hides the Execution / Shell controls but
+          // antd keeps the values of unmounted fields, while `resolveCommandShell`
+          // branches on `commandAdvanced` first and submits the default shell.
+          // Without this reset a user who picks Exec (or /bin/zsh) and then
+          // returns to Basic keeps seeing that choice when they reopen Advanced,
+          // even though submit silently sends /bin/bash. Reset the two fields so
+          // what the form holds always matches what is submitted.
+          onValuesChange={(changed: Partial<FormValues>) => {
+            if ('commandAdvanced' in changed && !changed.commandAdvanced) {
+              customForm.setFieldsValue({
+                commandExecution: 'shell',
+                commandShell: DEFAULT_MODEL_SERVICE_SHELL,
+              });
+            }
+          }}
           initialValues={_.merge({}, RESOURCE_ALLOCATION_INITIAL_FORM_VALUES, {
             resourceGroup: deployment?.metadata?.resourceGroupName,
             commandAdvanced: false,

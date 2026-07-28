@@ -110,8 +110,9 @@ export function deriveCommandModeState(params: {
 
 /**
  * Resolve the `shell` value to submit given the current UI state.
- * - Basic mode → `undefined` (omit the field entirely so the backend applies
- *   its own default shell instead of the client hard-coding it).
+ * - Basic mode → `/bin/bash` (see the note in the body: this SHOULD be
+ *   `undefined` so the backend applies its own default, but that default is
+ *   unreleased — FR-3363 tracks flipping it back).
  * - Advanced + Shell → the selected shell (required; falls back to `/bin/bash`).
  * - Advanced + Exec → `null` (no shell).
  *
@@ -119,10 +120,6 @@ export function deriveCommandModeState(params: {
  * shell is set the kernel runs `[shell, '-c', command]`; a null/empty shell
  * disables shell wrapping and runs the command directly (argv). The Exec mode
  * therefore maps to a null shell.
- *
- * Omitting the field (Basic) relies on the GraphQL input defaulting `shell` to
- * `/bin/bash` (backend BA-6742). On managers predating that change the omitted
- * field collapses to null (= no shell).
  *
  * `shell` is nullable with a default on every input that takes it
  * (`ModelServiceConfigInput` / `PresetModelServiceConfigInput` both declare
@@ -140,7 +137,14 @@ export function resolveCommandShell(params: {
   shell?: string | null;
 }): string | null | undefined {
   const { advanced, execution, shell } = params;
-  if (!advanced) return undefined;
+  // Basic mode should ideally omit `shell` and let the backend apply its own
+  // default, but that default (BA-6742, lablup/backend.ai#12622) is not in any
+  // release yet — it landed after the 26.7.0 tag. On a 26.7.0 manager (the
+  // newest release, and the lowest one that accepts `command`/`shell` at all)
+  // an omitted `shell` collapses to null, which disables shell wrapping and
+  // silently turns Basic into Exec — `A && B` would stop working. So the
+  // client sends the default explicitly until BA-6742 ships. See FR-3363.
+  if (!advanced) return DEFAULT_MODEL_SERVICE_SHELL;
   if (execution === 'exec') return null;
   return shell?.trim() || DEFAULT_MODEL_SERVICE_SHELL;
 }

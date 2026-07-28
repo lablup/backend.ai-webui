@@ -67,11 +67,12 @@ const buildModelDefinitionInput = (
                   command: service.startCommand,
                   // Presets are always run under a shell as a product decision,
                   // so Exec (no-shell) mode is not offered here and `execution`
-                  // is pinned to Shell — which makes `resolveCommandShell`
-                  // always return a string. This is NOT a type requirement:
-                  // `PresetModelServiceConfigInput.shell` is `String = "/bin/bash"`
-                  // (nullable with a default), so omitting it would be valid and
-                  // would let the backend apply its own default.
+                  // is pinned to Shell. `resolveCommandShell` therefore always
+                  // returns a string — no coercion needed. This is not a type
+                  // requirement either: `PresetModelServiceConfigInput.shell` is
+                  // `String = "/bin/bash"` (nullable with a default), so
+                  // omitting it would type-check — but the backend default is
+                  // unreleased (BA-6742), so nothing here omits it today.
                   shell: resolveCommandShell({
                     advanced: !!service.commandAdvanced,
                     execution: 'shell',
