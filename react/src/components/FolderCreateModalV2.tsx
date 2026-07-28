@@ -388,8 +388,15 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
       destroyOnHidden
       {...modalProps}
       afterOpenChange={(open) => {
-        if (open && initialValidate) {
-          formRef.current?.validateFields();
+        if (open) {
+          if (initialValidate) {
+            formRef.current?.validateFields();
+          } else if (mergedInitialValues.type === 'project') {
+            // The project-folder notice is a warningOnly validator on `type`;
+            // antd runs validators only on interaction, so trigger it here or
+            // the notice stays hidden until the user touches the form.
+            formRef.current?.validateFields(['type']);
+          }
         }
       }}
     >

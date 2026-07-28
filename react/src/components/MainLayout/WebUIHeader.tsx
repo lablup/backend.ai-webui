@@ -8,6 +8,7 @@ import {
   useSuspendedBackendaiClient,
   useWebUINavigate,
 } from '../../hooks';
+import { useAccessibleProjects } from '../../hooks/useAccessibleProjects';
 import {
   useCurrentProjectValue,
   useSetCurrentProject,
@@ -34,6 +35,7 @@ import { useSessionStorageState } from 'ahooks';
 import { theme, Button, Modal, Typography, Grid, Divider } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIFlex, BAIFlexProps } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import { MenuIcon } from 'lucide-react';
 import { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -70,9 +72,13 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
   // When the URL carries an invalid/inaccessible `:projectName`, the atom keeps
   // the last valid project, which would make the header selector look like that
   // project is selected. Detect this and show the selector unselected instead.
+  // Checked against the selector's own accessible-project source (FR-3388) so
+  // this can never disagree with what the selector renders.
   const activeProjectName = useActiveProjectName();
-  const accessibleProjectNames =
-    (baiClient as unknown as { groups?: string[] })?.groups ?? [];
+  const { accessibleProjects } = useAccessibleProjects();
+  const accessibleProjectNames = _.compact(
+    _.map(accessibleProjects, (project) => project?.name),
+  );
   const isUrlProjectInvalid =
     !!activeProjectName && !accessibleProjectNames.includes(activeProjectName);
   const { isSelectedAdminCategoryMenu } = useWebUIMenuItems();

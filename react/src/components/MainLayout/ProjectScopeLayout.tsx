@@ -24,8 +24,9 @@ import { Outlet, useLocation } from 'react-router-dom';
  * project names.
  *
  * Resolution (render-time, no setState):
- *   - `id = baiClient.groupIds[name]` (name -> uuid)
- *   - membership = `baiClient.groups.includes(name)`
+ *   - name -> id and membership both come from `useUrlProjectValidity`, which
+ *     reads the same accessible-project list the header's `ProjectSelect`
+ *     renders (`useAccessibleProjects`, FR-3388).
  *
  * If the URL project name is invalid (not a member, or no resolvable id), the
  * layout does NOT silently switch to another project — the name is just a name
