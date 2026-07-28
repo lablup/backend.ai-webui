@@ -92,6 +92,16 @@ const UpdateUsersModal = ({
         adminBulkUpdateUsersV2(input: $input) {
           updatedUsers {
             id
+            projects {
+              edges {
+                node {
+                  id
+                  basicInfo {
+                    name
+                  }
+                }
+              }
+            }
             ...BAIAdminUserV2TableFragment
           }
           failed {

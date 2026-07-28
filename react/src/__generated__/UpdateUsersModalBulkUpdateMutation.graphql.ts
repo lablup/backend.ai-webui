@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c37fa0157546ef20192aa731bbda2b40>>
+ * @generated SignedSource<<45c65a09376aa922526e153447530538>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -49,6 +49,16 @@ export type UpdateUsersModalBulkUpdateMutation$data = {
     }>;
     readonly updatedUsers: ReadonlyArray<{
       readonly id: string;
+      readonly projects: {
+        readonly edges: ReadonlyArray<{
+          readonly node: {
+            readonly basicInfo: {
+              readonly name: string;
+            };
+            readonly id: string;
+          };
+        }>;
+      } | null | undefined;
       readonly " $fragmentSpreads": FragmentRefs<"BAIAdminUserV2TableFragment">;
     }>;
   } | null | undefined;
@@ -86,6 +96,58 @@ v2 = {
   "storageKey": null
 },
 v3 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "ProjectV2Connection",
+  "kind": "LinkedField",
+  "name": "projects",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "ProjectV2Edge",
+      "kind": "LinkedField",
+      "name": "edges",
+      "plural": true,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "ProjectV2",
+          "kind": "LinkedField",
+          "name": "node",
+          "plural": false,
+          "selections": [
+            (v2/*: any*/),
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "ProjectBasicInfo",
+              "kind": "LinkedField",
+              "name": "basicInfo",
+              "plural": false,
+              "selections": [
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "name",
+                  "storageKey": null
+                }
+              ],
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
+v4 = {
   "alias": null,
   "args": null,
   "concreteType": "BulkUpdateUserV2Error",
@@ -134,6 +196,7 @@ return {
             "plural": true,
             "selections": [
               (v2/*: any*/),
+              (v3/*: any*/),
               {
                 "args": null,
                 "kind": "FragmentSpread",
@@ -142,7 +205,7 @@ return {
             ],
             "storageKey": null
           },
-          (v3/*: any*/)
+          (v4/*: any*/)
         ],
         "storageKey": null
       }
@@ -173,6 +236,7 @@ return {
             "plural": true,
             "selections": [
               (v2/*: any*/),
+              (v3/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -389,23 +453,23 @@ return {
             ],
             "storageKey": null
           },
-          (v3/*: any*/)
+          (v4/*: any*/)
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "5ae02c18b42c6dce882bd74baa0852af",
+    "cacheID": "c78bf104fe67345d10dd4c52953a5cea",
     "id": null,
     "metadata": {},
     "name": "UpdateUsersModalBulkUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation UpdateUsersModalBulkUpdateMutation(\n  $input: BulkUpdateUserV2Input!\n  $isNotSupportTotp: Boolean!\n) {\n  adminBulkUpdateUsersV2(input: $input) {\n    updatedUsers {\n      id\n      ...BAIAdminUserV2TableFragment\n    }\n    failed {\n      userId\n      message\n    }\n  }\n}\n\nfragment BAIAdminUserV2TableFragment on UserV2 {\n  id\n  basicInfo {\n    email\n    fullName\n    username\n    description\n    integrationName\n  }\n  organization {\n    domainName\n    role\n    resourcePolicy\n    mainAccessKey\n  }\n  security {\n    totpActivated @skipOnClient(if: $isNotSupportTotp)\n    totpActivatedAt @skipOnClient(if: $isNotSupportTotp)\n    sudoSessionEnabled\n    allowedClientIp\n  }\n  status {\n    status\n    statusInfo\n    needPasswordChange\n  }\n  container {\n    containerUid\n    containerMainGid\n    containerGids\n  }\n  timestamps {\n    createdAt\n    modifiedAt\n  }\n}\n"
+    "text": "mutation UpdateUsersModalBulkUpdateMutation(\n  $input: BulkUpdateUserV2Input!\n  $isNotSupportTotp: Boolean!\n) {\n  adminBulkUpdateUsersV2(input: $input) {\n    updatedUsers {\n      id\n      projects {\n        edges {\n          node {\n            id\n            basicInfo {\n              name\n            }\n          }\n        }\n      }\n      ...BAIAdminUserV2TableFragment\n    }\n    failed {\n      userId\n      message\n    }\n  }\n}\n\nfragment BAIAdminUserV2TableFragment on UserV2 {\n  id\n  basicInfo {\n    email\n    fullName\n    username\n    description\n    integrationName\n  }\n  organization {\n    domainName\n    role\n    resourcePolicy\n    mainAccessKey\n  }\n  security {\n    totpActivated @skipOnClient(if: $isNotSupportTotp)\n    totpActivatedAt @skipOnClient(if: $isNotSupportTotp)\n    sudoSessionEnabled\n    allowedClientIp\n  }\n  status {\n    status\n    statusInfo\n    needPasswordChange\n  }\n  container {\n    containerUid\n    containerMainGid\n    containerGids\n  }\n  timestamps {\n    createdAt\n    modifiedAt\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "31443f441dd27935958a105f42a87d93";
+(node as any).hash = "e99c549ef1d04421101b6f35ec6130ec";
 
 export default node;
