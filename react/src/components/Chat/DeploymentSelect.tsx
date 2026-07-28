@@ -20,14 +20,22 @@ import {
   Space,
   Tooltip,
 } from 'antd';
-import { BAIEndpointsIcon, BAIFlex, BAISelect, toLocalId } from 'backend.ai-ui';
+import {
+  BAIEndpointsIcon,
+  BAIFlex,
+  BAISelect,
+  toGlobalId,
+  toLocalId,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { InfoIcon } from 'lucide-react';
 import React, { useDeferredValue, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-export type Endpoint = NonNullable<DeploymentSelectValueQuery$data['endpoint']>;
+export type SelectedDeployment = NonNullable<
+  DeploymentSelectValueQuery$data['deployment']
+>;
 
 export interface DeploymentSelectProps extends Omit<
   SelectProps,
@@ -101,19 +109,28 @@ const DeploymentSelect: React.FC<DeploymentSelectProps> = ({
         }
       : { status: { notIn: ['STOPPING', 'STOPPED'] }, ...nameFilter };
 
-  const { endpoint: selectedEndpoint } =
+  const { deployment: selectedDeployment } =
     useLazyLoadQuery<DeploymentSelectValueQuery>(
       graphql`
-        query DeploymentSelectValueQuery($endpoint_id: UUID!) {
-          endpoint(endpoint_id: $endpoint_id) {
-            name
-            endpoint_id @required(action: NONE)
-            url
+        query DeploymentSelectValueQuery($deploymentId: ID!) {
+          deployment(id: $deploymentId) {
+            id
+            metadata {
+              name
+            }
+            networkAccess {
+              endpointUrl
+            }
           }
         }
       `,
       {
-        endpoint_id: controllableValue ?? '',
+        // The select's value is the deployment's local UUID; the Strawberry
+        // `deployment(id:)` field takes the global Relay ID. The empty string
+        // pairs with the store-only fetch policy below to skip the request.
+        deploymentId: controllableValue
+          ? toGlobalId('ModelDeployment', controllableValue)
+          : '',
       },
       {
         // to skip the query when controllableValue is empty
@@ -176,23 +193,25 @@ const DeploymentSelect: React.FC<DeploymentSelectProps> = ({
   );
 
   const selectOptions = _.map(paginationData, (node) => {
-    const endpointId = node?.id ? toLocalId(node.id) : undefined;
+    const deploymentId = node?.id ? toLocalId(node.id) : undefined;
     return {
       label: node?.metadata.name,
-      value: endpointId,
-      endpoint: {
+      value: deploymentId,
+      deployment: {
         name: node?.metadata.name,
-        endpoint_id: endpointId,
+        deploymentId,
         url: node?.networkAccess.endpointUrl,
       },
     };
   });
 
   const [optimisticValueWithLabel, setOptimisticValueWithLabel] = useState(
-    selectedEndpoint
+    selectedDeployment
       ? {
-          label: selectedEndpoint?.name || undefined,
-          value: selectedEndpoint?.endpoint_id || undefined,
+          label: selectedDeployment?.metadata.name || undefined,
+          value: selectedDeployment?.id
+            ? toLocalId(selectedDeployment.id)
+            : undefined,
         }
       : controllableValue
         ? {
@@ -242,7 +261,7 @@ const DeploymentSelect: React.FC<DeploymentSelectProps> = ({
           value={optimisticValueWithLabel}
           onChange={(v, option) => {
             setOptimisticValueWithLabel(v);
-            setControllableValue(v.value, _.castArray(option)?.[0].endpoint);
+            setControllableValue(v.value, _.castArray(option)?.[0].deployment);
             selectPropsWithoutLoading.onChange?.(v.value || '', option);
           }}
           endReached={() => {

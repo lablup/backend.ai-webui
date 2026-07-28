@@ -3,9 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type {
-  EndpointTokenSelectQuery,
-  EndpointTokenSelectQuery$data,
-} from '../../__generated__/EndpointTokenSelectQuery.graphql';
+  DeploymentTokenSelectQuery,
+  DeploymentTokenSelectQuery$data,
+} from '../../__generated__/DeploymentTokenSelectQuery.graphql';
 import WebUILink from '../WebUILink';
 import { SettingOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
@@ -24,7 +24,7 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 function getValidTokenOptions(
-  deploymentData: EndpointTokenSelectQuery$data['deployment'],
+  deploymentData: DeploymentTokenSelectQuery$data['deployment'],
 ) {
   if (!deploymentData.ok) return [];
 
@@ -50,24 +50,24 @@ function getValidTokenOptions(
   );
 }
 
-interface EndpointTokenSelectProps extends Omit<SelectProps, 'options'> {
-  endpointId?: string | null;
+interface DeploymentTokenSelectProps extends Omit<SelectProps, 'options'> {
+  deploymentId?: string | null;
 }
 
-const EndpointTokenSelectWithQuery: React.FC<
-  EndpointTokenSelectProps & {
-    endpointId: string;
+const DeploymentTokenSelectWithQuery: React.FC<
+  DeploymentTokenSelectProps & {
+    deploymentId: string;
   }
-> = ({ endpointId, style, ...props }) => {
+> = ({ deploymentId, style, ...props }) => {
   'use memo';
   const { t } = useTranslation();
   const { token: themeToken } = theme.useToken();
   const [controllableValue, setControllableValue] =
     useControllableValue<string>(props);
 
-  const { deployment } = useLazyLoadQuery<EndpointTokenSelectQuery>(
+  const { deployment } = useLazyLoadQuery<DeploymentTokenSelectQuery>(
     graphql`
-      query EndpointTokenSelectQuery($deploymentId: ID!) {
+      query DeploymentTokenSelectQuery($deploymentId: ID!) {
         deployment(id: $deploymentId) @catch {
           accessTokens(orderBy: [{ field: CREATED_AT, direction: DESC }]) {
             edges {
@@ -83,11 +83,11 @@ const EndpointTokenSelectWithQuery: React.FC<
       }
     `,
     {
-      // `endpointId` is the ModelDeployment's local UUID; the Strawberry
+      // `deploymentId` is the ModelDeployment's local UUID; the Strawberry
       // `deployment(id:)` field takes the global Relay ID. This component only
-      // mounts with a non-empty endpointId (the outer EndpointTokenSelect
+      // mounts with a non-empty deploymentId (the outer DeploymentTokenSelect
       // renders a plain Input otherwise), so no client-skip guard is needed.
-      deploymentId: toGlobalId('ModelDeployment', endpointId),
+      deploymentId: toGlobalId('ModelDeployment', deploymentId),
     },
     // Refetch on mount so returning from token creation (e.g. via the Access
     // Token Settings shortcut) does not render a stale cached list. This reads
@@ -166,7 +166,7 @@ const EndpointTokenSelectWithQuery: React.FC<
         {...props}
       />
       <WebUILink
-        to={`/deployments/${endpointId}#access-tokens`}
+        to={`/deployments/${deploymentId}#access-tokens`}
         aria-label={t('deployment.AccessTokenSettings')}
         style={{ flexShrink: 0, display: 'inline-flex' }}
       >
@@ -178,15 +178,15 @@ const EndpointTokenSelectWithQuery: React.FC<
   );
 };
 
-const EndpointTokenSelect: React.FC<EndpointTokenSelectProps> = ({
-  endpointId,
+const DeploymentTokenSelect: React.FC<DeploymentTokenSelectProps> = ({
+  deploymentId,
   ...props
 }) => {
   'use memo';
   const [controllableValue, setControllableValue] =
     useControllableValue<string>(props);
 
-  if (!endpointId) {
+  if (!deploymentId) {
     return (
       <Input
         value={controllableValue}
@@ -197,7 +197,9 @@ const EndpointTokenSelect: React.FC<EndpointTokenSelectProps> = ({
     );
   }
 
-  return <EndpointTokenSelectWithQuery endpointId={endpointId} {...props} />;
+  return (
+    <DeploymentTokenSelectWithQuery deploymentId={deploymentId} {...props} />
+  );
 };
 
-export default EndpointTokenSelect;
+export default DeploymentTokenSelect;
