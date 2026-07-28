@@ -497,7 +497,7 @@ const DeploymentInaccessibleResult: React.FC = () => {
   const webuiNavigate = useWebUINavigate();
   const { firstAvailableMenuItem } = useWebUIMenuItems();
   const activeProjectName = useActiveProjectName();
-  // Mirror Page401 — route to the user's first available menu item so the
+  // Mirror ForbiddenPage — route to the user's first available menu item so the
   // button takes them somewhere actionable instead of bouncing through the
   // index redirect.
   const defaultPagePath = firstAvailableMenuItem

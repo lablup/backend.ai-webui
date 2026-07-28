@@ -64,6 +64,54 @@ describe('real routes still win over the catch-alls', () => {
   });
 });
 
+/**
+ * Effective `handle.access` for a pathname — the exact lookup
+ * `useRouteAccessDecision` performs (FR-3383): walk up from the deepest
+ * match; a `notFound` catch-all clears any access inherited from the scope
+ * subtree (route existence is decided before authorization).
+ */
+const effectiveAccess = (pathname: string): string | undefined => {
+  const matches = matchRoutes(mainLayoutChildRoutes, pathname);
+  if (!matches) return undefined;
+  for (let i = matches.length - 1; i >= 0; i--) {
+    const handle = matches[i]?.route.handle as
+      { access?: string; notFound?: boolean } | undefined;
+    if (handle?.notFound) return undefined;
+    if (handle?.access) return handle.access;
+  }
+  return undefined;
+};
+
+describe('route-handle access declarations (FR-3383)', () => {
+  it.each([
+    // Bare /admin inherits the subtree requirement (no relaxation).
+    ['/admin', 'admin'],
+    // Global admin subtree default.
+    ['/admin/session', 'admin'],
+    ['/admin/environment', 'admin'],
+    ['/admin/users', 'admin'],
+    // Superadmin-only leaves override the subtree default.
+    ['/admin/settings', 'superadmin'],
+    ['/admin/deployments', 'superadmin'],
+    ['/admin/dashboard', 'superadmin'],
+    ['/admin/rbac', 'superadmin'],
+    // Project-admin subtree.
+    ['/project/foo/admin/users', 'projectAdmin'],
+    ['/project/foo/admin/session', 'projectAdmin'],
+    // General pages declare nothing.
+    ['/project/foo/start', undefined],
+    ['/usersettings', undefined],
+    // Unknown URLs: the notFound catch-all clears inherited access, so the
+    // router-owned 404 renders identically for every role.
+    ['/admin/bogus', undefined],
+    ['/project/foo/admin/bogus', undefined],
+    ['/project/foo/bogus', undefined],
+    ['/bogus', undefined],
+  ])('%s -> %s', (pathname, expected) => {
+    expect(effectiveAccess(pathname)).toBe(expected);
+  });
+});
+
 describe('unicode project names match :projectName', () => {
   it('matches a raw (unencoded) Korean project name', () => {
     expect(matchSignature('/project/한글-프로젝트/session')).toBe(

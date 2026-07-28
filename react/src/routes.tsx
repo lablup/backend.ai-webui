@@ -14,6 +14,7 @@ import LoginView from './components/LoginView';
 import AdminScopeLayout from './components/MainLayout/AdminScopeLayout';
 import MainLayout from './components/MainLayout/MainLayout';
 import ProjectScopeLayout from './components/MainLayout/ProjectScopeLayout';
+import RouteAccessGuard from './components/RouteAccessGuard';
 import RouteErrorBoundary from './components/RouteErrorBoundary';
 import { STokenLoginBoundary } from './components/STokenLoginBoundary';
 import StorageHostFetchErrorBoundary from './components/StorageHostFetchErrorBoundary';
@@ -28,7 +29,6 @@ import { useSToken } from './hooks/useSToken';
 import {
   useWebUIMenuItems,
   getPathFromMenuKey,
-  PROJECT_ADMIN_PAGE_KEY_SET,
 } from './hooks/useWebUIMenuItems';
 import { pluginApiEndpointState } from './hooks/useWebUIPluginState';
 import { AdminRedirect, ProjectScopedRedirect } from './legacyRedirects';
@@ -160,27 +160,39 @@ const ScopeIndexRedirect: React.FC<{ scope: 'admin' | 'projectAdmin' }> = ({
   scope,
 }) => {
   'use memo';
-  const { firstAvailableAdminMenuItem, defaultMenuPath } = useWebUIMenuItems();
+  const {
+    firstAvailableAdminMenuItem,
+    firstAvailableProjectAdminMenuKey,
+    defaultMenuPath,
+  } = useWebUIMenuItems();
   const activeProjectName = useActiveProjectName();
 
   if (scope === 'projectAdmin') {
-    // For project admins the first admin menu item IS a project-admin page.
-    // Super/domain admins carry no project-admin items in their menu (they
-    // see the global equivalents) but can access every project-admin page —
-    // send them to the first one in sider order. Users with no admin role
-    // land on it too and get the regular 401 from PageAccessGuard.
-    const key =
-      firstAvailableAdminMenuItem?.key &&
-      PROJECT_ADMIN_PAGE_KEY_SET.has(firstAvailableAdminMenuItem.key)
-        ? firstAvailableAdminMenuItem.key
-        : 'project-admin-users';
+    // First project-admin page in sider order, already narrowed by the
+    // config blocklist / inactive-list (so a hidden Users page falls through
+    // to Data, etc.). Only super/domain admins and project admins of the
+    // URL project reach this element (RouteAccessGuard enforces
+    // `access: 'projectAdmin'`). When the config hides every project-admin
+    // page, fall back to the user's general default page.
     return (
-      <WebUINavigate to={getPathFromMenuKey(key, activeProjectName)} replace />
+      <WebUINavigate
+        to={
+          firstAvailableProjectAdminMenuKey
+            ? getPathFromMenuKey(
+                firstAvailableProjectAdminMenuKey,
+                activeProjectName,
+              )
+            : defaultMenuPath
+        }
+        replace
+      />
     );
   }
 
-  // `/admin`: first admin menu item reachable by the current user; users with
-  // no admin menu at all fall back to their general default page.
+  // `/admin`: first admin menu item. Only super/domain admins reach this
+  // element (RouteAccessGuard enforces the subtree's 'admin' requirement),
+  // so an admin menu item always exists; defaultMenuPath is a defensive
+  // fallback only.
   return (
     <WebUINavigate
       to={
@@ -231,7 +243,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       // (plugin-aware — see UnknownRoutePage).
       {
         path: '*',
-        handle: { hideBreadcrumb: true },
+        handle: { hideBreadcrumb: true, notFound: true },
         Component: UnknownRoutePage,
       },
       {
@@ -470,6 +482,9 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       // --- project-admin scope: /project/:projectName/admin/* ---
       {
         path: 'admin',
+        // Subtree default (FR-3383): project-admin pages need super/domain
+        // admin or project-admin rights over the URL project.
+        handle: { access: 'projectAdmin' },
         children: [
           // Bare `/project/:name/admin` -> first project-admin menu item.
           { index: true, element: <ScopeIndexRedirect scope="projectAdmin" /> },
@@ -477,7 +492,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
           // (plugin-aware — see UnknownRoutePage).
           {
             path: '*',
-            handle: { hideBreadcrumb: true },
+            handle: { hideBreadcrumb: true, notFound: true },
             Component: UnknownRoutePage,
           },
           {
@@ -577,14 +592,19 @@ export const mainLayoutChildRoutes: RouteObject[] = [
   {
     path: 'admin',
     element: <AdminScopeLayout />,
+    // Subtree default (FR-3383): global admin pages need super/domain admin.
+    // Superadmin-only leaves override with `access: 'superadmin'`.
+    handle: { access: 'admin' },
     children: [
-      // Bare `/admin` -> first admin menu item reachable by this user.
+      // Bare `/admin` -> first admin menu item. Inherits the subtree's
+      // 'admin' requirement, so the /admin namespace (including its root) is
+      // super/domain-admin only — project admins get the forbidden page.
       { index: true, element: <ScopeIndexRedirect scope="admin" /> },
       // Router-owned 404: any URL unmatched within this scope falls here
       // (plugin-aware — see UnknownRoutePage).
       {
         path: '*',
-        handle: { hideBreadcrumb: true },
+        handle: { hideBreadcrumb: true, notFound: true },
         Component: UnknownRoutePage,
       },
       {
@@ -605,6 +625,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         handle: {
           scope: 'admin',
           menuKey: 'admin-deployments',
+          access: 'superadmin',
           labelKey: 'webui.menu.Serving',
         },
         children: [
@@ -619,7 +640,11 @@ export const mainLayoutChildRoutes: RouteObject[] = [
                 </BAIErrorBoundary>
               );
             },
-            handle: { scope: 'admin', menuKey: 'admin-deployments' },
+            handle: {
+              scope: 'admin',
+              menuKey: 'admin-deployments',
+              access: 'superadmin',
+            },
           },
           {
             path: 'deployment-presets/new',
@@ -633,6 +658,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
             handle: {
               scope: 'admin',
               menuKey: 'admin-deployments',
+              access: 'superadmin',
               labelKey: 'adminDeploymentPreset.CreatePreset',
             },
           },
@@ -648,6 +674,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
             handle: {
               scope: 'admin',
               menuKey: 'admin-deployments',
+              access: 'superadmin',
               labelKey: 'adminDeploymentPreset.EditPreset',
             },
           },
@@ -661,6 +688,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
             handle: {
               scope: 'admin',
               menuKey: 'admin-deployments',
+              access: 'superadmin',
               labelKey: 'webui.menu.DeploymentDetail',
             },
           },
@@ -679,6 +707,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         handle: {
           scope: 'admin',
           menuKey: 'admin-data',
+          access: 'superadmin',
           labelKey: 'webui.menu.Data',
         },
       },
@@ -696,6 +725,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         handle: {
           scope: 'admin',
           menuKey: 'admin-dashboard',
+          access: 'superadmin',
           labelKey: 'webui.menu.AdminDashboard',
         },
       },
@@ -815,6 +845,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         handle: {
           scope: 'admin',
           menuKey: 'agent',
+          access: 'superadmin',
           labelKey: 'webui.menu.Resources',
         },
       },
@@ -830,6 +861,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         handle: {
           scope: 'admin',
           menuKey: 'project',
+          access: 'superadmin',
           labelKey: 'webui.menu.Projects',
         },
       },
@@ -843,6 +875,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         handle: {
           scope: 'admin',
           menuKey: 'settings',
+          access: 'superadmin',
           labelKey: 'webui.menu.Configurations',
         },
       },
@@ -856,6 +889,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         handle: {
           scope: 'admin',
           menuKey: 'maintenance',
+          access: 'superadmin',
           labelKey: 'webui.menu.Maintenance',
         },
       },
@@ -869,6 +903,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         handle: {
           scope: 'admin',
           menuKey: 'diagnostics',
+          access: 'superadmin',
           labelKey: 'webui.menu.Diagnostics',
         },
       },
@@ -887,6 +922,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         handle: {
           scope: 'admin',
           menuKey: 'rbac',
+          access: 'superadmin',
           labelKey: 'webui.menu.RBACManagement',
         },
       },
@@ -900,6 +936,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         handle: {
           scope: 'admin',
           menuKey: 'branding',
+          access: 'superadmin',
           labelKey: 'webui.menu.Branding',
         },
       },
@@ -913,6 +950,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         handle: {
           scope: 'admin',
           menuKey: 'information',
+          access: 'superadmin',
           labelKey: 'webui.menu.Information',
         },
       },
@@ -1346,7 +1384,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
   // plugin pages (they have no React routes); everything else is a real 404.
   {
     path: '*',
-    handle: { hideBreadcrumb: true },
+    handle: { hideBreadcrumb: true, notFound: true },
     Component: UnknownRoutePage,
   },
 ];
@@ -1605,7 +1643,15 @@ export const routes: RouteObject[] = [
         // Pathless boundary: thrown Response errors (404/401/403) from pages
         // or future loaders render INSIDE the shell via RouteErrorBoundary.
         errorElement: <RouteErrorBoundary />,
-        children: mainLayoutChildRoutes,
+        children: [
+          {
+            // Route-handle-declared access control (FR-3383): throws
+            // Response 401/404 per the deepest `handle.access` declaration,
+            // caught by RouteErrorBoundary above.
+            element: <RouteAccessGuard />,
+            children: mainLayoutChildRoutes,
+          },
+        ],
       },
     ],
   },

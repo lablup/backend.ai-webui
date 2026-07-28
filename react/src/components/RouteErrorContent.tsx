@@ -59,7 +59,11 @@ const RouteErrorContent: React.FC<RouteErrorContentProps> = ({
       direction="column"
       align="center"
       justify="center"
-      style={{ width: '100%', height: '100%' }}
+      // `flex: 1` fills MainLayout's stretched outlet wrapper so the
+      // composition centers in the Outlet area; `height: '100%'` would
+      // resolve against the wrong box (viewport-height scroll column in
+      // project scope, collapsed auto-height in admin scope).
+      style={{ width: '100%', flex: 1 }}
     >
       <BAIFlex
         direction="column"

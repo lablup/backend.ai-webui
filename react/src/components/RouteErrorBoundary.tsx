@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import Page401 from '../pages/Page401';
+import ForbiddenPage from '../pages/ForbiddenPage';
 import Page404 from '../pages/Page404';
 import RouteErrorContent from './RouteErrorContent';
 import { useTranslation } from 'react-i18next';
@@ -58,7 +58,7 @@ const RouteErrorBoundary = () => {
     return <Page404 />;
   }
   if (status === 401 || status === 403) {
-    return <Page401 />;
+    return <ForbiddenPage />;
   }
 
   return (

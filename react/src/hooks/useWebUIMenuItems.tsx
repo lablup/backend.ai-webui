@@ -162,21 +162,6 @@ export const PROJECT_ADMIN_PAGE_KEY_SET: ReadonlySet<string> = new Set(
   PROJECT_ADMIN_PAGE_KEYS,
 );
 
-// Page keys that additionally require superadmin role
-const SUPERADMIN_ONLY_PAGE_KEYS: ReadonlySet<string> = new Set([
-  'admin-deployments',
-  'admin-dashboard',
-  'admin-data',
-  'agent',
-  'project',
-  'settings',
-  'maintenance',
-  'diagnostics',
-  'branding',
-  'rbac',
-  'information',
-]);
-
 // Legacy flat path for a menu key (the pre-scope-aware URL, e.g. `/session`,
 // `/project-data`, `/admin-session`). These flat paths are still mounted as
 // backward-compat redirect shims (`legacyRedirects.tsx`), so emitting one is a
@@ -791,6 +776,19 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     return null;
   })();
 
+  // First project-admin page in sider order that survives blocklist /
+  // inactive-list filtering. Computed from the un-role-filtered fullAdminMenu
+  // (super/domain admins' `adminMenu` excludes project-admin items, but they
+  // can access all of them) — the redirect target for `/project/:name/admin`.
+  // `undefined` when the config hides every project-admin page.
+  const firstAvailableProjectAdminMenuKey = _.find(
+    fullAdminMenu,
+    (item) =>
+      PROJECT_ADMIN_PAGE_KEY_SET.has(item.key as string) &&
+      !_.includes(blockList, item.key) &&
+      !_.includes(inactiveList, item.key),
+  )?.key;
+
   const isSelectedAdminCategoryMenu = _.some(adminMenu, (item) => {
     if (item && 'key' in item) {
       return item.key === currentMenuKeyFromRoute;
@@ -852,45 +850,6 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   const isCurrentPageBlocked =
     currentPathKey !== '' && _.includes(blockList, currentMenuKey);
 
-  // Check if current page requires higher permission than user has.
-  // Uses static key sets (not role-filtered adminMenu) to ensure correct 401 responses.
-  // Gating is driven by the user's effective admin role (super/domain/project/none)
-  // rather than the legacy `currentUserRole` string, so that project admins can reach
-  // the subset of admin pages listed in PROJECT_ADMIN_PAGE_KEYS.
-  const isCurrentPageUnauthorized = (() => {
-    if (currentPathKey === '') return false;
-
-    const isAdminPage =
-      ALL_ADMIN_PAGE_KEYS.has(currentMenuKey) ||
-      PROJECT_ADMIN_PAGE_KEY_SET.has(currentMenuKey);
-
-    if (!isAdminPage) return false;
-
-    // superadmin and domain admin can reach every admin page.
-    if (
-      effectiveAdminRole === 'superadmin' ||
-      effectiveAdminRole === 'domainAdmin'
-    ) {
-      // Domain admin still cannot reach superadmin-only pages.
-      if (
-        effectiveAdminRole === 'domainAdmin' &&
-        SUPERADMIN_ONLY_PAGE_KEYS.has(currentMenuKey) &&
-        !PROJECT_ADMIN_PAGE_KEY_SET.has(currentMenuKey)
-      ) {
-        return true;
-      }
-      return false;
-    }
-
-    // Project admin: allow only pages explicitly reachable by project admins.
-    if (effectiveAdminRole === 'currentProjectAdmin') {
-      return !PROJECT_ADMIN_PAGE_KEY_SET.has(currentMenuKey);
-    }
-
-    // No admin role at all: all admin pages are unauthorized.
-    return true;
-  })();
-
   // Get theme config for custom logo href
   const { themeConfig } = useCustomThemeConfig();
 
@@ -915,9 +874,9 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     isCurrentPathAdminCategory,
     firstAvailableMenuItem,
     firstAvailableAdminMenuItem,
+    firstAvailableProjectAdminMenuKey,
     defaultMenuPath,
     isCurrentPageBlocked,
-    isCurrentPageUnauthorized,
     isPluginLoaded,
     blockList,
   };

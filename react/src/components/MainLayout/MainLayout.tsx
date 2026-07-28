@@ -8,12 +8,9 @@ import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
 import { useLogoutEventListeners } from '../../hooks/useLogout';
 import usePrimaryColors from '../../hooks/usePrimaryColors';
+import { useRouteAccessDecision } from '../../hooks/useRouteAccess';
 import { useCurrentMenuKey, useRouteScope } from '../../hooks/useRouteScope';
-import { useUrlProjectValidity } from '../../hooks/useUrlProjectValidity';
-import { useWebUIMenuItems } from '../../hooks/useWebUIMenuItems';
 import { useSetupWebUIPluginEffect } from '../../hooks/useWebUIPluginState';
-import Page401 from '../../pages/Page401';
-import Page404 from '../../pages/Page404';
 import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
 import BAIErrorBoundary from '../BAIErrorBoundary';
 import { commonAppProps } from '../DefaultProviders';
@@ -267,7 +264,7 @@ function MainLayout() {
                 </Suspense>
                 <Suspense>
                   <ErrorBoundaryWithNullFallback>
-                    <PageAccessGuard emptyErrorPage>
+                    <RouteAccessBreadcrumbGate>
                       {isHiddenBreadcrumb ? (
                         <div
                           style={{
@@ -283,17 +280,25 @@ function MainLayout() {
                           }}
                         />
                       )}
-                    </PageAccessGuard>
+                    </RouteAccessBreadcrumbGate>
                   </ErrorBoundaryWithNullFallback>
-                  <BAIErrorBoundary>
-                    <AutoAdminPrimaryColorProvider>
-                      <ResourceSlotsWrapper>
-                        <PageAccessGuard>
+                  {/* Fills the viewport space left below header/alerts/
+                      breadcrumb so route-error screens (RouteErrorContent
+                      `flex: 1`) center in the Outlet area, identically in
+                      every scope. Taller pages still grow and scroll. */}
+                  <BAIFlex
+                    direction="column"
+                    align="stretch"
+                    style={{ flexGrow: 1 }}
+                  >
+                    <BAIErrorBoundary>
+                      <AutoAdminPrimaryColorProvider>
+                        <ResourceSlotsWrapper>
                           <Outlet />
-                        </PageAccessGuard>
-                      </ResourceSlotsWrapper>
-                    </AutoAdminPrimaryColorProvider>
-                  </BAIErrorBoundary>
+                        </ResourceSlotsWrapper>
+                      </AutoAdminPrimaryColorProvider>
+                    </BAIErrorBoundary>
+                  </BAIFlex>
                 </Suspense>
                 <ErrorBoundaryWithNullFallback>
                   <PluginLoader />
@@ -324,46 +329,22 @@ const ResourceSlotsWrapper = ({ children }: { children: React.ReactNode }) => {
 };
 
 /**
- * Component that guards page access based on permissions and route validity.
- * - Unauthorized (401): User lacks permission (e.g., regular user accessing admin page)
- * - Blocked (404): Page is in the blocklist configuration (treated as not found)
- * - Not Found (404) is NOT decided here anymore: unknown paths fall into the
- *   router-owned scoped catch-all routes (see UnknownRoutePage in routes.tsx).
- *
- * @param emptyErrorPage - If true, renders nothing instead of error pages (401/404)
+ * Hides the breadcrumb row while a route-error screen owns the content area.
+ * Access enforcement itself lives in `RouteAccessGuard` (a route element in
+ * routes.tsx) which throws `Response` 401/404 into `RouteErrorBoundary`; this
+ * gate only mirrors that decision for the breadcrumb, matching the
+ * breadcrumb-less catch-all 404s (`handle.hideBreadcrumb`).
  */
-const PageAccessGuard = ({
+const RouteAccessBreadcrumbGate = ({
   children,
-  emptyErrorPage = false,
 }: {
   children: React.ReactNode;
-  emptyErrorPage?: boolean;
 }) => {
-  const { isCurrentPageBlocked, isCurrentPageUnauthorized } =
-    useWebUIMenuItems();
-  const { isInvalid: isUrlProjectInvalid } = useUrlProjectValidity();
+  'use memo';
+  const decision = useRouteAccessDecision();
 
-  // When the URL names a project that doesn't resolve for this user, whether
-  // the page would be authorized cannot be decided (the roles are relative to
-  // a project we can't identify). Defer entirely to ProjectScopeLayout, which
-  // renders the "not found / no access" state — the same screen for every
-  // role, so project existence is not leaked via a 401/404 difference.
-  if (isUrlProjectInvalid) {
-    return children;
-  }
-
-  const hasError = isCurrentPageUnauthorized || isCurrentPageBlocked;
-
-  if (hasError && emptyErrorPage) {
+  if (decision === 'unauthorized' || decision === 'blocked') {
     return null;
-  }
-
-  if (isCurrentPageUnauthorized) {
-    return <Page401 />;
-  }
-
-  if (isCurrentPageBlocked) {
-    return <Page404 />;
   }
 
   return children;
@@ -393,7 +374,12 @@ const AutoAdminPrimaryColorProvider = ({
           },
         }}
       >
-        <App {...commonAppProps}>{children}</App>
+        {/* `display: contents` removes App's structural div from layout so
+            admin-scope Outlet content participates in the same flex context
+            as the other scopes (keeps route-error screens centered). */}
+        <App {...commonAppProps} style={{ display: 'contents' }}>
+          {children}
+        </App>
       </ConfigProvider>
     );
   }
