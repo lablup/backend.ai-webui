@@ -1007,6 +1007,7 @@
   },
   "deployment": {
     "AccessToken": "Token Akses",
+    "AccessTokenSettings": "Pengaturan Token Akses",
     "AccessTokens": "Token Akses",
     "ActivePool": "Pool Aktif",
     "ActivePoolDescription": "Replika yang saat ini menerima lalu lintas melalui App Proxy.",

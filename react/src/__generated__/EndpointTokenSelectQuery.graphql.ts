@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b4c2bd16d169a3749d9ec76613a28da2>>
+ * @generated SignedSource<<b0525c4d71a8c4df4d253016febb9402>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,17 +11,20 @@
 import { ConcreteRequest } from 'relay-runtime';
 import { Result } from "relay-runtime";
 export type EndpointTokenSelectQuery$variables = {
-  endpointId: string;
-  isEmptyEndpointId: boolean;
+  deploymentId: string;
 };
 export type EndpointTokenSelectQuery$data = {
-  readonly endpoint_token_list: Result<{
-    readonly items: ReadonlyArray<{
-      readonly created_at: string;
-      readonly id: string | null | undefined;
-      readonly token: string;
-      readonly valid_until: string | null | undefined;
-    } | null | undefined>;
+  readonly deployment: Result<{
+    readonly accessTokens: {
+      readonly edges: ReadonlyArray<{
+        readonly node: {
+          readonly createdAt: string;
+          readonly expiresAt: string | null | undefined;
+          readonly id: string;
+          readonly token: string;
+        };
+      }>;
+    } | null | undefined;
   } | null | undefined, unknown>;
 };
 export type EndpointTokenSelectQuery = {
@@ -34,79 +37,88 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "endpointId"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "isEmptyEndpointId"
+    "name": "deploymentId"
   }
 ],
-v1 = {
+v1 = [
+  {
+    "kind": "Variable",
+    "name": "id",
+    "variableName": "deploymentId"
+  }
+],
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v3 = {
   "alias": null,
   "args": [
     {
-      "kind": "Variable",
-      "name": "endpoint_id",
-      "variableName": "endpointId"
-    },
-    {
       "kind": "Literal",
-      "name": "limit",
-      "value": 100
-    },
-    {
-      "kind": "Literal",
-      "name": "offset",
-      "value": 0
+      "name": "orderBy",
+      "value": [
+        {
+          "direction": "DESC",
+          "field": "CREATED_AT"
+        }
+      ]
     }
   ],
-  "concreteType": "EndpointTokenList",
+  "concreteType": "AccessTokenConnection",
   "kind": "LinkedField",
-  "name": "endpoint_token_list",
+  "name": "accessTokens",
   "plural": false,
   "selections": [
     {
       "alias": null,
       "args": null,
-      "concreteType": "EndpointToken",
+      "concreteType": "AccessTokenEdge",
       "kind": "LinkedField",
-      "name": "items",
+      "name": "edges",
       "plural": true,
       "selections": [
         {
           "alias": null,
           "args": null,
-          "kind": "ScalarField",
-          "name": "id",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "token",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "created_at",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "valid_until",
+          "concreteType": "AccessToken",
+          "kind": "LinkedField",
+          "name": "node",
+          "plural": false,
+          "selections": [
+            (v2/*: any*/),
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "token",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "createdAt",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "expiresAt",
+              "storageKey": null
+            }
+          ],
           "storageKey": null
         }
       ],
       "storageKey": null
     }
   ],
-  "storageKey": null
+  "storageKey": "accessTokens(orderBy:[{\"direction\":\"DESC\",\"field\":\"CREATED_AT\"}])"
 };
 return {
   "fragment": {
@@ -117,7 +129,18 @@ return {
     "selections": [
       {
         "kind": "CatchField",
-        "field": (v1/*: any*/),
+        "field": {
+          "alias": null,
+          "args": (v1/*: any*/),
+          "concreteType": "ModelDeployment",
+          "kind": "LinkedField",
+          "name": "deployment",
+          "plural": false,
+          "selections": [
+            (v3/*: any*/)
+          ],
+          "storageKey": null
+        },
         "to": "RESULT"
       }
     ],
@@ -130,20 +153,32 @@ return {
     "kind": "Operation",
     "name": "EndpointTokenSelectQuery",
     "selections": [
-      (v1/*: any*/)
+      {
+        "alias": null,
+        "args": (v1/*: any*/),
+        "concreteType": "ModelDeployment",
+        "kind": "LinkedField",
+        "name": "deployment",
+        "plural": false,
+        "selections": [
+          (v3/*: any*/),
+          (v2/*: any*/)
+        ],
+        "storageKey": null
+      }
     ]
   },
   "params": {
-    "cacheID": "f8777131f4094de086beaa0e11d6ae09",
+    "cacheID": "804f425e87909bf310afc6b08603997f",
     "id": null,
     "metadata": {},
     "name": "EndpointTokenSelectQuery",
     "operationKind": "query",
-    "text": "query EndpointTokenSelectQuery(\n  $endpointId: UUID!\n  $isEmptyEndpointId: Boolean!\n) {\n  endpoint_token_list(offset: 0, limit: 100, endpoint_id: $endpointId) @skipOnClient(if: $isEmptyEndpointId) {\n    items {\n      id\n      token\n      created_at\n      valid_until\n    }\n  }\n}\n"
+    "text": "query EndpointTokenSelectQuery(\n  $deploymentId: ID!\n) {\n  deployment(id: $deploymentId) {\n    accessTokens(orderBy: [{field: CREATED_AT, direction: DESC}]) {\n      edges {\n        node {\n          id\n          token\n          createdAt\n          expiresAt\n        }\n      }\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "839fdaad7009de6f1d8dc79de4e35a3d";
+(node as any).hash = "510ee4474805d8ecefee557eab25da84";
 
 export default node;

@@ -36,15 +36,33 @@ import {
 } from 'backend.ai-ui';
 import type { GraphQLFormattedError } from 'graphql';
 import { BotMessageSquareIcon, PlusIcon } from 'lucide-react';
-import React, { useRef, useState, useTransition } from 'react';
+import React, {
+  useEffect,
+  useEffectEvent,
+  useRef,
+  useState,
+  useTransition,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 
 // Poll interval (ms) for refreshing the page query while a revision rollout is
 // in progress, so the deployment state moves off the "applying" banner once the
 // rollout settles.
 const REVISION_ROLLOUT_POLL_INTERVAL = 5000;
+
+// Smooth-scroll a page section into view, offsetting the sticky header so it is
+// not hidden underneath. Shared by the deep-link handler and the
+// revision/access-token "created" callbacks.
+const scrollSectionIntoView = (
+  el: HTMLElement | null,
+  headerHeight: number | string,
+) => {
+  if (!el) return;
+  el.style.scrollMarginTop = `${headerHeight}px`;
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
 
 const DeploymentDetailPage: React.FC = () => {
   'use memo';
@@ -80,6 +98,26 @@ const DeploymentDetailPage: React.FC = () => {
 
   const revisionsSectionRef = useRef<HTMLDivElement>(null);
   const accessTokensSectionRef = useRef<HTMLDivElement>(null);
+
+  // Deep links scroll a section into view via the URL hash (e.g. the Chat token
+  // selector's shortcut lands on `#access-tokens`).
+  const { hash } = useLocation();
+  const scrollToHashSection = useEffectEvent(() => {
+    // To make another section deep-linkable, add a `#hash → section ref` entry.
+    const sectionRefByHash: Record<string, { current: HTMLDivElement | null }> =
+      {
+        '#revisions': revisionsSectionRef,
+        '#access-tokens': accessTokensSectionRef,
+      };
+    scrollSectionIntoView(
+      sectionRefByHash[hash]?.current ?? null,
+      token.Layout?.headerHeight ?? 60,
+    );
+  });
+  useEffect(() => {
+    scrollToHashSection();
+  }, [hash]);
+
   // Fragment ref of the revision just created via the Add Revision modal.
   // When set, its detail drawer opens automatically so the user can confirm
   // the configuration that was actually persisted (FR-3005) — notably fields
@@ -251,13 +289,10 @@ const DeploymentDetailPage: React.FC = () => {
         // refresh or a tab re-mount.
         updateReplicaFetchKey();
       });
-      if (revisionsSectionRef.current) {
-        revisionsSectionRef.current.style.scrollMarginTop = `${token.Layout?.headerHeight ?? 60}px`;
-        revisionsSectionRef.current.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start',
-        });
-      }
+      scrollSectionIntoView(
+        revisionsSectionRef.current,
+        token.Layout?.headerHeight ?? 60,
+      );
     }
   };
 
@@ -415,13 +450,10 @@ const DeploymentDetailPage: React.FC = () => {
           // otherwise the "Private deployment" alert (which is gated on
           // `hasAccessTokens === false`) stays visible after creation.
           handleRefetch();
-          if (accessTokensSectionRef.current) {
-            accessTokensSectionRef.current.style.scrollMarginTop = `${token.Layout?.headerHeight ?? 60}px`;
-            accessTokensSectionRef.current.scrollIntoView({
-              behavior: 'smooth',
-              block: 'start',
-            });
-          }
+          scrollSectionIntoView(
+            accessTokensSectionRef.current,
+            token.Layout?.headerHeight ?? 60,
+          );
         }}
       />
       {/* No page-level Suspense boundary needed: the modal renders its chrome
