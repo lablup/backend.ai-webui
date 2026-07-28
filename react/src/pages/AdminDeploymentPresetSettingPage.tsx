@@ -28,7 +28,8 @@ const buildModelDefinitionInput = (
   // 26.4.4rc7+ managers accept the `enable` flag on ModelHealthCheckInput;
   // older managers reject it, so we keep the legacy null-when-disabled shape.
   supportsHealthCheckEnable: boolean,
-  // 26.7.0+ managers accept the single-string `command` + `shell` fields;
+  // The single-string `command` + `shell` fields exist since 26.7.0; the WebUI
+  // gates them at 26.8.0 (see `client.ts`).
   // older managers only understand the deprecated `startCommand` token list.
   supportsCommandShell: boolean,
 ) => {
@@ -57,7 +58,8 @@ const buildModelDefinitionInput = (
           modelPath: m.modelPath,
           service: {
             port: service.port,
-            // Start Command (FR-3205): on 26.7.0+ send the raw command string in
+            // Start Command (FR-3205): when enabled (26.8.0+ by client policy)
+            // send the raw command string in
             // `command` plus a `shell` derived from the Basic/Advanced controls
             // (Basic → /bin/bash, Advanced → selected shell). On older managers
             // fall back to the deprecated tokenized `startCommand`. Never send
@@ -67,12 +69,10 @@ const buildModelDefinitionInput = (
                   command: service.startCommand,
                   // Presets are always run under a shell as a product decision,
                   // so Exec (no-shell) mode is not offered here and `execution`
-                  // is pinned to Shell. `resolveCommandShell` therefore always
-                  // returns a string — no coercion needed. This is not a type
-                  // requirement either: `PresetModelServiceConfigInput.shell` is
-                  // `String = "/bin/bash"` (nullable with a default), so
-                  // omitting it would type-check — but the backend default is
-                  // unreleased (BA-6742), so nothing here omits it today.
+                  // is pinned to Shell. This is not a type requirement:
+                  // `PresetModelServiceConfigInput.shell` is `String =
+                  // "/bin/bash"` (nullable with a default), so Basic mode's
+                  // `undefined` is valid and lets the backend apply that default.
                   shell: resolveCommandShell({
                     advanced: !!service.commandAdvanced,
                     execution: 'shell',
@@ -155,7 +155,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
   const supportsHealthCheckEnable = baiClient.supports(
     'model-health-check-enable',
   );
-  // 26.7.0+ managers accept the single-string `command` + `shell` fields on the
+  // The single-string `command` + `shell` fields exist since 26.7.0; gated at 26.8.0 on the
   // preset service config (FR-3205); older managers only understand the
   // deprecated `startCommand` token list.
   const supportsCommandShell = baiClient.supports(

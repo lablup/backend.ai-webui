@@ -92,14 +92,10 @@ describe('deriveCommandModeState', () => {
 });
 
 describe('resolveCommandShell', () => {
-  // BA-6742 (the backend default for an omitted `shell`) is not in any release
-  // yet, so Basic mode must send the default explicitly: on a 26.7.0 manager an
-  // omitted `shell` collapses to null and silently turns Basic into Exec.
-  // FR-3363 flips this back to `undefined` once BA-6742 ships.
-  it('sends the default shell explicitly in Basic mode', () => {
-    expect(resolveCommandShell({ advanced: false, shell: '/bin/zsh' })).toBe(
-      DEFAULT_MODEL_SERVICE_SHELL,
-    );
+  it('omits the shell in Basic mode so the backend applies its own default', () => {
+    expect(
+      resolveCommandShell({ advanced: false, shell: '/bin/zsh' }),
+    ).toBeUndefined();
   });
 
   it('returns null for Advanced + Exec (no shell wrapping)', () => {

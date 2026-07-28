@@ -5,14 +5,16 @@
 /**
  * Shared logic for the model-service Start Command UI (FR-3205).
  *
- * Backend contract (26.7.0+, `ModelServiceConfigInput.command` / `shell`):
+ * Backend contract (`ModelServiceConfigInput.command` / `shell`, added to the
+ * schema in 26.7.0):
  * - `shell` set  → backend runs `shell -c {command}` (shell operators work).
  * - `shell` null → backend `shlex.split(command)` then exec (argv, no shell).
  *
  * The WebUI therefore stops tokenizing on the write path and sends the user's
  * raw command string in `command` plus a `shell` derived from the UI mode. The
  * deprecated `startCommand: [String!]` token list is only sent to managers that
- * predate 26.7.0 (see `formatShellCommand` / `tokenizeShellCommand`).
+ * the WebUI gates below 26.8.0 (see `formatShellCommand` /
+ * `tokenizeShellCommand`, and the capability comment in `client.ts`).
  */
 import { formatShellCommand } from './parseCliCommand';
 
@@ -110,9 +112,11 @@ export function deriveCommandModeState(params: {
 
 /**
  * Resolve the `shell` value to submit given the current UI state.
- * - Basic mode → `/bin/bash` (see the note in the body: this SHOULD be
- *   `undefined` so the backend applies its own default, but that default is
- *   unreleased — FR-3363 tracks flipping it back).
+ * - Basic mode → `undefined` (omit the field entirely so the backend applies
+ *   its own default shell instead of the client hard-coding it). Safe because
+ *   the whole command/shell path is gated at 26.8.0, which carries the input
+ *   default `shell: String = "/bin/bash"` (BA-6742) — see the capability
+ *   comment in `client.ts`.
  * - Advanced + Shell → the selected shell (required; falls back to `/bin/bash`).
  * - Advanced + Exec → `null` (no shell).
  *
@@ -137,14 +141,7 @@ export function resolveCommandShell(params: {
   shell?: string | null;
 }): string | null | undefined {
   const { advanced, execution, shell } = params;
-  // Basic mode should ideally omit `shell` and let the backend apply its own
-  // default, but that default (BA-6742, lablup/backend.ai#12622) is not in any
-  // release yet — it landed after the 26.7.0 tag. On a 26.7.0 manager (the
-  // newest release, and the lowest one that accepts `command`/`shell` at all)
-  // an omitted `shell` collapses to null, which disables shell wrapping and
-  // silently turns Basic into Exec — `A && B` would stop working. So the
-  // client sends the default explicitly until BA-6742 ships. See FR-3363.
-  if (!advanced) return DEFAULT_MODEL_SERVICE_SHELL;
+  if (!advanced) return undefined;
   if (execution === 'exec') return null;
   return shell?.trim() || DEFAULT_MODEL_SERVICE_SHELL;
 }

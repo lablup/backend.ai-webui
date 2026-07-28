@@ -944,12 +944,6 @@ export class Client {
       this._features['model-runtime-variant-preset-values'] = true;
     }
     if (this.isManagerVersionCompatibleWith('26.7.0')) {
-      // Single-string `command` + nullable `shell` on the model-service config
-      // (FR-3205 / BA-6551). Older managers only accept the deprecated
-      // `startCommand` token list.
-      this._features['model-service-command-string'] = true;
-    }
-    if (this.isManagerVersionCompatibleWith('26.7.0')) {
       // Strawberry V2 filter inputs gained the AND/OR/NOT sub-filter
       // combinators (schema: "Added in 26.7.0"), which
       // `BAIGraphQLPropertyFilter` emits when conditions are combined. Older
@@ -971,6 +965,18 @@ export class Client {
       // when this flag is set and otherwise fall back to the legacy
       // `name === 'custom'` heuristic.
       this._features['model-runtime-variant-reads-vfolder-config-files'] = true;
+      // Single-string `command` + nullable `shell` on the model-service config
+      // (FR-3205 / BA-6551). The field pair actually landed in 26.7.0, but the
+      // GraphQL input default `shell: String = "/bin/bash"` (BA-6742,
+      // lablup/backend.ai#12622) did not: it merged after the 26.7.0 tag, so on
+      // a 26.7.0 manager an omitted `shell` is null, which disables shell
+      // wrapping and turns the Basic mode into Exec. Worse, a manager built
+      // from `main` after BA-6742 still reports `26.7.0`, so the two cannot be
+      // told apart by version. BA-6742 ships together with the 26.8.0 fields
+      // below (both are in `main`), so gating the whole command/shell path at
+      // 26.8.0 removes the ambiguity — 26.7.0 managers keep using the
+      // deprecated `startCommand` token list and never receive `shell`.
+      this._features['model-service-command-string'] = true;
     }
   }
 

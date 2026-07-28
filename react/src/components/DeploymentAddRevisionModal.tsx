@@ -444,7 +444,9 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   const supportsRuntimeVariantPresetValues = baiClient.supports(
     'model-runtime-variant-preset-values',
   );
-  // 26.7.0+ managers accept the single-string `command` + `shell` fields on
+  // The single-string `command` + `shell` fields exist on
+  // ModelServiceConfigInput since 26.7.0, but the WebUI only uses them from
+  // 26.8.0 — see the capability comment in `client.ts` (BA-6742). Below that,
   // ModelServiceConfigInput (FR-3205); older managers only understand the
   // deprecated `startCommand` token list, so we fall back to sending that.
   const supportsCommandShell = baiClient.supports(
@@ -1368,7 +1370,8 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         ? []
         : collectRuntimeVariantPresetValues(values.runtimeParams);
 
-    // Start Command (FR-3205): on 26.7.0+ send the user's raw command string in
+    // Start Command (FR-3205): when the command/shell path is enabled (26.8.0+
+    // by client policy) send the user's raw command string in
     // `command` plus a `shell` derived from the Basic/Advanced + Execution mode
     // (Basic → omitted so the backend applies its default shell, Advanced+Shell
     // → selected shell, Advanced+Exec → null). On older managers fall back to
@@ -2063,7 +2066,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                       // fields stay registered and validate on submit (FR-3205).
                       forceRender: true,
                       // Basic/Advanced Segmented lives on the right of the header
-                      // (gated on the 26.7.0 command/shell API); stopPropagation
+                      // (gated on the 26.8.0 command/shell API); stopPropagation
                       // keeps switching modes from toggling the collapse.
                       label: (
                         <BAIFlex
@@ -2116,7 +2119,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                       children: (
                         <>
                           {/* Basic/Advanced + Execution/Shell controls need
-                              the 26.7.0 command/shell API; on older managers
+                              the 26.8.0 command/shell API; on older managers
                               only the plain command input below is shown. The
                               Basic/Advanced Segmented sits at the top of the
                               command config (FR-3205). */}
@@ -2219,7 +2222,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                               operators work); single-line input in Exec
                               mode (shell is null → command run directly as
                               argv, so operators do NOT work). Legacy
-                              (<26.7.0) managers get a plain single-line
+                              (<26.8.0) managers get a plain single-line
                               input that is tokenized on submit. */}
                           <Form.Item
                             dependencies={[
@@ -2266,7 +2269,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                                   rules={[{ whitespace: true }]}
                                 >
                                   {!supportsCommandShell ? (
-                                    // Legacy (<26.7.0): plain single-line
+                                    // Legacy (<26.8.0): plain single-line
                                     // input, tokenized on submit.
                                     <Input
                                       placeholder={
