@@ -8,7 +8,6 @@ import {
   PrometheusPresetTabQuery$variables,
   QueryDefinitionFilter,
 } from '../__generated__/PrometheusPresetTabQuery.graphql';
-import { PrometheusQueryPresetEditorModalFragment$key } from '../__generated__/PrometheusQueryPresetEditorModalFragment.graphql';
 import { convertToOrderBy } from '../helper';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -16,13 +15,16 @@ import AutoUpdateFetchKeyButton, {
   LONG_AUTO_UPDATE_DELAY_OPTIONS,
 } from './AutoUpdateFetchKeyButton';
 import PrometheusQueryPresetEditorModal from './PrometheusQueryPresetEditorModal';
-import PrometheusQueryPresetNodes from './PrometheusQueryPresetNodes';
+import PrometheusQueryPresetNodes, {
+  PrometheusQueryPresetNodeInList,
+} from './PrometheusQueryPresetNodes';
 import { App } from 'antd';
 import {
   BAIButton,
   BAIDeleteConfirmModal,
   BAIFlex,
   BAIGraphQLPropertyFilter,
+  BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
   toLocalId,
   useFetchKey,
@@ -63,12 +65,20 @@ const PrometheusPresetTab: React.FC = () => {
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [isOpenEditorModal, setIsOpenEditorModal] = useState(false);
   const [editingPreset, setEditingPreset] =
-    useState<PrometheusQueryPresetEditorModalFragment$key | null>(null);
+    useState<PrometheusQueryPresetNodeInList | null>(null);
   const [deletingPreset, setDeletingPreset] =
     useState<DeletingPresetTarget | null>(null);
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.PrometheusPresetTab',
   );
+
+  // The editor's category picker (`PrometheusCategorySelect`) fetches its own
+  // query inside its own Suspense boundary, so opening is a plain state update —
+  // no preloading, and the surrounding preset list never suspends.
+  const openEditor = (preset?: PrometheusQueryPresetNodeInList | null) => {
+    setEditingPreset(preset ?? null);
+    setIsOpenEditorModal(true);
+  };
 
   const [commitDeleteMutation, isInflightDelete] =
     useMutation<PrometheusPresetTabDeleteMutation>(graphql`
@@ -164,7 +174,7 @@ const PrometheusPresetTab: React.FC = () => {
           <BAIButton
             type="primary"
             icon={<PlusIcon />}
-            onClick={() => setIsOpenEditorModal(true)}
+            onClick={() => openEditor()}
           >
             {t('prometheusQueryPreset.CreatePreset')}
           </BAIButton>
@@ -191,25 +201,24 @@ const PrometheusPresetTab: React.FC = () => {
           columnOverrides,
           onColumnOverridesChange: setColumnOverrides,
         }}
-        onEditPreset={(preset) => {
-          setIsOpenEditorModal(true);
-          setEditingPreset(preset);
-        }}
+        onEditPreset={(preset) => openEditor(preset)}
         onDeletePreset={(preset) => {
           setDeletingPreset({ id: preset.id, name: preset.name });
         }}
       />
-      <PrometheusQueryPresetEditorModal
-        open={isOpenEditorModal}
-        presetFrgmt={editingPreset}
-        onRequestClose={(success) => {
-          setIsOpenEditorModal(false);
-          setEditingPreset(null);
-          if (success) {
-            updateFetchKey();
-          }
-        }}
-      />
+      <BAIUnmountAfterClose>
+        <PrometheusQueryPresetEditorModal
+          open={isOpenEditorModal}
+          presetFrgmt={editingPreset}
+          onRequestClose={(success) => {
+            setIsOpenEditorModal(false);
+            setEditingPreset(null);
+            if (success) {
+              updateFetchKey();
+            }
+          }}
+        />
+      </BAIUnmountAfterClose>
       <BAIDeleteConfirmModal
         open={!!deletingPreset}
         title={t('prometheusQueryPreset.PermanentlyDeletePreset', {

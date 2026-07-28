@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f8f5012872e11a622e00eee300c26011>>
+ * @generated SignedSource<<f8c4a92f4c53fefe3a60aefecff6ee25>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,16 +9,16 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type PrometheusQueryPresetEditorModalCategoriesQuery$variables = Record<PropertyKey, never>;
-export type PrometheusQueryPresetEditorModalCategoriesQuery$data = {
+export type PrometheusCategorySelectQuery$variables = Record<PropertyKey, never>;
+export type PrometheusCategorySelectQuery$data = {
   readonly prometheusQueryPresetCategories: ReadonlyArray<{
     readonly id: string;
     readonly name: string;
   }> | null | undefined;
 };
-export type PrometheusQueryPresetEditorModalCategoriesQuery = {
-  response: PrometheusQueryPresetEditorModalCategoriesQuery$data;
-  variables: PrometheusQueryPresetEditorModalCategoriesQuery$variables;
+export type PrometheusCategorySelectQuery = {
+  response: PrometheusCategorySelectQuery$data;
+  variables: PrometheusCategorySelectQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -54,7 +54,7 @@ return {
     "argumentDefinitions": [],
     "kind": "Fragment",
     "metadata": null,
-    "name": "PrometheusQueryPresetEditorModalCategoriesQuery",
+    "name": "PrometheusCategorySelectQuery",
     "selections": (v0/*: any*/),
     "type": "Query",
     "abstractKey": null
@@ -63,20 +63,20 @@ return {
   "operation": {
     "argumentDefinitions": [],
     "kind": "Operation",
-    "name": "PrometheusQueryPresetEditorModalCategoriesQuery",
+    "name": "PrometheusCategorySelectQuery",
     "selections": (v0/*: any*/)
   },
   "params": {
-    "cacheID": "c28830526d915797ea01849675c06f38",
+    "cacheID": "e817765b1c8f0f8bdcd0bc42497d8b22",
     "id": null,
     "metadata": {},
-    "name": "PrometheusQueryPresetEditorModalCategoriesQuery",
+    "name": "PrometheusCategorySelectQuery",
     "operationKind": "query",
-    "text": "query PrometheusQueryPresetEditorModalCategoriesQuery {\n  prometheusQueryPresetCategories {\n    id\n    name\n  }\n}\n"
+    "text": "query PrometheusCategorySelectQuery {\n  prometheusQueryPresetCategories {\n    id\n    name\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "06a58c02ded799e824d13c84845ee7f2";
+(node as any).hash = "22d271feb4bf2c935814101761d7b03e";
 
 export default node;
