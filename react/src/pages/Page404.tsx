@@ -33,18 +33,18 @@ const Page404 = () => {
   const defaultPageTitle =
     firstAvailableMenuItem?.labelText ?? t('webui.menu.FirstPageNameAlias');
 
-  // The pill shows the unknown path with its LAST segment marked broken —
-  // that is the part the router could not resolve. Long paths are capped
-  // with a leading ellipsis so detail-page URLs stay readable.
+  // The pill echoes the unknown path with all segments neutral: a 404 cannot
+  // know WHICH segment failed to resolve (e.g. `/admi/default/start` breaks
+  // on the first segment, not the last), so marking one would be a guess.
+  // Error states that DO know the failing segment (ProjectScopeErrorState)
+  // keep their `broken` marking. Long paths are capped with a leading
+  // ellipsis so detail-page URLs stay readable.
   const rawSegments = location.pathname.split('/').filter(Boolean);
   const capped =
     rawSegments.length > MAX_SEGMENTS
       ? ['…', ...rawSegments.slice(-(MAX_SEGMENTS - 1))]
       : rawSegments;
-  const segments: RouteErrorSegment[] = capped.map((text, i) => ({
-    text,
-    broken: i === capped.length - 1,
-  }));
+  const segments: RouteErrorSegment[] = capped.map((text) => ({ text }));
 
   return (
     <RouteErrorContent
