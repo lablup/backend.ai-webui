@@ -11,10 +11,7 @@ import AdminDeploymentPresetSettingPageContent, {
   type AdminDeploymentPresetFormValue,
   type ModelDefinitionFormValue,
 } from '../components/AdminDeploymentPresetSettingPageContent';
-import {
-  DEFAULT_MODEL_SERVICE_SHELL,
-  resolveCommandShell,
-} from '../helper/modelServiceCommand';
+import { resolveCommandShell } from '../helper/modelServiceCommand';
 import { tokenizeShellCommand } from '../helper/parseCliCommand';
 import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
@@ -64,21 +61,22 @@ const buildModelDefinitionInput = (
             // `command` plus a `shell` derived from the Basic/Advanced controls
             // (Basic → /bin/bash, Advanced → selected shell). On older managers
             // fall back to the deprecated tokenized `startCommand`. Never send
-            // both — the backend prefers `command`. Presets always run under a
-            // shell (`PresetModelServiceConfigInput.shell` is non-null), so the
-            // Exec (no-shell) mode is not offered here and `shell` is never null.
+            // both — the backend prefers `command`.
             ...(supportsCommandShell
               ? {
                   command: service.startCommand,
-                  // Presets always run under a shell (input `shell` is
-                  // non-null), so pass Shell explicitly (no Exec mode) — the
-                  // `??` only satisfies the non-null type, never triggers.
-                  shell:
-                    resolveCommandShell({
-                      advanced: !!service.commandAdvanced,
-                      execution: 'shell',
-                      shell: service.shell,
-                    }) ?? DEFAULT_MODEL_SERVICE_SHELL,
+                  // Presets are always run under a shell as a product decision,
+                  // so Exec (no-shell) mode is not offered here and `execution`
+                  // is pinned to Shell — which makes `resolveCommandShell`
+                  // always return a string. This is NOT a type requirement:
+                  // `PresetModelServiceConfigInput.shell` is `String = "/bin/bash"`
+                  // (nullable with a default), so omitting it would be valid and
+                  // would let the backend apply its own default.
+                  shell: resolveCommandShell({
+                    advanced: !!service.commandAdvanced,
+                    execution: 'shell',
+                    shell: service.shell,
+                  }),
                 }
               : { startCommand: tokenizeShellCommand(service.startCommand) }),
             preStartActions: (service.preStartActions ?? []).map((a) => ({

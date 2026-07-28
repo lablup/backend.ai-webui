@@ -122,8 +122,14 @@ export function deriveCommandModeState(params: {
  *
  * Omitting the field (Basic) relies on the GraphQL input defaulting `shell` to
  * `/bin/bash` (backend BA-6742). On managers predating that change the omitted
- * field collapses to null (= no shell); callers that must guarantee a shell
- * (e.g. the required-shell preset input) coerce `undefined` to the default.
+ * field collapses to null (= no shell).
+ *
+ * `shell` is nullable with a default on every input that takes it
+ * (`ModelServiceConfigInput` / `PresetModelServiceConfigInput` both declare
+ * `shell: String = "/bin/bash"`), so `undefined` is always a valid thing to
+ * send — no caller needs to coerce it to satisfy a type. Callers that want to
+ * guarantee a shell do so by pinning `execution` to `'shell'`, which makes this
+ * function return a string.
  *
  * `execution` is optional: when omitted (e.g. the preset form, which has no
  * Exec mode) it is treated as Shell, so the result is never null.
