@@ -4,14 +4,11 @@
  */
 import { SessionReclamationStatusPopoverFragment$key } from '../../__generated__/SessionReclamationStatusPopoverFragment.graphql';
 import { toFixedFloorWithoutTrailingZeros } from '../../helper';
+import { useResourceSlotsDetails } from '../../hooks/backendai';
 import type { IdleChecks } from './SessionIdleChecks';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Badge, Divider, Popover, Typography, theme } from 'antd';
-import {
-  useResourceSlotsDetails,
-  useMemoizedJSONParse,
-  BAIFlex,
-} from 'backend.ai-ui';
+import { useMemoizedJSONParse, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';

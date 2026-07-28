@@ -4,15 +4,11 @@
  */
 import { SessionUsageMonitorFragment$key } from '../__generated__/SessionUsageMonitorFragment.graphql';
 import { convertToBinaryUnit, convertToDecimalUnit } from '../helper';
-import { ResourceSlotName } from '../hooks/backendai';
+import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
 import { useSessionLiveStat } from '../hooks/useSessionNodeLiveStat';
 import SimpleProgressWithLabel from './SimpleProgressWithLabel';
 import { type ProgressProps, Typography, Row, Col } from 'antd';
-import {
-  filterOutEmpty,
-  BAIFlex,
-  useResourceSlotsDetails,
-} from 'backend.ai-ui';
+import { filterOutEmpty, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useMemo } from 'react';
 import { graphql, useFragment } from 'react-relay';

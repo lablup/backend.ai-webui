@@ -1,3 +1,5 @@
+export { default as BAIImageWithFallback } from './BAIImageWithFallback';
+export type { BAIImageWithFallbackProps } from './BAIImageWithFallback';
 export { default as BAIBadge } from './BAIBadge';
 export type { BAIBadgeProps } from './BAIBadge';
 export { default as BAIBoardItemTitle } from './BAIBoardItemTitle';

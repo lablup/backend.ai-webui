@@ -15,7 +15,6 @@ import { mainContentDivRefState } from '../components/MainLayout/MainLayout';
 import PortSelectFormItem, {
   PortSelectFormValues,
 } from '../components/PortSelectFormItem';
-import { ResourceTypeIcon } from '../components/ResourceNumber';
 import ResourceAllocationFormItems, {
   RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
   ResourceAllocationFormValue,
@@ -36,7 +35,10 @@ import VFolderTableFormItem, {
 } from '../components/VFolderTableFormItem';
 import { formatDuration, convertToBinaryUnit } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
-import { useCurrentUserRole } from '../hooks/backendai';
+import {
+  useCurrentUserRole,
+  useResourceSlotsDetails,
+} from '../hooks/backendai';
 import { useCurrentResourceGroupState } from '../hooks/useCurrentProject';
 import { useRecentSessionHistory } from '../hooks/useRecentSessionHistory';
 import { useStartSession } from '../hooks/useStartSession';
@@ -86,7 +88,7 @@ import {
   BAIUnmountAfterClose,
   useUpdatableState,
   BAIIntervalView,
-  useResourceSlotsDetails,
+  ResourceTypeIcon,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
@@ -1501,20 +1503,16 @@ type FormOrResourceRequired = {
 
 // Renders a unified-memory accelerator as "<device description>" with the same
 // explanatory tooltip as the launcher's accelerator field. Kept as a separate
-// component so its resource-slot metadata query runs only where it is used, and
-// so a long description wraps gracefully: the icon + text wrap as a unit, and
-// the text breaks onto multiple lines instead of overflowing.
+// component so a long description wraps gracefully: the icon + text wrap as a
+// unit, and the text breaks onto multiple lines instead of overflowing.
 const UnifiedAcceleratorChip: React.FC<{ type: string }> = ({ type }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  // Query slot details across all resource groups (no sgroup) so the unified
-  // slot's description is found regardless of the form's selected group — the
-  // description lives only in the backend slot-details response (it is not in
-  // the local device_metadata.json), so a group mismatch would otherwise drop
-  // it and fall back to the slot name.
+  // The description lives only in the backend slot-details response, not in
+  // the local device_metadata.json, and is not scoped to a resource group.
   const { mergedResourceSlots } = useResourceSlotsDetails();
-  const description = mergedResourceSlots?.[type]?.description ?? type;
+  const description = mergedResourceSlots[type]?.description ?? type;
   // One line of the description text, so the icon can be vertically centered
   // against the first line (not the whole wrapped block).
   const lineHeightPx = token.fontSize * token.lineHeight;

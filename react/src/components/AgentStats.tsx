@@ -2,11 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useResourceSlotsDetails } from '../hooks/backendai';
 import { AgentStatsFragment$key } from '../__generated__/AgentStatsFragment.graphql';
 import { useControllableValue } from 'ahooks';
 import { Segmented, Skeleton, theme, Typography } from 'antd';
 import {
-  useResourceSlotsDetails,
   BAIBoardItemTitle,
   BAIFetchKeyButton,
   BAIFlex,
@@ -34,6 +34,7 @@ const AgentStats: React.FC<AgentStatsProps> = ({
   extra,
   ...props
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
 

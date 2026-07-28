@@ -14,9 +14,10 @@ import { BAIProjectSettingModalFragment$key } from '../../__generated__/BAIProje
 import { BAIProjectSettingModalModifyMutation } from '../../__generated__/BAIProjectSettingModalModifyMutation.graphql';
 import { BAIProjectSettingModalQuery } from '../../__generated__/BAIProjectSettingModalQuery.graphql';
 import { convertToBinaryUnit } from '../../helper';
-import { useErrorMessageResolver, useResourceSlotsDetails } from '../../hooks';
+import { useErrorMessageResolver } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIModal, { BAIModalProps } from '../BAIModal';
+import { useBAIResourceSlots } from '../provider';
 import {
   App,
   Checkbox,
@@ -66,10 +67,11 @@ const BAIProjectSettingModal = ({
   projectFragment,
   ...modalProps
 }: BAIProjectSettingModalProps) => {
+  'use memo';
   const { token } = theme.useToken();
   const { t } = useBAIi18n();
   const deferredOpen = useDeferredValue(modalProps.open);
-  const { resourceSlotsInRG, deviceMetaData } = useResourceSlotsDetails();
+  const { resourceSlots, deviceMetaData } = useBAIResourceSlots();
   const form = useRef<FormInstance<FormValues>>(null);
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
@@ -473,7 +475,7 @@ const BAIProjectSettingModal = ({
         >
           <BAIAllowedHostNamesSelect mode="multiple" allowClear />
         </Form.Item>
-        {_.map(_.chunk(_.keys(resourceSlotsInRG), 2), (resourceSlotKeys) => (
+        {_.map(_.chunk(_.keys(resourceSlots), 2), (resourceSlotKeys) => (
           <>
             {_.map(resourceSlotKeys, (resourceSlotKey) => (
               <Form.Item
@@ -518,7 +520,7 @@ const BAIProjectSettingModal = ({
                     style={{ width: '100%' }}
                     min={0}
                     suffix={
-                      resourceSlotsInRG?.[resourceSlotKey as ResourceSlotName]
+                      resourceSlots?.[resourceSlotKey as ResourceSlotName]
                         ?.display_unit
                     }
                   />

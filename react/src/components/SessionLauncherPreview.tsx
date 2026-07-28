@@ -484,36 +484,6 @@ const SessionLauncherPreview: React.FC<{
                 <ResourceNumbersOfSession
                   resource={form.getFieldValue('resource')}
                 />
-                {/* {_.chain(
-                              form.getFieldValue('allocationPreset') ===
-                                'custom'
-                                ? form.getFieldValue('resource')
-                                : JSON.parse(
-                                    form.getFieldValue('selectedPreset')
-                                      ?.resource_slots || '{}',
-                                  ),
-                            )
-                              .map((value, type) => {
-                                // @ts-ignore
-                                if (resourceSlots[type] === undefined)
-                                  return undefined;
-                                const resource_opts = {
-                                  shmem:
-                                    form.getFieldValue('selectedPreset')
-                                      .shared_memory,
-                                };
-                                return (
-                                  <ResourceNumber
-                                    key={type}
-                                    // @ts-ignore
-                                    type={type}
-                                    value={value}
-                                    opts={resource_opts}
-                                  />
-                                );
-                              })
-                              .compact()
-                              .value()} */}
               </BAIFlex>
             </Descriptions.Item>
             {baiClient.supports('agent-select') &&

@@ -7,7 +7,11 @@ import { SessionDetailContentFragment$key } from '../__generated__/SessionDetail
 import { SessionDetailContentQuery } from '../__generated__/SessionDetailContentQuery.graphql';
 import { convertToBinaryUnit } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
+import {
+  useCurrentUserInfo,
+  useCurrentUserRole,
+  useResourceSlotsDetails,
+} from '../hooks/backendai';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
@@ -63,7 +67,6 @@ import {
   BAISessionClusterMode,
   INITIAL_FETCH_KEY,
   BAIButton,
-  useResourceSlotsDetails,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Suspense, useState } from 'react';

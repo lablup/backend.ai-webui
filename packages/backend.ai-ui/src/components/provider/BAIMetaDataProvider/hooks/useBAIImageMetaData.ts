@@ -1,5 +1,6 @@
 import { preserveDotStartCase } from '../../../../helper';
-import { BAIImageMetaDataContext, BAIImagePathContext } from '../context';
+import { BAIImageMetaDataContext } from '../context';
+import useBAIIconPath from './useBAIIconPath';
 import * as _ from 'lodash-es';
 import { use } from 'react';
 
@@ -18,7 +19,7 @@ import { use } from 'react';
 const useBAIImageMetaData = () => {
   'use memo';
   const metadata = use(BAIImageMetaDataContext);
-  const imagePath = use(BAIImagePathContext);
+  const resolveIconPath = useBAIIconPath();
 
   const getImageMeta = (imageName: string) => {
     // registry/name:tag@architecture
@@ -52,11 +53,10 @@ const useBAIImageMetaData = () => {
      * package never resolves an app asset path on its own.
      */
     getImageIcon: (imageName?: string | null) => {
-      if (_.isUndefined(imagePath)) return undefined;
       const iconFileName =
         (imageName && metadata?.imageInfo[getImageMeta(imageName).key]?.icon) ||
         'default.png';
-      return `${_.trimEnd(imagePath, '/')}/${iconFileName}`;
+      return resolveIconPath(iconFileName);
     },
     getBaseVersion: (imageName: string) => {
       return (

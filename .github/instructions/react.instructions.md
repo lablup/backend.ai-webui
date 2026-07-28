@@ -8,10 +8,10 @@ These instructions apply to React components in the `/react` directory.
 
 ## React Compiler Optimization
 
-### 'use memo' Directive (Recommended)
+### 'use memo' Directive (Required)
 
 - This project uses the new **React Compiler**.
-- We actively use React directives such as `use memo` and `use client` at the top components (NOT files).
+- We actively use React directives such as `use memo` and `use client` at the top of **component and custom hook** function bodies (NOT files).
 - `use memo` is **intentional and valid** in this codebase.
 - Even if tooling or TypeScript/ESLint shows something like:
   - `Unknown directive: 'use memo'.`
@@ -20,8 +20,8 @@ These instructions apply to React components in the `/react` directory.
 
 ### What should do
 
-- When generating or editing React components:
-  - Prefer adding `use memo` when it is beneficial for React Compiler.
+- When generating or editing React components **or custom hooks** (`use*` functions):
+  - **Always** add `'use memo'` at the top of the function body.
   - **Never** remove existing `use memo` directives.
   - **Never** “fix” or “rename” `use memo` to something else.
   - **Never** add comments suggesting that `use memo` is unknown, invalid, or deprecated.
@@ -37,7 +37,7 @@ The `'use memo'` directive has **strict placement requirements**:
 - Only the first directive is processed; additional directives are ignored
 
 ```typescript
-// ✅ Good: 'use memo' at the very beginning of function body
+// ✅ Good: 'use memo' at the very beginning of component body
 function MyComponent({ data }: Props) {
   'use memo';
 
@@ -45,6 +45,14 @@ function MyComponent({ data }: Props) {
   // Component logic - React Compiler handles optimization
   return <div>{data}</div>;
 }
+
+// ✅ Good: 'use memo' in custom hooks too
+const useMyHook = (id: string) => {
+  'use memo';
+
+  const [value, setValue] = useState(null);
+  return value;
+};
 
 // ✅ Good: Comments before 'use memo' are OK
 const AnotherComponent: React.FC<Props> = ({ data }) => {
@@ -73,6 +81,12 @@ function ConditionalBad({ data }: Props) {
 function BacktickBad({ data }: Props) {
   `use memo`; // ❌ Must use quotes, not backticks
   return <div>{data}</div>;
+}
+
+// ❌ Bad: Missing 'use memo' in a new custom hook
+function useData(id: string) {
+  // ❌ Should have 'use memo' at the top
+  return useSomeQuery(id);
 }
 ```
 
@@ -1056,7 +1070,7 @@ When reviewing React code, check for:
 
 ### React Compiler & Optimization
 
-- [ ] Component uses `'use memo'` directive if it's a new component
+- [ ] Component and custom hook (`use*`) uses `'use memo'` directive if new
 - [ ] No unnecessary `useMemo`/`useCallback` (prefer 'use memo' directive)
 - [ ] `useEffectEvent` is used for non-reactive logic in Effects when appropriate
 

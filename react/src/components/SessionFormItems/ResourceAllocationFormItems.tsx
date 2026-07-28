@@ -9,7 +9,10 @@ import {
   convertToBinaryUnit,
 } from '../../helper';
 import { useSuspendedBackendaiClient } from '../../hooks';
-import { useResourceSlots } from '../../hooks/backendai';
+import {
+  useResourceSlots,
+  useResourceSlotsDetails,
+} from '../../hooks/backendai';
 import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../../hooks/hooksUsingRelay';
 import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import {
@@ -29,7 +32,6 @@ import SharedMemoryFormItems from './SharedMemoryFormItems';
 import { QuestionCircleOutlined, ReloadOutlined } from '@ant-design/icons';
 import { Button, Card, Col, Form, Radio, Row, Tooltip, theme } from 'antd';
 import {
-  useResourceSlotsDetails,
   BAIFlex,
   useEventNotStable,
   useUpdatableState,

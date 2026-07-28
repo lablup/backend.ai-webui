@@ -9,9 +9,14 @@ import BAIRocmIcon from '../icons/BAIRocmIcon';
 import BAITenstorrentIcon from '../icons/BAITenstorrentIcon';
 import BAITpuIcon from '../icons/BAITpuIcon';
 import BAIFlex from './BAIFlex';
+import BAIImageWithFallback from './BAIImageWithFallback';
 import NumberWithUnit from './BAINumberWithUnit';
 import BAIText from './BAIText';
-import { ResourceSlotName, useBAIDeviceMetaData } from './provider';
+import {
+  ResourceSlotName,
+  useBAIIconPath,
+  useBAIResourceSlots,
+} from './provider';
 import { theme, Tooltip, TooltipProps } from 'antd';
 import * as _ from 'lodash-es';
 import { CpuIcon, MemoryStickIcon, MicrochipIcon } from 'lucide-react';
@@ -52,6 +57,10 @@ export interface BAIResourceNumberWithIconProps {
  * @param hideTooltip - When true, hides the tooltip on the resource icon
  * @param opts - Additional options like shmem for memory resources
  * @param extra - Extra content to display after the resource number
+ *
+ * Unit, number format and icon come from `BAIMetaDataProvider` and
+ * `BAIResourceSlotsProvider`. Without the latter, a slot only the server knows
+ * about renders with the generic icon and no unit.
  */
 const BAIResourceNumberWithIcon = ({
   type,
@@ -65,12 +74,13 @@ const BAIResourceNumberWithIcon = ({
   'use memo';
 
   const { t } = useBAIi18n();
-  const deviceMetaData = useBAIDeviceMetaData();
+  const { mergedResourceSlots } = useBAIResourceSlots();
   const { token } = theme.useToken();
 
   const formatAmount = (amount: string) => {
-    const roundLength = deviceMetaData?.[type]?.number_format.round_length || 0;
-    return deviceMetaData?.[type]?.number_format.binary
+    const roundLength =
+      mergedResourceSlots[type]?.number_format.round_length || 0;
+    return mergedResourceSlots[type]?.number_format.binary
       ? Number(
           convertToBinaryUnit(amount, 'g', 2, true)?.numberFixed,
         ).toString()
@@ -89,7 +99,7 @@ const BAIResourceNumberWithIcon = ({
       : undefined;
 
   // The number + optional `/ compared` + unit, sharing one trailing unit.
-  const numberGroup = deviceMetaData?.[type]?.number_format.binary ? (
+  const numberGroup = mergedResourceSlots[type]?.number_format.binary ? (
     <NumberWithUnit
       numberUnit={amount}
       targetUnit="g"
@@ -117,14 +127,14 @@ const BAIResourceNumberWithIcon = ({
         <BAIText type="secondary">{`/ ${formatAmount(effectiveComparedValue)}`}</BAIText>
       )}
       <BAIText type="secondary" style={{ whiteSpace: 'nowrap' }}>
-        {deviceMetaData?.[type]?.display_unit || ''}
+        {mergedResourceSlots[type]?.display_unit || ''}
       </BAIText>
     </>
   );
 
   return (
     <BAIFlex direction="row" gap="xxs">
-      {deviceMetaData?.[type] ? (
+      {mergedResourceSlots[type] ? (
         <ResourceTypeIcon type={type} showTooltip={!hideTooltip} />
       ) : (
         type
@@ -173,6 +183,11 @@ interface ResourceTypeIconProps {
   size?: number;
 }
 
+/**
+ * The icon half of `BAIResourceNumberWithIcon`, usable on its own. Without
+ * `BAIResourceSlotsProvider`, a slot only the server knows about falls back to
+ * the generic icon.
+ */
 export const ResourceTypeIcon = ({
   type,
   showTooltip = true,
@@ -181,7 +196,14 @@ export const ResourceTypeIcon = ({
 }: ResourceTypeIconProps) => {
   'use memo';
 
-  const deviceMetaData = useBAIDeviceMetaData();
+  const { mergedResourceSlots } = useBAIResourceSlots();
+  const resolveIconPath = useBAIIconPath();
+  const displayIcon = mergedResourceSlots[type]?.display_icon;
+  const genericIcon = (
+    <BAIFlex style={{ width: size, height: size }}>
+      <MicrochipIcon />
+    </BAIFlex>
+  );
 
   const getIconContent = () => {
     if (type === 'cpu') {
@@ -199,26 +221,36 @@ export const ResourceTypeIcon = ({
       );
     }
 
-    const displayIcon = deviceMetaData[type]?.display_icon;
-
     if (displayIcon && _.keys(knownDeviceIcons).includes(displayIcon)) {
       return (
         knownDeviceIcons[displayIcon as keyof typeof knownDeviceIcons] ?? null
       );
     }
 
-    return (
-      <BAIFlex style={{ width: size, height: size }}>
-        <MicrochipIcon />
-      </BAIFlex>
-    );
+    // A server-configured slot can name an icon the package does not bundle;
+    // those load from the host's icon directory.
+    const iconUrl = resolveIconPath(displayIcon && `${displayIcon}.svg`);
+    if (iconUrl) {
+      return (
+        <BAIImageWithFallback
+          src={iconUrl}
+          alt={type}
+          width={size}
+          height={size}
+          style={{ alignSelf: 'center' }}
+          fallbackIcon={genericIcon}
+        />
+      );
+    }
+
+    return genericIcon;
   };
 
   const content = getIconContent();
 
   return showTooltip ? (
     <Tooltip
-      title={deviceMetaData[type]?.description || type}
+      title={mergedResourceSlots[type]?.description || type}
       {...tooltipProps}
     >
       {content}

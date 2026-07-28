@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useWebUINavigate } from '../../hooks';
+import { useResourceSlotsDetails } from '../../hooks/backendai';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
 import { useLogoutEventListeners } from '../../hooks/useLogout';
@@ -29,7 +30,7 @@ import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
 import { App, ConfigProvider, Layout, type LayoutProps, theme } from 'antd';
 import { createGlobalStyle, createStyles } from 'antd-style';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, BAIResourceSlotsProvider } from 'backend.ai-ui';
 import { atom, useSetAtom } from 'jotai';
 import * as _ from 'lodash-es';
 import React, {
@@ -285,9 +286,11 @@ function MainLayout() {
                   </ErrorBoundaryWithNullFallback>
                   <BAIErrorBoundary>
                     <AutoAdminPrimaryColorProvider>
-                      <PageAccessGuard>
-                        <Outlet />
-                      </PageAccessGuard>
+                      <ResourceSlotsWrapper>
+                        <PageAccessGuard>
+                          <Outlet />
+                        </PageAccessGuard>
+                      </ResourceSlotsWrapper>
                     </AutoAdminPrimaryColorProvider>
                   </BAIErrorBoundary>
                 </Suspense>
@@ -302,6 +305,22 @@ function MainLayout() {
     </LayoutWithPageTestId>
   );
 }
+
+/**
+ * Feeds the server's resource slots to `backend.ai-ui`. Sits inside the routed
+ * subtree because the fetch is authenticated; the static metadata stays
+ * app-wide in `DefaultProvidersForReactRoot`.
+ */
+const ResourceSlotsWrapper = ({ children }: { children: React.ReactNode }) => {
+  'use memo';
+  const { resourceSlotsInRG } = useResourceSlotsDetails();
+
+  return (
+    <BAIResourceSlotsProvider resourceSlots={resourceSlotsInRG}>
+      {children}
+    </BAIResourceSlotsProvider>
+  );
+};
 
 /**
  * Component that guards page access based on permissions and route validity.

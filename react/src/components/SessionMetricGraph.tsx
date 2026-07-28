@@ -11,13 +11,10 @@ import {
   convertToDecimalUnit,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
+import { useResourceSlotsDetails } from '../hooks/backendai';
 import { Empty, Typography, theme } from 'antd';
 import { createStyles } from 'antd-style';
-import {
-  BAIQuestionIconWithTooltip,
-  useResourceSlotsDetails,
-  BAIFlex,
-} from 'backend.ai-ui';
+import { BAIQuestionIconWithTooltip, BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { useMemo } from 'react';

@@ -168,7 +168,10 @@ const meta: Meta<typeof BAIResourceNumberWithIcon> = {
   },
   decorators: [
     (Story) => (
-      <BAIMetaDataProvider deviceMetaData={mockDeviceMetaData}>
+      <BAIMetaDataProvider
+        deviceMetaData={mockDeviceMetaData}
+        imagePath="resources/icons"
+      >
         <Story />
       </BAIMetaDataProvider>
     ),
@@ -390,6 +393,72 @@ export const WithSharedMemory: Story = {
       <BAIFlex gap="sm" align="center">
         <span style={{ width: 180 }}>Memory without SHM:</span>
         <BAIResourceNumberWithIcon type="mem" value="16000000000" />
+      </BAIFlex>
+    </BAIFlex>
+  ),
+};
+
+export const ServerConfiguredIcon: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: `
+Demonstrates how the component handles devices whose \`display_icon\` is **not** in the built-in \`knownDeviceIcons\` set
+(\`nvidia\`, \`rocm\`, \`tpu\`, \`ipu\`, \`gaudi\`, \`furiosa\`, \`rebel\`, \`tenstorrent\`).
+
+**Icon resolution order for unknown devices:**
+1. \`display_icon\` is set but not in built-in set → loads \`{imagePath}/{display_icon}.svg\` from the host's icon directory
+2. SVG file missing (404) → falls back to \`MicrochipIcon\`
+3. \`display_icon\` not set at all → falls back to \`MicrochipIcon\`
+
+> **Note:** The "SVG from server" row uses \`npu_generic.svg\` as a stand-in example
+> since it already exists in the host's \`resources/icons/\` and is not part of \`knownDeviceIcons\`.
+> In production, any server-configured accelerator with a custom \`display_icon\` name follows the same path.`,
+      },
+    },
+  },
+  decorators: [
+    (Story) => {
+      const extendedDeviceMetaData = {
+        ...mockDeviceMetaData,
+        // an icon file the host serves, with no bundled component for it
+        'npu-generic.device': {
+          slot_name: 'npu-generic.device',
+          description: 'Generic NPU (server-configured icon)',
+          human_readable_name: 'NPU',
+          display_unit: 'NPU',
+          number_format: { binary: false, round_length: 0 },
+          display_icon: 'npu_generic',
+        },
+        // no such icon file, so the generic glyph is used
+        'unknown.device': {
+          slot_name: 'unknown.device',
+          description: 'Unknown device (missing icon file)',
+          human_readable_name: 'Unknown',
+          display_unit: 'Unit',
+          number_format: { binary: false, round_length: 0 },
+          display_icon: 'nonexistent_icon',
+        },
+      };
+      return (
+        <BAIMetaDataProvider
+          deviceMetaData={extendedDeviceMetaData}
+          imagePath="resources/icons"
+        >
+          <Story />
+        </BAIMetaDataProvider>
+      );
+    },
+  ],
+  render: () => (
+    <BAIFlex direction="column" gap="md" align="start">
+      <BAIFlex gap="sm" align="center">
+        <span style={{ width: 240 }}>SVG from server (npu_generic.svg):</span>
+        <BAIResourceNumberWithIcon type="npu-generic.device" value="2" />
+      </BAIFlex>
+      <BAIFlex gap="sm" align="center">
+        <span style={{ width: 240 }}>Fallback (missing SVG file):</span>
+        <BAIResourceNumberWithIcon type="unknown.device" value="1" />
       </BAIFlex>
     </BAIFlex>
   ),

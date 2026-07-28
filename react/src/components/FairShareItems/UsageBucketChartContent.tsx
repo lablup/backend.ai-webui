@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useResourceSlotsDetails } from '../../hooks/backendai';
 import {
   DomainV2Filter,
   ProjectV2Filter,
@@ -18,7 +19,6 @@ import { createStyles } from 'antd-style';
 import {
   convertToBinaryUnit,
   INITIAL_FETCH_KEY,
-  useResourceSlotsDetails,
   toFixedFloorWithoutTrailingZeros,
   BAIFlex,
 } from 'backend.ai-ui';

@@ -8,7 +8,7 @@ import {
   convertUnitValue,
   toFixedFloorWithoutTrailingZeros,
 } from '../../helper';
-import { useBAILogger, useResourceSlotsDetails } from '../../hooks';
+import { useBAILogger } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIAlertIconWithTooltip from '../BAIAlertIconWithTooltip';
 import BAIDoubleTag from '../BAIDoubleTag';
@@ -20,7 +20,11 @@ import { ResourceTypeIcon } from '../BAIResourceNumberWithIcon';
 import BAITag from '../BAITag';
 import BAIText from '../BAIText';
 import { BAIColumnType, BAITable, BAITableProps } from '../Table';
-import { ResourceSlotName, useConnectedBAIClient } from '../provider';
+import {
+  ResourceSlotName,
+  useBAIResourceSlots,
+  useConnectedBAIClient,
+} from '../provider';
 import { CheckCircleOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { theme, Typography } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
@@ -84,7 +88,7 @@ const CellErrorBoundary: React.FC<
 const AllocationCell: React.FC<{ record: AgentNodeInList }> = ({ record }) => {
   'use memo';
   const { token } = theme.useToken();
-  const { mergedResourceSlots } = useResourceSlotsDetails();
+  const { mergedResourceSlots } = useBAIResourceSlots();
   const parsedOccupiedSlots: {
     [key in ResourceSlotName]: string | undefined;
   } = JSON.parse(record?.occupied_slots || '{}');
@@ -126,7 +130,7 @@ const AllocationCell: React.FC<{ record: AgentNodeInList }> = ({ record }) => {
                     type="secondary"
                     style={{ fontSize: token.sizeXS }}
                   >
-                    {mergedResourceSlots?.cpu?.display_unit}
+                    {mergedResourceSlots.cpu?.display_unit}
                   </Typography.Text>
                 </BAIFlex>
                 <BAIProgressWithLabel
@@ -212,7 +216,7 @@ const AllocationCell: React.FC<{ record: AgentNodeInList }> = ({ record }) => {
                     type="secondary"
                     style={{ fontSize: token.sizeXS }}
                   >
-                    {mergedResourceSlots?.[key]?.display_unit}
+                    {mergedResourceSlots[key]?.display_unit}
                   </Typography.Text>
                 </BAIFlex>
                 <BAIProgressWithLabel
@@ -240,7 +244,7 @@ const UtilizationCell: React.FC<{
 }> = ({ value, record }) => {
   'use memo';
   const { t } = useBAIi18n();
-  const { mergedResourceSlots } = useResourceSlotsDetails();
+  const { mergedResourceSlots } = useBAIResourceSlots();
   const parsedValue = JSON.parse(value || '{}');
   const available_slots = JSON.parse(record?.available_slots || '{}');
   if (record?.status === 'ALIVE') {
@@ -296,7 +300,7 @@ const UtilizationCell: React.FC<{
           data-testid="live-stat-cpu"
         >
           <Typography.Text>
-            {mergedResourceSlots?.cpu?.human_readable_name}
+            {mergedResourceSlots.cpu?.human_readable_name}
           </Typography.Text>
           <BAIProgressWithLabel
             percent={liveStat.cpu_util.ratio * 100}
@@ -316,7 +320,7 @@ const UtilizationCell: React.FC<{
           data-testid="live-stat-mem"
         >
           <Typography.Text>
-            {mergedResourceSlots?.mem?.human_readable_name}
+            {mergedResourceSlots.mem?.human_readable_name}
           </Typography.Text>
           <BAIProgressWithLabel
             percent={liveStat.mem_util.ratio * 100}
@@ -349,7 +353,7 @@ const UtilizationCell: React.FC<{
                 data-testid={`live-stat-${statKey}`}
               >
                 <Typography.Text>
-                  {mergedResourceSlots?.[deviceName]?.human_readable_name}
+                  {mergedResourceSlots[deviceName]?.human_readable_name}
                   (util)
                 </Typography.Text>
                 <BAIProgressWithLabel
@@ -387,7 +391,7 @@ const UtilizationCell: React.FC<{
                 data-testid={`live-stat-${statKey}`}
               >
                 <Typography.Text>
-                  {mergedResourceSlots?.[deviceName]?.human_readable_name}
+                  {mergedResourceSlots[deviceName]?.human_readable_name}
                   (mem)
                 </Typography.Text>
                 <BAIProgressWithLabel
@@ -420,7 +424,7 @@ const UtilizationCell: React.FC<{
             const deviceName =
               _.split(statKey, '_').slice(0, -1).join('-') + '.device';
             const humanReadableName =
-              mergedResourceSlots?.[deviceName]?.human_readable_name;
+              mergedResourceSlots[deviceName]?.human_readable_name;
             return (
               <BAIFlex
                 key={statKey}
@@ -438,7 +442,7 @@ const UtilizationCell: React.FC<{
             const deviceName =
               _.split(statKey, '_').slice(0, -1).join('_') + '.device';
             const humanReadableName =
-              mergedResourceSlots?.[deviceName]?.human_readable_name;
+              mergedResourceSlots[deviceName]?.human_readable_name;
             return (
               <BAIFlex
                 key={statKey}
@@ -599,6 +603,7 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
   customizeColumns,
   ...tableProps
 }) => {
+  'use memo';
   const { t } = useBAIi18n();
   const { token } = theme.useToken();
   const baiClient = useConnectedBAIClient();

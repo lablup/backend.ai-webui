@@ -14,7 +14,7 @@ import {
 import { ResourcePresetSettingModalModifyByNameMutation } from '../__generated__/ResourcePresetSettingModalModifyByNameMutation.graphql';
 import { convertToBinaryUnit } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useResourceSlots } from '../hooks/backendai';
+import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { App, Form, type FormInstance, Input, InputNumber } from 'antd';
 import {
@@ -23,7 +23,6 @@ import {
   BAIModalProps,
   BAIProjectResourceGroupSelect,
   BAISelect,
-  useResourceSlotsDetails,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Fragment, useRef } from 'react';
