@@ -1958,7 +1958,7 @@
     "BasePath": "Jalur Dasar",
     "CommandAdvancedModeTooltip": "Mode lanjutan memungkinkan Anda memilih cara perintah dijalankan (Shell atau Exec) dan shell mana yang digunakan.",
     "CommandArgvLabel": "Perintah (argv)",
-    "CommandExecHelper": "Operator shell (; && | $VAR, pengalihan, dll.) tidak dapat digunakan. Masukkan setiap argumen yang dipisahkan oleh spasi.",
+    "CommandExecHelper": "Operator shell (; && | $VAR, pengalihan, dll.) tidak dapat digunakan. Masukkan setiap argumen yang dipisahkan oleh spasi; apit argumen yang mengandung spasi dengan tanda kutip (mis. --name \"my model\").",
     "CommandShellHelper": "Operator shell (; && | $VAR, pengalihan, dll.) dapat digunakan.",
     "Controls": "Kontrol",
     "CreateNewDeploymentWithPreset": "Buat Deployment Baru dengan Preset",

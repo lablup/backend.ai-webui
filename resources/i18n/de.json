@@ -1957,7 +1957,7 @@
     "BasePath": "Basispfad",
     "CommandAdvancedModeTooltip": "Im erweiterten Modus können Sie festlegen, wie der Befehl ausgeführt wird (Shell oder Exec) und welche Shell verwendet wird.",
     "CommandArgvLabel": "Befehl (argv)",
-    "CommandExecHelper": "Shell-Operatoren (; && | $VAR, Umleitung usw.) können nicht verwendet werden. Geben Sie jedes Argument durch Leerzeichen getrennt ein.",
+    "CommandExecHelper": "Shell-Operatoren (; && | $VAR, Umleitung usw.) können nicht verwendet werden. Geben Sie jedes Argument durch Leerzeichen getrennt ein; Argumente mit Leerzeichen müssen in Anführungszeichen stehen (z. B. --name \"my model\").",
     "CommandShellHelper": "Shell-Operatoren (; && | $VAR, Umleitung usw.) können verwendet werden.",
     "Controls": "Kontrolliert",
     "CreateNewDeploymentWithPreset": "Neue Bereitstellung mit Preset erstellen",

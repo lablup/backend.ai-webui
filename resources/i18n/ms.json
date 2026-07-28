@@ -1955,7 +1955,7 @@
     "BasePath": "Laluan asas",
     "CommandAdvancedModeTooltip": "Mod lanjutan membolehkan anda memilih cara arahan dilaksanakan (Shell atau Exec) dan shell yang hendak digunakan.",
     "CommandArgvLabel": "Arahan (argv)",
-    "CommandExecHelper": "Operator shell (; && | $VAR, pengalihan, dll.) tidak boleh digunakan. Masukkan setiap argumen dipisahkan dengan ruang.",
+    "CommandExecHelper": "Operator shell (; && | $VAR, pengalihan, dll.) tidak boleh digunakan. Masukkan setiap argumen dipisahkan dengan ruang; apit argumen yang mengandungi ruang dengan tanda petik (cth. --name \"my model\").",
     "CommandShellHelper": "Operator shell (; && | $VAR, pengalihan, dll.) boleh digunakan.",
     "Controls": "Kawalan",
     "CreateNewDeploymentWithPreset": "Cipta Penggunaan Baharu dengan Praset",

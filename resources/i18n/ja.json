@@ -1957,7 +1957,7 @@
     "BasePath": "ベースパス",
     "CommandAdvancedModeTooltip": "詳細モードでは、コマンドの実行方式（ShellまたはExec）と使用するシェルを選択できます。",
     "CommandArgvLabel": "コマンド (argv)",
-    "CommandExecHelper": "シェル演算子（; && | $VAR、リダイレクトなど）は使用できません。各引数をスペースで区切って入力してください。",
+    "CommandExecHelper": "シェル演算子（; && | $VAR、リダイレクトなど）は使用できません。各引数をスペースで区切って入力してください。スペースを含む引数は引用符で囲んでください（例: --name \"my model\"）。",
     "CommandShellHelper": "シェル演算子（; && | $VAR、リダイレクトなど）を使用できます。",
     "Controls": "操作",
     "CreateNewDeploymentWithPreset": "プリセットで新規デプロイメント作成",

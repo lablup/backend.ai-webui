@@ -1955,7 +1955,7 @@
     "BasePath": "Temel Yol",
     "CommandAdvancedModeTooltip": "Gelişmiş mod, komutun nasıl çalıştırılacağını (Shell veya Exec) ve hangi kabuğun kullanılacağını seçmenizi sağlar.",
     "CommandArgvLabel": "Komut (argv)",
-    "CommandExecHelper": "Kabuk operatörleri (; && | $VAR, yönlendirme vb.) kullanılamaz. Her argümanı boşlukla ayırarak girin.",
+    "CommandExecHelper": "Kabuk operatörleri (; && | $VAR, yönlendirme vb.) kullanılamaz. Her argümanı boşlukla ayırarak girin; boşluk içeren argümanları tırnak içine alın (ör. --name \"my model\").",
     "CommandShellHelper": "Kabuk operatörleri (; && | $VAR, yönlendirme vb.) kullanılabilir.",
     "Controls": "Kontroller",
     "CreateNewDeploymentWithPreset": "Ön Ayar ile Yeni Dağıtım Oluştur",

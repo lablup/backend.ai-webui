@@ -1956,7 +1956,7 @@
     "BasePath": "Ścieżka podstawowa",
     "CommandAdvancedModeTooltip": "Tryb zaawansowany pozwala wybrać sposób wykonania polecenia (Shell lub Exec) oraz używaną powłokę.",
     "CommandArgvLabel": "Polecenie (argv)",
-    "CommandExecHelper": "Nie można używać operatorów powłoki (; && | $VAR, przekierowania itp.). Wprowadź każdy argument oddzielony spacjami.",
+    "CommandExecHelper": "Nie można używać operatorów powłoki (; && | $VAR, przekierowania itp.). Wprowadź każdy argument oddzielony spacjami; argumenty zawierające spacje ujmij w cudzysłów (np. --name \"my model\").",
     "CommandShellHelper": "Można używać operatorów powłoki (; && | $VAR, przekierowania itp.).",
     "Controls": "Elementy sterujące",
     "CreateNewDeploymentWithPreset": "Utwórz nowe wdrożenie z presetem",

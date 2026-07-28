@@ -1957,7 +1957,7 @@
     "BasePath": "Trajetória de base",
     "CommandAdvancedModeTooltip": "O modo avançado permite escolher como o comando é executado (Shell ou Exec) e qual shell utilizar.",
     "CommandArgvLabel": "Comando (argv)",
-    "CommandExecHelper": "Não podem ser usados operadores de shell (; && | $VAR, redirecionamento, etc.). Introduza cada argumento separado por espaços.",
+    "CommandExecHelper": "Não podem ser usados operadores de shell (; && | $VAR, redirecionamento, etc.). Introduza cada argumento separado por espaços; coloque entre aspas os argumentos que contenham espaços (por ex., --name \"my model\").",
     "CommandShellHelper": "Podem ser usados operadores de shell (; && | $VAR, redirecionamento, etc.).",
     "Controls": "Controlos",
     "CreateNewDeploymentWithPreset": "Criar nova implementação com preset",

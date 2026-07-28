@@ -1956,7 +1956,7 @@
     "BasePath": "Chemin de base",
     "CommandAdvancedModeTooltip": "Le mode avancé vous permet de choisir comment la commande est exécutée (Shell ou Exec) et quel shell utiliser.",
     "CommandArgvLabel": "Commande (argv)",
-    "CommandExecHelper": "Les opérateurs shell (; && | $VAR, redirection, etc.) ne peuvent pas être utilisés. Saisissez chaque argument séparé par des espaces.",
+    "CommandExecHelper": "Les opérateurs shell (; && | $VAR, redirection, etc.) ne peuvent pas être utilisés. Saisissez chaque argument séparé par des espaces ; mettez entre guillemets les arguments contenant des espaces (par ex. --name \"my model\").",
     "CommandShellHelper": "Les opérateurs shell (; && | $VAR, redirection, etc.) peuvent être utilisés.",
     "Controls": "Contrôles",
     "CreateNewDeploymentWithPreset": "Créer un nouveau déploiement avec préréglage",
