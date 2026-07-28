@@ -904,9 +904,19 @@ export class Client {
     if (this.isManagerVersionCompatibleWith('26.4.3')) {
       this._features['model-deployment-extended-filter'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('26.4.4')) {
+      // RBAC filter support assigned user.
+      this._features['rbac-filter-assigned-user'] = true;
+      // ModelMountConfigInput / ExtraVFolderMountInput gained `subpath` in
+      // 26.4.4 (BA-6242): mount a subfolder inside the model vfolder instead of
+      // its root. Older managers reject the unknown input field, so the key is
+      // omitted from the mutation entirely on them.
+      this._features['model-mount-subpath'] = true;
+    }
     // ModelHealthCheck gained an `enable` flag in 26.4.4 (BA-6242): health
     // checks are opt-in via `enable: true/false` instead of nulling the whole
-    // object. Pinned to the rc7 tag for the same staging-manager reason as above.
+    // object. Pinned to the rc7 tag so the flag also activates against staging
+    // managers built from that tag.
     // TODO(FR-3056): simplify to '26.4.4' once the final release ships.
     if (this.isManagerVersionCompatibleWith('26.4.4rc7')) {
       this._features['model-health-check-enable'] = true;
@@ -933,22 +943,11 @@ export class Client {
       // TODO(FR-3139): simplify to '26.4.4' once rc builds are out of use.
       this._features['model-runtime-variant-preset-values'] = true;
     }
-    if (this.isManagerVersionCompatibleWith('26.4.4')) {
-      // ModelMountConfigInput / ExtraVFolderMountInput gained `subpath` in
-      // 26.4.4 (BA-6242): mount a subfolder inside the model vfolder instead of
-      // its root. Older managers reject the unknown input field, so the key is
-      // omitted from the mutation entirely on them.
-      this._features['model-mount-subpath'] = true;
-    }
     if (this.isManagerVersionCompatibleWith('26.7.0')) {
       // Single-string `command` + nullable `shell` on the model-service config
       // (FR-3205 / BA-6551). Older managers only accept the deprecated
       // `startCommand` token list.
       this._features['model-service-command-string'] = true;
-    }
-    if (this.isManagerVersionCompatibleWith('26.4.4')) {
-      // RBAC filter support assigned user.
-      this._features['rbac-filter-assigned-user'] = true;
     }
     if (this.isManagerVersionCompatibleWith('26.7.0')) {
       // Strawberry V2 filter inputs gained the AND/OR/NOT sub-filter
