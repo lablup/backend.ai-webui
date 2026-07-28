@@ -74,9 +74,7 @@ export interface ProjectStoragePermissionTableProps extends BAITableProps<Projec
    * derived from it internally; null/undefined yields an empty key list.
    */
   permissionFrgmt:
-    | ProjectStoragePermissionTable_permissionFrgmt$key
-    | null
-    | undefined;
+    ProjectStoragePermissionTable_permissionFrgmt$key | null | undefined;
 }
 
 const ProjectStoragePermissionTable: React.FC<
@@ -335,7 +333,6 @@ const ProjectStoragePermissionTable: React.FC<
               >
                 <BAIButton
                   icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
-                  style={{ backgroundColor: token.colorInfoBg }}
                   onClick={() =>
                     setEditingRows(
                       rows.filter((row) => selectedRowKeys.includes(row.id)),

@@ -458,18 +458,11 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
               />
               <BAIButton
                 icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
-                style={{
-                  backgroundColor: token.colorInfoBg,
-                }}
                 onClick={toggleUpdateUsersModal}
               />
               {queryParams.status === 'INACTIVE' && (
                 <BAIButton
-                  icon={<DeleteFilled />}
-                  style={{
-                    color: token.colorError,
-                    background: token.colorErrorBg,
-                  }}
+                  icon={<DeleteFilled style={{ color: token.colorError }} />}
                   onClick={togglePurgeUsersModal}
                 />
               )}

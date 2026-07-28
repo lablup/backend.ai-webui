@@ -39,8 +39,8 @@ The button automatically determines if vfolders are deletable:
 - **Not Deletable**: No vfolders have 'delete_vfolder' permission
 
 ## Visual States
-- **Enabled**: Error colors (red icon and background)
-- **Disabled**: Disabled colors (gray)
+- **Enabled**: Default bordered button with error-colored (red) icon only
+- **Disabled**: Disabled button chrome (gray border and background) while the icon keeps its error (red) color
 
 For other props, refer to [Ant Design Button](https://ant.design/components/button).
         `,

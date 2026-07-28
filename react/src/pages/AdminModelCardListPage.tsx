@@ -383,8 +383,7 @@ const AdminModelCardListPage: React.FC = () => {
                 onClearSelection={() => setSelectedModelCards([])}
               />
               <BAIButton
-                danger
-                icon={<DeleteFilled />}
+                icon={<DeleteFilled style={{ color: token.colorError }} />}
                 onClick={handleBulkDelete}
                 loading={isBulkDeleteInFlight}
               />

@@ -364,16 +364,13 @@ const ReservoirPage: React.FC = () => {
                     }
                   >
                     <Button
-                      icon={mode === 'ALIVE' ? <BanIcon /> : <UndoIcon />}
-                      style={{
-                        color:
-                          mode === 'ALIVE' ? token.colorError : token.colorInfo,
-                        backgroundColor:
-                          mode === 'ALIVE'
-                            ? token.colorErrorBg
-                            : token.colorInfoBg,
-                        borderColor: token.colorBorder,
-                      }}
+                      icon={
+                        mode === 'ALIVE' ? (
+                          <BanIcon style={{ color: token.colorError }} />
+                        ) : (
+                          <UndoIcon style={{ color: token.colorInfo }} />
+                        )
+                      }
                       onClick={() => {
                         if (mode === 'ALIVE') {
                           setSelectedArtifacts(

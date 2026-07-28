@@ -149,7 +149,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
               >
                 <BAIButton
                   disabled={!enableDownload}
-                  icon={<DownloadIcon />}
+                  icon={<DownloadIcon style={{ color: token.colorInfo }} />}
                   action={async () => {
                     const filePaths = selectedFiles.map((file) =>
                       currentPath === '.'

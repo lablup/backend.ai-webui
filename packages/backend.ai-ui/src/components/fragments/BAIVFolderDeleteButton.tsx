@@ -30,20 +30,9 @@ const BAIVFolderDeleteButton = ({
 
   return (
     <BAIButton
-      icon={<DeleteOutlined />}
+      icon={<DeleteOutlined style={{ color: token.colorError }} />}
       disabled={buttonProps.disabled || !isDeletable}
-      style={{
-        color:
-          isDeletable && !buttonProps.disabled
-            ? token.colorError
-            : token.colorTextDisabled,
-        backgroundColor:
-          isDeletable && !buttonProps.disabled
-            ? token.colorErrorBg
-            : token.colorBgContainerDisabled,
-        ...buttonProps.style,
-      }}
-      {..._.omit(buttonProps, ['style', 'disabled'])}
+      {..._.omit(buttonProps, ['disabled'])}
     />
   );
 };

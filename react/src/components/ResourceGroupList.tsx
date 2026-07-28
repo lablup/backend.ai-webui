@@ -355,7 +355,6 @@ const ResourceGroupList: React.FC = () => {
               <Tooltip title={t('general.BulkEdit')}>
                 <BAIButton
                   icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
-                  style={{ backgroundColor: token.colorInfoBg }}
                   onClick={() => setOpenSFTPModal(true)}
                 />
               </Tooltip>

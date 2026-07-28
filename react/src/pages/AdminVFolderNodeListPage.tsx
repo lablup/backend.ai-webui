@@ -403,11 +403,6 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                     <Tooltip title={t('data.folders.MoveToTrash')}>
                       <BAIVFolderDeleteButton
                         vfolderFrgmt={selectedFolderList}
-                        style={{
-                          borderColor: token.colorBorder,
-                        }}
-                        type="text"
-                        variant="outlined"
                         onClick={() => {
                           toggleDeleteModal();
                         }}
@@ -424,13 +419,9 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                     />
                     <Tooltip title={t('data.folders.Restore')}>
                       <BAIButton
-                        style={{
-                          color: token.colorInfo,
-                          borderColor: token.colorBorder,
-                        }}
-                        type="text"
-                        variant="outlined"
-                        icon={<BAIRestoreIcon />}
+                        icon={
+                          <BAIRestoreIcon style={{ color: token.colorInfo }} />
+                        }
                         onClick={() => {
                           toggleRestoreModal();
                         }}

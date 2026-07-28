@@ -456,7 +456,6 @@ const ProjectPage = () => {
                 <Tooltip title={t('project.BulkEdit')}>
                   <BAIButton
                     icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
-                    style={{ backgroundColor: token.colorInfoBg }}
                     onClick={toggleBulkEditModal}
                   />
                 </Tooltip>

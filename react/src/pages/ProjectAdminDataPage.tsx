@@ -366,9 +366,6 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
                   <Tooltip title={t('data.folders.MoveToTrash')}>
                     <BAIVFolderDeleteButtonV2
                       vfolderFrgmt={selectedFolderList}
-                      style={{ borderColor: token.colorBorder }}
-                      type="text"
-                      variant="outlined"
                       onClick={() => {
                         toggleDeleteModal();
                       }}
@@ -385,13 +382,9 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
                   />
                   <Tooltip title={t('data.folders.Restore')}>
                     <BAIButton
-                      style={{
-                        color: token.colorInfo,
-                        borderColor: token.colorBorder,
-                      }}
-                      type="text"
-                      variant="outlined"
-                      icon={<BAIRestoreIcon />}
+                      icon={
+                        <BAIRestoreIcon style={{ color: token.colorInfo }} />
+                      }
                       onClick={() => {
                         toggleRestoreModal();
                       }}
@@ -399,13 +392,9 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
                   </Tooltip>
                   <Tooltip title={t('data.folders.Delete')}>
                     <BAIButton
-                      style={{
-                        color: token.colorError,
-                        borderColor: token.colorBorder,
-                      }}
-                      type="text"
-                      variant="outlined"
-                      icon={<BAIPurgeIcon />}
+                      icon={
+                        <BAIPurgeIcon style={{ color: token.colorError }} />
+                      }
                       onClick={() => {
                         toggleDeleteForeverModal();
                       }}

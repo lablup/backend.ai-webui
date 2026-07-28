@@ -332,11 +332,7 @@ const AdminUserCredentialList: React.FC = () => {
               {queryParams.activeType === 'active' ? (
                 <Tooltip title={t('credential.Deactivate')}>
                   <BAIButton
-                    icon={<BanIcon />}
-                    style={{
-                      color: token.colorError,
-                      background: token.colorErrorBg,
-                    }}
+                    icon={<BanIcon style={{ color: token.colorError }} />}
                     loading={isBulkUpdating}
                     onClick={() => handleBulkStatusUpdate(false)}
                   />
@@ -344,11 +340,7 @@ const AdminUserCredentialList: React.FC = () => {
               ) : (
                 <Tooltip title={t('credential.Activate')}>
                   <BAIButton
-                    icon={<UndoIcon />}
-                    style={{
-                      color: token.colorSuccess,
-                      background: token.colorSuccessBg,
-                    }}
+                    icon={<UndoIcon style={{ color: token.colorInfo }} />}
                     loading={isBulkUpdating}
                     onClick={() => handleBulkStatusUpdate(true)}
                   />

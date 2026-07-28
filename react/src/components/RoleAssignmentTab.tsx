@@ -241,12 +241,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
               />
               <Tooltip title={t('rbac.RevokeUser')}>
                 <BAIButton
-                  danger
-                  icon={<DeleteFilled />}
-                  style={{
-                    borderColor: token.colorBorder,
-                    background: token.colorErrorBg,
-                  }}
+                  icon={<DeleteFilled style={{ color: token.colorError }} />}
                   onClick={() => {
                     const userIds = assignments
                       .filter((a) => selectedRowKeys.includes(a?.id ?? ''))

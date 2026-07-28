@@ -18,7 +18,7 @@ import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOption
 import RoleScopePermissionEditModal, {
   resolveScopeName,
 } from './RoleScopePermissionEditModal';
-import { Button, Tag, Tooltip } from 'antd';
+import { Button, Tag, theme, Tooltip } from 'antd';
 import {
   BAICard,
   type BAIColumnsType,
@@ -84,6 +84,7 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const { token } = theme.useToken();
 
   const role = useFragment(
     graphql`
@@ -424,7 +425,7 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
                     session list's bulk actions). */}
                 <Tooltip title={t('rbac.EditScopePermissions')}>
                   <Button
-                    icon={<SquarePenIcon />}
+                    icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
                     onClick={() => setIsSelectionEditOpen(true)}
                   />
                 </Tooltip>
