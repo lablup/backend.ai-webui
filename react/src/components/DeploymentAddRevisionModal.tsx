@@ -914,14 +914,14 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       service?.healthCheck && service.healthCheck.enable !== false
         ? service.healthCheck
         : undefined;
-    // Command-mode prefill: ONLY for a source variant that reads the vfolder
-    // config files — the Service Configuration (command) fields apply only to
-    // those variants. Gate on the variant's capability
-    // (`readsVfolderConfigFiles`, with the legacy `name === 'custom'` fallback)
-    // so a non-reading variant's stored default command never prefills these
-    // fields and then leaks across a later variant switch. Within that, key off
-    // whether the revision actually carries a command (the single-string
-    // `command` (26.7.0+) or the deprecated `startCommand` token list).
+    // Command-mode prefill applies only to variants that read the vfolder config
+    // files, since they are the only ones that expose the Service Configuration
+    // (command) fields. A variant that does not read them can still carry a
+    // stored command; prefilling from it would load that command into fields the
+    // user cannot see, and it would then follow along when they switch to a
+    // variant that does show them. Within a reading variant, prefill only when
+    // the revision actually carries a command — either as a single string or as
+    // a token list, depending on the manager that wrote it.
     const hasCustomCommand =
       readsVfolderConfigFiles &&
       !!service &&
@@ -1562,12 +1562,12 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     readsVfolderConfigFiles &&
     (supportsRuntimeVariantConfigReads || effectiveMode === 'custom');
 
-  // The "Model Definition File Path" (the vfolder path to model-definition.yaml)
-  // only applies to variants that read the vfolder config files. Decide via the
-  // client feature flag rather than a raw manager-version check: on 26.8.0+
-  // (`supportsRuntimeVariantConfigReads`) use the authoritative
-  // `readsVfolderConfigFiles` (hidden when false); on older managers (flag
-  // absent) show it whenever the runtime variant is Custom.
+  // The "Model Definition File Path" points at the model-definition.yaml the
+  // server will read, so the field is meaningful only for variants that read the
+  // vfolder config files. Managers that report that capability answer this
+  // directly; on managers that do not, `custom` is the only variant known to
+  // read them and stands in for the answer. The capability is read through the
+  // client feature flag rather than comparing manager versions here.
   const showModelDefinitionPath = supportsRuntimeVariantConfigReads
     ? !!watchedVariant?.readsVfolderConfigFiles
     : watchedVariant?.name === 'custom';
@@ -1582,27 +1582,24 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       readsVfolderConfigFilesInMode,
     );
 
-  // Low-priority placeholder layer: the runtime variant's DB
-  // `defaultModelDefinition` baseline (always present). Loaded by
-  // `VariantDefaultModelDefinitionLoader` (a Suspense-wrapped side query fired
-  // only when the variant reads the vfolder config files) and pushed here via
-  // `onLoaded`. Tagged with the loaded `variantId` so that while switching
-  // between two config-reading variants — the new loader suspends but
-  // `shouldLoadVariantDefault` stays true, so the clearing effect below never
-  // fires — the merge can ignore the previous variant's stale baseline instead
-  // of briefly showing its values as placeholders.
+  // Low-priority placeholder layer: the runtime variant's built-in
+  // `defaultModelDefinition`, resolved by the Suspense-wrapped
+  // `VariantDefaultModelDefinitionLoader` side query and pushed here via
+  // `onLoaded`. It is stored together with the `variantId` it describes because
+  // the loader for a newly selected variant suspends before it reports back:
+  // without that tag, the previous variant's values would briefly show up as
+  // this variant's placeholders.
   const [dbModelDefinitionDefaults, setDbModelDefinitionDefaults] = useState<{
     variantId: string;
     defaults: Partial<ParsedModelDefinition> | null;
   } | null>(null);
   const shouldLoadVariantDefault =
     readsVfolderConfigFilesInMode && !!watchedRuntimeVariantId;
-  // Use the loaded DB baseline only while it is still relevant: the variant must
-  // still be config-reading in the current mode (`shouldLoadVariantDefault`) AND
-  // the baseline must belong to the currently watched variant. Deriving
-  // relevance here — rather than clearing the state in an effect — keeps a stale
-  // baseline from a previous variant / mode from leaking into placeholders
-  // without a setState-in-effect (the loader re-populates the state when active).
+  // A stored baseline counts only while it still describes the current form
+  // state: the selected variant must read the vfolder config files in this mode,
+  // and the baseline must be the one loaded for that same variant. Deriving this
+  // on render — instead of resetting the state whenever either input changes —
+  // keeps a stale baseline out of the placeholders without a state write.
   const activeDbModelDefinitionDefaults =
     shouldLoadVariantDefault &&
     dbModelDefinitionDefaults &&
@@ -1610,22 +1607,21 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       ? dbModelDefinitionDefaults.defaults
       : null;
 
-  // Placeholder precedence: DB `defaultModelDefinition` (low) < vfolder
-  // `model-definition.yaml` (high). Merged field-by-field so the vfolder yaml
-  // overrides only the fields it actually defines — the vfolder layer is a
-  // *partial* parse (`parseModelDefinitionYamlPartial`), so a YAML that sets
-  // only `start_command` keeps the DB baseline's port / health-check values
-  // instead of stomping them with static defaults. The lower Advanced "Model
-  // Definition File Path" field is intentionally NOT part of this read (its
-  // value must not feed back into placeholders of fields above it). Keyed on
-  // variantId + folderId, so placeholders update when either changes.
+  // Placeholder precedence: the variant's built-in default (low) < the mounted
+  // vfolder's `model-definition.yaml` (high) — the yaml is what the server will
+  // actually read, so it wins wherever it speaks. Both layers list only the
+  // fields they define, so the merge is field-by-field: a yaml that sets just
+  // `start_command` keeps the variant's port / health-check hints rather than
+  // blanking them. The Advanced "Model Definition File Path" field is
+  // deliberately not an input here — it selects which yaml is read, so feeding
+  // it back would make the fields above it depend on their own hint source.
   const modelDefinitionDefaults: Partial<ParsedModelDefinition> | null =
     activeDbModelDefinitionDefaults || vfolderModelDefinitionDefaults
       ? {
           ...activeDbModelDefinitionDefaults,
-          // `vfolderModelDefinitionDefaults` is a partial parse that omits
-          // absent fields (never `undefined` values), so a plain spread already
-          // overrides the DB baseline field-by-field without clobbering.
+          // Safe as a plain spread: both layers omit the fields they do not
+          // define rather than carrying `undefined`, so the higher layer can
+          // never blank a value the lower one supplied.
           ...vfolderModelDefinitionDefaults,
         }
       : null;

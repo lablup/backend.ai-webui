@@ -120,21 +120,23 @@ export interface GraphQLModelDefinitionNode {
 }
 
 /**
- * Normalize a GraphQL `defaultModelDefinition` struct (from a runtime
- * variant's DB baseline, FR-3205/FR-3342) into the same PARTIAL shape
- * {@link parseModelDefinitionYamlPartial} produces — only the fields the DB
- * default actually defines, omitting the rest — so both the DB baseline and
+ * Normalize a GraphQL `defaultModelDefinition` struct (a runtime variant's
+ * built-in baseline) into the same partial shape
+ * {@link parseModelDefinitionYamlPartial} produces, so the variant baseline and
  * the vfolder `model-definition.yaml` feed the placeholder merge through one
- * type. Now that the backend projects real defaults via GraphQL, we surface
- * ONLY values that will truly apply; omitted fields are left absent (no
- * hardcoded 8000 / /health / /models / 60 / 10) so they fall through instead
- * of masking the true absence of a default with a static convenience hint.
+ * type.
  *
- * The command is surfaced RAW — the GraphQL `command` is a plain string
- * (the deprecated `start_command` projected via alias) and is passed through
- * with NO tokenize/join round-trip and NO re-quoting (FR-3205
- * stop-tokenizing principle). The sibling `shell` carries the exec-vs-shell
- * distinction but does not alter the surfaced command text.
+ * Only fields the variant's default actually defines are included; the rest are
+ * omitted rather than filled in with a static default. These values are shown
+ * as form placeholders, and a placeholder claims "leave this blank and *this* is
+ * what applies" — inventing a value for a field the backend does not define
+ * would advertise a default that does not exist, and would also stop that field
+ * from falling through to the other layer of the merge.
+ *
+ * The command is surfaced raw: a plain string passed through with no
+ * tokenize/join round-trip and no re-quoting, so the hint matches exactly what
+ * the backend stores. The sibling `shell` carries the exec-vs-shell distinction
+ * but does not alter the surfaced command text.
  *
  * Returns `null` when there is no first model / service to map.
  */
@@ -149,9 +151,9 @@ export function modelDefinitionFromGraphQL(
 
   const healthCheck = service.healthCheck ?? {};
 
-  // Include ONLY the fields the DB default actually defines; omit the rest so
-  // they fall through the placeholder merge instead of injecting static
-  // defaults (mirrors parseModelDefinitionYamlPartial).
+  // An undefined field must stay absent from the result, not become a static
+  // value: absence is what lets the placeholder merge fall through to the other
+  // layer (see the doc comment above).
   const result: Partial<ParsedModelDefinition> = {};
   // Raw command string, verbatim. No shell tokenization / re-quoting.
   if (service.command) result.startCommand = service.command;
