@@ -539,7 +539,7 @@ test.describe(
       await goToTrashLink.click();
       await page.waitForURL(
         (url) => {
-          if (url.pathname !== '/admin-data') return false;
+          if (url.pathname !== '/admin/data') return false;
           if (url.searchParams.get('statusCategory') !== 'deleted')
             return false;
           const rawFilter = url.searchParams.get('filter') ?? '';
@@ -711,7 +711,7 @@ test.describe(
       await goToTrashLink.click();
       await page.waitForURL(
         (url) => {
-          if (url.pathname !== '/admin-data') return false;
+          if (url.pathname !== '/admin/data') return false;
           return url.searchParams.get('statusCategory') === 'deleted';
         },
         { timeout: 30000 },
