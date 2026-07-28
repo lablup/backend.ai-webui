@@ -32,7 +32,7 @@ import {
   useInterval,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { Suspense, useTransition } from 'react';
+import { Suspense, useDeferredValue, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -48,8 +48,15 @@ const DashboardPage: React.FC = () => {
   const buildProjectPath = useProjectPath();
 
   const [fetchKey, updateFetchKey] = useFetchKey();
+  // Deferring the fetchKey keeps the committed board on screen while the
+  // interval-driven `network-only` refetch suspends in the background.
+  // Feeding the raw fetchKey into useLazyLoadQuery made every 15s tick
+  // re-suspend the whole page into the route-level fallback (FR-3386).
+  const deferredFetchKey = useDeferredValue(fetchKey);
   const [isPendingIntervalRefetch, startIntervalRefetchTransition] =
     useTransition();
+  const isRefetching =
+    isPendingIntervalRefetch || fetchKey !== deferredFetchKey;
 
   const [localStorageBoardItems, setLocalStorageBoardItems] =
     useBAISettingUserState('dashboard_board_items');
@@ -90,8 +97,10 @@ const DashboardPage: React.FC = () => {
     },
     {
       fetchPolicy:
-        fetchKey === INITIAL_FETCH_KEY ? 'store-and-network' : 'network-only',
-      fetchKey,
+        deferredFetchKey === INITIAL_FETCH_KEY
+          ? 'store-and-network'
+          : 'network-only',
+      fetchKey: deferredFetchKey,
     },
   );
 
@@ -119,7 +128,7 @@ const DashboardPage: React.FC = () => {
           >
             <SessionCountDashboardItem
               queryRef={queryRef}
-              isRefetching={isPendingIntervalRefetch}
+              isRefetching={isRefetching}
               title={
                 _.isEqual(userRole, 'superadmin')
                   ? t('session.ActiveSessions')
@@ -144,10 +153,14 @@ const DashboardPage: React.FC = () => {
             title={t('webui.menu.MyResources')}
             status="error"
           >
-            <MyResource
-              fetchKey={fetchKey}
-              refetching={isPendingIntervalRefetch}
-            />
+            <Suspense
+              fallback={<Skeleton active style={{ padding: token.marginMD }} />}
+            >
+              <MyResource
+                fetchKey={deferredFetchKey}
+                refetching={isRefetching}
+              />
+            </Suspense>
           </BAIBoardItemErrorBoundary>
         ),
       },
@@ -166,10 +179,14 @@ const DashboardPage: React.FC = () => {
             title={t('webui.menu.MyResourcesInResourceGroup')}
             status="error"
           >
-            <MyResourceWithinResourceGroup
-              fetchKey={fetchKey}
-              refetching={isPendingIntervalRefetch}
-            />
+            <Suspense
+              fallback={<Skeleton active style={{ padding: token.marginMD }} />}
+            >
+              <MyResourceWithinResourceGroup
+                fetchKey={deferredFetchKey}
+                refetching={isRefetching}
+              />
+            </Suspense>
           </BAIBoardItemErrorBoundary>
         ),
       },
@@ -192,7 +209,7 @@ const DashboardPage: React.FC = () => {
               fallback={<Skeleton active style={{ padding: token.marginMD }} />}
             >
               <StorageStatusPanelCard
-                fetchKey={fetchKey}
+                fetchKey={deferredFetchKey}
                 onRequestBadgeClick={() => {
                   webuiNavigate({
                     pathname: buildProjectPath('data'),
@@ -242,7 +259,7 @@ const DashboardPage: React.FC = () => {
         content: queryRef.TotalResourceWithinResourceGroupFragment && (
           <TotalResourceWithinResourceGroup
             queryRef={queryRef.TotalResourceWithinResourceGroupFragment}
-            refetching={isPendingIntervalRefetch}
+            refetching={isRefetching}
           />
         ),
       },
@@ -269,7 +286,7 @@ const DashboardPage: React.FC = () => {
             >
               <AgentStats
                 queryRef={queryRef.AgentStatsFragment}
-                isRefetching={isPendingIntervalRefetch}
+                isRefetching={isRefetching}
               />
             </Suspense>
           ),
@@ -291,7 +308,7 @@ const DashboardPage: React.FC = () => {
             }
           >
             <ActiveAgents
-              fetchKey={fetchKey}
+              fetchKey={deferredFetchKey}
               onChangeFetchKey={() => updateFetchKey()}
             />
           </Suspense>
@@ -310,7 +327,7 @@ const DashboardPage: React.FC = () => {
         content: (
           <RecentlyCreatedSession
             queryRef={queryRef}
-            isRefetching={isPendingIntervalRefetch}
+            isRefetching={isRefetching}
           />
         ),
       },
