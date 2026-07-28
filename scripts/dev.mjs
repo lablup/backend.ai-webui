@@ -10,6 +10,36 @@ import { spawn, spawnSync } from 'node:child_process';
 
 const env = { ...process.env };
 
+// Both TypeScript watch programs under this script — the root `tsc --watch`
+// child below and the one vite-plugin-checker runs inside the Vite process —
+// default to TS's `UseFsEvents` watch strategy, which installs ONE watcher per
+// file in the program. On macOS that is one open file descriptor per file, so a
+// GUI/IDE-launched dev server (launchd soft `maxfiles` = 256) hits EMFILE.
+//
+// `UseFsEventsOnParentDirectory` coalesces those into one watcher per
+// *directory* instead. It is TypeScript's own documented remedy for watcher
+// exhaustion, read straight from this env var by `createSystemWatchFunctions`,
+// and it composes with the pnpm-store `watchOptions` exclude added alongside it
+// (see `resolveCheckerTsconfigPath` in react/vite.config.ts): the exclude drops
+// the store's thousands of immutable `.d.ts` from the watch set, and this
+// collapses what remains from per-file to per-directory. Measured on the
+// react/ program (Linux, inotify watch descriptors on the tsc pid):
+//
+//   baseline                     9,678
+//   store exclude only           1,604
+//   this env var only            4,288
+//   both                           136   ← under macOS's 256 soft limit
+//
+// Type-check results and change-detection latency are unaffected (same
+// "Found 0 errors", edits still reported in ~1s); RSS/CPU are unchanged, so
+// this buys watcher headroom, not speed. Left overridable so a developer on a
+// filesystem where directory events are unreliable can pin the old strategy
+// with `TSC_WATCHFILE=UseFsEvents pnpm run dev`. An empty export
+// (`TSC_WATCHFILE=`) counts as unset, matching the PORTLESS_PORT handling below.
+if (!env.TSC_WATCHFILE?.trim()) {
+  env.TSC_WATCHFILE = 'UseFsEventsOnParentDirectory';
+}
+
 // Ensure the Portless daemon is running. Portless 0.10+ defaults the daemon
 // to port 443 which requires sudo; we override that to an unprivileged 1355
 // only when the user has not already pinned a port via PORTLESS_PORT. When
