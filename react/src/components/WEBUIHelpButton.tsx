@@ -7,6 +7,7 @@ import { useCurrentLanguage } from './DefaultProviders';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Button, type ButtonProps } from 'antd';
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 
 // Languages the hosted user manual (https://webui.docs.backend.ai) is
 // published in. Any other WebUI locale falls back to English.

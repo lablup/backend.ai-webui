@@ -3,16 +3,18 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { buildPath } from '../../helper/pathBuilder';
-import { useSuspendedBackendaiClient } from '../../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import {
   useCurrentProjectValue,
   useSetCurrentProject,
 } from '../../hooks/useCurrentProject';
-import WebUINavigate from '../WebUINavigate';
-import { BAIAlert, BAIFlex } from 'backend.ai-ui';
+import { getRouteScopeAndKey } from '../../hooks/useRouteScope';
+import ProjectScopeErrorState from './ProjectScopeErrorState';
+import { Button } from 'antd';
+import { ArrowRightIcon } from 'lucide-react';
 import React, { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Outlet, useParams } from 'react-router-dom';
+import { Outlet, useLocation, useParams } from 'react-router-dom';
 
 interface BackendAIClientGroups {
   groups?: string[];
@@ -30,12 +32,14 @@ interface BackendAIClientGroups {
  *   - membership = `baiClient.groups.includes(name)`
  *
  * If the URL project name is invalid (not a member, or no resolvable id), the
- * layout redirects (replace) to a guaranteed-valid fallback project's session
- * page rather than rendering with an undefined project id:
- *   - fallback = current atom project name if the user is still a member of it,
- *     otherwise `groups[0]`.
- *   - if the user has NO groups at all, we cannot synthesize a `/project//...`
- *     path, so we render the existing "no accessible projects" guidance.
+ * layout does NOT silently switch to another project — the name is just a name
+ * and may legitimately be missing or access-restricted (stale bookmark, shared
+ * link to a project the user cannot access, renamed/deleted project). Instead it
+ * renders an explicit "not found / no access" guidance:
+ *   - if the user has NO groups at all, the "no accessible projects" guidance.
+ *   - otherwise a "project not found or no access" notice, keeping the header
+ *     project selector available and offering a button that navigates to one of
+ *     the user's own projects on an explicit click.
  *
  * Sync (effect-only, idempotent):
  *   - `setCurrentProject({ projectName, projectId })` runs in an effect keyed on
@@ -49,8 +53,10 @@ const ProjectScopeLayout: React.FC = () => {
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
   const { projectName: rawProjectName } = useParams<{ projectName: string }>();
+  const location = useLocation();
   const currentProject = useCurrentProjectValue();
   const setCurrentProject = useSetCurrentProject();
+  const webuiNavigate = useWebUINavigate();
 
   // `useParams` already decodes percent-encoding; treat a missing param as ''.
   const projectName = rawProjectName ?? '';
@@ -79,32 +85,39 @@ const ProjectScopeLayout: React.FC = () => {
   }, [projectName]);
 
   if (!isValid) {
-    // No groups at all: cannot build a valid `/project/<name>/...` path. Show
-    // the same "no accessible projects" guidance used by the project selector
-    // rather than redirecting into an invalid empty-name URL.
+    // No groups at all: the user belongs to no project. Render a terminal
+    // "no accessible projects" status.
     if (groups.length === 0) {
-      return (
-        <BAIFlex direction="column" align="stretch" style={{ width: '100%' }}>
-          <BAIAlert
-            type="warning"
-            showIcon
-            description={t('projectSelect.NoAccessibleProjects')}
-          />
-        </BAIFlex>
-      );
+      return <ProjectScopeErrorState variant="no-projects" />;
     }
 
-    // Invalid / inaccessible name: redirect to a guaranteed-valid fallback.
-    // Prefer the current atom project if the user is still a member of it,
-    // otherwise the first group.
-    const currentName = currentProject.name ?? '';
-    const fallbackName =
-      currentName && groups.includes(currentName) ? currentName : groups[0];
-
+    // Invalid / inaccessible project name while the user DOES have other
+    // projects: do NOT silently switch to an arbitrary project (the name is
+    // just a name — it may not exist or be access-restricted). Render an
+    // explicit "not found / no access" status. The header project selector
+    // shows no selection for this invalid project, and a convenience button
+    // navigates to one of the user's own projects on an explicit click.
+    // Offer the alphabetically-first accessible project as the escape hatch —
+    // a stable, predictable target regardless of what the atom last held.
+    const ownProject = [...groups].sort((a, b) => a.localeCompare(b))[0];
     return (
-      <WebUINavigate
-        to={buildPath('project', 'session', fallbackName)}
-        replace
+      <ProjectScopeErrorState
+        variant="not-found"
+        projectName={projectName}
+        featureKey={getRouteScopeAndKey(location.pathname).featureKey}
+        extra={
+          <Button
+            type="primary"
+            size="large"
+            icon={<ArrowRightIcon size="1em" />}
+            iconPosition="end"
+            onClick={() =>
+              webuiNavigate(buildPath('project', 'session', ownProject))
+            }
+          >
+            {t('projectSelect.GoToProject', { project: ownProject })}
+          </Button>
+        }
       />
     );
   }
