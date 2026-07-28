@@ -376,7 +376,10 @@ const AdminDeploymentListPageContent: React.FC = () => {
                           title={record.metadata?.name ?? '-'}
                           onTitleClick={() =>
                             webUINavigate(
-                              `/admin-deployments/${toLocalId(record.id)}`,
+                              buildPath(
+                                'admin',
+                                `deployments/${toLocalId(record.id)}`,
+                              ),
                             )
                           }
                           copyable
