@@ -57,6 +57,34 @@ function getSyncToggle(page: Page, cardIndex: number) {
     .nth(1);
 }
 
+/**
+ * Clicks a pane's sync toggle and waits until the new state is actually
+ * committed, as reported by the SyncSwitch icon (ToggleRight = on,
+ * ToggleLeft = off).
+ *
+ * ChatHeader wraps `onChangeSync` in `startTransition`, so the pane keeps its
+ * previous `sync` value for a beat after the click. During that window the
+ * pane still mirrors its input into the shared `synchronizedMessage` atom,
+ * so typing right after the click can still propagate to the other panes.
+ * Asserting on the icon is the only signal that the toggle has landed —
+ * checking that the input was cleared does not work, because the clearing
+ * effect is a no-op whenever the input is already empty.
+ */
+async function setSync(
+  page: Page,
+  cardIndex: number,
+  enabled: boolean,
+): Promise<void> {
+  const toggle = getSyncToggle(page, cardIndex).first();
+  await expect(toggle).toBeVisible({ timeout: 10000 });
+  await toggle.click();
+  await expect(
+    toggle.locator(
+      enabled ? 'svg.lucide-toggle-right' : 'svg.lucide-toggle-left',
+    ),
+  ).toBeVisible({ timeout: 10000 });
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // 5. Sync Input Propagation Across Two Panes
 // ─────────────────────────────────────────────────────────────────────────────
@@ -211,15 +239,6 @@ test.describe(
         secondChatCardHeader.getByText('gpt-mock-model-b'),
       ).toBeVisible({ timeout: 10000 });
 
-      // Brief stabilization pause: the endpoint switch above involves both a
-      // Relay refetch (endpoint entity) and a TanStack Query refetch (model
-      // list); both must settle on the second pane before it is safe to rely
-      // on the cross-pane sync mechanism to fire a send with the correct
-      // model. There is no further DOM signal to assert on beyond what was
-      // already checked above, so a short fixed delay is used as a last
-      // resort per project convention.
-      await page.waitForTimeout(500);
-
       // Verify both panes have sync ON
       await expect(getSyncToggle(page, 0).first()).toBeVisible({
         timeout: 10000,
@@ -293,12 +312,8 @@ test.describe(
       // Clone a second pane
       await addComparePane(page, 2);
 
-      // Verify both panes have sync ON
-      const syncToggle0 = getSyncToggle(page, 0).first();
-      await expect(syncToggle0).toBeVisible({ timeout: 10000 });
-
-      // Click the sync toggle in the first pane to turn it OFF
-      await syncToggle0.click();
+      // Turn sync OFF on the first pane and wait for the toggle to commit
+      await setSync(page, 0, false);
 
       // The input is cleared when sync is toggled (by design per the spec)
       await expect(getChatInput(page, 0)).toHaveValue('', { timeout: 5000 });
@@ -342,8 +357,7 @@ test.describe(
       });
 
       // Click the sync toggle in the first pane to disable sync
-      const syncToggle0 = getSyncToggle(page, 0).first();
-      await syncToggle0.click();
+      await setSync(page, 0, false);
 
       // The first pane's input is cleared when sync is disabled
       await expect(getChatInput(page, 0)).toHaveValue('', { timeout: 10000 });
@@ -362,9 +376,7 @@ test.describe(
       await addComparePane(page, 2);
 
       // Turn off sync on the first pane
-      const syncToggle0 = getSyncToggle(page, 0).first();
-      await expect(syncToggle0).toBeVisible({ timeout: 10000 });
-      await syncToggle0.click();
+      await setSync(page, 0, false);
 
       // Wait for input to clear after sync toggle
       await expect(getChatInput(page, 0)).toHaveValue('', { timeout: 5000 });
@@ -408,11 +420,8 @@ test.describe(
       // Clone a second pane
       await addComparePane(page, 2);
 
-      const syncToggle0 = getSyncToggle(page, 0).first();
-      await expect(syncToggle0).toBeVisible({ timeout: 10000 });
-
       // Turn off sync on the first pane
-      await syncToggle0.click();
+      await setSync(page, 0, false);
 
       // Wait for input to clear
       await expect(getChatInput(page, 0)).toHaveValue('', { timeout: 5000 });
@@ -425,7 +434,7 @@ test.describe(
       });
 
       // Re-enable sync on the first pane
-      await syncToggle0.click();
+      await setSync(page, 0, true);
 
       // Input is cleared upon toggling sync back on
       await expect(getChatInput(page, 0)).toHaveValue('', { timeout: 10000 });
