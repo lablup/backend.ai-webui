@@ -10,6 +10,7 @@ import {
 import { ResourcePresetSettingModalFragment$key } from '../__generated__/ResourcePresetSettingModalFragment.graphql';
 import { localeCompare } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { ProjectContextOrNull } from '../types/projectContext';
 import ResourcePresetSettingModal from './ResourcePresetSettingModal';
 import { ReloadOutlined, DeleteFilled } from '@ant-design/icons';
 import { Tooltip, Button, App, TableColumnsType } from 'antd';
@@ -35,9 +36,17 @@ type ResourcePreset = NonNullable<
   NonNullable<ResourcePresetListQuery$data['resource_presets']>[number]
 >;
 
-interface ResourcePresetListProps {}
+interface ResourcePresetListProps {
+  /**
+   * Explicit project prop contract (ADR-0001, FR-3415). Presets themselves are
+   * global — this prop only scopes the resource-group options inside the
+   * setting modal, which the page's project selection decides. `null` (no
+   * project chosen) renders that field disabled with an explanation.
+   */
+  project: ProjectContextOrNull;
+}
 
-const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
+const ResourcePresetList: React.FC<ResourcePresetListProps> = ({ project }) => {
   const { t } = useTranslation();
   const { message } = App.useApp();
   const [isRefetchPending, startRefetchTransition] = useTransition();
@@ -234,6 +243,7 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
       />
       <Suspense fallback={null}>
         <ResourcePresetSettingModal
+          project={project}
           resourcePresetFrgmt={editingResourcePreset}
           open={!!editingResourcePreset || isCreating}
           onRequestClose={(success) => {

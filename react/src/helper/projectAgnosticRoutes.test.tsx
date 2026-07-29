@@ -114,6 +114,10 @@ describe('PROJECT_AGNOSTIC_PATHNAME_REGEX (FR-3414)', () => {
     '/admin/data',
     // FR-3414 widening — canonical shapes
     '/admin/users',
+    // FR-3415 widening
+    '/admin/environment',
+    '/admin/reservoir',
+    '/admin/reservoir/artifact-1',
     '/admin/resource-policy',
     '/admin/scheduler',
     '/admin/agent',
@@ -131,6 +135,9 @@ describe('PROJECT_AGNOSTIC_PATHNAME_REGEX (FR-3414)', () => {
     '/admin-serving',
     '/admin-data',
     '/credential',
+    '/environment',
+    '/reservoir',
+    '/reservoir/artifact-1',
     '/resource-policy',
     '/scheduler',
     '/agent',
@@ -156,11 +163,7 @@ describe('PROJECT_AGNOSTIC_PATHNAME_REGEX (FR-3414)', () => {
     '/project/default/session',
     '/project/default/admin/deployments/dep-1', // project-admin space
     '/project/default/admin/users',
-    // Excluded admin pages: they still read the ambient project.
-    '/admin/environment',
-    '/environment',
-    '/admin/reservoir',
-    '/reservoir',
+    // The only excluded admin page: it still reads the ambient project.
     '/admin/dashboard',
     '/admin-dashboard',
     '/admin', // bare admin root redirects; not a scoped surface itself

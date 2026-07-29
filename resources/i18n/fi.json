@@ -1040,6 +1040,7 @@
     "AutoScaling": "Automaattinen skaalaus",
     "AutoScalingRules": "Automaattisen skaalauksen säännöt",
     "BasicInformation": "Perustiedot",
+    "CannotResolveDeploymentProject": "Tämän käyttöönoton projektia ei voida määrittää, joten revision lisääminen on poistettu käytöstä.",
     "ClusterMode": "Klusteritila",
     "ClusterModeTooltip": "Replikan laskentasession klusteriasettelu muodossa \"tila / koko\". Yksittäinen tarkoittaa yhtä säilöä; Monisolmuinen jakaa työkuorman useille agenteille.",
     "ClusterSize": "Klusterin koko",
@@ -1236,8 +1237,7 @@
         "Revision": "Selaa aiempia käyttöönottorevisioita ja palauta mikä tahansa aiempi versio.",
         "RevisionHistory": "Selaa aiempia käyttöönottorevisioita ja palauta mikä tahansa niistä."
       }
-    },
-    "CannotResolveDeploymentProject": "Tämän käyttöönoton projektia ei voida määrittää, joten revision lisääminen on poistettu käytöstä."
+    }
   },
   "desktopNotification": {
     "NotSupported": "Tämä selain ei tue ilmoituksia.",
@@ -1469,6 +1469,7 @@
     "ResourceLimitAppliesToNewSessionsOnly": "Vähimmäisresurssirajoitus koskee vain uusia istuntoja eikä vaikuta jo käynnissä oleviin istuntoihin.",
     "ResourcePresets": "Resurssien esiasetukset",
     "SearchImages": "Etsi kuvia",
+    "SelectProjectToListImages": "Valitse projekti nähdäksesi sen imaget.",
     "SelectedImagesAlreadyInstalled": "Valittu kuva (valitut kuvat) on jo asennettu tai Ei mitään. Tarkista uudelleen.",
     "SelectedImagesNotInstalled": "Valittuja kuvia ei ole asennettu. Tarkista uudelleen.",
     "Status": "Tila",
@@ -1753,7 +1754,6 @@
     "YouCanCreateNotebookCode": "Tämä badge mahdollistaa muistikirjasi suorittamisen suoraan Backend.AI:ssä. Kopioi koodi käyttääksesi sitä missä tahansa."
   },
   "importArtifactRevisionToFolderModal": {
-    "CurrentProjectChangedSuccessfully": "Nykyinen projekti vaihdettiin onnistuneesti.",
     "FailedToImport": "Artefaktin(ien) tuonti epäonnistui",
     "FailedToImportArtifact": "Artefaktin {{ name }} ({{ version }}) tuonti epäonnistui.",
     "FailedToImportModelFromHuggingFace": "Mallin hakeminen Hugging Facesta epäonnistui.",
@@ -1762,8 +1762,7 @@
     "Import": "Tuo",
     "ImportToFolder": "Tuo kansioon",
     "ImportingArtifact": "Tuodaan artefaktia {{name}} ({{version}})",
-    "ModelStoreProjectRequired": "Mallikauppaa varten tarvitaan erillinen projekti.",
-    "ModelStoreProjectRequiredDescription": "Haluatko muuttaa nykyisen projektin mallivaraston yksinomaiseksi projektiksi?",
+    "ModelStoreProject": "Mallikaupan projekti",
     "NoArtifactsSelected": "Tuotavia artefakteja ei ole valittu",
     "OverwriteWarning": "Saman nimiset tiedostot korvataan, jos ne ovat jo olemassa.",
     "SuccessfullyImported": "Artefaktit tuotiin onnistuneesti.",
@@ -2549,6 +2548,7 @@
     "ResourcePresets": "Resurssien esiasetukset",
     "Resources": "Resurssit",
     "SHMEMShouldBeSmallerThanMemory": "Jaetun muistin on oltava pienempi kuin muistin",
+    "SelectProjectForResourceGroup": "Valitse projekti Ympäristöt-sivulla valitaksesi resurssiryhmän.",
     "SharedMemory": "Jaettu muisti",
     "Updated": "Resurssien esiasetus päivitetty"
   },

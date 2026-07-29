@@ -15,7 +15,7 @@ import { ResourcePresetSettingModalModifyByNameMutation } from '../__generated__
 import { convertToBinaryUnit } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { ProjectContextOrNull } from '../types/projectContext';
 import { App, Form, type FormInstance, Input, InputNumber } from 'antd';
 import {
   BAIDynamicUnitInputNumber,
@@ -34,19 +34,28 @@ interface ResourcePresetSettingModalProps extends BAIModalProps {
   resourcePresetFrgmt?: ResourcePresetSettingModalFragment$key | null;
   existingResourcePresetNames?: Array<string>;
   onRequestClose: (success: boolean) => void;
+  /**
+   * Explicit project prop contract (ADR-0001, FR-3415). Resource presets are
+   * global; only the **resource-group options** are project-keyed. The page
+   * decides which project scopes them — this modal never reads the ambient
+   * current project. `null` ("no project chosen") disables the resource-group
+   * field with an explanation instead of silently offering another project's
+   * resource groups.
+   */
+  project: ProjectContextOrNull;
 }
 
 const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
   resourcePresetFrgmt,
   existingResourcePresetNames,
   onRequestClose,
+  project,
   ...baiModalProps
 }) => {
   const { t } = useTranslation();
   const { message } = App.useApp();
   const formRef = useRef<FormInstance>(null);
   const baiClient = useSuspendedBackendaiClient();
-  const currentProject = useCurrentProjectValue();
 
   const [resourceSlots] = useResourceSlots();
   const { mergedResourceSlots } = useResourceSlotsDetails();
@@ -307,14 +316,17 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
               label={t('general.ResourceGroup')}
               name="scaling_group_name"
             >
-              {currentProject.name ? (
+              {project ? (
                 <BAIProjectResourceGroupSelect
-                  projectName={currentProject.name}
+                  projectName={project.name}
                   allowClear
                   popupMatchSelectWidth={false}
                 />
               ) : (
-                <BAISelect disabled tooltip={t('error.NoCurrentProject')} />
+                <BAISelect
+                  disabled
+                  tooltip={t('resourcePreset.SelectProjectForResourceGroup')}
+                />
               )}
             </Form.Item>
           )}

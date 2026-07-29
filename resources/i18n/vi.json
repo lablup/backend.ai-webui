@@ -1040,6 +1040,7 @@
     "AutoScaling": "Tự động mở rộng",
     "AutoScalingRules": "Quy tắc tự động mở rộng",
     "BasicInformation": "Thông tin cơ bản",
+    "CannotResolveDeploymentProject": "Không thể xác định dự án mà triển khai này thuộc về, do đó việc thêm bản sửa đổi đã bị vô hiệu hóa.",
     "ClusterMode": "Chế độ cụm",
     "ClusterModeTooltip": "Bố cục phân cụm cho phiên tính toán của bản sao, theo định dạng \"chế độ / kích thước\". Đơn lẻ nghĩa là một container; Đa nút phân phối khối lượng công việc trên nhiều agent.",
     "ClusterSize": "Kích thước cụm",
@@ -1236,8 +1237,7 @@
         "Revision": "Duyệt qua các lần sửa đổi deployment trước đây và khôi phục về bất kỳ phiên bản nào.",
         "RevisionHistory": "Duyệt qua các lần sửa đổi deployment trước đây và khôi phục về bất kỳ phiên bản nào."
       }
-    },
-    "CannotResolveDeploymentProject": "Không thể xác định dự án mà triển khai này thuộc về, do đó việc thêm bản sửa đổi đã bị vô hiệu hóa."
+    }
   },
   "desktopNotification": {
     "NotSupported": "Trình duyệt này không hỗ trợ thông báo.",
@@ -1469,6 +1469,7 @@
     "ResourceLimitAppliesToNewSessionsOnly": "Giới hạn tài nguyên tối thiểu chỉ áp dụng cho các phiên mới được tạo và không ảnh hưởng đến các phiên đang chạy.",
     "ResourcePresets": "Cài đặt trước tài nguyên",
     "SearchImages": "Tìm kiếm hình ảnh",
+    "SelectProjectToListImages": "Chọn một dự án để xem danh sách image của dự án đó.",
     "SelectedImagesAlreadyInstalled": "(Các) Hình ảnh được chọn đã được cài đặt hoặc Không có. Vui lòng kiểm tra lại.",
     "SelectedImagesNotInstalled": "(Các) Hình ảnh đã chọn chưa được cài đặt. Vui lòng kiểm tra lại.",
     "Status": "Trạng thái",
@@ -1755,7 +1756,6 @@
     "YouCanCreateNotebookCode": "Nhập URL sổ ghi chép để tạo mã huy hiệu như bên dưới mà bạn có thể chạy trực tiếp trên Backend.AI."
   },
   "importArtifactRevisionToFolderModal": {
-    "CurrentProjectChangedSuccessfully": "Đã thay đổi dự án hiện tại thành công.",
     "FailedToImport": "Nhập artifact thất bại",
     "FailedToImportArtifact": "Không thể nhập artifact {{ name }} ({{ version }})",
     "FailedToImportModelFromHuggingFace": "Không thể lấy mô hình từ Hugging Face.",
@@ -1764,8 +1764,7 @@
     "Import": "Nhập",
     "ImportToFolder": "Nhập vào thư mục",
     "ImportingArtifact": "Đang nhập artifact {{name}} ({{version}})",
-    "ModelStoreProjectRequired": "Cần một dự án riêng cho kho mô hình.",
-    "ModelStoreProjectRequiredDescription": "Bạn có muốn chuyển dự án hiện tại sang dự án chỉ dành cho kho mô hình không?",
+    "ModelStoreProject": "Dự án cửa hàng mô hình",
     "NoArtifactsSelected": "Không có mục nào được chọn để nhập",
     "OverwriteWarning": "Các tệp hiện có sẽ bị ghi đè nếu đã có tệp cùng tên.",
     "SuccessfullyImported": "Đã nhập artifact thành công",
@@ -2551,6 +2550,7 @@
     "ResourcePresets": "Cài đặt trước tài nguyên",
     "Resources": "Tài nguyên",
     "SHMEMShouldBeSmallerThanMemory": "Bộ nhớ dùng chung phải nhỏ hơn bộ nhớ",
+    "SelectProjectForResourceGroup": "Chọn một dự án trên trang Môi trường để chọn nhóm tài nguyên.",
     "SharedMemory": "Bộ nhớ chia sẻ",
     "Updated": "Đã cập nhật cài đặt trước tài nguyên"
   },

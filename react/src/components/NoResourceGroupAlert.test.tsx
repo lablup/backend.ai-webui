@@ -76,6 +76,9 @@ describe('NoResourceGroupAlert (FR-3414 project-agnostic gating)', () => {
     ['/admin/maintenance', 'maintenance'],
     ['/admin/diagnostics', 'diagnostics'],
     ['/admin/branding', 'branding'],
+    // Widened in FR-3415 — both now have explicit in-page project selection.
+    ['/admin/environment', 'environment'],
+    ['/admin/reservoir', 'reservoir'],
   ])(
     'renders nothing on the project-agnostic route %s even without a resource group',
     (path, menuKey) => {
@@ -85,9 +88,12 @@ describe('NoResourceGroupAlert (FR-3414 project-agnostic gating)', () => {
     },
   );
 
-  it('still renders on an admin page that depends on the ambient project', () => {
+  it('still renders on the one admin page that depends on the ambient project', () => {
     mockedUseCurrentResourceGroupValue.mockReturnValue(null);
-    renderAt('/admin/environment', { scope: 'admin', menuKey: 'environment' });
+    renderAt('/admin/dashboard', {
+      scope: 'admin',
+      menuKey: 'admin-dashboard',
+    });
     expect(screen.getByText(ALERT_TEXT)).toBeInTheDocument();
   });
 });

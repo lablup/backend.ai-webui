@@ -1040,6 +1040,7 @@
     "AutoScaling": "Automatische Skalierung",
     "AutoScalingRules": "Regeln für automatische Skalierung",
     "BasicInformation": "Grundlegende Informationen",
+    "CannotResolveDeploymentProject": "Das Projekt, zu dem diese Bereitstellung gehört, kann nicht ermittelt werden. Das Hinzufügen einer Revision ist daher deaktiviert.",
     "ClusterMode": "Cluster-Modus",
     "ClusterModeTooltip": "Clustering-Layout für die Computing-Session des Replikats, formatiert als \"Modus / Größe\". Einzeln bedeutet ein Container; Multi-Node verteilt die Arbeitslast auf mehrere Agenten.",
     "ClusterSize": "Clustergröße",
@@ -1236,8 +1237,7 @@
         "Revision": "Sehen Sie sich vergangene Deployment-Revisionen an und führen Sie einen Rollback auf eine beliebige frühere Version durch.",
         "RevisionHistory": "Durchsuchen Sie vergangene Deployment-Revisionen und führen Sie ein Rollback auf eine beliebige frühere Version durch."
       }
-    },
-    "CannotResolveDeploymentProject": "Das Projekt, zu dem diese Bereitstellung gehört, kann nicht ermittelt werden. Das Hinzufügen einer Revision ist daher deaktiviert."
+    }
   },
   "desktopNotification": {
     "NotSupported": "Dieser Browser unterstützt keine Benachrichtigungen.",
@@ -1469,6 +1469,7 @@
     "ResourceLimitAppliesToNewSessionsOnly": "Das minimale Ressourcenlimit gilt nur für neu erstellte Sitzungen und hat keinen Einfluss auf bereits laufende Sitzungen.",
     "ResourcePresets": "Ressourcenvoreinstellungen",
     "SearchImages": "Bilder suchen",
+    "SelectProjectToListImages": "Wählen Sie ein Projekt aus, um dessen Images anzuzeigen.",
     "SelectedImagesAlreadyInstalled": "Ausgewählte Bilder sind bereits installiert oder Keine. Bitte überprüfen Sie noch einmal.",
     "SelectedImagesNotInstalled": "Ausgewählte Bilder werden nicht installiert. Bitte überprüfen Sie noch einmal.",
     "Status": "Status",
@@ -1755,7 +1756,6 @@
     "YouCanCreateNotebookCode": "Dieses Abzeichen ermöglicht die direkte Ausführung Ihres Notebooks auf Backend.AI. Kopieren Sie den Code, um ihn überall zu verwenden."
   },
   "importArtifactRevisionToFolderModal": {
-    "CurrentProjectChangedSuccessfully": "Das aktuelle Projekt wurde erfolgreich geändert.",
     "FailedToImport": "Import von Artefakt(en) fehlgeschlagen",
     "FailedToImportArtifact": "Import des Artefakts {{ name }} ({{ version }}) fehlgeschlagen",
     "FailedToImportModelFromHuggingFace": "Fehler beim Abrufen des Modells von Hugging Face.",
@@ -1764,8 +1764,7 @@
     "Import": "Importieren",
     "ImportToFolder": "In Ordner importieren",
     "ImportingArtifact": "Importiere Artefakt {{name}} ({{version}})",
-    "ModelStoreProjectRequired": "Ein eigenes Projekt für den Modell-Store wird benötigt.",
-    "ModelStoreProjectRequiredDescription": "Möchten Sie das aktuelle Projekt in ein nur für den Model Store vorgesehenes Projekt umwandeln?",
+    "ModelStoreProject": "Modellladen-Projekt",
     "NoArtifactsSelected": "Keine Artefakte für den Import ausgewählt",
     "OverwriteWarning": "Vorhandene Dateien werden überschrieben, wenn Dateien mit demselben Namen bereits existieren.",
     "SuccessfullyImported": "Artefakt(e) erfolgreich importiert",
@@ -2551,6 +2550,7 @@
     "ResourcePresets": "Ressourcenvoreinstellungen",
     "Resources": "Ressourcen",
     "SHMEMShouldBeSmallerThanMemory": "Gemeinsamer Speicher muss kleiner sein als der Speicher",
+    "SelectProjectForResourceGroup": "Wählen Sie auf der Umgebungsseite ein Projekt aus, um eine Ressourcengruppe zu wählen.",
     "SharedMemory": "Gemeinsamer Speicher",
     "Updated": "Ressourcenvoreinstellung aktualisiert"
   },

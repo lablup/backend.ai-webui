@@ -30,9 +30,10 @@
  * `useCurrentProject -> useRouteScope -> useCurrentProject` import cycle -- and
  * its module-init TDZ hazard -- that a direct hook-to-hook import would create.
  *
- * Deliberately EXCLUDED (they genuinely read the ambient project):
- * `environment` and `reservoir` (pending follow-up), and `admin-dashboard`
- * (out of scope for FR-3407).
+ * Deliberately EXCLUDED: `admin-dashboard` only (out of scope for FR-3407 —
+ * the page is unused and still reads the ambient project directly).
+ * `environment` and `reservoir` joined the list in FR-3415, once both got
+ * explicit in-page project selection.
  */
 
 /**
@@ -45,7 +46,9 @@ export const PROJECT_AGNOSTIC_MENU_KEYS = [
   'admin-deployments',
   'admin-data',
   'credential',
+  'environment',
   'resource-policy',
+  'reservoir',
   'scheduler',
   'agent',
   'project',
@@ -113,9 +116,19 @@ export const PROJECT_AGNOSTIC_ROUTE_PATHS: Record<
     canonicalPath: '/admin/users',
     legacyPaths: ['/credential'],
   },
+  environment: {
+    canonicalPath: '/admin/environment',
+    legacyPaths: ['/environment'],
+  },
   'resource-policy': {
     canonicalPath: '/admin/resource-policy',
     legacyPaths: ['/resource-policy'],
+  },
+  reservoir: {
+    // Prefix match, so the artifact detail child (`/admin/reservoir/:artifactId`,
+    // legacy `/reservoir/:artifactId`) is covered by the same entry.
+    canonicalPath: '/admin/reservoir',
+    legacyPaths: ['/reservoir'],
   },
   scheduler: {
     canonicalPath: '/admin/scheduler',

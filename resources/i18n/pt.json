@@ -1040,6 +1040,7 @@
     "AutoScaling": "Dimensionamento automático",
     "AutoScalingRules": "Regras de dimensionamento automático",
     "BasicInformation": "Informações básicas",
+    "CannotResolveDeploymentProject": "Não é possível determinar o projeto ao qual esta implantação pertence, pelo que a adição de uma revisão está desativada.",
     "ClusterMode": "Modo de cluster",
     "ClusterModeTooltip": "Esquema de clustering para a sessão de computação da réplica, no formato \"modo / tamanho\". Único significa um container; Multi-nó distribui a carga de trabalho por vários agentes.",
     "ClusterSize": "Tamanho do Cluster",
@@ -1236,8 +1237,7 @@
         "Revision": "Navegue pelas revisões anteriores do deployment e reverta para qualquer versão anterior.",
         "RevisionHistory": "Navegue pelas revisões anteriores do deployment e reverta para qualquer uma delas."
       }
-    },
-    "CannotResolveDeploymentProject": "Não é possível determinar o projeto ao qual esta implantação pertence, pelo que a adição de uma revisão está desativada."
+    }
   },
   "desktopNotification": {
     "NotSupported": "Este navegador não suporta notificações.",
@@ -1469,6 +1469,7 @@
     "ResourceLimitAppliesToNewSessionsOnly": "O limite mínimo de recursos aplica-se apenas a sessões recém-criadas e não afeta sessões que já estão em execução.",
     "ResourcePresets": "Predefinições de recursos",
     "SearchImages": "Pesquisar imagens",
+    "SelectProjectToListImages": "Selecione um projeto para listar as suas imagens.",
     "SelectedImagesAlreadyInstalled": "As imagens selecionadas já estão instaladas ou nenhuma. Por favor cheque novamente.",
     "SelectedImagesNotInstalled": "As imagens selecionadas não estão instaladas. Por favor cheque novamente.",
     "Status": "Status",
@@ -1755,7 +1756,6 @@
     "YouCanCreateNotebookCode": "Este selo permite executar diretamente o seu notebook no Backend.AI. Copie o código para usá-lo em qualquer lugar."
   },
   "importArtifactRevisionToFolderModal": {
-    "CurrentProjectChangedSuccessfully": "Projeto atual alterado com sucesso.",
     "FailedToImport": "Falha ao importar artefato(s)",
     "FailedToImportArtifact": "Falha ao importar o artefato {{ name }} ({{ version }})",
     "FailedToImportModelFromHuggingFace": "Não foi possível obter o modelo do Hugging Face.",
@@ -1764,8 +1764,7 @@
     "Import": "Importar",
     "ImportToFolder": "Importar para a pasta",
     "ImportingArtifact": "Importando o artefato {{name}} ({{version}})",
-    "ModelStoreProjectRequired": "É necessário um projeto dedicado à loja de modelos.",
-    "ModelStoreProjectRequiredDescription": "Deseja tornar o projeto atual exclusivo para o Model Store?",
+    "ModelStoreProject": "Projeto da loja de modelos",
     "NoArtifactsSelected": "Nenhum artefato selecionado para importação",
     "OverwriteWarning": "Arquivos existentes serão sobrescritos se já existirem outros com o mesmo nome.",
     "SuccessfullyImported": "Artefato(s) importado(s) com sucesso",
@@ -2551,6 +2550,7 @@
     "ResourcePresets": "Predefinições de recursos",
     "Resources": "Recursos",
     "SHMEMShouldBeSmallerThanMemory": "A memória partilhada deve ser mais pequena do que a memória",
+    "SelectProjectForResourceGroup": "Selecione um projeto na página Ambientes para escolher um grupo de recursos.",
     "SharedMemory": "Memória compartilhada",
     "Updated": "Predefinição de recurso atualizada"
   },

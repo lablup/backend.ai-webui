@@ -1040,6 +1040,7 @@
     "AutoScaling": "การปรับขนาดอัตโนมัติ",
     "AutoScalingRules": "กฎการปรับขนาดอัตโนมัติ",
     "BasicInformation": "ข้อมูลพื้นฐาน",
+    "CannotResolveDeploymentProject": "ไม่สามารถระบุโปรเจกต์ที่การปรับใช้นี้สังกัดอยู่ได้ จึงปิดใช้งานการเพิ่มรีวิชัน",
     "ClusterMode": "โหมดคลัสเตอร์",
     "ClusterModeTooltip": "รูปแบบการจัดกลุ่มสำหรับเซสชันการประมวลผลของเรพลิกา ในรูปแบบ \"โหมด / ขนาด\" แบบเดี่ยวหมายถึงหนึ่งคอนเทนเนอร์ แบบหลายโหนดกระจายภาระงานไปยังหลาย agent",
     "ClusterSize": "ขนาดคลัสเตอร์",
@@ -1236,8 +1237,7 @@
         "Revision": "เรียกดูการแก้ไขการปรับใช้ที่ผ่านมาและย้อนกลับไปยังเวอร์ชันใดก็ได้",
         "RevisionHistory": "เรียกดูการแก้ไขการปรับใช้ที่ผ่านมาและย้อนกลับไปยังเวอร์ชันใดก็ได้"
       }
-    },
-    "CannotResolveDeploymentProject": "ไม่สามารถระบุโปรเจกต์ที่การปรับใช้นี้สังกัดอยู่ได้ จึงปิดใช้งานการเพิ่มรีวิชัน"
+    }
   },
   "desktopNotification": {
     "NotSupported": "เบราว์เซอร์นี้ไม่รองรับการแจ้งเตือน",
@@ -1469,6 +1469,7 @@
     "ResourceLimitAppliesToNewSessionsOnly": "ขีดจำกัดทรัพยากรขั้นต่ำจะมีผลกับเซสชันที่สร้างขึ้นใหม่เท่านั้น และไม่ส่งผลต่อเซสชันที่กำลังทำงานอยู่",
     "ResourcePresets": "ค่าที่กำหนดไว้ล่วงหน้าของทรัพยากร",
     "SearchImages": "ค้นหาอิมเมจ",
+    "SelectProjectToListImages": "เลือกโปรเจกต์เพื่อแสดงรายการอิมเมจ",
     "SelectedImagesAlreadyInstalled": "อิมเมจที่เลือกได้รับการติดตั้งแล้วหรือไม่มี กรุณาตรวจสอบอีกครั้ง",
     "SelectedImagesNotInstalled": "อิมเมจที่เลือกยังไม่ได้รับการติดตั้ง กรุณาตรวจสอบอีกครั้ง",
     "Status": "สถานะ",
@@ -1755,7 +1756,6 @@
     "YouCanCreateNotebookCode": "ป้ายนี้ช่วยให้รันโน้ตบุ๊กบน Backend.AI ได้โดยตรง คัดลอกโค้ดเพื่อนำไปใช้ได้ทุกที่"
   },
   "importArtifactRevisionToFolderModal": {
-    "CurrentProjectChangedSuccessfully": "เปลี่ยนโปรเจกต์ปัจจุบันเรียบร้อยแล้ว",
     "FailedToImport": "ไม่สามารถนำเข้าอาร์ติแฟกต์ได้",
     "FailedToImportArtifact": "ไม่สามารถนำเข้า artifact {{ name }} ({{ version }}) ได้",
     "FailedToImportModelFromHuggingFace": "ไม่สามารถดึงโมเดลจาก Hugging Face ได้",
@@ -1764,8 +1764,7 @@
     "Import": "นำเข้า",
     "ImportToFolder": "นำเข้าไปยังโฟลเดอร์",
     "ImportingArtifact": "กำลังนำเข้าอาร์ติแฟกต์ {{name}} ({{version}})",
-    "ModelStoreProjectRequired": "จำเป็นต้องมีโปรเจ็กต์เฉพาะสำหรับ Model Store",
-    "ModelStoreProjectRequiredDescription": "ต้องการเปลี่ยนโปรเจกต์ปัจจุบันให้เป็นโปรเจกต์สำหรับ Model Store เท่านั้นหรือไม่?",
+    "ModelStoreProject": "โปรเจกต์คลังโมเดล",
     "NoArtifactsSelected": "ยังไม่ได้เลือกอาร์ติแฟกต์สำหรับนำเข้า",
     "OverwriteWarning": "ไฟล์ที่มีอยู่จะถูกเขียนทับ หากมีไฟล์ชื่อเดียวกันอยู่แล้ว",
     "SuccessfullyImported": "นำเข้าอาร์ติแฟกต์เรียบร้อยแล้ว",
@@ -2551,6 +2550,7 @@
     "ResourcePresets": "ค่าที่กำหนดไว้ล่วงหน้าของทรัพยากร",
     "Resources": "ทรัพยากร",
     "SHMEMShouldBeSmallerThanMemory": "หน่วยความจำร่วมต้องน้อยกว่าหน่วยความจำ",
+    "SelectProjectForResourceGroup": "เลือกโปรเจกต์ในหน้าสภาพแวดล้อมเพื่อเลือกกลุ่มทรัพยากร",
     "SharedMemory": "หน่วยความจำที่ใช้ร่วมกัน",
     "Updated": "อัปเดตค่าที่กำหนดไว้ล่วงหน้าของทรัพยากรแล้ว"
   },

@@ -1040,6 +1040,7 @@
     "AutoScaling": "Penskalaan Automatik",
     "AutoScalingRules": "Peraturan penskalaan automatik",
     "BasicInformation": "Maklumat Asas",
+    "CannotResolveDeploymentProject": "Tidak dapat menentukan projek yang dimiliki oleh deployment ini, jadi penambahan semakan dinyahdayakan.",
     "ClusterMode": "Mod Kelompok",
     "ClusterModeTooltip": "Susun atur pengelompokan untuk sesi pengkomputeran replika, dalam format \"mod / saiz\". Tunggal bermaksud satu bekas; Berbilang nod mengagihkan beban kerja merentasi beberapa agen.",
     "ClusterSize": "Saiz Kelompok",
@@ -1236,8 +1237,7 @@
         "Revision": "Semak semula revisi deployment yang lalu dan gulung balik ke mana-mana versi sebelumnya.",
         "RevisionHistory": "Semak semula revisi deployment yang lalu dan gulung balik ke mana-mana versi sebelumnya."
       }
-    },
-    "CannotResolveDeploymentProject": "Tidak dapat menentukan projek yang dimiliki oleh deployment ini, jadi penambahan semakan dinyahdayakan."
+    }
   },
   "desktopNotification": {
     "NotSupported": "Penyemak imbas ini tidak menyokong pemberitahuan.",
@@ -1469,6 +1469,7 @@
     "ResourceLimitAppliesToNewSessionsOnly": "Had sumber minimum hanya terpakai untuk sesi yang baru dicipta dan tidak menjejaskan sesi yang sedang berjalan.",
     "ResourcePresets": "Pratetap Sumber",
     "SearchImages": "Cari imej",
+    "SelectProjectToListImages": "Pilih projek untuk menyenaraikan imejnya.",
     "SelectedImagesAlreadyInstalled": "Gambar Terpilih sudah dipasang atau Tiada. Sila semak semula.",
     "SelectedImagesNotInstalled": "Gambar yang dipilih tidak dipasang. Sila semak semula.",
     "Status": "Status",
@@ -1753,7 +1754,6 @@
     "YouCanCreateNotebookCode": "Lencana ini membolehkan notebook anda dijalankan terus di Backend.AI. Salin kod untuk menggunakannya di mana-mana."
   },
   "importArtifactRevisionToFolderModal": {
-    "CurrentProjectChangedSuccessfully": "Projek semasa berjaya ditukar.",
     "FailedToImport": "Gagal mengimport artefak",
     "FailedToImportArtifact": "Gagal mengimport artifak {{ name }} ({{ version }})",
     "FailedToImportModelFromHuggingFace": "Gagal mengambil model daripada Hugging Face.",
@@ -1762,8 +1762,7 @@
     "Import": "Import",
     "ImportToFolder": "Import ke Folder",
     "ImportingArtifact": "Mengimport artifak {{name}} ({{version}})",
-    "ModelStoreProjectRequired": "Projek khusus untuk Model Store diperlukan.",
-    "ModelStoreProjectRequiredDescription": "Adakah anda ingin menukar projek semasa kepada projek khusus untuk Model Store?",
+    "ModelStoreProject": "Projek Kedai Model",
     "NoArtifactsSelected": "Tiada artifak dipilih untuk diimport",
     "OverwriteWarning": "Fail sedia ada akan ditimpa jika terdapat fail dengan nama yang sama.",
     "SuccessfullyImported": "Berjaya mengimport artifak.",
@@ -2549,6 +2548,7 @@
     "ResourcePresets": "Pratetap Sumber",
     "Resources": "Sumber",
     "SHMEMShouldBeSmallerThanMemory": "Memori yang dikongsi mestilah lebih kecil daripada memori",
+    "SelectProjectForResourceGroup": "Pilih projek pada halaman Persekitaran untuk memilih kumpulan sumber.",
     "SharedMemory": "Memori bersama",
     "Updated": "Pratetap sumber dikemas kini"
   },
