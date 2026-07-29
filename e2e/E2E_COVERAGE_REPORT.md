@@ -308,23 +308,32 @@
 
 **Modal:** `DeploymentAddRevisionModal` (Advanced/Custom mode)
 
-| Feature                                                                                            | Status | Test                                                                                                        |
-| -------------------------------------------------------------------------------------------------- | ------ | ----------------------------------------------------------------------------------------------------------- |
-| Manual image name accepted → revision mutation carries resolved id (FR-3278)                       | ✅     | `a manually entered image is accepted and submitted as a resolved image`                                    |
-| Custom-mode Start Command: Execution (Shell/Exec) + Shell input appear only in Advanced (FR-3205)  | ✅     | `Admin sees Execution and Shell controls only after switching the command to Advanced mode`                 |
-| Start Command is optional — empty submit reaches the mutation (FR-3205)                            | ✅     | `Admin can add a revision with an empty Start Command (the command is optional)`                            |
-| Raw command sent verbatim (no tokenization) + shell omitted in Basic mode (FR-3205)                | ✅     | `Admin submits the raw command verbatim and omits shell in Basic mode`                                      |
-| Advanced Shell mode submits `shell` = the chosen shell binary (FR-3205)                            | ✅     | `Admin submits shell = the chosen shell binary when Advanced Shell mode overrides it`                       |
-| Advanced Exec mode submits `shell` = null (FR-3205)                                                | ✅     | `Admin submits shell = null in Advanced Exec mode`                                                          |
-| Model Definition File Path restored under Advanced Settings, optional (FR-3205)                    | ✅     | `Admin finds the restored Model Definition File Path under Advanced Settings`                               |
-| Config-reading variant shows Service Configuration; hides runtime-parameter presets (FR-3342)      | ✅     | `Admin sees the Service Configuration section for a config-reading variant (custom)`                        |
-| Non-config-reading variant shows runtime presets + default-command warning note (FR-3342)          | ✅     | `Admin sees runtime-parameter presets and the default-command note for a non-config-reading variant (vllm)` |
-| DB `defaultModelDefinition` drives command / port / health-check placeholders (FR-3342)            | ✅     | `Admin sees the variant defaultModelDefinition fill the command / port / health-check placeholders`         |
-| vfolder `model-definition.yaml` overrides DB-default placeholders (two-layer precedence) (FR-3342) | ✅     | `Admin sees a selected model folder’s model-definition.yaml override the DB-default … placeholders`         |
-| Model Definition File Path value does not feed back into the command placeholder (FR-3342)         | ✅     | `Admin sees the Model Definition File Path leave the command placeholder unchanged`                         |
-| Old-manager name-based `readsVfolderConfigFiles` fallback (prefill path)                           | ⏸️     | `test.fixme` — unreachable from a fresh variant select; deferred to a full DeploymentDetailPageQuery mock   |
+| Feature                                                                                            | Status | Test                                                                                                            |
+| -------------------------------------------------------------------------------------------------- | ------ | --------------------------------------------------------------------------------------------------------------- |
+| Manual image name accepted → revision mutation carries resolved id (FR-3278)                       | ✅     | `a manually entered image is accepted and submitted as a resolved image`                                        |
+| Custom-mode Start Command: Execution (Shell/Exec) + Shell input appear only in Advanced (FR-3205)  | ✅     | `Admin sees Execution and Shell controls only after switching the command to Advanced mode`                     |
+| Start Command is optional — empty submit reaches the mutation (FR-3205)                            | ✅     | `Admin can add a revision with an empty Start Command (the command is optional)`                                |
+| Raw command sent verbatim (no tokenization) + shell omitted in Basic mode (FR-3205)                | ✅     | `Admin submits the raw command verbatim and omits shell in Basic mode`                                          |
+| Advanced Shell mode submits `shell` = the chosen shell binary (FR-3205)                            | ✅     | `Admin submits shell = the chosen shell binary when Advanced Shell mode overrides it`                           |
+| Advanced Exec mode submits `shell` = null (FR-3205)                                                | ✅     | `Admin submits shell = null in Advanced Exec mode`                                                              |
+| Advanced Shell left unchanged submits the default shell `/bin/bash` (FR-3205)                      | ✅     | `Admin submits shell = /bin/bash (the default) when Advanced Shell mode is left unchanged`                      |
+| Model Definition File Path restored under Advanced Settings, optional (FR-3205)                    | ✅     | `Admin finds the restored Model Definition File Path under Advanced Settings`                                   |
+| Config-reading variant shows Service Configuration; hides runtime-parameter presets (FR-3342)      | ✅     | `Admin sees the Service Configuration section for a config-reading variant (custom)`                            |
+| Non-config-reading variant shows runtime presets + default-command warning note (FR-3342)          | ✅     | `Admin sees runtime-parameter presets and the default-command note for a non-config-reading variant (vllm)`     |
+| DB `defaultModelDefinition` drives command / port / health-check placeholders (FR-3342)            | ✅     | `Admin sees the variant defaultModelDefinition fill the command / port / health-check placeholders`             |
+| vfolder `model-definition.yaml` overrides DB-default placeholders (two-layer precedence) (FR-3342) | ✅     | `Admin sees a selected model folder’s model-definition.yaml override the DB-default … placeholders`             |
+| Model Definition File Path value does not feed back into the command placeholder (FR-3342)         | ✅     | `Admin sees the Model Definition File Path leave the command placeholder unchanged`                             |
+| Model Definition File Path hidden for a non-config-reading variant (FR-3342)                       | ✅     | asserted inside `… default-command note for a non-config-reading variant (vllm)`                                |
+| Old-manager name-based `readsVfolderConfigFiles` fallback (prefill path)                           | ⏸️     | `test.fixme` — unreachable from a fresh variant select; deferred to a full DeploymentDetailPageQuery mock       |
+| Command prefill suppressed when the source revision's variant does not read config files (FR-3342) | ⏸️     | same prefill path as the row above — needs the deferred `DeploymentDetailPageQuery` mock                        |
+| `definitionPath` sent as null for a non-config-reading variant (FR-3342)                           | ⏸️     | submit-path guard; the field is unreachable in the UI for those variants, so only the mutation payload shows it |
 
-**Coverage: ✅ 11 features (FR-3278 regression guard + FR-3205 Start Command redesign + FR-3342 runtime-variant defaults); 1 deferred (`test.fixme`)**
+**Coverage: ✅ 13 features (FR-3278 regression guard + FR-3205 Start Command redesign + FR-3342 runtime-variant defaults); 3 deferred**
+
+> The FR-3205 preset-side change (the Admin Deployment Preset form no longer coerces
+> Basic mode's `shell` to the client default) is **not** covered here — these specs
+> drive the deployment Add Revision modal, not the preset editor. It needs its own
+> spec under an Admin Deployment Preset suite.
 
 ---
 
