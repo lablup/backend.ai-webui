@@ -63,9 +63,7 @@ interface DeploymentBasicInfoCardProps {
 }
 
 type DeploymentSectionData =
-  | DeploymentBasicInfoCard_deployment$data
-  | null
-  | undefined;
+  DeploymentBasicInfoCard_deployment$data | null | undefined;
 
 const renderFallback = () => (
   <Typography.Text type="secondary">-</Typography.Text>
@@ -392,6 +390,9 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
       <DeploymentSettingModal
         open={settingModalOpen}
         deploymentFrgmt={deployment}
+        // Edit-only call site: the deployment already belongs to a project,
+        // so the modal ignores the prop in edit mode (ADR-0001).
+        project={null}
         onRequestClose={(success) => {
           setSettingModalOpen(false);
           if (success) onRefetch();

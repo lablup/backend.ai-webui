@@ -18,7 +18,6 @@ import { buildPath } from '../helper/pathBuilder';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { DeleteFilled, ExclamationCircleFilled } from '@ant-design/icons';
 import { App, Checkbox, Tooltip, Typography, theme } from 'antd';
 import {
@@ -73,7 +72,6 @@ const AdminModelCardListPage: React.FC = () => {
   const { logger } = useBAILogger();
   const { upsertNotification } = useSetBAINotification();
   const { generateFolderPath } = useFolderExplorerOpener();
-  const currentProject = useCurrentProjectValue();
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.AdminModelCardListPage',
   );
@@ -118,7 +116,6 @@ const AdminModelCardListPage: React.FC = () => {
     orderBy: convertToOrderBy<ModelCardV2OrderBy>(queryParams.order),
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
-    currentProjectId: currentProject.id!,
   };
 
   const deferredQueryVariables = useDeferredValue(queryVariables);
@@ -131,7 +128,6 @@ const AdminModelCardListPage: React.FC = () => {
         $orderBy: [ModelCardV2OrderBy!]
         $limit: Int
         $offset: Int
-        $currentProjectId: UUID!
       ) {
         adminModelCardsV2(
           filter: $filter
@@ -164,9 +160,6 @@ const AdminModelCardListPage: React.FC = () => {
               ...AdminModelCardSettingModalFragment
             }
           }
-        }
-        group(id: $currentProjectId) {
-          type @since(version: "24.03.0")
         }
         groups(is_active: true, type: ["MODEL_STORE"]) {
           id
@@ -451,7 +444,6 @@ const AdminModelCardListPage: React.FC = () => {
         <AdminModelCardSettingModal
           open={isSettingModalOpen}
           modelCardFrgmt={editingModelCard ?? null}
-          isModelStoreProject={queryRef.group?.type === 'MODEL_STORE'}
           modelStoreProject={queryRef.groups?.[0] ?? null}
           onRequestClose={(success) => {
             setIsSettingModalOpen(false);

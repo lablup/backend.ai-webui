@@ -13,6 +13,7 @@ import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
+import { ProjectContextOrNull } from '../types/projectContext';
 import DeploymentSettingModal from './DeploymentSettingModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import InviteFolderSettingModal from './InviteFolderSettingModal';
@@ -253,6 +254,14 @@ interface VFolderNodesProps extends Omit<
   // Callback when a row is removed from current list
   onRemoveRow?: (updatedFolderId?: string) => void;
   /**
+   * Explicit project prop contract (ADR-0001, FR-3410). Pass-through for the
+   * deployment-creation escalation modal (`DeploymentSettingModal`): the
+   * parent page decides the project context. Admin pages pass `null` (the
+   * modal then embeds its own required project selector); user-facing pages
+   * narrow the ambient current project at page level.
+   */
+  project: ProjectContextOrNull;
+  /**
    * Forwarded to each row's name cell. Set on the user-facing data page
    * (`/data`) so project folders are not deletable/restorable from there
    * — those actions live on the admin data page instead.
@@ -268,6 +277,7 @@ interface VFolderNodesProps extends Omit<
 const VFolderNodes: React.FC<VFolderNodesProps> = ({
   vfoldersFrgmt,
   onRemoveRow,
+  project,
   disableProjectFolderActions,
   ...tableProps
 }) => {
@@ -704,6 +714,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
       </Suspense>
       <DeploymentSettingModal
         open={isCreateDeploymentOpen}
+        project={project}
         onRequestClose={toggleCreateDeployment}
       />
     </>
