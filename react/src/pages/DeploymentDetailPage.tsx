@@ -17,7 +17,7 @@ import SwitchToProjectButton from '../components/SwitchToProjectButton';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { useIsSuperAdminScopedPage } from '../hooks/useIsSuperAdminScopedPage';
+import { useIsProjectAgnosticPage } from '../hooks/useIsProjectAgnosticPage';
 import { useActiveProjectName, useProjectPath } from '../hooks/useRouteScope';
 import {
   getPathFromMenuKey,
@@ -83,13 +83,13 @@ const DeploymentDetailPage: React.FC = () => {
   // (/project/:projectName/deployments/:deploymentId,
   // /admin/deployments/:deploymentId and
   // /project/:projectName/admin/deployments/:deploymentId — see routes.tsx).
-  // Per ADR-0001 the
-  // PAGE decides the project context: on the super-admin URL space there is
-  // no ambient project (`null` — no mismatch alert, no switch-project
-  // shortcut, and the Add-revision CTA is not suppressed); elsewhere the
-  // narrowed ambient project keeps today's behavior exactly.
-  const isSuperAdminScopedPage = useIsSuperAdminScopedPage();
-  const pageProject = isSuperAdminScopedPage
+  // Per ADR-0001 the PAGE decides the project context: on the
+  // project-agnostic (global admin) URL space there is no ambient project
+  // (`null` — no mismatch alert, no switch-project shortcut, and the
+  // Add-revision CTA is not suppressed); elsewhere the narrowed ambient
+  // project keeps today's behavior exactly.
+  const isProjectAgnosticPage = useIsProjectAgnosticPage();
+  const pageProject = isProjectAgnosticPage
     ? null
     : toProjectContext(currentProject);
   const buildProjectPath = useProjectPath();

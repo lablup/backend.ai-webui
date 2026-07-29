@@ -93,18 +93,38 @@ export default [
     },
   },
 
-  // FR-3414 (ADR-0001): the three super-admin surfaces (/admin/session,
-  // /admin/deployments, /admin/data) operate above project scope — their
-  // sources must never read the ambient current project. Converted components
-  // receive the decision via their required `project` prop instead.
+  // FR-3414 (ADR-0001): the project-agnostic surface — the whole `/admin/*`
+  // subtree except the pages that still genuinely depend on the ambient
+  // project — operates above project scope, so its sources must never read
+  // the ambient current project. Converted components receive the decision
+  // via their required `project` prop instead. This list must stay in sync
+  // with `PROJECT_AGNOSTIC_MENU_KEYS`
+  // (react/src/helper/projectAgnosticRoutes.ts); the mapping from menu key to
+  // page component is:
+  //   admin-session      -> AdminSessionPage / AdminComputeSessionListPage
+  //   admin-deployments  -> AdminDeployment*Page / AdminModelCardListPage
+  //   admin-data         -> AdminVFolderNodeListPage
+  //   credential         -> AdminUsersPage
+  //   resource-policy    -> ResourcePolicyPage
+  //   scheduler          -> SchedulerPage
+  //   agent              -> ResourcesPage
+  //   project            -> ProjectPage
+  //   settings           -> ConfigurationsPage
+  //   maintenance        -> MaintenancePage
+  //   diagnostics        -> DiagnosticsPage
+  //   rbac               -> RBACManagementPage
+  //   branding           -> BrandingPage
+  //   information        -> components/Information
   // NOTE: this block redeclares `no-restricted-imports`, which REPLACES the
   // global options above for these files, so the global paths/patterns are
   // repeated here (patterns must be all-strings or all-objects, hence the
   // object form).
-  // AdminDashboardPage is intentionally excluded (out of scope for FR-3407;
-  // it legitimately reads ambient state). DeploymentDetailPage is excluded
-  // because it serves three URL spaces and is the sanctioned page-level
-  // ambient reader (see the ADR).
+  // `environment` (EnvironmentPage), `reservoir` (ReservoirPage /
+  // ReservoirArtifactDetailPage) and `admin-dashboard` (AdminDashboardPage)
+  // are intentionally excluded — they legitimately read ambient state and are
+  // not gated by `PROJECT_AGNOSTIC_MENU_KEYS` either. DeploymentDetailPage is
+  // excluded because it serves three URL spaces and is the sanctioned
+  // page-level ambient reader (see the ADR).
   {
     files: [
       'src/pages/AdminSessionPage.tsx',
@@ -115,6 +135,17 @@ export default [
       'src/pages/AdminDeploymentPresetSettingPage.tsx',
       'src/pages/AdminModelCardListPage.tsx',
       'src/components/PendingSessionNodeList.tsx',
+      'src/pages/AdminUsersPage.tsx',
+      'src/pages/ResourcePolicyPage.tsx',
+      'src/pages/SchedulerPage.tsx',
+      'src/pages/ResourcesPage.tsx',
+      'src/pages/ProjectPage.tsx',
+      'src/pages/ConfigurationsPage.tsx',
+      'src/pages/MaintenancePage.tsx',
+      'src/pages/DiagnosticsPage.tsx',
+      'src/pages/RBACManagementPage.tsx',
+      'src/pages/BrandingPage.tsx',
+      'src/components/Information.tsx',
     ],
     rules: {
       'no-restricted-imports': [
@@ -132,7 +163,7 @@ export default [
               group: ['**/useCurrentProject'],
               importNames: ['useCurrentProjectValue'],
               message:
-                'Super-admin surfaces have no ambient project context (ADR-0001, docs/adr/0001-explicit-project-prop-contract.md). ' +
+                'Project-agnostic surfaces have no ambient project context (ADR-0001, docs/adr/0001-explicit-project-prop-contract.md). ' +
                 'Pass an explicit `project` prop (or `null` + in-modal selection) instead of reading the ambient current project.',
             },
           ],

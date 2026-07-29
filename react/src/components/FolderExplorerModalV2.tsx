@@ -25,7 +25,7 @@ import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { useIsSuperAdminScopedPage } from '../hooks/useIsSuperAdminScopedPage';
+import { useIsProjectAgnosticPage } from '../hooks/useIsProjectAgnosticPage';
 import { useMergedAllowedStorageHostPermission } from '../hooks/useMergedAllowedStorageHostPermission';
 import { useBAIBreakpoint } from '../theme-shim';
 import { toProjectContext } from '../types/projectContext';
@@ -117,12 +117,12 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   const currentDomain = useCurrentDomainValue();
   // This modal is globally mounted (no page parent), so it is the sanctioned
   // exception (ADR-0001) that may consult the route to decide its project
-  // context: on the super-admin-scoped routes there is no ambient project
+  // context: on the project-agnostic routes there is no ambient project
   // context; elsewhere it narrows the ambient current project (interim state
   // until a page-owned opener exists).
-  const isSuperAdminScopedPage = useIsSuperAdminScopedPage();
+  const isProjectAgnosticPage = useIsProjectAgnosticPage();
   const currentProject = useCurrentProjectValue();
-  const pageProject = isSuperAdminScopedPage
+  const pageProject = isProjectAgnosticPage
     ? null
     : toProjectContext(currentProject);
   const currentUserAccessKey = baiClient?._config?.accessKey;
@@ -442,7 +442,7 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
             // below, and rename gating falls back to owner/super-admin.
             project={pageProject}
             noProjectTooltip={
-              isSuperAdminScopedPage
+              isProjectAgnosticPage
                 ? t('data.CannotLaunchSessionInAdminMenu')
                 : undefined
             }

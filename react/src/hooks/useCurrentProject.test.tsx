@@ -3,17 +3,22 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 /**
- * Tests for the FR-3414 dev-mode straggler guardrail: the pathname matcher
- * that decides whether an ambient `useCurrentProjectValue` read happened
- * under a super-admin-scoped surface. The matcher is imperative
- * (window.location) by design so the hook stays router-independent; these
- * tests pin the exact path shapes it must (and must not) match.
+ * Tests for the FR-3414 dev-mode straggler guardrail: `useCurrentProjectValue`
+ * warns (dev builds only) when the ambient current project is read under a
+ * project-agnostic surface.
+ *
+ * The wiring under test is that the hook consults
+ * `PROJECT_AGNOSTIC_PATHNAME_REGEX` — the matcher DERIVED from
+ * `PROJECT_AGNOSTIC_MENU_KEYS`, so it cannot drift from the hook that hides
+ * the header selector. The exact path shapes that matcher accepts are pinned
+ * in `helper/projectAgnosticRoutes.test.tsx`; here we only assert that the
+ * hook honours it, imperatively (no router context is mounted).
  */
-import { SUPER_ADMIN_SCOPED_PATHNAME_REGEX } from './useCurrentProject';
-import { describe, expect, it, vi } from 'vitest';
+import { useCurrentProjectValue } from './useCurrentProject';
+import { renderHook } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-// `useCurrentProject` imports the hooks barrel and the backendai hooks at
-// module scope; stub them so importing the module under test stays cheap.
+// The hook only needs the client for its suspense gate.
 vi.mock('.', () => ({
   useSuspendedBackendaiClient: vi.fn(),
 }));
@@ -21,38 +26,37 @@ vi.mock('./backendai', () => ({
   useRecentProjectGroup: () => ({ writeRecentProjectGroup: vi.fn() }),
 }));
 
-describe('SUPER_ADMIN_SCOPED_PATHNAME_REGEX (FR-3414)', () => {
-  it.each([
-    // Modern /admin/* shape (routes.tsx `handle.menuKey` pages)
-    '/admin/session',
-    '/admin/session/some-session-id',
-    '/admin/deployments',
-    '/admin/deployments/dep-1',
-    '/admin/deployments/deployment-presets/new',
-    '/admin/data',
-    // Legacy first-segment shapes (redirect shims)
-    '/admin-session',
-    '/admin-deployments',
-    '/admin-deployments/dep-1',
-    '/admin-serving',
-    '/admin-data',
-  ])('matches the super-admin-scoped path %s', (pathname) => {
-    expect(SUPER_ADMIN_SCOPED_PATHNAME_REGEX.test(pathname)).toBe(true);
+const renderAt = (pathname: string) => {
+  window.history.replaceState({}, '', pathname);
+  return renderHook(() => useCurrentProjectValue());
+};
+
+describe('useCurrentProjectValue dev-mode straggler warning (FR-3414)', () => {
+  beforeEach(() => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+  });
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it.each([
-    '/',
-    '/data',
-    '/project/default/data',
+    '/admin/session',
+    '/admin/users', // `credential` — menu key differs from the path segment
+    '/admin/rbac',
+    '/credential', // legacy flat shim
+    '/scheduler',
+  ])('warns once when read under the project-agnostic route %s', (pathname) => {
+    renderAt(pathname);
+    expect(console.warn).toHaveBeenCalledTimes(1);
+    expect(vi.mocked(console.warn).mock.calls[0]?.[0]).toContain('[ADR-0001]');
+  });
+
+  it.each([
     '/project/default/session',
-    '/project/default/admin/deployments/dep-1', // project-admin space
-    '/admin/users',
-    '/admin/dashboard', // out of scope (FR-3407)
-    '/admin-dashboard',
-    '/admin', // bare admin root redirects; not a scoped surface itself
-    '/administrator',
-    '/admin-sessionish',
-  ])('does not match the non-scoped path %s', (pathname) => {
-    expect(SUPER_ADMIN_SCOPED_PATHNAME_REGEX.test(pathname)).toBe(false);
+    '/admin/environment', // excluded: still reads the ambient project
+    '/admin/dashboard',
+  ])('stays silent when read under the project-scoped route %s', (pathname) => {
+    renderAt(pathname);
+    expect(console.warn).not.toHaveBeenCalled();
   });
 });
