@@ -23,7 +23,6 @@ type CustomModelFormProps = {
   token?: string;
   deploymentId?: string | null;
   loading: boolean;
-  hasNoDesiredReplicas?: boolean;
   onSubmit?: (formData: CustomModelFormValues) => void;
 };
 
@@ -33,7 +32,6 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
   token,
   deploymentId,
   loading,
-  hasNoDesiredReplicas,
   onSubmit,
 }) => {
   'use memo';
@@ -71,14 +69,6 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
           token: token,
         }}
       >
-        {hasNoDesiredReplicas ? (
-          <Alert
-            type="warning"
-            showIcon
-            title={t('chatui.NoDesiredReplicas')}
-            style={{ marginBottom: themeToken.size }}
-          ></Alert>
-        ) : null}
         <Alert
           type="warning"
           showIcon

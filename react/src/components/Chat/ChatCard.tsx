@@ -29,6 +29,7 @@ import {
 import { Alert, App, Card, type CardProps, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import {
+  BAIFlex,
   BAILogger,
   toGlobalId,
   toLocalId,
@@ -219,6 +220,76 @@ function createBaseURL(
   }
 }
 
+type ChatUnavailableReason =
+  | 'no-desired-replicas'
+  | 'no-revision'
+  | 'no-active-replica'
+  | 'no-endpoint-url'
+  | 'invalid-base-url';
+
+const CHAT_UNAVAILABLE_REASON_MESSAGE_KEYS: Record<
+  ChatUnavailableReason,
+  string
+> = {
+  'no-desired-replicas': 'chatui.NoDesiredReplicas',
+  'no-revision': 'deployment.NoCurrentRevisionDeployed',
+  'no-active-replica': 'deployment.NoRunningReplicas',
+  'no-endpoint-url': 'chatui.NoEndpointUrlIssued',
+  'invalid-base-url': 'error.InvalidBaseURL',
+};
+
+/**
+ * Explains why a chat cannot reach its deployment, independently of whether the
+ * deployment has been issued an endpoint URL yet. A deployment that is still
+ * PENDING serves an empty `endpointUrl`, so any check starting from the URL can
+ * never describe why it is unavailable.
+ *
+ * Checks run from the most specific cause to the least: a deployment scaled to
+ * zero also has no replica, and a deployment without a revision also has no
+ * replica, so a later check would otherwise mask an earlier cause.
+ *
+ * An "active" replica is `RUNNING` **and** traffic-`ACTIVE` — the manager's own
+ * definition of a replica that is serving requests, and the same predicate the
+ * Chat deployment selector filters on (FR-3332). Deployment-level `status` is a
+ * monotonic lifecycle axis and cannot stand in for it.
+ *
+ * Returns null when the deployment can serve, and falls back to the generic
+ * `invalid-base-url` when no deployment was resolved at all (nothing selected,
+ * an AI agent binding, or a failed lookup) — there is nothing to explain there.
+ */
+function getChatUnavailableReason(
+  deployment:
+    | {
+        readonly replicaState: { readonly desiredReplicaCount: number };
+        readonly revisionHistory: { readonly count: number } | null | undefined;
+        readonly activeReplicas: { readonly count: number } | null | undefined;
+      }
+    | null
+    | undefined,
+  deploymentUrl: string | null | undefined,
+  baseURL: string | undefined,
+): ChatUnavailableReason | null {
+  if (deployment) {
+    if ((deployment.replicaState?.desiredReplicaCount ?? 0) === 0) {
+      return 'no-desired-replicas';
+    }
+    if ((deployment.revisionHistory?.count ?? 0) === 0) {
+      return 'no-revision';
+    }
+    if ((deployment.activeReplicas?.count ?? 0) === 0) {
+      return 'no-active-replica';
+    }
+    if (!baseURL) {
+      // `createBaseURL` returns undefined both when there is no URL to build on
+      // and when `new URL()` threw. Only the latter is a genuinely invalid URL;
+      // a deployment that has not been issued one yet is a different story.
+      return deploymentUrl ? 'invalid-base-url' : 'no-endpoint-url';
+    }
+    return null;
+  }
+  return baseURL ? null : 'invalid-base-url';
+}
+
 const PureChatCard: React.FC<ChatCardProps> = ({
   chat,
   onUpdateChat,
@@ -249,6 +320,17 @@ const PureChatCard: React.FC<ChatCardProps> = ({
           replicaState {
             desiredReplicaCount
           }
+          revisionHistory {
+            count
+          }
+          activeReplicas: replicas(
+            filter: {
+              status: { equals: RUNNING }
+              trafficStatus: { equals: ACTIVE }
+            }
+          ) {
+            count
+          }
           ...ChatHeader_Deployment
         }
       }
@@ -271,8 +353,6 @@ const PureChatCard: React.FC<ChatCardProps> = ({
   const deployment = deploymentResult.deployment.ok
     ? deploymentResult.deployment.value
     : null;
-  const hasNoDesiredReplicas =
-    deployment?.replicaState.desiredReplicaCount === 0;
   // Consumers below address the deployment by its local UUID, as the chat
   // provider and the `deploymentId` URL param do.
   const deploymentId = deployment?.id ? toLocalId(deployment.id) : undefined;
@@ -295,10 +375,16 @@ const PureChatCard: React.FC<ChatCardProps> = ({
   const effectiveApiKey = agentEndpoint?.endpoint_token || chat.provider.apiKey;
   const agentEndpointUrl = agentEndpoint?.endpoint_url;
 
-  const baseURL = createBaseURL(
-    logger,
-    chat.provider.basePath,
-    agentEndpointUrl || deployment?.networkAccess.endpointUrl,
+  // An AI agent binding brings its own URL and has no deployment behind it, so
+  // it takes precedence over whatever deployment the chat still points at.
+  const chatDeployment = agentEndpointUrl ? null : deployment;
+  const deploymentUrl =
+    agentEndpointUrl || chatDeployment?.networkAccess.endpointUrl;
+  const baseURL = createBaseURL(logger, chat.provider.basePath, deploymentUrl);
+  const unavailableReason = getChatUnavailableReason(
+    chatDeployment,
+    deploymentUrl,
+    baseURL,
   );
   const { models, modelId, modelsError, isLoadingModels } = useModels(
     chat.provider,
@@ -579,16 +665,40 @@ const PureChatCard: React.FC<ChatCardProps> = ({
       }
       ref={dropContainerRef}
     >
-      {baseURL && (deployment || agentEndpointUrl) && _.isEmpty(models) && (
+      {unavailableReason === 'no-desired-replicas' ? (
+        // This one keeps the exact placement it had before: on CustomModelForm's
+        // panel, which is where it lived as that form's own alert (FR-3156).
+        // Matching the form's padding keeps the two aligned when both are on
+        // screen, and no bottom padding here leaves the form panel's own top
+        // padding as the single gap between them. BAIFlex hardcodes
+        // `padding: 0` in its inline style, so this has to go through `style` —
+        // a className would lose to it.
+        <BAIFlex
+          direction="row"
+          style={{
+            paddingBlockStart: token.paddingContentVerticalLG,
+            paddingInline: token.paddingContentHorizontal,
+            backgroundColor: token.colorBgContainer,
+            overflow: 'hidden',
+          }}
+        >
+          <Alert
+            title={t(
+              CHAT_UNAVAILABLE_REASON_MESSAGE_KEYS['no-desired-replicas'],
+            )}
+            type="warning"
+            showIcon
+            style={{ flex: 1 }}
+          />
+        </BAIFlex>
+      ) : null}
+      {baseURL && (chatDeployment || agentEndpointUrl) && _.isEmpty(models) && (
         <CustomModelForm
-          deploymentUrl={
-            agentEndpointUrl || deployment?.networkAccess.endpointUrl || ''
-          }
+          deploymentUrl={deploymentUrl || ''}
           basePath={chat.provider.basePath}
           token={effectiveApiKey}
           deploymentId={deploymentId}
           loading={isPendingUpdate || isLoadingModels}
-          hasNoDesiredReplicas={hasNoDesiredReplicas}
           onSubmit={(data) => {
             startUpdateTransition(() => {
               updateFetchKey();
@@ -613,13 +723,14 @@ const PureChatCard: React.FC<ChatCardProps> = ({
           closable
         />
       ) : null}
-      {!baseURL ? (
+      {/* Every remaining reason renders as a plain card-level alert, in the spot
+          `error.InvalidBaseURL` already occupied. */}
+      {unavailableReason && unavailableReason !== 'no-desired-replicas' ? (
         <Alert
-          title={t('error.InvalidBaseURL')}
-          type="error"
+          title={t(CHAT_UNAVAILABLE_REASON_MESSAGE_KEYS[unavailableReason])}
+          type={unavailableReason === 'invalid-base-url' ? 'error' : 'warning'}
           showIcon
           className={alertStyle}
-          closable
         />
       ) : null}
       <ChatMessages
