@@ -131,9 +131,9 @@ test.describe(
         // manager lacks required-field support, so the element text can be
         // "Runtime Parameters (Optional)" — an { exact: true } match would miss
         // it and fail version-dependently.
-        await expect(
-          modal.getByText(/Runtime Parameters/).first(),
-        ).toBeVisible({ timeout: 10000 });
+        await expect(modal.getByText(/Runtime Parameters/).first()).toBeVisible(
+          { timeout: 10000 },
+        );
 
         // The "default start command will be applied" warning note appears
         // (rendered as the Runtime select's warning-only validation message).
@@ -144,11 +144,12 @@ test.describe(
           }),
         ).toBeVisible({ timeout: 10000 });
 
-        // The "Model Definition File Path" is gated on the variant reading
-        // vfolder config files (showModelDefinitionPath), so it is NOT rendered
-        // at all for a non-config-reading variant — regardless of the Advanced
-        // Settings collapse. (Its shown counterpart is asserted for the custom
-        // variant in add-revision-command-shell.spec.ts.)
+        // The "Model Definition File Path" points at the model-definition.yaml
+        // the server reads, so it is gated on the variant reading the vfolder
+        // config files and is NOT rendered at all for a non-config-reading
+        // variant — regardless of the Advanced Settings collapse. (Its shown
+        // counterpart is asserted for the custom variant in
+        // add-revision-command-shell.spec.ts.)
         await expect(
           modal.getByLabel('Model Definition File Path'),
         ).toHaveCount(0);
