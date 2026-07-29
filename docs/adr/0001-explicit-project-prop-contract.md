@@ -68,16 +68,22 @@ narrowing helper for the loosely-typed ambient value).
   selection instead of silently inheriting the header selection. Mistakes
   surface visibly (a selector the user must fill, a disabled button) instead
   of silently targeting the wrong project.
-- Intermediate components that merely *render* a converted leaf component and
+- Intermediate components that merely _render_ a converted leaf component and
   are not yet converted themselves may still read the ambient hook — but must
   pass the value on explicitly. Each conversion moves the ambient read one
   level closer to the page until only pages read it.
 - The global current-project atom, its derived resource-group atoms for
   non-admin pages, and the imperative client `current_group` mirror are
   explicitly untouched.
-- First application: `FolderCreateModalV2` (FR-3408). Subsequent tickets
-  convert the deployment-creation flow, session-launch buttons, and mismatch
-  alerts (FR-3410/3411/3412), then hide the header selector per admin route.
+- First application: `FolderCreateModalV2` (FR-3408). Second application
+  (FR-3410): `DeploymentSettingModal` (create mode embeds the selector when
+  `project` is `null`), `VFolderDeployModal` (derive-from-resource tier — the
+  target project comes from the folder's own ownership, with an in-modal
+  selector only for user-owned folders), and `AdminModelCardSettingModal`
+  (model cards are created only in the resolved model-store project; the
+  ambient fallback was deleted). Subsequent tickets convert session-launch
+  buttons and mismatch alerts (FR-3411/3412), then hide the header selector
+  per admin route.
 
 ## How to comply (checklist for new/converted components)
 

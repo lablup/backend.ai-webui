@@ -1169,6 +1169,7 @@
     "Tags": "タグ",
     "TagsPlaceholder": "タグをカンマ区切りで入力してください",
     "TagsTooltip": "デプロイメントを整理・フィルタリングするためのオプションのラベル。EnterまたはEnterキーを押して追加してください。",
+    "TargetProjectRequired": "対象プロジェクトを選択してください。",
     "ToStatus": "ステータスへ",
     "TrafficRatio": "トラフィック比率",
     "TrafficStatus": "トラフィック状態",

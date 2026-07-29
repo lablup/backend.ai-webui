@@ -1169,6 +1169,7 @@
     "Tags": "Tags",
     "TagsPlaceholder": "Tags eingeben, durch Kommas getrennt",
     "TagsTooltip": "Optionale Labels zum Organisieren und Filtern von Bereitstellungen. Enter oder Komma drücken, um hinzuzufügen.",
+    "TargetProjectRequired": "Bitte wählen Sie ein Zielprojekt aus.",
     "ToStatus": "Zum Status",
     "TrafficRatio": "Datenverkehrsanteil",
     "TrafficStatus": "Datenverkehrsstatus",

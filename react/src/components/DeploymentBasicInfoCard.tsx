@@ -363,6 +363,9 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
       <DeploymentSettingModal
         open={settingModalOpen}
         deploymentFrgmt={deployment}
+        // Edit-only call site: the deployment already belongs to a project,
+        // so the modal ignores the prop in edit mode (ADR-0001).
+        project={null}
         onRequestClose={(success) => {
           setSettingModalOpen(false);
           if (success) onRefetch();

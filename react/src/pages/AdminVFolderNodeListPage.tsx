@@ -450,6 +450,10 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
             <VFolderNodes
               order={queryParams.order}
               loading={deferredQueryVariables !== queryVariables}
+              // ADR-0001: super-admin page — no ambient project context. The
+              // deployment-creation escalation modal embeds its own required
+              // project selector.
+              project={null}
               vfoldersFrgmt={filterOutNullAndUndefined(
                 _.map(vfolder_nodes?.edges, 'node'),
               )}

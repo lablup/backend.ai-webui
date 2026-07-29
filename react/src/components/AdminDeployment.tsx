@@ -452,6 +452,9 @@ const AdminDeployment = ({
       <DeploymentSettingModal
         open={!!editingDeployment}
         deploymentFrgmt={editingDeployment ?? null}
+        // Edit-only call site: the deployment already belongs to a project,
+        // so the modal ignores the prop in edit mode (ADR-0001).
+        project={null}
         onRequestClose={(success) => {
           setEditingDeploymentId(null);
           // A create adds a new row the offset query can't know about, so it

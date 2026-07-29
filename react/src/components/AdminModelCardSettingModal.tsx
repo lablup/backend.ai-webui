@@ -8,8 +8,6 @@ import type { AdminModelCardSettingModalUpdateMutation } from '../__generated__/
 import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { useCurrentDomainValue } from '../hooks';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { useSwitchProject } from '../hooks/useRouteScope';
 import { toProjectContext } from '../types/projectContext';
 import BAIFormItem from './BAIFormItem';
 import FolderCreateModalV2 from './FolderCreateModalV2';
@@ -38,7 +36,7 @@ import {
   useBAILogger,
 } from 'backend.ai-ui';
 import { PlusIcon } from 'lucide-react';
-import { startTransition, Suspense, useRef, useState } from 'react';
+import { Suspense, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
@@ -62,7 +60,6 @@ type FormInputType = {
 
 interface AdminModelCardSettingModalProps extends BAIModalProps {
   modelCardFrgmt?: AdminModelCardSettingModalFragment$key | null | undefined;
-  isModelStoreProject?: boolean;
   modelStoreProject?: {
     id: string | null | undefined;
     name: string | null | undefined;
@@ -72,7 +69,6 @@ interface AdminModelCardSettingModalProps extends BAIModalProps {
 
 const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
   modelCardFrgmt,
-  isModelStoreProject,
   modelStoreProject,
   onRequestClose,
   ...modalProps
@@ -86,9 +82,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
   const vfolderSelectRef = useRef<BAIVFolderSelectAstryxRef>(null);
   const [isOpenCreateFolderModal, setIsOpenCreateFolderModal] = useState(false);
 
-  const currentProject = useCurrentProjectValue();
   const currentDomain = useCurrentDomainValue();
-  const switchProject = useSwitchProject();
 
   const modelCard = useFragment(
     graphql`
@@ -247,22 +241,24 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
             onError: handleMutationError,
           });
         } else {
+          // Model cards are created ONLY in the resolved model-store project
+          // (ADR-0001 / FR-3410 — the silent ambient-project fallback was
+          // deleted). When the model-store project cannot be resolved, the
+          // form is replaced by the ProjectNotFound alert and the OK button
+          // is disabled, so this guard only narrows the type.
+          if (!modelStoreProject?.id) {
+            return;
+          }
           commitCreateModelCard({
             variables: {
               input: {
                 vfolderId: toLocalId(values.vfolderId),
-                // The model card must be created in the MODEL_STORE project — the
-                // same project that backs the VFolder selector above — not the
-                // admin's current compute project. When the admin is not currently
-                // in the model-store project, `currentProject.id` would write the
-                // card to the wrong project; `modelStoreProject.id` is the
-                // model-store-dedicated project. Falls back to the current project
-                // only if no model-store project is resolved.
+                // The model card must be created in the MODEL_STORE project —
+                // the same project that backs the VFolder selector above.
                 // TODO: model cards in the model-store project are slated to
                 // become global cards. Once a query that can look up cards across
                 // projects of multiple scopes is added, this will need to change.
-                modelStoreProjectId:
-                  modelStoreProject?.id ?? currentProject.id!,
+                modelStoreProjectId: modelStoreProject.id,
                 domainName: values.domainName || null,
                 ...metadataInput,
               },
@@ -379,47 +375,13 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                       />
                     </BAIFormItem>
                   </Suspense>
-                  {isModelStoreProject ? (
-                    <BAIButton
-                      icon={<PlusIcon />}
-                      onClick={() => setIsOpenCreateFolderModal(true)}
-                    />
-                  ) : (
-                    <BAIPopconfirmAstryx
-                      title={t(
-                        'importArtifactRevisionToFolderModal.ModelStoreProjectRequired',
-                      )}
-                      description={t(
-                        'importArtifactRevisionToFolderModal.ModelStoreProjectRequiredDescription',
-                      )}
-                      okText={t('button.ChangeProject')}
-                      cancelText={t('button.Cancel')}
-                      onConfirm={() => {
-                        if (modelStoreProject?.id && modelStoreProject?.name) {
-                          startTransition(() => {
-                            switchProject({
-                              projectId: modelStoreProject.id!,
-                              projectName: modelStoreProject.name!,
-                            });
-                            message.success(
-                              t(
-                                'importArtifactRevisionToFolderModal.CurrentProjectChangedSuccessfully',
-                              ),
-                            );
-                            setIsOpenCreateFolderModal(true);
-                          });
-                        } else {
-                          message.error(
-                            t(
-                              'importArtifactRevisionToFolderModal.FailedToRetrieveModelStoreProject',
-                            ),
-                          );
-                        }
-                      }}
-                    >
-                      <BAIButton icon={<PlusIcon />} />
-                    </BAIPopconfirmAstryx>
-                  )}
+                  {/* The folder-creation modal below targets the model-store
+                      project explicitly (ADR-0001), so no ambient project
+                      switch is needed before opening it. */}
+                  <BAIButton
+                    icon={<PlusIcon />}
+                    onClick={() => setIsOpenCreateFolderModal(true)}
+                  />
                 </BAIFlex>
               </BAIFormItem>
             )}
@@ -584,9 +546,14 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
           </Form>
         )}
       </BAIModal>
+      {/* New model folders are created in the model-store project — the same
+          project that backs the VFolder selector — never in the ambient
+          current project. The button that opens this modal renders only when
+          the model-store project is resolved, so `toProjectContext` yields a
+          non-null project here in practice. */}
       <FolderCreateModalV2
         open={isOpenCreateFolderModal}
-        project={toProjectContext(currentProject)}
+        project={toProjectContext(modelStoreProject ?? {})}
         initialValidate={true}
         folderType="model_project"
         onRequestClose={(result) => {

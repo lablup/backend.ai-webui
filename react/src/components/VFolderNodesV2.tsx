@@ -21,6 +21,7 @@ import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import { theme } from '../theme-shim';
+import { ProjectContextOrNull } from '../types/projectContext';
 import DeleteForeverVFolderModalV2 from './DeleteForeverVFolderModalV2';
 import DeploymentSettingModal from './DeploymentSettingModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
@@ -456,11 +457,20 @@ interface VFolderNodesV2Props extends Omit<
   vfoldersFrgmt: VFolderNodesV2Fragment$key;
   // Callback when a row is removed from current list
   onRemoveRow?: (updatedFolderId?: string) => void;
+  /**
+   * Explicit project prop contract (ADR-0001, FR-3410). Pass-through for the
+   * deployment-creation escalation modal (`DeploymentSettingModal`): the
+   * parent page decides the project context. Admin pages pass `null` (the
+   * modal then embeds its own required project selector); project/user pages
+   * pass their page-level project.
+   */
+  project: ProjectContextOrNull;
 }
 
 const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
   vfoldersFrgmt,
   onRemoveRow,
+  project,
   ...tableProps
 }) => {
   'use memo';
@@ -898,6 +908,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
       </Suspense>
       <DeploymentSettingModal
         open={isCreateDeploymentOpen}
+        project={project}
         onRequestClose={toggleCreateDeployment}
       />
       <HostQuotaModal

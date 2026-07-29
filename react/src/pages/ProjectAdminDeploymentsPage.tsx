@@ -408,6 +408,9 @@ const ProjectAdminDeploymentsContent: React.FC<
       <DeploymentSettingModal
         open={!!editingDeployment}
         deploymentFrgmt={editingDeployment ?? null}
+        // Edit-only call site: the deployment already belongs to a project,
+        // so the modal ignores the prop in edit mode (ADR-0001).
+        project={null}
         onRequestClose={(success) => {
           setEditingDeploymentId(null);
           if (success) updateFetchKey();

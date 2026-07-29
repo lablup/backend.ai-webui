@@ -22,6 +22,7 @@ import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginati
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
+import { toProjectContext } from '../types/projectContext';
 import { Button } from '@astryxdesign/core/Button';
 import { Link } from '@astryxdesign/core/Link';
 import { Text } from '@astryxdesign/core/Text';
@@ -408,6 +409,9 @@ const DeploymentListPageContent: React.FC = () => {
         <DeploymentSettingModal
           open={isCreating || !!editingDeployment}
           deploymentFrgmt={editingDeployment ?? null}
+          // ADR-0001: general page — the page is the only reader of the
+          // ambient current project and passes it explicitly.
+          project={toProjectContext(currentProject)}
           onRequestClose={(success) => {
             closeCreate();
             setEditingDeploymentId(null);

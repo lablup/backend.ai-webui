@@ -5,6 +5,7 @@
 import { ModelCardDrawerFragment$key } from '../__generated__/ModelCardDrawerFragment.graphql';
 import { ModelCardDrawerQuery } from '../__generated__/ModelCardDrawerQuery.graphql';
 import { useBackendAIImageMetaData } from '../hooks';
+import { ProjectContextOrNull } from '../types/projectContext';
 import DeploymentSettingModal from './DeploymentSettingModal';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
@@ -44,11 +45,18 @@ import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 interface ModelCardDrawerProps {
   modelCardId: string | undefined;
   open?: boolean;
+  /**
+   * Explicit project prop contract (ADR-0001, FR-3410). Pass-through for the
+   * deployment-creation escalation modal (`DeploymentSettingModal`): the
+   * parent page decides the project context.
+   */
+  project: ProjectContextOrNull;
   onClose?: () => void;
 }
 
 const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
   modelCardId,
+  project,
   open,
   onClose,
 }) => {
@@ -354,6 +362,7 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
       </Suspense>
       <DeploymentSettingModal
         open={isCreateDeploymentOpen}
+        project={project}
         onRequestClose={toggleCreateDeployment}
       />
     </>

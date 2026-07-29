@@ -1169,6 +1169,7 @@
     "Tags": "Etiketler",
     "TagsPlaceholder": "Etiketleri virgülle ayırarak girin",
     "TagsTooltip": "Dağıtımları düzenlemek ve filtrelemek için isteğe bağlı etiketler. Eklemek için Enter veya virgüle basın.",
+    "TargetProjectRequired": "Lütfen bir hedef proje seçin.",
     "ToStatus": "Hedef Durum",
     "TrafficRatio": "Trafik Oranı",
     "TrafficStatus": "Trafik Durumu",

@@ -6,11 +6,13 @@ import { VFolderDeployModalMutation } from '../__generated__/VFolderDeployModalM
 import { VFolderDeployModalQuery } from '../__generated__/VFolderDeployModalQuery.graphql';
 import { App } from '../app-shim';
 import { Form } from '../form-engine';
-import { useWebUINavigate } from '../hooks';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useCurrentDomainValue, useWebUINavigate } from '../hooks';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { theme } from '../theme-shim';
+import { ProjectContext, ProjectContextOrNull } from '../types/projectContext';
 import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
+import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import { Banner } from '@astryxdesign/core/Banner';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import {
@@ -20,6 +22,7 @@ import {
   BAIModal,
   type BAIModalProps,
   BAIProjectResourceGroupSelect,
+  toGlobalId,
   toLocalId,
   useErrorMessageResolver,
   useProjectResourceGroups,
@@ -68,7 +71,7 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
   const { token } = theme.useToken();
-  const { id: projectId, name: projectName } = useCurrentProjectValue();
+  const currentDomain = useCurrentDomainValue();
 
   // Loading UX: `useDeferredValue(open)` lets this modal stay mounted with
   // `loading=true` (Ant Design skeleton) while the deferred re-render fetches
@@ -83,10 +86,15 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
   // `name` and `runtimeVariantId`). The list below is project-wide. Once a
   // vfolder-compatibility scope is exposed (e.g. similar to
   // `modelCardAvailablePresets`), wire it in here.
-  const { deploymentRevisionPresets } =
+  // ADR-0001 (FR-3410): this modal never reads the ambient current project.
+  // The target project is derived from the folder's own ownership —
+  // `vfolder_node` is fetched alongside the presets so a project-owned
+  // folder deploys into exactly the project that owns it. For user-owned
+  // folders (no owning project) a required in-modal selector is rendered.
+  const { deploymentRevisionPresets, vfolder_node } =
     useLazyLoadQuery<VFolderDeployModalQuery>(
       graphql`
-        query VFolderDeployModalQuery {
+        query VFolderDeployModalQuery($vfolderGlobalId: String!) {
           deploymentRevisionPresets(
             orderBy: [{ field: RANK, direction: "ASC" }]
           ) {
@@ -99,24 +107,46 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
               }
             }
           }
+          vfolder_node(id: $vfolderGlobalId) {
+            ownership_type
+            group
+            group_name
+          }
         }
       `,
-      {},
+      { vfolderGlobalId: toGlobalId('VirtualFolderNode', vfolderId ?? '') },
       {
         fetchPolicy: deferredOpen ? 'store-and-network' : 'store-only',
       },
     );
+
+  // Project-owned folder → the folder's own project is the deploy target.
+  // User-owned folder (or unresolved node) → no derived project; the user
+  // must pick one with the in-modal selector below.
+  const ownershipProject: ProjectContextOrNull =
+    vfolder_node?.ownership_type === 'group' &&
+    vfolder_node.group &&
+    vfolder_node.group_name
+      ? { id: vfolder_node.group, name: vfolder_node.group_name }
+      : null;
+  const [selectedProject, setSelectedProject] = useState<ProjectContext | null>(
+    null,
+  );
+  const effectiveProject = ownershipProject ?? selectedProject;
 
   const availablePresets =
     deploymentRevisionPresets?.edges
       ?.map((edge) => edge?.node)
       .filter((node): node is NonNullable<typeof node> => node != null) ?? [];
 
-  // Fetch resource groups accessible to the current project. Uses the same
+  // Fetch resource groups accessible to the effective project. Uses the same
   // React Query cache as BAIProjectResourceGroupSelect below, so no duplicate
   // network request is made — we only need the count here to decide whether
-  // to render the selection UI or auto-deploy.
-  const { resourceGroups } = useProjectResourceGroups(projectName ?? '');
+  // to render the selection UI or auto-deploy. The hook short-circuits on an
+  // empty name (no project derived/chosen yet).
+  const { resourceGroups } = useProjectResourceGroups(
+    effectiveProject?.name ?? '',
+  );
 
   const [commitDeploy, isInFlightDeploy] =
     useMutation<VFolderDeployModalMutation>(graphql`
@@ -131,9 +161,14 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
       }
     `);
 
-  // Determine scenario: auto-deploy (scenario 2) vs selection (scenario 3)
+  // Determine scenario: auto-deploy (scenario 2) vs selection (scenario 3).
+  // Auto-deploy additionally requires an ownership-derived project: for a
+  // user-owned folder the target project is a user decision, so the modal
+  // (with its required project selector) must always be shown.
   const isAutoDeployScenario =
-    availablePresets.length === 1 && resourceGroups.length === 1;
+    ownershipProject !== null &&
+    availablePresets.length === 1 &&
+    resourceGroups.length === 1;
 
   // Track user-initiated selections separately from computed defaults.
   // Effective values fall back to computed defaults when user hasn't selected yet.
@@ -154,7 +189,7 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
   const selectedResourceGroup = Form.useWatch('resourceGroup', form);
 
   const handleDeploy = (): Promise<void> => {
-    if (!vfolderId || !projectId) return Promise.resolve();
+    if (!vfolderId || !effectiveProject) return Promise.resolve();
 
     const presetId = isAutoDeployScenario
       ? toLocalId(availablePresets[0]?.id)
@@ -174,7 +209,7 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
         variables: {
           vfolderId,
           input: {
-            projectId,
+            projectId: effectiveProject.id,
             revisionPresetId: presetId,
             resourceGroup,
             desiredReplicaCount: 1,
@@ -276,7 +311,7 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
       okButtonProps={{
         disabled:
           !vfolderId ||
-          !projectId ||
+          !effectiveProject ||
           !effectivePresetId ||
           !selectedResourceGroup ||
           noAvailablePresets,
@@ -313,6 +348,33 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
         />
       )}
       <Form form={form} layout="vertical">
+        {ownershipProject === null && (
+          <Form.Item
+            label={t('data.folders.TargetProject')}
+            // The selector is wired manually (see onSelectProject below);
+            // the OK button stays disabled until a project is chosen.
+            required
+          >
+            {/* The Suspense boundary swallows Form.Item's injected props, so
+                the selection is tracked in component state — same manual-
+                wiring pattern as FolderCreateModalV2. */}
+            <Suspense fallback={<BAISkeletonAstryx variant="input" />}>
+              <ProjectSelectForAdminPage
+                data-testid="vfolder-deploy-project-select"
+                domain={currentDomain}
+                onSelectProject={(projectInfo) => {
+                  setSelectedProject({
+                    id: projectInfo.projectId,
+                    name: projectInfo.projectName,
+                  });
+                  // The resource-group options are keyed to the chosen
+                  // project; drop any group picked for a previous choice.
+                  form.setFieldValue('resourceGroup', undefined);
+                }}
+              />
+            </Suspense>
+          </Form.Item>
+        )}
         <Form.Item
           label={t('modelStore.Preset')}
           tooltip={t('modelStore.PresetTooltip')}
@@ -351,10 +413,11 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
           rules={[{ required: true }]}
         >
           <BAIProjectResourceGroupSelect
-            projectName={projectName ?? ''}
+            key={effectiveProject?.id ?? 'no-project'}
+            projectName={effectiveProject?.name ?? ''}
             autoSelectDefault
             style={{ width: '100%' }}
-            disabled={noAvailablePresets}
+            disabled={noAvailablePresets || !effectiveProject}
           />
         </Form.Item>
       </Form>
