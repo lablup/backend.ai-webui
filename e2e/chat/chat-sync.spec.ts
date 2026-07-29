@@ -177,6 +177,14 @@ test.describe(
         .getByText('mock-endpoint')
         .first();
       await secondCardEndpointText.click();
+
+      // Set up the wait for the second pane's own /v1/models fetch (for
+      // endpoint B) before clicking, so we don't miss a fast mocked response.
+      const modelsBResponsePromise = page.waitForResponse(
+        (response) =>
+          response.url().includes('mock-chat-endpoint-b') &&
+          response.url().includes('/v1/models'),
+      );
       await page
         .getByRole('option', { name: 'mock-endpoint-b' })
         .or(
@@ -186,6 +194,31 @@ test.describe(
         )
         .first()
         .click();
+      await modelsBResponsePromise;
+
+      const secondChatCardHeader = page.locator('.ant-card').nth(2);
+
+      // Selecting a new endpoint re-triggers the model list fetch for that
+      // pane (ChatCard's non-suspending isLoadingModels flag), which
+      // disables its ChatInput until the fetch resolves. Wait for the
+      // second pane's input to become enabled again, and for its model
+      // selector to reflect the newly-fetched model — otherwise the synced
+      // send below can race the endpoint/model switch and dispatch against
+      // a stale ('custom') model before React has settled on
+      // 'gpt-mock-model-b'.
+      await expect(getChatInput(page, 1)).toBeEnabled({ timeout: 10000 });
+      await expect(
+        secondChatCardHeader.getByText('gpt-mock-model-b'),
+      ).toBeVisible({ timeout: 10000 });
+
+      // Brief stabilization pause: the endpoint switch above involves both a
+      // Relay refetch (endpoint entity) and a TanStack Query refetch (model
+      // list); both must settle on the second pane before it is safe to rely
+      // on the cross-pane sync mechanism to fire a send with the correct
+      // model. There is no further DOM signal to assert on beyond what was
+      // already checked above, so a short fixed delay is used as a last
+      // resort per project convention.
+      await page.waitForTimeout(500);
 
       // Verify both panes have sync ON
       await expect(getSyncToggle(page, 0).first()).toBeVisible({
