@@ -54,7 +54,7 @@ const StartPage: React.FC = () => {
 
   // State for modal initial data
   const [startModalInitialProps, setStartModalInitialProps] = useState<{
-    initialTab?: 'notebook' | 'github' | 'gitlab';
+    initialTab?: 'notebook' | 'github' | 'gitlab' | 'huggingface';
     initialData?: { url?: string; branch?: string };
   }>();
 

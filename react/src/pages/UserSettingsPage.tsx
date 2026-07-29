@@ -124,6 +124,10 @@ const UserPreferencesPage = () => {
     useBAISettingUserState('preserve_login');
   const [experimentalAIAgents, setExperimentalAIAgents] =
     useBAISettingUserState('experimental_ai_agents');
+  const [
+    experimentalImportFromHuggingFace,
+    setExperimentalImportFromHuggingFace,
+  ] = useBAISettingUserState('experimental_import_from_huggingface');
   const [shellInfo, setShellInfo] = useState<ShellScriptType>('bootstrap');
   const [isOpenShellScriptEditModal, { toggle: toggleShellScriptEditModal }] =
     useToggle(false);
@@ -469,6 +473,15 @@ const UserPreferencesPage = () => {
           defaultValue: false,
           value: experimentalAIAgents,
           onChange: setExperimentalAIAgents,
+        },
+        {
+          'data-testid': 'items-experimental-import-from-huggingface',
+          type: 'checkbox',
+          title: t('userSettings.ImportFromHuggingFace'),
+          description: t('general.Enabled'),
+          defaultValue: false,
+          value: experimentalImportFromHuggingFace,
+          onChange: setExperimentalImportFromHuggingFace,
         },
       ],
     },
