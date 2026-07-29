@@ -732,6 +732,7 @@
     "AutomountFolderNameMustStartWithDot": "Il nome della cartella di montaggio automatico deve iniziare con un punto ('.').",
     "AutomountFolders": "Cartelle di montaggio automatico",
     "BelongsToDifferentProject": "Questa cartella appartiene a un progetto diverso.",
+    "CannotLaunchSessionInAdminMenu": "Non è possibile avviare sessioni dal menu di amministrazione.",
     "CloningIsOnlyPossibleSameHost": "Attualmente la clonazione è possibile solo sullo stesso host.",
     "Create": "Creare",
     "CreateANewStorageFolder": "Crea una nuova cartella di archiviazione",

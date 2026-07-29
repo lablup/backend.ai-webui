@@ -732,6 +732,7 @@
     "AutomountFolderNameMustStartWithDot": "Автомат суурилуулсан фолдерын нэр нь цэгээс эхлэх ёстой ('.').",
     "AutomountFolders": "Автомат хавтас",
     "BelongsToDifferentProject": "Энэхүү хавтас нь өөр төсөлд харьяалагдана.",
+    "CannotLaunchSessionInAdminMenu": "Session-ийг админ цэснээс эхлүүлэх боломжгүй.",
     "CloningIsOnlyPossibleSameHost": "Одоогоор зөвхөн нэг хост дээр клон хийх боломжтой.",
     "Create": "Үүсгэх",
     "CreateANewStorageFolder": "Шинэ хадгалах фолдер үүсгэх",

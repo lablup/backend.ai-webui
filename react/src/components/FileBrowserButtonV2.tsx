@@ -9,7 +9,6 @@ import {
   useSuspendedBackendaiClient,
   useWebUINavigate,
 } from '../hooks';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useDefaultFileBrowserImageWithFallback } from '../hooks/useDefaultImagesWithFallback';
 import { useMergedAllowedStorageHostPermission } from '../hooks/useMergedAllowedStorageHostPermission';
 import { useProjectPath } from '../hooks/useRouteScope';
@@ -17,6 +16,10 @@ import {
   StartSessionWithDefaultValue,
   useStartSession,
 } from '../hooks/useStartSession';
+import {
+  ProjectContext,
+  ProjectContextOrNull,
+} from '../types/projectContext';
 import { PrimaryAppOption } from './ComputeSessionNodeItems/SessionActionButtons';
 import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
@@ -37,12 +40,72 @@ import { graphql, useFragment } from 'react-relay';
 interface FileBrowserButtonV2Props extends BAIButtonProps {
   showTitle?: boolean;
   vfolderNodeFrgmt: FileBrowserButtonV2Fragment$key;
+  /**
+   * Explicit project prop contract (ADR-0001, FR-3412): the project the
+   * FileBrowser session is created in. With `null` the button renders
+   * disabled and shows the caller-provided `noProjectTooltip` — this
+   * component never knows WHY the project is absent.
+   */
+  project: ProjectContextOrNull;
+  noProjectTooltip?: string;
 }
+
 const FileBrowserButtonV2: React.FC<FileBrowserButtonV2Props> = ({
   showTitle = true,
   vfolderNodeFrgmt,
+  project,
+  noProjectTooltip,
   ...buttonProps
 }) => {
+  'use memo';
+  const { t } = useTranslation();
+
+  if (project === null) {
+    return (
+      <Tooltip title={noProjectTooltip}>
+        <Space.Compact>
+          <BAIButton
+            icon={
+              <Image
+                width="18px"
+                src="/resources/icons/filebrowser.svg"
+                alt="File Browser"
+                preview={false}
+                style={{
+                  filter: 'grayscale(100%)',
+                }}
+              />
+            }
+            disabled
+            {...buttonProps}
+          >
+            {showTitle && t('data.explorer.ExecuteFileBrowser')}
+          </BAIButton>
+          <BAIButton icon={<EllipsisOutlined />} disabled />
+        </Space.Compact>
+      </Tooltip>
+    );
+  }
+
+  return (
+    <FileBrowserButtonWithProject
+      showTitle={showTitle}
+      vfolderNodeFrgmt={vfolderNodeFrgmt}
+      project={project}
+      {...buttonProps}
+    />
+  );
+};
+
+interface FileBrowserButtonWithProjectProps extends BAIButtonProps {
+  showTitle: boolean;
+  vfolderNodeFrgmt: FileBrowserButtonV2Fragment$key;
+  project: ProjectContext;
+}
+
+const FileBrowserButtonWithProject: React.FC<
+  FileBrowserButtonWithProjectProps
+> = ({ showTitle, vfolderNodeFrgmt, project, ...buttonProps }) => {
   'use memo';
   const { t } = useTranslation();
   const { message, modal } = App.useApp();
@@ -53,15 +116,11 @@ const FileBrowserButtonV2: React.FC<FileBrowserButtonV2Props> = ({
 
   const baiClient = useSuspendedBackendaiClient();
   const currentDomain = useCurrentDomainValue();
-  const currentProject = useCurrentProjectValue();
-  if (!currentProject.id) {
-    throw new Error('Project ID is required for FileBrowserButtonV2');
-  }
   const currentUserAccessKey = baiClient?._config?.accessKey;
   const { unitedAllowedPermissionByVolume } =
     useMergedAllowedStorageHostPermission(
       currentDomain,
-      currentProject.id,
+      project.id,
       currentUserAccessKey,
     );
 
@@ -143,7 +202,11 @@ const FileBrowserButtonV2: React.FC<FileBrowserButtonV2Props> = ({
             if (!filebrowserImage) {
               return;
             }
-            const fileBrowserFormValue = createFilebrowserLauncherValue();
+            const fileBrowserFormValue = {
+              ...createFilebrowserLauncherValue(),
+              // Pin the session to exactly the passed project (FR-3412).
+              projectName: project.name,
+            };
             await startSessionWithDefault(fileBrowserFormValue)
               .then((results) => {
                 if (results?.fulfilled && results.fulfilled.length > 0) {

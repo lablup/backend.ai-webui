@@ -732,6 +732,7 @@
     "AutomountFolderNameMustStartWithDot": "Tên của thư mục tự động gắn phải bắt đầu bằng dấu chấm ('.').",
     "AutomountFolders": "Thư mục Automount",
     "BelongsToDifferentProject": "Thư mục này thuộc dự án khác.",
+    "CannotLaunchSessionInAdminMenu": "Không thể khởi chạy phiên từ menu quản trị.",
     "CloningIsOnlyPossibleSameHost": "Hiện tại, việc nhân bản chỉ có thể thực hiện được trên cùng một máy chủ.",
     "Create": "Tạo nên",
     "CreateANewStorageFolder": "Tạo một thư mục lưu trữ mới",

@@ -732,6 +732,7 @@
     "AutomountFolderNameMustStartWithDot": "Nama folder auto-mount mesti bermula dengan titik ('.').",
     "AutomountFolders": "Folder Automatik",
     "BelongsToDifferentProject": "Folder ini milik projek lain.",
+    "CannotLaunchSessionInAdminMenu": "Sesi tidak boleh dilancarkan daripada menu pentadbir.",
     "CloningIsOnlyPossibleSameHost": "Pada masa ini, pengklonan hanya boleh dilakukan pada hos yang sama.",
     "Create": "Buat",
     "CreateANewStorageFolder": "Buat folder storan baru",

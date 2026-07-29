@@ -732,6 +732,7 @@
     "AutomountFolderNameMustStartWithDot": "Το όνομα του φακέλου αυτόματης προσάρτησης πρέπει να αρχίζει με τελεία ('.').",
     "AutomountFolders": "Φάκελοι Automount",
     "BelongsToDifferentProject": "Αυτός ο φάκελος ανήκει σε διαφορετικό έργο.",
+    "CannotLaunchSessionInAdminMenu": "Δεν είναι δυνατή η εκκίνηση συνεδριών από το μενού διαχειριστή.",
     "CloningIsOnlyPossibleSameHost": "Προς το παρόν, η κλωνοποίηση είναι δυνατή μόνο στον ίδιο κεντρικό υπολογιστή.",
     "Create": "Δημιουργώ",
     "CreateANewStorageFolder": "Δημιουργήστε έναν νέο φάκελο αποθήκευσης",

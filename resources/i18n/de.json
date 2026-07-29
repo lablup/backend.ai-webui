@@ -732,6 +732,7 @@
     "AutomountFolderNameMustStartWithDot": "Der Name des Auto-Mount-Ordners muss mit einem Punkt ('.') beginnen.",
     "AutomountFolders": "Automount-Ordner",
     "BelongsToDifferentProject": "Dieser Ordner gehört zu einem anderen Projekt.",
+    "CannotLaunchSessionInAdminMenu": "Sitzungen können nicht über das Admin-Menü gestartet werden.",
     "CloningIsOnlyPossibleSameHost": "Derzeit ist das Klonen nur auf demselben Host möglich.",
     "Create": "Erstellen",
     "CreateANewStorageFolder": "Erstellen Sie einen neuen Speicherordner",

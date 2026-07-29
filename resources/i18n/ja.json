@@ -732,6 +732,7 @@
     "AutomountFolderNameMustStartWithDot": "自動マウントフォルダー名はドット（'.）",
     "AutomountFolders": "フォルダーの自動マウント",
     "BelongsToDifferentProject": "このフォルダは別のプロジェクトに属しています。",
+    "CannotLaunchSessionInAdminMenu": "管理者メニューからセッションを起動することはできません。",
     "CloningIsOnlyPossibleSameHost": "現在、クローン作成は同じホスト上でのみ可能です。",
     "Create": "作成",
     "CreateANewStorageFolder": "新規ストレージフォルダー作成",

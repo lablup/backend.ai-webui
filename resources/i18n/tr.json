@@ -732,6 +732,7 @@
     "AutomountFolderNameMustStartWithDot": "Otomatik montaj klasörünün adı bir nokta ('.') ile başlamalıdır.",
     "AutomountFolders": "Klasörleri Otomatik Bağla",
     "BelongsToDifferentProject": "Bu klasör farklı bir projeye ait.",
+    "CannotLaunchSessionInAdminMenu": "Oturumlar yönetici menüsünden başlatılamaz.",
     "CloningIsOnlyPossibleSameHost": "Şu anda klonlama yalnızca aynı ana bilgisayarda mümkündür.",
     "Create": "Oluşturmak",
     "CreateANewStorageFolder": "Yeni bir depolama klasörü oluşturun",

@@ -86,7 +86,17 @@ export type StartSessionValue =
   // Required fields (environments with only version required)
   StartSessionEnvironments &
     // Optional fields from SessionLauncherFormValue
-    Partial<Omit<SessionLauncherFormValue, 'environments'>>;
+    Partial<Omit<SessionLauncherFormValue, 'environments'>> & {
+      /**
+       * Explicit target project (group) name for the created session
+       * (ADR-0001, FR-3412). When set, `group_name` is pinned to exactly
+       * this project instead of the ambient current project. Distinct from
+       * the `owner` branch, which is coupled to `owner_access_key`.
+       * Callers that omit it keep the ambient-project fallback — a
+       * sanctioned interim state until they are converted.
+       */
+      projectName?: string;
+    };
 
 // Type for minimum required values (all fields except those with defaults are required)
 export type StartSessionWithDefaultValue = Omit<
@@ -157,11 +167,17 @@ export const useStartSession = () => {
   ) => {
     const mergedValue = _.merge({}, defaultFormValues, minimumValues);
     return startSession(
-      mergedValue as SessionLauncherFormValue & { dependencies?: string[] },
+      mergedValue as SessionLauncherFormValue & {
+        dependencies?: string[];
+        projectName?: string;
+      },
     );
   };
   const startSession = async (
-    values: SessionLauncherFormValue & { dependencies?: string[] },
+    values: SessionLauncherFormValue & {
+      dependencies?: string[];
+      projectName?: string;
+    },
   ) => {
     // A manual image (the `allowManualImageNameForSession` escape hatch) is
     // used verbatim — the user explicitly typed it, so it must not be
@@ -190,10 +206,13 @@ export const useStartSession = () => {
       architecture,
       resources: {
         enqueueOnly: true,
-        // Project and domain settings
+        // Project and domain settings. `projectName` (explicit project
+        // contract, FR-3412) wins over the ambient current project; the
+        // `owner` branch stays independent because it is coupled to
+        // `owner_access_key`.
         group_name: values.owner?.enabled
           ? values.owner.project
-          : currentProject.name || undefined,
+          : values.projectName || currentProject.name || undefined,
         domain: values.owner?.enabled
           ? values.owner.domainName
           : baiClient._config.domainName,
