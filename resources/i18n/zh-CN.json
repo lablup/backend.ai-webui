@@ -1235,7 +1235,8 @@
         "Revision": "浏览过去的部署版本历史，并回滚到任意之前的版本。",
         "RevisionHistory": "浏览过去的部署版本历史，并回滚到任意之前的版本。"
       }
-    }
+    },
+    "CannotResolveDeploymentProject": "无法确定此部署所属的项目，因此已禁用添加修订。"
   },
   "desktopNotification": {
     "NotSupported": "该浏览器不支持通知。",

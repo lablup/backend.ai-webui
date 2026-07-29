@@ -1235,7 +1235,8 @@
         "Revision": "Navegue pelas revisões anteriores do deployment e reverta para qualquer versão anterior.",
         "RevisionHistory": "Navegue pelas revisões anteriores do deployment e reverta para qualquer uma delas."
       }
-    }
+    },
+    "CannotResolveDeploymentProject": "Não é possível determinar o projeto ao qual esta implantação pertence, pelo que a adição de uma revisão está desativada."
   },
   "desktopNotification": {
     "NotSupported": "Este navegador não suporta notificações.",

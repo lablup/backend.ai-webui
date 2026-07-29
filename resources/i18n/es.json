@@ -1235,7 +1235,8 @@
         "Revision": "Explore las revisiones anteriores del despliegue y revierta a cualquier versión anterior.",
         "RevisionHistory": "Explore las revisiones anteriores del despliegue y revierta a cualquier versión anterior."
       }
-    }
+    },
+    "CannotResolveDeploymentProject": "No se puede determinar el proyecto al que pertenece este despliegue, por lo que la adición de una revisión está deshabilitada."
   },
   "desktopNotification": {
     "NotSupported": "Este navegador no admite notificaciones.",
