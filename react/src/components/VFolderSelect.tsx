@@ -7,6 +7,7 @@ import { useBaiSignedRequestWithPromise } from '../helper';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { toProjectContext } from '../types/projectContext';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
@@ -311,6 +312,7 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
       </Space.Compact>
       <FolderCreateModalV2
         open={isOpenCreateModal}
+        project={toProjectContext(currentProject)}
         initialValues={{ usage_mode: 'model' }}
         onRequestClose={(result) => {
           setIsOpenCreateModal(false);

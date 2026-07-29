@@ -7,6 +7,7 @@ import { ImportArtifactRevisionToFolderModalModelStoreProjectsFragment$key } fro
 import { ImportArtifactRevisionToFolderModalMutation } from '../__generated__/ImportArtifactRevisionToFolderModalMutation.graphql';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useSwitchProject } from '../hooks/useRouteScope';
+import { toProjectContext } from '../types/projectContext';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useToggle } from 'ahooks';
 import { Alert, App, Form, FormInstance, Popconfirm, theme } from 'antd';
@@ -320,6 +321,7 @@ const ImportArtifactRevisionToFolderModal = ({
       </BAIModal>
       <FolderCreateModalV2
         open={isOpenCreateModal}
+        project={toProjectContext(currentProject)}
         initialValidate={true}
         folderType="model_project"
         onRequestClose={(result) => {

@@ -939,6 +939,8 @@
       "SharedUser": "Pengguna Dikongsi",
       "SharedUserDesc": "Hanya pengguna yang menerima jemputan yang dipaparkan pada senarai.\n\nPengguna yang masih mengundang tidak dipaparkan.",
       "Status": "Status",
+      "TargetProject": "Projek Sasaran",
+      "TargetProjectRequired": "Sila pilih projek untuk mencipta folder itu.",
       "TrashBin": "Sampah",
       "Type": "Jenis",
       "TypeFolderNameToDelete": "Taipkan nama folder untuk dipadamkan",
