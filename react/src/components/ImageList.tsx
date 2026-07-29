@@ -11,8 +11,8 @@ import { App } from '../app-shim';
 import { getImageFullName } from '../helper';
 import { useBackendAIImageMetaData } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
+import { ProjectContext } from '../types/projectContext';
 import { theme } from '../theme-shim';
 import AliasedImageDoubleTags from './AliasedImageDoubleTags';
 import ImageInstallModal from './ImageInstallModal';
@@ -68,7 +68,19 @@ const availableImageSorterValues = [
 const isEnableSorter = (key: string) =>
   _.includes(availableImageSorterKeys, key);
 
-const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
+interface ImageListProps {
+  /**
+   * Explicit project prop contract (ADR-0001, FR-3415). The Environments page
+   * decides the project; this component never reads the ambient current
+   * project. Non-null by type: the page renders a "pick a project" empty state
+   * instead of mounting this list when nothing is chosen, because the image
+   * scope argument has no cheap "all projects" form (see the ADR).
+   */
+  project: ProjectContext;
+  style?: React.CSSProperties;
+}
+
+const ImageList: React.FC<ImageListProps> = ({ project, style }) => {
   'use memo';
 
   const { t } = useTranslation();
@@ -87,7 +99,6 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
     useToggle();
   const [isPendingRefreshTransition, startRefreshTransition] = useTransition();
-  const currentProject = useCurrentProjectValue();
 
   const {
     baiPaginationOption,
@@ -106,7 +117,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   );
 
   const queryVariables: ImageListQuery$variables = {
-    scopeId: `project:${currentProject.id}`,
+    scopeId: `project:${project.id}`,
     offset: baiPaginationOption.offset,
     first: baiPaginationOption.first,
     filter: imageFilter || undefined,
@@ -562,6 +573,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         imageFrgmt={managingApp}
       />
       <ImageInstallModal
+        project={project}
         open={isOpenInstallModal}
         onRequestClose={() => {
           setIsOpenInstallModal(false);

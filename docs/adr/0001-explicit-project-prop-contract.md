@@ -2,7 +2,8 @@
 
 - Status: Accepted
 - Date: 2026-07-29
-- Issues: FR-3407 (epic), FR-3408 (first application)
+- Issues: FR-3407 (epic), FR-3408 (first application), FR-3415 (final
+  application — the `/admin/*` surface is complete)
 
 ## Context
 
@@ -227,6 +228,73 @@ narrowing helper for the loosely-typed ambient value).
     previous selection; a folder created from the admin Data page lands in
     the project chosen inside the modal.
 
+  Seventh application (FR-3415) — the last two project-dependent admin
+  pages, completing the `/admin/*` surface:
+
+  - **Environments** (`EnvironmentPage`, `/admin/environment`) grew a visible,
+    URL-persisted, page-level project selection using
+    `ProjectSelectForAdminPage` (all projects of the domain — the header's
+    selector lists only the projects the admin is a MEMBER of, which is the
+    wrong set for an admin surface). The choice lives in the `project` search
+    param (the project **id**), resolved to `{ id, name }` at page level via
+    `useAccessibleProjects` — the same source the selector reads, so the URL
+    and the visible option cannot disagree, and an id that no longer resolves
+    narrows to "unselected" rather than to something arbitrary.
+
+    **There is deliberately no default.** Seeding it — from the ambient
+    project or from "the first project" — would reintroduce exactly the
+    invisible-scope bug this ADR exists to remove. Until a project is picked
+    the image list renders a "select a project" empty state. The selector is
+    shown on the Images and Resource Presets tabs only; Registries is
+    domain-wide.
+
+    **No "all projects" view is offered.** `image_nodes`'s `scope_id` does
+    accept `domain:<name>`, but the manager resolves it with a per-project
+    group lookup plus a per-image allowed-registry query (an N-queries-per-row
+    pattern) and unions in the caller's own user-scope images, so it is
+    neither cheap nor exactly "all projects in the domain". A single required
+    project choice was kept instead; revisit if the backend grows a real
+    admin-wide image list (`admin_images_v2` exists but takes no scope).
+
+    The three consumers below it were converted:
+    - `ImageList` — required **non-null** `project: ProjectContext`; the query
+      scope is `project:${project.id}`. Non-null because the page renders the
+      empty state instead of mounting the list.
+    - `ImageInstallModal` — required **non-null** `project`; the batch session
+      it enqueues carries `group_name: project.name` instead of
+      `baiClient.current_group`.
+    - `ResourcePresetSettingModal` (via `ResourcePresetList`) — required
+      `project: ProjectContextOrNull`; presets themselves are global, so only
+      the `BAIProjectResourceGroupSelect` options are keyed to the project.
+      `null` renders that one field disabled with an explanation.
+  - **Reservoir** (`ReservoirArtifactDetailPage`, `/admin/reservoir`):
+    `ImportArtifactRevisionToFolderModal` is derive-from-resource tier. An
+    artifact import always lands in a MODEL STORE project, so the destination
+    now comes from the model-store projects the page resolved — the fragment
+    became `@relay(plural: true)` and the page passes all of them instead of
+    arbitrarily picking `groups[0]`, with an in-modal selector when more than
+    one exists. **The "Change Project" `Popconfirm` — which called
+    `useSetCurrentProject` and thus MUTATED the global project selection from
+    an admin surface — is deleted**, together with the ambient read that
+    decided whether to show it. With no model-store project available, the
+    in-modal folder-creation button is disabled with a reason instead of
+    offering to change projects.
+  - **Gating**: `environment` and `reservoir` joined
+    `PROJECT_AGNOSTIC_MENU_KEYS` (with their canonical and legacy paths; the
+    reservoir entry is a prefix, so the `/:artifactId` child is covered).
+    `admin-dashboard` is now the ONLY excluded `/admin/*` key — the page is
+    unused and still reads ambient state directly.
+  - **Fourth copy removed**: `e2e/admin-scope/admin-header-project-selector.spec.ts`
+    had its own local `SUPER_ADMIN_ROUTES` constant covering only the original
+    three routes. It now derives the list from
+    `react/src/helper/projectAgnosticRoutes.ts` (a deliberate leaf module, so
+    importing it into Playwright costs nothing), minus the three
+    feature-flag-gated pages (`scheduler`, `rbac`, `reservoir`) that are not
+    navigable on every test cluster.
+  - **ESLint guardrail**: `EnvironmentPage`, `ReservoirPage` and
+    `ReservoirArtifactDetailPage` moved from the excluded set into the
+    restricted file list.
+
 ## Route-derived project context (`useIsProjectAgnosticPage`)
 
 `react/src/hooks/useIsProjectAgnosticPage.ts` re-exports
@@ -237,13 +305,14 @@ the deepest route `handle.menuKey`, with a pathname fallback for legacy
 unprefixed paths.
 
 ```
-admin-session  admin-deployments  admin-data  credential  resource-policy
-scheduler      agent              project     settings    maintenance
-diagnostics    rbac               branding    information
+admin-session  admin-deployments  admin-data  credential  environment
+resource-policy  reservoir        scheduler   agent       project
+settings       maintenance        diagnostics rbac        branding
+information
 ```
 
-Excluded: `environment`, `reservoir` (both pending a follow-up ticket) and
-`admin-dashboard` (out of scope).
+Excluded: `admin-dashboard` only (out of scope — the page is unused and still
+reads the ambient project directly).
 
 Who may call it:
 

@@ -1045,6 +1045,7 @@
     "AutoScaling": "Αυτόματη κλιμάκωση",
     "AutoScalingRules": "Κανόνες αυτόματης κλιμάκωσης",
     "BasicInformation": "Βασικές πληροφορίες",
+    "CannotResolveDeploymentProject": "Δεν είναι δυνατός ο προσδιορισμός του έργου στο οποίο ανήκει αυτή η ανάπτυξη, επομένως η προσθήκη αναθεώρησης είναι απενεργοποιημένη.",
     "ClusterMode": "Λειτουργία cluster",
     "ClusterModeTooltip": "Διάταξη ομαδοποίησης για την computing session του αντιγράφου, με μορφή \"λειτουργία / μέγεθος\". Μεμονωμένο σημαίνει ένα container· Πολλαπλοί κόμβοι κατανέμουν το φόρτο εργασίας σε πολλαπλούς agents.",
     "ClusterSize": "Μέγεθος cluster",
@@ -1240,8 +1241,7 @@
         "Revision": "Περιηγηθείτε σε προηγούμενες αναθεωρήσεις ανάπτυξης και επαναφέρετε οποιαδήποτε προηγούμενη.",
         "RevisionHistory": "Περιηγηθείτε σε προηγούμενες αναθεωρήσεις ανάπτυξης και επαναφέρετε οποιαδήποτε προηγούμενη έκδοση."
       }
-    },
-    "CannotResolveDeploymentProject": "Δεν είναι δυνατός ο προσδιορισμός του έργου στο οποίο ανήκει αυτή η ανάπτυξη, επομένως η προσθήκη αναθεώρησης είναι απενεργοποιημένη."
+    }
   },
   "desktopNotification": {
     "NotSupported": "Αυτό το πρόγραμμα περιήγησης δεν υποστηρίζει ειδοποιήσεις.",
@@ -1473,6 +1473,7 @@
     "ResourceLimitAppliesToNewSessionsOnly": "Το ελάχιστο όριο πόρων ισχύει μόνο για νέες συνεδρίες και δεν επηρεάζει τις ήδη εκτελούμενες συνεδρίες.",
     "ResourcePresets": "Προεπιλογές πόρων",
     "SearchImages": "Αναζήτηση εικόνων",
+    "SelectProjectToListImages": "Επιλέξτε ένα έργο για να εμφανιστούν οι εικόνες του.",
     "SelectedImagesAlreadyInstalled": "Οι επιλεγμένες εικόνες είναι ήδη εγκατεστημένες ή Καμία. Παρακαλώ ξαναελέγξτε.",
     "SelectedImagesNotInstalled": "Οι επιλεγμένες εικόνες δεν είναι εγκατεστημένες. Παρακαλώ ξαναελέγξτε.",
     "Status": "Κατάσταση",
@@ -1763,7 +1764,6 @@
     "YouCanCreateNotebookCode": "Αυτό το σήμα επιτρέπει την άμεση εκτέλεση του σημειωματάριού σας στο Backend.AI. Αντιγράψτε τον κώδικα για να τον χρησιμοποιήσετε οπουδήποτε."
   },
   "importArtifactRevisionToFolderModal": {
-    "CurrentProjectChangedSuccessfully": "Το τρέχον έργο άλλαξε με επιτυχία.",
     "FailedToImport": "Αποτυχία εισαγωγής αντικειμένου/αντικειμένων",
     "FailedToImportArtifact": "Αποτυχία εισαγωγής του artifact {{ name }} ({{ version }})",
     "FailedToImportModelFromHuggingFace": "Αποτυχία λήψης του μοντέλου από το Hugging Face.",
@@ -1772,8 +1772,7 @@
     "Import": "Εισαγωγή",
     "ImportToFolder": "Εισαγωγή σε φάκελο",
     "ImportingArtifact": "Εισαγωγή αντικειμένου {{name}} ({{version}})",
-    "ModelStoreProjectRequired": "Απαιτείται ένα έργο αποκλειστικά για το Model Store.",
-    "ModelStoreProjectRequiredDescription": "Θέλετε να μετατρέψετε το τρέχον έργο σε έργο αποκλειστικά για το Model Store;",
+    "ModelStoreProject": "Έργο καταστήματος μοντέλων",
     "NoArtifactsSelected": "Δεν έχουν επιλεγεί αρχεία για εισαγωγή",
     "OverwriteWarning": "Τα υπάρχοντα αρχεία θα αντικατασταθούν εάν υπάρχουν αρχεία με το ίδιο όνομα.",
     "SuccessfullyImported": "Επιτυχής εισαγωγή αντικειμένου(ων)",
@@ -2560,6 +2559,7 @@
     "ResourcePresets": "Προεπιλογές πόρων",
     "Resources": "Πόροι",
     "SHMEMShouldBeSmallerThanMemory": "Η κοινόχρηστη μνήμη πρέπει να είναι μικρότερη από τη μνήμη",
+    "SelectProjectForResourceGroup": "Επιλέξτε ένα έργο στη σελίδα Περιβάλλοντα για να επιλέξετε ομάδα πόρων.",
     "SharedMemory": "Κοινόχρηστη μνήμη",
     "Updated": "Η προεπιλογή πόρων ενημερώθηκε"
   },

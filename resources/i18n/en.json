@@ -1032,6 +1032,7 @@
     "AutoScaling": "Auto-scaling",
     "AutoScalingRules": "Auto Scaling Rules",
     "BasicInformation": "Basic Information",
+    "CannotResolveDeploymentProject": "Cannot determine the project this deployment belongs to, so adding a revision is disabled.",
     "ClusterMode": "Cluster Mode",
     "ClusterModeTooltip": "Clustering layout for the replica's compute session, formatted as \"mode / size\". Single means one container; Multi-node distributes the workload across multiple agents.",
     "ClusterSize": "Cluster Size",
@@ -1227,8 +1228,7 @@
         "Revision": "Browse past deployment revisions and roll back to any previous one.",
         "RevisionHistory": "Browse past deployment revisions and roll back to any previous one."
       }
-    },
-    "CannotResolveDeploymentProject": "Cannot determine the project this deployment belongs to, so adding a revision is disabled."
+    }
   },
   "desktopNotification": {
     "NotSupported": "This browser does not support notifications.",
@@ -1460,6 +1460,7 @@
     "ResourceLimitAppliesToNewSessionsOnly": "The minimum resource limit applies to newly created sessions only and does not affect sessions that are already running.",
     "ResourcePresets": "Resource Presets",
     "SearchImages": "Search images",
+    "SelectProjectToListImages": "Select a project to list its images.",
     "SelectedImagesAlreadyInstalled": "Selected Image(s) are already installed or None. Please check again.",
     "SelectedImagesNotInstalled": "Selected Images(s) are not installed. Please check again.",
     "Status": "Status",
@@ -1751,7 +1752,6 @@
     "YouCanCreateNotebookCode": "This badge enables direct execution of your notebook on Backend.AI. Copy the code to use it anywhere."
   },
   "importArtifactRevisionToFolderModal": {
-    "CurrentProjectChangedSuccessfully": "Current project changed successfully.",
     "FailedToImport": "Failed to imported artifact(s)",
     "FailedToImportArtifact": "Failed to import artifact {{ name }} ({{ version }})",
     "FailedToImportModelFromHuggingFace": "Failed to import model from hugging face.",
@@ -1760,8 +1760,7 @@
     "Import": "Import",
     "ImportToFolder": "Import to Folder",
     "ImportingArtifact": "Importing artifact {{name}} ({{version}})",
-    "ModelStoreProjectRequired": "Model-store-exclusive project is required",
-    "ModelStoreProjectRequiredDescription": "Do you want to convert the current project to a model-store-exclusive project?",
+    "ModelStoreProject": "Model Store Project",
     "NoArtifactsSelected": "No artifacts selected for import",
     "OverwriteWarning": "Existing files will be overwritten if files with the same name already exist.",
     "SuccessfullyImported": "Successfully imported artifact(s)",
@@ -2548,6 +2547,7 @@
     "ResourcePresets": "Resource Presets",
     "Resources": "Resources",
     "SHMEMShouldBeSmallerThanMemory": "Shared memory must be smaller than memory",
+    "SelectProjectForResourceGroup": "Select a project on the Environments page to choose a resource group.",
     "SharedMemory": "Shared Memory",
     "Updated": "Resource preset updated"
   },

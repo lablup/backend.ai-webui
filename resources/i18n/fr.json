@@ -1045,6 +1045,7 @@
     "AutoScaling": "Mise à l'échelle automatique",
     "AutoScalingRules": "Règles de mise à l'échelle automatique",
     "BasicInformation": "Informations de base",
+    "CannotResolveDeploymentProject": "Impossible de déterminer le projet auquel appartient ce déploiement ; l'ajout d'une révision est donc désactivé.",
     "ClusterMode": "Mode cluster",
     "ClusterModeTooltip": "Disposition de clustering pour la session de calcul de la réplique, au format \"mode / taille\". Unique signifie un seul conteneur ; Multi-nœud répartit la charge de travail sur plusieurs agents.",
     "ClusterSize": "Taille du Cluster",
@@ -1240,8 +1241,7 @@
         "Revision": "Parcourez les révisions de déploiement passées et revenez à n'importe laquelle.",
         "RevisionHistory": "Parcourez les révisions de déploiement passées et revenez à n'importe laquelle."
       }
-    },
-    "CannotResolveDeploymentProject": "Impossible de déterminer le projet auquel appartient ce déploiement ; l'ajout d'une révision est donc désactivé."
+    }
   },
   "desktopNotification": {
     "NotSupported": "Ce navigateur ne prend pas en charge les notifications.",
@@ -1474,6 +1474,7 @@
     "ResourceLimitAppliesToNewSessionsOnly": "La limite de ressources minimale s'applique uniquement aux sessions nouvellement créées et n'affecte pas les sessions déjà en cours d'exécution.",
     "ResourcePresets": "Préréglages de ressources",
     "SearchImages": "Recherche d'images",
+    "SelectProjectToListImages": "Sélectionnez un projet pour afficher ses images.",
     "SelectedImagesAlreadyInstalled": "Les images sélectionnées sont déjà installées ou Aucune. Veuillez vérifier à nouveau.",
     "SelectedImagesNotInstalled": "Les images sélectionnées ne sont pas installées. Veuillez vérifier à nouveau.",
     "Status": "Statut",
@@ -1764,7 +1765,6 @@
     "YouCanCreateNotebookCode": "Entrez l'URL du notebook pour créer un code de badge comme ci-dessous que vous pouvez exécuter directement sur Backend.AI."
   },
   "importArtifactRevisionToFolderModal": {
-    "CurrentProjectChangedSuccessfully": "Le projet actuel a été modifié avec succès.",
     "FailedToImport": "Échec de l'importation de l'artefact(s)",
     "FailedToImportArtifact": "Échec de l'importation de l'artefact {{ name }} ({{ version }})",
     "FailedToImportModelFromHuggingFace": "Impossible de récupérer le modèle depuis Hugging Face.",
@@ -1773,8 +1773,7 @@
     "Import": "Importer",
     "ImportToFolder": "Importer dans le dossier",
     "ImportingArtifact": "Importation de l'artefact {{name}} ({{version}})",
-    "ModelStoreProjectRequired": "Un projet dédié au Model Store est nécessaire.",
-    "ModelStoreProjectRequiredDescription": "Souhaitez-vous convertir le projet actuel en projet dédié au Model Store ?",
+    "ModelStoreProject": "Projet du magasin de modèles",
     "NoArtifactsSelected": "Aucun artefact sélectionné pour l’importation",
     "OverwriteWarning": "Les fichiers existants seront remplacés si des fichiers portant le même nom existent déjà.",
     "SuccessfullyImported": "Artefact(s) importé(s) avec succès",
@@ -2562,6 +2561,7 @@
     "ResourcePresets": "Préréglages de ressources",
     "Resources": "Ressources",
     "SHMEMShouldBeSmallerThanMemory": "La mémoire partagée doit être plus petite que la mémoire",
+    "SelectProjectForResourceGroup": "Sélectionnez un projet sur la page Environnements pour choisir un groupe de ressources.",
     "SharedMemory": "Mémoire partagée",
     "Updated": "Préréglage de ressource mis à jour"
   },

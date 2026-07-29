@@ -45,6 +45,8 @@ describe('useCurrentProjectValue dev-mode straggler warning (FR-3414)', () => {
     '/admin/rbac',
     '/credential', // legacy flat shim
     '/scheduler',
+    '/admin/environment', // FR-3415: now has in-page project selection
+    '/admin/reservoir/artifact-1', // FR-3415: prefix covers the detail child
   ])('warns once when read under the project-agnostic route %s', (pathname) => {
     renderAt(pathname);
     expect(console.warn).toHaveBeenCalledTimes(1);
@@ -53,8 +55,7 @@ describe('useCurrentProjectValue dev-mode straggler warning (FR-3414)', () => {
 
   it.each([
     '/project/default/session',
-    '/admin/environment', // excluded: still reads the ambient project
-    '/admin/dashboard',
+    '/admin/dashboard', // the only excluded admin page
   ])('stays silent when read under the project-scoped route %s', (pathname) => {
     renderAt(pathname);
     expect(console.warn).not.toHaveBeenCalled();

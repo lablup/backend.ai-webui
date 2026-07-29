@@ -1261,20 +1261,21 @@ To efficiently build new E2E tests, these POMs should be created:
 
 ---
 
-### 30. Super-Admin Scope — header project context (`/admin/session`, `/admin/deployments`, `/admin/data`)
+### 30. Project-Agnostic Scope — header project context (the whole `/admin/*` surface)
 
 **Test files:** [`e2e/admin-scope/admin-header-project-selector.spec.ts`](admin-scope/admin-header-project-selector.spec.ts), [`e2e/admin-scope/admin-data-folder-create.spec.ts`](admin-scope/admin-data-folder-create.spec.ts)
 
-FR-3414 / ADR-0001: the three super-admin routes operate above project scope — the header project selector is hidden there and folder creation asks for the target project inside the modal.
+FR-3414 / FR-3415 / ADR-0001: the project-agnostic routes operate above project scope — the header project selector is hidden there, folder creation asks for the target project inside the modal, and the Environments page selects its project in the page. The route list is derived from `react/src/helper/projectAgnosticRoutes.ts` (minus the feature-flag-gated `scheduler` / `rbac` / `reservoir`, which are not navigable on every test cluster), so a newly gated page is covered automatically.
 
 | Feature                                                                  | Covered | Test                                                                               |
 | ------------------------------------------------------------------------ | :-----: | ---------------------------------------------------------------------------------- |
-| Header project selector absent on the three super-admin routes           |   ✅    | `selector is absent on the three super-admin routes`                               |
+| Header project selector absent on every project-agnostic route           |   ✅    | `selector is absent on every project-agnostic route`                               |
+| Environments page offers in-page project selection instead               |   ✅    | `the Environments page selects its project in the page, not the header`            |
 | Header project selector present on the user Data page                    |   ✅    | `selector is present on the user Data page`                                        |
 | Leaving an admin route restores the previous selection untouched         |   ✅    | `leaving an admin route restores the previous selection untouched`                 |
 | Folder created from admin Data page lands in the in-modal chosen project |   ✅    | `folder created from the admin Data page lands in the project chosen in the modal` |
 
-**Coverage: 4 / 4 features (100%)**
+**Coverage: 5 / 5 features (100%)**
 
 ---
 

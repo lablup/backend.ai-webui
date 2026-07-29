@@ -1045,6 +1045,7 @@
     "AutoScaling": "Otomatik Ölçeklendirme",
     "AutoScalingRules": "Otomatik Ölçeklendirme Kuralları",
     "BasicInformation": "Temel Bilgiler",
+    "CannotResolveDeploymentProject": "Bu dağıtımın ait olduğu proje belirlenemediği için revizyon ekleme devre dışı bırakıldı.",
     "ClusterMode": "Küme modu",
     "ClusterModeTooltip": "Replikanın hesaplama oturumu için kümeleme düzeni, \"mod / boyut\" biçiminde gösterilir. Tek, bir container anlamına gelir; Çok düğümlü, iş yükünü birden fazla agent'a dağıtır.",
     "ClusterSize": "Küme boyutu",
@@ -1240,8 +1241,7 @@
         "Revision": "Geçmiş dağıtım revizyonlarını inceleyin ve istediğiniz bir önceki sürüme geri alın.",
         "RevisionHistory": "Geçmiş dağıtım revizyonlarını inceleyin ve istediğiniz bir önceki sürüme geri dönün."
       }
-    },
-    "CannotResolveDeploymentProject": "Bu dağıtımın ait olduğu proje belirlenemediği için revizyon ekleme devre dışı bırakıldı."
+    }
   },
   "desktopNotification": {
     "NotSupported": "Bu tarayıcı bildirimleri desteklemez.",
@@ -1473,6 +1473,7 @@
     "ResourceLimitAppliesToNewSessionsOnly": "Minimum kaynak sınırı yalnızca yeni oluşturulan oturumlara uygulanır ve halihazırda çalışan oturumları etkilemez.",
     "ResourcePresets": "Kaynak Ön Ayarları",
     "SearchImages": "Görselleri arayın",
+    "SelectProjectToListImages": "İmajlarını listelemek için bir proje seçin.",
     "SelectedImagesAlreadyInstalled": "Seçili Görüntü(ler) zaten yüklü veya Yok. Lütfen tekrar kontrol edin.",
     "SelectedImagesNotInstalled": "Seçilen Görüntü(ler) yüklü değil. Lütfen tekrar kontrol edin.",
     "Status": "Durum",
@@ -1763,7 +1764,6 @@
     "YouCanCreateNotebookCode": "Doğrudan Backend.AI üzerinde çalıştırabileceğiniz aşağıdakine benzer bir rozet kodu oluşturmak için not defteri URL'sini girin."
   },
   "importArtifactRevisionToFolderModal": {
-    "CurrentProjectChangedSuccessfully": "Mevcut proje başarıyla değiştirildi.",
     "FailedToImport": "Artefakt(lar) içe aktarılamadı",
     "FailedToImportArtifact": "Artefakt {{ name }} ({{ version }}) içe aktarılamadı.",
     "FailedToImportModelFromHuggingFace": "Hugging Face'ten model alınamadı.",
@@ -1772,8 +1772,7 @@
     "Import": "İçe aktar",
     "ImportToFolder": "Klasöre içe aktar",
     "ImportingArtifact": "Artefakt {{name}} ({{version}}) içe aktarılıyor",
-    "ModelStoreProjectRequired": "Model mağazası için özel bir proje gerekiyor.",
-    "ModelStoreProjectRequiredDescription": "Mevcut projeyi yalnızca Model Store için ayrılmış bir projeye dönüştürmek istiyor musunuz?",
+    "ModelStoreProject": "Model Mağazası Projesi",
     "NoArtifactsSelected": "İçe aktarılacak artefakt seçilmedi.",
     "OverwriteWarning": "Aynı ada sahip dosyalar varsa, mevcut dosyaların üzerine yazılacaktır.",
     "SuccessfullyImported": "Artefakt(lar) başarıyla içe aktarıldı.",
@@ -2560,6 +2559,7 @@
     "ResourcePresets": "Kaynak Ön Ayarları",
     "Resources": "Kaynaklar",
     "SHMEMShouldBeSmallerThanMemory": "Paylaşılan bellek, bellekten daha küçük olmalıdır",
+    "SelectProjectForResourceGroup": "Kaynak grubu seçmek için Ortamlar sayfasında bir proje seçin.",
     "SharedMemory": "Paylaşılan Bellek",
     "Updated": "Kaynak ön ayarı güncellendi"
   },

@@ -1045,6 +1045,7 @@
     "AutoScaling": "Automatyczne skalowanie",
     "AutoScalingRules": "Reguły automatycznego skalowania",
     "BasicInformation": "Podstawowe informacje",
+    "CannotResolveDeploymentProject": "Nie można ustalić projektu, do którego należy to wdrożenie, dlatego dodawanie rewizji jest wyłączone.",
     "ClusterMode": "Tryb klastra",
     "ClusterModeTooltip": "Układ klastrowania dla sesji obliczeniowej repliki w formacie \"tryb / rozmiar\". Pojedynczy oznacza jeden kontener; Wielowęzłowy rozkłada obciążenie na wielu agentów.",
     "ClusterSize": "Rozmiar klastra",
@@ -1240,8 +1241,7 @@
         "Revision": "Przeglądaj poprzednie wersje wdrożenia i wróć do dowolnej z nich.",
         "RevisionHistory": "Przeglądaj poprzednie wersje wdrożenia i wróć do dowolnej z nich."
       }
-    },
-    "CannotResolveDeploymentProject": "Nie można ustalić projektu, do którego należy to wdrożenie, dlatego dodawanie rewizji jest wyłączone."
+    }
   },
   "desktopNotification": {
     "NotSupported": "Ta przeglądarka nie obsługuje powiadomień.",
@@ -1474,6 +1474,7 @@
     "ResourceLimitAppliesToNewSessionsOnly": "Minimalny limit zasobów dotyczy tylko nowo tworzonych sesji i nie ma wpływu na sesje już uruchomione.",
     "ResourcePresets": "Predefiniowane ustawienia zasobów",
     "SearchImages": "Wyszukiwanie obrazów",
+    "SelectProjectToListImages": "Wybierz projekt, aby wyświetlić jego obrazy.",
     "SelectedImagesAlreadyInstalled": "Wybrane obrazy są już zainstalowane lub Brak. Prosze Sprawdź ponownie.",
     "SelectedImagesNotInstalled": "Wybrane obrazy nie są zainstalowane. Prosze Sprawdź ponownie.",
     "Status": "Status",
@@ -1764,7 +1765,6 @@
     "YouCanCreateNotebookCode": "Ta odznaka umożliwia bezpośrednie uruchamianie Twojego notatnika na Backend.AI. Skopiuj kod, aby użyć go w dowolnym miejscu."
   },
   "importArtifactRevisionToFolderModal": {
-    "CurrentProjectChangedSuccessfully": "Pomyślnie zmieniono bieżący projekt.",
     "FailedToImport": "Nie udało się zaimportować artefaktu(ów)",
     "FailedToImportArtifact": "Nie udało się zaimportować artefaktu {{ name }} ({{ version }})",
     "FailedToImportModelFromHuggingFace": "Nie udało się pobrać modelu z Hugging Face.",
@@ -1773,8 +1773,7 @@
     "Import": "Importuj",
     "ImportToFolder": "Importuj do folderu",
     "ImportingArtifact": "Importowanie artefaktu {{name}} ({{version}})",
-    "ModelStoreProjectRequired": "Wymagany jest projekt dedykowany sklepowi z modelami.",
-    "ModelStoreProjectRequiredDescription": "Czy chcesz przekształcić bieżący projekt w projekt przeznaczony wyłącznie dla Model Store?",
+    "ModelStoreProject": "Projekt sklepu modelarskiego",
     "NoArtifactsSelected": "Nie wybrano żadnych artefaktów do importu",
     "OverwriteWarning": "Istniejące pliki o tej samej nazwie zostaną nadpisane.",
     "SuccessfullyImported": "Pomyślnie zaimportowano artefakt(ów)",
@@ -2562,6 +2561,7 @@
     "ResourcePresets": "Predefiniowane ustawienia zasobów",
     "Resources": "Zasoby",
     "SHMEMShouldBeSmallerThanMemory": "Pamięć współdzielona musi być mniejsza niż pamięć",
+    "SelectProjectForResourceGroup": "Wybierz projekt na stronie Środowiska, aby wybrać grupę zasobów.",
     "SharedMemory": "Udostępniona pamięć",
     "Updated": "Zaktualizowano wstępne ustawienia zasobów"
   },

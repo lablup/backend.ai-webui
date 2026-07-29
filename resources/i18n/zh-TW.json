@@ -1046,6 +1046,7 @@
     "AutoScaling": "自動擴縮容",
     "AutoScalingRules": "自動擴縮容規則",
     "BasicInformation": "基本資訊",
+    "CannotResolveDeploymentProject": "無法確定此部署所屬的專案，因此已停用新增修訂。",
     "ClusterMode": "叢集模式",
     "ClusterModeTooltip": "副本計算工作階段的叢集布局，格式為「模式 / 大小」。單一表示一個容器；多節點將工作負載分散到多個 agent。",
     "ClusterSize": "叢集大小",
@@ -1241,8 +1242,7 @@
         "Revision": "瀏覽過去的部署版本歷史，並回滾至任意之前的版本。",
         "RevisionHistory": "瀏覽過去的部署版本歷史，並回滾至任意之前的版本。"
       }
-    },
-    "CannotResolveDeploymentProject": "無法確定此部署所屬的專案，因此已停用新增修訂。"
+    }
   },
   "desktopNotification": {
     "NotSupported": "該瀏覽器不支持通知。",
@@ -1474,6 +1474,7 @@
     "ResourceLimitAppliesToNewSessionsOnly": "最低資源限制僅適用於新建的工作階段，不影響已在執行中的工作階段。",
     "ResourcePresets": "資源預設",
     "SearchImages": "搜索图片",
+    "SelectProjectToListImages": "請選擇一個專案以檢視其映像檔。",
     "SelectedImagesAlreadyInstalled": "選定的圖像已安裝或無。請再次檢查。",
     "SelectedImagesNotInstalled": "未安裝選定的圖像。請再次檢查。",
     "Status": "地位",
@@ -1766,7 +1767,6 @@
     "YouCanCreateNotebookCode": "此徽章可讓您的筆記本在 Backend.AI 上直接執行。複製程式碼以在任何地方使用。"
   },
   "importArtifactRevisionToFolderModal": {
-    "CurrentProjectChangedSuccessfully": "已成功變更目前專案。",
     "FailedToImport": "無法匯入工件",
     "FailedToImportArtifact": "無法匯入工件 {{ name }}（{{ version }}）",
     "FailedToImportModelFromHuggingFace": "無法從 Hugging Face 取得模型。",
@@ -1775,8 +1775,7 @@
     "Import": "匯入",
     "ImportToFolder": "匯入至資料夾",
     "ImportingArtifact": "正在匯入工件 {{name}} ({{version}})",
-    "ModelStoreProjectRequired": "需要一個專門用於模型商店的專案",
-    "ModelStoreProjectRequiredDescription": "是否要將目前專案轉為僅供模型商店使用？",
+    "ModelStoreProject": "模型店專案",
     "NoArtifactsSelected": "未選取任何要匯入的項目",
     "OverwriteWarning": "若已存在同名檔案，現有檔案將被覆蓋。",
     "SuccessfullyImported": "已成功匯入產出物",
@@ -2564,6 +2563,7 @@
     "ResourcePresets": "資源預設",
     "Resources": "資源",
     "SHMEMShouldBeSmallerThanMemory": "共享内存必须小于内存",
+    "SelectProjectForResourceGroup": "請在環境頁面選擇專案後再選擇資源組。",
     "SharedMemory": "共享內存",
     "Updated": "資源預設已更新"
   },

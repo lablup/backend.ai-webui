@@ -7,6 +7,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { usePainKiller } from '../hooks/usePainKiller';
 import { SessionResources } from '../pages/SessionLauncherPage';
+import { ProjectContext } from '../types/projectContext';
 import { EnvironmentImage } from './ImageList';
 import { List, ListItem } from '@astryxdesign/core/List';
 import { Pagination } from '@astryxdesign/core/Pagination';
@@ -20,11 +21,20 @@ interface ImageInstallModalInterface extends BAIModalProps {
   onRequestClose: () => void;
   selectedRows: EnvironmentImage[];
   setInstallingImages: Dispatch<SetStateAction<string[]>>;
+  /**
+   * Explicit project prop contract (ADR-0001, FR-3415). Installing an image
+   * enqueues a batch session, so it MUST land in a project the operator chose
+   * deliberately — never in `baiClient.current_group`, which on an admin page
+   * is an invisible leftover. Required and non-null: the caller disables the
+   * install action until a project is picked.
+   */
+  project: ProjectContext;
 }
 const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
   onRequestClose,
   selectedRows,
   setInstallingImages,
+  project,
   ...modalProps
 }) => {
   const { t } = useTranslation();
@@ -73,7 +83,7 @@ const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
         ) ?? '320m'; // 320m = 256m + 64m
 
       const imageResource: SessionResources = {
-        group_name: baiClient.current_group,
+        group_name: project.name,
         domain: baiClient._config.domainName,
         type: 'batch',
         cluster_mode: 'single-node',
