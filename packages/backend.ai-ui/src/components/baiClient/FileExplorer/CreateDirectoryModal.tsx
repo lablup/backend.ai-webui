@@ -14,7 +14,7 @@ import React, { use, useRef } from 'react';
 
 // TODO: swap to BAIModal (already available in this package) instead of antd's Modal
 interface CreateDirectoryModalProps extends ModalProps {
-  onRequestClose: (success: boolean) => void;
+  onRequestClose: (success: boolean, createdFolderName?: string) => void;
 }
 
 const CreateDirectoryModal: React.FC<CreateDirectoryModalProps> = ({
@@ -43,7 +43,7 @@ const CreateDirectoryModal: React.FC<CreateDirectoryModalProps> = ({
             name: targetVFolderId,
           })
           .then(() => {
-            onRequestClose(true);
+            onRequestClose(true, values.folderName);
             message.success(t('comp:FileExplorer.FolderCreatedSuccessfully'));
           })
           .catch((err) => {

@@ -58,6 +58,14 @@ interface ExplorerActionControlsProps {
   // so callers that don't pass it explicitly keep the previous bundled
   // behavior.
   enableUpload?: boolean;
+  // 'directoryPicker' keeps only the directory-relevant actions (create
+  // folder); file creation and upload entry points are hidden entirely
+  // instead of rendered disabled.
+  mode?: 'explorer' | 'directoryPicker';
+  // Fired with the new folder's name right after a successful mkdir, in
+  // addition to onRequestClose(true). The directory picker uses this to jump
+  // straight into the created folder.
+  onFolderCreated?: (folderName: string) => void;
   // onClickRefresh?: (key: string) => void;
   extra?: React.ReactNode;
 }
@@ -72,6 +80,8 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
   enableDelete = false,
   enableWrite = false,
   enableUpload = enableWrite,
+  mode = 'explorer',
+  onFolderCreated,
   extra,
 }) => {
   const { t } = useBAIi18n();
@@ -136,7 +146,15 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
             <Tooltip title={t('general.button.Delete')} placement="topLeft">
               <Button
                 disabled={!enableDelete}
-                icon={<DeleteFilled style={{ color: token.colorError }} />}
+                icon={
+                  <DeleteFilled
+                    style={{
+                      color: enableDelete
+                        ? token.colorError
+                        : token.colorTextDisabled,
+                    }}
+                  />
+                }
                 onClick={() => {
                   toggleDeleteModal();
                 }}
@@ -149,7 +167,15 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
               >
                 <BAIButton
                   disabled={!enableDownload}
-                  icon={<DownloadIcon style={{ color: token.colorInfo }} />}
+                  icon={
+                    <DownloadIcon
+                      style={{
+                        color: enableDownload
+                          ? token.colorInfo
+                          : token.colorTextDisabled,
+                      }}
+                    />
+                  }
                   action={async () => {
                     const filePaths = selectedFiles.map((file) =>
                       currentPath === '.'
@@ -174,91 +200,95 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
             {lg && t('comp:FileExplorer.CreateFolder')}
           </Button>
         </Tooltip>
-        <Tooltip title={!lg && t('comp:FileExplorer.CreateFile')}>
-          <Button
-            disabled={!enableWrite}
-            icon={<FileAddOutlined />}
-            onClick={() => {
-              toggleCreateFileModal();
-            }}
-          >
-            {lg && t('comp:FileExplorer.CreateFile')}
-          </Button>
-        </Tooltip>
-        <Dropdown
-          disabled={!enableUpload}
-          trigger={['click']}
-          open={openUploadDropdown}
-          onOpenChange={toggleUploadDropdown}
-          popupRender={() => {
-            return (
-              <BAIFlex
-                align="start"
-                direction="column"
-                className={styles.upload}
-                style={{
-                  padding: 5,
-                  backgroundColor: token.colorBgElevated,
-                  borderRadius: token.borderRadiusLG,
-                  boxShadow: token.boxShadowSecondary,
-                }}
-              >
-                <Upload
-                  beforeUpload={(_, fileList) => {
-                    if (fileList !== lastFileListRef.current) {
-                      uploadFiles(fileList, onUpload);
-                    }
-                    lastFileListRef.current = fileList;
-                    return false; // Prevent default upload behavior
-                  }}
-                  multiple
-                  showUploadList={false}
-                >
-                  <Button
-                    type="text"
-                    icon={<FileAddOutlined />}
-                    onClick={() => toggleUploadDropdown()}
-                  >
-                    {t('comp:FileExplorer.UploadFiles')}
-                  </Button>
-                </Upload>
-                <Upload
-                  directory
-                  beforeUpload={(_, fileList) => {
-                    if (fileList !== lastFileListRef.current) {
-                      uploadFiles(fileList, onUpload);
-                    }
-                    lastFileListRef.current = fileList;
-                    return false;
-                  }}
-                  showUploadList={false}
-                >
-                  <Button
-                    type="text"
-                    icon={<FolderAddOutlined />}
-                    onClick={() => toggleUploadDropdown()}
-                  >
-                    {t('comp:FileExplorer.UploadFolder')}
-                  </Button>
-                </Upload>
-              </BAIFlex>
-            );
-          }}
-        >
-          <Tooltip
-            title={
-              !enableUpload
-                ? t('comp:FileExplorer.NoUploadPermissionForHost')
-                : !lg
-                  ? t('general.button.Upload')
-                  : undefined
-            }
-          >
-            <Button icon={<UploadOutlined />} disabled={!enableUpload}>
-              {lg && t('general.button.Upload')}
+        {mode !== 'directoryPicker' && (
+          <Tooltip title={!lg && t('comp:FileExplorer.CreateFile')}>
+            <Button
+              disabled={!enableWrite}
+              icon={<FileAddOutlined />}
+              onClick={() => {
+                toggleCreateFileModal();
+              }}
+            >
+              {lg && t('comp:FileExplorer.CreateFile')}
             </Button>
           </Tooltip>
-        </Dropdown>
+        )}
+        {mode !== 'directoryPicker' && (
+          <Dropdown
+            disabled={!enableUpload}
+            trigger={['click']}
+            open={openUploadDropdown}
+            onOpenChange={toggleUploadDropdown}
+            popupRender={() => {
+              return (
+                <BAIFlex
+                  align="start"
+                  direction="column"
+                  className={styles.upload}
+                  style={{
+                    padding: 5,
+                    backgroundColor: token.colorBgElevated,
+                    borderRadius: token.borderRadiusLG,
+                    boxShadow: token.boxShadowSecondary,
+                  }}
+                >
+                  <Upload
+                    beforeUpload={(_, fileList) => {
+                      if (fileList !== lastFileListRef.current) {
+                        uploadFiles(fileList, onUpload);
+                      }
+                      lastFileListRef.current = fileList;
+                      return false; // Prevent default upload behavior
+                    }}
+                    multiple
+                    showUploadList={false}
+                  >
+                    <Button
+                      type="text"
+                      icon={<FileAddOutlined />}
+                      onClick={() => toggleUploadDropdown()}
+                    >
+                      {t('comp:FileExplorer.UploadFiles')}
+                    </Button>
+                  </Upload>
+                  <Upload
+                    directory
+                    beforeUpload={(_, fileList) => {
+                      if (fileList !== lastFileListRef.current) {
+                        uploadFiles(fileList, onUpload);
+                      }
+                      lastFileListRef.current = fileList;
+                      return false;
+                    }}
+                    showUploadList={false}
+                  >
+                    <Button
+                      type="text"
+                      icon={<FolderAddOutlined />}
+                      onClick={() => toggleUploadDropdown()}
+                    >
+                      {t('comp:FileExplorer.UploadFolder')}
+                    </Button>
+                  </Upload>
+                </BAIFlex>
+              );
+            }}
+          >
+            <Tooltip
+              title={
+                !enableUpload
+                  ? t('comp:FileExplorer.NoUploadPermissionForHost')
+                  : !lg
+                    ? t('general.button.Upload')
+                    : undefined
+              }
+            >
+              <Button icon={<UploadOutlined />} disabled={!enableUpload}>
+                {lg && t('general.button.Upload')}
+              </Button>
+            </Tooltip>
+          </Dropdown>
+        )}
       </BAIFlex>
       <DeleteSelectedItemsModal
         destroyOnHidden
@@ -275,9 +305,12 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
       <CreateDirectoryModal
         destroyOnHidden
         open={openCreateModal}
-        onRequestClose={(success: boolean) => {
+        onRequestClose={(success: boolean, createdFolderName?: string) => {
           if (success) {
             onRequestClose(true);
+            if (createdFolderName) {
+              onFolderCreated?.(createdFolderName);
+            }
           }
           toggleCreateModal();
         }}
