@@ -1505,7 +1505,6 @@
     "LoginSucceededManagerNotResponding": "Login berhasil tetapi pengelola tidak merespons.",
     "MaximumVfolderCreation": "Anda tidak dapat membuat lebih banyak VFolder karena kebijakan sumber daya",
     "NetworkConnectionFailed": "Koneksi jaringan gagal. Periksa status jaringan.",
-    "NoCurrentProject": "Tidak ada proyek saat ini",
     "NotFoundBasePath": "Tidak ditemukan. Silakan periksa Path dasar Anda.",
     "OnlyIntegersAreAllowed": "Hanya bilangan bulat yang diizinkan.",
     "OnlyPositiveIntegersAreAllowed": "Hanya bilangan bulat positif yang diizinkan.",
@@ -2562,7 +2561,6 @@
     "ResourcePresets": "Preset Sumber Daya",
     "Resources": "Sumber Daya",
     "SHMEMShouldBeSmallerThanMemory": "Memori bersama harus lebih kecil dari memori",
-    "SelectProjectForResourceGroup": "Pilih proyek di halaman Lingkungan untuk memilih grup sumber daya.",
     "SharedMemory": "Memori bersama",
     "Updated": "Preset sumber daya diperbarui"
   },

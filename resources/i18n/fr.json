@@ -1505,7 +1505,6 @@
     "LoginSucceededManagerNotResponding": "La connexion a réussi mais le gestionnaire ne répond pas.",
     "MaximumVfolderCreation": "Vous ne pouvez pas créer d'autres dossiers virtuels en raison de la politique de ressources.",
     "NetworkConnectionFailed": "La connexion réseau a échoué. Vérifier l'état du réseau.",
-    "NoCurrentProject": "Aucun projet en cours",
     "NotFoundBasePath": "Non trouvé. Veuillez vérifier votre chemin d'accès à la base.",
     "OnlyIntegersAreAllowed": "Seuls les entiers sont autorisés.",
     "OnlyPositiveIntegersAreAllowed": "Seuls les entiers positifs sont autorisés.",
@@ -2561,7 +2560,6 @@
     "ResourcePresets": "Préréglages de ressources",
     "Resources": "Ressources",
     "SHMEMShouldBeSmallerThanMemory": "La mémoire partagée doit être plus petite que la mémoire",
-    "SelectProjectForResourceGroup": "Sélectionnez un projet sur la page Environnements pour choisir un groupe de ressources.",
     "SharedMemory": "Mémoire partagée",
     "Updated": "Préréglage de ressource mis à jour"
   },

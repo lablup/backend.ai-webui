@@ -1504,7 +1504,6 @@
     "LoginSucceededManagerNotResponding": "Giriş başarılı ancak yönetici yanıt vermiyor.",
     "MaximumVfolderCreation": "Kaynak ilkesi nedeniyle daha fazla VFolder oluşturamazsınız",
     "NetworkConnectionFailed": "Ağ bağlantısı başarısız oldu. Ağ durumunu kontrol edin.",
-    "NoCurrentProject": "Mevcut proje yok",
     "NotFoundBasePath": "Bulunamadı. Lütfen temel yolunuzu kontrol edin.",
     "OnlyIntegersAreAllowed": "Sadece tamsayılara izin verilir.",
     "OnlyPositiveIntegersAreAllowed": "Sadece pozitif tamsayılara izin verilir.",
@@ -2559,7 +2558,6 @@
     "ResourcePresets": "Kaynak Ön Ayarları",
     "Resources": "Kaynaklar",
     "SHMEMShouldBeSmallerThanMemory": "Paylaşılan bellek, bellekten daha küçük olmalıdır",
-    "SelectProjectForResourceGroup": "Kaynak grubu seçmek için Ortamlar sayfasında bir proje seçin.",
     "SharedMemory": "Paylaşılan Bellek",
     "Updated": "Kaynak ön ayarı güncellendi"
   },

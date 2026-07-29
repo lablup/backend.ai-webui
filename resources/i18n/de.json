@@ -1504,7 +1504,6 @@
     "LoginSucceededManagerNotResponding": "Anmeldung erfolgreich, aber Manager antwortet nicht.",
     "MaximumVfolderCreation": "Sie können aufgrund von Ressourcenrichtlinien keine weiteren vOrdner erstellen",
     "NetworkConnectionFailed": "Netzwerkverbindung fehlgeschlagen. Überprüfen Sie den Netzwerkstatus.",
-    "NoCurrentProject": "Kein aktuelles Projekt",
     "NotFoundBasePath": "Nicht gefunden. Bitte überprüfen Sie Ihren Basispfad.",
     "OnlyIntegersAreAllowed": "Nur Ganzzahlen sind erlaubt.",
     "OnlyPositiveIntegersAreAllowed": "Nur positive Ganzzahlen sind erlaubt.",
@@ -2561,7 +2560,6 @@
     "ResourcePresets": "Ressourcenvoreinstellungen",
     "Resources": "Ressourcen",
     "SHMEMShouldBeSmallerThanMemory": "Gemeinsamer Speicher muss kleiner sein als der Speicher",
-    "SelectProjectForResourceGroup": "Wählen Sie auf der Umgebungsseite ein Projekt aus, um eine Ressourcengruppe zu wählen.",
     "SharedMemory": "Gemeinsamer Speicher",
     "Updated": "Ressourcenvoreinstellung aktualisiert"
   },

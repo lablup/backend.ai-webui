@@ -1504,7 +1504,6 @@
     "LoginSucceededManagerNotResponding": "Нэвтрэлт амжилттай болсон боловч менежер хариу өгөхгүй байна.",
     "MaximumVfolderCreation": "Нөөцийн бодлогын улмаас та илүү олон v хавтас үүсгэх боломжгүй",
     "NetworkConnectionFailed": "Сүлжээний холболт амжилтгүй боллоо. \nСүлжээний статусыг шалгана уу.",
-    "NoCurrentProject": "Одоогийн төсөл байхгүй",
     "NotFoundBasePath": "Олдсонгүй. \nСуурь замаа шалгана уу.",
     "OnlyIntegersAreAllowed": "Зөвхөн бүхэл тоо зөвшөөрнө.",
     "OnlyPositiveIntegersAreAllowed": "Зөвхөн эерэг бүхэл тоо зөвшөөрөгдсөн.",
@@ -2560,7 +2559,6 @@
     "ResourcePresets": "Нөөцийн урьдчилсан тохируулга",
     "Resources": "Нөөц",
     "SHMEMShouldBeSmallerThanMemory": "Хуваалцсан санах ой санах ойноос бага байх ёстой",
-    "SelectProjectForResourceGroup": "Нөөцийн бүлэг сонгохын тулд Орчин хуудсанд төслөө сонгоно уу.",
     "SharedMemory": "Хуваалцсан санах ой",
     "Updated": "Нөөцийн урьдчилан тохируулалтыг шинэчилсэн"
   },

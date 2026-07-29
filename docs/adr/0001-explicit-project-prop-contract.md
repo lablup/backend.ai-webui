@@ -244,9 +244,17 @@ narrowing helper for the loosely-typed ambient value).
     **There is deliberately no default.** Seeding it — from the ambient
     project or from "the first project" — would reintroduce exactly the
     invisible-scope bug this ADR exists to remove. Until a project is picked
-    the image list renders a "select a project" empty state. The selector is
-    shown on the Images and Resource Presets tabs only; Registries is
-    domain-wide.
+    the image list renders a "select a project" empty state.
+
+    **The selector lives in the Images tab's own filter row, not in the page's
+    card header.** The project decides what that list SHOWS, which makes it a
+    content-scoped control (`.claude/rules/use-bai-card.md` reserves the card
+    `extra` slot for card-scoped actions and keeps filter/sort/paging controls
+    in the body). It is also the only tab that needs one: Registries are
+    domain-wide, and resource presets have no project dimension at all (see
+    below). The page still owns the URL state and resolves the id; `ImageList`
+    receives `project` plus an `onChangeProject` callback and never decides
+    the project itself, so ADR-0001's contract is intact.
 
     **No "all projects" view is offered.** `image_nodes`'s `scope_id` does
     accept `domain:<name>`, but the manager resolves it with a per-project
@@ -256,17 +264,36 @@ narrowing helper for the loosely-typed ambient value).
     project choice was kept instead; revisit if the backend grows a real
     admin-wide image list (`admin_images_v2` exists but takes no scope).
 
-    The three consumers below it were converted:
-    - `ImageList` — required **non-null** `project: ProjectContext`; the query
-      scope is `project:${project.id}`. Non-null because the page renders the
-      empty state instead of mounting the list.
+    The consumers below it were converted:
+    - `ImageList` — required `project: ProjectContextOrNull` plus
+      `onChangeProject`; the query scope is `project:${project.id}`. `null`
+      renders the selector with the "pick a project" empty state and issues no
+      scoped query.
     - `ImageInstallModal` — required **non-null** `project`; the batch session
       it enqueues carries `group_name: project.name` instead of
       `baiClient.current_group`.
-    - `ResourcePresetSettingModal` (via `ResourcePresetList`) — required
-      `project: ProjectContextOrNull`; presets themselves are global, so only
-      the `BAIProjectResourceGroupSelect` options are keyed to the project.
-      `null` renders that one field disabled with an explanation.
+
+    **Resource presets take no `project` prop at any tier — they have no
+    project dimension.** The manager's `resource_presets` table has no
+    project/group column; its only relation is to a single `ScalingGroupRow`,
+    and the row model states the semantics directly: _if `scaling_group_name`
+    is None, the preset is global_ (`src/ai/backend/manager/models/
+resource_preset/row.py`). `data/schema.graphql` agrees —
+    `CreateResourcePresetInput` carries only `resource_slots`,
+    `shared_memory` and `scaling_group_name`, and the `resource_presets`
+    query takes no project argument.
+
+    Narrowing the resource-group choices by a project was therefore not an
+    ambient-project leftover to be converted but a **pre-existing bug**: an
+    admin editing a global preset could only pick resource groups attached to
+    their own current project and could not target any other one. So
+    `ResourcePresetSettingModal` and `ResourcePresetList` carry **no project
+    prop at all**, and the modal lists resource groups at admin scope with
+    `BAIAdminResourceGroupSelect` (the project-independent
+    `resourceGroups(first, after, filter)` connection). The field stays
+    `allowClear`, because an empty resource group is exactly the manager's
+    global preset.
+
   - **Reservoir** (`ReservoirArtifactDetailPage`, `/admin/reservoir`):
     `ImportArtifactRevisionToFolderModal` is derive-from-resource tier. An
     artifact import always lands in a MODEL STORE project, so the destination
@@ -294,6 +321,12 @@ narrowing helper for the loosely-typed ambient value).
   - **ESLint guardrail**: `EnvironmentPage`, `ReservoirPage` and
     `ReservoirArtifactDetailPage` moved from the excluded set into the
     restricted file list.
+
+  A component that turns out to have **no project dimension in the backend**
+  (the resource-preset editor above) belongs to no tier of this ADR: the right
+  answer is to delete the project plumbing entirely, not to pick a tier for
+  it. Check the manager's data model before assuming an ambient read implies a
+  project-scoped resource.
 
 ## Route-derived project context (`useIsProjectAgnosticPage`)
 

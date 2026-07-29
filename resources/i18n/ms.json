@@ -1504,7 +1504,6 @@
     "LoginSucceededManagerNotResponding": "Log masuk berjaya tetapi pengurus tidak bertindak balas.",
     "MaximumVfolderCreation": "Anda tidak boleh membuat lebih banyak VFolder kerana dasar sumber",
     "NetworkConnectionFailed": "Sambungan rangkaian gagal. \nSemak status rangkaian.",
-    "NoCurrentProject": "Tiada projek semasa",
     "NotFoundBasePath": "Tidak dijumpai. \nSila periksa laluan asas anda.",
     "OnlyIntegersAreAllowed": "Hanya bilangan bulat yang dibenarkan.",
     "OnlyPositiveIntegersAreAllowed": "Hanya bilangan bulat positif yang dibenarkan.",
@@ -2559,7 +2558,6 @@
     "ResourcePresets": "Pratetap Sumber",
     "Resources": "Sumber",
     "SHMEMShouldBeSmallerThanMemory": "Memori yang dikongsi mestilah lebih kecil daripada memori",
-    "SelectProjectForResourceGroup": "Pilih projek pada halaman Persekitaran untuk memilih kumpulan sumber.",
     "SharedMemory": "Memori bersama",
     "Updated": "Pratetap sumber dikemas kini"
   },

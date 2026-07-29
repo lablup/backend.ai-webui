@@ -12,50 +12,86 @@ import {
   ResourcePresetSettingModalModifyByIdMutation,
 } from '../__generated__/ResourcePresetSettingModalModifyByIdMutation.graphql';
 import { ResourcePresetSettingModalModifyByNameMutation } from '../__generated__/ResourcePresetSettingModalModifyByNameMutation.graphql';
+import { ResourcePresetSettingModalResourceGroupQuery } from '../__generated__/ResourcePresetSettingModalResourceGroupQuery.graphql';
 import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { convertToBinaryUnit } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
-import { ProjectContextOrNull } from '../types/projectContext';
 import BAIFormItem from './BAIFormItem';
 import {
   AstryxFormNumberInput,
   AstryxFormTextInput,
 } from './astryxFormControls';
 import {
+  BAIAdminResourceGroupSelect,
   BAIDynamicUnitInputNumber,
   BAIModal,
   BAIModalProps,
-  BAIProjectResourceGroupSelect,
   BAISelect,
+  BAISelectProps,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import React, { Fragment, useRef } from 'react';
+import React, { Fragment, Suspense, useRef } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment, useMutation } from 'react-relay';
+import {
+  graphql,
+  useFragment,
+  useLazyLoadQuery,
+  useMutation,
+} from 'react-relay';
+
+type ResourceGroupSelectProps = Omit<
+  BAISelectProps,
+  'options' | 'labelInValue'
+>;
+
+const ResourceGroupSelectContent: React.FC<ResourceGroupSelectProps> = (
+  props,
+) => {
+  'use memo';
+  const queryRef =
+    useLazyLoadQuery<ResourcePresetSettingModalResourceGroupQuery>(
+      graphql`
+        query ResourcePresetSettingModalResourceGroupQuery {
+          ...BAIAdminResourceGroupSelect_resourceGroupsFragment
+        }
+      `,
+      {},
+      { fetchPolicy: 'store-and-network' },
+    );
+  return <BAIAdminResourceGroupSelect queryRef={queryRef} {...props} />;
+};
+
+/**
+ * Resource groups a preset may be bound to, listed at ADMIN scope — no project
+ * involved. A resource preset has no project dimension in the manager
+ * (`resource_presets` has no group column; its only relation is to one
+ * `ScalingGroupRow`, and a null `scaling_group_name` means the preset is
+ * global), so the options must not be narrowed by any project. Spreading
+ * `props` keeps the value/onChange pair `Form.Item` injects into its direct
+ * child from being swallowed by the Suspense boundary.
+ */
+const ResourceGroupSelect: React.FC<ResourceGroupSelectProps> = (props) => {
+  'use memo';
+  return (
+    <Suspense fallback={<BAISelect {...props} loading disabled />}>
+      <ResourceGroupSelectContent {...props} />
+    </Suspense>
+  );
+};
 
 interface ResourcePresetSettingModalProps extends BAIModalProps {
   resourcePresetFrgmt?: ResourcePresetSettingModalFragment$key | null;
   existingResourcePresetNames?: Array<string>;
   onRequestClose: (success: boolean) => void;
-  /**
-   * Explicit project prop contract (ADR-0001, FR-3415). Resource presets are
-   * global; only the **resource-group options** are project-keyed. The page
-   * decides which project scopes them — this modal never reads the ambient
-   * current project. `null` ("no project chosen") disables the resource-group
-   * field with an explanation instead of silently offering another project's
-   * resource groups.
-   */
-  project: ProjectContextOrNull;
 }
 
 const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
   resourcePresetFrgmt,
   existingResourcePresetNames,
   onRequestClose,
-  project,
   ...baiModalProps
 }) => {
   const { t } = useTranslation();
@@ -316,27 +352,18 @@ const ResourcePresetSettingModal: React.FC<ResourcePresetSettingModalProps> = ({
               label={t('general.ResourceGroup')}
               name="scaling_group_name"
             >
-              <BAISelect disabled tooltip={t('error.NoCurrentProject')} />
+              <BAISelect disabled />
             </BAIFormItem>
           )}
         >
           {baiClient?.supports('resource-presets-per-resource-group') && (
+            // Optional by design: a preset with no resource group is the
+            // manager's "global" preset, so the field stays clearable.
             <BAIFormItem
               label={t('general.ResourceGroup')}
               name="scaling_group_name"
             >
-              {project ? (
-                <BAIProjectResourceGroupSelect
-                  projectName={project.name}
-                  allowClear
-                  popupMatchSelectWidth={false}
-                />
-              ) : (
-                <BAISelect
-                  disabled
-                  tooltip={t('resourcePreset.SelectProjectForResourceGroup')}
-                />
-              )}
+              <ResourceGroupSelect allowClear popupMatchSelectWidth={false} />
             </BAIFormItem>
           )}
         </ErrorBoundary>

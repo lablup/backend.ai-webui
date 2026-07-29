@@ -6,20 +6,25 @@ import '../../__test__/matchMedia.mock.js';
 import '../../__test__/resizeObserver.mock.js';
 import ResourcePresetSettingModal from './ResourcePresetSettingModal';
 import '@testing-library/jest-dom';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { App } from 'antd';
 import { RelayEnvironmentProvider } from 'react-relay';
-import { createMockEnvironment } from 'relay-test-utils';
+import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
+import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockEnvironment';
 
 /**
- * Contract tests for the explicit project prop (ADR-0001, FR-3415).
+ * Contract tests for the resource-group field of the preset editor
+ * (ADR-0001, FR-3415).
  *
- * Resource presets are global; only the RESOURCE-GROUP options inside this
- * modal are project-keyed. They must follow the project the Environments page
- * selected, and with no selection the field is visibly disabled instead of
- * silently offering another project's resource groups.
+ * A resource preset has NO project dimension in the manager: the
+ * `resource_presets` table has no group column, its only relation is to a
+ * single `ScalingGroupRow`, and a null `scaling_group_name` means the preset
+ * is global. So this modal must offer resource groups at ADMIN scope and must
+ * expose no project affordance whatsoever — a project-narrowed list would hide
+ * resource groups the admin is entitled to bind a global preset to.
  *
- * External behavior only: prop in → rendered field out.
+ * External behavior only: rendered fields + submitted mutation variables.
  */
 
 vi.mock('react-i18next', async () => {
@@ -56,8 +61,8 @@ vi.mock('../hooks/backendai', async (importOriginal) => {
   };
 });
 
-// Decoy ambient project: if any ambient read survived, the resource-group
-// probe below would report `ambient-project-name`.
+// Decoy ambient project: nothing in this modal may narrow by a project, so a
+// surviving ambient read would show up as a project-keyed select below.
 vi.mock('../hooks/useCurrentProject', async (importOriginal) => {
   const originalModule =
     await importOriginal<typeof import('../hooks/useCurrentProject')>();
@@ -75,60 +80,80 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
   const originalModule = await importOriginal<typeof import('backend.ai-ui')>();
   return {
     ...originalModule,
+    // Project-keyed variant: must NOT appear anywhere in this modal.
     BAIProjectResourceGroupSelect: (props: any) =>
       React.createElement('div', {
         'data-testid': 'mock-project-resource-group-select',
         'data-project-name': props.projectName ?? '',
       }),
-    BAISelect: (props: any) =>
-      React.createElement('div', {
-        'data-testid': 'mock-bai-select',
-        'data-disabled': String(!!props.disabled),
-        'data-tooltip': props.tooltip ?? '',
+    BAIAdminResourceGroupSelect: (props: any) =>
+      React.createElement('button', {
+        'data-testid': 'mock-admin-resource-group-select',
+        'data-allow-clear': String(!!props.allowClear),
+        type: 'button',
+        onClick: () => props.onChange?.('rg-from-admin-scope'),
       }),
   };
 });
 
-const renderModal = (project: { id: string; name: string } | null) => {
-  const environment = createMockEnvironment();
+const renderModal = () => {
+  const environment: RelayMockEnvironment = createMockEnvironment();
+  environment.mock.queueOperationResolver((operation) =>
+    MockPayloadGenerator.generate(operation),
+  );
   render(
     <RelayEnvironmentProvider environment={environment}>
       <App>
-        <ResourcePresetSettingModal
-          open
-          project={project}
-          onRequestClose={vi.fn()}
-        />
+        <ResourcePresetSettingModal open onRequestClose={vi.fn()} />
       </App>
     </RelayEnvironmentProvider>,
   );
+  return { environment };
 };
 
 describe('ResourcePresetSettingModal resource-group scope contract (ADR-0001, FR-3415)', () => {
-  it('keys the resource-group options to exactly the project it was given', async () => {
-    renderModal({ id: 'chosen-project-id', name: 'chosen-project-name' });
+  it('lists resource groups at admin scope, independent of any project', async () => {
+    renderModal();
 
-    const select = await screen.findByTestId(
-      'mock-project-resource-group-select',
-    );
-    expect(select).toHaveAttribute('data-project-name', 'chosen-project-name');
-    expect(select).not.toHaveAttribute(
-      'data-project-name',
-      'ambient-project-name',
-    );
-  });
-
-  it('disables the resource-group field with an explanation when no project is selected', async () => {
-    renderModal(null);
-
+    expect(
+      await screen.findByTestId('mock-admin-resource-group-select'),
+    ).toBeInTheDocument();
+    // Neither a project-narrowed resource-group list nor any project picker.
     expect(
       screen.queryByTestId('mock-project-resource-group-select'),
     ).not.toBeInTheDocument();
-    const fallback = await screen.findByTestId('mock-bai-select');
-    expect(fallback).toHaveAttribute('data-disabled', 'true');
-    expect(fallback).toHaveAttribute(
-      'data-tooltip',
-      'resourcePreset.SelectProjectForResourceGroup',
+    expect(screen.queryByText('general.Project')).not.toBeInTheDocument();
+  });
+
+  it('keeps the resource group optional so a global preset can be saved', async () => {
+    const user = userEvent.setup();
+    const { environment } = renderModal();
+
+    // The field is clearable — the manager treats a preset with no resource
+    // group as global.
+    expect(
+      await screen.findByTestId('mock-admin-resource-group-select'),
+    ).toHaveAttribute('data-allow-clear', 'true');
+
+    await user.type(
+      screen.getByLabelText('resourcePreset.PresetName'),
+      'global-preset',
     );
+    await user.type(screen.getByLabelText('cpu'), '1');
+    await user.type(screen.getByLabelText('mem'), '1');
+    await user.click(screen.getByRole('button', { name: /button.Create/ }));
+
+    await waitFor(() => {
+      const create = environment.mock
+        .getAllOperations()
+        .find(
+          (operation) =>
+            operation.request.node.params.name ===
+            'ResourcePresetSettingModalCreateMutation',
+        );
+      expect(create).toBeDefined();
+      expect(create?.request.variables.name).toBe('global-preset');
+      expect(create?.request.variables.props.scaling_group_name).toBeNull();
+    });
   });
 });

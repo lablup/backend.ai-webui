@@ -1504,7 +1504,6 @@
     "LoginSucceededManagerNotResponding": "ログインは成功しましたが、マネージャーが応答していません。",
     "MaximumVfolderCreation": "リソースポリシーのため、Vフォルダーをさらに作成することはできません。",
     "NetworkConnectionFailed": "ネットワーク接続に失敗しました。ネットワークの状態を確認してください。",
-    "NoCurrentProject": "現在のプロジェクトがありません",
     "NotFoundBasePath": "見つかりません。ベースパスを確認してください。",
     "OnlyIntegersAreAllowed": "整数のみが許可されています。",
     "OnlyPositiveIntegersAreAllowed": "正の整数のみが許可されています。",
@@ -2561,7 +2560,6 @@
     "ResourcePresets": "リソースプリセット",
     "Resources": "リソース",
     "SHMEMShouldBeSmallerThanMemory": "共有メモリはメモリより小さくなければならない",
-    "SelectProjectForResourceGroup": "リソースグループを選択するには、環境ページでプロジェクトを選択してください。",
     "SharedMemory": "共有メモリ",
     "Updated": "リソースプリセットが更新されました"
   },
