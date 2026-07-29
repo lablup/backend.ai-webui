@@ -17,11 +17,13 @@ import SwitchToProjectButton from '../components/SwitchToProjectButton';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useIsSuperAdminScopedPage } from '../hooks/useIsSuperAdminScopedPage';
 import { useActiveProjectName, useProjectPath } from '../hooks/useRouteScope';
 import {
   getPathFromMenuKey,
   useWebUIMenuItems,
 } from '../hooks/useWebUIMenuItems';
+import { toProjectContext } from '../types/projectContext';
 import { useToggle } from 'ahooks';
 import { Alert, Button, Result, Typography, theme } from 'antd';
 import {
@@ -73,6 +75,16 @@ const DeploymentDetailPage: React.FC = () => {
   const webuiNavigate = useWebUINavigate();
   const baiClient = useSuspendedBackendaiClient();
   const currentProject = useCurrentProjectValue();
+  // This shared page serves three URL spaces (/deployments/:id,
+  // /admin-deployments/:id, /project-admin-deployments/:id). Per ADR-0001 the
+  // PAGE decides the project context: on the super-admin URL space there is
+  // no ambient project (`null` — no mismatch alert, no switch-project
+  // shortcut, and the Add-revision CTA is not suppressed); elsewhere the
+  // narrowed ambient project keeps today's behavior exactly.
+  const isSuperAdminScopedPage = useIsSuperAdminScopedPage();
+  const pageProject = isSuperAdminScopedPage
+    ? null
+    : toProjectContext(currentProject);
   const buildProjectPath = useProjectPath();
   const isChatBlocked = !!baiClient?._config?.blockList?.includes('chat');
 
@@ -228,7 +240,9 @@ const DeploymentDetailPage: React.FC = () => {
   // cannot act on without switching projects anyway.
   const deploymentProjectId = deployment.metadata.projectId ?? null;
   const isProjectMismatch =
-    !!deploymentProjectId && deploymentProjectId !== currentProject.id;
+    pageProject !== null &&
+    !!deploymentProjectId &&
+    deploymentProjectId !== pageProject.id;
   // Hide the "no revision" warning while a first revision is being applied —
   // the rollout is in flight, the user already knows about it from the
   // "Applying revision …" Alert in the Configuration section, and the
@@ -431,6 +445,7 @@ const DeploymentDetailPage: React.FC = () => {
         deploymentFrgmt={deployment}
         deploymentId={deploymentGlobalId}
         replicaFetchKey={replicaFetchKey}
+        project={pageProject}
       />
       <DeploymentAutoScalingCard deploymentFrgmt={deployment} />
       <DeploymentAccessTokensCard

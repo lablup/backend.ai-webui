@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { RecentlyCreatedSessionFragment$key } from '../__generated__/RecentlyCreatedSessionFragment.graphql';
+import { ProjectContextOrNull } from '../types/projectContext';
 import SessionDetailDrawer from './SessionDetailDrawer';
 import SessionNodes from './SessionNodes';
 import { theme } from 'antd';
@@ -22,11 +23,17 @@ import { graphql, useRefetchableFragment } from 'react-relay';
 interface RecentlyCreatedSessionProps {
   queryRef: RecentlyCreatedSessionFragment$key;
   isRefetching?: boolean;
+  /**
+   * Explicit project prop contract (ADR-0001, FR-3413): pass-through to the
+   * session-detail drawer. The mounting page decides the project context.
+   */
+  project: ProjectContextOrNull;
 }
 
 const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
   queryRef,
   isRefetching,
+  project,
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -129,6 +136,7 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
         <SessionDetailDrawer
           open={!!sessionDetailId}
           sessionId={sessionDetailId || undefined}
+          project={project}
           onClose={() => {
             setSessionDetailId(null);
           }}

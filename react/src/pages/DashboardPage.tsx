@@ -23,6 +23,7 @@ import {
   useCurrentResourceGroupValue,
 } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
+import { toProjectContext } from '../types/projectContext';
 import { Skeleton, theme } from 'antd';
 import {
   BAIBoardItemErrorBoundary,
@@ -328,6 +329,10 @@ const DashboardPage: React.FC = () => {
           <RecentlyCreatedSession
             queryRef={queryRef}
             isRefetching={isRefetching}
+            // Page-level ambient narrowing (ADR-0001): the dashboard is
+            // project-scoped, so the drawer compares against the current
+            // project.
+            project={toProjectContext(currentProject)}
           />
         ),
       },

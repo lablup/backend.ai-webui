@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<01f84eec24a9462f4d8a239a0f8488c5>>
+ * @generated SignedSource<<9af402f38cf05d6ce8c1dec90443b750>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,12 +13,13 @@ export type useMergedAllowedStorageHostPermission_AllowedVFolderHostsQuery$varia
   domainName?: string | null | undefined;
   projectId: string;
   resourcePolicyName?: string | null | undefined;
+  skipProjectScope: boolean;
 };
 export type useMergedAllowedStorageHostPermission_AllowedVFolderHostsQuery$data = {
   readonly domain: {
     readonly allowed_vfolder_hosts: string | null | undefined;
   } | null | undefined;
-  readonly group: {
+  readonly group?: {
     readonly allowed_vfolder_hosts: string | null | undefined;
   } | null | undefined;
   readonly keypair_resource_policy: {
@@ -46,6 +47,11 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "resourcePolicyName"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "skipProjectScope"
   }
 ],
 v1 = [
@@ -75,25 +81,32 @@ v2 = [
     "storageKey": null
   },
   {
-    "alias": null,
-    "args": [
+    "condition": "skipProjectScope",
+    "kind": "Condition",
+    "passingValue": false,
+    "selections": [
       {
-        "kind": "Variable",
-        "name": "domain_name",
-        "variableName": "domainName"
-      },
-      {
-        "kind": "Variable",
-        "name": "id",
-        "variableName": "projectId"
+        "alias": null,
+        "args": [
+          {
+            "kind": "Variable",
+            "name": "domain_name",
+            "variableName": "domainName"
+          },
+          {
+            "kind": "Variable",
+            "name": "id",
+            "variableName": "projectId"
+          }
+        ],
+        "concreteType": "Group",
+        "kind": "LinkedField",
+        "name": "group",
+        "plural": false,
+        "selections": (v1/*: any*/),
+        "storageKey": null
       }
-    ],
-    "concreteType": "Group",
-    "kind": "LinkedField",
-    "name": "group",
-    "plural": false,
-    "selections": (v1/*: any*/),
-    "storageKey": null
+    ]
   },
   {
     "alias": null,
@@ -130,16 +143,16 @@ return {
     "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "f7d16150a7d77cb465733a2933a08261",
+    "cacheID": "d7039e705450efc38a646cd5cdc70184",
     "id": null,
     "metadata": {},
     "name": "useMergedAllowedStorageHostPermission_AllowedVFolderHostsQuery",
     "operationKind": "query",
-    "text": "query useMergedAllowedStorageHostPermission_AllowedVFolderHostsQuery(\n  $domainName: String\n  $projectId: UUID!\n  $resourcePolicyName: String\n) {\n  domain(name: $domainName) {\n    allowed_vfolder_hosts\n  }\n  group(id: $projectId, domain_name: $domainName) {\n    allowed_vfolder_hosts\n  }\n  keypair_resource_policy(name: $resourcePolicyName) {\n    allowed_vfolder_hosts\n  }\n}\n"
+    "text": "query useMergedAllowedStorageHostPermission_AllowedVFolderHostsQuery(\n  $domainName: String\n  $projectId: UUID!\n  $resourcePolicyName: String\n  $skipProjectScope: Boolean!\n) {\n  domain(name: $domainName) {\n    allowed_vfolder_hosts\n  }\n  group(id: $projectId, domain_name: $domainName) @skip(if: $skipProjectScope) {\n    allowed_vfolder_hosts\n  }\n  keypair_resource_policy(name: $resourcePolicyName) {\n    allowed_vfolder_hosts\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "616594ca9d6c787458c32688c1a25b1f";
+(node as any).hash = "ad7ef1c40361740cddc3f40566121f8c";
 
 export default node;

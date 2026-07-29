@@ -7,9 +7,9 @@ import { VFolderNodeDescriptionV2PermissionRefreshQuery } from '../__generated__
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
 import { useVirtualFolderPathV2 } from '../hooks/useVirtualFolderNodePathV2';
+import { ProjectContextOrNull } from '../types/projectContext';
 import { statusTagColor } from './VFolderNodesV2';
 import VirtualFolderPathV2 from './VirtualFolderNodeItems/VirtualFolderPathV2';
 import {
@@ -46,10 +46,19 @@ import {
 
 interface VFolderNodeDescriptionV2Props extends DescriptionsProps {
   vfolderNodeFrgmt: VFolderNodeDescriptionV2Fragment$key;
+  /**
+   * Explicit project prop contract (ADR-0001, FR-3413): the project context
+   * the page decided on, used only for the `currentProjectAdmin` branch of
+   * the mount-permission gate. With `null` (super-admin pages) that branch
+   * simply doesn't match — owner and super admins keep their power. Never
+   * reads the ambient current project.
+   */
+  project: ProjectContextOrNull;
 }
 
 const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
   vfolderNodeFrgmt,
+  project,
   ...props
 }) => {
   const { t } = useTranslation();
@@ -58,7 +67,6 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
   const { getErrorMessage } = useErrorMessageResolver();
 
   const relayEnv = useRelayEnvironment();
-  const currentProject = useCurrentProjectValue();
   const baiClient = useSuspendedBackendaiClient();
   const [currentUser] = useCurrentUserInfo();
   const effectiveAdminRole = useEffectiveAdminRole();
@@ -193,13 +201,15 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
         ),
     },
     // Mount permission editing is allowed for the folder owner, super admins
-    // (any project), or the current project's admin when the folder belongs to
-    // that project. Domain admins are intentionally excluded — they do not
-    // have implicit per-project ownership rights.
+    // (any project), or the page-decided project's admin when the folder
+    // belongs to that project (`project === null` — super-admin pages — never
+    // matches this branch). Domain admins are intentionally excluded — they
+    // do not have implicit per-project ownership rights.
     (vfolderNode?.ownership?.userId === currentUser.uuid ||
       effectiveAdminRole === 'superadmin' ||
       (effectiveAdminRole === 'currentProjectAdmin' &&
-        vfolderNode?.ownership?.projectId === currentProject?.id)) && {
+        project !== null &&
+        vfolderNode?.ownership?.projectId === project.id)) && {
       key: 'permission',
       label: t('data.folders.MountPermission'),
       children: (

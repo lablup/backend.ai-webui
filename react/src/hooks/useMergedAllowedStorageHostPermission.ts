@@ -8,9 +8,20 @@ import { useMergedAllowedStorageHostPermission_KeypairQuery } from '../__generat
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
+// Placeholder UUID sent for the (validated, non-null) `$projectId` variable
+// when the project-scope lookup is skipped. The `group` field is `@skip`ped in
+// that case, so the value never reaches a resolver.
+const NIL_UUID = '00000000-0000-0000-0000-000000000000';
+
 export const useMergedAllowedStorageHostPermission = (
   domain: string,
-  projectId: string,
+  /**
+   * Project to merge group-level `allowed_vfolder_hosts` from. `null` (e.g.
+   * a user-owned folder opened from a super-admin page, where no ambient
+   * project context exists — FR-3413) skips the group-scope lookup and merges
+   * only the domain- and keypair-resource-policy-level permissions.
+   */
+  projectId: string | null,
   userAccessKey: string,
 ) => {
   const baiClient = useSuspendedBackendaiClient();
@@ -42,11 +53,13 @@ export const useMergedAllowedStorageHostPermission = (
           $domainName: String
           $projectId: UUID!
           $resourcePolicyName: String
+          $skipProjectScope: Boolean!
         ) {
           domain(name: $domainName) {
             allowed_vfolder_hosts
           }
-          group(id: $projectId, domain_name: $domainName) {
+          group(id: $projectId, domain_name: $domainName)
+            @skip(if: $skipProjectScope) {
             allowed_vfolder_hosts
           }
           keypair_resource_policy(name: $resourcePolicyName) {
@@ -56,8 +69,9 @@ export const useMergedAllowedStorageHostPermission = (
       `,
       {
         domainName: domain,
-        projectId,
+        projectId: projectId ?? NIL_UUID,
         resourcePolicyName: keypair?.resource_policy,
+        skipProjectScope: projectId === null,
       },
       {
         fetchPolicy: 'store-or-network',
