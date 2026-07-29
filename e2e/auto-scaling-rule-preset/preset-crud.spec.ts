@@ -805,9 +805,17 @@ test.describe(
       const modal = page.getByRole('dialog');
       await expect(modal).toBeVisible();
 
-      // The edit modal form does not auto-populate from initialValues on re-open
-      // (persistent Form instance). The Name field is already empty — just save
-      // immediately to trigger the required-field validation error.
+      // FR-3383/PR #8285 fixed the edit modal so it correctly re-applies
+      // initialValues on reopen — the Name field is now pre-populated with
+      // the preset's current name. Explicitly clear it to exercise the
+      // required-field validation.
+      const nameInput = modal.getByRole('textbox', {
+        name: 'Name',
+        exact: true,
+      });
+      await expect(nameInput).toHaveValue(presetName);
+      await nameInput.fill('');
+
       // Click "Save"
       await modal.getByRole('button', { name: 'Save' }).click();
 
@@ -844,14 +852,19 @@ test.describe(
       const modal = page.getByRole('dialog');
       await expect(modal).toBeVisible();
 
-      // The edit modal form does not auto-populate from initialValues on re-open
-      // (persistent Form instance). Fill Name and QueryTemplate to isolate Metric Name
-      // as the only missing required field, then save to trigger its validation error.
-      await modal
-        .getByRole('textbox', { name: 'Name', exact: true })
-        .fill(presetName);
-      await modal.getByRole('textbox', { name: 'Query Template' }).fill('up');
-      // Leave Metric Name empty (already empty from form non-pre-fill behavior)
+      // FR-3383/PR #8285 fixed the edit modal so it correctly re-applies
+      // initialValues on reopen — Name, Metric Name, and Query Template are
+      // now all pre-populated with the preset's current values. Explicitly
+      // clear only the Metric Name field to isolate it as the missing
+      // required field, then save to trigger its validation error.
+      await expect(
+        modal.getByRole('textbox', { name: 'Name', exact: true }),
+      ).toHaveValue(presetName);
+      const metricNameInput = modal.getByRole('textbox', {
+        name: 'Metric Name',
+      });
+      await expect(metricNameInput).toHaveValue('e2e_metric');
+      await metricNameInput.fill('');
 
       // Click "Save"
       await modal.getByRole('button', { name: 'Save' }).click();
