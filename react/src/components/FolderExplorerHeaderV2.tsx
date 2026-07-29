@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { FolderExplorerHeaderV2Fragment$key } from '../__generated__/FolderExplorerHeaderV2Fragment.graphql';
+import { ProjectContextOrNull } from '../types/projectContext';
 import EditableVFolderNameV2 from './EditableVFolderNameV2';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import FileBrowserButtonV2 from './FileBrowserButtonV2';
@@ -16,11 +17,20 @@ import { graphql, useFragment } from 'react-relay';
 interface FolderExplorerHeaderV2Props {
   vfolderNodeFrgmt?: FolderExplorerHeaderV2Fragment$key | null;
   titleStyle?: React.CSSProperties;
+  /**
+   * Explicit project prop contract (ADR-0001, FR-3412): pass-through for the
+   * FileBrowser/SFTP session-launch buttons. `null` renders them disabled
+   * with `noProjectTooltip` as the reason.
+   */
+  project: ProjectContextOrNull;
+  noProjectTooltip?: string;
 }
 
 const FolderExplorerHeaderV2: React.FC<FolderExplorerHeaderV2Props> = ({
   vfolderNodeFrgmt,
   titleStyle,
+  project,
+  noProjectTooltip,
 }) => {
   'use memo';
 
@@ -111,12 +121,16 @@ const FolderExplorerHeaderV2: React.FC<FolderExplorerHeaderV2Props> = ({
               <FileBrowserButtonV2
                 vfolderNodeFrgmt={vfolderNode}
                 showTitle={lg}
+                project={project}
+                noProjectTooltip={noProjectTooltip}
               />
             </ErrorBoundaryWithNullFallback>
             <ErrorBoundaryWithNullFallback>
               <SFTPServerButtonV2
                 vfolderNodeFrgmt={vfolderNode}
                 showTitle={lg}
+                project={project}
+                noProjectTooltip={noProjectTooltip}
               />
             </ErrorBoundaryWithNullFallback>
           </Suspense>
