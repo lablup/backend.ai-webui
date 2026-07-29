@@ -129,7 +129,39 @@ narrowing helper for the loosely-typed ambient value).
     routes (interim), and the hook accepts `projectId: null` to skip the
     group-scope lookup entirely.
 
-  Remaining follow-up (FR-3414): hide the header selector per admin route.
+  Sixth and final application (FR-3414) — the route flip:
+
+  - **Header**: the project selector block (label, `ProjectSelect`, and the
+    selector-bound admin-exit confirm flow) was extracted from `WebUIHeader`
+    into `WebUIHeaderProjectSelect` and is mounted only when
+    `useIsSuperAdminScopedPage()` is false. On the three super-admin routes
+    the block simply does not exist: nothing in the header reads or writes
+    the current-project atom there, so leaving admin restores the user's
+    previous selection untouched. No placeholder is rendered — the header's
+    `justify="between"` layout collapses the left slot cleanly (the mobile
+    menu button stays).
+  - **`NoResourceGroupAlert`** (globally mounted in `MainLayout` — the
+    sanctioned route-check exception) returns `null` on the three routes:
+    "no resource group in this project" is a project-scoped warning.
+  - **Dev-mode straggler warning**: `useCurrentProjectValue` warns once per
+    mount (dev builds only; dead-code eliminated in production) when it is
+    read while `window.location.pathname` matches a super-admin-scoped
+    surface (`SUPER_ADMIN_SCOPED_PATHNAME_REGEX` covers the modern
+    `/admin/{session|deployments|data}` shape and the legacy first-segment
+    shims). The check is imperative — no router hooks — so the hook stays
+    usable outside router contexts.
+  - **ESLint guardrail**: `react/eslint.config.js` forbids importing
+    `useCurrentProjectValue` in the admin-surface sources
+    (`AdminSessionPage`, `AdminComputeSessionListPage`,
+    `AdminVFolderNodeListPage`, `AdminDeploymentListPage`,
+    `AdminDeploymentPresetListPage`, `AdminDeploymentPresetSettingPage`,
+    `AdminModelCardListPage`, `PendingSessionNodeList`), pointing violators
+    at this ADR. `AdminDashboardPage` (out of scope) and
+    `DeploymentDetailPage` (sanctioned page-level reader) are excluded.
+  - **E2E** (`e2e/admin-scope/`): the selector is absent on the three admin
+    routes and present on the user Data page; leaving admin restores the
+    previous selection; a folder created from the admin Data page lands in
+    the project chosen inside the modal.
 
 ## Route-derived project context (`useIsSuperAdminScopedPage`)
 
