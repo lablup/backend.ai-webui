@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-07-27
+> **Last Updated:** 2026-07-29
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 309 / 454 features covered (68%)**
+**Overall (in-scope routes): 313 / 458 features covered (68%)**
 
 | Page                     | Route                                  | Features | Covered | Status  |
 | ------------------------ | -------------------------------------- | :------: | :-----: | :-----: |
@@ -49,7 +49,8 @@
 | RBAC Management          | `/rbac`                                |    22    |   21    | 🔶 95%  |
 | Auto Scaling Rule Preset | `/admin-serving?tab=auto-scaling-rule` |    33    |   32    | 🔶 97%  |
 | Deployments              | `/deployments`, `/deployments/:id`     |    16    |   12    | 🔶 75%  |
-| **Total**                |                                        | **470**  | **321** | **68%** |
+| Super-Admin Scope        | `/admin/session\|deployments\|data`    |    4     |    4    | ✅ 100% |
+| **Total**                |                                        | **474**  | **325** | **69%** |
 
 ---
 
@@ -1260,6 +1261,23 @@ To efficiently build new E2E tests, these POMs should be created:
 
 ---
 
+### 30. Super-Admin Scope — header project context (`/admin/session`, `/admin/deployments`, `/admin/data`)
+
+**Test files:** [`e2e/admin-scope/admin-header-project-selector.spec.ts`](admin-scope/admin-header-project-selector.spec.ts), [`e2e/admin-scope/admin-data-folder-create.spec.ts`](admin-scope/admin-data-folder-create.spec.ts)
+
+FR-3414 / ADR-0001: the three super-admin routes operate above project scope — the header project selector is hidden there and folder creation asks for the target project inside the modal.
+
+| Feature                                                                  | Covered | Test                                                                               |
+| ------------------------------------------------------------------------ | :-----: | ---------------------------------------------------------------------------------- |
+| Header project selector absent on the three super-admin routes           |   ✅    | `selector is absent on the three super-admin routes`                               |
+| Header project selector present on the user Data page                    |   ✅    | `selector is present on the user Data page`                                        |
+| Leaving an admin route restores the previous selection untouched         |   ✅    | `leaving an admin route restores the previous selection untouched`                 |
+| Folder created from admin Data page lands in the in-modal chosen project |   ✅    | `folder created from the admin Data page lands in the project chosen in the modal` |
+
+**Coverage: 4 / 4 features (100%)**
+
+---
+
 ## Coverage Matrix (Quick Reference)
 
 | Page Route                             | Functional Tests | Visual Tests | Priority |
@@ -1297,6 +1315,7 @@ To efficiently build new E2E tests, these POMs should be created:
 | App Launcher (modal)                   |        🔶        |      ❌      |    -     |
 | Plugin System (config-based)           |        ✅        |      ❌      |    -     |
 | `/admin-serving?tab=auto-scaling-rule` |        🔶        |      ❌      |    -     |
+| `/admin/{session,deployments,data}`    |        ✅        |      ❌      |    -     |
 
 ---
 
