@@ -240,7 +240,7 @@ Real failure modes you will hit if you don't think about them up front.
   Gate 3 and remind the user how to start the server if they're unsure.
 
 - **`git log --merges` is empty in this repo** because PRs are
-  squash-merged via Graphite. `docs-lint` already uses `gh pr list` for
+  squash-merged. `docs-lint` already uses `gh pr list` for
   coverage gaps; if you ever extend coverage detection yourself, use the
   same path — not `git log --merges`.
 

@@ -194,6 +194,6 @@ User: /create-release 26.4.0-beta.0
 
 ## Notes
 
-- This skill uses `git` directly for branch/tag operations (not Graphite) because release branches follow a different workflow than feature PRs
+- This skill uses `git` directly for branch/tag operations (not `gh stack`) because release branches follow a different workflow than feature PRs
 - Stable versions are published releases; alpha/beta/rc versions are marked as pre-releases
 - Always confirm with the user before pushing to remote if anything looks unexpected
