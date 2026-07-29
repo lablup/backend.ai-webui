@@ -5,9 +5,10 @@
 /**
  * Tests for the FR-3414 header flip: the header's project selector block
  * (extracted into `WebUIHeaderProjectSelect`) must not be mounted on the
- * three super-admin-scoped routes (`admin-session`, `admin-deployments`,
- * `admin-data` — decided by `useIsSuperAdminScopedPage` off the route
- * `handle.menuKey`) and must be mounted everywhere else.
+ * project-agnostic routes (`PROJECT_AGNOSTIC_MENU_KEYS` — decided by
+ * `useIsProjectAgnosticPage` off the route `handle.menuKey`) and must be
+ * mounted everywhere else, including the admin pages that still depend on the
+ * ambient project (`environment`, `reservoir`, `admin-dashboard`).
  *
  * External behavior only: routes in → selector block mounted / not mounted.
  * The selector itself is stubbed; its internals are not under test here.
@@ -68,8 +69,15 @@ describe('WebUIHeader project selector gating (FR-3414)', () => {
     ['/admin/session', 'admin-session'],
     ['/admin/deployments', 'admin-deployments'],
     ['/admin/data', 'admin-data'],
+    // Widened in FR-3414 — note `credential` lives at `/admin/users`.
+    ['/admin/users', 'credential'],
+    ['/admin/resource-policy', 'resource-policy'],
+    ['/admin/agent', 'agent'],
+    ['/admin/project', 'project'],
+    ['/admin/settings', 'settings'],
+    ['/admin/information', 'information'],
   ])(
-    'does NOT mount the project selector block on the super-admin route %s',
+    'does NOT mount the project selector block on the project-agnostic route %s',
     (path, menuKey) => {
       renderHeaderAt(path, { scope: 'admin', menuKey });
       expect(screen.getByTestId('webui-header')).toBeInTheDocument();
@@ -79,17 +87,23 @@ describe('WebUIHeader project selector gating (FR-3414)', () => {
     },
   );
 
-  it('does not mount the selector block on a legacy unprefixed admin path (pathname fallback)', () => {
-    renderHeaderAt('/admin-session');
-    expect(
-      screen.queryByTestId('header-project-select-stub'),
-    ).not.toBeInTheDocument();
-  });
+  it.each([['/admin-session'], ['/credential'], ['/rbac']])(
+    'does not mount the selector block on the legacy unprefixed admin path %s (pathname fallback)',
+    (path) => {
+      renderHeaderAt(path);
+      expect(
+        screen.queryByTestId('header-project-select-stub'),
+      ).not.toBeInTheDocument();
+    },
+  );
 
   it.each([
     ['/project/default/data', { scope: 'project', menuKey: 'data' }],
     ['/project/default/session', { scope: 'project', menuKey: 'session' }],
-    ['/admin/users', { scope: 'admin', menuKey: 'credential' }],
+    // Admin pages that still genuinely depend on the ambient project.
+    ['/admin/environment', { scope: 'admin', menuKey: 'environment' }],
+    ['/admin/reservoir', { scope: 'admin', menuKey: 'reservoir' }],
+    ['/admin/dashboard', { scope: 'admin', menuKey: 'admin-dashboard' }],
   ])('mounts the project selector block on %s', (path, handle) => {
     renderHeaderAt(path, handle);
     expect(

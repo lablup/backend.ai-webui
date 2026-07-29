@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '../../hooks';
-import { useIsSuperAdminScopedPage } from '../../hooks/useIsSuperAdminScopedPage';
+import { useIsProjectAgnosticPage } from '../../hooks/useIsProjectAgnosticPage';
 import BAINotificationButton from '../BAINotificationButton';
 import LoginSessionExtendButton from '../LoginSessionExtendButton';
 import ReverseThemeProvider from '../ReverseThemeProvider';
@@ -37,14 +37,14 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
   const gridBreakpoint = Grid.useBreakpoint();
-  // FR-3414 (ADR-0001): the three super-admin-scoped pages operate above
-  // project scope, so the header's current-project selector (and the
-  // selector-bound admin-exit confirm flow inside it) is not mounted there at
-  // all. Nothing then reads or writes the current-project atom from the
-  // header on those routes — leaving admin restores the previous selection
-  // untouched. The header layout keeps `justify="between"`, so the left slot
-  // simply collapses (no placeholder needed); the mobile menu button stays.
-  const isSuperAdminScopedPage = useIsSuperAdminScopedPage();
+  // FR-3414 (ADR-0001): the project-agnostic pages operate above project
+  // scope, so the header's current-project selector (and the selector-bound
+  // admin-exit confirm flow inside it) is not mounted there at all. Nothing
+  // then reads or writes the current-project atom from the header on those
+  // routes — leaving admin restores the previous selection untouched. The
+  // header layout keeps `justify="between"`, so the left slot simply
+  // collapses (no placeholder needed); the mobile menu button stays.
+  const isProjectAgnosticPage = useIsProjectAgnosticPage();
 
   const { styles } = useStyles();
 
@@ -79,7 +79,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
             />
           </ReverseThemeProvider>
         )}
-        {!isSuperAdminScopedPage && (
+        {!isProjectAgnosticPage && (
           <Suspense>
             <WebUIHeaderProjectSelect />
           </Suspense>

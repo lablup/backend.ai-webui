@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '.';
+import { PROJECT_AGNOSTIC_PATHNAME_REGEX } from '../helper/projectAgnosticRoutes';
 import { useRecentProjectGroup } from './backendai';
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { atomWithDefault } from 'jotai/utils';
@@ -68,36 +69,28 @@ const currentProjectAtom = atomWithDefault((): CurrentProject => {
   };
 });
 
-/**
- * FR-3414 guardrail: pathnames of the three super-admin-scoped surfaces
- * (ADR-0001), in both the modern `/admin/{session|deployments|data}` shape and
- * the legacy first-segment shapes (`/admin-session`, `/admin-deployments`,
- * `/admin-serving`, `/admin-data`) that now redirect into it. Matched
- * imperatively against `window.location.pathname` (NOT via router hooks) so
- * `useCurrentProjectValue` stays usable outside a router context (tests,
- * non-route callers). Exported for tests.
- */
-export const SUPER_ADMIN_SCOPED_PATHNAME_REGEX =
-  /^\/(?:admin\/(?:session|deployments|data)|admin-session|admin-deployments|admin-serving|admin-data)(?:\/|$)/;
-
 export const useCurrentProjectValue = () => {
   useSuspendedBackendaiClient();
-  // Dev-mode straggler warning (FR-3414, ADR-0001): the three super-admin
-  // surfaces have no ambient project context, so an ambient read under them is
+  // Dev-mode straggler warning (FR-3414, ADR-0001): the project-agnostic
+  // surface has no ambient project context, so an ambient read under it is
   // either a not-yet-converted leaf component (a bug in waiting — it silently
   // keys off the hidden header selection) or one of the few sanctioned
   // globally-mounted readers. Warn once per mount so regressions surface
   // immediately. `import.meta.env.DEV` is statically false in production
   // builds, so the body is dead-code eliminated there.
+  // The matcher is DERIVED from `PROJECT_AGNOSTIC_MENU_KEYS`
+  // (`helper/projectAgnosticRoutes.ts`) so it cannot drift from the hook that
+  // hides the header selector; it stays pathname-based (no router hooks) so
+  // this hook remains usable outside a router context.
   useEffect(() => {
     if (
       import.meta.env.DEV &&
       typeof window !== 'undefined' &&
-      SUPER_ADMIN_SCOPED_PATHNAME_REGEX.test(window.location.pathname)
+      PROJECT_AGNOSTIC_PATHNAME_REGEX.test(window.location.pathname)
     ) {
       // eslint-disable-next-line no-console
       console.warn(
-        `[ADR-0001] Ambient current-project read (useCurrentProjectValue) under the super-admin-scoped route "${window.location.pathname}". ` +
+        `[ADR-0001] Ambient current-project read (useCurrentProjectValue) under the project-agnostic route "${window.location.pathname}". ` +
           'Converted leaf components must receive the project via their required `project` prop instead of reading ambient state — ' +
           'see docs/adr/0001-explicit-project-prop-contract.md (FR-3414). ' +
           'Ignore only if this mount is a sanctioned globally-mounted reader.',
