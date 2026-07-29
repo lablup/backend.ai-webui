@@ -13,8 +13,8 @@ import {
   useResourceSlotsDetails,
 } from '../hooks/backendai';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
+import { ProjectContextOrNull } from '../types/projectContext';
 import { useBAIBreakpoint } from '../theme-shim';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import CodeHighlighterModal from './CodeHighlighterModal';
@@ -101,17 +101,22 @@ const SessionDetailContent: React.FC<{
   id: string;
   sessionFrgmt?: SessionDetailContentFragment$key | null;
   fetchKey?: string;
-}> = ({ id, fetchKey, sessionFrgmt }) => {
+  /**
+   * Explicit project prop contract (ADR-0001, FR-3413): the project context
+   * the PAGE decided on. Alert tier — with `null` (super-admin pages) the
+   * "not in your project" comparison is suppressed entirely; with a non-null
+   * project the alert renders exactly when the session belongs to a
+   * different project. This component never reads the ambient current
+   * project.
+   */
+  project: ProjectContextOrNull;
+}> = ({ id, fetchKey, sessionFrgmt, project }) => {
   'use memo';
   const { t } = useTranslation();
   const { md } = useBAIBreakpoint();
   const { mergedResourceSlots } = useResourceSlotsDetails();
   const location = useLocation();
 
-  const currentProject = useCurrentProjectValue();
-  if (!currentProject.id) {
-    throw new Error('Project ID is required for SessionDetailContent');
-  }
   const [currentUser] = useCurrentUserInfo();
   const userRole = useCurrentUserRole();
   const baiClient = useSuspendedBackendaiClient();
@@ -338,7 +343,7 @@ const SessionDetailContent: React.FC<{
 
   return session ? (
     <BAIFlex direction="column" gap={'lg'} align="stretch">
-      {resolvedProjectIdOfSession !== currentProject.id && (
+      {project !== null && resolvedProjectIdOfSession !== project.id && (
         <Banner status="warning" title={t('session.NotInProject')} />
       )}
       {currentUser.uuid !== session?.user_id && (

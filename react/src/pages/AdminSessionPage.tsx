@@ -56,7 +56,10 @@ const AdminSessionPage: React.FC = () => {
           )}
         </Suspense>
       </BAICard>
-      <SessionDetailAndContainerLogOpenerLegacy />
+      {/* Super-admin page (ADR-0001, FR-3413): no ambient project context —
+          the session-detail drawer (also opened from the pending-sessions
+          tab) renders without a project-mismatch alert. */}
+      <SessionDetailAndContainerLogOpenerLegacy project={null} />
     </>
   );
 };

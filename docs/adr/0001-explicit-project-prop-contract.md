@@ -121,11 +121,59 @@ narrowing helper for the loosely-typed ambient value).
   pins `group_name` without reusing the `owner` branch (which is coupled to
   `owner_access_key`); callers that omit it keep the ambient fallback as a
   sanctioned interim state. `FolderExplorerHeaderV2` passes the prop
-  through; the globally-mounted `FolderExplorerModalV2` still narrows the
-  ambient project and hands it on explicitly until its own conversion
-  (FR-3413).
-- Subsequent tickets convert mismatch alerts, then hide the header selector
-  per admin route.
+  through.
+- Fifth application (FR-3413) — the display/gating tier:
+  - `SessionDetailContent` (alert tier — required
+    `project: ProjectContextOrNull`; the internal ambient read and the
+    "Project ID is required" throw were deleted, so session detail renders
+    without any project context; the `session.NotInProject` alert renders
+    only when a non-null project is passed and the session's project
+    differs). `SessionDetailDrawer`, the multi-page
+    `SessionDetailAndContainerLogOpenerLegacy`, `RecentlyCreatedSession`,
+    and `DeploymentReplicasCard` are intermediates with a required
+    pass-through: general pages narrow ambient at page level, super-admin
+    pages (`/admin/session`, the scheduler page) pass `null`.
+  - `DeploymentDetailPage` serves three URL spaces; as the PAGE it decides
+    the context via `useIsSuperAdminScopedPage()`: `null` on the admin URL
+    space (no mismatch alert, no `SwitchToProjectButton` shortcut, and the
+    Add-revision CTA is no longer suppressed), narrowed ambient elsewhere.
+  - `EditableVFolderNameV2` and `VFolderNodeDescriptionV2` (ownership/role
+    gating — required `project: ProjectContextOrNull`; rename and
+    mount-permission editing are gated on the folder owner, the
+    `superadmin` effective role, or a page-decided project matching the
+    folder's own `ownership.projectId`; `null` simply never matches the
+    project branch, so super-admin abilities no longer flicker with header
+    state).
+  - The globally-mounted `FolderExplorerModalV2` (see the route-derivation
+    exception below) now keys `useMergedAllowedStorageHostPermission` to
+    the folder's own ownership project when the folder is project-owned;
+    for user-owned folders it narrows ambient only off the super-admin
+    routes (interim), and the hook accepts `projectId: null` to skip the
+    group-scope lookup entirely.
+
+  Remaining follow-up (FR-3414): hide the header selector per admin route.
+
+## Route-derived project context (`useIsSuperAdminScopedPage`)
+
+`react/src/hooks/useIsSuperAdminScopedPage.ts` exposes
+`SUPER_ADMIN_SCOPED_MENU_KEYS = ['admin-session', 'admin-deployments',
+'admin-data']` and a hook that reports whether the current route is one of
+the three super-admin-scoped pages (keyed off the deepest route
+`handle.menuKey`, with a pathname fallback for legacy unprefixed paths).
+
+Who may call it:
+
+- **Pages** (e.g. `DeploymentDetailPage`, which serves three URL spaces from
+  one component) — pages are the sanctioned ambient readers, and a
+  route-scope check at page level is just another page-level input.
+- **Globally-mounted components with no page parent** (e.g.
+  `FolderExplorerModalV2`, mounted once at the router root) — they cannot
+  receive a `project` prop from any page, so consulting the route is their
+  only correct signal. This is the single sanctioned exception.
+
+Converted **leaf components must NOT call it** — they receive the decision
+via their required `project` prop. A leaf that consults the route
+reintroduces the invisible-global failure mode this ADR exists to remove.
 
 ## How to comply (checklist for new/converted components)
 
