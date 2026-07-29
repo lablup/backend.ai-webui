@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<eb1a6e4eca7032d64805aa666c2dfc9f>>
+ * @generated SignedSource<<7be55abfdd5599a352e4960d6badf21e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,20 +10,22 @@
 
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type ImportArtifactRevisionToFolderModalModelStoreProjectsFragment$data = {
+export type ImportArtifactRevisionToFolderModalModelStoreProjectsFragment$data = ReadonlyArray<{
   readonly id: string | null | undefined;
   readonly name: string | null | undefined;
   readonly " $fragmentType": "ImportArtifactRevisionToFolderModalModelStoreProjectsFragment";
-};
-export type ImportArtifactRevisionToFolderModalModelStoreProjectsFragment$key = {
+}>;
+export type ImportArtifactRevisionToFolderModalModelStoreProjectsFragment$key = ReadonlyArray<{
   readonly " $data"?: ImportArtifactRevisionToFolderModalModelStoreProjectsFragment$data;
   readonly " $fragmentSpreads": FragmentRefs<"ImportArtifactRevisionToFolderModalModelStoreProjectsFragment">;
-};
+}>;
 
 const node: ReaderFragment = {
   "argumentDefinitions": [],
   "kind": "Fragment",
-  "metadata": null,
+  "metadata": {
+    "plural": true
+  },
   "name": "ImportArtifactRevisionToFolderModalModelStoreProjectsFragment",
   "selections": [
     {
@@ -45,6 +47,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "55dc19bd0c05c3aaf314215595f0c8a0";
+(node as any).hash = "03c2ef0be48adf59428cecc52d866468";
 
 export default node;

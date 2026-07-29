@@ -27,14 +27,16 @@ const renderAt = (
   return render(<RouterProvider router={router} />);
 };
 
-describe('useIsProjectAgnosticPage (FR-3413, widened in FR-3414)', () => {
+describe('useIsProjectAgnosticPage (FR-3413, widened in FR-3414 and FR-3415)', () => {
   it('exports the full project-agnostic menu key list', () => {
     expect(PROJECT_AGNOSTIC_MENU_KEYS).toEqual([
       'admin-session',
       'admin-deployments',
       'admin-data',
       'credential',
+      'environment',
       'resource-policy',
+      'reservoir',
       'scheduler',
       'agent',
       'project',
@@ -54,6 +56,10 @@ describe('useIsProjectAgnosticPage (FR-3413, widened in FR-3414)', () => {
     ['/admin/data', 'admin-data'],
     // FR-3414 widening — note `credential` lives at `/admin/users`
     ['/admin/users', 'credential'],
+    // FR-3415 widening
+    ['/admin/environment', 'environment'],
+    ['/admin/reservoir', 'reservoir'],
+    ['/admin/reservoir/artifact-1', 'reservoir'],
     ['/admin/resource-policy', 'resource-policy'],
     ['/admin/scheduler', 'scheduler'],
     ['/admin/agent', 'agent'],
@@ -89,13 +95,14 @@ describe('useIsProjectAgnosticPage (FR-3413, widened in FR-3414)', () => {
       '/project/default/admin/deployments/dep-1',
       { scope: 'projectAdmin', menuKey: 'project-admin-deployments' },
     ],
-    ['/project/default/admin/users', {
-      scope: 'projectAdmin',
-      menuKey: 'project-admin-users',
-    }],
-    // Excluded admin pages: they still read the ambient project.
-    ['/admin/environment', { scope: 'admin', menuKey: 'environment' }],
-    ['/admin/reservoir', { scope: 'admin', menuKey: 'reservoir' }],
+    [
+      '/project/default/admin/users',
+      {
+        scope: 'projectAdmin',
+        menuKey: 'project-admin-users',
+      },
+    ],
+    // The only excluded admin page: it still reads the ambient project.
     ['/admin/dashboard', { scope: 'admin', menuKey: 'admin-dashboard' }],
   ])('is false on the project-dependent route %s', (path, handle) => {
     renderAt(path, [{ path, element: <Probe />, handle }]);
