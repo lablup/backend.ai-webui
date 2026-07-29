@@ -1162,6 +1162,7 @@
     "Tags": "태그",
     "TagsPlaceholder": "쉼표로 구분하여 태그를 입력하세요",
     "TagsTooltip": "배포를 정리하고 필터링하기 위한 선택적 라벨입니다. Enter 또는 쉼표로 추가하세요.",
+    "TargetProjectRequired": "대상 프로젝트를 선택해 주세요.",
     "ToStatus": "이후 상태",
     "TrafficRatio": "트래픽 비율",
     "TrafficStatus": "트래픽 상태",

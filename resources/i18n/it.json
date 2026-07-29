@@ -1162,6 +1162,7 @@
     "Tags": "Tag",
     "TagsPlaceholder": "Inserisci i tag, separati da virgole",
     "TagsTooltip": "Etichette opzionali per organizzare e filtrare le distribuzioni. Premi Invio o virgola per aggiungere.",
+    "TargetProjectRequired": "Seleziona un progetto di destinazione.",
     "ToStatus": "Vai allo stato",
     "TrafficRatio": "Rapporto traffico",
     "TrafficStatus": "Stato traffico",
