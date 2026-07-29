@@ -1226,7 +1226,8 @@
         "Revision": "Browse past deployment revisions and roll back to any previous one.",
         "RevisionHistory": "Browse past deployment revisions and roll back to any previous one."
       }
-    }
+    },
+    "CannotResolveDeploymentProject": "Cannot determine the project this deployment belongs to, so adding a revision is disabled."
   },
   "desktopNotification": {
     "NotSupported": "This browser does not support notifications.",

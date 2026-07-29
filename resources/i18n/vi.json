@@ -1239,7 +1239,8 @@
         "Revision": "Duyệt qua các lần sửa đổi deployment trước đây và khôi phục về bất kỳ phiên bản nào.",
         "RevisionHistory": "Duyệt qua các lần sửa đổi deployment trước đây và khôi phục về bất kỳ phiên bản nào."
       }
-    }
+    },
+    "CannotResolveDeploymentProject": "Không thể xác định dự án mà triển khai này thuộc về, do đó việc thêm bản sửa đổi đã bị vô hiệu hóa."
   },
   "desktopNotification": {
     "NotSupported": "Trình duyệt này không hỗ trợ thông báo.",

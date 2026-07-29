@@ -1239,7 +1239,8 @@
         "Revision": "Parcourez les révisions de déploiement passées et revenez à n'importe laquelle.",
         "RevisionHistory": "Parcourez les révisions de déploiement passées et revenez à n'importe laquelle."
       }
-    }
+    },
+    "CannotResolveDeploymentProject": "Impossible de déterminer le projet auquel appartient ce déploiement ; l'ajout d'une révision est donc désactivé."
   },
   "desktopNotification": {
     "NotSupported": "Ce navigateur ne prend pas en charge les notifications.",
