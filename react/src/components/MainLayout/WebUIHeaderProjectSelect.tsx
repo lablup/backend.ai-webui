@@ -36,8 +36,8 @@ import { useMatches } from 'react-router-dom';
  *
  * Extracted from `WebUIHeader` for FR-3414: the selector block — and with it
  * every ambient current-project read this UI needs — is mounted ONLY when the
- * current route is not one of the three super-admin-scoped pages
- * (`useIsSuperAdminScopedPage` in the parent). On those pages this component
+ * current route is not one of the project-agnostic pages
+ * (`useIsProjectAgnosticPage` in the parent). On those pages this component
  * is simply not rendered, so nothing here can read or write the
  * current-project atom: leaving an admin page restores the user's previous,
  * untouched selection.

@@ -112,7 +112,7 @@ narrowing helper for the loosely-typed ambient value).
     pass-through: general pages narrow ambient at page level, super-admin
     pages (`/admin/session`, the scheduler page) pass `null`.
   - `DeploymentDetailPage` serves three URL spaces; as the PAGE it decides
-    the context via `useIsSuperAdminScopedPage()`: `null` on the admin URL
+    the context via `useIsProjectAgnosticPage()`: `null` on the admin URL
     space (no mismatch alert, no `SwitchToProjectButton` shortcut, and the
     Add-revision CTA is no longer suppressed), narrowed ambient elsewhere.
   - `EditableVFolderNameV2` and `VFolderNodeDescriptionV2` (ownership/role
@@ -134,42 +134,87 @@ narrowing helper for the loosely-typed ambient value).
   - **Header**: the project selector block (label, `ProjectSelect`, and the
     selector-bound admin-exit confirm flow) was extracted from `WebUIHeader`
     into `WebUIHeaderProjectSelect` and is mounted only when
-    `useIsSuperAdminScopedPage()` is false. On the three super-admin routes
-    the block simply does not exist: nothing in the header reads or writes
-    the current-project atom there, so leaving admin restores the user's
-    previous selection untouched. No placeholder is rendered — the header's
+    `useIsProjectAgnosticPage()` is false. On the project-agnostic routes the
+    block simply does not exist: nothing in the header reads or writes the
+    current-project atom there, so leaving admin restores the user's previous
+    selection untouched. No placeholder is rendered — the header's
     `justify="between"` layout collapses the left slot cleanly (the mobile
     menu button stays).
+  - **Scope**: the flip initially covered only the three FR-3407 feature
+    pages (`admin-session`, `admin-deployments`, `admin-data`). It now covers
+    the whole project-agnostic `/admin/*` surface — an audit of the subtree
+    found eleven further pages with no ambient current-project read anywhere
+    in their render trees, so hiding the selector there has no behavioral
+    consequence: `credential` (`/admin/users`), `resource-policy`,
+    `scheduler`, `agent`, `project`, `settings`, `maintenance`,
+    `diagnostics`, `rbac`, `branding`, `information`. Three admin keys stay
+    OUT because they genuinely read ambient state: `environment` (the image
+    install / resource-preset flows reach `SessionLauncherPage`) and
+    `reservoir` (`ImportArtifactRevisionToFolderModal` reads AND writes the
+    ambient project) — both pending a follow-up ticket — plus
+    `admin-dashboard`, which is out of scope for FR-3407.
+  - **Naming**: `SUPER_ADMIN_SCOPED_MENU_KEYS` /
+    `useIsSuperAdminScopedPage` / `SUPER_ADMIN_SCOPED_PATHNAME_REGEX` were
+    renamed to `PROJECT_AGNOSTIC_MENU_KEYS` / `useIsProjectAgnosticPage` /
+    `PROJECT_AGNOSTIC_PATHNAME_REGEX`. The old name was a misnomer:
+    `admin-session`, `credential` and `resource-policy` are `access: 'admin'`
+    (domain admins reach them too), so the defining property is the scope the
+    page operates at, not the role required to open it.
   - **`NoResourceGroupAlert`** (globally mounted in `MainLayout` — the
-    sanctioned route-check exception) returns `null` on the three routes:
-    "no resource group in this project" is a project-scoped warning.
+    sanctioned route-check exception) returns `null` on the project-agnostic
+    routes: "no resource group in this project" is a project-scoped warning.
   - **Dev-mode straggler warning**: `useCurrentProjectValue` warns once per
     mount (dev builds only; dead-code eliminated in production) when it is
-    read while `window.location.pathname` matches a super-admin-scoped
-    surface (`SUPER_ADMIN_SCOPED_PATHNAME_REGEX` covers the modern
-    `/admin/{session|deployments|data}` shape and the legacy first-segment
-    shims). The check is imperative — no router hooks — so the hook stays
-    usable outside router contexts.
+    read while `window.location.pathname` matches a project-agnostic surface.
+    The matcher (`PROJECT_AGNOSTIC_PATHNAME_REGEX`) is **derived from**
+    `PROJECT_AGNOSTIC_ROUTE_PATHS` rather than hand-written, so a newly gated
+    key widens it automatically; it covers both the canonical `/admin/*`
+    shape and the legacy flat shims. It stays imperative — no router hooks —
+    so the hook remains usable outside router contexts.
+  - **One source of truth**: the menu-key list, the key→pathname map and the
+    derived regex live in the leaf module
+    `react/src/helper/projectAgnosticRoutes.ts` (leaf because
+    `useCurrentProject -> useRouteScope -> useCurrentProject` would otherwise
+    be an import cycle). The map is written out explicitly because the menu
+    key is not always the path segment — `credential` resolves to
+    `/admin/users`. `projectAgnosticRoutes.test.tsx` matches every canonical
+    and legacy path against the real route tree (`matchRoutes` over
+    `mainLayoutChildRoutes`), so a route rename cannot silently un-gate a
+    page.
   - **ESLint guardrail**: `react/eslint.config.js` forbids importing
-    `useCurrentProjectValue` in the admin-surface sources
+    `useCurrentProjectValue` in the project-agnostic sources
     (`AdminSessionPage`, `AdminComputeSessionListPage`,
     `AdminVFolderNodeListPage`, `AdminDeploymentListPage`,
     `AdminDeploymentPresetListPage`, `AdminDeploymentPresetSettingPage`,
-    `AdminModelCardListPage`, `PendingSessionNodeList`), pointing violators
-    at this ADR. `AdminDashboardPage` (out of scope) and
+    `AdminModelCardListPage`, `PendingSessionNodeList`, `AdminUsersPage`,
+    `ResourcePolicyPage`, `SchedulerPage`, `ResourcesPage`, `ProjectPage`,
+    `ConfigurationsPage`, `MaintenancePage`, `DiagnosticsPage`,
+    `RBACManagementPage`, `BrandingPage`, `components/Information`), pointing
+    violators at this ADR. `EnvironmentPage`, `ReservoirPage`,
+    `AdminDashboardPage` (all excluded from the flip) and
     `DeploymentDetailPage` (sanctioned page-level reader) are excluded.
   - **E2E** (`e2e/admin-scope/`): the selector is absent on the three admin
     routes and present on the user Data page; leaving admin restores the
     previous selection; a folder created from the admin Data page lands in
     the project chosen inside the modal.
 
-## Route-derived project context (`useIsSuperAdminScopedPage`)
+## Route-derived project context (`useIsProjectAgnosticPage`)
 
-`react/src/hooks/useIsSuperAdminScopedPage.ts` exposes
-`SUPER_ADMIN_SCOPED_MENU_KEYS = ['admin-session', 'admin-deployments',
-'admin-data']` and a hook that reports whether the current route is one of
-the three super-admin-scoped pages (keyed off the deepest route
-`handle.menuKey`, with a pathname fallback for legacy unprefixed paths).
+`react/src/hooks/useIsProjectAgnosticPage.ts` re-exports
+`PROJECT_AGNOSTIC_MENU_KEYS` (defined in
+`react/src/helper/projectAgnosticRoutes.ts`) and exposes a hook that reports
+whether the current route is one of the project-agnostic pages — keyed off
+the deepest route `handle.menuKey`, with a pathname fallback for legacy
+unprefixed paths.
+
+```
+admin-session  admin-deployments  admin-data  credential  resource-policy
+scheduler      agent              project     settings    maintenance
+diagnostics    rbac               branding    information
+```
+
+Excluded: `environment`, `reservoir` (both pending a follow-up ticket) and
+`admin-dashboard` (out of scope).
 
 Who may call it:
 

@@ -80,15 +80,15 @@ vi.mock('../hooks/useCurrentProject', async (importOriginal) => {
   };
 });
 
-// Route derivation is covered by useIsSuperAdminScopedPage.test.tsx; pinned
+// Route derivation is covered by useIsProjectAgnosticPage.test.tsx; pinned
 // per scenario here.
-let mockIsSuperAdminScopedPage = false;
-vi.mock('../hooks/useIsSuperAdminScopedPage', async (importOriginal) => {
+let mockIsProjectAgnosticPage = false;
+vi.mock('../hooks/useIsProjectAgnosticPage', async (importOriginal) => {
   const originalModule =
-    await importOriginal<typeof import('../hooks/useIsSuperAdminScopedPage')>();
+    await importOriginal<typeof import('../hooks/useIsProjectAgnosticPage')>();
   return {
     ...originalModule,
-    useIsSuperAdminScopedPage: () => mockIsSuperAdminScopedPage,
+    useIsProjectAgnosticPage: () => mockIsProjectAgnosticPage,
   };
 });
 
@@ -218,11 +218,11 @@ const renderPage = () => {
 
 describe('DeploymentDetailPage project context (ADR-0001, FR-3413)', () => {
   beforeEach(() => {
-    mockIsSuperAdminScopedPage = false;
+    mockIsProjectAgnosticPage = false;
   });
 
   it('admin URL space (null): no mismatch alert, no switch-project shortcut, Add-revision CTA not suppressed', async () => {
-    mockIsSuperAdminScopedPage = true;
+    mockIsProjectAgnosticPage = true;
     renderPage();
 
     expect(await screen.findByText('test-deployment')).toBeInTheDocument();

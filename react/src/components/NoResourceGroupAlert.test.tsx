@@ -5,8 +5,8 @@
 /**
  * Tests for the FR-3414 gating of the globally-mounted "no resource group in
  * this project" banner: it is a project-scoped warning, so it must never
- * render on the three super-admin-scoped routes, and keep its existing
- * behavior (render only when the project has no resource group) elsewhere.
+ * render on the project-agnostic routes, and keep its existing behavior
+ * (render only when the project has no resource group) elsewhere.
  */
 import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
 import NoResourceGroupAlert from './NoResourceGroupAlert';
@@ -47,7 +47,7 @@ const renderAt = (path: string, handle?: Record<string, unknown>) => {
   return render(<RouterProvider router={router} />);
 };
 
-describe('NoResourceGroupAlert (FR-3414 super-admin gating)', () => {
+describe('NoResourceGroupAlert (FR-3414 project-agnostic gating)', () => {
   it('renders on a general page when the project has no resource group', () => {
     mockedUseCurrentResourceGroupValue.mockReturnValue(null);
     renderAt('/project/default/session', {
@@ -70,8 +70,14 @@ describe('NoResourceGroupAlert (FR-3414 super-admin gating)', () => {
     ['/admin/session', 'admin-session'],
     ['/admin/deployments', 'admin-deployments'],
     ['/admin/data', 'admin-data'],
+    // Widened in FR-3414 — note `credential` lives at `/admin/users`.
+    ['/admin/users', 'credential'],
+    ['/admin/scheduler', 'scheduler'],
+    ['/admin/maintenance', 'maintenance'],
+    ['/admin/diagnostics', 'diagnostics'],
+    ['/admin/branding', 'branding'],
   ])(
-    'renders nothing on the super-admin route %s even without a resource group',
+    'renders nothing on the project-agnostic route %s even without a resource group',
     (path, menuKey) => {
       mockedUseCurrentResourceGroupValue.mockReturnValue(null);
       renderAt(path, { scope: 'admin', menuKey });
@@ -79,9 +85,9 @@ describe('NoResourceGroupAlert (FR-3414 super-admin gating)', () => {
     },
   );
 
-  it('still renders on a non-super-admin admin page without a resource group', () => {
+  it('still renders on an admin page that depends on the ambient project', () => {
     mockedUseCurrentResourceGroupValue.mockReturnValue(null);
-    renderAt('/admin/users', { scope: 'admin', menuKey: 'credential' });
+    renderAt('/admin/environment', { scope: 'admin', menuKey: 'environment' });
     expect(screen.getByText(ALERT_TEXT)).toBeInTheDocument();
   });
 });
