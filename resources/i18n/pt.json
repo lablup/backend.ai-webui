@@ -1500,7 +1500,6 @@
     "LoginSucceededManagerNotResponding": "Login bem-sucedido, mas o gerente não está respondendo.",
     "MaximumVfolderCreation": "Não é possível criar mais VFolders devido à política de recursos",
     "NetworkConnectionFailed": "A ligação de rede falhou. Verificar o estado da rede.",
-    "NoCurrentProject": "Nenhum projeto ativo",
     "NotFoundBasePath": "Não encontrado. Por favor, verifique o seu caminho de base.",
     "OnlyIntegersAreAllowed": "Somente números inteiros são permitidos.",
     "OnlyPositiveIntegersAreAllowed": "Apenas números inteiros positivos são permitidos.",
@@ -2550,7 +2549,6 @@
     "ResourcePresets": "Predefinições de recursos",
     "Resources": "Recursos",
     "SHMEMShouldBeSmallerThanMemory": "A memória partilhada deve ser mais pequena do que a memória",
-    "SelectProjectForResourceGroup": "Selecione um projeto na página Ambientes para escolher um grupo de recursos.",
     "SharedMemory": "Memória compartilhada",
     "Updated": "Predefinição de recurso atualizada"
   },

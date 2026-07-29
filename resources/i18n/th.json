@@ -1500,7 +1500,6 @@
     "LoginSucceededManagerNotResponding": "เข้าสู่ระบบสำเร็จแต่ผู้จัดการไม่ตอบสนอง",
     "MaximumVfolderCreation": "คุณไม่สามารถสร้าง VFolder เพิ่มได้เนื่องจากนโยบายทรัพยากร",
     "NetworkConnectionFailed": "การเชื่อมต่อเครือข่ายล้มเหลว ตรวจสอบสถานะเครือข่าย",
-    "NoCurrentProject": "ไม่มีโปรเจกต์ปัจจุบัน",
     "NotFoundBasePath": "ไม่พบ \nโปรดตรวจสอบเส้นทางฐานของคุณ",
     "OnlyIntegersAreAllowed": "อนุญาตให้มีจำนวนเต็มเท่านั้น",
     "OnlyPositiveIntegersAreAllowed": "อนุญาตให้มีจำนวนเต็มบวกเท่านั้น",
@@ -2550,7 +2549,6 @@
     "ResourcePresets": "ค่าที่กำหนดไว้ล่วงหน้าของทรัพยากร",
     "Resources": "ทรัพยากร",
     "SHMEMShouldBeSmallerThanMemory": "หน่วยความจำร่วมต้องน้อยกว่าหน่วยความจำ",
-    "SelectProjectForResourceGroup": "เลือกโปรเจกต์ในหน้าสภาพแวดล้อมเพื่อเลือกกลุ่มทรัพยากร",
     "SharedMemory": "หน่วยความจำที่ใช้ร่วมกัน",
     "Updated": "อัปเดตค่าที่กำหนดไว้ล่วงหน้าของทรัพยากรแล้ว"
   },

@@ -1501,7 +1501,6 @@
     "LoginSucceededManagerNotResponding": "登錄成功，但經理沒有響應。",
     "MaximumVfolderCreation": "由于资源政策原因，无法创建更多 v 文件夹",
     "NetworkConnectionFailed": "网络连接失败。检查网络状态。",
-    "NoCurrentProject": "沒有當前項目",
     "NotFoundBasePath": "未找到。请检查您的基本路径。",
     "OnlyIntegersAreAllowed": "只允許整數。",
     "OnlyPositiveIntegersAreAllowed": "僅允許積極的整數。",
@@ -2552,7 +2551,6 @@
     "ResourcePresets": "資源預設",
     "Resources": "資源",
     "SHMEMShouldBeSmallerThanMemory": "共享内存必须小于内存",
-    "SelectProjectForResourceGroup": "請在環境頁面選擇專案後再選擇資源組。",
     "SharedMemory": "共享內存",
     "Updated": "資源預設已更新"
   },

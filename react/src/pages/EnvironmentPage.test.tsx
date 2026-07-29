@@ -13,16 +13,20 @@ import { NuqsTestingAdapter } from 'nuqs/adapters/testing';
 import { MemoryRouter } from 'react-router-dom';
 
 /**
- * Contract tests for the Environments page's explicit in-page project
- * selection (ADR-0001, FR-3415).
+ * Contract tests for the Environments page's explicit project selection
+ * (ADR-0001, FR-3415).
  *
  * The header project selector is not mounted on `/admin/environment` any
  * more, so the page owns the project decision: an explicit, URL-persisted
- * choice with NO default. Everything project-dependent below follows that
- * choice; nothing reads the ambient current project.
+ * choice with NO default, handed to the ONE tab whose content is
+ * project-scoped. Nothing reads the ambient current project.
  *
- * External behavior only: URL in → what the page renders and which project it
- * hands to its children.
+ * The selector itself is rendered by `ImageList` (it filters what that list
+ * shows, so it is a content-scoped control that belongs in the list's own
+ * filter row, not in the card header). This page therefore owns the URL state
+ * and the resolution, not the widget.
+ *
+ * External behavior only: URL in → which project the page hands to each child.
  */
 
 vi.mock('react-i18next', async () => {
@@ -72,16 +76,24 @@ vi.mock('../hooks/useAccessibleProjects', () => ({
   }),
 }));
 
-// Probes for the project each project-dependent child receives.
+// Probe for the project the image list receives, plus the callback it uses to
+// report a new choice back to the page.
 vi.mock('../components/ImageList', async () => {
   const React = await import('react');
   return {
     default: (props: any) =>
-      React.createElement('div', {
-        'data-testid': 'mock-image-list',
-        'data-project-id': props.project?.id ?? '',
-        'data-project-name': props.project?.name ?? '',
-      }),
+      React.createElement(
+        'button',
+        {
+          'data-testid': 'mock-image-list',
+          'data-project-id': props.project?.id ?? '',
+          'data-project-name': props.project?.name ?? '',
+          type: 'button',
+          onClick: () =>
+            props.onChangeProject?.({ id: 'p2', name: 'project-two' }),
+        },
+        'image-list',
+      ),
   };
 });
 vi.mock('../components/ResourcePresetList', async () => {
@@ -90,8 +102,9 @@ vi.mock('../components/ResourcePresetList', async () => {
     default: (props: any) =>
       React.createElement('div', {
         'data-testid': 'mock-resource-preset-list',
-        'data-project-id': props.project?.id ?? '',
-        'data-project-name': props.project?.name ?? '',
+        // A preset has no project dimension at all; the page must not hand one
+        // down, not even `null`.
+        'data-has-project-prop': String('project' in props),
       }),
   };
 });
@@ -100,32 +113,6 @@ vi.mock('../components/ContainerRegistryList', async () => {
   return {
     default: () =>
       React.createElement('div', { 'data-testid': 'mock-registry-list' }),
-  };
-});
-
-// The in-page selector is reduced to a button reporting a fixed choice via
-// the same `onSelectProject` surface the real component uses.
-vi.mock('../components/ProjectSelectForAdminPage', async () => {
-  const React = await import('react');
-  return {
-    default: (props: any) =>
-      React.createElement(
-        'button',
-        {
-          'data-testid': 'mock-project-select',
-          'data-value': props.value ?? '',
-          type: 'button',
-          onClick: () =>
-            props.onSelectProject?.({
-              label: 'project-two',
-              value: 'p2',
-              projectId: 'p2',
-              projectName: 'project-two',
-              projectResourcePolicy: null,
-            }),
-        },
-        'select-project',
-      ),
   };
 });
 
@@ -147,13 +134,11 @@ describe('EnvironmentPage explicit project selection (ADR-0001, FR-3415)', () =>
   it('starts unselected — it never seeds the scope from the ambient project', async () => {
     renderPage('');
 
-    expect(
-      await screen.findByText('environment.SelectProjectToListImages'),
-    ).toBeInTheDocument();
-    expect(screen.queryByTestId('mock-image-list')).not.toBeInTheDocument();
-    expect(screen.getByTestId('mock-project-select')).toHaveAttribute(
-      'data-value',
-      '',
+    const imageList = await screen.findByTestId('mock-image-list');
+    expect(imageList).toHaveAttribute('data-project-id', '');
+    expect(imageList).not.toHaveAttribute(
+      'data-project-id',
+      'ambient-project-id',
     );
   });
 
@@ -163,47 +148,40 @@ describe('EnvironmentPage explicit project selection (ADR-0001, FR-3415)', () =>
     const imageList = await screen.findByTestId('mock-image-list');
     expect(imageList).toHaveAttribute('data-project-id', 'p1');
     expect(imageList).toHaveAttribute('data-project-name', 'project-one');
-    expect(
-      screen.queryByText('environment.SelectProjectToListImages'),
-    ).not.toBeInTheDocument();
   });
 
   it('treats an unresolvable project id as unselected instead of scoping to it', async () => {
     renderPage('?project=deleted-project-id');
 
-    expect(
-      await screen.findByText('environment.SelectProjectToListImages'),
-    ).toBeInTheDocument();
-    expect(screen.queryByTestId('mock-image-list')).not.toBeInTheDocument();
+    expect(await screen.findByTestId('mock-image-list')).toHaveAttribute(
+      'data-project-id',
+      '',
+    );
   });
 
-  it('persists the chosen project in the URL so it survives reload and is shareable', async () => {
+  it('persists the project chosen inside the list in the URL so it survives reload and is shareable', async () => {
     const user = userEvent.setup();
     const { onUrlUpdate } = renderPage('');
 
-    await user.click(screen.getByTestId('mock-project-select'));
+    await user.click(await screen.findByTestId('mock-image-list'));
 
     expect(onUrlUpdate).toHaveBeenCalled();
     const lastCall = onUrlUpdate.mock.calls.at(-1)?.[0];
     expect(lastCall.queryString).toContain('project=p2');
   });
 
-  it('hands the same project to the resource-preset list, and null when unselected', async () => {
+  it('hands no project to the resource-preset tab — presets are project-independent', async () => {
     renderPage('?tab=preset&project=p1');
+
     expect(
       await screen.findByTestId('mock-resource-preset-list'),
-    ).toHaveAttribute('data-project-id', 'p1');
+    ).toHaveAttribute('data-has-project-prop', 'false');
   });
 
-  it('renders the preset list without a project (presets are global)', async () => {
-    renderPage('?tab=preset');
-    const presetList = await screen.findByTestId('mock-resource-preset-list');
-    expect(presetList).toHaveAttribute('data-project-id', '');
-  });
-
-  it('does not offer the project scope selector on the domain-wide registries tab', async () => {
+  it('renders the domain-wide registries tab without any project affordance', async () => {
     renderPage('?tab=registry&project=p1');
+
     expect(await screen.findByTestId('mock-registry-list')).toBeInTheDocument();
-    expect(screen.queryByTestId('mock-project-select')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('mock-image-list')).not.toBeInTheDocument();
   });
 });

@@ -1487,7 +1487,6 @@
     "LoginSucceededManagerNotResponding": "Login succeed but manager is not responding.",
     "MaximumVfolderCreation": "You cannot create more VFolders due to resource policy",
     "NetworkConnectionFailed": "Network connection failed. Check network status.",
-    "NoCurrentProject": "No current project",
     "NotFoundBasePath": "Not Found. Please check your Base Path.",
     "OnlyIntegersAreAllowed": "Only integers are allowed.",
     "OnlyPositiveIntegersAreAllowed": "Only positive integers are allowed.",
@@ -2535,7 +2534,6 @@
     "ResourcePresets": "Resource Presets",
     "Resources": "Resources",
     "SHMEMShouldBeSmallerThanMemory": "Shared memory must be smaller than memory",
-    "SelectProjectForResourceGroup": "Select a project on the Environments page to choose a resource group.",
     "SharedMemory": "Shared Memory",
     "Updated": "Resource preset updated"
   },
