@@ -727,6 +727,7 @@
     "AutomountFolderNameMustStartWithDot": "ชื่อของโฟลเดอร์ที่ติดตั้งอัตโนมัติต้องขึ้นต้นด้วยจุด ('.')",
     "AutomountFolders": "โฟลเดอร์เมาท์อัตโนมัติ",
     "BelongsToDifferentProject": "โฟลเดอร์นี้เป็นของโปรเจกต์อื่น.",
+    "CannotLaunchSessionInAdminMenu": "ไม่สามารถเริ่มเซสชันจากเมนูผู้ดูแลระบบได้",
     "CloningIsOnlyPossibleSameHost": "ปัจจุบันการโคลนสามารถทำได้เฉพาะบนโฮสต์เดียวกัน",
     "Create": "สร้าง",
     "CreateANewStorageFolder": "สร้างโฟลเดอร์จัดเก็บใหม่",
