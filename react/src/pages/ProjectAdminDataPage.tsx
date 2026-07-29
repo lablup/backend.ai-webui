@@ -25,6 +25,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { ProjectContext, toProjectContext } from '../types/projectContext';
 import { isDeletedCategory } from './VFolderNodeListPage';
 import { useToggle } from 'ahooks';
 import { Badge, Skeleton, theme, Tooltip } from 'antd';
@@ -98,11 +99,11 @@ function getUsageModeFilter(mode: (typeof modeValues)[number]) {
 }
 
 interface ProjectAdminDataContentProps {
-  projectId: string;
+  project: ProjectContext;
 }
 
 const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
-  projectId,
+  project,
 }) => {
   'use memo';
 
@@ -174,7 +175,7 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
   };
 
   const queryVariables = {
-    projectId,
+    projectId: project.id,
     offset: baiPaginationOption.offset,
     limit: baiPaginationOption.first,
     filter: combinedFilter,
@@ -515,6 +516,7 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
       />
       <FolderCreateModalV2
         open={isOpenCreateModal}
+        project={project}
         folderType="project"
         alertMessage={t('data.folders.ProjectAdminDataPageAlert')}
         onRequestClose={(result) => {
@@ -532,6 +534,7 @@ const ProjectAdminDataPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
   const currentProject = useCurrentProjectValue();
+  const project = toProjectContext(currentProject);
 
   return (
     <BAICard
@@ -544,8 +547,8 @@ const ProjectAdminDataPage: React.FC = () => {
     >
       <BAIErrorBoundary>
         <Suspense fallback={<Skeleton active />}>
-          {currentProject.id ? (
-            <ProjectAdminDataContent projectId={currentProject.id} />
+          {project ? (
+            <ProjectAdminDataContent project={project} />
           ) : (
             <Skeleton active />
           )}

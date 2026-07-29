@@ -10,6 +10,7 @@ import {
   useCurrentProjectValue,
   useSetCurrentProject,
 } from '../hooks/useCurrentProject';
+import { toProjectContext } from '../types/projectContext';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import FolderLink from './FolderLink';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
@@ -562,6 +563,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
       </BAIModal>
       <FolderCreateModalV2
         open={isOpenCreateFolderModal}
+        project={toProjectContext(currentProject)}
         initialValidate={true}
         folderType="model_project"
         onRequestClose={(result) => {

@@ -20,6 +20,7 @@ import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginati
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useVFolderInvitations } from '../hooks/useVFolderInvitations';
+import { toProjectContext } from '../types/projectContext';
 import { useToggle } from 'ahooks';
 import { Badge, theme, Tooltip } from 'antd';
 import {
@@ -576,6 +577,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
       </BAICard>
       <FolderCreateModalV2
         open={isOpenCreateModal}
+        project={toProjectContext(currentProject)}
         initialValues={{
           usage_mode:
             queryParams.mode === 'model'

@@ -9,6 +9,7 @@ import {
   useCurrentProjectValue,
   useSetCurrentProject,
 } from '../hooks/useCurrentProject';
+import { toProjectContext } from '../types/projectContext';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useToggle } from 'ahooks';
 import { Alert, App, Form, FormInstance, Popconfirm, theme } from 'antd';
@@ -322,6 +323,7 @@ const ImportArtifactRevisionToFolderModal = ({
       </BAIModal>
       <FolderCreateModalV2
         open={isOpenCreateModal}
+        project={toProjectContext(currentProject)}
         initialValidate={true}
         folderType="model_project"
         onRequestClose={(result) => {

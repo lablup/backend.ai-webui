@@ -3,10 +3,12 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '../hooks';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import {
   StartSessionWithDefaultValue,
   useStartSession,
 } from '../hooks/useStartSession';
+import { toProjectContext } from '../types/projectContext';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { ReloadOutlined } from '@ant-design/icons';
@@ -144,6 +146,7 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
     null,
   );
   const baiClient = useSuspendedBackendaiClient();
+  const currentProject = useCurrentProjectValue();
   const { startSessionWithDefault, upsertSessionNotification } =
     useStartSession();
   const { open: openFolderExplorer } = useFolderExplorerOpener();
@@ -359,6 +362,7 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
       </Form>
       <FolderCreateModalV2
         open={isFolderCreateModalOpen}
+        project={toProjectContext(currentProject)}
         initialValues={{ usage_mode: 'model' }}
         onRequestClose={(result) => {
           setIsFolderCreateModalOpen(false);
