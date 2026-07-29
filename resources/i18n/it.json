@@ -944,6 +944,8 @@
       "SharedUser": "Utente condiviso",
       "SharedUserDesc": "Solo gli utenti che hanno accettato l'invito vengono visualizzati nell'elenco.\n\nGli utenti che sono ancora invitanti non vengono visualizzati.",
       "Status": "Stato",
+      "TargetProject": "Progetto di destinazione",
+      "TargetProjectRequired": "Seleziona un progetto in cui creare la cartella.",
       "TrashBin": "Rifiuti",
       "Type": "genere",
       "TypeFolderNameToDelete": "Digita il nome della cartella da eliminare",

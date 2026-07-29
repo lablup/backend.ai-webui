@@ -944,6 +944,8 @@
       "SharedUser": "공유된 사용자",
       "SharedUserDesc": "초대를 수락한 사용자만 목록에 표시됩니다.\n아직 초대가 진행 중인 사용자는 표시되지 않습니다.",
       "Status": "상태",
+      "TargetProject": "대상 프로젝트",
+      "TargetProjectRequired": "폴더를 생성할 프로젝트를 선택해 주세요.",
       "TrashBin": "휴지통",
       "Type": "종류",
       "TypeFolderNameToDelete": "삭제 확인을 위해 폴더 이름을 입력하세요",

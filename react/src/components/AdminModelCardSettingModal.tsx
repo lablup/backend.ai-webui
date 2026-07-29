@@ -10,6 +10,7 @@ import { Form, type FormInstance } from '../form-engine';
 import { useCurrentDomainValue } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useSwitchProject } from '../hooks/useRouteScope';
+import { toProjectContext } from '../types/projectContext';
 import BAIFormItem from './BAIFormItem';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import FolderLink from './FolderLink';
@@ -585,6 +586,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
       </BAIModal>
       <FolderCreateModalV2
         open={isOpenCreateFolderModal}
+        project={toProjectContext(currentProject)}
         initialValidate={true}
         folderType="model_project"
         onRequestClose={(result) => {

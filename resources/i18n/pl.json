@@ -944,6 +944,8 @@
       "SharedUser": "Udostępniony użytkownik",
       "SharedUserDesc": "Tylko użytkownicy, którzy przyjęli zaproszenie, są wyświetlani na liście.\n\nUżytkownicy, którzy nadal są zapraszani, nie są wyświetlani.",
       "Status": "Status",
+      "TargetProject": "Projekt docelowy",
+      "TargetProjectRequired": "Wybierz projekt, w którym ma zostać utworzony folder.",
       "TrashBin": "Śmieci",
       "Type": "Rodzaj",
       "TypeFolderNameToDelete": "Wpisz nazwę folderu do usunięcia",

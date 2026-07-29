@@ -944,6 +944,8 @@
       "SharedUser": "共享用户",
       "SharedUserDesc": "列表中只有接受邀请的用户。\n\n仍未显示仍在邀请的用户。",
       "Status": "现状",
+      "TargetProject": "目标项目",
+      "TargetProjectRequired": "请选择要在其中创建文件夹的项目。",
       "TrashBin": "垃圾",
       "Type": "类型",
       "TypeFolderNameToDelete": "输入要删除的文件夹名称",

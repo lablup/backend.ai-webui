@@ -931,6 +931,8 @@
       "SharedUser": "Shared Users",
       "SharedUserDesc": "Only users who accepted the invitation are displayed on the list.\n\nUsers who are still inviting are not displayed.",
       "Status": "Status",
+      "TargetProject": "Target Project",
+      "TargetProjectRequired": "Please select a project to create the folder in.",
       "TrashBin": "Trash",
       "Type": "Type",
       "TypeFolderNameToDelete": "Type folder name to delete",

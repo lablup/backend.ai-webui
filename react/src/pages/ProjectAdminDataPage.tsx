@@ -29,6 +29,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { ProjectContext, toProjectContext } from '../types/projectContext';
 import { isDeletedCategory } from './VFolderNodeListPage';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
@@ -102,11 +103,11 @@ function getUsageModeFilter(mode: (typeof modeValues)[number]) {
 }
 
 interface ProjectAdminDataContentProps {
-  projectId: string;
+  project: ProjectContext;
 }
 
 const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
-  projectId,
+  project,
 }) => {
   'use memo';
 
@@ -177,7 +178,7 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
   };
 
   const queryVariables = {
-    projectId,
+    projectId: project.id,
     offset: baiPaginationOption.offset,
     limit: baiPaginationOption.first,
     filter: combinedFilter,
@@ -501,6 +502,7 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
       />
       <FolderCreateModalV2
         open={isOpenCreateModal}
+        project={project}
         folderType="project"
         alertMessage={t('data.folders.ProjectAdminDataPageAlert')}
         onRequestClose={(result) => {
@@ -518,13 +520,14 @@ const ProjectAdminDataPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
   const currentProject = useCurrentProjectValue();
+  const project = toProjectContext(currentProject);
 
   return (
     <BAICard title={t('data.ProjectFolders')}>
       <BAIErrorBoundary>
         <Suspense fallback={<BAISkeleton rows={4} />}>
-          {currentProject.id ? (
-            <ProjectAdminDataContent projectId={currentProject.id} />
+          {project ? (
+            <ProjectAdminDataContent project={project} />
           ) : (
             <BAISkeleton rows={4} />
           )}

@@ -10,6 +10,7 @@ import { Form, FormInstance } from '../form-engine';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useSwitchProject } from '../hooks/useRouteScope';
 import { theme } from '../theme-shim';
+import { toProjectContext } from '../types/projectContext';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import BAIPopconfirm from './astryx-bui/BAIPopconfirmAstryx';
 import { Banner } from '@astryxdesign/core/Banner';
@@ -334,6 +335,7 @@ const ImportArtifactRevisionToFolderModal = ({
       </BAIModal>
       <FolderCreateModalV2
         open={isOpenCreateModal}
+        project={toProjectContext(currentProject)}
         initialValidate={true}
         folderType="model_project"
         onRequestClose={(result) => {
