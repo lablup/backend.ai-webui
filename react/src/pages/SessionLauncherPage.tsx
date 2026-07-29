@@ -39,9 +39,13 @@ import {
   useCurrentUserRole,
   useResourceSlotsDetails,
 } from '../hooks/backendai';
-import { useCurrentResourceGroupState } from '../hooks/useCurrentProject';
+import {
+  useCurrentProjectValue,
+  useCurrentResourceGroupState,
+} from '../hooks/useCurrentProject';
 import { useRecentSessionHistory } from '../hooks/useRecentSessionHistory';
 import { useStartSession } from '../hooks/useStartSession';
+import { toProjectContext } from '../types/projectContext';
 import './SessionLauncherPage.css';
 import {
   DoubleRightOutlined,
@@ -215,6 +219,16 @@ const SessionLauncherPage = () => {
   const supportBatchTimeout = baiClient?.supports('batch-timeout') ?? false;
   const currentUserRole = useCurrentUserRole();
   const [, setCurrentGlobalResourceGroup] = useCurrentResourceGroupState();
+  // ADR-0001 (FR-3411): pages are the only readers of the ambient current
+  // project; ResourceAllocationFormItems takes it as an explicit required
+  // prop. The throw preserves the exact previous behavior — the form
+  // fragment used to raise this error itself when the ambient project was
+  // not resolvable (general pages always have one once login completes).
+  const currentProject = useCurrentProjectValue();
+  const currentProjectContext = toProjectContext(currentProject);
+  if (!currentProjectContext) {
+    throw new Error('Project ID is required for ResourceAllocationFormItems');
+  }
 
   const { startSession, defaultFormValues, upsertSessionNotification } =
     useStartSession();
@@ -1041,6 +1055,7 @@ const SessionLauncherPage = () => {
                   }}
                 >
                   <ResourceAllocationFormItems
+                    project={currentProjectContext}
                     enableAgentSelect={
                       !baiClient._config.hideAgents &&
                       baiClient.supports('agent-select')

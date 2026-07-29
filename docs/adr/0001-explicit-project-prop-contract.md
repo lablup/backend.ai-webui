@@ -81,9 +81,17 @@ narrowing helper for the loosely-typed ambient value).
   target project comes from the folder's own ownership, with an in-modal
   selector only for user-owned folders), and `AdminModelCardSettingModal`
   (model cards are created only in the resolved model-store project; the
-  ambient fallback was deleted). Subsequent tickets convert session-launch
-  buttons and mismatch alerts (FR-3411/3412), then hide the header selector
-  per admin route.
+  ambient fallback was deleted). Third application (FR-3411):
+  `ResourceAllocationFormItems` (form-fragment tier — a required **non-null**
+  `project: ProjectContext`; the parent owns any selector, and the prop
+  scopes the `accessible_scaling_groups` query, the resource-group select,
+  and the resource limit/preset lookups) and `DeploymentAddRevisionModal`
+  (derive-from-resource tier — the deployment's own `metadata.projectId` +
+  `projectV2` name drive the model-folder picker, the resource form, and
+  in-modal folder creation; when the project cannot be resolved, submission
+  is visibly disabled instead of falling back to ambient). Subsequent
+  tickets convert session-launch buttons and mismatch alerts, then hide the
+  header selector per admin route.
 
 ## How to comply (checklist for new/converted components)
 
