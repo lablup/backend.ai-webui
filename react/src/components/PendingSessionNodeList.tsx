@@ -7,22 +7,23 @@ import {
   PendingSessionNodeListQuery$data,
   PendingSessionNodeListQuery$variables,
 } from '../__generated__/PendingSessionNodeListQuery.graphql';
+import { PendingSessionNodeListResourceGroupsQuery } from '../__generated__/PendingSessionNodeListResourceGroupsQuery.graphql';
 import { Form } from '../form-engine';
 import { handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
 import { theme } from '../theme-shim';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import EditSessionPriorityModal from './ComputeSessionNodeItems/EditSessionPriorityModal';
 import SessionNodes from './SessionNodes';
-import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
+import TextHighlighter from './TextHighlighter';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIAlert,
   BAIButton,
   BAIFlex,
+  BAISelect,
   BAISelectionLabel,
   BAIUnmountAfterClose,
   filterOutNullAndUndefined,
@@ -31,6 +32,7 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { SettingsIcon } from 'lucide-react';
+import { parseAsString, useQueryState } from 'nuqs';
 import { useDeferredValue, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -52,9 +54,30 @@ const PendingSessionNodeList: React.FC = () => {
   const enablePriorityEditing =
     baiClient.isManagerVersionCompatibleWith('26.4.0');
   const [fetchKey, updateFetchKey] = useFetchKey();
-  // const [selectedResourceGroup, setSelectedResourceGroup] = useState<string>();
-  const currentResourceGroup = useCurrentResourceGroupValue();
+  const [selectedResourceGroup, setSelectedResourceGroup] = useQueryState(
+    'resourceGroup',
+    parseAsString.withOptions({ history: 'replace' }),
+  );
+  const [resourceGroupSearch, setResourceGroupSearch] = useState<string>();
   const deferredFetchKey = useDeferredValue(fetchKey);
+
+  // Superadmin scope: every resource group, not the current project's subset.
+  const { scaling_groups } =
+    useLazyLoadQuery<PendingSessionNodeListResourceGroupsQuery>(
+      graphql`
+        query PendingSessionNodeListResourceGroupsQuery {
+          scaling_groups(is_active: true) {
+            name
+          }
+        }
+      `,
+      {},
+    );
+  const resourceGroupNames = _.compact(
+    _.map(scaling_groups, (scalingGroup) => scalingGroup?.name),
+  );
+  const currentResourceGroup =
+    selectedResourceGroup ?? _.first(resourceGroupNames);
   const deferredCurrentResourceGroup = useDeferredValue(currentResourceGroup);
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
@@ -136,16 +159,30 @@ const PendingSessionNodeList: React.FC = () => {
           label={t('session.ResourceGroup')}
           style={{ marginBottom: 0 }}
         >
-          <SharedResourceGroupSelectForCurrentProject
-            showSearch
+          <BAISelect
+            showSearch={{
+              searchValue: resourceGroupSearch,
+              onSearch: setResourceGroupSearch,
+            }}
             style={{ minWidth: 100 }}
-            onChangeInTransition={() => {
+            loading={currentResourceGroup !== deferredCurrentResourceGroup}
+            options={_.map(resourceGroupNames, (name) => ({
+              value: name,
+              label: name,
+            }))}
+            optionRender={(option) => (
+              <TextHighlighter keyword={resourceGroupSearch}>
+                {option.data.value?.toString()}
+              </TextHighlighter>
+            )}
+            popupMatchSelectWidth={false}
+            tooltip={t('general.ResourceGroup')}
+            value={currentResourceGroup}
+            onChange={(value) => {
+              setSelectedResourceGroup(value ?? null);
               setTablePaginationOption({ current: 1 });
               setSelectedSessionList([]);
             }}
-            loading={currentResourceGroup !== deferredCurrentResourceGroup}
-            popupMatchSelectWidth={false}
-            tooltip={t('general.ResourceGroup')}
           />
         </Form.Item>
         <BAIFlex gap="xs">
