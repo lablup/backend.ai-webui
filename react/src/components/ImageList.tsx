@@ -8,14 +8,18 @@ import {
   ImageListQuery$variables,
 } from '../__generated__/ImageListQuery.graphql';
 import { getImageFullName } from '../helper';
-import { useBackendAIImageMetaData } from '../hooks';
+import {
+  useBackendAIImageMetaData,
+  useSuspendedBackendaiClient,
+} from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
-import { ProjectContext } from '../types/projectContext';
+import { ProjectContext, ProjectContextOrNull } from '../types/projectContext';
 import AliasedImageDoubleTags from './AliasedImageDoubleTags';
 import ImageInstallModal from './ImageInstallModal';
 import ManageAppsModal from './ManageAppsModal';
 import ManageImageResourceLimitModal from './ManageImageResourceLimitModal';
+import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import {
   AppstoreOutlined,
@@ -24,7 +28,16 @@ import {
   VerticalAlignBottomOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { App, Button, Tag, theme, Tooltip, Typography } from 'antd';
+import {
+  App,
+  Button,
+  Empty,
+  Skeleton,
+  Tag,
+  theme,
+  Tooltip,
+  Typography,
+} from 'antd';
 import type { ColumnType } from 'antd/es/table';
 import {
   filterOutEmpty,
@@ -40,7 +53,13 @@ import {
 import * as _ from 'lodash-es';
 import { SquarePenIcon } from 'lucide-react';
 import { parseAsStringLiteral, useQueryStates } from 'nuqs';
-import { Key, useDeferredValue, useState, useTransition } from 'react';
+import {
+  Key,
+  Suspense,
+  useDeferredValue,
+  useState,
+  useTransition,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -64,16 +83,95 @@ const isEnableSorter = (key: string) =>
 interface ImageListProps {
   /**
    * Explicit project prop contract (ADR-0001, FR-3415). The Environments page
-   * decides the project; this component never reads the ambient current
-   * project. Non-null by type: the page renders a "pick a project" empty state
-   * instead of mounting this list when nothing is chosen, because the image
-   * scope argument has no cheap "all projects" form (see the ADR).
+   * owns the (URL-persisted) choice; this component never reads the ambient
+   * current project. `null` means "nothing picked yet" — the list renders the
+   * selector plus a "pick a project" empty state, because the image scope
+   * argument has no cheap "all projects" form (see the ADR).
    */
-  project: ProjectContext;
+  project: ProjectContextOrNull;
+  /**
+   * Reports the project the user picked in the in-list selector. The project
+   * scopes what this list SHOWS, so the selector is a content-scoped control
+   * and lives in this list's own filter row rather than in the page's card
+   * header (`.claude/rules/use-bai-card.md`).
+   */
+  onChangeProject: (project: ProjectContext) => void;
   style?: React.CSSProperties;
 }
 
-const ImageList: React.FC<ImageListProps> = ({ project, style }) => {
+const ImageList: React.FC<ImageListProps> = ({
+  project,
+  onChangeProject,
+  style,
+}) => {
+  'use memo';
+
+  const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
+
+  const projectSelect = (
+    <BAIFlex gap="xs" align="center" wrap="wrap">
+      <Typography.Text type="secondary">{t('general.Project')}</Typography.Text>
+      <Suspense fallback={<Skeleton.Input active size="small" />}>
+        <ProjectSelectForAdminPage
+          data-testid="environment-project-select"
+          domain={baiClient._config.domainName}
+          value={project?.id ?? undefined}
+          style={{ minWidth: 180 }}
+          onSelectProject={(projectInfo) => {
+            onChangeProject({
+              id: projectInfo.projectId,
+              name: projectInfo.projectName,
+            });
+          }}
+        />
+      </Suspense>
+    </BAIFlex>
+  );
+
+  // The scoped query below cannot run without a project, so the unselected
+  // state is its own (query-free) branch. The selector is rendered in both
+  // branches from the single definition above.
+  if (!project) {
+    return (
+      <BAIFlex
+        direction="column"
+        align="stretch"
+        gap="sm"
+        style={{ flex: 1, ...style }}
+      >
+        <BAIFlex justify="between" gap="xs" wrap="wrap">
+          {projectSelect}
+        </BAIFlex>
+        <Empty
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+          description={t('environment.SelectProjectToListImages')}
+        />
+      </BAIFlex>
+    );
+  }
+
+  return (
+    <ImageListInProject
+      project={project}
+      projectSelect={projectSelect}
+      style={style}
+    />
+  );
+};
+
+interface ImageListInProjectProps {
+  project: ProjectContext;
+  /** The page-level project control, rendered inside the filter row. */
+  projectSelect: React.ReactNode;
+  style?: React.CSSProperties;
+}
+
+const ImageListInProject: React.FC<ImageListInProjectProps> = ({
+  project,
+  projectSelect,
+  style,
+}) => {
   'use memo';
 
   const { t } = useTranslation();
@@ -335,91 +433,94 @@ const ImageList: React.FC<ImageListProps> = ({ project, style }) => {
         }}
         gap="sm"
       >
-        <BAIFlex justify="between">
-          <BAIPropertyFilter
-            filterProperties={filterOutEmpty([
-              {
-                key: 'id',
-                propertyLabel: t('environment.ID'),
-                type: 'string',
-                defaultOperator: '==',
-              },
-              {
-                key: 'image',
-                propertyLabel: t('environment.Image'),
-                type: 'string',
-              },
-              {
-                key: 'name',
-                propertyLabel: t('environment.Name'),
-                type: 'string',
-              },
-              {
-                key: 'registry',
-                propertyLabel: t('environment.Registry'),
-                type: 'string',
-              },
-              {
-                key: 'architecture',
-                propertyLabel: t('environment.Architecture'),
-                type: 'string',
-                strictSelection: true,
-                defaultOperator: '==',
-                options: [
-                  { label: 'x86_64', value: 'x86_64' },
-                  { label: 'aarch64', value: 'aarch64' },
-                ],
-              },
-              {
-                key: 'namespace',
-                propertyLabel: t('environment.Namespace'),
-                type: 'string',
-              },
-              {
-                key: 'base_image_name',
-                propertyLabel: t('environment.BaseImageName'),
-                type: 'string',
-              },
-              {
-                key: 'tag',
-                propertyLabel: t('environment.Tags'),
-                type: 'string',
-              },
-              {
-                key: 'status',
-                propertyLabel: t('environment.Status'),
-                type: 'string',
-                strictSelection: true,
-                defaultOperator: '==',
-                options: [
-                  { label: 'ALIVE', value: 'ALIVE' },
-                  { label: 'DELETED', value: 'DELETED' },
-                ],
-              },
-              {
-                key: 'type',
-                propertyLabel: t('data.Type'),
-                type: 'string',
-                strictSelection: true,
-                defaultOperator: '==',
-                options: [
-                  { label: 'COMPUTE', value: 'COMPUTE' },
-                  { label: 'SERVICE', value: 'SERVICE' },
-                  { label: 'SYSTEM', value: 'SYSTEM' },
-                ],
-              },
-              {
-                key: 'is_local',
-                propertyLabel: t('environment.Local'),
-                type: 'boolean',
-              },
-            ])}
-            value={imageFilter || undefined}
-            onChange={(value) => {
-              setImageFilter(value || '');
-              setTablePaginationOption({ current: 1 });
-            }}
-          />
+        <BAIFlex justify="between" gap="xs" wrap="wrap">
+          <BAIFlex gap="xs" align="center" wrap="wrap">
+            {projectSelect}
+            <BAIPropertyFilter
+              filterProperties={filterOutEmpty([
+                {
+                  key: 'id',
+                  propertyLabel: t('environment.ID'),
+                  type: 'string',
+                  defaultOperator: '==',
+                },
+                {
+                  key: 'image',
+                  propertyLabel: t('environment.Image'),
+                  type: 'string',
+                },
+                {
+                  key: 'name',
+                  propertyLabel: t('environment.Name'),
+                  type: 'string',
+                },
+                {
+                  key: 'registry',
+                  propertyLabel: t('environment.Registry'),
+                  type: 'string',
+                },
+                {
+                  key: 'architecture',
+                  propertyLabel: t('environment.Architecture'),
+                  type: 'string',
+                  strictSelection: true,
+                  defaultOperator: '==',
+                  options: [
+                    { label: 'x86_64', value: 'x86_64' },
+                    { label: 'aarch64', value: 'aarch64' },
+                  ],
+                },
+                {
+                  key: 'namespace',
+                  propertyLabel: t('environment.Namespace'),
+                  type: 'string',
+                },
+                {
+                  key: 'base_image_name',
+                  propertyLabel: t('environment.BaseImageName'),
+                  type: 'string',
+                },
+                {
+                  key: 'tag',
+                  propertyLabel: t('environment.Tags'),
+                  type: 'string',
+                },
+                {
+                  key: 'status',
+                  propertyLabel: t('environment.Status'),
+                  type: 'string',
+                  strictSelection: true,
+                  defaultOperator: '==',
+                  options: [
+                    { label: 'ALIVE', value: 'ALIVE' },
+                    { label: 'DELETED', value: 'DELETED' },
+                  ],
+                },
+                {
+                  key: 'type',
+                  propertyLabel: t('data.Type'),
+                  type: 'string',
+                  strictSelection: true,
+                  defaultOperator: '==',
+                  options: [
+                    { label: 'COMPUTE', value: 'COMPUTE' },
+                    { label: 'SERVICE', value: 'SERVICE' },
+                    { label: 'SYSTEM', value: 'SYSTEM' },
+                  ],
+                },
+                {
+                  key: 'is_local',
+                  propertyLabel: t('environment.Local'),
+                  type: 'boolean',
+                },
+              ])}
+              value={imageFilter || undefined}
+              onChange={(value) => {
+                setImageFilter(value || '');
+                setTablePaginationOption({ current: 1 });
+              }}
+            />
+          </BAIFlex>
           <BAIFlex gap={'xs'}>
             {selectedRows.length > 0 ? (
               <BAISelectionLabel
