@@ -539,6 +539,7 @@
     "BulkCreateUserFromCSV": "Μαζική δημιουργία χρηστών από CSV",
     "BulkCreateUserFromCSVSubtitle": "Ανεβάστε ένα CSV για να δημιουργήσετε πολλούς λογαριασμούς χρηστών ταυτόχρονα.",
     "BulkCreateUserPartialFailure": "{{successCount}} χρήστης(ες) δημιουργήθηκαν. {{failCount}} χρήστης(ες) απέτυχαν.",
+    "BulkCreateUserPartialFailureDescription": "Ορισμένοι χρήστες δεν δημιουργήθηκαν. Ελέγξτε τα στοιχεία.",
     "BulkCreateUserSuccess": "Δημιουργήθηκαν με επιτυχία {{count}} χρήστες.",
     "BulkDeactivateCredentials": "Απενεργοποίηση διαπιστευτηρίων",
     "BulkDeactivateCredentialsDescription": "Πρόκειται να απενεργοποιήσετε {{count}} διαπιστευτήριο(α). Οι χρήστες δεν θα μπορούν πλέον να χρησιμοποιούν αυτά τα διαπιστευτήρια.",

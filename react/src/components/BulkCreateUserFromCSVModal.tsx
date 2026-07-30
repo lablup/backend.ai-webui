@@ -30,6 +30,11 @@ import { useCurrentDomainValue } from '../hooks';
 import { theme } from '../theme-shim';
 import BAIFormItem from './BAIFormItem';
 import BAIPanelItem from './BAIPanelItem';
+import {
+  BulkCreateUserErrorModal,
+  type FailedUserCreation,
+  toFailedUserCreations,
+} from './BulkCreateUserFailure';
 import GeneratedKeypairListModal from './GeneratedKeypairListModal';
 import { passwordPattern } from './LoginFormPanel';
 import ProjectSelect from './ProjectSelect';
@@ -58,7 +63,9 @@ import {
   BAIRowWrapWithDividers,
   BAITable,
   BAIText,
+  BAIUnmountAfterClose,
   badgeVariantForTagColor,
+  filterOutNullAndUndefined,
   useBAILogger,
   useBAISignedRequestWithPromise,
 } from 'backend.ai-ui';
@@ -141,13 +148,6 @@ interface ValidatedRow {
   isValid: boolean;
 }
 
-interface FailedUserRow {
-  index: number;
-  username: string;
-  email: string;
-  message: string;
-}
-
 // ─── Props ───────────────────────────────────────────────────────────────────
 
 interface BulkCreateUserFromCSVModalProps extends Omit<
@@ -196,7 +196,10 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
   const [dynamicColumnAliases, setDynamicColumnAliases] = useState<
     Record<string, string>
   >({});
-  const [failedRows, setFailedRows] = useState<FailedUserRow[]>([]);
+  // Users the server refused to create. Reported inside the generated-keypair
+  // result modal when some users were created, or in a standalone modal over
+  // the preview when none were.
+  const [failedUsers, setFailedUsers] = useState<FailedUserCreation[]>([]);
   // The server's actual created count from the last partial-failure submit.
   // Not derived from client stats — the server may reject rows the client
   // considered valid.
@@ -499,7 +502,6 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
 
   const canSubmit = stats.total > 0 && stats.withErrors === 0;
   const hasFile = fileName !== null;
-  const hasFailures = failedRows.length > 0;
 
   // ── Handlers ──────────────────────────────────────────────────────────────
 
@@ -508,7 +510,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
     setRawRows([]);
     setPresentColumns(new Set());
     setOnlyErrors(false);
-    setFailedRows([]);
+    setFailedUsers([]);
     setCreatedCount(0);
     setCreatedKeypairs(null);
   };
@@ -551,7 +553,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
     setRawRows(extractRawUserRows(records, headerMap));
     setPresentColumns(columnsInFile);
     setOnlyErrors(false);
-    setFailedRows([]);
+    setFailedUsers([]);
   };
 
   const handleFileInput = (files: FileList | null) => {
@@ -634,8 +636,9 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
           }
           const createdList =
             res.adminBulkCreateUsersWithKeypairV2?.created ?? [];
-          const createdCount = createdList.length;
+          const succeededCount = createdList.length;
           const failed = res.adminBulkCreateUsersWithKeypairV2?.failed ?? [];
+          setCreatedCount(succeededCount);
           // Surface keypairs first: secret keys are one-time and must be shown
           // regardless of whether some rows failed.
           const keypairs = _.map(createdList, (created) => created.keypair);
@@ -643,21 +646,23 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
             setCreatedKeypairs(keypairs);
           }
           if (failed.length > 0) {
-            setFailedRows([...failed]);
-            setCreatedCount(createdCount);
-            message.warning(
+            // Immediate failure notice as a toast on top of the detail modal
+            // (matches FR-3357's AssignRoleModal) — the modal carries the
+            // per-user table, the message the at-a-glance cue.
+            message.error(
               t('credential.BulkCreateUserPartialFailure', {
-                successCount: createdCount,
+                successCount: succeededCount,
                 failCount: failed.length,
               }),
             );
-            logger.error('Bulk create partial failures:', failed);
-            if (keypairs.length === 0) {
-              onRequestClose(true);
-            }
+            // The per-user reasons only reach the admin through the error
+            // modal, so nothing closes here — it renders on top of the preview
+            // (or of the keypair list, when some users were created), leaving
+            // the loaded CSV in place for a retry.
+            setFailedUsers(toFailedUserCreations(failed));
           } else {
             message.success(
-              t('credential.BulkCreateUserSuccess', { count: createdCount }),
+              t('credential.BulkCreateUserSuccess', { count: succeededCount }),
             );
             if (keypairs.length === 0) {
               onRequestClose(true);
@@ -940,81 +945,15 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
     },
   ]);
 
-  // ── Post-submission keypair download screen ───────────────────────────────
-
-  // On full success, replace the form with the generated-keypair download
-  // modal (same UX as single-user creation). `open` is inherited from the
-  // parent via baiModalProps; createdKeypairs is cleared in resetState after
-  // the close animation, so the form never flashes back into view.
-  if (createdKeypairs) {
-    return (
-      <GeneratedKeypairListModal
-        {...baiModalProps}
-        keypairFragment={createdKeypairs}
-        afterClose={resetState}
-        onRequestClose={() => onRequestClose(true)}
-      />
-    );
-  }
-
-  // ── Post-submission failure screen ────────────────────────────────────────
-
-  if (hasFailures) {
-    return (
-      <BAIModal
-        centered
-        title={t('credential.BulkCreateUserFromCSV')}
-        width={680}
-        styles={{ body: { padding: token.paddingLG } }}
-        footer={
-          <BAIFlex justify="end">
-            <BAIButton type="primary" onClick={() => onRequestClose(true)}>
-              {t('button.Close')}
-            </BAIButton>
-          </BAIFlex>
-        }
-        afterClose={resetState}
-        {...baiModalProps}
-      >
-        <BAIFlex direction="column" align="stretch" gap="md">
-          <BAIAlert
-            type="warning"
-            showIcon
-            description={t('credential.BulkCreateUserPartialFailure', {
-              successCount: createdCount,
-              failCount: failedRows.length,
-            })}
-          />
-          <BAITable
-            size="small"
-            rowKey="index"
-            dataSource={failedRows}
-            pagination={false}
-            columns={[
-              {
-                title: t('general.E-Mail'),
-                dataIndex: 'email',
-                key: 'email',
-              },
-              {
-                title: t('credential.UserName'),
-                dataIndex: 'username',
-                key: 'username',
-              },
-              {
-                title: t('dialog.error.Error'),
-                dataIndex: 'message',
-                key: 'message',
-                render: (v: string) => <BAIText type="danger">{v}</BAIText>,
-              },
-            ]}
-          />
-        </BAIFlex>
-      </BAIModal>
-    );
-  }
-
   // ── Main modal ────────────────────────────────────────────────────────────
+
+  // The keypair and failure screens are independent sibling modals layered
+  // over this one (never an early-return swap of the whole return) — this
+  // modal, and everything the admin already typed/uploaded into it, stays
+  // mounted the entire time. Swapping the whole return previously caused the
+  // form to visibly re-mount (a fresh "opening" transition) once the overlay
+  // was dismissed, and skipped this modal's own `afterClose` on a same-render
+  // double state flip (FR-3419).
 
   return (
     <BAIModal
@@ -1047,7 +986,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
       }}
       footer={
         <BAIFlex justify="end" gap="sm">
-          <BAIButton onClick={() => onRequestClose(false)}>
+          <BAIButton onClick={() => onRequestClose(createdCount > 0)}>
             {t('button.Cancel')}
           </BAIButton>
           <BAIButton
@@ -1061,7 +1000,10 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
           </BAIButton>
         </BAIFlex>
       }
-      onCancel={() => onRequestClose(false)}
+      // A partial failure leaves this form open, so closing it still has to
+      // report the users that *were* created — otherwise the list behind it
+      // never refetches. `createdCount` is 0 until a submit succeeds in part.
+      onCancel={() => onRequestClose(createdCount > 0)}
       afterClose={resetState}
       {...baiModalProps}
     >
@@ -1487,6 +1429,34 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
           />
         )}
       </BAIFlex>
+      <BAIUnmountAfterClose>
+        <GeneratedKeypairListModal
+          open={!!createdKeypairs}
+          keypairFragment={filterOutNullAndUndefined(createdKeypairs)}
+          onRequestClose={() => {
+            const hadFailures = !_.isEmpty(failedUsers);
+            setCreatedKeypairs(null);
+            if (!hadFailures) {
+              // Full success — nothing left to review, finish the whole flow.
+              onRequestClose(true);
+            }
+            // Partial failure: leave failedUsers as-is. The failure modal
+            // below is the next step — its `open` gate flips true now that
+            // createdKeypairs is cleared, showing over this still-open,
+            // still-loaded form (FR-3419).
+          }}
+        />
+      </BAIUnmountAfterClose>
+      {/* The failure report — shown immediately when every row failed (no
+          keypairs to show first), or as the step after the admin dismisses
+          the keypair modal above when some rows succeeded. Never shown
+          together with the keypair modal (FR-3419). */}
+      <BulkCreateUserErrorModal
+        open={!createdKeypairs && !_.isEmpty(failedUsers)}
+        failedUsers={failedUsers}
+        createdCount={createdCount}
+        onRequestClose={() => setFailedUsers([])}
+      />
     </BAIModal>
   );
 };

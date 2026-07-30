@@ -539,6 +539,7 @@
     "BulkCreateUserFromCSV": "Criar usuários em massa a partir de CSV",
     "BulkCreateUserFromCSVSubtitle": "Carregue um CSV para criar múltiplas contas de usuário de uma vez.",
     "BulkCreateUserPartialFailure": "{{successCount}} usuário(s) criado(s). {{failCount}} usuário(s) não foram criados.",
+    "BulkCreateUserPartialFailureDescription": "Alguns usuários não foram criados. Verifique os itens.",
     "BulkCreateUserSuccess": "{{count}} usuário(s) criado(s) com sucesso.",
     "BulkDeactivateCredentials": "Desativar credenciais",
     "BulkDeactivateCredentialsDescription": "Você está prestes a desativar {{count}} credencial(is). Os usuários não poderão mais usar essas credenciais.",

@@ -539,6 +539,7 @@
     "BulkCreateUserFromCSV": "透過 CSV 批次建立使用者",
     "BulkCreateUserFromCSVSubtitle": "上傳 CSV 檔案以一次建立多個使用者帳號。",
     "BulkCreateUserPartialFailure": "{{successCount}} 位使用者已建立。{{failCount}} 位使用者建立失敗。",
+    "BulkCreateUserPartialFailureDescription": "部分使用者建立失敗。請檢查相關項目。",
     "BulkCreateUserSuccess": "成功建立 {{count}} 位使用者。",
     "BulkDeactivateCredentials": "停用憑證",
     "BulkDeactivateCredentialsDescription": "您即將停用 {{count}} 個憑證。使用者將無法再使用這些憑證。",
