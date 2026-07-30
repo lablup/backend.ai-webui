@@ -1428,7 +1428,6 @@
     "Installed": "installed",
     "InstalledImagesAreExcluded": "Installed images are excluded.",
     "Installing": "installing",
-    "InstallingImage": "Installing: ",
     "Language": "Language",
     "Local": "Local",
     "ManageApps": "Manage Apps",
@@ -1458,7 +1457,6 @@
     "SuccessfullyCreated": "Successfully created",
     "SuccessfullyModified": "Successfully modified",
     "Tags": "Tags",
-    "TakesTime": ". It takes time so have a cup of coffee!",
     "Version": "Version"
   },
   "error": {

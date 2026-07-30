@@ -1441,7 +1441,6 @@
     "Installed": "installée",
     "InstalledImagesAreExcluded": "Les images installées sont exclues.",
     "Installing": "installation",
-    "InstallingImage": "Installation :",
     "Language": "Langue",
     "Local": "Local",
     "ManageApps": "Gérer les applications",
@@ -1472,7 +1471,6 @@
     "SuccessfullyCreated": "Création réussie",
     "SuccessfullyModified": "Modifié avec succès",
     "Tags": "Balises",
-    "TakesTime": ". Cela prend du temps alors prenez une tasse de café!",
     "Version": "Version"
   },
   "error": {

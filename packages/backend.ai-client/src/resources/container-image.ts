@@ -96,18 +96,22 @@ export class ContainerImage {
    * @param {string} architecture - architecture to install.
    * @param {object} resource - resource to use for installation.
    * @param {string} registry - registry of image. default is 'index.docker.io', which is public Backend.AI docker registry.
+   * @param {string} sessionName - name/token for the install session. Optional -
+   *   defaults to `this.client.generateSessionId()` (today's behavior) when
+   *   omitted, so existing callers are unaffected.
    */
   async install(
     name,
     architecture,
     resource: object = {},
     registry: string = 'index.docker.io',
+    sessionName?: string,
   ): Promise<any> {
     registry = (registry === 'index.docker.io' ? '' : registry + '/').replace(
       /:/g,
       '%3A',
     );
-    const sessionId = this.client.generateSessionId();
+    const sessionId = sessionName || this.client.generateSessionId();
     if (Object.keys(resource).length === 0) {
       resource = {
         cpu: '1',
