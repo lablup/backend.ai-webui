@@ -9,7 +9,7 @@ import LegacyRoleScopeTab from './LegacyRoleScopeTab';
 import RoleAssignmentTab from './RoleAssignmentTab';
 import RolePermissionDetailTab from './RolePermissionDetailTab';
 import { Descriptions, Skeleton, Tabs, Tag } from 'antd';
-import { BAIAlert, toLocalId } from 'backend.ai-ui';
+import { toLocalId } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -31,12 +31,6 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
   // merged Detailed Permissions view depends on. Older managers get the
   // legacy separate Scopes / Permissions tabs instead.
   const supportsDetailedPermissions = baiClient.supports(
-    'role-mapped-scope-filter',
-  );
-  // The project-page one-click admin setting exists from manager 26.8.0;
-  // older managers must keep direct assignment on system roles or there is
-  // no way to grant project admin at all.
-  const supportsProjectAdminSetting = baiClient.supports(
     'role-mapped-scope-filter',
   );
   const [activeTab, setActiveTab] = useState(
@@ -150,15 +144,7 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
             label: t('rbac.RoleAssignments'),
             children: (
               <Suspense fallback={<Skeleton active />}>
-                {role.source === 'SYSTEM' && supportsProjectAdminSetting ? (
-                  <BAIAlert
-                    type="warning"
-                    showIcon
-                    description={t('rbac.SystemRoleNoAssignments')}
-                  />
-                ) : (
-                  <RoleAssignmentTab roleNodeFrgmt={role} />
-                )}
+                <RoleAssignmentTab roleNodeFrgmt={role} />
               </Suspense>
             ),
           },
