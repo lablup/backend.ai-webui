@@ -180,24 +180,21 @@ function MainLayout() {
         >
           <BAIContentWithDrawerArea drawerWidth={DRAWER_WIDTH}>
             <BAIFlex
-              ref={contentScrollFlexRef}
               direction="column"
               align="stretch"
               style={{
-                paddingLeft: token.paddingContentHorizontalLG,
-                paddingRight: token.paddingContentHorizontalLG,
-                paddingBottom: token.paddingContentVertical,
                 height: '100vh',
-                overflow: 'auto',
               }}
             >
               <BAIErrorBoundary>
+                {/* Header lives outside the scroll container so the page
+                    scrollbar never runs across it and its width stays
+                    constant regardless of content overflow (FR-627). */}
                 <div
                   style={{
-                    margin: `0 -${token.paddingContentHorizontalLG}px 0 -${token.paddingContentHorizontalLG}px`,
-                    position: 'sticky',
-                    top: 0,
+                    position: 'relative',
                     zIndex: HEADER_Z_INDEX_IN_MAIN_LAYOUT,
+                    flexShrink: 0,
                   }}
                 >
                   <Suspense
@@ -214,86 +211,101 @@ function MainLayout() {
                       onClickMenuIcon={() => setSideCollapsed((v) => !v)}
                     />
                   </Suspense>
-                  {/* sticky Alert components with banner props */}
+                  {/* Alert components with banner props, pinned with the header */}
                   <ErrorBoundaryWithNullFallback>
                     <Suspense fallback={null}>
                       <NetworkStatusBanner />
                     </Suspense>
                   </ErrorBoundaryWithNullFallback>
                 </div>
-                {/* Non sticky Alert components */}
-                <Suspense fallback={<div style={{ minHeight: '0px' }} />}>
-                  <BAIFlex
-                    direction="column"
-                    gap={'sm'}
-                    align="stretch"
-                    className={styles.alertWrapper}
-                  >
-                    {/* Dev-only: warn when the connected backend differs from
+                <BAIFlex
+                  ref={contentScrollFlexRef}
+                  direction="column"
+                  align="stretch"
+                  style={{
+                    paddingLeft: token.paddingContentHorizontalLG,
+                    paddingRight: token.paddingContentHorizontalLG,
+                    paddingBottom: token.paddingContentVertical,
+                    flex: 1,
+                    minHeight: 0,
+                    overflow: 'auto',
+                  }}
+                >
+                  {/* Non sticky Alert components */}
+                  <Suspense fallback={<div style={{ minHeight: '0px' }} />}>
+                    <BAIFlex
+                      direction="column"
+                      gap={'sm'}
+                      align="stretch"
+                      className={styles.alertWrapper}
+                    >
+                      {/* Dev-only: warn when the connected backend differs from
                         VITE_DEFAULT_API_ENDPOINT. Guarded by import.meta.env.DEV
                         so it is dead-code eliminated from production builds. */}
-                    {import.meta.env.DEV && (
-                      <ErrorBoundaryWithNullFallback>
-                        <DevApiEndpointMismatchAlert />
-                      </ErrorBoundaryWithNullFallback>
-                    )}
-                    <ErrorBoundaryWithNullFallback>
-                      <ThemePreviewModeAlert />
-                    </ErrorBoundaryWithNullFallback>
-                    <ErrorBoundaryWithNullFallback>
-                      <ProjectAdminScopeAlert />
-                    </ErrorBoundaryWithNullFallback>
-                    <ErrorBoundaryWithNullFallback>
-                      <NoResourceGroupAlert />
-                    </ErrorBoundaryWithNullFallback>
-                    <ErrorBoundaryWithNullFallback>
-                      <PasswordChangeRequestAlert
-                        showIcon
-                        icon={undefined}
-                        banner={false}
-                        closable
-                      />
-                    </ErrorBoundaryWithNullFallback>
-                  </BAIFlex>
-                </Suspense>
-                <Suspense>
-                  <ErrorBoundaryWithNullFallback>
-                    {/* ForceTOTPChecker is a component for previous version of manager which don't support TOTP registration before login.  */}
-                    {/* https://github.com/lablup/backend.ai/pull/4354 */}
-                    <ForceTOTPChecker />
-                  </ErrorBoundaryWithNullFallback>
-                </Suspense>
-                <Suspense>
-                  <ErrorBoundaryWithNullFallback>
-                    <PageAccessGuard emptyErrorPage>
-                      {isHiddenBreadcrumb ? (
-                        <div
-                          style={{
-                            marginBottom: token.marginMD,
-                          }}
-                        />
-                      ) : (
-                        <WebUIBreadcrumb
-                          style={{
-                            marginBottom: token.marginMD,
-                            marginLeft: token.paddingContentHorizontalLG * -1,
-                            marginRight: token.paddingContentHorizontalLG * -1,
-                          }}
-                        />
+                      {import.meta.env.DEV && (
+                        <ErrorBoundaryWithNullFallback>
+                          <DevApiEndpointMismatchAlert />
+                        </ErrorBoundaryWithNullFallback>
                       )}
-                    </PageAccessGuard>
-                  </ErrorBoundaryWithNullFallback>
-                  <BAIErrorBoundary>
-                    <AutoAdminPrimaryColorProvider>
-                      <PageAccessGuard>
-                        <Outlet />
+                      <ErrorBoundaryWithNullFallback>
+                        <ThemePreviewModeAlert />
+                      </ErrorBoundaryWithNullFallback>
+                      <ErrorBoundaryWithNullFallback>
+                        <ProjectAdminScopeAlert />
+                      </ErrorBoundaryWithNullFallback>
+                      <ErrorBoundaryWithNullFallback>
+                        <NoResourceGroupAlert />
+                      </ErrorBoundaryWithNullFallback>
+                      <ErrorBoundaryWithNullFallback>
+                        <PasswordChangeRequestAlert
+                          showIcon
+                          icon={undefined}
+                          banner={false}
+                          closable
+                        />
+                      </ErrorBoundaryWithNullFallback>
+                    </BAIFlex>
+                  </Suspense>
+                  <Suspense>
+                    <ErrorBoundaryWithNullFallback>
+                      {/* ForceTOTPChecker is a component for previous version of manager which don't support TOTP registration before login.  */}
+                      {/* https://github.com/lablup/backend.ai/pull/4354 */}
+                      <ForceTOTPChecker />
+                    </ErrorBoundaryWithNullFallback>
+                  </Suspense>
+                  <Suspense>
+                    <ErrorBoundaryWithNullFallback>
+                      <PageAccessGuard emptyErrorPage>
+                        {isHiddenBreadcrumb ? (
+                          <div
+                            style={{
+                              marginBottom: token.marginMD,
+                            }}
+                          />
+                        ) : (
+                          <WebUIBreadcrumb
+                            style={{
+                              marginBottom: token.marginMD,
+                              marginLeft: token.paddingContentHorizontalLG * -1,
+                              marginRight:
+                                token.paddingContentHorizontalLG * -1,
+                            }}
+                          />
+                        )}
                       </PageAccessGuard>
-                    </AutoAdminPrimaryColorProvider>
-                  </BAIErrorBoundary>
-                </Suspense>
-                <ErrorBoundaryWithNullFallback>
-                  <PluginLoader />
-                </ErrorBoundaryWithNullFallback>
+                    </ErrorBoundaryWithNullFallback>
+                    <BAIErrorBoundary>
+                      <AutoAdminPrimaryColorProvider>
+                        <PageAccessGuard>
+                          <Outlet />
+                        </PageAccessGuard>
+                      </AutoAdminPrimaryColorProvider>
+                    </BAIErrorBoundary>
+                  </Suspense>
+                  <ErrorBoundaryWithNullFallback>
+                    <PluginLoader />
+                  </ErrorBoundaryWithNullFallback>
+                </BAIFlex>
               </BAIErrorBoundary>
             </BAIFlex>
           </BAIContentWithDrawerArea>
