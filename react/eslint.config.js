@@ -191,13 +191,15 @@ export default [
     //    and the `useSwitchProject` implementation.
     //  - ProjectScopeLayout.tsx — the URL→atom sync layer that converges the
     //    atom to the `:projectName` URL segment.
-    //  - WebUIHeader.tsx — the admin-mode-exit confirm flow, which must set
-    //    the atom AND navigate to a goBackPath-derived target in one step.
+    //  - WebUIHeaderProjectSelect.tsx — the admin-mode-exit confirm flow, which
+    //    must set the atom AND navigate to a goBackPath-derived target in one
+    //    step. Extracted out of WebUIHeader.tsx in FR-3414 so the header can
+    //    skip mounting it entirely on project-agnostic routes.
     files: [
       'src/hooks/useCurrentProject.tsx',
       'src/hooks/useRouteScope.ts',
       'src/components/MainLayout/ProjectScopeLayout.tsx',
-      'src/components/MainLayout/WebUIHeader.tsx',
+      'src/components/MainLayout/WebUIHeaderProjectSelect.tsx',
     ],
     rules: {
       'no-restricted-imports': [
