@@ -1401,6 +1401,7 @@
   },
   "environment": {
     "Action": "Aksiyon",
+    "AllProjects": "Tüm projeler",
     "AlreadyInstalledImage": "Zaten yüklü görüntü",
     "AppInfoDeleted": "Uygulama bilgileri başarıyla silindi.",
     "AppName": "Uygulama ismi",
@@ -1459,7 +1460,6 @@
     "ResourceLimitAppliesToNewSessionsOnly": "Minimum kaynak sınırı yalnızca yeni oluşturulan oturumlara uygulanır ve halihazırda çalışan oturumları etkilemez.",
     "ResourcePresets": "Kaynak Ön Ayarları",
     "SearchImages": "Görselleri arayın",
-    "SelectProjectToListImages": "İmajlarını listelemek için bir proje seçin.",
     "SelectedImagesAlreadyInstalled": "Seçili Görüntü(ler) zaten yüklü veya Yok. Lütfen tekrar kontrol edin.",
     "SelectedImagesNotInstalled": "Seçilen Görüntü(ler) yüklü değil. Lütfen tekrar kontrol edin.",
     "Status": "Durum",

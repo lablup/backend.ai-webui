@@ -14,7 +14,7 @@ import {
 } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
-import { ProjectContext, ProjectContextOrNull } from '../types/projectContext';
+import { ProjectContextOrNull } from '../types/projectContext';
 import AliasedImageDoubleTags from './AliasedImageDoubleTags';
 import ImageInstallModal from './ImageInstallModal';
 import ManageAppsModal from './ManageAppsModal';
@@ -28,16 +28,7 @@ import {
   VerticalAlignBottomOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import {
-  App,
-  Button,
-  Empty,
-  Skeleton,
-  Tag,
-  theme,
-  Tooltip,
-  Typography,
-} from 'antd';
+import { App, Button, Skeleton, Tag, theme, Tooltip, Typography } from 'antd';
 import type { ColumnType } from 'antd/es/table';
 import {
   filterOutEmpty,
@@ -84,18 +75,21 @@ interface ImageListProps {
   /**
    * Explicit project prop contract (ADR-0001, FR-3415). The Environments page
    * owns the (URL-persisted) choice; this component never reads the ambient
-   * current project. `null` means "nothing picked yet" — the list renders the
-   * selector plus a "pick a project" empty state, because the image scope
-   * argument has no cheap "all projects" form (see the ADR).
+   * current project.
+   *
+   * `null` is NOT an error state: the list then scopes to the whole DOMAIN
+   * (`domain:<domainName>`) and the project becomes an optional filter that
+   * narrows it. See ADR-0001 for why `domain:` and not `system:`.
    */
   project: ProjectContextOrNull;
   /**
-   * Reports the project the user picked in the in-list selector. The project
-   * scopes what this list SHOWS, so the selector is a content-scoped control
-   * and lives in this list's own filter row rather than in the page's card
-   * header (`.claude/rules/use-bai-card.md`).
+   * Reports the project the user picked — or `null` when the filter is
+   * cleared — in the in-list selector. The project narrows what this list
+   * SHOWS, so the selector is a content-scoped control and lives in this
+   * list's own filter row rather than in the page's card header
+   * (`.claude/rules/use-bai-card.md`).
    */
-  onChangeProject: (project: ProjectContext) => void;
+  onChangeProject: (project: ProjectContextOrNull) => void;
   style?: React.CSSProperties;
 }
 
@@ -109,6 +103,19 @@ const ImageList: React.FC<ImageListProps> = ({
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
 
+  // `image_nodes(scope_id:)` is NON-NULL, so there is no "omit it" form — but
+  // `ScopeField` accepts `<TYPE>:<ID>` for TYPE in system/domain/project/user
+  // (manager `api/gql_legacy/fields.py`). With no project filter the list
+  // therefore defaults to the caller's own DOMAIN: the widest scope this page
+  // may legitimately show, and an exact match for a domain admin's authority
+  // (`/admin/environment` is `access: 'admin'`). `system:` is deliberately NOT
+  // used — the manager derives it from the caller's own project memberships
+  // and raises `IndexError` for an admin who belongs to zero projects
+  // (`models/image/row.py`). See ADR-0001.
+  const scopeId = project
+    ? `project:${project.id}`
+    : `domain:${baiClient._config.domainName}`;
+
   const projectSelect = (
     <BAIFlex gap="xs" align="center" wrap="wrap">
       <Typography.Text type="secondary">{t('general.Project')}</Typography.Text>
@@ -117,58 +124,48 @@ const ImageList: React.FC<ImageListProps> = ({
           data-testid="environment-project-select"
           domain={baiClient._config.domainName}
           value={project?.id ?? undefined}
+          // An optional FILTER, not a required choice: clearing it puts the
+          // list back on the domain-wide default. antd routes the clear
+          // through `onChange` with no option, so an absent `projectInfo` IS
+          // the "cleared" signal.
+          allowClear
+          placeholder={t('environment.AllProjects')}
           style={{ minWidth: 180 }}
           onSelectProject={(projectInfo) => {
-            onChangeProject({
-              id: projectInfo.projectId,
-              name: projectInfo.projectName,
-            });
+            onChangeProject(
+              projectInfo
+                ? { id: projectInfo.projectId, name: projectInfo.projectName }
+                : null,
+            );
           }}
         />
       </Suspense>
     </BAIFlex>
   );
 
-  // The scoped query below cannot run without a project, so the unselected
-  // state is its own (query-free) branch. The selector is rendered in both
-  // branches from the single definition above.
-  if (!project) {
-    return (
-      <BAIFlex
-        direction="column"
-        align="stretch"
-        gap="sm"
-        style={{ flex: 1, ...style }}
-      >
-        <BAIFlex justify="between" gap="xs" wrap="wrap">
-          {projectSelect}
-        </BAIFlex>
-        <Empty
-          image={Empty.PRESENTED_IMAGE_SIMPLE}
-          description={t('environment.SelectProjectToListImages')}
-        />
-      </BAIFlex>
-    );
-  }
-
   return (
-    <ImageListInProject
+    <ImageListInScope
       project={project}
+      scopeId={scopeId}
       projectSelect={projectSelect}
       style={style}
     />
   );
 };
 
-interface ImageListInProjectProps {
-  project: ProjectContext;
-  /** The page-level project control, rendered inside the filter row. */
+interface ImageListInScopeProps {
+  /** Forwarded to the install modal, which owns its own `null` behavior. */
+  project: ProjectContextOrNull;
+  /** `project:<id>` when the filter is active, `domain:<name>` otherwise. */
+  scopeId: string;
+  /** The project filter control, rendered inside the filter row. */
   projectSelect: React.ReactNode;
   style?: React.CSSProperties;
 }
 
-const ImageListInProject: React.FC<ImageListInProjectProps> = ({
+const ImageListInScope: React.FC<ImageListInScopeProps> = ({
   project,
+  scopeId,
   projectSelect,
   style,
 }) => {
@@ -208,7 +205,7 @@ const ImageListInProject: React.FC<ImageListInProjectProps> = ({
   );
 
   const queryVariables: ImageListQuery$variables = {
-    scopeId: `project:${project.id}`,
+    scopeId,
     offset: baiPaginationOption.offset,
     first: baiPaginationOption.first,
     filter: imageFilter || undefined,

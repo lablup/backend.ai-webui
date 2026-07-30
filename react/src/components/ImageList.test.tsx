@@ -10,7 +10,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { App } from 'antd';
 import { NuqsTestingAdapter } from 'nuqs/adapters/testing';
-import { Suspense } from 'react';
+import { Suspense, useState } from 'react';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
 import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockEnvironment';
@@ -18,14 +18,17 @@ import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockE
 /**
  * Contract tests for the explicit project prop (ADR-0001, FR-3415).
  *
- * The image list is scoped by a `ScopeField` argument; the scope must come
- * from the project the Environments page selected, never from the ambient
+ * The image list is scoped by a `ScopeField` argument. With no project it
+ * scopes to the whole DOMAIN — the list always loads, there is no "pick a
+ * project first" empty state — and a chosen project narrows it. The scope must
+ * come from the props the Environments page passes, never from the ambient
  * current project.
  *
  * The project selector lives HERE rather than in the page's card header: it
  * filters what this list shows, which makes it a content-scoped control
  * (`.claude/rules/use-bai-card.md`). The list still never decides the project
- * itself — the value arrives by prop and every change is reported upward.
+ * itself — the value arrives by prop and every change (including clearing the
+ * filter) is reported upward.
  *
  * External behavior only: props in → query variables and callbacks out.
  */
@@ -78,28 +81,45 @@ vi.mock('./ManageAppsModal', () => ({ default: () => null }));
 vi.mock('./ImageInstallModal', () => ({ default: () => null }));
 vi.mock('./TableColumnsSettingModal', () => ({ default: () => null }));
 
-// The selector is reduced to a button reporting a fixed choice through the
-// same `onSelectProject` surface the real component uses.
+// The selector is reduced to two buttons driving the same `onSelectProject`
+// surface the real component uses: picking a project, and CLEARING the filter.
+// antd reports a cleared single select as `onChange(undefined, undefined)`, so
+// the real `ProjectSelect` forwards `undefined` — reproduced faithfully here.
 vi.mock('./ProjectSelectForAdminPage', async () => {
   const React = await import('react');
   return {
     default: (props: any) =>
       React.createElement(
-        'button',
-        {
-          'data-testid': 'mock-project-select',
-          'data-value': props.value ?? '',
-          type: 'button',
-          onClick: () =>
-            props.onSelectProject?.({
-              label: 'project-two',
-              value: 'p2',
-              projectId: 'p2',
-              projectName: 'project-two',
-              projectResourcePolicy: null,
-            }),
-        },
-        'select-project',
+        'div',
+        null,
+        React.createElement(
+          'button',
+          {
+            'data-testid': 'mock-project-select',
+            'data-value': props.value ?? '',
+            'data-allow-clear': String(!!props.allowClear),
+            'data-placeholder': props.placeholder ?? '',
+            type: 'button',
+            onClick: () =>
+              props.onSelectProject?.({
+                label: 'project-two',
+                value: 'p2',
+                projectId: 'p2',
+                projectName: 'project-two',
+                projectResourcePolicy: null,
+              }),
+          },
+          'select-project',
+        ),
+        React.createElement(
+          'button',
+          {
+            'data-testid': 'mock-project-clear',
+            type: 'button',
+            onClick: () => props.onSelectProject?.(undefined),
+          },
+          'clear-project',
+        ),
       ),
   };
 });
@@ -178,16 +198,103 @@ describe('ImageList project scope contract (ADR-0001, FR-3415)', () => {
     });
   });
 
-  it('shows the selector with an empty state — and runs no scoped query — until a project is picked', async () => {
+  it('defaults to the whole domain when no project is selected', async () => {
     const { environment } = renderList(null);
 
-    expect(
-      await screen.findByText('environment.SelectProjectToListImages'),
-    ).toBeInTheDocument();
-    expect(screen.getByTestId('mock-project-select')).toHaveAttribute(
+    await waitFor(() => {
+      expect(environment.mock.getAllOperations().length).toBeGreaterThan(0);
+    });
+    const operation = environment.mock.getMostRecentOperation();
+    expect(operation.request.node.params.name).toBe('ImageListQuery');
+    // `domain:` and not `system:`: the manager computes `system:` from the
+    // caller's own project memberships and crashes for an admin with none.
+    expect(operation.request.variables.scopeId).toBe('domain:default');
+    expect(operation.request.variables.scopeId).not.toContain(
+      'ambient-project-id',
+    );
+  });
+
+  it('renders the list — not an empty state — with no project selected', async () => {
+    renderList(null, vi.fn(), { resolveQuery: true });
+
+    // The control row and the table both render; nothing is gated behind a
+    // project choice.
+    expect(await screen.findByTestId('mock-project-select')).toHaveAttribute(
       'data-value',
       '',
     );
-    expect(environment.mock.getAllOperations()).toHaveLength(0);
+    expect(screen.getByText('environment.InstallImage')).toBeInTheDocument();
+    await waitFor(() => {
+      // Header row + at least one generated data row.
+      expect(screen.getAllByRole('row').length).toBeGreaterThan(1);
+    });
+  });
+
+  it('offers the project as an optional, clearable filter labelled for the domain-wide view', async () => {
+    renderList(null, vi.fn(), { resolveQuery: true });
+
+    const select = await screen.findByTestId('mock-project-select');
+    expect(select).toHaveAttribute('data-allow-clear', 'true');
+    expect(select).toHaveAttribute(
+      'data-placeholder',
+      'environment.AllProjects',
+    );
+  });
+
+  it('reports a cleared filter upward as null so the scope can fall back to the domain', async () => {
+    const user = userEvent.setup();
+    const { onChangeProject } = renderList(
+      { id: 'chosen-project-id', name: 'chosen-project-name' },
+      vi.fn(),
+      { resolveQuery: true },
+    );
+
+    await user.click(await screen.findByTestId('mock-project-clear'));
+
+    expect(onChangeProject).toHaveBeenCalledWith(null);
+  });
+
+  it('switches the scope back to the domain when the filter is cleared', async () => {
+    const environment: RelayMockEnvironment = createMockEnvironment();
+    // A queued resolver is consumed by ONE operation, so queue several and
+    // record the scope each fetch actually asked for.
+    const observedScopes: string[] = [];
+    Array.from({ length: 4 }).forEach(() => {
+      environment.mock.queueOperationResolver((operation) => {
+        observedScopes.push(String(operation.request.variables.scopeId));
+        return MockPayloadGenerator.generate(operation);
+      });
+    });
+    // Stand-in for the page: it owns the value and applies whatever the list
+    // reports, exactly as `EnvironmentPage`'s URL state does.
+    const Harness = () => {
+      const [project, setProject] = useState<{
+        id: string;
+        name: string;
+      } | null>({ id: 'chosen-project-id', name: 'chosen-project-name' });
+      return <ImageList project={project} onChangeProject={setProject} />;
+    };
+    const user = userEvent.setup();
+    render(
+      <RelayEnvironmentProvider environment={environment}>
+        <NuqsTestingAdapter searchParams="">
+          <App>
+            <Suspense fallback={null}>
+              <Harness />
+            </Suspense>
+          </App>
+        </NuqsTestingAdapter>
+      </RelayEnvironmentProvider>,
+    );
+
+    await waitFor(() => {
+      expect(observedScopes).toContain('project:chosen-project-id');
+    });
+
+    await user.click(await screen.findByTestId('mock-project-clear'));
+
+    await waitFor(() => {
+      expect(observedScopes).toContain('domain:default');
+    });
   });
 });
