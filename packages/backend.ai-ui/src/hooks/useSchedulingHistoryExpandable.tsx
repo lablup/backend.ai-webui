@@ -47,12 +47,6 @@ const computeExpandedRowKeysForMode = (
       : dataSource.filter(shouldExpandByDefault).map((record) => record.id);
 
 export interface UseSchedulingHistoryExpandableResult {
-  /**
-   * The effective master mode (the controlled `mode`, or the default
-   * "errors-only" when uncontrolled). Callers use this to filter the nested
-   * sub-step table to non-success rows when the mode is `errors-only`.
-   */
-  mode: SchedulingHistoryExpandMode;
   expandedRowKeys: React.Key[];
   onExpandedRowsChange: (expandedKeys: readonly React.Key[]) => void;
   /**
@@ -186,7 +180,6 @@ export const useSchedulingHistoryExpandable = <
     ) : null;
 
   return {
-    mode,
     expandedRowKeys,
     onExpandedRowsChange,
     expandColumnTitle,
