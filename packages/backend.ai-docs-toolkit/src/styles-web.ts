@@ -1052,7 +1052,14 @@ body.bai-drawer-open .bai-scrim {
      bubbling out and scrolling the article. Same defense applied to
      the mobile drawer override below. */
   overscroll-behavior: contain;
-  padding: 10px 8px 24px;
+  /* FR-3420: padding-top is the sole owner of the gap between the
+     version row's separator and the first nav item, and matches the
+     14px on either side of that separator. .doc-sidebar-intro's
+     margin-top is zeroed for this reason — when the gap was a sum of
+     this padding (10px) plus that margin (6px) it was easy to change one
+     and silently shift the rhythm. The 8px sides are load-bearing for
+     the rail grid (8 + 6 group margin + 10 summary padding = 24px). */
+  padding: 14px 8px 24px;
 }
 
 .doc-sidebar__scroll::-webkit-scrollbar {
@@ -1192,7 +1199,20 @@ body.bai-drawer-open .bai-scrim {
   justify-content: space-between;
   gap: 10px;
   flex: 0 0 auto;
-  padding: 14px 24px 10px;
+  /* FR-3420: symmetric vertical padding so the space above the switcher
+     pill equals the space between the pill and the ::after separator
+     below. It used to be 14px/10px, which pulled the rule toward the
+     pill and made the version block look top-heavy against the 16px
+     that sat on the other side of the rule.
+
+     The three gaps in this rail are now all 14px, measured box to box
+     (the convention .doc-toc__divider already follows with its
+     symmetric 18px margins):
+       sider top    -> pill top          14px  (this padding-top)
+       pill bottom  -> separator         14px  (this padding-bottom)
+       separator    -> first nav item    14px  (.doc-sidebar__scroll)
+     Horizontal padding stays 24px — see the rail-grid note below. */
+  padding: 14px 24px;
   /* FR-3265: positioning anchor for the .bai-select__list--version
      popup injected by interactions.js. Also the containing block for
      the ::after separator below. */
@@ -1304,7 +1324,11 @@ body.bai-drawer-open .bai-scrim {
   display: flex;
   align-items: center;
   gap: 9px;
-  margin: 6px 6px 4px;
+  /* FR-3420: no margin-top — .doc-sidebar__scroll's padding-top owns the
+     gap from the version separator down to this first item, so the rail's
+     three 14px gaps each come from exactly one declaration. The 6px
+     sides are the rail-grid nudge (see .doc-sidebar-group) and stay. */
+  margin: 0 6px 4px;
   padding: 8px 10px;
   border-radius: 6px;
   font-family: var(--bai-font-sans);

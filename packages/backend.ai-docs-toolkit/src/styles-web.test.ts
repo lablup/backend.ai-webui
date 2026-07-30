@@ -13,6 +13,9 @@
  *     inset their content by centering-gutter + --bai-rail-inset, so the
  *     brand and the banner icon stay on the sider's grid line at every
  *     viewport width instead of shifting as the cap is crossed.
+ *   - The version row's separator: an inset ::after matching
+ *     .doc-toc__divider, rather than a border spanning the sider edge to
+ *     edge, plus the uniform 14px rhythm around it.
  */
 
 import { test } from "node:test";
@@ -180,4 +183,35 @@ test("generateWebsiteStyles — full-bleed bars hold the rail grid at every widt
       `${selector} must stay full-bleed (no max-width) so its background spans the viewport`,
     );
   }
+});
+
+test("generateWebsiteStyles — the rail's three vertical gaps are uniform", () => {
+  const css = styles();
+
+  // The version block used to read top-heavy: 14px above the switcher pill,
+  // 10px from the pill down to the separator, then 16px from the separator
+  // to the first nav item. All three are now 14px, box to box, and each
+  // comes from exactly one declaration so none can drift alone.
+  const row = ruleBody(css, ".doc-sidebar-version");
+  assert.match(
+    row,
+    /padding:\s*14px 24px;/,
+    "symmetric padding makes the gap above the pill equal the gap below it",
+  );
+
+  const scroll = ruleBody(css, ".doc-sidebar__scroll");
+  assert.match(
+    scroll,
+    /padding:\s*14px 8px 24px;/,
+    "the scrollport's padding-top is the sole owner of the separator -> first item gap",
+  );
+
+  // If the intro regained a top margin the gap would become a sum again
+  // (the exact bug this replaced), so pin it to zero.
+  const intro = ruleBody(css, ".doc-sidebar-intro");
+  assert.match(
+    intro,
+    /margin:\s*0 6px 4px;/,
+    "the first item must not add its own top margin on top of the scrollport padding",
+  );
 });
