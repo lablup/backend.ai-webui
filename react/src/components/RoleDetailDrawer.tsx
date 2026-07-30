@@ -4,7 +4,6 @@
  */
 import { RoleDetailDrawerFragment$key } from '../__generated__/RoleDetailDrawerFragment.graphql';
 import { RoleDetailDrawerRefetchQuery } from '../__generated__/RoleDetailDrawerRefetchQuery.graphql';
-import BAIErrorBoundary from './BAIErrorBoundary';
 import RoleDetailDrawerContent from './RoleDetailDrawerContent';
 import RoleFormModal from './RoleFormModal';
 import { Drawer, Skeleton, Tooltip, Typography, theme } from 'antd';
@@ -48,7 +47,6 @@ const RoleDetailDrawer: React.FC<RoleDetailDrawerProps> = ({
     graphql`
       fragment RoleDetailDrawerFragment on Role
       @refetchable(queryName: "RoleDetailDrawerRefetchQuery") {
-        id
         name
         source
         ...RoleDetailDrawerContentFragment
@@ -80,52 +78,44 @@ const RoleDetailDrawer: React.FC<RoleDetailDrawerProps> = ({
       }
       {...drawerProps}
     >
-      {/* A failing detail query (e.g. a field this manager version does not
-          serve) stays inside the drawer instead of unmounting the role list
-          behind it. Keyed on the role so reopening a different row clears a
-          previous role's error. FR-3406. */}
-      <BAIErrorBoundary resetKeys={[role?.id]}>
-        <Suspense fallback={<Skeleton active />}>
-          {role && (
-            <BAIFlex direction="column" gap={'sm'} align="stretch">
-              <BAIFlex
-                direction="row"
-                justify="between"
-                align="start"
-                style={{ alignSelf: 'stretch' }}
-                gap={'sm'}
+      <Suspense fallback={<Skeleton active />}>
+        {role && (
+          <BAIFlex direction="column" gap={'sm'} align="stretch">
+            <BAIFlex
+              direction="row"
+              justify="between"
+              align="start"
+              style={{ alignSelf: 'stretch' }}
+              gap={'sm'}
+            >
+              <Typography.Title
+                level={3}
+                copyable
+                style={{ margin: 0, lineHeight: '1.6em' }}
               >
-                <Typography.Title
-                  level={3}
-                  copyable
-                  style={{ margin: 0, lineHeight: '1.6em' }}
-                >
-                  {role.name}
-                </Typography.Title>
-                {role.source === 'CUSTOM' && (
-                  <Tooltip title={t('rbac.EditRole')}>
-                    <BAIButton
-                      size="large"
-                      icon={
-                        <SquarePenIcon style={{ color: token.colorInfo }} />
-                      }
-                      onClick={() => setIsEditModalOpen(true)}
-                    />
-                  </Tooltip>
-                )}
-              </BAIFlex>
-              <RoleDetailDrawerContent roleNodeFrgmt={role} />
-              <RoleFormModal
-                open={isEditModalOpen}
-                roleNodeFrgmt={role}
-                onRequestClose={() => {
-                  setIsEditModalOpen(false);
-                }}
-              />
+                {role.name}
+              </Typography.Title>
+              {role.source === 'CUSTOM' && (
+                <Tooltip title={t('rbac.EditRole')}>
+                  <BAIButton
+                    size="large"
+                    icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
+                    onClick={() => setIsEditModalOpen(true)}
+                  />
+                </Tooltip>
+              )}
             </BAIFlex>
-          )}
-        </Suspense>
-      </BAIErrorBoundary>
+            <RoleDetailDrawerContent roleNodeFrgmt={role} />
+            <RoleFormModal
+              open={isEditModalOpen}
+              roleNodeFrgmt={role}
+              onRequestClose={() => {
+                setIsEditModalOpen(false);
+              }}
+            />
+          </BAIFlex>
+        )}
+      </Suspense>
     </Drawer>
   );
 };

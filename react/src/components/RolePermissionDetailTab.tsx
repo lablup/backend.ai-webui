@@ -4,7 +4,6 @@
  */
 import { RolePermissionDetailTabMatrixQuery } from '../__generated__/RolePermissionDetailTabMatrixQuery.graphql';
 import { RolePermissionDetailTab_roleScopeFragment$key } from '../__generated__/RolePermissionDetailTab_roleScopeFragment.graphql';
-import BAIErrorBoundary from './BAIErrorBoundary';
 import ScopedRolePermissionCard from './ScopedRolePermissionCard';
 import { Empty, Skeleton } from 'antd';
 import { BAICard, BAIFlex } from 'backend.ai-ui';
@@ -79,17 +78,13 @@ const RolePermissionDetailTab: React.FC<RolePermissionDetailTabProps> = ({
   return (
     <BAIFlex direction="column" align="stretch" gap="md">
       <Suspense fallback={<Skeleton active />}>
-        {/* Each card issues its own query, so contain a failing one to its own
-            card — the remaining scope types, the role metadata, and the
-            Assignments tab keep working. */}
         {_.map(scopeTypes, (scopeType) => (
-          <BAIErrorBoundary key={scopeType} resetKeys={[scopeType]}>
-            <ScopedRolePermissionCard
-              roleNodeFrgmt={role}
-              rbacPermissionMatrixFrgmt={rbacPermissionMatrix ?? []}
-              scopeType={scopeType}
-            />
-          </BAIErrorBoundary>
+          <ScopedRolePermissionCard
+            key={scopeType}
+            roleNodeFrgmt={role}
+            rbacPermissionMatrixFrgmt={rbacPermissionMatrix ?? []}
+            scopeType={scopeType}
+          />
         ))}
       </Suspense>
     </BAIFlex>
