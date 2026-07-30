@@ -35,6 +35,7 @@ import {
   BAIPropertyFilter,
   BAIResourceNumberWithIcon,
   BAITableAstryx,
+  BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
   badgeVariantForTagColor,
   filterOutEmpty,
@@ -669,15 +670,21 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
       />
       {/* No project is handed down: installing an image enqueues a session,
           and the modal asks for that session's own project and resource group.
-          The list's project filter only decides which images are on screen. */}
-      <ImageInstallModal
-        open={isOpenInstallModal}
-        onRequestClose={() => {
-          setIsOpenInstallModal(false);
-        }}
-        setInstallingImages={setInstallingImages}
-        selectedRows={selectedRows}
-      />
+          The list's project filter only decides which images are on screen.
+          Wrapped in `BAIUnmountAfterClose` so the modal keeps its exit
+          animation instead of vanishing instantly, while still fully
+          unmounting between opens - which is what resets the project /
+          resource-group selectors on every fresh open. */}
+      <BAIUnmountAfterClose>
+        <ImageInstallModal
+          open={isOpenInstallModal}
+          onRequestClose={() => {
+            setIsOpenInstallModal(false);
+          }}
+          setInstallingImages={setInstallingImages}
+          selectedRows={selectedRows}
+        />
+      </BAIUnmountAfterClose>
       <TableColumnsSettingModal
         open={visibleColumnSettingModal}
         onRequestClose={(values) => {

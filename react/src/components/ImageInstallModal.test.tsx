@@ -9,6 +9,8 @@ import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { App } from 'antd';
+import { BAIUnmountAfterClose } from 'backend.ai-ui';
+import { useState } from 'react';
 
 /**
  * Contract tests for the install session's explicit target (ADR-0001,
@@ -36,17 +38,51 @@ import { App } from 'antd';
 // Typed with the real `install(name, architecture, resource, registry?,
 // sessionName?)` signature so `mock.calls[i][4]` (the generated session name)
 // type-checks below.
-const mockInstall = vi.fn(
-  (
-    _name?: string,
-    _architecture?: string,
-    _resource?: unknown,
-    _registry?: string,
-    _sessionName?: string,
-  ) => Promise.resolve({ sessionId: 'installed-session-id' }),
-);
+const defaultInstallImpl = (
+  _name?: string,
+  _architecture?: string,
+  _resource?: unknown,
+  _registry?: string,
+  _sessionName?: string,
+) => Promise.resolve({ sessionId: 'installed-session-id' });
+
+// Typed with the real `install(name, architecture, resource, registry?,
+// sessionName?)` signature so `mock.calls[i][4]` (the generated session name)
+// type-checks below.
+const mockInstall = vi.fn(defaultInstallImpl);
 const mockUpsertSessionNotification = vi.fn(() => Promise.resolve([]));
 const mockUpsertNotification = vi.fn();
+
+// Lets a test hold an install request open (pending) and resolve/reject it on
+// demand, to assert the modal's in-flight behaviour (Bug 1: it must stay open
+// and show loading/close-guard state until the request settles).
+const createDeferred = <T,>() => {
+  let resolve!: (value: T) => void;
+  let reject!: (reason?: unknown) => void;
+  const promise = new Promise<T>((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
+  return { promise, resolve, reject };
+};
+
+// jsdom does not run real CSS transitions, so antd's rc-motion (which the
+// Modal's close animation depends on to call `afterClose`, the signal
+// `BAIUnmountAfterClose` waits on before unmounting - Bug 2) never receives a
+// `transitionend` event and stays stuck in the "leave-active" phase forever.
+// Deliberately scoped to a single call inside a `waitFor` retry (not a
+// standing `MutationObserver` in `setupTests.ts`): synthesizing the event
+// unconditionally on every render was found to also race real interactive
+// clicks elsewhere in this file. Called from inside `waitFor`, it only ever
+// nudges elements that are ACTUALLY mid-transition at that poll tick.
+const ACTIVE_TRANSITION_CLASS_RE = /(?:-(?:leave|enter|appear))-active(?:\s|$)/;
+const flushPendingCloseTransitions = () => {
+  document.querySelectorAll('[class]').forEach((el) => {
+    if (ACTIVE_TRANSITION_CLASS_RE.test(el.className)) {
+      el.dispatchEvent(new Event('transitionend', { bubbles: true }));
+    }
+  });
+};
 
 vi.mock('react-i18next', async () => {
   const React = await import('react');
@@ -518,5 +554,186 @@ describe('ImageInstallModal session notification contract (FR-3415)', () => {
     const [successCreations] = mockUpsertSessionNotification.mock
       .calls[0] as any[];
     expect(successCreations[0].value.sessionName).toBe(installSessionName);
+  });
+});
+
+/**
+ * In-flight contract (FR-3415 bug fix): the modal used to call
+ * `onRequestClose()` synchronously the instant Install was clicked, before
+ * the install requests were even issued - so it vanished with no indication
+ * anything was happening. It must now stay open, show a loading OK button,
+ * and refuse to be dismissed until the install requests settle.
+ */
+describe('ImageInstallModal in-flight behaviour while installing (FR-3415)', () => {
+  beforeEach(() => {
+    // `mockClear()` alone leaves any queued `mockImplementationOnce` /
+    // `mockRejectedValueOnce` from a previous (possibly failed) test in the
+    // queue, which would silently steal the next test's Install click. Reset
+    // all the way back to the shared default implementation instead.
+    mockInstall.mockReset();
+    mockInstall.mockImplementation(defaultInstallImpl);
+    mockUpsertSessionNotification.mockClear();
+    mockUpsertNotification.mockClear();
+  });
+
+  it('keeps the modal open while the install request is pending, and only closes once it settles', async () => {
+    const user = userEvent.setup();
+    const deferred = createDeferred<{ sessionId: string }>();
+    mockInstall.mockImplementationOnce(() => deferred.promise);
+    const { onRequestClose } = renderModal();
+
+    await chooseTargetsAndInstall(user);
+
+    await waitFor(() => expect(mockInstall).toHaveBeenCalledTimes(1));
+    // Still pending - must not have closed yet.
+    expect(onRequestClose).not.toHaveBeenCalled();
+
+    deferred.resolve({ sessionId: 'installed-session-id' });
+
+    await waitFor(() => {
+      expect(onRequestClose).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('shows the OK button in a loading state while pending, and clears it once settled', async () => {
+    const user = userEvent.setup();
+    const deferred = createDeferred<{ sessionId: string }>();
+    mockInstall.mockImplementationOnce(() => deferred.promise);
+    renderModal();
+
+    await user.click(await screen.findByTestId('mock-project-select'));
+    await user.click(screen.getByTestId('mock-resource-group-option-alpha-rg'));
+    expect(installButton()).not.toHaveClass('ant-btn-loading');
+
+    await user.click(screen.getByText('environment.Install'));
+
+    await waitFor(() => {
+      expect(installButton()).toHaveClass('ant-btn-loading');
+    });
+
+    deferred.resolve({ sessionId: 'installed-session-id' });
+
+    await waitFor(() => {
+      expect(installButton()).not.toHaveClass('ant-btn-loading');
+    });
+  });
+
+  it('disables the close affordances (close icon, Cancel button) while pending', async () => {
+    const user = userEvent.setup();
+    const deferred = createDeferred<{ sessionId: string }>();
+    mockInstall.mockImplementationOnce(() => deferred.promise);
+    renderModal();
+
+    // Before installing: closable and Cancel are both available.
+    expect(screen.getByRole('button', { name: 'Close' })).toBeInTheDocument();
+    expect(screen.getByText('Cancel').closest('button')).toBeEnabled();
+
+    await chooseTargetsAndInstall(user);
+
+    await waitFor(() => expect(mockInstall).toHaveBeenCalledTimes(1));
+    expect(
+      screen.queryByRole('button', { name: 'Close' }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByText('Cancel').closest('button')).toBeDisabled();
+
+    deferred.resolve({ sessionId: 'installed-session-id' });
+
+    await waitFor(() => {
+      expect(mockUpsertSessionNotification).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('still closes and clears the in-flight state when every install fails', async () => {
+    const user = userEvent.setup();
+    mockInstall.mockRejectedValueOnce(new Error('install failed'));
+    const { onRequestClose } = renderModal();
+
+    await chooseTargetsAndInstall(user);
+
+    await waitFor(() => {
+      expect(onRequestClose).toHaveBeenCalledTimes(1);
+    });
+    // No session succeeded, so the standard notification must not fire.
+    expect(mockUpsertSessionNotification).not.toHaveBeenCalled();
+    // In-flight state cleared: no stray loading button left behind.
+    expect(installButton()).not.toHaveClass('ant-btn-loading');
+  });
+});
+
+/**
+ * Exit-animation + state-reset contract (FR-3415 bug fix): the shell used to
+ * `return null` the instant `open` went false, which unmounted the whole
+ * modal synchronously and skipped antd's exit animation. The fix wraps the
+ * modal in `BAIUnmountAfterClose` (done at the call site, `ImageList.tsx`) so
+ * the close animation gets to run - and because that wrapper still fully
+ * unmounts the component once the animation completes, the project /
+ * resource-group selectors reset on every fresh open, same as before.
+ */
+describe('ImageInstallModal exit animation + state reset (FR-3415)', () => {
+  beforeEach(() => {
+    mockInstall.mockClear();
+    mockUpsertSessionNotification.mockClear();
+    mockUpsertNotification.mockClear();
+  });
+
+  const UnmountAfterCloseHarness: React.FC = () => {
+    const [open, setOpen] = useState(true);
+    const [, setInstallingImages] = useState<string[]>([]);
+    return (
+      <App>
+        <button
+          data-testid="reopen-install-modal"
+          type="button"
+          onClick={() => setOpen(true)}
+        >
+          reopen
+        </button>
+        <BAIUnmountAfterClose>
+          <ImageInstallModal
+            open={open}
+            selectedRows={[IMAGE]}
+            setInstallingImages={setInstallingImages}
+            onRequestClose={() => setOpen(false)}
+          />
+        </BAIUnmountAfterClose>
+      </App>
+    );
+  };
+
+  it('resets both selectors on reopen after being closed via BAIUnmountAfterClose', async () => {
+    const user = userEvent.setup();
+    render(<UnmountAfterCloseHarness />);
+
+    await user.click(await screen.findByTestId('mock-project-select'));
+    await user.click(screen.getByTestId('mock-resource-group-option-alpha-rg'));
+    expect(screen.getByTestId('mock-project-select')).toHaveAttribute(
+      'data-value',
+      'alpha-project-id',
+    );
+    expect(screen.getByTestId('mock-resource-group-select')).toHaveAttribute(
+      'data-value',
+      'alpha-rg',
+    );
+
+    // Close via Cancel and wait for `BAIUnmountAfterClose` to fully unmount
+    // the modal after its exit animation.
+    await user.click(screen.getByText('Cancel').closest('button')!);
+    await waitFor(() => {
+      flushPendingCloseTransitions();
+      expect(
+        screen.queryByTestId('mock-project-select'),
+      ).not.toBeInTheDocument();
+    });
+
+    // Reopen: a fresh mount must show both selectors empty again, not the
+    // previous choices.
+    await user.click(screen.getByTestId('reopen-install-modal'));
+    const projectSelect = await screen.findByTestId('mock-project-select');
+    expect(projectSelect).toHaveAttribute('data-value', '');
+    expect(screen.getByTestId('mock-resource-group-select')).toHaveAttribute(
+      'data-value',
+      '',
+    );
+    expect(installButton()).toBeDisabled();
   });
 });
