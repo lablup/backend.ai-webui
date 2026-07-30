@@ -122,8 +122,7 @@ export interface BAIColumnGroupType<RecordType = AnyObject> extends Omit<
  * Array type for BAI table columns
  */
 export type BAIColumnsType<RecordType = any> = (
-  | BAIColumnGroupType<RecordType>
-  | BAIColumnType<RecordType>
+  BAIColumnGroupType<RecordType> | BAIColumnType<RecordType>
 )[];
 
 /**
@@ -671,10 +670,6 @@ const useStyles = createStyles(({ token, css }) => ({
     thead.ant-table-thead > tr > th.ant-table-cell {
       font-weight: 500;
       color: ${token.colorTextTertiary};
-    }
-    & .ant-table-expanded-row > .ant-table-cell,
-    & .ant-table-expanded-row:hover > .ant-table-cell {
-      background: ${token.colorFillSecondary};
     }
   `,
   zeroWithSelectionColumn: css`
