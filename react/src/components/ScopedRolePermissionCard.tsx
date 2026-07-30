@@ -14,6 +14,7 @@ import {
   computeRBACGrantState,
   type RBACGrantState,
 } from '../helper/rbacGrantState';
+import { narrowAndPageScopes } from '../helper/rbacScopePaging';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import RoleScopePermissionEditModal, {
@@ -58,12 +59,11 @@ import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 const PERMISSION_FETCH_LIMIT = 500;
 
 /**
- * Upper bound of scope rows fetched per card on managers without
- * `EntityFilter.scopeType` (< 26.8.0), where the card takes the role's whole
- * scope list in one page and narrows/pages it client-side. A role holding more
- * scopes than this would show a truncated list on those managers. Note the
- * fetch is per card, so each scope type the permission matrix reports costs one
- * page of this size — see `narrowAndPageScopes`.
+ * Upper bound of scope rows fetched per card when the server cannot filter
+ * `Role.scopes` by scope type (see `narrowAndPageScopes`) — one page of this
+ * size per card, i.e. per scope type the permission matrix reports. A role
+ * holding more scopes than this shows a truncated list, and a truncated page
+ * count, on those managers.
  */
 const SCOPE_FETCH_LIMIT = 500;
 
@@ -83,22 +83,15 @@ type ScopeRowNode = NonNullable<
 >['node'];
 
 /**
- * Narrows a role's whole scope list to one scope type and pages it locally —
- * the fallback for managers without `EntityFilter.scopeType` (< 26.8.0), which
- * cannot do either server-side. `scopeCount` counts the type's rows rather than
- * the role's, since the server's `count` covers every type at once.
+ * Scope arguments for the fallback path: take one bounded page of every scope
+ * the role holds. Module-level so a client-side page change does not mint a new
+ * `queryVariables` identity and flash the table's `loading` state on a page turn
+ * that issues no request.
  */
-function narrowAndPageScopes(
-  scopes: ScopeRowNode[],
-  scopeType: RBACElementType,
-  { offset, limit }: { offset: number; limit: number },
-): { scopeRows: ScopeRowNode[]; scopeCount: number } {
-  const scopesOfType = scopes.filter((scope) => scope.scopeType === scopeType);
-  return {
-    scopeRows: scopesOfType.slice(offset, offset + limit),
-    scopeCount: scopesOfType.length,
-  };
-}
+const FALLBACK_SCOPE_QUERY_ARGS: Pick<
+  ScopedRolePermissionCardQuery['variables'],
+  'scopeFilter' | 'scopeLimit' | 'scopeOffset'
+> = { scopeFilter: null, scopeLimit: SCOPE_FETCH_LIMIT, scopeOffset: 0 };
 
 export interface ScopedRolePermissionCardProps {
   roleNodeFrgmt: ScopedRolePermissionCardFragment$key;
@@ -115,9 +108,8 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
-  // `EntityFilter.scopeType` / `scopeId` only exist on managers >= 26.8.0.
-  // Older ones reject the whole query, which used to take the enclosing page
-  // down with it. FR-3406.
+  // Older managers reject `EntityFilter.scopeType` / `scopeId` outright, and the
+  // failing query took the enclosing page down with it. FR-3406.
   const supportsScopeFilter = baiClient.supports('rbac-entity-scope-filter');
 
   const role = useFragment(
@@ -204,8 +196,7 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
       : [];
 
   // Who narrows and pages `Role.scopes` — one decision, so the three arguments
-  // move together. Without `EntityFilter` support the server can do neither and
-  // the card takes one bounded page to work over locally.
+  // move together.
   const scopeQueryArgs = supportsScopeFilter
     ? {
         scopeFilter: {
@@ -215,7 +206,7 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
         scopeLimit: baiPaginationOption.limit,
         scopeOffset: baiPaginationOption.offset,
       }
-    : { scopeFilter: null, scopeLimit: SCOPE_FETCH_LIMIT, scopeOffset: 0 };
+    : FALLBACK_SCOPE_QUERY_ARGS;
 
   const queryVariables: ScopedRolePermissionCardQuery['variables'] = {
     roleId: toLocalId(role.id),
@@ -324,9 +315,8 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
     (data.adminRole?.scopes?.edges ?? []).map((edge) => edge?.node),
   );
 
-  // This card's rows, and how many rows of its scope type exist in total. The
-  // server-filtered page *is* the row set; otherwise both come from narrowing
-  // and paging the role's whole scope list here, mirroring `scopeQueryArgs`.
+  // Row set and total for this card — branches with `scopeQueryArgs` and must
+  // change with it. `scopeCount` is the type's row count, not the role's.
   const { scopeRows, scopeCount } = supportsScopeFilter
     ? {
         scopeRows: fetchedScopes,
