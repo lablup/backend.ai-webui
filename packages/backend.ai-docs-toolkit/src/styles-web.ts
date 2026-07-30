@@ -1018,7 +1018,25 @@ body.bai-drawer-open .bai-scrim {
   flex-direction: column;
   overflow: hidden;
   border-right: 1px solid var(--bai-border);
-  background: var(--bai-bg-sider);
+  /* FR-3420: the in-flow rail carries no surface tint of its own — the
+     page is one continuous surface and the border-right above (paired
+     with .doc-toc's border-left) is what separates the three columns.
+
+     It used to use --bai-bg-sider, which is only 3/255 away from
+     --bai-bg. While the shell was full-bleed that tint was hidden
+     against the viewport edge, but once the shell is capped and centered
+     the rail detaches from the edge and the tint becomes a band with no
+     boundary on its left — too weak to read as a deliberate rail, too
+     strong to read as nothing. Dropping it is the treatment Fumadocs,
+     Tailwind and the React docs use. The alternative (commit to the tint
+     and give the shell a real outer edge on a recessed canvas) needs a
+     new canvas token and changes every viewport, so it stays a separate
+     decision.
+
+     The ≤880px drawer keeps --bai-bg-sider: there the sider is a fixed
+     overlay floating above the article with its own shadow, so it does
+     want a surface distinct from the content beneath it. */
+  background: var(--bai-bg);
 }
 
 /* The internal scrollport. Holds the synthetic Introduction entry +

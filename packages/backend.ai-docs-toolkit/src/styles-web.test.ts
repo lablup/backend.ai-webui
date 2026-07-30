@@ -6,6 +6,9 @@
  * Coverage:
  *   - The ultrawide shell cap: --bai-layout-max is defined and .doc-page is
  *     capped and centered by it.
+ *   - The flat rail: the in-flow sider shares the page surface (its old
+ *     3/255 tint became an unbounded band once the shell was centered),
+ *     while the mobile drawer overlay keeps a surface of its own.
  *   - The rail grid: the two full-bleed sticky bars (topbar, version banner)
  *     inset their content by centering-gutter + --bai-rail-inset, so the
  *     brand and the banner icon stay on the sider's grid line at every
@@ -17,6 +20,15 @@ import assert from "node:assert/strict";
 
 import { generateWebsiteStyles } from "./styles-web.js";
 
+/**
+ * The stylesheet is heavily commented, and those comments name the very
+ * tokens these tests assert on. Matching against raw CSS would let a
+ * comment satisfy an assertion — so every test works on stripped output.
+ */
+function styles(): string {
+  return generateWebsiteStyles().replace(/\/\*[\s\S]*?\*\//g, "");
+}
+
 /** Extract the body of the first rule whose selector matches exactly. */
 function ruleBody(css: string, selector: string): string {
   const idx = css.indexOf(`\n${selector} {`);
@@ -26,8 +38,47 @@ function ruleBody(css: string, selector: string): string {
   return css.slice(start + 1, end);
 }
 
+test("generateWebsiteStyles — the in-flow rail is flat, the drawer keeps its surface", () => {
+  const css = styles();
+
+  // The capped shell detaches the rail from the viewport edge, so a tint
+  // that is only 3/255 from --bai-bg reads as an unbounded band. The rail
+  // must therefore share the page surface and lean on its border instead.
+  const sider = ruleBody(css, ".doc-sidebar");
+  assert.match(
+    sider,
+    /background:\s*var\(--bai-bg\);/,
+    "the in-flow rail must use the page surface, not a near-invisible tint",
+  );
+  assert.ok(
+    !/--bai-bg-sider/.test(sider),
+    "the in-flow rail must not reintroduce --bai-bg-sider",
+  );
+  assert.match(
+    sider,
+    /border-right:\s*1px solid var\(--bai-border\);/,
+    "with the tint gone, the border is the only thing separating rail from article",
+  );
+
+  // ...but the ≤880px drawer is a fixed overlay above the article, so it
+  // does need a surface of its own. Guard that the flattening above was
+  // not applied to it wholesale.
+  assert.match(
+    css,
+    /body\.bai-drawer-open \.doc-sidebar \{[^}]*background:\s*var\(--bai-bg-sider\);/s,
+    "the mobile drawer overlay should keep its own surface",
+  );
+});
+
+test("generateWebsiteStyles — the TOC mirrors the rail's separator", () => {
+  // The two hairlines are now the whole separation story, so they have to
+  // stay symmetric; losing one leaves the shell visibly lopsided.
+  const toc = ruleBody(styles(), ".doc-toc");
+  assert.match(toc, /border-left:\s*1px solid var\(--bai-border\);/);
+});
+
 test("generateWebsiteStyles — defines the ultrawide shell cap token", () => {
-  const css = generateWebsiteStyles();
+  const css = styles();
   assert.match(
     css,
     /--bai-layout-max:\s*1536px;/,
@@ -36,7 +87,7 @@ test("generateWebsiteStyles — defines the ultrawide shell cap token", () => {
 });
 
 test("generateWebsiteStyles — .doc-page is capped and centered by the shell token", () => {
-  const body = ruleBody(generateWebsiteStyles(), ".doc-page");
+  const body = ruleBody(styles(), ".doc-page");
   assert.match(body, /max-width:\s*var\(--bai-layout-max\);/);
   assert.match(
     body,
@@ -46,7 +97,7 @@ test("generateWebsiteStyles — .doc-page is capped and centered by the shell to
 });
 
 test("generateWebsiteStyles — defines the rail grid inset", () => {
-  const css = generateWebsiteStyles();
+  const css = styles();
   assert.match(
     css,
     /--bai-rail-inset:\s*24px;/,
@@ -55,7 +106,7 @@ test("generateWebsiteStyles — defines the rail grid inset", () => {
 });
 
 test("generateWebsiteStyles — full-bleed bars hold the rail grid at every width", () => {
-  const css = generateWebsiteStyles();
+  const css = styles();
   // The bars stay full-bleed (background + border span the viewport) and only
   // their inline padding grows. The padding must be centering-gutter PLUS the
   // rail inset, so the brand sits at shell+inset on both sides of the cap.
