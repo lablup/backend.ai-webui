@@ -952,6 +952,10 @@ export class Client {
       // RoleFilter gained `mappedScope` (RoleMappedScopeNestedFilter) — look
       // up roles registered to a specific scope. FR-3317.
       this._features['role-mapped-scope-filter'] = true;
+      // EntityFilter gained `scopeType` / `scopeId` — filter an entity
+      // connection (e.g. `Role.scopes`) by the scope the entity is registered
+      // in. Older managers reject both arguments. FR-3406.
+      this._features['rbac-entity-scope-filter'] = true;
     }
   }
 
