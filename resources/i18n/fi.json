@@ -1455,7 +1455,6 @@
     "Installed": "asennettu",
     "InstalledImagesAreExcluded": "Asennettuja kuvia ei oteta huomioon.",
     "Installing": "asentaminen",
-    "InstallingImage": "Asennus:",
     "Language": "Kieli",
     "Local": "Paikallinen",
     "ManageApps": "Hallitse sovelluksia",
@@ -1485,7 +1484,6 @@
     "SuccessfullyCreated": "Luotu onnistuneesti",
     "SuccessfullyModified": "Muutettu onnistuneesti",
     "Tags": "Tunnisteet",
-    "TakesTime": ". Se vie aikaa, joten ota kuppi kahvia!",
     "Version": "Versio"
   },
   "error": {

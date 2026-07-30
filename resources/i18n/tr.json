@@ -1455,7 +1455,6 @@
     "Installed": "Kurulmuş",
     "InstalledImagesAreExcluded": "Yüklü görüntüler hariçtir.",
     "Installing": "yükleme",
-    "InstallingImage": "Yükleme:",
     "Language": "Dil",
     "Local": "Yerel",
     "ManageApps": "Uygulamaları yönet",
@@ -1485,7 +1484,6 @@
     "SuccessfullyCreated": "Başarıyla oluşturuldu",
     "SuccessfullyModified": "Başarıyla değiştirildi",
     "Tags": "Etiketler",
-    "TakesTime": ". Zaman alır, bu yüzden bir fincan kahve iç!",
     "Version": "Sürüm"
   },
   "error": {

@@ -1455,7 +1455,6 @@
     "Installed": "установлены",
     "InstalledImagesAreExcluded": "Установленные образы исключены.",
     "Installing": "установка",
-    "InstallingImage": "Установка:",
     "Language": "Язык",
     "Local": "Локальный",
     "ManageApps": "Управление приложениями",
@@ -1485,7 +1484,6 @@
     "SuccessfullyCreated": "Успешно создано",
     "SuccessfullyModified": "Успешно изменено",
     "Tags": "Теги",
-    "TakesTime": ". Это требует времени, так что выпейте чашечку кофе!",
     "Version": "Версия"
   },
   "error": {

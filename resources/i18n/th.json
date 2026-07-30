@@ -1455,7 +1455,6 @@
     "Installed": "ติดตั้งแล้ว",
     "InstalledImagesAreExcluded": "อิมเมจที่ติดตั้งแล้วจะถูกยกเว้น",
     "Installing": "กำลังติดตั้ง",
-    "InstallingImage": "กำลังติดตั้ง: ",
     "Language": "ภาษา",
     "Local": "ท้องถิ่น",
     "ManageApps": "จัดการแอป",
@@ -1485,7 +1484,6 @@
     "SuccessfullyCreated": "สร้างสำเร็จแล้ว",
     "SuccessfullyModified": "แก้ไขสำเร็จแล้ว",
     "Tags": "แท็ก",
-    "TakesTime": " ใช้เวลาสักครู่ ลองดื่มกาแฟสักแก้ว!",
     "Version": "เวอร์ชัน"
   },
   "error": {

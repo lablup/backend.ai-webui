@@ -1455,7 +1455,6 @@
     "Installed": "dipasang",
     "InstalledImagesAreExcluded": "Imej yang dipasang dikecualikan.",
     "Installing": "memasang",
-    "InstallingImage": "Memasang:",
     "Language": "Bahasa",
     "Local": "Lokal",
     "ManageApps": "Urus Aplikasi",
@@ -1485,7 +1484,6 @@
     "SuccessfullyCreated": "Berjaya dibuat",
     "SuccessfullyModified": "Berjaya diubah suai",
     "Tags": "Tag",
-    "TakesTime": ". Ia memerlukan masa jadi minum secawan kopi!",
     "Version": "Versi"
   },
   "error": {

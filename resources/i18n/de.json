@@ -1455,7 +1455,6 @@
     "Installed": "Eingerichtet",
     "InstalledImagesAreExcluded": "Installierte Bilder sind davon ausgenommen.",
     "Installing": "installieren",
-    "InstallingImage": "Installation:",
     "Language": "Sprache",
     "Local": "Lokal",
     "ManageApps": "Apps verwalten",
@@ -1485,7 +1484,6 @@
     "SuccessfullyCreated": "Erfolgreich erstellt",
     "SuccessfullyModified": "Erfolgreich geändert",
     "Tags": "Schlagworte",
-    "TakesTime": ". Es braucht Zeit, also trinken Sie eine Tasse Kaffee!",
     "Version": "Ausführung"
   },
   "error": {

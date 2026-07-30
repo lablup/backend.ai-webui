@@ -1455,7 +1455,6 @@
     "Installed": "Cài đặt",
     "InstalledImagesAreExcluded": "Hình ảnh được cài đặt được loại trừ.",
     "Installing": "cài đặt",
-    "InstallingImage": "Đang cài đặt:",
     "Language": "Ngôn ngữ",
     "Local": "Cục bộ",
     "ManageApps": "Quản lý ứng dụng",
@@ -1485,7 +1484,6 @@
     "SuccessfullyCreated": "Đã tạo thành công",
     "SuccessfullyModified": "Đã sửa đổi thành công",
     "Tags": "Thẻ",
-    "TakesTime": ". Cần có thời gian vì vậy hãy uống một tách cà phê!",
     "Version": "Phiên bản"
   },
   "error": {

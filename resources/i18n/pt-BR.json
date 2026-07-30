@@ -1455,7 +1455,6 @@
     "Installed": "instalado",
     "InstalledImagesAreExcluded": "As imagens instaladas são excluídas.",
     "Installing": "instalando",
-    "InstallingImage": "Instalando:",
     "Language": "Língua",
     "Local": "Local",
     "ManageApps": "Gerenciar aplicativos",
@@ -1485,7 +1484,6 @@
     "SuccessfullyCreated": "Criado com sucesso",
     "SuccessfullyModified": "Modificado com sucesso",
     "Tags": "Etiquetas",
-    "TakesTime": ". Leva tempo, então tome uma xícara de café!",
     "Version": "Versão"
   },
   "error": {

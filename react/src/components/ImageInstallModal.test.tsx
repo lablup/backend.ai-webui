@@ -33,7 +33,20 @@ import { App } from 'antd';
  * payload out.
  */
 
-const mockInstall = vi.fn(() => Promise.resolve({}));
+// Typed with the real `install(name, architecture, resource, registry?,
+// sessionName?)` signature so `mock.calls[i][4]` (the generated session name)
+// type-checks below.
+const mockInstall = vi.fn(
+  (
+    _name?: string,
+    _architecture?: string,
+    _resource?: unknown,
+    _registry?: string,
+    _sessionName?: string,
+  ) => Promise.resolve({ sessionId: 'installed-session-id' }),
+);
+const mockUpsertSessionNotification = vi.fn(() => Promise.resolve([]));
+const mockUpsertNotification = vi.fn();
 
 vi.mock('react-i18next', async () => {
   const React = await import('react');
@@ -69,9 +82,25 @@ vi.mock('../hooks/useBAINotification', async (importOriginal) => {
     await importOriginal<typeof import('../hooks/useBAINotification')>();
   return {
     ...originalModule,
-    useSetBAINotification: () => ({ upsertNotification: vi.fn() }),
+    // Kept as a decoy: the old bespoke "installing... takes time" toast went
+    // through this hook. If a regression brings it back, tests below assert
+    // this spy stays uncalled.
+    useSetBAINotification: () => ({
+      upsertNotification: mockUpsertNotification,
+    }),
   };
 });
+
+// Boundary for the standard session-creation notification (FR-3415). The
+// modal must feed installed sessions into `upsertSessionNotification` instead
+// of the removed bespoke toast; `useStartSession`'s own Relay/GraphQL wiring
+// is out of scope here; the module boundary mirrors the other hook mocks
+// above.
+vi.mock('../hooks/useStartSession', () => ({
+  useStartSession: () => ({
+    upsertSessionNotification: mockUpsertSessionNotification,
+  }),
+}));
 
 vi.mock('../hooks/usePainKiller', async (importOriginal) => {
   const originalModule =
@@ -211,27 +240,59 @@ const IMAGE = {
   ],
 } as any;
 
-const renderModal = () => {
+// A second, distinct image for the "N images installed in one action get N
+// distinct session names" contract.
+const IMAGE_2 = {
+  id: 'image-2',
+  registry: 'cr.backend.ai',
+  namespace: 'testing/pytorch',
+  name: 'testing/pytorch',
+  tag: '2.1-ubuntu20.04',
+  architecture: 'x86_64',
+  installed: false,
+  labels: [],
+  resource_limits: [
+    { key: 'cpu', min: '1', max: null },
+    { key: 'mem', min: '256m', max: null },
+  ],
+} as any;
+
+const renderModal = (
+  images: any[] = [IMAGE],
+  setInstallingImages = vi.fn(),
+) => {
   const onRequestClose = vi.fn();
   render(
     <App>
       <ImageInstallModal
         open
-        selectedRows={[IMAGE]}
-        setInstallingImages={vi.fn()}
+        selectedRows={images}
+        setInstallingImages={setInstallingImages}
         onRequestClose={onRequestClose}
       />
     </App>,
   );
-  return { onRequestClose };
+  return { onRequestClose, setInstallingImages };
 };
 
 const installButton = () =>
   screen.getByText('environment.Install').closest('button');
 
+// Drives the modal through project + resource-group selection for the
+// current selected images and clicks Install.
+const chooseTargetsAndInstall = async (
+  user: ReturnType<typeof userEvent.setup>,
+) => {
+  await user.click(await screen.findByTestId('mock-project-select'));
+  await user.click(screen.getByTestId('mock-resource-group-option-alpha-rg'));
+  await user.click(screen.getByText('environment.Install'));
+};
+
 describe('ImageInstallModal install session target contract (ADR-0001, FR-3415)', () => {
   beforeEach(() => {
     mockInstall.mockClear();
+    mockUpsertSessionNotification.mockClear();
+    mockUpsertNotification.mockClear();
   });
 
   it('always asks for both the session project and the target resource group, from the member-project source and with nothing pre-filled', async () => {
@@ -367,5 +428,95 @@ describe('ImageInstallModal install session target contract (ADR-0001, FR-3415)'
     expect(imageResource.group_name).toBe('beta-project-name');
     expect(imageResource.config.scaling_group).toBe('beta-rg');
     expect(imageResource.config.scaling_group).not.toBe('alpha-rg');
+  });
+});
+
+/**
+ * Notification contract (FR-3415).
+ *
+ * Installing an image enqueues a real session, so it must surface through the
+ * app's standard session-creation notification - the same
+ * `upsertSessionNotification` helper `FileBrowserButtonV2` /
+ * `SFTPServerButtonV2` use - instead of the old bespoke "installing... takes
+ * time" toast, which disappeared after 2 seconds and tracked nothing.
+ *
+ * The install session's name must also be a recognizable, unique,
+ * image-name-free token (never embed the image name: it's already visible on
+ * the image list, and image names are long and contain characters session
+ * names can't hold) so N images installed together cannot collide.
+ */
+describe('ImageInstallModal session notification contract (FR-3415)', () => {
+  beforeEach(() => {
+    mockInstall.mockClear();
+    mockUpsertSessionNotification.mockClear();
+    mockUpsertNotification.mockClear();
+  });
+
+  it('feeds a successful install into the standard session notification, not the removed toast', async () => {
+    const user = userEvent.setup();
+    renderModal();
+
+    await chooseTargetsAndInstall(user);
+
+    await waitFor(() => {
+      expect(mockUpsertSessionNotification).toHaveBeenCalledTimes(1);
+    });
+    const [successCreations] = mockUpsertSessionNotification.mock
+      .calls[0] as any[];
+    expect(successCreations).toHaveLength(1);
+    expect(successCreations[0].status).toBe('fulfilled');
+    expect(successCreations[0].value.sessionId).toBe('installed-session-id');
+
+    // The bespoke "installing... takes time" toast must never fire again.
+    expect(mockUpsertNotification).not.toHaveBeenCalled();
+  });
+
+  it('gives each of several images installed in one action its own notification with a distinct session name', async () => {
+    const user = userEvent.setup();
+    renderModal([IMAGE, IMAGE_2]);
+
+    await chooseTargetsAndInstall(user);
+
+    await waitFor(() => {
+      expect(mockInstall).toHaveBeenCalledTimes(2);
+    });
+    // Session names generated for the two installs (5th positional arg to
+    // `image.install`) must be distinct - collision is exactly what this
+    // contract exists to prevent.
+    const sessionNames = mockInstall.mock.calls.map((call: any[]) => call[4]);
+    expect(new Set(sessionNames).size).toBe(2);
+
+    await waitFor(() => {
+      expect(mockUpsertSessionNotification).toHaveBeenCalledTimes(1);
+    });
+    const [successCreations] = mockUpsertSessionNotification.mock
+      .calls[0] as any[];
+    expect(successCreations).toHaveLength(2);
+    const notifiedSessionNames = successCreations.map(
+      (creation: any) => creation.value.sessionName,
+    );
+    expect(new Set(notifiedSessionNames).size).toBe(2);
+  });
+
+  it('generates an install session name that carries the install prefix and never embeds the image name', async () => {
+    const user = userEvent.setup();
+    renderModal();
+
+    await chooseTargetsAndInstall(user);
+
+    await waitFor(() => {
+      expect(mockInstall).toHaveBeenCalledTimes(1);
+    });
+    const installSessionName = mockInstall.mock.calls[0][4] as string;
+    expect(installSessionName).toMatch(/^install-image-/);
+    expect(installSessionName).not.toContain('testing/python');
+    expect(installSessionName).not.toContain(IMAGE.tag);
+
+    await waitFor(() => {
+      expect(mockUpsertSessionNotification).toHaveBeenCalledTimes(1);
+    });
+    const [successCreations] = mockUpsertSessionNotification.mock
+      .calls[0] as any[];
+    expect(successCreations[0].value.sessionName).toBe(installSessionName);
   });
 });

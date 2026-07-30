@@ -1455,7 +1455,6 @@
     "Installed": "zainstalowany",
     "InstalledImagesAreExcluded": "Zainstalowane obrazy są wykluczone.",
     "Installing": "instalowanie",
-    "InstallingImage": "Instalowanie:",
     "Language": "Język",
     "Local": "Lokalny",
     "ManageApps": "Zarządzać aplikacjami",
@@ -1486,7 +1485,6 @@
     "SuccessfullyCreated": "Pomyślnie utworzono",
     "SuccessfullyModified": "Pomyślnie zmodyfikowano",
     "Tags": "Tagi",
-    "TakesTime": ". Potrzeba czasu, więc napij się kawy!",
     "Version": "Wersja"
   },
   "error": {
