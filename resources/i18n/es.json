@@ -860,7 +860,7 @@
       "AdminDataPageAlert": "En la página de Datos de Administrador solo se pueden crear carpetas de proyecto.",
       "CannotDeleteFolder": "No se puede eliminar la carpeta montada en una o más sesiones. Por favor, termine la sesión primero.",
       "CannotDeletePipelineFolder": "No puede eliminar las carpetas de tuberías.",
-      "CannotDeployFromAdminMenu": "Los despliegues se crean desde el proyecto al que pertenece la carpeta, no desde el menú de administración.",
+      "CannotDeployFromAdminMenu": "Los despliegues se crean desde la página Datos de un proyecto; el menú de administración no lo admite.",
       "CannotRestorePipelineFolder": "No puedes restaurar las carpetas de tuberías.",
       "ChangeTheVFolderTypeToCreateAutoMountFolder": "No se puede crear la carpeta de montaje automática como carpeta del proyecto.",
       "CloneAFolder": "Clonar una carpeta",
