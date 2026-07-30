@@ -5,15 +5,16 @@ import { setupGraphQLMocks } from '../session/mocking/graphql-interceptor';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import {
   setupChatPage,
-  setupChatPageWithTwoEndpoints,
-  chatPageQueryMockResponse,
-  chatCardQueryMockResponse,
-  chatCardQueryNullUrlMockResponse,
-  endpointSelectQueryMockResponse,
-  endpointSelectValueQueryMockResponse,
+  setupChatPageWithTwoDeployments,
+  chatGraphQLMocks,
+  setupChatPageWithUnavailableDeployment,
   makeSseResponse,
   modelsApiMockResponse,
+  waitForChatReady,
+  CHAT_READY_TIMEOUT_MS,
   MOCK_MODEL_ID,
+  MOCK_DEPLOYMENT_NAME,
+  MOCK_DEPLOYMENT_NAME_B,
 } from './mocking/chat-mock-data';
 import { test, expect } from '@playwright/test';
 
@@ -41,7 +42,7 @@ test.describe(
       await setupChatPage(page, request);
 
       // Verify the endpoint selector is visible in the chat card header
-      await expect(page.getByText('mock-endpoint').first()).toBeVisible({
+      await expect(page.getByText(MOCK_DEPLOYMENT_NAME).first()).toBeVisible({
         timeout: 10000,
       });
 
@@ -153,13 +154,7 @@ test.describe(
         localStorage.removeItem('backendaiwebui.cache.chat_history');
       });
 
-      await setupGraphQLMocks(page, {
-        ChatPageQuery: () => chatPageQueryMockResponse(),
-        ChatCardQuery: (vars) => chatCardQueryMockResponse(vars.endpointId),
-        EndpointSelectQuery: () => endpointSelectQueryMockResponse(),
-        EndpointSelectValueQuery: (vars) =>
-          endpointSelectValueQueryMockResponse(vars.endpoint_id),
-      });
+      await setupGraphQLMocks(page, chatGraphQLMocks());
 
       await page.route('**/v1/models', async (route) => {
         await route.fulfill({
@@ -184,9 +179,9 @@ test.describe(
       });
 
       await navigateTo(page, 'chat');
+      await waitForChatReady(page);
 
       const chatInput = page.getByPlaceholder('Type your message here...');
-      await expect(chatInput).toBeVisible({ timeout: 10000 });
 
       // Type and send a message to trigger streaming
       await chatInput.fill('Generate a long response.');
@@ -624,13 +619,7 @@ test.describe(
         localStorage.removeItem('backendaiwebui.cache.chat_history');
       });
 
-      await setupGraphQLMocks(page, {
-        ChatPageQuery: () => chatPageQueryMockResponse(),
-        ChatCardQuery: (vars) => chatCardQueryMockResponse(vars.endpointId),
-        EndpointSelectQuery: () => endpointSelectQueryMockResponse(),
-        EndpointSelectValueQuery: (vars) =>
-          endpointSelectValueQueryMockResponse(vars.endpoint_id),
-      });
+      await setupGraphQLMocks(page, chatGraphQLMocks());
 
       await page.route('**/v1/models', async (route) => {
         await route.fulfill({
@@ -650,9 +639,9 @@ test.describe(
       });
 
       await navigateTo(page, 'chat');
+      await waitForChatReady(page);
 
       const chatInput = page.getByPlaceholder('Type your message here...');
-      await expect(chatInput).toBeVisible({ timeout: 10000 });
 
       // Type "Trigger an error" and press Enter
       await chatInput.fill('Trigger an error');
@@ -667,60 +656,136 @@ test.describe(
       ).toBeVisible({ timeout: 15000 });
     });
 
-    test.fixme('User sees an error alert when the endpoint URL is invalid', async ({
+    // FR-3397: ChatCard derives one unavailability reason per deployment and
+    // renders a single alert for it. The checks run most-specific-first, since a
+    // deployment scaled to zero — or one without a revision — also has no active
+    // replica, and a later check would otherwise mask the real cause. Each case
+    // below states only the one condition it exercises; every other input stays
+    // at its serving value.
+    //
+    // `composer` records observed behaviour, not an aspiration: the composer is
+    // disabled only when no usable base URL resolved. A deployment that has a
+    // reachable URL but cannot answer (scaled to zero, no revision, no active
+    // replica) still accepts typing — the alert is the only thing telling the
+    // user why a send will not get a reply.
+    const UNAVAILABLE_REASONS = [
+      {
+        title: 'the desired replica count is 0',
+        overrides: { desiredReplicaCount: 0 },
+        message: 'The desired replica count for this deployment is 0',
+        composer: 'enabled' as const,
+      },
+      {
+        title: 'no revision is deployed',
+        overrides: { revisionCount: 0 },
+        message: 'No revision is deployed',
+        composer: 'enabled' as const,
+      },
+      {
+        title: 'no replica is serving traffic',
+        overrides: { activeReplicaCount: 0 },
+        message: 'No replicas are available',
+        composer: 'enabled' as const,
+      },
+      {
+        // The previous test for this was skipped on the theory that Relay served
+        // a cached URL from a real backend response; the actual cause was the mock
+        // describing the legacy `endpoint { url }` shape, which the migrated
+        // `deployment(id:)` query never reads (FR-3332).
+        title: 'no endpoint URL has been issued yet',
+        overrides: { endpointUrl: null },
+        message: 'This deployment has not been issued an endpoint URL yet',
+        composer: 'disabled' as const,
+      },
+      {
+        // `error.InvalidBaseURL` is reserved for a URL that was supplied and
+        // could not be parsed — distinct from one that was never issued.
+        title: 'the endpoint URL cannot be parsed',
+        overrides: { endpointUrl: 'not-a-valid-url' },
+        message: 'Endpoint URL is not valid.',
+        composer: 'disabled' as const,
+      },
+    ];
+
+    for (const { title, overrides, message, composer } of UNAVAILABLE_REASONS) {
+      test(`User sees why chat is unavailable when ${title}`, async ({
+        page,
+        request,
+      }) => {
+        await setupChatPageWithUnavailableDeployment(page, request, overrides);
+
+        // The alert is the readiness gate here: an unavailable pane keeps its
+        // composer disabled, so there is no enabled composer to wait for.
+        await expect(page.getByText(message)).toBeVisible({
+          timeout: CHAT_READY_TIMEOUT_MS,
+        });
+
+        // Exactly one reason is reported — no other reason's message appears.
+        for (const other of UNAVAILABLE_REASONS) {
+          if (other.message === message) continue;
+          await expect(page.getByText(other.message)).toBeHidden();
+        }
+
+        const chatInput = page.getByPlaceholder('Type your message here...');
+        if (composer === 'disabled') {
+          await expect(chatInput).toBeDisabled({ timeout: 10000 });
+        } else {
+          await expect(chatInput).toBeEnabled({ timeout: 10000 });
+        }
+      });
+    }
+
+    test('User sees both the unavailability reason and the missing-model warning', async ({
       page,
       request,
     }) => {
-      // FIXME: The error alert is not displayed even though ChatCardQuery returns url: null.
-      // The Relay store-or-network fetch policy appears to use cached endpoint data with
-      // a valid URL from a real backend response, bypassing the null URL mock. As a result,
-      // createBaseURL returns a valid URL and no .ant-alert-error is rendered.
-      // Set up GraphQL mocks so ChatCardQuery returns url: null
-      await loginAsAdmin(page, request);
-      await page.evaluate(() => {
-        localStorage.removeItem('backendaiwebui.cache.chat_history');
-      });
+      // The two alerts answer different questions and are no longer mutually
+      // exclusive: ChatCard used to suppress `chatui.CannotFindModel` whenever it
+      // had an unavailability reason to show. A deployment can have a reachable
+      // URL that serves an empty model list *and* be unable to answer, so both
+      // are reported.
+      await setupChatPageWithUnavailableDeployment(
+        page,
+        request,
+        { desiredReplicaCount: 0 },
+        // Empty model list — this is what renders the recovery form.
+        [],
+      );
 
-      await setupGraphQLMocks(page, {
-        ChatPageQuery: () => chatPageQueryMockResponse(),
-        ChatCardQuery: (vars) =>
-          chatCardQueryNullUrlMockResponse(vars.endpointId),
-        EndpointSelectQuery: () => endpointSelectQueryMockResponse(),
-        EndpointSelectValueQuery: (vars) =>
-          endpointSelectValueQueryMockResponse(vars.endpoint_id),
-      });
-
-      await page.route('**/v1/models', async (route) => {
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify(modelsApiMockResponse(MOCK_MODEL_ID)),
-        });
-      });
-
-      // Navigate to the chat page
-      await navigateTo(page, 'chat');
-
-      // Wait for the chat card to render
       await expect(
-        page.getByPlaceholder('Type your message here...'),
-      ).toBeVisible({
+        page.getByText('The desired replica count for this deployment is 0'),
+      ).toBeVisible({ timeout: CHAT_READY_TIMEOUT_MS });
+      await expect(page.getByText('LLM models not found')).toBeVisible({
         timeout: 10000,
       });
+    });
 
-      // An error alert should be visible when endpoint URL is null
-      // The component renders: <Alert title={t('error.InvalidBaseURL')} type="error" .../>
-      // which translates to "Endpoint URL is not valid."
-      await expect(page.locator('.ant-alert-error').first()).toBeVisible({
-        timeout: 10000,
+    test('User sees the most specific reason when several apply at once', async ({
+      page,
+      request,
+    }) => {
+      // A deployment scaled to zero also has no revision, no active replica and
+      // no URL. The desired-replica reason wins because it is checked first —
+      // this is what keeps a later, vaguer check from masking the real cause.
+      await setupChatPageWithUnavailableDeployment(page, request, {
+        desiredReplicaCount: 0,
+        revisionCount: 0,
+        activeReplicaCount: 0,
+        endpointUrl: null,
       });
 
-      // The text input should be disabled
       await expect(
-        page.getByPlaceholder('Type your message here...'),
-      ).toBeDisabled({
-        timeout: 10000,
-      });
+        page.getByText('The desired replica count for this deployment is 0'),
+      ).toBeVisible({ timeout: CHAT_READY_TIMEOUT_MS });
+
+      for (const masked of [
+        'No revision is deployed',
+        'No replicas are available',
+        'This deployment has not been issued an endpoint URL yet',
+        'Endpoint URL is not valid.',
+      ]) {
+        await expect(page.getByText(masked)).toBeHidden();
+      }
     });
 
     test.fixme('User sees an error notification when model fetching fails', async ({
@@ -738,13 +803,7 @@ test.describe(
         localStorage.removeItem('backendaiwebui.cache.chat_history');
       });
 
-      await setupGraphQLMocks(page, {
-        ChatPageQuery: () => chatPageQueryMockResponse(),
-        ChatCardQuery: (vars) => chatCardQueryMockResponse(vars.endpointId),
-        EndpointSelectQuery: () => endpointSelectQueryMockResponse(),
-        EndpointSelectValueQuery: (vars) =>
-          endpointSelectValueQueryMockResponse(vars.endpoint_id),
-      });
+      await setupGraphQLMocks(page, chatGraphQLMocks());
 
       // Models API returns HTTP 401 to trigger an error notification
       await page.route('**/v1/models', async (route) => {
@@ -757,13 +816,7 @@ test.describe(
 
       // Navigate to the chat page — model fetch happens on load
       await navigateTo(page, 'chat');
-
-      // Wait for page to load
-      await expect(
-        page.getByPlaceholder('Type your message here...'),
-      ).toBeVisible({
-        timeout: 10000,
-      });
+      await waitForChatReady(page);
 
       // An Ant Design error message notification should appear
       await expect(
@@ -813,7 +866,7 @@ test.describe(
 
       // Locate and click the "Compare" button (ArrowRightLeftIcon or tooltip "Create Compare Chat")
       // Button layout in .ant-card-head nth(1) for single pane:
-      //   nth(0)=detail-page (EndpointSelect compact btn), nth(1)=control, nth(2)=compare, nth(3)=more
+      //   nth(0)=detail-page (DeploymentSelect compact btn), nth(1)=control, nth(2)=compare, nth(3)=more
       const compareButton = page
         .locator('.ant-card-head')
         .nth(1)
@@ -947,7 +1000,7 @@ test.describe(
       request,
     }) => {
       // Setup with two endpoints available
-      await setupChatPageWithTwoEndpoints(page, request);
+      await setupChatPageWithTwoDeployments(page, request);
 
       await expect(
         page.getByPlaceholder('Type your message here...'),
@@ -977,18 +1030,18 @@ test.describe(
       const secondCardEndpointText = page
         .locator('.ant-card')
         .nth(2)
-        .getByText('mock-endpoint')
+        .getByText(MOCK_DEPLOYMENT_NAME)
         .first();
 
       await secondCardEndpointText.click();
 
       // Select the second mock endpoint
       await page
-        .getByRole('option', { name: 'mock-endpoint-b' })
+        .getByRole('option', { name: MOCK_DEPLOYMENT_NAME_B })
         .or(
           page
             .locator('.ant-select-item-option')
-            .filter({ hasText: 'mock-endpoint-b' }),
+            .filter({ hasText: MOCK_DEPLOYMENT_NAME_B }),
         )
         .first()
         .click();
@@ -996,14 +1049,20 @@ test.describe(
       // The second pane's endpoint selector shows the second endpoint
       // Use [title] to target the visible select display value (avoids hidden aria-live elements)
       await expect(
-        page.locator('.ant-card').nth(2).locator('[title="mock-endpoint-b"]'),
+        page
+          .locator('.ant-card')
+          .nth(2)
+          .locator(`[title="${MOCK_DEPLOYMENT_NAME_B}"]`),
       ).toBeVisible({
         timeout: 10000,
       });
 
       // The first pane's endpoint selector still shows the original endpoint
       await expect(
-        page.locator('.ant-card').nth(1).locator('[title="mock-endpoint"]'),
+        page
+          .locator('.ant-card')
+          .nth(1)
+          .locator(`[title="${MOCK_DEPLOYMENT_NAME}"]`),
       ).toBeVisible({
         timeout: 5000,
       });
