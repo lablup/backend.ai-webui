@@ -860,6 +860,7 @@
       "AdminDataPageAlert": "Nella pagina Dati Amministratore si possono creare solo cartelle di progetto.",
       "CannotDeleteFolder": "Impossibile eliminare la cartella montata in una o più sessioni. Si prega di terminare prima la sessione.",
       "CannotDeletePipelineFolder": "Non puoi eliminare le cartelle della pipeline.",
+      "CannotDeployFromAdminMenu": "Le distribuzioni vengono create all'interno del progetto a cui appartiene la cartella, non dal menu di amministrazione.",
       "CannotRestorePipelineFolder": "Non puoi ripristinare le cartelle della pipeline.",
       "ChangeTheVFolderTypeToCreateAutoMountFolder": "Impossibile creare la cartella di montaggio automatica come cartella del progetto.",
       "CloneAFolder": "Clonare una cartella",

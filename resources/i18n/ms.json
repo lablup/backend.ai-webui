@@ -860,6 +860,7 @@
       "AdminDataPageAlert": "Pada halaman Data Admin hanya folder projek boleh dicipta.",
       "CannotDeleteFolder": "Tidak dapat menghapus folder yang dipasang dalam satu atau lebih sesi. Tamatkan sesi terlebih dahulu.",
       "CannotDeletePipelineFolder": "Anda tidak boleh memadam folder saluran paip.",
+      "CannotDeployFromAdminMenu": "Penggunaan dicipta dalam projek yang memiliki folder ini, bukan daripada menu pentadbir.",
       "CannotRestorePipelineFolder": "Anda tidak boleh memulihkan folder saluran paip.",
       "ChangeTheVFolderTypeToCreateAutoMountFolder": "Gagal membuat folder pemasangan automatik sebagai folder projek.",
       "CloneAFolder": "Klon folder",

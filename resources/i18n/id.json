@@ -860,6 +860,7 @@
       "AdminDataPageAlert": "Di halaman Data Admin hanya folder proyek yang dapat dibuat.",
       "CannotDeleteFolder": "Tidak dapat menghapus folder yang dipasang di satu atau beberapa sesi. Mohon hentikan sesi terlebih dahulu.",
       "CannotDeletePipelineFolder": "Anda tidak dapat menghapus folder pipa.",
+      "CannotDeployFromAdminMenu": "Penerapan dibuat dari dalam proyek tempat folder berada, bukan dari menu admin.",
       "CannotRestorePipelineFolder": "Anda tidak dapat mengembalikan folder pipa.",
       "ChangeTheVFolderTypeToCreateAutoMountFolder": "Tidak dapat membuat folder mount otomatis sebagai folder proyek.",
       "CloneAFolder": "Klon folder",

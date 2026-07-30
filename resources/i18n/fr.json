@@ -860,6 +860,7 @@
       "AdminDataPageAlert": "La page Données de l'administrateur ne permet de créer que des dossiers de projet.",
       "CannotDeleteFolder": "Impossible de supprimer le dossier monté dans une ou plusieurs sessions. Veuillez d'abord terminer la session.",
       "CannotDeletePipelineFolder": "Vous ne pouvez pas supprimer les dossiers du pipeline.",
+      "CannotDeployFromAdminMenu": "Les déploiements sont créés depuis le projet auquel appartient le dossier, et non depuis le menu d'administration.",
       "CannotRestorePipelineFolder": "Vous ne pouvez pas restaurer les dossiers du pipeline.",
       "ChangeTheVFolderTypeToCreateAutoMountFolder": "Impossible de créer le dossier de montage automatique en tant que dossier de projet.",
       "CloneAFolder": "Cloner un dossier",
