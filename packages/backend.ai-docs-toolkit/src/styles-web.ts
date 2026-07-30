@@ -241,6 +241,22 @@ export function generateWebStyles(
      nothing changes, so laptop/1440p viewports render exactly as before. */
   --bai-layout-max: 1536px;
 
+  /* The rail's vertical grid line, measured from the shell's left edge.
+     The sider already puts its VERSION label, the Introduction icon and
+     every group icon at exactly 24px in, at every viewport width. The
+     topbar brand and the banner icon have to land on that same line, or
+     the logo and the menu beneath it read as two different grids.
+
+     Both bars are full-bleed, so they reach it by adding this inset on
+     top of the centering gutter rather than by being capped:
+       padding-inline: calc(max(0px, (100% - cap) / 2) + inset)
+     Below the cap the gutter term is 0 and the inset alone applies;
+     above it the gutter grows while the inset holds the content on the
+     grid. Using max(inset, gutter) instead — the obvious-looking form —
+     is what breaks it: the brand would sit at +inset below the cap and
+     snap to +0 above it, so the grid shifts as the window is resized. */
+  --bai-rail-inset: 24px;
+
   /* Legacy aliases used by F3 grid rules (resolve to BAI tokens). */
   --doc-sidebar-width: var(--bai-sider-w);
   --doc-toc-width: var(--bai-toc-w);
@@ -346,12 +362,15 @@ body {
   /* Full-bleed bar with shell-aligned content: the background and bottom
      border still span the viewport (a sticky bar that stopped short of
      the edges would read as a floating card), but the brand / search /
-     action row is inset to the same --bai-layout-max shell as .doc-page.
-     The brand then lines up with the sider and the icon cluster with the
-     TOC instead of clinging to the screen corners on ultrawide displays.
-     max() keeps the original 20px gutter at every width below the cap. */
+     action row is inset so the logo lands on the sider's +24px grid line
+     and the icon cluster ends on the TOC's right edge, instead of both
+     clinging to the screen corners on ultrawide displays. See
+     --bai-rail-inset for why this is gutter-plus-inset and not
+     max(inset, gutter). */
   padding-block: 0;
-  padding-inline: max(20px, calc((100% - var(--bai-layout-max)) / 2));
+  padding-inline: calc(
+    max(0px, (100% - var(--bai-layout-max)) / 2) + var(--bai-rail-inset)
+  );
   background: var(--bai-bg);
   border-bottom: 1px solid var(--bai-border);
 }
@@ -3167,11 +3186,13 @@ export function generateWebsiteStyles(branding?: StyleBrandingTokens): string {
   display: flex;
   align-items: center;
   gap: 10px;
-  /* Same full-bleed-bar / shell-aligned-content split as .bai-topbar so
-     the banner text starts on the sider's left edge rather than the
-     viewport's on ultrawide displays. */
+  /* Same full-bleed-bar / shell-aligned-content split as .bai-topbar, so
+     the banner icon starts on the same +24px rail grid as the brand above
+     it and the sider's icons below it. */
   padding-block: 10px;
-  padding-inline: max(22px, calc((100% - var(--bai-layout-max)) / 2));
+  padding-inline: calc(
+    max(0px, (100% - var(--bai-layout-max)) / 2) + var(--bai-rail-inset)
+  );
   border-bottom: 1px solid var(--bai-border);
   /* FR-2758: banner sits sticky right under the topbar so it stays
      visible during scroll (the operator wants this notice to be a
