@@ -77,6 +77,40 @@ test("generateWebsiteStyles — the TOC mirrors the rail's separator", () => {
   assert.match(toc, /border-left:\s*1px solid var\(--bai-border\);/);
 });
 
+test("generateWebsiteStyles — the version row is separated by an inset rule", () => {
+  const css = styles();
+
+  // A border-bottom here would sit outside the padding box and span the
+  // sider edge to edge. The separator has to be inset like the TOC's, and
+  // inset by exactly the rail grid so it starts under the VERSION label.
+  const row = ruleBody(css, ".doc-sidebar-version");
+  assert.ok(
+    !/border-bottom/.test(row),
+    "the version row must not use a full-width border-bottom as its separator",
+  );
+  assert.match(
+    row,
+    /position:\s*relative;/,
+    "the row must stay the containing block for its ::after separator",
+  );
+
+  const rule = ruleBody(css, ".doc-sidebar-version::after");
+  for (const decl of [
+    /left:\s*24px;/,
+    /right:\s*24px;/,
+    /height:\s*1px;/,
+    /background:\s*var\(--bai-border-soft\);/,
+  ]) {
+    assert.match(rule, decl, `inset separator should declare ${decl}`);
+  }
+
+  // Same weight and token as the divider it is copying, so the two rails
+  // separate their sections identically.
+  const tocDivider = ruleBody(css, ".doc-toc__divider");
+  assert.match(tocDivider, /height:\s*1px;/);
+  assert.match(tocDivider, /background:\s*var\(--bai-border-soft\);/);
+});
+
 test("generateWebsiteStyles — defines the ultrawide shell cap token", () => {
   const css = styles();
   assert.match(

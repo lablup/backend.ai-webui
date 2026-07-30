@@ -1193,10 +1193,41 @@ body.bai-drawer-open .bai-scrim {
   gap: 10px;
   flex: 0 0 auto;
   padding: 14px 24px 10px;
-  border-bottom: 1px solid var(--bai-border-soft, var(--bai-border));
   /* FR-3265: positioning anchor for the .bai-select__list--version
-     popup injected by interactions.js. */
+     popup injected by interactions.js. Also the containing block for
+     the ::after separator below. */
   position: relative;
+}
+
+/* FR-3420: separate the version row from the nav with an INSET rule,
+   matching .doc-toc__divider (which is inset by the TOC's own padding
+   and separates the outline from the Get-help block).
+
+   This used to be a border-bottom on the row itself. A border sits
+   outside the padding box, so it always spanned the sider edge to edge
+   — a hard full-width line cutting the rail in two, which reads as
+   heavier than the divider doing the equivalent job in the TOC.
+
+   Inset by the row's own 24px horizontal padding, so the rule starts on
+   the same +24px rail grid as the VERSION label, the group icons and
+   the topbar brand, and ends where the version popup's right edge does
+   (.bai-select__list--version is also right: 24px). Same
+   --bai-border-soft token as the TOC divider, so only the extent
+   differs, not the weight or colour.
+
+   A pseudo-element rather than a real <div> like the TOC's: the version
+   row lives outside .doc-sidebar__scroll, so this needs no markup
+   change and cannot disturb the scrollport's flex sizing. It carries no
+   z-index, so the version popup (z-index 110, opaque) still paints over
+   it. */
+.doc-sidebar-version::after {
+  content: "";
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: 0;
+  height: 1px;
+  background: var(--bai-border-soft);
 }
 .doc-sidebar-version__label {
   font-size: 10.5px;
