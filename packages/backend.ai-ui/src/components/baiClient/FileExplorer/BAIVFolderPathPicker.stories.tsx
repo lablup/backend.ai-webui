@@ -1,5 +1,6 @@
 import BAIFlex from '../../BAIFlex';
 import BAIUnmountAfterClose from '../../BAIUnmountAfterClose';
+import BAIVFolderSelect from '../../fragments/BAIVFolderSelect';
 import { BAIClientContext } from '../../provider/BAIClientProvider/context';
 import type {
   BAIClient,
@@ -15,11 +16,12 @@ import { RelayEnvironmentProvider } from 'react-relay';
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
 
 /**
- * The picker composes two data sources, both mocked here so every interaction
- * works end-to-end without a backend:
- * - the embedded BAIVFolderSelect fetches vfolders via Relay → mock Relay
- *   environment returning SAMPLE_VFOLDERS;
- * - the directory modal talks to the REST API through BAIClientContext
+ * The stories mock two data sources so every interaction works end-to-end
+ * without a backend:
+ * - Relay (the directory modal's `vfolder_node` query and the external
+ *   BAIVFolderSelect in the Form story) → mock Relay environment returning
+ *   SAMPLE_VFOLDERS;
+ * - the directory modal's REST calls through BAIClientContext
  *   (`vfolder.list_files` / `mkdir` / `rename_file` / `delete_files`) → mock
  *   client backed by an in-memory directory tree.
  */
@@ -198,9 +200,10 @@ const createMockClient = (): BAIClient => {
 };
 
 /**
- * Wraps stories with everything the integrated picker needs: a mock Relay
- * environment (for the embedded BAIVFolderSelect queries) and a mock
- * BAIClientContext client (for the directory modal's REST calls).
+ * Wraps stories with everything the picker needs: a mock Relay environment
+ * (for the directory modal's `vfolder_node` query and the external
+ * BAIVFolderSelect) and a mock BAIClientContext client (for the directory
+ * modal's REST calls).
  */
 const MockProviders: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -265,20 +268,20 @@ const meta: Meta<typeof BAIVFolderPathPicker> = {
     docs: {
       description: {
         component: `
-**BAIVFolderPathPicker** is an integrated "vfolder + sub path" picker: an embedded [BAIVFolderSelect](/?path=/docs/fragments-baivfolderselect--docs) next to a read-only path field that opens a directory-only picker modal.
+**BAIVFolderPathPicker** is a sub path picker for a given vfolder: a read-only path field that opens a directory-only picker modal. The vfolder itself is chosen elsewhere (e.g. a [BAIVFolderSelect](/?path=/docs/fragments-baivfolderselect--docs)) and passed in as \`vfolderUuid\`.
 
-The value is a single **name-based** path string — \`"my-workspace"\` for the vfolder root, \`"my-workspace/sub/path"\` below it — so it plugs directly into a Form.Item; \`value\`/\`onChange\` follow the controllable-state convention, so the component works both controlled and uncontrolled. The vfolder's id is tracked internally for the modal's REST calls and is not part of the value. Files are visible but disabled inside the picker; only directories can be entered and chosen. Folder CRUD (create / rename / delete) stays available via \`BAIFileExplorer\`'s \`directoryPicker\` mode.
+The value is the **sub path inside the vfolder** — \`''\` for the vfolder root, \`"sub/path"\` below it, \`undefined\` while nothing is picked — so it plugs directly into a Form.Item; \`value\`/\`onChange\` follow the controllable-state convention, so the component works both controlled and uncontrolled. Files are visible but disabled inside the picker; only directories can be entered and chosen. Folder CRUD (create / rename / delete) stays available via \`BAIFileExplorer\`'s \`directoryPicker\` mode. When the vfolder changes, reset the value — a sub path only makes sense within the vfolder it was picked from.
 
 ## BAI-Specific Props
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| \`value\` | \`string\` | - | Selected path; first segment is the vfolder's name, the rest is the sub path |
+| \`vfolderUuid\` | \`string\` | - | UUID of the vfolder to browse; the field stays disabled until provided |
+| \`value\` | \`string\` | - | Selected sub path (\`''\` = vfolder root) |
 | \`defaultValue\` | \`string\` | - | Initial value for uncontrolled usage |
-| \`onChange\` | \`(selectedPath?: string) => void\` | - | Fired on vfolder change (path restarts at its root), clear (\`undefined\`), and path confirmation |
-| \`selectProps\` | \`BAIVFolderSelectProps\` subset | - | Forwarded to the embedded vfolder select (\`currentProjectId\`, \`filter\`, \`excludeDeleted\`, …) |
+| \`onChange\` | \`(selectedSubPath?: string) => void\` | - | Fired when a location is confirmed in the modal |
 | \`inputProps\` | \`InputProps\` subset | - | Forwarded to the sub path trigger field |
 
-> The stories run against a mock Relay environment and a mock \`BAIClientContext\` client, so vfolder search, browsing, mkdir, rename and delete all work without a backend. The second folder (\`team-shared-data\`) is read-only — pick it to see permission gating disable folder CRUD inside the modal.
+> The stories run against a mock Relay environment and a mock \`BAIClientContext\` client, so vfolder search, browsing, mkdir, rename and delete all work without a backend. The second folder (\`team-shared-data\`) is read-only — pick it in the Form story to see permission gating disable folder CRUD inside the modal.
         `,
       },
     },
@@ -301,10 +304,17 @@ export const Default: Story = {
           gap="md"
           style={{ width: 560 }}
         >
-          <BAIVFolderPathPicker onChange={setLastChange} />
+          <BAIVFolderPathPicker
+            vfolderUuid={MOCK_VFOLDERS[0].uuid}
+            onChange={setLastChange}
+          />
           <Typography.Text type="secondary">
             onChange:{' '}
-            <Typography.Text code>{lastChange ?? 'undefined'}</Typography.Text>
+            <Typography.Text code>
+              {lastChange === undefined
+                ? 'undefined'
+                : JSON.stringify(lastChange)}
+            </Typography.Text>
           </Typography.Text>
         </BAIFlex>
       </MockProviders>
@@ -313,33 +323,63 @@ export const Default: Story = {
 };
 
 export const WithinForm: Story = {
-  name: 'Within Form (controlled by Form.Item)',
+  name: 'Within Form (with external BAIVFolderSelect)',
   parameters: {
     docs: {
       description: {
         story:
-          'The path string plugs straight into a Form.Item — the Form injects `value`/`onChange` and the required rule validates it.',
+          'The intended composition: a separate `BAIVFolderSelect` (with `valuePropName="row_id"` so the field holds the UUID) feeds `vfolderUuid`, and the picker plugs into its own Form.Item. Changing the vfolder resets the path field, and the required rule uses a custom validator because `""` (the vfolder root) is a valid pick.',
       },
     },
   },
   render: () => {
+    const [form] = Form.useForm<{
+      vfolderUuid?: string;
+      destination?: string;
+    }>();
+    const vfolderUuid = Form.useWatch('vfolderUuid', form);
     const [submitted, setSubmitted] = useState<string>();
 
     return (
       <MockProviders>
-        <Form<{ destination?: string }>
+        <Form
+          form={form}
           layout="vertical"
           style={{ width: 560 }}
           onFinish={(values) => {
-            setSubmitted(JSON.stringify(values.destination));
+            setSubmitted(JSON.stringify(values));
           }}
         >
           <Form.Item
-            name="destination"
-            label="Destination"
+            name="vfolderUuid"
+            label="Folder"
             rules={[{ required: true }]}
           >
-            <BAIVFolderPathPicker />
+            <BAIVFolderSelect
+              valuePropName="row_id"
+              allowClear
+              onChange={() => {
+                // A sub path belongs to the vfolder it was picked from.
+                form.setFieldValue('destination', undefined);
+              }}
+            />
+          </Form.Item>
+          <Form.Item
+            name="destination"
+            label="Destination"
+            required
+            rules={[
+              {
+                // `''` (vfolder root) is a valid pick, so `required: true`
+                // (which rejects empty strings) cannot be used here.
+                validator: (_rule, value) =>
+                  value === undefined
+                    ? Promise.reject(new Error('Please select a path'))
+                    : Promise.resolve(),
+              },
+            ]}
+          >
+            <BAIVFolderPathPicker vfolderUuid={vfolderUuid} />
           </Form.Item>
           <BAIFlex direction="column" align="start" gap="sm">
             <Button type="primary" htmlType="submit">
