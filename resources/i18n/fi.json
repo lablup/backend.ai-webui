@@ -1411,6 +1411,7 @@
   },
   "environment": {
     "Action": "Toiminta",
+    "AllProjects": "Kaikki projektit",
     "AlreadyInstalledImage": "Jo asennettu kuva",
     "AppInfoDeleted": "Sovelluksen tiedot onnistuneesti poistettu.",
     "AppName": "Sovelluksen nimi",
@@ -1469,7 +1470,6 @@
     "ResourceLimitAppliesToNewSessionsOnly": "Vähimmäisresurssirajoitus koskee vain uusia istuntoja eikä vaikuta jo käynnissä oleviin istuntoihin.",
     "ResourcePresets": "Resurssien esiasetukset",
     "SearchImages": "Etsi kuvia",
-    "SelectProjectToListImages": "Valitse projekti nähdäksesi sen imaget.",
     "SelectedImagesAlreadyInstalled": "Valittu kuva (valitut kuvat) on jo asennettu tai Ei mitään. Tarkista uudelleen.",
     "SelectedImagesNotInstalled": "Valittuja kuvia ei ole asennettu. Tarkista uudelleen.",
     "Status": "Tila",

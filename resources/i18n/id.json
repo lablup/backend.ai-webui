@@ -1411,6 +1411,7 @@
   },
   "environment": {
     "Action": "Tindakan",
+    "AllProjects": "Semua proyek",
     "AlreadyInstalledImage": "Gambar yang sudah terpasang",
     "AppInfoDeleted": "Informasi aplikasi berhasil dihapus.",
     "AppName": "Nama Aplikasi",
@@ -1470,7 +1471,6 @@
     "ResourceLimitAppliesToNewSessionsOnly": "Batas minimum sumber daya hanya berlaku untuk sesi yang baru dibuat dan tidak memengaruhi sesi yang sudah berjalan.",
     "ResourcePresets": "Preset Sumber Daya",
     "SearchImages": "Cari gambar",
-    "SelectProjectToListImages": "Pilih proyek untuk menampilkan daftar image-nya.",
     "SelectedImagesAlreadyInstalled": "Image yang dipilih sudah diinstal atau Tidak Ada. Silakan periksa lagi.",
     "SelectedImagesNotInstalled": "Image yang dipilih tidak diinstal. Silakan periksa lagi.",
     "Status": "Status",

@@ -17,9 +17,11 @@ import { MemoryRouter } from 'react-router-dom';
  * (ADR-0001, FR-3415).
  *
  * The header project selector is not mounted on `/admin/environment` any
- * more, so the page owns the project decision: an explicit, URL-persisted
- * choice with NO default, handed to the ONE tab whose content is
- * project-scoped. Nothing reads the ambient current project.
+ * more, so the page owns the project decision: an explicit, URL-persisted,
+ * OPTIONAL filter with NO default, handed to the ONE tab whose content it
+ * narrows. With nothing picked the list is domain-wide — an absent param means
+ * "all projects of the domain", not "nothing to show". Nothing reads the
+ * ambient current project.
  *
  * The selector itself is rendered by `ImageList` (it filters what that list
  * shows, so it is a content-scoped control that belongs in the list's own
@@ -76,23 +78,36 @@ vi.mock('../hooks/useAccessibleProjects', () => ({
   }),
 }));
 
-// Probe for the project the image list receives, plus the callback it uses to
-// report a new choice back to the page.
+// Probe for the project the image list receives, plus the callbacks it uses to
+// report a new choice — or a cleared filter — back to the page.
 vi.mock('../components/ImageList', async () => {
   const React = await import('react');
   return {
     default: (props: any) =>
       React.createElement(
-        'button',
-        {
-          'data-testid': 'mock-image-list',
-          'data-project-id': props.project?.id ?? '',
-          'data-project-name': props.project?.name ?? '',
-          type: 'button',
-          onClick: () =>
-            props.onChangeProject?.({ id: 'p2', name: 'project-two' }),
-        },
-        'image-list',
+        'div',
+        null,
+        React.createElement(
+          'button',
+          {
+            'data-testid': 'mock-image-list',
+            'data-project-id': props.project?.id ?? '',
+            'data-project-name': props.project?.name ?? '',
+            type: 'button',
+            onClick: () =>
+              props.onChangeProject?.({ id: 'p2', name: 'project-two' }),
+          },
+          'image-list',
+        ),
+        React.createElement(
+          'button',
+          {
+            'data-testid': 'mock-image-list-clear',
+            type: 'button',
+            onClick: () => props.onChangeProject?.(null),
+          },
+          'clear-project',
+        ),
       ),
   };
 });
@@ -131,7 +146,7 @@ const renderPage = (search: string) => {
 };
 
 describe('EnvironmentPage explicit project selection (ADR-0001, FR-3415)', () => {
-  it('starts unselected — it never seeds the scope from the ambient project', async () => {
+  it('starts unfiltered — it never seeds the scope from the ambient project', async () => {
     renderPage('');
 
     const imageList = await screen.findByTestId('mock-image-list');
@@ -142,7 +157,7 @@ describe('EnvironmentPage explicit project selection (ADR-0001, FR-3415)', () =>
     );
   });
 
-  it('scopes the image list to the project named in the URL', async () => {
+  it('narrows the image list to the project named in the URL', async () => {
     renderPage('?project=p1');
 
     const imageList = await screen.findByTestId('mock-image-list');
@@ -150,7 +165,7 @@ describe('EnvironmentPage explicit project selection (ADR-0001, FR-3415)', () =>
     expect(imageList).toHaveAttribute('data-project-name', 'project-one');
   });
 
-  it('treats an unresolvable project id as unselected instead of scoping to it', async () => {
+  it('treats an unresolvable project id as unfiltered instead of scoping to it', async () => {
     renderPage('?project=deleted-project-id');
 
     expect(await screen.findByTestId('mock-image-list')).toHaveAttribute(
@@ -168,6 +183,22 @@ describe('EnvironmentPage explicit project selection (ADR-0001, FR-3415)', () =>
     expect(onUrlUpdate).toHaveBeenCalled();
     const lastCall = onUrlUpdate.mock.calls.at(-1)?.[0];
     expect(lastCall.queryString).toContain('project=p2');
+  });
+
+  it('drops the project param when the filter is cleared, returning the list to the domain-wide view', async () => {
+    const user = userEvent.setup();
+    const { onUrlUpdate } = renderPage('?project=p1');
+
+    expect(await screen.findByTestId('mock-image-list')).toHaveAttribute(
+      'data-project-id',
+      'p1',
+    );
+
+    await user.click(screen.getByTestId('mock-image-list-clear'));
+
+    expect(onUrlUpdate).toHaveBeenCalled();
+    const lastCall = onUrlUpdate.mock.calls.at(-1)?.[0];
+    expect(lastCall.queryString).not.toContain('project=');
   });
 
   it('hands no project to the resource-preset tab — presets are project-independent', async () => {

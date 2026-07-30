@@ -1398,6 +1398,7 @@
   },
   "environment": {
     "Action": "Action",
+    "AllProjects": "All projects",
     "AlreadyInstalledImage": "Already installed image",
     "AppInfoDeleted": "Deleted App information.",
     "AppName": "App Name",
@@ -1456,7 +1457,6 @@
     "ResourceLimitAppliesToNewSessionsOnly": "The minimum resource limit applies to newly created sessions only and does not affect sessions that are already running.",
     "ResourcePresets": "Resource Presets",
     "SearchImages": "Search images",
-    "SelectProjectToListImages": "Select a project to list its images.",
     "SelectedImagesAlreadyInstalled": "Selected Image(s) are already installed or None. Please check again.",
     "SelectedImagesNotInstalled": "Selected Images(s) are not installed. Please check again.",
     "Status": "Status",

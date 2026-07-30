@@ -1411,6 +1411,7 @@
   },
   "environment": {
     "Action": "行动",
+    "AllProjects": "全部项目",
     "AlreadyInstalledImage": "已安装的图像",
     "AppInfoDeleted": "应用信息删除成功。",
     "AppName": "应用名称",
@@ -1469,7 +1470,6 @@
     "ResourceLimitAppliesToNewSessionsOnly": "最低资源限制仅适用于新建会话，不影响已在运行的会话。",
     "ResourcePresets": "资源预设",
     "SearchImages": "搜索图片",
-    "SelectProjectToListImages": "请选择一个项目以查看其镜像。",
     "SelectedImagesAlreadyInstalled": "选定的图像已安装或无。请再次检查。",
     "SelectedImagesNotInstalled": "未安装选定的图像。请再次检查。",
     "Status": "地位",

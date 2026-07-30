@@ -1411,6 +1411,7 @@
   },
   "environment": {
     "Action": "การดำเนินการ",
+    "AllProjects": "ทุกโปรเจกต์",
     "AlreadyInstalledImage": "อิมเมจที่ติดตั้งแล้ว",
     "AppInfoDeleted": "ลบข้อมูลแอปสำเร็จแล้ว",
     "AppName": "ชื่อแอป",
@@ -1469,7 +1470,6 @@
     "ResourceLimitAppliesToNewSessionsOnly": "ขีดจำกัดทรัพยากรขั้นต่ำจะมีผลกับเซสชันที่สร้างขึ้นใหม่เท่านั้น และไม่ส่งผลต่อเซสชันที่กำลังทำงานอยู่",
     "ResourcePresets": "ค่าที่กำหนดไว้ล่วงหน้าของทรัพยากร",
     "SearchImages": "ค้นหาอิมเมจ",
-    "SelectProjectToListImages": "เลือกโปรเจกต์เพื่อแสดงรายการอิมเมจ",
     "SelectedImagesAlreadyInstalled": "อิมเมจที่เลือกได้รับการติดตั้งแล้วหรือไม่มี กรุณาตรวจสอบอีกครั้ง",
     "SelectedImagesNotInstalled": "อิมเมจที่เลือกยังไม่ได้รับการติดตั้ง กรุณาตรวจสอบอีกครั้ง",
     "Status": "สถานะ",
