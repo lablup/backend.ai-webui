@@ -33,6 +33,12 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
   const supportsDetailedPermissions = baiClient.supports(
     'role-mapped-scope-filter',
   );
+  // The project-page one-click admin setting exists from manager 26.8.0;
+  // older managers must keep direct assignment on system roles or there is
+  // no way to grant project admin at all.
+  const supportsProjectAdminSetting = baiClient.supports(
+    'role-mapped-scope-filter',
+  );
   const [activeTab, setActiveTab] = useState(
     supportsDetailedPermissions ? 'detailedPermissions' : 'scopes',
   );
@@ -144,7 +150,7 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
             label: t('rbac.RoleAssignments'),
             children: (
               <Suspense fallback={<Skeleton active />}>
-                {role.source === 'SYSTEM' ? (
+                {role.source === 'SYSTEM' && supportsProjectAdminSetting ? (
                   <BAIAlert
                     type="warning"
                     showIcon
