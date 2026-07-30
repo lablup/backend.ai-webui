@@ -9,14 +9,14 @@ import { useCurrentDomainValue } from '../hooks';
 import DomainStoragePermissionTable from './DomainStoragePermissionTable';
 import ProjectStoragePermissionTable from './ProjectStoragePermissionTable';
 import { CheckCircleOutlined } from '@ant-design/icons';
-import { Typography, theme } from 'antd';
+import { Space, Typography, theme } from 'antd';
 import {
   BAIAlert,
   BAICard,
   BAIDomainSelect,
   BAIFetchKeyButton,
   BAIFlex,
-  BAIGraphQLPropertyFilter,
+  BAISelect,
   useFetchKey,
 } from 'backend.ai-ui';
 import React, { useDeferredValue, useState } from 'react';
@@ -114,32 +114,41 @@ const ProjectFolderPermissionPanel: React.FC<
       >
         <BAIFlex direction="column" align="stretch" gap="xs">
           <BAIFlex align="center" justify="between" gap="md" wrap="wrap">
-            <BAIGraphQLPropertyFilter
-              filterProperties={[
-                {
-                  key: 'domainName',
-                  propertyLabel: t('storageHost.permission.Name'),
-                  type: 'uuid',
-                  fixedOperator: 'equals',
-                  renderInput: () => (
-                    <BAIDomainSelect
-                      value={selectedDomainName}
-                      onChange={(value) =>
-                        setSelectedDomainName(
-                          (value as string | undefined) || undefined,
-                        )
-                      }
-                      allowClear
-                      style={{ minWidth: 200 }}
-                    />
-                  ),
-                },
-              ]}
-            />
+            {/* The domain picker drives this panel's own query state rather
+                than a GraphQL filter, so it is a plain compact pair (label
+                select + domain select) instead of BAIGraphQLPropertyFilter,
+                whose renderInput contract expects stateless controls committing
+                via onAddCondition (FR-3405). */}
+            <Space.Compact>
+              <BAISelect
+                popupMatchSelectWidth={false}
+                options={[
+                  {
+                    label: t('storageHost.permission.Name'),
+                    value: 'domainName',
+                  },
+                ]}
+                value="domainName"
+                style={{ minWidth: 150 }}
+              />
+              <BAIDomainSelect
+                value={selectedDomainName ?? null}
+                onChange={(value) =>
+                  setSelectedDomainName(
+                    (value as string | undefined) || undefined,
+                  )
+                }
+                allowClear
+                style={{ minWidth: 200 }}
+              />
+            </Space.Compact>
             <BAIFetchKeyButton
               value={domainFetchKey}
               onChange={updateDomainFetchKey}
-              loading={deferredFetchKey !== domainFetchKey}
+              loading={
+                deferredFetchKey !== domainFetchKey ||
+                deferredQueryVariables !== queryVariables
+              }
             />
           </BAIFlex>
           <DomainStoragePermissionTable
@@ -181,6 +190,10 @@ const ProjectFolderPermissionPanel: React.FC<
           storageVolumeFrgmt={storageVolume}
           domainFrgmt={domain}
           permissionFrgmt={vfolder_host_permissions}
+          loading={
+            deferredFetchKey !== domainFetchKey ||
+            deferredQueryVariables !== queryVariables
+          }
         />
       </BAICard>
     </BAIFlex>
