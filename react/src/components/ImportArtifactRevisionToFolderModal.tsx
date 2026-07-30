@@ -337,50 +337,7 @@ const ImportArtifactRevisionToFolderModal = ({
                       toggleIsOpenCreateModal();
                     }}
                   />
-<<<<<<< HEAD
-                ) : (
-                  <Popconfirm
-                    title={t(
-                      'importArtifactRevisionToFolderModal.ModelStoreProjectRequired',
-                    )}
-                    description={t(
-                      'importArtifactRevisionToFolderModal.ModelStoreProjectRequiredDescription',
-                    )}
-                    okText={t('button.ChangeProject')}
-                    cancelText={t('button.Cancel')}
-                    onConfirm={() => {
-                      if (
-                        modelStoreProject &&
-                        modelStoreProject.id &&
-                        modelStoreProject.name
-                      ) {
-                        startTransition(() => {
-                          switchProject({
-                            projectId: modelStoreProject.id!,
-                            projectName: modelStoreProject.name!,
-                          });
-                          message.success(
-                            t(
-                              'importArtifactRevisionToFolderModal.CurrentProjectChangedSuccessfully',
-                            ),
-                          );
-                          toggleIsOpenCreateModal();
-                        });
-                      } else {
-                        message.error(
-                          t(
-                            'importArtifactRevisionToFolderModal.FailedToRetrieveModelStoreProject',
-                          ),
-                        );
-                      }
-                    }}
-                  >
-                    <BAIButton icon={<PlusIcon />} />
-                  </Popconfirm>
-                )}
-=======
                 </Tooltip>
->>>>>>> 46c2d6144 (feat(FR-3415): explicit in-page project selection for Environments and Reservoir)
               </BAIFlex>
             </Form.Item>
           </BAIFlex>

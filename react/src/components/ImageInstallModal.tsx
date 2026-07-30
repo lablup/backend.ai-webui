@@ -54,19 +54,14 @@ interface ImageInstallModalInterface extends BAIModalProps {
  * The list filter answers "which images am I looking at"; this modal answers
  * "where does the install session run". Coupling them would make the user
  * change a *filter* in order to enable an *action*.
+ *
+ * The caller is responsible for wrapping this component in
+ * `BAIUnmountAfterClose` (see `ImageList.tsx`) - that is what resets the
+ * project / resource-group state on every fresh open (by fully unmounting
+ * this component between opens) while still letting the modal play its close
+ * animation instead of vanishing instantly.
  */
-const ImageInstallModal: React.FC<ImageInstallModalInterface> = (props) => {
-  'use memo';
-
-  // The body is mounted only while the modal is open. Everything it holds is
-  // modal-session state - the project and resource-group choices - so the
-  // fresh mount per open is what resets it; no state-syncing effect needed.
-  if (!props.open) return null;
-
-  return <ImageInstallModalContent {...props} />;
-};
-
-const ImageInstallModalContent: React.FC<ImageInstallModalInterface> = ({
+const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
   onRequestClose,
   selectedRows,
   setInstallingImages,
@@ -84,6 +79,11 @@ const ImageInstallModalContent: React.FC<ImageInstallModalInterface> = ({
   const [chosenResourceGroup, setChosenResourceGroup] = useState<
     string | undefined
   >(undefined);
+  // Tracks the in-flight install request. While true, the OK button shows a
+  // loading state (`confirmLoading`) and the modal refuses to be dismissed
+  // (`closable`/`cancelButtonProps`) so it can't vanish before the requests
+  // settle.
+  const [isInstalling, setIsInstalling] = useState(false);
 
   const mapImages = () => {
     let hasInstalledImage = false;
@@ -98,133 +98,138 @@ const ImageInstallModalContent: React.FC<ImageInstallModalInterface> = ({
 
   const canInstall = !!chosenProject && !!chosenResourceGroup;
 
-  const handleClick = () => {
+  const handleClick = async () => {
     if (!chosenProject || !chosenResourceGroup) return;
     const installProjectName = chosenProject.name;
     const installResourceGroup = chosenResourceGroup;
-    onRequestClose();
-    const installPromises = imagesToInstall.map(async (image, index) => {
-      const imageName = `${image?.registry}/${image?.namespace ?? image?.name}:${image?.tag}`;
 
-      const labels = (image?.labels ?? []).reduce<Record<string, string>>(
-        (acc, label) => {
-          if (label?.key && label?.value) {
-            acc[label.key] = label.value;
-          }
-          return acc;
-        },
-        {},
-      ); // Properly convert labels to a dictionary
+    setIsInstalling(true);
+    try {
+      const installPromises = imagesToInstall.map(async (image, index) => {
+        const imageName = `${image?.registry}/${image?.namespace ?? image?.name}:${image?.tag}`;
 
-      const shmem = labels['ai.backend.resource.preferred.shmem'] || '64m';
-      const mem =
-        addNumberWithUnits(
-          _.get(_.find(image?.resource_limits, { key: 'mem' }), 'min') ??
-            '256m',
-          shmem,
-          'm',
-        ) ?? '320m'; // 320m = 256m + 64m
-
-      const imageResource: SessionResources = {
-        group_name: installProjectName,
-        domain: baiClient._config.domainName,
-        type: 'batch',
-        cluster_mode: 'single-node',
-        cluster_size: 1,
-        startupCommand: 'echo "Image is installed"',
-        enqueueOnly: true,
-        reuseIfExists: false,
-        config: {
-          resources: {
-            ..._.mapValues(_.keyBy(image?.resource_limits, 'key'), 'min'),
-            cpu: _.get(
-              _.find(image?.resource_limits, { key: 'cpu' }),
-              'min',
-              1,
-            ) as number,
-            mem: mem,
+        const labels = (image?.labels ?? []).reduce<Record<string, string>>(
+          (acc, label) => {
+            if (label?.key && label?.value) {
+              acc[label.key] = label.value;
+            }
+            return acc;
           },
-          resource_opts: {
+          {},
+        ); // Properly convert labels to a dictionary
+
+        const shmem = labels['ai.backend.resource.preferred.shmem'] || '64m';
+        const mem =
+          addNumberWithUnits(
+            _.get(_.find(image?.resource_limits, { key: 'mem' }), 'min') ??
+              '256m',
             shmem,
-          },
-          // The agent that pulls the image is picked from this resource
-          // group's agents - never a hardcoded `'default'`.
-          scaling_group: installResourceGroup,
-        },
-      };
+            'm',
+          ) ?? '320m'; // 320m = 256m + 64m
 
-      const isGPURequired = _.some(
-        ['cuda.device', 'cuda.shares'],
-        (key) => key in (imageResource.config?.resources ?? {}),
-      );
-
-      if (isGPURequired && imageResource.config) {
-        _.assign(imageResource.config.resources, {
-          gpu: _.get(imageResource.config.resources, 'cuda.device', 0),
-          fgpu: _.get(imageResource.config.resources, 'cuda.shares'),
-        });
-      }
-
-      const resourceSlots = await baiClient.get_resource_slots();
-
-      const keysToRemove = _.filter(
-        ['cuda.device', 'cuda.shares', 'gpu', 'fgpu'],
-        (key) => !(key in resourceSlots),
-      );
-
-      // Remove keys that are not available in the resource slots
-      if (imageResource.config) {
-        imageResource.config.resources = {
-          ..._.omit(imageResource.config.resources ?? {}, keysToRemove),
-          cpu: imageResource.config.resources?.cpu ?? 1,
-          mem: imageResource.config.resources?.mem ?? '320m',
-        };
-      }
-
-      // A stable prefix marks this as an install session at a glance; the
-      // per-image index + random suffix keeps N images installed in one
-      // action from colliding. Deliberately does NOT embed the image name -
-      // that's already visible on the image list, and image names are long
-      // and contain characters (`/`, `:`) that session names can't hold.
-      const installSessionName = `install-image-${generateRandomString(8)}-${index}`;
-
-      try {
-        const result = await baiClient.image.install(
-          imageName,
-          image?.architecture,
-          imageResource,
-          undefined,
-          installSessionName,
-        );
-        return {
-          imageId: image?.id,
-          session: {
-            sessionId: result?.sessionId,
-            sessionName: installSessionName,
-            // The install endpoint's response carries no service-port info
-            // (it's a throwaway batch session with no exposed app) -
-            // `upsertSessionNotification` only reads `.sessionId`, so an
-            // empty array satisfies its declared contract without inventing
-            // data.
-            servicePorts: [],
-          },
-        };
-      } catch (error) {
-        document.dispatchEvent(
-          new CustomEvent('add-bai-notification', {
-            detail: {
-              open: true,
-              type: 'error',
-              message: painKiller.relieve((error as any).title),
-              description: (error as any).message,
+        const imageResource: SessionResources = {
+          group_name: installProjectName,
+          domain: baiClient._config.domainName,
+          type: 'batch',
+          cluster_mode: 'single-node',
+          cluster_size: 1,
+          startupCommand: 'echo "Image is installed"',
+          enqueueOnly: true,
+          reuseIfExists: false,
+          config: {
+            resources: {
+              ..._.mapValues(_.keyBy(image?.resource_limits, 'key'), 'min'),
+              cpu: _.get(
+                _.find(image?.resource_limits, { key: 'cpu' }),
+                'min',
+                1,
+              ) as number,
+              mem: mem,
             },
-          }),
-        );
-        return null;
-      }
-    });
+            resource_opts: {
+              shmem,
+            },
+            // The agent that pulls the image is picked from this resource
+            // group's agents - never a hardcoded `'default'`.
+            scaling_group: installResourceGroup,
+          },
+        };
 
-    Promise.allSettled(installPromises).then((results) => {
+        const isGPURequired = _.some(
+          ['cuda.device', 'cuda.shares'],
+          (key) => key in (imageResource.config?.resources ?? {}),
+        );
+
+        if (isGPURequired && imageResource.config) {
+          _.assign(imageResource.config.resources, {
+            gpu: _.get(imageResource.config.resources, 'cuda.device', 0),
+            fgpu: _.get(imageResource.config.resources, 'cuda.shares'),
+          });
+        }
+
+        const resourceSlots = await baiClient.get_resource_slots();
+
+        const keysToRemove = _.filter(
+          ['cuda.device', 'cuda.shares', 'gpu', 'fgpu'],
+          (key) => !(key in resourceSlots),
+        );
+
+        // Remove keys that are not available in the resource slots
+        if (imageResource.config) {
+          imageResource.config.resources = {
+            ..._.omit(imageResource.config.resources ?? {}, keysToRemove),
+            cpu: imageResource.config.resources?.cpu ?? 1,
+            mem: imageResource.config.resources?.mem ?? '320m',
+          };
+        }
+
+        // A stable prefix marks this as an install session at a glance; the
+        // per-image index + random suffix keeps N images installed in one
+        // action from colliding. Deliberately does NOT embed the image name -
+        // that's already visible on the image list, and image names are long
+        // and contain characters (`/`, `:`) that session names can't hold.
+        const installSessionName = `install-image-${generateRandomString(8)}-${index}`;
+
+        try {
+          const result = await baiClient.image.install(
+            imageName,
+            image?.architecture,
+            imageResource,
+            undefined,
+            installSessionName,
+          );
+          return {
+            imageId: image?.id,
+            session: {
+              sessionId: result?.sessionId,
+              sessionName: installSessionName,
+              // The install endpoint's response carries no service-port info
+              // (it's a throwaway batch session with no exposed app) -
+              // `upsertSessionNotification` only reads `.sessionId`, so an
+              // empty array satisfies its declared contract without inventing
+              // data.
+              servicePorts: [],
+            },
+          };
+        } catch (error) {
+          document.dispatchEvent(
+            new CustomEvent('add-bai-notification', {
+              detail: {
+                open: true,
+                type: 'error',
+                message: painKiller.relieve((error as any).title),
+                description: (error as any).message,
+              },
+            }),
+          );
+          return null;
+        }
+      });
+
+      // `Promise.allSettled` never rejects, so every install outcome - success
+      // or failure - is accounted for here; one image's failure can never
+      // strand the modal open waiting on a promise that never resolves.
+      const results = await Promise.allSettled(installPromises);
       const succeeded = results.filter(
         (
           result,
@@ -253,17 +258,33 @@ const ImageInstallModalContent: React.FC<ImageInstallModalInterface> = ({
           status: 'fulfilled',
           value: result.value.session,
         }));
-        upsertSessionNotification(successCreations);
+        // Awaited (it is a quick Relay fetch) so the notifications are
+        // already on screen by the time the modal closes below.
+        await upsertSessionNotification(successCreations);
       }
-    });
+    } finally {
+      // Always clear the in-flight flag and close - including when every
+      // install failed - so the modal can never get stuck open.
+      setIsInstalling(false);
+      onRequestClose();
+    }
   };
 
   return (
     <BAIModal
       {...modalProps}
-      destroyOnHidden
       maskClosable={false}
-      onCancel={() => onRequestClose()}
+      // While a request is in flight, remove every dismissal affordance so
+      // the modal can't be closed out from under it: no close icon, and the
+      // Cancel button is disabled. `onCancel` also short-circuits so a
+      // keyboard Esc can't sneak a close through either.
+      closable={!isInstalling}
+      cancelButtonProps={{ disabled: isInstalling }}
+      confirmLoading={isInstalling}
+      onCancel={() => {
+        if (isInstalling) return;
+        onRequestClose();
+      }}
       title={t('environment.CheckImageInstallation')}
       okText={t('environment.Install')}
       okButtonProps={{ disabled: !canInstall }}
