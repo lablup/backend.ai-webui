@@ -239,15 +239,47 @@ narrowing helper for the loosely-typed ambient value).
     param (the project **id**), resolved to `{ id, name }` at page level via
     `useAccessibleProjects` — the same source the selector reads, so the URL
     and the visible option cannot disagree, and an id that no longer resolves
-    narrows to "unselected" rather than to something arbitrary.
+    falls back to the unfiltered view rather than to something arbitrary.
 
-    **There is deliberately no default.** Seeding it — from the ambient
-    project or from "the first project" — would reintroduce exactly the
-    invisible-scope bug this ADR exists to remove. Until a project is picked
-    the image list renders a "select a project" empty state.
+    **There is deliberately no default**, and none is needed: the project is an
+    **optional filter over a domain-wide default**, not a precondition.
+    Seeding it — from the ambient project or from "the first project" — would
+    reintroduce exactly the invisible-scope bug this ADR exists to remove, and
+    an empty state ("pick a project to list images") would make an admin
+    surface refuse to show the domain's images until an arbitrary project was
+    chosen. The list therefore always loads; the selector is `allowClear` with
+    an "All projects" placeholder, and clearing it drops `?project=` from the
+    URL and re-runs the query at domain scope.
+
+    **The admin image list defaults to a DOMAIN scope — the first non-project
+    `scope_id` in the app.** Every other call site passes `project:${...}`.
+    `image_nodes(scope_id: ScopeField!)` is non-null, so the argument cannot be
+    omitted, but `ScopeField` parses `<TYPE>:<ID>` for TYPE in
+    `system | domain | project | user`
+    (`src/ai/backend/manager/api/gql_legacy/fields.py:15`). Verified against a
+    live manager 26.7.0 with everything else held constant: `system:` → 149
+    images, `domain:default` → 149, `project:<uuid>` → 149, and the legacy
+    unscoped `images` query → 149, i.e. the full set. Scope width differs only
+    for non-global (project-associated) container registries, where
+    `domain:<name>` ⊇ `system:` ⊇ `project:<one>`; images from global
+    registries appear under every scope. Invalid forms fail loudly
+    (`domain:nope` → "Domain not found").
+
+    **`domain:<current domain>` was chosen over `system:`** for two reasons:
+
+    1. `system:` is computed from the **caller's own project memberships** and
+       has a real crash path — `IndexError` → HTTP 500 — for an admin who
+       belongs to zero projects
+       (`src/ai/backend/manager/models/image/row.py:1441-1443`).
+    2. `/admin/environment` is `access: 'admin'`, so **domain admins** reach
+       it. A domain scope matches their authority exactly, whereas `system:`
+       claims a breadth the page has no business asserting.
+
+    `admin_images_v2` exists but takes no scope argument, so it is not a
+    substitute; revisit if it grows one.
 
     **The selector lives in the Images tab's own filter row, not in the page's
-    card header.** The project decides what that list SHOWS, which makes it a
+    card header.** The project narrows what that list SHOWS, which makes it a
     content-scoped control (`.claude/rules/use-bai-card.md` reserves the card
     `extra` slot for card-scoped actions and keeps filter/sort/paging controls
     in the body). It is also the only tab that needs one: Registries are
@@ -256,22 +288,24 @@ narrowing helper for the loosely-typed ambient value).
     receives `project` plus an `onChangeProject` callback and never decides
     the project itself, so ADR-0001's contract is intact.
 
-    **No "all projects" view is offered.** `image_nodes`'s `scope_id` does
-    accept `domain:<name>`, but the manager resolves it with a per-project
-    group lookup plus a per-image allowed-registry query (an N-queries-per-row
-    pattern) and unions in the caller's own user-scope images, so it is
-    neither cheap nor exactly "all projects in the domain". A single required
-    project choice was kept instead; revisit if the backend grows a real
-    admin-wide image list (`admin_images_v2` exists but takes no scope).
-
     The consumers below it were converted:
     - `ImageList` — required `project: ProjectContextOrNull` plus
-      `onChangeProject`; the query scope is `project:${project.id}`. `null`
-      renders the selector with the "pick a project" empty state and issues no
-      scoped query.
-    - `ImageInstallModal` — required **non-null** `project`; the batch session
-      it enqueues carries `group_name: project.name` instead of
-      `baiClient.current_group`.
+      `onChangeProject: (project: ProjectContextOrNull) => void`; the query
+      scope is `project:${project.id}` when the filter is active and
+      `domain:${baiClient._config.domainName}` otherwise. `null` is an
+      ordinary state, not an error: the list loads either way.
+    - `ImageInstallModal` — **modal tier**, `project: ProjectContextOrNull`.
+      Installing an image enqueues a batch session, which always needs a
+      project, but the list is domain-wide so there is not always one to
+      inherit. With `null` the modal renders its OWN required
+      `ProjectSelectForAdminPage` (same pattern as `FolderCreateModalV2` and
+      `DeploymentSettingModal`) and OK stays disabled until a project is
+      picked; the choice is modal-session state, reset on every open. With a
+      project passed it shows no selector and installs there. The install
+      target is deliberately NOT borrowed from the filter when unset —
+      requiring the user to change a _filter_ to enable an _action_ is the same
+      implicit coupling this epic removes. Either way `group_name` comes from
+      the resolved project, never `baiClient.current_group`.
 
     **Resource presets take no `project` prop at any tier — they have no
     project dimension.** The manager's `resource_presets` table has no

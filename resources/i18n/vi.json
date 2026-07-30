@@ -1415,6 +1415,7 @@
   },
   "environment": {
     "Action": "Hoạt động",
+    "AllProjects": "Tất cả dự án",
     "AlreadyInstalledImage": "Hình ảnh đã được cài đặt",
     "AppInfoDeleted": "Thông tin ứng dụng đã được xóa thành công.",
     "AppName": "Tên ứng dụng",
@@ -1473,7 +1474,6 @@
     "ResourceLimitAppliesToNewSessionsOnly": "Giới hạn tài nguyên tối thiểu chỉ áp dụng cho các phiên mới được tạo và không ảnh hưởng đến các phiên đang chạy.",
     "ResourcePresets": "Cài đặt trước tài nguyên",
     "SearchImages": "Tìm kiếm hình ảnh",
-    "SelectProjectToListImages": "Chọn một dự án để xem danh sách image của dự án đó.",
     "SelectedImagesAlreadyInstalled": "(Các) Hình ảnh được chọn đã được cài đặt hoặc Không có. Vui lòng kiểm tra lại.",
     "SelectedImagesNotInstalled": "(Các) Hình ảnh đã chọn chưa được cài đặt. Vui lòng kiểm tra lại.",
     "Status": "Trạng thái",

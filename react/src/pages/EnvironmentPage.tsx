@@ -32,12 +32,15 @@ const EnvironmentPage = () => {
   const baiClient = useSuspendedBackendaiClient();
 
   // ADR-0001 (FR-3415): this page operates above project scope, so the header
-  // project selector is not mounted here. The project the image list works in
-  // is an explicit, visible, URL-persisted choice instead of an ambient read.
+  // project selector is not mounted here. The project the image list narrows
+  // to is an explicit, visible, URL-persisted choice instead of an ambient
+  // read.
   //
   // There is deliberately NO default: seeding it (from the ambient project or
   // from "the first project") would reintroduce exactly the invisible-scope
-  // bug this epic removes. Until a project is picked, the image list says so.
+  // bug this epic removes. With nothing picked the list is domain-wide, so the
+  // project is a pure OPTIONAL FILTER — an absent param means "all projects of
+  // the domain", never "nothing to show".
   const [{ project: selectedProjectId }, setQueryParams] = useQueryStates(
     { project: parseAsString },
     { history: 'replace' },
@@ -47,7 +50,8 @@ const EnvironmentPage = () => {
   // projects of the domain, not just the ones the admin is a member of), so
   // the id in the URL resolves to exactly the option the user sees. An id that
   // no longer resolves (deleted project, hand-edited URL) narrows to `null` —
-  // the unselected state — rather than silently scoping to something.
+  // i.e. falls back to the domain-wide view — rather than silently scoping to
+  // something else.
   const { groups } = useAccessibleProjects({
     domain: baiClient._config.domainName,
   });
@@ -71,13 +75,15 @@ const EnvironmentPage = () => {
       <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
         {currentTab === 'image' && (
           <BAIErrorBoundary>
-            {/* The project scopes what this tab LISTS, so the selector is a
+            {/* The project NARROWS what this tab lists, so the selector is a
                 content-scoped control: it belongs in the list's own filter
-                row, not in the card header (see `.claude/rules/use-bai-card.md`). */}
+                row, not in the card header (see `.claude/rules/use-bai-card.md`).
+                Clearing it writes `null`, which drops `?project=` from the URL
+                and returns the list to the domain-wide scope. */}
             <ImageList
               project={selectedProject}
               onChangeProject={(project) => {
-                setQueryParams({ project: project.id });
+                setQueryParams({ project: project?.id ?? null });
               }}
             />
           </BAIErrorBoundary>

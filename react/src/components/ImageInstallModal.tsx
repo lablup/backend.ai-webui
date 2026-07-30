@@ -7,14 +7,17 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { usePainKiller } from '../hooks/usePainKiller';
 import { SessionResources } from '../pages/SessionLauncherPage';
-import { ProjectContext } from '../types/projectContext';
+import { ProjectContextOrNull } from '../types/projectContext';
 import { EnvironmentImage } from './ImageList';
+import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
+import BAIFormItem from './BAIFormItem';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import { List, ListItem } from '@astryxdesign/core/List';
 import { Pagination } from '@astryxdesign/core/Pagination';
 import { Text } from '@astryxdesign/core/Text';
 import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface ImageInstallModalInterface extends BAIModalProps {
@@ -25,18 +28,40 @@ interface ImageInstallModalInterface extends BAIModalProps {
    * Explicit project prop contract (ADR-0001, FR-3415). Installing an image
    * enqueues a batch session, so it MUST land in a project the operator chose
    * deliberately — never in `baiClient.current_group`, which on an admin page
-   * is an invisible leftover. Required and non-null: the caller disables the
-   * install action until a project is picked.
+   * is an invisible leftover.
+   *
+   * MODAL TIER: the image list is domain-wide by default, so a project is not
+   * always available to inherit. `null` therefore makes this modal render its
+   * OWN required project selector, and the chosen project becomes the install
+   * session's project. When a project IS passed (the list's optional filter is
+   * active) no selector is shown and the install lands in that project.
+   *
+   * The install target is deliberately NOT borrowed from the list's filter
+   * when unset: making the user change a *filter* to enable an *action* is the
+   * implicit coupling this epic removes.
    */
-  project: ProjectContext;
+  project: ProjectContextOrNull;
 }
-const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
+const ImageInstallModal: React.FC<ImageInstallModalInterface> = (props) => {
+  'use memo';
+
+  // The body is mounted only while the modal is open. Everything it holds is
+  // modal-session state — notably the in-modal project choice — so the fresh
+  // mount per open is what resets it; no state-syncing effect needed.
+  if (!props.open) return null;
+
+  return <ImageInstallModalContent {...props} />;
+};
+
+const ImageInstallModalContent: React.FC<ImageInstallModalInterface> = ({
   onRequestClose,
   selectedRows,
   setInstallingImages,
   project,
   ...modalProps
 }) => {
+  'use memo';
+
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
   const { upsertNotification } = useSetBAINotification();
@@ -45,7 +70,12 @@ const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
   // List: built-in pagination has no destination); page size 5 as before.
   const [listPage, setListPage] = useState(1);
   const LIST_PAGE_SIZE = 5;
-  if (!modalProps.open) return null;
+
+  const [chosenProject, setChosenProject] =
+    useState<ProjectContextOrNull>(null);
+
+  // The passed project wins; the in-modal choice only fills the `null` case.
+  const installProject: ProjectContextOrNull = project ?? chosenProject;
 
   const mapImages = () => {
     let hasInstalledImage = false;
@@ -59,6 +89,8 @@ const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
   const { imagesToInstall, hasInstalledImage } = mapImages();
 
   const handleClick = () => {
+    if (!installProject) return;
+    const installProjectName = installProject.name;
     onRequestClose();
     const installPromises = imagesToInstall.map(async (image) => {
       const imageName = `${image?.registry}/${image?.namespace ?? image?.name}:${image?.tag}`;
@@ -83,7 +115,7 @@ const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
         ) ?? '320m'; // 320m = 256m + 64m
 
       const imageResource: SessionResources = {
-        group_name: project.name,
+        group_name: installProjectName,
         domain: baiClient._config.domainName,
         type: 'batch',
         cluster_mode: 'single-node',
@@ -184,10 +216,44 @@ const ImageInstallModal: React.FC<ImageInstallModalInterface> = ({
       onCancel={() => onRequestClose()}
       title={t('environment.CheckImageInstallation')}
       okText={t('environment.Install')}
+      okButtonProps={{ disabled: !installProject }}
       onOk={handleClick}
     >
       <BAIFlex direction="column" gap="md" align="start">
         {hasInstalledImage ? t('environment.InstalledImagesAreExcluded') : null}
+        {project === null ? (
+          // ADR-0001 modal tier: with no project filter active the list is
+          // domain-wide, so the install target is this modal's own required
+          // decision — same pattern as FolderCreateModalV2 /
+          // DeploymentSettingModal.
+          <div style={{ width: '100%' }}>
+            <BAIFormItem
+              label={t('data.folders.TargetProject')}
+              required
+              style={{ marginBottom: 0 }}
+            >
+              {/* The Suspense boundary swallows BAIFormItem's injected props,
+                  so the value is held in local state instead of the form. */}
+              <Suspense fallback={<BAISkeletonAstryx variant="input" />}>
+                <ProjectSelectForAdminPage
+                  data-testid="image-install-project-select"
+                  domain={baiClient._config.domainName}
+                  value={chosenProject?.id ?? undefined}
+                  onSelectProject={(projectInfo) => {
+                    setChosenProject(
+                      projectInfo
+                        ? {
+                            id: projectInfo.projectId,
+                            name: projectInfo.projectName,
+                          }
+                        : null,
+                    );
+                  }}
+                />
+              </Suspense>
+            </BAIFormItem>
+          </div>
+        ) : null}
         <BAIFlex
           direction="column"
           align="stretch"

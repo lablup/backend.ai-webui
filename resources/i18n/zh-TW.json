@@ -1416,6 +1416,7 @@
   },
   "environment": {
     "Action": "行動",
+    "AllProjects": "全部專案",
     "AlreadyInstalledImage": "已安装的图像",
     "AppInfoDeleted": "應用信息刪除成功。",
     "AppName": "應用名稱",
@@ -1474,7 +1475,6 @@
     "ResourceLimitAppliesToNewSessionsOnly": "最低資源限制僅適用於新建的工作階段，不影響已在執行中的工作階段。",
     "ResourcePresets": "資源預設",
     "SearchImages": "搜索图片",
-    "SelectProjectToListImages": "請選擇一個專案以檢視其映像檔。",
     "SelectedImagesAlreadyInstalled": "選定的圖像已安裝或無。請再次檢查。",
     "SelectedImagesNotInstalled": "未安裝選定的圖像。請再次檢查。",
     "Status": "地位",

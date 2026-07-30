@@ -1415,6 +1415,7 @@
   },
   "environment": {
     "Action": "Үйлдэл",
+    "AllProjects": "Бүх төсөл",
     "AlreadyInstalledImage": "Аль хэдийн суулгасан зураг",
     "AppInfoDeleted": "Аппын мэдээллийг амжилттай устгалаа.",
     "AppName": "Аппын нэр",
@@ -1473,7 +1474,6 @@
     "ResourceLimitAppliesToNewSessionsOnly": "Хамгийн бага нөөцийн хязгаар нь зөвхөн шинээр үүсгэсэн сессүүдэд хамаарах бөгөөд аль хэдийн ажиллаж байгаа сессүүдэд нөлөөлөхгүй.",
     "ResourcePresets": "Нөөцийн урьдчилсан тохируулга",
     "SearchImages": "Зураг хайх",
-    "SelectProjectToListImages": "Дүрсүүдийг харахын тулд төслөө сонгоно уу.",
     "SelectedImagesAlreadyInstalled": "Сонгосон image аль хэдийн суулгасан эсвэл Байхгүй байна. Дахин шалгана уу.",
     "SelectedImagesNotInstalled": "Сонгосон image суулгагдаагүй байна. Дахин шалгана уу.",
     "Status": "Статус",

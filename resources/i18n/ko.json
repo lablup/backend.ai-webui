@@ -1415,6 +1415,7 @@
   },
   "environment": {
     "Action": "동작",
+    "AllProjects": "전체 프로젝트",
     "AlreadyInstalledImage": "이미 설치된 이미지입니다.",
     "AppInfoDeleted": "선택한 앱 정보가 삭제되었습니다.",
     "AppName": "앱 이름",
@@ -1473,7 +1474,6 @@
     "ResourceLimitAppliesToNewSessionsOnly": "변경된 최소 리소스 제한은 이미 실행 중인 세션에는 적용되지 않으며, 이후 새로 생성되는 세션부터 적용됩니다.",
     "ResourcePresets": "자원 프리셋",
     "SearchImages": "이미지 검색",
-    "SelectProjectToListImages": "이미지를 보려면 프로젝트를 선택하세요.",
     "SelectedImagesAlreadyInstalled": "선택된 이미지가 없거나 이미 설치 완료되었습니다. 다시 한번 확인해 주시기 바랍니다.",
     "SelectedImagesNotInstalled": "선택된 이미지가 없거나 설치되지 않아 삭제할 수 없습니다. 다시 한번 확인해 주시기 바랍니다.",
     "Status": "상태",

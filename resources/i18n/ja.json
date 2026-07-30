@@ -1415,6 +1415,7 @@
   },
   "environment": {
     "Action": "アクション",
+    "AllProjects": "すべてのプロジェクト",
     "AlreadyInstalledImage": "すでにインストールされているイメージ",
     "AppInfoDeleted": "アプリ情報が正常に削除されました。",
     "AppName": "アプリ名",
@@ -1473,7 +1474,6 @@
     "ResourceLimitAppliesToNewSessionsOnly": "最小リソース制限は新しく作成されるセッションにのみ適用され、すでに実行中のセッションには影響しません。",
     "ResourcePresets": "リソースプリセット",
     "SearchImages": "イメージ検索",
-    "SelectProjectToListImages": "イメージを表示するにはプロジェクトを選択してください。",
     "SelectedImagesAlreadyInstalled": "選択したイメージはすでにインストールされているか、[なし]です。再度確認してください。",
     "SelectedImagesNotInstalled": "選択したイメージはインストールされません。再度確認してください。",
     "Status": "状態",

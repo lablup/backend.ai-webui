@@ -1415,6 +1415,7 @@
   },
   "environment": {
     "Action": "action",
+    "AllProjects": "Tous les projets",
     "AlreadyInstalledImage": "Image déjà installée",
     "AppInfoDeleted": "Informations sur l'application supprimées avec succès.",
     "AppName": "Nom de l'application",
@@ -1474,7 +1475,6 @@
     "ResourceLimitAppliesToNewSessionsOnly": "La limite de ressources minimale s'applique uniquement aux sessions nouvellement créées et n'affecte pas les sessions déjà en cours d'exécution.",
     "ResourcePresets": "Préréglages de ressources",
     "SearchImages": "Recherche d'images",
-    "SelectProjectToListImages": "Sélectionnez un projet pour afficher ses images.",
     "SelectedImagesAlreadyInstalled": "Les images sélectionnées sont déjà installées ou Aucune. Veuillez vérifier à nouveau.",
     "SelectedImagesNotInstalled": "Les images sélectionnées ne sont pas installées. Veuillez vérifier à nouveau.",
     "Status": "Statut",
