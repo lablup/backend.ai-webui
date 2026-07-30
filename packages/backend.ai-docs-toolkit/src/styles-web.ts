@@ -227,6 +227,20 @@ export function generateWebStyles(
   --bai-content-max: 820px;
   --bai-gutter: 32px;
 
+  /* Outer shell cap. The three-column grid (sider + article + TOC) used
+     to stretch to the full viewport width, so on ultrawide displays
+     (21:9 and wider) the sider stuck to the far-left edge and the TOC to
+     the far-right one, leaving the 820px article marooned between two
+     ~600px voids. Capping the shell and centering it keeps the three
+     columns as one readable block; the leftover width becomes symmetric
+     page margin instead of intra-layout dead space.
+
+     1536px = 280 (sider) + 240 (TOC) + 1016 for the article column,
+     which gives the 820px prose ~98px of slack per side — the same
+     column-to-prose ratio the reference layout uses. Below this width
+     nothing changes, so laptop/1440p viewports render exactly as before. */
+  --bai-layout-max: 1536px;
+
   /* Legacy aliases used by F3 grid rules (resolve to BAI tokens). */
   --doc-sidebar-width: var(--bai-sider-w);
   --doc-toc-width: var(--bai-toc-w);
@@ -329,7 +343,15 @@ body {
   align-items: center;
   gap: 14px;
   height: var(--bai-topbar-h);
-  padding: 0 20px;
+  /* Full-bleed bar with shell-aligned content: the background and bottom
+     border still span the viewport (a sticky bar that stopped short of
+     the edges would read as a floating card), but the brand / search /
+     action row is inset to the same --bai-layout-max shell as .doc-page.
+     The brand then lines up with the sider and the icon cluster with the
+     TOC instead of clinging to the screen corners on ultrawide displays.
+     max() keeps the original 20px gutter at every width below the cap. */
+  padding-block: 0;
+  padding-inline: max(20px, calc((100% - var(--bai-layout-max)) / 2));
   background: var(--bai-bg);
   border-bottom: 1px solid var(--bai-border);
 }
@@ -951,6 +973,10 @@ body.bai-drawer-open .bai-scrim {
   grid-template-columns: var(--bai-sider-w) minmax(0, 1fr) var(--bai-toc-w);
   align-items: stretch;
   min-height: calc(100vh - var(--bai-topbar-h));
+  /* Cap + center the whole shell so ultrawide viewports grow the page
+     margins rather than the gaps between sider, article and TOC. */
+  max-width: var(--bai-layout-max);
+  margin-inline: auto;
 }
 
 .doc-sidebar {
@@ -3141,7 +3167,11 @@ export function generateWebsiteStyles(branding?: StyleBrandingTokens): string {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 22px;
+  /* Same full-bleed-bar / shell-aligned-content split as .bai-topbar so
+     the banner text starts on the sider's left edge rather than the
+     viewport's on ultrawide displays. */
+  padding-block: 10px;
+  padding-inline: max(22px, calc((100% - var(--bai-layout-max)) / 2));
   border-bottom: 1px solid var(--bai-border);
   /* FR-2758: banner sits sticky right under the topbar so it stays
      visible during scroll (the operator wants this notice to be a
