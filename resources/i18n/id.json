@@ -1451,7 +1451,6 @@
     "Installed": "Terinstal",
     "InstalledImagesAreExcluded": "Gambar yang diinstal tidak termasuk.",
     "Installing": "menginstal",
-    "InstallingImage": "Menginstal: ",
     "Language": "Bahasa",
     "Local": "Lokal",
     "ManageApps": "Kelola Aplikasi",
@@ -1482,7 +1481,6 @@
     "SuccessfullyCreated": "Berhasil dibuat",
     "SuccessfullyModified": "Berhasil dimodifikasi",
     "Tags": "Tag",
-    "TakesTime": ". Butuh waktu jadi minumlah secangkir kopi!",
     "Version": "Versi"
   },
   "error": {

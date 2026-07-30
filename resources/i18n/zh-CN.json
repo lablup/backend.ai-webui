@@ -1451,7 +1451,6 @@
     "Installed": "已安装",
     "InstalledImagesAreExcluded": "不包括已安装的图像。",
     "Installing": "安装",
-    "InstallingImage": "安装：",
     "Language": "语",
     "Local": "本地",
     "ManageApps": "管理应用程序",
@@ -1481,7 +1480,6 @@
     "SuccessfullyCreated": "创建成功",
     "SuccessfullyModified": "修改成功",
     "Tags": "标签",
-    "TakesTime": ".这需要时间，所以喝杯咖啡吧！",
     "Version": "版本"
   },
   "error": {

@@ -4,8 +4,8 @@
  */
 import { addNumberWithUnits } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useSetBAINotification } from '../hooks/useBAINotification';
 import { usePainKiller } from '../hooks/usePainKiller';
+import { useStartSession } from '../hooks/useStartSession';
 import { SessionResources } from '../pages/SessionLauncherPage';
 import { ProjectContextOrNull } from '../types/projectContext';
 import { EnvironmentImage } from './ImageList';
@@ -16,6 +16,7 @@ import {
   BAIModal,
   BAIModalProps,
   BAIProjectResourceGroupSelect,
+  generateRandomString,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Dispatch, SetStateAction, Suspense, useState } from 'react';
@@ -75,7 +76,7 @@ const ImageInstallModalContent: React.FC<ImageInstallModalInterface> = ({
 
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
-  const { upsertNotification } = useSetBAINotification();
+  const { upsertSessionNotification } = useStartSession();
   const painKiller = usePainKiller();
 
   const [chosenProject, setChosenProject] =
@@ -102,7 +103,7 @@ const ImageInstallModalContent: React.FC<ImageInstallModalInterface> = ({
     const installProjectName = chosenProject.name;
     const installResourceGroup = chosenResourceGroup;
     onRequestClose();
-    const installPromises = imagesToInstall.map(async (image) => {
+    const installPromises = imagesToInstall.map(async (image, index) => {
       const imageName = `${image?.registry}/${image?.namespace ?? image?.name}:${image?.tag}`;
 
       const labels = (image?.labels ?? []).reduce<Record<string, string>>(
@@ -180,19 +181,34 @@ const ImageInstallModalContent: React.FC<ImageInstallModalInterface> = ({
         };
       }
 
-      upsertNotification({
-        message: `${t('environment.InstallingImage')}${imageName}${t('environment.TakesTime')}`,
-        open: true,
-        duration: 2,
-      });
+      // A stable prefix marks this as an install session at a glance; the
+      // per-image index + random suffix keeps N images installed in one
+      // action from colliding. Deliberately does NOT embed the image name -
+      // that's already visible on the image list, and image names are long
+      // and contain characters (`/`, `:`) that session names can't hold.
+      const installSessionName = `install-image-${generateRandomString(8)}-${index}`;
 
       try {
-        await baiClient.image.install(
+        const result = await baiClient.image.install(
           imageName,
           image?.architecture,
           imageResource,
+          undefined,
+          installSessionName,
         );
-        return image?.id;
+        return {
+          imageId: image?.id,
+          session: {
+            sessionId: result?.sessionId,
+            sessionName: installSessionName,
+            // The install endpoint's response carries no service-port info
+            // (it's a throwaway batch session with no exposed app) -
+            // `upsertSessionNotification` only reads `.sessionId`, so an
+            // empty array satisfies its declared contract without inventing
+            // data.
+            servicePorts: [],
+          },
+        };
       } catch (error) {
         document.dispatchEvent(
           new CustomEvent('add-bai-notification', {
@@ -209,14 +225,36 @@ const ImageInstallModalContent: React.FC<ImageInstallModalInterface> = ({
     });
 
     Promise.allSettled(installPromises).then((results) => {
-      const installedImages = results
-        .filter(
-          (result): result is PromiseFulfilledResult<string> =>
-            result.status === 'fulfilled' && result.value !== null,
-        )
-        .map((result) => result.value);
+      const succeeded = results.filter(
+        (
+          result,
+        ): result is PromiseFulfilledResult<{
+          imageId: string;
+          session: {
+            sessionId: string;
+            sessionName: string;
+            servicePorts: never[];
+          };
+        }> => result.status === 'fulfilled' && result.value !== null,
+      );
 
-      setInstallingImages(installedImages);
+      setInstallingImages(succeeded.map((result) => result.value.imageId));
+
+      if (succeeded.length > 0) {
+        // Standard session-creation notification (FR-3415): each installed
+        // image gets its own persistent notification carrying the actual
+        // session node, replacing the old 2-second toast that tracked
+        // nothing. One failure among several installs must not suppress the
+        // others' notifications, hence building this from `succeeded` rather
+        // than short-circuiting on the first rejection.
+        const successCreations: Parameters<
+          typeof upsertSessionNotification
+        >[0] = succeeded.map((result) => ({
+          status: 'fulfilled',
+          value: result.value.session,
+        }));
+        upsertSessionNotification(successCreations);
+      }
     });
   };
 

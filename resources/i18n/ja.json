@@ -1451,7 +1451,6 @@
     "Installed": "インストール済み",
     "InstalledImagesAreExcluded": "インストールされたイメージは除く。",
     "Installing": "インストール",
-    "InstallingImage": "インストール：",
     "Language": "言語",
     "Local": "ローカル",
     "ManageApps": "アプリの管理",
@@ -1481,7 +1480,6 @@
     "SuccessfullyCreated": "正常に作成されました",
     "SuccessfullyModified": "正常に変更されました",
     "Tags": "タグ",
-    "TakesTime": "。時間がかかりますので、コーヒーをどうぞ！",
     "Version": "バージョン"
   },
   "error": {

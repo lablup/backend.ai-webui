@@ -1451,7 +1451,6 @@
     "Installed": "εγκατεστημένο",
     "InstalledImagesAreExcluded": "Οι εγκατεστημένες εικόνες εξαιρούνται.",
     "Installing": "εγκατάσταση",
-    "InstallingImage": "Εγκατάσταση:",
     "Language": "Γλώσσα",
     "Local": "Τοπικό",
     "ManageApps": "Διαχείριση εφαρμογών",
@@ -1481,7 +1480,6 @@
     "SuccessfullyCreated": "Δημιουργήθηκε με επιτυχία",
     "SuccessfullyModified": "Τροποποιήθηκε με επιτυχία",
     "Tags": "Ετικέτες",
-    "TakesTime": ". Χρειάζεται χρόνος, οπότε πάρτε ένα φλιτζάνι καφέ!",
     "Version": "Εκδοχή"
   },
   "error": {

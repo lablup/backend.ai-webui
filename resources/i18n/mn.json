@@ -1451,7 +1451,6 @@
     "Installed": "суулгасан",
     "InstalledImagesAreExcluded": "Суулгасан зургуудыг оруулаагүй болно.",
     "Installing": "суулгах",
-    "InstallingImage": "Суулгаж байна:",
     "Language": "Хэл",
     "Local": "Орон нутгийн",
     "ManageApps": "Аппыг удирдах",
@@ -1481,7 +1480,6 @@
     "SuccessfullyCreated": "Амжилттай үүсгэсэн",
     "SuccessfullyModified": "Амжилттай өөрчилсөн",
     "Tags": "Шошго",
-    "TakesTime": "Жаахан удах тул кофе уунгаа хүлээнэ үү.",
     "Version": "Хувилбар"
   },
   "error": {
