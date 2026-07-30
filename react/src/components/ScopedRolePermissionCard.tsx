@@ -14,7 +14,6 @@ import {
   computeRBACGrantState,
   type RBACGrantState,
 } from '../helper/rbacGrantState';
-import { narrowAndPageScopes } from '../helper/rbacScopePaging';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import RoleScopePermissionEditModal, {
@@ -60,10 +59,8 @@ const PERMISSION_FETCH_LIMIT = 500;
 
 /**
  * Upper bound of scope rows fetched per card when the server cannot filter
- * `Role.scopes` by scope type (see `narrowAndPageScopes`) — one page of this
- * size per card, i.e. per scope type the permission matrix reports. A role
- * holding more scopes than this shows a truncated list, and a truncated page
- * count, on those managers.
+ * `Role.scopes` by scope type (managers without `EntityFilter.scopeType`,
+ * < 26.8.0). Scopes beyond it are not shown on those managers.
  */
 const SCOPE_FETCH_LIMIT = 500;
 
@@ -82,17 +79,6 @@ type ScopeRowNode = NonNullable<
   >[number]
 >['node'];
 
-/**
- * Scope arguments for the fallback path: take one bounded page of every scope
- * the role holds. Module-level so a client-side page change does not mint a new
- * `queryVariables` identity and flash the table's `loading` state on a page turn
- * that issues no request.
- */
-const FALLBACK_SCOPE_QUERY_ARGS: Pick<
-  ScopedRolePermissionCardQuery['variables'],
-  'scopeFilter' | 'scopeLimit' | 'scopeOffset'
-> = { scopeFilter: null, scopeLimit: SCOPE_FETCH_LIMIT, scopeOffset: 0 };
-
 export interface ScopedRolePermissionCardProps {
   roleNodeFrgmt: ScopedRolePermissionCardFragment$key;
   rbacPermissionMatrixFrgmt: ScopedRolePermissionCard_rbacPermissionMatrixFragment$key;
@@ -108,8 +94,6 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
-  // Older managers reject `EntityFilter.scopeType` / `scopeId` outright, and the
-  // failing query took the enclosing page down with it. FR-3406.
   const supportsScopeFilter = baiClient.supports('rbac-entity-scope-filter');
 
   const role = useFragment(
@@ -195,25 +179,19 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
       ? [inlineEditingScope]
       : [];
 
-  // Who narrows and pages `Role.scopes` — one decision, so the three arguments
-  // move together.
-  const scopeQueryArgs = supportsScopeFilter
-    ? {
-        scopeFilter: {
-          ...scopeIdFilter,
-          scopeType: { equals: scopeType },
-        } as ScopedRolePermissionCardQuery['variables']['scopeFilter'],
-        scopeLimit: baiPaginationOption.limit,
-        scopeOffset: baiPaginationOption.offset,
-      }
-    : FALLBACK_SCOPE_QUERY_ARGS;
-
   const queryVariables: ScopedRolePermissionCardQuery['variables'] = {
     roleId: toLocalId(role.id),
-    ...scopeQueryArgs,
+    ...(supportsScopeFilter
+      ? {
+          scopeFilter: {
+            ...scopeIdFilter,
+            scopeType: { equals: scopeType },
+          } as ScopedRolePermissionCardQuery['variables']['scopeFilter'],
+          scopeLimit: baiPaginationOption.limit,
+          scopeOffset: baiPaginationOption.offset,
+        }
+      : { scopeFilter: null, scopeLimit: SCOPE_FETCH_LIMIT, scopeOffset: 0 }),
     // The role itself is implicit via the `adminRole.permissions` connection.
-    // `PermissionFilter.scopeType` predates 26.8.0, so this stays server-side
-    // on every supported manager.
     permissionFilter: {
       scopeType: { equals: scopeType },
     } as ScopedRolePermissionCardQuery['variables']['permissionFilter'],
@@ -315,14 +293,20 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
     (data.adminRole?.scopes?.edges ?? []).map((edge) => edge?.node),
   );
 
-  // Row set and total for this card — branches with `scopeQueryArgs` and must
-  // change with it. `scopeCount` is the type's row count, not the role's.
-  const { scopeRows, scopeCount } = supportsScopeFilter
-    ? {
-        scopeRows: fetchedScopes,
-        scopeCount: data.adminRole?.scopes?.count ?? 0,
-      }
-    : narrowAndPageScopes(fetchedScopes, scopeType, baiPaginationOption);
+  // This card's scope rows and this scope type's row count. Server-filtered and
+  // server-paged when the manager supports it; otherwise narrowed and paged here.
+  const scopesOfType = supportsScopeFilter
+    ? fetchedScopes
+    : fetchedScopes.filter((scope) => scope.scopeType === scopeType);
+  const scopeCount = supportsScopeFilter
+    ? (data.adminRole?.scopes?.count ?? 0)
+    : scopesOfType.length;
+  const scopeRows = supportsScopeFilter
+    ? scopesOfType
+    : scopesOfType.slice(
+        baiPaginationOption.offset,
+        baiPaginationOption.offset + baiPaginationOption.limit,
+      );
 
   // The role's permission rows for this scope type — tag state is computed
   // from them here, and the edit modal reads them via its fragment to pre-check
@@ -436,10 +420,6 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
     >
       <BAIFlex direction="column" align="stretch" gap="sm">
         <BAIFlex align="start" justify="between" gap="md" wrap="wrap">
-          {/* `BAIGraphQLPropertyFilter` only builds a GraphQL filter, so with
-              `EntityFilter.scopeId` unavailable there is nothing for it to
-              drive. Hidden rather than reimplemented as a local search, which
-              would mean a second, client-only filter path for one card. */}
           {supportsScopeFilter ? (
             <BAIGraphQLPropertyFilter<EntityFilter>
               style={{ flex: 1 }}
