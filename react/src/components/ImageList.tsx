@@ -145,7 +145,6 @@ const ImageList: React.FC<ImageListProps> = ({
 
   return (
     <ImageListInScope
-      project={project}
       scopeId={scopeId}
       projectSelect={projectSelect}
       style={style}
@@ -154,8 +153,6 @@ const ImageList: React.FC<ImageListProps> = ({
 };
 
 interface ImageListInScopeProps {
-  /** Forwarded to the install modal, which owns its own `null` behavior. */
-  project: ProjectContextOrNull;
   /** `project:<id>` when the filter is active, `domain:<name>` otherwise. */
   scopeId: string;
   /** The project filter control, rendered inside the filter row. */
@@ -164,7 +161,6 @@ interface ImageListInScopeProps {
 }
 
 const ImageListInScope: React.FC<ImageListInScopeProps> = ({
-  project,
   scopeId,
   projectSelect,
   style,
@@ -636,8 +632,10 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
         }}
         imageFrgmt={managingApp}
       />
+      {/* No project is handed down: installing an image enqueues a session,
+          and the modal asks for that session's own project and resource group.
+          The list's project filter only decides which images are on screen. */}
       <ImageInstallModal
-        project={project}
         open={isOpenInstallModal}
         onRequestClose={() => {
           setIsOpenInstallModal(false);
