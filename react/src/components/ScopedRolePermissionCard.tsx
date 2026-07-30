@@ -59,12 +59,11 @@ const PERMISSION_FETCH_LIMIT = 500;
 
 /**
  * Upper bound of scope rows fetched per card on managers without
- * `EntityFilter.scopeType` (< 26.8.0). There the server cannot narrow
- * `Role.scopes` to one scope type, so the card fetches the role's scopes in one
- * page and groups/pages them client-side. Same order of magnitude as
- * `PERMISSION_FETCH_LIMIT` and far above the scope count a role realistically
- * holds; a role that exceeded it would show a truncated scope list on those
- * managers (never a wrong grant state — tags are computed per visible row).
+ * `EntityFilter.scopeType` (< 26.8.0), where the card takes the role's whole
+ * scope list in one page and narrows/pages it client-side. A role holding more
+ * scopes than this would show a truncated list on those managers. Note the
+ * fetch is per card, so each scope type the permission matrix reports costs one
+ * page of this size — see `narrowAndPageScopes`.
  */
 const SCOPE_FETCH_LIMIT = 500;
 
@@ -82,6 +81,24 @@ type ScopeRowNode = NonNullable<
     >['edges']
   >[number]
 >['node'];
+
+/**
+ * Narrows a role's whole scope list to one scope type and pages it locally —
+ * the fallback for managers without `EntityFilter.scopeType` (< 26.8.0), which
+ * cannot do either server-side. `scopeCount` counts the type's rows rather than
+ * the role's, since the server's `count` covers every type at once.
+ */
+function narrowAndPageScopes(
+  scopes: ScopeRowNode[],
+  scopeType: RBACElementType,
+  { offset, limit }: { offset: number; limit: number },
+): { scopeRows: ScopeRowNode[]; scopeCount: number } {
+  const scopesOfType = scopes.filter((scope) => scope.scopeType === scopeType);
+  return {
+    scopeRows: scopesOfType.slice(offset, offset + limit),
+    scopeCount: scopesOfType.length,
+  };
+}
 
 export interface ScopedRolePermissionCardProps {
   roleNodeFrgmt: ScopedRolePermissionCardFragment$key;
@@ -186,20 +203,23 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
       ? [inlineEditingScope]
       : [];
 
-  const queryVariables: ScopedRolePermissionCardQuery['variables'] = {
-    roleId: toLocalId(role.id),
-    // Without server-side scope filtering the role's scopes come back in one
-    // unfiltered page and this card narrows them to its own scope type below.
-    scopeFilter: supportsScopeFilter
-      ? ({
+  // Who narrows and pages `Role.scopes` — one decision, so the three arguments
+  // move together. Without `EntityFilter` support the server can do neither and
+  // the card takes one bounded page to work over locally.
+  const scopeQueryArgs = supportsScopeFilter
+    ? {
+        scopeFilter: {
           ...scopeIdFilter,
           scopeType: { equals: scopeType },
-        } as ScopedRolePermissionCardQuery['variables']['scopeFilter'])
-      : null,
-    scopeLimit: supportsScopeFilter
-      ? baiPaginationOption.limit
-      : SCOPE_FETCH_LIMIT,
-    scopeOffset: supportsScopeFilter ? baiPaginationOption.offset : 0,
+        } as ScopedRolePermissionCardQuery['variables']['scopeFilter'],
+        scopeLimit: baiPaginationOption.limit,
+        scopeOffset: baiPaginationOption.offset,
+      }
+    : { scopeFilter: null, scopeLimit: SCOPE_FETCH_LIMIT, scopeOffset: 0 };
+
+  const queryVariables: ScopedRolePermissionCardQuery['variables'] = {
+    roleId: toLocalId(role.id),
+    ...scopeQueryArgs,
     // The role itself is implicit via the `adminRole.permissions` connection.
     // `PermissionFilter.scopeType` predates 26.8.0, so this stays server-side
     // on every supported manager.
@@ -304,22 +324,15 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
     (data.adminRole?.scopes?.edges ?? []).map((edge) => edge?.node),
   );
 
-  // This card's scope rows. On >= 26.8.0 the server already filtered by scope
-  // type (and the scope-id search when set) and paged by limit/offset, so the
-  // fetched page *is* the row set. On older managers the same narrowing and
-  // paging happen here, over the role's whole scope list.
-  const scopesOfType = supportsScopeFilter
-    ? fetchedScopes
-    : fetchedScopes.filter((scope) => scope.scopeType === scopeType);
-  const scopeCount = supportsScopeFilter
-    ? (data.adminRole?.scopes?.count ?? 0)
-    : scopesOfType.length;
-  const scopeRows = supportsScopeFilter
-    ? scopesOfType
-    : scopesOfType.slice(
-        baiPaginationOption.offset,
-        baiPaginationOption.offset + baiPaginationOption.limit,
-      );
+  // This card's rows, and how many rows of its scope type exist in total. The
+  // server-filtered page *is* the row set; otherwise both come from narrowing
+  // and paging the role's whole scope list here, mirroring `scopeQueryArgs`.
+  const { scopeRows, scopeCount } = supportsScopeFilter
+    ? {
+        scopeRows: fetchedScopes,
+        scopeCount: data.adminRole?.scopes?.count ?? 0,
+      }
+    : narrowAndPageScopes(fetchedScopes, scopeType, baiPaginationOption);
 
   // The role's permission rows for this scope type — tag state is computed
   // from them here, and the edit modal reads them via its fragment to pre-check
@@ -433,10 +446,10 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
     >
       <BAIFlex direction="column" align="stretch" gap="sm">
         <BAIFlex align="start" justify="between" gap="md" wrap="wrap">
-          {/* Scope-id search is server-side only (`EntityFilter.scopeId`);
-              hidden rather than emulated client-side on older managers, where
-              the card holds just one bounded page of the role's scopes and a
-              local search would silently miss the rest. */}
+          {/* `BAIGraphQLPropertyFilter` only builds a GraphQL filter, so with
+              `EntityFilter.scopeId` unavailable there is nothing for it to
+              drive. Hidden rather than reimplemented as a local search, which
+              would mean a second, client-only filter path for one card. */}
           {supportsScopeFilter ? (
             <BAIGraphQLPropertyFilter<EntityFilter>
               style={{ flex: 1 }}
