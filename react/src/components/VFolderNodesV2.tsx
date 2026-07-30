@@ -124,6 +124,16 @@ interface VFolderNameCellProps {
    * (FR-2599) for the given vfolder instead of navigating away.
    */
   onStartServiceFallback: (vfolderId: string) => void;
+  /**
+   * When set, the "Deploy as service" row action renders disabled with this
+   * string as its tooltip. The component never infers on its own when
+   * deployment should be blocked — the page decides and supplies the
+   * reason (mirrors `FolderExplorerHeaderV2`'s `noProjectTooltip`,
+   * FR-3412). Absent by default, so every current caller
+   * (`ProjectAdminDataPage`, always project-scoped) keeps today's behavior
+   * unchanged. Mirrors `VFolderNodes` (V1, FR-3423).
+   */
+  noDeployTooltip?: string;
 }
 
 const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
@@ -133,6 +143,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
   onRestore,
   onDeleteForever,
   onStartServiceFallback,
+  noDeployTooltip,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -152,6 +163,8 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
           key: 'start-service',
           title: t('modelService.DeployAsService'),
           icon: <BAIEndpointsIcon />,
+          disabled: !!noDeployTooltip,
+          disabledReason: noDeployTooltip,
           // Use `action` (not `onClick`) so the state update that mounts
           // `<VFolderDeployModal>` (which suspends on its Relay query)
           // runs inside `startTransition` — the page stays interactive
@@ -434,12 +447,21 @@ interface VFolderNodesV2Props extends Omit<
    * pass their page-level project.
    */
   project: ProjectContextOrNull;
+  /**
+   * Forwarded to each row's name cell (FR-3423). When set, the "Deploy as
+   * service" row action renders disabled with this string as its tooltip.
+   * No current caller passes this — `ProjectAdminDataPage` is always
+   * project-scoped — added for API parity with `VFolderNodes` (V1) so a
+   * future admin-oversight caller of V2 gets the same treatment for free.
+   */
+  noDeployTooltip?: string;
 }
 
 const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
   vfoldersFrgmt,
   onRemoveRow,
   project,
+  noDeployTooltip,
   ...tableProps
 }) => {
   'use memo';
@@ -602,6 +624,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
               return (
                 <VFolderNameCell
                   vfolder={vfolder}
+                  noDeployTooltip={noDeployTooltip}
                   onShare={() => {
                     vfolder?.ownership?.userId === currentUser?.uuid
                       ? setInviteFolderId(toLocalId(vfolder?.id ?? null))

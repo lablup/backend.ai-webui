@@ -855,6 +855,7 @@
       "AdminDataPageAlert": "Na página Dados do Administrador só é possível criar pastas de projeto.",
       "CannotDeleteFolder": "Não é possível excluir a pasta montada em uma ou mais sessões. Por favor, termine a sessão primeiro.",
       "CannotDeletePipelineFolder": "Você não pode excluir pastas de pipeline.",
+      "CannotDeployFromAdminMenu": "As implantações são criadas a partir do projeto ao qual a pasta pertence, não pelo menu de administração.",
       "CannotRestorePipelineFolder": "Você não pode restaurar pastas de pipeline.",
       "ChangeTheVFolderTypeToCreateAutoMountFolder": "Não foi possível criar a pasta de montagem automática como pasta do projeto.",
       "CloneAFolder": "Clonar uma pasta",

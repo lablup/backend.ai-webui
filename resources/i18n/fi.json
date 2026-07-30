@@ -855,6 +855,7 @@
       "AdminDataPageAlert": "Järjestelmänvalvojan tiedot -sivulla voi luoda vain projektin kansioita.",
       "CannotDeleteFolder": "Yhdessä tai useammassa istunnossa asennettua kansiota ei voi poistaa. Lopeta istunto ensin.",
       "CannotDeletePipelineFolder": "Et voi poistaa putkilinjan kansioita.",
+      "CannotDeployFromAdminMenu": "Käyttöönotot luodaan kansion hankkeen sisältä, ei hallintavalikosta.",
       "CannotRestorePipelineFolder": "Putkilinjan kansiot eivät voi palauttaa.",
       "ChangeTheVFolderTypeToCreateAutoMountFolder": "Automaattisesti liitettävää kansiota ei voi luoda projektikansioksi.",
       "CloneAFolder": "Kloonaa kansio",
