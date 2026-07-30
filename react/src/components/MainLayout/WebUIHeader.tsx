@@ -11,6 +11,7 @@ import UserDropdownMenu from '../UserDropdownMenu';
 import WEBUIHelpButton from '../WEBUIHelpButton';
 import WebUIThemeToggleButton from '../WebUIThemeToggleButton';
 import WebUIHeaderProjectSelect from './WebUIHeaderProjectSelect';
+import WebUIHeaderProjectSelectPlaceholder from './WebUIHeaderProjectSelectPlaceholder';
 import { theme, Button, Grid, Divider } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIFlex, BAIFlexProps } from 'backend.ai-ui';
@@ -39,11 +40,15 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
   const gridBreakpoint = Grid.useBreakpoint();
   // FR-3414 (ADR-0001): the project-agnostic pages operate above project
   // scope, so the header's current-project selector (and the selector-bound
-  // admin-exit confirm flow inside it) is not mounted there at all. Nothing
-  // then reads or writes the current-project atom from the header on those
-  // routes — leaving admin restores the previous selection untouched. The
-  // header layout keeps `justify="between"`, so the left slot simply
-  // collapses (no placeholder needed); the mobile menu button stays.
+  // admin-exit confirm flow inside it) is not mounted there. Nothing then
+  // reads or writes the current-project atom from the header on those
+  // routes — leaving admin restores the previous selection untouched.
+  //
+  // FR-3422: those routes render a static, selector-shaped placeholder
+  // ("All projects" + explanatory tooltip) instead of leaving the left
+  // slot empty. The placeholder is a separate component that reads no
+  // project hook and fetches nothing, so the zero-ambient-reads guarantee
+  // above still holds on these routes.
   const isProjectAgnosticPage = useIsProjectAgnosticPage();
 
   const { styles } = useStyles();
@@ -79,7 +84,9 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
             />
           </ReverseThemeProvider>
         )}
-        {!isProjectAgnosticPage && (
+        {isProjectAgnosticPage ? (
+          <WebUIHeaderProjectSelectPlaceholder />
+        ) : (
           <Suspense>
             <WebUIHeaderProjectSelect />
           </Suspense>

@@ -1691,6 +1691,8 @@
     }
   },
   "header": {
+    "AllProjects": "Semua proyek",
+    "AllProjectsTooltip": "Halaman admin berlaku untuk semua proyek, jadi tidak ada yang perlu dipilih di sini.",
     "SwitchOutOfAdminConfirmContent": "Anda tidak memiliki hak admin untuk proyek \"{{projectName}}\". Beralih akan keluar dari mode admin.",
     "SwitchOutOfAdminConfirmTitle": "Keluar dari mode admin?"
   },

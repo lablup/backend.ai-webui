@@ -1690,6 +1690,8 @@
     }
   },
   "header": {
+    "AllProjects": "전체 프로젝트",
+    "AllProjectsTooltip": "관리 페이지는 모든 프로젝트에 걸쳐 적용되므로 선택할 프로젝트가 없습니다.",
     "SwitchOutOfAdminConfirmContent": "\"{{projectName}}\" 프로젝트에 대한 관리자 권한이 없습니다. 전환하면 관리자 모드에서 나갑니다.",
     "SwitchOutOfAdminConfirmTitle": "관리자 모드에서 나가시겠습니까?"
   },

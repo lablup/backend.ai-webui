@@ -1689,6 +1689,8 @@
     }
   },
   "header": {
+    "AllProjects": "Wszystkie projekty",
+    "AllProjectsTooltip": "Strony administracyjne dotyczą wszystkich projektów, więc nie ma tu nic do wyboru.",
     "SwitchOutOfAdminConfirmContent": "Nie masz uprawnień administratora do projektu \"{{projectName}}\". Przełączenie spowoduje wyjście z trybu administratora.",
     "SwitchOutOfAdminConfirmTitle": "Opuścić tryb administratora?"
   },

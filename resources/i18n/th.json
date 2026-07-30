@@ -1690,6 +1690,8 @@
     }
   },
   "header": {
+    "AllProjects": "ทุกโปรเจกต์",
+    "AllProjectsTooltip": "หน้าการดูแลระบบใช้ได้กับทุกโปรเจกต์ จึงไม่มีอะไรให้เลือกที่นี่",
     "SwitchOutOfAdminConfirmContent": "คุณไม่มีสิทธิ์ผู้ดูแลระบบสำหรับโปรเจกต์ \"{{projectName}}\" การเปลี่ยนจะออกจากโหมดผู้ดูแลระบบ",
     "SwitchOutOfAdminConfirmTitle": "ออกจากโหมดผู้ดูแลระบบ?"
   },

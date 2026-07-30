@@ -1691,6 +1691,8 @@
     }
   },
   "header": {
+    "AllProjects": "全部專案",
+    "AllProjectsTooltip": "管理頁面適用於所有專案，因此這裡沒有可選擇的項目。",
     "SwitchOutOfAdminConfirmContent": "您沒有「{{projectName}}」專案的管理員權限。切換後將離開管理員模式。",
     "SwitchOutOfAdminConfirmTitle": "離開管理員模式？"
   },

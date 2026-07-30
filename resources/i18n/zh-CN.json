@@ -1690,6 +1690,8 @@
     }
   },
   "header": {
+    "AllProjects": "全部项目",
+    "AllProjectsTooltip": "管理页面适用于所有项目，因此这里没有可选择的内容。",
     "SwitchOutOfAdminConfirmContent": "您没有\"{{projectName}}\"项目的管理员权限。切换后将退出管理员模式。",
     "SwitchOutOfAdminConfirmTitle": "退出管理员模式？"
   },

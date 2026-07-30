@@ -3,15 +3,17 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 /**
- * Tests for the FR-3414 header flip: the header's project selector block
- * (extracted into `WebUIHeaderProjectSelect`) must not be mounted on the
+ * Tests for the FR-3414/FR-3422 header gating: the header's real project
+ * selector block (`WebUIHeaderProjectSelect`) must not be mounted on the
  * project-agnostic routes (`PROJECT_AGNOSTIC_MENU_KEYS` — decided by
- * `useIsProjectAgnosticPage` off the route `handle.menuKey`) and must be
- * mounted everywhere else, including the one admin page that still depends on
- * the ambient project (`admin-dashboard`).
+ * `useIsProjectAgnosticPage` off the route `handle.menuKey`); instead the
+ * static placeholder (`WebUIHeaderProjectSelectPlaceholder`, FR-3422) is
+ * mounted there. Everywhere else — including the one admin page that still
+ * depends on the ambient project (`admin-dashboard`) — the real selector is
+ * mounted and the placeholder is not.
  *
- * External behavior only: routes in → selector block mounted / not mounted.
- * The selector itself is stubbed; its internals are not under test here.
+ * External behavior only: routes in → which block mounts. Both the selector
+ * and the placeholder are stubbed; their internals are not under test here.
  */
 import WebUIHeader from './WebUIHeader';
 import '@testing-library/jest-dom';
@@ -27,10 +29,15 @@ vi.mock('../../hooks', () => ({
   }),
 }));
 
-// The selector block under test — stubbed so this test only asserts WHETHER
-// the header mounts it, not what it renders.
+// The real selector block — stubbed so this test only asserts WHETHER the
+// header mounts it, not what it renders.
 vi.mock('./WebUIHeaderProjectSelect', () => ({
   default: () => <div data-testid="header-project-select-stub" />,
+}));
+
+// The FR-3422 disabled placeholder — stubbed the same way.
+vi.mock('./WebUIHeaderProjectSelectPlaceholder', () => ({
+  default: () => <div data-testid="header-project-select-placeholder-stub" />,
 }));
 
 // Heavy, irrelevant header children.
@@ -64,7 +71,7 @@ const renderHeaderAt = (
   return render(<RouterProvider router={router} />);
 };
 
-describe('WebUIHeader project selector gating (FR-3414)', () => {
+describe('WebUIHeader project selector gating (FR-3414/FR-3422)', () => {
   it.each([
     ['/admin/session', 'admin-session'],
     ['/admin/deployments', 'admin-deployments'],
@@ -80,23 +87,29 @@ describe('WebUIHeader project selector gating (FR-3414)', () => {
     ['/admin/settings', 'settings'],
     ['/admin/information', 'information'],
   ])(
-    'does NOT mount the project selector block on the project-agnostic route %s',
+    'mounts the disabled placeholder (not the real selector) on the project-agnostic route %s',
     (path, menuKey) => {
       renderHeaderAt(path, { scope: 'admin', menuKey });
       expect(screen.getByTestId('webui-header')).toBeInTheDocument();
       expect(
         screen.queryByTestId('header-project-select-stub'),
       ).not.toBeInTheDocument();
+      expect(
+        screen.getByTestId('header-project-select-placeholder-stub'),
+      ).toBeInTheDocument();
     },
   );
 
   it.each([['/admin-session'], ['/credential'], ['/rbac']])(
-    'does not mount the selector block on the legacy unprefixed admin path %s (pathname fallback)',
+    'mounts the disabled placeholder on the legacy unprefixed admin path %s (pathname fallback)',
     (path) => {
       renderHeaderAt(path);
       expect(
         screen.queryByTestId('header-project-select-stub'),
       ).not.toBeInTheDocument();
+      expect(
+        screen.getByTestId('header-project-select-placeholder-stub'),
+      ).toBeInTheDocument();
     },
   );
 
@@ -105,10 +118,16 @@ describe('WebUIHeader project selector gating (FR-3414)', () => {
     ['/project/default/session', { scope: 'project', menuKey: 'session' }],
     // The only admin page that still genuinely depends on the ambient project.
     ['/admin/dashboard', { scope: 'admin', menuKey: 'admin-dashboard' }],
-  ])('mounts the project selector block on %s', (path, handle) => {
-    renderHeaderAt(path, handle);
-    expect(
-      screen.getByTestId('header-project-select-stub'),
-    ).toBeInTheDocument();
-  });
+  ])(
+    'mounts the real project selector block (not the placeholder) on %s',
+    (path, handle) => {
+      renderHeaderAt(path, handle);
+      expect(
+        screen.getByTestId('header-project-select-stub'),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByTestId('header-project-select-placeholder-stub'),
+      ).not.toBeInTheDocument();
+    },
+  );
 });
