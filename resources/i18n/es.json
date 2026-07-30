@@ -1689,7 +1689,7 @@
   },
   "header": {
     "AllProjects": "Todos los proyectos",
-    "AllProjectsTooltip": "Las páginas de administración se aplican a todos los proyectos, por lo que no hay nada que seleccionar aquí.",
+    "AllProjectsTooltip": "Las páginas de administración se aplican a todos los proyectos, por lo que no se puede seleccionar un proyecto aquí.",
     "SwitchOutOfAdminConfirmContent": "No tiene derechos de administrador para el proyecto \"{{projectName}}\". Al cambiar se saldrá del modo administrador.",
     "SwitchOutOfAdminConfirmTitle": "¿Salir del modo administrador?"
   },

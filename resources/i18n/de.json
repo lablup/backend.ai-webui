@@ -1691,7 +1691,7 @@
   },
   "header": {
     "AllProjects": "Alle Projekte",
-    "AllProjectsTooltip": "Verwaltungsseiten gelten projektübergreifend, daher gibt es hier nichts auszuwählen.",
+    "AllProjectsTooltip": "Verwaltungsseiten gelten projektübergreifend, daher kann hier kein Projekt ausgewählt werden.",
     "SwitchOutOfAdminConfirmContent": "Sie haben keine Administratorrechte für das Projekt \"{{projectName}}\". Durch den Wechsel wird der Administratormodus beendet.",
     "SwitchOutOfAdminConfirmTitle": "Administratormodus verlassen?"
   },

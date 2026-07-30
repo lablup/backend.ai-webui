@@ -1689,7 +1689,7 @@
   },
   "header": {
     "AllProjects": "Semua projek",
-    "AllProjectsTooltip": "Halaman pentadbiran terpakai merentasi semua projek, jadi tiada apa untuk dipilih di sini.",
+    "AllProjectsTooltip": "Halaman pentadbiran terpakai merentasi semua projek, jadi projek tidak boleh dipilih di sini.",
     "SwitchOutOfAdminConfirmContent": "Anda tidak mempunyai hak admin untuk projek \"{{projectName}}\". Penukaran akan keluar dari mod admin.",
     "SwitchOutOfAdminConfirmTitle": "Keluar dari mod admin?"
   },

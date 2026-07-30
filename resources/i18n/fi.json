@@ -1689,7 +1689,7 @@
   },
   "header": {
     "AllProjects": "Kaikki projektit",
-    "AllProjectsTooltip": "Hallintasivut koskevat kaikkia projekteja, joten täällä ei ole mitään valittavaa.",
+    "AllProjectsTooltip": "Hallintasivut koskevat kaikkia projekteja, joten täällä ei voi valita projektia.",
     "SwitchOutOfAdminConfirmContent": "Sinulla ei ole ylläpitäjäoikeuksia projektiin \"{{projectName}}\". Vaihtaminen poistuu ylläpitäjätilasta.",
     "SwitchOutOfAdminConfirmTitle": "Poistutaanko ylläpitäjätilasta?"
   },

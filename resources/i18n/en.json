@@ -1676,7 +1676,7 @@
   },
   "header": {
     "AllProjects": "All projects",
-    "AllProjectsTooltip": "Administration pages apply across every project, so there is nothing here to select.",
+    "AllProjectsTooltip": "Administration pages apply across every project, so a project cannot be selected here.",
     "SwitchOutOfAdminConfirmContent": "You don't have admin rights for the \"{{projectName}}\" project. Switching will exit admin mode.",
     "SwitchOutOfAdminConfirmTitle": "Leave admin mode?"
   },

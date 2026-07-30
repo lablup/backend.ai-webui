@@ -1689,7 +1689,7 @@
   },
   "header": {
     "AllProjects": "Tüm projeler",
-    "AllProjectsTooltip": "Yönetim sayfaları tüm projeler için geçerlidir, bu nedenle burada seçilecek bir şey yoktur.",
+    "AllProjectsTooltip": "Yönetim sayfaları tüm projeler için geçerli olduğundan burada bir proje seçilemez.",
     "SwitchOutOfAdminConfirmContent": "\"{{projectName}}\" projesi için yönetici haklarınız yok. Değiştirmek yönetici modundan çıkacak.",
     "SwitchOutOfAdminConfirmTitle": "Yönetici modundan çıkılsın mı?"
   },

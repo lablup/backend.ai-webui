@@ -1690,7 +1690,7 @@
   },
   "header": {
     "AllProjects": "Бүх төсөл",
-    "AllProjectsTooltip": "Админ хуудсууд бүх төсөлд хамаарах тул энд сонгох зүйл байхгүй.",
+    "AllProjectsTooltip": "Админ хуудсууд бүх төсөлд хамаарах тул энд төсөл сонгох боломжгүй.",
     "SwitchOutOfAdminConfirmContent": "\"{{projectName}}\" төсөлд администраторын эрх байхгүй байна. Шилжихэд админ горим дуусгавар болно.",
     "SwitchOutOfAdminConfirmTitle": "Админ горимоос гарах уу?"
   },

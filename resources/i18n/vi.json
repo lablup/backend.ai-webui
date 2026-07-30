@@ -1691,7 +1691,7 @@
   },
   "header": {
     "AllProjects": "Tất cả dự án",
-    "AllProjectsTooltip": "Các trang quản trị áp dụng cho mọi dự án, vì vậy không có gì để chọn ở đây.",
+    "AllProjectsTooltip": "Các trang quản trị áp dụng cho mọi dự án, vì vậy không thể chọn dự án ở đây.",
     "SwitchOutOfAdminConfirmContent": "Bạn không có quyền quản trị cho dự án \"{{projectName}}\". Việc chuyển đổi sẽ thoát khỏi chế độ quản trị.",
     "SwitchOutOfAdminConfirmTitle": "Thoát khỏi chế độ quản trị?"
   },
