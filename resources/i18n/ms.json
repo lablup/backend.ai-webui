@@ -524,6 +524,7 @@
     "BulkCreateUserFromCSV": "Cipta Pengguna Pukal dari CSV",
     "BulkCreateUserFromCSVSubtitle": "Muat naik CSV untuk mencipta beberapa akaun pengguna sekaligus.",
     "BulkCreateUserPartialFailure": "{{successCount}} pengguna berjaya dibuat. {{failCount}} pengguna gagal dibuat.",
+    "BulkCreateUserPartialFailureDescription": "Beberapa pengguna gagal dibuat. Sila semak item berkenaan.",
     "BulkCreateUserSuccess": "Berjaya mencipta {{count}} pengguna.",
     "BulkDeactivateCredentials": "Nyahaktifkan kelayakan",
     "BulkDeactivateCredentialsDescription": "Anda akan menyahaktifkan {{count}} kelayakan. Pengguna tidak akan dapat lagi menggunakan kelayakan ini.",

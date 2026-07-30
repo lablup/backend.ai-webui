@@ -524,6 +524,7 @@
     "BulkCreateUserFromCSV": "Buat Pengguna Massal dari CSV",
     "BulkCreateUserFromCSVSubtitle": "Unggah CSV untuk membuat beberapa akun pengguna sekaligus.",
     "BulkCreateUserPartialFailure": "{{successCount}} pengguna berhasil dibuat. {{failCount}} pengguna gagal dibuat.",
+    "BulkCreateUserPartialFailureDescription": "Beberapa pengguna gagal dibuat. Silakan periksa itemnya.",
     "BulkCreateUserSuccess": "Berhasil membuat {{count}} pengguna.",
     "BulkDeactivateCredentials": "Nonaktifkan kredensial",
     "BulkDeactivateCredentialsDescription": "Anda akan menonaktifkan {{count}} kredensial. Pengguna tidak akan bisa lagi menggunakan kredensial ini.",

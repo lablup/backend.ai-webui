@@ -524,6 +524,7 @@
     "BulkCreateUserFromCSV": "สร้างผู้ใช้จำนวนมากจาก CSV",
     "BulkCreateUserFromCSVSubtitle": "อัปโหลด CSV เพื่อสร้างบัญชีผู้ใช้หลายรายพร้อมกัน",
     "BulkCreateUserPartialFailure": "{{successCount}} ผู้ใช้ถูกสร้างสำเร็จ. {{failCount}} ผู้ใช้สร้างไม่สำเร็จ.",
+    "BulkCreateUserPartialFailureDescription": "ไม่สามารถสร้างผู้ใช้บางรายการได้ โปรดตรวจสอบรายการ",
     "BulkCreateUserSuccess": "สร้างผู้ใช้ {{count}} รายเรียบร้อยแล้ว",
     "BulkDeactivateCredentials": "ปิดใช้งานข้อมูลรับรอง",
     "BulkDeactivateCredentialsDescription": "คุณกำลังจะปิดใช้งานข้อมูลรับรอง {{count}} รายการ ผู้ใช้จะไม่สามารถใช้ข้อมูลรับรองเหล่านี้ได้อีกต่อไป",

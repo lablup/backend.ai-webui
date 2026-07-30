@@ -524,6 +524,7 @@
     "BulkCreateUserFromCSV": "Créer des utilisateurs en masse depuis un CSV",
     "BulkCreateUserFromCSVSubtitle": "Téléversez un CSV pour créer plusieurs comptes utilisateurs à la fois.",
     "BulkCreateUserPartialFailure": "{{successCount}} utilisateur(s) créé(s). Échec pour {{failCount}} utilisateur(s).",
+    "BulkCreateUserPartialFailureDescription": "Certains utilisateurs n'ont pas pu être créés. Veuillez vérifier les éléments.",
     "BulkCreateUserSuccess": "Création de {{count}} utilisateur(s) réussie.",
     "BulkDeactivateCredentials": "Désactiver les identifiants",
     "BulkDeactivateCredentialsDescription": "Vous êtes sur le point de désactiver {{count}} identifiant(s). Les utilisateurs ne pourront plus utiliser ces identifiants.",
