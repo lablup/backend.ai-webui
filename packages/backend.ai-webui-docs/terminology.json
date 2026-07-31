@@ -712,6 +712,14 @@
       "conceptId": "resource-group"
     },
     {
+      "avoid": "리소스 그룹",
+      "useInstead": "자원 그룹",
+      "reason": "Use the Korean translation, not the transliteration, for consistency with \"자원 정책\"",
+      "lang": "ko",
+      "context": null,
+      "conceptId": "resource-group"
+    },
+    {
       "avoid": "スケーリンググループ",
       "useInstead": "リソースグループ",
       "reason": "Deprecated term (\"scaling group\"); the UI and docs use \"リソースグループ\"",
