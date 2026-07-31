@@ -5,10 +5,10 @@ import {
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
+  isNonSuccessSubStep,
   newLineToBrElement,
 } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
-import { isNonSuccessSubStep } from '../../hooks/useSchedulingHistoryExpandable';
 import BAISchedulingResultBadge, {
   SchedulingResult,
 } from '../BAISchedulingResultBadge';

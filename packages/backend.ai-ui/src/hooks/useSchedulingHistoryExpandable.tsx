@@ -1,20 +1,15 @@
 import BAIFlex from '../components/BAIFlex';
 import { SchedulingResult } from '../components/BAISchedulingResultBadge';
+import {
+  isNonSuccessSubStep,
+  SchedulingHistoryExpandableSubStep,
+} from '../helper/schedulingHistory';
 import { useBAIi18n } from './useBAIi18n';
 import { Dropdown, theme, Tooltip } from 'antd';
 import * as _ from 'lodash-es';
 import { EllipsisVerticalIcon } from 'lucide-react';
 import * as React from 'react';
 import { useState } from 'react';
-
-/**
- * Minimal shape of one sub-step. Callers select `result` alongside the
- * `BAISubStepNodesFragment` spread so this hook can tell what the nested table
- * will actually render once the "errors-only" filter has run.
- */
-export interface SchedulingHistoryExpandableSubStep {
-  readonly result?: SchedulingResult | '%future added value' | null;
-}
 
 /**
  * Minimal shape shared by every scheduling-history row type
@@ -40,18 +35,6 @@ export const DEFAULT_SCHEDULING_HISTORY_EXPAND_MODE: SchedulingHistoryExpandMode
 
 const hasSubSteps = (record: SchedulingHistoryExpandableRow) =>
   !_.isEmpty(record.subSteps);
-
-/**
- * The rule "errors-only" mode applies to sub-steps. `BAISubStepNodes` filters
- * its rows by this exact test, so it must stay the single definition — the
- * moment the nested table's filter and this hook's expandability rule disagree,
- * an expandable row can open onto an empty table again (FR-3425). Deliberately
- * broader than `FAILURE_RESULTS` in `BAISubStepNodes`, which is a styling-only
- * "hard failure" set.
- */
-export const isNonSuccessSubStep = (
-  subStep: SchedulingHistoryExpandableSubStep | null | undefined,
-) => subStep?.result !== 'SUCCESS';
 
 // "errors-only" hides successful sub-steps inside the expanded row, so in that
 // mode a row is only expandable when at least one sub-step failed — otherwise
@@ -151,13 +134,17 @@ export const useSchedulingHistoryExpandable = <
   // identity that `filterOutNullAndUndefined(...)` produces every render — so
   // manual per-row toggles persist until the data actually reloads.
   const dataSignature = dataSource
-    .map((record) => {
-      // A boolean, not a count: expandability only turns on whether *any*
-      // sub-step failed, so a retry taking the failure count from 1 to 2 must
-      // not re-apply the master mode and discard the user's manual toggles.
-      const hasNonSuccessSubStep = _.some(record.subSteps, isNonSuccessSubStep);
-      return `${record.id}:${record.result ?? ''}:${record.subSteps?.length ?? 0}:${hasNonSuccessSubStep ? 1 : 0}`;
-    })
+    // Booleans, not counts: expandability only turns on whether the row has
+    // *any* sub-step and whether *any* of them failed, so a retry taking the
+    // failure count from 1 to 2 must not re-apply the master mode and discard
+    // the user's manual toggles.
+    .map(
+      (record) =>
+        `${record.id}:${record.result ?? ''}:${hasSubSteps(record)}:${_.some(
+          record.subSteps,
+          isNonSuccessSubStep,
+        )}`,
+    )
     .join('|');
 
   // Manual per-row toggles persist until a refetch (data signature) or a

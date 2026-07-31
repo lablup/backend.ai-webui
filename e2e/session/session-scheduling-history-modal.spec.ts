@@ -111,6 +111,19 @@ test.describe(
       return modal;
     }
 
+    /**
+     * Helper: switches the expand mode via the kebab (⋮) menu in the
+     * expand-icon column header.
+     */
+    async function switchExpandMode(
+      page: Page,
+      modal: ReturnType<Page['getByRole']>,
+      mode: 'Expand all' | 'Collapse all' | 'Expand errors only',
+    ) {
+      await modal.locator('thead button').first().click();
+      await page.getByRole('menuitem', { name: mode }).click();
+    }
+
     // ─────────────────────────────────────────────────────────────────────────
     // 1. History Button Visibility and Access
     // ─────────────────────────────────────────────────────────────────────────
@@ -703,8 +716,7 @@ test.describe(
       // all-SUCCESS schedule-sessions row offers no expand icon at all in that
       // mode (FR-3425). "Collapse all" shows every sub-step while leaving rows
       // collapsed, so the row becomes manually expandable.
-      await modal.locator('thead button').first().click();
-      await page.getByRole('menuitem', { name: 'Collapse all' }).click();
+      await switchExpandMode(page, modal, 'Collapse all');
 
       // 3. Identify a row with an expand icon (the schedule-sessions row has sub-steps).
       // NOTE: antd renders a "spaced" (invisible) expand button on ALL rows, even non-expandable
@@ -760,8 +772,7 @@ test.describe(
       // 2. Switch to "Collapse all" so successful sub-steps are shown. In the
       // default errors-only mode this all-SUCCESS row has no expand icon at all
       // (FR-3425). Rows start collapsed, so the row is still manually expandable.
-      await modal.locator('thead button').first().click();
-      await page.getByRole('menuitem', { name: 'Collapse all' }).click();
+      await switchExpandMode(page, modal, 'Collapse all');
 
       // 3. Expand the schedule-sessions row.
       // Use filter by text content — see test #8 comment for why the name pattern
@@ -840,8 +851,7 @@ test.describe(
 
       // 4. The mode menu stays reachable even though no row is expandable —
       // otherwise there would be no way back to "Expand all".
-      await modal.locator('thead button').first().click();
-      await page.getByRole('menuitem', { name: 'Expand all' }).click();
+      await switchExpandMode(page, modal, 'Expand all');
 
       // 5. With successful sub-steps shown again, the row expands and renders them.
       await expect(
@@ -942,8 +952,7 @@ test.describe(
       // 5. Switch to "Collapse all" so successful sub-steps are shown. In the
       // default errors-only mode this all-SUCCESS row has no expand icon at all
       // (FR-3425). Rows stay collapsed, so the row is still manually expandable.
-      await modal.locator('thead button').first().click();
-      await page.getByRole('menuitem', { name: 'Collapse all' }).click();
+      await switchExpandMode(page, modal, 'Collapse all');
 
       // 6. Expand the schedule-sessions row to view sub-step details
       await scheduleRow.getByLabel('Expand row').click();
