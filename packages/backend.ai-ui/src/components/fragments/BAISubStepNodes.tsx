@@ -52,9 +52,9 @@ export interface BAISubStepNodesProps extends Omit<
   ) => BAIColumnsType<SubStepInList>;
   disableSorter?: boolean;
   /**
-   * When true, only non-success sub-steps are shown (mirrors the parent table's
-   * "errors-only" mode), so an expanded row surfaces just the failing / retried
-   * steps.
+   * When true, only non-success sub-steps are shown. Do not wire this to the
+   * parent table's expand mode — that left all-success rows opening onto an
+   * empty table (FR-3425).
    */
   errorsOnly?: boolean;
 }

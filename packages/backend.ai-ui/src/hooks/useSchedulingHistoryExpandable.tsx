@@ -49,8 +49,8 @@ const computeExpandedRowKeysForMode = (
 export interface UseSchedulingHistoryExpandableResult {
   /**
    * The effective master mode (the controlled `mode`, or the default
-   * "errors-only" when uncontrolled). Callers use this to filter the nested
-   * sub-step table to non-success rows when the mode is `errors-only`.
+   * "errors-only" when uncontrolled). It decides which rows start expanded —
+   * never what an expanded row shows (FR-3425).
    */
   mode: SchedulingHistoryExpandMode;
   expandedRowKeys: React.Key[];
