@@ -538,7 +538,11 @@ const FairShareList: React.FC = () => {
       />
       {currentStep === 'user' && (
         <Suspense fallback={null}>
-          <UserResourceGroupAlert />
+          <UserResourceGroupAlert
+            resourceGroupName={deferredStepQueryParams.resourceGroup}
+            domainName={deferredStepQueryParams.domain}
+            projectId={deferredStepQueryParams.project}
+          />
         </Suspense>
       )}
       <Alert type="info" title={t('fairShare.step.Description')} showIcon />
