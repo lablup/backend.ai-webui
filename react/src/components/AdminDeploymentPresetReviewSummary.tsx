@@ -28,7 +28,6 @@ const STEP2_FIELDS = [
 
 interface PresetReviewSummaryProps {
   form: FormInstance<AdminDeploymentPresetFormValue>;
-  mode: 'create' | 'edit';
   onGoToStep: (index: number) => void;
   runtimeVariants: ReadonlyArray<{ id: string; name: string }>;
   errorFieldNames: string[];
@@ -42,7 +41,6 @@ interface PresetReviewSummaryProps {
 
 const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
   form,
-  mode,
   onGoToStep,
   runtimeVariants,
   errorFieldNames,
@@ -109,11 +107,9 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
               {values.description}
             </Descriptions.Item>
           )}
-          {mode === 'create' && (
-            <Descriptions.Item label={t('adminDeploymentPreset.Runtime')}>
-              {runtimeName || '-'}
-            </Descriptions.Item>
-          )}
+          <Descriptions.Item label={t('adminDeploymentPreset.Runtime')}>
+            {runtimeName || '-'}
+          </Descriptions.Item>
           <Descriptions.Item label={t('adminDeploymentPreset.Image')}>
             {imageReference ? (
               <Typography.Text

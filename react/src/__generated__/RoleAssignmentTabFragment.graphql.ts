@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d99c38d50eb7b2823158c0639995af86>>
+ * @generated SignedSource<<dd0b64091d19cdcab29d50867d0422ca>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,6 +10,7 @@
 
 import { ReaderFragment } from 'relay-runtime';
 export type RBACElementType = "AGENT" | "APP_CONFIG" | "APP_CONFIG_ALLOW_LIST" | "APP_CONFIG_DEFINITION" | "APP_CONFIG_FRAGMENT" | "ARTIFACT" | "ARTIFACT_REGISTRY" | "ARTIFACT_REVISION" | "AUDIT_LOG" | "CONTAINER_REGISTRY" | "DEPLOYMENT_POLICY" | "DEPLOYMENT_REVISION" | "DEPLOYMENT_TOKEN" | "DOMAIN" | "DOMAIN_ADMIN_PAGE" | "EVENT_LOG" | "IMAGE" | "IMAGE_ALIAS" | "KERNEL" | "KERNEL_HISTORY" | "KEYPAIR" | "KEYPAIR_RESOURCE_POLICY" | "MODEL_CARD" | "MODEL_DEPLOYMENT" | "NETWORK" | "NOTIFICATION_CHANNEL" | "NOTIFICATION_RULE" | "PROJECT" | "PROJECT_ADMIN_PAGE" | "PROJECT_RESOURCE_POLICY" | "RESOURCE_GROUP" | "RESOURCE_PRESET" | "ROLE" | "ROLE_ASSIGNMENT" | "ROUTING" | "SESSION" | "SESSION_APP_SERVICE" | "SESSION_TEMPLATE" | "STORAGE_HOST" | "USER" | "USER_EMAIL" | "USER_RESOURCE_POLICY" | "VFOLDER" | "VFOLDER_DATA" | "%future added value";
+export type RoleSource = "CUSTOM" | "SYSTEM" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type RoleAssignmentTabFragment$data = {
   readonly firstScope: {
@@ -21,6 +22,8 @@ export type RoleAssignmentTabFragment$data = {
     }>;
   } | null | undefined;
   readonly id: string;
+  readonly name: string;
+  readonly source: RoleSource;
   readonly users: {
     readonly count: number;
     readonly edges: ReadonlyArray<{
@@ -96,6 +99,20 @@ return {
   "name": "RoleAssignmentTabFragment",
   "selections": [
     (v0/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "name",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "source",
+      "storageKey": null
+    },
     {
       "alias": "firstScope",
       "args": [
@@ -275,6 +292,6 @@ return {
 };
 })();
 
-(node as any).hash = "409010db642c0926546832b7d5e21e2f";
+(node as any).hash = "1686ca5dcae81b1949d2704e9d05ec20";
 
 export default node;

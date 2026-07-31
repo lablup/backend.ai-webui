@@ -18,8 +18,9 @@ name: "Sync PR Project Status"
 #   2. A regex fallback over the PR body that matches `(close|fix|resolve)
 #      [sd|es|ed]? #<num>`. GitHub only registers closing keywords for PRs
 #      targeting the repo's default branch, so stacked PRs (common here via
-#      Graphite) never populate (1). The fallback is load-bearing — without
-#      it this workflow would be a near-total no-op for stacked PRs.
+#      GitHub Stacked PRs / gh stack) never populate (1). The fallback is
+#      load-bearing — without it this workflow would be a near-total no-op
+#      for stacked PRs.
 #
 # Configuration (repository or organization variables):
 #   vars.PROJECT_ORGANIZATION  — organization login that owns the Project V2.

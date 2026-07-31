@@ -4,7 +4,7 @@ description: When resolving pnpm-lock.yaml merge/rebase conflicts, always take m
 
 # pnpm-lock.yaml Conflict Resolution Rule
 
-When `pnpm-lock.yaml` conflicts during a merge, rebase, `gt sync`, or `gt restack`, **always take the main branch's version** rather than hand-merging the lockfile. Then run `pnpm install` to let pnpm reconcile any new dependencies from your branch's `package.json` / `pnpm-workspace.yaml`.
+When `pnpm-lock.yaml` conflicts during a merge, rebase, `gh stack sync`, or `gh stack rebase`, **always take the main branch's version** rather than hand-merging the lockfile. Then run `pnpm install` to let pnpm reconcile any new dependencies from your branch's `package.json` / `pnpm-workspace.yaml`.
 
 ## Why
 
@@ -23,11 +23,11 @@ Since FR-2866 disabled `gitBranchLockfile`, every branch writes to the same cano
 ### ✅ Recommended — `git restore --source=main` (context-independent)
 
 ```bash
-# Works the same in merge, rebase, gt sync, gt restack
+# Works the same in merge, rebase, gh stack sync, gh stack rebase
 git restore --source=main pnpm-lock.yaml
 pnpm install
 git add pnpm-lock.yaml
-# then continue: git rebase --continue / gt continue / git commit
+# then continue: git rebase --continue / gh stack rebase --continue / git commit
 ```
 
 `--source=main` explicitly names the source, so the command behaves identically whether you're in a merge or a rebase. Memorize this one form.
@@ -44,14 +44,14 @@ git commit
 
 In a **merge**, `--theirs` = the branch being merged in (main).
 
-### ⚠️ Correct but reversed semantics — `git checkout --ours` (during rebase / `gt sync` / `gt restack`)
+### ⚠️ Correct but reversed semantics — `git checkout --ours` (during rebase / `gh stack sync` / `gh stack rebase`)
 
 ```bash
-# After: gt sync, gt restack, or git rebase main → conflict in pnpm-lock.yaml
+# After: gh stack sync, gh stack rebase, or git rebase main → conflict in pnpm-lock.yaml
 git checkout --ours pnpm-lock.yaml
 pnpm install
 git add pnpm-lock.yaml
-git rebase --continue   # or: gt continue
+git rebase --continue   # or: gh stack rebase --continue
 ```
 
 In a **rebase**, `--ours` and `--theirs` are swapped relative to merge: `--ours` = the base you're rebasing onto (main), `--theirs` = the commit being replayed (your branch). This is a well-known Git footgun. If you're unsure which context you're in, fall back to `git restore --source=main pnpm-lock.yaml` from the recommended pattern.
@@ -89,7 +89,7 @@ Always run `pnpm install` after restoring. pnpm will re-resolve any new deps you
 2. **Always follow up with `pnpm install`** so pnpm reconciles any new deps from your branch's `package.json` / `pnpm-workspace.yaml`.
 3. **Never hand-merge `pnpm-lock.yaml`** — the file is auto-generated; let the tool that owns it (pnpm) regenerate it.
 4. **Mind the rebase / merge swap** when using `--ours` / `--theirs`. In rebase, `--ours` is main; in merge, `--theirs` is main. When in doubt, use `--source=main`.
-5. **Same rule applies during `gt sync` and `gt restack`** — both use rebase semantics under the hood. Resolve with `git restore --source=main pnpm-lock.yaml`, run `pnpm install`, then `gt continue`.
+5. **Same rule applies during `gh stack sync` and `gh stack rebase`** — both use rebase semantics under the hood. Note that on a conflict both commands restore every branch and exit with code 3; re-run `gh stack rebase` to reach the conflict, resolve with `git restore --source=main pnpm-lock.yaml` + `pnpm install`, then `gh stack rebase --continue`.
 6. **Don't escalate routine lockfile conflicts** — they almost always resolve via this recipe. Escalate only if `pnpm install` itself fails after taking main's lockfile (which typically points at a real `package.json` / `pnpm-workspace.yaml` problem, not a lockfile problem).
 
 ## Related

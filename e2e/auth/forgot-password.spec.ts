@@ -279,7 +279,7 @@ test.describe('Change password page', () => {
         page.getByRole('textbox', { name: 'Enter email address' }),
       ).toBeVisible();
       await expect(
-        page.getByRole('textbox', { name: 'New password', exact: true }),
+        page.getByRole('textbox', { name: 'New Password', exact: true }),
       ).toBeVisible();
       await expect(
         page.getByRole('textbox', { name: 'New password (again)' }),
@@ -321,7 +321,7 @@ test.describe('Change password page', () => {
         .getByRole('textbox', { name: 'Enter email address' })
         .fill(TEST_EMAIL);
       await page
-        .getByRole('textbox', { name: 'New password', exact: true })
+        .getByRole('textbox', { name: 'New Password', exact: true })
         .fill(TEST_PASSWORD);
       await page
         .getByRole('textbox', { name: 'New password (again)' })
@@ -363,7 +363,7 @@ test.describe('Change password page', () => {
         .getByRole('textbox', { name: 'Enter email address' })
         .fill(TEST_EMAIL);
       await page
-        .getByRole('textbox', { name: 'New password', exact: true })
+        .getByRole('textbox', { name: 'New Password', exact: true })
         .fill(TEST_PASSWORD);
       await page
         .getByRole('textbox', { name: 'New password (again)' })
@@ -439,7 +439,7 @@ test.describe('Change password page', () => {
         .getByRole('textbox', { name: 'Enter email address' })
         .fill(TEST_EMAIL);
       await page
-        .getByRole('textbox', { name: 'New password', exact: true })
+        .getByRole('textbox', { name: 'New Password', exact: true })
         .fill(TEST_PASSWORD);
       await page
         .getByRole('textbox', { name: 'New password (again)' })
@@ -482,7 +482,7 @@ test.describe('Change password page', () => {
         .getByRole('textbox', { name: 'Enter email address' })
         .fill('wrong@example.com');
       await page
-        .getByRole('textbox', { name: 'New password', exact: true })
+        .getByRole('textbox', { name: 'New Password', exact: true })
         .fill(TEST_PASSWORD);
       await page
         .getByRole('textbox', { name: 'New password (again)' })
@@ -542,7 +542,7 @@ test.describe('Change password page', () => {
         .getByRole('textbox', { name: 'Enter email address' })
         .fill(TEST_EMAIL);
       await page
-        .getByRole('textbox', { name: 'New password', exact: true })
+        .getByRole('textbox', { name: 'New Password', exact: true })
         .fill('abc');
       await page
         .getByRole('textbox', { name: 'New password (again)' })
@@ -579,7 +579,7 @@ test.describe('Change password page', () => {
         .getByRole('textbox', { name: 'Enter email address' })
         .fill(TEST_EMAIL);
       await page
-        .getByRole('textbox', { name: 'New password', exact: true })
+        .getByRole('textbox', { name: 'New Password', exact: true })
         .fill('NewPass1!');
       await page
         .getByRole('textbox', { name: 'New password (again)' })

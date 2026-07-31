@@ -326,8 +326,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
   // }`, the shape the section's `initialPresetValues` expects. No explicit
   // useMemo — the React Compiler ('use memo') memoizes this derivation.
   const initialRuntimePresetValues:
-    | ReadonlyArray<RuntimeVariantPresetValueEntry>
-    | undefined =
+    ReadonlyArray<RuntimeVariantPresetValueEntry> | undefined =
     mode === 'edit'
       ? (preset?.presetValues?.map((pv) => ({
           presetId: pv.presetId,
@@ -349,8 +348,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
   // the shape the schema helpers operate on.
   const readRuntimeParamStringValues = (): Record<string, string> => {
     const runtimeParams = form.getFieldValue([RUNTIME_PARAMS_NAMESPACE]) as
-      | RuntimeParameterValues
-      | undefined;
+      RuntimeParameterValues | undefined;
     const stringValues: Record<string, string> = {};
     if (!runtimeParams) return stringValues;
     for (const [key, val] of Object.entries(runtimeParams)) {
@@ -418,9 +416,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
         imageId: preset.execution?.imageId ?? undefined,
         clusterMode:
           (preset.cluster?.clusterMode as
-            | 'SINGLE_NODE'
-            | 'MULTI_NODE'
-            | undefined) ?? undefined,
+            'SINGLE_NODE' | 'MULTI_NODE' | undefined) ?? undefined,
         clusterSize: preset.cluster?.clusterSize ?? undefined,
         ...(() => {
           const slots = preset.resourceSlots ?? [];
@@ -1112,7 +1108,6 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                 <Suspense fallback={<Skeleton active />}>
                   <PresetReviewSummary
                     form={form}
-                    mode={mode}
                     onGoToStep={goToStep}
                     runtimeVariants={runtimeVariants}
                     errorFieldNames={errorFieldNames}

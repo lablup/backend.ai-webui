@@ -135,14 +135,14 @@ test(
 
     // The password change modal must be fully interactive — its form fields accessible.
     await expect(
-      page.getByLabel('New password', { exact: true }),
+      page.getByLabel('New Password', { exact: true }),
     ).toBeVisible();
     await expect(page.getByLabel('New password (again)')).toBeVisible();
 
     // Verify the password change form is not visually blocked by clicking and
     // typing into the new password field. If the login modal's mask were covering
     // it, the click would fail or the field would not accept input.
-    const newPasswordInput = page.getByLabel('New password', { exact: true });
+    const newPasswordInput = page.getByLabel('New Password', { exact: true });
     await newPasswordInput.click();
     await newPasswordInput.fill('TestPassword1!');
     await expect(newPasswordInput).toHaveValue('TestPassword1!');
@@ -191,7 +191,7 @@ test(
     await triggerPasswordExpiryModal(page);
 
     // Fill the new password fields with the same value as the current password
-    await page.getByLabel('New password', { exact: true }).fill(TEST_PASSWORD);
+    await page.getByLabel('New Password', { exact: true }).fill(TEST_PASSWORD);
     await page.getByLabel('New password (again)').fill(TEST_PASSWORD);
     await page.getByRole('button', { name: 'Update' }).click();
 
@@ -324,7 +324,7 @@ test.describe('real account password change flow', () => {
       });
 
       // ── Fill new password; submit will go through mocked /server/update-password-no-auth ──
-      await page.getByLabel('New password', { exact: true }).fill(NEW_PASSWORD);
+      await page.getByLabel('New Password', { exact: true }).fill(NEW_PASSWORD);
       await page.getByLabel('New password (again)').fill(NEW_PASSWORD);
 
       // Mock the password update endpoint — the real backend returns "Malformed body"

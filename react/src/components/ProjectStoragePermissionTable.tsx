@@ -75,11 +75,18 @@ export interface ProjectStoragePermissionTableProps extends BAITableProps<Projec
    */
   permissionFrgmt:
     ProjectStoragePermissionTable_permissionFrgmt$key | null | undefined;
+  loading?: boolean;
 }
 
 const ProjectStoragePermissionTable: React.FC<
   ProjectStoragePermissionTableProps
-> = ({ storageVolumeFrgmt, domainFrgmt, permissionFrgmt, ...tableProps }) => {
+> = ({
+  storageVolumeFrgmt,
+  domainFrgmt,
+  permissionFrgmt,
+  loading,
+  ...tableProps
+}) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -345,7 +352,7 @@ const ProjectStoragePermissionTable: React.FC<
           <BAIFetchKeyButton
             value={fetchKey}
             onChange={() => updateFetchKey()}
-            loading={deferredQueryVariables !== queryVariables}
+            loading={deferredQueryVariables !== queryVariables || loading}
           />
         </BAIFlex>
       </BAIFlex>

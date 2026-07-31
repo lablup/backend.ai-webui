@@ -15,8 +15,17 @@
  * / `startsWith('/admin-...')` first-segment check with a single, scope-aware
  * source of truth.
  */
-import { buildPath, RouteScope, FeatureKey } from '../helper/pathBuilder';
-import { useCurrentProjectValue } from './useCurrentProject';
+import { useWebUINavigate } from '.';
+import {
+  buildPath,
+  MENU_KEY_TO_SCOPE_FEATURE,
+  RouteScope,
+  FeatureKey,
+} from '../helper/pathBuilder';
+import {
+  useCurrentProjectValue,
+  useSetCurrentProject,
+} from './useCurrentProject';
 import { useLocation, useMatches } from 'react-router-dom';
 
 /**
@@ -224,5 +233,69 @@ export const useProjectPath = (): ((
 
   return (key: FeatureKey, opts?: ProjectPathOptions): string => {
     return buildPath(opts?.scope ?? scope, key, projectName);
+  };
+};
+
+export interface SwitchProjectInput {
+  projectId: string;
+  projectName: string;
+}
+
+/**
+ * The canonical way to change the current project from a component (FR-3428).
+ *
+ * Since FR-3055 the URL owns the current project on `/project/:projectName/*`
+ * routes: on `project` / `projectAdmin` scope this hook navigates to the same
+ * page with ONLY the `:projectName` segment rewritten (query string preserved)
+ * and lets `ProjectScopeLayout` converge `currentProjectAtom` to the new URL.
+ * Writing the atom directly there would leave the URL on the old project, so
+ * sider links, reloads, and the next navigation would all snap back.
+ *
+ * Outside project-scoped URLs (global `admin` scope) there is no
+ * `:projectName` segment to own the project, so the atom is updated directly.
+ *
+ * Do NOT call `useSetCurrentProject` from components — it is reserved for the
+ * URL→atom sync layer (`ProjectScopeLayout`) and this hook, enforced by the
+ * `no-restricted-imports` rule in `react/eslint.config.js`.
+ */
+export const useSwitchProject = (): ((info: SwitchProjectInput) => void) => {
+  'use memo';
+  const routeScope = useRouteScope();
+  const currentMenuKey = useCurrentMenuKey();
+  const location = useLocation();
+  const webuiNavigate = useWebUINavigate();
+  const setCurrentProject = useSetCurrentProject();
+
+  return ({ projectId, projectName }: SwitchProjectInput): void => {
+    if (routeScope === 'project' || routeScope === 'projectAdmin') {
+      // Stay on the exact same page and swap ONLY the project name, preserving
+      // everything after it (e.g. a detail `:id`) and the query string, so
+      // in-progress UI state survives.
+      const segments = location.pathname.split('/');
+      if (segments[1] === 'project' && segments.length > 2) {
+        webuiNavigate(
+          rewriteProjectNameInPath(location.pathname, projectName) +
+            location.search,
+        );
+        return;
+      }
+      // Defensive fallback: reconstruct from the current feature key when the
+      // path is not under `/project/:projectName` for some reason.
+      const scopeFeature = currentMenuKey
+        ? MENU_KEY_TO_SCOPE_FEATURE[currentMenuKey]
+        : undefined;
+      const featureKey =
+        scopeFeature && scopeFeature.scope === routeScope
+          ? scopeFeature.featureKey
+          : 'session';
+      webuiNavigate(
+        buildPath(routeScope, featureKey, projectName) + location.search,
+      );
+      return;
+    }
+
+    // Global admin scope has no project-aware layout — update the atom
+    // directly.
+    setCurrentProject({ projectId, projectName });
   };
 };

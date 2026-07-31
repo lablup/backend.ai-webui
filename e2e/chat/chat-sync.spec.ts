@@ -57,6 +57,34 @@ function getSyncToggle(page: Page, cardIndex: number) {
     .nth(1);
 }
 
+/**
+ * Clicks a pane's sync toggle and waits until the new state is actually
+ * committed, as reported by the SyncSwitch icon (ToggleRight = on,
+ * ToggleLeft = off).
+ *
+ * ChatHeader wraps `onChangeSync` in `startTransition`, so the pane keeps its
+ * previous `sync` value for a beat after the click. During that window the
+ * pane still mirrors its input into the shared `synchronizedMessage` atom,
+ * so typing right after the click can still propagate to the other panes.
+ * Asserting on the icon is the only signal that the toggle has landed —
+ * checking that the input was cleared does not work, because the clearing
+ * effect is a no-op whenever the input is already empty.
+ */
+async function setSync(
+  page: Page,
+  cardIndex: number,
+  enabled: boolean,
+): Promise<void> {
+  const toggle = getSyncToggle(page, cardIndex).first();
+  await expect(toggle).toBeVisible({ timeout: 10000 });
+  await toggle.click();
+  await expect(
+    toggle.locator(
+      enabled ? 'svg.lucide-toggle-right' : 'svg.lucide-toggle-left',
+    ),
+  ).toBeVisible({ timeout: 10000 });
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // 5. Sync Input Propagation Across Two Panes
 // ─────────────────────────────────────────────────────────────────────────────
@@ -177,6 +205,14 @@ test.describe(
         .getByText('mock-endpoint')
         .first();
       await secondCardEndpointText.click();
+
+      // Set up the wait for the second pane's own /v1/models fetch (for
+      // endpoint B) before clicking, so we don't miss a fast mocked response.
+      const modelsBResponsePromise = page.waitForResponse(
+        (response) =>
+          response.url().includes('mock-chat-endpoint-b') &&
+          response.url().includes('/v1/models'),
+      );
       await page
         .getByRole('option', { name: 'mock-endpoint-b' })
         .or(
@@ -186,6 +222,22 @@ test.describe(
         )
         .first()
         .click();
+      await modelsBResponsePromise;
+
+      const secondChatCardHeader = page.locator('.ant-card').nth(2);
+
+      // Selecting a new endpoint re-triggers the model list fetch for that
+      // pane (ChatCard's non-suspending isLoadingModels flag), which
+      // disables its ChatInput until the fetch resolves. Wait for the
+      // second pane's input to become enabled again, and for its model
+      // selector to reflect the newly-fetched model — otherwise the synced
+      // send below can race the endpoint/model switch and dispatch against
+      // a stale ('custom') model before React has settled on
+      // 'gpt-mock-model-b'.
+      await expect(getChatInput(page, 1)).toBeEnabled({ timeout: 10000 });
+      await expect(
+        secondChatCardHeader.getByText('gpt-mock-model-b'),
+      ).toBeVisible({ timeout: 10000 });
 
       // Verify both panes have sync ON
       await expect(getSyncToggle(page, 0).first()).toBeVisible({
@@ -260,12 +312,8 @@ test.describe(
       // Clone a second pane
       await addComparePane(page, 2);
 
-      // Verify both panes have sync ON
-      const syncToggle0 = getSyncToggle(page, 0).first();
-      await expect(syncToggle0).toBeVisible({ timeout: 10000 });
-
-      // Click the sync toggle in the first pane to turn it OFF
-      await syncToggle0.click();
+      // Turn sync OFF on the first pane and wait for the toggle to commit
+      await setSync(page, 0, false);
 
       // The input is cleared when sync is toggled (by design per the spec)
       await expect(getChatInput(page, 0)).toHaveValue('', { timeout: 5000 });
@@ -309,8 +357,7 @@ test.describe(
       });
 
       // Click the sync toggle in the first pane to disable sync
-      const syncToggle0 = getSyncToggle(page, 0).first();
-      await syncToggle0.click();
+      await setSync(page, 0, false);
 
       // The first pane's input is cleared when sync is disabled
       await expect(getChatInput(page, 0)).toHaveValue('', { timeout: 10000 });
@@ -329,9 +376,7 @@ test.describe(
       await addComparePane(page, 2);
 
       // Turn off sync on the first pane
-      const syncToggle0 = getSyncToggle(page, 0).first();
-      await expect(syncToggle0).toBeVisible({ timeout: 10000 });
-      await syncToggle0.click();
+      await setSync(page, 0, false);
 
       // Wait for input to clear after sync toggle
       await expect(getChatInput(page, 0)).toHaveValue('', { timeout: 5000 });
@@ -375,11 +420,8 @@ test.describe(
       // Clone a second pane
       await addComparePane(page, 2);
 
-      const syncToggle0 = getSyncToggle(page, 0).first();
-      await expect(syncToggle0).toBeVisible({ timeout: 10000 });
-
       // Turn off sync on the first pane
-      await syncToggle0.click();
+      await setSync(page, 0, false);
 
       // Wait for input to clear
       await expect(getChatInput(page, 0)).toHaveValue('', { timeout: 5000 });
@@ -392,7 +434,7 @@ test.describe(
       });
 
       // Re-enable sync on the first pane
-      await syncToggle0.click();
+      await setSync(page, 0, true);
 
       // Input is cleared upon toggling sync back on
       await expect(getChatInput(page, 0)).toHaveValue('', { timeout: 10000 });

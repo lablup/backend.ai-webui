@@ -263,12 +263,12 @@ So a green checker means "no forbidden term slipped in", not "this is the right 
 
 ## Rename / Deprecation Checklist
 
-Renaming or deprecating an established term is **atomic**: the termbase, all UI locales, and all doc languages change together, in one Graphite stack. A partial rename leaves the live label and the termbase disagreeing — and because [Precedence](#precedence) says the label wins, a half-done rename silently reverts the decision. Run every step below before submitting.
+Renaming or deprecating an established term is **atomic**: the termbase, all UI locales, and all doc languages change together, in one PR stack. A partial rename leaves the live label and the termbase disagreeing — and because [Precedence](#precedence) says the label wins, a half-done rename silently reverts the decision. Run every step below before submitting.
 
 1. **Deprecate in `terminology.json`.** Set the old concept's `status` to `deprecated`, point `preferred` at the new term (or add the new concept), and add an `avoid[]` row (`avoid` = old term, `useInstead` = new term, plus `reason`, `lang`, and `conceptId`). Set `decidingFR` on the changed concept(s) — the new-term gate requires it. For a **non-English** avoid row, also add its fixtures entry to `terminology.selftest.json` and confirm `pnpm run lint:terminology:selftest` passes (see the non-English curation rule above).
 2. **Retranslate the UI locales.** Update all 21 files in `resources/i18n/*.json` **and** all 21 in `packages/backend.ai-ui/src/locale/*.json`. Edit `en.json` by hand, then propagate the other 20 with the `fw` i18n-translator (`/fw:i18n`).
 3. **Update the 4 doc languages.** Replace prose occurrences of the old term under `src/{en,ko,ja,th}/`.
 4. **Regenerate the term tables.** Run `pnpm run build:terminology` to refresh the `<!-- terminology:auto:* -->` regions of this file, then `pnpm run check:terminology-md` (confirms the tables match `terminology.json`) and `pnpm run lint:terminology` (confirms no live label **and no manual page** still uses the deprecated term — since FR-3373 the checker reads both, so it verifies steps 2 and 3 together). A non-English or context-qualified row only WARNs, so read the report; do not rely on the exit code alone.
-5. **Ship as one stack.** With `scripts/verify.sh` clean, submit the whole change as a single Graphite stack (`gt submit --stack`). Do not let any step land in a separate PR ahead of the others — the atomicity is the point.
+5. **Ship as one stack.** With `scripts/verify.sh` clean, submit the whole change as a single PR stack (`gh stack submit --auto`). Do not let any step land in a separate PR ahead of the others — the atomicity is the point.
 
 The App Proxy rename (FR-2841) is the cautionary precedent for skipping this: it landed partly in prose and partly in `avoid[]`, which is exactly the split-state this checklist exists to prevent.

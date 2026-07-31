@@ -117,7 +117,12 @@ const SFTPConnectionInfoModal: React.FC<SFTPConnectionInfoModalProps> = ({
       okText={t('session.appLauncher.DownloadSSHKey')}
       onOk={readAndDownloadSSHKey}
     >
-      <BAIFlex className={styles.description} direction="column" gap="md">
+      <BAIFlex
+        className={styles.description}
+        direction="column"
+        align="stretch"
+        gap="md"
+      >
         <Alert
           showIcon
           type="info"
