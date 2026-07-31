@@ -21,7 +21,7 @@ import {
   rewriteProjectNameInPath,
   useActiveProjectName,
   useCurrentMenuKey,
-  useRouteScope,
+  useSwitchProject,
 } from '../../hooks/useRouteScope';
 import { useUrlProjectValidity } from '../../hooks/useUrlProjectValidity';
 import { useWebUIMenuItems } from '../../hooks/useWebUIMenuItems';
@@ -40,7 +40,7 @@ import * as _ from 'lodash-es';
 import { MenuIcon } from 'lucide-react';
 import { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useMatches } from 'react-router-dom';
+import { useMatches } from 'react-router-dom';
 
 const useStyles = createStyles(({ css }) => ({
   webuiHeader: css`
@@ -67,10 +67,9 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
   const baiClient = useSuspendedBackendaiClient();
   const gridBreakpoint = Grid.useBreakpoint();
   const webuiNavigate = useWebUINavigate();
-  const location = useLocation();
   const matches = useMatches();
-  const routeScope = useRouteScope();
   const currentMenuKey = useCurrentMenuKey();
+  const switchProject = useSwitchProject();
   // When the URL carries an invalid/inaccessible `:projectName`, the atom keeps
   // the last valid project, which would make the header selector look like that
   // project is selected. Detect this and show the selector unselected instead.
@@ -126,51 +125,13 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
   }) => {
     setOptimisticProjectId(projectInfo.projectId);
 
-    // On project / project-admin scope the URL owns the current project: stay
-    // on the exact same page and swap ONLY the project name, then let
-    // `ProjectScopeLayout` converge `currentProjectAtom` to the new URL. We
-    // deliberately do NOT call `setCurrentProject` here on these scopes, to
-    // avoid the atom being set twice (once here, once by the layout sync effect).
-    if (routeScope === 'project' || routeScope === 'projectAdmin') {
-      // Replace only the `:projectName` segment, preserving everything after it
-      // (e.g. `/session/start`, a detail `:id`) and the query string, so
-      // in-progress UI state survives — matching the legacy behavior where
-      // changing the project never navigated away (the session launcher form
-      // stays mounted with its contents intact).
-      const segments = location.pathname.split('/');
-      if (segments[1] === 'project' && segments.length > 2) {
-        startProjectChangedTransition(() => {
-          webuiNavigate(
-            rewriteProjectNameInPath(
-              location.pathname,
-              projectInfo.projectName,
-            ) + location.search,
-          );
-        });
-        return;
-      }
-      // Defensive fallback: reconstruct from the current feature key when the
-      // path is not under `/project/:projectName` for some reason.
-      const scopeFeature = currentMenuKey
-        ? MENU_KEY_TO_SCOPE_FEATURE[currentMenuKey]
-        : undefined;
-      const featureKey =
-        scopeFeature && scopeFeature.scope === routeScope
-          ? scopeFeature.featureKey
-          : 'session';
-      startProjectChangedTransition(() => {
-        webuiNavigate(
-          buildPath(routeScope, featureKey, projectInfo.projectName) +
-            location.search,
-        );
-      });
-      return;
-    }
-
-    // Admin (global) scope has no project-aware layout, so preserve today's
-    // behavior: update the atom directly without navigating.
+    // `useSwitchProject` holds the canonical scope rule (FR-3428): on project
+    // / project-admin scope the URL owns the current project, so it stays on
+    // the exact same page and swaps ONLY the `:projectName` segment, letting
+    // `ProjectScopeLayout` converge `currentProjectAtom` to the new URL. On
+    // global admin scope it updates the atom directly.
     startProjectChangedTransition(() => {
-      setCurrentProject(projectInfo);
+      switchProject(projectInfo);
     });
   };
 
