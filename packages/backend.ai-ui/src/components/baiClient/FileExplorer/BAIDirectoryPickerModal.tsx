@@ -24,7 +24,6 @@ export interface BAIDirectoryPickerModalProps extends Omit<
   'onOk' | 'onCancel' | 'footer' | 'title'
 > {
   vfolderUuid: string;
-  vfolderName?: string;
   /** Sub path to start browsing from ('' = vfolder root). */
   defaultPath?: string;
   /** Called with the chosen sub path, or `undefined` when cancelled. */
@@ -38,7 +37,6 @@ export interface BAIDirectoryPickerModalProps extends Omit<
  */
 const BAIDirectoryPickerModal: React.FC<BAIDirectoryPickerModalProps> = ({
   vfolderUuid,
-  vfolderName,
   defaultPath,
   onRequestClose,
   ...modalProps
@@ -76,9 +74,9 @@ const BAIDirectoryPickerModal: React.FC<BAIDirectoryPickerModalProps> = ({
     <BAIModal
       width={800}
       title={
-        (vfolderName ?? vfolder_node?.name)
+        vfolder_node?.name
           ? t('comp:VFolderPathPicker.SelectAPathInFolder', {
-              folderName: vfolderName ?? vfolder_node?.name,
+              folderName: vfolder_node.name,
             })
           : t('comp:VFolderPathPicker.SelectAPath')
       }
@@ -106,7 +104,7 @@ const BAIDirectoryPickerModal: React.FC<BAIDirectoryPickerModalProps> = ({
       <BAIFileExplorer
         mode="directoryPicker"
         targetVFolderId={vfolderUuid}
-        targetVFolderName={vfolderName}
+        targetVFolderName={vfolder_node?.name ?? undefined}
         defaultPath={toExplorerPath(defaultPath ?? '')}
         onChangeCurrentPath={setCurrentPath}
         enableWrite={hasWriteContentPermission}

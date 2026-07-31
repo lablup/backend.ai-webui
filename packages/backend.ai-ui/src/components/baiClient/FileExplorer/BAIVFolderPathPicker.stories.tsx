@@ -275,7 +275,7 @@ The value is the **sub path inside the vfolder** — \`''\` for the vfolder root
 ## BAI-Specific Props
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| \`vfolderUuid\` | \`string\` | - | UUID of the vfolder to browse; the field stays disabled until provided |
+| \`vfolderUuid\` | \`string\` | - | UUID of the vfolder to browse; pair with \`disabled={!vfolderUuid}\` until one is selected |
 | \`value\` | \`string\` | - | Selected sub path (\`''\` = vfolder root) |
 | \`defaultValue\` | \`string\` | - | Initial value for uncontrolled usage |
 | \`onChange\` | \`(selectedSubPath?: string) => void\` | - | Fired when a location is confirmed in the modal |
@@ -328,7 +328,7 @@ export const WithinForm: Story = {
     docs: {
       description: {
         story:
-          'The intended composition: a separate `BAIVFolderSelect` (with `valuePropName="row_id"` so the field holds the UUID) feeds `vfolderUuid`, and the picker plugs into its own Form.Item. Changing the vfolder resets the path field, and the required rule uses a custom validator because `""` (the vfolder root) is a valid pick.',
+          'The intended composition: a separate `BAIVFolderSelect` (with `valuePropName="row_id"` so the field holds the UUID) feeds `vfolderUuid`, and the picker plugs into its own Form.Item with `disabled={!vfolderUuid}` until a folder is chosen. Changing the vfolder resets the path field, and the required rule uses a custom validator because `""` (the vfolder root) is a valid pick.',
       },
     },
   },
@@ -379,7 +379,10 @@ export const WithinForm: Story = {
               },
             ]}
           >
-            <BAIVFolderPathPicker vfolderUuid={vfolderUuid} />
+            <BAIVFolderPathPicker
+              vfolderUuid={vfolderUuid}
+              disabled={!vfolderUuid}
+            />
           </Form.Item>
           <BAIFlex direction="column" align="start" gap="sm">
             <Button type="primary" htmlType="submit">
@@ -427,7 +430,6 @@ export const PickerModalOnly: Story = {
             <BAIDirectoryPickerModal
               open={isOpen}
               vfolderUuid={MOCK_VFOLDERS[0].uuid}
-              vfolderName={MOCK_VFOLDERS[0].label}
               onRequestClose={(selectedSubPath) => {
                 if (selectedSubPath !== undefined) {
                   setLastResult(selectedSubPath);

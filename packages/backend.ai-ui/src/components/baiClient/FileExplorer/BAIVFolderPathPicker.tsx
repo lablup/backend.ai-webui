@@ -11,8 +11,8 @@ import { Suspense, useState } from 'react';
 
 export interface BAIVFolderPathPickerProps {
   /**
-   * UUID of the vfolder to browse. The picker is disabled until it is
-   * provided — pair it with a separate vfolder select and reset the value
+   * UUID of the vfolder to browse. Pair it with a separate vfolder select:
+   * pass `disabled={!vfolderUuid}` until one is chosen, and reset the value
    * when the vfolder changes (a sub path only makes sense within the
    * vfolder it was picked from).
    */
@@ -53,7 +53,7 @@ const BAIVFolderPathPicker: React.FC<BAIVFolderPathPickerProps> = (props) => {
   >(props);
   const [isPickerOpen, setIsPickerOpen] = useState(false);
 
-  const canOpenPicker = !disabled && !!vfolderUuid;
+  const canOpenPicker = !disabled;
 
   return (
     <>
@@ -87,8 +87,8 @@ const BAIVFolderPathPicker: React.FC<BAIVFolderPathPickerProps> = (props) => {
         }}
         {...inputProps}
       />
-      {/* Mounted only while open (BAIUnmountAfterClose), and it can only be
-          opened once a vfolder is provided — so rendering unconditionally is
+      {/* Mounted only while open (BAIUnmountAfterClose); callers disable the
+          picker until a vfolder is provided, so rendering unconditionally is
           safe. The modal fetches this vfolder's name and permissions on mount
           (Suspense). */}
       <Suspense fallback={null}>
