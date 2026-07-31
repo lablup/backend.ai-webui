@@ -6,13 +6,17 @@ import {
   EndpointSelectQuery,
   EndpointSelectQuery$data,
 } from '../../__generated__/EndpointSelectQuery.graphql';
+import { EndpointSelectTargetProjectQuery } from '../../__generated__/EndpointSelectTargetProjectQuery.graphql';
 import { EndpointSelectValueQuery } from '../../__generated__/EndpointSelectValueQuery.graphql';
+import { buildPath } from '../../helper/pathBuilder';
 import { useWebUINavigate } from '../../hooks';
+import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
 import { useProjectPath } from '../../hooks/useRouteScope';
 import TotalFooter from '../TotalFooter';
 import { useControllableValue } from 'ahooks';
 import {
+  App,
   Button,
   type GetRef,
   type SelectProps,
@@ -102,6 +106,9 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
             name
             endpoint_id @required(action: NONE)
             url
+            # The owning project's id, used to detect whether this deployment
+            # belongs to a project other than the currently active one.
+            project
           }
         }
       `,
@@ -192,6 +199,66 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
 
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
+  const currentProject = useCurrentProjectValue();
+  const { modal } = App.useApp();
+
+  // General-user menus only surface entities within the current project
+  // scope (FR-3429): if the selected deployment belongs to a DIFFERENT
+  // project than the one currently active, opening its detail page directly
+  // would land on a cross-project entity. Detect the mismatch here so the
+  // detail-page shortcut can confirm-and-switch instead.
+  const targetProjectId = selectedEndpoint?.project ?? null;
+  const isDifferentProject =
+    !!targetProjectId &&
+    !!currentProject.id &&
+    targetProjectId !== currentProject.id;
+
+  // Resolves the target project's NAME (needed to build
+  // `/project/<name>/deployments/<id>`) only when it differs from the
+  // current project — `fetchPolicy` is toggled to 'store-only' otherwise so
+  // no network request is made for the common same-project case.
+  const { group: targetProject } =
+    useLazyLoadQuery<EndpointSelectTargetProjectQuery>(
+      graphql`
+        query EndpointSelectTargetProjectQuery($projectId: UUID!) {
+          group(id: $projectId) {
+            id
+            name
+          }
+        }
+      `,
+      {
+        projectId: targetProjectId ?? '',
+      },
+      {
+        fetchPolicy: isDifferentProject ? 'store-or-network' : 'store-only',
+      },
+    );
+
+  const goToDeploymentDetailPage = () => {
+    if (!controllableValue) return;
+    if (!isDifferentProject) {
+      webuiNavigate(buildProjectPath(`deployments/${controllableValue}`));
+      return;
+    }
+    modal.confirm({
+      title: t('deployment.SwitchProjectConfirmTitle'),
+      content: t('deployment.SwitchProjectConfirmContent', {
+        projectName: targetProject?.name ?? '',
+      }),
+      okText: t('button.Confirm'),
+      cancelText: t('button.Cancel'),
+      onOk: () => {
+        webuiNavigate(
+          buildPath(
+            'project',
+            `deployments/${controllableValue}`,
+            targetProject?.name,
+          ),
+        );
+      },
+    });
+  };
 
   const isValueMatched = searchStr === deferredSearchStr;
   useEffect(() => {
@@ -259,11 +326,7 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
             <Button
               icon={<InfoIcon />}
               disabled={!controllableValue}
-              onClick={() => {
-                webuiNavigate(
-                  buildProjectPath(`deployments/${controllableValue}`),
-                );
-              }}
+              onClick={goToDeploymentDetailPage}
             />
           </Tooltip>
         ) : null}

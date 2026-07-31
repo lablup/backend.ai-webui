@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<517bf374e2ffd9c5f6e52c1bfe885b7b>>
+ * @generated SignedSource<<d374b8eb6a89c3622c5305b9cdf8d011>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,6 +16,7 @@ export type EndpointSelectValueQuery$data = {
   readonly endpoint: {
     readonly endpoint_id: string;
     readonly name: string | null | undefined;
+    readonly project: string | null | undefined;
     readonly url: string | null | undefined;
   } | null | undefined;
 };
@@ -59,6 +60,13 @@ v4 = {
   "kind": "ScalarField",
   "name": "url",
   "storageKey": null
+},
+v5 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "project",
+  "storageKey": null
 };
 return {
   "fragment": {
@@ -81,7 +89,8 @@ return {
             "field": (v3/*: any*/),
             "action": "NONE"
           },
-          (v4/*: any*/)
+          (v4/*: any*/),
+          (v5/*: any*/)
         ],
         "storageKey": null
       }
@@ -106,6 +115,7 @@ return {
           (v2/*: any*/),
           (v3/*: any*/),
           (v4/*: any*/),
+          (v5/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -119,16 +129,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "305b4336fc43ab460edf54efa95ff116",
+    "cacheID": "80fdc17cb4bce9d1f8f34fc07b0439f4",
     "id": null,
     "metadata": {},
     "name": "EndpointSelectValueQuery",
     "operationKind": "query",
-    "text": "query EndpointSelectValueQuery(\n  $endpoint_id: UUID!\n) {\n  endpoint(endpoint_id: $endpoint_id) {\n    name\n    endpoint_id\n    url\n    id\n  }\n}\n"
+    "text": "query EndpointSelectValueQuery(\n  $endpoint_id: UUID!\n) {\n  endpoint(endpoint_id: $endpoint_id) {\n    name\n    endpoint_id\n    url\n    project\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "5f7c6954ddf84a211dc8428e86004300";
+(node as any).hash = "2d842e86d1f299782140fa06bf6eb739";
 
 export default node;
