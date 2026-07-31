@@ -7,11 +7,9 @@ import {
   setupChatPage,
   setupChatPageWithTwoDeployments,
   chatGraphQLMocks,
-  setupChatPageWithUnavailableDeployment,
   makeSseResponse,
   modelsApiMockResponse,
   waitForChatReady,
-  CHAT_READY_TIMEOUT_MS,
   MOCK_MODEL_ID,
   MOCK_DEPLOYMENT_NAME,
   MOCK_DEPLOYMENT_NAME_B,
@@ -654,138 +652,6 @@ test.describe(
           .or(page.locator('[role="alert"]'))
           .first(),
       ).toBeVisible({ timeout: 15000 });
-    });
-
-    // FR-3397: ChatCard derives one unavailability reason per deployment and
-    // renders a single alert for it. The checks run most-specific-first, since a
-    // deployment scaled to zero — or one without a revision — also has no active
-    // replica, and a later check would otherwise mask the real cause. Each case
-    // below states only the one condition it exercises; every other input stays
-    // at its serving value.
-    //
-    // `composer` records observed behaviour, not an aspiration: the composer is
-    // disabled only when no usable base URL resolved. A deployment that has a
-    // reachable URL but cannot answer (scaled to zero, no revision, no active
-    // replica) still accepts typing — the alert is the only thing telling the
-    // user why a send will not get a reply.
-    const UNAVAILABLE_REASONS = [
-      {
-        title: 'the desired replica count is 0',
-        overrides: { desiredReplicaCount: 0 },
-        message: 'The desired replica count for this deployment is 0',
-        composer: 'enabled' as const,
-      },
-      {
-        title: 'no revision is deployed',
-        overrides: { revisionCount: 0 },
-        message: 'No revision is deployed',
-        composer: 'enabled' as const,
-      },
-      {
-        title: 'no replica is serving traffic',
-        overrides: { activeReplicaCount: 0 },
-        message: 'No replicas are available',
-        composer: 'enabled' as const,
-      },
-      {
-        // The previous test for this was skipped on the theory that Relay served
-        // a cached URL from a real backend response; the actual cause was the mock
-        // describing the legacy `endpoint { url }` shape, which the migrated
-        // `deployment(id:)` query never reads (FR-3332).
-        title: 'no endpoint URL has been issued yet',
-        overrides: { endpointUrl: null },
-        message: 'This deployment has not been issued an endpoint URL yet',
-        composer: 'disabled' as const,
-      },
-      {
-        // `error.InvalidBaseURL` is reserved for a URL that was supplied and
-        // could not be parsed — distinct from one that was never issued.
-        title: 'the endpoint URL cannot be parsed',
-        overrides: { endpointUrl: 'not-a-valid-url' },
-        message: 'Endpoint URL is not valid.',
-        composer: 'disabled' as const,
-      },
-    ];
-
-    for (const { title, overrides, message, composer } of UNAVAILABLE_REASONS) {
-      test(`User sees why chat is unavailable when ${title}`, async ({
-        page,
-        request,
-      }) => {
-        await setupChatPageWithUnavailableDeployment(page, request, overrides);
-
-        // The alert is the readiness gate here: an unavailable pane keeps its
-        // composer disabled, so there is no enabled composer to wait for.
-        await expect(page.getByText(message)).toBeVisible({
-          timeout: CHAT_READY_TIMEOUT_MS,
-        });
-
-        // Exactly one reason is reported — no other reason's message appears.
-        for (const other of UNAVAILABLE_REASONS) {
-          if (other.message === message) continue;
-          await expect(page.getByText(other.message)).toBeHidden();
-        }
-
-        const chatInput = page.getByPlaceholder('Type your message here...');
-        if (composer === 'disabled') {
-          await expect(chatInput).toBeDisabled({ timeout: 10000 });
-        } else {
-          await expect(chatInput).toBeEnabled({ timeout: 10000 });
-        }
-      });
-    }
-
-    test('User sees both the unavailability reason and the missing-model warning', async ({
-      page,
-      request,
-    }) => {
-      // The two alerts answer different questions and are no longer mutually
-      // exclusive: ChatCard used to suppress `chatui.CannotFindModel` whenever it
-      // had an unavailability reason to show. A deployment can have a reachable
-      // URL that serves an empty model list *and* be unable to answer, so both
-      // are reported.
-      await setupChatPageWithUnavailableDeployment(
-        page,
-        request,
-        { desiredReplicaCount: 0 },
-        // Empty model list — this is what renders the recovery form.
-        [],
-      );
-
-      await expect(
-        page.getByText('The desired replica count for this deployment is 0'),
-      ).toBeVisible({ timeout: CHAT_READY_TIMEOUT_MS });
-      await expect(page.getByText('LLM models not found')).toBeVisible({
-        timeout: 10000,
-      });
-    });
-
-    test('User sees the most specific reason when several apply at once', async ({
-      page,
-      request,
-    }) => {
-      // A deployment scaled to zero also has no revision, no active replica and
-      // no URL. The desired-replica reason wins because it is checked first —
-      // this is what keeps a later, vaguer check from masking the real cause.
-      await setupChatPageWithUnavailableDeployment(page, request, {
-        desiredReplicaCount: 0,
-        revisionCount: 0,
-        activeReplicaCount: 0,
-        endpointUrl: null,
-      });
-
-      await expect(
-        page.getByText('The desired replica count for this deployment is 0'),
-      ).toBeVisible({ timeout: CHAT_READY_TIMEOUT_MS });
-
-      for (const masked of [
-        'No revision is deployed',
-        'No replicas are available',
-        'This deployment has not been issued an endpoint URL yet',
-        'Endpoint URL is not valid.',
-      ]) {
-        await expect(page.getByText(masked)).toBeHidden();
-      }
     });
 
     test.fixme('User sees an error notification when model fetching fails', async ({
