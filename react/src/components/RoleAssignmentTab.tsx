@@ -9,10 +9,11 @@ import {
   RoleAssignmentOrderBy,
 } from '../__generated__/RoleAssignmentTabRefetchQuery.graphql';
 import { convertToOrderBy } from '../helper';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import AssignRoleModal from './AssignRoleModal';
 import { DeleteFilled } from '@ant-design/icons';
-import { App, Tooltip, theme } from 'antd';
+import { Alert, App, Tooltip, theme } from 'antd';
 import {
   BAIButton,
   BAIDeleteConfirmModal,
@@ -52,6 +53,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const baiClient = useSuspendedBackendaiClient();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const { upsertNotification } = useSetBAINotification();
@@ -91,6 +93,8 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
       )
       @refetchable(queryName: "RoleAssignmentTabRefetchQuery") {
         id
+        name
+        source
         # Aliased: RoleNodesFragment selects scopes(first: 3) on the same list
         # nodes the drawer fragment now composes with, and unaliased fields
         # with different arguments conflict in one query.
@@ -136,6 +140,17 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
     data.firstScope?.edges?.[0]?.node?.scopeType === 'PROJECT'
       ? data.firstScope.edges[0].node.scopeId
       : undefined;
+
+  // System-generated project admin roles are managed through the project
+  // page's one-click admin setting, which requires manager >= 26.8.0
+  // (role-mapped-scope-filter). Show their assignments read-only there; on
+  // older managers direct assignment here is the only way to grant project
+  // admin, so keep the actions available (FR-3424).
+  const isReadOnly =
+    data.source === 'SYSTEM' &&
+    !!projectScopeId &&
+    !!data.name?.toLowerCase().includes('admin') &&
+    baiClient.supports('role-mapped-scope-filter');
 
   const mutateBulkRevokeRole =
     useMutationWithPromise<RoleAssignmentTabBulkRevokeMutation>(graphql`
@@ -208,14 +223,15 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
   };
 
   return (
-    <>
-      <BAIFlex
-        justify="between"
-        align="start"
-        gap="sm"
-        wrap="wrap"
-        style={{ marginBottom: 12 }}
-      >
+    <BAIFlex align="stretch" direction="column" gap="sm">
+      {isReadOnly && (
+        <Alert
+          type="warning"
+          showIcon
+          title={t('rbac.SystemRoleNoAssignments')}
+        />
+      )}
+      <BAIFlex justify="between" align="start" gap="sm" wrap="wrap">
         <BAIGraphQLPropertyFilter<RoleAssignmentFilter>
           filterProperties={[
             {
@@ -258,13 +274,15 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
             value=""
             onChange={() => handleRefresh()}
           />
-          <BAIButton
-            type="primary"
-            icon={<PlusIcon />}
-            onClick={() => setIsAssignModalOpen(true)}
-          >
-            {t('rbac.AssignUser')}
-          </BAIButton>
+          {!isReadOnly && (
+            <BAIButton
+              type="primary"
+              icon={<PlusIcon />}
+              onClick={() => setIsAssignModalOpen(true)}
+            >
+              {t('rbac.AssignUser')}
+            </BAIButton>
+          )}
         </BAIFlex>
       </BAIFlex>
       <BAITable
@@ -282,11 +300,15 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
             doRefetch({ limit: pageSize, offset: newOffset });
           },
         }}
-        rowSelection={{
-          type: 'checkbox',
-          selectedRowKeys,
-          onChange: (keys) => setSelectedRowKeys(keys),
-        }}
+        rowSelection={
+          isReadOnly
+            ? undefined
+            : {
+                type: 'checkbox',
+                selectedRowKeys,
+                onChange: (keys) => setSelectedRowKeys(keys),
+              }
+        }
         order={queryParams.order}
         onChangeOrder={(newOrder) => {
           setQueryParams((prev) => ({
@@ -305,15 +327,19 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
               <BAINameActionCell
                 title={record?.user?.basicInfo?.email || '-'}
                 showActions="always"
-                actions={[
-                  {
-                    key: 'delete',
-                    title: t('rbac.RevokeUser'),
-                    icon: <DeleteFilled />,
-                    type: 'danger',
-                    onClick: () => handleBulkRevoke([record?.userId]),
-                  },
-                ]}
+                actions={
+                  isReadOnly
+                    ? []
+                    : [
+                        {
+                          key: 'delete',
+                          title: t('rbac.RevokeUser'),
+                          icon: <DeleteFilled />,
+                          type: 'danger',
+                          onClick: () => handleBulkRevoke([record?.userId]),
+                        },
+                      ]
+                }
               />
             ),
             sorter: true,
@@ -400,7 +426,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
         }}
         onCancel={() => setRevokingTargets(null)}
       />
-    </>
+    </BAIFlex>
   );
 };
 

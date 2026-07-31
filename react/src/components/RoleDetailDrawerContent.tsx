@@ -9,7 +9,7 @@ import LegacyRoleScopeTab from './LegacyRoleScopeTab';
 import RoleAssignmentTab from './RoleAssignmentTab';
 import RolePermissionDetailTab from './RolePermissionDetailTab';
 import { Descriptions, Skeleton, Tabs, Tag } from 'antd';
-import { BAIAlert, toLocalId } from 'backend.ai-ui';
+import { toLocalId } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -144,15 +144,7 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
             label: t('rbac.RoleAssignments'),
             children: (
               <Suspense fallback={<Skeleton active />}>
-                {role.source === 'SYSTEM' ? (
-                  <BAIAlert
-                    type="warning"
-                    showIcon
-                    description={t('rbac.SystemRoleNoAssignments')}
-                  />
-                ) : (
-                  <RoleAssignmentTab roleNodeFrgmt={role} />
-                )}
+                <RoleAssignmentTab roleNodeFrgmt={role} />
               </Suspense>
             ),
           },
