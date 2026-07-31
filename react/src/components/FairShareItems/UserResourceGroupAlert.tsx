@@ -1,27 +1,26 @@
 import type { UserResourceGroupAlertQuery } from '../../__generated__/UserResourceGroupAlertQuery.graphql';
 import { Alert, AlertProps } from 'antd';
 import * as _ from 'lodash-es';
-import { parseAsString, useQueryStates } from 'nuqs';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 interface UserResourceGroupAlertProps extends AlertProps {
   isModalOpen?: boolean;
+  resourceGroupName: string;
+  domainName: string;
+  projectId: string;
 }
 
 const UserResourceGroupAlert: React.FC<UserResourceGroupAlertProps> = ({
   isModalOpen,
+  resourceGroupName,
+  domainName,
+  projectId,
   ...alertProps
 }) => {
   'use memo';
 
   const { t } = useTranslation();
-
-  const [stepQueryParams] = useQueryStates({
-    resourceGroup: parseAsString.withDefault(''),
-    domain: parseAsString.withDefault(''),
-    project: parseAsString.withDefault(''),
-  });
 
   const { domain, group } = useLazyLoadQuery<UserResourceGroupAlertQuery>(
     graphql`
@@ -38,7 +37,7 @@ const UserResourceGroupAlert: React.FC<UserResourceGroupAlertProps> = ({
         }
       }
     `,
-    { projectId: stepQueryParams.project, domainName: stepQueryParams.domain },
+    { projectId, domainName },
     {
       fetchPolicy: _.isUndefined(isModalOpen)
         ? 'network-only'
@@ -48,7 +47,6 @@ const UserResourceGroupAlert: React.FC<UserResourceGroupAlertProps> = ({
     },
   );
 
-  const resourceGroupName = stepQueryParams.resourceGroup;
   const domainScalingGroups = domain?.scaling_groups ?? [];
   const projectScalingGroups = group?.scaling_groups ?? [];
 
