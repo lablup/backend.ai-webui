@@ -14,7 +14,6 @@ import {
   computeRBACGrantState,
   type RBACGrantState,
 } from '../helper/rbacGrantState';
-import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import RoleScopePermissionEditModal, {
   resolveScopeName,
@@ -57,17 +56,6 @@ import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
  */
 const PERMISSION_FETCH_LIMIT = 500;
 
-/**
- * Upper bound of scope rows fetched when the server cannot filter `Role.scopes`
- * by scope type (managers without `EntityFilter.scopeType`, < 26.8.0). The
- * fetch is unfiltered, so this is a budget shared by every scope type, not a
- * per-type cap: a role holding more scopes than this across all types leaves
- * the types outside the leading window with zero rows here, hiding their whole
- * card. Well above what a role realistically holds, so this is accepted rather
- * than detected.
- */
-const SCOPE_FETCH_LIMIT = 500;
-
 const GRANT_STATE_TAG_COLOR: Record<RBACGrantState, string | undefined> = {
   full: 'success',
   partial: 'warning',
@@ -97,8 +85,6 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const baiClient = useSuspendedBackendaiClient();
-  const supportsScopeFilter = baiClient.supports('rbac-entity-scope-filter');
 
   const role = useFragment(
     graphql`
@@ -185,16 +171,12 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
 
   const queryVariables: ScopedRolePermissionCardQuery['variables'] = {
     roleId: toLocalId(role.id),
-    ...(supportsScopeFilter
-      ? {
-          scopeFilter: {
-            ...scopeIdFilter,
-            scopeType: { equals: scopeType },
-          } as ScopedRolePermissionCardQuery['variables']['scopeFilter'],
-          scopeLimit: baiPaginationOption.limit,
-          scopeOffset: baiPaginationOption.offset,
-        }
-      : { scopeFilter: null, scopeLimit: SCOPE_FETCH_LIMIT, scopeOffset: 0 }),
+    scopeFilter: {
+      ...scopeIdFilter,
+      scopeType: { equals: scopeType },
+    } as ScopedRolePermissionCardQuery['variables']['scopeFilter'],
+    scopeLimit: baiPaginationOption.limit,
+    scopeOffset: baiPaginationOption.offset,
     // The role itself is implicit via the `adminRole.permissions` connection.
     permissionFilter: {
       scopeType: { equals: scopeType },
@@ -293,24 +275,11 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
     },
   );
 
-  const fetchedScopes = _.compact(
+  // This card's scope rows — server-filtered by scope type (and the scope-id
+  // search when set) and server-paginated by limit/offset.
+  const scopeRows = _.compact(
     (data.adminRole?.scopes?.edges ?? []).map((edge) => edge?.node),
   );
-
-  // This card's scope rows and this scope type's row count. Server-filtered and
-  // server-paged when the manager supports it; otherwise narrowed and paged here.
-  const scopesOfType = supportsScopeFilter
-    ? fetchedScopes
-    : fetchedScopes.filter((scope) => scope.scopeType === scopeType);
-  const scopeCount = supportsScopeFilter
-    ? (data.adminRole?.scopes?.count ?? 0)
-    : scopesOfType.length;
-  const scopeRows = supportsScopeFilter
-    ? scopesOfType
-    : scopesOfType.slice(
-        baiPaginationOption.offset,
-        baiPaginationOption.offset + baiPaginationOption.limit,
-      );
 
   // The role's permission rows for this scope type — tag state is computed
   // from them here, and the edit modal reads them via its fragment to pre-check
@@ -413,7 +382,7 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
   // The role has no scope of this type — render no card at all (FR-2). When a
   // filter is active, an empty result must keep the card (and its filter UI)
   // visible so the user can clear the filter.
-  if (!scopeIdFilter && scopeCount === 0) {
+  if (!scopeIdFilter && data.adminRole?.scopes?.count === 0) {
     return null;
   }
 
@@ -424,30 +393,26 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
     >
       <BAIFlex direction="column" align="stretch" gap="sm">
         <BAIFlex align="start" justify="between" gap="md" wrap="wrap">
-          {supportsScopeFilter ? (
-            <BAIGraphQLPropertyFilter<EntityFilter>
-              style={{ flex: 1 }}
-              value={scopeIdFilter}
-              onChange={(value) => {
-                setScopeIdFilter(value);
-                // The filter narrows the result set — land back on page 1 so the
-                // offset stays in range.
-                setTablePaginationOption({ current: 1 });
-                // Drop the selection so stale, now-hidden rows can't survive a
-                // filter change and get bulk-edited unintentionally.
-                setSelectedScopes([]);
-              }}
-              filterProperties={[
-                {
-                  key: 'scopeId',
-                  propertyLabel: t('rbac.ScopeRawId'),
-                  type: 'string',
-                },
-              ]}
-            />
-          ) : (
-            <div style={{ flex: 1 }} />
-          )}
+          <BAIGraphQLPropertyFilter<EntityFilter>
+            style={{ flex: 1 }}
+            value={scopeIdFilter}
+            onChange={(value) => {
+              setScopeIdFilter(value);
+              // The filter narrows the result set — land back on page 1 so the
+              // offset stays in range.
+              setTablePaginationOption({ current: 1 });
+              // Drop the selection so stale, now-hidden rows can't survive a
+              // filter change and get bulk-edited unintentionally.
+              setSelectedScopes([]);
+            }}
+            filterProperties={[
+              {
+                key: 'scopeId',
+                propertyLabel: t('rbac.ScopeRawId'),
+                type: 'string',
+              },
+            ]}
+          />
           <BAIFlex gap="xs" align="center">
             {selectedScopes.length > 0 && (
               <>
@@ -494,7 +459,7 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
           pagination={{
             pageSize: tablePaginationOption.pageSize,
             current: tablePaginationOption.current,
-            total: scopeCount,
+            total: data.adminRole?.scopes?.count ?? 0,
             onChange: (current, pageSize) => {
               setTablePaginationOption({ current, pageSize });
             },
