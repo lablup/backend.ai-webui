@@ -51,7 +51,7 @@ const BAISchedulingHistoryTable = ({
   );
 
   const dataSource = filterOutNullAndUndefined(histories);
-  const { mode, expandedRowKeys, onExpandedRowsChange, expandColumnTitle } =
+  const { expandedRowKeys, onExpandedRowsChange, expandColumnTitle } =
     useSchedulingHistoryExpandable(dataSource, {
       mode: expandMode,
       onModeChange: onExpandModeChange,
@@ -73,7 +73,6 @@ const BAISchedulingHistoryTable = ({
               dataSource.find((h) => h.id === record.id)?.subSteps ?? []
             }
             pagination={false}
-            errorsOnly={mode === 'errors-only'}
           />
         ),
       }}

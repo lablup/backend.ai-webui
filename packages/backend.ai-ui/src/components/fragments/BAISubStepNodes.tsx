@@ -51,19 +51,12 @@ export interface BAISubStepNodesProps extends Omit<
     baseColumns: BAIColumnsType<SubStepInList>,
   ) => BAIColumnsType<SubStepInList>;
   disableSorter?: boolean;
-  /**
-   * When true, only non-success sub-steps are shown (mirrors the parent table's
-   * "errors-only" mode), so an expanded row surfaces just the failing / retried
-   * steps.
-   */
-  errorsOnly?: boolean;
 }
 
 const BAISubStepNodes = ({
   subStepsFrgmt,
   customizeColumns,
   disableSorter,
-  errorsOnly,
   ...tableProps
 }: BAISubStepNodesProps) => {
   'use memo';
@@ -181,9 +174,7 @@ const BAISubStepNodes = ({
     ? customizeColumns(baseColumns)
     : baseColumns;
 
-  const dataSource = filterOutNullAndUndefined(subSteps)
-    .filter((subStep) => !errorsOnly || subStep.result !== 'SUCCESS')
-    .reverse();
+  const dataSource = filterOutNullAndUndefined(subSteps).reverse();
 
   return (
     <BAITable
