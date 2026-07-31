@@ -139,59 +139,20 @@ export function deploymentSelectQueryTwoDeploymentsMockResponse() {
  *
  * Every field the query selects must be present. A missing field makes the
  * catch result not-ok, which nulls the deployment and leaves the chat input
- * disabled (no base URL -> no /v1/models fetch). `replicaState`,
- * `revisionHistory` and the `activeReplicas` alias additionally feed ChatCard's
- * "why is chat unavailable" reason (FR-3397): a serving deployment needs a
- * non-zero desired replica count, at least one revision, and at least one
- * RUNNING + traffic-ACTIVE replica.
+ * disabled (no base URL -> no /v1/models fetch).
  */
-export function chatCardQueryMockResponse(
-  deploymentGlobalId: string,
-  overrides: DeploymentServingOverrides = {},
-) {
+export function chatCardQueryMockResponse(deploymentGlobalId: string) {
   const isB = isDeploymentB(deploymentGlobalId);
   return {
     deployment: {
       id: deploymentGlobalId,
       networkAccess: {
-        endpointUrl:
-          'endpointUrl' in overrides
-            ? overrides.endpointUrl
-            : isB
-              ? MOCK_DEPLOYMENT_URL_B
-              : MOCK_DEPLOYMENT_URL,
+        endpointUrl: isB ? MOCK_DEPLOYMENT_URL_B : MOCK_DEPLOYMENT_URL,
       },
-      replicaState: {
-        desiredReplicaCount: overrides.desiredReplicaCount ?? 1,
-      },
-      revisionHistory: { count: overrides.revisionCount ?? 1 },
-      activeReplicas: { count: overrides.activeReplicaCount ?? 1 },
+      replicaState: { desiredReplicaCount: 1 },
       metadata: { name: isB ? MOCK_DEPLOYMENT_NAME_B : MOCK_DEPLOYMENT_NAME },
     },
   };
-}
-
-/**
- * The three counts plus the URL that decide whether ChatCard considers a
- * deployment able to serve, and which reason it reports when it cannot
- * (FR-3397). Each defaults to the serving value, so a spec states only the one
- * condition it is exercising.
- */
-export interface DeploymentServingOverrides {
-  endpointUrl?: string | null;
-  desiredReplicaCount?: number;
-  revisionCount?: number;
-  activeReplicaCount?: number;
-}
-
-/**
- * Returns deployment detail with no endpoint URL issued. The deployment is
- * otherwise serviceable (replicas desired, a revision, an active replica), so
- * ChatCard reports `chatui.NoEndpointUrlIssued` rather than an earlier, more
- * specific unavailability reason (FR-3397).
- */
-export function chatCardQueryNullUrlMockResponse(deploymentGlobalId: string) {
-  return chatCardQueryMockResponse(deploymentGlobalId, { endpointUrl: null });
 }
 
 /**
@@ -403,50 +364,6 @@ export async function setupChatPage(
   // Navigate to chat page
   await navigateTo(page, 'chat');
   await waitForChatReady(page);
-}
-
-/**
- * Setup variant for a deployment ChatCard should refuse to chat with.
- *
- * Same wiring as {@link setupChatPage} except the ChatCardQuery mock carries the
- * supplied serving overrides, and it deliberately does not wait for an enabled
- * composer — an unavailable pane keeps its composer disabled by design, so the
- * caller gates on the unavailability alert instead.
- */
-export async function setupChatPageWithUnavailableDeployment(
-  page: Page,
-  request: APIRequestContext,
-  overrides: DeploymentServingOverrides,
-  /**
-   * Models the deployment's `/v1/models` reports. Pass `[]` to drive ChatCard's
-   * recovery form, which renders only when a base URL resolved but the model
-   * list came back empty.
-   */
-  modelIds: string[] = [MOCK_MODEL_ID],
-): Promise<void> {
-  await loginAsAdmin(page, request);
-
-  await page.evaluate(() => {
-    localStorage.removeItem('backendaiwebui.cache.chat_history');
-  });
-
-  await setupGraphQLMocks(page, {
-    ...chatGraphQLMocks(),
-    ChatCardQuery: (vars: Record<string, string>) =>
-      chatCardQueryMockResponse(vars.deploymentId, overrides),
-  });
-
-  await page.route('**/v1/models', async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({
-        data: modelIds.map((id) => ({ id, object: 'model' })),
-      }),
-    });
-  });
-
-  await navigateTo(page, 'chat');
 }
 
 /**
