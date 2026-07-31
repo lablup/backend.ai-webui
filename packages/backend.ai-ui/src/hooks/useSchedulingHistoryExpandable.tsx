@@ -1,9 +1,5 @@
 import BAIFlex from '../components/BAIFlex';
 import { SchedulingResult } from '../components/BAISchedulingResultBadge';
-import {
-  isNonSuccessSubStep,
-  SchedulingHistoryExpandableSubStep,
-} from '../helper/schedulingHistory';
 import { useBAIi18n } from './useBAIi18n';
 import { Dropdown, theme, Tooltip } from 'antd';
 import * as _ from 'lodash-es';
@@ -16,11 +12,17 @@ import { useState } from 'react';
  * (session / deployment / route). A row is expandable when the current mode
  * would render at least one sub-step, and it is expanded by default unless its
  * result is a success.
+ *
+ * Parent fragments must select `result` on `subSteps` alongside the
+ * `BAISubStepNodesFragment` spread — without it Relay's data masking hides the
+ * field, and a parent cannot tell what the nested sub-step table will render.
  */
 export interface SchedulingHistoryExpandableRow {
   readonly id: string;
   readonly result?: SchedulingResult | '%future added value' | null;
-  readonly subSteps?: ReadonlyArray<SchedulingHistoryExpandableSubStep | null> | null;
+  readonly subSteps?: ReadonlyArray<{
+    readonly result?: SchedulingResult | '%future added value' | null;
+  } | null> | null;
 }
 
 /**
@@ -36,15 +38,16 @@ export const DEFAULT_SCHEDULING_HISTORY_EXPAND_MODE: SchedulingHistoryExpandMode
 const hasSubSteps = (record: SchedulingHistoryExpandableRow) =>
   !_.isEmpty(record.subSteps);
 
-// "errors-only" hides successful sub-steps inside the expanded row, so in that
-// mode a row is only expandable when at least one sub-step failed — otherwise
-// the expand icon would open a table with nothing in it (FR-3425).
+// "errors-only" hides successful sub-steps inside the expanded row — the same
+// test BAISubStepNodes filters by — so in that mode a row is only expandable
+// when at least one sub-step failed. Otherwise the expand icon would open a
+// table with nothing in it (FR-3425).
 const isRowExpandableInMode = (
   record: SchedulingHistoryExpandableRow,
   mode: SchedulingHistoryExpandMode,
 ) =>
   mode === 'errors-only'
-    ? _.some(record.subSteps, isNonSuccessSubStep)
+    ? _.some(record.subSteps, (subStep) => subStep?.result !== 'SUCCESS')
     : hasSubSteps(record);
 
 // "Collapse success only": every non-success row stays open by default so
@@ -142,7 +145,7 @@ export const useSchedulingHistoryExpandable = <
       (record) =>
         `${record.id}:${record.result ?? ''}:${hasSubSteps(record)}:${_.some(
           record.subSteps,
-          isNonSuccessSubStep,
+          (subStep) => subStep?.result !== 'SUCCESS',
         )}`,
     )
     .join('|');

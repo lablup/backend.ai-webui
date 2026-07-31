@@ -5,7 +5,6 @@ import {
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
-  isNonSuccessSubStep,
   newLineToBrElement,
 } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
@@ -183,7 +182,7 @@ const BAISubStepNodes = ({
     : baseColumns;
 
   const dataSource = filterOutNullAndUndefined(subSteps)
-    .filter((subStep) => !errorsOnly || isNonSuccessSubStep(subStep))
+    .filter((subStep) => !errorsOnly || subStep.result !== 'SUCCESS')
     .reverse();
 
   return (

@@ -476,7 +476,6 @@ export const convertToUUID = (id: string): string => {
 };
 
 export * from './newLineToBrElement';
-export * from './schedulingHistory';
 export * from './useDebouncedDeferredValue';
 
 export type SemanticColor =
