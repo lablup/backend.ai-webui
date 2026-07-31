@@ -6,10 +6,10 @@ import {
   EndpointSelectQuery,
   EndpointSelectQuery$data,
 } from '../../__generated__/EndpointSelectQuery.graphql';
-import { EndpointSelectTargetProjectQuery } from '../../__generated__/EndpointSelectTargetProjectQuery.graphql';
 import { EndpointSelectValueQuery } from '../../__generated__/EndpointSelectValueQuery.graphql';
 import { buildPath } from '../../helper/pathBuilder';
 import { useWebUINavigate } from '../../hooks';
+import { useAccessibleProjects } from '../../hooks/useAccessibleProjects';
 import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
 import { useProjectPath } from '../../hooks/useRouteScope';
@@ -213,31 +213,21 @@ const EndpointSelect: React.FC<EndpointSelectProps> = ({
     !!currentProject.id &&
     targetProjectId !== currentProject.id;
 
-  // Resolves the target project's NAME (needed to build
-  // `/project/<name>/deployments/<id>`) only when it differs from the
-  // current project — `fetchPolicy` is toggled to 'store-only' otherwise so
-  // no network request is made for the common same-project case.
-  const { group: targetProject } =
-    useLazyLoadQuery<EndpointSelectTargetProjectQuery>(
-      graphql`
-        query EndpointSelectTargetProjectQuery($projectId: UUID!) {
-          group(id: $projectId) {
-            id
-            name
-          }
-        }
-      `,
-      {
-        projectId: targetProjectId ?? '',
-      },
-      {
-        fetchPolicy: isDifferentProject ? 'store-or-network' : 'store-only',
-      },
-    );
+  // The target project's NAME (needed to build
+  // `/project/<name>/deployments/<id>`) comes from the same
+  // accessible-project list the header's ProjectSelect renders (FR-3388) —
+  // no extra query: the header already populated these records in the Relay
+  // store. If the project is NOT in that list the user cannot enter it
+  // (`ProjectScopeLayout` would render "not found / no access"), so offering
+  // the switch would be wrong anyway — fall back to today's behavior below.
+  const { accessibleProjects } = useAccessibleProjects();
+  const targetProject = isDifferentProject
+    ? accessibleProjects?.find((project) => project?.id === targetProjectId)
+    : undefined;
 
   const goToDeploymentDetailPage = () => {
     if (!controllableValue) return;
-    if (!isDifferentProject) {
+    if (!isDifferentProject || !targetProject?.name) {
       webuiNavigate(buildProjectPath(`deployments/${controllableValue}`));
       return;
     }
