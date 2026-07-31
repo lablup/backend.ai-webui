@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8f3c4e13ae6e0bdefc12a3b889284d66>>
+ * @generated SignedSource<<bf2117517ccb59e3046323508a1ffa7c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,6 +14,9 @@ export type ProjectResourceGroupAlertQuery$variables = {
   projectId: string;
 };
 export type ProjectResourceGroupAlertQuery$data = {
+  readonly domain: {
+    readonly scaling_groups: ReadonlyArray<string | null | undefined> | null | undefined;
+  } | null | undefined;
   readonly group: {
     readonly scaling_groups: ReadonlyArray<string | null | undefined> | null | undefined;
   } | null | undefined;
@@ -37,6 +40,15 @@ v1 = {
 v2 = [
   {
     "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "scaling_groups",
+    "storageKey": null
+  }
+],
+v3 = [
+  {
+    "alias": null,
     "args": [
       {
         "kind": "Variable",
@@ -53,15 +65,23 @@ v2 = [
     "kind": "LinkedField",
     "name": "group",
     "plural": false,
-    "selections": [
+    "selections": (v2/*: any*/),
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": [
       {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "scaling_groups",
-        "storageKey": null
+        "kind": "Variable",
+        "name": "name",
+        "variableName": "domainName"
       }
     ],
+    "concreteType": "Domain",
+    "kind": "LinkedField",
+    "name": "domain",
+    "plural": false,
+    "selections": (v2/*: any*/),
     "storageKey": null
   }
 ];
@@ -74,7 +94,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "ProjectResourceGroupAlertQuery",
-    "selections": (v2/*: any*/),
+    "selections": (v3/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -86,19 +106,19 @@ return {
     ],
     "kind": "Operation",
     "name": "ProjectResourceGroupAlertQuery",
-    "selections": (v2/*: any*/)
+    "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "7daa38de5abe27896deb5ef365b29880",
+    "cacheID": "aa1a7fbdd8826b0ac88d78f0a7dfa5f8",
     "id": null,
     "metadata": {},
     "name": "ProjectResourceGroupAlertQuery",
     "operationKind": "query",
-    "text": "query ProjectResourceGroupAlertQuery(\n  $projectId: UUID!\n  $domainName: String\n) {\n  group(id: $projectId, domain_name: $domainName) {\n    scaling_groups\n  }\n}\n"
+    "text": "query ProjectResourceGroupAlertQuery(\n  $projectId: UUID!\n  $domainName: String\n) {\n  group(id: $projectId, domain_name: $domainName) {\n    scaling_groups\n  }\n  domain(name: $domainName) {\n    scaling_groups\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "99402543345dc504d0d83feb5512b48a";
+(node as any).hash = "21f89780fe2143a62a0ec11f497c9ad3";
 
 export default node;

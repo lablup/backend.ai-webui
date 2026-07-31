@@ -30,13 +30,16 @@ const ProjectResourceGroupAlert: React.FC<ProjectResourceGroupAlertProps> = ({
     projectFairShareFrgmt,
   );
 
-  const { group } = useLazyLoadQuery<ProjectResourceGroupAlertQuery>(
+  const { group, domain } = useLazyLoadQuery<ProjectResourceGroupAlertQuery>(
     graphql`
       query ProjectResourceGroupAlertQuery(
         $projectId: UUID!
         $domainName: String
       ) {
         group(id: $projectId, domain_name: $domainName) {
+          scaling_groups
+        }
+        domain(name: $domainName) {
           scaling_groups
         }
       }
@@ -47,9 +50,14 @@ const ProjectResourceGroupAlert: React.FC<ProjectResourceGroupAlertProps> = ({
     },
   );
 
-  const scalingGroups = group?.scaling_groups ?? [];
+  const projectScalingGroups = group?.scaling_groups ?? [];
+  const domainScalingGroups = domain?.scaling_groups ?? [];
 
-  if (!resourceGroupName || _.includes(scalingGroups, resourceGroupName)) {
+  if (
+    !resourceGroupName ||
+    _.includes(projectScalingGroups, resourceGroupName) ||
+    _.includes(domainScalingGroups, resourceGroupName)
+  ) {
     return null;
   }
 
