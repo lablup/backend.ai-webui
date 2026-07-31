@@ -479,7 +479,11 @@ export * from './newLineToBrElement';
 export * from './useDebouncedDeferredValue';
 
 export type SemanticColor =
-  'success' | 'info' | 'warning' | 'error' | 'default';
+  | 'success'
+  | 'info'
+  | 'warning'
+  | 'error'
+  | 'default';
 
 export const useSemanticColorMap = (): Record<SemanticColor, string> => {
   const { token } = theme.useToken();

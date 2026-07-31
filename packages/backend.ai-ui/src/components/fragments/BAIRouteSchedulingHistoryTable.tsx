@@ -9,6 +9,7 @@ import BAIRouteSchedulingHistoryNodeTable, {
   RouteSchedulingHistoryNodeInList,
 } from './BAIRouteSchedulingHistoryNodeTable';
 import BAISubStepNodes from './BAISubStepNodes';
+import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';
 
 export interface BAIRouteSchedulingHistoryTableProps extends Omit<
@@ -41,7 +42,6 @@ const BAIRouteSchedulingHistoryTable = ({
         id
         result
         subSteps {
-          result
           ...BAISubStepNodesFragment
         }
         ...BAIRouteSchedulingHistoryNodeTableFragment
@@ -51,16 +51,11 @@ const BAIRouteSchedulingHistoryTable = ({
   );
 
   const dataSource = filterOutNullAndUndefined(histories);
-  const {
-    mode,
-    expandedRowKeys,
-    onExpandedRowsChange,
-    rowExpandable,
-    expandColumnTitle,
-  } = useSchedulingHistoryExpandable(dataSource, {
-    mode: expandMode,
-    onModeChange: onExpandModeChange,
-  });
+  const { expandedRowKeys, onExpandedRowsChange, expandColumnTitle } =
+    useSchedulingHistoryExpandable(dataSource, {
+      mode: expandMode,
+      onModeChange: onExpandModeChange,
+    });
 
   return (
     <BAIRouteSchedulingHistoryNodeTable
@@ -69,7 +64,8 @@ const BAIRouteSchedulingHistoryTable = ({
         columnTitle: expandColumnTitle,
         expandedRowKeys,
         onExpandedRowsChange,
-        rowExpandable,
+        rowExpandable: (record: RouteSchedulingHistoryNodeInList) =>
+          !_.isEmpty(dataSource.find((h) => h.id === record.id)?.subSteps),
         expandedRowRender: (record: RouteSchedulingHistoryNodeInList) => (
           <BAISubStepNodes
             resizable
@@ -77,7 +73,6 @@ const BAIRouteSchedulingHistoryTable = ({
               dataSource.find((h) => h.id === record.id)?.subSteps ?? []
             }
             pagination={false}
-            errorsOnly={mode === 'errors-only'}
           />
         ),
       }}

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<dfb15f620f75d6aee36e37500fe0438c>>
+ * @generated SignedSource<<6423974fd699af3b00e2069e111ef76a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -287,7 +287,6 @@ return {
                     "name": "subSteps",
                     "plural": true,
                     "selections": [
-                      (v7/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -295,6 +294,7 @@ return {
                         "name": "step",
                         "storageKey": null
                       },
+                      (v7/*: any*/),
                       (v8/*: any*/),
                       (v9/*: any*/),
                       {
@@ -377,12 +377,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "173407a5acef5ad26b512a11c66d6b09",
+    "cacheID": "b24d145b426294eb9cc72c268ccd1df2",
     "id": null,
     "metadata": {},
     "name": "DeploymentSchedulingHistoryModalQuery",
     "operationKind": "query",
-    "text": "query DeploymentSchedulingHistoryModalQuery(\n  $scope: DeploymentScope!\n  $filter: DeploymentHistoryFilter\n  $orderBy: [DeploymentHistoryOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  deploymentScopedSchedulingHistories(scope: $scope, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...BAIDeploymentSchedulingHistoryTableFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIDeploymentSchedulingHistoryNodesFragment on DeploymentHistory {\n  id\n  category\n  phase\n  fromStatus\n  toStatus\n  result\n  errorCode\n  message\n  attempts\n  createdAt\n  updatedAt\n}\n\nfragment BAIDeploymentSchedulingHistoryTableFragment on DeploymentHistory {\n  id\n  result\n  subSteps {\n    result\n    ...BAISubStepNodesFragment\n  }\n  ...BAIDeploymentSchedulingHistoryNodesFragment\n}\n\nfragment BAISubStepNodesFragment on SubStepResultGQL {\n  step\n  result\n  errorCode\n  message\n  startedAt\n  endedAt\n}\n"
+    "text": "query DeploymentSchedulingHistoryModalQuery(\n  $scope: DeploymentScope!\n  $filter: DeploymentHistoryFilter\n  $orderBy: [DeploymentHistoryOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  deploymentScopedSchedulingHistories(scope: $scope, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...BAIDeploymentSchedulingHistoryTableFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIDeploymentSchedulingHistoryNodesFragment on DeploymentHistory {\n  id\n  category\n  phase\n  fromStatus\n  toStatus\n  result\n  errorCode\n  message\n  attempts\n  createdAt\n  updatedAt\n}\n\nfragment BAIDeploymentSchedulingHistoryTableFragment on DeploymentHistory {\n  id\n  result\n  subSteps {\n    ...BAISubStepNodesFragment\n  }\n  ...BAIDeploymentSchedulingHistoryNodesFragment\n}\n\nfragment BAISubStepNodesFragment on SubStepResultGQL {\n  step\n  result\n  errorCode\n  message\n  startedAt\n  endedAt\n}\n"
   }
 };
 })();

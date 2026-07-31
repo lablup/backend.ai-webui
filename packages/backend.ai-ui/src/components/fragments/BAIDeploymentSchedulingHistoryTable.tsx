@@ -9,6 +9,7 @@ import BAIDeploymentSchedulingHistoryNodes, {
   DeploymentSchedulingHistoryNodeInList,
 } from './BAIDeploymentSchedulingHistoryNodes';
 import BAISubStepNodes from './BAISubStepNodes';
+import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';
 
 export interface BAIDeploymentSchedulingHistoryTableProps extends Omit<
@@ -41,7 +42,6 @@ const BAIDeploymentSchedulingHistoryTable = ({
         id
         result
         subSteps {
-          result
           ...BAISubStepNodesFragment
         }
         ...BAIDeploymentSchedulingHistoryNodesFragment
@@ -51,16 +51,11 @@ const BAIDeploymentSchedulingHistoryTable = ({
   );
 
   const dataSource = filterOutNullAndUndefined(histories);
-  const {
-    mode,
-    expandedRowKeys,
-    onExpandedRowsChange,
-    rowExpandable,
-    expandColumnTitle,
-  } = useSchedulingHistoryExpandable(dataSource, {
-    mode: expandMode,
-    onModeChange: onExpandModeChange,
-  });
+  const { expandedRowKeys, onExpandedRowsChange, expandColumnTitle } =
+    useSchedulingHistoryExpandable(dataSource, {
+      mode: expandMode,
+      onModeChange: onExpandModeChange,
+    });
 
   return (
     <BAIDeploymentSchedulingHistoryNodes
@@ -69,7 +64,8 @@ const BAIDeploymentSchedulingHistoryTable = ({
         columnTitle: expandColumnTitle,
         expandedRowKeys,
         onExpandedRowsChange,
-        rowExpandable,
+        rowExpandable: (record: DeploymentSchedulingHistoryNodeInList) =>
+          !_.isEmpty(dataSource.find((h) => h.id === record.id)?.subSteps),
         expandedRowRender: (record: DeploymentSchedulingHistoryNodeInList) => (
           <BAISubStepNodes
             resizable
@@ -77,7 +73,6 @@ const BAIDeploymentSchedulingHistoryTable = ({
               dataSource.find((h) => h.id === record.id)?.subSteps ?? []
             }
             pagination={false}
-            errorsOnly={mode === 'errors-only'}
           />
         ),
       }}
