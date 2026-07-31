@@ -6,10 +6,8 @@ import type { AdminModelCardSettingModalCreateMutation } from '../__generated__/
 import type { AdminModelCardSettingModalFragment$key } from '../__generated__/AdminModelCardSettingModalFragment.graphql';
 import type { AdminModelCardSettingModalUpdateMutation } from '../__generated__/AdminModelCardSettingModalUpdateMutation.graphql';
 import { useCurrentDomainValue } from '../hooks';
-import {
-  useCurrentProjectValue,
-  useSetCurrentProject,
-} from '../hooks/useCurrentProject';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useSwitchProject } from '../hooks/useRouteScope';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import FolderLink from './FolderLink';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
@@ -86,7 +84,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
 
   const currentProject = useCurrentProjectValue();
   const currentDomain = useCurrentDomainValue();
-  const setCurrentProject = useSetCurrentProject();
+  const switchProject = useSwitchProject();
 
   const modelCard = useFragment(
     graphql`
@@ -385,7 +383,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                       onConfirm={() => {
                         if (modelStoreProject?.id && modelStoreProject?.name) {
                           startTransition(() => {
-                            setCurrentProject({
+                            switchProject({
                               projectId: modelStoreProject.id!,
                               projectName: modelStoreProject.name!,
                             });

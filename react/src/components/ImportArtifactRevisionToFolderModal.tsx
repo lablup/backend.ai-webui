@@ -5,10 +5,8 @@
 import { ImportArtifactRevisionToFolderModalArtifactRevisionFragment$key } from '../__generated__/ImportArtifactRevisionToFolderModalArtifactRevisionFragment.graphql';
 import { ImportArtifactRevisionToFolderModalModelStoreProjectsFragment$key } from '../__generated__/ImportArtifactRevisionToFolderModalModelStoreProjectsFragment.graphql';
 import { ImportArtifactRevisionToFolderModalMutation } from '../__generated__/ImportArtifactRevisionToFolderModalMutation.graphql';
-import {
-  useCurrentProjectValue,
-  useSetCurrentProject,
-} from '../hooks/useCurrentProject';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useSwitchProject } from '../hooks/useRouteScope';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useToggle } from 'ahooks';
 import { Alert, App, Form, FormInstance, Popconfirm, theme } from 'antd';
@@ -74,7 +72,7 @@ const ImportArtifactRevisionToFolderModal = ({
 
   const { logger } = useBAILogger();
   const currentProject = useCurrentProjectValue();
-  const setCurrentProject = useSetCurrentProject();
+  const switchProject = useSwitchProject();
 
   const selectedArtifactRevisions = useFragment(
     graphql`
@@ -292,7 +290,7 @@ const ImportArtifactRevisionToFolderModal = ({
                         modelStoreProject.name
                       ) {
                         startTransition(() => {
-                          setCurrentProject({
+                          switchProject({
                             projectId: modelStoreProject.id!,
                             projectName: modelStoreProject.name!,
                           });
