@@ -8,14 +8,24 @@ import * as React from 'react';
 import { useState } from 'react';
 
 /**
+ * Minimal shape of one sub-step. Callers select `result` alongside the
+ * `BAISubStepNodesFragment` spread so this hook can tell what the nested table
+ * will actually render once the "errors-only" filter has run.
+ */
+export interface SchedulingHistoryExpandableSubStep {
+  readonly result?: SchedulingResult | '%future added value' | null;
+}
+
+/**
  * Minimal shape shared by every scheduling-history row type
- * (session / deployment / route). A row is expandable when it has sub-steps,
- * and it is expanded by default unless its result is a success.
+ * (session / deployment / route). A row is expandable when the current mode
+ * would render at least one sub-step, and it is expanded by default unless its
+ * result is a success.
  */
 export interface SchedulingHistoryExpandableRow {
   readonly id: string;
   readonly result?: SchedulingResult | '%future added value' | null;
-  readonly subSteps?: ReadonlyArray<unknown> | null;
+  readonly subSteps?: ReadonlyArray<SchedulingHistoryExpandableSubStep | null> | null;
 }
 
 /**
@@ -28,33 +38,75 @@ export type SchedulingHistoryExpandMode =
 export const DEFAULT_SCHEDULING_HISTORY_EXPAND_MODE: SchedulingHistoryExpandMode =
   'errors-only';
 
-const isRowExpandable = (record: SchedulingHistoryExpandableRow) =>
+const hasSubSteps = (record: SchedulingHistoryExpandableRow) =>
   !_.isEmpty(record.subSteps);
 
+/**
+ * The rule "errors-only" mode applies to sub-steps. `BAISubStepNodes` filters
+ * its rows by this exact test, so it must stay the single definition — the
+ * moment the nested table's filter and this hook's expandability rule disagree,
+ * an expandable row can open onto an empty table again (FR-3425). Deliberately
+ * broader than `FAILURE_RESULTS` in `BAISubStepNodes`, which is a styling-only
+ * "hard failure" set.
+ */
+export const isNonSuccessSubStep = (
+  subStep: SchedulingHistoryExpandableSubStep | null | undefined,
+) => subStep?.result !== 'SUCCESS';
+
+// "errors-only" hides successful sub-steps inside the expanded row, so in that
+// mode a row is only expandable when at least one sub-step failed — otherwise
+// the expand icon would open a table with nothing in it (FR-3425).
+const isRowExpandableInMode = (
+  record: SchedulingHistoryExpandableRow,
+  mode: SchedulingHistoryExpandMode,
+) =>
+  mode === 'errors-only'
+    ? _.some(record.subSteps, isNonSuccessSubStep)
+    : hasSubSteps(record);
+
 // "Collapse success only": every non-success row stays open by default so
-// failures / retries / expirations are visible at a glance.
-const shouldExpandByDefault = (record: SchedulingHistoryExpandableRow) =>
-  isRowExpandable(record) && record.result !== 'SUCCESS';
+// failures / retries / expirations are visible at a glance. "expand-all" opens
+// every expandable row instead.
+const shouldExpandByDefaultInMode = (
+  record: SchedulingHistoryExpandableRow,
+  mode: SchedulingHistoryExpandMode,
+) =>
+  isRowExpandableInMode(record, mode) &&
+  (mode === 'expand-all' || record.result !== 'SUCCESS');
 
 const computeExpandedRowKeysForMode = (
   dataSource: ReadonlyArray<SchedulingHistoryExpandableRow>,
   mode: SchedulingHistoryExpandMode,
 ): React.Key[] =>
-  mode === 'expand-all'
-    ? dataSource.filter(isRowExpandable).map((record) => record.id)
-    : mode === 'collapse-all'
-      ? []
-      : dataSource.filter(shouldExpandByDefault).map((record) => record.id);
+  mode === 'collapse-all'
+    ? []
+    : dataSource
+        .filter((record) => shouldExpandByDefaultInMode(record, mode))
+        .map((record) => record.id);
 
 export interface UseSchedulingHistoryExpandableResult {
+  /**
+   * The effective master mode (the controlled `mode`, or the default
+   * "errors-only" when uncontrolled). Callers use this to filter the nested
+   * sub-step table to non-success rows when the mode is `errors-only`.
+   */
+  mode: SchedulingHistoryExpandMode;
   expandedRowKeys: React.Key[];
   onExpandedRowsChange: (expandedKeys: readonly React.Key[]) => void;
+  /**
+   * Predicate for Ant Design's `expandable.rowExpandable`. It is mode-aware and
+   * derived from the same rule as `expandedRowKeys`, so a row never offers an
+   * expand icon that would open an empty sub-step table.
+   */
+  rowExpandable: (record: { readonly id: string }) => boolean;
   /**
    * Header content for the expand-icon column: a kebab (vertical ellipsis)
    * hover menu offering the three view actions (expand all / collapse all /
    * expand errors only). It reads as an action menu, not a stateful toggle, so
    * there is no "active" indication. `null` when no row in the current data set
-   * is expandable. Per-row rows keep Ant Design's default +/- expand icon.
+   * has sub-steps at all — a mode-independent test, so the menu stays reachable
+   * even when the active mode leaves every row unexpandable. Per-row rows keep
+   * Ant Design's default +/- expand icon.
    */
   expandColumnTitle: React.ReactNode;
 }
@@ -68,7 +120,10 @@ export interface UseSchedulingHistoryExpandableResult {
  * - `expandColumnTitle` renders a hover dropdown in the expand-column header
  *   that switches between the three modes (expand-all / collapse-all /
  *   errors-only).
- * - Individual rows remain manually expandable via `onExpandedRowsChange`.
+ * - Individual rows remain manually expandable via `onExpandedRowsChange`, but
+ *   only where `rowExpandable` says the active mode has something to show —
+ *   in "errors-only" an all-success row offers no expand icon, because the
+ *   nested table would filter every one of its sub-steps away.
  * - When the underlying data meaningfully changes (e.g. a refetch), the
  *   current mode is re-applied — so a refresh always returns to the selected
  *   mode even after the user toggled individual rows.
@@ -96,10 +151,13 @@ export const useSchedulingHistoryExpandable = <
   // identity that `filterOutNullAndUndefined(...)` produces every render — so
   // manual per-row toggles persist until the data actually reloads.
   const dataSignature = dataSource
-    .map(
-      (record) =>
-        `${record.id}:${record.result ?? ''}:${isRowExpandable(record) ? 1 : 0}`,
-    )
+    .map((record) => {
+      // A boolean, not a count: expandability only turns on whether *any*
+      // sub-step failed, so a retry taking the failure count from 1 to 2 must
+      // not re-apply the master mode and discard the user's manual toggles.
+      const hasNonSuccessSubStep = _.some(record.subSteps, isNonSuccessSubStep);
+      return `${record.id}:${record.result ?? ''}:${record.subSteps?.length ?? 0}:${hasNonSuccessSubStep ? 1 : 0}`;
+    })
     .join('|');
 
   // Manual per-row toggles persist until a refetch (data signature) or a
@@ -112,9 +170,19 @@ export const useSchedulingHistoryExpandable = <
     setExpandedRowKeys(computeExpandedRowKeysForMode(dataSource, mode));
   }
 
-  const expandableRowKeys = dataSource
-    .filter(isRowExpandable)
-    .map((record) => record.id);
+  // Deliberately mode-independent: were this mode-aware, an all-success data set
+  // in "errors-only" mode would hide the very menu that switches back to
+  // "expand all", leaving the user with no way out of the filtered view.
+  const hasAnyExpandableRow = _.some(dataSource, hasSubSteps);
+
+  // Ant Design calls `rowExpandable` once per row, so index the rows instead of
+  // scanning `dataSource` on every call.
+  const rowsById = new Map(dataSource.map((record) => [record.id, record]));
+
+  const rowExpandable = (record: { readonly id: string }) => {
+    const row = rowsById.get(record.id);
+    return !!row && isRowExpandableInMode(row, mode);
+  };
 
   const onExpandedRowsChange = (expandedKeys: readonly React.Key[]) => {
     setExpandedRowKeys([...expandedKeys]);
@@ -139,49 +207,50 @@ export const useSchedulingHistoryExpandable = <
     options?.onModeChange?.(next);
   };
 
-  const expandColumnTitle =
-    expandableRowKeys.length > 0 ? (
-      // Center the trigger in the header cell so it lines up with the
-      // per-row expand icons, which Ant Design centers in their column.
-      <BAIFlex justify="center">
-        <Dropdown
-          // Click (not hover) so the menu is operable by keyboard (Enter/Space
-          // on the focused trigger) and by touch, not mouse-only.
-          trigger={['click']}
-          // A kebab (vertical ellipsis) action menu — no `selectedKeys`, so no
-          // item is shown as "active". The three modes read as actions you
-          // trigger, not a stateful toggle.
-          menu={{
-            items: menuItems,
-            onClick: onMenuClick,
-          }}
-        >
-          {/* Tooltip (not aria-label) surfaces the affordance on hover for
+  const expandColumnTitle = hasAnyExpandableRow ? (
+    // Center the trigger in the header cell so it lines up with the
+    // per-row expand icons, which Ant Design centers in their column.
+    <BAIFlex justify="center">
+      <Dropdown
+        // Click (not hover) so the menu is operable by keyboard (Enter/Space
+        // on the focused trigger) and by touch, not mouse-only.
+        trigger={['click']}
+        // A kebab (vertical ellipsis) action menu — no `selectedKeys`, so no
+        // item is shown as "active". The three modes read as actions you
+        // trigger, not a stateful toggle.
+        menu={{
+          items: menuItems,
+          onClick: onMenuClick,
+        }}
+      >
+        {/* Tooltip (not aria-label) surfaces the affordance on hover for
               sighted users; screen-reader support is out of scope for this
               feature. Keeps `comp:BAITable.ExpandOptions` (+ its locale
               entries) in use. */}
-          <Tooltip title={t('comp:BAITable.ExpandOptions')}>
-            <button
-              type="button"
-              style={{
-                cursor: 'pointer',
-                border: 'none',
-                background: 'transparent',
-                padding: 0,
-                display: 'inline-flex',
-                color: token.colorTextSecondary,
-              }}
-            >
-              <EllipsisVerticalIcon size={token.fontSizeLG} />
-            </button>
-          </Tooltip>
-        </Dropdown>
-      </BAIFlex>
-    ) : null;
+        <Tooltip title={t('comp:BAITable.ExpandOptions')}>
+          <button
+            type="button"
+            style={{
+              cursor: 'pointer',
+              border: 'none',
+              background: 'transparent',
+              padding: 0,
+              display: 'inline-flex',
+              color: token.colorTextSecondary,
+            }}
+          >
+            <EllipsisVerticalIcon size={token.fontSizeLG} />
+          </button>
+        </Tooltip>
+      </Dropdown>
+    </BAIFlex>
+  ) : null;
 
   return {
+    mode,
     expandedRowKeys,
     onExpandedRowsChange,
+    rowExpandable,
     expandColumnTitle,
   };
 };

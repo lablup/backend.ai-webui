@@ -698,9 +698,15 @@ test.describe(
       await openSessionDetailDrawer(page);
       const modal = await openSchedulingHistoryModal(page);
 
-      // 2. Identify a row with an expand icon (the schedule-sessions row has sub-steps).
-      // The default "expand errors only" mode leaves this all-SUCCESS row collapsed
-      // but still expandable, and expanding it must show every sub-step (FR-3425).
+      // 2. Switch to "Collapse all" via the header kebab (⋮) menu first. The
+      // default "expand errors only" mode hides successful sub-steps, so the
+      // all-SUCCESS schedule-sessions row offers no expand icon at all in that
+      // mode (FR-3425). "Collapse all" shows every sub-step while leaving rows
+      // collapsed, so the row becomes manually expandable.
+      await modal.locator('thead button').first().click();
+      await page.getByRole('menuitem', { name: 'Collapse all' }).click();
+
+      // 3. Identify a row with an expand icon (the schedule-sessions row has sub-steps).
       // NOTE: antd renders a "spaced" (invisible) expand button on ALL rows, even non-expandable
       // ones. Playwright's accessible-name computation for <tr> uses text content only (not
       // nested button aria-labels), so the pattern /Expand row schedule-sessions/ does not match
@@ -711,7 +717,7 @@ test.describe(
         .filter({ hasText: 'schedule-sessions' });
       await expect(expandableRow).toBeVisible();
 
-      // 3. Click the expand icon/arrow on that row
+      // 4. Click the expand icon/arrow on that row
       await expandableRow.getByLabel('Expand row').click();
 
       // 4. Verify the sub-steps table columns are visible
@@ -751,7 +757,13 @@ test.describe(
       await openSessionDetailDrawer(page);
       const modal = await openSchedulingHistoryModal(page);
 
-      // 2. Expand the schedule-sessions row.
+      // 2. Switch to "Collapse all" so successful sub-steps are shown. In the
+      // default errors-only mode this all-SUCCESS row has no expand icon at all
+      // (FR-3425). Rows start collapsed, so the row is still manually expandable.
+      await modal.locator('thead button').first().click();
+      await page.getByRole('menuitem', { name: 'Collapse all' }).click();
+
+      // 3. Expand the schedule-sessions row.
       // Use filter by text content — see test #8 comment for why the name pattern
       // /Expand row schedule-sessions/ does not work with Playwright's row accname.
       // Narrow to the first match to avoid strict-mode violations if multiple
@@ -802,6 +814,39 @@ test.describe(
 
       // 3. Verify the enqueue row does not have an "Expand row" button
       await expect(enqueueRow.getByLabel('Expand row')).not.toBeVisible();
+    });
+
+    test('Admin does not see expand icon for an all-success row while "expand errors only" is active', async ({
+      page,
+    }) => {
+      // Regression test for FR-3425: the errors-only mode hides successful
+      // sub-steps, so offering an expand icon on a row whose sub-steps all
+      // succeeded would open a sub-step table with nothing in it.
+
+      // 1. Open the Session Detail drawer and history modal. The expand mode
+      // defaults to "expand errors only".
+      await openSessionDetailDrawer(page);
+      const modal = await openSchedulingHistoryModal(page);
+
+      // 2. The schedule-sessions row HAS sub-steps, but all of them succeeded.
+      const scheduleRow = modal
+        .getByRole('row')
+        .filter({ hasText: 'schedule-sessions' })
+        .first();
+      await expect(scheduleRow).toBeVisible();
+
+      // 3. It must therefore offer no expand icon in this mode.
+      await expect(scheduleRow.getByLabel('Expand row')).not.toBeVisible();
+
+      // 4. The mode menu stays reachable even though no row is expandable —
+      // otherwise there would be no way back to "Expand all".
+      await modal.locator('thead button').first().click();
+      await page.getByRole('menuitem', { name: 'Expand all' }).click();
+
+      // 5. With successful sub-steps shown again, the row expands and renders them.
+      await expect(
+        modal.getByRole('row', { name: /FIFOSequencer SUCCESS/ }).first(),
+      ).toBeVisible();
     });
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -894,7 +939,13 @@ test.describe(
         .filter({ hasText: 'schedule-sessions' });
       await expect(scheduleRow).toBeVisible();
 
-      // 5. Expand the schedule-sessions row to view sub-step details
+      // 5. Switch to "Collapse all" so successful sub-steps are shown. In the
+      // default errors-only mode this all-SUCCESS row has no expand icon at all
+      // (FR-3425). Rows stay collapsed, so the row is still manually expandable.
+      await modal.locator('thead button').first().click();
+      await page.getByRole('menuitem', { name: 'Collapse all' }).click();
+
+      // 6. Expand the schedule-sessions row to view sub-step details
       await scheduleRow.getByLabel('Expand row').click();
 
       // 6. Verify the sub-steps table appears with correct column headers

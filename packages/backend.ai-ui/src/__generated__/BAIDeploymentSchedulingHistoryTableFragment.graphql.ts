@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f04a8d6c2c26a9be4969f98eb55bd6f7>>
+ * @generated SignedSource<<3e15e2786625827018a3bd46820264ae>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,6 +15,7 @@ export type BAIDeploymentSchedulingHistoryTableFragment$data = ReadonlyArray<{
   readonly id: string;
   readonly result: SchedulingResult;
   readonly subSteps: ReadonlyArray<{
+    readonly result: SchedulingResult;
     readonly " $fragmentSpreads": FragmentRefs<"BAISubStepNodesFragment">;
   }>;
   readonly " $fragmentSpreads": FragmentRefs<"BAIDeploymentSchedulingHistoryNodesFragment">;
@@ -25,7 +26,15 @@ export type BAIDeploymentSchedulingHistoryTableFragment$key = ReadonlyArray<{
   readonly " $fragmentSpreads": FragmentRefs<"BAIDeploymentSchedulingHistoryTableFragment">;
 }>;
 
-const node: ReaderFragment = {
+const node: ReaderFragment = (function(){
+var v0 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "result",
+  "storageKey": null
+};
+return {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": {
@@ -40,13 +49,7 @@ const node: ReaderFragment = {
       "name": "id",
       "storageKey": null
     },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "result",
-      "storageKey": null
-    },
+    (v0/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -55,6 +58,7 @@ const node: ReaderFragment = {
       "name": "subSteps",
       "plural": true,
       "selections": [
+        (v0/*: any*/),
         {
           "args": null,
           "kind": "FragmentSpread",
@@ -72,7 +76,8 @@ const node: ReaderFragment = {
   "type": "DeploymentHistory",
   "abstractKey": null
 };
+})();
 
-(node as any).hash = "72a9b8118e4f52a97c2ab8996996098d";
+(node as any).hash = "e4ba0be1f439387b8fa5f690adbd749d";
 
 export default node;

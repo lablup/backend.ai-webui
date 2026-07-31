@@ -8,6 +8,7 @@ import {
   newLineToBrElement,
 } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
+import { isNonSuccessSubStep } from '../../hooks/useSchedulingHistoryExpandable';
 import BAISchedulingResultBadge, {
   SchedulingResult,
 } from '../BAISchedulingResultBadge';
@@ -51,12 +52,19 @@ export interface BAISubStepNodesProps extends Omit<
     baseColumns: BAIColumnsType<SubStepInList>,
   ) => BAIColumnsType<SubStepInList>;
   disableSorter?: boolean;
+  /**
+   * When true, only non-success sub-steps are shown (mirrors the parent table's
+   * "errors-only" mode), so an expanded row surfaces just the failing / retried
+   * steps.
+   */
+  errorsOnly?: boolean;
 }
 
 const BAISubStepNodes = ({
   subStepsFrgmt,
   customizeColumns,
   disableSorter,
+  errorsOnly,
   ...tableProps
 }: BAISubStepNodesProps) => {
   'use memo';
@@ -174,7 +182,9 @@ const BAISubStepNodes = ({
     ? customizeColumns(baseColumns)
     : baseColumns;
 
-  const dataSource = filterOutNullAndUndefined(subSteps).reverse();
+  const dataSource = filterOutNullAndUndefined(subSteps)
+    .filter((subStep) => !errorsOnly || isNonSuccessSubStep(subStep))
+    .reverse();
 
   return (
     <BAITable
