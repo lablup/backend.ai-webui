@@ -38,6 +38,7 @@ import {
   useUpdatableState,
 } from 'backend.ai-ui';
 import classNames from 'classnames';
+import { TFunction } from 'i18next';
 import * as _ from 'lodash-es';
 import React, { memo, useEffect, useRef, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -227,16 +228,29 @@ type ChatUnavailableReason =
   | 'no-endpoint-url'
   | 'invalid-base-url';
 
-const CHAT_UNAVAILABLE_REASON_MESSAGE_KEYS: Record<
-  ChatUnavailableReason,
-  string
-> = {
-  'no-desired-replicas': 'chatui.NoDesiredReplicas',
-  'no-revision': 'deployment.NoCurrentRevisionDeployed',
-  'no-active-replica': 'deployment.NoRunningReplicas',
-  'no-endpoint-url': 'chatui.NoEndpointUrlIssued',
-  'invalid-base-url': 'error.InvalidBaseURL',
-};
+/**
+ * Translates a `ChatUnavailableReason` to its display text. A `switch` keeps
+ * each key next to the reason it belongs to, so the text can be checked by
+ * reading the case itself instead of cross-referencing a separate lookup
+ * table.
+ */
+function getChatUnavailableReasonMessage(
+  t: TFunction,
+  reason: ChatUnavailableReason,
+): string {
+  switch (reason) {
+    case 'no-desired-replicas':
+      return t('chatui.NoDesiredReplicas');
+    case 'no-revision':
+      return t('deployment.NoCurrentRevisionDeployed');
+    case 'no-active-replica':
+      return t('deployment.NoRunningReplicas');
+    case 'no-endpoint-url':
+      return t('chatui.NoEndpointUrlIssued');
+    case 'invalid-base-url':
+      return t('error.InvalidBaseURL');
+  }
+}
 
 /**
  * Explains why a chat cannot reach its deployment, independently of whether the
@@ -392,6 +406,8 @@ const PureChatCard: React.FC<ChatCardProps> = ({
     baseURL,
     effectiveApiKey,
   );
+  const showCustomModelForm =
+    !!baseURL && !!(chatDeployment || agentEndpointUrl) && _.isEmpty(models);
 
   const [input, setInput] = useState('');
 
@@ -669,30 +685,34 @@ const PureChatCard: React.FC<ChatCardProps> = ({
         // This one keeps the exact placement it had before: on CustomModelForm's
         // panel, which is where it lived as that form's own alert (FR-3156).
         // Matching the form's padding keeps the two aligned when both are on
-        // screen, and no bottom padding here leaves the form panel's own top
-        // padding as the single gap between them. BAIFlex hardcodes
-        // `padding: 0` in its inline style, so this has to go through `style` —
-        // a className would lose to it.
+        // screen, and skipping the bottom padding there leaves the form
+        // panel's own top padding as the single gap between them. When the
+        // form does *not* follow (`!showCustomModelForm`), nothing else
+        // provides that gap, so the bottom padding is added here instead —
+        // otherwise the alert's white background runs flush into whatever
+        // renders next. BAIFlex hardcodes `padding: 0` in its inline style,
+        // so this has to go through `style` — a className would lose to it.
         <BAIFlex
           direction="row"
           style={{
             paddingBlockStart: token.paddingContentVerticalLG,
+            paddingBlockEnd: showCustomModelForm
+              ? undefined
+              : token.paddingContentVerticalLG,
             paddingInline: token.paddingContentHorizontal,
             backgroundColor: token.colorBgContainer,
             overflow: 'hidden',
           }}
         >
           <Alert
-            title={t(
-              CHAT_UNAVAILABLE_REASON_MESSAGE_KEYS['no-desired-replicas'],
-            )}
+            title={getChatUnavailableReasonMessage(t, 'no-desired-replicas')}
             type="warning"
             showIcon
             style={{ flex: 1 }}
           />
         </BAIFlex>
       ) : null}
-      {baseURL && (chatDeployment || agentEndpointUrl) && _.isEmpty(models) && (
+      {showCustomModelForm && (
         <CustomModelForm
           deploymentUrl={deploymentUrl || ''}
           basePath={chat.provider.basePath}
@@ -727,7 +747,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
           `error.InvalidBaseURL` already occupied. */}
       {unavailableReason && unavailableReason !== 'no-desired-replicas' ? (
         <Alert
-          title={t(CHAT_UNAVAILABLE_REASON_MESSAGE_KEYS[unavailableReason])}
+          title={getChatUnavailableReasonMessage(t, unavailableReason)}
           type={unavailableReason === 'invalid-base-url' ? 'error' : 'warning'}
           showIcon
           className={alertStyle}
