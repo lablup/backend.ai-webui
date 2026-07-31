@@ -58,9 +58,13 @@ import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 const PERMISSION_FETCH_LIMIT = 500;
 
 /**
- * Upper bound of scope rows fetched per card when the server cannot filter
- * `Role.scopes` by scope type (managers without `EntityFilter.scopeType`,
- * < 26.8.0). Scopes beyond it are not shown on those managers.
+ * Upper bound of scope rows fetched when the server cannot filter `Role.scopes`
+ * by scope type (managers without `EntityFilter.scopeType`, < 26.8.0). The
+ * fetch is unfiltered, so this is a budget shared by every scope type, not a
+ * per-type cap: a role holding more scopes than this across all types leaves
+ * the types outside the leading window with zero rows here, hiding their whole
+ * card. Well above what a role realistically holds, so this is accepted rather
+ * than detected.
  */
 const SCOPE_FETCH_LIMIT = 500;
 
