@@ -29,7 +29,6 @@ navTitle: 상단 바
 선택기가 선택되지 않은 상태로 표시되며 페이지에 상황이 안내됩니다.
 
 ![](../images/project_not_found_or_no_access.png)
-<!-- TODO: Capture screenshot of project_not_found_or_no_access.png — the "Project ... was not found or you don't have access to it." page under an invalid project URL, showing the path pill with the project segment highlighted, the hint pointing at the project selector, and the "Go to ..." button -->
 
 - `프로젝트 '<name>'를 찾을 수 없거나 접근 권한이 없습니다.`라는 메시지가 표시됩니다.
 - 그 아래에는 페이지 상단의 프로젝트 선택기에서 접근 가능한 프로젝트를 선택하라는 안내가
@@ -113,7 +112,6 @@ navTitle: 상단 바
 상단 바 우측의 사용자 아이콘 버튼을 클릭하여 사용자 메뉴를 확인할 수 있습니다.
 
 ![](../images/user_drop_down.png)
-<!-- TODO: Re-capture user_drop_down.png — the menu now shows a single `Downloads` entry in place of the former `Download Desktop App` entry -->
 
 드롭다운 상단에는 다음과 같은 사용자 정보가 표시됩니다. 이 항목들은 클릭할 수 없는 참고 정보입니다.
 
@@ -187,14 +185,12 @@ navTitle: 상단 바
 탭은 `데스크톱 앱`과 `CLI`입니다.
 
 ![](../images/downloads_desktop_app_tab.png)
-<!-- TODO: Capture screenshot of downloads_desktop_app_tab.png — the Downloads dialog on the Desktop App tab, showing the OS selector and the per-architecture download buttons -->
 
 `데스크톱 앱` 탭에서는 **OS** 항목에서 사용 중인 운영체제를 선택한 뒤, 사용 중인 CPU
 아키텍처에 해당하는 버튼을 클릭하면 다운로드가 시작됩니다. 독립형 앱을 사용하면 브라우저
 없이도 동일한 WebUI를 사용할 수 있습니다.
 
 ![](../images/downloads_cli_tab.png)
-<!-- TODO: Capture screenshot of downloads_cli_tab.png — the Downloads dialog on the CLI tab with macOS selected, so both the standalone-executable section (including the unsigned-build warning) and the pip section are visible -->
 
 `CLI` 탭에서는 명령줄 클라이언트를 사용하는 두 가지 방법을 제공합니다.
 

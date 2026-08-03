@@ -33,7 +33,6 @@ shows no selection and the page explains what happened instead of silently
 switching you to another project.
 
 ![](../images/project_not_found_or_no_access.png)
-<!-- TODO: Capture screenshot of project_not_found_or_no_access.png — the "Project ... was not found or you don't have access to it." page under an invalid project URL, showing the path pill with the project segment highlighted, the hint pointing at the project selector, and the "Go to ..." button -->
 
 - The message reads `Project ‘<name>’ was not found or you don’t have access to it.`
 - Below it, a hint asks you to select an accessible project from the project
@@ -134,7 +133,6 @@ small screens.
 Click the user icon on the right side of the top bar to see the user menu.
 
 ![](../images/user_drop_down.png)
-<!-- TODO: Re-capture user_drop_down.png — the menu now shows a single `Downloads` entry in place of the former `Download Desktop App` entry -->
 
 At the top of the dropdown, the following user information is displayed for
 reference. These items are not clickable.
@@ -219,14 +217,12 @@ Selecting `Downloads` opens a dialog with one tab for each download the
 administrator has enabled: `Desktop App` and `CLI`.
 
 ![](../images/downloads_desktop_app_tab.png)
-<!-- TODO: Capture screenshot of downloads_desktop_app_tab.png — the Downloads dialog on the Desktop App tab, showing the OS selector and the per-architecture download buttons -->
 
 On the `Desktop App` tab, select your operating system in the **OS** field, then
 click the button for your CPU architecture to start the download. The
 stand-alone app gives you the same WebUI outside a browser.
 
 ![](../images/downloads_cli_tab.png)
-<!-- TODO: Capture screenshot of downloads_cli_tab.png — the Downloads dialog on the CLI tab with macOS selected, so both the standalone-executable section (including the unsigned-build warning) and the pip section are visible -->
 
 The `CLI` tab offers two ways to start using the command-line client:
 

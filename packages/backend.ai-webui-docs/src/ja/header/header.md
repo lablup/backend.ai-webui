@@ -29,7 +29,6 @@ navTitle: トップバー
 未選択の状態で表示され、ページに状況が案内されます。
 
 ![](../images/project_not_found_or_no_access.png)
-<!-- TODO: Capture screenshot of project_not_found_or_no_access.png — the "Project ... was not found or you don't have access to it." page under an invalid project URL, showing the path pill with the project segment highlighted, the hint pointing at the project selector, and the "Go to ..." button -->
 
 - `プロジェクト '<name>' が見つからないか、アクセス権がありません。`というメッセージが表示されます。
 - その下に、ページ上部のプロジェクトセレクターからアクセス可能なプロジェクトを選択するよう促す
@@ -114,7 +113,6 @@ navTitle: トップバー
 トップバーの右側にあるユーザーアイコンをクリックすると、ユーザーメニューが表示されます。
 
 ![](../images/user_drop_down.png)
-<!-- TODO: Re-capture user_drop_down.png — the menu now shows a single `Downloads` entry in place of the former `Download Desktop App` entry -->
 
 ドロップダウンの上部には、以下のユーザー情報が表示されます。これらの項目はクリックできない参考情報です。
 
@@ -189,14 +187,12 @@ navTitle: トップバー
 タブは`デスクトップアプリ`と`CLI`です。
 
 ![](../images/downloads_desktop_app_tab.png)
-<!-- TODO: Capture screenshot of downloads_desktop_app_tab.png — the Downloads dialog on the Desktop App tab, showing the OS selector and the per-architecture download buttons -->
 
 `デスクトップアプリ`タブでは、**OS**の項目で使用しているオペレーティングシステムを選択し、
 使用しているCPUアーキテクチャのボタンをクリックするとダウンロードが始まります。スタンドアロン
 アプリを使うと、ブラウザなしで同じWebUIを利用できます。
 
 ![](../images/downloads_cli_tab.png)
-<!-- TODO: Capture screenshot of downloads_cli_tab.png — the Downloads dialog on the CLI tab with macOS selected, so both the standalone-executable section (including the unsigned-build warning) and the pip section are visible -->
 
 `CLI`タブでは、コマンドラインクライアントを使い始める方法が2つ用意されています。
 

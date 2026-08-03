@@ -27,7 +27,6 @@ navTitle: แถบด้านบน
 แต่ตัวเลือกโปรเจกต์จะแสดงสถานะที่ยังไม่ได้เลือก และหน้าจะอธิบายสิ่งที่เกิดขึ้น
 
 ![](../images/project_not_found_or_no_access.png)
-<!-- TODO: Capture screenshot of project_not_found_or_no_access.png — the "Project ... was not found or you don't have access to it." page under an invalid project URL, showing the path pill with the project segment highlighted, the hint pointing at the project selector, and the "Go to ..." button -->
 
 - ข้อความที่แสดงคือ `ไม่พบโปรเจกต์ '<name>' หรือคุณไม่มีสิทธิ์เข้าถึง`
 - ด้านล่างจะมีคำแนะนำให้เลือกโปรเจกต์ที่สามารถเข้าถึงได้จากตัวเลือกโปรเจกต์ที่ด้านบนของหน้า
@@ -107,7 +106,6 @@ navTitle: แถบด้านบน
 คลิกไอคอนผู้ใช้ที่ด้านขวาของแถบด้านบนเพื่อดูเมนูผู้ใช้
 
 ![](../images/user_drop_down.png)
-<!-- TODO: Re-capture user_drop_down.png — the menu now shows a single `Downloads` entry in place of the former `Download Desktop App` entry -->
 
 ที่ด้านบนของดรอปดาวน์จะแสดงข้อมูลผู้ใช้ดังต่อไปนี้เพื่อเป็นข้อมูลอ้างอิง รายการเหล่านี้ไม่สามารถคลิกได้
 
@@ -182,13 +180,11 @@ navTitle: แถบด้านบน
 ได้แก่ `แอปเดสก์ท็อป` และ `CLI`
 
 ![](../images/downloads_desktop_app_tab.png)
-<!-- TODO: Capture screenshot of downloads_desktop_app_tab.png — the Downloads dialog on the Desktop App tab, showing the OS selector and the per-architecture download buttons -->
 
 ในแท็บ `แอปเดสก์ท็อป` ให้เลือกระบบปฏิบัติการของคุณในช่อง **OS** จากนั้นคลิกปุ่มที่ตรงกับสถาปัตยกรรม CPU
 ของคุณเพื่อเริ่มดาวน์โหลด แอปแบบสแตนด์อะโลนช่วยให้คุณใช้ WebUI เดียวกันได้โดยไม่ต้องใช้เบราว์เซอร์
 
 ![](../images/downloads_cli_tab.png)
-<!-- TODO: Capture screenshot of downloads_cli_tab.png — the Downloads dialog on the CLI tab with macOS selected, so both the standalone-executable section (including the unsigned-build warning) and the pip section are visible -->
 
 แท็บ `CLI` มีสองวิธีในการเริ่มใช้งานไคลเอนต์บรรทัดคำสั่ง
 
