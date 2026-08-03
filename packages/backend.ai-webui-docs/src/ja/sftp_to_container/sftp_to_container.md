@@ -29,7 +29,6 @@ SSH/SFTP接続は、SSH/SFTPアイコンをクリックするまで、セッシ�
 その場合は、再度ダウンロードする必要があります。
 
 ![](../images/SSH_SFTP_connection.png)
-<!-- TODO: Re-capture SSH_SFTP_connection.png — the current image predates the connection dialog's width change (FR-3396); the Host, Port, and example command values must be shown on a single line each, unwrapped. -->
 
 ![](../images/sftp_app.png)
 

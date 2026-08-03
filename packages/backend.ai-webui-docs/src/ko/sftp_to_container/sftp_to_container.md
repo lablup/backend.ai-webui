@@ -21,7 +21,6 @@ Backend.AI는 생성된 연산 세션(컨테이너)에 SSH/SFTP 접속을 지원
 다음으로, SSH/SFTP 접속 정보가 담긴 대화상자가 팝업됩니다. 이 대화상자에는 접속에 사용할 **사용자**, **호스트**, **포트** 값과 바로 사용할 수 있는 `sftp`, `scp`, `rsync` 예시 명령, 그리고 `id_container` 파일을 로컬 머신에 저장하는 **SSH 키 다운로드** 버튼이 표시됩니다. 이 파일은 자동으로 생성된 SSH 개인 키입니다. 버튼을 사용하는 대신, 웹 터미널이나 Jupyter Notebook을 통해 `/home/work/` 아래에 위치한 `id_container` 파일을 직접 다운로드할 수도 있습니다. 자동 생성된 SSH 키는 새 세션이 생성되면 변경될 수 있으며, 그 경우 다시 다운로드해야 합니다.
 
 ![](../images/SSH_SFTP_connection.png)
-<!-- TODO: Re-capture SSH_SFTP_connection.png — the current image predates the connection dialog's width change (FR-3396); the Host, Port, and example command values must be shown on a single line each, unwrapped. -->
 
 ![](../images/sftp_app.png)
 

@@ -35,7 +35,6 @@ terminal or Jupyter Notebook. The auto-generated SSH key may change when new
 session is created. In that case, it must be downloaded again.
 
 ![](../images/SSH_SFTP_connection.png)
-<!-- TODO: Re-capture SSH_SFTP_connection.png — the current image predates the connection dialog's width change (FR-3396); the Host, Port, and example command values must be shown on a single line each, unwrapped. -->
 
 ![](../images/sftp_app.png)
 
