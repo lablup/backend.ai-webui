@@ -10,7 +10,7 @@ import { useProjectPath } from '../../hooks/useRouteScope';
 import AIAgentSelect from './AIAgentSelect';
 import type { ChatModel, ChatParameters } from './ChatModel';
 import { ChatParametersSliders } from './ChatParametersSliders';
-import EndpointSelect, { EndpointSelectProps } from './EndpointSelect';
+import DeploymentSelect, { DeploymentSelectProps } from './DeploymentSelect';
 import ModelSelect from './ModelSelect';
 import {
   CloseOutlined,
@@ -71,7 +71,7 @@ interface ChatHeaderProps {
   modelId: string;
   onChangeModel: (modelId: string) => void;
   endpointFrgmt?: ChatHeader_Endpoint$key | null;
-  onChangeEndpoint: EndpointSelectProps['onChange'];
+  onChangeEndpoint: DeploymentSelectProps['onChange'];
   agents: AIAgent[];
   agent?: AIAgent;
   onChangeAgent: (agent: AIAgent) => void;
@@ -119,7 +119,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
     useTransition();
   const [isPendingAgentTransition, startAgentTransition] = useTransition();
 
-  // Using fragment instead of just endpoint_id to support future EndpointSelect extensions
+  // Using fragment instead of just endpoint_id to support future DeploymentSelect extensions
   const endpoint = useFragment(
     graphql`
       fragment ChatHeader_Endpoint on Endpoint {
@@ -212,7 +212,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
           />
         )}
         {!agentBinding?.endpoint_url && (
-          <EndpointSelect
+          <DeploymentSelect
             fetchKey={fetchKey}
             loading={isPendingEndpointTransition}
             onChange={(id) => {
