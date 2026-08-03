@@ -79,7 +79,7 @@ The CSV export from the personal Sessions page includes only your own sessions.
 Click a session name to open the session detail panel. Its **Resource Allocation** row shows the resources the
 session actually holds, so you can tell what the session is running with — not only what you asked for.
 
-![](../images/session_detail_resource_allocation.png)
+<!-- ![](../images/session_detail_resource_allocation.png) -->
 <!-- TODO: Capture screenshot of the session detail panel Resource Allocation row for a session whose allocation is smaller than its request, showing the warning icon on the label and an `allocated / requested` chip. -->
 
 - When the allocation matches the request, each resource shows a single value.
