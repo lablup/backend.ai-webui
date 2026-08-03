@@ -88,6 +88,14 @@ parity is a reviewer responsibility, not a machine guarantee.
   FR-3203 deliberately drove version gates to zero and the flag proposed
   reintroducing them.
 
+- [Create the Jira epic and per-page sub-tasks](issues/03-jira-scaffold.md) — Epic
+  **FR-3445 / #8538** plus **16** page tasks (FR-3446…FR-3461 → #8539…#8554), each
+  with its `Resolves` line resolved. **16, not 17**: `agent_summary` dropped because
+  the watcher drawer is reachable only from the admin `AgentList`, so flag F6's two
+  rows were mis-routed and `admin_menu` already covers them. Children are `Task`,
+  not `Subtask` — a level-−1 `Subtask` cannot parent to a level-1 `Epic`. The
+  webhook clone arrived promptly, so the fallback never fired.
+
 - [Define the screenshot hand-off artifact and the reviewer-conflict rule](issues/02-screenshot-handoff.md)
   — Keep the existing `<!-- TODO: Capture ... -->` marker verbatim, joined by PNG
   filename; aggregate into **one** `screenshot-manifest.md` on the map branch (not

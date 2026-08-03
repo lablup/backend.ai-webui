@@ -3,8 +3,8 @@
 Part of [Map: 26.8 user manual refresh](../map.md)
 
 Type: task
-Status: open
-Blocked by: 01
+Status: resolved
+Blocked by: 01 (resolved)
 
 ## Question
 
@@ -85,4 +85,47 @@ read that table; they must not have to re-query Jira.
 
 ## Answer
 
-_(pending)_
+Epic **FR-3445** → GitHub **#8538** — "26.8 user manual refresh".
+
+**16 page tasks, not 17.** `agent_summary` was dropped: flag F6 asked whether the
+agent watcher drawer is reachable from the Agent Summary page, and it is not —
+`AgentDetailDrawer` is referenced only by `AgentList.tsx` (the admin list), and
+neither `AgentSummaryPage.tsx` nor `AgentSummaryList.tsx` contains any
+`FetchKeyButton` / auto-update reference. Both rows routed there were mis-placed
+and are already covered by `admin_menu`.
+
+**Hierarchy note.** Sub-tasks were created as **`Task`**, not `Subtask`. In this
+team-managed project `Subtask` sits at hierarchy level −1 and cannot parent to an
+`Epic` at level 1; `Task` (level 0) is the correct child type.
+
+**The webhook clone arrived promptly** — the fallback in the section above was not
+needed, and no `## Pending Resolves lines` entries exist.
+
+| page | Jira | GitHub | `Resolves` line |
+|---|---|---|---|
+| `admin_menu` | FR-3446 | #8539 | `Resolves #8539 (FR-3446)` |
+| `deployment` | FR-3447 | #8540 | `Resolves #8540 (FR-3447)` |
+| `rbac_management` | FR-3448 | #8541 | `Resolves #8541 (FR-3448)` |
+| `sessions_all` | FR-3449 | #8542 | `Resolves #8542 (FR-3449)` |
+| `user_settings` | FR-3450 | #8543 | `Resolves #8543 (FR-3450)` |
+| `header` | FR-3451 | #8544 | `Resolves #8544 (FR-3451)` |
+| `dashboard` | FR-3452 | #8545 | `Resolves #8545 (FR-3452)` |
+| `trouble_shooting` | FR-3453 | #8546 | `Resolves #8546 (FR-3453)` |
+| `chat` | FR-3454 | #8547 | `Resolves #8547 (FR-3454)` |
+| `vfolder` | FR-3455 | #8548 | `Resolves #8548 (FR-3455)` |
+| `project_admin` | FR-3456 | #8549 | `Resolves #8549 (FR-3456)` |
+| `session_page` | FR-3457 | #8550 | `Resolves #8550 (FR-3457)` |
+| `login` | FR-3458 | #8551 | `Resolves #8551 (FR-3458)` |
+| `start` | FR-3459 | #8552 | `Resolves #8552 (FR-3459)` |
+| `share_vfolder` | FR-3460 | #8553 | `Resolves #8553 (FR-3460)` |
+| `sftp_to_container` | FR-3461 | #8554 | `Resolves #8554 (FR-3461)` |
+
+### Trap for anyone re-deriving this table
+
+Do **not** resolve the mapping with `gh issue list --search "FR-XXXX"`. The search
+matches issue *bodies*, and several of these issues cite other FR keys in
+cross-chapter notes — `FR-3448` resolved to #8549 (Project Admin) because that
+issue's body references the RBAC rewrite. The table above was built by matching
+issue **titles**, which is unambiguous.
+
+Status: resolved
