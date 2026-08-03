@@ -23,7 +23,6 @@ and **Login History**.
 ## General tab
 
 ![](../images/user_settings_page.png)
-<!-- TODO: Re-capture user_settings_page.png — the card now shows four tabs (General, Logs, Login Sessions, Login History) -->
 
 The General tab contains all preference settings organized into groups:
 **Preferences**, **Shell Environments**, and **Experimental features**. The list
@@ -340,7 +339,6 @@ Access new experimental features early -- these may change or be removed in
 future updates. Each feature is turned on with its **Enabled** checkbox.
 
 ![](../images/experimental_features.png)
-<!-- TODO: Re-capture experimental_features.png — the group now lists both the AI Agents and the Import from Hugging Face toggles -->
 
 - **AI Agents**: Enable the AI Agents feature, which provides agent-based AI
   capabilities within the WebUI. When turned on, AI agent functionality becomes
@@ -384,7 +382,6 @@ it to review where your account is in use and to sign out a session you no
 longer need.
 
 ![](../images/login_sessions_tab.png)
-<!-- TODO: Capture screenshot of the Login Sessions tab showing the filter, the refresh button, and a few session rows -->
 
 The table includes the following columns:
 
@@ -451,7 +448,6 @@ successful sign-ins, failed attempts, and login session events such as logout or
 expiry. This tab is read-only; there are no actions on the rows.
 
 ![](../images/login_history_tab.png)
-<!-- TODO: Capture screenshot of the Login History tab showing the result filter and a mix of successful and failed entries -->
 
 The table includes the following columns:
 

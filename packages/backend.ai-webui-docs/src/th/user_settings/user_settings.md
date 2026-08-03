@@ -23,7 +23,6 @@ navTitle: ตั้งค่าผู้ใช้
 ## แท็บทั่วไป
 
 ![](../images/user_settings_page.png)
-<!-- TODO: Re-capture user_settings_page.png — the card now shows four tabs (General, Logs, Login Sessions, Login History) -->
 
 แท็บทั่วไปประกอบด้วยรายการตั้งค่าทั้งหมดที่จัดกลุ่มเป็น **การตั้งค่า**,
 **สภาพแวดล้อมเชลล์** และ **คุณสมบัติการทดลอง** รายการทางด้านซ้ายช่วยให้คุณ
@@ -330,7 +329,6 @@ Backend.AI WebUI รองรับการเพิ่มคู่คีย์
 **เปิดใช้งาน**
 
 ![](../images/experimental_features.png)
-<!-- TODO: Re-capture experimental_features.png — the group now lists both the AI Agents and the Import from Hugging Face toggles -->
 
 - **เอเจนต์ AI**: เปิดใช้งานฟีเจอร์เอเจนต์ AI ซึ่งให้ความสามารถ AI แบบ
   เอเจนต์ภายใน WebUI เมื่อเปิดใช้งาน ฟังก์ชันเอเจนต์ AI จะพร้อมใช้งาน
@@ -373,7 +371,6 @@ Backend.AI WebUI รองรับการเพิ่มคู่คีย์
 และเพื่อออกจากระบบเซสชันที่คุณไม่ต้องการใช้อีกต่อไป
 
 ![](../images/login_sessions_tab.png)
-<!-- TODO: Capture screenshot of the Login Sessions tab showing the filter, the refresh button, and a few session rows -->
 
 ตารางประกอบด้วยคอลัมน์ต่อไปนี้:
 
@@ -440,7 +437,6 @@ Backend.AI WebUI รองรับการเพิ่มคู่คีย์
 แท็บนี้เป็นแบบอ่านอย่างเดียว และไม่มีการดำเนินการใดๆ บนแถว
 
 ![](../images/login_history_tab.png)
-<!-- TODO: Capture screenshot of the Login History tab showing the result filter and a mix of successful and failed entries -->
 
 ตารางประกอบด้วยคอลัมน์ต่อไปนี้:
 

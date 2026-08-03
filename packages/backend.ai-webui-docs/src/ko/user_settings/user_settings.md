@@ -22,7 +22,6 @@ navTitle: 사용자 설정
 ## 일반 탭
 
 ![](../images/user_settings_page.png)
-<!-- TODO: Re-capture user_settings_page.png — the card now shows four tabs (General, Logs, Login Sessions, Login History) -->
 
 일반 탭에는 **설정**, **쉘 스크립트 환경**, **실험적 기능** 그룹으로 구성된
 모든 환경 설정 항목이 포함되어 있습니다. 좌측 목록에서 특정 그룹으로 바로
@@ -319,7 +318,6 @@ Backend.AI WebUI는 사설 저장소 접근 등 유연성을 제공하기 위해
 변경되거나 제거될 수 있습니다. 각 기능은 **활성화** 체크박스로 켤 수 있습니다.
 
 ![](../images/experimental_features.png)
-<!-- TODO: Re-capture experimental_features.png — the group now lists both the AI Agents and the Import from Hugging Face toggles -->
 
 - **AI 에이전트**: AI 에이전트 기능을 활성화합니다. 이 기능은 WebUI 내에서
   에이전트 기반 AI 기능을 제공합니다. 활성화하면 세션에서 AI 에이전트 기능을
@@ -360,7 +358,6 @@ Backend.AI WebUI는 사설 저장소 접근 등 유연성을 제공하기 위해
 사용되고 있는지 확인하고 더 이상 필요하지 않은 세션을 로그아웃시킬 수 있습니다.
 
 ![](../images/login_sessions_tab.png)
-<!-- TODO: Capture screenshot of the Login Sessions tab showing the filter, the refresh button, and a few session rows -->
 
 테이블에는 다음 열이 포함됩니다:
 
@@ -423,7 +420,6 @@ Backend.AI WebUI는 사설 저장소 접근 등 유연성을 제공하기 위해
 표시됩니다. 이 탭은 조회 전용이며 행에 대한 별도의 작업은 없습니다.
 
 ![](../images/login_history_tab.png)
-<!-- TODO: Capture screenshot of the Login History tab showing the result filter and a mix of successful and failed entries -->
 
 테이블에는 다음 열이 포함됩니다:
 

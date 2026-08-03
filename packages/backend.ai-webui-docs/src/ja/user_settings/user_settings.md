@@ -23,7 +23,6 @@ navTitle: ユーザー設定
 ## 一般タブ
 
 ![](../images/user_settings_page.png)
-<!-- TODO: Re-capture user_settings_page.png — the card now shows four tabs (General, Logs, Login Sessions, Login History) -->
 
 一般タブには、**環境設定**、**シェル環境**、**実験的特徴**のグループに整理された
 すべての設定項目が含まれています。左側のリストから特定のグループに移動でき、
@@ -331,7 +330,6 @@ Backend.AIセッションにアクセスできます。
 削除される可能性があります。各機能は**有効**チェックボックスでオンにします。
 
 ![](../images/experimental_features.png)
-<!-- TODO: Re-capture experimental_features.png — the group now lists both the AI Agents and the Import from Hugging Face toggles -->
 
 - **AIエージェント**: AIエージェント機能を有効にします。この機能はWebUI内で
   エージェントベースのAI機能を提供します。有効にすると、セッションでAI
@@ -375,7 +373,6 @@ Backend.AIセッションにアクセスできます。
 なったセッションをサインアウトさせたりできます。
 
 ![](../images/login_sessions_tab.png)
-<!-- TODO: Capture screenshot of the Login Sessions tab showing the filter, the refresh button, and a few session rows -->
 
 テーブルには次の列が含まれます:
 
@@ -441,7 +438,6 @@ Backend.AIセッションにアクセスできます。
 関するイベントも表示されます。このタブは閲覧専用で、行に対する操作はありません。
 
 ![](../images/login_history_tab.png)
-<!-- TODO: Capture screenshot of the Login History tab showing the result filter and a mix of successful and failed entries -->
 
 テーブルには次の列が含まれます:
 
