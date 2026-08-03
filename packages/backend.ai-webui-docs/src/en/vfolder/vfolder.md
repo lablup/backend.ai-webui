@@ -16,6 +16,7 @@ such as the folder name and ID, the storage host name where the folder is locate
 
 
 ![](../images/data_page.png)
+<!-- TODO: Re-capture data_page.png — the refresh button above the folder list is now a split control with an interval chevron next to it -->
 
 There are two types of storage folders: `User` and `Project`. You can
 distinguish between them in the 'Type' column.
@@ -34,6 +35,29 @@ each pending invitation. Accepted folders immediately appear in your folder
 list with the `Invited` type. The `/data` page itself is also a valid entry
 point for reviewing invitations — open the Data page and the same invitation
 list is reachable from the folder status summary.
+
+<a id="refresh-folder-list"></a>
+
+## Refresh the folder list
+
+The refresh button above the folder list reloads the folders without reloading
+the page. The chevron next to it opens the **Auto Refresh** menu, where you
+choose how often the list reloads by itself: `Off`, `5s`, `10s`, `15s`, `30s`,
+or `1m`. A check mark marks the interval that is currently active.
+
+![](../images/vfolder_auto_refresh_menu.png)
+<!-- TODO: Capture screenshot of vfolder_auto_refresh_menu.png — the Data page refresh button with the Auto Refresh menu open, showing Off / 5s / 10s / 15s / 30s / 1m and a check mark on the active entry -->
+
+Folder lists start with auto-refresh set to `Off`, because folder contents
+rarely change on their own. Once you pick an interval, that choice is
+remembered for this list and reapplied the next time you open the page — this
+includes picking `Off` again.
+
+While auto-refresh is on, the selected interval appears next to the chevron and
+a countdown border fills around the button until the next reload. Refreshing
+manually restarts the countdown. Auto-refresh pauses while the page is not
+visible — for example, when you switch to another browser tab — and resumes
+when you come back.
 
 
 <a id="create-storage-folder"></a>
@@ -123,7 +147,7 @@ in the directory.
 
 ### Edit text files
 
-You can edit text files directly in the folder explorer. Click the folder name to open the file explorer, then click the **Edit File** button in the Control column for any text file.
+You can edit text files directly in the folder explorer. Click the folder name to open the file explorer, then click the **Edit File** button in the Controls column for any text file.
 
 ![](../images/folder_explorer_edit_button.png)
 
@@ -154,6 +178,10 @@ The audit log shows the following columns, in order:
 
 You can filter the log by **Time**, **Operation**, **Status**, and **Triggered By**.
 
+The tab has its own refresh button with the same **Auto Refresh** interval menu
+described in [Refresh the folder list](#refresh-folder-list). Its interval also
+starts at `Off` and is remembered separately from the folder list.
+
 ## Rename folder
 
 
@@ -172,12 +200,31 @@ tab by clicking the `trash bin` button. When you move a folder to the Trash tab,
 
 ![](../images/move_to_trash.png)
 
+### Delete several folders at once
+
+Select the checkboxes of the folders you want to remove. A selection summary
+(`{count} selected`) and a trash bin button appear above the folder list. Click
+the trash bin button to open the **Move to trash bin** confirmation for the
+whole selection.
+
+![](../images/vfolder_bulk_move_to_trash.png)
+<!-- TODO: Capture screenshot of vfolder_bulk_move_to_trash.png — the Move to trash bin modal opened from a multi-folder selection that mixes deletable and non-deletable folders, so the excluded-folders alert and its bulleted folder list are visible above the confirmation message -->
+
+If the selection contains folders you are not allowed to delete, the modal lists
+them in an alert titled *"The following folder(s) without delete permission will
+be excluded."* Read the list before confirming: only the remaining folders move
+to the Trash tab, and the confirmation message below the alert counts just those
+folders. When many folders are excluded, the list scrolls inside the alert
+instead of stretching the modal.
+
+### Restore or permanently delete
+
 In this status, you can restore the folder by clicking restore button in Control column. If you want to permanently delete the folder,
 please click `trash bin` button in the same column.
 
 ![](../images/vfolder_trash_list.png)
 
-A confirmation modal will appear asking you to type the folder name. Once you enter the folder name correctly, the **Delete Forever** button becomes active. Click it to permanently delete the folder.
+A confirmation modal will appear asking you to type the folder name. Once you enter the folder name correctly, the **Delete forever** button becomes active. Click it to permanently delete the folder.
 
 ![](../images/vfolder_delete_dialog.png)
 
