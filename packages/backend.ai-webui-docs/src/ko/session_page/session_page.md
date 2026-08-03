@@ -11,7 +11,6 @@ Backend.AI에서 `세션(session)`은 사용자가 할당된 자원을 사용하
 세션이 시작되면 대화형 애플리케이션, 터미널, 로그에 접근할 수 있어 작업을 효율적으로 관리하고 모니터링할 수 있습니다.
 
 ![](../images/sessions_page.png)
-<!-- TODO: Re-capture sessions_page.png — the resource panel header now reads "My Total Resource Usage" and no longer shows the used/limit toggle. -->
 
 
 <a id="resource-summary-panels"></a>
@@ -21,7 +20,6 @@ Backend.AI에서 `세션(session)`은 사용자가 할당된 자원을 사용하
 `세션` 페이지 상단에는 CPU, RAM, AI 가속기 등 컴퓨팅 자원을 표시하는 패널이 있습니다. 필요한 정보에 따라 **나의 총자원 사용량**, **자원 그룹 내 나의 자원**, **자원 그룹 내 총자원** 등 다양한 패널 뷰를 선택할 수 있습니다. 표시할 패널을 변경하려면 패널 헤더의 설정(톱니바퀴) 아이콘을 클릭한 뒤 **패널 설정**에서 원하는 뷰를 선택합니다.
 
 ![](../images/panel_settings.png)
-<!-- TODO: Re-capture panel_settings.png — the Panel Settings menu now lists "My Total Resource Usage", and the panel header no longer shows the used/limit toggle. -->
 
 **나의 총자원 사용량** 패널은 모든 프로젝트에서 내가 현재 사용 중인 자원량을 보여줍니다. 각 자원에 적용되는 제한을 확인하려면 숫자 아래의 상태바에 마우스 커서를 올립니다. 여러 제한(도메인, 프로젝트, 키페어 등)이 함께 적용될 경우 가장 엄격한 기준이 적용됩니다.
 

@@ -11,7 +11,6 @@ Backend.AIにおける`セッション`は、ユーザーが割り当てられ�
 セッションが開始されると、インタラクティブアプリケーション、ターミナル、ログにアクセスでき、ワークロードを効率的に管理・監視できます。
 
 ![](../images/sessions_page.png)
-<!-- TODO: Re-capture sessions_page.png — the resource panel header now reads "My Total Resource Usage" and no longer shows the used/limit toggle. -->
 
 
 <a id="resource-summary-panels"></a>
@@ -22,7 +21,6 @@ Backend.AIにおける`セッション`は、ユーザーが割り当てられ�
 必要な情報に応じて、**私の総リソース使用量**、**リソースグループの私のリソース**、**リソースグループの総リソース**など、さまざまなパネルビューを選択できます。表示するパネルを変更するには、パネルヘッダーの設定（歯車）アイコンをクリックし、**パネル設定**からビューを選択してください。
 
 ![](../images/panel_settings.png)
-<!-- TODO: Re-capture panel_settings.png — the Panel Settings menu now lists "My Total Resource Usage", and the panel header no longer shows the used/limit toggle. -->
 
 **私の総リソース使用量**パネルには、すべてのプロジェクトで現在使用しているリソースが表示されます。
 各リソースに適用される制限を確認するには、数値の下のステータスバーにマウスを合わせてください。複数の制限（ドメイン、プロジェクト、キーペアなど）が適用されている場合は、最も厳しい制限が適用されます。

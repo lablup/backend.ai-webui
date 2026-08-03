@@ -11,7 +11,6 @@ Each session is created based on user-defined configurations such as runtime ima
 Once started, the session provides access to interactive applications, terminals, and logs, allowing users to manage and monitor their workloads efficiently.
 
 ![](../images/sessions_page.png)
-<!-- TODO: Re-capture sessions_page.png — the resource panel header now reads "My Total Resource Usage" and no longer shows the used/limit toggle. -->
 
 
 <a id="resource-summary-panels"></a>
@@ -23,7 +22,6 @@ Different panel views — **My Total Resource Usage**, **My Resources in Resourc
 the information needed. Click the settings (gear) icon in the panel header and pick a view under **Panel Settings**.
 
 ![](../images/panel_settings.png)
-<!-- TODO: Re-capture panel_settings.png — the Panel Settings menu now lists "My Total Resource Usage", and the panel header no longer shows the used/limit toggle. -->
 
 The **My Total Resource Usage** panel shows the resources you are currently using across all projects.
 To check the limit that applies to a resource, hover over the status bar below its number. When several limits apply
