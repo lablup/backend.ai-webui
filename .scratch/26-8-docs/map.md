@@ -94,6 +94,34 @@ parity is a reviewer responsibility, not a machine guarantee.
   FR-3203 deliberately drove version gates to zero and the flag proposed
   reintroducing them.
 
+- **Collision with PR #8521 — the coverage matrix had a structural blind spot.**
+  Discovered 2026-08-03 while listing pushed branches. PR **#8521**
+  (`docs/FR-3431-rbac-manual-update`, @ironAiken2, open, updated the same day)
+  already rewrites **`rbac_management.md` AND `project_admin.md`** in all four
+  languages, with **44 captured screenshots**.
+
+  Root cause: [ticket 01](issues/01-coverage-matrix.md) triaged **code commits**
+  and never asked whether a docs PR was already in flight for the same chapter.
+  A commit-only triage cannot see that. `docs-lint` has a "PR coverage gap" check
+  that would have caught it — it should run *before* the matrix next time, not
+  after. Confirmed by `gh pr list` that #8521 is the **only** open docs PR, so the
+  damage is bounded to two chapters.
+
+  Resolution: **#8521 is authoritative for the overlap** — its author wrote the
+  RBAC features and it already has real screenshots.
+  - `rbac_management` (FR-3448 / #8541): fully superseded. Writing agent stopped
+    mid-flight; no PR will be opened. Closed as duplicate.
+  - `project_admin` (FR-3456 / #8549): partial overlap. #8521 covers FR-3317 /
+    FR-3320 / FR-3333 / FR-3383; it does **not** cover FR-2948 (session table
+    columns) or FR-3147 (auto-refresh), which we do. Rebuilt as a **stack on top
+    of #8521** carrying only the unique content.
+
+  Unraised review point on #8521, recorded rather than acted on: its body
+  advertises **version-gated prose** ("on 26.8.0+", "legacy fallback on older
+  managers", "Auto Assign gated to 26.4.4+"), which is exactly what FR-3208
+  (#8038) and FR-3203 (#8027) removed from this manual. That is a conversation for
+  its author — not a silent edit by this effort.
+
 - [Create the Jira epic and per-page sub-tasks](issues/03-jira-scaffold.md) — Epic
   **FR-3445 / #8538** plus **16** page tasks (FR-3446…FR-3461 → #8539…#8554), each
   with its `Resolves` line resolved. **16, not 17**: `agent_summary` dropped because
