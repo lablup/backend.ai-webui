@@ -5,8 +5,8 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import { announcementQueryOptions } from '../hooks/useSuspenseGetAnnouncement';
-import AnnouncementMarkdown from './AnnouncementMarkdown';
 import BAICodeEditor from './BAICodeEditor';
+import MarkdownContent from './MarkdownContent';
 import {
   BoldOutlined,
   CodeOutlined,
@@ -259,7 +259,7 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
             <Typography.Text strong>
               {t('summary.AnnouncementPreview')}
             </Typography.Text>
-            <AnnouncementMarkdown
+            <MarkdownContent
               style={{
                 border: `1px solid ${token.colorBorder}`,
                 borderRadius: token.borderRadius,
@@ -272,7 +272,7 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
               }}
             >
               {message}
-            </AnnouncementMarkdown>
+            </MarkdownContent>
           </BAIFlex>
         </BAIFlex>
       )}

@@ -149,7 +149,7 @@ const useStyles = createStyles(({ css, token }) => ({
   `,
 }));
 
-interface AnnouncementMarkdownProps extends Omit<
+interface MarkdownContentProps extends Omit<
   React.HTMLAttributes<HTMLDivElement>,
   'children'
 > {
@@ -157,15 +157,14 @@ interface AnnouncementMarkdownProps extends Omit<
 }
 
 /**
- * Renders an announcement message as markdown.
+ * Renders markdown text with a shared reading typography (headings,
+ * blockquotes, tables, lists) and a shiki-based fenced-code highlighter.
  *
- * The editor's preview pane and the published announcement alert both render
- * through this component so that the preview is a faithful preview: one
- * renderer, one plugin set, one stylesheet. Rendering them separately let the
- * two drift — a blockquote styled in the preview came out as plain text once
- * published (FR-3402).
+ * Every call site shares one renderer, one plugin set, and one stylesheet so
+ * they can't drift from each other — e.g. a blockquote styled in one place
+ * but rendered as plain text in another (FR-3402).
  */
-const AnnouncementMarkdown: React.FC<AnnouncementMarkdownProps> = ({
+const MarkdownContent: React.FC<MarkdownContentProps> = ({
   children,
   className,
   ...divProps
@@ -209,4 +208,4 @@ const AnnouncementMarkdown: React.FC<AnnouncementMarkdownProps> = ({
   );
 };
 
-export default AnnouncementMarkdown;
+export default MarkdownContent;

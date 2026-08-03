@@ -5,7 +5,7 @@
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useSuspenseGetAnnouncement } from '../hooks/useSuspenseGetAnnouncement';
 import AnnouncementEditModal from './AnnouncementEditModal';
-import AnnouncementMarkdown from './AnnouncementMarkdown';
+import MarkdownContent from './MarkdownContent';
 import { useToggle } from 'ahooks';
 import { Button } from 'antd';
 import { BAIAlert, BAIAlertProps, BAIUnmountAfterClose } from 'backend.ai-ui';
@@ -27,9 +27,7 @@ const AnnouncementAlert: React.FC<Props> = ({ ...otherProps }) => {
   return !_.isEmpty(announcement.message) ? (
     <>
       <BAIAlert
-        description={
-          <AnnouncementMarkdown>{announcement.message}</AnnouncementMarkdown>
-        }
+        description={<MarkdownContent>{announcement.message}</MarkdownContent>}
         action={
           isSuperAdmin ? (
             <Button

@@ -8,6 +8,7 @@ import { useBackendAIImageMetaData } from '../hooks';
 import DeploymentSettingModal from './DeploymentSettingModal';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
+import MarkdownContent from './MarkdownContent';
 import ModelBrandIcon from './ModelBrandIcon';
 import ModelCardDeployModal from './ModelCardDeployModal';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
@@ -35,9 +36,7 @@ import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import Markdown from 'react-markdown';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
-import remarkGfm from 'remark-gfm';
 
 interface ModelCardDrawerProps extends Omit<
   DrawerProps,
@@ -333,9 +332,7 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
                 style={{ width: '100%' }}
                 styles={{ body: { paddingTop: 0 } }}
               >
-                <Markdown remarkPlugins={[remarkGfm]}>
-                  {modelCard.readme}
-                </Markdown>
+                <MarkdownContent>{modelCard.readme}</MarkdownContent>
               </BAICard>
             )}
           </BAIFlex>

@@ -8,6 +8,7 @@ import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useSuspenseTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
+import MarkdownContent from './MarkdownContent';
 import {
   CloudUploadOutlined,
   FilterOutlined,
@@ -46,9 +47,7 @@ import React, {
   useTransition,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import Markdown from 'react-markdown';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import remarkGfm from 'remark-gfm';
 
 type Service = {
   url: string;
@@ -372,9 +371,9 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
                   },
                 }}
               >
-                <Markdown remarkPlugins={[remarkGfm]}>
+                <MarkdownContent>
                   {huggingFaceModelInfo.data?.markdown}
-                </Markdown>
+                </MarkdownContent>
               </BAICard>
             </Suspense>
           ) : (
