@@ -1,0 +1,112 @@
+diff --git a/dist/chunk-EZJWUTUA.js b/dist/chunk-EZJWUTUA.js
+index c8e45b82c0a7838d6333d3b8a3f2ac95786828ba..269429779afe5d0b1e501be3e9f62d6094641a0a 100644
+--- a/dist/chunk-EZJWUTUA.js
++++ b/dist/chunk-EZJWUTUA.js
+@@ -1428,33 +1428,97 @@ var RouteStore = class _RouteStore {
+     try {
+       const raw = fs4.readFileSync(this.routesPath, "utf-8");
+       let parsed;
++      let corruptReason;
+       try {
+         parsed = JSON.parse(raw);
++        if (!Array.isArray(parsed)) {
++          corruptReason = "expected array";
++        }
+       } catch {
+-        this.onWarning?.(`Corrupted routes file (invalid JSON): ${this.routesPath}`);
+-        return [];
++        corruptReason = "invalid JSON";
+       }
+-      if (!Array.isArray(parsed)) {
+-        this.onWarning?.(`Corrupted routes file (expected array): ${this.routesPath}`);
+-        return [];
++      if (corruptReason) {
++        // A corrupt routes file must never be silently downgraded to "no routes
++        // at all": the caller (addRoute/removeRoute) would then persist only its
++        // own route and wipe every other live process's registration. Keep the
++        // damaged file for inspection, recover the last good snapshot if we have
++        // one, and otherwise fail loudly so the caller aborts instead of
++        // clobbering.
++        this.onWarning?.(`Corrupted routes file (${corruptReason}): ${this.routesPath}`);
++        try {
++          fs4.copyFileSync(this.routesPath, `${this.routesPath}.corrupt-${Date.now()}`);
++        } catch {
++        }
++        const recovered = this.readBackup();
++        if (recovered) {
++          this.onWarning?.(`Recovered routes from ${this.routesPath}.bak`);
++          parsed = recovered;
++        } else {
++          const corruptError = new Error(
++            `Corrupted routes file (${corruptReason}): ${this.routesPath}`
++          );
++          corruptError.code = "PORTLESS_CORRUPT_ROUTES";
++          throw corruptError;
++        }
+       }
+       const routes = parsed.filter(isValidRoute);
+       const alive = routes.filter((r) => r.pid === 0 || this.isProcessAlive(r.pid));
+       if (persistCleanup && alive.length !== routes.length) {
+         try {
+-          fs4.writeFileSync(this.routesPath, JSON.stringify(alive, null, 2), {
+-            mode: this.fileMode
+-          });
++          this.saveRoutes(alive);
+         } catch {
+         }
+       }
+       return alive;
+-    } catch {
++    } catch (err) {
++      // Propagate corruption: returning [] here is exactly what let a damaged
++      // file wipe every registered route.
++      if (err instanceof Error && err.code === "PORTLESS_CORRUPT_ROUTES") {
++        throw err;
++      }
+       return [];
+     }
+   }
++  /**
++   * Last known-good snapshot, written alongside every successful save. Used to
++   * recover when routes.json itself is unreadable.
++   */
++  readBackup() {
++    const backupPath = `${this.routesPath}.bak`;
++    try {
++      if (!fs4.existsSync(backupPath)) {
++        return null;
++      }
++      const parsed = JSON.parse(fs4.readFileSync(backupPath, "utf-8"));
++      return Array.isArray(parsed) ? parsed : null;
++    } catch {
++      return null;
++    }
++  }
+   saveRoutes(routes) {
+-    fs4.writeFileSync(this.routesPath, JSON.stringify(routes, null, 2), { mode: this.fileMode });
++    const tmpPath = `${this.routesPath}.tmp-${process.pid}`;
++    try {
++      const serialized = JSON.stringify(routes, null, 2);
++      // Write to a temp file and rename: rename is atomic within a filesystem,
++      // so a reader (or a process killed mid-write) can never observe a
++      // half-written routes.json. This is the root fix — the unpatched
++      // writeFileSync truncates in place, and an interrupted write left a
++      // corrupt file that the next registration silently reset to a single
++      // route, wiping every other dev server's registration.
++      fs4.writeFileSync(tmpPath, serialized, { mode: this.fileMode });
++      fs4.renameSync(tmpPath, this.routesPath);
++      // Keep a known-good snapshot for `readBackup()` recovery.
++      try {
++        fs4.writeFileSync(`${this.routesPath}.bak`, serialized, { mode: this.fileMode });
++      } catch {
++      }
++    } catch (err) {
++      try {
++        fs4.rmSync(tmpPath, { force: true });
++      } catch {
++      }
++      throw err;
++    }
+     fixOwnership(this.routesPath);
+   }
+   /**
