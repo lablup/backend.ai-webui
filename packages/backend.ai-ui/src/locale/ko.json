@@ -34,7 +34,7 @@
     "SelectModelService": "모델 서비스를 선택해주세요"
   },
   "comp:BAIAdminResourceGroupSelect": {
-    "PlaceHolder": "리소스 그룹을 선택해주세요"
+    "PlaceHolder": "자원 그룹을 선택해주세요"
   },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "세션을 선택해주세요"
@@ -254,7 +254,7 @@
     "ReplicaSummary": "복제본 수",
     "ReplicaSummaryTooltip": "원하는 복제본 수 대비 실행 중인 복제본 수입니다.",
     "Replicas": "복제본 수",
-    "ResourceGroup": "리소스 그룹",
+    "ResourceGroup": "자원 그룹",
     "RevisionNumber": "리비전",
     "RevisionNumberTooltip": "배포의 현재 리비전 번호입니다.",
     "StrategyType": "전략",
@@ -271,7 +271,7 @@
   },
   "comp:BAIProjectSettingModal": {
     "AllowedFolderHosts": "허용된 호스트",
-    "AllowedResourceGroups": "허용된 리소스 그룹",
+    "AllowedResourceGroups": "허용된 자원 그룹",
     "ContainerMustBeSpecified": " 사용자가 커밋한 컨테이너 이미지를 저장하려면 컨테이너 레지스트리를 지정해야 합니다.",
     "ContainerRegistryForImageCommit": "이미지 커밋용 컨테이너 레지스트리",
     "CreateProject": "프로젝트 생성",
@@ -325,7 +325,7 @@
     "YouAreAboutToCancelThisVersion": "다음의 버전을 취소하려고 합니다"
   },
   "comp:BAIResourceGroupSelect": {
-    "SelectResourceGroup": "리소스 그룹을 선택해주세요"
+    "SelectResourceGroup": "자원 그룹을 선택해주세요"
   },
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "할당 자원 / 요청 자원"
@@ -501,7 +501,7 @@
     "Memory": "메모리",
     "OwnerEmail": "소유자 이메일",
     "Project": "프로젝트",
-    "ResourceGroup": "리소스 그룹",
+    "ResourceGroup": "자원 그룹",
     "SessionId": "세션 ID",
     "SessionName": "세션 이름",
     "SessionType": "세션 유형",
