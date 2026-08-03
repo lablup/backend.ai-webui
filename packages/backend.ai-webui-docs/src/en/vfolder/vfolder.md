@@ -46,7 +46,6 @@ choose how often the list reloads by itself: `Off`, `5s`, `10s`, `15s`, `30s`,
 or `1m`. A check mark marks the interval that is currently active.
 
 ![](../images/vfolder_auto_refresh_menu.png)
-<!-- TODO: Capture screenshot of vfolder_auto_refresh_menu.png — the Data page refresh button with the Auto Refresh menu open, showing Off / 5s / 10s / 15s / 30s / 1m and a check mark on the active entry -->
 
 Folder lists start with auto-refresh set to `Off`, because folder contents
 rarely change on their own. Once you pick an interval, that choice is
