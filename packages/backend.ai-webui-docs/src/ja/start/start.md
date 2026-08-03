@@ -10,7 +10,6 @@ navTitle: スタート
 を表しています。
 
 ![](../images/start_page.png)
-<!-- TODO: Re-capture start_page.png — the deployment card is labeled "Start Model Service" with a "Start Service" button in the current image; the live labels are "Start Deployment" and "Create Deployment" -->
 
 ## お知らせバナー
 
@@ -124,7 +123,6 @@ Markdownのバッジコードをコピーして、プロジェクトのドキュ
 :::
 
 ![](../images/start_from_url_huggingface.png)
-<!-- TODO: Capture screenshot of start_from_url_huggingface.png — the Start from URL dialog with the Import Hugging Face Model tab active, showing the Hugging Face Model URL or ID, Revision, and Hugging Face Token fields, the Model Folder selector with its open / add / refresh buttons, and the Download Model To Folder button -->
 
 1. **Hugging Face モデルの URL または ID**フィールドにモデルを入力します。
    `https://huggingface.co/openai/gpt-oss-20b`のようなモデルページのURLと、
