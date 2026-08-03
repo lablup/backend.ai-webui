@@ -10,6 +10,7 @@ It helps you quickly understand how your computing resources are being utilized
 and monitor your recent activities in the system.
 
 ![](../images/dashboard.png)
+<!-- TODO: Re-capture dashboard.png — the second panel is now titled "My Total Resource Usage" and its header no longer contains the Used segmented toggle -->
 
 The page is composed of several main panels:
 
@@ -18,10 +19,12 @@ The page is composed of several main panels:
     such as *Interactive*, *Batch*, *Inference*, and *Upload*.
     You can quickly see how many sessions of each type are currently running.
 
-- **My Total Resources Limit**:
-    Displays the total used and free resources across all your projects and resource groups.
+- **My Total Resource Usage**:
+    Displays the resources you are currently using across all your projects.
+    Each resource shows a usage bar below its value; hover over the bar to see
+    how much of your total limit that usage represents.
     When multiple limits (domain, project, or keypair) apply,
-    the system uses the **most restrictive** available limit to calculate the remaining resources.
+    the **most restrictive** one takes effect.
 
 - **My Resources in Resource Group**:
     Shows your current resource usage and remaining capacity
@@ -54,6 +57,18 @@ These panels show cluster-wide agent health and resource utilization.
 The Dashboard automatically refreshes all panel data every **15 seconds**. This
 ensures that the displayed information stays up to date without requiring manual
 interaction.
+
+The board stays on screen while a refresh runs. The values you were already
+looking at remain visible, and you can keep moving, resizing, and scrolling
+panels while the new data is fetched. Each panel reports its own progress:
+
+- The refresh button in a panel header shows a loading indicator while that
+  panel's data is being fetched.
+- If a panel needs to rebuild its content, it shows a loading skeleton within
+  its own area. The rest of the board stays visible and interactive.
+
+You can also refresh a single panel at any time by clicking the refresh button
+in its header, without waiting for the next automatic refresh.
 
 :::note
 The [Superadmin Dashboard](#superadmin-dashboard) uses a **30-second** refresh interval instead.
