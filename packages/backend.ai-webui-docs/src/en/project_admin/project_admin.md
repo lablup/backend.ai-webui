@@ -18,6 +18,45 @@ When you open the project dropdown in the header, projects in which you have the
 
 Switching to a different project from the header's project selector re-evaluates the user's role: the same user may act as a project admin in one project and as a regular user in another within the same login session. To learn how project-admin roles are granted and revoked, see [Grant Project Admin Authority](#grant-project-admin) in the RBAC Management chapter.
 
+:::note
+Because project-admin authority is re-evaluated per selected project, the pages available to you can differ between projects. If you open a URL or select a project you do not have permission for, an **Unauthorized Access** page is shown with a button that takes you back to your first available page.
+:::
+
+![](../images/forbidden_page.png)
+<!-- TODO: Capture the Unauthorized Access (Forbidden) page -->
+
+<a id="set-project-admin"></a>
+
+## Set Project Admin
+
+Superadmins can grant and revoke project admin for one or more users in a single place through the **Set Project Admin** modal, launched from the **Project** admin page (**Users → Project**). This is the primary way to manage project admin on **manager 26.8.0 or later**.
+
+On each project row, click the shield (**Set Project Admin**) action to open the modal.
+
+![](../images/project_admin_set_admin_action.png)
+<!-- TODO: Capture the Set Project Admin row action on the Project page -->
+
+:::note
+The **Set Project Admin** action is available to superadmins on **manager 26.8.0 or later**. It is hidden on older managers, and it is disabled for Model Store projects.
+:::
+
+The modal provides:
+
+- **User select and Add**: A multi-select to choose one or more users, and an **Add** button to grant them project admin for the current project.
+- **Current admins table**: A list of the project's current admins, each with a **Revoke admin permission** (X) action to remove that user's project admin.
+
+![](../images/project_admin_set_admin_modal.png)
+<!-- TODO: Capture the Set Project Admin modal (user select, current-admins table, both alerts, shield RBAC shortcut in the title) -->
+
+The modal shows two alerts you should read before assigning or revoking:
+
+- **Info**: Granting project admin automatically adds the project to the user's allowed project list, so the user can then access the project.
+- **Warning**: Revoking project admin does **not** automatically remove the project from the user's allowed project list. To block access to the project, remove it from the list manually.
+
+Next to the modal title, a shield-check (**View RBAC permissions**) icon opens the RBAC Management page with the project's `project-<project_id>-admin` role pre-filtered and its detail drawer open, so you can inspect the underlying role. For more on that role, see [Grant Project Admin authority](#grant-project-admin) in the RBAC Management chapter.
+
+When you add several users at once, any that fail are surfaced through an error notification that includes the number of users that could not be assigned; the users that succeeded are still granted.
+
 <a id="the-project-admin-sidebar"></a>
 
 ## The Project Admin sidebar
