@@ -5,6 +5,7 @@ import {
   setupChatPageWithTwoDeployments,
   MOCK_DEPLOYMENT_NAME,
   MOCK_DEPLOYMENT_NAME_B,
+  MOCK_DEPLOYMENT_URL_B,
   MOCK_REPLY_A,
   MOCK_REPLY_B,
   MOCK_MODEL_ID_B,
@@ -215,7 +216,7 @@ test.describe(
       // endpoint B) before clicking, so we don't miss a fast mocked response.
       const modelsBResponsePromise = page.waitForResponse(
         (response) =>
-          response.url().includes('mock-chat-endpoint-b') &&
+          response.url().includes(MOCK_DEPLOYMENT_URL_B) &&
           response.url().includes('/v1/models'),
       );
       await page
