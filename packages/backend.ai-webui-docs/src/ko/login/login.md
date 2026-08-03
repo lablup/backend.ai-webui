@@ -185,7 +185,7 @@ TOTP 설정 이후에는 매 로그인 시 OTP 코드를 입력해야 합니다.
 
 권한이 없는 주소를 열면(예: 다른 권한을 가지고 있을 때 저장한 즐겨찾기나 관리자가 공유한 링크) WebUI는 페이지 내용 대신 **허가되지 않은 접근입니다.** 페이지를 표시합니다. 이 페이지에는 열려고 한 주소가 표시되고, 해당 페이지에 접근할 권한이 없다는 설명과 함께 사용자가 이용할 수 있는 첫 번째 페이지로 이동하는 버튼이 제공됩니다. 동시에 사이드바는 일반 메뉴로 되돌아가므로 로그아웃하지 않고 계속 탐색할 수 있습니다.
 
-<!-- TODO: Capture screenshot of unauthorized_access_page.png — the Unauthorized Access page shown after a non-admin user opens an admin-only URL, with the path pill, the "You don't have permission to access this page." description, the "Go back to the ... page" button, and the sidebar showing the general menu -->
+![](../images/unauthorized_access_page.png)
 
 :::note
 이 페이지가 표시되었다고 해서 계정에 문제가 있는 것은 아닙니다. 주소에 지정된 프로젝트에서 사용자가 가지고 있지 않은 권한이 해당 페이지에 필요하다는 의미입니다. 접근할 수 있어야 한다고 생각되면 관리자에게 해당 프로젝트에서의 권한을 확인해 달라고 요청하십시오.

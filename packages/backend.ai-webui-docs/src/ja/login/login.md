@@ -184,7 +184,7 @@ TOTP設定後は、毎回のログイン時にOTPコードの入力が必要に�
 
 権限のないアドレスを開いた場合（別のロールを持っていたときに保存したブックマークや、管理者から共有されたリンクなど）、WebUIはページの内容の代わりに**不正アクセス**ページを表示します。このページには開こうとしたアドレスが表示され、そのページにアクセスする権限がないことの説明と、利用可能な最初のページへ移動するボタンが表示されます。同時にサイドバーは一般メニューに戻るため、ログアウトせずにナビゲーションを続けられます。
 
-<!-- TODO: Capture screenshot of unauthorized_access_page.png — the Unauthorized Access page shown after a non-admin user opens an admin-only URL, with the path pill, the "You don't have permission to access this page." description, the "Go back to the ... page" button, and the sidebar showing the general menu -->
+![](../images/unauthorized_access_page.png)
 
 :::note
 このページが表示されても、アカウントに問題があるわけではありません。アドレスで指定されたプロジェクトにおいて、ユーザーが持っていないロールがそのページに必要であることを意味します。アクセスできるはずだと思われる場合は、管理者にそのプロジェクトでのロールを確認するよう依頼してください。

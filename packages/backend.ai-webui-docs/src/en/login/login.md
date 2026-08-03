@@ -268,7 +268,7 @@ it, and offers a button that takes you to the first page that is available to
 you. The sidebar falls back to the general menu at the same time, so you can keep
 navigating without logging out.
 
-<!-- TODO: Capture screenshot of unauthorized_access_page.png — the Unauthorized Access page shown after a non-admin user opens an admin-only URL, with the path pill, the "You don't have permission to access this page." description, the "Go back to the ... page" button, and the sidebar showing the general menu -->
+![](../images/unauthorized_access_page.png)
 
 :::note
 Seeing this page does not mean something is wrong with your account. It means the
