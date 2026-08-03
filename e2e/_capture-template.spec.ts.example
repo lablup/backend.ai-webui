@@ -1,0 +1,49 @@
+// Capture harness template for user-manual screenshots.
+//
+// Run with:
+//   PLAYWRIGHT_HOST_PLATFORM_OVERRIDE=ubuntu24.04-x64 \
+//   E2E_WEBUI_ENDPOINT=http://10.82.0.119:8090 \
+//   E2E_WEBSERVER_ENDPOINT=http://10.82.0.119:8090 \
+//   pnpm exec playwright test --config=playwright.docs-capture.config.ts
+//
+// Uses playwright.docs-capture.config.ts, NOT playwright.config.ts — the default
+// chromium project runs global-cleanup.teardown.ts, which sweeps vfolders and
+// services on the target server.
+import { test, expect, type Page } from '@playwright/test';
+import { loginAsAdmin } from './utils/test-util';
+
+const LANGS = ['en', 'ko', 'ja', 'th'] as const;
+const DOCS = 'packages/backend.ai-webui-docs/src';
+
+async function switchLanguage(page: Page, lang: string) {
+  await page.evaluate((l) => {
+    (window as unknown as { switchLanguage: (x: string) => void }).switchLanguage(
+      l,
+    );
+  }, lang);
+  // The i18n swap is synchronous in-place, but let React flush before capturing.
+  await page.waitForTimeout(600);
+}
+
+/** Capture the same screen once per locale into each language's images dir. */
+async function captureAllLocales(page: Page, pngName: string) {
+  for (const lang of LANGS) {
+    await switchLanguage(page, lang);
+    await page.screenshot({
+      path: `${DOCS}/${lang}/images/${pngName}`,
+      fullPage: false,
+    });
+  }
+  await switchLanguage(page, 'en');
+}
+
+test('start_page.png — Start page action cards', async ({ page, request }) => {
+  await loginAsAdmin(page, request);
+  await page.goto(`${process.env.E2E_WEBUI_ENDPOINT}/project/default/start`);
+  // Anchor on a stable card title so we never capture a half-rendered board.
+  await expect(
+    page.getByText('Start Deployment', { exact: false }).first(),
+  ).toBeVisible({ timeout: 30_000 });
+  await page.waitForTimeout(1200);
+  await captureAllLocales(page, 'start_page.png');
+});

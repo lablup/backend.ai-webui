@@ -9,6 +9,30 @@
 //
 // Also pins `channel: 'chromium'` (the full browser) rather than the default
 // headless shell, which Playwright does not ship for ubuntu 26.04.
+//
+// HOST SETUP (ubuntu 26.04) — all three are required, and each fails in a way
+// that is easy to miss:
+//
+//   1. Browsers do not install: Playwright has no ubuntu26.04 build, and
+//      `playwright install` prints the failure but STILL EXITS 0. Install with
+//        PLAYWRIGHT_HOST_PLATFORM_OVERRIDE=ubuntu24.04-x64 pnpm exec playwright install chromium
+//      (the `-x64` suffix is required; bare `ubuntu24.04` is rejected). The same
+//      env var must be set when running, not just when installing.
+//
+//   2. Chromium needs its runtime libs:
+//        sudo apt-get install -y libatk1.0-0t64 libatk-bridge2.0-0t64 \
+//          libatspi2.0-0t64 libcups2t64 libxkbcommon0 libxcomposite1 \
+//          libxdamage1 libxfixes3 libxrandr2 libgbm1 libpango-1.0-0 \
+//          libcairo2 libasound2t64 libnss3 libnspr4 libdrm2
+//
+//   3. CJK + Thai fonts, or ko/ja/th captures render as TOFU BOXES while the
+//      English one looks perfect — silent, and only visible by eyeballing the
+//      PNG:
+//        sudo apt-get install -y fonts-noto-cjk fonts-noto-cjk-extra \
+//          fonts-thai-tlwg fonts-noto-core
+//      (there is no `fonts-noto-thai` package on 26.04; apt aborts the whole
+//      transaction if you ask for it, so install these individually.)
+//      Verify with: fc-list :lang=ko | wc -l   (must be > 0, likewise ja / th)
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
@@ -34,7 +58,19 @@ export default defineConfig({
   projects: [
     {
       name: 'capture',
-      use: { ...devices['Desktop Chrome'], channel: 'chromium' },
+      // NOTE: project-level `use` OVERRIDES the top-level `use`, so viewport and
+      // deviceScaleFactor must be repeated here — spreading devices['Desktop
+      // Chrome'] alone silently resets them to 1280x720 @1x and produces
+      // off-spec captures that do not match the existing images' framing.
+      use: {
+        ...devices['Desktop Chrome'],
+        channel: 'chromium',
+        // 1440x900 matches the framing of the existing full-page manual
+        // screenshots; deviceScaleFactor 2 yields the 2880x1800 output
+        // SCREENSHOT-GUIDELINES.md asks for (sharp text without a Retina host).
+        viewport: { width: 1440, height: 900 },
+        deviceScaleFactor: 2,
+      },
     },
   ],
 });
