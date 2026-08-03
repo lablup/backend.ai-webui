@@ -30,6 +30,8 @@ import { Alert, App, Card, type CardProps, theme } from 'antd';
 import { createStyles } from 'antd-style';
 import {
   BAILogger,
+  toGlobalId,
+  toLocalId,
   useBAILogger,
   useEventNotStable,
   useUpdatableState,
@@ -45,7 +47,7 @@ interface ChatCardProps extends Omit<CardProps, 'classNames' | 'variant'> {
   onUpdateChat?: (partialChat: DeepPartial<ChatData>) => void;
   onRemoveChat?: (chat: ChatData) => void;
   onAddChat?: (chat: ChatData) => void;
-  onChangeEndpoint?: (endpointId: string) => void;
+  onChangeDeployment?: (deploymentId: string) => void;
   onChangeModel?: (modelId: string) => void;
   onChangeAgent?: (agentId: string) => void;
   onChangeSync?: (sync: boolean) => void;
@@ -54,7 +56,7 @@ interface ChatCardProps extends Omit<CardProps, 'classNames' | 'variant'> {
   closable?: boolean;
   cloneable?: boolean;
   fetchOnClient?: boolean;
-  defaultEndpointId?: string;
+  defaultDeploymentId?: string;
 }
 
 const useStyles = createStyles(({ token, css }) => ({
@@ -206,14 +208,14 @@ const ChatInput = React.memo(PureChatInput);
 function createBaseURL(
   logger: BAILogger,
   basePath?: string,
-  endpointUrl?: string | null,
+  deploymentUrl?: string | null,
 ) {
   try {
-    return endpointUrl
-      ? new URL(basePath ?? '', endpointUrl).toString()
+    return deploymentUrl
+      ? new URL(basePath ?? '', deploymentUrl).toString()
       : undefined;
   } catch {
-    logger.error('Invalid base URL:', basePath, 'endpointUrl', endpointUrl);
+    logger.error('Invalid base URL:', basePath, 'deploymentUrl', deploymentUrl);
   }
 }
 
@@ -236,28 +238,44 @@ const PureChatCard: React.FC<ChatCardProps> = ({
   const { t } = useTranslation();
   const { logger } = useBAILogger();
   const { message: appMessage } = App.useApp();
-  const endpointResult = useLazyLoadQuery<ChatCardQuery>(
+  const deploymentResult = useLazyLoadQuery<ChatCardQuery>(
     graphql`
-      query ChatCardQuery($endpointId: UUID!) {
-        endpoint(endpoint_id: $endpointId) @catch {
-          endpoint_id
-          url
-          replicas
-          ...ChatHeader_Endpoint
+      query ChatCardQuery($deploymentId: ID!) {
+        deployment(id: $deploymentId) @catch {
+          id
+          networkAccess {
+            endpointUrl
+          }
+          replicaState {
+            desiredReplicaCount
+          }
+          ...ChatHeader_Deployment
         }
       }
     `,
     {
-      endpointId: chat.provider.endpointId || '',
+      // `chat.provider.deploymentId` holds the deployment's local UUID (it also
+      // travels through the `deploymentId` URL param), while the Strawberry
+      // `deployment(id:)` field takes the global Relay ID. The empty string
+      // keeps the store-only branch below from issuing a network request.
+      deploymentId: chat.provider.deploymentId
+        ? toGlobalId('ModelDeployment', chat.provider.deploymentId)
+        : '',
     },
     {
-      fetchPolicy: chat.provider.endpointId ? 'store-or-network' : 'store-only',
+      fetchPolicy: chat.provider.deploymentId
+        ? 'store-or-network'
+        : 'store-only',
     },
   );
-  const endpoint = endpointResult.endpoint.ok
-    ? endpointResult.endpoint.value
+  const deployment = deploymentResult.deployment.ok
+    ? deploymentResult.deployment.value
     : null;
-  const hasNoDesiredReplicas = endpoint?.replicas === 0;
+  const hasNoDesiredReplicas =
+    deployment?.replicaState.desiredReplicaCount === 0;
+  // Consumers below address the deployment by its local UUID, as the chat
+  // provider and the `deploymentId` URL param do.
+  const deploymentId = deployment?.id ? toLocalId(deployment.id) : undefined;
   const {
     styles: { chatCard: chatCardStyle, alert: alertStyle },
   } = useStyles();
@@ -280,7 +298,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
   const baseURL = createBaseURL(
     logger,
     chat.provider.basePath,
-    agentEndpointUrl || endpoint?.url,
+    agentEndpointUrl || deployment?.networkAccess.endpointUrl,
   );
   const { models, modelId, modelsError, isLoadingModels } = useModels(
     chat.provider,
@@ -513,18 +531,18 @@ const PureChatCard: React.FC<ChatCardProps> = ({
             onUpdateChat?.({
               provider: {
                 agentId: agent.id,
-                endpointId: binding?.endpoint_url ? '' : binding?.endpoint_id,
+                deploymentId: binding?.endpoint_url ? '' : binding?.endpoint_id,
                 apiKey: binding?.endpoint_token || undefined,
                 modelId: agent.modelPreferences?.preferredModelId || undefined,
               },
             });
           }}
-          // endpoint
-          endpointFrgmt={endpoint}
-          onChangeEndpoint={(endpointId) => {
+          // deployment
+          deploymentFrgmt={deployment}
+          onChangeDeployment={(deploymentId) => {
             onUpdateChat?.({
               provider: {
-                endpointId,
+                deploymentId,
               },
             });
           }}
@@ -561,12 +579,14 @@ const PureChatCard: React.FC<ChatCardProps> = ({
       }
       ref={dropContainerRef}
     >
-      {baseURL && (endpoint || agentEndpointUrl) && _.isEmpty(models) && (
+      {baseURL && (deployment || agentEndpointUrl) && _.isEmpty(models) && (
         <CustomModelForm
-          endpointUrl={agentEndpointUrl || endpoint?.url || ''}
+          deploymentUrl={
+            agentEndpointUrl || deployment?.networkAccess.endpointUrl || ''
+          }
           basePath={chat.provider.basePath}
           token={effectiveApiKey}
-          endpointId={endpoint?.endpoint_id}
+          deploymentId={deploymentId}
           loading={isPendingUpdate || isLoadingModels}
           hasNoDesiredReplicas={hasNoDesiredReplicas}
           onSubmit={(data) => {

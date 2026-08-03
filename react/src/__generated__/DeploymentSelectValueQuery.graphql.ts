@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<32f151f4c8d125d585242479c525734b>>
+ * @generated SignedSource<<48d2217c91c32a7505791a5f19db3bf6>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,13 +10,17 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type DeploymentSelectValueQuery$variables = {
-  endpoint_id: string;
+  deploymentId: string;
 };
 export type DeploymentSelectValueQuery$data = {
-  readonly endpoint: {
-    readonly endpoint_id: string;
-    readonly name: string | null | undefined;
-    readonly url: string | null | undefined;
+  readonly deployment: {
+    readonly id: string;
+    readonly metadata: {
+      readonly name: string;
+    };
+    readonly networkAccess: {
+      readonly endpointUrl: string | null | undefined;
+    };
   } | null | undefined;
 };
 export type DeploymentSelectValueQuery = {
@@ -29,63 +33,78 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "endpoint_id"
+    "name": "deploymentId"
   }
 ],
 v1 = [
   {
-    "kind": "Variable",
-    "name": "endpoint_id",
-    "variableName": "endpoint_id"
+    "alias": null,
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "id",
+        "variableName": "deploymentId"
+      }
+    ],
+    "concreteType": "ModelDeployment",
+    "kind": "LinkedField",
+    "name": "deployment",
+    "plural": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "id",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "ModelDeploymentMetadata",
+        "kind": "LinkedField",
+        "name": "metadata",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "name",
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "ModelDeploymentNetworkAccess",
+        "kind": "LinkedField",
+        "name": "networkAccess",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "endpointUrl",
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
   }
-],
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "name",
-  "storageKey": null
-},
-v3 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "endpoint_id",
-  "storageKey": null
-},
-v4 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "url",
-  "storageKey": null
-};
+];
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "DeploymentSelectValueQuery",
-    "selections": [
-      {
-        "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "Endpoint",
-        "kind": "LinkedField",
-        "name": "endpoint",
-        "plural": false,
-        "selections": [
-          (v2/*: any*/),
-          {
-            "kind": "RequiredField",
-            "field": (v3/*: any*/),
-            "action": "NONE"
-          },
-          (v4/*: any*/)
-        ],
-        "storageKey": null
-      }
-    ],
+    "selections": (v1/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -94,41 +113,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "DeploymentSelectValueQuery",
-    "selections": [
-      {
-        "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "Endpoint",
-        "kind": "LinkedField",
-        "name": "endpoint",
-        "plural": false,
-        "selections": [
-          (v2/*: any*/),
-          (v3/*: any*/),
-          (v4/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ]
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "d888e8ed8462de1a8cdfa5203eec275f",
+    "cacheID": "d019233e2b61cf4c5de6d4201a9241e1",
     "id": null,
     "metadata": {},
     "name": "DeploymentSelectValueQuery",
     "operationKind": "query",
-    "text": "query DeploymentSelectValueQuery(\n  $endpoint_id: UUID!\n) {\n  endpoint(endpoint_id: $endpoint_id) {\n    name\n    endpoint_id\n    url\n    id\n  }\n}\n"
+    "text": "query DeploymentSelectValueQuery(\n  $deploymentId: ID!\n) {\n  deployment(id: $deploymentId) {\n    id\n    metadata {\n      name\n    }\n    networkAccess {\n      endpointUrl\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "94a10c16a1bb37157f0a417d80a9c5e2";
+(node as any).hash = "216367ded2e494bc626f4baba302eced";
 
 export default node;
