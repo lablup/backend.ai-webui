@@ -53,6 +53,7 @@ import {
   createDeploymentShell,
   deleteDeploymentAndVerify,
   type DeploymentFixtures,
+  ensureDeploymentPreset,
   escapeForRegExp,
   provisionDeploymentFixtures,
   provisionDeploymentModelFolder,
@@ -451,6 +452,26 @@ test.describe(
     test('Admin can view Preset Mode fields in the Add Revision modal', async ({
       page,
     }) => {
+      // Preset Mode's fields only render once at least one deployment preset
+      // exists on the cluster -- with none, the modal shows a "No deployment
+      // presets available" empty state instead (confirmed live via GraphQL:
+      // this cluster had zero deployment presets at test time, which the app
+      // correctly reflects as an intentional empty state, not a bug). Ensure
+      // one exists first, exactly like the Preset Mode revision-attach test
+      // below -- reusing a compatible pre-existing preset when the cluster
+      // has one, or provisioning a throwaway `e2e-dfx-*` preset otherwise. A
+      // model folder is not needed here since this test only inspects the
+      // modal's fields and never submits.
+      await skipUnlessClientFeature(
+        page,
+        'deployment-preset',
+        "Preset Mode requires the 'deployment-preset' capability (manager >= 26.4.x)",
+      );
+      const preset = await ensureDeploymentPreset(page);
+      if (preset.presetId) {
+        fixtures = { presetId: preset.presetId, presetName: preset.presetName };
+      }
+
       const deploymentName = `e2e-plan-preset-${Date.now()}`;
       await navigateTo(page, 'deployments');
       await createDeploymentShell(page, deploymentName);
