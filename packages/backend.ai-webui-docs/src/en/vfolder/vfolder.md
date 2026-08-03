@@ -206,7 +206,7 @@ Select the checkboxes of the folders you want to remove. A selection summary
 the trash bin button to open the **Move to trash bin** confirmation for the
 whole selection.
 
-![](../images/vfolder_bulk_move_to_trash.png)
+<!-- ![](../images/vfolder_bulk_move_to_trash.png) -->
 <!-- TODO: Capture screenshot of vfolder_bulk_move_to_trash.png — the Move to trash bin modal opened from a multi-folder selection that mixes deletable and non-deletable folders, so the excluded-folders alert and its bulleted folder list are visible above the confirmation message -->
 
 If the selection contains folders you are not allowed to delete, the modal lists

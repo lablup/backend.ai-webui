@@ -183,7 +183,7 @@ Backend.AI는 사용자의 파일을 안전하게 보관할 수 있도록 전용
 휴지통 버튼이 나타납니다. 휴지통 버튼을 클릭하면 선택한 폴더 전체에 대한
 **휴지통으로 이동** 확인 창이 열립니다.
 
-![](../images/vfolder_bulk_move_to_trash.png)
+<!-- ![](../images/vfolder_bulk_move_to_trash.png) -->
 <!-- TODO: Capture screenshot of vfolder_bulk_move_to_trash.png — 삭제 권한이 있는 폴더와 없는 폴더가 함께 선택된 상태에서 연 휴지통으로 이동 모달. 제외 폴더 알림과 그 안의 폴더 목록이 확인 메시지 위에 보여야 함 -->
 
 선택한 폴더 중에 삭제 권한이 없는 폴더가 있으면, 모달에 *"삭제 권한이 없는 다음 폴더는
