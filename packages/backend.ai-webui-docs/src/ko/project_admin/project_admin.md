@@ -71,6 +71,23 @@ navTitle: 프로젝트 관리자 기능
 
 ![](../images/project_admin_scope_alert.png)
 
+<a id="refreshing-project-admin-pages"></a>
+
+## 프로젝트 관리자 페이지 새로고침
+
+네 개의 프로젝트 관리자 페이지는 모두 테이블 위 도구 모음의 오른쪽 끝에 동일한 새로고침 컨트롤을 제공합니다. 새로고침 버튼을 클릭하면 목록을 즉시 다시 불러옵니다.
+
+새로고침 버튼 옆의 화살표를 클릭하면 **자동 새로고침** 메뉴가 열리며, 페이지가 스스로 다시 불러오는 주기를 선택할 수 있습니다: **끄기**, **5초**, **10초**, **15초**, **30초**, **1분**. 현재 사용 중인 주기에는 체크 표시가 나타납니다. 자동 새로고침이 켜져 있는 동안에는 선택한 주기가 화살표 옆에 표시되고, 다음 새로고침까지 남은 시간이 컨트롤 테두리에 채워집니다.
+
+![](../images/project_admin_auto_refresh_menu.png)
+<!-- TODO: Capture screenshot of project_admin_auto_refresh_menu.png — the refresh button on a project-admin page with the Auto Refresh menu open, showing the Off / 5s / 10s / 15s / 30s / 1m options and the check mark on the active interval. -->
+
+- **세션**과 **배포** 페이지는 기본적으로 15초마다 새로고침합니다.
+- **사용자**와 **데이터** 페이지는 기본적으로 자동 새로고침이 꺼져 있습니다.
+- 각 페이지는 자체 주기를 기억하며, 선택한 값은 페이지를 다시 열어도 유지됩니다. **끄기**를 선택하면 해당 페이지의 자동 새로고침만 중지됩니다.
+
+새로고침 버튼을 직접 클릭해도 남은 시간이 다시 시작되므로, 다음 자동 새로고침까지는 선택한 주기만큼의 시간이 남습니다.
+
 <a id="users"></a>
 
 ## 사용자
@@ -146,6 +163,21 @@ navTitle: 프로젝트 관리자 기능
 
 - **실행 중 / 종료됨** 세그먼트 컨트롤: 현재 실행 중인 세션과 이미 종료된 세션을 전환합니다.
 - **속성 필터 및 정렬**: ID, 세션 이름 또는 소유자 UUID로 목록을 필터링할 수 있으며, 정렬 가능한 열 헤더를 클릭하여 테이블을 정렬할 수 있습니다.
+
+### 세션 테이블 열
+
+각 행은 하나의 세션을 나타내며, 기본적으로 **세션 이름**, **상태**, **AI 가속기**, **CPU**, **메모리**, **경과 시간**, **환경**, **자원 그룹**, **세션 유형**, **클러스터 모드**, **생성 시각**, **소유자 이메일** 열이 표시됩니다.
+
+![](../images/project_admin_session_table_columns.png)
+<!-- TODO: Capture screenshot of project_admin_session_table_columns.png — the project-admin Sessions table scrolled to show the Environments, Session Type and Cluster Mode columns, with an image icon rendered in Environments and a colored session-type tag. -->
+
+이 중 세 개의 열은 세션이 무엇 위에서 실행되는지를 보여 줍니다:
+
+- **환경**: 세션의 컨테이너 이미지를 이미지 아이콘, 기본 이름, 버전, 아키텍처 순으로 표시합니다. 아이콘과 표시 이름은 설치된 Backend.AI에 등록된 이미지 메타데이터에서 가져오며, 메타데이터가 등록되지 않은 이미지는 기본 아이콘으로 표시됩니다.
+- **세션 유형**: 세션 유형을 색상 태그로 표시합니다 — `INTERACTIVE`, `BATCH`, `INFERENCE`.
+- **클러스터 모드**: **단일** 또는 **다중**을 표시하고, 괄호 안에 세션의 클러스터 크기를 함께 표시합니다.
+
+표시할 열을 변경하려면 테이블 아래 페이지네이션 컨트롤 옆의 설정(톱니바퀴) 아이콘을 클릭한 뒤 **표 설정** 모달에서 선택을 조정합니다. 기본적으로 숨겨져 있는 **세션 ID**와 **프로젝트** 열도 여기에서 표시할 수 있습니다.
 
 ### 세션 종료
 
