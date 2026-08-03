@@ -136,11 +136,19 @@ test.describe(
         await expect(modal.locator('#startCommand').first()).toBeVisible();
 
         // 2. Basic mode (default): no Execution (Shell/Exec) radios and no
-        //    Shell input are shown.
+        //    Shell input are shown. Basic runs the command under the
+        //    backend's default shell exactly like Advanced + Shell, so the
+        //    same shell-operators hint applies here too (FR-3205).
         await expect(
           modal.getByRole('radio', { name: 'Exec', exact: true }),
         ).toHaveCount(0);
         await expect(modal.locator('#commandShell')).toHaveCount(0);
+        await expect(
+          modal.getByText(
+            'Shell operators (; && | $VAR, redirection, etc.) can be used.',
+            { exact: true },
+          ),
+        ).toBeVisible();
 
         // 3. Toggle Advanced (the Basic/Advanced Segmented lives in the Service
         //    Configuration header) → the Execution radios (Shell/Exec) and the
