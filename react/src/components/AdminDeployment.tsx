@@ -126,12 +126,10 @@ const AdminDeployment = ({
     'model-deployment-extended-filter',
   );
 
-  const mergedFilter = queryRef.variables.filter as DeploymentFilter | undefined;
-  const statusCategory: DeploymentStatusCategory = mergedFilter?.status?.in?.includes(
-    'STOPPED',
-  )
-    ? 'finished'
-    : 'running';
+  const mergedFilter = queryRef.variables.filter as
+    DeploymentFilter | undefined;
+  const statusCategory: DeploymentStatusCategory =
+    mergedFilter?.status?.in?.includes('STOPPED') ? 'finished' : 'running';
   const userFilter = _.omit(mergedFilter, 'status') as DeploymentFilter;
 
   const orderEntry = queryRef.variables.orderBy?.[0];
@@ -171,9 +169,7 @@ const AdminDeployment = ({
 
   const [commitDeleteMutation, isInFlightDeleteMutation] =
     useMutation<AdminDeploymentDeleteMutation>(graphql`
-      mutation AdminDeploymentDeleteMutation(
-        $input: DeleteDeploymentInput!
-      ) {
+      mutation AdminDeploymentDeleteMutation($input: DeleteDeploymentInput!) {
         deleteModelDeployment(input: $input) {
           id
         }
@@ -247,8 +243,7 @@ const AdminDeployment = ({
             <BAIRadioGroup
               value={statusCategory}
               onChange={(e) => {
-                const nextCategory = e.target
-                  .value as DeploymentStatusCategory;
+                const nextCategory = e.target.value as DeploymentStatusCategory;
                 onReload(
                   {
                     ...queryRef.variables,
@@ -469,7 +464,11 @@ const AdminDeployment = ({
         deploymentFrgmt={editingDeployment ?? null}
         onRequestClose={(success) => {
           setEditingDeploymentId(null);
-          if (success) {
+          // A create adds a new row the offset query can't know about, so it
+          // needs a refetch. An update returns every field, so Relay merges
+          // the record by id into the store and the list reflects it without
+          // one.
+          if (success && editingDeployment === null) {
             onReload(queryRef.variables, { fetchPolicy: 'network-only' });
           }
         }}

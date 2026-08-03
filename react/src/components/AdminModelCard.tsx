@@ -217,8 +217,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
     setIsSettingModalOpen(true);
   };
 
-  const modelCards =
-    adminModelCardsV2?.edges?.map((edge) => edge?.node) ?? [];
+  const modelCards = adminModelCardsV2?.edges?.map((edge) => edge?.node) ?? [];
 
   const editingModelCard = editingModelCardId
     ? modelCards.find((mc) => mc?.id === editingModelCardId)
@@ -437,8 +436,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
               {
                 ...queryRef.variables,
                 limit: nextPageSize,
-                offset:
-                  nextCurrent > 1 ? (nextCurrent - 1) * nextPageSize : 0,
+                offset: nextCurrent > 1 ? (nextCurrent - 1) * nextPageSize : 0,
               },
               { fetchPolicy: 'network-only' },
             );
@@ -454,7 +452,11 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
           onRequestClose={(success) => {
             setIsSettingModalOpen(false);
             setEditingModelCardId(null);
-            if (success) {
+            // A create adds a new row the offset query can't know about, so it
+            // needs a refetch. An update returns every field, so Relay merges
+            // the record by id into the store and the list reflects it
+            // without one.
+            if (success && editingModelCard === null) {
               onReload(queryRef.variables, { fetchPolicy: 'network-only' });
             }
           }}

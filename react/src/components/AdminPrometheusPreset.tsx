@@ -3,9 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { AdminPrometheusPresetDeleteMutation } from '../__generated__/AdminPrometheusPresetDeleteMutation.graphql';
-import {
-  AdminPrometheusPresetQuery as AdminPrometheusPresetQueryType,
-} from '../__generated__/AdminPrometheusPresetQuery.graphql';
+import { AdminPrometheusPresetQuery as AdminPrometheusPresetQueryType } from '../__generated__/AdminPrometheusPresetQuery.graphql';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import AutoUpdateFetchKeyButton, {
   LONG_AUTO_UPDATE_DELAY_OPTIONS,
@@ -210,7 +208,11 @@ const AdminPrometheusPreset = ({
           onRequestClose={(success) => {
             setIsOpenEditorModal(false);
             setEditingPreset(null);
-            if (success) {
+            // A create adds a new row the offset query can't know about, so it
+            // needs a refetch. An update returns every field, so Relay merges
+            // the record by id into the store and the list reflects it
+            // without one.
+            if (success && editingPreset === null) {
               onReload(queryRef.variables, { fetchPolicy: 'network-only' });
             }
           }}
