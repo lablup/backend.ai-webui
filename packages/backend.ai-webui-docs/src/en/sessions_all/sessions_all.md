@@ -17,14 +17,16 @@ After logging in with a user account, click `Sessions` on the left sidebar.
 
 ![](../images/sessions_page.png)
 
+For how the list is organized, filtered, and refreshed, see
+[Session List View and Refresh](#session-list-view-and-refresh).
 
-Click the `START` button to start a new compute session.
+Click the `Start Session` button to start a new compute session.
 
 ![](../images/launch_session_type.png)
 
 <a id="session-type"></a>
 
-### Session type
+### Session Type
 
 In the first page, users can select the type of session, 'interactive' or 'batch'.
 If needed, setting the name of the session (optional) is also available.
@@ -80,10 +82,10 @@ You can also select a project and resource group.
 
 <a id="environments-and-resource-allocation"></a>
 
-### Environments & resource allocation
+### Environments & Resource Allocation
 
 
-Click the `Next` button below, or the `Environments & Resource allocation` menu on the right
+Click the `Next` button below, or the `Environments & Resource Allocation` menu on the right
 to proceed to the next page. If you want to create a session without any further
 settings, press the `Skip to review` button. In this case, settings on the
 other pages will all use the default values.
@@ -109,7 +111,7 @@ refer to the following:
 
   ![](../images/launch_session_environments.png)
 
-### Resource allocation
+### Resource Allocation
 
 
 - Resource Group: Specifies the resource group in which to create a compute
@@ -200,7 +202,7 @@ The Agent Select feature may not be available depending on the server environmen
 <a id="data-and-storage"></a>
 <a id="session-mounts"></a>
 
-### Data & storage
+### Data & Storage
 
 
 Click the `Next` button below, or the `Data & Storage` menu on the right to proceed to the next page.
@@ -238,7 +240,7 @@ On this page, Network configuration can be done such as Preopen Ports.
 
 <a id="confirm-and-launch"></a>
 
-### Confirm and launch
+### Confirm and Launch
 
 
 If you are done with the network setting, click the `Next` button below, or
@@ -294,7 +296,7 @@ By clicking the app dialog button on the far left, you can view the available ap
 ![](../images/app_dialog.png)
 
 
-### Recent history
+### Recent History
 
 
 'Session Launcher' page provides a set of options for creating sessions. The
@@ -321,6 +323,43 @@ network connection problems, and etc. This can be solved by refreshing the
 browser.
 :::
 
+<a id="session-list-view-and-refresh"></a>
+
+## Session List View and Refresh
+
+The session list groups your sessions into type tabs — **All**, **Interactive**,
+**Batch**, **Inference**, and **Upload Sessions** — and each tab carries a
+**Running** / **Finished** switch and a property filter for **Session Name**,
+**Resource Group**, and **Agent**.
+
+Every tab keeps its own filter, sort order, and page number, and that view state
+is stored in the page URL. Switching to another tab and back restores the view
+you left instead of resetting it, reloading the browser reproduces it, and you
+can bookmark or share the URL to open the list in exactly the same state.
+
+<a id="auto-refresh-interval"></a>
+
+### Auto-Refresh Interval
+
+The refresh button at the right of the list toolbar reloads the session list on
+demand. It also carries an auto-refresh interval selector: click the chevron
+next to the button to pick an interval — **Off**, or one of the presets between
+5 seconds and 60 seconds. While auto-refresh is on, an animated countdown border
+fills the control to show how much time remains until the next reload, and the
+active interval appears as a label (for example, `15s`) on the selector.
+
+Auto-refresh is on out of the box on the compute session surfaces:
+
+- The **session list** starts at a 15-second interval.
+- The **session detail panel** and the **container log** window start at a
+  10-second interval.
+
+Each of these surfaces remembers your interval separately and keeps it across
+reloads, so choosing **Off** in the container log window does not stop the
+session list from refreshing.
+
+<!-- TODO: Capture screenshot of session_list_auto_refresh_dropdown.png — the Sessions page list toolbar with the refresh button's interval dropdown open, showing Off / 5s / 10s / 15s / 30s / 60s with 15s checked, and the countdown border on the refresh button -->
+
 <a id="session-detail-panel"></a>
 
 ## Session detail panel
@@ -331,6 +370,10 @@ session ID, user ID, status, type, environments, mount information, resource all
 elapsed time, agent, cluster mode, resource usage including network I/O, and kernel information.
 
 Click the `Log` button next to the `Hostname` in `Kernels` to view the logs of that kernel directly.
+
+The refresh button in the panel header reloads the session information and, like
+the list toolbar, offers an auto-refresh interval selector. See
+[Auto-Refresh Interval](#auto-refresh-interval) for how the intervals work.
 
 ![](../images/session_detail.png)
 
@@ -515,6 +558,15 @@ applies the following features, respectively:
 Depending on the system configuration, these options may not be shown.
 :::
 
+:::note
+Your administrator can hide the in-container apps for batch sessions by enabling
+`hideAppsOnBatchSession` in `resources/app_template.json`. When it is enabled,
+the app launcher and the terminal shortcut are not offered for **Batch**
+sessions — in the session list row actions, in the session creation
+notification, and in the session detail panel. Interactive sessions are not
+affected. This option is off by default.
+:::
+
 Let's click on Jupyter Notebook.
 
 ![](../images/jupyter_app.png)
@@ -574,6 +626,30 @@ icon in the session detail panel.
 
 ![](../images/session_log.png)
 
+The log window provides the following controls above the log view:
+
+- **Kernel selector**: Choose which kernel of the session to read. For a
+  single-container session there is only one entry; for a cluster session, each
+  container is listed by its hostname with the first characters of its ID.
+- **Download**: Save the currently displayed log to a text file.
+- **Refresh**: Reload the log. The button also carries the auto-refresh interval
+  selector described in [Auto-Refresh Interval](#auto-refresh-interval).
+
+Because a log window is normally opened to watch new lines arrive, auto-refresh
+starts at a 10-second interval. Pick another interval — or **Off** — from the
+selector next to the refresh button, and that choice is remembered for the log
+window the next time you open it. The log view scrolls to the newest lines after
+each reload, and the lines that arrived since the previous reload are
+highlighted.
+
+You can also search within the displayed log using the search box built into the
+log view.
+
+<!-- TODO: Capture screenshot of container_log_refresh_dropdown.png — the container log window toolbar showing the kernel selector, the Download button, and the refresh button with its interval dropdown open (Off / 5s / 10s / 15s / 30s / 60s, 10s checked) -->
+
+<!-- TODO: Re-capture session_log.png — the current image predates the unified refresh control; the log window toolbar no longer has a separate auto-refresh switch or interval number input -->
+
+
 <a id="rename-running-session"></a>
 
 ## Rename running session
@@ -605,12 +681,18 @@ Backend.AI supports three types of inactivity (idleness) criteria for automatic 
 collection of compute sessions: Max Session Lifetime, Network Idle Timeout, and Utilization
 Checker.
 
-The criteria for session termination can be found in the 'Idle Checks' section of the session detail panel.
+The criteria that apply to a running session are shown in the **Reclamation Status**
+row of the session detail panel, together with the time remaining before each one
+would terminate the session. The row appears while the session is running and one
+of its idle checks is approaching expiration.
 
 ![](../images/idle_checks_column.png)
 
-The meaning of idle checkers are as follows, and more detailed explanations can be
-found by clicking the information (i) button in the idle checks section.
+<!-- TODO: Re-capture idle_checks_column.png — the session detail panel row is now labeled Reclamation Status with a question-mark icon, and the utilization entry is shown as a Safe / Warning / At risk badge with an info icon instead of the plain "Utilization Checker" label -->
+
+The meaning of idle checkers are as follows. Click the question-mark (`?`) icon
+next to the **Reclamation Status** label to open a dialog with the full
+explanation of each one.
 
 - Max Session Lifetime: Force-terminate sessions after this time from creation.
   This measure prevents sessions from running indefinitely.
@@ -645,16 +727,53 @@ remains low. Briefly using the resources does not extend the grace period.
 Only the average utilization over the last idle timeout is considered.
 :::
 
-Hovering the mouse over the Utilization Checker will display a tooltip with the
-utilization and threshold values. The text color changes to yellow and then red
-as the current utilization approaches the threshold (indicating low resource
-utilization).
-
-
 :::note
-Depending on the environment settings, idle checkers and resource types of
-utilization checker's tooltip may be different.
+Depending on the environment settings, the idle checkers that apply and the
+resource types listed for the utilization checker may be different.
 :::
+
+<a id="reclamation-status"></a>
+
+### Reclamation Status
+
+The session list includes a **Reclamation Status** column that tells you at a
+glance how close each session is to being reclaimed by the utilization checker.
+The same badge replaces the plain label of the utilization entry in the
+**Reclamation Status** row of the session detail panel.
+
+The badge has three levels:
+
+- **Safe**: The current average utilization is comfortably above the threshold.
+- **Warning**: The current average is above the threshold, but close to it.
+- **At risk**: The current average is below the threshold.
+
+Sessions that the utilization checker does not apply to, and sessions for which
+no measurement is available yet, show `-` in the column. In the session detail
+panel, an entry whose first reclamation decision has not been made yet reads
+**Checking reclamation status** in place of the remaining-time tag.
+
+Hover the information (i) icon next to the badge to open a popover with the
+details behind the level:
+
+- The condition sentence, which states whether resources are reclaimed when
+  **any** of the listed conditions stays at the at-risk level or only when
+  **all** of them do. Which sentence appears depends on how your administrator
+  configured the checker.
+- One row per measured resource, each with its own level badge and the current
+  average against the configured threshold, in the form
+  `(current 12% | threshold 5%)`.
+- A legend describing the criterion for each of the three levels.
+
+Resources without a measurement are listed with a dash and do not affect the
+overall level.
+
+The remaining-time tag shown next to the utilization entry uses the same colors
+as the badge, so a session whose countdown turns red is also the one at risk of
+being reclaimed.
+
+<!-- TODO: Capture screenshot of session_reclamation_status_column.png — the Sessions page list showing the Reclamation Status column with Safe, Warning, and At risk badges on different rows -->
+
+<!-- TODO: Capture screenshot of session_reclamation_status_popover.png — the Reclamation Status popover opened from the info icon, showing the condition sentence, the per-resource rows with current vs threshold values, and the three-level legend -->
 
 <a id="how-to-add-environment-variable-before-creating-a-session"></a>
 
