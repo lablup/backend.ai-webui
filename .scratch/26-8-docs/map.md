@@ -6,12 +6,18 @@
 
 Every manual page affected by the 26.8 release has an **open, ready-for-review PR
 against `main`** carrying: prose complete in all four languages (en/ko/ja/th),
-screenshot needs recorded as TODO markers (not captured), an attribution table in
-the PR body, all driving authors assigned as reviewers, and green docs CI.
+**screenshots captured and committed**, an attribution table in the PR body, all
+driving authors assigned as reviewers, and green docs CI.
 
-The map is done when no page still needs a PR and nothing is left to decide
-before screenshots can be captured. **Screenshot capture, review turnaround, and
-merge are explicitly not part of reaching the destination.**
+The map is done when every affected page has such a PR sitting immediately before
+human review. **Review turnaround and merge remain outside the destination.**
+
+> **Destination widened 2026-08-03.** Screenshot capture was originally excluded
+> because no server was available. A capture server was then provided
+> (`10.82.0.119:8090`, e2e default credentials), so capture moved from a
+> follow-up effort *into* this map. Consequence: the per-page write tickets now
+> have a capture stage after the prose stage, and PRs are not ready for review
+> until their TODO markers are discharged.
 
 ## Notes
 
@@ -128,18 +134,19 @@ Fog toward the destination. Graduates into tickets as the frontier advances.
 
 Ruled beyond this destination. Never graduates; returns only as a fresh effort.
 
-- **Screenshot capture.** Blocked on server access the human will supply later, and
-  deliberately excluded from the destination so PRs are not held hostage to it.
-  Becomes its own effort, consuming the hand-off artifact defined by
-  [Define the screenshot hand-off artifact](issues/02-screenshot-handoff.md).
+- ~~**Screenshot capture.**~~ _Moved INTO scope 2026-08-03_ once a capture server
+  was provided. See the destination note above and
+  [Capture screenshots](issues/05-screenshot-capture.md).
 - **Batched back-port to `26.8`.** After the per-page PRs merge *and* screenshots
   land, one sync commit goes to the `26.8` release branch, which auto-refreshes
   `docs-archive/26.8` and the live `/26.8/` site via FR-3242. Must exclude the 2
   post-cut commits (26.9 features). Precedent: `26.7` received exactly this
   treatment — 7 commits including `docs(26.7): sync manual source with main`.
 - **The 96 pre-existing screenshot TODO markers** already in the manual, unrelated
-  to 26.8. The capture effort may choose to clear them opportunistically; that is
-  its call, not this map's.
+  to 26.8. Still out of scope even though a capture server is now available: the
+  brief is the capture needs *of these PRs*, and folding 96 unrelated recaptures in
+  would balloon every diff and bury the 26.8 changes under noise. Cheap to opt into
+  later as its own effort now that the server exists.
 - **Review turnaround and merge.** The destination is *open, ready-for-review PRs*.
   What reviewers do next is outside the map.
 
