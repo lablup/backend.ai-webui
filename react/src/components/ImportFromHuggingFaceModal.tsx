@@ -17,7 +17,6 @@ import { useToggle } from 'ahooks';
 import {
   App,
   Button,
-  Card,
   Empty,
   Form,
   FormInstance,
@@ -31,6 +30,7 @@ import {
   Typography,
 } from 'antd';
 import {
+  BAICard,
   BAIModal,
   BAIModalProps,
   BAIFlex,
@@ -38,7 +38,6 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CheckIcon } from 'lucide-react';
-import Markdown from 'markdown-to-jsx';
 import React, {
   Suspense,
   useEffect,
@@ -47,7 +46,9 @@ import React, {
   useTransition,
 } from 'react';
 import { useTranslation } from 'react-i18next';
+import Markdown from 'react-markdown';
 import { graphql, useLazyLoadQuery } from 'react-relay';
+import remarkGfm from 'remark-gfm';
 
 type Service = {
   url: string;
@@ -69,7 +70,7 @@ type ImportFromHuggingFaceResult = {
 const ReadmeFallbackCard = () => {
   const { token } = theme.useToken();
   return (
-    <Card
+    <BAICard
       size="small"
       title={
         <BAIFlex direction="row" gap="xs">
@@ -80,13 +81,14 @@ const ReadmeFallbackCard = () => {
       styles={{
         body: {
           padding: token.paddingLG,
+          paddingTop: 0,
           overflow: 'auto',
           height: 200,
         },
       }}
     >
       <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-    </Card>
+    </BAICard>
   );
 };
 
@@ -353,7 +355,7 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
           </Form.Item>
           {huggingFaceURL && huggingFaceModelInfo.data?.markdown ? (
             <Suspense fallback={<ReadmeFallbackCard />}>
-              <Card
+              <BAICard
                 size="small"
                 title={
                   <BAIFlex direction="row" gap="xs">
@@ -364,13 +366,16 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
                 styles={{
                   body: {
                     padding: token.paddingLG,
+                    paddingTop: 0,
                     overflow: 'auto',
                     height: 200,
                   },
                 }}
               >
-                <Markdown>{huggingFaceModelInfo.data?.markdown}</Markdown>
-              </Card>
+                <Markdown remarkPlugins={[remarkGfm]}>
+                  {huggingFaceModelInfo.data?.markdown}
+                </Markdown>
+              </BAICard>
             </Suspense>
           ) : (
             <ReadmeFallbackCard />

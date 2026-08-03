@@ -14,7 +14,6 @@ import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
 import { BankOutlined, FileOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {
-  Card,
   Descriptions,
   Drawer,
   type DrawerProps,
@@ -24,6 +23,7 @@ import {
 } from 'antd';
 import {
   BAIButton,
+  BAICard,
   BAIFlex,
   BAILink,
   BAIResourceNumberWithIcon,
@@ -33,10 +33,11 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import Markdown from 'markdown-to-jsx';
 import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import Markdown from 'react-markdown';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
+import remarkGfm from 'remark-gfm';
 
 interface ModelCardDrawerProps extends Omit<
   DrawerProps,
@@ -321,7 +322,7 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
             />
 
             {modelCard.readme && (
-              <Card
+              <BAICard
                 size="small"
                 title={
                   <BAIFlex direction="row" gap="xs">
@@ -330,11 +331,12 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
                   </BAIFlex>
                 }
                 style={{ width: '100%' }}
+                styles={{ body: { paddingTop: 0 } }}
               >
-                <Markdown options={{ disableParsingRawHTML: true }}>
+                <Markdown remarkPlugins={[remarkGfm]}>
                   {modelCard.readme}
                 </Markdown>
-              </Card>
+              </BAICard>
             )}
           </BAIFlex>
         )}
