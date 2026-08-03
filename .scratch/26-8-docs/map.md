@@ -55,7 +55,13 @@ touching `react/` or `packages/backend.ai-ui/src/`, of which **103 shipped in
 7. **Execution is carried into this map** (overriding wayfinder's plan-only
    default). Writing prose and opening PRs happen as tickets here, not in a
    handed-off effort.
-8. **No further human-in-the-loop.** Directed 2026-08-03: every remaining decision
+8. **The Jira→GitHub webhook clone never blocks progress.** Directed 2026-08-03.
+   If the clone does not arrive: first check whether GitHub already has the issue
+   (`gh issue list --search "FR-XXXX"`); if it exists, reconcile the Jira fields
+   rather than creating anything; if it does not exist either, proceed without it
+   and backfill the `Resolves` line later. Never `gh issue create` as a
+   workaround. Detail in [Create the Jira epic and per-page sub-tasks](issues/03-jira-scaffold.md).
+9. **No further human-in-the-loop.** Directed 2026-08-03: every remaining decision
    is made autonomously and *recorded* on this map rather than put to the human,
    and PRs are driven to **ready for review**, not left as drafts. Consequence:
    there are no `grilling` or `prototype` tickets on this map — every ticket is

@@ -9,7 +9,7 @@ Status: resolved
 
 Two small conventions that both PR creation and the downstream capture effort
 depend on. Originally a `grilling` ticket; converted to an AFK `task` under map
-standing decision 8, so the answer must record the call *and its reasoning*.
+standing decision 9, so the answer must record the call *and its reasoning*.
 
 **(a) How are screenshot needs recorded so the later batch capture is one pass?**
 
@@ -38,7 +38,7 @@ reviewer — self-review, which GitHub will not even accept as an approval.
 
 ## Answer
 
-Decided AFK 2026-08-03 under map standing decision 8.
+Decided AFK 2026-08-03 under map standing decision 9.
 
 ### (a) Marker convention unchanged; add one manifest on the map branch
 
