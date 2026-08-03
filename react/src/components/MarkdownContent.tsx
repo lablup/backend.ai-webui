@@ -126,6 +126,7 @@ const useStyles = createStyles(({ css, token }) => ({
     }
     pre {
       margin: 0 0 1em;
+      padding: ${token.paddingSM}px ${token.padding}px;
       border-radius: ${token.borderRadius}px;
       overflow: auto;
     }
