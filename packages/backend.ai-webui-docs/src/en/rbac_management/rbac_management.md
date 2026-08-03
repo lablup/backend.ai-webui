@@ -89,7 +89,6 @@ The drawer header displays the role name and provides an **Edit** button for cus
 Below the metadata, two tabs are available: **Permissions** and **Role Assignments**. The **Permissions** tab is selected by default.
 
 ![](../images/rbac_role_detail_drawer.png)
-<!-- TODO: Refresh rbac_role_detail_drawer.png to show the two-tab layout (Permissions active) on manager 26.8.0+ -->
 
 :::info
 This two-tab layout applies to **manager 26.8.0 or later**. On older managers the drawer instead shows three tabs — **Scopes**, **Permissions**, and **Role Assignments** — matching the legacy behavior described in [View role scopes](#view-role-scopes) and [Manage permissions](#manage-permissions) below.
@@ -126,7 +125,6 @@ The Edit button is only available for Custom roles. System roles cannot have the
 On **manager 26.8.0 or later**, the **Permissions** tab in the role detail drawer is a merged, detailed view that combines the role's scopes and its fine-grained permissions. It renders **one card per scope type** the role uses, and each card shows that scope type's scopes together with the permissions granted on them.
 
 ![](../images/rbac_permissions_tab.png)
-<!-- TODO: Refresh rbac_permissions_tab.png to show the per-scope-type cards with grant-state tags -->
 
 :::info
 The scopes a role can reference are defined when the role is created and are **read-only** afterward — you cannot change them from the role detail drawer. In the Permissions tab, scopes appear as the rows inside each scope-type card. To change a role's scopes, create a new role with the desired scopes.
@@ -163,7 +161,6 @@ In the **Permissions** column, each permission-type tag is colored by how many o
 Hover over a tag to see its state label.
 
 ![](../images/rbac_permissions_card_grant_tags.png)
-<!-- TODO: Capture close-up of a scope-type card's Permissions column showing Fully / Partially / Not allowed tags with a tooltip -->
 
 ### Understanding permissions
 
@@ -208,7 +205,6 @@ Permissions are edited per scope through a grid-based modal, where each row is a
 4. Click **Save**. The changes are reconciled against the scope's current grants — newly ticked cells are granted and cleared cells are removed.
 
 ![](../images/rbac_permission_edit_modal_single.png)
-<!-- TODO: Capture the single-scope permission edit grid modal -->
 
 :::note
 Editing permissions is **reversible** — you can re-open the modal and change the grid again at any time — so saving uses a normal **Save** button rather than a typed-name confirmation.
@@ -226,7 +222,6 @@ You can apply the same permission change to several scopes of the same type at o
 4. Click **Save** to apply the changes to all selected scopes.
 
 ![](../images/rbac_permission_edit_modal_bulk.png)
-<!-- TODO: Capture the bulk permission edit modal showing the selected-scopes note and Keep-as-is cells -->
 
 <a id="no-op-and-partial-failure-behavior"></a>
 
@@ -238,7 +233,7 @@ When you save permission changes:
 - On success, the message **Permissions saved successfully.** is shown and the card's tags are recomputed.
 - On a **partial failure**, the modal stays open with the failed cells flagged. A bulk-error modal lists each failed request — the target scope, the permission, and the error message — along with a success and failed count. You can adjust the grid and save again to retry only the cells that failed.
 
-![](../images/rbac_permission_partial_failure_modal.png)
+<!-- ![](../images/rbac_permission_partial_failure_modal.png) -->
 <!-- TODO: Capture the bulk-error modal shown after a partial-failure permission save -->
 
 <a id="manage-user-assignments"></a>
@@ -263,7 +258,7 @@ The **Role Assignments** tab in the role detail drawer shows which users are ass
 
 Adding users is a bulk operation — you can select several users in a single pass and assign them all at once. If some assignments fail, the modal stays open and a bulk-error modal lists each failed user with an error message and a success and failed count. The users that were assigned successfully are cleared from the selection, so only the failed users remain selected and you can click **Add** again to retry just those.
 
-![](../images/rbac_assign_user_partial_failure.png)
+<!-- ![](../images/rbac_assign_user_partial_failure.png) -->
 <!-- TODO: Capture the Add User modal with the bulk-error modal listing failed assignments -->
 
 <a id="system-roles-and-assignment-restrictions"></a>
@@ -273,7 +268,6 @@ Adding users is a bulk operation — you can select several users in a single pa
 On **manager 26.8.0 or later**, the system-generated project-admin role (the `project-<project_id>-admin` role, whose **Source** is **System**) cannot have users assigned or revoked directly from the Role Assignments tab. The tab shows a warning alert, **Roles automatically created by the system cannot have users directly assigned or unassigned.**, and the assignment table is read-only (the **Add User** and revoke controls are hidden).
 
 ![](../images/rbac_system_role_assignments_readonly.png)
-<!-- TODO: Capture the Role Assignments tab of a system role showing the warning alert and read-only table -->
 
 To manage who administers a project, use **Set Project Admin** on the Project page instead. See [Set Project Admin](#set-project-admin) in the Project Admin Features chapter and [Grant Project Admin authority](#grant-project-admin) below.
 
@@ -292,8 +286,7 @@ To revoke a single user:
 1. In the **Role Assignments** tab, hover over the user row and click the revoke (trash) icon next to the user.
 2. A **Revoke User** confirmation modal opens. Review the listed user(s) and click **Revoke User** to confirm, or **Cancel** to dismiss.
 
-![](../images/rbac_revoke_popconfirm.png)
-<!-- TODO: The revoke flow now uses a confirmation modal, not a popconfirm; consider renaming rbac_revoke_popconfirm.png to rbac_revoke_confirm_modal.png (shared across all four languages) when re-capturing -->
+![](../images/rbac_revoke_confirm_modal.png)
 
 To revoke multiple users at once:
 
@@ -320,7 +313,6 @@ Creating a project also creates a dedicated role named `project-<project_id>-adm
 On **manager 26.8.0 or later**, grant and revoke project admin through the **Set Project Admin** one-click flow on the **Project** admin page, described in [Set Project Admin](#set-project-admin) in the Project Admin Features chapter. On these managers the `project-<project_id>-admin` role is a system role, so its Role Assignments tab here is **read-only** and provided for inspection — you can still open the role to review who currently holds project admin. The **Set Project Admin** modal also links back to this role's detail drawer through its RBAC shortcut.
 
 ![](../images/rbac_project_admin_role_detail.png)
-<!-- TODO: Refresh rbac_project_admin_role_detail.png to show the read-only Role Assignments state on manager 26.8.0+ -->
 
 :::note
 On managers **older than 26.8.0**, the **Set Project Admin** one-click flow is not available. Grant and revoke project admin manually on the `project-<project_id>-admin` role instead:

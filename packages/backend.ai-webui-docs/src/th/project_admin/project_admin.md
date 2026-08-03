@@ -23,7 +23,6 @@ navTitle: ฟีเจอร์ผู้ดูแลโปรเจกต์
 :::
 
 ![](../images/forbidden_page.png)
-<!-- TODO: Capture the Unauthorized Access (Forbidden) page -->
 
 <a id="set-project-admin"></a>
 
@@ -34,7 +33,6 @@ navTitle: ฟีเจอร์ผู้ดูแลโปรเจกต์
 ในแต่ละแถวโปรเจกต์ คลิกการดำเนินการรูปโล่ (**ตั้งค่าผู้ดูแลโปรเจกต์**) เพื่อเปิดโมดอล
 
 ![](../images/project_admin_set_admin_action.png)
-<!-- TODO: Capture the Set Project Admin row action on the Project page -->
 
 :::note
 การดำเนินการ **ตั้งค่าผู้ดูแลโปรเจกต์** พร้อมใช้งานสำหรับผู้ดูแลระบบระดับสูงบน**ตัวจัดการเวอร์ชัน 26.8.0 ขึ้นไป** จะถูกซ่อนไว้บนตัวจัดการเวอร์ชันเก่ากว่านี้ และถูกปิดใช้งานสำหรับโปรเจกต์คลังโมเดล
@@ -46,7 +44,6 @@ navTitle: ฟีเจอร์ผู้ดูแลโปรเจกต์
 - **ตารางผู้ดูแลปัจจุบัน**: รายการผู้ดูแลปัจจุบันของโปรเจกต์ โดยแต่ละรายการมีการดำเนินการ **เพิกถอนสิทธิ์ผู้ดูแลระบบ** (X) เพื่อนำสิทธิ์ผู้ดูแลโปรเจกต์ของผู้ใช้นั้นออก
 
 ![](../images/project_admin_set_admin_modal.png)
-<!-- TODO: Capture the Set Project Admin modal (user select, current-admins table, both alerts, shield RBAC shortcut in the title) -->
 
 โมดอลจะแสดงการแจ้งเตือนสองรายการที่คุณควรอ่านก่อนมอบหมายหรือเพิกถอน:
 

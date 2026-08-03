@@ -23,7 +23,6 @@ navTitle: プロジェクト管理者機能
 :::
 
 ![](../images/forbidden_page.png)
-<!-- TODO: Capture the Unauthorized Access (Forbidden) page -->
 
 <a id="set-project-admin"></a>
 
@@ -34,7 +33,6 @@ navTitle: プロジェクト管理者機能
 各プロジェクト行で盾（**プロジェクト管理者を設定**）アクションをクリックしてモーダルを開きます。
 
 ![](../images/project_admin_set_admin_action.png)
-<!-- TODO: Capture the Set Project Admin row action on the Project page -->
 
 :::note
 **プロジェクト管理者を設定**アクションは、**マネージャー26.8.0以降**のスーパー管理者が利用できます。それより古いマネージャーでは表示されず、モデルストアプロジェクトでは無効になります。
@@ -46,7 +44,6 @@ navTitle: プロジェクト管理者機能
 - **現在の管理者テーブル**: プロジェクトの現在の管理者の一覧で、各項目にはそのユーザーのプロジェクト管理者権限を削除する**管理者権限を無効化**（X）アクションがあります。
 
 ![](../images/project_admin_set_admin_modal.png)
-<!-- TODO: Capture the Set Project Admin modal (user select, current-admins table, both alerts, shield RBAC shortcut in the title) -->
 
 このモーダルには、割り当てまたは取り消しの前に読むべき2つのアラートが表示されます:
 

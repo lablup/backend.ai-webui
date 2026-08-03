@@ -89,7 +89,6 @@ RBAC 관리 페이지에 접근하려면 사이드바 메뉴의 **관리자 설�
 메타데이터 아래에는 **세부 권한**과 **역할 할당** 두 개의 탭이 있습니다. 기본적으로 **세부 권한** 탭이 선택되어 있습니다.
 
 ![](../images/rbac_role_detail_drawer.png)
-<!-- TODO: Refresh rbac_role_detail_drawer.png to show the two-tab layout (Permissions active) on manager 26.8.0+ -->
 
 :::info
 이 두 탭 구성은 **매니저 26.8.0 이상**에 적용됩니다. 이전 버전의 매니저에서는 패널에 **역할 범위**, **세부 권한**, **역할 할당** 세 개의 탭이 표시되며, 이는 아래 [역할 범위 보기](#view-role-scopes) 및 [세부 권한 관리](#manage-permissions)에서 설명하는 레거시 동작과 일치합니다.
@@ -126,7 +125,6 @@ RBAC 관리 페이지에 접근하려면 사이드바 메뉴의 **관리자 설�
 **매니저 26.8.0 이상**에서는 역할 상세 패널의 **세부 권한** 탭이 역할의 적용 범위와 세분화된 세부 권한을 결합한 통합 상세 보기입니다. 역할이 사용하는 **적용 범위 타입마다 하나의 카드**를 렌더링하며, 각 카드는 해당 적용 범위 타입의 적용 범위와 그 위에 부여된 권한을 함께 표시합니다.
 
 ![](../images/rbac_permissions_tab.png)
-<!-- TODO: Refresh rbac_permissions_tab.png to show the per-scope-type cards with grant-state tags -->
 
 :::info
 역할이 참조할 수 있는 적용 범위는 역할 생성 시에 정의되며 이후에는 **읽기 전용**입니다. 역할 상세 패널에서 변경할 수 없습니다. 세부 권한 탭에서는 적용 범위가 각 적용 범위 타입 카드 내부의 행으로 나타납니다. 역할의 적용 범위를 변경하려면 원하는 적용 범위를 가진 새 역할을 생성해야 합니다.
@@ -163,7 +161,6 @@ RBAC 관리 페이지에 접근하려면 사이드바 메뉴의 **관리자 설�
 태그 위에 마우스를 올리면 상태 라벨을 확인할 수 있습니다.
 
 ![](../images/rbac_permissions_card_grant_tags.png)
-<!-- TODO: Capture close-up of a scope-type card's Permissions column showing Fully / Partially / Not allowed tags with a tooltip -->
 
 ### 세부 권한 이해하기
 
@@ -208,7 +205,6 @@ RBAC 관리 페이지에 접근하려면 사이드바 메뉴의 **관리자 설�
 4. **저장**을 클릭합니다. 변경 사항은 적용 범위의 현재 부여 상태와 대조되어 새로 선택한 셀은 부여되고 해제한 셀은 제거됩니다.
 
 ![](../images/rbac_permission_edit_modal_single.png)
-<!-- TODO: Capture the single-scope permission edit grid modal -->
 
 :::note
 세부 권한 수정은 **되돌릴 수 있는** 작업입니다. 언제든지 모달을 다시 열어 그리드를 변경할 수 있으므로, 저장 시 이름을 입력해 확인하는 대신 일반 **저장** 버튼을 사용합니다.
@@ -226,7 +222,6 @@ RBAC 관리 페이지에 접근하려면 사이드바 메뉴의 **관리자 설�
 4. **저장**을 클릭하여 선택한 모든 적용 범위에 변경 사항을 적용합니다.
 
 ![](../images/rbac_permission_edit_modal_bulk.png)
-<!-- TODO: Capture the bulk permission edit modal showing the selected-scopes note and Keep-as-is cells -->
 
 <a id="no-op-and-partial-failure-behavior"></a>
 
@@ -238,7 +233,7 @@ RBAC 관리 페이지에 접근하려면 사이드바 메뉴의 **관리자 설�
 - 성공하면 **세부 권한이 저장되었습니다.** 메시지가 표시되고 카드의 태그가 다시 계산됩니다.
 - **부분 실패** 시에는 모달이 열린 상태로 유지되고 실패한 셀이 표시됩니다. 일괄 오류 모달에 실패한 각 요청(대상 적용 범위, 권한, 오류 메시지)과 성공 및 실패 개수가 나열됩니다. 그리드를 조정한 후 다시 저장하면 실패한 셀만 재시도할 수 있습니다.
 
-![](../images/rbac_permission_partial_failure_modal.png)
+<!-- ![](../images/rbac_permission_partial_failure_modal.png) -->
 <!-- TODO: Capture the bulk-error modal shown after a partial-failure permission save -->
 
 <a id="manage-user-assignments"></a>
@@ -263,7 +258,7 @@ RBAC 관리 페이지에 접근하려면 사이드바 메뉴의 **관리자 설�
 
 사용자 추가는 일괄 작업입니다. 한 번에 여러 사용자를 선택하여 모두 한꺼번에 할당할 수 있습니다. 일부 할당이 실패하면 모달이 열린 상태로 유지되며, 일괄 오류 모달에 실패한 각 사용자와 오류 메시지, 성공 및 실패 개수가 나열됩니다. 성공적으로 할당된 사용자는 선택에서 지워지므로 실패한 사용자만 선택된 상태로 남아 **추가**를 다시 클릭하여 해당 사용자만 재시도할 수 있습니다.
 
-![](../images/rbac_assign_user_partial_failure.png)
+<!-- ![](../images/rbac_assign_user_partial_failure.png) -->
 <!-- TODO: Capture the Add User modal with the bulk-error modal listing failed assignments -->
 
 <a id="system-roles-and-assignment-restrictions"></a>
@@ -273,7 +268,6 @@ RBAC 관리 페이지에 접근하려면 사이드바 메뉴의 **관리자 설�
 **매니저 26.8.0 이상**에서는 시스템이 생성한 프로젝트 관리자 역할(**소스**가 **시스템**인 `project-<project_id>-admin` 역할)에는 역할 할당 탭에서 사용자를 직접 할당하거나 해제할 수 없습니다. 이 탭에는 **시스템에 의해 자동으로 생성된 역할은 사용자를 직접 할당하거나 할당 해제할 수 없습니다.** 경고 알림이 표시되며 할당 테이블은 읽기 전용입니다(**사용자 추가** 및 해제 컨트롤이 숨겨집니다).
 
 ![](../images/rbac_system_role_assignments_readonly.png)
-<!-- TODO: Capture the Role Assignments tab of a system role showing the warning alert and read-only table -->
 
 프로젝트를 관리할 사용자를 지정하려면 대신 프로젝트 페이지의 **프로젝트 관리자 권한 설정**을 사용하세요. 프로젝트 관리자 기능 챕터의 [프로젝트 관리자 권한 설정](#set-project-admin)과 아래의 [프로젝트 관리자 권한 부여](#grant-project-admin)를 참고하세요.
 
@@ -292,8 +286,7 @@ RBAC 관리 페이지에 접근하려면 사이드바 메뉴의 **관리자 설�
 1. **역할 할당** 탭에서 사용자 행 위에 마우스를 올린 후 사용자 옆의 해제(휴지통) 아이콘을 클릭합니다.
 2. **사용자 해제** 확인 모달이 열립니다. 목록에 표시된 사용자를 확인한 후 **사용자 해제**를 클릭하여 확정하거나 **취소**를 눌러 닫습니다.
 
-![](../images/rbac_revoke_popconfirm.png)
-<!-- TODO: The revoke flow now uses a confirmation modal, not a popconfirm; consider renaming rbac_revoke_popconfirm.png to rbac_revoke_confirm_modal.png (shared across all four languages) when re-capturing -->
+![](../images/rbac_revoke_confirm_modal.png)
 
 여러 명의 사용자를 한 번에 해제하려면:
 
@@ -320,7 +313,6 @@ RBAC 관리 페이지에 접근하려면 사이드바 메뉴의 **관리자 설�
 **매니저 26.8.0 이상**에서는 프로젝트 관리자 기능 챕터의 [프로젝트 관리자 권한 설정](#set-project-admin)에서 설명하는 **프로젝트** 관리자 페이지의 **프로젝트 관리자 권한 설정** 원클릭 흐름을 통해 프로젝트 관리자 권한을 부여하고 회수합니다. 이러한 매니저에서 `project-<project_id>-admin` 역할은 시스템 역할이므로, 여기의 역할 할당 탭은 **읽기 전용**이며 확인용으로 제공됩니다. 역할을 열어 현재 프로젝트 관리자 권한을 가진 사용자를 검토할 수 있습니다. **프로젝트 관리자 권한 설정** 모달은 RBAC 바로 가기를 통해 이 역할의 상세 패널로 다시 연결됩니다.
 
 ![](../images/rbac_project_admin_role_detail.png)
-<!-- TODO: Refresh rbac_project_admin_role_detail.png to show the read-only Role Assignments state on manager 26.8.0+ -->
 
 :::note
 **26.8.0 이전** 버전의 매니저에서는 **프로젝트 관리자 권한 설정** 원클릭 흐름을 사용할 수 없습니다. 대신 `project-<project_id>-admin` 역할에서 프로젝트 관리자 권한을 직접 부여하고 회수합니다:

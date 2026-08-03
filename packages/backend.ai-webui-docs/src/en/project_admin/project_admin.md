@@ -23,7 +23,6 @@ Because project-admin authority is re-evaluated per selected project, the pages 
 :::
 
 ![](../images/forbidden_page.png)
-<!-- TODO: Capture the Unauthorized Access (Forbidden) page -->
 
 <a id="set-project-admin"></a>
 
@@ -34,7 +33,6 @@ Superadmins can grant and revoke project admin for one or more users in a single
 On each project row, click the shield (**Set Project Admin**) action to open the modal.
 
 ![](../images/project_admin_set_admin_action.png)
-<!-- TODO: Capture the Set Project Admin row action on the Project page -->
 
 :::note
 The **Set Project Admin** action is available to superadmins on **manager 26.8.0 or later**. It is hidden on older managers, and it is disabled for Model Store projects.
@@ -46,7 +44,6 @@ The modal provides:
 - **Current admins table**: A list of the project's current admins, each with a **Revoke admin permission** (X) action to remove that user's project admin.
 
 ![](../images/project_admin_set_admin_modal.png)
-<!-- TODO: Capture the Set Project Admin modal (user select, current-admins table, both alerts, shield RBAC shortcut in the title) -->
 
 The modal shows two alerts you should read before assigning or revoking:
 

@@ -89,7 +89,6 @@ RBAC管理ページにアクセスするには、サイドバーメニューの*
 メタデータの下には**権限**と**ロール割り当て**の2つのタブがあります。デフォルトでは**権限**タブが選択されています。
 
 ![](../images/rbac_role_detail_drawer.png)
-<!-- TODO: Refresh rbac_role_detail_drawer.png to show the two-tab layout (Permissions active) on manager 26.8.0+ -->
 
 :::info
 この2つのタブ構成は**マネージャー26.8.0以降**に適用されます。それより古いマネージャーでは、パネルに**スコープ**、**権限**、**ロール割り当て**の3つのタブが表示され、以下の[ロールのスコープ表示](#view-role-scopes)および[権限の管理](#manage-permissions)で説明するレガシー動作と一致します。
@@ -126,7 +125,6 @@ RBAC管理ページにアクセスするには、サイドバーメニューの*
 **マネージャー26.8.0以降**では、ロール詳細パネルの**権限**タブは、ロールのスコープときめ細かい権限を統合した詳細ビューです。ロールが使用する**スコープタイプごとに1枚のカード**をレンダリングし、各カードはそのスコープタイプのスコープと、それらに付与された権限を併せて表示します。
 
 ![](../images/rbac_permissions_tab.png)
-<!-- TODO: Refresh rbac_permissions_tab.png to show the per-scope-type cards with grant-state tags -->
 
 :::info
 ロールが参照できるスコープはロール作成時に定義され、その後は**読み取り専用**です。ロール詳細パネルから変更することはできません。権限タブでは、スコープは各スコープタイプカード内の行として表示されます。ロールのスコープを変更するには、目的のスコープを持つ新しいロールを作成する必要があります。
@@ -163,7 +161,6 @@ RBAC管理ページにアクセスするには、サイドバーメニューの*
 タグにカーソルを合わせると、状態ラベルが表示されます。
 
 ![](../images/rbac_permissions_card_grant_tags.png)
-<!-- TODO: Capture close-up of a scope-type card's Permissions column showing Fully / Partially / Not allowed tags with a tooltip -->
 
 ### 権限について
 
@@ -208,7 +205,6 @@ RBAC管理ページにアクセスするには、サイドバーメニューの*
 4. **保存**をクリックします。変更はスコープの現在の付与状態と照合され、新しくチェックしたセルは付与され、解除したセルは削除されます。
 
 ![](../images/rbac_permission_edit_modal_single.png)
-<!-- TODO: Capture the single-scope permission edit grid modal -->
 
 :::note
 権限の編集は**元に戻せる**操作です。いつでもモーダルを再度開いてグリッドを変更できるため、保存には名前を入力して確認する代わりに通常の**保存**ボタンを使用します。
@@ -226,7 +222,6 @@ RBAC管理ページにアクセスするには、サイドバーメニューの*
 4. **保存**をクリックして、選択したすべてのスコープに変更を適用します。
 
 ![](../images/rbac_permission_edit_modal_bulk.png)
-<!-- TODO: Capture the bulk permission edit modal showing the selected-scopes note and Keep-as-is cells -->
 
 <a id="no-op-and-partial-failure-behavior"></a>
 
@@ -238,7 +233,7 @@ RBAC管理ページにアクセスするには、サイドバーメニューの*
 - 成功すると、**権限を保存しました。**というメッセージが表示され、カードのタグが再計算されます。
 - **部分的な失敗**の場合、モーダルは開いたままになり、失敗したセルにフラグが付きます。一括エラーモーダルには、失敗した各リクエスト（対象スコープ、権限、エラーメッセージ）と成功・失敗の件数が一覧表示されます。グリッドを調整して再度保存すると、失敗したセルのみを再試行できます。
 
-![](../images/rbac_permission_partial_failure_modal.png)
+<!-- ![](../images/rbac_permission_partial_failure_modal.png) -->
 <!-- TODO: Capture the bulk-error modal shown after a partial-failure permission save -->
 
 <a id="manage-user-assignments"></a>
@@ -263,7 +258,7 @@ RBAC管理ページにアクセスするには、サイドバーメニューの*
 
 ユーザーの追加は一括操作です。一度に複数のユーザーを選択して、まとめて割り当てることができます。一部の割り当てが失敗した場合、モーダルは開いたままになり、一括エラーモーダルに失敗した各ユーザーとエラーメッセージ、成功・失敗の件数が一覧表示されます。正常に割り当てられたユーザーは選択から解除されるため、失敗したユーザーのみが選択された状態で残り、**追加**を再度クリックしてそれらだけを再試行できます。
 
-![](../images/rbac_assign_user_partial_failure.png)
+<!-- ![](../images/rbac_assign_user_partial_failure.png) -->
 <!-- TODO: Capture the Add User modal with the bulk-error modal listing failed assignments -->
 
 <a id="system-roles-and-assignment-restrictions"></a>
@@ -273,7 +268,6 @@ RBAC管理ページにアクセスするには、サイドバーメニューの*
 **マネージャー26.8.0以降**では、システムが生成したプロジェクト管理者ロール（**ソース**が**システム**の`project-<project_id>-admin`ロール）は、ロール割り当てタブからユーザーを直接割り当てたり外したりすることはできません。このタブには**システムによって自動的に作成されたロールには、ユーザーを直接割り当てたり外したりすることはできません。**という警告アラートが表示され、割り当てテーブルは読み取り専用になります（**ユーザーを追加**と解除のコントロールは非表示になります）。
 
 ![](../images/rbac_system_role_assignments_readonly.png)
-<!-- TODO: Capture the Role Assignments tab of a system role showing the warning alert and read-only table -->
 
 プロジェクトを管理するユーザーを指定するには、代わりにプロジェクトページの**プロジェクト管理者を設定**を使用してください。プロジェクト管理者機能の章の[プロジェクト管理者を設定](#set-project-admin)、および下記の[プロジェクト管理者権限の付与](#grant-project-admin)を参照してください。
 
@@ -292,8 +286,7 @@ RBAC管理ページにアクセスするには、サイドバーメニューの*
 1. **ロール割り当て**タブで、ユーザー行にマウスを合わせ、ユーザーの横にある解除（ゴミ箱）アイコンをクリックします。
 2. **ロールからユーザーを外す**確認モーダルが開きます。一覧に表示されたユーザーを確認し、**ロールからユーザーを外す**をクリックして確定するか、**キャンセル**で閉じます。
 
-![](../images/rbac_revoke_popconfirm.png)
-<!-- TODO: The revoke flow now uses a confirmation modal, not a popconfirm; consider renaming rbac_revoke_popconfirm.png to rbac_revoke_confirm_modal.png (shared across all four languages) when re-capturing -->
+![](../images/rbac_revoke_confirm_modal.png)
 
 複数のユーザーを一度に解除するには:
 
@@ -320,7 +313,6 @@ RBAC管理ページにアクセスするには、サイドバーメニューの*
 **マネージャー26.8.0以降**では、プロジェクト管理者機能の章の[プロジェクト管理者を設定](#set-project-admin)で説明する**プロジェクト**管理者ページの**プロジェクト管理者を設定**ワンクリックフローを通じて、プロジェクト管理者権限を付与・取り消しします。これらのマネージャーでは`project-<project_id>-admin`ロールはシステムロールであるため、ここのロール割り当てタブは**読み取り専用**であり、確認用に提供されます。ロールを開いて、現在プロジェクト管理者権限を持つユーザーを確認できます。**プロジェクト管理者を設定**モーダルは、RBACショートカットを通じてこのロールの詳細パネルにもリンクします。
 
 ![](../images/rbac_project_admin_role_detail.png)
-<!-- TODO: Refresh rbac_project_admin_role_detail.png to show the read-only Role Assignments state on manager 26.8.0+ -->
 
 :::note
 **26.8.0より古い**マネージャーでは、**プロジェクト管理者を設定**ワンクリックフローは利用できません。代わりに`project-<project_id>-admin`ロールでプロジェクト管理者権限を手動で付与・取り消しします:

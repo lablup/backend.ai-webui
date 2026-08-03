@@ -23,7 +23,6 @@ navTitle: 프로젝트 관리자 기능
 :::
 
 ![](../images/forbidden_page.png)
-<!-- TODO: Capture the Unauthorized Access (Forbidden) page -->
 
 <a id="set-project-admin"></a>
 
@@ -34,7 +33,6 @@ navTitle: 프로젝트 관리자 기능
 각 프로젝트 행에서 방패(**프로젝트 관리자 권한 설정**) 동작을 클릭하여 모달을 엽니다.
 
 ![](../images/project_admin_set_admin_action.png)
-<!-- TODO: Capture the Set Project Admin row action on the Project page -->
 
 :::note
 **프로젝트 관리자 권한 설정** 동작은 **매니저 26.8.0 이상**의 슈퍼 관리자에게 제공됩니다. 이전 버전의 매니저에서는 표시되지 않으며, 모델 스토어 프로젝트에서는 비활성화됩니다.
@@ -46,7 +44,6 @@ navTitle: 프로젝트 관리자 기능
 - **현재 관리자 테이블**: 프로젝트의 현재 관리자 목록으로, 각 항목에는 해당 사용자의 프로젝트 관리자 권한을 제거하는 **관리자 권한 해제**(X) 동작이 있습니다.
 
 ![](../images/project_admin_set_admin_modal.png)
-<!-- TODO: Capture the Set Project Admin modal (user select, current-admins table, both alerts, shield RBAC shortcut in the title) -->
 
 이 모달에는 할당하거나 회수하기 전에 읽어야 하는 두 개의 알림이 표시됩니다:
 
