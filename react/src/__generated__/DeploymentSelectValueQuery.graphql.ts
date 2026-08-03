@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<517bf374e2ffd9c5f6e52c1bfe885b7b>>
+ * @generated SignedSource<<32f151f4c8d125d585242479c525734b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,19 +9,19 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type EndpointSelectValueQuery$variables = {
+export type DeploymentSelectValueQuery$variables = {
   endpoint_id: string;
 };
-export type EndpointSelectValueQuery$data = {
+export type DeploymentSelectValueQuery$data = {
   readonly endpoint: {
     readonly endpoint_id: string;
     readonly name: string | null | undefined;
     readonly url: string | null | undefined;
   } | null | undefined;
 };
-export type EndpointSelectValueQuery = {
-  response: EndpointSelectValueQuery$data;
-  variables: EndpointSelectValueQuery$variables;
+export type DeploymentSelectValueQuery = {
+  response: DeploymentSelectValueQuery$data;
+  variables: DeploymentSelectValueQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -65,7 +65,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "EndpointSelectValueQuery",
+    "name": "DeploymentSelectValueQuery",
     "selections": [
       {
         "alias": null,
@@ -93,7 +93,7 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "EndpointSelectValueQuery",
+    "name": "DeploymentSelectValueQuery",
     "selections": [
       {
         "alias": null,
@@ -119,16 +119,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "305b4336fc43ab460edf54efa95ff116",
+    "cacheID": "d888e8ed8462de1a8cdfa5203eec275f",
     "id": null,
     "metadata": {},
-    "name": "EndpointSelectValueQuery",
+    "name": "DeploymentSelectValueQuery",
     "operationKind": "query",
-    "text": "query EndpointSelectValueQuery(\n  $endpoint_id: UUID!\n) {\n  endpoint(endpoint_id: $endpoint_id) {\n    name\n    endpoint_id\n    url\n    id\n  }\n}\n"
+    "text": "query DeploymentSelectValueQuery(\n  $endpoint_id: UUID!\n) {\n  endpoint(endpoint_id: $endpoint_id) {\n    name\n    endpoint_id\n    url\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "5f7c6954ddf84a211dc8428e86004300";
+(node as any).hash = "94a10c16a1bb37157f0a417d80a9c5e2";
 
 export default node;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<63dd841df9adad8ca11bfb960098eef6>>
+ * @generated SignedSource<<9c4a13825dc8114aab23ae3ffaa48f97>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -108,32 +108,49 @@ export type TrafficStatusFilter = {
   notEquals?: TrafficStatus | null | undefined;
   notIn?: ReadonlyArray<TrafficStatus> | null | undefined;
 };
-export type ChatPageQuery$variables = {
+export type DeploymentSelectQuery$variables = {
   filter?: DeploymentFilter | null | undefined;
+  limit: number;
+  offset: number;
 };
-export type ChatPageQuery$data = {
+export type DeploymentSelectQuery$data = {
   readonly myDeployments: {
+    readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly id: string;
+        readonly metadata: {
+          readonly name: string;
+        };
+        readonly networkAccess: {
+          readonly endpointUrl: string | null | undefined;
+        };
       };
     }>;
   } | null | undefined;
 };
-export type ChatPageQuery = {
-  response: ChatPageQuery$data;
-  variables: ChatPageQuery$variables;
+export type DeploymentSelectQuery = {
+  response: DeploymentSelectQuery$data;
+  variables: DeploymentSelectQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = [
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "filter"
-  }
-],
-v1 = [
+var v0 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "filter"
+},
+v1 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "limit"
+},
+v2 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "offset"
+},
+v3 = [
   {
     "alias": null,
     "args": [
@@ -143,14 +160,14 @@ v1 = [
         "variableName": "filter"
       },
       {
-        "kind": "Literal",
+        "kind": "Variable",
         "name": "limit",
-        "value": 1
+        "variableName": "limit"
       },
       {
-        "kind": "Literal",
+        "kind": "Variable",
         "name": "offset",
-        "value": 0
+        "variableName": "offset"
       }
     ],
     "concreteType": "ModelDeploymentConnection",
@@ -158,6 +175,13 @@ v1 = [
     "name": "myDeployments",
     "plural": false,
     "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "count",
+        "storageKey": null
+      },
       {
         "alias": null,
         "args": null,
@@ -180,6 +204,42 @@ v1 = [
                 "kind": "ScalarField",
                 "name": "id",
                 "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ModelDeploymentMetadata",
+                "kind": "LinkedField",
+                "name": "metadata",
+                "plural": false,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "name",
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ModelDeploymentNetworkAccess",
+                "kind": "LinkedField",
+                "name": "networkAccess",
+                "plural": false,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "endpointUrl",
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
               }
             ],
             "storageKey": null
@@ -193,32 +253,40 @@ v1 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v0/*: any*/),
+      (v1/*: any*/),
+      (v2/*: any*/)
+    ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "ChatPageQuery",
-    "selections": (v1/*: any*/),
+    "name": "DeploymentSelectQuery",
+    "selections": (v3/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v2/*: any*/),
+      (v1/*: any*/),
+      (v0/*: any*/)
+    ],
     "kind": "Operation",
-    "name": "ChatPageQuery",
-    "selections": (v1/*: any*/)
+    "name": "DeploymentSelectQuery",
+    "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "27f504d93285f91846d14fc84600f39d",
+    "cacheID": "67fbab159928582bce381e016aa01efa",
     "id": null,
     "metadata": {},
-    "name": "ChatPageQuery",
+    "name": "DeploymentSelectQuery",
     "operationKind": "query",
-    "text": "query ChatPageQuery(\n  $filter: DeploymentFilter\n) {\n  myDeployments(filter: $filter, limit: 1, offset: 0) {\n    edges {\n      node {\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query DeploymentSelectQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: DeploymentFilter\n) {\n  myDeployments(offset: $offset, limit: $limit, filter: $filter) {\n    count\n    edges {\n      node {\n        id\n        metadata {\n          name\n        }\n        networkAccess {\n          endpointUrl\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "7a8ee2203c4082d39ab9b95c9d243df4";
+(node as any).hash = "a9dd48a92573f3d68bac5c39724bc8f1";
 
 export default node;
