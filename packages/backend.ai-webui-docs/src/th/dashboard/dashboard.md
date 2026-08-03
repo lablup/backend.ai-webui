@@ -9,7 +9,6 @@ navTitle: แดชบอร์ด
 **แดชบอร์ด** แสดงภาพรวมการใช้ทรัพยากรปัจจุบัน ขีดจำกัดที่ใช้งานได้ และข้อมูลเซสชันในทุกโปรเจกต์และกลุ่มทรัพยากรของคุณ ช่วยให้คุณเข้าใจสถานะการใช้ทรัพยากรการคำนวณได้อย่างรวดเร็ว และติดตามกิจกรรมล่าสุดในระบบ
 
 ![](../images/dashboard.png)
-<!-- TODO: Re-capture dashboard.png — the second panel is now titled "My Total Resource Usage" (การใช้ทรัพยากรทั้งหมดของฉัน) and its header no longer contains the Used segmented toggle -->
 
 หน้านี้ประกอบด้วยแผงหลักดังต่อไปนี้:
 

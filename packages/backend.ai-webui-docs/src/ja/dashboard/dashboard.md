@@ -9,7 +9,6 @@ navTitle: ダッシュボード
 **ダッシュボード**は、すべてのプロジェクトとリソースグループにおける現在のリソース使用状況、利用可能な上限、セッション情報の概要を一目で確認できるページです。コンピューティングリソースの使用状況を素早く把握し、システム内の最近の活動をモニタリングするのに役立ちます。
 
 ![](../images/dashboard.png)
-<!-- TODO: Re-capture dashboard.png — the second panel is now titled "My Total Resource Usage" (私の総リソース使用量) and its header no longer contains the Used segmented toggle -->
 
 このページは以下の主要パネルで構成されています：
 

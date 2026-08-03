@@ -10,7 +10,6 @@ It helps you quickly understand how your computing resources are being utilized
 and monitor your recent activities in the system.
 
 ![](../images/dashboard.png)
-<!-- TODO: Re-capture dashboard.png — the second panel is now titled "My Total Resource Usage" and its header no longer contains the Used segmented toggle -->
 
 The page is composed of several main panels:
 

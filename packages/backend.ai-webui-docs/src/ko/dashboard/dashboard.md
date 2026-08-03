@@ -9,7 +9,6 @@ navTitle: 대시보드
 **대시보드** 페이지는 모든 프로젝트와 자원 그룹의 자원 사용량, 한도, 그리고 실행 중인 세션 정보를 한눈에 확인할 수 있는 종합 현황 화면입니다. 사용 중인 자원의 분포를 직관적으로 파악하고, 시스템 활동 상태를 실시간으로 모니터링할 수 있습니다.
 
 ![](../images/dashboard.png)
-<!-- TODO: Re-capture dashboard.png — the second panel is now titled "My Total Resource Usage" (나의 총자원 사용량) and its header no longer contains the Used segmented toggle -->
 
 이 페이지는 다음과 같은 주요 패널로 구성되어 있습니다.
 
