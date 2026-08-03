@@ -18,13 +18,16 @@ Backend.AI는 생성된 연산 세션(컨테이너)에 SSH/SFTP 접속을 지원
 이 아이콘을 클릭하기 전에는 해당 세션에 SSH/SFTP 접속을 할 수 없습니다. WebUI 앱을 껐다가 다시 켜게 되면 로컬 proxy와 WebUI 앱 사이의 연결이 초기화되므로 SSH/SFTP 아이콘을 다시 한 번 클릭해주어야 합니다.
 :::
 
-다음으로, SSH/SFTP 접속 정보가 담긴 대화상자가 팝업됩니다. SFTP URL에 적혀 있는 주소(특히 할당된 포트 번호)를 기억해 두고, 다운로드 링크를 클릭하여 `id_container` 파일을 로컬 머신에 저장합니다. 이 파일은 자동으로 생성된 SSH 개인 키입니다. 링크를 사용하는 대신, 웹 터미널이나 Jupyter Notebook을 통해 `/home/work/` 아래에 위치한 `id_container` 파일을 직접 다운로드할 수도 있습니다. 자동 생성된 SSH 키는 새 세션이 생성되면 변경될 수 있으며, 그 경우 다시 다운로드해야 합니다.
+다음으로, SSH/SFTP 접속 정보가 담긴 대화상자가 팝업됩니다. 이 대화상자에는 접속에 사용할 **사용자**, **호스트**, **포트** 값과 바로 사용할 수 있는 `sftp`, `scp`, `rsync` 예시 명령, 그리고 `id_container` 파일을 로컬 머신에 저장하는 **SSH 키 다운로드** 버튼이 표시됩니다. 이 파일은 자동으로 생성된 SSH 개인 키입니다. 버튼을 사용하는 대신, 웹 터미널이나 Jupyter Notebook을 통해 `/home/work/` 아래에 위치한 `id_container` 파일을 직접 다운로드할 수도 있습니다. 자동 생성된 SSH 키는 새 세션이 생성되면 변경될 수 있으며, 그 경우 다시 다운로드해야 합니다.
 
 ![](../images/SSH_SFTP_connection.png)
+<!-- TODO: Re-capture SSH_SFTP_connection.png — the current image predates the connection dialog's width change (FR-3396); the Host, Port, and example command values must be shown on a single line each, unwrapped. -->
 
 ![](../images/sftp_app.png)
 
-다운로드한 SSH 개인 키를 사용하여 연산 세션에 SSH 접속하려면, 쉘 환경에서 다음 명령을 실행합니다. `-i` 옵션 뒤에 다운로드한 `id_container` 파일의 경로를, `-p` 옵션 뒤에 할당된 포트 번호를 입력합니다. 연산 세션 내부의 사용자 계정은 보통 `work`으로 설정되어 있지만, 세션이 다른 계정을 사용하는 경우 `work@127.0.0.1`에서 `work` 부분을 실제 세션 계정으로 변경해야 합니다. 명령을 올바르게 실행하면, 연산 세션에 SSH 접속이 이루어지고 컨테이너의 쉘 환경이 표시됩니다.
+접속 주소는 항상 이 대화상자의 **호스트**와 **포트** 필드에서 확인하세요. 이 값은 Backend.AI를 사용하는 방식에 따라 달라집니다. WebUI 데스크톱 앱은 사용자 머신에서 실행되는 proxy를 통해 연결을 중계하므로 호스트가 로컬 주소이며, 브라우저는 세션이 실행 중인 자원 그룹의 App Proxy에 직접 연결하므로 호스트가 해당 proxy의 주소입니다. 대화상자에는 임시로 채워 넣은 주소가 표시되지 않습니다. 접속 정보를 확인할 수 없는 경우 대화상자 자체가 열리지 않고 오류 알림으로 그 이유를 안내합니다. [접속 오류](#connection-errors) 절을 참고하세요.
+
+다운로드한 SSH 개인 키를 사용하여 연산 세션에 SSH 접속하려면, 쉘 환경에서 다음 명령을 실행합니다. `-i` 옵션 뒤에 다운로드한 `id_container` 파일의 경로를, `-p` 옵션 뒤에 대화상자에 표시된 포트 번호를 입력하고, 대화상자에 표시된 호스트를 접속 주소로 사용합니다. 연산 세션 내부의 사용자 계정은 보통 `work`으로 설정되어 있지만, 세션이 다른 계정을 사용하는 경우 `work@<호스트>`에서 `work` 부분을 실제 세션 계정으로 변경해야 합니다. 명령을 올바르게 실행하면, 연산 세션에 SSH 접속이 이루어지고 컨테이너의 쉘 환경이 표시됩니다. 아래 예시는 호스트가 로컬 주소인 WebUI 데스크톱 앱에서 실행한 것이므로, 실제 대화상자에 표시된 호스트와 포트로 바꿔서 사용하세요.
 
 ```shellsession
 $ ssh \
@@ -51,6 +54,20 @@ SSH/SFTP 접속 포트 번호는 세션이 생성될 때마다 무작위로 할�
 
 ![](../images/bad_permissions.png)
 :::
+
+<a id="connection-errors"></a>
+
+### 접속 오류
+
+SSH/SFTP 접속 정보는 세션이 실행 중인 자원 그룹의 App Proxy를 통해 확인됩니다. 이 단계가 실패하면 접속 대화상자가 열리지 않고, 대신 그 이유를 알리는 알림이 표시됩니다. 메시지를 보면 어느 단계에서 실패했는지 알 수 있습니다.
+
+- **프록시 서버가 아직 준비되지 않았습니다. 프록시 설정을 확인하세요.**: WebUI가 App Proxy에 접근하지 못했거나, proxy가 접속 정보를 반환하지 않은 경우입니다. proxy가 아직 기동 중일 수 있으므로 몇 초 기다린 후 SSH/SFTP 아이콘을 다시 클릭해 보세요. 메시지가 계속 표시된다면 사용자 머신에서 App Proxy에 접근할 수 없는 상태입니다. 예를 들어 방화벽에 의해 차단되었거나, WebUI와 다른 프로토콜로 서비스되고 있을 수 있습니다. 관리자에게 해당 자원 그룹의 **App Proxy 서버 주소** 확인을 요청하세요.
+- **프록시 직접 TCP 연결은 아직 지원되지 않습니다.**: App Proxy가 응답했지만, SSH/SFTP에 필요한 직접 TCP 연결을 제공하지 않는 경우입니다. 같은 세션에서 Jupyter Notebook, 터미널 등 웹 기반 앱은 정상적으로 사용할 수 있습니다. 관리자에게 해당 자원 그룹에서 TCP를 지원하는 App Proxy를 활성화하도록 요청하세요. 그동안에는 [Backend.AI 클라이언트 패키지](#establish-ssh-connection-with-backendai-client-package)를 사용하여 SSH로 세션에 접속할 수 있습니다.
+- **유효하지 않은 URL로 인해 앱을 실행할 수 없습니다.**: App Proxy가 WebUI에서 해석할 수 없는 주소를 반환한 경우입니다. SSH/SFTP 아이콘을 다시 클릭해 보고, 메시지가 계속 표시되면 세션이 속한 자원 그룹 이름과 함께 관리자에게 알리세요.
+
+대화상자는 실제 주소가 확인된 후에만 열리므로, 대화상자에 표시된 호스트와 포트는 언제나 실제로 접속할 수 있는 값입니다. 대화상자가 열리지 않을 때는 접속 주소를 임의로 추측하지 말고 알림에 표시된 오류부터 해결하세요.
+
+접속이 완료된 후에 발생하는 문제(예: WebUI 앱을 종료하여 전송이 중단되는 경우)는 문제 해결 장의 SFTP 연결 끊김 항목을 참고하세요.
 
 <a id="for-windows-filezilla"></a>
 
@@ -90,17 +107,17 @@ Backend.AI는 연산 세션에 대한 SSH/SFTP 접속을 통해 로컬 Visual St
 
 ![](../images/vscode_install_remote_ssh.png)
 
-확장을 설치한 후, 연산 세션에 대한 SSH 접속을 설정합니다. VSCode Remote Connection 대화상자에서 복사 아이콘 버튼을 클릭하여 Visual Studio Code 원격 SSH 비밀번호를 복사합니다. 포트 번호도 기억해 둡니다.
+확장을 설치한 후, 연산 세션에 대한 SSH 접속을 설정합니다. VSCode Remote Connection 대화상자에서 복사 아이콘 버튼을 클릭하여 Visual Studio Code 원격 SSH 비밀번호를 복사합니다. 대화상자에 표시된 호스트와 포트 번호도 기억해 둡니다. SSH/SFTP 대화상자와 마찬가지로, 이 대화상자도 접속 정보가 확인된 경우에만 열립니다. 열리지 않는다면 [접속 오류](#connection-errors) 절을 참고하세요.
 
 ![](../images/download_ssh_key.png)
 
-그런 다음, SSH config 파일을 설정합니다. `~/.ssh/config` 파일(Linux/Mac의 경우) 또는 `C:\Users\[사용자 이름]\.ssh\config` 파일(Windows의 경우)을 편집하고 다음 블록을 추가합니다. 편의를 위해 호스트 이름을 `bai-vscode`로 설정합니다. 원하는 별칭으로 변경할 수 있습니다.
+그런 다음, SSH config 파일을 설정합니다. `~/.ssh/config` 파일(Linux/Mac의 경우) 또는 `C:\Users\[사용자 이름]\.ssh\config` 파일(Windows의 경우)을 편집하고 다음 블록을 추가합니다. `Hostname`과 `Port` 항목에는 대화상자에 표시된 호스트와 포트 번호를 입력합니다. 호스트가 로컬 주소인 것은 WebUI 데스크톱 앱을 사용할 때뿐입니다. 편의를 위해 호스트 이름을 `bai-vscode`로 설정합니다. 원하는 별칭으로 변경할 수 있습니다.
 
 ```
 Host bai-vscode
 User work
+# 앞서 기억해 둔 호스트와 포트 번호를 입력합니다
 Hostname 127.0.0.1
-# 앞서 기억해 둔 포트 번호를 입력합니다
 Port 49335
 StrictHostKeyChecking no
 UserKnownHostsFile /dev/null
