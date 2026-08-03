@@ -78,6 +78,16 @@ parity is a reviewer responsibility, not a machine guarantee.
 
 <!-- one line per closed ticket: gist + link. Zoom the ticket for detail. -->
 
+- [Build the 26.8 coverage matrix](issues/01-coverage-matrix.md) — **105 triaged →
+  72 included, 17 chapters affected.** Identity dedup collapsed 9 git author names
+  to **5 people** (the suspected `yomybaby` / "Jong Eun Lee" duplicate confirmed as
+  one person; never resolve identity from `%ae` on this range). Six removals landed,
+  so docs get deleted as well as added. Two manual statements are *verifiably* false
+  today — `session_page.md:38` and `admin_menu.md:365`. All 11 flags decided in the
+  ticket; the load-bearing one: **no version-gated prose**, because FR-3208 and
+  FR-3203 deliberately drove version gates to zero and the flag proposed
+  reintroducing them.
+
 - [Define the screenshot hand-off artifact and the reviewer-conflict rule](issues/02-screenshot-handoff.md)
   — Keep the existing `<!-- TODO: Capture ... -->` marker verbatim, joined by PNG
   filename; aggregate into **one** `screenshot-manifest.md` on the map branch (not
@@ -91,19 +101,20 @@ parity is a reviewer responsibility, not a machine guarantee.
 
 Fog toward the destination. Graduates into tickets as the frontier advances.
 
-- **The per-page write + PR tickets.** One per affected page, but the page set is
-  unknown until [Build the 26.8 coverage matrix](issues/01-coverage-matrix.md)
-  resolves. Cannot be sliced before then — guessing the page list would pre-slice
-  the fog wrongly.
-- **How removals are handled.** Some 26.8 changes removed UI surface. Deleting a
-  section is not symmetric with adding one: it may orphan cross-references, strand
-  images, and break nav entries in `book.config.yaml`. The shape of this only
-  becomes clear once the matrix says whether any removals actually landed.
-- **Whether pre-existing docs debt rides along.** `docs-lint` reports terminology
-  drift and translation-parity gaps independent of 26.8. Folding a page's existing
-  debt into its 26.8 PR is cheap (the file is already open) but widens each diff
-  and muddies the attribution table. Decide once the matrix shows how many pages
-  are touched and how large the debt per page is.
+- _(graduated 2026-08-03)_ ~~The per-page write + PR tickets~~ → the page set is
+  now known: **17 chapters, expected to yield 16 PRs** once `agent_summary` is
+  confirmed redundant (F6). Specs in
+  [Per-page write specs](issues/04-page-write-specs.md).
+- _(graduated 2026-08-03)_ ~~How removals are handled~~ → six removals landed;
+  resolved in [ticket 01](issues/01-coverage-matrix.md) flag F3. Handled inside the
+  owning page's PR: delete the section, fix inbound cross-refs, check for images
+  orphaned by the deletion. No chapter dies entirely, so nav is untouched.
+- **Whether pre-existing docs debt rides along.** Still fog. `docs-lint` reports
+  terminology drift and translation-parity gaps independent of 26.8. Now sharper in
+  one respect — `admin_menu` carries 27 driving rows on a 1655-line chapter, so
+  *that* page's PR is already large enough that folding extra debt into it is
+  clearly wrong; the question remains open for the smaller pages. Decide when a
+  `docs-lint` run is available per page.
 
 ## Out of scope
 
@@ -121,5 +132,20 @@ Ruled beyond this destination. Never graduates; returns only as a fresh effort.
 - **The 96 pre-existing screenshot TODO markers** already in the manual, unrelated
   to 26.8. The capture effort may choose to clear them opportunistically; that is
   its call, not this map's.
-- **Review turnaround and merge.** The destination is *open draft PRs*. What
-  reviewers do next is outside the map.
+- **Review turnaround and merge.** The destination is *open, ready-for-review PRs*.
+  What reviewers do next is outside the map.
+
+Follow-up candidates surfaced by [ticket 01](issues/01-coverage-matrix.md) — real
+findings, but IA/product decisions rather than 26.8 docs-gap fixes. Each wants its
+own FR:
+
+- **A URLs / scopes / 403-404 chapter.** FR-3055 rewrote the whole URL scheme and
+  FR-3383 added a Forbidden page, but no chapter documents routing or error pages
+  and `book.config.yaml` has no such entry. This map corrects only the two
+  *verifiably false* sentences in place (F2); a real chapter needs nav entries in
+  four languages.
+- **`deployment_presets.md` is in no language's nav** (F11) — a 160-line page
+  reachable from nothing in `book.config.yaml`, yet four 26.8 rows land on it.
+  Pre-existing orphan, not a 26.8 regression.
+- **Spot-check the nuqs migration's shareable links** (F7) — needs a live server, so
+  it belongs to the screenshot effort, which will have one.
