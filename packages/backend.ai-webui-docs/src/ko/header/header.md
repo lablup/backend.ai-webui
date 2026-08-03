@@ -16,6 +16,35 @@ navTitle: 상단 바
 
 사용자는 상단 바의 프로젝트 선택기를 통하여 현재 프로젝트를 선택할 수 있습니다. 각 프로젝트 별로 다른 자원 정책을 가질 수 있으므로, 프로젝트를 변경할 경우 가용 가능한 자원 정책이 변경될 수 있습니다.
 
+프로젝트 페이지의 주소에는 현재 작업 중인 프로젝트의 이름이 포함됩니다. 예를 들어
+`http://<host>/project/<project-name>/start`과 같은 형태입니다. 다른 프로젝트를
+선택하면 현재 주소에서 프로젝트 이름 부분만 바뀌므로 같은 페이지에 그대로 머무릅니다.
+경로의 나머지 부분과 쿼리 문자열이 유지되어, 작성 중인 세션 생성 폼처럼 진행 중이던
+작업이 사라지지 않습니다. 이전 버전의 WebUI에서 북마크한 주소도 계속 사용할 수 있으며,
+같은 페이지의 현재 주소로 자동 연결됩니다.
+
+프로젝트 선택기에는 사용자가 접근할 수 있는 프로젝트가 표시되며, 주소에 포함된 프로젝트
+이름이 유효한지도 동일한 목록을 기준으로 판단합니다. 존재하지 않거나 접근 권한이 없는
+프로젝트 이름이 포함된 주소로 접속하면, 다른 프로젝트로 임의로 전환되지 않고 프로젝트
+선택기가 선택되지 않은 상태로 표시되며 페이지에 상황이 안내됩니다.
+
+![](../images/project_not_found_or_no_access.png)
+<!-- TODO: Capture screenshot of project_not_found_or_no_access.png — the "Project ... was not found or you don't have access to it." page under an invalid project URL, showing the path pill with the project segment highlighted, the hint pointing at the project selector, and the "Go to ..." button -->
+
+- `프로젝트 '<name>'를 찾을 수 없거나 접근 권한이 없습니다.`라는 메시지가 표시됩니다.
+- 그 아래에는 페이지 상단의 프로젝트 선택기에서 접근 가능한 프로젝트를 선택하라는 안내가
+  표시됩니다.
+- `<project>로 이동` 버튼을 클릭하면 접근 가능한 프로젝트로 이동합니다.
+
+소속된 프로젝트가 하나도 없는 경우에는 `선택 가능한 프로젝트가 없습니다.`와
+`관리자에게 프로젝트 접근 권한을 요청하세요.`가 표시됩니다.
+
+:::note
+관리자 페이지는 특정 프로젝트에 종속되지 않으므로 주소에 프로젝트 이름이 포함되지 않습니다.
+이러한 페이지에서 프로젝트를 선택하면 다른 주소로 이동하지 않고 작업 대상 프로젝트만
+변경됩니다.
+:::
+
 <a id="login-session-timer"></a>
 
 ## 로그인 세션 타이머
@@ -46,12 +75,29 @@ navTitle: 상단 바
 
 ![](../images/theme_mode.png)
 
+테마와 주요 색상 등 추가적인 외형 설정은 사용자 설정 페이지에 있습니다. 사용자 메뉴를 열고
+`설정`을 선택하면 이동할 수 있습니다. 이 항목들은 관리자가 활성화한 경우에만 제공됩니다.
+각 항목에 대한 설명은 [사용자 설정](#user-settings) 챕터를 참고하시기 바랍니다.
+
 <a id="help"></a>
 
 ## 도움말
 
 
-상단 바 우측의 물음표 버튼을 클릭하면 본 가이드 문서의 웹 버전에 접속할 수 있습니다. 현재 사용자가 접근해 있는 페이지에 따라, 관련된 문서로 자동 연결됩니다.
+상단 바 우측의 물음표 버튼을 클릭하면 본 가이드 문서의 웹 버전에 접속할 수 있습니다. 연결되는
+주소는 현재 사용 중인 WebUI에 맞추어 구성됩니다.
+
+- **버전**: 현재 실행 중인 WebUI 버전에 맞추어 발행된 문서가 열립니다. 사전 릴리스나 개발
+  빌드에서는 최신 변경 사항을 반영하는 `next` 채널이 열립니다.
+- **언어**: 사용 중인 표시 언어로 문서가 발행되어 있는 경우(영어, 한국어, 일본어, 태국어)
+  해당 언어의 문서가 열리며, 그 외의 언어에서는 영어 문서가 열립니다.
+- **페이지**: 현재 사용자가 접근해 있는 페이지를 설명하는 섹션으로 연결됩니다. 탭별로 별도의
+  섹션이 있는 경우에는 현재 선택된 탭에 해당하는 섹션으로 연결됩니다. 이는 모든 범위에서
+  동작하여, 사용자 페이지는 사용자 섹션으로, 프로젝트 관리자 및 관리자 페이지는 각각의
+  관리자 섹션으로 연결됩니다.
+
+일부 페이지는 본 문서에 별도의 섹션이 없습니다. 이러한 페이지에서는 해당 언어 문서의 첫
+페이지가 열립니다.
 
 <a id="responsive-layout"></a>
 
@@ -67,6 +113,7 @@ navTitle: 상단 바
 상단 바 우측의 사용자 아이콘 버튼을 클릭하여 사용자 메뉴를 확인할 수 있습니다.
 
 ![](../images/user_drop_down.png)
+<!-- TODO: Re-capture user_drop_down.png — the menu now shows a single `Downloads` entry in place of the former `Download Desktop App` entry -->
 
 드롭다운 상단에는 다음과 같은 사용자 정보가 표시됩니다. 이 항목들은 클릭할 수 없는 참고 정보입니다.
 
@@ -80,7 +127,7 @@ navTitle: 상단 바
 - `사용자 정보 변경`: 현재 로그인된 사용자 정보를 확인하거나 변경합니다.
 - `설정`: 사용자 설정 페이지로 이동합니다.
 - `로그 / 에러기록`: 사용자 설정 페이지의 로그 탭으로 이동합니다. 클라이언트 측에 기록된 로그 및 오류 내역을 확인할 수 있습니다.
-- `데스크톱 앱 다운로드`: 사용자의 플랫폼에 맞는 독립형 WebUI 앱을 다운로드합니다. 이 옵션은 관리자가 활성화한 경우에만 표시됩니다.
+- `다운로드`: 다운로드 다이얼로그를 엽니다. 독립형 WebUI 데스크톱 앱과 Backend.AI 명령줄 인터페이스(CLI)를 받을 수 있습니다. 이 항목은 관리자가 둘 중 하나 이상을 활성화한 경우에만 표시됩니다.
 - `로그아웃`: WebUI에서 로그아웃합니다.
 
 <a id="my-account"></a>
@@ -131,3 +178,37 @@ navTitle: 상단 바
 ![](../images/remove_2fa.png)
 
 이중 인증을 비활성화하려면, `2FA Enabled` 스위치를 끄고 다음 다이얼로그에서 확인 버튼을 클릭합니다.
+
+<a id="downloads"></a>
+
+### 다운로드
+
+`다운로드`를 선택하면 관리자가 활성화한 항목별로 탭이 구성된 다이얼로그가 나타납니다.
+탭은 `데스크톱 앱`과 `CLI`입니다.
+
+![](../images/downloads_desktop_app_tab.png)
+<!-- TODO: Capture screenshot of downloads_desktop_app_tab.png — the Downloads dialog on the Desktop App tab, showing the OS selector and the per-architecture download buttons -->
+
+`데스크톱 앱` 탭에서는 **OS** 항목에서 사용 중인 운영체제를 선택한 뒤, 사용 중인 CPU
+아키텍처에 해당하는 버튼을 클릭하면 다운로드가 시작됩니다. 독립형 앱을 사용하면 브라우저
+없이도 동일한 WebUI를 사용할 수 있습니다.
+
+![](../images/downloads_cli_tab.png)
+<!-- TODO: Capture screenshot of downloads_cli_tab.png — the Downloads dialog on the CLI tab with macOS selected, so both the standalone-executable section (including the unsigned-build warning) and the pip section are visible -->
+
+`CLI` 탭에서는 명령줄 클라이언트를 사용하는 두 가지 방법을 제공합니다.
+
+- **독립 실행 파일 다운로드**: 사용 중인 운영체제를 선택한 뒤, 사용 중인 CPU 아키텍처에
+  해당하는 버튼을 클릭합니다. Linux와 macOS 빌드를 제공합니다. 다운로드한 뒤에는 버튼
+  아래에 표시된 명령을 실행하여 실행 권한을 부여하고, 필요하면 `PATH`에 `backend.ai`로
+  설치할 수 있습니다. macOS의 경우 빌드가 아직 서명되지 않았기 때문에, 대신 quarantine
+  속성을 먼저 제거하는 방법이 안내됩니다.
+- **pip로 설치**: 파이썬 가상 환경을 만들고, 접속 중인 서버와 버전이 일치하는 클라이언트를
+  설치하며, 클라이언트에 필요한 환경 변수를 설정하는 스니펫이 제공됩니다. 스니펫 우측 상단의
+  복사 버튼을 클릭하면 전체 내용을 복사할 수 있습니다.
+
+:::note
+스니펫에는 현재 세션의 엔드포인트가 자동으로 채워지지만, 자격 증명은 표시되지 않습니다.
+실행하기 전에 `<your-access-key>`와 `<your-secret-key>`를 본인의 키페어로 바꾸시기
+바랍니다. 또한 스니펫은 클라이언트가 요구하는 Python 3.13을 사용하도록 고정합니다.
+:::

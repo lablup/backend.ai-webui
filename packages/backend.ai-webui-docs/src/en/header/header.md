@@ -18,6 +18,38 @@ Users can switch between projects using the project selector provided in the top
 By default, the project that the user currently belongs to is selected.
 Since each project may have different resource policies, switching projects may also change the available resource policies.
 
+The address of a project page contains the name of the project you are working
+in, for example `http://<host>/project/<project-name>/start`. Selecting another
+project rewrites only the project segment of the current address, so you stay on
+the same page: the rest of the path and the query string are preserved, and
+in-progress work such as an open session launcher form is not lost. Addresses
+bookmarked from earlier versions of the WebUI still work: they are redirected to
+the current address of the same page.
+
+The selector lists the projects you can access, and the same list decides whether
+the project name in an address is valid. If you open an address that names a
+project which does not exist or which you cannot access, the project selector
+shows no selection and the page explains what happened instead of silently
+switching you to another project.
+
+![](../images/project_not_found_or_no_access.png)
+<!-- TODO: Capture screenshot of project_not_found_or_no_access.png — the "Project ... was not found or you don't have access to it." page under an invalid project URL, showing the path pill with the project segment highlighted, the hint pointing at the project selector, and the "Go to ..." button -->
+
+- The message reads `Project ‘<name>’ was not found or you don’t have access to it.`
+- Below it, a hint asks you to select an accessible project from the project
+  selector at the top of the page.
+- A `Go to <project>` button takes you to a project you can access.
+
+If you do not belong to any project, the page shows
+`No accessible projects.` together with
+`Ask your administrator to grant you access to a project.`
+
+:::note
+Administrator pages are not tied to a single project, so their addresses do not
+contain a project segment. On those pages, choosing a project in the selector
+changes the project you are working with without navigating to another address.
+:::
+
 <a id="login-session-timer"></a>
 
 ## Login session timer
@@ -57,13 +89,32 @@ right side of the header.
 
 ![](../images/theme_mode.png)
 
+Further appearance options — the theme and its primary color — are on the user
+settings page. Open the user menu and select `Preferences` to reach them. These
+options are available only when your administrator has enabled them. For a
+description of each option, see the [User Settings](#user-settings) chapter.
+
 <a id="help"></a>
 
 ## Help
 
 
 Click the question mark button to access the web version of this guide document.
-You will be directed to the appropriate documentation based on the page you are currently on.
+The link is built to match the WebUI you are using:
+
+- **Version**: the manual published for the version of the WebUI you are
+  running opens. A pre-release or development build opens the `next` channel,
+  which follows the latest changes.
+- **Language**: the manual opens in your display language when it is published
+  in that language (English, Korean, Japanese, and Thai). Any other display
+  language opens the English manual.
+- **Page**: you are directed to the section that documents the page you are
+  currently on, including the section for the tab you have selected when that
+  tab is documented separately. This works in every scope — the same page opens
+  its user, project-administrator, or administrator section as appropriate.
+
+A few pages have no dedicated section in this manual. For those, the button
+opens the front page of the manual in your language.
 
 <a id="responsive-layout"></a>
 
@@ -83,6 +134,7 @@ small screens.
 Click the user icon on the right side of the top bar to see the user menu.
 
 ![](../images/user_drop_down.png)
+<!-- TODO: Re-capture user_drop_down.png — the menu now shows a single `Downloads` entry in place of the former `Download Desktop App` entry -->
 
 At the top of the dropdown, the following user information is displayed for
 reference. These items are not clickable.
@@ -99,8 +151,9 @@ Below the user information, the following action items are available.
 - `Preferences`: Go to the user settings page.
 - `Logs / Errors`: Go to the logs tab in the user settings page. You can check
   the log and error history recorded on the client side.
-- `Download Desktop App`: Download the stand-alone WebUI app for your platform.
-  This option is only visible when enabled by the administrator.
+- `Downloads`: Open the Downloads dialog, where you can get the stand-alone
+  WebUI desktop app and the Backend.AI command-line interface (CLI). This option
+  is only visible when the administrator has enabled at least one of the two.
 - `Log Out`: Log out of the WebUI.
 
 <a id="my-account"></a>
@@ -157,3 +210,40 @@ To log in, you must open the 2FA application and enter a 6-digit code in the One
 
 If you want to disable 2FA, turn off the `2FA Enabled` switch and click the confirm button in the
 following dialog.
+
+<a id="downloads"></a>
+
+### Downloads
+
+Selecting `Downloads` opens a dialog with one tab for each download the
+administrator has enabled: `Desktop App` and `CLI`.
+
+![](../images/downloads_desktop_app_tab.png)
+<!-- TODO: Capture screenshot of downloads_desktop_app_tab.png — the Downloads dialog on the Desktop App tab, showing the OS selector and the per-architecture download buttons -->
+
+On the `Desktop App` tab, select your operating system in the **OS** field, then
+click the button for your CPU architecture to start the download. The
+stand-alone app gives you the same WebUI outside a browser.
+
+![](../images/downloads_cli_tab.png)
+<!-- TODO: Capture screenshot of downloads_cli_tab.png — the Downloads dialog on the CLI tab with macOS selected, so both the standalone-executable section (including the unsigned-build warning) and the pip section are visible -->
+
+The `CLI` tab offers two ways to start using the command-line client:
+
+- **Download standalone executable**: Select your operating system, then click
+  the button for your CPU architecture. Linux and macOS builds are offered.
+  After downloading, run the commands shown below the buttons to make the file
+  executable and, optionally, install it as `backend.ai` on your `PATH`. On
+  macOS, the dialog instead shows how to clear the quarantine flag first,
+  because the build is not signed yet.
+- **Install via pip**: A ready-to-run snippet that creates a Python virtual
+  environment, installs the client version matching the server you are connected
+  to, and sets the environment variables the client needs. Use the copy button at
+  the top right of the snippet to copy the whole block.
+
+:::note
+The snippet fills in the endpoint of your current session, but never your
+credentials. Replace `<your-access-key>` and `<your-secret-key>` with your own
+keypair before running it. The snippet also pins Python 3.13, which the client
+requires.
+:::
