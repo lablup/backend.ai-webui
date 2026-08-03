@@ -2,10 +2,9 @@
 
 <!-- wayfinder:map -->
 
-Related: FR-3394 (https://lablup.atlassian.net/browse/FR-3394) — reported bug. The
-issue also carries a second report (environment variable values disappearing);
-that one was investigated and ruled out as intended behaviour, so it is out of
-scope for this map. FR-3394 itself is left untouched.
+Related: FR-3394 (https://lablup.atlassian.net/browse/FR-3394) — the reported
+bug. That issue carries a second report as well; see **Out of scope** below.
+FR-3394 itself is left untouched.
 
 ## Destination
 

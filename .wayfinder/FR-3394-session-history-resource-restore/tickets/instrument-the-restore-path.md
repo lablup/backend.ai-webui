@@ -18,8 +18,7 @@ begin with?
 ## Why it is HITL
 
 Needs a live cluster with a fractional GPU slot (`cuda.shares`) to create a real
-session with fgpu and get a real history entry. See the `webui-connection-info`
-skill for the dev server and endpoint.
+session with fgpu and get a real history entry.
 
 ## What to do
 
