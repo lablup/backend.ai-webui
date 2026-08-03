@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { FairShareListProjectNameQuery } from '../../__generated__/FairShareListProjectNameQuery.graphql';
 import DomainFairShareStep from './DomainFairShareStep';
 import ProjectFairShareStep from './ProjectFairShareStep';
 import ResourceGroupFairShareStep from './ResourceGroupFairShareStep';
@@ -26,6 +27,7 @@ import {
 } from 'nuqs';
 import { Suspense, useDeferredValue, useEffect, useEffectEvent } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const useStyles = createStyles(({ css, token }) => ({
   step: css`
@@ -174,19 +176,13 @@ const FairShareList: React.FC = () => {
           >
             {t('fairShare.Project')}
           </BAIText>
-          <BAIText
-            type="secondary"
-            ellipsis={{
-              tooltip: { title: deferredStepQueryParams.project },
-            }}
-            style={{
-              minWidth: 0,
-              flex: 1,
-            }}
-          >
-            {deferredStepQueryParams.project &&
-              `(${deferredStepQueryParams.project})`}
-          </BAIText>
+          {deferredStepQueryParams.project && (
+            <Suspense fallback={null}>
+              <ProjectStepNameText
+                projectId={deferredStepQueryParams.project}
+              />
+            </Suspense>
+          )}
         </BAIFlex>
       ),
 
@@ -300,8 +296,8 @@ const FairShareList: React.FC = () => {
               resourceGroupName={deferredStepQueryParams.resourceGroup}
               domainName={deferredStepQueryParams.domain}
               loading={isStepTransitionPending}
-              onClickProjectName={(projectName) => {
-                setStepQueryParams({ project: projectName });
+              onClickProjectName={(projectId) => {
+                setStepQueryParams({ project: projectId });
                 resetPerStepQueryParams();
               }}
             />
@@ -310,7 +306,7 @@ const FairShareList: React.FC = () => {
             <UserFairShareStep
               resourceGroupName={deferredStepQueryParams.resourceGroup}
               domainName={deferredStepQueryParams.domain}
-              projectName={deferredStepQueryParams.project}
+              projectId={deferredStepQueryParams.project}
               loading={isStepTransitionPending}
             />
           )}
@@ -321,6 +317,41 @@ const FairShareList: React.FC = () => {
 };
 
 export default FairShareList;
+
+const ProjectStepNameText: React.FC<{ projectId: string }> = ({
+  projectId,
+}) => {
+  'use memo';
+
+  const { project } = useLazyLoadQuery<FairShareListProjectNameQuery>(
+    graphql`
+      query FairShareListProjectNameQuery($projectId: UUID!) {
+        project: projectV2(projectId: $projectId) {
+          basicInfo {
+            name
+          }
+        }
+      }
+    `,
+    { projectId },
+  );
+  const projectName = project?.basicInfo?.name || '';
+
+  return (
+    <BAIText
+      type="secondary"
+      ellipsis={{
+        tooltip: { title: projectName },
+      }}
+      style={{
+        minWidth: 0,
+        flex: 1,
+      }}
+    >
+      {projectName && `(${projectName})`}
+    </BAIText>
+  );
+};
 
 const FairShareListTitle: React.FC<{
   currentStep: FairShareStepKey;

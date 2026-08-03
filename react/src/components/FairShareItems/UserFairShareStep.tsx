@@ -4,9 +4,8 @@
  */
 import {
   UserFairShareOrderBy,
-  UserFairShareStepContentQuery,
-} from '../../__generated__/UserFairShareStepContentQuery.graphql';
-import { UserFairShareStepQuery } from '../../__generated__/UserFairShareStepQuery.graphql';
+  UserFairShareStepQuery,
+} from '../../__generated__/UserFairShareStepQuery.graphql';
 import { convertToOrderBy, handleRowSelectionChange } from '../../helper';
 import { useBAIPaginationOptionStateOnSearchParam } from '../../hooks/reactPaginationQueryOptions';
 import AutoUpdateFetchKeyButton, {
@@ -39,71 +38,11 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 interface UserFairShareStepProps {
   resourceGroupName: string;
   domainName: string;
-  projectName: string;
-  loading?: boolean;
-}
-
-const UserFairShareStep: React.FC<UserFairShareStepProps> = ({
-  resourceGroupName,
-  domainName,
-  projectName,
-  loading,
-}) => {
-  'use memo';
-
-  const { projectFairShares } = useLazyLoadQuery<UserFairShareStepQuery>(
-    graphql`
-      query UserFairShareStepQuery(
-        $resourceGroupName: String!
-        $domainName: String!
-        $projectName: String
-      ) {
-        projectFairShares: rgProjectFairShares(
-          scope: {
-            resourceGroupName: $resourceGroupName
-            domainName: $domainName
-          }
-          filter: { project: { name: { equals: $projectName } } }
-          limit: 1
-        ) {
-          edges {
-            node {
-              projectId
-            }
-          }
-        }
-      }
-    `,
-    { resourceGroupName, domainName, projectName },
-  );
-
-  const projectId = projectFairShares?.edges?.[0]?.node?.projectId;
-  if (!projectId) {
-    // The message must mention 'projectFairShares' so that SchedulerPage's
-    // error fallback classifies it as an invalid URL parameter error.
-    throw new Error(
-      `projectFairShares: no project named "${projectName}" in resource group "${resourceGroupName}" and domain "${domainName}".`,
-    );
-  }
-
-  return (
-    <UserFairShareStepContent
-      resourceGroupName={resourceGroupName}
-      domainName={domainName}
-      projectId={projectId}
-      loading={loading}
-    />
-  );
-};
-
-interface UserFairShareStepContentProps {
-  resourceGroupName: string;
-  domainName: string;
   projectId: string;
   loading?: boolean;
 }
 
-const UserFairShareStepContent: React.FC<UserFairShareStepContentProps> = ({
+const UserFairShareStep: React.FC<UserFairShareStepProps> = ({
   resourceGroupName,
   domainName,
   projectId,
@@ -157,9 +96,9 @@ const UserFairShareStepContent: React.FC<UserFairShareStepContentProps> = ({
   const deferredFetchKey = useDeferredValue(fetchKey);
 
   const { resourceGroups, userFairShares } =
-    useLazyLoadQuery<UserFairShareStepContentQuery>(
+    useLazyLoadQuery<UserFairShareStepQuery>(
       graphql`
-        query UserFairShareStepContentQuery(
+        query UserFairShareStepQuery(
           $resourceGroupName: String!
           $domainName: String!
           $projectId: String!
