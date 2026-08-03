@@ -26,7 +26,7 @@ Users can select the deployment and model from the top left corner of each chat 
 Clicking the **Deployment** field (indicated by a deployment icon prefix; the field reads **Select Endpoint** while it is empty) opens a dropdown showing available deployments under a "Deployment" header.
 Once a deployment is selected, the model dropdown header updates to show "{deployment name}'s Models", listing the models associated with that deployment.
 
-![](../images/chat_deployment_select.png)
+<!-- ![](../images/chat_deployment_select.png) -->
 <!-- TODO: Capture screenshot of chat_deployment_select.png — the Deployment dropdown on a chat card, open, with the "Deployment" header and several deployments listed -->
 
 <a id="deployments-listed-in-chat"></a>
@@ -50,7 +50,7 @@ When a chat card has no model list yet, a configuration panel appears above the 
 
 The chat card header — the deployment, model, and sync controls — is rendered right away and does not wait for the model list, so the panel is reachable while the fetch is still in progress. During the fetch, **Refresh Model Information** shows a loading indicator, the **Base Path** and **Token** fields are disabled, and the message input at the bottom of the card is disabled. All of them become usable again once the fetch settles. A deployment that never answers eventually times out and is reported as a failed fetch, so you can correct the settings and retry instead of waiting indefinitely.
 
-![](../images/chat_model_loading.png)
+<!-- ![](../images/chat_model_loading.png) -->
 <!-- TODO: Capture screenshot of chat_model_loading.png — the configuration panel while the model list is being fetched: Refresh Model Information showing its loading indicator and the Base Path / Token fields disabled -->
 
 The panel can carry the following warnings:
@@ -74,7 +74,7 @@ Refer to the description below for the necessary inputs to configure custom mode
    * Expired tokens are not listed. When the field is empty, the most recently created valid token is selected for you.
    * The gear icon beside the field (**Access Token Settings**) opens the Access Tokens section of the deployment's detail page, where you can issue a new token. The list is read again when you return, so a token you just created is immediately selectable. For instructions, refer to the [Generating Tokens](#generating-tokens) section.
 
-![](../images/chat_token_select.png)
+<!-- ![](../images/chat_token_select.png) -->
 <!-- TODO: Capture screenshot of chat_token_select.png — the Token dropdown open, showing options labeled with the token tail and expiry date, one "No Expiration" option, and the Access Token Settings gear icon beside the field -->
 
 <a id="add-or-remove-comparison-chat-cards"></a>

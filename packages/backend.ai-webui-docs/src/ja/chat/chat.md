@@ -25,7 +25,7 @@ navTitle: チャット
 **デプロイメント**フィールド（デプロイメントアイコンのプレフィックスが付いています。未選択のときは「エンドポイントの選択」と表示されます）をクリックすると、「デプロイ」ヘッダーの下に利用可能なデプロイメントが一覧表示されたドロップダウンが開きます。
 デプロイメントを選択すると、モデルドロップダウンのヘッダーが「{デプロイメント名}のモデル」に更新され、そのデプロイメントに関連付けられたモデルが一覧表示されます。
 
-![](../images/chat_deployment_select.png)
+<!-- ![](../images/chat_deployment_select.png) -->
 <!-- TODO: Capture screenshot of chat_deployment_select.png — the Deployment dropdown on a chat card, open, with the "Deployment" header and several deployments listed -->
 
 <a id="deployments-listed-in-chat"></a>
@@ -49,7 +49,7 @@ navTitle: チャット
 
 デプロイメント、モデル、同期のコントロールを含むチャットカードのヘッダーはモデル一覧を待たずにすぐ表示されるため、取得中でもこのパネルを操作できます。取得中は **モデル情報の更新** ボタンにローディング表示が出て、**ベースパス** と **トークン** の入力欄、およびカード下部のメッセージ入力欄が無効になります。取得が完了すると、いずれも再び使用できます。応答しないデプロイメントは一定時間後にタイムアウトして取得失敗として扱われるため、いつまでも待たされることなく設定を修正して再試行できます。
 
-![](../images/chat_model_loading.png)
+<!-- ![](../images/chat_model_loading.png) -->
 <!-- TODO: Capture screenshot of chat_model_loading.png — the configuration panel while the model list is being fetched: Refresh Model Information showing its loading indicator and the Base Path / Token fields disabled -->
 
 このパネルには以下の警告が表示される場合があります。
@@ -73,7 +73,7 @@ navTitle: チャット
    * 期限切れのトークンは一覧に表示されません。値が空の場合は、最後に作成された有効なトークンが自動的に選択されます。
    * 入力欄の横の歯車アイコン（**アクセストークンの設定**）をクリックすると、デプロイ詳細ページのアクセストークンセクションが開き、新しいトークンを発行できます。戻ると一覧が読み直されるため、作成したばかりのトークンをすぐに選択できます。手順については[トークンの生成](#generating-tokens)セクションを参照してください。
 
-![](../images/chat_token_select.png)
+<!-- ![](../images/chat_token_select.png) -->
 <!-- TODO: Capture screenshot of chat_token_select.png — the Token dropdown open, showing options labeled with the token tail and expiry date, one "No Expiration" option, and the Access Token Settings gear icon beside the field -->
 
 <a id="add-or-remove-comparison-chat-cards"></a>

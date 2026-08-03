@@ -26,7 +26,7 @@ navTitle: 채팅
 배포 아이콘이 앞에 표시된 **배포** 선택란(비어 있을 때는 **엔드포인트 선택**으로 표시됩니다)을 클릭하면 "배포" 헤더 아래에 사용 가능한 배포 목록이 드롭다운으로 표시됩니다.
 배포를 선택하면 모델 드롭다운 헤더가 "{배포 이름}의 모델"로 업데이트되어 해당 배포와 연결된 모델 목록이 표시됩니다.
 
-![](../images/chat_deployment_select.png)
+<!-- ![](../images/chat_deployment_select.png) -->
 <!-- TODO: Capture screenshot of chat_deployment_select.png — the Deployment dropdown on a chat card, open, with the "Deployment" header and several deployments listed -->
 
 <a id="deployments-listed-in-chat"></a>
@@ -50,7 +50,7 @@ navTitle: 채팅
 
 배포, 모델, 동기화 컨트롤이 있는 채팅 카드 헤더는 모델 목록을 기다리지 않고 곧바로 표시되므로, 가져오기가 진행 중인 동안에도 이 패널을 사용할 수 있습니다. 가져오는 동안에는 **모델 정보 새로고침** 버튼에 로딩 표시가 나타나고, **기본 경로**와 **토큰** 입력란 및 카드 하단의 메시지 입력란이 비활성화됩니다. 가져오기가 끝나면 모두 다시 사용할 수 있습니다. 응답하지 않는 배포는 일정 시간이 지나면 시간 초과되어 가져오기 실패로 처리되므로, 무한정 기다리지 않고 설정을 수정한 뒤 다시 시도할 수 있습니다.
 
-![](../images/chat_model_loading.png)
+<!-- ![](../images/chat_model_loading.png) -->
 <!-- TODO: Capture screenshot of chat_model_loading.png — the configuration panel while the model list is being fetched: Refresh Model Information showing its loading indicator and the Base Path / Token fields disabled -->
 
 이 패널에는 다음 경고가 표시될 수 있습니다.
@@ -74,7 +74,7 @@ navTitle: 채팅
    * 이미 만료된 토큰은 목록에 표시되지 않습니다. 값이 비어 있는 경우 가장 최근에 생성된 유효한 토큰이 자동으로 선택됩니다.
    * 입력란 옆의 톱니바퀴 아이콘(**액세스 토큰 설정**)을 클릭하면 배포 상세 페이지의 액세스 토큰 섹션이 열리며, 여기에서 새 토큰을 발급할 수 있습니다. 돌아오면 목록을 다시 읽어오므로 방금 만든 토큰을 바로 선택할 수 있습니다. 자세한 방법은 [토큰 생성](#generating-tokens) 섹션을 참조하세요.
 
-![](../images/chat_token_select.png)
+<!-- ![](../images/chat_token_select.png) -->
 <!-- TODO: Capture screenshot of chat_token_select.png — the Token dropdown open, showing options labeled with the token tail and expiry date, one "No Expiration" option, and the Access Token Settings gear icon beside the field -->
 
 <a id="add-or-remove-comparison-chat-cards"></a>
