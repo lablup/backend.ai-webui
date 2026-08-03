@@ -50,7 +50,7 @@ interface ProjectFairShareTableProps extends BAITableProps<ProjectFairShare> {
     currentPageItems: readonly ProjectFairShare[],
   ) => void;
   onOpenWeightSetting?: (row: ProjectFairShare) => void;
-  onClickProjectName?: (projectId: string) => void;
+  onClickProjectName?: (projectName: string) => void;
 }
 
 const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
@@ -124,7 +124,9 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
             <ProjectResourceGroupWarningIcon projectFairShareFrgmt={record} />
           }
           title={record?.project?.basicInfo?.name}
-          onTitleClick={() => onClickProjectName?.(record?.projectId)}
+          onTitleClick={() =>
+            onClickProjectName?.(record?.project?.basicInfo?.name || '')
+          }
           showActions="always"
           actions={[
             {
