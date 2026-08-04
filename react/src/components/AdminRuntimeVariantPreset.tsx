@@ -306,7 +306,11 @@ const AdminRuntimeVariantPreset = ({
           onRequestClose={(success) => {
             setIsCreating(false);
             setEditingPreset(null);
-            if (success) {
+            // A create adds a new row the offset query can't know about, so it
+            // needs a refetch. An update returns every field, so Relay merges
+            // the record by id into the store and the list reflects it
+            // without one.
+            if (success && editingPreset === null) {
               onReload(queryRef.variables, { fetchPolicy: 'network-only' });
             }
           }}
