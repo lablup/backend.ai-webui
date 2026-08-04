@@ -341,6 +341,16 @@ const PureChatCard: React.FC<ChatCardProps> = ({
                 middleware: [
                   extractReasoningMiddleware({
                     tagName: 'think',
+                    // Qwen3-style models are handed an opening `<think>` by
+                    // their chat template, so the *response* begins inside
+                    // reasoning and only ever emits the closing `</think>`.
+                    // Waiting for an opening tag that never arrives left the
+                    // reasoning inline in the answer, with a stray `</think>`
+                    // rendered as literal text. Starting in reasoning mode
+                    // costs nothing when a model emits no tags at all — with
+                    // no closing tag there is no match, and the text is passed
+                    // through untouched.
+                    startWithReasoning: true,
                   }),
                   // The openai-compatible provider does not advertise any
                   // `supportedUrls`, so the AI SDK treats a `data:` image
