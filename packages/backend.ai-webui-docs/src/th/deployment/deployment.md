@@ -47,7 +47,6 @@ Backend.AI ให้คุณปรับใช้โมเดล AI เป็�
 คลิกปุ่ม `สร้างการปรับใช้` ในหน้าการปรับใช้เพื่อเปิดหน้าต่าง **สร้างการปรับใช้** หน้าต่างนี้รับเฉพาะเมตาดาตาระดับการปรับใช้เท่านั้น และจะยังไม่มีการสร้าง Revision ในขั้นตอนนี้
 
 ![](../images/model_serving_create_modal.png)
-<!-- TODO: Re-capture model_serving_create_modal.png — the modal now shows the warning notice "The resource group selected at creation cannot be changed." under the Resource Group field, the checkbox label reads "Open to Public", and the submit button reads "Create". -->
 
 หน้าต่างประกอบด้วยฟิลด์ต่อไปนี้
 
@@ -515,7 +514,7 @@ vllm:
 
 คลิกปุ่มลิงก์ **ประวัติการจัดตาราง** ที่อยู่ถัดจากแท็กสถานะ เพื่อเปิดโมดอล **ประวัติการจัดตารางของการปรับใช้** โมดอลนี้แสดงเหตุการณ์การจัดตารางที่บันทึกไว้สำหรับการปรับใช้นี้โดยเรียงจากใหม่ไปเก่า พร้อมแถบตัวกรองคุณสมบัติ (ID, เฟส, ผลลัพธ์, สถานะเดิม, สถานะใหม่, รหัสข้อผิดพลาด, ข้อความ, สร้างเมื่อ, อัปเดตเมื่อ) และปุ่มรีเฟรช
 
-<!-- TODO: Capture screenshot of deployment_scheduling_history.png — the Deployment Scheduling History modal in its default "Expand errors only" view, with one non-success row expanded to show its complete sub-step table (including a SUCCESS sub-step) and the expand-column header menu open. -->
+![](../images/deployment_scheduling_history.png)
 
 เหตุการณ์ที่มีขั้นตอนย่อยสามารถขยายได้ โดยคลิกไอคอน `+` ที่ต้นแถวเพื่อดูตารางขั้นตอนย่อยของเหตุการณ์นั้น เมนูในส่วนหัวของคอลัมน์ขยายมีตัวเลือกการแสดงผลสามแบบ:
 
@@ -636,7 +635,6 @@ vllm:
 ถัดจากแท็กสถานะในคอลัมน์ **วงจรชีวิต** จะมีปุ่มไอคอนประวัติ เมื่อคลิกจะเปิดโมดอล **ประวัติการจัดตารางเวลาของ Replica** ของเรพลิกานั้น ซึ่งคุณสามารถกรองประวัติเหตุการณ์การจัดตารางของเรพลิกาได้ตามช่วงวันที่ สถานะ และอื่น ๆ
 
 ![](../images/replica_scheduling_history.png)
-<!-- TODO: Re-capture replica_scheduling_history.png — show an expanded row in the default "Expand errors only" view with its full sub-step table, including a sub-step whose result is SUCCESS, plus the expand-column header menu. -->
 
 การขยายแถวและตัวเลือกการแสดงผลทั้งสามแบบทำงานเหมือนกับที่อธิบายไว้ใน [ประวัติการจัดตาราง](#scheduling-history) ทุกประการ คือ ตัวเลือกการแสดงผลกำหนดเพียงว่าแถวใดจะเริ่มต้นในสถานะขยาย และแถวที่ขยายจะแสดงตารางขั้นตอนย่อยทั้งหมดของเหตุการณ์นั้นเสมอ
 
@@ -690,7 +688,6 @@ vllm:
 โทเค็นการเข้าถึงจัดการได้จากการ์ด **โทเค็นการเข้าถึง** ที่ด้านล่างของหน้าข้อมูลรายละเอียดการปรับใช้ วางเมาส์เหนือไอคอน ⓘ ถัดจากชื่อการ์ดเพื่อดูคำอธิบาย: *"จัดการโทเค็นการเข้าถึงสำหรับการยืนยันตัวตนคำขอ API ไปยังเอนด์พอยต์ของการปรับใช้นี้"*
 
 ![](../images/generate_token.png)
-<!-- TODO: Re-capture generate_token.png — the Access Tokens card with its refresh button and the primary "Create Access Token" button in the header, and a token table with the Token / Created At / Expiration columns. -->
 
 #### การสร้างโทเค็นการเข้าถึง
 
@@ -702,7 +699,6 @@ vllm:
 3. คลิก `สร้างโทเค็นการเข้าถึง` เพื่อออกโทเค็น
 
 ![](../images/token_generation_dialog.png)
-<!-- TODO: Re-capture token_generation_dialog.png — the "Create Access Token" dialog showing the Expiration select expanded with the 7 Days / 30 Days / 90 Days / Custom Expiration / No Expiration options. -->
 
    ปุ่ม `สร้างโทเค็นการเข้าถึง` จะถูกปิดใช้งานจนกว่า manager จะออก endpoint ของเครือข่ายให้การปรับใช้นี้ ระหว่างที่ปิดใช้งาน คำแนะนำของปุ่มจะระบุว่า *"ยังไม่ได้ออก endpoint ของเครือข่าย"* ปุ่มนี้ยังถูกปิดใช้งานสำหรับการปรับใช้ที่คุณไม่ได้เป็นเจ้าของ และการปรับใช้ที่กำลังถูกลบด้วย
 
@@ -785,7 +781,7 @@ endpoint ได้ หากบริการถูกสร้างในเ�
 
 หากการปรับใช้ไม่มีโทเค็นที่ใช้ได้เลย ตัวเลือกจะว่างเปล่า ให้สร้างโทเค็นก่อนตามที่อธิบายไว้ใน [การสร้างโทเค็น](#generating-tokens)
 
-<!-- TODO: Capture screenshot of chat_deployment_token_select.png — the Chat page token selector expanded, showing two options with their "…abc123" tails and expiry dates, and the Access Token Settings gear icon beside the field. -->
+![](../images/chat_deployment_token_select.png)
 
 หากคุณพบปัญหาในการเชื่อมต่อกับ API หน้าแชทจะแสดงตัวเลือกที่ให้คุณกำหนดค่าการตั้งค่าโมเดลด้วยตนเอง
 ในการใช้โมเดล คุณจะต้องมีข้อมูลต่อไปนี้:
@@ -808,7 +804,6 @@ endpoint ได้ หากบริการถูกสร้างในเ�
 คลังโมเดล (Model Store) ให้บริการแกลเลอรีแบบการ์ดของโมเดลที่กำหนดค่าไว้ล่วงหน้าซึ่งคุณสามารถเรียกดู ค้นหา และ deploy ได้ คุณสามารถเข้าถึงคลังโมเดลได้จากเมนูด้านข้าง
 
 ![](../images/model_store_page_v2.png)
-<!-- TODO: Re-capture model_store_page_v2.png — the filter bar with the Storage Host property selected, showing the storage-host dropdown open instead of a free-text input. -->
 
 ### การเรียกดูและค้นหาโมเดล
 

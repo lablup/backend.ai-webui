@@ -47,7 +47,6 @@ Each deployment can hold many revisions. Only one revision is *current* (serving
 Click the `New Deployment` button on the Deployments page to open the **Create Deployment** modal. The modal collects only deployment-level metadata; no revision is created at this point.
 
 ![](../images/model_serving_create_modal.png)
-<!-- TODO: Re-capture model_serving_create_modal.png — the modal now shows the warning notice "The resource group selected at creation cannot be changed." under the Resource Group field, the checkbox label reads "Open to Public", and the submit button reads "Create". -->
 
 The modal contains the following fields:
 
@@ -533,8 +532,7 @@ The Service Info card's header exposes an **Edit** button alongside a **More** m
 
 Click the **Scheduling History** link button next to the status tag to open the **Deployment Scheduling History** modal. The modal lists the scheduling events recorded for this deployment, newest first, with a property filter bar (ID, Phase, Result, From Status, To Status, Error Code, Message, Created At, Updated At) and a refresh button.
 
-<!-- TODO: Capture screenshot of deployment_scheduling_history.png — the Deployment Scheduling History modal in its default "Expand errors only" view, with one non-success row expanded to show its complete sub-step table (including a SUCCESS sub-step) and the expand-column header menu open. -->
-
+![](../images/deployment_scheduling_history.png)
 
 Every event that has sub-steps can be expanded: click the `+` icon at the start of the row to see the sub-step table for that event. The menu in the expand column header offers three view options:
 
@@ -656,7 +654,6 @@ Click the session name in the **Session** column to open the session detail draw
 Next to the status tag in the **Lifecycle** column is a history icon button. Click it to open the **Replica Scheduling History** modal for that replica, where you can review the replica's scheduling events filtered by date range, status, and other criteria.
 
 ![](../images/replica_scheduling_history.png)
-<!-- TODO: Re-capture replica_scheduling_history.png — show an expanded row in the default "Expand errors only" view with its full sub-step table, including a sub-step whose result is SUCCESS, plus the expand-column header menu. -->
 
 Expanding a row and the three view options behave exactly as described in [Scheduling History](#scheduling-history): the view option chooses which rows start expanded, and an expanded row always shows the full sub-step table for that event.
 
@@ -710,7 +707,6 @@ Once the deployment is `HEALTHY`, you can click on its name in the Deployments l
 Access tokens are managed in the **Access Tokens** card at the bottom of the Deployment Detail Page. Hover the ⓘ icon next to the card title for a summary: *"Manage access tokens for authenticating API requests to this deployment's endpoint."*
 
 ![](../images/generate_token.png)
-<!-- TODO: Re-capture generate_token.png — the Access Tokens card with its refresh button and the primary "Create Access Token" button in the header, and a token table with the Token / Created At / Expiration columns. -->
 
 #### Creating an access token
 
@@ -722,7 +718,6 @@ Access tokens are managed in the **Access Tokens** card at the bottom of the Dep
 3. Click `Create Access Token` to issue it.
 
 ![](../images/token_generation_dialog.png)
-<!-- TODO: Re-capture token_generation_dialog.png — the "Create Access Token" dialog showing the Expiration select expanded with the 7 Days / 30 Days / 90 Days / Custom Expiration / No Expiration options. -->
 
    The `Create Access Token` button is disabled until the manager has issued a network endpoint for the deployment. While it is disabled, its tooltip reads *"The network endpoint has not been issued yet."* It is also disabled for a deployment you do not own and for a deployment that is being deleted.
 
@@ -803,7 +798,7 @@ When the Chat page is talking to a Backend.AI deployment, the token field is a s
 
 If the deployment has no valid token, the selector is empty; create one first as described in [Access Tokens](#generating-tokens).
 
-<!-- TODO: Capture screenshot of chat_deployment_token_select.png — the Chat page token selector expanded, showing two options with their "…abc123" tails and expiry dates, and the Access Token Settings gear icon beside the field. -->
+![](../images/chat_deployment_token_select.png)
 
 If you encounter issues connecting to the API, the Chat page will display options that allow you to manually configure the model settings.
 To use the model, you will need the following information:
@@ -826,7 +821,6 @@ To use the model, you will need the following information:
 The Model Store provides a card-based gallery of pre-configured models that you can browse, search, and deploy. You can access the Model Store from the sidebar menu.
 
 ![](../images/model_store_page_v2.png)
-<!-- TODO: Re-capture model_store_page_v2.png — the filter bar with the Storage Host property selected, showing the storage-host dropdown open instead of a free-text input. -->
 
 ### Browsing and searching models
 

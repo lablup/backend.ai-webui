@@ -134,7 +134,7 @@
 
    **런타임** 항목은 프리셋을 생성할 때뿐 아니라 **수정할 때도** 표시됩니다. 두 경우 모두 1단계에서 런타임을 변경할 수 있으므로, 저장하기 전에 이 항목에서 프리셋이 사용할 런타임을 확인하세요.
 
-<!-- TODO: Capture screenshot of deployment_preset_review_step.png — the Review step of the preset form opened in edit mode, with the Basic Info card showing the Name, Runtime, and Image rows and its Edit link. -->
+![](../images/deployment_preset_review_step.png)
 
 ### 배포 프리셋 수정
 
@@ -143,7 +143,6 @@
 3. 필요한 값을 수정한 뒤 **검토** 단계에서 요약 내용(**런타임** 항목 포함)을 확인하고 `저장`을 클릭하여 변경 사항을 반영합니다.
 
 ![](../images/deployment_preset_edit_modal.png)
-<!-- TODO: Re-capture deployment_preset_edit_modal.png — the preset edit form as a full-page wizard (step list on the right, Previous / Next / Skip to Review at the bottom) rather than a dialog, with the submit button on the Review step reading "Save". -->
 
 프리셋을 수정하면 **이후** 생성되는 배포의 기본값만 변경됩니다. 이미 해당 프리셋으로 생성된 기존 배포에는 영향을 주지 않습니다.
 

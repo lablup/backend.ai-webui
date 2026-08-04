@@ -131,7 +131,7 @@ The remaining cards summarize **Resources** (resource slots, resource options, c
 
    The **Runtime** row appears when you create a preset **and** when you edit one, matching the fact that the runtime is editable on step 1 in both cases. Use it to confirm which runtime the preset will use before you save.
 
-<!-- TODO: Capture screenshot of deployment_preset_review_step.png — the Review step of the preset form opened in edit mode, with the Basic Info card showing the Name, Runtime, and Image rows and its Edit link. -->
+![](../images/deployment_preset_review_step.png)
 
 :::note[Required parameters in presets]
 Administrators can mark individual Runtime Parameters as required. Required parameters display a red asterisk (★) next to the label. The save button stays disabled until all required parameters are filled in. Required parameter validation applies even to parameters on unvisited tabs.
@@ -148,7 +148,6 @@ The **Enable Health Check** toggle also applies to the vLLM/SGLang Advanced Mode
 3. Adjust the fields as needed. On the **Review** step, confirm the summary — including the **Runtime** row — and click `Save` to store your changes.
 
 ![](../images/deployment_preset_edit_modal.png)
-<!-- TODO: Re-capture deployment_preset_edit_modal.png — the preset edit form as a full-page wizard (step list on the right, Previous / Next / Skip to Review at the bottom) rather than a dialog, with the submit button on the Review step reading "Save". -->
 
 Editing a preset only changes the defaults for **future** deployments. Existing deployments that were already created from this preset are not modified.
 

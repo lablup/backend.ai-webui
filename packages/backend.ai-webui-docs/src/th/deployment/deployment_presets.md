@@ -133,7 +133,7 @@
 
    แถว **Runtime** จะแสดงทั้งตอนที่คุณสร้างพรีเซ็ต **และ** ตอนที่คุณแก้ไขพรีเซ็ต เนื่องจากฟิลด์นี้แก้ไขได้ในขั้นตอนที่ 1 ทั้งสองกรณี ใช้แถวนี้เพื่อยืนยันว่าพรีเซ็ตจะใช้ runtime ใดก่อนบันทึก
 
-<!-- TODO: Capture screenshot of deployment_preset_review_step.png — the Review step of the preset form opened in edit mode, with the Basic Info card showing the Name, Runtime, and Image rows and its Edit link. -->
+![](../images/deployment_preset_review_step.png)
 
 ### แก้ไขพรีเซ็ตการดีพลอย
 
@@ -142,7 +142,6 @@
 3. ปรับค่าตามต้องการ จากนั้นในขั้นตอน **การทบทวน** ให้ยืนยันสรุปข้อมูล รวมถึงแถว **Runtime** แล้วคลิก `บันทึก` เพื่อบันทึกการเปลี่ยนแปลง
 
 ![](../images/deployment_preset_edit_modal.png)
-<!-- TODO: Re-capture deployment_preset_edit_modal.png — the preset edit form as a full-page wizard (step list on the right, Previous / Next / Skip to Review at the bottom) rather than a dialog, with the submit button on the Review step reading "Save". -->
 
 การแก้ไขพรีเซ็ตจะเปลี่ยนเฉพาะค่าเริ่มต้นของ deployment ที่จะสร้าง **ในอนาคต** เท่านั้น deployment ที่สร้างจากพรีเซ็ตนี้อยู่แล้วจะไม่ถูกแก้ไข
 

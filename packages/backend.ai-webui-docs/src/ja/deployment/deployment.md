@@ -47,7 +47,6 @@ Backend.AI では、**デプロイ（Deployments）** 機能を通じて AI モ�
 デプロイページで `デプロイを作成` ボタンをクリックすると、**デプロイメント作成** モーダルが開きます。このモーダルではデプロイメント単位のメタデータのみを入力し、この段階で Revision は作成されません。
 
 ![](../images/model_serving_create_modal.png)
-<!-- TODO: Re-capture model_serving_create_modal.png — the modal now shows the warning notice "The resource group selected at creation cannot be changed." under the Resource Group field, the checkbox label reads "Open to Public", and the submit button reads "Create". -->
 
 モーダルには次のフィールドが含まれます。
 
@@ -524,7 +523,7 @@ vLLM デプロイメントの場合、ルートのデフォルト値は `vllm` �
 
 ステータスタグの横にある **スケジュール履歴** リンクボタンをクリックすると、**デプロイメントのスケジュール履歴** モーダルが開きます。モーダルにはこのデプロイメントに記録されたスケジューリングイベントが新しい順に表示され、プロパティフィルターバー（ID、フェーズ、結果、変更前ステータス、変更後ステータス、エラーコード、メッセージ、作成日時、更新日時）と更新ボタンが用意されています。
 
-<!-- TODO: Capture screenshot of deployment_scheduling_history.png — the Deployment Scheduling History modal in its default "Expand errors only" view, with one non-success row expanded to show its complete sub-step table (including a SUCCESS sub-step) and the expand-column header menu open. -->
+![](../images/deployment_scheduling_history.png)
 
 サブステップを持つイベントは、行の先頭にある `+` アイコンをクリックすると展開でき、そのイベントのサブステップ表が表示されます。展開列のヘッダーにあるメニューでは、次の 3 つの表示方法を選択できます。
 
@@ -645,7 +644,6 @@ vLLM デプロイメントの場合、ルートのデフォルト値は `vllm` �
 **ライフサイクル** 列のステータスタグの横には履歴アイコンボタンがあります。クリックすると該当レプリカの **レプリカのスケジュール履歴** モーダルが開き、レプリカのスケジューリングイベント履歴を日付範囲やステータスなどで絞り込んで確認できます。
 
 ![](../images/replica_scheduling_history.png)
-<!-- TODO: Re-capture replica_scheduling_history.png — show an expanded row in the default "Expand errors only" view with its full sub-step table, including a sub-step whose result is SUCCESS, plus the expand-column header menu. -->
 
 行の展開方法と 3 つの表示方法は、[スケジュール履歴](#scheduling-history) で説明したものと同じです。表示方法はどの行を展開した状態で開始するかだけを決め、展開された行にはそのイベントのサブステップ表が常にすべて表示されます。
 
@@ -699,7 +697,6 @@ vLLM デプロイメントの場合、ルートのデフォルト値は `vllm` �
 アクセストークンは、デプロイ詳細ページ下部の **アクセストークン** カードで管理します。カードタイトル横の ⓘ アイコンにカーソルを合わせると、*「このデプロイメントのエンドポイントへの API リクエストを認証するためのアクセストークンを管理します。」* という説明が表示されます。
 
 ![](../images/generate_token.png)
-<!-- TODO: Re-capture generate_token.png — the Access Tokens card with its refresh button and the primary "Create Access Token" button in the header, and a token table with the Token / Created At / Expiration columns. -->
 
 #### アクセストークンの作成
 
@@ -711,7 +708,6 @@ vLLM デプロイメントの場合、ルートのデフォルト値は `vllm` �
 3. `アクセストークンを作成` をクリックして発行します。
 
 ![](../images/token_generation_dialog.png)
-<!-- TODO: Re-capture token_generation_dialog.png — the "Create Access Token" dialog showing the Expiration select expanded with the 7 Days / 30 Days / 90 Days / Custom Expiration / No Expiration options. -->
 
    マネージャーがまだネットワークエンドポイントを発行していない間、`アクセストークンを作成` ボタンは無効になり、ツールチップに *「ネットワークエンドポイントはまだ発行されていません。」* と表示されます。自分が所有していないデプロイメントや、削除中のデプロイメントでもボタンは無効になります。
 
@@ -794,7 +790,7 @@ Chat ページが Backend.AI のデプロイメントに接続している場合
 
 デプロイメントに有効なトークンが 1 つもない場合、セレクタは空になります。[トークンの生成](#generating-tokens) を参照して先にトークンを作成してください。
 
-<!-- TODO: Capture screenshot of chat_deployment_token_select.png — the Chat page token selector expanded, showing two options with their "…abc123" tails and expiry dates, and the Access Token Settings gear icon beside the field. -->
+![](../images/chat_deployment_token_select.png)
 
 API接続に問題が発生した場合、Chatページにモデル設定を手動で構成できるオプションが表示されます。
 モデルを使用するには、以下の情報が必要です：
@@ -817,7 +813,6 @@ API接続に問題が発生した場合、Chatページにモデル設定を手�
 モデルストア（Model Store）は、事前構成されたモデルを閲覧、検索、デプロイできるカードベースのギャラリーを提供します。サイドバーメニューからモデルストアにアクセスできます。
 
 ![](../images/model_store_page_v2.png)
-<!-- TODO: Re-capture model_store_page_v2.png — the filter bar with the Storage Host property selected, showing the storage-host dropdown open instead of a free-text input. -->
 
 ### モデルの閲覧と検索
 

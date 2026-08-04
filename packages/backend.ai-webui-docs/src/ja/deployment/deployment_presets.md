@@ -128,7 +128,7 @@
 
    **ランタイム** の行は、プリセットを作成するときだけでなく **編集するとき** にも表示されます。どちらの場合もステップ 1 でランタイムを変更できるため、保存する前にこの行でプリセットが使用するランタイムを確認してください。
 
-<!-- TODO: Capture screenshot of deployment_preset_review_step.png — the Review step of the preset form opened in edit mode, with the Basic Info card showing the Name, Runtime, and Image rows and its Edit link. -->
+![](../images/deployment_preset_review_step.png)
 
 :::note[プリセットの必須パラメータ]
 管理者は個々のランタイムパラメータを必須に指定できます。必須パラメータには、ラベルの横に赤いアスタリスク（★）が表示されます。すべての必須パラメータが入力されるまで、保存ボタンは無効のままになります。必須パラメータの検証は、まだ開いていないタブ上のパラメータにも適用されます。
@@ -141,7 +141,6 @@
 3. 必要な値を変更し、**レビュー** ステップで要約（**ランタイム** の行を含む）を確認してから `保存` をクリックして変更を反映します。
 
 ![](../images/deployment_preset_edit_modal.png)
-<!-- TODO: Re-capture deployment_preset_edit_modal.png — the preset edit form as a full-page wizard (step list on the right, Previous / Next / Skip to Review at the bottom) rather than a dialog, with the submit button on the Review step reading "Save". -->
 
 プリセットを編集すると、**今後** 作成されるデプロイの既定値のみが変更されます。すでにこのプリセットから作成された既存のデプロイには影響しません。
 

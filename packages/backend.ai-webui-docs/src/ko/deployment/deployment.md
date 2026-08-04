@@ -47,7 +47,6 @@ Backend.AI는 **배포(Deployments)** 기능을 통해 AI 모델을 추론 서�
 배포 페이지에서 `배포 생성` 버튼을 클릭하여 **배포 생성** 모달을 엽니다. 이 모달에서는 배포 단위의 메타데이터만 입력하며, 이 단계에서 리비전이 함께 생성되지는 않습니다.
 
 ![](../images/model_serving_create_modal.png)
-<!-- TODO: Re-capture model_serving_create_modal.png — the modal now shows the warning notice "The resource group selected at creation cannot be changed." under the Resource Group field, the checkbox label reads "Open to Public", and the submit button reads "Create". -->
 
 모달에는 다음과 같은 필드가 있습니다.
 
@@ -496,7 +495,7 @@ vLLM 배포의 경우 루트 기본값이 `vllm` 섹션과 병합되며(변형 �
 
 상태 태그 옆의 **스케줄링 기록** 링크 버튼을 클릭하면 **배포 스케줄링 기록** 모달이 열립니다. 이 모달에는 해당 배포에 기록된 스케줄링 이벤트가 최신순으로 표시되며, 속성 필터 바(ID, 단계, 결과, 이전 상태, 이후 상태, 오류 코드, 메시지, 생성일, 업데이트일)와 새로 고침 버튼이 함께 제공됩니다.
 
-<!-- TODO: Capture screenshot of deployment_scheduling_history.png — the Deployment Scheduling History modal in its default "Expand errors only" view, with one non-success row expanded to show its complete sub-step table (including a SUCCESS sub-step) and the expand-column header menu open. -->
+![](../images/deployment_scheduling_history.png)
 
 하위 단계가 있는 이벤트는 행 앞의 `+` 아이콘을 클릭하여 펼칠 수 있으며, 해당 이벤트의 하위 단계 표가 표시됩니다. 펼침 열 헤더의 메뉴에서는 세 가지 보기 방식을 선택할 수 있습니다.
 
@@ -617,7 +616,6 @@ vLLM 배포의 경우 루트 기본값이 `vllm` 섹션과 병합되며(변형 �
 **라이프사이클** 컬럼의 상태 태그 옆에는 기록 아이콘 버튼이 있습니다. 클릭하면 해당 복제본의 **복제본 스케줄링 기록** 모달이 열리며, 복제본의 스케줄링 이벤트 기록을 날짜 범위, 상태 등으로 필터링하여 확인할 수 있습니다.
 
 ![](../images/replica_scheduling_history.png)
-<!-- TODO: Re-capture replica_scheduling_history.png — show an expanded row in the default "Expand errors only" view with its full sub-step table, including a sub-step whose result is SUCCESS, plus the expand-column header menu. -->
 
 행을 펼치는 방법과 세 가지 보기 방식은 [스케줄링 기록](#scheduling-history)에서 설명한 것과 동일합니다. 보기 방식은 어떤 행을 펼친 상태로 시작할지만 결정하며, 펼쳐진 행에는 언제나 해당 이벤트의 전체 하위 단계 표가 표시됩니다.
 
@@ -671,7 +669,6 @@ vLLM 배포의 경우 루트 기본값이 `vllm` 섹션과 병합되며(변형 �
 액세스 토큰은 배포 상세 페이지 하단의 **액세스 토큰** 카드에서 관리합니다. 카드 제목 옆의 ⓘ 아이콘에 마우스를 올리면 *"이 배포의 엔드포인트에 API 요청을 인증하기 위한 액세스 토큰을 관리합니다."* 라는 설명이 표시됩니다.
 
 ![](../images/generate_token.png)
-<!-- TODO: Re-capture generate_token.png — the Access Tokens card with its refresh button and the primary "Create Access Token" button in the header, and a token table with the Token / Created At / Expiration columns. -->
 
 #### 액세스 토큰 생성
 
@@ -683,7 +680,6 @@ vLLM 배포의 경우 루트 기본값이 `vllm` 섹션과 병합되며(변형 �
 3. `액세스 토큰 생성`을 클릭하여 토큰을 발급합니다.
 
 ![](../images/token_generation_dialog.png)
-<!-- TODO: Re-capture token_generation_dialog.png — the "Create Access Token" dialog showing the Expiration select expanded with the 7 Days / 30 Days / 90 Days / Custom Expiration / No Expiration options. -->
 
    매니저가 아직 네트워크 엔드포인트를 발급하지 않았다면 `액세스 토큰 생성` 버튼은 비활성화되며, 툴팁에 *"아직 네트워크 엔드포인트가 발급되지 않았습니다."* 라고 표시됩니다. 본인이 소유하지 않은 배포이거나 삭제 중인 배포에서도 버튼이 비활성화됩니다.
 
@@ -767,7 +763,7 @@ Chat 페이지가 Backend.AI 배포에 연결되어 있으면, 토큰 입력란�
 
 배포에 유효한 토큰이 하나도 없으면 선택기는 비어 있습니다. [토큰 생성](#generating-tokens)을 참고하여 먼저 토큰을 발급하세요.
 
-<!-- TODO: Capture screenshot of chat_deployment_token_select.png — the Chat page token selector expanded, showing two options with their "…abc123" tails and expiry dates, and the Access Token Settings gear icon beside the field. -->
+![](../images/chat_deployment_token_select.png)
 
 API 연결에 문제가 발생하면, Chat 페이지에 모델 설정을 수동으로 구성할 수 있는 옵션이 표시됩니다.
 모델을 사용하려면 다음 정보가 필요합니다:
@@ -790,7 +786,6 @@ API 연결에 문제가 발생하면, Chat 페이지에 모델 설정을 수동�
 모델 스토어(Model Store)는 사전 구성된 모델을 탐색, 검색 및 배포할 수 있는 카드 기반 갤러리를 제공합니다. 사이드바 메뉴에서 모델 스토어에 접근할 수 있습니다.
 
 ![](../images/model_store_page_v2.png)
-<!-- TODO: Re-capture model_store_page_v2.png — the filter bar with the Storage Host property selected, showing the storage-host dropdown open instead of a free-text input. -->
 
 ### 모델 탐색 및 검색
 
