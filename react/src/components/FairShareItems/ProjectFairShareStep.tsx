@@ -37,6 +37,7 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 interface ProjectFairShareStepProps {
   resourceGroupName: string;
   domainName: string;
+  initialFetchKey: string;
   loading?: boolean;
   onClickProjectName?: (projectName: string) => void;
 }
@@ -44,6 +45,7 @@ interface ProjectFairShareStepProps {
 const ProjectFairShareStep: React.FC<ProjectFairShareStepProps> = ({
   resourceGroupName,
   domainName,
+  initialFetchKey,
   loading,
   onClickProjectName,
 }) => {
@@ -91,7 +93,9 @@ const ProjectFairShareStep: React.FC<ProjectFairShareStepProps> = ({
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const [fetchKey, updateFetchKey] = useFetchKey();
-  const deferredFetchKey = useDeferredValue(fetchKey);
+  const effectiveFetchKey =
+    fetchKey === INITIAL_FETCH_KEY ? initialFetchKey : fetchKey;
+  const deferredFetchKey = useDeferredValue(effectiveFetchKey);
 
   const { resourceGroups, projectFairShares } =
     useLazyLoadQuery<ProjectFairShareStepQuery>(
@@ -139,7 +143,7 @@ const ProjectFairShareStep: React.FC<ProjectFairShareStepProps> = ({
       {
         fetchKey: deferredFetchKey,
         fetchPolicy:
-          deferredFetchKey === INITIAL_FETCH_KEY
+          deferredFetchKey === initialFetchKey
             ? 'store-and-network'
             : 'network-only',
       },
@@ -194,7 +198,7 @@ const ProjectFairShareStep: React.FC<ProjectFairShareStepProps> = ({
           <AutoUpdateFetchKeyButton
             settingId="fair-share-list"
             autoUpdateDelayOptions={LONG_AUTO_UPDATE_DELAY_OPTIONS}
-            loading={fetchKey !== deferredFetchKey}
+            loading={effectiveFetchKey !== deferredFetchKey}
             value=""
             onChange={() => {
               updateFetchKey();
@@ -209,7 +213,7 @@ const ProjectFairShareStep: React.FC<ProjectFairShareStepProps> = ({
         loading={
           loading ||
           queryVariables !== deferredQueryVariables ||
-          fetchKey !== deferredFetchKey
+          effectiveFetchKey !== deferredFetchKey
         }
         selectedRows={selectedRows}
         onRowSelect={(selectedRowKeys, currentPageItems) => {

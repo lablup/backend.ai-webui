@@ -9,11 +9,12 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 
 interface ResourceGroupSchedulerTypeAlertProps extends AlertProps {
   resourceGroupName: string;
+  initialFetchKey: string;
 }
 
 const ResourceGroupSchedulerTypeAlert: React.FC<
   ResourceGroupSchedulerTypeAlertProps
-> = ({ resourceGroupName, ...alertProps }) => {
+> = ({ resourceGroupName, initialFetchKey, ...alertProps }) => {
   'use memo';
 
   const { t } = useTranslation();
@@ -40,7 +41,7 @@ const ResourceGroupSchedulerTypeAlert: React.FC<
         }
       `,
       { resourceGroupName },
-      { fetchPolicy: 'store-and-network' },
+      { fetchPolicy: 'store-and-network', fetchKey: initialFetchKey },
     );
 
   const resourceGroup = resourceGroups?.edges?.[0]?.node;

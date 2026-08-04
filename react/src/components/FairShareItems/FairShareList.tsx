@@ -25,7 +25,14 @@ import {
   parseAsString,
   useQueryStates,
 } from 'nuqs';
-import { Suspense, useDeferredValue, useEffect, useEffectEvent } from 'react';
+import {
+  Suspense,
+  useDeferredValue,
+  useEffect,
+  useEffectEvent,
+  useRef,
+  useState,
+} from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -42,6 +49,9 @@ const useStyles = createStyles(({ css, token }) => ({
 type FairShareStepKey = 'resource-group' | 'domain' | 'project' | 'user';
 
 type StepItem = NonNullable<StepsProps['items']>[number];
+
+const generateStepEntryFetchKey = () =>
+  `step-entry-${new Date().toISOString()}`;
 
 const FairShareList: React.FC = () => {
   'use memo';
@@ -80,6 +90,57 @@ const FairShareList: React.FC = () => {
       current: null,
     });
   };
+
+  // Each step entry mints a fresh initial fetchKey so a remounted step never
+  // reuses react-relay's QueryResource entry from a previous visit — that
+  // cache entry outlives the unmount while the Relay store may have GC'd its
+  // records, and reading the combination crashes on @required. The keys live
+  // in this committed parent instead of the step components: a suspended step
+  // transition discards and restarts background renders, so a useState
+  // initializer inside a step would mint a new key per attempt and duplicate
+  // the network request.
+  const [stepEntryFetchKeys, setStepEntryFetchKeys] = useState<
+    Record<FairShareStepKey, string>
+  >(() => {
+    const initialKey = generateStepEntryFetchKey();
+    return {
+      'resource-group': initialKey,
+      domain: initialKey,
+      project: initialKey,
+      user: initialKey,
+    };
+  });
+  const regenerateStepEntryFetchKey = useEffectEvent(() => {
+    const enteredStep: FairShareStepKey = !stepQueryParams.resourceGroup
+      ? 'resource-group'
+      : !stepQueryParams.domain
+        ? 'domain'
+        : !stepQueryParams.project
+          ? 'project'
+          : 'user';
+    setStepEntryFetchKeys((prev) => ({
+      ...prev,
+      [enteredStep]: generateStepEntryFetchKey(),
+    }));
+  });
+  const visitedStepParamsRef = useRef<string | null>(null);
+  useEffect(() => {
+    const paramsSignature = `${stepQueryParams.resourceGroup}|${stepQueryParams.domain}|${stepQueryParams.project}`;
+    if (visitedStepParamsRef.current === paramsSignature) {
+      return;
+    }
+    const isInitialEntry = visitedStepParamsRef.current === null;
+    visitedStepParamsRef.current = paramsSignature;
+    // The mount-time keys already cover the first entry; regenerate only when
+    // the URL actually moves (click, back/forward, or BAIBackButton).
+    if (!isInitialEntry) {
+      regenerateStepEntryFetchKey();
+    }
+  }, [
+    stepQueryParams.resourceGroup,
+    stepQueryParams.domain,
+    stepQueryParams.project,
+  ]);
 
   const isStepTransitionPending = stepQueryParams !== deferredStepQueryParams;
 
@@ -239,6 +300,7 @@ const FairShareList: React.FC = () => {
         <Suspense fallback={null}>
           <ResourceGroupSchedulerTypeAlert
             resourceGroupName={deferredStepQueryParams.resourceGroup}
+            initialFetchKey={stepEntryFetchKeys.domain}
           />
         </Suspense>
       )}
@@ -274,6 +336,7 @@ const FairShareList: React.FC = () => {
         <Suspense fallback={<Skeleton active />}>
           {currentStep === 'resource-group' && (
             <ResourceGroupFairShareStep
+              initialFetchKey={stepEntryFetchKeys['resource-group']}
               loading={isStepTransitionPending}
               onClickResourceGroupName={(resourceGroupName) => {
                 setStepQueryParams({ resourceGroup: resourceGroupName });
@@ -284,6 +347,7 @@ const FairShareList: React.FC = () => {
           {currentStep === 'domain' && (
             <DomainFairShareStep
               resourceGroupName={deferredStepQueryParams.resourceGroup}
+              initialFetchKey={stepEntryFetchKeys.domain}
               loading={isStepTransitionPending}
               onClickDomainName={(domainName) => {
                 setStepQueryParams({ domain: domainName });
@@ -295,6 +359,7 @@ const FairShareList: React.FC = () => {
             <ProjectFairShareStep
               resourceGroupName={deferredStepQueryParams.resourceGroup}
               domainName={deferredStepQueryParams.domain}
+              initialFetchKey={stepEntryFetchKeys.project}
               loading={isStepTransitionPending}
               onClickProjectName={(projectId) => {
                 setStepQueryParams({ project: projectId });
@@ -307,6 +372,7 @@ const FairShareList: React.FC = () => {
               resourceGroupName={deferredStepQueryParams.resourceGroup}
               domainName={deferredStepQueryParams.domain}
               projectId={deferredStepQueryParams.project}
+              initialFetchKey={stepEntryFetchKeys.user}
               loading={isStepTransitionPending}
             />
           )}

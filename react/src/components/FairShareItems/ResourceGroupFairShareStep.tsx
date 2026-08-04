@@ -28,11 +28,13 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 interface ResourceGroupFairShareStepProps {
+  initialFetchKey: string;
   loading?: boolean;
   onClickResourceGroupName?: (resourceGroupName: string) => void;
 }
 
 const ResourceGroupFairShareStep: React.FC<ResourceGroupFairShareStepProps> = ({
+  initialFetchKey,
   loading,
   onClickResourceGroupName,
 }) => {
@@ -72,7 +74,9 @@ const ResourceGroupFairShareStep: React.FC<ResourceGroupFairShareStepProps> = ({
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const [fetchKey, updateFetchKey] = useFetchKey();
-  const deferredFetchKey = useDeferredValue(fetchKey);
+  const effectiveFetchKey =
+    fetchKey === INITIAL_FETCH_KEY ? initialFetchKey : fetchKey;
+  const deferredFetchKey = useDeferredValue(effectiveFetchKey);
 
   const { resourceGroups } = useLazyLoadQuery<ResourceGroupFairShareStepQuery>(
     graphql`
@@ -101,7 +105,7 @@ const ResourceGroupFairShareStep: React.FC<ResourceGroupFairShareStepProps> = ({
     {
       fetchKey: deferredFetchKey,
       fetchPolicy:
-        deferredFetchKey === INITIAL_FETCH_KEY
+        deferredFetchKey === initialFetchKey
           ? 'store-and-network'
           : 'network-only',
     },
@@ -129,7 +133,7 @@ const ResourceGroupFairShareStep: React.FC<ResourceGroupFairShareStepProps> = ({
         <AutoUpdateFetchKeyButton
           settingId="fair-share-list"
           autoUpdateDelayOptions={LONG_AUTO_UPDATE_DELAY_OPTIONS}
-          loading={fetchKey !== deferredFetchKey}
+          loading={effectiveFetchKey !== deferredFetchKey}
           value=""
           onChange={() => {
             updateFetchKey();
@@ -149,7 +153,7 @@ const ResourceGroupFairShareStep: React.FC<ResourceGroupFairShareStepProps> = ({
         loading={
           loading ||
           queryVariables !== deferredQueryVariables ||
-          fetchKey !== deferredFetchKey
+          effectiveFetchKey !== deferredFetchKey
         }
         pagination={{
           pageSize: tablePaginationOption.pageSize,

@@ -36,12 +36,14 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 
 interface DomainFairShareStepProps {
   resourceGroupName: string;
+  initialFetchKey: string;
   loading?: boolean;
   onClickDomainName?: (domainName: string) => void;
 }
 
 const DomainFairShareStep: React.FC<DomainFairShareStepProps> = ({
   resourceGroupName,
+  initialFetchKey,
   loading,
   onClickDomainName,
 }) => {
@@ -88,7 +90,9 @@ const DomainFairShareStep: React.FC<DomainFairShareStepProps> = ({
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const [fetchKey, updateFetchKey] = useFetchKey();
-  const deferredFetchKey = useDeferredValue(fetchKey);
+  const effectiveFetchKey =
+    fetchKey === INITIAL_FETCH_KEY ? initialFetchKey : fetchKey;
+  const deferredFetchKey = useDeferredValue(effectiveFetchKey);
 
   const { resourceGroups, domainFairShares } =
     useLazyLoadQuery<DomainFairShareStepQuery>(
@@ -132,7 +136,7 @@ const DomainFairShareStep: React.FC<DomainFairShareStepProps> = ({
       {
         fetchKey: deferredFetchKey,
         fetchPolicy:
-          deferredFetchKey === INITIAL_FETCH_KEY
+          deferredFetchKey === initialFetchKey
             ? 'store-and-network'
             : 'network-only',
       },
@@ -187,7 +191,7 @@ const DomainFairShareStep: React.FC<DomainFairShareStepProps> = ({
           <AutoUpdateFetchKeyButton
             settingId="fair-share-list"
             autoUpdateDelayOptions={LONG_AUTO_UPDATE_DELAY_OPTIONS}
-            loading={fetchKey !== deferredFetchKey}
+            loading={effectiveFetchKey !== deferredFetchKey}
             value=""
             onChange={() => {
               updateFetchKey();
@@ -202,7 +206,7 @@ const DomainFairShareStep: React.FC<DomainFairShareStepProps> = ({
         loading={
           loading ||
           queryVariables !== deferredQueryVariables ||
-          fetchKey !== deferredFetchKey
+          effectiveFetchKey !== deferredFetchKey
         }
         selectedRows={selectedRows}
         onRowSelect={(selectedRowKeys, currentPageItems) => {

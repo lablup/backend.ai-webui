@@ -39,6 +39,7 @@ interface UserFairShareStepProps {
   resourceGroupName: string;
   domainName: string;
   projectId: string;
+  initialFetchKey: string;
   loading?: boolean;
 }
 
@@ -46,6 +47,7 @@ const UserFairShareStep: React.FC<UserFairShareStepProps> = ({
   resourceGroupName,
   domainName,
   projectId,
+  initialFetchKey,
   loading,
 }) => {
   'use memo';
@@ -93,7 +95,9 @@ const UserFairShareStep: React.FC<UserFairShareStepProps> = ({
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const [fetchKey, updateFetchKey] = useFetchKey();
-  const deferredFetchKey = useDeferredValue(fetchKey);
+  const effectiveFetchKey =
+    fetchKey === INITIAL_FETCH_KEY ? initialFetchKey : fetchKey;
+  const deferredFetchKey = useDeferredValue(effectiveFetchKey);
 
   const { resourceGroups, userFairShares } =
     useLazyLoadQuery<UserFairShareStepQuery>(
@@ -143,7 +147,7 @@ const UserFairShareStep: React.FC<UserFairShareStepProps> = ({
       {
         fetchKey: deferredFetchKey,
         fetchPolicy:
-          deferredFetchKey === INITIAL_FETCH_KEY
+          deferredFetchKey === initialFetchKey
             ? 'store-and-network'
             : 'network-only',
       },
@@ -215,7 +219,7 @@ const UserFairShareStep: React.FC<UserFairShareStepProps> = ({
           <AutoUpdateFetchKeyButton
             settingId="fair-share-list"
             autoUpdateDelayOptions={LONG_AUTO_UPDATE_DELAY_OPTIONS}
-            loading={fetchKey !== deferredFetchKey}
+            loading={effectiveFetchKey !== deferredFetchKey}
             value=""
             onChange={() => {
               updateFetchKey();
@@ -230,7 +234,7 @@ const UserFairShareStep: React.FC<UserFairShareStepProps> = ({
         loading={
           loading ||
           queryVariables !== deferredQueryVariables ||
-          fetchKey !== deferredFetchKey
+          effectiveFetchKey !== deferredFetchKey
         }
         selectedRows={selectedRows}
         onRowSelect={(selectedRowKeys, currentPageItems) => {
