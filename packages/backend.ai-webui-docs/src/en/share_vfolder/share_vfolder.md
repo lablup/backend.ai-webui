@@ -112,15 +112,6 @@ granted Read & Write permission. Please note that Read & Write permission does n
 include renaming the folder.
 :::
 
-:::note
-The permissions described here apply to a single storage folder and are managed by
-its owner. Host-wide folder permissions are an administrator-only setting, configured
-on the **Project Folder Permissions** and **User Folder Permissions** tabs of the
-Storage Host Detail Drawer, where you pick the target domain or user from a selector
-instead of typing its name. For details, go to
-[user folder permissions](#user-folder-permission).
-:::
-
 <a id="stop-sharing-a-folder"></a>
 
 ## Stop sharing a folder
