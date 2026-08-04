@@ -1736,7 +1736,7 @@
     "NotebookBadgeCodeMarkdown": "Código do emblema do notebook (Markdown)",
     "NotebookBadgeURL": "URL do notebook",
     "NotebookURL": "URL do notebook",
-    "OnlyWritableModelFoldersAreListed": "Apenas as pastas de modelos do projeto atual que pode montar com permissão de escrita são listadas. Uma pasta só de leitura não pode receber a transferência.",
+    "OnlyWritableModelFoldersAreListed": "Apenas as pastas de modelos do projeto atual que pode montar com permissão de escrita são listadas.",
     "Preparing": "Preparando...",
     "ReadyToImport": "Pronto para importar",
     "RepoWillBeFolder": "Os repositórios GitHub importados são convertidos em pastas e podem ser montados quando a sessão é iniciada.",

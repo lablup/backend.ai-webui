@@ -1734,7 +1734,7 @@
     "NotebookBadgeCodeMarkdown": "Código de la insignia del cuaderno (Markdown)",
     "NotebookBadgeURL": "URL del cuaderno",
     "NotebookURL": "URL del cuaderno",
-    "OnlyWritableModelFoldersAreListed": "Solo se muestran las carpetas de modelos del proyecto actual que puede montar con permiso de escritura. Una carpeta de solo lectura no puede recibir la descarga.",
+    "OnlyWritableModelFoldersAreListed": "Solo se muestran las carpetas de modelos del proyecto actual que puede montar con permiso de escritura.",
     "Preparing": "Preparando...",
     "ReadyToImport": "Listo para importar",
     "RepoWillBeFolder": "Los repositorios de GitHub importados se convierten en carpetas y se pueden montar al iniciar la sesión.",

@@ -1735,7 +1735,7 @@
     "NotebookBadgeCodeMarkdown": "Kod plakietki notebooka (przecena)",
     "NotebookBadgeURL": "URL notatnika",
     "NotebookURL": "URL notatnika",
-    "OnlyWritableModelFoldersAreListed": "Wyświetlane są tylko foldery modeli w bieżącym projekcie, które możesz zamontować z prawem zapisu. Folder tylko do odczytu nie może przyjąć pobierania.",
+    "OnlyWritableModelFoldersAreListed": "Wyświetlane są tylko foldery modeli w bieżącym projekcie, które możesz zamontować z prawem zapisu.",
     "Preparing": "Przygotowuję...",
     "ReadyToImport": "Gotowy do importu",
     "RepoWillBeFolder": "Zaimportowane repozytoria GitHub są konwertowane na foldery i można je zamontować po rozpoczęciu sesji.",

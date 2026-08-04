@@ -1735,7 +1735,7 @@
     "NotebookBadgeCodeMarkdown": "Code de badge de bloc-notes (Markdown)",
     "NotebookBadgeURL": "URL du bloc-notes",
     "NotebookURL": "URL du bloc-notes",
-    "OnlyWritableModelFoldersAreListed": "Seuls les dossiers de modèles du projet actuel que vous pouvez monter avec des droits d'écriture sont affichés. Un dossier en lecture seule ne peut pas recevoir le téléchargement.",
+    "OnlyWritableModelFoldersAreListed": "Seuls les dossiers de modèles du projet actuel que vous pouvez monter avec des droits d'écriture sont affichés.",
     "Preparing": "En cours de préparation...",
     "ReadyToImport": "Prêt à importer",
     "RepoWillBeFolder": "Les dépôts GitHub importés sont convertis en dossiers et peuvent être montés au démarrage de la session.",

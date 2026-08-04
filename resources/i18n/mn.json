@@ -1735,7 +1735,7 @@
     "NotebookBadgeCodeMarkdown": "Jupyter Notebook-ийн код (Markdown)",
     "NotebookBadgeURL": "Jupyter Notebook-ийн тэмдэгийн URL",
     "NotebookURL": "Jupyter Notebook-ийн URL",
-    "OnlyWritableModelFoldersAreListed": "Зөвхөн одоогийн төсөлд бичих эрхээр холбож болох загварын хавтаснууд харагдана. Зөвхөн уншихаар холбогдсон хавтас руу татаж авах боломжгүй.",
+    "OnlyWritableModelFoldersAreListed": "Зөвхөн одоогийн төсөлд бичих эрхээр холбож болох загварын хавтаснууд харагдана.",
     "Preparing": "Бэлтгэж байна ...",
     "ReadyToImport": "Импортлоход бэлэн байна",
     "RepoWillBeFolder": "Импортоор оруулсан GitHub репозиторыг фолдер болгон хөрвүүлдэг бөгөөд Session эхлэхэд холбож болдог.",

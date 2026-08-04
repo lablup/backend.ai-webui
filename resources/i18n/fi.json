@@ -1734,7 +1734,7 @@
     "NotebookBadgeCodeMarkdown": "Muistikirjan merkkikoodi (Markdown)",
     "NotebookBadgeURL": "Muistikirjan URL-osoite",
     "NotebookURL": "Muistikirjan URL-osoite",
-    "OnlyWritableModelFoldersAreListed": "Luettelossa näkyvät vain nykyisen projektin mallikansiot, jotka voit liittää kirjoitusoikeudella. Vain luku -kansioon ei voi ladata.",
+    "OnlyWritableModelFoldersAreListed": "Luettelossa näkyvät vain nykyisen projektin mallikansiot, jotka voit liittää kirjoitusoikeudella.",
     "Preparing": "Valmistautuminen...",
     "ReadyToImport": "Valmis tuomaan",
     "RepoWillBeFolder": "Tuodut GitHub-arkistot muunnetaan kansioiksi ja ne voidaan asentaa istunnon alkaessa.",

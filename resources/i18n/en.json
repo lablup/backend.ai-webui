@@ -1721,7 +1721,7 @@
     "NotebookBadgeCodeMarkdown": "Notebook Badge Code (Markdown)",
     "NotebookBadgeURL": "Notebook URL",
     "NotebookURL": "Notebook URL",
-    "OnlyWritableModelFoldersAreListed": "Only model folders in the current project that you can mount with write permission are listed. A read-only folder cannot receive the download.",
+    "OnlyWritableModelFoldersAreListed": "Only model folders in the current project that you can mount with write permission are listed.",
     "Preparing": "Preparing...",
     "ReadyToImport": "Ready To Import",
     "RepoWillBeFolder": "Imported GitHub repositories are converted to folders and can be mounted when session starts.",

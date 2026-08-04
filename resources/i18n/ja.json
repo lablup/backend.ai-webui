@@ -1736,7 +1736,7 @@
     "NotebookBadgeCodeMarkdown": "ノートブックバッジコード（マークダウン）",
     "NotebookBadgeURL": "ノートブックのURL",
     "NotebookURL": "ノートブックのURL",
-    "OnlyWritableModelFoldersAreListed": "現在のプロジェクトで書き込み権限でマウントできるモデルフォルダのみ表示されます。読み取り専用フォルダにはダウンロードできません。",
+    "OnlyWritableModelFoldersAreListed": "現在のプロジェクトで書き込み権限でマウントできるモデルフォルダのみ表示されます。",
     "Preparing": "準備...",
     "ReadyToImport": "インポートする準備ができました",
     "RepoWillBeFolder": "インポートされたGitHubリポジトリはフォルダーに変換され、セッションの開始時にマウントできます。",

@@ -1736,7 +1736,7 @@
     "NotebookBadgeCodeMarkdown": "Mã huy hiệu sổ tay (Markdown)",
     "NotebookBadgeURL": "URL máy tính xách tay",
     "NotebookURL": "URL máy tính xách tay",
-    "OnlyWritableModelFoldersAreListed": "Chỉ hiển thị các thư mục mô hình trong dự án hiện tại mà bạn có thể gắn kết với quyền ghi. Thư mục chỉ đọc không thể nhận nội dung tải xuống.",
+    "OnlyWritableModelFoldersAreListed": "Chỉ hiển thị các thư mục mô hình trong dự án hiện tại mà bạn có thể gắn kết với quyền ghi.",
     "Preparing": "Đang chuẩn bị ...",
     "ReadyToImport": "Sẵn sàng nhập",
     "RepoWillBeFolder": "Các kho lưu trữ GitHub đã nhập được chuyển đổi thành các thư mục và có thể được gắn kết khi phiên bắt đầu.",

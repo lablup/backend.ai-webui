@@ -1736,7 +1736,7 @@
     "NotebookBadgeCodeMarkdown": "笔记本徽章代码 (Markdown)",
     "NotebookBadgeURL": "笔记本网址",
     "NotebookURL": "笔记本网址",
-    "OnlyWritableModelFoldersAreListed": "仅显示当前项目中您可以以写入权限挂载的模型文件夹。只读文件夹无法用于下载。",
+    "OnlyWritableModelFoldersAreListed": "仅显示当前项目中您可以以写入权限挂载的模型文件夹。",
     "Preparing": "正在准备...",
     "ReadyToImport": "准备进口",
     "RepoWillBeFolder": "导入的 GitHub 存储库转换为文件夹，并且可以在会话开始时挂载。",

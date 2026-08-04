@@ -1736,7 +1736,7 @@
     "NotebookBadgeCodeMarkdown": "Notebook-Badge-Code (Abschlag)",
     "NotebookBadgeURL": "Notizbuch-URL",
     "NotebookURL": "Notizbuch-URL",
-    "OnlyWritableModelFoldersAreListed": "Es werden nur Modellordner im aktuellen Projekt angezeigt, die Sie mit Schreibrechten einbinden können. In einen schreibgeschützten Ordner kann nicht heruntergeladen werden.",
+    "OnlyWritableModelFoldersAreListed": "Es werden nur Modellordner im aktuellen Projekt angezeigt, die Sie mit Schreibrechten einbinden können.",
     "Preparing": "Vorbereitung...",
     "ReadyToImport": "Bereit zum Importieren",
     "RepoWillBeFolder": "Importierte GitHub-Repositorys werden in Ordner konvertiert und können beim Sitzungsstart gemountet werden.",

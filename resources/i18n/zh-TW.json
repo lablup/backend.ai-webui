@@ -1737,7 +1737,7 @@
     "NotebookBadgeCodeMarkdown": "筆記本徽章代碼 (Markdown)",
     "NotebookBadgeURL": "筆記本網址",
     "NotebookURL": "筆記本網址",
-    "OnlyWritableModelFoldersAreListed": "僅顯示目前專案中您可以以寫入權限掛載的模型資料夾。唯讀資料夾無法用於下載。",
+    "OnlyWritableModelFoldersAreListed": "僅顯示目前專案中您可以以寫入權限掛載的模型資料夾。",
     "Preparing": "正在準備...",
     "ReadyToImport": "準備進口",
     "RepoWillBeFolder": "導入的 GitHub 存儲庫轉換為文件夾，並且可以在會話開始時掛載。",

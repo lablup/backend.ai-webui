@@ -1734,7 +1734,7 @@
     "NotebookBadgeCodeMarkdown": "Kod Lencana Notebook (Markdown)",
     "NotebookBadgeURL": "URL buku nota",
     "NotebookURL": "URL buku nota",
-    "OnlyWritableModelFoldersAreListed": "Hanya folder model dalam projek semasa yang boleh anda lekapkan dengan kebenaran tulis disenaraikan. Folder baca sahaja tidak boleh menerima muat turun.",
+    "OnlyWritableModelFoldersAreListed": "Hanya folder model dalam projek semasa yang boleh anda lekapkan dengan kebenaran tulis disenaraikan.",
     "Preparing": "Menyiapkan ...",
     "ReadyToImport": "Sedia Diimport",
     "RepoWillBeFolder": "Repositori GitHub yang diimport ditukar menjadi folder dan boleh dipasang semasa sesi dimulakan.",
