@@ -515,13 +515,23 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
 
   return (
     <>
+      {/* The toolbar wraps as a whole on narrow cards: the status filter group
+          keeps a flex basis wide enough for the property filter, and the
+          auto-update control drops to its own line instead of overlapping the
+          filter inputs. */}
       <BAIFlex
         justify="between"
-        align="center"
+        align="start"
         gap="xs"
+        wrap="wrap"
         style={{ marginBottom: 12 }}
       >
-        <BAIFlex gap="sm" align="start" wrap="wrap" style={{ flexShrink: 1 }}>
+        <BAIFlex
+          gap="sm"
+          align="start"
+          wrap="wrap"
+          style={{ flex: '1 1 360px', minWidth: 0 }}
+        >
           <BAIRadioGroup
             value={queryParams.rStatusCategory}
             onChange={(e) => {
@@ -556,15 +566,17 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
             }}
           />
         </BAIFlex>
-        <AutoUpdateFetchKeyButton
-          settingId="deployment-replicas"
-          defaultAutoUpdateDelay={10_000}
-          loading={isPending}
-          value=""
-          onChange={() => {
-            startTransition(() => setFetchKey((k) => k + 1));
-          }}
-        />
+        <BAIFlex style={{ marginLeft: 'auto' }}>
+          <AutoUpdateFetchKeyButton
+            settingId="deployment-replicas"
+            defaultAutoUpdateDelay={10_000}
+            loading={isPending}
+            value=""
+            onChange={() => {
+              startTransition(() => setFetchKey((k) => k + 1));
+            }}
+          />
+        </BAIFlex>
       </BAIFlex>
       <BAITable<ReplicaNode>
         rowKey={(record) => record.id}

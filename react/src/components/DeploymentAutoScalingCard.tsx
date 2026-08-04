@@ -282,9 +282,12 @@ const DeploymentAutoScalingCardContent: React.FC<
   return (
     <>
       <BAIFlex direction="column" align="stretch" gap="sm">
-        <BAIFlex align="center" gap="xs">
+        {/* `wrap` + a flex basis on the filter keep the toolbar inside the
+            card on narrow viewports: the actions drop to their own line
+            instead of being pushed past the card's right edge. */}
+        <BAIFlex align="center" gap="xs" wrap="wrap">
           <BAIGraphQLPropertyFilter<AutoScalingRuleFilter>
-            style={{ flex: 1 }}
+            style={{ flex: '1 1 320px', minWidth: 0 }}
             filterProperties={[
               {
                 key: 'createdAt',
@@ -309,24 +312,26 @@ const DeploymentAutoScalingCardContent: React.FC<
               });
             }}
           />
-          <BAIFetchKeyButton
-            loading={isPendingRefetch}
-            value=""
-            onChange={() => {
-              startRefetchTransition(() => updateFetchKey());
-            }}
-          />
-          <BAIButton
-            type="primary"
-            icon={<PlusIcon />}
-            disabled={isEndpointDestroying || !isOwnedByCurrentUser}
-            onClick={() => {
-              setEditingRuleId(null);
-              setIsOpenEditorModal(true);
-            }}
-          >
-            {t('modelService.AddRules')}
-          </BAIButton>
+          <BAIFlex gap="xs" align="center" style={{ marginLeft: 'auto' }}>
+            <BAIFetchKeyButton
+              loading={isPendingRefetch}
+              value=""
+              onChange={() => {
+                startRefetchTransition(() => updateFetchKey());
+              }}
+            />
+            <BAIButton
+              type="primary"
+              icon={<PlusIcon />}
+              disabled={isEndpointDestroying || !isOwnedByCurrentUser}
+              onClick={() => {
+                setEditingRuleId(null);
+                setIsOpenEditorModal(true);
+              }}
+            >
+              {t('modelService.AddRules')}
+            </BAIButton>
+          </BAIFlex>
         </BAIFlex>
         <AutoScalingRuleListNodes
           autoScalingRulesFrgmt={autoScalingRuleNodes}

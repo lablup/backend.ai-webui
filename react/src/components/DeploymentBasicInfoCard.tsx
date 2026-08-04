@@ -15,6 +15,7 @@ import DeploymentSchedulingHistoryModal, {
 } from './DeploymentSchedulingHistoryModal';
 import DeploymentSettingModal from './DeploymentSettingModal';
 import { DeleteFilled, HistoryOutlined, MoreOutlined } from '@ant-design/icons';
+import useResizeObserver from '@react-hook/resize-observer';
 import {
   App,
   Button,
@@ -44,7 +45,7 @@ import {
 } from 'backend.ai-ui';
 import type { BAIDeploymentStatus } from 'backend.ai-ui';
 import { SquarePenIcon } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation, useQueryLoader } from 'react-relay';
 
@@ -71,6 +72,14 @@ const renderFallback = () => (
   <Typography.Text type="secondary">-</Typography.Text>
 );
 
+/**
+ * Narrowest content width that fits two label/value pairs per row. Below it a
+ * pair gets so little room that long values (a deployment UUID, an endpoint
+ * URL) wrap a character or two per line, so the descriptions fall back to a
+ * single pair per row.
+ */
+const TWO_COLUMN_MIN_WIDTH = 720;
+
 const DeploymentOverviewContent: React.FC<{
   deployment: DeploymentSectionData;
   onClickSchedulingHistoryAction?: () => Promise<void>;
@@ -82,6 +91,12 @@ const DeploymentOverviewContent: React.FC<{
   const { t } = useTranslation();
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
+
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [isTwoColumn, setIsTwoColumn] = useState(true);
+  useResizeObserver(containerRef, ({ contentRect }) => {
+    setIsTwoColumn(contentRect.width >= TWO_COLUMN_MIN_WIDTH);
+  });
 
   const projectName =
     deployment?.metadata.projectV2?.basicInfo?.name ??
@@ -203,11 +218,20 @@ const DeploymentOverviewContent: React.FC<{
   ]);
 
   return (
-    <Descriptions
-      bordered
-      column={{ xs: 1, sm: 1, md: 2, lg: 2, xl: 2, xxl: 2 }}
-      items={deploymentItems}
-    />
+    // The available width here follows the card, not the viewport (the side
+    // navigation collapses on its own breakpoint), so the column count is
+    // measured rather than derived from `Grid.useBreakpoint`.
+    <div ref={containerRef}>
+      <Descriptions
+        bordered
+        column={isTwoColumn ? 2 : 1}
+        styles={{
+          label: { width: isTwoColumn ? 160 : 140, wordBreak: 'keep-all' },
+          content: { wordBreak: 'break-word', overflowWrap: 'anywhere' },
+        }}
+        items={deploymentItems}
+      />
+    </div>
   );
 };
 

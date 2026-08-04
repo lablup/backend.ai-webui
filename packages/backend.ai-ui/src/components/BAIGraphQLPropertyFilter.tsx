@@ -752,7 +752,13 @@ const BAIGraphQLPropertyFilter = <
 
   return (
     <BAIFlex direction="column" gap="xs" align="start" {...containerProps}>
-      <Space.Compact>
+      {/* `maxWidth: 100%` keeps the compact input group inside its container
+          when the surrounding card gets narrow. Without it the group keeps its
+          max-content width and spills over neighbouring toolbar actions (or
+          past the card edge) instead of shrinking. The value input below
+          carries the matching `flex` so the shrinking lands there rather than
+          on the property/operator selectors, whose labels must stay legible. */}
+      <Space.Compact style={{ maxWidth: '100%' }}>
         <BAISelect
           popupMatchSelectWidth={false}
           options={propertyOptions}
@@ -803,7 +809,9 @@ const BAIGraphQLPropertyFilter = <
           <DatePicker
             value={selectedDate}
             showTime
-            style={{ minWidth: 200 }}
+            // Base size stays 200px (unchanged on roomy layouts) but the
+            // input may shrink to 120px so the whole group fits a narrow card.
+            style={{ flex: '0 1 200px', minWidth: 120 }}
             onChange={(date) => setSelectedDate(date)}
             placeholder={
               selectedProperty?.placeholder ??
@@ -828,7 +836,9 @@ const BAIGraphQLPropertyFilter = <
                 setSearch(_.isNil(val) ? '' : String(val));
               }}
               onPressEnter={() => addCondition(search)}
-              style={{ minWidth: 200 }}
+              // Base size stays 200px (unchanged on roomy layouts) but the
+              // input may shrink to 120px so the whole group fits a narrow card.
+              style={{ flex: '0 1 200px', minWidth: 120 }}
               placeholder={
                 selectedProperty?.placeholder ??
                 t('comp:BAIPropertyFilter.PlaceHolder')
@@ -855,7 +865,9 @@ const BAIGraphQLPropertyFilter = <
                 setIsValid(true);
                 setSearch(value);
               }}
-              style={{ minWidth: 200 }}
+              // Base size stays 200px (unchanged on roomy layouts) but the
+              // input may shrink to 120px so the whole group fits a narrow card.
+              style={{ flex: '0 1 200px', minWidth: 120 }}
               options={effectiveOptions?.filter((option) =>
                 !search ? true : option.label?.toString().includes(search),
               )}
