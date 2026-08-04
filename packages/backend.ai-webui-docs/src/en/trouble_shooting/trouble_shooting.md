@@ -152,11 +152,11 @@ different part of the App Proxy path, as described in
 The session detail page reports this by itself, so check it before doing
 anything else. It shows the resources the session **actually holds**. When the
 allocation differs from the request, each resource shows both values as
-*allocated / requested* in the same chip (for example `1 / 2 Core`), and the
+*allocated / requested* in the same chip (for example `0.0 / 0.5 fGPU`), and the
 **Resource Allocation** label carries a warning icon whose tooltip reads
 *Fewer resources were allocated than requested.*
 
-<!-- TODO: Capture screenshot of session_detail_resource_allocation_warning.png — the session detail page Resource Allocation row of an under-allocated session, showing the warning icon next to the "Resource Allocation" label and a resource chip rendered as "allocated / requested" -->
+![](../images/session_detail_resource_allocation_warning.png)
 
 A difference shown there is the real allocation, not a display error. It usually
 means the request was adjusted when the session was allocated — for example a

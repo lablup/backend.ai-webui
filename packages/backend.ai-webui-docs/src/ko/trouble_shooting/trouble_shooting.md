@@ -88,9 +88,9 @@ App Proxy 서비스 연결에 문제가 있을 수 있습니다. App Proxy 서�
 
 ### 표시되는 자원 양이 실제 할당된 양과 다릅니다
 
-세션 상세 페이지가 이 상황을 직접 알려주므로 다른 조치를 취하기 전에 먼저 확인하십시오. 이 페이지에는 세션이 **실제로 점유하고 있는** 자원이 표시됩니다. 할당된 양이 요청한 양과 다를 경우, 각 자원은 하나의 항목 안에 *할당 자원 / 요청 자원* 형태(예: `1 / 2 Core`)로 두 값이 함께 표시되고, **자원 할당** 항목 이름에는 경고 아이콘이 나타납니다. 아이콘의 툴팁에는 *자원이 요청보다 적게 할당되었습니다.* 라는 설명이 표시됩니다.
+세션 상세 페이지가 이 상황을 직접 알려주므로 다른 조치를 취하기 전에 먼저 확인하십시오. 이 페이지에는 세션이 **실제로 점유하고 있는** 자원이 표시됩니다. 할당된 양이 요청한 양과 다를 경우, 각 자원은 하나의 항목 안에 *할당 자원 / 요청 자원* 형태(예: `0.0 / 0.5 fGPU`)로 두 값이 함께 표시되고, **자원 할당** 항목 이름에는 경고 아이콘이 나타납니다. 아이콘의 툴팁에는 *자원이 요청보다 적게 할당되었습니다.* 라는 설명이 표시됩니다.
 
-<!-- TODO: Capture screenshot of session_detail_resource_allocation_warning.png — the session detail page Resource Allocation row of an under-allocated session, showing the warning icon next to the "Resource Allocation" label and a resource chip rendered as "allocated / requested" -->
+![](../images/session_detail_resource_allocation_warning.png)
 
 여기에 표시된 차이는 표시 오류가 아니라 실제 할당 결과입니다. 대부분 세션이 할당될 때 요청이 조정된 경우로, 예를 들어 소수점 단위의 GPU 요청량이 자원 그룹의 할당 단위에 맞춰 내림 처리된 경우입니다. 아직 할당되지 않은 세션에는 요청한 양만 표시되고 비교 값은 나타나지 않습니다.
 
