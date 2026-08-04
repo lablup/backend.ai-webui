@@ -18,7 +18,6 @@ import {
   Select,
   Skeleton,
   theme,
-  Tooltip,
   Typography,
 } from 'antd';
 import {
@@ -329,28 +328,22 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
           </Form.Item>
           {/* TODO(needs-backend): the manager currently rejects changes to
               openToPublic after a deployment is created, so the field is
-              forced read-only in edit mode. Drop the `disabled` + Tooltip
-              wrapping once the backend supports updating this setting. */}
+              forced read-only in edit mode. Drop the `disabled` prop and the
+              warning `extra` once the backend supports updating this setting. */}
           <Form.Item
+            name="openToPublic"
+            valuePropName="checked"
             label={t('deployment.OpenToPublic')}
             tooltip={t('deployment.OpenToPublicTooltip')}
+            extra={
+              <Typography.Text type="warning">
+                {t('deployment.OpenToPublicCannotBeChanged')}
+              </Typography.Text>
+            }
           >
-            <Tooltip
-              title={
-                deployment ? t('deployment.OpenToPublicCannotBeChanged') : ''
-              }
-            >
-              {/* Wrap with span so the Tooltip still receives mouseenter when
-                  the inner Checkbox is disabled (disabled controls swallow
-                  pointer events). */}
-              <span style={{ display: 'inline-block' }}>
-                <Form.Item name="openToPublic" valuePropName="checked" noStyle>
-                  <Checkbox disabled={!!deployment}>
-                    {t('deployment.Public')}
-                  </Checkbox>
-                </Form.Item>
-              </span>
-            </Tooltip>
+            <Checkbox disabled={!!deployment}>
+              {t('deployment.Public')}
+            </Checkbox>
           </Form.Item>
         </Form>
       </Suspense>
