@@ -163,7 +163,9 @@ function fetchForSubscribe(
 function createRelayEnvironment() {
   return new Environment({
     network: Network.create(fetchFn, fetchForSubscribe),
-    store: new Store(new RecordSource()),
+    store: new Store(new RecordSource(), {
+      gcReleaseBufferSize: 20,
+    }),
   });
 }
 
