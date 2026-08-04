@@ -36,8 +36,7 @@ export interface BAIVFolderSelectRef {
 
 /**
  * RBAC permission names accepted by the `permission` argument of
- * `vfolder_nodes`. Listing is narrowed to the folders that grant the given
- * permission to the current user.
+ * `vfolder_nodes`.
  */
 export type BAIVFolderPermission =
   | 'clone'
@@ -62,15 +61,23 @@ export interface BAIVFolderSelectProps extends Omit<
   valuePropName?: 'id' | 'row_id';
   excludeDeleted?: boolean;
   /**
-   * Permission the listed folders must grant to the current user. Defaults to
+   * Permission a folder must grant the current user to be listed. Only folders
+   * whose computed permission set contains it are returned — it is a filter on
+   * the listing, not a description of the folder. Defaults to
    * `'read_attribute'`, i.e. every folder the user can see.
+   *
+   * Exactly one permission, because that is what the API takes: the
+   * `vfolder_nodes` argument is the single scalar `VFolderPermissionValueField`
+   * ("One of [...]"), parsed server-side into one `VFolderRBACPermission`. It
+   * accepts no list, and requiring several would mean several round trips whose
+   * intersection breaks `count` and pagination.
    *
    * Pass `'mount_rw'` when the caller writes into the folder from a session:
    * read-only folders (a `ro` mount permission, or a model folder owned by
    * another project's Model Store) are mounted read-only and any write fails
    * inside the container, so they must not be offered as a destination.
    */
-  permission?: BAIVFolderPermission;
+  requiredPermission?: BAIVFolderPermission;
   onResolvedNamesChange?: (nameMap: Record<string, string>) => void;
   ref?: React.Ref<BAIVFolderSelectRef>;
 }
@@ -86,7 +93,7 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
   filter,
   excludeDeleted,
   valuePropName = 'id',
-  permission = 'read_attribute',
+  requiredPermission = 'read_attribute',
   onResolvedNamesChange,
   ref,
   ...selectProps
@@ -122,10 +129,10 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
   const deferredControllableValue = useDeferredValue(controllableValue);
 
   // Resolves the label of the already-selected value(s). This deliberately
-  // stays on `read_attribute` rather than following the `permission` prop:
+  // stays on `read_attribute` rather than following `requiredPermission`:
   // narrowing it would leave an externally-supplied value unresolved and the
   // select would fall back to rendering the raw ID as its label. The option
-  // list below is what `permission` narrows.
+  // list below is what `requiredPermission` narrows.
   const { vfolder_nodes: selectedVFolderNodes } =
     useLazyLoadQuery<BAIVFolderSelectValueQuery>(
       graphql`
@@ -218,7 +225,7 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
           deferredSearchStr ? `name ilike "%${deferredSearchStr}%"` : null,
         ]),
         scopeId: currentProjectId ? `project:${currentProjectId}` : undefined,
-        permission,
+        permission: requiredPermission,
       },
       {
         fetchPolicy: deferredOpen ? 'network-only' : 'store-only',

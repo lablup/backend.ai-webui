@@ -304,7 +304,7 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
                   // session runs in — cross-project folders are dropped when
                   // the session mounts, and another project's Model Store
                   // folders are always mounted read-only.
-                  permission="mount_rw"
+                  requiredPermission="mount_rw"
                   currentProjectId={currentProject.id ?? undefined}
                   style={{ flex: 1 }}
                   onResolvedNamesChange={(nameMap) => {
