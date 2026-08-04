@@ -75,17 +75,11 @@ On the project-admin pages, only the items under the project selected with the p
 
 ## Refreshing project-admin pages
 
-All four project-admin pages share the same refresh control, at the right end of the toolbar above the table. Click the refresh button to reload the list immediately.
+The project-admin pages provide the same refresh button. Click the refresh button to refresh the table list.
 
-The chevron next to the refresh button opens the **Auto Refresh** menu, where you can choose how often the page reloads itself: **Off**, **5s**, **10s**, **15s**, **30s**, or **1m**. A check mark marks the interval currently in use. While auto-refresh is on, the selected interval is displayed next to the chevron and a countdown border fills around the control between reloads.
+The dropdown button next to the refresh button opens the **Auto Refresh** menu, where you can choose the auto-refresh interval.
 
 ![](../images/project_admin_auto_refresh_menu.png)
-
-- The **Sessions** and **Deployments** pages start out refreshing every 15 seconds.
-- The **Users** and **Data** pages start out with auto-refresh off.
-- Each page remembers its own interval, and your choice is kept across page reloads. Selecting **Off** stops auto-refresh on that page only.
-
-A manual click on the refresh button also restarts the countdown, so the next automatic reload is a full interval away.
 
 <a id="users"></a>
 
@@ -162,20 +156,6 @@ The page provides the following controls:
 
 - **Running / Finished** segmented control: Toggle between currently running sessions and sessions that have already finished.
 - **Property filter and sorting**: Filter the list by ID, Session Name, or Owner UUID. Click a sortable column header to sort the table.
-
-### Session table columns
-
-Each row shows one session, with the **Session Name**, **Status**, **AI Accelerator**, **CPU**, **Memory**, **Elapsed Time**, **Environments**, **Resource Group**, **Session Type**, **Cluster Mode**, **Created At**, and **Owner Email** columns displayed by default.
-
-![](../images/project_admin_session_table_columns.png)
-
-Three of these columns describe what the session runs on:
-
-- **Environments**: The session's container image, rendered as the image's icon followed by its base name, version, and architecture. The icon and the display name come from the image metadata registered in your Backend.AI installation; images with no registered metadata fall back to a default icon.
-- **Session Type**: A colored tag showing the session type — `INTERACTIVE`, `BATCH`, or `INFERENCE`.
-- **Cluster Mode**: **Single** or **Multi**, followed by the session's cluster size in parentheses.
-
-To change which columns appear, click the settings (gear) icon next to the pagination controls below the table and adjust the selection in the **Table Settings** modal. Columns that are hidden by default — **Session ID** and **Project** — can be shown from there.
 
 ### Terminate sessions
 
