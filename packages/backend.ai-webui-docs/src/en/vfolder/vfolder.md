@@ -16,7 +16,6 @@ such as the folder name and ID, the storage host name where the folder is locate
 
 
 ![](../images/data_page.png)
-<!-- TODO: Re-capture data_page.png — the refresh button above the folder list is now a split control with an interval chevron next to it -->
 
 There are two types of storage folders: `User` and `Project`. You can
 distinguish between them in the 'Type' column.
@@ -206,8 +205,7 @@ Select the checkboxes of the folders you want to remove. A selection summary
 the trash bin button to open the **Move to trash bin** confirmation for the
 whole selection.
 
-<!-- ![](../images/vfolder_bulk_move_to_trash.png) -->
-<!-- TODO: Capture screenshot of vfolder_bulk_move_to_trash.png — the Move to trash bin modal opened from a multi-folder selection that mixes deletable and non-deletable folders, so the excluded-folders alert and its bulleted folder list are visible above the confirmation message -->
+![](../images/vfolder_bulk_move_to_trash.png)
 
 If the selection contains folders you are not allowed to delete, the modal lists
 them in an alert titled *"The following folder(s) without delete permission will
