@@ -1088,126 +1088,6 @@ enum AppConfigDefinitionOrderField
   UPDATED_AT @join__enumValue(graph: STRAWBERRY)
 }
 
-"""
-Added in 26.8.0. One config document written at a single scope, merged by rank at resolve time.
-"""
-type AppConfigFragment implements Node
-  @join__implements(graph: STRAWBERRY, interface: "Node")
-  @join__type(graph: STRAWBERRY)
-{
-  """The Globally Unique ID of this object"""
-  id: ID!
-
-  """Config name the fragment belongs to."""
-  configName: String!
-
-  """Scope the fragment is written at (public | domain | user)."""
-  scopeType: AppConfigScopeType!
-
-  """Scope identifier: the domain id or user id; null for public scope."""
-  scopeId: UUID
-
-  """The fragment's JSON config document."""
-  config: JSON!
-
-  """Creation timestamp (UTC)."""
-  createdAt: DateTime!
-
-  """Last update timestamp (UTC)."""
-  updatedAt: DateTime!
-}
-
-"""Added in 26.8.0. Paginated connection for app config fragments."""
-type AppConfigFragmentConnection
-  @join__type(graph: STRAWBERRY)
-{
-  """Pagination data for this connection"""
-  pageInfo: PageInfo!
-
-  """Contains the nodes in this connection"""
-  edges: [AppConfigFragmentEdge!]!
-
-  """Total number of app config fragments matching the query criteria."""
-  count: Int!
-}
-
-"""An edge in a connection."""
-type AppConfigFragmentEdge
-  @join__type(graph: STRAWBERRY)
-{
-  """A cursor for use in pagination"""
-  cursor: String!
-
-  """The item at the end of the edge"""
-  node: AppConfigFragment!
-}
-
-"""Added in 26.8.0. Filter input for querying app config fragments."""
-input AppConfigFragmentFilter
-  @join__type(graph: STRAWBERRY)
-{
-  """Filter by config name."""
-  configName: StringFilter = null
-
-  """Filter by scope type."""
-  scopeType: AppConfigFragmentScopeTypeFilter = null
-
-  """Filter by creation datetime."""
-  createdAt: DateTimeFilter = null
-
-  """Filter by last update datetime."""
-  updatedAt: DateTimeFilter = null
-
-  """Match all of the given sub-filters."""
-  AND: [AppConfigFragmentFilter!] = null
-
-  """Match any of the given sub-filters."""
-  OR: [AppConfigFragmentFilter!] = null
-
-  """Negate the given sub-filters."""
-  NOT: [AppConfigFragmentFilter!] = null
-}
-
-"""Added in 26.8.0. Specifies ordering for app config fragment results."""
-input AppConfigFragmentOrderBy
-  @join__type(graph: STRAWBERRY)
-{
-  """The field to order by."""
-  field: AppConfigFragmentOrderField!
-
-  """Sort direction."""
-  direction: OrderDirection! = ASC
-}
-
-"""
-Added in 26.8.0. Fields available for ordering app config fragment results.
-"""
-enum AppConfigFragmentOrderField
-  @join__type(graph: STRAWBERRY)
-{
-  CONFIG_NAME @join__enumValue(graph: STRAWBERRY)
-  SCOPE_TYPE @join__enumValue(graph: STRAWBERRY)
-  CREATED_AT @join__enumValue(graph: STRAWBERRY)
-  UPDATED_AT @join__enumValue(graph: STRAWBERRY)
-}
-
-"""Added in 26.8.0. Filter input for the fragment scope_type enum field."""
-input AppConfigFragmentScopeTypeFilter
-  @join__type(graph: STRAWBERRY)
-{
-  """Exact scope type match."""
-  equals: AppConfigScopeType = null
-
-  """Match any of the provided scope types."""
-  in: [AppConfigScopeType!] = null
-
-  """Exclude exact scope type match."""
-  notEquals: AppConfigScopeType = null
-
-  """Exclude any of the provided scope types."""
-  notIn: [AppConfigScopeType!] = null
-}
-
 enum AppConfigScopeType
   @join__type(graph: STRAWBERRY)
 {
@@ -3127,16 +3007,6 @@ input ComputeScheduleInput
   kernels: [ComputeScheduleKernelResourceInput!]!
   clusterMode: SessionClusterMode!
   resourceGroupId: ID!
-
-  """
-  Restrict the fitting check to these agents, with the same semantics as the scheduling path. Null means no restriction.
-  """
-  designatedAgentIds: [String!] = null
-
-  """
-  How designated agents are enforced (STRICT fails without capacity, PREFERRED falls back). Null inherits the resource group default.
-  """
-  agentSelectionPolicy: SessionAgentSelectionPolicy = null
 }
 
 """
@@ -3348,16 +3218,6 @@ type ComputeSessionNode implements Node
 
   """Added in 24.09.0."""
   graph(filter: String, order: String, offset: Int, before: String, after: String, first: Int, last: Int): ComputeSessionConnection @join__field(graph: GRAPHENE)
-}
-
-"""
-Added in 26.8.0. How to clean up sessions that conflict with an agent's resource-group change.
-"""
-enum ConflictingSessionCleanupPolicy
-  @join__type(graph: STRAWBERRY)
-{
-  TERMINATE @join__enumValue(graph: STRAWBERRY)
-  RESCHEDULE @join__enumValue(graph: STRAWBERRY)
 }
 
 """Deprecated since 24.09.0. use `ContainerRegistryNode` instead"""
@@ -7242,11 +7102,6 @@ input EnqueueSessionInput
   """Designated agent IDs."""
   agentList: [String!] = null
 
-  """
-  Added in 26.8.0. How agent_list is enforced. null inherits the resource group default.
-  """
-  agentSelectionPolicy: SessionAgentSelectionPolicy = null
-
   """Network UUID to attach."""
   attachNetwork: ID = null
 
@@ -8739,21 +8594,12 @@ enum KernelSchedulingHistoryOrderField
   ATTEMPTS @join__enumValue(graph: STRAWBERRY)
 }
 
-"""
-Added in 26.8.0. Scope for kernel scheduling history query. All items are OR'd; raises an error if every field is empty.
-"""
+"""Added in 26.8.0. Scope for kernel scheduling history query"""
 input KernelScope
   @join__type(graph: STRAWBERRY)
 {
-  """
-  Kernel IDs to get history for. The scoped search is single-target for now, so exactly one item is accepted across all fields.
-  """
-  kernel: [UUIDScope!] = null
-
-  """
-  Session IDs to get the history of every owned kernel for. The scoped search is single-target for now, so exactly one item is accepted across all fields.
-  """
-  session: [UUIDScope!] = null
+  """Kernel ID to get history for"""
+  kernelId: UUID!
 }
 
 """
@@ -11720,11 +11566,6 @@ type Mutation
 
   """Added in 24.12.0."""
   delete_network(network: String!): DeleteNetwork @join__field(graph: GRAPHENE)
-
-  """
-  Added in 26.8.0. Change the resource group of an agent (superadmin only). Sessions still running on the agent under the old resource group are cleaned up per the given policy; without force, the change is rejected with a conflict error when such sessions exist.
-  """
-  adminUpdateAgentResourceGroup(input: UpdateAgentResourceGroupInput!): UpdateAgentResourceGroupPayload @join__field(graph: STRAWBERRY)
 
   """
   Added in 26.7.0. Register a new app config allow-list entry (super admin only).
@@ -14759,7 +14600,7 @@ type Query
   """Added in 25.5.0."""
   total_resource_slot(
     """
-    `statuses` argument is an array of session statuses. Only sessions with the specified statuses will be queried to calculate the sum of total resource slots. The argument should be an array of the following valid status values: ['PENDING', 'DEPRIORITIZING', 'SCHEDULED', 'PREPARING', 'PULLING', 'PREPARED', 'CREATING', 'RUNNING', 'RESTARTING', 'RUNNING_DEGRADED', 'PREEMPTED', 'RESCHEDULING', 'TERMINATING', 'TERMINATED', 'ERROR', 'CANCELLED'].
+    `statuses` argument is an array of session statuses. Only sessions with the specified statuses will be queried to calculate the sum of total resource slots. The argument should be an array of the following valid status values: ['PENDING', 'DEPRIORITIZING', 'SCHEDULED', 'PREPARING', 'PULLING', 'PREPARED', 'CREATING', 'RUNNING', 'RESTARTING', 'RUNNING_DEGRADED', 'PREEMPTED', 'TERMINATING', 'TERMINATED', 'ERROR', 'CANCELLED'].
     Default value is null.
     """
     statuses: [String] = null
@@ -14840,14 +14681,6 @@ type Query
   Added in 26.7.0. Search app config allow-list entries with filtering, ordering, and pagination (super admin only).
   """
   adminAppConfigAllowLists(filter: AppConfigAllowListFilter = null, orderBy: [AppConfigAllowListOrderBy!] = null, first: Int = null, after: String = null, last: Int = null, before: String = null, limit: Int = null, offset: Int = null): AppConfigAllowListConnection @join__field(graph: STRAWBERRY)
-
-  """Added in 26.8.0. Get a single app config fragment by id."""
-  appConfigFragment(id: UUID!): AppConfigFragment @join__field(graph: STRAWBERRY)
-
-  """
-  Added in 26.8.0. Search app config fragments across every scope with filtering, ordering, and pagination (super admin only).
-  """
-  adminAppConfigFragments(filter: AppConfigFragmentFilter = null, orderBy: [AppConfigFragmentOrderBy!] = null, first: Int = null, after: String = null, last: Int = null, before: String = null, limit: Int = null, offset: Int = null): AppConfigFragmentConnection @join__field(graph: STRAWBERRY)
 
   """
   Added in 25.14.0. Retrieve a specific artifact by its ID. Returns detailed information about the artifact including its metadata, registry information, and availability status.
@@ -19343,7 +19176,6 @@ enum SessionV2Status
   RUNNING @join__enumValue(graph: STRAWBERRY)
   DEPRIORITIZING @join__enumValue(graph: STRAWBERRY)
   PREEMPTED @join__enumValue(graph: STRAWBERRY)
-  RESCHEDULING @join__enumValue(graph: STRAWBERRY)
   TERMINATING @join__enumValue(graph: STRAWBERRY)
   TERMINATED @join__enumValue(graph: STRAWBERRY)
   CANCELLED @join__enumValue(graph: STRAWBERRY)
@@ -19825,51 +19657,6 @@ type UntagImageFromRegistry
 
   """Added since 24.03.1."""
   image: ImageNode
-}
-
-"""Added in 26.8.0. Input for changing the resource group of an agent."""
-input UpdateAgentResourceGroupInput
-  @join__type(graph: STRAWBERRY)
-{
-  """ID of the agent to move."""
-  agentId: String!
-
-  """UUID of the target resource group to move the agent into."""
-  resourceGroupId: UUID!
-
-  """
-  How to handle sessions still running on the agent under the old resource group. Defaults to TERMINATE, which is currently the only supported policy.
-  """
-  policy: ConflictingSessionCleanupPolicy = null
-
-  """
-  When false, the change is rejected with a conflict error if the agent still has active sessions. When true, the group is changed anyway and the conflicting sessions are cleaned up per the policy.
-  """
-  force: Boolean! = false
-}
-
-"""Added in 26.8.0. Result of changing the resource group of an agent."""
-type UpdateAgentResourceGroupPayload
-  @join__type(graph: STRAWBERRY)
-{
-  """ID of the agent whose resource group was changed."""
-  agentId: String!
-
-  """UUID of the new resource group."""
-  resourceGroupId: UUID!
-
-  """Cleanup policy applied to the conflicting sessions."""
-  policy: ConflictingSessionCleanupPolicy!
-
-  """
-  IDs of the sessions that were still running on the agent under the old resource group at the time of the change.
-  """
-  conflictingSessionIds: [UUID!]!
-
-  """
-  IDs of the conflicting sessions that were actually transitioned to TERMINATING by the applied policy. Their container cleanup proceeds asynchronously.
-  """
-  terminatingSessionIds: [UUID!]!
 }
 
 """

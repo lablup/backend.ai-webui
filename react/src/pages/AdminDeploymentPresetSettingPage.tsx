@@ -11,6 +11,7 @@ import AdminDeploymentPresetSettingPageContent, {
   type AdminDeploymentPresetFormValue,
   type ModelDefinitionFormValue,
 } from '../components/AdminDeploymentPresetSettingPageContent';
+import { resolveCommandShell } from '../helper/modelServiceCommand';
 import { tokenizeShellCommand } from '../helper/parseCliCommand';
 import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
@@ -27,39 +28,66 @@ const buildModelDefinitionInput = (
   // 26.4.4rc7+ managers accept the `enable` flag on ModelHealthCheckInput;
   // older managers reject it, so we keep the legacy null-when-disabled shape.
   supportsHealthCheckEnable: boolean,
+  // The single-string `command` + `shell` fields exist since 26.7.0; the WebUI
+  // gates them at 26.8.0 (see `client.ts`).
+  // older managers only understand the deprecated `startCommand` token list.
+  supportsCommandShell: boolean,
 ) => {
-  // The model definition is optional: the card's switch (`enabled`) gates it,
-  // so when off we omit it entirely (`modelDefinition: null`).
-  if (!value?.enabled || !value.models?.length) return null;
-  // A model is only emitted when it carries a service, so if no model has one
-  // the definition is effectively empty — omit it (`modelDefinition: null`)
-  // instead of sending `{ models: [] }`, which violates the create path's
-  // "at least one model" requirement.
-  if (!value.models.some((m) => m.service)) return null;
+  if (!value?.models?.length) return null;
+
+  // Service config fields (port, command, health check, pre-start actions)
+  // live in Step 1 and are independent of the model definition switch. The
+  // switch (`enabled`) only gates model name, path, and metadata in Step 2.
+  // When the switch is off but the first model carries service data (port,
+  // command, health check, etc.), we still send the model definition with
+  // just the service fields so the backend receives them.
+  const firstModel = value.models[0];
+  const svc = firstModel?.service;
+  const hasServiceData =
+    svc?.port != null ||
+    svc?.startCommand ||
+    svc?.enableHealthCheck ||
+    (svc?.preStartActions?.length ?? 0) > 0;
+
+  // Neither the model definition switch nor any service fields are set → null.
+  if (!value.enabled && !hasServiceData) return null;
+
   return {
     models: value.models.flatMap((m) => {
       const service = m.service;
-      // `service` is optional on a model, but the create path's
-      // PresetModelServiceConfigInput is required (the update path's is
-      // nullable), so a model without a service can't be submitted — skip it.
-      // When present, ModelServiceFormValue guarantees port/startCommand; shell
-      // is optional, handled below.
+      // Skip models with no service data at all.
       if (!service) {
         return [];
       }
+      // When the model definition switch is off, only send service fields
+      // (no name/modelPath/metadata — those belong to the gated section).
+      const modelEnabled = !!value.enabled;
       return [
         {
-          name: m.name,
-          modelPath: m.modelPath,
+          name: modelEnabled ? m.name : '',
+          modelPath: modelEnabled ? m.modelPath : '',
           service: {
-            port: service.port,
-            // `shell` has no UI field (see AdminDeploymentPresetModelConfigItem)
-            // but still round-trips: on edit, an existing value flows back
-            // through `form.getFieldsValue(true)`. Omit empty/whitespace-only
-            // values so create applies the server default `/bin/bash` and a
-            // blank never lands as `''`.
-            shell: service.shell?.trim() || undefined,
-            startCommand: tokenizeShellCommand(service.startCommand),
+            port: service.port ?? 8000,
+            // Start Command (FR-3205): when enabled (26.8.0+ by client policy)
+            // send the raw command string in
+            // `command` plus a `shell` derived from the Basic/Advanced controls
+            // (Basic → /bin/bash, Advanced → selected shell). On older managers
+            // fall back to the deprecated tokenized `startCommand`. Never send
+            // both — the backend prefers `command`.
+            ...(supportsCommandShell
+              ? {
+                  command: service.startCommand ?? '',
+                  shell: resolveCommandShell({
+                    advanced: !!service.commandAdvanced,
+                    execution: service.commandExecution ?? 'shell',
+                    shell: service.shell,
+                  }),
+                }
+              : {
+                  startCommand: tokenizeShellCommand(
+                    service.startCommand ?? '',
+                  ),
+                }),
             preStartActions: (service.preStartActions ?? []).map((a) => ({
               action: a.action,
               args: (() => {
@@ -95,25 +123,26 @@ const buildModelDefinitionInput = (
                 : fields;
             })(),
           },
-          metadata: m.metadata
-            ? {
-                author: m.metadata.author || null,
-                title: m.metadata.title || null,
-                version: m.metadata.version || null,
-                created: null,
-                lastModified: null,
-                description: m.metadata.description || null,
-                task: m.metadata.task || null,
-                category: m.metadata.category || null,
-                architecture: m.metadata.architecture || null,
-                framework: m.metadata.framework?.length
-                  ? m.metadata.framework
-                  : null,
-                label: m.metadata.label?.length ? m.metadata.label : null,
-                license: m.metadata.license || null,
-                minResource: null,
-              }
-            : null,
+          metadata:
+            modelEnabled && m.metadata
+              ? {
+                  author: m.metadata.author || null,
+                  title: m.metadata.title || null,
+                  version: m.metadata.version || null,
+                  created: null,
+                  lastModified: null,
+                  description: m.metadata.description || null,
+                  task: m.metadata.task || null,
+                  category: m.metadata.category || null,
+                  architecture: m.metadata.architecture || null,
+                  framework: m.metadata.framework?.length
+                    ? m.metadata.framework
+                    : null,
+                  label: m.metadata.label?.length ? m.metadata.label : null,
+                  license: m.metadata.license || null,
+                  minResource: null,
+                }
+              : null,
         },
       ];
     }),
@@ -134,6 +163,12 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
   const baiClient = useSuspendedBackendaiClient();
   const supportsHealthCheckEnable = baiClient.supports(
     'model-health-check-enable',
+  );
+  // The single-string `command` + `shell` fields exist since 26.7.0; gated at 26.8.0 on the
+  // preset service config (FR-3205); older managers only understand the
+  // deprecated `startCommand` token list.
+  const supportsCommandShell = baiClient.supports(
+    'model-service-command-string',
   );
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -174,6 +209,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
               node {
                 id
                 name
+                readsVfolderConfigFiles @since(version: "26.8.0")
               }
             }
           }
@@ -320,6 +356,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
             modelDefinition: buildModelDefinitionInput(
               values.modelDefinition,
               supportsHealthCheckEnable,
+              supportsCommandShell,
             ),
             openToPublic: values.openToPublic ?? null,
             replicaCount: values.replicaCount ?? null,
@@ -363,6 +400,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
             modelDefinition: buildModelDefinitionInput(
               values.modelDefinition,
               supportsHealthCheckEnable,
+              supportsCommandShell,
             ),
             openToPublic: values.openToPublic ?? null,
             replicaCount: values.replicaCount!,

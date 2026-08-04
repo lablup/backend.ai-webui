@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fce99cf16cbb504be52481b6e6b46d0f>>
+ * @generated SignedSource<<21ed09b2c60f44402983209f94592ea8>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -500,6 +500,13 @@ return {
                             "alias": null,
                             "args": null,
                             "kind": "ScalarField",
+                            "name": "command",
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
                             "name": "startCommand",
                             "storageKey": null
                           },
@@ -691,12 +698,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "e5658ff9add365e63321b8b2b1d63adc",
+    "cacheID": "5723c96f9ce3a0c28cf8e39aaf1ed22b",
     "id": null,
     "metadata": {},
     "name": "AdminDeploymentPresetSettingPageUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation AdminDeploymentPresetSettingPageUpdateMutation(\n  $input: UpdateDeploymentRevisionPresetInput!\n) {\n  adminUpdateDeploymentRevisionPreset(input: $input) {\n    preset {\n      id\n      name\n      ...AdminDeploymentPresetSettingPageContent_preset\n    }\n  }\n}\n\nfragment AdminDeploymentPresetSettingPageContent_preset on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    name\n    id\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues @since(version: \"26.4.4rc9\") {\n    presetId\n    value\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        preStartActions {\n          action\n          args\n        }\n        startCommand\n        shell\n        port\n        healthCheck {\n          enable @since(version: \"26.4.4rc7\")\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n      metadata {\n        author\n        title\n        version\n        created\n        lastModified\n        description\n        task\n        category\n        architecture\n        framework\n        label\n        license\n        minResource\n      }\n    }\n  }\n}\n"
+    "text": "mutation AdminDeploymentPresetSettingPageUpdateMutation(\n  $input: UpdateDeploymentRevisionPresetInput!\n) {\n  adminUpdateDeploymentRevisionPreset(input: $input) {\n    preset {\n      id\n      name\n      ...AdminDeploymentPresetSettingPageContent_preset\n    }\n  }\n}\n\nfragment AdminDeploymentPresetSettingPageContent_preset on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    name\n    id\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues @since(version: \"26.4.4rc9\") {\n    presetId\n    value\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        preStartActions {\n          action\n          args\n        }\n        command @since(version: \"26.7.0\")\n        startCommand\n        shell\n        port\n        healthCheck {\n          enable @since(version: \"26.4.4rc7\")\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n      metadata {\n        author\n        title\n        version\n        created\n        lastModified\n        description\n        task\n        category\n        architecture\n        framework\n        label\n        license\n        minResource\n      }\n    }\n  }\n}\n"
   }
 };
 })();
