@@ -39,7 +39,7 @@ You can filter sessions by type — `All`, `Interactive`, `Batch`, `Inference`, 
 `Running` and `Finished` tabs to manage sessions.
 
 :::note
-The personal Sessions page is scoped to the project you are currently working in — its address is
+The personal Sessions page shows only the sessions of the project selected with the project selector in the top bar — its address is
 `/project/<project name>/session` — and it always shows only your own sessions, regardless of your role.
 To view and manage sessions across all users in a project, use the **Sessions** page under
 **Admin Settings** in the sidebar.
@@ -91,5 +91,3 @@ session actually holds, so you can tell what the session is running with — not
 
 A shortfall occurs when the requested amount cannot be allocated exactly, such as a fractional GPU (fGPU)
 request that is rounded down to the nearest allocatable unit. The session runs with the allocated amount.
-
-For the other fields in the panel, see [Session detail panel](#session-detail-panel).
