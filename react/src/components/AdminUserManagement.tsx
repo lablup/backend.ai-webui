@@ -88,6 +88,8 @@ export const AdminUserManagementQuery = graphql`
   }
 `;
 
+export const USER_LIST_DEFAULT_PAGE_SIZE = 10;
+
 interface AdminUserManagementProps {
   queryRef: PreloadedQuery<AdminUserManagementQueryType>;
   onReload: (
@@ -139,9 +141,10 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
   const statusValue =
     variables.filter?.status?.equals === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE';
   const propertyFilterValue = _.omit(variables.filter ?? {}, 'status');
-  const orderValue = convertFromOrderBy(variables.orderBy) as
-    (typeof availableUserV2SorterValues)[number] | null;
-  const pageSize = variables.limit ?? 10;
+  const orderValue = convertFromOrderBy<
+    (typeof availableUserV2SorterValues)[number]
+  >(variables.orderBy);
+  const pageSize = variables.limit ?? USER_LIST_DEFAULT_PAGE_SIZE;
   const current = Math.floor((variables.offset ?? 0) / pageSize) + 1;
 
   const deferredQueryRef = useDeferredValue(queryRef);

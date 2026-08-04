@@ -989,12 +989,12 @@ export const convertToOrderBy = <
  * (`'-createdAt'` style). Only the first entry is used, mirroring
  * `convertToOrderBy` producing a single-entry list.
  */
-export const convertFromOrderBy = (
+export const convertFromOrderBy = <T extends string = string>(
   orderBy:
     ReadonlyArray<{ field?: string; direction?: string }> | null | undefined,
-): string | null => {
+): T | null => {
   const first = orderBy?.[0];
   if (!first?.field) return null;
   const name = _.camelCase(first.field.toLowerCase());
-  return first.direction === 'DESC' ? `-${name}` : name;
+  return (first.direction === 'DESC' ? `-${name}` : name) as T;
 };

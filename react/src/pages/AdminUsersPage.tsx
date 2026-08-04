@@ -10,9 +10,11 @@ import {
 } from '../__generated__/AdminUserManagementQuery.graphql';
 import AdminUserCredentialList, {
   AdminUserCredentialListQuery,
+  CREDENTIAL_LIST_DEFAULT_PAGE_SIZE,
 } from '../components/AdminUserCredentialList';
 import AdminUserManagement, {
   AdminUserManagementQuery,
+  USER_LIST_DEFAULT_PAGE_SIZE,
 } from '../components/AdminUserManagement';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import { convertFromOrderBy, convertToOrderBy } from '../helper';
@@ -23,7 +25,12 @@ import { Skeleton } from 'antd';
 import { CardTabListType } from 'antd/es/card';
 import { BAIFlex, BAICard, availableUserV2SorterValues } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
+import {
+  parseAsJson,
+  parseAsString,
+  parseAsStringLiteral,
+  useQueryStates,
+} from 'nuqs';
 import { Suspense, useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -67,11 +74,11 @@ const AdminUsersPage: React.FC = () => {
     },
     { history: 'replace' },
   );
-  const { tablePaginationOption, setTablePaginationOption } =
+  const { baiPaginationOption, setTablePaginationOption } =
     useBAIPaginationOptionStateOnSearchParam(
       queryParams.tab === 'credentials'
-        ? { current: 1, pageSize: 20 }
-        : { current: 1, pageSize: 10 },
+        ? { current: 1, pageSize: CREDENTIAL_LIST_DEFAULT_PAGE_SIZE }
+        : { current: 1, pageSize: USER_LIST_DEFAULT_PAGE_SIZE },
     );
 
   const [usersQueryRef, loadUsersQuery] =
@@ -91,14 +98,11 @@ const AdminUsersPage: React.FC = () => {
   );
 
   const buildInitialUsersVariables = (): UsersVariables => {
-    let urlFilter: UserV2Filter | null = null;
-    try {
-      urlFilter = queryParams.filter
-        ? (JSON.parse(queryParams.filter) as UserV2Filter)
-        : null;
-    } catch {
-      urlFilter = null;
-    }
+    const urlFilter = queryParams.filter
+      ? parseAsJson<UserV2Filter>((value) => value as UserV2Filter).parse(
+          queryParams.filter,
+        )
+      : null;
     const order = _.includes(availableUserV2SorterValues, queryParams.order)
       ? queryParams.order
       : null;
@@ -111,17 +115,15 @@ const AdminUsersPage: React.FC = () => {
             : { notEquals: 'ACTIVE' },
       },
       orderBy: convertToOrderBy<Required<UserV2OrderBy>>(order),
-      limit: tablePaginationOption.pageSize,
-      offset:
-        (tablePaginationOption.current - 1) * tablePaginationOption.pageSize,
+      limit: baiPaginationOption.limit,
+      offset: baiPaginationOption.offset,
       isNotSupportTotp: !isTOTPSupported,
     };
   };
 
   const buildInitialCredentialsVariables = (): CredentialsVariables => ({
-    limit: tablePaginationOption.pageSize,
-    offset:
-      (tablePaginationOption.current - 1) * tablePaginationOption.pageSize,
+    limit: baiPaginationOption.limit,
+    offset: baiPaginationOption.offset,
     is_active: queryParams.activeType !== 'inactive',
     filter: queryParams.filter,
     order: queryParams.order,
@@ -129,13 +131,13 @@ const AdminUsersPage: React.FC = () => {
 
   const defaultUsersVariables = (): UsersVariables => ({
     filter: { status: { equals: 'ACTIVE' } },
-    limit: 10,
+    limit: USER_LIST_DEFAULT_PAGE_SIZE,
     offset: 0,
     isNotSupportTotp: !isTOTPSupported,
   });
 
   const defaultCredentialsVariables = (): CredentialsVariables => ({
-    limit: 20,
+    limit: CREDENTIAL_LIST_DEFAULT_PAGE_SIZE,
     offset: 0,
     is_active: true,
   });
@@ -158,10 +160,6 @@ const AdminUsersPage: React.FC = () => {
         },
         { history: historyMode },
       );
-      setTablePaginationOption({
-        current: Math.floor((v.offset ?? 0) / (v.limit ?? 10)) + 1,
-        pageSize: v.limit ?? 10,
-      });
     } else {
       const v = variables as CredentialsVariables;
       setQueryParams(
@@ -174,11 +172,16 @@ const AdminUsersPage: React.FC = () => {
         },
         { history: historyMode },
       );
-      setTablePaginationOption({
-        current: Math.floor((v.offset ?? 0) / (v.limit ?? 20)) + 1,
-        pageSize: v.limit ?? 20,
-      });
     }
+    const pageSize =
+      variables.limit ??
+      (tab === 'users'
+        ? USER_LIST_DEFAULT_PAGE_SIZE
+        : CREDENTIAL_LIST_DEFAULT_PAGE_SIZE);
+    setTablePaginationOption({
+      current: Math.floor((variables.offset ?? 0) / pageSize) + 1,
+      pageSize,
+    });
   };
 
   const handleTabChange = (key: string) => {

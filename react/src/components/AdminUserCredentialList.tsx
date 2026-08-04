@@ -88,6 +88,8 @@ type Keypair = NonNullable<
   >['items'][number]
 >;
 
+export const CREDENTIAL_LIST_DEFAULT_PAGE_SIZE = 20;
+
 interface AdminUserCredentialListProps {
   queryRef: PreloadedQuery<AdminUserCredentialListQueryType>;
   onReload: (
@@ -124,7 +126,7 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
   // funnels changes back through `onReload`.
   const variables = queryRef.variables;
   const activeType = variables.is_active === false ? 'inactive' : 'active';
-  const pageSize = variables.limit ?? 20;
+  const pageSize = variables.limit ?? CREDENTIAL_LIST_DEFAULT_PAGE_SIZE;
   const current = Math.floor((variables.offset ?? 0) / pageSize) + 1;
 
   const deferredQueryRef = useDeferredValue(queryRef);
