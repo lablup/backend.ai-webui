@@ -339,18 +339,15 @@ const PureChatCard: React.FC<ChatCardProps> = ({
               model: wrapLanguageModel({
                 model: provider.chatModel(modelId),
                 middleware: [
+                  // NOTE: `startWithReasoning: true` looks like the fix for
+                  // Qwen3-style models, whose chat template supplies the
+                  // opening `<think>` so the response emits only the closing
+                  // tag. It is not: on the streaming path a model that emits
+                  // no tags at all never leaves reasoning mode, so its entire
+                  // answer is hidden. See `chatReasoningExtraction.test.ts`
+                  // and FR-3466 — the fix belongs at the serving layer.
                   extractReasoningMiddleware({
                     tagName: 'think',
-                    // Qwen3-style models are handed an opening `<think>` by
-                    // their chat template, so the *response* begins inside
-                    // reasoning and only ever emits the closing `</think>`.
-                    // Waiting for an opening tag that never arrives left the
-                    // reasoning inline in the answer, with a stray `</think>`
-                    // rendered as literal text. Starting in reasoning mode
-                    // costs nothing when a model emits no tags at all — with
-                    // no closing tag there is no match, and the text is passed
-                    // through untouched.
-                    startWithReasoning: true,
                   }),
                   // The openai-compatible provider does not advertise any
                   // `supportedUrls`, so the AI SDK treats a `data:` image

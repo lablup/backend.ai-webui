@@ -3,7 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 /**
- * Pins the reasoning-extraction contract `ChatCard` relies on.
+ * Pins the reasoning-extraction contract `ChatCard` relies on, and records why
+ * the obvious client-side fix was rejected (FR-3466).
  *
  * Qwen3-style models are handed an opening `<think>` by their chat template,
  * so the response begins *inside* reasoning and only emits the closing
@@ -12,8 +13,16 @@
  * stays inline in the answer and the orphan `</think>` reaches the markdown
  * renderer — which escapes unknown tags and shows them as literal text.
  *
- * These assertions guard the `startWithReasoning: true` decision against an
- * `ai` upgrade quietly changing the semantics underneath it.
+ * `startWithReasoning: true` looks like the fix and is **not** one. On the
+ * streaming path — the one `ChatCard` uses via `streamText` — a model that
+ * emits no think tags never leaves reasoning mode, so its entire answer is
+ * routed to the collapsed panel and the visible message is empty. The
+ * non-streaming path passes the same input through untouched, so the two
+ * disagree and only a streaming test catches it.
+ *
+ * These assertions keep both behaviours visible, so the flag is not enabled
+ * again on the strength of the non-streaming path alone, and so an `ai`
+ * upgrade that changes the semantics fails loudly.
  */
 import { extractReasoningMiddleware } from 'ai';
 import { describe, expect, it } from 'vitest';
