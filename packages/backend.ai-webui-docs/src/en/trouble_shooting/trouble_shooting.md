@@ -24,6 +24,39 @@ If there are problems in recognizing authentication cookies, users may not be ab
 to login with private browser window. If it succeeds, please clear your
 browser's cache and/or application data.
 
+<a id="offline-banner"></a>
+
+### The WebUI says I am offline
+
+A red **Offline: Not connected to any networks.** banner at the top of the page
+means the Backend.AI server could not be reached. Check your network
+connection, and confirm with your administrator that the Backend.AI server is
+running. The WebUI keeps re-checking while the banner is shown, so the banner
+disappears on its own within a few seconds once the server is reachable again.
+
+<a id="route-error-pages"></a>
+
+### A link takes me to an error page instead of the page I expected
+
+When an address cannot be opened, the WebUI keeps you inside the application and
+explains why instead of leaving a blank page. The page shows the address you
+tried to open and a button that takes you to the first page available to you
+(**Go back to the ... page**). The message tells you which of the following
+happened:
+
+- **Oops! Page not Found...** — the address does not match any page in the
+  WebUI. This usually comes from a mistyped or outdated link, or a bookmark
+  saved before a page was renamed.
+- **Project '...' was not found or you don't have access to it.** — the address
+  names a project that does not exist, or that you are not a member of. The
+  address is shown with the project part marked, so you can see exactly which
+  name failed. Pick a project you can use from the project selector at the top
+  of the page, and the same feature opens in that project.
+- **No accessible projects.** — your account does not belong to any project yet.
+  Ask your administrator to grant you access to a project, as the message
+  suggests.
+- **Unauthorized Access** — the address is valid, but your role does not allow
+  you to open it.
 
 <a id="installing_apt_pkg"></a>
 
@@ -67,12 +100,19 @@ automount folder and then try to launch Jupyter Notebook again.
 Backend.AI WebUI utilizes the latest modern JavaScript and/or browser features.
 Please use the LATEST versions of moder browsers (such as Chrome).
 
+<a id="sftp-disconnection"></a>
+
 ### SFTP disconnection
 
-When WebUI App launches SFTP connection, it uses a local proxy server which is
-embeded in the App. If you exit the WebUI App during the file transfer with
-SFTP protocol, the transfer will immediately fail because the connection
-established through the local proxy server is disconnected.  Therefore, even if
+This entry covers transfers that stop after a connection was established. If no
+connection dialog opens at all and a notification reports an error instead, the
+connection information could not be resolved — see the
+[SSH/SFTP Connection to a Compute Session](#ssh-sftp-container) chapter.
+
+When the WebUI App launches an SFTP connection, it uses a local proxy server
+which is embedded in the App. If you exit the WebUI App during the file transfer
+with SFTP protocol, the transfer will immediately fail because the connection
+established through the local proxy server is disconnected. Therefore, even if
 you are not using a compute session, you should not quit the WebUI App while
 using SFTP. If you need to refresh the page, we recommend using the Ctrl-R
 shortcut.
@@ -90,6 +130,11 @@ connection.
 There may be a problem connecting to the App Proxy service.
 Try to stop and restart the service by referencing the guide on
 start/stop/restart App Proxy service.
+
+When users report a failure to open SSH/SFTP rather than a web-based app, ask
+them for the exact message shown in the notification: each message points at a
+different part of the App Proxy path; see the
+[SSH/SFTP Connection to a Compute Session](#ssh-sftp-container) chapter for details.
 
 ### Indicated resources do not match with actual allocation
 
