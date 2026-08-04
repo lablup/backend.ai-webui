@@ -83,7 +83,7 @@ session actually holds, so you can tell what the session is running with — not
 
 - When the allocation matches the request, each resource shows a single value.
 - When the two differ, the allocated amount is followed by the requested amount in a muted color, with both
-  sharing one unit — for example `1 / 2 Core`. Hovering the numbers shows an **Allocated / Requested** tooltip.
+  sharing one unit — for example `0.0 / 0.5 fGPU`. Hovering the numbers shows an **Allocated / Requested** tooltip.
 - When a resource was allocated less than requested, a warning icon appears next to the **Resource Allocation**
   label. Hovering it shows the message *Fewer resources were allocated than requested.*
 - Before the session is allocated — for example while it is still `PENDING` — the requested resources are shown
