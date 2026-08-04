@@ -9,6 +9,31 @@ import {
 } from './modelServiceCommand';
 
 describe('deriveCommandModeState', () => {
+  it('returns Basic mode when no command and no startCommand exist', () => {
+    expect(deriveCommandModeState({})).toEqual({
+      command: '',
+      advanced: false,
+      execution: 'shell',
+      shell: DEFAULT_MODEL_SERVICE_SHELL,
+    });
+    expect(
+      deriveCommandModeState({ command: null, startCommand: null }),
+    ).toEqual({
+      command: '',
+      advanced: false,
+      execution: 'shell',
+      shell: DEFAULT_MODEL_SERVICE_SHELL,
+    });
+    expect(deriveCommandModeState({ command: null, startCommand: [] })).toEqual(
+      {
+        command: '',
+        advanced: false,
+        execution: 'shell',
+        shell: DEFAULT_MODEL_SERVICE_SHELL,
+      },
+    );
+  });
+
   it('reconstructs a legacy startCommand list as Exec (argv, no shell)', () => {
     expect(
       deriveCommandModeState({ startCommand: ['python', 'service.py'] }),

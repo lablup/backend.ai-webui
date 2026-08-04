@@ -72,6 +72,16 @@ export function deriveCommandModeState(params: {
     : formatShellCommand(startCommand ?? []);
 
   if (!usingNewCommand) {
+    if (!commandString) {
+      // No command at all (neither `command` nor legacy `startCommand`).
+      // Default to Basic mode so the UI shows a clean state.
+      return {
+        command: '',
+        advanced: false,
+        execution: 'shell',
+        shell: DEFAULT_MODEL_SERVICE_SHELL,
+      };
+    }
     // A legacy `startCommand` was an argv array run WITHOUT a shell. Reconstruct
     // it as an Exec command (shell submitted as null) so the tokens round-trip
     // via `shlex.split` without shell interpretation — Shell mode would wrap the

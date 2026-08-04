@@ -498,7 +498,13 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
           preset.deploymentDefaults?.revisionHistoryLimit ?? undefined,
         modelDefinition: preset.modelDefinition?.models?.length
           ? {
-              enabled: true,
+              // The model definition switch gates name/path/metadata (Step 2).
+              // A model that only carries service data (port, command, health
+              // check) was created with the switch OFF — treat it as disabled
+              // so the required name/path fields don't trigger validation.
+              enabled: preset.modelDefinition.models.some(
+                (m) => !!m.name || !!m.modelPath,
+              ),
               models: preset.modelDefinition.models.map((m) => {
                 // Start Command (FR-3205): reconstruct the raw command string
                 // and Basic/Advanced mode from whichever field the preset
