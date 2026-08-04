@@ -39,23 +39,10 @@ list is reachable from the folder status summary.
 
 ## Refresh the folder list
 
-The refresh button above the folder list reloads the folders without reloading
-the page. The chevron next to it opens the **Auto Refresh** menu, where you
-choose how often the list reloads by itself: `Off`, `5s`, `10s`, `15s`, `30s`,
-or `1m`. A check mark marks the interval that is currently active.
+Click the refresh button to refresh the folder list. Click the dropdown arrow
+on the right side of the button to set the **Auto Refresh** interval.
 
 ![](../images/vfolder_auto_refresh_menu.png)
-
-Folder lists start with auto-refresh set to `Off`, because folder contents
-rarely change on their own. Once you pick an interval, that choice is
-remembered for this list and reapplied the next time you open the page — this
-includes picking `Off` again.
-
-While auto-refresh is on, the selected interval appears next to the chevron and
-a countdown border fills around the button until the next reload. Refreshing
-manually restarts the countdown. Auto-refresh pauses while the page is not
-visible — for example, when you switch to another browser tab — and resumes
-when you come back.
 
 
 <a id="create-storage-folder"></a>
@@ -176,10 +163,6 @@ The audit log shows the following columns, in order:
 
 You can filter the log by **Time**, **Operation**, **Status**, and **Triggered By**.
 
-The tab has its own refresh button with the same **Auto Refresh** interval menu
-described in [Refresh the folder list](#refresh-folder-list). Its interval also
-starts at `Off` and is remembered separately from the folder list.
-
 ## Rename folder
 
 
@@ -209,10 +192,9 @@ whole selection.
 
 If the selection contains folders you are not allowed to delete, the modal lists
 them in an alert titled *"The following folder(s) without delete permission will
-be excluded."* Read the list before confirming: only the remaining folders move
-to the Trash tab, and the confirmation message below the alert counts just those
-folders. When many folders are excluded, the list scrolls inside the alert
-instead of stretching the modal.
+be excluded."* Check the list before proceeding with the deletion: only the
+remaining folders move to the Trash tab, and the confirmation message below the
+alert counts just the folders that are actually moved.
 
 ### Restore or permanently delete
 
