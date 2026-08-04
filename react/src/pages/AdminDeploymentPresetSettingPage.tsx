@@ -20,7 +20,12 @@ import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { type RuntimeVariantPresetValueEntry } from '../hooks/useRuntimeParameterSchema';
 import { theme } from '../theme-shim';
 import { Heading } from '@astryxdesign/core/Heading';
-import { BAIFlex, useBAILogger, useMutationWithPromise } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  toLocalId,
+  useBAILogger,
+  useMutationWithPromise,
+} from 'backend.ai-ui';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -35,6 +40,10 @@ const buildModelDefinitionInput = (
   // gates them at 26.8.0 (see `client.ts`).
   // older managers only understand the deprecated `startCommand` token list.
   supportsCommandShell: boolean,
+  // Whether the selected runtime variant reads vfolder config files (custom).
+  // When false, command/port fields are hidden in the UI, so any stale values
+  // in the form store must be excluded from the mutation.
+  readsVfolderConfigFiles: boolean,
 ) => {
   if (!value?.models?.length) return null;
 
@@ -46,9 +55,13 @@ const buildModelDefinitionInput = (
   // just the service fields so the backend receives them.
   const firstModel = value.models[0];
   const svc = firstModel?.service;
+  // Command/port are only relevant when the variant reads vfolder config
+  // files (custom). When a non-custom variant is selected, any stale
+  // command/port left in the form store must be excluded.
+  const hasCommandData =
+    readsVfolderConfigFiles && (svc?.port != null || svc?.startCommand);
   const hasServiceData =
-    svc?.port != null ||
-    svc?.startCommand ||
+    hasCommandData ||
     svc?.enableHealthCheck ||
     (svc?.preStartActions?.length ?? 0) > 0;
 
@@ -70,29 +83,30 @@ const buildModelDefinitionInput = (
           name: modelEnabled ? m.name : '',
           modelPath: modelEnabled ? m.modelPath : '',
           service: {
-            port: service.port ?? 8000,
+            port: hasCommandData ? (service.port ?? 8000) : 8000,
             // Start Command (FR-3205): when enabled (26.8.0+ by client policy)
-            // send the raw command string in
-            // `command` plus a `shell` derived from the Basic/Advanced controls
-            // (Basic → /bin/bash, Advanced → selected shell). On older managers
-            // fall back to the deprecated tokenized `startCommand`. Never send
-            // both — the backend prefers `command`.
-            ...(supportsCommandShell
-              ? {
-                  command: service.startCommand || null,
-                  shell: service.startCommand
-                    ? resolveCommandShell({
-                        advanced: !!service.commandAdvanced,
-                        execution: service.commandExecution ?? 'shell',
-                        shell: service.shell,
-                      })
-                    : undefined,
-                }
-              : {
-                  startCommand: tokenizeShellCommand(
-                    service.startCommand ?? '',
-                  ),
-                }),
+            // send the raw command string in `command` plus a `shell` derived
+            // from the Basic/Advanced controls. On older managers fall back to
+            // the deprecated tokenized `startCommand`. When the variant does
+            // not read config files, omit command/shell entirely.
+            ...(hasCommandData
+              ? supportsCommandShell
+                ? {
+                    command: service.startCommand || null,
+                    shell: service.startCommand
+                      ? resolveCommandShell({
+                          advanced: !!service.commandAdvanced,
+                          execution: service.commandExecution ?? 'shell',
+                          shell: service.shell,
+                        })
+                      : undefined,
+                  }
+                : {
+                    startCommand: tokenizeShellCommand(
+                      service.startCommand ?? '',
+                    ),
+                  }
+              : {}),
             preStartActions: (service.preStartActions ?? []).map((a) => ({
               action: a.action,
               args: (() => {
@@ -322,6 +336,15 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
     const values: AdminDeploymentPresetFormValue = form.getFieldsValue(true);
     const presetValues = collectRuntimePresetValuesRef.current();
 
+    // Resolve whether the selected variant reads vfolder config files so
+    // buildModelDefinitionInput can exclude stale command/port data.
+    const selectedVariant = runtimeVariantList.find(
+      (rt) => toLocalId(rt.id) === values.runtimeVariantId,
+    );
+    const reads =
+      selectedVariant?.readsVfolderConfigFiles ??
+      selectedVariant?.name === 'custom';
+
     setIsSubmitting(true);
     try {
       if (mode === 'edit' && presetId) {
@@ -362,6 +385,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
               values.modelDefinition,
               supportsHealthCheckEnable,
               supportsCommandShell,
+              !!reads,
             ),
             openToPublic: values.openToPublic ?? null,
             replicaCount: values.replicaCount ?? null,
@@ -406,6 +430,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
               values.modelDefinition,
               supportsHealthCheckEnable,
               supportsCommandShell,
+              !!reads,
             ),
             openToPublic: values.openToPublic ?? null,
             replicaCount: values.replicaCount!,
