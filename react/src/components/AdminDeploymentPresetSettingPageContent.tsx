@@ -584,13 +584,14 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
   const applyInitialValues = useEffectEvent(() => {
     // In edit mode, skip applying until the preset data is available.
     if (mode === 'edit' && !preset) return;
+    // resetFields() resets to the Form's current `initialValues` prop and then
+    // setFieldsValue() deep-merges on top. This two-step ensures stale values
+    // from a previous render (e.g. EMPTY_MODEL_SEED's commandExecution) do not
+    // survive into the edit-mode prefill.
+    form.resetFields();
     if (mode === 'create') {
-      // Create mode: merge URL-synced values on top of defaults.
-      form.resetFields();
       form.setFieldsValue(_.merge({}, initialValues, formValuesFromURL));
     } else {
-      // Edit mode: form already has initialValues from <Form initialValues>,
-      // so only call setFieldsValue (no resetFields to avoid clearing briefly).
       form.setFieldsValue(initialValues);
     }
   });
