@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<382d87fb7e0cc5a5821ad66091a920c8>>
+ * @generated SignedSource<<177313f73fdcc3ac12c8e3a6c85a65d6>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,10 +16,10 @@ export type BulkDeleteModelCardsV2Input = {
 export type DeleteModelCardV2Options = {
   deleteAssociatedVfolder?: boolean;
 };
-export type AdminModelCardListPageBulkDeleteMutation$variables = {
+export type AdminModelCardBulkDeleteMutation$variables = {
   input: BulkDeleteModelCardsV2Input;
 };
-export type AdminModelCardListPageBulkDeleteMutation$data = {
+export type AdminModelCardBulkDeleteMutation$data = {
   readonly adminBulkDeleteModelCardsV2: {
     readonly failed: ReadonlyArray<{
       readonly cardId: string;
@@ -28,9 +28,9 @@ export type AdminModelCardListPageBulkDeleteMutation$data = {
     readonly successes: ReadonlyArray<string>;
   } | null | undefined;
 };
-export type AdminModelCardListPageBulkDeleteMutation = {
-  response: AdminModelCardListPageBulkDeleteMutation$data;
-  variables: AdminModelCardListPageBulkDeleteMutation$variables;
+export type AdminModelCardBulkDeleteMutation = {
+  response: AdminModelCardBulkDeleteMutation$data;
+  variables: AdminModelCardBulkDeleteMutation$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -97,7 +97,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "AdminModelCardListPageBulkDeleteMutation",
+    "name": "AdminModelCardBulkDeleteMutation",
     "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -106,20 +106,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "AdminModelCardListPageBulkDeleteMutation",
+    "name": "AdminModelCardBulkDeleteMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "74eba942ff74fb006b1ccf73a34b49f4",
+    "cacheID": "41531d617eda12f10098bff2e4623f27",
     "id": null,
     "metadata": {},
-    "name": "AdminModelCardListPageBulkDeleteMutation",
+    "name": "AdminModelCardBulkDeleteMutation",
     "operationKind": "mutation",
-    "text": "mutation AdminModelCardListPageBulkDeleteMutation(\n  $input: BulkDeleteModelCardsV2Input!\n) {\n  adminBulkDeleteModelCardsV2(input: $input) {\n    successes\n    failed {\n      cardId\n      message\n    }\n  }\n}\n"
+    "text": "mutation AdminModelCardBulkDeleteMutation(\n  $input: BulkDeleteModelCardsV2Input!\n) {\n  adminBulkDeleteModelCardsV2(input: $input) {\n    successes\n    failed {\n      cardId\n      message\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "09131356976871fd5c8b7f460995a96f";
+(node as any).hash = "91c710abd67f83d9dce9f866a1c82272";
 
 export default node;

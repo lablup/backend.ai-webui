@@ -16,11 +16,7 @@ export type PresetValueType = 'STR' | 'INT' | 'FLOAT' | 'BOOL' | 'FLAG';
 
 /** UI rendering type for the preset control. */
 export type PresetUIType =
-  | 'slider'
-  | 'number_input'
-  | 'select'
-  | 'checkbox'
-  | 'text_input';
+  'slider' | 'number_input' | 'select' | 'checkbox' | 'text_input';
 
 export interface SelectOption {
   value: string;
@@ -138,14 +134,7 @@ export function useRuntimeParameterSchema(
               rank
               category
               displayName
-              # Version-gated: stripped from the request on managers older than
-              # the capability cutoff (runtime-variant-preset-required in
-              # client.ts, which turns on at 26.4.4rc9) so the presets query
-              # stays valid on legacy backends. Must match that flag's version —
-              # gating at the final "26.4.4" would strip the field on every
-              # 26.4.4rc manager (rc < final in PEP440), even though the field
-              # already exists there from rc9 onward.
-              required @since(version: "26.4.4rc9")
+              required @since(version: "26.4.4")
               targetSpec {
                 presetTarget
                 valueType

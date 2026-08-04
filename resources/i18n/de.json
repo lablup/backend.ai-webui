@@ -196,6 +196,14 @@
     "VFolder": "VFolder",
     "VFolderRequired": "VFolder ist erforderlich."
   },
+  "adminRuntimeVariantPreset": {
+    "CreatePreset": "Voreinstellung erstellen",
+    "Name": "Name",
+    "PresetDeleted": "Die Voreinstellung für die Laufzeitvariante wurde gelöscht.",
+    "RuntimeVariantId": "Laufzeitvarianten-ID",
+    "RuntimeVariantPreset": "Laufzeitvarianten-Voreinstellung",
+    "TabTitle": "Laufzeitvarianten-Voreinstellungen"
+  },
   "adminSession": {
     "PendingSessions": "Ausstehende Sitzungen",
     "PendingSessionsScopedToResourceGroup": "Es werden nur ausstehende Sitzungen für die ausgewählte Ressourcengruppe angezeigt. Wechseln Sie die Ressourcengruppe, um Sitzungen in anderen Gruppen anzuzeigen."

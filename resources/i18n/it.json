@@ -196,6 +196,14 @@
     "VFolder": "VFolder",
     "VFolderRequired": "Il VFolder è obbligatorio."
   },
+  "adminRuntimeVariantPreset": {
+    "CreatePreset": "Crea Preimpostazione",
+    "Name": "Nome",
+    "PresetDeleted": "La preimpostazione della variante di runtime è stata eliminata.",
+    "RuntimeVariantId": "ID Variante di Runtime",
+    "RuntimeVariantPreset": "Preimpostazione Variante di Runtime",
+    "TabTitle": "Preimpostazioni Varianti di Runtime"
+  },
   "adminSession": {
     "PendingSessions": "Sessioni in sospeso",
     "PendingSessionsScopedToResourceGroup": "Vengono mostrate solo le sessioni in sospeso per il gruppo di risorse selezionato. Cambia gruppo di risorse per visualizzare le sessioni in altri gruppi."

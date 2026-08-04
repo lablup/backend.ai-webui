@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e2b0d12e9ee241317cf98b6b287954f0>>
+ * @generated SignedSource<<1453f4e77362c5be01ae71c6e23a90ab>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,17 +12,17 @@ import { ConcreteRequest } from 'relay-runtime';
 export type DeleteDeploymentInput = {
   id: string;
 };
-export type AdminDeploymentListPageDeleteMutation$variables = {
+export type AdminDeploymentDeleteMutation$variables = {
   input: DeleteDeploymentInput;
 };
-export type AdminDeploymentListPageDeleteMutation$data = {
+export type AdminDeploymentDeleteMutation$data = {
   readonly deleteModelDeployment: {
     readonly id: string;
   } | null | undefined;
 };
-export type AdminDeploymentListPageDeleteMutation = {
-  response: AdminDeploymentListPageDeleteMutation$data;
-  variables: AdminDeploymentListPageDeleteMutation$variables;
+export type AdminDeploymentDeleteMutation = {
+  response: AdminDeploymentDeleteMutation$data;
+  variables: AdminDeploymentDeleteMutation$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -64,7 +64,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "AdminDeploymentListPageDeleteMutation",
+    "name": "AdminDeploymentDeleteMutation",
     "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -73,20 +73,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "AdminDeploymentListPageDeleteMutation",
+    "name": "AdminDeploymentDeleteMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "102d0bf1e8e60917d9d011759a41790c",
+    "cacheID": "6c4d5e089de8847855a360c25b91855b",
     "id": null,
     "metadata": {},
-    "name": "AdminDeploymentListPageDeleteMutation",
+    "name": "AdminDeploymentDeleteMutation",
     "operationKind": "mutation",
-    "text": "mutation AdminDeploymentListPageDeleteMutation(\n  $input: DeleteDeploymentInput!\n) {\n  deleteModelDeployment(input: $input) {\n    id\n  }\n}\n"
+    "text": "mutation AdminDeploymentDeleteMutation(\n  $input: DeleteDeploymentInput!\n) {\n  deleteModelDeployment(input: $input) {\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "2ecece6de837bfaf9eb7065300b85fba";
+(node as any).hash = "85eb1c4f21f817def12acb84acc36a46";
 
 export default node;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<079c40ad13707c84813ca28db8024f88>>
+ * @generated SignedSource<<c45a6a4754d0a9f1bf2a56df452a4454>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,20 +10,13 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type DeploymentRevisionPresetOrderField = "CREATED_AT" | "NAME" | "RANK" | "%future added value";
-export type DeploymentRevisionPresetFilter = {
-  AND?: ReadonlyArray<DeploymentRevisionPresetFilter> | null | undefined;
-  NOT?: ReadonlyArray<DeploymentRevisionPresetFilter> | null | undefined;
-  OR?: ReadonlyArray<DeploymentRevisionPresetFilter> | null | undefined;
-  id?: UUIDFilter | null | undefined;
+export type RuntimeVariantPresetOrderField = "CREATED_AT" | "NAME" | "RANK" | "%future added value";
+export type RuntimeVariantPresetFilter = {
+  AND?: ReadonlyArray<RuntimeVariantPresetFilter> | null | undefined;
+  NOT?: ReadonlyArray<RuntimeVariantPresetFilter> | null | undefined;
+  OR?: ReadonlyArray<RuntimeVariantPresetFilter> | null | undefined;
   name?: StringFilter | null | undefined;
   runtimeVariantId?: UUIDFilter | null | undefined;
-};
-export type UUIDFilter = {
-  equals?: string | null | undefined;
-  in?: ReadonlyArray<string> | null | undefined;
-  notEquals?: string | null | undefined;
-  notIn?: ReadonlyArray<string> | null | undefined;
 };
 export type StringFilter = {
   contains?: string | null | undefined;
@@ -47,31 +40,36 @@ export type StringFilter = {
   notStartsWith?: string | null | undefined;
   startsWith?: string | null | undefined;
 };
-export type DeploymentRevisionPresetOrderBy = {
-  direction?: string;
-  field: DeploymentRevisionPresetOrderField;
+export type UUIDFilter = {
+  equals?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
 };
-export type AdminDeploymentPresetListPageQuery$variables = {
-  filter?: DeploymentRevisionPresetFilter | null | undefined;
+export type RuntimeVariantPresetOrderBy = {
+  direction?: string;
+  field: RuntimeVariantPresetOrderField;
+};
+export type AdminRuntimeVariantPresetQuery$variables = {
+  filter?: RuntimeVariantPresetFilter | null | undefined;
   limit?: number | null | undefined;
   offset?: number | null | undefined;
-  orderBy?: ReadonlyArray<DeploymentRevisionPresetOrderBy> | null | undefined;
+  orderBy?: ReadonlyArray<RuntimeVariantPresetOrderBy> | null | undefined;
 };
-export type AdminDeploymentPresetListPageQuery$data = {
-  readonly deploymentRevisionPresets: {
+export type AdminRuntimeVariantPresetQuery$data = {
+  readonly runtimeVariantPresets: {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly id: string;
-        readonly name: string;
-        readonly " $fragmentSpreads": FragmentRefs<"AdminDeploymentPresetNodesFragment">;
+        readonly " $fragmentSpreads": FragmentRefs<"BAIRuntimeVariantPresetSettingModalFragment" | "BAIRuntimeVariantPresetTableFragment">;
       };
     }>;
   } | null | undefined;
 };
-export type AdminDeploymentPresetListPageQuery = {
-  response: AdminDeploymentPresetListPageQuery$data;
-  variables: AdminDeploymentPresetListPageQuery$variables;
+export type AdminRuntimeVariantPresetQuery = {
+  response: AdminRuntimeVariantPresetQuery$data;
+  variables: AdminRuntimeVariantPresetQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -148,21 +146,21 @@ return {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "AdminDeploymentPresetListPageQuery",
+    "name": "AdminRuntimeVariantPresetQuery",
     "selections": [
       {
         "alias": null,
         "args": (v4/*: any*/),
-        "concreteType": "DeploymentRevisionPresetConnection",
+        "concreteType": "RuntimeVariantPresetConnection",
         "kind": "LinkedField",
-        "name": "deploymentRevisionPresets",
+        "name": "runtimeVariantPresets",
         "plural": false,
         "selections": [
           (v5/*: any*/),
           {
             "alias": null,
             "args": null,
-            "concreteType": "DeploymentRevisionPresetEdge",
+            "concreteType": "RuntimeVariantPresetEdge",
             "kind": "LinkedField",
             "name": "edges",
             "plural": true,
@@ -170,17 +168,21 @@ return {
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "DeploymentRevisionPreset",
+                "concreteType": "RuntimeVariantPreset",
                 "kind": "LinkedField",
                 "name": "node",
                 "plural": false,
                 "selections": [
                   (v6/*: any*/),
-                  (v7/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
-                    "name": "AdminDeploymentPresetNodesFragment"
+                    "name": "BAIRuntimeVariantPresetTableFragment"
+                  },
+                  {
+                    "args": null,
+                    "kind": "FragmentSpread",
+                    "name": "BAIRuntimeVariantPresetSettingModalFragment"
                   }
                 ],
                 "storageKey": null
@@ -204,21 +206,21 @@ return {
       (v2/*: any*/)
     ],
     "kind": "Operation",
-    "name": "AdminDeploymentPresetListPageQuery",
+    "name": "AdminRuntimeVariantPresetQuery",
     "selections": [
       {
         "alias": null,
         "args": (v4/*: any*/),
-        "concreteType": "DeploymentRevisionPresetConnection",
+        "concreteType": "RuntimeVariantPresetConnection",
         "kind": "LinkedField",
-        "name": "deploymentRevisionPresets",
+        "name": "runtimeVariantPresets",
         "plural": false,
         "selections": [
           (v5/*: any*/),
           {
             "alias": null,
             "args": null,
-            "concreteType": "DeploymentRevisionPresetEdge",
+            "concreteType": "RuntimeVariantPresetEdge",
             "kind": "LinkedField",
             "name": "edges",
             "plural": true,
@@ -226,20 +228,12 @@ return {
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "DeploymentRevisionPreset",
+                "concreteType": "RuntimeVariantPreset",
                 "kind": "LinkedField",
                 "name": "node",
                 "plural": false,
                 "selections": [
                   (v6/*: any*/),
-                  (v7/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "description",
-                    "storageKey": null
-                  },
                   {
                     "alias": null,
                     "args": null,
@@ -255,31 +249,60 @@ return {
                     "name": "runtimeVariant",
                     "plural": false,
                     "selections": [
-                      (v6/*: any*/),
-                      (v7/*: any*/)
+                      (v7/*: any*/),
+                      (v6/*: any*/)
                     ],
+                    "storageKey": null
+                  },
+                  (v7/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "description",
                     "storageKey": null
                   },
                   {
                     "alias": null,
                     "args": null,
-                    "concreteType": "PresetClusterSpec",
+                    "kind": "ScalarField",
+                    "name": "rank",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "PresetTargetSpec",
                     "kind": "LinkedField",
-                    "name": "cluster",
+                    "name": "targetSpec",
                     "plural": false,
                     "selections": [
                       {
                         "alias": null,
                         "args": null,
                         "kind": "ScalarField",
-                        "name": "clusterMode",
+                        "name": "presetTarget",
                         "storageKey": null
                       },
                       {
                         "alias": null,
                         "args": null,
                         "kind": "ScalarField",
-                        "name": "clusterSize",
+                        "name": "valueType",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "defaultValue",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "key",
                         "storageKey": null
                       }
                     ],
@@ -288,102 +311,8 @@ return {
                   {
                     "alias": null,
                     "args": null,
-                    "concreteType": "PresetExecutionSpec",
-                    "kind": "LinkedField",
-                    "name": "execution",
-                    "plural": false,
-                    "selections": [
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "imageId",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "startupCommand",
-                        "storageKey": null
-                      }
-                    ],
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "ImageV2",
-                    "kind": "LinkedField",
-                    "name": "image",
-                    "plural": false,
-                    "selections": [
-                      (v6/*: any*/),
-                      {
-                        "alias": null,
-                        "args": null,
-                        "concreteType": "ImageV2IdentityInfo",
-                        "kind": "LinkedField",
-                        "name": "identity",
-                        "plural": false,
-                        "selections": [
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "canonicalName",
-                            "storageKey": null
-                          },
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "architecture",
-                            "storageKey": null
-                          }
-                        ],
-                        "storageKey": null
-                      }
-                    ],
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "PresetDeploymentDefaults",
-                    "kind": "LinkedField",
-                    "name": "deploymentDefaults",
-                    "plural": false,
-                    "selections": [
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "replicaCount",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "deploymentStrategy",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "openToPublic",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "revisionHistoryLimit",
-                        "storageKey": null
-                      }
-                    ],
+                    "kind": "ScalarField",
+                    "name": "required",
                     "storageKey": null
                   },
                   {
@@ -412,16 +341,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "e010668333406a1ca2d16b2541b6a1d3",
+    "cacheID": "ad337dc7d2db6d546a2fdb2a4585c1d0",
     "id": null,
     "metadata": {},
-    "name": "AdminDeploymentPresetListPageQuery",
+    "name": "AdminRuntimeVariantPresetQuery",
     "operationKind": "query",
-    "text": "query AdminDeploymentPresetListPageQuery(\n  $filter: DeploymentRevisionPresetFilter\n  $orderBy: [DeploymentRevisionPresetOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  deploymentRevisionPresets(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        name\n        ...AdminDeploymentPresetNodesFragment\n      }\n    }\n  }\n}\n\nfragment AdminDeploymentPresetNodesFragment on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n  }\n  image @since(version: \"26.4.4\") {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n  }\n  deploymentDefaults {\n    replicaCount\n    deploymentStrategy\n    openToPublic\n    revisionHistoryLimit\n  }\n  createdAt\n  updatedAt\n}\n"
+    "text": "query AdminRuntimeVariantPresetQuery(\n  $filter: RuntimeVariantPresetFilter\n  $orderBy: [RuntimeVariantPresetOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  runtimeVariantPresets(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        ...BAIRuntimeVariantPresetTableFragment\n        ...BAIRuntimeVariantPresetSettingModalFragment\n      }\n    }\n  }\n}\n\nfragment BAIRuntimeVariantPresetSettingModalFragment on RuntimeVariantPreset {\n  id\n  runtimeVariantId\n  name\n  description\n  rank\n  targetSpec {\n    presetTarget\n    valueType\n    defaultValue\n    key\n  }\n  required @since(version: \"26.4.4\")\n}\n\nfragment BAIRuntimeVariantPresetTableFragment on RuntimeVariantPreset {\n  id\n  runtimeVariantId\n  runtimeVariant @since(version: \"26.8.0\") {\n    name\n    id\n  }\n  name\n  description\n  rank\n  targetSpec {\n    presetTarget\n    valueType\n    defaultValue\n    key\n  }\n  required @since(version: \"26.4.4\")\n  createdAt\n  updatedAt\n}\n"
   }
 };
 })();
 
-(node as any).hash = "5fad3136d3763515c67dc5ad55ab6323";
+(node as any).hash = "0e8b4a450530419c80e8ab241723b8ec";
 
 export default node;

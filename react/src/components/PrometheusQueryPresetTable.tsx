@@ -3,9 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
-  PrometheusQueryPresetNodesFragment$data,
-  PrometheusQueryPresetNodesFragment$key,
-} from '../__generated__/PrometheusQueryPresetNodesFragment.graphql';
+  PrometheusQueryPresetTableFragment$data,
+  PrometheusQueryPresetTableFragment$key,
+} from '../__generated__/PrometheusQueryPresetTableFragment.graphql';
 import { DeleteFilled } from '@ant-design/icons';
 import { Tag } from 'antd';
 import {
@@ -26,7 +26,7 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 export type PrometheusQueryPresetNodeInList = NonNullable<
-  PrometheusQueryPresetNodesFragment$data[number]
+  PrometheusQueryPresetTableFragment$data[number]
 >;
 
 const availablePrometheusQueryPresetSorterKeys = [
@@ -44,11 +44,11 @@ const isEnableSorter = (key: string) => {
   return _.includes(availablePrometheusQueryPresetSorterKeys, key);
 };
 
-interface PrometheusQueryPresetNodesProps extends Omit<
+interface PrometheusQueryPresetTableProps extends Omit<
   BAITableProps<PrometheusQueryPresetNodeInList>,
   'dataSource' | 'columns' | 'onChangeOrder'
 > {
-  presetsFrgmt: PrometheusQueryPresetNodesFragment$key;
+  presetsFrgmt: PrometheusQueryPresetTableFragment$key;
   onDeletePreset?: (preset: PrometheusQueryPresetNodeInList) => void;
   onEditPreset?: (preset: PrometheusQueryPresetNodeInList) => void;
   customizeColumns?: (
@@ -59,7 +59,7 @@ interface PrometheusQueryPresetNodesProps extends Omit<
   ) => void;
 }
 
-const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
+const PrometheusQueryPresetTable: React.FC<PrometheusQueryPresetTableProps> = ({
   presetsFrgmt,
   onDeletePreset,
   onEditPreset,
@@ -72,7 +72,7 @@ const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
 
   const presets = useFragment(
     graphql`
-      fragment PrometheusQueryPresetNodesFragment on QueryDefinition
+      fragment PrometheusQueryPresetTableFragment on QueryDefinition
       @relay(plural: true) {
         id
         name
@@ -296,4 +296,4 @@ const PrometheusQueryPresetNodes: React.FC<PrometheusQueryPresetNodesProps> = ({
   );
 };
 
-export default PrometheusQueryPresetNodes;
+export default PrometheusQueryPresetTable;
