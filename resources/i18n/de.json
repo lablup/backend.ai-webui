@@ -524,6 +524,7 @@
     "BulkCreateUserFromCSV": "Mehrere Benutzer per CSV erstellen",
     "BulkCreateUserFromCSVSubtitle": "Laden Sie eine CSV-Datei hoch, um mehrere Benutzerkonten auf einmal zu erstellen.",
     "BulkCreateUserPartialFailure": "{{successCount}} Benutzer wurden erstellt. {{failCount}} Benutzer konnten nicht erstellt werden.",
+    "BulkCreateUserPartialFailureDescription": "Einige Benutzer konnten nicht erstellt werden. Bitte überprüfen Sie die Einträge.",
     "BulkCreateUserSuccess": "Erfolgreich {{count}} Benutzer erstellt.",
     "BulkDeactivateCredentials": "Anmeldeinformationen deaktivieren",
     "BulkDeactivateCredentialsDescription": "Sie sind dabei, {{count}} Anmeldeinformation(en) zu deaktivieren. Die Benutzer können diese Anmeldeinformationen danach nicht mehr verwenden.",

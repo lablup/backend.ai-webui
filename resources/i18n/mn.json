@@ -524,6 +524,7 @@
     "BulkCreateUserFromCSV": "CSV-ээс хэрэглэгчдийг бөөнөөр үүсгэх",
     "BulkCreateUserFromCSVSubtitle": "Олон хэрэглэгчийн бүртгэлийг нэг дор үүсгэхийн тулд CSV файл байршуулна уу.",
     "BulkCreateUserPartialFailure": "{{successCount}} хэрэглэгч амжилттай үүслээ. {{failCount}} хэрэглэгч үүсгэхэд амжилтгүй боллоо.",
+    "BulkCreateUserPartialFailureDescription": "Зарим хэрэглэгчийг үүсгэж чадсангүй. Холбогдох зүйлсийг шалгана уу.",
     "BulkCreateUserSuccess": "Амжилттай {{count}} хэрэглэгч үүсгэлээ.",
     "BulkDeactivateCredentials": "Итгэмжлэлүүдийг идэвхгүй болгох",
     "BulkDeactivateCredentialsDescription": "Та {{count}} итгэмжлэлийг идэвхгүй болгох гэж байна. Хэрэглэгчид цаашид эдгээр итгэмжлэлийг ашиглах боломжгүй болно.",
