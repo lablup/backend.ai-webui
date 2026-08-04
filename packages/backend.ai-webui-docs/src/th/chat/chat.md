@@ -25,8 +25,7 @@ navTitle: แชท
 การคลิกที่ช่อง **Deployment** (ระบุด้วยไอคอน deployment นำหน้า และแสดงข้อความ **เลือกจุดสิ้นสุด** เมื่อยังไม่ได้เลือก) จะเปิดเมนูแบบดร็อปดาวน์ที่แสดง deployment ที่มีอยู่ภายใต้หัวข้อ "Deployment"
 เมื่อเลือก deployment แล้ว หัวข้อของเมนูดร็อปดาวน์โมเดลจะอัปเดตเป็น "โมเดลของ {ชื่อ deployment}" ซึ่งจะแสดงรายการโมเดลที่เชื่อมโยงกับ deployment นั้น
 
-<!-- ![](../images/chat_deployment_select.png) -->
-<!-- TODO: Capture screenshot of chat_deployment_select.png — the Deployment dropdown on a chat card, open, with the "Deployment" header and several deployments listed -->
+![](../images/chat_deployment_select.png)
 
 <a id="deployments-listed-in-chat"></a>
 
@@ -45,12 +44,10 @@ deployment ที่ไม่ได้ให้บริการอะไรอ
 เมื่อการ์ดแชทยังไม่มีรายการโมเดล แผงการตั้งค่าจะปรากฏเหนือพื้นที่ข้อความ ซึ่งเกิดขึ้นทั้งในระหว่างที่กำลังดึงรายการโมเดลจาก deployment และหลังจากการดึงข้อมูลล้มเหลว
 
 ![](../images/custom_model.png)
-<!-- TODO: Re-capture custom_model.png — the Token field is now a dropdown of the deployment's access tokens with an Access Token Settings gear icon beside it, not a plain text input -->
 
 ส่วนหัวของการ์ดแชท ซึ่งประกอบด้วยตัวเลือก deployment, โมเดล และการซิงค์ จะแสดงขึ้นทันทีโดยไม่รอรายการโมเดล คุณจึงเข้าถึงแผงนี้ได้แม้ในขณะที่ยังดึงข้อมูลอยู่ ระหว่างการดึงข้อมูล ปุ่ม **รีเฟรชข้อมูลโมเดล** จะแสดงตัวบ่งชี้การโหลด และช่อง **Base Path** กับ **Token** รวมถึงช่องพิมพ์ข้อความที่ด้านล่างของการ์ดจะถูกปิดใช้งาน ทั้งหมดจะกลับมาใช้งานได้อีกครั้งเมื่อการดึงข้อมูลเสร็จสิ้น deployment ที่ไม่ตอบสนองจะหมดเวลาในที่สุดและถูกรายงานว่าดึงข้อมูลล้มเหลว คุณจึงแก้ไขการตั้งค่าและลองใหม่ได้โดยไม่ต้องรออย่างไม่มีกำหนด
 
-<!-- ![](../images/chat_model_loading.png) -->
-<!-- TODO: Capture screenshot of chat_model_loading.png — the configuration panel while the model list is being fetched: Refresh Model Information showing its loading indicator and the Base Path / Token fields disabled -->
+![](../images/chat_model_loading.png)
 
 แผงนี้อาจแสดงคำเตือนต่อไปนี้:
 
@@ -73,8 +70,7 @@ deployment ที่ไม่ได้ให้บริการอะไรอ
    * โทเค็นที่หมดอายุแล้วจะไม่แสดงในรายการ และเมื่อช่องนี้ว่าง ระบบจะเลือกโทเค็นที่ยังใช้ได้ซึ่งสร้างล่าสุดให้โดยอัตโนมัติ
    * ไอคอนรูปเฟืองข้างช่องนี้ (**การตั้งค่าโทเค็นการเข้าถึง**) จะเปิดส่วนโทเค็นการเข้าถึงในหน้ารายละเอียดของ deployment ซึ่งคุณสามารถออกโทเค็นใหม่ได้ เมื่อกลับมา ระบบจะอ่านรายการใหม่อีกครั้ง โทเค็นที่เพิ่งสร้างจึงเลือกใช้ได้ทันที ดูคำแนะนำได้ที่ส่วน [การสร้างโทเค็น](#generating-tokens)
 
-<!-- ![](../images/chat_token_select.png) -->
-<!-- TODO: Capture screenshot of chat_token_select.png — the Token dropdown open, showing options labeled with the token tail and expiry date, one "No Expiration" option, and the Access Token Settings gear icon beside the field -->
+![](../images/chat_token_select.png)
 
 <a id="add-or-remove-comparison-chat-cards"></a>
 
