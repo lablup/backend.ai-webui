@@ -139,6 +139,58 @@ parity is a reviewer responsibility, not a machine guarantee.
   self-review several pages and make them unapprovable); fall back to the original
   driving PR's reviewer, then to the highest-volume non-self contributor.
 
+## Destination reached — 2026-08-04
+
+**15 PRs open and ready for review**, one per affected chapter, all non-draft with
+attribution tables and reviewers. `agent_summary` was dropped (mis-routed rows) and
+`rbac_management` closed as a duplicate of #8521, so 16 chapters yielded 15 PRs.
+
+| PR | chapter | screenshots |
+|---|---|---|
+| #8555 | Dashboard | live |
+| #8556 | Login | live |
+| #8557 | Getting Started | live |
+| #8558 | Share Storage Folder | none needed |
+| #8559 | Header | live (16 files) |
+| #8560 | SFTP to Container | live |
+| #8561 | Chat | **all mocked** |
+| #8562 | Session Page | 2 live, 1 mocked |
+| #8563 | User Settings | 4 live, 1 mocked gate |
+| #8564 | Storage Folders | **both mocked** |
+| #8567 | Compute Sessions | **all mocked** |
+| #8568 | Project Admin | 1 live, 1 mocked — **stacked on #8521** |
+| #8569 | Troubleshooting | mocked |
+| #8575 | Model Deployment | 1 live, 8 mocked |
+| #8579 | Admin Menu | **all 15 live** |
+
+Mocking was approved mid-effort because the capture server was reset 2026-08-03
+12:05Z and holds no folders, sessions or deployments. Every mocked capture carries
+a disclosure banner naming the exact operations mocked and what stayed real.
+
+### Follow-ups this effort surfaced
+
+- **Back-port automation.** The core `backend.ai` repo has a mature
+  `backport.yml` + `maintained-versions.yml` + `decide-backport-targets.sh`;
+  webui has none, and 26.7 was back-ported by hand. Porting it is recommended, as
+  its own FR. Note its default rule (`fix:` only, others via a `Backport:` trailer)
+  is *correct* for docs — an automatic `docs:` rule would push #8561's
+  FR-3332 prose to 26.8, where it is factually wrong.
+- **Capture specs are deleted after each run**, so mocked images cannot be
+  regenerated; the mock data survives only in commit messages. Consider committing
+  them under `e2e/`.
+- **i18n defects found** (each wants its own FR, none are docs bugs):
+  `<Trans>` inside `'use memo'` goes stale on in-place language switch;
+  `word-break: keep-all` on `:lang(ja)` (`index.css:8-11`) overflows Japanese text;
+  ko `webui.menu.Architecture` = 운영체제, ja = 建築; ja `button.Generate` = 生む;
+  ja `ThemeAccentColor` = 原色; th Host/Port = เจ้าภาพ/ท่าเรือ;
+  ja/th `RecentHistory` = "history, the academic subject";
+  en `session.ExpiresAfter` missing a space; `chatui.CannotFindModel` embeds
+  English "Refresh Models" in ja/th.
+- **Manual defects predating 26.8**: `PUSH SESSION TO CUSTOMIZED IMAGE` exists in
+  no i18n file; `deployment_presets.md` is in no language's nav and documents a
+  tag filter and Rank field that do not exist; `SSH_SFTP_connection.png` and
+  `idle_checks_column.png` had locale copies that were byte-identical to English.
+
 ## Not yet specified
 
 Fog toward the destination. Graduates into tickets as the frontier advances.
