@@ -73,8 +73,7 @@ Backend.AIにおける`セッション`は、ユーザーが割り当てられ�
 セッション名をクリックすると、セッション詳細パネルが開きます。パネルの**リソース配分**の項目には、要求したリソースではなく、
 セッションが実際に確保しているリソースが表示されるため、セッションがどのリソースで実行されているかを確認できます。
 
-<!-- ![](../images/session_detail_resource_allocation.png) -->
-<!-- TODO: Capture screenshot of the session detail panel Resource Allocation row for a session whose allocation is smaller than its request, showing the warning icon on the label and an `allocated / requested` chip. -->
+![](../images/session_detail_resource_allocation.png)
 
 - 割り当て量と要求量が一致する場合、各リソースは1つの値で表示されます。
 - 両者が異なる場合は、割り当て量の後ろに要求量が淡い色で表示され、単位は1つにまとめられます（例: `1 / 2 Core`）。数値にマウスを合わせると、**割り当て / 要求**のツールチップが表示されます。

@@ -68,8 +68,7 @@ Backend.AI에서 `세션(session)`은 사용자가 할당된 자원을 사용하
 
 세션 이름을 클릭하면 세션 상세 정보 패널이 열립니다. 패널의 **자원 할당** 항목에는 요청한 자원이 아니라 세션이 실제로 점유하고 있는 자원이 표시되므로, 세션이 어떤 자원으로 실행되고 있는지 확인할 수 있습니다.
 
-<!-- ![](../images/session_detail_resource_allocation.png) -->
-<!-- TODO: Capture screenshot of the session detail panel Resource Allocation row for a session whose allocation is smaller than its request, showing the warning icon on the label and an `allocated / requested` chip. -->
+![](../images/session_detail_resource_allocation.png)
 
 - 할당된 양과 요청한 양이 같으면 각 자원은 하나의 값으로 표시됩니다.
 - 두 값이 다르면 할당된 양 뒤에 요청한 양이 흐린 색으로 함께 표시되며 단위는 하나만 표기됩니다(예: `1 / 2 Core`). 숫자 위에 마우스 커서를 올리면 **할당 자원 / 요청 자원** 툴팁이 표시됩니다.

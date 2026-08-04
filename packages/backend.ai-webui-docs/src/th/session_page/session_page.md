@@ -71,8 +71,7 @@ navTitle: หน้าเซสชัน
 คลิกชื่อเซสชันเพื่อเปิดแผงรายละเอียดเซสชัน แถว **การจัดสรรทรัพยากร** ในแผงนี้จะแสดงทรัพยากรที่เซสชันถือครองอยู่จริง
 ทำให้คุณทราบว่าเซสชันกำลังทำงานด้วยทรัพยากรเท่าใด ไม่ใช่เพียงจำนวนที่ร้องขอไว้
 
-<!-- ![](../images/session_detail_resource_allocation.png) -->
-<!-- TODO: Capture screenshot of the session detail panel Resource Allocation row for a session whose allocation is smaller than its request, showing the warning icon on the label and an `allocated / requested` chip. -->
+![](../images/session_detail_resource_allocation.png)
 
 - เมื่อจำนวนที่จัดสรรตรงกับจำนวนที่ร้องขอ ทรัพยากรแต่ละรายการจะแสดงเป็นค่าเดียว
 - เมื่อทั้งสองค่าต่างกัน จะแสดงจำนวนที่จัดสรรตามด้วยจำนวนที่ร้องขอด้วยสีจาง โดยใช้หน่วยร่วมกันเพียงหน่วยเดียว เช่น `1 / 2 Core` เมื่อวางเมาส์เหนือตัวเลขจะแสดงคำแนะนำ **ที่จัดสรร / ที่ร้องขอ**
