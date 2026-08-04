@@ -71,6 +71,16 @@ navTitle: 프로젝트 관리자 기능
 
 ![](../images/project_admin_scope_alert.png)
 
+<a id="refreshing-project-admin-pages"></a>
+
+## 프로젝트 관리자 페이지 새로고침
+
+프로젝트 관리자 페이지에서는 동일한 새로고침 버튼을 제공합니다. 새로고침 버튼을 클릭하면 테이블 목록을 갱신할 수 있습니다.
+
+새로고침 버튼 옆의 드롭다운 버튼을 클릭하면 **자동 새로고침** 메뉴가 열리며, 자동 새로고침 주기를 선택할 수 있습니다.
+
+![](../images/project_admin_auto_refresh_menu.png)
+
 <a id="users"></a>
 
 ## 사용자

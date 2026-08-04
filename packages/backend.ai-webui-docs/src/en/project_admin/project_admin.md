@@ -71,6 +71,16 @@ On the project-admin pages, only the items under the project selected with the p
 
 ![](../images/project_admin_scope_alert.png)
 
+<a id="refreshing-project-admin-pages"></a>
+
+## Refreshing project-admin pages
+
+The project-admin pages provide the same refresh button. Click the refresh button to refresh the table list.
+
+The dropdown button next to the refresh button opens the **Auto Refresh** menu, where you can choose the auto-refresh interval.
+
+![](../images/project_admin_auto_refresh_menu.png)
+
 <a id="users"></a>
 
 ## Users

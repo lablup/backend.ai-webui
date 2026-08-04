@@ -71,6 +71,16 @@ navTitle: プロジェクト管理者機能
 
 ![](../images/project_admin_scope_alert.png)
 
+<a id="refreshing-project-admin-pages"></a>
+
+## プロジェクト管理者ページの更新
+
+プロジェクト管理者ページには同じ更新ボタンが用意されています。更新ボタンをクリックすると、テーブルの一覧を更新できます。
+
+更新ボタンの横のドロップダウンボタンをクリックすると **自動更新** メニューが開き、自動更新の間隔を選択できます。
+
+![](../images/project_admin_auto_refresh_menu.png)
+
 <a id="users"></a>
 
 ## ユーザー
