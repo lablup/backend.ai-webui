@@ -35,6 +35,15 @@ list with the `Invited` type. The `/data` page itself is also a valid entry
 point for reviewing invitations — open the Data page and the same invitation
 list is reachable from the folder status summary.
 
+<a id="refresh-folder-list"></a>
+
+## Refresh the folder list
+
+Click the refresh button to refresh the folder list. Click the dropdown arrow
+on the right side of the button to set the **Auto Refresh** interval.
+
+![](../images/vfolder_auto_refresh_menu.png)
+
 
 <a id="create-storage-folder"></a>
 <a id="create_storage_folder"></a>
@@ -123,7 +132,7 @@ in the directory.
 
 ### Edit text files
 
-You can edit text files directly in the folder explorer. Click the folder name to open the file explorer, then click the **Edit File** button in the Control column for any text file.
+You can edit text files directly in the folder explorer. Click the folder name to open the file explorer, then click the **Edit File** button in the Controls column for any text file.
 
 ![](../images/folder_explorer_edit_button.png)
 
@@ -172,12 +181,29 @@ tab by clicking the `trash bin` button. When you move a folder to the Trash tab,
 
 ![](../images/move_to_trash.png)
 
+### Delete several folders at once
+
+Select the checkboxes of the folders you want to remove. A selection summary
+(`{count} selected`) and a trash bin button appear above the folder list. Click
+the trash bin button to open the **Move to trash bin** confirmation for the
+whole selection.
+
+![](../images/vfolder_bulk_move_to_trash.png)
+
+If the selection contains folders you are not allowed to delete, the modal lists
+them in an alert titled *"The following folder(s) without delete permission will
+be excluded."* Check the list before proceeding with the deletion: only the
+remaining folders move to the Trash tab, and the confirmation message below the
+alert counts just the folders that are actually moved.
+
+### Restore or permanently delete
+
 In this status, you can restore the folder by clicking restore button in Control column. If you want to permanently delete the folder,
 please click `trash bin` button in the same column.
 
 ![](../images/vfolder_trash_list.png)
 
-A confirmation modal will appear asking you to type the folder name. Once you enter the folder name correctly, the **Delete Forever** button becomes active. Click it to permanently delete the folder.
+A confirmation modal will appear asking you to type the folder name. Once you enter the folder name correctly, the **Delete forever** button becomes active. Click it to permanently delete the folder.
 
 ![](../images/vfolder_delete_dialog.png)
 
