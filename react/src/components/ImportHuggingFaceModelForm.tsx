@@ -296,9 +296,12 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
                 <BAIVFolderSelect
                   ref={vfolderSelectRef}
                   excludeDeleted
-                  filter='usage_mode == "model"'
                   // The session writes into the folder, so a read-only mount
-                  // fails; the project scope matches what it can mount.
+                  // fails. `mount_rw` covers read-only *shares* and hosts, but
+                  // the resolver filters rows by scope only and strips
+                  // MOUNT_RW afterwards, so a row-level `ro` folder still comes
+                  // back — exclude it here too.
+                  filter='usage_mode == "model" & permission != "ro"'
                   requiredPermission="mount_rw"
                   currentProjectId={currentProject.id ?? undefined}
                   style={{ flex: 1 }}
