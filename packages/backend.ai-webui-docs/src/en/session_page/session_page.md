@@ -70,24 +70,3 @@ for details.
 You can export the session list as a CSV file using the download button in the session list toolbar.
 The CSV export from the personal Sessions page includes only your own sessions.
 :::
-
-
-<a id="allocated-and-requested-resources"></a>
-
-## Allocated and requested resources
-
-Click a session name to open the session detail panel. Its **Resource Allocation** row shows the resources the
-session actually holds, so you can tell what the session is running with — not only what you asked for.
-
-![](../images/session_detail_resource_allocation.png)
-
-- When the allocation matches the request, each resource shows a single value.
-- When the two differ, the allocated amount is followed by the requested amount in a muted color, with both
-  sharing one unit — for example `0.0 / 0.5 fGPU`. Hovering the numbers shows an **Allocated / Requested** tooltip.
-- When a resource was allocated less than requested, a warning icon appears next to the **Resource Allocation**
-  label. Hovering it shows the message *Fewer resources were allocated than requested.*
-- Before the session is allocated — for example while it is still `PENDING` — the requested resources are shown
-  and no comparison appears.
-
-A shortfall occurs when the requested amount cannot be allocated exactly, such as a fractional GPU (fGPU)
-request that is rounded down to the nearest allocatable unit. The session runs with the allocated amount.
