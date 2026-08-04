@@ -774,8 +774,7 @@ overall level.
 As the countdown on the utilization entry gets short, the remaining-time tag next to
 it takes on the same color as the badge, so a countdown shown in red belongs to a
 session about to be reclaimed. While there is still plenty of time left, the tag
-stays plain even if the badge already shows a risk level — color on the countdown
-means reclamation is near, not just possible.
+stays plain even if the badge already shows a risk level.
 
 ![](../images/session_reclamation_status_column.png)
 
