@@ -856,11 +856,7 @@ export function isIpIncludedInList(ip: string, entries: string[]): boolean {
 }
 
 type SSEHandlerKeys =
-  | 'onUpdated'
-  | 'onDone'
-  | 'onFailed'
-  | 'onTaskFailed'
-  | 'onTaskCancelled';
+  'onUpdated' | 'onDone' | 'onFailed' | 'onTaskFailed' | 'onTaskCancelled';
 
 export type SSEEventHandlerTypes<
   BaseType = unknown,
@@ -986,4 +982,19 @@ export const convertToOrderBy = <
       direction: isDescending ? 'DESC' : 'ASC',
     } as TOrderBy,
   ];
+};
+
+/**
+ * Inverse of `convertToOrderBy`: an orderBy list back to the sorter string
+ * (`'-createdAt'` style). Only the first entry is used, mirroring
+ * `convertToOrderBy` producing a single-entry list.
+ */
+export const convertFromOrderBy = (
+  orderBy:
+    ReadonlyArray<{ field?: string; direction?: string }> | null | undefined,
+): string | null => {
+  const first = orderBy?.[0];
+  if (!first?.field) return null;
+  const name = _.camelCase(first.field.toLowerCase());
+  return first.direction === 'DESC' ? `-${name}` : name;
 };

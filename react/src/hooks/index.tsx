@@ -68,6 +68,55 @@ export const useTabQuerySnapshot = <T extends string>(
   return { currentTab, onTabChange };
 };
 
+/**
+ * Per-key value snapshots with an uncontrolled current key.
+ *
+ * `sourceKey` seeds the key state and re-syncs it whenever the argument's
+ * value changes (e.g. the caller derives it from the URL and the user
+ * navigates back/forward). The sync is change-triggered, not
+ * difference-triggered: right after `setAfterSnapshot` the caller's async URL
+ * mirror still reports the departing key, but since the argument hasn't
+ * changed, no bounce-back occurs.
+ *
+ * `getValue` reads the value to snapshot for a key; keying the read this way
+ * (instead of taking the active value directly) keeps every map write an
+ * internally consistent key/value pair even on renders where the key is
+ * mid-transition.
+ *
+ * `setAfterSnapshot(nextKey)` snapshots the current key's value, switches the
+ * key, and synchronously returns the value stored for `nextKey` (`undefined`
+ * if never visited) — so the caller can start a preloaded query and mirror
+ * the URL inside the same event handler (render-as-you-fetch).
+ */
+export const useKeyedSnapshot = <K extends string, V>(
+  sourceKey: K,
+  getValue: (key: K) => V,
+): [K, (nextKey: K) => V | undefined] => {
+  'use memo';
+  const [currentKey, setCurrentKey] = useState(sourceKey);
+  const [prevSourceKey, setPrevSourceKey] = useState(sourceKey);
+  const snapshotMapRef = useRef<Partial<Record<K, V>>>({});
+
+  if (sourceKey !== prevSourceKey) {
+    setPrevSourceKey(sourceKey);
+    if (sourceKey !== currentKey) {
+      setCurrentKey(sourceKey);
+    }
+  }
+
+  useEffect(() => {
+    snapshotMapRef.current[currentKey] = getValue(currentKey);
+  });
+
+  const setAfterSnapshot = (nextKey: K): V | undefined => {
+    snapshotMapRef.current[currentKey] = getValue(currentKey);
+    setCurrentKey(nextKey);
+    return snapshotMapRef.current[nextKey];
+  };
+
+  return [currentKey, setAfterSnapshot];
+};
+
 export const useBackendAIConnectedState = () => {
   const [time, setTime] = useState<string>();
 
