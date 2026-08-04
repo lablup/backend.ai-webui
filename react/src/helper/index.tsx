@@ -518,6 +518,22 @@ type PartialImageRef = NonNullable<
 >;
 
 /**
+ * Whether an image is marked private via the `ai.backend.features` label.
+ * The session launcher form (`ImageEnvironmentSelectFormItems`) hides private
+ * images unless explicitly asked to show them.
+ */
+export const isPrivateImage = (
+  image: PartialImageRef | null | undefined,
+): boolean => {
+  return _.some(image?.labels, (label) => {
+    return (
+      label?.key === 'ai.backend.features' &&
+      label?.value?.split(' ').includes('private')
+    );
+  });
+};
+
+/**
  * Resolve a possibly-partial image reference from `config.toml` against the
  * registered image list, following the formats documented in
  * `config.toml.sample` for `defaultSessionEnvironment` /
@@ -526,22 +542,26 @@ type PartialImageRef = NonNullable<
  * - `registry/namespace:tag@arch` → the exact image
  * - `registry/namespace:tag` → the first available architecture for that tag
  * - `registry/namespace` → the latest version, first available architecture
+ * - `registry/namespace@arch` (undocumented) → the latest version restricted
+ *   to that architecture
  *
  * This mirrors the matching `ImageEnvironmentSelectFormItems` performs for the
  * session launcher form, so launch paths that bypass that form (the Start from
  * URL import features) resolve the same config value to the same image.
+ * Private images are excluded from the candidate set, matching the launcher
+ * form's default behavior.
  *
  * @returns the full image name (`registry/namespace:tag@arch`), or `undefined`
  *   when no registered image matches
  */
-export const resolveImageStringFromImages = (
+export const resolveImageFullName = (
   imageString: string | undefined | null,
   images: ReadonlyArray<PartialImageRef | null | undefined> | undefined | null,
 ): string | undefined => {
   if (!imageString) return undefined;
 
   const candidates = (images ?? []).filter(
-    (image): image is PartialImageRef => !!image,
+    (image): image is PartialImageRef => !!image && !isPrivateImage(image),
   );
 
   // 1. Exact full name match (registry/namespace:tag@arch)
@@ -551,7 +571,7 @@ export const resolveImageStringFromImages = (
   );
   if (exactMatch) return getImageFullName(exactMatch);
 
-  const { registryAndNamespace, hasTag, hasArch } =
+  const { registryAndNamespace, architecture, hasTag, hasArch } =
     parseImageString(imageString);
 
   // 2. Tag but no architecture: take the first available architecture.
@@ -572,13 +592,16 @@ export const resolveImageStringFromImages = (
     return matched ? getImageFullName(matched) : undefined;
   }
 
-  // 3. Neither tag nor architecture: take the latest version
+  // 3. No tag: take the latest version. An explicit `@arch` without a tag
+  // (`registry/namespace@arch`) restricts the candidates to that architecture
+  // instead of silently returning a different one.
   if (!hasTag) {
     const sameEnvironment = _.filter(
       candidates,
       (image) =>
         `${image.registry}/${image.namespace ?? image.name}` ===
-        registryAndNamespace,
+          registryAndNamespace &&
+        (!hasArch || image.architecture === architecture),
     );
     // Sorted the same way as the launcher's version select: latest first,
     // then by architecture name so the pick is deterministic.

@@ -10,6 +10,8 @@ defaultImportEnvironment = "[Default kernel to use import features. If blank, cr
 #     → Selects the first available architecture for the specified tag
 #   - Without tag (registry/namespace only): "registry/namespace" (e.g., "cr.backend.ai/multiarch/python")
 #     → Selects the latest version with the first available architecture
+#   "First available architecture" means alphabetically first (e.g., aarch64 before x86_64),
+#   not the order the server returns the images in.
 connectionMode = "[Connection mode. Default is API. Currenly supports API and SESSION]"
 allowChangeSigninMode = false           # Allows user to change signin mode between `API` and `SESSION`
 signupSupport = false                   # Enable/disable signup feature support. Manager plugin is required.

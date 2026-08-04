@@ -9,6 +9,7 @@ import {
 import {
   compareImageVersions,
   getImageFullName,
+  isPrivateImage,
   localeCompare,
   parseImageString,
   preserveDotStartCase,
@@ -68,15 +69,6 @@ interface ImageEnvironmentSelectFormItemsProps {
   showPrivate?: boolean;
   searchPrefill?: string;
 }
-
-const isPrivateImage = (image: Image) => {
-  return _.some(image?.labels, (label) => {
-    return (
-      label?.key === 'ai.backend.features' &&
-      label?.value?.split(' ').includes('private')
-    );
-  });
-};
 
 const ImageEnvironmentSelectFormItems: React.FC<
   ImageEnvironmentSelectFormItemsProps

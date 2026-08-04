@@ -25,7 +25,7 @@ import {
   addNumberWithUnits,
   subNumberWithUnits,
   compareImageVersions,
-  resolveImageStringFromImages,
+  resolveImageFullName,
 } from './index';
 
 describe('isOutsideRange', () => {
@@ -1070,9 +1070,17 @@ describe('compareImageVersions', () => {
     expect(compareImageVersions('3.13.1', '3.13')).toBe(1);
     expect(compareImageVersions('3.13', '3.13.0')).toBe(0);
   });
+
+  it('should sort a non-numeric segment as version 0 (inherited launcher behavior)', () => {
+    // `Number('ngc')` is NaN and `NaN || 0` is 0, so a non-numeric leading
+    // segment can never win "latest". Documented here, not endorsed.
+    expect(compareImageVersions('2.1', 'ngc')).toBe(1);
+    expect(compareImageVersions('ngc', '2.1')).toBe(-1);
+    expect(compareImageVersions('ngc', '0')).toBe(0);
+  });
 });
 
-describe('resolveImageStringFromImages', () => {
+describe('resolveImageFullName', () => {
   const images = [
     {
       registry: 'cr.backend.ai',
@@ -1093,16 +1101,19 @@ describe('resolveImageStringFromImages', () => {
       architecture: 'x86_64',
     },
     {
+      // Deliberately newer than every `stable/python` tag: a broken namespace
+      // filter that matches by prefix would leak this into `stable/python`
+      // lookups and change their answer.
       registry: 'cr.backend.ai',
       namespace: 'stable/python-ff',
-      tag: '3.13-ubuntu24.04',
+      tag: '9.99-ubuntu24.04',
       architecture: 'x86_64',
     },
   ];
 
   it('should return the exact image for a fully qualified reference', () => {
     expect(
-      resolveImageStringFromImages(
+      resolveImageFullName(
         'cr.backend.ai/stable/python:3.9-ubuntu20.04@x86_64',
         images,
       ),
@@ -1111,7 +1122,7 @@ describe('resolveImageStringFromImages', () => {
 
   it('should pick the first available architecture when the tag has no architecture', () => {
     expect(
-      resolveImageStringFromImages(
+      resolveImageFullName(
         'cr.backend.ai/stable/python:3.13-ubuntu24.04',
         images,
       ),
@@ -1119,43 +1130,87 @@ describe('resolveImageStringFromImages', () => {
   });
 
   it('should pick the latest version when the reference has no tag', () => {
-    expect(
-      resolveImageStringFromImages('cr.backend.ai/stable/python', images),
-    ).toBe('cr.backend.ai/stable/python:3.13-ubuntu24.04@aarch64');
+    expect(resolveImageFullName('cr.backend.ai/stable/python', images)).toBe(
+      'cr.backend.ai/stable/python:3.13-ubuntu24.04@aarch64',
+    );
   });
 
   it('should not match an environment that merely shares a name prefix', () => {
     expect(
-      resolveImageStringFromImages('cr.backend.ai/stable/pyth', images),
+      resolveImageFullName('cr.backend.ai/stable/pyth', images),
+    ).toBeUndefined();
+  });
+
+  it('should not leak a longer namespace with a newer tag into the lookup', () => {
+    // `stable/python-ff` carries 9.99 (newer than every `stable/python` tag);
+    // a prefix-style namespace filter would wrongly return it here.
+    expect(resolveImageFullName('cr.backend.ai/stable/python', images)).toBe(
+      'cr.backend.ai/stable/python:3.13-ubuntu24.04@aarch64',
+    );
+    expect(resolveImageFullName('cr.backend.ai/stable/python-ff', images)).toBe(
+      'cr.backend.ai/stable/python-ff:9.99-ubuntu24.04@x86_64',
+    );
+  });
+
+  it('should restrict to the requested architecture for an arch-only reference', () => {
+    expect(
+      resolveImageFullName('cr.backend.ai/stable/python@x86_64', images),
+    ).toBe('cr.backend.ai/stable/python:3.13-ubuntu24.04@x86_64');
+    expect(
+      resolveImageFullName('cr.backend.ai/stable/python@riscv64', images),
+    ).toBeUndefined();
+  });
+
+  it('should exclude private images like the launcher form does', () => {
+    const privateOnly = [
+      {
+        registry: 'cr.backend.ai',
+        namespace: 'stable/python',
+        tag: '9.99-ubuntu24.04',
+        architecture: 'x86_64',
+        labels: [{ key: 'ai.backend.features', value: 'operation private' }],
+      },
+      ...images,
+    ];
+    // The private 9.99 build must not win the "latest version" pick …
+    expect(
+      resolveImageFullName('cr.backend.ai/stable/python', privateOnly),
+    ).toBe('cr.backend.ai/stable/python:3.13-ubuntu24.04@aarch64');
+    // … and must not resolve even when referenced by its exact tag.
+    expect(
+      resolveImageFullName(
+        'cr.backend.ai/stable/python:9.99-ubuntu24.04',
+        privateOnly,
+      ),
     ).toBeUndefined();
   });
 
   it('should return undefined when no registered image matches', () => {
     expect(
-      resolveImageStringFromImages(
+      resolveImageFullName(
         'cr.backend.ai/stable/python:0.0-nonexistent',
         images,
       ),
     ).toBeUndefined();
     expect(
-      resolveImageStringFromImages('cr.backend.ai/missing/image', images),
+      resolveImageFullName('cr.backend.ai/missing/image', images),
     ).toBeUndefined();
   });
 
   it('should return undefined for an empty reference or empty image list', () => {
-    expect(resolveImageStringFromImages('', images)).toBeUndefined();
-    expect(resolveImageStringFromImages(undefined, images)).toBeUndefined();
+    expect(resolveImageFullName('', images)).toBeUndefined();
+    expect(resolveImageFullName(undefined, images)).toBeUndefined();
     expect(
-      resolveImageStringFromImages('cr.backend.ai/stable/python', []),
+      resolveImageFullName('cr.backend.ai/stable/python', []),
     ).toBeUndefined();
     expect(
-      resolveImageStringFromImages('cr.backend.ai/stable/python', undefined),
+      resolveImageFullName('cr.backend.ai/stable/python', undefined),
     ).toBeUndefined();
   });
 
   it('should fall back to the deprecated name field when namespace is absent', () => {
     expect(
-      resolveImageStringFromImages('cr.backend.ai/stable/python', [
+      resolveImageFullName('cr.backend.ai/stable/python', [
         {
           registry: 'cr.backend.ai',
           name: 'stable/python',
@@ -1167,15 +1222,24 @@ describe('resolveImageStringFromImages', () => {
   });
 
   it('should handle a registry with a port', () => {
+    const portImages = [
+      {
+        registry: '127.0.0.1:5000',
+        namespace: 'stable/python',
+        tag: '3.13-ubuntu24.04',
+        architecture: 'x86_64',
+      },
+    ];
     expect(
-      resolveImageStringFromImages('127.0.0.1:5000/stable/python', [
-        {
-          registry: '127.0.0.1:5000',
-          namespace: 'stable/python',
-          tag: '3.13-ubuntu24.04',
-          architecture: 'x86_64',
-        },
-      ]),
+      resolveImageFullName('127.0.0.1:5000/stable/python', portImages),
+    ).toBe('127.0.0.1:5000/stable/python:3.13-ubuntu24.04@x86_64');
+    // The registry colon must not be mistaken for the tag separator when a
+    // tag is present but the architecture is not.
+    expect(
+      resolveImageFullName(
+        '127.0.0.1:5000/stable/python:3.13-ubuntu24.04',
+        portImages,
+      ),
     ).toBe('127.0.0.1:5000/stable/python:3.13-ubuntu24.04@x86_64');
   });
 });

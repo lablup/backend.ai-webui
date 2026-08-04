@@ -19,7 +19,7 @@ import {
   useCurrentProjectValue,
   useCurrentResourceGroupState,
 } from './useCurrentProject';
-import { useImageReferenceResolver } from './useDefaultImagesWithFallback';
+import { useResolveImageReference } from './useDefaultImagesWithFallback';
 import { generateRandomString, toGlobalId } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
@@ -117,7 +117,7 @@ export const useStartSession = () => {
   const { upsertNotification } = useSetBAINotification();
 
   const relayEnv = useRelayEnvironment();
-  const { resolveImageReference } = useImageReferenceResolver();
+  const resolveImageReference = useResolveImageReference();
   const baiClient = useSuspendedBackendaiClient();
   const supportsMountById = baiClient.supports('mount-by-id');
   const supportBatchTimeout = baiClient?.supports('batch-timeout') ?? false;
@@ -163,17 +163,18 @@ export const useStartSession = () => {
   const startSession = async (
     values: SessionLauncherFormValue & { dependencies?: string[] },
   ) => {
-    // If manual image is selected, use it as kernelName. `environment` holds a
-    // name-only reference (see `normalizeEnvironmentFormat`), which callers
-    // that never render the launcher form rely on us to resolve.
-    const requestedImage =
+    // A manual image (the `allowManualImageNameForSession` escape hatch) is
+    // used verbatim — the user explicitly typed it, so it must not be
+    // rewritten by resolution. `environment` holds a name-only reference (see
+    // `normalizeEnvironmentFormat`); config values such as
+    // `defaultImportEnvironment` may omit the tag and/or the architecture, so
+    // resolve them against the registered image list here to make every
+    // caller of `startSession` behave like the launcher form (FR-3462).
+    const imageFullName =
       values.environments.manual ||
-      values.environments.version ||
-      values.environments.environment;
-    // Config values such as `defaultImportEnvironment` may omit the tag and/or
-    // the architecture. Resolve them against the registered image list here so
-    // every caller of `startSession` behaves like the launcher form (FR-3462).
-    const imageFullName = await resolveImageReference(requestedImage);
+      (await resolveImageReference(
+        values.environments.version || values.environments.environment,
+      ));
     // `architecture` stays `undefined` for a reference without `@arch` on
     // purpose — see the note on `CreateSessionInfo.architecture`.
     const [kernelName = '', architecture] = imageFullName?.split('@') ?? [];
