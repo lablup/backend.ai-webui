@@ -160,29 +160,6 @@ const AdminUsersPage: React.FC = () => {
     };
   };
 
-  const applySnapshotToUrl = (
-    tab: TabKey,
-    snapshot: TabSnapshot,
-    historyMode: 'push' | 'replace',
-  ) => {
-    setQueryParams({ tab, ...snapshot.queryParams }, { history: historyMode });
-    setTablePaginationOption(snapshot.tablePaginationOption);
-  };
-
-  const handleTabChange = (key: string) => {
-    const tab = tabParser.parse(key) ?? tabParser.defaultValue;
-    if (tab === currentTab) return;
-    const snapshot = setAfterSnapshot(tab) ?? defaultSnapshotOf(tab);
-    // A revisited tab's retained queryRef already holds its data — show it
-    // without refetching (freshness is the child's refresh button's job).
-    if (tab === 'users' && !usersQueryRef) {
-      loadUsersQuery(usersVariablesOf(snapshot));
-    } else if (tab === 'credentials' && !credentialsQueryRef) {
-      loadCredentialsQuery(credentialsVariablesOf(snapshot));
-    }
-    applySnapshotToUrl(tab, snapshot, 'push');
-  };
-
   // Child-driven changes arrive as complete GraphQL variables; mirror them
   // back to the URL keys so the snapshot effect captures the new state.
   const snapshotOfVariables = (
@@ -225,11 +202,12 @@ const AdminUsersPage: React.FC = () => {
     options?: UseQueryLoaderLoadQueryOptions,
   ) => {
     loadUsersQuery(variables, options);
-    applySnapshotToUrl(
-      'users',
-      snapshotOfVariables('users', variables),
-      'replace',
+    const snapshot = snapshotOfVariables('users', variables);
+    setQueryParams(
+      { tab: 'users', ...snapshot.queryParams },
+      { history: 'replace' },
     );
+    setTablePaginationOption(snapshot.tablePaginationOption);
   };
 
   const handleCredentialsReload = (
@@ -237,31 +215,31 @@ const AdminUsersPage: React.FC = () => {
     options?: UseQueryLoaderLoadQueryOptions,
   ) => {
     loadCredentialsQuery(variables, options);
-    applySnapshotToUrl(
-      'credentials',
-      snapshotOfVariables('credentials', variables),
-      'replace',
+    const snapshot = snapshotOfVariables('credentials', variables);
+    setQueryParams(
+      { tab: 'credentials', ...snapshot.queryParams },
+      { history: 'replace' },
     );
+    setTablePaginationOption(snapshot.tablePaginationOption);
   };
 
-  // Entries that bypass the tab-change handler (initial mount, direct URL
-  // entry, reload) build the active tab's variables from the URL-seeded
-  // snapshot; a tab reached with a warm queryRef (back/forward) needs no load.
-  const ensureActiveTabLoaded = useEffectEvent(() => {
+  // First visit (mount / direct URL entry / reload) queries once from the
+  // URL-seeded snapshot. Every tab change afterwards restores its snapshot and
+  // queries inside onTabChange.
+  const loadInitialTabFromUrl = useEffectEvent(() => {
     const snapshot: TabSnapshot = {
       queryParams: _.omit(queryParams, 'tab'),
       tablePaginationOption,
     };
-    if (currentTab === 'users' && !usersQueryRef) {
+    if (currentTab === 'users') {
       loadUsersQuery(usersVariablesOf(snapshot));
-    }
-    if (currentTab === 'credentials' && !credentialsQueryRef) {
+    } else {
       loadCredentialsQuery(credentialsVariablesOf(snapshot));
     }
   });
   useEffect(() => {
-    ensureActiveTabLoaded();
-  }, [currentTab]);
+    loadInitialTabFromUrl();
+  }, []);
 
   const tabItems: CardTabListType[] = [
     {
@@ -277,7 +255,18 @@ const AdminUsersPage: React.FC = () => {
   return (
     <BAICard
       activeTabKey={currentTab}
-      onTabChange={handleTabChange}
+      onTabChange={(key) => {
+        const tab = tabParser.parse(key) ?? tabParser.defaultValue;
+        if (tab === currentTab) return;
+        const snapshot = setAfterSnapshot(tab) ?? defaultSnapshotOf(tab);
+        if (tab === 'users') {
+          loadUsersQuery(usersVariablesOf(snapshot));
+        } else {
+          loadCredentialsQuery(credentialsVariablesOf(snapshot));
+        }
+        setQueryParams({ tab, ...snapshot.queryParams }, { history: 'push' });
+        setTablePaginationOption(snapshot.tablePaginationOption);
+      }}
       tabList={tabItems}
     >
       <Suspense fallback={<Skeleton active />}>
