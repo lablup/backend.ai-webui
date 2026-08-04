@@ -35,6 +35,108 @@ const extract = async (text: string, startWithReasoning: boolean) => {
   };
 };
 
+/**
+ * `ChatCard` calls `streamText`, so production runs through `wrapStream`, not
+ * `wrapGenerate`. These feed the middleware a chunked stream — including a
+ * closing tag split across two chunks, which is the boundary a buffer bug
+ * would fall through.
+ */
+const streamExtract = async (deltas: string[], startWithReasoning: boolean) => {
+  const middleware = extractReasoningMiddleware({
+    tagName: 'think',
+    startWithReasoning,
+  });
+  const doStream = async () => ({
+    stream: new ReadableStream({
+      start(controller) {
+        controller.enqueue({ type: 'text-start', id: 'c1' });
+        for (const delta of deltas) {
+          controller.enqueue({ type: 'text-delta', id: 'c1', delta });
+        }
+        controller.enqueue({ type: 'text-end', id: 'c1' });
+        controller.close();
+      },
+    }),
+  });
+
+  const { stream } = (await middleware.wrapStream?.({ doStream } as never)) as {
+    stream: ReadableStream<{ type: string; delta?: string }>;
+  };
+
+  const chunks: Array<{ type: string; delta?: string }> = [];
+  const reader = stream.getReader();
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    chunks.push(value);
+  }
+
+  const join = (type: string) =>
+    chunks
+      .filter((chunk) => chunk.type === type)
+      .map((chunk) => chunk.delta ?? '')
+      .join('');
+
+  return { reasoning: join('reasoning-delta'), text: join('text-delta') };
+};
+
+describe('extractReasoningMiddleware streaming (the path ChatCard uses)', () => {
+  it('extracts reasoning when the closing tag arrives in one chunk', async () => {
+    const { reasoning, text } = await streamExtract(
+      ['Let me work through it.', '\n</think>\n\n', '# Answer'],
+      true,
+    );
+
+    expect(reasoning.trim()).toBe('Let me work through it.');
+    expect(text).toContain('# Answer');
+    expect(text).not.toContain('think>');
+  });
+
+  it('extracts reasoning when the closing tag is split across chunks', async () => {
+    const { reasoning, text } = await streamExtract(
+      ['Let me work through it.\n</thi', 'nk>\n\n# Answer'],
+      true,
+    );
+
+    expect(reasoning.trim()).toBe('Let me work through it.');
+    expect(text).toContain('# Answer');
+    // The split must not leak either half of the tag into the answer.
+    expect(text).not.toContain('think>');
+    expect(text).not.toContain('</thi');
+  });
+
+  // ⚠️ The streaming path does NOT behave like `wrapGenerate` here.
+  //
+  // With no closing tag the stream never leaves reasoning mode, so the entire
+  // answer is emitted as `reasoning-delta` and the visible message is empty.
+  // `wrapGenerate` passes the same input straight through as text (asserted
+  // below in the non-streaming suite). Since `ChatCard` streams, enabling
+  // `startWithReasoning` globally would hide the whole reply for every model
+  // that does not emit think tags — which is most of them.
+  //
+  // This asymmetry is why the flag must be gated rather than applied to every
+  // client-fetched model.
+  it('swallows the whole answer when no tag ever arrives (hazard)', async () => {
+    const { reasoning, text } = await streamExtract(
+      ['The capital of ', 'France is Paris.'],
+      true,
+    );
+
+    expect(reasoning).toBe('The capital of France is Paris.');
+    expect(text).toBe('');
+  });
+
+  it('is safe for a tagless model when the flag is off', async () => {
+    const { reasoning, text } = await streamExtract(
+      ['The capital of ', 'France is Paris.'],
+      false,
+    );
+
+    expect(reasoning).toBe('');
+    expect(text).toBe('The capital of France is Paris.');
+  });
+});
+
 describe('extractReasoningMiddleware for chat', () => {
   // The shape this endpoint actually returns — verified against a live
   // qwen3.5-4b deployment, which emits no opening tag.
