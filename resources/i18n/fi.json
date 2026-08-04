@@ -1115,7 +1115,7 @@
     "OpenCreateDeploymentModal": "Avaa käyttöönoton luontimodaali",
     "OpenToPublic": "Julkinen",
     "OpenToPublicCannotBeChanged": "Luonnin yhteydessä valittua julkisen käytön asetusta ei voi muuttaa.",
-    "OpenToPublicTooltip": "Kun käytössä, päätepiste on saavutettavissa ilman käyttöoikeustunnusta. Poista käytöstä vaatiaksesi tunnuksen jokaiselta pyynöltä.",
+    "OpenToPublicTooltip": "Kun käytössä, päätepiste on saavutettavissa ilman käyttöoikeustunnusta. Poista käytöstä vaatiaksesi tunnuksen jokaiselta pyynnöltä."
     "Overview": "Yleiskatsaus",
     "Owner": "Omistaja",
     "Phase": "Vaihe",
