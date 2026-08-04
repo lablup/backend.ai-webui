@@ -4,7 +4,6 @@
  */
 import { CodeHead } from './Chat/CodeHead';
 import { SyntaxHighlighter } from './Chat/SyntaxHighlighter';
-import { theme } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIFlex } from 'backend.ai-ui';
 // `rehype-katex` does not import the CSS file, so we need to import it manually.
@@ -166,8 +165,10 @@ const useStyles = createStyles(({ css, token }) => ({
       border: ${token.lineWidth}px solid ${token.colorBorder};
       border-radius: ${token.borderRadiusSM}px;
     }
+    /* Fenced blocks are replaced wholesale below, so the only \`pre\` left is
+       the highlighter's own loading fallback, which sits inside the panel. */
     pre {
-      margin: 0 0 1em;
+      margin: 0;
       overflow: auto;
     }
 
@@ -218,7 +219,19 @@ const useStyles = createStyles(({ css, token }) => ({
     border: ${token.lineWidth}px solid ${token.colorBorderSecondary};
     border-radius: ${token.borderRadiusSM}px;
   `,
+  // Margin lives here rather than inline so the container's
+  // \`& > *:last-child { margin-bottom: 0 }\` can still win over it.
+  codeBlockPanel: css`
+    margin-bottom: 1em;
+    overflow: hidden;
+    border: ${token.lineWidth}px solid ${token.colorBorder};
+    border-radius: ${token.borderRadiusLG}px;
+  `,
   codeBlock: css`
+    width: 100%;
+    overflow: auto;
+    border-radius: 0 0 ${token.borderRadiusLG}px ${token.borderRadiusLG}px;
+
     & .shiki.github-light,
     & .shiki.github-dark {
       margin: 0 !important;
@@ -251,9 +264,11 @@ interface MarkdownContentProps extends Omit<
  *
  * Every call site shares one renderer, one plugin set, and one stylesheet so
  * they can't drift from each other — e.g. a blockquote styled in one place
- * but rendered as plain text in another (FR-3402). The element overrides and
- * tokens mirror `ChatMessageContent`, which stays separate because it also
- * owns streaming concerns (per-block splitting, `pre-wrap` paragraphs).
+ * but rendered as plain text in another (FR-3402). The code-block panel and
+ * the tokens for every element `ChatMessageContent` also styles are shared
+ * with it, so the two render the same output. That component stays separate
+ * because it owns streaming concerns (per-block splitting, `pre-wrap`
+ * paragraphs) that don't apply to long-form markdown.
  */
 const MarkdownContent: React.FC<MarkdownContentProps> = ({
   children,
@@ -264,51 +279,53 @@ const MarkdownContent: React.FC<MarkdownContentProps> = ({
   'use memo';
 
   const { styles, cx } = useStyles();
-  const { token } = theme.useToken();
 
   const components: Components = {
-    // The fenced-code box is built in `code` below; `pre` only carries the
-    // block's spacing and horizontal scroll.
-    pre({ node: _node, ref: _ref, ...props }) {
-      return <pre {...props} style={{ overflow: 'auto', marginTop: 0 }} />;
-    },
-    code({ node, className: codeClassName, children, ref: _ref, ...rest }) {
-      const match = /language-(\w+)/.exec(codeClassName ?? '');
-      const content = String(children ?? '').replace(/\n$/, '');
-      // A fenced block always spans its opening and closing fence, so it
-      // never sits on a single source line the way inline code does.
-      const isMultiline = node?.position
-        ? node.position.start.line !== node.position.end.line
-        : content.includes('\n');
+    // Fenced code reaches us as `pre > code`. Replace the whole `pre` rather
+    // than rendering the panel inside it: `pre` takes phrasing content, so a
+    // panel there would nest block elements — and the highlighter's own
+    // `pre` — inside a preformatted element.
+    //
+    // Reading the language and text off the element tree also settles
+    // block-vs-inline structurally. Inline code never reaches this override,
+    // so it keeps the default `<code>` (styled by `:not(pre) > code` above)
+    // even for a code span that wraps across a newline, which CommonMark
+    // allows and a line-count heuristic would misread as a fenced block.
+    pre({ node }) {
+      const codeNode = node?.children.find(
+        (child) => child.type === 'element' && child.tagName === 'code',
+      );
+      const rawClassName =
+        codeNode && 'properties' in codeNode
+          ? codeNode.properties.className
+          : undefined;
+      const classNames = Array.isArray(rawClassName)
+        ? rawClassName.map(String)
+        : typeof rawClassName === 'string'
+          ? rawClassName.split(/\s+/)
+          : [];
+      // Capture the whole token: `useHighlight` knows `git-commit`,
+      // `objective-c`, `c#` and `f#`, all of which a `\w+` capture truncates.
+      const language =
+        classNames
+          .map((name) => /^language-(\S+)$/.exec(name)?.[1])
+          .find(Boolean) ?? 'txt';
+      const content = (
+        codeNode && 'children' in codeNode
+          ? codeNode.children
+              .map((child) => ('value' in child ? child.value : ''))
+              .join('')
+          : ''
+      ).replace(/\n$/, '');
 
-      if (!match && !isMultiline) {
-        return (
-          <code {...rest} className={codeClassName}>
-            {children}
-          </code>
-        );
-      }
-
-      const language = match?.[1] ?? 'txt';
       return (
         <BAIFlex
           direction="column"
           align="stretch"
-          style={{
-            border: `${token.lineWidth}px solid ${token.colorBorder}`,
-            borderRadius: token.borderRadiusLG,
-            overflow: 'hidden',
-          }}
+          className={styles.codeBlockPanel}
         >
           <CodeHead lang={language} extra={codeBlockExtra?.(content)} />
-          <BAIFlex
-            className={styles.codeBlock}
-            style={{
-              width: '100%',
-              borderRadius: `0 0 ${token.borderRadiusLG}px ${token.borderRadiusLG}px`,
-              overflow: 'auto',
-            }}
-          >
+          <BAIFlex className={styles.codeBlock}>
             <SyntaxHighlighter language={language}>{content}</SyntaxHighlighter>
           </BAIFlex>
         </BAIFlex>

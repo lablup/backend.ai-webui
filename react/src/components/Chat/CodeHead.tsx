@@ -18,6 +18,8 @@ const { Text } = Typography;
  */
 export const CodeHead = memo<{ lang: string; extra?: React.ReactNode }>(
   ({ lang, extra }) => {
+    'use memo';
+
     const { token } = theme.useToken();
 
     return (
