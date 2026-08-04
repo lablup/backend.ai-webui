@@ -132,9 +132,12 @@ const DeploymentRevisionCard: React.FC<DeploymentRevisionCardProps> = ({
         },
       ]}
       // Wide enough: the action sits in the tab bar. Too narrow: it moves up
-      // into the card header (`extra`) so the tab labels keep the full row.
+      // into the card header (`extra`) so the tab labels keep the full row,
+      // and a tighter gutter keeps all three labels on that row rather than
+      // half-clipping the last one behind the overflow menu.
       tabBarExtraContent={isTabActionInline ? addRevisionButton : undefined}
       extra={isTabActionInline ? undefined : addRevisionButton}
+      tabProps={isTabActionInline ? undefined : { tabBarGutter: 16 }}
     >
       {activeRevisionTab === 'currentRevision' && (
         <DeploymentCurrentRevisionTab deploymentFrgmt={deployment} />

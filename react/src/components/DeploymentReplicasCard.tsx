@@ -551,6 +551,10 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
             ]}
           />
           <BAIGraphQLPropertyFilter
+            // Without an explicit basis the filter keeps its max-content width
+            // and spills past the card edge on narrow layouts; `minWidth: 0`
+            // lets the value input inside it absorb the shrinking.
+            style={{ flex: '1 1 240px', minWidth: 0 }}
             filterProperties={filterProperties}
             value={filterValue}
             onChange={(next) => {

@@ -107,7 +107,9 @@ const DeploymentOverviewContent: React.FC<{
       key: 'lifecycle',
       label: t('deployment.Lifecycle'),
       children: deployment?.metadata.status ? (
-        <BAIFlex align="center" gap="xs">
+        // Wraps so the "Scheduling History" action does not force the whole
+        // descriptions table wider than the card on narrow layouts.
+        <BAIFlex align="center" gap="xs" wrap="wrap">
           <BAIDeploymentStatusTag
             status={deployment.metadata.status as BAIDeploymentStatus}
           />
@@ -226,7 +228,9 @@ const DeploymentOverviewContent: React.FC<{
         bordered
         column={isTwoColumn ? 2 : 1}
         styles={{
-          label: { width: isTwoColumn ? 160 : 140, wordBreak: 'keep-all' },
+          // A fixed label width is a floor as well as a target: keep it small
+          // enough in single-column mode that label + value still fit the card.
+          label: { width: isTwoColumn ? 160 : 120, wordBreak: 'keep-all' },
           content: { wordBreak: 'break-word', overflowWrap: 'anywhere' },
         }}
         items={deploymentItems}

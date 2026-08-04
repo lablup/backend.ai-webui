@@ -236,7 +236,9 @@ const DeploymentRevisionDetail: React.FC<{
           label: t('deployment.RevisionNumberWithID'),
           children:
             revision.revisionNumber != null || revision.id ? (
-              <BAIFlex gap="xs" align="center">
+              // Wraps so the status tag moves under the id instead of hanging
+              // off the card's right edge on narrow layouts.
+              <BAIFlex gap="xs" align="center" wrap="wrap">
                 {revision.revisionNumber != null ? (
                   <BAIText>{`#${revision.revisionNumber}`}</BAIText>
                 ) : null}
@@ -276,7 +278,9 @@ const DeploymentRevisionDetail: React.FC<{
       label: t('modelService.RevisionID'),
       span: screens.md ? 2 : 1,
       children: revision.id ? (
-        <BAIFlex gap="xs" align="center">
+        // Wraps so the status tag moves under the id instead of hanging off
+        // the card's right edge on narrow layouts.
+        <BAIFlex gap="xs" align="center" wrap="wrap">
           <BAIId globalId={revision.id} style={{ maxWidth: '100%' }} />
           {status === 'current' && (
             <BAITag color="success">{t('deployment.Current')}</BAITag>

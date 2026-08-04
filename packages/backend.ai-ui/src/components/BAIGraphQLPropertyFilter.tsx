@@ -810,8 +810,8 @@ const BAIGraphQLPropertyFilter = <
             value={selectedDate}
             showTime
             // Base size stays 200px (unchanged on roomy layouts) but the
-            // input may shrink to 120px so the whole group fits a narrow card.
-            style={{ flex: '0 1 200px', minWidth: 120 }}
+            // input may shrink to 96px so the whole group fits a narrow card.
+            style={{ flex: '0 1 200px', minWidth: 96 }}
             onChange={(date) => setSelectedDate(date)}
             placeholder={
               selectedProperty?.placeholder ??
@@ -837,8 +837,8 @@ const BAIGraphQLPropertyFilter = <
               }}
               onPressEnter={() => addCondition(search)}
               // Base size stays 200px (unchanged on roomy layouts) but the
-              // input may shrink to 120px so the whole group fits a narrow card.
-              style={{ flex: '0 1 200px', minWidth: 120 }}
+              // input may shrink to 96px so the whole group fits a narrow card.
+              style={{ flex: '0 1 200px', minWidth: 96 }}
               placeholder={
                 selectedProperty?.placeholder ??
                 t('comp:BAIPropertyFilter.PlaceHolder')
@@ -866,8 +866,8 @@ const BAIGraphQLPropertyFilter = <
                 setSearch(value);
               }}
               // Base size stays 200px (unchanged on roomy layouts) but the
-              // input may shrink to 120px so the whole group fits a narrow card.
-              style={{ flex: '0 1 200px', minWidth: 120 }}
+              // input may shrink to 96px so the whole group fits a narrow card.
+              style={{ flex: '0 1 200px', minWidth: 96 }}
               options={effectiveOptions?.filter((option) =>
                 !search ? true : option.label?.toString().includes(search),
               )}
