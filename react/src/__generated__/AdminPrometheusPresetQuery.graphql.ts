@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ee038e04e3f6768577812ffbf8f3c9e8>>
+ * @generated SignedSource<<b9c38cf8eee58b45d734c85c1c8f5647>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -51,26 +51,26 @@ export type QueryDefinitionOrderBy = {
   direction?: OrderDirection;
   field: QueryDefinitionOrderField;
 };
-export type PrometheusPresetTabQuery$variables = {
+export type AdminPrometheusPresetQuery$variables = {
   filter?: QueryDefinitionFilter | null | undefined;
   limit?: number | null | undefined;
   offset?: number | null | undefined;
   orderBy?: ReadonlyArray<QueryDefinitionOrderBy> | null | undefined;
 };
-export type PrometheusPresetTabQuery$data = {
+export type AdminPrometheusPresetQuery$data = {
   readonly prometheusQueryPresets: {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly id: string;
-        readonly " $fragmentSpreads": FragmentRefs<"PrometheusQueryPresetNodesFragment">;
+        readonly " $fragmentSpreads": FragmentRefs<"PrometheusQueryPresetTableFragment">;
       };
     }>;
   } | null | undefined;
 };
-export type PrometheusPresetTabQuery = {
-  response: PrometheusPresetTabQuery$data;
-  variables: PrometheusPresetTabQuery$variables;
+export type AdminPrometheusPresetQuery = {
+  response: AdminPrometheusPresetQuery$data;
+  variables: AdminPrometheusPresetQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -147,7 +147,7 @@ return {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "PrometheusPresetTabQuery",
+    "name": "AdminPrometheusPresetQuery",
     "selections": [
       {
         "alias": null,
@@ -178,7 +178,7 @@ return {
                   {
                     "args": null,
                     "kind": "FragmentSpread",
-                    "name": "PrometheusQueryPresetNodesFragment"
+                    "name": "PrometheusQueryPresetTableFragment"
                   }
                 ],
                 "storageKey": null
@@ -202,7 +202,7 @@ return {
       (v3/*: any*/)
     ],
     "kind": "Operation",
-    "name": "PrometheusPresetTabQuery",
+    "name": "AdminPrometheusPresetQuery",
     "selections": [
       {
         "alias": null,
@@ -337,16 +337,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "ff40e1b41e12e2ded4dbced18e5916e0",
+    "cacheID": "d064a958630b5e99af03c7761685f600",
     "id": null,
     "metadata": {},
-    "name": "PrometheusPresetTabQuery",
+    "name": "AdminPrometheusPresetQuery",
     "operationKind": "query",
-    "text": "query PrometheusPresetTabQuery(\n  $offset: Int\n  $limit: Int\n  $filter: QueryDefinitionFilter\n  $orderBy: [QueryDefinitionOrderBy!]\n) {\n  prometheusQueryPresets(offset: $offset, limit: $limit, filter: $filter, orderBy: $orderBy) {\n    count\n    edges {\n      node {\n        id\n        ...PrometheusQueryPresetNodesFragment\n      }\n    }\n  }\n}\n\nfragment PrometheusQueryPresetEditorModalFragment on QueryDefinition {\n  id\n  name\n  description\n  categoryId\n  metricName\n  queryTemplate\n  timeWindow\n  options {\n    filterLabels\n    groupLabels\n  }\n}\n\nfragment PrometheusQueryPresetNodesFragment on QueryDefinition {\n  id\n  name\n  description\n  rank\n  categoryId\n  metricName\n  queryTemplate\n  timeWindow\n  options {\n    filterLabels\n    groupLabels\n  }\n  createdAt\n  updatedAt\n  category {\n    id\n    name\n  }\n  ...PrometheusQueryPresetEditorModalFragment\n}\n"
+    "text": "query AdminPrometheusPresetQuery(\n  $offset: Int\n  $limit: Int\n  $filter: QueryDefinitionFilter\n  $orderBy: [QueryDefinitionOrderBy!]\n) {\n  prometheusQueryPresets(offset: $offset, limit: $limit, filter: $filter, orderBy: $orderBy) {\n    count\n    edges {\n      node {\n        id\n        ...PrometheusQueryPresetTableFragment\n      }\n    }\n  }\n}\n\nfragment PrometheusQueryPresetEditorModalFragment on QueryDefinition {\n  id\n  name\n  description\n  categoryId\n  metricName\n  queryTemplate\n  timeWindow\n  options {\n    filterLabels\n    groupLabels\n  }\n}\n\nfragment PrometheusQueryPresetTableFragment on QueryDefinition {\n  id\n  name\n  description\n  rank\n  categoryId\n  metricName\n  queryTemplate\n  timeWindow\n  options {\n    filterLabels\n    groupLabels\n  }\n  createdAt\n  updatedAt\n  category {\n    id\n    name\n  }\n  ...PrometheusQueryPresetEditorModalFragment\n}\n"
   }
 };
 })();
 
-(node as any).hash = "2f5fe1cd9fc99a544b70c3e0cdce2136";
+(node as any).hash = "dbbe09b8911ab3c19ae83e9a91467c68";
 
 export default node;

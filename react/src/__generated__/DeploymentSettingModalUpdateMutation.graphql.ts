@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5a3a79adc3a1cafc87a22671177ec161>>
+ * @generated SignedSource<<ade1997e9750299a4b03d2ecd53e09c9>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -43,6 +43,17 @@ export type DeploymentSettingModalUpdateMutation$data = {
   readonly updateModelDeployment: {
     readonly deployment: {
       readonly id: string;
+      readonly metadata: {
+        readonly name: string;
+        readonly resourceGroupName: string;
+        readonly tags: ReadonlyArray<string>;
+      };
+      readonly networkAccess: {
+        readonly openToPublic: boolean;
+      };
+      readonly replicaState: {
+        readonly desiredReplicaCount: number;
+      };
     };
   } | null | undefined;
 };
@@ -88,6 +99,74 @@ v1 = [
             "kind": "ScalarField",
             "name": "id",
             "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "ModelDeploymentMetadata",
+            "kind": "LinkedField",
+            "name": "metadata",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "name",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "tags",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "resourceGroupName",
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "ModelDeploymentNetworkAccess",
+            "kind": "LinkedField",
+            "name": "networkAccess",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "openToPublic",
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "ReplicaState",
+            "kind": "LinkedField",
+            "name": "replicaState",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "desiredReplicaCount",
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
           }
         ],
         "storageKey": null
@@ -114,16 +193,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "94d32eceeac74ffa680649dbc39dc4e1",
+    "cacheID": "66f0f082c918737b0cbfd64e4b071f37",
     "id": null,
     "metadata": {},
     "name": "DeploymentSettingModalUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation DeploymentSettingModalUpdateMutation(\n  $input: UpdateDeploymentInput!\n) {\n  updateModelDeployment(input: $input) {\n    deployment {\n      id\n    }\n  }\n}\n"
+    "text": "mutation DeploymentSettingModalUpdateMutation(\n  $input: UpdateDeploymentInput!\n) {\n  updateModelDeployment(input: $input) {\n    deployment {\n      id\n      metadata {\n        name\n        tags\n        resourceGroupName\n      }\n      networkAccess {\n        openToPublic\n      }\n      replicaState {\n        desiredReplicaCount\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "614463acb88e639fdcf663e2c35779a4";
+(node as any).hash = "4c636c058bf69ea1cd7761b401f5a4d0";
 
 export default node;

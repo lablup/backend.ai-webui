@@ -105,6 +105,17 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
         updateModelDeployment(input: $input) {
           deployment {
             id
+            metadata {
+              name
+              tags
+              resourceGroupName
+            }
+            networkAccess {
+              openToPublic
+            }
+            replicaState {
+              desiredReplicaCount
+            }
           }
         }
       }

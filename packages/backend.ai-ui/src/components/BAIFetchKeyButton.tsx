@@ -35,7 +35,14 @@ export interface BAIFetchKeyButtonProps extends Omit<
   ButtonProps,
   'value' | 'onChange' | 'loading'
 > {
-  value: string;
+  /**
+   * Optional. The button self-generates its fetch key on each refresh
+   * (`onChange(new Date().toISOString())`) and re-anchors its countdown via an
+   * internal `cycleKey`, so it does not read this value. Consumers that drive
+   * refetching directly (e.g. a preloaded `loadQuery(..., 'network-only')` in
+   * `onChange`) can omit it entirely instead of threading a `useFetchKey`.
+   */
+  value?: string;
   loading?: boolean;
   lastLoadTime?: Date;
   showLastLoadTime?: boolean;
