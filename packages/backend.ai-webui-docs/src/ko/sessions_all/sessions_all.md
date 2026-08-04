@@ -423,14 +423,6 @@ Backend.AI는 `PENDING`, `TERMINATED` 또는 `CANCELLED` 상태의 세션에 대
 시스템 설정에 따라, 이 옵션들은 보이지 않을 수도 있습니다.
 :::
 
-:::note
-관리자는 `resources/app_template.json` 파일에서 `hideAppsOnBatchSession` 옵션을 활성화하여
-Batch 세션의 컨테이너 내부 앱을 숨길 수 있습니다. 이 옵션이 활성화되면 **Batch** 세션에서는
-세션 목록의 행 동작, 세션 생성 알림, 세션 상세 정보 패널 어디에서도 앱 런처와 터미널 바로
-가기가 제공되지 않습니다. Interactive 세션은 영향을 받지 않습니다. 이 옵션은 기본적으로
-비활성화되어 있습니다.
-:::
-
 Jupyter Notebook 을 클릭해봅시다.
 
 ![](../images/jupyter_app.png)

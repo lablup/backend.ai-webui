@@ -560,15 +560,6 @@ applies the following features, respectively:
 Depending on the system configuration, these options may not be shown.
 :::
 
-:::note
-Your administrator can hide the in-container apps for batch sessions by enabling
-`hideAppsOnBatchSession` in `resources/app_template.json`. When it is enabled,
-the app launcher and the terminal shortcut are not offered for **Batch**
-sessions — in the session list row actions, in the session creation
-notification, and in the session detail panel. Interactive sessions are not
-affected. This option is off by default.
-:::
-
 Let's click on Jupyter Notebook.
 
 ![](../images/jupyter_app.png)
