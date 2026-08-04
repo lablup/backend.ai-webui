@@ -29,20 +29,10 @@ browser's cache and/or application data.
 ### The WebUI says I am offline
 
 A red **Offline: Not connected to any networks.** banner at the top of the page
-means the Backend.AI server could not be reached. The WebUI does not rely on the
-browser's own network guess alone — when the browser reports no connection, the
-WebUI first checks whether the server still answers, and shows the banner only
-if that check also fails. A working VPN, captive portal, or virtual network
-adapter therefore no longer triggers a false alarm.
-
-Check your network connection, and confirm with your administrator that the
-Backend.AI server is running. The WebUI keeps re-checking while the banner is
-shown, so the banner disappears on its own within a few seconds once the server
-is reachable again.
-
-A yellow **The server is taking longer to respond. Please wait a moment**
-banner is a different message: the server is reachable but slow. You can dismiss
-it and keep working.
+means the Backend.AI server could not be reached. Check your network
+connection, and confirm with your administrator that the Backend.AI server is
+running. The WebUI keeps re-checking while the banner is shown, so the banner
+disappears on its own within a few seconds once the server is reachable again.
 
 <a id="route-error-pages"></a>
 
@@ -66,8 +56,7 @@ happened:
   Ask your administrator to grant you access to a project, as the message
   suggests.
 - **Unauthorized Access** — the address is valid, but your role does not allow
-  you to open it. See
-  [Pages you cannot open](#pages-you-cannot-open) in the login chapter.
+  you to open it.
 
 <a id="installing_apt_pkg"></a>
 
@@ -117,8 +106,8 @@ Please use the LATEST versions of moder browsers (such as Chrome).
 
 This entry covers transfers that stop after a connection was established. If no
 connection dialog opens at all and a notification reports an error instead, the
-connection information could not be resolved — see
-[Connection Errors](#connection-errors) in the SFTP to Container chapter.
+connection information could not be resolved — see the
+[SSH/SFTP Connection to a Compute Session](#ssh-sftp-container) chapter.
 
 When the WebUI App launches an SFTP connection, it uses a local proxy server
 which is embedded in the App. If you exit the WebUI App during the file transfer
@@ -144,33 +133,19 @@ start/stop/restart App Proxy service.
 
 When users report a failure to open SSH/SFTP rather than a web-based app, ask
 them for the exact message shown in the notification: each message points at a
-different part of the App Proxy path, as described in
-[Connection Errors](#connection-errors).
+different part of the App Proxy path; see the
+[SSH/SFTP Connection to a Compute Session](#ssh-sftp-container) chapter for details.
 
 ### Indicated resources do not match with actual allocation
 
-The session detail page reports this by itself, so check it before doing
-anything else. It shows the resources the session **actually holds**. When the
-allocation differs from the request, each resource shows both values as
-*allocated / requested* in the same chip (for example `0.0 / 0.5 fGPU`), and the
-**Resource Allocation** label carries a warning icon whose tooltip reads
-*Fewer resources were allocated than requested.*
+Occasionally, due to unstable network connections or container management
+problem of Docker daemon, there may be a case where the resource occupied by
+Backend.AI does not match with the resource actually used by the container. In this
+case, follow the steps below.
 
-![](../images/session_detail_resource_allocation_warning.png)
-
-A difference shown there is the real allocation, not a display error. It usually
-means the request was adjusted when the session was allocated — for example a
-fractional GPU amount rounded down to the resource group's quantum size. A
-session that has not been allocated yet shows the requested amounts with no
-comparison.
-
-Only if the values on that page still disagree with what the container actually
-uses — which can happen after an unstable network connection or a container
-management problem of the Docker daemon — recompute the occupancy:
-
-1. Log in with an administrator account.
-2. Open the **Maintenance** page.
-3. Click the **Recalculate Usage** button.
+- Login as admin account.
+- Visit the **Maintenance** page.
+- Click the **Recalculate Usage** button to manually correct the resource occupancy.
 
 ### Image is not displayed after it is pushed to a docker registry
 
