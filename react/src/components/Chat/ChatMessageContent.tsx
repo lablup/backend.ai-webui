@@ -2,9 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { CodeHead } from './CodeHead';
 import CopyButton from './CopyButton';
 import { SyntaxHighlighter } from './SyntaxHighlighter';
-import { theme, Typography } from 'antd';
+import { theme } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIFlex } from 'backend.ai-ui';
 // `rehype-katex` does not import the CSS file, so we need to import it manually.
@@ -15,8 +16,6 @@ import Markdown from 'react-markdown';
 import rehypeKatex from 'rehype-katex';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
-
-const { Text } = Typography;
 
 const useMarkdownStyles = createStyles(({ token }) => ({
   markdownTable: {
@@ -131,41 +130,6 @@ function parseMarkdownIntoBlocks(markdown: string): string[] {
   const tokens = marked.lexer(markdown);
   return tokens.map((token) => token.raw);
 }
-
-const CodeHead = memo<{ lang: string; extra?: React.ReactNode }>(
-  ({ lang, extra }) => {
-    const { token } = theme.useToken();
-
-    return (
-      <BAIFlex
-        style={{
-          margin: 0,
-          minHeight: 38,
-          padding: `0 ${token.paddingSM}px`,
-          background: 'rgba(0, 0, 0, 0.02)',
-          width: '100%',
-        }}
-      >
-        <BAIFlex
-          style={{
-            display: 'inline-block',
-            flex: '1',
-            overflow: 'hidden',
-            whiteSpace: 'nowrap',
-            textOverflow: 'ellipsis',
-          }}
-        >
-          <Text style={{ fontWeight: 'normal' }} type="secondary">
-            {lang}
-          </Text>
-        </BAIFlex>
-        <BAIFlex>{extra}</BAIFlex>
-      </BAIFlex>
-    );
-  },
-);
-
-CodeHead.displayName = 'CodeHead';
 
 const ChatMessageContentBlock = memo<{ block?: string; isStreaming?: boolean }>(
   ({ block, isStreaming }) => {
