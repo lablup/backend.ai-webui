@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { BAIDirectoryPickerModalQuery } from '../../../__generated__/BAIDirectoryPickerModalQuery.graphql';
-import { toGlobalId } from '../../../helper';
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
 import BAIFlex from '../../BAIFlex';
 import BAIModal, { BAIModalProps } from '../../BAIModal';
@@ -11,7 +10,7 @@ import BAIFileExplorer from './BAIFileExplorer';
 import { Button, Typography } from 'antd';
 import * as _ from 'lodash-es';
 import { useState } from 'react';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import { graphql, PreloadedQuery, usePreloadedQuery } from 'react-relay';
 
 // The picker works with sub paths ('' = vfolder root) while BAIFileExplorer
 // uses '.' as its root path.
@@ -19,11 +18,30 @@ const toExplorerPath = (subPath: string) => (subPath === '' ? '.' : subPath);
 const toSubPath = (explorerPath: string) =>
   explorerPath === '.' ? '' : explorerPath;
 
+// Exported so openers can `loadQuery` it in the trigger's event handler
+// (render-as-you-fetch): the trigger stays in control of the in-flight state
+// (e.g. BAIVFolderPathPicker's select `loading`) instead of hiding it behind a
+// Suspense gap. Operation name must match the generated artifact; the const
+// name only differs to avoid clashing with the imported generated type.
+export const BAIDirectoryPickerQuery = graphql`
+  query BAIDirectoryPickerModalQuery($vfolderGlobalId: String!) {
+    vfolder_node(id: $vfolderGlobalId) {
+      name
+      permissions
+    }
+  }
+`;
+
 export interface BAIDirectoryPickerModalProps extends Omit<
   BAIModalProps,
   'onOk' | 'onCancel' | 'footer' | 'title'
 > {
   vfolderUuid: string;
+  /**
+   * Preloaded reference to `BAIDirectoryPickerQuery` produced by the opener
+   * via `useQueryLoader`, keyed by this vfolder's global id.
+   */
+  queryRef: PreloadedQuery<BAIDirectoryPickerModalQuery>;
   /** Sub path to start browsing from ('' = vfolder root). */
   defaultPath?: string;
   /** Called with the chosen sub path, or `undefined` when cancelled. */
@@ -37,6 +55,7 @@ export interface BAIDirectoryPickerModalProps extends Omit<
  */
 const BAIDirectoryPickerModal: React.FC<BAIDirectoryPickerModalProps> = ({
   vfolderUuid,
+  queryRef,
   defaultPath,
   onRequestClose,
   ...modalProps
@@ -50,16 +69,9 @@ const BAIDirectoryPickerModal: React.FC<BAIDirectoryPickerModalProps> = ({
 
   // Folder CRUD inside the picker follows the caller's effective permissions
   // on this vfolder, same as FolderExplorerModal.
-  const { vfolder_node } = useLazyLoadQuery<BAIDirectoryPickerModalQuery>(
-    graphql`
-      query BAIDirectoryPickerModalQuery($vfolderGlobalId: String!) {
-        vfolder_node(id: $vfolderGlobalId) {
-          name
-          permissions
-        }
-      }
-    `,
-    { vfolderGlobalId: toGlobalId('VirtualFolderNode', vfolderUuid) },
+  const { vfolder_node } = usePreloadedQuery<BAIDirectoryPickerModalQuery>(
+    BAIDirectoryPickerQuery,
+    queryRef,
   );
   const hasWriteContentPermission = _.includes(
     vfolder_node?.permissions,

@@ -1,3 +1,5 @@
+import type { BAIDirectoryPickerModalQuery } from '../../../__generated__/BAIDirectoryPickerModalQuery.graphql';
+import { toGlobalId } from '../../../helper';
 import BAIFlex from '../../BAIFlex';
 import BAIUnmountAfterClose from '../../BAIUnmountAfterClose';
 import BAIVFolderSelect from '../../fragments/BAIVFolderSelect';
@@ -6,13 +8,15 @@ import type {
   BAIClient,
   VFolderFile,
 } from '../../provider/BAIClientProvider/types';
-import BAIDirectoryPickerModal from './BAIDirectoryPickerModal';
+import BAIDirectoryPickerModal, {
+  BAIDirectoryPickerQuery,
+} from './BAIDirectoryPickerModal';
 import BAIVFolderPathPicker from './BAIVFolderPathPicker';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { App, Button, Form, Typography } from 'antd';
 import { Suspense, useState } from 'react';
-import { RelayEnvironmentProvider } from 'react-relay';
+import { RelayEnvironmentProvider, useQueryLoader } from 'react-relay';
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
 
 /**
@@ -268,7 +272,7 @@ const meta: Meta<typeof BAIVFolderPathPicker> = {
     docs: {
       description: {
         component: `
-**BAIVFolderPathPicker** is a sub path picker for a given vfolder: a read-only path field that opens a directory-only picker modal. The vfolder itself is chosen elsewhere (e.g. a [BAIVFolderSelect](/?path=/docs/fragments-baivfolderselect--docs)) and passed in as \`vfolderUuid\`.
+**BAIVFolderPathPicker** is a sub path picker for a given vfolder: a select-like trigger that opens a directory-only picker modal. The vfolder itself is chosen elsewhere (e.g. a [BAIVFolderSelect](/?path=/docs/fragments-baivfolderselect--docs)) and passed in as \`vfolderUuid\`. The modal's vfolder query is preloaded from the open gesture (\`useQueryLoader\` + transition), so the trigger shows its own \`loading\` state while the data is in flight.
 
 The value is the **sub path inside the vfolder** — \`''\` for the vfolder root, \`"sub/path"\` below it, \`undefined\` while nothing is picked — so it plugs directly into a Form.Item; \`value\`/\`onChange\` follow the controllable-state convention, so the component works both controlled and uncontrolled. Files are visible but disabled inside the picker; only directories can be entered and chosen. Folder CRUD (create / rename / delete) stays available via \`BAIFileExplorer\`'s \`directoryPicker\` mode. When the vfolder changes, reset the value — a sub path only makes sense within the vfolder it was picked from.
 
@@ -279,7 +283,7 @@ The value is the **sub path inside the vfolder** — \`''\` for the vfolder root
 | \`value\` | \`string\` | - | Selected sub path (\`''\` = vfolder root) |
 | \`defaultValue\` | \`string\` | - | Initial value for uncontrolled usage |
 | \`onChange\` | \`(selectedSubPath?: string) => void\` | - | Fired when a location is confirmed in the modal |
-| \`inputProps\` | \`InputProps\` subset | - | Forwarded to the sub path trigger field |
+| \`selectProps\` | \`BAISelectProps\` subset | - | Forwarded to the sub path trigger select |
 
 > The stories run against a mock Relay environment and a mock \`BAIClientContext\` client, so vfolder search, browsing, mkdir, rename and delete all work without a backend. The second folder (\`team-shared-data\`) is read-only — pick it in the Form story to see permission gating disable folder CRUD inside the modal.
         `,
@@ -400,46 +404,77 @@ export const WithinForm: Story = {
   },
 };
 
+/**
+ * Drives `BAIDirectoryPickerModal` directly, the way a future wrapper (e.g. a
+ * button component) would: preload `BAIDirectoryPickerQuery` in the click
+ * handler via `useQueryLoader`, then pass the resulting `queryRef` to the
+ * modal. Must live inside `MockProviders` so `useQueryLoader` finds the Relay
+ * environment.
+ */
+const DirectoryPickerModalDemo: React.FC = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [lastResult, setLastResult] = useState<string | undefined>();
+  const [queryRef, loadQuery] = useQueryLoader<BAIDirectoryPickerModalQuery>(
+    BAIDirectoryPickerQuery,
+  );
+
+  return (
+    <BAIFlex direction="column" gap="md" align="start">
+      <Button
+        type="primary"
+        onClick={() => {
+          loadQuery(
+            {
+              vfolderGlobalId: toGlobalId(
+                'VirtualFolderNode',
+                MOCK_VFOLDERS[0].uuid,
+              ),
+            },
+            { fetchPolicy: 'store-and-network' },
+          );
+          setIsOpen(true);
+        }}
+      >
+        Open directory picker
+      </Button>
+      <Typography.Text type="secondary">
+        Last selection:{' '}
+        <Typography.Text code>
+          {lastResult === undefined ? '(none)' : `/${lastResult}`}
+        </Typography.Text>
+      </Typography.Text>
+      {queryRef != null && (
+        <BAIUnmountAfterClose>
+          <BAIDirectoryPickerModal
+            open={isOpen}
+            vfolderUuid={MOCK_VFOLDERS[0].uuid}
+            queryRef={queryRef}
+            onRequestClose={(selectedSubPath) => {
+              if (selectedSubPath !== undefined) {
+                setLastResult(selectedSubPath);
+              }
+              setIsOpen(false);
+            }}
+          />
+        </BAIUnmountAfterClose>
+      )}
+    </BAIFlex>
+  );
+};
+
 export const PickerModalOnly: Story = {
   name: 'Directory Picker Modal',
   parameters: {
     docs: {
       description: {
         story:
-          '`BAIDirectoryPickerModal` can also be driven directly — pass a vfolder UUID and receive the chosen sub path via `onRequestClose` (`undefined` when cancelled).',
+          '`BAIDirectoryPickerModal` can also be driven directly — preload `BAIDirectoryPickerQuery` with `useQueryLoader` in the opening event, pass the `queryRef`, and receive the chosen sub path via `onRequestClose` (`undefined` when cancelled).',
       },
     },
   },
-  render: () => {
-    const [isOpen, setIsOpen] = useState(false);
-    const [lastResult, setLastResult] = useState<string | undefined>();
-
-    return (
-      <MockProviders>
-        <BAIFlex direction="column" gap="md" align="start">
-          <Button type="primary" onClick={() => setIsOpen(true)}>
-            Open directory picker
-          </Button>
-          <Typography.Text type="secondary">
-            Last selection:{' '}
-            <Typography.Text code>
-              {lastResult === undefined ? '(none)' : `/${lastResult}`}
-            </Typography.Text>
-          </Typography.Text>
-          <BAIUnmountAfterClose>
-            <BAIDirectoryPickerModal
-              open={isOpen}
-              vfolderUuid={MOCK_VFOLDERS[0].uuid}
-              onRequestClose={(selectedSubPath) => {
-                if (selectedSubPath !== undefined) {
-                  setLastResult(selectedSubPath);
-                }
-                setIsOpen(false);
-              }}
-            />
-          </BAIUnmountAfterClose>
-        </BAIFlex>
-      </MockProviders>
-    );
-  },
+  render: () => (
+    <MockProviders>
+      <DirectoryPickerModalDemo />
+    </MockProviders>
+  ),
 };
