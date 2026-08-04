@@ -336,8 +336,8 @@ Every tab keeps its own filter, sort order, and page number while you stay on th
 page, so switching to another tab and back restores the view you left instead of
 resetting it. The view state of the tab you are currently on is also stored in the
 page URL, so reloading the browser reproduces that view, and you can bookmark or
-share the URL to open the list in the same state. Only the active tab's state
-travels with the URL — after a reload, the other tabs start from their defaults.
+share the URL to open the list in the same state. The URL carries only the tab you
+are on, so after a reload the other tabs start from their defaults.
 
 <a id="auto-refresh-interval"></a>
 
@@ -684,9 +684,8 @@ Checker.
 The criteria that apply to a running session are shown in the **Reclamation Status**
 row of the session detail panel, together with the time remaining before each one
 would terminate the session. The row appears while the session is running and at
-least one of its idle checks reports a remaining time, no matter how much time is
-left — a check that still has a long way to go is listed just like one that is
-close to expiring.
+least one of its idle checks has a countdown, whether that countdown still has
+days to go or only minutes.
 
 ![](../images/idle_checks_column.png)
 
@@ -747,11 +746,10 @@ The badge has three levels, described in the popover legend as:
 - **Warning**: The current average is above the threshold, but close to it.
 - **At risk**: The current average is below the threshold.
 
-The levels are graded with a margin rather than by a strict comparison against the
-configured threshold, so a session can already show **At risk** while its current
-average is still above that threshold. Read the badge as a relative warning level
-that gives you room to react, not as a literal statement about whether the average
-has crossed the threshold.
+The badge changes level before the average actually falls below the threshold, so a
+session can show **At risk** while its current average is still above the configured
+value. Treat it as an early warning that leaves you time to react, not as a report
+that the threshold has already been crossed.
 
 Sessions that the utilization checker does not apply to, and sessions for which
 no measurement is available yet, show `-` in the column. In the session detail
@@ -773,11 +771,11 @@ details behind the level:
 Resources without a measurement are listed with a dash and do not affect the
 overall level.
 
-Once the utilization entry's countdown is close to running out, the remaining-time
-tag next to it takes on the same color as the badge, so a countdown shown in red
-belongs to a session at risk of being reclaimed. While there is still ample time
-left, the tag stays uncolored even if the badge already shows a risk level — a
-colored countdown means the risk is imminent, not merely present.
+As the countdown on the utilization entry gets short, the remaining-time tag next to
+it takes on the same color as the badge, so a countdown shown in red belongs to a
+session about to be reclaimed. While there is still plenty of time left, the tag
+stays plain even if the badge already shows a risk level — color on the countdown
+means reclamation is near, not just possible.
 
 ![](../images/session_reclamation_status_column.png)
 
