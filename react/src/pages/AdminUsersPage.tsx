@@ -47,13 +47,41 @@ type UsersVariables = AdminUserManagementQueryType['variables'];
 type CredentialsVariables = AdminUserCredentialListQueryType['variables'];
 type TabVariables = UsersVariables | CredentialsVariables;
 
+// The per-tab snapshot shape useKeyedSnapshot holds: the page's URL state
+// (minus the tab key itself) plus table pagination.
+type TabSnapshot = {
+  queryParams: {
+    filter: string | null;
+    order: string | null;
+    status: 'ACTIVE' | 'INACTIVE';
+    activeType: 'active' | 'inactive';
+  };
+  tablePaginationOption: { current: number; pageSize: number };
+};
+
+const defaultSnapshotOf = (tab: TabKey): TabSnapshot => ({
+  queryParams: {
+    filter: null,
+    order: null,
+    status: 'ACTIVE',
+    activeType: 'active',
+  },
+  tablePaginationOption: {
+    current: 1,
+    pageSize:
+      tab === 'users'
+        ? USER_LIST_DEFAULT_PAGE_SIZE
+        : CREDENTIAL_LIST_DEFAULT_PAGE_SIZE,
+  },
+});
+
 /**
  * FR-3387 pilot: the page is the single owner of URL state and query
- * fetching. The URL seeds the initial tab and variables at mount and is a
- * write-only mirror afterwards; per-tab variables are snapshotted by
- * `useKeyedSnapshot`, restored synchronously on tab change, and loaded via
- * `useQueryLoader` (render-as-you-fetch). Children receive `queryRef` +
- * `onReload` and own no URL state.
+ * fetching. The URL seeds the initial tab and snapshot at mount and is a
+ * write-only mirror afterwards; each tab's URL state is snapshotted by
+ * `useKeyedSnapshot`, restored synchronously on tab change, and its GraphQL
+ * variables loaded via `useQueryLoader` (render-as-you-fetch). Children
+ * receive `queryRef` + `onReload` and own no URL state.
  */
 const AdminUsersPage: React.FC = () => {
   'use memo';
@@ -74,11 +102,9 @@ const AdminUsersPage: React.FC = () => {
     },
     { history: 'replace' },
   );
-  const { baiPaginationOption, setTablePaginationOption } =
+  const { tablePaginationOption, setTablePaginationOption } =
     useBAIPaginationOptionStateOnSearchParam(
-      queryParams.tab === 'credentials'
-        ? { current: 1, pageSize: CREDENTIAL_LIST_DEFAULT_PAGE_SIZE }
-        : { current: 1, pageSize: USER_LIST_DEFAULT_PAGE_SIZE },
+      defaultSnapshotOf(queryParams.tab).tablePaginationOption,
     );
 
   const [usersQueryRef, loadUsersQuery] =
@@ -88,119 +114,110 @@ const AdminUsersPage: React.FC = () => {
       AdminUserCredentialListQuery,
     );
 
-  // The retained queryRefs hold each tab's last requested variables; the
-  // snapshot hook reads them per key so every capture is a consistent pair.
-  const [currentTab, setAfterSnapshot] = useKeyedSnapshot<
-    TabKey,
-    TabVariables | undefined
-  >(queryParams.tab, (tab) =>
-    tab === 'users' ? usersQueryRef?.variables : credentialsQueryRef?.variables,
+  const [currentTab, setAfterSnapshot] = useKeyedSnapshot<TabKey, TabSnapshot>(
+    queryParams.tab,
+    {
+      queryParams: _.omit(queryParams, 'tab'),
+      tablePaginationOption,
+    },
   );
 
-  const buildInitialUsersVariables = (): UsersVariables => {
-    const urlFilter = queryParams.filter
+  const usersVariablesOf = (snapshot: TabSnapshot): UsersVariables => {
+    const { queryParams: params, tablePaginationOption: pagination } = snapshot;
+    const filter = params.filter
       ? parseAsJson<UserV2Filter>((value) => value as UserV2Filter).parse(
-          queryParams.filter,
+          params.filter,
         )
       : null;
-    const order = _.includes(availableUserV2SorterValues, queryParams.order)
-      ? queryParams.order
+    const order = _.includes(availableUserV2SorterValues, params.order)
+      ? params.order
       : null;
     return {
       filter: {
-        ..._.omit(urlFilter ?? {}, 'status'),
+        ..._.omit(filter ?? {}, 'status'),
         status:
-          queryParams.status === 'ACTIVE'
+          params.status === 'ACTIVE'
             ? { equals: 'ACTIVE' }
             : { notEquals: 'ACTIVE' },
       },
       orderBy: convertToOrderBy<Required<UserV2OrderBy>>(order),
-      limit: baiPaginationOption.limit,
-      offset: baiPaginationOption.offset,
+      limit: pagination.pageSize,
+      offset: (pagination.current - 1) * pagination.pageSize,
       isNotSupportTotp: !isTOTPSupported,
     };
   };
 
-  const buildInitialCredentialsVariables = (): CredentialsVariables => ({
-    limit: baiPaginationOption.limit,
-    offset: baiPaginationOption.offset,
-    is_active: queryParams.activeType !== 'inactive',
-    filter: queryParams.filter,
-    order: queryParams.order,
-  });
+  const credentialsVariablesOf = (
+    snapshot: TabSnapshot,
+  ): CredentialsVariables => {
+    const { queryParams: params, tablePaginationOption: pagination } = snapshot;
+    return {
+      limit: pagination.pageSize,
+      offset: (pagination.current - 1) * pagination.pageSize,
+      is_active: params.activeType !== 'inactive',
+      filter: params.filter,
+      order: params.order,
+    };
+  };
 
-  const defaultUsersVariables = (): UsersVariables => ({
-    filter: { status: { equals: 'ACTIVE' } },
-    limit: USER_LIST_DEFAULT_PAGE_SIZE,
-    offset: 0,
-    isNotSupportTotp: !isTOTPSupported,
-  });
-
-  const defaultCredentialsVariables = (): CredentialsVariables => ({
-    limit: CREDENTIAL_LIST_DEFAULT_PAGE_SIZE,
-    offset: 0,
-    is_active: true,
-  });
-
-  const mirrorVariablesToUrl = (
+  const applySnapshotToUrl = (
     tab: TabKey,
-    variables: TabVariables,
+    snapshot: TabSnapshot,
     historyMode: 'push' | 'replace',
   ) => {
-    if (tab === 'users') {
-      const v = variables as UsersVariables;
-      const restFilter = _.omit(v.filter ?? {}, 'status');
-      setQueryParams(
-        {
-          tab,
-          filter: _.isEmpty(restFilter) ? null : JSON.stringify(restFilter),
-          order: convertFromOrderBy(v.orderBy),
-          status: v.filter?.status?.equals === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE',
-          activeType: null,
-        },
-        { history: historyMode },
-      );
-    } else {
-      const v = variables as CredentialsVariables;
-      setQueryParams(
-        {
-          tab,
-          filter: v.filter ?? null,
-          order: v.order ?? null,
-          status: null,
-          activeType: v.is_active === false ? 'inactive' : 'active',
-        },
-        { history: historyMode },
-      );
-    }
-    const pageSize =
-      variables.limit ??
-      (tab === 'users'
-        ? USER_LIST_DEFAULT_PAGE_SIZE
-        : CREDENTIAL_LIST_DEFAULT_PAGE_SIZE);
-    setTablePaginationOption({
-      current: Math.floor((variables.offset ?? 0) / pageSize) + 1,
-      pageSize,
-    });
+    setQueryParams({ tab, ...snapshot.queryParams }, { history: historyMode });
+    setTablePaginationOption(snapshot.tablePaginationOption);
   };
 
   const handleTabChange = (key: string) => {
     const tab = tabParser.parse(key) ?? tabParser.defaultValue;
     if (tab === currentTab) return;
-    const restored = setAfterSnapshot(tab);
-    const variables =
-      restored ??
-      (tab === 'users'
-        ? defaultUsersVariables()
-        : defaultCredentialsVariables());
+    const snapshot = setAfterSnapshot(tab) ?? defaultSnapshotOf(tab);
     // A revisited tab's retained queryRef already holds its data — show it
     // without refetching (freshness is the child's refresh button's job).
     if (tab === 'users' && !usersQueryRef) {
-      loadUsersQuery(variables as UsersVariables);
+      loadUsersQuery(usersVariablesOf(snapshot));
     } else if (tab === 'credentials' && !credentialsQueryRef) {
-      loadCredentialsQuery(variables as CredentialsVariables);
+      loadCredentialsQuery(credentialsVariablesOf(snapshot));
     }
-    mirrorVariablesToUrl(tab, variables, 'push');
+    applySnapshotToUrl(tab, snapshot, 'push');
+  };
+
+  // Child-driven changes arrive as complete GraphQL variables; mirror them
+  // back to the URL keys so the snapshot effect captures the new state.
+  const snapshotOfVariables = (
+    tab: TabKey,
+    variables: TabVariables,
+  ): TabSnapshot => {
+    const pageSize =
+      variables.limit ?? defaultSnapshotOf(tab).tablePaginationOption.pageSize;
+    const tablePaginationOption = {
+      current: Math.floor((variables.offset ?? 0) / pageSize) + 1,
+      pageSize,
+    };
+    if (tab === 'users') {
+      const v = variables as UsersVariables;
+      const restFilter = _.omit(v.filter ?? {}, 'status');
+      return {
+        queryParams: {
+          filter: _.isEmpty(restFilter) ? null : JSON.stringify(restFilter),
+          order: convertFromOrderBy(v.orderBy),
+          status: v.filter?.status?.equals === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE',
+          activeType: 'active',
+        },
+        tablePaginationOption,
+      };
+    }
+    const v = variables as CredentialsVariables;
+    return {
+      queryParams: {
+        filter: v.filter ?? null,
+        order: v.order ?? null,
+        status: 'ACTIVE',
+        activeType: v.is_active === false ? 'inactive' : 'active',
+      },
+      tablePaginationOption,
+    };
   };
 
   const handleUsersReload = (
@@ -208,7 +225,11 @@ const AdminUsersPage: React.FC = () => {
     options?: UseQueryLoaderLoadQueryOptions,
   ) => {
     loadUsersQuery(variables, options);
-    mirrorVariablesToUrl('users', variables, 'replace');
+    applySnapshotToUrl(
+      'users',
+      snapshotOfVariables('users', variables),
+      'replace',
+    );
   };
 
   const handleCredentialsReload = (
@@ -216,18 +237,26 @@ const AdminUsersPage: React.FC = () => {
     options?: UseQueryLoaderLoadQueryOptions,
   ) => {
     loadCredentialsQuery(variables, options);
-    mirrorVariablesToUrl('credentials', variables, 'replace');
+    applySnapshotToUrl(
+      'credentials',
+      snapshotOfVariables('credentials', variables),
+      'replace',
+    );
   };
 
   // Entries that bypass the tab-change handler (initial mount, direct URL
-  // entry, reload) build the active tab's variables from the URL; a tab
-  // reached with a warm queryRef (back/forward) needs no load at all.
+  // entry, reload) build the active tab's variables from the URL-seeded
+  // snapshot; a tab reached with a warm queryRef (back/forward) needs no load.
   const ensureActiveTabLoaded = useEffectEvent(() => {
+    const snapshot: TabSnapshot = {
+      queryParams: _.omit(queryParams, 'tab'),
+      tablePaginationOption,
+    };
     if (currentTab === 'users' && !usersQueryRef) {
-      loadUsersQuery(buildInitialUsersVariables());
+      loadUsersQuery(usersVariablesOf(snapshot));
     }
     if (currentTab === 'credentials' && !credentialsQueryRef) {
-      loadCredentialsQuery(buildInitialCredentialsVariables());
+      loadCredentialsQuery(credentialsVariablesOf(snapshot));
     }
   });
   useEffect(() => {

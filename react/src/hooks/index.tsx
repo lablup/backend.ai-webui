@@ -69,19 +69,19 @@ export const useTabQuerySnapshot = <T extends string>(
 };
 
 /**
- * Per-key value snapshots with an uncontrolled current key.
+ * Per-key value snapshots with an uncontrolled current key. The caller
+ * defines the snapshot shape `V` (e.g. `{ queryParams,
+ * tablePaginationOption }`) and passes its live value every render; the
+ * first-render value — typically parsed from the query string — seeds the
+ * initial key's snapshot.
  *
  * `sourceKey` seeds the key state and re-syncs it whenever the argument's
  * value changes (e.g. the caller derives it from the URL and the user
  * navigates back/forward). The sync is change-triggered, not
  * difference-triggered: right after `setAfterSnapshot` the caller's async URL
  * mirror still reports the departing key, but since the argument hasn't
- * changed, no bounce-back occurs.
- *
- * `getValue` reads the value to snapshot for a key; keying the read this way
- * (instead of taking the active value directly) keeps every map write an
- * internally consistent key/value pair even on renders where the key is
- * mid-transition.
+ * changed, no bounce-back occurs. It also runs during render, so effects only
+ * ever observe a settled key/value pair.
  *
  * `setAfterSnapshot(nextKey)` snapshots the current key's value, switches the
  * key, and synchronously returns the value stored for `nextKey` (`undefined`
@@ -90,12 +90,14 @@ export const useTabQuerySnapshot = <T extends string>(
  */
 export const useKeyedSnapshot = <K extends string, V>(
   sourceKey: K,
-  getValue: (key: K) => V,
+  value: V,
 ): [K, (nextKey: K) => V | undefined] => {
   'use memo';
   const [currentKey, setCurrentKey] = useState(sourceKey);
   const [prevSourceKey, setPrevSourceKey] = useState(sourceKey);
-  const snapshotMapRef = useRef<Partial<Record<K, V>>>({});
+  const snapshotMapRef = useRef<Partial<Record<K, V>>>({
+    [currentKey]: value,
+  } as Partial<Record<K, V>>);
 
   if (sourceKey !== prevSourceKey) {
     setPrevSourceKey(sourceKey);
@@ -105,11 +107,11 @@ export const useKeyedSnapshot = <K extends string, V>(
   }
 
   useEffect(() => {
-    snapshotMapRef.current[currentKey] = getValue(currentKey);
-  });
+    snapshotMapRef.current[currentKey] = value;
+  }, [currentKey, value]);
 
   const setAfterSnapshot = (nextKey: K): V | undefined => {
-    snapshotMapRef.current[currentKey] = getValue(currentKey);
+    snapshotMapRef.current[currentKey] = value;
     setCurrentKey(nextKey);
     return snapshotMapRef.current[nextKey];
   };
