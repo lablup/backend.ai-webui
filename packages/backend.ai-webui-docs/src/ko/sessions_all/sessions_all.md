@@ -262,7 +262,7 @@ navTitle: 연산 세션
 선택한 주기는 각 화면별로 따로 저장되며 새로고침 후에도 유지됩니다. 따라서 컨테이너 로그
 창에서 **끄기**를 선택하더라도 세션 목록의 자동 새로고침은 그대로 동작합니다.
 
-<!-- TODO: Capture screenshot of session_list_auto_refresh_dropdown.png — the Sessions page list toolbar with the refresh button's interval dropdown open, showing Off / 5s / 10s / 15s / 30s / 60s with 15s checked, and the countdown border on the refresh button -->
+![](../images/session_list_auto_refresh_dropdown.png)
 
 <a id="session-detail-panel"></a>
 
@@ -484,9 +484,7 @@ Notebook 의 파일 탐색기에서 `id_container file` 에는 개인 SSH 키가
 
 로그 화면에 내장된 검색 상자를 사용하여 표시된 로그 안에서 검색할 수도 있습니다.
 
-<!-- TODO: Capture screenshot of container_log_refresh_dropdown.png — the container log window toolbar showing the kernel selector, the Download button, and the refresh button with its interval dropdown open (Off / 5s / 10s / 15s / 30s / 60s, 10s checked) -->
-
-<!-- TODO: Re-capture session_log.png — the current image predates the unified refresh control; the log window toolbar no longer has a separate auto-refresh switch or interval number input -->
+![](../images/container_log_refresh_dropdown.png)
 
 
 <a id="rename-running-session"></a>
@@ -517,8 +515,6 @@ Backend.AI는 최대 세션 수명 시간, 네트워크 트래픽 기반 유휴 
 중 하나가 만료에 가까워졌을 때 나타납니다.
 
 ![](../images/idle_checks_column.png)
-
-<!-- TODO: Re-capture idle_checks_column.png — the session detail panel row is now labeled Reclamation Status with a question-mark icon, and the utilization entry is shown as a Safe / Warning / At risk badge with an info icon instead of the plain "Utilization Checker" label -->
 
 각 항목의 의미는 다음과 같습니다. **자원 수거 상태** 레이블 옆의 물음표(`?`) 아이콘을 클릭하면
 각 항목에 대한 자세한 설명이 담긴 대화 상자가 열립니다.
@@ -570,9 +566,9 @@ Backend.AI는 최대 세션 수명 시간, 네트워크 트래픽 기반 유휴 
 사용량 기반 자원 수거 항목 옆의 남은 시간 태그는 배지와 동일한 색상을 사용하므로, 남은 시간
 태그가 빨간색으로 표시된 세션이 곧 자원 수거 대상이 되는 세션입니다.
 
-<!-- TODO: Capture screenshot of session_reclamation_status_column.png — the Sessions page list showing the Reclamation Status column with Safe, Warning, and At risk badges on different rows -->
+![](../images/session_reclamation_status_column.png)
 
-<!-- TODO: Capture screenshot of session_reclamation_status_popover.png — the Reclamation Status popover opened from the info icon, showing the condition sentence, the per-resource rows with current vs threshold values, and the three-level legend -->
+![](../images/session_reclamation_status_popover.png)
 
 <a id="how-to-add-environment-variable-before-creating-a-session"></a>
 

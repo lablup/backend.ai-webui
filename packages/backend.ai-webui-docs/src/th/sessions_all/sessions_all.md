@@ -322,7 +322,7 @@ AI Accelerator บางตัวใช้ **หน่วยความจำ�
 หน้าจอแต่ละแห่งจะจดจำช่วงเวลาที่คุณเลือกแยกจากกันและคงไว้หลังการโหลดใหม่ ดังนั้นการเลือก
 **ปิด** ในหน้าต่างบันทึกคอนเทนเนอร์จะไม่หยุดการรีเฟรชของรายการเซสชัน
 
-<!-- TODO: Capture screenshot of session_list_auto_refresh_dropdown.png — the Sessions page list toolbar with the refresh button's interval dropdown open, showing Off / 5s / 10s / 15s / 30s / 60s with 15s checked, and the countdown border on the refresh button -->
+![](../images/session_list_auto_refresh_dropdown.png)
 
 <a id="session-detail-panel"></a>
 
@@ -570,9 +570,7 @@ Lab เป็นต้น ขึ้นอยู่กับประเภทข
 
 คุณยังสามารถค้นหาภายในบันทึกที่แสดงอยู่ได้โดยใช้ช่องค้นหาที่มีอยู่ในมุมมองบันทึก
 
-<!-- TODO: Capture screenshot of container_log_refresh_dropdown.png — the container log window toolbar showing the kernel selector, the Download button, and the refresh button with its interval dropdown open (Off / 5s / 10s / 15s / 30s / 60s, 10s checked) -->
-
-<!-- TODO: Re-capture session_log.png — the current image predates the unified refresh control; the log window toolbar no longer has a separate auto-refresh switch or interval number input -->
+![](../images/container_log_refresh_dropdown.png)
 
 
 <a id="rename-running-session"></a>
@@ -609,8 +607,6 @@ Backend.AI รองรับเกณฑ์การไร้กิจกรร
 และการตรวจสอบสถานะไม่ใช้งานรายการใดรายการหนึ่งกำลังใกล้หมดอายุ
 
 ![](../images/idle_checks_column.png)
-
-<!-- TODO: Re-capture idle_checks_column.png — the session detail panel row is now labeled Reclamation Status with a question-mark icon, and the utilization entry is shown as a Safe / Warning / At risk badge with an info icon instead of the plain "Utilization Checker" label -->
 
 ความหมายของตัวตรวจสอบสถานะไม่ใช้งานมีดังต่อไปนี้ คลิกไอคอนเครื่องหมายคำถาม (`?`)
 ถัดจากป้ายกำกับ **สถานะการเรียกคืน** เพื่อเปิดกล่องโต้ตอบที่มีคำอธิบายโดยละเอียดของแต่ละรายการ
@@ -667,9 +663,9 @@ Backend.AI รองรับเกณฑ์การไร้กิจกรร
 แท็กเวลาที่เหลือซึ่งแสดงถัดจากรายการตัวตรวจสอบการใช้งานใช้สีเดียวกับป้าย ดังนั้นเซสชันที่
 การนับถอยหลังเปลี่ยนเป็นสีแดงก็คือเซสชันที่มีความเสี่ยงที่จะถูกเรียกคืน
 
-<!-- TODO: Capture screenshot of session_reclamation_status_column.png — the Sessions page list showing the Reclamation Status column with Safe, Warning, and At risk badges on different rows -->
+![](../images/session_reclamation_status_column.png)
 
-<!-- TODO: Capture screenshot of session_reclamation_status_popover.png — the Reclamation Status popover opened from the info icon, showing the condition sentence, the per-resource rows with current vs threshold values, and the three-level legend -->
+![](../images/session_reclamation_status_popover.png)
 
 <a id="how-to-add-environment-variable-before-creating-a-session"></a>
 

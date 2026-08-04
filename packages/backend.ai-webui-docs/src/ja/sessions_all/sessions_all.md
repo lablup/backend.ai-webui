@@ -329,7 +329,7 @@ navTitle: コンピュートセッション
 選択した間隔は画面ごとに個別に記憶され、再読み込み後も維持されます。したがって、コンテナログ
 ウィンドウで **オフ** を選んでも、セッションリストの自動更新は止まりません。
 
-<!-- TODO: Capture screenshot of session_list_auto_refresh_dropdown.png — the Sessions page list toolbar with the refresh button's interval dropdown open, showing Off / 5s / 10s / 15s / 30s / 60s with 15s checked, and the countdown border on the refresh button -->
+![](../images/session_list_auto_refresh_dropdown.png)
 
 <a id="session-detail-panel"></a>
 
@@ -586,9 +586,7 @@ TensorBoardやJupyter LabなどのWebベースのサービスを利用できま�
 
 ログ表示に組み込まれた検索ボックスを使って、表示中のログ内を検索することもできます。
 
-<!-- TODO: Capture screenshot of container_log_refresh_dropdown.png — the container log window toolbar showing the kernel selector, the Download button, and the refresh button with its interval dropdown open (Off / 5s / 10s / 15s / 30s / 60s, 10s checked) -->
-
-<!-- TODO: Re-capture session_log.png — the current image predates the unified refresh control; the log window toolbar no longer has a separate auto-refresh switch or interval number input -->
+![](../images/container_log_refresh_dropdown.png)
 
 
 <a id="rename-running-session"></a>
@@ -625,8 +623,6 @@ Backend.AIは、コンピュートセッションの自動ガベージコレク�
 セッションが実行中で、いずれかのアイドルチェックが期限に近づいているときに表示されます。
 
 ![](../images/idle_checks_column.png)
-
-<!-- TODO: Re-capture idle_checks_column.png — the session detail panel row is now labeled Reclamation Status with a question-mark icon, and the utilization entry is shown as a Safe / Warning / At risk badge with an info icon instead of the plain "Utilization Checker" label -->
 
 各アイドルチェッカーの意味は次のとおりです。**リクレイム状態** ラベルの横にある疑問符（`?`）
 アイコンをクリックすると、各項目の詳細な説明が記載されたダイアログが開きます。
@@ -700,9 +696,9 @@ Backend.AIは、コンピュートセッションの自動ガベージコレク�
 使用量ベースの資源回収の項目の横に表示される残り時間のタグは、バッジと同じ色を使用します。
 そのため、残り時間のタグが赤くなっているセッションが、まさに回収の対象となるセッションです。
 
-<!-- TODO: Capture screenshot of session_reclamation_status_column.png — the Sessions page list showing the Reclamation Status column with Safe, Warning, and At risk badges on different rows -->
+![](../images/session_reclamation_status_column.png)
 
-<!-- TODO: Capture screenshot of session_reclamation_status_popover.png — the Reclamation Status popover opened from the info icon, showing the condition sentence, the per-resource rows with current vs threshold values, and the three-level legend -->
+![](../images/session_reclamation_status_popover.png)
 
 <a id="how-to-add-environment-variable-before-creating-a-session"></a>
 

@@ -358,7 +358,7 @@ Each of these surfaces remembers your interval separately and keeps it across
 reloads, so choosing **Off** in the container log window does not stop the
 session list from refreshing.
 
-<!-- TODO: Capture screenshot of session_list_auto_refresh_dropdown.png — the Sessions page list toolbar with the refresh button's interval dropdown open, showing Off / 5s / 10s / 15s / 30s / 60s with 15s checked, and the countdown border on the refresh button -->
+![](../images/session_list_auto_refresh_dropdown.png)
 
 <a id="session-detail-panel"></a>
 
@@ -645,9 +645,7 @@ highlighted.
 You can also search within the displayed log using the search box built into the
 log view.
 
-<!-- TODO: Capture screenshot of container_log_refresh_dropdown.png — the container log window toolbar showing the kernel selector, the Download button, and the refresh button with its interval dropdown open (Off / 5s / 10s / 15s / 30s / 60s, 10s checked) -->
-
-<!-- TODO: Re-capture session_log.png — the current image predates the unified refresh control; the log window toolbar no longer has a separate auto-refresh switch or interval number input -->
+![](../images/container_log_refresh_dropdown.png)
 
 
 <a id="rename-running-session"></a>
@@ -687,8 +685,6 @@ would terminate the session. The row appears while the session is running and on
 of its idle checks is approaching expiration.
 
 ![](../images/idle_checks_column.png)
-
-<!-- TODO: Re-capture idle_checks_column.png — the session detail panel row is now labeled Reclamation Status with a question-mark icon, and the utilization entry is shown as a Safe / Warning / At risk badge with an info icon instead of the plain "Utilization Checker" label -->
 
 The meaning of idle checkers are as follows. Click the question-mark (`?`) icon
 next to the **Reclamation Status** label to open a dialog with the full
@@ -771,9 +767,9 @@ The remaining-time tag shown next to the utilization entry uses the same colors
 as the badge, so a session whose countdown turns red is also the one at risk of
 being reclaimed.
 
-<!-- TODO: Capture screenshot of session_reclamation_status_column.png — the Sessions page list showing the Reclamation Status column with Safe, Warning, and At risk badges on different rows -->
+![](../images/session_reclamation_status_column.png)
 
-<!-- TODO: Capture screenshot of session_reclamation_status_popover.png — the Reclamation Status popover opened from the info icon, showing the condition sentence, the per-resource rows with current vs threshold values, and the three-level legend -->
+![](../images/session_reclamation_status_popover.png)
 
 <a id="how-to-add-environment-variable-before-creating-a-session"></a>
 
