@@ -27,6 +27,7 @@ import {
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useMountableVFolderHosts } from '../hooks/useMountableVFolderHosts';
 import {
   buildRuntimeVariantPresetValues,
   type RuntimeParameterGroup,
@@ -205,6 +206,40 @@ const PresetDetailLoader: React.FC<{
       open
       presetFrgmt={data.deploymentRevisionPreset}
       onCancel={onCancel}
+    />
+  );
+};
+
+/**
+ * Model folder picker for the deployment revision forms.
+ *
+ * The backend defers the storage-host mount-permission check (MOUNT_IN_SESSION)
+ * to session start / replica spawn rather than deployment creation, so a
+ * deployment built from a model folder on a non-mountable host is accepted and
+ * only fails later when its replicas try to mount it. Restricting the picker to
+ * folders whose host the user may actually mount prevents that failure up front.
+ *
+ * The mountable-host query lives in this child component, rather than the modal
+ * body, so it suspends within each select's own `<Suspense>` skeleton instead of
+ * blanking the whole modal.
+ */
+const MountableModelFolderSelect: React.FC<
+  Omit<React.ComponentProps<typeof BAIVFolderSelect>, 'filter'>
+> = ({ ref, ...props }) => {
+  'use memo';
+  const mountableVFolderHosts = useMountableVFolderHosts();
+  const hostMountFilter =
+    mountableVFolderHosts.length > 0
+      ? mountableVFolderHosts
+          .map((host) => `host == ${JSON.stringify(host)}`)
+          .join(' | ')
+      : // No mountable host: match nothing rather than every folder.
+        'host == "__no_mountable_host__"';
+  return (
+    <BAIVFolderSelect
+      {...props}
+      ref={ref}
+      filter={`usage_mode == "model" & (${hostMountFilter})`}
     />
   );
 };
@@ -1537,12 +1572,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                     noStyle
                     rules={[{ required: true }]}
                   >
-                    <BAIVFolderSelect
+                    <MountableModelFolderSelect
                       ref={presetVFolderSelectRef}
                       currentProjectId={currentProjectId ?? undefined}
                       disabled={!currentProjectId}
                       excludeDeleted
-                      filter='usage_mode == "model"'
                       style={{ flex: 1 }}
                     />
                   </Form.Item>
@@ -1618,12 +1652,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                   noStyle
                   rules={[{ required: true }]}
                 >
-                  <BAIVFolderSelect
+                  <MountableModelFolderSelect
                     ref={customVFolderSelectRef}
                     currentProjectId={currentProjectId ?? undefined}
                     disabled={!currentProjectId}
                     excludeDeleted
-                    filter='usage_mode == "model"'
                     style={{ flex: 1 }}
                   />
                 </Form.Item>
