@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { backendaiClientPromise } from '.';
+import { backendaiClientPromise, useSuspendedBackendaiClient } from '.';
 import {
   useDefaultImagesWithFallbackQuery,
   useDefaultImagesWithFallbackQuery$data,
@@ -133,6 +133,14 @@ export const useDefaultFileBrowserImageWithFallback = () => {
 export const useImageReferenceResolver = () => {
   'use memo';
   const relayEnv = useRelayEnvironment();
+  const baiClient = useSuspendedBackendaiClient();
+  // Mirror the candidate set `ImageEnvironmentSelectFormItems` queries, so both
+  // launch paths resolve the same reference to the same image. Narrowing to
+  // installed images here would make a tag-less default pick an older image
+  // than the launcher form does when `showNonInstalledImages` is enabled.
+  const imageQueryVariables = baiClient?._config?.showNonInstalledImages
+    ? {}
+    : { installed: true };
 
   const resolveImageReference = async (
     imageString: string | undefined,
@@ -147,9 +155,7 @@ export const useImageReferenceResolver = () => {
       const response = await fetchQuery<useDefaultImagesWithFallbackQuery>(
         relayEnv,
         IMAGES_QUERY,
-        {
-          installed: true,
-        },
+        imageQueryVariables,
         {
           fetchPolicy: 'store-or-network',
         },

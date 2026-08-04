@@ -35,7 +35,11 @@ type SessionCreationSuccess = {
 interface CreateSessionInfo {
   kernelName: string;
   sessionName: string;
-  architecture: string;
+  // Left `undefined` when the image reference carries no `@arch` suffix, so
+  // that `createIfNotExists()` applies its own `x86_64` default. Passing an
+  // empty string instead would suppress that default and send a blank
+  // architecture to the manager.
+  architecture: string | undefined;
   batchTimeout?: string;
   resources: SessionResources;
 }
@@ -170,9 +174,9 @@ export const useStartSession = () => {
     // the architecture. Resolve them against the registered image list here so
     // every caller of `startSession` behaves like the launcher form (FR-3462).
     const imageFullName = await resolveImageReference(requestedImage);
-    const [kernelName, architecture] = imageFullName
-      ? imageFullName.split('@')
-      : ['', ''];
+    // `architecture` stays `undefined` for a reference without `@arch` on
+    // purpose — see the note on `CreateSessionInfo.architecture`.
+    const [kernelName = '', architecture] = imageFullName?.split('@') ?? [];
 
     const sessionName = _.isEmpty(values.sessionName)
       ? generateSessionId()
