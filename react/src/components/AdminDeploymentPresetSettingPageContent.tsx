@@ -582,17 +582,18 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
   }, [mode, preset]);
 
   const applyInitialValues = useEffectEvent(() => {
-    // In edit mode, skip applying until the preset data is available.
-    if (mode === 'edit' && !preset) return;
-    // resetFields() resets to the Form's current `initialValues` prop and then
-    // setFieldsValue() deep-merges on top. This two-step ensures stale values
-    // from a previous render (e.g. EMPTY_MODEL_SEED's commandExecution) do not
-    // survive into the edit-mode prefill.
-    form.resetFields();
-    if (mode === 'create') {
-      form.setFieldsValue(_.merge({}, initialValues, formValuesFromURL));
+    if (mode === 'edit') {
+      // Edit mode: `initialValues` is computed from the Relay fragment via
+      // useMemo and passed as the Form's `initialValues` prop, which antd
+      // applies on mount. resetFields() re-applies those values when the
+      // preset data changes (e.g. after a Relay store update from a mutation).
+      if (!preset) return;
+      form.resetFields();
     } else {
-      form.setFieldsValue(initialValues);
+      // Create mode: merge URL-synced values on top of defaults so a
+      // half-filled form survives a reload.
+      form.resetFields();
+      form.setFieldsValue(_.merge({}, initialValues, formValuesFromURL));
     }
   });
 

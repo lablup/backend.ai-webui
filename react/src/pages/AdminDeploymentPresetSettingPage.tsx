@@ -76,12 +76,14 @@ const buildModelDefinitionInput = (
             // both — the backend prefers `command`.
             ...(supportsCommandShell
               ? {
-                  command: service.startCommand ?? '',
-                  shell: resolveCommandShell({
-                    advanced: !!service.commandAdvanced,
-                    execution: service.commandExecution ?? 'shell',
-                    shell: service.shell,
-                  }),
+                  command: service.startCommand || null,
+                  shell: service.startCommand
+                    ? resolveCommandShell({
+                        advanced: !!service.commandAdvanced,
+                        execution: service.commandExecution ?? 'shell',
+                        shell: service.shell,
+                      })
+                    : undefined,
                 }
               : {
                   startCommand: tokenizeShellCommand(
