@@ -24,6 +24,8 @@ import {
   toFixedWithTypeValidation,
   addNumberWithUnits,
   subNumberWithUnits,
+  compareImageVersions,
+  resolveImageStringFromImages,
 } from './index';
 
 describe('isOutsideRange', () => {
@@ -1051,5 +1053,129 @@ describe('subNumberWithUnits', () => {
   it('should handle negative results', () => {
     const result = subNumberWithUnits('2g', '5g', 'g');
     expect(result).toBe('-3g');
+  });
+});
+
+describe('compareImageVersions', () => {
+  it('should treat a higher leading segment as newer', () => {
+    expect(compareImageVersions('3.13', '3.9')).toBe(1);
+    expect(compareImageVersions('3.9', '3.13')).toBe(-1);
+  });
+
+  it('should return 0 for equal versions', () => {
+    expect(compareImageVersions('3.13', '3.13')).toBe(0);
+  });
+
+  it('should pad missing segments with zero', () => {
+    expect(compareImageVersions('3.13.1', '3.13')).toBe(1);
+    expect(compareImageVersions('3.13', '3.13.0')).toBe(0);
+  });
+});
+
+describe('resolveImageStringFromImages', () => {
+  const images = [
+    {
+      registry: 'cr.backend.ai',
+      namespace: 'stable/python',
+      tag: '3.9-ubuntu20.04',
+      architecture: 'x86_64',
+    },
+    {
+      registry: 'cr.backend.ai',
+      namespace: 'stable/python',
+      tag: '3.13-ubuntu24.04',
+      architecture: 'aarch64',
+    },
+    {
+      registry: 'cr.backend.ai',
+      namespace: 'stable/python',
+      tag: '3.13-ubuntu24.04',
+      architecture: 'x86_64',
+    },
+    {
+      registry: 'cr.backend.ai',
+      namespace: 'stable/python-ff',
+      tag: '3.13-ubuntu24.04',
+      architecture: 'x86_64',
+    },
+  ];
+
+  it('should return the exact image for a fully qualified reference', () => {
+    expect(
+      resolveImageStringFromImages(
+        'cr.backend.ai/stable/python:3.9-ubuntu20.04@x86_64',
+        images,
+      ),
+    ).toBe('cr.backend.ai/stable/python:3.9-ubuntu20.04@x86_64');
+  });
+
+  it('should pick the first available architecture when the tag has no architecture', () => {
+    expect(
+      resolveImageStringFromImages(
+        'cr.backend.ai/stable/python:3.13-ubuntu24.04',
+        images,
+      ),
+    ).toBe('cr.backend.ai/stable/python:3.13-ubuntu24.04@aarch64');
+  });
+
+  it('should pick the latest version when the reference has no tag', () => {
+    expect(
+      resolveImageStringFromImages('cr.backend.ai/stable/python', images),
+    ).toBe('cr.backend.ai/stable/python:3.13-ubuntu24.04@aarch64');
+  });
+
+  it('should not match an environment that merely shares a name prefix', () => {
+    expect(
+      resolveImageStringFromImages('cr.backend.ai/stable/pyth', images),
+    ).toBeUndefined();
+  });
+
+  it('should return undefined when no registered image matches', () => {
+    expect(
+      resolveImageStringFromImages(
+        'cr.backend.ai/stable/python:0.0-nonexistent',
+        images,
+      ),
+    ).toBeUndefined();
+    expect(
+      resolveImageStringFromImages('cr.backend.ai/missing/image', images),
+    ).toBeUndefined();
+  });
+
+  it('should return undefined for an empty reference or empty image list', () => {
+    expect(resolveImageStringFromImages('', images)).toBeUndefined();
+    expect(resolveImageStringFromImages(undefined, images)).toBeUndefined();
+    expect(
+      resolveImageStringFromImages('cr.backend.ai/stable/python', []),
+    ).toBeUndefined();
+    expect(
+      resolveImageStringFromImages('cr.backend.ai/stable/python', undefined),
+    ).toBeUndefined();
+  });
+
+  it('should fall back to the deprecated name field when namespace is absent', () => {
+    expect(
+      resolveImageStringFromImages('cr.backend.ai/stable/python', [
+        {
+          registry: 'cr.backend.ai',
+          name: 'stable/python',
+          tag: '3.13-ubuntu24.04',
+          architecture: 'x86_64',
+        },
+      ]),
+    ).toBe('cr.backend.ai/stable/python:3.13-ubuntu24.04@x86_64');
+  });
+
+  it('should handle a registry with a port', () => {
+    expect(
+      resolveImageStringFromImages('127.0.0.1:5000/stable/python', [
+        {
+          registry: '127.0.0.1:5000',
+          namespace: 'stable/python',
+          tag: '3.13-ubuntu24.04',
+          architecture: 'x86_64',
+        },
+      ]),
+    ).toBe('127.0.0.1:5000/stable/python:3.13-ubuntu24.04@x86_64');
   });
 });

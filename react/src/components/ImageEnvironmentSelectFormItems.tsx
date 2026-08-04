@@ -7,6 +7,7 @@ import {
   ImageEnvironmentSelectFormItemsQuery$data,
 } from '../__generated__/ImageEnvironmentSelectFormItemsQuery.graphql';
 import {
+  compareImageVersions,
   getImageFullName,
   localeCompare,
   parseImageString,
@@ -66,24 +67,6 @@ interface ImageEnvironmentSelectFormItemsProps {
   filter?: (image: Image) => boolean;
   showPrivate?: boolean;
   searchPrefill?: string;
-}
-
-function compareVersions(version1: string, version2: string): number {
-  const v1 = version1.split('.').map(Number);
-  const v2 = version2.split('.').map(Number);
-
-  for (let i = 0; i < Math.max(v1.length, v2.length); i++) {
-    const num1 = v1[i] || 0;
-    const num2 = v2[i] || 0;
-
-    if (num1 > num2) {
-      return 1;
-    } else if (num1 < num2) {
-      return -1;
-    }
-  }
-
-  return 0;
 }
 
 const isPrivateImage = (image: Image) => {
@@ -231,7 +214,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                   prefix: environmentName.split('/').slice(1, -1).join('/'),
                   images: images.sort(
                     (a, b) =>
-                      compareVersions(
+                      compareImageVersions(
                         // latest version comes first
                         b?.tag?.split('-')?.[0] ?? '',
                         a?.tag?.split('-')?.[0] ?? '',

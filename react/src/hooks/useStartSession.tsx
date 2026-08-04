@@ -19,6 +19,7 @@ import {
   useCurrentProjectValue,
   useCurrentResourceGroupState,
 } from './useCurrentProject';
+import { useImageReferenceResolver } from './useDefaultImagesWithFallback';
 import { generateRandomString, toGlobalId } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
@@ -112,6 +113,7 @@ export const useStartSession = () => {
   const { upsertNotification } = useSetBAINotification();
 
   const relayEnv = useRelayEnvironment();
+  const { resolveImageReference } = useImageReferenceResolver();
   const baiClient = useSuspendedBackendaiClient();
   const supportsMountById = baiClient.supports('mount-by-id');
   const supportBatchTimeout = baiClient?.supports('batch-timeout') ?? false;
@@ -157,9 +159,17 @@ export const useStartSession = () => {
   const startSession = async (
     values: SessionLauncherFormValue & { dependencies?: string[] },
   ) => {
-    // If manual image is selected, use it as kernelName
-    const imageFullName =
-      values.environments.manual || values.environments.version;
+    // If manual image is selected, use it as kernelName. `environment` holds a
+    // name-only reference (see `normalizeEnvironmentFormat`), which callers
+    // that never render the launcher form rely on us to resolve.
+    const requestedImage =
+      values.environments.manual ||
+      values.environments.version ||
+      values.environments.environment;
+    // Config values such as `defaultImportEnvironment` may omit the tag and/or
+    // the architecture. Resolve them against the registered image list here so
+    // every caller of `startSession` behaves like the launcher form (FR-3462).
+    const imageFullName = await resolveImageReference(requestedImage);
     const [kernelName, architecture] = imageFullName
       ? imageFullName.split('@')
       : ['', ''];

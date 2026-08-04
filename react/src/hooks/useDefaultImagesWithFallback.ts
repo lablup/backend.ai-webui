@@ -7,7 +7,11 @@ import {
   useDefaultImagesWithFallbackQuery,
   useDefaultImagesWithFallbackQuery$data,
 } from '../__generated__/useDefaultImagesWithFallbackQuery.graphql';
-import { getImageFullName } from '../helper';
+import {
+  getImageFullName,
+  parseImageString,
+  resolveImageStringFromImages,
+} from '../helper';
 import { atom, useAtom } from 'jotai';
 import { atomWithDefault } from 'jotai/utils';
 import * as _ from 'lodash-es';
@@ -109,6 +113,60 @@ export const useDefaultFileBrowserImageWithFallback = () => {
   }, []);
 
   return defaultFileBrowserImage;
+};
+
+/**
+ * Resolve a possibly-partial image reference into a full
+ * `registry/namespace:tag@arch` name, using the registered image list.
+ *
+ * `ImageEnvironmentSelectFormItems` performs this matching for the session
+ * launcher form, but launch paths that never render that form (the Start from
+ * URL import features) previously passed the configured string straight to the
+ * manager. A documented partial value such as `cr.backend.ai/stable/python`
+ * then reached the manager verbatim, which resolves it to a `:latest` tag that
+ * is not registered, failing the launch (FR-3462).
+ *
+ * A fully-qualified reference skips the lookup entirely, and anything that
+ * cannot be resolved is returned unchanged so the server keeps reporting the
+ * misconfiguration exactly as before.
+ */
+export const useImageReferenceResolver = () => {
+  'use memo';
+  const relayEnv = useRelayEnvironment();
+
+  const resolveImageReference = async (
+    imageString: string | undefined,
+  ): Promise<string | undefined> => {
+    if (!imageString) return imageString;
+
+    const { hasTag, hasArch } = parseImageString(imageString);
+    // Already fully qualified — no lookup needed.
+    if (hasTag && hasArch) return imageString;
+
+    try {
+      const response = await fetchQuery<useDefaultImagesWithFallbackQuery>(
+        relayEnv,
+        IMAGES_QUERY,
+        {
+          installed: true,
+        },
+        {
+          fetchPolicy: 'store-or-network',
+        },
+      ).toPromise();
+
+      return (
+        resolveImageStringFromImages(imageString, response?.images) ??
+        imageString
+      );
+    } catch {
+      // Keep the original value so the launch surfaces the server-side error
+      // instead of silently doing nothing.
+      return imageString;
+    }
+  };
+
+  return { resolveImageReference };
 };
 
 export const useDefaultSystemSSHImageWithFallback = () => {

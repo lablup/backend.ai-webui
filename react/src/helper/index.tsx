@@ -488,6 +488,115 @@ export const localeCompare = (a?: string | null, b?: string | null) => {
   return a.localeCompare(b);
 };
 
+/**
+ * Compare two dot-separated version strings numerically.
+ * @returns 1 when version1 is newer, -1 when older, 0 when equal
+ */
+export const compareImageVersions = (
+  version1: string,
+  version2: string,
+): number => {
+  const v1 = version1.split('.').map(Number);
+  const v2 = version2.split('.').map(Number);
+
+  for (let i = 0; i < Math.max(v1.length, v2.length); i++) {
+    const num1 = v1[i] || 0;
+    const num2 = v2[i] || 0;
+
+    if (num1 > num2) {
+      return 1;
+    } else if (num1 < num2) {
+      return -1;
+    }
+  }
+
+  return 0;
+};
+
+type PartialImageRef = NonNullable<
+  DeepPartial<Image | CommittedImage | EnvironmentImage>
+>;
+
+/**
+ * Resolve a possibly-partial image reference from `config.toml` against the
+ * registered image list, following the formats documented in
+ * `config.toml.sample` for `defaultSessionEnvironment` /
+ * `defaultImportEnvironment`:
+ *
+ * - `registry/namespace:tag@arch` → the exact image
+ * - `registry/namespace:tag` → the first available architecture for that tag
+ * - `registry/namespace` → the latest version, first available architecture
+ *
+ * This mirrors the matching `ImageEnvironmentSelectFormItems` performs for the
+ * session launcher form, so launch paths that bypass that form (the Start from
+ * URL import features) resolve the same config value to the same image.
+ *
+ * @returns the full image name (`registry/namespace:tag@arch`), or `undefined`
+ *   when no registered image matches
+ */
+export const resolveImageStringFromImages = (
+  imageString: string | undefined | null,
+  images: ReadonlyArray<PartialImageRef | null | undefined> | undefined | null,
+): string | undefined => {
+  if (!imageString) return undefined;
+
+  const candidates = (images ?? []).filter(
+    (image): image is PartialImageRef => !!image,
+  );
+
+  // 1. Exact full name match (registry/namespace:tag@arch)
+  const exactMatch = _.find(
+    candidates,
+    (image) => getImageFullName(image) === imageString,
+  );
+  if (exactMatch) return getImageFullName(exactMatch);
+
+  const { registryAndNamespace, hasTag, hasArch } =
+    parseImageString(imageString);
+
+  // 2. Tag but no architecture: take the first available architecture.
+  // Sorted by architecture name so the pick does not depend on the order the
+  // server happened to return the images in.
+  if (hasTag && !hasArch) {
+    const sameTag = _.filter(
+      candidates,
+      (image) =>
+        removeArchitectureFromImageFullName(getImageFullName(image)) ===
+        imageString,
+    );
+    const matched = _.first(
+      [...sameTag].sort((a, b) =>
+        localeCompare(a?.architecture, b?.architecture),
+      ),
+    );
+    return matched ? getImageFullName(matched) : undefined;
+  }
+
+  // 3. Neither tag nor architecture: take the latest version
+  if (!hasTag) {
+    const sameEnvironment = _.filter(
+      candidates,
+      (image) =>
+        `${image.registry}/${image.namespace ?? image.name}` ===
+        registryAndNamespace,
+    );
+    // Sorted the same way as the launcher's version select: latest first,
+    // then by architecture name so the pick is deterministic.
+    const latest = _.first(
+      [...sameEnvironment].sort(
+        (a, b) =>
+          compareImageVersions(
+            b?.tag?.split('-')?.[0] ?? '',
+            a?.tag?.split('-')?.[0] ?? '',
+          ) || localeCompare(a?.architecture, b?.architecture),
+      ),
+    );
+    return latest ? getImageFullName(latest) : undefined;
+  }
+
+  return undefined;
+};
+
 export const numberSorterWithInfinityValue = (
   a?: number | null,
   b?: number | null,
@@ -856,11 +965,7 @@ export function isIpIncludedInList(ip: string, entries: string[]): boolean {
 }
 
 type SSEHandlerKeys =
-  | 'onUpdated'
-  | 'onDone'
-  | 'onFailed'
-  | 'onTaskFailed'
-  | 'onTaskCancelled';
+  'onUpdated' | 'onDone' | 'onFailed' | 'onTaskFailed' | 'onTaskCancelled';
 
 export type SSEEventHandlerTypes<
   BaseType = unknown,
