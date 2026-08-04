@@ -34,10 +34,7 @@ export interface BAIVFolderSelectRef {
   refetch: () => void;
 }
 
-/**
- * RBAC permission names accepted by the `permission` argument of
- * `vfolder_nodes`.
- */
+/** Permission names accepted by the `permission` argument of `vfolder_nodes`. */
 export type BAIVFolderPermission =
   | 'clone'
   | 'assign_permission_to_others'
@@ -61,21 +58,9 @@ export interface BAIVFolderSelectProps extends Omit<
   valuePropName?: 'id' | 'row_id';
   excludeDeleted?: boolean;
   /**
-   * Permission a folder must grant the current user to be listed. Only folders
-   * whose computed permission set contains it are returned — it is a filter on
-   * the listing, not a description of the folder. Defaults to
-   * `'read_attribute'`, i.e. every folder the user can see.
-   *
-   * Exactly one permission, because that is what the API takes: the
-   * `vfolder_nodes` argument is the single scalar `VFolderPermissionValueField`
-   * ("One of [...]"), parsed server-side into one `VFolderRBACPermission`. It
-   * accepts no list, and requiring several would mean several round trips whose
-   * intersection breaks `count` and pagination.
-   *
-   * Pass `'mount_rw'` when the caller writes into the folder from a session:
-   * read-only folders (a `ro` mount permission, or a model folder owned by
-   * another project's Model Store) are mounted read-only and any write fails
-   * inside the container, so they must not be offered as a destination.
+   * Lists only the folders granting this permission to the current user.
+   * Defaults to `'read_attribute'`; one value only, as the API argument is a
+   * single scalar.
    */
   requiredPermission?: BAIVFolderPermission;
   onResolvedNamesChange?: (nameMap: Record<string, string>) => void;
@@ -128,11 +113,8 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
   // Defer query refetch to prevent flickering during user selection
   const deferredControllableValue = useDeferredValue(controllableValue);
 
-  // Resolves the label of the already-selected value(s). This deliberately
-  // stays on `read_attribute` rather than following `requiredPermission`:
-  // narrowing it would leave an externally-supplied value unresolved and the
-  // select would fall back to rendering the raw ID as its label. The option
-  // list below is what `requiredPermission` narrows.
+  // Labels the selected value(s). Stays on `read_attribute` — narrowing it to
+  // `requiredPermission` would leave an externally-set value showing a raw ID.
   const { vfolder_nodes: selectedVFolderNodes } =
     useLazyLoadQuery<BAIVFolderSelectValueQuery>(
       graphql`

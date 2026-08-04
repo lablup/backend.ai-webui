@@ -297,13 +297,8 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
                   ref={vfolderSelectRef}
                   excludeDeleted
                   filter='usage_mode == "model"'
-                  // The download session writes the model into a subfolder of
-                  // the selected folder, so a read-only mount fails inside the
-                  // container ("Read-only file system"). Offer only folders
-                  // this user can mount read-write, scoped to the project the
-                  // session runs in — cross-project folders are dropped when
-                  // the session mounts, and another project's Model Store
-                  // folders are always mounted read-only.
+                  // The session writes into the folder, so a read-only mount
+                  // fails; the project scope matches what it can mount.
                   requiredPermission="mount_rw"
                   currentProjectId={currentProject.id ?? undefined}
                   style={{ flex: 1 }}
@@ -378,9 +373,6 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
         onRequestClose={(result) => {
           setIsFolderCreateModalOpen(false);
           if (result?.accessControl?.permission === 'READ_ONLY') {
-            // The folder exists, but selecting it would only defer the
-            // failure to the download session, so leave the field untouched
-            // and say why.
             app.message.warning(t('import.CreatedFolderIsReadOnly'));
             return;
           }
