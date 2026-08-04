@@ -34,7 +34,6 @@ navTitle: 管理者機能
 該当ユーザーの**メール**列の行にある**編集**（鉛筆）アイコンをクリックすると、既存のユーザーの設定を変更できます。ユーザー名、パスワード、有効化状態などを変更できます。ユーザーID（メールアドレス）は変更できません。変更を適用するには**保存**をクリックします。
 
 ![](../images/user_update_dialog.png)
-<!-- TODO: Re-capture user_update_dialog.png — the row action is the Edit (pencil) icon and the dialog's submit button reads Save. -->
 
 
 ユーザー作成/編集ダイアログには、以下のフィールドが含まれています。
@@ -197,7 +196,6 @@ CSV ファイルを選択すると、ダイアログにすべての行を一覧�
 3. **ユーザーを一括編集** ダイアログが開きます。
 
 ![](../images/bulk_edit_users_modal.png)
-<!-- TODO: Capture screenshot of bulk_edit_users_modal.png — Bulk Edit Users dialog showing the warning alert that lists the selected users' email addresses above the form fields -->
 
 ダイアログ上部のアラートには、変更が適用されるすべてのユーザーのメールアドレスが並ぶため、実行前に選択内容を
 確認できます。あわせて、UID または GID を設定すると既存のフォルダマウントの使用が制限される場合があるという
@@ -320,7 +318,6 @@ Backend.AIサーバーに対するAPI認証に使用されます。ログイン�
 可能性がある点にご注意ください。
 
 ![](../images/keypair_update_dialog.png)
-<!-- TODO: Re-capture keypair_update_dialog.png — the dialog is titled Edit Keypair Resource Policy and its submit button reads Save. -->
 
 キーペアの行にある「非アクティブ化」ボタンまたは「活性化」ボタンをクリックすると、
 キーペアを無効化または再有効化することもできます。ユーザー管理タブとは異なり、非アクティブタブでは
@@ -345,7 +342,6 @@ Backend.AIサーバーに対するAPI認証に使用されます。ログイン�
 4. 確認すると変更が適用されます。
 
 ![](../images/credential_bulk_deactivate.png)
-<!-- TODO: Capture screenshot of credential_bulk_deactivate.png — Credentials tab with several active keypairs selected, showing the selection count and the red Deactivate button in the toolbar -->
 
 一部だけ成功した場合は、変更できた資格情報の件数と失敗した件数が結果メッセージに表示されます。タブの切り替え、
 フィルターの変更、並べ替え、ページ移動を行うと選択は解除されます。
@@ -358,7 +354,6 @@ Backend.AIサーバーに対するAPI認証に使用されます。ログイン�
 ユーザーのキーペアを新たに作成できます。
 
 ![](../images/add_keypair_dialog.png)
-<!-- TODO: Re-capture add_keypair_dialog.png — the button reads Create Credential and the first field is a searchable User select instead of a free-text email input. -->
 
 ダイアログには次のフィールドがあります。
 
@@ -787,7 +782,6 @@ Backend.AIでは、管理者は各キーペア、ユーザー、プロジェク�
 **保存**をクリックして、変更したリソースポリシーを適用します。
 
 ![](../images/update_resource_policy.png)
-<!-- TODO: Re-capture update_resource_policy.png — the dialog is titled Edit Keypair Resource Policy and its submit button reads Save. -->
 
 リソースポリシーダイアログの各オプションの詳細については、以下の説明を参照してください。
 
@@ -873,7 +867,6 @@ Backend.AIはユーザーリソースポリシーの管理をサポートして�
 最大セッション数」や「最大カスタマイズイメージ数」などの個別のリソース制限を設定できます。
 
 ![](../images/user_resource_policy_list.png)
-<!-- TODO: Re-capture user_resource_policy_list.png — the tab now shows the property filter bar above the table and the Create button at the top right. -->
 
 テーブルには **名前**（インラインの **編集** と **削除** アクション付き）、**最大フォルダ数**、
 **最大同時ログイン数**、**モデルセッションごとの最大セッション数**、**最大クォータ スコープ サイズ**、
@@ -1361,7 +1354,6 @@ GitLabコンテナレジストリを追加する場合、追加情報フィー�
 開きます。このドロワーにも間隔ドロップダウン付きの更新ボタンがあり、間隔を選ぶまで自動更新は **オフ** です。
 
 ![](../images/detailed_agent_node_usage_information.png)
-<!-- TODO: Re-capture detailed_agent_node_usage_information.png — the usage detail now opens as the Agent Info drawer from the agent ID, with the action buttons in the drawer header. -->
 
 <a id="control-agent-service"></a>
 
@@ -1374,7 +1366,6 @@ GitLabコンテナレジストリを追加する場合、追加情報フィー�
 - **エージェントを再起動**: エージェントサービスを再起動します。
 
 ![](../images/agent_watcher_actions.png)
-<!-- TODO: Capture screenshot of agent_watcher_actions.png — Agent Info drawer header showing the Settings, Restart Agent, Start Agent, and Stop Agent buttons -->
 
 いずれの操作でも、対象のエージェントを明示し、このエージェントで実行中のセッションに影響する場合がある旨を警告する
 確認ダイアログが開きます。確認すると要求が送信され、起動・停止・再起動が要求された旨のメッセージが表示された後、
@@ -1412,7 +1403,6 @@ GitLabコンテナレジストリを追加する場合、追加情報フィー�
 名前列の **編集**（鉛筆）アクションをクリックすると **リソースグループの変更** ダイアログが開き、リソースグループを編集できます。**スケジューラー** フィールドで、コンピュートセッション作成のスケジューリング方法を選択できます。現在、`FIFO`、`LIFO`、`DRF`、`FAIR_SHARE`の4種類があります。`FIFO`と`LIFO`はジョブキューで最初または最後にキューイングされたコンピュートセッションを作成するスケジューリング方法です。`DRF`はDominant Resource Fairnessの略で、各ユーザーにできるだけ公平にリソースを提供することを目指します。`FAIR_SHARE`は過去の使用パターンに基づいてコンピュートリソースを割り当てます。詳細については、[フェアシェアスケジューラ](#fair-share-scheduler)セクションを参照してください。**アクティブ** をオフにすることでリソースグループを無効化できます。**保存** をクリックすると変更が適用されます。
 
 ![](../images/modify_resource_group.png)
-<!-- TODO: Re-capture modify_resource_group.png — the dialog is titled Edit Resource Group, carries the SFTP Storage Proxies field, and its submit button reads Save. -->
 
 
 リソースグループ編集ダイアログには以下の追加フィールドが含まれています：
@@ -1445,7 +1435,6 @@ GitLabコンテナレジストリを追加する場合、追加情報フィー�
 3. **リソースグループを更新** ダイアログが開きます。
 
 ![](../images/bulk_edit_resource_groups_modal.png)
-<!-- TODO: Capture screenshot of bulk_edit_resource_groups_modal.png — Bulk Edit Resource Groups dialog listing the selected resource groups in the info alert above the SFTP Storage Proxies field -->
 
 ダイアログ上部のアラートには、変更対象となるすべてのリソースグループが並びます。その下には
 **SFTPストレージプロキシ** フィールドがあり、選択したリソースグループのいずれかが既に利用しているプロキシが
@@ -1706,7 +1695,6 @@ Backend.AIクラスターセッションの詳細については、
 目的の項目を素早く絞り込めます。
 
 ![](../images/maintenance_page.png)
-<!-- TODO: Re-capture maintenance_page.png — the page is now a grouped setting list (Fix / Images / Environment / Announcement) with a search bar. -->
 
 **修正**
 
@@ -1746,7 +1734,6 @@ Backend.AIクラスターセッションの詳細については、
 - すでに公開済みのお知らせがある場合は、スタートページのお知らせバナーから直接開きます。
 
 ![](../images/announcement_edit_modal.png)
-<!-- TODO: Capture screenshot of announcement_edit_modal.png — Edit Announcement dialog with the Markdown editor and its formatting toolbar on the left, the live preview on the right, and the Delete / Cancel / Publish footer -->
 
 **発表を編集** ダイアログは2つの領域に分かれています。
 
@@ -1797,7 +1784,6 @@ RBAC管理ページでプロジェクトのロールを探さなくても、プ�
 3. **プロジェクト管理者を設定** ダイアログが開きます。
 
 ![](../images/set_project_admin_modal.png)
-<!-- TODO: Capture screenshot of set_project_admin_modal.png — Set Project Admin dialog showing the info alert, the user select with the Add button, and the assignment table with its revoke action -->
 
 ダイアログは次の要素で構成されます。
 
@@ -1851,7 +1837,6 @@ RBAC（ロールベースアクセス制御）管理では、スーパー管理�
 はっきりわかります。
 
 ![](../images/diagnostics_empty_state.png)
-<!-- TODO: Capture screenshot of diagnostics_empty_state.png — Diagnostics page with Show only failed items enabled and every check passing, showing the "No failed items. All diagnostics passed." placeholder -->
 
 :::tip
 接続の問題をトラブルシューティングする際は、まず **失敗した項目のみ表示** をオンにして `診断を再実行` を実行してください。対応が必要なチェックだけを素早く確認できます。

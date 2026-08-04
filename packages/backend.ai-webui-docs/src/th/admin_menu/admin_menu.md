@@ -34,7 +34,6 @@ navTitle: ฟีเจอร์ผู้ดูแลระบบ
 คลิกไอคอน **แก้ไข** (ดินสอ) ในแถวคอลัมน์ **อีเมล** ของผู้ใช้นั้น เพื่อเปลี่ยนการตั้งค่าของผู้ใช้ที่มีอยู่แล้ว สามารถเปลี่ยนชื่อผู้ใช้ รหัสผ่าน สถานะการเปิดใช้งาน เป็นต้น User ID (อีเมล) ไม่สามารถเปลี่ยนแปลงได้ คลิก **บันทึก** เพื่อใช้การเปลี่ยนแปลง
 
 ![](../images/user_update_dialog.png)
-<!-- TODO: Re-capture user_update_dialog.png — the row action is the Edit (pencil) icon and the dialog's submit button reads Save. -->
 
 
 กล่องโต้ตอบสร้าง/แก้ไขผู้ใช้ประกอบด้วยฟิลด์ต่อไปนี้:
@@ -185,7 +184,6 @@ zero-padded ต่อท้ายส่วนนำหน้า
 3. ไดอะล็อก **แก้ไขผู้ใช้เป็นชุด** จะเปิดขึ้น
 
 ![](../images/bulk_edit_users_modal.png)
-<!-- TODO: Capture screenshot of bulk_edit_users_modal.png — Bulk Edit Users dialog showing the warning alert that lists the selected users' email addresses above the form fields -->
 
 การแจ้งเตือนที่ด้านบนของไดอะล็อกจะแสดงรายชื่ออีเมลของผู้ใช้ทุกคนที่การเปลี่ยนแปลงจะมีผล เพื่อให้คุณยืนยันรายการที่เลือกก่อนดำเนินการ นอกจากนี้ยังเตือนว่าการตั้งค่า UID หรือ GID อาจทำให้ไม่สามารถใช้งานการเมานท์โฟลเดอร์ที่สร้างไว้ก่อนหน้านี้ได้
 
@@ -300,7 +298,6 @@ superadmin สามารถลบบัญชีผู้ใช้ที่ถ
 โปรดทราบว่าหากค่า **ขีดจำกัดอัตรา** น้อยเกินไป การดำเนินการ API เช่น การเข้าสู่ระบบอาจถูกบล็อก
 
 ![](../images/keypair_update_dialog.png)
-<!-- TODO: Re-capture keypair_update_dialog.png — the dialog is titled Edit Keypair Resource Policy and its submit button reads Save. -->
 
 คุณสามารถปิดใช้งานหรือเปิดใช้งานคีย์แพร์ได้โดยคลิกปุ่ม `ปิดการใช้งาน` หรือปุ่ม `เปิดใช้งาน` ในแถวของคีย์แพร์
 ต่างจากแท็บผู้ใช้ แท็บไม่ทำงานอนุญาตให้ลบคีย์แพร์อย่างถาวรได้
@@ -324,7 +321,6 @@ superadmin สามารถลบบัญชีผู้ใช้ที่ถ
 4. ยืนยันเพื่อใช้การเปลี่ยนแปลง
 
 ![](../images/credential_bulk_deactivate.png)
-<!-- TODO: Capture screenshot of credential_bulk_deactivate.png — Credentials tab with several active keypairs selected, showing the selection count and the red Deactivate button in the toolbar -->
 
 หากสำเร็จเพียงบางส่วน ข้อความผลลัพธ์จะรายงานจำนวนข้อมูลประจำตัวที่เปลี่ยนแปลงสำเร็จและจำนวนที่ล้มเหลว
 รายการที่เลือกจะถูกล้างเมื่อคุณสลับแท็บ เปลี่ยนตัวกรอง เรียงลำดับตาราง หรือย้ายไปหน้าอื่น
@@ -337,7 +333,6 @@ superadmin สามารถลบบัญชีผู้ใช้ที่ถ
 คลิกปุ่ม **สร้างข้อมูลประจำตัว** ที่มุมบนขวา
 
 ![](../images/add_keypair_dialog.png)
-<!-- TODO: Re-capture add_keypair_dialog.png — the button reads Create Credential and the first field is a searchable User select instead of a free-text email input. -->
 
 ไดอะล็อกมีฟิลด์ต่อไปนี้:
 
@@ -756,7 +751,6 @@ Backend.AI ช่วยให้ผู้ดูแลระบบสามาร
 คลิก **บันทึก** เพื่อนำนโยบายทรัพยากรที่เปลี่ยนแปลงไปใช้
 
 ![](../images/update_resource_policy.png)
-<!-- TODO: Re-capture update_resource_policy.png — the dialog is titled Edit Keypair Resource Policy and its submit button reads Save. -->
 
 สำหรับรายละเอียดของแต่ละตัวเลือกในกล่องโต้ตอบนโยบายทรัพยากร โปรดดูคำอธิบายด้านล่าง
 
@@ -845,7 +839,6 @@ Max Folder Count และ Max Folder Size รวมถึงขีดจำก�
 Count Per Model Session และ Max Customized Image Count
 
 ![](../images/user_resource_policy_list.png)
-<!-- TODO: Re-capture user_resource_policy_list.png — the tab now shows the property filter bar above the table and the Create button at the top right. -->
 
 ตารางแสดงคอลัมน์ต่อไปนี้: **ชื่อ** (พร้อมการกระทำแบบอินไลน์ **แก้ไข** และ **ลบ**), **จำนวนโฟลเดอร์สูงสุด**,
 **จำนวนการเข้าสู่ระบบพร้อมกันสูงสุด**, **จำนวนเซสชันสูงสุดต่อเซสชันโมเดล**, **ขนาดขอบเขตโควตาสูงสุด**,
@@ -1308,7 +1301,6 @@ Superadmin สามารถดูรายการโหนดเอเจน
 คลิก ID ของเอเจนต์เพื่อเปิดแผง **ข้อมูลเอเจนต์** ซึ่งแสดงการใช้ทรัพยากรที่แน่นอนของโหนดนั้น แผงนี้มีปุ่มรีเฟรชพร้อมดรอปดาวน์ช่วงเวลาของตัวเอง โดยรีเฟรชอัตโนมัติจะเป็น **ปิด** จนกว่าคุณจะเลือกช่วงเวลา
 
 ![](../images/detailed_agent_node_usage_information.png)
-<!-- TODO: Re-capture detailed_agent_node_usage_information.png — the usage detail now opens as the Agent Info drawer from the agent ID, with the action buttons in the drawer header. -->
 
 <a id="control-agent-service"></a>
 
@@ -1321,7 +1313,6 @@ Superadmin สามารถดูรายการโหนดเอเจน
 - **รีสตาร์ทตัวแทน**: รีสตาร์ทบริการเอเจนต์
 
 ![](../images/agent_watcher_actions.png)
-<!-- TODO: Capture screenshot of agent_watcher_actions.png — Agent Info drawer header showing the Settings, Restart Agent, Start Agent, and Stop Agent buttons -->
 
 การกระทำแต่ละอย่างจะเปิดไดอะล็อกยืนยันที่ระบุชื่อเอเจนต์ที่ได้รับผลกระทบ และเตือนว่าเซสชันที่กำลังทำงานบนเอเจนต์นี้อาจได้รับผลกระทบ ยืนยันเพื่อส่งคำขอ ระบบจะแสดงข้อความว่าได้ส่งคำขอเริ่ม หยุด หรือรีสตาร์ทแล้ว จากนั้นจะอ่านสถานะของเอเจนต์ใหม่อีกครั้ง
 
@@ -1354,7 +1345,6 @@ Superadmin สามารถดูรายการโหนดเอเจน
 คุณสามารถแก้ไขกลุ่มทรัพยากรได้โดยคลิกการกระทำ **แก้ไข** (ดินสอ) ในคอลัมน์ชื่อ ซึ่งจะเปิดไดอะล็อก **แก้ไขกลุ่มทรัพยากร** ในฟิลด์ **ตัวจัดกำหนดการ** คุณสามารถเลือกวิธีการจัดตารางสำหรับการสร้างเซสชันการคำนวณ ปัจจุบันมีสี่ประเภท: `FIFO`, `LIFO`, `DRF` และ `FAIR_SHARE` `FIFO` และ `LIFO` เป็นวิธีการจัดตารางที่สร้างเซสชันที่เข้าคิวเป็นลำดับแรกหรือลำดับสุดท้ายในคิวงาน `DRF` ย่อมาจาก Dominant Resource Fairness มีเป้าหมายเพื่อจัดสรรทรัพยากรอย่างเท่าเทียมที่สุดสำหรับแต่ละผู้ใช้ `FAIR_SHARE` จัดสรรทรัพยากรตามรูปแบบการใช้งานในอดีต สำหรับรายละเอียดเพิ่มเติม โปรดดูที่ส่วน [Fair Share Scheduler](#fair-share-scheduler) คุณสามารถปิดใช้งานกลุ่มทรัพยากรได้โดยปิด **ใช้งาน** คลิก **บันทึก** เพื่อใช้การเปลี่ยนแปลง
 
 ![](../images/modify_resource_group.png)
-<!-- TODO: Re-capture modify_resource_group.png — the dialog is titled Edit Resource Group, carries the SFTP Storage Proxies field, and its submit button reads Save. -->
 
 กลุ่มทรัพยากรมีตัวเลือกเพิ่มเติมดังนี้:
 
@@ -1382,7 +1372,6 @@ Superadmin สามารถดูรายการโหนดเอเจน
 3. ไดอะล็อก **อัปเดตกลุ่มทรัพยากร** จะเปิดขึ้น
 
 ![](../images/bulk_edit_resource_groups_modal.png)
-<!-- TODO: Capture screenshot of bulk_edit_resource_groups_modal.png — Bulk Edit Resource Groups dialog listing the selected resource groups in the info alert above the SFTP Storage Proxies field -->
 
 การแจ้งเตือนที่ด้านบนของไดอะล็อกจะแสดงรายชื่อกลุ่มทรัพยากรทุกกลุ่มที่จะถูกเปลี่ยนแปลง ด้านล่างเป็นฟิลด์ **พร็อกซีที่เก็บข้อมูล SFTP** ซึ่งถูกเติมไว้ล่วงหน้าด้วยพร็อกซีทั้งหมดที่ให้บริการกลุ่มใดกลุ่มหนึ่งที่เลือกไว้อยู่แล้ว
 
@@ -1632,7 +1621,6 @@ Transmission Unit (MTU) สำหรับเครือข่าย overlay �
 ไปที่หน้าการบำรุงรักษาและคุณจะเห็นรายการจัดการเซิร์ฟเวอร์ที่จัดกลุ่มตามวัตถุประสงค์ แถบค้นหาที่ด้านบนของหน้าช่วยกรองรายการเมื่อคุณกำลังมองหารายการใดรายการหนึ่ง
 
 ![](../images/maintenance_page.png)
-<!-- TODO: Re-capture maintenance_page.png — the page is now a grouped setting list (Fix / Images / Environment / Announcement) with a search bar. -->
 
 **แก้ไข**
 
@@ -1670,7 +1658,6 @@ Superadmin สามารถเผยแพร่ข้อความสั้
 - จากแบนเนอร์ประกาศบนหน้าเริ่มต้นโดยตรง เมื่อมีประกาศที่เผยแพร่อยู่แล้ว
 
 ![](../images/announcement_edit_modal.png)
-<!-- TODO: Capture screenshot of announcement_edit_modal.png — Edit Announcement dialog with the Markdown editor and its formatting toolbar on the left, the live preview on the right, and the Delete / Cancel / Publish footer -->
 
 ไดอะล็อก **แก้ไขประกาศ** แบ่งเป็นสองส่วน:
 
@@ -1714,7 +1701,6 @@ Superadmin สามารถเผยแพร่ข้อความสั้
 3. ไดอะล็อก **ตั้งค่าผู้ดูแลโปรเจกต์** จะเปิดขึ้น
 
 ![](../images/set_project_admin_modal.png)
-<!-- TODO: Capture screenshot of set_project_admin_modal.png — Set Project Admin dialog showing the info alert, the user select with the Add button, and the assignment table with its revoke action -->
 
 ไดอะล็อกประกอบด้วย:
 
@@ -1759,7 +1745,6 @@ Superadmin สามารถเผยแพร่ข้อความสั้
 เมื่อเปิด **แสดงเฉพาะรายการที่ล้มเหลว** และการตรวจสอบทุกรายการผ่าน หน้าจะไม่ว่างเปล่า แต่จะแสดงข้อความ `ไม่มีรายการที่ล้มเหลว การวินิจฉัยทั้งหมดผ่านแล้ว` เพื่อให้เห็นชัดเจนว่าผลลัพธ์เป็นปกติ
 
 ![](../images/diagnostics_empty_state.png)
-<!-- TODO: Capture screenshot of diagnostics_empty_state.png — Diagnostics page with Show only failed items enabled and every check passing, showing the "No failed items. All diagnostics passed." placeholder -->
 
 :::tip
 เมื่อแก้ไขปัญหาการเชื่อมต่อ ให้เปิด **แสดงเฉพาะรายการที่ล้มเหลว** ก่อน แล้วคลิก `เรียกใช้การวินิจฉัยอีกครั้ง` เพื่อแสดงเฉพาะการตรวจสอบที่ต้องให้ความสนใจ

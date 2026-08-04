@@ -43,7 +43,6 @@ already exists. User's name, password, activation state, etc. can be changed. Us
 Click **Save** to apply your changes.
 
 ![](../images/user_update_dialog.png)
-<!-- TODO: Re-capture user_update_dialog.png — the row action is the Edit (pencil) icon and the dialog's submit button reads Save. -->
 
 
 The user create/edit dialog contains the following fields:
@@ -223,7 +222,6 @@ user in turn.
 3. The **Bulk Edit Users** dialog opens.
 
 ![](../images/bulk_edit_users_modal.png)
-<!-- TODO: Capture screenshot of bulk_edit_users_modal.png — Bulk Edit Users dialog showing the warning alert that lists the selected users' email addresses above the form fields -->
 
 An alert at the top of the dialog lists every user the change will be applied to, by email address, so
 you can confirm the selection before committing. The alert also warns that setting a UID or GID may
@@ -344,7 +342,6 @@ changes. Please keep in mind that if the **Rate Limit** value is small, API oper
 be blocked.
 
 ![](../images/keypair_update_dialog.png)
-<!-- TODO: Re-capture keypair_update_dialog.png — the dialog is titled Edit Keypair Resource Policy and its submit button reads Save. -->
 
 You can also deactivate or reactivate the keypair by clicking the `Deactivate` button or `Activate` button in the keypair's row.
 Unlike the User tab, the Inactive tab allows permanent deletion of keypairs.
@@ -370,7 +367,6 @@ step:
 4. Confirm to apply the change.
 
 ![](../images/credential_bulk_deactivate.png)
-<!-- TODO: Capture screenshot of credential_bulk_deactivate.png — Credentials tab with several active keypairs selected, showing the selection count and the red Deactivate button in the toolbar -->
 
 If only part of the batch succeeds, the result message reports the number of credentials that were
 changed and the number that failed. The selection is cleared whenever you switch tabs, change the
@@ -384,7 +380,6 @@ If you accidentally deleted a keypair, you can create a new one for the user by 
 **Create Credential** button at the upper right corner.
 
 ![](../images/add_keypair_dialog.png)
-<!-- TODO: Re-capture add_keypair_dialog.png — the button reads Create Credential and the first field is a searchable User select instead of a free-text email input. -->
 
 The dialog contains the following fields:
 
@@ -822,7 +817,6 @@ capacity. In this case, set CPU, RAM, and fGPU to 2, 4, and 1 respectively.
 Click **Save** to apply the changed resource policy.
 
 ![](../images/update_resource_policy.png)
-<!-- TODO: Re-capture update_resource_policy.png — the dialog is titled Edit Keypair Resource Policy and its submit button reads Save. -->
 
 About details of each option in resource policy dialog, see the description below.
 
@@ -912,7 +906,6 @@ Max Folder Count and Max Folder Size, as well as individual resource limits like
 Count Per Model Session and Max Customized Image Count.
 
 ![](../images/user_resource_policy_list.png)
-<!-- TODO: Re-capture user_resource_policy_list.png — the tab now shows the property filter bar above the table and the Create button at the top right. -->
 
 The table shows the following columns: **Name** (with the inline **Edit** and **Delete** actions),
 **Max Folder Count**, **Max Concurrent Logins**, **Max Session Count Per Model Session**,
@@ -1450,7 +1443,6 @@ node. The drawer has its own refresh control with an interval dropdown; auto-ref
 pick an interval.
 
 ![](../images/detailed_agent_node_usage_information.png)
-<!-- TODO: Re-capture detailed_agent_node_usage_information.png — the usage detail now opens as the Agent Info drawer from the agent ID, with the action buttons in the drawer header. -->
 
 <a id="control-agent-service"></a>
 
@@ -1463,7 +1455,6 @@ The Agent Info drawer holds a group of action buttons for the agent service itse
 - **Restart Agent**: Restarts the agent service.
 
 ![](../images/agent_watcher_actions.png)
-<!-- TODO: Capture screenshot of agent_watcher_actions.png — Agent Info drawer header showing the Settings, Restart Agent, Start Agent, and Stop Agent buttons -->
 
 Each action opens a confirmation dialog that names the affected agent and warns that running sessions on
 this agent may be affected. Confirm to send the request; a message reports that the start, stop, or
@@ -1520,7 +1511,6 @@ more details, refer to the [Fair Share Scheduler](#fair-share-scheduler) section
 You can deactivate a resource group by turning off **Active**. Click **Save** to apply your changes.
 
 ![](../images/modify_resource_group.png)
-<!-- TODO: Re-capture modify_resource_group.png — the dialog is titled Edit Resource Group, carries the SFTP Storage Proxies field, and its submit button reads Save. -->
 
 
 The resource group edit dialog contains the following additional fields:
@@ -1565,7 +1555,6 @@ Settings that apply the same way to a set of resource groups can be changed in o
 3. The **Bulk Edit Resource Groups** dialog opens.
 
 ![](../images/bulk_edit_resource_groups_modal.png)
-<!-- TODO: Capture screenshot of bulk_edit_resource_groups_modal.png — Bulk Edit Resource Groups dialog listing the selected resource groups in the info alert above the SFTP Storage Proxies field -->
 
 An alert at the top of the dialog lists every resource group that will be changed. Below it sits the
 **SFTP Storage Proxies** field, pre-filled with the union of the proxies that already serve any of the
@@ -1825,7 +1814,6 @@ Go to the Maintenance page and you will see the server management actions, group
 bar at the top of the page filters the list when you are looking for a specific entry.
 
 ![](../images/maintenance_page.png)
-<!-- TODO: Re-capture maintenance_page.png — the page is now a grouped setting list (Fix / Images / Environment / Announcement) with a search bar. -->
 
 **Fix**
 
@@ -1867,7 +1855,6 @@ Open the editor in either of two ways:
 - From the announcement banner itself on the start page, when one is already published.
 
 ![](../images/announcement_edit_modal.png)
-<!-- TODO: Capture screenshot of announcement_edit_modal.png — Edit Announcement dialog with the Markdown editor and its formatting toolbar on the left, the live preview on the right, and the Delete / Cancel / Publish footer -->
 
 The **Edit Announcement** dialog is split into two panes:
 
@@ -1918,7 +1905,6 @@ administrators directly from the project list.
 3. The **Set Project Admin** dialog opens.
 
 ![](../images/set_project_admin_modal.png)
-<!-- TODO: Capture screenshot of set_project_admin_modal.png — Set Project Admin dialog showing the info alert, the user select with the Add button, and the assignment table with its revoke action -->
 
 The dialog contains:
 
@@ -1971,7 +1957,6 @@ When **Show only failed items** is enabled and every check passes, the page does
 placeholder reading `No failed items. All diagnostics passed.`, so a clean result is unmistakable.
 
 ![](../images/diagnostics_empty_state.png)
-<!-- TODO: Capture screenshot of diagnostics_empty_state.png — Diagnostics page with Show only failed items enabled and every check passing, showing the "No failed items. All diagnostics passed." placeholder -->
 
 :::tip
 When troubleshooting a connection problem, enable **Show only failed items** and click `Re-run Diagnostics` first — it surfaces just the checks that need attention.

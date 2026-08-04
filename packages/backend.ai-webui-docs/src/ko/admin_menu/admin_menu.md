@@ -35,7 +35,6 @@ navTitle: 관리자 기능
 해당 사용자의 **이메일** 컬럼 행에 있는 **수정**(연필) 아이콘을 클릭하면 이미 존재하는 사용자의 설정을 변경할 수 있습니다. 사용자의 이름, 비밀번호, 활성화 상태 등을 변경할 수 있습니다. 사용자 ID(이메일)는 변경할 수 없습니다. 변경 내용을 적용하려면 **저장**을 클릭합니다.
 
 ![](../images/user_update_dialog.png)
-<!-- TODO: Re-capture user_update_dialog.png — the row action is the Edit (pencil) icon and the dialog's submit button reads Save. -->
 
 
 사용자 생성/수정 대화 상자에는 다음과 같은 필드가 포함되어 있습니다.
@@ -197,7 +196,6 @@ CSV 파일을 선택하면 대화 상자에 다음 표시와 함께 모든 행�
 3. **사용자 일괄 수정** 대화 상자가 열립니다.
 
 ![](../images/bulk_edit_users_modal.png)
-<!-- TODO: Capture screenshot of bulk_edit_users_modal.png — Bulk Edit Users dialog showing the warning alert that lists the selected users' email addresses above the form fields -->
 
 대화 상자 상단의 알림에는 변경이 적용될 모든 사용자의 이메일 주소가 나열되므로, 실행 전에 선택 내용을 확인할 수
 있습니다. 또한 UID 또는 GID를 설정하면 기존에 생성된 폴더 마운트의 사용이 제한될 수 있다는 경고도 함께
@@ -280,7 +278,6 @@ CSV 파일을 선택하면 대화 상자에 다음 표시와 함께 모든 행�
 키페어 행의 **수정**(연필) 버튼을 클릭하면 키페어의 자원 정책과 최대 요청수를 변경할 수 있습니다. 대화 상자의 제목은 **키페어 자원 정책 수정**이며, **저장**을 클릭하면 변경 내용이 적용됩니다. **최대 요청수** 값이 작으면 로그인과 같은 API 작업이 차단될 수 있으므로 주의하시기 바랍니다.
 
 ![](../images/keypair_update_dialog.png)
-<!-- TODO: Re-capture keypair_update_dialog.png — the dialog is titled Edit Keypair Resource Policy and its submit button reads Save. -->
 
 키페어 행의 `비활성화` 버튼이나 `활성화` 버튼을 클릭하여 키페어를 비활성화하거나 다시 활성화할 수도 있습니다. 사용자 탭과 달리 비활성 탭에서는 키페어를 영구적으로 삭제할 수 있습니다. 그러나 현재 사용자의 주요 액세스 키로 사용 중인 키페어는 영구적으로 삭제할 수 없습니다.
 
@@ -302,7 +299,6 @@ CSV 파일을 선택하면 대화 상자에 다음 표시와 함께 모든 행�
 4. 확인하면 변경이 적용됩니다.
 
 ![](../images/credential_bulk_deactivate.png)
-<!-- TODO: Capture screenshot of credential_bulk_deactivate.png — Credentials tab with several active keypairs selected, showing the selection count and the red Deactivate button in the toolbar -->
 
 일부만 성공한 경우 결과 메시지에 변경된 자격 증명 수와 실패한 자격 증명 수가 함께 표시됩니다. 탭을 전환하거나
 필터를 변경하거나 테이블을 정렬하거나 다른 페이지로 이동하면 선택이 해제됩니다.
@@ -314,7 +310,6 @@ CSV 파일을 선택하면 대화 상자에 다음 표시와 함께 모든 행�
 실수로 키페어를 삭제한 경우, 오른쪽 상단의 **자격증명 생성** 버튼을 클릭하여 사용자를 위한 키페어를 새로 만들 수 있습니다.
 
 ![](../images/add_keypair_dialog.png)
-<!-- TODO: Re-capture add_keypair_dialog.png — the button reads Create Credential and the first field is a searchable User select instead of a free-text email input. -->
 
 대화 상자에는 다음 필드가 있습니다.
 
@@ -721,7 +716,6 @@ Backend.AI에서 관리자는 각 키페어, 사용자, 프로젝트에 사용 �
 **키페어 자원 정책 수정** 대화 상자에서 목록의 자원 정책을 구분하는 기본 키 역할을 하는 자원 정책 이름을 제외한 모든 옵션을 편집할 수 있습니다. CPU, RAM, fGPU 하단의 무제한 체크박스를 해제하고 자원 제한을 원하는 값으로 설정합니다. 할당된 자원이 전체 하드웨어 용량보다 적은지 확인하세요. 이 경우 CPU, RAM, fGPU를 각각 2, 4, 1로 설정합니다. **저장**을 클릭하여 변경된 자원 정책을 적용합니다.
 
 ![](../images/update_resource_policy.png)
-<!-- TODO: Re-capture update_resource_policy.png — the dialog is titled Edit Keypair Resource Policy and its submit button reads Save. -->
 
 자원 정책 대화 상자의 각 옵션에 대한 세부 정보는 아래 설명을 참조하세요.
 
@@ -774,7 +768,6 @@ Backend.AI에서 관리자는 각 키페어, 사용자, 프로젝트에 사용 �
 Backend.AI는 사용자 자원 정책 관리를 지원합니다. 각 사용자는 여러 키페어를 가질 수 있지만, 사용자는 하나의 사용자 자원 정책만 가질 수 있습니다. 사용자 자원 정책 페이지에서는 Max Folder Count 및 Max Folder Size와 같은 폴더 관련 다양한 설정에 대한 제한뿐만 아니라 Max Session Count Per Model Session 및 Max Customized Image Count와 같은 개별 자원 제한도 설정할 수 있습니다.
 
 ![](../images/user_resource_policy_list.png)
-<!-- TODO: Re-capture user_resource_policy_list.png — the tab now shows the property filter bar above the table and the Create button at the top right. -->
 
 테이블에는 **이름**(인라인 **수정** 및 **삭제** 액션 포함), **최대 폴더 수**, **최대 동시 로그인**,
 **모델 세션당 최대 세션 수**, **최대 할당량 범위 크기**, **최대 사용자 정의 이미지 수**, **생성 날짜** 컬럼이
@@ -1230,7 +1223,6 @@ GitLab 컨테이너 레지스트리를 추가할 때는 추가 정보 필드에 
 간격 드롭다운이 있는 새로고침 버튼이 있으며, 간격을 선택하기 전까지 자동 새로고침은 **끄기** 상태입니다.
 
 ![](../images/detailed_agent_node_usage_information.png)
-<!-- TODO: Re-capture detailed_agent_node_usage_information.png — the usage detail now opens as the Agent Info drawer from the agent ID, with the action buttons in the drawer header. -->
 
 <a id="control-agent-service"></a>
 
@@ -1243,7 +1235,6 @@ GitLab 컨테이너 레지스트리를 추가할 때는 추가 정보 필드에 
 - **에이전트 재시작**: 에이전트 서비스를 재시작합니다.
 
 ![](../images/agent_watcher_actions.png)
-<!-- TODO: Capture screenshot of agent_watcher_actions.png — Agent Info drawer header showing the Settings, Restart Agent, Start Agent, and Stop Agent buttons -->
 
 각 동작을 선택하면 대상 에이전트를 명시하고 이 에이전트에서 실행 중인 세션이 영향을 받을 수 있다고 경고하는 확인
 대화 상자가 열립니다. 확인하면 요청이 전송되고, 시작·중지·재시작이 요청되었다는 메시지가 표시된 뒤 에이전트 상태를
@@ -1281,7 +1272,6 @@ GitLab 컨테이너 레지스트리를 추가할 때는 추가 정보 필드에 
 이름 열의 **수정**(연필) 액션을 클릭하면 **자원 그룹 수정** 대화 상자가 열려 자원 그룹을 편집할 수 있습니다. **스케줄** 필드에서 연산 세션을 생성하기 위한 스케줄링 방법을 선택할 수 있습니다. 현재 `FIFO`, `LIFO`, `DRF`, `FAIR_SHARE` 네 가지 유형이 있습니다. `FIFO`와 `LIFO`는 작업 대기열에서 먼저 또는 마지막으로 대기열에 등록된 연산 세션을 생성하는 스케줄링 방법입니다. `DRF`는 Dominant Resource Fairness의 약자로, 각 사용자에게 가능한 한 공정하게 자원을 제공하는 것을 목표로 합니다. `FAIR_SHARE`는 과거 사용 패턴을 기반으로 연산 자원을 할당합니다. 자세한 내용은 [Fair Share 스케줄러](#fair-share-scheduler) 섹션을 참고하세요. **활성** 상태를 끄면 자원 그룹을 비활성화할 수 있습니다. **저장**을 클릭하면 변경 내용이 적용됩니다.
 
 ![](../images/modify_resource_group.png)
-<!-- TODO: Re-capture modify_resource_group.png — the dialog is titled Edit Resource Group, carries the SFTP Storage Proxies field, and its submit button reads Save. -->
 
 
 자원 그룹 편집 대화 상자에는 다음과 같은 추가 필드가 포함되어 있습니다:
@@ -1316,7 +1306,6 @@ GitLab 컨테이너 레지스트리를 추가할 때는 추가 정보 필드에 
 3. **자원 그룹 일괄 수정** 대화 상자가 열립니다.
 
 ![](../images/bulk_edit_resource_groups_modal.png)
-<!-- TODO: Capture screenshot of bulk_edit_resource_groups_modal.png — Bulk Edit Resource Groups dialog listing the selected resource groups in the info alert above the SFTP Storage Proxies field -->
 
 대화 상자 상단의 알림에는 변경 대상이 되는 모든 자원 그룹이 나열됩니다. 그 아래에는 **SFTP 스토리지 프록시**
 필드가 있으며, 선택한 자원 그룹 중 하나라도 이미 사용 중인 프록시가 모두 미리 채워집니다.
@@ -1524,7 +1513,6 @@ Scheduler의 config 버튼을 클릭하여 작업 스케줄러별 구성을 편�
 찾을 수 있습니다.
 
 ![](../images/maintenance_page.png)
-<!-- TODO: Re-capture maintenance_page.png — the page is now a grouped setting list (Fix / Images / Environment / Announcement) with a search bar. -->
 
 **문제 해결**
 
@@ -1561,7 +1549,6 @@ Scheduler의 config 버튼을 클릭하여 작업 스케줄러별 구성을 편�
 - 이미 발행된 공지가 있는 경우, 시작 페이지의 공지사항 배너에서 직접 엽니다.
 
 ![](../images/announcement_edit_modal.png)
-<!-- TODO: Capture screenshot of announcement_edit_modal.png — Edit Announcement dialog with the Markdown editor and its formatting toolbar on the left, the live preview on the right, and the Delete / Cancel / Publish footer -->
 
 **공지사항 수정** 대화 상자는 두 영역으로 나뉩니다.
 
@@ -1610,7 +1597,6 @@ RBAC 관리 페이지에서 프로젝트의 역할을 찾지 않고도, 프로�
 3. **프로젝트 관리자 권한 설정** 대화 상자가 열립니다.
 
 ![](../images/set_project_admin_modal.png)
-<!-- TODO: Capture screenshot of set_project_admin_modal.png — Set Project Admin dialog showing the info alert, the user select with the Add button, and the assignment table with its revoke action -->
 
 대화 상자는 다음으로 구성됩니다.
 
@@ -1663,7 +1649,6 @@ RBAC(역할 기반 접근 제어) 관리를 통해 슈퍼 관리자는 세분화
 `실패한 항목이 없습니다. 모든 진단을 통과했습니다.` 라는 안내가 표시되어 결과가 정상임을 분명히 알 수 있습니다.
 
 ![](../images/diagnostics_empty_state.png)
-<!-- TODO: Capture screenshot of diagnostics_empty_state.png — Diagnostics page with Show only failed items enabled and every check passing, showing the "No failed items. All diagnostics passed." placeholder -->
 
 :::tip
 연결 문제를 해결할 때는 먼저 **실패한 항목만 표시**를 켜고 `진단 재실행`을 실행하세요. 주의가 필요한 점검만 빠르게 확인할 수 있습니다.
