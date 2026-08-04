@@ -74,8 +74,7 @@ setting lets you pick one of the built-in themes that ship with the product:
 The selected theme is applied immediately, and the choice is remembered for your
 account. Click the setting's reset button to go back to **Default**.
 
-<!-- ![](../images/user_settings_theme.png) -->
-<!-- TODO: Capture screenshot of the Theme selector and the Primary Color pickers in the Preferences group of the General tab -->
+![](../images/user_settings_theme.png)
 
 :::note
 The **Theme** setting appears only when your administrator has enabled theme

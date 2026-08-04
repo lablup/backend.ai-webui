@@ -70,8 +70,7 @@ WebUIの表示モードを設定します。以下から選択できます:
 選択したテーマはすぐに適用され、選択内容はアカウントに保存されます。設定の
 リセットボタンをクリックすると、**Default**テーマに戻ります。
 
-<!-- ![](../images/user_settings_theme.png) -->
-<!-- TODO: Capture screenshot of the Theme selector and the Primary Color pickers in the Preferences group of the General tab -->
+![](../images/user_settings_theme.png)
 
 :::note
 **テーマ**設定は、管理者がテーマのカスタマイズを有効にし、かつ環境に複数の

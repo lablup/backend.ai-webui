@@ -71,8 +71,7 @@ navTitle: ตั้งค่าผู้ใช้
 ธีมที่เลือกจะถูกนำไปใช้ทันที และการเลือกจะถูกจดจำไว้สำหรับบัญชีของคุณ
 คลิกปุ่มรีเซ็ตของการตั้งค่านี้เพื่อกลับไปใช้ **Default**
 
-<!-- ![](../images/user_settings_theme.png) -->
-<!-- TODO: Capture screenshot of the Theme selector and the Primary Color pickers in the Preferences group of the General tab -->
+![](../images/user_settings_theme.png)
 
 :::note
 การตั้งค่า **ธีม** จะแสดงเฉพาะเมื่อผู้ดูแลระบบเปิดใช้งานการปรับแต่งธีม

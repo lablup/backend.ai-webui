@@ -68,8 +68,7 @@ WebUI의 화면 모드를 설정합니다. 다음 중에서 선택할 수 있습
 선택한 테마는 즉시 적용되며, 선택 내용은 계정에 저장됩니다. 설정의 초기화
 버튼을 클릭하면 **Default** 테마로 되돌아갑니다.
 
-<!-- ![](../images/user_settings_theme.png) -->
-<!-- TODO: Capture screenshot of the Theme selector and the Primary Color pickers in the Preferences group of the General tab -->
+![](../images/user_settings_theme.png)
 
 :::note
 **테마** 설정은 관리자가 테마 사용자 정의 기능을 활성화하고 설치 환경에 둘 이상의
