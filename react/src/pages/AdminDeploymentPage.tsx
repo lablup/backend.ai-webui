@@ -19,6 +19,11 @@ import type {
   AdminPrometheusPresetQuery as AdminPrometheusPresetQueryType,
   QueryDefinitionOrderBy,
 } from '../__generated__/AdminPrometheusPresetQuery.graphql';
+import type {
+  AdminRuntimeVariantPresetQuery as AdminRuntimeVariantPresetQueryType,
+  RuntimeVariantPresetFilter,
+  RuntimeVariantPresetOrderBy,
+} from '../__generated__/AdminRuntimeVariantPresetQuery.graphql';
 import AdminDeployment, {
   AdminDeploymentQuery,
 } from '../components/AdminDeployment';
@@ -31,6 +36,9 @@ import AdminModelCard, {
 import AdminPrometheusPreset, {
   AdminPrometheusPresetQuery,
 } from '../components/AdminPrometheusPreset';
+import AdminRuntimeVariantPreset, {
+  AdminRuntimeVariantPresetQuery,
+} from '../components/AdminRuntimeVariantPreset';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
@@ -55,6 +63,7 @@ const TAB_KEYS = [
   'model-store-management',
   'prometheus-preset',
   'deployment-presets',
+  'runtime-variant-presets',
 ] as const;
 
 type TabKey = (typeof TAB_KEYS)[number];
@@ -78,6 +87,7 @@ const DEFAULT_ORDER_BY_TAB: Record<TabKey, string | null> = {
   'model-store-management': null,
   'prometheus-preset': null,
   'deployment-presets': '-createdAt',
+  'runtime-variant-presets': '-createdAt',
 };
 
 type DeploymentTabQueryParams = {
@@ -236,6 +246,30 @@ const AdminDeploymentPage: React.FC = () => {
     loadDeploymentPresetQuery(variables, options);
   };
 
+  // --- Runtime variant presets tab ---
+  const [presetQueryRef, loadPresetQuery] =
+    useQueryLoader<AdminRuntimeVariantPresetQueryType>(
+      AdminRuntimeVariantPresetQuery,
+    );
+  const [presetColumnOverrides, setPresetColumnOverrides] =
+    useBAISettingUserState('table_column_overrides.AdminRuntimeVariantPreset');
+
+  const reloadRuntimeVariantPresets = (
+    variables: AdminRuntimeVariantPresetQueryType['variables'],
+    options?: UseQueryLoaderLoadQueryOptions,
+  ) => {
+    const nextLimit = variables.limit ?? 10;
+    const nextOffset = variables.offset ?? 0;
+    setQueryParams({
+      filter: variables.filter ?? null,
+      order: convertFirstOrderByToString(variables.orderBy),
+    });
+    setTablePaginationOption({
+      pageSize: nextLimit,
+      current: nextOffset > 0 ? Math.floor(nextOffset / nextLimit) + 1 : 1,
+    });
+    loadPresetQuery(variables, options);
+  };
 
   // Single entry point that lazily loads a tab's query when it becomes active
   // and isn't already loaded (guarded per-tab by its ref), so a query never
@@ -325,6 +359,24 @@ const AdminDeploymentPage: React.FC = () => {
           );
         }
         break;
+      case 'runtime-variant-presets':
+        if (!presetQueryRef) {
+          loadPresetQuery(
+            {
+              filter:
+                (params.filter as RuntimeVariantPresetFilter | null) ??
+                undefined,
+              orderBy: convertToOrderBy<RuntimeVariantPresetOrderBy>(
+                params.order ??
+                  DEFAULT_ORDER_BY_TAB['runtime-variant-presets'],
+              ),
+              limit,
+              offset,
+            },
+            { fetchPolicy: 'store-and-network' },
+          );
+        }
+        break;
     }
   };
 
@@ -390,6 +442,10 @@ const AdminDeploymentPage: React.FC = () => {
     isDeploymentPresetSupported && {
       key: 'deployment-presets',
       label: t('adminDeploymentPreset.TabTitle'),
+    },
+    {
+      key: 'runtime-variant-presets',
+      label: t('adminRuntimeVariantPreset.TabTitle'),
     },
   ]);
 
@@ -458,6 +514,22 @@ const AdminDeploymentPage: React.FC = () => {
                 tableSettings={{
                   columnOverrides: deploymentPresetColumnOverrides,
                   onColumnOverridesChange: setDeploymentPresetColumnOverrides,
+                }}
+              />
+            ) : (
+              <Skeleton active />
+            )}
+          </BAIErrorBoundary>
+        )}
+        {currentTab === 'runtime-variant-presets' && (
+          <BAIErrorBoundary>
+            {presetQueryRef ? (
+              <AdminRuntimeVariantPreset
+                queryRef={presetQueryRef}
+                onReload={reloadRuntimeVariantPresets}
+                tableSettings={{
+                  columnOverrides: presetColumnOverrides,
+                  onColumnOverridesChange: setPresetColumnOverrides,
                 }}
               />
             ) : (
