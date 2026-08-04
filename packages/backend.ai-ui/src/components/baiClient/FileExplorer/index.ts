@@ -10,4 +10,7 @@ export {
   BAIDirectoryPickerQuery,
 } from './BAIDirectoryPickerModal';
 export type { BAIDirectoryPickerModalProps } from './BAIDirectoryPickerModal';
+// Operation type paired with BAIDirectoryPickerQuery so external openers can
+// type `useQueryLoader<BAIDirectoryPickerModalQuery>` without deep imports.
+export type { BAIDirectoryPickerModalQuery } from '../../../__generated__/BAIDirectoryPickerModalQuery.graphql';
 export { useSearchVFolderFiles } from './hooks';
