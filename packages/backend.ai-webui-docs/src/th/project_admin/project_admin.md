@@ -80,7 +80,6 @@ navTitle: ฟีเจอร์ผู้ดูแลโปรเจกต์
 ลูกศรที่อยู่ข้างปุ่มรีเฟรชจะเปิดเมนู **รีเฟรชอัตโนมัติ** ซึ่งคุณสามารถเลือกความถี่ที่หน้าจะโหลดตัวเองใหม่ได้: **ปิด**, **5วิ**, **10วิ**, **15วิ**, **30วิ** หรือ **1น.** ช่วงเวลาที่ใช้งานอยู่จะมีเครื่องหมายถูกกำกับไว้ ขณะที่การรีเฟรชอัตโนมัติเปิดอยู่ ช่วงเวลาที่เลือกจะแสดงข้างลูกศร และเส้นขอบของตัวควบคุมจะค่อย ๆ เติมเต็มเพื่อนับถอยหลังไปยังการรีเฟรชครั้งถัดไป
 
 ![](../images/project_admin_auto_refresh_menu.png)
-<!-- TODO: Capture screenshot of project_admin_auto_refresh_menu.png — the refresh button on a project-admin page with the Auto Refresh menu open, showing the Off / 5s / 10s / 15s / 30s / 1m options and the check mark on the active interval. -->
 
 - หน้า **เซสชัน** และ **การปรับใช้** เริ่มต้นด้วยการรีเฟรชทุก 15 วินาที
 - หน้า **ผู้ใช้** และ **ข้อมูล** เริ่มต้นโดยปิดการรีเฟรชอัตโนมัติ
@@ -169,7 +168,6 @@ navTitle: ฟีเจอร์ผู้ดูแลโปรเจกต์
 แต่ละแถวแสดงหนึ่งเซสชัน โดยค่าเริ่มต้นจะแสดงคอลัมน์ **ชื่อเซสชัน**, **สถานะ**, **ตัวเร่ง AI**, **CPU**, **หน่วยความจำ**, **เวลาที่ผ่านไป**, **สภาพแวดล้อม**, **กลุ่มทรัพยากร**, **ประเภทเซสชัน**, **โหมดคลัสเตอร์**, **สร้างเมื่อ** และ **อีเมลเจ้าของ**
 
 ![](../images/project_admin_session_table_columns.png)
-<!-- TODO: Capture screenshot of project_admin_session_table_columns.png — the project-admin Sessions table scrolled to show the Environments, Session Type and Cluster Mode columns, with an image icon rendered in Environments and a colored session-type tag. -->
 
 ในจำนวนนี้ มีสามคอลัมน์ที่อธิบายว่าเซสชันทำงานอยู่บนอะไร:
 

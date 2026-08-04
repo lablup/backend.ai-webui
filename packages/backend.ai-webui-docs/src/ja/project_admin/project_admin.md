@@ -80,7 +80,6 @@ navTitle: プロジェクト管理者機能
 更新ボタンの横のシェブロンをクリックすると **自動更新** メニューが開き、ページが自動的に再読み込みする間隔を選択できます: **オフ**、**5秒**、**10秒**、**15秒**、**30秒**、**1分**。現在使用中の間隔にはチェックマークが表示されます。自動更新が有効な間は、選択した間隔がシェブロンの横に表示され、次の更新までの残り時間がコントロールの枠線として満たされていきます。
 
 ![](../images/project_admin_auto_refresh_menu.png)
-<!-- TODO: Capture screenshot of project_admin_auto_refresh_menu.png — the refresh button on a project-admin page with the Auto Refresh menu open, showing the Off / 5s / 10s / 15s / 30s / 1m options and the check mark on the active interval. -->
 
 - **セッション** と **デプロイメント** のページは、初期状態では15秒ごとに更新します。
 - **ユーザー** と **データ** のページは、初期状態では自動更新がオフです。
@@ -169,7 +168,6 @@ navTitle: プロジェクト管理者機能
 各行が1つのセッションを表し、既定では **セッション名**、**ステータス**、**AIアクセラレータ**、**CPU**、**メモリ**、**経過時間**、**環境**、**リソースグループ**、**セッションタイプ**、**クラスターモード**、**作成日時**、**オーナーメール** の列が表示されます。
 
 ![](../images/project_admin_session_table_columns.png)
-<!-- TODO: Capture screenshot of project_admin_session_table_columns.png — the project-admin Sessions table scrolled to show the Environments, Session Type and Cluster Mode columns, with an image icon rendered in Environments and a colored session-type tag. -->
 
 このうち3つの列は、セッションが何の上で動作しているかを示します:
 

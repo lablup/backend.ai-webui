@@ -80,7 +80,6 @@ All four project-admin pages share the same refresh control, at the right end of
 The chevron next to the refresh button opens the **Auto Refresh** menu, where you can choose how often the page reloads itself: **Off**, **5s**, **10s**, **15s**, **30s**, or **1m**. A check mark marks the interval currently in use. While auto-refresh is on, the selected interval is displayed next to the chevron and a countdown border fills around the control between reloads.
 
 ![](../images/project_admin_auto_refresh_menu.png)
-<!-- TODO: Capture screenshot of project_admin_auto_refresh_menu.png — the refresh button on a project-admin page with the Auto Refresh menu open, showing the Off / 5s / 10s / 15s / 30s / 1m options and the check mark on the active interval. -->
 
 - The **Sessions** and **Deployments** pages start out refreshing every 15 seconds.
 - The **Users** and **Data** pages start out with auto-refresh off.
@@ -169,7 +168,6 @@ The page provides the following controls:
 Each row shows one session, with the **Session Name**, **Status**, **AI Accelerator**, **CPU**, **Memory**, **Elapsed Time**, **Environments**, **Resource Group**, **Session Type**, **Cluster Mode**, **Created At**, and **Owner Email** columns displayed by default.
 
 ![](../images/project_admin_session_table_columns.png)
-<!-- TODO: Capture screenshot of project_admin_session_table_columns.png — the project-admin Sessions table scrolled to show the Environments, Session Type and Cluster Mode columns, with an image icon rendered in Environments and a colored session-type tag. -->
 
 Three of these columns describe what the session runs on:
 

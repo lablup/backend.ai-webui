@@ -80,7 +80,6 @@ navTitle: 프로젝트 관리자 기능
 새로고침 버튼 옆의 화살표를 클릭하면 **자동 새로고침** 메뉴가 열리며, 페이지가 스스로 다시 불러오는 주기를 선택할 수 있습니다: **끄기**, **5초**, **10초**, **15초**, **30초**, **1분**. 현재 사용 중인 주기에는 체크 표시가 나타납니다. 자동 새로고침이 켜져 있는 동안에는 선택한 주기가 화살표 옆에 표시되고, 다음 새로고침까지 남은 시간이 컨트롤 테두리에 채워집니다.
 
 ![](../images/project_admin_auto_refresh_menu.png)
-<!-- TODO: Capture screenshot of project_admin_auto_refresh_menu.png — the refresh button on a project-admin page with the Auto Refresh menu open, showing the Off / 5s / 10s / 15s / 30s / 1m options and the check mark on the active interval. -->
 
 - **세션**과 **배포** 페이지는 기본적으로 15초마다 새로고침합니다.
 - **사용자**와 **데이터** 페이지는 기본적으로 자동 새로고침이 꺼져 있습니다.
@@ -169,7 +168,6 @@ navTitle: 프로젝트 관리자 기능
 각 행은 하나의 세션을 나타내며, 기본적으로 **세션 이름**, **상태**, **AI 가속기**, **CPU**, **메모리**, **경과 시간**, **환경**, **자원 그룹**, **세션 유형**, **클러스터 모드**, **생성 시각**, **소유자 이메일** 열이 표시됩니다.
 
 ![](../images/project_admin_session_table_columns.png)
-<!-- TODO: Capture screenshot of project_admin_session_table_columns.png — the project-admin Sessions table scrolled to show the Environments, Session Type and Cluster Mode columns, with an image icon rendered in Environments and a colored session-type tag. -->
 
 이 중 세 개의 열은 세션이 무엇 위에서 실행되는지를 보여 줍니다:
 
