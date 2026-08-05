@@ -52,32 +52,9 @@ vi.mock('../hooks/useRouteScope', async (importOriginal) => {
   };
 });
 
-// The in-modal project selector is mocked to a button that reports a fixed
-// choice through the same `onSelectProject` surface the real component uses.
-// The contract under test is DeploymentSettingModal's (selector rendered or
-// not, chosen project reaching the mutation) — not the selector's internals.
-vi.mock('./ProjectSelectForAdminPage', async () => {
-  const React = await import('react');
-  return {
-    default: (props: any) =>
-      React.createElement(
-        'button',
-        {
-          'data-testid': 'mock-project-select',
-          type: 'button',
-          onClick: () =>
-            props.onSelectProject?.({
-              label: 'chosen-project-name',
-              value: 'chosen-project-id',
-              projectId: 'chosen-project-id',
-              projectName: 'chosen-project-name',
-              projectResourcePolicy: null,
-            }),
-        },
-        'select-project',
-      ),
-  };
-});
+// `ProjectSelectForAdminPage` is deliberately NOT mocked: the modal must not
+// render any project selector at all, and a missing mock would surface as a
+// real (suspending) component rather than a silently passing assertion.
 
 // The resource-group select fetches per-project resource groups internally;
 // stub it to a button that commits a fixed choice through the Form.Item
@@ -94,6 +71,8 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
           'data-testid': 'mock-resource-group-select',
           type: 'button',
           disabled: props.disabled,
+          // Surfaced so a test can assert which project scopes the options.
+          'data-project-name': props.projectName,
           onClick: () => props.onChange?.('mock-resource-group'),
         },
         'select-resource-group',
@@ -102,7 +81,7 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
 });
 
 const renderModal = (
-  project: { id: string; name: string } | null,
+  project: { id: string; name: string },
   onRequestClose = vi.fn(),
 ) => {
   const environment: RelayMockEnvironment = createMockEnvironment();
@@ -163,39 +142,15 @@ describe('DeploymentSettingModal project prop contract (ADR-0001)', () => {
     );
   });
 
-  it('renders a required project selector when `project` is null and blocks submit until a project is chosen', async () => {
-    const user = userEvent.setup();
-    const { environment } = renderModal(null);
-
-    // Null mode: the modal embeds its own required project selector.
-    expect(screen.getByTestId('mock-project-select')).toBeInTheDocument();
-
-    // Submitting without choosing a project fails the required rule and
-    // dispatches no mutation.
-    await fillRequiredFieldsAndSubmit(user);
-    expect(
-      await screen.findByText('deployment.TargetProjectRequired'),
-    ).toBeInTheDocument();
-    expect(environment.mock.getAllOperations()).toHaveLength(0);
-  });
-
-  it('targets exactly the project chosen in the in-modal selector when `project` is null', async () => {
-    const user = userEvent.setup();
-    const { environment } = renderModal(null);
-
-    await user.click(screen.getByTestId('mock-project-select'));
-    await fillRequiredFieldsAndSubmit(user);
-
-    await waitFor(() => {
-      expect(environment.mock.getAllOperations()).toHaveLength(1);
+  it('scopes the resource-group options to the given project', async () => {
+    renderModal({
+      id: 'fixed-project-id',
+      name: 'fixed-project-name',
     });
-    const operation = environment.mock.getMostRecentOperation();
-    expect(operation.request.node.params.name).toBe(
-      'DeploymentSettingModalCreateMutation',
-    );
-    // The mutation carries exactly the project chosen inside the modal.
-    expect(operation.request.variables.input.metadata.projectId).toBe(
-      'chosen-project-id',
+
+    expect(screen.getByTestId('mock-resource-group-select')).toHaveAttribute(
+      'data-project-name',
+      'fixed-project-name',
     );
   });
 });

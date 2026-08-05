@@ -1169,7 +1169,6 @@
     "Tags": "Tag",
     "TagsPlaceholder": "Masukkan tag, dipisahkan dengan koma",
     "TagsTooltip": "Label opsional untuk mengorganisir dan memfilter deployment. Tekan Enter atau koma untuk menambahkan.",
-    "TargetProjectRequired": "Silakan pilih proyek tujuan.",
     "ToStatus": "Ke status",
     "TrafficRatio": "Rasio Lalu Lintas",
     "TrafficStatus": "Status Lalu Lintas",

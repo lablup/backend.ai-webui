@@ -24,7 +24,6 @@ import { useProjectPath } from '../hooks/useRouteScope';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import { theme } from '../theme-shim';
 import { ProjectContextOrNull } from '../types/projectContext';
-import DeploymentSettingModal from './DeploymentSettingModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import InviteFolderSettingModal from './InviteFolderSettingModal';
 import SharedFolderPermissionInfoModal from './SharedFolderPermissionInfoModal';
@@ -357,11 +356,6 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
     useQueryLoader<VFolderDeployModalQuery>(VFolderDeployQuery);
   const [deployVfolderId, setDeployVfolderId] = useState<string | null>(null);
   const [isDeployModalOpen, setIsDeployModalOpen] = useState(false);
-  // FR-2862 — when the user hits the empty-preset state in
-  // VFolderDeployModal, escalate to the deployment shell creation modal
-  // (`DeploymentSettingModal`), same as the `/deployments` page entry.
-  const [isCreateDeploymentOpen, { toggle: toggleCreateDeployment }] =
-    useToggle(false);
 
   const vfolders = useFragment(
     graphql`
@@ -790,11 +784,6 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
             </BAIUnmountAfterClose>
           )}
       </Suspense>
-      <DeploymentSettingModal
-        open={isCreateDeploymentOpen}
-        project={project}
-        onRequestClose={toggleCreateDeployment}
-      />
     </>
   );
 };

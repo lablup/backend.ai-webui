@@ -449,23 +449,25 @@ const AdminDeployment = ({
           }}
         />
       </BAIFlex>
-      <DeploymentSettingModal
-        open={!!editingDeployment}
-        deploymentFrgmt={editingDeployment ?? null}
-        // Edit-only call site: the deployment already belongs to a project,
-        // so the modal ignores the prop in edit mode (ADR-0001).
-        project={null}
-        onRequestClose={(success) => {
-          setEditingDeploymentId(null);
-          // A create adds a new row the offset query can't know about, so it
-          // needs a refetch. An update returns every field, so Relay merges
-          // the record by id into the store and the list reflects it without
-          // one.
-          if (success && editingDeployment === null) {
-            onReload(queryRef.variables, { fetchPolicy: 'network-only' });
-          }
-        }}
-      />
+      {/* Edit-only call site: the deployment already belongs to a project, so
+          the props union rejects a `project` here entirely (ADR-0001). That
+          member requires a non-null fragment, hence the guard. */}
+      {editingDeployment != null && (
+        <DeploymentSettingModal
+          open
+          deploymentFrgmt={editingDeployment}
+          onRequestClose={(success) => {
+            setEditingDeploymentId(null);
+            // A create adds a new row the offset query can't know about, so it
+            // needs a refetch. An update returns every field, so Relay merges
+            // the record by id into the store and the list reflects it without
+            // one.
+            if (success && editingDeployment === null) {
+              onReload(queryRef.variables, { fetchPolicy: 'network-only' });
+            }
+          }}
+        />
+      )}
       <BAIDeleteConfirmModal
         open={!!deletingDeployment}
         title={t('deployment.DeleteDeployment')}

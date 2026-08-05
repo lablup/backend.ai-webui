@@ -103,6 +103,7 @@ const DeploymentListPageContent: React.FC = () => {
   const [fetchKey, updateFetchKey] = useFetchKey();
 
   const currentProject = useCurrentProjectValue();
+  const pageProject = toProjectContext(currentProject);
 
   const orderBy = convertToOrderBy<DeploymentOrderBy>(queryParams.order);
   const finishedStatuses: ReadonlyArray<DeploymentStatus> = ['STOPPED'];
@@ -405,20 +406,24 @@ const DeploymentListPageContent: React.FC = () => {
           }}
         />
       </BAIFlex>
-      <BAIUnmountAfterClose>
-        <DeploymentSettingModal
-          open={isCreating || !!editingDeployment}
-          deploymentFrgmt={editingDeployment ?? null}
-          // ADR-0001: general page — the page is the only reader of the
-          // ambient current project and passes it explicitly.
-          project={toProjectContext(currentProject)}
-          onRequestClose={(success) => {
-            closeCreate();
-            setEditingDeploymentId(null);
-            if (success) updateFetchKey();
-          }}
-        />
-      </BAIUnmountAfterClose>
+      {/* ADR-0001: general page — the page is the only reader of the ambient
+          current project and passes it explicitly. Creation is offered only
+          here, from this project-scoped menu, so the modal's props union
+          requires a non-null project on this call site. */}
+      {pageProject != null && (
+        <BAIUnmountAfterClose>
+          <DeploymentSettingModal
+            open={isCreating || !!editingDeployment}
+            deploymentFrgmt={editingDeployment ?? null}
+            project={pageProject}
+            onRequestClose={(success) => {
+              closeCreate();
+              setEditingDeploymentId(null);
+              if (success) updateFetchKey();
+            }}
+          />
+        </BAIUnmountAfterClose>
+      )}
       <BAIDeleteConfirmModal
         open={!!deletingDeployment}
         title={t('deployment.DeleteDeployment')}

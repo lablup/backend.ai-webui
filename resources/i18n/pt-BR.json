@@ -1169,7 +1169,6 @@
     "Tags": "Tags",
     "TagsPlaceholder": "Insira tags, separadas por vírgulas",
     "TagsTooltip": "Rótulos opcionais para organizar e filtrar implantações. Pressione Enter ou vírgula para adicionar.",
-    "TargetProjectRequired": "Selecione um projeto de destino.",
     "ToStatus": "Ir para o status",
     "TrafficRatio": "Proporção de tráfego",
     "TrafficStatus": "Status do tráfego",
