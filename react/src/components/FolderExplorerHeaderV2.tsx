@@ -18,9 +18,11 @@ interface FolderExplorerHeaderV2Props {
   vfolderNodeFrgmt?: FolderExplorerHeaderV2Fragment$key | null;
   titleStyle?: React.CSSProperties;
   /**
-   * Explicit project prop contract (ADR-0001, FR-3412): pass-through for the
-   * FileBrowser/SFTP session-launch buttons. `null` renders them disabled
-   * with `noProjectTooltip` as the reason.
+   * Explicit project prop contract (ADR-0001, FR-3412/FR-3413): pass-through
+   * for the FileBrowser/SFTP session-launch buttons (`null` renders them
+   * disabled with `noProjectTooltip` as the reason) and for the rename
+   * gating of `EditableVFolderNameV2` (`null` drops the project-membership
+   * branch — owner/super-admin keep their power).
    */
   project: ProjectContextOrNull;
   noProjectTooltip?: string;
@@ -86,6 +88,7 @@ const FolderExplorerHeaderV2: React.FC<FolderExplorerHeaderV2Props> = ({
         {vfolderNode && (
           <EditableVFolderNameV2
             vfolderNodeFrgmt={vfolderNode}
+            project={project}
             enableLink={false}
             component={Typography.Title}
             level={3}

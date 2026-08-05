@@ -7,8 +7,7 @@ import { VFolderNodeDescriptionV2PermissionRefreshQuery } from '../__generated__
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
+import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles';
 import { useVirtualFolderPathV2 } from '../hooks/useVirtualFolderNodePathV2';
 import { statusTagColor } from './VFolderNodesV2';
 import VirtualFolderPathV2 from './VirtualFolderNodeItems/VirtualFolderPathV2';
@@ -58,10 +57,11 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
   const { getErrorMessage } = useErrorMessageResolver();
 
   const relayEnv = useRelayEnvironment();
-  const currentProject = useCurrentProjectValue();
   const baiClient = useSuspendedBackendaiClient();
   const [currentUser] = useCurrentUserInfo();
-  const effectiveAdminRole = useEffectiveAdminRole();
+  // Not `useEffectiveAdminRole` — it resolves its target from the ambient
+  // project. Authorization here is derived from the folder's own ownership.
+  const { isSuperAdmin, projectAdminIds } = useCurrentUserProjectRoles();
 
   // TODO(needs-backend): the mount-permission update still goes through the
   // legacy REST endpoint (`baiClient.vfolder.update_folder`) because the V2
@@ -192,14 +192,13 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
           </BAIFlex>
         ),
     },
-    // Mount permission editing is allowed for the folder owner, super admins
-    // (any project), or the current project's admin when the folder belongs to
-    // that project. Domain admins are intentionally excluded — they do not
-    // have implicit per-project ownership rights.
+    // Allowed for the folder owner, super admins, or an admin of the project
+    // that owns the folder. Domain admins are excluded — they have no
+    // implicit per-project ownership rights.
     (vfolderNode?.ownership?.userId === currentUser.uuid ||
-      effectiveAdminRole === 'superadmin' ||
-      (effectiveAdminRole === 'currentProjectAdmin' &&
-        vfolderNode?.ownership?.projectId === currentProject?.id)) && {
+      isSuperAdmin ||
+      (!!vfolderNode?.ownership?.projectId &&
+        projectAdminIds.includes(vfolderNode.ownership.projectId))) && {
       key: 'permission',
       label: t('data.folders.MountPermission'),
       children: (
