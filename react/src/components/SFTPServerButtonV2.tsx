@@ -19,8 +19,9 @@ import {
   StartSessionWithDefaultValue,
   useStartSession,
 } from '../hooks/useStartSession';
+import { openSFTPFailureModal } from './sftpFailureModal';
 import { EllipsisOutlined } from '@ant-design/icons';
-import { App, Dropdown, Image, Space, Tooltip } from 'antd';
+import { App, Dropdown, Image, Space, Tooltip, theme } from 'antd';
 import {
   BAIButton,
   BAIButtonProps,
@@ -47,6 +48,7 @@ const SFTPServerButtonV2: React.FC<SFTPServerButtonV2Props> = ({
   const { logger } = useBAILogger();
   const { t } = useTranslation();
   const { message, modal } = App.useApp();
+  const { token } = theme.useToken();
 
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
@@ -161,9 +163,18 @@ const SFTPServerButtonV2: React.FC<SFTPServerButtonV2Props> = ({
                 }
                 if (results?.rejected && results.rejected.length > 0) {
                   const error = results.rejected[0].reason;
-                  modal.error({
-                    title: error?.title,
-                    content: getErrorMessage(error),
+                  openSFTPFailureModal({
+                    modal,
+                    t,
+                    token,
+                    error,
+                    getErrorMessage,
+                    onGoToUploadSessions: () => {
+                      webuiNavigate({
+                        pathname: '/session',
+                        search: '?type=system',
+                      });
+                    },
                   });
                 }
               })
