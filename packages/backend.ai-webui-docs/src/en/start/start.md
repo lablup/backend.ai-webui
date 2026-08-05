@@ -138,7 +138,9 @@ Experimental features may change or be removed in future updates.
 
 The dialog closes and Backend.AI starts a batch session that performs the
 download. Because the download runs inside that session, you can follow its
-progress on the Sessions page; the model is ready once the session finishes.
+progress on the Sessions page; the model is ready once the session finishes
+successfully. If the session fails, the download did not complete and the
+model is not ready to use.
 
 The model is stored in a subfolder named after the model, inside the folder you
 selected — `openai/gpt-oss-20b`, for example, is downloaded to `gpt-oss-20b/`.
@@ -146,7 +148,7 @@ Several models can therefore share a single model folder.
 
 :::warning
 The token is passed to the download session as the `HF_TOKEN` environment
-variable. Use a read-only token.
+variable and can be viewed by administrators. Use a read-only token.
 :::
 
 :::note
