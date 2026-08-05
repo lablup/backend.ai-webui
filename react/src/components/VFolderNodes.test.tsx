@@ -193,6 +193,7 @@ const TestRenderer: React.FC<{ noDeployTooltip?: string }> = ({
 // so every row action collapses into the menu by default. Give this test
 // its own `ResizeObserver` that reports a generous width synchronously on
 // `observe()`, matching how a real browser would size this row.
+let mockObservedWidth = 600;
 class ImmediateWidthResizeObserver {
   private readonly callback: ResizeObserverCallback;
   constructor(callback: ResizeObserverCallback) {
@@ -203,7 +204,7 @@ class ImmediateWidthResizeObserver {
       [
         {
           target,
-          contentRect: { width: 600 } as DOMRectReadOnly,
+          contentRect: { width: mockObservedWidth } as DOMRectReadOnly,
         } as ResizeObserverEntry,
       ],
       this as unknown as ResizeObserver,
@@ -263,6 +264,7 @@ const renderTable = (noDeployTooltip?: string) => {
 describe('VFolderNodes deploy row action disable-with-tooltip contract (FR-3423)', () => {
   beforeEach(() => {
     mockDeployModalOpen.mockClear();
+    mockObservedWidth = 600;
   });
 
   it('renders the deploy action disabled with the caller-provided tooltip when noDeployTooltip is set', async () => {
@@ -281,6 +283,34 @@ describe('VFolderNodes deploy row action disable-with-tooltip contract (FR-3423)
 
     // Clicking a disabled button must not fire the row action's handler.
     fireEvent.click(deployButton);
+    expect(mockDeployModalOpen).not.toHaveBeenCalledWith(
+      true,
+      expect.anything(),
+    );
+  }, 10000);
+
+  it('still explains the disabled deploy action when the row is too narrow and it collapses into the More menu', async () => {
+    const user = userEvent.setup();
+    // Narrow enough that the row actions overflow instead of rendering as
+    // buttons — the layout an admin actually gets on a small viewport.
+    mockObservedWidth = 0;
+    renderTable('data.folders.CannotDeployFromAdminMenu');
+
+    expect(
+      screen.queryByRole('button', { name: 'modelService.DeployAsService' }),
+    ).not.toBeInTheDocument();
+
+    await user.click(
+      await screen.findByRole('button', { name: 'More actions' }),
+    );
+
+    const deployItem = await screen.findByText('modelService.DeployAsService');
+    await user.hover(deployItem);
+    expect(
+      await screen.findByText('data.folders.CannotDeployFromAdminMenu'),
+    ).toBeInTheDocument();
+
+    fireEvent.click(deployItem);
     expect(mockDeployModalOpen).not.toHaveBeenCalledWith(
       true,
       expect.anything(),
