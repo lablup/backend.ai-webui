@@ -3,11 +3,13 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '.';
+import { PROJECT_AGNOSTIC_PATHNAME_REGEX } from '../helper/projectAgnosticRoutes';
 import { useRecentProjectGroup } from './backendai';
+import { useBAILogger } from 'backend.ai-ui';
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { atomWithDefault } from 'jotai/utils';
 import * as _ from 'lodash-es';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useEffectEvent, useRef } from 'react';
 
 interface ScalingGroupItem {
   name: string;
@@ -70,6 +72,44 @@ const currentProjectAtom = atomWithDefault((): CurrentProject => {
 
 export const useCurrentProjectValue = () => {
   useSuspendedBackendaiClient();
+  // `useBAILogger` returns the logger singleton (no context/provider), so it is
+  // safe in this hook, which also runs in tests and outside a router.
+  const { logger } = useBAILogger();
+  // Dev-mode straggler warning (FR-3414, ADR-0001): the project-agnostic
+  // surface has no ambient project context, so an ambient read under it is
+  // either a not-yet-converted leaf component (a bug in waiting — it silently
+  // keys off the hidden header selection) or one of the few sanctioned
+  // globally-mounted readers. Warn once per mount so regressions surface
+  // immediately. `import.meta.env.DEV` is statically false in production
+  // builds, so the body is dead-code eliminated there.
+  // The matcher is DERIVED from `PROJECT_AGNOSTIC_MENU_KEYS`
+  // (`helper/projectAgnosticRoutes.ts`) so it cannot drift from the hook that
+  // hides the header selector; it stays pathname-based (no router hooks) so
+  // this hook remains usable outside a router context.
+  // `logger` is only *called* here, it is not something the effect
+  // re-synchronizes on, so it belongs in `useEffectEvent` rather than the
+  // dependency array (see `.claude/rules/use-effect-event.md`).
+  const warnAmbientRead = useEffectEvent(() => {
+    if (
+      import.meta.env.DEV &&
+      typeof window !== 'undefined' &&
+      PROJECT_AGNOSTIC_PATHNAME_REGEX.test(window.location.pathname)
+    ) {
+      logger.warn(
+        `[ADR-0001] Ambient current-project read (useCurrentProjectValue) under the project-agnostic route "${window.location.pathname}". ` +
+          'Converted leaf components must receive the project via their required `project` prop instead of reading ambient state — ' +
+          'see docs/adr/0001-explicit-project-prop-contract.md (FR-3414). ' +
+          'Ignore only if this mount is a sanctioned globally-mounted reader.',
+      );
+    }
+  });
+  // StrictMode re-runs mount effects in dev, which would double every warning.
+  const hasWarnedRef = useRef(false);
+  useEffect(() => {
+    if (hasWarnedRef.current) return;
+    hasWarnedRef.current = true;
+    warnAmbientRead();
+  }, []);
   return useAtomValue(currentProjectAtom);
 };
 

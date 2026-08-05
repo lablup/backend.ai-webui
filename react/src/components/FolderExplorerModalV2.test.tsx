@@ -18,7 +18,7 @@ import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockE
 /**
  * Contract tests for the globally-mounted folder explorer (ADR-0001,
  * FR-3413). The modal is the sanctioned route-consulting exception: on
- * super-admin-scoped routes it feeds `project={null}` (+ tooltip) to the
+ * project-agnostic routes it feeds `project={null}` (+ tooltip) to the
  * header's FileBrowser/SFTP buttons and suppresses the ownership-mismatch
  * alert; permission calculation follows the folder's OWN ownership project
  * when the folder is project-owned. External behavior only: rendered output
@@ -81,7 +81,7 @@ vi.mock('../hooks', async (importOriginal) => {
   };
 });
 
-// Decoy ambient project: on super-admin routes nothing rendered by the modal
+// Decoy ambient project: on project-agnostic routes nothing rendered by the modal
 // may key off it — the permission-query and button assertions below would
 // surface `ambient-project-id` if it leaked through.
 vi.mock('../hooks/useCurrentProject', async (importOriginal) => {
@@ -97,16 +97,16 @@ vi.mock('../hooks/useCurrentProject', async (importOriginal) => {
   };
 });
 
-// Route derivation is covered by useIsSuperAdminScopedPage.test.tsx; here it
+// Route derivation is covered by useIsProjectAgnosticPage.test.tsx; here it
 // is pinned per scenario (the sanctioned location mock for route-derived
 // pieces).
-let mockIsSuperAdminScopedPage = false;
-vi.mock('../hooks/useIsSuperAdminScopedPage', async (importOriginal) => {
+let mockIsProjectAgnosticPage = false;
+vi.mock('../hooks/useIsProjectAgnosticPage', async (importOriginal) => {
   const originalModule =
-    await importOriginal<typeof import('../hooks/useIsSuperAdminScopedPage')>();
+    await importOriginal<typeof import('../hooks/useIsProjectAgnosticPage')>();
   return {
     ...originalModule,
-    useIsSuperAdminScopedPage: () => mockIsSuperAdminScopedPage,
+    useIsProjectAgnosticPage: () => mockIsProjectAgnosticPage,
   };
 });
 
@@ -278,12 +278,12 @@ const findPermissionOperation = (
 
 describe('FolderExplorerModalV2 project context (ADR-0001, FR-3413)', () => {
   beforeEach(() => {
-    mockIsSuperAdminScopedPage = false;
+    mockIsProjectAgnosticPage = false;
     mockListHosts.mockClear();
   });
 
-  it('on a super-admin route: buttons disabled with the admin-menu tooltip, no mismatch alert, permission keyed to the folder ownership project', async () => {
-    mockIsSuperAdminScopedPage = true;
+  it('on a project-agnostic route: buttons disabled with the admin-menu tooltip, no mismatch alert, permission keyed to the folder ownership project', async () => {
+    mockIsProjectAgnosticPage = true;
     const { seenOperations } = renderModal({
       ownershipProjectId: 'folder-project-id',
     });
@@ -316,8 +316,8 @@ describe('FolderExplorerModalV2 project context (ADR-0001, FR-3413)', () => {
     expect(permissionOperation?.variables.skipProjectScope).toBe(false);
   });
 
-  it('on a super-admin route with a user-owned folder: skips the group-scope permission lookup instead of falling back to the ambient project', async () => {
-    mockIsSuperAdminScopedPage = true;
+  it('on a project-agnostic route with a user-owned folder: skips the group-scope permission lookup instead of falling back to the ambient project', async () => {
+    mockIsProjectAgnosticPage = true;
     const { seenOperations } = renderModal({ ownershipProjectId: null });
 
     await screen.findByTestId('mock-file-explorer');
