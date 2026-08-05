@@ -1681,6 +1681,8 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                           icon={<PlusIcon />}
                           label={t('data.CreateANewStorageFolder')}
                           tooltip={t('data.CreateANewStorageFolder')}
+                          // Same gate as the BAIVFolderSelect above.
+                          isDisabled={!deploymentProject}
                           onClick={() => setIsModelFolderCreateModalOpen(true)}
                         />
                         <IconButton
@@ -1765,6 +1767,8 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                         icon={<PlusIcon />}
                         label={t('data.CreateANewStorageFolder')}
                         tooltip={t('data.CreateANewStorageFolder')}
+                        // Same gate as the BAIVFolderSelect above.
+                        isDisabled={!deploymentProject}
                         onClick={() => setIsModelFolderCreateModalOpen(true)}
                       />
                       <IconButton
@@ -2156,7 +2160,9 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         </Suspense>
       )}
       <FolderCreateModalV2
-        open={isModelFolderCreateModalOpen}
+        // Never reach the `project={null}` tier from here: `onRequestClose`
+        // would write back a folder this revision cannot mount.
+        open={isModelFolderCreateModalOpen && !!deploymentProject}
         project={deploymentProject}
         initialValues={{ usage_mode: 'model' }}
         onRequestClose={(result) => {
