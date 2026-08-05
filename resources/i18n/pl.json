@@ -1081,6 +1081,8 @@
     "FailedToDeleteDeployment": "Nie udało się usunąć wdrożenia.",
     "FailedToRollback": "Nie udało się cofnąć do wybranej Revision.",
     "FailedToUpdateDeployment": "Nie udało się zaktualizować wdrożenia.",
+    "FolderOwnershipUnresolved": "Nie można ustalić właściciela folderu.",
+    "FolderOwnershipUnresolvedDescription": "Projekt będący właścicielem tego folderu jest niedostępny, więc nie można go wdrożyć. Odśwież listę folderów i spróbuj ponownie.",
     "FromStatus": "Z statusu",
     "GoToDetailPage": "Wyświetl szczegóły wdrożenia",
     "HealthStatus": "Stan zdrowia",

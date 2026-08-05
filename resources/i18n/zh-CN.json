@@ -1081,6 +1081,8 @@
     "FailedToDeleteDeployment": "删除部署失败。",
     "FailedToRollback": "回滚到所选 Revision 失败。",
     "FailedToUpdateDeployment": "更新部署失败。",
+    "FolderOwnershipUnresolved": "无法确定文件夹的归属。",
+    "FolderOwnershipUnresolvedDescription": "无法获取该文件夹所属的项目，因此无法部署。请刷新文件夹列表后重试。",
     "FromStatus": "来源状态",
     "GoToDetailPage": "查看部署详情",
     "HealthStatus": "健康状态",

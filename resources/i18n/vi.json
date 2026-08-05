@@ -1081,6 +1081,8 @@
     "FailedToDeleteDeployment": "Không thể xóa triển khai.",
     "FailedToRollback": "Không thể khôi phục về Revision đã chọn.",
     "FailedToUpdateDeployment": "Không thể cập nhật triển khai.",
+    "FolderOwnershipUnresolved": "Không thể xác định quyền sở hữu thư mục.",
+    "FolderOwnershipUnresolvedDescription": "Không lấy được dự án sở hữu thư mục này nên không thể triển khai. Hãy làm mới danh sách thư mục rồi thử lại.",
     "FromStatus": "Từ trạng thái",
     "GoToDetailPage": "Xem chi tiết triển khai",
     "HealthStatus": "Trạng thái sức khỏe",

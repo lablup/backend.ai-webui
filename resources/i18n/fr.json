@@ -1081,6 +1081,8 @@
     "FailedToDeleteDeployment": "Échec de la suppression du déploiement.",
     "FailedToRollback": "Échec du retour à la Revision sélectionnée.",
     "FailedToUpdateDeployment": "Échec de la mise à jour du déploiement.",
+    "FolderOwnershipUnresolved": "Impossible de déterminer le propriétaire du dossier.",
+    "FolderOwnershipUnresolvedDescription": "Le projet propriétaire de ce dossier est indisponible, il ne peut donc pas être déployé. Actualisez la liste des dossiers, puis réessayez.",
     "FromStatus": "Statut source",
     "GoToDetailPage": "Voir les détails du déploiement",
     "HealthStatus": "État de santé",

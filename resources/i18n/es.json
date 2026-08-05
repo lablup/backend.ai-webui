@@ -1081,6 +1081,8 @@
     "FailedToDeleteDeployment": "Error al eliminar el despliegue.",
     "FailedToRollback": "Error al revertir a la Revision seleccionada.",
     "FailedToUpdateDeployment": "Error al actualizar el despliegue.",
+    "FolderOwnershipUnresolved": "No se pudo determinar la propiedad de la carpeta.",
+    "FolderOwnershipUnresolvedDescription": "El proyecto propietario de esta carpeta no está disponible, por lo que no se puede desplegar. Actualice la lista de carpetas e inténtelo de nuevo.",
     "FromStatus": "Estado de origen",
     "GoToDetailPage": "Ver detalles del despliegue",
     "HealthStatus": "Estado de salud",

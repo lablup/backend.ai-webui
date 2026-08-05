@@ -246,6 +246,12 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
       }
       onCancel={() => onRequestClose(false)}
       destroyOnHidden
+      afterOpenChange={(isOpen) => {
+        if (isOpen) {
+          // `destroyOnHidden` clears the form but not this state.
+          setSelectedProject(null);
+        }
+      }}
       width={520}
       confirmLoading={isCreating || isUpdating}
       footer={

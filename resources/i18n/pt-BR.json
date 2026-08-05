@@ -1081,6 +1081,8 @@
     "FailedToDeleteDeployment": "Falha ao excluir a implantação.",
     "FailedToRollback": "Falha ao reverter para a Revision selecionada.",
     "FailedToUpdateDeployment": "Falha ao atualizar a implantação.",
+    "FolderOwnershipUnresolved": "Não foi possível determinar a propriedade da pasta.",
+    "FolderOwnershipUnresolvedDescription": "O projeto proprietário desta pasta está indisponível, por isso ela não pode ser implantada. Atualize a lista de pastas e tente novamente.",
     "FromStatus": "Do status",
     "GoToDetailPage": "Ver detalhes da implantação",
     "HealthStatus": "Status de saúde",

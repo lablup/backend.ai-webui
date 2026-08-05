@@ -1081,6 +1081,8 @@
     "FailedToDeleteDeployment": "Bereitstellung konnte nicht gelöscht werden.",
     "FailedToRollback": "Rollback zur ausgewählten Revision ist fehlgeschlagen.",
     "FailedToUpdateDeployment": "Bereitstellung konnte nicht aktualisiert werden.",
+    "FolderOwnershipUnresolved": "Die Zugehörigkeit des Ordners konnte nicht ermittelt werden.",
+    "FolderOwnershipUnresolvedDescription": "Das zugehörige Projekt dieses Ordners ist nicht verfügbar, daher kann er nicht bereitgestellt werden. Aktualisieren Sie die Ordnerliste und versuchen Sie es erneut.",
     "FromStatus": "Von Status",
     "GoToDetailPage": "Bereitstellungsdetails anzeigen",
     "HealthStatus": "Gesundheitsstatus",
