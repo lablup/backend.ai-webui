@@ -95,6 +95,7 @@ export type {
   BAIVFolderSelectProps,
   VFolderNode,
   BAIVFolderSelectRef,
+  BAIVFolderPermission,
 } from './BAIVFolderSelect';
 export { default as BAIVFolderMountConfigInput } from './BAIVFolderMountConfigInput';
 export {

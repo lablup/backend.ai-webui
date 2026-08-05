@@ -34,6 +34,20 @@ export interface BAIVFolderSelectRef {
   refetch: () => void;
 }
 
+/** Permission names accepted by the `permission` argument of `vfolder_nodes`. */
+export type BAIVFolderPermission =
+  | 'clone'
+  | 'assign_permission_to_others'
+  | 'read_attribute'
+  | 'update_attribute'
+  | 'delete_vfolder'
+  | 'read_content'
+  | 'write_content'
+  | 'delete_content'
+  | 'mount_ro'
+  | 'mount_rw'
+  | 'mount_wd';
+
 export interface BAIVFolderSelectProps extends Omit<
   BAISelectProps,
   'options' | 'labelInValue' | 'ref'
@@ -43,6 +57,12 @@ export interface BAIVFolderSelectProps extends Omit<
   filter?: string;
   valuePropName?: 'id' | 'row_id';
   excludeDeleted?: boolean;
+  /**
+   * Lists only the folders granting this permission to the current user.
+   * Defaults to `'read_attribute'`; one value only, as the API argument is a
+   * single scalar.
+   */
+  requiredPermission?: BAIVFolderPermission;
   onResolvedNamesChange?: (nameMap: Record<string, string>) => void;
   ref?: React.Ref<BAIVFolderSelectRef>;
 }
@@ -58,6 +78,7 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
   filter,
   excludeDeleted,
   valuePropName = 'id',
+  requiredPermission = 'read_attribute',
   onResolvedNamesChange,
   ref,
   ...selectProps
@@ -92,6 +113,8 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
   // Defer query refetch to prevent flickering during user selection
   const deferredControllableValue = useDeferredValue(controllableValue);
 
+  // Labels the selected value(s). Stays on `read_attribute` — narrowing it to
+  // `requiredPermission` would leave an externally-set value showing a raw ID.
   const { vfolder_nodes: selectedVFolderNodes } =
     useLazyLoadQuery<BAIVFolderSelectValueQuery>(
       graphql`
@@ -184,7 +207,7 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
           deferredSearchStr ? `name ilike "%${deferredSearchStr}%"` : null,
         ]),
         scopeId: currentProjectId ? `project:${currentProjectId}` : undefined,
-        permission: 'read_attribute' as const,
+        permission: requiredPermission,
       },
       {
         fetchPolicy: deferredOpen ? 'network-only' : 'store-only',
