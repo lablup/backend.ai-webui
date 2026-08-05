@@ -16,10 +16,7 @@ import {
   useStartSession,
 } from '../hooks/useStartSession';
 import { useVHostInfo } from '../hooks/useVHostInfo';
-import {
-  ProjectContext,
-  ProjectContextOrNull,
-} from '../types/projectContext';
+import { ProjectContext, ProjectContextOrNull } from '../types/projectContext';
 import { EllipsisOutlined } from '@ant-design/icons';
 import { App, Dropdown, Image, Space, Tooltip } from 'antd';
 import {
@@ -61,7 +58,6 @@ const SFTPServerButtonV2: React.FC<SFTPServerButtonV2Props> = ({
       <Tooltip title={noProjectTooltip}>
         <Space.Compact>
           <BAIButton
-            disabled
             icon={
               <Image
                 width="18px"
@@ -71,6 +67,8 @@ const SFTPServerButtonV2: React.FC<SFTPServerButtonV2Props> = ({
               />
             }
             {...buttonProps}
+            // After the spread: a caller must not re-enable this tier.
+            disabled
           >
             {showTitle && t('data.explorer.RunSSH/SFTPserver')}
           </BAIButton>
@@ -251,21 +249,17 @@ const SFTPServerButtonWithProject: React.FC<
                 onClick: () => {
                   const launcherValue = {
                     ...createSftpLauncherValue(),
-                    // Pin the session to exactly the passed project (FR-3412),
-                    // matching the primary button above.
                     projectName: project.name,
                   };
                   const params = new URLSearchParams();
                   params.set('formValues', JSON.stringify(launcherValue));
                   params.set('step', '4');
                   webuiNavigate({
-                    // `SessionLauncherPage` resolves its project from the
-                    // ambient current project, which `ProjectScopeLayout`
-                    // converges from the `:projectName` URL segment — not from
-                    // these form values. So the link itself must carry the
-                    // explicit project, otherwise this entry point could
-                    // launch in a different project than the primary button.
+                    // The launcher reads the project from the URL, not from
+                    // these form values. `scope` is required too: the launcher
+                    // route exists only in the project subtree.
                     pathname: buildProjectPath('session/start', {
+                      scope: 'project',
                       projectName: project.name,
                     }),
                     search: params.toString(),

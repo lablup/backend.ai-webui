@@ -7,8 +7,8 @@ import '../../__test__/resizeObserver.mock.js';
 import type { FileBrowserButtonV2TestQuery } from '../__generated__/FileBrowserButtonV2TestQuery.graphql';
 import { ProjectContextOrNull } from '../types/projectContext';
 import FileBrowserButtonV2 from './FileBrowserButtonV2';
-import '@testing-library/jest-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import '@testing-library/jest-dom';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { App } from 'antd';
@@ -137,10 +137,7 @@ vi.mock('../hooks/useDefaultImagesWithFallback', () => ({
   useDefaultSystemSSHImageWithFallback: () => ({
     systemSSHImage: 'cr.backend.ai/stable/ssh:latest@x86_64',
   }),
-  // `useStartSession` resolves the image reference through this hook. The
-  // fixtures above are already fully qualified (`:tag@arch`), which the real
-  // implementation passes through untouched — so echoing the input keeps the
-  // mock faithful without needing a Relay image query.
+  // Fixtures are already fully qualified, which the real hook passes through.
   useResolveImageReference: () => async (imageString?: string) => imageString,
 }));
 
@@ -150,6 +147,7 @@ const TestRenderer: React.FC<{
   project: ProjectContextOrNull;
   noProjectTooltip?: string;
 }> = ({ project, noProjectTooltip }) => {
+  'use memo';
   const data = useLazyLoadQuery<FileBrowserButtonV2TestQuery>(
     graphql`
       query FileBrowserButtonV2TestQuery($vfolderId: UUID!)
@@ -274,9 +272,7 @@ describe('FileBrowserButtonV2 project prop contract (ADR-0001, FR-3412)', () => 
         op.name ===
         'useMergedAllowedStorageHostPermission_AllowedVFolderHostsQuery',
     );
-    expect(permissionOperation?.variables.projectId).toBe(
-      'passed-project-id',
-    );
+    expect(permissionOperation?.variables.projectId).toBe('passed-project-id');
 
     await user.click(launchButton);
 

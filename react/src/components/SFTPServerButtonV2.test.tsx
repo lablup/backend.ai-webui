@@ -7,8 +7,8 @@ import '../../__test__/resizeObserver.mock.js';
 import type { SFTPServerButtonV2TestQuery } from '../__generated__/SFTPServerButtonV2TestQuery.graphql';
 import { ProjectContextOrNull } from '../types/projectContext';
 import SFTPServerButtonV2 from './SFTPServerButtonV2';
-import '@testing-library/jest-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import '@testing-library/jest-dom';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { App } from 'antd';
@@ -92,22 +92,40 @@ const { mockBaiClient, mockCreateIfNotExists, mockListHosts } = vi.hoisted(
   },
 );
 
+const mockWebUINavigate = vi.fn();
+
 vi.mock('../hooks', async (importOriginal) => {
   const originalModule = await importOriginal<typeof import('../hooks')>();
   return {
     ...originalModule,
     useSuspendedBackendaiClient: () => mockBaiClient,
     useCurrentDomainValue: () => 'default',
-    useWebUINavigate: () => vi.fn(),
+    useWebUINavigate: () => mockWebUINavigate,
   };
 });
 
 vi.mock('../hooks/useRouteScope', async (importOriginal) => {
   const originalModule =
     await importOriginal<typeof import('../hooks/useRouteScope')>();
+  const { buildPath } = await import('../helper/pathBuilder');
   return {
     ...originalModule,
-    useProjectPath: () => (path: string) => `/${path}`,
+    // Ambient scope is projectAdmin — the case where a `projectName`-only
+    // override still resolves into the routeless `/admin/` subtree.
+    useProjectPath:
+      () =>
+      (
+        key: string,
+        opts?: {
+          scope?: 'project' | 'projectAdmin' | 'admin';
+          projectName?: string;
+        },
+      ) =>
+        buildPath(
+          opts?.scope ?? 'projectAdmin',
+          key,
+          opts?.projectName ?? 'ambient-project-name',
+        ),
   };
 });
 
@@ -160,10 +178,7 @@ vi.mock('../hooks/useDefaultImagesWithFallback', () => ({
   useDefaultSystemSSHImageWithFallback: () => ({
     systemSSHImage: 'cr.backend.ai/stable/ssh:latest@x86_64',
   }),
-  // `useStartSession` resolves the image reference through this hook. The
-  // fixtures above are already fully qualified (`:tag@arch`), which the real
-  // implementation passes through untouched — so echoing the input keeps the
-  // mock faithful without needing a Relay image query.
+  // Fixtures are already fully qualified, which the real hook passes through.
   useResolveImageReference: () => async (imageString?: string) => imageString,
 }));
 
@@ -173,6 +188,7 @@ const TestRenderer: React.FC<{
   project: ProjectContextOrNull;
   noProjectTooltip?: string;
 }> = ({ project, noProjectTooltip }) => {
+  'use memo';
   const data = useLazyLoadQuery<SFTPServerButtonV2TestQuery>(
     graphql`
       query SFTPServerButtonV2TestQuery($vfolderId: UUID!)
@@ -260,6 +276,7 @@ describe('SFTPServerButtonV2 project prop contract (ADR-0001, FR-3412)', () => {
   beforeEach(() => {
     mockCreateIfNotExists.mockClear();
     mockListHosts.mockClear();
+    mockWebUINavigate.mockClear();
   });
 
   it('renders disabled with the caller-provided tooltip when project is null', async () => {
@@ -303,9 +320,7 @@ describe('SFTPServerButtonV2 project prop contract (ADR-0001, FR-3412)', () => {
         op.name ===
         'useMergedAllowedStorageHostPermission_AllowedVFolderHostsQuery',
     );
-    expect(permissionOperation?.variables.projectId).toBe(
-      'passed-project-id',
-    );
+    expect(permissionOperation?.variables.projectId).toBe('passed-project-id');
 
     await user.click(launchButton);
 
@@ -315,5 +330,37 @@ describe('SFTPServerButtonV2 project prop contract (ADR-0001, FR-3412)', () => {
     // per-project SFTP scaling group.
     expect(resources.group_name).toBe('passed-project-name');
     expect(resources.config.scaling_group).toBe('project-sftp-rg');
+  });
+
+  it('sends "Start with Options" to the passed project\'s launcher route, not the ambient scope', async () => {
+    const user = userEvent.setup();
+    renderButton({
+      id: 'passed-project-id',
+      name: 'passed-project-name',
+    });
+
+    const launchButton = await screen.findByRole('button', {
+      name: /RunSSH\/SFTPserver/,
+    });
+    await waitFor(() => expect(launchButton).toBeEnabled());
+
+    // The dropdown trigger is the second button in the compact group.
+    const menuTrigger = launchButton
+      .closest('.ant-space-compact')!
+      .querySelectorAll('button')[1];
+    await user.click(menuTrigger);
+    await user.click(await screen.findByText('import.StartWithOptions'));
+
+    await waitFor(() => expect(mockWebUINavigate).toHaveBeenCalled());
+    const target = mockWebUINavigate.mock.calls[0][0];
+
+    // Must not keep the ambient projectAdmin scope, which would 404.
+    expect(target.pathname).toBe('/project/passed-project-name/session/start');
+    expect(target.pathname).not.toContain('/admin/');
+
+    const formValues = JSON.parse(
+      new URLSearchParams(target.search).get('formValues')!,
+    );
+    expect(formValues.projectName).toBe('passed-project-name');
   });
 });
