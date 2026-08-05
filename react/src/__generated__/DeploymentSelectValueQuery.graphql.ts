@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<48d2217c91c32a7505791a5f19db3bf6>>
+ * @generated SignedSource<<d26fb07613b1065fbb112b234e330614>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,6 +17,7 @@ export type DeploymentSelectValueQuery$data = {
     readonly id: string;
     readonly metadata: {
       readonly name: string;
+      readonly projectId: string;
     };
     readonly networkAccess: {
       readonly endpointUrl: string | null | undefined;
@@ -72,6 +73,13 @@ v1 = [
             "kind": "ScalarField",
             "name": "name",
             "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "projectId",
+            "storageKey": null
           }
         ],
         "storageKey": null
@@ -116,16 +124,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "d019233e2b61cf4c5de6d4201a9241e1",
+    "cacheID": "da4ff5a3e9ea6ea0e81e9af5c9f321f8",
     "id": null,
     "metadata": {},
     "name": "DeploymentSelectValueQuery",
     "operationKind": "query",
-    "text": "query DeploymentSelectValueQuery(\n  $deploymentId: ID!\n) {\n  deployment(id: $deploymentId) {\n    id\n    metadata {\n      name\n    }\n    networkAccess {\n      endpointUrl\n    }\n  }\n}\n"
+    "text": "query DeploymentSelectValueQuery(\n  $deploymentId: ID!\n) {\n  deployment(id: $deploymentId) {\n    id\n    metadata {\n      name\n      projectId\n    }\n    networkAccess {\n      endpointUrl\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "216367ded2e494bc626f4baba302eced";
+(node as any).hash = "e5b0bd5b1241e84c48ada2928a4aa788";
 
 export default node;

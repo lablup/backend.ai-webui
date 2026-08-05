@@ -1157,6 +1157,8 @@
     "SchedulingHistory": "Planungsverlauf",
     "SessionId": "Sitzungs-ID",
     "StartChatTest": "Im Chat testen",
+    "SwitchProjectConfirmContent": "Diese Bereitstellung gehört zum Projekt „{{projectName}}“. Sie werden zu diesem Projekt gewechselt, um sie anzuzeigen. Fortfahren?",
+    "SwitchProjectConfirmTitle": "Zu einem anderen Projekt wechseln?",
     "Tags": "Tags",
     "TagsPlaceholder": "Tags eingeben, durch Kommas getrennt",
     "TagsTooltip": "Optionale Labels zum Organisieren und Filtern von Bereitstellungen. Enter oder Komma drücken, um hinzuzufügen.",

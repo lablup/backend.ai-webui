@@ -1157,6 +1157,8 @@
     "SchedulingHistory": "Histórico de Agendamento",
     "SessionId": "ID da sessão",
     "StartChatTest": "Testar no Chat",
+    "SwitchProjectConfirmContent": "Esta implantação pertence ao projeto \"{{projectName}}\". Será mudado para esse projeto para a visualizar. Continuar?",
+    "SwitchProjectConfirmTitle": "Mudar para outro projeto?",
     "Tags": "Etiquetas",
     "TagsPlaceholder": "Introduza etiquetas, separadas por vírgulas",
     "TagsTooltip": "Etiquetas opcionais para organizar e filtrar implementações. Prima Enter ou vírgula para adicionar.",

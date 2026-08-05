@@ -1157,6 +1157,8 @@
     "SchedulingHistory": "スケジュール履歴",
     "SessionId": "セッションID",
     "StartChatTest": "チャットでテスト",
+    "SwitchProjectConfirmContent": "このデプロイは「{{projectName}}」プロジェクトに属しています。表示するには、そのプロジェクトに切り替わります。続行しますか？",
+    "SwitchProjectConfirmTitle": "別のプロジェクトに切り替えますか？",
     "Tags": "タグ",
     "TagsPlaceholder": "タグをカンマ区切りで入力してください",
     "TagsTooltip": "デプロイメントを整理・フィルタリングするためのオプションのラベル。EnterまたはEnterキーを押して追加してください。",

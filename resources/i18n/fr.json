@@ -1157,6 +1157,8 @@
     "SchedulingHistory": "Historique de planification",
     "SessionId": "ID de session",
     "StartChatTest": "Tester dans le chat",
+    "SwitchProjectConfirmContent": "Ce déploiement appartient au projet \"{{projectName}}\". Vous serez basculé vers ce projet pour le consulter. Continuer ?",
+    "SwitchProjectConfirmTitle": "Passer à un autre projet ?",
     "Tags": "Étiquettes",
     "TagsPlaceholder": "Saisir des étiquettes, séparées par des virgules",
     "TagsTooltip": "Étiquettes optionnelles pour organiser et filtrer les déploiements. Appuyez sur Entrée ou virgule pour ajouter.",

@@ -1144,6 +1144,8 @@
     "SchedulingHistory": "Scheduling History",
     "SessionId": "Session ID",
     "StartChatTest": "Test in Chat",
+    "SwitchProjectConfirmContent": "This deployment belongs to the \"{{projectName}}\" project. You'll be switched to that project to view it. Continue?",
+    "SwitchProjectConfirmTitle": "Switch to another project?",
     "Tags": "Tags",
     "TagsPlaceholder": "Enter tags, separated by commas",
     "TagsTooltip": "Optional labels for organizing and filtering deployments. Press Enter or comma to add.",

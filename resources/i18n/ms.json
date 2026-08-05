@@ -1157,6 +1157,8 @@
     "SchedulingHistory": "Sejarah Penjadualan",
     "SessionId": "ID Sesi",
     "StartChatTest": "Uji di Sembang",
+    "SwitchProjectConfirmContent": "Penggunaan ini tergolong dalam projek \"{{projectName}}\". Anda akan ditukar ke projek tersebut untuk melihatnya. Teruskan?",
+    "SwitchProjectConfirmTitle": "Tukar ke projek lain?",
     "Tags": "Tag",
     "TagsPlaceholder": "Masukkan tag, dipisahkan dengan koma",
     "TagsTooltip": "Label pilihan untuk mengatur dan menapis deployment. Tekan Enter atau koma untuk menambah.",

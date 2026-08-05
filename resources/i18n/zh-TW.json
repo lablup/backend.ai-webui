@@ -1158,6 +1158,8 @@
     "SchedulingHistory": "排程記錄",
     "SessionId": "工作階段 ID",
     "StartChatTest": "在聊天中測試",
+    "SwitchProjectConfirmContent": "此部署屬於「{{projectName}}」專案。系統將切換至該專案以便查看。是否繼續？",
+    "SwitchProjectConfirmTitle": "是否切換至其他專案？",
     "Tags": "標籤",
     "TagsPlaceholder": "輸入標籤，以逗號分隔",
     "TagsTooltip": "用於組織和篩選部署的可選標籤。按 Enter 或逗號新增。",

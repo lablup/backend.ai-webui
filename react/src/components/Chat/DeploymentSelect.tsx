@@ -7,12 +7,16 @@ import {
   DeploymentSelectValueQuery,
   DeploymentSelectValueQuery$data,
 } from '../../__generated__/DeploymentSelectValueQuery.graphql';
+import { buildPath } from '../../helper/pathBuilder';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
+import { useAccessibleProjects } from '../../hooks/useAccessibleProjects';
+import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
 import { useProjectPath } from '../../hooks/useRouteScope';
 import TotalFooter from '../TotalFooter';
 import { useControllableValue } from 'ahooks';
 import {
+  App,
   Button,
   type GetRef,
   type SelectProps,
@@ -117,6 +121,11 @@ const DeploymentSelect: React.FC<DeploymentSelectProps> = ({
             id
             metadata {
               name
+              # The owning project's id, used to detect whether this deployment
+              # belongs to a project other than the currently active one. It is
+              # a raw UUID (not a Relay global id), so it compares directly
+              # against the current project id.
+              projectId
             }
             networkAccess {
               endpointUrl
@@ -223,6 +232,56 @@ const DeploymentSelect: React.FC<DeploymentSelectProps> = ({
 
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
+  const currentProject = useCurrentProjectValue();
+  const { modal } = App.useApp();
+
+  // General-user menus only surface entities within the current project
+  // scope (FR-3429): if the selected deployment belongs to a DIFFERENT
+  // project than the one currently active, opening its detail page directly
+  // would land on a cross-project entity. Detect the mismatch here so the
+  // detail-page shortcut can confirm-and-switch instead.
+  const targetProjectId = selectedDeployment?.metadata.projectId ?? null;
+  const isDifferentProject =
+    !!targetProjectId &&
+    !!currentProject.id &&
+    targetProjectId !== currentProject.id;
+
+  // The target project's NAME (needed to build
+  // `/project/<name>/deployments/<id>`) comes from the same
+  // accessible-project list the header's ProjectSelect renders (FR-3388) —
+  // no extra query: the header already populated these records in the Relay
+  // store. If the project is NOT in that list the user cannot enter it
+  // (`ProjectScopeLayout` would render "not found / no access"), so offering
+  // the switch would be wrong anyway — fall back to today's behavior below.
+  const { accessibleProjects } = useAccessibleProjects();
+  const targetProject = isDifferentProject
+    ? accessibleProjects?.find((project) => project?.id === targetProjectId)
+    : undefined;
+
+  const goToDeploymentDetailPage = () => {
+    if (!controllableValue) return;
+    if (!isDifferentProject || !targetProject?.name) {
+      webuiNavigate(buildProjectPath(`deployments/${controllableValue}`));
+      return;
+    }
+    modal.confirm({
+      title: t('deployment.SwitchProjectConfirmTitle'),
+      content: t('deployment.SwitchProjectConfirmContent', {
+        projectName: targetProject?.name ?? '',
+      }),
+      okText: t('button.Confirm'),
+      cancelText: t('button.Cancel'),
+      onOk: () => {
+        webuiNavigate(
+          buildPath(
+            'project',
+            `deployments/${controllableValue}`,
+            targetProject?.name,
+          ),
+        );
+      },
+    });
+  };
 
   const isValueMatched = searchStr === deferredSearchStr;
   useEffect(() => {
@@ -289,11 +348,7 @@ const DeploymentSelect: React.FC<DeploymentSelectProps> = ({
             <Button
               icon={<InfoIcon />}
               disabled={!controllableValue}
-              onClick={() => {
-                webuiNavigate(
-                  buildProjectPath(`deployments/${controllableValue}`),
-                );
-              }}
+              onClick={goToDeploymentDetailPage}
             />
           </Tooltip>
         ) : null}

@@ -1157,6 +1157,8 @@
     "SchedulingHistory": "스케줄링 기록",
     "SessionId": "세션 ID",
     "StartChatTest": "채팅으로 테스트하기",
+    "SwitchProjectConfirmContent": "이 배포는 \"{{projectName}}\" 프로젝트에 속해 있습니다. 이 배포를 보려면 해당 프로젝트로 전환합니다. 진행할까요?",
+    "SwitchProjectConfirmTitle": "다른 프로젝트로 전환할까요?",
     "Tags": "태그",
     "TagsPlaceholder": "쉼표로 구분하여 태그를 입력하세요",
     "TagsTooltip": "배포를 정리하고 필터링하기 위한 선택적 라벨입니다. Enter 또는 쉼표로 추가하세요.",

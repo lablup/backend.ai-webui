@@ -1157,6 +1157,8 @@
     "SchedulingHistory": "Cronologia di pianificazione",
     "SessionId": "ID sessione",
     "StartChatTest": "Prova in chat",
+    "SwitchProjectConfirmContent": "Questa distribuzione appartiene al progetto \"{{projectName}}\". Verrai spostato su quel progetto per visualizzarla. Continuare?",
+    "SwitchProjectConfirmTitle": "Passare a un altro progetto?",
     "Tags": "Tag",
     "TagsPlaceholder": "Inserisci i tag, separati da virgole",
     "TagsTooltip": "Etichette opzionali per organizzare e filtrare le distribuzioni. Premi Invio o virgola per aggiungere.",
