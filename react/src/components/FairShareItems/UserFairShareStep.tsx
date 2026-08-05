@@ -6,32 +6,28 @@ import {
   UserFairShareOrderBy,
   UserFairShareStepQuery,
 } from '../../__generated__/UserFairShareStepQuery.graphql';
-import { convertToOrderBy, handleRowSelectionChange } from '../../helper';
+import { convertToOrderBy } from '../../helper';
 import { useBAIPaginationOptionStateOnSearchParam } from '../../hooks/reactPaginationQueryOptions';
-import AutoUpdateFetchKeyButton, {
-  LONG_AUTO_UPDATE_DELAY_OPTIONS,
-} from '../AutoUpdateFetchKeyButton';
+import FairShareStepToolbar from './FairShareStepToolbar';
 import FairShareWeightSettingModal from './FairShareWeightSettingModal';
+import ResourceGroupSchedulerTypeAlert from './ResourceGroupSchedulerTypeAlert';
 import UsageBucketModal from './UsageBucketModal';
 import UserFairShareTable, {
   availableUserFairShareSorterValues,
   UserFairShare,
 } from './UserFairShareTable';
 import UserResourceGroupAlert from './UserResourceGroupAlert';
-import { theme, Tooltip } from 'antd';
+import { useFairShareStepSelectionState } from './useFairShareStepSelectionState';
+import { theme } from 'antd';
 import {
-  BAIButton,
   BAIFlex,
-  BAIGraphQLPropertyFilter,
-  BAISelectionLabel,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { ChartNoAxesCombined, SquarePenIcon } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
-import { Suspense, useDeferredValue, useState } from 'react';
+import { Suspense, useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -53,11 +49,18 @@ const UserFairShareStep: React.FC<UserFairShareStepProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
-  const [selectedRows, setSelectedRows] = useState<Array<UserFairShare>>([]);
-  const [selectedSingleRow, setSelectedSingleRow] =
-    useState<UserFairShare | null>(null);
-  const [openWeightSettingModal, setOpenWeightSettingModal] = useState(false);
-  const [openUsageModal, setOpenUsageModal] = useState(false);
+  const {
+    selectedRows,
+    selectedSingleRow,
+    openWeightSettingModal,
+    openUsageModal,
+    setSelectedSingleRow,
+    setOpenWeightSettingModal,
+    setOpenUsageModal,
+    handleRowSelect,
+    clearSelection,
+    closeModals,
+  } = useFairShareStepSelectionState<UserFairShare, 'userUuid'>('userUuid');
 
   const {
     baiPaginationOption,
@@ -113,6 +116,7 @@ const UserFairShareStep: React.FC<UserFairShareStepProps> = ({
           ) {
             edges {
               node {
+                ...ResourceGroupSchedulerTypeAlertFragment
                 ...FairShareWeightSettingModal_ResourceGroupFragment
               }
             }
@@ -149,8 +153,11 @@ const UserFairShareStep: React.FC<UserFairShareStepProps> = ({
       },
     );
 
+  const resourceGroupNode = resourceGroups?.edges?.[0]?.node;
+
   return (
     <BAIFlex direction="column" align="stretch" gap="xs">
+      <ResourceGroupSchedulerTypeAlert resourceGroupFrgmt={resourceGroupNode} />
       <Suspense fallback={null}>
         <UserResourceGroupAlert
           resourceGroupName={resourceGroupName}
@@ -158,71 +165,42 @@ const UserFairShareStep: React.FC<UserFairShareStepProps> = ({
           projectId={projectId}
         />
       </Suspense>
-      <BAIFlex justify="between" align="center" wrap="wrap" gap="sm">
-        <BAIGraphQLPropertyFilter
-          filterProperties={[
-            {
-              key: 'user.email',
-              propertyLabel: t('fairShare.Email'),
-              type: 'string',
-            },
-            {
-              key: 'user.username',
-              propertyLabel: t('fairShare.Name'),
-              type: 'string',
-            },
-            {
-              key: 'user.isActive',
-              propertyLabel: t('fairShare.ActiveStatus'),
-              type: 'boolean',
-            },
-          ]}
-          value={queryParams.filter || {}}
-          onChange={(filter) => {
-            setQueryParams({
-              filter: filter || null,
-            });
-            setTablePaginationOption({ current: 1 });
-          }}
-        />
-        <BAIFlex gap="xs">
-          {selectedRows.length > 0 && (
-            <>
-              <BAISelectionLabel
-                count={selectedRows.length}
-                onClearSelection={() => setSelectedRows([])}
-              />
-              <Tooltip title={t('general.ShowUsageGraph')} placement="topLeft">
-                <BAIButton
-                  icon={
-                    <ChartNoAxesCombined style={{ color: token.colorInfo }} />
-                  }
-                  onClick={() => {
-                    setOpenUsageModal(true);
-                  }}
-                />
-              </Tooltip>
-              <Tooltip title={t('general.BulkEdit')} placement="topLeft">
-                <BAIButton
-                  icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
-                  onClick={() => {
-                    setOpenWeightSettingModal(true);
-                  }}
-                />
-              </Tooltip>
-            </>
-          )}
-          <AutoUpdateFetchKeyButton
-            settingId="fair-share-list"
-            autoUpdateDelayOptions={LONG_AUTO_UPDATE_DELAY_OPTIONS}
-            loading={fetchKey !== deferredFetchKey}
-            value=""
-            onChange={() => {
-              updateFetchKey();
-            }}
-          />
-        </BAIFlex>
-      </BAIFlex>
+      <FairShareStepToolbar
+        filterProperties={[
+          {
+            key: 'user.email',
+            propertyLabel: t('fairShare.Email'),
+            type: 'string',
+          },
+          {
+            key: 'user.username',
+            propertyLabel: t('fairShare.Name'),
+            type: 'string',
+          },
+          {
+            key: 'user.isActive',
+            propertyLabel: t('fairShare.ActiveStatus'),
+            type: 'boolean',
+          },
+        ]}
+        filterValue={queryParams.filter || {}}
+        onChangeFilter={(filter) => {
+          setQueryParams({
+            filter: filter || null,
+          });
+          setTablePaginationOption({ current: 1 });
+        }}
+        fetchKeyLoading={fetchKey !== deferredFetchKey}
+        onRefresh={() => {
+          updateFetchKey();
+        }}
+        selection={{
+          selectedCount: selectedRows.length,
+          onClearSelection: clearSelection,
+          onShowUsage: () => setOpenUsageModal(true),
+          onBulkEdit: () => setOpenWeightSettingModal(true),
+        }}
+      />
       <UserFairShareTable
         userFairShareNodeFragment={
           userFairShares?.edges?.map((edge) => edge?.node) || null
@@ -233,14 +211,7 @@ const UserFairShareStep: React.FC<UserFairShareStepProps> = ({
           fetchKey !== deferredFetchKey
         }
         selectedRows={selectedRows}
-        onRowSelect={(selectedRowKeys, currentPageItems) => {
-          handleRowSelectionChange(
-            selectedRowKeys,
-            currentPageItems,
-            setSelectedRows,
-            'userUuid',
-          );
-        }}
+        onRowSelect={handleRowSelect}
         onOpenWeightSetting={(row) => {
           setSelectedSingleRow(row);
         }}
@@ -268,14 +239,13 @@ const UserFairShareStep: React.FC<UserFairShareStepProps> = ({
           userFairShareFrgmt={
             selectedSingleRow ? [selectedSingleRow] : selectedRows
           }
-          resourceGroupFrgmt={resourceGroups?.edges?.[0]?.node}
+          resourceGroupFrgmt={resourceGroupNode}
           onRequestClose={(success) => {
             if (success) {
               updateFetchKey();
-              setSelectedRows([]);
+              clearSelection();
             }
-            setSelectedSingleRow(null);
-            setOpenWeightSettingModal(false);
+            closeModals();
           }}
         />
       </BAIUnmountAfterClose>

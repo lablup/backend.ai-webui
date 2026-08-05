@@ -6,7 +6,6 @@ import { FairShareListProjectNameQuery } from '../../__generated__/FairShareList
 import DomainFairShareStep from './DomainFairShareStep';
 import ProjectFairShareStep from './ProjectFairShareStep';
 import ResourceGroupFairShareStep from './ResourceGroupFairShareStep';
-import ResourceGroupSchedulerTypeAlert from './ResourceGroupSchedulerTypeAlert';
 import UserFairShareStep from './UserFairShareStep';
 import { Alert, Skeleton, Steps, theme, Typography } from 'antd';
 import { createStyles } from 'antd-style';
@@ -235,13 +234,6 @@ const FairShareList: React.FC = () => {
 
   return (
     <BAIFlex direction="column" gap="md" align="stretch">
-      {currentStep !== 'resource-group' && (
-        <Suspense fallback={null}>
-          <ResourceGroupSchedulerTypeAlert
-            resourceGroupName={deferredStepQueryParams.resourceGroup}
-          />
-        </Suspense>
-      )}
       <Alert type="info" title={t('fairShare.step.Description')} showIcon />
       <Steps
         className={styles.step}

@@ -8,19 +8,12 @@ import {
 } from '../../__generated__/ResourceGroupFairShareStepQuery.graphql';
 import { convertToOrderBy } from '../../helper';
 import { useBAIPaginationOptionStateOnSearchParam } from '../../hooks/reactPaginationQueryOptions';
-import AutoUpdateFetchKeyButton, {
-  LONG_AUTO_UPDATE_DELAY_OPTIONS,
-} from '../AutoUpdateFetchKeyButton';
+import FairShareStepToolbar from './FairShareStepToolbar';
 import ResourceGroupFairShareTable, {
   availableResourceGroupSorterValues,
 } from './ResourceGroupFairShareTable';
 import { theme } from 'antd';
-import {
-  BAIFlex,
-  BAIGraphQLPropertyFilter,
-  INITIAL_FETCH_KEY,
-  useFetchKey,
-} from 'backend.ai-ui';
+import { BAIFlex, INITIAL_FETCH_KEY, useFetchKey } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { useDeferredValue } from 'react';
@@ -109,33 +102,26 @@ const ResourceGroupFairShareStep: React.FC<ResourceGroupFairShareStepProps> = ({
 
   return (
     <BAIFlex direction="column" align="stretch" gap="xs">
-      <BAIFlex justify="between" align="center" wrap="wrap" gap="sm">
-        <BAIGraphQLPropertyFilter
-          filterProperties={[
-            {
-              key: 'name',
-              propertyLabel: t('fairShare.Name'),
-              type: 'string',
-            },
-          ]}
-          value={queryParams.filter || {}}
-          onChange={(filter) => {
-            setQueryParams({
-              filter: filter || null,
-            });
-            setTablePaginationOption({ current: 1 });
-          }}
-        />
-        <AutoUpdateFetchKeyButton
-          settingId="fair-share-list"
-          autoUpdateDelayOptions={LONG_AUTO_UPDATE_DELAY_OPTIONS}
-          loading={fetchKey !== deferredFetchKey}
-          value=""
-          onChange={() => {
-            updateFetchKey();
-          }}
-        />
-      </BAIFlex>
+      <FairShareStepToolbar
+        filterProperties={[
+          {
+            key: 'name',
+            propertyLabel: t('fairShare.Name'),
+            type: 'string',
+          },
+        ]}
+        filterValue={queryParams.filter || {}}
+        onChangeFilter={(filter) => {
+          setQueryParams({
+            filter: filter || null,
+          });
+          setTablePaginationOption({ current: 1 });
+        }}
+        fetchKeyLoading={fetchKey !== deferredFetchKey}
+        onRefresh={() => {
+          updateFetchKey();
+        }}
+      />
       <ResourceGroupFairShareTable
         resourceGroupNodeFragment={
           resourceGroups?.edges?.map((edge) => edge?.node) || null

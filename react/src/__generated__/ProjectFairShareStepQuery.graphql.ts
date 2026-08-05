@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<11c4d570054bacc96fd5bc9ca6e881f1>>
+ * @generated SignedSource<<c17e0dcbf5998f79378510bbc4eaf131>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -85,7 +85,7 @@ export type ProjectFairShareStepQuery$data = {
   readonly resourceGroups: {
     readonly edges: ReadonlyArray<{
       readonly node: {
-        readonly " $fragmentSpreads": FragmentRefs<"FairShareWeightSettingModal_ResourceGroupFragment">;
+        readonly " $fragmentSpreads": FragmentRefs<"FairShareWeightSettingModal_ResourceGroupFragment" | "ResourceGroupSchedulerTypeAlertFragment">;
       };
     }>;
   } | null | undefined;
@@ -253,6 +253,11 @@ return {
                   {
                     "args": null,
                     "kind": "FragmentSpread",
+                    "name": "ResourceGroupSchedulerTypeAlertFragment"
+                  },
+                  {
+                    "args": null,
+                    "kind": "FragmentSpread",
                     "name": "FairShareWeightSettingModal_ResourceGroupFragment"
                   }
                 ],
@@ -348,6 +353,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
+                  (v9/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -366,7 +372,6 @@ return {
                     ],
                     "storageKey": null
                   },
-                  (v9/*: any*/),
                   (v10/*: any*/)
                 ],
                 "storageKey": null
@@ -586,16 +591,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "82ad7f501b75613058e9e3ac9cd02803",
+    "cacheID": "854a6b5155b4e5d3a32f635f59768056",
     "id": null,
     "metadata": {},
     "name": "ProjectFairShareStepQuery",
     "operationKind": "query",
-    "text": "query ProjectFairShareStepQuery(\n  $resourceGroupName: String!\n  $domainName: String!\n  $filter: RGProjectFairShareFilter\n  $order: [ProjectFairShareOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  resourceGroups: adminResourceGroups(filter: {name: {equals: $resourceGroupName}}, limit: 1) {\n    edges {\n      node {\n        ...FairShareWeightSettingModal_ResourceGroupFragment\n        id\n      }\n    }\n  }\n  projectFairShares: rgProjectFairShares(scope: {resourceGroupName: $resourceGroupName, domainName: $domainName}, filter: $filter, orderBy: $order, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...ProjectFairShareTableFragment\n        id\n      }\n    }\n  }\n}\n\nfragment FairShareWeightSettingModal_ProjectFragment on ProjectFairShare {\n  resourceGroup {\n    name\n    id\n  }\n  domain {\n    basicInfo {\n      name\n    }\n    id\n  }\n  project {\n    basicInfo {\n      name\n    }\n    id\n  }\n  projectId\n  spec {\n    weight\n  }\n  ...ProjectResourceGroupAlertFragment\n}\n\nfragment FairShareWeightSettingModal_ResourceGroupFragment on ResourceGroup {\n  scheduler {\n    type\n  }\n  name\n}\n\nfragment ProjectFairShareTableFragment on ProjectFairShare {\n  project {\n    basicInfo {\n      name\n    }\n    id\n  }\n  id\n  resourceGroupName\n  domainName\n  projectId\n  spec {\n    weight\n    usesDefault\n  }\n  calculationSnapshot {\n    fairShareFactor\n    averageDailyDecayedUsage {\n      entries {\n        resourceType\n        quantity\n      }\n    }\n  }\n  createdAt\n  updatedAt\n  ...ProjectResourceGroupWarningIconFragment\n  ...FairShareWeightSettingModal_ProjectFragment\n  ...UsageBucketModal_ProjectFragment\n}\n\nfragment ProjectResourceGroupAlertFragment on ProjectFairShare {\n  projectId\n  domainName\n  resourceGroupName\n}\n\nfragment ProjectResourceGroupWarningIconFragment on ProjectFairShare {\n  projectId\n  domainName\n  resourceGroupName\n}\n\nfragment UsageBucketChartContent_ProjectFragment on ProjectFairShare {\n  id\n  domainName\n  projectId\n  resourceGroup {\n    name\n    id\n  }\n}\n\nfragment UsageBucketModal_ProjectFragment on ProjectFairShare {\n  id\n  resourceGroup {\n    name\n    id\n  }\n  domain {\n    basicInfo {\n      name\n    }\n    id\n  }\n  project {\n    basicInfo {\n      name\n    }\n    id\n  }\n  ...UsageBucketChartContent_ProjectFragment\n}\n"
+    "text": "query ProjectFairShareStepQuery(\n  $resourceGroupName: String!\n  $domainName: String!\n  $filter: RGProjectFairShareFilter\n  $order: [ProjectFairShareOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  resourceGroups: adminResourceGroups(filter: {name: {equals: $resourceGroupName}}, limit: 1) {\n    edges {\n      node {\n        ...ResourceGroupSchedulerTypeAlertFragment\n        ...FairShareWeightSettingModal_ResourceGroupFragment\n        id\n      }\n    }\n  }\n  projectFairShares: rgProjectFairShares(scope: {resourceGroupName: $resourceGroupName, domainName: $domainName}, filter: $filter, orderBy: $order, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...ProjectFairShareTableFragment\n        id\n      }\n    }\n  }\n}\n\nfragment FairShareWeightSettingModal_ProjectFragment on ProjectFairShare {\n  resourceGroup {\n    name\n    id\n  }\n  domain {\n    basicInfo {\n      name\n    }\n    id\n  }\n  project {\n    basicInfo {\n      name\n    }\n    id\n  }\n  projectId\n  spec {\n    weight\n  }\n  ...ProjectResourceGroupAlertFragment\n}\n\nfragment FairShareWeightSettingModal_ResourceGroupFragment on ResourceGroup {\n  scheduler {\n    type\n  }\n  name\n}\n\nfragment ProjectFairShareTableFragment on ProjectFairShare {\n  project {\n    basicInfo {\n      name\n    }\n    id\n  }\n  id\n  resourceGroupName\n  domainName\n  projectId\n  spec {\n    weight\n    usesDefault\n  }\n  calculationSnapshot {\n    fairShareFactor\n    averageDailyDecayedUsage {\n      entries {\n        resourceType\n        quantity\n      }\n    }\n  }\n  createdAt\n  updatedAt\n  ...ProjectResourceGroupWarningIconFragment\n  ...FairShareWeightSettingModal_ProjectFragment\n  ...UsageBucketModal_ProjectFragment\n}\n\nfragment ProjectResourceGroupAlertFragment on ProjectFairShare {\n  projectId\n  domainName\n  resourceGroupName\n}\n\nfragment ProjectResourceGroupWarningIconFragment on ProjectFairShare {\n  projectId\n  domainName\n  resourceGroupName\n}\n\nfragment ResourceGroupSchedulerTypeAlertFragment on ResourceGroup {\n  name\n  scheduler {\n    type\n  }\n}\n\nfragment UsageBucketChartContent_ProjectFragment on ProjectFairShare {\n  id\n  domainName\n  projectId\n  resourceGroup {\n    name\n    id\n  }\n}\n\nfragment UsageBucketModal_ProjectFragment on ProjectFairShare {\n  id\n  resourceGroup {\n    name\n    id\n  }\n  domain {\n    basicInfo {\n      name\n    }\n    id\n  }\n  project {\n    basicInfo {\n      name\n    }\n    id\n  }\n  ...UsageBucketChartContent_ProjectFragment\n}\n"
   }
 };
 })();
 
-(node as any).hash = "5b0577e5c364eb6b5c7f0531c20f5bde";
+(node as any).hash = "dfdc5241b1220afbd5387275a657b4ed";
 
 export default node;

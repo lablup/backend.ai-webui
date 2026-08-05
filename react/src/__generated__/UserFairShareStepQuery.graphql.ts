@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d0a067c5ee44de99f91631a1a2182007>>
+ * @generated SignedSource<<9e74cf4598ea212e6830e6801ca21e5a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -72,7 +72,7 @@ export type UserFairShareStepQuery$data = {
   readonly resourceGroups: {
     readonly edges: ReadonlyArray<{
       readonly node: {
-        readonly " $fragmentSpreads": FragmentRefs<"FairShareWeightSettingModal_ResourceGroupFragment">;
+        readonly " $fragmentSpreads": FragmentRefs<"FairShareWeightSettingModal_ResourceGroupFragment" | "ResourceGroupSchedulerTypeAlertFragment">;
       };
     }>;
   } | null | undefined;
@@ -259,6 +259,11 @@ return {
                   {
                     "args": null,
                     "kind": "FragmentSpread",
+                    "name": "ResourceGroupSchedulerTypeAlertFragment"
+                  },
+                  {
+                    "args": null,
+                    "kind": "FragmentSpread",
                     "name": "FairShareWeightSettingModal_ResourceGroupFragment"
                   }
                 ],
@@ -355,6 +360,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
+                  (v10/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -373,7 +379,6 @@ return {
                     ],
                     "storageKey": null
                   },
-                  (v10/*: any*/),
                   (v11/*: any*/)
                 ],
                 "storageKey": null
@@ -637,16 +642,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "a2f99bebeabfc9281d7297fd6290ec07",
+    "cacheID": "431604316906355d6810914430fe49da",
     "id": null,
     "metadata": {},
     "name": "UserFairShareStepQuery",
     "operationKind": "query",
-    "text": "query UserFairShareStepQuery(\n  $resourceGroupName: String!\n  $domainName: String!\n  $projectId: String!\n  $filter: RGUserFairShareFilter\n  $order: [UserFairShareOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  resourceGroups: adminResourceGroups(filter: {name: {equals: $resourceGroupName}}, limit: 1) {\n    edges {\n      node {\n        ...FairShareWeightSettingModal_ResourceGroupFragment\n        id\n      }\n    }\n  }\n  userFairShares: rgUserFairShares(scope: {resourceGroupName: $resourceGroupName, domainName: $domainName, projectId: $projectId}, filter: $filter, orderBy: $order, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...UserFairShareTableFragment\n        id\n      }\n    }\n  }\n}\n\nfragment FairShareWeightSettingModal_ResourceGroupFragment on ResourceGroup {\n  scheduler {\n    type\n  }\n  name\n}\n\nfragment FairShareWeightSettingModal_UserFragment on UserFairShare {\n  resourceGroup {\n    name\n    id\n  }\n  domain {\n    basicInfo {\n      name\n    }\n    id\n  }\n  project {\n    basicInfo {\n      name\n    }\n    id\n  }\n  user {\n    basicInfo {\n      email\n    }\n    id\n  }\n  id\n  projectId\n  userUuid\n  spec {\n    weight\n  }\n}\n\nfragment UsageBucketChartContent_UserFragment on UserFairShare {\n  id\n  domainName\n  projectId\n  userUuid\n  resourceGroup {\n    name\n    id\n  }\n}\n\nfragment UsageBucketModal_UserFragment on UserFairShare {\n  id\n  resourceGroup {\n    name\n    id\n  }\n  domain {\n    basicInfo {\n      name\n    }\n    id\n  }\n  project {\n    basicInfo {\n      name\n    }\n    id\n  }\n  user {\n    basicInfo {\n      email\n    }\n    id\n  }\n  ...UsageBucketChartContent_UserFragment\n}\n\nfragment UserFairShareTableFragment on UserFairShare {\n  user {\n    basicInfo {\n      username\n      email\n    }\n    id\n  }\n  id\n  resourceGroupName\n  domainName\n  projectId\n  userUuid\n  spec {\n    weight\n    usesDefault\n  }\n  calculationSnapshot {\n    fairShareFactor\n    averageDailyDecayedUsage {\n      entries {\n        resourceType\n        quantity\n      }\n    }\n  }\n  createdAt\n  updatedAt\n  ...FairShareWeightSettingModal_UserFragment\n  ...UsageBucketModal_UserFragment\n}\n"
+    "text": "query UserFairShareStepQuery(\n  $resourceGroupName: String!\n  $domainName: String!\n  $projectId: String!\n  $filter: RGUserFairShareFilter\n  $order: [UserFairShareOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  resourceGroups: adminResourceGroups(filter: {name: {equals: $resourceGroupName}}, limit: 1) {\n    edges {\n      node {\n        ...ResourceGroupSchedulerTypeAlertFragment\n        ...FairShareWeightSettingModal_ResourceGroupFragment\n        id\n      }\n    }\n  }\n  userFairShares: rgUserFairShares(scope: {resourceGroupName: $resourceGroupName, domainName: $domainName, projectId: $projectId}, filter: $filter, orderBy: $order, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...UserFairShareTableFragment\n        id\n      }\n    }\n  }\n}\n\nfragment FairShareWeightSettingModal_ResourceGroupFragment on ResourceGroup {\n  scheduler {\n    type\n  }\n  name\n}\n\nfragment FairShareWeightSettingModal_UserFragment on UserFairShare {\n  resourceGroup {\n    name\n    id\n  }\n  domain {\n    basicInfo {\n      name\n    }\n    id\n  }\n  project {\n    basicInfo {\n      name\n    }\n    id\n  }\n  user {\n    basicInfo {\n      email\n    }\n    id\n  }\n  id\n  projectId\n  userUuid\n  spec {\n    weight\n  }\n}\n\nfragment ResourceGroupSchedulerTypeAlertFragment on ResourceGroup {\n  name\n  scheduler {\n    type\n  }\n}\n\nfragment UsageBucketChartContent_UserFragment on UserFairShare {\n  id\n  domainName\n  projectId\n  userUuid\n  resourceGroup {\n    name\n    id\n  }\n}\n\nfragment UsageBucketModal_UserFragment on UserFairShare {\n  id\n  resourceGroup {\n    name\n    id\n  }\n  domain {\n    basicInfo {\n      name\n    }\n    id\n  }\n  project {\n    basicInfo {\n      name\n    }\n    id\n  }\n  user {\n    basicInfo {\n      email\n    }\n    id\n  }\n  ...UsageBucketChartContent_UserFragment\n}\n\nfragment UserFairShareTableFragment on UserFairShare {\n  user {\n    basicInfo {\n      username\n      email\n    }\n    id\n  }\n  id\n  resourceGroupName\n  domainName\n  projectId\n  userUuid\n  spec {\n    weight\n    usesDefault\n  }\n  calculationSnapshot {\n    fairShareFactor\n    averageDailyDecayedUsage {\n      entries {\n        resourceType\n        quantity\n      }\n    }\n  }\n  createdAt\n  updatedAt\n  ...FairShareWeightSettingModal_UserFragment\n  ...UsageBucketModal_UserFragment\n}\n"
   }
 };
 })();
 
-(node as any).hash = "ddf8cd1937580d44746a9f1e5f26a720";
+(node as any).hash = "ac76bf258717f6a2d41be02c1f608790";
 
 export default node;

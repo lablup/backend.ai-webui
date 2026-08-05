@@ -2,48 +2,34 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { ResourceGroupSchedulerTypeAlertQuery } from '../../__generated__/ResourceGroupSchedulerTypeAlertQuery.graphql';
+import { ResourceGroupSchedulerTypeAlertFragment$key } from '../../__generated__/ResourceGroupSchedulerTypeAlertFragment.graphql';
 import { Alert, AlertProps } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface ResourceGroupSchedulerTypeAlertProps extends AlertProps {
-  resourceGroupName: string;
+  resourceGroupFrgmt?: ResourceGroupSchedulerTypeAlertFragment$key | null;
 }
 
 const ResourceGroupSchedulerTypeAlert: React.FC<
   ResourceGroupSchedulerTypeAlertProps
-> = ({ resourceGroupName, ...alertProps }) => {
+> = ({ resourceGroupFrgmt, ...alertProps }) => {
   'use memo';
 
   const { t } = useTranslation();
 
-  const { resourceGroups } =
-    useLazyLoadQuery<ResourceGroupSchedulerTypeAlertQuery>(
-      graphql`
-        query ResourceGroupSchedulerTypeAlertQuery(
-          $resourceGroupName: String!
-        ) {
-          resourceGroups: adminResourceGroups(
-            filter: { name: { equals: $resourceGroupName } }
-            limit: 1
-          ) {
-            edges {
-              node {
-                name
-                scheduler {
-                  type
-                }
-              }
-            }
-          }
+  const resourceGroup = useFragment(
+    graphql`
+      fragment ResourceGroupSchedulerTypeAlertFragment on ResourceGroup {
+        name
+        scheduler {
+          type
         }
-      `,
-      { resourceGroupName },
-      { fetchPolicy: 'store-and-network' },
-    );
+      }
+    `,
+    resourceGroupFrgmt,
+  );
 
-  const resourceGroup = resourceGroups?.edges?.[0]?.node;
   if (!resourceGroup || resourceGroup.scheduler?.type === 'FAIR_SHARE') {
     return null;
   }
