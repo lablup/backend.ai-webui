@@ -121,6 +121,7 @@ vi.mock('./ProjectSelectForAdminPage', async () => {
 const renderModal = (
   project: { id: string; name: string } | null,
   onRequestClose = vi.fn(),
+  initialValues?: Record<string, unknown>,
 ) => {
   const environment: RelayMockEnvironment = createMockEnvironment();
   render(
@@ -129,6 +130,7 @@ const renderModal = (
         open
         project={project}
         folderType="project"
+        initialValues={initialValues}
         onRequestClose={onRequestClose}
       />
     </RelayEnvironmentProvider>,
@@ -167,6 +169,24 @@ describe('FolderCreateModalV2 project prop contract (ADR-0001)', () => {
     // The mutation carries exactly the project passed by the page.
     expect(operation.request.variables.projectId).toBe('fixed-project-id');
     expect(operation.request.variables.input.name).toBe('contract-folder');
+  });
+
+  it('ignores a caller `initialValues.group` that disagrees with the `project` prop', async () => {
+    const user = userEvent.setup();
+    const { environment } = renderModal(
+      { id: 'fixed-project-id', name: 'fixed-project-name' },
+      vi.fn(),
+      { group: 'stale-project-id' },
+    );
+
+    await fillFolderNameAndSubmit(user, 'contract-folder');
+
+    await waitFor(() => {
+      expect(environment.mock.getAllOperations()).toHaveLength(1);
+    });
+    const operation = environment.mock.getMostRecentOperation();
+    expect(operation.request.variables.projectId).toBe('fixed-project-id');
+    expect(operation.request.variables.projectId).not.toBe('stale-project-id');
   });
 
   it('closes with the created folder after the mutation resolves (non-null project)', async () => {
