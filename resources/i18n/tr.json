@@ -1086,8 +1086,6 @@
     "FailedToDeleteDeployment": "Dağıtım silinemedi.",
     "FailedToRollback": "Seçilen Revision'a geri alınamadı.",
     "FailedToUpdateDeployment": "Dağıtım güncellenemedi.",
-    "FolderOwnershipUnresolved": "Klasörün sahipliği belirlenemedi.",
-    "FolderOwnershipUnresolvedDescription": "Bu klasörün ait olduğu proje kullanılamadığı için dağıtılamıyor. Klasör listesini yenileyip tekrar deneyin.",
     "FromStatus": "Başlangıç Durumu",
     "GoToDetailPage": "Dağıtım ayrıntılarını görüntüle",
     "HealthStatus": "Sağlık Durumu",

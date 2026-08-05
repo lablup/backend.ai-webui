@@ -1086,8 +1086,6 @@
     "FailedToDeleteDeployment": "ไม่สามารถลบการปรับใช้ได้",
     "FailedToRollback": "ไม่สามารถย้อนกลับไปยัง Revision ที่เลือกได้",
     "FailedToUpdateDeployment": "ไม่สามารถอัปเดตการปรับใช้ได้",
-    "FolderOwnershipUnresolved": "ไม่สามารถระบุความเป็นเจ้าของโฟลเดอร์ได้",
-    "FolderOwnershipUnresolvedDescription": "ไม่สามารถดึงข้อมูลโปรเจกต์ที่เป็นเจ้าของโฟลเดอร์นี้ จึงไม่สามารถดีพลอยได้ กรุณารีเฟรชรายการโฟลเดอร์แล้วลองใหม่อีกครั้ง",
     "FromStatus": "จากสถานะ",
     "GoToDetailPage": "ดูรายละเอียดการปรับใช้",
     "HealthStatus": "สถานะสุขภาพ",

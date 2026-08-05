@@ -1086,8 +1086,6 @@
     "FailedToDeleteDeployment": "Gagal memadam penggunaan.",
     "FailedToRollback": "Gagal kembali ke Revision yang dipilih.",
     "FailedToUpdateDeployment": "Gagal mengemas kini penggunaan.",
-    "FolderOwnershipUnresolved": "Pemilikan folder tidak dapat ditentukan.",
-    "FolderOwnershipUnresolvedDescription": "Projek pemilik folder ini tidak tersedia, jadi ia tidak boleh digunakan untuk deploy. Muat semula senarai folder dan cuba lagi.",
     "FromStatus": "Dari Status",
     "GoToDetailPage": "Lihat butiran penggelaran",
     "HealthStatus": "Status Kesihatan",
