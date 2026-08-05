@@ -68,7 +68,7 @@ import {
   UserIcon,
   UsersIcon,
 } from 'lucide-react';
-import React, { Suspense, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useQueryLoader } from 'react-relay';
 
@@ -183,9 +183,12 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
             title: t('modelService.DeployAsService'),
             icon: <RocketIcon />,
             // Use `action` (not `onClick`) so the state update that mounts
-            // `<VFolderDeployModal>` (which suspends on its Relay query)
+            // `<VFolderDeployModal>` (which suspends on its preloaded query)
             // runs inside `startTransition` — the page stays interactive
-            // instead of falling into its Suspense fallback.
+            // while the query resolves. This is required, not an
+            // optimization: the modal has no local Suspense boundary, so a
+            // bare `onClick` would let the suspend reach the page-level
+            // fallback and blank the list.
             action: async () => {
               onStartServiceFallback(vfolderId);
             },
@@ -750,33 +753,22 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
           setCurrentSharedVFolder(null);
         }}
       />
-<<<<<<< HEAD
-      {/* `VFolderDeployModal` fetches presets via Relay internally and uses
-          `useDeferredValue(open)` to show a skeleton while a deferred update
-          resolves. The first-time cache miss still suspends, so wrap in
-          `<Suspense>`. */}
-=======
-      {/* The boundary is mounted unconditionally, with the modal switched in
-          underneath it. The Deploy action runs inside `startTransition`
-          (`BAINameActionCell`), and React does not swap an already-mounted
-          boundary to its fallback during a transition — it keeps the table on
-          screen until the preloaded query resolves. So `fallback` is a safety
-          net for a non-transition suspend, not the normal loading path; if the
-          boundary were mounted together with the modal it would be a *new*
-          boundary and the fallback would render. */}
->>>>>>> 80aeae4f4 (refactor(FR-3410): drive VFolderDeployModal from a preloaded query)
-      <Suspense fallback={null}>
-        {deployQueryRef != null && (
-          <BAIUnmountAfterClose>
-            <VFolderDeployModal
-              open={isDeployModalOpen}
-              queryRef={deployQueryRef}
-              onClose={() => setIsDeployModalOpen(false)}
-              onDeployed={() => setIsDeployModalOpen(false)}
-            />
-          </BAIUnmountAfterClose>
-        )}
-      </Suspense>
+      {/* No local Suspense boundary: the Deploy action runs inside
+          `startTransition` (`BAINameActionCell`), so React keeps the table on
+          screen and delays committing until the preloaded query resolves —
+          a fallback would never render. Any opener added later must use
+          `action` (transition), not a bare `onClick`, or the suspend escapes
+          to the page-level boundary. */}
+      {deployQueryRef != null && (
+        <BAIUnmountAfterClose>
+          <VFolderDeployModal
+            open={isDeployModalOpen}
+            queryRef={deployQueryRef}
+            onClose={() => setIsDeployModalOpen(false)}
+            onDeployed={() => setIsDeployModalOpen(false)}
+          />
+        </BAIUnmountAfterClose>
+      )}
       <DeploymentSettingModal
         open={isCreateDeploymentOpen}
         project={project}
