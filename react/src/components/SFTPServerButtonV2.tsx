@@ -249,12 +249,25 @@ const SFTPServerButtonWithProject: React.FC<
                 key: 'custom',
                 label: t('import.StartWithOptions'),
                 onClick: () => {
-                  const launcherValue = createSftpLauncherValue();
+                  const launcherValue = {
+                    ...createSftpLauncherValue(),
+                    // Pin the session to exactly the passed project (FR-3412),
+                    // matching the primary button above.
+                    projectName: project.name,
+                  };
                   const params = new URLSearchParams();
                   params.set('formValues', JSON.stringify(launcherValue));
                   params.set('step', '4');
                   webuiNavigate({
-                    pathname: buildProjectPath('session/start'),
+                    // `SessionLauncherPage` resolves its project from the
+                    // ambient current project, which `ProjectScopeLayout`
+                    // converges from the `:projectName` URL segment — not from
+                    // these form values. So the link itself must carry the
+                    // explicit project, otherwise this entry point could
+                    // launch in a different project than the primary button.
+                    pathname: buildProjectPath('session/start', {
+                      projectName: project.name,
+                    }),
                     search: params.toString(),
                   });
                 },
