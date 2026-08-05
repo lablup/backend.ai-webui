@@ -1162,7 +1162,6 @@
     "Tags": "Etiquetas",
     "TagsPlaceholder": "Ingrese etiquetas, separadas por comas",
     "TagsTooltip": "Etiquetas opcionales para organizar y filtrar implementaciones. Presione Enter o coma para añadir.",
-    "TargetProjectRequired": "Seleccione un proyecto de destino.",
     "ToStatus": "Ver estado",
     "TrafficRatio": "Proporción de tráfico",
     "TrafficStatus": "Estado del tráfico",

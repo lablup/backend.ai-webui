@@ -7,8 +7,7 @@ import { DeploymentSettingModalUpdateMutation } from '../__generated__/Deploymen
 import { DeploymentSettingModal_deployment$key } from '../__generated__/DeploymentSettingModal_deployment.graphql';
 import { useCurrentDomainValue, useWebUINavigate } from '../hooks';
 import { useProjectPath } from '../hooks/useRouteScope';
-import { ProjectContext, ProjectContextOrNull } from '../types/projectContext';
-import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
+import { ProjectContext } from '../types/projectContext';
 import {
   App,
   Button,
@@ -30,7 +29,7 @@ import {
   BAIProjectResourceGroupSelect,
   toLocalId,
 } from 'backend.ai-ui';
-import React, { Suspense, useState } from 'react';
+import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
@@ -40,30 +39,40 @@ interface FormValues {
   openToPublic: boolean;
   replicaCount: number;
   resourceGroup: string;
-  projectId?: string;
 }
 
-export interface DeploymentSettingModalProps extends BAIModalProps {
-  /** When provided → update mode; when null/undefined → create mode. */
-  deploymentFrgmt?: DeploymentSettingModal_deployment$key | null;
-  /**
-   * Explicit project prop contract (ADR-0001). The page decides the project
-   * context; this modal never reads the ambient current project.
-   *
-   * Create mode:
-   * - Non-null: no in-modal selector is rendered and the create mutation's
-   *   `metadata.projectId` is exactly this project's id. Resource-group
-   *   options are scoped to this project.
-   * - `null` ("no ambient project context", e.g. super-admin pages): a
-   *   required in-modal project selector is rendered and the mutation
-   *   targets the project chosen there.
-   *
-   * Edit mode (`deploymentFrgmt` present) does not need a project — the
-   * deployment already belongs to one — so the prop is ignored there.
-   */
-  project: ProjectContextOrNull;
+/**
+ * Explicit project prop contract (ADR-0001), expressed as a discriminated
+ * union rather than a runtime check: the page decides the project context and
+ * this modal never reads the ambient current project.
+ *
+ * - **Create** (`deploymentFrgmt` absent): a deployment is always created
+ *   inside one project, and creation is offered only from the project-scoped
+ *   user menu — so `project` is required and non-null. There is no in-modal
+ *   selector and no "missing project" error path; the create mutation's
+ *   `metadata.projectId` is exactly this project's id and the resource-group
+ *   options are scoped to it.
+ * - **Edit** (`deploymentFrgmt` present): the deployment already belongs to a
+ *   project, so `project` is not accepted at all.
+ */
+type DeploymentSettingModalProjectProps =
+  | {
+      /** Edit-only call site: no project is accepted. */
+      deploymentFrgmt: DeploymentSettingModal_deployment$key;
+      project?: never;
+    }
+  | {
+      /**
+       * Project-scoped call site: may open in create mode (fragment absent)
+       * or edit mode (fragment present), and therefore must supply a project.
+       */
+      deploymentFrgmt?: DeploymentSettingModal_deployment$key | null;
+      project: ProjectContext;
+    };
+
+export type DeploymentSettingModalProps = BAIModalProps & {
   onRequestClose: (success: boolean) => void;
-}
+} & DeploymentSettingModalProjectProps;
 
 const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
   deploymentFrgmt,
@@ -79,14 +88,6 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
   const buildProjectPath = useProjectPath();
   const { message } = App.useApp();
   const currentDomain = useCurrentDomainValue();
-  // ADR-0001: the target project comes exclusively from the `project` prop.
-  // When it is `null`, the user picks the target project with the in-modal
-  // selector below; the chosen value is tracked here so the resource-group
-  // options follow the chosen project, never the ambient one.
-  const [selectedProject, setSelectedProject] = useState<ProjectContext | null>(
-    null,
-  );
-  const effectiveProject = project ?? selectedProject;
 
   const deployment = useFragment(
     graphql`
@@ -180,17 +181,17 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
             },
           });
         } else {
-          // The required rule on the in-modal project selector (null mode)
-          // guarantees a chosen project before validation passes; this guard
-          // only narrows the type.
-          if (!effectiveProject) {
-            return;
-          }
+          // No "missing project" branch: the only props member that permits a
+          // create (fragment absent) requires a non-null `project`, so this is
+          // unreachable-by-construction rather than guarded at runtime. The
+          // assertion is needed only because `deploymentFrgmt` is an opaque
+          // fragment key, not a unit type, so TypeScript cannot use it as a
+          // discriminant to narrow the union here.
           commitCreate({
             variables: {
               input: {
                 metadata: {
-                  projectId: effectiveProject.id,
+                  projectId: project!.id,
                   domainName: currentDomain,
                   name: values.name,
                   tags: values.tags?.length ? values.tags : null,
@@ -246,12 +247,6 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
       }
       onCancel={() => onRequestClose(false)}
       destroyOnHidden
-      afterOpenChange={(isOpen) => {
-        if (isOpen) {
-          // `destroyOnHidden` clears the form but not this state.
-          setSelectedProject(null);
-        }
-      }}
       width={520}
       confirmLoading={isCreating || isUpdating}
       footer={
@@ -300,40 +295,6 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
           >
             <Input placeholder={t('deployment.NamePlaceholder')} />
           </Form.Item>
-          {!deployment && project === null && (
-            <Form.Item
-              name="projectId"
-              label={t('data.folders.TargetProject')}
-              required
-              rules={[
-                {
-                  required: true,
-                  message: t('deployment.TargetProjectRequired'),
-                },
-              ]}
-            >
-              {/* The Suspense boundary swallows Form.Item's injected props,
-                  so the field value is written explicitly on selection —
-                  same manual-wiring pattern as FolderCreateModalV2. */}
-              <Suspense fallback={<Skeleton.Input active block />}>
-                <ProjectSelectForAdminPage
-                  data-testid="deployment-create-project-select"
-                  domain={currentDomain}
-                  onSelectProject={(projectInfo) => {
-                    setSelectedProject({
-                      id: projectInfo.projectId,
-                      name: projectInfo.projectName,
-                    });
-                    form.setFieldValue('projectId', projectInfo.projectId);
-                    form.validateFields(['projectId']);
-                    // The resource-group options are keyed to the chosen
-                    // project; drop any group picked for a previous choice.
-                    form.setFieldValue('resourceGroup', undefined);
-                  }}
-                />
-              </Suspense>
-            </Form.Item>
-          )}
           {deployment ? (
             <Form.Item
               label={t('modelStore.ResourceGroup')}
@@ -364,9 +325,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
               }
             >
               <BAIProjectResourceGroupSelect
-                key={effectiveProject?.id ?? 'no-project'}
-                projectName={effectiveProject?.name ?? ''}
-                disabled={!effectiveProject}
+                projectName={project?.name ?? ''}
                 autoSelectDefault
                 style={{ width: '100%' }}
               />

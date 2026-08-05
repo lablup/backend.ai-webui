@@ -1162,7 +1162,6 @@
     "Tags": "Étiquettes",
     "TagsPlaceholder": "Saisir des étiquettes, séparées par des virgules",
     "TagsTooltip": "Étiquettes optionnelles pour organiser et filtrer les déploiements. Appuyez sur Entrée ou virgule pour ajouter.",
-    "TargetProjectRequired": "Veuillez sélectionner un projet cible.",
     "ToStatus": "Vers le statut",
     "TrafficRatio": "Rapport de trafic",
     "TrafficStatus": "État du trafic",

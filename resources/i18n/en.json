@@ -1149,7 +1149,6 @@
     "Tags": "Tags",
     "TagsPlaceholder": "Enter tags, separated by commas",
     "TagsTooltip": "Optional labels for organizing and filtering deployments. Press Enter or comma to add.",
-    "TargetProjectRequired": "Please select a target project.",
     "ToStatus": "To Status",
     "TrafficRatio": "Traffic Ratio",
     "TrafficStatus": "Traffic Status",

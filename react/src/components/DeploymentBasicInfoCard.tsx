@@ -387,17 +387,19 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
           }
         />
       </BAICard>
-      <DeploymentSettingModal
-        open={settingModalOpen}
-        deploymentFrgmt={deployment}
-        // Edit-only call site: the deployment already belongs to a project,
-        // so the modal ignores the prop in edit mode (ADR-0001).
-        project={null}
-        onRequestClose={(success) => {
-          setSettingModalOpen(false);
-          if (success) onRefetch();
-        }}
-      />
+      {/* Edit-only call site: the deployment already belongs to a project, so
+          the props union rejects a `project` here entirely (ADR-0001). That
+          member requires a non-null fragment, hence the guard. */}
+      {deployment != null && (
+        <DeploymentSettingModal
+          open={settingModalOpen}
+          deploymentFrgmt={deployment}
+          onRequestClose={(success) => {
+            setSettingModalOpen(false);
+            if (success) onRefetch();
+          }}
+        />
+      )}
       <BAIDeleteConfirmModal
         open={isDeleteModalOpen}
         title={t('deployment.DeleteDeployment')}

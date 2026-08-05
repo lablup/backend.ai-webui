@@ -1162,7 +1162,6 @@
     "Tags": "标签",
     "TagsPlaceholder": "输入标签，以逗号分隔",
     "TagsTooltip": "用于组织和筛选部署的可选标签。按 Enter 或逗号添加。",
-    "TargetProjectRequired": "请选择目标项目。",
     "ToStatus": "查看状态",
     "TrafficRatio": "流量比例",
     "TrafficStatus": "流量状态",

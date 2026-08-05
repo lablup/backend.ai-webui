@@ -5,15 +5,12 @@
 import { ModelCardDrawerFragment$key } from '../__generated__/ModelCardDrawerFragment.graphql';
 import { ModelCardDrawerQuery } from '../__generated__/ModelCardDrawerQuery.graphql';
 import { useBackendAIImageMetaData } from '../hooks';
-import { ProjectContextOrNull } from '../types/projectContext';
-import DeploymentSettingModal from './DeploymentSettingModal';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ModelBrandIcon from './ModelBrandIcon';
 import ModelCardDeployModal from './ModelCardDeployModal';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
 import { BankOutlined, FileOutlined } from '@ant-design/icons';
-import { useToggle } from 'ahooks';
 import {
   Card,
   Descriptions,
@@ -44,18 +41,11 @@ interface ModelCardDrawerProps extends Omit<
   'children' | 'onClose'
 > {
   modelCardId: string | undefined;
-  /**
-   * Explicit project prop contract (ADR-0001, FR-3410). Pass-through for the
-   * deployment-creation escalation modal (`DeploymentSettingModal`): the
-   * parent page decides the project context.
-   */
-  project: ProjectContextOrNull;
   onClose?: () => void;
 }
 
 const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
   modelCardId,
-  project,
   open,
   onClose,
   ...drawerProps
@@ -66,10 +56,6 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
   const [imageMetaData] = useBackendAIImageMetaData();
   const { generateFolderPath } = useFolderExplorerOpener();
   const [deployModalOpen, setDeployModalOpen] = useState(false);
-  const [
-    isCreateDeploymentOpen,
-    { toggle: toggleCreateDeployment, setLeft: closeCreateDeployment },
-  ] = useToggle(false);
 
   // Defer `open` so the lazy query only fires once the drawer has actually
   // committed to opening. `loading={deferredOpen !== open}` then lets the
@@ -149,7 +135,6 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
         loading={deferredOpen !== open}
         onClose={() => {
           setDeployModalOpen(false);
-          closeCreateDeployment();
           onClose?.();
         }}
         title={
@@ -367,11 +352,6 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
           />
         </BAIUnmountAfterClose>
       </Suspense>
-      <DeploymentSettingModal
-        open={isCreateDeploymentOpen}
-        project={project}
-        onRequestClose={toggleCreateDeployment}
-      />
     </>
   );
 };

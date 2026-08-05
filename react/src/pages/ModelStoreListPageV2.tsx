@@ -12,9 +12,7 @@ import ModelBrandIcon from '../components/ModelBrandIcon';
 import ModelCardDrawer from '../components/ModelCardDrawer';
 import TextHighlighter from '../components/TextHighlighter';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useModelStoreProject } from '../hooks/useModelStoreProject';
-import { toProjectContext } from '../types/projectContext';
 import { SwapOutlined } from '@ant-design/icons';
 import {
   Alert,
@@ -300,7 +298,6 @@ const ModelStoreListPageV2: React.FC = () => {
 
   const { t } = useTranslation();
   const modelStoreProject = useModelStoreProject();
-  const currentProject = useCurrentProjectValue();
 
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const deferredFetchKey = useDeferredValue(fetchKey);
@@ -516,10 +513,6 @@ const ModelStoreListPageV2: React.FC = () => {
 
       <ModelCardDrawer
         modelCardId={localSelectedModelCardId}
-        // ADR-0001: general page — the page is the only reader of the
-        // ambient current project and passes it explicitly. Deployments
-        // created from the drawer target the user's working project.
-        project={toProjectContext(currentProject)}
         open={drawerOpen}
         onClose={() => {
           setQueryParams({ modelCard: null });

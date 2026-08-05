@@ -17,7 +17,6 @@ import { useProjectPath } from '../hooks/useRouteScope';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import { ProjectContextOrNull } from '../types/projectContext';
 import DeleteForeverVFolderModalV2 from './DeleteForeverVFolderModalV2';
-import DeploymentSettingModal from './DeploymentSettingModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import InviteFolderSettingModal from './InviteFolderSettingModal';
 import QuotaPerStorageVolumePanelCard, {
@@ -33,7 +32,6 @@ import {
   QuestionCircleOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { useToggle } from 'ahooks';
 import { App, Modal, Skeleton, theme, Tooltip, Typography } from 'antd';
 import {
   filterOutNullAndUndefined,
@@ -485,11 +483,6 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
     useQueryLoader<VFolderDeployModalQuery>(VFolderDeployQuery);
   const [deployVfolderId, setDeployVfolderId] = useState<string | null>(null);
   const [isDeployModalOpen, setIsDeployModalOpen] = useState(false);
-  // FR-2862 — when the user hits the empty-preset state in
-  // VFolderDeployModal, escalate to the deployment shell creation modal
-  // (`DeploymentSettingModal`), same as the `/deployments` page entry.
-  const [isCreateDeploymentOpen, { toggle: toggleCreateDeployment }] =
-    useToggle(false);
   const [isHostQuotaModalOpen, setIsHostQuotaModalOpen] = useState(false);
 
   // `vfolderStatus: status` aliases the V2 `VFolder.status`
@@ -920,11 +913,6 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
             </BAIUnmountAfterClose>
           )}
       </Suspense>
-      <DeploymentSettingModal
-        open={isCreateDeploymentOpen}
-        project={project}
-        onRequestClose={toggleCreateDeployment}
-      />
       <HostQuotaModal
         open={isHostQuotaModalOpen}
         onCancel={() => setIsHostQuotaModalOpen(false)}
