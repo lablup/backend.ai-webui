@@ -16,9 +16,9 @@ import remarkMath from 'remark-math';
 
 const useStyles = createStyles(({ css, token }) => ({
   // Reading typography for long-form markdown: comfortable line height and
-  // bordered headings. Everything `ChatMessageContent` also styles
-  // (blockquote, hr, lists, tables, inline code) uses the same tokens it
-  // does, so the two renderers produce the same output.
+  // bordered headings. `ChatMessageContent` renders through this same
+  // component (see its file), so every element styled here — blockquote,
+  // hr, lists, tables, inline code — looks identical in chat and elsewhere.
   markdown: css`
     color: ${token.colorText};
     font-size: ${token.fontSize}px;
@@ -242,6 +242,23 @@ const useStyles = createStyles(({ css, token }) => ({
       min-width: 100%;
     }
   `,
+  // Streaming-only: preserves literal whitespace/newlines in a paragraph
+  // that may not yet be "finished" markdown (see `isStreaming` doc below).
+  paragraphStreaming: css`
+    white-space: pre-wrap;
+    word-break: break-word;
+  `,
+  // Streaming-only: strips the inline-code background/border for a code
+  // span that currently crosses a newline. `:not(pre) > code` above styles
+  // every inline code the same way, which is correct once markdown is
+  // final — but mid-stream, an unterminated fenced block can momentarily
+  // parse as a multi-line code span, and giving that the inline pill style
+  // reads as a rendering glitch.
+  codeSpanStreaming: css`
+    background: none;
+    border: none;
+    padding: 0;
+  `,
 }));
 
 interface MarkdownContentProps extends Omit<
@@ -256,6 +273,16 @@ interface MarkdownContentProps extends Omit<
    * affordance belongs there is the caller's decision.
    */
   codeBlockExtra?: (code: string) => React.ReactNode;
+  /**
+   * Set while the `children` markdown is still arriving incrementally (e.g.
+   * a chat message being streamed token-by-token) rather than complete.
+   * Turns on two defensive renderers that don't apply to finished markdown:
+   * paragraphs keep literal whitespace (`pre-wrap`) instead of collapsing
+   * it, and an inline code span that currently spans multiple lines (an
+   * unterminated fence can momentarily parse this way) renders without the
+   * inline-code pill style instead of looking like a broken code block.
+   */
+  isStreaming?: boolean;
 }
 
 /**
@@ -264,16 +291,16 @@ interface MarkdownContentProps extends Omit<
  *
  * Every call site shares one renderer, one plugin set, and one stylesheet so
  * they can't drift from each other — e.g. a blockquote styled in one place
- * but rendered as plain text in another (FR-3402). The code-block panel and
- * the tokens for every element `ChatMessageContent` also styles are shared
- * with it, so the two render the same output. That component stays separate
- * because it owns streaming concerns (per-block splitting, `pre-wrap`
- * paragraphs) that don't apply to long-form markdown.
+ * but rendered as plain text in another (FR-3402). `ChatMessageContent`
+ * renders through this component too (one block at a time, for its
+ * per-block streaming memoization); its streaming-only quirks are opted
+ * into via `isStreaming` rather than living in a second copy of this file.
  */
 const MarkdownContent: React.FC<MarkdownContentProps> = ({
   children,
   className,
   codeBlockExtra,
+  isStreaming,
   ...divProps
 }) => {
   'use memo';
@@ -339,6 +366,34 @@ const MarkdownContent: React.FC<MarkdownContentProps> = ({
       );
     },
   };
+
+  // Streaming-only overrides — see `isStreaming` doc on the props above.
+  // Omitted entirely when not streaming, so finished markdown keeps the
+  // plain default `p` and the unconditional `:not(pre) > code` styling.
+  if (isStreaming) {
+    components.p = ({ node: _node, className: pClassName, ...props }) => (
+      <p {...props} className={cx(pClassName, styles.paragraphStreaming)} />
+    );
+    components.code = ({
+      node,
+      className: codeClassName,
+      ref: _ref,
+      ...rest
+    }) => {
+      const isOneLine =
+        node?.position?.start?.line === node?.position?.end?.line;
+      return (
+        <code
+          {...rest}
+          className={
+            isOneLine
+              ? codeClassName
+              : cx(codeClassName, styles.codeSpanStreaming)
+          }
+        />
+      );
+    };
+  }
 
   return (
     <div className={cx(styles.markdown, className)} {...divProps}>
