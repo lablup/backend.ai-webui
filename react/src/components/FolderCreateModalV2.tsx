@@ -198,6 +198,8 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
     ...INITIAL_FORM_VALUES,
     ...initialValuesFromProps,
     ...folderTypePreset,
+    // Fixed mode: the `project` prop wins over any caller `initialValues.group`.
+    ...(project ? { group: project.id } : {}),
   };
 
   // No V2 equivalent for allowed types — keep using existing REST API approach
@@ -309,7 +311,9 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
     try {
       if (isProjectFolder) {
         vfolderResults = await commitCreateInProjectMutation({
-          projectId: values.group ?? '',
+          // Not `values.group`: antd snapshots initialValues at mount and
+          // never resyncs them to later `project` prop changes.
+          projectId: effectiveProject?.id ?? values.group ?? '',
           input: {
             ...baseInput,
             // `CreateVFolderInScopeInput` takes enum-typed values.
