@@ -164,6 +164,7 @@ function createRelayEnvironment() {
   return new Environment({
     network: Network.create(fetchFn, fetchForSubscribe),
     store: new Store(new RecordSource(), {
+      // FR-3430: retains step queries released during FairShare step navigation (default 10)
       gcReleaseBufferSize: 20,
     }),
   });
