@@ -7,9 +7,9 @@ import { useBAIi18n } from '../../../hooks/useBAIi18n';
 import BAIFlex from '../../BAIFlex';
 import BAIModal, { BAIModalProps } from '../../BAIModal';
 import BAIFileExplorer from './BAIFileExplorer';
-import { Button, Typography } from 'antd';
+import { Button, Skeleton, Typography } from 'antd';
 import * as _ from 'lodash-es';
-import { useState } from 'react';
+import { Suspense, useEffect, useEffectEvent, useState } from 'react';
 import { graphql, PreloadedQuery, usePreloadedQuery } from 'react-relay';
 
 // The picker works with sub paths ('' = vfolder root) while BAIFileExplorer
@@ -49,23 +49,25 @@ export interface BAIDirectoryPickerModalProps extends Omit<
 }
 
 /**
- * A directory-only picker built on `BAIFileExplorer`'s `directoryPicker`
- * mode: browse the vfolder (files visible but disabled, folder CRUD
- * available) and confirm the current location with the footer button.
+ * The suspending part of the modal: the preloaded `vfolder_node` query and the
+ * `BAIFileExplorer` (which resolves the BAIClient via `use()`). Kept in a child
+ * component so the modal shell can wrap it in its own `<Suspense>` and stay
+ * self-contained — callers do not need to provide an outer boundary.
  */
-const BAIDirectoryPickerModal: React.FC<BAIDirectoryPickerModalProps> = ({
+const DirectoryPickerModalContent: React.FC<{
+  vfolderUuid: string;
+  queryRef: PreloadedQuery<BAIDirectoryPickerModalQuery>;
+  defaultPath: string;
+  onChangeCurrentPath: (currentPath: string) => void;
+  onLoadFolderName: (folderName?: string) => void;
+}> = ({
   vfolderUuid,
   queryRef,
   defaultPath,
-  onRequestClose,
-  ...modalProps
+  onChangeCurrentPath,
+  onLoadFolderName,
 }) => {
   'use memo';
-
-  const { t } = useBAIi18n();
-  const [currentPath, setCurrentPath] = useState(
-    toExplorerPath(defaultPath ?? ''),
-  );
 
   // Folder CRUD inside the picker follows the caller's effective permissions
   // on this vfolder, same as FolderExplorerModal.
@@ -82,13 +84,59 @@ const BAIDirectoryPickerModal: React.FC<BAIDirectoryPickerModalProps> = ({
     'delete_content',
   );
 
+  // Lift the resolved folder name up so the modal title can show it once the
+  // query settles, without pulling the suspending query into the shell.
+  const notifyFolderName = useEffectEvent(() => {
+    onLoadFolderName(vfolder_node?.name ?? undefined);
+  });
+  useEffect(() => {
+    notifyFolderName();
+  }, [vfolder_node?.name]);
+
+  return (
+    <BAIFileExplorer
+      mode="directoryPicker"
+      targetVFolderId={vfolderUuid}
+      targetVFolderName={vfolder_node?.name ?? undefined}
+      defaultPath={toExplorerPath(defaultPath)}
+      onChangeCurrentPath={onChangeCurrentPath}
+      enableWrite={hasWriteContentPermission}
+      enableDelete={hasDeleteContentPermission}
+    />
+  );
+};
+
+/**
+ * A directory-only picker built on `BAIFileExplorer`'s `directoryPicker`
+ * mode: browse the vfolder (files visible but disabled, folder CRUD
+ * available) and confirm the current location with the footer button.
+ *
+ * Self-contained: the suspending content (preloaded query + explorer) sits
+ * behind an internal `<Suspense>`, so the modal frame renders immediately and
+ * no outer Suspense boundary is required.
+ */
+const BAIDirectoryPickerModal: React.FC<BAIDirectoryPickerModalProps> = ({
+  vfolderUuid,
+  queryRef,
+  defaultPath,
+  onRequestClose,
+  ...modalProps
+}) => {
+  'use memo';
+
+  const { t } = useBAIi18n();
+  const [currentPath, setCurrentPath] = useState(
+    toExplorerPath(defaultPath ?? ''),
+  );
+  const [folderName, setFolderName] = useState<string>();
+
   return (
     <BAIModal
       width={800}
       title={
-        vfolder_node?.name
+        folderName
           ? t('comp:VFolderPathPicker.SelectAPathInFolder', {
-              folderName: vfolder_node.name,
+              folderName,
             })
           : t('comp:VFolderPathPicker.SelectAPath')
       }
@@ -113,15 +161,15 @@ const BAIDirectoryPickerModal: React.FC<BAIDirectoryPickerModalProps> = ({
       }
       {...modalProps}
     >
-      <BAIFileExplorer
-        mode="directoryPicker"
-        targetVFolderId={vfolderUuid}
-        targetVFolderName={vfolder_node?.name ?? undefined}
-        defaultPath={toExplorerPath(defaultPath ?? '')}
-        onChangeCurrentPath={setCurrentPath}
-        enableWrite={hasWriteContentPermission}
-        enableDelete={hasDeleteContentPermission}
-      />
+      <Suspense fallback={<Skeleton active paragraph={{ rows: 6 }} />}>
+        <DirectoryPickerModalContent
+          vfolderUuid={vfolderUuid}
+          queryRef={queryRef}
+          defaultPath={defaultPath ?? ''}
+          onChangeCurrentPath={setCurrentPath}
+          onLoadFolderName={setFolderName}
+        />
+      </Suspense>
     </BAIModal>
   );
 };

@@ -11,7 +11,7 @@ import BAIDirectoryPickerModal, {
   BAIDirectoryPickerQuery,
 } from './BAIDirectoryPickerModal';
 import { useControllableValue } from 'ahooks';
-import { Suspense, useState, useTransition } from 'react';
+import { useState, useTransition } from 'react';
 import { useQueryLoader } from 'react-relay';
 
 export interface BAIVFolderPathPickerProps {
@@ -107,26 +107,24 @@ const BAIVFolderPathPicker: React.FC<BAIVFolderPathPickerProps> = (props) => {
         {...selectProps}
       />
       {/* Mounted only while open (BAIUnmountAfterClose) and only after the
-          first loadQuery. The open-state update runs in a transition, so the
-          modal commits once its preloaded query resolves. */}
+          first loadQuery. The modal is self-contained (it wraps its own
+          suspending content in a Suspense), so no boundary is needed here. */}
       {pickerQueryRef != null && (
-        <Suspense fallback={null}>
-          <BAIUnmountAfterClose>
-            <BAIDirectoryPickerModal
-              open={isPickerOpen}
-              vfolderUuid={vfolderUuid ?? ''}
-              queryRef={pickerQueryRef}
-              defaultPath={selectedSubPath ?? ''}
-              onRequestClose={(newSubPath) => {
-                // `undefined` means the modal was cancelled — keep the value.
-                if (newSubPath !== undefined) {
-                  setSelectedSubPath(newSubPath);
-                }
-                setIsPickerOpen(false);
-              }}
-            />
-          </BAIUnmountAfterClose>
-        </Suspense>
+        <BAIUnmountAfterClose>
+          <BAIDirectoryPickerModal
+            open={isPickerOpen}
+            vfolderUuid={vfolderUuid ?? ''}
+            queryRef={pickerQueryRef}
+            defaultPath={selectedSubPath ?? ''}
+            onRequestClose={(newSubPath) => {
+              // `undefined` means the modal was cancelled — keep the value.
+              if (newSubPath !== undefined) {
+                setSelectedSubPath(newSubPath);
+              }
+              setIsPickerOpen(false);
+            }}
+          />
+        </BAIUnmountAfterClose>
       )}
     </>
   );
