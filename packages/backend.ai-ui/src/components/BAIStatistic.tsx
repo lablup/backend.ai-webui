@@ -46,7 +46,10 @@ const BAIStatistic: React.FC<BAIStatisticProps> = ({
 
   const calculatePercent = (): number => {
     if (!showProgress || total === undefined || total === Infinity) return 0;
-    if (!_.isFinite(current) || !isFinite(total) || total === 0) return 100;
+    // Nothing allocated out of a zero quota is empty, not full. Anything else
+    // against a zero quota — including a non-finite current — stays full.
+    if (total === 0) return current === 0 ? 0 : 100;
+    if (!_.isFinite(current) || !isFinite(total)) return 100;
     return _.isUndefined(current) ? 0 : Math.round((current / total) * 100);
   };
 

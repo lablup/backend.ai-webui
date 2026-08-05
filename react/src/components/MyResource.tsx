@@ -57,13 +57,21 @@ const MyResource: React.FC<MyResourceProps> = ({
   const resourceSlotsDetails = useResourceSlotsDetails();
 
   const resourceData = (() => {
+    // A failed request is a no-data state, not zero usage across every slot.
+    if (!checkPresetInfo) {
+      return { cpu: null, memory: null, accelerators: [] };
+    }
+
+    // Every `keypair_using` read below defaults to 0: the payload omits slots
+    // the keypair holds no allocation for, and `convertToNumber` would read
+    // that absence as unlimited. Only limits are unlimited when absent.
     const cpuSlot = resourceSlotsDetails?.resourceSlotsInRG?.['cpu'];
     const memSlot = resourceSlotsDetails?.resourceSlotsInRG?.['mem'];
 
     const cpuData = cpuSlot
       ? {
           used: {
-            current: convertToNumber(checkPresetInfo?.keypair_using.cpu),
+            current: convertToNumber(checkPresetInfo.keypair_using.cpu ?? 0),
             total: convertToNumber(resourceLimitsWithoutResourceGroup.cpu?.max),
           },
           free: {
@@ -81,7 +89,7 @@ const MyResource: React.FC<MyResourceProps> = ({
       ? {
           used: {
             current: processMemoryValue(
-              checkPresetInfo?.keypair_using.mem,
+              checkPresetInfo.keypair_using.mem ?? 0,
               memSlot.display_unit,
             ),
             total: processMemoryValue(
@@ -116,7 +124,7 @@ const MyResource: React.FC<MyResourceProps> = ({
             key,
             used: {
               current: convertToNumber(
-                checkPresetInfo?.keypair_using[key as ResourceSlotName],
+                checkPresetInfo.keypair_using[key as ResourceSlotName] ?? 0,
               ),
               total: convertToNumber(
                 resourceLimitsWithoutResourceGroup.accelerators[key]?.max,
