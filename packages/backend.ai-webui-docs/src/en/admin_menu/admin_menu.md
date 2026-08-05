@@ -930,8 +930,8 @@ To create a new user resource policy, click the **Create** button.
   user's storage space exceeds this value, user cannot create a new data
   folder. If set to Unlimited, it is displayed as "∞". In the list this limit appears as
   **Max Quota Scope Size**, shown with the unit that fits the configured value.
-- Max Concurrent Logins: The maximum number of sessions the user can be logged in to at the same
-  time. If set to Unlimited, no limit is applied and the list displays "∞".
+- Max Concurrent Logins: The maximum number of concurrent login sessions allowed for the user.
+  If set to Unlimited, it is displayed as "∞".
 - Max Session Count Per Model Session: The maximum number of available sessions per model
   service created by a user. Increasing this value can put a heavy load on the session
   scheduler and potentially lead to system downtime, so please caution when
@@ -1891,9 +1891,8 @@ This page is only for showing current information.
 
 ## Manage projects
 
-The Projects page is available to superadmins. It lists every project in the cluster and lets them
-create, edit, deactivate, activate, and purge projects. Each row also carries a shortcut for granting
-Project Admin authority.
+Superadmins can view every project in the cluster on the Projects page and create, edit, deactivate,
+activate, and purge them. Each row also carries a shortcut for granting Project Admin authority.
 
 <a id="set-project-admin"></a>
 
