@@ -57,8 +57,11 @@ The Dashboard automatically refreshes all panel data every **15 seconds**. This
 ensures that the displayed information stays up to date without requiring manual
 interaction.
 
-You can also refresh a single panel at any time by clicking the refresh button
-in its header, without waiting for the next automatic refresh.
+The board stays visible while a refresh runs — a panel shows a loading skeleton
+within its own area only when it needs to rebuild its content, without affecting
+the rest of the board. Panels that have a refresh button in their header can
+also be refreshed individually at any time, instead of waiting for the next
+automatic refresh.
 
 :::note
 The [Superadmin Dashboard](#superadmin-dashboard) uses a **30-second** refresh interval instead.
