@@ -272,7 +272,17 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
   const hasMoreMenu = hasOverflow || menuOnlyActions.length > 0;
   const toMenuItem = (action: BAINameActionCellAction) => ({
     key: action.key,
-    label: action.title,
+    // A disabled menu item explains itself the same way the icon button does;
+    // antd does not fire hover events on disabled items, so the tooltip wraps
+    // the label instead of the item.
+    label:
+      action.disabled && action.disabledReason ? (
+        <Tooltip title={action.disabledReason} placement="left">
+          <span>{action.title}</span>
+        </Tooltip>
+      ) : (
+        action.title
+      ),
     icon: action.icon,
     danger: action.type === 'danger',
     disabled: action.disabled,

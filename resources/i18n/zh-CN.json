@@ -855,6 +855,7 @@
       "AdminDataPageAlert": "管理员数据页面仅可创建项目文件夹。",
       "CannotDeleteFolder": "无法删除安装在一个或多个会话中的文件夹。请先终止会话。",
       "CannotDeletePipelineFolder": "您无法删除管道文件夹。",
+      "CannotDeployFromAdminMenu": "部署需要在项目的数据页面中创建；管理员菜单不支持此操作。",
       "CannotRestorePipelineFolder": "您无法还原管道文件夹。",
       "ChangeTheVFolderTypeToCreateAutoMountFolder": "无法将自动挂载的文件夹创建为项目文件夹。",
       "CloneAFolder": "克隆文件夹",

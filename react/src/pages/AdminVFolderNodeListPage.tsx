@@ -458,6 +458,13 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
             // deployment-creation escalation modal embeds its own required
             // project selector.
             project={null}
+            // FR-3423: deployments are project-scoped, and this page is an
+            // oversight surface across every project — deploying from here
+            // would create an endpoint in a project the admin may not
+            // belong to and can't afterwards see or clean up. Mirrors the
+            // FileBrowser/SFTP disabled-with-tooltip treatment already
+            // applied to this page (FR-3412).
+            noDeployTooltip={t('data.folders.CannotDeployFromAdminMenu')}
             vfoldersFrgmt={filterOutNullAndUndefined(
               _.map(vfolder_nodes?.edges, 'node'),
             )}

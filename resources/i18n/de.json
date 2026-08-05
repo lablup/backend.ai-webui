@@ -855,6 +855,7 @@
       "AdminDataPageAlert": "Auf der Admin-Datenseite können nur Projekt-Ordner erstellt werden.",
       "CannotDeleteFolder": "Der in einer oder mehreren Sitzungen bereitgestellte Ordner kann nicht gelöscht werden. Bitte beenden Sie zuerst die Sitzung.",
       "CannotDeletePipelineFolder": "Sie können Pipeline -Ordner nicht löschen.",
+      "CannotDeployFromAdminMenu": "Bereitstellungen werden auf der Seite Daten eines Projekts erstellt; das Admin-Menü unterstützt dies nicht.",
       "CannotRestorePipelineFolder": "Sie können Pipeline -Ordner nicht wiederherstellen.",
       "ChangeTheVFolderTypeToCreateAutoMountFolder": "Der automatisch eingebundene Ordner kann nicht als Projektordner angelegt werden.",
       "CloneAFolder": "Einen Ordner klonen",

@@ -110,6 +110,16 @@ interface VFolderNameCellProps {
    * additionally redirects admins (project/domain/super) to that page.
    */
   disableProjectFolderActions?: boolean;
+  /**
+   * When set, the "Deploy as service" row action renders disabled with this
+   * string as its tooltip. The component never infers on its own when
+   * deployment should be blocked — including from `project` being `null`,
+   * which user-facing pages may also pass legitimately — the page decides
+   * and supplies the reason (mirrors `FolderExplorerHeaderV2`'s
+   * `noProjectTooltip`, FR-3412). Absent by default, so every existing
+   * caller (user Data page, model store) keeps today's behavior unchanged.
+   */
+  noDeployTooltip?: string;
 }
 
 const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
@@ -120,6 +130,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
   onDeleteForever,
   onStartServiceFallback,
   disableProjectFolderActions = false,
+  noDeployTooltip,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -155,6 +166,8 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
           key: 'start-service',
           title: t('modelService.DeployAsService'),
           icon: <BAIEndpointsIcon />,
+          disabled: !!noDeployTooltip,
+          disabledReason: noDeployTooltip,
           // Use `action` (not `onClick`) so the state update that mounts
           // `<VFolderDeployModal>` (which suspends on its preloaded query)
           // runs inside `startTransition` — the page stays interactive
@@ -277,6 +290,17 @@ interface VFolderNodesProps extends Omit<
    * component. This prop is the V1-friendly stopgap.
    */
   disableProjectFolderActions?: boolean;
+  /**
+   * Forwarded to each row's name cell (FR-3423). When set, the "Deploy as
+   * service" row action renders disabled with this string as its tooltip.
+   * The admin folder page (`AdminVFolderNodeListPage`) is the only caller
+   * that passes this — deployments are project-scoped, and that page has
+   * no ambient project (an oversight surface across every project), so
+   * deploying from it would create an endpoint the admin cannot
+   * afterwards see or clean up. The user-facing data page and the model
+   * store leave this unset and keep the action fully functional.
+   */
+  noDeployTooltip?: string;
 }
 
 const VFolderNodes: React.FC<VFolderNodesProps> = ({
@@ -284,6 +308,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
   onRemoveRow,
   project,
   disableProjectFolderActions,
+  noDeployTooltip,
   ...tableProps
 }) => {
   const { t } = useTranslation();
@@ -386,6 +411,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                 <VFolderNameCell
                   vfolder={vfolder}
                   disableProjectFolderActions={disableProjectFolderActions}
+                  noDeployTooltip={noDeployTooltip}
                   onShare={() => {
                     vfolder?.user === currentUser?.uuid
                       ? setInviteFolderId(toLocalId(vfolder?.id ?? null))
