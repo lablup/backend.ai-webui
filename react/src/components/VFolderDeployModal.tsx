@@ -27,21 +27,58 @@ import {
   BAIModal,
   type BAIModalProps,
   BAIProjectResourceGroupSelect,
-  toGlobalId,
   toLocalId,
   useErrorMessageResolver,
   useProjectResourceGroups,
 } from 'backend.ai-ui';
 import React, {
   Suspense,
-  useDeferredValue,
   useEffect,
   useEffectEvent,
   useRef,
   useState,
 } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
+import {
+  graphql,
+  PreloadedQuery,
+  useMutation,
+  usePreloadedQuery,
+} from 'react-relay';
+
+// TODO(needs-backend): FR-2599 — `deploymentRevisionPresets` currently has
+// no per-vfolder scope (`DeploymentRevisionPresetFilter` only supports
+// `name` and `runtimeVariantId`). The list below is project-wide. Once a
+// vfolder-compatibility scope is exposed (e.g. similar to
+// `modelCardAvailablePresets`), wire it in here.
+// ADR-0001 (FR-3410): this modal never reads the ambient current project.
+// The target project is derived from the folder's own ownership —
+// `vfolder_node` is fetched alongside the presets so a project-owned
+// folder deploys into exactly the project that owns it. For user-owned
+// folders (no owning project) a required in-modal selector is rendered.
+//
+// Exported so the opener can `loadQuery` it in the click event (render-as-you-
+// fetch). Operation name must match the generated artifact; the const name only
+// differs to avoid clashing with the imported generated type.
+export const VFolderDeployQuery = graphql`
+  query VFolderDeployModalQuery($vfolderGlobalId: String!) {
+    deploymentRevisionPresets(orderBy: [{ field: RANK, direction: "ASC" }]) {
+      edges {
+        node {
+          id
+          name
+          runtimeVariantId
+          ...DeploymentPresetDetailModalFragment
+        }
+      }
+    }
+    vfolder_node(id: $vfolderGlobalId) {
+      ownership_type
+      group
+      group_name
+    }
+  }
+`;
 
 export interface VFolderDeployModalProps extends Omit<
   BAIModalProps,
@@ -49,14 +86,22 @@ export interface VFolderDeployModalProps extends Omit<
 > {
   /** Domain close callback — wired to `onCancel` on the underlying `BAIModal`. */
   onClose: () => void;
-  /** Local UUID of the VFolder to deploy. */
-  vfolderId?: string;
+  /**
+   * Preloaded query reference produced by the opener via `useQueryLoader`.
+   *
+   * The target VFolder is carried by the reference itself
+   * (`variables.vfolderGlobalId`), so there is no separate `vfolderId` prop
+   * that could drift from — or be cleared ahead of — the data being rendered.
+   * The opener keeps the reference alive across the close animation and only
+   * toggles `open`, so nothing re-derives query variables mid-close.
+   */
+  queryRef: PreloadedQuery<VFolderDeployModalQuery>;
   onDeployed?: (deploymentId: string) => void;
 }
 
 const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
   onClose,
-  vfolderId,
+  queryRef,
   onDeployed,
   // `open` and `afterClose` come in via `BAIModalProps` (the latter is
   // typically injected by `BAIUnmountAfterClose`'s `cloneElement`). We
@@ -77,52 +122,16 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
   const { token } = theme.useToken();
   const currentDomain = useCurrentDomainValue();
 
-  // Loading UX: `useDeferredValue(open)` lets this modal stay mounted with
-  // `loading=true` (Ant Design skeleton) while the deferred re-render fetches
-  // fresh data in the background. The first synchronous render uses
-  // `store-only` so it never suspends; the deferred render upgrades to
-  // `store-and-network` and suspends only if the cache is empty. The parent
-  // wraps this component in `<Suspense>` to handle that first-time cache miss.
-  const deferredOpen = useDeferredValue(open);
-
-  // TODO(needs-backend): FR-2599 — `deploymentRevisionPresets` currently has
-  // no per-vfolder scope (`DeploymentRevisionPresetFilter` only supports
-  // `name` and `runtimeVariantId`). The list below is project-wide. Once a
-  // vfolder-compatibility scope is exposed (e.g. similar to
-  // `modelCardAvailablePresets`), wire it in here.
-  // ADR-0001 (FR-3410): this modal never reads the ambient current project.
-  // The target project is derived from the folder's own ownership —
-  // `vfolder_node` is fetched alongside the presets so a project-owned
-  // folder deploys into exactly the project that owns it. For user-owned
-  // folders (no owning project) a required in-modal selector is rendered.
+  // Render-as-you-fetch: the request was already started by the opener's
+  // `loadQuery` in the click event, so there is no `open`-derived fetch policy
+  // here and no render-time variable derivation. The opener wraps this
+  // component in `<Suspense>` for the first-time cache miss.
   const { deploymentRevisionPresets, vfolder_node } =
-    useLazyLoadQuery<VFolderDeployModalQuery>(
-      graphql`
-        query VFolderDeployModalQuery($vfolderGlobalId: String!) {
-          deploymentRevisionPresets(
-            orderBy: [{ field: RANK, direction: "ASC" }]
-          ) {
-            edges {
-              node {
-                id
-                name
-                runtimeVariantId
-                ...DeploymentPresetDetailModalFragment
-              }
-            }
-          }
-          vfolder_node(id: $vfolderGlobalId) {
-            ownership_type
-            group
-            group_name
-          }
-        }
-      `,
-      { vfolderGlobalId: toGlobalId('VirtualFolderNode', vfolderId ?? '') },
-      {
-        fetchPolicy: deferredOpen ? 'store-and-network' : 'store-only',
-      },
-    );
+    usePreloadedQuery<VFolderDeployModalQuery>(VFolderDeployQuery, queryRef);
+
+  // The reference's variables are the single source of truth for which folder
+  // is being deployed — `toLocalId` reverses the opener's `toGlobalId`.
+  const vfolderId = toLocalId(queryRef.variables.vfolderGlobalId);
 
   // `ownership_type` / `group` / `group_name` are all nullable, so an
   // unreadable group folder must not fall through to the user-owned branch.
@@ -330,7 +339,6 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
           noAvailablePresets,
       }}
       confirmLoading={isInFlightDeploy}
-      loading={deferredOpen !== open}
       {...modalProps}
       open={open}
       afterClose={afterClose}

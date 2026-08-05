@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { VFolderDeployModalQuery } from '../__generated__/VFolderDeployModalQuery.graphql';
 import { VFolderNodesV2DeleteMutation } from '../__generated__/VFolderNodesV2DeleteMutation.graphql';
 import {
   VFolderNodesV2Fragment$data,
@@ -23,7 +24,7 @@ import QuotaPerStorageVolumePanelCard, {
   type VolumeInfo,
 } from './QuotaPerStorageVolumePanelCard';
 import SharedFolderPermissionInfoModalV2 from './SharedFolderPermissionInfoModalV2';
-import VFolderDeployModal from './VFolderDeployModal';
+import VFolderDeployModal, { VFolderDeployQuery } from './VFolderDeployModal';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
 import VFolderPermissionCellV2 from './VFolderPermissionCellV2';
 import {
@@ -48,6 +49,7 @@ import {
   BAIFlex,
   BAINameActionCell,
   BAIText,
+  toGlobalId,
   toLocalId,
   useErrorMessageResolver,
   BAITag,
@@ -58,7 +60,7 @@ import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment, useMutation } from 'react-relay';
+import { graphql, useFragment, useMutation, useQueryLoader } from 'react-relay';
 
 export const statusTagColor = {
   // V2 UPPERCASE enum values (VFolderOperationStatus)
@@ -462,10 +464,14 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
   >([]);
   const [currentSharedVFolder, setCurrentSharedVFolder] =
     useState<VFolderNodeInList | null>(null);
-  // vfolder id whose preset-selection deploy modal (FR-2599) should be open.
-  const [deployFallbackVfolderId, setDeployFallbackVfolderId] = useState<
-    string | null
-  >(null);
+  // Preset-selection deploy modal (FR-2599). The query reference is loaded in
+  // the Deploy click handler (render-as-you-fetch) and deliberately kept alive
+  // after close — only `isDeployModalOpen` toggles, so the modal's data (and
+  // therefore its auto-deploy/selection decision) stays stable through the
+  // close animation instead of collapsing to an empty-id query.
+  const [deployQueryRef, loadDeployQuery] =
+    useQueryLoader<VFolderDeployModalQuery>(VFolderDeployQuery);
+  const [isDeployModalOpen, setIsDeployModalOpen] = useState(false);
   // FR-2862 — when the user hits the empty-preset state in
   // VFolderDeployModal, escalate to the deployment shell creation modal
   // (`DeploymentSettingModal`), same as the `/deployments` page entry.
@@ -662,7 +668,14 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
                     setPurgingVFolders(vfolder ? [vfolder] : []);
                   }}
                   onStartServiceFallback={(id) => {
-                    setDeployFallbackVfolderId(id);
+                    // Render-as-you-fetch: start the request in the open event.
+                    loadDeployQuery(
+                      {
+                        vfolderGlobalId: toGlobalId('VirtualFolderNode', id),
+                      },
+                      { fetchPolicy: 'store-and-network' },
+                    );
+                    setIsDeployModalOpen(true);
                   }}
                 />
               );
@@ -868,22 +881,25 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
           setCurrentSharedVFolder(null);
         }}
       />
-      {/* Local Suspense around the lazily-mounted modal so its initial
-          `useLazyLoadQuery` doesn't bubble its suspend up to the page-level
-          Suspense fallback and blank the data page. The mount is triggered
-          from a `BAINameActionCell` action (transition), but
-          `BAIUnmountAfterClose` defers the mount via `useLayoutEffect` —
-          that state update is no longer inside the transition, so we still
-          need an explicit Suspense boundary here. */}
+      {/* The boundary is mounted unconditionally, with the modal switched in
+          underneath it. The Deploy action runs inside `startTransition`
+          (`BAINameActionCell`), and React does not swap an already-mounted
+          boundary to its fallback during a transition — it keeps the table on
+          screen until the preloaded query resolves. So `fallback` is a safety
+          net for a non-transition suspend, not the normal loading path; if the
+          boundary were mounted together with the modal it would be a *new*
+          boundary and the fallback would render. */}
       <Suspense fallback={null}>
-        <BAIUnmountAfterClose>
-          <VFolderDeployModal
-            open={!!deployFallbackVfolderId}
-            vfolderId={deployFallbackVfolderId ?? undefined}
-            onClose={() => setDeployFallbackVfolderId(null)}
-            onDeployed={() => setDeployFallbackVfolderId(null)}
-          />
-        </BAIUnmountAfterClose>
+        {deployQueryRef != null && (
+          <BAIUnmountAfterClose>
+            <VFolderDeployModal
+              open={isDeployModalOpen}
+              queryRef={deployQueryRef}
+              onClose={() => setIsDeployModalOpen(false)}
+              onDeployed={() => setIsDeployModalOpen(false)}
+            />
+          </BAIUnmountAfterClose>
+        )}
       </Suspense>
       <DeploymentSettingModal
         open={isCreateDeploymentOpen}
