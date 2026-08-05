@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<494c648f688acacfe4488ea61378aeb3>>
+ * @generated SignedSource<<561efcd307b8ee76d0e2faad28eaa910>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,7 +9,6 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-import { FragmentRefs } from "relay-runtime";
 export type DeploymentStrategyType = "BLUE_GREEN" | "ROLLING" | "%future added value";
 export type UpdateDeploymentInput = {
   defaultDeploymentStrategy?: DeploymentStrategyInput | null | undefined;
@@ -45,10 +44,17 @@ export type DeploymentSettingModalUpdateMutation$data = {
     readonly deployment: {
       readonly id: string;
       readonly metadata: {
+        readonly name: string;
+        readonly resourceGroupName: string;
+        readonly tags: ReadonlyArray<string>;
         readonly updatedAt: string;
-        readonly " $fragmentSpreads": FragmentRefs<"BAIDeploymentTagChips_metadata">;
       };
-      readonly " $fragmentSpreads": FragmentRefs<"DeploymentSettingModal_deployment">;
+      readonly networkAccess: {
+        readonly openToPublic: boolean;
+      };
+      readonly replicaState: {
+        readonly desiredReplicaCount: number;
+      };
     };
   } | null | undefined;
 };
@@ -67,69 +73,104 @@ var v0 = [
 ],
 v1 = [
   {
-    "kind": "Variable",
-    "name": "input",
-    "variableName": "input"
-  }
-],
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-},
-v3 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "updatedAt",
-  "storageKey": null
-};
-return {
-  "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
-    "kind": "Fragment",
-    "metadata": null,
-    "name": "DeploymentSettingModalUpdateMutation",
+    "alias": null,
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "input",
+        "variableName": "input"
+      }
+    ],
+    "concreteType": "UpdateDeploymentPayload",
+    "kind": "LinkedField",
+    "name": "updateModelDeployment",
+    "plural": false,
     "selections": [
       {
         "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "UpdateDeploymentPayload",
+        "args": null,
+        "concreteType": "ModelDeployment",
         "kind": "LinkedField",
-        "name": "updateModelDeployment",
+        "name": "deployment",
         "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "ModelDeployment",
+            "kind": "ScalarField",
+            "name": "id",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "ModelDeploymentMetadata",
             "kind": "LinkedField",
-            "name": "deployment",
+            "name": "metadata",
             "plural": false,
             "selections": [
-              (v2/*: any*/),
               {
+                "alias": null,
                 "args": null,
-                "kind": "FragmentSpread",
-                "name": "DeploymentSettingModal_deployment"
+                "kind": "ScalarField",
+                "name": "name",
+                "storageKey": null
               },
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "ModelDeploymentMetadata",
-                "kind": "LinkedField",
-                "name": "metadata",
-                "plural": false,
-                "selections": [
-                  (v3/*: any*/),
-                  {
-                    "args": null,
-                    "kind": "FragmentSpread",
-                    "name": "BAIDeploymentTagChips_metadata"
-                  }
-                ],
+                "kind": "ScalarField",
+                "name": "tags",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "resourceGroupName",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "updatedAt",
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "ModelDeploymentNetworkAccess",
+            "kind": "LinkedField",
+            "name": "networkAccess",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "openToPublic",
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "ReplicaState",
+            "kind": "LinkedField",
+            "name": "replicaState",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "desiredReplicaCount",
                 "storageKey": null
               }
             ],
@@ -139,6 +180,16 @@ return {
         "storageKey": null
       }
     ],
+    "storageKey": null
+  }
+];
+return {
+  "fragment": {
+    "argumentDefinitions": (v0/*: any*/),
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "DeploymentSettingModalUpdateMutation",
+    "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
@@ -147,112 +198,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "DeploymentSettingModalUpdateMutation",
-    "selections": [
-      {
-        "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "UpdateDeploymentPayload",
-        "kind": "LinkedField",
-        "name": "updateModelDeployment",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "ModelDeployment",
-            "kind": "LinkedField",
-            "name": "deployment",
-            "plural": false,
-            "selections": [
-              (v2/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "ModelDeploymentMetadata",
-                "kind": "LinkedField",
-                "name": "metadata",
-                "plural": false,
-                "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "name",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "tags",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "resourceGroupName",
-                    "storageKey": null
-                  },
-                  (v3/*: any*/)
-                ],
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "ModelDeploymentNetworkAccess",
-                "kind": "LinkedField",
-                "name": "networkAccess",
-                "plural": false,
-                "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "openToPublic",
-                    "storageKey": null
-                  }
-                ],
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "ReplicaState",
-                "kind": "LinkedField",
-                "name": "replicaState",
-                "plural": false,
-                "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "desiredReplicaCount",
-                    "storageKey": null
-                  }
-                ],
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ]
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "ca6b1623612613e9ed2c5e6e2e29de8d",
+    "cacheID": "ac9e20ce5b931369ce4ca5f78ca57923",
     "id": null,
     "metadata": {},
     "name": "DeploymentSettingModalUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation DeploymentSettingModalUpdateMutation(\n  $input: UpdateDeploymentInput!\n) {\n  updateModelDeployment(input: $input) {\n    deployment {\n      id\n      ...DeploymentSettingModal_deployment\n      metadata {\n        updatedAt\n        ...BAIDeploymentTagChips_metadata\n      }\n    }\n  }\n}\n\nfragment BAIDeploymentTagChips_metadata on ModelDeploymentMetadata {\n  tags\n}\n\nfragment DeploymentSettingModal_deployment on ModelDeployment {\n  id\n  metadata {\n    name\n    tags\n    resourceGroupName\n  }\n  networkAccess {\n    openToPublic\n  }\n  replicaState {\n    desiredReplicaCount\n  }\n}\n"
+    "text": "mutation DeploymentSettingModalUpdateMutation(\n  $input: UpdateDeploymentInput!\n) {\n  updateModelDeployment(input: $input) {\n    deployment {\n      id\n      metadata {\n        name\n        tags\n        resourceGroupName\n        updatedAt\n      }\n      networkAccess {\n        openToPublic\n      }\n      replicaState {\n        desiredReplicaCount\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "b56acd7214b6bdd12a2f90b233c3d2bc";
+(node as any).hash = "bdc119d19a1ff9cb9611a02edc900367";
 
 export default node;

@@ -92,6 +92,39 @@ const UpdateUsersModal = ({
         adminBulkUpdateUsersV2(input: $input) {
           updatedUsers {
             id
+            basicInfo {
+              email
+              fullName
+              username
+              description
+              integrationName
+            }
+            organization {
+              domainName
+              role
+              resourcePolicy
+              mainAccessKey
+            }
+            security {
+              totpActivated @skipOnClient(if: $isNotSupportTotp)
+              totpActivatedAt @skipOnClient(if: $isNotSupportTotp)
+              sudoSessionEnabled
+              allowedClientIp
+            }
+            status {
+              status
+              statusInfo
+              needPasswordChange
+            }
+            container {
+              containerUid
+              containerMainGid
+              containerGids
+            }
+            timestamps {
+              createdAt
+              modifiedAt
+            }
             projects {
               edges {
                 node {
@@ -102,7 +135,6 @@ const UpdateUsersModal = ({
                 }
               }
             }
-            ...BAIAdminUserV2TableFragment
           }
           failed {
             userId

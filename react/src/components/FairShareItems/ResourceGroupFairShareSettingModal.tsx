@@ -77,7 +77,17 @@ const ResourceGroupFairShareSettingModal: React.FC<
         resourceGroup {
           id
           name
-          ...ResourceGroupFairShareSettingModalFragment
+          fairShareSpec {
+            halfLifeDays
+            lookbackDays
+            decayUnitDays
+            defaultWeight
+            resourceWeights {
+              resourceType
+              weight
+              usesDefault
+            }
+          }
         }
       }
     }
