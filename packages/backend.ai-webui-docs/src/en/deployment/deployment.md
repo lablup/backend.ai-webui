@@ -522,7 +522,7 @@ The Service Info card displays the following details:
 
 #### More menu (edit and delete)
 
-The Service Info card's header exposes an **Edit** button alongside a **More** menu. The **Edit** button opens the **Edit Deployment** modal described in [Create deployment modal](#create-deployment); its submit button reads `Save`. The More menu currently contains the **Delete Deployment** action.
+The Service Info card's header exposes an **Edit** button alongside a **More** menu. The **Edit** button opens the **Edit Deployment** modal described in [Create deployment modal](#create-deployment). The More menu currently contains the **Delete Deployment** action.
 
 ![](../images/endpoint_detail_more_menu.png)
 
