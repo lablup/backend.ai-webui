@@ -1086,6 +1086,8 @@
     "FailedToDeleteDeployment": "Не удалось удалить развёртывание.",
     "FailedToRollback": "Не удалось выполнить откат до выбранной Revision.",
     "FailedToUpdateDeployment": "Не удалось обновить развёртывание.",
+    "FolderOwnershipUnresolved": "Не удалось определить владельца папки.",
+    "FolderOwnershipUnresolvedDescription": "Проект, которому принадлежит эта папка, недоступен, поэтому её нельзя развернуть. Обновите список папок и повторите попытку.",
     "FromStatus": "Исходный статус",
     "GoToDetailPage": "Просмотреть детали развертывания",
     "HealthStatus": "Состояние здоровья",

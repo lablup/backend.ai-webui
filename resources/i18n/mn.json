@@ -1086,6 +1086,8 @@
     "FailedToDeleteDeployment": "Байршуулалт устгахад алдаа гарлаа.",
     "FailedToRollback": "Сонгосон Revision руу буцаахад алдаа гарлаа.",
     "FailedToUpdateDeployment": "Байршуулалт шинэчлэхэд алдаа гарлаа.",
+    "FolderOwnershipUnresolved": "Хавтасны эзэмшлийг тодорхойлж чадсангүй.",
+    "FolderOwnershipUnresolvedDescription": "Энэ хавтас харьяалагдах төслийг татаж чадаагүй тул байршуулах боломжгүй. Хавтасны жагсаалтыг сэргээгээд дахин оролдоно уу.",
     "FromStatus": "Өмнөх статус",
     "GoToDetailPage": "Түгээлтийн дэлгэрэнгүйг үзэх",
     "HealthStatus": "Эрүүл мэндийн төлөв",

@@ -119,6 +119,11 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
 
   const isEditMode = !!modelCard;
 
+  // `name` is nullable, so gate on the same condition `toProjectContext`
+  // applies — otherwise the form stays enabled while the context is null.
+  const modelStoreProjectContext = toProjectContext(modelStoreProject ?? {});
+  const isModelStoreProjectResolved = modelStoreProjectContext !== null;
+
   const [commitCreateModelCard, isCreateInFlight] =
     useMutation<AdminModelCardSettingModalCreateMutation>(graphql`
       mutation AdminModelCardSettingModalCreateMutation(
@@ -246,7 +251,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
           // deleted). When the model-store project cannot be resolved, the
           // form is replaced by the ProjectNotFound alert and the OK button
           // is disabled, so this guard only narrows the type.
-          if (!modelStoreProject?.id) {
+          if (!modelStoreProjectContext) {
             return;
           }
           commitCreateModelCard({
@@ -258,7 +263,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                 // TODO: model cards in the model-store project are slated to
                 // become global cards. Once a query that can look up cards across
                 // projects of multiple scopes is added, this will need to change.
-                modelStoreProjectId: modelStoreProject.id,
+                modelStoreProjectId: modelStoreProjectContext.id,
                 domainName: values.domainName || null,
                 ...metadataInput,
               },
@@ -297,10 +302,10 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
           ...modalProps.okButtonProps,
           loading: isCreateInFlight || isUpdateInFlight,
           disabled:
-            !modelStoreProject?.id || modalProps.okButtonProps?.disabled,
+            !isModelStoreProjectResolved || modalProps.okButtonProps?.disabled,
         }}
       >
-        {!modelStoreProject?.id ? (
+        {!isModelStoreProjectResolved ? (
           <Banner
             status="error"
             title={t('modelStore.ProjectNotFound')}
@@ -546,14 +551,11 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
           </Form>
         )}
       </BAIModal>
-      {/* New model folders are created in the model-store project — the same
-          project that backs the VFolder selector — never in the ambient
-          current project. The button that opens this modal renders only when
-          the model-store project is resolved, so `toProjectContext` yields a
-          non-null project here in practice. */}
+      {/* Model folders are created in the model-store project, never the
+          ambient one. */}
       <FolderCreateModalV2
         open={isOpenCreateFolderModal}
-        project={toProjectContext(modelStoreProject ?? {})}
+        project={modelStoreProjectContext}
         initialValidate={true}
         folderType="model_project"
         onRequestClose={(result) => {

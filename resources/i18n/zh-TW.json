@@ -1087,6 +1087,8 @@
     "FailedToDeleteDeployment": "刪除部署失敗。",
     "FailedToRollback": "回滾到所選 Revision 失敗。",
     "FailedToUpdateDeployment": "更新部署失敗。",
+    "FolderOwnershipUnresolved": "無法確定資料夾的歸屬。",
+    "FolderOwnershipUnresolvedDescription": "無法取得該資料夾所屬的專案，因此無法部署。請重新整理資料夾清單後再試一次。",
     "FromStatus": "來源狀態",
     "GoToDetailPage": "檢視部署詳細資訊",
     "HealthStatus": "健康狀態",

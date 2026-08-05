@@ -1073,6 +1073,8 @@
     "FailedToDeleteDeployment": "Failed to delete deployment.",
     "FailedToRollback": "Failed to rollback to the selected revision.",
     "FailedToUpdateDeployment": "Failed to update deployment.",
+    "FolderOwnershipUnresolved": "Folder ownership could not be determined.",
+    "FolderOwnershipUnresolvedDescription": "This folder's owning project is unavailable, so it cannot be deployed. Refresh the folder list and try again.",
     "FromStatus": "From Status",
     "GoToDetailPage": "View Deployment Details",
     "HealthStatus": "Health Status",

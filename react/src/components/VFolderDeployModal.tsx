@@ -120,15 +120,23 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
       },
     );
 
-  // Project-owned folder → the folder's own project is the deploy target.
-  // User-owned folder (or unresolved node) → no derived project; the user
-  // must pick one with the in-modal selector below.
+  // `ownership_type` / `group` / `group_name` are all nullable, so an
+  // unreadable group folder must not fall through to the user-owned branch.
+  const ownership: 'user' | 'group' | 'unresolved' =
+    vfolder_node?.ownership_type === 'user'
+      ? 'user'
+      : vfolder_node?.ownership_type === 'group' &&
+          vfolder_node.group &&
+          vfolder_node.group_name
+        ? 'group'
+        : 'unresolved';
+
   const ownershipProject: ProjectContextOrNull =
-    vfolder_node?.ownership_type === 'group' &&
-    vfolder_node.group &&
-    vfolder_node.group_name
+    ownership === 'group' && vfolder_node?.group && vfolder_node.group_name
       ? { id: vfolder_node.group, name: vfolder_node.group_name }
       : null;
+
+  const isOwnershipUnresolved = ownership === 'unresolved';
   const [selectedProject, setSelectedProject] = useState<ProjectContext | null>(
     null,
   );
@@ -311,6 +319,7 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
       okButtonProps={{
         disabled:
           !vfolderId ||
+          isOwnershipUnresolved ||
           !effectiveProject ||
           !effectivePresetId ||
           !selectedResourceGroup ||
@@ -347,8 +356,17 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
           style={{ marginBottom: token.marginMD }}
         />
       )}
+      {isOwnershipUnresolved && (
+        <Alert
+          type="error"
+          showIcon
+          title={t('deployment.FolderOwnershipUnresolved')}
+          description={t('deployment.FolderOwnershipUnresolvedDescription')}
+          style={{ marginBottom: token.marginMD }}
+        />
+      )}
       <Form form={form} layout="vertical">
-        {ownershipProject === null && (
+        {ownership === 'user' && (
           <Form.Item
             label={t('data.folders.TargetProject')}
             // The selector is wired manually (see onSelectProject below);

@@ -1086,6 +1086,8 @@
     "FailedToDeleteDeployment": "배포 삭제에 실패했습니다.",
     "FailedToRollback": "선택한 리비전으로 롤백하는 데 실패했습니다.",
     "FailedToUpdateDeployment": "배포 업데이트에 실패했습니다.",
+    "FolderOwnershipUnresolved": "폴더 소유 정보를 확인할 수 없습니다.",
+    "FolderOwnershipUnresolvedDescription": "이 폴더가 속한 프로젝트를 가져오지 못해 배포할 수 없습니다. 폴더 목록을 새로 고친 뒤 다시 시도하세요.",
     "FromStatus": "이전 상태",
     "GoToDetailPage": "배포 자세히 보기",
     "HealthStatus": "헬스 상태",

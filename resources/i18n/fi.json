@@ -1086,6 +1086,8 @@
     "FailedToDeleteDeployment": "Käyttöönoton poistaminen epäonnistui.",
     "FailedToRollback": "Palautus valittuun Revision epäonnistui.",
     "FailedToUpdateDeployment": "Käyttöönoton päivittäminen epäonnistui.",
+    "FolderOwnershipUnresolved": "Kansion omistajuutta ei voitu määrittää.",
+    "FolderOwnershipUnresolvedDescription": "Tämän kansion omistava projekti ei ole saatavilla, joten sitä ei voi ottaa käyttöön. Päivitä kansioluettelo ja yritä uudelleen.",
     "FromStatus": "Edellinen tila",
     "GoToDetailPage": "Näytä käyttöönoton tiedot",
     "HealthStatus": "Terveystila",

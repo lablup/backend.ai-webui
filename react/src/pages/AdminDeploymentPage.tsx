@@ -308,9 +308,7 @@ const AdminDeploymentPage: React.FC = () => {
         }
         break;
       case 'model-store-management': {
-        // The model-card query is no longer scoped to the ambient project
-        // (ADR-0001 / FR-3410): the model-store project is resolved by the
-        // query itself, so loading once is enough.
+        // No longer project-scoped, so loading once is enough.
         if (!modelCardQueryRef) {
           loadModelCardQuery(
             {
