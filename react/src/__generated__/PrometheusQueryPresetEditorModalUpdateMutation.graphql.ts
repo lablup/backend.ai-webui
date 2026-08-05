@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<26021ad8492d496cc2ee4d8f771a49d1>>
+ * @generated SignedSource<<288387103880e1c2771071943f67624f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -224,16 +224,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "61a27c4ce0475b01d0d3ae229e64207a",
+    "cacheID": "d6e16fb460c6f3c2cb06714955c53308",
     "id": null,
     "metadata": {},
     "name": "PrometheusQueryPresetEditorModalUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation PrometheusQueryPresetEditorModalUpdateMutation(\n  $id: ID!\n  $input: ModifyQueryDefinitionInput!\n) {\n  adminModifyPrometheusQueryPreset(id: $id, input: $input) {\n    preset {\n      id\n      name\n      description\n      rank\n      categoryId\n      metricName\n      queryTemplate\n      timeWindow\n      options {\n        filterLabels\n        groupLabels\n      }\n      updatedAt\n      category {\n        id\n        name\n      }\n    }\n  }\n}\n"
+    "text": "mutation PrometheusQueryPresetEditorModalUpdateMutation(\n  $id: ID!\n  $input: ModifyQueryDefinitionInput!\n) {\n  adminModifyPrometheusQueryPreset(id: $id, input: $input) {\n    preset {\n      id\n      name\n      description\n      rank\n      categoryId\n      metricName\n      queryTemplate\n      timeWindow\n      options {\n        filterLabels\n        groupLabels\n      }\n      updatedAt\n      category @since(version: \"26.4.3\") {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "fddc5b518607f53d20f7dde90ac7e946";
+(node as any).hash = "dd0cf0fcdb7c8df0b805cbc366c84447";
 
 export default node;

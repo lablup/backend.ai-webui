@@ -206,11 +206,11 @@ onRequestClose={(success) => {
 의존성이 없어 병렬 진행이 가능합니다.
 
 1. ~~**죽은 refetch 제거 (E-3)**~~ — **완료. 제거 대상 없음.** `RBACManagementPage.tsx:202`·`:181`, `ReservoirArtifactDetailPage.tsx:329` 모두 바뀌는 필드가 목록의 필터 조건이라 refetch가 정당했습니다. 코드 변경 없이 이 문서만 정정했습니다 (E-3 참조). 나머지 단계는 이 단계를 참조 구현으로 삼지 말고, **먼저 목록 쿼리의 필터 인자부터 확인**하십시오
-2. ~~**한 줄 payload 버그 (B) 수정**~~ — **완료.** `AutoScalingRuleEditorModalLegacy`의 modify·create 양쪽 `rule`에 `id` 추가(create 쪽도 같은 결함이었습니다), `MyKeypairManagementModal`의 `updateMyKeypair`에 `id` 추가
+2. ~~**한 줄 payload 버그 (B) 수정**~~ — **완료.** `AutoScalingRuleEditorModalLegacy`의 modify·create 양쪽 `rule`에 `id` 추가(create 쪽도 같은 결함이었습니다). `MyKeypairManagementModal`은 `id`를 추가했다가 **의도적으로 되돌렸습니다** — 목록이 `isActive`로 필터하는데 토글이 그 값을 뒤집으므로 행은 patch가 아니라 evict 대상이고, 병합 가능해 보이는 payload는 실제로 일하는 refetch를 지우게 유도하는 함정이기 때문입니다 (5단계 참조)
 3. ~~**C 수정**~~ — **완료.** `UserSettingModal` update payload에 `projects { edges { node { id } } }` 추가. 모달 자신의 fragment와 필드 단위로 일치시켰습니다. create payload는 신규 노드라 대상 아님
 4. ~~**A 제거**~~ — **완료. 단 결과는 refetch 제거가 아니라 버그 수정.** `onRequestClose(false)` 우회를 걷어내 update 성공이 `true`를 반환합니다. 호출부 `AdminUserManagement`는 create/edit **인스턴스를 이미 분리해 렌더링**하므로(`:611`·`:623`) 분기 자체가 필요 없었습니다. 다만 refetch는 **양쪽 다 유지**합니다 — 쿼리 필터에 `status`가 무조건 들어가고(`:119-123`) 모달이 그 `status`를 편집하므로, ACTIVE 탭에서 사용자를 비활성화하면 행이 빠져야 합니다. 즉 기존 `false` 우회는 refetch를 건너뛰어 **stale row를 남기고 있었습니다**
 5. ~~**행 단위 토글 (E-2)**~~ — **완료. 제거 대상 없음.** 토글 대상이 예외 없이 목록의 필터 인자였습니다. 유지 확정: `MyKeypairManagementModal`(`isActive` 필터), `ProjectPage`(`is_active == true/false`가 필터 문자열에 하드코딩), `AdminUserManagement`(`status` 무조건 필터 + `status` 정렬 키), `ContainerRegistryList`(필터는 아니지만 `Domain` 병합 불가라 refetch가 유일한 갱신 경로), `RBACManagementPage`(1단계)
-6. ~~**D — selection 보강**~~ — **완료.** `NODE_NOT_SELECTED` 5건은 **오분류라 제외**(위 D 참조). `GAP` D-1 확정 건 중 병합 가능한 것만 보강했습니다 — `ResourceGroupFairShareSettingModal`(`fairShareSpec` 4종), `DeploymentSettingModal`(자기 fragment spread), `AdminDeploymentPresetSettingPage`(`updatedAt`·`runtimeVariant`·`image`). `AdminUserManagement`는 보강해도 행이 항상 탭에서 빠지므로 하지 않았습니다
+6. ~~**D — selection 보강**~~ — **완료.** `NODE_NOT_SELECTED` 5건은 **오분류라 제외**(위 D 참조). `GAP` D-1 확정 건 중 병합 가능한 것만 보강했습니다 — `ResourceGroupFairShareSettingModal`(`fairShareSpec` 4종), `DeploymentSettingModal`(`metadata`·`networkAccess`·`replicaState`), `AdminDeploymentPresetSettingPage`(`updatedAt`·`runtimeVariant`·`image`). payload selection은 fragment spread가 아니라 **명시 필드 나열**로 통일했습니다 — payload가 무엇을 반환하는지 그 자리에서 읽히도록 한 리뷰 결정이며, 폼에 편집 필드를 추가할 때 payload에도 같이 넣어야 합니다. `AdminUserManagement`는 보강해도 행이 항상 탭에서 빠지므로 하지 않았습니다
 
 **이 PR에서 실제로 제거한 refetch는 `FairShareList`의 `afterUpdate` 1건뿐입니다.** fair-share 스펙 값이 `ResourceGroupFilter`·`ResourceGroupOrderField` 어디에도 없어 행의 소속·순서가 바뀔 수 없는, 유일하게 확인된 순수 필드 수정 경로였습니다.
 

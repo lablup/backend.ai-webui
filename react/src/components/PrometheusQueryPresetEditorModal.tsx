@@ -159,7 +159,7 @@ const PrometheusQueryPresetEditorModal: React.FC<
               groupLabels
             }
             updatedAt
-            category {
+            category @since(version: "26.4.3") {
               id
               name
             }
