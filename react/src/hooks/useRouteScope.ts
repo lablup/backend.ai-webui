@@ -212,16 +212,26 @@ export const useActiveProjectName = (): string | undefined => {
 
 interface ProjectPathOptions {
   scope?: RouteScope;
+  /**
+   * Build the link for this project instead of the ambient active one
+   * (ADR-0001). Components that took an explicit `project` prop must pass it
+   * here: since FR-3055 the `:projectName` segment owns the current project,
+   * so a link built from the ambient name would land the target page in a
+   * different project than the component was told to act on.
+   */
+  projectName?: string;
 }
 
 /**
  * Returns a link builder bound to the current scope / active project. Pass an
  * explicit `scope` to override (e.g. to build an `admin` link from a project
- * page).
+ * page), or an explicit `projectName` to build the link for a project other
+ * than the ambient one.
  *
  *   const buildLink = useProjectPath();
  *   buildLink('session');                          // current scope + project
  *   buildLink('users', { scope: 'admin' });        // /admin/users
+ *   buildLink('session', { projectName: p.name }); // explicit project
  */
 export const useProjectPath = (): ((
   key: FeatureKey,
@@ -229,10 +239,14 @@ export const useProjectPath = (): ((
 ) => string) => {
   'use memo';
   const scope = useRouteScope();
-  const projectName = useActiveProjectName();
+  const activeProjectName = useActiveProjectName();
 
   return (key: FeatureKey, opts?: ProjectPathOptions): string => {
-    return buildPath(opts?.scope ?? scope, key, projectName);
+    return buildPath(
+      opts?.scope ?? scope,
+      key,
+      opts?.projectName ?? activeProjectName,
+    );
   };
 };
 

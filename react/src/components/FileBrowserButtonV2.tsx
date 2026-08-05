@@ -23,6 +23,7 @@ import {
 import { PrimaryAppOption } from './ComputeSessionNodeItems/SessionActionButtons';
 import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
+import { IconButton } from '@astryxdesign/core/IconButton';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIButton,
@@ -62,15 +63,14 @@ const FileBrowserButtonV2: React.FC<FileBrowserButtonV2Props> = ({
 
   if (project === null) {
     return (
-      <Tooltip title={noProjectTooltip}>
-        <Space.Compact>
+      <Tooltip content={noProjectTooltip} isEnabled={!!noProjectTooltip}>
+        <ButtonGroup label={t('data.explorer.ExecuteFileBrowser')}>
           <BAIButton
             icon={
-              <Image
+              <img
                 width="18px"
                 src="/resources/icons/filebrowser.svg"
                 alt="File Browser"
-                preview={false}
                 style={{
                   filter: 'grayscale(100%)',
                 }}
@@ -81,8 +81,12 @@ const FileBrowserButtonV2: React.FC<FileBrowserButtonV2Props> = ({
           >
             {showTitle && t('data.explorer.ExecuteFileBrowser')}
           </BAIButton>
-          <BAIButton icon={<EllipsisOutlined />} disabled />
-        </Space.Compact>
+          <IconButton
+            label={t('import.StartWithOptions')}
+            icon={<Ellipsis size="1em" />}
+            isDisabled
+          />
+        </ButtonGroup>
       </Tooltip>
     );
   }
@@ -255,12 +259,25 @@ const FileBrowserButtonWithProject: React.FC<
             {
               label: t('import.StartWithOptions'),
               onClick: () => {
-                const launcherValue = createFilebrowserLauncherValue();
+                const launcherValue = {
+                  ...createFilebrowserLauncherValue(),
+                  // Pin the session to exactly the passed project (FR-3412),
+                  // matching the primary button above.
+                  projectName: project.name,
+                };
                 const params = new URLSearchParams();
                 params.set('formValues', JSON.stringify(launcherValue));
                 params.set('step', '4');
                 webuiNavigate({
-                  pathname: buildProjectPath('session/start'),
+                  // `SessionLauncherPage` resolves its project from the
+                  // ambient current project, which `ProjectScopeLayout`
+                  // converges from the `:projectName` URL segment — not from
+                  // these form values. So the link itself must carry the
+                  // explicit project, otherwise this entry point could
+                  // launch in a different project than the primary button.
+                  pathname: buildProjectPath('session/start', {
+                    projectName: project.name,
+                  }),
                   search: params.toString(),
                 });
               },
