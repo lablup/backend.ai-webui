@@ -311,12 +311,15 @@ const ImportArtifactRevisionToFolderModal = ({
                   <BAIVFolderSelect
                     ref={vfolderSelectRef}
                     excludeDeleted
+                    // Disabled rather than unfiltered without a destination:
+                    // dropping the `group` predicate would list every
+                    // group-owned folder and allow an import outside the
+                    // model store.
+                    disabled={!destinationProject?.id}
                     // model-store-exclusive project folders only
                     filter={mergeFilterValues([
                       'ownership_type == "group"',
-                      destinationProject?.id
-                        ? `group == "${destinationProject.id}"`
-                        : null,
+                      `group == "${destinationProject?.id ?? ''}"`,
                     ])}
                   />
                 </Form.Item>
