@@ -75,6 +75,8 @@ export default defineConfig(({ mode }) => {
         insertTypesEntry: true,
         compilerOptions: {
           preserveSymlinks: false,
+          rootDir: 'src',
+          paths: {}
         },
       }),
       svgr(),
