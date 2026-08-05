@@ -727,6 +727,7 @@
     "AutomountFolderNameMustStartWithDot": "Automaattisen kiinnityskansion nimen on alettava pisteellä ('.').",
     "AutomountFolders": "Automount-kansiot",
     "BelongsToDifferentProject": "Tämä kansio kuuluu toiseen projektiin.",
+    "CannotLaunchSessionInAdminMenu": "Istuntoja ei voi käynnistää hallintavalikosta.",
     "CloningIsOnlyPossibleSameHost": "Tällä hetkellä kloonaus on mahdollista vain samassa isännässä.",
     "Create": "Luo",
     "CreateANewStorageFolder": "Luo uusi tallennuskansio",
