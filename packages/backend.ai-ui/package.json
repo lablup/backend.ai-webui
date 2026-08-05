@@ -18,16 +18,16 @@
   ],
   "main": "./dist/backend.ai-ui.js",
   "module": "./dist/backend.ai-ui.js",
-  "types": "./dist/src/index.d.ts",
+  "types": "./dist/index.d.ts",
   "sideEffects": false,
   "exports": {
     ".": {
-      "types": "./dist/src/index.d.ts",
-      "import": "./dist/backend.ai-ui.js"
+      "import": "./dist/backend.ai-ui.js",
+      "types": "./dist/index.d.ts"
     },
     "./dist/locale/*": {
-      "types": "./dist/src/locale/*.d.ts",
-      "import": "./dist/locale/*.js"
+      "import": "./dist/locale/*.js",
+      "types": "./dist/locale/*.d.ts"
     }
   },
   "files": [
