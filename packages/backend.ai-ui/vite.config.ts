@@ -7,7 +7,18 @@ import dts from 'vite-plugin-dts';
 import relay from 'vite-plugin-relay-lite';
 import svgr from 'vite-plugin-svgr';
 
+import { peerDependencies } from './package.json';
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// Rollup matches `external` strings exactly, so bare names left subpaths like
+// `react-dom/client` bundled — a second renderer that blank-screens consumers
+// on any other React patch (#8595). i18next / react-i18next are dependencies
+// rather than peers, so they stay bundled and keep BUI's i18n isolated.
+const peerDependencyPatterns = Object.keys(peerDependencies).map(
+  // `.` is the only regex metacharacter an npm package name can hold.
+  (name) => new RegExp(`^${name.replaceAll('.', '\\.')}(/.*)?$`),
+);
 
 export default defineConfig(({ mode }) => {
   const isDevMode = mode === 'development';
@@ -36,16 +47,7 @@ export default defineConfig(({ mode }) => {
         formats: ['es'],
       },
       rollupOptions: {
-        external: [
-          'react',
-          'react-dom',
-          'react-router-dom',
-          'relay-runtime',
-          'antd',
-          'antd-style',
-          'graphql',
-          // i18next and react-i18next are bundled to isolate BUI's i18n instance from the host app
-        ],
+        external: peerDependencyPatterns,
       },
       sourcemap: true,
       outDir: 'dist',
