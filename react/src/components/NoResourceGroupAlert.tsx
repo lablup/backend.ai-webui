@@ -11,6 +11,25 @@ import { useTranslation } from 'react-i18next';
 
 interface NoResourceGroupAlertProps extends BAIAlertProps {}
 
+// Separate component so the route gate below can skip mounting it:
+// `useCurrentResourceGroupValue` reads an atom that queries `scalingGroup.list`
+// / `vfolder.list_hosts` for the ambient project, which must not happen on
+// project-agnostic pages.
+const NoResourceGroupAlertBody: React.FC<NoResourceGroupAlertProps> = (
+  props,
+) => {
+  const currentResourceGroup = useCurrentResourceGroupValue();
+  const { t } = useTranslation();
+
+  return _.isEmpty(currentResourceGroup) ? (
+    <BAIAlert
+      title={t('resourceGroup.NoScalingGroupAssignedToThisProject')}
+      showIcon
+      {...props}
+    />
+  ) : null;
+};
+
 const NoResourceGroupAlert: React.FC<NoResourceGroupAlertProps> = (props) => {
   // FR-3414 (ADR-0001): this alert is project-scoped ("no resource group in
   // THIS PROJECT"), so it must not render on the project-agnostic pages,
@@ -18,16 +37,8 @@ const NoResourceGroupAlert: React.FC<NoResourceGroupAlertProps> = (props) => {
   // MainLayout (no page parent), so consulting the route here is the
   // sanctioned exception of ADR-0001.
   const isProjectAgnosticPage = useIsProjectAgnosticPage();
-  const currentResourceGroup = useCurrentResourceGroupValue();
-  const { t } = useTranslation();
 
-  return !isProjectAgnosticPage && _.isEmpty(currentResourceGroup) ? (
-    <BAIAlert
-      title={t('resourceGroup.NoScalingGroupAssignedToThisProject')}
-      showIcon
-      {...props}
-    />
-  ) : null;
+  return isProjectAgnosticPage ? null : <NoResourceGroupAlertBody {...props} />;
 };
 
 export default NoResourceGroupAlert;
