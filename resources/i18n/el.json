@@ -1040,6 +1040,7 @@
     "AutoScaling": "Αυτόματη κλιμάκωση",
     "AutoScalingRules": "Κανόνες αυτόματης κλιμάκωσης",
     "BasicInformation": "Βασικές πληροφορίες",
+    "CannotResolveDeploymentProject": "Δεν είναι δυνατός ο προσδιορισμός του έργου στο οποίο ανήκει αυτή η ανάπτυξη, επομένως η προσθήκη αναθεώρησης είναι απενεργοποιημένη.",
     "ClusterMode": "Λειτουργία cluster",
     "ClusterModeTooltip": "Διάταξη ομαδοποίησης για την computing session του αντιγράφου, με μορφή \"λειτουργία / μέγεθος\". Μεμονωμένο σημαίνει ένα container· Πολλαπλοί κόμβοι κατανέμουν το φόρτο εργασίας σε πολλαπλούς agents.",
     "ClusterSize": "Μέγεθος cluster",
@@ -1236,8 +1237,7 @@
         "Revision": "Περιηγηθείτε σε προηγούμενες αναθεωρήσεις ανάπτυξης και επαναφέρετε οποιαδήποτε προηγούμενη.",
         "RevisionHistory": "Περιηγηθείτε σε προηγούμενες αναθεωρήσεις ανάπτυξης και επαναφέρετε οποιαδήποτε προηγούμενη έκδοση."
       }
-    },
-    "CannotResolveDeploymentProject": "Δεν είναι δυνατός ο προσδιορισμός του έργου στο οποίο ανήκει αυτή η ανάπτυξη, επομένως η προσθήκη αναθεώρησης είναι απενεργοποιημένη."
+    }
   },
   "desktopNotification": {
     "NotSupported": "Αυτό το πρόγραμμα περιήγησης δεν υποστηρίζει ειδοποιήσεις.",
@@ -1411,6 +1411,7 @@
   },
   "environment": {
     "Action": "Δράση",
+    "AllProjects": "Όλα τα έργα",
     "AlreadyInstalledImage": "Ήδη εγκατεστημένη εικόνα",
     "AppInfoDeleted": "Οι πληροφορίες της εφαρμογής διαγράφηκαν με επιτυχία.",
     "AppName": "Όνομα εφαρμογής",
@@ -1428,6 +1429,7 @@
     "DescDownloadImage": "__NOT_TRANSLATED__",
     "DescImagePortsModified": "Οι θύρες εικόνας τροποποιήθηκαν με επιτυχία",
     "DescImageResourceModified": "Το όριο πόρων τροποποιήθηκε επιτυχώς",
+    "DescInstallRunsSession": "Η εγκατάσταση μιας εικόνας τοποθετεί σε ουρά μια σύντομη σύνοδο που κατεβάζει την εικόνα. Επιλέξτε το έργο στο οποίο εκτελείται η σύνοδος και την ομάδα πόρων στην οποία θα κατέβει η εικόνα.",
     "DescProblemOccurred": "Παρουσιάστηκε πρόβλημα κατά την εγκατάσταση",
     "DescServicePortModified": "Η θύρα υπηρεσίας τροποποιήθηκε με επιτυχία",
     "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
@@ -1442,10 +1444,13 @@
     "Images": "Εικόνες",
     "Install": "Εγκαθιστώ",
     "InstallImage": "Εγκατάσταση εικόνας",
+    "InstallSessionProject": "Έργο συνόδου εγκατάστασης",
+    "InstallSessionProjectTooltip": "Η σύνοδος εγκατάστασης δημιουργείται σε αυτό το έργο ως δική σας σύνοδος, γι' αυτό εμφανίζονται μόνο τα έργα στα οποία ανήκετε.",
+    "InstallTargetResourceGroup": "Ομάδα πόρων προορισμού",
+    "InstallTargetResourceGroupTooltip": "Η εικόνα κατεβαίνει σε αυτήν την ομάδα πόρων. Εμφανίζονται μόνο οι ομάδες πόρων που είναι προσβάσιμες από το επιλεγμένο έργο.",
     "Installed": "εγκατεστημένο",
     "InstalledImagesAreExcluded": "Οι εγκατεστημένες εικόνες εξαιρούνται.",
     "Installing": "εγκατάσταση",
-    "InstallingImage": "Εγκατάσταση:",
     "Language": "Γλώσσα",
     "Local": "Τοπικό",
     "ManageApps": "Διαχείριση εφαρμογών",
@@ -1475,7 +1480,6 @@
     "SuccessfullyCreated": "Δημιουργήθηκε με επιτυχία",
     "SuccessfullyModified": "Τροποποιήθηκε με επιτυχία",
     "Tags": "Ετικέτες",
-    "TakesTime": ". Χρειάζεται χρόνος, οπότε πάρτε ένα φλιτζάνι καφέ!",
     "Version": "Εκδοχή"
   },
   "error": {
@@ -1499,7 +1503,6 @@
     "LoginSucceededManagerNotResponding": "Η σύνδεση έγινε επιτυχής, αλλά ο διαχειριστής δεν αποκρίνεται.",
     "MaximumVfolderCreation": "Δεν μπορείτε να δημιουργήσετε περισσότερους φακέλους v λόγω της πολιτικής πόρων",
     "NetworkConnectionFailed": "Η σύνδεση δικτύου απέτυχε. Ελέγξτε την κατάσταση του δικτύου.",
-    "NoCurrentProject": "Δεν υπάρχει τρέχον έργο",
     "NotFoundBasePath": "Δεν βρέθηκε. Ελέγξτε τη διαδρομή της βάσης σας.",
     "OnlyIntegersAreAllowed": "Επιτρέπονται μόνο ακέραιοι.",
     "OnlyPositiveIntegersAreAllowed": "Επιτρέπονται μόνο θετικοί ακέραιοι ακέραιοι.",
@@ -1753,7 +1756,6 @@
     "YouCanCreateNotebookCode": "Αυτό το σήμα επιτρέπει την άμεση εκτέλεση του σημειωματάριού σας στο Backend.AI. Αντιγράψτε τον κώδικα για να τον χρησιμοποιήσετε οπουδήποτε."
   },
   "importArtifactRevisionToFolderModal": {
-    "CurrentProjectChangedSuccessfully": "Το τρέχον έργο άλλαξε με επιτυχία.",
     "FailedToImport": "Αποτυχία εισαγωγής αντικειμένου/αντικειμένων",
     "FailedToImportArtifact": "Αποτυχία εισαγωγής του artifact {{ name }} ({{ version }})",
     "FailedToImportModelFromHuggingFace": "Αποτυχία λήψης του μοντέλου από το Hugging Face.",
@@ -1762,8 +1764,7 @@
     "Import": "Εισαγωγή",
     "ImportToFolder": "Εισαγωγή σε φάκελο",
     "ImportingArtifact": "Εισαγωγή αντικειμένου {{name}} ({{version}})",
-    "ModelStoreProjectRequired": "Απαιτείται ένα έργο αποκλειστικά για το Model Store.",
-    "ModelStoreProjectRequiredDescription": "Θέλετε να μετατρέψετε το τρέχον έργο σε έργο αποκλειστικά για το Model Store;",
+    "ModelStoreProject": "Έργο καταστήματος μοντέλων",
     "NoArtifactsSelected": "Δεν έχουν επιλεγεί αρχεία για εισαγωγή",
     "OverwriteWarning": "Τα υπάρχοντα αρχεία θα αντικατασταθούν εάν υπάρχουν αρχεία με το ίδιο όνομα.",
     "SuccessfullyImported": "Επιτυχής εισαγωγή αντικειμένου(ων)",

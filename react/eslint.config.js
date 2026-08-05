@@ -93,7 +93,7 @@ export default [
     },
   },
 
-  // FR-3414 (ADR-0001): the project-agnostic surface — the whole `/admin/*`
+  // FR-3414 / FR-3415 (ADR-0001): the project-agnostic surface — the whole `/admin/*`
   // subtree except the pages that still genuinely depend on the ambient
   // project — operates above project scope, so its sources must never read
   // the ambient current project. Converted components receive the decision
@@ -115,16 +115,17 @@ export default [
   //   rbac               -> RBACManagementPage
   //   branding           -> BrandingPage
   //   information        -> components/Information
+  //   environment        -> EnvironmentPage                        (FR-3415)
+  //   reservoir          -> ReservoirPage / ReservoirArtifactDetailPage
+  //                                                                (FR-3415)
   // NOTE: this block redeclares `no-restricted-imports`, which REPLACES the
   // global options above for these files, so the global paths/patterns are
   // repeated here (patterns must be all-strings or all-objects, hence the
   // object form).
-  // `environment` (EnvironmentPage), `reservoir` (ReservoirPage /
-  // ReservoirArtifactDetailPage) and `admin-dashboard` (AdminDashboardPage)
-  // are intentionally excluded — they legitimately read ambient state and are
-  // not gated by `PROJECT_AGNOSTIC_MENU_KEYS` either. DeploymentDetailPage is
-  // excluded because it serves three URL spaces and is the sanctioned
-  // page-level ambient reader (see the ADR).
+  // Only `admin-dashboard` (AdminDashboardPage) stays excluded — it still
+  // reads ambient state and is not gated by `PROJECT_AGNOSTIC_MENU_KEYS`
+  // either. DeploymentDetailPage is excluded because it serves three URL
+  // spaces and is the sanctioned page-level ambient reader (see the ADR).
   {
     files: [
       'src/pages/AdminSessionPage.tsx',
@@ -146,6 +147,9 @@ export default [
       'src/pages/RBACManagementPage.tsx',
       'src/pages/BrandingPage.tsx',
       'src/components/Information.tsx',
+      'src/pages/EnvironmentPage.tsx',
+      'src/pages/ReservoirPage.tsx',
+      'src/pages/ReservoirArtifactDetailPage.tsx',
     ],
     rules: {
       'no-restricted-imports': [

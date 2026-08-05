@@ -687,7 +687,11 @@ const ReservoirArtifactDetailPage = () => {
       />
       <ImportArtifactRevisionToFolderModal
         selectedArtifactRevisionFrgmt={selectedImportRevisions}
-        modelStoreProjectsFrgmt={groups?.[0] ?? undefined}
+        // ADR-0001 (FR-3415): every model-store project is handed to the
+        // modal so it can pick the destination in-modal. It used to read the
+        // ambient project — and offer a confirmation that WROTE the global
+        // selection — which an admin surface must never do.
+        modelStoreProjectsFrgmt={filterOutNullAndUndefined(groups ?? [])}
         onOk={(_e, tasks, vfolderId) => {
           setSelectedImportRevisions([]);
           updateFetchKey();

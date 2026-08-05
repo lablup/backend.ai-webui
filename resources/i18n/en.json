@@ -1027,6 +1027,7 @@
     "AutoScaling": "Auto-scaling",
     "AutoScalingRules": "Auto Scaling Rules",
     "BasicInformation": "Basic Information",
+    "CannotResolveDeploymentProject": "Cannot determine the project this deployment belongs to, so adding a revision is disabled.",
     "ClusterMode": "Cluster Mode",
     "ClusterModeTooltip": "Clustering layout for the replica's compute session, formatted as \"mode / size\". Single means one container; Multi-node distributes the workload across multiple agents.",
     "ClusterSize": "Cluster Size",
@@ -1223,8 +1224,7 @@
         "Revision": "Browse past deployment revisions and roll back to any previous one.",
         "RevisionHistory": "Browse past deployment revisions and roll back to any previous one."
       }
-    },
-    "CannotResolveDeploymentProject": "Cannot determine the project this deployment belongs to, so adding a revision is disabled."
+    }
   },
   "desktopNotification": {
     "NotSupported": "This browser does not support notifications.",
@@ -1398,6 +1398,7 @@
   },
   "environment": {
     "Action": "Action",
+    "AllProjects": "All projects",
     "AlreadyInstalledImage": "Already installed image",
     "AppInfoDeleted": "Deleted App information.",
     "AppName": "App Name",
@@ -1415,6 +1416,7 @@
     "DescDownloadImage": "DescDownloadImage",
     "DescImagePortsModified": "Image Ports successfully modified",
     "DescImageResourceModified": "Resource limit successfully modified",
+    "DescInstallRunsSession": "Installing an image enqueues a short-lived session that pulls the image. Choose the project the session runs in and the resource group to pull the image into.",
     "DescProblemOccurred": "Problem occurred during installation",
     "DescServicePortModified": "Service port successfully modified",
     "DescSignificantDownloadTime": "DescSignificantDownloadTime",
@@ -1429,10 +1431,13 @@
     "Images": "Images",
     "Install": "Install",
     "InstallImage": "Install Image",
+    "InstallSessionProject": "Install Session Project",
+    "InstallSessionProjectTooltip": "The install session is created in this project as your own session, so only projects you belong to are listed.",
+    "InstallTargetResourceGroup": "Target Resource Group",
+    "InstallTargetResourceGroupTooltip": "The image is pulled into this resource group. Only resource groups accessible from the selected project are listed.",
     "Installed": "installed",
     "InstalledImagesAreExcluded": "Installed images are excluded.",
     "Installing": "installing",
-    "InstallingImage": "Installing: ",
     "Language": "Language",
     "Local": "Local",
     "ManageApps": "Manage Apps",
@@ -1462,7 +1467,6 @@
     "SuccessfullyCreated": "Successfully created",
     "SuccessfullyModified": "Successfully modified",
     "Tags": "Tags",
-    "TakesTime": ". It takes time so have a cup of coffee!",
     "Version": "Version"
   },
   "error": {
@@ -1486,7 +1490,6 @@
     "LoginSucceededManagerNotResponding": "Login succeed but manager is not responding.",
     "MaximumVfolderCreation": "You cannot create more VFolders due to resource policy",
     "NetworkConnectionFailed": "Network connection failed. Check network status.",
-    "NoCurrentProject": "No current project",
     "NotFoundBasePath": "Not Found. Please check your Base Path.",
     "OnlyIntegersAreAllowed": "Only integers are allowed.",
     "OnlyPositiveIntegersAreAllowed": "Only positive integers are allowed.",
@@ -1740,7 +1743,6 @@
     "YouCanCreateNotebookCode": "This badge enables direct execution of your notebook on Backend.AI. Copy the code to use it anywhere."
   },
   "importArtifactRevisionToFolderModal": {
-    "CurrentProjectChangedSuccessfully": "Current project changed successfully.",
     "FailedToImport": "Failed to imported artifact(s)",
     "FailedToImportArtifact": "Failed to import artifact {{ name }} ({{ version }})",
     "FailedToImportModelFromHuggingFace": "Failed to import model from hugging face.",
@@ -1749,8 +1751,7 @@
     "Import": "Import",
     "ImportToFolder": "Import to Folder",
     "ImportingArtifact": "Importing artifact {{name}} ({{version}})",
-    "ModelStoreProjectRequired": "Model-store-exclusive project is required",
-    "ModelStoreProjectRequiredDescription": "Do you want to convert the current project to a model-store-exclusive project?",
+    "ModelStoreProject": "Model Store Project",
     "NoArtifactsSelected": "No artifacts selected for import",
     "OverwriteWarning": "Existing files will be overwritten if files with the same name already exist.",
     "SuccessfullyImported": "Successfully imported artifact(s)",

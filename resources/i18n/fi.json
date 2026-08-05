@@ -1040,6 +1040,7 @@
     "AutoScaling": "Automaattinen skaalaus",
     "AutoScalingRules": "Automaattisen skaalauksen säännöt",
     "BasicInformation": "Perustiedot",
+    "CannotResolveDeploymentProject": "Tämän käyttöönoton projektia ei voida määrittää, joten revision lisääminen on poistettu käytöstä.",
     "ClusterMode": "Klusteritila",
     "ClusterModeTooltip": "Replikan laskentasession klusteriasettelu muodossa \"tila / koko\". Yksittäinen tarkoittaa yhtä säilöä; Monisolmuinen jakaa työkuorman useille agenteille.",
     "ClusterSize": "Klusterin koko",
@@ -1236,8 +1237,7 @@
         "Revision": "Selaa aiempia käyttöönottorevisioita ja palauta mikä tahansa aiempi versio.",
         "RevisionHistory": "Selaa aiempia käyttöönottorevisioita ja palauta mikä tahansa niistä."
       }
-    },
-    "CannotResolveDeploymentProject": "Tämän käyttöönoton projektia ei voida määrittää, joten revision lisääminen on poistettu käytöstä."
+    }
   },
   "desktopNotification": {
     "NotSupported": "Tämä selain ei tue ilmoituksia.",
@@ -1411,6 +1411,7 @@
   },
   "environment": {
     "Action": "Toiminta",
+    "AllProjects": "Kaikki projektit",
     "AlreadyInstalledImage": "Jo asennettu kuva",
     "AppInfoDeleted": "Sovelluksen tiedot onnistuneesti poistettu.",
     "AppName": "Sovelluksen nimi",
@@ -1428,6 +1429,7 @@
     "DescDownloadImage": "__NOT_TRANSLATED__",
     "DescImagePortsModified": "Kuvaportteja on muokattu onnistuneesti",
     "DescImageResourceModified": "Resurssirajan muokkaus onnistui",
+    "DescInstallRunsSession": "Kuvan asentaminen asettaa jonoon lyhytkestoisen istunnon, joka lataa kuvan. Valitse projekti, jossa istunto suoritetaan, ja resurssiryhmä, johon kuva ladataan.",
     "DescProblemOccurred": "Ongelma ilmeni asennuksen aikana",
     "DescServicePortModified": "Palvelun porttia muutettu onnistuneesti",
     "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
@@ -1442,10 +1444,13 @@
     "Images": "Kuvat",
     "Install": "Asenna",
     "InstallImage": "Asenna kuva",
+    "InstallSessionProject": "Asennusistunnon projekti",
+    "InstallSessionProjectTooltip": "Asennusistunto luodaan tähän projektiin omana istuntonasi, joten luettelossa näkyvät vain projektit, joihin kuulut.",
+    "InstallTargetResourceGroup": "Kohderesurssiryhmä",
+    "InstallTargetResourceGroupTooltip": "Kuva ladataan tähän resurssiryhmään. Luettelossa näkyvät vain valitusta projektista käytettävissä olevat resurssiryhmät.",
     "Installed": "asennettu",
     "InstalledImagesAreExcluded": "Asennettuja kuvia ei oteta huomioon.",
     "Installing": "asentaminen",
-    "InstallingImage": "Asennus:",
     "Language": "Kieli",
     "Local": "Paikallinen",
     "ManageApps": "Hallitse sovelluksia",
@@ -1475,7 +1480,6 @@
     "SuccessfullyCreated": "Luotu onnistuneesti",
     "SuccessfullyModified": "Muutettu onnistuneesti",
     "Tags": "Tunnisteet",
-    "TakesTime": ". Se vie aikaa, joten ota kuppi kahvia!",
     "Version": "Versio"
   },
   "error": {
@@ -1499,7 +1503,6 @@
     "LoginSucceededManagerNotResponding": "Sisäänkirjautuminen onnistuu, mutta johtaja ei vastaa.",
     "MaximumVfolderCreation": "Et voi luoda lisää v-kansioita resurssikäytännön vuoksi.",
     "NetworkConnectionFailed": "Verkkoyhteys epäonnistui. Tarkista verkon tila.",
-    "NoCurrentProject": "Ei aktiivista projektia",
     "NotFoundBasePath": "Ei löydy. Ole hyvä ja tarkista tukipolkusi.",
     "OnlyIntegersAreAllowed": "Vain kokonaisluvut ovat sallittuja.",
     "OnlyPositiveIntegersAreAllowed": "Vain positiiviset kokonaisluvut ovat sallittuja.",
@@ -1753,7 +1756,6 @@
     "YouCanCreateNotebookCode": "Tämä badge mahdollistaa muistikirjasi suorittamisen suoraan Backend.AI:ssä. Kopioi koodi käyttääksesi sitä missä tahansa."
   },
   "importArtifactRevisionToFolderModal": {
-    "CurrentProjectChangedSuccessfully": "Nykyinen projekti vaihdettiin onnistuneesti.",
     "FailedToImport": "Artefaktin(ien) tuonti epäonnistui",
     "FailedToImportArtifact": "Artefaktin {{ name }} ({{ version }}) tuonti epäonnistui.",
     "FailedToImportModelFromHuggingFace": "Mallin hakeminen Hugging Facesta epäonnistui.",
@@ -1762,8 +1764,7 @@
     "Import": "Tuo",
     "ImportToFolder": "Tuo kansioon",
     "ImportingArtifact": "Tuodaan artefaktia {{name}} ({{version}})",
-    "ModelStoreProjectRequired": "Mallikauppaa varten tarvitaan erillinen projekti.",
-    "ModelStoreProjectRequiredDescription": "Haluatko muuttaa nykyisen projektin mallivaraston yksinomaiseksi projektiksi?",
+    "ModelStoreProject": "Mallikaupan projekti",
     "NoArtifactsSelected": "Tuotavia artefakteja ei ole valittu",
     "OverwriteWarning": "Saman nimiset tiedostot korvataan, jos ne ovat jo olemassa.",
     "SuccessfullyImported": "Artefaktit tuotiin onnistuneesti.",

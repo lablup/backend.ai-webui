@@ -1040,6 +1040,7 @@
     "AutoScaling": "Otomatik Ölçeklendirme",
     "AutoScalingRules": "Otomatik Ölçeklendirme Kuralları",
     "BasicInformation": "Temel Bilgiler",
+    "CannotResolveDeploymentProject": "Bu dağıtımın ait olduğu proje belirlenemediği için revizyon ekleme devre dışı bırakıldı.",
     "ClusterMode": "Küme modu",
     "ClusterModeTooltip": "Replikanın hesaplama oturumu için kümeleme düzeni, \"mod / boyut\" biçiminde gösterilir. Tek, bir container anlamına gelir; Çok düğümlü, iş yükünü birden fazla agent'a dağıtır.",
     "ClusterSize": "Küme boyutu",
@@ -1236,8 +1237,7 @@
         "Revision": "Geçmiş dağıtım revizyonlarını inceleyin ve istediğiniz bir önceki sürüme geri alın.",
         "RevisionHistory": "Geçmiş dağıtım revizyonlarını inceleyin ve istediğiniz bir önceki sürüme geri dönün."
       }
-    },
-    "CannotResolveDeploymentProject": "Bu dağıtımın ait olduğu proje belirlenemediği için revizyon ekleme devre dışı bırakıldı."
+    }
   },
   "desktopNotification": {
     "NotSupported": "Bu tarayıcı bildirimleri desteklemez.",
@@ -1411,6 +1411,7 @@
   },
   "environment": {
     "Action": "Aksiyon",
+    "AllProjects": "Tüm projeler",
     "AlreadyInstalledImage": "Zaten yüklü görüntü",
     "AppInfoDeleted": "Uygulama bilgileri başarıyla silindi.",
     "AppName": "Uygulama ismi",
@@ -1428,6 +1429,7 @@
     "DescDownloadImage": "__NOT_TRANSLATED__",
     "DescImagePortsModified": "Görüntü Bağlantı Noktaları başarıyla değiştirildi",
     "DescImageResourceModified": "Kaynak sınırı başarıyla değiştirildi",
+    "DescInstallRunsSession": "Bir imajın kurulumu, imajı indiren kısa süreli bir oturumu kuyruğa alır. Oturumun çalışacağı projeyi ve imajın indirileceği kaynak grubunu seçin.",
     "DescProblemOccurred": "Kurulum sırasında sorun oluştu",
     "DescServicePortModified": "Hizmet bağlantı noktası başarıyla değiştirildi",
     "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
@@ -1442,10 +1444,13 @@
     "Images": "Görüntüler",
     "Install": "Yüklemek",
     "InstallImage": "Görüntü Yükle",
+    "InstallSessionProject": "Kurulum Oturumu Projesi",
+    "InstallSessionProjectTooltip": "Kurulum oturumu bu projede kendi oturumunuz olarak oluşturulur; bu nedenle yalnızca üyesi olduğunuz projeler listelenir.",
+    "InstallTargetResourceGroup": "Hedef Kaynak Grubu",
+    "InstallTargetResourceGroupTooltip": "İmaj bu kaynak grubuna indirilir. Yalnızca seçilen projeden erişilebilen kaynak grupları listelenir.",
     "Installed": "Kurulmuş",
     "InstalledImagesAreExcluded": "Yüklü görüntüler hariçtir.",
     "Installing": "yükleme",
-    "InstallingImage": "Yükleme:",
     "Language": "Dil",
     "Local": "Yerel",
     "ManageApps": "Uygulamaları yönet",
@@ -1475,7 +1480,6 @@
     "SuccessfullyCreated": "Başarıyla oluşturuldu",
     "SuccessfullyModified": "Başarıyla değiştirildi",
     "Tags": "Etiketler",
-    "TakesTime": ". Zaman alır, bu yüzden bir fincan kahve iç!",
     "Version": "Sürüm"
   },
   "error": {
@@ -1499,7 +1503,6 @@
     "LoginSucceededManagerNotResponding": "Giriş başarılı ancak yönetici yanıt vermiyor.",
     "MaximumVfolderCreation": "Kaynak ilkesi nedeniyle daha fazla VFolder oluşturamazsınız",
     "NetworkConnectionFailed": "Ağ bağlantısı başarısız oldu. Ağ durumunu kontrol edin.",
-    "NoCurrentProject": "Mevcut proje yok",
     "NotFoundBasePath": "Bulunamadı. Lütfen temel yolunuzu kontrol edin.",
     "OnlyIntegersAreAllowed": "Sadece tamsayılara izin verilir.",
     "OnlyPositiveIntegersAreAllowed": "Sadece pozitif tamsayılara izin verilir.",
@@ -1753,7 +1756,6 @@
     "YouCanCreateNotebookCode": "Doğrudan Backend.AI üzerinde çalıştırabileceğiniz aşağıdakine benzer bir rozet kodu oluşturmak için not defteri URL'sini girin."
   },
   "importArtifactRevisionToFolderModal": {
-    "CurrentProjectChangedSuccessfully": "Mevcut proje başarıyla değiştirildi.",
     "FailedToImport": "Artefakt(lar) içe aktarılamadı",
     "FailedToImportArtifact": "Artefakt {{ name }} ({{ version }}) içe aktarılamadı.",
     "FailedToImportModelFromHuggingFace": "Hugging Face'ten model alınamadı.",
@@ -1762,8 +1764,7 @@
     "Import": "İçe aktar",
     "ImportToFolder": "Klasöre içe aktar",
     "ImportingArtifact": "Artefakt {{name}} ({{version}}) içe aktarılıyor",
-    "ModelStoreProjectRequired": "Model mağazası için özel bir proje gerekiyor.",
-    "ModelStoreProjectRequiredDescription": "Mevcut projeyi yalnızca Model Store için ayrılmış bir projeye dönüştürmek istiyor musunuz?",
+    "ModelStoreProject": "Model Mağazası Projesi",
     "NoArtifactsSelected": "İçe aktarılacak artefakt seçilmedi.",
     "OverwriteWarning": "Aynı ada sahip dosyalar varsa, mevcut dosyaların üzerine yazılacaktır.",
     "SuccessfullyImported": "Artefakt(lar) başarıyla içe aktarıldı.",

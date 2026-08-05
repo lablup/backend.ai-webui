@@ -1040,6 +1040,7 @@
     "AutoScaling": "自动扩缩容",
     "AutoScalingRules": "自动扩缩容规则",
     "BasicInformation": "基本信息",
+    "CannotResolveDeploymentProject": "无法确定此部署所属的项目，因此已禁用添加修订。",
     "ClusterMode": "集群模式",
     "ClusterModeTooltip": "副本计算会话的集群布局，格式为「模式 / 大小」。单节点表示一个容器；多节点将工作负载分布到多个 agent。",
     "ClusterSize": "集群大小",
@@ -1236,8 +1237,7 @@
         "Revision": "浏览过去的部署版本历史，并回滚到任意之前的版本。",
         "RevisionHistory": "浏览过去的部署版本历史，并回滚到任意之前的版本。"
       }
-    },
-    "CannotResolveDeploymentProject": "无法确定此部署所属的项目，因此已禁用添加修订。"
+    }
   },
   "desktopNotification": {
     "NotSupported": "该浏览器不支持通知。",
@@ -1411,6 +1411,7 @@
   },
   "environment": {
     "Action": "行动",
+    "AllProjects": "全部项目",
     "AlreadyInstalledImage": "已安装的图像",
     "AppInfoDeleted": "应用信息删除成功。",
     "AppName": "应用名称",
@@ -1428,6 +1429,7 @@
     "DescDownloadImage": "__NOT_TRANSLATED__",
     "DescImagePortsModified": "图像端口修改成功",
     "DescImageResourceModified": "资源限制成功修改",
+    "DescInstallRunsSession": "安装镜像会排入一个短暂的会话来拉取镜像。请选择运行该会话的项目，以及拉取镜像的目标资源组。",
     "DescProblemOccurred": "安装过程中出现问题",
     "DescServicePortModified": "服务端口修改成功",
     "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
@@ -1442,10 +1444,13 @@
     "Images": "图片",
     "Install": "安装",
     "InstallImage": "安装图像",
+    "InstallSessionProject": "安装会话项目",
+    "InstallSessionProjectTooltip": "安装会话将在该项目中以您本人的会话创建，因此仅列出您所属的项目。",
+    "InstallTargetResourceGroup": "目标资源组",
+    "InstallTargetResourceGroupTooltip": "镜像将被拉取到该资源组。仅列出所选项目可访问的资源组。",
     "Installed": "已安装",
     "InstalledImagesAreExcluded": "不包括已安装的图像。",
     "Installing": "安装",
-    "InstallingImage": "安装：",
     "Language": "语",
     "Local": "本地",
     "ManageApps": "管理应用程序",
@@ -1475,7 +1480,6 @@
     "SuccessfullyCreated": "创建成功",
     "SuccessfullyModified": "修改成功",
     "Tags": "标签",
-    "TakesTime": ".这需要时间，所以喝杯咖啡吧！",
     "Version": "版本"
   },
   "error": {
@@ -1499,7 +1503,6 @@
     "LoginSucceededManagerNotResponding": "登录成功，但经理没有响应。",
     "MaximumVfolderCreation": "由于资源政策原因，无法创建更多 v 文件夹",
     "NetworkConnectionFailed": "网络连接失败。检查网络状态。",
-    "NoCurrentProject": "没有当前项目",
     "NotFoundBasePath": "未找到。请检查您的基本路径。",
     "OnlyIntegersAreAllowed": "只允许整数。",
     "OnlyPositiveIntegersAreAllowed": "仅允许积极的整数。",
@@ -1755,7 +1758,6 @@
     "YouCanCreateNotebookCode": "此徽章可在 Backend.AI 上直接运行您的笔记本。复制代码即可在任何地方使用。"
   },
   "importArtifactRevisionToFolderModal": {
-    "CurrentProjectChangedSuccessfully": "当前项目已成功更改。",
     "FailedToImport": "导入工件失败",
     "FailedToImportArtifact": "无法导入工件 {{ name }} ({{ version }})",
     "FailedToImportModelFromHuggingFace": "无法从 Hugging Face 获取模型。",
@@ -1764,8 +1766,7 @@
     "Import": "导入",
     "ImportToFolder": "导入到文件夹",
     "ImportingArtifact": "正在导入制品 {{name}} ({{version}})",
-    "ModelStoreProjectRequired": "需要一个专用于模型存储的项目",
-    "ModelStoreProjectRequiredDescription": "是否将当前项目转换为模型商店专用项目？",
+    "ModelStoreProject": "模型店项目",
     "NoArtifactsSelected": "未选择任何要导入的工件",
     "OverwriteWarning": "如果已存在同名文件，现有文件将被覆盖。",
     "SuccessfullyImported": "已成功导入工件",

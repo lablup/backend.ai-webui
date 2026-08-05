@@ -1040,6 +1040,7 @@
     "AutoScaling": "Tự động mở rộng",
     "AutoScalingRules": "Quy tắc tự động mở rộng",
     "BasicInformation": "Thông tin cơ bản",
+    "CannotResolveDeploymentProject": "Không thể xác định dự án mà triển khai này thuộc về, do đó việc thêm bản sửa đổi đã bị vô hiệu hóa.",
     "ClusterMode": "Chế độ cụm",
     "ClusterModeTooltip": "Bố cục phân cụm cho phiên tính toán của bản sao, theo định dạng \"chế độ / kích thước\". Đơn lẻ nghĩa là một container; Đa nút phân phối khối lượng công việc trên nhiều agent.",
     "ClusterSize": "Kích thước cụm",
@@ -1236,8 +1237,7 @@
         "Revision": "Duyệt qua các lần sửa đổi deployment trước đây và khôi phục về bất kỳ phiên bản nào.",
         "RevisionHistory": "Duyệt qua các lần sửa đổi deployment trước đây và khôi phục về bất kỳ phiên bản nào."
       }
-    },
-    "CannotResolveDeploymentProject": "Không thể xác định dự án mà triển khai này thuộc về, do đó việc thêm bản sửa đổi đã bị vô hiệu hóa."
+    }
   },
   "desktopNotification": {
     "NotSupported": "Trình duyệt này không hỗ trợ thông báo.",
@@ -1411,6 +1411,7 @@
   },
   "environment": {
     "Action": "Hoạt động",
+    "AllProjects": "Tất cả dự án",
     "AlreadyInstalledImage": "Hình ảnh đã được cài đặt",
     "AppInfoDeleted": "Thông tin ứng dụng đã được xóa thành công.",
     "AppName": "Tên ứng dụng",
@@ -1428,6 +1429,7 @@
     "DescDownloadImage": "__NOT_TRANSLATED__",
     "DescImagePortsModified": "Cổng hình ảnh được sửa đổi thành công",
     "DescImageResourceModified": "Đã sửa đổi giới hạn tài nguyên thành công",
+    "DescInstallRunsSession": "Việc cài đặt một ảnh sẽ đưa vào hàng đợi một phiên ngắn hạn để tải ảnh xuống. Hãy chọn dự án sẽ chạy phiên đó và nhóm tài nguyên sẽ tải ảnh về.",
     "DescProblemOccurred": "Đã xảy ra sự cố trong khi cài đặt",
     "DescServicePortModified": "Đã sửa đổi thành công cổng dịch vụ",
     "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
@@ -1442,10 +1444,13 @@
     "Images": "Hình ảnh",
     "Install": "Tải về",
     "InstallImage": "Cài đặt hình ảnh",
+    "InstallSessionProject": "Dự án của phiên cài đặt",
+    "InstallSessionProjectTooltip": "Phiên cài đặt được tạo trong dự án này với tư cách phiên của chính bạn, nên chỉ những dự án bạn tham gia được liệt kê.",
+    "InstallTargetResourceGroup": "Nhóm tài nguyên đích",
+    "InstallTargetResourceGroupTooltip": "Ảnh được tải về nhóm tài nguyên này. Chỉ những nhóm tài nguyên có thể truy cập từ dự án đã chọn được liệt kê.",
     "Installed": "Cài đặt",
     "InstalledImagesAreExcluded": "Hình ảnh được cài đặt được loại trừ.",
     "Installing": "cài đặt",
-    "InstallingImage": "Đang cài đặt:",
     "Language": "Ngôn ngữ",
     "Local": "Cục bộ",
     "ManageApps": "Quản lý ứng dụng",
@@ -1475,7 +1480,6 @@
     "SuccessfullyCreated": "Đã tạo thành công",
     "SuccessfullyModified": "Đã sửa đổi thành công",
     "Tags": "Thẻ",
-    "TakesTime": ". Cần có thời gian vì vậy hãy uống một tách cà phê!",
     "Version": "Phiên bản"
   },
   "error": {
@@ -1499,7 +1503,6 @@
     "LoginSucceededManagerNotResponding": "Đăng nhập thành công nhưng người quản lý không phản hồi.",
     "MaximumVfolderCreation": "Bạn không thể tạo thêm VFolder do chính sách tài nguyên",
     "NetworkConnectionFailed": "Kết nối mạng không thành công. \nKiểm tra trạng thái mạng.",
-    "NoCurrentProject": "Không có dự án hiện tại",
     "NotFoundBasePath": "Không tìm thấy. \nVui lòng kiểm tra đường dẫn cơ sở của bạn.",
     "OnlyIntegersAreAllowed": "Chỉ có số nguyên được cho phép.",
     "OnlyPositiveIntegersAreAllowed": "Chỉ cho phép số nguyên dương được cho phép.",
@@ -1755,7 +1758,6 @@
     "YouCanCreateNotebookCode": "Nhập URL sổ ghi chép để tạo mã huy hiệu như bên dưới mà bạn có thể chạy trực tiếp trên Backend.AI."
   },
   "importArtifactRevisionToFolderModal": {
-    "CurrentProjectChangedSuccessfully": "Đã thay đổi dự án hiện tại thành công.",
     "FailedToImport": "Nhập artifact thất bại",
     "FailedToImportArtifact": "Không thể nhập artifact {{ name }} ({{ version }})",
     "FailedToImportModelFromHuggingFace": "Không thể lấy mô hình từ Hugging Face.",
@@ -1764,8 +1766,7 @@
     "Import": "Nhập",
     "ImportToFolder": "Nhập vào thư mục",
     "ImportingArtifact": "Đang nhập artifact {{name}} ({{version}})",
-    "ModelStoreProjectRequired": "Cần một dự án riêng cho kho mô hình.",
-    "ModelStoreProjectRequiredDescription": "Bạn có muốn chuyển dự án hiện tại sang dự án chỉ dành cho kho mô hình không?",
+    "ModelStoreProject": "Dự án cửa hàng mô hình",
     "NoArtifactsSelected": "Không có mục nào được chọn để nhập",
     "OverwriteWarning": "Các tệp hiện có sẽ bị ghi đè nếu đã có tệp cùng tên.",
     "SuccessfullyImported": "Đã nhập artifact thành công",
