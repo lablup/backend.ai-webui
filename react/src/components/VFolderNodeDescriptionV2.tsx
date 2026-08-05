@@ -7,9 +7,8 @@ import { VFolderNodeDescriptionV2PermissionRefreshQuery } from '../__generated__
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
+import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles';
 import { useVirtualFolderPathV2 } from '../hooks/useVirtualFolderNodePathV2';
-import { ProjectContextOrNull } from '../types/projectContext';
 import { statusTagColor } from './VFolderNodesV2';
 import VirtualFolderPathV2 from './VirtualFolderNodeItems/VirtualFolderPathV2';
 import {
@@ -46,19 +45,10 @@ import {
 
 interface VFolderNodeDescriptionV2Props extends DescriptionsProps {
   vfolderNodeFrgmt: VFolderNodeDescriptionV2Fragment$key;
-  /**
-   * Explicit project prop contract (ADR-0001, FR-3413): the project context
-   * the page decided on, used only for the `currentProjectAdmin` branch of
-   * the mount-permission gate. With `null` (super-admin pages) that branch
-   * simply doesn't match — owner and super admins keep their power. Never
-   * reads the ambient current project.
-   */
-  project: ProjectContextOrNull;
 }
 
 const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
   vfolderNodeFrgmt,
-  project,
   ...props
 }) => {
   const { t } = useTranslation();
@@ -69,7 +59,9 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
   const relayEnv = useRelayEnvironment();
   const baiClient = useSuspendedBackendaiClient();
   const [currentUser] = useCurrentUserInfo();
-  const effectiveAdminRole = useEffectiveAdminRole();
+  // Not `useEffectiveAdminRole` — it resolves its target from the ambient
+  // project. Authorization here is derived from the folder's own ownership.
+  const { isSuperAdmin, projectAdminIds } = useCurrentUserProjectRoles();
 
   // TODO(needs-backend): the mount-permission update still goes through the
   // legacy REST endpoint (`baiClient.vfolder.update_folder`) because the V2
@@ -200,16 +192,13 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
           </BAIFlex>
         ),
     },
-    // Mount permission editing is allowed for the folder owner, super admins
-    // (any project), or the page-decided project's admin when the folder
-    // belongs to that project (`project === null` — super-admin pages — never
-    // matches this branch). Domain admins are intentionally excluded — they
-    // do not have implicit per-project ownership rights.
+    // Allowed for the folder owner, super admins, or an admin of the project
+    // that owns the folder. Domain admins are excluded — they have no
+    // implicit per-project ownership rights.
     (vfolderNode?.ownership?.userId === currentUser.uuid ||
-      effectiveAdminRole === 'superadmin' ||
-      (effectiveAdminRole === 'currentProjectAdmin' &&
-        project !== null &&
-        vfolderNode?.ownership?.projectId === project.id)) && {
+      isSuperAdmin ||
+      (!!vfolderNode?.ownership?.projectId &&
+        projectAdminIds.includes(vfolderNode.ownership.projectId))) && {
       key: 'permission',
       label: t('data.folders.MountPermission'),
       children: (
