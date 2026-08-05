@@ -160,6 +160,11 @@ vi.mock('../hooks/useDefaultImagesWithFallback', () => ({
   useDefaultSystemSSHImageWithFallback: () => ({
     systemSSHImage: 'cr.backend.ai/stable/ssh:latest@x86_64',
   }),
+  // `useStartSession` resolves the image reference through this hook. The
+  // fixtures above are already fully qualified (`:tag@arch`), which the real
+  // implementation passes through untouched — so echoing the input keeps the
+  // mock faithful without needing a Relay image query.
+  useResolveImageReference: () => async (imageString?: string) => imageString,
 }));
 
 const VFOLDER_GLOBAL_ID = btoa('VFolder:folder-0000');
