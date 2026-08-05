@@ -8,7 +8,6 @@ import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { App } from 'antd';
-import { toGlobalId } from 'backend.ai-ui';
 import { Suspense } from 'react';
 import { loadQuery, RelayEnvironmentProvider } from 'react-relay';
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
@@ -17,9 +16,9 @@ import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockE
 /**
  * Contract tests for the explicit project prop contract (ADR-0001, FR-3410).
  *
- * VFolderDeployModal never reads the ambient current project: the deploy
- * target is derived from the folder's own ownership (project-owned folder)
- * or chosen with a required in-modal selector (user-owned folder). These
+ * A deployment is always created inside one project, and every surface that
+ * can reach this modal is itself project-scoped, so `project` is a required
+ * non-null prop and the modal renders no project selector of its own. These
  * tests exercise external behavior only: rendered output and mutation
  * variables.
  */
@@ -47,7 +46,6 @@ vi.mock('../hooks', async (importOriginal) => {
   const originalModule = await importOriginal<typeof import('../hooks')>();
   return {
     ...originalModule,
-    useCurrentDomainValue: () => 'default',
     useWebUINavigate: () => vi.fn(),
   };
 });
@@ -65,31 +63,6 @@ vi.mock('../hooks/useRouteScope', async (importOriginal) => {
 vi.mock('./DeploymentPresetDetailModal', () => ({
   default: () => null,
 }));
-
-// The in-modal project selector is mocked to a button that reports a fixed
-// choice through the same `onSelectProject` surface the real component uses.
-vi.mock('./ProjectSelectForAdminPage', async () => {
-  const React = await import('react');
-  return {
-    default: (props: any) =>
-      React.createElement(
-        'button',
-        {
-          'data-testid': 'mock-project-select',
-          type: 'button',
-          onClick: () =>
-            props.onSelectProject?.({
-              label: 'chosen-project-name',
-              value: 'chosen-project-id',
-              projectId: 'chosen-project-id',
-              projectName: 'chosen-project-name',
-              projectResourcePolicy: null,
-            }),
-        },
-        'select-project',
-      ),
-  };
-});
 
 // Stub the REST-backed pieces from backend.ai-ui: the preset select and the
 // resource-group select/hook fetch their own data internally. Two resource
@@ -111,6 +84,8 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
           'data-testid': 'mock-resource-group-select',
           type: 'button',
           disabled: props.disabled,
+          // Surfaced so a test can assert which project scopes the options.
+          'data-project-name': props.projectName,
           onClick: () => props.onChange?.('rg-a'),
         },
         'select-resource-group',
@@ -120,11 +95,12 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
 
 const PRESET_GLOBAL_ID = btoa('DeploymentRevisionPreset:preset-0000');
 
-const renderModal = (vfolderNode: {
-  ownership_type: string;
-  group: string | null;
-  group_name: string | null;
-}) => {
+const PAGE_PROJECT = {
+  id: 'page-project-id',
+  name: 'page-project-name',
+};
+
+const renderModal = () => {
   const environment: RelayMockEnvironment = createMockEnvironment();
   const onClose = vi.fn();
   // Mirrors the opener: the query is started in the click event and the modal
@@ -132,7 +108,7 @@ const renderModal = (vfolderNode: {
   const queryRef = loadQuery<VFolderDeployModalQuery>(
     environment,
     VFolderDeployQuery,
-    { vfolderGlobalId: toGlobalId('VirtualFolderNode', 'vf-0000') },
+    {},
     { fetchPolicy: 'store-and-network' },
   );
   // `loadQuery` hits the mock network before the operation is registered as
@@ -140,7 +116,6 @@ const renderModal = (vfolderNode: {
   // already-started request explicitly instead.
   environment.mock.resolveMostRecentOperation((operation) =>
     MockPayloadGenerator.generate(operation, {
-      VirtualFolderNode: () => vfolderNode,
       DeploymentRevisionPreset: () => ({
         id: PRESET_GLOBAL_ID,
         name: 'mock-preset',
@@ -151,7 +126,13 @@ const renderModal = (vfolderNode: {
     <RelayEnvironmentProvider environment={environment}>
       <App>
         <Suspense fallback={null}>
-          <VFolderDeployModal open queryRef={queryRef} onClose={onClose} />
+          <VFolderDeployModal
+            open
+            project={PAGE_PROJECT}
+            vfolderId="vf-0000"
+            queryRef={queryRef}
+            onClose={onClose}
+          />
         </Suspense>
       </App>
     </RelayEnvironmentProvider>,
@@ -159,29 +140,40 @@ const renderModal = (vfolderNode: {
   return { environment, onClose };
 };
 
-const submitDeploy = async (user: ReturnType<typeof userEvent.setup>) => {
-  await user.click(screen.getByTestId('mock-resource-group-select'));
-  await user.click(screen.getByRole('button', { name: 'modelStore.Deploy' }));
-};
-
-describe('VFolderDeployModal project derivation contract (ADR-0001)', () => {
-  it('derives the target project from a project-owned folder and renders no selector', async () => {
-    const user = userEvent.setup();
-    const { environment } = renderModal({
-      ownership_type: 'group',
-      group: 'folder-project-id',
-      group_name: 'folder-project-name',
-    });
+describe('VFolderDeployModal project prop contract (ADR-0001)', () => {
+  it('renders no project selector — the target project comes from the prop', async () => {
+    renderModal();
 
     await waitFor(() => {
       expect(
         screen.getByTestId('mock-resource-group-select'),
       ).toBeInTheDocument();
     });
-    // Derived mode: the folder's own project is the target — no selector.
     expect(screen.queryByTestId('mock-project-select')).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('data.folders.TargetProject'),
+    ).not.toBeInTheDocument();
+  });
 
-    await submitDeploy(user);
+  it('scopes the resource-group options to the passed project', async () => {
+    renderModal();
+
+    const resourceGroupSelect = await screen.findByTestId(
+      'mock-resource-group-select',
+    );
+    expect(resourceGroupSelect).toHaveAttribute(
+      'data-project-name',
+      PAGE_PROJECT.name,
+    );
+    expect(resourceGroupSelect).toBeEnabled();
+  });
+
+  it('targets exactly the passed project in the deploy mutation', async () => {
+    const user = userEvent.setup();
+    const { environment } = renderModal();
+
+    await user.click(await screen.findByTestId('mock-resource-group-select'));
+    await user.click(screen.getByRole('button', { name: 'modelStore.Deploy' }));
 
     await waitFor(() => {
       const operation = environment.mock.getMostRecentOperation();
@@ -190,76 +182,10 @@ describe('VFolderDeployModal project derivation contract (ADR-0001)', () => {
       );
     });
     const operation = environment.mock.getMostRecentOperation();
-    // The mutation carries exactly the folder's owning project.
-    expect(operation.request.variables.input.projectId).toBe(
-      'folder-project-id',
-    );
+    // The mutation carries exactly the project the page passed in — never an
+    // ambient one, and never one derived from the folder's ownership.
+    expect(operation.request.variables.input.projectId).toBe(PAGE_PROJECT.id);
     expect(operation.request.variables.vfolderId).toBe('vf-0000');
     expect(operation.request.variables.input.resourceGroup).toBe('rg-a');
-  });
-
-  it('renders a required project selector for a user-owned folder and blocks deploy until a project is chosen', async () => {
-    renderModal({
-      ownership_type: 'user',
-      group: null,
-      group_name: null,
-    });
-
-    // Selector mode: the user must pick the target project in the modal.
-    expect(
-      await screen.findByTestId('mock-project-select'),
-    ).toBeInTheDocument();
-
-    // No project chosen yet → the deploy button stays disabled and the
-    // resource-group options are not usable either.
-    expect(
-      screen.getByRole('button', { name: 'modelStore.Deploy' }),
-    ).toBeDisabled();
-    expect(screen.getByTestId('mock-resource-group-select')).toBeDisabled();
-  });
-
-  it('blocks deploy and explains why when a group folder has unreadable ownership fields', async () => {
-    // `ownership_type` says "group" but the group id/name are missing, so no
-    // target project can be derived. This must not fall through to the
-    // user-owned branch (which would silently offer a free project choice).
-    renderModal({
-      ownership_type: 'group',
-      group: null,
-      group_name: null,
-    });
-
-    expect(
-      await screen.findByText('deployment.FolderOwnershipUnresolved'),
-    ).toBeInTheDocument();
-    // Neither derived nor selectable → no selector, and deploy stays blocked.
-    expect(screen.queryByTestId('mock-project-select')).not.toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: 'modelStore.Deploy' }),
-    ).toBeDisabled();
-  });
-
-  it('targets exactly the project chosen in the in-modal selector for a user-owned folder', async () => {
-    const user = userEvent.setup();
-    const { environment } = renderModal({
-      ownership_type: 'user',
-      group: null,
-      group_name: null,
-    });
-
-    await user.click(await screen.findByTestId('mock-project-select'));
-    await submitDeploy(user);
-
-    await waitFor(() => {
-      const operation = environment.mock.getMostRecentOperation();
-      expect(operation.request.node.params.name).toBe(
-        'VFolderDeployModalMutation',
-      );
-    });
-    const operation = environment.mock.getMostRecentOperation();
-    // The mutation carries exactly the project chosen inside the modal —
-    // never an ambient one.
-    expect(operation.request.variables.input.projectId).toBe(
-      'chosen-project-id',
-    );
   });
 });

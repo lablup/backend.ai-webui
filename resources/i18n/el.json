@@ -1081,8 +1081,6 @@
     "FailedToDeleteDeployment": "Αποτυχία διαγραφής ανάπτυξης.",
     "FailedToRollback": "Αποτυχία επαναφοράς στην επιλεγμένη Revision.",
     "FailedToUpdateDeployment": "Αποτυχία ενημέρωσης ανάπτυξης.",
-    "FolderOwnershipUnresolved": "Δεν ήταν δυνατός ο προσδιορισμός της ιδιοκτησίας του φακέλου.",
-    "FolderOwnershipUnresolvedDescription": "Το έργο στο οποίο ανήκει αυτός ο φάκελος δεν είναι διαθέσιμο, επομένως δεν μπορεί να αναπτυχθεί. Ανανεώστε τη λίστα φακέλων και δοκιμάστε ξανά.",
     "FromStatus": "Από κατάσταση",
     "GoToDetailPage": "Προβολή λεπτομερειών ανάπτυξης",
     "HealthStatus": "Κατάσταση υγείας",

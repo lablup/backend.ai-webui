@@ -1081,8 +1081,6 @@
     "FailedToDeleteDeployment": "デプロイの削除に失敗しました。",
     "FailedToRollback": "選択した Revision へのロールバックに失敗しました。",
     "FailedToUpdateDeployment": "デプロイの更新に失敗しました。",
-    "FolderOwnershipUnresolved": "フォルダーの所有情報を確認できません。",
-    "FolderOwnershipUnresolvedDescription": "このフォルダーが属するプロジェクトを取得できないため、デプロイできません。フォルダー一覧を更新してから再試行してください。",
     "FromStatus": "元のステータス",
     "GoToDetailPage": "デプロイの詳細を表示",
     "HealthStatus": "ヘルス状態",
