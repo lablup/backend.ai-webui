@@ -1,6 +1,6 @@
 ---
 name: docs-update-writer
-description: Use this agent to write or update user manual documentation based on a documentation update plan. It reads the plan created by docs-update-planner and writes the actual documentation content in the correct format and style. Examples: <example>Context: A documentation update plan has been created and the user wants the actual docs written. user: 'Write the documentation updates from the plan' assistant: 'I'll use the docs-update-writer agent to write the documentation updates following the plan.' <commentary> The user has a plan ready and needs the actual documentation content written, which is exactly what this writer agent does. </commentary></example><example>Context: User wants to update a specific section of the manual. user: 'Update the session page docs to include the new batch session feature' assistant: 'I'll launch the docs-update-writer to write the documentation for the batch session feature.' <commentary> The user needs specific documentation content written for a feature, perfect for this agent. </commentary></example>
+description: Write or update user manual documentation based on a documentation update plan. Reads the plan created by docs-update-planner and writes the actual content in the correct format and style. Invoke when a plan is ready or a specific manual section needs new feature content.
 tools: Glob, Grep, Read, Write, Edit, Bash
 model: opus
 color: blue
