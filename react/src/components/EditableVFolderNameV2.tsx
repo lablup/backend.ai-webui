@@ -27,7 +27,7 @@ import { Form } from '../form-engine';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
+import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import { ProjectContextOrNull } from '../types/projectContext';
 import BAIFormItem from './BAIFormItem';
@@ -98,7 +98,9 @@ const EditableVFolderNameV2: React.FC<EditableVFolderNameV2Props> = ({
     vfolderNode.metadata?.name,
   );
   const [userInfo] = useCurrentUserInfo();
-  const effectiveAdminRole = useEffectiveAdminRole();
+  // Not `useEffectiveAdminRole` — it resolves its target from the ambient
+  // project, which this contract must not depend on.
+  const { isSuperAdmin } = useCurrentUserProjectRoles();
   const baiClient = useSuspendedBackendaiClient();
   const renameMutation = useTanMutation({
     mutationFn: (input: { id: string; name: string }) => {
@@ -121,7 +123,7 @@ const EditableVFolderNameV2: React.FC<EditableVFolderNameV2Props> = ({
   const isEditingAllowed =
     editable &&
     (userInfo.uuid === vfolderNode.ownership?.userId ||
-      effectiveAdminRole === 'superadmin' ||
+      isSuperAdmin ||
       (project !== null &&
         !!vfolderNode.ownership?.projectId &&
         project.id === vfolderNode.ownership.projectId)) &&

@@ -387,10 +387,7 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
           label: t('explorer.Metadata'),
           children: (
             <div style={infoPanelPanelStyle}>
-              <VFolderNodeDescriptionV2
-                vfolderNodeFrgmt={vfolderNode}
-                project={pageProject}
-              />
+              <VFolderNodeDescriptionV2 vfolderNodeFrgmt={vfolderNode} />
             </div>
           ),
         },

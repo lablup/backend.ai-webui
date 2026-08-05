@@ -4,7 +4,6 @@
  */
 import '../../__test__/matchMedia.mock.js';
 import type { EditableVFolderNameV2TestQuery } from '../__generated__/EditableVFolderNameV2TestQuery.graphql';
-import type { EffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
 import { ProjectContextOrNull } from '../types/projectContext';
 import EditableVFolderNameV2 from './EditableVFolderNameV2';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -67,8 +66,8 @@ vi.mock('../hooks/backendai', async (importOriginal) => {
   };
 });
 
-// The effective admin role is pinned per test scenario.
-let mockEffectiveAdminRole: EffectiveAdminRole = 'none';
+// Super-admin status is pinned per test scenario.
+let mockIsSuperAdmin = false;
 vi.mock('../hooks/useCurrentUserProjectRoles', async (importOriginal) => {
   const originalModule =
     await importOriginal<
@@ -76,7 +75,11 @@ vi.mock('../hooks/useCurrentUserProjectRoles', async (importOriginal) => {
     >();
   return {
     ...originalModule,
-    useEffectiveAdminRole: () => mockEffectiveAdminRole,
+    useCurrentUserProjectRoles: () => ({
+      isSuperAdmin: mockIsSuperAdmin,
+      domainAdminDomains: [],
+      projectAdminIds: [],
+    }),
   };
 });
 
@@ -175,7 +178,7 @@ const findEditTrigger = async () => {
 
 describe('EditableVFolderNameV2 rename gate (ADR-0001, FR-3413)', () => {
   beforeEach(() => {
-    mockEffectiveAdminRole = 'none';
+    mockIsSuperAdmin = false;
   });
 
   it('lets the folder owner rename regardless of project context (project null)', async () => {
@@ -188,7 +191,7 @@ describe('EditableVFolderNameV2 rename gate (ADR-0001, FR-3413)', () => {
   });
 
   it("lets a super admin rename another user's folder with project null", async () => {
-    mockEffectiveAdminRole = 'superadmin';
+    mockIsSuperAdmin = true;
     renderName({
       project: null,
       ownerUserId: 'someone-else-uuid',

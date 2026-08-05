@@ -193,15 +193,11 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
   };
 });
 
-// Probe: surfaces the project the modal hands to the metadata description.
 vi.mock('./VFolderNodeDescriptionV2', async () => {
   const React = await import('react');
   return {
-    default: (props: any) =>
-      React.createElement('div', {
-        'data-testid': 'mock-vfolder-description',
-        'data-project-id': props.project?.id ?? '',
-      }),
+    default: () =>
+      React.createElement('div', { 'data-testid': 'mock-vfolder-description' }),
   };
 });
 
@@ -318,12 +314,6 @@ describe('FolderExplorerModalV2 project context (ADR-0001, FR-3413)', () => {
     const permissionOperation = findPermissionOperation(seenOperations);
     expect(permissionOperation?.variables.projectId).toBe('folder-project-id');
     expect(permissionOperation?.variables.skipProjectScope).toBe(false);
-
-    // The metadata description receives `null` as well.
-    expect(screen.getByTestId('mock-vfolder-description')).toHaveAttribute(
-      'data-project-id',
-      '',
-    );
   });
 
   it('on a super-admin route with a user-owned folder: skips the group-scope permission lookup instead of falling back to the ambient project', async () => {
@@ -352,11 +342,5 @@ describe('FolderExplorerModalV2 project context (ADR-0001, FR-3413)', () => {
     // acceptance criterion) instead of the header selection.
     const permissionOperation = findPermissionOperation(seenOperations);
     expect(permissionOperation?.variables.projectId).toBe('folder-project-id');
-
-    // The description receives the page project (narrowed ambient).
-    expect(screen.getByTestId('mock-vfolder-description')).toHaveAttribute(
-      'data-project-id',
-      'ambient-project-id',
-    );
   });
 });
