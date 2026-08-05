@@ -13,8 +13,9 @@ import {
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
+import { ProjectContext, ProjectContextOrNull } from '../types/projectContext';
+import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
 import StorageSelect from './StorageSelect';
 import {
   Divider,
@@ -42,7 +43,7 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { TriangleAlertIcon } from 'lucide-react';
-import { Suspense, useRef } from 'react';
+import { Suspense, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql } from 'react-relay';
 
@@ -92,6 +93,18 @@ export type FolderCreationResponse =
 
 export interface FolderCreateModalProps extends BAIModalProps {
   onRequestClose: (response?: FolderCreationResponse) => void;
+  /**
+   * Explicit project prop contract (ADR-0001). The page decides the project
+   * context; this modal never reads the ambient current project.
+   *
+   * - Non-null: no in-modal selector is rendered and project folders are
+   *   created in exactly this project. Model-store usage-mode gating is
+   *   keyed off `project.name`.
+   * - `null` ("no ambient project context", e.g. super-admin pages): a
+   *   required in-modal project selector is rendered and the mutation
+   *   targets the project chosen there.
+   */
+  project: ProjectContextOrNull;
   initialValidate?: boolean;
   initialValues?: Partial<FolderCreateFormItemsType>;
   /**
@@ -123,6 +136,7 @@ export interface FolderCreateModalProps extends BAIModalProps {
 
 const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
   onRequestClose,
+  project,
   initialValidate = false,
   initialValues: initialValuesFromProps = {},
   allowCreateProjectFolder = false,
@@ -140,14 +154,21 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
   const formRef = useRef<FormInstance>(null);
   const baiClient = useSuspendedBackendaiClient();
   const effectiveAdminRole = useEffectiveAdminRole();
-  const currentProject = useCurrentProjectValue();
+  // ADR-0001: the target project comes exclusively from the `project` prop.
+  // When it is `null`, the user picks the target project with the in-modal
+  // selector below; the chosen value is tracked here so name-keyed gating
+  // (model-store) follows the chosen project, never the ambient one.
+  const [selectedProject, setSelectedProject] = useState<ProjectContext | null>(
+    null,
+  );
+  const effectiveProject = project ?? selectedProject;
 
   const { upsertNotification } = useSetBAINotification();
 
   const INITIAL_FORM_VALUES: FolderCreateFormItemsType = {
     name: '',
     host: undefined,
-    group: currentProject.id || undefined,
+    group: project?.id,
     usage_mode: 'general',
     type: 'user',
     permission: 'rw',
@@ -177,6 +198,8 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
     ...INITIAL_FORM_VALUES,
     ...initialValuesFromProps,
     ...folderTypePreset,
+    // Fixed mode: the `project` prop wins over any caller `initialValues.group`.
+    ...(project ? { group: project.id } : {}),
   };
 
   // No V2 equivalent for allowed types — keep using existing REST API approach
@@ -288,7 +311,9 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
     try {
       if (isProjectFolder) {
         vfolderResults = await commitCreateInProjectMutation({
-          projectId: values.group ?? '',
+          // Not `values.group`: antd snapshots initialValues at mount and
+          // never resyncs them to later `project` prop changes.
+          projectId: effectiveProject?.id ?? values.group ?? '',
           input: {
             ...baseInput,
             // `CreateVFolderInScopeInput` takes enum-typed values.
@@ -357,6 +382,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
             danger
             onClick={() => {
               formRef.current?.resetFields();
+              setSelectedProject(null);
             }}
           >
             {t('button.Reset')}
@@ -389,6 +415,9 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
       {...modalProps}
       afterOpenChange={(open) => {
         if (open) {
+          // destroyOnHidden clears the form between opens; keep the tracked
+          // in-modal project selection in sync with it.
+          setSelectedProject(null);
           if (initialValidate) {
             formRef.current?.validateFields();
           } else if (mergedInitialValues.type === 'project') {
@@ -425,6 +454,48 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
           initialValues={mergedInitialValues}
           labelCol={{ span: 8 }}
         >
+          {project === null && (
+            <>
+              <Form.Item
+                label={t('data.folders.TargetProject')}
+                name={'group'}
+                required
+                rules={[
+                  {
+                    required: true,
+                    message: t('data.folders.TargetProjectRequired'),
+                  },
+                ]}
+              >
+                {/* Same manual-wiring pattern as StorageSelect below: the
+                    Suspense boundary swallows Form.Item's injected props, so
+                    the field value is written explicitly. */}
+                <Suspense fallback={<Skeleton.Input active block />}>
+                  <ProjectSelectForAdminPage
+                    data-testid="folder-create-project-select"
+                    domain={baiClient._config.domainName}
+                    onSelectProject={(projectInfo) => {
+                      setSelectedProject({
+                        id: projectInfo.projectId,
+                        name: projectInfo.projectName,
+                      });
+                      formRef.current?.setFieldValue(
+                        'group',
+                        projectInfo.projectId,
+                      );
+                      formRef.current?.validateFields(['group']);
+                      // Model-store gating on `type` is keyed off the chosen
+                      // project name; re-validate so it updates immediately.
+                      if (formRef.current?.getFieldValue('type')) {
+                        formRef.current.validateFields(['type']);
+                      }
+                    }}
+                  />
+                </Suspense>
+              </Form.Item>
+              <Divider />
+            </>
+          )}
           <Form.Item label={t('data.UsageMode')} name={'usage_mode'} required>
             <Radio.Group
               disabled={isFolderTypeLocked}
@@ -528,7 +599,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
               const usageMode = getFieldValue('usage_mode');
               const shouldDisableProject =
                 (usageMode === 'model' &&
-                  currentProject?.name !== MODEL_STORE_PROJECT_NAME) ||
+                  effectiveProject?.name !== MODEL_STORE_PROJECT_NAME) ||
                 usageMode === 'automount';
 
               return (
@@ -544,7 +615,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
                         const isInvalidModelProjectFolder =
                           value === 'project' &&
                           currentUsageMode === 'model' &&
-                          currentProject?.name !== MODEL_STORE_PROJECT_NAME;
+                          effectiveProject?.name !== MODEL_STORE_PROJECT_NAME;
                         const isInvalidAutoMountFolder =
                           value === 'project' &&
                           currentUsageMode === 'automount';
@@ -573,11 +644,17 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
                     {
                       warningOnly: true,
                       validator: async (__, value) => {
-                        if (!shouldDisableProject && value === 'project') {
+                        // Skip the informational notice until a target
+                        // project is known (prop or in-modal selection).
+                        if (
+                          !shouldDisableProject &&
+                          value === 'project' &&
+                          effectiveProject
+                        ) {
                           return Promise.reject(
                             new Error(
                               t('data.folders.ProjectFolderCreationHelp', {
-                                projectName: currentProject?.name,
+                                projectName: effectiveProject.name,
                               }),
                             ),
                           );
@@ -650,7 +727,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
           </Form.Item>
           <Divider />
 
-          <Form.Item hidden name={'group'} />
+          {project !== null && <Form.Item hidden name={'group'} />}
 
           <Form.Item dependencies={['usage_mode', 'type']} noStyle required>
             {({ getFieldValue }) => {

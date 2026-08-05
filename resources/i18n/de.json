@@ -939,6 +939,8 @@
       "SharedUser": "Freigegebener Benutzer",
       "SharedUserDesc": "Nur Benutzer, die die Einladung angenommen haben, werden in der Liste angezeigt.\n\nBenutzer, die noch einladend sind, werden nicht angezeigt.",
       "Status": "Status",
+      "TargetProject": "Zielprojekt",
+      "TargetProjectRequired": "Bitte wählen Sie ein Projekt aus, in dem der Ordner erstellt werden soll.",
       "TrashBin": "Papierkorb",
       "Type": "Art",
       "TypeFolderNameToDelete": "Geben Sie den zu löschenden Ordnernamen ein",

@@ -939,6 +939,8 @@
       "SharedUser": "Jaettu käyttäjä",
       "SharedUserDesc": "Vain kutsun hyväksyneet käyttäjät näytetään luettelossa.\n\nVielä kutsuvia käyttäjiä ei näytetä.",
       "Status": "Tila",
+      "TargetProject": "Kohdeprojekti",
+      "TargetProjectRequired": "Valitse projekti, johon kansio luodaan.",
       "TrashBin": "Roskat",
       "Type": "Tyyppi",
       "TypeFolderNameToDelete": "Kirjoita poistettavan kansion nimi",
