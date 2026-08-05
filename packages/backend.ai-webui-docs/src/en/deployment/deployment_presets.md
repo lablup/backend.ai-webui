@@ -40,12 +40,10 @@ Only administrators can create, edit, or delete deployment presets. Administrato
 
 ![](../images/admin_deployment_preset_list.png)
 
-The Admin Deployments page hosts several tabs — **Deployments**, **Model Store Management**, **Prometheus Preset**, and **Deployment Presets**. The tab you are on is written into the page URL, and each tab keeps its **own** filter, sort order, and page number there as well. Two consequences are worth knowing:
+The Admin Deployments page hosts several tabs — **Deployments**, **Model Store Management**, **Prometheus Preset**, and **Deployment Presets**. Each tab's filter, sort order, and page number are saved in the URL, which gives you two benefits:
 
-- Switching to another tab and back restores the Deployment Presets tab exactly as you left it, instead of resetting it to the unfiltered first page.
-- You can bookmark or share the URL of a filtered preset list, and the recipient lands on the same tab with the same filter, sort, and page applied.
-
-The filter and pagination state of one tab never leaks into another, so a filter you set on **Deployments** does not follow you to **Deployment Presets**.
+- Switching to another tab and back restores the Deployment Presets tab exactly as you left it.
+- You can bookmark or share the URL of a filtered preset list, and the recipient lands on the same filter, sort, and page.
 
 The list view shows each preset with key fields. From this list, administrators can:
 
