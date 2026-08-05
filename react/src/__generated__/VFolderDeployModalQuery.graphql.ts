@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d91a56816b7538475297ffb7d6ea0a17>>
+ * @generated SignedSource<<b76ca3267cff275fdfdff6c9dcf3157c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,7 +10,9 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type VFolderDeployModalQuery$variables = Record<PropertyKey, never>;
+export type VFolderDeployModalQuery$variables = {
+  vfolderGlobalId: string;
+};
 export type VFolderDeployModalQuery$data = {
   readonly deploymentRevisionPresets: {
     readonly edges: ReadonlyArray<{
@@ -22,6 +24,11 @@ export type VFolderDeployModalQuery$data = {
       };
     }>;
   } | null | undefined;
+  readonly vfolder_node: {
+    readonly group: string | null | undefined;
+    readonly group_name: string | null | undefined;
+    readonly ownership_type: string | null | undefined;
+  } | null | undefined;
 };
 export type VFolderDeployModalQuery = {
   response: VFolderDeployModalQuery$data;
@@ -30,6 +37,13 @@ export type VFolderDeployModalQuery = {
 
 const node: ConcreteRequest = (function(){
 var v0 = [
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "vfolderGlobalId"
+  }
+],
+v1 = [
   {
     "kind": "Literal",
     "name": "orderBy",
@@ -41,28 +55,56 @@ var v0 = [
     ]
   }
 ],
-v1 = {
+v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v2 = {
+v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v3 = {
+v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "runtimeVariantId",
   "storageKey": null
 },
-v4 = {
+v5 = [
+  {
+    "kind": "Variable",
+    "name": "id",
+    "variableName": "vfolderGlobalId"
+  }
+],
+v6 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "ownership_type",
+  "storageKey": null
+},
+v7 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "group",
+  "storageKey": null
+},
+v8 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "group_name",
+  "storageKey": null
+},
+v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -71,14 +113,14 @@ v4 = {
 };
 return {
   "fragment": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "VFolderDeployModalQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v0/*: any*/),
+        "args": (v1/*: any*/),
         "concreteType": "DeploymentRevisionPresetConnection",
         "kind": "LinkedField",
         "name": "deploymentRevisionPresets",
@@ -100,9 +142,9 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v1/*: any*/),
                   (v2/*: any*/),
                   (v3/*: any*/),
+                  (v4/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
@@ -116,6 +158,20 @@ return {
           }
         ],
         "storageKey": "deploymentRevisionPresets(orderBy:[{\"direction\":\"ASC\",\"field\":\"RANK\"}])"
+      },
+      {
+        "alias": null,
+        "args": (v5/*: any*/),
+        "concreteType": "VirtualFolderNode",
+        "kind": "LinkedField",
+        "name": "vfolder_node",
+        "plural": false,
+        "selections": [
+          (v6/*: any*/),
+          (v7/*: any*/),
+          (v8/*: any*/)
+        ],
+        "storageKey": null
       }
     ],
     "type": "Query",
@@ -123,13 +179,13 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "VFolderDeployModalQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v0/*: any*/),
+        "args": (v1/*: any*/),
         "concreteType": "DeploymentRevisionPresetConnection",
         "kind": "LinkedField",
         "name": "deploymentRevisionPresets",
@@ -151,9 +207,9 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v1/*: any*/),
                   (v2/*: any*/),
                   (v3/*: any*/),
+                  (v4/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -169,8 +225,8 @@ return {
                     "name": "runtimeVariant",
                     "plural": false,
                     "selections": [
-                      (v1/*: any*/),
-                      (v2/*: any*/)
+                      (v2/*: any*/),
+                      (v3/*: any*/)
                     ],
                     "storageKey": null
                   },
@@ -243,7 +299,7 @@ return {
                             "name": "key",
                             "storageKey": null
                           },
-                          (v4/*: any*/)
+                          (v9/*: any*/)
                         ],
                         "storageKey": null
                       }
@@ -258,7 +314,7 @@ return {
                     "name": "image",
                     "plural": false,
                     "selections": [
-                      (v1/*: any*/),
+                      (v2/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -296,8 +352,8 @@ return {
                         "name": "resourceOpts",
                         "plural": true,
                         "selections": [
-                          (v2/*: any*/),
-                          (v4/*: any*/)
+                          (v3/*: any*/),
+                          (v9/*: any*/)
                         ],
                         "storageKey": null
                       }
@@ -383,7 +439,7 @@ return {
                         "name": "presetId",
                         "storageKey": null
                       },
-                      (v4/*: any*/)
+                      (v9/*: any*/)
                     ],
                     "storageKey": null
                   },
@@ -403,7 +459,7 @@ return {
                         "name": "models",
                         "plural": true,
                         "selections": [
-                          (v2/*: any*/),
+                          (v3/*: any*/),
                           {
                             "alias": null,
                             "args": null,
@@ -489,20 +545,35 @@ return {
           }
         ],
         "storageKey": "deploymentRevisionPresets(orderBy:[{\"direction\":\"ASC\",\"field\":\"RANK\"}])"
+      },
+      {
+        "alias": null,
+        "args": (v5/*: any*/),
+        "concreteType": "VirtualFolderNode",
+        "kind": "LinkedField",
+        "name": "vfolder_node",
+        "plural": false,
+        "selections": [
+          (v6/*: any*/),
+          (v7/*: any*/),
+          (v8/*: any*/),
+          (v2/*: any*/)
+        ],
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "d13a05683d9410fd57a20e2a7d819bb4",
+    "cacheID": "751a09d7896e426072bc1f0438f7f92d",
     "id": null,
     "metadata": {},
     "name": "VFolderDeployModalQuery",
     "operationKind": "query",
-    "text": "query VFolderDeployModalQuery {\n  deploymentRevisionPresets(orderBy: [{field: RANK, direction: \"ASC\"}]) {\n    edges {\n      node {\n        id\n        name\n        runtimeVariantId\n        ...DeploymentPresetDetailModalFragment\n      }\n    }\n  }\n}\n\nfragment DeploymentPresetDetailModalFragment on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  image @since(version: \"26.4.4\") {\n    id\n    identity {\n      canonicalName\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues @since(version: \"26.4.4rc9\") {\n    presetId\n    value\n  }\n  modelDefinition {\n    models {\n      name\n      service {\n        healthCheck {\n          enable @since(version: \"26.4.4rc7\")\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query VFolderDeployModalQuery(\n  $vfolderGlobalId: String!\n) {\n  deploymentRevisionPresets(orderBy: [{field: RANK, direction: \"ASC\"}]) {\n    edges {\n      node {\n        id\n        name\n        runtimeVariantId\n        ...DeploymentPresetDetailModalFragment\n      }\n    }\n  }\n  vfolder_node(id: $vfolderGlobalId) {\n    ownership_type\n    group\n    group_name\n    id\n  }\n}\n\nfragment DeploymentPresetDetailModalFragment on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  image @since(version: \"26.4.4\") {\n    id\n    identity {\n      canonicalName\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues @since(version: \"26.4.4rc9\") {\n    presetId\n    value\n  }\n  modelDefinition {\n    models {\n      name\n      service {\n        healthCheck {\n          enable @since(version: \"26.4.4rc7\")\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "28257fbdb782608acef6e45d698dac96";
+(node as any).hash = "1d876243e0514f1a8f7f8379dfdce54c";
 
 export default node;

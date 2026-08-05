@@ -75,7 +75,6 @@ export const AdminModelCardQuery = graphql`
     $orderBy: [ModelCardV2OrderBy!]
     $limit: Int
     $offset: Int
-    $currentProjectId: UUID!
   ) {
     adminModelCardsV2(
       filter: $filter
@@ -108,9 +107,6 @@ export const AdminModelCardQuery = graphql`
           ...AdminModelCardSettingModalFragment
         }
       }
-    }
-    group(id: $currentProjectId) {
-      type
     }
     groups(is_active: true, type: ["MODEL_STORE"]) {
       id
@@ -164,7 +160,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
   const deferredQueryRef = useDeferredValue(queryRef);
   const isRefetching = deferredQueryRef !== queryRef;
 
-  const { adminModelCardsV2, group, groups } =
+  const { adminModelCardsV2, groups } =
     usePreloadedQuery<AdminModelCardQueryType>(
       AdminModelCardQuery,
       deferredQueryRef,
@@ -447,7 +443,6 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
         <AdminModelCardSettingModal
           open={isSettingModalOpen}
           modelCardFrgmt={editingModelCard ?? null}
-          isModelStoreProject={group?.type === 'MODEL_STORE'}
           modelStoreProject={groups?.[0] ?? null}
           onRequestClose={(success) => {
             setIsSettingModalOpen(false);

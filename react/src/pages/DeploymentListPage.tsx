@@ -20,6 +20,7 @@ import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginati
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
+import { toProjectContext } from '../types/projectContext';
 import { DeleteFilled } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { App, Button, Skeleton, Typography } from 'antd';
@@ -407,6 +408,9 @@ const DeploymentListPageContent: React.FC = () => {
         <DeploymentSettingModal
           open={isCreating || !!editingDeployment}
           deploymentFrgmt={editingDeployment ?? null}
+          // ADR-0001: general page — the page is the only reader of the
+          // ambient current project and passes it explicitly.
+          project={toProjectContext(currentProject)}
           onRequestClose={(success) => {
             closeCreate();
             setEditingDeploymentId(null);
