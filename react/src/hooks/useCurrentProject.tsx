@@ -9,7 +9,7 @@ import { useBAILogger } from 'backend.ai-ui';
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { atomWithDefault } from 'jotai/utils';
 import * as _ from 'lodash-es';
-import { useCallback, useEffect, useEffectEvent } from 'react';
+import { useCallback, useEffect, useEffectEvent, useRef } from 'react';
 
 interface ScalingGroupItem {
   name: string;
@@ -103,7 +103,11 @@ export const useCurrentProjectValue = () => {
       );
     }
   });
+  // StrictMode re-runs mount effects in dev, which would double every warning.
+  const hasWarnedRef = useRef(false);
   useEffect(() => {
+    if (hasWarnedRef.current) return;
+    hasWarnedRef.current = true;
     warnAmbientRead();
   }, []);
   return useAtomValue(currentProjectAtom);
