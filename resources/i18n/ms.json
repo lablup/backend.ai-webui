@@ -1235,7 +1235,8 @@
         "Revision": "Semak semula revisi deployment yang lalu dan gulung balik ke mana-mana versi sebelumnya.",
         "RevisionHistory": "Semak semula revisi deployment yang lalu dan gulung balik ke mana-mana versi sebelumnya."
       }
-    }
+    },
+    "CannotResolveDeploymentProject": "Tidak dapat menentukan projek yang dimiliki oleh deployment ini, jadi penambahan semakan dinyahdayakan."
   },
   "desktopNotification": {
     "NotSupported": "Penyemak imbas ini tidak menyokong pemberitahuan.",

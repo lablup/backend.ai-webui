@@ -14,12 +14,12 @@ import {
   useResourceSlotsDetails,
 } from '../../hooks/backendai';
 import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../../hooks/hooksUsingRelay';
-import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import {
   MergedResourceLimits,
   ResourcePreset,
   useResourceLimitAndRemaining,
 } from '../../hooks/useResourceLimitAndRemaining';
+import { ProjectContext } from '../../types/projectContext';
 import AgentSelect from '../AgentSelect';
 import {
   Image,
@@ -122,6 +122,16 @@ export type MergedResourceAllocationFormValue = ResourceAllocationFormValue &
   ImageEnvironmentFormInput;
 
 interface ResourceAllocationFormItemsProps {
+  /**
+   * The project that scopes every project-dependent piece of this form
+   * fragment: the `accessible_scaling_groups(project_id:)` query, the
+   * resource-group select, and the resource limit / remaining / preset
+   * lookups. Required and non-null per ADR-0001 (form-fragment tier,
+   * FR-3411): this fragment never reads the ambient current project and
+   * never embeds a project selector — the parent owns any selector and
+   * passes the chosen/derived project down.
+   */
+  project: ProjectContext;
   enableAgentSelect?: boolean;
   enableResourcePresets?: boolean;
   showRemainingWarning?: boolean;
@@ -153,6 +163,7 @@ interface ResourceAllocationFormItemsProps {
 const ResourceAllocationFormItems: React.FC<
   ResourceAllocationFormItemsProps
 > = ({
+  project,
   enableAgentSelect = false,
   enableResourcePresets,
   forceImageMinValues = false,
@@ -175,10 +186,6 @@ const ResourceAllocationFormItems: React.FC<
   const [agentFetchKey, updateAgentFetchKey] = useUpdatableState('first');
   const [isPendingAgentList, startAgentListTransition] = useTransition();
 
-  const currentProject = useCurrentProjectValue();
-  if (!currentProject.id || !currentProject.name) {
-    throw new Error('Project ID is required for ResourceAllocationFormItems');
-  }
   const currentResourceGroupInForm =
     Form.useWatch(['resourceGroup'], {
       form,
@@ -198,7 +205,7 @@ const ResourceAllocationFormItems: React.FC<
         }
       `,
       {
-        projectID: currentProject.id,
+        projectID: project.id,
       },
       {
         fetchPolicy: baiClient.supports('custom-accelerator-quantum-size')
@@ -210,6 +217,13 @@ const ResourceAllocationFormItems: React.FC<
   const currentResourceGroupInfo = _.find(
     accessible_scaling_groups,
     (group) => group?.name === currentResourceGroupInForm,
+  );
+  // Names of the resource groups accessible to the PASSED project. Handed to
+  // `useResourceLimitAndRemaining` so its "is this resource group valid?"
+  // guard is keyed off the `project` prop instead of the ambient current
+  // project's derived resource-group atom (ADR-0001).
+  const accessibleResourceGroupNames = _.compact(
+    _.map(accessible_scaling_groups, (group) => group?.name),
   );
   const currentResourceValue = Form.useWatch(['resource']);
   const currentImage = Form.useWatch(['environments', 'image'], {
@@ -227,10 +241,11 @@ const ResourceAllocationFormItems: React.FC<
 
   const [{ currentImageMinM, remaining, resourceLimits, checkPresetInfo }] =
     useResourceLimitAndRemaining({
-      currentProjectName: currentProject.name,
+      currentProjectName: project.name,
       currentResourceGroup: currentResourceGroupInForm || undefined, // global currentResourceGroup can be null
       currentResourceGroupFrgmtForLimit: currentResourceGroupInfo,
       currentImage: currentImage,
+      accessibleResourceGroupNames,
     });
 
   const [resourceSlots] = useResourceSlots();
@@ -621,7 +636,7 @@ const ResourceAllocationFormItems: React.FC<
         ]}
       >
         <BAIProjectResourceGroupSelect
-          projectName={currentProject.name}
+          projectName={project.name}
           autoSelectDefault={autoSelectFirstResourceGroup}
           showSearch
         />

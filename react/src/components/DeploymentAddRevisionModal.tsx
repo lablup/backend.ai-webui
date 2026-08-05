@@ -26,13 +26,12 @@ import {
 } from '../helper/parseCliCommand';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import {
   buildRuntimeVariantPresetValues,
   type RuntimeParameterGroup,
   type RuntimeVariantPresetValueEntry,
 } from '../hooks/useRuntimeParameterSchema';
-import { toProjectContext } from '../types/projectContext';
+import type { ProjectContextOrNull } from '../types/projectContext';
 import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
 import EnvVarFormList, { type EnvVarFormListValue } from './EnvVarFormList';
 import FolderCreateModalV2 from './FolderCreateModalV2';
@@ -233,6 +232,12 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         id
         metadata {
           resourceGroupName
+          projectId
+          projectV2 @since(version: "26.4.3") {
+            basicInfo {
+              name
+            }
+          }
         }
         currentRevision @since(version: "26.4.3") {
           modelMountConfig {
@@ -331,12 +336,22 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       revisionPrefillFragment,
       sourceRevisionFrgmt ?? null,
     );
-  // The model folder picker scopes to the user's current project so the
-  // listing matches what the user has access to in the active project
-  // context, consistent with the rest of the model-deployment UI
-  // (ServiceLauncherPageContent, ModelCardDeployModal).
-  const currentProject = useCurrentProjectValue();
-  const currentProjectId = currentProject.id;
+  // ADR-0001 (FR-3411, derive-from-resource tier): adding a revision always
+  // targets the deployment's own project — never the ambient header
+  // selection. The id comes from the deployment metadata (`projectId`); the
+  // name is resolved via `projectV2` (managers >= 26.4.3). It scopes the
+  // model-folder picker, the resource-allocation form, and the in-modal
+  // folder-creation flow. When the pair cannot be resolved (defensive:
+  // missing metadata or a pre-26.4.3 manager without `projectV2`),
+  // submission is visibly disabled instead of falling back to ambient.
+  const deploymentProject: ProjectContextOrNull =
+    deployment?.metadata?.projectId &&
+    deployment?.metadata?.projectV2?.basicInfo?.name
+      ? {
+          id: deployment.metadata.projectId,
+          name: deployment.metadata.projectV2.basicInfo.name,
+        }
+      : null;
   const { logger } = useBAILogger();
   const { open: openFolderExplorer } = useFolderExplorerOpener();
   const baiClient = useSuspendedBackendaiClient();
@@ -1431,7 +1446,10 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               type="primary"
               loading={isAddInFlight || isResolvingImage}
               onClick={handleOk}
-              disabled={effectiveMode === 'preset' && hasNoPresets}
+              disabled={
+                (effectiveMode === 'preset' && hasNoPresets) ||
+                !deploymentProject
+              }
             >
               {t('deployment.AddRevision')}
             </Button>
@@ -1451,6 +1469,14 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           vanishes — there is nothing left to load. In Preset mode the click
           flips to Custom first and applies once the form mounts (see
           `handleLoadCurrent`). */}
+      {!deploymentProject ? (
+        <Alert
+          type="warning"
+          showIcon
+          style={{ marginBottom: token.marginMD }}
+          title={t('deployment.CannotResolveDeploymentProject')}
+        />
+      ) : null}
       {currentRevision && !sourceRevisionFrgmt && !hasLoadedCurrent ? (
         <Alert
           type="info"
@@ -1541,8 +1567,8 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                   >
                     <BAIVFolderSelect
                       ref={presetVFolderSelectRef}
-                      currentProjectId={currentProjectId ?? undefined}
-                      disabled={!currentProjectId}
+                      currentProjectId={deploymentProject?.id}
+                      disabled={!deploymentProject}
                       excludeDeleted
                       filter='usage_mode == "model"'
                       style={{ flex: 1 }}
@@ -1568,6 +1594,8 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                         <Tooltip title={t('data.CreateANewStorageFolder')}>
                           <Button
                             icon={<PlusIcon />}
+                            // Same gate as the BAIVFolderSelect above.
+                            disabled={!deploymentProject}
                             onClick={() =>
                               setIsModelFolderCreateModalOpen(true)
                             }
@@ -1622,8 +1650,8 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 >
                   <BAIVFolderSelect
                     ref={customVFolderSelectRef}
-                    currentProjectId={currentProjectId ?? undefined}
-                    disabled={!currentProjectId}
+                    currentProjectId={deploymentProject?.id}
+                    disabled={!deploymentProject}
                     excludeDeleted
                     filter='usage_mode == "model"'
                     style={{ flex: 1 }}
@@ -1649,6 +1677,8 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                       <Tooltip title={t('data.CreateANewStorageFolder')}>
                         <Button
                           icon={<PlusIcon />}
+                          // Same gate as the BAIVFolderSelect above.
+                          disabled={!deploymentProject}
                           onClick={() => setIsModelFolderCreateModalOpen(true)}
                         />
                       </Tooltip>
@@ -1958,12 +1988,15 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           <SectionHeader>
             {t('deployment.step.ClusterAndResources')}
           </SectionHeader>
-          <Suspense fallback={<Skeleton active paragraph={{ rows: 4 }} />}>
-            <ResourceAllocationFormItems
-              enableResourcePresets
-              hideResourceGroupFormItem
-            />
-          </Suspense>
+          {deploymentProject ? (
+            <Suspense fallback={<Skeleton active paragraph={{ rows: 4 }} />}>
+              <ResourceAllocationFormItems
+                project={deploymentProject}
+                enableResourcePresets
+                hideResourceGroupFormItem
+              />
+            </Suspense>
+          ) : null}
 
           <Collapse
             items={[
@@ -2022,8 +2055,10 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         </Suspense>
       )}
       <FolderCreateModalV2
-        open={isModelFolderCreateModalOpen}
-        project={toProjectContext(currentProject)}
+        // Never reach the `project={null}` tier from here: `onRequestClose`
+        // would write back a folder this revision cannot mount.
+        open={isModelFolderCreateModalOpen && !!deploymentProject}
+        project={deploymentProject}
         initialValues={{ usage_mode: 'model' }}
         onRequestClose={(result) => {
           setIsModelFolderCreateModalOpen(false);
