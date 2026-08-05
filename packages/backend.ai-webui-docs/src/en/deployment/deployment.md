@@ -132,7 +132,7 @@ Use:
 The Review step (step 4 of the wizard) renders the start command and bootstrap script as code blocks for easy review before you confirm.
 :::
 
-- **Mount Destination For Model Folder**: The path inside the container where the model storage folder is mounted (default: `/models`). Hover the field's tooltip for a reminder: *"The path where the model folder is mounted inside the container."*
+- **Mount Destination For Model Folder**: The path inside the container where the model storage folder is mounted (default: `/models`).
 - **Port**: The container port that the inference server listens on (default: `8000`).
 - **Enable Health Check**: When enabled, the system periodically sends HTTP requests to the inference server to verify it is responding correctly. When disabled (the default for new revisions), no health check is configured and unhealthy replicas are not automatically detected. Turn this on for production deployments. When **Enable Health Check** is checked, the following additional fields appear:
    * **Path**: The HTTP endpoint path called during service health checks (default: `/health`).
