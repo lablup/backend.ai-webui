@@ -2,13 +2,15 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import VFolderDeployModal from './VFolderDeployModal';
+import { VFolderDeployModalQuery } from '../__generated__/VFolderDeployModalQuery.graphql';
+import VFolderDeployModal, { VFolderDeployQuery } from './VFolderDeployModal';
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { App } from 'antd';
+import { toGlobalId } from 'backend.ai-ui';
 import { Suspense } from 'react';
-import { RelayEnvironmentProvider } from 'react-relay';
+import { loadQuery, RelayEnvironmentProvider } from 'react-relay';
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
 import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockEnvironment';
 
@@ -124,7 +126,19 @@ const renderModal = (vfolderNode: {
   group_name: string | null;
 }) => {
   const environment: RelayMockEnvironment = createMockEnvironment();
-  environment.mock.queueOperationResolver((operation) =>
+  const onClose = vi.fn();
+  // Mirrors the opener: the query is started in the click event and the modal
+  // receives only the resulting reference (render-as-you-fetch).
+  const queryRef = loadQuery<VFolderDeployModalQuery>(
+    environment,
+    VFolderDeployQuery,
+    { vfolderGlobalId: toGlobalId('VirtualFolderNode', 'vf-0000') },
+    { fetchPolicy: 'store-and-network' },
+  );
+  // `loadQuery` hits the mock network before the operation is registered as
+  // pending, so `queueOperationResolver` would never see it — resolve the
+  // already-started request explicitly instead.
+  environment.mock.resolveMostRecentOperation((operation) =>
     MockPayloadGenerator.generate(operation, {
       VirtualFolderNode: () => vfolderNode,
       DeploymentRevisionPreset: () => ({
@@ -133,12 +147,11 @@ const renderModal = (vfolderNode: {
       }),
     }),
   );
-  const onClose = vi.fn();
   render(
     <RelayEnvironmentProvider environment={environment}>
       <App>
         <Suspense fallback={null}>
-          <VFolderDeployModal open vfolderId="vf-0000" onClose={onClose} />
+          <VFolderDeployModal open queryRef={queryRef} onClose={onClose} />
         </Suspense>
       </App>
     </RelayEnvironmentProvider>,
@@ -203,6 +216,26 @@ describe('VFolderDeployModal project derivation contract (ADR-0001)', () => {
       screen.getByRole('button', { name: 'modelStore.Deploy' }),
     ).toBeDisabled();
     expect(screen.getByTestId('mock-resource-group-select')).toBeDisabled();
+  });
+
+  it('blocks deploy and explains why when a group folder has unreadable ownership fields', async () => {
+    // `ownership_type` says "group" but the group id/name are missing, so no
+    // target project can be derived. This must not fall through to the
+    // user-owned branch (which would silently offer a free project choice).
+    renderModal({
+      ownership_type: 'group',
+      group: null,
+      group_name: null,
+    });
+
+    expect(
+      await screen.findByText('deployment.FolderOwnershipUnresolved'),
+    ).toBeInTheDocument();
+    // Neither derived nor selectable → no selector, and deploy stays blocked.
+    expect(screen.queryByTestId('mock-project-select')).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'modelStore.Deploy' }),
+    ).toBeDisabled();
   });
 
   it('targets exactly the project chosen in the in-modal selector for a user-owned folder', async () => {
