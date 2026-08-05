@@ -18,16 +18,7 @@ Users can switch between projects using the project selector provided in the top
 By default, the project that the user currently belongs to is selected.
 Since each project may have different resource policies, switching projects may also change the available resource policies.
 
-The address of a project page contains the name of the project you are working
-in, for example `http://<host>/project/<project-name>/start`. Selecting another
-project rewrites only the project segment of the current address, so you stay on
-the same page: the rest of the path and the query string are preserved, and
-in-progress work such as an open session launcher form is not lost. Addresses
-bookmarked from earlier versions of the WebUI still work: they are redirected to
-the current address of the same page.
-
-The selector lists the projects you can access, and the same list decides whether
-the project name in an address is valid. If you open an address that names a
+The selector lists the projects you can access. If you open an address that names a
 project which does not exist or which you cannot access, the project selector
 shows no selection and the page explains what happened instead of silently
 switching you to another project.
@@ -42,12 +33,6 @@ switching you to another project.
 If you do not belong to any project, the page shows
 `No accessible projects.` together with
 `Ask your administrator to grant you access to a project.`
-
-:::note
-Administrator pages are not tied to a single project, so their addresses do not
-contain a project segment. On those pages, choosing a project in the selector
-changes the project you are working with without navigating to another address.
-:::
 
 <a id="login-session-timer"></a>
 
@@ -80,18 +65,12 @@ Press the shortcut key (`]`) to open and close the notification area.
 
 <a id="theme-mode"></a>
 
-## Theme mode
+## Display mode
 
 
-You can change the theme mode of the WebUI via the dark mode button on the
-right side of the header.
+You can change the display mode of the WebUI via the light/dark mode button.
 
 ![](../images/theme_mode.png)
-
-Further appearance options — the theme and its primary color — are on the user
-settings page. Open the user menu and select `Preferences` to reach them. These
-options are available only when your administrator has enabled them. For a
-description of each option, see the [User Settings](#user-settings) chapter.
 
 <a id="help"></a>
 
@@ -99,21 +78,7 @@ description of each option, see the [User Settings](#user-settings) chapter.
 
 
 Click the question mark button to access the web version of this guide document.
-The link is built to match the WebUI you are using:
-
-- **Version**: the manual published for the version of the WebUI you are
-  running opens. A pre-release or development build opens the `next` channel,
-  which follows the latest changes.
-- **Language**: the manual opens in your display language when it is published
-  in that language (English, Korean, Japanese, and Thai). Any other display
-  language opens the English manual.
-- **Page**: you are directed to the section that documents the page you are
-  currently on, including the section for the tab you have selected when that
-  tab is documented separately. This works in every scope — the same page opens
-  its user, project-administrator, or administrator section as appropriate.
-
-A few pages have no dedicated section in this manual. For those, the button
-opens the front page of the manual in your language.
+The link is built to match the WebUI you are using.
 
 <a id="responsive-layout"></a>
 
