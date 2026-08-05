@@ -727,6 +727,7 @@
     "AutomountFolderNameMustStartWithDot": "Имя папки автомонтирования должно начинаться с точки ('.').",
     "AutomountFolders": "Автоматически монтировать папки",
     "BelongsToDifferentProject": "Эта папка принадлежит другому проекту.",
+    "CannotLaunchSessionInAdminMenu": "Запуск сессий из меню администратора невозможен.",
     "CloningIsOnlyPossibleSameHost": "В настоящее время клонирование возможно только на том же хосте.",
     "Create": "Создавать",
     "CreateANewStorageFolder": "Создать новую папку для хранения",

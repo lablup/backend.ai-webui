@@ -727,6 +727,7 @@
     "AutomountFolderNameMustStartWithDot": "Nazwa folderu automatycznego montażu musi zaczynać się od kropki (\".\").",
     "AutomountFolders": "Automatyczne montowanie folderów",
     "BelongsToDifferentProject": "Ten folder należy do innego projektu.",
+    "CannotLaunchSessionInAdminMenu": "Nie można uruchamiać sesji z menu administratora.",
     "CloningIsOnlyPossibleSameHost": "Obecnie klonowanie jest możliwe tylko na tym samym hoście.",
     "Create": "Stwórz",
     "CreateANewStorageFolder": "Utwórz nowy folder przechowywania",

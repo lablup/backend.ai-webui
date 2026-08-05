@@ -89,8 +89,20 @@ narrowing helper for the loosely-typed ambient value).
   (derive-from-resource tier — the deployment's own `metadata.projectId` +
   `projectV2` name drive the model-folder picker, the resource form, and
   in-modal folder creation; when the project cannot be resolved, submission
-  is visibly disabled instead of falling back to ambient). Subsequent
-  tickets convert session-launch buttons and mismatch alerts, then hide the
+  is visibly disabled instead of falling back to ambient). Fourth
+  application (FR-3412): `FileBrowserButtonV2` and `SFTPServerButtonV2`
+  (button tier — required `project: ProjectContextOrNull` plus
+  `noProjectTooltip?`; `null` renders the button disabled with the
+  caller-provided reason, non-null keys the storage-host permission lookup,
+  the per-project volume-host fetch (`useVHostInfo(projectId)` replaces the
+  ambient derived-atom read), and the created session to exactly that
+  project). `useStartSession` gained an explicit `projectName` input that
+  pins `group_name` without reusing the `owner` branch (which is coupled to
+  `owner_access_key`); callers that omit it keep the ambient fallback as a
+  sanctioned interim state. `FolderExplorerHeaderV2` passes the prop
+  through; the globally-mounted `FolderExplorerModalV2` still narrows the
+  ambient project and hands it on explicitly until its own conversion
+  (FR-3413). Subsequent tickets convert mismatch alerts, then hide the
   header selector per admin route.
 
 ## How to comply (checklist for new/converted components)

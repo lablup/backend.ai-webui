@@ -10,6 +10,7 @@ import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOption
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useMergedAllowedStorageHostPermission } from '../hooks/useMergedAllowedStorageHostPermission';
+import { toProjectContext } from '../types/projectContext';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import { useFileUploadManager } from './FileUploadManager';
 import FolderExplorerHeaderV2 from './FolderExplorerHeaderV2';
@@ -371,6 +372,11 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
               zIndex: token.zIndexPopupBase + 2,
             }}
             vfolderNodeFrgmt={vfolderNode}
+            // Sanctioned interim state (ADR-0001): this globally-mounted
+            // modal is not yet converted (FR-3413), so it still narrows the
+            // ambient current project and passes it on explicitly — general
+            // page UX is unchanged.
+            project={toProjectContext(currentProject)}
           />
         ) : null
       }
