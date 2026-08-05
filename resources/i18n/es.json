@@ -1040,6 +1040,7 @@
     "AutoScaling": "Escalado automático",
     "AutoScalingRules": "Reglas de escalado automático",
     "BasicInformation": "Información básica",
+    "CannotResolveDeploymentProject": "No se puede determinar el proyecto al que pertenece este despliegue, por lo que la adición de una revisión está deshabilitada.",
     "ClusterMode": "Modo clúster",
     "ClusterModeTooltip": "Disposición de clústering para la sesión de cómputo de la réplica, con el formato \"modo / tamaño\". Único significa un contenedor; Multi-nodo distribuye la carga de trabajo entre varios agentes.",
     "ClusterSize": "Tamaño del clúster",
@@ -1233,8 +1234,7 @@
         "Revision": "Explore las revisiones anteriores del despliegue y revierta a cualquier versión anterior.",
         "RevisionHistory": "Explore las revisiones anteriores del despliegue y revierta a cualquier versión anterior."
       }
-    },
-    "CannotResolveDeploymentProject": "No se puede determinar el proyecto al que pertenece este despliegue, por lo que la adición de una revisión está deshabilitada."
+    }
   },
   "desktopNotification": {
     "NotSupported": "Este navegador no admite notificaciones.",
@@ -1408,6 +1408,7 @@
   },
   "environment": {
     "Action": "Acción",
+    "AllProjects": "Todos los proyectos",
     "AlreadyInstalledImage": "Imagen ya instalada",
     "AppInfoDeleted": "Información de la aplicación eliminada correctamente.",
     "AppName": "Nombre de la aplicación",
@@ -1425,6 +1426,7 @@
     "DescDownloadImage": "__NOT_TRANSLATED__",
     "DescImagePortsModified": "Puertos de imagen modificados exitosamente",
     "DescImageResourceModified": "Límite de recursos modificado con éxito",
+    "DescInstallRunsSession": "La instalación de una imagen encola una sesión efímera que descarga la imagen. Elija el proyecto en el que se ejecutará la sesión y el grupo de recursos en el que se descargará la imagen.",
     "DescProblemOccurred": "Se ha producido un problema durante la instalación",
     "DescServicePortModified": "Puerto de servicio modificado correctamente",
     "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
@@ -1439,10 +1441,13 @@
     "Images": "Imágenes",
     "Install": "Instale",
     "InstallImage": "Instalar imagen",
+    "InstallSessionProject": "Proyecto de la sesión de instalación",
+    "InstallSessionProjectTooltip": "La sesión de instalación se crea en este proyecto como su propia sesión, por lo que solo se muestran los proyectos a los que pertenece.",
+    "InstallTargetResourceGroup": "Grupo de recursos de destino",
+    "InstallTargetResourceGroupTooltip": "La imagen se descarga en este grupo de recursos. Solo se muestran los grupos de recursos accesibles desde el proyecto seleccionado.",
     "Installed": "instalado",
     "InstalledImagesAreExcluded": "Se excluyen las imágenes instaladas.",
     "Installing": "instalación de",
-    "InstallingImage": "Instalando:",
     "Language": "Idioma",
     "Local": "Local",
     "ManageApps": "Gestionar aplicaciones",
@@ -1472,7 +1477,6 @@
     "SuccessfullyCreated": "Creado con éxito",
     "SuccessfullyModified": "Modificado con éxito",
     "Tags": "Etiquetas",
-    "TakesTime": ". Lleva tiempo, así que tómate un café.",
     "Version": "Versión"
   },
   "error": {
@@ -1496,7 +1500,6 @@
     "LoginSucceededManagerNotResponding": "El inicio de sesión se ha realizado correctamente, pero el administrador no responde.",
     "MaximumVfolderCreation": "No se pueden crear más VFolders debido a la política de recursos",
     "NetworkConnectionFailed": "Ha fallado la conexión de red. Compruebe el estado de la red.",
-    "NoCurrentProject": "No hay proyecto actual",
     "NotFoundBasePath": "No se ha encontrado. Por favor, compruebe su ruta base.",
     "OnlyIntegersAreAllowed": "Solo se permiten enteros.",
     "OnlyPositiveIntegersAreAllowed": "Solo se permiten enteros positivos.",
@@ -1750,7 +1753,6 @@
     "YouCanCreateNotebookCode": "Esta insignia habilita la ejecución directa de tu notebook en Backend.AI. Copia el código para usarlo en cualquier lugar."
   },
   "importArtifactRevisionToFolderModal": {
-    "CurrentProjectChangedSuccessfully": "Proyecto actual cambiado con éxito.",
     "FailedToImport": "Error al importar artefacto(s)",
     "FailedToImportArtifact": "No se pudo importar el artefacto {{ name }} ({{ version }})",
     "FailedToImportModelFromHuggingFace": "No se pudo obtener el modelo de Hugging Face.",
@@ -1759,8 +1761,7 @@
     "Import": "Importar",
     "ImportToFolder": "Importar a la carpeta",
     "ImportingArtifact": "Importando el artefacto {{name}} ({{version}})",
-    "ModelStoreProjectRequired": "Se requiere un proyecto dedicado para Model Store.",
-    "ModelStoreProjectRequiredDescription": "¿Desea convertir el proyecto actual en un proyecto exclusivo para Model Store?",
+    "ModelStoreProject": "Proyecto de la tienda de modelos",
     "NoArtifactsSelected": "No se han seleccionado artefactos para importar",
     "OverwriteWarning": "Los archivos existentes se sobrescribirán si hay archivos con el mismo nombre.",
     "SuccessfullyImported": "Artefacto(s) importado(s) correctamente.",

@@ -1040,6 +1040,7 @@
     "AutoScaling": "การปรับขนาดอัตโนมัติ",
     "AutoScalingRules": "กฎการปรับขนาดอัตโนมัติ",
     "BasicInformation": "ข้อมูลพื้นฐาน",
+    "CannotResolveDeploymentProject": "ไม่สามารถระบุโปรเจกต์ที่การปรับใช้นี้สังกัดอยู่ได้ จึงปิดใช้งานการเพิ่มรีวิชัน",
     "ClusterMode": "โหมดคลัสเตอร์",
     "ClusterModeTooltip": "รูปแบบการจัดกลุ่มสำหรับเซสชันการประมวลผลของเรพลิกา ในรูปแบบ \"โหมด / ขนาด\" แบบเดี่ยวหมายถึงหนึ่งคอนเทนเนอร์ แบบหลายโหนดกระจายภาระงานไปยังหลาย agent",
     "ClusterSize": "ขนาดคลัสเตอร์",
@@ -1233,8 +1234,7 @@
         "Revision": "เรียกดูการแก้ไขการปรับใช้ที่ผ่านมาและย้อนกลับไปยังเวอร์ชันใดก็ได้",
         "RevisionHistory": "เรียกดูการแก้ไขการปรับใช้ที่ผ่านมาและย้อนกลับไปยังเวอร์ชันใดก็ได้"
       }
-    },
-    "CannotResolveDeploymentProject": "ไม่สามารถระบุโปรเจกต์ที่การปรับใช้นี้สังกัดอยู่ได้ จึงปิดใช้งานการเพิ่มรีวิชัน"
+    }
   },
   "desktopNotification": {
     "NotSupported": "เบราว์เซอร์นี้ไม่รองรับการแจ้งเตือน",
@@ -1408,6 +1408,7 @@
   },
   "environment": {
     "Action": "การดำเนินการ",
+    "AllProjects": "ทุกโปรเจกต์",
     "AlreadyInstalledImage": "อิมเมจที่ติดตั้งแล้ว",
     "AppInfoDeleted": "ลบข้อมูลแอปสำเร็จแล้ว",
     "AppName": "ชื่อแอป",
@@ -1425,6 +1426,7 @@
     "DescDownloadImage": "คุณกำลังจะติดตั้งอิมเมจ: ",
     "DescImagePortsModified": "แก้ไขพอร์ตอิมเมจสำเร็จแล้ว",
     "DescImageResourceModified": "แก้ไขขีดจำกัดทรัพยากรสำเร็จแล้ว",
+    "DescInstallRunsSession": "การติดตั้งอิมเมจจะเพิ่มเซสชันระยะสั้นเข้าคิวเพื่อดึงอิมเมจ โปรดเลือกโปรเจกต์ที่จะรันเซสชันและกลุ่มทรัพยากรที่จะดึงอิมเมจไปไว้",
     "DescProblemOccurred": "เกิดปัญหาระหว่างการติดตั้ง",
     "DescServicePortModified": "แก้ไขพอร์ตบริการสำเร็จแล้ว",
     "DescSignificantDownloadTime": "กระบวนการนี้ต้องใช้เวลาดาวน์โหลดที่สำคัญ",
@@ -1439,10 +1441,13 @@
     "Images": "อิมเมจ",
     "Install": "ติดตั้ง",
     "InstallImage": "ติดตั้งอิมเมจ",
+    "InstallSessionProject": "โปรเจกต์ของเซสชันการติดตั้ง",
+    "InstallSessionProjectTooltip": "เซสชันการติดตั้งจะถูกสร้างในโปรเจกต์นี้ในฐานะเซสชันของคุณเอง จึงแสดงเฉพาะโปรเจกต์ที่คุณเป็นสมาชิกเท่านั้น",
+    "InstallTargetResourceGroup": "กลุ่มทรัพยากรเป้าหมาย",
+    "InstallTargetResourceGroupTooltip": "อิมเมจจะถูกดึงไปที่กลุ่มทรัพยากรนี้ และจะแสดงเฉพาะกลุ่มทรัพยากรที่เข้าถึงได้จากโปรเจกต์ที่เลือก",
     "Installed": "ติดตั้งแล้ว",
     "InstalledImagesAreExcluded": "อิมเมจที่ติดตั้งแล้วจะถูกยกเว้น",
     "Installing": "กำลังติดตั้ง",
-    "InstallingImage": "กำลังติดตั้ง: ",
     "Language": "ภาษา",
     "Local": "ท้องถิ่น",
     "ManageApps": "จัดการแอป",
@@ -1472,7 +1477,6 @@
     "SuccessfullyCreated": "สร้างสำเร็จแล้ว",
     "SuccessfullyModified": "แก้ไขสำเร็จแล้ว",
     "Tags": "แท็ก",
-    "TakesTime": " ใช้เวลาสักครู่ ลองดื่มกาแฟสักแก้ว!",
     "Version": "เวอร์ชัน"
   },
   "error": {
@@ -1496,7 +1500,6 @@
     "LoginSucceededManagerNotResponding": "เข้าสู่ระบบสำเร็จแต่ผู้จัดการไม่ตอบสนอง",
     "MaximumVfolderCreation": "คุณไม่สามารถสร้าง VFolder เพิ่มได้เนื่องจากนโยบายทรัพยากร",
     "NetworkConnectionFailed": "การเชื่อมต่อเครือข่ายล้มเหลว ตรวจสอบสถานะเครือข่าย",
-    "NoCurrentProject": "ไม่มีโปรเจกต์ปัจจุบัน",
     "NotFoundBasePath": "ไม่พบ \nโปรดตรวจสอบเส้นทางฐานของคุณ",
     "OnlyIntegersAreAllowed": "อนุญาตให้มีจำนวนเต็มเท่านั้น",
     "OnlyPositiveIntegersAreAllowed": "อนุญาตให้มีจำนวนเต็มบวกเท่านั้น",
@@ -1752,7 +1755,6 @@
     "YouCanCreateNotebookCode": "ป้ายนี้ช่วยให้รันโน้ตบุ๊กบน Backend.AI ได้โดยตรง คัดลอกโค้ดเพื่อนำไปใช้ได้ทุกที่"
   },
   "importArtifactRevisionToFolderModal": {
-    "CurrentProjectChangedSuccessfully": "เปลี่ยนโปรเจกต์ปัจจุบันเรียบร้อยแล้ว",
     "FailedToImport": "ไม่สามารถนำเข้าอาร์ติแฟกต์ได้",
     "FailedToImportArtifact": "ไม่สามารถนำเข้า artifact {{ name }} ({{ version }}) ได้",
     "FailedToImportModelFromHuggingFace": "ไม่สามารถดึงโมเดลจาก Hugging Face ได้",
@@ -1761,8 +1763,7 @@
     "Import": "นำเข้า",
     "ImportToFolder": "นำเข้าไปยังโฟลเดอร์",
     "ImportingArtifact": "กำลังนำเข้าอาร์ติแฟกต์ {{name}} ({{version}})",
-    "ModelStoreProjectRequired": "จำเป็นต้องมีโปรเจ็กต์เฉพาะสำหรับ Model Store",
-    "ModelStoreProjectRequiredDescription": "ต้องการเปลี่ยนโปรเจกต์ปัจจุบันให้เป็นโปรเจกต์สำหรับ Model Store เท่านั้นหรือไม่?",
+    "ModelStoreProject": "โปรเจกต์คลังโมเดล",
     "NoArtifactsSelected": "ยังไม่ได้เลือกอาร์ติแฟกต์สำหรับนำเข้า",
     "OverwriteWarning": "ไฟล์ที่มีอยู่จะถูกเขียนทับ หากมีไฟล์ชื่อเดียวกันอยู่แล้ว",
     "SuccessfullyImported": "นำเข้าอาร์ติแฟกต์เรียบร้อยแล้ว",

@@ -1040,6 +1040,7 @@
     "AutoScaling": "自動スケーリング",
     "AutoScalingRules": "自動スケーリングルール",
     "BasicInformation": "基本情報",
+    "CannotResolveDeploymentProject": "このデプロイが属するプロジェクトを特定できないため、リビジョンの追加は無効になっています。",
     "ClusterMode": "クラスターモード",
     "ClusterModeTooltip": "レプリカのコンピューティングセッションのクラスタリングレイアウト。「モード / サイズ」の形式で表示されます。シングルは1つのコンテナを意味し、マルチノードは複数のエージェントに負荷を分散します。",
     "ClusterSize": "クラスターサイズ",
@@ -1233,8 +1234,7 @@
         "Revision": "過去のデプロイメントリビジョンを参照し、任意の以前のバージョンにロールバックできます。",
         "RevisionHistory": "過去のデプロイメントリビジョンを参照し、任意の以前のバージョンにロールバックできます。"
       }
-    },
-    "CannotResolveDeploymentProject": "このデプロイが属するプロジェクトを特定できないため、リビジョンの追加は無効になっています。"
+    }
   },
   "desktopNotification": {
     "NotSupported": "このブラウザは通知をサポートしていません。",
@@ -1408,6 +1408,7 @@
   },
   "environment": {
     "Action": "アクション",
+    "AllProjects": "すべてのプロジェクト",
     "AlreadyInstalledImage": "すでにインストールされているイメージ",
     "AppInfoDeleted": "アプリ情報が正常に削除されました。",
     "AppName": "アプリ名",
@@ -1425,6 +1426,7 @@
     "DescDownloadImage": "__NOT_TRANSLATED__",
     "DescImagePortsModified": "イメージポートが正常に変更されました",
     "DescImageResourceModified": "リソース制限が正常に変更されました",
+    "DescInstallRunsSession": "イメージのインストールは、イメージを取得する短時間のセッションをキューに登録することで実行されます。セッションを実行するプロジェクトと、イメージを取得するリソースグループを選択してください。",
     "DescProblemOccurred": "インストール中に問題が発生しました",
     "DescServicePortModified": "サービスポートが正常に変更されました",
     "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
@@ -1439,10 +1441,13 @@
     "Images": "イメージ",
     "Install": "インストール",
     "InstallImage": "イメージをインストール",
+    "InstallSessionProject": "インストールセッションのプロジェクト",
+    "InstallSessionProjectTooltip": "インストールセッションはこのプロジェクトで自分自身のセッションとして作成されるため、所属しているプロジェクトのみが表示されます。",
+    "InstallTargetResourceGroup": "対象リソースグループ",
+    "InstallTargetResourceGroupTooltip": "イメージはこのリソースグループに取得されます。選択したプロジェクトからアクセスできるリソースグループのみが表示されます。",
     "Installed": "インストール済み",
     "InstalledImagesAreExcluded": "インストールされたイメージは除く。",
     "Installing": "インストール",
-    "InstallingImage": "インストール：",
     "Language": "言語",
     "Local": "ローカル",
     "ManageApps": "アプリの管理",
@@ -1472,7 +1477,6 @@
     "SuccessfullyCreated": "正常に作成されました",
     "SuccessfullyModified": "正常に変更されました",
     "Tags": "タグ",
-    "TakesTime": "。時間がかかりますので、コーヒーをどうぞ！",
     "Version": "バージョン"
   },
   "error": {
@@ -1496,7 +1500,6 @@
     "LoginSucceededManagerNotResponding": "ログインは成功しましたが、マネージャーが応答していません。",
     "MaximumVfolderCreation": "リソースポリシーのため、Vフォルダーをさらに作成することはできません。",
     "NetworkConnectionFailed": "ネットワーク接続に失敗しました。ネットワークの状態を確認してください。",
-    "NoCurrentProject": "現在のプロジェクトがありません",
     "NotFoundBasePath": "見つかりません。ベースパスを確認してください。",
     "OnlyIntegersAreAllowed": "整数のみが許可されています。",
     "OnlyPositiveIntegersAreAllowed": "正の整数のみが許可されています。",
@@ -1752,7 +1755,6 @@
     "YouCanCreateNotebookCode": "このバッジを使うと、ノートブックを Backend.AI 上で直接実行できます。コードをコピーして任意の場所でご利用ください。"
   },
   "importArtifactRevisionToFolderModal": {
-    "CurrentProjectChangedSuccessfully": "現在のプロジェクトを正常に変更しました。",
     "FailedToImport": "アーティファクトのインポートに失敗しました",
     "FailedToImportArtifact": "アーティファクト {{ name }} ({{ version }}) のインポートに失敗しました。",
     "FailedToImportModelFromHuggingFace": "Hugging Face からモデルを取得できませんでした。",
@@ -1761,8 +1763,7 @@
     "Import": "インポート",
     "ImportToFolder": "フォルダにインポート",
     "ImportingArtifact": "アーティファクト {{name}} ({{version}}) をインポート中",
-    "ModelStoreProjectRequired": "モデルストア専用のプロジェクトが必要です",
-    "ModelStoreProjectRequiredDescription": "現在のプロジェクトをモデルストア専用プロジェクトに切り替えますか？",
+    "ModelStoreProject": "モデルストアプロジェクト",
     "NoArtifactsSelected": "インポートするアーティファクトが選択されていません",
     "OverwriteWarning": "同名のファイルが既に存在する場合、既存のファイルは上書きされます。",
     "SuccessfullyImported": "アーティファクトを正常にインポートしました",

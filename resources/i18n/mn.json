@@ -1040,6 +1040,7 @@
     "AutoScaling": "Автомат масштабжуулалт",
     "AutoScalingRules": "Автомат масштабжуулалтын дүрмүүд",
     "BasicInformation": "Үндсэн мэдээлэл",
+    "CannotResolveDeploymentProject": "Энэ байршуулалт аль төсөлд хамаарахыг тодорхойлох боломжгүй тул шинэ хувилбар нэмэх идэвхгүй байна.",
     "ClusterMode": "Кластерийн горим",
     "ClusterModeTooltip": "Репликийн тооцоолох сессийн кластерын байршлыг \"горим / хэмжээ\" гэсэн форматаар харуулна. Ганц нь нэг контейнерийг; Олон зангилаа нь ачааллыг олон агентуудад хуваарилна.",
     "ClusterSize": "Кластерийн хэмжээ",
@@ -1233,8 +1234,7 @@
         "Revision": "Өмнөх байршуулалтын хяналтуудыг үзэж, дурын өмнөх хувилбар руу буцаах боломжтой.",
         "RevisionHistory": "Өмнөх байршуулалтын хяналтуудыг үзэж, дурын өмнөх хувилбар руу буцаж орно уу."
       }
-    },
-    "CannotResolveDeploymentProject": "Энэ байршуулалт аль төсөлд хамаарахыг тодорхойлох боломжгүй тул шинэ хувилбар нэмэх идэвхгүй байна."
+    }
   },
   "desktopNotification": {
     "NotSupported": "Энэ хөтөч нь мэдэгдлийг дэмждэггүй.",
@@ -1408,6 +1408,7 @@
   },
   "environment": {
     "Action": "Үйлдэл",
+    "AllProjects": "Бүх төсөл",
     "AlreadyInstalledImage": "Аль хэдийн суулгасан зураг",
     "AppInfoDeleted": "Аппын мэдээллийг амжилттай устгалаа.",
     "AppName": "Аппын нэр",
@@ -1425,6 +1426,7 @@
     "DescDownloadImage": "__NOT_TRANSLATED__",
     "DescImagePortsModified": "Зургийн портуудыг амжилттай өөрчилсөн",
     "DescImageResourceModified": "Нөөцийн хязгаарыг амжилттай өөрчилсөн",
+    "DescInstallRunsSession": "Имаж суулгах нь имажийг татаж авах богино хугацааны сессийг дараалалд оруулдаг. Сессийг ажиллуулах төсөл болон имажийг татах нөөцийн бүлгийг сонгоно уу.",
     "DescProblemOccurred": "Суулгалтын явцад асуудал гарав",
     "DescServicePortModified": "Үйлчилгээний порт амжилттай өөрчлөгдсөн",
     "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
@@ -1439,10 +1441,13 @@
     "Images": "Image",
     "Install": "Суулгах",
     "InstallImage": "Зураг суулгах",
+    "InstallSessionProject": "Суулгах сессийн төсөл",
+    "InstallSessionProjectTooltip": "Суулгах сесс нь энэ төсөлд таны өөрийн сесс болж үүсдэг тул та харьяалагддаг төслүүд л харагдана.",
+    "InstallTargetResourceGroup": "Зорилтот нөөцийн бүлэг",
+    "InstallTargetResourceGroupTooltip": "Имаж нь энэ нөөцийн бүлэгт татагдана. Сонгосон төслөөс хандах боломжтой нөөцийн бүлгүүд л харагдана.",
     "Installed": "суулгасан",
     "InstalledImagesAreExcluded": "Суулгасан зургуудыг оруулаагүй болно.",
     "Installing": "суулгах",
-    "InstallingImage": "Суулгаж байна:",
     "Language": "Хэл",
     "Local": "Орон нутгийн",
     "ManageApps": "Аппыг удирдах",
@@ -1472,7 +1477,6 @@
     "SuccessfullyCreated": "Амжилттай үүсгэсэн",
     "SuccessfullyModified": "Амжилттай өөрчилсөн",
     "Tags": "Шошго",
-    "TakesTime": "Жаахан удах тул кофе уунгаа хүлээнэ үү.",
     "Version": "Хувилбар"
   },
   "error": {
@@ -1496,7 +1500,6 @@
     "LoginSucceededManagerNotResponding": "Нэвтрэлт амжилттай болсон боловч менежер хариу өгөхгүй байна.",
     "MaximumVfolderCreation": "Нөөцийн бодлогын улмаас та илүү олон v хавтас үүсгэх боломжгүй",
     "NetworkConnectionFailed": "Сүлжээний холболт амжилтгүй боллоо. \nСүлжээний статусыг шалгана уу.",
-    "NoCurrentProject": "Одоогийн төсөл байхгүй",
     "NotFoundBasePath": "Олдсонгүй. \nСуурь замаа шалгана уу.",
     "OnlyIntegersAreAllowed": "Зөвхөн бүхэл тоо зөвшөөрнө.",
     "OnlyPositiveIntegersAreAllowed": "Зөвхөн эерэг бүхэл тоо зөвшөөрөгдсөн.",
@@ -1751,7 +1754,6 @@
     "YouCanCreateNotebookCode": "Энэхүү шошго нь таны тэмдэглэлийн дэвтрийг Backend.AI дээр шууд ажиллуулах боломжийг олгоно. Кодыг хаана ч ашиглахын тулд хуулж аваарай."
   },
   "importArtifactRevisionToFolderModal": {
-    "CurrentProjectChangedSuccessfully": "Одоогийн төсөл амжилттай өөрчлөгдлөө.",
     "FailedToImport": "Артефакт(ууд)-ыг импортлох нь амжилтгүй боллоо",
     "FailedToImportArtifact": "Артефакт {{ name }} ({{ version }})-ыг импортлоход амжилтгүй боллоо.",
     "FailedToImportModelFromHuggingFace": "Hugging Face-аас загвар татаж чадсангүй.",
@@ -1760,8 +1762,7 @@
     "Import": "Импортлах",
     "ImportToFolder": "Хавтас руу импорт хийх",
     "ImportingArtifact": "Артефакт {{name}} ({{version}}) импортолж байна",
-    "ModelStoreProjectRequired": "Модель дэлгүүрийн тусгай төсөл шаардлагатай.",
-    "ModelStoreProjectRequiredDescription": "Одоогийн төслөө зөвхөн моделийн дэлгүүрт зориулсан төсөл болгох уу?",
+    "ModelStoreProject": "Загварын дэлгүүрийн төсөл",
     "NoArtifactsSelected": "Импортлоход артефакт сонгогдоогүй.",
     "OverwriteWarning": "Аль хэдийн адил нэртэй файл байгаа бол тэдгээр файлуудыг дээгүүр нь бичнэ.",
     "SuccessfullyImported": "Артефакт(ууд) амжилттай импортлагдлаа",

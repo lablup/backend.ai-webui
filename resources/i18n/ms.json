@@ -1040,6 +1040,7 @@
     "AutoScaling": "Penskalaan Automatik",
     "AutoScalingRules": "Peraturan penskalaan automatik",
     "BasicInformation": "Maklumat Asas",
+    "CannotResolveDeploymentProject": "Tidak dapat menentukan projek yang dimiliki oleh deployment ini, jadi penambahan semakan dinyahdayakan.",
     "ClusterMode": "Mod Kelompok",
     "ClusterModeTooltip": "Susun atur pengelompokan untuk sesi pengkomputeran replika, dalam format \"mod / saiz\". Tunggal bermaksud satu bekas; Berbilang nod mengagihkan beban kerja merentasi beberapa agen.",
     "ClusterSize": "Saiz Kelompok",
@@ -1233,8 +1234,7 @@
         "Revision": "Semak semula revisi deployment yang lalu dan gulung balik ke mana-mana versi sebelumnya.",
         "RevisionHistory": "Semak semula revisi deployment yang lalu dan gulung balik ke mana-mana versi sebelumnya."
       }
-    },
-    "CannotResolveDeploymentProject": "Tidak dapat menentukan projek yang dimiliki oleh deployment ini, jadi penambahan semakan dinyahdayakan."
+    }
   },
   "desktopNotification": {
     "NotSupported": "Penyemak imbas ini tidak menyokong pemberitahuan.",
@@ -1408,6 +1408,7 @@
   },
   "environment": {
     "Action": "Tindakan",
+    "AllProjects": "Semua projek",
     "AlreadyInstalledImage": "Imej sudah dipasang",
     "AppInfoDeleted": "Maklumat aplikasi berjaya dipadamkan.",
     "AppName": "Nama Aplikasi",
@@ -1425,6 +1426,7 @@
     "DescDownloadImage": "__NOT_TRANSLATED__",
     "DescImagePortsModified": "Port Imej berjaya diubah suai",
     "DescImageResourceModified": "Had sumber berjaya diubah suai",
+    "DescInstallRunsSession": "Pemasangan imej akan memasukkan sesi ringkas ke dalam baris gilir untuk memuat turun imej tersebut. Pilih projek tempat sesi dijalankan dan kumpulan sumber tempat imej akan dimuat turun.",
     "DescProblemOccurred": "Masalah berlaku semasa pemasangan",
     "DescServicePortModified": "Port perkhidmatan berjaya diubah suai",
     "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
@@ -1439,10 +1441,13 @@
     "Images": "Gambar",
     "Install": "Pasang",
     "InstallImage": "Pasang imej",
+    "InstallSessionProject": "Projek Sesi Pemasangan",
+    "InstallSessionProjectTooltip": "Sesi pemasangan dicipta dalam projek ini sebagai sesi anda sendiri, jadi hanya projek yang anda sertai disenaraikan.",
+    "InstallTargetResourceGroup": "Kumpulan Sumber Sasaran",
+    "InstallTargetResourceGroupTooltip": "Imej dimuat turun ke kumpulan sumber ini. Hanya kumpulan sumber yang boleh diakses daripada projek yang dipilih disenaraikan.",
     "Installed": "dipasang",
     "InstalledImagesAreExcluded": "Imej yang dipasang dikecualikan.",
     "Installing": "memasang",
-    "InstallingImage": "Memasang:",
     "Language": "Bahasa",
     "Local": "Lokal",
     "ManageApps": "Urus Aplikasi",
@@ -1472,7 +1477,6 @@
     "SuccessfullyCreated": "Berjaya dibuat",
     "SuccessfullyModified": "Berjaya diubah suai",
     "Tags": "Tag",
-    "TakesTime": ". Ia memerlukan masa jadi minum secawan kopi!",
     "Version": "Versi"
   },
   "error": {
@@ -1496,7 +1500,6 @@
     "LoginSucceededManagerNotResponding": "Log masuk berjaya tetapi pengurus tidak bertindak balas.",
     "MaximumVfolderCreation": "Anda tidak boleh membuat lebih banyak VFolder kerana dasar sumber",
     "NetworkConnectionFailed": "Sambungan rangkaian gagal. \nSemak status rangkaian.",
-    "NoCurrentProject": "Tiada projek semasa",
     "NotFoundBasePath": "Tidak dijumpai. \nSila periksa laluan asas anda.",
     "OnlyIntegersAreAllowed": "Hanya bilangan bulat yang dibenarkan.",
     "OnlyPositiveIntegersAreAllowed": "Hanya bilangan bulat positif yang dibenarkan.",
@@ -1750,7 +1753,6 @@
     "YouCanCreateNotebookCode": "Lencana ini membolehkan notebook anda dijalankan terus di Backend.AI. Salin kod untuk menggunakannya di mana-mana."
   },
   "importArtifactRevisionToFolderModal": {
-    "CurrentProjectChangedSuccessfully": "Projek semasa berjaya ditukar.",
     "FailedToImport": "Gagal mengimport artefak",
     "FailedToImportArtifact": "Gagal mengimport artifak {{ name }} ({{ version }})",
     "FailedToImportModelFromHuggingFace": "Gagal mengambil model daripada Hugging Face.",
@@ -1759,8 +1761,7 @@
     "Import": "Import",
     "ImportToFolder": "Import ke Folder",
     "ImportingArtifact": "Mengimport artifak {{name}} ({{version}})",
-    "ModelStoreProjectRequired": "Projek khusus untuk Model Store diperlukan.",
-    "ModelStoreProjectRequiredDescription": "Adakah anda ingin menukar projek semasa kepada projek khusus untuk Model Store?",
+    "ModelStoreProject": "Projek Kedai Model",
     "NoArtifactsSelected": "Tiada artifak dipilih untuk diimport",
     "OverwriteWarning": "Fail sedia ada akan ditimpa jika terdapat fail dengan nama yang sama.",
     "SuccessfullyImported": "Berjaya mengimport artifak.",

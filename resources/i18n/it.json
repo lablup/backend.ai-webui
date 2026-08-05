@@ -1040,6 +1040,7 @@
     "AutoScaling": "Scalabilità automatica",
     "AutoScalingRules": "Regole di scalabilità automatica",
     "BasicInformation": "Informazioni di base",
+    "CannotResolveDeploymentProject": "Impossibile determinare il progetto a cui appartiene questa distribuzione, pertanto l'aggiunta di una revisione è disabilitata.",
     "ClusterMode": "Modalità cluster",
     "ClusterModeTooltip": "Layout di clustering per la sessione di calcolo della replica, nel formato \"modalità / dimensione\". Singolo significa un container; Multi-nodo distribuisce il carico di lavoro su più agenti.",
     "ClusterSize": "Dimensione Cluster",
@@ -1233,8 +1234,7 @@
         "Revision": "Sfoglia le revisioni passate del deployment e ripristina qualsiasi versione precedente.",
         "RevisionHistory": "Sfoglia le revisioni passate del deployment e ripristina qualsiasi versione precedente."
       }
-    },
-    "CannotResolveDeploymentProject": "Impossibile determinare il progetto a cui appartiene questa distribuzione, pertanto l'aggiunta di una revisione è disabilitata."
+    }
   },
   "desktopNotification": {
     "NotSupported": "Questo browser non supporta le notifiche.",
@@ -1408,6 +1408,7 @@
   },
   "environment": {
     "Action": "Azione",
+    "AllProjects": "Tutti i progetti",
     "AlreadyInstalledImage": "Immagine già installata",
     "AppInfoDeleted": "Informazioni sull'app eliminate con successo.",
     "AppName": "Nome dell'applicazione",
@@ -1425,6 +1426,7 @@
     "DescDownloadImage": "__NOT_TRANSLATED__",
     "DescImagePortsModified": "Porte immagine modificate con successo",
     "DescImageResourceModified": "Limite delle risorse modificato con successo",
+    "DescInstallRunsSession": "L'installazione di un'immagine accoda una sessione temporanea che scarica l'immagine. Scegli il progetto in cui viene eseguita la sessione e il gruppo di risorse in cui scaricare l'immagine.",
     "DescProblemOccurred": "Si è verificato un problema durante l'installazione",
     "DescServicePortModified": "Porta di servizio modificata con successo",
     "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
@@ -1439,10 +1441,13 @@
     "Images": "immagini",
     "Install": "Installare",
     "InstallImage": "Installa immagine",
+    "InstallSessionProject": "Progetto della sessione di installazione",
+    "InstallSessionProjectTooltip": "La sessione di installazione viene creata in questo progetto come sessione personale, quindi vengono elencati solo i progetti di cui fai parte.",
+    "InstallTargetResourceGroup": "Gruppo di risorse di destinazione",
+    "InstallTargetResourceGroupTooltip": "L'immagine viene scaricata in questo gruppo di risorse. Vengono elencati solo i gruppi di risorse accessibili dal progetto selezionato.",
     "Installed": "installato",
     "InstalledImagesAreExcluded": "Le immagini installate sono escluse.",
     "Installing": "installazione",
-    "InstallingImage": "Installazione:",
     "Language": "linguaggio",
     "Local": "Locale",
     "ManageApps": "Gestisci app",
@@ -1472,7 +1477,6 @@
     "SuccessfullyCreated": "Creato con successo",
     "SuccessfullyModified": "Modificato con successo",
     "Tags": "Tag",
-    "TakesTime": ". Ci vuole tempo, quindi prendi una tazza di caffè!",
     "Version": "Versione"
   },
   "error": {
@@ -1496,7 +1500,6 @@
     "LoginSucceededManagerNotResponding": "Accesso riuscito ma il gestore non risponde.",
     "MaximumVfolderCreation": "Non è possibile creare altre VFolders a causa del criterio delle risorse.",
     "NetworkConnectionFailed": "Connessione di rete fallita. Controllare lo stato della rete.",
-    "NoCurrentProject": "Nessun progetto corrente",
     "NotFoundBasePath": "Non trovato. Controllare il percorso di base.",
     "OnlyIntegersAreAllowed": "Sono ammessi solo numeri interi.",
     "OnlyPositiveIntegersAreAllowed": "Sono consentiti solo numeri interi positivi.",
@@ -1750,7 +1753,6 @@
     "YouCanCreateNotebookCode": "Questo badge consente l'esecuzione diretta del tuo notebook su Backend.AI. Copia il codice per usarlo ovunque."
   },
   "importArtifactRevisionToFolderModal": {
-    "CurrentProjectChangedSuccessfully": "Progetto corrente modificato con successo.",
     "FailedToImport": "Impossibile importare l'artefatto(i)",
     "FailedToImportArtifact": "Impossibile importare l'artifact {{ name }} ({{ version }})",
     "FailedToImportModelFromHuggingFace": "Impossibile ottenere il modello da Hugging Face.",
@@ -1759,8 +1761,7 @@
     "Import": "Importa",
     "ImportToFolder": "Importa nella cartella",
     "ImportingArtifact": "Importazione dell'artefatto {{name}} ({{version}})",
-    "ModelStoreProjectRequired": "È necessario un progetto dedicato al Model Store.",
-    "ModelStoreProjectRequiredDescription": "Vuoi convertire il progetto corrente in un progetto dedicato al Model Store?",
+    "ModelStoreProject": "Progetto del negozio di modelli",
     "NoArtifactsSelected": "Nessun artefatto selezionato per l'importazione",
     "OverwriteWarning": "I file esistenti verranno sovrascritti se esistono file con lo stesso nome.",
     "SuccessfullyImported": "Artefatto(i) importato(i) con successo",

@@ -1040,6 +1040,7 @@
     "AutoScaling": "Skala Otomatis",
     "AutoScalingRules": "Aturan Skala Otomatis",
     "BasicInformation": "Informasi Dasar",
+    "CannotResolveDeploymentProject": "Tidak dapat menentukan proyek tempat deployment ini berada, sehingga penambahan revisi dinonaktifkan.",
     "ClusterMode": "Mode Klaster",
     "ClusterModeTooltip": "Tata letak pengelompokan untuk sesi komputasi replika, diformat sebagai \"mode / ukuran\". Tunggal berarti satu container; Multi-node mendistribusikan beban kerja ke beberapa agen.",
     "ClusterSize": "Ukuran Klaster",
@@ -1233,8 +1234,7 @@
         "Revision": "Jelajahi revisi deployment sebelumnya dan kembalikan ke revisi sebelumnya.",
         "RevisionHistory": "Jelajahi revisi deployment sebelumnya dan kembalikan ke revisi mana pun."
       }
-    },
-    "CannotResolveDeploymentProject": "Tidak dapat menentukan proyek tempat deployment ini berada, sehingga penambahan revisi dinonaktifkan."
+    }
   },
   "desktopNotification": {
     "NotSupported": "Browser ini tidak mendukung pemberitahuan.",
@@ -1408,6 +1408,7 @@
   },
   "environment": {
     "Action": "Tindakan",
+    "AllProjects": "Semua proyek",
     "AlreadyInstalledImage": "Gambar yang sudah terpasang",
     "AppInfoDeleted": "Informasi aplikasi berhasil dihapus.",
     "AppName": "Nama Aplikasi",
@@ -1425,6 +1426,7 @@
     "DescDownloadImage": "__NOT_TRANSLATED__",
     "DescImagePortsModified": "Port Gambar berhasil dimodifikasi",
     "DescImageResourceModified": "Batas sumber daya berhasil diubah",
+    "DescInstallRunsSession": "Menginstal image akan memasukkan sesi singkat ke antrean untuk mengunduh image tersebut. Pilih proyek tempat sesi dijalankan dan grup sumber daya tempat image akan diunduh.",
     "DescProblemOccurred": "Masalah terjadi selama instalasi",
     "DescServicePortModified": "Port layanan berhasil dimodifikasi",
     "DescSignificantDownloadTime": "__NOT_TRANSLATED__",
@@ -1439,10 +1441,13 @@
     "Images": "Image",
     "Install": "Instal",
     "InstallImage": "Instal gambar",
+    "InstallSessionProject": "Proyek Sesi Instalasi",
+    "InstallSessionProjectTooltip": "Sesi instalasi dibuat di proyek ini sebagai sesi Anda sendiri, sehingga hanya proyek yang Anda ikuti yang ditampilkan.",
+    "InstallTargetResourceGroup": "Grup Sumber Daya Tujuan",
+    "InstallTargetResourceGroupTooltip": "Image diunduh ke grup sumber daya ini. Hanya grup sumber daya yang dapat diakses dari proyek yang dipilih yang ditampilkan.",
     "Installed": "Terinstal",
     "InstalledImagesAreExcluded": "Gambar yang diinstal tidak termasuk.",
     "Installing": "menginstal",
-    "InstallingImage": "Menginstal: ",
     "Language": "Bahasa",
     "Local": "Lokal",
     "ManageApps": "Kelola Aplikasi",
@@ -1473,7 +1478,6 @@
     "SuccessfullyCreated": "Berhasil dibuat",
     "SuccessfullyModified": "Berhasil dimodifikasi",
     "Tags": "Tag",
-    "TakesTime": ". Butuh waktu jadi minumlah secangkir kopi!",
     "Version": "Versi"
   },
   "error": {
@@ -1497,7 +1501,6 @@
     "LoginSucceededManagerNotResponding": "Login berhasil tetapi pengelola tidak merespons.",
     "MaximumVfolderCreation": "Anda tidak dapat membuat lebih banyak VFolder karena kebijakan sumber daya",
     "NetworkConnectionFailed": "Koneksi jaringan gagal. Periksa status jaringan.",
-    "NoCurrentProject": "Tidak ada proyek saat ini",
     "NotFoundBasePath": "Tidak ditemukan. Silakan periksa Path dasar Anda.",
     "OnlyIntegersAreAllowed": "Hanya bilangan bulat yang diizinkan.",
     "OnlyPositiveIntegersAreAllowed": "Hanya bilangan bulat positif yang diizinkan.",
@@ -1753,7 +1756,6 @@
     "YouCanCreateNotebookCode": "Lencana ini memungkinkan eksekusi langsung notebook Anda di Backend.AI. Salin kode ini untuk menggunakannya di mana pun."
   },
   "importArtifactRevisionToFolderModal": {
-    "CurrentProjectChangedSuccessfully": "Proyek saat ini berhasil diubah.",
     "FailedToImport": "Gagal mengimpor artefak",
     "FailedToImportArtifact": "Gagal mengimpor artefak {{ name }} ({{ version }})",
     "FailedToImportModelFromHuggingFace": "Gagal mengambil model dari Hugging Face.",
@@ -1762,8 +1764,7 @@
     "Import": "Impor",
     "ImportToFolder": "Impor ke Folder",
     "ImportingArtifact": "Mengimpor artefak {{name}} ({{version}})",
-    "ModelStoreProjectRequired": "Diperlukan proyek khusus untuk Model Store",
-    "ModelStoreProjectRequiredDescription": "Apakah Anda ingin mengubah proyek saat ini menjadi proyek khusus Model Store?",
+    "ModelStoreProject": "Proyek Toko Model",
     "NoArtifactsSelected": "Tidak ada artefak yang dipilih untuk diimpor",
     "OverwriteWarning": "File yang ada akan ditimpa jika terdapat file dengan nama yang sama.",
     "SuccessfullyImported": "Berhasil mengimpor artefak",
