@@ -214,24 +214,23 @@ interface ProjectPathOptions {
   scope?: RouteScope;
   /**
    * Build the link for this project instead of the ambient active one
-   * (ADR-0001). Components that took an explicit `project` prop must pass it
-   * here: since FR-3055 the `:projectName` segment owns the current project,
-   * so a link built from the ambient name would land the target page in a
-   * different project than the component was told to act on.
+   * (ADR-0001).
+   *
+   * Replaces the project NAME only — the scope stays ambient, and `buildPath`
+   * ignores this entirely on `admin` scope. Callers that can render outside
+   * `project` scope must pass `scope: 'project'` too, or they build a path
+   * into a subtree where the feature has no route.
    */
   projectName?: string;
 }
 
 /**
- * Returns a link builder bound to the current scope / active project. Pass an
- * explicit `scope` to override (e.g. to build an `admin` link from a project
- * page), or an explicit `projectName` to build the link for a project other
- * than the ambient one.
+ * Returns a link builder bound to the current scope / active project.
  *
  *   const buildLink = useProjectPath();
  *   buildLink('session');                          // current scope + project
  *   buildLink('users', { scope: 'admin' });        // /admin/users
- *   buildLink('session', { projectName: p.name }); // explicit project
+ *   buildLink('session/start', { scope: 'project', projectName: p.name });
  */
 export const useProjectPath = (): ((
   key: FeatureKey,
