@@ -140,7 +140,7 @@
 2. `/admin/deployments/deployment-presets/{presetId}/edit` 주소의 프리셋 작성 화면이 현재 값으로 채워진 상태로 열립니다. 단계와 섹션 구성은 생성 흐름과 동일하며, vLLM 및 SGLang 런타임의 **런타임 파라미터** 섹션도 포함됩니다.
 3. 필요한 값을 수정한 뒤 **검토** 단계에서 요약 내용(**런타임** 항목 포함)을 확인하고 `저장`을 클릭하여 변경 사항을 반영합니다.
 
-![](../images/deployment_preset_edit_modal.png)
+![](../images/deployment_preset_edit_wizard.png)
 
 프리셋을 수정하면 **이후** 생성되는 배포의 기본값만 변경됩니다. 이미 해당 프리셋으로 생성된 기존 배포에는 영향을 주지 않습니다.
 

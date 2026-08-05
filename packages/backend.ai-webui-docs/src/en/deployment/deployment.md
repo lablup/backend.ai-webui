@@ -714,14 +714,14 @@ Access tokens are managed in the **Access Tokens** card at the bottom of the Dep
 2. Choose an **Expiration** for the token:
    * `7 Days`, `30 Days`, or `90 Days`: The token expires that many days from now. `7 Days` is the default.
    * **Custom Expiration**: Reveals a date-and-time picker so you can set the exact expiry. The chosen moment must be in the future.
-   * **No Expiration**: The token never expires.
+   * **No Expiration**: Sets the expiration to a far-future date (`December 31, 2099`), so the token effectively never expires. This date — not a literal *No Expiration* label — is what appears afterward in the token dialog, the access token list, and the Chat token selector.
 3. Click `Create Access Token` to issue it.
 
 ![](../images/token_generation_dialog.png)
 
    The `Create Access Token` button is disabled until the manager has issued a network endpoint for the deployment. While it is disabled, its tooltip reads *"The network endpoint has not been issued yet."* It is also disabled for a deployment you do not own and for a deployment that is being deleted.
 
-After the token is issued, a **Token** dialog shows the token value once, together with a copy button and the expiration you chose (or *No Expiration*). Copy the token from this dialog, or from the table afterwards.
+After the token is issued, a **Token** dialog shows the token value once, together with a copy button and the expiration date you chose. Copy the token from this dialog, or from the table afterwards.
 
 #### Access token list
 
@@ -729,7 +729,7 @@ The card lists every access token issued for this deployment, newest first:
 
 - **Token**: The token value, shown truncated with a copy button. A delete icon in the same cell removes the token.
 - **Created At**: When the token was issued.
-- **Expiration**: When the token expires, or *No Expiration*.
+- **Expiration**: When the token expires. Tokens created with **No Expiration** show `December 31, 2099`.
 
 ![](../images/generated_token_copy.png)
 
@@ -791,8 +791,8 @@ For more information about the chat feature, please refer to the [Chat page](#ch
 
 When the Chat page is talking to a Backend.AI deployment, the token field is a selector listing that deployment's access tokens rather than a plain text box:
 
-- Every option shows the **last six characters** of the token as a code chip, plus its expiry date (for example `~ Aug 26, 2026`) or *No Expiration*. All tokens begin with the same JWT header, so the tail is the part that actually tells them apart. Hover an option to see the full issued → expiry timestamps.
-- **Expired tokens are hidden.** Only tokens that are still valid — including tokens issued with **No Expiration** — appear in the list.
+- Every option shows the **last six characters** of the token as a code chip, plus its expiry date (for example `~ Aug 26, 2026`, or `~ Dec 31, 2099` for tokens created with **No Expiration**). All tokens begin with the same JWT header, so the tail is the part that actually tells them apart. Hover an option to see the full issued → expiry timestamps.
+- **Expired tokens are hidden.** Only tokens that are still valid appear in the list.
 - When the field is empty, the **most recently created valid token** is selected for you. If you clear the selection deliberately, it is not re-applied.
 - The gear icon next to the field (**Access Token Settings**) opens the deployment's Access Tokens section, so you can issue a new token without losing your place. The list reloads when you come back, so a token you just created is immediately selectable.
 

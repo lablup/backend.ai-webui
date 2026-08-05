@@ -145,7 +145,7 @@ The **Enable Health Check** toggle also applies to the vLLM/SGLang Advanced Mode
 2. The preset form opens at `/admin/deployments/deployment-presets/{presetId}/edit` with the preset's current values pre-filled. The steps and sections are identical to the create flow, including the **Runtime Parameters** section for vLLM and SGLang runtimes.
 3. Adjust the fields as needed. On the **Review** step, confirm the summary — including the **Runtime** row — and click `Save` to store your changes.
 
-![](../images/deployment_preset_edit_modal.png)
+![](../images/deployment_preset_edit_wizard.png)
 
 Editing a preset only changes the defaults for **future** deployments. Existing deployments that were already created from this preset are not modified.
 

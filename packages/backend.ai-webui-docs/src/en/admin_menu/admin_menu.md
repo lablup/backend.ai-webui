@@ -621,7 +621,7 @@ If a required field is missing or invalid, the **Create Preset** button stays di
 2. The *Edit Preset* dialog opens with the preset's current values pre-filled. The available sections are identical to the *Create Preset* dialog.
 3. Adjust the fields as needed, then click **Edit Preset** to save your changes.
 
-![](../images/deployment_preset_edit_modal.png)
+![](../images/deployment_preset_edit_wizard.png)
 
 Editing a preset only changes the defaults for **future** deployments. Existing deployments that were already created from this preset are not modified.
 
