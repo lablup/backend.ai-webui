@@ -64,7 +64,7 @@ A warning notice sits under the **Resource Group** field from the moment the mod
 
 Click `Create` to create the deployment. You are then taken to the Deployment Detail Page, where the **No Current Revision** warning is shown until you add the first revision.
 
-To change deployment-level settings (name, desired replicas, or tags) after creation, click the **Edit** button on the Service Info card. The **Edit Deployment** modal opens with the current values pre-filled; its submit button reads `Save`. The **Resource Group** field there is read-only and repeats the same warning, and **Open to Public** is disabled.
+To change deployment-level settings (name, desired replicas, or tags) after creation, click the **Edit** button on the Service Info card, update the values in the **Edit Deployment** modal, and save your changes. The resource group and **Open to Public** setting cannot be changed here — both are fixed at creation, as described above.
 
 <a id="add-revision"></a>
 
