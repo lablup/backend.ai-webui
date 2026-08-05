@@ -15,7 +15,7 @@ import BAIVFolderPathPicker from './BAIVFolderPathPicker';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { App, Button, Form, Typography } from 'antd';
-import { Suspense, useState } from 'react';
+import { useState } from 'react';
 import { RelayEnvironmentProvider, useQueryLoader } from 'react-relay';
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
 
@@ -255,7 +255,10 @@ const MockProviders: React.FC<{ children: React.ReactNode }> = ({
       <QueryClientProvider client={queryClient}>
         <App>
           <BAIClientContext.Provider value={clientPromise}>
-            <Suspense fallback="Loading...">{children}</Suspense>
+            {/* No Suspense boundary here on purpose: BAIVFolderPathPicker and
+                BAIDirectoryPickerModal are self-contained — the modal wraps its
+                own suspending content — so a host never needs to add one. */}
+            {children}
           </BAIClientContext.Provider>
         </App>
       </QueryClientProvider>
