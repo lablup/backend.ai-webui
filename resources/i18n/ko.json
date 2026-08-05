@@ -1232,7 +1232,8 @@
         "Revision": "현재 적용된 리비전과 설정을 확인합니다.",
         "RevisionHistory": "현재 적용된 리비전과 설정을 확인합니다."
       }
-    }
+    },
+    "CannotResolveDeploymentProject": "이 배포가 속한 프로젝트를 확인할 수 없어 리비전 추가가 비활성화되었습니다."
   },
   "desktopNotification": {
     "NotSupported": "현재 브라우저에서는 알림 기능을 지원하지 않습니다. ",

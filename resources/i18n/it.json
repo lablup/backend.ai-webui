@@ -1232,7 +1232,8 @@
         "Revision": "Sfoglia le revisioni passate del deployment e ripristina qualsiasi versione precedente.",
         "RevisionHistory": "Sfoglia le revisioni passate del deployment e ripristina qualsiasi versione precedente."
       }
-    }
+    },
+    "CannotResolveDeploymentProject": "Impossibile determinare il progetto a cui appartiene questa distribuzione, pertanto l'aggiunta di una revisione è disabilitata."
   },
   "desktopNotification": {
     "NotSupported": "Questo browser non supporta le notifiche.",

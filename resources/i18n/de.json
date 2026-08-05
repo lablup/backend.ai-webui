@@ -1232,7 +1232,8 @@
         "Revision": "Sehen Sie sich vergangene Deployment-Revisionen an und führen Sie einen Rollback auf eine beliebige frühere Version durch.",
         "RevisionHistory": "Durchsuchen Sie vergangene Deployment-Revisionen und führen Sie ein Rollback auf eine beliebige frühere Version durch."
       }
-    }
+    },
+    "CannotResolveDeploymentProject": "Das Projekt, zu dem diese Bereitstellung gehört, kann nicht ermittelt werden. Das Hinzufügen einer Revision ist daher deaktiviert."
   },
   "desktopNotification": {
     "NotSupported": "Dieser Browser unterstützt keine Benachrichtigungen.",

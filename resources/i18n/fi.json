@@ -1232,7 +1232,8 @@
         "Revision": "Selaa aiempia käyttöönottorevisioita ja palauta mikä tahansa aiempi versio.",
         "RevisionHistory": "Selaa aiempia käyttöönottorevisioita ja palauta mikä tahansa niistä."
       }
-    }
+    },
+    "CannotResolveDeploymentProject": "Tämän käyttöönoton projektia ei voida määrittää, joten revision lisääminen on poistettu käytöstä."
   },
   "desktopNotification": {
     "NotSupported": "Tämä selain ei tue ilmoituksia.",

@@ -1232,7 +1232,8 @@
         "Revision": "Przeglądaj poprzednie wersje wdrożenia i wróć do dowolnej z nich.",
         "RevisionHistory": "Przeglądaj poprzednie wersje wdrożenia i wróć do dowolnej z nich."
       }
-    }
+    },
+    "CannotResolveDeploymentProject": "Nie można ustalić projektu, do którego należy to wdrożenie, dlatego dodawanie rewizji jest wyłączone."
   },
   "desktopNotification": {
     "NotSupported": "Ta przeglądarka nie obsługuje powiadomień.",

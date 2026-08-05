@@ -1232,7 +1232,8 @@
         "Revision": "Jelajahi revisi deployment sebelumnya dan kembalikan ke revisi sebelumnya.",
         "RevisionHistory": "Jelajahi revisi deployment sebelumnya dan kembalikan ke revisi mana pun."
       }
-    }
+    },
+    "CannotResolveDeploymentProject": "Tidak dapat menentukan proyek tempat deployment ini berada, sehingga penambahan revisi dinonaktifkan."
   },
   "desktopNotification": {
     "NotSupported": "Browser ini tidak mendukung pemberitahuan.",
