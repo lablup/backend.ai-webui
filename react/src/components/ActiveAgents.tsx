@@ -55,7 +55,6 @@ const ActiveAgents: React.FC<ActiveAgentsProps> = ({
         }
       />
 
-      {/* Scrollable Content Section */}
       <BAIFlex
         direction="column"
         align="stretch"
