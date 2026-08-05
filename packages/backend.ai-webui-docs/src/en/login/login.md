@@ -52,34 +52,6 @@ screen. The first field is automatically focused when the login dialog opens —
 email/username field in `Session` mode, or the **API Key** field in `API` mode.
 :::
 
-<a id="login-page-language"></a>
-
-### Login page language
-
-The login screen is displayed in your browser's language. You do not have to log
-in first or change any setting: on your very first visit — and in a private or
-incognito window, where nothing has been saved yet — the WebUI reads the language
-your browser reports and renders the login dialog, its field placeholders, and
-its buttons in that language.
-
-The language is chosen in the following order:
-
-1. The language you selected in User Settings, if you have selected one before.
-   This choice is remembered in your browser and is applied to the login screen
-   as well, not only after you log in.
-2. Your browser's full locale, when the WebUI ships a translation for it (for
-   example, `pt-BR`).
-3. The base part of your browser's locale, when the full locale has no exact
-   match (for example, `de` for a browser set to `de-AT`).
-4. English, when none of the above matches a language the WebUI ships.
-
-:::note
-To choose the interface language yourself, log in and open the
-[General](#general-tab) tab of User Settings. Your selection replaces browser
-detection from then on, on the login screen as well as inside the application.
-:::
-
-
 <a id="connection-mode"></a>
 
 ### Connection mode
@@ -219,22 +191,6 @@ your system administrator.
 
 ## Sidebar menus
 
-After you log in, the sidebar on the left is your main navigation. You can change
-its width, and the entries it lists depend on the role you hold in the project
-that is currently open.
-
-<a id="resizing-the-sidebar"></a>
-
-### Resizing the sidebar
-
-Change the size of the sidebar via the buttons on the right side of the sidebar.
-Click it to significantly reduce the width of the sidebar, giving you a wider view of its contents.
-Clicking it again will return the sidebar to its original width.
-You can also use the shortcut key ( `[` ) to toggle between the narrow and original sidebar widths.
-
-
-![](../images/menu_collapse.png)
-
 <a id="menus-available-to-your-role"></a>
 
 ### Menus available to your role
@@ -243,8 +199,8 @@ The sidebar lists only the pages you are allowed to open. Every user sees the
 general menu groups; the **Administration** groups appear in addition for
 superadmins and domain admins.
 
-Project-admin entries are evaluated against **the project that is currently
-open**, not against your account as a whole. The project you are working in is
+Project-admin entries are evaluated against **the currently selected project**,
+not against your account as a whole. The project you are working in is
 part of the page address, so switching projects with the project selector in the
 header re-evaluates your role: the same account can be a project admin in one
 project and a regular user in another, and the sidebar gains or loses the
@@ -255,6 +211,16 @@ that project as soon as the page loads.
 For the entries a project admin receives and what each of them shows, see
 [The Project Admin sidebar](#the-project-admin-sidebar) in the Project Admin
 Features chapter.
+
+### Resizing the sidebar
+
+Change the size of the sidebar via the buttons on the right side of the sidebar.
+Click it to significantly reduce the width of the sidebar, giving you a wider view of its contents.
+Clicking it again will return the sidebar to its original width.
+You can also use the shortcut key ( `[` ) to toggle between the narrow and original sidebar widths.
+
+
+![](../images/menu_collapse.png)
 
 <a id="pages-you-cannot-open"></a>
 
