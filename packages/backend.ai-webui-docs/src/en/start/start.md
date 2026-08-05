@@ -146,7 +146,7 @@ Several models can therefore share a single model folder.
 
 :::warning
 The token is passed to the download session as the `HF_TOKEN` environment
-variable and can be viewed by administrators. Use a read-only token.
+variable. Use a read-only token.
 :::
 
 :::note
