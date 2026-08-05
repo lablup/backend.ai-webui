@@ -193,6 +193,15 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
     useToggle();
   const [isPendingRefreshTransition, startRefreshTransition] = useTransition();
 
+  // Selected rows belong to one scope. Reset during render rather than
+  // remounting on a `key`, which would discard the deferred scope transition
+  // below (it renders the previous list while the new scope loads).
+  const [selectedRowsScopeId, setSelectedRowsScopeId] = useState(scopeId);
+  if (selectedRowsScopeId !== scopeId) {
+    setSelectedRowsScopeId(scopeId);
+    setSelectedRows([]);
+  }
+
   const {
     baiPaginationOption,
     tablePaginationOption,
