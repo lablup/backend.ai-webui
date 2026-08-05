@@ -39,11 +39,7 @@ session is created. In that case, it must be downloaded again.
 ![](../images/sftp_app.png)
 
 Always take the connection address from the **Host** and **Port** fields of this
-dialog. The values depend on how you use Backend.AI: the WebUI desktop app
-relays the connection through a proxy running on your own machine, so the host
-is a local address, while a browser connects to the App Proxy of the resource
-group that runs the session, so the host is that proxy's address. The dialog
-never shows a placeholder address. If the connection information cannot be
+dialog. The values depend on how you use Backend.AI. If the connection information cannot be
 resolved, the dialog does not open at all and an error notification explains the
 reason — see [Connection Errors](#connection-errors).
 
@@ -55,9 +51,8 @@ connection address. The user inside the compute session is
 usually set to `work`, but if your session uses other account, the `work`
 part in `work@<host>` should be changed to the actual session account. If
 you run the command correctly, you can see that SSH connection is made to the
-compute session and you are welcomed by the container's shell environment. The
-transcript below was taken from the WebUI desktop app, where the host is a local
-address; substitute the host and port that your own dialog shows.
+compute session and you are welcomed by the container's shell environment. Replace the
+host and port in the transcript below with the values shown in your own dialog.
 
 ```shellsession
 $ ssh \
@@ -121,20 +116,11 @@ part of the path failed:
   but it does not offer the direct TCP connection that SSH/SFTP requires.
   Web-based apps such as Jupyter Notebook and Terminal still work on the same
   session. Ask your administrator to enable a TCP-capable App Proxy for the
-  resource group. In the meantime, you can reach the session over SSH with the
-  [Backend.AI client package](#establish-ssh-connection-with-backendai-client-package).
+  resource group.
 - **The app cannot be launched due to an invalid URL.**: The App Proxy returned
   an address that the WebUI cannot interpret. Click the SSH/SFTP icon again, and
   if the message persists, report it to your administrator together with the
   name of the session's resource group.
-
-Because the dialog opens only after a real address has been resolved, the host
-and port it shows are always values you can connect to. When no dialog appears,
-resolve the reported error instead of guessing a connection address.
-
-For problems that occur after a connection has been established — such as a
-transfer that stops when the WebUI app is closed — refer to the SFTP
-disconnection entry in the troubleshooting chapter.
 
 <a id="for-windows-filezilla"></a>
 
@@ -199,16 +185,14 @@ Link: https://aka.ms/vscode-remote/download/extension
 After installing the extension, you should configure the SSH connection for the
 compute session. In the VSCode Remote Connection dialog, click the copy icon button
 to copy the Visual Studio Code remote SSH password. Also, remember the host and
-the port number shown in the dialog. As with the SSH/SFTP dialog, the dialog
-opens only when the connection information has been resolved; if it does not
-open, refer to [Connection Errors](#connection-errors).
+the port number shown in the dialog.
 
 ![](../images/download_ssh_key.png)
 
 Then, set the SSH config file. Edit the `~/.ssh/config` file (for Linux/Mac)
 or `C:\Users\[user name]\.ssh\config` (for Windows) and add the following block.
 Enter the host and the port number from the dialog in the `Hostname` and `Port`
-lines — the host is a local address only when you use the WebUI desktop app.
+lines.
 For convenience, we set the hostname to `bai-vscode`. It can be changed to any alias.
 
 ```
