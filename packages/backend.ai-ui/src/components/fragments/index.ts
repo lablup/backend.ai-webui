@@ -95,6 +95,7 @@ export type {
   BAIVFolderSelectProps,
   VFolderNode,
   BAIVFolderSelectRef,
+  BAIVFolderPermission,
 } from './BAIVFolderSelect';
 export { default as BAIVFolderMountConfigInput } from './BAIVFolderMountConfigInput';
 export {
@@ -171,9 +172,18 @@ export type {
 export { default as BAIRouteNodes } from './BAIRouteNodes';
 export type { BAIRouteNodesProps, RouteNodeInList } from './BAIRouteNodes';
 export {
+  default as BAIRuntimeVariantPresetTable,
+  availablePresetSorterValues,
+} from './BAIRuntimeVariantPresetTable';
+export type {
+  BAIRuntimeVariantPresetTableProps,
+  RuntimeVariantPresetNodeInList,
+} from './BAIRuntimeVariantPresetTable';
+export { default as BAIRuntimeVariantPresetSettingModal } from './BAIRuntimeVariantPresetSettingModal';
+export type { BAIRuntimeVariantPresetSettingModalProps } from './BAIRuntimeVariantPresetSettingModal';
+export {
   default as BAIModelDeploymentNodes,
   availableDeploymentSorterValues,
-  parseDeploymentOrder,
 } from './BAIModelDeploymentNodes';
 export type {
   BAIModelDeploymentNodesProps,

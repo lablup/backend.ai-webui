@@ -9,12 +9,12 @@ import { useTranslation } from 'react-i18next';
 
 interface ModelSelectProps extends BAISelectProps {
   models?: Array<ChatModel>;
-  endpointName?: string | null;
+  deploymentName?: string | null;
 }
 
 const ModelSelect: React.FC<ModelSelectProps> = ({
   models,
-  endpointName,
+  deploymentName,
   ...selectProps
 }) => {
   'use memo';
@@ -34,8 +34,8 @@ const ModelSelect: React.FC<ModelSelectProps> = ({
       }))}
       popupMatchSelectWidth={false}
       header={
-        endpointName
-          ? t('chatui.DeploymentModels', { name: endpointName })
+        deploymentName
+          ? t('chatui.DeploymentModels', { name: deploymentName })
           : undefined
       }
       {...selectProps}

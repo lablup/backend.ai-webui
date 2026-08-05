@@ -4,10 +4,12 @@
  */
 import { RoleDetailDrawerContentFragment$key } from '../__generated__/RoleDetailDrawerContentFragment.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
+import LegacyRolePermissionTab from './LegacyRolePermissionTab';
+import LegacyRoleScopeTab from './LegacyRoleScopeTab';
 import RoleAssignmentTab from './RoleAssignmentTab';
 import RolePermissionDetailTab from './RolePermissionDetailTab';
 import { Descriptions, Skeleton, Tabs, Tag } from 'antd';
-import { BAIAlert } from 'backend.ai-ui';
+import { toLocalId } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -25,7 +27,15 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
   const baiClient = useSuspendedBackendaiClient();
   // Auto-assign is only supported on managers >= 26.4.4.
   const supportsAutoAssign = baiClient.supports('role-auto-assign');
-  const [activeTab, setActiveTab] = useState('detailedPermissions');
+  // Managers >= 26.8.0 can filter `Role.scopes` by scope type, which the
+  // merged Detailed Permissions view depends on. Older managers get the
+  // legacy separate Scopes / Permissions tabs instead.
+  const supportsDetailedPermissions = baiClient.supports(
+    'role-mapped-scope-filter',
+  );
+  const [activeTab, setActiveTab] = useState(
+    supportsDetailedPermissions ? 'detailedPermissions' : 'scopes',
+  );
 
   const role = useFragment(
     graphql`
@@ -97,29 +107,44 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
         activeKey={activeTab}
         onChange={setActiveTab}
         items={[
-          {
-            key: 'detailedPermissions',
-            label: t('rbac.Permissions'),
-            children: (
-              <Suspense fallback={<Skeleton active />}>
-                <RolePermissionDetailTab roleNodeFrgmt={role} />
-              </Suspense>
-            ),
-          },
+          ...(supportsDetailedPermissions
+            ? [
+                {
+                  key: 'detailedPermissions',
+                  label: t('rbac.Permissions'),
+                  children: (
+                    <Suspense fallback={<Skeleton active />}>
+                      <RolePermissionDetailTab roleNodeFrgmt={role} />
+                    </Suspense>
+                  ),
+                },
+              ]
+            : [
+                {
+                  key: 'scopes',
+                  label: t('rbac.RoleScopes'),
+                  children: (
+                    <Suspense fallback={<Skeleton active />}>
+                      <LegacyRoleScopeTab roleId={toLocalId(role.id)} />
+                    </Suspense>
+                  ),
+                },
+                {
+                  key: 'permissions',
+                  label: t('rbac.Permissions'),
+                  children: (
+                    <Suspense fallback={<Skeleton active />}>
+                      <LegacyRolePermissionTab roleId={toLocalId(role.id)} />
+                    </Suspense>
+                  ),
+                },
+              ]),
           {
             key: 'assignments',
             label: t('rbac.RoleAssignments'),
             children: (
               <Suspense fallback={<Skeleton active />}>
-                {role.source === 'SYSTEM' ? (
-                  <BAIAlert
-                    type="warning"
-                    showIcon
-                    description={t('rbac.SystemRoleNoAssignments')}
-                  />
-                ) : (
-                  <RoleAssignmentTab roleNodeFrgmt={role} />
-                )}
+                <RoleAssignmentTab roleNodeFrgmt={role} />
               </Suspense>
             ),
           },

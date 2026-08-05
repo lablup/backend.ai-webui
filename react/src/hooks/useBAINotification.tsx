@@ -91,21 +91,11 @@ export interface NotificationState<T = any> extends Omit<
     steps: Array<{
       label: string;
       status:
-        | 'idle'
-        | 'pending'
-        | 'resolved'
-        | 'rejected'
-        | 'warned'
-        | 'cancelled';
+        'idle' | 'pending' | 'resolved' | 'rejected' | 'warned' | 'cancelled';
       progress?: number;
     }>;
     overallStatus:
-      | 'idle'
-      | 'running'
-      | 'completed'
-      | 'failed'
-      | 'warned'
-      | 'cancelled';
+      'idle' | 'running' | 'completed' | 'failed' | 'warned' | 'cancelled';
   };
 }
 
@@ -463,15 +453,28 @@ export const useSetBAINotification = () => {
    * Function to hide specific notification. It remains in the drawer.
    */
   const closeNotification = (key: React.Key) => {
+    // Since antd 6.5 (rc-notification 2.x), `notification.destroy(key)` no
+    // longer fires the notice's `onClose` callback, so the state must be
+    // marked closed here. Otherwise the reactive opener re-shows this
+    // notification on the next state change (zombie re-open).
+    _.remove(_activeNotificationKeys, (k) => k === key);
     app.notification.destroy(key);
+    setNotifications((prevList) => {
+      const idx = prevList.findIndex((n) => n.key === key);
+      if (idx < 0 || prevList[idx].open === false) return prevList;
+      const newList = [...prevList];
+      newList[idx] = { ...newList[idx], open: false };
+      return newList;
+    });
   };
 
   /**
    * Function to remove specific notification from the list and hide it.
    */
   const clearNotification = (key: React.Key) => {
+    _.remove(_activeNotificationKeys, (k) => k === key);
+    app.notification.destroy(key);
     setNotifications((prev) => prev.filter((n) => n.key !== key));
-    closeNotification(key);
   };
 
   /**

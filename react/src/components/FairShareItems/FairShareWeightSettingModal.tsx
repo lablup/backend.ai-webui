@@ -541,6 +541,9 @@ const FairShareWeightSettingModal: React.FC<
         {!isBulkEdit && userFairShares?.[0] && (
           <UserResourceGroupAlert
             isModalOpen={modalProps?.open ?? false}
+            resourceGroupName={INITIAL_FORM_VALUES.resourceGroupName}
+            domainName={INITIAL_FORM_VALUES.domainName}
+            projectId={INITIAL_FORM_VALUES.projectId}
             style={{ marginBottom: token.marginMD }}
           />
         )}

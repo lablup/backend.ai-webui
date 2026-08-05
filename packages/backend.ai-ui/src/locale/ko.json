@@ -34,7 +34,7 @@
     "SelectModelService": "모델 서비스를 선택해주세요"
   },
   "comp:BAIAdminResourceGroupSelect": {
-    "PlaceHolder": "리소스 그룹을 선택해주세요"
+    "PlaceHolder": "자원 그룹을 선택해주세요"
   },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "세션을 선택해주세요"
@@ -254,7 +254,7 @@
     "ReplicaSummary": "복제본 수",
     "ReplicaSummaryTooltip": "원하는 복제본 수 대비 실행 중인 복제본 수입니다.",
     "Replicas": "복제본 수",
-    "ResourceGroup": "리소스 그룹",
+    "ResourceGroup": "자원 그룹",
     "RevisionNumber": "리비전",
     "RevisionNumberTooltip": "배포의 현재 리비전 번호입니다.",
     "StrategyType": "전략",
@@ -271,7 +271,7 @@
   },
   "comp:BAIProjectSettingModal": {
     "AllowedFolderHosts": "허용된 호스트",
-    "AllowedResourceGroups": "허용된 리소스 그룹",
+    "AllowedResourceGroups": "허용된 자원 그룹",
     "ContainerMustBeSpecified": " 사용자가 커밋한 컨테이너 이미지를 저장하려면 컨테이너 레지스트리를 지정해야 합니다.",
     "ContainerRegistryForImageCommit": "이미지 커밋용 컨테이너 레지스트리",
     "CreateProject": "프로젝트 생성",
@@ -325,7 +325,7 @@
     "YouAreAboutToCancelThisVersion": "다음의 버전을 취소하려고 합니다"
   },
   "comp:BAIResourceGroupSelect": {
-    "SelectResourceGroup": "리소스 그룹을 선택해주세요"
+    "SelectResourceGroup": "자원 그룹을 선택해주세요"
   },
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "할당 자원 / 요청 자원"
@@ -354,6 +354,62 @@
     "Result": "결과",
     "To": "이후 상태",
     "UpdatedAt": "수정일"
+  },
+  "comp:BAIRuntimeVariantPresetSettingModal": {
+    "CreatePreset": "프리셋 생성",
+    "DefaultValue": "기본값",
+    "DefaultValuePlaceholder": "예: 1",
+    "Description": "설명",
+    "DescriptionPlaceholder": "이 매개변수가 제어하는 항목과 인퍼런스 동작에 미치는 영향을 설명하세요.",
+    "EditPreset": "프리셋 편집",
+    "Key": "키",
+    "KeyPlaceholder": "예: TENSOR_PARALLEL_SIZE",
+    "KeyRequired": "키는 필수입니다.",
+    "Name": "이름",
+    "NamePlaceholder": "예: Tensor Parallel Size",
+    "NameRequired": "이름은 필수입니다.",
+    "PresetCreated": "런타임 프리셋이 생성되었습니다.",
+    "PresetTarget": "프리셋 대상",
+    "PresetTargetArgs": "커맨드라인 인자",
+    "PresetTargetEnv": "환경 변수",
+    "PresetTargetRequired": "프리셋 대상은 필수입니다.",
+    "PresetUpdated": "런타임 프리셋이 업데이트되었습니다.",
+    "Rank": "순위",
+    "RankTooltip": "같은 런타임의 프리셋 간 표시 순서입니다. 값이 낮을수록 먼저 표시됩니다.",
+    "Required": "필수",
+    "RequiredTooltip": "배포 리비전을 생성할 때 이 프리셋 매개변수를 반드시 입력해야 하는지 여부입니다.",
+    "RuntimeVariant": "런타임",
+    "RuntimeVariantRequired": "런타임은 필수입니다.",
+    "ValueType": "값 유형",
+    "ValueTypeBool": "bool 자료형(Boolean)",
+    "ValueTypeFlag": "플래그",
+    "ValueTypeFloat": "실수",
+    "ValueTypeInt": "정수",
+    "ValueTypeRequired": "값 유형은 필수입니다.",
+    "ValueTypeStr": "문자열"
+  },
+  "comp:BAIRuntimeVariantPresetTable": {
+    "CreatedAt": "생성일",
+    "DefaultValue": "기본값",
+    "Description": "설명",
+    "Key": "키",
+    "ModifiedAt": "수정일",
+    "Name": "이름",
+    "Optional": "선택 사항",
+    "PresetTarget": "프리셋 대상",
+    "PresetTargetArgs": "커맨드라인 인자",
+    "PresetTargetEnv": "환경 변수",
+    "Rank": "순위",
+    "RankTooltip": "같은 런타임의 프리셋 간 표시 순서입니다. 값이 낮을수록 먼저 표시됩니다.",
+    "Required": "필수",
+    "RuntimeVariant": "런타임",
+    "RuntimeVariantId": "런타임 ID",
+    "ValueType": "값 유형",
+    "ValueTypeBool": "bool 자료형(Boolean)",
+    "ValueTypeFlag": "플래그",
+    "ValueTypeFloat": "실수",
+    "ValueTypeInt": "정수",
+    "ValueTypeStr": "문자열"
   },
   "comp:BAIRuntimeVariantSelect": {
     "SelectRuntimeVariant": "런타임 변형을 선택해주세요"
@@ -501,7 +557,7 @@
     "Memory": "메모리",
     "OwnerEmail": "소유자 이메일",
     "Project": "프로젝트",
-    "ResourceGroup": "리소스 그룹",
+    "ResourceGroup": "자원 그룹",
     "SessionId": "세션 ID",
     "SessionName": "세션 이름",
     "SessionType": "세션 유형",

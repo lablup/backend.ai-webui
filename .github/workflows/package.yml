@@ -40,8 +40,14 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     steps:
+      # Full history: `make versiontag` derives BUILD_NUMBER from
+      # `git rev-list --count`, which returns 1 on the default shallow
+      # (fetch-depth: 1) checkout. Only this job runs versiontag — the desktop
+      # jobs restore build/web/ from the web-build artifact.
       - name: Check out Git repository
         uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       - uses: pnpm/action-setup@v5
         name: Install pnpm

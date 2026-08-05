@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import EndpointTokenSelect from './EndpointTokenSelect';
+import DeploymentTokenSelect from './DeploymentTokenSelect';
 import { ReloadOutlined } from '@ant-design/icons';
 import useResizeObserver from '@react-hook/resize-observer';
 import { Alert, Button, Form, Input, theme } from 'antd';
@@ -18,20 +18,20 @@ export type CustomModelFormValues = {
 };
 
 type CustomModelFormProps = {
-  endpointUrl?: string;
+  deploymentUrl?: string;
   basePath?: string;
   token?: string;
-  endpointId?: string | null;
+  deploymentId?: string | null;
   loading: boolean;
   hasNoDesiredReplicas?: boolean;
   onSubmit?: (formData: CustomModelFormValues) => void;
 };
 
 const CustomModelForm: React.FC<CustomModelFormProps> = ({
-  endpointUrl,
+  deploymentUrl,
   basePath,
   token,
-  endpointId,
+  deploymentId,
   loading,
   hasNoDesiredReplicas,
   onSubmit,
@@ -65,7 +65,7 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
         layout="horizontal"
         size="small"
         style={{ flex: 1 }}
-        key={endpointUrl}
+        key={deploymentUrl}
         initialValues={{
           basePath: basePath,
           token: token,
@@ -88,15 +88,15 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
         <Form.Item label={t('modelService.BasePath')} name="basePath">
           <Input
             placeholder="v1"
-            prefix={shrinkControlSize ? undefined : endpointUrl}
+            prefix={shrinkControlSize ? undefined : deploymentUrl}
             disabled={loading}
           />
         </Form.Item>
         <Form.Item label={t('modelService.Token')} name="token">
-          <EndpointTokenSelect
+          <DeploymentTokenSelect
             loading={loading}
             disabled={loading}
-            endpointId={endpointId}
+            deploymentId={deploymentId}
             style={{
               width: shrinkControlSize ? '100%' : '200px',
             }}

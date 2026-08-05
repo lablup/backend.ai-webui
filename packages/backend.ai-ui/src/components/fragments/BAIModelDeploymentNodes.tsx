@@ -32,19 +32,20 @@ export type ModelDeploymentNodeInList = NonNullable<
 >;
 
 /**
- * Sortable `DeploymentOrderField` enum values. BAITable column `dataIndex`
- * for sortable columns matches an entry here so antd emits `sorter.field`
- * directly in the server enum's shape — no separate camelCase ↔ enum
- * mapping is needed. `UPDATED_AT` is intentionally omitted because the
- * server enum does not include it.
+ * Sortable column keys, in the same camelCase form every other table uses
+ * (see `AdminDeploymentPresetTable`). A sortable column's `dataIndex` matches
+ * an entry here, and callers bridge these strings to the server
+ * `DeploymentOrderField` enum with the shared `convertToOrderBy` helper
+ * (`createdAt` → `CREATED_AT`, `tag` → `TAG`, …). `updatedAt` is
+ * intentionally omitted because the server enum does not include it.
  */
 const availableDeploymentSorterKeys = [
-  'NAME',
-  'CREATED_AT',
-  'DOMAIN',
-  'PROJECT',
-  'RESOURCE_GROUP',
-  'TAG',
+  'name',
+  'createdAt',
+  'domain',
+  'project',
+  'resourceGroup',
+  'tag',
 ] as const;
 
 export const availableDeploymentSorterValues = [
@@ -57,20 +58,6 @@ export type DeploymentOrderValue =
 
 const isEnableSorter = (key: string) => {
   return _.includes(availableDeploymentSorterKeys, key);
-};
-
-/**
- * Parse a BAITable order string (e.g. `'-CREATED_AT'`) into a single
- * `DeploymentOrderBy` entry the server accepts. Returns `undefined` when
- * `order` is empty so callers can simply skip the `orderBy` variable.
- */
-export const parseDeploymentOrder = (
-  order: string | null | undefined,
-): { field: string; direction: 'ASC' | 'DESC' } | undefined => {
-  if (!order) return undefined;
-  const descending = order.startsWith('-');
-  const field = descending ? order.slice(1) : order;
-  return { field, direction: descending ? 'DESC' : 'ASC' };
 };
 
 export interface BAIModelDeploymentNodesProps extends Omit<
@@ -158,8 +145,8 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         title: t('comp:BAIModelDeploymentNodes.Name'),
         fixed: 'left',
         required: true,
-        dataIndex: 'NAME',
-        sorter: isEnableSorter('NAME'),
+        dataIndex: 'name',
+        sorter: isEnableSorter('name'),
         render: (_value, record) => (
           <BAINameActionCell
             title={record.metadata?.name ?? '-'}
@@ -279,8 +266,8 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         key: 'tags',
         title: t('comp:BAIModelDeploymentNodes.Tags'),
         defaultHidden: true,
-        dataIndex: 'TAG',
-        sorter: isEnableSorter('TAG'),
+        dataIndex: 'tag',
+        sorter: isEnableSorter('tag'),
         render: (__, record) => (
           <BAIDeploymentTagChips
             metadataFrgmt={record.metadata}
@@ -293,8 +280,8 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         key: 'projectId',
         title: t('comp:BAIModelDeploymentNodes.Project'),
         defaultHidden: true,
-        dataIndex: 'PROJECT',
-        sorter: isEnableSorter('PROJECT'),
+        dataIndex: 'project',
+        sorter: isEnableSorter('project'),
         render: (__, record) => {
           const projectId = record.metadata?.projectId;
           if (!projectId) {
@@ -324,8 +311,8 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         key: 'domainName',
         title: t('comp:BAIModelDeploymentNodes.DomainName'),
         defaultHidden: true,
-        dataIndex: 'DOMAIN',
-        sorter: isEnableSorter('DOMAIN'),
+        dataIndex: 'domain',
+        sorter: isEnableSorter('domain'),
         render: (__, record) => {
           const domain = record.metadata?.domainName;
           return domain ? (
@@ -339,8 +326,8 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         key: 'resourceGroup',
         title: t('comp:BAIModelDeploymentNodes.ResourceGroup'),
         defaultHidden: true,
-        dataIndex: 'RESOURCE_GROUP',
-        sorter: isEnableSorter('RESOURCE_GROUP'),
+        dataIndex: 'resourceGroup',
+        sorter: isEnableSorter('resourceGroup'),
         render: (__, record) => {
           const resourceGroup = record.metadata?.resourceGroupName;
           return resourceGroup ? (
@@ -418,8 +405,8 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         key: 'updatedAt',
         title: t('comp:BAIModelDeploymentNodes.UpdatedAt'),
         defaultHidden: true,
-        dataIndex: 'UPDATED_AT',
-        sorter: isEnableSorter('UPDATED_AT'),
+        dataIndex: 'updatedAt',
+        sorter: isEnableSorter('updatedAt'),
         render: (_, record) =>
           record.metadata?.updatedAt
             ? dayjs(record.metadata.updatedAt).format('lll')
@@ -428,8 +415,8 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
       {
         key: 'createdAt',
         title: t('comp:BAIModelDeploymentNodes.CreatedAt'),
-        dataIndex: 'CREATED_AT',
-        sorter: isEnableSorter('CREATED_AT'),
+        dataIndex: 'createdAt',
+        sorter: isEnableSorter('createdAt'),
         defaultSortOrder: 'descend',
         render: (_, record) =>
           record.metadata?.createdAt

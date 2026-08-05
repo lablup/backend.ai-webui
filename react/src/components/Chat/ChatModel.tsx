@@ -9,7 +9,7 @@ import type { UIMessage } from 'ai';
 export interface ChatProviderData {
   basePath?: string;
   baseURL?: string;
-  endpointId?: string;
+  deploymentId?: string;
   agentId?: string;
   modelId?: string;
   apiKey?: string;
