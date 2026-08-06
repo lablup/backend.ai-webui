@@ -42,6 +42,18 @@ const tabParser = parseAsStringLiteral(['users', 'credentials']).withDefault(
   'users',
 );
 
+// Every URL key this page owns; a browser navigation that moves any of them
+// has to re-issue the active tab's query.
+const NAVIGATED_QUERY_KEYS = [
+  'tab',
+  'filter',
+  'order',
+  'status',
+  'activeType',
+  'current',
+  'pageSize',
+];
+
 type TabKey = 'users' | 'credentials';
 type UsersVariables = AdminUserManagementQueryType['variables'];
 type CredentialsVariables = AdminUserCredentialListQueryType['variables'];
@@ -225,10 +237,7 @@ const AdminUsersPage: React.FC = () => {
     setTablePaginationOption(snapshot.tablePaginationOption);
   };
 
-  // First visit (mount / direct URL entry / reload) queries once from the
-  // URL-seeded snapshot. Every tab change afterwards restores its snapshot and
-  // queries inside onTabChange.
-  const loadInitialTabFromUrl = useEffectEvent(() => {
+  const loadActiveTabFromUrl = () => {
     const snapshot: TabSnapshot = {
       queryParams: _.omit(queryParams, 'tab'),
       tablePaginationOption,
@@ -238,28 +247,22 @@ const AdminUsersPage: React.FC = () => {
     } else {
       loadCredentialsQuery(credentialsVariablesOf(snapshot));
     }
+  };
+
+  // First visit (mount / direct URL entry / reload) queries once from the
+  // URL-seeded snapshot. Every tab change afterwards restores its snapshot and
+  // queries inside onTabChange.
+  const loadOnMount = useEffectEvent(() => {
+    loadActiveTabFromUrl();
   });
   useEffect(() => {
-    loadInitialTabFromUrl();
+    loadOnMount();
   }, []);
 
   // Back/forward moves the URL without going through onTabChange, so the tab
   // flips (useKeyedSnapshot follows its source key) while the query ref would
   // otherwise keep the departed tab's data.
-  useBrowserNavigatedQueryEffect(
-    { queryParams, tablePaginationOption },
-    (navigated) => {
-      const snapshot: TabSnapshot = {
-        queryParams: _.omit(navigated.queryParams, 'tab'),
-        tablePaginationOption: navigated.tablePaginationOption,
-      };
-      if (navigated.queryParams.tab === 'users') {
-        loadUsersQuery(usersVariablesOf(snapshot));
-      } else {
-        loadCredentialsQuery(credentialsVariablesOf(snapshot));
-      }
-    },
-  );
+  useBrowserNavigatedQueryEffect(NAVIGATED_QUERY_KEYS, loadActiveTabFromUrl);
 
   const tabItems: CardTabListType[] = [
     {

@@ -120,22 +120,27 @@ export const useKeyedSnapshot = <K extends string, V>(
 };
 
 /**
- * Runs `onNavigated` when `values` change **because of a browser navigation**
- * (back/forward), and never for the app's own URL writes: `pushState` and
- * `replaceState` do not emit `popstate`, so only a real history navigation
- * arms the effect.
+ * Runs `onNavigated` when a browser navigation (back/forward) changes any of
+ * the watched query-string keys. The app's own URL writes never reach it:
+ * `pushState` and `replaceState` do not emit `popstate`.
  *
- * Values are compared structurally — callers build the watched bundle inline,
- * so its identity changes every render and a dependency array alone would say
- * nothing about whether the state actually moved.
+ * `popstate` only arms the effect; the callback runs from an effect on the
+ * commit that follows, so it can read the caller's already re-derived state
+ * (parsed params, a synced tab key, a restored snapshot) instead of a location
+ * the last render has not caught up with yet. It is invoked through
+ * `useEffectEvent`, so the version called is always the latest render's.
  */
-export const useBrowserNavigatedQueryEffect = <T,>(
-  values: T,
-  onNavigated: (values: T) => void,
+export const useBrowserNavigatedQueryEffect = (
+  keys: ReadonlyArray<string>,
+  onNavigated: () => void,
 ) => {
   'use memo';
+  const readWatchedValues = () => {
+    const searchParams = new URLSearchParams(location.search);
+    return _.fromPairs(keys.map((key) => [key, searchParams.get(key)]));
+  };
+  const lastValuesRef = useRef(readWatchedValues());
   const hasNavigatedRef = useRef(false);
-  const lastValuesRef = useRef(values);
 
   useEffect(() => {
     const markNavigated = () => {
@@ -146,11 +151,12 @@ export const useBrowserNavigatedQueryEffect = <T,>(
   }, []);
 
   const notifyIfNavigated = useEffectEvent(() => {
+    const values = readWatchedValues();
     if (_.isEqual(values, lastValuesRef.current)) return;
     lastValuesRef.current = values;
     if (!hasNavigatedRef.current) return;
     hasNavigatedRef.current = false;
-    onNavigated(values);
+    onNavigated();
   });
 
   useEffect(() => {
