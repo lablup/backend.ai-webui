@@ -1,10 +1,10 @@
-diff --git a/dist/chunk-EZJWUTUA.js b/dist/chunk-EZJWUTUA.js
-index c8e45b82c0a7838d6333d3b8a3f2ac95786828ba..269429779afe5d0b1e501be3e9f62d6094641a0a 100644
---- a/dist/chunk-EZJWUTUA.js
-+++ b/dist/chunk-EZJWUTUA.js
-@@ -1428,33 +1428,97 @@ var RouteStore = class _RouteStore {
+diff --git a/dist/chunk-SLEZT6EJ.js b/dist/chunk-SLEZT6EJ.js
+index 76791c619bf72a8c5b99eb2f086e150b3cef9466..aa48f91704c19c1ac1298f0939c032b770fb82c3 100644
+--- a/dist/chunk-SLEZT6EJ.js
++++ b/dist/chunk-SLEZT6EJ.js
+@@ -1027,33 +1027,97 @@ var RouteStore = class _RouteStore {
      try {
-       const raw = fs4.readFileSync(this.routesPath, "utf-8");
+       const raw = fs3.readFileSync(this.routesPath, "utf-8");
        let parsed;
 +      let corruptReason;
        try {
@@ -29,7 +29,7 @@ index c8e45b82c0a7838d6333d3b8a3f2ac95786828ba..269429779afe5d0b1e501be3e9f62d60
 +        // clobbering.
 +        this.onWarning?.(`Corrupted routes file (${corruptReason}): ${this.routesPath}`);
 +        try {
-+          fs4.copyFileSync(this.routesPath, `${this.routesPath}.corrupt-${Date.now()}`);
++          fs3.copyFileSync(this.routesPath, `${this.routesPath}.corrupt-${Date.now()}`);
 +        } catch {
 +        }
 +        const recovered = this.readBackup();
@@ -48,8 +48,8 @@ index c8e45b82c0a7838d6333d3b8a3f2ac95786828ba..269429779afe5d0b1e501be3e9f62d60
        const alive = routes.filter((r) => r.pid === 0 || this.isProcessAlive(r.pid));
        if (persistCleanup && alive.length !== routes.length) {
          try {
--          fs4.writeFileSync(this.routesPath, JSON.stringify(alive, null, 2), {
--            mode: this.fileMode
+-          fs3.writeFileSync(this.routesPath, JSON.stringify(alive, null, 2), {
+-            mode: FILE_MODE
 -          });
 +          this.saveRoutes(alive);
          } catch {
@@ -73,17 +73,17 @@ index c8e45b82c0a7838d6333d3b8a3f2ac95786828ba..269429779afe5d0b1e501be3e9f62d60
 +  readBackup() {
 +    const backupPath = `${this.routesPath}.bak`;
 +    try {
-+      if (!fs4.existsSync(backupPath)) {
++      if (!fs3.existsSync(backupPath)) {
 +        return null;
 +      }
-+      const parsed = JSON.parse(fs4.readFileSync(backupPath, "utf-8"));
++      const parsed = JSON.parse(fs3.readFileSync(backupPath, "utf-8"));
 +      return Array.isArray(parsed) ? parsed : null;
 +    } catch {
 +      return null;
 +    }
 +  }
    saveRoutes(routes) {
--    fs4.writeFileSync(this.routesPath, JSON.stringify(routes, null, 2), { mode: this.fileMode });
+-    fs3.writeFileSync(this.routesPath, JSON.stringify(routes, null, 2), { mode: FILE_MODE });
 +    const tmpPath = `${this.routesPath}.tmp-${process.pid}`;
 +    try {
 +      const serialized = JSON.stringify(routes, null, 2);
@@ -93,16 +93,16 @@ index c8e45b82c0a7838d6333d3b8a3f2ac95786828ba..269429779afe5d0b1e501be3e9f62d60
 +      // writeFileSync truncates in place, and an interrupted write left a
 +      // corrupt file that the next registration silently reset to a single
 +      // route, wiping every other dev server's registration.
-+      fs4.writeFileSync(tmpPath, serialized, { mode: this.fileMode });
-+      fs4.renameSync(tmpPath, this.routesPath);
++      fs3.writeFileSync(tmpPath, serialized, { mode: FILE_MODE });
++      fs3.renameSync(tmpPath, this.routesPath);
 +      // Keep a known-good snapshot for `readBackup()` recovery.
 +      try {
-+        fs4.writeFileSync(`${this.routesPath}.bak`, serialized, { mode: this.fileMode });
++        fs3.writeFileSync(`${this.routesPath}.bak`, serialized, { mode: FILE_MODE });
 +      } catch {
 +      }
 +    } catch (err) {
 +      try {
-+        fs4.rmSync(tmpPath, { force: true });
++        fs3.rmSync(tmpPath, { force: true });
 +      } catch {
 +      }
 +      throw err;
