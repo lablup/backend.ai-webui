@@ -121,6 +121,7 @@ Experimental features may change or be removed in future updates.
 :::
 
 ![](../images/start_from_url_huggingface.png)
+<!-- TODO(screenshot): start_from_url_huggingface.png now shows helper text under the Model Folder field -->
 
 1. Enter the model in the **Hugging Face Model URL or ID** field. Both a model
    page URL such as `https://huggingface.co/openai/gpt-oss-20b` and a plain
@@ -131,9 +132,15 @@ Experimental features may change or be removed in future updates.
    the address you entered already contains a revision, that revision is used.
 3. Optionally enter a **Hugging Face Token**. A token is required for gated or
    private models.
-4. Select the **Model Folder** to download into. The buttons next to the
-   selector let you open the selected folder, create a new model folder, and
-   refresh the list.
+4. Select the **Model Folder** to download into. As the helper text under the
+   field notes, only model folders in the current project that you can mount
+   with write permission are listed — the download session writes into the
+   folder, so folders you can only mount read-only are excluded. The buttons
+   next to the selector let you open the selected folder, create a new model
+   folder, and refresh the list. When creating a new folder here, set its
+   mount permission to read & write: a folder created with read-only mount
+   permission cannot receive the download, and a warning tells you to create
+   one with read & write mount permission instead.
 5. Click **Download Model To Folder**.
 
 The dialog closes and Backend.AI starts a batch session that performs the
