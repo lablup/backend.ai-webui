@@ -720,36 +720,36 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             changed: Partial<AdminDeploymentPresetFormValue>,
           ) => {
             // Reset Execution + Shell when switching from Advanced → Basic,
-            // matching the revision modal's behaviour so the form state always
-            // reflects what will actually be submitted.
-            const advChanged =
-              changed.modelDefinition?.models?.[0]?.service?.advanced;
-            if (advChanged === false) {
+            // and reset the (now stale) Shell when switching Execution to
+            // Exec — in both cases so the form state always reflects what
+            // will actually be submitted (`resolveCommandShell` already
+            // discards Shell in both scenarios). `modelDefinition.models` is
+            // a plain array field (no `Form.List`), and `form.setFieldsValue`
+            // replaces nested object/array values wholesale rather than
+            // deep-merging, so a *partial* `models[0]` object here would wipe
+            // out name/modelPath/port/startCommand/etc. Read the current
+            // model and write back a complete merged object instead.
+            const svc = changed.modelDefinition?.models?.[0]?.service;
+            if (svc?.advanced === false || svc?.execution === 'exec') {
+              const currentModel = form.getFieldValue([
+                'modelDefinition',
+                'models',
+                0,
+              ]);
               form.setFieldsValue({
                 modelDefinition: {
                   models: [
                     {
+                      ...currentModel,
                       service: {
-                        execution: 'shell',
+                        ...currentModel?.service,
+                        ...(svc?.advanced === false
+                          ? { execution: 'shell' as const }
+                          : {}),
                         shell: DEFAULT_MODEL_SERVICE_SHELL,
                       },
                     },
                   ],
-                },
-              });
-            }
-            // Reset Shell when switching Execution to Exec: the Shell input
-            // unmounts but antd keeps its stale value in the form store, and
-            // `resolveCommandShell` already discards it (submits `shell:
-            // null` for Exec) — without this reset, the stale value lingers
-            // to be misread by anything reading the raw field, e.g. the
-            // Review page, or shown again if the user switches back to Shell.
-            const execChanged =
-              changed.modelDefinition?.models?.[0]?.service?.execution;
-            if (execChanged === 'exec') {
-              form.setFieldsValue({
-                modelDefinition: {
-                  models: [{ service: { shell: DEFAULT_MODEL_SERVICE_SHELL } }],
                 },
               });
             }
