@@ -55,6 +55,10 @@ const AdminDashboardPage = React.lazy(
 );
 const EnvironmentPage = React.lazy(() => import('./pages/EnvironmentPage'));
 const MyEnvironmentPage = React.lazy(() => import('./pages/MyEnvironmentPage'));
+// SPIKE (cn-oss-removal ticket 12) — Astryx select architecture probe.
+const AstryxSelectProbePage = React.lazy(
+  () => import('./pages/AstryxSelectProbePage'),
+);
 const UserSettingsPage = React.lazy(() => import('./pages/UserSettingsPage'));
 const SessionLauncherPage = React.lazy(
   () => import('./pages/SessionLauncherPage'),
@@ -410,6 +414,17 @@ export const mainLayoutChildRoutes: RouteObject[] = [
           menuKey: 'data',
           labelKey: 'webui.menu.Data',
         },
+      },
+      // SPIKE (cn-oss-removal ticket 12) — Astryx select architecture probe.
+      // Remove with the rest of the spike.
+      {
+        path: 'astryx-select-probe',
+        element: (
+          <Suspense fallback={<Skeleton active />}>
+            <AstryxSelectProbePage />
+          </Suspense>
+        ),
+        handle: { scope: 'project' },
       },
       {
         path: 'my-environment',

@@ -1,3 +1,9 @@
+/* Astryx spike (FR-cn-oss-removal/12): cascade-layer order statement. MUST be
+   the first at-rule in the global stylesheet, before any @import. Unlayered
+   rules still beat every named layer, so anything below this line outranks
+   Astryx — see 03-stylex-answer.md conflict point 6. */
+@layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
+
 /* fix: match the icon size between Lucide and Ant.d icons */
 .lucide {
   width: 1em !important;
