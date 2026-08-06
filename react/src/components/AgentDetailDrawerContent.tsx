@@ -7,19 +7,21 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import AgentActionButtons from './AgentNodeItems/AgentActionButtons';
 import AgentComputePlugins from './AgentNodeItems/AgentComputePlugins';
 import AgentResources from './AgentNodeItems/AgentResources';
+import AgentSessions from './AgentNodeItems/AgentSessions';
 import AgentStatusTag from './AgentNodeItems/AgentStatusTag';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import { Descriptions, Grid, Tabs, theme, Typography } from 'antd';
+import { Descriptions, Grid, Skeleton, Tabs, theme, Typography } from 'antd';
 import {
   BAIDoubleTag,
   BAIFlex,
   BAIIntervalView,
+  filterOutEmpty,
   toLocalId,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
@@ -27,7 +29,7 @@ interface AgentDetailDrawerContentProps {
   agentNodeFrgmt?: AgentDetailDrawerContentFragment$key | null;
 }
 
-type TabKey = 'resources';
+type TabKey = 'resources' | 'sessions';
 
 const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
   agentNodeFrgmt,
@@ -147,7 +149,7 @@ const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
       <Tabs
         activeKey={activeTabKey}
         onChange={(key) => setActiveTabKey(key as TabKey)}
-        items={[
+        items={filterOutEmpty([
           {
             key: 'resources',
             label: t('agent.Resources'),
@@ -157,7 +159,19 @@ const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
               </BAIErrorBoundary>
             ),
           },
-        ]}
+          // `AgentV2.sessions` is only available on manager 26.3.0+.
+          baiClient.isManagerVersionCompatibleWith('26.3.0') && {
+            key: 'sessions',
+            label: t('webui.menu.Sessions'),
+            children: (
+              <BAIErrorBoundary>
+                <Suspense fallback={<Skeleton active />}>
+                  {agent?.row_id && <AgentSessions agentId={agent.row_id} />}
+                </Suspense>
+              </BAIErrorBoundary>
+            ),
+          },
+        ])}
       />
     </BAIFlex>
   );
