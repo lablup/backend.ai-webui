@@ -18,7 +18,7 @@ import AdminUserManagement, {
 } from '../components/AdminUserManagement';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
-import { useBrowserNavigatedQueryEffect, useKeyedSnapshot } from '../hooks';
+import { useBrowserNavigationEffect, useKeyedSnapshot } from '../hooks';
 import { useSuspendedTOTPSupported } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { Skeleton } from 'antd';
@@ -249,10 +249,8 @@ const AdminUsersPage: React.FC = () => {
 
   // Back/forward moves the URL without going through onTabChange, so the tab
   // flips (useKeyedSnapshot follows its source key) while the query ref would
-  // otherwise keep the departed tab's data. Only tab changes push a history
-  // entry — everything inside a tab is written with `replace` — so `tab` is
-  // what separates any two adjacent entries.
-  useBrowserNavigatedQueryEffect(['tab'], loadActiveTabFromUrl);
+  // otherwise keep the departed tab's data.
+  useBrowserNavigationEffect(loadActiveTabFromUrl);
 
   const tabItems: CardTabListType[] = [
     {

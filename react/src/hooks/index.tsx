@@ -133,44 +133,27 @@ export const useKeyedSnapshot = <K extends string, V>(
  * Navigations that leave every watched key alone never arm it, so the callback
  * is not woken for a query string it does not care about.
  */
-export const useBrowserNavigatedQueryEffect = (
-  keys: ReadonlyArray<string>,
-  onNavigated: () => void,
-) => {
+export const useBrowserNavigationEffect = (onNavigated: () => void) => {
   'use memo';
-  // What the URL said as of the last commit — whoever wrote it. A navigation
-  // is measured against this, so a key the app itself changed is not mistaken
-  // for a navigation when the user later goes back to its earlier value.
-  const lastSearchRef = useRef(location.search);
-  const hasNavigatedRef = useRef(false);
+  // Counting the navigations is what schedules the render whose effect runs
+  // the callback. A ref flag would leave the callback waiting for a commit
+  // nothing is obliged to produce.
+  const [navigationCount, setNavigationCount] = useState(0);
 
-  // Runs only on a real navigation, while `lastSearchRef` still holds the
-  // departed URL — so the watched keys are parsed here rather than on every
-  // commit.
-  const markNavigation = useEffectEvent(() => {
-    const departed = new URLSearchParams(lastSearchRef.current);
-    const arrived = new URLSearchParams(location.search);
-    hasNavigatedRef.current = keys.some(
-      (key) => departed.get(key) !== arrived.get(key),
-    );
-  });
+  useEffect(() => {
+    const countNavigation = () => setNavigationCount((count) => count + 1);
+    window.addEventListener('popstate', countNavigation);
+    return () => window.removeEventListener('popstate', countNavigation);
+  }, []);
 
-  const notifyIfNavigated = useEffectEvent(() => {
-    if (!hasNavigatedRef.current) return;
-    hasNavigatedRef.current = false;
+  const notifyNavigated = useEffectEvent(() => {
     onNavigated();
   });
 
   useEffect(() => {
-    const listener = () => markNavigation();
-    window.addEventListener('popstate', listener);
-    return () => window.removeEventListener('popstate', listener);
-  }, []);
-
-  useEffect(() => {
-    lastSearchRef.current = location.search;
-    notifyIfNavigated();
-  });
+    if (navigationCount === 0) return;
+    notifyNavigated();
+  }, [navigationCount]);
 };
 
 export const useBackendAIConnectedState = () => {
