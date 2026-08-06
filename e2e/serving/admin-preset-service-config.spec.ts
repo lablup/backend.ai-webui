@@ -14,14 +14,18 @@
 //
 // Behaviors asserted:
 //   1. Service Configuration is shown for the (mocked) `custom` variant, with
-//      Start Command / Port required (unlike the Add-Revision modal, where
-//      Start Command is optional — the preset form requires it since a
-//      preset is a reusable template).
+//      Start Command / Port both optional (BA-6613) — matching the
+//      Add-Revision modal exactly. Shell is the only required field, and only
+//      once Advanced/Shell mode is active; it starts pre-filled with the
+//      backend default (`/bin/bash`).
 //   2. Basic mode hides Execution/Shell; Advanced reveals them, mirroring the
 //      Add-Revision modal's toggle.
 //   3. A full Create submission carries the Service Configuration / Health
 //      Check / Pre-Start Actions data in the expected nested
 //      `modelDefinition.models[0].service` shape.
+//   4. Leaving Start Command and Port blank still submits successfully —
+//      `command` is omitted and `port` falls back to the submit-mapping
+//      layer's default (8000), rather than being blocked by form validation.
 import { setupGraphQLMocks } from '../session/mocking/graphql-interceptor';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import {
@@ -173,14 +177,14 @@ test.describe(
   () => {
     test.describe.configure({ mode: 'serial', retries: 1 });
 
-    test('Admin sees Service Configuration required and Basic/Advanced toggle works for the custom variant', async ({
+    test('Admin sees Service Configuration is optional, Shell defaults pre-filled, and Basic/Advanced toggle works for the custom variant', async ({
       page,
       request,
     }) => {
       await setupPresetCreatePage(page, request);
 
-      // 1. Start Command and Port are present and required (unlike the
-      //    Add-Revision modal's optional Start Command).
+      // 1. Start Command and Port are present but optional — same as the
+      //    Add-Revision modal (BA-6613).
       await expect(
         page.locator('#modelDefinition_models_0_service_startCommand'),
       ).toBeVisible();
@@ -196,7 +200,10 @@ test.describe(
         page.locator('#modelDefinition_models_0_service_shell'),
       ).toHaveCount(0);
 
-      // 3. Toggle Advanced → Execution radios + Shell input appear.
+      // 3. Toggle Advanced → Execution radios + Shell input appear,
+      //    pre-filled with the backend default (not blank — a newly-added
+      //    model seeds `shell: /bin/bash` so Advanced/Shell mode never starts
+      //    on an empty required field).
       await page.getByText('Advanced', { exact: true }).click();
       await expect(
         page.getByRole('radio', { name: 'Shell', exact: true }),
@@ -204,9 +211,11 @@ test.describe(
       await expect(
         page.getByRole('radio', { name: 'Exec', exact: true }),
       ).toBeVisible();
-      await expect(
-        page.locator('#modelDefinition_models_0_service_shell'),
-      ).toBeVisible();
+      const shellInputPrefill = page.locator(
+        '#modelDefinition_models_0_service_shell',
+      );
+      await expect(shellInputPrefill).toBeVisible();
+      await expect(shellInputPrefill).toHaveValue('/bin/bash');
 
       // 4. Switch to Exec → Shell input hides, command relabels.
       await page.getByRole('radio', { name: 'Exec', exact: true }).click();
@@ -296,6 +305,67 @@ test.describe(
       expect(service.preStartActions).toEqual([
         { action: 'warm_cache', args: { size: 128 } },
       ]);
+    });
+
+    test('Admin creates a preset with Start Command and Port left blank', async ({
+      page,
+      request,
+    }) => {
+      const { capture } = await setupPresetCreatePage(page, request);
+
+      // Start Command and Port both left blank, but Health Check enabled —
+      // hasServiceData must come from Health Check alone (not command/port)
+      // for the model to still be submitted; leaving *everything* service-
+      // related blank submits `modelDefinition: null` instead, which is a
+      // different (also correct) case this test isn't about.
+      await page
+        .locator('#modelDefinition_models_0_service_enableHealthCheck')
+        .check();
+      await page
+        .locator('#modelDefinition_models_0_service_healthCheck_path')
+        .fill('/health');
+      await page
+        .locator('#modelDefinition_models_0_service_healthCheck_interval')
+        .fill('10');
+      await page
+        .locator('#modelDefinition_models_0_service_healthCheck_maxRetries')
+        .fill('5');
+      await page
+        .locator('#modelDefinition_models_0_service_healthCheck_maxWaitTime')
+        .fill('15');
+      await page
+        .locator(
+          '#modelDefinition_models_0_service_healthCheck_expectedStatusCode',
+        )
+        .fill('200');
+      await page
+        .locator('#modelDefinition_models_0_service_healthCheck_initialDelay')
+        .fill('3');
+
+      await page.locator('#replicaCount').fill('1');
+      await page.getByText('Skip to Review', { exact: true }).click();
+      await page.getByRole('button', { name: 'Create', exact: true }).click();
+
+      await expect.poll(() => capture.input, { timeout: 15000 }).not.toBeNull();
+
+      const service = capture.input?.modelDefinition?.models?.[0]?.service;
+      expect(service).toBeTruthy();
+      // Neither `command` nor `startCommand` is sent when the user leaves
+      // Start Command blank — hasCommandData is false, so the whole
+      // command/shell branch is omitted (buildModelDefinitionInput,
+      // AdminDeploymentPresetSettingPage.tsx).
+      expect(service.command).toBeUndefined();
+      expect(service.startCommand).toBeUndefined();
+      // Port still falls back to the submit-mapping layer's default.
+      expect(service.port).toBe(8000);
+      expect(service.healthCheck).toMatchObject({
+        path: '/health',
+        interval: 10,
+        maxRetries: 5,
+        maxWaitTime: 15,
+        expectedStatusCode: 200,
+        initialDelay: 3,
+      });
     });
   },
 );
