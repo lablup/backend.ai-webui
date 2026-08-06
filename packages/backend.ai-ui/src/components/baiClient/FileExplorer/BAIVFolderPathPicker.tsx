@@ -107,8 +107,10 @@ const BAIVFolderPathPicker: React.FC<BAIVFolderPathPickerProps> = (props) => {
         {...selectProps}
       />
       {/* Mounted only while open (BAIUnmountAfterClose) and only after the
-          first loadQuery. The modal is self-contained (it wraps its own
-          suspending content in a Suspense), so no boundary is needed here. */}
+          first loadQuery. The modal suspends until its preloaded query
+          resolves; because it mounts inside the transition above, React
+          delays the commit (surfaced as the select's `loading`) instead of
+          needing a Suspense boundary here. */}
       {pickerQueryRef != null && (
         <BAIUnmountAfterClose>
           <BAIDirectoryPickerModal

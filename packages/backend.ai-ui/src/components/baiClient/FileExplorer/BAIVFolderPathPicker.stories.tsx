@@ -15,7 +15,7 @@ import BAIVFolderPathPicker from './BAIVFolderPathPicker';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { App, Button, Form, Typography } from 'antd';
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import { RelayEnvironmentProvider, useQueryLoader } from 'react-relay';
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
 
@@ -255,9 +255,10 @@ const MockProviders: React.FC<{ children: React.ReactNode }> = ({
       <QueryClientProvider client={queryClient}>
         <App>
           <BAIClientContext.Provider value={clientPromise}>
-            {/* No Suspense boundary here on purpose: BAIVFolderPathPicker and
-                BAIDirectoryPickerModal are self-contained — the modal wraps its
-                own suspending content — so a host never needs to add one. */}
+            {/* No Suspense boundary here on purpose: every opener mounts
+                BAIDirectoryPickerModal inside a transition (loadQuery + open
+                wrapped in startTransition), so the suspension is absorbed by
+                the transition and a host never needs a boundary. */}
             {children}
           </BAIClientContext.Provider>
         </App>
@@ -410,12 +411,15 @@ export const WithinForm: Story = {
 /**
  * Drives `BAIDirectoryPickerModal` directly, the way a future wrapper (e.g. a
  * button component) would: preload `BAIDirectoryPickerQuery` in the click
- * handler via `useQueryLoader`, then pass the resulting `queryRef` to the
+ * handler via `useQueryLoader` **inside a transition** (the modal suspends on
+ * the preloaded query, and the transition absorbs that suspension — surfaced
+ * as the trigger's loading state), then pass the resulting `queryRef` to the
  * modal. Must live inside `MockProviders` so `useQueryLoader` finds the Relay
  * environment.
  */
 const DirectoryPickerModalDemo: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenPending, startOpenTransition] = useTransition();
   const [lastResult, setLastResult] = useState<string | undefined>();
   const [queryRef, loadQuery] = useQueryLoader<BAIDirectoryPickerModalQuery>(
     BAIDirectoryPickerQuery,
@@ -425,17 +429,20 @@ const DirectoryPickerModalDemo: React.FC = () => {
     <BAIFlex direction="column" gap="md" align="start">
       <Button
         type="primary"
+        loading={isOpenPending}
         onClick={() => {
-          loadQuery(
-            {
-              vfolderGlobalId: toGlobalId(
-                'VirtualFolderNode',
-                MOCK_VFOLDERS[0].uuid,
-              ),
-            },
-            { fetchPolicy: 'store-and-network' },
-          );
-          setIsOpen(true);
+          startOpenTransition(() => {
+            loadQuery(
+              {
+                vfolderGlobalId: toGlobalId(
+                  'VirtualFolderNode',
+                  MOCK_VFOLDERS[0].uuid,
+                ),
+              },
+              { fetchPolicy: 'store-and-network' },
+            );
+            setIsOpen(true);
+          });
         }}
       >
         Open directory picker
@@ -471,7 +478,7 @@ export const PickerModalOnly: Story = {
     docs: {
       description: {
         story:
-          '`BAIDirectoryPickerModal` can also be driven directly — preload `BAIDirectoryPickerQuery` with `useQueryLoader` in the opening event, pass the `queryRef`, and receive the chosen sub path via `onRequestClose` (`undefined` when cancelled).',
+          '`BAIDirectoryPickerModal` can also be driven directly — preload `BAIDirectoryPickerQuery` with `useQueryLoader` in the opening event (wrapped in a transition, since the modal suspends until the query resolves), pass the `queryRef`, and receive the chosen sub path via `onRequestClose` (`undefined` when cancelled).',
       },
     },
   },
