@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<98289759770227d3e3f411563ce60562>>
+ * @generated SignedSource<<37c70ffffbddb917df0b64a8c7f93e45>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,6 +15,9 @@ export type ChatCardQuery$variables = {
 };
 export type ChatCardQuery$data = {
   readonly deployment: Result<{
+    readonly activeReplicas: {
+      readonly count: number;
+    } | null | undefined;
     readonly id: string;
     readonly networkAccess: {
       readonly endpointUrl: string | null | undefined;
@@ -22,6 +25,9 @@ export type ChatCardQuery$data = {
     readonly replicaState: {
       readonly desiredReplicaCount: number;
     };
+    readonly revisionHistory: {
+      readonly count: number;
+    } | null | undefined;
     readonly " $fragmentSpreads": FragmentRefs<"ChatHeader_Deployment">;
   } | null | undefined, unknown>;
 };
@@ -87,6 +93,48 @@ v4 = {
     }
   ],
   "storageKey": null
+},
+v5 = [
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "count",
+    "storageKey": null
+  }
+],
+v6 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "ModelRevisionConnection",
+  "kind": "LinkedField",
+  "name": "revisionHistory",
+  "plural": false,
+  "selections": (v5/*: any*/),
+  "storageKey": null
+},
+v7 = {
+  "alias": "activeReplicas",
+  "args": [
+    {
+      "kind": "Literal",
+      "name": "filter",
+      "value": {
+        "status": {
+          "equals": "RUNNING"
+        },
+        "trafficStatus": {
+          "equals": "ACTIVE"
+        }
+      }
+    }
+  ],
+  "concreteType": "ModelReplicaConnection",
+  "kind": "LinkedField",
+  "name": "replicas",
+  "plural": false,
+  "selections": (v5/*: any*/),
+  "storageKey": "replicas(filter:{\"status\":{\"equals\":\"RUNNING\"},\"trafficStatus\":{\"equals\":\"ACTIVE\"}})"
 };
 return {
   "fragment": {
@@ -108,6 +156,8 @@ return {
             (v2/*: any*/),
             (v3/*: any*/),
             (v4/*: any*/),
+            (v6/*: any*/),
+            (v7/*: any*/),
             {
               "args": null,
               "kind": "FragmentSpread",
@@ -139,6 +189,8 @@ return {
           (v2/*: any*/),
           (v3/*: any*/),
           (v4/*: any*/),
+          (v6/*: any*/),
+          (v7/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -163,16 +215,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "3f9013e20edcaafd1a678f53b915b406",
+    "cacheID": "574d386dfa419cbeb27faf76bbb93271",
     "id": null,
     "metadata": {},
     "name": "ChatCardQuery",
     "operationKind": "query",
-    "text": "query ChatCardQuery(\n  $deploymentId: ID!\n) {\n  deployment(id: $deploymentId) {\n    id\n    networkAccess {\n      endpointUrl\n    }\n    replicaState {\n      desiredReplicaCount\n    }\n    ...ChatHeader_Deployment\n  }\n}\n\nfragment ChatHeader_Deployment on ModelDeployment {\n  id\n  metadata {\n    name\n  }\n}\n"
+    "text": "query ChatCardQuery(\n  $deploymentId: ID!\n) {\n  deployment(id: $deploymentId) {\n    id\n    networkAccess {\n      endpointUrl\n    }\n    replicaState {\n      desiredReplicaCount\n    }\n    revisionHistory {\n      count\n    }\n    activeReplicas: replicas(filter: {status: {equals: RUNNING}, trafficStatus: {equals: ACTIVE}}) {\n      count\n    }\n    ...ChatHeader_Deployment\n  }\n}\n\nfragment ChatHeader_Deployment on ModelDeployment {\n  id\n  metadata {\n    name\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0a7cffdb9b1bf06c7a0b1c1cff29396b";
+(node as any).hash = "2dc57cbb436f041731859dcc5f0cc89a";
 
 export default node;

@@ -471,6 +471,7 @@
     "History": "Sejarah",
     "NewChat": "Obrolan Baru",
     "NoDesiredReplicas": "Jumlah replika yang diinginkan untuk penerapan ini adalah 0, sehingga tidak dapat merespons. Setel jumlah replika yang diinginkan menjadi 1 atau lebih untuk menggunakannya.",
+    "NoEndpointUrlIssued": "Penerapan ini belum diberi URL endpoint, sehingga tidak dapat merespons. Coba lagi setelah penerapan siap.",
     "SelectEndpoint": "Pilih Titik Akhir",
     "SelectModel": "Pilih Model",
     "SelectToken": "Pilih Token",

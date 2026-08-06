@@ -471,6 +471,7 @@
     "History": "历史",
     "NewChat": "新聊天",
     "NoDesiredReplicas": "此部署的目標副本數為 0，因此無法回應。請將目標副本數設定為 1 或以上以使用它。",
+    "NoEndpointUrlIssued": "此部署尚未指派端點 URL，因此無法回應。請在部署就緒後重試。",
     "SelectEndpoint": "選擇端點",
     "SelectModel": "選擇型號",
     "SelectToken": "选择令牌",

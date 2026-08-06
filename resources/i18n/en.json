@@ -458,6 +458,7 @@
     "History": "History",
     "NewChat": "New Chat",
     "NoDesiredReplicas": "The desired replica count for this deployment is 0, so it cannot respond. Set the desired replica count to 1 or more to use it.",
+    "NoEndpointUrlIssued": "This deployment has not been issued an endpoint URL yet, so it cannot respond. Try again once the deployment is ready.",
     "SelectEndpoint": "Select Endpoint",
     "SelectModel": "Select Model",
     "SelectToken": "Select Token",

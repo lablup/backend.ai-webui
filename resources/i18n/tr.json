@@ -471,6 +471,7 @@
     "History": "Tarih",
     "NewChat": "Yeni sohbet",
     "NoDesiredReplicas": "Bu dağıtım için istenen kopya sayısı 0 olduğundan yanıt veremiyor. Kullanmak için istenen kopya sayısını 1 veya daha fazla olarak ayarlayın.",
+    "NoEndpointUrlIssued": "Bu dağıtıma henüz bir uç nokta URL'si atanmadı, bu nedenle yanıt veremiyor. Dağıtım hazır olduğunda tekrar deneyin.",
     "SelectEndpoint": "Uç Noktayı Seçin",
     "SelectModel": "Modeli Seçin",
     "SelectToken": "Belirteç Seçin",

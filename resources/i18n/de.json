@@ -471,6 +471,7 @@
     "History": "Geschichte",
     "NewChat": "Neuer Chat",
     "NoDesiredReplicas": "Die gewünschte Anzahl an Replikaten für diese Bereitstellung ist 0, daher kann sie nicht antworten. Setzen Sie die gewünschte Anzahl an Replikaten auf 1 oder mehr, um sie zu verwenden.",
+    "NoEndpointUrlIssued": "Für diese Bereitstellung wurde noch keine Endpunkt-URL vergeben, daher kann sie nicht antworten. Versuchen Sie es erneut, sobald die Bereitstellung bereit ist.",
     "SelectEndpoint": "Wählen Sie Endpunkt aus",
     "SelectModel": "Wählen Sie Modell aus",
     "SelectToken": "Token auswählen",

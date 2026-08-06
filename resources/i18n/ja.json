@@ -471,6 +471,7 @@
     "History": "歴史",
     "NewChat": "新しいチャット",
     "NoDesiredReplicas": "このデプロイの目標レプリカ数が0のため、応答できません。目標レプリカ数を1以上に設定してください。",
+    "NoEndpointUrlIssued": "このデプロイにはまだエンドポイント URL が発行されていないため、応答できません。デプロイの準備が完了してから再試行してください。",
     "SelectEndpoint": "エンドポイントの選択",
     "SelectModel": "モデルの選択",
     "SelectToken": "トークンを選択",

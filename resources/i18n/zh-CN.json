@@ -471,6 +471,7 @@
     "History": "历史",
     "NewChat": "新聊天",
     "NoDesiredReplicas": "该部署的目标副本数为 0，因此无法响应。请将目标副本数设置为 1 或更多以使用它。",
+    "NoEndpointUrlIssued": "该部署尚未分配端点 URL，因此无法响应。请在部署就绪后重试。",
     "SelectEndpoint": "选择端点",
     "SelectModel": "选择型号",
     "SelectToken": "选择令牌",

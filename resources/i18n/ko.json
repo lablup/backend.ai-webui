@@ -471,6 +471,7 @@
     "History": "히스토리",
     "NewChat": "새 채팅",
     "NoDesiredReplicas": "이 배포의 목표 복제본 수가 0이라 응답할 수 없습니다. 목표 복제본 수를 1 이상으로 설정해 주세요.",
+    "NoEndpointUrlIssued": "이 배포에 아직 엔드포인트 URL이 발급되지 않아 응답할 수 없습니다. 배포가 준비된 후 다시 시도해 주세요.",
     "SelectEndpoint": "엔드포인트 선택",
     "SelectModel": "모델 선택",
     "SelectToken": "토큰 선택",

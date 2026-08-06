@@ -471,6 +471,7 @@
     "History": "História",
     "NewChat": "Novo chat",
     "NoDesiredReplicas": "O número desejado de réplicas para esta implementação é 0, pelo que não pode responder. Defina o número desejado de réplicas para 1 ou mais para a utilizar.",
+    "NoEndpointUrlIssued": "Esta implementação ainda não recebeu um URL de endpoint, pelo que não pode responder. Tente novamente quando a implementação estiver pronta.",
     "SelectEndpoint": "Selecione o ponto final",
     "SelectModel": "Selecione o modelo",
     "SelectToken": "Selecionar Token",

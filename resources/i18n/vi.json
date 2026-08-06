@@ -471,6 +471,7 @@
     "History": "Lịch sử",
     "NewChat": "Cuộc trò truyện mới",
     "NoDesiredReplicas": "Số lượng bản sao mong muốn cho triển khai này là 0, do đó không thể phản hồi. Đặt số lượng bản sao mong muốn thành 1 trở lên để sử dụng.",
+    "NoEndpointUrlIssued": "Triển khai này chưa được cấp URL điểm cuối nên không thể phản hồi. Hãy thử lại khi triển khai đã sẵn sàng.",
     "SelectEndpoint": "Chọn điểm cuối",
     "SelectModel": "Chọn mẫu",
     "SelectToken": "Chọn mã thông báo",

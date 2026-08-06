@@ -471,6 +471,7 @@
     "History": "L'histoire",
     "NewChat": "Nouvelle discussion",
     "NoDesiredReplicas": "Le nombre de répliques souhaité pour ce déploiement est de 0, il ne peut donc pas répondre. Définissez le nombre de répliques souhaité sur 1 ou plus pour l'utiliser.",
+    "NoEndpointUrlIssued": "Aucune URL de point de terminaison n'a encore été attribuée à ce déploiement, il ne peut donc pas répondre. Réessayez une fois le déploiement prêt.",
     "SelectEndpoint": "Sélectionnez le point de terminaison",
     "SelectModel": "Sélectionnez le modèle",
     "SelectToken": "Sélectionner le jeton",

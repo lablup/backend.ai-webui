@@ -471,6 +471,7 @@
     "History": "Historia",
     "NewChat": "Nowy czat",
     "NoDesiredReplicas": "Żądana liczba replik dla tego wdrożenia wynosi 0, więc nie może odpowiadać. Ustaw żądaną liczbę replik na 1 lub więcej, aby z niego korzystać.",
+    "NoEndpointUrlIssued": "To wdrożenie nie ma jeszcze przypisanego adresu URL punktu końcowego, więc nie może odpowiadać. Spróbuj ponownie, gdy wdrożenie będzie gotowe.",
     "SelectEndpoint": "Wybierz Punkt końcowy",
     "SelectModel": "Wybierz Model",
     "SelectToken": "Wybierz token",

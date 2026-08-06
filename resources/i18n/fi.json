@@ -471,6 +471,7 @@
     "History": "Historia",
     "NewChat": "Uusi keskustelu",
     "NoDesiredReplicas": "Tämän käyttöönoton haluttu replikoiden määrä on 0, joten se ei voi vastata. Aseta haluttu replikoiden määrä arvoon 1 tai enemmän käyttääksesi sitä.",
+    "NoEndpointUrlIssued": "Tälle käyttöönotolle ei ole vielä myönnetty päätepisteen URL-osoitetta, joten se ei voi vastata. Yritä uudelleen, kun käyttöönotto on valmis.",
     "SelectEndpoint": "Valitse Päätepiste",
     "SelectModel": "Valitse Malli",
     "SelectToken": "Valitse Token",

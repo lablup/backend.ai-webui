@@ -471,6 +471,7 @@
     "History": "Sejarah",
     "NewChat": "Sembang Baharu",
     "NoDesiredReplicas": "Bilangan replika yang dikehendaki untuk penggunaan ini ialah 0, jadi ia tidak boleh membalas. Tetapkan bilangan replika yang dikehendaki kepada 1 atau lebih untuk menggunakannya.",
+    "NoEndpointUrlIssued": "Penggunaan ini belum diberikan URL titik akhir, jadi ia tidak boleh membalas. Cuba lagi setelah penggunaan sedia.",
     "SelectEndpoint": "Pilih Titik Akhir",
     "SelectModel": "Pilih Model",
     "SelectToken": "Pilih token",

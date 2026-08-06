@@ -471,6 +471,7 @@
     "History": "Historia",
     "NewChat": "Nuevo chat",
     "NoDesiredReplicas": "El número deseado de réplicas para este despliegue es 0, por lo que no puede responder. Establezca el número deseado de réplicas en 1 o más para usarlo.",
+    "NoEndpointUrlIssued": "A este despliegue aún no se le ha asignado una URL de endpoint, por lo que no puede responder. Vuelva a intentarlo cuando el despliegue esté listo.",
     "SelectEndpoint": "Seleccionar punto final",
     "SelectModel": "Seleccionar modelo",
     "SelectToken": "Seleccionar ficha",

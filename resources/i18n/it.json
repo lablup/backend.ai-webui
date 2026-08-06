@@ -471,6 +471,7 @@
     "History": "La storia",
     "NewChat": "Nuova chiacchierata",
     "NoDesiredReplicas": "Il numero di repliche desiderato per questa distribuzione è 0, quindi non può rispondere. Imposta il numero di repliche desiderato su 1 o più per utilizzarla.",
+    "NoEndpointUrlIssued": "A questa distribuzione non è ancora stato assegnato un URL endpoint, quindi non può rispondere. Riprova quando la distribuzione è pronta.",
     "SelectEndpoint": "Seleziona punto finale",
     "SelectModel": "Seleziona modello",
     "SelectToken": "Selezionare il gettone",
