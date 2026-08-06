@@ -6,6 +6,7 @@ import {
   VFolderNodesFragment$data,
   VFolderNodesFragment$key,
 } from '../__generated__/VFolderNodesFragment.graphql';
+import { App } from '../app-shim';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
@@ -13,6 +14,7 @@ import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
+import { theme } from '../theme-shim';
 import DeploymentSettingModal from './DeploymentSettingModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import InviteFolderSettingModal from './InviteFolderSettingModal';
@@ -21,8 +23,8 @@ import VFolderDeployModal from './VFolderDeployModal';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
 import VFolderPermissionCell from './VFolderPermissionCell';
 import { DeleteFilled, DeleteOutlined, UserOutlined } from '@ant-design/icons';
+import { Text } from '@astryxdesign/core/Text';
 import { useToggle } from 'ahooks';
-import { App, theme, Typography } from 'antd';
 import {
   filterOutNullAndUndefined,
   BAIEndpointsIcon,
@@ -405,13 +407,15 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                               ),
                               extraDescription: !_.isEmpty(occupiedSession) ? (
                                 <BAIFlex direction="column" align="stretch">
-                                  <Typography.Text
-                                    style={{
-                                      color: token.colorTextDescription,
-                                    }}
-                                  >
+                                  {/* PILOT-DECISION: Astryx `Text` has no
+                                      `style` escape hatch (only `xstyle`,
+                                      which needs the StyleX compiler we chose
+                                      NOT to adopt — see 03 conflict point 1).
+                                      `token.colorTextDescription` maps to the
+                                      semantic `color="secondary"`. */}
+                                  <Text color="secondary">
                                     {t('data.folders.MountedSessions')}
-                                  </Typography.Text>
+                                  </Text>
                                   {_.map(occupiedSession, (sessionId) => (
                                     <BAILink
                                       key={sessionId}
@@ -509,12 +513,12 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
             render: (type: string) => {
               return type === 'user' ? (
                 <BAIFlex gap={'xs'}>
-                  <Typography.Text>{t('data.User')}</Typography.Text>
+                  <Text>{t('data.User')}</Text>
                   <UserOutlined style={{ color: token.colorTextTertiary }} />
                 </BAIFlex>
               ) : (
                 <BAIFlex gap={'xs'}>
-                  <Typography.Text>{t('data.Project')}</Typography.Text>
+                  <Text>{t('data.Project')}</Text>
                   <BAIUserUnionIcon
                     style={{ color: token.colorTextTertiary }}
                   />

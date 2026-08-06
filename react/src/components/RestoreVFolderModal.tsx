@@ -4,10 +4,11 @@
  */
 import { RestoreVFolderModalFragment$key } from '../__generated__/RestoreVFolderModalFragment.graphql';
 import { VFolderNodesFragment$data } from '../__generated__/VFolderNodesFragment.graphql';
+import { message } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { Typography, message } from 'antd';
+import { Text } from '@astryxdesign/core/Text';
 import {
   BAIModal,
   BAIModalProps,
@@ -94,7 +95,7 @@ const RestoreVFolderModal: React.FC<RestoreVFolderModalProps> = ({
       }}
       {...baiModalProps}
     >
-      <Typography.Text>
+      <Text>
         {vfolders?.length === 1
           ? t('data.folders.RestoreDescription', {
               folderName: vfolders?.[0]?.name,
@@ -102,7 +103,7 @@ const RestoreVFolderModal: React.FC<RestoreVFolderModalProps> = ({
           : t('data.folders.RestoreMultipleDescription', {
               folderLength: vfolders?.length,
             })}
-      </Typography.Text>
+      </Text>
     </BAIModal>
   );
 };

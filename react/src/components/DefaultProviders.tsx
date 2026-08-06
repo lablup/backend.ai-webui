@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { RelayEnvironment } from '../RelayEnvironment';
+import { BAIAppShimProvider } from '../app-shim';
 import { backendaiOptions } from '../global-stores';
 import { buiLanguages } from '../helper/bui-language';
 import { resolveInitialLanguage } from '../helper/resolveInitialLanguage';
@@ -15,6 +16,7 @@ import { useDeviceMetaData, useImageMetaData } from '../hooks/backendai';
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
 import '../index.css';
+import { ThemeShimProvider } from '../theme-shim';
 import NotificationHost from './NotificationHost';
 import createCache from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
@@ -380,42 +382,55 @@ export const DefaultProvidersForReactRoot: React.FC<{
                * unchanged. See FR-2986 / packages/backend.ai-ui/src/hooks/
                * useBAIi18n.ts.
                */}
-              <BAIMetaDataProviderWrapper>
-                <App {...commonAppProps}>
-                  {/* Single app-wide notification renderer. Lives outside
+              {/* PILOT (cn-oss-removal): the two Astryx-backed shims. They sit
+                  INSIDE antd's providers so a partially-migrated tree keeps
+                  working — antd's own <App>/theme stay mounted for every file
+                  not yet converted, while converted files read these instead. */}
+              <ThemeShimProvider
+                mode={isDarkMode ? 'dark' : 'light'}
+                seeds={
+                  (isDarkMode ? themeConfig?.dark : themeConfig?.light)?.token
+                }
+              >
+                <BAIAppShimProvider>
+                  <BAIMetaDataProviderWrapper>
+                    <App {...commonAppProps}>
+                      {/* Single app-wide notification renderer. Lives outside
                         the Suspense below so toasts work on every route and
                         in both anonymous and authenticated states. Renders
                         null, so its position relative to the emotion caches
                         below is irrelevant. */}
-                  <NotificationHost />
-                  {/*
-                   * Two separate emotion caches are needed for CSP nonce
-                   * coverage:
-                   *
-                   * 1. StyleProvider (antd-style's custom EmotionContext):
-                   *    covers createStyles() and the antd-style css() helper.
-                   *    The nonce is passed directly as a prop.
-                   *
-                   * 2. CacheProvider (@emotion/react's CacheContext):
-                   *    covers createGlobalStyle(), which uses @emotion/react's
-                   *    Global component internally. Global reads the nonce from
-                   *    cache.sheet.nonce — it does NOT read antd-style's custom
-                   *    EmotionContext. Without this wrapper, style tags emitted
-                   *    by createGlobalStyle (e.g. ScrollbarGlobalStyle) carry no
-                   *    nonce and are blocked by `style-src 'nonce-...'` CSP.
-                   */}
-                  <CacheProvider value={emotionGlobalCache}>
-                    <StyleProvider nonce={globalThis.baiNonce}>
-                      <Suspense>
-                        {/* <BrowserRouter> */}
-                        {/* <RoutingEventHandler /> */}
-                        {children}
-                        {/* </BrowserRouter> */}
-                      </Suspense>
-                    </StyleProvider>
-                  </CacheProvider>
-                </App>
-              </BAIMetaDataProviderWrapper>
+                      <NotificationHost />
+                      {/*
+                       * Two separate emotion caches are needed for CSP nonce
+                       * coverage:
+                       *
+                       * 1. StyleProvider (antd-style's custom EmotionContext):
+                       *    covers createStyles() and the antd-style css() helper.
+                       *    The nonce is passed directly as a prop.
+                       *
+                       * 2. CacheProvider (@emotion/react's CacheContext):
+                       *    covers createGlobalStyle(), which uses @emotion/react's
+                       *    Global component internally. Global reads the nonce from
+                       *    cache.sheet.nonce — it does NOT read antd-style's custom
+                       *    EmotionContext. Without this wrapper, style tags emitted
+                       *    by createGlobalStyle (e.g. ScrollbarGlobalStyle) carry no
+                       *    nonce and are blocked by `style-src 'nonce-...'` CSP.
+                       */}
+                      <CacheProvider value={emotionGlobalCache}>
+                        <StyleProvider nonce={globalThis.baiNonce}>
+                          <Suspense>
+                            {/* <BrowserRouter> */}
+                            {/* <RoutingEventHandler /> */}
+                            {children}
+                            {/* </BrowserRouter> */}
+                          </Suspense>
+                        </StyleProvider>
+                      </CacheProvider>
+                    </App>
+                  </BAIMetaDataProviderWrapper>
+                </BAIAppShimProvider>
+              </ThemeShimProvider>
             </BAIConfigProvider>
           </QueryClientProvider>
         </RelayEnvironmentProvider>

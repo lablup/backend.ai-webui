@@ -18,9 +18,11 @@ import { handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { theme } from '../theme-shim';
 import { isDeletedCategory } from './VFolderNodeListPage';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { useToggle } from 'ahooks';
-import { Badge, theme, Tooltip } from 'antd';
 import {
   BAIButton,
   BAICard,
@@ -254,33 +256,30 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
             },
             (label, key) => ({
               key,
-              label: (
-                <BAIFlex justify="center" gap={10}>
-                  {label}
-                  {
-                    // display badge only if count is greater than 0
+              // Astryx `Tab` takes a STRING label plus a native `endContent`
+              // slot, so the previous BAIFlex-wrapped JSX label is split in
+              // two. This also restores a correct `aria-label` on the tab.
+              label,
+              endContent:
+                // display badge only if count is greater than 0
+                // @ts-ignore
+                (folderCounts[key]?.count || 0) > 0 ? (
+                  // PILOT-DECISION: antd's Badge took an arbitrary `color`
+                  // (brand orange when selected, disabled grey otherwise) plus
+                  // explicit padding/fontSize. Astryx's Badge exposes only a
+                  // closed `variant` set — no colour, size, or style escape
+                  // hatch. `info` (solid, accent-coloured) is the closest read
+                  // of "this tab is active"; `neutral` for the inactive one.
+                  // The exact orange and the 10px type are lost. Needs a
+                  // design call before rollout.
+                  <Badge
                     // @ts-ignore
-                    (folderCounts[key]?.count || 0) > 0 && (
-                      <Badge
-                        // @ts-ignore
-                        count={folderCounts[key].count}
-                        color={
-                          queryParams.statusCategory === key
-                            ? token.colorPrimary
-                            : token.colorTextDisabled
-                        }
-                        size="small"
-                        showZero
-                        style={{
-                          paddingRight: token.paddingXS,
-                          paddingLeft: token.paddingXS,
-                          fontSize: 10,
-                        }}
-                      />
-                    )
-                  }
-                </BAIFlex>
-              ),
+                    label={folderCounts[key].count}
+                    variant={
+                      queryParams.statusCategory === key ? 'info' : 'neutral'
+                    }
+                  />
+                ) : undefined,
             }),
           )}
         />
@@ -400,7 +399,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                       count={selectedFolderList.length}
                       onClearSelection={() => setSelectedFolderList([])}
                     />
-                    <Tooltip title={t('data.folders.MoveToTrash')}>
+                    <Tooltip content={t('data.folders.MoveToTrash')}>
                       <BAIVFolderDeleteButton
                         vfolderFrgmt={selectedFolderList}
                         onClick={() => {
@@ -417,7 +416,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                       count={selectedFolderList.length}
                       onClearSelection={() => setSelectedFolderList([])}
                     />
-                    <Tooltip title={t('data.folders.Restore')}>
+                    <Tooltip content={t('data.folders.Restore')}>
                       <BAIButton
                         icon={
                           <BAIRestoreIcon style={{ color: token.colorInfo }} />

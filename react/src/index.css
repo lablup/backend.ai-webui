@@ -1,3 +1,13 @@
+/* PILOT (cn-oss-removal): Astryx design-system consumption path.
+   The `@layer` declaration MUST stay the very first statement in this file —
+   it fixes cascade precedence before any `@import` pulls layered CSS in.
+   See answers/03-stylex-answer.md. */
+@layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
+
+@import '@astryxdesign/core/reset.css';
+@import '@astryxdesign/core/astryx.css';
+@import '@astryxdesign/theme-neutral/theme.css';
+
 /* fix: match the icon size between Lucide and Ant.d icons */
 .lucide {
   width: 1em !important;

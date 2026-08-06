@@ -8,6 +8,8 @@ export { default as BAIBulkEditFormItem } from './BAIBulkEditFormItem';
 export type { BAIBulkEditFormItemProps } from './BAIBulkEditFormItem';
 export { default as BAIFlex } from './BAIFlex';
 export type { BAIFlexProps } from './BAIFlex';
+export { default as BAIFormItem } from './BAIFormItem';
+export type { BAIFormItemProps } from './BAIFormItem';
 export { default as BAICard } from './BAICard';
 export type { BAICardProps } from './BAICard';
 export {

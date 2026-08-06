@@ -4,9 +4,10 @@
  */
 import { DeleteVFolderModalFragment$key } from '../__generated__/DeleteVFolderModalFragment.graphql';
 import { VFolderNodesFragment$data } from '../__generated__/VFolderNodesFragment.graphql';
+import { message } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { Typography, message } from 'antd';
+import { Text } from '@astryxdesign/core/Text';
 import {
   BAIFlex,
   BAIListAlert,
@@ -139,7 +140,7 @@ const DeleteVFolderModal: React.FC<DeleteVFolderModalProps> = ({
               }))}
             />
           )}
-        <Typography.Text>
+        <Text>
           {foldersByPermission.deletable?.length === 1
             ? t('data.folders.MoveToTrashDescription', {
                 folderName: foldersByPermission.deletable?.[0]?.name,
@@ -147,7 +148,7 @@ const DeleteVFolderModal: React.FC<DeleteVFolderModalProps> = ({
             : t('data.folders.MoveToTrashMultipleDescription', {
                 folderLength: foldersByPermission.deletable?.length,
               })}
-        </Typography.Text>
+        </Text>
       </BAIFlex>
     </BAIModal>
   );
