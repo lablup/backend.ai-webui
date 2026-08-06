@@ -189,7 +189,7 @@ test.describe(
         await expect(modal.locator('textarea#startCommand')).toHaveCount(0);
         await expect(
           modal.getByText(
-            'Shell operators (; && | $VAR, redirection, etc.) cannot be used. Enter each argument separated by spaces.',
+            'Shell operators (; && | $VAR, redirection, etc.) cannot be used. Enter each argument separated by spaces; quote arguments containing spaces (e.g. --name "my model").',
             { exact: true },
           ),
         ).toBeVisible();
