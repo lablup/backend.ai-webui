@@ -53,6 +53,9 @@ import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ImageEnvironmentSelectFormItems, {
   type ImageEnvironmentFormInput,
 } from './ImageEnvironmentSelectFormItems';
+import ModelServiceHealthCheckFormItems from './ModelServiceFormItems/ModelServiceHealthCheckFormItems';
+import PreStartActionsFormList from './ModelServiceFormItems/PreStartActionsFormList';
+import ServiceConfigurationFormItems from './ModelServiceFormItems/ServiceConfigurationFormItems';
 import RuntimeParameterFormSection, {
   type RuntimeParameterValues,
 } from './RuntimeParameterFormSection';
@@ -64,13 +67,7 @@ import ResourceAllocationFormItems, {
 import VFolderTableFormItem, {
   type VFolderTableFormValues,
 } from './VFolderTableFormItem';
-import {
-  AstryxFormCheckbox,
-  AstryxFormNumberInput,
-  AstryxFormRadioList,
-  AstryxFormTextArea,
-  AstryxFormTextInput,
-} from './astryxFormControls';
+import { AstryxFormTextInput } from './astryxFormControls';
 import './collapsible-section.css';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
@@ -86,11 +83,9 @@ import {
 import {
   BAISkeleton,
   BAIAvailablePresetSelectAstryx,
-  BAIButton,
   BAIFlex,
   BAIModal,
   BAIModalProps,
-  BAIQuestionIconWithTooltip,
   BAIRuntimeVariantSelectAstryx,
   BAISelect,
   BAIVFolderSelectAstryx,
@@ -102,13 +97,7 @@ import {
   useBAILogger,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import {
-  CircleMinus,
-  Info,
-  RotateCw,
-  FolderOpenIcon,
-  PlusIcon,
-} from 'lucide-react';
+import { Info, RotateCw, FolderOpenIcon, PlusIcon } from 'lucide-react';
 import React, {
   Suspense,
   startTransition,
@@ -143,22 +132,24 @@ export type FormValues = ImageEnvironmentFormInput &
     // Command below; optional, so it can be set alone or alongside a command.
     definitionPath?: string;
     startCommand?: string;
-    // Start Command shell semantics (FR-3205). `commandAdvanced` toggles the
-    // Basic/Advanced controls; in Advanced mode `commandExecution` chooses
+    // Start Command shell semantics (FR-3205). `advanced` toggles the
+    // Basic/Advanced controls; in Advanced mode `execution` chooses
     // Shell (run `shell -c command`) vs Exec (argv, no shell) and
-    // `commandShell` is the shell binary for Shell execution.
-    commandAdvanced?: boolean;
-    commandExecution?: CommandExecutionMode;
-    commandShell?: string;
-    commandPort?: number;
-    commandEnableHealthCheck?: boolean;
-    commandHealthCheck?: string;
-    commandInitialDelay?: number;
-    commandMaxRetries?: number;
-    commandInterval?: number;
-    commandMaxWaitTime?: number;
-    commandExpectedStatusCode?: number;
-    commandPreStartActions?: Array<{ action: string; args: string }>;
+    // `shell` is the shell binary for Shell execution.
+    advanced?: boolean;
+    execution?: CommandExecutionMode;
+    shell?: string;
+    port?: number;
+    enableHealthCheck?: boolean;
+    healthCheck?: {
+      path?: string;
+      interval?: number;
+      maxRetries?: number;
+      maxWaitTime?: number;
+      expectedStatusCode?: number;
+      initialDelay?: number;
+    };
+    preStartActions?: Array<{ action: string; args: string }>;
     environ: EnvVarFormListValue[];
     /** Runtime-variant preset values, registered by RuntimeParameterFormSection. */
     runtimeParams?: RuntimeParameterValues;
@@ -275,34 +266,6 @@ const SectionHeader: React.FC<{ children: React.ReactNode }> = ({
   // placement prop, so the left placement (and the manual fontSizeSM Text) is
   // dropped per defaults-first.
   return <Divider label={children} />;
-};
-
-// Bridge for the form engine: `BAIFormItem name="commandAdvanced" noStyle`
-// injects `value`/`onChange` as a BOOLEAN, while Astryx `SegmentedControl`
-// works on non-nullable string values. antd solved this at the Form.Item with
-// a `getValueProps`/`normalize` pair, but the self-hosted engine dropped
-// `normalize` (0 call sites at migration time), so the boolean ↔
-// 'basic'/'advanced' mapping lives in this bridge instead — the same pattern
-// the former `DefinitionModeSegmented` bridge used (FR-3205 replaced that
-// command/file toggle with this Basic/Advanced one).
-const AdvancedModeSegmented: React.FC<{
-  value?: boolean;
-  onChange?: (next: boolean) => void;
-}> = ({ value, onChange }) => {
-  'use memo';
-  const { t } = useTranslation();
-  return (
-    <SegmentedControl
-      value={value ? 'advanced' : 'basic'}
-      onChange={(next) => onChange?.(next === 'advanced')}
-      size="sm"
-      // Aria-only group label; reuses an existing key (no new i18n keys).
-      label={t('modelService.ServiceConfiguration')}
-    >
-      <SegmentedControlItem value="basic" label={t('general.Basic')} />
-      <SegmentedControlItem value="advanced" label={t('general.Advanced')} />
-    </SegmentedControl>
-  );
 };
 
 // Loader for the preset-detail modal in this paginated context. The Preset
@@ -1097,16 +1060,18 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       // Health check prefill applies to every runtime variant and mode
       // (FR-3068): the checkbox + fields reflect the source revision's
       // health-check override regardless of how the definition is provided.
-      commandEnableHealthCheck: !!healthCheck,
-      commandHealthCheck: healthCheck?.path ?? undefined,
-      commandInitialDelay: healthCheck?.initialDelay ?? undefined,
-      commandMaxRetries: healthCheck?.maxRetries ?? undefined,
-      commandInterval: healthCheck?.interval ?? undefined,
-      commandMaxWaitTime: healthCheck?.maxWaitTime ?? undefined,
-      commandExpectedStatusCode: healthCheck?.expectedStatusCode ?? undefined,
+      enableHealthCheck: !!healthCheck,
+      healthCheck: {
+        path: healthCheck?.path ?? undefined,
+        initialDelay: healthCheck?.initialDelay ?? undefined,
+        maxRetries: healthCheck?.maxRetries ?? undefined,
+        interval: healthCheck?.interval ?? undefined,
+        maxWaitTime: healthCheck?.maxWaitTime ?? undefined,
+        expectedStatusCode: healthCheck?.expectedStatusCode ?? undefined,
+      },
       // Pre-start actions prefill (FR-3205): translate from the GraphQL shape
       // (args as object) to the form shape (args as JSON string).
-      commandPreStartActions:
+      preStartActions:
         service?.preStartActions?.map((a) => ({
           action: a.action,
           args: JSON.stringify(a.args),
@@ -1114,10 +1079,10 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       ...(hasCustomCommand && service
         ? {
             startCommand: commandModeState.command,
-            commandAdvanced: commandModeState.advanced,
-            commandExecution: commandModeState.execution,
-            commandShell: commandModeState.shell,
-            commandPort: service.port,
+            advanced: commandModeState.advanced,
+            execution: commandModeState.execution,
+            shell: commandModeState.shell,
+            port: service.port,
           }
         : {}),
     });
@@ -1428,15 +1393,15 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     // fields are required in the UI (mirrors the preset form). For non-command
     // modes (non-custom runtimes and custom+file) we send a minimal
     // modelDefinition override containing only the health check when enabled.
-    const healthCheckEnabled = !!values.commandEnableHealthCheck;
+    const healthCheckEnabled = !!values.enableHealthCheck;
     const healthCheck = (() => {
       const configuredFields = {
-        path: values.commandHealthCheck,
-        interval: values.commandInterval,
-        maxRetries: values.commandMaxRetries,
-        maxWaitTime: values.commandMaxWaitTime,
-        initialDelay: values.commandInitialDelay,
-        expectedStatusCode: values.commandExpectedStatusCode,
+        path: values.healthCheck?.path,
+        interval: values.healthCheck?.interval,
+        maxRetries: values.healthCheck?.maxRetries,
+        maxWaitTime: values.healthCheck?.maxWaitTime,
+        initialDelay: values.healthCheck?.initialDelay,
+        expectedStatusCode: values.healthCheck?.expectedStatusCode,
       };
       if (!supportsHealthCheckEnable) {
         // Managers < 26.4.4: null disables the health check.
@@ -1470,16 +1435,16 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       ? {
           command: rawCommand,
           shell: resolveCommandShell({
-            advanced: !!values.commandAdvanced,
-            execution: values.commandExecution,
-            shell: values.commandShell,
+            advanced: !!values.advanced,
+            execution: values.execution,
+            shell: values.shell,
           }),
         }
       : { startCommand: tokenizeShellCommand(rawCommand) };
 
     // Pre-start actions from the form (FR-3205). Parse the JSON `args` string
     // for each entry; fallback to `{}` on invalid JSON.
-    const preStartActions = (values.commandPreStartActions ?? [])
+    const preStartActions = (values.preStartActions ?? [])
       .filter((a) => a.action)
       .map((a) => ({
         action: a.action,
@@ -1497,8 +1462,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     // expose health check and pre-start actions. The definition is sent
     // whenever any service field has data — not just when a command is typed.
     const hasServiceConfig =
-      readsVfolderConfigFiles &&
-      (values.startCommand || values.commandPort != null);
+      readsVfolderConfigFiles && (values.startCommand || values.port != null);
     const hasHealthOrPreStart =
       healthCheckEnabled || preStartActions.length > 0;
 
@@ -1511,7 +1475,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               service: {
                 preStartActions,
                 ...commandServiceFields,
-                port: values.commandPort ?? 8000,
+                port: values.port ?? 8000,
                 healthCheck,
               },
             },
@@ -2013,25 +1977,25 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           onFinishFailed={handleFinishFailed}
           // Collapsing Advanced → Basic hides the Execution / Shell controls but
           // antd keeps the values of unmounted fields, while `resolveCommandShell`
-          // branches on `commandAdvanced` first and submits the default shell.
+          // branches on `advanced` first and submits the default shell.
           // Without this reset a user who picks Exec (or /bin/zsh) and then
           // returns to Basic keeps seeing that choice when they reopen Advanced,
           // even though submit silently sends /bin/bash. Reset the two fields so
           // what the form holds always matches what is submitted.
           onValuesChange={(changed: Partial<FormValues>) => {
-            if ('commandAdvanced' in changed && !changed.commandAdvanced) {
+            if ('advanced' in changed && !changed.advanced) {
               customForm.setFieldsValue({
-                commandExecution: 'shell',
-                commandShell: DEFAULT_MODEL_SERVICE_SHELL,
+                execution: 'shell',
+                shell: DEFAULT_MODEL_SERVICE_SHELL,
               });
             }
           }}
           initialValues={_.merge({}, RESOURCE_ALLOCATION_INITIAL_FORM_VALUES, {
             resourceGroup: deployment?.metadata?.resourceGroupName,
-            commandAdvanced: false,
-            commandExecution: 'shell',
-            commandShell: DEFAULT_MODEL_SERVICE_SHELL,
-            commandEnableHealthCheck: false,
+            advanced: false,
+            execution: 'shell',
+            shell: DEFAULT_MODEL_SERVICE_SHELL,
+            enableHealthCheck: false,
             environ: [],
           })}
         >
@@ -2218,454 +2182,32 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               if (!reads) {
                 return null;
               }
-              // PILOT-DECISION: antd `Collapse` (single bordered panel,
-              // size="small", defaultActiveKey open, forceRender) → Astryx
-              // `Collapsible`. The boxed panel chrome is dropped (Collapsible
-              // is a flat "ghost" trigger + content — the design's default)
-              // and it starts open by default, matching `defaultActiveKey`.
-              // `forceRender` needs no equivalent: Collapsible keeps its
-              // children MOUNTED while collapsed (CSS-hidden), so the command
-              // fields stay registered and validate on submit (FR-3205).
-              //
-              // PILOT-DECISION: the Basic/Advanced Segmented moves from the
-              // antd Collapse header into the top of the content — Astryx
-              // renders the whole `trigger` inside a <button>, which cannot
-              // host interactive controls (this also drops the
-              // stopPropagation dance the antd header needed).
               return (
-                <Collapsible
-                  className="bai-collapsible-section"
-                  trigger={t('modelService.ServiceConfiguration')}
-                  style={{ marginBottom: token.marginMD }}
-                >
-                  {/* Basic/Advanced toggle for the command config, gated on
-                      the 26.8.0 command/shell API (FR-3205). The boolean ↔
-                      'basic'/'advanced' mapping lives in the
-                      `AdvancedModeSegmented` bridge so submit and prefill
-                      keep the same semantics. */}
-                  {supportsCommandShell && (
-                    <BAIFlex
-                      gap="xxs"
-                      align="center"
-                      justify="end"
-                      style={{ marginBottom: token.marginXS }}
-                    >
-                      <BAIFormItem name="commandAdvanced" noStyle>
-                        <AdvancedModeSegmented />
-                      </BAIFormItem>
-                      <BAIQuestionIconWithTooltip
-                        title={t('modelService.CommandAdvancedModeTooltip')}
-                      />
-                    </BAIFlex>
-                  )}
-                  <>
-                    {/* Basic/Advanced + Execution/Shell controls need
-                              the 26.8.0 command/shell API; on older managers
-                              only the plain command input below is shown. The
-                              Basic/Advanced Segmented sits at the top of the
-                              command config (FR-3205). */}
-                    {supportsCommandShell && (
-                      <>
-                        {/* Advanced only: Execution (Shell | Exec) +
-                                  Shell. The Basic/Advanced toggle lives at
-                                  the top of the Collapsible content. */}
-                        <BAIFormItem dependencies={['commandAdvanced']} noStyle>
-                          {(advForm) => {
-                            const { getFieldValue: getAdv } =
-                              advForm as FormInstance<FormValues>;
-                            return getAdv('commandAdvanced') ? (
-                              <BAIFlex gap="sm" align="start">
-                                <BAIFormItem
-                                  name="commandExecution"
-                                  label={t('modelService.Execution')}
-                                  tooltip={{
-                                    // pre-line so the `\n` between the
-                                    // Shell and Exec descriptions renders
-                                    // as a line break.
-                                    title: (
-                                      <span
-                                        style={{
-                                          whiteSpace: 'pre-line',
-                                        }}
-                                      >
-                                        {t('modelService.ExecutionTooltip')}
-                                      </span>
-                                    ),
-                                  }}
-                                  required
-                                  rules={[{ required: true }]}
-                                >
-                                  <AstryxFormRadioList
-                                    label={t('modelService.Execution')}
-                                    options={[
-                                      {
-                                        label: t('modelService.ExecutionShell'),
-                                        value: 'shell',
-                                      },
-                                      {
-                                        label: t('modelService.ExecutionExec'),
-                                        value: 'exec',
-                                      },
-                                    ]}
-                                  />
-                                </BAIFormItem>
-                                <BAIFormItem
-                                  dependencies={['commandExecution']}
-                                  noStyle
-                                >
-                                  {(execForm) => {
-                                    const { getFieldValue: getExec } =
-                                      execForm as FormInstance<FormValues>;
-                                    // Exec = no shell → hide the Shell
-                                    // field entirely (submitted `shell`
-                                    // is null).
-                                    return getExec('commandExecution') ===
-                                      'exec' ? null : (
-                                      <BAIFormItem
-                                        name="commandShell"
-                                        label={t('modelService.Shell')}
-                                        tooltip={t('modelService.ShellTooltip')}
-                                        style={{ flex: 1 }}
-                                        required
-                                        rules={[
-                                          {
-                                            required: true,
-                                            whitespace: true,
-                                          },
-                                        ]}
-                                      >
-                                        {/* PILOT-DECISION: antd
-                                                  `AutoComplete` (free text +
-                                                  shell suggestions) has no
-                                                  Astryx equivalent — Typeahead
-                                                  commits a SELECTED item, not
-                                                  free text — so this becomes a
-                                                  plain text input (same call as
-                                                  the AdminDeploymentPreset
-                                                  resource-opts conversion). The
-                                                  COMMAND_SHELL_OPTIONS
-                                                  suggestion list is dropped;
-                                                  the placeholder shows the
-                                                  default shell. */}
-                                        <AstryxFormTextInput
-                                          label={t('modelService.Shell')}
-                                          hasClear
-                                          placeholder={
-                                            DEFAULT_MODEL_SERVICE_SHELL
-                                          }
-                                        />
-                                      </BAIFormItem>
-                                    );
-                                  }}
-                                </BAIFormItem>
-                              </BAIFlex>
-                            ) : null;
-                          }}
-                        </BAIFormItem>
-                      </>
-                    )}
-                    {/* Command input: multi-line textarea in Shell
-                              mode (backend runs `shell -c command`, so
-                              operators work); single-line input in Exec
-                              mode (shell is null → command run directly as
-                              argv, so operators do NOT work). Legacy
-                              (<26.8.0) managers get a plain single-line
-                              input that is tokenized on submit. */}
-                    <BAIFormItem
-                      dependencies={['commandAdvanced', 'commandExecution']}
-                      noStyle
-                    >
-                      {(modeForm) => {
-                        const { getFieldValue: getMode } =
-                          modeForm as FormInstance<FormValues>;
-                        const advanced = !!getMode('commandAdvanced');
-                        const isExec =
-                          advanced && getMode('commandExecution') === 'exec';
-                        const commandLabel = isExec
-                          ? t('modelService.CommandArgvLabel')
-                          : supportsCommandShell
-                            ? t('modelService.Command')
-                            : t('modelService.StartCommand');
-                        return (
-                          <BAIFormItem
-                            name="startCommand"
-                            // Exec splits the input into an argv
-                            // vector, so label it "Command (argv)"
-                            // to distinguish it from a shell command.
-                            label={commandLabel}
-                            tooltip={t('modelService.StartCommandTooltip')}
-                            // The hint states how the command will be run,
-                            // so it follows that rather than the UI mode:
-                            // Exec is the only case that does not go
-                            // through a shell, and Basic runs under the
-                            // backend's default shell exactly like
-                            // Advanced + Shell. Managers without the
-                            // command/shell path still receive a
-                            // tokenized `startCommand`, so they keep the
-                            // original shell-syntax hint (FR-3166).
-                            extra={
-                              !supportsCommandShell
-                                ? t('modelService.StartCommandHelperShell')
-                                : isExec
-                                  ? t('modelService.CommandExecHelper')
-                                  : t('modelService.CommandShellHelper')
-                            }
-                            // The command is sent to the server as the
-                            // raw string the user typed; the WebUI does
-                            // not pre-validate shell operators (Exec runs
-                            // it via shlex.split, where quoted operators
-                            // are valid argv content). The Exec helper
-                            // text explains that unquoted operators are
-                            // not interpreted.
-                            rules={[{ whitespace: true }]}
-                          >
-                            {!supportsCommandShell ? (
-                              // Legacy (<26.8.0): plain single-line
-                              // input, tokenized on submit.
-                              <AstryxFormTextInput
-                                label={commandLabel}
-                                placeholder={
-                                  modelDefinitionDefaults?.startCommand
-                                }
-                              />
-                            ) : isExec ? (
-                              // Exec: argv example, no shell operators.
-                              <AstryxFormTextInput
-                                label={commandLabel}
-                                placeholder={
-                                  modelDefinitionDefaults?.startCommand
-                                }
-                              />
-                            ) : (
-                              // PILOT-DECISION: antd `autoSize={{minRows:
-                              // 2}}` (grow-with-content) has no Astryx
-                              // TextArea equivalent — fixed `rows={2}`
-                              // instead.
-                              <AstryxFormTextArea
-                                label={commandLabel}
-                                placeholder={
-                                  modelDefinitionDefaults?.startCommand
-                                }
-                                rows={2}
-                              />
-                            )}
-                          </BAIFormItem>
-                        );
-                      }}
-                    </BAIFormItem>
-                    <BAIFormItem
-                      name="commandPort"
-                      label={t('modelService.Port')}
-                      tooltip={t('modelService.PortTooltip')}
-                      style={{ marginBottom: 0 }}
-                    >
-                      <AstryxFormNumberInput
-                        label={t('modelService.Port')}
-                        min={2}
-                        max={65535}
-                        placeholder={modelDefinitionDefaults?.port?.toString()}
-                      />
-                    </BAIFormItem>
-                  </>
-                </Collapsible>
+                <div style={{ marginBottom: token.marginMD }}>
+                  <ServiceConfigurationFormItems
+                    namePrefix={[]}
+                    supportsCommandShell={supportsCommandShell}
+                    commandPlaceholder={modelDefinitionDefaults?.startCommand}
+                    portPlaceholder={modelDefinitionDefaults?.port?.toString()}
+                  />
+                </div>
               );
             }}
           </BAIFormItem>
 
           {/* Health check is shown for every runtime variant and definition
               mode (FR-3068); enabling it submits a health-check override. */}
-          <BAIFormItem
-            name="commandEnableHealthCheck"
-            valuePropName="checked"
-            style={{ marginBottom: token.marginXS }}
-          >
-            <AstryxFormCheckbox label={t('modelService.EnableHealthCheck')} />
-          </BAIFormItem>
-          <BAIFormItem dependencies={['commandEnableHealthCheck']} noStyle>
-            {(form) =>
-              (form as FormInstance<FormValues>).getFieldValue(
-                'commandEnableHealthCheck',
-              ) ? (
-                <BAIFlex direction="column" align="stretch" gap="xs">
-                  <BAIFormItem
-                    name="commandHealthCheck"
-                    label={t('adminDeploymentPreset.modelDef.HealthCheckPath')}
-                    tooltip={t('modelService.HealthCheckTooltip')}
-                    rules={[{ required: true }]}
-                  >
-                    <AstryxFormTextInput
-                      label={t(
-                        'adminDeploymentPreset.modelDef.HealthCheckPath',
-                      )}
-                      placeholder={modelDefinitionDefaults?.healthCheckPath}
-                      hasClear
-                    />
-                  </BAIFormItem>
-                  <BAIFlex gap="md" wrap="wrap" align="end">
-                    <BAIFormItem
-                      name="commandInterval"
-                      label={t(
-                        'adminDeploymentPreset.modelDef.HealthCheckInterval',
-                      )}
-                      tooltip={t('modelService.IntervalTooltip')}
-                      rules={[{ required: true }]}
-                      style={{ flex: 1, minWidth: 160 }}
-                    >
-                      <AstryxFormNumberInput
-                        label={t(
-                          'adminDeploymentPreset.modelDef.HealthCheckInterval',
-                        )}
-                        min={1}
-                        units={t('time.Sec')}
-                      />
-                    </BAIFormItem>
-                    <BAIFormItem
-                      name="commandMaxRetries"
-                      label={t(
-                        'adminDeploymentPreset.modelDef.HealthCheckMaxRetries',
-                      )}
-                      tooltip={t('modelService.MaxRetriesTooltip')}
-                      rules={[{ required: true }]}
-                      style={{ flex: 1, minWidth: 160 }}
-                    >
-                      <AstryxFormNumberInput
-                        label={t(
-                          'adminDeploymentPreset.modelDef.HealthCheckMaxRetries',
-                        )}
-                        min={1}
-                        placeholder={modelDefinitionDefaults?.maxRetries?.toString()}
-                      />
-                    </BAIFormItem>
-                    <BAIFormItem
-                      name="commandMaxWaitTime"
-                      label={t(
-                        'adminDeploymentPreset.modelDef.HealthCheckMaxWaitTime',
-                      )}
-                      tooltip={t('modelService.MaxWaitTimeTooltip')}
-                      rules={[{ required: true }]}
-                      style={{ flex: 1, minWidth: 160 }}
-                    >
-                      <AstryxFormNumberInput
-                        label={t(
-                          'adminDeploymentPreset.modelDef.HealthCheckMaxWaitTime',
-                        )}
-                        min={1}
-                        units={t('time.Sec')}
-                      />
-                    </BAIFormItem>
-                  </BAIFlex>
-                  <BAIFlex gap="md" wrap="wrap" align="end">
-                    <BAIFormItem
-                      name="commandExpectedStatusCode"
-                      label={t(
-                        'adminDeploymentPreset.modelDef.HealthCheckExpectedStatus',
-                      )}
-                      tooltip={t('modelService.ExpectedStatusTooltip')}
-                      rules={[{ required: true }]}
-                      style={{ flex: 1, minWidth: 160 }}
-                    >
-                      <AstryxFormNumberInput
-                        label={t(
-                          'adminDeploymentPreset.modelDef.HealthCheckExpectedStatus',
-                        )}
-                        min={101}
-                        max={599}
-                      />
-                    </BAIFormItem>
-                    <BAIFormItem
-                      name="commandInitialDelay"
-                      label={t(
-                        'adminDeploymentPreset.modelDef.HealthCheckInitialDelay',
-                      )}
-                      tooltip={t('modelService.InitialDelayTooltip')}
-                      rules={[{ required: true }]}
-                      style={{ flex: 1, minWidth: 160 }}
-                    >
-                      <AstryxFormNumberInput
-                        label={t(
-                          'adminDeploymentPreset.modelDef.HealthCheckInitialDelay',
-                        )}
-                        min={0}
-                        placeholder={modelDefinitionDefaults?.initialDelay?.toString()}
-                        units={t('time.Sec')}
-                      />
-                    </BAIFormItem>
-                    <div style={{ flex: 1, minWidth: 160 }} />
-                  </BAIFlex>
-                </BAIFlex>
-              ) : null
-            }
-          </BAIFormItem>
+          <ModelServiceHealthCheckFormItems
+            namePrefix={[]}
+            placeholders={{
+              path: modelDefinitionDefaults?.healthCheckPath,
+              maxRetries: modelDefinitionDefaults?.maxRetries?.toString(),
+              initialDelay: modelDefinitionDefaults?.initialDelay?.toString(),
+            }}
+          />
 
           {/* Pre-Start Actions — always visible regardless of runtime variant */}
-          <BAIFormItem
-            label={t('modelService.PreStartActions')}
-            tooltip={t('modelService.PreStartActionsTooltip')}
-            style={{ marginBottom: 0, marginTop: token.marginXS }}
-          >
-            <Form.List name="commandPreStartActions">
-              {(fields, { add, remove }) => (
-                <BAIFlex direction="column" gap="xs" align="stretch">
-                  {fields.map(({ key, name, ...rest }) => (
-                    <BAIFlex
-                      key={key}
-                      direction="row"
-                      align="baseline"
-                      gap="xs"
-                    >
-                      <BAIFormItem
-                        {...rest}
-                        name={[name, 'action']}
-                        style={{ marginBottom: 0, flex: 1 }}
-                        rules={[{ required: true, message: '' }]}
-                      >
-                        <AstryxFormTextInput
-                          label={t('modelService.PreStartActions')}
-                          placeholder={t(
-                            'adminDeploymentPreset.modelDef.ActionPlaceholder',
-                          )}
-                        />
-                      </BAIFormItem>
-                      <BAIFormItem
-                        {...rest}
-                        name={[name, 'args']}
-                        style={{ marginBottom: 0, flex: 2 }}
-                        rules={[
-                          { required: true, message: '' },
-                          {
-                            validator: async (_, v) => {
-                              if (!v) return;
-                              try {
-                                JSON.parse(v);
-                              } catch {
-                                return Promise.reject('');
-                              }
-                            },
-                          },
-                        ]}
-                      >
-                        <AstryxFormTextInput
-                          label={t('modelService.PreStartActions')}
-                          placeholder={t('general.Example', { value: '{}' })}
-                        />
-                      </BAIFormItem>
-                      <CircleMinus size="1em" onClick={() => remove(name)} />
-                    </BAIFlex>
-                  ))}
-                  <BAIFormItem noStyle>
-                    <BAIButton
-                      type="dashed"
-                      onClick={() => add({ action: '', args: '{}' })}
-                      icon={<PlusIcon />}
-                      block
-                    >
-                      {t('adminDeploymentPreset.modelDef.AddPreStartAction')}
-                    </BAIButton>
-                  </BAIFormItem>
-                </BAIFlex>
-              )}
-            </Form.List>
-          </BAIFormItem>
+          <PreStartActionsFormList namePrefix={[]} />
 
           <SectionHeader>{t('session.launcher.Environments')}</SectionHeader>
 

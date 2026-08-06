@@ -101,8 +101,8 @@ const buildModelDefinitionInput = (
                     command: service.startCommand || null,
                     shell: service.startCommand
                       ? resolveCommandShell({
-                          advanced: !!service.commandAdvanced,
-                          execution: service.commandExecution ?? 'shell',
+                          advanced: !!service.advanced,
+                          execution: service.execution ?? 'shell',
                           shell: service.shell,
                         })
                       : undefined,
