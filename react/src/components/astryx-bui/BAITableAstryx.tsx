@@ -53,15 +53,24 @@
    is wired here; the settings modal itself is not rebuilt.
 */
 import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+} from '@astryxdesign/core/DropdownMenu';
+import { Pagination } from '@astryxdesign/core/Pagination';
+import { HStack } from '@astryxdesign/core/Stack';
+import {
   Table,
   pixel,
   proportional,
   useTableColumnResize,
-  useTablePagination,
+  useTableColumnSettings,
+  useTableColumnSettingsState,
   useTableSelection,
   useTableSortable,
 } from '@astryxdesign/core/Table';
+import { SettingsIcon } from 'lucide-react';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 /** antd-shaped column definition, as used across this repo. */
 export interface BAITableAstryxColumn<T> {
@@ -148,6 +157,7 @@ function BAITableAstryx<T extends Record<string, unknown>>({
   // width field, so persisting them would need a BUI schema change.
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
 
+  const { t } = useTranslation();
   const data = dataSource ?? [];
   const getKey = (record: T) =>
     rowKey ? rowKey(record) : String((record as Record<string, unknown>).id);
@@ -248,18 +258,64 @@ function BAITableAstryx<T extends Record<string, unknown>>({
     allowUnsortedState: true,
   });
 
-  const paginationPlugin = useTablePagination<T>({
-    page: pagination?.current ?? 1,
-    pageSize: pagination?.pageSize ?? 10,
-    totalItems: pagination?.total ?? 0,
-    onPageChange: (page) =>
-      pagination?.onChange?.(page, pagination?.pageSize ?? 10),
-    onPageSizeChange: (pageSize) =>
-      pagination?.onChange?.(pagination?.current ?? 1, pageSize),
-    pageSizeOptions: [10, 20, 50, 100],
-    position: 'below',
-    align: 'end',
+  // PHASE 4 — pagination is rendered as a STANDALONE `Pagination` in a
+  // right-aligned bottom bar rather than via the `useTablePagination` plugin.
+  //
+  // Two reasons, both matching the original:
+  //  1. The plugin deliberately renders NOTHING when there is a single page
+  //     ("Don't render pagination when there's only one page and no more
+  //     data"). antd always shows the bar, and the BEFORE screenshot shows it
+  //     at total=3/pageSize=10 — so the plugin would have silently hidden it.
+  //  2. BUI's own `BAITable` does exactly this: it sets antd's built-in
+  //     pagination to `display: none` and renders its own `<Pagination>` in a
+  //     `BAIFlex justify="end"` next to the column-settings gear. Composing the
+  //     bar ourselves reproduces that anatomy directly.
+  //
+  // The Relay wiring is untouched: `onChange(page, pageSize)` still feeds
+  // `useBAIPaginationOptionStateOnSearchParam`, which drives limit+offset —
+  // never mixed with cursor args (see .claude/rules/graphql-pagination.md).
+
+  // PHASE 4 — column settings. `useTableColumnSettingsState` owns the
+  // visible/ordered key list; `useTableColumnSettings` is the plugin that
+  // applies it. Both are HEADLESS: Astryx renders **no trigger and no
+  // popover** — the surface is ours (BUI ships a whole `BAITableSettingModal`).
+  //
+  // Persistence matches the original exactly: the active-key list is projected
+  // back into BUI's `columnOverrides` record (`{ [key]: { hidden } }`) and sent
+  // to `tableSettings.onColumnOverridesChange`, which the page already persists
+  // through `useBAISettingUserState('table_column_overrides.<Page>')`.
+  const settingsColumns = (columns ?? []).map((column) => ({
+    key: column.key,
+    label: typeof column.title === 'string' ? column.title : column.key,
+    isAlwaysVisible: !!column.required,
+  }));
+  const activeColumnKeys = visibleColumns.map((column) => column.key);
+
+  const columnSettingsState = useTableColumnSettingsState({
+    columns: settingsColumns,
+    activeColumnKeys,
+    defaultColumnKeys: (columns ?? [])
+      .filter((column) => column.required || !column.defaultHidden)
+      .map((column) => column.key),
+    onChangeActiveColumnKeys: (keys) => {
+      const active = new Set(keys);
+      const next: Record<string, BAITableAstryxColumnOverride> = {
+        ...overrides,
+      };
+      (columns ?? []).forEach((column) => {
+        if (column.required) return;
+        next[column.key] = {
+          ...next[column.key],
+          hidden: !active.has(column.key),
+        };
+      });
+      tableSettings?.onColumnOverridesChange?.(next);
+    },
   });
+
+  const columnSettingsPlugin = useTableColumnSettings<T>(
+    columnSettingsState.columnSettingsConfig,
+  );
 
   const resizePlugin = useTableColumnResize<T>({
     // The plugin's `columns` is typed against the erased
@@ -277,7 +333,7 @@ function BAITableAstryx<T extends Record<string, unknown>>({
   const plugins: Record<string, unknown> = { sort: sortPlugin };
   if (resizable) plugins.resize = resizePlugin;
   if (rowSelection) plugins.selection = selectionPlugin;
-  if (pagination) plugins.pagination = paginationPlugin;
+  if (tableSettings) plugins.columnSettings = columnSettingsPlugin;
 
   return (
     // PILOT-DECISION: antd's loading overlay (dim + centred spinner over the
@@ -306,6 +362,61 @@ function BAITableAstryx<T extends Record<string, unknown>>({
         }
         plugins={plugins as React.ComponentProps<typeof Table<T>>['plugins']}
       />
+
+      {/* Bottom bar — right-aligned pagination with the column-settings gear
+          immediately to its right, matching BUI's `BAIFlex justify="end"`. */}
+      {pagination || tableSettings ? (
+        <HStack justify="end" align="center" gap={2} style={{ marginTop: 12 }}>
+          {pagination ? (
+            <Pagination
+              page={pagination.current ?? 1}
+              pageSize={pagination.pageSize ?? 10}
+              totalItems={pagination.total ?? 0}
+              // Same three options the original offers.
+              pageSizeOptions={[10, 20, 50]}
+              size="sm"
+              variant="pages"
+              label={t('general.Pagination', 'Pagination')}
+              onChange={(page) =>
+                pagination.onChange?.(page, pagination.pageSize ?? 10)
+              }
+              onPageSizeChange={(pageSize) =>
+                pagination.onChange?.(1, pageSize)
+              }
+            />
+          ) : null}
+          {tableSettings ? (
+            <DropdownMenu
+              placement="above"
+              alignment="end"
+              hasChevron={false}
+              button={{
+                label: t('comp:BAITable.ColumnSettings', 'Column settings'),
+                variant: 'ghost',
+                size: 'sm',
+                isIconOnly: true,
+                icon: <SettingsIcon />,
+              }}
+            >
+              {/* PILOT-DECISION: BUI opens a full modal with drag-to-reorder
+                  AND CSV export. This rebuild covers visibility toggling only —
+                  a checkbox menu. Reorder (`columnOverrides[key].order`) and
+                  export are real remaining cost, not rebuilt here. */}
+              {settingsColumns.map((column) => (
+                <DropdownMenuCheckboxItem
+                  key={column.key}
+                  label={column.label}
+                  value={columnSettingsState.isColumnActive(column.key)}
+                  isDisabled={
+                    !columnSettingsState.isColumnToggleable(column.key)
+                  }
+                  onChange={() => columnSettingsState.toggleColumn(column.key)}
+                />
+              ))}
+            </DropdownMenu>
+          ) : null}
+        </HStack>
+      ) : null}
     </div>
   );
 }
