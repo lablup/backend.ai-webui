@@ -2,7 +2,13 @@
 // Sections: 5 (Sync Input Propagation), 6 (Sync Toggle Off — Input Isolation)
 import {
   setupChatPage,
-  setupChatPageWithTwoEndpoints,
+  setupChatPageWithTwoDeployments,
+  MOCK_DEPLOYMENT_NAME,
+  MOCK_DEPLOYMENT_NAME_B,
+  MOCK_DEPLOYMENT_URL_B,
+  MOCK_REPLY_A,
+  MOCK_REPLY_B,
+  MOCK_MODEL_ID_B,
 } from './mocking/chat-mock-data';
 import { test, expect, Page } from '@playwright/test';
 
@@ -49,7 +55,7 @@ function getChatInput(page: Page, index: number) {
 function getSyncToggle(page: Page, cardIndex: number) {
   // ant-card-head nth(0) is the page-level Chat card, nth(1+) are ChatCards
   // Button layout in .ant-card-head nth(cardIndex+1) when closable=true (multi-pane):
-  //   nth(0)=detail-page (EndpointSelect compact btn), nth(1)=sync, nth(2)=control, nth(3)=compare, nth(4)=more
+  //   nth(0)=detail-page (DeploymentSelect compact btn), nth(1)=sync, nth(2)=control, nth(3)=compare, nth(4)=more
   return page
     .locator('.ant-card-head')
     .nth(cardIndex + 1)
@@ -189,7 +195,7 @@ test.describe(
       request,
     }) => {
       // Setup with two distinct endpoints
-      await setupChatPageWithTwoEndpoints(page, request);
+      await setupChatPageWithTwoDeployments(page, request);
 
       await expect(getChatInput(page, 0)).toBeVisible({ timeout: 10000 });
 
@@ -202,7 +208,7 @@ test.describe(
       const secondCardEndpointText = page
         .locator('.ant-card')
         .nth(2)
-        .getByText('mock-endpoint')
+        .getByText(MOCK_DEPLOYMENT_NAME)
         .first();
       await secondCardEndpointText.click();
 
@@ -210,15 +216,15 @@ test.describe(
       // endpoint B) before clicking, so we don't miss a fast mocked response.
       const modelsBResponsePromise = page.waitForResponse(
         (response) =>
-          response.url().includes('mock-chat-endpoint-b') &&
+          response.url().includes(MOCK_DEPLOYMENT_URL_B) &&
           response.url().includes('/v1/models'),
       );
       await page
-        .getByRole('option', { name: 'mock-endpoint-b' })
+        .getByRole('option', { name: MOCK_DEPLOYMENT_NAME_B })
         .or(
           page
             .locator('.ant-select-item-option')
-            .filter({ hasText: 'mock-endpoint-b' }),
+            .filter({ hasText: MOCK_DEPLOYMENT_NAME_B }),
         )
         .first()
         .click();
@@ -238,6 +244,13 @@ test.describe(
       await expect(
         secondChatCardHeader.getByText('gpt-mock-model-b'),
       ).toBeVisible({ timeout: 10000 });
+
+      // The second pane has to finish loading deployment B's model list before a
+      // synced send can reach it — otherwise the send races the switch and the
+      // pane answers from the model it was still holding.
+      await expect(
+        page.locator('.ant-card').nth(2).getByText(MOCK_MODEL_ID_B).first(),
+      ).toBeVisible({ timeout: 15000 });
 
       // Verify both panes have sync ON
       await expect(getSyncToggle(page, 0).first()).toBeVisible({
@@ -267,17 +280,17 @@ test.describe(
       await expect(
         firstChatCard.getByText('Multi-endpoint test').first(),
       ).toBeVisible({ timeout: 10000 });
-      await expect(
-        firstChatCard.getByText('Response from endpoint A').first(),
-      ).toBeVisible({ timeout: 15000 });
+      await expect(firstChatCard.getByText(MOCK_REPLY_A).first()).toBeVisible({
+        timeout: 15000,
+      });
 
       // Second pane: user message and response from endpoint B (triggered by sync)
       await expect(
         secondChatCard.getByText('Multi-endpoint test').first(),
       ).toBeVisible({ timeout: 10000 });
-      await expect(
-        secondChatCard.getByText('Response from endpoint B').first(),
-      ).toBeVisible({ timeout: 15000 });
+      await expect(secondChatCard.getByText(MOCK_REPLY_B).first()).toBeVisible({
+        timeout: 15000,
+      });
     });
   },
 );

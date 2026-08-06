@@ -5,15 +5,14 @@ import { setupGraphQLMocks } from '../session/mocking/graphql-interceptor';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import {
   setupChatPage,
-  setupChatPageWithTwoEndpoints,
-  chatPageQueryMockResponse,
-  chatCardQueryMockResponse,
-  chatCardQueryNullUrlMockResponse,
-  endpointSelectQueryMockResponse,
-  endpointSelectValueQueryMockResponse,
+  setupChatPageWithTwoDeployments,
+  chatGraphQLMocks,
   makeSseResponse,
   modelsApiMockResponse,
+  waitForChatReady,
   MOCK_MODEL_ID,
+  MOCK_DEPLOYMENT_NAME,
+  MOCK_DEPLOYMENT_NAME_B,
 } from './mocking/chat-mock-data';
 import { test, expect } from '@playwright/test';
 
@@ -41,7 +40,7 @@ test.describe(
       await setupChatPage(page, request);
 
       // Verify the endpoint selector is visible in the chat card header
-      await expect(page.getByText('mock-endpoint').first()).toBeVisible({
+      await expect(page.getByText(MOCK_DEPLOYMENT_NAME).first()).toBeVisible({
         timeout: 10000,
       });
 
@@ -153,13 +152,7 @@ test.describe(
         localStorage.removeItem('backendaiwebui.cache.chat_history');
       });
 
-      await setupGraphQLMocks(page, {
-        ChatPageQuery: () => chatPageQueryMockResponse(),
-        ChatCardQuery: (vars) => chatCardQueryMockResponse(vars.endpointId),
-        EndpointSelectQuery: () => endpointSelectQueryMockResponse(),
-        EndpointSelectValueQuery: (vars) =>
-          endpointSelectValueQueryMockResponse(vars.endpoint_id),
-      });
+      await setupGraphQLMocks(page, chatGraphQLMocks());
 
       await page.route('**/v1/models', async (route) => {
         await route.fulfill({
@@ -184,9 +177,9 @@ test.describe(
       });
 
       await navigateTo(page, 'chat');
+      await waitForChatReady(page);
 
       const chatInput = page.getByPlaceholder('Type your message here...');
-      await expect(chatInput).toBeVisible({ timeout: 10000 });
 
       // Type and send a message to trigger streaming
       await chatInput.fill('Generate a long response.');
@@ -624,13 +617,7 @@ test.describe(
         localStorage.removeItem('backendaiwebui.cache.chat_history');
       });
 
-      await setupGraphQLMocks(page, {
-        ChatPageQuery: () => chatPageQueryMockResponse(),
-        ChatCardQuery: (vars) => chatCardQueryMockResponse(vars.endpointId),
-        EndpointSelectQuery: () => endpointSelectQueryMockResponse(),
-        EndpointSelectValueQuery: (vars) =>
-          endpointSelectValueQueryMockResponse(vars.endpoint_id),
-      });
+      await setupGraphQLMocks(page, chatGraphQLMocks());
 
       await page.route('**/v1/models', async (route) => {
         await route.fulfill({
@@ -650,9 +637,9 @@ test.describe(
       });
 
       await navigateTo(page, 'chat');
+      await waitForChatReady(page);
 
       const chatInput = page.getByPlaceholder('Type your message here...');
-      await expect(chatInput).toBeVisible({ timeout: 10000 });
 
       // Type "Trigger an error" and press Enter
       await chatInput.fill('Trigger an error');
@@ -665,62 +652,6 @@ test.describe(
           .or(page.locator('[role="alert"]'))
           .first(),
       ).toBeVisible({ timeout: 15000 });
-    });
-
-    test.fixme('User sees an error alert when the endpoint URL is invalid', async ({
-      page,
-      request,
-    }) => {
-      // FIXME: The error alert is not displayed even though ChatCardQuery returns url: null.
-      // The Relay store-or-network fetch policy appears to use cached endpoint data with
-      // a valid URL from a real backend response, bypassing the null URL mock. As a result,
-      // createBaseURL returns a valid URL and no .ant-alert-error is rendered.
-      // Set up GraphQL mocks so ChatCardQuery returns url: null
-      await loginAsAdmin(page, request);
-      await page.evaluate(() => {
-        localStorage.removeItem('backendaiwebui.cache.chat_history');
-      });
-
-      await setupGraphQLMocks(page, {
-        ChatPageQuery: () => chatPageQueryMockResponse(),
-        ChatCardQuery: (vars) =>
-          chatCardQueryNullUrlMockResponse(vars.endpointId),
-        EndpointSelectQuery: () => endpointSelectQueryMockResponse(),
-        EndpointSelectValueQuery: (vars) =>
-          endpointSelectValueQueryMockResponse(vars.endpoint_id),
-      });
-
-      await page.route('**/v1/models', async (route) => {
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify(modelsApiMockResponse(MOCK_MODEL_ID)),
-        });
-      });
-
-      // Navigate to the chat page
-      await navigateTo(page, 'chat');
-
-      // Wait for the chat card to render
-      await expect(
-        page.getByPlaceholder('Type your message here...'),
-      ).toBeVisible({
-        timeout: 10000,
-      });
-
-      // An error alert should be visible when endpoint URL is null
-      // The component renders: <Alert title={t('error.InvalidBaseURL')} type="error" .../>
-      // which translates to "Endpoint URL is not valid."
-      await expect(page.locator('.ant-alert-error').first()).toBeVisible({
-        timeout: 10000,
-      });
-
-      // The text input should be disabled
-      await expect(
-        page.getByPlaceholder('Type your message here...'),
-      ).toBeDisabled({
-        timeout: 10000,
-      });
     });
 
     test.fixme('User sees an error notification when model fetching fails', async ({
@@ -738,13 +669,7 @@ test.describe(
         localStorage.removeItem('backendaiwebui.cache.chat_history');
       });
 
-      await setupGraphQLMocks(page, {
-        ChatPageQuery: () => chatPageQueryMockResponse(),
-        ChatCardQuery: (vars) => chatCardQueryMockResponse(vars.endpointId),
-        EndpointSelectQuery: () => endpointSelectQueryMockResponse(),
-        EndpointSelectValueQuery: (vars) =>
-          endpointSelectValueQueryMockResponse(vars.endpoint_id),
-      });
+      await setupGraphQLMocks(page, chatGraphQLMocks());
 
       // Models API returns HTTP 401 to trigger an error notification
       await page.route('**/v1/models', async (route) => {
@@ -757,13 +682,7 @@ test.describe(
 
       // Navigate to the chat page — model fetch happens on load
       await navigateTo(page, 'chat');
-
-      // Wait for page to load
-      await expect(
-        page.getByPlaceholder('Type your message here...'),
-      ).toBeVisible({
-        timeout: 10000,
-      });
+      await waitForChatReady(page);
 
       // An Ant Design error message notification should appear
       await expect(
@@ -813,7 +732,7 @@ test.describe(
 
       // Locate and click the "Compare" button (ArrowRightLeftIcon or tooltip "Create Compare Chat")
       // Button layout in .ant-card-head nth(1) for single pane:
-      //   nth(0)=detail-page (EndpointSelect compact btn), nth(1)=control, nth(2)=compare, nth(3)=more
+      //   nth(0)=detail-page (DeploymentSelect compact btn), nth(1)=control, nth(2)=compare, nth(3)=more
       const compareButton = page
         .locator('.ant-card-head')
         .nth(1)
@@ -947,7 +866,7 @@ test.describe(
       request,
     }) => {
       // Setup with two endpoints available
-      await setupChatPageWithTwoEndpoints(page, request);
+      await setupChatPageWithTwoDeployments(page, request);
 
       await expect(
         page.getByPlaceholder('Type your message here...'),
@@ -977,18 +896,18 @@ test.describe(
       const secondCardEndpointText = page
         .locator('.ant-card')
         .nth(2)
-        .getByText('mock-endpoint')
+        .getByText(MOCK_DEPLOYMENT_NAME)
         .first();
 
       await secondCardEndpointText.click();
 
       // Select the second mock endpoint
       await page
-        .getByRole('option', { name: 'mock-endpoint-b' })
+        .getByRole('option', { name: MOCK_DEPLOYMENT_NAME_B })
         .or(
           page
             .locator('.ant-select-item-option')
-            .filter({ hasText: 'mock-endpoint-b' }),
+            .filter({ hasText: MOCK_DEPLOYMENT_NAME_B }),
         )
         .first()
         .click();
@@ -996,14 +915,20 @@ test.describe(
       // The second pane's endpoint selector shows the second endpoint
       // Use [title] to target the visible select display value (avoids hidden aria-live elements)
       await expect(
-        page.locator('.ant-card').nth(2).locator('[title="mock-endpoint-b"]'),
+        page
+          .locator('.ant-card')
+          .nth(2)
+          .locator(`[title="${MOCK_DEPLOYMENT_NAME_B}"]`),
       ).toBeVisible({
         timeout: 10000,
       });
 
       // The first pane's endpoint selector still shows the original endpoint
       await expect(
-        page.locator('.ant-card').nth(1).locator('[title="mock-endpoint"]'),
+        page
+          .locator('.ant-card')
+          .nth(1)
+          .locator(`[title="${MOCK_DEPLOYMENT_NAME}"]`),
       ).toBeVisible({
         timeout: 5000,
       });

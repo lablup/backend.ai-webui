@@ -1,49 +1,100 @@
 // e2e/chat/mocking/chat-mock-data.ts
 // Shared mock helpers and data for chat E2E tests.
+//
+// The Chat deployment surface reads the Strawberry v2 Deployments API
+// (`myDeployments` / `deployment(id:)`), so every factory below returns that
+// wire shape. FR-3332 migrated these queries off the legacy Graphene
+// `endpoint` / `endpoint_list` fields and renamed `EndpointSelect*` to
+// `DeploymentSelect*`; a mock keyed on a stale operation name is not an error —
+// the interceptor passes unmatched operations through to the real backend — so
+// the names here must track the queries exactly.
 import { setupGraphQLMocks } from '../../session/mocking/graphql-interceptor';
 import { loginAsAdmin, navigateTo } from '../../utils/test-util';
-import { type APIRequestContext, type Page } from '@playwright/test';
+import { expect, type APIRequestContext, type Page } from '@playwright/test';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Mock constants
 // ─────────────────────────────────────────────────────────────────────────────
 
-export const MOCK_ENDPOINT_UUID = 'chat-ep-aaaa-bbbb-cccc-000000000001';
-export const MOCK_ENDPOINT_UUID_B = MOCK_ENDPOINT_UUID + '-b';
-export const MOCK_ENDPOINT_URL = 'https://mock-chat-endpoint.backend.ai';
-export const MOCK_ENDPOINT_URL_B = 'https://mock-chat-endpoint-b.backend.ai';
+export const MOCK_DEPLOYMENT_UUID = 'chat-dp-aaaa-bbbb-cccc-000000000001';
+export const MOCK_DEPLOYMENT_UUID_B = MOCK_DEPLOYMENT_UUID + '-b';
+export const MOCK_DEPLOYMENT_URL = 'https://mock-chat-deployment.backend.ai';
+export const MOCK_DEPLOYMENT_URL_B =
+  'https://mock-chat-deployment-b.backend.ai';
+export const MOCK_DEPLOYMENT_NAME = 'mock-deployment';
+export const MOCK_DEPLOYMENT_NAME_B = 'mock-deployment-b';
 export const MOCK_MODEL_ID = 'gpt-mock-model';
 export const MOCK_MODEL_ID_B = 'gpt-mock-model-b';
+
+/**
+ * Assistant replies the two-deployment completions mock streams back. Exported
+ * so a spec asserts the exact string the mock produces instead of restating it —
+ * a restated literal is what let these assertions drift out of sync.
+ */
+export const MOCK_REPLY_A = 'Response from deployment A';
+export const MOCK_REPLY_B = 'Response from deployment B';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Relay global ID helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Encodes a deployment UUID the way the app's `toGlobalId` does. Chat holds
+ * local UUIDs (chat provider state, the `deploymentId` URL param, the select's
+ * value) and converts to the global Relay ID on the way into `deployment(id:)`,
+ * so mocks must speak global IDs on the wire.
+ */
+export function toMockDeploymentGlobalId(uuid: string): string {
+  return Buffer.from(`ModelDeployment:${uuid}`).toString('base64');
+}
+
+/**
+ * Reverses {@link toMockDeploymentGlobalId} so a mock factory can tell which
+ * deployment a `deployment(id:)` request is asking for.
+ */
+export function fromMockDeploymentGlobalId(globalId: string): string {
+  return Buffer.from(globalId, 'base64').toString().split(':')[1] ?? '';
+}
+
+function isDeploymentB(deploymentGlobalId: string): boolean {
+  return (
+    fromMockDeploymentGlobalId(deploymentGlobalId) === MOCK_DEPLOYMENT_UUID_B
+  );
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // GraphQL mock response factories
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Returns a single mock endpoint for ChatPageQuery.
+ * Returns the default deployment for ChatPageQuery, which reads
+ * `myDeployments(limit: 1)` to pick the initially-selected deployment.
  * Shape matches the wire-format GraphQL response (not Relay TypeScript types).
  */
 export function chatPageQueryMockResponse() {
   return {
-    endpoint_list: {
-      items: [{ endpoint_id: MOCK_ENDPOINT_UUID }],
+    myDeployments: {
+      edges: [{ node: { id: toMockDeploymentGlobalId(MOCK_DEPLOYMENT_UUID) } }],
     },
   };
 }
 
 /**
- * Returns the endpoint list for EndpointSelectQuery (single endpoint).
- * Includes all fields required by EndpointSelectQuery: total_count, name, url.
+ * Returns the deployment list for DeploymentSelectQuery (single deployment).
+ * Includes every field the query selects: `count`, `metadata.name` and
+ * `networkAccess.endpointUrl`.
  */
-export function endpointSelectQueryMockResponse() {
+export function deploymentSelectQueryMockResponse() {
   return {
-    endpoint_list: {
-      total_count: 1,
-      items: [
+    myDeployments: {
+      count: 1,
+      edges: [
         {
-          endpoint_id: MOCK_ENDPOINT_UUID,
-          name: 'mock-endpoint',
-          url: MOCK_ENDPOINT_URL,
+          node: {
+            id: toMockDeploymentGlobalId(MOCK_DEPLOYMENT_UUID),
+            metadata: { name: MOCK_DEPLOYMENT_NAME },
+            networkAccess: { endpointUrl: MOCK_DEPLOYMENT_URL },
+          },
         },
       ],
     },
@@ -51,22 +102,27 @@ export function endpointSelectQueryMockResponse() {
 }
 
 /**
- * Returns two endpoints for EndpointSelectQuery (two-endpoint multi-pane tests).
+ * Returns two deployments for DeploymentSelectQuery (multi-pane tests that
+ * switch one pane onto a second deployment).
  */
-export function endpointSelectQueryTwoEndpointsMockResponse() {
+export function deploymentSelectQueryTwoDeploymentsMockResponse() {
   return {
-    endpoint_list: {
-      total_count: 2,
-      items: [
+    myDeployments: {
+      count: 2,
+      edges: [
         {
-          endpoint_id: MOCK_ENDPOINT_UUID,
-          name: 'mock-endpoint',
-          url: MOCK_ENDPOINT_URL,
+          node: {
+            id: toMockDeploymentGlobalId(MOCK_DEPLOYMENT_UUID),
+            metadata: { name: MOCK_DEPLOYMENT_NAME },
+            networkAccess: { endpointUrl: MOCK_DEPLOYMENT_URL },
+          },
         },
         {
-          endpoint_id: MOCK_ENDPOINT_UUID_B,
-          name: 'mock-endpoint-b',
-          url: MOCK_ENDPOINT_URL_B,
+          node: {
+            id: toMockDeploymentGlobalId(MOCK_DEPLOYMENT_UUID_B),
+            metadata: { name: MOCK_DEPLOYMENT_NAME_B },
+            networkAccess: { endpointUrl: MOCK_DEPLOYMENT_URL_B },
+          },
         },
       ],
     },
@@ -74,72 +130,83 @@ export function endpointSelectQueryTwoEndpointsMockResponse() {
 }
 
 /**
- * Returns two mock endpoints for multi-pane tests (ChatPageQuery shape).
- */
-export function chatPageQueryTwoEndpointsMockResponse() {
-  return {
-    endpoint_list: {
-      items: [
-        { endpoint_id: MOCK_ENDPOINT_UUID },
-        { endpoint_id: MOCK_ENDPOINT_UUID_B },
-      ],
-    },
-  };
-}
-
-/**
- * Returns endpoint detail for ChatCardQuery.
+ * Returns deployment detail for ChatCardQuery.
  *
- * IMPORTANT: ChatCardQuery uses `@catch` in Relay, but that is a client-side
- * transformation. The wire-format GraphQL response still returns the Endpoint
- * object directly (not wrapped in { ok, value }). Relay's normaliser applies
- * the Result wrapping after receiving the response.
+ * IMPORTANT: ChatCardQuery wraps `deployment` in Relay `@catch`, but that is a
+ * client-side transformation — the wire response still returns the
+ * ModelDeployment object directly (not `{ ok, value }`). Relay applies the
+ * Result wrapping while normalising.
+ *
+ * Every field the query selects must be present. A missing field makes the
+ * catch result not-ok, which nulls the deployment and leaves the chat input
+ * disabled (no base URL -> no /v1/models fetch).
  */
-export function chatCardQueryMockResponse(endpointId: string) {
-  const isB = endpointId === MOCK_ENDPOINT_UUID_B;
+export function chatCardQueryMockResponse(deploymentGlobalId: string) {
+  const isB = isDeploymentB(deploymentGlobalId);
   return {
-    endpoint: {
-      endpoint_id: endpointId,
-      url: isB ? MOCK_ENDPOINT_URL_B : MOCK_ENDPOINT_URL,
-      // `replicas` is selected by ChatCardQuery (FR-3156, #7935). It must be
-      // present in the mock — the query wraps `endpoint` in Relay `@catch`,
-      // so a missing field makes the catch result not-ok, nulls the endpoint,
-      // and leaves the chat input disabled (no base URL → no /v1/models fetch).
-      replicas: 1,
-      name: isB ? 'mock-endpoint-b' : 'mock-endpoint',
+    deployment: {
+      id: deploymentGlobalId,
+      networkAccess: {
+        endpointUrl: isB ? MOCK_DEPLOYMENT_URL_B : MOCK_DEPLOYMENT_URL,
+      },
+      replicaState: { desiredReplicaCount: 1 },
+      metadata: { name: isB ? MOCK_DEPLOYMENT_NAME_B : MOCK_DEPLOYMENT_NAME },
     },
   };
 }
 
 /**
- * Returns an endpoint detail with a null URL to test invalid base URL handling.
+ * Returns deployment detail for DeploymentSelectValueQuery — the lookup that
+ * renders the currently-selected value in the deployment select.
  */
-export function chatCardQueryNullUrlMockResponse(endpointId: string) {
+export function deploymentSelectValueQueryMockResponse(
+  deploymentGlobalId: string,
+) {
+  const isB = isDeploymentB(deploymentGlobalId);
   return {
-    endpoint: {
-      endpoint_id: endpointId,
-      url: null,
-      // See chatCardQueryMockResponse: `replicas` must be present for the
-      // Relay `@catch` on `endpoint` to resolve to a value (here we are
-      // deliberately exercising the null-URL path, not a missing endpoint).
-      replicas: 1,
-      name: 'mock-endpoint-no-url',
+    deployment: {
+      id: deploymentGlobalId,
+      metadata: { name: isB ? MOCK_DEPLOYMENT_NAME_B : MOCK_DEPLOYMENT_NAME },
+      networkAccess: {
+        endpointUrl: isB ? MOCK_DEPLOYMENT_URL_B : MOCK_DEPLOYMENT_URL,
+      },
     },
   };
 }
 
 /**
- * Returns endpoint detail for EndpointSelectValueQuery.
- * Variable name is `endpoint_id` (snake_case) — matches the query's variable declaration.
+ * Returns the access-token list for DeploymentTokenSelectQuery. Empty by
+ * default: the chat specs drive the token field as free text, and leaving this
+ * unmocked sends the fake mock UUID to the real manager, which answers
+ * "badly formed hexadecimal UUID string".
  */
-export function endpointSelectValueQueryMockResponse(endpointId: string) {
-  const isB = endpointId === MOCK_ENDPOINT_UUID_B;
+export function deploymentTokenSelectQueryMockResponse(
+  deploymentGlobalId: string,
+) {
   return {
-    endpoint: {
-      endpoint_id: endpointId,
-      name: isB ? 'mock-endpoint-b' : 'mock-endpoint',
-      url: isB ? MOCK_ENDPOINT_URL_B : MOCK_ENDPOINT_URL,
+    deployment: {
+      id: deploymentGlobalId,
+      accessTokens: { edges: [] },
     },
+  };
+}
+
+/**
+ * The GraphQL mock map shared by every chat spec: one reachable deployment.
+ * Exposed as a factory so a spec can spread it and override a single operation
+ * (e.g. the null-URL ChatCardQuery variant) without restating the rest — the
+ * drift that broke these specs came from restating the map in each spec.
+ */
+export function chatGraphQLMocks() {
+  return {
+    ChatPageQuery: () => chatPageQueryMockResponse(),
+    ChatCardQuery: (vars: Record<string, string>) =>
+      chatCardQueryMockResponse(vars.deploymentId),
+    DeploymentSelectQuery: () => deploymentSelectQueryMockResponse(),
+    DeploymentSelectValueQuery: (vars: Record<string, string>) =>
+      deploymentSelectValueQueryMockResponse(vars.deploymentId),
+    DeploymentTokenSelectQuery: (vars: Record<string, string>) =>
+      deploymentTokenSelectQueryMockResponse(vars.deploymentId),
   };
 }
 
@@ -217,6 +284,42 @@ export function makeSseResponse(content: string): string {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
+ * How long a freshly-navigated chat pane may take to become interactive.
+ *
+ * Deliberately far above the per-assertion timeouts in the specs: reaching an
+ * interactive pane costs a full app boot (login, project/user bootstrap queries)
+ * against the real manager before the mocked deployment lookups even run, and
+ * that boot is what stretches under parallel workers — measured at ~15s per test
+ * with `--workers=1` against a shared manager and over 45s with the default four.
+ * It is a readiness gate, not a behavioural assertion, so a generous budget costs
+ * nothing on a fast target while keeping a slow shared one usable; the specs' own
+ * 5-10s assertion timeouts still measure chat behaviour on a settled page.
+ * Stays under Playwright's 180s per-test timeout with room for the test body.
+ */
+export const CHAT_READY_TIMEOUT_MS = 120_000;
+
+/**
+ * Waits until a chat pane is actually interactive. Every chat setup path for a
+ * reachable deployment ends here so a spec never starts asserting against a
+ * half-booted page.
+ *
+ * Both conditions matter. Visibility alone is not readiness: the composer renders
+ * disabled until the pane has resolved a deployment URL and fetched its model
+ * list, and `press('Enter')` on a disabled composer silently does nothing — the
+ * message never sends and the failure surfaces later as a missing reply rather
+ * than as "the page was not ready".
+ *
+ * Not for panes that are expected to stay unavailable (e.g. a deployment with no
+ * endpoint URL): those keep a disabled composer by design, so gate those specs on
+ * the unavailability alert instead.
+ */
+export async function waitForChatReady(page: Page): Promise<void> {
+  const composer = page.getByPlaceholder('Type your message here...').first();
+  await composer.waitFor({ state: 'visible', timeout: CHAT_READY_TIMEOUT_MS });
+  await expect(composer).toBeEnabled({ timeout: CHAT_READY_TIMEOUT_MS });
+}
+
+/**
  * Full chat page setup:
  * 1. Login as admin.
  * 2. Clear chat history from localStorage.
@@ -238,14 +341,7 @@ export async function setupChatPage(
   });
 
   // GraphQL mocks — variable names must match the wire-format query variables
-  await setupGraphQLMocks(page, {
-    ChatPageQuery: () => chatPageQueryMockResponse(),
-    ChatCardQuery: (vars) => chatCardQueryMockResponse(vars.endpointId),
-    EndpointSelectQuery: () => endpointSelectQueryMockResponse(),
-    // EndpointSelectValueQuery uses snake_case `endpoint_id` variable
-    EndpointSelectValueQuery: (vars) =>
-      endpointSelectValueQueryMockResponse(vars.endpoint_id),
-  });
+  await setupGraphQLMocks(page, chatGraphQLMocks());
 
   // Models API mock
   await page.route('**/v1/models', async (route) => {
@@ -267,14 +363,15 @@ export async function setupChatPage(
 
   // Navigate to chat page
   await navigateTo(page, 'chat');
+  await waitForChatReady(page);
 }
 
 /**
- * Setup variant for two-endpoint multi-pane tests.
- * EndpointSelectQuery returns both endpoints; completions requests are
+ * Setup variant for two-deployment multi-pane tests.
+ * DeploymentSelectQuery returns both deployments; completions requests are
  * differentiated by URL (alpha vs beta prefix).
  */
-export async function setupChatPageWithTwoEndpoints(
+export async function setupChatPageWithTwoDeployments(
   page: Page,
   request: APIRequestContext,
 ): Promise<void> {
@@ -285,20 +382,17 @@ export async function setupChatPageWithTwoEndpoints(
   });
 
   await setupGraphQLMocks(page, {
-    ChatPageQuery: () => chatPageQueryMockResponse(),
-    ChatCardQuery: (vars) => chatCardQueryMockResponse(vars.endpointId),
-    EndpointSelectQuery: () => endpointSelectQueryTwoEndpointsMockResponse(),
-    // EndpointSelectValueQuery uses snake_case `endpoint_id` variable
-    EndpointSelectValueQuery: (vars) =>
-      endpointSelectValueQueryMockResponse(vars.endpoint_id),
+    ...chatGraphQLMocks(),
+    DeploymentSelectQuery: () =>
+      deploymentSelectQueryTwoDeploymentsMockResponse(),
   });
 
-  // Models API mock — both endpoints respond with their respective model IDs
+  // Models API mock — both deployments respond with their respective model IDs
   // Differentiate by URL path/host since models endpoint is a GET request
   await page.route('**/v1/models', async (route) => {
     const url = route.request().url();
-    const isEndpointB = url.includes('mock-chat-endpoint-b');
-    const modelId = isEndpointB ? MOCK_MODEL_ID_B : MOCK_MODEL_ID;
+    const isB = url.includes('mock-chat-deployment-b');
+    const modelId = isB ? MOCK_MODEL_ID_B : MOCK_MODEL_ID;
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
@@ -313,8 +407,8 @@ export async function setupChatPageWithTwoEndpoints(
     // streamText sends `model` field; DefaultChatTransport sends `modelId`
     const model = body.model || body.modelId || '';
     const content = model.includes(MOCK_MODEL_ID_B)
-      ? 'Response from endpoint B'
-      : 'Response from endpoint A';
+      ? MOCK_REPLY_B
+      : MOCK_REPLY_A;
     await route.fulfill({
       status: 200,
       contentType: 'text/event-stream',
@@ -323,4 +417,5 @@ export async function setupChatPageWithTwoEndpoints(
   });
 
   await navigateTo(page, 'chat');
+  await waitForChatReady(page);
 }
