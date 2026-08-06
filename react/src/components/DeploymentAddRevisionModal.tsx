@@ -41,6 +41,10 @@ import {
   type RuntimeParameterGroup,
   type RuntimeVariantPresetValueEntry,
 } from '../hooks/useRuntimeParameterSchema';
+import {
+  type ModelHealthCheckFormValue,
+  type PreStartActionFormValue,
+} from './AdminDeploymentPresetFormTypes';
 import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
 import EnvVarFormList, { type EnvVarFormListValue } from './EnvVarFormList';
 import FolderCreateModalV2 from './FolderCreateModalV2';
@@ -141,15 +145,11 @@ export type FormValues = ImageEnvironmentFormInput &
     shell?: string;
     port?: number;
     enableHealthCheck?: boolean;
-    healthCheck?: {
-      path?: string;
-      interval?: number;
-      maxRetries?: number;
-      maxWaitTime?: number;
-      expectedStatusCode?: number;
-      initialDelay?: number;
-    };
-    preStartActions?: Array<{ action: string; args: string }>;
+    // Shared with AdminDeploymentPresetSettingPageContent.tsx's ModelConfigFormValue
+    // — the two forms' service-config leaf field names were unified (FR-3474),
+    // so their value shapes are now genuinely identical, not just parallel.
+    healthCheck?: ModelHealthCheckFormValue;
+    preStartActions?: PreStartActionFormValue[];
     environ: EnvVarFormListValue[];
     /** Runtime-variant preset values, registered by RuntimeParameterFormSection. */
     runtimeParams?: RuntimeParameterValues;
@@ -2093,8 +2093,10 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                   <ServiceConfigurationFormItems
                     namePrefix={[]}
                     supportsCommandShell={supportsCommandShell}
-                    commandPlaceholder={modelDefinitionDefaults?.startCommand}
-                    portPlaceholder={modelDefinitionDefaults?.port?.toString()}
+                    placeholders={{
+                      command: modelDefinitionDefaults?.startCommand,
+                      port: modelDefinitionDefaults?.port?.toString(),
+                    }}
                   />
                 </div>
               );

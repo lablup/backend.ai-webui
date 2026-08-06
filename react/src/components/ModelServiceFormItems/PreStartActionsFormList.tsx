@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { ServiceFormNamePrefix } from './types';
 import { MinusCircleOutlined } from '@ant-design/icons';
 import { Form, Input, theme } from 'antd';
 import { BAIButton, BAIFlex } from 'backend.ai-ui';
@@ -10,7 +11,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 export interface PreStartActionsFormListProps {
-  namePrefix: Array<string | number>;
+  namePrefix: ServiceFormNamePrefix;
 }
 
 // Shared between DeploymentAddRevisionModal.tsx (namePrefix: []) and

@@ -878,11 +878,13 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                       namePrefix={['modelDefinition', 'models', 0, 'service']}
                       supportsCommandShell={supportsCommandShell}
                       commandRules={[{ required: true }]}
-                      commandPlaceholder={t(
-                        'adminDeploymentPreset.modelDef.StartCommandPlaceholder',
-                      )}
                       portRules={[{ required: true }]}
-                      portPlaceholder={t('general.Example', { value: '8080' })}
+                      placeholders={{
+                        command: t(
+                          'adminDeploymentPreset.modelDef.StartCommandPlaceholder',
+                        ),
+                        port: t('general.Example', { value: '8080' }),
+                      }}
                     />
                   </div>
                 );
@@ -894,7 +896,10 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               namePrefix={['modelDefinition', 'models', 0, 'service']}
               placeholders={{
                 path: t('general.Example', { value: '/health' }),
+                interval: t('general.Example', { value: '10' }),
                 maxRetries: t('general.Example', { value: '10' }),
+                maxWaitTime: t('general.Example', { value: '15' }),
+                expectedStatusCode: t('general.Example', { value: '200' }),
                 initialDelay: t('general.Example', { value: '60' }),
               }}
             />

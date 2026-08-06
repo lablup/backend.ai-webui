@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { ServiceFormNamePrefix } from './types';
 import { Checkbox, Form, Input, InputNumber, theme } from 'antd';
 import type { FormInstance } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
@@ -9,16 +10,19 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 export interface ModelServiceHealthCheckFormItemsProps {
-  namePrefix: Array<string | number>;
+  namePrefix: ServiceFormNamePrefix;
   /**
    * Per-field placeholder text. The revision modal sources some of these
-   * dynamically from the selected model definition's defaults (and leaves
-   * others blank); the preset form uses static example text on all of them.
-   * Left undefined, a field simply has no placeholder.
+   * dynamically from the selected model definition's defaults and leaves the
+   * rest blank; the preset form uses static example text on all six. Left
+   * undefined, a field simply has no placeholder.
    */
   placeholders?: Partial<{
     path: string;
+    interval: string;
     maxRetries: string;
+    maxWaitTime: string;
+    expectedStatusCode: string;
     initialDelay: string;
   }>;
 }
@@ -68,6 +72,7 @@ const ModelServiceHealthCheckFormItems: React.FC<
                 >
                   <InputNumber
                     min={1}
+                    placeholder={placeholders?.interval}
                     suffix={t('time.Sec')}
                     style={{ width: '100%' }}
                   />
@@ -98,6 +103,7 @@ const ModelServiceHealthCheckFormItems: React.FC<
                 >
                   <InputNumber
                     min={1}
+                    placeholder={placeholders?.maxWaitTime}
                     suffix={t('time.Sec')}
                     style={{ width: '100%' }}
                   />
@@ -113,7 +119,12 @@ const ModelServiceHealthCheckFormItems: React.FC<
                   rules={[{ required: true }]}
                   style={{ flex: 1, minWidth: 160 }}
                 >
-                  <InputNumber min={101} max={599} style={{ width: '100%' }} />
+                  <InputNumber
+                    min={101}
+                    max={599}
+                    placeholder={placeholders?.expectedStatusCode}
+                    style={{ width: '100%' }}
+                  />
                 </Form.Item>
                 <Form.Item
                   name={[...namePrefix, 'healthCheck', 'initialDelay']}

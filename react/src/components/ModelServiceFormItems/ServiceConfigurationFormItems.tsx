@@ -6,6 +6,7 @@ import {
   COMMAND_SHELL_OPTIONS,
   DEFAULT_MODEL_SERVICE_SHELL,
 } from '../../helper/modelServiceCommand';
+import type { ServiceFormNamePrefix } from './types';
 import {
   AutoComplete,
   Collapse,
@@ -22,7 +23,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 export interface ServiceConfigurationFormItemsProps {
-  namePrefix: Array<string | number>;
+  namePrefix: ServiceFormNamePrefix;
   supportsCommandShell: boolean;
   /**
    * Start Command validation. The revision modal leaves the command optional
@@ -30,9 +31,12 @@ export interface ServiceConfigurationFormItemsProps {
    * (`[{ required: true }]`) since a preset is a reusable template.
    */
   commandRules?: (RuleObject | RuleRender)[];
-  commandPlaceholder?: string;
   portRules?: (RuleObject | RuleRender)[];
-  portPlaceholder?: string;
+  /** Per-field placeholder text, grouped to match ModelServiceHealthCheckFormItems. */
+  placeholders?: Partial<{
+    command: string;
+    port: string;
+  }>;
 }
 
 // Shared between DeploymentAddRevisionModal.tsx (namePrefix: []) and
@@ -50,9 +54,8 @@ const ServiceConfigurationFormItems: React.FC<
   namePrefix,
   supportsCommandShell,
   commandRules = [{ whitespace: true }],
-  commandPlaceholder,
   portRules,
-  portPlaceholder,
+  placeholders,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -232,13 +235,13 @@ const ServiceConfigurationFormItems: React.FC<
                       {!supportsCommandShell ? (
                         // Legacy (<26.8.0): plain single-line input,
                         // tokenized on submit.
-                        <Input placeholder={commandPlaceholder} />
+                        <Input placeholder={placeholders?.command} />
                       ) : isExec ? (
                         // Exec: argv example, no shell operators.
-                        <Input placeholder={commandPlaceholder} />
+                        <Input placeholder={placeholders?.command} />
                       ) : (
                         <Input.TextArea
-                          placeholder={commandPlaceholder}
+                          placeholder={placeholders?.command}
                           autoSize={{ minRows: 2 }}
                         />
                       )}
@@ -256,7 +259,7 @@ const ServiceConfigurationFormItems: React.FC<
                 <InputNumber
                   min={2}
                   max={65535}
-                  placeholder={portPlaceholder}
+                  placeholder={placeholders?.port}
                   style={{ width: '100%' }}
                 />
               </Form.Item>
