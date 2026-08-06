@@ -88,9 +88,7 @@ In the Users list, columns that hold several values — **Allowed Client IPs** a
 show the first value inline and collapse the rest behind a `+N` tag. Hover over the tag to see the
 complete list without widening the column.
 
-The Users page keeps the table state (filter, sort, page, and status tab) in the page URL, and it keeps
-a separate state per tab. Switching between the **Users** and **Credentials** tabs and coming back
-restores the view you left, and you can bookmark or share a URL that reopens the exact same list.
+Filters, sorting, and other view state persist when you switch tabs, and copying the URL lets you reopen or share the exact same view.
 
 <a id="bulk-create-users"></a>
 
@@ -455,9 +453,6 @@ Each individual admin deployment has its own address under the Admin Deployments
 URL changes to this path so that the deployment detail can be linked to or bookmarked directly.
 :::
 
-Each tab keeps its own table state — filter, sort, and page — in the page URL, so moving to another tab
-and back returns you to the view you left, and the URL you copy reopens exactly that view.
-
 The refresh control at the top right of the deployment list carries an auto-refresh interval dropdown.
 The list reloads every 15 seconds until you pick a different interval, or **Off**, from the dropdown;
 while auto-refresh is on, a countdown border fills around the control to show when the next reload is
@@ -786,9 +781,6 @@ indicates that no resource restrictions have been applied to those resources.
 ![](../images/resource_policy_page.png)
 <!-- TODO: Re-capture resource_policy_page.png — needs update. -->
 
-Each of the three tabs keeps its own table state — filter, sort, and page — in the page URL. Moving to
-another tab and back returns you to the view you left, and the URL you copy reopens exactly that view.
-
 The user account being used in this guide is currently assigned to the default
 resource policy. This can be verified in the Credentials tab on the Users page.
 You can also confirm that all resource policies are set to default in the Resource Policies panel.
@@ -1018,9 +1010,6 @@ which the session will be created once sufficient resources become available.
 
 Similar to the Session page, you can click the session name to open a drawer that
 displays detailed information about the session.
-
-Each tab keeps its own table state — filter, sort, and page — in the page URL, so switching tabs and
-coming back restores the view you left.
 
 On the **Sessions** tab, the property filter offers the following conditions:
 
