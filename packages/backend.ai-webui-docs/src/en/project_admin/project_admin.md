@@ -28,9 +28,9 @@ Because project-admin authority is re-evaluated per selected project, the pages 
 
 ## Set Project Admin
 
-Superadmins can grant and revoke project admin for one or more users in a single place through the **Set Project Admin** modal, launched from the **Project** admin page (**Users → Project**). This is the primary way to manage project admin on **manager 26.8.0 or later**.
+Superadmins can grant and revoke project admin for one or more users in a single place through the **Set Project Admin** modal, launched from the **Project** admin page (**Users → Project**).
 
-On each project row, click the shield (**Set Project Admin**) action to open the modal.
+On each project row, click the **Set Project Admin** button to open the modal.
 
 ![](../images/project_admin_set_admin_action.png)
 
@@ -50,7 +50,7 @@ The modal shows two alerts you should read before assigning or revoking:
 - **Info**: Granting project admin automatically adds the project to the user's allowed project list, so the user can then access the project.
 - **Warning**: Revoking project admin does **not** automatically remove the project from the user's allowed project list. To block access to the project, remove it from the list manually.
 
-Next to the modal title, a shield-check (**View RBAC permissions**) icon opens the RBAC Management page with the project's `project-<project_id>-admin` role pre-filtered and its detail drawer open, so you can inspect the underlying role. For more on that role, see [Grant Project Admin authority](#grant-project-admin) in the RBAC Management chapter.
+Next to the modal title, the **View RBAC permissions** icon opens the RBAC Management page with the project's `project-<project_id>-admin` role pre-filtered and its detail drawer open, so you can inspect the underlying role. For more on that role, see [Grant Project Admin authority](#grant-project-admin) in the RBAC Management chapter.
 
 When you add several users at once, any that fail are surfaced through an error notification that includes the number of users that could not be assigned; the users that succeeded are still granted.
 
