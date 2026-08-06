@@ -31,14 +31,22 @@ import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { useToggle } from 'ahooks';
 import {
-  BAIRestoreIcon,
   filterOutEmpty,
   filterOutNullAndUndefined,
   mergeFilterValues,
   useUpdatableState,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { PlusIcon } from 'lucide-react';
+// PHASE 6 FINAL SWEEP: BUI's `BAI*Icon` set is NOT "icons only" as Phase 2
+// assumed — each one wraps `@ant-design/icons`' `Icon` COMPONENT around an SVG
+// imported through `?react`, so every one of them is a live antd render. The
+// pilot graph's four are replaced with their nearest Lucide glyphs, the same
+// trade Phase 2 recorded for `DeleteFilled` -> `Trash2Icon`.
+// PILOT-DECISION: this loses the bespoke Backend.AI artwork. The faithful fix
+// is mechanical but out of this pilot's scope — re-export each SVG as a plain
+// component (`<svg width="1em" height="1em" fill="currentColor">`) instead of
+// through antd's `Icon`, which is a 4-file change inside BUI.
+import { PlusIcon, RotateCcwIcon } from 'lucide-react';
 import { parseAsString, useQueryStates } from 'nuqs';
 import React, { useDeferredValue, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -442,7 +450,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                           // Astryx requires a real accessible name; the antd
                           // original had none (only the wrapping tooltip).
                           label={t('data.folders.Restore')}
-                          icon={<BAIRestoreIcon />}
+                          icon={<RotateCcwIcon />}
                           onClick={() => {
                             toggleRestoreModal();
                           }}

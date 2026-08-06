@@ -36,11 +36,7 @@ import { Text } from '@astryxdesign/core/Text';
 import { useToggle } from 'ahooks';
 import {
   filterOutNullAndUndefined,
-  BAIEndpointsIcon,
-  BAIRestoreIcon,
-  BAIShareAltIcon,
   BAIUnmountAfterClose,
-  BAIUserUnionIcon,
   toLocalId,
   useErrorMessageResolver,
   bytesToGB,
@@ -52,7 +48,24 @@ import * as _ from 'lodash-es';
 // closest read. PILOT-DECISION: the filled/outlined distinction that
 // distinguished 'delete forever' from 'move to trash' is lost and is carried
 // by the label alone now.
-import { Trash2Icon, TrashIcon, UserIcon } from 'lucide-react';
+// PHASE 6 FINAL SWEEP: BUI's `BAI*Icon` set is NOT "icons only" as Phase 2
+// assumed — each one wraps `@ant-design/icons`' `Icon` COMPONENT around an SVG
+// imported through `?react`, so every one of them is a live antd render. The
+// pilot graph's four are replaced with their nearest Lucide glyphs, the same
+// trade Phase 2 recorded for `DeleteFilled` -> `Trash2Icon`.
+// PILOT-DECISION: this loses the bespoke Backend.AI artwork. The faithful fix
+// is mechanical but out of this pilot's scope — re-export each SVG as a plain
+// component (`<svg width="1em" height="1em" fill="currentColor">`) instead of
+// through antd's `Icon`, which is a 4-file change inside BUI.
+import {
+  RocketIcon,
+  RotateCcwIcon,
+  Share2Icon,
+  Trash2Icon,
+  TrashIcon,
+  UserIcon,
+  UsersIcon,
+} from 'lucide-react';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -167,7 +180,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
         ? {
             key: 'start-service',
             title: t('modelService.DeployAsService'),
-            icon: <BAIEndpointsIcon />,
+            icon: <RocketIcon />,
             // Use `action` (not `onClick`) so the state update that mounts
             // `<VFolderDeployModal>` (which suspends on its Relay query)
             // runs inside `startTransition` — the page stays interactive
@@ -182,7 +195,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
         ? {
             key: 'share',
             title: t('button.Share'),
-            icon: <BAIShareAltIcon />,
+            icon: <Share2Icon />,
             onClick: onShare,
           }
         : null,
@@ -209,7 +222,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
         ? {
             key: 'restore',
             title: t('data.folders.Restore'),
-            icon: <BAIRestoreIcon />,
+            icon: <RotateCcwIcon />,
             disabled:
               vfolder?.status !== 'delete-pending' ||
               isPipelineFolder ||
@@ -557,9 +570,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
               ) : (
                 <HStack gap={2}>
                   <Text>{t('data.Project')}</Text>
-                  <BAIUserUnionIcon
-                    style={{ color: token.colorTextTertiary }}
-                  />
+                  <UsersIcon style={{ color: token.colorTextTertiary }} />
                 </HStack>
               );
             },

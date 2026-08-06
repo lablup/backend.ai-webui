@@ -7,15 +7,12 @@ import { VFolderNodesFragment$data } from '../__generated__/VFolderNodesFragment
 import { message } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
+import BAIListAlert from './astryx-bui/BAIListAlertAstryx';
 import BAIModal from './astryx-bui/BAIModalAstryx';
 import type { BAIModalAstryxProps as BAIModalProps } from './astryx-bui/BAIModalAstryx';
 import { VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
-import {
-  BAIListAlert,
-  toLocalId,
-  useErrorMessageResolver,
-} from 'backend.ai-ui';
+import { toLocalId, useErrorMessageResolver } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -136,8 +133,6 @@ const DeleteVFolderModal: React.FC<DeleteVFolderModalProps> = ({
         {vfolders &&
           vfolders.length !== foldersByPermission.deletable?.length && (
             <BAIListAlert
-              showIcon
-              ghostInfoBg={false}
               title={t('data.folders.ExcludedFolders', {
                 count: foldersByPermission.undeletable?.length || 0,
               })}

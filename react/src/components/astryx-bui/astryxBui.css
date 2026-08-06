@@ -98,3 +98,26 @@
 .bai-name-action-cell-disabled {
   color: var(--color-text-disabled);
 }
+
+/* PILOT PHASE 6: BAIListAlertAstryx. The BUI original expressed these through
+   `antd-style` `createStyles` with `token.colorTextQuaternary`; Astryx has no
+   quaternary text token, so the thumb uses `--color-text-tertiary` at reduced
+   opacity. Track stays transparent — only the thumb floats over content. */
+.bai-list-alert-scroll {
+  scrollbar-color: var(--color-text-tertiary) transparent;
+  scrollbar-width: thin;
+}
+
+.bai-list-alert-scroll::-webkit-scrollbar,
+.bai-list-alert-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.bai-list-alert-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.bai-list-alert-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-text-tertiary);
+  border-radius: 3px;
+}
