@@ -129,37 +129,46 @@ export const useKeyedSnapshot = <K extends string, V>(
  * (parsed params, a synced tab key, a restored snapshot) instead of a location
  * the last render has not caught up with yet. It is invoked through
  * `useEffectEvent`, so the version called is always the latest render's.
+ *
+ * Navigations that leave every watched key alone never arm it, so the callback
+ * is not woken for a query string it does not care about.
  */
 export const useBrowserNavigatedQueryEffect = (
   keys: ReadonlyArray<string>,
   onNavigated: () => void,
 ) => {
   'use memo';
-  const readWatchedValues = () => {
-    const searchParams = new URLSearchParams(location.search);
-    return _.fromPairs(keys.map((key) => [key, searchParams.get(key)]));
-  };
-  const lastValuesRef = useRef(readWatchedValues());
+  // What the URL said as of the last commit — whoever wrote it. A navigation
+  // is measured against this, so a key the app itself changed is not mistaken
+  // for a navigation when the user later goes back to its earlier value.
+  const lastSearchRef = useRef(location.search);
   const hasNavigatedRef = useRef(false);
 
-  useEffect(() => {
-    const markNavigated = () => {
-      hasNavigatedRef.current = true;
-    };
-    window.addEventListener('popstate', markNavigated);
-    return () => window.removeEventListener('popstate', markNavigated);
-  }, []);
+  // Runs only on a real navigation, while `lastSearchRef` still holds the
+  // departed URL — so the watched keys are parsed here rather than on every
+  // commit.
+  const markNavigation = useEffectEvent(() => {
+    const departed = new URLSearchParams(lastSearchRef.current);
+    const arrived = new URLSearchParams(location.search);
+    hasNavigatedRef.current = keys.some(
+      (key) => departed.get(key) !== arrived.get(key),
+    );
+  });
 
   const notifyIfNavigated = useEffectEvent(() => {
-    const values = readWatchedValues();
-    if (_.isEqual(values, lastValuesRef.current)) return;
-    lastValuesRef.current = values;
     if (!hasNavigatedRef.current) return;
     hasNavigatedRef.current = false;
     onNavigated();
   });
 
   useEffect(() => {
+    const listener = () => markNavigation();
+    window.addEventListener('popstate', listener);
+    return () => window.removeEventListener('popstate', listener);
+  }, []);
+
+  useEffect(() => {
+    lastSearchRef.current = location.search;
     notifyIfNavigated();
   });
 };
