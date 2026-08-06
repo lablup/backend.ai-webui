@@ -57,10 +57,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   // Filter file parts from the message parts array
   const fileParts = _.filter(message.parts, (part) => part.type === 'file');
 
-  // The bubble has no vertical padding; the rendered markdown paragraphs of
-  // `content` supply it. When only reasoning is present (e.g. while the model
-  // is still thinking), there is no paragraph to provide the bottom gap, so the
-  // Collapse has to add it itself.
   const hasContent = !_.isEmpty(_.trim(content));
 
   return (
@@ -114,8 +110,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
           borderColor: token.colorBorderSecondary,
           borderWidth: token.lineWidth,
           padding: '1em',
-          paddingTop: 0,
-          paddingBottom: 0,
           backgroundColor: token.colorBgElevated,
           maxWidth: '100%',
           width: _.trim(reasoningText) ? '100%' : 'auto',
@@ -124,8 +118,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
         {_.trim(reasoningText) && (
           <Collapse
             style={{
-              marginTop: token.margin,
-              marginBottom: hasContent ? 0 : token.margin,
+              marginBottom: hasContent ? token.margin : 0,
               width: '100%',
             }}
             items={[

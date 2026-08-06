@@ -4,6 +4,7 @@
  */
 import MarkdownContent from '../MarkdownContent';
 import CopyButton from './CopyButton';
+import { BAIFlex } from 'backend.ai-ui';
 import { marked } from 'marked';
 import React, { memo } from 'react';
 
@@ -49,13 +50,24 @@ const ChatMessageContent: React.FC<{
 
   const blocks = parseMarkdownIntoBlocks(children ?? '');
 
-  return blocks.map((block, index) => (
-    <ChatMessageContentBlock
-      block={block}
-      key={`block_${index}`}
-      isStreaming={isStreaming}
-    />
-  ));
+  // Each block renders through its own `MarkdownContent`, which zeroes the
+  // margin on its own first/last child (see that component's `& > *:first-
+  // child` / `& > *:last-child` rule) so a single call site's edges don't
+  // double up against a container that already pads it. Splitting into
+  // per-block instances means every block *is* a first-and-last child, so
+  // that rule now also zeroes the space between blocks — a `gap` here
+  // restores it.
+  return (
+    <BAIFlex direction="column" align="stretch" gap="md">
+      {blocks.map((block, index) => (
+        <ChatMessageContentBlock
+          block={block}
+          key={`block_${index}`}
+          isStreaming={isStreaming}
+        />
+      ))}
+    </BAIFlex>
+  );
 };
 
 ChatMessageContent.displayName = 'ChatMessageContent';
