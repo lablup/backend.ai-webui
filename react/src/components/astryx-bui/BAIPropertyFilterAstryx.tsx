@@ -2,58 +2,68 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- PILOT PHASE 3 (cn-oss-removal / ticket 10, item 3) — `BAIPropertyFilter`
- rebuilt on Astryx `PowerSearch`.
+ PILOT PHASE 3 probe -> PHASE 6 SWAP-IN (cn-oss-removal / ticket 10, item 1) —
+ `BAIPropertyFilter` rebuilt on Astryx `PowerSearch`.
 
  **Verdict: PowerSearch is a direct structural analog, and a better one than
  expected.** BAIPropertyFilter is a hand-built antd `AutoComplete` + `Input` +
  `Tag` composite that parses a Backend.AI filter DSL string
  (`name ilike "%foo%" & status == "READY"`). PowerSearch models exactly the same
- thing natively: a token = {field, operator, value}, with typed value editors and
- an operator list per field. We stop parsing our own DSL for the UI and only
- SERIALISE to it on the way out.
+ thing natively: a token = {field, operator, value}, with typed value editors
+ and an operator list per field.
 
  Mapping (BAIPropertyFilter -> PowerSearch):
 
- | BUI `FilterProperty`   | PowerSearch                                       |
- |------------------------|---------------------------------------------------|
- | `key`                  | `field.key`                                       |
- | `propertyLabel`        | `field.label`                                     |
- | `type: 'string'`       | operator `value: {type: 'string'}`                |
- | `options` + `strictSelection` | operator `value: {type:'enum', items}`     |
- | `defaultOperator`      | `field.defaultOperator`                           |
- | (implicit) `ilike`/`==`| explicit `operators[]` per field                  |
- | output DSL string      | `serialiseFilters()` below                        |
+ | BUI `FilterProperty`          | PowerSearch                                |
+ |-------------------------------|--------------------------------------------|
+ | `key`                         | `field.key`                                |
+ | `propertyLabel`               | `field.label`                              |
+ | `type: 'string'`              | operator `value: {type: 'string'}`         |
+ | `options` + `strictSelection` | operator `value: {type:'enum', values}`    |
+ | `defaultOperator`             | `field.defaultOperator`                    |
+ | (implicit) `ilike`/`==`       | explicit `operators[]` per field           |
+ | output DSL string             | `serialiseFilters()` below                 |
+ | inbound DSL string            | `parseFilters()` below <- PHASE 6          |
 
- GAINED over BAIPropertyFilter:
- - Operators are declared data, not inferred from `type` + `strictSelection`.
- - Typed value editors for free (enum picker, integer, date/date-range/relative)
-   — the repo currently only supports `'string' | 'boolean'`.
- - `resultCount` with a polite live region; keyboard editing of existing tokens;
-   `typeaheadAliases` for field discovery.
+ PHASE 6 — both halves now exist, so this is a real drop-in for
+ `BAIPropertyFilter` on a page whose filter lives in the URL:
 
- LOST / needs work:
- - **i18n.** Operator labels come either from a raw `label` string or an
-   `i18nKey` resolved against Astryx's own `InternationalizationProvider`
-   catalog — NOT react-i18next. So either we pass pre-translated `label`s from
-   `t()` (done below, simplest) or we register a catalog bridge. Field labels
-   are plain strings and translate fine.
- - **The DSL is ours, both ways.** PowerSearch has no notion of the Backend.AI
-   filter grammar. Serialising out is easy (below); parsing an inbound URL
-   filter string back into tokens is NOT implemented here and is the real
-   remaining work — BAIPropertyFilter has a parser we would need to reuse.
- - `strictSelection` has no direct flag; it is expressed by choosing an `enum`
-   operator value type instead of `string`.
+ - `serialiseFilters(tokens) -> string`     (outbound, ~15 lines, Phase 3)
+ - `parseFilters(string, props) -> tokens`  (inbound, this phase)
 
- PILOT-DECISION: this is a **probe**, not swapped into the page. Round-tripping
- the URL filter state needs the inbound parser, and that is a work item of its
- own rather than something to land mid-pilot.
+ `parseFilters` is the exact inverse and deliberately reuses BUI's own
+ `parseFilterValue` tokenizer (quote-aware, ReDoS-safe linear scan) instead of
+ introducing a second grammar — the DSL has exactly one parser in the repo and
+ it stays that way. NOTE: `parseFilterValue` is exported from
+ `BAIPropertyFilter.tsx`, which imports antd; this is a **helper-only** import
+ of a pure string function and renders no antd. See the Phase 6 residue table.
+
+ The component keeps an **antd-shaped external contract** (`value: string`,
+ `onChange(value?: string)`) on purpose — the translating-frontier rule. The
+ page stores the filter in the URL as a DSL string and hands the same string to
+ GraphQL, and `VFolderNodeListPage` (unmigrated) uses the identical contract.
+ PowerSearch's token array is an internal representation derived on every render
+ from the URL, so there is no second source of truth to keep in sync.
+
+ i18n — what we own vs what stays on Astryx's catalog:
+ - OURS (react-i18next `t()`): field labels, operator labels (passed as raw
+   `label` strings), the accessible `label`, `placeholder`, the popover's Apply
+   button (`popoverSaveButtonLabel`), and `resultCount` (passed as a **string**
+   so our own pluralisation applies instead of Astryx's "N results").
+ - ASTRYX'S catalog (`InternationalizationProvider`, NOT react-i18next): the
+   typeahead's own chrome — empty-result text, the operator menu's aria strings,
+   the token remove button's label, and every date / relative-date editor label.
+   Bridging those needs a catalog registration, not a prop; the `i18nKey`
+   operator variant is the documented path if we ever want operator labels to
+   come from Astryx's shipped defaults instead of ours.
 */
 import { PowerSearch } from '@astryxdesign/core/PowerSearch';
 import type {
   PowerSearchConfig,
   PowerSearchFilter,
 } from '@astryxdesign/core/PowerSearch';
+import { parseFilterValue } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import React from 'react';
 
 export interface BAIPropertyFilterAstryxProperty {
@@ -65,27 +75,56 @@ export interface BAIPropertyFilterAstryxProperty {
   options?: Array<{ label: string; value: string }>;
 }
 
+export interface BAIPropertyFilterAstryxOperatorLabels {
+  contains: string;
+  equals: string;
+  notEquals: string;
+}
+
 export interface BAIPropertyFilterAstryxProps {
   filterProperties: Array<BAIPropertyFilterAstryxProperty>;
-  filters: ReadonlyArray<PowerSearchFilter>;
-  onChangeFilters: (next: ReadonlyArray<PowerSearchFilter>) => void;
+  /** The Backend.AI filter DSL string (URL state). */
+  value?: string;
   /** Receives the serialised Backend.AI filter DSL string. */
   onChange?: (value: string | undefined) => void;
-  resultCount?: number;
+  /**
+   * Pre-formatted result count. A STRING, not a number: Astryx formats numbers
+   * as "N results" from its own catalog, and we want react-i18next to own that
+   * sentence.
+   */
+  resultCount?: string;
   placeholder?: string;
+  label?: string;
+  applyLabel?: string;
+  /** Field free text is routed to (PowerSearch `contentSearchFieldKey`). */
+  contentSearchFieldKey?: string;
   /** Operator labels, pre-translated by the caller (see the i18n note above). */
-  operatorLabels?: { contains: string; equals: string; notEquals: string };
+  operatorLabels?: BAIPropertyFilterAstryxOperatorLabels;
+  style?: React.CSSProperties;
+  'data-testid'?: string;
 }
+
+const DEFAULT_OPERATOR_LABELS: BAIPropertyFilterAstryxOperatorLabels = {
+  contains: 'contains',
+  equals: 'is',
+  notEquals: 'is not',
+};
+
+/** Enum-valued fields are the `strictSelection` + `options` combination. */
+const isEnumProperty = (property: BAIPropertyFilterAstryxProperty) =>
+  !!property.options && !!property.strictSelection;
 
 /** BUI `FilterProperty[]` -> `PowerSearchConfig`. */
 export function toPowerSearchConfig(
   properties: Array<BAIPropertyFilterAstryxProperty>,
-  labels: NonNullable<BAIPropertyFilterAstryxProps['operatorLabels']>,
+  labels: BAIPropertyFilterAstryxOperatorLabels,
+  contentSearchFieldKey?: string,
 ): PowerSearchConfig {
   return {
     name: 'bai-property-filter',
+    ...(contentSearchFieldKey ? { contentSearchFieldKey } : {}),
     fields: properties.map((property) => {
-      const isEnum = !!property.options && property.strictSelection;
+      const isEnum = isEnumProperty(property);
       return {
         key: property.key,
         label: property.propertyLabel,
@@ -126,52 +165,106 @@ export function toPowerSearchConfig(
   };
 }
 
+/** `%foo%` -> `foo`, exactly as BUI's `trimFilterValue`. */
+const trimWildcards = (value: string) => value.replace(/^%|%$/g, '');
+
 /**
  * PowerSearch tokens -> the Backend.AI filter DSL the page already sends to
- * GraphQL. This is the half that makes the swap viable; the inbound parser is
- * the half that is missing.
+ * GraphQL. Inverse of `parseFilters`.
  */
 export function serialiseFilters(
   filters: ReadonlyArray<PowerSearchFilter>,
 ): string | undefined {
-  const parts = filters
-    .map((filter) => {
+  const parts = _.compact(
+    _.map(filters, (filter) => {
       // Both the string and enum filter-value shapes expose `.value`.
       const raw = filter.value as { type: string; value?: unknown };
-      const value = String(raw?.value ?? '');
+      const value = _.isArray(raw?.value)
+        ? String(_.first(raw.value) ?? '')
+        : String(raw?.value ?? '');
       if (!value) return null;
       // `ilike` wraps in wildcards, exactly as BAIPropertyFilter does.
-      return filter.operator === 'ilike'
-        ? `${filter.field} ilike "%${value}%"`
+      return filter.operator === 'ilike' || filter.operator === 'like'
+        ? `${filter.field} ${filter.operator} "%${value}%"`
         : `${filter.field} ${filter.operator} "${value}"`;
-    })
-    .filter((part): part is string => !!part);
+    }),
+  );
   return parts.length ? parts.join(' & ') : undefined;
+}
+
+/**
+ * PHASE 6 — the inbound half. Backend.AI filter DSL -> PowerSearch tokens.
+ *
+ * The exact inverse of `serialiseFilters`, and the reason this component can
+ * finally replace `BAIPropertyFilter` on a URL-backed page: the token array is
+ * DERIVED from `value` on every render, so reload / back / share all round-trip
+ * with no local state.
+ *
+ * Conditions naming a field that is not in `filterProperties` are dropped
+ * rather than rendered as an unconfigurable token — PowerSearch cannot edit a
+ * token whose field it does not know, and a silently uneditable token is worse
+ * than a dropped one. (BAIPropertyFilter rendered them as a raw tag.)
+ */
+export function parseFilters(
+  value: string | undefined,
+  properties: Array<BAIPropertyFilterAstryxProperty>,
+): Array<PowerSearchFilter> {
+  if (!value) return [];
+  const byKey = _.keyBy(properties, 'key');
+  return _.compact(
+    _.map(value.split('&'), (part) => {
+      const trimmed = part.trim();
+      if (!trimmed) return null;
+      const { property, operator, value: rawValue } = parseFilterValue(trimmed);
+      const filterProperty = byKey[property];
+      if (!filterProperty || !operator) return null;
+      const unwrapped =
+        operator === 'ilike' || operator === 'like'
+          ? trimWildcards(rawValue)
+          : rawValue;
+      if (!unwrapped) return null;
+      return {
+        field: property,
+        operator,
+        value: isEnumProperty(filterProperty)
+          ? { type: 'enum' as const, value: unwrapped }
+          : { type: 'string' as const, value: unwrapped },
+      };
+    }),
+  );
 }
 
 const BAIPropertyFilterAstryx: React.FC<BAIPropertyFilterAstryxProps> = ({
   filterProperties,
-  filters,
-  onChangeFilters,
+  value,
   onChange,
   resultCount,
   placeholder,
-  operatorLabels = {
-    contains: 'contains',
-    equals: 'is',
-    notEquals: 'is not',
-  },
+  label = 'Search',
+  applyLabel,
+  contentSearchFieldKey,
+  operatorLabels = DEFAULT_OPERATOR_LABELS,
+  style,
+  'data-testid': dataTestId,
 }) => {
   'use memo';
-  const config = toPowerSearchConfig(filterProperties, operatorLabels);
+  const config = toPowerSearchConfig(
+    filterProperties,
+    operatorLabels,
+    contentSearchFieldKey,
+  );
+  const filters = parseFilters(value, filterProperties);
   return (
     <PowerSearch
       config={config}
       filters={filters}
+      label={label}
       placeholder={placeholder}
       resultCount={resultCount}
+      popoverSaveButtonLabel={applyLabel}
+      style={style}
+      data-testid={dataTestId}
       onChange={(next) => {
-        onChangeFilters(next);
         onChange?.(serialiseFilters(next));
       }}
     />

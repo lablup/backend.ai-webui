@@ -16,6 +16,7 @@ import FolderCreateModalV2 from '../components/FolderCreateModalV2';
 import RestoreVFolderModal from '../components/RestoreVFolderModal';
 import VFolderNodes, { VFolderNodeInList } from '../components/VFolderNodes';
 import BAICard from '../components/astryx-bui/BAICardAstryx';
+import BAIPropertyFilter from '../components/astryx-bui/BAIPropertyFilterAstryx';
 import BAISelectionLabel from '../components/astryx-bui/BAISelectionLabel';
 import { handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
@@ -29,7 +30,6 @@ import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { useToggle } from 'ahooks';
 import {
-  BAIPropertyFilter,
   BAIRestoreIcon,
   BAIVFolderDeleteButton,
   filterOutEmpty,
@@ -321,8 +321,30 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                     },
                   ])}
                 />
+                {/* PHASE 6 (item 1) — the BUI antd composite is replaced by
+                    Astryx `PowerSearch`. Same external contract (DSL string in,
+                    DSL string out) so the URL round-trip and the GraphQL
+                    variable are untouched; the token model is internal. */}
                 <BAIPropertyFilter
                   data-testid="vfolder-filter"
+                  style={{ minWidth: 320, flex: 1 }}
+                  label={t('settings.SearchPlaceholder')}
+                  placeholder={t('data.SearchByName')}
+                  applyLabel={t('button.Apply')}
+                  // Free text with no field prefix becomes a `name ilike` token.
+                  contentSearchFieldKey="name"
+                  resultCount={t('general.TotalItems', {
+                    defaultValue: '{{count}} items',
+                    count: vfolder_nodes?.count ?? 0,
+                  })}
+                  // P13: these live in BUI's own i18next namespace, invisible to
+                  // the host instance. Explicit defaults until the keys move
+                  // into `resources/i18n/*.json` (22 files).
+                  operatorLabels={{
+                    contains: t('propertyFilter.Contains', 'contains'),
+                    equals: t('propertyFilter.Equals', 'is'),
+                    notEquals: t('propertyFilter.NotEquals', 'is not'),
+                  }}
                   filterProperties={[
                     {
                       key: 'name',
