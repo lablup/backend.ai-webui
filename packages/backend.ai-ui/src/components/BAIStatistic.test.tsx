@@ -263,7 +263,7 @@ describe('BAIStatistic', () => {
       expect(progress).toHaveAttribute('aria-valuenow', '0');
     });
 
-    it('should return 100% when total is 0', () => {
+    it('should return 100% when total is 0 and current is over quota', () => {
       const { container } = render(
         <BAIStatistic
           title="CPU"
@@ -272,7 +272,37 @@ describe('BAIStatistic', () => {
           progressMode="normal"
         />,
       );
-      // When total is 0, returns 100% (line 49: division by zero case)
+      // Allocation against a zero quota is fully over budget.
+      const progress = container.querySelector(
+        '[role="progressbar"]',
+      ) as HTMLElement;
+      expect(progress).toBeInTheDocument();
+      expect(progress).toHaveAttribute('aria-valuenow', '100');
+    });
+
+    it('should return 0% when both total and current are 0', () => {
+      const { container } = render(
+        <BAIStatistic
+          title="GPU"
+          current={0}
+          total={0}
+          progressMode="normal"
+        />,
+      );
+      // A zero quota with nothing allocated is empty, not full.
+      const progress = container.querySelector(
+        '[role="progressbar"]',
+      ) as HTMLElement;
+      expect(progress).toBeInTheDocument();
+      expect(progress).toHaveAttribute('aria-valuenow', '0');
+    });
+
+    it('should return 100% when total is 0 and current is undefined', () => {
+      const { container } = render(
+        <BAIStatistic title="CPU" total={0} progressMode="normal" />,
+      );
+      // Only an explicit 0 empties the gauge; an unknown current stays full,
+      // the same as it does against a non-zero total.
       const progress = container.querySelector(
         '[role="progressbar"]',
       ) as HTMLElement;
@@ -284,8 +314,7 @@ describe('BAIStatistic', () => {
       const { container } = render(
         <BAIStatistic title="CPU" total={8} progressMode="normal" />,
       );
-      // When current is undefined: !_.isFinite(undefined) is true at line 49,
-      // so calculatePercent() returns 100 (not 0)
+      // An undefined current is not finite, so it reports as full, not empty.
       const progress = container.querySelector(
         '[role="progressbar"]',
       ) as HTMLElement;

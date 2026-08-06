@@ -196,6 +196,14 @@
     "VFolder": "VFolder",
     "VFolderRequired": "O VFolder é obrigatório."
   },
+  "adminRuntimeVariantPreset": {
+    "CreatePreset": "Criar Predefinição",
+    "Name": "Nome",
+    "PresetDeleted": "A predefinição de variante de runtime foi excluída.",
+    "RuntimeVariantId": "ID da Variante de Runtime",
+    "RuntimeVariantPreset": "Predefinição de Variante de Runtime",
+    "TabTitle": "Predefinições de Variante de Runtime"
+  },
   "adminSession": {
     "PendingSessions": "Sessões Pendentes",
     "PendingSessionsScopedToResourceGroup": "Exibindo apenas as sessões pendentes do grupo de recursos selecionado. Alterne entre grupos de recursos para visualizar sessões em outros grupos."
@@ -1149,6 +1157,8 @@
     "SchedulingHistory": "Histórico de Agendamento",
     "SessionId": "ID da sessão",
     "StartChatTest": "Testar no Chat",
+    "SwitchProjectConfirmContent": "Esta implantação pertence ao projeto \"{{projectName}}\". Você será direcionado para esse projeto para visualizá-la. Continuar?",
+    "SwitchProjectConfirmTitle": "Mudar para outro projeto?",
     "Tags": "Tags",
     "TagsPlaceholder": "Insira tags, separadas por vírgulas",
     "TagsTooltip": "Rótulos opcionais para organizar e filtrar implantações. Pressione Enter ou vírgula para adicionar.",
@@ -1688,6 +1698,7 @@
     "CouldNotCopyText": "Não foi possível copiar o texto:",
     "CreateButtonCode": "Crio",
     "CreateNotebookButton": "Botão Criar Bloco de Notas",
+    "CreatedFolderIsReadOnly": "A pasta foi criada com permissão de montagem somente leitura, portanto não pode receber o download. Crie uma pasta com permissão de leitura e escrita.",
     "DownloadModelToFolder": "Baixar Modelo para a Pasta",
     "Downloading": "Baixando...",
     "FailedToFetchRepositoryInformation": "Falha ao obter informações do repositório.",
@@ -1725,6 +1736,7 @@
     "NotebookBadgeCodeMarkdown": "Código do emblema do notebook (Markdown)",
     "NotebookBadgeURL": "URL do notebook",
     "NotebookURL": "URL do notebook",
+    "OnlyWritableModelFoldersAreListed": "Somente as pastas de modelos do projeto atual que você pode montar com permissão de escrita são listadas.",
     "Preparing": "Preparando...",
     "ReadyToImport": "Pronto para importar",
     "RepoWillBeFolder": "Os repositórios GitHub importados são convertidos em pastas e podem ser montados quando a sessão é iniciada.",

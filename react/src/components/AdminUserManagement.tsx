@@ -9,7 +9,7 @@ import {
   UserV2OrderBy,
 } from '../__generated__/AdminUserManagementQuery.graphql';
 import { AdminUserManagementUpdateUserMutation } from '../__generated__/AdminUserManagementUpdateUserMutation.graphql';
-import { convertFromOrderBy, convertToOrderBy } from '../helper';
+import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTOTPSupported } from '../hooks/backendai';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -141,9 +141,9 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
   const statusValue =
     variables.filter?.status?.equals === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE';
   const propertyFilterValue = _.omit(variables.filter ?? {}, 'status');
-  const orderValue = convertFromOrderBy<
-    (typeof availableUserV2SorterValues)[number]
-  >(variables.orderBy);
+  const orderValue = convertFirstOrderByToString(variables.orderBy) as
+    | (typeof availableUserV2SorterValues)[number]
+    | null;
   const pageSize = variables.limit ?? USER_LIST_DEFAULT_PAGE_SIZE;
   const current = Math.floor((variables.offset ?? 0) / pageSize) + 1;
 

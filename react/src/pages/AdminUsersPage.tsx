@@ -17,7 +17,7 @@ import AdminUserManagement, {
   USER_LIST_DEFAULT_PAGE_SIZE,
 } from '../components/AdminUserManagement';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
-import { convertFromOrderBy, convertToOrderBy } from '../helper';
+import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import { useKeyedSnapshot } from '../hooks';
 import { useTOTPSupported } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -178,7 +178,7 @@ const AdminUsersPage: React.FC = () => {
       return {
         queryParams: {
           filter: _.isEmpty(restFilter) ? null : JSON.stringify(restFilter),
-          order: convertFromOrderBy(v.orderBy),
+          order: convertFirstOrderByToString(v.orderBy),
           status: v.filter?.status?.equals === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE',
           activeType: 'active',
         },

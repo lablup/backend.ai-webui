@@ -196,6 +196,14 @@
     "VFolder": "VFolder",
     "VFolderRequired": "VFolder zorunludur."
   },
+  "adminRuntimeVariantPreset": {
+    "CreatePreset": "Ön Ayar Oluştur",
+    "Name": "Ad",
+    "PresetDeleted": "Çalışma zamanı varyantı ön ayarı silindi.",
+    "RuntimeVariantId": "Çalışma Zamanı Varyantı ID",
+    "RuntimeVariantPreset": "Çalışma Zamanı Varyantı Ön Ayarı",
+    "TabTitle": "Çalışma Zamanı Varyantı Ön Ayarları"
+  },
   "adminSession": {
     "PendingSessions": "Bekleyen Oturumlar",
     "PendingSessionsScopedToResourceGroup": "Yalnızca seçili kaynak grubuna ait bekleyen oturumlar gösterilmektedir. Diğer gruplardaki oturumları görüntülemek için kaynak gruplarını değiştirin."
@@ -1149,6 +1157,8 @@
     "SchedulingHistory": "Zamanlama Geçmişi",
     "SessionId": "Oturum Kimliği",
     "StartChatTest": "Sohbette test et",
+    "SwitchProjectConfirmContent": "Bu dağıtım \"{{projectName}}\" projesine ait. Görüntülemek için o projeye geçirileceksiniz. Devam edilsin mi?",
+    "SwitchProjectConfirmTitle": "Başka bir projeye geçilsin mi?",
     "Tags": "Etiketler",
     "TagsPlaceholder": "Etiketleri virgülle ayırarak girin",
     "TagsTooltip": "Dağıtımları düzenlemek ve filtrelemek için isteğe bağlı etiketler. Eklemek için Enter veya virgüle basın.",
@@ -1688,6 +1698,7 @@
     "CouldNotCopyText": "Metin kopyalanamadı:",
     "CreateButtonCode": "Oluşturmak",
     "CreateNotebookButton": "Defter Düğmesi Oluştur",
+    "CreatedFolderIsReadOnly": "Klasör salt okunur bağlama iznine sahip olarak oluşturuldu, bu nedenle indirme yapılamaz. Okuma ve yazma bağlama izniyle bir klasör oluşturun.",
     "DownloadModelToFolder": "Modeli Klasöre İndir",
     "Downloading": "İndiriliyor...",
     "FailedToFetchRepositoryInformation": "Depo bilgileri alınamadı.",
@@ -1725,6 +1736,7 @@
     "NotebookBadgeCodeMarkdown": "Defter Rozeti Kodu (Markdown)",
     "NotebookBadgeURL": "Not Defteri URL'si",
     "NotebookURL": "Not Defteri URL'si",
+    "OnlyWritableModelFoldersAreListed": "Yalnızca geçerli projede yazma izniyle bağlayabileceğiniz model klasörleri listelenir.",
     "Preparing": "hazırlanıyor...",
     "ReadyToImport": "İçe Aktarmaya Hazır",
     "RepoWillBeFolder": "İçe aktarılan GitHub depoları klasörlere dönüştürülür ve oturum başladığında eklenebilir.",

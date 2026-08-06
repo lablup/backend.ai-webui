@@ -196,6 +196,14 @@
     "VFolder": "VFolder",
     "VFolderRequired": "VFolder 为必填项。"
   },
+  "adminRuntimeVariantPreset": {
+    "CreatePreset": "创建预设",
+    "Name": "名称",
+    "PresetDeleted": "运行时变体预设已删除。",
+    "RuntimeVariantId": "运行时变体 ID",
+    "RuntimeVariantPreset": "运行时变体预设",
+    "TabTitle": "运行时变体预设"
+  },
   "adminSession": {
     "PendingSessions": "待处理会话",
     "PendingSessionsScopedToResourceGroup": "仅显示所选资源组的待处理会话。切换资源组以查看其他组中的会话。"
@@ -1149,6 +1157,8 @@
     "SchedulingHistory": "调度历史",
     "SessionId": "会话 ID",
     "StartChatTest": "在聊天中测试",
+    "SwitchProjectConfirmContent": "此部署属于「{{projectName}}」项目。系统将切换到该项目以便查看。是否继续？",
+    "SwitchProjectConfirmTitle": "是否切换到其他项目？",
     "Tags": "标签",
     "TagsPlaceholder": "输入标签，以逗号分隔",
     "TagsTooltip": "用于组织和筛选部署的可选标签。按 Enter 或逗号添加。",
@@ -1690,6 +1700,7 @@
     "CouldNotCopyText": "无法复制文本：",
     "CreateButtonCode": "创造",
     "CreateNotebookButton": "创建笔记本按钮",
+    "CreatedFolderIsReadOnly": "该文件夹以只读挂载权限创建，无法用于下载。请以读写挂载权限创建文件夹。",
     "DownloadModelToFolder": "下载模型到文件夹",
     "Downloading": "正在下载...",
     "FailedToFetchRepositoryInformation": "获取仓库信息失败。",
@@ -1727,6 +1738,7 @@
     "NotebookBadgeCodeMarkdown": "笔记本徽章代码 (Markdown)",
     "NotebookBadgeURL": "笔记本网址",
     "NotebookURL": "笔记本网址",
+    "OnlyWritableModelFoldersAreListed": "仅显示当前项目中您可以以写入权限挂载的模型文件夹。",
     "Preparing": "正在准备...",
     "ReadyToImport": "准备进口",
     "RepoWillBeFolder": "导入的 GitHub 存储库转换为文件夹，并且可以在会话开始时挂载。",

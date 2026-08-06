@@ -196,6 +196,14 @@
     "VFolder": "VFolder",
     "VFolderRequired": "VFolder diperlukan."
   },
+  "adminRuntimeVariantPreset": {
+    "CreatePreset": "Cipta Pratetap",
+    "Name": "Nama",
+    "PresetDeleted": "Pratetap varian masa jalan telah dipadam.",
+    "RuntimeVariantId": "ID Varian Masa Jalan",
+    "RuntimeVariantPreset": "Pratetap Varian Masa Jalan",
+    "TabTitle": "Pratetap Varian Masa Jalan"
+  },
   "adminSession": {
     "PendingSessions": "Sesi Tertunda",
     "PendingSessionsScopedToResourceGroup": "Menunjukkan sesi tertunda untuk kumpulan sumber yang dipilih sahaja. Tukar kumpulan sumber untuk melihat sesi dalam kumpulan lain."
@@ -1149,6 +1157,8 @@
     "SchedulingHistory": "Sejarah Penjadualan",
     "SessionId": "ID Sesi",
     "StartChatTest": "Uji di Sembang",
+    "SwitchProjectConfirmContent": "Penggunaan ini tergolong dalam projek \"{{projectName}}\". Anda akan ditukar ke projek tersebut untuk melihatnya. Teruskan?",
+    "SwitchProjectConfirmTitle": "Tukar ke projek lain?",
     "Tags": "Tag",
     "TagsPlaceholder": "Masukkan tag, dipisahkan dengan koma",
     "TagsTooltip": "Label pilihan untuk mengatur dan menapis deployment. Tekan Enter atau koma untuk menambah.",
@@ -1688,6 +1698,7 @@
     "CouldNotCopyText": "Tidak dapat menyalin teks:",
     "CreateButtonCode": "Buat",
     "CreateNotebookButton": "Buat Butang Notebook",
+    "CreatedFolderIsReadOnly": "Folder dicipta dengan kebenaran lekapan baca sahaja, jadi ia tidak boleh menerima muat turun. Cipta folder dengan kebenaran lekapan baca dan tulis.",
     "DownloadModelToFolder": "Muat Turun Model ke Folder",
     "Downloading": "Memuat turun ...",
     "FailedToFetchRepositoryInformation": "Gagal mendapatkan maklumat repositori.",
@@ -1725,6 +1736,7 @@
     "NotebookBadgeCodeMarkdown": "Kod Lencana Notebook (Markdown)",
     "NotebookBadgeURL": "URL buku nota",
     "NotebookURL": "URL buku nota",
+    "OnlyWritableModelFoldersAreListed": "Hanya folder model dalam projek semasa yang boleh anda lekapkan dengan kebenaran tulis disenaraikan.",
     "Preparing": "Menyiapkan ...",
     "ReadyToImport": "Sedia Diimport",
     "RepoWillBeFolder": "Repositori GitHub yang diimport ditukar menjadi folder dan boleh dipasang semasa sesi dimulakan.",
