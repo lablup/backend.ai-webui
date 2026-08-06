@@ -738,6 +738,21 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                 },
               });
             }
+            // Reset Shell when switching Execution to Exec: the Shell input
+            // unmounts but antd keeps its stale value in the form store, and
+            // `resolveCommandShell` already discards it (submits `shell:
+            // null` for Exec) — without this reset, the stale value lingers
+            // to be misread by anything reading the raw field, e.g. the
+            // Review page, or shown again if the user switches back to Shell.
+            const execChanged =
+              changed.modelDefinition?.models?.[0]?.service?.execution;
+            if (execChanged === 'exec') {
+              form.setFieldsValue({
+                modelDefinition: {
+                  models: [{ service: { shell: DEFAULT_MODEL_SERVICE_SHELL } }],
+                },
+              });
+            }
             syncFormToURL();
           }}
           scrollToFirstError

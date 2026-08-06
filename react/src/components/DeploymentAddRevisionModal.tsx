@@ -1910,6 +1910,16 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 shell: DEFAULT_MODEL_SERVICE_SHELL,
               });
             }
+            // Same staleness problem when switching Execution to Exec within
+            // Advanced mode: the Shell input unmounts but its value lingers,
+            // even though `resolveCommandShell` already discards it (submits
+            // `shell: null` for Exec). Reset it so the form never holds a
+            // shell value that won't actually be sent.
+            if ('execution' in changed && changed.execution === 'exec') {
+              customForm.setFieldsValue({
+                shell: DEFAULT_MODEL_SERVICE_SHELL,
+              });
+            }
           }}
           initialValues={_.merge({}, RESOURCE_ALLOCATION_INITIAL_FORM_VALUES, {
             resourceGroup: deployment?.metadata?.resourceGroupName,
