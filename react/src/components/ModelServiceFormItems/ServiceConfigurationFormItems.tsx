@@ -5,6 +5,7 @@
 import { Form } from '../../form-engine';
 import type { FormInstance, RuleObject, RuleRender } from '../../form-engine';
 import { COMMAND_SHELL_OPTIONS } from '../../helper/modelServiceCommand';
+import { useSuspendedBackendaiClient } from '../../hooks';
 import { theme } from '../../theme-shim';
 import {
   AstryxFormNumberInput,
@@ -13,15 +14,13 @@ import {
   AstryxFormTextArea,
   AstryxFormTextInput,
 } from '../astryxFormControls';
-import type { ServiceFormNamePrefix } from './types';
 import { Collapsible } from '@astryxdesign/core/Collapsible';
 import { BAIFlex, BAIQuestionIconWithTooltip } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 export interface ServiceConfigurationFormItemsProps {
-  namePrefix: ServiceFormNamePrefix;
-  supportsCommandShell: boolean;
+  namePrefix: Array<string | number>;
   /**
    * Start Command validation. The revision modal leaves the command optional
    * (`[{ whitespace: true }]`); the preset form requires it
@@ -41,15 +40,13 @@ export interface ServiceConfigurationFormItemsProps {
 // 'models', 0, 'service']) — FR-3474. The caller owns the "does this variant
 // read vfolder config files" gate (its data source differs per page) and
 // renders this only when that gate is open; this component owns everything
-// inside the Collapsible. `supportsCommandShell` and the two `*Rules` props
-// are caller-supplied so the single source of truth for capability/validation
-// stays with each page's own `baiClient.supports(...)` call and business
-// rules, not duplicated here.
+// inside the Collapsible. The two `*Rules` props stay caller-supplied since
+// they encode each page's own business rules (required vs. optional
+// command/port), not a capability check.
 const ServiceConfigurationFormItems: React.FC<
   ServiceConfigurationFormItemsProps
 > = ({
   namePrefix,
-  supportsCommandShell,
   commandRules = [{ whitespace: true }],
   portRules,
   placeholders,
@@ -57,6 +54,10 @@ const ServiceConfigurationFormItems: React.FC<
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
+  const baiClient = useSuspendedBackendaiClient();
+  const supportsCommandShell = baiClient.supports(
+    'model-service-command-string',
+  );
 
   return (
     // PILOT-DECISION: antd `Collapse` (single bordered panel, size="small",

@@ -5,14 +5,13 @@
 import { Form } from '../../form-engine';
 import { theme } from '../../theme-shim';
 import { AstryxFormTextInput } from '../astryxFormControls';
-import type { ServiceFormNamePrefix } from './types';
 import { BAIButton, BAIFlex } from 'backend.ai-ui';
 import { CircleMinus, PlusIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 export interface PreStartActionsFormListProps {
-  namePrefix: ServiceFormNamePrefix;
+  namePrefix: Array<string | number>;
 }
 
 // Shared between DeploymentAddRevisionModal.tsx (namePrefix: []) and

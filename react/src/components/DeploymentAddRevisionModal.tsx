@@ -2186,7 +2186,6 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 <div style={{ marginBottom: token.marginMD }}>
                   <ServiceConfigurationFormItems
                     namePrefix={[]}
-                    supportsCommandShell={supportsCommandShell}
                     placeholders={{
                       command: modelDefinitionDefaults?.startCommand,
                       port: modelDefinitionDefaults?.port?.toString(),

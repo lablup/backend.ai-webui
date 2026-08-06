@@ -10,13 +10,12 @@ import {
   AstryxFormNumberInput,
   AstryxFormTextInput,
 } from '../astryxFormControls';
-import type { ServiceFormNamePrefix } from './types';
 import { BAIFlex } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 export interface ModelServiceHealthCheckFormItemsProps {
-  namePrefix: ServiceFormNamePrefix;
+  namePrefix: Array<string | number>;
   /**
    * Per-field placeholder text. The revision modal sources some of these
    * dynamically from the selected model definition's defaults (and leaves
