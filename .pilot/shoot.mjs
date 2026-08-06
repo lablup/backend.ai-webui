@@ -18,7 +18,7 @@ for (const mode of ['light', 'dark']) {
     if (m.type() === 'error') errors.push(`[${mode}] console: ${m.text()}`);
   });
 
-  await page.goto('http://127.0.0.1:5311/', { waitUntil: 'networkidle' });
+  await page.goto('http://127.0.0.1:5311/phase2.html', { waitUntil: 'networkidle' });
   await page.evaluate((m) => {
     document.documentElement.setAttribute('data-theme', m);
     document.documentElement.setAttribute('data-astryx-theme', 'neutral');
@@ -31,8 +31,8 @@ for (const mode of ['light', 'dark']) {
   }, mode);
   await page.waitForTimeout(800);
 
-  await page.screenshot({ path: `${OUT}pilot-${mode}.png`, fullPage: true });
-  console.log(`shot: pilot-${mode}.png`);
+  await page.screenshot({ path: `${OUT}pilot2-${mode}.png`, fullPage: true });
+  console.log(`shot: pilot2-${mode}.png`);
   await page.close();
 }
 
