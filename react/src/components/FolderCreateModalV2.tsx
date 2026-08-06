@@ -19,6 +19,8 @@ import { theme } from '../theme-shim';
 import StorageSelect from './StorageSelect';
 import BAIButton from './astryx-bui/BAIButtonAstryx';
 import BAIFlex from './astryx-bui/BAIFlexAstryx';
+import BAIModal from './astryx-bui/BAIModalAstryx';
+import type { BAIModalAstryxProps as BAIModalProps } from './astryx-bui/BAIModalAstryx';
 import {
   AstryxFormRadioList,
   AstryxFormSwitch,
@@ -36,8 +38,6 @@ import {
   BAIQuestionIconWithTooltip,
   BAIAlert,
   BAIFormItem,
-  BAIModal,
-  BAIModalProps,
   toLocalId,
   useBAILogger,
   useErrorMessageResolver,

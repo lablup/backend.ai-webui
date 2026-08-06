@@ -8,11 +8,11 @@ import { message } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIFlex from './astryx-bui/BAIFlexAstryx';
+import BAIModal from './astryx-bui/BAIModalAstryx';
+import type { BAIModalAstryxProps as BAIModalProps } from './astryx-bui/BAIModalAstryx';
 import { Text } from '@astryxdesign/core/Text';
 import {
   BAIListAlert,
-  BAIModal,
-  BAIModalProps,
   toLocalId,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
