@@ -132,10 +132,6 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
   const deferredQueryRef = useDeferredValue(queryRef);
   const isPending = deferredQueryRef !== queryRef;
 
-  const reloadCurrentVariables = () => {
-    onReload(variables, { fetchPolicy: 'network-only' });
-  };
-
   const { keypair_list } = usePreloadedQuery<AdminUserCredentialListQueryType>(
     AdminUserCredentialListQuery,
     deferredQueryRef,
@@ -234,7 +230,7 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
           );
         }
         setSelectedKeypairs([]);
-        reloadCurrentVariables();
+        onReload(variables, { fetchPolicy: 'network-only' });
       },
     });
   };
@@ -341,7 +337,7 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
             <Button
               loading={isPending}
               onClick={() => {
-                reloadCurrentVariables();
+                onReload(variables, { fetchPolicy: 'network-only' });
               }}
               icon={<ReloadOutlined />}
             />
@@ -449,7 +445,7 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
                                         kp.access_key !== record.access_key,
                                     ),
                                   );
-                                  reloadCurrentVariables();
+                                  onReload(variables, { fetchPolicy: 'network-only' });
                                   resolve();
                                 },
                                 onError: (error) => {
@@ -503,7 +499,7 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
                                         kp.access_key !== record.access_key,
                                     ),
                                   );
-                                  reloadCurrentVariables();
+                                  onReload(variables, { fetchPolicy: 'network-only' });
                                   resolve();
                                 },
                                 onError: (error) => {
@@ -675,7 +671,7 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
           setKeypairSettingModalFrgmt(null);
           setOpenUserKeypairSettingModal(false);
           if (success) {
-            reloadCurrentVariables();
+            onReload(variables, { fetchPolicy: 'network-only' });
           }
         }}
       />
@@ -714,7 +710,7 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
                   ),
                 );
                 setDeletingKeypair(null);
-                reloadCurrentVariables();
+                onReload(variables, { fetchPolicy: 'network-only' });
               },
               onError: (error) => {
                 message.error(error?.message);

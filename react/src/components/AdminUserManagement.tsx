@@ -150,10 +150,6 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
   const deferredQueryRef = useDeferredValue(queryRef);
   const isPending = deferredQueryRef !== queryRef;
 
-  const reloadCurrentVariables = () => {
-    onReload(variables, { fetchPolicy: 'network-only' });
-  };
-
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.AdminUserManagement',
   );
@@ -238,7 +234,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
                   setSelectedUserList((prev) =>
                     prev.filter((user) => user?.node?.id !== record?.id),
                   );
-                  reloadCurrentVariables();
+                  onReload(variables, { fetchPolicy: 'network-only' });
                 };
 
                 if (record?.id) {
@@ -475,7 +471,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
             loading={isPending}
             value=""
             onChange={() => {
-              reloadCurrentVariables();
+              onReload(variables, { fetchPolicy: 'network-only' });
             }}
           />
           <Space.Compact>
@@ -613,7 +609,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
           onRequestClose={(success) => {
             setSelectedUserForSettingModal(null);
             if (success) {
-              reloadCurrentVariables();
+              onReload(variables, { fetchPolicy: 'network-only' });
             }
           }}
         />
@@ -627,7 +623,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
             setOpenCreateModal(false);
             setOpenBulkCreateModal(false);
             if (success) {
-              reloadCurrentVariables();
+              onReload(variables, { fetchPolicy: 'network-only' });
             }
           }}
         />
@@ -638,7 +634,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
           onRequestClose={(success) => {
             setOpenBulkCreateCSVModal(false);
             if (success) {
-              reloadCurrentVariables();
+              onReload(variables, { fetchPolicy: 'network-only' });
             }
           }}
         />
@@ -649,7 +645,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
           onOk={() => {
             togglePurgeUsersModal();
             setSelectedUserList([]);
-            reloadCurrentVariables();
+            onReload(variables, { fetchPolicy: 'network-only' });
           }}
           onCancel={() => {
             togglePurgeUsersModal();
@@ -665,7 +661,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
               prev.filter((user) => user?.node?.id !== purgeTargetId),
             );
             setPurgeTargetId(null);
-            reloadCurrentVariables();
+            onReload(variables, { fetchPolicy: 'network-only' });
           }}
           onCancel={() => {
             setPurgeTargetId(null);
@@ -683,7 +679,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
           onOk={() => {
             toggleUpdateUsersModal();
             setSelectedUserList([]);
-            reloadCurrentVariables();
+            onReload(variables, { fetchPolicy: 'network-only' });
           }}
           onCancel={() => {
             toggleUpdateUsersModal();
