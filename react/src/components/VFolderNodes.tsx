@@ -25,6 +25,7 @@ import VFolderPermissionCell from './VFolderPermissionCell';
 import BAIFlex from './astryx-bui/BAIFlexAstryx';
 import BAITable from './astryx-bui/BAITableAstryx';
 import type { BAITableAstryxProps } from './astryx-bui/BAITableAstryx';
+import { BAILink, BAITag, BAIText } from './astryx-bui/smallPrimitives';
 import { Text } from '@astryxdesign/core/Text';
 import { useToggle } from 'ahooks';
 import {
@@ -35,12 +36,9 @@ import {
   BAIUnmountAfterClose,
   BAIUserUnionIcon,
   BAINameActionCell,
-  BAIText,
   toLocalId,
   useErrorMessageResolver,
-  BAILink,
   BAIDeleteConfirmModal,
-  BAITag,
   bytesToGB,
 } from 'backend.ai-ui';
 import type { BAINameActionCellAction } from 'backend.ai-ui';

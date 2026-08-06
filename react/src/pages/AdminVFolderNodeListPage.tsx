@@ -17,6 +17,7 @@ import VFolderNodes, { VFolderNodeInList } from '../components/VFolderNodes';
 import BAIButton from '../components/astryx-bui/BAIButtonAstryx';
 import BAICard from '../components/astryx-bui/BAICardAstryx';
 import BAIFlex from '../components/astryx-bui/BAIFlexAstryx';
+import { BAISelectionLabel } from '../components/astryx-bui/smallPrimitives';
 import { handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -29,7 +30,6 @@ import { useToggle } from 'ahooks';
 import {
   BAIPropertyFilter,
   BAIRestoreIcon,
-  BAISelectionLabel,
   BAIVFolderDeleteButton,
   filterOutEmpty,
   filterOutNullAndUndefined,
