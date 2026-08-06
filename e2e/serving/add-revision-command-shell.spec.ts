@@ -142,7 +142,7 @@ test.describe(
         await expect(
           modal.getByRole('radio', { name: 'Exec', exact: true }),
         ).toHaveCount(0);
-        await expect(modal.locator('#commandShell')).toHaveCount(0);
+        await expect(modal.locator('#shell')).toHaveCount(0);
         await expect(
           modal.getByText(
             'Shell operators (; && | $VAR, redirection, etc.) can be used.',
@@ -160,7 +160,7 @@ test.describe(
         await expect(
           modal.getByRole('radio', { name: 'Exec', exact: true }),
         ).toBeVisible();
-        await expect(modal.locator('#commandShell')).toBeVisible();
+        await expect(modal.locator('#shell')).toBeVisible();
 
         // 3b. Advanced defaults Execution to Shell → the command control is a
         //     multi-line TextArea (shell scripts span lines) and the shell
@@ -179,7 +179,7 @@ test.describe(
         //    exactly "Command (argv)"; the string is distinctive enough that a
         //    substring match is unambiguous.
         await modal.getByRole('radio', { name: 'Exec', exact: true }).click();
-        await expect(modal.locator('#commandShell')).toHaveCount(0);
+        await expect(modal.locator('#shell')).toHaveCount(0);
         await expect(modal.getByText('Command (argv)')).toBeVisible();
 
         // 4b. Exec swaps the command control to a single-line Input (argv is one
@@ -311,11 +311,11 @@ test.describe(
         // Advanced mode → Execution defaults to Shell → Shell input appears
         // prefilled with /bin/bash; override it with a non-default shell so the
         // submitted `shell` is the chosen value. The Shell field is an
-        // AutoComplete text input (`#commandShell`); filling it sets the form
+        // AutoComplete text input (`#shell`); filling it sets the form
         // value directly. Do NOT click a suggestion option — selecting one
         // clears the combobox's displayed search text.
         await modal.getByText('Advanced', { exact: true }).click();
-        const shellInput = modal.locator('#commandShell');
+        const shellInput = modal.locator('#shell');
         await expect(shellInput).toBeVisible();
         await shellInput.fill('/bin/zsh');
         await expect(shellInput).toHaveValue('/bin/zsh');
@@ -412,7 +412,7 @@ test.describe(
         // UNTOUCHED so the submitted `shell` is the default, not an override —
         // the companion override test proves a changed value is honored.
         await modal.getByText('Advanced', { exact: true }).click();
-        const shellInput = modal.locator('#commandShell');
+        const shellInput = modal.locator('#shell');
         await expect(shellInput).toBeVisible();
         await expect(shellInput).toHaveValue('/bin/bash');
 
