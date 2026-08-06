@@ -184,7 +184,7 @@ test.describe(
         await expect(startCommand).toHaveValue('');
 
         // The Port input's placeholder is the DB default port (as a string).
-        await expect(modal.locator('#commandPort').first()).toHaveAttribute(
+        await expect(modal.locator('#port').first()).toHaveAttribute(
           'placeholder',
           String(MOCK_DB_DEFAULT_PORT),
         );
@@ -193,7 +193,7 @@ test.describe(
         // once Health Check is enabled).
         await modal.getByText('Enable Health Check', { exact: true }).click();
         await expect(
-          modal.locator('#commandMaxRetries').first(),
+          modal.locator('#healthCheck_maxRetries').first(),
         ).toHaveAttribute('placeholder', String(MOCK_DB_DEFAULT_MAX_RETRIES), {
           timeout: 10000,
         });
@@ -261,7 +261,7 @@ test.describe(
         await expect(startCommand).toHaveValue('');
 
         // Port placeholder = the vfolder port, overriding the DB default port.
-        await expect(modal.locator('#commandPort').first()).toHaveAttribute(
+        await expect(modal.locator('#port').first()).toHaveAttribute(
           'placeholder',
           String(MOCK_VFOLDER_PORT),
           { timeout: 10000 },
@@ -271,7 +271,7 @@ test.describe(
         // overriding the DB default (shown once Health Check is enabled).
         await modal.getByText('Enable Health Check', { exact: true }).click();
         await expect(
-          modal.locator('#commandMaxRetries').first(),
+          modal.locator('#healthCheck_maxRetries').first(),
         ).toHaveAttribute('placeholder', String(MOCK_VFOLDER_MAX_RETRIES), {
           timeout: 10000,
         });
