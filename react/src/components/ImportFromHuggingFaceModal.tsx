@@ -8,6 +8,7 @@ import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useSuspenseTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
+import MarkdownContent from './MarkdownContent';
 import {
   CloudUploadOutlined,
   FilterOutlined,
@@ -17,7 +18,6 @@ import { useToggle } from 'ahooks';
 import {
   App,
   Button,
-  Card,
   Empty,
   Form,
   FormInstance,
@@ -31,6 +31,7 @@ import {
   Typography,
 } from 'antd';
 import {
+  BAICard,
   BAIModal,
   BAIModalProps,
   BAIFlex,
@@ -38,7 +39,6 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CheckIcon } from 'lucide-react';
-import Markdown from 'markdown-to-jsx';
 import React, {
   Suspense,
   useEffect,
@@ -69,7 +69,7 @@ type ImportFromHuggingFaceResult = {
 const ReadmeFallbackCard = () => {
   const { token } = theme.useToken();
   return (
-    <Card
+    <BAICard
       size="small"
       title={
         <BAIFlex direction="row" gap="xs">
@@ -80,13 +80,14 @@ const ReadmeFallbackCard = () => {
       styles={{
         body: {
           padding: token.paddingLG,
+          paddingTop: 0,
           overflow: 'auto',
           height: 200,
         },
       }}
     >
       <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-    </Card>
+    </BAICard>
   );
 };
 
@@ -353,7 +354,7 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
           </Form.Item>
           {huggingFaceURL && huggingFaceModelInfo.data?.markdown ? (
             <Suspense fallback={<ReadmeFallbackCard />}>
-              <Card
+              <BAICard
                 size="small"
                 title={
                   <BAIFlex direction="row" gap="xs">
@@ -364,13 +365,16 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
                 styles={{
                   body: {
                     padding: token.paddingLG,
+                    paddingTop: 0,
                     overflow: 'auto',
                     height: 200,
                   },
                 }}
               >
-                <Markdown>{huggingFaceModelInfo.data?.markdown}</Markdown>
-              </Card>
+                <MarkdownContent>
+                  {huggingFaceModelInfo.data?.markdown}
+                </MarkdownContent>
+              </BAICard>
             </Suspense>
           ) : (
             <ReadmeFallbackCard />
