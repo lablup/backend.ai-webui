@@ -10,7 +10,6 @@ import type {
 import AstryxAdminTheme from '../astryx-theme/AstryxAdminTheme';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIRadioGroup from '../components/BAIRadioGroup';
-import BAITabs from '../components/BAITabs';
 import DeleteVFolderModal from '../components/DeleteVFolderModal';
 import FolderCreateModalV2 from '../components/FolderCreateModalV2';
 import RestoreVFolderModal from '../components/RestoreVFolderModal';
@@ -225,68 +224,85 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
         <BAICard
           variant="borderless"
           title={t('data.Folders')}
-          styles={{
-            header: {
-              borderBottom: 'none',
-            },
-            body: {
-              paddingTop: 0,
-            },
+          // PHASE 4 — the card owns the tab strip again (antd `tabList`), so
+          // the tabs render on the header's bottom edge and the body starts
+          // under the tab underline, exactly as `.claude/rules/use-bai-card.md`
+          // describes for a tabbed card.
+          activeTabKey={queryParams.statusCategory}
+          onTabChange={(key) => {
+            const storedQuery = queryMapRef.current[key] || {
+              mode: 'all',
+            };
+            // Reset the whole group first: nuqs partial updates merge, so
+            // without this the previous tab's filter/order/mode leak into a
+            // tab that has no cached state (legacy 'replace' cleared them).
+            setQuery(null);
+            setQuery({
+              ...storedQuery.queryParams,
+              statusCategory: key as 'active' | 'deleted',
+            });
+            setTablePaginationOption(
+              storedQuery.tablePaginationOption || { current: 1 },
+            );
+            setSelectedFolderList([]);
           }}
+          tabList={_.map(
+            {
+              active: t('data.Active'),
+              deleted: t('data.folders.TrashBin'),
+            },
+            (label, key) => ({
+              key,
+              // Astryx `Tab` takes a STRING label plus a native `endContent`
+              // slot, so the previous BAIFlex-wrapped JSX label is split in
+              // two. This also restores a correct `aria-label` on the tab.
+              label,
+              endContent:
+                // display badge only if count is greater than 0
+                // @ts-ignore
+                (folderCounts[key]?.count || 0) > 0 ? (
+                  // PILOT-DECISION: antd's Badge took an arbitrary `color`
+                  // (brand orange when selected, disabled grey otherwise) plus
+                  // explicit padding/fontSize. Astryx's Badge exposes only a
+                  // closed `variant` set. `info` is the closest read of "this
+                  // tab is active"; `neutral` for the inactive one.
+                  <Badge
+                    // @ts-ignore
+                    label={folderCounts[key].count}
+                    variant={
+                      queryParams.statusCategory === key ? 'info' : 'neutral'
+                    }
+                  />
+                ) : undefined,
+            }),
+          )}
+          // Card-scoped actions live in `extra`, per the project rule: the
+          // refresh control and the primary create button, primary rightmost.
+          extra={
+            <BAIFlex gap={'xs'} align="center">
+              <AutoUpdateFetchKeyButton
+                settingId="admin-vfolder-list"
+                loading={
+                  deferredQueryVariables !== queryVariables ||
+                  deferredFetchKey !== fetchKey
+                }
+                value={fetchKey}
+                onChange={(newFetchKey) => {
+                  updateFetchKey(newFetchKey);
+                }}
+              />
+              <BAIButton
+                type="primary"
+                icon={<PlusIcon />}
+                onClick={() => {
+                  toggleCreateModal();
+                }}
+              >
+                {t('data.CreateFolder')}
+              </BAIButton>
+            </BAIFlex>
+          }
         >
-          <BAITabs
-            activeKey={queryParams.statusCategory}
-            onChange={(key) => {
-              const storedQuery = queryMapRef.current[key] || {
-                mode: 'all',
-              };
-              // Reset the whole group first: nuqs partial updates merge, so
-              // without this the previous tab's filter/order/mode leak into a
-              // tab that has no cached state (legacy 'replace' cleared them).
-              setQuery(null);
-              setQuery({
-                ...storedQuery.queryParams,
-                statusCategory: key as 'active' | 'deleted',
-              });
-              setTablePaginationOption(
-                storedQuery.tablePaginationOption || { current: 1 },
-              );
-              setSelectedFolderList([]);
-            }}
-            items={_.map(
-              {
-                active: t('data.Active'),
-                deleted: t('data.folders.TrashBin'),
-              },
-              (label, key) => ({
-                key,
-                // Astryx `Tab` takes a STRING label plus a native `endContent`
-                // slot, so the previous BAIFlex-wrapped JSX label is split in
-                // two. This also restores a correct `aria-label` on the tab.
-                label,
-                endContent:
-                  // display badge only if count is greater than 0
-                  // @ts-ignore
-                  (folderCounts[key]?.count || 0) > 0 ? (
-                    // PILOT-DECISION: antd's Badge took an arbitrary `color`
-                    // (brand orange when selected, disabled grey otherwise) plus
-                    // explicit padding/fontSize. Astryx's Badge exposes only a
-                    // closed `variant` set — no colour, size, or style escape
-                    // hatch. `info` (solid, accent-coloured) is the closest read
-                    // of "this tab is active"; `neutral` for the inactive one.
-                    // The exact orange and the 10px type are lost. Needs a
-                    // design call before rollout.
-                    <Badge
-                      // @ts-ignore
-                      label={folderCounts[key].count}
-                      variant={
-                        queryParams.statusCategory === key ? 'info' : 'neutral'
-                      }
-                    />
-                  ) : undefined,
-              }),
-            )}
-          />
           <BAIFlex direction="column" align="stretch" gap={'sm'}>
             <BAIFlex justify="between" wrap="wrap" gap={'sm'}>
               <BAIFlex
@@ -434,26 +450,6 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                       </Tooltip>
                     </>
                   )}
-                <AutoUpdateFetchKeyButton
-                  settingId="admin-vfolder-list"
-                  loading={
-                    deferredQueryVariables !== queryVariables ||
-                    deferredFetchKey !== fetchKey
-                  }
-                  value={fetchKey}
-                  onChange={(newFetchKey) => {
-                    updateFetchKey(newFetchKey);
-                  }}
-                />
-                <BAIButton
-                  type="primary"
-                  icon={<PlusIcon />}
-                  onClick={() => {
-                    toggleCreateModal();
-                  }}
-                >
-                  {t('data.CreateFolder')}
-                </BAIButton>
               </BAIFlex>
             </BAIFlex>
             <VFolderNodes
