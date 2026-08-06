@@ -19,11 +19,7 @@ const MonacoEditor: React.LazyExoticComponent<React.FC<EditorProps>> =
 // Language alias preserved from the previous codemirror-based API so existing
 // call sites keep working. Extend as needed when adding new languages.
 export type BAICodeEditorLanguage =
-  | 'json'
-  | 'sh'
-  | 'yaml'
-  | 'toml'
-  | 'markdown';
+  'json' | 'sh' | 'yaml' | 'toml' | 'markdown';
 
 const MONACO_LANGUAGE_MAP: Record<BAICodeEditorLanguage, string> = {
   json: 'json',
@@ -35,9 +31,16 @@ const MONACO_LANGUAGE_MAP: Record<BAICodeEditorLanguage, string> = {
 
 interface BAICodeEditorProps extends Omit<
   EditorProps,
-  'language' | 'value' | 'onChange'
+  'language' | 'value' | 'onChange' | 'defaultValue'
 > {
   value?: string;
+  // Seeds the editor once when used uncontrolled (`value` left undefined).
+  // Use this instead of `value` for editors whose content is retyped
+  // continuously — feeding a fast-changing `value` back into Monaco as a
+  // controlled prop races its internal echo-detection (`value` vs. the live
+  // buffer momentarily disagreeing forces a full-buffer replace that resets
+  // the cursor to the end; see AnnouncementEditModal for a concrete repro).
+  defaultValue?: string;
   onChange?: (value: string) => void;
   language?: BAICodeEditorLanguage;
   editable?: boolean;
@@ -48,6 +51,7 @@ interface BAICodeEditorProps extends Omit<
 
 const BAICodeEditor: React.FC<BAICodeEditorProps> = ({
   value,
+  defaultValue = '',
   onChange,
   language = 'sh',
   editable = false,
@@ -62,8 +66,13 @@ const BAICodeEditor: React.FC<BAICodeEditorProps> = ({
   const { isDarkMode } = useThemeMode();
   const { token } = theme.useToken();
 
+  // Whether *this* BAICodeEditor is controlled by its caller (a `value` prop
+  // was given), independent of `useControllableState_deprecated`'s own
+  // controlled/uncontrolled bookkeeping below.
+  const isControlled = value !== undefined;
+
   const [script, setScript] = useControllableState_deprecated<string>({
-    defaultValue: '',
+    defaultValue,
     value,
     onChange,
   });
@@ -92,7 +101,14 @@ const BAICodeEditor: React.FC<BAICodeEditorProps> = ({
           language={MONACO_LANGUAGE_MAP[language]}
           height={height}
           theme={isDarkMode ? 'vs-dark' : 'vs'}
-          value={script}
+          // Only feed Monaco a controlled `value` when our own caller is
+          // controlled. Otherwise leave `value` undefined and seed via
+          // `defaultValue` instead — @monaco-editor/react then manages the
+          // buffer itself after creation, with no controlled-value prop to
+          // race against fast typing (see the `defaultValue` doc comment on
+          // BAICodeEditorProps above).
+          value={isControlled ? script : undefined}
+          defaultValue={isControlled ? undefined : defaultValue}
           onChange={(v: string | undefined) => setScript(v ?? '')}
           loading={loadingFallback}
           options={{

@@ -246,13 +246,10 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
 
   // The live preview re-parses Markdown/GFM/math and re-highlights fenced code
   // on every keystroke, which is expensive enough on a large announcement to
-  // starve the editor's own re-render. Since the Monaco editor is a controlled
-  // component (`@monaco-editor/react` force-replaces its whole buffer via
-  // `executeEdits` — resetting the cursor to the document's end — whenever its
-  // `value` prop doesn't yet match Monaco's live buffer), a starved re-render
-  // showed up as the cursor jumping to the end of the message while typing.
-  // Deferring the preview's input lets React prioritize flushing `message`
-  // back down to the editor before spending time on the expensive preview.
+  // make typing feel laggy. (The editor itself no longer round-trips through
+  // this state — see the `defaultValue` passed to MarkdownEditorField below —
+  // so deferring this is purely a responsiveness optimization, not a
+  // correctness fix.)
   const previewMessage = useDeferredValue(message);
 
   // Both Publish and Save Draft require text to be worth persisting; the
@@ -417,7 +414,7 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
             </Typography.Text>
             <MarkdownEditorField
               height={EDITOR_HEIGHT}
-              value={message}
+              defaultValue={announcement?.message}
               onChange={setMessageDraft}
             />
             {isMessageMissing && (
@@ -486,12 +483,14 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
 };
 
 // A markdown editor field (Monaco) with a velog-style formatting toolbar.
-// A controlled component with the standard value / onChange contract.
+// Uncontrolled: `defaultValue` seeds the editor once, `onChange` reports
+// every edit — see BAICodeEditor's `defaultValue` doc comment for why this
+// message editor deliberately isn't a controlled `value`/`onChange` pair.
 const MarkdownEditorField: React.FC<{
-  value?: string;
+  defaultValue?: string;
   onChange?: (value: string) => void;
   height: string;
-}> = ({ value, onChange, height }) => {
+}> = ({ defaultValue, onChange, height }) => {
   'use memo';
 
   const { t } = useTranslation();
@@ -659,7 +658,7 @@ const MarkdownEditorField: React.FC<{
         editable
         lineWrapping
         height={height}
-        value={value}
+        defaultValue={defaultValue}
         onChange={onChange}
         onMount={(editor, monaco) => {
           editorRef.current = editor;
