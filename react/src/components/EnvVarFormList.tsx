@@ -3,7 +3,14 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { MinusCircleOutlined } from '@ant-design/icons';
-import { AutoComplete, Form, FormItemProps, Input, InputRef } from 'antd';
+import {
+  AutoComplete,
+  Form,
+  FormInstance,
+  FormItemProps,
+  Input,
+  InputRef,
+} from 'antd';
 import { FormListProps } from 'antd/lib/form';
 import { BAIButton, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -17,6 +24,21 @@ export interface EnvVarConfig {
   required?: boolean;
   description?: string;
 }
+
+// The value input's placeholder depends on the sibling `variable` field.
+// `Form.Item`'s `dependencies` re-renders the *Field* itself, but the
+// `<Input placeholder={...}>` element is still the same static element
+// created on the last outer render, so its placeholder prop wouldn't pick
+// up the new variable — `Form.useWatch` is what actually makes it reactive.
+const EnvVarValueInput: React.FC<{
+  form: FormInstance;
+  variableNamePath: Parameters<FormInstance['getFieldValue']>[0];
+  getPlaceholderForVariable: (variable: string) => string;
+}> = ({ form, variableNamePath, getPlaceholderForVariable }) => {
+  'use memo';
+  const variable = Form.useWatch(variableNamePath, form);
+  return <Input placeholder={getPlaceholderForVariable(variable)} />;
+};
 
 interface EnvVarFormListProps extends Omit<FormListProps, 'children'> {
   formItemProps?: FormItemProps;
@@ -222,12 +244,11 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
                     },
                   ]}
                   validateTrigger={['onChange', 'onBlur']}
-                  dependencies={[[props.name, name, 'variable']]}
                 >
-                  <Input
-                    placeholder={getPlaceholderForVariable(
-                      form.getFieldValue([props.name, name, 'variable']),
-                    )}
+                  <EnvVarValueInput
+                    form={form}
+                    variableNamePath={[props.name, name, 'variable']}
+                    getPlaceholderForVariable={getPlaceholderForVariable}
                   />
                 </Form.Item>
                 <MinusCircleOutlined onClick={() => remove(name)} />
