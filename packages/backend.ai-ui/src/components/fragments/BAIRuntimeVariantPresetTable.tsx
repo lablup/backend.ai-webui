@@ -68,6 +68,9 @@ const BAIRuntimeVariantPresetTable = ({
   const isRuntimeVariantFieldSupported = baiClient.supports(
     'runtime-variant-preset-runtime-variant-field',
   );
+  const isUIMetadataSupported = baiClient.supports(
+    'runtime-variant-preset-ui-metadata',
+  );
 
   const presets = useFragment<BAIRuntimeVariantPresetTableFragment$key>(
     graphql`
@@ -80,6 +83,8 @@ const BAIRuntimeVariantPresetTable = ({
         }
         name @required(action: NONE)
         description
+        category
+        displayName
         rank
         targetSpec {
           presetTarget
@@ -133,6 +138,18 @@ const BAIRuntimeVariantPresetTable = ({
         key: 'runtimeVariant',
         title: t('comp:BAIRuntimeVariantPresetTable.RuntimeVariant'),
         render: (__, record) => record.runtimeVariant?.name ?? '-',
+      },
+      isUIMetadataSupported && {
+        key: 'category',
+        title: t('comp:BAIRuntimeVariantPresetTable.Category'),
+        defaultHidden: true,
+        render: (__, record) => record.category ?? '-',
+      },
+      isUIMetadataSupported && {
+        key: 'displayName',
+        title: t('comp:BAIRuntimeVariantPresetTable.DisplayName'),
+        defaultHidden: true,
+        render: (__, record) => record.displayName ?? '-',
       },
       {
         key: 'runtimeVariantId',

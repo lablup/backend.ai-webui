@@ -1001,6 +1001,10 @@ export class Client {
       // the RBAC layer parses a DOMAIN scope's scopeId as a UUID. Older
       // managers expect the domain name there instead. FR-3618.
       this._features['rbac-domain-scope-uuid'] = true;
+      // BA-7253 / backend PR #13562 — category/displayName/uiOption became
+      // writable on Create/UpdateRuntimeVariantPresetInput (previously
+      // read-only on the RuntimeVariantPreset type). FR-3476.
+      this._features['runtime-variant-preset-ui-metadata'] = true;
     }
   }
 
