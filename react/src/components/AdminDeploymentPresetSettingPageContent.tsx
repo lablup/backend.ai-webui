@@ -5,7 +5,6 @@
 import type { AdminDeploymentPresetSettingPageContent_preset$key } from '../__generated__/AdminDeploymentPresetSettingPageContent_preset.graphql';
 import EnvVarFormList from '../components/EnvVarFormList';
 import {
-  COMMAND_SHELL_OPTIONS,
   DEFAULT_MODEL_SERVICE_SHELL,
   deriveCommandModeState,
 } from '../helper/modelServiceCommand';
@@ -30,6 +29,9 @@ import {
 } from './AdminDeploymentPresetResourceFields';
 import PresetReviewSummary from './AdminDeploymentPresetReviewSummary';
 import PresetValidationTour from './AdminDeploymentPresetValidationTour';
+import ModelServiceHealthCheckFormItems from './ModelServiceFormItems/ModelServiceHealthCheckFormItems';
+import PreStartActionsFormList from './ModelServiceFormItems/PreStartActionsFormList';
+import ServiceConfigurationFormItems from './ModelServiceFormItems/ServiceConfigurationFormItems';
 import RuntimeParameterFormSection, {
   RUNTIME_PARAMS_NAMESPACE,
   type RuntimeParameterValues,
@@ -45,13 +47,10 @@ import {
   AutoComplete,
   Button,
   Checkbox,
-  Collapse,
   Form,
   Grid,
   Input,
   InputNumber,
-  Radio,
-  Segmented,
   Select,
   Skeleton,
   Steps,
@@ -64,7 +63,6 @@ import {
   BAIButton,
   BAICard,
   BAIFlex,
-  BAIQuestionIconWithTooltip,
   toLocalId,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -202,7 +200,7 @@ const sanitizeFormValuesForURL = (
 const EMPTY_MODEL_SEED: ModelConfigFormValue = {
   name: '',
   modelPath: '',
-  service: { commandExecution: 'shell' },
+  service: { execution: 'shell' },
 };
 
 // ---------------------------------------------------------------------------
@@ -524,8 +522,8 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                         port: m.service.port,
                         shell: commandModeState.shell,
                         startCommand: commandModeState.command,
-                        commandAdvanced: commandModeState.advanced,
-                        commandExecution: commandModeState.execution,
+                        advanced: commandModeState.advanced,
+                        execution: commandModeState.execution,
                         // 26.4.4rc7+: `enable` is authoritative; older managers
                         // omit it, so fall back to the object's presence.
                         enableHealthCheck:
@@ -732,14 +730,14 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             // matching the revision modal's behaviour so the form state always
             // reflects what will actually be submitted.
             const advChanged =
-              changed.modelDefinition?.models?.[0]?.service?.commandAdvanced;
+              changed.modelDefinition?.models?.[0]?.service?.advanced;
             if (advChanged === false) {
               form.setFieldsValue({
                 modelDefinition: {
                   models: [
                     {
                       service: {
-                        commandExecution: 'shell',
+                        execution: 'shell',
                         shell: DEFAULT_MODEL_SERVICE_SHELL,
                       },
                     },
@@ -870,575 +868,41 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                   variant?.readsVfolderConfigFiles ?? variantName === 'custom';
                 if (!reads) return null;
                 return (
-                  <Collapse
-                    size="small"
-                    defaultActiveKey={['service-config']}
+                  <div
                     style={{
                       marginTop: -token.margin,
                       marginBottom: token.marginLG,
                     }}
-                    styles={{ header: { alignItems: 'center' } }}
-                    items={[
-                      {
-                        key: 'service-config',
-                        forceRender: true,
-                        label: (
-                          <BAIFlex
-                            justify="between"
-                            align="center"
-                            gap="sm"
-                            style={{ flex: 1 }}
-                          >
-                            <span>
-                              {t('modelService.ServiceConfiguration')}
-                            </span>
-                            {supportsCommandShell && (
-                              <div onClick={(e) => e.stopPropagation()}>
-                                <BAIFlex gap="xxs" align="center">
-                                  <Form.Item
-                                    name={[
-                                      'modelDefinition',
-                                      'models',
-                                      0,
-                                      'service',
-                                      'commandAdvanced',
-                                    ]}
-                                    noStyle
-                                    getValueProps={(checked: boolean) => ({
-                                      value: checked ? 'advanced' : 'basic',
-                                    })}
-                                    normalize={(m: string) => m === 'advanced'}
-                                  >
-                                    <Segmented
-                                      size="small"
-                                      options={[
-                                        {
-                                          label: t('general.Basic'),
-                                          value: 'basic',
-                                        },
-                                        {
-                                          label: t('general.Advanced'),
-                                          value: 'advanced',
-                                        },
-                                      ]}
-                                    />
-                                  </Form.Item>
-                                  <BAIQuestionIconWithTooltip
-                                    title={t(
-                                      'modelService.CommandAdvancedModeTooltip',
-                                    )}
-                                  />
-                                </BAIFlex>
-                              </div>
-                            )}
-                          </BAIFlex>
-                        ),
-                        children: (
-                          <>
-                            {supportsCommandShell && (
-                              <>
-                                <Form.Item
-                                  dependencies={[
-                                    [
-                                      'modelDefinition',
-                                      'models',
-                                      0,
-                                      'service',
-                                      'commandAdvanced',
-                                    ],
-                                  ]}
-                                  noStyle
-                                >
-                                  {({ getFieldValue: getAdv }) =>
-                                    getAdv([
-                                      'modelDefinition',
-                                      'models',
-                                      0,
-                                      'service',
-                                      'commandAdvanced',
-                                    ]) ? (
-                                      <BAIFlex gap="sm" align="start">
-                                        <Form.Item
-                                          name={[
-                                            'modelDefinition',
-                                            'models',
-                                            0,
-                                            'service',
-                                            'commandExecution',
-                                          ]}
-                                          label={t('modelService.Execution')}
-                                          tooltip={{
-                                            title: (
-                                              <span
-                                                style={{
-                                                  whiteSpace: 'pre-line',
-                                                }}
-                                              >
-                                                {t(
-                                                  'modelService.ExecutionTooltip',
-                                                )}
-                                              </span>
-                                            ),
-                                          }}
-                                          required
-                                          rules={[{ required: true }]}
-                                        >
-                                          <Radio.Group
-                                            options={[
-                                              {
-                                                label: t(
-                                                  'modelService.ExecutionShell',
-                                                ),
-                                                value: 'shell',
-                                              },
-                                              {
-                                                label: t(
-                                                  'modelService.ExecutionExec',
-                                                ),
-                                                value: 'exec',
-                                              },
-                                            ]}
-                                          />
-                                        </Form.Item>
-                                        <Form.Item
-                                          dependencies={[
-                                            [
-                                              'modelDefinition',
-                                              'models',
-                                              0,
-                                              'service',
-                                              'commandExecution',
-                                            ],
-                                          ]}
-                                          noStyle
-                                        >
-                                          {({ getFieldValue: getExec }) =>
-                                            getExec([
-                                              'modelDefinition',
-                                              'models',
-                                              0,
-                                              'service',
-                                              'commandExecution',
-                                            ]) === 'exec' ? null : (
-                                              <Form.Item
-                                                name={[
-                                                  'modelDefinition',
-                                                  'models',
-                                                  0,
-                                                  'service',
-                                                  'shell',
-                                                ]}
-                                                label={t('modelService.Shell')}
-                                                tooltip={t(
-                                                  'modelService.ShellTooltip',
-                                                )}
-                                                style={{ flex: 1 }}
-                                                required
-                                                rules={[
-                                                  {
-                                                    required: true,
-                                                    whitespace: true,
-                                                  },
-                                                ]}
-                                              >
-                                                <AutoComplete
-                                                  placeholder={
-                                                    DEFAULT_MODEL_SERVICE_SHELL
-                                                  }
-                                                  options={
-                                                    COMMAND_SHELL_OPTIONS
-                                                  }
-                                                  allowClear
-                                                />
-                                              </Form.Item>
-                                            )
-                                          }
-                                        </Form.Item>
-                                      </BAIFlex>
-                                    ) : null
-                                  }
-                                </Form.Item>
-                              </>
-                            )}
-                            <Form.Item
-                              dependencies={[
-                                [
-                                  'modelDefinition',
-                                  'models',
-                                  0,
-                                  'service',
-                                  'commandAdvanced',
-                                ],
-                                [
-                                  'modelDefinition',
-                                  'models',
-                                  0,
-                                  'service',
-                                  'commandExecution',
-                                ],
-                              ]}
-                              noStyle
-                            >
-                              {({ getFieldValue: getMode }) => {
-                                const advanced = !!getMode([
-                                  'modelDefinition',
-                                  'models',
-                                  0,
-                                  'service',
-                                  'commandAdvanced',
-                                ]);
-                                const isExec =
-                                  advanced &&
-                                  getMode([
-                                    'modelDefinition',
-                                    'models',
-                                    0,
-                                    'service',
-                                    'commandExecution',
-                                  ]) === 'exec';
-                                return (
-                                  <Form.Item
-                                    name={[
-                                      'modelDefinition',
-                                      'models',
-                                      0,
-                                      'service',
-                                      'startCommand',
-                                    ]}
-                                    label={
-                                      isExec
-                                        ? t('modelService.CommandArgvLabel')
-                                        : supportsCommandShell
-                                          ? t('modelService.Command')
-                                          : t('modelService.StartCommand')
-                                    }
-                                    tooltip={t(
-                                      'modelService.StartCommandTooltip',
-                                    )}
-                                    extra={
-                                      !supportsCommandShell
-                                        ? t(
-                                            'modelService.StartCommandHelperShell',
-                                          )
-                                        : isExec
-                                          ? t('modelService.CommandExecHelper')
-                                          : t('modelService.CommandShellHelper')
-                                    }
-                                    rules={[{ required: true }]}
-                                  >
-                                    {!supportsCommandShell ? (
-                                      <Input
-                                        placeholder={t(
-                                          'adminDeploymentPreset.modelDef.StartCommandPlaceholder',
-                                        )}
-                                      />
-                                    ) : isExec ? (
-                                      <Input
-                                        placeholder={t(
-                                          'adminDeploymentPreset.modelDef.StartCommandPlaceholder',
-                                        )}
-                                      />
-                                    ) : (
-                                      <Input.TextArea
-                                        placeholder={t(
-                                          'adminDeploymentPreset.modelDef.StartCommandPlaceholder',
-                                        )}
-                                        autoSize={{ minRows: 2 }}
-                                      />
-                                    )}
-                                  </Form.Item>
-                                );
-                              }}
-                            </Form.Item>
-                            <Form.Item
-                              name={[
-                                'modelDefinition',
-                                'models',
-                                0,
-                                'service',
-                                'port',
-                              ]}
-                              label={t('modelService.Port')}
-                              tooltip={t('modelService.PortTooltip')}
-                              rules={[{ required: true }]}
-                              style={{ marginBottom: 0 }}
-                            >
-                              <InputNumber
-                                min={2}
-                                max={65535}
-                                style={{ width: '100%' }}
-                                placeholder={t('general.Example', {
-                                  value: '8080',
-                                })}
-                              />
-                            </Form.Item>
-                          </>
-                        ),
-                      },
-                    ]}
-                  />
+                  >
+                    <ServiceConfigurationFormItems
+                      namePrefix={['modelDefinition', 'models', 0, 'service']}
+                      supportsCommandShell={supportsCommandShell}
+                      commandRules={[{ required: true }]}
+                      commandPlaceholder={t(
+                        'adminDeploymentPreset.modelDef.StartCommandPlaceholder',
+                      )}
+                      portRules={[{ required: true }]}
+                      portPlaceholder={t('general.Example', { value: '8080' })}
+                    />
+                  </div>
                 );
               }}
             </Form.Item>
 
             {/* Health Check — always visible regardless of runtime variant */}
-            <Form.Item
-              name={[
-                'modelDefinition',
-                'models',
-                0,
-                'service',
-                'enableHealthCheck',
-              ]}
-              valuePropName="checked"
-              style={{ marginTop: token.marginXS, marginBottom: 0 }}
-            >
-              <Checkbox>
-                {t('adminDeploymentPreset.modelDef.EnableHealthCheck')}
-              </Checkbox>
-            </Form.Item>
-
-            <Form.Item
-              noStyle
-              dependencies={[
-                [
-                  'modelDefinition',
-                  'models',
-                  0,
-                  'service',
-                  'enableHealthCheck',
-                ],
-              ]}
-            >
-              {({ getFieldValue }) =>
-                getFieldValue([
-                  'modelDefinition',
-                  'models',
-                  0,
-                  'service',
-                  'enableHealthCheck',
-                ]) ? (
-                  <BAIFlex direction="column" align="stretch" gap="xs">
-                    <Form.Item
-                      name={[
-                        'modelDefinition',
-                        'models',
-                        0,
-                        'service',
-                        'healthCheck',
-                        'path',
-                      ]}
-                      label={t(
-                        'adminDeploymentPreset.modelDef.HealthCheckPath',
-                      )}
-                      tooltip={t('modelService.HealthCheckTooltip')}
-                      rules={[{ required: true }]}
-                    >
-                      <Input
-                        placeholder={t('general.Example', {
-                          value: '/health',
-                        })}
-                      />
-                    </Form.Item>
-                    <BAIFlex gap="md" wrap="wrap" align="end">
-                      <Form.Item
-                        name={[
-                          'modelDefinition',
-                          'models',
-                          0,
-                          'service',
-                          'healthCheck',
-                          'interval',
-                        ]}
-                        label={t(
-                          'adminDeploymentPreset.modelDef.HealthCheckInterval',
-                        )}
-                        tooltip={t('modelService.IntervalTooltip')}
-                        style={{ flex: 1, minWidth: 160 }}
-                        rules={[{ required: true }]}
-                      >
-                        <InputNumber
-                          min={1}
-                          placeholder={t('general.Example', { value: '10' })}
-                          suffix={t('time.Sec')}
-                          style={{ width: '100%' }}
-                        />
-                      </Form.Item>
-                      <Form.Item
-                        name={[
-                          'modelDefinition',
-                          'models',
-                          0,
-                          'service',
-                          'healthCheck',
-                          'maxRetries',
-                        ]}
-                        label={t(
-                          'adminDeploymentPreset.modelDef.HealthCheckMaxRetries',
-                        )}
-                        tooltip={t('modelService.MaxRetriesTooltip')}
-                        style={{ flex: 1, minWidth: 160 }}
-                        rules={[{ required: true }]}
-                      >
-                        <InputNumber
-                          min={1}
-                          placeholder={t('general.Example', { value: '10' })}
-                          style={{ width: '100%' }}
-                        />
-                      </Form.Item>
-                      <Form.Item
-                        name={[
-                          'modelDefinition',
-                          'models',
-                          0,
-                          'service',
-                          'healthCheck',
-                          'maxWaitTime',
-                        ]}
-                        label={t(
-                          'adminDeploymentPreset.modelDef.HealthCheckMaxWaitTime',
-                        )}
-                        tooltip={t('modelService.MaxWaitTimeTooltip')}
-                        style={{ flex: 1, minWidth: 160 }}
-                        rules={[{ required: true }]}
-                      >
-                        <InputNumber
-                          min={1}
-                          placeholder={t('general.Example', { value: '15' })}
-                          suffix={t('time.Sec')}
-                          style={{ width: '100%' }}
-                        />
-                      </Form.Item>
-                    </BAIFlex>
-                    <BAIFlex gap="md" wrap="wrap" align="end">
-                      <Form.Item
-                        name={[
-                          'modelDefinition',
-                          'models',
-                          0,
-                          'service',
-                          'healthCheck',
-                          'expectedStatusCode',
-                        ]}
-                        label={t(
-                          'adminDeploymentPreset.modelDef.HealthCheckExpectedStatus',
-                        )}
-                        tooltip={t('modelService.ExpectedStatusTooltip')}
-                        style={{ flex: 1, minWidth: 160 }}
-                        rules={[{ required: true }]}
-                      >
-                        <InputNumber
-                          min={101}
-                          max={599}
-                          placeholder={t('general.Example', { value: '200' })}
-                          style={{ width: '100%' }}
-                        />
-                      </Form.Item>
-                      <Form.Item
-                        name={[
-                          'modelDefinition',
-                          'models',
-                          0,
-                          'service',
-                          'healthCheck',
-                          'initialDelay',
-                        ]}
-                        label={t(
-                          'adminDeploymentPreset.modelDef.HealthCheckInitialDelay',
-                        )}
-                        tooltip={t('modelService.InitialDelayTooltip')}
-                        style={{ flex: 1, minWidth: 160 }}
-                        rules={[{ required: true }]}
-                      >
-                        <InputNumber
-                          min={0}
-                          placeholder={t('general.Example', { value: '60' })}
-                          suffix={t('time.Sec')}
-                          style={{ width: '100%' }}
-                        />
-                      </Form.Item>
-                      <div style={{ flex: 1, minWidth: 160 }} />
-                    </BAIFlex>
-                  </BAIFlex>
-                ) : null
-              }
-            </Form.Item>
+            <ModelServiceHealthCheckFormItems
+              namePrefix={['modelDefinition', 'models', 0, 'service']}
+              placeholders={{
+                path: t('general.Example', { value: '/health' }),
+                maxRetries: t('general.Example', { value: '10' }),
+                initialDelay: t('general.Example', { value: '60' }),
+              }}
+            />
 
             {/* Pre-Start Actions — always visible regardless of runtime variant */}
-            <Form.Item
-              label={t('modelService.PreStartActions')}
-              tooltip={t('modelService.PreStartActionsTooltip')}
-              style={{ marginBottom: 0, marginTop: token.marginMD }}
-            >
-              <Form.List
-                name={[
-                  'modelDefinition',
-                  'models',
-                  0,
-                  'service',
-                  'preStartActions',
-                ]}
-              >
-                {(fields, { add, remove }) => (
-                  <BAIFlex direction="column" gap="xs" align="stretch">
-                    {fields.map(({ key, name, ...rest }) => (
-                      <BAIFlex
-                        key={key}
-                        direction="row"
-                        align="baseline"
-                        gap="xs"
-                      >
-                        <Form.Item
-                          {...rest}
-                          name={[name, 'action']}
-                          style={{ marginBottom: 0, flex: 1 }}
-                          rules={[{ required: true, message: '' }]}
-                        >
-                          <Input
-                            placeholder={t(
-                              'adminDeploymentPreset.modelDef.ActionPlaceholder',
-                            )}
-                          />
-                        </Form.Item>
-                        <Form.Item
-                          {...rest}
-                          name={[name, 'args']}
-                          style={{ marginBottom: 0, flex: 2 }}
-                          rules={[
-                            { required: true, message: '' },
-                            {
-                              validator: async (_, v) => {
-                                if (!v) return;
-                                try {
-                                  JSON.parse(v);
-                                } catch {
-                                  return Promise.reject('');
-                                }
-                              },
-                            },
-                          ]}
-                        >
-                          <Input
-                            placeholder={t('general.Example', { value: '{}' })}
-                          />
-                        </Form.Item>
-                        <MinusCircleOutlined onClick={() => remove(name)} />
-                      </BAIFlex>
-                    ))}
-                    <Form.Item noStyle>
-                      <BAIButton
-                        type="dashed"
-                        onClick={() => add({ action: '', args: '{}' })}
-                        icon={<PlusIcon />}
-                        block
-                      >
-                        {t('adminDeploymentPreset.modelDef.AddPreStartAction')}
-                      </BAIButton>
-                    </Form.Item>
-                  </BAIFlex>
-                )}
-              </Form.List>
-            </Form.Item>
+            <PreStartActionsFormList
+              namePrefix={['modelDefinition', 'models', 0, 'service']}
+            />
 
             <Form.Item
               name="imageId"

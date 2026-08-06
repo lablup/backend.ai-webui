@@ -22,7 +22,6 @@ import type {
 } from '../__generated__/DeploymentAddRevisionModal_revisionSource.graphql';
 import { convertToBinaryUnit } from '../helper';
 import {
-  COMMAND_SHELL_OPTIONS,
   DEFAULT_MODEL_SERVICE_SHELL,
   type CommandExecutionMode,
   deriveCommandModeState,
@@ -49,6 +48,9 @@ import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ImageEnvironmentSelectFormItems, {
   type ImageEnvironmentFormInput,
 } from './ImageEnvironmentSelectFormItems';
+import ModelServiceHealthCheckFormItems from './ModelServiceFormItems/ModelServiceHealthCheckFormItems';
+import PreStartActionsFormList from './ModelServiceFormItems/PreStartActionsFormList';
+import ServiceConfigurationFormItems from './ModelServiceFormItems/ServiceConfigurationFormItems';
 import RuntimeParameterFormSection, {
   type RuntimeParameterValues,
 } from './RuntimeParameterFormSection';
@@ -60,23 +62,16 @@ import ResourceAllocationFormItems, {
 import VFolderTableFormItem, {
   type VFolderTableFormValues,
 } from './VFolderTableFormItem';
-import {
-  InfoCircleOutlined,
-  MinusCircleOutlined,
-  ReloadOutlined,
-} from '@ant-design/icons';
+import { InfoCircleOutlined, ReloadOutlined } from '@ant-design/icons';
 import {
   Alert,
   App,
-  AutoComplete,
   Button,
   Checkbox,
   Collapse,
   Divider,
   Form,
   Input,
-  InputNumber,
-  Radio,
   Segmented,
   Skeleton,
   Space,
@@ -88,11 +83,9 @@ import type { FormInstance } from 'antd';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import {
   BAIAvailablePresetSelect,
-  BAIButton,
   BAIFlex,
   BAIModal,
   BAIModalProps,
-  BAIQuestionIconWithTooltip,
   BAIRuntimeVariantSelect,
   BAISelect,
   BAIVFolderSelect,
@@ -139,22 +132,24 @@ export type FormValues = ImageEnvironmentFormInput &
     // Command below; optional, so it can be set alone or alongside a command.
     definitionPath?: string;
     startCommand?: string;
-    // Start Command shell semantics (FR-3205). `commandAdvanced` toggles the
-    // Basic/Advanced controls; in Advanced mode `commandExecution` chooses
+    // Start Command shell semantics (FR-3205). `advanced` toggles the
+    // Basic/Advanced controls; in Advanced mode `execution` chooses
     // Shell (run `shell -c command`) vs Exec (argv, no shell) and
-    // `commandShell` is the shell binary for Shell execution.
-    commandAdvanced?: boolean;
-    commandExecution?: CommandExecutionMode;
-    commandShell?: string;
-    commandPort?: number;
-    commandEnableHealthCheck?: boolean;
-    commandHealthCheck?: string;
-    commandInitialDelay?: number;
-    commandMaxRetries?: number;
-    commandInterval?: number;
-    commandMaxWaitTime?: number;
-    commandExpectedStatusCode?: number;
-    commandPreStartActions?: Array<{ action: string; args: string }>;
+    // `shell` is the shell binary for Shell execution.
+    advanced?: boolean;
+    execution?: CommandExecutionMode;
+    shell?: string;
+    port?: number;
+    enableHealthCheck?: boolean;
+    healthCheck?: {
+      path?: string;
+      interval?: number;
+      maxRetries?: number;
+      maxWaitTime?: number;
+      expectedStatusCode?: number;
+      initialDelay?: number;
+    };
+    preStartActions?: Array<{ action: string; args: string }>;
     environ: EnvVarFormListValue[];
     /** Runtime-variant preset values, registered by RuntimeParameterFormSection. */
     runtimeParams?: RuntimeParameterValues;
@@ -1048,16 +1043,18 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       // Health check prefill applies to every runtime variant and mode
       // (FR-3068): the checkbox + fields reflect the source revision's
       // health-check override regardless of how the definition is provided.
-      commandEnableHealthCheck: !!healthCheck,
-      commandHealthCheck: healthCheck?.path ?? undefined,
-      commandInitialDelay: healthCheck?.initialDelay ?? undefined,
-      commandMaxRetries: healthCheck?.maxRetries ?? undefined,
-      commandInterval: healthCheck?.interval ?? undefined,
-      commandMaxWaitTime: healthCheck?.maxWaitTime ?? undefined,
-      commandExpectedStatusCode: healthCheck?.expectedStatusCode ?? undefined,
+      enableHealthCheck: !!healthCheck,
+      healthCheck: {
+        path: healthCheck?.path ?? undefined,
+        initialDelay: healthCheck?.initialDelay ?? undefined,
+        maxRetries: healthCheck?.maxRetries ?? undefined,
+        interval: healthCheck?.interval ?? undefined,
+        maxWaitTime: healthCheck?.maxWaitTime ?? undefined,
+        expectedStatusCode: healthCheck?.expectedStatusCode ?? undefined,
+      },
       // Pre-start actions prefill (FR-3205): translate from the GraphQL shape
       // (args as object) to the form shape (args as JSON string).
-      commandPreStartActions:
+      preStartActions:
         service?.preStartActions?.map((a) => ({
           action: a.action,
           args: JSON.stringify(a.args),
@@ -1065,10 +1062,10 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       ...(hasCustomCommand && service
         ? {
             startCommand: commandModeState.command,
-            commandAdvanced: commandModeState.advanced,
-            commandExecution: commandModeState.execution,
-            commandShell: commandModeState.shell,
-            commandPort: service.port,
+            advanced: commandModeState.advanced,
+            execution: commandModeState.execution,
+            shell: commandModeState.shell,
+            port: service.port,
           }
         : {}),
     });
@@ -1358,15 +1355,15 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     // fields are required in the UI (mirrors the preset form). For non-command
     // modes (non-custom runtimes and custom+file) we send a minimal
     // modelDefinition override containing only the health check when enabled.
-    const healthCheckEnabled = !!values.commandEnableHealthCheck;
+    const healthCheckEnabled = !!values.enableHealthCheck;
     const healthCheck = (() => {
       const configuredFields = {
-        path: values.commandHealthCheck,
-        interval: values.commandInterval,
-        maxRetries: values.commandMaxRetries,
-        maxWaitTime: values.commandMaxWaitTime,
-        initialDelay: values.commandInitialDelay,
-        expectedStatusCode: values.commandExpectedStatusCode,
+        path: values.healthCheck?.path,
+        interval: values.healthCheck?.interval,
+        maxRetries: values.healthCheck?.maxRetries,
+        maxWaitTime: values.healthCheck?.maxWaitTime,
+        initialDelay: values.healthCheck?.initialDelay,
+        expectedStatusCode: values.healthCheck?.expectedStatusCode,
       };
       if (!supportsHealthCheckEnable) {
         // Managers < 26.4.4: null disables the health check.
@@ -1400,16 +1397,16 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       ? {
           command: rawCommand,
           shell: resolveCommandShell({
-            advanced: !!values.commandAdvanced,
-            execution: values.commandExecution,
-            shell: values.commandShell,
+            advanced: !!values.advanced,
+            execution: values.execution,
+            shell: values.shell,
           }),
         }
       : { startCommand: tokenizeShellCommand(rawCommand) };
 
     // Pre-start actions from the form (FR-3205). Parse the JSON `args` string
     // for each entry; fallback to `{}` on invalid JSON.
-    const preStartActions = (values.commandPreStartActions ?? [])
+    const preStartActions = (values.preStartActions ?? [])
       .filter((a) => a.action)
       .map((a) => ({
         action: a.action,
@@ -1427,8 +1424,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     // expose health check and pre-start actions. The definition is sent
     // whenever any service field has data — not just when a command is typed.
     const hasServiceConfig =
-      readsVfolderConfigFiles &&
-      (values.startCommand || values.commandPort != null);
+      readsVfolderConfigFiles && (values.startCommand || values.port != null);
     const hasHealthOrPreStart =
       healthCheckEnabled || preStartActions.length > 0;
 
@@ -1441,7 +1437,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               service: {
                 preStartActions,
                 ...commandServiceFields,
-                port: values.commandPort ?? 8000,
+                port: values.port ?? 8000,
                 healthCheck,
               },
             },
@@ -1902,25 +1898,25 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           onFinishFailed={handleFinishFailed}
           // Collapsing Advanced → Basic hides the Execution / Shell controls but
           // antd keeps the values of unmounted fields, while `resolveCommandShell`
-          // branches on `commandAdvanced` first and submits the default shell.
+          // branches on `advanced` first and submits the default shell.
           // Without this reset a user who picks Exec (or /bin/zsh) and then
           // returns to Basic keeps seeing that choice when they reopen Advanced,
           // even though submit silently sends /bin/bash. Reset the two fields so
           // what the form holds always matches what is submitted.
           onValuesChange={(changed: Partial<FormValues>) => {
-            if ('commandAdvanced' in changed && !changed.commandAdvanced) {
+            if ('advanced' in changed && !changed.advanced) {
               customForm.setFieldsValue({
-                commandExecution: 'shell',
-                commandShell: DEFAULT_MODEL_SERVICE_SHELL,
+                execution: 'shell',
+                shell: DEFAULT_MODEL_SERVICE_SHELL,
               });
             }
           }}
           initialValues={_.merge({}, RESOURCE_ALLOCATION_INITIAL_FORM_VALUES, {
             resourceGroup: deployment?.metadata?.resourceGroupName,
-            commandAdvanced: false,
-            commandExecution: 'shell',
-            commandShell: DEFAULT_MODEL_SERVICE_SHELL,
-            commandEnableHealthCheck: false,
+            advanced: false,
+            execution: 'shell',
+            shell: DEFAULT_MODEL_SERVICE_SHELL,
+            enableHealthCheck: false,
             environ: [],
           })}
         >
@@ -2093,461 +2089,31 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 return null;
               }
               return (
-                <Collapse
-                  size="small"
-                  defaultActiveKey={['service-config']}
-                  style={{ marginBottom: token.marginMD }}
-                  // Center the header items vertically — the Basic/Advanced
-                  // Segmented on the right makes the header row tall.
-                  styles={{ header: { alignItems: 'center' } }}
-                  items={[
-                    {
-                      key: 'service-config',
-                      // Keep the panel mounted while collapsed so the command
-                      // fields stay registered and validate on submit (FR-3205).
-                      forceRender: true,
-                      // Basic/Advanced Segmented lives on the right of the header
-                      // (gated on the 26.8.0 command/shell API); stopPropagation
-                      // keeps switching modes from toggling the collapse.
-                      label: (
-                        <BAIFlex
-                          justify="between"
-                          align="center"
-                          gap="sm"
-                          style={{ flex: 1 }}
-                        >
-                          <span>{t('modelService.ServiceConfiguration')}</span>
-                          {supportsCommandShell && (
-                            <div onClick={(e) => e.stopPropagation()}>
-                              <BAIFlex gap="xxs" align="center">
-                                <Form.Item
-                                  name="commandAdvanced"
-                                  noStyle
-                                  // Segmented uses 'basic' | 'advanced' strings;
-                                  // map to/from the boolean form value so submit
-                                  // and prefill keep the same semantics.
-                                  getValueProps={(checked: boolean) => ({
-                                    value: checked ? 'advanced' : 'basic',
-                                  })}
-                                  normalize={(mode: string) =>
-                                    mode === 'advanced'
-                                  }
-                                >
-                                  <Segmented
-                                    size="small"
-                                    options={[
-                                      {
-                                        label: t('general.Basic'),
-                                        value: 'basic',
-                                      },
-                                      {
-                                        label: t('general.Advanced'),
-                                        value: 'advanced',
-                                      },
-                                    ]}
-                                  />
-                                </Form.Item>
-                                <BAIQuestionIconWithTooltip
-                                  title={t(
-                                    'modelService.CommandAdvancedModeTooltip',
-                                  )}
-                                />
-                              </BAIFlex>
-                            </div>
-                          )}
-                        </BAIFlex>
-                      ),
-                      children: (
-                        <>
-                          {/* Basic/Advanced + Execution/Shell controls need
-                              the 26.8.0 command/shell API; on older managers
-                              only the plain command input below is shown. The
-                              Basic/Advanced Segmented sits at the top of the
-                              command config (FR-3205). */}
-                          {supportsCommandShell && (
-                            <>
-                              {/* Advanced only: Execution (Shell | Exec) + Shell.
-                                  The Basic/Advanced toggle lives in the Collapse
-                                  header. */}
-                              <Form.Item
-                                dependencies={['commandAdvanced']}
-                                noStyle
-                              >
-                                {({
-                                  getFieldValue: getAdv,
-                                }: FormInstance<FormValues>) =>
-                                  getAdv('commandAdvanced') ? (
-                                    <BAIFlex gap="sm" align="start">
-                                      <Form.Item
-                                        name="commandExecution"
-                                        label={t('modelService.Execution')}
-                                        tooltip={{
-                                          // pre-line so the `\n` between the
-                                          // Shell and Exec descriptions renders
-                                          // as a line break.
-                                          title: (
-                                            <span
-                                              style={{
-                                                whiteSpace: 'pre-line',
-                                              }}
-                                            >
-                                              {t(
-                                                'modelService.ExecutionTooltip',
-                                              )}
-                                            </span>
-                                          ),
-                                        }}
-                                        required
-                                        rules={[{ required: true }]}
-                                      >
-                                        <Radio.Group
-                                          options={[
-                                            {
-                                              label: t(
-                                                'modelService.ExecutionShell',
-                                              ),
-                                              value: 'shell',
-                                            },
-                                            {
-                                              label: t(
-                                                'modelService.ExecutionExec',
-                                              ),
-                                              value: 'exec',
-                                            },
-                                          ]}
-                                        />
-                                      </Form.Item>
-                                      <Form.Item
-                                        dependencies={['commandExecution']}
-                                        noStyle
-                                      >
-                                        {({
-                                          getFieldValue: getExec,
-                                        }: FormInstance<FormValues>) =>
-                                          // Exec = no shell → hide the Shell
-                                          // field entirely (submitted `shell`
-                                          // is null).
-                                          getExec('commandExecution') ===
-                                          'exec' ? null : (
-                                            <Form.Item
-                                              name="commandShell"
-                                              label={t('modelService.Shell')}
-                                              tooltip={t(
-                                                'modelService.ShellTooltip',
-                                              )}
-                                              style={{ flex: 1 }}
-                                              required
-                                              rules={[
-                                                {
-                                                  required: true,
-                                                  whitespace: true,
-                                                },
-                                              ]}
-                                            >
-                                              <AutoComplete
-                                                options={COMMAND_SHELL_OPTIONS}
-                                                allowClear
-                                              />
-                                            </Form.Item>
-                                          )
-                                        }
-                                      </Form.Item>
-                                    </BAIFlex>
-                                  ) : null
-                                }
-                              </Form.Item>
-                            </>
-                          )}
-                          {/* Command input: multi-line textarea in Shell
-                              mode (backend runs `shell -c command`, so
-                              operators work); single-line input in Exec
-                              mode (shell is null → command run directly as
-                              argv, so operators do NOT work). Legacy
-                              (<26.8.0) managers get a plain single-line
-                              input that is tokenized on submit. */}
-                          <Form.Item
-                            dependencies={[
-                              'commandAdvanced',
-                              'commandExecution',
-                            ]}
-                            noStyle
-                          >
-                            {({
-                              getFieldValue: getMode,
-                            }: FormInstance<FormValues>) => {
-                              const advanced = !!getMode('commandAdvanced');
-                              const isExec =
-                                advanced &&
-                                getMode('commandExecution') === 'exec';
-                              return (
-                                <Form.Item
-                                  name="startCommand"
-                                  // Exec splits the input into an argv
-                                  // vector, so label it "Command (argv)"
-                                  // to distinguish it from a shell command.
-                                  label={
-                                    isExec
-                                      ? t('modelService.CommandArgvLabel')
-                                      : supportsCommandShell
-                                        ? t('modelService.Command')
-                                        : t('modelService.StartCommand')
-                                  }
-                                  tooltip={t(
-                                    'modelService.StartCommandTooltip',
-                                  )}
-                                  // The hint states how the command will be run,
-                                  // so it follows that rather than the UI mode:
-                                  // Exec is the only case that does not go
-                                  // through a shell, and Basic runs under the
-                                  // backend's default shell exactly like
-                                  // Advanced + Shell. Managers without the
-                                  // command/shell path still receive a
-                                  // tokenized `startCommand`, so they keep the
-                                  // original shell-syntax hint (FR-3166).
-                                  extra={
-                                    !supportsCommandShell
-                                      ? t(
-                                          'modelService.StartCommandHelperShell',
-                                        )
-                                      : isExec
-                                        ? t('modelService.CommandExecHelper')
-                                        : t('modelService.CommandShellHelper')
-                                  }
-                                  // The command is sent to the server as the
-                                  // raw string the user typed; the WebUI does
-                                  // not pre-validate shell operators (Exec runs
-                                  // it via shlex.split, where quoted operators
-                                  // are valid argv content). The Exec helper
-                                  // text explains that unquoted operators are
-                                  // not interpreted.
-                                  rules={[{ whitespace: true }]}
-                                >
-                                  {!supportsCommandShell ? (
-                                    // Legacy (<26.8.0): plain single-line
-                                    // input, tokenized on submit.
-                                    <Input
-                                      placeholder={
-                                        modelDefinitionDefaults?.startCommand
-                                      }
-                                    />
-                                  ) : isExec ? (
-                                    // Exec: argv example, no shell operators.
-                                    <Input
-                                      placeholder={
-                                        modelDefinitionDefaults?.startCommand
-                                      }
-                                    />
-                                  ) : (
-                                    <Input.TextArea
-                                      placeholder={
-                                        modelDefinitionDefaults?.startCommand
-                                      }
-                                      autoSize={{ minRows: 2 }}
-                                    />
-                                  )}
-                                </Form.Item>
-                              );
-                            }}
-                          </Form.Item>
-                          <Form.Item
-                            name="commandPort"
-                            label={t('modelService.Port')}
-                            tooltip={t('modelService.PortTooltip')}
-                            style={{ marginBottom: 0 }}
-                          >
-                            <InputNumber
-                              min={2}
-                              max={65535}
-                              placeholder={modelDefinitionDefaults?.port?.toString()}
-                              style={{ width: '100%' }}
-                            />
-                          </Form.Item>
-                        </>
-                      ),
-                    },
-                  ]}
-                />
+                <div style={{ marginBottom: token.marginMD }}>
+                  <ServiceConfigurationFormItems
+                    namePrefix={[]}
+                    supportsCommandShell={supportsCommandShell}
+                    commandPlaceholder={modelDefinitionDefaults?.startCommand}
+                    portPlaceholder={modelDefinitionDefaults?.port?.toString()}
+                  />
+                </div>
               );
             }}
           </Form.Item>
 
           {/* Health check is shown for every runtime variant and definition
               mode (FR-3068); enabling it submits a health-check override. */}
-          <Form.Item
-            name="commandEnableHealthCheck"
-            valuePropName="checked"
-            style={{ marginBottom: token.marginXS }}
-          >
-            <Checkbox>{t('modelService.EnableHealthCheck')}</Checkbox>
-          </Form.Item>
-          <Form.Item dependencies={['commandEnableHealthCheck']} noStyle>
-            {({ getFieldValue: getHc }: FormInstance<FormValues>) =>
-              getHc('commandEnableHealthCheck') ? (
-                <BAIFlex direction="column" align="stretch" gap="xs">
-                  <Form.Item
-                    name="commandHealthCheck"
-                    label={t('adminDeploymentPreset.modelDef.HealthCheckPath')}
-                    tooltip={t('modelService.HealthCheckTooltip')}
-                    rules={[{ required: true }]}
-                  >
-                    <Input
-                      placeholder={modelDefinitionDefaults?.healthCheckPath}
-                      allowClear
-                    />
-                  </Form.Item>
-                  <BAIFlex gap="md" wrap="wrap" align="end">
-                    <Form.Item
-                      name="commandInterval"
-                      label={t(
-                        'adminDeploymentPreset.modelDef.HealthCheckInterval',
-                      )}
-                      tooltip={t('modelService.IntervalTooltip')}
-                      rules={[{ required: true }]}
-                      style={{ flex: 1, minWidth: 160 }}
-                    >
-                      <InputNumber
-                        min={1}
-                        suffix={t('time.Sec')}
-                        style={{ width: '100%' }}
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      name="commandMaxRetries"
-                      label={t(
-                        'adminDeploymentPreset.modelDef.HealthCheckMaxRetries',
-                      )}
-                      tooltip={t('modelService.MaxRetriesTooltip')}
-                      rules={[{ required: true }]}
-                      style={{ flex: 1, minWidth: 160 }}
-                    >
-                      <InputNumber
-                        min={1}
-                        placeholder={modelDefinitionDefaults?.maxRetries?.toString()}
-                        style={{ width: '100%' }}
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      name="commandMaxWaitTime"
-                      label={t(
-                        'adminDeploymentPreset.modelDef.HealthCheckMaxWaitTime',
-                      )}
-                      tooltip={t('modelService.MaxWaitTimeTooltip')}
-                      rules={[{ required: true }]}
-                      style={{ flex: 1, minWidth: 160 }}
-                    >
-                      <InputNumber
-                        min={1}
-                        suffix={t('time.Sec')}
-                        style={{ width: '100%' }}
-                      />
-                    </Form.Item>
-                  </BAIFlex>
-                  <BAIFlex gap="md" wrap="wrap" align="end">
-                    <Form.Item
-                      name="commandExpectedStatusCode"
-                      label={t(
-                        'adminDeploymentPreset.modelDef.HealthCheckExpectedStatus',
-                      )}
-                      tooltip={t('modelService.ExpectedStatusTooltip')}
-                      rules={[{ required: true }]}
-                      style={{ flex: 1, minWidth: 160 }}
-                    >
-                      <InputNumber
-                        min={101}
-                        max={599}
-                        style={{ width: '100%' }}
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      name="commandInitialDelay"
-                      label={t(
-                        'adminDeploymentPreset.modelDef.HealthCheckInitialDelay',
-                      )}
-                      tooltip={t('modelService.InitialDelayTooltip')}
-                      rules={[{ required: true }]}
-                      style={{ flex: 1, minWidth: 160 }}
-                    >
-                      <InputNumber
-                        min={0}
-                        placeholder={modelDefinitionDefaults?.initialDelay?.toString()}
-                        suffix={t('time.Sec')}
-                        style={{ width: '100%' }}
-                      />
-                    </Form.Item>
-                    <div style={{ flex: 1, minWidth: 160 }} />
-                  </BAIFlex>
-                </BAIFlex>
-              ) : null
-            }
-          </Form.Item>
+          <ModelServiceHealthCheckFormItems
+            namePrefix={[]}
+            placeholders={{
+              path: modelDefinitionDefaults?.healthCheckPath,
+              maxRetries: modelDefinitionDefaults?.maxRetries?.toString(),
+              initialDelay: modelDefinitionDefaults?.initialDelay?.toString(),
+            }}
+          />
 
           {/* Pre-Start Actions — always visible regardless of runtime variant */}
-          <Form.Item
-            label={t('modelService.PreStartActions')}
-            tooltip={t('modelService.PreStartActionsTooltip')}
-            style={{ marginBottom: 0, marginTop: token.marginXS }}
-          >
-            <Form.List name="commandPreStartActions">
-              {(fields, { add, remove }) => (
-                <BAIFlex direction="column" gap="xs" align="stretch">
-                  {fields.map(({ key, name, ...rest }) => (
-                    <BAIFlex
-                      key={key}
-                      direction="row"
-                      align="baseline"
-                      gap="xs"
-                    >
-                      <Form.Item
-                        {...rest}
-                        name={[name, 'action']}
-                        style={{ marginBottom: 0, flex: 1 }}
-                        rules={[{ required: true, message: '' }]}
-                      >
-                        <Input
-                          placeholder={t(
-                            'adminDeploymentPreset.modelDef.ActionPlaceholder',
-                          )}
-                        />
-                      </Form.Item>
-                      <Form.Item
-                        {...rest}
-                        name={[name, 'args']}
-                        style={{ marginBottom: 0, flex: 2 }}
-                        rules={[
-                          { required: true, message: '' },
-                          {
-                            validator: async (_, v) => {
-                              if (!v) return;
-                              try {
-                                JSON.parse(v);
-                              } catch {
-                                return Promise.reject('');
-                              }
-                            },
-                          },
-                        ]}
-                      >
-                        <Input
-                          placeholder={t('general.Example', { value: '{}' })}
-                        />
-                      </Form.Item>
-                      <MinusCircleOutlined onClick={() => remove(name)} />
-                    </BAIFlex>
-                  ))}
-                  <Form.Item noStyle>
-                    <BAIButton
-                      type="dashed"
-                      onClick={() => add({ action: '', args: '{}' })}
-                      icon={<PlusIcon />}
-                      block
-                    >
-                      {t('adminDeploymentPreset.modelDef.AddPreStartAction')}
-                    </BAIButton>
-                  </Form.Item>
-                </BAIFlex>
-              )}
-            </Form.List>
-          </Form.Item>
+          <PreStartActionsFormList namePrefix={[]} />
 
           <SectionHeader>{t('session.launcher.Environments')}</SectionHeader>
 
