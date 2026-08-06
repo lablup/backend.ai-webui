@@ -20,3 +20,15 @@
 :lang(zh) * {
   word-break: keep-all;
 }
+
+/* PILOT PHASE 3: spinner keyframes for BAIFetchKeyButtonAstryx. antd's Button
+   shipped a built-in loading spinner; Astryx's IconButton does not animate a
+   supplied icon, so the rotation is ours. */
+@keyframes bai-fetchkey-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

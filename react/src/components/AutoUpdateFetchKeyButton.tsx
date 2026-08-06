@@ -2,7 +2,8 @@ import {
   hasStoredUserSetting,
   useBAISettingUserState,
 } from '../hooks/useBAISetting';
-import { BAIFetchKeyButton } from 'backend.ai-ui';
+// PILOT PHASE 3: local Astryx rebuild, swapped in only for the pilot graph.
+import BAIFetchKeyButton from './astryx-bui/BAIFetchKeyButtonAstryx';
 import React, { ComponentProps } from 'react';
 
 /**
