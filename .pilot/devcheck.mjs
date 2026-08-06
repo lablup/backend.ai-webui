@@ -28,6 +28,17 @@ const modules = [
   '/src/components/FolderCreateModalV2.tsx',
   '/src/components/BAITabs.tsx',
   '/src/components/BAIRadioGroup.tsx',
+  // PHASE 6
+  '/src/components/astryx-bui/BAIPropertyFilterAstryx.tsx',
+  '/src/components/astryx-bui/BAIDeleteConfirmModalAstryx.tsx',
+  '/src/components/astryx-bui/BAINameActionCellAstryx.tsx',
+  '/src/components/astryx-bui/BAICountdownBorderAstryx.tsx',
+  '/src/components/astryx-bui/BAIQuestionIconWithTooltipAstryx.tsx',
+  '/src/components/astryx-bui/BAIVFolderDeleteButtonAstryx.tsx',
+  '/src/components/astryx-bui/BAIFetchKeyButtonAstryx.tsx',
+  '/src/components/StorageSelectAstryx.tsx',
+  '/src/components/VFolderPermissionCell.tsx',
+  '/src/components/VFolderNodeIdenticon.tsx',
 ];
 for (const m of modules) {
   const res = await page.request.get(BASE.replace(/\/$/, '') + m);
@@ -37,7 +48,7 @@ for (const m of modules) {
   if (!ok) console.log(body.slice(0, 600));
 }
 
-await page.screenshot({ path: '.pilot/shots/pilot2-devserver.png', fullPage: false });
+await page.screenshot({ path: '.pilot/shots/pilot6-devserver.png', fullPage: false });
 await browser.close();
 
 console.log('---');

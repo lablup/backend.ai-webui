@@ -54,6 +54,7 @@
     the antd original's tinted-on-hover text button.
 */
 import { App } from '../../app-shim';
+import './astryxBui.css';
 import { Button } from '@astryxdesign/core/Button';
 import {
   DropdownMenu,

@@ -42,6 +42,7 @@
  the "auto-refresh is armed" affordance entirely. Pinning `stroke-dashoffset: 0`
  keeps the affordance and drops only the motion.
 */
+import './astryxBui.css';
 import React, { useEffect, useRef, useState } from 'react';
 
 export interface BAICountdownBorderAstryxProps {

@@ -51,8 +51,42 @@ import {
   RotateCcwIcon,
   FolderIcon,
 } from 'lucide-react';
+import i18next from 'i18next';
 import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import { initReactI18next } from 'react-i18next';
+
+// Phase 4 recorded that the harness renders `{{count}}s` uninterpolated because
+// it mounts no i18next instance. Fixed here with a minimal one carrying only the
+// keys these components ask for, so the shots show real labels.
+void i18next.use(initReactI18next).init({
+  lng: 'en',
+  fallbackLng: 'en',
+  ns: ['translation', 'comp'],
+  defaultNS: 'translation',
+  interpolation: { escapeValue: false },
+  resources: {
+    en: {
+      translation: {
+        general: {
+          NSelected: '{{count}} selected',
+          DeselectAll: 'Deselect all',
+        },
+      },
+      comp: {
+        BAIFetchKeyButton: {
+          Refresh: 'Refresh',
+          AutoRefresh: 'Auto Refresh',
+          LastUpdated: 'Last Updated',
+          Off: 'Off',
+          EverySeconds: '{{count}}s',
+          EveryMinutes: '{{count}}m',
+          EveryHours: '{{count}}h',
+        },
+      },
+    },
+  },
+});
 
 interface Row extends Record<string, unknown> {
   id: string;
