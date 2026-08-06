@@ -6,6 +6,8 @@
  * them next to the antd originals they replaced.
  */
 import './probe.css';
+import { backendAiAdminTheme } from '../src/astryx-theme/backendAiTheme';
+import { Theme } from '@astryxdesign/core/theme';
 import BAIButtonAstryx from '../src/components/astryx-bui/BAIButtonAstryx';
 import BAICardAstryx from '../src/components/astryx-bui/BAICardAstryx';
 import BAIFlexAstryx from '../src/components/astryx-bui/BAIFlexAstryx';
@@ -215,11 +217,14 @@ const AstryxSide: React.FC = () => {
 };
 
 const App: React.FC = () => {
-  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   return (
     <div className="page">
       <AntdSide dark={dark} />
-      <AstryxSide />
+      {/* PHASE 3: the admin-accent theme, mode passed EXPLICITLY. */}
+      <Theme theme={backendAiAdminTheme} mode={dark ? 'dark' : 'light'}>
+        <AstryxSide />
+      </Theme>
     </div>
   );
 };

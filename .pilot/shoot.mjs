@@ -19,20 +19,10 @@ for (const mode of ['light', 'dark']) {
   });
 
   await page.goto('http://127.0.0.1:5311/phase2.html', { waitUntil: 'networkidle' });
-  await page.evaluate((m) => {
-    document.documentElement.setAttribute('data-theme', m);
-    document.documentElement.setAttribute('data-astryx-theme', 'neutral');
-  }, mode);
-  // Re-render the antd side under the right algorithm.
-  await page.reload({ waitUntil: 'networkidle' });
-  await page.evaluate((m) => {
-    document.documentElement.setAttribute('data-theme', m);
-    document.documentElement.setAttribute('data-astryx-theme', 'neutral');
-  }, mode);
-  await page.waitForTimeout(800);
+  await page.waitForTimeout(1200);
 
-  await page.screenshot({ path: `${OUT}pilot2-${mode}.png`, fullPage: true });
-  console.log(`shot: pilot2-${mode}.png`);
+  await page.screenshot({ path: `${OUT}pilot3-page-${mode}.png`, fullPage: true });
+  console.log(`shot: pilot3-page-${mode}.png`);
   await page.close();
 }
 
