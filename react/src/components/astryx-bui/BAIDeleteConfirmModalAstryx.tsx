@@ -141,7 +141,14 @@ const BAIDeleteConfirmModalAstryx: React.FC<
                 // flips with the colour scheme like every Astryx surface.
                 backgroundColor: 'var(--color-background-secondary)',
                 border: '1px solid var(--color-border)',
-                borderRadius: 'var(--radius-md, 6px)',
+                // SWEEP: this said `var(--radius-md, 6px)`. There is no
+                // `--radius-md` in Astryx — the scale is
+                // none/inner/element/container/page/chat/full — so it silently
+                // fell through to the 6px literal. Same silent-CSS class as
+                // P6/P17: a variable that does not exist fails as a default,
+                // not as an error. `--radius-inner` is the token for a nested
+                // surface, and happens to be the 6px this was drawing.
+                borderRadius: 'var(--radius-inner)',
                 padding: 8,
                 paddingInline: 12,
               }

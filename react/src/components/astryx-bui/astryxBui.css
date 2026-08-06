@@ -119,5 +119,8 @@
 
 .bai-list-alert-scroll::-webkit-scrollbar-thumb {
   background: var(--color-text-tertiary);
-  border-radius: 3px;
+  /* SWEEP: was a literal 3px, i.e. half of the 6px track — a pill. Say that
+     with the token instead; `--radius-full` clamps to the same shape and stops
+     being wrong if the thumb width ever changes. */
+  border-radius: var(--radius-full);
 }
