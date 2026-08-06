@@ -8,9 +8,11 @@ import { theme, useBAIBreakpoint } from '../theme-shim';
 import AgentActionButtons from './AgentNodeItems/AgentActionButtons';
 import AgentComputePlugins from './AgentNodeItems/AgentComputePlugins';
 import AgentResources from './AgentNodeItems/AgentResources';
+import AgentSessions from './AgentNodeItems/AgentSessions';
 import AgentStatusTag from './AgentNodeItems/AgentStatusTag';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import BAICopyableText from './astryx-bui/BAICopyableText';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import {
   MetadataList,
   MetadataListItem,
@@ -26,7 +28,7 @@ import {
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { Check, X } from 'lucide-react';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
@@ -34,7 +36,7 @@ interface AgentDetailDrawerContentProps {
   agentNodeFrgmt?: AgentDetailDrawerContentFragment$key | null;
 }
 
-type TabKey = 'resources';
+type TabKey = 'resources' | 'sessions';
 
 const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
   agentNodeFrgmt,
@@ -166,10 +168,21 @@ const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
         onChange={(key) => setActiveTabKey(key as TabKey)}
       >
         <Tab value="resources" label={t('agent.Resources')} />
+        {/* `AgentV2.sessions` is only available on manager 26.3.0+. */}
+        {baiClient.isManagerVersionCompatibleWith('26.3.0') ? (
+          <Tab value="sessions" label={t('webui.menu.Sessions')} />
+        ) : null}
       </TabList>
       {activeTabKey === 'resources' && (
         <BAIErrorBoundary>
           <AgentResources agentNodeFrgmt={agent} />
+        </BAIErrorBoundary>
+      )}
+      {activeTabKey === 'sessions' && (
+        <BAIErrorBoundary>
+          <Suspense fallback={<BAISkeletonAstryx />}>
+            {agent?.row_id && <AgentSessions agentId={agent.row_id} />}
+          </Suspense>
         </BAIErrorBoundary>
       )}
     </BAIFlex>
