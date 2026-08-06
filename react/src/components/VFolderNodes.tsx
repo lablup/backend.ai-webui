@@ -23,6 +23,8 @@ import VFolderDeployModal from './VFolderDeployModal';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
 import VFolderPermissionCell from './VFolderPermissionCell';
 import BAIFlex from './astryx-bui/BAIFlexAstryx';
+import BAITable from './astryx-bui/BAITableAstryx';
+import type { BAITableAstryxProps } from './astryx-bui/BAITableAstryx';
 import { Text } from '@astryxdesign/core/Text';
 import { useToggle } from 'ahooks';
 import {
@@ -32,8 +34,6 @@ import {
   BAIShareAltIcon,
   BAIUnmountAfterClose,
   BAIUserUnionIcon,
-  BAITable,
-  BAITableProps,
   BAINameActionCell,
   BAIText,
   toLocalId,
@@ -253,7 +253,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
 };
 
 interface VFolderNodesProps extends Omit<
-  BAITableProps<VFolderNodeInList>,
+  BAITableAstryxProps<VFolderNodeInList>,
   'dataSource' | 'columns'
 > {
   vfoldersFrgmt: VFolderNodesFragment$key;
