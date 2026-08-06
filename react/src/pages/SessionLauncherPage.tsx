@@ -1445,6 +1445,19 @@ const SessionLauncherPage = () => {
               fieldsValue.sessionName =
                 fieldsValue.sessionName + '-' + generateRandomString(4);
             }
+
+            // A stale `image` makes the resource form judge the accelerator
+            // against the wrong image. Clear it only on a version change —
+            // nothing re-derives it otherwise.
+            if (
+              fieldsValue.environments?.version !==
+              form.getFieldValue(['environments', 'version'])
+            ) {
+              fieldsValue.environments = {
+                ...fieldsValue.environments,
+                image: undefined,
+              };
+            }
             form.setFieldsValue(fieldsValue as SessionLauncherFormData);
             setCurrentStep(steps.length - 1);
             form.validateFields().catch(() => {});
