@@ -18,11 +18,11 @@ for (const mode of ['light', 'dark']) {
     if (m.type() === 'error') errors.push(`[${mode}] console: ${m.text()}`);
   });
 
-  await page.goto('http://127.0.0.1:5311/phase2.html', { waitUntil: 'networkidle' });
+  await page.goto('http://127.0.0.1:5311/phase4.html', { waitUntil: 'networkidle' });
   await page.waitForTimeout(1200);
 
-  await page.screenshot({ path: `${OUT}pilot3-page-${mode}.png`, fullPage: true });
-  console.log(`shot: pilot3-page-${mode}.png`);
+  await page.screenshot({ path: `${OUT}pilot4-${mode}.png`, fullPage: true });
+  console.log(`shot: pilot4-${mode}.png`);
   await page.close();
 }
 

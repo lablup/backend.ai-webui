@@ -336,32 +336,51 @@ function BAITableAstryx<T extends Record<string, unknown>>({
   if (tableSettings) plugins.columnSettings = columnSettingsPlugin;
 
   return (
-    // PILOT-DECISION: antd's loading overlay (dim + centred spinner over the
-    // existing rows) has no Astryx equivalent. Dimming preserves the "old data
-    // is still readable while refetching" behaviour; the spinner is lost.
-    <div
-      style={
-        loading
-          ? { opacity: 0.5, pointerEvents: 'none', transition: 'opacity .2s' }
-          : undefined
-      }
-      aria-busy={loading || undefined}
-    >
-      <Table<T>
-        data={data}
-        columns={astryxColumns}
-        idKey={(item) => getKey(item)}
-        density={size === 'small' ? 'compact' : 'balanced'}
-        hasHover
-        textOverflow="truncate"
-        rowCount={pagination?.total}
-        rowIndexStart={
-          pagination
-            ? ((pagination.current ?? 1) - 1) * (pagination.pageSize ?? 10) + 1
-            : undefined
-        }
-        plugins={plugins as React.ComponentProps<typeof Table<T>>['plugins']}
-      />
+    // PILOT-DECISION: a plain BLOCK wrapper, deliberately not `VStack`.
+    // Astryx's `astryx-table-scroll-wrapper` sets its own explicit height and
+    // `overflow: auto`; inside a flex column it ends up overflowing its flex
+    // parent, so the following sibling (the pagination bar) is laid out ~24px
+    // too high and visually collides with the last row. Block layout has no
+    // such interaction. Nothing warns about this — only a screenshot catches it.
+    <div>
+      {/* PILOT-DECISION: antd's loading overlay (dim + centred spinner over the
+          existing rows) has no Astryx equivalent. Dimming preserves the "old
+          data is still readable while refetching" behaviour; the spinner is
+          lost. The dim wrapper holds ONLY the table — putting the bottom bar
+          inside it made the bar overlap the last row, because Astryx's table
+          scroll wrapper claims the full block. */}
+      <div
+        style={{
+          // PILOT-DECISION: Astryx applies "edge compensation" negative margins
+          // so a table bleeds to its container's edge. Measured here: the
+          // `<table>` renders ~24px BELOW its own box, so the next sibling (the
+          // pagination bar) visually collides with the last row even though the
+          // boxes do not overlap. Padding the wrapper contains the bleed.
+          // Invisible to every gate; only a screenshot catches it.
+          paddingBottom: 24,
+          ...(loading
+            ? { opacity: 0.5, pointerEvents: 'none', transition: 'opacity .2s' }
+            : null),
+        }}
+        aria-busy={loading || undefined}
+      >
+        <Table<T>
+          data={data}
+          columns={astryxColumns}
+          idKey={(item) => getKey(item)}
+          density={size === 'small' ? 'compact' : 'balanced'}
+          hasHover
+          textOverflow="truncate"
+          rowCount={pagination?.total}
+          rowIndexStart={
+            pagination
+              ? ((pagination.current ?? 1) - 1) * (pagination.pageSize ?? 10) +
+                1
+              : undefined
+          }
+          plugins={plugins as React.ComponentProps<typeof Table<T>>['plugins']}
+        />
+      </div>
 
       {/* Bottom bar — right-aligned pagination with the column-settings gear
           immediately to its right, matching BUI's `BAIFlex justify="end"`. */}

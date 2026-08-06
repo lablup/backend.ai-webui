@@ -42,6 +42,14 @@
  - Changing the interval re-anchors the refresh cycle.
 
  PILOT-DECISION:
+ - **i18n namespace split.** The `comp:BAIFetchKeyButton.*` keys live in
+   `packages/backend.ai-ui/src/locale/*.json`, which is loaded by **BUI's own
+   i18next instance** (FR-2986). A local rebuild under `react/src` uses the HOST
+   `react-i18next` instance, which does not see that namespace — so the labels
+   rendered as raw keys until explicit default values were supplied. Any BUI
+   component pulled into the host during the migration hits this; the real fix
+   is to move the keys into `resources/i18n/*.json` (22 files) as part of the
+   component's move.
  - **`BAICountdownBorder` still dropped.** BUI animates a depleting border
    around the control showing time-to-next-refresh. It is a bespoke SVG/CSS
    animation with no Astryx counterpart and would have to be ported verbatim.
@@ -206,7 +214,7 @@ const BAIFetchKeyButtonAstryx: React.FC<BAIFetchKeyButtonAstryxProps> = ({
   }, [showLastLoadTime]);
 
   const tooltip = showLastLoadTime
-    ? `${t('comp:BAIFetchKeyButton.LastUpdated')}: ${dayjs(lastLoadTime).fromNow()}`
+    ? `${t('comp:BAIFetchKeyButton.LastUpdated', 'Last Updated')}: ${dayjs(lastLoadTime).fromNow()}`
     : undefined;
 
   const resolvedSize = SIZE_MAP[size] ?? 'md';
@@ -220,7 +228,7 @@ const BAIFetchKeyButtonAstryx: React.FC<BAIFetchKeyButtonAstryxProps> = ({
     <IconButton
       // P8: an explicit accessible name, which the antd original never had —
       // there the only name came from the tooltip.
-      label={t('comp:BAIFetchKeyButton.Refresh')}
+      label={t('comp:BAIFetchKeyButton.Refresh', 'Refresh')}
       icon={
         <RefreshCwIcon
           style={
@@ -250,12 +258,18 @@ const BAIFetchKeyButtonAstryx: React.FC<BAIFetchKeyButtonAstryxProps> = ({
     const hours = d.asHours();
     const minutes = d.asMinutes();
     if (Number.isInteger(hours) && hours >= 1) {
-      return t('comp:BAIFetchKeyButton.EveryHours', { count: hours });
+      return t('comp:BAIFetchKeyButton.EveryHours', '{{count}}h', {
+        count: hours,
+      });
     }
     if (Number.isInteger(minutes) && minutes >= 1) {
-      return t('comp:BAIFetchKeyButton.EveryMinutes', { count: minutes });
+      return t('comp:BAIFetchKeyButton.EveryMinutes', '{{count}}m', {
+        count: minutes,
+      });
     }
-    return t('comp:BAIFetchKeyButton.EverySeconds', { count: d.asSeconds() });
+    return t('comp:BAIFetchKeyButton.EverySeconds', '{{count}}s', {
+      count: d.asSeconds(),
+    });
   };
 
   const mergedOptions = [
@@ -270,7 +284,7 @@ const BAIFetchKeyButtonAstryx: React.FC<BAIFetchKeyButtonAstryxProps> = ({
 
   return (
     <ButtonGroup
-      label={t('comp:BAIFetchKeyButton.AutoRefresh')}
+      label={t('comp:BAIFetchKeyButton.AutoRefresh', 'Auto Refresh')}
       size={resolvedSize}
     >
       {refreshButton}
@@ -280,17 +294,17 @@ const BAIFetchKeyButtonAstryx: React.FC<BAIFetchKeyButtonAstryxProps> = ({
         button={{
           // The trigger shows the active interval ("30s") next to the chevron,
           // exactly as the antd original does; "Off" shows chevron only.
-          label: t('comp:BAIFetchKeyButton.AutoRefresh'),
+          label: t('comp:BAIFetchKeyButton.AutoRefresh', 'Auto Refresh'),
           variant: 'ghost',
           size: resolvedSize,
           children: isAutoRefreshOn
             ? formatInterval(autoUpdateDelay)
             : undefined,
-          tooltip: t('comp:BAIFetchKeyButton.AutoRefresh'),
+          tooltip: t('comp:BAIFetchKeyButton.AutoRefresh', 'Auto Refresh'),
         }}
       >
         <DropdownMenuRadioGroup
-          label={t('comp:BAIFetchKeyButton.AutoRefresh')}
+          label={t('comp:BAIFetchKeyButton.AutoRefresh', 'Auto Refresh')}
           value={autoUpdateDelay == null ? 'off' : String(autoUpdateDelay)}
           onChange={(next) => {
             onChangeAutoUpdateDelay?.(next === 'off' ? null : Number(next));
@@ -300,7 +314,7 @@ const BAIFetchKeyButtonAstryx: React.FC<BAIFetchKeyButtonAstryxProps> = ({
         >
           <DropdownMenuRadioItem
             value="off"
-            label={t('comp:BAIFetchKeyButton.Off')}
+            label={t('comp:BAIFetchKeyButton.Off', 'Off')}
           />
           {mergedOptions.map((ms) => (
             <DropdownMenuRadioItem
