@@ -225,12 +225,32 @@ const AdminUsersPage: React.FC = () => {
     setTablePaginationOption(snapshot.tablePaginationOption);
   };
 
+  // Reads `location.search` rather than the parsed state: on a browser
+  // navigation this runs before nuqs has re-parsed the new URL, so anything
+  // derived from `queryParams` would still describe the departed entry.
   const loadActiveTabFromUrl = () => {
+    const search = new URLSearchParams(location.search);
+    const tab =
+      tabParser.parse(search.get('tab') ?? '') ?? tabParser.defaultValue;
+    const defaults = defaultSnapshotOf(tab);
     const snapshot: TabSnapshot = {
-      queryParams: _.omit(queryParams, 'tab'),
-      tablePaginationOption,
+      queryParams: {
+        filter: search.get('filter'),
+        order: search.get('order'),
+        status: search.get('status') === 'INACTIVE' ? 'INACTIVE' : 'ACTIVE',
+        activeType:
+          search.get('activeType') === 'inactive' ? 'inactive' : 'active',
+      },
+      tablePaginationOption: {
+        current:
+          Number(search.get('current')) ||
+          defaults.tablePaginationOption.current,
+        pageSize:
+          Number(search.get('pageSize')) ||
+          defaults.tablePaginationOption.pageSize,
+      },
     };
-    if (currentTab === 'users') {
+    if (tab === 'users') {
       loadUsersQuery(usersVariablesOf(snapshot));
     } else {
       loadCredentialsQuery(credentialsVariablesOf(snapshot));
