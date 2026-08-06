@@ -66,8 +66,10 @@ export type ModelMetadataFormValue = {
 };
 
 export type ModelConfigFormValue = {
-  name: string;
-  modelPath: string;
+  // `name`/`modelPath` are optional on PresetModelConfigInput — a user can
+  // enable the model definition (e.g. for metadata) without naming a model.
+  name?: string;
+  modelPath?: string;
   service?: ModelServiceFormValue;
   metadata?: ModelMetadataFormValue;
 };
@@ -75,8 +77,8 @@ export type ModelConfigFormValue = {
 export type ModelDefinitionFormValue = {
   /**
    * UI switch: whether this preset defines a model. The model definition is
-   * optional (nullable) — when off, the submit sends `modelDefinition: null`;
-   * when on, the single model's sub-fields are required.
+   * optional (nullable) — when off, the submit sends `modelDefinition: null`.
+   * When on, `name`/`modelPath` are still optional at the field level.
    */
   enabled?: boolean;
   models?: ModelConfigFormValue[];

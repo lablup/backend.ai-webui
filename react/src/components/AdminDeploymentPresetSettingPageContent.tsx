@@ -217,10 +217,10 @@ const sanitizeFormValuesForURL = (
 
 // Seed model for an empty / disabled model definition. Used in both the
 // "no existing preset" and "create" initial values so the form has a model
-// entry ready when the model definition switch is turned on.
+// entry ready when the model definition switch is turned on. `name`/
+// `modelPath` are left unset (not `''`) — an empty string is a real value,
+// distinct from "the user hasn't provided one".
 const EMPTY_MODEL_SEED: ModelConfigFormValue = {
-  name: '',
-  modelPath: '',
   service: { commandExecution: 'shell' },
 };
 
@@ -519,10 +519,11 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
           ? {
               // The model definition switch gates name/path/metadata (Step 2).
               // A model that only carries service data (port, command, health
-              // check) was created with the switch OFF — treat it as disabled
-              // so the required name/path fields don't trigger validation.
+              // check) was created with the switch OFF — treat it as disabled.
+              // Name/path are optional even when the switch is ON (e.g. a
+              // metadata-only definition), so metadata presence also counts.
               enabled: preset.modelDefinition.models.some(
-                (m) => !!m.name || !!m.modelPath,
+                (m) => !!m.name || !!m.modelPath || !!m.metadata,
               ),
               models: preset.modelDefinition.models.map((m) => {
                 // Start Command (FR-3205): reconstruct the raw command string

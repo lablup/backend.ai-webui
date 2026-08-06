@@ -53,8 +53,11 @@ const ModelConfigItem: React.FC<{
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
-  // Rendered only when the model-definition switch is ON, so sub-fields are
-  // unconditionally required here; the switch lives in the parent card.
+  // Rendered only when the model-definition switch is ON. Name/path are
+  // optional on PresetModelConfigInput — a user can enable the model
+  // definition purely for metadata without naming a model — but the UI
+  // still shows the required asterisk as a hint via the `required` prop
+  // (visual only, no `rules`, so it doesn't block submission).
   return (
     <BAIFlex direction="column" align="stretch" gap="md">
       <BAIFlex gap="md" wrap="wrap">
@@ -63,7 +66,7 @@ const ModelConfigItem: React.FC<{
           name={[listItemName, 'name']}
           label={t('adminDeploymentPreset.modelDef.ModelName')}
           style={{ flex: 1, minWidth: 160 }}
-          rules={[{ required: true }]}
+          required
         >
           <AstryxFormTextInput
             label={t('adminDeploymentPreset.modelDef.ModelName')}
@@ -77,7 +80,7 @@ const ModelConfigItem: React.FC<{
           name={[listItemName, 'modelPath']}
           label={t('adminDeploymentPreset.modelDef.ModelPath')}
           style={{ flex: 2, minWidth: 200 }}
-          rules={[{ required: true }]}
+          required
         >
           <AstryxFormTextInput
             label={t('adminDeploymentPreset.modelDef.ModelPath')}

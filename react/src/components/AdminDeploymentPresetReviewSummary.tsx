@@ -391,7 +391,7 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
               {t('adminDeploymentPreset.ModelDefinition')}
             </Text>
             {values.modelDefinition.models.filter(Boolean).map((m, i) => (
-              <BAICard key={i} size="small" title={m.name}>
+              <BAICard key={i} size="small" title={m.name || '-'}>
                 <MetadataList columns={1}>
                   <MetadataListItem
                     label={t('adminDeploymentPreset.modelDef.ModelPath')}

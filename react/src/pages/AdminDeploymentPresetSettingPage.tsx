@@ -77,11 +77,15 @@ const buildModelDefinitionInput = (
       }
       // When the model definition switch is off, only send service fields
       // (no name/modelPath/metadata — those belong to the gated section).
+      // `name`/`modelPath` are optional on PresetModelConfigInput, so the
+      // disabled case sends undefined (omitted) rather than a synthetic
+      // empty string. `|| undefined` also normalizes a blank-but-touched
+      // field to omitted — `''` is a real value, not "not provided".
       const modelEnabled = !!value.enabled;
       return [
         {
-          name: modelEnabled ? m.name : '',
-          modelPath: modelEnabled ? m.modelPath : '',
+          name: modelEnabled ? m.name || undefined : undefined,
+          modelPath: modelEnabled ? m.modelPath || undefined : undefined,
           service: {
             port: hasCommandData ? (service.port ?? 8000) : 8000,
             // Start Command (FR-3205): when enabled (26.8.0+ by client policy)

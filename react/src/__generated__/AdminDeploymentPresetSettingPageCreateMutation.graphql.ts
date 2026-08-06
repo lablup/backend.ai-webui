@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<946371680fadee2a73a842fca1d6b45c>>
+ * @generated SignedSource<<466920504aecfeeec777247e500d2854>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -53,8 +53,8 @@ export type PresetModelDefinitionInput = {
 };
 export type PresetModelConfigInput = {
   metadata?: PresetModelMetadataInput | null | undefined;
-  modelPath: string;
-  name: string;
+  modelPath?: string | null | undefined;
+  name?: string | null | undefined;
   service: PresetModelServiceConfigInput;
 };
 export type PresetModelServiceConfigInput = {
