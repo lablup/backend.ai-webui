@@ -74,3 +74,28 @@ export const backendAiTheme = buildBackendAiTheme();
 
 /** Alias used by `DefaultProviders`. */
 export const backendAiBrandTheme = backendAiTheme;
+
+/** `resources/theme.json` → `token.colorInfo`, what `ThemeAdminProvider` uses. */
+export const BAI_ADMIN_LIGHT = '#028DF2';
+export const BAI_ADMIN_DARK = '#009BDD';
+
+/**
+ * The admin-section accent, mirroring `ThemeAdminProvider`'s
+ * `colorPrimary: usePrimaryColors().admin`.
+ *
+ * MEASURED (ticket 13, phase 3b): nesting works and is cleanly scoped — the
+ * nested theme's attribute lands on a wrapper <div>, its CSS is `@scope`d to
+ * that attribute, and sibling/parent regions keep the brand accent with ZERO
+ * leakage in either direction.
+ *
+ * BUT: a nested `<Theme>` **does NOT inherit the parent's mode**. With no
+ * `mode` prop it falls back to `system` (`color-scheme: light dark`), so an
+ * admin region renders LIGHT inside a DARK app whenever the user's explicit
+ * theme choice disagrees with the OS preference. `ThemeAdminProvider` already
+ * solves this for antd by reading `isParentDark` off the parent ConfigProvider;
+ * Astryx does not do the equivalent for you. **Always pass `mode` explicitly.**
+ */
+export const backendAiAdminTheme = buildBackendAiTheme({
+  accentLight: BAI_ADMIN_LIGHT,
+  accentDark: BAI_ADMIN_DARK,
+});

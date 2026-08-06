@@ -7,6 +7,7 @@ import type {
   AdminVFolderNodeListPageQuery$data,
   AdminVFolderNodeListPageQuery$variables,
 } from '../__generated__/AdminVFolderNodeListPageQuery.graphql';
+import AstryxAdminTheme from '../astryx-theme/AstryxAdminTheme';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
@@ -217,326 +218,332 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
     );
 
   return (
-    <BAIFlex direction="column" align="stretch" gap={'md'} {...props}>
-      <BAICard
-        variant="borderless"
-        title={t('data.Folders')}
-        styles={{
-          header: {
-            borderBottom: 'none',
-          },
-          body: {
-            paddingTop: 0,
-          },
-        }}
-      >
-        <BAITabs
-          activeKey={queryParams.statusCategory}
-          onChange={(key) => {
-            const storedQuery = queryMapRef.current[key] || {
-              mode: 'all',
-            };
-            // Reset the whole group first: nuqs partial updates merge, so
-            // without this the previous tab's filter/order/mode leak into a
-            // tab that has no cached state (legacy 'replace' cleared them).
-            setQuery(null);
-            setQuery({
-              ...storedQuery.queryParams,
-              statusCategory: key as 'active' | 'deleted',
-            });
-            setTablePaginationOption(
-              storedQuery.tablePaginationOption || { current: 1 },
-            );
-            setSelectedFolderList([]);
-          }}
-          items={_.map(
-            {
-              active: t('data.Active'),
-              deleted: t('data.folders.TrashBin'),
+    // PILOT PHASE 3 / ticket 13: this is an ADMIN page, so it gets the nested
+    // admin accent — the Astryx counterpart of `ThemeAdminProvider`.
+    <AstryxAdminTheme>
+      <BAIFlex direction="column" align="stretch" gap={'md'} {...props}>
+        <BAICard
+          variant="borderless"
+          title={t('data.Folders')}
+          styles={{
+            header: {
+              borderBottom: 'none',
             },
-            (label, key) => ({
-              key,
-              // Astryx `Tab` takes a STRING label plus a native `endContent`
-              // slot, so the previous BAIFlex-wrapped JSX label is split in
-              // two. This also restores a correct `aria-label` on the tab.
-              label,
-              endContent:
-                // display badge only if count is greater than 0
-                // @ts-ignore
-                (folderCounts[key]?.count || 0) > 0 ? (
-                  // PILOT-DECISION: antd's Badge took an arbitrary `color`
-                  // (brand orange when selected, disabled grey otherwise) plus
-                  // explicit padding/fontSize. Astryx's Badge exposes only a
-                  // closed `variant` set — no colour, size, or style escape
-                  // hatch. `info` (solid, accent-coloured) is the closest read
-                  // of "this tab is active"; `neutral` for the inactive one.
-                  // The exact orange and the 10px type are lost. Needs a
-                  // design call before rollout.
-                  <Badge
-                    // @ts-ignore
-                    label={folderCounts[key].count}
-                    variant={
-                      queryParams.statusCategory === key ? 'info' : 'neutral'
-                    }
-                  />
-                ) : undefined,
-            }),
-          )}
-        />
-        <BAIFlex direction="column" align="stretch" gap={'sm'}>
-          <BAIFlex justify="between" wrap="wrap" gap={'sm'}>
-            <BAIFlex
-              gap={'sm'}
-              align="start"
-              style={{
-                flexShrink: 1,
-              }}
-              wrap="wrap"
-            >
-              <BAIRadioGroup
-                optionType="button"
-                value={queryParams.mode}
-                onChange={(e) => {
-                  setQuery({ mode: e.target.value });
-                  setTablePaginationOption({ current: 1 });
-                  setSelectedFolderList([]);
-                }}
-                options={filterOutEmpty([
-                  {
-                    label: t('data.All'),
-                    value: 'all',
-                  },
-                  {
-                    label: t('data.General'),
-                    value: 'general',
-                  },
-                  baiClient?._config?.fasttrackEndpoint && {
-                    label: t('data.Pipeline'),
-                    value: 'data',
-                  },
-                  {
-                    label: t('data.AutoMount'),
-                    value: 'automount',
-                  },
-                  baiClient._config.enableModelFolders && {
-                    label: t('data.Models'),
-                    value: 'model',
-                  },
-                ])}
-              />
-              <BAIPropertyFilter
-                data-testid="vfolder-filter"
-                filterProperties={[
-                  {
-                    key: 'name',
-                    propertyLabel: t('data.folders.Name'),
-                    type: 'string',
-                  },
-                  {
-                    key: 'status',
-                    propertyLabel: t('data.folders.Status'),
-                    type: 'string',
-                    strictSelection: true,
-                    defaultOperator: '==',
-                    options: _.map(VFOLDER_STATUSES, (status) => ({
-                      label: status,
-                      value: status,
-                    })),
-                  },
-                  {
-                    key: 'host',
-                    propertyLabel: t('data.folders.Location'),
-                    type: 'string',
-                  },
-                  {
-                    key: 'ownership_type',
-                    propertyLabel: t('data.Type'),
-                    type: 'string',
-                    strictSelection: true,
-                    defaultOperator: '==',
-                    options: [
-                      {
-                        label: t('data.User'),
-                        value: 'user',
-                      },
-                      {
-                        label: t('data.Project'),
-                        value: 'group',
-                      },
-                    ],
-                  },
-                  {
-                    key: 'permission',
-                    propertyLabel: t('data.Permission'),
-                    type: 'string',
-                    strictSelection: true,
-                    defaultOperator: '==',
-                    options: [
-                      {
-                        label: t('data.ReadOnly'),
-                        value: 'ro',
-                      },
-                      {
-                        label: t('data.ReadWrite'),
-                        value: 'rw',
-                      },
-                    ],
-                  },
-                ]}
-                value={queryParams.filter ?? undefined}
-                onChange={(value) => {
-                  setQuery({ filter: value ?? null });
-                  setTablePaginationOption({ current: 1 });
-                  setSelectedFolderList([]);
-                }}
-              />
-            </BAIFlex>
-            <BAIFlex gap={'xs'}>
-              {selectedFolderList.length > 0 &&
-                queryParams.statusCategory === 'active' && (
-                  <>
-                    <BAISelectionLabel
-                      count={selectedFolderList.length}
-                      onClearSelection={() => setSelectedFolderList([])}
-                    />
-                    <Tooltip content={t('data.folders.MoveToTrash')}>
-                      <BAIVFolderDeleteButton
-                        vfolderFrgmt={selectedFolderList}
-                        onClick={() => {
-                          toggleDeleteModal();
-                        }}
-                      />
-                    </Tooltip>
-                  </>
-                )}
-              {selectedFolderList.length > 0 &&
-                queryParams.statusCategory === 'deleted' && (
-                  <>
-                    <BAISelectionLabel
-                      count={selectedFolderList.length}
-                      onClearSelection={() => setSelectedFolderList([])}
-                    />
-                    <Tooltip content={t('data.folders.Restore')}>
-                      <BAIButton
-                        icon={
-                          <BAIRestoreIcon style={{ color: token.colorInfo }} />
-                        }
-                        onClick={() => {
-                          toggleRestoreModal();
-                        }}
-                      />
-                    </Tooltip>
-                  </>
-                )}
-              <AutoUpdateFetchKeyButton
-                settingId="admin-vfolder-list"
-                loading={
-                  deferredQueryVariables !== queryVariables ||
-                  deferredFetchKey !== fetchKey
-                }
-                value={fetchKey}
-                onChange={(newFetchKey) => {
-                  updateFetchKey(newFetchKey);
-                }}
-              />
-              <BAIButton
-                type="primary"
-                icon={<PlusIcon />}
-                onClick={() => {
-                  toggleCreateModal();
-                }}
-              >
-                {t('data.CreateFolder')}
-              </BAIButton>
-            </BAIFlex>
-          </BAIFlex>
-          <VFolderNodes
-            order={queryParams.order}
-            loading={deferredQueryVariables !== queryVariables}
-            vfoldersFrgmt={filterOutNullAndUndefined(
-              _.map(vfolder_nodes?.edges, 'node'),
-            )}
-            rowSelection={{
-              type: 'checkbox',
-              preserveSelectedRowKeys: true,
-              getCheckboxProps(record: VFolderNodeInList) {
-                return {
-                  disabled:
-                    isDeletedCategory(record.status) &&
-                    record.status !== 'delete-pending',
-                };
-              },
-              onChange: (selectedRowKeys) => {
-                handleRowSelectionChange(
-                  selectedRowKeys,
-                  filterOutNullAndUndefined(
-                    _.map(vfolder_nodes?.edges, 'node'),
-                  ),
-                  setSelectedFolderList,
-                );
-              },
-              selectedRowKeys: _.map(selectedFolderList, (i) => i.id),
-            }}
-            pagination={{
-              pageSize: tablePaginationOption.pageSize,
-              current: tablePaginationOption.current,
-              total: vfolder_nodes?.count ?? 0,
-              onChange(current, pageSize) {
-                if (_.isNumber(current) && _.isNumber(pageSize)) {
-                  setTablePaginationOption({ current, pageSize });
-                }
-              },
-            }}
-            onChangeOrder={(order) => {
-              setQuery({ order: order ?? null });
-            }}
-            onRemoveRow={(removedId) => {
-              setSelectedFolderList((prevSelected) =>
-                _.filter(prevSelected, (folder) => folder.id !== removedId),
+            body: {
+              paddingTop: 0,
+            },
+          }}
+        >
+          <BAITabs
+            activeKey={queryParams.statusCategory}
+            onChange={(key) => {
+              const storedQuery = queryMapRef.current[key] || {
+                mode: 'all',
+              };
+              // Reset the whole group first: nuqs partial updates merge, so
+              // without this the previous tab's filter/order/mode leak into a
+              // tab that has no cached state (legacy 'replace' cleared them).
+              setQuery(null);
+              setQuery({
+                ...storedQuery.queryParams,
+                statusCategory: key as 'active' | 'deleted',
+              });
+              setTablePaginationOption(
+                storedQuery.tablePaginationOption || { current: 1 },
               );
-              updateFetchKey();
+              setSelectedFolderList([]);
             }}
-            tableSettings={{
-              columnOverrides: columnOverrides,
-              onColumnOverridesChange: setColumnOverrides,
-            }}
+            items={_.map(
+              {
+                active: t('data.Active'),
+                deleted: t('data.folders.TrashBin'),
+              },
+              (label, key) => ({
+                key,
+                // Astryx `Tab` takes a STRING label plus a native `endContent`
+                // slot, so the previous BAIFlex-wrapped JSX label is split in
+                // two. This also restores a correct `aria-label` on the tab.
+                label,
+                endContent:
+                  // display badge only if count is greater than 0
+                  // @ts-ignore
+                  (folderCounts[key]?.count || 0) > 0 ? (
+                    // PILOT-DECISION: antd's Badge took an arbitrary `color`
+                    // (brand orange when selected, disabled grey otherwise) plus
+                    // explicit padding/fontSize. Astryx's Badge exposes only a
+                    // closed `variant` set — no colour, size, or style escape
+                    // hatch. `info` (solid, accent-coloured) is the closest read
+                    // of "this tab is active"; `neutral` for the inactive one.
+                    // The exact orange and the 10px type are lost. Needs a
+                    // design call before rollout.
+                    <Badge
+                      // @ts-ignore
+                      label={folderCounts[key].count}
+                      variant={
+                        queryParams.statusCategory === key ? 'info' : 'neutral'
+                      }
+                    />
+                  ) : undefined,
+              }),
+            )}
           />
-        </BAIFlex>
-      </BAICard>
-      <DeleteVFolderModal
-        vfolderFrgmts={selectedFolderList}
-        open={isOpenDeleteModal}
-        onRequestClose={(success) => {
-          if (success) {
-            updateFetchKey();
-            setSelectedFolderList([]);
-          }
-          toggleDeleteModal();
-        }}
-      />
-      <RestoreVFolderModal
-        vfolderFrgmts={selectedFolderList}
-        open={isOpenRestoreModal}
-        onRequestClose={(success) => {
-          if (success) {
-            updateFetchKey();
-            setSelectedFolderList([]);
-          }
-          toggleRestoreModal();
-        }}
-      />
-      <FolderCreateModalV2
-        open={isOpenCreateModal}
-        folderType="project"
-        alertMessage={t('data.folders.AdminDataPageAlert')}
-        onRequestClose={(result) => {
-          toggleCreateModal();
-          if (result) {
-            updateFetchKey();
-          }
-        }}
-      />
-    </BAIFlex>
+          <BAIFlex direction="column" align="stretch" gap={'sm'}>
+            <BAIFlex justify="between" wrap="wrap" gap={'sm'}>
+              <BAIFlex
+                gap={'sm'}
+                align="start"
+                style={{
+                  flexShrink: 1,
+                }}
+                wrap="wrap"
+              >
+                <BAIRadioGroup
+                  optionType="button"
+                  value={queryParams.mode}
+                  onChange={(e) => {
+                    setQuery({ mode: e.target.value });
+                    setTablePaginationOption({ current: 1 });
+                    setSelectedFolderList([]);
+                  }}
+                  options={filterOutEmpty([
+                    {
+                      label: t('data.All'),
+                      value: 'all',
+                    },
+                    {
+                      label: t('data.General'),
+                      value: 'general',
+                    },
+                    baiClient?._config?.fasttrackEndpoint && {
+                      label: t('data.Pipeline'),
+                      value: 'data',
+                    },
+                    {
+                      label: t('data.AutoMount'),
+                      value: 'automount',
+                    },
+                    baiClient._config.enableModelFolders && {
+                      label: t('data.Models'),
+                      value: 'model',
+                    },
+                  ])}
+                />
+                <BAIPropertyFilter
+                  data-testid="vfolder-filter"
+                  filterProperties={[
+                    {
+                      key: 'name',
+                      propertyLabel: t('data.folders.Name'),
+                      type: 'string',
+                    },
+                    {
+                      key: 'status',
+                      propertyLabel: t('data.folders.Status'),
+                      type: 'string',
+                      strictSelection: true,
+                      defaultOperator: '==',
+                      options: _.map(VFOLDER_STATUSES, (status) => ({
+                        label: status,
+                        value: status,
+                      })),
+                    },
+                    {
+                      key: 'host',
+                      propertyLabel: t('data.folders.Location'),
+                      type: 'string',
+                    },
+                    {
+                      key: 'ownership_type',
+                      propertyLabel: t('data.Type'),
+                      type: 'string',
+                      strictSelection: true,
+                      defaultOperator: '==',
+                      options: [
+                        {
+                          label: t('data.User'),
+                          value: 'user',
+                        },
+                        {
+                          label: t('data.Project'),
+                          value: 'group',
+                        },
+                      ],
+                    },
+                    {
+                      key: 'permission',
+                      propertyLabel: t('data.Permission'),
+                      type: 'string',
+                      strictSelection: true,
+                      defaultOperator: '==',
+                      options: [
+                        {
+                          label: t('data.ReadOnly'),
+                          value: 'ro',
+                        },
+                        {
+                          label: t('data.ReadWrite'),
+                          value: 'rw',
+                        },
+                      ],
+                    },
+                  ]}
+                  value={queryParams.filter ?? undefined}
+                  onChange={(value) => {
+                    setQuery({ filter: value ?? null });
+                    setTablePaginationOption({ current: 1 });
+                    setSelectedFolderList([]);
+                  }}
+                />
+              </BAIFlex>
+              <BAIFlex gap={'xs'}>
+                {selectedFolderList.length > 0 &&
+                  queryParams.statusCategory === 'active' && (
+                    <>
+                      <BAISelectionLabel
+                        count={selectedFolderList.length}
+                        onClearSelection={() => setSelectedFolderList([])}
+                      />
+                      <Tooltip content={t('data.folders.MoveToTrash')}>
+                        <BAIVFolderDeleteButton
+                          vfolderFrgmt={selectedFolderList}
+                          onClick={() => {
+                            toggleDeleteModal();
+                          }}
+                        />
+                      </Tooltip>
+                    </>
+                  )}
+                {selectedFolderList.length > 0 &&
+                  queryParams.statusCategory === 'deleted' && (
+                    <>
+                      <BAISelectionLabel
+                        count={selectedFolderList.length}
+                        onClearSelection={() => setSelectedFolderList([])}
+                      />
+                      <Tooltip content={t('data.folders.Restore')}>
+                        <BAIButton
+                          icon={
+                            <BAIRestoreIcon
+                              style={{ color: token.colorInfo }}
+                            />
+                          }
+                          onClick={() => {
+                            toggleRestoreModal();
+                          }}
+                        />
+                      </Tooltip>
+                    </>
+                  )}
+                <AutoUpdateFetchKeyButton
+                  settingId="admin-vfolder-list"
+                  loading={
+                    deferredQueryVariables !== queryVariables ||
+                    deferredFetchKey !== fetchKey
+                  }
+                  value={fetchKey}
+                  onChange={(newFetchKey) => {
+                    updateFetchKey(newFetchKey);
+                  }}
+                />
+                <BAIButton
+                  type="primary"
+                  icon={<PlusIcon />}
+                  onClick={() => {
+                    toggleCreateModal();
+                  }}
+                >
+                  {t('data.CreateFolder')}
+                </BAIButton>
+              </BAIFlex>
+            </BAIFlex>
+            <VFolderNodes
+              order={queryParams.order}
+              loading={deferredQueryVariables !== queryVariables}
+              vfoldersFrgmt={filterOutNullAndUndefined(
+                _.map(vfolder_nodes?.edges, 'node'),
+              )}
+              rowSelection={{
+                type: 'checkbox',
+                preserveSelectedRowKeys: true,
+                getCheckboxProps(record: VFolderNodeInList) {
+                  return {
+                    disabled:
+                      isDeletedCategory(record.status) &&
+                      record.status !== 'delete-pending',
+                  };
+                },
+                onChange: (selectedRowKeys) => {
+                  handleRowSelectionChange(
+                    selectedRowKeys,
+                    filterOutNullAndUndefined(
+                      _.map(vfolder_nodes?.edges, 'node'),
+                    ),
+                    setSelectedFolderList,
+                  );
+                },
+                selectedRowKeys: _.map(selectedFolderList, (i) => i.id),
+              }}
+              pagination={{
+                pageSize: tablePaginationOption.pageSize,
+                current: tablePaginationOption.current,
+                total: vfolder_nodes?.count ?? 0,
+                onChange(current, pageSize) {
+                  if (_.isNumber(current) && _.isNumber(pageSize)) {
+                    setTablePaginationOption({ current, pageSize });
+                  }
+                },
+              }}
+              onChangeOrder={(order) => {
+                setQuery({ order: order ?? null });
+              }}
+              onRemoveRow={(removedId) => {
+                setSelectedFolderList((prevSelected) =>
+                  _.filter(prevSelected, (folder) => folder.id !== removedId),
+                );
+                updateFetchKey();
+              }}
+              tableSettings={{
+                columnOverrides: columnOverrides,
+                onColumnOverridesChange: setColumnOverrides,
+              }}
+            />
+          </BAIFlex>
+        </BAICard>
+        <DeleteVFolderModal
+          vfolderFrgmts={selectedFolderList}
+          open={isOpenDeleteModal}
+          onRequestClose={(success) => {
+            if (success) {
+              updateFetchKey();
+              setSelectedFolderList([]);
+            }
+            toggleDeleteModal();
+          }}
+        />
+        <RestoreVFolderModal
+          vfolderFrgmts={selectedFolderList}
+          open={isOpenRestoreModal}
+          onRequestClose={(success) => {
+            if (success) {
+              updateFetchKey();
+              setSelectedFolderList([]);
+            }
+            toggleRestoreModal();
+          }}
+        />
+        <FolderCreateModalV2
+          open={isOpenCreateModal}
+          folderType="project"
+          alertMessage={t('data.folders.AdminDataPageAlert')}
+          onRequestClose={(result) => {
+            toggleCreateModal();
+            if (result) {
+              updateFetchKey();
+            }
+          }}
+        />
+      </BAIFlex>
+    </AstryxAdminTheme>
   );
 };
 
