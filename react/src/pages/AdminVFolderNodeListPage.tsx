@@ -14,17 +14,17 @@ import DeleteVFolderModal from '../components/DeleteVFolderModal';
 import FolderCreateModalV2 from '../components/FolderCreateModalV2';
 import RestoreVFolderModal from '../components/RestoreVFolderModal';
 import VFolderNodes, { VFolderNodeInList } from '../components/VFolderNodes';
-import BAIButton from '../components/astryx-bui/BAIButtonAstryx';
 import BAICard from '../components/astryx-bui/BAICardAstryx';
-import BAIFlex from '../components/astryx-bui/BAIFlexAstryx';
-import { BAISelectionLabel } from '../components/astryx-bui/smallPrimitives';
+import BAISelectionLabel from '../components/astryx-bui/BAISelectionLabel';
 import { handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { theme } from '../theme-shim';
 import { isDeletedCategory } from './VFolderNodeListPage';
 import { Badge } from '@astryxdesign/core/Badge';
+import { Button } from '@astryxdesign/core/Button';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { useToggle } from 'ahooks';
 import {
@@ -69,7 +69,6 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
@@ -220,7 +219,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
     // PILOT PHASE 3 / ticket 13: this is an ADMIN page, so it gets the nested
     // admin accent — the Astryx counterpart of `ThemeAdminProvider`.
     <AstryxAdminTheme>
-      <BAIFlex direction="column" align="stretch" gap={'md'} {...props}>
+      <VStack align="stretch" gap={5} {...props}>
         <BAICard
           variant="borderless"
           title={t('data.Folders')}
@@ -279,7 +278,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
           // Card-scoped actions live in `extra`, per the project rule: the
           // refresh control and the primary create button, primary rightmost.
           extra={
-            <BAIFlex gap={'xs'} align="center">
+            <HStack gap={2} align="center">
               <AutoUpdateFetchKeyButton
                 settingId="admin-vfolder-list"
                 loading={
@@ -291,22 +290,21 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                   updateFetchKey(newFetchKey);
                 }}
               />
-              <BAIButton
-                type="primary"
+              <Button
+                variant="primary"
                 icon={<PlusIcon />}
+                label={t('data.CreateFolder')}
                 onClick={() => {
                   toggleCreateModal();
                 }}
-              >
-                {t('data.CreateFolder')}
-              </BAIButton>
-            </BAIFlex>
+              />
+            </HStack>
           }
         >
-          <BAIFlex direction="column" align="stretch" gap={'sm'}>
-            <BAIFlex justify="between" wrap="wrap" gap={'sm'}>
-              <BAIFlex
-                gap={'sm'}
+          <VStack align="stretch" gap={3}>
+            <HStack justify="between" wrap="wrap" gap={3}>
+              <HStack
+                gap={3}
                 align="start"
                 style={{
                   flexShrink: 1,
@@ -410,8 +408,8 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                     setSelectedFolderList([]);
                   }}
                 />
-              </BAIFlex>
-              <BAIFlex gap={'xs'}>
+              </HStack>
+              <HStack gap={2}>
                 {selectedFolderList.length > 0 &&
                   queryParams.statusCategory === 'active' && (
                     <>
@@ -437,12 +435,11 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                         onClearSelection={() => setSelectedFolderList([])}
                       />
                       <Tooltip content={t('data.folders.Restore')}>
-                        <BAIButton
-                          icon={
-                            <BAIRestoreIcon
-                              style={{ color: token.colorInfo }}
-                            />
-                          }
+                        <IconButton
+                          // Astryx requires a real accessible name; the antd
+                          // original had none (only the wrapping tooltip).
+                          label={t('data.folders.Restore')}
+                          icon={<BAIRestoreIcon />}
                           onClick={() => {
                             toggleRestoreModal();
                           }}
@@ -450,8 +447,8 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                       </Tooltip>
                     </>
                   )}
-              </BAIFlex>
-            </BAIFlex>
+              </HStack>
+            </HStack>
             <VFolderNodes
               order={queryParams.order}
               loading={deferredQueryVariables !== queryVariables}
@@ -503,7 +500,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                 onColumnOverridesChange: setColumnOverrides,
               }}
             />
-          </BAIFlex>
+          </VStack>
         </BAICard>
         <DeleteVFolderModal
           vfolderFrgmts={selectedFolderList}
@@ -538,7 +535,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
             }
           }}
         />
-      </BAIFlex>
+      </VStack>
     </AstryxAdminTheme>
   );
 };

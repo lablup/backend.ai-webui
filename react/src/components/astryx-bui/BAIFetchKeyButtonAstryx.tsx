@@ -239,7 +239,6 @@ const BAIFetchKeyButtonAstryx: React.FC<BAIFetchKeyButtonAstryxProps> = ({
         />
       }
       tooltip={tooltip}
-      variant="ghost"
       size={resolvedSize}
       onClick={triggerRefresh}
     />
@@ -295,7 +294,6 @@ const BAIFetchKeyButtonAstryx: React.FC<BAIFetchKeyButtonAstryxProps> = ({
           // The trigger shows the active interval ("30s") next to the chevron,
           // exactly as the antd original does; "Off" shows chevron only.
           label: t('comp:BAIFetchKeyButton.AutoRefresh', 'Auto Refresh'),
-          variant: 'ghost',
           size: resolvedSize,
           children: isAutoRefreshOn
             ? formatInterval(autoUpdateDelay)

@@ -17,8 +17,6 @@ import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
 import { theme } from '../theme-shim';
 import StorageSelect from './StorageSelect';
-import BAIButton from './astryx-bui/BAIButtonAstryx';
-import BAIFlex from './astryx-bui/BAIFlexAstryx';
 import BAIModal from './astryx-bui/BAIModalAstryx';
 import type { BAIModalAstryxProps as BAIModalProps } from './astryx-bui/BAIModalAstryx';
 import {
@@ -26,8 +24,10 @@ import {
   AstryxFormSwitch,
   AstryxFormTextInput,
 } from './astryxFormControls';
+import { Button } from '@astryxdesign/core/Button';
 import { Divider } from '@astryxdesign/core/Divider';
 import { Skeleton } from '@astryxdesign/core/Skeleton';
+import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 // `Form` (the state engine) stays antd, per the locked ticket-08 decision.
 // Only `Form.Item`'s VISUAL layer moves, to `BAIFormItem`.
@@ -347,34 +347,38 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
       className={styles.modal}
       title={t('data.CreateANewStorageFolder')}
       footer={
-        <BAIFlex justify="between">
-          <BAIButton
-            danger
+        <HStack justify="between">
+          <Button
+            variant="destructive"
+            label={t('button.Reset')}
             onClick={() => {
               formRef.current?.resetFields();
             }}
-          >
-            {t('button.Reset')}
-          </BAIButton>
-          <BAIFlex gap={token.marginSM}>
-            <BAIButton
+          />
+          {/* PHASE 5: `token.marginSM` is 8px = Astryx spacing step 2. With the
+              wrapper gone, TypeScript rejects the raw pixel value outright
+              instead of silently snapping it — the closed scale is now a
+              compile-time constraint rather than an invisible drift. */}
+          <HStack gap={2}>
+            <Button
+              variant="secondary"
+              label={t('button.Cancel')}
               onClick={() => {
                 onRequestClose();
               }}
-            >
-              {t('button.Cancel')}
-            </BAIButton>
-            <BAIButton
-              type="primary"
-              data-testid="create-folder-button"
-              action={async () => {
+            />
+            <Button
+              variant="primary"
+              label={t('data.Create')}
+              // `clickAction` IS Astryx-native async-with-loading; BUI's
+              // `action` prop was a hand-rolled version of exactly this.
+              clickAction={async () => {
                 await handleOk();
               }}
-            >
-              {t('data.Create')}
-            </BAIButton>
-          </BAIFlex>
-        </BAIFlex>
+              {...({ 'data-testid': 'create-folder-button' } as object)}
+            />
+          </HStack>
+        </HStack>
       }
       width={MODAL_WIDTH}
       onCancel={() => {
@@ -405,8 +409,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
         />
       ) : null}
 
-      <BAIFlex
-        direction="column"
+      <VStack
         align="stretch"
         style={{
           paddingLeft: token.paddingMD,
@@ -774,7 +777,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
             }}
           </Form.Item>
         </Form>
-      </BAIFlex>
+      </VStack>
     </BAIModal>
   );
 };

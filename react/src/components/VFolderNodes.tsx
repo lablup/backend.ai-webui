@@ -22,10 +22,13 @@ import SharedFolderPermissionInfoModal from './SharedFolderPermissionInfoModal';
 import VFolderDeployModal from './VFolderDeployModal';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
 import VFolderPermissionCell from './VFolderPermissionCell';
-import BAIFlex from './astryx-bui/BAIFlexAstryx';
+import BAICopyableText from './astryx-bui/BAICopyableText';
 import BAITable from './astryx-bui/BAITableAstryx';
 import type { BAITableAstryxProps } from './astryx-bui/BAITableAstryx';
-import { BAILink, BAITag, BAIText } from './astryx-bui/smallPrimitives';
+import { Badge } from '@astryxdesign/core/Badge';
+import type { BadgeVariant } from '@astryxdesign/core/Badge';
+import { Link } from '@astryxdesign/core/Link';
+import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
 import { useToggle } from 'ahooks';
 import {
@@ -54,16 +57,21 @@ import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
-export const statusTagColor = {
+/**
+ * PHASE 5: retyped from antd `Tag` colour names to Astryx `Badge` variants —
+ * `'default'` becomes `'neutral'`. The status map is now Astryx-shaped data
+ * rather than an antd-shaped value the wrapper had to translate.
+ */
+export const statusTagColor: Record<string, BadgeVariant> = {
   // mountable
   ready: 'warning',
   performing: 'warning',
   cloning: 'warning',
   mounted: 'warning',
   // delete
-  'delete-pending': 'default',
-  'delete-ongoing': 'default',
-  'delete-complete': 'default',
+  'delete-pending': 'neutral',
+  'delete-ongoing': 'neutral',
+  'delete-complete': 'neutral',
   // error
   error: 'error',
   'delete-error': 'error',
@@ -409,7 +417,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                                 '',
                               ),
                               extraDescription: !_.isEmpty(occupiedSession) ? (
-                                <BAIFlex direction="column" align="stretch">
+                                <VStack align="stretch">
                                   {/* PILOT-DECISION: Astryx `Text` has no
                                       `style` escape hatch (only `xstyle`,
                                       which needs the StyleX compiler we chose
@@ -420,10 +428,12 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                                     {t('data.folders.MountedSessions')}
                                   </Text>
                                   {_.map(occupiedSession, (sessionId) => (
-                                    <BAILink
+                                    <Link
                                       key={sessionId}
+                                      href="#"
                                       style={{ fontWeight: 'normal' }}
-                                      onClick={() => {
+                                      onClick={(e: React.MouseEvent) => {
+                                        e.preventDefault();
                                         navigate({
                                           pathname: buildProjectPath(
                                             'session',
@@ -436,9 +446,9 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                                       }}
                                     >
                                       {sessionId}
-                                    </BAILink>
+                                    </Link>
                                   ))}
-                                </BAIFlex>
+                                </VStack>
                               ) : null,
                             });
                           },
@@ -483,15 +493,10 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
             dataIndex: 'status',
             render: (status: string) => {
               return (
-                <BAITag
-                  color={
-                    status
-                      ? statusTagColor[status as keyof typeof statusTagColor]
-                      : undefined
-                  }
-                >
-                  {_.toUpper(status)}
-                </BAITag>
+                <Badge
+                  variant={status ? statusTagColor[status] : 'neutral'}
+                  label={_.toUpper(status)}
+                />
               );
             },
             sorter: isEnableSorter('status'),
@@ -515,17 +520,17 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
             dataIndex: 'ownership_type',
             render: (type: string) => {
               return type === 'user' ? (
-                <BAIFlex gap={'xs'}>
+                <HStack gap={2}>
                   <Text>{t('data.User')}</Text>
                   <UserIcon style={{ color: token.colorTextTertiary }} />
-                </BAIFlex>
+                </HStack>
               ) : (
-                <BAIFlex gap={'xs'}>
+                <HStack gap={2}>
                   <Text>{t('data.Project')}</Text>
                   <BAIUserUnionIcon
                     style={{ color: token.colorTextTertiary }}
                   />
-                </BAIFlex>
+                </HStack>
               );
             },
             sorter: isEnableSorter('ownership_type'),
@@ -612,7 +617,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
             defaultHidden: true,
             sorter: isEnableSorter('quota_scope_id'),
             render: (value: string) =>
-              value ? <BAIText copyable>{value}</BAIText> : '-',
+              value ? <BAICopyableText>{value}</BAICopyableText> : '-',
           },
           {
             key: 'last_used',

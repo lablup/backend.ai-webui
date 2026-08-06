@@ -7,9 +7,9 @@ import { VFolderNodesFragment$data } from '../__generated__/VFolderNodesFragment
 import { message } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import BAIFlex from './astryx-bui/BAIFlexAstryx';
 import BAIModal from './astryx-bui/BAIModalAstryx';
 import type { BAIModalAstryxProps as BAIModalProps } from './astryx-bui/BAIModalAstryx';
+import { VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
 import {
   BAIListAlert,
@@ -125,7 +125,7 @@ const DeleteVFolderModal: React.FC<DeleteVFolderModalProps> = ({
       }}
       {...baiModalProps}
     >
-      <BAIFlex direction="column" gap={'sm'} align="stretch">
+      <VStack gap={3} align="stretch">
         {vfolders &&
           vfolders.length !== foldersByPermission.deletable?.length && (
             <BAIListAlert
@@ -149,7 +149,7 @@ const DeleteVFolderModal: React.FC<DeleteVFolderModalProps> = ({
                 folderLength: foldersByPermission.deletable?.length,
               })}
         </Text>
-      </BAIFlex>
+      </VStack>
     </BAIModal>
   );
 };
