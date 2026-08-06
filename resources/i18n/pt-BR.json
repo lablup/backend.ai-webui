@@ -1356,8 +1356,7 @@
       "DoYouWantToDelete": "Tem certeza de que deseja excluir?",
       "DoYouWantToDeleteSomething": "Tem a certeza de que pretende eliminar \"{{ name }}\"?",
       "DoYouWantToProceed": "Você quer prosseguir?",
-      "DoYouWantToResetChanges": "Deseja redefinir suas alterações?",
-      "DoYouWantToUnpublishAndSaveDraft": "Deseja salvar como rascunho e cancelar a publicação do anúncio atual?"
+      "DoYouWantToResetChanges": "Deseja redefinir suas alterações?"
     },
     "error": {
       "Error": "Erro"
@@ -1376,8 +1375,7 @@
       "DeleteForeverDesc": "AVISO: os itens selecionados serão excluídos para sempre e você não poderá restaurá-los.",
       "LogDeletion": "Tem certeza de que deseja excluir todas as mensagens de log?",
       "Required": "Necessário",
-      "WillBeAppliedToNewSessions": "Esta atualização será aplicada a novas sessões.",
-      "WillHideCurrentAnnouncement": "O anúncio atualmente publicado ficará oculto para todos os usuários. Você pode publicá-lo novamente a qualquer momento."
+      "WillBeAppliedToNewSessions": "Esta atualização será aplicada a novas sessões."
     }
   },
   "eduapi": {

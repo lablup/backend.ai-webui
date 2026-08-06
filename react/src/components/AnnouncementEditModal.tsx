@@ -24,7 +24,6 @@ import {
   App,
   Button,
   Dropdown,
-  Popconfirm,
   Skeleton,
   theme,
   Tooltip,
@@ -378,31 +377,14 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
             <Button onClick={() => onRequestClose()}>
               {t('button.Cancel')}
             </Button>
-            {announcement?.enabled ? (
-              // The backend has only one message + `enabled` slot, so saving
-              // a draft while an announcement is live overwrites that same
-              // slot with `enabled: false` — immediately hiding it from
-              // everyone. Confirm first since "Save Draft" alone doesn't
-              // read as an unpublish action. Reversible (Publish restores
-              // it), so Popconfirm — not BAIConfirmModalWithInput — per
-              // destructive-confirmation.md.
-              <Popconfirm
-                title={t('dialog.ask.DoYouWantToUnpublishAndSaveDraft')}
-                description={t('dialog.warning.WillHideCurrentAnnouncement')}
-                okText={t('button.SaveDraft')}
-                cancelText={t('button.Cancel')}
-                onConfirm={handleSaveDraft}
-              >
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  disabled={isLoading || isMessageMissing}
-                  loading={saveDraftMutation.isPending}
-                >
-                  {t('button.SaveDraft')}
-                </Button>
-              </Popconfirm>
-            ) : (
+            {/* The backend has only one message + `enabled` slot, so there is
+                no way to hold a draft alongside a live announcement — saving
+                a draft would simply overwrite the live one with `enabled:
+                false`. Rather than let that surprise happen behind a "Save
+                Draft" label, only offer the draft flow when nothing is
+                currently published: editing a live announcement offers just
+                Publish (update it in place) and Delete. */}
+            {!announcement?.enabled && (
               <Button
                 variant="outlined"
                 color="primary"

@@ -1357,8 +1357,7 @@
       "DoYouWantToDelete": "您確定要刪除嗎？",
       "DoYouWantToDeleteSomething": "您确定要删除\"{{ 名称 }}}\"吗？",
       "DoYouWantToProceed": "您要繼續嗎？",
-      "DoYouWantToResetChanges": "您想重置您的變更嗎？",
-      "DoYouWantToUnpublishAndSaveDraft": "是否要儲存為草稿並取消發布目前的公告？"
+      "DoYouWantToResetChanges": "您想重置您的變更嗎？"
     },
     "error": {
       "Error": "錯誤"
@@ -1377,8 +1376,7 @@
       "DeleteForeverDesc": "警告：所選項目將永久刪除，並且您將無法恢復它們。",
       "LogDeletion": "您確定要刪除所有日誌消息嗎？",
       "Required": "需要",
-      "WillBeAppliedToNewSessions": "此更新將應用於新會話。",
-      "WillHideCurrentAnnouncement": "目前已發布的公告將對所有使用者隱藏。您可以隨時重新發布。"
+      "WillBeAppliedToNewSessions": "此更新將應用於新會話。"
     }
   },
   "eduapi": {

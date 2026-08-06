@@ -1356,8 +1356,7 @@
       "DoYouWantToDelete": "本当に削除しますか？",
       "DoYouWantToDeleteSomething": "本当に\"{{ name }}\"を削除しますか？",
       "DoYouWantToProceed": "続行しますか？",
-      "DoYouWantToResetChanges": "変更をリセットしますか?",
-      "DoYouWantToUnpublishAndSaveDraft": "下書きとして保存し、現在のお知らせの公開を取り消しますか?"
+      "DoYouWantToResetChanges": "変更をリセットしますか?"
     },
     "error": {
       "Error": "エラー"
@@ -1376,8 +1375,7 @@
       "DeleteForeverDesc": "警告: 選択したアイテムは完全に削除され、復元することはできません。",
       "LogDeletion": "すべてのログメッセージを削除してもよろしいですか？",
       "Required": "必須入力です。",
-      "WillBeAppliedToNewSessions": "このアップデートは、新しいセッションに適用されます。",
-      "WillHideCurrentAnnouncement": "現在公開中のお知らせは、すべてのユーザーから非表示になります。いつでも再度公開できます。"
+      "WillBeAppliedToNewSessions": "このアップデートは、新しいセッションに適用されます。"
     }
   },
   "eduapi": {

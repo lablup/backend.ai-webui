@@ -1343,8 +1343,7 @@
       "DoYouWantToDelete": "Are you sure you want to delete?",
       "DoYouWantToDeleteSomething": "Are you sure you want to delete \"{{ name }}\"?",
       "DoYouWantToProceed": "Do you want to proceed?",
-      "DoYouWantToResetChanges": "Do you want to reset your changes?",
-      "DoYouWantToUnpublishAndSaveDraft": "Save as draft and unpublish the current announcement?"
+      "DoYouWantToResetChanges": "Do you want to reset your changes?"
     },
     "error": {
       "Error": "Error"
@@ -1363,8 +1362,7 @@
       "DeleteForeverDesc": "WARNING: Selected items will be deleted forever and won't be restored.",
       "LogDeletion": "Are you sure you want to delete all of the log messages?",
       "Required": "Required",
-      "WillBeAppliedToNewSessions": "This update will be applied to new sessions.",
-      "WillHideCurrentAnnouncement": "The currently published announcement will be hidden from all users. You can publish it again at any time."
+      "WillBeAppliedToNewSessions": "This update will be applied to new sessions."
     }
   },
   "eduapi": {

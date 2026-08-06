@@ -1356,8 +1356,7 @@
       "DoYouWantToDelete": "Möchten Sie dies wirklich löschen?",
       "DoYouWantToDeleteSomething": "Sind Sie sicher, dass Sie \"{{ Name }}\" löschen wollen?",
       "DoYouWantToProceed": "Willst du fortfahren?",
-      "DoYouWantToResetChanges": "Möchten Sie Ihre Änderungen zurücksetzen?",
-      "DoYouWantToUnpublishAndSaveDraft": "Als Entwurf speichern und die Veröffentlichung der aktuellen Ankündigung aufheben?"
+      "DoYouWantToResetChanges": "Möchten Sie Ihre Änderungen zurücksetzen?"
     },
     "error": {
       "Error": "Error"
@@ -1376,8 +1375,7 @@
       "DeleteForeverDesc": "ACHTUNG: Ausgewählte Elemente werden für immer gelöscht und Sie können sie nicht wiederherstellen.",
       "LogDeletion": "Möchten Sie wirklich alle Protokollnachrichten löschen?",
       "Required": "Erforderlich",
-      "WillBeAppliedToNewSessions": "Dieses Update wird auf neue Sitzungen angewendet.",
-      "WillHideCurrentAnnouncement": "Die derzeit veröffentlichte Ankündigung wird für alle Benutzer ausgeblendet. Sie können sie jederzeit erneut veröffentlichen."
+      "WillBeAppliedToNewSessions": "Dieses Update wird auf neue Sitzungen angewendet."
     }
   },
   "eduapi": {

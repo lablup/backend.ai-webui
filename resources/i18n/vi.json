@@ -1356,8 +1356,7 @@
       "DoYouWantToDelete": "Bạn có chắc chắn muốn xóa không?",
       "DoYouWantToDeleteSomething": "Bạn có chắc chắn muốn xóa \"{{ name }}\" không?",
       "DoYouWantToProceed": "Bạn có muốn tiếp tục?",
-      "DoYouWantToResetChanges": "Bạn có muốn đặt lại các thay đổi của mình không?",
-      "DoYouWantToUnpublishAndSaveDraft": "Bạn có muốn lưu dưới dạng bản nháp và hủy xuất bản thông báo hiện tại không?"
+      "DoYouWantToResetChanges": "Bạn có muốn đặt lại các thay đổi của mình không?"
     },
     "error": {
       "Error": "lỗi"
@@ -1376,8 +1375,7 @@
       "DeleteForeverDesc": "CẢNH BÁO: các mục đã chọn sẽ bị xóa vĩnh viễn và bạn sẽ không thể khôi phục chúng.",
       "LogDeletion": "Bạn có chắc chắn muốn xóa tất cả các thông báo nhật ký không?",
       "Required": "Yêu cầu",
-      "WillBeAppliedToNewSessions": "Bản cập nhật này sẽ được áp dụng cho các phiên mới.",
-      "WillHideCurrentAnnouncement": "Thông báo hiện đang được xuất bản sẽ bị ẩn khỏi tất cả người dùng. Bạn có thể xuất bản lại bất cứ lúc nào."
+      "WillBeAppliedToNewSessions": "Bản cập nhật này sẽ được áp dụng cho các phiên mới."
     }
   },
   "eduapi": {

@@ -1356,8 +1356,7 @@
       "DoYouWantToDelete": "您确定要删除吗？",
       "DoYouWantToDeleteSomething": "您确定要删除\"{{ 名称 }}}\"吗？",
       "DoYouWantToProceed": "您要继续吗？",
-      "DoYouWantToResetChanges": "您想重置您的更改吗？",
-      "DoYouWantToUnpublishAndSaveDraft": "是否要保存为草稿并取消发布当前公告？"
+      "DoYouWantToResetChanges": "您想重置您的更改吗？"
     },
     "error": {
       "Error": "错误"
@@ -1376,8 +1375,7 @@
       "DeleteForeverDesc": "警告：所选项目将被永久删除，并且您将无法恢复它们。",
       "LogDeletion": "您确定要删除所有日志消息吗？",
       "Required": "需要",
-      "WillBeAppliedToNewSessions": "此更新将应用于新会话。",
-      "WillHideCurrentAnnouncement": "当前已发布的公告将对所有用户隐藏。您可以随时重新发布。"
+      "WillBeAppliedToNewSessions": "此更新将应用于新会话。"
     }
   },
   "eduapi": {

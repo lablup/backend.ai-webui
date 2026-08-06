@@ -1356,8 +1356,7 @@
       "DoYouWantToDelete": "Apakah Anda yakin ingin menghapus?",
       "DoYouWantToDeleteSomething": "Apakah Anda yakin ingin menghapus \"{{ nama }}\"?",
       "DoYouWantToProceed": "Apakah Anda ingin lanjut?",
-      "DoYouWantToResetChanges": "Apakah Anda ingin mengatur ulang perubahan Anda?",
-      "DoYouWantToUnpublishAndSaveDraft": "Apakah Anda ingin menyimpan sebagai draf dan membatalkan penerbitan pengumuman saat ini?"
+      "DoYouWantToResetChanges": "Apakah Anda ingin mengatur ulang perubahan Anda?"
     },
     "error": {
       "Error": "Galat"
@@ -1376,8 +1375,7 @@
       "DeleteForeverDesc": "PERINGATAN: item yang dipilih akan dihapus selamanya dan Anda tidak dapat memulihkannya.",
       "LogDeletion": "Anda yakin ingin menghapus semua pesan log?",
       "Required": "Diperlukan",
-      "WillBeAppliedToNewSessions": "Pembaruan ini akan diterapkan ke sesi baru.",
-      "WillHideCurrentAnnouncement": "Pengumuman yang sedang diterbitkan akan disembunyikan dari semua pengguna. Anda dapat menerbitkannya kembali kapan saja."
+      "WillBeAppliedToNewSessions": "Pembaruan ini akan diterapkan ke sesi baru."
     }
   },
   "eduapi": {
