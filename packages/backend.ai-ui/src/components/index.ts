@@ -174,3 +174,5 @@ export * from './fragments';
 export * from './provider';
 export * from './baiClient';
 export * from './unsafe';
+export { default as BAIFormItem, BAIFormItemVisual } from './BAIFormItem';
+export type { BAIFormItemProps, BAIFormItemVisualProps } from './BAIFormItem';

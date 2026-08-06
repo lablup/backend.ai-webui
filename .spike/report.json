@@ -1,0 +1,2360 @@
+{
+  "files": 977,
+  "formItemProps": {
+    "(...spread)": 41,
+    "name": 411,
+    "label": 378,
+    "style": 113,
+    "rules": 237,
+    "tooltip": 91,
+    "extra": 21,
+    "noStyle": 104,
+    "valuePropName": 30,
+    "dependencies": 53,
+    "getValueFromEvent": 3,
+    "getValueProps": 3,
+    "required": 83,
+    "shouldUpdate": 16,
+    "hidden": 32,
+    "validateTrigger": 1,
+    "className": 2,
+    "hasFeedback": 4,
+    "initialValue": 5,
+    "layout": 3,
+    "validateStatus": 5,
+    "help": 6,
+    "trigger": 1
+  },
+  "formItemPropFiles": {
+    "name": 97,
+    "label": 80,
+    "style": 41,
+    "rules": 79,
+    "tooltip": 24,
+    "extra": 16,
+    "noStyle": 32,
+    "valuePropName": 22,
+    "dependencies": 26,
+    "getValueFromEvent": 2,
+    "getValueProps": 2,
+    "required": 40,
+    "shouldUpdate": 9,
+    "hidden": 14,
+    "validateTrigger": 1,
+    "className": 1,
+    "hasFeedback": 2,
+    "initialValue": 5,
+    "layout": 2,
+    "validateStatus": 4,
+    "help": 5,
+    "trigger": 1
+  },
+  "formProps": {
+    "form": 27,
+    "initialValues": 52,
+    "layout": 66,
+    "onValuesChange": 5,
+    "scrollToFirstError": 2,
+    "ref": 51,
+    "preserve": 31,
+    "requiredMark": 13,
+    "component": 4,
+    "style": 15,
+    "size": 2,
+    "key": 3,
+    "onFinish": 9,
+    "validateTrigger": 5,
+    "onFinishFailed": 2,
+    "className": 3,
+    "labelCol": 4,
+    "(...spread)": 3,
+    "onKeyDown": 1,
+    "disabled": 4,
+    "autoComplete": 1,
+    "wrapperCol": 1,
+    "onClick": 1
+  },
+  "formListProps": {
+    "name": 6,
+    "rules": 2
+  },
+  "formProviderProps": {
+    "onFormChange": 1
+  },
+  "instanceMethods": {
+    "getFieldsValue": 11,
+    "getFieldValue": 166,
+    "resetFields": 18,
+    "setFieldsValue": 44,
+    "validateFields": 98,
+    "getFieldError": 16,
+    "setFields": 11,
+    "setFieldValue": 64,
+    "scrollToField": 1,
+    "submit": 4,
+    "getFieldWarning": 3,
+    "isFieldsTouched": 1,
+    "getFieldsError": 1
+  },
+  "instanceMethodFiles": {
+    "getFieldsValue": [
+      "react/src/components/AdminDeploymentPresetReviewSummary.tsx",
+      "react/src/components/AdminDeploymentPresetSettingPageContent.tsx",
+      "react/src/components/DeploymentAddRevisionModal.tsx",
+      "react/src/components/ManageImageResourceLimitModal.tsx",
+      "react/src/components/RoleScopePermissionEditModal.tsx",
+      "react/src/components/VFolderTable.tsx",
+      "react/src/pages/AdminDeploymentPresetSettingPage.tsx",
+      "react/src/pages/SessionLauncherPage.tsx",
+      "packages/backend.ai-ui/src/components/BAIBulkEditFormItem.stories.tsx"
+    ],
+    "getFieldValue": [
+      "react/src/components/AdminDeploymentPresetSettingPageContent.tsx",
+      "react/src/components/AutoScalingRuleEditorModal.tsx",
+      "react/src/components/Chat/CustomModelForm.tsx",
+      "react/src/components/EnvVarFormList.tsx",
+      "react/src/components/FolderCreateModal.tsx",
+      "react/src/components/FolderCreateModalV2.tsx",
+      "react/src/components/FormItemControl.tsx",
+      "react/src/components/FormItemWithUnlimited.tsx",
+      "react/src/components/ImageEnvironmentSelectFormItems.tsx",
+      "react/src/components/ImportNotebookForm.tsx",
+      "react/src/components/LoginView.tsx",
+      "react/src/components/ManageAppsModal.tsx",
+      "react/src/components/ModelCardDeployModal.tsx",
+      "react/src/components/OverlayNetworkSettingModal.tsx",
+      "react/src/components/PortSelectFormItem.tsx",
+      "react/src/components/RoleFormModal.tsx",
+      "react/src/components/SchedulerSettingModal.tsx",
+      "react/src/components/SessionFormItems/ClusterModeFormItems.tsx",
+      "react/src/components/SessionFormItems/ResourceAllocationFormItems.tsx",
+      "react/src/components/SessionLauncherPreview.tsx",
+      "react/src/components/SessionOwnerSetterCard.tsx",
+      "react/src/components/VFolderDeployModal.tsx",
+      "react/src/components/VFolderMountFormItem.tsx",
+      "react/src/components/VFolderTable.tsx",
+      "react/src/components/VFolderTableFormItem.tsx",
+      "react/src/pages/SessionLauncherPage.tsx",
+      "packages/backend.ai-ui/src/components/BAIBulkEditFormItem.test.tsx",
+      "packages/backend.ai-ui/src/components/BAIBulkEditFormItem.tsx"
+    ],
+    "resetFields": [
+      "react/src/components/AdminDeploymentPresetSettingPageContent.tsx",
+      "react/src/components/DeploymentAddRevisionModal.tsx",
+      "react/src/components/FolderCreateModal.tsx",
+      "react/src/components/FolderCreateModalV2.tsx",
+      "react/src/components/FormItemWithUnlimited.tsx",
+      "react/src/components/ImportHuggingFaceModelForm.tsx",
+      "react/src/components/ImportRepoForm.tsx",
+      "react/src/components/InviteFolderSettingModal.tsx",
+      "react/src/components/LaunchMultipleSessionsModal.tsx",
+      "react/src/components/LoginFormPanel.tsx",
+      "react/src/components/ProjectAdminSettingModal.tsx",
+      "react/src/components/ScanArtifactModelsFromHuggingFaceModal.tsx",
+      "react/src/pages/SessionLauncherPage.tsx",
+      "packages/backend.ai-ui/src/components/BAIDeleteConfirmModal.tsx",
+      "packages/backend.ai-ui/src/components/fragments/BAIHuggingFaceRegistrySettingModal.tsx"
+    ],
+    "setFieldsValue": [
+      "react/src/components/AdminDeploymentPresetSettingPageContent.tsx",
+      "react/src/components/AdminModelCardSettingModal.tsx",
+      "react/src/components/AssignRoleModal.tsx",
+      "react/src/components/AutoScalingRuleEditorModal.tsx",
+      "react/src/components/AutoScalingRuleEditorModalLegacy.tsx",
+      "react/src/components/DeploymentAddRevisionModal.tsx",
+      "react/src/components/ImageEnvironmentSelectFormItems.tsx",
+      "react/src/components/ImportArtifactRevisionToFolderModal.tsx",
+      "react/src/components/LegacyCreatePermissionModal.tsx",
+      "react/src/components/LoginView.tsx",
+      "react/src/components/OverlayNetworkSettingModal.tsx",
+      "react/src/components/RoleFormModal.tsx",
+      "react/src/components/SchedulerSettingModal.tsx",
+      "react/src/components/SessionFormItems/ResourceAllocationFormItems.tsx",
+      "react/src/components/SessionListColums/SessionInfoCell.tsx",
+      "react/src/components/SessionOwnerSetterCard.tsx",
+      "react/src/components/VFolderTable.tsx",
+      "react/src/pages/SessionLauncherPage.tsx"
+    ],
+    "validateFields": [
+      "react/src/components/AdminDeploymentPresetSettingPageContent.tsx",
+      "react/src/components/AdminModelCardSettingModal.tsx",
+      "react/src/components/AgentEditorModal.tsx",
+      "react/src/components/AgentSettingModal.tsx",
+      "react/src/components/AssignRoleModal.tsx",
+      "react/src/components/AutoScalingRuleEditorModal.tsx",
+      "react/src/components/AutoScalingRuleEditorModalLegacy.tsx",
+      "react/src/components/ChangePasswordView.tsx",
+      "react/src/components/ComputeSessionNodeItems/AppLauncherModal.tsx",
+      "react/src/components/ComputeSessionNodeItems/ContainerCommitModal.tsx",
+      "react/src/components/ComputeSessionNodeItems/TensorboardPathModal.tsx",
+      "react/src/components/ContainerRegistryEditorModal.tsx",
+      "react/src/components/DeploymentAccessTokensCard.tsx",
+      "react/src/components/DeploymentAddRevisionModal.tsx",
+      "react/src/components/DeploymentSettingModal.tsx",
+      "react/src/components/EmailVerificationView.tsx",
+      "react/src/components/EnvVarFormList.tsx",
+      "react/src/components/FairShareItems/FairShareWeightSettingModal.tsx",
+      "react/src/components/FairShareItems/ResourceGroupFairShareSettingModal.tsx",
+      "react/src/components/FolderCreateModal.tsx",
+      "react/src/components/FolderCreateModalV2.tsx",
+      "react/src/components/ImportArtifactRevisionToFolderModal.tsx",
+      "react/src/components/ImportFromHuggingFaceModal.tsx",
+      "react/src/components/ImportHuggingFaceModelForm.tsx",
+      "react/src/components/ImportNotebookForm.tsx",
+      "react/src/components/ImportRepoForm.tsx",
+      "react/src/components/InviteFolderSettingModal.tsx",
+      "react/src/components/KeypairResourcePolicySettingModal.tsx",
+      "react/src/components/KeypairSettingModal.tsx",
+      "react/src/components/LaunchMultipleSessionsModal.tsx",
+      "react/src/components/LegacyCreatePermissionModal.tsx",
+      "react/src/components/LoginFormPanel.tsx",
+      "react/src/components/ManageAppsModal.tsx",
+      "react/src/components/ManageImageResourceLimitModal.tsx",
+      "react/src/components/OverlayNetworkSettingModal.tsx",
+      "react/src/components/ProjectAdminSettingModal.tsx",
+      "react/src/components/ProjectResourcePolicySettingModal.tsx",
+      "react/src/components/PrometheusQueryPresetEditorModal.tsx",
+      "react/src/components/PurgeUsersModal.tsx",
+      "react/src/components/QuotaSettingModal.tsx",
+      "react/src/components/ResourceGroupSettingModal.tsx",
+      "react/src/components/ResourcePresetSettingModal.tsx",
+      "react/src/components/RoleFormModal.tsx",
+      "react/src/components/SSHKeypairManualFormModal.tsx",
+      "react/src/components/ScanArtifactModelsFromHuggingFaceModal.tsx",
+      "react/src/components/SchedulerSettingModal.tsx",
+      "react/src/components/SessionFormItems/ClusterModeFormItems.tsx",
+      "react/src/components/SessionFormItems/ResourceAllocationFormItems.tsx",
+      "react/src/components/SessionListColums/SessionInfoCell.tsx",
+      "react/src/components/SessionOwnerSetterCard.tsx",
+      "react/src/components/SignoutModal.tsx",
+      "react/src/components/SignupModal.tsx",
+      "react/src/components/TOTPActivateModal.tsx",
+      "react/src/components/TableColumnsSettingModal.tsx",
+      "react/src/components/UpdateResourceGroupsModal.tsx",
+      "react/src/components/UpdateUsersModal.tsx",
+      "react/src/components/UserProfileSettingModal.tsx",
+      "react/src/components/UserResourcePolicySettingModal.tsx",
+      "react/src/components/UserResourcePolicyV2SettingModal.tsx",
+      "react/src/components/UserSettingModal.tsx",
+      "react/src/components/VFolderTable.tsx",
+      "react/src/components/VFolderTableFormItem.tsx",
+      "react/src/pages/AdminDeploymentPresetSettingPage.tsx",
+      "react/src/pages/SessionLauncherPage.tsx",
+      "packages/backend.ai-ui/src/components/Table/BAITableSettingModal.tsx",
+      "packages/backend.ai-ui/src/components/baiClient/FileExplorer/CreateDirectoryModal.tsx",
+      "packages/backend.ai-ui/src/components/baiClient/FileExplorer/CreateFileModal.tsx",
+      "packages/backend.ai-ui/src/components/fragments/BAIHuggingFaceRegistrySettingModal.tsx",
+      "packages/backend.ai-ui/src/components/fragments/BAIProjectBulkEditModal.tsx",
+      "packages/backend.ai-ui/src/components/fragments/BAIProjectSettingModal.tsx",
+      "packages/backend.ai-ui/src/components/fragments/BAIRuntimeVariantPresetSettingModal.tsx",
+      "packages/backend.ai-ui/src/components/fragments/BAIVFolderMountConfigInput.stories.tsx"
+    ],
+    "getFieldError": [
+      "react/src/components/AdminDeploymentPresetSettingPageContent.tsx",
+      "react/src/components/SessionLauncherPreview.tsx",
+      "react/src/components/SessionOwnerSetterCard.tsx",
+      "react/src/pages/SessionLauncherPage.tsx"
+    ],
+    "setFields": [
+      "react/src/components/AssignRoleModal.tsx",
+      "react/src/components/ChangePasswordView.tsx",
+      "react/src/components/DeploymentAddRevisionModal.tsx",
+      "react/src/components/RoleFormModal.tsx",
+      "react/src/components/RoleScopePermissionEditModal.tsx",
+      "packages/backend.ai-ui/src/components/BAICheckbox.stories.tsx"
+    ],
+    "setFieldValue": [
+      "react/src/components/ContainerRegistryEditorModal.tsx",
+      "react/src/components/DeploymentAccessTokensCard.tsx",
+      "react/src/components/DeploymentAddRevisionModal.tsx",
+      "react/src/components/FolderCreateModal.tsx",
+      "react/src/components/FolderCreateModalV2.tsx",
+      "react/src/components/FormItemControl.tsx",
+      "react/src/components/FormItemWithUnlimited.tsx",
+      "react/src/components/HiddenFormItem.tsx",
+      "react/src/components/ImageEnvironmentSelectFormItems.tsx",
+      "react/src/components/ImportHuggingFaceModelForm.tsx",
+      "react/src/components/LoginFormPanel.tsx",
+      "react/src/components/LoginView.tsx",
+      "react/src/components/RuntimeParameterFormSection.tsx",
+      "react/src/components/SessionFormItems/ResourceAllocationFormItems.tsx",
+      "react/src/components/SessionLauncherFormIncompatibleValueChecker.tsx",
+      "react/src/components/UpdateUsersModal.tsx",
+      "react/src/components/UserProfileSettingModal.tsx",
+      "react/src/components/UserSettingModal.tsx",
+      "react/src/components/VFolderMountFormItem.tsx",
+      "react/src/components/VFolderTableFormItem.tsx",
+      "react/src/pages/SessionLauncherPage.tsx",
+      "packages/backend.ai-ui/src/components/BAIBulkEditFormItem.tsx",
+      "packages/backend.ai-ui/src/components/Table/BAITableSettingModal.tsx"
+    ],
+    "scrollToField": [
+      "react/src/components/DeploymentAddRevisionModal.tsx"
+    ],
+    "submit": [
+      "react/src/components/DeploymentAddRevisionModal.tsx",
+      "react/src/components/ImportNotebookForm.tsx",
+      "react/src/helper/loginSessionAuth.ts"
+    ],
+    "getFieldWarning": [
+      "react/src/components/SessionLauncherPreview.tsx"
+    ],
+    "isFieldsTouched": [
+      "react/src/components/UserProfileSettingModal.tsx"
+    ],
+    "getFieldsError": [
+      "react/src/pages/SessionLauncherPage.tsx"
+    ]
+  },
+  "useWatch": [
+    {
+      "file": "react/src/components/AdminDeploymentPresetResourceFields.tsx",
+      "line": 42,
+      "args": [
+        "[ 'resourceSlots', listItemName, 'resourceType', ]"
+      ]
+    },
+    {
+      "file": "react/src/components/AdminDeploymentPresetSettingPageContent.tsx",
+      "line": 405,
+      "args": [
+        "['modelDefinition', 'enabled']",
+        "form"
+      ]
+    },
+    {
+      "file": "react/src/components/AgentEditorModal.tsx",
+      "line": 129,
+      "args": [
+        "'connectionType'",
+        "form"
+      ]
+    },
+    {
+      "file": "react/src/components/DeploymentAccessTokensCard.tsx",
+      "line": 493,
+      "args": [
+        "'expiryOption'",
+        "form"
+      ]
+    },
+    {
+      "file": "react/src/components/ImageEnvironmentSelectFormItems.tsx",
+      "line": 78,
+      "args": [
+        "'environments'",
+        "{ form, preserve: true }"
+      ]
+    },
+    {
+      "file": "react/src/components/LegacyCreatePermissionModal.tsx",
+      "line": 94,
+      "args": [
+        "'scopeType'",
+        "form"
+      ]
+    },
+    {
+      "file": "react/src/components/LegacyCreatePermissionModal.tsx",
+      "line": 95,
+      "args": [
+        "'scopeId'",
+        "form"
+      ]
+    },
+    {
+      "file": "react/src/components/LegacyCreatePermissionModal.tsx",
+      "line": 96,
+      "args": [
+        "'entityType'",
+        "form"
+      ]
+    },
+    {
+      "file": "react/src/components/LegacyCreatePermissionModal.tsx",
+      "line": 171,
+      "args": [
+        "'roleScopeKey'",
+        "form"
+      ]
+    },
+    {
+      "file": "react/src/components/LoginView.tsx",
+      "line": 166,
+      "args": [
+        "'user_id'",
+        "form"
+      ]
+    },
+    {
+      "file": "react/src/components/LoginView.tsx",
+      "line": 167,
+      "args": [
+        "'password'",
+        "form"
+      ]
+    },
+    {
+      "file": "react/src/components/ModelCardDeployModal.tsx",
+      "line": 141,
+      "args": [
+        "'resourceGroup'",
+        "form"
+      ]
+    },
+    {
+      "file": "react/src/components/PrometheusQueryPresetEditorModal.tsx",
+      "line": 111,
+      "args": [
+        "'queryTemplate'",
+        "form"
+      ]
+    },
+    {
+      "file": "react/src/components/RoleFormModal.tsx",
+      "line": 229,
+      "args": [
+        "['scopes', name, 'scopeType']",
+        "form"
+      ]
+    },
+    {
+      "file": "react/src/components/SessionFormItems/ResourceAllocationFormItems.tsx",
+      "line": 183,
+      "args": [
+        "['resourceGroup']",
+        "{ form, preserve: true, }"
+      ]
+    },
+    {
+      "file": "react/src/components/SessionFormItems/ResourceAllocationFormItems.tsx",
+      "line": 214,
+      "args": [
+        "['resource']"
+      ]
+    },
+    {
+      "file": "react/src/components/SessionFormItems/ResourceAllocationFormItems.tsx",
+      "line": 215,
+      "args": [
+        "['environments', 'image']",
+        "{ form, preserve: true, }"
+      ]
+    },
+    {
+      "file": "react/src/components/SessionFormItems/ResourceAllocationFormItems.tsx",
+      "line": 219,
+      "args": [
+        "['allocationPreset']",
+        "{ form, preserve: true, }"
+      ]
+    },
+    {
+      "file": "react/src/components/SessionFormItems/ResourceAllocationFormItems.tsx",
+      "line": 223,
+      "args": [
+        "['environments', 'manual']",
+        "{ form, preserve: true, }"
+      ]
+    },
+    {
+      "file": "react/src/components/SessionLauncherFormIncompatibleValueChecker.tsx",
+      "line": 14,
+      "args": [
+        "'mounts'",
+        "form"
+      ]
+    },
+    {
+      "file": "react/src/components/SessionLauncherPreview.tsx",
+      "line": 49,
+      "args": [
+        "'sessionType'",
+        "{ form, preserve: true }"
+      ]
+    },
+    {
+      "file": "react/src/components/SessionOwnerSetterCard.tsx",
+      "line": 60,
+      "args": [
+        "['owner', 'enabled']",
+        "form"
+      ]
+    },
+    {
+      "file": "react/src/components/SessionOwnerSetterCard.tsx",
+      "line": 285,
+      "args": [
+        "['owner', 'enabled']",
+        "form"
+      ]
+    },
+    {
+      "file": "react/src/components/VFolderDeployModal.tsx",
+      "line": 150,
+      "args": [
+        "'resourceGroup'",
+        "form"
+      ]
+    },
+    {
+      "file": "react/src/pages/SessionLauncherPage.tsx",
+      "line": 341,
+      "args": [
+        "'sessionType'",
+        "{ form, preserve: true }"
+      ]
+    },
+    {
+      "file": "react/src/pages/SessionLauncherPage.tsx",
+      "line": 345,
+      "args": [
+        "'resource'",
+        "{ form, preserve: true, }"
+      ]
+    },
+    {
+      "file": "react/src/pages/SessionLauncherPage.tsx",
+      "line": 349,
+      "args": [
+        "'cluster_size'",
+        "{ form, preserve: true, }"
+      ]
+    },
+    {
+      "file": "react/src/pages/SessionLauncherPage.tsx",
+      "line": 353,
+      "args": [
+        "'cluster_mode'",
+        "{ form, preserve: true, }"
+      ]
+    },
+    {
+      "file": "react/src/pages/SessionLauncherPage.tsx",
+      "line": 357,
+      "args": [
+        "'resourceGroup'",
+        "{ form, preserve: true, }"
+      ]
+    },
+    {
+      "file": "packages/backend.ai-ui/src/components/BAIDeleteConfirmModal.tsx",
+      "line": 101,
+      "args": [
+        "'confirmText'",
+        "form"
+      ]
+    }
+  ],
+  "useFormInstance": [
+    {
+      "file": "react/src/components/EnvVarFormList.tsx",
+      "line": 41
+    },
+    {
+      "file": "react/src/components/FormItemControl.tsx",
+      "line": 16
+    },
+    {
+      "file": "react/src/components/FormItemWithUnlimited.tsx",
+      "line": 31
+    },
+    {
+      "file": "react/src/components/HiddenFormItem.tsx",
+      "line": 12
+    },
+    {
+      "file": "react/src/components/ImageEnvironmentSelectFormItems.tsx",
+      "line": 77
+    },
+    {
+      "file": "react/src/components/PortSelectFormItem.tsx",
+      "line": 26
+    },
+    {
+      "file": "react/src/components/RoleFormModal.tsx",
+      "line": 228
+    },
+    {
+      "file": "react/src/components/RuntimeParameterFormSection.tsx",
+      "line": 112
+    },
+    {
+      "file": "react/src/components/SessionFormItems/ClusterModeFormItems.tsx",
+      "line": 34
+    },
+    {
+      "file": "react/src/components/SessionFormItems/ResourceAllocationFormItems.tsx",
+      "line": 165
+    },
+    {
+      "file": "react/src/components/SessionLauncherPreview.tsx",
+      "line": 46
+    },
+    {
+      "file": "react/src/components/SessionOwnerSetterCard.tsx",
+      "line": 58
+    },
+    {
+      "file": "react/src/components/SessionOwnerSetterCard.tsx",
+      "line": 284
+    },
+    {
+      "file": "react/src/components/VFolderMountFormItem.tsx",
+      "line": 71
+    },
+    {
+      "file": "react/src/components/VFolderTableFormItem.tsx",
+      "line": 39
+    },
+    {
+      "file": "packages/backend.ai-ui/src/components/BAIBulkEditFormItem.tsx",
+      "line": 95
+    }
+  ],
+  "useForm": [
+    {
+      "file": "react/src/components/AgentEditorModal.tsx",
+      "line": 80
+    },
+    {
+      "file": "react/src/components/ChangePasswordView.tsx",
+      "line": 44
+    },
+    {
+      "file": "react/src/components/ComputeSessionNodeItems/TensorboardPathModal.tsx",
+      "line": 41
+    },
+    {
+      "file": "react/src/components/DeploymentAccessTokensCard.tsx",
+      "line": 488
+    },
+    {
+      "file": "react/src/components/DeploymentAddRevisionModal.tsx",
+      "line": 363
+    },
+    {
+      "file": "react/src/components/DeploymentAddRevisionModal.tsx",
+      "line": 364
+    },
+    {
+      "file": "react/src/components/DeploymentSettingModal.tsx",
+      "line": 58
+    },
+    {
+      "file": "react/src/components/EmailVerificationView.tsx",
+      "line": 30
+    },
+    {
+      "file": "react/src/components/LegacyCreatePermissionModal.tsx",
+      "line": 92
+    },
+    {
+      "file": "react/src/components/LoginFormPanel.tsx",
+      "line": 567
+    },
+    {
+      "file": "react/src/components/LoginView.tsx",
+      "line": 149
+    },
+    {
+      "file": "react/src/components/ModelCardDeployModal.tsx",
+      "line": 140
+    },
+    {
+      "file": "react/src/components/PrometheusQueryPresetEditorModal.tsx",
+      "line": 110
+    },
+    {
+      "file": "react/src/components/RoleFormModal.tsx",
+      "line": 319
+    },
+    {
+      "file": "react/src/components/STokenLoginBoundary.tsx",
+      "line": 688
+    },
+    {
+      "file": "react/src/components/SignupModal.tsx",
+      "line": 45
+    },
+    {
+      "file": "react/src/components/UpdateResourceGroupsModal.tsx",
+      "line": 39
+    },
+    {
+      "file": "react/src/components/VFolderDeployModal.tsx",
+      "line": 149
+    },
+    {
+      "file": "react/src/components/VFolderTable.tsx",
+      "line": 157
+    },
+    {
+      "file": "react/src/pages/AdminDeploymentPresetSettingPage.tsx",
+      "line": 126
+    },
+    {
+      "file": "react/src/pages/SessionLauncherPage.tsx",
+      "line": 296
+    },
+    {
+      "file": "packages/backend.ai-ui/src/components/BAIBulkEditFormItem.stories.tsx",
+      "line": 349
+    },
+    {
+      "file": "packages/backend.ai-ui/src/components/BAIBulkEditFormItem.test.tsx",
+      "line": 35
+    },
+    {
+      "file": "packages/backend.ai-ui/src/components/BAICheckbox.stories.tsx",
+      "line": 31
+    },
+    {
+      "file": "packages/backend.ai-ui/src/components/BAIDeleteConfirmModal.tsx",
+      "line": 100
+    },
+    {
+      "file": "packages/backend.ai-ui/src/components/fragments/BAIProjectBulkEditModal.tsx",
+      "line": 24
+    },
+    {
+      "file": "packages/backend.ai-ui/src/components/fragments/BAIVFolderMountConfigInput.stories.tsx",
+      "line": 327
+    }
+  ],
+  "formItemNameKinds": {
+    "string": 334,
+    "arrayFlat": 0,
+    "arrayNested": 68,
+    "dynamic": 0,
+    "expr": 9,
+    "absent": 138
+  },
+  "nestedNameSamples": [
+    {
+      "file": "react/src/components/AdminDeploymentPresetModelConfigItem.tsx",
+      "line": 35,
+      "text": "[listItemName, 'name']",
+      "static": false
+    },
+    {
+      "file": "react/src/components/AdminDeploymentPresetModelConfigItem.tsx",
+      "line": 48,
+      "text": "[listItemName, 'modelPath']",
+      "static": false
+    },
+    {
+      "file": "react/src/components/AdminDeploymentPresetModelConfigItem.tsx",
+      "line": 80,
+      "text": "[listItemName, 'service', 'port']",
+      "static": false
+    },
+    {
+      "file": "react/src/components/AdminDeploymentPresetModelConfigItem.tsx",
+      "line": 95,
+      "text": "[listItemName, 'service', 'startCommand']",
+      "static": false
+    },
+    {
+      "file": "react/src/components/AdminDeploymentPresetModelConfigItem.tsx",
+      "line": 124,
+      "text": "[name, 'action']",
+      "static": false
+    },
+    {
+      "file": "react/src/components/AdminDeploymentPresetModelConfigItem.tsx",
+      "line": 136,
+      "text": "[name, 'args']",
+      "static": false
+    },
+    {
+      "file": "react/src/components/AdminDeploymentPresetModelConfigItem.tsx",
+      "line": 176,
+      "text": "[listItemName, 'service', 'enableHealthCheck']",
+      "static": false
+    },
+    {
+      "file": "react/src/components/AdminDeploymentPresetModelConfigItem.tsx",
+      "line": 208,
+      "text": "[listItemName, 'service', 'healthCheck', 'path']",
+      "static": false
+    },
+    {
+      "file": "react/src/components/AdminDeploymentPresetModelConfigItem.tsx",
+      "line": 220,
+      "text": "[ listItemName, 'service', 'healthCheck', 'interval', ]",
+      "static": false
+    },
+    {
+      "file": "react/src/components/AdminDeploymentPresetModelConfigItem.tsx",
+      "line": 242,
+      "text": "[ listItemName, 'service', 'healthCheck', 'maxRetries', ]",
+      "static": false
+    },
+    {
+      "file": "react/src/components/AdminDeploymentPresetModelConfigItem.tsx",
+      "line": 263,
+      "text": "[ listItemName, 'service', 'healthCheck', 'maxWaitTime', ]",
+      "static": false
+    },
+    {
+      "file": "react/src/components/AdminDeploymentPresetModelConfigItem.tsx",
+      "line": 287,
+      "text": "[ listItemName, 'service', 'healthCheck', 'expectedStatusCode', ]",
+      "static": false
+    },
+    {
+      "file": "react/src/components/AdminDeploymentPresetModelConfigItem.tsx",
+      "line": 311,
+      "text": "[ listItemName, 'service', 'healthCheck', 'initialDelay', ]",
+      "static": false
+    },
+    {
+      "file": "react/src/components/AdminDeploymentPresetModelConfigItem.tsx",
+      "line": 352,
+      "text": "[listItemName, 'metadata', 'title']",
+      "static": false
+    },
+    {
+      "file": "react/src/components/AdminDeploymentPresetModelConfigItem.tsx",
+      "line": 360,
+      "text": "[listItemName, 'metadata', 'author']",
+      "static": false
+    },
+    {
+      "file": "react/src/components/AdminDeploymentPresetModelConfigItem.tsx",
+      "line": 370,
+      "text": "[listItemName, 'metadata', 'version']",
+      "static": false
+    },
+    {
+      "file": "react/src/components/AdminDeploymentPresetModelConfigItem.tsx",
+      "line": 378,
+      "text": "[listItemName, 'metadata', 'license']",
+      "static": false
+    },
+    {
+      "file": "react/src/components/AdminDeploymentPresetModelConfigItem.tsx",
+      "line": 387,
+      "text": "[listItemName, 'metadata', 'description']",
+      "static": false
+    },
+    {
+      "file": "react/src/components/AdminDeploymentPresetModelConfigItem.tsx",
+      "line": 395,
+      "text": "[listItemName, 'metadata', 'task']",
+      "static": false
+    },
+    {
+      "file": "react/src/components/AdminDeploymentPresetModelConfigItem.tsx",
+      "line": 403,
+      "text": "[listItemName, 'metadata', 'category']",
+      "static": false
+    },
+    {
+      "file": "react/src/components/AdminDeploymentPresetModelConfigItem.tsx",
+      "line": 411,
+      "text": "[listItemName, 'metadata', 'architecture']",
+      "static": false
+    },
+    {
+      "file": "react/src/components/AdminDeploymentPresetModelConfigItem.tsx",
+      "line": 421,
+      "text": "[listItemName, 'metadata', 'framework']",
+      "static": false
+    },
+    {
+      "file": "react/src/components/AdminDeploymentPresetModelConfigItem.tsx",
+      "line": 437,
+      "text": "[listItemName, 'metadata', 'label']",
+      "static": false
+    },
+    {
+      "file": "react/src/components/AdminDeploymentPresetResourceFields.tsx",
+      "line": 66,
+      "text": "[listItemName, 'resourceType']",
+      "static": false
+    },
+    {
+      "file": "react/src/components/AdminDeploymentPresetResourceFields.tsx",
+      "line": 82,
+      "text": "[listItemName, 'quantity']",
+      "static": false
+    },
+    {
+      "file": "react/src/components/AdminDeploymentPresetSettingPageContent.tsx",
+      "line": 861,
+      "text": "[name, 'name']",
+      "static": false
+    },
+    {
+      "file": "react/src/components/AdminDeploymentPresetSettingPageContent.tsx",
+      "line": 879,
+      "text": "[name, 'value']",
+      "static": false
+    },
+    {
+      "file": "react/src/components/AdminDeploymentPresetSettingPageContent.tsx",
+      "line": 1017,
+      "text": "['modelDefinition', 'enabled']",
+      "static": true
+    },
+    {
+      "file": "react/src/components/EnvVarFormList.tsx",
+      "line": 136,
+      "text": "[name, 'variable']",
+      "static": false
+    },
+    {
+      "file": "react/src/components/EnvVarFormList.tsx",
+      "line": 212,
+      "text": "[name, 'value']",
+      "static": false
+    },
+    {
+      "file": "react/src/components/FairShareItems/ResourceGroupFairShareSettingModal.tsx",
+      "line": 321,
+      "text": "['resourceWeights', entry?.resourceType]",
+      "static": false
+    },
+    {
+      "file": "react/src/components/ImageEnvironmentSelectFormItems.tsx",
+      "line": 394,
+      "text": "['environments', 'environment']",
+      "static": true
+    },
+    {
+      "file": "react/src/components/ImageEnvironmentSelectFormItems.tsx",
+      "line": 619,
+      "text": "['environments', 'version']",
+      "static": true
+    },
+    {
+      "file": "react/src/components/ImageEnvironmentSelectFormItems.tsx",
+      "line": 853,
+      "text": "['environments', 'manual']",
+      "static": true
+    },
+    {
+      "file": "react/src/components/ImageEnvironmentSelectFormItems.tsx",
+      "line": 878,
+      "text": "['environments', 'image']",
+      "static": true
+    },
+    {
+      "file": "react/src/components/ManageAppsModal.tsx",
+      "line": 207,
+      "text": "[field.name, 'app']",
+      "static": false
+    },
+    {
+      "file": "react/src/components/ManageAppsModal.tsx",
+      "line": 220,
+      "text": "[field.name, 'protocol']",
+      "static": false
+    },
+    {
+      "file": "react/src/components/ManageAppsModal.tsx",
+      "line": 236,
+      "text": "[field.name, 'port']",
+      "static": false
+    },
+    {
+      "file": "react/src/components/ResourcePresetSettingModal.tsx",
+      "line": 332,
+      "text": "['resource_slots', resourceSlotKey]",
+      "static": false
+    },
+    {
+      "file": "react/src/components/RoleFormModal.tsx",
+      "line": 235,
+      "text": "[name, 'scopeType']",
+      "static": false
+    },
+    {
+      "file": "react/src/components/RoleFormModal.tsx",
+      "line": 262,
+      "text": "[name, 'scopeId']",
+      "static": false
+    },
+    {
+      "file": "react/src/components/RuntimeParameterFormSection.tsx",
+      "line": 366,
+      "text": "[RUNTIME_PARAMS_NAMESPACE, param.key]",
+      "static": false
+    },
+    {
+      "file": "react/src/components/RuntimeParameterFormSection.tsx",
+      "line": 401,
+      "text": "[RUNTIME_PARAMS_NAMESPACE, param.key]",
+      "static": false
+    },
+    {
+      "file": "react/src/components/RuntimeParameterFormSection.tsx",
+      "line": 427,
+      "text": "[RUNTIME_PARAMS_NAMESPACE, param.key]",
+      "static": false
+    },
+    {
+      "file": "react/src/components/RuntimeParameterFormSection.tsx",
+      "line": 454,
+      "text": "[RUNTIME_PARAMS_NAMESPACE, param.key]",
+      "static": false
+    },
+    {
+      "file": "react/src/components/RuntimeParameterFormSection.tsx",
+      "line": 476,
+      "text": "[RUNTIME_PARAMS_NAMESPACE, param.key]",
+      "static": false
+    },
+    {
+      "file": "react/src/components/SessionFormItems/ResourceAllocationFormItems.tsx",
+      "line": 688,
+      "text": "['resource', 'cpu']",
+      "static": true
+    },
+    {
+      "file": "react/src/components/SessionFormItems/ResourceAllocationFormItems.tsx",
+      "line": 819,
+      "text": "['resource', 'mem']",
+      "static": true
+    },
+    {
+      "file": "react/src/components/SessionFormItems/ResourceAllocationFormItems.tsx",
+      "line": 1064,
+      "text": "['resource', 'accelerator']",
+      "static": true
+    },
+    {
+      "file": "react/src/components/SessionFormItems/ResourceAllocationFormItems.tsx",
+      "line": 1305,
+      "text": "['resource', 'acceleratorType']",
+      "static": true
+    },
+    {
+      "file": "react/src/components/SessionFormItems/SharedMemoryFormItems.tsx",
+      "line": 135,
+      "text": "['resource', 'shmem']",
+      "static": true
+    },
+    {
+      "file": "react/src/components/SessionOwnerSetterCard.tsx",
+      "line": 103,
+      "text": "['owner', 'enabled']",
+      "static": true
+    },
+    {
+      "file": "react/src/components/SessionOwnerSetterCard.tsx",
+      "line": 130,
+      "text": "['owner', 'email']",
+      "static": true
+    },
+    {
+      "file": "react/src/components/SessionOwnerSetterCard.tsx",
+      "line": 180,
+      "text": "['owner', 'accesskey']",
+      "static": true
+    },
+    {
+      "file": "react/src/components/SessionOwnerSetterCard.tsx",
+      "line": 203,
+      "text": "['owner', 'project']",
+      "static": true
+    },
+    {
+      "file": "react/src/components/SessionOwnerSetterCard.tsx",
+      "line": 242,
+      "text": "['owner', 'resourceGroup']",
+      "static": true
+    },
+    {
+      "file": "react/src/components/VFolderMountFormItem.tsx",
+      "line": 248,
+      "text": "['mount_id_map', localId]",
+      "static": false
+    },
+    {
+      "file": "react/src/pages/SessionLauncherPage.tsx",
+      "line": 627,
+      "text": "['batch', 'command']",
+      "static": true
+    },
+    {
+      "file": "react/src/pages/SessionLauncherPage.tsx",
+      "line": 684,
+      "text": "['batch', 'enabled']",
+      "static": true
+    },
+    {
+      "file": "react/src/pages/SessionLauncherPage.tsx",
+      "line": 739,
+      "text": "['batch', 'scheduleDate']",
+      "static": true
+    },
+    {
+      "file": "react/src/pages/SessionLauncherPage.tsx",
+      "line": 840,
+      "text": "['batch', 'timeoutEnabled']",
+      "static": true
+    },
+    {
+      "file": "react/src/pages/SessionLauncherPage.tsx",
+      "line": 874,
+      "text": "['batch', 'timeout']",
+      "static": true
+    },
+    {
+      "file": "react/src/pages/SessionLauncherPage.tsx",
+      "line": 909,
+      "text": "['batch', 'timeoutUnit']",
+      "static": true
+    },
+    {
+      "file": "react/src/pages/SessionLauncherPage.tsx",
+      "line": 994,
+      "text": "['inference', 'vFolderName']",
+      "static": true
+    },
+    {
+      "file": "react/src/pages/SessionLauncherPage.tsx",
+      "line": 1064,
+      "text": "['hpcOptimization', 'autoEnabled']",
+      "static": true
+    },
+    {
+      "file": "react/src/pages/SessionLauncherPage.tsx",
+      "line": 1120,
+      "text": "['hpcOptimization', 'OMP_NUM_THREADS']",
+      "static": true
+    },
+    {
+      "file": "react/src/pages/SessionLauncherPage.tsx",
+      "line": 1146,
+      "text": "['hpcOptimization', 'OPENBLAS_NUM_THREADS']",
+      "static": true
+    },
+    {
+      "file": "packages/backend.ai-ui/src/components/fragments/BAIProjectSettingModal.tsx",
+      "line": 481,
+      "text": "['total_resource_slots', resourceSlotKey]",
+      "static": false
+    }
+  ],
+  "rulesDetail": {
+    "total": 237,
+    "withValidator": 41,
+    "withAsyncValidator": 16,
+    "declarativeOnly": 196,
+    "samplesValidator": [
+      {
+        "file": "react/src/components/AdminDeploymentPresetModelConfigItem.tsx",
+        "line": 136,
+        "snippet": "[ { required: true, message: '' }, { validator: async (_, v) => { if (!v) return; try { JSON.parse(v); } catch { return Promise.reject(''); } }, }, ]",
+        "async": true
+      },
+      {
+        "file": "react/src/components/AgentEditorModal.tsx",
+        "line": 335,
+        "snippet": "[ { required: true, message: t('aiAgent.EndpointUrlRequired'), }, { validator: (_, value) => { if (!value) return Promise.resolve(); try { new URL(value); return Promise.resolve(); } catch { return Promise.reject(new Err",
+        "async": false
+      },
+      {
+        "file": "react/src/components/AutoScalingRuleEditorModal.tsx",
+        "line": 564,
+        "snippet": "[ { required: true }, { type: 'number', min: 1, max: SIGNED_32BIT_MAX_INT, }, { validator: (_, value) => { if (value % 1 !== 0) { return Promise.reject( new Error(t('error.OnlyPositiveIntegersAreAllowed')), ); } return P",
+        "async": false
+      },
+      {
+        "file": "react/src/components/AutoScalingRuleEditorModal.tsx",
+        "line": 604,
+        "snippet": "[ { required: true }, { type: 'number', min: 1, }, { validator: (_, value) => { if (value % 1 !== 0) { return Promise.reject( new Error(t('error.OnlyPositiveIntegersAreAllowed')), ); } return Promise.resolve(); }, }, ]",
+        "async": false
+      },
+      {
+        "file": "react/src/components/AutoScalingRuleEditorModal.tsx",
+        "line": 639,
+        "snippet": "[ { min: 0, max: SIGNED_32BIT_MAX_INT, type: 'number', }, { validator: (_, value) => { if (value != null && value % 1 !== 0) { return Promise.reject( new Error(t('error.OnlyPositiveIntegersAreAllowed')), ); } return Prom",
+        "async": false
+      },
+      {
+        "file": "react/src/components/AutoScalingRuleEditorModal.tsx",
+        "line": 669,
+        "snippet": "[ { min: 0, max: SIGNED_32BIT_MAX_INT, type: 'number', }, { validator: (_, value) => { if (value != null && value % 1 !== 0) { return Promise.reject( new Error(t('error.OnlyPositiveIntegersAreAllowed')), ); } return Prom",
+        "async": false
+      },
+      {
+        "file": "react/src/components/AutoScalingRuleEditorModalLegacy.tsx",
+        "line": 406,
+        "snippet": "[ { required: true }, { type: 'number', min: 1, max: SIGNED_32BIT_MAX_INT, }, { validator: (_, value) => { if (value % 1 !== 0) { return Promise.reject( new Error(t('error.OnlyPositiveIntegersAreAllowed')), ); } return P",
+        "async": false
+      },
+      {
+        "file": "react/src/components/AutoScalingRuleEditorModalLegacy.tsx",
+        "line": 433,
+        "snippet": "[ { required: true, }, { min: 0, max: SIGNED_32BIT_MAX_INT, type: 'number', }, { validator: (_, value) => { if (value % 1 !== 0) { return Promise.reject( new Error(t('error.OnlyPositiveIntegersAreAllowed')), ); } return ",
+        "async": false
+      },
+      {
+        "file": "react/src/components/AutoScalingRuleEditorModalLegacy.tsx",
+        "line": 465,
+        "snippet": "[ { required: true, }, { min: 0, max: SIGNED_32BIT_MAX_INT, type: 'number', }, { validator: (_, value) => { if (value % 1 !== 0) { return Promise.reject( new Error(t('error.OnlyPositiveIntegersAreAllowed')), ); } return ",
+        "async": false
+      },
+      {
+        "file": "react/src/components/AutoScalingRuleEditorModalLegacy.tsx",
+        "line": 499,
+        "snippet": "[ { required: true, }, { min: 0, type: 'number', }, { validator: (_, value) => { if (value % 1 !== 0) { return Promise.reject( new Error(t('error.OnlyPositiveIntegersAreAllowed')), ); } return Promise.resolve(); }, }, ]",
+        "async": false
+      },
+      {
+        "file": "react/src/components/ContainerRegistryEditorModal.tsx",
+        "line": 304,
+        "snippet": "[ { required: true, }, { validator: (_, value) => { if (value) { if ( !value.startsWith('http://') && !value.startsWith('https://') ) return Promise.reject(t('registry.DescURLStartString')); try { new URL(value); } catch",
+        "async": false
+      },
+      {
+        "file": "react/src/components/ContainerRegistryEditorModal.tsx",
+        "line": 522,
+        "snippet": "[ { validator: (_, value) => { if (value) { try { JSON.parse(value); } catch { return Promise.reject( t('registry.DescExtraJsonFormat'), ); } } return Promise.resolve(); }, }, ]",
+        "async": false
+      },
+      {
+        "file": "react/src/components/DeploymentAddRevisionModal.tsx",
+        "line": 1670,
+        "snippet": "[ { required: true }, { warningOnly: true, validator: async (_rule, value: string) => { const variantName = runtimeVariantNameMap[value]; if (variantName && variantName !== 'custom') { return Promise.reject( t( 'modelSer",
+        "async": true
+      },
+      {
+        "file": "react/src/components/EditableVFolderName.tsx",
+        "line": 216,
+        "snippet": "[ { max: 64, message: t('data.FolderNameTooLong'), type: 'string', }, { required: true, message: t('data.FolderNameRequired'), }, { pattern: /^[a-zA-Z0-9-_.]+$/, message: t('data.AllowsLettersNumbersAnd-_Dot'), }, // TOD",
+        "async": false
+      },
+      {
+        "file": "react/src/components/FairShareItems/ResourceGroupFairShareSettingModal.tsx",
+        "line": 199,
+        "snippet": "[ { required: true, message: t('fairShare.PleaseInputFieldWithFieldName', { field: t('fairShare.HalfLifeDays'), }), }, { validator: (_, value) => { if (value % 1 !== 0) { return Promise.reject( new Error(t('error.OnlyInt",
+        "async": false
+      },
+      {
+        "file": "react/src/components/FairShareItems/ResourceGroupFairShareSettingModal.tsx",
+        "line": 237,
+        "snippet": "[ { required: true, message: t('fairShare.PleaseInputFieldWithFieldName', { field: t('fairShare.LookbackDays'), }), }, { validator: (_, value) => { if (value % 1 !== 0) { return Promise.reject( new Error(t('error.OnlyInt",
+        "async": false
+      },
+      {
+        "file": "react/src/components/FolderCreateModal.tsx",
+        "line": 394,
+        "snippet": "[ ({ getFieldValue }) => ({ validator(__, value) { const currentUsageMode = getFieldValue('usage_mode'); const isInvalidModelProjectFolder = value === 'project' && currentUsageMode === 'model' && currentProject?.name !==",
+        "async": true
+      },
+      {
+        "file": "react/src/components/FolderCreateModalV2.tsx",
+        "line": 535,
+        "snippet": "[ ({ getFieldValue }) => ({ validator(__, value) { const currentUsageMode = getFieldValue('usage_mode'); const isInvalidModelProjectFolder = value === 'project' && currentUsageMode === 'model' && currentProject?.name !==",
+        "async": true
+      },
+      {
+        "file": "react/src/components/ImportFromHuggingFaceModal.tsx",
+        "line": 306,
+        "snippet": "[ { validator: async () => { if ( !isHuggingfaceURLExisted && huggingFaceModelInfo.data?.isError && huggingFaceModelInfo.data.url === typedURL ) { return Promise.reject( t('data.modelStore.InvalidHuggingFaceUrl'), ); } e",
+        "async": true
+      },
+      {
+        "file": "react/src/components/ImportHuggingFaceModelForm.tsx",
+        "line": 237,
+        "snippet": "[ { required: true, message: t('general.ValueRequired', { name: t('import.HuggingFaceModelUrlOrId'), }), }, { type: 'string', max: 2048 }, { validator: (_rule, value) => { if (!value || parseHuggingFaceModel(value)) { re",
+        "async": false
+      },
+      {
+        "file": "react/src/components/KeypairResourcePolicySettingModal.tsx",
+        "line": 319,
+        "snippet": "[ { required: true, message: t('data.explorer.ValueRequired'), }, { max: 64, }, { validator: (_, value) => { if ( !keypairResourcePolicy && existingPolicyNames?.includes(value) ) { return Promise.reject( t('resourcePolic",
+        "async": false
+      },
+      {
+        "file": "react/src/components/LaunchMultipleSessionsModal.tsx",
+        "line": 131,
+        "snippet": "[ { required: true }, { type: 'number', max: MAX_COUNT, message: t( 'session.launcher.LaunchMultipleSessionsHardCapExceeded', { max: MAX_COUNT }, ), }, { validator: (_rule, value) => { if (value == null || Number.isInteg",
+        "async": true
+      },
+      {
+        "file": "react/src/components/ManageAppsModal.tsx",
+        "line": 236,
+        "snippet": "[ { validator: (_rules, rawValue) => { const value = _.isUndefined(rawValue) || rawValue === '' ? NaN : _.toNumber(rawValue); if ( _.isNaN(value) || value < 0 || value >= 65535 ) { return Promise.reject( t('environment.P",
+        "async": false
+      },
+      {
+        "file": "react/src/components/ManageImageResourceLimitModal.tsx",
+        "line": 171,
+        "snippet": "[ // Minimum resource values are assumed as 1 CPU core and 1 GiB memory. // Accelerators (e.g., GPUs) have no minimum requirement and can be set arbitrarily. // To preserve the key, the UI marks this field as required to",
+        "async": false
+      },
+      {
+        "file": "react/src/components/OverlayNetworkSettingModal.tsx",
+        "line": 111,
+        "snippet": "[ { validator: (_, value) => { if ( formRef.current?.getFieldValue('mtu_checkbox') === true ) { return Promise.resolve(); } if (value === undefined || value === null) { return Promise.reject( t('data.explorer.ValueRequir",
+        "async": false
+      },
+      {
+        "file": "react/src/components/ProjectResourcePolicySettingModal.tsx",
+        "line": 234,
+        "snippet": "[ { required: true, message: t('data.explorer.ValueRequired'), }, { max: 255, }, { validator: (_, value) => { if ( !projectResourcePolicy && existingPolicyNames?.includes(value) ) { return Promise.reject( t('resourcePoli",
+        "async": false
+      },
+      {
+        "file": "react/src/components/SchedulerSettingModal.tsx",
+        "line": 190,
+        "snippet": "[ { validator: (_, value) => { if ( formRef.current?.getFieldValue( 'num_retries_to_skip_checkbox', ) === true ) { return Promise.resolve(); } if (value === undefined || value === null) { return Promise.reject( t('data.e",
+        "async": false
+      },
+      {
+        "file": "react/src/components/SessionFormItems/ClusterModeFormItems.tsx",
+        "line": 164,
+        "snippet": "[ { warningOnly: true, validator: async (_rule, value: number) => { if ( form.getFieldValue('cluster_mode') === 'multi-node' && value === 1 ) { return Promise.reject( t( 'session.launcher.ClusterSizeOneMultiNodeConvertIn",
+        "async": true
+      },
+      {
+        "file": "react/src/components/SessionFormItems/ResourceAllocationFormItems.tsx",
+        "line": 688,
+        "snippet": "[ { required: true, }, { type: 'number', min: resourceLimits.cpu?.min, // TODO: set message }, { type: 'number', max: resourceLimits.cpu?.max, }, { warningOnly: true, validator: async (_rule, value: number) => { if ( _.i",
+        "async": true
+      },
+      {
+        "file": "react/src/components/SessionFormItems/ResourceAllocationFormItems.tsx",
+        "line": 819,
+        "snippet": "[ { required: true, message: t('general.ValueRequired', { name: t('session.launcher.Memory'), }), }, { validator: async (_rule, value: string) => { if ( _.isString(value) && resourceLimits.mem?.max && compareNumberWithUn",
+        "async": true
+      },
+      {
+        "file": "react/src/components/SessionFormItems/ResourceAllocationFormItems.tsx",
+        "line": 1064,
+        "snippet": "isUnifiedType ? [] : [ { required: currentImageAcceleratorLimits && currentImageAcceleratorLimits.length > 0, }, { type: 'number', min: resourceLimits.accelerators[ currentAcceleratorType ]?.min || 0, // Unique type shou",
+        "async": true
+      },
+      {
+        "file": "react/src/components/SessionFormItems/ResourceAllocationFormItems.tsx",
+        "line": 1598,
+        "snippet": "[ { warningOnly: true, validator: async (_rule, value: number) => { if ( form.getFieldValue('cluster_mode') === 'multi-node' && value === 1 ) { return Promise.reject( t( 'session.launcher.ClusterSizeOneMultiNodeConvertIn",
+        "async": true
+      },
+      {
+        "file": "react/src/components/SessionFormItems/SharedMemoryFormItems.tsx",
+        "line": 135,
+        "snippet": "[ { required: true, message: t('general.ValueRequired', { name: t('session.launcher.SharedMemory'), }), }, { warningOnly: true, validator: async (_rule, value: string) => { // Skip validation when automatic shmem is enab",
+        "async": true
+      },
+      {
+        "file": "react/src/components/SignupModal.tsx",
+        "line": 206,
+        "snippet": "[ { validator: (_, value) => value ? Promise.resolve() : Promise.reject( new Error(t('signUp.RequestAgreementTermsOfService')), ), }, ]",
+        "async": false
+      },
+      {
+        "file": "react/src/components/UserProfileSettingModal.tsx",
+        "line": 260,
+        "snippet": "[ { validator: async (_rule, value) => { if (!value || value.length === 0) return Promise.resolve(); const invalidIPs = (value as string[]).filter( (ip: string) => !isValidIPOrCidr(ip), ); if (invalidIPs.length > 0) { re",
+        "async": true
+      },
+      {
+        "file": "react/src/components/UserResourcePolicySettingModal.tsx",
+        "line": 229,
+        "snippet": "[ { required: true, message: t('data.explorer.ValueRequired'), }, { max: 255, }, { validator: (_, value) => { if ( !userResourcePolicy && existingPolicyNames?.includes(value) ) { return Promise.reject( t('resourcePolicy.",
+        "async": false
+      },
+      {
+        "file": "react/src/components/UserSettingModal.tsx",
+        "line": 978,
+        "snippet": "[ { validator: async (_rule, value) => { if (!value || value.length === 0) return Promise.resolve(); const invalidIPs = (value as string[]).filter( (ip: string) => !isValidIPOrCidr(ip), ); if (invalidIPs.length > 0) { re",
+        "async": true
+      },
+      {
+        "file": "react/src/components/VFolderTable.tsx",
+        "line": 458,
+        "snippet": "[ { // required: true, type: 'string', pattern: vFolderAliasNameRegExp, message: t('session.launcher.FolderAliasInvalid'), }, { type: 'string', validator: async (_rule, value) => { if ( value && _.some( allAliasPathMap, ",
+        "async": true
+      },
+      {
+        "file": "react/src/pages/SessionLauncherPage.tsx",
+        "line": 739,
+        "snippet": "[ { // required: true, validator: async ( _rule, value, ) => { if ( value && dayjs(value).isBefore( dayjs(), ) ) { return Promise.reject( t( 'session.launcher.StartTimeMustBeInTheFuture', ), ); } return Promise.resolve()",
+        "async": true
+      },
+      {
+        "file": "packages/backend.ai-ui/src/components/baiClient/FileExplorer/CreateFileModal.tsx",
+        "line": 116,
+        "snippet": "[ { required: true, message: t('comp:FileExplorer.PleaseEnterAFileName'), }, { max: 255, message: t('comp:FileExplorer.MaxFileNameLength'), }, { validator: (_, value) => { if (value && (value.includes('/') || value.inclu",
+        "async": false
+      },
+      {
+        "file": "packages/backend.ai-ui/src/components/fragments/BAIVFolderMountConfigInput.stories.tsx",
+        "line": 351,
+        "snippet": "[ { validator: (_rule, value) => isVFolderMountConfigValid(value, { aliasBasePath: args.aliasBasePath, autoMountedFolderNames: args.autoMountedFolderNames, }) ? Promise.resolve() : Promise.reject( new Error( 'Some mounts",
+        "async": false
+      }
+    ]
+  },
+  "formListSites": [
+    {
+      "file": "react/src/components/AdminDeploymentPresetModelConfigItem.tsx",
+      "name": "{[listItemName, 'service', 'preStartActions']}",
+      "line": 114
+    },
+    {
+      "file": "react/src/components/AdminDeploymentPresetSettingPageContent.tsx",
+      "name": "\"resourceSlots\"",
+      "line": 820
+    },
+    {
+      "file": "react/src/components/AdminDeploymentPresetSettingPageContent.tsx",
+      "name": "\"resourceOpts\"",
+      "line": 851
+    },
+    {
+      "file": "react/src/components/AdminDeploymentPresetSettingPageContent.tsx",
+      "name": "{['modelDefinition', 'models']}",
+      "line": 1035
+    },
+    {
+      "file": "react/src/components/EnvVarFormList.tsx",
+      "name": "(none)",
+      "line": 96
+    },
+    {
+      "file": "react/src/components/ManageAppsModal.tsx",
+      "name": "\"apps\"",
+      "line": 201
+    },
+    {
+      "file": "react/src/components/RoleFormModal.tsx",
+      "name": "\"scopes\"",
+      "line": 578
+    }
+  ],
+  "validateFieldsCatch": [
+    {
+      "file": "react/src/components/AdminDeploymentPresetSettingPageContent.tsx",
+      "line": 599,
+      "kind": "promise.catch",
+      "text": "form .validateFields()"
+    },
+    {
+      "file": "react/src/components/AdminModelCardSettingModal.tsx",
+      "line": 221,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/AgentEditorModal.tsx",
+      "line": 224,
+      "kind": null,
+      "text": "form.validateFields()"
+    },
+    {
+      "file": "react/src/components/AgentSettingModal.tsx",
+      "line": 93,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/AssignRoleModal.tsx",
+      "line": 222,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/AutoScalingRuleEditorModal.tsx",
+      "line": 778,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/AutoScalingRuleEditorModalLegacy.tsx",
+      "line": 152,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/ChangePasswordView.tsx",
+      "line": 63,
+      "kind": "promise.catch",
+      "text": "form.validateFields()"
+    },
+    {
+      "file": "react/src/components/ComputeSessionNodeItems/AppLauncherModal.tsx",
+      "line": 109,
+      "kind": "promise.catch",
+      "text": "formRef.current?.validateFields()"
+    },
+    {
+      "file": "react/src/components/ComputeSessionNodeItems/ContainerCommitModal.tsx",
+      "line": 50,
+      "kind": "promise.catch",
+      "text": "formRef?.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/ComputeSessionNodeItems/TensorboardPathModal.tsx",
+      "line": 62,
+      "kind": "try/catch",
+      "text": "form.validateFields()"
+    },
+    {
+      "file": "react/src/components/ContainerRegistryEditorModal.tsx",
+      "line": 117,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/ContainerRegistryEditorModal.tsx",
+      "line": 228,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/DeploymentAccessTokensCard.tsx",
+      "line": 496,
+      "kind": "promise.catch",
+      "text": "form .validateFields()"
+    },
+    {
+      "file": "react/src/components/DeploymentAddRevisionModal.tsx",
+      "line": 1380,
+      "kind": "try/catch",
+      "text": "activeForm.validateFields()"
+    },
+    {
+      "file": "react/src/components/DeploymentSettingModal.tsx",
+      "line": 125,
+      "kind": "promise.catch",
+      "text": "form .validateFields()"
+    },
+    {
+      "file": "react/src/components/EmailVerificationView.tsx",
+      "line": 70,
+      "kind": null,
+      "text": "form.validateFields()"
+    },
+    {
+      "file": "react/src/components/EnvVarFormList.tsx",
+      "line": 189,
+      "kind": null,
+      "text": "form.validateFields(fieldNames)"
+    },
+    {
+      "file": "react/src/components/EnvVarFormList.tsx",
+      "line": 207,
+      "kind": null,
+      "text": "form.validateFields(fieldNames)"
+    },
+    {
+      "file": "react/src/components/FairShareItems/FairShareWeightSettingModal.tsx",
+      "line": 270,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/FairShareItems/ResourceGroupFairShareSettingModal.tsx",
+      "line": 111,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/FolderCreateModal.tsx",
+      "line": 181,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/FolderCreateModal.tsx",
+      "line": 262,
+      "kind": null,
+      "text": "formRef.current?.validateFields()"
+    },
+    {
+      "file": "react/src/components/FolderCreateModal.tsx",
+      "line": 267,
+      "kind": null,
+      "text": "formRef.current?.validateFields(['type'])"
+    },
+    {
+      "file": "react/src/components/FolderCreateModal.tsx",
+      "line": 288,
+      "kind": null,
+      "text": "formRef.current.validateFields(['name'])"
+    },
+    {
+      "file": "react/src/components/FolderCreateModal.tsx",
+      "line": 291,
+      "kind": null,
+      "text": "formRef.current.validateFields(['type'])"
+    },
+    {
+      "file": "react/src/components/FolderCreateModalV2.tsx",
+      "line": 259,
+      "kind": "try/catch",
+      "text": "formRef.current?.validateFields()"
+    },
+    {
+      "file": "react/src/components/FolderCreateModalV2.tsx",
+      "line": 393,
+      "kind": null,
+      "text": "formRef.current?.validateFields()"
+    },
+    {
+      "file": "react/src/components/FolderCreateModalV2.tsx",
+      "line": 398,
+      "kind": null,
+      "text": "formRef.current?.validateFields(['type'])"
+    },
+    {
+      "file": "react/src/components/FolderCreateModalV2.tsx",
+      "line": 434,
+      "kind": null,
+      "text": "formRef.current.validateFields(['name'])"
+    },
+    {
+      "file": "react/src/components/FolderCreateModalV2.tsx",
+      "line": 437,
+      "kind": null,
+      "text": "formRef.current.validateFields(['type'])"
+    },
+    {
+      "file": "react/src/components/ImportArtifactRevisionToFolderModal.tsx",
+      "line": 140,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/ImportFromHuggingFaceModal.tsx",
+      "line": 206,
+      "kind": "promise.catch",
+      "text": "formRef.current?.validateFields()"
+    },
+    {
+      "file": "react/src/components/ImportFromHuggingFaceModal.tsx",
+      "line": 211,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/ImportFromHuggingFaceModal.tsx",
+      "line": 236,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields(['url'])"
+    },
+    {
+      "file": "react/src/components/ImportHuggingFaceModelForm.tsx",
+      "line": 359,
+      "kind": "try/catch",
+      "text": "formRef.current?.validateFields()"
+    },
+    {
+      "file": "react/src/components/ImportNotebookForm.tsx",
+      "line": 160,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/ImportRepoForm.tsx",
+      "line": 415,
+      "kind": "try/catch",
+      "text": "formRef.current?.validateFields()"
+    },
+    {
+      "file": "react/src/components/InviteFolderSettingModal.tsx",
+      "line": 110,
+      "kind": "promise.catch",
+      "text": "inviteFormRef.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/KeypairResourcePolicySettingModal.tsx",
+      "line": 176,
+      "kind": "promise.catch",
+      "text": "formRef?.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/KeypairSettingModal.tsx",
+      "line": 84,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/LaunchMultipleSessionsModal.tsx",
+      "line": 111,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/LegacyCreatePermissionModal.tsx",
+      "line": 268,
+      "kind": "promise.catch",
+      "text": "form .validateFields()"
+    },
+    {
+      "file": "react/src/components/LoginFormPanel.tsx",
+      "line": 594,
+      "kind": "promise.catch",
+      "text": "form .validateFields()"
+    },
+    {
+      "file": "react/src/components/LoginFormPanel.tsx",
+      "line": 754,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/LoginFormPanel.tsx",
+      "line": 827,
+      "kind": "promise.catch",
+      "text": "form.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/ManageAppsModal.tsx",
+      "line": 108,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/ManageImageResourceLimitModal.tsx",
+      "line": 87,
+      "kind": "promise.catch",
+      "text": "formRef.current?.validateFields()"
+    },
+    {
+      "file": "react/src/components/OverlayNetworkSettingModal.tsx",
+      "line": 64,
+      "kind": "promise.catch",
+      "text": "formRef.current .validateFields()"
+    },
+    {
+      "file": "react/src/components/ProjectAdminSettingModal.tsx",
+      "line": 167,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/ProjectResourcePolicySettingModal.tsx",
+      "line": 128,
+      "kind": "promise.catch",
+      "text": "formRef?.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/PrometheusQueryPresetEditorModal.tsx",
+      "line": 163,
+      "kind": "promise.catch",
+      "text": "form .validateFields()"
+    },
+    {
+      "file": "react/src/components/PurgeUsersModal.tsx",
+      "line": 74,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/QuotaSettingModal.tsx",
+      "line": 68,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/ResourceGroupSettingModal.tsx",
+      "line": 200,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/ResourcePresetSettingModal.tsx",
+      "line": 110,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/RoleFormModal.tsx",
+      "line": 404,
+      "kind": "promise.catch",
+      "text": "form .validateFields()"
+    },
+    {
+      "file": "react/src/components/SSHKeypairManualFormModal.tsx",
+      "line": 37,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/ScanArtifactModelsFromHuggingFaceModal.tsx",
+      "line": 76,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/SchedulerSettingModal.tsx",
+      "line": 54,
+      "kind": "promise.catch",
+      "text": "formRef.current .validateFields()"
+    },
+    {
+      "file": "react/src/components/SessionFormItems/ClusterModeFormItems.tsx",
+      "line": 57,
+      "kind": "promise.catch",
+      "text": "form.validateFields()"
+    },
+    {
+      "file": "react/src/components/SessionFormItems/ResourceAllocationFormItems.tsx",
+      "line": 475,
+      "kind": "promise.catch",
+      "text": "form .validateFields(['resource'], { recursive: true, })"
+    },
+    {
+      "file": "react/src/components/SessionFormItems/ResourceAllocationFormItems.tsx",
+      "line": 536,
+      "kind": "promise.catch",
+      "text": "form .validateFields(['resource'], { recursive: true, })"
+    },
+    {
+      "file": "react/src/components/SessionFormItems/ResourceAllocationFormItems.tsx",
+      "line": 584,
+      "kind": "promise.catch",
+      "text": "form .validateFields(['resource'], { recursive: true, })"
+    },
+    {
+      "file": "react/src/components/SessionFormItems/ResourceAllocationFormItems.tsx",
+      "line": 1478,
+      "kind": "promise.catch",
+      "text": "form.validateFields()"
+    },
+    {
+      "file": "react/src/components/SessionListColums/SessionInfoCell.tsx",
+      "line": 92,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/SessionOwnerSetterCard.tsx",
+      "line": 153,
+      "kind": "promise.catch",
+      "text": "form .validateFields([['owner', 'email']])"
+    },
+    {
+      "file": "react/src/components/SignoutModal.tsx",
+      "line": 37,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/SignupModal.tsx",
+      "line": 74,
+      "kind": "promise.catch",
+      "text": "form.validateFields()"
+    },
+    {
+      "file": "react/src/components/TOTPActivateModal.tsx",
+      "line": 79,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/TableColumnsSettingModal.tsx",
+      "line": 72,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/UpdateResourceGroupsModal.tsx",
+      "line": 85,
+      "kind": "promise.catch",
+      "text": "form .validateFields()"
+    },
+    {
+      "file": "react/src/components/UpdateUsersModal.tsx",
+      "line": 106,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/UserProfileSettingModal.tsx",
+      "line": 139,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/UserResourcePolicySettingModal.tsx",
+      "line": 124,
+      "kind": "promise.catch",
+      "text": "formRef?.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/UserResourcePolicyV2SettingModal.tsx",
+      "line": 125,
+      "kind": "promise.catch",
+      "text": "formRef?.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/UserSettingModal.tsx",
+      "line": 354,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "react/src/components/VFolderTable.tsx",
+      "line": 169,
+      "kind": null,
+      "text": "internalForm.validateFields()"
+    },
+    {
+      "file": "react/src/components/VFolderTable.tsx",
+      "line": 370,
+      "kind": "promise.catch",
+      "text": "internalForm.validateFields()"
+    },
+    {
+      "file": "react/src/components/VFolderTableFormItem.tsx",
+      "line": 111,
+      "kind": null,
+      "text": "form.validateFields(['mount_id_map'])"
+    },
+    {
+      "file": "react/src/pages/AdminDeploymentPresetSettingPage.tsx",
+      "line": 279,
+      "kind": "promise.catch",
+      "text": "form.validateFields()"
+    },
+    {
+      "file": "react/src/pages/SessionLauncherPage.tsx",
+      "line": 300,
+      "kind": "promise.catch",
+      "text": "form.validateFields()"
+    },
+    {
+      "file": "react/src/pages/SessionLauncherPage.tsx",
+      "line": 310,
+      "kind": "promise.catch",
+      "text": "form.validateFields()"
+    },
+    {
+      "file": "react/src/pages/SessionLauncherPage.tsx",
+      "line": 402,
+      "kind": "promise.catch",
+      "text": "form .validateFields()"
+    },
+    {
+      "file": "react/src/pages/SessionLauncherPage.tsx",
+      "line": 438,
+      "kind": "promise.catch",
+      "text": "form.validateFields()"
+    },
+    {
+      "file": "react/src/pages/SessionLauncherPage.tsx",
+      "line": 664,
+      "kind": null,
+      "text": "form.validateFields([ ['batch', 'scheduleDate'], ])"
+    },
+    {
+      "file": "react/src/pages/SessionLauncherPage.tsx",
+      "line": 714,
+      "kind": null,
+      "text": "form.validateFields([ ['batch', 'scheduleDate'], ])"
+    },
+    {
+      "file": "react/src/pages/SessionLauncherPage.tsx",
+      "line": 853,
+      "kind": null,
+      "text": "form.validateFields([ ['batch', 'timeout'], ])"
+    },
+    {
+      "file": "react/src/pages/SessionLauncherPage.tsx",
+      "line": 903,
+      "kind": null,
+      "text": "form.validateFields([ ['batch', 'timeoutUnit'], ])"
+    },
+    {
+      "file": "react/src/pages/SessionLauncherPage.tsx",
+      "line": 1450,
+      "kind": "promise.catch",
+      "text": "form.validateFields()"
+    },
+    {
+      "file": "packages/backend.ai-ui/src/components/Table/BAITableSettingModal.tsx",
+      "line": 383,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "packages/backend.ai-ui/src/components/baiClient/FileExplorer/CreateDirectoryModal.tsx",
+      "line": 37,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "packages/backend.ai-ui/src/components/baiClient/FileExplorer/CreateFileModal.tsx",
+      "line": 60,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "packages/backend.ai-ui/src/components/fragments/BAIHuggingFaceRegistrySettingModal.tsx",
+      "line": 57,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "packages/backend.ai-ui/src/components/fragments/BAIProjectBulkEditModal.tsx",
+      "line": 57,
+      "kind": null,
+      "text": "form .validateFields()"
+    },
+    {
+      "file": "packages/backend.ai-ui/src/components/fragments/BAIProjectSettingModal.tsx",
+      "line": 180,
+      "kind": "promise.catch",
+      "text": "form.current ?.validateFields()"
+    },
+    {
+      "file": "packages/backend.ai-ui/src/components/fragments/BAIRuntimeVariantPresetSettingModal.tsx",
+      "line": 155,
+      "kind": "promise.catch",
+      "text": "formRef.current ?.validateFields()"
+    },
+    {
+      "file": "packages/backend.ai-ui/src/components/fragments/BAIVFolderMountConfigInput.stories.tsx",
+      "line": 375,
+      "kind": "promise.catch",
+      "text": "form .validateFields()"
+    }
+  ],
+  "formItemFiles": [
+    "react/src/components/AdminDeploymentPresetModelConfigItem.tsx",
+    "react/src/components/AdminDeploymentPresetResourceFields.tsx",
+    "react/src/components/AdminDeploymentPresetSettingPageContent.tsx",
+    "react/src/components/AdminModelCardSettingModal.tsx",
+    "react/src/components/AgentEditorModal.tsx",
+    "react/src/components/AgentSettingModal.tsx",
+    "react/src/components/AllocationHistory.tsx",
+    "react/src/components/AssignRoleModal.tsx",
+    "react/src/components/AutoScalingRuleEditorModal.tsx",
+    "react/src/components/AutoScalingRuleEditorModalLegacy.tsx",
+    "react/src/components/BulkCreateUserFromCSVModal.tsx",
+    "react/src/components/ChangePasswordView.tsx",
+    "react/src/components/Chat/ChatParametersSliders.tsx",
+    "react/src/components/Chat/CustomModelForm.tsx",
+    "react/src/components/ComputeSessionNodeItems/AppLauncherModal.tsx",
+    "react/src/components/ComputeSessionNodeItems/ContainerCommitModal.tsx",
+    "react/src/components/ComputeSessionNodeItems/EditableSessionName.tsx",
+    "react/src/components/ComputeSessionNodeItems/TensorboardPathModal.tsx",
+    "react/src/components/ContainerRegistryEditorModal.tsx",
+    "react/src/components/DeploymentAccessTokensCard.tsx",
+    "react/src/components/DeploymentAddRevisionModal.tsx",
+    "react/src/components/DeploymentSettingModal.tsx",
+    "react/src/components/EditableVFolderName.tsx",
+    "react/src/components/EditableVFolderNameV2.tsx",
+    "react/src/components/EmailVerificationView.tsx",
+    "react/src/components/EnvVarFormList.tsx",
+    "react/src/components/FairShareItems/FairShareWeightSettingModal.tsx",
+    "react/src/components/FairShareItems/ResourceGroupFairShareSettingModal.tsx",
+    "react/src/components/FolderCreateModal.tsx",
+    "react/src/components/FolderCreateModalV2.tsx",
+    "react/src/components/FormItemControl.tsx",
+    "react/src/components/FormItemWithUnlimited.tsx",
+    "react/src/components/HiddenFormItem.tsx",
+    "react/src/components/ImageEnvironmentSelectFormItems.tsx",
+    "react/src/components/ImportArtifactRevisionToFolderModal.tsx",
+    "react/src/components/ImportFromHuggingFaceModal.tsx",
+    "react/src/components/ImportHuggingFaceModelForm.tsx",
+    "react/src/components/ImportNotebookForm.tsx",
+    "react/src/components/ImportRepoForm.tsx",
+    "react/src/components/InviteFolderSettingModal.tsx",
+    "react/src/components/KeypairResourcePolicySettingModal.tsx",
+    "react/src/components/KeypairSettingModal.tsx",
+    "react/src/components/LaunchMultipleSessionsModal.tsx",
+    "react/src/components/LegacyCreatePermissionModal.tsx",
+    "react/src/components/LoginFormPanel.tsx",
+    "react/src/components/ManageAppsModal.tsx",
+    "react/src/components/ManageImageResourceLimitModal.tsx",
+    "react/src/components/ModelCardDeployModal.tsx",
+    "react/src/components/OverlayNetworkSettingModal.tsx",
+    "react/src/components/PendingSessionNodeList.tsx",
+    "react/src/components/PortSelectFormItem.tsx",
+    "react/src/components/ProjectAdminSettingModal.tsx",
+    "react/src/components/ProjectResourcePolicySettingModal.tsx",
+    "react/src/components/PrometheusQueryPresetEditorModal.tsx",
+    "react/src/components/PurgeUsersModal.tsx",
+    "react/src/components/QuotaSettingModal.tsx",
+    "react/src/components/ResourceGroupSettingModal.tsx",
+    "react/src/components/ResourcePresetSettingModal.tsx",
+    "react/src/components/RoleFormModal.tsx",
+    "react/src/components/RoleScopePermissionEditModal.tsx",
+    "react/src/components/RuntimeParameterFormSection.tsx",
+    "react/src/components/SSHKeypairManualFormModal.tsx",
+    "react/src/components/STokenLoginBoundary.tsx",
+    "react/src/components/ScanArtifactModelsFromHuggingFaceModal.tsx",
+    "react/src/components/SchedulerSettingModal.tsx",
+    "react/src/components/SessionFormItems/ClusterModeFormItems.tsx",
+    "react/src/components/SessionFormItems/ResourceAllocationFormItems.tsx",
+    "react/src/components/SessionFormItems/SharedMemoryFormItems.tsx",
+    "react/src/components/SessionListColums/SessionInfoCell.tsx",
+    "react/src/components/SessionNameFormItem.tsx",
+    "react/src/components/SessionOwnerSetterCard.tsx",
+    "react/src/components/ShellScriptEditModal.tsx",
+    "react/src/components/SignoutModal.tsx",
+    "react/src/components/SignupModal.tsx",
+    "react/src/components/TOTPActivateModal.tsx",
+    "react/src/components/TableColumnsSettingModal.tsx",
+    "react/src/components/UpdateResourceGroupsModal.tsx",
+    "react/src/components/UpdateUsersModal.tsx",
+    "react/src/components/UserProfileSettingModal.tsx",
+    "react/src/components/UserResourcePolicySettingModal.tsx",
+    "react/src/components/UserResourcePolicyV2SettingModal.tsx",
+    "react/src/components/UserSettingModal.tsx",
+    "react/src/components/VFolderDeployModal.tsx",
+    "react/src/components/VFolderMountFormItem.tsx",
+    "react/src/components/VFolderTable.tsx",
+    "react/src/components/VFolderTableFormItem.tsx",
+    "react/src/pages/SessionLauncherPage.tsx",
+    "packages/backend.ai-ui/src/components/BAIBulkEditFormItem.tsx",
+    "packages/backend.ai-ui/src/components/BAICheckbox.stories.tsx",
+    "packages/backend.ai-ui/src/components/BAIDeleteConfirmModal.tsx",
+    "packages/backend.ai-ui/src/components/BAIDynamicUnitInputNumber.stories.tsx",
+    "packages/backend.ai-ui/src/components/BAIDynamicUnitInputNumberWithSlider.stories.tsx",
+    "packages/backend.ai-ui/src/components/BAIUnmountAfterClose.stories.tsx",
+    "packages/backend.ai-ui/src/components/Table/BAITableColumnCSVExportModal.tsx",
+    "packages/backend.ai-ui/src/components/Table/BAITableSettingModal.tsx",
+    "packages/backend.ai-ui/src/components/baiClient/FileExplorer/CreateDirectoryModal.tsx",
+    "packages/backend.ai-ui/src/components/baiClient/FileExplorer/CreateFileModal.tsx",
+    "packages/backend.ai-ui/src/components/baiClient/FileExplorer/EditableFileName.tsx",
+    "packages/backend.ai-ui/src/components/fragments/BAIHuggingFaceRegistrySettingModal.tsx",
+    "packages/backend.ai-ui/src/components/fragments/BAIProjectBulkEditModal.tsx",
+    "packages/backend.ai-ui/src/components/fragments/BAIProjectSettingModal.tsx",
+    "packages/backend.ai-ui/src/components/fragments/BAIRuntimeVariantPresetSettingModal.tsx",
+    "packages/backend.ai-ui/src/components/fragments/BAIVFolderMountConfigInput.stories.tsx",
+    "packages/backend.ai-ui/src/components/fragments/BAIVFolderMountConfigInput.tsx"
+  ],
+  "formFiles": [
+    "react/src/components/AdminDeploymentPresetSettingPageContent.tsx",
+    "react/src/components/AdminModelCardSettingModal.tsx",
+    "react/src/components/AgentEditorModal.tsx",
+    "react/src/components/AgentSettingModal.tsx",
+    "react/src/components/AssignRoleModal.tsx",
+    "react/src/components/AutoScalingRuleEditorModal.tsx",
+    "react/src/components/AutoScalingRuleEditorModalLegacy.tsx",
+    "react/src/components/BulkCreateUserFromCSVModal.tsx",
+    "react/src/components/ChangePasswordView.tsx",
+    "react/src/components/Chat/ChatParametersSliders.tsx",
+    "react/src/components/Chat/CustomModelForm.tsx",
+    "react/src/components/ComputeSessionNodeItems/AppLauncherModal.tsx",
+    "react/src/components/ComputeSessionNodeItems/ContainerCommitModal.tsx",
+    "react/src/components/ComputeSessionNodeItems/EditableSessionName.tsx",
+    "react/src/components/ComputeSessionNodeItems/TensorboardPathModal.tsx",
+    "react/src/components/ContainerRegistryEditorModal.tsx",
+    "react/src/components/DeploymentAccessTokensCard.tsx",
+    "react/src/components/DeploymentAddRevisionModal.tsx",
+    "react/src/components/DeploymentSettingModal.tsx",
+    "react/src/components/EditableVFolderName.tsx",
+    "react/src/components/EditableVFolderNameV2.tsx",
+    "react/src/components/EmailVerificationView.tsx",
+    "react/src/components/FairShareItems/FairShareWeightSettingModal.tsx",
+    "react/src/components/FairShareItems/ResourceGroupFairShareSettingModal.tsx",
+    "react/src/components/FolderCreateModal.tsx",
+    "react/src/components/FolderCreateModalV2.tsx",
+    "react/src/components/ImportArtifactRevisionToFolderModal.tsx",
+    "react/src/components/ImportFromHuggingFaceModal.tsx",
+    "react/src/components/ImportHuggingFaceModelForm.tsx",
+    "react/src/components/ImportNotebookForm.tsx",
+    "react/src/components/ImportRepoForm.tsx",
+    "react/src/components/InviteFolderSettingModal.tsx",
+    "react/src/components/KeypairResourcePolicySettingModal.tsx",
+    "react/src/components/KeypairSettingModal.tsx",
+    "react/src/components/LaunchMultipleSessionsModal.tsx",
+    "react/src/components/LegacyCreatePermissionModal.tsx",
+    "react/src/components/LoginFormPanel.tsx",
+    "react/src/components/ManageAppsModal.tsx",
+    "react/src/components/ManageImageResourceLimitModal.tsx",
+    "react/src/components/ModelCardDeployModal.tsx",
+    "react/src/components/OverlayNetworkSettingModal.tsx",
+    "react/src/components/ProjectAdminSettingModal.tsx",
+    "react/src/components/ProjectResourcePolicySettingModal.tsx",
+    "react/src/components/PrometheusQueryPresetEditorModal.tsx",
+    "react/src/components/PurgeUsersModal.tsx",
+    "react/src/components/QuotaSettingModal.tsx",
+    "react/src/components/ResourceGroupSettingModal.tsx",
+    "react/src/components/ResourcePresetSettingModal.tsx",
+    "react/src/components/RoleFormModal.tsx",
+    "react/src/components/RoleScopePermissionEditModal.tsx",
+    "react/src/components/SSHKeypairManualFormModal.tsx",
+    "react/src/components/STokenLoginBoundary.tsx",
+    "react/src/components/ScanArtifactModelsFromHuggingFaceModal.tsx",
+    "react/src/components/SchedulerSettingModal.tsx",
+    "react/src/components/SessionListColums/SessionInfoCell.tsx",
+    "react/src/components/SignoutModal.tsx",
+    "react/src/components/SignupModal.tsx",
+    "react/src/components/TOTPActivateModal.tsx",
+    "react/src/components/TableColumnsSettingModal.tsx",
+    "react/src/components/UpdateResourceGroupsModal.tsx",
+    "react/src/components/UpdateUsersModal.tsx",
+    "react/src/components/UserProfileSettingModal.tsx",
+    "react/src/components/UserResourcePolicySettingModal.tsx",
+    "react/src/components/UserResourcePolicyV2SettingModal.tsx",
+    "react/src/components/UserSettingModal.tsx",
+    "react/src/components/VFolderDeployModal.tsx",
+    "react/src/components/VFolderTable.tsx",
+    "react/src/pages/SessionLauncherPage.tsx",
+    "packages/backend.ai-ui/src/components/BAIBulkEditFormItem.stories.tsx",
+    "packages/backend.ai-ui/src/components/BAIBulkEditFormItem.test.tsx",
+    "packages/backend.ai-ui/src/components/BAICheckbox.stories.tsx",
+    "packages/backend.ai-ui/src/components/BAIDeleteConfirmModal.tsx",
+    "packages/backend.ai-ui/src/components/BAIDynamicUnitInputNumber.stories.tsx",
+    "packages/backend.ai-ui/src/components/BAIDynamicUnitInputNumberWithSlider.stories.tsx",
+    "packages/backend.ai-ui/src/components/BAIUnmountAfterClose.stories.tsx",
+    "packages/backend.ai-ui/src/components/Table/BAITableColumnCSVExportModal.tsx",
+    "packages/backend.ai-ui/src/components/Table/BAITableSettingModal.tsx",
+    "packages/backend.ai-ui/src/components/baiClient/FileExplorer/CreateDirectoryModal.tsx",
+    "packages/backend.ai-ui/src/components/baiClient/FileExplorer/CreateFileModal.tsx",
+    "packages/backend.ai-ui/src/components/baiClient/FileExplorer/EditableFileName.tsx",
+    "packages/backend.ai-ui/src/components/fragments/BAIHuggingFaceRegistrySettingModal.tsx",
+    "packages/backend.ai-ui/src/components/fragments/BAIProjectBulkEditModal.tsx",
+    "packages/backend.ai-ui/src/components/fragments/BAIProjectSettingModal.tsx",
+    "packages/backend.ai-ui/src/components/fragments/BAIRuntimeVariantPresetSettingModal.tsx",
+    "packages/backend.ai-ui/src/components/fragments/BAIVFolderMountConfigInput.stories.tsx"
+  ],
+  "itemsPerFile": {
+    "react/src/components/AdminDeploymentPresetModelConfigItem.tsx": 26,
+    "react/src/components/AdminDeploymentPresetResourceFields.tsx": 5,
+    "react/src/components/AdminDeploymentPresetSettingPageContent.tsx": 21,
+    "react/src/components/AdminModelCardSettingModal.tsx": 19,
+    "react/src/components/AgentEditorModal.tsx": 20,
+    "react/src/components/AgentSettingModal.tsx": 2,
+    "react/src/components/AllocationHistory.tsx": 1,
+    "react/src/components/AssignRoleModal.tsx": 1,
+    "react/src/components/AutoScalingRuleEditorModal.tsx": 13,
+    "react/src/components/AutoScalingRuleEditorModalLegacy.tsx": 11,
+    "react/src/components/BulkCreateUserFromCSVModal.tsx": 6,
+    "react/src/components/ChangePasswordView.tsx": 3,
+    "react/src/components/Chat/ChatParametersSliders.tsx": 1,
+    "react/src/components/Chat/CustomModelForm.tsx": 2,
+    "react/src/components/ComputeSessionNodeItems/AppLauncherModal.tsx": 5,
+    "react/src/components/ComputeSessionNodeItems/ContainerCommitModal.tsx": 1,
+    "react/src/components/ComputeSessionNodeItems/EditableSessionName.tsx": 1,
+    "react/src/components/ComputeSessionNodeItems/TensorboardPathModal.tsx": 1,
+    "react/src/components/ContainerRegistryEditorModal.tsx": 17,
+    "react/src/components/DeploymentAccessTokensCard.tsx": 2,
+    "react/src/components/DeploymentAddRevisionModal.tsx": 28,
+    "react/src/components/DeploymentSettingModal.tsx": 7,
+    "react/src/components/EditableVFolderName.tsx": 1,
+    "react/src/components/EditableVFolderNameV2.tsx": 1,
+    "react/src/components/EmailVerificationView.tsx": 1,
+    "react/src/components/EnvVarFormList.tsx": 3,
+    "react/src/components/FairShareItems/FairShareWeightSettingModal.tsx": 7,
+    "react/src/components/FairShareItems/ResourceGroupFairShareSettingModal.tsx": 7,
+    "react/src/components/FolderCreateModal.tsx": 10,
+    "react/src/components/FolderCreateModalV2.tsx": 10,
+    "react/src/components/FormItemControl.tsx": 2,
+    "react/src/components/FormItemWithUnlimited.tsx": 2,
+    "react/src/components/HiddenFormItem.tsx": 1,
+    "react/src/components/ImageEnvironmentSelectFormItems.tsx": 5,
+    "react/src/components/ImportArtifactRevisionToFolderModal.tsx": 2,
+    "react/src/components/ImportFromHuggingFaceModal.tsx": 5,
+    "react/src/components/ImportHuggingFaceModelForm.tsx": 8,
+    "react/src/components/ImportNotebookForm.tsx": 2,
+    "react/src/components/ImportRepoForm.tsx": 6,
+    "react/src/components/InviteFolderSettingModal.tsx": 2,
+    "react/src/components/KeypairResourcePolicySettingModal.tsx": 6,
+    "react/src/components/KeypairSettingModal.tsx": 5,
+    "react/src/components/LaunchMultipleSessionsModal.tsx": 2,
+    "react/src/components/LegacyCreatePermissionModal.tsx": 5,
+    "react/src/components/LoginFormPanel.tsx": 12,
+    "react/src/components/ManageAppsModal.tsx": 4,
+    "react/src/components/ManageImageResourceLimitModal.tsx": 1,
+    "react/src/components/ModelCardDeployModal.tsx": 2,
+    "react/src/components/OverlayNetworkSettingModal.tsx": 4,
+    "react/src/components/PendingSessionNodeList.tsx": 1,
+    "react/src/components/PortSelectFormItem.tsx": 1,
+    "react/src/components/ProjectAdminSettingModal.tsx": 1,
+    "react/src/components/ProjectResourcePolicySettingModal.tsx": 1,
+    "react/src/components/PrometheusQueryPresetEditorModal.tsx": 9,
+    "react/src/components/PurgeUsersModal.tsx": 2,
+    "react/src/components/QuotaSettingModal.tsx": 1,
+    "react/src/components/ResourceGroupSettingModal.tsx": 14,
+    "react/src/components/ResourcePresetSettingModal.tsx": 6,
+    "react/src/components/RoleFormModal.tsx": 6,
+    "react/src/components/RoleScopePermissionEditModal.tsx": 1,
+    "react/src/components/RuntimeParameterFormSection.tsx": 5,
+    "react/src/components/SSHKeypairManualFormModal.tsx": 2,
+    "react/src/components/STokenLoginBoundary.tsx": 1,
+    "react/src/components/ScanArtifactModelsFromHuggingFaceModal.tsx": 2,
+    "react/src/components/SchedulerSettingModal.tsx": 6,
+    "react/src/components/SessionFormItems/ClusterModeFormItems.tsx": 4,
+    "react/src/components/SessionFormItems/ResourceAllocationFormItems.tsx": 17,
+    "react/src/components/SessionFormItems/SharedMemoryFormItems.tsx": 3,
+    "react/src/components/SessionListColums/SessionInfoCell.tsx": 1,
+    "react/src/components/SessionNameFormItem.tsx": 1,
+    "react/src/components/SessionOwnerSetterCard.tsx": 8,
+    "react/src/components/ShellScriptEditModal.tsx": 1,
+    "react/src/components/SignoutModal.tsx": 3,
+    "react/src/components/SignupModal.tsx": 6,
+    "react/src/components/TOTPActivateModal.tsx": 1,
+    "react/src/components/TableColumnsSettingModal.tsx": 3,
+    "react/src/components/UpdateResourceGroupsModal.tsx": 1,
+    "react/src/components/UpdateUsersModal.tsx": 11,
+    "react/src/components/UserProfileSettingModal.tsx": 5,
+    "react/src/components/UserResourcePolicySettingModal.tsx": 3,
+    "react/src/components/UserResourcePolicyV2SettingModal.tsx": 3,
+    "react/src/components/UserSettingModal.tsx": 26,
+    "react/src/components/VFolderDeployModal.tsx": 2,
+    "react/src/components/VFolderMountFormItem.tsx": 3,
+    "react/src/components/VFolderTable.tsx": 2,
+    "react/src/components/VFolderTableFormItem.tsx": 5,
+    "react/src/pages/SessionLauncherPage.tsx": 22,
+    "packages/backend.ai-ui/src/components/BAIBulkEditFormItem.tsx": 3,
+    "packages/backend.ai-ui/src/components/BAICheckbox.stories.tsx": 1,
+    "packages/backend.ai-ui/src/components/BAIDeleteConfirmModal.tsx": 1,
+    "packages/backend.ai-ui/src/components/BAIDynamicUnitInputNumber.stories.tsx": 1,
+    "packages/backend.ai-ui/src/components/BAIDynamicUnitInputNumberWithSlider.stories.tsx": 1,
+    "packages/backend.ai-ui/src/components/BAIUnmountAfterClose.stories.tsx": 9,
+    "packages/backend.ai-ui/src/components/Table/BAITableColumnCSVExportModal.tsx": 1,
+    "packages/backend.ai-ui/src/components/Table/BAITableSettingModal.tsx": 3,
+    "packages/backend.ai-ui/src/components/baiClient/FileExplorer/CreateDirectoryModal.tsx": 1,
+    "packages/backend.ai-ui/src/components/baiClient/FileExplorer/CreateFileModal.tsx": 1,
+    "packages/backend.ai-ui/src/components/baiClient/FileExplorer/EditableFileName.tsx": 1,
+    "packages/backend.ai-ui/src/components/fragments/BAIHuggingFaceRegistrySettingModal.tsx": 1,
+    "packages/backend.ai-ui/src/components/fragments/BAIProjectBulkEditModal.tsx": 2,
+    "packages/backend.ai-ui/src/components/fragments/BAIProjectSettingModal.tsx": 11,
+    "packages/backend.ai-ui/src/components/fragments/BAIRuntimeVariantPresetSettingModal.tsx": 10,
+    "packages/backend.ai-ui/src/components/fragments/BAIVFolderMountConfigInput.stories.tsx": 1,
+    "packages/backend.ai-ui/src/components/fragments/BAIVFolderMountConfigInput.tsx": 2
+  },
+  "formItemLikeComponents": {
+    "Form.Item": 549
+  },
+  "validateTriggerValues": {
+    "{['onChange', 'onBlur']}": 1
+  },
+  "layoutValues": {
+    "vertical": 65,
+    "horizontal": 1
+  },
+  "ruleKeys": {
+    "required": 181,
+    "message": 161,
+    "validator": 90,
+    "type": 48,
+    "min": 22,
+    "max": 45,
+    "pattern": 32,
+    "warningOnly": 15,
+    "whitespace": 1,
+    "field": 3,
+    "projectName": 2,
+    "name": 19,
+    "requested": 1,
+    "remaining": 1,
+    "value": 1,
+    "key": 1,
+    "count": 2,
+    "maxClusterSize": 2,
+    "unit": 2,
+    "size": 1,
+    "stepSize": 1,
+    "accelerator": 1,
+    "ip": 1,
+    "aliasBasePath": 1,
+    "autoMountedFolderNames": 1
+  }
+}

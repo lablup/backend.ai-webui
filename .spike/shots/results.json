@@ -1,0 +1,328 @@
+{
+  "results": {
+    "01-baseline-both": {
+      "stripped": null,
+      "antdResult": "",
+      "baiResult": "",
+      "antdStyleTags": 27,
+      "baiDomHasAntFormClass": 1,
+      "antdDomHasAntFormClass": 67
+    },
+    "02-error-both": {
+      "stripped": null,
+      "antdResult": "REJECT keys=[\"message\",\"values\",\"errorFields\",\"outOfDate\"] errorFields=[[\"metricName\"],[\"minThreshold\"],[\"maxThreshold\"],[\"stepSize\"],[\"ruleName\"],[\"cooldown\"],[\"tags\",0,\"key\"]] outOfDate=false",
+      "baiResult": "REJECT keys=[\"message\",\"values\",\"errorFields\",\"outOfDate\"] errorFields=[[\"metricName\"],[\"minThreshold\"],[\"maxThreshold\"],[\"stepSize\"],[\"ruleName\"],[\"cooldown\"],[\"tags\",0,\"key\"]] outOfDate=false",
+      "antdStyleTags": 27,
+      "baiDomHasAntFormClass": 1,
+      "antdDomHasAntFormClass": 92
+    },
+    "03-stripform-both": {
+      "stripped": 0,
+      "antdResult": "REJECT keys=[\"message\",\"values\",\"errorFields\",\"outOfDate\"] errorFields=[[\"metricName\"],[\"minThreshold\"],[\"maxThreshold\"],[\"stepSize\"],[\"ruleName\"],[\"cooldown\"],[\"tags\",0,\"key\"]] outOfDate=false",
+      "baiResult": "REJECT keys=[\"message\",\"values\",\"errorFields\",\"outOfDate\"] errorFields=[[\"metricName\"],[\"minThreshold\"],[\"maxThreshold\"],[\"stepSize\"],[\"ruleName\"],[\"cooldown\"],[\"tags\",0,\"key\"]] outOfDate=false",
+      "antdStyleTags": 24,
+      "baiDomHasAntFormClass": 1,
+      "antdDomHasAntFormClass": 92
+    },
+    "04-stripall-both": {
+      "stripped": 0,
+      "antdResult": "REJECT keys=[\"message\",\"values\",\"errorFields\",\"outOfDate\"] errorFields=[[\"metricName\"],[\"minThreshold\"],[\"maxThreshold\"],[\"stepSize\"],[\"ruleName\"],[\"cooldown\"],[\"tags\",0,\"key\"]] outOfDate=false",
+      "baiResult": "REJECT keys=[\"message\",\"values\",\"errorFields\",\"outOfDate\"] errorFields=[[\"metricName\"],[\"minThreshold\"],[\"maxThreshold\"],[\"stepSize\"],[\"ruleName\"],[\"cooldown\"],[\"tags\",0,\"key\"]] outOfDate=false",
+      "antdStyleTags": 0,
+      "baiDomHasAntFormClass": 1,
+      "antdDomHasAntFormClass": 92
+    }
+  },
+  "behaviour": {
+    "antd": {
+      "rejectShape": {
+        "keys": [
+          "errorFields",
+          "message",
+          "outOfDate",
+          "values"
+        ],
+        "errorFields": [
+          {
+            "name": [
+              "metricName"
+            ],
+            "errors": [
+              "Metric name is required"
+            ]
+          },
+          {
+            "name": [
+              "maxThreshold"
+            ],
+            "errors": [
+              "Min must be less than max"
+            ]
+          },
+          {
+            "name": [
+              "stepSize"
+            ],
+            "errors": [
+              "'stepSize' is required",
+              "Only positive integers are allowed"
+            ]
+          },
+          {
+            "name": [
+              "ruleName"
+            ],
+            "errors": [
+              "'ruleName' is required"
+            ]
+          },
+          {
+            "name": [
+              "cooldown"
+            ],
+            "errors": [
+              "'cooldown' is required"
+            ]
+          },
+          {
+            "name": [
+              "tags",
+              0,
+              "key"
+            ],
+            "errors": [
+              "Key is required"
+            ]
+          }
+        ],
+        "hasValues": true,
+        "outOfDate": false,
+        "isError": false
+      },
+      "maxErrorsAfterFix": [
+        "Min must be less than max"
+      ],
+      "listBefore": [
+        {}
+      ],
+      "listAfter": "staging",
+      "valuesKeysAfterUnmount": [
+        "metricSource",
+        "metricName",
+        "conditionMode",
+        "minThreshold",
+        "maxThreshold",
+        "stepSize",
+        "ruleName",
+        "enabled",
+        "tags"
+      ],
+      "asyncValidator": [
+        [
+          "This name is reserved"
+        ]
+      ],
+      "setFieldsError": [
+        "taken on server"
+      ],
+      "touchedBeforeReset": true,
+      "touchedAfterReset": false,
+      "valuesAfterReset": {
+        "metricSource": "kernel",
+        "conditionMode": "scale_in_out",
+        "enabled": true,
+        "tags": [
+          {}
+        ]
+      },
+      "errorsAfterReset": []
+    },
+    "bai": {
+      "rejectShape": {
+        "keys": [
+          "errorFields",
+          "message",
+          "outOfDate",
+          "values"
+        ],
+        "errorFields": [
+          {
+            "name": [
+              "metricName"
+            ],
+            "errors": [
+              "Metric name is required"
+            ]
+          },
+          {
+            "name": [
+              "maxThreshold"
+            ],
+            "errors": [
+              "Min must be less than max"
+            ]
+          },
+          {
+            "name": [
+              "stepSize"
+            ],
+            "errors": [
+              "'stepSize' is required",
+              "Only positive integers are allowed"
+            ]
+          },
+          {
+            "name": [
+              "ruleName"
+            ],
+            "errors": [
+              "'ruleName' is required"
+            ]
+          },
+          {
+            "name": [
+              "cooldown"
+            ],
+            "errors": [
+              "'cooldown' is required"
+            ]
+          },
+          {
+            "name": [
+              "tags",
+              0,
+              "key"
+            ],
+            "errors": [
+              "Key is required"
+            ]
+          }
+        ],
+        "hasValues": true,
+        "outOfDate": false,
+        "isError": false
+      },
+      "maxErrorsAfterFix": [
+        "Min must be less than max"
+      ],
+      "listBefore": [
+        {}
+      ],
+      "listAfter": "staging",
+      "valuesKeysAfterUnmount": [
+        "metricSource",
+        "metricName",
+        "conditionMode",
+        "minThreshold",
+        "maxThreshold",
+        "stepSize",
+        "ruleName",
+        "enabled",
+        "tags"
+      ],
+      "asyncValidator": [
+        [
+          "This name is reserved"
+        ]
+      ],
+      "setFieldsError": [
+        "taken on server"
+      ],
+      "touchedBeforeReset": true,
+      "touchedAfterReset": false,
+      "valuesAfterReset": {
+        "metricSource": "kernel",
+        "conditionMode": "scale_in_out",
+        "enabled": true,
+        "tags": [
+          {}
+        ]
+      },
+      "errorsAfterReset": []
+    }
+  },
+  "dom": {
+    "antd": {
+      "totalElements": 204,
+      "antFormClasses": [
+        "ant-form",
+        "ant-form-css-var",
+        "ant-form-item",
+        "ant-form-item-additional",
+        "ant-form-item-control",
+        "ant-form-item-control-input",
+        "ant-form-item-control-input-content",
+        "ant-form-item-explain",
+        "ant-form-item-explain-connected",
+        "ant-form-item-explain-error",
+        "ant-form-item-extra",
+        "ant-form-item-has-error",
+        "ant-form-item-label",
+        "ant-form-item-margin-offset",
+        "ant-form-item-required",
+        "ant-form-item-row",
+        "ant-form-item-tooltip",
+        "ant-form-item-vertical",
+        "ant-form-item-with-help",
+        "ant-form-show-help",
+        "ant-form-show-help-enter",
+        "ant-form-show-help-enter-active",
+        "ant-form-vertical"
+      ],
+      "errorTexts": [
+        "Metric name is required",
+        "Min threshold is required",
+        "Max threshold is required",
+        "'stepSize' is required",
+        "Only positive integers are allowed",
+        "'ruleName' is required",
+        "'cooldown' is required",
+        "Key is required"
+      ]
+    },
+    "bai": {
+      "totalElements": 199,
+      "antFormClasses": [
+        "ant-form",
+        "ant-form-css-var",
+        "ant-form-vertical"
+      ],
+      "errorTexts": [
+        "Metric name is required",
+        "Min threshold is required",
+        "Max threshold is required",
+        "'stepSize' is required",
+        "Only positive integers are allowed",
+        "'ruleName' is required",
+        "'cooldown' is required",
+        "Key is required"
+      ]
+    }
+  },
+  "logs": [
+    "[debug] [vite] connecting...",
+    "[debug] [vite] connected.",
+    "[info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold",
+    "[info] 🌐 i18next is made possible by our own product, Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙",
+    "[debug] [vite] connecting...",
+    "[debug] [vite] connected.",
+    "[info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold",
+    "[info] 🌐 i18next is made possible by our own product, Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙",
+    "[debug] [vite] connecting...",
+    "[debug] [vite] connected.",
+    "[info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold",
+    "[info] 🌐 i18next is made possible by our own product, Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙",
+    "[debug] [vite] connecting...",
+    "[debug] [vite] connected.",
+    "[info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold",
+    "[info] 🌐 i18next is made possible by our own product, Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙",
+    "[debug] [vite] connecting...",
+    "[debug] [vite] connected.",
+    "[info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold",
+    "[info] 🌐 i18next is made possible by our own product, Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙",
+    "[debug] [vite] connecting...",
+    "[debug] [vite] connected.",
+    "[info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold",
+    "[info] 🌐 i18next is made possible by our own product, Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙"
+  ]
+}

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>08 form spike probe</title>
+    <style>
+      body {
+        margin: 0;
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: #fff;
+      }
+      /*
+       * The whole BAIFormItem stylesheet. Static CSS + custom properties only:
+       * no CSS-in-JS, no antd tokens, no runtime style injection. In production
+       * this would ship as a co-located .css file in backend.ai-ui.
+       * antd's equivalent (`antd/es/form/style`) is ~700 LOC of token-driven
+       * cssinjs.
+       */
+      [data-bai-form-item-control-input] > * > .ant-select,
+      [data-bai-form-item-control-input] > * > .ant-input-number,
+      [data-bai-form-item-control-input] > * > .ant-picker {
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/main.tsx"></script>
+  </body>
+</html>
