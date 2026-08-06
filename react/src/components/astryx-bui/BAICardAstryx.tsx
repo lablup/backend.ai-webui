@@ -50,11 +50,16 @@ const BAICardAstryx: React.FC<BAICardAstryxProps> = ({
   return (
     <Card
       variant={variant === 'borderless' ? 'transparent' : 'default'}
-      padding={4}
+      // antd's Card body padding is 24px (`token.paddingLG`) = Astryx step 6.
+      // Phase 2 used step 4 (16px), which is part of why the converted page
+      // read tighter than the original.
+      padding={6}
       style={style}
       className={className}
     >
-      <VStack gap={2} align="stretch">
+      {/* antd's Card puts ~16px between the header and the body once the
+          project's `body.paddingTop: 0` convention is applied. Step 4 = 16px. */}
+      <VStack gap={4} align="stretch">
         {title || extra ? (
           <HStack justify="between" align="center" wrap="wrap" gap={2}>
             {typeof title === 'string' ? (

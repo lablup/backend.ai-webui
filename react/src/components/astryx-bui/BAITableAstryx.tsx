@@ -34,9 +34,14 @@
    rows, preserving layout during a refetch. Astryx has no table loading state
    at all. Reproduced with a wrapping div at `opacity: .5` +
    `pointer-events: none`. The spinner is gone.
- - `resizable` — BUI wires `react-resizable` around antd's header cells.
-   Astryx has a `useTableColumnResize` plugin, but its persistence model is
-   width-per-key, which BUI does not currently store. Dropped; annotated.
+ - `resizable` — WIRED (phase 3) via Astryx's `useTableColumnResize`. Widths
+   live in component state as `Record<columnKey, px>`. It composes cleanly with
+   the sort/selection/pagination plugins (all four are independent entries in
+   the same `plugins` record) — but it needs every resizable column to carry an
+   explicit `width`, and it wants `pixel()` widths to resize freely: a
+   `proportional()` column resizes its NEIGHBOUR to keep the table full-width,
+   which is a different feel from antd's `react-resizable` (that one just grows
+   the table and lets it scroll).
  - `scroll={{ x: 'max-content' }}` — Astryx's Table always renders inside its
    own `astryx-table-scroll-wrapper`, so horizontal overflow already scrolls.
    Accepted and ignored.
@@ -49,12 +54,14 @@
 */
 import {
   Table,
+  pixel,
   proportional,
+  useTableColumnResize,
   useTablePagination,
   useTableSelection,
   useTableSortable,
 } from '@astryxdesign/core/Table';
-import React from 'react';
+import React, { useState } from 'react';
 
 /** antd-shaped column definition, as used across this repo. */
 export interface BAITableAstryxColumn<T> {
@@ -101,7 +108,7 @@ export interface BAITableAstryxProps<T extends Record<string, unknown>> {
       next: Record<string, BAITableAstryxColumnOverride>,
     ) => void;
   };
-  /** Accepted and ignored — see the PILOT-DECISION notes above. */
+  /** Drag-to-resize column borders. Wired in phase 3. */
   resizable?: boolean;
   showSorterTooltip?: boolean;
   scroll?: { x?: number | string; y?: number | string };
@@ -132,9 +139,14 @@ function BAITableAstryx<T extends Record<string, unknown>>({
   rowSelection,
   pagination,
   tableSettings,
+  resizable = false,
   size = 'middle',
 }: BAITableAstryxProps<T>) {
   'use memo';
+
+  // Resized widths are component state — BUI's `columnOverrides` record has no
+  // width field, so persisting them would need a BUI schema change.
+  const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
 
   const data = dataSource ?? [];
   const getKey = (record: T) =>
@@ -165,7 +177,14 @@ function BAITableAstryx<T extends Record<string, unknown>>({
   const astryxColumns = visibleColumns.map((column) => ({
     key: column.key,
     header: column.title,
-    width: column.width ? proportional(1) : proportional(1),
+    // Resize needs a concrete starting width; without `resizable` the columns
+    // stay proportional so the table still fills its container.
+    width:
+      resizable && columnWidths[column.key] != null
+        ? pixel(columnWidths[column.key])
+        : column.width
+          ? pixel(column.width)
+          : proportional(1),
     sortable: column.sorter ? true : undefined,
     renderCell: (item: T) => {
       const value = column.dataIndex
@@ -242,7 +261,21 @@ function BAITableAstryx<T extends Record<string, unknown>>({
     align: 'end',
   });
 
+  const resizePlugin = useTableColumnResize<T>({
+    // The plugin's `columns` is typed against the erased
+    // `TableColumn<Record<string, unknown>>` rather than the generic `T`, so a
+    // generic table cannot satisfy it without a cast. Minor Astryx typing gap.
+    columns: astryxColumns as unknown as Parameters<
+      typeof useTableColumnResize
+    >[0]['columns'],
+    columnWidths,
+    minWidth: 80,
+    onColumnResizeEnd: (updates) =>
+      setColumnWidths((prev) => ({ ...prev, ...updates })),
+  });
+
   const plugins: Record<string, unknown> = { sort: sortPlugin };
+  if (resizable) plugins.resize = resizePlugin;
   if (rowSelection) plugins.selection = selectionPlugin;
   if (pagination) plugins.pagination = paginationPlugin;
 
