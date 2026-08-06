@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8a22aaa2d9e458a5c4ae0bce923abbce>>
+ * @generated SignedSource<<c94f74ce5c8174e8b84582c8eb7886b3>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -174,12 +174,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "a865ccaae64cece26c3ab54e6ccde32f",
+    "cacheID": "112762bc16d5fc1b71485ea4d6fafb7d",
     "id": null,
     "metadata": {},
     "name": "UserDropdownMenuQuery",
     "operationKind": "query",
-    "text": "query UserDropdownMenuQuery(\n  $isNotSupportTotp: Boolean!\n) {\n  myUserV2 {\n    basicInfo {\n      fullName\n    }\n    ...UserProfileSettingModalFragment\n    id\n  }\n  myClientIp {\n    clientIp\n  }\n}\n\nfragment TOTPActivateModalFragment on UserV2 {\n  basicInfo {\n    email\n  }\n  security {\n    totpActivated @skipOnClient(if: $isNotSupportTotp)\n  }\n}\n\nfragment UserProfileSettingModalFragment on UserV2 {\n  id\n  basicInfo {\n    email\n    fullName\n  }\n  security {\n    totpActivated @skipOnClient(if: $isNotSupportTotp)\n    allowedClientIp\n  }\n  ...TOTPActivateModalFragment\n}\n"
+    "text": "query UserDropdownMenuQuery(\n  $isNotSupportTotp: Boolean!\n) {\n  myUserV2 {\n    basicInfo {\n      fullName\n    }\n    ...UserProfileSettingModalFragment\n    id\n  }\n  myClientIp {\n    clientIp\n  }\n}\n\nfragment TOTPActivateModalFragment on UserV2 {\n  basicInfo {\n    email\n  }\n  security {\n    totpActivated @skip(if: $isNotSupportTotp) @skipOnClient(if: $isNotSupportTotp)\n  }\n}\n\nfragment UserProfileSettingModalFragment on UserV2 {\n  id\n  basicInfo {\n    email\n    fullName\n  }\n  security {\n    totpActivated @skipOnClient(if: $isNotSupportTotp)\n    allowedClientIp\n  }\n  ...TOTPActivateModalFragment\n}\n"
   }
 };
 })();

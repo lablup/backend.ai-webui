@@ -18,8 +18,8 @@ import AdminUserManagement, {
 } from '../components/AdminUserManagement';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
-import { useKeyedSnapshot } from '../hooks';
-import { useTOTPSupported } from '../hooks/backendai';
+import { useBrowserNavigatedQueryEffect, useKeyedSnapshot } from '../hooks';
+import { useSuspendedTOTPSupported } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { Skeleton } from 'antd';
 import { CardTabListType } from 'antd/es/card';
@@ -86,7 +86,9 @@ const defaultSnapshotOf = (tab: TabKey): TabSnapshot => ({
 const AdminUsersPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
-  const { isTOTPSupported } = useTOTPSupported();
+  // Suspends until the capability is known, so `isNotSupportTotp` is never
+  // built from `undefined` — the load below happens exactly once, on mount.
+  const isTOTPSupported = useSuspendedTOTPSupported();
 
   const [queryParams, setQueryParams] = useQueryStates(
     {
@@ -240,6 +242,24 @@ const AdminUsersPage: React.FC = () => {
   useEffect(() => {
     loadInitialTabFromUrl();
   }, []);
+
+  // Back/forward moves the URL without going through onTabChange, so the tab
+  // flips (useKeyedSnapshot follows its source key) while the query ref would
+  // otherwise keep the departed tab's data.
+  useBrowserNavigatedQueryEffect(
+    { queryParams, tablePaginationOption },
+    (navigated) => {
+      const snapshot: TabSnapshot = {
+        queryParams: _.omit(navigated.queryParams, 'tab'),
+        tablePaginationOption: navigated.tablePaginationOption,
+      };
+      if (navigated.queryParams.tab === 'users') {
+        loadUsersQuery(usersVariablesOf(snapshot));
+      } else {
+        loadCredentialsQuery(credentialsVariablesOf(snapshot));
+      }
+    },
+  );
 
   const tabItems: CardTabListType[] = [
     {

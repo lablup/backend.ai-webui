@@ -7,7 +7,7 @@ import { useSuspenseTanQuery } from './reactQueryAlias';
 import { MenuKeys } from './useWebUIMenuItems';
 import * as _ from 'lodash-es';
 import type { SingleParserBuilder } from 'nuqs';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useEffectEvent, useMemo, useRef, useState } from 'react';
 // eslint-disable-next-line no-restricted-imports
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -117,6 +117,45 @@ export const useKeyedSnapshot = <K extends string, V>(
   };
 
   return [currentKey, setAfterSnapshot];
+};
+
+/**
+ * Runs `onNavigated` when `values` change **because of a browser navigation**
+ * (back/forward), and never for the app's own URL writes: `pushState` and
+ * `replaceState` do not emit `popstate`, so only a real history navigation
+ * arms the effect.
+ *
+ * Values are compared structurally — callers build the watched bundle inline,
+ * so its identity changes every render and a dependency array alone would say
+ * nothing about whether the state actually moved.
+ */
+export const useBrowserNavigatedQueryEffect = <T,>(
+  values: T,
+  onNavigated: (values: T) => void,
+) => {
+  'use memo';
+  const hasNavigatedRef = useRef(false);
+  const lastValuesRef = useRef(values);
+
+  useEffect(() => {
+    const markNavigated = () => {
+      hasNavigatedRef.current = true;
+    };
+    window.addEventListener('popstate', markNavigated);
+    return () => window.removeEventListener('popstate', markNavigated);
+  }, []);
+
+  const notifyIfNavigated = useEffectEvent(() => {
+    if (_.isEqual(values, lastValuesRef.current)) return;
+    lastValuesRef.current = values;
+    if (!hasNavigatedRef.current) return;
+    hasNavigatedRef.current = false;
+    onNavigated(values);
+  });
+
+  useEffect(() => {
+    notifyIfNavigated();
+  });
 };
 
 export const useBackendAIConnectedState = () => {
