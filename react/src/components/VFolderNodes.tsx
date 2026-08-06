@@ -23,6 +23,7 @@ import VFolderDeployModal from './VFolderDeployModal';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
 import VFolderPermissionCell from './VFolderPermissionCell';
 import BAICopyableText from './astryx-bui/BAICopyableText';
+import BAIDeleteConfirmModal from './astryx-bui/BAIDeleteConfirmModalAstryx';
 import BAITable from './astryx-bui/BAITableAstryx';
 import type { BAITableAstryxProps } from './astryx-bui/BAITableAstryx';
 import { Badge } from '@astryxdesign/core/Badge';
@@ -41,7 +42,6 @@ import {
   BAINameActionCell,
   toLocalId,
   useErrorMessageResolver,
-  BAIDeleteConfirmModal,
   bytesToGB,
 } from 'backend.ai-ui';
 import type { BAINameActionCellAction } from 'backend.ai-ui';
@@ -684,9 +684,13 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
         }
         {...tableProps}
       />
+      {/* PHASE 6 (item 2) — the typed-confirmation destructive modal, rebuilt
+          on Astryx. `.claude/rules/destructive-confirmation.md` is the contract
+          this call site has to satisfy: the danger button stays disabled until
+          the folder name is typed exactly. */}
       <BAIDeleteConfirmModal
-        open={!!deletingVFolder}
-        onOk={() => {
+        isOpen={!!deletingVFolder}
+        onAction={() => {
           deleteFromTrashBinMutation.mutate(deletingVFolder?.id ?? '', {
             onSuccess: (_result, vfolderId) => {
               onRemoveRow?.(vfolderId);
@@ -707,8 +711,8 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
           });
           setDeletingVFolder(null);
         }}
-        onCancel={() => {
-          setDeletingVFolder(null);
+        onOpenChange={(next) => {
+          if (!next) setDeletingVFolder(null);
         }}
         items={
           deletingVFolder
@@ -722,10 +726,17 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
         }
         confirmText={deletingVFolder?.name ?? ''}
         requireConfirmInput
-        inputProps={{ placeholder: deletingVFolder?.name ?? '' }}
+        inputLabel={t('dialog.PleaseTypeToConfirm', {
+          confirmText: deletingVFolder?.name ?? '',
+        })}
+        inputPlaceholder={deletingVFolder?.name ?? ''}
         title={t('dialog.title.DeleteForever')}
-        target={t('general.Folder')}
-        okText={t('data.folders.DeleteForever')}
+        description={t('data.folders.DeleteForeverDescription', {
+          folderName: deletingVFolder?.name ?? '',
+        })}
+        cannotBeUndoneText={t('dialog.warning.CannotBeUndone')}
+        actionLabel={t('data.folders.DeleteForever')}
+        cancelLabel={t('button.Cancel')}
       />
       <InviteFolderSettingModal
         onRequestClose={() => {

@@ -16,7 +16,7 @@ import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
 import { theme } from '../theme-shim';
-import StorageSelect from './StorageSelect';
+import StorageSelect from './StorageSelectAstryx';
 import BAIModal from './astryx-bui/BAIModalAstryx';
 import type { BAIModalAstryxProps as BAIModalProps } from './astryx-bui/BAIModalAstryx';
 import {
@@ -548,15 +548,17 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
                 shimmer) has no compound equivalent; Astryx's Skeleton is a
                 single primitive sized by props. 32px matches the md input. */}
             <Suspense fallback={<Skeleton height={32} />}>
-              {/* Remaining antd: StorageSelect is an infinite-scroll select,
-                  explicitly out of scope per the locked Select decision. */}
+              {/* PHASE 6 (item 3): rebuilt on Astryx `ComplexSelector` with the
+                  ticket-12 scroll-driven load recipe. The antd `StorageSelect`
+                  stays in the tree for its four unmigrated consumers — this is
+                  the translating frontier, not a repo-wide swap. */}
               <StorageSelect
+                label={t('data.folders.Location')}
                 onChange={(value) => {
                   formRef.current?.setFieldValue('host', value);
                 }}
                 showUsageStatus
                 autoSelectType="usage"
-                showSearch
               />
             </Suspense>
           </BAIFormItem>
