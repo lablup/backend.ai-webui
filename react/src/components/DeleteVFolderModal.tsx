@@ -7,9 +7,9 @@ import { VFolderNodesFragment$data } from '../__generated__/VFolderNodesFragment
 import { message } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
+import BAIFlex from './astryx-bui/BAIFlexAstryx';
 import { Text } from '@astryxdesign/core/Text';
 import {
-  BAIFlex,
   BAIListAlert,
   BAIModal,
   BAIModalProps,

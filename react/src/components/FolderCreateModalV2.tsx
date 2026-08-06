@@ -17,6 +17,8 @@ import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
 import { theme } from '../theme-shim';
 import StorageSelect from './StorageSelect';
+import BAIButton from './astryx-bui/BAIButtonAstryx';
+import BAIFlex from './astryx-bui/BAIFlexAstryx';
 import {
   AstryxFormRadioList,
   AstryxFormSwitch,
@@ -33,8 +35,6 @@ import { FormInstance } from 'antd/lib';
 import {
   BAIQuestionIconWithTooltip,
   BAIAlert,
-  BAIButton,
-  BAIFlex,
   BAIFormItem,
   BAIModal,
   BAIModalProps,

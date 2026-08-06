@@ -22,7 +22,7 @@ import SharedFolderPermissionInfoModal from './SharedFolderPermissionInfoModal';
 import VFolderDeployModal from './VFolderDeployModal';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
 import VFolderPermissionCell from './VFolderPermissionCell';
-import { DeleteFilled, DeleteOutlined, UserOutlined } from '@ant-design/icons';
+import BAIFlex from './astryx-bui/BAIFlexAstryx';
 import { Text } from '@astryxdesign/core/Text';
 import { useToggle } from 'ahooks';
 import {
@@ -34,7 +34,6 @@ import {
   BAIUserUnionIcon,
   BAITable,
   BAITableProps,
-  BAIFlex,
   BAINameActionCell,
   BAIText,
   toLocalId,
@@ -47,6 +46,12 @@ import {
 import type { BAINameActionCellAction } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
+// PILOT PHASE 2: @ant-design/icons -> lucide-react. `DeleteFilled` (a solid
+// glyph) has no filled counterpart in Lucide's stroke-only set; Trash2 is the
+// closest read. PILOT-DECISION: the filled/outlined distinction that
+// distinguished 'delete forever' from 'move to trash' is lost and is carried
+// by the label alone now.
+import { Trash2Icon, TrashIcon, UserIcon } from 'lucide-react';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -177,7 +182,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
       ? {
           key: 'delete',
           title: t('data.folders.MoveToTrash'),
-          icon: <DeleteOutlined />,
+          icon: <TrashIcon />,
           type: 'danger' as const,
           disabled:
             !hasDeletePermission ||
@@ -218,7 +223,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
       ? {
           key: 'delete-forever',
           title: t('data.folders.Delete'),
-          icon: <DeleteFilled />,
+          icon: <Trash2Icon />,
           type: 'danger' as const,
           disabled:
             vfolder?.status !== 'delete-pending' ||
@@ -514,7 +519,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
               return type === 'user' ? (
                 <BAIFlex gap={'xs'}>
                   <Text>{t('data.User')}</Text>
-                  <UserOutlined style={{ color: token.colorTextTertiary }} />
+                  <UserIcon style={{ color: token.colorTextTertiary }} />
                 </BAIFlex>
               ) : (
                 <BAIFlex gap={'xs'}>
