@@ -91,8 +91,14 @@
   color: var(--color-text-accent);
 }
 
+/* P19 SWEEP (gap-components pass): was `--color-text-error`, which is not a
+   declared variable — the declared text ramp is primary/secondary/disabled/
+   accent plus the 10 named hues, and the semantic error token is the SOLID
+   `--color-error`. With no fallback the rule was invalid, so a danger action
+   rendered in the inherited colour instead of red. `--color-text-red` is the
+   text-tier member of the red hue family. */
 .bai-name-action-cell-danger {
-  color: var(--color-text-error);
+  color: var(--color-text-red);
 }
 
 .bai-name-action-cell-disabled {
@@ -101,10 +107,18 @@
 
 /* PILOT PHASE 6: BAIListAlertAstryx. The BUI original expressed these through
    `antd-style` `createStyles` with `token.colorTextQuaternary`; Astryx has no
-   quaternary text token, so the thumb uses `--color-text-tertiary` at reduced
-   opacity. Track stays transparent — only the thumb floats over content. */
+   quaternary text token. Track stays transparent — only the thumb floats over
+   content.
+
+   P19 SWEEP (gap-components pass): this used to say `--color-text-tertiary`,
+   which is NOT declared by @astryxdesign/core or theme-neutral — the declared
+   set is `--color-text-` + primary/secondary/disabled/accent + the 10 named
+   hues. With no fallback the declaration was simply invalid, so the scrollbar
+   fell back to the browser default in every theme. `--color-text-secondary` is
+   the nearest declared tier (the theme-shim already records antd's
+   tertiary/quaternary tiers as verdict `self` for the same reason). */
 .bai-list-alert-scroll {
-  scrollbar-color: var(--color-text-tertiary) transparent;
+  scrollbar-color: var(--color-text-secondary) transparent;
   scrollbar-width: thin;
 }
 
@@ -118,7 +132,7 @@
 }
 
 .bai-list-alert-scroll::-webkit-scrollbar-thumb {
-  background: var(--color-text-tertiary);
+  background: var(--color-text-secondary);
   /* SWEEP: was a literal 3px, i.e. half of the 6px track — a pill. Say that
      with the token instead; `--radius-full` clamps to the same shape and stops
      being wrong if the thumb width ever changes. */

@@ -7,8 +7,16 @@
 body {
   margin: 0;
   font-family: 'Ubuntu', Roboto, sans-serif;
-  background: var(--color-background-primary, #fff);
-  color: var(--color-text-primary, #111);
+  /* P19 SWEEP (gap-components pass): this said
+     `var(--color-background-primary, #fff)`. `--color-background-primary` is
+     not a declared Astryx variable (the declared page/surface names are
+     `--color-background-body` and `--color-background-surface`), so the
+     literal `#fff` won unconditionally — the harness painted a white body in
+     dark mode and every earlier dark screenshot was taken against it. This is
+     the exact failure the P19 rule describes, found by grepping
+     `var(--…, <literal>)` in the files this pass touched. */
+  background: var(--color-background-body);
+  color: var(--color-text-primary);
 }
 .page {
   display: grid;

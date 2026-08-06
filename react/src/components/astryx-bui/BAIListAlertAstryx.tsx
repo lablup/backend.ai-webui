@@ -13,7 +13,7 @@
 
  Rebuild: Astryx `Banner status="info"` with the same `<ul>` in `description`.
  The transparent-scrollbar rules move to `astryxBui.css` with Astryx theme vars
- (`--color-text-tertiary`), so they follow brand / admin themes and both colour
+ (`--color-text-secondary`), so they follow brand / admin themes and both colour
  schemes — the antd version read `token.colorTextQuaternary`.
 
  **Native** rebuild: the only pilot-graph consumer is `DeleteVFolderModal`.
