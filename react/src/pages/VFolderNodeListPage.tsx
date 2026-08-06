@@ -522,7 +522,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           </BAIFlex>
           <VFolderNodes
             order={queryParams.order}
-            loading={deferredQueryVariables !== queryVariables}
+            isLoading={deferredQueryVariables !== queryVariables}
             disableProjectFolderActions
             vfoldersFrgmt={filterOutNullAndUndefined(
               _.map(vfolder_nodes?.edges, 'node'),

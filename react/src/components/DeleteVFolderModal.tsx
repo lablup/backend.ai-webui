@@ -24,7 +24,12 @@ import { PayloadError } from 'relay-runtime';
 
 type VFolderType = NonNullable<VFolderNodesFragment$data[number]>;
 
-interface DeleteVFolderModalProps extends BAIModalProps {
+interface DeleteVFolderModalProps extends Omit<
+  BAIModalProps,
+  'isOpen' | 'onOpenChange'
+> {
+  /** App-level contract, kept: consumers outside the pilot graph use it. */
+  open?: boolean;
   vfolderFrgmts?: DeleteVFolderModalFragment$key;
   onRequestClose?: (success: boolean) => void;
 }
@@ -65,12 +70,14 @@ const DeleteVFolderModal: React.FC<DeleteVFolderModalProps> = ({
 
   return (
     <BAIModal
+      isOpen={baiModalProps.open}
+      onOpenChange={(next) => {
+        if (!next) onRequestClose?.(false);
+      }}
       title={t('data.folders.MoveToTrash')}
-      centered
-      okText={t('data.folders.Delete')}
-      okButtonProps={{ danger: true }}
-      onCancel={() => onRequestClose?.(false)}
-      onOk={() => {
+      actionLabel={t('data.folders.Delete')}
+      actionVariant="destructive"
+      onAction={() => {
         const promises = _.map(
           foldersByPermission.deletable,
           (vfolder: VFolderType) =>

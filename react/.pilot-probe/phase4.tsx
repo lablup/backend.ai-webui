@@ -8,11 +8,11 @@ import './probe.css';
 import { backendAiAdminTheme } from '../src/astryx-theme/backendAiTheme';
 import BAICardAstryx from '../src/components/astryx-bui/BAICardAstryx';
 import BAIFetchKeyButtonAstryx from '../src/components/astryx-bui/BAIFetchKeyButtonAstryx';
-import BAIFlexAstryx from '../src/components/astryx-bui/BAIFlexAstryx';
-import BAIButtonAstryx from '../src/components/astryx-bui/BAIButtonAstryx';
 import BAITableAstryx from '../src/components/astryx-bui/BAITableAstryx';
-import { BAITag } from '../src/components/astryx-bui/smallPrimitives';
 import { Badge } from '@astryxdesign/core/Badge';
+import { Button as AstryxButton } from '@astryxdesign/core/Button';
+import { HStack } from '@astryxdesign/core/Stack';
+import { TextInput } from '@astryxdesign/core/TextInput';
 import { LayerProvider } from '@astryxdesign/core/Layer';
 import { Theme } from '@astryxdesign/core/theme';
 import { Badge as ABadge, Button, Card, ConfigProvider, Table, Tag, theme } from 'antd';
@@ -41,11 +41,22 @@ const ROWS: Array<Row> = Array.from({ length: 12 }, (_, i) => ({
 }));
 
 const COLUMNS = [
-  { key: 'name', title: 'Name', dataIndex: 'name', required: true, sorter: true },
-  { key: 'status', title: 'Status', dataIndex: 'status', sorter: true },
-  { key: 'host', title: 'Location', dataIndex: 'host', sorter: true },
-  { key: 'ownership_type', title: 'Type', dataIndex: 'ownership_type', sorter: true },
-  { key: 'cur_size', title: 'Folder usage', dataIndex: 'cur_size' },
+  {
+    key: 'name',
+    header: 'Name',
+    dataIndex: 'name',
+    isRequired: true,
+    sortable: true,
+  },
+  { key: 'status', header: 'Status', dataIndex: 'status', sortable: true },
+  { key: 'host', header: 'Location', dataIndex: 'host', sortable: true },
+  {
+    key: 'ownership_type',
+    header: 'Type',
+    dataIndex: 'ownership_type',
+    sortable: true,
+  },
+  { key: 'cur_size', header: 'Folder usage', dataIndex: 'cur_size' },
 ];
 
 const AntdSide: React.FC<{ dark: boolean }> = ({ dark }) => {
@@ -118,11 +129,12 @@ const AntdSide: React.FC<{ dark: boolean }> = ({ dark }) => {
 };
 
 const AstryxSide: React.FC = () => {
-  const [selected, setSelected] = useState<Array<React.Key>>(['2']);
+  const [selected, setSelected] = useState<Array<string>>(['2']);
   const [tab, setTab] = useState('active');
   const [order, setOrder] = useState<string | null>('-name');
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [filter, setFilter] = useState('');
   const [delay, setDelay] = useState<number | null>(30_000);
   const [overrides, setOverrides] = useState({});
   return (
@@ -130,10 +142,9 @@ const AstryxSide: React.FC = () => {
       <div className="col-head">Astryx — AFTER</div>
       <BAICardAstryx
         title="Folders"
-        variant="borderless"
-        activeTabKey={tab}
-        onTabChange={setTab}
-        tabList={[
+        activeTab={tab}
+        onChangeTab={setTab}
+        tabs={[
           {
             key: 'active',
             label: 'Active',
@@ -142,37 +153,53 @@ const AstryxSide: React.FC = () => {
           { key: 'deleted', label: 'Trash Bin' },
         ]}
         extra={
-          <BAIFlexAstryx gap="xs" align="center">
+          <HStack gap={2} align="center">
             <BAIFetchKeyButtonAstryx
               onChange={() => {}}
               autoUpdateDelay={delay}
               onChangeAutoUpdateDelay={setDelay}
             />
-            <BAIButtonAstryx type="primary" icon={<PlusIcon />}>
-              Create folder
-            </BAIButtonAstryx>
-          </BAIFlexAstryx>
+            <AstryxButton
+              variant="primary"
+              icon={<PlusIcon />}
+              label="Create folder"
+            />
+          </HStack>
         }
       >
+        {/* PHASE 5: a filter row above the table, to reproduce the reported
+            gap-collapse between the filter and the table. */}
+        <HStack gap={3} align="center" style={{ marginBottom: 12 }}>
+          <TextInput
+            value={filter}
+            onChange={setFilter}
+            label="Filter"
+            isLabelHidden
+            placeholder="Filter folders"
+            width={280}
+          />
+        </HStack>
         <BAITableAstryx<Row>
-          size="small"
-          resizable
-          rowKey={(r) => r.id}
-          dataSource={ROWS.slice((page - 1) * pageSize, page * pageSize)}
+          density="compact"
+          isColumnResizable
+          idKey={(r) => r.id}
+          data={ROWS.slice((page - 1) * pageSize, page * pageSize)}
           order={order}
           onChangeOrder={(next) => setOrder(next ?? null)}
           columns={COLUMNS.map((c) => ({
             ...c,
-            render:
+            renderCell:
               c.key === 'status'
-                ? ((v: never) => (
-                    <BAITag color="warning">{String(v).toUpperCase()}</BAITag>
-                  ) as never)
+                ? (item: Row) => (
+                    <Badge
+                      variant="warning"
+                      label={String(item.status).toUpperCase()}
+                    />
+                  )
                 : undefined,
           }))}
           rowSelection={{
-            type: 'checkbox',
-            selectedRowKeys: selected,
+            selectedKeys: selected,
             onChange: setSelected,
           }}
           pagination={{

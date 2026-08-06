@@ -19,7 +19,12 @@ import { graphql, useFragment } from 'react-relay';
 
 type VFolderType = NonNullable<VFolderNodesFragment$data[number]>;
 
-interface RestoreVFolderModalProps extends BAIModalProps {
+interface RestoreVFolderModalProps extends Omit<
+  BAIModalProps,
+  'isOpen' | 'onOpenChange'
+> {
+  /** App-level contract, kept: consumers outside the pilot graph use it. */
+  open?: boolean;
   vfolderFrgmts?: RestoreVFolderModalFragment$key;
   onRequestClose?: (success: boolean) => void;
 }
@@ -53,11 +58,13 @@ const RestoreVFolderModal: React.FC<RestoreVFolderModalProps> = ({
 
   return (
     <BAIModal
+      isOpen={baiModalProps.open}
+      onOpenChange={(next) => {
+        if (!next) onRequestClose?.(false);
+      }}
       title={t('data.folders.Restore')}
-      centered
-      okText={t('data.folders.Restore')}
-      onCancel={() => onRequestClose?.(false)}
-      onOk={() => {
+      actionLabel={t('data.folders.Restore')}
+      onAction={() => {
         const promises = _.map(vfolders, (vfolder: VFolderType) =>
           restoreMutation.mutateAsync(vfolder.id).catch((error) => {
             upsertNotification({

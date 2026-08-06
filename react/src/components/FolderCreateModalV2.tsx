@@ -85,7 +85,12 @@ export type FolderCreationResponse =
       FolderCreateModalV2ProjectMutation$data['createVFolderInProject']
     >['vfolder'];
 
-export interface FolderCreateModalProps extends BAIModalProps {
+export interface FolderCreateModalProps extends Omit<
+  BAIModalProps,
+  'isOpen' | 'onOpenChange'
+> {
+  /** App-level contract, kept: 9 consumers outside the pilot graph. */
+  open?: boolean;
   onRequestClose: (response?: FolderCreationResponse) => void;
   initialValidate?: boolean;
   initialValues?: Partial<FolderCreateFormItemsType>;
@@ -343,7 +348,11 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
 
   return (
     <BAIModal
-      loading={isFetchingAllowedTypes}
+      isOpen={modalProps.open}
+      onOpenChange={(next) => {
+        if (!next) onRequestClose();
+      }}
+      isLoading={isFetchingAllowedTypes}
       className={styles.modal}
       title={t('data.CreateANewStorageFolder')}
       footer={
@@ -381,21 +390,15 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
         </HStack>
       }
       width={MODAL_WIDTH}
-      onCancel={() => {
-        onRequestClose();
-      }}
-      destroyOnHidden
       {...modalProps}
-      afterOpenChange={(open) => {
-        if (open) {
-          if (initialValidate) {
-            formRef.current?.validateFields();
-          } else if (mergedInitialValues.type === 'project') {
-            // The project-folder notice is a warningOnly validator on `type`;
-            // antd runs validators only on interaction, so trigger it here or
-            // the notice stays hidden until the user touches the form.
-            formRef.current?.validateFields(['type']);
-          }
+      onAfterOpen={() => {
+        if (initialValidate) {
+          formRef.current?.validateFields();
+        } else if (mergedInitialValues.type === 'project') {
+          // The project-folder notice is a warningOnly validator on `type`;
+          // antd runs validators only on interaction, so trigger it here or
+          // the notice stays hidden until the user touches the form.
+          formRef.current?.validateFields(['type']);
         }
       }}
     >

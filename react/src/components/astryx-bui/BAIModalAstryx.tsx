@@ -34,113 +34,131 @@
 */
 import { Button } from '@astryxdesign/core/Button';
 import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog';
+import type { DialogProps } from '@astryxdesign/core/Dialog';
 import { Layout, LayoutContent, LayoutFooter } from '@astryxdesign/core/Layout';
 import { Skeleton } from '@astryxdesign/core/Skeleton';
 import { HStack } from '@astryxdesign/core/Stack';
 import React, { useEffect } from 'react';
 
-export interface BAIModalAstryxProps {
-  open?: boolean;
-  title?: React.ReactNode;
+export interface BAIModalAstryxProps extends Omit<
+  DialogProps,
+  'children' | 'isOpen' | 'onOpenChange'
+> {
+  /** Astryx `Dialog` naming — NOT antd's `open`. */
+  isOpen?: boolean;
+  /** Astryx `Dialog` naming — NOT antd's `onCancel`. Called with `false`. */
+  onOpenChange?: (isOpen: boolean) => void;
+  title?: string;
+  subtitle?: string;
   children?: React.ReactNode;
-  width?: number | string;
-  okText?: React.ReactNode;
-  cancelText?: React.ReactNode;
-  okButtonProps?: { danger?: boolean; disabled?: boolean };
-  confirmLoading?: boolean;
-  /** May return a Promise; the dialog stays open until it resolves. */
-  onOk?: () => void | Promise<unknown>;
-  onCancel?: () => void;
-  /** Full footer override. When present, ok/cancel are not generated. */
+  /** Action button label. Omit to render no generated footer action. */
+  actionLabel?: string;
+  cancelLabel?: string;
+  /** Astryx `ButtonVariant`, not antd's `okButtonProps.danger`. */
+  actionVariant?: 'primary' | 'secondary' | 'ghost' | 'destructive';
+  isActionDisabled?: boolean;
+  isActionLoading?: boolean;
+  /**
+   * May return a promise; the dialog stays open until it settles and closes
+   * only on success. This await-then-close controller is the whole reason the
+   * component exists — Astryx `Dialog` has no action contract at all.
+   */
+  onAction?: () => void | Promise<unknown>;
+  /** Full footer override; suppresses the generated action row. */
   footer?: React.ReactNode;
-  loading?: boolean;
-  /** Accepted and ignored — Astryx dialogs are centred by default. */
-  centered?: boolean;
-  /** Accepted and ignored — this wrapper unmounts when closed. */
-  destroyOnHidden?: boolean;
-  maskClosable?: boolean;
-  afterOpenChange?: (open: boolean) => void;
+  /** Renders a Skeleton in place of the body. */
+  isLoading?: boolean;
+  /**
+   * Fired once each time the dialog transitions to open. Astryx `Dialog` has
+   * no such hook; the form modals need it to kick off initial validation.
+   */
+  onAfterOpen?: () => void;
   className?: string;
   style?: React.CSSProperties;
-  [key: string]: unknown;
 }
 
 const BAIModalAstryx: React.FC<BAIModalAstryxProps> = ({
-  open = false,
+  isOpen = false,
+  onOpenChange,
   title,
+  subtitle,
   children,
   width = 520,
-  okText,
-  cancelText,
-  okButtonProps,
-  confirmLoading,
-  onOk,
-  onCancel,
+  actionLabel,
+  cancelLabel = 'Cancel',
+  actionVariant = 'primary',
+  isActionDisabled,
+  isActionLoading,
+  onAction,
   footer,
-  loading,
-  afterOpenChange,
+  isLoading,
+  onAfterOpen,
   className,
   style,
+  purpose = 'form',
+  ...dialogProps
 }) => {
   'use memo';
 
+  // Must run before the early return — hooks cannot sit behind a conditional.
   useEffect(() => {
-    afterOpenChange?.(open);
-    // `afterOpenChange` is a stable callback at every call site in this graph.
+    if (isOpen) onAfterOpen?.();
+    // `onAfterOpen` is a stable callback at every call site in this graph.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
+  }, [isOpen]);
 
-  if (!open) return null;
+  if (!isOpen) return null;
+  const close = () => onOpenChange?.(false);
 
-  const generatedFooter = (
+  const generatedFooter = actionLabel ? (
     <HStack justify="end" gap={2} align="center">
+      <Button label={cancelLabel} variant="secondary" onClick={close} />
       <Button
-        label={typeof cancelText === 'string' ? cancelText : 'Cancel'}
-        variant="secondary"
-        onClick={() => onCancel?.()}
-      />
-      <Button
-        label={typeof okText === 'string' ? okText : 'OK'}
-        variant={okButtonProps?.danger ? 'destructive' : 'primary'}
-        isDisabled={okButtonProps?.disabled}
-        isLoading={confirmLoading}
-        // Astryx's native async-click handles the spinner; the close is ours.
+        label={actionLabel}
+        variant={actionVariant}
+        isDisabled={isActionDisabled}
+        isLoading={isActionLoading}
+        // `clickAction` is Astryx-native async-with-loading; the close is ours.
         clickAction={async () => {
-          await onOk?.();
+          await onAction?.();
         }}
       />
     </HStack>
-  );
+  ) : null;
 
   return (
     <Dialog
-      isOpen={open}
+      isOpen={isOpen}
       onOpenChange={(next) => {
-        if (!next) onCancel?.();
+        if (!next) close();
       }}
       width={width}
       // `form` blocks accidental backdrop dismissal, matching how these modals
-      // behave in the app today (all of them wrap a form or a destructive act).
-      purpose="form"
+      // behave today (all wrap a form or a destructive act).
+      purpose={purpose}
+      {...dialogProps}
     >
       <Layout
         className={className}
         style={style}
         header={
           <DialogHeader
-            title={typeof title === 'string' ? title : ''}
+            title={title ?? ''}
+            subtitle={subtitle}
             onOpenChange={(next) => {
-              if (!next) onCancel?.();
+              if (!next) close();
             }}
           />
         }
         content={
           <LayoutContent>
-            {loading ? <Skeleton height={120} /> : children}
+            {isLoading ? <Skeleton height={120} /> : children}
           </LayoutContent>
         }
         footer={
-          <LayoutFooter hasDivider>{footer ?? generatedFooter}</LayoutFooter>
+          (footer ?? generatedFooter) ? (
+            <LayoutFooter hasDivider>{footer ?? generatedFooter}</LayoutFooter>
+          ) : undefined
         }
       />
     </Dialog>

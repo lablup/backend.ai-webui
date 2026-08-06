@@ -45,8 +45,8 @@
  - `scroll={{ x: 'max-content' }}` — Astryx's Table always renders inside its
    own `astryx-table-scroll-wrapper`, so horizontal overflow already scrolls.
    Accepted and ignored.
- - `showSorterTooltip` / `size` — no counterparts; `size="small"` maps to
-   `density="compact"`, `showSorterTooltip` is dropped.
+ - `showSorterTooltip` / `scroll` — dropped, no Astryx counterpart. antd's
+   `size` becomes Astryx's own `density` prop, passed straight through.
  - Column settings UI — BUI ships a whole `BAITableSettingModal` (drag-reorder,
    CSV export). `useTableColumnSettings` is headless: it returns filtered
    columns + MultiSelector options but NO UI. Only the *filtering/ordering* half
@@ -58,6 +58,7 @@ import {
 } from '@astryxdesign/core/DropdownMenu';
 import { Pagination } from '@astryxdesign/core/Pagination';
 import { HStack } from '@astryxdesign/core/Stack';
+import type { TableColumn, TableProps } from '@astryxdesign/core/Table';
 import {
   Table,
   pixel,
@@ -72,18 +73,24 @@ import { SettingsIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-/** antd-shaped column definition, as used across this repo. */
-export interface BAITableAstryxColumn<T> {
-  key: string;
-  title?: React.ReactNode;
+/**
+ * Extends Astryx's `TableColumn` with the three things the Backend.AI column
+ * model adds: a settings-visibility triple (`isRequired` / `isHiddenByDefault`
+ * / `isHidden`) and `dataIndex` for the default cell renderer.
+ */
+export interface BAITableAstryxColumn<
+  T extends Record<string, unknown>,
+> extends Omit<TableColumn<T>, 'width'> {
+  /** Property read for the default cell render when `renderCell` is absent. */
   dataIndex?: string;
-  render?: (value: never, record: T, index: number) => React.ReactNode;
-  sorter?: boolean;
-  required?: boolean;
+  /** Cannot be hidden through column settings. */
+  isRequired?: boolean;
+  /** Hidden until the user opts in through column settings. */
+  isHiddenByDefault?: boolean;
+  /** Always hidden. */
+  isHidden?: boolean;
+  /** Pixel width; resizing overrides it. */
   width?: number;
-  hidden?: boolean;
-  /** Hidden until the user opts in via column settings. */
-  defaultHidden?: boolean;
 }
 
 export interface BAITableAstryxColumnOverride {
@@ -91,19 +98,25 @@ export interface BAITableAstryxColumnOverride {
   order?: number;
 }
 
-export interface BAITableAstryxProps<T extends Record<string, unknown>> {
-  dataSource?: Array<T>;
+export interface BAITableAstryxProps<
+  T extends Record<string, unknown>,
+> extends Omit<
+  TableProps<T>,
+  'data' | 'columns' | 'idKey' | 'plugins' | 'children'
+> {
+  data?: Array<T>;
   columns?: Array<BAITableAstryxColumn<T>>;
-  rowKey?: (record: T) => string;
-  loading?: boolean;
+  idKey?: (item: T) => string;
+  isLoading?: boolean;
+  /** Backend.AI order string, e.g. `-created_at`. Mapped to Astryx sort state. */
   order?: string | null;
   onChangeOrder?: (order?: string) => void;
   rowSelection?: {
-    type?: 'checkbox' | 'radio';
-    selectedRowKeys?: Array<React.Key>;
-    preserveSelectedRowKeys?: boolean;
-    getCheckboxProps?: (record: T) => { disabled?: boolean };
-    onChange?: (selectedRowKeys: Array<React.Key>) => void;
+    selectedKeys?: Array<string>;
+    /** Keys from other pages survive a select-all. */
+    isPreservingKeys?: boolean;
+    getIsItemEnabled?: (item: T) => boolean;
+    onChange?: (selectedKeys: Array<string>) => void;
   };
   pagination?: {
     pageSize?: number;
@@ -117,11 +130,8 @@ export interface BAITableAstryxProps<T extends Record<string, unknown>> {
       next: Record<string, BAITableAstryxColumnOverride>,
     ) => void;
   };
-  /** Drag-to-resize column borders. Wired in phase 3. */
-  resizable?: boolean;
-  showSorterTooltip?: boolean;
-  scroll?: { x?: number | string; y?: number | string };
-  size?: 'small' | 'middle' | 'large';
+  /** Drag-to-resize column borders. Astryx `useTableColumnResize`. */
+  isColumnResizable?: boolean;
 }
 
 /** `-created_at` <-> `[{sortKey:'created_at', direction:'descending'}]` */
@@ -139,17 +149,18 @@ function orderToSort(order?: string | null) {
 }
 
 function BAITableAstryx<T extends Record<string, unknown>>({
-  dataSource,
+  data: dataProp,
   columns,
-  rowKey,
-  loading,
+  idKey,
+  isLoading,
   order,
   onChangeOrder,
   rowSelection,
   pagination,
   tableSettings,
-  resizable = false,
-  size = 'middle',
+  isColumnResizable = false,
+  density = 'balanced',
+  ...tableProps
 }: BAITableAstryxProps<T>) {
   'use memo';
 
@@ -158,9 +169,9 @@ function BAITableAstryx<T extends Record<string, unknown>>({
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
 
   const { t } = useTranslation();
-  const data = dataSource ?? [];
-  const getKey = (record: T) =>
-    rowKey ? rowKey(record) : String((record as Record<string, unknown>).id);
+  const data = dataProp ?? [];
+  const getKey = (item: T) =>
+    idKey ? idKey(item) : String((item as Record<string, unknown>).id);
 
   const overrides = tableSettings?.columnOverrides ?? {};
 
@@ -168,11 +179,11 @@ function BAITableAstryx<T extends Record<string, unknown>>({
   // Astryx plugin wants an ordered key ARRAY, so it is derived here.
   const visibleColumns = (columns ?? [])
     .filter((c) => {
-      if (c.required) return true;
-      if (c.hidden) return false;
+      if (c.isRequired) return true;
+      if (c.isHidden) return false;
       const override = overrides[c.key]?.hidden;
       // An explicit override always wins over the column's own default.
-      return override != null ? !override : !c.defaultHidden;
+      return override != null ? !override : !c.isHiddenByDefault;
     })
     .slice()
     .sort((a, b) => {
@@ -185,39 +196,30 @@ function BAITableAstryx<T extends Record<string, unknown>>({
     });
 
   const astryxColumns = visibleColumns.map((column) => ({
-    key: column.key,
-    header: column.title,
-    // Resize needs a concrete starting width; without `resizable` the columns
-    // stay proportional so the table still fills its container.
+    ...column,
+    // Resize needs a concrete starting width; otherwise columns stay
+    // proportional so the table still fills its container.
     width:
-      resizable && columnWidths[column.key] != null
+      isColumnResizable && columnWidths[column.key] != null
         ? pixel(columnWidths[column.key])
         : column.width
           ? pixel(column.width)
           : proportional(1),
-    sortable: column.sorter ? true : undefined,
-    renderCell: (item: T) => {
-      const value = column.dataIndex
-        ? (item as Record<string, unknown>)[column.dataIndex]
-        : undefined;
-      if (column.render) {
-        // antd's render signature is (value, record, index); the index is not
-        // available inside Astryx's per-item renderer, so it is passed as -1.
-        // No column on this page reads it.
-        return column.render(value as never, item, -1);
-      }
-      return value == null ? null : String(value);
-    },
+    renderCell:
+      column.renderCell ??
+      ((item: T) => {
+        const value = column.dataIndex
+          ? (item as Record<string, unknown>)[column.dataIndex]
+          : undefined;
+        return value == null ? null : String(value);
+      }),
   }));
 
-  const selectedKeys = new Set(
-    (rowSelection?.selectedRowKeys ?? []).map(String),
-  );
+  const selectedKeys = new Set(rowSelection?.selectedKeys ?? []);
 
   const selectionPlugin = useTableSelection<T>({
     getIsItemSelected: (item) => selectedKeys.has(getKey(item)),
-    getIsItemEnabled: (item) =>
-      !rowSelection?.getCheckboxProps?.(item)?.disabled,
+    getIsItemEnabled: (item) => rowSelection?.getIsItemEnabled?.(item) ?? true,
     getIsAllSelected: () =>
       data.length > 0 && data.every((item) => selectedKeys.has(getKey(item))),
     getIsIndeterminate: () =>
@@ -230,10 +232,8 @@ function BAITableAstryx<T extends Record<string, unknown>>({
       rowSelection?.onChange?.(Array.from(next));
     },
     onSelectAll: ({ isAllSelected }) => {
-      // `preserveSelectedRowKeys` semantics: keys from other pages survive.
-      const next = new Set(
-        rowSelection?.preserveSelectedRowKeys ? selectedKeys : [],
-      );
+      // `isPreservingKeys` semantics: keys from other pages survive.
+      const next = new Set(rowSelection?.isPreservingKeys ? selectedKeys : []);
       data.forEach((item) => {
         const key = getKey(item);
         if (isAllSelected) next.add(key);
@@ -286,8 +286,8 @@ function BAITableAstryx<T extends Record<string, unknown>>({
   // through `useBAISettingUserState('table_column_overrides.<Page>')`.
   const settingsColumns = (columns ?? []).map((column) => ({
     key: column.key,
-    label: typeof column.title === 'string' ? column.title : column.key,
-    isAlwaysVisible: !!column.required,
+    label: typeof column.header === 'string' ? column.header : column.key,
+    isAlwaysVisible: !!column.isRequired,
   }));
   const activeColumnKeys = visibleColumns.map((column) => column.key);
 
@@ -295,7 +295,7 @@ function BAITableAstryx<T extends Record<string, unknown>>({
     columns: settingsColumns,
     activeColumnKeys,
     defaultColumnKeys: (columns ?? [])
-      .filter((column) => column.required || !column.defaultHidden)
+      .filter((column) => column.isRequired || !column.isHiddenByDefault)
       .map((column) => column.key),
     onChangeActiveColumnKeys: (keys) => {
       const active = new Set(keys);
@@ -303,7 +303,7 @@ function BAITableAstryx<T extends Record<string, unknown>>({
         ...overrides,
       };
       (columns ?? []).forEach((column) => {
-        if (column.required) return;
+        if (column.isRequired) return;
         next[column.key] = {
           ...next[column.key],
           hidden: !active.has(column.key),
@@ -331,7 +331,7 @@ function BAITableAstryx<T extends Record<string, unknown>>({
   });
 
   const plugins: Record<string, unknown> = { sort: sortPlugin };
-  if (resizable) plugins.resize = resizePlugin;
+  if (isColumnResizable) plugins.resize = resizePlugin;
   if (rowSelection) plugins.selection = selectionPlugin;
   if (tableSettings) plugins.columnSettings = columnSettingsPlugin;
 
@@ -351,26 +351,50 @@ function BAITableAstryx<T extends Record<string, unknown>>({
           scroll wrapper claims the full block. */}
       <div
         style={{
-          // PILOT-DECISION: Astryx applies "edge compensation" negative margins
-          // so a table bleeds to its container's edge. Measured here: the
-          // `<table>` renders ~24px BELOW its own box, so the next sibling (the
-          // pagination bar) visually collides with the last row even though the
-          // boxes do not overlap. Padding the wrapper contains the bleed.
-          // Invisible to every gate; only a screenshot catches it.
+          // PILOT-DECISION (P12, corrected in phase 5).
+          //
+          // MEASURED: `astryx-table-scroll-wrapper` computes to
+          // `margin-top: -24px; margin-bottom: -24px` (plus the inline pair).
+          // `Table.js` applies it unconditionally —
+          // `stylex.props(base, containerBleed, ...pluginStyles)` — and there
+          // is NO prop knob.
+          //
+          // It is NOT "edge compensation": that mechanism
+          // (`Layout/edgeCompensation.stylex`) is `marginInline`-ONLY and is
+          // opt-in via a `data-astryx-edge-comp` attribute. The phase-4
+          // diagnosis was wrong; this is the Table's own bleed-to-card-edge.
+          //
+          // The INLINE bleed is wanted — it makes the table span the card's
+          // padding, which the design intends. The BLOCK bleed is not: the
+          // -24px top pulls the table into the parent's gap (gluing the filter
+          // row to the table header — the user-reported bug) and the -24px
+          // bottom drops it over the pagination bar. Symmetric padding cancels
+          // the block bleed and keeps the inline one.
+          //
+          // Two official alternatives, both rejected:
+          //  - a table plugin returning `xstyle` from `transformScrollWrapper`
+          //    (plugin styles come last, so they win) — needs the StyleX
+          //    COMPILER, which ticket 03 recommends against adopting;
+          //  - a `defineTheme` override on the themeable class
+          //    `table-scroll-wrapper` — official and compiler-free, but GLOBAL:
+          //    it would also kill the bleed for tables that are a card's only
+          //    child, where the bleed is correct.
+          paddingTop: 24,
           paddingBottom: 24,
-          ...(loading
+          ...(isLoading
             ? { opacity: 0.5, pointerEvents: 'none', transition: 'opacity .2s' }
             : null),
         }}
-        aria-busy={loading || undefined}
+        aria-busy={isLoading || undefined}
       >
         <Table<T>
           data={data}
           columns={astryxColumns}
           idKey={(item) => getKey(item)}
-          density={size === 'small' ? 'compact' : 'balanced'}
+          density={density}
           hasHover
           textOverflow="truncate"
+          {...tableProps}
           rowCount={pagination?.total}
           rowIndexStart={
             pagination

@@ -260,8 +260,23 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
 
 interface VFolderNodesProps extends Omit<
   BAITableAstryxProps<VFolderNodeInList>,
-  'dataSource' | 'columns'
+  'data' | 'columns' | 'rowSelection'
 > {
+  /**
+   * PHASE 5 boundary: `VFolderNodes` is an APP component with a consumer
+   * outside the pilot graph (`VFolderNodeListPage`), so it keeps the repo's
+   * existing antd-shaped selection contract and translates to the
+   * Astryx-native `BAITableAstryx` shape internally. The native-API policy
+   * applies to the NEW `astryx-bui/*` components, not to app components whose
+   * callers were never migrated.
+   */
+  rowSelection?: {
+    type?: 'checkbox' | 'radio';
+    preserveSelectedRowKeys?: boolean;
+    selectedRowKeys?: Array<React.Key>;
+    getCheckboxProps?: (record: VFolderNodeInList) => { disabled?: boolean };
+    onChange?: (selectedRowKeys: Array<React.Key>) => void;
+  };
   vfoldersFrgmt: VFolderNodesFragment$key;
   // Callback when a row is removed from current list
   onRemoveRow?: (updatedFolderId?: string) => void;
@@ -282,6 +297,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
   vfoldersFrgmt,
   onRemoveRow,
   disableProjectFolderActions,
+  rowSelection,
   ...tableProps
 }) => {
   const { t } = useTranslation();
@@ -363,19 +379,17 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
   return (
     <>
       <BAITable
-        resizable
-        showSorterTooltip={false}
-        rowKey={(record) => record.id}
-        size="small"
-        dataSource={filteredVFolders}
-        scroll={{ x: 'max-content' }}
+        isColumnResizable
+        idKey={(record) => record.id}
+        density="compact"
+        data={filteredVFolders}
         columns={[
           {
             key: 'name',
-            title: t('data.folders.Name'),
+            header: t('data.folders.Name'),
             dataIndex: 'name',
-            required: true,
-            render: (_name, vfolder) => {
+            isRequired: true,
+            renderCell: (vfolder) => {
               return (
                 <VFolderNameCell
                   vfolder={vfolder}
@@ -485,13 +499,14 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                 />
               );
             },
-            sorter: isEnableSorter('name'),
+            sortable: isEnableSorter('name'),
           },
           {
             key: 'status',
-            title: t('data.folders.Status'),
+            header: t('data.folders.Status'),
             dataIndex: 'status',
-            render: (status: string) => {
+            renderCell: (vfolder) => {
+              const status = vfolder.status as string;
               return (
                 <Badge
                   variant={status ? statusTagColor[status] : 'neutral'}
@@ -499,26 +514,27 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                 />
               );
             },
-            sorter: isEnableSorter('status'),
+            sortable: isEnableSorter('status'),
           },
           {
             key: 'host',
-            title: t('data.folders.Location'),
+            header: t('data.folders.Location'),
             dataIndex: 'host',
-            sorter: isEnableSorter('host'),
+            sortable: isEnableSorter('host'),
           },
           {
             key: 'permissions',
-            title: t('data.folders.MountPermission'),
-            render: (_perm: string, vfolder) => {
+            header: t('data.folders.MountPermission'),
+            renderCell: (vfolder) => {
               return <VFolderPermissionCell vfolderFrgmt={vfolder} />;
             },
           },
           {
             key: 'ownership_type',
-            title: t('data.folders.Type'),
+            header: t('data.folders.Type'),
             dataIndex: 'ownership_type',
-            render: (type: string) => {
+            renderCell: (vfolder) => {
+              const type = vfolder.ownership_type as string;
               return type === 'user' ? (
                 <HStack gap={2}>
                   <Text>{t('data.User')}</Text>
@@ -533,24 +549,25 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                 </HStack>
               );
             },
-            sorter: isEnableSorter('ownership_type'),
+            sortable: isEnableSorter('ownership_type'),
           },
 
           {
             key: 'owner',
-            title: t('data.folders.Owner'),
-            render: (__, vfolder) =>
+            header: t('data.folders.Owner'),
+            renderCell: (vfolder) =>
               vfolder.ownership_type === 'user'
                 ? vfolder?.user_email
                 : vfolder?.group_name,
           },
           {
             key: 'usage_mode',
-            title: t('data.UsageMode'),
+            header: t('data.UsageMode'),
             dataIndex: 'usage_mode',
-            defaultHidden: true,
-            sorter: isEnableSorter('usage_mode'),
-            render: (mode: string) => {
+            isHiddenByDefault: true,
+            sortable: isEnableSorter('usage_mode'),
+            renderCell: (vfolder) => {
+              const mode = vfolder.usage_mode as string;
               switch (mode) {
                 case 'general':
                   return t('data.General');
@@ -565,79 +582,106 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
           },
           {
             key: 'num_files',
-            title: t('data.folders.NumberOfFiles'),
+            header: t('data.folders.NumberOfFiles'),
             dataIndex: 'num_files',
-            defaultHidden: true,
-            sorter: isEnableSorter('num_files'),
-            render: (value: number) =>
-              value != null ? value.toLocaleString() : '-',
+            isHiddenByDefault: true,
+            sortable: isEnableSorter('num_files'),
+            renderCell: (vfolder) => {
+              const value = vfolder.num_files;
+              return value != null ? value.toLocaleString() : '-';
+            },
           },
           {
             key: 'cur_size',
-            title: t('data.folders.FolderUsage'),
+            header: t('data.folders.FolderUsage'),
             dataIndex: 'cur_size',
-            defaultHidden: true,
-            sorter: isEnableSorter('cur_size'),
-            render: (value: string) =>
-              value != null ? `${bytesToGB(Number(value))} GB` : '-',
+            isHiddenByDefault: true,
+            sortable: isEnableSorter('cur_size'),
+            renderCell: (vfolder) => {
+              const value = vfolder.cur_size;
+              return value != null ? `${bytesToGB(Number(value))} GB` : '-';
+            },
           },
           {
             key: 'max_files',
-            title: t('data.folders.MaxFolderQuota'),
+            header: t('data.folders.MaxFolderQuota'),
             dataIndex: 'max_files',
-            defaultHidden: true,
-            sorter: isEnableSorter('max_files'),
-            render: (value: number) =>
-              value != null && value > 0 ? value.toLocaleString() : '-',
+            isHiddenByDefault: true,
+            sortable: isEnableSorter('max_files'),
+            renderCell: (vfolder) => {
+              const value = vfolder.max_files;
+              return value != null && value > 0 ? value.toLocaleString() : '-';
+            },
           },
           {
             key: 'max_size',
-            title: t('data.folders.MaxSize'),
+            header: t('data.folders.MaxSize'),
             dataIndex: 'max_size',
-            defaultHidden: true,
-            sorter: isEnableSorter('max_size'),
-            render: (value: string) =>
-              value != null && Number(value) > 0
+            isHiddenByDefault: true,
+            sortable: isEnableSorter('max_size'),
+            renderCell: (vfolder) => {
+              const value = vfolder.max_size;
+              return value != null && Number(value) > 0
                 ? `${bytesToGB(Number(value))} GB`
-                : '-',
+                : '-';
+            },
           },
           {
             key: 'cloneable',
-            title: t('data.folders.Cloneable'),
+            header: t('data.folders.Cloneable'),
             dataIndex: 'cloneable',
-            defaultHidden: true,
-            sorter: isEnableSorter('cloneable'),
-            render: (value: boolean) =>
-              value ? t('button.Yes') : t('button.No'),
+            isHiddenByDefault: true,
+            sortable: isEnableSorter('cloneable'),
+            renderCell: (vfolder) => {
+              const value = vfolder.cloneable;
+              return value ? t('button.Yes') : t('button.No');
+            },
           },
           {
             key: 'quota_scope_id',
-            title: t('data.QuotaScopeId'),
+            header: t('data.QuotaScopeId'),
             dataIndex: 'quota_scope_id',
-            defaultHidden: true,
-            sorter: isEnableSorter('quota_scope_id'),
-            render: (value: string) =>
-              value ? <BAICopyableText>{value}</BAICopyableText> : '-',
+            isHiddenByDefault: true,
+            sortable: isEnableSorter('quota_scope_id'),
+            renderCell: (vfolder) => {
+              const value = vfolder.quota_scope_id;
+              return value ? <BAICopyableText>{value}</BAICopyableText> : '-';
+            },
           },
           {
             key: 'last_used',
-            title: t('credential.LastUsed'),
+            header: t('credential.LastUsed'),
             dataIndex: 'last_used',
-            defaultHidden: true,
-            sorter: isEnableSorter('last_used'),
-            render: (value: string) =>
-              value ? dayjs(value).format('ll LT') : '-',
+            isHiddenByDefault: true,
+            sortable: isEnableSorter('last_used'),
+            renderCell: (vfolder) => {
+              const value = vfolder.last_used;
+              return value ? dayjs(value).format('ll LT') : '-';
+            },
           },
           {
             key: 'created_at',
-            title: t('data.folders.CreatedAt'),
+            header: t('data.folders.CreatedAt'),
             dataIndex: 'created_at',
-            defaultHidden: true,
-            sorter: isEnableSorter('created_at'),
-            render: (value: string) =>
-              value ? dayjs(value).format('ll LT') : '-',
+            isHiddenByDefault: true,
+            sortable: isEnableSorter('created_at'),
+            renderCell: (vfolder) => {
+              const value = vfolder.created_at;
+              return value ? dayjs(value).format('ll LT') : '-';
+            },
           },
         ]}
+        rowSelection={
+          rowSelection
+            ? {
+                selectedKeys: (rowSelection.selectedRowKeys ?? []).map(String),
+                isPreservingKeys: rowSelection.preserveSelectedRowKeys,
+                getIsItemEnabled: (item) =>
+                  !rowSelection.getCheckboxProps?.(item)?.disabled,
+                onChange: (keys) => rowSelection.onChange?.(keys),
+              }
+            : undefined
+        }
         {...tableProps}
       />
       <BAIDeleteConfirmModal

@@ -69,7 +69,7 @@ import { IconButton } from '@astryxdesign/core/IconButton';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { RefreshCwIcon } from 'lucide-react';
+import { ChevronDown, RefreshCwIcon } from 'lucide-react';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -298,6 +298,8 @@ const BAIFetchKeyButtonAstryx: React.FC<BAIFetchKeyButtonAstryxProps> = ({
           children: isAutoRefreshOn
             ? formatInterval(autoUpdateDelay)
             : undefined,
+          isIconOnly: !isAutoRefreshOn,
+          icon: !isAutoRefreshOn ? <ChevronDown /> : undefined,
           tooltip: t('comp:BAIFetchKeyButton.AutoRefresh', 'Auto Refresh'),
         }}
       >

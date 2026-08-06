@@ -19,70 +19,69 @@
      │  filters / table / pagination                 │  <- body
      └───────────────────────────────────────────────┘
 
- PILOT-DECISIONs:
- - `styles={{ header, body }}` has NO Astryx equivalent — the card owns one
-   uniform `padding` step. The flush-to-header look and the project's
-   `body.paddingTop: 0` convention are reproduced by composing the header
-   inside the card's padding box; the prop is accepted-and-ignored so call
-   sites keep compiling.
- - `variant="borderless"` maps to Astryx `variant="default"` (a real white/
-   surface-coloured card), NOT `transparent`. Phase 2 mapped it to
-   `transparent`, which is what made the converted page lose its card
-   background entirely. antd's "borderless" means *no border*, not *no
-   surface* — mapping it to `transparent` was a misreading.
- - `status` (success/error/warning border tint, used elsewhere in the app) is
-   NOT implemented — Astryx exposes no border-colour prop, so it needs a theme
-   component override. This page does not use it.
+ PHASE 5 — props now **extend Astryx `CardProps`**, not antd's `CardProps`.
+ The antd-shaped surface is gone entirely:
+
+   REMOVED  `variant="borderless" | "outlined"`  -> Astryx `variant` passes through
+   REMOVED  `styles={{ header, body }}`          -> Astryx has one `padding` step
+   RENAMED  `tabList` -> `tabs`                  -> avoids antd's vocabulary
+   RENAMED  `activeTabKey` -> `activeTab`
+   RENAMED  `onTabChange` -> `onChangeTab`
+
+ What the component still adds over a bare `Card` (and why it survives the
+ "use Astryx directly" audit): the header composition itself — title row +
+ right-aligned `extra` actions + a tab rail welded to the header's bottom edge,
+ which is the `use-bai-card.md` convention and is ~40 lines of layout every
+ call site would otherwise repeat.
+
+ NOT implemented: `status` (success/error/warning border tint used elsewhere in
+ the app). Astryx exposes no border-colour prop, so it needs a theme component
+ override. This page does not use it.
 */
 import { Card } from '@astryxdesign/core/Card';
+import type { CardProps } from '@astryxdesign/core/Card';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Tab, TabList } from '@astryxdesign/core/TabList';
 import { Heading } from '@astryxdesign/core/Text';
 import React from 'react';
 
-export interface BAICardAstryxTabItem {
+export interface BAICardAstryxTab {
   key: string;
+  /** Astryx `Tab` labels are strings and double as the accessible name. */
   label: string;
   /** Trailing slot — badge counts, status dots. */
   endContent?: React.ReactNode;
 }
 
-export interface BAICardAstryxProps {
+export interface BAICardAstryxProps extends CardProps {
+  /** Rendered as a `Heading` when a string; otherwise used verbatim. */
   title?: React.ReactNode;
+  /** Card-scoped actions, right-aligned in the header. */
   extra?: React.ReactNode;
-  variant?: 'borderless' | 'outlined';
-  /** Tabs rendered at the bottom edge of the card header (antd parity). */
-  tabList?: Array<BAICardAstryxTabItem>;
-  activeTabKey?: string;
-  onTabChange?: (key: string) => void;
-  /** Accepted and ignored — see the note above. */
-  styles?: Record<string, React.CSSProperties>;
-  style?: React.CSSProperties;
-  className?: string;
-  children?: React.ReactNode;
+  /** Tabs welded to the header's bottom edge. */
+  tabs?: Array<BAICardAstryxTab>;
+  activeTab?: string;
+  onChangeTab?: (key: string) => void;
 }
 
 const BAICardAstryx: React.FC<BAICardAstryxProps> = ({
   title,
   extra,
-  tabList,
-  activeTabKey,
-  onTabChange,
-  style,
-  className,
+  tabs,
+  activeTab,
+  onChangeTab,
+  variant = 'default',
+  padding = 6,
   children,
+  ...cardProps
 }) => {
   'use memo';
-  const hasHeader = !!title || !!extra || !!tabList?.length;
+  const hasHeader = !!title || !!extra || !!tabs?.length;
   return (
-    <Card
-      // A real surface — see the `variant` PILOT-DECISION above.
-      variant="default"
-      // antd's Card body padding is 24px (`token.paddingLG`) = Astryx step 6.
-      padding={6}
-      style={style}
-      className={className}
-    >
+    // `variant` and `padding` are Astryx's own props with Astryx defaults
+    // (step 6 = 24px, matching the density the app already uses); everything
+    // else passes straight through.
+    <Card variant={variant} padding={padding} {...cardProps}>
       <VStack gap={4} align="stretch">
         {hasHeader ? (
           <VStack gap={4} align="stretch">
@@ -98,16 +97,16 @@ const BAICardAstryx: React.FC<BAICardAstryxProps> = ({
                 {extra}
               </HStack>
             ) : null}
-            {tabList?.length ? (
+            {tabs?.length ? (
               // `hasDivider` puts the rail on the header's bottom edge, so the
               // body starts directly under the tab underline — the tabbed-card
               // behaviour the project convention describes.
               <TabList
-                value={activeTabKey ?? tabList[0]?.key ?? ''}
-                onChange={(key) => onTabChange?.(key)}
+                value={activeTab ?? tabs[0]?.key ?? ''}
+                onChange={(key) => onChangeTab?.(key)}
                 hasDivider
               >
-                {tabList.map((tab) => (
+                {tabs.map((tab) => (
                   <Tab
                     key={tab.key}
                     value={tab.key}
