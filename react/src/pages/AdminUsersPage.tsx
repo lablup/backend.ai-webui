@@ -42,18 +42,6 @@ const tabParser = parseAsStringLiteral(['users', 'credentials']).withDefault(
   'users',
 );
 
-// Every URL key this page owns; a browser navigation that moves any of them
-// has to re-issue the active tab's query.
-const NAVIGATED_QUERY_KEYS = [
-  'tab',
-  'filter',
-  'order',
-  'status',
-  'activeType',
-  'current',
-  'pageSize',
-];
-
 type TabKey = 'users' | 'credentials';
 type UsersVariables = AdminUserManagementQueryType['variables'];
 type CredentialsVariables = AdminUserCredentialListQueryType['variables'];
@@ -261,8 +249,10 @@ const AdminUsersPage: React.FC = () => {
 
   // Back/forward moves the URL without going through onTabChange, so the tab
   // flips (useKeyedSnapshot follows its source key) while the query ref would
-  // otherwise keep the departed tab's data.
-  useBrowserNavigatedQueryEffect(NAVIGATED_QUERY_KEYS, loadActiveTabFromUrl);
+  // otherwise keep the departed tab's data. Only tab changes push a history
+  // entry — everything inside a tab is written with `replace` — so `tab` is
+  // what separates any two adjacent entries.
+  useBrowserNavigatedQueryEffect(['tab'], loadActiveTabFromUrl);
 
   const tabItems: CardTabListType[] = [
     {
