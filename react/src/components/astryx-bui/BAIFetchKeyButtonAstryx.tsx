@@ -20,28 +20,53 @@
    easy to miss and is the single most behaviour-carrying detail in the file.
  - "Last updated N minutes ago" tooltip, re-rendered on a 5 s tick.
 
- PILOT-DECISIONs:
- - **Interval dropdown dropped.** BUI opens an antd `Dropdown` menu to pick the
-   interval. Astryx's `DropdownMenu` + `DropdownMenuRadioGroup` could carry it,
-   but the pilot page never passes `onChangeAutoUpdateDelay`, so the dropdown
-   never renders there. Rebuilding it is real remaining cost, not zero.
- - **`BAICountdownBorder` dropped.** BUI animates a depleting border around the
-   button showing time-to-next-refresh. It is a bespoke SVG/CSS animation with
-   no Astryx counterpart and would have to be ported verbatim.
+ PHASE 4 — the interval picker is now rebuilt:
+ `ButtonGroup` (replacing antd's `Space.Compact`) joining the icon-only refresh
+ button to a chevron trigger that shows the active interval ("30s"), opening a
+ `DropdownMenu` in compound-component mode containing a
+ `DropdownMenuRadioGroup` of `DropdownMenuRadioItem`s.
+
+ Why this trio over `MoreMenu`: the original is a SPLIT control (a primary
+ action welded to a menu trigger) whose menu is a single-choice list with
+ exactly one check mark — `ButtonGroup` + `DropdownMenuRadioGroup` reproduces
+ both halves natively, and `role="menuitemradio"` states the single-choice
+ semantics that antd could only fake with a hidden/visible `CheckOutlined`.
+
+ Faithfully carried over from BUI:
+ - `AUTO_UPDATE_DELAY_OPTIONS` = 5/10/15/30/60 s, with "Off" always prepended.
+ - `formatInterval` picks the largest whole unit and translates via the same
+   `comp:BAIFetchKeyButton.Every{Seconds,Minutes,Hours}` keys.
+ - **Sticky off-list intervals**: a persisted value outside the preset list
+   (e.g. a legacy 7 s) is merged in and remembered for the component's lifetime
+   so it stays selectable and exactly one item is always checked.
+ - Changing the interval re-anchors the refresh cycle.
+
+ PILOT-DECISION:
+ - **`BAICountdownBorder` still dropped.** BUI animates a depleting border
+   around the control showing time-to-next-refresh. It is a bespoke SVG/CSS
+   animation with no Astryx counterpart and would have to be ported verbatim.
  - **P8 handled properly.** Astryx requires a string `label` that doubles as the
    accessible name. The BUI original renders an icon-only antd Button whose only
    accessible name came from the tooltip `title`. Here the label is an explicit,
    translated string ("Refresh"), and the last-updated text goes to the tooltip
    — so the control is *more* accessible than the original, not less.
 */
+import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
+import {
+  DropdownMenu,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+} from '@astryxdesign/core/DropdownMenu';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { RefreshCwIcon } from 'lucide-react';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 dayjs.extend(relativeTime);
+dayjs.extend(duration);
 
 /** Same presets BUI offers. */
 export const AUTO_UPDATE_DELAY_OPTIONS = [
@@ -85,6 +110,8 @@ const BAIFetchKeyButtonAstryx: React.FC<BAIFetchKeyButtonAstryxProps> = ({
   loading = false,
   onChange,
   autoUpdateDelay = null,
+  onChangeAutoUpdateDelay,
+  autoUpdateDelayOptions = AUTO_UPDATE_DELAY_OPTIONS,
   showLastLoadTime = true,
   size = 'md',
 }) => {
@@ -96,6 +123,29 @@ const BAIFetchKeyButtonAstryx: React.FC<BAIFetchKeyButtonAstryxProps> = ({
   const [cycleKey, setCycleKey] = useState(0);
   // Re-render on a 5 s tick so "3 minutes ago" stays honest.
   const [, setTick] = useState(0);
+
+  // Providing `onChangeAutoUpdateDelay` opts the control into the interval
+  // picker — the exact same switch BUI uses.
+  const isAutoUpdateConfigurable = onChangeAutoUpdateDelay !== undefined;
+
+  // Sticky off-list intervals (BUI parity): a persisted value outside the
+  // preset list stays selectable for the component's lifetime, so exactly one
+  // menu item is always checked and the consumer's option list is never mutated.
+  const [seenOffListDelays, setSeenOffListDelays] = useState<Array<number>>([]);
+  const [trackedDelay, setTrackedDelay] = useState<number | null | undefined>(
+    undefined,
+  );
+  if (autoUpdateDelay !== trackedDelay) {
+    setTrackedDelay(autoUpdateDelay);
+    if (
+      autoUpdateDelay != null &&
+      !autoUpdateDelayOptions.includes(autoUpdateDelay)
+    ) {
+      setSeenOffListDelays((prev) =>
+        prev.includes(autoUpdateDelay) ? prev : [...prev, autoUpdateDelay],
+      );
+    }
+  }
 
   const turnOffTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const loadingStartRef = useRef<number | null>(null);
@@ -159,10 +209,18 @@ const BAIFetchKeyButtonAstryx: React.FC<BAIFetchKeyButtonAstryxProps> = ({
     ? `${t('comp:BAIFetchKeyButton.LastUpdated')}: ${dayjs(lastLoadTime).fromNow()}`
     : undefined;
 
-  return (
+  const resolvedSize = SIZE_MAP[size] ?? 'md';
+
+  const triggerRefresh = () => {
+    onChange(new Date().toISOString());
+    setCycleKey((k) => k + 1);
+  };
+
+  const refreshButton = (
     <IconButton
-      // P8: an explicit accessible name, which the antd original never had.
-      label={t('button.Refresh')}
+      // P8: an explicit accessible name, which the antd original never had —
+      // there the only name came from the tooltip.
+      label={t('comp:BAIFetchKeyButton.Refresh')}
       icon={
         <RefreshCwIcon
           style={
@@ -174,12 +232,86 @@ const BAIFetchKeyButtonAstryx: React.FC<BAIFetchKeyButtonAstryxProps> = ({
       }
       tooltip={tooltip}
       variant="ghost"
-      size={SIZE_MAP[size] ?? 'md'}
-      onClick={() => {
-        onChange(new Date().toISOString());
-        setCycleKey((k) => k + 1);
-      }}
+      size={resolvedSize}
+      onClick={triggerRefresh}
     />
+  );
+
+  // Not configurable (the default, and what most consumers use): render exactly
+  // the single icon button, with no layout change. BUI behaves the same way.
+  if (!isAutoUpdateConfigurable) return refreshButton;
+
+  /**
+   * Largest whole unit, translated through the same keys BUI uses, so ko/ja
+   * ("5분" / "5分") keep working unchanged.
+   */
+  const formatInterval = (ms: number) => {
+    const d = dayjs.duration(ms);
+    const hours = d.asHours();
+    const minutes = d.asMinutes();
+    if (Number.isInteger(hours) && hours >= 1) {
+      return t('comp:BAIFetchKeyButton.EveryHours', { count: hours });
+    }
+    if (Number.isInteger(minutes) && minutes >= 1) {
+      return t('comp:BAIFetchKeyButton.EveryMinutes', { count: minutes });
+    }
+    return t('comp:BAIFetchKeyButton.EverySeconds', { count: d.asSeconds() });
+  };
+
+  const mergedOptions = [
+    ...new Set([
+      ...autoUpdateDelayOptions,
+      ...seenOffListDelays,
+      ...(autoUpdateDelay != null ? [autoUpdateDelay] : []),
+    ]),
+  ].sort((a, b) => a - b);
+
+  const isAutoRefreshOn = autoUpdateDelay != null;
+
+  return (
+    <ButtonGroup
+      label={t('comp:BAIFetchKeyButton.AutoRefresh')}
+      size={resolvedSize}
+    >
+      {refreshButton}
+      <DropdownMenu
+        placement="below"
+        alignment="end"
+        button={{
+          // The trigger shows the active interval ("30s") next to the chevron,
+          // exactly as the antd original does; "Off" shows chevron only.
+          label: t('comp:BAIFetchKeyButton.AutoRefresh'),
+          variant: 'ghost',
+          size: resolvedSize,
+          children: isAutoRefreshOn
+            ? formatInterval(autoUpdateDelay)
+            : undefined,
+          tooltip: t('comp:BAIFetchKeyButton.AutoRefresh'),
+        }}
+      >
+        <DropdownMenuRadioGroup
+          label={t('comp:BAIFetchKeyButton.AutoRefresh')}
+          value={autoUpdateDelay == null ? 'off' : String(autoUpdateDelay)}
+          onChange={(next) => {
+            onChangeAutoUpdateDelay?.(next === 'off' ? null : Number(next));
+            // Changing the interval re-anchors the refresh cycle, as in BUI.
+            setCycleKey((k) => k + 1);
+          }}
+        >
+          <DropdownMenuRadioItem
+            value="off"
+            label={t('comp:BAIFetchKeyButton.Off')}
+          />
+          {mergedOptions.map((ms) => (
+            <DropdownMenuRadioItem
+              key={ms}
+              value={String(ms)}
+              label={formatInterval(ms)}
+            />
+          ))}
+        </DropdownMenuRadioGroup>
+      </DropdownMenu>
+    </ButtonGroup>
   );
 };
 
