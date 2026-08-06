@@ -149,7 +149,13 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
             const svc = values.modelDefinition?.models?.[0]?.service;
             return (
               <>
-                {svc?.shell && (
+                {/* Exec mode sends `shell: null` regardless of what's typed
+                    in the (now-hidden) Shell input — resolveCommandShell()
+                    discards it. The field's stale value otherwise lingers in
+                    the form store after switching Execution away from
+                    Shell, so gate the display on the mode actually being
+                    submitted, not just on the raw value being present. */}
+                {svc?.shell && svc?.execution !== 'exec' && (
                   <MetadataListItem label={t('modelService.Shell')}>
                     <Code>{svc.shell}</Code>
                   </MetadataListItem>

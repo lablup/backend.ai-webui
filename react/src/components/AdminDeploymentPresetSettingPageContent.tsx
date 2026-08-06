@@ -739,18 +739,24 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
           onValuesChange={(
             changed: Partial<AdminDeploymentPresetFormValue>,
           ) => {
-            // Reset Execution + Shell when switching from Advanced → Basic,
-            // and reset the (now stale) Shell when switching Execution to
-            // Exec — in both cases so the form state always reflects what
-            // will actually be submitted (`resolveCommandShell` already
-            // discards Shell in both scenarios). `modelDefinition.models` is
-            // a plain array field (no `Form.List`), and `form.setFieldsValue`
-            // replaces nested object/array values wholesale rather than
-            // deep-merging, so a *partial* `models[0]` object here would wipe
-            // out name/modelPath/port/startCommand/etc. Read the current
-            // model and write back a complete merged object instead.
-            const svc = changed.modelDefinition?.models?.[0]?.service;
-            if (svc?.advanced === false || svc?.execution === 'exec') {
+            // Reset Execution + Shell when switching from Advanced → Basic —
+            // matches the revision modal's behaviour so re-opening Advanced
+            // later doesn't resurface a stale custom shell as if it were
+            // still selected. (The Exec case doesn't need a reset: submit
+            // already ignores a stale Shell value via resolveCommandShell(),
+            // and PresetReviewSummary now gates its Shell display on
+            // `execution !== 'exec'` instead of relying on the stored value
+            // being cleared.)
+            //
+            // `modelDefinition.models` is a plain array field (no
+            // `Form.List`), and `form.setFieldsValue` replaces nested
+            // object/array values wholesale rather than deep-merging, so a
+            // *partial* `models[0]` object here would wipe out
+            // name/modelPath/port/startCommand/etc. Read the current model
+            // and write back a complete merged object instead.
+            const advChanged =
+              changed.modelDefinition?.models?.[0]?.service?.advanced;
+            if (advChanged === false) {
               const currentModel = form.getFieldValue([
                 'modelDefinition',
                 'models',
@@ -763,9 +769,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                       ...currentModel,
                       service: {
                         ...currentModel?.service,
-                        ...(svc?.advanced === false
-                          ? { execution: 'shell' as const }
-                          : {}),
+                        execution: 'shell' as const,
                         shell: DEFAULT_MODEL_SERVICE_SHELL,
                       },
                     },
