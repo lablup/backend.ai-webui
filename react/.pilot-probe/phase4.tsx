@@ -10,6 +10,7 @@ import BAICardAstryx from '../src/components/astryx-bui/BAICardAstryx';
 import BAIFetchKeyButtonAstryx from '../src/components/astryx-bui/BAIFetchKeyButtonAstryx';
 import BAITableAstryx from '../src/components/astryx-bui/BAITableAstryx';
 import { Badge } from '@astryxdesign/core/Badge';
+import { Tab, TabList } from '@astryxdesign/core/TabList';
 import { Button as AstryxButton } from '@astryxdesign/core/Button';
 import { HStack } from '@astryxdesign/core/Stack';
 import { TextInput } from '@astryxdesign/core/TextInput';
@@ -140,19 +141,36 @@ const AstryxSide: React.FC = () => {
   return (
     <div className="col">
       <div className="col-head">Astryx — AFTER</div>
-      <BAICardAstryx
-        title="Folders"
-        activeTab={tab}
-        onChangeTab={setTab}
-        tabs={[
-          {
-            key: 'active',
-            label: 'Active',
-            endContent: <Badge label={12} variant="info" />,
-          },
-          { key: 'deleted', label: 'Trash Bin' },
-        ]}
-        extra={
+      {/* PHASE 6 — matches the ORIGINAL tree: card header is title-only, tabs
+          are the first child of the card BODY, and refresh + create sit at the
+          right edge of the action row directly above the table. */}
+      <BAICardAstryx title="Folders">
+        <TabList value={tab} onChange={setTab} hasDivider>
+          <Tab
+            value="active"
+            label="Active"
+            endContent={<Badge label={12} variant="info" />}
+          />
+          <Tab value="deleted" label="Trash Bin" />
+        </TabList>
+        {/* PHASE 5: a filter row above the table, to reproduce the reported
+            gap-collapse between the filter and the table. */}
+        <HStack
+          justify="between"
+          wrap="wrap"
+          gap={3}
+          style={{ marginBlock: 12 }}
+        >
+          <HStack gap={3} align="start" wrap="wrap" style={{ flexShrink: 1 }}>
+            <TextInput
+              value={filter}
+              onChange={setFilter}
+              label="Filter"
+              isLabelHidden
+              placeholder="Filter folders"
+              width={280}
+            />
+          </HStack>
           <HStack gap={2} align="center">
             <BAIFetchKeyButtonAstryx
               onChange={() => {}}
@@ -165,19 +183,6 @@ const AstryxSide: React.FC = () => {
               label="Create folder"
             />
           </HStack>
-        }
-      >
-        {/* PHASE 5: a filter row above the table, to reproduce the reported
-            gap-collapse between the filter and the table. */}
-        <HStack gap={3} align="center" style={{ marginBottom: 12 }}>
-          <TextInput
-            value={filter}
-            onChange={setFilter}
-            label="Filter"
-            isLabelHidden
-            placeholder="Filter folders"
-            width={280}
-          />
         </HStack>
         <BAITableAstryx<Row>
           density="compact"
