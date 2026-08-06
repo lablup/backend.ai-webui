@@ -13,6 +13,7 @@ import DeploymentBasicInfoCard from '../components/DeploymentBasicInfoCard';
 import DeploymentReplicasCard from '../components/DeploymentReplicasCard';
 import DeploymentRevisionCard from '../components/DeploymentRevisionCard';
 import DeploymentRevisionDetailDrawer from '../components/DeploymentRevisionDetailDrawer';
+import DeploymentVllmMetricsButton from '../components/DeploymentVllmMetricsButton';
 import SwitchToProjectButton from '../components/SwitchToProjectButton';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
@@ -173,6 +174,7 @@ const DeploymentDetailPage: React.FC = () => {
             ...DeploymentReplicasCard_deployment
             ...DeploymentAccessTokensCard_deployment
             ...DeploymentAutoScalingCard_deployment
+            ...DeploymentVllmMetricsButton_deployment
           }
         }
       `,
@@ -406,11 +408,20 @@ const DeploymentDetailPage: React.FC = () => {
           }
         />
       )}
-      <BAIFlex direction="row" align="center" gap="sm">
-        <Typography.Title level={3} style={{ margin: 0 }}>
-          {deploymentName}
-        </Typography.Title>
-        <BAIDeploymentStatusTag status={deploymentStatus} />
+      <BAIFlex
+        direction="row"
+        align="center"
+        justify="between"
+        gap="sm"
+        wrap="wrap"
+      >
+        <BAIFlex direction="row" align="center" gap="sm">
+          <Typography.Title level={3} style={{ margin: 0 }}>
+            {deploymentName}
+          </Typography.Title>
+          <BAIDeploymentStatusTag status={deploymentStatus} />
+        </BAIFlex>
+        <DeploymentVllmMetricsButton deploymentFrgmt={deployment} />
       </BAIFlex>
       <DeploymentBasicInfoCard
         deploymentFrgmt={deployment}
