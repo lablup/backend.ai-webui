@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { ServiceFormNamePrefix } from './types';
 import { Checkbox, Form, Input, InputNumber, theme } from 'antd';
 import type { FormInstance } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
@@ -10,7 +9,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 export interface ModelServiceHealthCheckFormItemsProps {
-  namePrefix: ServiceFormNamePrefix;
+  namePrefix: Array<string | number>;
   /**
    * Per-field placeholder text. The revision modal sources some of these
    * dynamically from the selected model definition's defaults and leaves the

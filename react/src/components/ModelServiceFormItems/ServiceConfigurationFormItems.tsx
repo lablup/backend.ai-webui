@@ -6,7 +6,7 @@ import {
   COMMAND_SHELL_OPTIONS,
   DEFAULT_MODEL_SERVICE_SHELL,
 } from '../../helper/modelServiceCommand';
-import type { ServiceFormNamePrefix } from './types';
+import { useSuspendedBackendaiClient } from '../../hooks';
 import {
   AutoComplete,
   Collapse,
@@ -23,8 +23,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 export interface ServiceConfigurationFormItemsProps {
-  namePrefix: ServiceFormNamePrefix;
-  supportsCommandShell: boolean;
+  namePrefix: Array<string | number>;
   /**
    * Start Command validation. The revision modal leaves the command optional
    * (`[{ whitespace: true }]`); the preset form requires it
@@ -44,21 +43,23 @@ export interface ServiceConfigurationFormItemsProps {
 // 'models', 0, 'service']) — FR-3474. The caller owns the "does this variant
 // read vfolder config files" gate (its data source differs per page) and
 // renders this only when that gate is open; this component owns everything
-// inside the Collapse. `supportsCommandShell` and the two `*Rules` props are
-// caller-supplied so the single source of truth for capability/validation
-// stays with each page's own `baiClient.supports(...)` call and business
-// rules, not duplicated here.
+// inside the Collapse. The two `*Rules` props stay caller-supplied since they
+// encode each page's own business rules (required vs. optional command/port),
+// not a capability check.
 const ServiceConfigurationFormItems: React.FC<
   ServiceConfigurationFormItemsProps
 > = ({
   namePrefix,
-  supportsCommandShell,
   commandRules = [{ whitespace: true }],
   portRules,
   placeholders,
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
+  const supportsCommandShell = baiClient.supports(
+    'model-service-command-string',
+  );
 
   return (
     <Collapse

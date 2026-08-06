@@ -8,7 +8,6 @@ import {
   DEFAULT_MODEL_SERVICE_SHELL,
   deriveCommandModeState,
 } from '../helper/modelServiceCommand';
-import { useSuspendedBackendaiClient } from '../hooks';
 import {
   buildRuntimeVariantPresetValues,
   collectTouchedRuntimePresetParams,
@@ -224,12 +223,6 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const screens = Grid.useBreakpoint();
-  const baiClient = useSuspendedBackendaiClient();
-  // 26.7.0+: render the Start Command Basic/Advanced + Shell controls (FR-3205);
-  // older managers fall back to the plain single-line command input.
-  const supportsCommandShell = baiClient.supports(
-    'model-service-command-string',
-  );
 
   const preset = useFragment(
     graphql`
@@ -876,7 +869,6 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                   >
                     <ServiceConfigurationFormItems
                       namePrefix={['modelDefinition', 'models', 0, 'service']}
-                      supportsCommandShell={supportsCommandShell}
                       commandRules={[{ required: true }]}
                       portRules={[{ required: true }]}
                       placeholders={{
