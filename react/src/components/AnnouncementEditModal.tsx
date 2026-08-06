@@ -203,11 +203,6 @@ const useStyles = createStyles(({ css, token }) => ({
 // wrapper's 1px border).
 const EDITOR_HEIGHT = 'calc(100vh - 320px)';
 
-interface AnnouncementValues {
-  enabled: boolean;
-  message: string;
-}
-
 interface AnnouncementEditModalProps extends BAIModalProps {
   onRequestClose: (success?: boolean) => void;
 }
@@ -235,56 +230,76 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
     announcementQueryOptions(baiClient),
   );
 
-  // The `enabled` flag is not user-controllable for now: the manager stores the
-  // announcement purely by presence — publishing a message enables it, and
-  // "disabling" it just deletes the stored message (there is no way to persist a
-  // disabled-but-present announcement). So the footer exposes an explicit Delete
-  // action instead of an Enabled toggle. The toggle implementation is kept below
-  // (commented out) so it can be restored once the backend can persist the flag.
+  // The manager now stores the message and the `enabled` flag under separate
+  // etcd keys (see backend.ai#12679 / BA-6794), so a disabled announcement's
+  // text is retained rather than discarded. That unlocks a Save Draft action
+  // (`enabled: false`, message kept) alongside Publish (`enabled: true`). A
+  // free-form Enabled toggle that lets an admin flip an already-published
+  // announcement back to draft is still out of scope (FR-3473 covers only the
+  // `enabled: false` save-draft path) — the toggle implementation is kept below
+  // (commented out) for that follow-up.
   //
   // const [enabledDraft, setEnabledDraft] = useState<boolean>();
   // const enabled = enabledDraft ?? announcement?.enabled ?? true;
   const [messageDraft, setMessageDraft] = useState<string>();
   const message = messageDraft ?? announcement?.message ?? '';
 
-  // Publishing always enables the announcement, and the backend rejects an empty
-  // message ("Empty message not allowed to enable announcement"), so a non-empty
-  // message is required to publish. (Previously gated on `enabled && ...`.)
+  // Both Publish and Save Draft require text to be worth persisting; the
+  // backend also rejects an empty message when enabling ("Empty message not
+  // allowed to enable announcement"). Delete is the dedicated action for
+  // clearing the stored message entirely.
   const isMessageMissing = !message.trim();
 
-  const updateMutation = useTanMutation({
-    mutationFn: (values: AnnouncementValues) => {
-      return baiClient.service.update_announcement(
-        values.enabled,
-        values.message,
-      );
-    },
+  const publishMutation = useTanMutation({
+    mutationFn: (value: string) =>
+      baiClient.service.update_announcement(true, value),
   });
 
-  // Deleting is `update_announcement(false, ...)`: with `enabled: false` the
-  // manager removes the stored message from etcd, clearing the announcement.
+  const saveDraftMutation = useTanMutation({
+    mutationFn: (value: string) =>
+      baiClient.service.update_announcement(false, value),
+  });
+
+  // Deleting is `update_announcement(false, '')`: an explicit empty message
+  // clears the stored text regardless of `enabled`, removing both a published
+  // announcement and an unpublished draft.
   const deleteMutation = useTanMutation({
     mutationFn: () => baiClient.service.update_announcement(false, ''),
   });
 
-  const handleSubmit = () => {
+  const handlePublish = () => {
     if (isMessageMissing) return;
-    updateMutation.mutate(
-      { enabled: true, message },
-      {
-        onSuccess: () => {
-          appMessage.success(t('summary.AnnouncementUpdated'));
-          queryClient.invalidateQueries({
-            queryKey: announcementQueryOptions(baiClient).queryKey,
-          });
-          onRequestClose(true);
-        },
-        onError: (error) => {
-          appMessage.error(getErrorMessage(error));
-          logger.error(error);
-        },
+    publishMutation.mutate(message, {
+      onSuccess: () => {
+        appMessage.success(t('summary.AnnouncementUpdated'));
+        queryClient.invalidateQueries({
+          queryKey: announcementQueryOptions(baiClient).queryKey,
+        });
+        onRequestClose(true);
       },
-    );
+      onError: (error) => {
+        appMessage.error(getErrorMessage(error));
+        logger.error(error);
+      },
+    });
+  };
+
+  // Save Draft persists the message with `enabled: false` and keeps the modal
+  // open so editing can continue — unlike Publish, it isn't a closing action.
+  const handleSaveDraft = () => {
+    if (isMessageMissing) return;
+    saveDraftMutation.mutate(message, {
+      onSuccess: () => {
+        appMessage.success(t('summary.AnnouncementDraftSaved'));
+        queryClient.invalidateQueries({
+          queryKey: announcementQueryOptions(baiClient).queryKey,
+        });
+      },
+      onError: (error) => {
+        appMessage.error(getErrorMessage(error));
+        logger.error(error);
+      },
+    });
   };
 
   const handleDelete = async () => {
@@ -343,7 +358,7 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
             <Button
               type="text"
               danger
-              disabled={isLoading || !announcement?.enabled}
+              disabled={isLoading || !announcement?.message?.trim()}
               loading={deleteMutation.isPending}
               onClick={confirmDelete}
             >
@@ -355,10 +370,17 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
               {t('button.Cancel')}
             </Button>
             <Button
+              disabled={isLoading || isMessageMissing}
+              loading={saveDraftMutation.isPending}
+              onClick={handleSaveDraft}
+            >
+              {t('button.SaveDraft')}
+            </Button>
+            <Button
               type="primary"
               disabled={isLoading || isMessageMissing}
-              loading={updateMutation.isPending}
-              onClick={handleSubmit}
+              loading={publishMutation.isPending}
+              onClick={handlePublish}
             >
               {t('button.Publish')}
             </Button>
