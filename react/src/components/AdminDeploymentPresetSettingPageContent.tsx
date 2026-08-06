@@ -219,7 +219,7 @@ const sanitizeFormValuesForURL = (
 // `modelPath` are left unset (not `''`) — an empty string is a real value,
 // distinct from "the user hasn't provided one".
 const EMPTY_MODEL_SEED: ModelConfigFormValue = {
-  service: { execution: 'shell' },
+  service: { execution: 'shell', shell: DEFAULT_MODEL_SERVICE_SHELL },
 };
 
 // ---------------------------------------------------------------------------
@@ -892,8 +892,6 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                   >
                     <ServiceConfigurationFormItems
                       namePrefix={['modelDefinition', 'models', 0, 'service']}
-                      commandRules={[{ required: true }]}
-                      portRules={[{ required: true }]}
                       placeholders={{
                         command: t(
                           'adminDeploymentPreset.modelDef.StartCommandPlaceholder',

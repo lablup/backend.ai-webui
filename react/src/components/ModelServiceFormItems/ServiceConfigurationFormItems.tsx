@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { Form } from '../../form-engine';
-import type { FormInstance, RuleObject, RuleRender } from '../../form-engine';
+import type { FormInstance } from '../../form-engine';
 import { COMMAND_SHELL_OPTIONS } from '../../helper/modelServiceCommand';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { theme } from '../../theme-shim';
@@ -21,13 +21,6 @@ import { useTranslation } from 'react-i18next';
 
 export interface ServiceConfigurationFormItemsProps {
   namePrefix: Array<string | number>;
-  /**
-   * Start Command validation. The revision modal leaves the command optional
-   * (`[{ whitespace: true }]`); the preset form requires it
-   * (`[{ required: true }]`) since a preset is a reusable template.
-   */
-  commandRules?: (RuleObject | RuleRender)[];
-  portRules?: (RuleObject | RuleRender)[];
   /** Per-field placeholder text, grouped to match ModelServiceHealthCheckFormItems. */
   placeholders?: Partial<{
     command: string;
@@ -40,17 +33,14 @@ export interface ServiceConfigurationFormItemsProps {
 // 'models', 0, 'service']) — FR-3474. The caller owns the "does this variant
 // read vfolder config files" gate (its data source differs per page) and
 // renders this only when that gate is open; this component owns everything
-// inside the Collapsible. The two `*Rules` props stay caller-supplied since
-// they encode each page's own business rules (required vs. optional
-// command/port), not a capability check.
+// inside the Collapsible. Start Command and Port are both optional on both
+// forms (BA-6613): the backend defaults `shell` to `/bin/bash` and the
+// submit-mapping layer on each page falls back to a default port, so neither
+// field needs a `required` rule here. Shell itself stays required + prefilled
+// with the default whenever Advanced/Shell mode is active, below.
 const ServiceConfigurationFormItems: React.FC<
   ServiceConfigurationFormItemsProps
-> = ({
-  namePrefix,
-  commandRules = [{ whitespace: true }],
-  portRules,
-  placeholders,
-}) => {
+> = ({ namePrefix, placeholders }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -232,8 +222,9 @@ const ServiceConfigurationFormItems: React.FC<
               // The command is sent to the server as the raw string
               // the user typed; the WebUI does not pre-validate shell
               // operators (Exec runs it via shlex.split, where quoted
-              // operators are valid argv content).
-              rules={commandRules}
+              // operators are valid argv content). Optional (BA-6613):
+              // only guard against whitespace-only input.
+              rules={[{ whitespace: true }]}
             >
               {!supportsCommandShell ? (
                 // Legacy (<26.8.0): plain single-line input,
@@ -266,7 +257,6 @@ const ServiceConfigurationFormItems: React.FC<
         name={[...namePrefix, 'port']}
         label={t('modelService.Port')}
         tooltip={t('modelService.PortTooltip')}
-        rules={portRules}
         style={{ marginBottom: 0 }}
       >
         <AstryxFormNumberInput
