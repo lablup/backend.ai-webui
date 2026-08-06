@@ -28,6 +28,9 @@ Once a deployment is selected, the model dropdown header updates to show "{deplo
 
 ![](../images/chat_deployment_select.png)
 
+Next to the **Deployment** field, a button with an info icon (**View Deployment Details**) opens the selected deployment's detail page; the button is disabled while no deployment is selected.
+If the selected deployment belongs to a project other than the currently active one, a confirmation dialog titled **Switch to another project?** appears before opening the detail page.
+
 <a id="deployments-listed-in-chat"></a>
 
 ### Which deployments are listed
