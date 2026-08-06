@@ -18,6 +18,7 @@ import VFolderNodes, { VFolderNodeInList } from '../components/VFolderNodes';
 import BAICard from '../components/astryx-bui/BAICardAstryx';
 import BAIPropertyFilter from '../components/astryx-bui/BAIPropertyFilterAstryx';
 import BAISelectionLabel from '../components/astryx-bui/BAISelectionLabel';
+import BAIVFolderDeleteButton from '../components/astryx-bui/BAIVFolderDeleteButtonAstryx';
 import { handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -31,7 +32,6 @@ import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { useToggle } from 'ahooks';
 import {
   BAIRestoreIcon,
-  BAIVFolderDeleteButton,
   filterOutEmpty,
   filterOutNullAndUndefined,
   mergeFilterValues,
@@ -182,7 +182,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                 ...RestoreVFolderModalFragment
                 ...VFolderNodeIdenticonFragment
                 ...SharedFolderPermissionInfoModalFragment
-                ...BAIVFolderDeleteButtonFragment
+                ...BAIVFolderDeleteButtonAstryxFragment
               }
             }
             count
@@ -418,14 +418,16 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                         count={selectedFolderList.length}
                         onClearSelection={() => setSelectedFolderList([])}
                       />
-                      <Tooltip content={t('data.folders.MoveToTrash')}>
-                        <BAIVFolderDeleteButton
-                          vfolderFrgmt={selectedFolderList}
-                          onClick={() => {
-                            toggleDeleteModal();
-                          }}
-                        />
-                      </Tooltip>
+                      <BAIVFolderDeleteButton
+                        vfolderFrgmt={selectedFolderList}
+                        // P8: the accessible name is now on the control itself,
+                        // so the wrapping Tooltip that used to BE the name is
+                        // gone — the component owns both.
+                        label={t('data.folders.MoveToTrash')}
+                        onClick={() => {
+                          toggleDeleteModal();
+                        }}
+                      />
                     </>
                   )}
                 {selectedFolderList.length > 0 &&

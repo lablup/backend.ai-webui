@@ -31,12 +31,14 @@
  - `serialiseFilters(tokens) -> string`     (outbound, ~15 lines, Phase 3)
  - `parseFilters(string, props) -> tokens`  (inbound, this phase)
 
- `parseFilters` is the exact inverse and deliberately reuses BUI's own
- `parseFilterValue` tokenizer (quote-aware, ReDoS-safe linear scan) instead of
- introducing a second grammar — the DSL has exactly one parser in the repo and
- it stays that way. NOTE: `parseFilterValue` is exported from
- `BAIPropertyFilter.tsx`, which imports antd; this is a **helper-only** import
- of a pure string function and renders no antd. See the Phase 6 residue table.
+ `parseFilters` is the exact inverse. It carries a COPY of BUI's quote-aware,
+ ReDoS-safe linear-scan tokenizer rather than importing `parseFilterValue` from
+ `BAIPropertyFilter.tsx`. That import compiles and renders no antd — it is a
+ pure string function — but it drags the whole antd-importing module (and the
+ BUI barrel) into this file's dependency graph, which defeats the point of the
+ sweep and blocks the isolation harness from mounting the component. Cost of
+ the copy: 30 lines and a duplicated grammar; recorded in the residue table as
+ the one place the sweep chose duplication over reuse.
 
  The component keeps an **antd-shaped external contract** (`value: string`,
  `onChange(value?: string)`) on purpose — the translating-frontier rule. The
@@ -62,7 +64,6 @@ import type {
   PowerSearchConfig,
   PowerSearchFilter,
 } from '@astryxdesign/core/PowerSearch';
-import { parseFilterValue } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';
 
@@ -163,6 +164,44 @@ export function toPowerSearchConfig(
       };
     }),
   };
+}
+
+/**
+ * Splits on runs of whitespace that fall OUTSIDE double quotes, one character
+ * at a time so it is linear and cannot backtrack. Copied from BUI's
+ * `splitOutsideDoubleQuotes` (see the header note on why it is copied).
+ */
+function splitOutsideDoubleQuotes(input: string): Array<string> {
+  const tokens: Array<string> = [];
+  let current = '';
+  let inQuotes = false;
+  let hasToken = false;
+  for (let i = 0; i < input.length; i++) {
+    const ch = input[i];
+    if (ch === '"') {
+      inQuotes = !inQuotes;
+      current += ch;
+      hasToken = true;
+    } else if (!inQuotes && /\s/.test(ch)) {
+      if (hasToken) {
+        tokens.push(current);
+        current = '';
+        hasToken = false;
+      }
+    } else {
+      current += ch;
+      hasToken = true;
+    }
+  }
+  if (hasToken) tokens.push(current);
+  return tokens;
+}
+
+/** `property operator "value"` -> its three parts. BUI's `parseFilterValue`. */
+function parseFilterValue(filter: string) {
+  const [property, operator, ...valueParts] = splitOutsideDoubleQuotes(filter);
+  const value = valueParts.join(' ').replace(/^"|"$/g, '');
+  return { property, operator, value };
 }
 
 /** `%foo%` -> `foo`, exactly as BUI's `trimFilterValue`. */

@@ -50,15 +50,19 @@
    component pulled into the host during the migration hits this; the real fix
    is to move the keys into `resources/i18n/*.json` (22 files) as part of the
    component's move.
- - **`BAICountdownBorder` still dropped.** BUI animates a depleting border
-   around the control showing time-to-next-refresh. It is a bespoke SVG/CSS
-   animation with no Astryx counterpart and would have to be ported verbatim.
+ - ~~`BAICountdownBorder` still dropped.~~ **PHASE 6 (item 6): ported.** The
+   earlier note was wrong about the cost — the sweep is a plain SVG
+   `stroke-dashoffset` animation, and the only antd surfaces were
+   `theme.useToken()` (now `var(--color-accent)`, so it follows the brand and
+   the nested admin theme automatically) and `antd-style` `createStyles` (now a
+   class in `react/src/index.css`). See `BAICountdownBorderAstryx.tsx`.
  - **P8 handled properly.** Astryx requires a string `label` that doubles as the
    accessible name. The BUI original renders an icon-only antd Button whose only
    accessible name came from the tooltip `title`. Here the label is an explicit,
    translated string ("Refresh"), and the last-updated text goes to the tooltip
    — so the control is *more* accessible than the original, not less.
 */
+import BAICountdownBorder from './BAICountdownBorderAstryx';
 import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
 import {
   DropdownMenu,
@@ -91,8 +95,13 @@ export interface BAIFetchKeyButtonAstryxProps {
   onChangeAutoUpdateDelay?: (delayMs: number | null) => void;
   autoUpdateDelayOptions?: ReadonlyArray<number>;
   showLastLoadTime?: boolean;
-  /** Accepted and ignored — the countdown border is not rebuilt. */
+  /**
+   * Accepted and ignored. BUI pauses the interval when the tab is hidden via
+   * its `useInterval`; this rebuild has no document-visibility hook.
+   */
   pauseWhenHidden?: boolean;
+  /** Show the animated countdown border while auto-refresh is on. */
+  showCountdownBorder?: boolean;
   /**
    * P1 (17 -> 21 occurrences): `AutoUpdateFetchKeyButton` has ~15 consumers
    * outside the pilot graph that pass antd's size names and a `readonly`
@@ -121,6 +130,7 @@ const BAIFetchKeyButtonAstryx: React.FC<BAIFetchKeyButtonAstryxProps> = ({
   onChangeAutoUpdateDelay,
   autoUpdateDelayOptions = AUTO_UPDATE_DELAY_OPTIONS,
   showLastLoadTime = true,
+  showCountdownBorder = true,
   size = 'md',
 }) => {
   'use memo';
@@ -213,6 +223,17 @@ const BAIFetchKeyButtonAstryx: React.FC<BAIFetchKeyButtonAstryxProps> = ({
     return () => clearInterval(id);
   }, [showLastLoadTime]);
 
+  // BUI parity: when a consumer-supplied `loading` refresh finishes, re-anchor
+  // the countdown to this moment. The interval effect already restarts on the
+  // same edge (its `loading` dependency), and bumping `cycleKey` restarts the
+  // border from empty at the same instant — so the newly revealed countdown is
+  // accurate instead of finishing early on its request-start anchor.
+  const [prevLoading, setPrevLoading] = useState(loading);
+  if (loading !== prevLoading) {
+    setPrevLoading(loading);
+    if (!loading) setCycleKey((k) => k + 1);
+  }
+
   const tooltip = showLastLoadTime
     ? `${t('comp:BAIFetchKeyButton.LastUpdated', 'Last Updated')}: ${dayjs(lastLoadTime).fromNow()}`
     : undefined;
@@ -244,9 +265,26 @@ const BAIFetchKeyButtonAstryx: React.FC<BAIFetchKeyButtonAstryxProps> = ({
     />
   );
 
+  // While auto-refresh is on, wrap the control so its border fills clockwise
+  // once per selected interval, re-anchored on `cycleKey` (see `triggerRefresh`
+  // and the `loading` edge above) so it never drifts out of sync with the real
+  // reload. Frozen and hidden while a refresh is in flight.
+  const withCountdownBorder = (node: React.ReactNode) =>
+    autoUpdateDelay != null && showCountdownBorder ? (
+      <BAICountdownBorder
+        durationMs={autoUpdateDelay}
+        resetKey={cycleKey}
+        paused={displayLoading}
+      >
+        {node}
+      </BAICountdownBorder>
+    ) : (
+      node
+    );
+
   // Not configurable (the default, and what most consumers use): render exactly
   // the single icon button, with no layout change. BUI behaves the same way.
-  if (!isAutoUpdateConfigurable) return refreshButton;
+  if (!isAutoUpdateConfigurable) return withCountdownBorder(refreshButton);
 
   /**
    * Largest whole unit, translated through the same keys BUI uses, so ko/ja
@@ -281,7 +319,7 @@ const BAIFetchKeyButtonAstryx: React.FC<BAIFetchKeyButtonAstryxProps> = ({
 
   const isAutoRefreshOn = autoUpdateDelay != null;
 
-  return (
+  return withCountdownBorder(
     <ButtonGroup
       label={t('comp:BAIFetchKeyButton.AutoRefresh', 'Auto Refresh')}
       size={resolvedSize}
@@ -325,7 +363,7 @@ const BAIFetchKeyButtonAstryx: React.FC<BAIFetchKeyButtonAstryxProps> = ({
           ))}
         </DropdownMenuRadioGroup>
       </DropdownMenu>
-    </ButtonGroup>
+    </ButtonGroup>,
   );
 };
 

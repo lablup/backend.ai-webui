@@ -32,3 +32,98 @@
     transform: rotate(360deg);
   }
 }
+
+/* PILOT PHASE 6 (item 6): countdown-border keyframes for
+   BAICountdownBorderAstryx. `pathLength={100}` normalises the stroke length so
+   the offset animation is size-independent: the rounded-rect outline draws
+   clockwise from the top-left over one refresh cycle, then resets.
+   Ported from `packages/backend.ai-ui/src/components/BAICountdownBorder.tsx`,
+   which expressed the same rule through antd-style `createStyles`. */
+@keyframes bai-countdown-border-fill {
+  from {
+    stroke-dashoffset: 100;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.bai-countdown-border-fill {
+  animation-name: bai-countdown-border-fill;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+/* The BUI original carried the same guard; kept, and additionally the spinner
+   above is left alone because it signals in-flight state, not decoration. */
+@media (prefers-reduced-motion: reduce) {
+  .bai-countdown-border-fill {
+    animation: none;
+    /* With no animation the dash offset would freeze at its initial value and
+       show nothing at all; pin it to a fully drawn outline so the control still
+       reads as "auto-refresh is armed". */
+    stroke-dashoffset: 0;
+  }
+}
+
+/* PILOT PHASE 6 (item 4): BAINameActionCellAstryx. These are the five
+   `createStyles` rules from BUI's `BAINameActionCell`, moved out of `antd-style`
+   and re-expressed with Astryx theme CSS vars. Nothing here targets `.ant-*`,
+   which is the P6 failure mode this rewrite closes. */
+.bai-name-action-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+  position: relative;
+}
+
+.bai-name-action-cell-title-area {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.bai-name-action-cell-title-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.bai-name-action-cell-actions {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.bai-name-action-cell-actions-hidden {
+  max-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.bai-name-action-cell-hover:hover .bai-name-action-cell-actions,
+.bai-name-action-cell-hover:has(:focus-visible) .bai-name-action-cell-actions {
+  max-width: none;
+  overflow: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.bai-name-action-cell-default {
+  color: var(--color-text-accent);
+}
+
+.bai-name-action-cell-danger {
+  color: var(--color-text-error);
+}
+
+.bai-name-action-cell-disabled {
+  color: var(--color-text-disabled);
+}

@@ -24,6 +24,8 @@ import VFolderNodeIdenticon from './VFolderNodeIdenticon';
 import VFolderPermissionCell from './VFolderPermissionCell';
 import BAICopyableText from './astryx-bui/BAICopyableText';
 import BAIDeleteConfirmModal from './astryx-bui/BAIDeleteConfirmModalAstryx';
+import BAINameActionCell from './astryx-bui/BAINameActionCellAstryx';
+import type { BAINameActionCellAstryxAction } from './astryx-bui/BAINameActionCellAstryx';
 import BAITable from './astryx-bui/BAITableAstryx';
 import type { BAITableAstryxProps } from './astryx-bui/BAITableAstryx';
 import { Badge } from '@astryxdesign/core/Badge';
@@ -39,12 +41,10 @@ import {
   BAIShareAltIcon,
   BAIUnmountAfterClose,
   BAIUserUnionIcon,
-  BAINameActionCell,
   toLocalId,
   useErrorMessageResolver,
   bytesToGB,
 } from 'backend.ai-ui';
-import type { BAINameActionCellAction } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 // PILOT PHASE 2: @ant-design/icons -> lucide-react. `DeleteFilled` (a solid
@@ -135,6 +135,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { generateFolderPath } = useFolderExplorerOpener();
+  const navigate = useWebUINavigate();
   const effectiveAdminRole = useEffectiveAdminRole();
 
   const isPipelineFolder = vfolder?.usage_mode === 'data';
@@ -157,90 +158,97 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
       : undefined;
 
   const vfolderId = toLocalId(vfolder.id ?? '');
+  const folderPath = generateFolderPath(vfolderId);
 
-  const actions: BAINameActionCellAction[] = filterOutNullAndUndefined([
-    // Start Service (model folders only, active only)
-    isModelFolder && !isDeleted
-      ? {
-          key: 'start-service',
-          title: t('modelService.DeployAsService'),
-          icon: <BAIEndpointsIcon />,
-          // Use `action` (not `onClick`) so the state update that mounts
-          // `<VFolderDeployModal>` (which suspends on its Relay query)
-          // runs inside `startTransition` — the page stays interactive
-          // instead of falling into its Suspense fallback.
-          action: async () => {
-            onStartServiceFallback(vfolderId);
-          },
-        }
-      : null,
-    // Share (active folders only)
-    !isDeleted
-      ? {
-          key: 'share',
-          title: t('button.Share'),
-          icon: <BAIShareAltIcon />,
-          onClick: onShare,
-        }
-      : null,
-    // Move to trash (active folders only)
-    !isDeleted
-      ? {
-          key: 'delete',
-          title: t('data.folders.MoveToTrash'),
-          icon: <TrashIcon />,
-          type: 'danger' as const,
-          disabled:
-            !hasDeletePermission ||
-            isPipelineFolder ||
-            isProjectFolderManagedElsewhere,
-          disabledReason: isPipelineFolder
-            ? t('data.folders.CannotDeletePipelineFolder')
-            : (projectFolderAdminHint ?? t('data.folders.NoDeletePermission')),
-          onClick: onDelete,
-        }
-      : null,
-    // Restore (deleted folders only)
-    isDeleted
-      ? {
-          key: 'restore',
-          title: t('data.folders.Restore'),
-          icon: <BAIRestoreIcon />,
-          disabled:
-            vfolder?.status !== 'delete-pending' ||
-            isPipelineFolder ||
-            isProjectFolderManagedElsewhere,
-          disabledReason: isPipelineFolder
-            ? t('data.folders.CannotRestorePipelineFolder')
-            : isProjectFolderManagedElsewhere
-              ? (projectFolderAdminHint ??
-                t('data.folders.NoRestorePermission'))
-              : undefined,
-          popConfirm: {
+  const actions: Array<BAINameActionCellAstryxAction> =
+    filterOutNullAndUndefined([
+      // Start Service (model folders only, active only)
+      isModelFolder && !isDeleted
+        ? {
+            key: 'start-service',
+            title: t('modelService.DeployAsService'),
+            icon: <BAIEndpointsIcon />,
+            // Use `action` (not `onClick`) so the state update that mounts
+            // `<VFolderDeployModal>` (which suspends on its Relay query)
+            // runs inside `startTransition` — the page stays interactive
+            // instead of falling into its Suspense fallback.
+            action: async () => {
+              onStartServiceFallback(vfolderId);
+            },
+          }
+        : null,
+      // Share (active folders only)
+      !isDeleted
+        ? {
+            key: 'share',
+            title: t('button.Share'),
+            icon: <BAIShareAltIcon />,
+            onClick: onShare,
+          }
+        : null,
+      // Move to trash (active folders only)
+      !isDeleted
+        ? {
+            key: 'delete',
+            title: t('data.folders.MoveToTrash'),
+            icon: <TrashIcon />,
+            type: 'danger' as const,
+            disabled:
+              !hasDeletePermission ||
+              isPipelineFolder ||
+              isProjectFolderManagedElsewhere,
+            disabledReason: isPipelineFolder
+              ? t('data.folders.CannotDeletePipelineFolder')
+              : (projectFolderAdminHint ??
+                t('data.folders.NoDeletePermission')),
+            onClick: onDelete,
+          }
+        : null,
+      // Restore (deleted folders only)
+      isDeleted
+        ? {
+            key: 'restore',
             title: t('data.folders.Restore'),
-            description: vfolder?.name,
-            okText: t('button.Confirm'),
-            onConfirm: onRestore,
-          },
-        }
-      : null,
-    // Delete from trash bin (deleted folders only)
-    isDeleted
-      ? {
-          key: 'delete-forever',
-          title: t('data.folders.Delete'),
-          icon: <Trash2Icon />,
-          type: 'danger' as const,
-          disabled:
-            vfolder?.status !== 'delete-pending' ||
-            isProjectFolderManagedElsewhere,
-          disabledReason: isProjectFolderManagedElsewhere
-            ? (projectFolderAdminHint ?? t('data.folders.NoDeletePermission'))
-            : undefined,
-          onClick: onDeleteForever,
-        }
-      : null,
-  ]);
+            icon: <BAIRestoreIcon />,
+            disabled:
+              vfolder?.status !== 'delete-pending' ||
+              isPipelineFolder ||
+              isProjectFolderManagedElsewhere,
+            disabledReason: isPipelineFolder
+              ? t('data.folders.CannotRestorePipelineFolder')
+              : isProjectFolderManagedElsewhere
+                ? (projectFolderAdminHint ??
+                  t('data.folders.NoRestorePermission'))
+                : undefined,
+            // PHASE 6 (item 4): antd `Popconfirm` has no Astryx counterpart, so
+            // the action now declares an Astryx-shaped confirm and the cell
+            // builds the popover from `Popover` + two `Button`s.
+            confirm: {
+              title: t('data.folders.Restore'),
+              description: vfolder?.name ?? undefined,
+              confirmLabel: t('button.Confirm'),
+              cancelLabel: t('button.Cancel'),
+              onConfirm: onRestore,
+            },
+          }
+        : null,
+      // Delete from trash bin (deleted folders only)
+      isDeleted
+        ? {
+            key: 'delete-forever',
+            title: t('data.folders.Delete'),
+            icon: <Trash2Icon />,
+            type: 'danger' as const,
+            disabled:
+              vfolder?.status !== 'delete-pending' ||
+              isProjectFolderManagedElsewhere,
+            disabledReason: isProjectFolderManagedElsewhere
+              ? (projectFolderAdminHint ?? t('data.folders.NoDeletePermission'))
+              : undefined,
+            onClick: onDeleteForever,
+          }
+        : null,
+    ]);
 
   return (
     <BAINameActionCell
@@ -251,7 +259,13 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
         />
       }
       title={vfolder.name}
-      to={generateFolderPath(vfolderId)}
+      // BUI passed react-router's `to` OBJECT; Astryx `Link` is anchor-first,
+      // so the object is flattened to an href and the left click is
+      // intercepted for the router.
+      to={`${folderPath.pathname}?${folderPath.search}`}
+      onTitleClick={() => {
+        navigate(folderPath);
+      }}
       actions={actions}
       showActions="always"
     />

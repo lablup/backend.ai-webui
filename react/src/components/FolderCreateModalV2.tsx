@@ -19,11 +19,13 @@ import { theme } from '../theme-shim';
 import StorageSelect from './StorageSelectAstryx';
 import BAIModal from './astryx-bui/BAIModalAstryx';
 import type { BAIModalAstryxProps as BAIModalProps } from './astryx-bui/BAIModalAstryx';
+import BAIQuestionIconWithTooltip from './astryx-bui/BAIQuestionIconWithTooltipAstryx';
 import {
   AstryxFormRadioList,
   AstryxFormSwitch,
   AstryxFormTextInput,
 } from './astryxFormControls';
+import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { Divider } from '@astryxdesign/core/Divider';
 import { Skeleton } from '@astryxdesign/core/Skeleton';
@@ -32,11 +34,8 @@ import { Tooltip } from '@astryxdesign/core/Tooltip';
 // `Form` (the state engine) stays antd, per the locked ticket-08 decision.
 // Only `Form.Item`'s VISUAL layer moves, to `BAIFormItem`.
 import { Form } from 'antd';
-import { createStyles } from 'antd-style';
 import { FormInstance } from 'antd/lib';
 import {
-  BAIQuestionIconWithTooltip,
-  BAIAlert,
   BAIFormItem,
   toLocalId,
   useBAILogger,
@@ -54,18 +53,12 @@ const MODEL_STORE_PROJECT_NAME = 'model-store';
 const FOLDER_NAME_MAX_LENGTH = 64;
 const MODAL_WIDTH = 650;
 
-const useStyles = createStyles(({ css }) => ({
-  modal: css`
-    .ant-modal-body {
-      padding: 0 !important;
-    }
-  `,
-  // PILOT: the former `form` block styled `.ant-form-item-*` selectors. With
-  // `Form.Item` -> `BAIFormItem` those elements no longer exist, so the rule
-  // set is dead and is removed rather than translated. This is a recurring
-  // shape: antd-style `createStyles` blocks that reach INTO antd's internal
-  // class names die with the component and cannot be codemodded.
-}));
+// PHASE 6: the last `createStyles` block is gone. It held two rule sets, and
+// BOTH were the P6 failure mode — `.ant-form-item-*` (already dead once
+// `Form.Item` became `BAIFormItem`) and `.ant-modal-body` (dead once `BAIModal`
+// became `BAIModalAstryx`, which renders no such element). Neither ever
+// stopped compiling; both simply stopped applying. Deleting them removes the
+// file's last `antd-style` import.
 
 interface FolderCreateFormItemsType {
   name: string;
@@ -132,7 +125,6 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { styles } = useStyles();
   const { token } = theme.useToken();
   const { logger } = useBAILogger();
   const { getErrorMessage } = useErrorMessageResolver();
@@ -353,7 +345,6 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
         if (!next) onRequestClose();
       }}
       isLoading={isFetchingAllowedTypes}
-      className={styles.modal}
       title={t('data.CreateANewStorageFolder')}
       footer={
         <HStack justify="between">
@@ -402,14 +393,17 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
         }
       }}
     >
+      {/* PHASE 6 (item 4): BUI's `BAIAlert` is antd `Alert` plus a
+          `createStyles` block that reaches into `.ant-alert-message` /
+          `.ant-alert-icon` (P6 again). Astryx `Banner` is the direct analog and
+          needs none of it — `status` carries the colour and the icon, and
+          `container="section"` is the closest match to antd's `banner` mode
+          (square corners, edge-to-edge) — `BannerContainer` is a closed set of
+          `card | section`, so antd's exact `banner` flag has no equal. */}
       {alertMessage ? (
-        <BAIAlert
-          type="warning"
-          showIcon
-          description={alertMessage}
-          banner
-          style={{ marginBottom: token.marginMD }}
-        />
+        <div style={{ marginBottom: token.marginMD }}>
+          <Banner status="warning" title={alertMessage} container="section" />
+        </div>
       ) : null}
 
       <VStack
