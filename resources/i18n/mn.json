@@ -1973,6 +1973,9 @@
     "AdditionalMounts": "Нэмэлт бэхэлгээ",
     "AdditionalMountsTooltip": "Загварын хавтастай хамт репликийн тус бүрд холбогдох нэмэлт загварын бус хавтасууд.",
     "AutoScalingRules": "Автомат масштабын дүрэм",
+    "AwsAccessKeyId": "Таны AWS хандалтын түлхүүрийн ID",
+    "AwsDefaultRegion": "жн: us-east-1, ap-northeast-2",
+    "AwsSecretAccessKey": "Таны AWS нууц хандалтын түлхүүр",
     "BasePath": "ВЭДИЙН Хог байхгүй",
     "Controls": "Хяналтууд",
     "CreateNewDeploymentWithPreset": "Урьдчилан тохируулгаар шинэ байршуулалт үүсгэх",
@@ -1986,6 +1989,9 @@
     "Finished": "Дууслаа",
     "HealthCheck": "Эрүүл мэндийн үзлэгийн URL",
     "HealthCheckTooltip": "Үйлчилгээ ажиллаж байгааг шалгахад ашиглах URL зам (жш нь: /health).",
+    "HfToken": "Таны Hugging Face хандалтын токен",
+    "HttpProxy": "жн: http://proxy.example.com:8080",
+    "HttpsProxy": "жн: https://proxy.example.com:8080",
     "Image": "Зураг",
     "ImageRequired": "Дүрс заавал шаардлагатай.",
     "InitialDelay": "Эхлүүлэх тэвчих хугацаа",
@@ -2004,6 +2010,7 @@
     "ModelMountDestination": "Загварын хавтасыг холбох газар",
     "ModelMountTooltip": "Загварын хавтас контейнерийн дотор холбогдох зам.",
     "NimApiKey": "Таны NGC API түлхүүр",
+    "NoProxy": "жн: localhost,127.0.0.1,.internal",
     "OpenFolder": "Хавтас руу очих",
     "Port": "Порт",
     "PortTooltip": "Загвар үйлчлэх процесс сонсох порт дугаар.",
@@ -2042,7 +2049,8 @@
     "VllmModelName": "Загварын нэр (жишээ: meta-llama/Llama-2-7b-chat-hf)",
     "VllmPpSize": "Пайплайны параллель хэмжээ (жишээ нь, 2, 4)",
     "VllmQuantization": "жишээ нь, awq, gptq, fp8",
-    "VllmTpSize": "Тензорын параллель хэмжээ (жишээ: 2, 4, 8)"
+    "VllmTpSize": "Тензорын параллель хэмжээ (жишээ: 2, 4, 8)",
+    "WandbApiKey": "Таны Weights & Biases API түлхүүр"
   },
   "modelStore": {
     "Architecture": "Архитектур",

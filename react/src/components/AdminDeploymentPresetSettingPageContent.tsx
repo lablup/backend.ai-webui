@@ -11,6 +11,7 @@ import {
   type RuntimeParameterGroup,
   type RuntimeVariantPresetValueEntry,
 } from '../hooks/useRuntimeParameterSchema';
+import { useCommonEnvVarConfigs } from '../hooks/useVariantConfigs';
 import {
   STEP_KEYS,
   type AdminDeploymentPresetFormValue,
@@ -200,6 +201,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const screens = Grid.useBreakpoint();
+  const commonEnvVars = useCommonEnvVarConfigs();
 
   const preset = useFragment(
     graphql`
@@ -996,7 +998,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               label={t('adminDeploymentPreset.EnvironmentVariables')}
               style={{ marginBottom: 0 }}
             >
-              <EnvVarFormList name="environ" />
+              <EnvVarFormList name="environ" optionalEnvVars={commonEnvVars} />
             </Form.Item>
           </BAICard>
 

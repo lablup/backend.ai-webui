@@ -1975,6 +1975,9 @@
     "AdditionalMounts": "Pemasangan Tambahan",
     "AdditionalMountsTooltip": "Folder tambahan non-model yang dipasang di setiap replika bersama folder model.",
     "AutoScalingRules": "Aturan penskalaan otomatis",
+    "AwsAccessKeyId": "ID Kunci Akses AWS Anda",
+    "AwsDefaultRegion": "mis. us-east-1, ap-northeast-2",
+    "AwsSecretAccessKey": "Kunci Akses Rahasia AWS Anda",
     "BasePath": "Jalur Dasar",
     "Controls": "Kontrol",
     "CreateNewDeploymentWithPreset": "Buat Deployment Baru dengan Preset",
@@ -1988,6 +1991,9 @@
     "Finished": "Selesai",
     "HealthCheck": "URL cek kesehatan",
     "HealthCheckTooltip": "Jalur URL yang digunakan untuk memeriksa apakah layanan sedang berjalan (mis. /health).",
+    "HfToken": "Token Akses Hugging Face Anda",
+    "HttpProxy": "mis. http://proxy.example.com:8080",
+    "HttpsProxy": "mis. https://proxy.example.com:8080",
     "Image": "Gambar",
     "ImageRequired": "Image wajib diisi.",
     "InitialDelay": "Periode Toleransi Startup",
@@ -2006,6 +2012,7 @@
     "ModelMountDestination": "Pasang Tujuan Untuk Folder Model",
     "ModelMountTooltip": "Jalur tempat folder model di-mount di dalam container.",
     "NimApiKey": "Kunci API NGC Anda",
+    "NoProxy": "mis. localhost,127.0.0.1,.internal",
     "OpenFolder": "Buka folder",
     "Port": "Pelabuhan",
     "PortTooltip": "Nomor port yang didengarkan oleh proses penyajian model.",
@@ -2044,7 +2051,8 @@
     "VllmModelName": "Nama model (misalnya: meta-llama/Llama-2-7b-chat-hf)",
     "VllmPpSize": "Ukuran paralel pipeline (mis. 2, 4)",
     "VllmQuantization": "misalnya, awq, gptq, fp8",
-    "VllmTpSize": "Ukuran tensor paralel (mis. 2, 4, 8)"
+    "VllmTpSize": "Ukuran tensor paralel (mis. 2, 4, 8)",
+    "WandbApiKey": "Kunci API Weights & Biases Anda"
   },
   "modelStore": {
     "Architecture": "Arsitektur",

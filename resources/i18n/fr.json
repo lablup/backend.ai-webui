@@ -1973,6 +1973,9 @@
     "AdditionalMounts": "Supports supplémentaires",
     "AdditionalMountsTooltip": "Dossiers supplémentaires non liés au modèle montés dans chaque réplique en plus du dossier du modèle.",
     "AutoScalingRules": "Règles de mise à l'échelle automatique",
+    "AwsAccessKeyId": "Votre identifiant de clé d'accès AWS",
+    "AwsDefaultRegion": "ex. us-east-1, ap-northeast-2",
+    "AwsSecretAccessKey": "Votre clé d'accès secrète AWS",
     "BasePath": "Chemin de base",
     "Controls": "Contrôles",
     "CreateNewDeploymentWithPreset": "Créer un nouveau déploiement avec préréglage",
@@ -1986,6 +1989,9 @@
     "Finished": "Fini",
     "HealthCheck": "URL de bilan de santé",
     "HealthCheckTooltip": "Le chemin URL utilisé pour vérifier que le service est en cours d'exécution (p. ex. /health).",
+    "HfToken": "Votre jeton d'accès Hugging Face",
+    "HttpProxy": "ex. http://proxy.example.com:8080",
+    "HttpsProxy": "ex. https://proxy.example.com:8080",
     "Image": "Image",
     "ImageRequired": "L'image est obligatoire.",
     "InitialDelay": "Délai de grâce au démarrage",
@@ -2004,6 +2010,7 @@
     "ModelMountDestination": "Destination de montage pour le dossier modèle",
     "ModelMountTooltip": "Le chemin où le dossier du modèle est monté à l'intérieur du conteneur.",
     "NimApiKey": "Votre clé API NGC",
+    "NoProxy": "ex. localhost,127.0.0.1,.internal",
     "OpenFolder": "Aller au dossier",
     "Port": "Port",
     "PortTooltip": "Le numéro de port sur lequel le processus de service du modèle écoute.",
@@ -2043,7 +2050,8 @@
     "VllmModelName": "Nom du modèle (par ex. meta-llama/Llama-2-7b-chat-hf)",
     "VllmPpSize": "Taille du parallélisme du pipeline (par ex. 2, 4)",
     "VllmQuantization": "p. ex., awq, gptq, fp8",
-    "VllmTpSize": "Taille du parallélisme tensoriel (par ex. 2, 4, 8)"
+    "VllmTpSize": "Taille du parallélisme tensoriel (par ex. 2, 4, 8)",
+    "WandbApiKey": "Votre clé API Weights & Biases"
   },
   "modelStore": {
     "Architecture": "Architecture",

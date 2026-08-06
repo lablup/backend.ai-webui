@@ -1972,6 +1972,9 @@
     "AdditionalMounts": "Lekapan Tambahan",
     "AdditionalMountsTooltip": "Folder bukan model tambahan yang dipasang dalam setiap replika bersama folder model.",
     "AutoScalingRules": "Peraturan penskalaan automatik",
+    "AwsAccessKeyId": "ID kunci akses AWS anda",
+    "AwsDefaultRegion": "cth. us-east-1, ap-northeast-2",
+    "AwsSecretAccessKey": "Kunci akses rahsia AWS anda",
     "BasePath": "Laluan asas",
     "Controls": "Kawalan",
     "CreateNewDeploymentWithPreset": "Cipta Penggunaan Baharu dengan Praset",
@@ -1985,6 +1988,9 @@
     "Finished": "Selesai",
     "HealthCheck": "URL pemeriksaan kesihatan",
     "HealthCheckTooltip": "Laluan URL yang digunakan untuk memeriksa sama ada perkhidmatan sedang berjalan (cth. /health).",
+    "HfToken": "Token akses Hugging Face anda",
+    "HttpProxy": "cth. http://proxy.example.com:8080",
+    "HttpsProxy": "cth. https://proxy.example.com:8080",
     "Image": "Gambar",
     "ImageRequired": "Imej diperlukan.",
     "InitialDelay": "Tempoh Peralihan Permulaan",
@@ -2003,6 +2009,7 @@
     "ModelMountDestination": "Lekapkan Destinasi Untuk Folder Model",
     "ModelMountTooltip": "Laluan tempat folder model dipasang di dalam bekas.",
     "NimApiKey": "Kunci API NGC anda",
+    "NoProxy": "cth. localhost,127.0.0.1,.internal",
     "OpenFolder": "Pergi ke folder",
     "Port": "Pelabuhan",
     "PortTooltip": "Nombor port yang didengar oleh proses penyajian model.",
@@ -2041,7 +2048,8 @@
     "VllmModelName": "Nama model (contoh: meta-llama/Llama-2-7b-chat-hf)",
     "VllmPpSize": "Saiz paralel pipeline (contoh: 2, 4)",
     "VllmQuantization": "contohnya, awq, gptq, fp8",
-    "VllmTpSize": "Saiz selari tensor (contoh: 2, 4, 8)"
+    "VllmTpSize": "Saiz selari tensor (contoh: 2, 4, 8)",
+    "WandbApiKey": "Kunci API Weights & Biases anda"
   },
   "modelStore": {
     "Architecture": "Seni bina",

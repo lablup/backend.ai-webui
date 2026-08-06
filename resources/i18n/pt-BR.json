@@ -1972,6 +1972,9 @@
     "AdditionalMounts": "Montarias Adicionais",
     "AdditionalMountsTooltip": "Pastas adicionais não relacionadas ao modelo montadas em cada réplica junto à pasta do modelo.",
     "AutoScalingRules": "Regras de escala automática",
+    "AwsAccessKeyId": "Seu ID da chave de acesso da AWS",
+    "AwsDefaultRegion": "ex. us-east-1, ap-northeast-2",
+    "AwsSecretAccessKey": "Sua chave de acesso secreta da AWS",
     "BasePath": "Trajetória de base",
     "Controls": "Controlos",
     "CreateNewDeploymentWithPreset": "Criar nova implantação com preset",
@@ -1985,6 +1988,9 @@
     "Finished": "Finalizado",
     "HealthCheck": "URL de verificação de integridade",
     "HealthCheckTooltip": "O caminho URL usado para verificar se o serviço está em execução (ex.: /health).",
+    "HfToken": "Seu token de acesso do Hugging Face",
+    "HttpProxy": "ex. http://proxy.example.com:8080",
+    "HttpsProxy": "ex. https://proxy.example.com:8080",
     "Image": "Imagem",
     "ImageRequired": "A imagem é obrigatória.",
     "InitialDelay": "Período de carência na inicialização",
@@ -2003,6 +2009,7 @@
     "ModelMountDestination": "Montar destino para pasta de modelo",
     "ModelMountTooltip": "O caminho onde a pasta do modelo é montada dentro do container.",
     "NimApiKey": "Sua chave de API do NGC",
+    "NoProxy": "ex. localhost,127.0.0.1,.internal",
     "OpenFolder": "Ir para a pasta",
     "Port": "Porta",
     "PortTooltip": "O número de porta em que o processo de serviço do modelo escuta.",
@@ -2041,7 +2048,8 @@
     "VllmModelName": "Nome do modelo (ex.: meta-llama/Llama-2-7b-chat-hf)",
     "VllmPpSize": "Tamanho do paralelismo de pipeline (por exemplo: 2, 4)",
     "VllmQuantization": "por exemplo: awq, gptq, fp8",
-    "VllmTpSize": "Tamanho do paralelismo tensorial (ex.: 2, 4, 8)"
+    "VllmTpSize": "Tamanho do paralelismo tensorial (ex.: 2, 4, 8)",
+    "WandbApiKey": "Sua chave de API do Weights & Biases"
   },
   "modelStore": {
     "Architecture": "Arquitetura",
