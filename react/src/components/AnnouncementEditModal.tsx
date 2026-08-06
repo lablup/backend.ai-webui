@@ -39,7 +39,7 @@ import {
 } from 'backend.ai-ui';
 // `rehype-katex` does not import the CSS file, so we need to import it manually.
 import 'katex/dist/katex.min.css';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useDeferredValue, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Markdown from 'react-markdown';
 import rehypeKatex from 'rehype-katex';
@@ -244,6 +244,17 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
   const [messageDraft, setMessageDraft] = useState<string>();
   const message = messageDraft ?? announcement?.message ?? '';
 
+  // The live preview re-parses Markdown/GFM/math and re-highlights fenced code
+  // on every keystroke, which is expensive enough on a large announcement to
+  // starve the editor's own re-render. Since the Monaco editor is a controlled
+  // component (`@monaco-editor/react` force-replaces its whole buffer via
+  // `executeEdits` — resetting the cursor to the document's end — whenever its
+  // `value` prop doesn't yet match Monaco's live buffer), a starved re-render
+  // showed up as the cursor jumping to the end of the message while typing.
+  // Deferring the preview's input lets React prioritize flushing `message`
+  // back down to the editor before spending time on the expensive preview.
+  const previewMessage = useDeferredValue(message);
+
   // Both Publish and Save Draft require text to be worth persisting; the
   // backend also rejects an empty message when enabling ("Empty message not
   // allowed to enable announcement"). Delete is the dedicated action for
@@ -370,6 +381,8 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
               {t('button.Cancel')}
             </Button>
             <Button
+              variant="outlined"
+              color="primary"
               disabled={isLoading || isMessageMissing}
               loading={saveDraftMutation.isPending}
               onClick={handleSaveDraft}
@@ -462,7 +475,7 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
                   },
                 }}
               >
-                {message}
+                {previewMessage}
               </Markdown>
             </div>
           </BAIFlex>
