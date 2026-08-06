@@ -1356,7 +1356,8 @@
       "DoYouWantToDelete": "정말로 삭제하시겠습니까?",
       "DoYouWantToDeleteSomething": "\"{{ name }}\"을(를) 삭제하시겠습니까?",
       "DoYouWantToProceed": "계속 진행하시겠습니까?",
-      "DoYouWantToResetChanges": "변경사항을 초기화하시겠습니까?"
+      "DoYouWantToResetChanges": "변경사항을 초기화하시겠습니까?",
+      "DoYouWantToUnpublishAndSaveDraft": "임시 저장하고 현재 공지사항 발행을 취소하시겠습니까?"
     },
     "error": {
       "Error": "오류"
@@ -1375,7 +1376,8 @@
       "DeleteForeverDesc": "경고: 선택한 항목은 완전히 삭제되며 복원할 수 없습니다.",
       "LogDeletion": "모든 로그를 삭제하시겠습니까?",
       "Required": "필수 입력입니다.",
-      "WillBeAppliedToNewSessions": "이 변경사항은 새 세션부터 적용됩니다."
+      "WillBeAppliedToNewSessions": "이 변경사항은 새 세션부터 적용됩니다.",
+      "WillHideCurrentAnnouncement": "현재 발행 중인 공지사항이 모든 사용자에게 숨겨집니다. 언제든지 다시 발행할 수 있습니다."
     }
   },
   "eduapi": {

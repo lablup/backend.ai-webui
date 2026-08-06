@@ -1356,7 +1356,8 @@
       "DoYouWantToDelete": "Sei sicuro di voler eliminare?",
       "DoYouWantToDeleteSomething": "Si è sicuri di voler eliminare \"{{ name }}\"?",
       "DoYouWantToProceed": "Vuoi procedere?",
-      "DoYouWantToResetChanges": "Vuoi ripristinare le modifiche?"
+      "DoYouWantToResetChanges": "Vuoi ripristinare le modifiche?",
+      "DoYouWantToUnpublishAndSaveDraft": "Vuoi salvare come bozza e annullare la pubblicazione dell'annuncio corrente?"
     },
     "error": {
       "Error": "Errore"
@@ -1375,7 +1376,8 @@
       "DeleteForeverDesc": "ATTENZIONE: gli elementi selezionati verranno eliminati per sempre e non potrai ripristinarli.",
       "LogDeletion": "Sei sicuro di voler eliminare tutti i messaggi di registro?",
       "Required": "Richiesto",
-      "WillBeAppliedToNewSessions": "Questo aggiornamento verrà applicato alle nuove sessioni."
+      "WillBeAppliedToNewSessions": "Questo aggiornamento verrà applicato alle nuove sessioni.",
+      "WillHideCurrentAnnouncement": "L'annuncio attualmente pubblicato verrà nascosto a tutti gli utenti. Potrai ripubblicarlo in qualsiasi momento."
     }
   },
   "eduapi": {

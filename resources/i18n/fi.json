@@ -1356,7 +1356,8 @@
       "DoYouWantToDelete": "Haluatko varmasti poistaa tämän?",
       "DoYouWantToDeleteSomething": "Oletko varma, että haluat poistaa \"{{ name }}\"?\"?",
       "DoYouWantToProceed": "Haluatteko jatkaa?",
-      "DoYouWantToResetChanges": "Haluatko nollata tekemäsi muutokset?"
+      "DoYouWantToResetChanges": "Haluatko nollata tekemäsi muutokset?",
+      "DoYouWantToUnpublishAndSaveDraft": "Haluatko tallentaa luonnoksena ja peruuttaa nykyisen ilmoituksen julkaisun?"
     },
     "error": {
       "Error": "Virhe"
@@ -1375,7 +1376,8 @@
       "DeleteForeverDesc": "VAROITUS: valitut kohteet poistetaan pysyvästi, etkä voi palauttaa niitä.",
       "LogDeletion": "Haluatko varmasti poistaa kaikki lokiviestit?",
       "Required": "Vaadittu",
-      "WillBeAppliedToNewSessions": "Tätä päivitystä sovelletaan uusiin istuntoihin."
+      "WillBeAppliedToNewSessions": "Tätä päivitystä sovelletaan uusiin istuntoihin.",
+      "WillHideCurrentAnnouncement": "Nykyinen julkaistu ilmoitus piilotetaan kaikilta käyttäjiltä. Voit julkaista sen uudelleen milloin tahansa."
     }
   },
   "eduapi": {

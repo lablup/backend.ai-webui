@@ -1356,7 +1356,8 @@
       "DoYouWantToDelete": "Voulez-vous vraiment supprimer ?",
       "DoYouWantToDeleteSomething": "Êtes-vous sûr de vouloir supprimer \"{{ nom }}\" ?",
       "DoYouWantToProceed": "Voulez-vous poursuivre?",
-      "DoYouWantToResetChanges": "Voulez-vous réinitialiser vos modifications ?"
+      "DoYouWantToResetChanges": "Voulez-vous réinitialiser vos modifications ?",
+      "DoYouWantToUnpublishAndSaveDraft": "Voulez-vous enregistrer comme brouillon et annuler la publication de l'annonce actuelle ?"
     },
     "error": {
       "Error": "Erreur"
@@ -1375,7 +1376,8 @@
       "DeleteForeverDesc": "ATTENTION : les éléments sélectionnés seront supprimés définitivement et vous ne pourrez pas les restaurer.",
       "LogDeletion": "Voulez-vous vraiment supprimer tous les messages du journal ?",
       "Required": "Exigée",
-      "WillBeAppliedToNewSessions": "Cette mise à jour sera appliquée aux nouvelles sessions."
+      "WillBeAppliedToNewSessions": "Cette mise à jour sera appliquée aux nouvelles sessions.",
+      "WillHideCurrentAnnouncement": "L'annonce actuellement publiée sera masquée pour tous les utilisateurs. Vous pourrez la republier à tout moment."
     }
   },
   "eduapi": {

@@ -1356,7 +1356,8 @@
       "DoYouWantToDelete": "Adakah anda pasti mahu memadam?",
       "DoYouWantToDeleteSomething": "Adakah anda pasti mahu memadamkan \"{{ name }}\"?",
       "DoYouWantToProceed": "Adakah anda mahu meneruskan?",
-      "DoYouWantToResetChanges": "Adakah anda mahu menetapkan semula perubahan anda?"
+      "DoYouWantToResetChanges": "Adakah anda mahu menetapkan semula perubahan anda?",
+      "DoYouWantToUnpublishAndSaveDraft": "Adakah anda mahu menyimpan sebagai draf dan membatalkan penerbitan pengumuman semasa?"
     },
     "error": {
       "Error": "ralat"
@@ -1375,7 +1376,8 @@
       "DeleteForeverDesc": "AMARAN: item yang dipilih akan dipadamkan selama-lamanya dan anda tidak akan dapat memulihkannya.",
       "LogDeletion": "Adakah anda pasti mahu memadamkan semua mesej log?",
       "Required": "Diperlukan",
-      "WillBeAppliedToNewSessions": "Kemas kini ini akan digunakan pada sesi baharu."
+      "WillBeAppliedToNewSessions": "Kemas kini ini akan digunakan pada sesi baharu.",
+      "WillHideCurrentAnnouncement": "Pengumuman yang sedang diterbitkan akan disembunyikan daripada semua pengguna. Anda boleh menerbitkannya semula pada bila-bila masa."
     }
   },
   "eduapi": {

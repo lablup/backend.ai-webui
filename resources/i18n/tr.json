@@ -1356,7 +1356,8 @@
       "DoYouWantToDelete": "Silmek istediğinizden emin misiniz?",
       "DoYouWantToDeleteSomething": "\"{{ name }}\" silmek istediğinizden emin misiniz?",
       "DoYouWantToProceed": "Devam etmek istiyor musunuz?",
-      "DoYouWantToResetChanges": "Değişikliklerinizi sıfırlamak istiyor musunuz?"
+      "DoYouWantToResetChanges": "Değişikliklerinizi sıfırlamak istiyor musunuz?",
+      "DoYouWantToUnpublishAndSaveDraft": "Taslak olarak kaydedip mevcut duyurunun yayınını kaldırmak istiyor musunuz?"
     },
     "error": {
       "Error": "Hata"
@@ -1375,7 +1376,8 @@
       "DeleteForeverDesc": "UYARI: seçilen öğeler kalıcı olarak silinecek ve bunları geri yükleyemeyeceksiniz.",
       "LogDeletion": "Tüm günlük mesajlarını silmek istediğinizden emin misiniz?",
       "Required": "Gerekli",
-      "WillBeAppliedToNewSessions": "Bu güncelleme yeni oturumlara uygulanacaktır."
+      "WillBeAppliedToNewSessions": "Bu güncelleme yeni oturumlara uygulanacaktır.",
+      "WillHideCurrentAnnouncement": "Şu anda yayınlanan duyuru tüm kullanıcılardan gizlenecek. Dilediğiniz zaman tekrar yayınlayabilirsiniz."
     }
   },
   "eduapi": {
