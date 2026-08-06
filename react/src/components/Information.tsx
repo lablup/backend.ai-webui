@@ -5,13 +5,13 @@
 import { newLineToBrElement } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
+import { theme } from '../theme-shim';
 import DescriptionLabel from './DescriptionLabel';
 import { CheckOutlined, WarningOutlined } from '@ant-design/icons';
 import {
   Descriptions,
   Tag,
   Card,
-  theme,
   DescriptionsProps,
   Spin,
   Row,

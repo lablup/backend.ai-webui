@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useResourceSlotsDetails } from '../../hooks/backendai';
 import {
   DomainV2Filter,
   ProjectV2Filter,
@@ -13,8 +12,10 @@ import {
 import { UsageBucketChartContent_DomainFragment$key } from '../../__generated__/UsageBucketChartContent_DomainFragment.graphql';
 import { UsageBucketChartContent_ProjectFragment$key } from '../../__generated__/UsageBucketChartContent_ProjectFragment.graphql';
 import { UsageBucketChartContent_UserFragment$key } from '../../__generated__/UsageBucketChartContent_UserFragment.graphql';
+import { useResourceSlotsDetails } from '../../hooks/backendai';
+import { theme } from '../../theme-shim';
 import { presetPalettes } from '@ant-design/colors';
-import { Empty, Tabs, Typography, theme } from 'antd';
+import { Empty, Tabs, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import {
   convertToBinaryUnit,

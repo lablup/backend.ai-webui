@@ -4,10 +4,11 @@
  */
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
+import { theme } from '../theme-shim';
 import SSHKeypairGenerationModal from './SSHKeypairGenerationModal';
 import SSHKeypairManualFormModal from './SSHKeypairManualFormModal';
 import { useToggle } from 'ahooks';
-import { Button, Typography, theme } from 'antd';
+import { Button, Typography } from 'antd';
 import {
   BAIModal,
   BAIModalProps,

@@ -5,9 +5,10 @@
 import { SessionReclamationStatusPopoverFragment$key } from '../../__generated__/SessionReclamationStatusPopoverFragment.graphql';
 import { toFixedFloorWithoutTrailingZeros } from '../../helper';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
+import { theme } from '../../theme-shim';
 import type { IdleChecks } from './SessionIdleChecks';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { Badge, Divider, Popover, Typography, theme } from 'antd';
+import { Badge, Divider, Popover, Typography } from 'antd';
 import { useMemoizedJSONParse, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';

@@ -3,7 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import AgentSummaryList from '../components/AgentSummaryList';
-import { Skeleton, theme } from 'antd';
+import { theme } from '../theme-shim';
+import { Skeleton } from 'antd';
 import { BAICard } from 'backend.ai-ui';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import React, { Suspense } from 'react';

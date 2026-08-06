@@ -13,6 +13,7 @@ import {
   PERMISSION_DISPLAY_MAP,
   v2PermissionToKey,
 } from '../helper/storageHostPermission';
+import { theme } from '../theme-shim';
 import StoragePermissionEditModal from './StoragePermissionEditModal';
 import {
   CheckCircleOutlined,
@@ -20,7 +21,7 @@ import {
   ExclamationCircleOutlined,
   InfoCircleOutlined,
 } from '@ant-design/icons';
-import { Tooltip, Typography, theme } from 'antd';
+import { Tooltip, Typography } from 'antd';
 import {
   BAIFlex,
   BAINameActionCell,

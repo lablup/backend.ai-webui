@@ -7,9 +7,10 @@ import {
   InvitationItem,
   useVFolderInvitations,
 } from '../hooks/useVFolderInvitations';
+import { theme } from '../theme-shim';
 import VFolderPermissionCell from './VFolderPermissionCell';
 import { FolderOutlined } from '@ant-design/icons';
-import { List, Typography, theme, Descriptions, App } from 'antd';
+import { List, Typography, Descriptions, App } from 'antd';
 import {
   BAIButton,
   BAIFlex,

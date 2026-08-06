@@ -16,6 +16,7 @@ import {
 } from '../../__generated__/FairShareListQuery.graphql';
 import { convertToOrderBy, handleRowSelectionChange } from '../../helper';
 import { useBAIPaginationOptionStateOnSearchParam } from '../../hooks/reactPaginationQueryOptions';
+import { theme } from '../../theme-shim';
 import AutoUpdateFetchKeyButton, {
   LONG_AUTO_UPDATE_DELAY_OPTIONS,
 } from '../AutoUpdateFetchKeyButton';
@@ -37,7 +38,7 @@ import UserFairShareTable, {
   UserFairShare,
 } from './UserFairShareTable';
 import UserResourceGroupAlert from './UserResourceGroupAlert';
-import { Alert, Skeleton, Steps, theme, Tooltip, Typography } from 'antd';
+import { Alert, Skeleton, Steps, Tooltip, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import { StepsProps } from 'antd/lib';
 import {

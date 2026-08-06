@@ -16,6 +16,7 @@ import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole, useTOTPSupported } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
+import { theme } from '../theme-shim';
 import AccessKeySelect from './AccessKeySelect';
 import GeneratedKeypairListModal from './GeneratedKeypairListModal';
 import ProjectSelect from './ProjectSelect';
@@ -33,7 +34,6 @@ import {
   Typography,
   FormInstance,
   App,
-  theme,
   Checkbox,
   Skeleton,
   Tag,

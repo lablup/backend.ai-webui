@@ -9,9 +9,10 @@ import {
 import { localeCompare } from '../helper';
 import { ResourceSlotName, useResourceSlots } from '../hooks/backendai';
 import useControllableState_deprecated from '../hooks/useControllableState';
+import { theme } from '../theme-shim';
 import { EditOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { useThrottleFn } from 'ahooks';
-import { Select, Tooltip, theme } from 'antd';
+import { Select, Tooltip } from 'antd';
 import { SelectProps } from 'antd/lib';
 import {
   useUpdatableState,

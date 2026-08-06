@@ -6,13 +6,14 @@ import { ConfigurableResourceCardQuery } from '../__generated__/ConfigurableReso
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
+import { theme } from '../theme-shim';
 import MyResource from './MyResource';
 import MyResourceWithinResourceGroup from './MyResourceWithinResourceGroup';
 import TotalResourceWithinResourceGroup, {
   useIsAvailableTotalResourceWithinResourceGroup,
 } from './TotalResourceWithinResourceGroup';
 import { SettingOutlined } from '@ant-design/icons';
-import { Button, Dropdown, type MenuProps, Skeleton, theme } from 'antd';
+import { Button, Dropdown, type MenuProps, Skeleton } from 'antd';
 import { filterOutEmpty, BAICard, BAICardProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense, useEffect } from 'react';

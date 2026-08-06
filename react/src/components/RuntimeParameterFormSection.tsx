@@ -9,6 +9,7 @@ import {
   RuntimeVariantPresetValueEntry,
   useRuntimeParameterSchema,
 } from '../hooks/useRuntimeParameterSchema';
+import { theme } from '../theme-shim';
 import InputNumberWithSlider from './InputNumberWithSlider';
 import { UndoOutlined } from '@ant-design/icons';
 import {
@@ -19,7 +20,6 @@ import {
   Select,
   Input,
   Tooltip,
-  theme,
   Alert,
   Tabs,
 } from 'antd';

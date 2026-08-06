@@ -4,13 +4,14 @@
  */
 import { AgentDetailDrawerContentFragment$key } from '../__generated__/AgentDetailDrawerContentFragment.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { theme } from '../theme-shim';
 import AgentActionButtons from './AgentNodeItems/AgentActionButtons';
 import AgentComputePlugins from './AgentNodeItems/AgentComputePlugins';
 import AgentResources from './AgentNodeItems/AgentResources';
 import AgentStatusTag from './AgentNodeItems/AgentStatusTag';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import { Descriptions, Grid, Tabs, theme, Typography } from 'antd';
+import { Descriptions, Grid, Tabs, Typography } from 'antd';
 import {
   BAIDoubleTag,
   BAIFlex,

@@ -6,7 +6,8 @@ import { AgentLifeCycleControlModalFragment$key } from '../__generated__/AgentLi
 import { AgentLifeCycleControlModalRefetchQuery } from '../__generated__/AgentLifeCycleControlModalRefetchQuery.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { App, theme, Typography } from 'antd';
+import { theme } from '../theme-shim';
+import { App, Typography } from 'antd';
 import {
   BAIFlex,
   BAIModal,

@@ -5,8 +5,9 @@
 import { useAccessibleProjects } from '../hooks/useAccessibleProjects';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles';
+import { theme } from '../theme-shim';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { theme, Tooltip } from 'antd';
+import { Tooltip } from 'antd';
 import { BAIFlex, BAISelect, BAISelectProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { ShieldUser } from 'lucide-react';

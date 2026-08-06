@@ -7,9 +7,10 @@ import { QuotaPerStorageVolumePanelCardUserQuery } from '../__generated__/QuotaP
 import { addQuotaScopeTypePrefix, convertToDecimalUnit } from '../helper';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { theme } from '../theme-shim';
 import BAIProgress from './BAIProgress';
 import StorageSelect from './StorageSelect';
-import { Col, Empty, Row, Skeleton, theme, Typography } from 'antd';
+import { Col, Empty, Row, Skeleton, Typography } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense, useState } from 'react';

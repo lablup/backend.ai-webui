@@ -7,9 +7,10 @@ import {
   ConnectedKernelListFragment$key,
 } from '../../__generated__/ConnectedKernelListFragment.graphql';
 import { ContainerLogModalFragment$key } from '../../__generated__/ContainerLogModalFragment.graphql';
+import { theme } from '../../theme-shim';
 // import BAIPropertyFilter from '../BAIPropertyFilter';
 import ContainerLogModal from './ContainerLogModal';
-import { Button, Tag, theme, Tooltip, Typography } from 'antd';
+import { Button, Tag, Tooltip, Typography } from 'antd';
 import type { ColumnType } from 'antd/lib/table';
 import {
   filterOutEmpty,

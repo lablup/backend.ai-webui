@@ -2,7 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { theme, Tooltip, Typography } from 'antd';
+import { theme } from '../theme-shim';
+import { Tooltip, Typography } from 'antd';
 import {
   BAIFlex,
   BAIProgressWithLabel,

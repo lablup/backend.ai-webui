@@ -1,3 +1,13 @@
+/* SPIKE (06-theme-token-layer): Astryx token layer.
+   The @layer order statement MUST be the first thing in the file (03-stylex). */
+@layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
+
+/* NOTE: `@astryxdesign/core/reset.css` is deliberately NOT imported. This spike
+   measures the TOKEN layer; pulling in Astryx's global element reset would
+   restyle the whole antd app and contaminate the visual A/B. */
+@import '@astryxdesign/core/astryx.css';
+@import '@astryxdesign/theme-neutral/theme.css';
+
 /* fix: match the icon size between Lucide and Ant.d icons */
 .lucide {
   width: 1em !important;

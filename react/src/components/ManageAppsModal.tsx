@@ -4,6 +4,7 @@
  */
 import { ManageAppsModalMutation } from '../__generated__/ManageAppsModalMutation.graphql';
 import { ManageAppsModal_image$key } from '../__generated__/ManageAppsModal_image.graphql';
+import { theme } from '../theme-shim';
 import { DeleteOutlined } from '@ant-design/icons';
 import {
   Input,
@@ -12,7 +13,6 @@ import {
   message,
   Typography,
   FormInstance,
-  theme,
   Alert,
 } from 'antd';
 import { BAIButton, BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';

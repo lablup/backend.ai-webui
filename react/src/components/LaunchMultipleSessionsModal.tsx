@@ -6,13 +6,13 @@
 import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../hooks/hooksUsingRelay';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
+import { theme } from '../theme-shim';
 import { ResourceAllocationFormValue } from './SessionFormItems/ResourceAllocationFormItems';
 import {
   Descriptions,
   Form,
   FormInstance,
   InputNumber,
-  theme,
   Typography,
 } from 'antd';
 import {

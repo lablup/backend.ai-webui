@@ -11,6 +11,7 @@ import type { DeploymentRevisionDetail_revision$key } from '../__generated__/Dep
 import { RouteSchedulingHistoryModalQuery } from '../__generated__/RouteSchedulingHistoryModalQuery.graphql';
 import { convertToOrderBy } from '../helper';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { theme } from '../theme-shim';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import BAIRadioGroup from './BAIRadioGroup';
@@ -21,7 +22,7 @@ import RouteSchedulingHistoryModal, {
 } from './RouteSchedulingHistoryModal';
 import SessionDetailDrawer from './SessionDetailDrawer';
 import { HistoryOutlined, QuestionCircleOutlined } from '@ant-design/icons';
-import { Skeleton, Tooltip, Typography, theme } from 'antd';
+import { Skeleton, Tooltip, Typography } from 'antd';
 import {
   BAIButton,
   BAICard,

@@ -10,6 +10,7 @@ import {
 import type { DeploymentRevisionHistoryTab_deployment$key } from '../__generated__/DeploymentRevisionHistoryTab_deployment.graphql';
 import { convertToOrderBy } from '../helper';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { theme } from '../theme-shim';
 import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import FolderLink from './FolderLink';
@@ -18,7 +19,7 @@ import {
   MoreOutlined,
   PlayCircleOutlined,
 } from '@ant-design/icons';
-import { App, Dropdown, Popconfirm, Space, theme, Typography } from 'antd';
+import { App, Dropdown, Popconfirm, Space, Typography } from 'antd';
 import {
   type BAIColumnType,
   BAIButton,

@@ -6,6 +6,7 @@ import { SharedFolderPermissionInfoModalFragment$key } from '../__generated__/Sh
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
+import { theme } from '../theme-shim';
 import VFolderPermissionCell from './VFolderPermissionCell';
 import { UserOutlined } from '@ant-design/icons';
 import {
@@ -16,7 +17,6 @@ import {
   Popconfirm,
   Tooltip,
   Typography,
-  theme,
 } from 'antd';
 import {
   BAIModal,

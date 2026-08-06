@@ -9,9 +9,10 @@ import {
   PERMISSION_DISPLAY_MAP,
   v2PermissionToKey,
 } from '../helper/storageHostPermission';
+import { theme } from '../theme-shim';
 import StoragePermissionEditModal from './StoragePermissionEditModal';
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import { Typography, theme } from 'antd';
+import { Typography } from 'antd';
 import {
   BAINameActionCell,
   BAITable,

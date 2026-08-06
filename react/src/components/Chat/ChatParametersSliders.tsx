@@ -2,9 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { theme } from '../../theme-shim';
 import InputNumberWithSlider from '../InputNumberWithSlider';
 import { DEFAULT_CHAT_PARAMETERS, type ChatParameters } from './ChatModel';
-import { ConfigProvider, Divider, Form, Switch, theme, Typography } from 'antd';
+import { ConfigProvider, Divider, Form, Switch, Typography } from 'antd';
 import { BAIQuestionIconWithTooltip, BAIFlex } from 'backend.ai-ui';
 import { t } from 'i18next';
 import { useRef } from 'react';

@@ -15,6 +15,7 @@ import { useAnonymousBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
+import { theme } from '../theme-shim';
 import SignupModal from './SignupModal';
 import {
   TOTPActivateForm,
@@ -41,7 +42,6 @@ import {
   Modal,
   Segmented,
   Typography,
-  theme,
   type FormInstance,
   type MenuProps,
 } from 'antd';

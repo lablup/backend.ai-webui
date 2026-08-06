@@ -9,6 +9,7 @@ import {
 import { ManageImageResourceLimitModal_image$key } from '../__generated__/ManageImageResourceLimitModal_image.graphql';
 import { compareNumberWithUnits } from '../helper';
 import { useResourceSlotsDetails } from '../hooks/backendai';
+import { theme } from '../theme-shim';
 import {
   Form,
   type FormInstance,
@@ -17,7 +18,6 @@ import {
   Row,
   Col,
   Alert,
-  theme,
 } from 'antd';
 import {
   BAIModal,

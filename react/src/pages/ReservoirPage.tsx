@@ -17,8 +17,9 @@ import { useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { theme } from '../theme-shim';
 import { useToggle } from 'ahooks';
-import { theme, Col, Row, Statistic, Card, Button, Tooltip } from 'antd';
+import { Col, Row, Statistic, Card, Button, Tooltip } from 'antd';
 import {
   BAIActivateArtifactsModal,
   BAIActivateArtifactsModalArtifactsFragmentKey,

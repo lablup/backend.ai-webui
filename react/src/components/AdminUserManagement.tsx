@@ -15,6 +15,7 @@ import { useTOTPSupported } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
+import { theme } from '../theme-shim';
 import BAIRadioGroup from './BAIRadioGroup';
 import BulkCreateUserFromCSVModal from './BulkCreateUserFromCSVModal';
 import PurgeUsersModal from './PurgeUsersModal';
@@ -27,7 +28,7 @@ import {
   InfoCircleOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { App, Button, Dropdown, Space, theme } from 'antd';
+import { App, Button, Dropdown, Space } from 'antd';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,

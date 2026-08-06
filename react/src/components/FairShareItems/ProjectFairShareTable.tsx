@@ -6,9 +6,10 @@ import {
   ProjectFairShareTableFragment$data,
   ProjectFairShareTableFragment$key,
 } from '../../__generated__/ProjectFairShareTableFragment.graphql';
+import { theme } from '../../theme-shim';
 import ProjectResourceGroupWarningIcon from './ProjectResourceGroupWarningIcon';
 import { SettingOutlined } from '@ant-design/icons';
-import { Divider, theme, Typography } from 'antd';
+import { Divider, Typography } from 'antd';
 import {
   BAIQuestionIconWithTooltip,
   BAIColumnsType,

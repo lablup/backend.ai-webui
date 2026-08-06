@@ -2,9 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { theme } from '../theme-shim';
 import CopyButton from './Chat/CopyButton';
 import { SyntaxHighlighter } from './Chat/SyntaxHighlighter';
-import { theme } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIFlex, BAIText } from 'backend.ai-ui';
 

@@ -4,10 +4,11 @@
  */
 import type { DeploymentCurrentRevisionTab_deployment$key } from '../__generated__/DeploymentCurrentRevisionTab_deployment.graphql';
 import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
+import { theme } from '../theme-shim';
 import DeploymentRevisionDetail from './DeploymentRevisionDetail';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Alert, Button, Empty, theme } from 'antd';
+import { Alert, Button, Empty } from 'antd';
 import { BAIUnmountAfterClose, toLocalId } from 'backend.ai-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -15,9 +16,7 @@ import { graphql, useFragment } from 'react-relay';
 
 interface DeploymentCurrentRevisionTabProps {
   deploymentFrgmt:
-    | DeploymentCurrentRevisionTab_deployment$key
-    | null
-    | undefined;
+    DeploymentCurrentRevisionTab_deployment$key | null | undefined;
 }
 
 /**

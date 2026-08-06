@@ -3,12 +3,13 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { AgentActionButtonsFragment$key } from '../../__generated__/AgentActionButtonsFragment.graphql';
+import { theme } from '../../theme-shim';
 import AgentLifeCycleControlModal, {
   AgentLifeCycleType,
 } from '../AgentLifeCycleControlModal';
 import AgentSettingModal from '../AgentSettingModal';
 import { PlayCircleOutlined, SettingOutlined } from '@ant-design/icons';
-import { Space, Tooltip, theme } from 'antd';
+import { Space, Tooltip } from 'antd';
 import { BAIButton, BAIButtonProps, BAITerminateIcon } from 'backend.ai-ui';
 import { RefreshCw } from 'lucide-react';
 import { useState } from 'react';

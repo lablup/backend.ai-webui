@@ -3,9 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ResourceGroupInfoModalFragment$key } from '../__generated__/ResourceGroupInfoModalFragment.graphql';
+import { theme } from '../theme-shim';
 import { ScalingGroupOpts } from './ResourceGroupList';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import { Descriptions, Tag, Typography, theme } from 'antd';
+import { Descriptions, Tag, Typography } from 'antd';
 import { BAIModal, BAIModalProps, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useMemo } from 'react';

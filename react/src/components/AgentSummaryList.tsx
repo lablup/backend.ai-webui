@@ -16,6 +16,7 @@ import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginati
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useResourceGroupsForCurrentProject } from '../hooks/useCurrentProject';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
+import { theme } from '../theme-shim';
 import BAIRadioGroup from './BAIRadioGroup';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import {
@@ -24,7 +25,7 @@ import {
   ReloadOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { Button, type TableProps, theme, Tooltip, Typography } from 'antd';
+import { Button, type TableProps, Tooltip, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import type { ColumnsType, ColumnType } from 'antd/es/table';
 import {

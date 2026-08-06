@@ -4,7 +4,8 @@
  */
 import { PurgeUsersModalBulkMutation } from '../__generated__/PurgeUsersModalBulkMutation.graphql';
 import { PurgeUsersModalFragment$key } from '../__generated__/PurgeUsersModalFragment.graphql';
-import { App, Checkbox, Form, theme } from 'antd';
+import { theme } from '../theme-shim';
+import { App, Checkbox, Form } from 'antd';
 import { FormInstance } from 'antd/lib';
 import {
   BAIDeleteConfirmModal,

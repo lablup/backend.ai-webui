@@ -5,7 +5,8 @@
 import { TerminateSessionModalForProjectAdminFragment$key } from '../__generated__/TerminateSessionModalForProjectAdminFragment.graphql';
 import { TerminateSessionModalForProjectAdminMutation } from '../__generated__/TerminateSessionModalForProjectAdminMutation.graphql';
 import { useCurrentUserRole } from '../hooks/backendai';
-import { App, Checkbox, type ModalProps, theme, Typography } from 'antd';
+import { theme } from '../theme-shim';
+import { App, Checkbox, type ModalProps, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import {
   BAICard,

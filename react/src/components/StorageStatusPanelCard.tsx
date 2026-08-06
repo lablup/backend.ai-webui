@@ -7,9 +7,10 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useVFolderInvitations } from '../hooks/useVFolderInvitations';
+import { theme } from '../theme-shim';
 import BAIPanelItem from './BAIPanelItem';
 import { useUpdateEffect } from 'ahooks';
-import { Badge, theme, Tooltip, Typography } from 'antd';
+import { Badge, Tooltip, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import {
   BAIBoardItemTitle,

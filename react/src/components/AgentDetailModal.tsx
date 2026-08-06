@@ -8,7 +8,8 @@ import {
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { useResourceSlotsDetails } from '../hooks/backendai';
-import { Col, Row, theme, Typography } from 'antd';
+import { theme } from '../theme-shim';
+import { Col, Row, Typography } from 'antd';
 import {
   BAIFlex,
   BAIModal,

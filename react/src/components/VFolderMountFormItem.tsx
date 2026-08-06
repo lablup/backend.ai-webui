@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { VFolderMountFormItemAutoMountQuery } from '../__generated__/VFolderMountFormItemAutoMountQuery.graphql';
+import { theme } from '../theme-shim';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import {
@@ -18,7 +19,6 @@ import {
   Tag,
   Tooltip,
   Typography,
-  theme,
 } from 'antd';
 import {
   BAIButton,

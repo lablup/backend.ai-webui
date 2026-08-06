@@ -5,6 +5,7 @@
 import { SessionOwnerSetterCardQuery } from '../__generated__/SessionOwnerSetterCardQuery.graphql';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useTanQuery } from '../hooks/reactQueryAlias';
+import { theme } from '../theme-shim';
 import HiddenFormItem from './HiddenFormItem';
 import {
   Button,
@@ -16,7 +17,6 @@ import {
   Row,
   Select,
   Switch,
-  theme,
 } from 'antd';
 import { CardProps } from 'antd/lib';
 import {

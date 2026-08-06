@@ -12,7 +12,8 @@ import {
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { useResourceSlotsDetails } from '../hooks/backendai';
-import { Empty, Typography, theme } from 'antd';
+import { theme } from '../theme-shim';
+import { Empty, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIQuestionIconWithTooltip, BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';

@@ -4,15 +4,9 @@
  */
 import { UserInfoModalFragment$key } from '../__generated__/UserInfoModalFragment.graphql';
 import { useTOTPSupported } from '../hooks/backendai';
+import { theme } from '../theme-shim';
 import { WarningOutlined } from '@ant-design/icons';
-import {
-  Descriptions,
-  type DescriptionsProps,
-  Tag,
-  Spin,
-  Tooltip,
-  theme,
-} from 'antd';
+import { Descriptions, type DescriptionsProps, Tag, Spin, Tooltip } from 'antd';
 import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';

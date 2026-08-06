@@ -6,9 +6,10 @@ import {
   DomainFairShareTableFragment$data,
   DomainFairShareTableFragment$key,
 } from '../../__generated__/DomainFairShareTableFragment.graphql';
+import { theme } from '../../theme-shim';
 import DomainResourceGroupWarningIcon from './DomainResourceGroupWarningIcon';
 import { SettingOutlined } from '@ant-design/icons';
-import { Divider, theme, Typography } from 'antd';
+import { Divider, Typography } from 'antd';
 import {
   BAIQuestionIconWithTooltip,
   BAIColumnsType,

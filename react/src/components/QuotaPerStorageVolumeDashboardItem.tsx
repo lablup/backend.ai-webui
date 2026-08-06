@@ -4,10 +4,11 @@
  */
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
+import { theme } from '../theme-shim';
 import QuotaPerStorageVolumePanelCard, {
   type VolumeInfo,
 } from './QuotaPerStorageVolumePanelCard';
-import { Empty, theme } from 'antd';
+import { Empty } from 'antd';
 import { BAIBoardItemTitle, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';

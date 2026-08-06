@@ -15,6 +15,8 @@ import { useDeviceMetaData, useImageMetaData } from '../hooks/backendai';
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
 import '../index.css';
+// SPIKE (06-theme-token-layer)
+import { ThemeShimProvider } from '../theme-shim';
 import NotificationHost from './NotificationHost';
 import createCache from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
@@ -321,102 +323,115 @@ export const DefaultProvidersForReactRoot: React.FC<{
       {RelayEnvironment && (
         <RelayEnvironmentProvider environment={RelayEnvironment}>
           <QueryClientProvider client={queryClient}>
-            <BAIConfigProvider
-              locale={currentLocale}
-              theme={{
+            <ThemeShimProvider
+              mode={isDarkMode ? 'dark' : 'light'}
+              seeds={{
                 ...(isDarkMode
-                  ? { ...themeConfig?.dark }
-                  : { ...themeConfig?.light }),
-                algorithm: isDarkMode
-                  ? theme.darkAlgorithm
-                  : theme.defaultAlgorithm,
-              }}
-              csp={{ nonce: globalThis.baiNonce }}
-              clientPromise={backendaiClientPromise}
-              anonymousClientFactory={createAnonymousBackendaiClient}
-              modal={{
-                mask: {
-                  blur: false,
-                },
-              }}
-              drawer={{
-                mask: {
-                  blur: false,
-                },
-              }}
-              form={{
-                // Explicitly set validateMessages from the antd locale so form
-                // validation errors always appear in the user's selected language
-                // (antd's built-in default falls back to English otherwise).
-                validateMessages:
-                  currentLocale.antdLocale?.Form?.defaultValidateMessages,
-                requiredMark: (label, { required }) => (
-                  <>
-                    {label}
-                    {!required && (
-                      <BAIText
-                        type="secondary"
-                        style={{
-                          marginLeft: token.marginXXS,
-                          wordBreak: 'keep-all',
-                        }}
-                      >
-                        ({t('general.Optional')})
-                      </BAIText>
-                    )}
-                  </>
-                ),
-              }}
-              tag={{
-                variant: 'outlined',
+                  ? themeConfig?.dark?.token
+                  : themeConfig?.light?.token),
+                fontFamily: themeConfig?.fontFamily,
+                components: (isDarkMode
+                  ? themeConfig?.dark?.components
+                  : themeConfig?.light?.components) as never,
               }}
             >
-              {/*
-               * No <I18nextProvider> wrap needed here. BUI components
-               * resolve their translations via `useBAIi18n()` which calls
-               * `useTranslation(undefined, { i18n: buiI18n })` — explicit
-               * instance binding bypasses React Context entirely, so the
-               * host's i18n Context flows through to host components
-               * unchanged. See FR-2986 / packages/backend.ai-ui/src/hooks/
-               * useBAIi18n.ts.
-               */}
-              <BAIMetaDataProviderWrapper>
-                <App {...commonAppProps}>
-                  {/* Single app-wide notification renderer. Lives outside
+              <BAIConfigProvider
+                locale={currentLocale}
+                theme={{
+                  ...(isDarkMode
+                    ? { ...themeConfig?.dark }
+                    : { ...themeConfig?.light }),
+                  algorithm: isDarkMode
+                    ? theme.darkAlgorithm
+                    : theme.defaultAlgorithm,
+                }}
+                csp={{ nonce: globalThis.baiNonce }}
+                clientPromise={backendaiClientPromise}
+                anonymousClientFactory={createAnonymousBackendaiClient}
+                modal={{
+                  mask: {
+                    blur: false,
+                  },
+                }}
+                drawer={{
+                  mask: {
+                    blur: false,
+                  },
+                }}
+                form={{
+                  // Explicitly set validateMessages from the antd locale so form
+                  // validation errors always appear in the user's selected language
+                  // (antd's built-in default falls back to English otherwise).
+                  validateMessages:
+                    currentLocale.antdLocale?.Form?.defaultValidateMessages,
+                  requiredMark: (label, { required }) => (
+                    <>
+                      {label}
+                      {!required && (
+                        <BAIText
+                          type="secondary"
+                          style={{
+                            marginLeft: token.marginXXS,
+                            wordBreak: 'keep-all',
+                          }}
+                        >
+                          ({t('general.Optional')})
+                        </BAIText>
+                      )}
+                    </>
+                  ),
+                }}
+                tag={{
+                  variant: 'outlined',
+                }}
+              >
+                {/*
+                 * No <I18nextProvider> wrap needed here. BUI components
+                 * resolve their translations via `useBAIi18n()` which calls
+                 * `useTranslation(undefined, { i18n: buiI18n })` — explicit
+                 * instance binding bypasses React Context entirely, so the
+                 * host's i18n Context flows through to host components
+                 * unchanged. See FR-2986 / packages/backend.ai-ui/src/hooks/
+                 * useBAIi18n.ts.
+                 */}
+                <BAIMetaDataProviderWrapper>
+                  <App {...commonAppProps}>
+                    {/* Single app-wide notification renderer. Lives outside
                         the Suspense below so toasts work on every route and
                         in both anonymous and authenticated states. Renders
                         null, so its position relative to the emotion caches
                         below is irrelevant. */}
-                  <NotificationHost />
-                  {/*
-                   * Two separate emotion caches are needed for CSP nonce
-                   * coverage:
-                   *
-                   * 1. StyleProvider (antd-style's custom EmotionContext):
-                   *    covers createStyles() and the antd-style css() helper.
-                   *    The nonce is passed directly as a prop.
-                   *
-                   * 2. CacheProvider (@emotion/react's CacheContext):
-                   *    covers createGlobalStyle(), which uses @emotion/react's
-                   *    Global component internally. Global reads the nonce from
-                   *    cache.sheet.nonce — it does NOT read antd-style's custom
-                   *    EmotionContext. Without this wrapper, style tags emitted
-                   *    by createGlobalStyle (e.g. ScrollbarGlobalStyle) carry no
-                   *    nonce and are blocked by `style-src 'nonce-...'` CSP.
-                   */}
-                  <CacheProvider value={emotionGlobalCache}>
-                    <StyleProvider nonce={globalThis.baiNonce}>
-                      <Suspense>
-                        {/* <BrowserRouter> */}
-                        {/* <RoutingEventHandler /> */}
-                        {children}
-                        {/* </BrowserRouter> */}
-                      </Suspense>
-                    </StyleProvider>
-                  </CacheProvider>
-                </App>
-              </BAIMetaDataProviderWrapper>
-            </BAIConfigProvider>
+                    <NotificationHost />
+                    {/*
+                     * Two separate emotion caches are needed for CSP nonce
+                     * coverage:
+                     *
+                     * 1. StyleProvider (antd-style's custom EmotionContext):
+                     *    covers createStyles() and the antd-style css() helper.
+                     *    The nonce is passed directly as a prop.
+                     *
+                     * 2. CacheProvider (@emotion/react's CacheContext):
+                     *    covers createGlobalStyle(), which uses @emotion/react's
+                     *    Global component internally. Global reads the nonce from
+                     *    cache.sheet.nonce — it does NOT read antd-style's custom
+                     *    EmotionContext. Without this wrapper, style tags emitted
+                     *    by createGlobalStyle (e.g. ScrollbarGlobalStyle) carry no
+                     *    nonce and are blocked by `style-src 'nonce-...'` CSP.
+                     */}
+                    <CacheProvider value={emotionGlobalCache}>
+                      <StyleProvider nonce={globalThis.baiNonce}>
+                        <Suspense>
+                          {/* <BrowserRouter> */}
+                          {/* <RoutingEventHandler /> */}
+                          {children}
+                          {/* </BrowserRouter> */}
+                        </Suspense>
+                      </StyleProvider>
+                    </CacheProvider>
+                  </App>
+                </BAIMetaDataProviderWrapper>
+              </BAIConfigProvider>
+            </ThemeShimProvider>
           </QueryClientProvider>
         </RelayEnvironmentProvider>
       )}

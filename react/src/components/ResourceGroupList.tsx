@@ -11,6 +11,7 @@ import { ResourceGroupListUpdateMutation } from '../__generated__/ResourceGroupL
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useSFTPProxyResourceGroupsQuery } from '../hooks/useSFTPResourceGroups';
+import { theme } from '../theme-shim';
 import BAIRadioGroup from './BAIRadioGroup';
 import ResourceGroupInfoModal from './ResourceGroupInfoModal';
 import ResourceGroupSettingModal from './ResourceGroupSettingModal';
@@ -22,7 +23,7 @@ import {
   InfoCircleOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { App, Tag, Tooltip, theme } from 'antd';
+import { App, Tag, Tooltip } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import {
   useUpdatableState,

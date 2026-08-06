@@ -9,9 +9,10 @@ import {
   useResourceSlotsDetails,
 } from '../hooks/backendai';
 import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
+import { theme } from '../theme-shim';
 import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
 import { useControllableValue } from 'ahooks';
-import { Segmented, theme, Typography } from 'antd';
+import { Segmented, Typography } from 'antd';
 import {
   filterOutNullAndUndefined,
   BAIFlex,

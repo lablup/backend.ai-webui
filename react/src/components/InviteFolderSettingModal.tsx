@@ -5,6 +5,7 @@
 import { localeCompare, useBaiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
+import { theme } from '../theme-shim';
 import { CloseCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import {
   App,
@@ -17,7 +18,6 @@ import {
   Select,
   Tooltip,
   Typography,
-  theme,
 } from 'antd';
 import {
   BAITable,

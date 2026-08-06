@@ -16,7 +16,8 @@ import ImportArtifactRevisionToFolderModal from '../components/ImportArtifactRev
 import { buildPath } from '../helper/pathBuilder';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { Button, Typography, Descriptions, theme, Tooltip } from 'antd';
+import { theme } from '../theme-shim';
+import { Button, Typography, Descriptions, Tooltip } from 'antd';
 import {
   BAIArtifactRevisionDeleteButton,
   BAIArtifactRevisionDownloadButton,

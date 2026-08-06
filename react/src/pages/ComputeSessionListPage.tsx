@@ -25,6 +25,7 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
+import { theme } from '../theme-shim';
 import {
   Alert,
   App,
@@ -33,7 +34,6 @@ import {
   Col,
   Grid,
   Row,
-  theme,
   Tooltip,
   Typography,
 } from 'antd';

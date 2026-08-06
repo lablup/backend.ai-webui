@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { theme } from '../../theme-shim';
 import {
   ChatMessageContainer,
   ChatMessagePlacement,
@@ -9,7 +10,7 @@ import {
 import ChatMessageContent from './ChatMessageContent';
 import { UIMessage } from '@ai-sdk/react';
 import { FileCard } from '@ant-design/x';
-import { theme, Image, Collapse, Typography, Spin } from 'antd';
+import { Image, Collapse, Typography, Spin } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { memo, useState } from 'react';

@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { compareNumberWithUnits, convertToBinaryUnit } from '../../helper';
+import { theme } from '../../theme-shim';
 import { MergedResourceAllocationFormValue } from './ResourceAllocationFormItems';
 import {
   ConfigProvider,
@@ -11,7 +12,6 @@ import {
   Slider,
   Switch,
   SwitchProps,
-  theme,
 } from 'antd';
 import {
   BAIQuestionIconWithTooltip,

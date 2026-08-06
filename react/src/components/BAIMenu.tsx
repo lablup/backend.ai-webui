@@ -2,7 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { ConfigProvider, Menu, type MenuProps, theme } from 'antd';
+import { theme } from '../theme-shim';
+import { ConfigProvider, Menu, type MenuProps } from 'antd';
 import { createStyles } from 'antd-style';
 import classNames from 'classnames';
 import React from 'react';

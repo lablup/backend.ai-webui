@@ -7,17 +7,9 @@ import { FluentEmojiIcon } from '../components/FluentEmojiIcon';
 import { useWebUINavigate } from '../hooks';
 import { AIAgent, useAIAgent } from '../hooks/useAIAgent';
 import { useProjectPath } from '../hooks/useRouteScope';
+import { theme } from '../theme-shim';
 import { DeleteFilled, MoreOutlined, UndoOutlined } from '@ant-design/icons';
-import {
-  Button,
-  Col,
-  Dropdown,
-  Row,
-  Skeleton,
-  Tag,
-  Typography,
-  theme,
-} from 'antd';
+import { Button, Col, Dropdown, Row, Skeleton, Tag, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import {
   BAIButton,

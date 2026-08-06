@@ -15,8 +15,9 @@ import { convertToOrderBy } from '../helper';
 import { downloadCSV } from '../helper/csv-util';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { theme } from '../theme-shim';
 import BAIRadioGroup from './BAIRadioGroup';
-import { Alert, App, Empty, Popconfirm, theme, Tooltip } from 'antd';
+import { Alert, App, Empty, Popconfirm, Tooltip } from 'antd';
 import {
   BAIButton,
   BAIDeleteConfirmModal,

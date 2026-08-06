@@ -6,10 +6,11 @@ import { ProjectFolderPermissionPanelPermissionQuery } from '../__generated__/Pr
 import { ProjectFolderPermissionPanelQuery } from '../__generated__/ProjectFolderPermissionPanelQuery.graphql';
 import { ProjectFolderPermissionPanel_storageVolumeFrgmt$key } from '../__generated__/ProjectFolderPermissionPanel_storageVolumeFrgmt.graphql';
 import { useCurrentDomainValue } from '../hooks';
+import { theme } from '../theme-shim';
 import DomainStoragePermissionTable from './DomainStoragePermissionTable';
 import ProjectStoragePermissionTable from './ProjectStoragePermissionTable';
 import { CheckCircleOutlined } from '@ant-design/icons';
-import { Space, Typography, theme } from 'antd';
+import { Space, Typography } from 'antd';
 import {
   BAIAlert,
   BAICard,

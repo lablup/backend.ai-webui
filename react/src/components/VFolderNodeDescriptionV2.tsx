@@ -10,6 +10,7 @@ import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
 import { useVirtualFolderPathV2 } from '../hooks/useVirtualFolderNodePathV2';
+import { theme } from '../theme-shim';
 import { statusTagColor } from './VFolderNodesV2';
 import VirtualFolderPathV2 from './VirtualFolderNodeItems/VirtualFolderPathV2';
 import {
@@ -20,7 +21,6 @@ import {
 import {
   App,
   Descriptions,
-  theme,
   Tooltip,
   Typography,
   type DescriptionsProps,

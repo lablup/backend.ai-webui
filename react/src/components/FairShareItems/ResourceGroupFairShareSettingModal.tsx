@@ -2,13 +2,14 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useResourceSlotsDetails } from '../../hooks/backendai';
 import { ResourceGroupFairShareSettingModalFragment$key } from '../../__generated__/ResourceGroupFairShareSettingModalFragment.graphql';
 import {
   ResourceGroupFairShareSettingModalMutation,
   ResourceGroupFairShareSettingModalMutation$variables,
 } from '../../__generated__/ResourceGroupFairShareSettingModalMutation.graphql';
-import { App, Col, Form, Input, InputNumber, Row, theme } from 'antd';
+import { useResourceSlotsDetails } from '../../hooks/backendai';
+import { theme } from '../../theme-shim';
+import { App, Col, Form, Input, InputNumber, Row } from 'antd';
 import { FormInstance } from 'antd/lib';
 import {
   BAIQuestionIconWithTooltip,

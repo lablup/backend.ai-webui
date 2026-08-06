@@ -11,9 +11,10 @@ import {
   buildAllowedHostsPayload,
   parseAllowedHosts,
 } from '../helper/storageHostPermission';
+import { theme } from '../theme-shim';
 import StoragePermissionEditModal from './StoragePermissionEditModal';
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import { Typography, theme } from 'antd';
+import { Typography } from 'antd';
 import {
   BAINameActionCell,
   BAITable,
@@ -47,9 +48,7 @@ export interface DomainStoragePermissionTableProps extends BAITableProps<DomainR
    * derived from it internally; null/undefined yields an empty key list.
    */
   permissionFrgmt:
-    | DomainStoragePermissionTable_permissionFrgmt$key
-    | null
-    | undefined;
+    DomainStoragePermissionTable_permissionFrgmt$key | null | undefined;
   /** Called after a successful save so the parent can refetch the domain. */
   onSaved?: () => void;
 }

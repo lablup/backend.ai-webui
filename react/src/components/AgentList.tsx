@@ -10,11 +10,12 @@ import {
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useThemeMode } from '../hooks/useThemeMode';
+import { theme } from '../theme-shim';
 import AgentDetailDrawer from './AgentDetailDrawer';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import BAIRadioGroup from './BAIRadioGroup';
 import { useControllableValue } from 'ahooks';
-import { type TableProps, Tag, theme } from 'antd';
+import { type TableProps, Tag } from 'antd';
 import {
   BAIFlex,
   BAIPropertyFilter,

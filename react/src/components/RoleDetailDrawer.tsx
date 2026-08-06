@@ -4,9 +4,10 @@
  */
 import { RoleDetailDrawerFragment$key } from '../__generated__/RoleDetailDrawerFragment.graphql';
 import { RoleDetailDrawerRefetchQuery } from '../__generated__/RoleDetailDrawerRefetchQuery.graphql';
+import { theme } from '../theme-shim';
 import RoleDetailDrawerContent from './RoleDetailDrawerContent';
 import RoleFormModal from './RoleFormModal';
-import { Drawer, Skeleton, Tooltip, Typography, theme } from 'antd';
+import { Drawer, Skeleton, Tooltip, Typography } from 'antd';
 import { DrawerProps } from 'antd/lib';
 import {
   BAIButton,

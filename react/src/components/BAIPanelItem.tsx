@@ -3,7 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import usePrimaryColors from '../hooks/usePrimaryColors';
-import { Progress, type ProgressProps, theme, Typography } from 'antd';
+import { theme } from '../theme-shim';
+import { Progress, type ProgressProps, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIFlex, BAIFlexProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';

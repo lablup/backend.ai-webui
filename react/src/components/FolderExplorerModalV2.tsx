@@ -10,6 +10,7 @@ import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOption
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useMergedAllowedStorageHostPermission } from '../hooks/useMergedAllowedStorageHostPermission';
+import { theme } from '../theme-shim';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import { useFileUploadManager } from './FileUploadManager';
 import FolderExplorerHeaderV2 from './FolderExplorerHeaderV2';
@@ -17,7 +18,7 @@ import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ScopedAuditLog, { ScopedAuditLogQuery } from './ScopedAuditLog';
 import VFolderNodeDescriptionV2 from './VFolderNodeDescriptionV2';
 import VFolderTextFileEditorModal from './VFolderTextFileEditorModal';
-import { Alert, Grid, Skeleton, Splitter, Tabs, theme } from 'antd';
+import { Alert, Grid, Skeleton, Splitter, Tabs } from 'antd';
 import { createStyles } from 'antd-style';
 import { RcFile } from 'antd/es/upload';
 import {

@@ -2,12 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { theme } from '../../theme-shim';
 import ChatSender, {
   AttachmentChangeInfo,
   ChatAttachmentsProps,
 } from './ChatSender';
 import type { AttachmentsProps } from '@ant-design/x';
-import { theme } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import { atom, useAtom } from 'jotai';
 import { isEmpty, isEqual, isUndefined } from 'lodash-es';

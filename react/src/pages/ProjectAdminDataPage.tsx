@@ -25,9 +25,10 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { theme } from '../theme-shim';
 import { isDeletedCategory } from './VFolderNodeListPage';
 import { useToggle } from 'ahooks';
-import { Badge, Skeleton, theme, Tooltip } from 'antd';
+import { Badge, Skeleton, Tooltip } from 'antd';
 import {
   BAIButton,
   BAICard,

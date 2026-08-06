@@ -19,11 +19,12 @@ import {
   v2PermissionToKey,
 } from '../helper/storageHostPermission';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
+import { theme } from '../theme-shim';
 import StoragePermissionEditModal, {
   type PermissionEditTarget,
 } from './StoragePermissionEditModal';
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import { Tooltip, Typography, theme } from 'antd';
+import { Tooltip, Typography } from 'antd';
 import {
   BAIButton,
   BAIFetchKeyButton,

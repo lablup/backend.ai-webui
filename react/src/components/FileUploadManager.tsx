@@ -5,8 +5,9 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { theme } from '../theme-shim';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
-import { theme, Typography } from 'antd';
+import { Typography } from 'antd';
 import { RcFile } from 'antd/es/upload';
 import {
   BAIFlex,

@@ -2,7 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { Avatar, theme } from 'antd';
+import { theme } from '../../theme-shim';
+import { Avatar } from 'antd';
 import { BAIFlex, BAIFlexProps } from 'backend.ai-ui';
 import React, { memo } from 'react';
 

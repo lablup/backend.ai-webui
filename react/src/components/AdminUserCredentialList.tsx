@@ -11,6 +11,7 @@ import {
 } from '../__generated__/AdminUserCredentialListQuery.graphql';
 import { KeypairSettingModalFragment$key } from '../__generated__/KeypairSettingModalFragment.graphql';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { theme } from '../theme-shim';
 import BAIRadioGroup from './BAIRadioGroup';
 import KeypairInfoModal from './KeypairInfoModal';
 import KeypairSettingModal from './KeypairSettingModal';
@@ -19,7 +20,7 @@ import {
   InfoCircleOutlined,
   ReloadOutlined,
 } from '@ant-design/icons';
-import { App, Button, Tag, Tooltip, Typography, theme } from 'antd';
+import { App, Button, Tag, Tooltip, Typography } from 'antd';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,

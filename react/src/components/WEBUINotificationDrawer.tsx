@@ -4,6 +4,7 @@
  */
 import { useWebUINavigate } from '../hooks';
 import { useBAINotificationState } from '../hooks/useBAINotification';
+import { theme } from '../theme-shim';
 import BAIGeneralNotificationItem from './BAIGeneralNotificationItem';
 import BAIMultiStepNotificationItem from './BAIMultiStepNotificationItem';
 import BAINodeNotificationItem from './BAINodeNotificationItem';
@@ -13,7 +14,6 @@ import {
   Drawer,
   List,
   type DrawerProps,
-  theme,
   Button,
   Segmented,
   Badge,

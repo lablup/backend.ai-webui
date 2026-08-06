@@ -18,7 +18,8 @@ import {
   useCurrentProjectValue,
   useCurrentResourceGroupValue,
 } from '../hooks/useCurrentProject';
-import { Skeleton, theme } from 'antd';
+import { theme } from '../theme-shim';
+import { Skeleton } from 'antd';
 import {
   filterOutEmpty,
   INITIAL_FETCH_KEY,

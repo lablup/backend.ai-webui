@@ -11,7 +11,8 @@ import {
   useSuspenseTanQuery,
   useTanMutation,
 } from '../../hooks/reactQueryAlias';
-import { App, Button, Descriptions, Empty, Tag, Typography, theme } from 'antd';
+import { theme } from '../../theme-shim';
+import { App, Button, Descriptions, Empty, Tag, Typography } from 'antd';
 import { BAICard, BAIFlex, useErrorMessageResolver } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 

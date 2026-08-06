@@ -7,9 +7,10 @@ import { VFolderDeployModalQuery } from '../__generated__/VFolderDeployModalQuer
 import { useWebUINavigate } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
+import { theme } from '../theme-shim';
 import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { Alert, App, Button, Form, Space, theme, Tooltip } from 'antd';
+import { Alert, App, Button, Form, Space, Tooltip } from 'antd';
 import {
   BAIAvailablePresetSelect,
   BAIFlex,

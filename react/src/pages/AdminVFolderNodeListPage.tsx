@@ -18,9 +18,10 @@ import { handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { theme } from '../theme-shim';
 import { isDeletedCategory } from './VFolderNodeListPage';
 import { useToggle } from 'ahooks';
-import { Badge, theme, Tooltip } from 'antd';
+import { Badge, Tooltip } from 'antd';
 import {
   BAIButton,
   BAICard,

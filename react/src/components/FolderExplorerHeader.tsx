@@ -3,12 +3,13 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { FolderExplorerHeaderFragment$key } from '../__generated__/FolderExplorerHeaderFragment.graphql';
+import { theme } from '../theme-shim';
 import EditableVFolderName from './EditableVFolderName';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import FileBrowserButton from './FileBrowserButton';
 import SFTPServerButton from './SFTPServerButton';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
-import { theme, Typography, Skeleton, Grid } from 'antd';
+import { Typography, Skeleton, Grid } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense } from 'react';

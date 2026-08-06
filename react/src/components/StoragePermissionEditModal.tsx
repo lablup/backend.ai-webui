@@ -6,7 +6,8 @@ import {
   PERMISSION_DISPLAY_MAP,
   hasMountWithoutFileOps,
 } from '../helper/storageHostPermission';
-import { App, Checkbox, Divider, Tooltip, Typography, theme } from 'antd';
+import { theme } from '../theme-shim';
+import { App, Checkbox, Divider, Tooltip, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { BAIFlex, BAIModal, type BAIModalProps } from 'backend.ai-ui';

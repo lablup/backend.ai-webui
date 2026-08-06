@@ -9,6 +9,7 @@ import { useKeyPairLazyLoadQuery } from '../hooks/hooksUsingRelay';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { theme } from '../theme-shim';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import TextHighlighter from './TextHighlighter';
@@ -27,7 +28,6 @@ import {
   Space,
   TableProps,
   Tag,
-  theme,
   Tooltip,
   Typography,
 } from 'antd';

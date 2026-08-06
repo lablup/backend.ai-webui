@@ -7,12 +7,13 @@ import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useMergedAllowedStorageHostPermission } from '../hooks/useMergedAllowedStorageHostPermission';
+import { theme } from '../theme-shim';
 import { useFileUploadManager } from './FileUploadManager';
 import FolderExplorerHeader from './FolderExplorerHeader';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderNodeDescription from './VFolderNodeDescription';
 import VFolderTextFileEditorModal from './VFolderTextFileEditorModal';
-import { Alert, Divider, Grid, Skeleton, Splitter, theme } from 'antd';
+import { Alert, Divider, Grid, Skeleton, Splitter } from 'antd';
 import { createStyles } from 'antd-style';
 import { RcFile } from 'antd/es/upload';
 import {

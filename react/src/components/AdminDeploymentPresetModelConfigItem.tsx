@@ -2,16 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { theme } from '../theme-shim';
 import { MinusCircleOutlined } from '@ant-design/icons';
-import {
-  Checkbox,
-  Collapse,
-  Form,
-  Input,
-  InputNumber,
-  Select,
-  theme,
-} from 'antd';
+import { Checkbox, Collapse, Form, Input, InputNumber, Select } from 'antd';
 import { BAIButton, BAICard, BAIFlex } from 'backend.ai-ui';
 import { PlusIcon } from 'lucide-react';
 import React from 'react';

@@ -5,9 +5,10 @@
 import { baiSignedRequestWithPromise } from '../helper';
 import { useAnonymousBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
+import { theme } from '../theme-shim';
 import PrivacyPolicyModal from './PrivacyPolicyModal';
 import TermsOfServiceModal from './TermsOfServiceModal';
-import { App, Checkbox, Form, Input, theme, Typography } from 'antd';
+import { App, Checkbox, Form, Input, Typography } from 'antd';
 import { BAIButton, BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';

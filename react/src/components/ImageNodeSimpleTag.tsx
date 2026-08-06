@@ -5,8 +5,9 @@
 import { ImageNodeSimpleTagFragment$key } from '../__generated__/ImageNodeSimpleTagFragment.graphql';
 import { preserveDotStartCase } from '../helper';
 import { useBackendAIImageMetaData } from '../hooks';
+import { theme } from '../theme-shim';
 import ImageMetaIcon from './ImageMetaIcon';
-import { Divider, Tag, Typography, theme } from 'antd';
+import { Divider, Tag, Typography } from 'antd';
 import { BAIDoubleTag, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';

@@ -2,7 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { type ModalProps, Typography, theme } from 'antd';
+import { theme } from '../theme-shim';
+import { type ModalProps, Typography } from 'antd';
 import { BAIFlex, BAIModal } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 

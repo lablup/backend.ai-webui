@@ -20,6 +20,7 @@ import {
   ResourcePreset,
   useResourceLimitAndRemaining,
 } from '../../hooks/useResourceLimitAndRemaining';
+import { theme } from '../../theme-shim';
 import AgentSelect from '../AgentSelect';
 import {
   Image,
@@ -30,7 +31,7 @@ import ResourcePresetSelect from '../ResourcePresetSelect';
 import RemainingMark from './RemainingMark';
 import SharedMemoryFormItems from './SharedMemoryFormItems';
 import { QuestionCircleOutlined, ReloadOutlined } from '@ant-design/icons';
-import { Button, Card, Col, Form, Radio, Row, Tooltip, theme } from 'antd';
+import { Button, Card, Col, Form, Radio, Row, Tooltip } from 'antd';
 import {
   BAIFlex,
   useEventNotStable,

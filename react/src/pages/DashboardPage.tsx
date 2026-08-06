@@ -23,7 +23,8 @@ import {
   useCurrentResourceGroupValue,
 } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
-import { Skeleton, theme } from 'antd';
+import { theme } from '../theme-shim';
+import { Skeleton } from 'antd';
 import {
   BAIBoardItemErrorBoundary,
   filterOutEmpty,
