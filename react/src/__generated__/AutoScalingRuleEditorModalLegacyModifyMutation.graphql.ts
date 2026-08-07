@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a2a1dddefbcec0c213aca42b4ab8af89>>
+ * @generated SignedSource<<f84dfaa7f4ca00b97b12458a79a62840>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -32,6 +32,7 @@ export type AutoScalingRuleEditorModalLegacyModifyMutation$data = {
     readonly rule: {
       readonly comparator: AutoScalingMetricComparator;
       readonly cooldown_seconds: number;
+      readonly id: string;
       readonly max_replicas: number | null | undefined;
       readonly metric_name: string;
       readonly metric_source: AutoScalingMetricSource;
@@ -61,126 +62,123 @@ var v0 = [
 ],
 v1 = [
   {
-    "kind": "Variable",
-    "name": "id",
-    "variableName": "id"
-  },
-  {
-    "kind": "Variable",
-    "name": "props",
-    "variableName": "props"
-  }
-],
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "ok",
-  "storageKey": null
-},
-v3 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "msg",
-  "storageKey": null
-},
-v4 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "metric_name",
-  "storageKey": null
-},
-v5 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "metric_source",
-  "storageKey": null
-},
-v6 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "threshold",
-  "storageKey": null
-},
-v7 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "comparator",
-  "storageKey": null
-},
-v8 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "step_size",
-  "storageKey": null
-},
-v9 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "cooldown_seconds",
-  "storageKey": null
-},
-v10 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "min_replicas",
-  "storageKey": null
-},
-v11 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "max_replicas",
-  "storageKey": null
-};
-return {
-  "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
-    "kind": "Fragment",
-    "metadata": null,
-    "name": "AutoScalingRuleEditorModalLegacyModifyMutation",
+    "alias": null,
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "id",
+        "variableName": "id"
+      },
+      {
+        "kind": "Variable",
+        "name": "props",
+        "variableName": "props"
+      }
+    ],
+    "concreteType": "ModifyEndpointAutoScalingRuleNode",
+    "kind": "LinkedField",
+    "name": "modify_endpoint_auto_scaling_rule_node",
+    "plural": false,
     "selections": [
       {
         "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "ModifyEndpointAutoScalingRuleNode",
+        "args": null,
+        "kind": "ScalarField",
+        "name": "ok",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "msg",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "EndpointAutoScalingRuleNode",
         "kind": "LinkedField",
-        "name": "modify_endpoint_auto_scaling_rule_node",
+        "name": "rule",
         "plural": false,
         "selections": [
-          (v2/*: any*/),
-          (v3/*: any*/),
           {
             "alias": null,
             "args": null,
-            "concreteType": "EndpointAutoScalingRuleNode",
-            "kind": "LinkedField",
-            "name": "rule",
-            "plural": false,
-            "selections": [
-              (v4/*: any*/),
-              (v5/*: any*/),
-              (v6/*: any*/),
-              (v7/*: any*/),
-              (v8/*: any*/),
-              (v9/*: any*/),
-              (v10/*: any*/),
-              (v11/*: any*/)
-            ],
+            "kind": "ScalarField",
+            "name": "id",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "metric_name",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "metric_source",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "threshold",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "comparator",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "step_size",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "cooldown_seconds",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "min_replicas",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "max_replicas",
             "storageKey": null
           }
         ],
         "storageKey": null
       }
     ],
+    "storageKey": null
+  }
+];
+return {
+  "fragment": {
+    "argumentDefinitions": (v0/*: any*/),
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "AutoScalingRuleEditorModalLegacyModifyMutation",
+    "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
@@ -189,59 +187,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "AutoScalingRuleEditorModalLegacyModifyMutation",
-    "selections": [
-      {
-        "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "ModifyEndpointAutoScalingRuleNode",
-        "kind": "LinkedField",
-        "name": "modify_endpoint_auto_scaling_rule_node",
-        "plural": false,
-        "selections": [
-          (v2/*: any*/),
-          (v3/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "EndpointAutoScalingRuleNode",
-            "kind": "LinkedField",
-            "name": "rule",
-            "plural": false,
-            "selections": [
-              (v4/*: any*/),
-              (v5/*: any*/),
-              (v6/*: any*/),
-              (v7/*: any*/),
-              (v8/*: any*/),
-              (v9/*: any*/),
-              (v10/*: any*/),
-              (v11/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "id",
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ]
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "027d83c53e1eff57ebb76cbd6bd9fc03",
+    "cacheID": "d615856c9e6a08ad1f16d3133ee4c998",
     "id": null,
     "metadata": {},
     "name": "AutoScalingRuleEditorModalLegacyModifyMutation",
     "operationKind": "mutation",
-    "text": "mutation AutoScalingRuleEditorModalLegacyModifyMutation(\n  $id: String!\n  $props: ModifyEndpointAutoScalingRuleInput!\n) {\n  modify_endpoint_auto_scaling_rule_node(id: $id, props: $props) {\n    ok\n    msg\n    rule {\n      metric_name\n      metric_source\n      threshold\n      comparator\n      step_size\n      cooldown_seconds\n      min_replicas\n      max_replicas\n      id\n    }\n  }\n}\n"
+    "text": "mutation AutoScalingRuleEditorModalLegacyModifyMutation(\n  $id: String!\n  $props: ModifyEndpointAutoScalingRuleInput!\n) {\n  modify_endpoint_auto_scaling_rule_node(id: $id, props: $props) {\n    ok\n    msg\n    rule {\n      id\n      metric_name\n      metric_source\n      threshold\n      comparator\n      step_size\n      cooldown_seconds\n      min_replicas\n      max_replicas\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "dc4f4cf0c80099d59b5c06e4b2e3ed16";
+(node as any).hash = "fb85ee35b9bdd738cb1a22f3a7c6935d";
 
 export default node;

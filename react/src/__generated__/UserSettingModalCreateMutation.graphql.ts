@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<93ad1a06d7205e10a9e82cf578a8bb4e>>
+ * @generated SignedSource<<089df4bd34888d74823a4561be57b672>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -33,6 +33,7 @@ export type CreateUserV2Input = {
 };
 export type UserSettingModalCreateMutation$variables = {
   input: CreateUserV2Input;
+  isNotSupportTotp: boolean;
 };
 export type UserSettingModalCreateMutation$data = {
   readonly adminCreateUserV2: {
@@ -88,6 +89,11 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "input"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "isNotSupportTotp"
   }
 ],
 v1 = [
@@ -451,16 +457,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "2d7a4992d94f27fba991f1f60749f2eb",
+    "cacheID": "05667b6461306b82fcb437dc4e58483f",
     "id": null,
     "metadata": {},
     "name": "UserSettingModalCreateMutation",
     "operationKind": "mutation",
-    "text": "mutation UserSettingModalCreateMutation(\n  $input: CreateUserV2Input!\n) {\n  adminCreateUserV2(input: $input) {\n    user {\n      id\n      basicInfo {\n        email\n        fullName\n        username\n        description\n        integrationName\n      }\n      organization {\n        domainName\n        role\n        resourcePolicy\n        mainAccessKey\n      }\n      security {\n        totpActivated\n        totpActivatedAt\n        sudoSessionEnabled\n        allowedClientIp\n      }\n      status {\n        status\n        statusInfo\n        needPasswordChange\n      }\n      container {\n        containerUid\n        containerMainGid\n        containerGids\n      }\n      timestamps {\n        createdAt\n        modifiedAt\n      }\n    }\n    keypair {\n      ...GeneratedKeypairListModalFragment\n    }\n  }\n}\n\nfragment GeneratedKeypairListModalFragment on CreateKeypairPayload {\n  secretKey\n  keypair {\n    accessKey\n    user {\n      basicInfo {\n        email\n      }\n      id\n    }\n    id\n  }\n}\n"
+    "text": "mutation UserSettingModalCreateMutation(\n  $input: CreateUserV2Input!\n  $isNotSupportTotp: Boolean!\n) {\n  adminCreateUserV2(input: $input) {\n    user {\n      id\n      basicInfo {\n        email\n        fullName\n        username\n        description\n        integrationName\n      }\n      organization {\n        domainName\n        role\n        resourcePolicy\n        mainAccessKey\n      }\n      security {\n        totpActivated @skipOnClient(if: $isNotSupportTotp)\n        totpActivatedAt @skipOnClient(if: $isNotSupportTotp)\n        sudoSessionEnabled\n        allowedClientIp\n      }\n      status {\n        status\n        statusInfo\n        needPasswordChange\n      }\n      container {\n        containerUid\n        containerMainGid\n        containerGids\n      }\n      timestamps {\n        createdAt\n        modifiedAt\n      }\n    }\n    keypair {\n      ...GeneratedKeypairListModalFragment\n    }\n  }\n}\n\nfragment GeneratedKeypairListModalFragment on CreateKeypairPayload {\n  secretKey\n  keypair {\n    accessKey\n    user {\n      basicInfo {\n        email\n      }\n      id\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "2c2423094ad9f6d036021cf8a59a16f4";
+(node as any).hash = "793270fc0f556e3d7971fe74263da9f2";
 
 export default node;

@@ -2,12 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useResourceSlotsDetails } from '../../hooks/backendai';
 import { ResourceGroupFairShareSettingModalFragment$key } from '../../__generated__/ResourceGroupFairShareSettingModalFragment.graphql';
 import {
   ResourceGroupFairShareSettingModalMutation,
   ResourceGroupFairShareSettingModalMutation$variables,
 } from '../../__generated__/ResourceGroupFairShareSettingModalMutation.graphql';
+import { useResourceSlotsDetails } from '../../hooks/backendai';
 import { App, Col, Form, Input, InputNumber, Row, theme } from 'antd';
 import { FormInstance } from 'antd/lib';
 import {
@@ -71,6 +71,17 @@ const ResourceGroupFairShareSettingModal: React.FC<
         resourceGroup {
           id
           name
+          fairShareSpec {
+            halfLifeDays
+            lookbackDays
+            decayUnitDays
+            defaultWeight
+            resourceWeights {
+              resourceType
+              weight
+              usesDefault
+            }
+          }
         }
       }
     }

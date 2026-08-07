@@ -455,15 +455,8 @@ const AdminDeployment = ({
       <DeploymentSettingModal
         open={!!editingDeployment}
         deploymentFrgmt={editingDeployment ?? null}
-        onRequestClose={(success) => {
+        onRequestClose={() => {
           setEditingDeploymentId(null);
-          // A create adds a new row the offset query can't know about, so it
-          // needs a refetch. An update returns every field, so Relay merges
-          // the record by id into the store and the list reflects it without
-          // one.
-          if (success && editingDeployment === null) {
-            onReload(queryRef.variables, { fetchPolicy: 'network-only' });
-          }
         }}
       />
       <BAIDeleteConfirmModal

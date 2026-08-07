@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a0d3314f6330ab3e582a48a90201ecbb>>
+ * @generated SignedSource<<d29ca38280592fe6c71f46de7cb712ef>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -31,6 +31,7 @@ export type UpdateUserV2Input = {
 };
 export type UserSettingModalUpdateMutation$variables = {
   input: UpdateUserV2Input;
+  isNotSupportTotp: boolean;
   userId: string;
 };
 export type UserSettingModalUpdateMutation$data = {
@@ -55,6 +56,16 @@ export type UserSettingModalUpdateMutation$data = {
         readonly resourcePolicy: string;
         readonly role: UserRoleV2 | null | undefined;
       };
+      readonly projects: {
+        readonly edges: ReadonlyArray<{
+          readonly node: {
+            readonly basicInfo: {
+              readonly name: string;
+            };
+            readonly id: string;
+          };
+        }>;
+      } | null | undefined;
       readonly security: {
         readonly allowedClientIp: ReadonlyArray<string> | null | undefined;
         readonly sudoSessionEnabled: boolean;
@@ -87,9 +98,21 @@ var v0 = {
 v1 = {
   "defaultValue": null,
   "kind": "LocalArgument",
+  "name": "isNotSupportTotp"
+},
+v2 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
   "name": "userId"
 },
-v2 = [
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v4 = [
   {
     "alias": null,
     "args": [
@@ -117,13 +140,7 @@ v2 = [
         "name": "user",
         "plural": false,
         "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          },
+          (v3/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -315,6 +332,58 @@ v2 = [
           {
             "alias": null,
             "args": null,
+            "concreteType": "ProjectV2Connection",
+            "kind": "LinkedField",
+            "name": "projects",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ProjectV2Edge",
+                "kind": "LinkedField",
+                "name": "edges",
+                "plural": true,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "ProjectV2",
+                    "kind": "LinkedField",
+                    "name": "node",
+                    "plural": false,
+                    "selections": [
+                      (v3/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "ProjectBasicInfo",
+                        "kind": "LinkedField",
+                        "name": "basicInfo",
+                        "plural": false,
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "name",
+                            "storageKey": null
+                          }
+                        ],
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
             "concreteType": "EntityTimestamps",
             "kind": "LinkedField",
             "name": "timestamps",
@@ -348,36 +417,38 @@ return {
   "fragment": {
     "argumentDefinitions": [
       (v0/*: any*/),
-      (v1/*: any*/)
+      (v1/*: any*/),
+      (v2/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
     "name": "UserSettingModalUpdateMutation",
-    "selections": (v2/*: any*/),
+    "selections": (v4/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
-      (v1/*: any*/),
-      (v0/*: any*/)
+      (v2/*: any*/),
+      (v0/*: any*/),
+      (v1/*: any*/)
     ],
     "kind": "Operation",
     "name": "UserSettingModalUpdateMutation",
-    "selections": (v2/*: any*/)
+    "selections": (v4/*: any*/)
   },
   "params": {
-    "cacheID": "6d9694c22dd3d159d5a4e20ca653d6e1",
+    "cacheID": "2aa05129af0dc82be17e61984a811903",
     "id": null,
     "metadata": {},
     "name": "UserSettingModalUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation UserSettingModalUpdateMutation(\n  $userId: UUID!\n  $input: UpdateUserV2Input!\n) {\n  adminUpdateUserV2(userId: $userId, input: $input) {\n    user {\n      id\n      basicInfo {\n        email\n        fullName\n        username\n        description\n        integrationName\n      }\n      organization {\n        domainName\n        role\n        resourcePolicy\n        mainAccessKey\n      }\n      security {\n        totpActivated\n        totpActivatedAt\n        sudoSessionEnabled\n        allowedClientIp\n      }\n      status {\n        status\n        statusInfo\n        needPasswordChange\n      }\n      container {\n        containerUid\n        containerMainGid\n        containerGids\n      }\n      timestamps {\n        createdAt\n        modifiedAt\n      }\n    }\n  }\n}\n"
+    "text": "mutation UserSettingModalUpdateMutation(\n  $userId: UUID!\n  $input: UpdateUserV2Input!\n  $isNotSupportTotp: Boolean!\n) {\n  adminUpdateUserV2(userId: $userId, input: $input) {\n    user {\n      id\n      basicInfo {\n        email\n        fullName\n        username\n        description\n        integrationName\n      }\n      organization {\n        domainName\n        role\n        resourcePolicy\n        mainAccessKey\n      }\n      security {\n        totpActivated @skipOnClient(if: $isNotSupportTotp)\n        totpActivatedAt @skipOnClient(if: $isNotSupportTotp)\n        sudoSessionEnabled\n        allowedClientIp\n      }\n      status {\n        status\n        statusInfo\n        needPasswordChange\n      }\n      container {\n        containerUid\n        containerMainGid\n        containerGids\n      }\n      projects {\n        edges {\n          node {\n            id\n            basicInfo {\n              name\n            }\n          }\n        }\n      }\n      timestamps {\n        createdAt\n        modifiedAt\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "5846adb6fee8b57f1a573238dea83916";
+(node as any).hash = "0fbee48353f4af852e5e87ff28295e0d";
 
 export default node;

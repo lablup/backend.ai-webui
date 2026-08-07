@@ -680,9 +680,6 @@ const FairShareList: React.FC = () => {
                   filter: null,
                 });
               }}
-              afterUpdate={() => {
-                updateFetchKey();
-              }}
               loading={
                 GQLQueryVariables !== deferredGQLQueryVariables ||
                 stepQueryParams !== deferredStepQueryParams

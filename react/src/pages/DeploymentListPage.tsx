@@ -408,9 +408,11 @@ const DeploymentListPageContent: React.FC = () => {
           open={isCreating || !!editingDeployment}
           deploymentFrgmt={editingDeployment ?? null}
           onRequestClose={(success) => {
+            if (success && !editingDeployment) {
+              updateFetchKey();
+            }
             closeCreate();
             setEditingDeploymentId(null);
-            if (success) updateFetchKey();
           }}
         />
       </BAIUnmountAfterClose>

@@ -179,8 +179,7 @@ const DeploymentAutoScalingCardContent: React.FC<
       {
         field: 'CREATED_AT' as const,
         direction: (orderString.startsWith('-') ? 'DESC' : 'ASC') as
-          | 'ASC'
-          | 'DESC',
+          'ASC' | 'DESC',
       },
     ],
     filter: graphQLFilter ?? null,
@@ -374,10 +373,10 @@ const DeploymentAutoScalingCardContent: React.FC<
               : null
           }
           onRequestClose={(success) => {
-            setIsOpenEditorModal(false);
-            if (success) {
+            if (success && !editingRuleId) {
               handleRefetch();
             }
+            setIsOpenEditorModal(false);
           }}
           afterClose={() => {
             setEditingRuleId(null);
