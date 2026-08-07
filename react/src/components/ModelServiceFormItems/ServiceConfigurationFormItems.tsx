@@ -6,16 +6,14 @@ import { Form } from '../../form-engine';
 import type { FormInstance } from '../../form-engine';
 import { COMMAND_SHELL_OPTIONS } from '../../helper/modelServiceCommand';
 import { useSuspendedBackendaiClient } from '../../hooks';
-import { theme } from '../../theme-shim';
 import {
   AstryxFormNumberInput,
   AstryxFormRadioList,
-  AstryxFormSegmented,
   AstryxFormTextArea,
   AstryxFormTextInput,
 } from '../astryxFormControls';
 import { Collapsible } from '@astryxdesign/core/Collapsible';
-import { BAIFlex, BAIQuestionIconWithTooltip } from 'backend.ai-ui';
+import { BAIFlex } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -37,13 +35,19 @@ export interface ServiceConfigurationFormItemsProps {
 // forms (BA-6613): the backend defaults `shell` to `/bin/bash` and the
 // submit-mapping layer on each page falls back to a default port, so neither
 // field needs a `required` rule here. Shell itself stays required + prefilled
-// with the default whenever Advanced/Shell mode is active, below.
+// with the default, below.
+//
+// No Basic/Advanced toggle: Execution (Shell/Exec) + Shell are always shown
+// together with Command/Port — team feedback (devops sync, 2026-08-07) was
+// that hiding this behind an "Advanced" switch made the always-shell-wrapped
+// Basic mode look like it didn't run through a shell at all, which was the
+// actual source of confusion. Showing the real execution mode up front is
+// more explicit, at the cost of one more always-visible field.
 const ServiceConfigurationFormItems: React.FC<
   ServiceConfigurationFormItemsProps
 > = ({ namePrefix, placeholders }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
   const supportsCommandShell = baiClient.supports(
     'model-service-command-string',
@@ -57,141 +61,85 @@ const ServiceConfigurationFormItems: React.FC<
     // `defaultActiveKey`. `forceRender` needs no equivalent: Collapsible
     // keeps its children MOUNTED while collapsed (CSS-hidden), so the
     // command fields stay registered and validate on submit (FR-3205).
-    //
-    // PILOT-DECISION: the Basic/Advanced Segmented moves from the antd
-    // Collapse header into the top of the content — Astryx renders the whole
-    // `trigger` inside a <button>, which cannot host interactive controls
-    // (this also drops the stopPropagation dance the antd header needed).
     <Collapsible defaultIsOpen trigger={t('modelService.ServiceConfiguration')}>
-      {/* Basic/Advanced toggle for the command config, gated on the 26.8.0
-          command/shell API (FR-3205). The form engine dropped antd's
-          `normalize`; the `getValueProps`/`getValueFromEvent` pair maps the
-          Segmented's 'basic' | 'advanced' strings to/from the boolean form
-          value so submit and prefill keep the same semantics. */}
+      {/* Execution/Shell controls need the 26.8.0 command/shell API;
+          on older managers only the plain command input below is
+          shown. */}
       {supportsCommandShell && (
-        <BAIFlex
-          gap="xxs"
-          align="center"
-          justify="end"
-          style={{ marginBottom: token.marginXS }}
-        >
+        <BAIFlex gap="sm" align="start">
           <Form.Item
-            name={[...namePrefix, 'advanced']}
-            noStyle
-            getValueProps={(checked: boolean) => ({
-              value: checked ? 'advanced' : 'basic',
-            })}
-            getValueFromEvent={(mode: string) => mode === 'advanced'}
+            name={[...namePrefix, 'execution']}
+            label={t('modelService.Execution')}
+            tooltip={{
+              // pre-line so the `\n` between the Shell and Exec
+              // descriptions renders as a line break.
+              title: (
+                <span style={{ whiteSpace: 'pre-line' }}>
+                  {t('modelService.ExecutionTooltip')}
+                </span>
+              ),
+            }}
+            required
+            rules={[{ required: true }]}
           >
-            {/* antd `Segmented size="small"` → AstryxFormSegmented (no
-                density axis). Aria-only group label; reuses an existing key
-                (no new i18n keys). */}
-            <AstryxFormSegmented
-              label={t('modelService.ServiceConfiguration')}
+            {/* antd Radio.Group → AstryxFormRadioList. */}
+            <AstryxFormRadioList
+              label={t('modelService.Execution')}
               options={[
-                { label: t('general.Basic'), value: 'basic' },
-                { label: t('general.Advanced'), value: 'advanced' },
+                {
+                  label: t('modelService.ExecutionShell'),
+                  value: 'shell',
+                },
+                {
+                  label: t('modelService.ExecutionExec'),
+                  value: 'exec',
+                },
               ]}
             />
           </Form.Item>
-          <BAIQuestionIconWithTooltip
-            title={t('modelService.CommandAdvancedModeTooltip')}
-          />
-        </BAIFlex>
-      )}
-      {/* Basic/Advanced + Execution/Shell controls need the 26.8.0
-          command/shell API; on older managers only the plain command
-          input below is shown. */}
-      {supportsCommandShell && (
-        <Form.Item dependencies={[[...namePrefix, 'advanced']]} noStyle>
-          {({ getFieldValue: getAdv }: FormInstance) =>
-            getAdv([...namePrefix, 'advanced']) ? (
-              <BAIFlex gap="sm" align="start">
+          <Form.Item dependencies={[[...namePrefix, 'execution']]} noStyle>
+            {({ getFieldValue: getExec }: FormInstance) =>
+              // Exec = no shell → hide the Shell field entirely
+              // (submitted `shell` is null).
+              getExec([...namePrefix, 'execution']) === 'exec' ? null : (
                 <Form.Item
-                  name={[...namePrefix, 'execution']}
-                  label={t('modelService.Execution')}
-                  tooltip={{
-                    // pre-line so the `\n` between the Shell and Exec
-                    // descriptions renders as a line break.
-                    title: (
-                      <span style={{ whiteSpace: 'pre-line' }}>
-                        {t('modelService.ExecutionTooltip')}
-                      </span>
-                    ),
-                  }}
+                  name={[...namePrefix, 'shell']}
+                  label={t('modelService.Shell')}
+                  tooltip={t('modelService.ShellTooltip')}
+                  style={{ flex: 1 }}
                   required
-                  rules={[{ required: true }]}
+                  rules={[{ required: true, whitespace: true }]}
                 >
-                  {/* antd Radio.Group → AstryxFormRadioList. */}
-                  <AstryxFormRadioList
-                    label={t('modelService.Execution')}
-                    options={[
-                      {
-                        label: t('modelService.ExecutionShell'),
-                        value: 'shell',
-                      },
-                      {
-                        label: t('modelService.ExecutionExec'),
-                        value: 'exec',
-                      },
-                    ]}
+                  {/* PILOT-DECISION: antd `AutoComplete` →
+                      `AstryxFormTextInput` (free-text AutoComplete
+                      does NOT map to `Typeahead`, which commits
+                      `T | null` and cannot keep a typed string). The
+                      suggestion dropdown is dropped; the known shells
+                      are surfaced in the placeholder instead.
+                      `allowClear` → `hasClear`. */}
+                  <AstryxFormTextInput
+                    label={t('modelService.Shell')}
+                    placeholder={COMMAND_SHELL_OPTIONS.map((o) => o.value).join(
+                      ', ',
+                    )}
+                    hasClear
                   />
                 </Form.Item>
-                <Form.Item
-                  dependencies={[[...namePrefix, 'execution']]}
-                  noStyle
-                >
-                  {({ getFieldValue: getExec }: FormInstance) =>
-                    // Exec = no shell → hide the Shell field entirely
-                    // (submitted `shell` is null).
-                    getExec([...namePrefix, 'execution']) === 'exec' ? null : (
-                      <Form.Item
-                        name={[...namePrefix, 'shell']}
-                        label={t('modelService.Shell')}
-                        tooltip={t('modelService.ShellTooltip')}
-                        style={{ flex: 1 }}
-                        required
-                        rules={[{ required: true, whitespace: true }]}
-                      >
-                        {/* PILOT-DECISION: antd `AutoComplete` →
-                            `AstryxFormTextInput` (free-text AutoComplete
-                            does NOT map to `Typeahead`, which commits
-                            `T | null` and cannot keep a typed string). The
-                            suggestion dropdown is dropped; the known shells
-                            are surfaced in the placeholder instead.
-                            `allowClear` → `hasClear`. */}
-                        <AstryxFormTextInput
-                          label={t('modelService.Shell')}
-                          placeholder={COMMAND_SHELL_OPTIONS.map(
-                            (o) => o.value,
-                          ).join(', ')}
-                          hasClear
-                        />
-                      </Form.Item>
-                    )
-                  }
-                </Form.Item>
-              </BAIFlex>
-            ) : null
-          }
-        </Form.Item>
+              )
+            }
+          </Form.Item>
+        </BAIFlex>
       )}
       {/* Command input: multi-line textarea in Shell mode (backend
           runs `shell -c command`, so operators work); single-line
           input in Exec mode (shell is null → command run directly as
           argv, so operators do NOT work). Legacy (<26.8.0) managers
           get a plain single-line input that is tokenized on submit. */}
-      <Form.Item
-        dependencies={[
-          [...namePrefix, 'advanced'],
-          [...namePrefix, 'execution'],
-        ]}
-        noStyle
-      >
+      <Form.Item dependencies={[[...namePrefix, 'execution']]} noStyle>
         {({ getFieldValue: getMode }: FormInstance) => {
-          const advanced = !!getMode([...namePrefix, 'advanced']);
           const isExec =
-            advanced && getMode([...namePrefix, 'execution']) === 'exec';
+            supportsCommandShell &&
+            getMode([...namePrefix, 'execution']) === 'exec';
           // Exec splits the input into an argv vector, so label it
           // "Command (argv)" to distinguish it from a shell command.
           const commandLabel = isExec
@@ -204,14 +152,10 @@ const ServiceConfigurationFormItems: React.FC<
               name={[...namePrefix, 'startCommand']}
               label={commandLabel}
               tooltip={t('modelService.StartCommandTooltip')}
-              // The hint states how the command will be run, so it
-              // follows that rather than the UI mode: Exec is the
-              // only case that does not go through a shell, and
-              // Basic runs under the backend's default shell exactly
-              // like Advanced + Shell. Managers without the
-              // command/shell path still receive a tokenized
-              // `startCommand`, so they keep the original
-              // shell-syntax hint (FR-3166).
+              // The hint states how the command will be run.
+              // Managers without the command/shell path still
+              // receive a tokenized `startCommand`, so they keep the
+              // original shell-syntax hint (FR-3166).
               extra={
                 !supportsCommandShell
                   ? t('modelService.StartCommandHelperShell')

@@ -519,10 +519,9 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               ),
               models: preset.modelDefinition.models.map((m) => {
                 // Start Command (FR-3205): reconstruct the raw command string
-                // and Basic/Advanced mode from whichever field the preset
+                // and Execution/Shell mode from whichever field the preset
                 // carries — the new single-string `command` (26.7.0+) or the
-                // deprecated `startCommand` token list. Presets always run
-                // under a shell, so the Exec (no-shell) mode never applies.
+                // deprecated `startCommand` token list.
                 const commandModeState = deriveCommandModeState({
                   command: m.service?.command,
                   shell: m.service?.shell,
@@ -536,7 +535,6 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                         port: m.service.port,
                         shell: commandModeState.shell,
                         startCommand: commandModeState.command,
-                        advanced: commandModeState.advanced,
                         execution: commandModeState.execution,
                         // 26.4.4rc7+: `enable` is authoritative; older managers
                         // omit it, so fall back to the object's presence.
@@ -736,47 +734,12 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
           form={form}
           initialValues={initialValues}
           layout="vertical"
-          onValuesChange={(
-            changed: Partial<AdminDeploymentPresetFormValue>,
-          ) => {
-            // Reset Execution + Shell when switching from Advanced → Basic —
-            // matches the revision modal's behaviour so re-opening Advanced
-            // later doesn't resurface a stale custom shell as if it were
-            // still selected. (The Exec case doesn't need a reset: submit
-            // already ignores a stale Shell value via resolveCommandShell(),
-            // and PresetReviewSummary now gates its Shell display on
-            // `execution !== 'exec'` instead of relying on the stored value
-            // being cleared.)
-            //
-            // `modelDefinition.models` is a plain array field (no
-            // `Form.List`), and `form.setFieldsValue` replaces nested
-            // object/array values wholesale rather than deep-merging, so a
-            // *partial* `models[0]` object here would wipe out
-            // name/modelPath/port/startCommand/etc. Read the current model
-            // and write back a complete merged object instead.
-            const advChanged =
-              changed.modelDefinition?.models?.[0]?.service?.advanced;
-            if (advChanged === false) {
-              const currentModel = form.getFieldValue([
-                'modelDefinition',
-                'models',
-                0,
-              ]);
-              form.setFieldsValue({
-                modelDefinition: {
-                  models: [
-                    {
-                      ...currentModel,
-                      service: {
-                        ...currentModel?.service,
-                        execution: 'shell' as const,
-                        shell: DEFAULT_MODEL_SERVICE_SHELL,
-                      },
-                    },
-                  ],
-                },
-              });
-            }
+          onValuesChange={() => {
+            // No Basic/Advanced toggle: submit already ignores a stale Shell
+            // value when Execution is Exec (resolveCommandShell()), and
+            // PresetReviewSummary gates its Shell display on `execution !==
+            // 'exec'` instead of relying on the stored value being cleared,
+            // so there's nothing left to reset here.
             syncFormToURL();
           }}
           scrollToFirstError

@@ -36,16 +36,12 @@ export type ModelServiceFormValue = {
   //
   // `startCommand` holds the raw command string typed by the user. On 26.7.0+
   // it is submitted as the single-string `command` (with `shell` derived from
-  // the Basic/Advanced + Execution controls); on older managers it is tokenized
-  // into the deprecated `startCommand` list (FR-3205).
+  // the Execution/Shell controls); on older managers it is tokenized into the
+  // deprecated `startCommand` list (FR-3205).
   //
-  // `shell` is the shell binary for Advanced → Shell execution; it stays
+  // `shell` is the shell binary for Shell execution; it stays
   // `string | undefined` (never null) so an existing value round-trips on edit
   // and to stay assignable to the create input which forbids null.
-  //
-  // `advanced` backs the FR-3205 Start Command Basic/Advanced switch: Basic
-  // uses the implicit default shell (`/bin/bash`), Advanced reveals the shell
-  // selector. Presets always run under a shell, so there is no Exec mode.
   //
   // These leaf names are shared verbatim with `DeploymentAddRevisionModal.tsx`
   // (FR-3474) so a common component can prepend a `namePrefix` without any
@@ -55,7 +51,6 @@ export type ModelServiceFormValue = {
   // same change.
   port?: number;
   shell?: string;
-  advanced?: boolean;
   execution?: 'shell' | 'exec';
   startCommand?: string;
   preStartActions?: PreStartActionFormValue[];

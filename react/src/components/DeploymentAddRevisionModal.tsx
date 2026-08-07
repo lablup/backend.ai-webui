@@ -136,11 +136,9 @@ export type FormValues = ImageEnvironmentFormInput &
     // Command below; optional, so it can be set alone or alongside a command.
     definitionPath?: string;
     startCommand?: string;
-    // Start Command shell semantics (FR-3205). `advanced` toggles the
-    // Basic/Advanced controls; in Advanced mode `execution` chooses
-    // Shell (run `shell -c command`) vs Exec (argv, no shell) and
-    // `shell` is the shell binary for Shell execution.
-    advanced?: boolean;
+    // Start Command shell semantics (FR-3205). `execution` chooses Shell
+    // (run `shell -c command`) vs Exec (argv, no shell); `shell` is the
+    // shell binary for Shell execution.
     execution?: CommandExecutionMode;
     shell?: string;
     port?: number;
@@ -1079,7 +1077,6 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       ...(hasCustomCommand && service
         ? {
             startCommand: commandModeState.command,
-            advanced: commandModeState.advanced,
             execution: commandModeState.execution,
             shell: commandModeState.shell,
             port: service.port,
@@ -1424,18 +1421,15 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
 
     // Start Command (FR-3205): when the command/shell path is enabled (26.8.0+
     // by client policy) send the user's raw command string in
-    // `command` plus a `shell` derived from the Basic/Advanced + Execution mode
-    // (Basic → omitted so the backend applies its default shell, Advanced+Shell
-    // → selected shell, Advanced+Exec → null). On older managers fall back to
-    // the deprecated tokenized `startCommand`. Never send both — the backend
-    // prefers `command`. `shell: undefined` is dropped from the request by
-    // Relay, so the field is truly omitted.
+    // `command` plus a `shell` derived from the Execution mode (Shell →
+    // selected shell, Exec → null). On older managers fall back to the
+    // deprecated tokenized `startCommand`. Never send both — the backend
+    // prefers `command`.
     const rawCommand = values.startCommand ?? '';
     const commandServiceFields = supportsCommandShell
       ? {
           command: rawCommand,
           shell: resolveCommandShell({
-            advanced: !!values.advanced,
             execution: values.execution,
             shell: values.shell,
           }),
@@ -1975,30 +1969,8 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           style={{ marginTop: token.marginXS }}
           onFinish={handleCustomFinish}
           onFinishFailed={handleFinishFailed}
-          // Collapsing Advanced → Basic hides the Execution / Shell controls but
-          // antd keeps the values of unmounted fields, while `resolveCommandShell`
-          // branches on `advanced` first and submits the default shell.
-          // Without this reset a user who picks Exec (or /bin/zsh) and then
-          // returns to Basic keeps seeing that choice when they reopen Advanced,
-          // even though submit silently sends /bin/bash. Reset the two fields so
-          // what the form holds always matches what is submitted.
-          onValuesChange={(changed: Partial<FormValues>) => {
-            if ('advanced' in changed && !changed.advanced) {
-              customForm.setFieldsValue({
-                execution: 'shell',
-                shell: DEFAULT_MODEL_SERVICE_SHELL,
-              });
-            }
-            // No equivalent reset for switching Execution to Exec: this
-            // modal has no read-only summary that re-displays the raw Shell
-            // value (unlike the preset form's Review step), and submit
-            // already ignores a stale Shell via resolveCommandShell()
-            // (Exec always sends shell: null), so there's nothing left for
-            // a stale value to mislead.
-          }}
           initialValues={_.merge({}, RESOURCE_ALLOCATION_INITIAL_FORM_VALUES, {
             resourceGroup: deployment?.metadata?.resourceGroupName,
-            advanced: false,
             execution: 'shell',
             shell: DEFAULT_MODEL_SERVICE_SHELL,
             enableHealthCheck: false,
