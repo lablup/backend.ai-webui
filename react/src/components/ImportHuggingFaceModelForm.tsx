@@ -10,6 +10,7 @@ import {
 } from '../hooks/useStartSession';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
+import HuggingFaceModelPreview from './HuggingFaceModelPreview';
 import { ReloadOutlined } from '@ant-design/icons';
 import {
   App,
@@ -258,6 +259,17 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
           ]}
         >
           <Input placeholder="https://huggingface.co/openai/gpt-oss-20b" />
+        </Form.Item>
+        <Form.Item dependencies={['model']}>
+          {({
+            getFieldValue,
+          }: FormInstance<ImportHuggingFaceModelFormValues>) => (
+            <HuggingFaceModelPreview
+              modelId={
+                parseHuggingFaceModel(getFieldValue('model') ?? '')?.modelId
+              }
+            />
+          )}
         </Form.Item>
         <Form.Item
           name="revision"
