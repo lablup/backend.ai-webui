@@ -9,10 +9,9 @@ import {
 } from './modelServiceCommand';
 
 describe('deriveCommandModeState', () => {
-  it('returns Basic mode when no command and no startCommand exist', () => {
+  it('returns Shell mode with the default shell when no command and no startCommand exist', () => {
     expect(deriveCommandModeState({})).toEqual({
       command: '',
-      advanced: false,
       execution: 'shell',
       shell: DEFAULT_MODEL_SERVICE_SHELL,
     });
@@ -20,14 +19,12 @@ describe('deriveCommandModeState', () => {
       deriveCommandModeState({ command: null, startCommand: null }),
     ).toEqual({
       command: '',
-      advanced: false,
       execution: 'shell',
       shell: DEFAULT_MODEL_SERVICE_SHELL,
     });
     expect(deriveCommandModeState({ command: null, startCommand: [] })).toEqual(
       {
         command: '',
-        advanced: false,
         execution: 'shell',
         shell: DEFAULT_MODEL_SERVICE_SHELL,
       },
@@ -39,7 +36,6 @@ describe('deriveCommandModeState', () => {
       deriveCommandModeState({ startCommand: ['python', 'service.py'] }),
     ).toEqual({
       command: 'python service.py',
-      advanced: true,
       execution: 'exec',
       shell: DEFAULT_MODEL_SERVICE_SHELL,
     });
@@ -50,7 +46,6 @@ describe('deriveCommandModeState', () => {
       deriveCommandModeState({ command: '', startCommand: ['vllm', 'serve'] }),
     ).toEqual({
       command: 'vllm serve',
-      advanced: true,
       execution: 'exec',
       shell: DEFAULT_MODEL_SERVICE_SHELL,
     });
@@ -61,24 +56,22 @@ describe('deriveCommandModeState', () => {
       deriveCommandModeState({ command: 'vllm serve /models', shell: '' }),
     ).toEqual({
       command: 'vllm serve /models',
-      advanced: true,
       execution: 'exec',
       shell: DEFAULT_MODEL_SERVICE_SHELL,
     });
   });
 
-  it('maps a null shell to Advanced + Exec (no shell)', () => {
+  it('maps a null shell to Exec (no shell)', () => {
     expect(
       deriveCommandModeState({ command: 'vllm serve /models', shell: null }),
     ).toEqual({
       command: 'vllm serve /models',
-      advanced: true,
       execution: 'exec',
       shell: DEFAULT_MODEL_SERVICE_SHELL,
     });
   });
 
-  it('maps the default shell (/bin/bash) to Basic', () => {
+  it('maps the default shell (/bin/bash) to Shell mode', () => {
     expect(
       deriveCommandModeState({
         command: 'vllm serve /models',
@@ -86,13 +79,12 @@ describe('deriveCommandModeState', () => {
       }),
     ).toEqual({
       command: 'vllm serve /models',
-      advanced: false,
       execution: 'shell',
       shell: DEFAULT_MODEL_SERVICE_SHELL,
     });
   });
 
-  it('maps a custom shell to Advanced + Shell, preserving the shell value', () => {
+  it('maps a custom shell to Shell mode, preserving the shell value', () => {
     expect(
       deriveCommandModeState({
         command: 'vllm serve /models',
@@ -100,7 +92,6 @@ describe('deriveCommandModeState', () => {
       }),
     ).toEqual({
       command: 'vllm serve /models',
-      advanced: true,
       execution: 'shell',
       shell: '/bin/zsh',
     });
@@ -117,44 +108,32 @@ describe('deriveCommandModeState', () => {
 });
 
 describe('resolveCommandShell', () => {
-  it('omits the shell in Basic mode so the backend applies its own default', () => {
-    expect(
-      resolveCommandShell({ advanced: false, shell: '/bin/zsh' }),
-    ).toBeUndefined();
-  });
-
-  it('returns null for Advanced + Exec (no shell wrapping)', () => {
+  it('returns null for Exec (no shell wrapping)', () => {
     expect(
       resolveCommandShell({
-        advanced: true,
         execution: 'exec',
         shell: '/bin/zsh',
       }),
     ).toBeNull();
   });
 
-  it('returns the selected shell for Advanced + Shell', () => {
+  it('returns the selected shell for Shell mode', () => {
     expect(
       resolveCommandShell({
-        advanced: true,
         execution: 'shell',
         shell: '/bin/zsh',
       }),
     ).toBe('/bin/zsh');
   });
 
-  it('falls back to the default shell when Advanced + Shell has an empty value', () => {
-    expect(
-      resolveCommandShell({ advanced: true, execution: 'shell', shell: '  ' }),
-    ).toBe(DEFAULT_MODEL_SERVICE_SHELL);
+  it('falls back to the default shell when Shell mode has an empty value', () => {
+    expect(resolveCommandShell({ execution: 'shell', shell: '  ' })).toBe(
+      DEFAULT_MODEL_SERVICE_SHELL,
+    );
   });
 
   it('treats an omitted execution (preset path) as Shell, never null', () => {
-    expect(resolveCommandShell({ advanced: true, shell: '/bin/zsh' })).toBe(
-      '/bin/zsh',
-    );
-    expect(resolveCommandShell({ advanced: true })).toBe(
-      DEFAULT_MODEL_SERVICE_SHELL,
-    );
+    expect(resolveCommandShell({ shell: '/bin/zsh' })).toBe('/bin/zsh');
+    expect(resolveCommandShell({})).toBe(DEFAULT_MODEL_SERVICE_SHELL);
   });
 });
