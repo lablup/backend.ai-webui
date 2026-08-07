@@ -959,6 +959,12 @@ export class Client {
       // BA-6809 / backend PR #12708 — RuntimeVariantPreset.runtimeVariant
       // nested field (DataLoader-resolved name/description). FR-3256.
       this._features['runtime-variant-preset-runtime-variant-field'] = true;
+      // Manager now retains an announcement's message when disabling it
+      // (`update_announcement(false, message)` no longer clears the stored
+      // text) — backend#12679 / BA-6794. Older managers still delete the
+      // message on disable, so the Save Draft action must stay hidden there.
+      // FR-3473.
+      this._features['retained-announcement-message'] = true;
     }
   }
 
