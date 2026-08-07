@@ -1,0 +1,10 @@
+{
+  "$comment": "Allowlist for scripts/migration-gates/astryx-token-gate.mjs (P19). ONLY for custom properties whose undeclared-with-fallback shape is a DOCUMENTED design (override hooks whose fallback IS the default). Never allowlist a name to silence a typo — fix the name instead. Each entry needs a reason.",
+  "prefixes": [
+    {
+      "prefix": "--bai-form-item-",
+      "reason": "BAIFormItem per-surface override hooks (react/src/components/BAIFormItem.tsx V map): intentionally declared nowhere; the var() fallback chain (hook -> Astryx token -> antd-parity literal) is the documented default resolution order."
+    }
+  ],
+  "names": []
+}

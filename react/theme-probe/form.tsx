@@ -26,6 +26,12 @@
 
  URL params:
    ?variant=antd|bai|both   which column(s) to render (default both)
+   ?mode=light|dark         Astryx theme mode (default light). NOTE: the
+                            antd column has no ConfigProvider darkAlgorithm
+                            here, so in dark mode it stays light — the
+                            "independent dark-mode switches" frontier hazard,
+                            on purpose (visual-compare.mjs reports it via
+                            token compliance).
    ?strip=form|all          drop antd's injected CSS after mount, simulating
                             the post-theme-removal world where antd's
                             cssinjs layer is gone. `form` drops only rules
@@ -62,6 +68,7 @@ import { createRoot } from 'react-dom/client';
 
 const params = new URLSearchParams(location.search);
 const VARIANT = params.get('variant') ?? 'both';
+const MODE = params.get('mode') === 'dark' ? 'dark' : 'light';
 const STRIP = params.get('strip');
 const STATE = params.get('state') ?? 'pristine';
 
@@ -449,7 +456,8 @@ const Probe: React.FC = () => {
         gap: 16,
         padding: 16,
         alignItems: 'flex-start',
-        backgroundColor: '#fff',
+        minHeight: '100vh',
+        backgroundColor: 'var(--color-background-surface, #fff)',
         fontFamily:
           "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
       }}
@@ -469,7 +477,7 @@ const Probe: React.FC = () => {
 };
 
 createRoot(document.getElementById('root')!).render(
-  <Theme theme={backendAiBrandTheme} mode="light">
+  <Theme theme={backendAiBrandTheme} mode={MODE}>
     <Probe />
   </Theme>,
 );
