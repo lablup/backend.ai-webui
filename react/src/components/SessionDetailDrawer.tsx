@@ -6,7 +6,11 @@ import { SessionDetailDrawerFragment$key } from '../__generated__/SessionDetailD
 import { useSuspendedBackendaiClient } from '../hooks';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import SessionDetailContent from './SessionDetailContent';
-import { Drawer, Skeleton } from 'antd';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
+// FRONTIER (ticket 17): antd `Drawer` stays for now — the Astryx Drawer lives
+// only in `@astryxdesign/lab@canary`, which is not yet a dependency of this
+// branch. Swap to lab `Drawer` when the Lab adoption ticket lands.
+import { Drawer } from 'antd';
 import { DrawerProps } from 'antd/lib';
 import { useFetchKey } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -78,7 +82,7 @@ const SessionDetailDrawer: React.FC<SessionDetailDrawerProps> = ({
       }
       {...drawerProps}
     >
-      <Suspense fallback={<Skeleton active />}>
+      <Suspense fallback={<BAISkeletonAstryx />}>
         {sessionId && (
           <SessionDetailContent
             id={sessionId}

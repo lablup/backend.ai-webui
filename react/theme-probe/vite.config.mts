@@ -11,6 +11,7 @@
  *   cd react && pnpm exec vite --config theme-probe/vite.config.mts
  *   -> http://127.0.0.1:9198/theme-probe/brand.html
  */
+import stylexVite from '@stylexjs/unplugin/vite';
 import react from '@vitejs/plugin-react';
 import { execSync } from 'node:child_process';
 import { dirname, resolve } from 'node:path';
@@ -18,6 +19,7 @@ import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 
 const reactRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const projectRoot = resolve(reactRoot, '..');
 
 // pnpm's global virtual store lives outside the repo; without allowing it,
 // dependency CSS (astryx.css etc.) is rejected by server.fs.allow. Same
@@ -39,6 +41,16 @@ export default defineConfig({
   // define is enough (relay-test-utils touches `global` at import time).
   define: { global: 'globalThis' },
   plugins: [
+    // Ticket 17: probe pages now mount components authored with Astryx
+    // `xstyle` (stylex.create) — compile them exactly like the app dev server
+    // (react/vite.config.ts). Same settings; dev server injects CSS itself so
+    // cssInjectionTarget only matters for build.
+    stylexVite({
+      useCSSLayers: false,
+      cssInjectionTarget: (fileName: string) =>
+        /assets\/index-[^/]*\.css$/.test(fileName),
+      unstable_moduleResolution: { type: 'commonJS', rootDir: projectRoot },
+    }),
     react({
       babel: (id: string) => ({
         plugins: id.startsWith(reactSrc)

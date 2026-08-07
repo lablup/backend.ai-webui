@@ -13,12 +13,14 @@ import {
 } from '../helper';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import { theme } from '../theme-shim';
-import { Empty, Typography } from 'antd';
-import { createStyles } from 'antd-style';
+import './SessionMetricGraph.css';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { Heading } from '@astryxdesign/core/Heading';
 import { BAIQuestionIconWithTooltip, BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import {
   LineChart,
@@ -31,28 +33,6 @@ import {
   ReferenceLine,
   Tooltip as ChartTooltip,
 } from 'recharts';
-
-const useStyle = createStyles(({ css, token }) => ({
-  recharts: css`
-    .recharts-label {
-      fill: ${token.colorTextDescription};
-    }
-    .recharts-cartesian-axis-line {
-      stroke: ${token.colorBorder};
-    }
-    .recharts-cartesian-axis-tick-line {
-      stroke: ${token.colorBorder};
-    }
-    .recharts-cartesian-axis-tick-value {
-      fill: ${token.colorTextDescription};
-    }
-    .recharts-default-tooltip {
-      background-color: ${token.colorBgBase} !important;
-      border: 1px solid ${token.colorBorderSecondary} !important;
-      color: ${token.colorText} !important;
-    }
-  `,
-}));
 
 type MetricData = NonNullable<
   NonNullable<SessionMetricGraphQuery$data['current_metric']>['metrics']
@@ -75,8 +55,8 @@ const SessionMetricGraph: React.FC<PrometheusMetricGraphProps> = ({
   fetchKey,
   tooltip,
 }) => {
+  const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { styles } = useStyle();
   const { mergedResourceSlots } = useResourceSlotsDetails();
 
   const { capacity_metric, current_metric } =
@@ -200,20 +180,18 @@ const SessionMetricGraph: React.FC<PrometheusMetricGraphProps> = ({
       }}
     >
       <BAIFlex align="center" style={{ height: 56, marginLeft: 52 }} gap="xs">
-        <Typography.Text style={{ fontSize: token.fontSizeHeading5 }} strong>
-          {getMetricTitle()}
-        </Typography.Text>
+        <Heading level={5}>{getMetricTitle()}</Heading>
         {tooltip ? <BAIQuestionIconWithTooltip title={tooltip} /> : null}
       </BAIFlex>
       {_.isEmpty(capacity_metric?.metrics) &&
       _.isEmpty(current_metric?.metrics) ? (
-        <Empty
-          image={Empty.PRESENTED_IMAGE_SIMPLE}
-          style={{ height: '100%', alignContent: 'center' }}
-        />
+        <EmptyState isCompact title={t('autoScalingRule.NoDataAvailable')} />
       ) : (
         <ResponsiveContainer style={{ paddingRight: token.marginXL }}>
-          <LineChart data={metricData} className={styles.recharts}>
+          <LineChart
+            data={metricData}
+            className="session-metric-graph-recharts"
+          >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="timestamp" minTickGap={token.marginMD} />
             <YAxis domain={[0, 'dataMax']} />

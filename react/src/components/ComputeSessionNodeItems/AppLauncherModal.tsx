@@ -21,24 +21,20 @@ import TensorboardPathModal from './TensorboardPathModal';
 import VNCConnectionInfoModal from './VNCConnectionInfoModal';
 import VSCodeDesktopConnectionModal from './VSCodeDesktopConnectionModal';
 import XRDPConnectionInfoModal from './XRDPConnectionInfoModal';
+import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
+import { Grid } from '@astryxdesign/core/Grid';
+import { Heading } from '@astryxdesign/core/Heading';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Text } from '@astryxdesign/core/Text';
+import * as stylex from '@stylexjs/stylex';
+// FRONTIER (ticket 17 / ticket 34): the Form engine plus its Form.Item
+// controls (BAISelect tags-mode, InputNumber, Input) stay antd until the
+// form-engine ticket.
+import { Form, FormInstance, Input, InputNumber, ModalProps } from 'antd';
 import {
-  Checkbox,
-  Col,
-  Form,
-  FormInstance,
-  Image,
-  Input,
-  InputNumber,
-  ModalProps,
-  Row,
-  Typography,
-} from 'antd';
-import {
-  BAIButton,
   BAIFlex,
   BAIModal,
   BAISelect,
-  BAIText,
   BAIUnmountAfterClose,
   useBAILogger,
   useErrorMessageResolver,
@@ -52,6 +48,18 @@ interface AppLauncherModalProps extends ModalProps {
   onRequestClose: () => void;
   sessionFrgmt: AppLauncherModalFragment$key | null;
 }
+
+const styles = stylex.create({
+  modalTitle: {
+    maxWidth: 375,
+  },
+  // 72px app tile with a 36px logo — off the IconButton size enum, kept as an
+  // explicit layout override (antd BAIButton style height/width 72).
+  appTile: {
+    height: 72,
+    width: 72,
+  },
+});
 
 const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
   onRequestClose,
@@ -280,15 +288,9 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
       <BAIModal
         data-testid="app-launcher-modal"
         title={
-          <BAIText
-            ellipsis
-            title={session?.name ?? ''}
-            style={{
-              maxWidth: 375,
-            }}
-          >
+          <Text maxLines={1} xstyle={styles.modalTitle}>
             {`${t('session.appLauncher.App')}: ${session?.name ?? ''}`}
-          </BAIText>
+          </Text>
         }
         width={450}
         onCancel={onRequestClose}
@@ -300,90 +302,78 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
           {_.map(baseAppTemplate, (apps, category) => {
             return (
               <div key={category}>
-                <Typography.Title
+                <Heading
                   level={5}
-                  style={{ marginTop: 0 }}
                   data-testid={`category-${category.split('.')[1]}`}
                 >
                   {category.split('.')[1]}
-                </Typography.Title>
-                <Row gutter={[24, 24]}>
+                </Heading>
+                {/* antd `Row gutter={[24,24]}` + `Col span={6}` (fixed 4-up,
+                    R2 — not responsive) -> Astryx Grid columns={4}. */}
+                <Grid columns={4} gap={6}>
                   {_.map(apps, (app) => {
                     return (
-                      <Col
+                      <BAIFlex
                         key={app?.name}
                         data-testid={`app-${app?.name}`}
-                        span={6}
-                        style={{ alignContent: 'center' }}
+                        direction="column"
+                        gap={'xs'}
+                        style={{ height: '100%' }}
                       >
-                        <BAIFlex
-                          direction="column"
-                          gap={'xs'}
-                          style={{ height: '100%' }}
-                        >
-                          <BAIButton
-                            icon={
-                              <Image
-                                src={app?.src}
-                                alt={app?.name}
-                                preview={false}
-                                style={{ height: 36, width: 36 }}
-                              />
-                            }
-                            action={() => handleAppLaunch(app)}
-                            style={{ height: 72, width: 72 }}
-                          />
-                          <Typography.Text style={{ textAlign: 'center' }}>
-                            {app?.title}
-                          </Typography.Text>
-                        </BAIFlex>
-                      </Col>
+                        <IconButton
+                          icon={
+                            <img
+                              src={app?.src}
+                              alt={app?.name}
+                              style={{ height: 36, width: 36 }}
+                            />
+                          }
+                          label={app?.title ?? app?.name ?? ''}
+                          clickAction={() => handleAppLaunch(app)}
+                          xstyle={styles.appTile}
+                        />
+                        <Text justify="center">{app?.title}</Text>
+                      </BAIFlex>
                     );
                   })}
-                </Row>
+                </Grid>
               </div>
             );
           })}
           {preOpenAppTemplate.length > 0 ? (
             <>
-              <Typography.Title level={5} style={{ marginTop: 0 }}>
+              <Heading level={5}>
                 {t('session.launcher.PreOpenPortTitle')}
-              </Typography.Title>
-              <Row gutter={[12, 12]}>
+              </Heading>
+              <Grid columns={4} gap={3}>
                 {_.map(preOpenAppTemplate, (app) => {
                   return (
-                    <Col
+                    <BAIFlex
                       key={app?.name}
-                      span={6}
-                      style={{ alignContent: 'center' }}
+                      direction="column"
+                      gap={'xs'}
+                      style={{ height: '100%' }}
                     >
-                      <BAIFlex
-                        direction="column"
-                        gap={'xs'}
-                        style={{ height: '100%' }}
-                      >
-                        <BAIButton
-                          icon={
-                            <Image
-                              src={app?.src}
-                              alt={app?.name}
-                              preview={false}
-                              style={{ height: 36, width: 36 }}
-                            />
-                          }
-                          action={() => handleAppLaunch(app)}
-                          style={{ height: 72, width: 72 }}
-                        />
-                        <Typography.Text style={{ textAlign: 'center' }}>
-                          {app?.title}
-                          {app?.ports?.length > 0 &&
-                            ` (${app.ports.join(', ')})`}
-                        </Typography.Text>
-                      </BAIFlex>
-                    </Col>
+                      <IconButton
+                        icon={
+                          <img
+                            src={app?.src}
+                            alt={app?.name}
+                            style={{ height: 36, width: 36 }}
+                          />
+                        }
+                        label={app?.title ?? app?.name ?? ''}
+                        clickAction={() => handleAppLaunch(app)}
+                        xstyle={styles.appTile}
+                      />
+                      <Text justify="center">
+                        {app?.title}
+                        {app?.ports?.length > 0 && ` (${app.ports.join(', ')})`}
+                      </Text>
+                    </BAIFlex>
                   );
                 })}
-              </Row>
+              </Grid>
             </>
           ) : null}
           <Form ref={formRef} layout="vertical" requiredMark={false}>
@@ -394,14 +384,11 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                 tooltip={<Trans i18nKey="session.OpenToPublicDesc" />}
                 label={
                   <BAIFlex gap={'xs'}>
-                    <Checkbox
-                      checked={openToPublic}
-                      onChange={(value) =>
-                        setOpenToPublic(value.target.checked)
-                      }
-                    >
-                      {t('session.OpenToPublic')}
-                    </Checkbox>
+                    <CheckboxInput
+                      label={t('session.OpenToPublic')}
+                      value={openToPublic}
+                      onChange={(checked) => setOpenToPublic(checked)}
+                    />
                   </BAIFlex>
                 }
               >
@@ -420,14 +407,11 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                 name={'preferredPort'}
                 label={
                   <BAIFlex gap={'xs'}>
-                    <Checkbox
-                      checked={tryPreferredPort}
-                      onChange={(value) =>
-                        setTryPreferredPort(value.target.checked)
-                      }
-                    >
-                      {t('session.TryPreferredPort')}
-                    </Checkbox>
+                    <CheckboxInput
+                      label={t('session.TryPreferredPort')}
+                      value={tryPreferredPort}
+                      onChange={(checked) => setTryPreferredPort(checked)}
+                    />
                   </BAIFlex>
                 }
                 rules={[
@@ -455,14 +439,11 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                 <Form.Item
                   label={
                     <BAIFlex gap={'xs'}>
-                      <Checkbox
-                        checked={useSubDomain}
-                        onChange={(value) =>
-                          setUseSubDomain(value.target.checked)
-                        }
-                      >
-                        {t('session.UseSubdomain')}
-                      </Checkbox>
+                      <CheckboxInput
+                        label={t('session.UseSubdomain')}
+                        value={useSubDomain}
+                        onChange={(checked) => setUseSubDomain(checked)}
+                      />
                     </BAIFlex>
                   }
                 >
@@ -473,26 +454,20 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                   />
                 </Form.Item>
                 <Form.Item>
-                  <Checkbox
-                    checked={forceUseV1Proxy}
-                    disabled={forceUseV2Proxy}
-                    onChange={(value) =>
-                      setForceUseV1Proxy(value.target.checked)
-                    }
-                  >
-                    {t('session.ForceUseV1Proxy')}
-                  </Checkbox>
+                  <CheckboxInput
+                    label={t('session.ForceUseV1Proxy')}
+                    value={forceUseV1Proxy}
+                    isDisabled={forceUseV2Proxy}
+                    onChange={(checked) => setForceUseV1Proxy(checked)}
+                  />
                 </Form.Item>
                 <Form.Item>
-                  <Checkbox
-                    checked={forceUseV2Proxy}
-                    disabled={forceUseV1Proxy}
-                    onChange={(value) =>
-                      setForceUseV2Proxy(value.target.checked)
-                    }
-                  >
-                    {t('session.ForceUseV2Proxy')}
-                  </Checkbox>
+                  <CheckboxInput
+                    label={t('session.ForceUseV2Proxy')}
+                    value={forceUseV2Proxy}
+                    isDisabled={forceUseV1Proxy}
+                    onChange={(checked) => setForceUseV2Proxy(checked)}
+                  />
                 </Form.Item>
               </>
             ) : null}

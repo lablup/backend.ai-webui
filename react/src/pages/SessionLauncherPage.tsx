@@ -34,6 +34,7 @@ import SessionTemplateModal from '../components/SessionTemplateModal';
 import VFolderTableFormItem, {
   VFolderTableFormValues,
 } from '../components/VFolderTableFormItem';
+import BAIPopconfirmAstryx from '../components/astryx-bui/BAIPopconfirmAstryx';
 import { formatDuration, convertToBinaryUnit } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import {
@@ -43,36 +44,41 @@ import {
 import { useCurrentResourceGroupState } from '../hooks/useCurrentProject';
 import { useRecentSessionHistory } from '../hooks/useRecentSessionHistory';
 import { useStartSession } from '../hooks/useStartSession';
-import { theme } from '../theme-shim';
+import { theme, useBAIBreakpoint } from '../theme-shim';
 import './SessionLauncherPage.css';
+import { Button } from '@astryxdesign/core/Button';
+import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
+import { Card } from '@astryxdesign/core/Card';
+import { Divider } from '@astryxdesign/core/Divider';
+import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
+import { Grid as AstryxGrid } from '@astryxdesign/core/Grid';
+import { Heading } from '@astryxdesign/core/Heading';
+import { VStack } from '@astryxdesign/core/Stack';
+import { Text } from '@astryxdesign/core/Text';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
+import * as stylex from '@stylexjs/stylex';
 import { useDebounceFn, useToggle } from 'ahooks';
+// FRONTIER (ticket 17 / ticket 34): the antd Form ENGINE and its Form.Item
+// controls (Checkbox/Input/InputNumber/Radio/Select/Switch inside Form.Item)
+// stay antd until the form-engine ticket. `Steps` stays antd because the
+// Astryx Stepper lives only in `@astryxdesign/lab@canary`, which is not yet a
+// dependency of this branch (same LAB frontier as Drawer/Tour).
 import {
-  Button,
-  Card,
   Checkbox,
-  Col,
-  Divider,
-  Dropdown,
   Form,
-  Grid,
   Input,
   InputNumber,
-  Popconfirm,
   Radio,
-  Row,
   Select,
   Space,
   Steps,
   Switch,
-  Tooltip,
-  Typography,
 } from 'antd';
 import type { StepsProps } from 'antd';
 import {
   filterOutEmpty,
   BAIFlex,
   useErrorMessageResolver,
-  BAIButton,
   generateRandomString,
   useBAILogger,
   BAIResourceNumberWithIcon,
@@ -203,6 +209,28 @@ interface StepPropsWithKey extends StepItem {
   key: SessionLauncherStepKey;
 }
 
+/**
+ * Step-section container: Astryx `Card` + `Heading` composition replacing the
+ * antd `Card title` (MAPPING.md §5.1). `hidden` keeps the original
+ * `style={{display:'none'}}` show/hide behaviour, which preserves mounted
+ * form state across steps (the form engine requirement).
+ */
+const StepCard: React.FC<{
+  title?: React.ReactNode;
+  hidden?: boolean;
+  children?: React.ReactNode;
+}> = ({ title, hidden, children }) => {
+  'use memo';
+  return (
+    <Card style={{ display: hidden ? 'none' : undefined }}>
+      <VStack gap={4} align="stretch">
+        {title ? <Heading level={5}>{title}</Heading> : null}
+        {children}
+      </VStack>
+    </Card>
+  );
+};
+
 const SessionLauncherPage = () => {
   const app = App.useApp();
   const { logger } = useBAILogger();
@@ -290,7 +318,7 @@ const SessionLauncherPage = () => {
 
   const { t } = useTranslation();
 
-  const screens = Grid.useBreakpoint();
+  const screens = useBAIBreakpoint();
 
   const [form] = Form.useForm<SessionLauncherFormValue>();
 
@@ -530,19 +558,13 @@ const SessionLauncherPage = () => {
           style={{ flex: 1, maxWidth: 700 }}
         >
           <BAIFlex direction="row" justify="between">
-            <Typography.Title level={4} style={{ marginTop: 0 }}>
-              {t('session.launcher.StartNewSession')}
-            </Typography.Title>
+            <Heading level={4}>{t('session.launcher.StartNewSession')}</Heading>
             <BAIFlex direction="row" gap={'sm'}>
               <Button
-                type="link"
-                // icon={<BlockOutlined />}
-                // disabled
-                style={{ paddingRight: 0, paddingLeft: 0 }}
+                variant="ghost"
+                label={t('session.launcher.RecentHistory')}
                 onClick={() => toggleIsOpenTemplateModal()}
-              >
-                {t('session.launcher.RecentHistory')}
-              </Button>
+              />
             </BAIFlex>
           </BAIFlex>
           {/* <Suspense fallback={<FlexActivityIndicator />}> */}
@@ -566,12 +588,9 @@ const SessionLauncherPage = () => {
                 // style={{  }}
               >
                 {/* Step 0 fields */}
-                <Card
+                <StepCard
                   title={t('session.launcher.SessionType')}
-                  style={{
-                    display:
-                      currentStepKey === 'sessionType' ? 'block' : 'none',
-                  }}
+                  hidden={currentStepKey !== 'sessionType'}
                 >
                   <Form.Item name="sessionType">
                     <Radio.Group
@@ -579,12 +598,12 @@ const SessionLauncherPage = () => {
                         {
                           label: (
                             <>
-                              <Typography.Text code>
+                              <Text type="code">
                                 {t('session.launcher.InteractiveMode')}
-                              </Typography.Text>{' '}
-                              <Typography.Text type="secondary">
+                              </Text>{' '}
+                              <Text color="secondary">
                                 {t('session.launcher.InteractiveModeDesc')}
-                              </Typography.Text>
+                              </Text>
                             </>
                           ),
                           value: 'interactive',
@@ -592,12 +611,12 @@ const SessionLauncherPage = () => {
                         {
                           label: (
                             <>
-                              <Typography.Text code>
+                              <Text type="code">
                                 {t('session.launcher.BatchMode')}
-                              </Typography.Text>{' '}
-                              <Typography.Text type="secondary">
+                              </Text>{' '}
+                              <Text color="secondary">
                                 {t('session.launcher.BatchModeDesc')}
-                              </Typography.Text>
+                              </Text>
                             </>
                           ),
                           value: 'batch',
@@ -613,15 +632,12 @@ const SessionLauncherPage = () => {
                   >
                     <Input />
                   </Form.Item>
-                </Card>
+                </StepCard>
 
                 {sessionType === 'batch' && (
-                  <Card
+                  <StepCard
                     title={t('session.launcher.BatchModeConfig')}
-                    style={{
-                      display:
-                        currentStepKey === 'sessionType' ? 'block' : 'none',
-                    }}
+                    hidden={currentStepKey !== 'sessionType'}
                   >
                     <Form.Item
                       label={t('session.launcher.StartUpCommand')}
@@ -975,7 +991,7 @@ const SessionLauncherPage = () => {
                         }}
                       </Form.Item>
                     ) : null}
-                  </Card>
+                  </StepCard>
                 )}
 
                 {(currentUserRole === 'admin' ||
@@ -989,7 +1005,7 @@ const SessionLauncherPage = () => {
                 )}
 
                 {sessionType === 'inference' && (
-                  <Card title="Inference Mode Configuration">
+                  <StepCard title="Inference Mode Configuration">
                     <Form.Item
                       name={['inference', 'vFolderName']}
                       label={t('session.launcher.ModelStorageToMount')}
@@ -1005,16 +1021,13 @@ const SessionLauncherPage = () => {
                           autoSelectDefault
                           /> */}
                     </Form.Item>
-                  </Card>
+                  </StepCard>
                 )}
 
                 {/* Step Start*/}
-                <Card
+                <StepCard
                   title={t('session.launcher.Environments')}
-                  style={{
-                    display:
-                      currentStepKey === 'environment' ? 'block' : 'none',
-                  }}
+                  hidden={currentStepKey !== 'environment'}
                 >
                   <ErrorBoundary
                     fallbackRender={() => {
@@ -1031,13 +1044,10 @@ const SessionLauncherPage = () => {
                       }}
                     />
                   </Form.Item>
-                </Card>
-                <Card
+                </StepCard>
+                <StepCard
                   title={t('session.launcher.ResourceAllocation')}
-                  style={{
-                    display:
-                      currentStepKey === 'environment' ? 'block' : 'none',
-                  }}
+                  hidden={currentStepKey !== 'environment'}
                 >
                   <ResourceAllocationFormItems
                     enableAgentSelect={
@@ -1047,19 +1057,16 @@ const SessionLauncherPage = () => {
                     enableResourcePresets
                     showRemainingWarning
                   />
-                </Card>
-                <Card
+                </StepCard>
+                <StepCard
                   title={t('session.launcher.HPCOptimization')}
-                  style={{
-                    display:
-                      currentStepKey === 'environment' ? 'block' : 'none',
-                  }}
+                  hidden={currentStepKey !== 'environment'}
                 >
                   <Form.Item noStyle>
                     <BAIFlex direction="row" gap={'sm'}>
-                      <Typography.Text>
+                      <Text>
                         {t('session.launcher.SwitchOpenMPoptimization')}
-                      </Typography.Text>
+                      </Text>
                       <Form.Item
                         label={t('session.launcher.SwitchOpenMPoptimization')}
                         name={['hpcOptimization', 'autoEnabled']}
@@ -1108,76 +1115,74 @@ const SessionLauncherPage = () => {
                         'autoEnabled',
                       ]);
                       return (
-                        <Row
-                          gutter={token.marginMD}
+                        // Responsive policy R1 (ticket 14): antd
+                        // `Row gutter` + `Col xs={24} sm={12}` -> Astryx Grid
+                        // (2-up from 576px -> minWidth 280, max 2).
+                        <AstryxGrid
+                          columns={{ minWidth: 280, max: 2 }}
+                          gap={4}
                           style={{
                             display: enabled ? 'none' : undefined,
                             marginTop: token.marginMD,
                           }}
                         >
-                          <Col xs={24} sm={12}>
-                            <Form.Item
-                              style={{ flex: 1 }}
-                              label={t('session.launcher.NumOpenMPthreads')}
-                              name={['hpcOptimization', 'OMP_NUM_THREADS']}
-                              tooltip={
-                                <>
-                                  {t('session.launcher.OpenMPOptimization')}
-                                  <Trans
-                                    i18nKey={
-                                      'session.launcher.DescOpenMPOptimization'
-                                    }
-                                  />
-                                </>
-                              }
-                              required
-                            >
-                              <InputNumber
-                                min={1}
-                                max={1000}
-                                step={1}
-                                stringMode
-                                style={{ width: '100%' }}
-                              />
-                            </Form.Item>
-                          </Col>
-                          <Col xs={24} sm={12}>
-                            <Form.Item
-                              style={{ flex: 1 }}
-                              label={t('session.launcher.NumOpenBLASthreads')}
-                              name={['hpcOptimization', 'OPENBLAS_NUM_THREADS']}
-                              tooltip={
-                                <>
-                                  {t('session.launcher.OpenMPOptimization')}
-                                  <Trans
-                                    i18nKey={
-                                      'session.launcher.DescOpenMPOptimization'
-                                    }
-                                  />
-                                </>
-                              }
-                              required
-                            >
-                              <InputNumber
-                                min={1}
-                                max={1000}
-                                step={1}
-                                stringMode
-                                style={{ width: '100%' }}
-                              />
-                            </Form.Item>
-                          </Col>
-                        </Row>
+                          <Form.Item
+                            style={{ flex: 1 }}
+                            label={t('session.launcher.NumOpenMPthreads')}
+                            name={['hpcOptimization', 'OMP_NUM_THREADS']}
+                            tooltip={
+                              <>
+                                {t('session.launcher.OpenMPOptimization')}
+                                <Trans
+                                  i18nKey={
+                                    'session.launcher.DescOpenMPOptimization'
+                                  }
+                                />
+                              </>
+                            }
+                            required
+                          >
+                            <InputNumber
+                              min={1}
+                              max={1000}
+                              step={1}
+                              stringMode
+                              style={{ width: '100%' }}
+                            />
+                          </Form.Item>
+                          <Form.Item
+                            style={{ flex: 1 }}
+                            label={t('session.launcher.NumOpenBLASthreads')}
+                            name={['hpcOptimization', 'OPENBLAS_NUM_THREADS']}
+                            tooltip={
+                              <>
+                                {t('session.launcher.OpenMPOptimization')}
+                                <Trans
+                                  i18nKey={
+                                    'session.launcher.DescOpenMPOptimization'
+                                  }
+                                />
+                              </>
+                            }
+                            required
+                          >
+                            <InputNumber
+                              min={1}
+                              max={1000}
+                              step={1}
+                              stringMode
+                              style={{ width: '100%' }}
+                            />
+                          </Form.Item>
+                        </AstryxGrid>
                       );
                     }}
                   </Form.Item>
-                </Card>
+                </StepCard>
                 {/* Step Start*/}
-                <Card
+                <StepCard
                   title={t('webui.menu.Data&Storage')}
-                  style={{
-                    display: currentStepKey === 'storage' ? 'block' : 'none',
-                  }}
+                  hidden={currentStepKey !== 'storage'}
                 >
                   <Form.Item noStyle dependencies={['owner']}>
                     {({ getFieldValue }) => {
@@ -1206,17 +1211,15 @@ const SessionLauncherPage = () => {
                       );
                     }}
                   </Form.Item>
-                </Card>
+                </StepCard>
 
                 {/* Step Start*/}
-                <Card
+                <StepCard
                   title={t('session.launcher.Network')}
-                  style={{
-                    display: currentStepKey === 'network' ? 'block' : 'none',
-                  }}
+                  hidden={currentStepKey !== 'network'}
                 >
                   <PortSelectFormItem />
-                </Card>
+                </StepCard>
 
                 {/* Step Start*/}
                 {currentStepKey === 'review' && (
@@ -1230,7 +1233,10 @@ const SessionLauncherPage = () => {
 
                 <BAIFlex direction="row" justify="between">
                   <BAIFlex gap={'sm'}>
-                    <Popconfirm
+                    {/* Reversible action -> anchored one-click confirm
+                        (BAIPopconfirmAstryx, gap component 08); the typed
+                        confirm modal stays reserved for irreversible flows. */}
+                    <BAIPopconfirmAstryx
                       title={t('button.Reset')}
                       description={t('session.launcher.ResetFormConfirm')}
                       onConfirm={() => {
@@ -1244,23 +1250,20 @@ const SessionLauncherPage = () => {
                       }}
                       icon={
                         <CircleHelp
-                          style={{ color: token.colorError }}
+                          style={{ color: 'var(--color-error)' }}
                           size="1em"
                         />
                       }
                       okText={t('button.Reset')}
-                      okButtonProps={{
-                        danger: true,
-                      }}
+                      isDanger
                     >
-                      <Button
-                        danger
-                        type="link"
-                        style={{ paddingRight: 0, paddingLeft: 0 }}
-                      >
-                        {t('button.Reset')}
-                      </Button>
-                    </Popconfirm>
+                      {/* PILOT-DECISION: antd `Button danger type="link"` (red
+                          text link) -> Astryx ghost Button. A ghost+destructive
+                          combination is inexpressible in the closed variant
+                          enum (P5); the danger signal moves to the confirm
+                          popover. */}
+                      <Button variant="ghost" label={t('button.Reset')} />
+                    </BAIPopconfirmAstryx>
                     {/* {currentStep === steps.length - 1 && (
                       <Button
                         icon={<SaveOutlined />}
@@ -1282,60 +1285,64 @@ const SessionLauncherPage = () => {
                   >
                     {currentStep > 0 && (
                       <Button
+                        label={t('button.Previous')}
+                        icon={<ChevronLeft size="1em" />}
                         onClick={() => {
                           setCurrentStep(currentStep - 1);
                         }}
-                        icon={<ChevronLeft size="1em" />}
-                      >
-                        {t('button.Previous')}
-                      </Button>
+                      />
                     )}
                     {currentStep === steps.length - 1 ? (
                       <Tooltip
-                        title={
+                        content={
                           hasError
                             ? t('session.launcher.PleaseCompleteForm')
                             : undefined
                         }
+                        isEnabled={hasError}
                       >
-                        <Space.Compact>
-                          <BAIButton
-                            type="primary"
+                        {/* antd `Space.Compact` + Dropdown split button ->
+                            Astryx ButtonGroup + DropdownMenu (MAPPING.md
+                            §5.3). The dropdown owns its own trigger button. */}
+                        <ButtonGroup label={t('session.launcher.Launch')}>
+                          <Button
+                            variant="primary"
                             icon={<CirclePlay size="1em" />}
-                            disabled={hasError}
-                            action={() => performLaunch(1)}
-                          >
-                            {t('session.launcher.Launch')}
-                          </BAIButton>
-                          <Dropdown
-                            trigger={['click']}
-                            disabled={hasError}
-                            menu={{
-                              items: [
-                                {
-                                  key: 'batch',
-                                  label: t(
-                                    'session.launcher.LaunchMultipleSessions',
-                                  ),
-                                  onClick: () => {
-                                    setIsLaunchMultipleSessionsModalOpen(true);
-                                  },
-                                },
-                              ],
+                            isDisabled={hasError}
+                            label={t('session.launcher.Launch')}
+                            clickAction={() => performLaunch(1)}
+                          />
+                          <DropdownMenu
+                            hasChevron={false}
+                            button={{
+                              variant: 'primary',
+                              icon: <Ellipsis size="1em" />,
+                              isIconOnly: true,
+                              isDisabled: hasError,
+                              label: t(
+                                'session.launcher.LaunchMultipleSessions',
+                              ),
                             }}
-                          >
-                            <BAIButton
-                              type="primary"
-                              icon={<Ellipsis size="1em" />}
-                              disabled={hasError}
-                            />
-                          </Dropdown>
-                        </Space.Compact>
+                            items={[
+                              {
+                                label: t(
+                                  'session.launcher.LaunchMultipleSessions',
+                                ),
+                                onClick: () => {
+                                  setIsLaunchMultipleSessionsModalOpen(true);
+                                },
+                              },
+                            ]}
+                          />
+                        </ButtonGroup>
                       </Tooltip>
                     ) : (
+                      // PILOT-DECISION: antd `type="primary" ghost` (outlined
+                      // primary) has no Astryx variant; `secondary` is the
+                      // closest closed-enum destination (P5).
                       <Button
-                        type="primary"
-                        ghost
+                        variant="secondary"
+                        label={t('button.Next')}
                         onClick={() => {
                           setCurrentStep(currentStep + 1);
                         }}
@@ -1345,6 +1352,7 @@ const SessionLauncherPage = () => {
                     )}
                     {currentStep !== steps.length - 1 && (
                       <Button
+                        label={t('session.launcher.SkipToConfirmAndLaunch')}
                         onClick={() => {
                           setCurrentStep(steps.length - 1);
                         }}
@@ -1501,6 +1509,14 @@ type FormOrResourceRequired = {
   showDividers?: boolean;
 };
 
+const unifiedChipStyles = stylex.create({
+  description: {
+    minWidth: 0,
+    whiteSpace: 'normal',
+    overflowWrap: 'anywhere',
+  },
+});
+
 // Renders a unified-memory accelerator as "<device description>" with the same
 // explanatory tooltip as the launcher's accelerator field. Kept as a separate
 // component so a long description wraps gracefully: the icon + text wrap as a
@@ -1518,7 +1534,7 @@ const UnifiedAcceleratorChip: React.FC<{ type: string }> = ({ type }) => {
   const lineHeightPx = token.fontSize * token.lineHeight;
   return (
     <Tooltip
-      title={t('session.launcher.UnifiedAcceleratorMemoryNote', {
+      content={t('session.launcher.UnifiedAcceleratorMemoryNote', {
         description,
       })}
     >
@@ -1533,15 +1549,7 @@ const UnifiedAcceleratorChip: React.FC<{ type: string }> = ({ type }) => {
         <BAIFlex align="center" style={{ flexShrink: 0, height: lineHeightPx }}>
           <ResourceTypeIcon type={type} showTooltip={false} />
         </BAIFlex>
-        <Typography.Text
-          style={{
-            minWidth: 0,
-            whiteSpace: 'normal',
-            overflowWrap: 'anywhere',
-          }}
-        >
-          {description}
-        </Typography.Text>
+        <Text xstyle={unifiedChipStyles.description}>{description}</Text>
       </BAIFlex>
     </Tooltip>
   );

@@ -16,7 +16,8 @@ import SessionSlotCell from './ComputeSessionNodeItems/SessionSlotCell';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
 import TerminateSessionModal from './ComputeSessionNodeItems/TerminateSessionModal';
 import ImageNodeSimpleTag from './ImageNodeSimpleTag';
-import { Tooltip } from 'antd';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -29,7 +30,6 @@ import {
   BAINameActionCell,
   BAISessionTypeTag,
   BAISessionClusterMode,
-  BAITag,
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -318,16 +318,16 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
           return (
             <BAIFlex gap="xs" wrap="wrap">
               {dependeeNodes?.map((node) => (
-                <Tooltip key={node?.row_id} title={t('session.DependsOn')}>
-                  <BAITag>→ {node?.name}</BAITag>
+                <Tooltip key={node?.row_id} content={t('session.DependsOn')}>
+                  <Badge label={`→ ${node?.name}`} />
                 </Tooltip>
               ))}
               {dependentNodes?.map((node) => (
                 <Tooltip
                   key={node?.row_id}
-                  title={t('session.DependedByOthers')}
+                  content={t('session.DependedByOthers')}
                 >
-                  <BAITag>← {node?.name}</BAITag>
+                  <Badge label={`← ${node?.name}`} />
                 </Tooltip>
               ))}
             </BAIFlex>

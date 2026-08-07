@@ -6,9 +6,12 @@ import { TensorboardPathModalFragment$key } from '../../__generated__/Tensorboar
 import { App } from '../../app-shim';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useBackendAIAppLauncher } from '../../hooks/useBackendAIAppLauncher';
-import { Form, Input, Typography } from 'antd';
+import { Button } from '@astryxdesign/core/Button';
+import { Text } from '@astryxdesign/core/Text';
+// FRONTIER (ticket 17 / ticket 34): Form + Form.Item + Input stay on the antd
+// form engine (locked SHIM decision).
+import { Form, Input } from 'antd';
 import {
-  BAIButton,
   BAIFlex,
   BAIModal,
   BAIModalProps,
@@ -104,9 +107,9 @@ const TensorboardPathModal: React.FC<TensorboardPathModalProps> = ({
       {...modalProps}
     >
       <BAIFlex direction="column" gap="md" align="stretch">
-        <Typography.Paragraph>
+        <Text as="p" display="block">
           {t('session.InputTensorboardPath')}
-        </Typography.Paragraph>
+        </Text>
 
         <Form
           form={form}
@@ -120,9 +123,12 @@ const TensorboardPathModal: React.FC<TensorboardPathModalProps> = ({
           </Form.Item>
         </Form>
 
-        <BAIButton type="primary" size="large" action={handleSubmit}>
-          {t('session.UseThisPath')}
-        </BAIButton>
+        <Button
+          variant="primary"
+          size="lg"
+          label={t('session.UseThisPath')}
+          clickAction={handleSubmit}
+        />
       </BAIFlex>
     </BAIModal>
   );

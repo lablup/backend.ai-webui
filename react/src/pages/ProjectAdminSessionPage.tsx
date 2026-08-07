@@ -13,12 +13,12 @@ import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import TerminateSessionModalForProjectAdmin from '../components/TerminateSessionModalForProjectAdmin';
+import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
 import { convertToOrderBy, handleRowSelectionChange } from '../helper';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { theme } from '../theme-shim';
-import { Button, Skeleton, Tooltip } from 'antd';
+import { IconButton } from '@astryxdesign/core/IconButton';
 import {
   BAICard,
   BAIFlex,
@@ -73,7 +73,6 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
 
   const [selectedSessionList, setSelectedSessionList] = useState<
     Array<ProjectSessionNode>
@@ -234,15 +233,12 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
                 count={selectedSessionList.length}
                 onClearSelection={() => setSelectedSessionList([])}
               />
-              <Tooltip
-                title={t('session.TerminateSession')}
-                placement="topLeft"
-              >
-                <Button
-                  icon={<PowerOffIcon color={token.colorError} />}
-                  onClick={() => openTerminateModal(selectedSessionList)}
-                />
-              </Tooltip>
+              <IconButton
+                label={t('session.TerminateSession')}
+                tooltip={t('session.TerminateSession')}
+                icon={<PowerOffIcon color="var(--color-error)" />}
+                onClick={() => openTerminateModal(selectedSessionList)}
+              />
             </>
           )}
           <AutoUpdateFetchKeyButton
@@ -379,11 +375,11 @@ const ProjectAdminSessionPage: React.FC = () => {
         }}
       >
         <BAIErrorBoundary>
-          <Suspense fallback={<Skeleton active />}>
+          <Suspense fallback={<BAISkeletonAstryx />}>
             {currentProject.id ? (
               <ProjectAdminSessionContent projectId={currentProject.id} />
             ) : (
-              <Skeleton active />
+              <BAISkeletonAstryx />
             )}
           </Suspense>
         </BAIErrorBoundary>

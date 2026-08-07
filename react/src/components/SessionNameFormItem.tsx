@@ -3,6 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useValidateSessionName } from '../hooks/useValidateSessionName';
+// FRONTIER (ticket 17 / ticket 34): Form.Item + Input stay on the antd form
+// engine (locked SHIM decision) until the form-engine ticket.
 import { Form, type FormItemProps, Input } from 'antd';
 import React from 'react';
 import { useTranslation } from 'react-i18next';

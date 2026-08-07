@@ -3,6 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+// FRONTIER (ticket 17): antd `Tour` stays — the Astryx Tour lives only in
+// `@astryxdesign/lab@canary`, which is not yet a dependency of this branch
+// (same LAB frontier as Drawer/Steps). Swap when the Lab adoption ticket lands.
 import { Tour, type TourProps } from 'antd';
 import React from 'react';
 import { useTranslation } from 'react-i18next';

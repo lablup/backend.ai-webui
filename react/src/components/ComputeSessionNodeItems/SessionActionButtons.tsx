@@ -10,14 +10,19 @@ import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserInfo } from '../../hooks/backendai';
 import { useSuspendedAppTemplateConfig } from '../../hooks/useAppTemplate';
 import { useBackendAIAppLauncher } from '../../hooks/useBackendAIAppLauncher';
-import { theme } from '../../theme-shim';
 import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
 import AppLauncherModal from './AppLauncherModal';
 import ContainerCommitModal from './ContainerCommitModal';
 import ContainerLogModal from './ContainerLogModal';
 import SFTPConnectionInfoModal from './SFTPConnectionInfoModal';
 import TerminateSessionModal from './TerminateSessionModal';
-import { Tooltip, Button, Space, type ButtonProps } from 'antd';
+import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { HStack } from '@astryxdesign/core/Stack';
+// FRONTIER (ticket 17): `ButtonProps['size']` keeps the antd-shaped `size`
+// prop for unmigrated consumers (BAIComputeSessionNodeNotificationItem);
+// translated to the Astryx size enum internally. Type-only import.
+import { type ButtonProps } from 'antd';
 import {
   BAIAppIcon,
   BAIContainerCommitIcon,
@@ -28,6 +33,7 @@ import {
   BAITerminalAppIcon,
   BAITerminateIcon,
   BAIUnmountAfterClose,
+  filterOutEmpty,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense, useState } from 'react';
@@ -72,12 +78,9 @@ const isAppSupported = (session: SessionActionButtonsFragment$data) => {
   );
 };
 
-const Wrapper: React.FC<{ compact?: boolean; children?: React.ReactNode }> = ({
-  children,
-  compact,
-}) => {
-  return compact ? <Space.Compact>{children}</Space.Compact> : <>{children}</>;
-};
+/** antd `ButtonProps['size']` -> Astryx size enum (frontier translation). */
+const toAstryxSize = (size?: ButtonProps['size']): 'sm' | 'md' | 'lg' =>
+  size === 'small' ? 'sm' : size === 'large' ? 'lg' : 'md';
 
 const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
   sessionFrgmt,
@@ -88,7 +91,6 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
   onAction,
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
   const { hideAppsOnBatchSession } = useSuspendedAppTemplateConfig();
 
@@ -162,8 +164,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
     return !hiddenButtons.has(key);
   };
 
-  // When size is 'small', use the button's title attribute instead of a Tooltip
-  const isButtonTitleMode = size === 'small';
+  const astryxSize = toAstryxSize(size);
 
   const launchApp = () => {
     if (!primaryAppOption?.appName) return;
@@ -184,205 +185,159 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
     });
   };
 
+  // PILOT-DECISION (ticket 17): antd icon-only `Button`s in a `Space.Compact`
+  // -> Astryx `IconButton`s in a `ButtonGroup` (compact) / `HStack` (loose).
+  // The small-size "native title instead of Tooltip" special case collapses
+  // into IconButton's own `tooltip` prop; every icon-only control now carries
+  // a real accessible `label` (P8).
+  const buttons = session
+    ? filterOutEmpty([
+        primaryAppOption && primaryAppOption.appName === 'jupyter' && (
+          <IconButton
+            key="primary-jupyter"
+            size={astryxSize}
+            variant="primary"
+            isDisabled={
+              !isAppSupported(session) || !isActive(session) || !isOwner
+            }
+            icon={<BAIJupyterIcon />}
+            label={t('session.ExecuteSpecificApp', {
+              appName: 'Jupyter Notebook',
+            })}
+            tooltip={t('session.ExecuteSpecificApp', {
+              appName: 'Jupyter Notebook',
+            })}
+            onClick={() => {
+              launchApp();
+            }}
+          />
+        ),
+        primaryAppOption && primaryAppOption.appName === 'filebrowser' && (
+          <IconButton
+            key="primary-filebrowser"
+            size={astryxSize}
+            variant="primary"
+            isDisabled={
+              !isAppSupported(session) || !isActive(session) || !isOwner
+            }
+            icon={<BAIFileBrowserIcon />}
+            label={t('session.ExecuteSpecificApp', {
+              appName: 'File browser',
+            })}
+            tooltip={t('session.ExecuteSpecificApp', {
+              appName: 'File browser',
+            })}
+            onClick={() => {
+              launchApp();
+            }}
+          />
+        ),
+        isVisible('appLauncher') && (
+          <IconButton
+            key="appLauncher"
+            size={astryxSize}
+            variant={primaryAppOption ? 'secondary' : 'primary'}
+            isDisabled={
+              !isAppSupported(session) || !isActive(session) || !isOwner
+            }
+            icon={<BAIAppIcon />}
+            label={t('session.SeeAppDialog')}
+            tooltip={t('session.SeeAppDialog')}
+            onClick={() => {
+              onAction?.('appLauncher');
+              setOpenAppLauncherModal(true);
+            }}
+          />
+        ),
+        isVisible('sftp') && (
+          <IconButton
+            key="sftp"
+            size={astryxSize}
+            variant="primary"
+            isDisabled={!isActive(session) || !isOwner}
+            icon={<BAISftpIcon />}
+            label={t('data.explorer.RunSSH/SFTPserver')}
+            tooltip={t('data.explorer.RunSSH/SFTPserver')}
+            onClick={() => {
+              setOpenSFTPConnectionInfoModal(true);
+            }}
+          />
+        ),
+        isVisible('terminal') && (
+          <IconButton
+            key="terminal"
+            size={astryxSize}
+            isDisabled={
+              !isAppSupported(session) || !isActive(session) || !isOwner
+            }
+            icon={<BAITerminalAppIcon />}
+            label={t('session.ExecuteTerminalApp')}
+            tooltip={t('session.ExecuteTerminalApp')}
+            onClick={() => {
+              onAction?.('terminal');
+              appLauncher.runTerminal({});
+            }}
+          />
+        ),
+        isVisible('logs') && (
+          <IconButton
+            key="logs"
+            size={astryxSize}
+            icon={<BAISessionLogIcon />}
+            label={t('session.SeeContainerLogs')}
+            tooltip={t('session.SeeContainerLogs')}
+            onClick={() => {
+              onAction?.('logs');
+              setOpenLogModal(true);
+            }}
+          />
+        ),
+        isVisible('containerCommit') && (
+          <IconButton
+            key="containerCommit"
+            size={astryxSize}
+            isDisabled={session?.status !== 'RUNNING' || !isOwner}
+            icon={<BAIContainerCommitIcon />}
+            label={t('session.RequestContainerCommit')}
+            tooltip={t('session.RequestContainerCommit')}
+            onClick={() => {
+              onAction?.('containerCommit');
+              setOpenContainerCommitModal(true);
+            }}
+          />
+        ),
+        isVisible('terminate') && (
+          <IconButton
+            key="terminate"
+            size={astryxSize}
+            isDisabled={!isActive(session)}
+            icon={
+              <BAITerminateIcon
+                style={{
+                  color: isActive(session) ? 'var(--color-error)' : undefined,
+                }}
+              />
+            }
+            label={t('session.TerminateSession')}
+            tooltip={t('session.TerminateSession')}
+            onClick={() => {
+              onAction?.('terminate');
+              setOpenTerminateModal(true);
+            }}
+          />
+        ),
+      ])
+    : [];
+
   return session ? (
     <>
-      <Wrapper compact={compact}>
-        {primaryAppOption && (
-          <>
-            {primaryAppOption.appName === 'jupyter' && (
-              <Tooltip
-                title={
-                  isButtonTitleMode
-                    ? undefined
-                    : t('session.ExecuteSpecificApp', {
-                        appName: 'Jupyter Notebook',
-                      })
-                }
-              >
-                <Button
-                  size={size}
-                  type={'primary'}
-                  disabled={
-                    !isAppSupported(session) || !isActive(session) || !isOwner
-                  }
-                  icon={<BAIJupyterIcon />}
-                  onClick={() => {
-                    launchApp();
-                  }}
-                  title={
-                    isButtonTitleMode
-                      ? t('session.ExecuteSpecificApp', {
-                          appName: 'Jupyter Notebook',
-                        })
-                      : undefined
-                  }
-                />
-              </Tooltip>
-            )}
-            {primaryAppOption.appName === 'filebrowser' && (
-              <Tooltip
-                title={
-                  isButtonTitleMode
-                    ? undefined
-                    : t('session.ExecuteSpecificApp', {
-                        appName: 'File browser',
-                      })
-                }
-              >
-                <Button
-                  size={size}
-                  type={'primary'}
-                  disabled={
-                    !isAppSupported(session) || !isActive(session) || !isOwner
-                  }
-                  icon={<BAIFileBrowserIcon />}
-                  onClick={() => {
-                    launchApp();
-                  }}
-                  title={
-                    isButtonTitleMode
-                      ? t('session.ExecuteSpecificApp', {
-                          appName: 'File browser',
-                        })
-                      : undefined
-                  }
-                />
-              </Tooltip>
-            )}
-          </>
-        )}
-        {isVisible('appLauncher') && (
-          <>
-            <Tooltip
-              title={isButtonTitleMode ? undefined : t('session.SeeAppDialog')}
-            >
-              <Button
-                size={size}
-                type={primaryAppOption ? undefined : 'primary'}
-                disabled={
-                  !isAppSupported(session) || !isActive(session) || !isOwner
-                }
-                icon={<BAIAppIcon />}
-                onClick={() => {
-                  onAction?.('appLauncher');
-                  setOpenAppLauncherModal(true);
-                }}
-                title={
-                  isButtonTitleMode ? t('session.SeeAppDialog') : undefined
-                }
-              />
-            </Tooltip>
-          </>
-        )}
-        {isVisible('sftp') && (
-          <Tooltip title={t('data.explorer.RunSSH/SFTPserver')}>
-            <Button
-              type="primary"
-              disabled={!isActive(session) || !isOwner}
-              size={size}
-              icon={<BAISftpIcon />}
-              onClick={() => {
-                setOpenSFTPConnectionInfoModal(true);
-              }}
-            />
-          </Tooltip>
-        )}
-        {isVisible('terminal') && (
-          <>
-            <Tooltip
-              title={
-                isButtonTitleMode ? undefined : t('session.ExecuteTerminalApp')
-              }
-            >
-              <Button
-                size={size}
-                disabled={
-                  !isAppSupported(session) || !isActive(session) || !isOwner
-                }
-                icon={<BAITerminalAppIcon />}
-                onClick={() => {
-                  onAction?.('terminal');
-                  appLauncher.runTerminal({});
-                }}
-                title={
-                  isButtonTitleMode
-                    ? t('session.ExecuteTerminalApp')
-                    : undefined
-                }
-              />
-            </Tooltip>
-          </>
-        )}
-        {isVisible('logs') && (
-          <Tooltip
-            title={
-              isButtonTitleMode ? undefined : t('session.SeeContainerLogs')
-            }
-          >
-            <Button
-              size={size}
-              icon={<BAISessionLogIcon />}
-              onClick={() => {
-                onAction?.('logs');
-                setOpenLogModal(true);
-              }}
-              title={
-                isButtonTitleMode ? t('session.SeeContainerLogs') : undefined
-              }
-            />
-          </Tooltip>
-        )}
-        {isVisible('containerCommit') && (
-          <Tooltip
-            title={
-              isButtonTitleMode
-                ? undefined
-                : t('session.RequestContainerCommit')
-            }
-          >
-            <Button
-              size={size}
-              disabled={session?.status !== 'RUNNING' || !isOwner}
-              icon={<BAIContainerCommitIcon />}
-              onClick={() => {
-                onAction?.('containerCommit');
-                setOpenContainerCommitModal(true);
-              }}
-              title={
-                isButtonTitleMode
-                  ? t('session.RequestContainerCommit')
-                  : undefined
-              }
-            />
-          </Tooltip>
-        )}
-        {isVisible('terminate') && (
-          <Tooltip
-            title={
-              isButtonTitleMode ? undefined : t('session.TerminateSession')
-            }
-          >
-            <Button
-              size={size}
-              disabled={!isActive(session)}
-              icon={
-                <BAITerminateIcon
-                  style={{
-                    color: isActive(session) ? token.colorError : undefined,
-                  }}
-                />
-              }
-              onClick={() => {
-                onAction?.('terminate');
-                setOpenTerminateModal(true);
-              }}
-              title={
-                isButtonTitleMode ? t('session.TerminateSession') : undefined
-              }
-            />
-          </Tooltip>
-        )}
-      </Wrapper>
+      {compact ? (
+        <ButtonGroup label={t('data.explorer.Actions')} size={astryxSize}>
+          {buttons}
+        </ButtonGroup>
+      ) : (
+        <HStack gap={1}>{buttons}</HStack>
+      )}
 
       <Suspense fallback={null}>
         {isVisible('appLauncher') && (

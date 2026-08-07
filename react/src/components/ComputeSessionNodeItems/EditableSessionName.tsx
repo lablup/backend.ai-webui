@@ -9,10 +9,21 @@ import { useBaiSignedRequestWithPromise } from '../../helper';
 import { useCurrentUserInfo } from '../../hooks/backendai';
 import { useTanMutation } from '../../hooks/reactQueryAlias';
 import { useValidateSessionName } from '../../hooks/useValidateSessionName';
-import { theme } from '../../theme-shim';
-import { Form, Input, type GetProps, Typography } from 'antd';
-import { CornerDownLeftIcon } from 'lucide-react';
-import React, { useRef, useState } from 'react';
+import { Heading } from '@astryxdesign/core/Heading';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { HStack } from '@astryxdesign/core/Stack';
+import { Text } from '@astryxdesign/core/Text';
+// FRONTIER (ticket 17 / ticket 34): the inline rename editor keeps the antd
+// Form engine (Form + Form.Item + Input) — locked SHIM decision. Only the
+// display (name + copy/edit affordances) is Astryx.
+import { Form, Input } from 'antd';
+import {
+  CheckIcon,
+  CopyIcon,
+  CornerDownLeftIcon,
+  PencilIcon,
+} from 'lucide-react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -21,25 +32,31 @@ import {
   useRelayEnvironment,
 } from 'react-relay';
 
+/**
+ * PILOT-DECISION (ticket 17): the antd `Typography.Text/Title editable
+ * copyable` surface (P11 — behaviour delivered by antd Typography itself) is
+ * rebuilt with Astryx primitives: `Heading`/`Text` + ghost `IconButton`s for
+ * copy and rename. The props are Astryx-shaped (`level`, `editable`,
+ * `dimmed`) instead of forwarding antd Typography props; the terminated /
+ * pending "tertiary" text colour maps to the closed `disabled` TextColor.
+ * The after-edit focus restore of the old implementation is dropped
+ * (defaults-first; the edit affordance is a real focusable button now).
+ */
 type EditableSessionNameProps = {
   sessionFrgmt: EditableSessionNameFragment$key;
-} & (
-  | ({ component?: typeof Typography.Text } & Omit<
-      GetProps<typeof Typography.Text>,
-      'children' | 'component'
-    >)
-  | ({ component: typeof Typography.Title } & Omit<
-      GetProps<typeof Typography.Title>,
-      'children' | 'component'
-    >)
-);
+  /** Render as a Heading of this level; body text when omitted. */
+  level?: 1 | 2 | 3 | 4 | 5 | 6;
+  /** Allow renaming (further gated by ownership + session status). */
+  editable?: boolean;
+  /** Muted display for terminated/cancelled sessions. */
+  dimmed?: boolean;
+};
 
 const EditableSessionName: React.FC<EditableSessionNameProps> = ({
-  component: Component = Typography.Text,
   sessionFrgmt,
-  editable: editableOfProps,
-  style,
-  ...otherProps
+  level,
+  editable: editableOfProps = false,
+  dimmed = false,
 }) => {
   'use memo';
   const relayEvn = useRelayEnvironment();
@@ -77,9 +94,9 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
   });
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { message } = App.useApp();
   const [isEditing, setIsEditing] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const isNotPreparingCategoryStatus = ![
     'RESTARTING',
@@ -97,51 +114,54 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
   const isPendingRenamingAndRefreshing =
     renameSessionMutation.isPending || optimisticName !== session.name;
 
-  // focus back to the text component after editing for better UX related to keyboard shortcuts
-  const textRef = useRef<HTMLElement>(null);
-  const focusFallback = () => {
-    setTimeout(() => {
-      textRef.current?.focus();
-    }, 0);
-  };
+  const displayedName =
+    renameSessionMutation.isPending || optimisticName !== session.name
+      ? optimisticName
+      : session.name;
+  const isDimmed = dimmed || isPendingRenamingAndRefreshing;
 
   return (
     <>
       {(!isEditing || isPendingRenamingAndRefreshing) && (
-        <Component
-          ref={textRef}
-          tabIndex={-1}
-          editable={
-            isEditingAllowed && !isPendingRenamingAndRefreshing
-              ? {
-                  onStart: () => {
-                    setIsEditing(true);
-                  },
-                  triggerType: ['icon', 'text'],
-                }
-              : false
-          }
-          copyable
-          style={{
-            // after editing, focus this element, remove outline
-            outline: 'none',
-            ...style,
-            color: isPendingRenamingAndRefreshing
-              ? token.colorTextTertiary
-              : style?.color,
-          }}
-          {...otherProps}
-        >
-          {renameSessionMutation.isPending || optimisticName !== session.name
-            ? optimisticName
-            : session.name}
-        </Component>
+        <HStack gap={1} align="center">
+          {level ? (
+            <Heading level={level} color={isDimmed ? 'disabled' : undefined}>
+              {displayedName}
+            </Heading>
+          ) : (
+            <Text color={isDimmed ? 'disabled' : undefined}>
+              {displayedName}
+            </Text>
+          )}
+          <IconButton
+            variant="ghost"
+            size="sm"
+            icon={copied ? <CheckIcon aria-hidden /> : <CopyIcon aria-hidden />}
+            label={t('sourceCodeViewer.Copy')}
+            tooltip={t('sourceCodeViewer.Copy')}
+            isDisabled={copied}
+            onClick={() => {
+              void navigator.clipboard?.writeText(displayedName ?? '');
+              setCopied(true);
+              setTimeout(() => setCopied(false), 1500);
+            }}
+          />
+          {isEditingAllowed && !isPendingRenamingAndRefreshing && (
+            <IconButton
+              variant="ghost"
+              size="sm"
+              icon={<PencilIcon aria-hidden />}
+              label={t('button.Edit')}
+              tooltip={t('button.Edit')}
+              onClick={() => setIsEditing(true)}
+            />
+          )}
+        </HStack>
       )}
       {isEditing && !isPendingRenamingAndRefreshing && (
         <Form
           onFinish={(values) => {
             setIsEditing(false);
-            focusFallback();
             setOptimisticName(values.sessionName);
             // FIXME: This API does not return any response on success or error.
             renameSessionMutation.mutate(values.sessionName, {
@@ -195,7 +215,7 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
                 <CornerDownLeftIcon
                   style={{
                     fontSize: '0.8em',
-                    color: token.colorTextTertiary,
+                    color: 'var(--color-text-disabled)',
                   }}
                 />
               }
@@ -205,7 +225,6 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
                 if (e.key === 'Escape') {
                   e.stopPropagation();
                   setIsEditing(false);
-                  focusFallback();
                 }
               }}
             />

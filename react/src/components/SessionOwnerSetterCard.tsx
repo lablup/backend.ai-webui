@@ -7,6 +7,8 @@ import { useCurrentUserRole } from '../hooks/backendai';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import { theme } from '../theme-shim';
 import HiddenFormItem from './HiddenFormItem';
+// FRONTIER (ticket 17 / ticket 34): form-heavy card (Form.useWatch + Form.Item
+// controls). Stays antd until the form-engine ticket.
 import {
   Button,
   Card,

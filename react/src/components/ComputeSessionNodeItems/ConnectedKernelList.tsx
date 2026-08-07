@@ -7,12 +7,15 @@ import {
   ConnectedKernelListFragment$key,
 } from '../../__generated__/ConnectedKernelListFragment.graphql';
 import { ContainerLogModalFragment$key } from '../../__generated__/ContainerLogModalFragment.graphql';
-import { theme } from '../../theme-shim';
 // import BAIPropertyFilter from '../BAIPropertyFilter';
+import BAICopyableText from '../astryx-bui/BAICopyableText';
 import ContainerLogModal from './ContainerLogModal';
-import { Button, Tag, Tooltip, Typography } from 'antd';
+import { Badge } from '@astryxdesign/core/Badge';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Text } from '@astryxdesign/core/Text';
 import type { ColumnType } from 'antd/lib/table';
 import {
+  badgeVariantForStatus,
   filterOutEmpty,
   filterOutNullAndUndefined,
   BAITable,
@@ -64,7 +67,6 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
 }) => {
   const { t } = useTranslation();
   const [kernelIdForLogModal, setKernelIdForLogModal] = useState<string>();
-  const { token } = theme.useToken();
 
   const kernelNodes = useFragment(
     graphql`
@@ -90,22 +92,17 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
       render: (hostname, record) => {
         return (
           <>
-            <Typography.Text>{hostname}</Typography.Text>
-            <Tooltip title={t('session.SeeContainerLogs')}>
-              <Button
-                icon={<ScrollTextIcon />}
-                type="link"
-                onClick={() => {
-                  record.row_id && setKernelIdForLogModal(record.row_id);
-                }}
-                style={{
-                  width: 'auto',
-                  height: 'auto',
-                  marginInlineStart: token.marginXXS,
-                  border: 'none',
-                }}
-              />
-            </Tooltip>
+            <Text>{hostname}</Text>
+            <IconButton
+              variant="ghost"
+              size="sm"
+              icon={<ScrollTextIcon />}
+              label={t('session.SeeContainerLogs')}
+              tooltip={t('session.SeeContainerLogs')}
+              onClick={() => {
+                record.row_id && setKernelIdForLogModal(record.row_id);
+              }}
+            />
           </>
         );
       },
@@ -130,7 +127,10 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
                 ]}
               />
             ) : (
-              <Tag color={_.get(kernelStatusTagColor, status)}>{status}</Tag>
+              <Badge
+                variant={badgeVariantForStatus('kernel', status)}
+                label={status}
+              />
             )}
           </>
         );
@@ -140,7 +140,7 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
       title: t('kernel.AgentId'),
       dataIndex: 'agent_id',
       render: (id) =>
-        _.isEmpty(id) ? '-' : <Typography.Text copyable>{id}</Typography.Text>,
+        _.isEmpty(id) ? '-' : <BAICopyableText>{id}</BAICopyableText>,
     },
     {
       title: t('kernel.KernelId'),

@@ -9,6 +9,8 @@ import { RemainingSlots } from '../../hooks/useResourceLimitAndRemaining';
 import { theme } from '../../theme-shim';
 import InputNumberWithSlider from '../InputNumberWithSlider';
 import RemainingMark from './RemainingMark';
+// FRONTIER (ticket 17 / ticket 34): form-visual remainder — stays antd until
+// the form-engine ticket.
 import { Form, Radio, Tooltip } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';

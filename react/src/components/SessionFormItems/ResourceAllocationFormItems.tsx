@@ -30,6 +30,10 @@ import InputNumberWithSlider from '../InputNumberWithSlider';
 import ResourcePresetSelect from '../ResourcePresetSelect';
 import RemainingMark from './RemainingMark';
 import SharedMemoryFormItems from './SharedMemoryFormItems';
+// FRONTIER (ticket 17 / ticket 34): this module is the launcher's form-visual
+// core (Form engine + Form.Item controls + tightly coupled chrome). It stays
+// antd until the form-engine ticket rebuilds the form surface; recorded as
+// the explicit form-visual remainder of the Sessions page-group migration.
 import { Button, Card, Col, Form, Radio, Row, Tooltip } from 'antd';
 import {
   BAIFlex,

@@ -5,14 +5,15 @@
 import { ContainerCommitModalFragment$key } from '../../__generated__/ContainerCommitModalFragment.graphql';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useSetBAINotification } from '../../hooks/useBAINotification';
+import { Divider } from '@astryxdesign/core/Divider';
 import {
-  Descriptions,
-  Divider,
-  Form,
-  FormInstance,
-  Input,
-  Typography,
-} from 'antd';
+  MetadataList,
+  MetadataListItem,
+} from '@astryxdesign/core/MetadataList';
+import { Text } from '@astryxdesign/core/Text';
+// FRONTIER (ticket 17 / ticket 34): Form + Form.Item + Input stay on the antd
+// form engine (locked SHIM decision).
+import { Form, FormInstance, Input } from 'antd';
 import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -114,19 +115,17 @@ const ContainerCommitModal: React.FC<ContainerCommitModalProps> = ({
         align="stretch"
         style={{ overflow: 'hidden' }}
       >
-        <Typography.Text>{t('session.DescCommitSession')}</Typography.Text>
-        <Descriptions bordered size="small" column={1}>
-          <Descriptions.Item label={t('session.SessionName')}>
+        <Text>{t('session.DescCommitSession')}</Text>
+        <MetadataList columns="single">
+          <MetadataListItem label={t('session.SessionName')}>
             {session?.name}
-          </Descriptions.Item>
-          <Descriptions.Item label={t('session.SessionId')}>
+          </MetadataListItem>
+          <MetadataListItem label={t('session.SessionId')}>
             {session?.row_id}
-          </Descriptions.Item>
+          </MetadataListItem>
           {/* FIXME: need to use legacy_session */}
-          {/* <Descriptions.Item label={t('session.launcher.Environments')}>
-          </Descriptions.Item>  */}
-        </Descriptions>
-        <Divider style={{ marginTop: 12, marginBottom: 12 }} />
+        </MetadataList>
+        <Divider />
         <Form ref={formRef}>
           <Form.Item
             label={t('session.CommitImageName')}

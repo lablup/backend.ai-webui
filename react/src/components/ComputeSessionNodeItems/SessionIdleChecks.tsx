@@ -7,7 +7,8 @@ import { SessionReclamationStatusCellFragment$key } from '../../__generated__/Se
 import { formatDurationAsDays } from '../../helper';
 import SessionReclamationStatusCell from './SessionReclamationStatusCell';
 import { getOverallReclamation } from './SessionReclamationStatusPopover';
-import { Typography } from 'antd';
+import { Text } from '@astryxdesign/core/Text';
+import * as stylex from '@stylexjs/stylex';
 import {
   useMemoizedJSONParse,
   BAIFlex,
@@ -48,6 +49,15 @@ interface SessionIdleChecksProps {
   sessionNodeFrgmt: SessionIdleChecksNodeFragment$key | null;
   direction?: 'row' | 'column';
 }
+
+const styles = stylex.create({
+  // antd `Typography.Text type="warning"` — Astryx TextColor has no warning
+  // hue (MAPPING.md §3.4); the semantic warning token is applied directly.
+  // `--color-warning` is a declared Astryx variable (verified, P19).
+  warningText: {
+    color: 'var(--color-warning)',
+  },
+});
 
 export function getIdleChecksTagColor(
   result: IdleCheckItem,
@@ -120,7 +130,7 @@ const SessionIdleCheckItem: React.FC<{
         {checkKey === 'utilization' ? (
           <SessionReclamationStatusCell sessionFrgmt={sessionFrgmt} />
         ) : (
-          <Typography.Text>{getIdleCheckTitle(checkKey)}</Typography.Text>
+          <Text>{getIdleCheckTitle(checkKey)}</Text>
         )}
       </BAIFlex>
 
@@ -159,9 +169,9 @@ const SessionIdleCheckItem: React.FC<{
           )}
         </BAIFlex>
       ) : (
-        <Typography.Text type="warning">
+        <Text xstyle={styles.warningText}>
           {t('session.ReclamationStatusChecking')}
-        </Typography.Text>
+        </Text>
       )}
     </BAIFlex>
   );

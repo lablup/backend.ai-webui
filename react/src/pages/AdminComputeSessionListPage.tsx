@@ -22,8 +22,9 @@ import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
-import { theme } from '../theme-shim';
-import { Alert, Badge, Button, Tooltip } from 'antd';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Banner } from '@astryxdesign/core/Banner';
+import { IconButton } from '@astryxdesign/core/IconButton';
 import {
   BAIAdminProjectSelect,
   BAIFlex,
@@ -33,6 +34,7 @@ import {
   filterOutNullAndUndefined,
   INITIAL_FETCH_KEY,
   mergeFilterValues,
+  PRIMARY_TAG_VARIANT,
   useBAILogger,
   useFetchKey,
 } from 'backend.ai-ui';
@@ -66,7 +68,6 @@ const AdminComputeSessionListPage = () => {
   const userRole = useCurrentUserRole();
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const webUINavigate = useWebUINavigate();
@@ -262,20 +263,22 @@ const AdminComputeSessionListPage = () => {
                   // @ts-ignore
                   (sessionCounts[key]?.count || 0) > 0 && (
                     <Badge
-                      // @ts-ignore
-                      count={sessionCounts[key].count}
-                      color={
+                      // PILOT-DECISION: antd count Badge (brand color when the
+                      // tab is active, gray otherwise) -> Astryx Badge pill.
+                      // Arbitrary token colors are inexpressible (P5); the
+                      // active state maps to PRIMARY_TAG_VARIANT (policy
+                      // class 4) and the inactive state to `neutral`. The
+                      // 10px font-size / paddingXS tweaks are dropped
+                      // (defaults-first).
+                      variant={
                         queryParams.type === key
-                          ? token.colorPrimary
-                          : token.colorTextDisabled
+                          ? PRIMARY_TAG_VARIANT
+                          : 'neutral'
                       }
-                      size="small"
-                      showZero
-                      style={{
-                        paddingRight: token.paddingXS,
-                        paddingLeft: token.paddingXS,
-                        fontSize: 10,
-                      }}
+                      label={
+                        // @ts-ignore
+                        sessionCounts[key].count
+                      }
                     />
                   )
                 }
@@ -375,17 +378,14 @@ const AdminComputeSessionListPage = () => {
                   count={selectedSessionList.length}
                   onClearSelection={() => setSelectedSessionList([])}
                 />
-                <Tooltip
-                  title={t('session.TerminateSession')}
-                  placement="topLeft"
-                >
-                  <Button
-                    icon={<PowerOffIcon color={token.colorError} />}
-                    onClick={() => {
-                      setOpenTerminateModal(true);
-                    }}
-                  />
-                </Tooltip>
+                <IconButton
+                  label={t('session.TerminateSession')}
+                  tooltip={t('session.TerminateSession')}
+                  icon={<PowerOffIcon color="var(--color-error)" />}
+                  onClick={() => {
+                    setOpenTerminateModal(true);
+                  }}
+                />
               </>
             )}
             <AutoUpdateFetchKeyButton
@@ -508,11 +508,7 @@ const AdminComputeSessionListPage = () => {
             }
           />
         ) : (
-          <Alert
-            type="error"
-            showIcon
-            message={t('error.FailedToLoadTableData')}
-          />
+          <Banner status="error" title={t('error.FailedToLoadTableData')} />
         )}
       </BAIFlex>
       <TerminateSessionModal

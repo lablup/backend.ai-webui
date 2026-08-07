@@ -7,10 +7,9 @@ import {
   SessionStatusTagFragment$key,
 } from '../../__generated__/SessionStatusTagFragment.graphql';
 import { useSuspendedBackendaiClient } from '../../hooks';
-import { theme } from '../../theme-shim';
-import { statusInfoTagColor } from './SessionStatusDetailModal';
-import { Tag, Tooltip } from 'antd';
-import { BAIFlex, BAITag } from 'backend.ai-ui';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { BAIFlex, badgeVariantForStatus } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { LoaderCircle, CircleAlertIcon } from 'lucide-react';
 import React from 'react';
@@ -23,21 +22,6 @@ interface SessionStatusTagProps {
   showQueuePosition?: boolean;
   showTooltip?: boolean;
 }
-export const statusTagColor = {
-  //prepare
-  RESTARTING: 'blue',
-  PREPARING: 'blue',
-  PREPARED: 'blue',
-  CREATING: 'blue',
-  PULLING: 'blue',
-  PENDING: 'blue',
-  SCHEDULED: 'blue',
-  //running
-  RUNNING: 'green',
-  //error
-  ERROR: 'red',
-  //finished return undefined
-};
 
 const isTransitional = (session: SessionStatusTagFragment$data) => {
   return [
@@ -52,13 +36,18 @@ const isTransitional = (session: SessionStatusTagFragment$data) => {
   ].includes(session?.status || '');
 };
 
+// PILOT-DECISION (ticket 17): antd `Tag color` (per-file blue/green/red map)
+// -> Astryx `Badge` variants via the repo-global `badgeVariantForStatus`
+// lookup (`session` / `sessionStatusInfo` domains, ticket 13). The bespoke
+// pill styling (11px joined radii, dashed second segment, 80px ellipsis
+// width, paddingSM tweaks) is dropped — defaults-first; the two-segment
+// status+reason pill becomes two adjacent Badges.
 const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
   sessionFrgmt,
   showInfo,
   showQueuePosition = true,
   showTooltip = true,
 }) => {
-  const { token } = theme.useToken();
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
 
@@ -79,137 +68,96 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
     showQueuePosition && _.isNumber(session?.queue_position)
       ? session?.queue_position + 1
       : undefined;
-  return session ? (
-    baiClient.supports('session-scheduling-history') ? (
+
+  if (!session) {
+    return null;
+  }
+
+  const statusBadge = (
+    <Badge
+      variant={badgeVariantForStatus('session', session.status)}
+      icon={
+        isTransitional(session) ? (
+          <LoaderCircle className="anticon-spin" size="1em" />
+        ) : undefined
+      }
+      label={
+        <>
+          {session.status || ' '}
+          {session.status_info && isTransitional(session) ? (
+            <CircleAlertIcon
+              size="1em"
+              style={{
+                verticalAlign: 'text-top',
+                marginLeft: 4,
+                color: 'var(--color-error)',
+              }}
+            />
+          ) : null}
+        </>
+      }
+    />
+  );
+
+  const queuePositionBadge = displayQuePosition ? (
+    <Tooltip content={t('session.PendingPosition')}>
+      <Badge label={`#${displayQuePosition}`} />
+    </Tooltip>
+  ) : null;
+
+  if (baiClient.supports('session-scheduling-history')) {
+    return (
       <BAIFlex gap="xs">
-        <BAITag
-          style={{
-            margin: 0,
-            zIndex: 1,
-            paddingLeft: token.paddingSM,
-          }}
+        <Badge
+          variant={badgeVariantForStatus('session', session.status)}
           icon={
             isTransitional(session) ? (
               <LoaderCircle className="anticon-spin" size="1em" />
             ) : undefined
           }
-          color={
-            session.status ? _.get(statusTagColor, session.status) : undefined
-          }
-        >
-          {session.status}
-        </BAITag>
-        {displayQuePosition ? (
-          <Tooltip title={t('session.PendingPosition')}>
-            <BAITag
-              style={{
-                margin: 0,
-              }}
-            >{`#${displayQuePosition}`}</BAITag>
-          </Tooltip>
-        ) : null}
+          label={session.status || ' '}
+        />
+        {queuePositionBadge}
       </BAIFlex>
-    ) : _.isEmpty(session.status_info) || !showInfo ? (
+    );
+  }
+
+  if (_.isEmpty(session.status_info) || !showInfo) {
+    return (
       <BAIFlex wrap="nowrap" gap="xs">
-        <Tooltip title={showTooltip ? session.status_info : undefined}>
-          <Tag
-            color={
-              session.status ? _.get(statusTagColor, session.status) : undefined
-            }
-            icon={
-              isTransitional(session) ? (
-                <LoaderCircle className="anticon-spin" size="1em" />
-              ) : undefined
-            }
-            style={{
-              borderRadius: 11,
-              paddingLeft: token.paddingSM,
-              paddingRight: token.paddingSM,
-            }}
-          >
-            {session.status || ' '}
-            {session.status_info && isTransitional(session) ? (
-              <CircleAlertIcon
-                style={{
-                  marginLeft: token.marginXXS,
-                  color: token.colorError,
-                }}
-              />
-            ) : null}
-          </Tag>
-        </Tooltip>
-        {displayQuePosition ? (
-          <Tooltip title={t('session.PendingPosition')}>
-            <BAITag
-              style={{
-                margin: 0,
-              }}
-            >{`#${displayQuePosition}`}</BAITag>
-          </Tooltip>
-        ) : null}
+        {showTooltip && session.status_info ? (
+          <Tooltip content={session.status_info}>{statusBadge}</Tooltip>
+        ) : (
+          statusBadge
+        )}
+        {queuePositionBadge}
       </BAIFlex>
-    ) : (
-      <BAIFlex gap={'xs'}>
-        <BAIFlex>
-          <Tag
-            style={{
-              margin: 0,
-              zIndex: 1,
-              paddingLeft: token.paddingSM,
-              borderTopLeftRadius: 11,
-              borderBottomLeftRadius: 11,
-            }}
-            icon={
-              isTransitional(session) ? (
-                <LoaderCircle className="anticon-spin" size="1em" />
-              ) : undefined
-            }
-            color={
-              session.status ? _.get(statusTagColor, session.status) : undefined
-            }
-          >
-            {session.status}
-          </Tag>
-          <Tag
-            style={{
-              margin: 0,
-              marginLeft: -1,
-              borderStyle: 'dashed',
-              paddingRight: token.paddingSM,
-              borderTopRightRadius: 11,
-              borderBottomRightRadius: 11,
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              width: 80,
-              color:
-                session.status_info &&
-                _.get(statusInfoTagColor, session.status_info)
-                  ? undefined
-                  : token.colorTextSecondary,
-            }}
-            color={
-              session.status_info
-                ? _.get(statusInfoTagColor, session.status_info)
-                : undefined
-            }
-            title={session.status_info || undefined}
-          >
-            {session.status_info}
-          </Tag>
-        </BAIFlex>
-        {displayQuePosition ? (
-          <Tooltip title={t('session.PendingPosition')}>
-            <BAITag
-              style={{
-                margin: 0,
-              }}
-            >{`#${displayQuePosition}`}</BAITag>
-          </Tooltip>
-        ) : null}
+    );
+  }
+
+  return (
+    <BAIFlex gap={'xs'}>
+      <BAIFlex gap="xxs">
+        <Badge
+          variant={badgeVariantForStatus('session', session.status)}
+          icon={
+            isTransitional(session) ? (
+              <LoaderCircle className="anticon-spin" size="1em" />
+            ) : undefined
+          }
+          label={session.status || ' '}
+        />
+        <Badge
+          variant={badgeVariantForStatus(
+            'sessionStatusInfo',
+            session.status_info,
+          )}
+          label={session.status_info}
+        />
       </BAIFlex>
-    )
-  ) : null;
+      {queuePositionBadge}
+    </BAIFlex>
+  );
 };
 
 export default SessionStatusTag;
