@@ -18,8 +18,8 @@ import BAISelect from '../BAISelect';
 import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import BAIRuntimeVariantSelect from './BAIRuntimeVariantSelect';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import { App, Form, Input, InputNumber, Switch } from 'antd';
-import React, { Suspense } from 'react';
+import { App, AutoComplete, Form, Input, InputNumber, Switch } from 'antd';
+import React, { Suspense, useState } from 'react';
 import { graphql, useFragment, useMutation } from 'react-relay';
 import { PayloadError } from 'relay-runtime';
 
@@ -105,18 +105,19 @@ export interface BAIRuntimeVariantPresetSettingModalProps extends Omit<
 > {
   presetFrgmt?: BAIRuntimeVariantPresetSettingModalFragment$key | null;
   onRequestClose: (success?: boolean) => void;
+  /** Category values already used by other presets, offered as autocomplete suggestions. */
+  categoryOptions?: ReadonlyArray<string>;
 }
 
 const BAIRuntimeVariantPresetSettingModal: React.FC<
   BAIRuntimeVariantPresetSettingModalProps
-> = ({ presetFrgmt, onRequestClose, ...baiModalProps }) => {
+> = ({ presetFrgmt, onRequestClose, categoryOptions, ...baiModalProps }) => {
   'use memo';
 
   const { t } = useBAIi18n();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const [form] = Form.useForm<RuntimeVariantPresetFormValues>();
-  const uiType = Form.useWatch('uiType', form);
   const baiClient = useConnectedBAIClient();
   const isRequiredSupported = baiClient.supports(
     'runtime-variant-preset-required',
@@ -166,6 +167,20 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
       }
     `,
     presetFrgmt,
+  );
+
+  // Derived synchronously from `preset` at mount (not via `Form.useWatch`,
+  // which returns `undefined` on the very first render by design). With
+  // `preserve={false}` on the Form, any field path that isn't actively
+  // mounted on that first render gets garbage-collected from the form
+  // store — so a `Form.useWatch`-driven `uiType` would mount the
+  // slider/number/choices/text sub-fields one render too late and lose
+  // their edit-mode initial values (Form.List keeps the row *count* but
+  // not the per-row content).
+  const [uiType, setUiType] = useState<UIType | undefined>(() =>
+    preset?.uiOption?.uiType
+      ? READ_UI_TYPE_TO_FORM_UI_TYPE[preset.uiOption.uiType]
+      : undefined,
   );
 
   const [commitCreate, isInFlightCreate] =
@@ -360,7 +375,25 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
       <Form
         form={form}
         layout="vertical"
-        preserve={false}
+        onValuesChange={(changedValues) => {
+          if ('uiType' in changedValues) {
+            setUiType(changedValues.uiType);
+            // Clear the other UI types' config so switching types doesn't
+            // leak stale values into the submitted `uiOption` (previously
+            // handled by `preserve={false}` on the Form, which turned out to
+            // garbage-collect the `choices` Form.List's per-row content —
+            // see the `uiType` state comment above).
+            form.setFieldsValue({
+              sliderMin: undefined,
+              sliderMax: undefined,
+              sliderStep: undefined,
+              numberMin: undefined,
+              numberMax: undefined,
+              choices: undefined,
+              textPlaceholder: undefined,
+            });
+          }
+        }}
         initialValues={
           preset
             ? {
@@ -479,7 +512,15 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
                 'comp:BAIRuntimeVariantPresetSettingModal.CategoryTooltip',
               )}
             >
-              <Input
+              <AutoComplete
+                options={(categoryOptions ?? []).map((category) => ({
+                  value: category,
+                }))}
+                filterOption={(inputValue, option) =>
+                  !!option?.value
+                    .toLowerCase()
+                    .includes(inputValue.toLowerCase())
+                }
                 placeholder={t(
                   'comp:BAIRuntimeVariantPresetSettingModal.CategoryPlaceholder',
                 )}

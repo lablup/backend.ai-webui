@@ -397,6 +397,13 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
       const min = param.number?.min ?? undefined;
       const max = param.number?.max ?? undefined;
       const isInt = param.valueType === 'INT';
+      // Surface out-of-range values as a validation error instead of
+      // clamping/blocking input via InputNumber's `min`/`max` props — the
+      // user can see and correct what they typed rather than have the
+      // control silently refuse it. The message itself comes from antd's
+      // global `validateMessages` template (see `DefaultProviders.tsx`),
+      // already localized to the user's selected language.
+      const rangeRule = { type: 'number' as const, min, max };
       return (
         <Form.Item
           name={[RUNTIME_PARAMS_NAMESPACE, param.key]}
@@ -404,11 +411,9 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
           tooltip={tooltip}
           style={formItemStyle}
           required={isRequired}
-          rules={requiredRules}
+          rules={[...(requiredRules ?? []), rangeRule]}
         >
           <InputNumber
-            min={min}
-            max={max}
             step={isInt ? 1 : 0.1}
             onChange={onTouch}
             placeholder={defaultPlaceholder}
