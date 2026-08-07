@@ -1,3 +1,14 @@
+/* SPIKE 14 (Astryx/StyleX) — the `@layer` order statement must be the first
+   thing in the global CSS so Astryx's prebuilt layered sheets slot
+   deterministically. Compiled StyleX (xstyle / stylex.props) output is emitted
+   UNLAYERED and therefore outranks every named layer — which is what makes
+   `xstyle` overrides win over Astryx component base styles. */
+@layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
+
+@import '@astryxdesign/core/reset.css';
+@import '@astryxdesign/core/astryx.css';
+@import '@astryxdesign/theme-neutral/theme.css';
+
 /* fix: match the icon size between Lucide and Ant.d icons */
 .lucide {
   width: 1em !important;

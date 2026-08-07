@@ -1,0 +1,15 @@
+/* SPIKE — Astryx consumption CSS, mirroring the recipe in 03-stylex-answer.md.
+   The @layer order statement MUST come first so Astryx's own layered CSS
+   (reset / astryx-base / astryx-theme) slots deterministically. */
+@layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
+
+@import '@astryxdesign/core/reset.css';
+@import '@astryxdesign/core/astryx.css';
+@import '@astryxdesign/theme-neutral/theme.css';
+
+/* Mirrors the app's real unlayered global rules (react/src/index.css). */
+.lucide {
+  width: 1em !important;
+  height: 1em !important;
+  vertical-align: -0.125em !important;
+}

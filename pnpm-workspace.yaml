@@ -84,6 +84,7 @@ minimumReleaseAgeIgnoreMissingTime: false
 resolutionMode: time-based
 
 allowBuilds:
+  '@astryxdesign/core': false
   bufferutil: true
   core-js: true
   core-js-pure: true

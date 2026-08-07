@@ -1,3 +1,4 @@
+import stylexVite from '@stylexjs/unplugin/vite';
 import react from '@vitejs/plugin-react';
 import compression from 'compression';
 import { execSync } from 'node:child_process';
@@ -656,7 +657,14 @@ export default defineConfig(({ command, mode }) => {
 
   // Builds always check; dev servers only on request. See the
   // `isDevTypecheckEnabled` definition above.
-  const runTypeChecker = command !== 'serve' || isDevTypecheckEnabled;
+  // SPIKE 14 escape hatch: `vite-plugin-checker` currently fails on `main`
+  // independently of this spike (it resolves a TypeScript that cannot parse
+  // `gpt-tokenizer@3.4.0`'s generated `.d.ts`). `tsc --noEmit` run inside
+  // `react/` with its own TypeScript passes. Set SPIKE_NO_TYPECHECK=1 to get a
+  // clean bundling signal. Delete with the spike.
+  const runTypeChecker =
+    process.env.SPIKE_NO_TYPECHECK !== '1' &&
+    (command !== 'serve' || isDevTypecheckEnabled);
 
   // Say it out loud. A dev server with no type checker looks identical to one
   // with a passing checker — both just print "ready in Nms" — so without this
@@ -955,6 +963,25 @@ export default defineConfig(({ command, mode }) => {
       // projectRootStaticPlugin — its 'pre' HTML handler discards earlier
       // transforms (see reviewOverlay.ts).
       devReviewOverlayPlugin(),
+
+      // SPIKE 14 — StyleX compiler, wired DIRECTLY via `@stylexjs/unplugin`
+      // (peer: `unplugin` only, NO vite peer) instead of
+      // `@astryxdesign/build/vite`, which declares peer `vite ^8`.
+      // `enforce: 'pre'` inside the plugin puts it ahead of
+      // @vitejs/plugin-react, so StyleX sees raw TSX and the React Compiler /
+      // babel-plugin-relay see StyleX-compiled output.
+      stylexVite({
+        // Unlayered output: StyleX's own priority ordering applies inside the
+        // sheet, and unlayered CSS outranks every named layer — so `xstyle`
+        // overrides beat Astryx's `@layer astryx-base` component styles.
+        useCSSLayers: false,
+        // Without this the plugin appends its CSS to "whichever .css asset
+        // rollup emitted first", which in a code-split app can be a lazy route
+        // chunk. Pin it to the entry stylesheet.
+        cssInjectionTarget: (fileName: string) =>
+          /assets\/index-[^/]*\.css$/.test(fileName),
+        unstable_moduleResolution: { type: 'commonJS', rootDir: projectRoot },
+      }),
 
       react({
         babel: (id) => {

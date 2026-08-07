@@ -49,6 +49,10 @@ const LoginViewLazy = React.lazy(() => import('./components/LoginView'));
 
 const Information = React.lazy(() => import('./components/Information'));
 const StartPage = React.lazy(() => import('./pages/StartPage'));
+// SPIKE 14 — StyleX authoring probe route. Delete with the spike.
+const AstryxStylexProbePage = React.lazy(
+  () => import('./pages/AstryxStylexProbePage'),
+);
 const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
 const AdminDashboardPage = React.lazy(
   () => import('./pages/AdminDashboardPage'),
@@ -245,6 +249,16 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         path: '*',
         handle: { hideBreadcrumb: true, notFound: true },
         Component: UnknownRoutePage,
+      },
+      {
+        // SPIKE 14 — StyleX authoring probe. Delete with the spike.
+        path: 'stylex-probe',
+        element: (
+          <Suspense fallback={<Skeleton active />}>
+            <AstryxStylexProbePage />
+          </Suspense>
+        ),
+        handle: { hideBreadcrumb: true },
       },
       {
         path: 'start',
