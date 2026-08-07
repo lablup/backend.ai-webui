@@ -93,7 +93,11 @@ const FileItemControls: React.FC<FileItemControlsProps> = ({
       <BAIButton
         type="text"
         size="small"
-        icon={<DownloadIcon color={token.colorInfo} />}
+        icon={
+          <DownloadIcon
+            color={enableDownload ? token.colorInfo : token.colorTextDisabled}
+          />
+        }
         disabled={!enableDownload}
         onClick={(e) => e.stopPropagation()}
         action={async () => {
@@ -109,7 +113,13 @@ const FileItemControls: React.FC<FileItemControlsProps> = ({
       <BAIButton
         type="text"
         size="small"
-        icon={<DeleteFilled style={{ color: token.colorError }} />}
+        icon={
+          <DeleteFilled
+            style={{
+              color: enableDelete ? token.colorError : token.colorTextDisabled,
+            }}
+          />
+        }
         disabled={!enableDelete}
         onClick={(e) => {
           e.stopPropagation();

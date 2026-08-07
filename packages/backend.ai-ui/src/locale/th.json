@@ -594,6 +594,14 @@
     "UserID": "รหัสผู้ใช้",
     "Username": "ชื่อผู้ใช้"
   },
+  "comp:VFolderPathPicker": {
+    "ClickToSelectPath": "คลิกเพื่อเลือกพาธ",
+    "SelectAPath": "เลือกพาธ",
+    "SelectAPathInFolder": "เลือกพาธใน {{folderName}}",
+    "SelectFolderFirst": "กรุณาเลือกโฟลเดอร์ก่อน",
+    "SelectThisLocation": "เลือกตำแหน่งนี้",
+    "SelectedPath": "เลือกแล้ว"
+  },
   "error": {
     "UnknownError": "เกิดข้อผิดพลาดที่ไม่รู้จัก \nโปรดลองอีกครั้ง"
   },

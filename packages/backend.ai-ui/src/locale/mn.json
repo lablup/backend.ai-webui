@@ -594,6 +594,14 @@
     "UserID": "Хэрэглэгчийн ID",
     "Username": "Хэрэглэгчийн нэр"
   },
+  "comp:VFolderPathPicker": {
+    "ClickToSelectPath": "Зам сонгохын тулд дарна уу",
+    "SelectAPath": "Зам сонгох",
+    "SelectAPathInFolder": "{{folderName}} хавтаснаас зам сонгох",
+    "SelectFolderFirst": "Эхлээд хавтас сонгоно уу",
+    "SelectThisLocation": "Энэ байршлыг сонгох",
+    "SelectedPath": "Сонгогдсон"
+  },
   "error": {
     "UnknownError": "Үл мэдэгдэх алдаа гарлаа. \nДахин оролдоно уу."
   },

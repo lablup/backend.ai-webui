@@ -594,6 +594,14 @@
     "UserID": "用户 ID",
     "Username": "用户名"
   },
+  "comp:VFolderPathPicker": {
+    "ClickToSelectPath": "点击选择路径",
+    "SelectAPath": "选择路径",
+    "SelectAPathInFolder": "在 {{folderName}} 中选择路径",
+    "SelectFolderFirst": "请先选择文件夹",
+    "SelectThisLocation": "选择此位置",
+    "SelectedPath": "已选择"
+  },
   "error": {
     "UnknownError": "发生了未知错误。\n请重试。"
   },

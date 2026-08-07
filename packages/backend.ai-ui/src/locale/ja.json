@@ -594,6 +594,14 @@
     "UserID": "ユーザーID",
     "Username": "ユーザー名"
   },
+  "comp:VFolderPathPicker": {
+    "ClickToSelectPath": "クリックしてパスを選択",
+    "SelectAPath": "パスを選択",
+    "SelectAPathInFolder": "{{folderName}} 内のパスを選択",
+    "SelectFolderFirst": "最初にフォルダを選択してください",
+    "SelectThisLocation": "この場所を選択",
+    "SelectedPath": "選択済み"
+  },
   "error": {
     "UnknownError": "不明なエラーが発生しました。\nもう一度やり直してください。"
   },

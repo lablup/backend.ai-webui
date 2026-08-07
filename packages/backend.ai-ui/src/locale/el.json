@@ -594,6 +594,14 @@
     "UserID": "Αναγνωριστικό χρήστη",
     "Username": "Όνομα χρήστη"
   },
+  "comp:VFolderPathPicker": {
+    "ClickToSelectPath": "Κάντε κλικ για να επιλέξετε διαδρομή",
+    "SelectAPath": "Επιλέξτε διαδρομή",
+    "SelectAPathInFolder": "Επιλέξτε διαδρομή στο {{folderName}}",
+    "SelectFolderFirst": "Επιλέξτε πρώτα έναν φάκελο",
+    "SelectThisLocation": "Επιλέξτε αυτή τη θέση",
+    "SelectedPath": "Επιλεγμένο"
+  },
   "error": {
     "UnknownError": "Παρουσιάστηκε ένα άγνωστο σφάλμα. \nΔοκιμάστε ξανά."
   },

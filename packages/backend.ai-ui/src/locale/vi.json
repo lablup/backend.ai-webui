@@ -594,6 +594,14 @@
     "UserID": "ID người dùng",
     "Username": "Tên người dùng"
   },
+  "comp:VFolderPathPicker": {
+    "ClickToSelectPath": "Nhấp để chọn đường dẫn",
+    "SelectAPath": "Chọn đường dẫn",
+    "SelectAPathInFolder": "Chọn đường dẫn trong {{folderName}}",
+    "SelectFolderFirst": "Vui lòng chọn thư mục trước",
+    "SelectThisLocation": "Chọn vị trí này",
+    "SelectedPath": "Đã chọn"
+  },
   "error": {
     "UnknownError": "Một lỗi không xác định xảy ra. \nHãy thử lại."
   },

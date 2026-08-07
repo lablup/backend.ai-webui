@@ -594,6 +594,14 @@
     "UserID": "ID utente",
     "Username": "Nome utente"
   },
+  "comp:VFolderPathPicker": {
+    "ClickToSelectPath": "Clicca per selezionare un percorso",
+    "SelectAPath": "Seleziona un percorso",
+    "SelectAPathInFolder": "Seleziona un percorso in {{folderName}}",
+    "SelectFolderFirst": "Seleziona prima una cartella",
+    "SelectThisLocation": "Seleziona questa posizione",
+    "SelectedPath": "Selezionato"
+  },
   "error": {
     "UnknownError": "Si è verificato un errore sconosciuto. \nPer favore riprova."
   },

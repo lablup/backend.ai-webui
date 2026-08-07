@@ -594,6 +594,14 @@
     "UserID": "Kullanıcı Kimliği",
     "Username": "Kullanıcı Adı"
   },
+  "comp:VFolderPathPicker": {
+    "ClickToSelectPath": "Yol seçmek için tıklayın",
+    "SelectAPath": "Bir yol seçin",
+    "SelectAPathInFolder": "{{folderName}} içinde bir yol seçin",
+    "SelectFolderFirst": "Önce bir klasör seçin",
+    "SelectThisLocation": "Bu konumu seç",
+    "SelectedPath": "Seçildi"
+  },
   "error": {
     "UnknownError": "Bilinmeyen bir hata oluştu. \nLütfen tekrar deneyin."
   },

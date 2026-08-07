@@ -594,6 +594,14 @@
     "UserID": "ID пользователя",
     "Username": "Имя пользователя"
   },
+  "comp:VFolderPathPicker": {
+    "ClickToSelectPath": "Нажмите, чтобы выбрать путь",
+    "SelectAPath": "Выбрать путь",
+    "SelectAPathInFolder": "Выбрать путь в {{folderName}}",
+    "SelectFolderFirst": "Сначала выберите папку",
+    "SelectThisLocation": "Выбрать это расположение",
+    "SelectedPath": "Выбрано"
+  },
   "error": {
     "UnknownError": "Произошла неизвестная ошибка. \nПожалуйста, попробуйте еще раз."
   },

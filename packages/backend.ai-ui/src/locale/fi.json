@@ -594,6 +594,14 @@
     "UserID": "Käyttäjätunnus",
     "Username": "Käyttäjänimi"
   },
+  "comp:VFolderPathPicker": {
+    "ClickToSelectPath": "Napsauta valitaksesi polun",
+    "SelectAPath": "Valitse polku",
+    "SelectAPathInFolder": "Valitse polku kansiossa {{folderName}}",
+    "SelectFolderFirst": "Valitse ensin kansio",
+    "SelectThisLocation": "Valitse tämä sijainti",
+    "SelectedPath": "Valittu"
+  },
   "error": {
     "UnknownError": "Tapahtui tuntematon virhe. \nYritä uudelleen."
   },

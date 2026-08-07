@@ -594,6 +594,14 @@
     "UserID": "ID Pengguna",
     "Username": "Nama Pengguna"
   },
+  "comp:VFolderPathPicker": {
+    "ClickToSelectPath": "Klik untuk memilih jalur",
+    "SelectAPath": "Pilih jalur",
+    "SelectAPathInFolder": "Pilih jalur di {{folderName}}",
+    "SelectFolderFirst": "Pilih folder terlebih dahulu",
+    "SelectThisLocation": "Pilih lokasi ini",
+    "SelectedPath": "Terpilih"
+  },
   "error": {
     "UnknownError": "Terjadi kesalahan yang tidak diketahui. \nTolong coba lagi."
   },
