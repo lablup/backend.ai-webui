@@ -59,6 +59,7 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
   'use memo';
   const { rules: externalRules, ...restFormItemProps } = formItemProps || {};
   const inputRef = useRef<InputRef>(null);
+  const autoCompleteRef = useRef<React.ComponentRef<typeof AutoComplete>>(null);
   const { t } = useTranslation();
   const form = Form.useFormInstance();
 
@@ -200,6 +201,7 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
                 >
                   {optionalEnvVars && getAutoCompleteOptions().length > 0 ? (
                     <AutoComplete
+                      ref={index === fields.length - 1 ? autoCompleteRef : null}
                       placeholder={t('session.launcher.EnvironmentVariable')}
                       options={getAutoCompleteOptions()}
                       onChange={() => {
@@ -260,9 +262,11 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
                 onClick={() => {
                   add();
                   setTimeout(() => {
-                    if (inputRef.current) {
-                      inputRef.current.focus();
-                    }
+                    // Whichever branch the newest row renders as (plain
+                    // Input, or AutoComplete once `optionalEnvVars` is
+                    // set) — only one ref is ever populated at a time.
+                    inputRef.current?.focus();
+                    autoCompleteRef.current?.focus();
                   }, 0);
                 }}
                 icon={<PlusIcon />}

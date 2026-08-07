@@ -13,6 +13,7 @@ export interface RuntimeVariantConfig {
 // Env vars that are useful regardless of the selected inference runtime
 // variant (e.g. credentials for pulling gated models, egress proxies).
 export const useCommonEnvVarConfigs = (): EnvVarConfig[] => {
+  'use memo';
   const { t } = useTranslation();
 
   return [
@@ -40,6 +41,7 @@ export const useRuntimeEnvVarConfigs = (): Record<
   string,
   RuntimeVariantConfig
 > => {
+  'use memo';
   const { t } = useTranslation();
 
   return {
