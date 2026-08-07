@@ -9,11 +9,17 @@
 //
 // Behaviors asserted (FR-3205):
 //   1. Custom-mode Start Command is present and OPTIONAL (empty submit allowed).
-//   2. Basic mode shows just a command input; Advanced reveals Execution
-//      (Shell vs Exec) + a Shell input; Exec hides the Shell input and relabels
-//      the command to "Command (argv)".
-//   3. Shell mode submits ModelServiceConfigInput.shell = the selected shell;
-//      Basic mode OMITS shell; Exec mode submits shell = null.
+//   2. Execution (Shell vs Exec) + Shell are always visible (no Basic/Advanced
+//      toggle — removed per devops sync feedback, 2026-08-07: hiding the
+//      always-shell-wrapped default mode behind an "Advanced" switch made it
+//      look like it didn't run through a shell at all); Shell starts
+//      pre-filled with the backend default (/bin/bash). Exec hides the Shell
+//      input and relabels the command to "Command (argv)".
+//   3. Shell mode submits ModelServiceConfigInput.shell = the selected shell
+//      (defaulting to /bin/bash when left unchanged); Exec mode submits
+//      shell = null. When neither Start Command nor Port is set, the whole
+//      service config is omitted from the mutation (the `shell` key is
+//      absent, independent of Execution/Shell mode).
 //   4. command is sent as the RAW string (no client tokenization).
 //   5. "Model Definition File Path" is restored, lives UNDER Advanced Settings,
 //      and is optional.
@@ -118,7 +124,7 @@ test.describe(
     // submit→mutation timing miss under sequential load (CI already retries).
     test.describe.configure({ mode: 'serial', retries: 1 });
 
-    test('Admin sees Execution and Shell controls only after switching the command to Advanced mode', async ({
+    test('Admin sees Execution and Shell controls immediately, and Exec hides Shell', async ({
       page,
       request,
     }) => {
@@ -135,45 +141,31 @@ test.describe(
         ).toBeVisible();
         await expect(modal.locator('#startCommand').first()).toBeVisible();
 
-        // 2. Basic mode (default): no Execution (Shell/Exec) radios and no
-        //    Shell input are shown. Basic runs the command under the
-        //    backend's default shell exactly like Advanced + Shell, so the
-        //    same shell-operators hint applies here too (FR-3205).
-        await expect(
-          modal.getByRole('radio', { name: 'Exec', exact: true }),
-        ).toHaveCount(0);
-        await expect(modal.locator('#shell')).toHaveCount(0);
-        await expect(
-          modal.getByText(
-            'Shell operators (; && | $VAR, redirection, etc.) can be used.',
-            { exact: true },
-          ),
-        ).toBeVisible();
-
-        // 3. Toggle Advanced (the Basic/Advanced Segmented lives in the Service
-        //    Configuration header) → the Execution radios (Shell/Exec) and the
-        //    Shell input appear.
-        await modal.getByText('Advanced', { exact: true }).click();
+        // 2. No Basic/Advanced toggle: the Execution radios (Shell/Exec) and
+        //    the Shell input are visible immediately, pre-filled with the
+        //    backend default (/bin/bash).
         await expect(
           modal.getByRole('radio', { name: 'Shell', exact: true }),
         ).toBeVisible();
         await expect(
           modal.getByRole('radio', { name: 'Exec', exact: true }),
         ).toBeVisible();
-        await expect(modal.locator('#shell')).toBeVisible();
+        const shellInput = modal.locator('#shell');
+        await expect(shellInput).toBeVisible();
+        await expect(shellInput).toHaveValue('/bin/bash');
 
-        // 3b. Advanced defaults Execution to Shell → the command control is a
+        // 2b. Execution defaults to Shell → the command control is a
         //     multi-line TextArea (shell scripts span lines) and the shell
         //     helper (operators allowed) is shown.
         await expect(modal.locator('textarea#startCommand')).toBeVisible();
         await expect(
           modal.getByText(
-            'Shell operators (; && | $VAR, redirection, etc.) can be used.',
+            'Runs through the shell (e.g. bash -c "..."), so shell operators (; && | $VAR, redirection, etc.) work.',
             { exact: true },
           ),
         ).toBeVisible();
 
-        // 4. Switch Execution to Exec → the Shell input is hidden and the
+        // 3. Switch Execution to Exec → the Shell input is hidden and the
         //    command field is relabeled "Command (argv)". Non-exact text match:
         //    the Form.Item <label> wraps a tooltip icon so its text node is not
         //    exactly "Command (argv)"; the string is distinctive enough that a
@@ -182,14 +174,14 @@ test.describe(
         await expect(modal.locator('#shell')).toHaveCount(0);
         await expect(modal.getByText('Command (argv)')).toBeVisible();
 
-        // 4b. Exec swaps the command control to a single-line Input (argv is one
+        // 3b. Exec swaps the command control to a single-line Input (argv is one
         //     token vector, not a script) and switches the helper text to warn
         //     that shell operators are NOT interpreted.
         await expect(modal.locator('input#startCommand')).toBeVisible();
         await expect(modal.locator('textarea#startCommand')).toHaveCount(0);
         await expect(
           modal.getByText(
-            'Shell operators (; && | $VAR, redirection, etc.) cannot be used. Enter each argument separated by spaces; quote arguments containing spaces (e.g. --name "my model").',
+            'Runs directly as arguments, without a shell — operators (; && | $VAR, redirection, etc.) are treated as literal text. Separate arguments with spaces; quote ones containing spaces (e.g. --name "my model").',
             { exact: true },
           ),
         ).toBeVisible();
@@ -230,11 +222,12 @@ test.describe(
           .not.toBeNull();
 
         // The mutation carried the resolved image id and an empty command
-        // string (Basic mode → shell omitted).
+        // string (no Start Command and no Port → hasServiceConfig is false,
+        // so `shell` is omitted regardless of Execution/Shell mode).
         expect(capture.input?.image?.id).toBe(MOCK_RESOLVED_IMAGE_UUID);
         const service = capture.input?.modelDefinition?.models?.[0]?.service;
-        // modelDefinition is only sent when a command was typed; an empty
-        // command in Basic mode yields no command-bearing modelDefinition.
+        // modelDefinition is only sent when a command or port was set; empty
+        // Start Command with no Port yields no command-bearing modelDefinition.
         if (service) {
           expect(service.command ?? '').toBe('');
           expect('shell' in service).toBe(false);
@@ -247,7 +240,7 @@ test.describe(
       }
     });
 
-    test('Admin submits the raw command verbatim and omits shell in Basic mode', async ({
+    test('Admin submits the raw command verbatim, with shell = /bin/bash (the default) when left unchanged', async ({
       page,
       request,
     }) => {
@@ -265,6 +258,11 @@ test.describe(
         const rawCommand = 'python -m server --arg "a b" && echo done';
         await modal.locator('#startCommand').first().fill(rawCommand);
 
+        // Leave Execution/Shell untouched — Shell mode + /bin/bash are the
+        // form's initial values, no toggle needed to reach them.
+        const shellInput = modal.locator('#shell');
+        await expect(shellInput).toHaveValue('/bin/bash');
+
         await selectRevisionModalOption(page, '#modelFolderId', folderName!);
         await fillManualImageName(modal, MOCK_MANUAL_IMAGE_REFERENCE);
         await disableAutoApply(modal);
@@ -278,9 +276,9 @@ test.describe(
         expect(service).toBeTruthy();
         // Raw string, byte-for-byte (FR-3205 stop-tokenizing).
         expect(service.command).toBe(rawCommand);
-        // Basic mode (default) → shell OMITTED so the backend applies its own
-        // default (undefined is dropped from the Relay request entirely).
-        expect('shell' in service).toBe(false);
+        // Shell mode, unchanged → DEFAULT_MODEL_SERVICE_SHELL is submitted
+        // explicitly (no more implicit "Basic mode omits shell" state).
+        expect(service.shell).toBe('/bin/bash');
       } finally {
         await cleanupDeploymentSafely(page, name);
         if (folderName) {
@@ -289,7 +287,7 @@ test.describe(
       }
     });
 
-    test('Admin submits shell = the chosen shell binary when Advanced Shell mode overrides it', async ({
+    test('Admin submits shell = the chosen shell binary when Shell mode overrides the default', async ({
       page,
       request,
     }) => {
@@ -308,13 +306,12 @@ test.describe(
         await selectRevisionModalOption(page, '#modelFolderId', folderName!);
 
         await modal.locator('#startCommand').first().fill('run-server');
-        // Advanced mode → Execution defaults to Shell → Shell input appears
-        // prefilled with /bin/bash; override it with a non-default shell so the
+        // Shell mode is the default (visible without a toggle), prefilled
+        // with /bin/bash; override it with a non-default shell so the
         // submitted `shell` is the chosen value. The Shell field is an
         // AutoComplete text input (`#shell`); filling it sets the form
         // value directly. Do NOT click a suggestion option — selecting one
         // clears the combobox's displayed search text.
-        await modal.getByText('Advanced', { exact: true }).click();
         const shellInput = modal.locator('#shell');
         await expect(shellInput).toBeVisible();
         await shellInput.fill('/bin/zsh');
@@ -338,7 +335,7 @@ test.describe(
         const service = capture.input?.modelDefinition?.models?.[0]?.service;
         expect(service).toBeTruthy();
         expect(service.command).toBe('run-server');
-        // Advanced + Shell → the selected shell binary is submitted.
+        // Shell mode → the selected shell binary is submitted.
         expect(service.shell).toBe('/bin/zsh');
       } finally {
         await cleanupDeploymentSafely(page, name);
@@ -348,7 +345,7 @@ test.describe(
       }
     });
 
-    test('Admin submits shell = null in Advanced Exec mode', async ({
+    test('Admin submits shell = null in Exec mode', async ({
       page,
       request,
     }) => {
@@ -362,8 +359,8 @@ test.describe(
         const { modal, capture } = setup;
 
         await modal.locator('#startCommand').first().fill('run-server');
-        await modal.getByText('Advanced', { exact: true }).click();
-        // Exec execution → no shell wrapping (shell submitted as null).
+        // Exec is visible without a toggle → no shell wrapping (shell
+        // submitted as null).
         await modal.getByRole('radio', { name: 'Exec', exact: true }).click();
 
         await selectRevisionModalOption(page, '#modelFolderId', folderName!);
@@ -381,54 +378,6 @@ test.describe(
         // Exec → shell is explicitly null (the key IS present, value null).
         expect('shell' in service).toBe(true);
         expect(service.shell).toBeNull();
-      } finally {
-        await cleanupDeploymentSafely(page, name);
-        if (folderName) {
-          await cleanupDeploymentFixtures(page, { folderName });
-        }
-      }
-    });
-
-    test('Admin submits shell = /bin/bash (the default) when Advanced Shell mode is left unchanged', async ({
-      page,
-      request,
-    }) => {
-      const name = `e2e-fr3205-advshell-default-${Date.now()}`;
-      let folderName: string | undefined;
-      try {
-        const setup = await setupCommandScenario(page, request, name, {
-          withModelFolder: true,
-        });
-        folderName = setup.folderName;
-        const { modal, capture } = setup;
-
-        // Select the folder first (see the override test) to keep the Shell
-        // AutoComplete's dropdown from overlapping the folder option list.
-        await selectRevisionModalOption(page, '#modelFolderId', folderName!);
-
-        await modal.locator('#startCommand').first().fill('run-server');
-        // Advanced mode → Execution defaults to Shell → the Shell input is
-        // prefilled with the default /bin/bash (form initialValues). Leave it
-        // UNTOUCHED so the submitted `shell` is the default, not an override —
-        // the companion override test proves a changed value is honored.
-        await modal.getByText('Advanced', { exact: true }).click();
-        const shellInput = modal.locator('#shell');
-        await expect(shellInput).toBeVisible();
-        await expect(shellInput).toHaveValue('/bin/bash');
-
-        await fillManualImageName(modal, MOCK_MANUAL_IMAGE_REFERENCE);
-        await disableAutoApply(modal);
-        await submitAddRevision(modal);
-
-        await expect
-          .poll(() => capture.input, { timeout: 30000 })
-          .not.toBeNull();
-
-        const service = capture.input?.modelDefinition?.models?.[0]?.service;
-        expect(service).toBeTruthy();
-        expect(service.command).toBe('run-server');
-        // Advanced + Shell, unchanged → DEFAULT_MODEL_SERVICE_SHELL is submitted.
-        expect(service.shell).toBe('/bin/bash');
       } finally {
         await cleanupDeploymentSafely(page, name);
         if (folderName) {

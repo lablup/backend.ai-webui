@@ -15,11 +15,14 @@
 // Behaviors asserted:
 //   1. Service Configuration is shown for the (mocked) `custom` variant, with
 //      Start Command / Port both optional (BA-6613) — matching the
-//      Add-Revision modal exactly. Shell is the only required field, and only
-//      once Advanced/Shell mode is active; it starts pre-filled with the
-//      backend default (`/bin/bash`).
-//   2. Basic mode hides Execution/Shell; Advanced reveals them, mirroring the
-//      Add-Revision modal's toggle.
+//      Add-Revision modal exactly. Execution and Shell are always visible
+//      (no Basic/Advanced toggle — removed per devops sync feedback,
+//      2026-08-07: hiding the always-shell-wrapped default mode behind an
+//      "Advanced" switch made it look like it didn't run through a shell at
+//      all). Shell is the only required field, and starts pre-filled with
+//      the backend default (`/bin/bash`).
+//   2. Switching Execution to Exec hides the Shell field and relabels
+//      Command to "Command (argv)", mirroring the Add-Revision modal.
 //   3. A full Create submission carries the Service Configuration / Health
 //      Check / Pre-Start Actions data in the expected nested
 //      `modelDefinition.models[0].service` shape.
@@ -50,8 +53,8 @@ type Capture = { input: any };
  * (see `packages/backend.ai-client/src/client.ts`, FR-3205/BA-6551). The
  * shared e2e test backend runs `26.8.0rc1`, which sorts *before* `26.8.0`
  * under PEP440 (release candidates are pre-releases), so the flag is false
- * against it even though the feature is present — every Basic/Advanced/
- * Execution/Shell control this spec asserts on is gated behind it.
+ * against it even though the feature is present — every Execution/Shell
+ * control this spec asserts on is gated behind it.
  */
 async function installPresetFlagOverride(page: Page): Promise<void> {
   await page.addInitScript(() => {
@@ -177,7 +180,7 @@ test.describe(
   () => {
     test.describe.configure({ mode: 'serial', retries: 1 });
 
-    test('Admin sees Service Configuration is optional, Shell defaults pre-filled, and Basic/Advanced toggle works for the custom variant', async ({
+    test('Admin sees Service Configuration is optional, Execution/Shell always visible with Shell pre-filled, and Exec hides Shell', async ({
       page,
       request,
     }) => {
@@ -192,19 +195,10 @@ test.describe(
         page.locator('#modelDefinition_models_0_service_port'),
       ).toBeVisible();
 
-      // 2. Basic mode (default): no Execution radios, no Shell input.
-      await expect(
-        page.getByRole('radio', { name: 'Exec', exact: true }),
-      ).toHaveCount(0);
-      await expect(
-        page.locator('#modelDefinition_models_0_service_shell'),
-      ).toHaveCount(0);
-
-      // 3. Toggle Advanced → Execution radios + Shell input appear,
-      //    pre-filled with the backend default (not blank — a newly-added
-      //    model seeds `shell: /bin/bash` so Advanced/Shell mode never starts
-      //    on an empty required field).
-      await page.getByText('Advanced', { exact: true }).click();
+      // 2. No Basic/Advanced toggle: Execution radios + Shell input are
+      //    visible immediately, pre-filled with the backend default (not
+      //    blank — a newly-added model seeds `shell: /bin/bash` so Shell
+      //    mode never starts on an empty required field).
       await expect(
         page.getByRole('radio', { name: 'Shell', exact: true }),
       ).toBeVisible();
@@ -217,7 +211,7 @@ test.describe(
       await expect(shellInputPrefill).toBeVisible();
       await expect(shellInputPrefill).toHaveValue('/bin/bash');
 
-      // 4. Switch to Exec → Shell input hides, command relabels.
+      // 3. Switch to Exec → Shell input hides, command relabels.
       await page.getByRole('radio', { name: 'Exec', exact: true }).click();
       await expect(
         page.locator('#modelDefinition_models_0_service_shell'),
@@ -231,8 +225,8 @@ test.describe(
     }) => {
       const { capture } = await setupPresetCreatePage(page, request);
 
-      // Advanced + Shell, overriding the default shell.
-      await page.getByText('Advanced', { exact: true }).click();
+      // Shell is visible immediately (no Advanced toggle) — override the
+      // default shell.
       const shellInput = page.locator(
         '#modelDefinition_models_0_service_shell',
       );

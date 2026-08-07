@@ -27,8 +27,8 @@ import { expect, type Locator, type Page } from '@playwright/test';
  * `26.8.0rc1`, which sorts *before* `26.8.0` under PEP440 (release candidates
  * are pre-releases), so `isManagerVersionCompatibleWith('26.8.0')` — and
  * therefore this flag — is false against it even though the feature is
- * present. Every Basic/Advanced/Execution/Shell control these specs assert on
- * is gated behind this exact flag, so without the override the whole
+ * present. Every Execution/Shell control these specs assert on is gated
+ * behind this exact flag, so without the override the whole
  * command/shell UI silently falls back to the pre-FR-3205 legacy path and
  * every assertion in this file fails or times out waiting for elements that
  * never render.
