@@ -2,9 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { theme } from '../theme-shim';
 import type { ResourceSlotTypeInfo } from './AdminDeploymentPresetFormTypes';
 import { MinusCircleOutlined } from '@ant-design/icons';
-import { Form, Input, InputNumber, Select, Space, theme } from 'antd';
+import { Form, Input, InputNumber, Select, Space } from 'antd';
 import { BAIDynamicUnitInputNumber, BAIFlex } from 'backend.ai-ui';
 import React from 'react';
 

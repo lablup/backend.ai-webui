@@ -4,7 +4,8 @@
  */
 import { UsageProgressFragment_usageFrgmt$key } from '../__generated__/UsageProgressFragment_usageFrgmt.graphql';
 import { bytesToGB, usageIndicatorColor } from '../helper';
-import { Progress, Typography, theme } from 'antd';
+import { theme } from '../theme-shim';
+import { Progress, Typography } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';

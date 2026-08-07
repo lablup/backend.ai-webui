@@ -42,6 +42,7 @@ import {
 import { useCurrentResourceGroupState } from '../hooks/useCurrentProject';
 import { useRecentSessionHistory } from '../hooks/useRecentSessionHistory';
 import { useStartSession } from '../hooks/useStartSession';
+import { theme } from '../theme-shim';
 import './SessionLauncherPage.css';
 import {
   DoubleRightOutlined,
@@ -74,7 +75,6 @@ import {
   Switch,
   Tooltip,
   Typography,
-  theme,
 } from 'antd';
 import type { StepsProps } from 'antd';
 import {

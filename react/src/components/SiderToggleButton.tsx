@@ -2,8 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { theme } from '../theme-shim';
 import { HEADER_Z_INDEX_IN_MAIN_LAYOUT } from './MainLayout/MainLayout';
-import { Button, ConfigProvider, theme, Tooltip } from 'antd';
+import { Button, ConfigProvider, Tooltip } from 'antd';
 import { BAIFlex, BAIText } from 'backend.ai-ui';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import React from 'react';

@@ -14,6 +14,7 @@ import {
   useSFTPProxyResourceGroupsQuery,
   useSFTPResourceGroups,
 } from '../hooks/useSFTPResourceGroups';
+import { theme } from '../theme-shim';
 import { ScalingGroupOpts } from './ResourceGroupList';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import {
@@ -29,7 +30,6 @@ import {
   Skeleton,
   Switch,
   Tooltip,
-  theme,
 } from 'antd';
 import {
   BAIModal,

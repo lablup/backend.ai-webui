@@ -7,9 +7,10 @@ import { ImportArtifactRevisionToFolderModalModelStoreProjectsFragment$key } fro
 import { ImportArtifactRevisionToFolderModalMutation } from '../__generated__/ImportArtifactRevisionToFolderModalMutation.graphql';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useSwitchProject } from '../hooks/useRouteScope';
+import { theme } from '../theme-shim';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useToggle } from 'ahooks';
-import { Alert, App, Form, FormInstance, Popconfirm, theme } from 'antd';
+import { Alert, App, Form, FormInstance, Popconfirm } from 'antd';
 import {
   BAIButton,
   BAIModalProps,

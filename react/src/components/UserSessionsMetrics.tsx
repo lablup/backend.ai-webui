@@ -6,12 +6,13 @@ import { UserSessionsMetricsQuery } from '../__generated__/UserSessionsMetricsQu
 import { newLineToBrElement } from '../helper';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { theme } from '../theme-shim';
 import AutoUpdateFetchKeyButton, {
   LONG_AUTO_UPDATE_DELAY_OPTIONS,
 } from './AutoUpdateFetchKeyButton';
 import BAIBoard, { BAIBoardItem } from './BAIBoard';
 import SessionMetricGraph from './SessionMetricGraph';
-import { Alert, DatePicker, Empty, Skeleton, theme } from 'antd';
+import { Alert, DatePicker, Empty, Skeleton } from 'antd';
 import { useUpdatableState, BAIFlex, filterOutEmpty } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';

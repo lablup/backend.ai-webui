@@ -6,10 +6,11 @@ import type {
   DeploymentTokenSelectQuery,
   DeploymentTokenSelectQuery$data,
 } from '../../__generated__/DeploymentTokenSelectQuery.graphql';
+import { theme } from '../../theme-shim';
 import WebUILink from '../WebUILink';
 import { SettingOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
-import { Input, Select, Tooltip, theme } from 'antd';
+import { Input, Select, Tooltip } from 'antd';
 import type { SelectProps } from 'antd';
 import {
   BAIFlex,

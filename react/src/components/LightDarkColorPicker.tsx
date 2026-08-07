@@ -2,7 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { Col, ColorPicker, type ColorPickerProps, Row, theme } from 'antd';
+import { theme } from '../theme-shim';
+import { Col, ColorPicker, type ColorPickerProps, Row } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 

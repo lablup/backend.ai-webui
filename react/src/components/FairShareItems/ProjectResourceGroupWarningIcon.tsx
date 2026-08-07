@@ -1,6 +1,7 @@
 import type { ProjectResourceGroupWarningIconFragment$key } from '../../__generated__/ProjectResourceGroupWarningIconFragment.graphql';
 import type { ProjectResourceGroupWarningIconQuery } from '../../__generated__/ProjectResourceGroupWarningIconQuery.graphql';
-import { Tooltip, theme } from 'antd';
+import { theme } from '../../theme-shim';
+import { Tooltip } from 'antd';
 import * as _ from 'lodash-es';
 import { TriangleAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';

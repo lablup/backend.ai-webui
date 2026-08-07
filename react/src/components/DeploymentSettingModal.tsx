@@ -8,6 +8,7 @@ import { DeploymentSettingModal_deployment$key } from '../__generated__/Deployme
 import { useCurrentDomainValue, useWebUINavigate } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
+import { theme } from '../theme-shim';
 import {
   App,
   Button,
@@ -17,7 +18,6 @@ import {
   InputNumber,
   Select,
   Skeleton,
-  theme,
   Tooltip,
   Typography,
 } from 'antd';

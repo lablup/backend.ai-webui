@@ -3,7 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useThemeMode } from '../hooks/useThemeMode';
-import { Typography, theme } from 'antd';
+import { theme } from '../theme-shim';
+import { Typography } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import React from 'react';
 

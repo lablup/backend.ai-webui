@@ -4,9 +4,10 @@
  */
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useSuspenseGetAnnouncement } from '../hooks/useSuspenseGetAnnouncement';
+import { theme } from '../theme-shim';
 import AnnouncementEditModal from './AnnouncementEditModal';
 import { useToggle } from 'ahooks';
-import { Button, theme } from 'antd';
+import { Button } from 'antd';
 import { BAIAlert, BAIAlertProps, BAIUnmountAfterClose } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { SquarePenIcon } from 'lucide-react';

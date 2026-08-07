@@ -12,10 +12,11 @@ import { FairShareWeightSettingModal_ModifyUserWeightMutation } from '../../__ge
 import { FairShareWeightSettingModal_ProjectFragment$key } from '../../__generated__/FairShareWeightSettingModal_ProjectFragment.graphql';
 import { FairShareWeightSettingModal_ResourceGroupFragment$key } from '../../__generated__/FairShareWeightSettingModal_ResourceGroupFragment.graphql';
 import { FairShareWeightSettingModal_UserFragment$key } from '../../__generated__/FairShareWeightSettingModal_UserFragment.graphql';
+import { theme } from '../../theme-shim';
 import DomainResourceGroupAlert from './DomainResourceGroupAlert';
 import ProjectResourceGroupAlert from './ProjectResourceGroupAlert';
 import UserResourceGroupAlert from './UserResourceGroupAlert';
-import { Alert, App, Form, Input, InputNumber, Skeleton, theme } from 'antd';
+import { Alert, App, Form, Input, InputNumber, Skeleton } from 'antd';
 import { FormInstance } from 'antd/lib';
 import {
   BAIQuestionIconWithTooltip,

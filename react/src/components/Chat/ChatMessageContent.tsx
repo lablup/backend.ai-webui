@@ -2,9 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { theme } from '../../theme-shim';
 import CopyButton from './CopyButton';
 import { SyntaxHighlighter } from './SyntaxHighlighter';
-import { theme, Typography } from 'antd';
+import { Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIFlex } from 'backend.ai-ui';
 // `rehype-katex` does not import the CSS file, so we need to import it manually.

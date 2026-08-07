@@ -21,7 +21,8 @@ import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
-import { Alert, App, Badge, Button, theme, Tooltip } from 'antd';
+import { theme } from '../theme-shim';
+import { Alert, App, Badge, Button, Tooltip } from 'antd';
 import {
   BAIAdminProjectSelect,
   BAIFlex,

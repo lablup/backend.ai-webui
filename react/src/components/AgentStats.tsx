@@ -2,10 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useResourceSlotsDetails } from '../hooks/backendai';
 import { AgentStatsFragment$key } from '../__generated__/AgentStatsFragment.graphql';
+import { useResourceSlotsDetails } from '../hooks/backendai';
+import { theme } from '../theme-shim';
 import { useControllableValue } from 'ahooks';
-import { Segmented, Skeleton, theme, Typography } from 'antd';
+import { Segmented, Skeleton, Typography } from 'antd';
 import {
   BAIBoardItemTitle,
   BAIFetchKeyButton,

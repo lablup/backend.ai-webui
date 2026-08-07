@@ -2,14 +2,15 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useResourceSlotsDetails } from '../../hooks/backendai';
 import {
   ResourceGroupFairShareTableFragment$data,
   ResourceGroupFairShareTableFragment$key,
 } from '../../__generated__/ResourceGroupFairShareTableFragment.graphql';
+import { useResourceSlotsDetails } from '../../hooks/backendai';
+import { theme } from '../../theme-shim';
 import ResourceGroupFairShareSettingModal from './ResourceGroupFairShareSettingModal';
 import { SettingOutlined } from '@ant-design/icons';
-import { Divider, theme, Typography } from 'antd';
+import { Divider, Typography } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import {
   BAIQuestionIconWithTooltip,

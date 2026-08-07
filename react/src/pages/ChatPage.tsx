@@ -15,16 +15,8 @@ import WebUINavigate from '../components/WebUINavigate';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useProjectPath } from '../hooks/useRouteScope';
-import {
-  Alert,
-  Badge,
-  Button,
-  Card,
-  Drawer,
-  theme,
-  Tooltip,
-  Typography,
-} from 'antd';
+import { theme } from '../theme-shim';
+import { Alert, Badge, Button, Card, Drawer, Tooltip, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import {
   BAIButton,
@@ -388,11 +380,15 @@ const PureChatPage = ({ id }: { id: string }) => {
                 navigate(buildProjectPath('chat'), { replace: true });
               } else if (historyId === chat.id) {
                 const chat = history.filter(({ id }) => id !== historyId)[0];
-                navigate(buildProjectPath(`chat/${chat?.id}`), { replace: true });
+                navigate(buildProjectPath(`chat/${chat?.id}`), {
+                  replace: true,
+                });
               }
             }}
             onClickHistory={(historyId) => {
-              navigate(buildProjectPath(`chat/${historyId}`), { replace: true });
+              navigate(buildProjectPath(`chat/${historyId}`), {
+                replace: true,
+              });
             }}
           />
         </BAICard>

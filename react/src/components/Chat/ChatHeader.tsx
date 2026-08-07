@@ -7,6 +7,7 @@ import { useWebUINavigate } from '../../hooks';
 import { AIAgent, useAIAgent } from '../../hooks/useAIAgent';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useProjectPath } from '../../hooks/useRouteScope';
+import { theme } from '../../theme-shim';
 import AIAgentSelect from './AIAgentSelect';
 import type { ChatModel, ChatParameters } from './ChatModel';
 import { ChatParametersSliders } from './ChatParametersSliders';
@@ -17,14 +18,7 @@ import {
   ControlOutlined,
   MoreOutlined,
 } from '@ant-design/icons';
-import {
-  Dropdown,
-  Button,
-  theme,
-  type MenuProps,
-  Popover,
-  Tooltip,
-} from 'antd';
+import { Dropdown, Button, type MenuProps, Popover, Tooltip } from 'antd';
 import { filterOutEmpty, BAIFlex, toLocalId } from 'backend.ai-ui';
 import { isEmpty } from 'lodash-es';
 import {

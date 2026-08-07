@@ -4,8 +4,9 @@
  */
 import { UserFolderPermissionPanelQuery } from '../__generated__/UserFolderPermissionPanelQuery.graphql';
 import { UserFolderPermissionPanel_storageVolumeFrgmt$key } from '../__generated__/UserFolderPermissionPanel_storageVolumeFrgmt.graphql';
+import { theme } from '../theme-shim';
 import KeypairResourcePolicyStoragePermissionTable from './KeypairResourcePolicyStoragePermissionTable';
-import { Typography, theme } from 'antd';
+import { Typography } from 'antd';
 import {
   BAIAdminKeypairResourcePolicySelect,
   BAIAlert,

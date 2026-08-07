@@ -13,16 +13,9 @@ import {
 } from '../__generated__/UserResourcePolicySettingModalModifyMutation.graphql';
 import { GBToBytes, bytesToGB } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
+import { theme } from '../theme-shim';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
-import {
-  Form,
-  Input,
-  Alert,
-  App,
-  InputNumber,
-  theme,
-  FormInstance,
-} from 'antd';
+import { Form, Input, Alert, App, InputNumber, FormInstance } from 'antd';
 import { BAIModal, BAIModalProps, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useMemo, useRef } from 'react';
@@ -125,8 +118,7 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
       ?.validateFields()
       .then((values) => {
         const props:
-          | CreateUserResourcePolicyInput
-          | ModifyUserResourcePolicyInput = {
+          CreateUserResourcePolicyInput | ModifyUserResourcePolicyInput = {
           max_vfolder_count: values?.max_vfolder_count || 0,
           max_quota_scope_size:
             values?.max_quota_scope_size === -1

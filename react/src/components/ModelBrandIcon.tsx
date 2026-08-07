@@ -3,9 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { findBrandIconLoader } from '../helper/modelBrandIcons';
+import { theme } from '../theme-shim';
 import { RobotOutlined } from '@ant-design/icons';
 import type { IconType } from '@lobehub/icons/es/types';
-import { theme } from 'antd';
 import React, { Suspense, use } from 'react';
 
 export interface ModelBrandIconProps {

@@ -2,19 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { theme } from '../theme-shim';
 import SettingItem, { SettingItemProps } from './SettingItem';
 import { RedoOutlined, SearchOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import {
-  Alert,
-  Checkbox,
-  Divider,
-  Empty,
-  Input,
-  Tabs,
-  Typography,
-  theme,
-} from 'antd';
+import { Alert, Checkbox, Divider, Empty, Input, Tabs, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIModal, BAIFlex, BAIButton } from 'backend.ai-ui';
 import * as _ from 'lodash-es';

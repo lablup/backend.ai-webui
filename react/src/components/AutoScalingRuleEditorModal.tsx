@@ -12,6 +12,7 @@ import { AutoScalingRuleEditorModalUpdateMutation } from '../__generated__/AutoS
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
+import { theme } from '../theme-shim';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import PrometheusQueryTemplatePreview from './PrometheusQueryTemplatePreview';
 import {
@@ -24,7 +25,6 @@ import {
   Select,
   Skeleton,
   Typography,
-  theme,
 } from 'antd';
 import type { DefaultOptionType } from 'antd/es/select';
 import {

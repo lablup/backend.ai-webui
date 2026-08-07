@@ -9,16 +9,9 @@ import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
+import { theme } from '../theme-shim';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
-import {
-  theme,
-  Form,
-  Input,
-  App,
-  GetProps,
-  Typography,
-  InputProps,
-} from 'antd';
+import { Form, Input, App, GetProps, Typography, InputProps } from 'antd';
 import { BAILink, toLocalId, useErrorMessageResolver } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CornerDownLeftIcon } from 'lucide-react';

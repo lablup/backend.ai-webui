@@ -3,9 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useActiveErrorBoundaryControl } from '../hooks/useActiveErrorBoundary';
+import { theme } from '../theme-shim';
 import { isLoginSessionExpiredState } from './LoginSessionExtendButton';
 import { ReloadOutlined } from '@ant-design/icons';
-import { Alert, Button, Result, theme, Typography } from 'antd';
+import { Alert, Button, Result, Typography } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import type { GraphQLFormattedError } from 'graphql';
 import { useAtomValue } from 'jotai';

@@ -8,6 +8,7 @@ import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useSuspenseTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
+import { theme } from '../theme-shim';
 import {
   CloudUploadOutlined,
   FilterOutlined,
@@ -26,7 +27,6 @@ import {
   Result,
   Space,
   Switch,
-  theme,
   Tooltip,
   Typography,
 } from 'antd';

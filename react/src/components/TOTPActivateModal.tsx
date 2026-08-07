@@ -5,11 +5,11 @@
 import { TOTPActivateModalFragment$key } from '../__generated__/TOTPActivateModalFragment.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
+import { theme } from '../theme-shim';
 import {
   QRCode,
   Typography,
   Input,
-  theme,
   Form,
   message,
   Spin,

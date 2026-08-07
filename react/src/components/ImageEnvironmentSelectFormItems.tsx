@@ -20,6 +20,7 @@ import {
   useSuspendedBackendaiClient,
 } from '../hooks';
 import { useThemeMode } from '../hooks/useThemeMode';
+import { theme } from '../theme-shim';
 // @ts-ignore
 import ImageMetaIcon from './ImageMetaIcon';
 import { ImageTags } from './ImageTags';
@@ -31,7 +32,6 @@ import {
   RefSelectProps,
   Select,
   Tag,
-  theme,
   Typography,
 } from 'antd';
 import { BAIDoubleTag, BAIFlex, BAISelect } from 'backend.ai-ui';

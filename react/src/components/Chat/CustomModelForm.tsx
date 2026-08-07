@@ -2,10 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { theme } from '../../theme-shim';
 import DeploymentTokenSelect from './DeploymentTokenSelect';
 import { ReloadOutlined } from '@ant-design/icons';
 import useResizeObserver from '@react-hook/resize-observer';
-import { Alert, Button, Form, Input, theme } from 'antd';
+import { Alert, Button, Form, Input } from 'antd';
 import type { FormInstance } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import { useRef, useState } from 'react';

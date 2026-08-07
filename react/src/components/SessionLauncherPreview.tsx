@@ -13,6 +13,7 @@ import {
   ResourceNumbersOfSession,
   SessionLauncherStepKey,
 } from '../pages/SessionLauncherPage';
+import { theme } from '../theme-shim';
 import ImageMetaIcon from './ImageMetaIcon';
 import { ImageTags } from './ImageTags';
 import { PortTag } from './PortSelectFormItem';
@@ -29,7 +30,6 @@ import {
   Card,
   Table,
   Form,
-  theme,
   Button,
   App,
 } from 'antd';

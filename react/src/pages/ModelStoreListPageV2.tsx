@@ -13,6 +13,7 @@ import ModelCardDrawer from '../components/ModelCardDrawer';
 import TextHighlighter from '../components/TextHighlighter';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useModelStoreProject } from '../hooks/useModelStoreProject';
+import { theme } from '../theme-shim';
 import { SwapOutlined } from '@ant-design/icons';
 import {
   Alert,
@@ -24,7 +25,6 @@ import {
   Row,
   Tag,
   Typography,
-  theme,
 } from 'antd';
 import {
   BAIFetchKeyButton,

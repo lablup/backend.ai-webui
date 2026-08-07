@@ -3,8 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '../hooks';
+import { theme } from '../theme-shim';
 import { SchedulerType } from './ConfigurationsSettingList';
-import { App, Form, InputNumber, Select, theme, Typography } from 'antd';
+import { App, Form, InputNumber, Select, Typography } from 'antd';
 import Checkbox from 'antd/es/checkbox/Checkbox';
 import { FormInstance } from 'antd/lib';
 import {

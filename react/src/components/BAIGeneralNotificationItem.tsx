@@ -3,13 +3,14 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { NotificationState } from '../hooks/useBAINotification';
+import { theme } from '../theme-shim';
 import BAINotificationBackgroundProgress from './BAINotificationBackgroundProgress';
 import {
   CheckCircleOutlined,
   ClockCircleOutlined,
   CloseCircleOutlined,
 } from '@ant-design/icons';
-import { Button, Card, List, Typography, theme } from 'antd';
+import { Button, Card, List, Typography } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';

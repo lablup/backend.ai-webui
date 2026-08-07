@@ -10,8 +10,9 @@ import {
 } from '../hooks';
 import { useThemeMode } from '../hooks/useThemeMode';
 import useUserUsageStats from '../hooks/useUserUsageStats';
+import { theme } from '../theme-shim';
 import { Period } from './AllocationHistory';
-import { Card, theme } from 'antd';
+import { Card } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIQuestionIconWithTooltip, BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';

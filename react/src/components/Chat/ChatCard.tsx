@@ -5,6 +5,7 @@
 import { ChatCardQuery } from '../../__generated__/ChatCardQuery.graphql';
 import { useTanQuery } from '../../hooks/reactQueryAlias';
 import { useAIAgent } from '../../hooks/useAIAgent';
+import { theme } from '../../theme-shim';
 import PureChatHeader from './ChatHeader';
 import PureChatInput from './ChatInput';
 import ChatMessages from './ChatMessages';
@@ -26,7 +27,7 @@ import {
   streamText,
   wrapLanguageModel,
 } from 'ai';
-import { Alert, App, Card, type CardProps, theme } from 'antd';
+import { Alert, App, Card, type CardProps } from 'antd';
 import { createStyles } from 'antd-style';
 import {
   BAILogger,

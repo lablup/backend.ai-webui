@@ -4,8 +4,9 @@
  */
 import { AgentSelectQuery } from '../__generated__/AgentSelectQuery.graphql';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
+import { theme } from '../theme-shim';
 import { useControllableValue } from 'ahooks';
-import { Select, type SelectProps, theme } from 'antd';
+import { Select, type SelectProps } from 'antd';
 import {
   filterOutEmpty,
   BAIFlex,

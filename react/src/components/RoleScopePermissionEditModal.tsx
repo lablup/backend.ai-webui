@@ -21,15 +21,8 @@ import {
   type BulkCellState,
   type PermissionCellDiff,
 } from '../helper/rbacPermissionDiff';
-import {
-  App,
-  Empty,
-  Form,
-  type FormInstance,
-  theme,
-  Tooltip,
-  Typography,
-} from 'antd';
+import { theme } from '../theme-shim';
+import { App, Empty, Form, type FormInstance, Tooltip, Typography } from 'antd';
 import {
   BAIBulkEditFormItem,
   BAIBulkErrorModal,

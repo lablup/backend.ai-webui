@@ -22,8 +22,9 @@ import {
   getPathFromMenuKey,
   useWebUIMenuItems,
 } from '../hooks/useWebUIMenuItems';
+import { theme } from '../theme-shim';
 import { useToggle } from 'ahooks';
-import { Alert, Button, Result, Typography, theme } from 'antd';
+import { Alert, Button, Result, Typography } from 'antd';
 import {
   BAIButton,
   BAIDeploymentStatus,

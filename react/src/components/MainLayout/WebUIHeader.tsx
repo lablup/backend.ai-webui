@@ -25,6 +25,7 @@ import {
 } from '../../hooks/useRouteScope';
 import { useUrlProjectValidity } from '../../hooks/useUrlProjectValidity';
 import { useWebUIMenuItems } from '../../hooks/useWebUIMenuItems';
+import { theme } from '../../theme-shim';
 import BAINotificationButton from '../BAINotificationButton';
 import LoginSessionExtendButton from '../LoginSessionExtendButton';
 import ProjectSelect from '../ProjectSelect';
@@ -33,7 +34,7 @@ import UserDropdownMenu from '../UserDropdownMenu';
 import WEBUIHelpButton from '../WEBUIHelpButton';
 import WebUIThemeToggleButton from '../WebUIThemeToggleButton';
 import { useSessionStorageState } from 'ahooks';
-import { theme, Button, Modal, Typography, Grid, Divider } from 'antd';
+import { Button, Modal, Typography, Grid, Divider } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIFlex, BAIFlexProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';

@@ -20,8 +20,9 @@ import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginati
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useVFolderInvitations } from '../hooks/useVFolderInvitations';
+import { theme } from '../theme-shim';
 import { useToggle } from 'ahooks';
-import { Badge, theme, Tooltip } from 'antd';
+import { Badge, Tooltip } from 'antd';
 import {
   BAIButton,
   BAICard,

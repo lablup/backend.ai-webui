@@ -15,17 +15,9 @@ import { useTanQuery } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
+import { theme } from '../theme-shim';
 import StorageSelect from './StorageSelect';
-import {
-  Divider,
-  Form,
-  Input,
-  Radio,
-  Skeleton,
-  Switch,
-  theme,
-  Tooltip,
-} from 'antd';
+import { Divider, Form, Input, Radio, Skeleton, Switch, Tooltip } from 'antd';
 import { createStyles } from 'antd-style';
 import { FormInstance } from 'antd/lib';
 import {

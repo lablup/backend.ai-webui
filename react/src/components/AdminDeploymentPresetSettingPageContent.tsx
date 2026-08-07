@@ -11,6 +11,7 @@ import {
   type RuntimeParameterGroup,
   type RuntimeVariantPresetValueEntry,
 } from '../hooks/useRuntimeParameterSchema';
+import { theme } from '../theme-shim';
 import {
   STEP_KEYS,
   type AdminDeploymentPresetFormValue,
@@ -47,7 +48,6 @@ import {
   Skeleton,
   Steps,
   Switch,
-  theme,
 } from 'antd';
 import type { FormInstance, StepsProps } from 'antd';
 import {

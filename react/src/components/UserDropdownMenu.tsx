@@ -9,6 +9,7 @@ import {
   useCurrentUserRole,
   useTOTPSupported,
 } from '../hooks/backendai';
+import { theme } from '../theme-shim';
 import AboutBackendAIModal from './AboutBackendAIModal';
 import DownloadModal from './DownloadModal';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
@@ -24,15 +25,7 @@ import {
   DownloadOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import {
-  Avatar,
-  Button,
-  Dropdown,
-  Grid,
-  MenuProps,
-  Typography,
-  theme,
-} from 'antd';
+import { Avatar, Button, Dropdown, Grid, MenuProps, Typography } from 'antd';
 import {
   BAIUnmountAfterClose,
   filterOutEmpty,

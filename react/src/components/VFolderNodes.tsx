@@ -13,6 +13,7 @@ import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
+import { theme } from '../theme-shim';
 import DeploymentSettingModal from './DeploymentSettingModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import InviteFolderSettingModal from './InviteFolderSettingModal';
@@ -22,7 +23,7 @@ import VFolderNodeIdenticon from './VFolderNodeIdenticon';
 import VFolderPermissionCell from './VFolderPermissionCell';
 import { DeleteFilled, DeleteOutlined, UserOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { App, theme, Typography } from 'antd';
+import { App, Typography } from 'antd';
 import {
   filterOutNullAndUndefined,
   BAIEndpointsIcon,

@@ -17,7 +17,8 @@ import { convertToOrderBy, handleRowSelectionChange } from '../helper';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { Button, Skeleton, Tooltip, theme } from 'antd';
+import { theme } from '../theme-shim';
+import { Button, Skeleton, Tooltip } from 'antd';
 import {
   BAICard,
   BAIFlex,

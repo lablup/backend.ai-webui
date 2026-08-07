@@ -4,9 +4,10 @@
  */
 import { useAdminImageReference } from '../hooks/hooksUsingRelay';
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
+import { theme } from '../theme-shim';
 import type { AdminDeploymentPresetFormValue } from './AdminDeploymentPresetFormTypes';
 import SourceCodeView from './SourceCodeView';
-import { Button, Descriptions, Space, Tag, Typography, theme } from 'antd';
+import { Button, Descriptions, Space, Tag, Typography } from 'antd';
 import type { FormInstance } from 'antd';
 import { BAICard, BAIFlex, toLocalId } from 'backend.ai-ui';
 import * as _ from 'lodash-es';

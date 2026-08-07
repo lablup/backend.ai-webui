@@ -2,8 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { theme } from '../theme-shim';
 import type { DiagnosticResult } from '../types/diagnostics';
-import { Alert, Skeleton, theme, Typography } from 'antd';
+import { Alert, Skeleton, Typography } from 'antd';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import { BAIFlex } from 'backend.ai-ui';
 import { CheckCircle } from 'lucide-react';

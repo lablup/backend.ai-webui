@@ -6,6 +6,7 @@ import { DeploymentAccessTokensCardCreateMutation } from '../__generated__/Deplo
 import { DeploymentAccessTokensCardDeleteMutation } from '../__generated__/DeploymentAccessTokensCardDeleteMutation.graphql';
 import { DeploymentAccessTokensCardListQuery } from '../__generated__/DeploymentAccessTokensCardListQuery.graphql';
 import { DeploymentAccessTokensCard_deployment$key } from '../__generated__/DeploymentAccessTokensCard_deployment.graphql';
+import { theme } from '../theme-shim';
 import { DeleteFilled, QuestionCircleOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
 import {
@@ -16,7 +17,6 @@ import {
   Skeleton,
   Tooltip,
   Typography,
-  theme,
 } from 'antd';
 import {
   BAIButton,

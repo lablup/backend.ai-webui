@@ -12,8 +12,9 @@ import {
   ResourceNumbersOfSession,
   SessionLauncherFormValue,
 } from '../pages/SessionLauncherPage';
+import { theme } from '../theme-shim';
 import ImageMetaIcon from './ImageMetaIcon';
-import { Button, theme, Tooltip, Typography } from 'antd';
+import { Button, Tooltip, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import {
   BAIQuestionIconWithTooltip,

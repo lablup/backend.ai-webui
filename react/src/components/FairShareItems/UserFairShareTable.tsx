@@ -6,8 +6,9 @@ import {
   UserFairShareTableFragment$data,
   UserFairShareTableFragment$key,
 } from '../../__generated__/UserFairShareTableFragment.graphql';
+import { theme } from '../../theme-shim';
 import { SettingOutlined } from '@ant-design/icons';
-import { Divider, theme, Typography } from 'antd';
+import { Divider, Typography } from 'antd';
 import {
   BAIQuestionIconWithTooltip,
   BAIColumnsType,

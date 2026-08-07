@@ -5,7 +5,8 @@
 import { AssignRoleModalBulkAssignMutation } from '../__generated__/AssignRoleModalBulkAssignMutation.graphql';
 import { AssignRoleModalQuery } from '../__generated__/AssignRoleModalQuery.graphql';
 import { reasonMessage } from '../helper/mutationError';
-import { App, Form, type FormInstance, theme, Tooltip, Typography } from 'antd';
+import { theme } from '../theme-shim';
+import { App, Form, type FormInstance, Tooltip, Typography } from 'antd';
 import {
   BAIBulkErrorModal,
   type BAIColumnsType,

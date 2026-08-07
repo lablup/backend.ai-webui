@@ -25,6 +25,7 @@ import {
 } from '../helper/bulkUserCSV';
 import { downloadBlob, parseCSV } from '../helper/csv-util';
 import { useCurrentDomainValue } from '../hooks';
+import { theme } from '../theme-shim';
 import BAIPanelItem from './BAIPanelItem';
 import GeneratedKeypairListModal from './GeneratedKeypairListModal';
 import { passwordPattern } from './LoginFormPanel';
@@ -50,7 +51,6 @@ import {
   Switch,
   Table,
   Tag,
-  theme,
   Tooltip,
   Typography,
   Upload,

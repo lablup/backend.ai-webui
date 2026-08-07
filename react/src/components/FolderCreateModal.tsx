@@ -8,6 +8,7 @@ import { useCurrentUserRole } from '../hooks/backendai';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { theme } from '../theme-shim';
 import StorageSelect from './StorageSelect';
 import {
   App,
@@ -17,7 +18,6 @@ import {
   Radio,
   Skeleton,
   Switch,
-  theme,
   Tooltip,
 } from 'antd';
 import { createStyles } from 'antd-style';

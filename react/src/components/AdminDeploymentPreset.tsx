@@ -14,7 +14,8 @@ import AdminDeploymentPresetTable, {
 import { convertToOrderBy } from '../helper';
 import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
-import { App, theme } from 'antd';
+import { theme } from '../theme-shim';
+import { App } from 'antd';
 import {
   BAIButton,
   BAIDeleteConfirmModal,
@@ -103,14 +104,15 @@ const AdminDeploymentPreset = ({
       deferredQueryRef,
     );
 
-  const [commitDeletePreset] =
-    useMutation<AdminDeploymentPresetDeleteMutation>(graphql`
+  const [commitDeletePreset] = useMutation<AdminDeploymentPresetDeleteMutation>(
+    graphql`
       mutation AdminDeploymentPresetDeleteMutation($id: UUID!) {
         adminDeleteDeploymentRevisionPreset(id: $id) {
           id
         }
       }
-    `);
+    `,
+  );
 
   const handleDeletePreset = (preset: DeploymentPresetNodeInList) => {
     setDeletingPreset(preset);
@@ -152,7 +154,11 @@ const AdminDeploymentPreset = ({
             value={filter as DeploymentRevisionPresetFilter | undefined}
             onChange={(value) => {
               onReload(
-                { ...queryRef.variables, filter: value ?? undefined, offset: 0 },
+                {
+                  ...queryRef.variables,
+                  filter: value ?? undefined,
+                  offset: 0,
+                },
                 { fetchPolicy: 'network-only' },
               );
             }}

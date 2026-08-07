@@ -7,9 +7,10 @@ import {
   SessionStatusTagFragment$key,
 } from '../../__generated__/SessionStatusTagFragment.graphql';
 import { useSuspendedBackendaiClient } from '../../hooks';
+import { theme } from '../../theme-shim';
 import { statusInfoTagColor } from './SessionStatusDetailModal';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Tag, Tooltip, theme } from 'antd';
+import { Tag, Tooltip } from 'antd';
 import { BAIFlex, BAITag } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CircleAlertIcon } from 'lucide-react';

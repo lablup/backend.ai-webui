@@ -5,6 +5,7 @@
 import { useSuspendedBackendaiClient } from '.';
 import WebUILink from '../components/WebUILink';
 import { buildPath, MENU_KEY_TO_SCOPE_FEATURE } from '../helper/pathBuilder';
+import { theme } from '../theme-shim';
 import { useCurrentUserRole } from './backendai';
 import { useDiagnosticsBadgeSeverity } from './useAutoDiagnostics';
 import { useBAISettingUserState } from './useBAISetting';
@@ -38,7 +39,7 @@ import {
   SafetyCertificateOutlined,
 } from '@ant-design/icons';
 import { useSessionStorageState } from 'ahooks';
-import { Badge, theme, Typography } from 'antd';
+import { Badge, Typography } from 'antd';
 import { MenuItemType } from 'antd/lib/menu/interface';
 import {
   BAIEndpointsIcon,

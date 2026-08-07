@@ -12,10 +12,11 @@ import { DeploymentAutoScalingCard_deployment$key } from '../__generated__/Deplo
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { theme } from '../theme-shim';
 import AutoScalingRuleEditorModal from './AutoScalingRuleEditorModal';
 import AutoScalingRuleListNodes from './AutoScalingRuleListNodes';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { App, Skeleton, Tooltip, theme } from 'antd';
+import { App, Skeleton, Tooltip } from 'antd';
 import {
   BAIButton,
   BAICard,
@@ -179,8 +180,7 @@ const DeploymentAutoScalingCardContent: React.FC<
       {
         field: 'CREATED_AT' as const,
         direction: (orderString.startsWith('-') ? 'DESC' : 'ASC') as
-          | 'ASC'
-          | 'DESC',
+          'ASC' | 'DESC',
       },
     ],
     filter: graphQLFilter ?? null,

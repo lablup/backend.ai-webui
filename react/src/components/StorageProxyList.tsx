@@ -9,9 +9,10 @@ import {
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { theme } from '../theme-shim';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import StorageHostDetailDrawer from './StorageHostDetailDrawer';
-import { type TableColumnsType, Tag, theme, Typography } from 'antd';
+import { type TableColumnsType, Tag, Typography } from 'antd';
 import {
   filterOutNullAndUndefined,
   BAICephIcon,

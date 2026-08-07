@@ -12,6 +12,7 @@ import { useBackendAIImageMetaData } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
+import { theme } from '../theme-shim';
 import AliasedImageDoubleTags from './AliasedImageDoubleTags';
 import ImageInstallModal from './ImageInstallModal';
 import ManageAppsModal from './ManageAppsModal';
@@ -24,7 +25,7 @@ import {
   VerticalAlignBottomOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { App, Button, Tag, theme, Tooltip, Typography } from 'antd';
+import { App, Button, Tag, Tooltip, Typography } from 'antd';
 import type { ColumnType } from 'antd/es/table';
 import {
   filterOutEmpty,
@@ -479,8 +480,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           onChangeOrder={(order) => {
             setQueryParams({
               order: order as
-                | (typeof availableImageSorterValues)[number]
-                | null,
+                (typeof availableImageSorterValues)[number] | null,
             });
             setTablePaginationOption({ current: 1 });
           }}

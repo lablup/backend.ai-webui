@@ -6,9 +6,10 @@ import { loadMonacoEditor } from '../helper/monacoEditor';
 import { useTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useThemeMode } from '../hooks/useThemeMode';
+import { theme } from '../theme-shim';
 import type { Monaco, OnMount } from '@monaco-editor/react';
 import { useQueryClient } from '@tanstack/react-query';
-import { Skeleton, App, theme } from 'antd';
+import { Skeleton, App } from 'antd';
 import { RcFile } from 'antd/es/upload';
 import {
   BAIFlex,

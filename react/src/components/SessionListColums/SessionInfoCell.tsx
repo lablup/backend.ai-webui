@@ -8,15 +8,9 @@ import {
   useSuspendedBackendaiClient,
 } from '../../hooks';
 import { useTanMutation } from '../../hooks/reactQueryAlias';
+import { theme } from '../../theme-shim';
 import { EditOutlined } from '@ant-design/icons';
-import {
-  Button,
-  Form,
-  type FormInstance,
-  Input,
-  Typography,
-  theme,
-} from 'antd';
+import { Button, Form, type FormInstance, Input, Typography } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useRef, useState } from 'react';

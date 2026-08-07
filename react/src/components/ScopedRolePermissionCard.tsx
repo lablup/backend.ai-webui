@@ -15,10 +15,11 @@ import {
   type RBACGrantState,
 } from '../helper/rbacGrantState';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
+import { theme } from '../theme-shim';
 import RoleScopePermissionEditModal, {
   resolveScopeName,
 } from './RoleScopePermissionEditModal';
-import { Button, Tag, theme, Tooltip } from 'antd';
+import { Button, Tag, Tooltip } from 'antd';
 import {
   BAICard,
   type BAIColumnsType,

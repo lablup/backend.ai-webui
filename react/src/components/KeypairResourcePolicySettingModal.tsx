@@ -15,6 +15,7 @@ import { convertToBinaryUnit } from '../helper';
 import { MAX_CPU_QUOTA, SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
+import { theme } from '../theme-shim';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import {
@@ -27,7 +28,6 @@ import {
   InputNumber,
   Row,
   Select,
-  theme,
   Tooltip,
   Typography,
 } from 'antd';
@@ -215,12 +215,12 @@ const KeypairResourcePolicySettingModal: React.FC<
 
         const { _name, ...restValues } = values;
         const props:
-          | CreateKeyPairResourcePolicyInput
-          | ModifyKeyPairResourcePolicyInput = {
-          ..._.omit(restValues, 'parsedTotalResourceSlots', 'name'),
-          total_resource_slots: JSON.stringify(total_resource_slots),
-          allowed_vfolder_hosts: JSON.stringify(allowed_vfolder_hosts),
-        };
+          CreateKeyPairResourcePolicyInput | ModifyKeyPairResourcePolicyInput =
+          {
+            ..._.omit(restValues, 'parsedTotalResourceSlots', 'name'),
+            total_resource_slots: JSON.stringify(total_resource_slots),
+            allowed_vfolder_hosts: JSON.stringify(allowed_vfolder_hosts),
+          };
 
         if (keypairResourcePolicy === null) {
           commitCreateKeypairResourcePolicy({

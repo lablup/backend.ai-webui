@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { SessionCountDashboardItemFragment$key } from '../__generated__/SessionCountDashboardItemFragment.graphql';
-import { theme } from 'antd';
+import { theme } from '../theme-shim';
 import {
   BAIBoardItemTitle,
   BAIFlex,

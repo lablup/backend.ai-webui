@@ -14,6 +14,7 @@ import { useSuspenseTanQuery, useTanQuery } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
+import { theme } from '../theme-shim';
 import DeleteForeverVFolderModalV2 from './DeleteForeverVFolderModalV2';
 import DeploymentSettingModal from './DeploymentSettingModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
@@ -32,7 +33,7 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { App, Modal, Skeleton, theme, Tooltip, Typography } from 'antd';
+import { App, Modal, Skeleton, Tooltip, Typography } from 'antd';
 import {
   filterOutNullAndUndefined,
   BAIAlertIconWithTooltip,

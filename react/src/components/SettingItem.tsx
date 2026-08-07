@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { theme } from '../theme-shim';
 import { SettingOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {
@@ -12,7 +13,6 @@ import {
   Dropdown,
   Select,
   Typography,
-  theme,
 } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIButton, BAIFlex, BAIModal, BAISelectProps } from 'backend.ai-ui';
@@ -57,9 +57,7 @@ type CustomSettingItemProps = BaseSettingItemProps & {
 };
 
 export type SettingItemProps =
-  | CheckboxSettingItemProps
-  | SelectSettingItemProps
-  | CustomSettingItemProps;
+  CheckboxSettingItemProps | SelectSettingItemProps | CustomSettingItemProps;
 
 const useStyles = createStyles(({ css }) => ({
   baiSettingItemCheckbox: css`

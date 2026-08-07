@@ -7,10 +7,11 @@ import {
   NotificationState,
   useSetBAINotification,
 } from '../hooks/useBAINotification';
+import { theme } from '../theme-shim';
 import BAINotificationBackgroundProgress from './BAINotificationBackgroundProgress';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { useToggle } from 'ahooks';
-import { Card, List, theme, Typography } from 'antd';
+import { Card, List, Typography } from 'antd';
 import { BAIFlex, BAILink, BAINotificationItem, BAIText } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';

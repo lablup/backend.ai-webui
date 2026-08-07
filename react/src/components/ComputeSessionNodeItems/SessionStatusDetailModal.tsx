@@ -5,9 +5,10 @@
 import { SessionStatusDetailModalFragment$key } from '../../__generated__/SessionStatusDetailModalFragment.graphql';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
+import { theme } from '../../theme-shim';
 import SessionStatusTag from './SessionStatusTag';
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import { Descriptions, type ModalProps, Tag, Typography, theme } from 'antd';
+import { Descriptions, type ModalProps, Tag, Typography } from 'antd';
 import { BAIFlex, BAIModal } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';

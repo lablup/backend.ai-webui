@@ -15,6 +15,7 @@ import {
   useSuspendedBackendaiClient,
 } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
+import { theme } from '../theme-shim';
 import AliasedImageDoubleTags from './AliasedImageDoubleTags';
 import { ImageTags } from './ImageTags';
 import TextHighlighter from './TextHighlighter';
@@ -25,7 +26,7 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { App, Button, Input, theme, Typography } from 'antd';
+import { App, Button, Input, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import type { ColumnsType, ColumnType } from 'antd/es/table';
 import {

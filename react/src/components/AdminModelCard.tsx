@@ -17,11 +17,12 @@ import {
 } from '../helper';
 import { buildPath } from '../helper/pathBuilder';
 import { useSetBAINotification } from '../hooks/useBAINotification';
+import { theme } from '../theme-shim';
 import AdminModelCardSettingModal from './AdminModelCardSettingModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
 import { DeleteFilled, ExclamationCircleFilled } from '@ant-design/icons';
-import { App, Checkbox, Tooltip, Typography, theme } from 'antd';
+import { App, Checkbox, Tooltip, Typography } from 'antd';
 import {
   BAIButton,
   BAIColumnType,

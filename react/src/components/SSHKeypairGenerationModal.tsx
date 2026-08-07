@@ -4,8 +4,9 @@
  */
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
+import { theme } from '../theme-shim';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Button, Popconfirm, Spin, Typography, theme } from 'antd';
+import { Button, Popconfirm, Spin, Typography } from 'antd';
 import { BAIModal, BAIModalProps, BAIFlex } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';

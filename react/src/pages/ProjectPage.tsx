@@ -18,9 +18,10 @@ import ProjectAdminSettingModal, {
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCSVExport } from '../hooks/useCSVExport';
+import { theme } from '../theme-shim';
 import { DeleteFilled } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { App, theme, Tooltip } from 'antd';
+import { App, Tooltip } from 'antd';
 import {
   availableProjectSorterValues,
   BAIButton,

@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { NotificationState } from '../hooks/useBAINotification';
+import { theme } from '../theme-shim';
 import BAINotificationBackgroundProgress from './BAINotificationBackgroundProgress';
 import {
   CheckCircleOutlined,
@@ -13,7 +14,7 @@ import {
   LoadingOutlined,
   MinusCircleOutlined,
 } from '@ant-design/icons';
-import { Button, List, Typography, theme } from 'antd';
+import { Button, List, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -248,8 +249,7 @@ const BAIMultiStepNotificationItem: React.FC<{
     (overallStatus === 'failed' || overallStatus === 'warned');
   const showCancel = onCancel != null && overallStatus === 'running';
   const actionButton = notification.extraData?.actionButton as
-    | { label: string; onClick: () => void }
-    | undefined;
+    { label: string; onClick: () => void } | undefined;
 
   // showDate is true when rendered inside the Drawer (detail view)
   const isDetailView = showDate === true;

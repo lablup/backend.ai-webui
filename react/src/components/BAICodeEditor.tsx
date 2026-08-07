@@ -5,8 +5,9 @@
 import { loadMonacoEditor } from '../helper/monacoEditor';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { useThemeMode } from '../hooks/useThemeMode';
+import { theme } from '../theme-shim';
 import type { EditorProps } from '@monaco-editor/react';
-import { Skeleton, theme } from 'antd';
+import { Skeleton } from 'antd';
 import React, { Suspense } from 'react';
 
 const MonacoEditor: React.LazyExoticComponent<React.FC<EditorProps>> =
@@ -19,11 +20,7 @@ const MonacoEditor: React.LazyExoticComponent<React.FC<EditorProps>> =
 // Language alias preserved from the previous codemirror-based API so existing
 // call sites keep working. Extend as needed when adding new languages.
 export type BAICodeEditorLanguage =
-  | 'json'
-  | 'sh'
-  | 'yaml'
-  | 'toml'
-  | 'markdown';
+  'json' | 'sh' | 'yaml' | 'toml' | 'markdown';
 
 const MONACO_LANGUAGE_MAP: Record<BAICodeEditorLanguage, string> = {
   json: 'json',

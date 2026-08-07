@@ -32,6 +32,7 @@ import {
   type RuntimeParameterGroup,
   type RuntimeVariantPresetValueEntry,
 } from '../hooks/useRuntimeParameterSchema';
+import { theme } from '../theme-shim';
 import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
 import EnvVarFormList, { type EnvVarFormListValue } from './EnvVarFormList';
 import FolderCreateModalV2 from './FolderCreateModalV2';
@@ -66,7 +67,6 @@ import {
   Space,
   Tooltip,
   Typography,
-  theme,
 } from 'antd';
 import type { FormInstance } from 'antd';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';

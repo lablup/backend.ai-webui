@@ -6,9 +6,10 @@ import { downloadBlob } from '../../helper/csv-util';
 import { loadMonacoEditor } from '../../helper/monacoEditor';
 import { useDefaultTheme } from '../../hooks/useDefaultTheme';
 import { useThemeMode } from '../../hooks/useThemeMode';
+import { theme } from '../../theme-shim';
 import { ExportOutlined, ImportOutlined } from '@ant-design/icons';
 import type { Monaco } from '@monaco-editor/react';
-import { Alert, App, Skeleton, theme, Upload } from 'antd';
+import { Alert, App, Skeleton, Upload } from 'antd';
 import {
   BAIButton,
   BAIFlex,

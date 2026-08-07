@@ -8,9 +8,10 @@ import {
   useCurrentResourceGroupValue,
 } from '../hooks/useCurrentProject';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
+import { theme } from '../theme-shim';
 import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
 import { useControllableValue } from 'ahooks';
-import { Segmented, Skeleton, theme, Typography } from 'antd';
+import { Segmented, Skeleton, Typography } from 'antd';
 import {
   BAIFlex,
   BAIBoardItemTitle,

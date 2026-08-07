@@ -15,6 +15,7 @@ import {
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
+import { theme } from '../theme-shim';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import CodeHighlighterModal from './CodeHighlighterModal';
 import ConnectedKernelList from './ComputeSessionNodeItems/ConnectedKernelList';
@@ -50,7 +51,6 @@ import {
   Skeleton,
   Tabs,
   Tag,
-  theme,
   Tooltip,
   Typography,
 } from 'antd';
