@@ -18,7 +18,7 @@ import AdminUserManagement, {
 } from '../components/AdminUserManagement';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
-import { useBrowserNavigationEffect, useKeyedSnapshot } from '../hooks';
+import { useKeyedSnapshot } from '../hooks';
 import { useSuspendedTOTPSupported } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { Skeleton } from 'antd';
@@ -225,52 +225,23 @@ const AdminUsersPage: React.FC = () => {
     setTablePaginationOption(snapshot.tablePaginationOption);
   };
 
-  // Reads `location.search` rather than the parsed state: on a browser
-  // navigation this runs before nuqs has re-parsed the new URL, so anything
-  // derived from `queryParams` would still describe the departed entry.
-  const loadActiveTabFromUrl = () => {
-    const search = new URLSearchParams(location.search);
-    const tab =
-      tabParser.parse(search.get('tab') ?? '') ?? tabParser.defaultValue;
-    const defaults = defaultSnapshotOf(tab);
+  // First visit (mount / direct URL entry / reload) queries once from the
+  // URL-seeded snapshot. Every tab change afterwards restores its snapshot and
+  // queries inside onTabChange.
+  const loadInitialTabFromUrl = useEffectEvent(() => {
     const snapshot: TabSnapshot = {
-      queryParams: {
-        filter: search.get('filter'),
-        order: search.get('order'),
-        status: search.get('status') === 'INACTIVE' ? 'INACTIVE' : 'ACTIVE',
-        activeType:
-          search.get('activeType') === 'inactive' ? 'inactive' : 'active',
-      },
-      tablePaginationOption: {
-        current:
-          Number(search.get('current')) ||
-          defaults.tablePaginationOption.current,
-        pageSize:
-          Number(search.get('pageSize')) ||
-          defaults.tablePaginationOption.pageSize,
-      },
+      queryParams: _.omit(queryParams, 'tab'),
+      tablePaginationOption,
     };
-    if (tab === 'users') {
+    if (currentTab === 'users') {
       loadUsersQuery(usersVariablesOf(snapshot));
     } else {
       loadCredentialsQuery(credentialsVariablesOf(snapshot));
     }
-  };
-
-  // First visit (mount / direct URL entry / reload) queries once from the
-  // URL-seeded snapshot. Every tab change afterwards restores its snapshot and
-  // queries inside onTabChange.
-  const loadOnMount = useEffectEvent(() => {
-    loadActiveTabFromUrl();
   });
   useEffect(() => {
-    loadOnMount();
+    loadInitialTabFromUrl();
   }, []);
-
-  // Back/forward moves the URL without going through onTabChange, so the tab
-  // flips (useKeyedSnapshot follows its source key) while the query ref would
-  // otherwise keep the departed tab's data.
-  useBrowserNavigationEffect(loadActiveTabFromUrl);
 
   const tabItems: CardTabListType[] = [
     {

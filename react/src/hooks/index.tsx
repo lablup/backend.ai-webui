@@ -7,7 +7,7 @@ import { useSuspenseTanQuery } from './reactQueryAlias';
 import { MenuKeys } from './useWebUIMenuItems';
 import * as _ from 'lodash-es';
 import type { SingleParserBuilder } from 'nuqs';
-import { useEffect, useEffectEvent, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 // eslint-disable-next-line no-restricted-imports
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -117,43 +117,6 @@ export const useKeyedSnapshot = <K extends string, V>(
   };
 
   return [currentKey, setAfterSnapshot];
-};
-
-/**
- * Runs `onNavigated` when a browser navigation (back/forward) changes any of
- * the watched query-string keys. The app's own URL writes never reach it:
- * `pushState` and `replaceState` do not emit `popstate`.
- *
- * `popstate` only arms the effect; the callback runs from an effect on the
- * commit that follows, so it can read the caller's already re-derived state
- * (parsed params, a synced tab key, a restored snapshot) instead of a location
- * the last render has not caught up with yet. It is invoked through
- * `useEffectEvent`, so the version called is always the latest render's.
- *
- * Navigations that leave every watched key alone never arm it, so the callback
- * is not woken for a query string it does not care about.
- */
-export const useBrowserNavigationEffect = (onNavigated: () => void) => {
-  'use memo';
-  // Counting the navigations is what schedules the render whose effect runs
-  // the callback. A ref flag would leave the callback waiting for a commit
-  // nothing is obliged to produce.
-  const [navigationCount, setNavigationCount] = useState(0);
-
-  useEffect(() => {
-    const countNavigation = () => setNavigationCount((count) => count + 1);
-    window.addEventListener('popstate', countNavigation);
-    return () => window.removeEventListener('popstate', countNavigation);
-  }, []);
-
-  const notifyNavigated = useEffectEvent(() => {
-    onNavigated();
-  });
-
-  useEffect(() => {
-    if (navigationCount === 0) return;
-    notifyNavigated();
-  }, [navigationCount]);
 };
 
 export const useBackendAIConnectedState = () => {
