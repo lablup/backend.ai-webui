@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { VFolderDeployModalQuery } from '../__generated__/VFolderDeployModalQuery.graphql';
 import {
   VFolderNodesFragment$data,
   VFolderNodesFragment$key,
@@ -13,15 +14,14 @@ import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
-import DeploymentSettingModal from './DeploymentSettingModal';
+import { ProjectContextOrNull } from '../types/projectContext';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import InviteFolderSettingModal from './InviteFolderSettingModal';
 import SharedFolderPermissionInfoModal from './SharedFolderPermissionInfoModal';
-import VFolderDeployModal from './VFolderDeployModal';
+import VFolderDeployModal, { VFolderDeployQuery } from './VFolderDeployModal';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
 import VFolderPermissionCell from './VFolderPermissionCell';
 import { DeleteFilled, DeleteOutlined, UserOutlined } from '@ant-design/icons';
-import { useToggle } from 'ahooks';
 import { App, theme, Typography } from 'antd';
 import {
   filterOutNullAndUndefined,
@@ -47,7 +47,7 @@ import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment } from 'react-relay';
+import { graphql, useFragment, useQueryLoader } from 'react-relay';
 
 export const statusTagColor = {
   // mountable
@@ -99,6 +99,18 @@ interface VFolderNameCellProps {
    */
   onStartServiceFallback: (vfolderId: string) => void;
   /**
+   * Whether the deploy row action is offered at all. A deployment is created
+   * inside a specific project, so a page without a project context (the
+   * super-admin folder page passes `project={null}`) has no valid target and
+   * must not surface the action.
+   *
+   * TODO(FR-3423): #8494 replaces this with a visible-but-disabled action
+   * carrying an explanatory tooltip (`noDeployTooltip`). Reconcile when that
+   * PR lands — it deliberately does not infer the admin context from
+   * `project` being `null`.
+   */
+  canDeploy: boolean;
+  /**
    * When true, project-type folders (`ownership_type === 'group'`) are
    * locked from row-level destructive actions regardless of the caller's
    * `delete_vfolder` permission — even super-admins. Used by the
@@ -116,6 +128,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
   onRestore,
   onDeleteForever,
   onStartServiceFallback,
+  canDeploy,
   disableProjectFolderActions = false,
 }) => {
   'use memo';
@@ -147,15 +160,16 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
 
   const actions: BAINameActionCellAction[] = filterOutNullAndUndefined([
     // Start Service (model folders only, active only)
-    isModelFolder && !isDeleted
+    isModelFolder && !isDeleted && canDeploy
       ? {
           key: 'start-service',
           title: t('modelService.DeployAsService'),
           icon: <BAIEndpointsIcon />,
           // Use `action` (not `onClick`) so the state update that mounts
-          // `<VFolderDeployModal>` (which suspends on its Relay query)
+          // `<VFolderDeployModal>` (which suspends on its preloaded query)
           // runs inside `startTransition` — the page stays interactive
-          // instead of falling into its Suspense fallback.
+          // while the preloaded query resolves, instead of flashing the
+          // modal's Suspense fallback.
           action: async () => {
             onStartServiceFallback(vfolderId);
           },
@@ -253,6 +267,14 @@ interface VFolderNodesProps extends Omit<
   // Callback when a row is removed from current list
   onRemoveRow?: (updatedFolderId?: string) => void;
   /**
+   * Explicit project prop contract (ADR-0001, FR-3410). Pass-through for the
+   * deployment-creation escalation modal (`DeploymentSettingModal`): the
+   * parent page decides the project context. Admin pages pass `null` (the
+   * modal then embeds its own required project selector); user-facing pages
+   * narrow the ambient current project at page level.
+   */
+  project: ProjectContextOrNull;
+  /**
    * Forwarded to each row's name cell. Set on the user-facing data page
    * (`/data`) so project folders are not deletable/restorable from there
    * — those actions live on the admin data page instead.
@@ -268,6 +290,7 @@ interface VFolderNodesProps extends Omit<
 const VFolderNodes: React.FC<VFolderNodesProps> = ({
   vfoldersFrgmt,
   onRemoveRow,
+  project,
   disableProjectFolderActions,
   ...tableProps
 }) => {
@@ -286,15 +309,15 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
     useState<VFolderNodeInList | null>(null);
   const [currentSharedVFolder, setCurrentSharedVFolder] =
     useState<VFolderNodeInList | null>(null);
-  // vfolder id whose preset-selection deploy modal (FR-2599) should be open.
-  const [deployFallbackVfolderId, setDeployFallbackVfolderId] = useState<
-    string | null
-  >(null);
-  // FR-2862 — when the user hits the empty-preset state in
-  // VFolderDeployModal, escalate to the deployment shell creation modal
-  // (`DeploymentSettingModal`), same as the `/deployments` page entry.
-  const [isCreateDeploymentOpen, { toggle: toggleCreateDeployment }] =
-    useToggle(false);
+  // Preset-selection deploy modal (FR-2599). The query reference is loaded in
+  // the Deploy click handler (render-as-you-fetch); it and the target folder id
+  // are deliberately kept alive after close — only `isDeployModalOpen` toggles,
+  // so the modal's data and its auto-deploy/selection decision stay stable
+  // through the close animation.
+  const [deployQueryRef, loadDeployQuery] =
+    useQueryLoader<VFolderDeployModalQuery>(VFolderDeployQuery);
+  const [deployVfolderId, setDeployVfolderId] = useState<string | null>(null);
+  const [isDeployModalOpen, setIsDeployModalOpen] = useState(false);
 
   const vfolders = useFragment(
     graphql`
@@ -462,8 +485,12 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                   onDeleteForever={() => {
                     setDeletingVFolder(vfolder ?? null);
                   }}
+                  canDeploy={project != null}
                   onStartServiceFallback={(id) => {
-                    setDeployFallbackVfolderId(id);
+                    // Render-as-you-fetch: start the request in the open event.
+                    loadDeployQuery({}, { fetchPolicy: 'store-and-network' });
+                    setDeployVfolderId(id);
+                    setIsDeployModalOpen(true);
                   }}
                 />
               );
@@ -688,24 +715,35 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
           setCurrentSharedVFolder(null);
         }}
       />
-      {/* `VFolderDeployModal` fetches presets via Relay internally and uses
-          `useDeferredValue(open)` to show an Ant Design skeleton while a
-          deferred update resolves. The first-time cache miss still suspends,
-          so wrap in `<Suspense>`. */}
+      {/* The boundary is required and must stay mounted unconditionally.
+          The Deploy action runs inside `startTransition`
+          (`BAINameActionCell`), which only protects the render that state
+          update causes — the preloaded presets query. The modal also holds
+          suspending sources that start *after* it commits and therefore
+          outside any transition: `useProjectResourceGroups`
+          (`useSuspenseTanQuery`), `BAIProjectResourceGroupSelect` (same
+          hook), and `BAIAvailablePresetSelect`, whose value query re-runs
+          with `skip: false` as soon as the modal preselects the first
+          preset. Without this boundary those escape to the page-level
+          fallback and blank the folder list. Keeping it mounted (rather
+          than rendering it together with the modal) means the initial
+          transition still avoids showing `fallback` at all. */}
       <Suspense fallback={null}>
-        <BAIUnmountAfterClose>
-          <VFolderDeployModal
-            open={!!deployFallbackVfolderId}
-            vfolderId={deployFallbackVfolderId ?? undefined}
-            onClose={() => setDeployFallbackVfolderId(null)}
-            onDeployed={() => setDeployFallbackVfolderId(null)}
-          />
-        </BAIUnmountAfterClose>
+        {deployQueryRef != null &&
+          deployVfolderId != null &&
+          project != null && (
+            <BAIUnmountAfterClose>
+              <VFolderDeployModal
+                open={isDeployModalOpen}
+                project={project}
+                vfolderId={deployVfolderId}
+                queryRef={deployQueryRef}
+                onClose={() => setIsDeployModalOpen(false)}
+                onDeployed={() => setIsDeployModalOpen(false)}
+              />
+            </BAIUnmountAfterClose>
+          )}
       </Suspense>
-      <DeploymentSettingModal
-        open={isCreateDeploymentOpen}
-        onRequestClose={toggleCreateDeployment}
-      />
     </>
   );
 };

@@ -6,8 +6,8 @@ import { DeploymentSettingModalCreateMutation } from '../__generated__/Deploymen
 import { DeploymentSettingModalUpdateMutation } from '../__generated__/DeploymentSettingModalUpdateMutation.graphql';
 import { DeploymentSettingModal_deployment$key } from '../__generated__/DeploymentSettingModal_deployment.graphql';
 import { useCurrentDomainValue, useWebUINavigate } from '../hooks';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
+import { ProjectContext } from '../types/projectContext';
 import {
   App,
   Button,
@@ -41,14 +41,42 @@ interface FormValues {
   resourceGroup: string;
 }
 
-export interface DeploymentSettingModalProps extends BAIModalProps {
-  /** When provided → update mode; when null/undefined → create mode. */
-  deploymentFrgmt?: DeploymentSettingModal_deployment$key | null;
+/**
+ * Explicit project prop contract (ADR-0001), expressed as a discriminated
+ * union rather than a runtime check: the page decides the project context and
+ * this modal never reads the ambient current project.
+ *
+ * - **Create** (`deploymentFrgmt` absent): a deployment is always created
+ *   inside one project, and creation is offered only from the project-scoped
+ *   user menu — so `project` is required and non-null. There is no in-modal
+ *   selector and no "missing project" error path; the create mutation's
+ *   `metadata.projectId` is exactly this project's id and the resource-group
+ *   options are scoped to it.
+ * - **Edit** (`deploymentFrgmt` present): the deployment already belongs to a
+ *   project, so `project` is not accepted at all.
+ */
+type DeploymentSettingModalProjectProps =
+  | {
+      /** Edit-only call site: no project is accepted. */
+      deploymentFrgmt: DeploymentSettingModal_deployment$key;
+      project?: never;
+    }
+  | {
+      /**
+       * Project-scoped call site: may open in create mode (fragment absent)
+       * or edit mode (fragment present), and therefore must supply a project.
+       */
+      deploymentFrgmt?: DeploymentSettingModal_deployment$key | null;
+      project: ProjectContext;
+    };
+
+export type DeploymentSettingModalProps = BAIModalProps & {
   onRequestClose: (success: boolean) => void;
-}
+} & DeploymentSettingModalProjectProps;
 
 const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
   deploymentFrgmt,
+  project,
   onRequestClose,
   ...baiModalProps
 }) => {
@@ -59,7 +87,6 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
   const navigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
   const { message } = App.useApp();
-  const { id: projectId, name: projectName } = useCurrentProjectValue();
   const currentDomain = useCurrentDomainValue();
 
   const deployment = useFragment(
@@ -154,15 +181,17 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
             },
           });
         } else {
-          if (!projectId) {
-            message.error(t('general.ErrorOccurred'));
-            return;
-          }
+          // No "missing project" branch: the only props member that permits a
+          // create (fragment absent) requires a non-null `project`, so this is
+          // unreachable-by-construction rather than guarded at runtime. The
+          // assertion is needed only because `deploymentFrgmt` is an opaque
+          // fragment key, not a unit type, so TypeScript cannot use it as a
+          // discriminant to narrow the union here.
           commitCreate({
             variables: {
               input: {
                 metadata: {
-                  projectId,
+                  projectId: project!.id,
                   domainName: currentDomain,
                   name: values.name,
                   tags: values.tags?.length ? values.tags : null,
@@ -296,7 +325,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
               }
             >
               <BAIProjectResourceGroupSelect
-                projectName={projectName ?? ''}
+                projectName={project?.name ?? ''}
                 autoSelectDefault
                 style={{ width: '100%' }}
               />
