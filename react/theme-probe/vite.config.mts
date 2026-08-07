@@ -26,9 +26,27 @@ const pnpmStorePath = execSync('pnpm store path --silent', {
   encoding: 'utf-8',
 }).trim();
 
+// Ticket 14: probe pages now mount real react/src components, some of which
+// carry Relay `graphql` tags — compile them exactly like the app dev server
+// does (see react/vite.config.ts). BUI sources are consumed via the built
+// package here, so only the react/src artifact directory is needed.
+const reactArtifactDir = resolve(reactRoot, 'src/__generated__');
+const reactSrc = resolve(reactRoot, 'src');
+
 export default defineConfig({
   root: reactRoot,
-  plugins: [react()],
+  // The app build gets `global` from vite-plugin-node-polyfills; here a
+  // define is enough (relay-test-utils touches `global` at import time).
+  define: { global: 'globalThis' },
+  plugins: [
+    react({
+      babel: (id: string) => ({
+        plugins: id.startsWith(reactSrc)
+          ? [['babel-plugin-relay', { artifactDirectory: reactArtifactDir }]]
+          : [],
+      }),
+    }),
+  ],
   server: {
     host: '127.0.0.1',
     port: 9198,

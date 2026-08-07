@@ -274,3 +274,17 @@ export const theme = { useToken };
 // Shared measured tables (consumed by react/src/astryx-theme/backendAiTheme.ts
 // via the `backend.ai-ui` public entry — see antdParity.ts).
 export { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from './antdParity';
+
+// Breakpoint system (ticket 08 gap component; policy in ticket 14): the JS
+// side of the responsive policy. `Grid.useBreakpoint()` call sites convert by
+// import swap to `useBAIBreakpoint`; `token.screen*`-as-px-constant sites
+// read `BAI_BREAKPOINTS` instead of theme tokens.
+export {
+  BAI_BREAKPOINTS,
+  BAI_BREAKPOINT_KEYS,
+  BAI_BREAKPOINT_QUERIES,
+  useBAIBreakpoint,
+  useBAIActiveBreakpoint,
+  type BAIBreakpointKey,
+  type BAIScreenMap,
+} from './breakpoints';

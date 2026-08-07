@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { KeypairResourcePolicyInfoModalFragment$key } from '../__generated__/KeypairResourcePolicyInfoModalFragment.graphql';
-import { theme } from '../theme-shim';
+import { BAI_BREAKPOINTS } from '../theme-shim';
 import { Descriptions, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import { DescriptionsItemType } from 'antd/es/descriptions';
@@ -45,7 +45,6 @@ const KeypairResourcePolicyInfoModal: React.FC<InfoModalProps> = ({
 }) => {
   const { styles } = useStyles();
   const { t } = useTranslation();
-  const { token } = theme.useToken();
 
   const resourcePolicy = useFragment(
     graphql`
@@ -196,7 +195,10 @@ const KeypairResourcePolicyInfoModal: React.FC<InfoModalProps> = ({
       footer={null}
       title={`${t('resourcePolicy.ResourcePolicy')}: '${resourcePolicy?.name}'`}
       centered
-      width={token.screenSM}
+      // Responsive policy (ticket 14): `token.screenSM` was a 576px width
+      // CONSTANT, not responsive behaviour — read the breakpoint table, not
+      // the theme.
+      width={BAI_BREAKPOINTS.sm}
       {...modalProps}
     >
       <Descriptions bordered column={1} items={descriptionItems} />

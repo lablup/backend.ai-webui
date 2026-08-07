@@ -2,8 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useBAIBreakpoint } from '../theme-shim';
 import { isOpenDrawerState } from './BAINotificationButton';
-import { Grid, Layout } from 'antd';
+import { Layout } from 'antd';
 import { createGlobalStyle } from 'antd-style';
 import { BasicProps } from 'antd/lib/layout/layout';
 import { useAtomValue } from 'jotai';
@@ -49,7 +50,9 @@ const BAIContentWithDrawerArea: React.FC<Props> = ({
   ...contextProps
 }) => {
   const isOpenDrawer = useAtomValue(isOpenDrawerState);
-  const { xl } = Grid.useBreakpoint();
+  // Responsive policy (ticket 14): JS behaviour branch — the drawer style is
+  // a layout MODE, not a track layout, so it stays on the JS-side hook.
+  const { xl } = useBAIBreakpoint();
   const drawerStyle: DrawerStyle =
     xl && isOpenDrawer ? 'margin-style' : 'overlay-style';
   return (

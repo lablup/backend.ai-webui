@@ -3,7 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { theme } from '../theme-shim';
-import { Col, ColorPicker, type ColorPickerProps, Row } from 'antd';
+import { Grid } from '@astryxdesign/core/Grid';
+import { ColorPicker, type ColorPickerProps } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 
@@ -42,25 +43,30 @@ const LightDarkColorPicker: React.FC<LightDarkColorPickerProps> = ({
       direction="column"
       style={{ alignSelf: 'stretch' }}
     >
-      <Row gutter={[16, 4]}>
+      {/* Responsive policy (ticket 14): container-driven Astryx Grid replaces
+          `Row gutter={[16,4]}` + `Col xl={6} lg={24}`. minWidth 300 keeps the
+          two scheme fields side-by-side whenever ~600px is available and
+          stacks them below; max 4 reproduces the antd xl={6} quarter-width
+          track sizing on wide containers. gap unit = 4px (columnGap 16px /
+          rowGap 4px = the former gutter). */}
+      <Grid columns={{ minWidth: 300, max: 4 }} columnGap={4} rowGap={1}>
         {schemes.map(({ label, pickerProps }) => (
-          <Col key={label} xl={6} lg={24}>
-            <BAIFlex
-              gap="sm"
-              style={{ color: token.colorTextTertiary }}
-              wrap="wrap"
-            >
-              {label}:
-              <ColorPicker
-                format="hex"
-                showText
-                style={{ minWidth: 110 }}
-                {...pickerProps}
-              />
-            </BAIFlex>
-          </Col>
+          <BAIFlex
+            key={label}
+            gap="sm"
+            style={{ color: token.colorTextTertiary }}
+            wrap="wrap"
+          >
+            {label}:
+            <ColorPicker
+              format="hex"
+              showText
+              style={{ minWidth: 110 }}
+              {...pickerProps}
+            />
+          </BAIFlex>
         ))}
-      </Row>
+      </Grid>
     </BAIFlex>
   );
 };

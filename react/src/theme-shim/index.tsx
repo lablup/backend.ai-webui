@@ -17,4 +17,13 @@ export {
   ThemeShimProvider,
   type ThemeShimProviderProps,
   type BrandSeeds,
+  // Responsive policy (ticket 14): JS-side breakpoints for behaviour
+  // branches; `BAI_BREAKPOINTS` for former `token.screen*` px constants.
+  BAI_BREAKPOINTS,
+  BAI_BREAKPOINT_KEYS,
+  BAI_BREAKPOINT_QUERIES,
+  useBAIBreakpoint,
+  useBAIActiveBreakpoint,
+  type BAIBreakpointKey,
+  type BAIScreenMap,
 } from 'backend.ai-ui';
