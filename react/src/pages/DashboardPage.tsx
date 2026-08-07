@@ -15,6 +15,7 @@ import StorageStatusPanelCard from '../components/StorageStatusPanelCard';
 import TotalResourceWithinResourceGroup, {
   useIsAvailableTotalResourceWithinResourceGroup,
 } from '../components/TotalResourceWithinResourceGroup';
+import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -24,7 +25,6 @@ import {
 } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { theme } from '../theme-shim';
-import { Skeleton } from 'antd';
 import {
   BAIBoardItemErrorBoundary,
   filterOutEmpty,
@@ -124,7 +124,9 @@ const DashboardPage: React.FC = () => {
         content: (
           <Suspense
             fallback={
-              <Skeleton active style={{ padding: `0px ${token.marginMD}px` }} />
+              <BAISkeletonAstryx
+                style={{ padding: `0px ${token.marginMD}px` }}
+              />
             }
           >
             <SessionCountDashboardItem
@@ -155,7 +157,9 @@ const DashboardPage: React.FC = () => {
             status="error"
           >
             <Suspense
-              fallback={<Skeleton active style={{ padding: token.marginMD }} />}
+              fallback={
+                <BAISkeletonAstryx style={{ padding: token.marginMD }} />
+              }
             >
               <MyResource
                 fetchKey={deferredFetchKey}
@@ -181,7 +185,9 @@ const DashboardPage: React.FC = () => {
             status="error"
           >
             <Suspense
-              fallback={<Skeleton active style={{ padding: token.marginMD }} />}
+              fallback={
+                <BAISkeletonAstryx style={{ padding: token.marginMD }} />
+              }
             >
               <MyResourceWithinResourceGroup
                 fetchKey={deferredFetchKey}
@@ -207,7 +213,9 @@ const DashboardPage: React.FC = () => {
             status="error"
           >
             <Suspense
-              fallback={<Skeleton active style={{ padding: token.marginMD }} />}
+              fallback={
+                <BAISkeletonAstryx style={{ padding: token.marginMD }} />
+              }
             >
               <StorageStatusPanelCard
                 fetchKey={deferredFetchKey}
@@ -240,7 +248,9 @@ const DashboardPage: React.FC = () => {
             status="error"
           >
             <Suspense
-              fallback={<Skeleton active style={{ padding: token.marginMD }} />}
+              fallback={
+                <BAISkeletonAstryx style={{ padding: token.marginMD }} />
+              }
             >
               <QuotaPerStorageVolumeDashboardItem />
             </Suspense>
@@ -279,8 +289,7 @@ const DashboardPage: React.FC = () => {
           content: (
             <Suspense
               fallback={
-                <Skeleton
-                  active
+                <BAISkeletonAstryx
                   style={{ padding: `0px ${token.marginMD}px` }}
                 />
               }
@@ -305,7 +314,9 @@ const DashboardPage: React.FC = () => {
         content: (
           <Suspense
             fallback={
-              <Skeleton active style={{ padding: `0px ${token.marginMD}px` }} />
+              <BAISkeletonAstryx
+                style={{ padding: `0px ${token.marginMD}px` }}
+              />
             }
           >
             <ActiveAgents

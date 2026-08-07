@@ -19,10 +19,9 @@ import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting'
 import { theme } from '../theme-shim';
 import BAIRadioGroup from './BAIRadioGroup';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Text } from '@astryxdesign/core/Text';
 import { useToggle } from 'ahooks';
-import { Button, type TableProps, Tooltip, Typography } from 'antd';
-import { AnyObject } from 'antd/es/_util/type';
-import type { ColumnsType, ColumnType } from 'antd/es/table';
 import {
   filterOutNullAndUndefined,
   BAITable,
@@ -33,6 +32,9 @@ import {
   BAIProgressWithLabel,
   useFetchKey,
   INITIAL_FETCH_KEY,
+  type BAITableProps,
+  type BAIColumnsType,
+  type BAIColumnType,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CircleCheck, CircleMinus, RotateCw } from 'lucide-react';
@@ -42,12 +44,14 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 type AgentSummary = NonNullable<
-  AgentSummaryListQuery$data['agent_summary_list']
->['items'][number];
+  NonNullable<AgentSummaryListQuery$data['agent_summary_list']>['items'][number]
+>;
 
 interface AgentSummaryListProps {
   containerStyle?: React.CSSProperties;
-  tableProps?: Omit<TableProps, 'dataSource'>;
+  // Typed against BAITable's own surface (frontier: BAITable stays antd-backed
+  // until ticket 25, but this file no longer imports antd types directly).
+  tableProps?: Partial<Omit<BAITableProps<AgentSummary>, 'dataSource'>>;
 }
 
 const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
@@ -150,7 +154,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
     },
   );
 
-  const columns: ColumnsType<AgentSummary> = [
+  const columns: BAIColumnsType<AgentSummary> = [
     {
       title: <>ID</>,
       key: 'id',
@@ -159,7 +163,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
       render: (value) => {
         return (
           <BAIFlex direction="column" align="start">
-            <Typography.Text>{value}</Typography.Text>
+            <Text>{value}</Text>
           </BAIFlex>
         );
       },
@@ -199,7 +203,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
                     >
                       <BAIFlex gap="xxs">
                         <ResourceTypeIcon key={key} type={key} />
-                        <Typography.Text>
+                        <Text>
                           {toFixedFloorWithoutTrailingZeros(
                             parsedOccupiedSlots.cpu || 0,
                             0,
@@ -209,13 +213,10 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
                             parsedAvailableSlots.cpu || 0,
                             0,
                           )}
-                        </Typography.Text>
-                        <Typography.Text
-                          type="secondary"
-                          style={{ fontSize: token.sizeXS }}
-                        >
+                        </Text>
+                        <Text color="secondary" size="2xs">
                           {mergedResourceSlots?.cpu?.display_unit}
-                        </Typography.Text>
+                        </Text>
                       </BAIFlex>
                       <BAIProgressWithLabel
                         percent={cpuPercent}
@@ -245,19 +246,16 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
                     >
                       <BAIFlex gap="xxs">
                         <ResourceTypeIcon type={'mem'} />
-                        <Typography.Text>
+                        <Text>
                           {convertToBinaryUnit(parsedOccupiedSlots.mem, 'g', 0)
                             ?.numberFixed ?? 0}
                           /
                           {convertToBinaryUnit(parsedAvailableSlots.mem, 'g', 0)
                             ?.numberFixed ?? 0}
-                        </Typography.Text>
-                        <Typography.Text
-                          type="secondary"
-                          style={{ fontSize: token.sizeXS }}
-                        >
+                        </Text>
+                        <Text color="secondary" size="2xs">
                           GiB
-                        </Typography.Text>
+                        </Text>
                       </BAIFlex>
                       <BAIProgressWithLabel
                         percent={memPercent}
@@ -288,7 +286,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
                     >
                       <BAIFlex gap="xxs">
                         <ResourceTypeIcon key={key} type={key} />
-                        <Typography.Text>
+                        <Text>
                           {toFixedFloorWithoutTrailingZeros(
                             parsedOccupiedSlots[key] || 0,
                             2,
@@ -298,13 +296,10 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
                             parsedAvailableSlots[key],
                             2,
                           )}
-                        </Typography.Text>
-                        <Typography.Text
-                          type="secondary"
-                          style={{ fontSize: token.sizeXS }}
-                        >
+                        </Text>
+                        <Text color="secondary" size="2xs">
                           {mergedResourceSlots?.[key]?.display_unit}
-                        </Typography.Text>
+                        </Text>
                       </BAIFlex>
                       <BAIProgressWithLabel
                         percent={percent}
@@ -423,13 +418,13 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
           />
         </BAIFlex>
         <BAIFlex gap="xs">
-          <Tooltip title={t('button.Refresh')}>
-            <Button
-              loading={deferredFetchKey !== fetchKey}
-              onClick={() => updateFetchKey()}
-              icon={<RotateCw size="1em" />}
-            ></Button>
-          </Tooltip>
+          <IconButton
+            label={t('button.Refresh')}
+            tooltip={t('button.Refresh')}
+            isLoading={deferredFetchKey !== fetchKey}
+            onClick={() => updateFetchKey()}
+            icon={<RotateCw size="1em" />}
+          />
         </BAIFlex>
       </BAIFlex>
       <BAITable
@@ -442,7 +437,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
           _.filter(
             columns,
             (column) => !_.includes(hiddenColumnKeys, _.toString(column?.key)),
-          ) as ColumnType<AnyObject>[]
+          ) as BAIColumnType<AgentSummary>[]
         }
         pagination={{
           pageSize: tablePaginationOption.pageSize,

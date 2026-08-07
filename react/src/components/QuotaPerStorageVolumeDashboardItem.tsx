@@ -8,7 +8,7 @@ import { theme } from '../theme-shim';
 import QuotaPerStorageVolumePanelCard, {
   type VolumeInfo,
 } from './QuotaPerStorageVolumePanelCard';
-import { Empty } from 'antd';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { BAIBoardItemTitle, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';
@@ -54,10 +54,10 @@ const QuotaPerStorageVolumeDashboardItem: React.FC = () => {
       {defaultVolumeInfo ? (
         <QuotaPerStorageVolumePanelCard defaultVolumeInfo={defaultVolumeInfo} />
       ) : (
-        <Empty
-          image={Empty.PRESENTED_IMAGE_SIMPLE}
-          description={t('storageHost.QuotaDoesNotSupported')}
-        />
+        // PILOT-DECISION: antd Empty PRESENTED_IMAGE_SIMPLE -> Astryx
+        // EmptyState (DIRECT); the simple-image variant has no counterpart and
+        // is dropped — EmptyState's compact variant fits the board-item slot.
+        <EmptyState title={t('storageHost.QuotaDoesNotSupported')} isCompact />
       )}
     </BAIFlex>
   );

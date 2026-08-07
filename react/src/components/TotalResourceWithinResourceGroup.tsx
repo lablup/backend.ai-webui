@@ -11,8 +11,12 @@ import {
 import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
 import { theme } from '../theme-shim';
 import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
+import {
+  SegmentedControl,
+  SegmentedControlItem,
+} from '@astryxdesign/core/SegmentedControl';
+import { Heading } from '@astryxdesign/core/Text';
 import { useControllableValue } from 'ahooks';
-import { Segmented, Typography } from 'antd';
 import {
   filterOutNullAndUndefined,
   BAIFlex,
@@ -288,14 +292,10 @@ const TotalResourceWithinResourceGroup: React.FC<
       <BAIBoardItemTitle
         title={
           <BAIFlex gap={'xs'} wrap="wrap">
-            <Typography.Text
-              style={{
-                fontSize: token.fontSizeHeading5,
-                fontWeight: token.fontWeightStrong,
-              }}
-            >
-              {t('webui.menu.TotalResourcesIn')}
-            </Typography.Text>
+            {/* PILOT-DECISION: antd Typography.Text (fontSizeHeading5 +
+                fontWeightStrong) -> Astryx Heading level={3}; visual values
+                follow Astryx defaults. */}
+            <Heading level={3}>{t('webui.menu.TotalResourcesIn')}</Heading>
             <SharedResourceGroupSelectForCurrentProject
               size="small"
               showSearch
@@ -309,26 +309,24 @@ const TotalResourceWithinResourceGroup: React.FC<
         tooltip={t('webui.menu.TotalResourcesInResourceGroupDescription')}
         extra={
           <BAIFlex gap={'xs'} wrap="wrap">
-            <Segmented<
-              Exclude<
-                TotalResourceWithinResourceGroupProps['displayType'],
-                undefined
-              >
-            >
-              size="small"
-              options={[
-                {
-                  label: t('dashboard.Used'),
-                  value: 'used',
-                },
-                {
-                  label: t('dashboard.Free'),
-                  value: 'free',
-                },
-              ]}
+            {/* PILOT-DECISION: SegmentedControl.label is aria-only and required;
+                composed from the two option labels to avoid new i18n keys. */}
+            <SegmentedControl
+              size="sm"
+              label={`${t('dashboard.Used')}/${t('dashboard.Free')}`}
               value={displayType}
-              onChange={(v) => setDisplayType(v)}
-            />
+              onChange={(v) =>
+                setDisplayType(
+                  v as Exclude<
+                    TotalResourceWithinResourceGroupProps['displayType'],
+                    undefined
+                  >,
+                )
+              }
+            >
+              <SegmentedControlItem value="used" label={t('dashboard.Used')} />
+              <SegmentedControlItem value="free" label={t('dashboard.Free')} />
+            </SegmentedControl>
             <BAIFetchKeyButton
               size="small"
               loading={isPendingRefetch || refetching}

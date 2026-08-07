@@ -1,6 +1,7 @@
 import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
-import { Typography, Tooltip } from 'antd';
+import { Heading } from '@astryxdesign/core/Text';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { CircleHelp } from 'lucide-react';
 import React from 'react';
 
@@ -41,14 +42,14 @@ const BAIBoardItemTitle: React.FC<BAIBoardItemTitleProps> = ({
     >
       <BAIFlex gap={'xs'} align="center" wrap="wrap">
         {typeof title === 'string' ? (
-          <Typography.Title level={5} style={{ margin: 0 }}>
-            {title}
-          </Typography.Title>
+          // PILOT-DECISION: antd Typography.Title level={5} (16px) -> Astryx
+          // Heading level={3} (17px); visual values follow Astryx defaults.
+          <Heading level={3}>{title}</Heading>
         ) : (
           title
         )}
         {tooltip ? (
-          <Tooltip title={tooltip}>
+          <Tooltip content={tooltip}>
             <CircleHelp
               style={{ color: token.colorTextSecondary }}
               size="1em"

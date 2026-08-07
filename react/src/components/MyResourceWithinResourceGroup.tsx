@@ -10,8 +10,13 @@ import {
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
 import { theme } from '../theme-shim';
 import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
+import {
+  SegmentedControl,
+  SegmentedControlItem,
+} from '@astryxdesign/core/SegmentedControl';
+import { Heading } from '@astryxdesign/core/Text';
 import { useControllableValue } from 'ahooks';
-import { Segmented, Skeleton, Typography } from 'antd';
 import {
   BAIFlex,
   BAIBoardItemTitle,
@@ -194,14 +199,10 @@ const MyResourceWithinResourceGroup: React.FC<
       <BAIBoardItemTitle
         title={
           <>
-            <Typography.Text
-              style={{
-                fontSize: token.fontSizeHeading5,
-                fontWeight: token.fontWeightStrong,
-              }}
-            >
-              {t('webui.menu.MyResourcesIn')}
-            </Typography.Text>
+            {/* PILOT-DECISION: antd Typography.Text (fontSizeHeading5 +
+                fontWeightStrong) -> Astryx Heading level={3}; visual values
+                follow Astryx defaults. */}
+            <Heading level={3}>{t('webui.menu.MyResourcesIn')}</Heading>
             <SharedResourceGroupSelectForCurrentProject
               size="small"
               showSearch
@@ -214,26 +215,25 @@ const MyResourceWithinResourceGroup: React.FC<
         tooltip={t('webui.menu.MyResourcesInResourceGroupDescription')}
         extra={
           <BAIFlex gap={'xs'}>
-            <Segmented<
-              Exclude<
-                MyResourceWithinResourceGroupProps['displayType'],
-                undefined
-              >
-            >
-              size="small"
-              options={[
-                {
-                  label: t('dashboard.Used'),
-                  value: 'used',
-                },
-                {
-                  label: t('dashboard.Free'),
-                  value: 'free',
-                },
-              ]}
+            {/* PILOT-DECISION: SegmentedControl.label is aria-only and required;
+                composed from the two option labels to avoid new i18n keys. */}
+            <SegmentedControl
+              size="sm"
+              label={`${t('dashboard.Used')}/${t('dashboard.Free')}`}
               value={displayType}
-              onChange={(v) => v && setDisplayType(v)}
-            />
+              onChange={(v) =>
+                v &&
+                setDisplayType(
+                  v as Exclude<
+                    MyResourceWithinResourceGroupProps['displayType'],
+                    undefined
+                  >,
+                )
+              }
+            >
+              <SegmentedControlItem value="used" label={t('dashboard.Used')} />
+              <SegmentedControlItem value="free" label={t('dashboard.Free')} />
+            </SegmentedControl>
             <BAIFetchKeyButton
               size="small"
               loading={isPending || refetching}
@@ -251,7 +251,7 @@ const MyResourceWithinResourceGroup: React.FC<
         }
       />
       {resourceSlotsDetails.isLoading ? (
-        <Skeleton active />
+        <BAISkeletonAstryx />
       ) : (
         <ResourceStatistics
           resourceData={resourceData}

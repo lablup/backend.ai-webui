@@ -5,8 +5,13 @@
 import { AgentStatsFragment$key } from '../__generated__/AgentStatsFragment.graphql';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import { theme } from '../theme-shim';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
+import {
+  SegmentedControl,
+  SegmentedControlItem,
+} from '@astryxdesign/core/SegmentedControl';
+import { Heading } from '@astryxdesign/core/Text';
 import { useControllableValue } from 'ahooks';
-import { Segmented, Skeleton, Typography } from 'antd';
 import {
   BAIBoardItemTitle,
   BAIFetchKeyButton,
@@ -168,33 +173,30 @@ const AgentStats: React.FC<AgentStatsProps> = ({
     >
       <BAIBoardItemTitle
         title={
-          <Typography.Text
-            style={{
-              fontSize: token.fontSizeHeading5,
-              fontWeight: token.fontWeightStrong,
-            }}
-          >
-            {t('agentStats.AgentStats')}
-          </Typography.Text>
+          // PILOT-DECISION: antd Typography.Text styled to fontSizeHeading5 +
+          // fontWeightStrong -> Astryx Heading level={3} (visual values follow
+          // Astryx defaults; per-pixel parity is a non-goal).
+          <Heading level={3}>{t('agentStats.AgentStats')}</Heading>
         }
         tooltip={t('agentStats.AgentStatsDescription')}
         extra={
           <BAIFlex gap={'xs'} wrap="wrap">
-            <Segmented<Exclude<AgentStatsProps['displayType'], undefined>>
-              size="small"
-              options={[
-                {
-                  label: t('dashboard.Used'),
-                  value: 'used',
-                },
-                {
-                  value: 'free',
-                  label: t('dashboard.Free'),
-                },
-              ]}
+            {/* PILOT-DECISION: SegmentedControl.label is aria-only and required;
+                composed from the two existing option labels to avoid adding new
+                i18n keys while page tickets run in parallel. */}
+            <SegmentedControl
+              size="sm"
+              label={`${t('dashboard.Used')}/${t('dashboard.Free')}`}
               value={displayType}
-              onChange={(v) => setDisplayType(v)}
-            />
+              onChange={(v) =>
+                setDisplayType(
+                  v as Exclude<AgentStatsProps['displayType'], undefined>,
+                )
+              }
+            >
+              <SegmentedControlItem value="used" label={t('dashboard.Used')} />
+              <SegmentedControlItem value="free" label={t('dashboard.Free')} />
+            </SegmentedControl>
             <BAIFetchKeyButton
               size="small"
               loading={isPendingRefetch || isRefetching}
@@ -219,7 +221,7 @@ const AgentStats: React.FC<AgentStatsProps> = ({
         }
       />
       {resourceSlotsDetails.isLoading ? (
-        <Skeleton active />
+        <BAISkeletonAstryx />
       ) : (
         <ResourceStatistics
           resourceData={agentStatsData}
