@@ -11,7 +11,6 @@ import {
 import { AdminUserManagementUpdateUserMutation } from '../__generated__/AdminUserManagementUpdateUserMutation.graphql';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useTOTPSupported } from '../hooks/backendai';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
 import BAIRadioGroup from './BAIRadioGroup';
@@ -132,18 +131,16 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
   const [openUpdateUsersModal, { toggle: toggleUpdateUsersModal }] =
     useToggle(false);
 
-  const { isTOTPSupported } = useTOTPSupported();
-
   // The page owns URL state and the fetch; this component derives every
   // filter/order/pagination control from the last requested variables and
   // funnels changes back through `onReload`.
   const variables = queryRef.variables;
+  const isTOTPSupported = !variables.isNotSupportTotp;
   const statusValue =
     variables.filter?.status?.equals === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE';
   const propertyFilterValue = _.omit(variables.filter ?? {}, 'status');
   const orderValue = convertFirstOrderByToString(variables.orderBy) as
-    | (typeof availableUserV2SorterValues)[number]
-    | null;
+    (typeof availableUserV2SorterValues)[number] | null;
   const pageSize = variables.limit ?? USER_LIST_DEFAULT_PAGE_SIZE;
   const current = Math.floor((variables.offset ?? 0) / pageSize) + 1;
 

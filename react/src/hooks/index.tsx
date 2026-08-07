@@ -7,7 +7,7 @@ import { useSuspenseTanQuery } from './reactQueryAlias';
 import { MenuKeys } from './useWebUIMenuItems';
 import * as _ from 'lodash-es';
 import type { SingleParserBuilder } from 'nuqs';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, useEffectEvent } from 'react';
 // eslint-disable-next-line no-restricted-imports
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -117,6 +117,19 @@ export const useKeyedSnapshot = <K extends string, V>(
   };
 
   return [currentKey, setAfterSnapshot];
+};
+
+export const useBrowserPopstateEffect = (onPopstate: () => void) => {
+  const handlePopstate = useEffectEvent(onPopstate);
+
+  useEffect(function listenBrowserNavigation() {
+    // `useEffectEvent` results must not be handed to other APIs directly.
+    const listener = () => handlePopstate();
+    window.addEventListener('popstate', listener);
+    return () => {
+      window.removeEventListener('popstate', listener);
+    };
+  }, []);
 };
 
 export const useBackendAIConnectedState = () => {

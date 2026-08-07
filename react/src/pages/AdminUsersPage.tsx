@@ -18,7 +18,7 @@ import AdminUserManagement, {
 } from '../components/AdminUserManagement';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
-import { useKeyedSnapshot } from '../hooks';
+import { useBrowserPopstateEffect, useKeyedSnapshot } from '../hooks';
 import { useSuspendedTOTPSupported } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { Skeleton } from 'antd';
@@ -31,7 +31,7 @@ import {
   parseAsStringLiteral,
   useQueryStates,
 } from 'nuqs';
-import { Suspense, useEffect, useEffectEvent } from 'react';
+import { Suspense, useEffect, useEffectEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   useQueryLoader,
@@ -41,14 +41,19 @@ import {
 const tabParser = parseAsStringLiteral(['users', 'credentials']).withDefault(
   'users',
 );
+const statusParser = parseAsStringLiteral(['ACTIVE', 'INACTIVE']).withDefault(
+  'ACTIVE',
+);
+const activeTypeParser = parseAsStringLiteral([
+  'active',
+  'inactive',
+]).withDefault('active');
 
 type TabKey = 'users' | 'credentials';
 type UsersVariables = AdminUserManagementQueryType['variables'];
 type CredentialsVariables = AdminUserCredentialListQueryType['variables'];
 type TabVariables = UsersVariables | CredentialsVariables;
 
-// The per-tab snapshot shape useKeyedSnapshot holds: the page's URL state
-// (minus the tab key itself) plus table pagination.
 type TabSnapshot = {
   queryParams: {
     filter: string | null;
@@ -75,19 +80,9 @@ const defaultSnapshotOf = (tab: TabKey): TabSnapshot => ({
   },
 });
 
-/**
- * FR-3387 pilot: the page is the single owner of URL state and query
- * fetching. The URL seeds the initial tab and snapshot at mount and is a
- * write-only mirror afterwards; each tab's URL state is snapshotted by
- * `useKeyedSnapshot`, restored synchronously on tab change, and its GraphQL
- * variables loaded via `useQueryLoader` (render-as-you-fetch). Children
- * receive `queryRef` + `onReload` and own no URL state.
- */
 const AdminUsersPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
-  // Suspends until the capability is known, so `isNotSupportTotp` is never
-  // built from `undefined` — the load below happens exactly once, on mount.
   const isTOTPSupported = useSuspendedTOTPSupported();
 
   const [queryParams, setQueryParams] = useQueryStates(
@@ -95,12 +90,8 @@ const AdminUsersPage: React.FC = () => {
       tab: tabParser,
       filter: parseAsString,
       order: parseAsString,
-      status: parseAsStringLiteral(['ACTIVE', 'INACTIVE']).withDefault(
-        'ACTIVE',
-      ),
-      activeType: parseAsStringLiteral(['active', 'inactive']).withDefault(
-        'active',
-      ),
+      status: statusParser,
+      activeType: activeTypeParser,
     },
     { history: 'replace' },
   );
@@ -225,23 +216,50 @@ const AdminUsersPage: React.FC = () => {
     setTablePaginationOption(snapshot.tablePaginationOption);
   };
 
-  // First visit (mount / direct URL entry / reload) queries once from the
-  // URL-seeded snapshot. Every tab change afterwards restores its snapshot and
-  // queries inside onTabChange.
   const loadInitialTabFromUrl = useEffectEvent(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const tab =
+      tabParser.parse(searchParams.get('tab') ?? '') ?? tabParser.defaultValue;
+    const defaults = defaultSnapshotOf(tab);
     const snapshot: TabSnapshot = {
-      queryParams: _.omit(queryParams, 'tab'),
-      tablePaginationOption,
+      queryParams: {
+        filter: searchParams.get('filter') ?? defaults.queryParams.filter,
+        order: searchParams.get('order') ?? defaults.queryParams.order,
+        status:
+          statusParser.parse(searchParams.get('status') ?? '') ??
+          defaults.queryParams.status,
+        activeType:
+          activeTypeParser.parse(searchParams.get('activeType') ?? '') ??
+          defaults.queryParams.activeType,
+      },
+      tablePaginationOption: {
+        current:
+          parseInt(searchParams.get('current') ?? '') ||
+          defaults.tablePaginationOption.current,
+        pageSize:
+          parseInt(searchParams.get('pageSize') ?? '') ||
+          defaults.tablePaginationOption.pageSize,
+      },
     };
-    if (currentTab === 'users') {
+    if (tab === 'users') {
       loadUsersQuery(usersVariablesOf(snapshot));
     } else {
       loadCredentialsQuery(credentialsVariablesOf(snapshot));
     }
   });
-  useEffect(() => {
-    loadInitialTabFromUrl();
-  }, []);
+
+  const [popstateTick, setPopstateTick] = useState<number>(0);
+
+  useBrowserPopstateEffect(() => {
+    setPopstateTick((t) => t + 1);
+  });
+
+  useEffect(
+    function loadTabOnMountAndPopstate() {
+      loadInitialTabFromUrl();
+    },
+    [popstateTick],
+  );
 
   const tabItems: CardTabListType[] = [
     {
