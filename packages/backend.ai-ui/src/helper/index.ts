@@ -3,6 +3,8 @@ import { SorterResult } from 'antd/es/table/interface';
 import Big from 'big.js';
 import * as _ from 'lodash-es';
 
+export * from './astryxTagVariant';
+
 export function transformSorterToOrderString<T = any>(
   sorter: SorterResult<T> | Array<SorterResult<T>>,
 ) {
