@@ -11,9 +11,10 @@ import { RoleFormModalFragment$key } from '../__generated__/RoleFormModalFragmen
 import { RoleFormModalPermissionMatrixQuery } from '../__generated__/RoleFormModalPermissionMatrixQuery.graphql';
 import { RoleFormModalResourceGroupQuery } from '../__generated__/RoleFormModalResourceGroupQuery.graphql';
 import { RoleFormModalUpdateMutation } from '../__generated__/RoleFormModalUpdateMutation.graphql';
+import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { DeleteOutlined } from '@ant-design/icons';
-import { App, Button, Checkbox, Form, Input, type SelectProps } from 'antd';
+import { Button, Checkbox, Form, Input, type SelectProps } from 'antd';
 import {
   BAIAdminContainerRegistrySelect,
   BAIAdminModelServiceSelect,
@@ -227,8 +228,7 @@ const ScopeRow: React.FC<ScopeRowProps> = ({
   const { t } = useTranslation();
   const form = Form.useFormInstance();
   const scopeType = Form.useWatch(['scopes', name, 'scopeType'], form) as
-    | RBACElementType
-    | undefined;
+    RBACElementType | undefined;
 
   return (
     <BAIFlex direction="row" gap="xs" align="start" style={{ width: '100%' }}>

@@ -4,10 +4,11 @@
  */
 import { AgentLifeCycleControlModalFragment$key } from '../__generated__/AgentLifeCycleControlModalFragment.graphql';
 import { AgentLifeCycleControlModalRefetchQuery } from '../__generated__/AgentLifeCycleControlModalRefetchQuery.graphql';
+import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { theme } from '../theme-shim';
-import { App, Typography } from 'antd';
+import { Typography } from 'antd';
 import {
   BAIFlex,
   BAIModal,

@@ -1,9 +1,10 @@
 import { BAIDeactivateArtifactsModalArtifactsFragment$key } from '../../__generated__/BAIDeactivateArtifactsModalArtifactsFragment.graphql';
 import { BAIDeactivateArtifactsModalDeleteArtifactsMutation } from '../../__generated__/BAIDeactivateArtifactsModalDeleteArtifactsMutation.graphql';
+import { App } from '../../app-shim';
 import { toLocalId } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
-import { App, Modal, Typography, type ModalProps } from 'antd';
+import { Modal, Typography, type ModalProps } from 'antd';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
 export type BAIDeactivateArtifactsModalArtifactsFragmentKey =

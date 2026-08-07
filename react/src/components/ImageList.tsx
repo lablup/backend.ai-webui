@@ -7,6 +7,7 @@ import {
   ImageListQuery$data,
   ImageListQuery$variables,
 } from '../__generated__/ImageListQuery.graphql';
+import { App } from '../app-shim';
 import { getImageFullName } from '../helper';
 import { useBackendAIImageMetaData } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -25,7 +26,7 @@ import {
   VerticalAlignBottomOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { App, Button, Tag, Tooltip, Typography } from 'antd';
+import { Button, Tag, Tooltip, Typography } from 'antd';
 import type { ColumnType } from 'antd/es/table';
 import {
   filterOutEmpty,

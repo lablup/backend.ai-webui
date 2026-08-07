@@ -8,6 +8,7 @@ import {
   CustomizedImageListQuery$data,
 } from '../__generated__/CustomizedImageListQuery.graphql';
 import { CustomizedImageListUntagMutation } from '../__generated__/CustomizedImageListUntagMutation.graphql';
+import { App } from '../app-shim';
 import TableColumnsSettingModal from '../components/TableColumnsSettingModal';
 import { getImageFullName, localeCompare } from '../helper';
 import {
@@ -26,7 +27,7 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { App, Button, Input, Typography } from 'antd';
+import { Button, Input, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import type { ColumnsType, ColumnType } from 'antd/es/table';
 import {

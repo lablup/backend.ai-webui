@@ -5,9 +5,10 @@
 import { ProjectAdminSettingModalAssignMutation } from '../__generated__/ProjectAdminSettingModalAssignMutation.graphql';
 import { ProjectAdminSettingModalQuery } from '../__generated__/ProjectAdminSettingModalQuery.graphql';
 import { ProjectAdminSettingModalRevokeMutation } from '../__generated__/ProjectAdminSettingModalRevokeMutation.graphql';
+import { App } from '../app-shim';
 import { useWebUINavigate } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { Alert, App, Form, FormInstance, Tooltip } from 'antd';
+import { Alert, Form, FormInstance, Tooltip } from 'antd';
 import {
   BAIButton,
   BAIFlex,

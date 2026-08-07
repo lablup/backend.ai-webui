@@ -2,9 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { message } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { Form, Input, message, Alert, type FormInstance } from 'antd';
+import { Form, Input, Alert, type FormInstance } from 'antd';
 import {
   BAIModal,
   BAIModalProps,
@@ -26,7 +27,6 @@ const SignoutModal: React.FC<SignoutModalProps> = ({
   const formRef = useRef<FormInstance>(null);
   const { t } = useTranslation();
   const { getErrorMessage } = useErrorMessageResolver();
-  const [messageApi, contextHolder] = message.useMessage();
   const baiClient = useSuspendedBackendaiClient();
   const signoutMutation = useTanMutation({
     mutationFn: (values: { email: string; password: string }) => {
@@ -48,7 +48,7 @@ const SignoutModal: React.FC<SignoutModalProps> = ({
               document.dispatchEvent(event);
             },
             onError: (e) => {
-              messageApi.open({
+              message.open({
                 type: 'error',
                 content: getErrorMessage(e),
               });
@@ -59,76 +59,73 @@ const SignoutModal: React.FC<SignoutModalProps> = ({
       .catch(() => {});
   };
   return (
-    <>
-      <BAIModal
-        title={t('login.LeaveService')}
-        centered
-        width={450}
-        open={open}
-        onOk={handleOk}
-        okText={t('login.LeaveService')}
-        okButtonProps={{ danger: true }}
-        confirmLoading={signoutMutation.isPending}
-        onCancel={() => {
-          onRequestClose();
-        }}
-        {...modalProps}
+    <BAIModal
+      title={t('login.LeaveService')}
+      centered
+      width={450}
+      open={open}
+      onOk={handleOk}
+      okText={t('login.LeaveService')}
+      okButtonProps={{ danger: true }}
+      confirmLoading={signoutMutation.isPending}
+      onCancel={() => {
+        onRequestClose();
+      }}
+      {...modalProps}
+    >
+      <Form
+        ref={formRef}
+        layout="vertical"
+        labelCol={{ span: 6 }}
+        disabled={signoutMutation.isPending}
       >
-        <Form
-          ref={formRef}
-          layout="vertical"
-          labelCol={{ span: 6 }}
-          disabled={signoutMutation.isPending}
+        <Form.Item name="alert">
+          <Alert title={t('login.DescConfirmLeave')} type="warning" />
+        </Form.Item>
+        <Form.Item
+          name="email"
+          label={t('general.E-Mail')}
+          required
+          rules={[
+            () => ({
+              validator(_, value) {
+                if (!value) {
+                  return Promise.reject(
+                    new Error(t('webui.menu.InvalidBlankEmail')),
+                  );
+                } else if (value !== baiClient.email) {
+                  return Promise.reject(
+                    new Error(t('webui.menu.DisMatchUserEmail')),
+                  );
+                }
+                return Promise.resolve();
+              },
+            }),
+          ]}
         >
-          <Form.Item name="alert">
-            <Alert title={t('login.DescConfirmLeave')} type="warning" />
-          </Form.Item>
-          <Form.Item
-            name="email"
-            label={t('general.E-Mail')}
-            required
-            rules={[
-              () => ({
-                validator(_, value) {
-                  if (!value) {
-                    return Promise.reject(
-                      new Error(t('webui.menu.InvalidBlankEmail')),
-                    );
-                  } else if (value !== baiClient.email) {
-                    return Promise.reject(
-                      new Error(t('webui.menu.DisMatchUserEmail')),
-                    );
-                  }
-                  return Promise.resolve();
-                },
-              }),
-            ]}
-          >
-            <Input autoComplete="off" />
-          </Form.Item>
-          <Form.Item
-            name="password"
-            label={t('general.Password')}
-            required
-            rules={[
-              () => ({
-                validator(_, value) {
-                  if (!value) {
-                    return Promise.reject(
-                      new Error(t('webui.menu.InvalidBlankPassword')),
-                    );
-                  }
-                  return Promise.resolve();
-                },
-              }),
-            ]}
-          >
-            <Input.Password />
-          </Form.Item>
-        </Form>
-      </BAIModal>
-      {contextHolder}
-    </>
+          <Input autoComplete="off" />
+        </Form.Item>
+        <Form.Item
+          name="password"
+          label={t('general.Password')}
+          required
+          rules={[
+            () => ({
+              validator(_, value) {
+                if (!value) {
+                  return Promise.reject(
+                    new Error(t('webui.menu.InvalidBlankPassword')),
+                  );
+                }
+                return Promise.resolve();
+              },
+            }),
+          ]}
+        >
+          <Input.Password />
+        </Form.Item>
+      </Form>
+    </BAIModal>
   );
 };
 

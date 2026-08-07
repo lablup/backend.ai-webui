@@ -2,9 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
-import { App, Checkbox, Form, InputNumber } from 'antd';
+import { Checkbox, Form, InputNumber } from 'antd';
 import { FormInstance } from 'antd/lib';
 import {
   BAIQuestionIconWithTooltip,

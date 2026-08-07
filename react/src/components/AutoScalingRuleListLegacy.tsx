@@ -4,12 +4,13 @@
  */
 import { AutoScalingRuleEditorModalLegacyFragment$key } from '../__generated__/AutoScalingRuleEditorModalLegacyFragment.graphql';
 import { AutoScalingRuleListLegacyDeleteMutation } from '../__generated__/AutoScalingRuleListLegacyDeleteMutation.graphql';
+import { App } from '../app-shim';
 import { theme } from '../theme-shim';
 import AutoScalingRuleEditorModalLegacy, {
   COMPARATOR_LABELS,
 } from './AutoScalingRuleEditorModalLegacy';
 import { DeleteFilled } from '@ant-design/icons';
-import { App, Button, Tag, Tooltip, Typography } from 'antd';
+import { Button, Tag, Tooltip, Typography } from 'antd';
 import {
   BAIButton,
   BAICard,

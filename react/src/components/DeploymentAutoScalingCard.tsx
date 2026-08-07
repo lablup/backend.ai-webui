@@ -9,6 +9,7 @@ import {
 } from '../__generated__/DeploymentAutoScalingCardListQuery.graphql';
 import { DeploymentAutoScalingCardPresetsQuery } from '../__generated__/DeploymentAutoScalingCardPresetsQuery.graphql';
 import { DeploymentAutoScalingCard_deployment$key } from '../__generated__/DeploymentAutoScalingCard_deployment.graphql';
+import { App } from '../app-shim';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -16,7 +17,7 @@ import { theme } from '../theme-shim';
 import AutoScalingRuleEditorModal from './AutoScalingRuleEditorModal';
 import AutoScalingRuleListNodes from './AutoScalingRuleListNodes';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { App, Skeleton, Tooltip } from 'antd';
+import { Skeleton, Tooltip } from 'antd';
 import {
   BAIButton,
   BAICard,

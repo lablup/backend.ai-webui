@@ -2,8 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
 import { useAnonymousBackendaiClient } from '../hooks';
-import { App, Form, Input } from 'antd';
+import { Form, Input } from 'antd';
 import { BAIButton, BAIFlex, BAIModal } from 'backend.ai-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';

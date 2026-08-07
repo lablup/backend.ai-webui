@@ -4,7 +4,7 @@
  */
 import { DeleteForeverVFolderModalV2Fragment$key } from '../__generated__/DeleteForeverVFolderModalV2Fragment.graphql';
 import { DeleteForeverVFolderModalV2Mutation } from '../__generated__/DeleteForeverVFolderModalV2Mutation.graphql';
-import { App } from 'antd';
+import { App } from '../app-shim';
 import {
   BAIDeleteConfirmModal,
   BAIDeleteConfirmModalProps,

@@ -2,13 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
 import { localeCompare, useBaiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import { theme } from '../theme-shim';
 import { CloseCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import {
-  App,
   Button,
   Descriptions,
   Form,

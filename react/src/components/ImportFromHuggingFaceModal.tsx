@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ImportFromHuggingFaceModalQuery } from '../__generated__/ImportFromHuggingFaceModalQuery.graphql';
+import { App } from '../app-shim';
 import { baiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useSuspenseTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
@@ -16,7 +17,6 @@ import {
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {
-  App,
   Button,
   Card,
   Empty,

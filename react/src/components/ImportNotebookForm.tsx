@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useProjectPath } from '../hooks/useRouteScope';
 import {
@@ -12,7 +13,6 @@ import CopyButton from './Chat/CopyButton';
 import { PrimaryAppOption } from './ComputeSessionNodeItems/SessionActionButtons';
 import { EllipsisOutlined } from '@ant-design/icons';
 import {
-  App,
   Divider,
   Dropdown,
   Form,

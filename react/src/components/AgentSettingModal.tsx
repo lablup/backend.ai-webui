@@ -8,8 +8,9 @@ import {
 } from '../__generated__/AgentSettingModalFragment.graphql';
 import { AgentSettingModalMutation } from '../__generated__/AgentSettingModalMutation.graphql';
 import { AgentSettingModalQuery } from '../__generated__/AgentSettingModalQuery.graphql';
+import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { App, Form, type FormInstance, Switch } from 'antd';
+import { Form, type FormInstance, Switch } from 'antd';
 import {
   BAIAdminResourceGroupSelect,
   BAIModal,

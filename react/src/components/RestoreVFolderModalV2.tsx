@@ -4,8 +4,9 @@
  */
 import { RestoreVFolderModalV2Fragment$key } from '../__generated__/RestoreVFolderModalV2Fragment.graphql';
 import { RestoreVFolderModalV2Mutation } from '../__generated__/RestoreVFolderModalV2Mutation.graphql';
+import { message } from '../app-shim';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { Typography, message } from 'antd';
+import { Typography } from 'antd';
 import {
   BAIModal,
   BAIModalProps,

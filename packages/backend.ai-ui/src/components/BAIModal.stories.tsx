@@ -1,10 +1,10 @@
+import { App } from '../app-shim';
 import BAIButton from './BAIButton';
 import BAIFlex from './BAIFlex';
 import BAIModal from './BAIModal';
 import type { WindowState } from './BAIModal';
 import BAIText from './BAIText';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { App } from 'antd';
 import { useState } from 'react';
 
 /**

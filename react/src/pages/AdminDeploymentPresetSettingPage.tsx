@@ -7,6 +7,7 @@ import type { AdminDeploymentPresetSettingPagePresetQuery } from '../__generated
 import type { AdminDeploymentPresetSettingPageResourceSlotTypesQuery } from '../__generated__/AdminDeploymentPresetSettingPageResourceSlotTypesQuery.graphql';
 import type { AdminDeploymentPresetSettingPageRuntimeVariantsQuery } from '../__generated__/AdminDeploymentPresetSettingPageRuntimeVariantsQuery.graphql';
 import type { AdminDeploymentPresetSettingPageUpdateMutation } from '../__generated__/AdminDeploymentPresetSettingPageUpdateMutation.graphql';
+import { App } from '../app-shim';
 import AdminDeploymentPresetSettingPageContent, {
   type AdminDeploymentPresetFormValue,
   type ModelDefinitionFormValue,
@@ -16,7 +17,7 @@ import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { type RuntimeVariantPresetValueEntry } from '../hooks/useRuntimeParameterSchema';
 import { theme } from '../theme-shim';
-import { App, Form, Typography } from 'antd';
+import { Form, Typography } from 'antd';
 import { BAIFlex, useBAILogger, useMutationWithPromise } from 'backend.ai-ui';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';

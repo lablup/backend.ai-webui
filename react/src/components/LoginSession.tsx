@@ -7,10 +7,10 @@ import type {
   LoginSessionQuery as LoginSessionQueryType,
 } from '../__generated__/LoginSessionQuery.graphql';
 import type { LoginSessionRevokeMutation } from '../__generated__/LoginSessionRevokeMutation.graphql';
+import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import { LogoutOutlined } from '@ant-design/icons';
-import { App } from 'antd';
 import {
   BAIFlex,
   BAIGraphQLPropertyFilter,

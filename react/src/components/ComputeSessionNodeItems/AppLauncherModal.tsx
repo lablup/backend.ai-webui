@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { AppLauncherModalFragment$key } from '../../__generated__/AppLauncherModalFragment.graphql';
+import { App } from '../../app-shim';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import {
   ServicePort,
@@ -21,7 +22,6 @@ import VNCConnectionInfoModal from './VNCConnectionInfoModal';
 import VSCodeDesktopConnectionModal from './VSCodeDesktopConnectionModal';
 import XRDPConnectionInfoModal from './XRDPConnectionInfoModal';
 import {
-  App,
   Checkbox,
   Col,
   Form,
@@ -110,7 +110,9 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
         return;
       });
       const allowedClientIps = openToPublic ? values?.clientIps : undefined;
-      const preferredPort = tryPreferredPort ? values?.preferredPort : undefined;
+      const preferredPort = tryPreferredPort
+        ? values?.preferredPort
+        : undefined;
 
       // Handle special apps that require confirmation before launching (nniboard, mlflow-ui)
       // These apps need to run before tunneling, so show confirmation dialog first

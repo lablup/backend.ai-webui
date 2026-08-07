@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
 import { VFolder } from './VFolderSelect';
 import VFolderTable, {
   AliasMap,
@@ -9,7 +10,7 @@ import VFolderTable, {
   VFolderTableProps,
   vFolderAliasNameRegExp,
 } from './VFolderTable';
-import { App, Form, type FormItemProps, Input } from 'antd';
+import { Form, type FormItemProps, Input } from 'antd';
 import { useEventNotStable } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';

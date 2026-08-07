@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import { announcementQueryOptions } from '../hooks/useSuspenseGetAnnouncement';
@@ -21,7 +22,7 @@ import {
 } from '@ant-design/icons';
 import type { OnMount } from '@monaco-editor/react';
 import { useQueryClient } from '@tanstack/react-query';
-import { App, Button, Dropdown, Skeleton, Tooltip, Typography } from 'antd';
+import { Button, Dropdown, Skeleton, Tooltip, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import {
   BAIModal,

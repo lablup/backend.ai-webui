@@ -6,3 +6,4 @@ export * from './hooks';
 export * from './icons';
 export * from './tests';
 export * from './theme-shim';
+export * from './app-shim';

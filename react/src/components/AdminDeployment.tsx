@@ -9,6 +9,7 @@ import type {
   DeploymentOrderBy,
   DeploymentStatus,
 } from '../__generated__/AdminDeploymentQuery.graphql';
+import { App } from '../app-shim';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
@@ -17,7 +18,7 @@ import BAIRadioGroup from './BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import DeploymentSettingModal from './DeploymentSettingModal';
 import { DeleteFilled } from '@ant-design/icons';
-import { App, Typography } from 'antd';
+import { Typography } from 'antd';
 import {
   BAIDeleteConfirmModal,
   BAIDeploymentTagChips,

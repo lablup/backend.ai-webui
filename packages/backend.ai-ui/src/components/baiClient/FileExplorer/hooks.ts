@@ -1,9 +1,9 @@
+import { App } from '../../../app-shim';
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import { FolderInfoContext } from './BAIFileExplorer';
 import { useQuery } from '@tanstack/react-query';
-import { App } from 'antd';
 import { RcFile } from 'antd/es/upload';
 import * as _ from 'lodash-es';
 import { use, useState } from 'react';

@@ -3,9 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { TensorboardPathModalFragment$key } from '../../__generated__/TensorboardPathModalFragment.graphql';
+import { App } from '../../app-shim';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useBackendAIAppLauncher } from '../../hooks/useBackendAIAppLauncher';
-import { App, Form, Input, Typography } from 'antd';
+import { Form, Input, Typography } from 'antd';
 import {
   BAIButton,
   BAIFlex,

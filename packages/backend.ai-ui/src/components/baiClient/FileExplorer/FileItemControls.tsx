@@ -1,3 +1,4 @@
+import { App } from '../../../app-shim';
 import { convertToBinaryUnit, initiateDownload } from '../../../helper';
 import { useTanMutation } from '../../../helper/reactQueryAlias';
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
@@ -8,7 +9,7 @@ import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useCon
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import { FolderInfoContext } from './BAIFileExplorer';
 import { DeleteFilled, MoreOutlined } from '@ant-design/icons';
-import { App, Dropdown, Tooltip } from 'antd';
+import { Dropdown, Tooltip } from 'antd';
 import { DownloadIcon, EditIcon } from 'lucide-react';
 import { use, useState } from 'react';
 

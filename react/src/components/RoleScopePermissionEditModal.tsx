@@ -15,6 +15,7 @@ import {
   RoleScopePermissionEditModal_scopesFragment$data,
   RoleScopePermissionEditModal_scopesFragment$key,
 } from '../__generated__/RoleScopePermissionEditModal_scopesFragment.graphql';
+import { App } from '../app-shim';
 import { reasonMessage } from '../helper/mutationError';
 import {
   applyBulkPermissionCells,
@@ -22,7 +23,7 @@ import {
   type PermissionCellDiff,
 } from '../helper/rbacPermissionDiff';
 import { theme } from '../theme-shim';
-import { App, Empty, Form, type FormInstance, Tooltip, Typography } from 'antd';
+import { Empty, Form, type FormInstance, Tooltip, Typography } from 'antd';
 import {
   BAIBulkEditFormItem,
   BAIBulkErrorModal,

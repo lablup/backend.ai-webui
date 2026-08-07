@@ -12,6 +12,7 @@ import {
   UserRoleV2,
   UserStatusV2,
 } from '../__generated__/UserSettingModalBulkCreateMutation.graphql';
+import { App } from '../app-shim';
 import {
   buildDynamicColumnAliases,
   CanonicalUserColumn,
@@ -42,7 +43,6 @@ import {
   ReloadOutlined,
 } from '@ant-design/icons';
 import {
-  App,
   Checkbox,
   Empty,
   Form,

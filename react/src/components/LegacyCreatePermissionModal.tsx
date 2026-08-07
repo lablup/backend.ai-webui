@@ -10,8 +10,9 @@ import {
 import { LegacyCreatePermissionModalPermissionMatrixQuery } from '../__generated__/LegacyCreatePermissionModalPermissionMatrixQuery.graphql';
 import { LegacyCreatePermissionModalUpdateMutation } from '../__generated__/LegacyCreatePermissionModalUpdateMutation.graphql';
 import { LegacyCreatePermissionModal_roleScopeFragment$key } from '../__generated__/LegacyCreatePermissionModal_roleScopeFragment.graphql';
+import { App } from '../app-shim';
 import { RBAC_ELEMENT_TYPES, ScopeIdSelect } from './RoleFormModal';
-import { App, Form } from 'antd';
+import { Form } from 'antd';
 import {
   BAIModal,
   BAIModalProps,

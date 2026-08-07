@@ -4,7 +4,6 @@ import BAIButton from '../BAIButton';
 import BAIFlex from '../BAIFlex';
 import BAIActivateArtifactsModal from './BAIActivateArtifactsModal';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { App } from 'antd';
 import { useState } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -90,13 +89,7 @@ Mutation is mocked and will execute successfully, closing the modal on completio
       },
     },
   },
-  decorators: [
-    (Story) => (
-      <App>
-        <Story />
-      </App>
-    ),
-  ],
+  decorators: [(Story) => <Story />],
 };
 
 export default meta;

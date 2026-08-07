@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
 import { preserveDotStartCase, getImageFullName } from '../helper';
 import {
   useBackendAIImageMetaData,
@@ -31,7 +32,6 @@ import {
   Table,
   Form,
   Button,
-  App,
 } from 'antd';
 import { BAIAlert, BAICard, BAIDoubleTag, BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';

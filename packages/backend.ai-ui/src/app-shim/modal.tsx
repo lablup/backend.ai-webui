@@ -51,7 +51,19 @@ export interface ModalShimFuncProps {
   okText?: ReactNode;
   cancelText?: ReactNode;
   okType?: 'primary' | 'danger' | 'default' | 'dashed' | 'link' | 'text';
-  okButtonProps?: { danger?: boolean; disabled?: boolean };
+  /**
+   * `danger`/`disabled` are honoured. `loading` is accepted and ignored:
+   * antd itself only reflects a *static* `loading` here (there is no
+   * `.update()` path in this repo), and the shim derives ok-button loading
+   * from the pending `onOk` promise instead.
+   */
+  okButtonProps?: { danger?: boolean; disabled?: boolean; loading?: unknown };
+  /** `disabled` is honoured on the cancel button; other keys are ignored. */
+  cancelButtonProps?: {
+    danger?: boolean;
+    disabled?: boolean;
+    loading?: unknown;
+  };
   /** May return a promise — see the promise semantics note above. */
   onOk?: () => unknown;
   onCancel?: () => unknown;
@@ -67,12 +79,17 @@ export interface ModalShimFuncProps {
    * - `maskClosable`/`keyboard` — dismissal is governed by Dialog `purpose`;
    *   the shim always uses antd's confirm-family defaults (Escape yes,
    *   backdrop no).
+   * - `closable` — the AlertDialog branch never has a header X; the Dialog
+   *   branch always has one (DialogHeader). Either way Escape already
+   *   cancels (see `maskClosable`/`keyboard` above), so a header-X toggle
+   *   cannot enforce anything Escape does not already allow.
    */
   centered?: boolean;
   zIndex?: number;
   icon?: ReactNode;
   maskClosable?: boolean;
   keyboard?: boolean;
+  closable?: boolean;
 }
 
 /** antd's confirm return: an imperative handle that is also thenable. */
@@ -293,6 +310,7 @@ const AppShimModalTask: React.FC<{ task: ModalTask }> = ({ task }) => {
                 <Button
                   label={cancelLabel}
                   variant="secondary"
+                  isDisabled={options.cancelButtonProps?.disabled}
                   onClick={() => runCancel(task)}
                 />
               )}

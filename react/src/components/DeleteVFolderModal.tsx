@@ -4,9 +4,10 @@
  */
 import { DeleteVFolderModalFragment$key } from '../__generated__/DeleteVFolderModalFragment.graphql';
 import { VFolderNodesFragment$data } from '../__generated__/VFolderNodesFragment.graphql';
+import { message } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { Typography, message } from 'antd';
+import { Typography } from 'antd';
 import {
   BAIFlex,
   BAIListAlert,

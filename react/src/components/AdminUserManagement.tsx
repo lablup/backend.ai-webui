@@ -9,6 +9,7 @@ import {
   UserV2OrderBy,
 } from '../__generated__/AdminUserManagementQuery.graphql';
 import { AdminUserManagementUpdateUserMutation } from '../__generated__/AdminUserManagementUpdateUserMutation.graphql';
+import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTOTPSupported } from '../hooks/backendai';
@@ -28,7 +29,7 @@ import {
   InfoCircleOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { App, Button, Dropdown, Space } from 'antd';
+import { Button, Dropdown, Space } from 'antd';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,

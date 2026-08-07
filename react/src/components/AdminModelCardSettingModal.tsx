@@ -5,6 +5,7 @@
 import type { AdminModelCardSettingModalCreateMutation } from '../__generated__/AdminModelCardSettingModalCreateMutation.graphql';
 import type { AdminModelCardSettingModalFragment$key } from '../__generated__/AdminModelCardSettingModalFragment.graphql';
 import type { AdminModelCardSettingModalUpdateMutation } from '../__generated__/AdminModelCardSettingModalUpdateMutation.graphql';
+import { App } from '../app-shim';
 import { useCurrentDomainValue } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useSwitchProject } from '../hooks/useRouteScope';
@@ -13,7 +14,6 @@ import FolderLink from './FolderLink';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
 import {
   Alert,
-  App,
   Form,
   type FormInstance,
   Input,

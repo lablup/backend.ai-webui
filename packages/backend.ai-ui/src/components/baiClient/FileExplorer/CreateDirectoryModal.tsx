@@ -1,15 +1,9 @@
+import { App } from '../../../app-shim';
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { FolderInfoContext } from './BAIFileExplorer';
 import { useMutation } from '@tanstack/react-query';
-import {
-  App,
-  Form,
-  Input,
-  Modal,
-  type FormInstance,
-  type ModalProps,
-} from 'antd';
+import { Form, Input, Modal, type FormInstance, type ModalProps } from 'antd';
 import React, { use, useRef } from 'react';
 
 // TODO: swap to BAIModal (already available in this package) instead of antd's Modal

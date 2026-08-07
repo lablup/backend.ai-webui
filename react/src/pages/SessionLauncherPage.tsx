@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
 import DatePickerISO from '../components/DatePickerISO';
 import EnvVarFormList, {
   sanitizeSensitiveEnv,
@@ -55,7 +56,6 @@ import {
 } from '@ant-design/icons';
 import { useDebounceFn, useToggle } from 'ahooks';
 import {
-  App,
   Button,
   Card,
   Checkbox,

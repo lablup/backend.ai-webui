@@ -4,12 +4,13 @@
  */
 import { EditableSessionNameFragment$key } from '../../__generated__/EditableSessionNameFragment.graphql';
 import { EditableSessionNameRefetchQuery } from '../../__generated__/EditableSessionNameRefetchQuery.graphql';
+import { App } from '../../app-shim';
 import { useBaiSignedRequestWithPromise } from '../../helper';
 import { useCurrentUserInfo } from '../../hooks/backendai';
 import { useTanMutation } from '../../hooks/reactQueryAlias';
 import { useValidateSessionName } from '../../hooks/useValidateSessionName';
 import { theme } from '../../theme-shim';
-import { Form, Input, App, type GetProps, Typography } from 'antd';
+import { Form, Input, type GetProps, Typography } from 'antd';
 import { CornerDownLeftIcon } from 'lucide-react';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';

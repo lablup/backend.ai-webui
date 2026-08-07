@@ -8,6 +8,7 @@ import {
   ModelRevisionOrderBy,
 } from '../__generated__/DeploymentRevisionHistoryTabListQuery.graphql';
 import type { DeploymentRevisionHistoryTab_deployment$key } from '../__generated__/DeploymentRevisionHistoryTab_deployment.graphql';
+import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { theme } from '../theme-shim';
@@ -19,7 +20,7 @@ import {
   MoreOutlined,
   PlayCircleOutlined,
 } from '@ant-design/icons';
-import { App, Dropdown, Popconfirm, Space, Typography } from 'antd';
+import { Dropdown, Popconfirm, Space, Typography } from 'antd';
 import {
   type BAIColumnType,
   BAIButton,

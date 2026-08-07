@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { modal } from '../../app-shim';
 import { buildPath, MENU_KEY_TO_SCOPE_FEATURE } from '../../helper/pathBuilder';
 import {
   useCurrentDomainValue,
@@ -34,7 +35,7 @@ import UserDropdownMenu from '../UserDropdownMenu';
 import WEBUIHelpButton from '../WEBUIHelpButton';
 import WebUIThemeToggleButton from '../WebUIThemeToggleButton';
 import { useSessionStorageState } from 'ahooks';
-import { Button, Modal, Typography, Grid, Divider } from 'antd';
+import { Button, Typography, Grid, Divider } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIFlex, BAIFlexProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -116,8 +117,6 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
     useState(false);
   const isProjectChanging =
     isPendingProjectChanged || isConfirmingProjectSwitch;
-
-  const [modal, modalContextHolder] = Modal.useModal();
 
   const applyProjectChange = (projectInfo: {
     projectId: string;
@@ -316,7 +315,6 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
           }}
         />
       </BAIFlex>
-      {modalContextHolder}
     </BAIFlex>
   );
 };

@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import {
   InvitationItem,
@@ -10,7 +11,7 @@ import {
 import { theme } from '../theme-shim';
 import VFolderPermissionCell from './VFolderPermissionCell';
 import { FolderOutlined } from '@ant-design/icons';
-import { List, Typography, Descriptions, App } from 'antd';
+import { List, Typography, Descriptions } from 'antd';
 import {
   BAIButton,
   BAIFlex,

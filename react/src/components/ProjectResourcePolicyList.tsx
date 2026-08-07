@@ -8,6 +8,7 @@ import {
   ProjectResourcePolicyListQuery$data,
 } from '../__generated__/ProjectResourcePolicyListQuery.graphql';
 import { ProjectResourcePolicySettingModalFragment$key } from '../__generated__/ProjectResourcePolicySettingModalFragment.graphql';
+import { App } from '../app-shim';
 import {
   bytesToGB,
   localeCompare,
@@ -18,7 +19,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import ProjectResourcePolicySettingModal from './ProjectResourcePolicySettingModal';
 import { DeleteFilled, ReloadOutlined } from '@ant-design/icons';
-import { App, Button, Tooltip } from 'antd';
+import { Button, Tooltip } from 'antd';
 import type { ColumnType } from 'antd/es/table';
 import {
   filterOutEmpty,

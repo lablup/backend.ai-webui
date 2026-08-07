@@ -1,3 +1,4 @@
+import { App } from '../../../app-shim';
 import { initiateDownload } from '../../../helper';
 import { useTanMutation } from '../../../helper/reactQueryAlias';
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
@@ -21,7 +22,7 @@ import {
   UploadOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { App, Button, Dropdown, Grid, Tooltip, Upload } from 'antd';
+import { Button, Dropdown, Grid, Tooltip, Upload } from 'antd';
 import { createStyles } from 'antd-style';
 import type { RcFile } from 'antd/es/upload';
 import { DownloadIcon } from 'lucide-react';

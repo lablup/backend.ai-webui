@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
@@ -10,16 +11,7 @@ import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { theme } from '../theme-shim';
 import StorageSelect from './StorageSelect';
-import {
-  App,
-  Divider,
-  Form,
-  Input,
-  Radio,
-  Skeleton,
-  Switch,
-  Tooltip,
-} from 'antd';
+import { Divider, Form, Input, Radio, Skeleton, Switch, Tooltip } from 'antd';
 import { createStyles } from 'antd-style';
 import { FormInstance } from 'antd/lib';
 import {

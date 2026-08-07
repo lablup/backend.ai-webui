@@ -10,6 +10,7 @@ import {
   RoleFilter,
   RoleOrderBy,
 } from '../__generated__/RBACManagementPageQuery.graphql';
+import { App } from '../app-shim';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import RoleDetailDrawer from '../components/RoleDetailDrawer';
 import RoleFormModal, { RBAC_ELEMENT_TYPES } from '../components/RoleFormModal';
@@ -21,7 +22,6 @@ import { convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { DeleteFilled } from '@ant-design/icons';
-import { App } from 'antd';
 import {
   BAIButton,
   BAICard,

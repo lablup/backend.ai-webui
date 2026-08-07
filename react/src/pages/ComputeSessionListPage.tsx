@@ -7,6 +7,7 @@ import {
   ComputeSessionListPageQuery$data,
   ComputeSessionListPageQuery$variables,
 } from '../__generated__/ComputeSessionListPageQuery.graphql';
+import { App } from '../app-shim';
 import ActionItemContent from '../components/ActionItemContent';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIRadioGroup from '../components/BAIRadioGroup';
@@ -28,7 +29,6 @@ import { useProjectPath } from '../hooks/useRouteScope';
 import { theme } from '../theme-shim';
 import {
   Alert,
-  App,
   Badge,
   Button,
   Col,

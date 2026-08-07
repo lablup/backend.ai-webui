@@ -2,13 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { ShellScriptType } from '../pages/UserSettingsPage';
 import BAICodeEditor from './BAICodeEditor';
 import { DeleteFilled, DownOutlined } from '@ant-design/icons';
 import {
-  App,
   Button,
   Dropdown,
   Form,

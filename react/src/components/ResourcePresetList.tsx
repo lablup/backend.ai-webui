@@ -8,11 +8,12 @@ import {
   ResourcePresetListQuery$data,
 } from '../__generated__/ResourcePresetListQuery.graphql';
 import { ResourcePresetSettingModalFragment$key } from '../__generated__/ResourcePresetSettingModalFragment.graphql';
+import { App } from '../app-shim';
 import { localeCompare } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import ResourcePresetSettingModal from './ResourcePresetSettingModal';
 import { ReloadOutlined, DeleteFilled } from '@ant-design/icons';
-import { Tooltip, Button, App, TableColumnsType } from 'antd';
+import { Tooltip, Button, TableColumnsType } from 'antd';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,

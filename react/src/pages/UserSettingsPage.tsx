@@ -4,6 +4,7 @@
  */
 import type { LoginHistoryQuery as LoginHistoryQueryType } from '../__generated__/LoginHistoryQuery.graphql';
 import type { LoginSessionQuery as LoginSessionQueryType } from '../__generated__/LoginSessionQuery.graphql';
+import { App } from '../app-shim';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import ErrorLogList from '../components/ErrorLogList';
 import LoginHistory, { LoginHistoryQuery } from '../components/LoginHistory';
@@ -26,7 +27,7 @@ import {
 import { useThemeMode } from '../hooks/useThemeMode';
 import { SettingOutlined } from '@ant-design/icons';
 import { useSessionStorageState, useToggle } from 'ahooks';
-import { App, Button, Skeleton, Typography } from 'antd';
+import { Button, Skeleton, Typography } from 'antd';
 import { BAICard, filterOutEmpty } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { parseAsStringLiteral } from 'nuqs';

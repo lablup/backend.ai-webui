@@ -1,9 +1,10 @@
+import { App } from '../../../app-shim';
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
 import BAIModal, { type BAIModalProps } from '../../BAIModal';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { FolderInfoContext } from './BAIFileExplorer';
 import { useMutation } from '@tanstack/react-query';
-import { App, Form, Input, type FormInstance } from 'antd';
+import { Form, Input, type FormInstance } from 'antd';
 import * as _ from 'lodash-es';
 import React, { use, useRef } from 'react';
 

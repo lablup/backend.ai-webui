@@ -1,10 +1,11 @@
+import { App } from '../../../app-shim';
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
 import BAIDeleteConfirmModal from '../../BAIDeleteConfirmModal';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import { FolderInfoContext } from './BAIFileExplorer';
 import { useMutation } from '@tanstack/react-query';
-import { App, type ModalProps } from 'antd';
+import { type ModalProps } from 'antd';
 import * as _ from 'lodash-es';
 import { use } from 'react';
 

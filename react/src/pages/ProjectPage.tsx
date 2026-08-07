@@ -11,6 +11,7 @@ import {
   ProjectPageQuery$data,
   ProjectPageQuery$variables,
 } from '../__generated__/ProjectPageQuery.graphql';
+import { App } from '../app-shim';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import ProjectAdminSettingModal, {
   ProjectAdminSettingQuery,
@@ -21,7 +22,7 @@ import { useCSVExport } from '../hooks/useCSVExport';
 import { theme } from '../theme-shim';
 import { DeleteFilled } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { App, Tooltip } from 'antd';
+import { Tooltip } from 'antd';
 import {
   availableProjectSorterValues,
   BAIButton,

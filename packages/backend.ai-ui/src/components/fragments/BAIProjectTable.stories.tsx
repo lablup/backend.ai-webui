@@ -12,7 +12,6 @@ import BAIProjectTable, {
   availableProjectSorterValues,
 } from './BAIProjectTable';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { App } from 'antd';
 import { useState } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -104,17 +103,15 @@ For other props (loading, pagination, etc.), refer to [BAITable](?path=/docs/tab
       const baiLocale = locales[locale] || locales.en;
 
       return (
-        <App>
-          <BAIConfigProvider
-            locale={baiLocale}
-            clientPromise={mockClientPromise}
-            anonymousClientFactory={mockAnonymousClientFactory}
-          >
-            <BAIMetaDataProvider deviceMetaData={mockDeviceMetaData}>
-              <Story />
-            </BAIMetaDataProvider>
-          </BAIConfigProvider>
-        </App>
+        <BAIConfigProvider
+          locale={baiLocale}
+          clientPromise={mockClientPromise}
+          anonymousClientFactory={mockAnonymousClientFactory}
+        >
+          <BAIMetaDataProvider deviceMetaData={mockDeviceMetaData}>
+            <Story />
+          </BAIMetaDataProvider>
+        </BAIConfigProvider>
       );
     },
   ],

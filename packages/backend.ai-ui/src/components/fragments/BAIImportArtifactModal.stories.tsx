@@ -4,7 +4,6 @@ import BAIButton from '../BAIButton';
 import BAIFlex from '../BAIFlex';
 import BAIImportArtifactModal from './BAIImportArtifactModal';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { App } from 'antd';
 import { useState } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { MemoryRouter } from 'react-router-dom';
@@ -127,9 +126,7 @@ Mutation is mocked and will execute successfully, closing the modal on completio
   decorators: [
     (Story) => (
       <MemoryRouter>
-        <App>
-          <Story />
-        </App>
+        <Story />
       </MemoryRouter>
     ),
   ],

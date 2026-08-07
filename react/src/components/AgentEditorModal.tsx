@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
 import {
   AgentEndpointBinding,
   AgentProfile,
@@ -13,7 +14,6 @@ import {
   useAIAgent,
 } from '../hooks/useAIAgent';
 import {
-  App,
   Alert,
   Divider,
   Form,

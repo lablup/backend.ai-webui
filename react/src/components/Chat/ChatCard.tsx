@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ChatCardQuery } from '../../__generated__/ChatCardQuery.graphql';
+import { App } from '../../app-shim';
 import { useTanQuery } from '../../hooks/reactQueryAlias';
 import { useAIAgent } from '../../hooks/useAIAgent';
 import { theme } from '../../theme-shim';
@@ -27,7 +28,7 @@ import {
   streamText,
   wrapLanguageModel,
 } from 'ai';
-import { Alert, App, Card, type CardProps } from 'antd';
+import { Alert, Card, type CardProps } from 'antd';
 import { createStyles } from 'antd-style';
 import {
   BAILogger,

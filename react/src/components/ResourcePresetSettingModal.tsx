@@ -12,11 +12,12 @@ import {
   ResourcePresetSettingModalModifyByIdMutation,
 } from '../__generated__/ResourcePresetSettingModalModifyByIdMutation.graphql';
 import { ResourcePresetSettingModalModifyByNameMutation } from '../__generated__/ResourcePresetSettingModalModifyByNameMutation.graphql';
+import { App } from '../app-shim';
 import { convertToBinaryUnit } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { App, Form, type FormInstance, Input, InputNumber } from 'antd';
+import { Form, type FormInstance, Input, InputNumber } from 'antd';
 import {
   BAIDynamicUnitInputNumber,
   BAIModal,

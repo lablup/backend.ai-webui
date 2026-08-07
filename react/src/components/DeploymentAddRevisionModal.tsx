@@ -19,6 +19,7 @@ import type {
   DeploymentAddRevisionModal_revisionSource$data,
   DeploymentAddRevisionModal_revisionSource$key,
 } from '../__generated__/DeploymentAddRevisionModal_revisionSource.graphql';
+import { App } from '../app-shim';
 import { convertToBinaryUnit } from '../helper';
 import {
   formatShellCommand,
@@ -54,7 +55,6 @@ import VFolderTableFormItem, {
 import { InfoCircleOutlined, ReloadOutlined } from '@ant-design/icons';
 import {
   Alert,
-  App,
   Button,
   Checkbox,
   Collapse,

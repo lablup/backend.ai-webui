@@ -1,10 +1,11 @@
+import { App } from '../../app-shim';
 import { useEventNotStable } from '../../hooks/useEventNotStable';
 import { theme } from '../../theme-shim';
 import BAIButton from '../BAIButton';
 import BAILink from '../BAILink';
 import BAIText from '../BAIText';
 import { MoreOutlined } from '@ant-design/icons';
-import { App, Dropdown, Popconfirm, Tooltip } from 'antd';
+import { Dropdown, Popconfirm, Tooltip } from 'antd';
 import type { GlobalToken, MenuProps, PopconfirmProps } from 'antd';
 import { createStyles } from 'antd-style';
 import React, { useEffect, useRef, useState, useTransition } from 'react';

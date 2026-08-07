@@ -7,6 +7,7 @@ import {
   AdminComputeSessionListPageQuery$data,
   AdminComputeSessionListPageQuery$variables,
 } from '../__generated__/AdminComputeSessionListPageQuery.graphql';
+import { App } from '../app-shim';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
@@ -22,7 +23,7 @@ import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginati
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
 import { theme } from '../theme-shim';
-import { Alert, App, Badge, Button, Tooltip } from 'antd';
+import { Alert, Badge, Button, Tooltip } from 'antd';
 import {
   BAIAdminProjectSelect,
   BAIFlex,

@@ -2,14 +2,19 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
 import { loadMonacoEditor } from '../helper/monacoEditor';
 import { useTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useThemeMode } from '../hooks/useThemeMode';
 import { theme } from '../theme-shim';
+import { Button } from '@astryxdesign/core/Button';
+import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog';
+import { Layout, LayoutContent, LayoutFooter } from '@astryxdesign/core/Layout';
+import { HStack } from '@astryxdesign/core/Stack';
 import type { Monaco, OnMount } from '@monaco-editor/react';
 import { useQueryClient } from '@tanstack/react-query';
-import { Skeleton, App } from 'antd';
+import { Skeleton } from 'antd';
 import { RcFile } from 'antd/es/upload';
 import {
   BAIFlex,
@@ -21,15 +26,8 @@ import {
   useErrorMessageResolver,
   BAIText,
   BAIAlert,
-  BAIButton,
 } from 'backend.ai-ui';
-import React, {
-  Suspense,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const MonacoEditor = React.lazy(() =>
@@ -98,7 +96,7 @@ const VFolderTextFileEditorModal: React.FC<VFolderTextFileEditorModalProps> = ({
 
   const { t } = useTranslation();
   const { isDarkMode } = useThemeMode();
-  const { message, modal } = App.useApp();
+  const { message } = App.useApp();
   const baiClient = useConnectedBAIClient();
   const { getErrorMessage } = useErrorMessageResolver();
   const { token } = theme.useToken();
@@ -110,6 +108,7 @@ const VFolderTextFileEditorModal: React.FC<VFolderTextFileEditorModalProps> = ({
   const abortControllerRef = useRef<AbortController | null>(null);
   const disposablesRef = useRef<{ dispose(): void }[]>([]);
   const [isDirty, setIsDirty] = useState(false);
+  const [isUnsavedConfirmOpen, setIsUnsavedConfirmOpen] = useState(false);
 
   useEffect(() => {
     return () => {
@@ -223,38 +222,78 @@ const VFolderTextFileEditorModal: React.FC<VFolderTextFileEditorModalProps> = ({
     },
   });
 
-  const handleRequestClose = useCallback(() => {
+  const handleRequestClose = () => {
     if (!isDirty) {
       onRequestClose();
       return;
     }
-    const confirmInstance = modal.confirm({
-      title: t('data.explorer.EditFileUnsavedChangesTitle', {
-        fileName: fileInfo?.name,
-      }),
-      content: t('data.explorer.EditFileUnsavedChangesDescription'),
-      icon: null,
-      okText: t('button.Save'),
-      cancelText: t('button.Cancel'),
-      footer: (_, { OkBtn, CancelBtn }) => (
-        <BAIFlex justify="end" gap="xs">
-          <CancelBtn />
-          <BAIButton
-            onClick={() => {
-              confirmInstance.destroy();
-              onRequestClose();
+    setIsUnsavedConfirmOpen(true);
+  };
+
+  // TICKET-11 gap rewrite (answers/07 §5): antd modal.confirm's 3-button
+  // `footer` render-prop (Save / Don't Save / Cancel + `.destroy()`) has no
+  // shim/Astryx analog — AlertDialog is a fixed 2-button footer. This is the
+  // one bespoke dialog: a controlled Astryx Dialog with a hand-built footer,
+  // same composition technique as the shim's ReactNode branch.
+  const closeUnsavedConfirm = () => setIsUnsavedConfirmOpen(false);
+  const unsavedConfirmDialog = (
+    <Dialog
+      isOpen={isUnsavedConfirmOpen}
+      onOpenChange={(open) => {
+        if (!open) {
+          closeUnsavedConfirm();
+        }
+      }}
+      purpose="form"
+    >
+      <Layout
+        header={
+          <DialogHeader
+            title={t('data.explorer.EditFileUnsavedChangesTitle', {
+              fileName: fileInfo?.name,
+            })}
+            onOpenChange={(open) => {
+              if (!open) {
+                closeUnsavedConfirm();
+              }
             }}
-          >
-            {t('button.DontSave')}
-          </BAIButton>
-          <OkBtn />
-        </BAIFlex>
-      ),
-      onOk: () => {
-        saveMutation.mutate();
-      },
-    });
-  }, [isDirty, modal, t, fileInfo?.name, onRequestClose, saveMutation]);
+          />
+        }
+        content={
+          <LayoutContent>
+            {t('data.explorer.EditFileUnsavedChangesDescription')}
+          </LayoutContent>
+        }
+        footer={
+          <LayoutFooter>
+            <HStack justify="end" gap={2} align="center">
+              <Button
+                label={t('button.Cancel')}
+                variant="secondary"
+                onClick={closeUnsavedConfirm}
+              />
+              <Button
+                label={t('button.DontSave')}
+                variant="secondary"
+                onClick={() => {
+                  closeUnsavedConfirm();
+                  onRequestClose();
+                }}
+              />
+              <Button
+                label={t('button.Save')}
+                variant="primary"
+                onClick={() => {
+                  closeUnsavedConfirm();
+                  saveMutation.mutate();
+                }}
+              />
+            </HStack>
+          </LayoutFooter>
+        }
+      />
+    </Dialog>
+  );
 
   const skeletonWithPadding = (
     <Skeleton
@@ -404,6 +443,7 @@ const VFolderTextFileEditorModal: React.FC<VFolderTextFileEditorModalProps> = ({
           )}
         </Suspense>
       </BAIFlex>
+      {unsavedConfirmDialog}
     </BAIModal>
   );
 };

@@ -4,6 +4,7 @@
  */
 import { EditableVFolderNameFragment$key } from '../__generated__/EditableVFolderNameFragment.graphql';
 import { EditableVFolderNameRefetchQuery } from '../__generated__/EditableVFolderNameRefetchQuery.graphql';
+import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
@@ -11,7 +12,7 @@ import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import { theme } from '../theme-shim';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
-import { Form, Input, App, GetProps, Typography, InputProps } from 'antd';
+import { Form, Input, GetProps, Typography, InputProps } from 'antd';
 import { BAILink, toLocalId, useErrorMessageResolver } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CornerDownLeftIcon } from 'lucide-react';

@@ -9,6 +9,7 @@ import {
   KeypairResourcePolicyListQuery$data,
 } from '../__generated__/KeypairResourcePolicyListQuery.graphql';
 import { KeypairResourcePolicySettingModalFragment$key } from '../__generated__/KeypairResourcePolicySettingModalFragment.graphql';
+import { App } from '../app-shim';
 import { localeCompare, numberSorterWithInfinityValue } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
@@ -20,7 +21,7 @@ import {
   InfoCircleOutlined,
   ReloadOutlined,
 } from '@ant-design/icons';
-import { App, Button, Tooltip } from 'antd';
+import { Button, Tooltip } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import type { ColumnsType, ColumnType } from 'antd/es/table';
 import {

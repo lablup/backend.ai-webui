@@ -3,8 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ScanArtifactModelsFromHuggingFaceModalMutation } from '../__generated__/ScanArtifactModelsFromHuggingFaceModalMutation.graphql';
+import { App } from '../app-shim';
 import { theme } from '../theme-shim';
-import { App, Form, type FormInstance, Input } from 'antd';
+import { Form, type FormInstance, Input } from 'antd';
 import {
   BAIFlex,
   BAIModal,

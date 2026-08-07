@@ -6,6 +6,7 @@ import {
   VFolderNodesFragment$data,
   VFolderNodesFragment$key,
 } from '../__generated__/VFolderNodesFragment.graphql';
+import { App } from '../app-shim';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
@@ -23,7 +24,7 @@ import VFolderNodeIdenticon from './VFolderNodeIdenticon';
 import VFolderPermissionCell from './VFolderPermissionCell';
 import { DeleteFilled, DeleteOutlined, UserOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { App, Typography } from 'antd';
+import { Typography } from 'antd';
 import {
   filterOutNullAndUndefined,
   BAIEndpointsIcon,

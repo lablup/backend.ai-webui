@@ -4,6 +4,7 @@
  */
 import { UserProfileSettingModalFragment$key } from '../__generated__/UserProfileSettingModalFragment.graphql';
 import { UserProfileSettingModalUpdateUserMutation } from '../__generated__/UserProfileSettingModalUpdateUserMutation.graphql';
+import { App } from '../app-shim';
 import { isIpIncludedInList, isValidIPOrCidr } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
@@ -16,7 +17,6 @@ import {
   Form,
   Switch,
   type FormInstance,
-  App,
   Tag,
   Typography,
 } from 'antd';

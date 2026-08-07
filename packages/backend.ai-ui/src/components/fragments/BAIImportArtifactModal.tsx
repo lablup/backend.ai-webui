@@ -4,6 +4,7 @@ import {
   BAIImportArtifactModalArtifactRevisionFragment$key,
 } from '../../__generated__/BAIImportArtifactModalArtifactRevisionFragment.graphql';
 import { BAIImportArtifactModalImportArtifactsMutation } from '../../__generated__/BAIImportArtifactModalImportArtifactsMutation.graphql';
+import { App } from '../../app-shim';
 import {
   convertToDecimalUnit,
   filterOutEmpty,
@@ -18,7 +19,7 @@ import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
 import { BAIColumnsType, BAITable } from '../Table';
 import BAIArtifactDescriptions from './BAIArtifactDescriptions';
 import { QuestionCircleFilled } from '@ant-design/icons';
-import { Alert, App, Modal, Tooltip, type ModalProps } from 'antd';
+import { Alert, Modal, Tooltip, type ModalProps } from 'antd';
 import * as _ from 'lodash-es';
 import { graphql, useFragment, useMutation } from 'react-relay';
 

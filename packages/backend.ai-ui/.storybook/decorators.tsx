@@ -1,6 +1,12 @@
+import { BAIAppProvider } from '../src/app-shim';
 import BAIText from '../src/components/BAIText';
 import { i18n } from '../src/locale';
 import { ThemeShimProvider } from '../src/theme-shim';
+import { getAntdLocale } from './localeConfig';
+import { themeConfigs, type ThemeStyle } from './themeConfig';
+import type { Decorator } from '@storybook/react-vite';
+import { useDarkMode } from '@vueless/storybook-dark-mode';
+import { ConfigProvider, Skeleton, theme } from 'antd';
 import dayjs from 'dayjs';
 import 'dayjs/locale/de';
 import 'dayjs/locale/el';
@@ -29,6 +35,8 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import weekday from 'dayjs/plugin/weekday';
+import React, { Suspense, useEffect } from 'react';
+import { I18nextProvider, useTranslation } from 'react-i18next';
 
 dayjs.extend(weekday);
 dayjs.extend(localeData);
@@ -37,13 +45,6 @@ dayjs.extend(relativeTime);
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(duration);
-import { getAntdLocale } from './localeConfig';
-import { themeConfigs, type ThemeStyle } from './themeConfig';
-import type { Decorator } from '@storybook/react-vite';
-import { useDarkMode } from '@vueless/storybook-dark-mode';
-import { ConfigProvider, Skeleton, theme } from 'antd';
-import React, { Suspense, useEffect } from 'react';
-import { I18nextProvider, useTranslation } from 'react-i18next';
 
 interface StorybookProviderProps {
   locale: string;
@@ -133,7 +134,12 @@ const GlobalConfigProvider: React.FC<StorybookProviderProps> = ({
           fontFamily: seedToken.fontFamily,
         }}
       >
-        <ThemedContainer>{children}</ThemedContainer>
+        {/* App.useApp shim (ticket 11): stories exercising imperative
+            message/modal flows read the shim's toast/dialog host from here
+            (replaces the per-story antd <App> wrappers). */}
+        <BAIAppProvider>
+          <ThemedContainer>{children}</ThemedContainer>
+        </BAIAppProvider>
       </ThemeShimProvider>
     </ConfigProvider>
   );

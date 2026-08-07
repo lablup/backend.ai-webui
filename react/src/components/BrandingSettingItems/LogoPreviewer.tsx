@@ -2,8 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../../app-shim';
 import { useDefaultTheme } from '../../hooks/useDefaultTheme';
-import { App, Image, Space, Tooltip, Typography, Upload } from 'antd';
+import { Image, Space, Tooltip, Typography, Upload } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIButton, BAIFlex, BAIUncontrolledInput } from 'backend.ai-ui';
 import { t } from 'i18next';

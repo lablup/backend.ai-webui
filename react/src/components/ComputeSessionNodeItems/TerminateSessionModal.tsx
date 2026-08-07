@@ -7,13 +7,14 @@ import {
   TerminateSessionModalFragment$key,
 } from '../../__generated__/TerminateSessionModalFragment.graphql';
 import { TerminateSessionModalRefetchQuery } from '../../__generated__/TerminateSessionModalRefetchQuery.graphql';
+import { App } from '../../app-shim';
 import { requestLocalProxyToken } from '../../helper/localProxyToken';
 import { BackendAIClient, useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import { useSetBAINotification } from '../../hooks/useBAINotification';
 import { usePainKiller } from '../../hooks/usePainKiller';
 import { usePromiseTracker } from '../../usePromiseTracker';
-import { App, Card, Checkbox, type ModalProps, Typography } from 'antd';
+import { Card, Checkbox, type ModalProps, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import { filterOutEmpty, BAIFlex, BAIModal } from 'backend.ai-ui';
 import * as _ from 'lodash-es';

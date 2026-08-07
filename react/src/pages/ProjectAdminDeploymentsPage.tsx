@@ -10,6 +10,7 @@ import type {
   DeploymentStatus,
   ProjectAdminDeploymentsPageQuery,
 } from '../__generated__/ProjectAdminDeploymentsPageQuery.graphql';
+import { App } from '../app-shim';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import BAIRadioGroup from '../components/BAIRadioGroup';
@@ -22,7 +23,7 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { DeleteFilled } from '@ant-design/icons';
-import { App, Skeleton, Typography } from 'antd';
+import { Skeleton, Typography } from 'antd';
 import {
   BAICard,
   BAIDeleteConfirmModal,

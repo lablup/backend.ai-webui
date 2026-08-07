@@ -10,6 +10,7 @@ import {
   DeploymentStatus,
 } from '../__generated__/DeploymentListPageQuery.graphql';
 import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
+import { App } from '../app-shim';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from '../components/DeploymentRevisionDetailDrawer';
@@ -22,7 +23,7 @@ import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { DeleteFilled } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { App, Button, Skeleton, Typography } from 'antd';
+import { Button, Skeleton, Typography } from 'antd';
 import {
   BAICard,
   BAIDeleteConfirmModal,

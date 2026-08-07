@@ -8,6 +8,7 @@ import {
   ContainerRegistryListQuery,
   ContainerRegistryListQuery$data,
 } from '../__generated__/ContainerRegistryListQuery.graphql';
+import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
@@ -22,7 +23,7 @@ import {
   SyncOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { Button, Switch, Tag, Tooltip, App } from 'antd';
+import { Button, Switch, Tag, Tooltip } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import type { ColumnsType, ColumnType } from 'antd/es/table';
 import {

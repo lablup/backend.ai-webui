@@ -9,6 +9,7 @@ import {
   type PermissionFilter,
   type PermissionOrderBy,
 } from '../__generated__/LegacyRolePermissionTabQuery.graphql';
+import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
@@ -16,7 +17,7 @@ import LegacyCreatePermissionModal, {
   PermissionMatrixQuery,
 } from './LegacyCreatePermissionModal';
 import { DeleteFilled } from '@ant-design/icons';
-import { App, Tag } from 'antd';
+import { Tag } from 'antd';
 import {
   BAIButton,
   BAIDeleteConfirmModal,

@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { FileBrowserButtonV2Fragment$key } from '../__generated__/FileBrowserButtonV2Fragment.graphql';
+import { App } from '../app-shim';
 import {
   useCurrentDomainValue,
   useSuspendedBackendaiClient,
@@ -18,7 +19,7 @@ import {
 } from '../hooks/useStartSession';
 import { PrimaryAppOption } from './ComputeSessionNodeItems/SessionActionButtons';
 import { EllipsisOutlined } from '@ant-design/icons';
-import { App, Dropdown, Image, Space, Tooltip } from 'antd';
+import { Dropdown, Image, Space, Tooltip } from 'antd';
 import {
   BAIButton,
   BAIButtonProps,

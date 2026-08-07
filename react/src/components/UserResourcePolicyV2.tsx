@@ -7,11 +7,11 @@ import type {
   UserResourcePolicyV2OrderBy,
   UserResourcePolicyV2Query as UserResourcePolicyV2QueryType,
 } from '../__generated__/UserResourcePolicyV2Query.graphql';
+import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import UserResourcePolicyV2SettingModal from './UserResourcePolicyV2SettingModal';
 import { DeleteFilled } from '@ant-design/icons';
-import { App } from 'antd';
 import {
   BAIButton,
   BAIDeleteConfirmModal,

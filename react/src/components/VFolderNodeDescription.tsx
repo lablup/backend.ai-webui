@@ -5,6 +5,7 @@
 import { VFolderNodeDescriptionFragment$key } from '../__generated__/VFolderNodeDescriptionFragment.graphql';
 import { VFolderNodeDescriptionPermissionRefreshQuery } from '../__generated__/VFolderNodeDescriptionPermissionRefreshQuery.graphql';
 import { useVirtualFolderNodePathFragment$key } from '../__generated__/useVirtualFolderNodePathFragment.graphql';
+import { App } from '../app-shim';
 import { convertToDecimalUnit } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
@@ -15,7 +16,7 @@ import { theme } from '../theme-shim';
 import { statusTagColor } from './VFolderNodesV2';
 import VirtualFolderPath from './VirtualFolderNodeItems/VirtualFolderPath';
 import { CheckCircleOutlined, UserOutlined } from '@ant-design/icons';
-import { App, Descriptions, Typography, type DescriptionsProps } from 'antd';
+import { Descriptions, Typography, type DescriptionsProps } from 'antd';
 import {
   filterOutEmpty,
   BAIUserUnionIcon,

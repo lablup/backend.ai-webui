@@ -2,12 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
 import {
   proxiesServingGroups,
   useSFTPProxyResourceGroupsQuery,
   useSFTPResourceGroups,
 } from '../hooks/useSFTPResourceGroups';
-import { App, Form, Skeleton, Typography } from 'antd';
+import { Form, Skeleton, Typography } from 'antd';
 import {
   BAIFlex,
   BAIListAlert,

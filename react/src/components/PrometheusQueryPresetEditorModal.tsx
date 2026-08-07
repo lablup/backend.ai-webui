@@ -8,10 +8,11 @@ import {
   PrometheusQueryPresetEditorModalFragment$key,
 } from '../__generated__/PrometheusQueryPresetEditorModalFragment.graphql';
 import { PrometheusQueryPresetEditorModalUpdateMutation } from '../__generated__/PrometheusQueryPresetEditorModalUpdateMutation.graphql';
+import { App } from '../app-shim';
 import { useCurrentUserRole } from '../hooks/backendai';
 import PrometheusCategorySelect from './PrometheusCategorySelect';
 import PrometheusQueryTemplatePreview from './PrometheusQueryTemplatePreview';
-import { App, Form, Input } from 'antd';
+import { Form, Input } from 'antd';
 import {
   BAIModal,
   BAIModalProps,

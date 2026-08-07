@@ -10,6 +10,7 @@ import {
   AdminUserCredentialListQuery$variables,
 } from '../__generated__/AdminUserCredentialListQuery.graphql';
 import { KeypairSettingModalFragment$key } from '../__generated__/KeypairSettingModalFragment.graphql';
+import { App } from '../app-shim';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { theme } from '../theme-shim';
 import BAIRadioGroup from './BAIRadioGroup';
@@ -20,7 +21,7 @@ import {
   InfoCircleOutlined,
   ReloadOutlined,
 } from '@ant-design/icons';
-import { App, Button, Tag, Tooltip, Typography } from 'antd';
+import { Button, Tag, Tooltip, Typography } from 'antd';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,

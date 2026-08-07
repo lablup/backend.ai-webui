@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { SFTPServerButtonFragment$key } from '../__generated__/SFTPServerButtonFragment.graphql';
+import { App } from '../app-shim';
 import {
   useCurrentDomainValue,
   useSuspendedBackendaiClient,
@@ -20,7 +21,7 @@ import {
   useStartSession,
 } from '../hooks/useStartSession';
 import { EllipsisOutlined } from '@ant-design/icons';
-import { App, Dropdown, Image, Space, Tooltip } from 'antd';
+import { Dropdown, Image, Space, Tooltip } from 'antd';
 import {
   BAIButton,
   BAIButtonProps,

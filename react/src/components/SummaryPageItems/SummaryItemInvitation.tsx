@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../../app-shim';
 import {
   baiSignedRequestWithPromise,
   useBaiSignedRequestWithPromise,
@@ -12,7 +13,7 @@ import {
   useTanMutation,
 } from '../../hooks/reactQueryAlias';
 import { theme } from '../../theme-shim';
-import { App, Button, Descriptions, Empty, Tag, Typography } from 'antd';
+import { Button, Descriptions, Empty, Tag, Typography } from 'antd';
 import { BAICard, BAIFlex, useErrorMessageResolver } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 

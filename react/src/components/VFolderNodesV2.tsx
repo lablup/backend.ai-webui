@@ -8,6 +8,7 @@ import {
   VFolderNodesV2Fragment$key,
 } from '../__generated__/VFolderNodesV2Fragment.graphql';
 import { VFolderNodesV2RestoreMutation } from '../__generated__/VFolderNodesV2RestoreMutation.graphql';
+import { App } from '../app-shim';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useSuspenseTanQuery, useTanQuery } from '../hooks/reactQueryAlias';
@@ -33,7 +34,7 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { App, Modal, Skeleton, Tooltip, Typography } from 'antd';
+import { Modal, Skeleton, Tooltip, Typography } from 'antd';
 import {
   filterOutNullAndUndefined,
   BAIAlertIconWithTooltip,

@@ -4,10 +4,11 @@
  */
 import { QuotaScopeTableQuery as QuotaScopeTableQueryType } from '../__generated__/QuotaScopeTableQuery.graphql';
 import { QuotaScopeTableUnsetMutation } from '../__generated__/QuotaScopeTableUnsetMutation.graphql';
+import { App } from '../app-shim';
 import { bytesToGB } from '../helper/index';
 import QuotaSettingModal from './QuotaSettingModal';
 import { CloseOutlined } from '@ant-design/icons';
-import { App, Empty } from 'antd';
+import { Empty } from 'antd';
 import {
   BAINameActionCell,
   BAITable,

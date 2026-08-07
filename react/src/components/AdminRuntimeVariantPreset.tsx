@@ -8,10 +8,10 @@ import type {
   RuntimeVariantPresetFilter,
   RuntimeVariantPresetOrderBy,
 } from '../__generated__/AdminRuntimeVariantPresetQuery.graphql';
+import { App } from '../app-shim';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { DeleteFilled, SettingOutlined } from '@ant-design/icons';
-import { App } from 'antd';
 import {
   BAIButton,
   BAIDeleteConfirmModal,

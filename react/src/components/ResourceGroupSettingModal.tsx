@@ -6,6 +6,7 @@ import { ResourceGroupSettingModalAssociateDomainMutation } from '../__generated
 import { ResourceGroupSettingModalCreateMutation } from '../__generated__/ResourceGroupSettingModalCreateMutation.graphql';
 import { ResourceGroupSettingModalFragment$key } from '../__generated__/ResourceGroupSettingModalFragment.graphql';
 import { ResourceGroupSettingModalUpdateMutation } from '../__generated__/ResourceGroupSettingModalUpdateMutation.graphql';
+import { App } from '../app-shim';
 import { newLineToBrElement } from '../helper';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import {
@@ -18,7 +19,6 @@ import { theme } from '../theme-shim';
 import { ScalingGroupOpts } from './ResourceGroupList';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import {
-  App,
   Col,
   Form,
   FormInstance,

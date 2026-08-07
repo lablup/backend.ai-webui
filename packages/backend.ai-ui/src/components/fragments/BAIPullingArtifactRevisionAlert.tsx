@@ -1,10 +1,11 @@
 import { BAIPullingArtifactRevisionAlertCancelMutation } from '../../__generated__/BAIPullingArtifactRevisionAlertCancelMutation.graphql';
 import { BAIPullingArtifactRevisionAlertFragment$key } from '../../__generated__/BAIPullingArtifactRevisionAlertFragment.graphql';
+import { App } from '../../app-shim';
 import { toLocalId } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIFlex from '../BAIFlex';
 import BAIText from '../BAIText';
-import { Alert, App, Button } from 'antd';
+import { Alert, Button } from 'antd';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
 export interface BAIPullingArtifactRevisionAlertProps {

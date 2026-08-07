@@ -2,12 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
 import {
   PERMISSION_DISPLAY_MAP,
   hasMountWithoutFileOps,
 } from '../helper/storageHostPermission';
 import { theme } from '../theme-shim';
-import { App, Checkbox, Divider, Tooltip, Typography } from 'antd';
+import { Checkbox, Divider, Tooltip, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { BAIFlex, BAIModal, type BAIModalProps } from 'backend.ai-ui';

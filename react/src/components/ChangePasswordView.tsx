@@ -2,10 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
 import { useAnonymousBackendaiClient } from '../hooks';
 import { theme } from '../theme-shim';
 import { CheckCircleOutlined } from '@ant-design/icons';
-import { App, Form, Input, Typography } from 'antd';
+import { Form, Input, Typography } from 'antd';
 import {
   BAIButton,
   BAIFlex,

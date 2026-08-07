@@ -8,6 +8,7 @@ import type {
   DeploymentBasicInfoCard_deployment$key,
 } from '../__generated__/DeploymentBasicInfoCard_deployment.graphql';
 import { DeploymentSchedulingHistoryModalQuery } from '../__generated__/DeploymentSchedulingHistoryModalQuery.graphql';
+import { App } from '../app-shim';
 import { useWebUINavigate } from '../hooks';
 import { useProjectPath } from '../hooks/useRouteScope';
 import DeploymentSchedulingHistoryModal, {
@@ -16,7 +17,6 @@ import DeploymentSchedulingHistoryModal, {
 import DeploymentSettingModal from './DeploymentSettingModal';
 import { DeleteFilled, HistoryOutlined, MoreOutlined } from '@ant-design/icons';
 import {
-  App,
   Button,
   Descriptions,
   Divider,
@@ -63,9 +63,7 @@ interface DeploymentBasicInfoCardProps {
 }
 
 type DeploymentSectionData =
-  | DeploymentBasicInfoCard_deployment$data
-  | null
-  | undefined;
+  DeploymentBasicInfoCard_deployment$data | null | undefined;
 
 const renderFallback = () => (
   <Typography.Text type="secondary">-</Typography.Text>

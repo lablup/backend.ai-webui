@@ -10,6 +10,7 @@ import type {
   ModelCardV2Filter,
   ModelCardV2OrderBy,
 } from '../__generated__/AdminModelCardQuery.graphql';
+import { App } from '../app-shim';
 import {
   convertFirstOrderByToString,
   convertToOrderBy,
@@ -22,7 +23,7 @@ import AdminModelCardSettingModal from './AdminModelCardSettingModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
 import { DeleteFilled, ExclamationCircleFilled } from '@ant-design/icons';
-import { App, Checkbox, Tooltip, Typography } from 'antd';
+import { Checkbox, Tooltip, Typography } from 'antd';
 import {
   BAIButton,
   BAIColumnType,

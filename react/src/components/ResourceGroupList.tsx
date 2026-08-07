@@ -8,6 +8,7 @@ import {
   ResourceGroupListQuery$data,
 } from '../__generated__/ResourceGroupListQuery.graphql';
 import { ResourceGroupListUpdateMutation } from '../__generated__/ResourceGroupListUpdateMutation.graphql';
+import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useSFTPProxyResourceGroupsQuery } from '../hooks/useSFTPResourceGroups';
@@ -23,7 +24,7 @@ import {
   InfoCircleOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { App, Tag, Tooltip } from 'antd';
+import { Tag, Tooltip } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import {
   useUpdatableState,

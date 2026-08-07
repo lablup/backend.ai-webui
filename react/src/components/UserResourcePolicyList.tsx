@@ -8,6 +8,7 @@ import {
   UserResourcePolicyListQuery$data,
 } from '../__generated__/UserResourcePolicyListQuery.graphql';
 import { UserResourcePolicySettingModalFragment$key } from '../__generated__/UserResourcePolicySettingModalFragment.graphql';
+import { App } from '../app-shim';
 import {
   bytesToGB,
   localeCompare,
@@ -17,7 +18,7 @@ import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import UserResourcePolicySettingModal from './UserResourcePolicySettingModal';
 import { DeleteFilled, ReloadOutlined } from '@ant-design/icons';
-import { App, Button, Tooltip } from 'antd';
+import { Button, Tooltip } from 'antd';
 import type { ColumnType } from 'antd/es/table';
 import {
   useUpdatableState,

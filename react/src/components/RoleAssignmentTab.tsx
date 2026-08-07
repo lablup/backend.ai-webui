@@ -8,13 +8,14 @@ import {
   RoleAssignmentFilter,
   RoleAssignmentOrderBy,
 } from '../__generated__/RoleAssignmentTabRefetchQuery.graphql';
+import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { theme } from '../theme-shim';
 import AssignRoleModal from './AssignRoleModal';
 import { DeleteFilled } from '@ant-design/icons';
-import { Alert, App, Tooltip } from 'antd';
+import { Alert, Tooltip } from 'antd';
 import {
   BAIButton,
   BAIDeleteConfirmModal,

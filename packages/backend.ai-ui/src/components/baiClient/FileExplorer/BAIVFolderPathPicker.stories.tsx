@@ -14,7 +14,7 @@ import BAIDirectoryPickerModal, {
 import BAIVFolderPathPicker from './BAIVFolderPathPicker';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { App, Button, Form, Typography } from 'antd';
+import { Button, Form, Typography } from 'antd';
 import { useState, useTransition } from 'react';
 import { RelayEnvironmentProvider, useQueryLoader } from 'react-relay';
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
@@ -262,15 +262,13 @@ const MockProviders: React.FC<{ children: React.ReactNode }> = ({
   return (
     <RelayEnvironmentProvider environment={relayEnvironment}>
       <QueryClientProvider client={queryClient}>
-        <App>
-          <BAIClientContext.Provider value={clientPromise}>
-            {/* No Suspense boundary here on purpose: every opener mounts
+        <BAIClientContext.Provider value={clientPromise}>
+          {/* No Suspense boundary here on purpose: every opener mounts
                 BAIDirectoryPickerModal inside a transition (loadQuery + open
                 wrapped in startTransition), so the suspension is absorbed by
                 the transition and a host never needs a boundary. */}
-            {children}
-          </BAIClientContext.Provider>
-        </App>
+          {children}
+        </BAIClientContext.Provider>
       </QueryClientProvider>
     </RelayEnvironmentProvider>
   );

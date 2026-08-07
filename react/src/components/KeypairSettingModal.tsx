@@ -5,8 +5,9 @@
 import { KeypairSettingModalCreateMutation } from '../__generated__/KeypairSettingModalCreateMutation.graphql';
 import { KeypairSettingModalFragment$key } from '../__generated__/KeypairSettingModalFragment.graphql';
 import { KeypairSettingModalModifyMutation } from '../__generated__/KeypairSettingModalModifyMutation.graphql';
+import { App } from '../app-shim';
 import KeypairResourcePolicySelect from './KeypairResourcePolicySelect';
-import { App, Col, Form, InputNumber, type ModalProps, Row } from 'antd';
+import { Col, Form, InputNumber, type ModalProps, Row } from 'antd';
 import { FormInstance } from 'antd/lib';
 import { BAIModal, BAISelect, BAIUserSelect } from 'backend.ai-ui';
 import { Suspense, useRef } from 'react';

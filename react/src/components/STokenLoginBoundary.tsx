@@ -11,6 +11,7 @@
  "URL 파라미터 파싱 규약 (nuqs)". A static assertion in the accompanying
  unit test (`STokenLoginBoundary.test.tsx`) enforces this in CI.
  */
+import { App } from '../app-shim';
 import { getDefaultLoginConfig } from '../helper/loginConfig';
 import {
   connectViaGQL,
@@ -22,7 +23,7 @@ import {
   initializeConfigOnce,
   loginConfigState,
 } from '../hooks/useWebUIConfig';
-import { App, Form, Input, Spin, Typography } from 'antd';
+import { Form, Input, Spin, Typography } from 'antd';
 import { BAIButton, BAICard, BAIFlex, useBAILogger } from 'backend.ai-ui';
 import { useAtomValue, useStore } from 'jotai';
 import {

@@ -11,6 +11,7 @@ import {
   KeypairResourcePolicySettingModalModifyMutation,
   ModifyKeyPairResourcePolicyInput,
 } from '../__generated__/KeypairResourcePolicySettingModalModifyMutation.graphql';
+import { App } from '../app-shim';
 import { convertToBinaryUnit } from '../helper';
 import { MAX_CPU_QUOTA, SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { useSuspendedBackendaiClient } from '../hooks';
@@ -19,7 +20,6 @@ import { theme } from '../theme-shim';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import {
-  App,
   Card,
   Col,
   Form,

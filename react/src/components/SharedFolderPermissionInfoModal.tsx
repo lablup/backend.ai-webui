@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { SharedFolderPermissionInfoModalFragment$key } from '../__generated__/SharedFolderPermissionInfoModalFragment.graphql';
+import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
@@ -11,7 +12,6 @@ import VFolderPermissionCell from './VFolderPermissionCell';
 import { UserOutlined } from '@ant-design/icons';
 import {
   Alert,
-  App,
   Button,
   Descriptions,
   Popconfirm,

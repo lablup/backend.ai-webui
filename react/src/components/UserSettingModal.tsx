@@ -11,6 +11,7 @@ import {
 import { UserSettingModalCreateMutation } from '../__generated__/UserSettingModalCreateMutation.graphql';
 import { UserSettingModalFragment$key } from '../__generated__/UserSettingModalFragment.graphql';
 import { UserSettingModalUpdateMutation } from '../__generated__/UserSettingModalUpdateMutation.graphql';
+import { App } from '../app-shim';
 import { isValidIPOrCidr } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
@@ -33,7 +34,6 @@ import {
   message,
   Typography,
   FormInstance,
-  App,
   Checkbox,
   Skeleton,
   Tag,

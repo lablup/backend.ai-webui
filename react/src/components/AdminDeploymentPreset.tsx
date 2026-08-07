@@ -8,6 +8,7 @@ import type {
   DeploymentRevisionPresetFilter,
   DeploymentRevisionPresetOrderBy,
 } from '../__generated__/AdminDeploymentPresetQuery.graphql';
+import { App } from '../app-shim';
 import AdminDeploymentPresetTable, {
   type DeploymentPresetNodeInList,
 } from '../components/AdminDeploymentPresetTable';
@@ -15,7 +16,6 @@ import { convertToOrderBy } from '../helper';
 import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { theme } from '../theme-shim';
-import { App } from 'antd';
 import {
   BAIButton,
   BAIDeleteConfirmModal,

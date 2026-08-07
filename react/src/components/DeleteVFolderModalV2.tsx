@@ -4,7 +4,8 @@
  */
 import { DeleteVFolderModalV2Fragment$key } from '../__generated__/DeleteVFolderModalV2Fragment.graphql';
 import { DeleteVFolderModalV2Mutation } from '../__generated__/DeleteVFolderModalV2Mutation.graphql';
-import { App, Typography } from 'antd';
+import { App } from '../app-shim';
+import { Typography } from 'antd';
 import {
   BAIFlex,
   BAIModal,

@@ -9,6 +9,7 @@ import {
 } from '../__generated__/AutoScalingRuleEditorModalFragment.graphql';
 import { AutoScalingRuleEditorModalPresetsQuery } from '../__generated__/AutoScalingRuleEditorModalPresetsQuery.graphql';
 import { AutoScalingRuleEditorModalUpdateMutation } from '../__generated__/AutoScalingRuleEditorModalUpdateMutation.graphql';
+import { App } from '../app-shim';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
@@ -16,7 +17,6 @@ import { theme } from '../theme-shim';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import PrometheusQueryTemplatePreview from './PrometheusQueryTemplatePreview';
 import {
-  App,
   AutoComplete,
   Form,
   FormInstance,

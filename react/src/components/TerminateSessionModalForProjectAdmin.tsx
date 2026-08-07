@@ -4,9 +4,10 @@
  */
 import { TerminateSessionModalForProjectAdminFragment$key } from '../__generated__/TerminateSessionModalForProjectAdminFragment.graphql';
 import { TerminateSessionModalForProjectAdminMutation } from '../__generated__/TerminateSessionModalForProjectAdminMutation.graphql';
+import { App } from '../app-shim';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { theme } from '../theme-shim';
-import { App, Checkbox, type ModalProps, Typography } from 'antd';
+import { Checkbox, type ModalProps, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import {
   BAICard,

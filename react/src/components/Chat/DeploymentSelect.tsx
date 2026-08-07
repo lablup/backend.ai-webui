@@ -7,6 +7,7 @@ import {
   DeploymentSelectValueQuery,
   DeploymentSelectValueQuery$data,
 } from '../../__generated__/DeploymentSelectValueQuery.graphql';
+import { App } from '../../app-shim';
 import { buildPath } from '../../helper/pathBuilder';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useAccessibleProjects } from '../../hooks/useAccessibleProjects';
@@ -16,7 +17,6 @@ import { useProjectPath } from '../../hooks/useRouteScope';
 import TotalFooter from '../TotalFooter';
 import { useControllableValue } from 'ahooks';
 import {
-  App,
   Button,
   type GetRef,
   type SelectProps,
