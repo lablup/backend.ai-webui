@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { theme } from '../theme-shim';
 import BAIFormItem from './BAIFormItem';
 import {
   AstryxFormTagsInput,
@@ -52,7 +51,6 @@ const ModelConfigItem: React.FC<{
 }> = ({ listItemName, restField }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
 
   // Rendered only when the model-definition switch is ON. Name/path are
   // optional on PresetModelConfigInput — a user can enable the model
@@ -100,7 +98,6 @@ const ModelConfigItem: React.FC<{
         className="bai-collapsible-section"
         trigger={t('adminDeploymentPreset.modelDef.EnableMetadata')}
         defaultIsOpen
-        style={{ marginTop: token.marginXS }}
       >
         <BAIFlex direction="column" align="stretch" gap="xs">
           <BAIFlex gap="md" wrap="wrap">
