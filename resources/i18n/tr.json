@@ -1972,6 +1972,9 @@
     "AdditionalMounts": "Ek Montajlar",
     "AdditionalMountsTooltip": "Model klasörünün yanı sıra her kopyaya bağlanan ek model olmayan klasörler.",
     "AutoScalingRules": "Otomatik Ölçeklendirme Kuralları",
+    "AwsAccessKeyId": "AWS erişim anahtarı kimliğiniz",
+    "AwsDefaultRegion": "örn. us-east-1, ap-northeast-2",
+    "AwsSecretAccessKey": "AWS gizli erişim anahtarınız",
     "BasePath": "Temel Yol",
     "Controls": "Kontroller",
     "CreateNewDeploymentWithPreset": "Ön Ayar ile Yeni Dağıtım Oluştur",
@@ -1985,6 +1988,9 @@
     "Finished": "bitmiş",
     "HealthCheck": "Sağlık kontrolü URL'si",
     "HealthCheckTooltip": "Hizmetin çalışıp çalışmadığını kontrol etmek için kullanılan URL yolu (ör. /health).",
+    "HfToken": "Hugging Face erişim jetonunuz",
+    "HttpProxy": "örn. http://proxy.example.com:8080",
+    "HttpsProxy": "örn. https://proxy.example.com:8080",
     "Image": "Resim",
     "ImageRequired": "İmaj zorunludur.",
     "InitialDelay": "Başlangıç Tolerans Süresi",
@@ -2003,6 +2009,7 @@
     "ModelMountDestination": "Model Klasörü İçin Montaj Hedefi",
     "ModelMountTooltip": "Model klasörünün container içinde bağlandığı yol.",
     "NimApiKey": "NGC API anahtarınız",
+    "NoProxy": "örn. localhost,127.0.0.1,.internal",
     "OpenFolder": "Klasöre git",
     "Port": "Liman",
     "PortTooltip": "Model servis sürecinin dinlediği port numarası.",
@@ -2041,7 +2048,8 @@
     "VllmModelName": "Model adı (ör. meta-llama/Llama-2-7b-chat-hf)",
     "VllmPpSize": "Pipeline paralel boyutu (örn. 2, 4)",
     "VllmQuantization": "örn., awq, gptq, fp8",
-    "VllmTpSize": "Tensör paralel boyutu (örn. 2, 4, 8)"
+    "VllmTpSize": "Tensör paralel boyutu (örn. 2, 4, 8)",
+    "WandbApiKey": "Weights & Biases API anahtarınız"
   },
   "modelStore": {
     "Architecture": "Mimari",

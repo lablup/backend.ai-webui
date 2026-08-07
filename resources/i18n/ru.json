@@ -1972,6 +1972,9 @@
     "AdditionalMounts": "Дополнительные крепления",
     "AdditionalMountsTooltip": "Дополнительные папки, не являющиеся моделями, монтируемые в каждую реплику вместе с папкой модели.",
     "AutoScalingRules": "Автоматические правила",
+    "AwsAccessKeyId": "Ваш идентификатор ключа доступа AWS",
+    "AwsDefaultRegion": "напр. us-east-1, ap-northeast-2",
+    "AwsSecretAccessKey": "Ваш секретный ключ доступа AWS",
     "BasePath": "Базовый путь",
     "Controls": "Средства управления",
     "CreateNewDeploymentWithPreset": "Создать новое развёртывание с пресетом",
@@ -1985,6 +1988,9 @@
     "Finished": "Законченный",
     "HealthCheck": "URL проверки работоспособности",
     "HealthCheckTooltip": "URL-путь, используемый для проверки работоспособности сервиса (например, /health).",
+    "HfToken": "Ваш токен доступа Hugging Face",
+    "HttpProxy": "напр. http://proxy.example.com:8080",
+    "HttpsProxy": "напр. https://proxy.example.com:8080",
     "Image": "Изображение",
     "ImageRequired": "Образ обязателен.",
     "InitialDelay": "Льготный период запуска",
@@ -2003,6 +2009,7 @@
     "ModelMountDestination": "Место установки папки модели",
     "ModelMountTooltip": "Путь, по которому папка с моделью монтируется внутри контейнера.",
     "NimApiKey": "Ваш API-ключ NGC",
+    "NoProxy": "напр. localhost,127.0.0.1,.internal",
     "OpenFolder": "Перейти в папку",
     "Port": "Порт",
     "PortTooltip": "Номер порта, который прослушивает процесс обслуживания модели.",
@@ -2041,7 +2048,8 @@
     "VllmModelName": "Имя модели (например: meta-llama/Llama-2-7b-chat-hf)",
     "VllmPpSize": "Размер конвейерного параллелизма (например: 2, 4)",
     "VllmQuantization": "например, awq, gptq, fp8",
-    "VllmTpSize": "Размер тензорного параллелизма (например 2, 4, 8)"
+    "VllmTpSize": "Размер тензорного параллелизма (например 2, 4, 8)",
+    "WandbApiKey": "Ваш ключ API Weights & Biases"
   },
   "modelStore": {
     "Architecture": "Архитектура",

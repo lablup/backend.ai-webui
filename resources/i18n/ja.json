@@ -1974,6 +1974,9 @@
     "AdditionalMounts": "追加のマウント",
     "AdditionalMountsTooltip": "モデルフォルダーと並んで各レプリカにマウントされる追加の非モデルフォルダー。",
     "AutoScalingRules": "自動スケーリングルール",
+    "AwsAccessKeyId": "あなたのAWSアクセスキーID",
+    "AwsDefaultRegion": "例: us-east-1, ap-northeast-2",
+    "AwsSecretAccessKey": "あなたのAWSシークレットアクセスキー",
     "BasePath": "ベースパス",
     "Controls": "操作",
     "CreateNewDeploymentWithPreset": "プリセットで新規デプロイメント作成",
@@ -1987,6 +1990,9 @@
     "Finished": "終了した",
     "HealthCheck": "ヘルスチェック URL",
     "HealthCheckTooltip": "サービスが稼働しているかどうかを確認するために使用するURLパスです（例: /health）。",
+    "HfToken": "あなたのHugging Faceアクセストークン",
+    "HttpProxy": "例: http://proxy.example.com:8080",
+    "HttpsProxy": "例: https://proxy.example.com:8080",
     "Image": "イメージ",
     "ImageRequired": "イメージは必須です。",
     "InitialDelay": "起動猶予期間",
@@ -2005,6 +2011,7 @@
     "ModelMountDestination": "モデルフォルダーのマウント先",
     "ModelMountTooltip": "コンテナ内にモデルフォルダがマウントされるパスです。",
     "NimApiKey": "あなたのNGC APIキー",
+    "NoProxy": "例: localhost,127.0.0.1,.internal",
     "OpenFolder": "フォルダーに移動",
     "Port": "ポート",
     "PortTooltip": "モデルサービングプロセスがリッスンするポート番号です。",
@@ -2043,7 +2050,8 @@
     "VllmModelName": "モデル名（例: meta-llama/Llama-2-7b-chat-hf）",
     "VllmPpSize": "パイプライン並列度（例：2、4）",
     "VllmQuantization": "例：awq、gptq、fp8",
-    "VllmTpSize": "テンソル並列サイズ（例：2、4、8）"
+    "VllmTpSize": "テンソル並列サイズ（例：2、4、8）",
+    "WandbApiKey": "あなたのWeights & Biases APIキー"
   },
   "modelStore": {
     "Architecture": "アーキテクチャ",

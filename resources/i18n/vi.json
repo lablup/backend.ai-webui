@@ -1974,6 +1974,9 @@
     "AdditionalMounts": "Gắn Kết Bổ Sung",
     "AdditionalMountsTooltip": "Các thư mục phi mô hình bổ sung được gắn kết vào mỗi bản sao cùng với thư mục mô hình.",
     "AutoScalingRules": "Quy tắc mở rộng tự động",
+    "AwsAccessKeyId": "ID khóa truy cập AWS của bạn",
+    "AwsDefaultRegion": "vd: us-east-1, ap-northeast-2",
+    "AwsSecretAccessKey": "Khóa truy cập bí mật AWS của bạn",
     "BasePath": "Đường cơ sở",
     "Controls": "Điều khiển",
     "CreateNewDeploymentWithPreset": "Tạo triển khai mới với Preset",
@@ -1987,6 +1990,9 @@
     "Finished": "Hoàn thành",
     "HealthCheck": "URL kiểm tra sức khỏe",
     "HealthCheckTooltip": "Đường dẫn URL dùng để kiểm tra xem dịch vụ có đang hoạt động hay không (vd. /health).",
+    "HfToken": "Mã thông báo truy cập Hugging Face của bạn",
+    "HttpProxy": "vd: http://proxy.example.com:8080",
+    "HttpsProxy": "vd: https://proxy.example.com:8080",
     "Image": "Hình ảnh",
     "ImageRequired": "Image là bắt buộc.",
     "InitialDelay": "Thời gian ân hạn khởi động",
@@ -2005,6 +2011,7 @@
     "ModelMountDestination": "Mount đích cho thư mục mẫu",
     "ModelMountTooltip": "Đường dẫn nơi thư mục mô hình được gắn kết bên trong container.",
     "NimApiKey": "Khóa API NGC của bạn",
+    "NoProxy": "vd: localhost,127.0.0.1,.internal",
     "OpenFolder": "Đi tới thư mục",
     "Port": "Cổng",
     "PortTooltip": "Số cổng mà tiến trình phục vụ mô hình lắng nghe.",
@@ -2043,7 +2050,8 @@
     "VllmModelName": "Tên mô hình (ví dụ: meta-llama/Llama-2-7b-chat-hf)",
     "VllmPpSize": "Kích thước song song của pipeline (ví dụ: 2, 4)",
     "VllmQuantization": "ví dụ: awq, gptq, fp8",
-    "VllmTpSize": "Kích thước tensor song song (ví dụ: 2, 4, 8)"
+    "VllmTpSize": "Kích thước tensor song song (ví dụ: 2, 4, 8)",
+    "WandbApiKey": "Khóa API Weights & Biases của bạn"
   },
   "modelStore": {
     "Architecture": "Kiến trúc",

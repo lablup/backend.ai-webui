@@ -1973,6 +1973,9 @@
     "AdditionalMounts": "Dodatkowe mocowania",
     "AdditionalMountsTooltip": "Dodatkowe foldery inne niż model montowane w każdej replice obok folderu modelu.",
     "AutoScalingRules": "Reguły automatycznego skalowania",
+    "AwsAccessKeyId": "Twój identyfikator klucza dostępu AWS",
+    "AwsDefaultRegion": "np. us-east-1, ap-northeast-2",
+    "AwsSecretAccessKey": "Twój tajny klucz dostępu AWS",
     "BasePath": "Ścieżka podstawowa",
     "Controls": "Elementy sterujące",
     "CreateNewDeploymentWithPreset": "Utwórz nowe wdrożenie z presetem",
@@ -1986,6 +1989,9 @@
     "Finished": "Skończone",
     "HealthCheck": "URL kontroli zdrowia",
     "HealthCheckTooltip": "Ścieżka URL używana do sprawdzenia, czy usługa działa (np. /health).",
+    "HfToken": "Twój token dostępu Hugging Face",
+    "HttpProxy": "np. http://proxy.example.com:8080",
+    "HttpsProxy": "np. https://proxy.example.com:8080",
     "Image": "Obraz",
     "ImageRequired": "Obraz jest wymagany.",
     "InitialDelay": "Okres karencji przy uruchomieniu",
@@ -2004,6 +2010,7 @@
     "ModelMountDestination": "Miejsce docelowe montażu dla folderu modelu",
     "ModelMountTooltip": "Ścieżka, pod którą folder modelu jest montowany wewnątrz kontenera.",
     "NimApiKey": "Twój klucz API NGC",
+    "NoProxy": "np. localhost,127.0.0.1,.internal",
     "OpenFolder": "Przejdź do folderu",
     "Port": "Port",
     "PortTooltip": "Numer portu, na którym nasłuchuje proces obsługi modelu.",
@@ -2043,7 +2050,8 @@
     "VllmModelName": "Nazwa modelu (np. meta-llama/Llama-2-7b-chat-hf)",
     "VllmPpSize": "Rozmiar równoległości pipeline (np. 2, 4)",
     "VllmQuantization": "np. awq, gptq, fp8",
-    "VllmTpSize": "Rozmiar paralelizmu tensorowego (np. 2, 4, 8)"
+    "VllmTpSize": "Rozmiar paralelizmu tensorowego (np. 2, 4, 8)",
+    "WandbApiKey": "Twój klucz API Weights & Biases"
   },
   "modelStore": {
     "Architecture": "Architektura",

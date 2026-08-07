@@ -1974,6 +1974,9 @@
     "AdditionalMounts": "추가 마운트",
     "AdditionalMountsTooltip": "모델 폴더 외에 각 복제본에 추가로 마운트할 폴더입니다.",
     "AutoScalingRules": "오토스케일링 규칙",
+    "AwsAccessKeyId": "AWS 액세스 키 ID",
+    "AwsDefaultRegion": "예: us-east-1, ap-northeast-2",
+    "AwsSecretAccessKey": "AWS 비밀 액세스 키",
     "BasePath": "기본 경로",
     "Controls": "제어",
     "CreateNewDeploymentWithPreset": "프리셋으로 새 배포 생성",
@@ -1987,6 +1990,9 @@
     "Finished": "완료됨",
     "HealthCheck": "헬스 체크 URL",
     "HealthCheckTooltip": "서비스가 정상 작동 중인지 확인하는 URL 경로입니다 (예: /health).",
+    "HfToken": "Hugging Face 액세스 토큰",
+    "HttpProxy": "예: http://proxy.example.com:8080",
+    "HttpsProxy": "예: https://proxy.example.com:8080",
     "Image": "이미지",
     "ImageRequired": "이미지는 필수입니다.",
     "InitialDelay": "초기 헬스 체크 유예 시간",
@@ -2005,6 +2011,7 @@
     "ModelMountDestination": "모델 폴더 마운트할 경로",
     "ModelMountTooltip": "컨테이너 내부에 모델 폴더가 마운트되는 경로입니다.",
     "NimApiKey": "NGC API 키",
+    "NoProxy": "예: localhost,127.0.0.1,.internal",
     "OpenFolder": "폴더 열기",
     "Port": "포트",
     "PortTooltip": "모델 서빙 프로세스가 수신하는 포트 번호입니다.",
@@ -2043,7 +2050,8 @@
     "VllmModelName": "모델 이름(예: meta-llama/Llama-2-7b-chat-hf)",
     "VllmPpSize": "파이프라인 parallel size(예: 2, 4)",
     "VllmQuantization": "예: awq, gptq, fp8",
-    "VllmTpSize": "텐서 병렬 크기(예: 2, 4, 8)"
+    "VllmTpSize": "텐서 병렬 크기(예: 2, 4, 8)",
+    "WandbApiKey": "Weights & Biases API 키"
   },
   "modelStore": {
     "Architecture": "아키텍처",

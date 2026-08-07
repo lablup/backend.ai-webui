@@ -1972,6 +1972,9 @@
     "AdditionalMounts": "Πρόσθετες βάσεις",
     "AdditionalMountsTooltip": "Επιπλέον φάκελοι εκτός μοντέλου που τοποθετούνται σε κάθε αντίγραφο μαζί με τον φάκελο μοντέλου.",
     "AutoScalingRules": "Κανόνες αυτόματης κλιμάκωσης",
+    "AwsAccessKeyId": "Το αναγνωριστικό κλειδιού πρόσβασης AWS σας",
+    "AwsDefaultRegion": "π.χ. us-east-1, ap-northeast-2",
+    "AwsSecretAccessKey": "Το μυστικό κλειδί πρόσβασης AWS σας",
     "BasePath": "Διαδρομή βάσης",
     "Controls": "Έλεγχοι",
     "CreateNewDeploymentWithPreset": "Δημιουργία νέου Deployment με Preset",
@@ -1985,6 +1988,9 @@
     "Finished": "Πεπερασμένος",
     "HealthCheck": "URL ελέγχου υγείας",
     "HealthCheckTooltip": "Η διαδρομή URL που χρησιμοποιείται για να ελεγχθεί αν η υπηρεσία εκτελείται (π.χ. /health).",
+    "HfToken": "Το διακριτικό πρόσβασης Hugging Face σας",
+    "HttpProxy": "π.χ. http://proxy.example.com:8080",
+    "HttpsProxy": "π.χ. https://proxy.example.com:8080",
     "Image": "Εικόνα",
     "ImageRequired": "Η εικόνα είναι υποχρεωτική.",
     "InitialDelay": "Περίοδος χάριτος εκκίνησης",
@@ -2003,6 +2009,7 @@
     "ModelMountDestination": "Προσάρτηση προορισμού για φάκελο μοντέλου",
     "ModelMountTooltip": "Η διαδρομή όπου ο φάκελος μοντέλου είναι προσαρτημένος εντός του container.",
     "NimApiKey": "Το κλειδί API του NGC σας",
+    "NoProxy": "π.χ. localhost,127.0.0.1,.internal",
     "OpenFolder": "Μετάβαση στον φάκελο",
     "Port": "Θύρα",
     "PortTooltip": "Ο αριθμός θύρας στον οποίο ακούει η διεργασία εξυπηρέτησης μοντέλου.",
@@ -2041,7 +2048,8 @@
     "VllmModelName": "Όνομα μοντέλου (π.χ., meta-llama/Llama-2-7b-chat-hf)",
     "VllmPpSize": "Μέγεθος παραλληλισμού pipeline (π.χ., 2, 4)",
     "VllmQuantization": "π.χ., awq, gptq, fp8",
-    "VllmTpSize": "Μέγεθος παράλληλης επεξεργασίας tensor (π.χ. 2, 4, 8)"
+    "VllmTpSize": "Μέγεθος παράλληλης επεξεργασίας tensor (π.χ. 2, 4, 8)",
+    "WandbApiKey": "Το κλειδί API Weights & Biases σας"
   },
   "modelStore": {
     "Architecture": "Αρχιτεκτονική",
