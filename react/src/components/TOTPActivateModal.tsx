@@ -45,7 +45,9 @@ const TOTPActivateModal: React.FC<Props> = ({
           email
         }
         security {
-          totpActivated @skipOnClient(if: $isNotSupportTotp)
+          totpActivated
+            @skipOnClient(if: $isNotSupportTotp)
+            @skip(if: $isNotSupportTotp)
         }
       }
     `,

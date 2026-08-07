@@ -7,7 +7,7 @@ import { useSuspenseTanQuery } from './reactQueryAlias';
 import { MenuKeys } from './useWebUIMenuItems';
 import * as _ from 'lodash-es';
 import type { SingleParserBuilder } from 'nuqs';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, useEffectEvent } from 'react';
 // eslint-disable-next-line no-restricted-imports
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -66,6 +66,70 @@ export const useTabQuerySnapshot = <T extends string>(
   };
 
   return { currentTab, onTabChange };
+};
+
+/**
+ * Per-key value snapshots with an uncontrolled current key. The caller
+ * defines the snapshot shape `V` (e.g. `{ queryParams,
+ * tablePaginationOption }`) and passes its live value every render; the
+ * first-render value — typically parsed from the query string — seeds the
+ * initial key's snapshot.
+ *
+ * `sourceKey` seeds the key state and re-syncs it whenever the argument's
+ * value changes (e.g. the caller derives it from the URL and the user
+ * navigates back/forward). The sync is change-triggered, not
+ * difference-triggered: right after `setAfterSnapshot` the caller's async URL
+ * mirror still reports the departing key, but since the argument hasn't
+ * changed, no bounce-back occurs. It also runs during render, so effects only
+ * ever observe a settled key/value pair.
+ *
+ * `setAfterSnapshot(nextKey)` snapshots the current key's value, switches the
+ * key, and synchronously returns the value stored for `nextKey` (`undefined`
+ * if never visited) — so the caller can start a preloaded query and mirror
+ * the URL inside the same event handler (render-as-you-fetch).
+ */
+export const useKeyedSnapshot = <K extends string, V>(
+  sourceKey: K,
+  value: V,
+): [K, (nextKey: K) => V | undefined] => {
+  'use memo';
+  const [currentKey, setCurrentKey] = useState(sourceKey);
+  const [prevSourceKey, setPrevSourceKey] = useState(sourceKey);
+  const snapshotMapRef = useRef<Partial<Record<K, V>>>({
+    [currentKey]: value,
+  } as Partial<Record<K, V>>);
+
+  if (sourceKey !== prevSourceKey) {
+    setPrevSourceKey(sourceKey);
+    if (sourceKey !== currentKey) {
+      setCurrentKey(sourceKey);
+    }
+  }
+
+  useEffect(() => {
+    snapshotMapRef.current[currentKey] = value;
+  }, [currentKey, value]);
+
+  const setAfterSnapshot = (nextKey: K): V | undefined => {
+    snapshotMapRef.current[currentKey] = value;
+    setCurrentKey(nextKey);
+    return snapshotMapRef.current[nextKey];
+  };
+
+  return [currentKey, setAfterSnapshot];
+};
+
+export const useBrowserPopstateEffect = (onPopstate: () => void) => {
+  const handlePopstate = useEffectEvent(onPopstate);
+
+  useEffect(function listenBrowserNavigation() {
+    // `useEffectEvent` results must not be handed to other APIs directly.
+    const listener = () => handlePopstate();
+    window.addEventListener('popstate', listener);
+    return () => {
+      window.removeEventListener('popstate', listener);
+    };
+  }, []);
 };
 
 export const useBackendAIConnectedState = () => {
