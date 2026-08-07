@@ -260,16 +260,22 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
         >
           <Input placeholder="https://huggingface.co/openai/gpt-oss-20b" />
         </Form.Item>
-        <Form.Item dependencies={['model']}>
+        {/* `noStyle` on the outer item so an unparseable (or empty) input
+            leaves no gap above the next field; the inner item supplies the
+            normal field spacing once there is something to preview. */}
+        <Form.Item noStyle dependencies={['model']}>
           {({
             getFieldValue,
-          }: FormInstance<ImportHuggingFaceModelFormValues>) => (
-            <HuggingFaceModelPreview
-              modelId={
-                parseHuggingFaceModel(getFieldValue('model') ?? '')?.modelId
-              }
-            />
-          )}
+          }: FormInstance<ImportHuggingFaceModelFormValues>) => {
+            const modelId = parseHuggingFaceModel(
+              getFieldValue('model') ?? '',
+            )?.modelId;
+            return modelId ? (
+              <Form.Item>
+                <HuggingFaceModelPreview modelId={modelId} />
+              </Form.Item>
+            ) : null;
+          }}
         </Form.Item>
         <Form.Item
           name="revision"
