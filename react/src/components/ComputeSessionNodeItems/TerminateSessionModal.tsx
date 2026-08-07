@@ -55,6 +55,11 @@ type SessionForTerminateModal = NonNullable<
   TerminateSessionModalFragment$data[number]
 >;
 
+// Budget for the best-effort wsproxy cleanup performed before a session is
+// deleted. A proxy that accepts the TCP connection but never returns an HTTP
+// response would otherwise leave these requests pending forever (FR-3398).
+const WSPROXY_CLEANUP_TIMEOUT_MS = 10_000;
+
 const sendRequest = async (
   rqst: {
     uri: string;
@@ -66,7 +71,13 @@ const sendRequest = async (
     if (rqst.method === 'GET') {
       rqst.body = undefined;
     }
-    resp = await fetch(rqst.uri, rqst);
+    resp = await fetch(rqst.uri, {
+      ...rqst,
+      // Abort an unresponsive proxy instead of hanging. The rejection is
+      // caught below and reported as "no response", which the caller already
+      // treats as "nothing to clean up".
+      signal: rqst.signal ?? AbortSignal.timeout(WSPROXY_CLEANUP_TIMEOUT_MS),
+    });
     const contentType = resp.headers.get('Content-Type');
     if (contentType === null) {
       body = resp.ok;
@@ -115,6 +126,13 @@ const getProxyURL = async (
   wsproxyVersion?: string,
 ) => {
   let url = 'http://127.0.0.1:5050/';
+  // The `_config.proxyURL` branch uses a truthy check, which covers undefined,
+  // null, and empty string. The Backend.AI client initializes
+  // `_config._proxyURL = null` by default, and `config.toml` can ship
+  // `wsproxy.proxyURL = ""`. Both must fall through to the default URL above
+  // instead of overwriting it with a non-string value (which would later throw
+  // in `new URL(...)`). Mirrors the same guard in `useBackendAIAppLauncher`'s
+  // `getProxyURL`.
   if (
     // @ts-ignore
     globalThis.__local_proxy !== undefined &&
@@ -123,7 +141,7 @@ const getProxyURL = async (
   ) {
     // @ts-ignore
     url = globalThis.__local_proxy.url;
-  } else if (baiClient._config.proxyURL !== undefined) {
+  } else if (baiClient._config.proxyURL) {
     url = baiClient._config.proxyURL;
   }
   if (resourceGroupIdOfSession !== undefined && projectId !== undefined) {
@@ -201,6 +219,7 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
   onRequestClose,
   ...modalProps
 }) => {
+  'use memo';
   const openTerminateModal = false;
   const { t } = useTranslation();
   const { styles } = useStyle();
@@ -234,32 +253,28 @@ const TerminateSessionModal: React.FC<TerminateSessionModalProps> = ({
 
   const { pendingCount, trackPromise } = usePromiseTracker();
 
-  const terminateSession = (session: SessionForTerminateModal) => {
-    return terminateApp(
-      session,
-      baiClient._config.accessKey,
-      session.project_id,
-      baiClient,
-    )
-      .catch((e) => {
-        return {
-          error: e,
-        };
-      })
-      .then((result) => {
-        const err = result?.error;
-        if (
-          err === undefined || //no error
-          (err && // Even if wsproxy address is invalid, session must be deleted.
-            err.message &&
-            (err.statusCode === 404 || err.statusCode === 500))
-        ) {
-          // BAI client destroy try to request 3times as default
-          return baiClient.destroy(session.row_id, session.access_key, isForce);
-        } else {
-          throw err;
-        }
-      });
+  // The wsproxy cleanup is best-effort: it releases a leftover app-proxy route
+  // for the session. It must never prevent the deletion the user actually asked
+  // for — an unreachable, misconfigured, or unresponsive proxy is not a reason
+  // to keep a session alive (FR-3398). The previous guard only let `destroy()`
+  // run for a 404/500 cleanup failure and re-threw everything else, so a
+  // network-level failure silently skipped the deletion.
+  //
+  // The step is also time-boxed as a whole, not just at the `fetch` level:
+  // `getWSProxyVersion` goes through the Backend.AI client, which applies no
+  // request timeout of its own.
+  const terminateSession = async (session: SessionForTerminateModal) => {
+    await Promise.race([
+      terminateApp(
+        session,
+        baiClient._config.accessKey,
+        session.project_id,
+        baiClient,
+      ).catch(() => undefined),
+      new Promise((resolve) => setTimeout(resolve, WSPROXY_CLEANUP_TIMEOUT_MS)),
+    ]);
+    // BAI client destroy try to request 3times as default
+    return baiClient.destroy(session.row_id, session.access_key, isForce);
   };
 
   const relayEvn = useRelayEnvironment();
