@@ -49,6 +49,10 @@ const LoginViewLazy = React.lazy(() => import('./components/LoginView'));
 
 const Information = React.lazy(() => import('./components/Information'));
 const StartPage = React.lazy(() => import('./pages/StartPage'));
+// Astryx/StyleX foundation probe (to-astryx ticket 01).
+const AstryxStylexProbePage = React.lazy(
+  () => import('./pages/AstryxStylexProbePage'),
+);
 const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
 const AdminDashboardPage = React.lazy(
   () => import('./pages/AdminDashboardPage'),
@@ -245,6 +249,17 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         path: '*',
         handle: { hideBreadcrumb: true, notFound: true },
         Component: UnknownRoutePage,
+      },
+      {
+        // Astryx/StyleX foundation probe (to-astryx ticket 01). Not linked
+        // from any menu; remove once real Astryx pages carry authored styles.
+        path: 'stylex-probe',
+        element: (
+          <Suspense fallback={<Skeleton active />}>
+            <AstryxStylexProbePage />
+          </Suspense>
+        ),
+        handle: { hideBreadcrumb: true },
       },
       {
         path: 'start',

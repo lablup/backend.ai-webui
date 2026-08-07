@@ -109,11 +109,65 @@ check_terminology_drift() {
   node scripts/check-terminology-i18n.mjs --strict --no-check2 --no-check3
 }
 
+check_stylex_injection() {
+  # Guard the StyleX compiler's `cssInjectionTarget` (react/vite.config.ts).
+  # The @stylexjs/unplugin appends ALL compiled `xstyle`/stylex.create CSS to
+  # one existing CSS asset. Without a pinned target it picks "whichever .css
+  # rollup emitted first" — in a code-split app that can be a lazy route's
+  # stylesheet, silently putting every authored style behind that route
+  # boundary. Nothing warns when the predicate stops matching (e.g. an
+  # assetFileNames tweak or a Vite major), so this check asserts it directly.
+  #
+  # 1. Config gate (always): vite.config.ts must still declare
+  #    cssInjectionTarget targeting the entry `assets/index-*.css`.
+  # 2. Build gate (only when react/build/assets exists): the sentinel rule
+  #    authored in react/src/pages/AstryxStylexProbePage.tsx must land in the
+  #    ENTRY stylesheet and in no other emitted CSS asset. Keep the value in
+  #    sync with the `sentinel` style there.
+  local STYLEX_SENTINEL='z-index: ?2147480001'
+  local config=react/vite.config.ts
+
+  if ! grep -q 'cssInjectionTarget' "$config"; then
+    echo "cssInjectionTarget is missing from $config."
+    echo "Without it the StyleX plugin appends authored CSS to an arbitrary"
+    echo "code-split stylesheet. Restore the predicate pinning it to"
+    echo "assets/index-*.css."
+    return 1
+  fi
+
+  local assets=react/build/assets
+  if [ ! -d "$assets" ]; then
+    echo "(no production build present — config gate only; run" \
+      "\`pnpm run build:react-only\` for the full sentinel check)"
+    return 0
+  fi
+
+  local entry_hits other_hits
+  entry_hits=$(grep -lE "$STYLEX_SENTINEL" "$assets"/index-*.css 2>/dev/null || true)
+  other_hits=$(grep -lE "$STYLEX_SENTINEL" "$assets"/*.css 2>/dev/null \
+    | grep -v '/index-' || true)
+
+  if [ -z "$entry_hits" ]; then
+    echo "StyleX sentinel not found in the entry stylesheet ($assets/index-*.css)."
+    echo "cssInjectionTarget no longer matches the entry CSS asset — authored"
+    echo "xstyle/StyleX output is landing somewhere else (or nowhere)."
+    [ -n "$other_hits" ] && echo "Found instead in: $other_hits"
+    return 1
+  fi
+  if [ -n "$other_hits" ]; then
+    echo "StyleX sentinel leaked into non-entry stylesheets: $other_hits"
+    return 1
+  fi
+  echo "sentinel found in: $entry_hits"
+  return 0
+}
+
 run_check "Relay" check_relay_drift
 run_check "Lint" pnpm -r --stream lint
 run_check "Format" pnpm run format
 run_check "TypeScript" pnpm --prefix ./react exec tsc --noEmit
 run_check "Vite warmup paths" check_warmup_paths
+run_check "StyleX cssInjectionTarget" check_stylex_injection
 run_check "Terminology" check_terminology_drift
 
 # Non-English avoid-row precision self-test (FR-3051). This gates the avoid-row

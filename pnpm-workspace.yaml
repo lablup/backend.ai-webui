@@ -80,10 +80,21 @@ minimumReleaseAgeExclude:
   - react@19.2.6
   - react-dom@19.2.6
   - nuqs@2.9.2
+  # Astryx foundation (to-astryx, ticket 01): 0.3.0 published 2026-08-05,
+  # inside the 7-day window at adoption time. Remove after 2026-08-12.
+  - "@astryxdesign/core@0.3.0"
+  - "@astryxdesign/theme-neutral@0.3.0"
+  - "@astryxdesign/cli@0.3.0"
 minimumReleaseAgeIgnoreMissingTime: false
 resolutionMode: time-based
 
 allowBuilds:
+  # `false` on purpose for both @astryxdesign entries: each postinstall only
+  # prints an `astryx init` nudge (non-interactive, always exits 0) — no build
+  # output is needed. Without an entry here pnpm 11's verifyDepsBeforeRun
+  # aborts every `pnpm run <script>` with ERR_PNPM_IGNORED_BUILDS.
+  "@astryxdesign/cli": false
+  "@astryxdesign/core": false
   bufferutil: true
   core-js: true
   core-js-pure: true
