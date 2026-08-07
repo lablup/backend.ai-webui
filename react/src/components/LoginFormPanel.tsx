@@ -9,6 +9,9 @@
  * SSO buttons, signup/password change links, and integrates
  * child React modals (TOTP, ResetPassword, Signup).
  */
+// to-astryx ticket 04: this screen's `App.useApp()` is served by the Astryx
+// app-shim (message → Toast) instead of antd.
+import { App } from '../app-shim';
 import { baiSignedRequestWithPromise } from '../helper';
 import type { LoginConfigState } from '../helper/loginConfig';
 import { useAnonymousBackendaiClient } from '../hooks';
@@ -34,7 +37,6 @@ import {
 } from '@ant-design/icons';
 import {
   Alert,
-  App,
   Button,
   Dropdown,
   Form,

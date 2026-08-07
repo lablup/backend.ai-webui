@@ -13,6 +13,9 @@
  * handled by the useLoginOrchestration hook, replacing the Lit shell's
  * firstUpdated() logic.
  */
+// to-astryx ticket 04: this screen's `App.useApp()` is served by the Astryx
+// app-shim (message → Toast, modal.confirm → AlertDialog) instead of antd.
+import { App } from '../app-shim';
 import {
   devApiEndpointOverride,
   devEmailOverride,
@@ -41,7 +44,16 @@ import { pluginApiEndpointState } from '../hooks/useWebUIPluginState';
 import { preloadPostLoginChunks } from '../preload';
 import { jotaiStore } from './DefaultProviders';
 import LoginFormPanel from './LoginFormPanel';
-import { App, Button, ConfigProvider, Form, type MenuProps, Tag } from 'antd';
+// antd's <App> element stays mounted as a nested provider: unmigrated
+// children in this subtree (e.g. SignupModal) still read antd's context.
+import {
+  App as AntdApp,
+  Button,
+  ConfigProvider,
+  Form,
+  type MenuProps,
+  Tag,
+} from 'antd';
 import { BAIModal, BAIFlex, useBAILogger } from 'backend.ai-ui';
 import i18n from 'i18next';
 import { useAtomValue, useSetAtom } from 'jotai';
@@ -1118,7 +1130,7 @@ const LoginView: React.FC<{
         },
       }}
     >
-      <App>
+      <AntdApp>
         {/* The login screen background (Diagonal Weave + version/copyright
             metadata) is the persisted splash element from index.html, switched
             to backdrop mode via __enterLoginBackdrop(). It sits at z-index
@@ -1195,7 +1207,7 @@ const LoginView: React.FC<{
             </div>
           </BAIModal>
         </div>
-      </App>
+      </AntdApp>
     </ConfigProvider>
   );
 };
