@@ -260,9 +260,13 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
         >
           <Input placeholder="https://huggingface.co/openai/gpt-oss-20b" />
         </Form.Item>
-        {/* `noStyle` on the outer item so an unparseable (or empty) input
-            leaves no gap above the next field; the inner item supplies the
-            normal field spacing once there is something to preview. */}
+        {/* The preview must stay mounted even while the input is
+            unparseable: `useDebounce` seeds its state with the current
+            value, so remounting on every unparseable→parseable transition
+            (`openai/` → `openai/g`) would fire an undebounced request at the
+            rate-limited API. `hidden` collapses the row to `display: none`,
+            so an empty input leaves no gap above the next field without
+            unmounting anything. */}
         <Form.Item noStyle dependencies={['model']}>
           {({
             getFieldValue,
@@ -270,11 +274,11 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
             const modelId = parseHuggingFaceModel(
               getFieldValue('model') ?? '',
             )?.modelId;
-            return modelId ? (
-              <Form.Item>
+            return (
+              <Form.Item hidden={!modelId}>
                 <HuggingFaceModelPreview modelId={modelId} />
               </Form.Item>
-            ) : null;
+            );
           }}
         </Form.Item>
         <Form.Item

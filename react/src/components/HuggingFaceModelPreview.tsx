@@ -153,10 +153,14 @@ const HuggingFaceModelPreview: React.FC<HuggingFaceModelPreviewProps> = ({
         )}
         <BAIFlex gap="md" wrap="wrap">
           {size && (
+            // The caveat behind this tooltip changes what the number means,
+            // so it has to be reachable without a pointer: the trigger is
+            // focusable and opens on focus as well as hover.
             <Tooltip
               title={t('import.HuggingFaceModelSizeIncludesAllRevisions')}
+              trigger={['hover', 'focus']}
             >
-              <Typography.Text type="secondary">
+              <Typography.Text type="secondary" tabIndex={0}>
                 {t('import.HuggingFaceModelSize')}: {size}
               </Typography.Text>
             </Tooltip>
