@@ -100,7 +100,7 @@ const ModelConfigItem: React.FC<{
         className="bai-collapsible-section"
         trigger={t('adminDeploymentPreset.modelDef.EnableMetadata')}
         defaultIsOpen
-        style={{ marginTop: token.marginSM }}
+        style={{ marginTop: token.marginXS }}
       >
         <BAIFlex direction="column" align="stretch" gap="xs">
           <BAIFlex gap="md" wrap="wrap">
