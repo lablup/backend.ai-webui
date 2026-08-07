@@ -39,7 +39,7 @@ import {
 } from 'backend.ai-ui';
 // `rehype-katex` does not import the CSS file, so we need to import it manually.
 import 'katex/dist/katex.min.css';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useDeferredValue, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Markdown from 'react-markdown';
 import rehypeKatex from 'rehype-katex';
@@ -203,11 +203,6 @@ const useStyles = createStyles(({ css, token }) => ({
 // wrapper's 1px border).
 const EDITOR_HEIGHT = 'calc(100vh - 320px)';
 
-interface AnnouncementValues {
-  enabled: boolean;
-  message: string;
-}
-
 interface AnnouncementEditModalProps extends BAIModalProps {
   onRequestClose: (success?: boolean) => void;
 }
@@ -235,56 +230,109 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
     announcementQueryOptions(baiClient),
   );
 
-  // The `enabled` flag is not user-controllable for now: the manager stores the
-  // announcement purely by presence — publishing a message enables it, and
-  // "disabling" it just deletes the stored message (there is no way to persist a
-  // disabled-but-present announcement). So the footer exposes an explicit Delete
-  // action instead of an Enabled toggle. The toggle implementation is kept below
-  // (commented out) so it can be restored once the backend can persist the flag.
+  // The manager now stores the message and the `enabled` flag under separate
+  // etcd keys (see backend.ai#12679 / BA-6794), so a disabled announcement's
+  // text is retained rather than discarded. That unlocks a Save Draft action
+  // (`enabled: false`, message kept) alongside Publish (`enabled: true`). A
+  // free-form Enabled toggle that lets an admin flip an already-published
+  // announcement back to draft is still out of scope (FR-3473 covers only the
+  // `enabled: false` save-draft path) — the toggle implementation is kept below
+  // (commented out) for that follow-up.
   //
   // const [enabledDraft, setEnabledDraft] = useState<boolean>();
   // const enabled = enabledDraft ?? announcement?.enabled ?? true;
   const [messageDraft, setMessageDraft] = useState<string>();
   const message = messageDraft ?? announcement?.message ?? '';
+  // Whether the editor still reflects the fetched announcement verbatim (no
+  // local edits yet). Used to key the Monaco editor below so a background
+  // refetch that lands after the initial (possibly stale, cache-first)
+  // render can still replace its `defaultValue` — but only while there is
+  // nothing in-progress to lose.
+  const isPristine = messageDraft === undefined;
 
-  // Publishing always enables the announcement, and the backend rejects an empty
-  // message ("Empty message not allowed to enable announcement"), so a non-empty
-  // message is required to publish. (Previously gated on `enabled && ...`.)
+  // The live preview re-parses Markdown/GFM/math and re-highlights fenced code
+  // on every keystroke, which is expensive enough on a large announcement to
+  // make typing feel laggy. (The editor itself no longer round-trips through
+  // this state — see the `defaultValue` passed to MarkdownEditorField below —
+  // so deferring this is purely a responsiveness optimization, not a
+  // correctness fix.)
+  const previewMessage = useDeferredValue(message);
+
+  // Both Publish and Save Draft require text to be worth persisting; the
+  // backend also rejects an empty message when enabling ("Empty message not
+  // allowed to enable announcement"). Delete is the dedicated action for
+  // clearing the stored message entirely.
   const isMessageMissing = !message.trim();
 
-  const updateMutation = useTanMutation({
-    mutationFn: (values: AnnouncementValues) => {
-      return baiClient.service.update_announcement(
-        values.enabled,
-        values.message,
-      );
-    },
+  const publishMutation = useTanMutation({
+    mutationFn: (value: string) =>
+      baiClient.service.update_announcement(true, value),
   });
 
-  // Deleting is `update_announcement(false, ...)`: with `enabled: false` the
-  // manager removes the stored message from etcd, clearing the announcement.
+  const saveDraftMutation = useTanMutation({
+    mutationFn: (value: string) =>
+      baiClient.service.update_announcement(false, value),
+  });
+
+  // Deleting is `update_announcement(false, '')`: an explicit empty message
+  // clears the stored text regardless of `enabled`, removing both a published
+  // announcement and an unpublished draft.
   const deleteMutation = useTanMutation({
     mutationFn: () => baiClient.service.update_announcement(false, ''),
   });
 
-  const handleSubmit = () => {
+  // Publish, Save Draft, and Delete all write the same `enabled`/message
+  // slot. Each button only reflects its own pending state, so nothing stops
+  // an admin from firing a second mutation while the first is still in
+  // flight — e.g. Save Draft then Publish racing, where whichever request
+  // the server finishes last silently wins regardless of which success
+  // message the UI already showed. Block all three actions while any one of
+  // them is pending.
+  const isAnyMutationPending =
+    publishMutation.isPending ||
+    saveDraftMutation.isPending ||
+    deleteMutation.isPending;
+
+  // The retained-draft semantics this button relies on (`enabled: false`
+  // keeps the stored message instead of discarding it) landed in the
+  // manager only as of 26.8.0 (backend#12679 / BA-6794). Older managers
+  // still delete the message on disable, so on those managers this button
+  // would report "Draft saved" while quietly wiping the announcement.
+  const supportsDraftSave = baiClient.supports('retained-announcement-message');
+
+  const handlePublish = () => {
     if (isMessageMissing) return;
-    updateMutation.mutate(
-      { enabled: true, message },
-      {
-        onSuccess: () => {
-          appMessage.success(t('summary.AnnouncementUpdated'));
-          queryClient.invalidateQueries({
-            queryKey: announcementQueryOptions(baiClient).queryKey,
-          });
-          onRequestClose(true);
-        },
-        onError: (error) => {
-          appMessage.error(getErrorMessage(error));
-          logger.error(error);
-        },
+    publishMutation.mutate(message, {
+      onSuccess: () => {
+        appMessage.success(t('summary.AnnouncementUpdated'));
+        queryClient.invalidateQueries({
+          queryKey: announcementQueryOptions(baiClient).queryKey,
+        });
+        onRequestClose(true);
       },
-    );
+      onError: (error) => {
+        appMessage.error(getErrorMessage(error));
+        logger.error(error);
+      },
+    });
+  };
+
+  // Save Draft persists the message with `enabled: false` and keeps the modal
+  // open so editing can continue — unlike Publish, it isn't a closing action.
+  const handleSaveDraft = () => {
+    if (isMessageMissing) return;
+    saveDraftMutation.mutate(message, {
+      onSuccess: () => {
+        appMessage.success(t('summary.AnnouncementDraftSaved'));
+        queryClient.invalidateQueries({
+          queryKey: announcementQueryOptions(baiClient).queryKey,
+        });
+      },
+      onError: (error) => {
+        appMessage.error(getErrorMessage(error));
+        logger.error(error);
+      },
+    });
   };
 
   const handleDelete = async () => {
@@ -343,7 +391,11 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
             <Button
               type="text"
               danger
-              disabled={isLoading || !announcement?.enabled}
+              disabled={
+                isLoading ||
+                !announcement?.message?.trim() ||
+                isAnyMutationPending
+              }
               loading={deleteMutation.isPending}
               onClick={confirmDelete}
             >
@@ -354,11 +406,29 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
             <Button onClick={() => onRequestClose()}>
               {t('button.Cancel')}
             </Button>
+            {/* The backend has only one message + `enabled` slot, so there is
+                no way to hold a draft alongside a live announcement — saving
+                a draft would simply overwrite the live one with `enabled:
+                false`. Rather than let that surprise happen behind a "Save
+                Draft" label, only offer the draft flow when nothing is
+                currently published: editing a live announcement offers just
+                Publish (update it in place) and Delete. */}
+            {!announcement?.enabled && supportsDraftSave && (
+              <Button
+                variant="outlined"
+                color="primary"
+                disabled={isLoading || isMessageMissing || isAnyMutationPending}
+                loading={saveDraftMutation.isPending}
+                onClick={handleSaveDraft}
+              >
+                {t('button.SaveDraft')}
+              </Button>
+            )}
             <Button
               type="primary"
-              disabled={isLoading || isMessageMissing}
-              loading={updateMutation.isPending}
-              onClick={handleSubmit}
+              disabled={isLoading || isMessageMissing || isAnyMutationPending}
+              loading={publishMutation.isPending}
+              onClick={handlePublish}
             >
               {t('button.Publish')}
             </Button>
@@ -381,8 +451,19 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
               {t('summary.AnnouncementMessage')}
             </Typography.Text>
             <MarkdownEditorField
+              // The announcement query has no `staleTime` and shares its
+              // cache key with the alert banner, so this modal frequently
+              // mounts on already-cached (possibly stale) data while a
+              // background refetch is in flight. That refetch updates
+              // `announcement`, but the editor below is uncontrolled and
+              // only reads `defaultValue` once. Re-keying on the fetched
+              // message while nothing has been typed yet forces a remount
+              // that picks up the fresh text; once the admin starts
+              // editing, the key stops changing so in-progress edits are
+              // never clobbered by a late-arriving refetch.
+              key={isPristine ? (announcement?.message ?? '') : 'editing'}
               height={EDITOR_HEIGHT}
-              value={message}
+              defaultValue={announcement?.message}
               onChange={setMessageDraft}
             />
             {isMessageMissing && (
@@ -440,7 +521,7 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
                   },
                 }}
               >
-                {message}
+                {previewMessage}
               </Markdown>
             </div>
           </BAIFlex>
@@ -451,12 +532,14 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
 };
 
 // A markdown editor field (Monaco) with a velog-style formatting toolbar.
-// A controlled component with the standard value / onChange contract.
+// Uncontrolled: `defaultValue` seeds the editor once, `onChange` reports
+// every edit — see BAICodeEditor's `defaultValue` doc comment for why this
+// message editor deliberately isn't a controlled `value`/`onChange` pair.
 const MarkdownEditorField: React.FC<{
-  value?: string;
+  defaultValue?: string;
   onChange?: (value: string) => void;
   height: string;
-}> = ({ value, onChange, height }) => {
+}> = ({ defaultValue, onChange, height }) => {
   'use memo';
 
   const { t } = useTranslation();
@@ -624,7 +707,7 @@ const MarkdownEditorField: React.FC<{
         editable
         lineWrapping
         height={height}
-        value={value}
+        defaultValue={defaultValue}
         onChange={onChange}
         onMount={(editor, monaco) => {
           editorRef.current = editor;

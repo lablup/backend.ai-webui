@@ -25,7 +25,11 @@ const AnnouncementAlert: React.FC<Props> = ({ ...otherProps }) => {
   const [isEditOpen, { toggle: toggleEditModal }] = useToggle(false);
   const { data: announcement } = useSuspenseGetAnnouncement();
 
-  return !_.isEmpty(announcement.message) ? (
+  // A saved draft (`enabled: false`) keeps its message in etcd (backend.ai#12679
+  // / BA-6794) but must stay hidden from this public-facing banner until
+  // published — only the superadmin-only editor (opened from Maintenance
+  // settings or this alert's own Edit button) can see and manage it.
+  return announcement.enabled && !_.isEmpty(announcement.message) ? (
     <>
       <BAIAlert
         description={
