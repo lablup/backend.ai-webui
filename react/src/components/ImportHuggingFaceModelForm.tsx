@@ -10,6 +10,7 @@ import {
 } from '../hooks/useStartSession';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
+import HuggingFaceModelPreview from './HuggingFaceModelPreview';
 import { ReloadOutlined } from '@ant-design/icons';
 import {
   App,
@@ -258,6 +259,27 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
           ]}
         >
           <Input placeholder="https://huggingface.co/openai/gpt-oss-20b" />
+        </Form.Item>
+        {/* The preview must stay mounted even while the input is
+            unparseable: `useDebounce` seeds its state with the current
+            value, so remounting on every unparseable→parseable transition
+            (`openai/` → `openai/g`) would fire an undebounced request at the
+            rate-limited API. `hidden` collapses the row to `display: none`,
+            so an empty input leaves no gap above the next field without
+            unmounting anything. */}
+        <Form.Item noStyle dependencies={['model']}>
+          {({
+            getFieldValue,
+          }: FormInstance<ImportHuggingFaceModelFormValues>) => {
+            const modelId = parseHuggingFaceModel(
+              getFieldValue('model') ?? '',
+            )?.modelId;
+            return (
+              <Form.Item hidden={!modelId}>
+                <HuggingFaceModelPreview modelId={modelId} />
+              </Form.Item>
+            );
+          }}
         </Form.Item>
         <Form.Item
           name="revision"
