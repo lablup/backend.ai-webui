@@ -218,7 +218,11 @@ const MockProviders: React.FC<{ children: React.ReactNode }> = ({
   const [clientPromise] = useState(() => Promise.resolve(createMockClient()));
   const [relayEnvironment] = useState(() => {
     const environment = createMockEnvironment();
-    // The select re-fetches on open/selection; queue enough resolvers.
+    const pickerGlobalIds = MOCK_VFOLDERS.map(({ uuid }) =>
+      toGlobalId('VirtualFolderNode', uuid),
+    );
+    // Queue a resolver and a pending operation per mocked fetch; the picker's
+    // preloaded query hangs unless its operation is registered up front.
     for (let i = 0; i < 20; i++) {
       environment.mock.queueOperationResolver((operation) => {
         // BAIDirectoryPickerModal queries `vfolder_node(id: $vfolderGlobalId)`
@@ -246,6 +250,11 @@ const MockProviders: React.FC<{ children: React.ReactNode }> = ({
           }),
         });
       });
+      pickerGlobalIds.forEach((vfolderGlobalId) =>
+        environment.mock.queuePendingOperation(BAIDirectoryPickerQuery, {
+          vfolderGlobalId,
+        }),
+      );
     }
     return environment;
   });
