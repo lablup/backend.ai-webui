@@ -939,6 +939,8 @@
       "SharedUser": "Paylaşılan kullanıcı",
       "SharedUserDesc": "Listede yalnızca davetiyeyi kabul eden kullanıcılar görüntülenir.\n\nHala davet eden kullanıcılar görüntülenmiyor.",
       "Status": "Durum",
+      "TargetProject": "Hedef Proje",
+      "TargetProjectRequired": "Klasörün oluşturulacağı projeyi seçin.",
       "TrashBin": "Çöp",
       "Type": "Tür",
       "TypeFolderNameToDelete": "Silmek için klasör adını yazın",

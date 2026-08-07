@@ -939,6 +939,8 @@
       "SharedUser": "Usuário compartilhado",
       "SharedUserDesc": "Somente os usuários que aceitaram o convite são exibidos na lista.\n\nOs usuários que ainda estão convidativos não são exibidos.",
       "Status": "Estado",
+      "TargetProject": "Projeto de destino",
+      "TargetProjectRequired": "Selecione um projeto no qual criar a pasta.",
       "TrashBin": "Lixo",
       "Type": "Modelo",
       "TypeFolderNameToDelete": "Digite o nome da pasta para excluir",

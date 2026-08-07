@@ -32,6 +32,7 @@ import {
   type RuntimeParameterGroup,
   type RuntimeVariantPresetValueEntry,
 } from '../hooks/useRuntimeParameterSchema';
+import { toProjectContext } from '../types/projectContext';
 import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
 import EnvVarFormList, { type EnvVarFormListValue } from './EnvVarFormList';
 import FolderCreateModalV2 from './FolderCreateModalV2';
@@ -334,7 +335,8 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   // listing matches what the user has access to in the active project
   // context, consistent with the rest of the model-deployment UI
   // (ServiceLauncherPageContent, ModelCardDeployModal).
-  const { id: currentProjectId } = useCurrentProjectValue();
+  const currentProject = useCurrentProjectValue();
+  const currentProjectId = currentProject.id;
   const { logger } = useBAILogger();
   const { open: openFolderExplorer } = useFolderExplorerOpener();
   const baiClient = useSuspendedBackendaiClient();
@@ -2021,6 +2023,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       )}
       <FolderCreateModalV2
         open={isModelFolderCreateModalOpen}
+        project={toProjectContext(currentProject)}
         initialValues={{ usage_mode: 'model' }}
         onRequestClose={(result) => {
           setIsModelFolderCreateModalOpen(false);
