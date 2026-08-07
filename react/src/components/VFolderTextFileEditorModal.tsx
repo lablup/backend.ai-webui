@@ -1,31 +1,35 @@
 /**
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
- */
+
+ Ticket 16 — modal shell converted to `BAIModalAstryx` (the unsaved-changes
+ dialog below was already Astryx from the app-shim migration). PILOT-DECISION:
+ the antd modal's JSX title ("Edit File — name (size)") splits into the
+ Astryx `DialogHeader`'s string `title` + `subtitle` (P2). `keyboard={false}`
+ is replaced by the dirty-check on `onOpenChange` — Escape now routes through
+ the same unsaved-changes confirmation instead of being disabled outright.
+*/
 import { App } from '../app-shim';
 import { loadMonacoEditor } from '../helper/monacoEditor';
 import { useTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useThemeMode } from '../hooks/useThemeMode';
-import { theme } from '../theme-shim';
+import BAIModal from './astryx-bui/BAIModalAstryx';
+import type { BAIModalAstryxProps as BAIModalProps } from './astryx-bui/BAIModalAstryx';
+import BAISkeleton from './astryx-bui/BAISkeletonAstryx';
+import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog';
 import { Layout, LayoutContent, LayoutFooter } from '@astryxdesign/core/Layout';
-import { HStack } from '@astryxdesign/core/Stack';
+import { HStack, VStack } from '@astryxdesign/core/Stack';
 import type { Monaco, OnMount } from '@monaco-editor/react';
 import { useQueryClient } from '@tanstack/react-query';
-import { Skeleton } from 'antd';
 import { RcFile } from 'antd/es/upload';
 import {
-  BAIFlex,
-  BAIModal,
-  BAIModalProps,
   VFolderFile,
   convertToDecimalUnit,
   useConnectedBAIClient,
   useErrorMessageResolver,
-  BAIText,
-  BAIAlert,
 } from 'backend.ai-ui';
 import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -38,8 +42,10 @@ const MonacoEditor = React.lazy(() =>
 
 interface VFolderTextFileEditorModalProps extends Omit<
   BAIModalProps,
-  'children' | 'title' | 'onCancel' | 'onOk' | 'confirmLoading'
+  'children' | 'title' | 'isOpen' | 'onOpenChange' | 'onAction'
 > {
+  /** App-level contract, kept: the explorer passes `open`. */
+  open?: boolean;
   targetVFolderId: string;
   currentPath: string;
   fileInfo: VFolderFile | null;
@@ -99,7 +105,6 @@ const VFolderTextFileEditorModal: React.FC<VFolderTextFileEditorModalProps> = ({
   const { message } = App.useApp();
   const baiClient = useConnectedBAIClient();
   const { getErrorMessage } = useErrorMessageResolver();
-  const { token } = theme.useToken();
   const { upsertNotification } = useSetBAINotification();
 
   const queryClient = useQueryClient();
@@ -296,56 +301,41 @@ const VFolderTextFileEditorModal: React.FC<VFolderTextFileEditorModalProps> = ({
   );
 
   const skeletonWithPadding = (
-    <Skeleton
-      active
+    <BAISkeleton
+      rows={3}
       style={{
         alignSelf: 'start',
-        paddingInline: token.paddingContentHorizontal,
-        paddingBlock: token.paddingContentVertical,
+        paddingInline: 'var(--spacing-4)',
+        paddingBlock: 'var(--spacing-3)',
       }}
     />
   );
+  const fileSizeSuffix =
+    fileInfo && fileInfo.size > 0
+      ? ` (${convertToDecimalUnit(fileInfo.size, 'auto')?.displayValue})`
+      : '';
   return (
     <BAIModal
       width={'100%'}
-      destroyOnHidden
-      okText={t('button.Save')}
-      cancelText={t('button.Cancel')}
-      keyboard={false}
-      {...modalProps}
-      title={
-        <>
-          {t('data.explorer.EditFile')}
-          {fileInfo && (
-            <BAIText type="secondary" style={{ fontWeight: 'normal' }}>
-              - {fileInfo.name}
-              {fileInfo.size > 0 &&
-                ` (${convertToDecimalUnit(fileInfo.size, 'auto')?.displayValue})`}
-            </BAIText>
-          )}
-        </>
-      }
-      onCancel={() => handleRequestClose()}
-      onOk={() => saveMutation.mutate()}
-      confirmLoading={saveMutation.isPending}
-      okButtonProps={{ disabled: !!loadError }}
-      styles={{
-        body: {
-          paddingBlock: 0,
-          paddingInline: 0,
-        },
+      maxHeight={'95vh'}
+      title={t('data.explorer.EditFile')}
+      subtitle={fileInfo ? `${fileInfo.name}${fileSizeSuffix}` : undefined}
+      actionLabel={t('button.Save')}
+      cancelLabel={t('button.Cancel')}
+      isActionLoading={saveMutation.isPending}
+      isActionDisabled={!!loadError}
+      onAction={() => saveMutation.mutate()}
+      isOpen={modalProps.open}
+      onOpenChange={(next) => {
+        if (!next) handleRequestClose();
       }}
+      {...modalProps}
     >
-      <BAIFlex
-        direction="column"
-        gap="md"
-        style={{ height: 'calc(100vh - 180px)' }}
-      >
+      <VStack gap={5} align="stretch" style={{ height: 'calc(100vh - 220px)' }}>
         <Suspense fallback={skeletonWithPadding}>
           {loadError ? (
-            <BAIAlert
-              type="error"
-              showIcon
+            <Banner
+              status="error"
               title={t('data.explorer.FailedToLoadFile')}
               description={t('data.explorer.FailedToLoadFileDescription')}
             />
@@ -442,7 +432,7 @@ const VFolderTextFileEditorModal: React.FC<VFolderTextFileEditorModalProps> = ({
             />
           )}
         </Suspense>
-      </BAIFlex>
+      </VStack>
       {unsavedConfirmDialog}
     </BAIModal>
   );

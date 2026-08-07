@@ -8,13 +8,10 @@ import { message } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { Typography } from 'antd';
-import {
-  BAIModal,
-  BAIModalProps,
-  toLocalId,
-  useErrorMessageResolver,
-} from 'backend.ai-ui';
+import BAIModal from './astryx-bui/BAIModalAstryx';
+import type { BAIModalAstryxProps as BAIModalProps } from './astryx-bui/BAIModalAstryx';
+import { Text } from '@astryxdesign/core/Text';
+import { toLocalId, useErrorMessageResolver } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -22,7 +19,12 @@ import { graphql, useFragment } from 'react-relay';
 
 type VFolderType = NonNullable<VFolderNodesFragment$data[number]>;
 
-interface RestoreVFolderModalProps extends BAIModalProps {
+interface RestoreVFolderModalProps extends Omit<
+  BAIModalProps,
+  'isOpen' | 'onOpenChange'
+> {
+  /** App-level contract, kept: consumers outside the pilot graph use it. */
+  open?: boolean;
   vfolderFrgmts?: RestoreVFolderModalFragment$key;
   onRequestClose?: (success: boolean) => void;
 }
@@ -56,11 +58,13 @@ const RestoreVFolderModal: React.FC<RestoreVFolderModalProps> = ({
 
   return (
     <BAIModal
+      isOpen={baiModalProps.open}
+      onOpenChange={(next) => {
+        if (!next) onRequestClose?.(false);
+      }}
       title={t('data.folders.Restore')}
-      centered
-      okText={t('data.folders.Restore')}
-      onCancel={() => onRequestClose?.(false)}
-      onOk={() => {
+      actionLabel={t('data.folders.Restore')}
+      onAction={() => {
         const promises = _.map(vfolders, (vfolder: VFolderType) =>
           restoreMutation.mutateAsync(vfolder.id).catch((error) => {
             upsertNotification({
@@ -95,7 +99,7 @@ const RestoreVFolderModal: React.FC<RestoreVFolderModalProps> = ({
       }}
       {...baiModalProps}
     >
-      <Typography.Text>
+      <Text>
         {vfolders?.length === 1
           ? t('data.folders.RestoreDescription', {
               folderName: vfolders?.[0]?.name,
@@ -103,7 +107,7 @@ const RestoreVFolderModal: React.FC<RestoreVFolderModalProps> = ({
           : t('data.folders.RestoreMultipleDescription', {
               folderLength: vfolders?.length,
             })}
-      </Typography.Text>
+      </Text>
     </BAIModal>
   );
 };

@@ -5,16 +5,11 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { theme } from '../theme-shim';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
-import { Typography } from 'antd';
+import { VStack } from '@astryxdesign/core/Stack';
+import { Text } from '@astryxdesign/core/Text';
 import { RcFile } from 'antd/es/upload';
-import {
-  BAIFlex,
-  BAILink,
-  toLocalId,
-  useConnectedBAIClient,
-} from 'backend.ai-ui';
+import { BAILink, toLocalId, useConnectedBAIClient } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { atom, useAtom, useSetAtom } from 'jotai';
 import { atomFamily } from 'jotai-family';
@@ -79,7 +74,6 @@ const FileUploadManager: React.FC = () => {
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
   const { upsertNotification, closeNotification } = useSetBAINotification();
   const { generateFolderPath } = useFolderExplorerOpener();
@@ -133,22 +127,19 @@ const FileUploadManager: React.FC = () => {
               onChange: {
                 pending: {
                   description: (
-                    <BAIFlex direction="column" align="start">
-                      <Typography.Text>
+                    <VStack align="start">
+                      <Text>
                         {t('explorer.UploadingFiles')} ( {uploadedFilesCount} /{' '}
                         {totalUploadedFilesCount} )
-                      </Typography.Text>
-                      <Typography.Text
-                        ellipsis
-                        type="secondary"
-                        style={{
-                          fontSize: token.fontSizeSM,
-                          maxWidth: '300px',
-                        }}
+                      </Text>
+                      <Text
+                        maxLines={1}
+                        type="supporting"
+                        style={{ maxWidth: '300px' }}
                       >
                         {fileName}
-                      </Typography.Text>
-                    </BAIFlex>
+                      </Text>
+                    </VStack>
                   ),
                 },
               },

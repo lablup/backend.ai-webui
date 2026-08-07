@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { VFolderNodeIdenticonFragment$key } from '../__generated__/VFolderNodeIdenticonFragment.graphql';
-import { theme } from '../theme-shim';
 import { createAvatar } from '@dicebear/core';
 import * as shapes from '@dicebear/shapes';
 import React from 'react';
@@ -18,7 +17,6 @@ const VFolderNodeIdenticon: React.FC<VFolderNodeIdenticonProps> = ({
   vfolderNodeIdenticonFrgmt,
   style,
 }) => {
-  const { token } = theme.useToken();
   const vfolder = useFragment(
     graphql`
       fragment VFolderNodeIdenticonFragment on VirtualFolderNode {
@@ -38,7 +36,8 @@ const VFolderNodeIdenticon: React.FC<VFolderNodeIdenticonProps> = ({
         height: '1em',
         borderWidth: 0.5,
         borderStyle: 'solid',
-        borderColor: token.colorBorder,
+        // Astryx theme var (ticket 16) — replaces `token.colorBorder`.
+        borderColor: 'var(--color-border)',
         userSelect: 'none',
         ...style,
       }}

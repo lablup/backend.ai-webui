@@ -1,11 +1,16 @@
 /**
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
- */
+
+ Ticket 16 — converted to Astryx. `BAIText monospace` becomes
+ `Text type="code"`; `copyable={{ text }}` (truncated display, full-value
+ copy) becomes `BAICopyableText copyText` (astryx-bui gap component).
+*/
 import { useVirtualFolderNodePathV2Fragment$key } from '../../__generated__/useVirtualFolderNodePathV2Fragment.graphql';
 import { useVirtualFolderPathV2 } from '../../hooks/useVirtualFolderNodePathV2';
-import { theme } from '../../theme-shim';
-import { BAIFlex, BAIText } from 'backend.ai-ui';
+import BAICopyableText from '../astryx-bui/BAICopyableText';
+import { HStack, VStack } from '@astryxdesign/core/Stack';
+import { Text } from '@astryxdesign/core/Text';
 import * as _ from 'lodash-es';
 import React from 'react';
 
@@ -16,6 +21,7 @@ interface VirtualFolderPathV2Props {
 const VirtualFolderPathV2: React.FC<VirtualFolderPathV2Props> = ({
   vfolderNodeFrgmt,
 }) => {
+  'use memo';
   const {
     quotaScopeType,
     quotaScopeIdWithoutType,
@@ -25,74 +31,44 @@ const VirtualFolderPathV2: React.FC<VirtualFolderPathV2Props> = ({
     vfolderIdRest,
   } = useVirtualFolderPathV2(vfolderNodeFrgmt);
 
-  const { token } = theme.useToken();
-
   return (
-    <BAIFlex direction="row" align="start" justify="start" wrap="wrap" gap={3}>
-      <BAIText monospace type="secondary" style={{ fontSize: '0.9em' }}>
+    <HStack align="start" justify="start" wrap="wrap" gap={3}>
+      <Text type="code" color="secondary">
         (root)
-      </BAIText>
-      <BAIText monospace type="secondary" style={{ fontSize: '0.9em' }}>
+      </Text>
+      <Text type="code" color="secondary">
         /
-      </BAIText>
-      <BAIFlex direction="column" align="start" justify="start">
-        <BAIText
-          monospace
-          copyable={{
-            text: quotaScopeIdWithoutType,
-          }}
-          style={{ fontSize: '0.9em' }}
-        >
+      </Text>
+      <VStack align="start" justify="start">
+        <BAICopyableText type="code" copyText={quotaScopeIdWithoutType}>
           {_.truncate(quotaScopeIdWithoutType.replaceAll('-', ''), {
             length: 15,
           })}
-        </BAIText>
-        <BAIText
-          type="secondary"
-          style={{
-            fontSize: token.fontSizeSM,
-          }}
-        >
+        </BAICopyableText>
+        <Text type="supporting">
           Quota Scope ID ({_.upperFirst(quotaScopeType)})
-        </BAIText>
-      </BAIFlex>
-      <BAIText monospace type="secondary" style={{ fontSize: '0.9em' }}>
+        </Text>
+      </VStack>
+      <Text type="code" color="secondary">
         /
-      </BAIText>
-      <BAIFlex direction="column" align="start" justify="start">
-        <BAIFlex gap={3}>
-          <BAIText monospace style={{ fontSize: '0.9em' }}>
-            {vfolderIdPrefix1}
-          </BAIText>
-          <BAIText monospace type="secondary" style={{ fontSize: '0.9em' }}>
+      </Text>
+      <VStack align="start" justify="start">
+        <HStack gap={3}>
+          <Text type="code">{vfolderIdPrefix1}</Text>
+          <Text type="code" color="secondary">
             /
-          </BAIText>
-          <BAIText monospace style={{ fontSize: '0.9em' }}>
-            {vfolderIdPrefix2}
-          </BAIText>
-          <BAIText monospace type="secondary" style={{ fontSize: '0.9em' }}>
+          </Text>
+          <Text type="code">{vfolderIdPrefix2}</Text>
+          <Text type="code" color="secondary">
             /
-          </BAIText>
-          <BAIText
-            monospace
-            copyable={{
-              text: vfolderId,
-            }}
-            style={{ fontSize: '0.9em' }}
-          >
+          </Text>
+          <BAICopyableText type="code" copyText={vfolderId}>
             {_.truncate(vfolderIdRest.replaceAll('-', ''), { length: 7 })}
-          </BAIText>
-        </BAIFlex>
-        <BAIText
-          type="secondary"
-          style={{
-            fontSize: token.fontSizeSM,
-          }}
-        >
-          VFolder ID
-        </BAIText>
-      </BAIFlex>
-    </BAIFlex>
+          </BAICopyableText>
+        </HStack>
+        <Text type="supporting">VFolder ID</Text>
+      </VStack>
+    </HStack>
   );
 };
 

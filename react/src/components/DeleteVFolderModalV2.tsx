@@ -5,20 +5,21 @@
 import { DeleteVFolderModalV2Fragment$key } from '../__generated__/DeleteVFolderModalV2Fragment.graphql';
 import { DeleteVFolderModalV2Mutation } from '../__generated__/DeleteVFolderModalV2Mutation.graphql';
 import { App } from '../app-shim';
-import { Typography } from 'antd';
-import {
-  BAIFlex,
-  BAIModal,
-  BAIModalProps,
-  toLocalId,
-  useErrorMessageResolver,
-} from 'backend.ai-ui';
+import BAIModal from './astryx-bui/BAIModalAstryx';
+import type { BAIModalAstryxProps as BAIModalProps } from './astryx-bui/BAIModalAstryx';
+import { Text } from '@astryxdesign/core/Text';
+import { toLocalId, useErrorMessageResolver } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
-interface DeleteVFolderModalV2Props extends BAIModalProps {
+interface DeleteVFolderModalV2Props extends Omit<
+  BAIModalProps,
+  'isOpen' | 'onOpenChange'
+> {
+  /** App-level contract, kept: consumers outside this area use it. */
+  open?: boolean;
   vfolderFrgmts?: DeleteVFolderModalV2Fragment$key;
   onRequestClose?: (success: boolean) => void;
 }
@@ -66,13 +67,15 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
 
   return (
     <BAIModal
+      isOpen={baiModalProps.open}
+      onOpenChange={(next) => {
+        if (!next) onRequestClose?.(false);
+      }}
       title={t('data.folders.MoveToTrash')}
-      centered
-      okText={t('data.folders.Delete')}
-      okButtonProps={{ danger: true }}
-      confirmLoading={isInFlightBulkDelete}
-      onCancel={() => onRequestClose?.(false)}
-      onOk={() => {
+      actionLabel={t('data.folders.Delete')}
+      actionVariant="destructive"
+      isActionLoading={isInFlightBulkDelete}
+      onAction={() => {
         if (folders.length === 0) {
           onRequestClose?.(false);
           return;
@@ -120,17 +123,15 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
       }}
       {...baiModalProps}
     >
-      <BAIFlex direction="column" gap={'sm'} align="stretch">
-        <Typography.Text>
-          {folders.length === 1
-            ? t('data.folders.MoveToTrashDescription', {
-                folderName: folders[0]?.metadata?.name,
-              })
-            : t('data.folders.MoveToTrashMultipleDescription', {
-                folderLength: folders.length,
-              })}
-        </Typography.Text>
-      </BAIFlex>
+      <Text>
+        {folders.length === 1
+          ? t('data.folders.MoveToTrashDescription', {
+              folderName: folders[0]?.metadata?.name,
+            })
+          : t('data.folders.MoveToTrashMultipleDescription', {
+              folderLength: folders.length,
+            })}
+      </Text>
     </BAIModal>
   );
 };

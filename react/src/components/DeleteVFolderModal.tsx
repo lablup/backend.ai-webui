@@ -7,15 +7,12 @@ import { VFolderNodesFragment$data } from '../__generated__/VFolderNodesFragment
 import { message } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { Typography } from 'antd';
-import {
-  BAIFlex,
-  BAIListAlert,
-  BAIModal,
-  BAIModalProps,
-  toLocalId,
-  useErrorMessageResolver,
-} from 'backend.ai-ui';
+import BAIListAlert from './astryx-bui/BAIListAlertAstryx';
+import BAIModal from './astryx-bui/BAIModalAstryx';
+import type { BAIModalAstryxProps as BAIModalProps } from './astryx-bui/BAIModalAstryx';
+import { VStack } from '@astryxdesign/core/Stack';
+import { Text } from '@astryxdesign/core/Text';
+import { toLocalId, useErrorMessageResolver } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -24,7 +21,12 @@ import { PayloadError } from 'relay-runtime';
 
 type VFolderType = NonNullable<VFolderNodesFragment$data[number]>;
 
-interface DeleteVFolderModalProps extends BAIModalProps {
+interface DeleteVFolderModalProps extends Omit<
+  BAIModalProps,
+  'isOpen' | 'onOpenChange'
+> {
+  /** App-level contract, kept: consumers outside the pilot graph use it. */
+  open?: boolean;
   vfolderFrgmts?: DeleteVFolderModalFragment$key;
   onRequestClose?: (success: boolean) => void;
 }
@@ -65,12 +67,14 @@ const DeleteVFolderModal: React.FC<DeleteVFolderModalProps> = ({
 
   return (
     <BAIModal
+      isOpen={baiModalProps.open}
+      onOpenChange={(next) => {
+        if (!next) onRequestClose?.(false);
+      }}
       title={t('data.folders.MoveToTrash')}
-      centered
-      okText={t('data.folders.Delete')}
-      okButtonProps={{ danger: true }}
-      onCancel={() => onRequestClose?.(false)}
-      onOk={() => {
+      actionLabel={t('data.folders.Delete')}
+      actionVariant="destructive"
+      onAction={() => {
         const promises = _.map(
           foldersByPermission.deletable,
           (vfolder: VFolderType) =>
@@ -125,12 +129,10 @@ const DeleteVFolderModal: React.FC<DeleteVFolderModalProps> = ({
       }}
       {...baiModalProps}
     >
-      <BAIFlex direction="column" gap={'sm'} align="stretch">
+      <VStack gap={3} align="stretch">
         {vfolders &&
           vfolders.length !== foldersByPermission.deletable?.length && (
             <BAIListAlert
-              showIcon
-              ghostInfoBg={false}
               title={t('data.folders.ExcludedFolders', {
                 count: foldersByPermission.undeletable?.length || 0,
               })}
@@ -140,7 +142,7 @@ const DeleteVFolderModal: React.FC<DeleteVFolderModalProps> = ({
               }))}
             />
           )}
-        <Typography.Text>
+        <Text>
           {foldersByPermission.deletable?.length === 1
             ? t('data.folders.MoveToTrashDescription', {
                 folderName: foldersByPermission.deletable?.[0]?.name,
@@ -148,8 +150,8 @@ const DeleteVFolderModal: React.FC<DeleteVFolderModalProps> = ({
             : t('data.folders.MoveToTrashMultipleDescription', {
                 folderLength: foldersByPermission.deletable?.length,
               })}
-        </Typography.Text>
-      </BAIFlex>
+        </Text>
+      </VStack>
     </BAIModal>
   );
 };

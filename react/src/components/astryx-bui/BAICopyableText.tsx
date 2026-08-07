@@ -32,11 +32,18 @@ export interface BAICopyableTextProps extends Omit<TextProps, 'children'> {
   children: string;
   /** Accessible name for the copy control. */
   copyLabel?: string;
+  /**
+   * Copy THIS string instead of the visible `children` — antd's
+   * `copyable={{ text }}` shape (a truncated display whose copy target is the
+   * full value). Defaults to `children`.
+   */
+  copyText?: string;
 }
 
 const BAICopyableText: React.FC<BAICopyableTextProps> = ({
   children,
   copyLabel = 'Copy',
+  copyText,
   ...textProps
 }) => {
   'use memo';
@@ -52,7 +59,7 @@ const BAICopyableText: React.FC<BAICopyableTextProps> = ({
         tooltip={copyLabel}
         isDisabled={copied}
         onClick={() => {
-          void navigator.clipboard?.writeText(children);
+          void navigator.clipboard?.writeText(copyText ?? children);
           setCopied(true);
           setTimeout(() => setCopied(false), 1500);
         }}

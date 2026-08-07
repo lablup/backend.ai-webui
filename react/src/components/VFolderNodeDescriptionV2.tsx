@@ -1,7 +1,20 @@
 /**
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
- */
+
+ Ticket 16 — converted to Astryx. antd `Descriptions bordered size="small"`
+ becomes `MetadataList columns="single"` (MAPPING §4: `bordered`/`size` have
+ no destination and are DROPPED, defaults-first). The status tag routes
+ through the repo-global ticket-13 lookup, the permission select becomes an
+ Astryx `Selector`, and copyable values use `BAICopyableText`.
+
+ PILOT-DECISIONs:
+ - The copy affordance on the "Path" LABEL moves next to the path VALUE:
+   `MetadataListItem.label` is a plain string (P2).
+ - The disabled 'rw' option's inline Tooltip is dropped — Astryx `Selector`
+   options take string labels; the client-side guard in `onChange` still
+   blocks the restricted transition.
+*/
 import { VFolderNodeDescriptionV2Fragment$key } from '../__generated__/VFolderNodeDescriptionV2Fragment.graphql';
 import { VFolderNodeDescriptionV2PermissionRefreshQuery } from '../__generated__/VFolderNodeDescriptionV2PermissionRefreshQuery.graphql';
 import { App } from '../app-shim';
@@ -11,27 +24,33 @@ import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
 import { useVirtualFolderPathV2 } from '../hooks/useVirtualFolderNodePathV2';
-import { theme } from '../theme-shim';
-import { statusTagColor } from './VFolderNodesV2';
 import VirtualFolderPathV2 from './VirtualFolderNodeItems/VirtualFolderPathV2';
+import BAICopyableText from './astryx-bui/BAICopyableText';
+import { Badge } from '@astryxdesign/core/Badge';
+import { IconButton } from '@astryxdesign/core/IconButton';
 import {
-  Descriptions,
-  Tooltip,
-  Typography,
-  type DescriptionsProps,
-} from 'antd';
+  MetadataList,
+  MetadataListItem,
+} from '@astryxdesign/core/MetadataList';
+import { Selector } from '@astryxdesign/core/Selector';
+import { HStack } from '@astryxdesign/core/Stack';
+import { Text } from '@astryxdesign/core/Text';
 import {
   filterOutEmpty,
-  BAIUserUnionIcon,
   toLocalId,
-  BAIFlex,
   useErrorMessageResolver,
-  BAISelect,
-  BAITag,
+  badgeVariantForStatus,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { CircleCheck, CircleX, User } from 'lucide-react';
+import {
+  CircleCheckIcon,
+  CircleXIcon,
+  CopyIcon,
+  UserIcon,
+  UsersIcon,
+} from 'lucide-react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -40,7 +59,7 @@ import {
   useRelayEnvironment,
 } from 'react-relay';
 
-interface VFolderNodeDescriptionV2Props extends DescriptionsProps {
+interface VFolderNodeDescriptionV2Props {
   vfolderNodeFrgmt: VFolderNodeDescriptionV2Fragment$key;
 }
 
@@ -48,8 +67,8 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
   vfolderNodeFrgmt,
   ...props
 }) => {
+  'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
 
@@ -113,7 +132,7 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
   const vfolderId = toLocalId(vfolderNode.id);
 
   // V2 `VFolderMountPermission` enum → legacy REST permission string mapping
-  // for the `<BAISelect/>` below. READ_ONLY → 'ro', READ_WRITE/RW_DELETE → 'rw'.
+  // for the `<Selector/>` below. READ_ONLY → 'ro', READ_WRITE/RW_DELETE → 'rw'.
   // NOTE: `accessControl.permission` is the *mount* permission (how this folder
   // would be mounted into a session), not the caller's operational rights on
   // the folder. When the value is null/undefined we fall back to 'ro' so that
@@ -133,38 +152,34 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
     vfolderNode.metadata?.usageMode === 'MODEL' &&
     vfolderNode.accessControl?.ownershipType === 'GROUP';
 
-  const items: DescriptionsProps['items'] = filterOutEmpty([
+  const items = filterOutEmpty([
     !vfolderNode?.unmanagedPath && {
       key: 'path',
-      label: (
-        <Typography.Text
-          copyable={{
-            text: vfolderPath,
-          }}
-          style={{
-            color: token.colorTextLabel,
-          }}
-        >
-          {t('data.folders.Path')}
-        </Typography.Text>
+      label: t('data.folders.Path'),
+      children: (
+        <HStack gap={1} align="start" wrap="wrap">
+          <VirtualFolderPathV2 vfolderNodeFrgmt={vfolderNode} />
+          <IconButton
+            label={t('sourceCodeViewer.Copy')}
+            tooltip={t('sourceCodeViewer.Copy')}
+            variant="ghost"
+            size="sm"
+            icon={<CopyIcon />}
+            onClick={() => {
+              void navigator.clipboard?.writeText(vfolderPath);
+            }}
+          />
+        </HStack>
       ),
-      children: <VirtualFolderPathV2 vfolderNodeFrgmt={vfolderNode} />,
     },
     {
       key: 'status',
       label: t('data.folders.Status'),
       children: (
-        <BAITag
-          color={
-            vfolderNode.status
-              ? statusTagColor[
-                  vfolderNode.status as keyof typeof statusTagColor
-                ]
-              : undefined
-          }
-        >
-          {_.toUpper(vfolderNode.status ?? '')}
-        </BAITag>
+        <Badge
+          variant={badgeVariantForStatus('vfolder', vfolderNode.status)}
+          label={_.toUpper(vfolderNode.status ?? '')}
+        />
       ),
     },
     {
@@ -177,15 +192,15 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
       label: t('data.folders.Ownership'),
       children:
         vfolderNode?.accessControl?.ownershipType === 'USER' ? (
-          <BAIFlex gap={'xs'}>
-            <Typography.Text>{t('data.User')}</Typography.Text>
-            <User style={{ color: token.colorTextTertiary }} size="1em" />
-          </BAIFlex>
+          <HStack gap={2}>
+            <Text>{t('data.User')}</Text>
+            <UserIcon size="1em" />
+          </HStack>
         ) : (
-          <BAIFlex gap={'xs'}>
-            <Typography.Text>{t('data.Project')}</Typography.Text>
-            <BAIUserUnionIcon style={{ color: token.colorTextTertiary }} />
-          </BAIFlex>
+          <HStack gap={2}>
+            <Text>{t('data.Project')}</Text>
+            <UsersIcon size="1em" />
+          </HStack>
         ),
     },
     // Mount permission editing is allowed for the folder owner, super admins
@@ -199,23 +214,15 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
       key: 'permission',
       label: t('data.folders.MountPermission'),
       children: (
-        <BAISelect
-          defaultValue={currentSelectPermission}
+        <Selector
+          label={t('data.folders.MountPermission')}
+          isLabelHidden
+          value={currentSelectPermission}
           options={[
             { value: 'ro', label: t('data.ReadOnly') },
             {
               value: 'rw',
-              label: shouldDisableRWPermission ? (
-                <Tooltip
-                  title={t(
-                    'data.folders.ModelProjectFolderRestrictedToReadOnly',
-                  )}
-                >
-                  {t('data.ReadWrite')}
-                </Tooltip>
-              ) : (
-                t('data.ReadWrite')
-              ),
+              label: t('data.ReadWrite'),
               disabled: shouldDisableRWPermission,
             },
           ]}
@@ -264,7 +271,6 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
               },
             );
           }}
-          popupMatchSelectWidth={false}
         />
       ),
     },
@@ -272,22 +278,22 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
       key: 'owner',
       label: t('data.folders.Owner'),
       children: (
-        <BAIFlex justify="start">
+        <HStack justify="start">
           {vfolderNode?.ownership?.creatorId === currentUser?.uuid ? (
-            <CircleCheck size="1em" />
+            <CircleCheckIcon size="1em" />
           ) : (
-            <CircleX size="1em" />
+            <CircleXIcon size="1em" />
           )}
-        </BAIFlex>
+        </HStack>
       ),
     },
     vfolderNode.ownership?.user?.basicInfo?.email && {
       key: 'user_email',
       label: t('data.User'),
       children: (
-        <Typography.Text copyable>
-          {vfolderNode.ownership?.user?.basicInfo?.email}
-        </Typography.Text>
+        <BAICopyableText>
+          {vfolderNode.ownership?.user?.basicInfo?.email ?? ''}
+        </BAICopyableText>
       ),
     },
     vfolderNode.ownership?.project?.basicInfo?.name && {
@@ -299,13 +305,13 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
       key: 'cloneable',
       label: t('data.folders.Cloneable'),
       children: (
-        <BAIFlex justify="start">
+        <HStack justify="start">
           {vfolderNode.metadata?.cloneable ? (
-            <CircleCheck size="1em" />
+            <CircleCheckIcon size="1em" />
           ) : (
-            <CircleX size="1em" />
+            <CircleXIcon size="1em" />
           )}
-        </BAIFlex>
+        </HStack>
       ),
     },
     // TODO(needs-backend): V2 `VFolder` does not yet expose quota limits
@@ -337,19 +343,13 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
   ]);
 
   return (
-    <Descriptions
-      bordered
-      column={1}
-      size="small"
-      items={items}
-      styles={{
-        content: {
-          wordBreak: 'break-word',
-          overflowWrap: 'break-word',
-        },
-      }}
-      {...props}
-    />
+    <MetadataList columns="single" {...props}>
+      {items.map((item) => (
+        <MetadataListItem key={item.key} label={item.label as string}>
+          {item.children}
+        </MetadataListItem>
+      ))}
+    </MetadataList>
   );
 };
 
