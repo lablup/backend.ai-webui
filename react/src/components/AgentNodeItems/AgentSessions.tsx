@@ -97,6 +97,11 @@ const AgentSessions: React.FC<AgentSessionsProps> = ({ agentId }) => {
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
 
+  // TODO(FR-3251): `AgentDetailDrawer` still runs on the legacy `AgentNode`
+  // query because AgentV2 has no `live_stat` / `gpu_alloc_map` equivalents
+  // yet. Once those land and the drawer migrates to `agentsV2`, drop this
+  // standalone lookup query and read `AgentV2.sessions` as a fragment spread
+  // on the drawer's agent node instead.
   const data = useLazyLoadQuery<AgentSessionsQuery>(
     graphql`
       query AgentSessionsQuery(
