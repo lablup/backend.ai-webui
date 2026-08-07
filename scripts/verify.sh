@@ -162,12 +162,27 @@ check_stylex_injection() {
   return 0
 }
 
+check_astryx_theme_built() {
+  # Prebuilt brand theme staleness gate (to-astryx ticket 02). The default
+  # Backend.AI theme ships as `astryx theme build` artifacts committed under
+  # react/src/astryx-theme/built/; `-c` recompiles the theme source in memory
+  # and exits non-zero when the committed CSS/JS no longer match it (e.g. a
+  # seed or recipe change in backendAiTheme.ts without a rebuild). The
+  # rebuild + wrapper-update procedure is documented in
+  # react/src/astryx-theme/built/index.ts; the wrapper↔artifact linkage
+  # itself is covered by react/src/astryx-theme/backendAiTheme.test.ts.
+  pnpm --prefix ./react exec astryx theme build -c \
+    src/astryx-theme/built/backendai-default.ts \
+    -o src/astryx-theme/built/backendai-default-built.css
+}
+
 run_check "Relay" check_relay_drift
 run_check "Lint" pnpm -r --stream lint
 run_check "Format" pnpm run format
 run_check "TypeScript" pnpm --prefix ./react exec tsc --noEmit
 run_check "Vite warmup paths" check_warmup_paths
 run_check "StyleX cssInjectionTarget" check_stylex_injection
+run_check "Astryx theme build" check_astryx_theme_built
 run_check "Terminology" check_terminology_drift
 
 # Non-English avoid-row precision self-test (FR-3051). This gates the avoid-row

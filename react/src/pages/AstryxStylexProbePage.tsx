@@ -20,6 +20,9 @@
  * Not a product surface — remove once real Astryx pages exist and carry
  * their own authored styles.
  */
+import AstryxAdminTheme from '../astryx-theme/AstryxAdminTheme';
+import AstryxBrandTheme from '../astryx-theme/AstryxBrandTheme';
+import AstryxSecondaryTheme from '../astryx-theme/AstryxSecondaryTheme';
 import { Button as AstryxButton } from '@astryxdesign/core/Button';
 import { Card as AstryxCard } from '@astryxdesign/core/Card';
 import { VStack } from '@astryxdesign/core/Layout';
@@ -28,6 +31,7 @@ import { colorVars, spacingVars } from '@astryxdesign/core/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
 import { Button as AntdButton } from 'antd';
 import { BAICard } from 'backend.ai-ui';
+import { useState } from 'react';
 
 const styles = stylex.create({
   // cssInjectionTarget sentinel — value must match STYLEX_SENTINEL in
@@ -58,6 +62,15 @@ const styles = stylex.create({
       ':hover': 'rgb(255, 0, 128)',
     },
   },
+  // Brand-theme probe (ticket 02): swatches that paint the ACTIVE theme's
+  // accent tokens — the assertion surface for computed-style checks.
+  accentSwatch: {
+    backgroundColor: 'var(--color-accent)',
+    color: 'var(--color-on-accent)',
+    padding: 'var(--spacing-3)',
+    borderRadius: 'var(--radius-element)',
+    fontSize: 'var(--font-size-lg)',
+  },
   // (d) non-Astryx authoring: stylex.props() on a plain element
   plainBox: {
     padding: '12px',
@@ -72,6 +85,67 @@ const styles = stylex.create({
   },
 });
 
+/**
+ * Backend.AI brand theme probe (ticket 02). Wraps its content in the real
+ * app-level providers so what renders here is exactly what the migration
+ * will ship: brand accent from theme.json (prebuilt for the shipped
+ * defaults), nested admin/secondary themes with explicit mode inheritance.
+ * The local light/dark toggle overrides the app mode so both dark tuples
+ * ([#FF7A00 → #be5e06] etc.) can be inspected without leaving the page.
+ */
+const BrandThemeProbe: React.FC = () => {
+  'use memo';
+  const [probeMode, setProbeMode] = useState<'light' | 'dark' | undefined>(
+    undefined,
+  );
+  return (
+    <AstryxBrandTheme mode={probeMode}>
+      <VStack gap={3}>
+        <AstryxButton
+          id="probe-mode-toggle"
+          label={`theme mode: ${probeMode ?? 'app'} — toggle`}
+          variant="secondary"
+          onClick={() =>
+            setProbeMode((m) => (m === 'light' ? 'dark' : 'light'))
+          }
+        />
+        <AstryxButton
+          id="probe-brand-btn"
+          label="brand primary (accent)"
+          variant="primary"
+        />
+        <div id="probe-brand-swatch" {...stylex.props(styles.accentSwatch)}>
+          brand --color-accent (expect #FF7A00 light / #be5e06 dark)
+        </div>
+        <AstryxAdminTheme>
+          <VStack gap={3}>
+            <AstryxButton
+              id="probe-admin-btn"
+              label="admin primary (nested theme)"
+              variant="primary"
+            />
+            <div id="probe-admin-swatch" {...stylex.props(styles.accentSwatch)}>
+              admin --color-accent (expect #028DF2 light / #0387bf dark,
+              following the parent mode)
+            </div>
+          </VStack>
+        </AstryxAdminTheme>
+        <div id="probe-sibling-swatch" {...stylex.props(styles.accentSwatch)}>
+          sibling AFTER the admin region (must stay brand orange — no leak)
+        </div>
+        <AstryxSecondaryTheme>
+          <div
+            id="probe-secondary-swatch"
+            {...stylex.props(styles.accentSwatch)}
+          >
+            secondary --color-accent (expect #00BD9B light / #068e76 dark)
+          </div>
+        </AstryxSecondaryTheme>
+      </VStack>
+    </AstryxBrandTheme>
+  );
+};
+
 const AstryxStylexProbePage: React.FC = () => {
   'use memo';
   return (
@@ -80,6 +154,7 @@ const AstryxStylexProbePage: React.FC = () => {
       styles={{ body: { paddingTop: 0 } }}
     >
       <VStack gap={4} xstyle={styles.sentinel}>
+        <BrandThemeProbe />
         <div id="plain-box" {...stylex.props(styles.plainBox)}>
           plain element via stylex.props()
         </div>

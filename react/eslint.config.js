@@ -148,6 +148,15 @@ export default [
   },
 
   {
-    ignores: ['**/__generated__/**', 'build/**', '**/*.tsx_', '**/*.ts_'],
+    ignores: [
+      '**/__generated__/**',
+      'build/**',
+      '**/*.tsx_',
+      '**/*.ts_',
+      // `astryx theme build` artifacts (see src/astryx-theme/built/index.ts).
+      // verify.sh byte-compares them against the CLI output, so linters must
+      // not touch them (same policy as prettierignore/.gitattributes).
+      'src/astryx-theme/built/bai-r*',
+    ],
   },
 ];
