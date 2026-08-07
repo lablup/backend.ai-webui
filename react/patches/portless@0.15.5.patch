@@ -1,8 +1,8 @@
 diff --git a/dist/chunk-SLEZT6EJ.js b/dist/chunk-SLEZT6EJ.js
-index 76791c619bf72a8c5b99eb2f086e150b3cef9466..aa48f91704c19c1ac1298f0939c032b770fb82c3 100644
+index 76791c619bf72a8c5b99eb2f086e150b3cef9466..aa70d525911377cf699dc5d3619a76a8c5ccf1cd 100644
 --- a/dist/chunk-SLEZT6EJ.js
 +++ b/dist/chunk-SLEZT6EJ.js
-@@ -1027,33 +1027,97 @@ var RouteStore = class _RouteStore {
+@@ -1027,33 +1027,106 @@ var RouteStore = class _RouteStore {
      try {
        const raw = fs3.readFileSync(this.routesPath, "utf-8");
        let parsed;
@@ -56,16 +56,23 @@ index 76791c619bf72a8c5b99eb2f086e150b3cef9466..aa48f91704c19c1ac1298f0939c032b7
          }
        }
        return alive;
--    } catch {
 +    } catch (err) {
 +      // Propagate corruption: returning [] here is exactly what let a damaged
 +      // file wipe every registered route.
 +      if (err instanceof Error && err.code === "PORTLESS_CORRUPT_ROUTES") {
 +        throw err;
 +      }
-       return [];
-     }
-   }
++      // ENOENT (routes.json doesn't exist yet) genuinely means "no routes".
++      // Any other read failure (e.g. EACCES on a temporarily-unreadable file)
++      // must not be silently downgraded to an empty, writable route set --
++      // that is the exact global-wipe bug this patch fixes for corruption,
++      // just triggered by a permissions blip instead of truncation.
++      if (err instanceof Error && err.code === "ENOENT") {
++        return [];
++      }
++      throw err;
++    }
++  }
 +  /**
 +   * Last known-good snapshot, written alongside every successful save. Used to
 +   * recover when routes.json itself is unreadable.
@@ -78,10 +85,11 @@ index 76791c619bf72a8c5b99eb2f086e150b3cef9466..aa48f91704c19c1ac1298f0939c032b7
 +      }
 +      const parsed = JSON.parse(fs3.readFileSync(backupPath, "utf-8"));
 +      return Array.isArray(parsed) ? parsed : null;
-+    } catch {
+     } catch {
+-      return [];
 +      return null;
-+    }
-+  }
+     }
+   }
    saveRoutes(routes) {
 -    fs3.writeFileSync(this.routesPath, JSON.stringify(routes, null, 2), { mode: FILE_MODE });
 +    const tmpPath = `${this.routesPath}.tmp-${process.pid}`;
@@ -98,6 +106,7 @@ index 76791c619bf72a8c5b99eb2f086e150b3cef9466..aa48f91704c19c1ac1298f0939c032b7
 +      // Keep a known-good snapshot for `readBackup()` recovery.
 +      try {
 +        fs3.writeFileSync(`${this.routesPath}.bak`, serialized, { mode: FILE_MODE });
++        fixOwnership(`${this.routesPath}.bak`);
 +      } catch {
 +      }
 +    } catch (err) {

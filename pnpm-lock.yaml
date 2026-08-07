@@ -205,7 +205,7 @@ patchedDependencies:
   '@lobehub/fluent-emoji@2.0.0': e3910174b171372f01ee0d0f41033c3aed501f7eba649e863c48e7a370886a88
   '@rc-component/form': e4841378d1c17439be3359cd395e44bb49a9b3d1f594e48cba191ea19ecf0b32
   ansi_up@6.0.6: 99856fc7fa4571c6ef4716cfd2dbf1151a025690c737775e248e8b7fe08a4459
-  portless@0.15.5: 60df4aa27249a9a0c6c5df6a96f29c8ad14c78bd0b20e9efad0779f6d3db5369
+  portless@0.15.5: 161c145331e5006ea4db96fda98f454b0b450ed20c64d09c01baced0c16c47d6
   relay-runtime@20.1.1: cc791a2ea160bc7c87571401d2f1430d50527847c44039d45579a5bfa60effa6
 
 importers:
@@ -356,7 +356,7 @@ importers:
         version: 3.1.14
       portless:
         specifier: ^0.15.5
-        version: 0.15.5(patch_hash=60df4aa27249a9a0c6c5df6a96f29c8ad14c78bd0b20e9efad0779f6d3db5369)
+        version: 0.15.5(patch_hash=161c145331e5006ea4db96fda98f454b0b450ed20c64d09c01baced0c16c47d6)
       prettier:
         specifier: 'catalog:'
         version: 3.9.5
@@ -22676,7 +22676,7 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.29.7
 
-  portless@0.15.5(patch_hash=60df4aa27249a9a0c6c5df6a96f29c8ad14c78bd0b20e9efad0779f6d3db5369): {}
+  portless@0.15.5(patch_hash=161c145331e5006ea4db96fda98f454b0b450ed20c64d09c01baced0c16c47d6): {}
 
   possible-typed-array-names@1.1.0: {}
 
