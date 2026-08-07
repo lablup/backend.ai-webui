@@ -7,7 +7,6 @@ import { convertToBinaryUnit } from '../helper';
 import { formatShellCommand } from '../helper/parseCliCommand';
 import FolderLink from './FolderLink';
 import SourceCodeView from './SourceCodeView';
-import { LoadingOutlined } from '@ant-design/icons';
 import { Descriptions, Grid, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import { DescriptionsItemType } from 'antd/es/descriptions';
@@ -21,6 +20,7 @@ import {
   filterOutNullAndUndefined,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
+import { LoaderCircle } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -251,7 +251,10 @@ const DeploymentRevisionDetail: React.FC<{
                   <BAITag color="success">{t('deployment.Current')}</BAITag>
                 )}
                 {status === 'deploying' && (
-                  <BAITag color="warning" icon={<LoadingOutlined spin />}>
+                  <BAITag
+                    color="warning"
+                    icon={<LoaderCircle className="anticon-spin" size="1em" />}
+                  >
                     {t('deployment.Applying')}
                   </BAITag>
                 )}
@@ -282,7 +285,10 @@ const DeploymentRevisionDetail: React.FC<{
             <BAITag color="success">{t('deployment.Current')}</BAITag>
           )}
           {status === 'deploying' && (
-            <BAITag color="warning" icon={<LoadingOutlined spin />}>
+            <BAITag
+              color="warning"
+              icon={<LoaderCircle className="anticon-spin" size="1em" />}
+            >
               {t('deployment.Applying')}
             </BAITag>
           )}
