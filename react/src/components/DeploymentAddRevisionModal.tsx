@@ -14,6 +14,7 @@ import type {
   DeploymentAddRevisionModalSelectedPresetQuery,
   DeploymentAddRevisionModalSelectedPresetQuery$data,
 } from '../__generated__/DeploymentAddRevisionModalSelectedPresetQuery.graphql';
+import type { DeploymentAddRevisionModalVariantDefaultQuery } from '../__generated__/DeploymentAddRevisionModalVariantDefaultQuery.graphql';
 import type { DeploymentAddRevisionModal_deployment$key } from '../__generated__/DeploymentAddRevisionModal_deployment.graphql';
 import type {
   DeploymentAddRevisionModal_revisionSource$data,
@@ -21,12 +22,21 @@ import type {
 } from '../__generated__/DeploymentAddRevisionModal_revisionSource.graphql';
 import { convertToBinaryUnit } from '../helper';
 import {
-  formatShellCommand,
-  tokenizeShellCommand,
-} from '../helper/parseCliCommand';
+  COMMAND_SHELL_OPTIONS,
+  DEFAULT_MODEL_SERVICE_SHELL,
+  type CommandExecutionMode,
+  deriveCommandModeState,
+  resolveCommandShell,
+} from '../helper/modelServiceCommand';
+import { tokenizeShellCommand } from '../helper/parseCliCommand';
+import {
+  modelDefinitionFromGraphQL,
+  type ParsedModelDefinition,
+} from '../helper/parseModelDefinitionYaml';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useModelDefinitionPlaceholders } from '../hooks/useModelDefinitionDefaults';
 import {
   buildRuntimeVariantPresetValues,
   type RuntimeParameterGroup,
@@ -50,10 +60,15 @@ import ResourceAllocationFormItems, {
 import VFolderTableFormItem, {
   type VFolderTableFormValues,
 } from './VFolderTableFormItem';
-import { InfoCircleOutlined, ReloadOutlined } from '@ant-design/icons';
+import {
+  InfoCircleOutlined,
+  MinusCircleOutlined,
+  ReloadOutlined,
+} from '@ant-design/icons';
 import {
   Alert,
   App,
+  AutoComplete,
   Button,
   Checkbox,
   Collapse,
@@ -61,6 +76,7 @@ import {
   Form,
   Input,
   InputNumber,
+  Radio,
   Segmented,
   Skeleton,
   Space,
@@ -72,9 +88,11 @@ import type { FormInstance } from 'antd';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import {
   BAIAvailablePresetSelect,
+  BAIButton,
   BAIFlex,
   BAIModal,
   BAIModalProps,
+  BAIQuestionIconWithTooltip,
   BAIRuntimeVariantSelect,
   BAISelect,
   BAIVFolderSelect,
@@ -110,19 +128,33 @@ export type FormValues = ImageEnvironmentFormInput &
   VFolderTableFormValues & {
     runtimeVariantId: string;
     modelFolderId: string;
-    mountDestination: string;
-    definitionPath: string;
-    customDefinitionMode?: 'command' | 'file';
+    // Mount config for the selected model folder (FR-3205): the container mount
+    // destination and an optional subpath inside the model folder, rendered as
+    // plain inputs beneath the model folder selector. Replaces the former
+    // per-mode `mountDestination` / `commandModelMount` fields.
+    modelMountDestination?: string;
+    modelSubpath?: string;
+    // Path (within the model folder) to a model-definition YAML the backend
+    // reads service config from as an alternative to the explicit Start
+    // Command below; optional, so it can be set alone or alongside a command.
+    definitionPath?: string;
     startCommand?: string;
+    // Start Command shell semantics (FR-3205). `commandAdvanced` toggles the
+    // Basic/Advanced controls; in Advanced mode `commandExecution` chooses
+    // Shell (run `shell -c command`) vs Exec (argv, no shell) and
+    // `commandShell` is the shell binary for Shell execution.
+    commandAdvanced?: boolean;
+    commandExecution?: CommandExecutionMode;
+    commandShell?: string;
     commandPort?: number;
     commandEnableHealthCheck?: boolean;
     commandHealthCheck?: string;
-    commandModelMount?: string;
     commandInitialDelay?: number;
     commandMaxRetries?: number;
     commandInterval?: number;
     commandMaxWaitTime?: number;
     commandExpectedStatusCode?: number;
+    commandPreStartActions?: Array<{ action: string; args: string }>;
     environ: EnvVarFormListValue[];
     /** Runtime-variant preset values, registered by RuntimeParameterFormSection. */
     runtimeParams?: RuntimeParameterValues;
@@ -165,6 +197,69 @@ interface DeploymentAddRevisionModalProps extends BAIModalProps {
 }
 
 type RevisionPrefillData = DeploymentAddRevisionModal_revisionSource$data;
+
+// Suspense-wrapped side query that resolves the selected runtime variant's DB
+// `defaultModelDefinition` baseline (FR-3205/FR-3342) and pushes the parsed
+// result up via `onLoaded`. Runs only when the variant reads the vfolder
+// config files (Custom mode); rendered inside a `<Suspense fallback={null}>`
+// so the modal chrome / form never blank while it resolves.
+const VariantDefaultModelDefinitionLoader: React.FC<{
+  variantId: string;
+  onLoaded: (
+    defaults: Partial<ParsedModelDefinition> | null,
+    variantId: string,
+  ) => void;
+}> = ({ variantId, onLoaded }) => {
+  'use memo';
+  const uuid = convertToUUID(variantId);
+  const data = useLazyLoadQuery<DeploymentAddRevisionModalVariantDefaultQuery>(
+    graphql`
+      query DeploymentAddRevisionModalVariantDefaultQuery(
+        $id: UUID!
+        $skip: Boolean!
+      ) {
+        runtimeVariant(id: $id) @skip(if: $skip) {
+          id
+          defaultModelDefinition @since(version: "26.8.0") {
+            models {
+              name
+              modelPath
+              service {
+                command
+                shell
+                port
+                healthCheck {
+                  path
+                  interval
+                  maxRetries
+                  maxWaitTime
+                  expectedStatusCode
+                  initialDelay
+                }
+              }
+            }
+          }
+        }
+      }
+    `,
+    { id: uuid, skip: !uuid },
+    { fetchPolicy: 'store-or-network' },
+  );
+
+  // Push the parsed baseline (or null) up as soon as it resolves; re-fires when
+  // the resolved struct changes (i.e., a different variant).
+  const notifyLoaded = useEffectEvent(() => {
+    onLoaded(
+      modelDefinitionFromGraphQL(data.runtimeVariant?.defaultModelDefinition),
+      variantId,
+    );
+  });
+  useEffect(() => {
+    notifyLoaded();
+  }, [data.runtimeVariant?.defaultModelDefinition]);
+
+  return null;
+};
 
 const SectionHeader: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -274,6 +369,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         runtimeVariantId
         runtimeVariant {
           name
+          readsVfolderConfigFiles @since(version: "26.8.0")
         }
         environ {
           entries {
@@ -290,14 +386,21 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         vfolderId
         mountDestination
         definitionPath
+        subpath @since(version: "26.4.4")
       }
       modelDefinition {
         models {
           name
           modelPath
           service {
+            command @since(version: "26.7.0")
+            shell @since(version: "26.7.0")
             startCommand
             port
+            preStartActions {
+              action
+              args
+            }
             healthCheck {
               enable @since(version: "26.4.4")
               path
@@ -350,6 +453,25 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   // version string.
   const supportsRuntimeVariantPresetValues = baiClient.supports(
     'model-runtime-variant-preset-values',
+  );
+  // The single-string `command` + `shell` fields exist on
+  // ModelServiceConfigInput since 26.7.0, but the WebUI only uses them from
+  // 26.8.0 — see the capability comment in `client.ts` (BA-6742). Below that,
+  // ModelServiceConfigInput (FR-3205); older managers only understand the
+  // deprecated `startCommand` token list, so we fall back to sending that.
+  const supportsCommandShell = baiClient.supports(
+    'model-service-command-string',
+  );
+  // `ModelMountConfigInput.subpath` (mount a subfolder inside the model vfolder)
+  // was added in 26.4.4 (FR-3205); older managers reject the unknown input
+  // field, so the key is omitted from the mutation entirely on them.
+  const supportsMountSubpath = baiClient.supports('model-mount-subpath');
+  // 26.8.0+ managers report `readsVfolderConfigFiles` / `defaultModelDefinition`
+  // on RuntimeVariant (FR-3342); older managers omit them, so the flag is only
+  // authoritative when supported (otherwise the legacy `name === 'custom'`
+  // heuristic decides).
+  const supportsRuntimeVariantConfigReads = baiClient.supports(
+    'model-runtime-variant-reads-vfolder-config-files',
   );
 
   // Refs to refetch each form's model folder select after creating a new
@@ -411,13 +533,15 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   // its own Relay query keyed by this id.
   const [presetDetailId, setPresetDetailId] = useState<string | null>(null);
 
-  // Map of runtime variant id → name, populated by `BAIRuntimeVariantSelect`
-  // as it resolves the currently selected value (via its `runtimeVariant(id:)`
-  // point lookup) and the visible page of the paginated list. Used by the
-  // form to branch on `variantName === 'custom'` and to look up the human-
-  // readable name at submit time, without owning the variant list here.
-  const [runtimeVariantNameMap, setRuntimeVariantNameMap] = useState<
-    Record<string, string>
+  // Map of runtime variant id → { name, readsVfolderConfigFiles }, populated by
+  // `BAIRuntimeVariantSelect` as it resolves the currently selected value (via
+  // its `runtimeVariant(id:)` point lookup) and the visible page of the
+  // paginated list. Used by the form to branch on whether the variant reads the
+  // vfolder config files (see the `readsVfolderConfigFiles` derivation sites)
+  // and to look up the human-readable name at submit time, without owning the
+  // variant list here.
+  const [runtimeVariantMap, setRuntimeVariantMap] = useState<
+    Record<string, { name: string; readsVfolderConfigFiles: boolean }>
   >({});
 
   // Runtime parameter values live in `customForm` under the `runtimeParams`
@@ -771,23 +895,28 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       (e) => e.name === 'shmem',
     );
 
-    // The query selects `modelRuntimeConfig.runtimeVariant.name`, so the
-    // prefill path knows the variant name without waiting for
-    // `BAIRuntimeVariantSelect` to resolve it.
+    // The query selects `modelRuntimeConfig.runtimeVariant.name` and
+    // `readsVfolderConfigFiles`, so the prefill path knows the variant metadata
+    // without waiting for `BAIRuntimeVariantSelect` to resolve it.
     const variantName = rev.modelRuntimeConfig?.runtimeVariant?.name ?? '';
-    const isCustom = variantName === 'custom';
-    // Seed `runtimeVariantNameMap` so submit and any other consumers can
-    // resolve `runtimeVariantId → name` immediately, without waiting for
-    // `BAIRuntimeVariantSelect`'s point lookup to finish.
+    // `readsVfolderConfigFiles` (26.8.0+) is stripped on older managers →
+    // undefined. Fall back to the legacy `name === 'custom'` heuristic — NEVER
+    // `?? false` — so pre-26.8.0 managers keep identical custom-variant
+    // behavior.
+    const readsVfolderConfigFiles =
+      rev.modelRuntimeConfig?.runtimeVariant?.readsVfolderConfigFiles ??
+      variantName === 'custom';
+    // Seed `runtimeVariantMap` so submit and any other consumers can resolve
+    // `runtimeVariantId → { name, readsVfolderConfigFiles }` immediately,
+    // without waiting for `BAIRuntimeVariantSelect`'s point lookup to finish.
     const variantId = rev.modelRuntimeConfig?.runtimeVariantId;
     if (variantId && variantName) {
-      setRuntimeVariantNameMap((prev) => ({
+      setRuntimeVariantMap((prev) => ({
         ...prev,
-        [variantId]: variantName,
+        [variantId]: { name: variantName, readsVfolderConfigFiles },
       }));
     }
     const service = rev.modelDefinition?.models?.[0]?.service;
-    const customModelPath = rev.modelDefinition?.models?.[0]?.modelPath;
     // On 26.4.4+ a disabled source revision carries `enable: false`; treat
     // that as "no health check" for prefill so form fields stay empty. On older
     // managers `enable` is stripped (undefined), fall back to object presence.
@@ -795,12 +924,25 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       service?.healthCheck && service.healthCheck.enable !== false
         ? service.healthCheck
         : undefined;
-    // For custom + command mode: the saved revision carries a populated
-    // `modelDefinition` with a `startCommand` token list. For custom +
-    // file mode the form serializes to a null `modelDefinition`, so the
-    // absence of `service.startCommand` indicates file mode.
+    // Command-mode prefill applies only to variants that read the vfolder config
+    // files, since they are the only ones that expose the Service Configuration
+    // (command) fields. A variant that does not read them can still carry a
+    // stored command; prefilling from it would load that command into fields the
+    // user cannot see, and it would then follow along when they switch to a
+    // variant that does show them. Within a reading variant, prefill only when
+    // the revision actually carries a command — either as a single string or as
+    // a token list, depending on the manager that wrote it.
     const hasCustomCommand =
-      isCustom && !!service && (service.startCommand?.length ?? 0) > 0;
+      readsVfolderConfigFiles &&
+      !!service &&
+      (!!service.command || (service.startCommand?.length ?? 0) > 0);
+    // Reconstruct the command string and Basic/Advanced + Execution + Shell UI
+    // state from whichever field the revision carries (FR-3205).
+    const commandModeState = deriveCommandModeState({
+      command: service?.command,
+      shell: service?.shell,
+      startCommand: service?.startCommand,
+    });
 
     prefilledMountAliasesRef.current = _.fromPairs(
       (rev.extraMounts ?? [])
@@ -815,7 +957,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     // (non-custom variants). Preset values are their own field now — no longer
     // encoded into `environ` / EXTRA_ARGS — so we feed them through directly,
     // keyed by preset id.
-    if (!isCustom && variantName) {
+    if (!readsVfolderConfigFiles && variantName) {
       const presetValues = rev.modelRuntimeConfig?.runtimeVariantPresetValues;
       setInitialRuntimePresetValues(
         presetValues && presetValues.length > 0
@@ -876,8 +1018,12 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       modelFolderId: rev.modelMountConfig?.vfolderId
         ? toGlobalId('VirtualFolderNode', rev.modelMountConfig.vfolderId)
         : undefined,
-      mountDestination: rev.modelMountConfig?.mountDestination ?? '/models',
-      definitionPath: rev.modelMountConfig?.definitionPath ?? undefined,
+      // Model-folder mount config (destination + subpath) for the plain inputs
+      // beneath the folder selector (FR-3205).
+      modelMountDestination:
+        rev.modelMountConfig?.mountDestination ?? undefined,
+      modelSubpath: rev.modelMountConfig?.subpath ?? undefined,
+      definitionPath: rev.modelMountConfig?.definitionPath || undefined,
       // `ImageEnvironmentSelectFormItems` matches the form's
       // `environments.version` against its image catalog by full name
       // (`registry/namespace:tag@architecture`); the architecture suffix is
@@ -909,16 +1055,22 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       commandInterval: healthCheck?.interval ?? undefined,
       commandMaxWaitTime: healthCheck?.maxWaitTime ?? undefined,
       commandExpectedStatusCode: healthCheck?.expectedStatusCode ?? undefined,
+      // Pre-start actions prefill (FR-3205): translate from the GraphQL shape
+      // (args as object) to the form shape (args as JSON string).
+      commandPreStartActions:
+        service?.preStartActions?.map((a) => ({
+          action: a.action,
+          args: JSON.stringify(a.args),
+        })) ?? [],
       ...(hasCustomCommand && service
         ? {
-            customDefinitionMode: 'command' as const,
-            startCommand: formatShellCommand(service.startCommand ?? []),
+            startCommand: commandModeState.command,
+            commandAdvanced: commandModeState.advanced,
+            commandExecution: commandModeState.execution,
+            commandShell: commandModeState.shell,
             commandPort: service.port,
-            commandModelMount: customModelPath ?? '/models',
           }
-        : isCustom
-          ? { customDefinitionMode: 'file' as const }
-          : {}),
+        : {}),
     });
   };
 
@@ -1171,9 +1323,25 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       };
     });
 
-    const variantName = runtimeVariantNameMap[values.runtimeVariantId] ?? '';
-    const isCustom = variantName === 'custom';
-    const isCommandMode = values.customDefinitionMode === 'command';
+    const variant = runtimeVariantMap[values.runtimeVariantId];
+    const variantName = variant?.name ?? '';
+    // `readsVfolderConfigFiles` (26.8.0+) drives whether this variant reads the
+    // vfolder config files (command / modelDefinition override). On pre-26.8.0
+    // managers the field is stripped → undefined, so fall back to the legacy
+    // `name === 'custom'` heuristic — NEVER `?? false` — to preserve behavior.
+    const readsVfolderConfigFiles =
+      variant?.readsVfolderConfigFiles ?? variantName === 'custom';
+
+    // Resolve the model folder's mount destination + subpath from the plain
+    // inputs beneath the folder selector (FR-3205). An empty destination falls
+    // back to the conventional `/models` model mount root; the subpath is only
+    // sent on managers that support it.
+    const selectedModelFolderUuid = toLocalId(values.modelFolderId);
+    const modelMountDestination =
+      values.modelMountDestination?.trim() || '/models';
+    const modelMountSubpath = supportsMountSubpath
+      ? values.modelSubpath?.trim() || null
+      : undefined;
 
     // `environ` now carries ONLY the user's manual Environment Variables —
     // runtime-variant preset values are no longer merged in here.
@@ -1212,36 +1380,85 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
 
     // Runtime-variant preset values are their own list (kept out of `environ`),
     // sent via `modelRuntimeConfig.runtimeVariantPresetValues`. Only collected
-    // for non-custom variants on managers that support the field.
+    // for variants that do NOT read the vfolder config files, on managers that
+    // support the field.
     const runtimeVariantPresetValues =
-      isCustom || !supportsRuntimeVariantPresetValues
+      readsVfolderConfigFiles || !supportsRuntimeVariantPresetValues
         ? []
         : collectRuntimeVariantPresetValues(values.runtimeParams);
 
-    const modelDefinition =
-      isCustom && isCommandMode && values.startCommand
+    // Start Command (FR-3205): when the command/shell path is enabled (26.8.0+
+    // by client policy) send the user's raw command string in
+    // `command` plus a `shell` derived from the Basic/Advanced + Execution mode
+    // (Basic → omitted so the backend applies its default shell, Advanced+Shell
+    // → selected shell, Advanced+Exec → null). On older managers fall back to
+    // the deprecated tokenized `startCommand`. Never send both — the backend
+    // prefers `command`. `shell: undefined` is dropped from the request by
+    // Relay, so the field is truly omitted.
+    const rawCommand = values.startCommand ?? '';
+    const commandServiceFields = supportsCommandShell
+      ? {
+          command: rawCommand,
+          shell: resolveCommandShell({
+            advanced: !!values.commandAdvanced,
+            execution: values.commandExecution,
+            shell: values.commandShell,
+          }),
+        }
+      : { startCommand: tokenizeShellCommand(rawCommand) };
+
+    // Pre-start actions from the form (FR-3205). Parse the JSON `args` string
+    // for each entry; fallback to `{}` on invalid JSON.
+    const preStartActions = (values.commandPreStartActions ?? [])
+      .filter((a) => a.action)
+      .map((a) => ({
+        action: a.action,
+        args: (() => {
+          try {
+            return JSON.parse(a.args || '{}');
+          } catch {
+            return {};
+          }
+        })(),
+      }));
+
+    // Build the model definition from the service config fields. Custom
+    // variants (readsVfolderConfigFiles) expose command/port; all variants
+    // expose health check and pre-start actions. The definition is sent
+    // whenever any service field has data — not just when a command is typed.
+    const hasServiceConfig =
+      readsVfolderConfigFiles &&
+      (values.startCommand || values.commandPort != null);
+    const hasHealthOrPreStart =
+      healthCheckEnabled || preStartActions.length > 0;
+
+    const modelDefinition = hasServiceConfig
+      ? {
+          models: [
+            {
+              name: 'model',
+              modelPath: modelMountDestination,
+              service: {
+                preStartActions,
+                ...commandServiceFields,
+                port: values.commandPort ?? 8000,
+                healthCheck,
+              },
+            },
+          ],
+        }
+      : hasHealthOrPreStart
         ? {
             models: [
               {
-                name: 'model',
-                modelPath: values.commandModelMount ?? '/models',
                 service: {
-                  preStartActions: [],
-                  startCommand: tokenizeShellCommand(values.startCommand ?? ''),
-                  port: values.commandPort ?? 8000,
                   healthCheck,
+                  ...(preStartActions.length > 0 ? { preStartActions } : {}),
                 },
               },
             ],
           }
-        : healthCheckEnabled
-          ? { models: [{ service: { healthCheck } }] }
-          : null;
-
-    const mountDestination =
-      isCustom && isCommandMode
-        ? (values.commandModelMount ?? '/models')
-        : values.mountDestination || '/models';
+        : null;
 
     commitAdd({
       variables: {
@@ -1273,9 +1490,18 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             }),
           },
           modelMountConfig: {
-            vfolderId: toLocalId(values.modelFolderId),
-            mountDestination,
-            definitionPath: values.definitionPath,
+            vfolderId: selectedModelFolderUuid,
+            mountDestination: modelMountDestination,
+            // Only variants that read the vfolder config files expose this
+            // field; anything left in the form store for the others is not
+            // theirs to send.
+            definitionPath: readsVfolderConfigFiles
+              ? values.definitionPath?.trim() || null
+              : null,
+            // `subpath` (mount a subfolder inside the model vfolder) was added
+            // in 26.4.4; omit the key entirely on older managers, which reject
+            // unknown input fields.
+            ...(supportsMountSubpath && { subpath: modelMountSubpath }),
           },
           modelDefinition,
           extraMounts: extraMounts.length > 0 ? extraMounts : null,
@@ -1368,6 +1594,83 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
     });
   };
 
+  // Watch the custom form's model folder + runtime variant so the placeholder
+  // hook re-reads the definition file when the user changes either. `useWatch`
+  // returns undefined until the field registers (Preset mode / before mount),
+  // which naturally disables the read.
+  const watchedModelFolderId = Form.useWatch('modelFolderId', customForm);
+  const watchedRuntimeVariantId = Form.useWatch('runtimeVariantId', customForm);
+  const watchedVariant = runtimeVariantMap[watchedRuntimeVariantId ?? ''];
+  // Whether the watched variant reads the vfolder config files (command /
+  // service-config fields, placeholders). `readsVfolderConfigFiles` (26.8.0+)
+  // is stripped on older managers → undefined; fall back to the legacy
+  // `name === 'custom'` heuristic — NEVER `?? false` — so pre-26.8.0 managers
+  // keep identical custom-variant behavior.
+  const readsVfolderConfigFiles =
+    watchedVariant?.readsVfolderConfigFiles ??
+    watchedVariant?.name === 'custom';
+
+  // 26.8.0+ treats `readsVfolderConfigFiles` as authoritative in either Preset
+  // or Custom mode. Pre-26.8.0 (field stripped → `name === 'custom'` fallback)
+  // keeps the legacy Custom-mode-only gate.
+  const readsVfolderConfigFilesInMode =
+    readsVfolderConfigFiles &&
+    (supportsRuntimeVariantConfigReads || effectiveMode === 'custom');
+
+  // Read the selected model folder's `model-definition.yaml` and use its parsed
+  // values as placeholders (display-only hints) on the command fields. Enabled
+  // only for a config-reading variant with a folder selected; failures fall
+  // back to the DB baseline / static placeholders below.
+  const { defaults: vfolderModelDefinitionDefaults } =
+    useModelDefinitionPlaceholders(
+      watchedModelFolderId,
+      readsVfolderConfigFilesInMode,
+    );
+
+  // Low-priority placeholder layer: the runtime variant's built-in
+  // `defaultModelDefinition`, resolved by the Suspense-wrapped
+  // `VariantDefaultModelDefinitionLoader` side query and pushed here via
+  // `onLoaded`. It is stored together with the `variantId` it describes because
+  // the loader for a newly selected variant suspends before it reports back:
+  // without that tag, the previous variant's values would briefly show up as
+  // this variant's placeholders.
+  const [dbModelDefinitionDefaults, setDbModelDefinitionDefaults] = useState<{
+    variantId: string;
+    defaults: Partial<ParsedModelDefinition> | null;
+  } | null>(null);
+  const shouldLoadVariantDefault =
+    readsVfolderConfigFilesInMode && !!watchedRuntimeVariantId;
+  // A stored baseline counts only while it still describes the current form
+  // state: the selected variant must read the vfolder config files in this mode,
+  // and the baseline must be the one loaded for that same variant. Deriving this
+  // on render — instead of resetting the state whenever either input changes —
+  // keeps a stale baseline out of the placeholders without a state write.
+  const activeDbModelDefinitionDefaults =
+    shouldLoadVariantDefault &&
+    dbModelDefinitionDefaults &&
+    dbModelDefinitionDefaults.variantId === watchedRuntimeVariantId
+      ? dbModelDefinitionDefaults.defaults
+      : null;
+
+  // Placeholder precedence: the variant's built-in default (low) < the mounted
+  // vfolder's `model-definition.yaml` (high) — the yaml is what the server will
+  // actually read, so it wins wherever it speaks. Both layers list only the
+  // fields they define, so the merge is field-by-field: a yaml that sets just
+  // `start_command` keeps the variant's port / health-check hints rather than
+  // blanking them. The Advanced "Model Definition File Path" field is
+  // deliberately not an input here — it selects which yaml is read, so feeding
+  // it back would make the fields above it depend on their own hint source.
+  const modelDefinitionDefaults: Partial<ParsedModelDefinition> | null =
+    activeDbModelDefinitionDefaults || vfolderModelDefinitionDefaults
+      ? {
+          ...activeDbModelDefinitionDefaults,
+          // Safe as a plain spread: both layers omit the fields they do not
+          // define rather than carrying `undefined`, so the higher layer can
+          // never blank a value the lower one supplied.
+          ...vfolderModelDefinitionDefaults,
+        }
+      : null;
+
   const handleOk = async () => {
     // Explicitly `validateFields()` before triggering the mutation. The
     // subsequent `form.submit()` will also validate, but routing through
@@ -1409,7 +1712,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           />
         </BAIFlex>
       }
-      width={720}
+      width={800}
       footer={
         <BAIFlex direction="row" align="center" justify="between" gap="sm">
           <Checkbox
@@ -1597,9 +1900,26 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           style={{ marginTop: token.marginXS }}
           onFinish={handleCustomFinish}
           onFinishFailed={handleFinishFailed}
+          // Collapsing Advanced → Basic hides the Execution / Shell controls but
+          // antd keeps the values of unmounted fields, while `resolveCommandShell`
+          // branches on `commandAdvanced` first and submits the default shell.
+          // Without this reset a user who picks Exec (or /bin/zsh) and then
+          // returns to Basic keeps seeing that choice when they reopen Advanced,
+          // even though submit silently sends /bin/bash. Reset the two fields so
+          // what the form holds always matches what is submitted.
+          onValuesChange={(changed: Partial<FormValues>) => {
+            if ('commandAdvanced' in changed && !changed.commandAdvanced) {
+              customForm.setFieldsValue({
+                commandExecution: 'shell',
+                commandShell: DEFAULT_MODEL_SERVICE_SHELL,
+              });
+            }
+          }}
           initialValues={_.merge({}, RESOURCE_ALLOCATION_INITIAL_FORM_VALUES, {
             resourceGroup: deployment?.metadata?.resourceGroupName,
-            customDefinitionMode: 'command',
+            commandAdvanced: false,
+            commandExecution: 'shell',
+            commandShell: DEFAULT_MODEL_SERVICE_SHELL,
             commandEnableHealthCheck: false,
             environ: [],
           })}
@@ -1666,6 +1986,33 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               </Form.Item>
             </BAIFlex>
           </Form.Item>
+          {/* Model-folder mount config (FR-3205): the destination path and an
+              optional subpath for the selected model folder. Replaces the
+              per-mode mount-path inputs that used to live in the command /
+              config-file sections. */}
+          <BAIFlex gap="sm" align="start">
+            <Form.Item
+              name="modelMountDestination"
+              label={t('modelService.ModelMountDestination')}
+              tooltip={t('modelService.ModelMountTooltip')}
+              style={{ flex: 1 }}
+            >
+              <Input
+                allowClear
+                placeholder={modelDefinitionDefaults?.modelMountDestination}
+              />
+            </Form.Item>
+            {supportsMountSubpath && (
+              <Form.Item
+                name="modelSubpath"
+                label={t('modelService.Subpath')}
+                tooltip={t('modelService.SubpathTooltip')}
+                style={{ flex: 1 }}
+              >
+                <Input allowClear />
+              </Form.Item>
+            )}
+          </BAIFlex>
           <Suspense fallback={<BAISelect loading style={{ width: '100%' }} />}>
             <Form.Item
               name="runtimeVariantId"
@@ -1676,8 +2023,14 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 {
                   warningOnly: true,
                   validator: async (_rule, value: string) => {
-                    const variantName = runtimeVariantNameMap[value];
-                    if (variantName && variantName !== 'custom') {
+                    const v = runtimeVariantMap[value];
+                    // Warn for variants that do NOT read the vfolder config
+                    // files: their default command is applied by the backend.
+                    // Fall back to the legacy `name === 'custom'` heuristic on
+                    // pre-26.8.0 managers (field stripped → undefined).
+                    const reads =
+                      v?.readsVfolderConfigFiles ?? v?.name === 'custom';
+                    if (v && !reads) {
                       return Promise.reject(
                         t(
                           'modelService.RuntimeVariantDefaultCommandAppliedNote',
@@ -1690,8 +2043,8 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               ]}
             >
               <BAIRuntimeVariantSelect
-                onResolvedNamesChange={(map) =>
-                  setRuntimeVariantNameMap((prev) => ({ ...prev, ...map }))
+                onResolvedVariantsChange={(map) =>
+                  setRuntimeVariantMap((prev) => ({ ...prev, ...map }))
                 }
               />
             </Form.Item>
@@ -1700,8 +2053,14 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           <Form.Item dependencies={['runtimeVariantId']} noStyle>
             {({ getFieldValue }: FormInstance<FormValues>) => {
               const variantId = getFieldValue('runtimeVariantId');
-              const variantName = runtimeVariantNameMap[variantId];
-              if (!variantName || variantName === 'custom') return null;
+              const v = runtimeVariantMap[variantId];
+              const variantName = v?.name;
+              // Runtime-parameter presets apply only to variants that do NOT
+              // read the vfolder config files. Legacy fallback on pre-26.8.0
+              // managers: `name === 'custom'` (field stripped → undefined).
+              const reads =
+                v?.readsVfolderConfigFiles ?? variantName === 'custom';
+              if (!variantName || reads) return null;
               return (
                 <div style={{ marginBottom: token.marginMD }}>
                   <Suspense fallback={null}>
@@ -1724,94 +2083,290 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           <Form.Item dependencies={['runtimeVariantId']} noStyle>
             {({ getFieldValue }: FormInstance<FormValues>) => {
               const variantId = getFieldValue('runtimeVariantId');
-              const variantName = runtimeVariantNameMap[variantId];
-              if (variantName !== 'custom') {
+              const v = runtimeVariantMap[variantId];
+              // Service Configuration (command / port / etc.) is shown only for
+              // variants that read the vfolder config files. Legacy fallback on
+              // pre-26.8.0 managers: `name === 'custom'` (field stripped →
+              // undefined).
+              const reads = v?.readsVfolderConfigFiles ?? v?.name === 'custom';
+              if (!reads) {
                 return null;
               }
               return (
-                <>
-                  <Form.Item name="customDefinitionMode" noStyle>
-                    <Segmented
-                      options={[
-                        {
-                          label: t('modelService.EnterCommand'),
-                          value: 'command',
-                        },
-                        {
-                          label: t('modelService.UseConfigFile'),
-                          value: 'file',
-                        },
-                      ]}
-                      style={{ marginBottom: token.marginMD }}
-                    />
-                  </Form.Item>
-                  <Form.Item dependencies={['customDefinitionMode']} noStyle>
-                    {({ getFieldValue: getField }: FormInstance<FormValues>) =>
-                      getField('customDefinitionMode') === 'command' ? (
+                <Collapse
+                  size="small"
+                  defaultActiveKey={['service-config']}
+                  style={{ marginBottom: token.marginMD }}
+                  // Center the header items vertically — the Basic/Advanced
+                  // Segmented on the right makes the header row tall.
+                  styles={{ header: { alignItems: 'center' } }}
+                  items={[
+                    {
+                      key: 'service-config',
+                      // Keep the panel mounted while collapsed so the command
+                      // fields stay registered and validate on submit (FR-3205).
+                      forceRender: true,
+                      // Basic/Advanced Segmented lives on the right of the header
+                      // (gated on the 26.8.0 command/shell API); stopPropagation
+                      // keeps switching modes from toggling the collapse.
+                      label: (
+                        <BAIFlex
+                          justify="between"
+                          align="center"
+                          gap="sm"
+                          style={{ flex: 1 }}
+                        >
+                          <span>{t('modelService.ServiceConfiguration')}</span>
+                          {supportsCommandShell && (
+                            <div onClick={(e) => e.stopPropagation()}>
+                              <BAIFlex gap="xxs" align="center">
+                                <Form.Item
+                                  name="commandAdvanced"
+                                  noStyle
+                                  // Segmented uses 'basic' | 'advanced' strings;
+                                  // map to/from the boolean form value so submit
+                                  // and prefill keep the same semantics.
+                                  getValueProps={(checked: boolean) => ({
+                                    value: checked ? 'advanced' : 'basic',
+                                  })}
+                                  normalize={(mode: string) =>
+                                    mode === 'advanced'
+                                  }
+                                >
+                                  <Segmented
+                                    size="small"
+                                    options={[
+                                      {
+                                        label: t('general.Basic'),
+                                        value: 'basic',
+                                      },
+                                      {
+                                        label: t('general.Advanced'),
+                                        value: 'advanced',
+                                      },
+                                    ]}
+                                  />
+                                </Form.Item>
+                                <BAIQuestionIconWithTooltip
+                                  title={t(
+                                    'modelService.CommandAdvancedModeTooltip',
+                                  )}
+                                />
+                              </BAIFlex>
+                            </div>
+                          )}
+                        </BAIFlex>
+                      ),
+                      children: (
                         <>
+                          {/* Basic/Advanced + Execution/Shell controls need
+                              the 26.8.0 command/shell API; on older managers
+                              only the plain command input below is shown. The
+                              Basic/Advanced Segmented sits at the top of the
+                              command config (FR-3205). */}
+                          {supportsCommandShell && (
+                            <>
+                              {/* Advanced only: Execution (Shell | Exec) + Shell.
+                                  The Basic/Advanced toggle lives in the Collapse
+                                  header. */}
+                              <Form.Item
+                                dependencies={['commandAdvanced']}
+                                noStyle
+                              >
+                                {({
+                                  getFieldValue: getAdv,
+                                }: FormInstance<FormValues>) =>
+                                  getAdv('commandAdvanced') ? (
+                                    <BAIFlex gap="sm" align="start">
+                                      <Form.Item
+                                        name="commandExecution"
+                                        label={t('modelService.Execution')}
+                                        tooltip={{
+                                          // pre-line so the `\n` between the
+                                          // Shell and Exec descriptions renders
+                                          // as a line break.
+                                          title: (
+                                            <span
+                                              style={{
+                                                whiteSpace: 'pre-line',
+                                              }}
+                                            >
+                                              {t(
+                                                'modelService.ExecutionTooltip',
+                                              )}
+                                            </span>
+                                          ),
+                                        }}
+                                        required
+                                        rules={[{ required: true }]}
+                                      >
+                                        <Radio.Group
+                                          options={[
+                                            {
+                                              label: t(
+                                                'modelService.ExecutionShell',
+                                              ),
+                                              value: 'shell',
+                                            },
+                                            {
+                                              label: t(
+                                                'modelService.ExecutionExec',
+                                              ),
+                                              value: 'exec',
+                                            },
+                                          ]}
+                                        />
+                                      </Form.Item>
+                                      <Form.Item
+                                        dependencies={['commandExecution']}
+                                        noStyle
+                                      >
+                                        {({
+                                          getFieldValue: getExec,
+                                        }: FormInstance<FormValues>) =>
+                                          // Exec = no shell → hide the Shell
+                                          // field entirely (submitted `shell`
+                                          // is null).
+                                          getExec('commandExecution') ===
+                                          'exec' ? null : (
+                                            <Form.Item
+                                              name="commandShell"
+                                              label={t('modelService.Shell')}
+                                              tooltip={t(
+                                                'modelService.ShellTooltip',
+                                              )}
+                                              style={{ flex: 1 }}
+                                              required
+                                              rules={[
+                                                {
+                                                  required: true,
+                                                  whitespace: true,
+                                                },
+                                              ]}
+                                            >
+                                              <AutoComplete
+                                                options={COMMAND_SHELL_OPTIONS}
+                                                allowClear
+                                              />
+                                            </Form.Item>
+                                          )
+                                        }
+                                      </Form.Item>
+                                    </BAIFlex>
+                                  ) : null
+                                }
+                              </Form.Item>
+                            </>
+                          )}
+                          {/* Command input: multi-line textarea in Shell
+                              mode (backend runs `shell -c command`, so
+                              operators work); single-line input in Exec
+                              mode (shell is null → command run directly as
+                              argv, so operators do NOT work). Legacy
+                              (<26.8.0) managers get a plain single-line
+                              input that is tokenized on submit. */}
                           <Form.Item
-                            name="startCommand"
-                            label={t('modelService.StartCommand')}
-                            tooltip={t('modelService.StartCommandTooltip')}
-                            extra={t('modelService.StartCommandHelperShell')}
-                            rules={[{ required: true, whitespace: true }]}
+                            dependencies={[
+                              'commandAdvanced',
+                              'commandExecution',
+                            ]}
+                            noStyle
                           >
-                            <Input.TextArea
-                              placeholder={t(
-                                'modelService.StartCommandPlaceholder',
-                              )}
-                              autoSize={{ minRows: 2 }}
-                            />
-                          </Form.Item>
-                          <Form.Item
-                            name="commandModelMount"
-                            label={t('modelService.ModelMountDestination')}
-                            tooltip={t('modelService.ModelMountTooltip')}
-                          >
-                            <Input placeholder="/models" allowClear />
+                            {({
+                              getFieldValue: getMode,
+                            }: FormInstance<FormValues>) => {
+                              const advanced = !!getMode('commandAdvanced');
+                              const isExec =
+                                advanced &&
+                                getMode('commandExecution') === 'exec';
+                              return (
+                                <Form.Item
+                                  name="startCommand"
+                                  // Exec splits the input into an argv
+                                  // vector, so label it "Command (argv)"
+                                  // to distinguish it from a shell command.
+                                  label={
+                                    isExec
+                                      ? t('modelService.CommandArgvLabel')
+                                      : supportsCommandShell
+                                        ? t('modelService.Command')
+                                        : t('modelService.StartCommand')
+                                  }
+                                  tooltip={t(
+                                    'modelService.StartCommandTooltip',
+                                  )}
+                                  // The hint states how the command will be run,
+                                  // so it follows that rather than the UI mode:
+                                  // Exec is the only case that does not go
+                                  // through a shell, and Basic runs under the
+                                  // backend's default shell exactly like
+                                  // Advanced + Shell. Managers without the
+                                  // command/shell path still receive a
+                                  // tokenized `startCommand`, so they keep the
+                                  // original shell-syntax hint (FR-3166).
+                                  extra={
+                                    !supportsCommandShell
+                                      ? t(
+                                          'modelService.StartCommandHelperShell',
+                                        )
+                                      : isExec
+                                        ? t('modelService.CommandExecHelper')
+                                        : t('modelService.CommandShellHelper')
+                                  }
+                                  // The command is sent to the server as the
+                                  // raw string the user typed; the WebUI does
+                                  // not pre-validate shell operators (Exec runs
+                                  // it via shlex.split, where quoted operators
+                                  // are valid argv content). The Exec helper
+                                  // text explains that unquoted operators are
+                                  // not interpreted.
+                                  rules={[{ whitespace: true }]}
+                                >
+                                  {!supportsCommandShell ? (
+                                    // Legacy (<26.8.0): plain single-line
+                                    // input, tokenized on submit.
+                                    <Input
+                                      placeholder={
+                                        modelDefinitionDefaults?.startCommand
+                                      }
+                                    />
+                                  ) : isExec ? (
+                                    // Exec: argv example, no shell operators.
+                                    <Input
+                                      placeholder={
+                                        modelDefinitionDefaults?.startCommand
+                                      }
+                                    />
+                                  ) : (
+                                    <Input.TextArea
+                                      placeholder={
+                                        modelDefinitionDefaults?.startCommand
+                                      }
+                                      autoSize={{ minRows: 2 }}
+                                    />
+                                  )}
+                                </Form.Item>
+                              );
+                            }}
                           </Form.Item>
                           <Form.Item
                             name="commandPort"
                             label={t('modelService.Port')}
                             tooltip={t('modelService.PortTooltip')}
+                            style={{ marginBottom: 0 }}
                           >
                             <InputNumber
                               min={2}
                               max={65535}
-                              placeholder="8000"
+                              placeholder={modelDefinitionDefaults?.port?.toString()}
                               style={{ width: '100%' }}
                             />
                           </Form.Item>
                         </>
-                      ) : (
-                        <BAIFlex gap="sm">
-                          <Form.Item
-                            name="mountDestination"
-                            label={t('modelService.ModelMountDestination')}
-                            tooltip={t('modelService.ModelMountTooltip')}
-                            rules={[{ required: true }]}
-                            style={{ flex: 1 }}
-                          >
-                            <Input allowClear placeholder="/models" />
-                          </Form.Item>
-                          <Form.Item
-                            name="definitionPath"
-                            label={t('deployment.ModelDefinitionPath')}
-                            tooltip={t(
-                              'modelService.ModelDefinitionPathTooltip',
-                            )}
-                            style={{ flex: 1 }}
-                          >
-                            <Input
-                              allowClear
-                              placeholder="model-definition.yaml"
-                            />
-                          </Form.Item>
-                        </BAIFlex>
-                      )
-                    }
-                  </Form.Item>
-                </>
+                      ),
+                    },
+                  ]}
+                />
               );
             }}
           </Form.Item>
@@ -1836,9 +2391,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                     rules={[{ required: true }]}
                   >
                     <Input
-                      placeholder={t('general.Example', {
-                        value: '/health',
-                      })}
+                      placeholder={modelDefinitionDefaults?.healthCheckPath}
                       allowClear
                     />
                   </Form.Item>
@@ -1854,9 +2407,6 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                     >
                       <InputNumber
                         min={1}
-                        placeholder={t('general.Example', {
-                          value: '10',
-                        })}
                         suffix={t('time.Sec')}
                         style={{ width: '100%' }}
                       />
@@ -1872,9 +2422,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                     >
                       <InputNumber
                         min={1}
-                        placeholder={t('general.Example', {
-                          value: '10',
-                        })}
+                        placeholder={modelDefinitionDefaults?.maxRetries?.toString()}
                         style={{ width: '100%' }}
                       />
                     </Form.Item>
@@ -1889,9 +2437,6 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                     >
                       <InputNumber
                         min={1}
-                        placeholder={t('general.Example', {
-                          value: '15',
-                        })}
                         suffix={t('time.Sec')}
                         style={{ width: '100%' }}
                       />
@@ -1910,9 +2455,6 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                       <InputNumber
                         min={101}
                         max={599}
-                        placeholder={t('general.Example', {
-                          value: '200',
-                        })}
                         style={{ width: '100%' }}
                       />
                     </Form.Item>
@@ -1927,9 +2469,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                     >
                       <InputNumber
                         min={0}
-                        placeholder={t('general.Example', {
-                          value: '60',
-                        })}
+                        placeholder={modelDefinitionDefaults?.initialDelay?.toString()}
                         suffix={t('time.Sec')}
                         style={{ width: '100%' }}
                       />
@@ -1939,6 +2479,74 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 </BAIFlex>
               ) : null
             }
+          </Form.Item>
+
+          {/* Pre-Start Actions — always visible regardless of runtime variant */}
+          <Form.Item
+            label={t('modelService.PreStartActions')}
+            tooltip={t('modelService.PreStartActionsTooltip')}
+            style={{ marginBottom: 0, marginTop: token.marginXS }}
+          >
+            <Form.List name="commandPreStartActions">
+              {(fields, { add, remove }) => (
+                <BAIFlex direction="column" gap="xs" align="stretch">
+                  {fields.map(({ key, name, ...rest }) => (
+                    <BAIFlex
+                      key={key}
+                      direction="row"
+                      align="baseline"
+                      gap="xs"
+                    >
+                      <Form.Item
+                        {...rest}
+                        name={[name, 'action']}
+                        style={{ marginBottom: 0, flex: 1 }}
+                        rules={[{ required: true, message: '' }]}
+                      >
+                        <Input
+                          placeholder={t(
+                            'adminDeploymentPreset.modelDef.ActionPlaceholder',
+                          )}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        {...rest}
+                        name={[name, 'args']}
+                        style={{ marginBottom: 0, flex: 2 }}
+                        rules={[
+                          { required: true, message: '' },
+                          {
+                            validator: async (_, v) => {
+                              if (!v) return;
+                              try {
+                                JSON.parse(v);
+                              } catch {
+                                return Promise.reject('');
+                              }
+                            },
+                          },
+                        ]}
+                      >
+                        <Input
+                          placeholder={t('general.Example', { value: '{}' })}
+                        />
+                      </Form.Item>
+                      <MinusCircleOutlined onClick={() => remove(name)} />
+                    </BAIFlex>
+                  ))}
+                  <Form.Item noStyle>
+                    <BAIButton
+                      type="dashed"
+                      onClick={() => add({ action: '', args: '{}' })}
+                      icon={<PlusIcon />}
+                      block
+                    >
+                      {t('adminDeploymentPreset.modelDef.AddPreStartAction')}
+                    </BAIButton>
+                  </Form.Item>
+                </BAIFlex>
+              )}
+            </Form.List>
           </Form.Item>
 
           <SectionHeader>{t('session.launcher.Environments')}</SectionHeader>
@@ -1970,6 +2578,20 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 label: t('session.launcher.AdvancedSettings'),
                 children: (
                   <Suspense fallback={<Skeleton active />}>
+                    {/* The path points at the model-definition.yaml the server
+                        will read, so the field means nothing for a variant that
+                        does not read the vfolder config files. */}
+                    {readsVfolderConfigFiles && (
+                      <Form.Item
+                        name="definitionPath"
+                        label={t('deployment.ModelDefinitionPath')}
+                        tooltip={t('modelService.ModelDefinitionPathTooltip')}
+                        rules={[{ whitespace: true }]}
+                        preserve={false}
+                      >
+                        <Input allowClear placeholder="model-definition.yaml" />
+                      </Form.Item>
+                    )}
                     <Form.Item
                       noStyle
                       dependencies={[
@@ -2019,6 +2641,22 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           />
         </Suspense>
       )}
+      {/* DB `defaultModelDefinition` baseline loader (FR-3205). Renders nothing;
+          resolves the variant's built-in definition and pushes it into
+          `dbModelDefinitionDefaults` for the placeholder merge. Keyed by
+          variantId so switching variants remounts a fresh query. Wrapped in
+          Suspense so the modal chrome / form never blank while it resolves. */}
+      {shouldLoadVariantDefault && watchedRuntimeVariantId ? (
+        <Suspense fallback={null}>
+          <VariantDefaultModelDefinitionLoader
+            key={watchedRuntimeVariantId}
+            variantId={watchedRuntimeVariantId}
+            onLoaded={(defaults, variantId) =>
+              setDbModelDefinitionDefaults({ variantId, defaults })
+            }
+          />
+        </Suspense>
+      ) : null}
       <FolderCreateModalV2
         open={isModelFolderCreateModalOpen}
         initialValues={{ usage_mode: 'model' }}

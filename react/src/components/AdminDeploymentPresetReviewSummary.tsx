@@ -134,6 +134,113 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
               </BAIFlex>
             </Descriptions.Item>
           )}
+          {/* Service Configuration fields (moved to Step 1) */}
+          {(() => {
+            const svc = values.modelDefinition?.models?.[0]?.service;
+            return (
+              <>
+                {svc?.port != null && (
+                  <Descriptions.Item label={t('modelService.Port')}>
+                    {svc.port}
+                  </Descriptions.Item>
+                )}
+                {svc?.startCommand && (
+                  <Descriptions.Item label={t('modelService.Command')}>
+                    <SourceCodeView language="shell">
+                      {svc.startCommand}
+                    </SourceCodeView>
+                  </Descriptions.Item>
+                )}
+                {svc?.shell && (
+                  <Descriptions.Item label={t('modelService.Shell')}>
+                    <Typography.Text code>{svc.shell}</Typography.Text>
+                  </Descriptions.Item>
+                )}
+                {(svc?.preStartActions?.length ?? 0) > 0 && (
+                  <Descriptions.Item label={t('modelService.PreStartActions')}>
+                    <BAIFlex direction="column" align="start" gap="xxs">
+                      {svc?.preStartActions?.filter(Boolean).map((a, ai) => (
+                        <Typography.Text
+                          key={ai}
+                          code
+                          style={{ display: 'block' }}
+                        >
+                          {a?.action}: {a?.args || '{}'}
+                        </Typography.Text>
+                      ))}
+                    </BAIFlex>
+                  </Descriptions.Item>
+                )}
+                <Descriptions.Item
+                  label={t('adminDeploymentPreset.modelDef.EnableHealthCheck')}
+                >
+                  {svc?.enableHealthCheck
+                    ? t('general.Enabled')
+                    : t('general.Disabled')}
+                </Descriptions.Item>
+                {svc?.enableHealthCheck && svc?.healthCheck && (
+                  <>
+                    {svc.healthCheck.path && (
+                      <Descriptions.Item
+                        label={t(
+                          'adminDeploymentPreset.modelDef.HealthCheckPath',
+                        )}
+                      >
+                        <Typography.Text code>
+                          {svc.healthCheck.path}
+                        </Typography.Text>
+                      </Descriptions.Item>
+                    )}
+                    {svc.healthCheck.interval != null && (
+                      <Descriptions.Item
+                        label={t(
+                          'adminDeploymentPreset.modelDef.HealthCheckInterval',
+                        )}
+                      >
+                        {svc.healthCheck.interval}
+                      </Descriptions.Item>
+                    )}
+                    {svc.healthCheck.maxRetries != null && (
+                      <Descriptions.Item
+                        label={t(
+                          'adminDeploymentPreset.modelDef.HealthCheckMaxRetries',
+                        )}
+                      >
+                        {svc.healthCheck.maxRetries}
+                      </Descriptions.Item>
+                    )}
+                    {svc.healthCheck.maxWaitTime != null && (
+                      <Descriptions.Item
+                        label={t(
+                          'adminDeploymentPreset.modelDef.HealthCheckMaxWaitTime',
+                        )}
+                      >
+                        {svc.healthCheck.maxWaitTime}
+                      </Descriptions.Item>
+                    )}
+                    {svc.healthCheck.expectedStatusCode != null && (
+                      <Descriptions.Item
+                        label={t(
+                          'adminDeploymentPreset.modelDef.HealthCheckExpectedStatus',
+                        )}
+                      >
+                        {svc.healthCheck.expectedStatusCode}
+                      </Descriptions.Item>
+                    )}
+                    {svc.healthCheck.initialDelay != null && (
+                      <Descriptions.Item
+                        label={t(
+                          'adminDeploymentPreset.modelDef.HealthCheckInitialDelay',
+                        )}
+                      >
+                        {svc.healthCheck.initialDelay}
+                      </Descriptions.Item>
+                    )}
+                  </>
+                )}
+              </>
+            );
+          })()}
         </Descriptions>
       </BAICard>
 
@@ -288,112 +395,6 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
                       {m.modelPath || '-'}
                     </Typography.Text>
                   </Descriptions.Item>
-                  {m.service?.port != null && (
-                    <Descriptions.Item
-                      label={t('adminDeploymentPreset.modelDef.Port')}
-                    >
-                      {m.service.port}
-                    </Descriptions.Item>
-                  )}
-                  {/* `shell` is not surfaced in this form (no-op on the list
-                      `startCommand` path); see AdminDeploymentPresetModelConfigItem. */}
-                  {m.service?.startCommand && (
-                    <Descriptions.Item
-                      label={t('adminDeploymentPreset.modelDef.StartCommand')}
-                    >
-                      <SourceCodeView language="shell">
-                        {m.service.startCommand}
-                      </SourceCodeView>
-                    </Descriptions.Item>
-                  )}
-                  {(m.service?.preStartActions?.length ?? 0) > 0 && (
-                    <Descriptions.Item
-                      label={t(
-                        'adminDeploymentPreset.modelDef.PreStartActions',
-                      )}
-                    >
-                      {m.service?.preStartActions
-                        ?.filter(Boolean)
-                        .map((a, ai) => (
-                          <Typography.Text
-                            key={ai}
-                            code
-                            style={{ display: 'block' }}
-                          >
-                            {a?.action}
-                          </Typography.Text>
-                        ))}
-                    </Descriptions.Item>
-                  )}
-                  <Descriptions.Item
-                    label={t(
-                      'adminDeploymentPreset.modelDef.EnableHealthCheck',
-                    )}
-                  >
-                    {m.service?.enableHealthCheck
-                      ? t('general.Enabled')
-                      : t('general.Disabled')}
-                  </Descriptions.Item>
-                  {m.service?.enableHealthCheck && (
-                    <>
-                      {m.service.healthCheck?.path && (
-                        <Descriptions.Item
-                          label={t(
-                            'adminDeploymentPreset.modelDef.HealthCheckPath',
-                          )}
-                        >
-                          <Typography.Text code>
-                            {m.service.healthCheck.path}
-                          </Typography.Text>
-                        </Descriptions.Item>
-                      )}
-                      {m.service.healthCheck?.interval != null && (
-                        <Descriptions.Item
-                          label={t(
-                            'adminDeploymentPreset.modelDef.HealthCheckInterval',
-                          )}
-                        >
-                          {m.service.healthCheck.interval}
-                        </Descriptions.Item>
-                      )}
-                      {m.service.healthCheck?.maxRetries != null && (
-                        <Descriptions.Item
-                          label={t(
-                            'adminDeploymentPreset.modelDef.HealthCheckMaxRetries',
-                          )}
-                        >
-                          {m.service.healthCheck.maxRetries}
-                        </Descriptions.Item>
-                      )}
-                      {m.service.healthCheck?.maxWaitTime != null && (
-                        <Descriptions.Item
-                          label={t(
-                            'adminDeploymentPreset.modelDef.HealthCheckMaxWaitTime',
-                          )}
-                        >
-                          {m.service.healthCheck.maxWaitTime}
-                        </Descriptions.Item>
-                      )}
-                      {m.service.healthCheck?.expectedStatusCode != null && (
-                        <Descriptions.Item
-                          label={t(
-                            'adminDeploymentPreset.modelDef.HealthCheckExpectedStatus',
-                          )}
-                        >
-                          {m.service.healthCheck.expectedStatusCode}
-                        </Descriptions.Item>
-                      )}
-                      {m.service.healthCheck?.initialDelay != null && (
-                        <Descriptions.Item
-                          label={t(
-                            'adminDeploymentPreset.modelDef.HealthCheckInitialDelay',
-                          )}
-                        >
-                          {m.service.healthCheck.initialDelay}
-                        </Descriptions.Item>
-                      )}
-                    </>
-                  )}
                   {m.metadata?.title && (
                     <Descriptions.Item
                       label={t('adminDeploymentPreset.modelDef.Title')}
