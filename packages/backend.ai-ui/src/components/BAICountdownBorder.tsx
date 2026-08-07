@@ -1,4 +1,4 @@
-import { theme } from 'antd';
+import { theme } from '../theme-shim';
 import { createStyles } from 'antd-style';
 import React, { useEffect, useRef, useState } from 'react';
 

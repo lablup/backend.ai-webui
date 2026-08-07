@@ -1,5 +1,6 @@
+import { theme } from '../theme-shim';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { theme, Tooltip, type TooltipProps } from 'antd';
+import { Tooltip, type TooltipProps } from 'antd';
 import React from 'react';
 
 interface BAIQuestionIconWithTooltipProps extends Omit<

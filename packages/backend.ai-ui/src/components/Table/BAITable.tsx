@@ -1,5 +1,6 @@
 import { transformSorterToOrderString } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
+import { theme } from '../../theme-shim';
 import BAIButton from '../BAIButton';
 import BAIFlex from '../BAIFlex';
 import BAIText from '../BAIText';
@@ -18,6 +19,7 @@ import {
   Dropdown,
   Pagination,
   Table,
+  type GlobalToken,
   type TablePaginationConfig,
   type TableProps,
 } from 'antd';
@@ -266,7 +268,8 @@ const BAITable = <RecordType extends AnyObject = AnyObject>({
 }: BAITableProps<RecordType>): React.ReactElement => {
   'use memo';
   const { t } = useBAIi18n();
-  const { styles } = useStyles();
+  const { token } = theme.useToken();
+  const { styles } = useStyles({ token });
   const [resizedColumnWidths, setResizedColumnWidths] = useState<
     Record<string, number>
   >(generateResizedColumnWidths(columns));
@@ -649,36 +652,39 @@ const BAITable = <RecordType extends AnyObject = AnyObject>({
 
 export default BAITable;
 
-const useStyles = createStyles(({ token, css }) => ({
-  resizableTable: css`
-    .react-resizable-handle {
-      position: absolute;
-      inset-inline-end: 0px;
-      bottom: 0;
-      z-index: 1;
-      width: 10px;
-      height: 100%;
-      cursor: col-resize;
-    }
-    .ant-table-cell {
-      overflow: hidden;
-      white-space: 'pre';
-      word-wrap: 'break-word';
-    }
-  `,
-  neoHeader: css`
-    thead.ant-table-thead > tr > th.ant-table-cell {
-      font-weight: 500;
-      color: ${token.colorTextTertiary};
-    }
-  `,
-  zeroWithSelectionColumn: css`
-    .ant-table-selection-column {
-      /* display: none !important; */
-      padding: 0 !important;
-    }
-  `,
-}));
+// Token values come in as props from the shim (to-astryx ticket 10).
+const useStyles = createStyles(
+  ({ css }, { token }: { token: GlobalToken }) => ({
+    resizableTable: css`
+      .react-resizable-handle {
+        position: absolute;
+        inset-inline-end: 0px;
+        bottom: 0;
+        z-index: 1;
+        width: 10px;
+        height: 100%;
+        cursor: col-resize;
+      }
+      .ant-table-cell {
+        overflow: hidden;
+        white-space: 'pre';
+        word-wrap: 'break-word';
+      }
+    `,
+    neoHeader: css`
+      thead.ant-table-thead > tr > th.ant-table-cell {
+        font-weight: 500;
+        color: ${token.colorTextTertiary};
+      }
+    `,
+    zeroWithSelectionColumn: css`
+      .ant-table-selection-column {
+        /* display: none !important; */
+        padding: 0 !important;
+      }
+    `,
+  }),
+);
 
 const ResizableTitle = (
   props: React.HTMLAttributes<any> & {

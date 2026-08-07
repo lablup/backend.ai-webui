@@ -1,6 +1,7 @@
 import { BAISessionClusterModeFragment$key } from '../../__generated__/BAISessionClusterModeFragment.graphql';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
-import { Tag, theme, Typography } from 'antd';
+import { theme } from '../../theme-shim';
+import { Tag, Typography } from 'antd';
 import * as _ from 'lodash-es';
 import React from 'react';
 import { useFragment, graphql } from 'react-relay';

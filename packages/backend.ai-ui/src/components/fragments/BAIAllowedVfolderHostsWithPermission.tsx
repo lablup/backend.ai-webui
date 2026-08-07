@@ -3,12 +3,12 @@ import { BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment$k
 import { BAIAllowedVfolderHostsWithPermissionQuery } from '../../__generated__/BAIAllowedVfolderHostsWithPermissionQuery.graphql';
 import { SemanticColor } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
+import { theme } from '../../theme-shim';
 import BAIFlex from '../BAIFlex';
 import BAILink from '../BAILink';
 import BAIModal from '../BAIModal';
 import { BAITable } from '../Table';
 import { CheckCircleFilled, StopFilled } from '@ant-design/icons';
-import { theme } from 'antd';
 import * as _ from 'lodash-es';
 import { LockIcon, LockOpenIcon } from 'lucide-react';
 import React from 'react';

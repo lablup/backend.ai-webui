@@ -1,4 +1,4 @@
-import { theme } from 'antd';
+import { theme } from '../theme-shim';
 import { SorterResult } from 'antd/es/table/interface';
 import Big from 'big.js';
 import * as _ from 'lodash-es';
@@ -479,11 +479,7 @@ export * from './newLineToBrElement';
 export * from './useDebouncedDeferredValue';
 
 export type SemanticColor =
-  | 'success'
-  | 'info'
-  | 'warning'
-  | 'error'
-  | 'default';
+  'success' | 'info' | 'warning' | 'error' | 'default';
 
 export const useSemanticColorMap = (): Record<SemanticColor, string> => {
   const { token } = theme.useToken();

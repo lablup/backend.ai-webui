@@ -13,10 +13,8 @@ import { Button } from 'antd';
 import { useState } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-const {
-  mockClientPromise,
-  mockAnonymousClientFactory,
-} = createMockClientWithElapsedTime();
+const { mockClientPromise, mockAnonymousClientFactory } =
+  createMockClientWithElapsedTime();
 
 /**
  * BAIAgentTable is a specialized table component for displaying Backend.AI agent information.

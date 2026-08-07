@@ -1,5 +1,6 @@
+import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
-import { Popover, Tag, theme, Tooltip, Typography } from 'antd';
+import { Popover, Tag, Tooltip, Typography } from 'antd';
 import * as _ from 'lodash-es';
 import React, { ReactNode } from 'react';
 

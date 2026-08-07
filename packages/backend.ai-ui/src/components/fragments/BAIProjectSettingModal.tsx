@@ -16,17 +16,10 @@ import { BAIProjectSettingModalQuery } from '../../__generated__/BAIProjectSetti
 import { convertToBinaryUnit } from '../../helper';
 import { useErrorMessageResolver } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
+import { theme } from '../../theme-shim';
 import BAIModal, { BAIModalProps } from '../BAIModal';
 import { useBAIResourceSlots } from '../provider';
-import {
-  App,
-  Checkbox,
-  Form,
-  FormInstance,
-  Input,
-  InputNumber,
-  theme,
-} from 'antd';
+import { App, Checkbox, Form, FormInstance, Input, InputNumber } from 'antd';
 import * as _ from 'lodash-es';
 import { useDeferredValue, useRef } from 'react';
 import {

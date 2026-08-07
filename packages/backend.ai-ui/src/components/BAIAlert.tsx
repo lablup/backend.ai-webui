@@ -1,4 +1,5 @@
-import { Alert, type AlertProps } from 'antd';
+import { theme } from '../theme-shim';
+import { Alert, type AlertProps, type GlobalToken } from 'antd';
 import { createStyles } from 'antd-style';
 import classNames from 'classnames';
 import React from 'react';
@@ -6,7 +7,10 @@ import React from 'react';
 export interface BAIAlertProps extends AlertProps {
   ghostInfoBg?: boolean;
 }
-const useStyle = createStyles(({ css, token }) => ({
+// Token values come in as props from the shim (`theme.useToken()`), not from
+// antd-style's own theme context (to-astryx ticket 10; createStyles itself is
+// ticket 33).
+const useStyle = createStyles(({ css }, { token }: { token: GlobalToken }) => ({
   baiAlertDefault: css`
     .ant-alert-message {
       font-size: 14px;
@@ -31,7 +35,8 @@ const BAIAlert: React.FC<BAIAlertProps> = ({
   ghostInfoBg = true,
   ...otherProps
 }) => {
-  const { styles } = useStyle();
+  const { token } = theme.useToken();
+  const { styles } = useStyle({ token });
   return (
     <Alert
       className={classNames(

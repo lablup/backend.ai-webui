@@ -11,13 +11,14 @@ import {
   toLocalId,
 } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
+import { theme } from '../../theme-shim';
 import BAIFlex from '../BAIFlex';
 import BAIText from '../BAIText';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
 import { BAIColumnsType, BAITable } from '../Table';
 import BAIArtifactDescriptions from './BAIArtifactDescriptions';
 import { QuestionCircleFilled } from '@ant-design/icons';
-import { Alert, message, Modal, theme, Tooltip, type ModalProps } from 'antd';
+import { Alert, message, Modal, Tooltip, type ModalProps } from 'antd';
 import * as _ from 'lodash-es';
 import { graphql, useFragment, useMutation } from 'react-relay';
 

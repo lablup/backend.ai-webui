@@ -1,5 +1,5 @@
 // BAIRowWrapWithDividers.tsx
-import { theme } from 'antd';
+import { theme } from '../theme-shim';
 import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 export interface BAIRowWrapWithDividersProps {

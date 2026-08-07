@@ -1,8 +1,9 @@
 import { BAISessionAgentIdsFragment$key } from '../../__generated__/BAISessionAgentIdsFragment.graphql';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
+import { theme } from '../../theme-shim';
 import BAIFlex from '../BAIFlex';
 import { CopyOutlined } from '@ant-design/icons';
-import { Popover, Typography, Button, theme } from 'antd';
+import { Popover, Typography, Button } from 'antd';
 import * as _ from 'lodash-es';
 import React, { useMemo } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';

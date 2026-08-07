@@ -1,5 +1,6 @@
+import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
-import { Typography, theme, type ProgressProps } from 'antd';
+import { Typography, type ProgressProps } from 'antd';
 import * as _ from 'lodash-es';
 import React from 'react';
 

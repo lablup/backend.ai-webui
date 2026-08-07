@@ -1,4 +1,5 @@
-import { ConfigProvider, Tag, theme } from 'antd';
+import { theme } from '../theme-shim';
+import { ConfigProvider, Tag } from 'antd';
 import type { TagProps } from 'antd/lib/tag';
 import React from 'react';
 

@@ -1,5 +1,6 @@
 import BAIText from '../src/components/BAIText';
 import { i18n } from '../src/locale';
+import { ThemeShimProvider } from '../src/theme-shim';
 import dayjs from 'dayjs';
 import 'dayjs/locale/de';
 import 'dayjs/locale/el';
@@ -76,6 +77,9 @@ const GlobalConfigProvider: React.FC<StorybookProviderProps> = ({
   const antdLocale = getAntdLocale(locale);
   const currentThemeConfig = themeConfigs[themeStyle];
   const isWebUIStyle = themeStyle === 'webui';
+  const seedToken =
+    (isDarkMode ? currentThemeConfig.dark : currentThemeConfig.light).token ??
+    {};
 
   return (
     <ConfigProvider
@@ -114,7 +118,23 @@ const GlobalConfigProvider: React.FC<StorybookProviderProps> = ({
         },
       })}
     >
-      <ThemedContainer>{children}</ThemedContainer>
+      {/* Astryx theme shim (ticket 10): BUI components read tokens from
+          ThemeShimProvider now, so mirror the story's mode/seeds here —
+          without it stories would fall back to light-mode default seeds. */}
+      <ThemeShimProvider
+        mode={isDarkMode ? 'dark' : 'light'}
+        seeds={{
+          colorPrimary: seedToken.colorPrimary,
+          colorLink: seedToken.colorLink ?? seedToken.colorPrimary,
+          colorInfo: seedToken.colorInfo,
+          colorSuccess: seedToken.colorSuccess,
+          colorError: seedToken.colorError,
+          colorWarning: seedToken.colorWarning,
+          fontFamily: seedToken.fontFamily,
+        }}
+      >
+        <ThemedContainer>{children}</ThemedContainer>
+      </ThemeShimProvider>
     </ConfigProvider>
   );
 };

@@ -15,10 +15,7 @@
     ('astryx') values need a real browser cascade and are covered by the
     ticket's pixel A/B instead.
  */
-import {
-  ANTD_ALIGN_TOKENS,
-  ANTD_DARK_ALGORITHM_OUTPUT,
-} from '../astryx-theme/backendAiTheme';
+import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from './antdParity';
 import { resolveLightDark } from './astryxVars';
 import { buildTokens } from './index';
 import { TOKEN_MAP } from './mapping';

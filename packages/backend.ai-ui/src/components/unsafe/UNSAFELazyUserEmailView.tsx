@@ -3,8 +3,10 @@ import { toGlobalId } from '../../helper';
 import { Typography, type GetProps } from 'antd';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-export interface UNSAFELazyUserEmailViewProps
-  extends Omit<GetProps<typeof Typography.Text>, 'children'> {
+export interface UNSAFELazyUserEmailViewProps extends Omit<
+  GetProps<typeof Typography.Text>,
+  'children'
+> {
   uuid?: string;
   fetchKey?: string;
 }

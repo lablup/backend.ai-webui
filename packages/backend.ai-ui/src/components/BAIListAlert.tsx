@@ -1,5 +1,6 @@
+import { theme } from '../theme-shim';
 import BAIAlert, { BAIAlertProps } from './BAIAlert';
-import { theme } from 'antd';
+import type { GlobalToken } from 'antd';
 import { createStyles } from 'antd-style';
 import * as _ from 'lodash-es';
 import React, { ReactNode } from 'react';
@@ -14,27 +15,30 @@ export interface BAIListAlertProps extends Omit<BAIAlertProps, 'description'> {
   maxHeight?: React.CSSProperties['maxHeight'];
 }
 
-const useStyles = createStyles(({ css, token }) => ({
-  // scrollbar with no track background — only the thumb floats over content
-  transparentScrollbar: css`
-    /* Firefox, Chrome 121+ — thumb / track */
-    scrollbar-color: ${token.colorTextQuaternary} transparent;
-    scrollbar-width: thin;
+// Token values come in as props from the shim (to-astryx ticket 10).
+const useStyles = createStyles(
+  ({ css }, { token }: { token: GlobalToken }) => ({
+    // scrollbar with no track background — only the thumb floats over content
+    transparentScrollbar: css`
+      /* Firefox, Chrome 121+ — thumb / track */
+      scrollbar-color: ${token.colorTextQuaternary} transparent;
+      scrollbar-width: thin;
 
-    /* Safari and older WebKit (ignored where scrollbar-color is supported) */
-    &::-webkit-scrollbar,
-    &::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    &::-webkit-scrollbar {
-      width: 6px;
-    }
-    &::-webkit-scrollbar-thumb {
-      background: ${token.colorTextQuaternary};
-      border-radius: 3px;
-    }
-  `,
-}));
+      /* Safari and older WebKit (ignored where scrollbar-color is supported) */
+      &::-webkit-scrollbar,
+      &::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+      &::-webkit-scrollbar-thumb {
+        background: ${token.colorTextQuaternary};
+        border-radius: 3px;
+      }
+    `,
+  }),
+);
 
 /**
  * Alert that summarizes a list of items (e.g. selected resources in a modal)
@@ -52,7 +56,7 @@ const BAIListAlert: React.FC<BAIListAlertProps> = ({
 }) => {
   'use memo';
   const { token } = theme.useToken();
-  const { styles } = useStyles();
+  const { styles } = useStyles({ token });
   return (
     <BAIAlert
       {...alertProps}

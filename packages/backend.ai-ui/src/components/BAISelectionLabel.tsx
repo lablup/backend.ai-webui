@@ -1,5 +1,6 @@
 import { useBAIi18n } from '../hooks/useBAIi18n';
-import { theme, Tooltip, Typography } from 'antd';
+import { theme } from '../theme-shim';
+import { Tooltip, Typography } from 'antd';
 import { CircleXIcon } from 'lucide-react';
 import React from 'react';
 

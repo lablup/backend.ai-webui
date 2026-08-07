@@ -1,10 +1,11 @@
 import { useBAIi18n } from '../hooks/useBAIi18n';
+import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
 import BAIModal, { type BAIModalProps } from './BAIModal';
 import BAIText from './BAIText';
 import { BAITrans } from './BAITrans';
 import { ExclamationCircleFilled } from '@ant-design/icons';
-import { Form, Input, theme, Typography, type InputProps } from 'antd';
+import { Form, Input, Typography, type InputProps } from 'antd';
 import React from 'react';
 
 const { Text } = Typography;

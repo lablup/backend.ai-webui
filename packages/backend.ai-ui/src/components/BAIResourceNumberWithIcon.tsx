@@ -8,6 +8,7 @@ import BAIRebelIcon from '../icons/BAIRebelIcon';
 import BAIRocmIcon from '../icons/BAIRocmIcon';
 import BAITenstorrentIcon from '../icons/BAITenstorrentIcon';
 import BAITpuIcon from '../icons/BAITpuIcon';
+import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
 import BAIImageWithFallback from './BAIImageWithFallback';
 import NumberWithUnit from './BAINumberWithUnit';
@@ -17,7 +18,7 @@ import {
   useBAIIconPath,
   useBAIResourceSlots,
 } from './provider';
-import { theme, Tooltip, TooltipProps } from 'antd';
+import { Tooltip, TooltipProps } from 'antd';
 import * as _ from 'lodash-es';
 import { CpuIcon, MemoryStickIcon, MicrochipIcon } from 'lucide-react';
 import type { ReactNode } from 'react';

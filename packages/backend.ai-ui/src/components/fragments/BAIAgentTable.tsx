@@ -10,6 +10,7 @@ import {
 } from '../../helper';
 import { useBAILogger } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
+import { theme } from '../../theme-shim';
 import BAIAlertIconWithTooltip from '../BAIAlertIconWithTooltip';
 import BAIDoubleTag from '../BAIDoubleTag';
 import BAIFlex from '../BAIFlex';
@@ -26,7 +27,7 @@ import {
   useConnectedBAIClient,
 } from '../provider';
 import { CheckCircleOutlined, MinusCircleOutlined } from '@ant-design/icons';
-import { theme, Typography } from 'antd';
+import { Typography } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';

@@ -1,4 +1,5 @@
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
+import { theme } from '../../../theme-shim';
 import BAIFlex from '../../BAIFlex';
 import BAILink from '../../BAILink';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
@@ -6,7 +7,7 @@ import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import { FolderInfoContext } from './BAIFileExplorer';
 import { FileOutlined, FolderOutlined } from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
-import { App, Form, Input, theme, Typography, type GetProps } from 'antd';
+import { App, Form, Input, Typography, type GetProps } from 'antd';
 import { createStyles } from 'antd-style';
 import * as _ from 'lodash-es';
 import { CornerDownLeftIcon } from 'lucide-react';

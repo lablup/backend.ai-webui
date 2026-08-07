@@ -1,7 +1,8 @@
 import { BAIVFolderDeleteButtonV2Fragment$key } from '../../__generated__/BAIVFolderDeleteButtonV2Fragment.graphql';
+import { theme } from '../../theme-shim';
 import BAIButton from '../BAIButton';
 import { DeleteOutlined } from '@ant-design/icons';
-import { theme, type ButtonProps } from 'antd';
+import { type ButtonProps } from 'antd';
 import { graphql, useFragment } from 'react-relay';
 
 export interface BAIVFolderDeleteButtonV2Props extends ButtonProps {

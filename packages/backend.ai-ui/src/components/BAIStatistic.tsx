@@ -1,6 +1,7 @@
 import { useBAIi18n } from '../hooks/useBAIi18n';
+import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
-import { theme, Typography, Tooltip, Progress } from 'antd';
+import { Typography, Tooltip, Progress } from 'antd';
 import * as _ from 'lodash-es';
 import React, { type ReactNode } from 'react';
 

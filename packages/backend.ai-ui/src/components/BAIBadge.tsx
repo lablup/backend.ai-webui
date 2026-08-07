@@ -1,5 +1,6 @@
 import { SemanticColor, useSemanticColorMap } from '../helper';
-import { Badge, BadgeProps, theme } from 'antd';
+import { theme } from '../theme-shim';
+import { Badge, BadgeProps } from 'antd';
 import React from 'react';
 
 /**

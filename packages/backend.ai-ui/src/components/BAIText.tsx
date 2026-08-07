@@ -1,5 +1,6 @@
 import { useBAIi18n } from '../hooks/useBAIi18n';
-import { theme, Tooltip, Typography } from 'antd';
+import { theme } from '../theme-shim';
+import { Tooltip, Typography } from 'antd';
 import type { TooltipProps } from 'antd/es/tooltip';
 import type { EllipsisConfig } from 'antd/es/typography/Base';
 import type { TextProps as AntdTextProps } from 'antd/es/typography/Text';

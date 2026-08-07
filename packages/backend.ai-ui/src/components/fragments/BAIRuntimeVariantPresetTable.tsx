@@ -4,6 +4,7 @@ import {
 } from '../../__generated__/BAIRuntimeVariantPresetTableFragment.graphql';
 import { filterOutEmpty, filterOutNullAndUndefined } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
+import { theme } from '../../theme-shim';
 import BAIFlex from '../BAIFlex';
 import BAIId from '../BAIId';
 import BAIText from '../BAIText';
@@ -16,7 +17,7 @@ import {
 } from '../Table';
 import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { Tooltip, theme } from 'antd';
+import { Tooltip } from 'antd';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';

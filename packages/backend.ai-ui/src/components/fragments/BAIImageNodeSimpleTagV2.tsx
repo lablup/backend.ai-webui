@@ -1,10 +1,11 @@
 import { BAIImageNodeSimpleTagV2Fragment$key } from '../../__generated__/BAIImageNodeSimpleTagV2Fragment.graphql';
 import { preserveDotStartCase } from '../../helper';
+import { theme } from '../../theme-shim';
 import BAIDoubleTag from '../BAIDoubleTag';
 import BAIFlex from '../BAIFlex';
 import BAIImageMetaIcon from '../BAIImageMetaIcon';
 import { useBAIImageMetaData } from '../provider/BAIMetaDataProvider';
-import { Divider, Tag, Typography, theme } from 'antd';
+import { Divider, Tag, Typography } from 'antd';
 import * as _ from 'lodash-es';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';

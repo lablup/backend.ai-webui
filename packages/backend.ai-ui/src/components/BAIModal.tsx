@@ -1,5 +1,6 @@
 // @ts-ignore
 import { useBAIi18n } from '../hooks/useBAIi18n';
+import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
 import {
   BlockOutlined,
@@ -10,7 +11,7 @@ import {
   HolderOutlined,
   MinusOutlined,
 } from '@ant-design/icons';
-import { Button, Modal, Tooltip, theme, type ModalProps } from 'antd';
+import { Button, Modal, Tooltip, type ModalProps } from 'antd';
 import { createStyles } from 'antd-style';
 import classNames from 'classnames';
 import * as _ from 'lodash-es';

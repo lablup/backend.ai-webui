@@ -1,6 +1,7 @@
+import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { Typography, Tooltip, theme } from 'antd';
+import { Typography, Tooltip } from 'antd';
 import React from 'react';
 
 export interface BAIBoardItemTitleProps {

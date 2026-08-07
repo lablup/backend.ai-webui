@@ -4,6 +4,7 @@ import {
   localeCompare,
 } from '../../../helper';
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
+import { theme } from '../../../theme-shim';
 import BAIFetchKeyButton from '../../BAIFetchKeyButton';
 import BAIFlex from '../../BAIFlex';
 import BAILink from '../../BAILink';
@@ -18,13 +19,7 @@ import ExplorerActionControls from './ExplorerActionControls';
 import FileItemControls from './FileItemControls';
 import { useSearchVFolderFiles } from './hooks';
 import { FileOutlined, FolderOutlined } from '@ant-design/icons';
-import {
-  Breadcrumb,
-  Skeleton,
-  theme,
-  Typography,
-  type TableColumnsType,
-} from 'antd';
+import { Breadcrumb, Skeleton, Typography, type TableColumnsType } from 'antd';
 import type { ItemType } from 'antd/es/breadcrumb/Breadcrumb';
 import type { RcFile } from 'antd/es/upload';
 import dayjs from 'dayjs';

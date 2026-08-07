@@ -1,5 +1,6 @@
+import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
-import { List, Typography, theme } from 'antd';
+import { List, Typography } from 'antd';
 import React, { type ReactNode } from 'react';
 
 export interface BAINotificationItemStyles {

@@ -28,9 +28,7 @@ export interface BAIArtifactRevisionTableProps extends Omit<
 > {
   artifactRevisionFrgmt: BAIArtifactRevisionTableArtifactRevisionFragment$key;
   latestRevisionFrgmt:
-    | BAIArtifactRevisionTableLatestRevisionFragment$key
-    | null
-    | undefined;
+    BAIArtifactRevisionTableLatestRevisionFragment$key | null | undefined;
   customizeColumns?: (
     baseColumns: BAIColumnType<ArtifactRevision>[],
   ) => BAIColumnType<ArtifactRevision>[];

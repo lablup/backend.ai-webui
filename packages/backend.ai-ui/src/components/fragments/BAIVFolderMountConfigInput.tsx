@@ -1,10 +1,11 @@
 import { useBAIi18n } from '../../hooks/useBAIi18n';
+import { theme } from '../../theme-shim';
 import BAIFlex from '../BAIFlex';
 import BAIQuestionIconWithTooltip from '../BAIQuestionIconWithTooltip';
 import BAIText from '../BAIText';
 import BAIVFolderSelect from './BAIVFolderSelect';
 import { useControllableValue } from 'ahooks';
-import { Button, Form, Input, Skeleton, Tag, Tooltip, theme } from 'antd';
+import { Button, Form, Input, Skeleton, Tag, Tooltip } from 'antd';
 import * as _ from 'lodash-es';
 import { XIcon } from 'lucide-react';
 import React, { Suspense } from 'react';

@@ -5,11 +5,12 @@ import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useFetchKey } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
+import { theme } from '../../theme-shim';
 import BAIFlex from '../BAIFlex';
 import BAISelect, { BAISelectProps } from '../BAISelect';
 import TotalFooter from '../TotalFooter';
 import { useControllableValue } from 'ahooks';
-import { GetRef, Skeleton, Typography, theme } from 'antd';
+import { GetRef, Skeleton, Typography } from 'antd';
 import type { DefaultOptionType } from 'antd/es/select';
 import * as _ from 'lodash-es';
 import {

@@ -1,9 +1,10 @@
 import { convertToBinaryUnit, getDisplayUnitToInputSizeUnit } from '../helper';
 import { useBAIi18n } from '../hooks/useBAIi18n';
+import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
 import BAIRowWrapWithDividers from './BAIRowWrapWithDividers';
 import BAIStatistic, { BAIStatisticProps } from './BAIStatistic';
-import { Empty, theme } from 'antd';
+import { Empty } from 'antd';
 import React from 'react';
 
 interface ResourceData {

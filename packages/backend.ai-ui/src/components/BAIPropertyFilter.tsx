@@ -1,5 +1,6 @@
 import { filterOutEmpty } from '../helper';
 import { useBAIi18n } from '../hooks/useBAIi18n';
+import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
@@ -13,7 +14,6 @@ import {
   Space,
   Tag,
   Tooltip,
-  theme,
 } from 'antd';
 import * as _ from 'lodash-es';
 import React, { ComponentProps, ReactNode, useRef, useState } from 'react';

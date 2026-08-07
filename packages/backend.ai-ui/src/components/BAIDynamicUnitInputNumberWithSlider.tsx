@@ -4,12 +4,13 @@ import {
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { useUpdatableState } from '../hooks';
+import { theme } from '../theme-shim';
 import BAIDynamicUnitInputNumber, {
   BAIDynamicUnitInputNumberProps,
 } from './BAIDynamicUnitInputNumber';
 import BAIFlex from './BAIFlex';
 import { useControllableValue } from 'ahooks';
-import { Slider, theme } from 'antd';
+import { Slider } from 'antd';
 import type { SliderMarks } from 'antd/es/slider';
 import * as _ from 'lodash-es';
 import React, { useEffect, useMemo } from 'react';

@@ -76,6 +76,9 @@
     "react-resizable": "^3.2.0"
   },
   "devDependencies": {
+    "@ant-design/colors": "^7.2.1",
+    "@astryxdesign/core": "0.3.0",
+    "@astryxdesign/theme-neutral": "0.3.0",
     "@eslint/js": "catalog:",
     "@jest/expect": "catalog:",
     "@jest/globals": "catalog:",

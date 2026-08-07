@@ -1,7 +1,8 @@
 import { useBAIi18n } from '../hooks/useBAIi18n';
+import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
 import { LoadingOutlined } from '@ant-design/icons';
-import { theme, Typography } from 'antd';
+import { Typography } from 'antd';
 
 const TotalFooter: React.FC<{
   loading?: boolean;

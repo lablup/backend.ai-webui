@@ -1,7 +1,8 @@
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
+import { theme } from '../../../theme-shim';
 import { useUploadVFolderFiles } from './hooks';
 import { InboxOutlined } from '@ant-design/icons';
-import { theme, Typography, Upload } from 'antd';
+import { Typography, Upload } from 'antd';
 import type { RcFile } from 'antd/es/upload';
 import { useRef } from 'react';
 import { createPortal } from 'react-dom';

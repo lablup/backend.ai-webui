@@ -1,10 +1,11 @@
+import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
 import {
   Divider,
   Select,
-  theme,
   Tooltip,
   Typography,
+  type GlobalToken,
   type SelectProps,
 } from 'antd';
 import { createStyles } from 'antd-style';
@@ -14,86 +15,88 @@ import classNames from 'classnames';
 import * as _ from 'lodash-es';
 import React, { useLayoutEffect, useRef, useTransition } from 'react';
 
-const useStyles = createStyles(({ css, token }) => ({
-  ghostSelect: css`
-    &.ant-select {
-      background-color: transparent;
-      border-color: ${token.colorBgBase} !important;
-      /* box-shadow: none; */
-      color: ${token.colorBgBase};
-      /* transition: color 0.3s, border-color 0.3s; */
-
-      &:hover {
-        background-color: rgb(255 255 255 / 10%);
-      }
-
-      &:active {
-        background-color: rgb(255 255 255 / 10%);
-      }
-
-      .ant-select-suffix {
+// Token values come in as props from the shim (to-astryx ticket 10).
+const useStyles = createStyles(
+  ({ css }, { token }: { token: GlobalToken }) => ({
+    ghostSelect: css`
+      &.ant-select {
+        background-color: transparent;
+        border-color: ${token.colorBgBase} !important;
+        /* box-shadow: none; */
         color: ${token.colorBgBase};
+        /* transition: color 0.3s, border-color 0.3s; */
+
+        &:hover {
+          background-color: rgb(255 255 255 / 10%);
+        }
+
+        &:active {
+          background-color: rgb(255 255 255 / 10%);
+        }
+
+        .ant-select-suffix {
+          color: ${token.colorBgBase};
+        }
+
+        &:hover .ant-select-suffix {
+          color: ${token.colorBgBase};
+        }
+
+        &:active .ant-select-suffix {
+          color: ${token.colorBgBase};
+        }
       }
 
-      &:hover .ant-select-suffix {
-        color: ${token.colorBgBase};
-      }
-
-      &:active .ant-select-suffix {
-        color: ${token.colorBgBase};
-      }
-    }
-
-    /* In ghost mode the border-color is hard-overridden with !important,
+      /* In ghost mode the border-color is hard-overridden with !important,
        which would otherwise swallow antd's status="error" red border.
        Restore the error treatment with a higher-specificity rule so a
        ghost select (e.g. the header ProjectSelect) can still surface an
        error state. */
-    &.ant-select.ant-select-status-error {
-      border-color: ${token.colorError} !important;
+      &.ant-select.ant-select-status-error {
+        border-color: ${token.colorError} !important;
 
-      .ant-select-suffix {
-        color: ${token.colorError};
-      }
+        .ant-select-suffix {
+          color: ${token.colorError};
+        }
 
-      &:hover .ant-select-suffix,
-      &:active .ant-select-suffix {
-        color: ${token.colorError};
+        &:hover .ant-select-suffix,
+        &:active .ant-select-suffix {
+          color: ${token.colorError};
+        }
       }
-    }
-  `,
-  customStyle: css`
-    /* Hide selected value content (except search input) when the user is typing a search query.
+    `,
+    customStyle: css`
+      /* Hide selected value content (except search input) when the user is typing a search query.
        Matches antd's approach of using color: transparent instead of display: none.
        Uses opacity: 0 with transition: none to avoid delay from antd Tag's default transition. */
-    .ant-select-content-has-search-value img,
-    .ant-select-content-has-search-value .ant-divider,
-    .ant-select-content-has-search-value .ant-badge,
-    .ant-select-content-has-search-value span.text-high-lighter,
-    .ant-select-content-has-search-value span.ant-tag {
-      opacity: 0 !important;
-      transition: none;
-    }
+      .ant-select-content-has-search-value img,
+      .ant-select-content-has-search-value .ant-divider,
+      .ant-select-content-has-search-value .ant-badge,
+      .ant-select-content-has-search-value span.text-high-lighter,
+      .ant-select-content-has-search-value span.ant-tag {
+        opacity: 0 !important;
+        transition: none;
+      }
 
-    /* Change the opacity of images and tags in the select option when the dropdown is open */
-    &.ant-select-open .ant-select-content .ant-badge,
-    &.ant-select-open .ant-select-content img,
-    &.ant-select-open .ant-select-content .ant-divider,
-    &.ant-select-open .ant-select-content span.ant-tag {
-      opacity: 0.5;
-    }
+      /* Change the opacity of images and tags in the select option when the dropdown is open */
+      &.ant-select-open .ant-select-content .ant-badge,
+      &.ant-select-open .ant-select-content img,
+      &.ant-select-open .ant-select-content .ant-divider,
+      &.ant-select-open .ant-select-content span.ant-tag {
+        opacity: 0.5;
+      }
 
-    /* Change the color of secondary/success/warning/danger text to placeholder color when the dropdown is open */
-    &.ant-select-open .ant-select-content .ant-typography-secondary,
-    &.ant-select-open .ant-select-content .ant-typography-success,
-    &.ant-select-open .ant-select-content .ant-typography-warning,
-    &.ant-select-open .ant-select-content .ant-typography-danger {
-      color: ${token.colorTextPlaceholder};
-    }
+      /* Change the color of secondary/success/warning/danger text to placeholder color when the dropdown is open */
+      &.ant-select-open .ant-select-content .ant-typography-secondary,
+      &.ant-select-open .ant-select-content .ant-typography-success,
+      &.ant-select-open .ant-select-content .ant-typography-warning,
+      &.ant-select-open .ant-select-content .ant-typography-danger {
+        color: ${token.colorTextPlaceholder};
+      }
 
-    /* TODO: re-enable this style after fixing flickering when theme changes */
-    /* Add a gradient effect to the right side of the dropdown to indicate more content */
-    /* & .ant-select-content::after {
+      /* TODO: re-enable this style after fixing flickering when theme changes */
+      /* Add a gradient effect to the right side of the dropdown to indicate more content */
+      /* & .ant-select-content::after {
       content: '';
       position: absolute;
       top: 0;
@@ -107,8 +110,9 @@ const useStyles = createStyles(({ css, token }) => ({
       );
       z-index: 2;
     } */
-  `,
-}));
+    `,
+  }),
+);
 
 export interface BAISelectProps<
   ValueType = any,
@@ -146,11 +150,11 @@ function BAISelect<
   ...selectProps
 }: BAISelectProps<ValueType, OptionType>): React.ReactElement {
   const { value, options, onChange } = selectProps;
-  const { styles } = useStyles();
+  const { token } = theme.useToken();
+  const { styles } = useStyles({ token });
   // const dropdownRef = useRef<HTMLDivElement | null>(null);
   const lastScrollTop = useRef<number>(0);
   const isAtBottom = useRef<boolean>(false);
-  const { token } = theme.useToken();
   const [isPending, startTransition] = useTransition();
 
   useLayoutEffect(() => {

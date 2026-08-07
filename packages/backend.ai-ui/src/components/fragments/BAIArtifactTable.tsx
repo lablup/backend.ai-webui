@@ -9,6 +9,7 @@ import {
   toLocalId,
 } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
+import { theme } from '../../theme-shim';
 import BAIFlex from '../BAIFlex';
 import BAILink from '../BAILink';
 import BAIText from '../BAIText';
@@ -17,7 +18,7 @@ import BAIArtifactRevisionDownloadButton from './BAIArtifactRevisionDownloadButt
 import BAIArtifactStatusTag from './BAIArtifactStatusTag';
 import BAIArtifactTypeTag from './BAIArtifactTypeTag';
 import { SyncOutlined } from '@ant-design/icons';
-import { Button, theme, Typography } from 'antd';
+import { Button, Typography } from 'antd';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import * as _ from 'lodash-es';

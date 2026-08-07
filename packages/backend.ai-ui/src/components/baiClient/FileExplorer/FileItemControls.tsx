@@ -1,13 +1,14 @@
 import { convertToBinaryUnit, initiateDownload } from '../../../helper';
 import { useTanMutation } from '../../../helper/reactQueryAlias';
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
+import { theme } from '../../../theme-shim';
 import BAIButton, { BAIButtonProps } from '../../BAIButton';
 import BAIFlex from '../../BAIFlex';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import { FolderInfoContext } from './BAIFileExplorer';
 import { DeleteFilled, MoreOutlined } from '@ant-design/icons';
-import { App, theme, Dropdown, Tooltip } from 'antd';
+import { App, Dropdown, Tooltip } from 'antd';
 import { DownloadIcon, EditIcon } from 'lucide-react';
 import { use, useState } from 'react';
 

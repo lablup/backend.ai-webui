@@ -3,11 +3,11 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useBAIi18n } from '../hooks/useBAIi18n';
+import { theme } from '../theme-shim';
 import BAIAlert from './BAIAlert';
 import BAIFlex from './BAIFlex';
 import BAIModal, { type BAIModalProps } from './BAIModal';
 import BAITable, { type BAIColumnsType } from './Table/BAITable';
-import { theme } from 'antd';
 import type { AnyObject } from 'antd/es/_util/type';
 import { TriangleAlert } from 'lucide-react';
 import type { ReactNode } from 'react';

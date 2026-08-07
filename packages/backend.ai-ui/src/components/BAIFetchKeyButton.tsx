@@ -1,6 +1,7 @@
 import { omitNullAndUndefinedFields } from '../helper';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import { useInterval, useIntervalValue } from '../hooks/useIntervalValue';
+import { theme } from '../theme-shim';
 import BAICountdownBorder from './BAICountdownBorder';
 import { CheckOutlined, ReloadOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
@@ -8,7 +9,6 @@ import {
   Button,
   Dropdown,
   Space,
-  theme,
   Tooltip,
   type ButtonProps,
   type MenuProps,

@@ -11,6 +11,7 @@ import {
   useSemanticColorMap,
 } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
+import { theme } from '../../theme-shim';
 import BAIButton from '../BAIButton';
 import BAIFlex from '../BAIFlex';
 import BAILink from '../BAILink';
@@ -24,7 +25,7 @@ import {
 } from '../Table';
 import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { ExclamationCircleOutlined, HistoryOutlined } from '@ant-design/icons';
-import { Tooltip, theme } from 'antd';
+import { Tooltip } from 'antd';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';

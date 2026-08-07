@@ -1,12 +1,11 @@
-import { theme } from 'antd';
+import { theme } from '../theme-shim';
 import React, { type CSSProperties, type PropsWithChildren } from 'react';
 
 type GapSize = number | 'xxs' | 'xs' | 'sm' | 'ms' | 'md' | 'lg' | 'xl' | 'xxl';
 type GapProp = GapSize | [GapSize | undefined, GapSize | undefined];
 
 export interface BAIFlexProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'dir'>,
-    PropsWithChildren {
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'dir'>, PropsWithChildren {
   direction?: 'row' | 'row-reverse' | 'column' | 'column-reverse';
   wrap?: 'nowrap' | 'wrap' | 'wrap-reverse';
   justify?: 'start' | 'end' | 'center' | 'between' | 'around';

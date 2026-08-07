@@ -1,6 +1,7 @@
 import { initiateDownload } from '../../../helper';
 import { useTanMutation } from '../../../helper/reactQueryAlias';
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
+import { theme } from '../../../theme-shim';
 import BAIButton from '../../BAIButton';
 import BAIFlex from '../../BAIFlex';
 import BAISelectionLabel from '../../BAISelectionLabel';
@@ -20,7 +21,7 @@ import {
   UploadOutlined,
 } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
-import { App, Button, Dropdown, Grid, theme, Tooltip, Upload } from 'antd';
+import { App, Button, Dropdown, Grid, Tooltip, Upload } from 'antd';
 import { createStyles } from 'antd-style';
 import type { RcFile } from 'antd/es/upload';
 import { DownloadIcon } from 'lucide-react';

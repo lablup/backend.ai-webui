@@ -1,4 +1,5 @@
 import { useBAIi18n } from '../../hooks/useBAIi18n';
+import { theme } from '../../theme-shim';
 import {
   BAIColumnsType,
   isColumnVisible,
@@ -17,7 +18,6 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import {
   Input,
-  theme,
   Form,
   Modal,
   ModalProps,

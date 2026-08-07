@@ -1,7 +1,8 @@
 import BAIFlex from '../components/BAIFlex';
+import { theme } from '../theme-shim';
 import * as Icons from './index';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Input, theme, Typography } from 'antd';
+import { Input, Typography } from 'antd';
 import React, { useState } from 'react';
 
 const icons = Object.entries(Icons)

@@ -1,4 +1,5 @@
 import { useBAIi18n } from '../hooks/useBAIi18n';
+import { theme } from '../theme-shim';
 import BAIButton from './BAIButton';
 import BAIFlex from './BAIFlex';
 import BAISelect from './BAISelect';
@@ -13,7 +14,6 @@ import {
   Space,
   Tag,
   Tooltip,
-  theme,
 } from 'antd';
 import type { AutoCompleteProps, GetRef } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';

@@ -4,6 +4,7 @@ import {
 } from '../../__generated__/BAIModelDeploymentNodesFragment.graphql';
 import { filterOutEmpty, filterOutNullAndUndefined } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
+import { theme } from '../../theme-shim';
 import BAIDeploymentStatusTag, {
   BAIDeploymentStatus,
 } from '../BAIDeploymentStatusTag';
@@ -21,7 +22,7 @@ import {
 import BAIDeploymentOwnerInfo from './BAIDeploymentOwnerInfo';
 import BAIDeploymentTagChips from './BAIDeploymentTagChips';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { theme, Tooltip, Typography } from 'antd';
+import { Tooltip, Typography } from 'antd';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import React from 'react';

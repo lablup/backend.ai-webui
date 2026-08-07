@@ -1,4 +1,5 @@
-import { Input, theme, type InputProps, type InputRef } from 'antd';
+import { theme } from '../theme-shim';
+import { Input, type InputProps, type InputRef } from 'antd';
 import { createStyles } from 'antd-style';
 import { CornerDownLeftIcon } from 'lucide-react';
 import { useRef, useState } from 'react';

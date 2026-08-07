@@ -1,25 +1,29 @@
+import { theme } from '../theme-shim';
 import BAIText from './BAIText';
-import { theme, Typography } from 'antd';
+import { Typography, type GlobalToken } from 'antd';
 import { createStyles } from 'antd-style';
 import React from 'react';
 import { Link, type LinkProps } from 'react-router-dom';
 
-const useStyles = createStyles(({ css, token }) => ({
-  hover: css`
-    text-decoration: none;
-    color: ${token.colorLink};
+// Token values come in as props from the shim (to-astryx ticket 10).
+const useStyles = createStyles(
+  ({ css }, { token }: { token: GlobalToken }) => ({
+    hover: css`
+      text-decoration: none;
+      color: ${token.colorLink};
 
-    &:hover {
-      color: ${token.colorLinkHover};
-      text-decoration: underline;
-    }
-  `,
-  disabled: css`
-    color: ${token.colorTextDisabled};
-    cursor: not-allowed;
-    pointer-events: none;
-  `,
-}));
+      &:hover {
+        color: ${token.colorLinkHover};
+        text-decoration: underline;
+      }
+    `,
+    disabled: css`
+      color: ${token.colorTextDisabled};
+      cursor: not-allowed;
+      pointer-events: none;
+    `,
+  }),
+);
 
 export interface BAILinkProps extends Omit<LinkProps, 'to'> {
   type?: 'hover' | 'disabled' | undefined;
@@ -36,8 +40,8 @@ const BAILink: React.FC<BAILinkProps> = ({
   children,
   ...linkProps
 }) => {
-  const { styles } = useStyles();
   const { token } = theme.useToken();
+  const { styles } = useStyles({ token });
   if (type !== 'disabled' && to) {
     return (
       <Link

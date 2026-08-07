@@ -1,6 +1,7 @@
+import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
 import { CloseCircleTwoTone, WarningTwoTone } from '@ant-design/icons';
-import { Button, Card, theme, type CardProps } from 'antd';
+import { Button, Card, type CardProps } from 'antd';
 import * as _ from 'lodash-es';
 import React, { cloneElement, isValidElement } from 'react';
 import type { ReactNode } from 'react';

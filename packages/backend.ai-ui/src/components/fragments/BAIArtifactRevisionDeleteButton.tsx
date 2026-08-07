@@ -1,7 +1,7 @@
 import { BAIArtifactRevisionDeleteButtonFragment$key } from '../../__generated__/BAIArtifactRevisionDeleteButtonFragment.graphql';
+import { theme } from '../../theme-shim';
 import BAIButton, { BAIButtonProps } from '../BAIButton';
 import { DeleteFilled } from '@ant-design/icons';
-import { theme } from 'antd';
 import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';
 

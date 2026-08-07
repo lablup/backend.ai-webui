@@ -14,14 +14,7 @@ import BAIModal, { BAIModalProps } from '../BAIModal';
 import BAISelect from '../BAISelect';
 import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import BAIRuntimeVariantSelect from './BAIRuntimeVariantSelect';
-import {
-  App,
-  Form,
-  FormInstance,
-  Input,
-  InputNumber,
-  Switch,
-} from 'antd';
+import { App, Form, FormInstance, Input, InputNumber, Switch } from 'antd';
 import React, { Suspense, useRef } from 'react';
 import { graphql, useFragment, useMutation } from 'react-relay';
 import { PayloadError } from 'relay-runtime';
