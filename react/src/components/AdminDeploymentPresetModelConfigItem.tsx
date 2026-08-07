@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { Collapse, Form, Input, Select, theme } from 'antd';
+import { Collapse, Form, Input, Select } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -15,7 +15,6 @@ const ModelConfigItem: React.FC<{
 }> = ({ listItemName, restField }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
 
   // Rendered only when the model-definition switch is ON, so sub-fields are
   // unconditionally required here; the switch lives in the parent card.
@@ -60,7 +59,6 @@ const ModelConfigItem: React.FC<{
 
       <Collapse
         defaultActiveKey={['metadata']}
-        style={{ marginTop: token.marginXS }}
         items={[
           {
             key: 'metadata',
