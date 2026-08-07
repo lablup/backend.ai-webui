@@ -334,31 +334,18 @@ The session list groups your sessions into type tabs — **All**, **Interactive*
 
 Every tab keeps its own filter, sort order, and page number while you stay on the
 page, so switching to another tab and back restores the view you left instead of
-resetting it. The view state of the tab you are currently on is also stored in the
-page URL, so reloading the browser reproduces that view, and you can bookmark or
-share the URL to open the list in the same state. The URL carries only the tab you
-are on, so after a reload the other tabs start from their defaults.
+resetting it.
 
 <a id="auto-refresh-interval"></a>
 
 ### Auto-Refresh Interval
 
 The refresh button at the right of the list toolbar reloads the session list on
-demand. It also carries an auto-refresh interval selector: click the chevron
-next to the button to pick an interval — **Off**, or one of the presets between
-5 seconds and 60 seconds. While auto-refresh is on, an animated countdown border
-fills the control to show how much time remains until the next reload, and the
-active interval appears as a label (for example, `15s`) on the selector.
-
-Auto-refresh is on out of the box on the compute session surfaces:
-
-- The **session list** starts at a 15-second interval.
-- The **session detail panel** and the **container log** window start at a
-  10-second interval.
-
-Each of these surfaces remembers your interval separately and keeps it across
-reloads, so choosing **Off** in the container log window does not stop the
-session list from refreshing.
+demand and carries the shared auto-refresh interval selector — see
+[Auto-refresh](#common-auto-refresh). Auto-refresh is on out of the box on the
+compute session surfaces: the **session list** starts at a 15-second interval,
+and the **session detail panel** and the **container log** window start at a
+10-second interval, each remembered separately.
 
 ![](../images/session_list_auto_refresh_dropdown.png)
 
@@ -462,14 +449,10 @@ The sub-steps table includes the following columns:
 
 #### Expand / collapse control
 
-A kebab menu (⋮) in the expand-column header opens the **Expand options** menu, which lets you control
-how rows are expanded across the entire table. Three view modes are available:
-
-- **Expand all**: Expands every row so all sub-steps are immediately visible.
-- **Collapse all**: Collapses every row to show only the top-level history records.
-- **Expand errors only** (default): Automatically expands rows whose result is not SUCCESS, and
-  also hides SUCCESS sub-steps within those expanded rows. This is the most useful mode for quickly
-  identifying what went wrong in a session's scheduling lifecycle.
+A kebab menu (⋮) in the expand-column header opens the **Expand options** menu, which lets you expand
+all rows, collapse all rows, or expand only the rows whose result is not SUCCESS. **Expand errors
+only** is the default — in that mode SUCCESS sub-steps are also hidden within the expanded rows, so
+what went wrong in a session's scheduling lifecycle stands out immediately.
 
 The selected mode is remembered per user and persists across modal opens. You can still manually
 expand or collapse individual rows at any time, regardless of the active mode.
@@ -629,9 +612,7 @@ The log window provides the following controls above the log view:
   selector described in [Auto-Refresh Interval](#auto-refresh-interval).
 
 Because a log window is normally opened to watch new lines arrive, auto-refresh
-starts at a 10-second interval. Pick another interval — or **Off** — from the
-selector next to the refresh button, and that choice is remembered for the log
-window the next time you open it. The log view scrolls to the newest lines after
+starts at a 10-second interval. The log view scrolls to the newest lines after
 each reload, and the lines that arrived since the previous reload are
 highlighted.
 

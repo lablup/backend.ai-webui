@@ -27,7 +27,7 @@ At the top of the page, you can filter deployments by lifecycle stage:
 
 You can also use the property filter bar to search deployments by **Deployment Name**, **Service Endpoint URL**, or **Owner** (available to admins and superadmins).
 
-The refresh button at the top of the list also controls auto-refresh. Click the chevron next to it to pick an interval — **Off**, `5s`, `10s`, `15s`, `30s`, or `60s`. The Deployments list starts at `15s`; once you pick an interval (including **Off**), your choice is remembered for this list across page reloads. While auto-refresh is on, the chevron trigger shows the selected interval and a countdown border fills around the control until the next refresh. A manual click restarts the countdown.
+The refresh button at the top of the list also controls auto-refresh (see [Auto-refresh](#common-auto-refresh)); the Deployments list starts at a `15s` interval.
 
 Click the `New Deployment` button to open the **Create Deployment** modal.
 
@@ -534,13 +534,9 @@ Click the **Scheduling History** link button next to the status tag to open the 
 
 ![](../images/deployment_scheduling_history.png)
 
-Every event that has sub-steps can be expanded: click the `+` icon at the start of the row to see the sub-step table for that event. The menu in the expand column header offers three view options:
+Every event that has sub-steps can be expanded: click the `+` icon at the start of the row to see the sub-step table for that event. The menu in the expand column header offers three view options — expand all rows, collapse all rows, or expand only the rows with errors. **Expand errors only** is the default, so failures, retries, and expirations are visible as soon as the modal opens.
 
-- **Expand all**: Opens every expandable row.
-- **Collapse all**: Closes every row.
-- **Expand errors only**: Opens only the rows whose result is not a success. This is the default, so failures, retries, and expirations are visible as soon as the modal opens.
-
-   The view option decides only **which rows start expanded** — it never changes what an expanded row shows. An expanded row always lists the **complete** sub-step table for that event, including sub-steps that succeeded, so you can read a failure in the context of the steps that ran before it. Rows you open or close by hand keep that state until you change the view option or the data reloads.
+The view option decides only **which rows start expanded** — it never changes what an expanded row shows. An expanded row always lists the **complete** sub-step table for that event, including sub-steps that succeeded, so you can read a failure in the context of the steps that ran before it. Rows you open or close by hand keep that state until you change the view option or the data reloads.
 
 The **Replica Scheduling History** modal, opened from the Replicas tab, uses the same table and the same expand controls. See [Replicas](#replicas-tab-history).
 
@@ -634,7 +630,7 @@ The Replicas tab shows the routing nodes that make up the deployment. Replica en
 - **Running**: Shows replicas that are currently provisioning, running, or otherwise active.
 - **Terminated**: Shows replicas that have completed their lifecycle.
 
-The Replicas card has its own auto-refresh control on the refresh button, with the same interval options as the Deployments list. Because replica state changes quickly, this card starts at `10s`; your chosen interval is remembered separately from the one on the Deployments list.
+The Replicas card has its own auto-refresh control on the refresh button (see [Auto-refresh](#common-auto-refresh)). Because replica state changes quickly, this card starts at `10s`, remembered separately from the interval on the Deployments list.
 
 Each replica row carries three **independent** status fields. They describe different axes and should be read together — a replica can be *Running* in its lifecycle while its health is still *Not Checked*, for example.
 

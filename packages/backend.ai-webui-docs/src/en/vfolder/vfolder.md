@@ -40,7 +40,8 @@ list is reachable from the folder status summary.
 ## Refresh the folder list
 
 Click the refresh button to refresh the folder list. Click the dropdown arrow
-on the right side of the button to set the **Auto Refresh** interval.
+on the right side of the button to set the **Auto Refresh** interval — see
+[Auto-refresh](#common-auto-refresh).
 
 ![](../images/vfolder_auto_refresh_menu.png)
 

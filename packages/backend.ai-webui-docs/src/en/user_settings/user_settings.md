@@ -425,18 +425,10 @@ session you are currently using, you have to log in again.
 
 ### Refreshing the list
 
-The refresh button above the table reloads the list on demand. Click the arrow
-next to it to open the **Auto Refresh** menu and choose how often the list
-reloads by itself:
-
-- **Off** (the initial setting)
-- **5s**, **10s**, **15s**, **30s**, or **60s**
-
-While auto-refresh is on, the selected interval is shown on the button and a
-border fills around it as the next reload approaches. Your choice is remembered
-for this list and still applies the next time you open the tab. Every list in
-the WebUI keeps its own interval, so turning auto-refresh on here does not
-change any other page.
+The refresh button above the table reloads the list on demand and carries the
+shared **Auto Refresh** interval menu — see
+[Auto-refresh](#common-auto-refresh). Auto-refresh starts **Off** on this list
+until you choose an interval.
 
 <a id="login-history-tab"></a>
 
