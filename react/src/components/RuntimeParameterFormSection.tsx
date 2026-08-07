@@ -433,6 +433,14 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
       const min = param.number?.min ?? undefined;
       const max = param.number?.max ?? undefined;
       const isInt = param.valueType === 'INT';
+      // Surface out-of-range values as a validation error instead of
+      // clamping/blocking input via the number input's `min`/`max` props — the
+      // user can see and correct what they typed rather than have the
+      // control silently refuse it. The message itself comes from the form
+      // engine's global `validateMessages` template (`form.validateMessages`
+      // in the BUI locale catalogs, wired up in `DefaultProviders.tsx`),
+      // already localized to the user's selected language.
+      const rangeRule = { type: 'number' as const, min, max };
       return (
         <Form.Item
           name={[RUNTIME_PARAMS_NAMESPACE, param.key]}
@@ -440,15 +448,16 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
           tooltip={tooltip}
           style={formItemStyle}
           required={isRequired}
-          rules={requiredRules}
+          rules={[...(requiredRules ?? []), rangeRule]}
           getValueFromEvent={touchOnChange}
         >
           {/* MAPPING 3.17: `InputNumber` -> `NumberInput`; `style.width:
-              '100%'` becomes the adapter's `width` (its default). */}
+              '100%'` becomes the adapter's `width` (its default). `min`/`max`
+              are deliberately NOT passed to the adapter — it clamps, and the
+              point of `rangeRule` is validation feedback instead of
+              clamping. */}
           <AstryxFormNumberInput
             label={label}
-            min={min}
-            max={max}
             step={isInt ? 1 : 0.1}
             isIntegerOnly={isInt}
             placeholder={defaultPlaceholder}

@@ -57,6 +57,7 @@ export const AdminRuntimeVariantPresetQuery = graphql`
       edges {
         node {
           id
+          category
           ...BAIRuntimeVariantPresetTableFragment
           ...BAIRuntimeVariantPresetSettingModalFragment
         }
@@ -134,6 +135,13 @@ const AdminRuntimeVariantPreset = ({
 
   const presetHostNodes = filterOutNullAndUndefined(
     _.map(runtimeVariantPresets?.edges, 'node'),
+  );
+  // Sourced from the currently loaded page only (no dedicated distinct-values
+  // query exists on the backend) — still useful since categories tend to
+  // repeat across presets of the same runtime variant, which is usually what
+  // the admin is looking at while creating/editing.
+  const existingCategories = _.uniq(
+    _.compact(_.map(presetHostNodes, 'category')),
   );
 
   const [commitDeletePreset] =
@@ -302,6 +310,7 @@ const AdminRuntimeVariantPreset = ({
         <BAIRuntimeVariantPresetSettingModal
           open={isCreating || !!editingPreset}
           presetFrgmt={editingPreset}
+          categoryOptions={existingCategories}
           onRequestClose={(success) => {
             setIsCreating(false);
             setEditingPreset(null);
