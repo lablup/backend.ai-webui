@@ -235,9 +235,15 @@ When a mutation's `updater`/return fields cover the shape the UI reads, Relay
 automatically re-renders the affected components. Add the needed fields to the
 mutation's selection and trust the store.
 
+This is the default for **update** mutations — see the
+`relay-mutation-store-updates` skill for how to pick the selection set, what to
+do when a legacy payload returns only `ok`/`msg`, and why `if (success)
+updateFetchKey()` after an update is an anti-pattern (FR-3170).
+
 ### 6.2 `updateFetchKey()` — re-issue the list query
 
-When the mutation changes list-level data (add/remove/rename row):
+When the mutation changes **list membership** (add/remove row) — not for a
+plain field edit, which §6.1 already covers:
 
 ```tsx
 const [fetchKey, updateFetchKey] = useFetchKey();

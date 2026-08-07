@@ -94,9 +94,12 @@ import { useFetchKey, INITIAL_FETCH_KEY } from 'backend.ai-ui';
 
 const [fetchKey, updateFetchKey] = useFetchKey();
 
-// in a mutation:
+// in a mutation that changes list membership (create / delete):
 onCompleted: () => { updateFetchKey(); message.success(...); }
 ```
+
+For an **update** mutation, don't bump the fetch key — return the changed
+fields so Relay patches the store instead. See `relay-mutation-store-updates`.
 
 ## 3. Suspense fallback placement
 

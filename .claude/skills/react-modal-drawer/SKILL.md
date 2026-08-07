@@ -90,15 +90,25 @@ interface FolderCreateModalProps extends BAIModalProps {
   initialValues?: Partial<FolderCreateFormItemsType>;
 }
 
-// caller
+// caller — FolderCreateModal only creates, so the flag means "a row was added"
 <FolderCreateModal
   open={open}
   onRequestClose={(result) => {
-    if (result) updateFetchKey();  // success path
+    if (result) updateFetchKey();  // new folder → list membership changed
     setOpen(false);
   }}
 />
 ```
+
+**The argument means "the list changed", not "it succeeded".** Refetching on
+every success throws away Relay's normalized cache: an *update* mutation that
+returns its changed fields has already patched the store, so `updateFetchKey()`
+there is a redundant round-trip. This matters most in modals that handle both
+create and update behind one nullable fragment prop — those two paths must not
+share a single `onRequestClose(true)` exit.
+
+Read the `relay-mutation-store-updates` skill before writing
+`if (success) updateFetchKey()`.
 
 When a modal MUST surface both buttons' intent (e.g. delete flow with different
 follow-up), keep the antd-native `onOk` / `onCancel` pair — PurgeUsersModal
