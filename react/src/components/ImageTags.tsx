@@ -8,8 +8,14 @@ import { useBackendAIImageMetaData } from '../hooks';
 import { theme } from '../theme-shim';
 import ImageMetaIcon from './ImageMetaIcon';
 import TextHighlighter from './TextHighlighter';
-import { Tag, type TagProps } from 'antd';
-import { BAIDoubleTag, BAIFlex, DoubleTagObjectValue } from 'backend.ai-ui';
+import { Badge } from '@astryxdesign/core/Badge';
+import type { TagProps } from 'antd';
+import {
+  BAIDoubleTag,
+  BAIFlex,
+  DoubleTagObjectValue,
+  badgeVariantForTagColor,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -46,13 +52,19 @@ const ImageAliasNameAndBaseVersionTags: React.FC<
 interface BaseImageTagsProps extends TagProps {
   image: string | null;
 }
+// Frontier note (ticket 19): the public prop surfaces keep their antd shape
+// (`TagProps`, `color?: string`) for unmigrated consumers; internally every
+// tag renders as an Astryx Badge through the repo-global Tag lookup
+// (ticket 13 policy — unknown runtime strings drop to neutral). Extra
+// TagProps beyond `color` have no Badge destination and are ignored.
 const BaseImageTags: React.FC<BaseImageTagsProps> = ({ image, ...props }) => {
   image = image || '';
   const [, { getBaseImage, tagAlias }] = useBackendAIImageMetaData();
   return _.isEmpty(tagAlias(getBaseImage(image))) ? null : (
-    <Tag color="green" {...props}>
-      {tagAlias(getBaseImage(image))}
-    </Tag>
+    <Badge
+      variant={badgeVariantForTagColor(props.color ?? 'green')}
+      label={tagAlias(getBaseImage(image))}
+    />
   );
 };
 
@@ -66,9 +78,10 @@ const ArchitectureTags: React.FC<ArchitectureTagsProps> = ({
   image = image || '';
   const [, { getArchitecture, tagAlias }] = useBackendAIImageMetaData();
   return _.isEmpty(tagAlias(getArchitecture(image))) ? null : (
-    <Tag color="green" {...props}>
-      {getArchitecture(image)}
-    </Tag>
+    <Badge
+      variant={badgeVariantForTagColor(props.color ?? 'green')}
+      label={getArchitecture(image)}
+    />
   );
 };
 
@@ -124,11 +137,15 @@ export const ImageTags: React.FC<ImageTagsProps> = ({
             ]}
           />
         ) : (
-          <Tag key={tag.key} color={isCustomized ? 'cyan' : 'blue'}>
-            <TextHighlighter keyword={highlightKeyword} key={index}>
-              {aliasedTag}
-            </TextHighlighter>
-          </Tag>
+          <Badge
+            key={tag.key}
+            variant={badgeVariantForTagColor(isCustomized ? 'cyan' : 'blue')}
+            label={
+              <TextHighlighter keyword={highlightKeyword} key={index}>
+                {aliasedTag}
+              </TextHighlighter>
+            }
+          />
         );
       })}
     </React.Fragment>

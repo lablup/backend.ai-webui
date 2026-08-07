@@ -4,17 +4,15 @@
  */
 import { ManageAppsModalMutation } from '../__generated__/ManageAppsModalMutation.graphql';
 import { ManageAppsModal_image$key } from '../__generated__/ManageAppsModal_image.graphql';
-import { theme } from '../theme-shim';
-import {
-  Input,
-  Button,
-  Form,
-  message,
-  Typography,
-  FormInstance,
-  Alert,
-} from 'antd';
-import { BAIButton, BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
+import { App } from '../app-shim';
+import BAIFormItem from './BAIFormItem';
+import { AstryxFormTextInput } from './astryxFormControls';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Button } from '@astryxdesign/core/Button';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Text } from '@astryxdesign/core/Text';
+import { Form, FormInstance } from 'antd';
+import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Trash, PlusIcon } from 'lucide-react';
 import React from 'react';
@@ -36,9 +34,8 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
   ...baiModalProps
 }) => {
   const { t } = useTranslation();
+  const { message } = App.useApp();
   const formRef = React.useRef<FormInstance>(null);
-
-  const { token } = theme.useToken();
 
   const image = useFragment(
     graphql`
@@ -169,26 +166,26 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
       title={t('environment.ManageApps')}
       {...baiModalProps}
     >
-      <Alert
-        type="info"
-        showIcon
-        style={{ marginBottom: token.marginMD }}
-        title={t('environment.AppPortsApplyToNewSessionsOnly')}
-      />
-      <BAIFlex
-        direction="row"
-        style={{ width: '100%', marginBottom: token.marginXS }}
-      >
-        <Typography.Text strong style={{ width: '32%' }}>
-          {t('environment.AppName')}
-        </Typography.Text>
-        <Typography.Text strong style={{ width: '32%' }}>
-          {t('environment.Protocol')}
-        </Typography.Text>
-        <Typography.Text strong style={{ width: '32%' }}>
-          {t('environment.Port')}
-        </Typography.Text>
-        <BAIFlex></BAIFlex>
+      {/* antd Alert type="info" -> Astryx Banner status="info"; `showIcon` is
+          dropped (Banner shows its icon by default — MAPPING.md §4). The
+          marginBottom token becomes BAIFlex column gaps. */}
+      <BAIFlex direction="column" align="stretch" gap="md">
+        <Banner
+          status="info"
+          title={t('environment.AppPortsApplyToNewSessionsOnly')}
+        />
+        <BAIFlex direction="row" style={{ width: '100%' }}>
+          <BAIFlex style={{ width: '32%' }}>
+            <Text weight="semibold">{t('environment.AppName')}</Text>
+          </BAIFlex>
+          <BAIFlex style={{ width: '32%' }}>
+            <Text weight="semibold">{t('environment.Protocol')}</Text>
+          </BAIFlex>
+          <BAIFlex style={{ width: '32%' }}>
+            <Text weight="semibold">{t('environment.Port')}</Text>
+          </BAIFlex>
+          <BAIFlex></BAIFlex>
+        </BAIFlex>
       </BAIFlex>
       <Form
         ref={formRef}
@@ -201,9 +198,9 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
             {(fields, { add, remove }) => (
               <BAIFlex direction="column" style={{ width: '100%' }}>
                 {_.map(fields, (field, index) => (
-                  <Form.Item>
+                  <BAIFormItem>
                     <BAIFlex direction="row" key={field.key} gap={'xs'}>
-                      <Form.Item
+                      <BAIFormItem
                         {...field}
                         name={[field.name, 'app']}
                         noStyle
@@ -214,9 +211,12 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
                           },
                         ]}
                       >
-                        <Input placeholder={t('environment.AppName')} />
-                      </Form.Item>
-                      <Form.Item
+                        <AstryxFormTextInput
+                          label={t('environment.AppName')}
+                          placeholder={t('environment.AppName')}
+                        />
+                      </BAIFormItem>
+                      <BAIFormItem
                         {...field}
                         name={[field.name, 'protocol']}
                         noStyle
@@ -230,9 +230,12 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
                           },
                         ]}
                       >
-                        <Input placeholder={t('environment.Protocol')} />
-                      </Form.Item>
-                      <Form.Item
+                        <AstryxFormTextInput
+                          label={t('environment.Protocol')}
+                          placeholder={t('environment.Protocol')}
+                        />
+                      </BAIFormItem>
+                      <BAIFormItem
                         {...field}
                         name={[field.name, 'port']}
                         noStyle
@@ -285,31 +288,36 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
                           },
                         ]}
                       >
-                        <Input placeholder={t('environment.Port')} />
-                      </Form.Item>
-                      <Button
-                        type="text"
-                        danger
+                        <AstryxFormTextInput
+                          label={t('environment.Port')}
+                          placeholder={t('environment.Port')}
+                        />
+                      </BAIFormItem>
+                      {/* PILOT-DECISION: antd `type="text" danger` -> ghost
+                          IconButton; the red tint is dropped (closed variant
+                          enum, P5/P11). The first-row marginTop nudge against
+                          antd's label offset is obsolete and dropped. */}
+                      <IconButton
+                        variant="ghost"
+                        label={t('button.Delete')}
+                        tooltip={t('button.Delete')}
                         onClick={() => remove(field.name)}
-                        style={
-                          index === 0
-                            ? { width: '10%', marginTop: 8 }
-                            : { width: '10%' }
-                        }
                         icon={<Trash size="1em" />}
                       />
                     </BAIFlex>
-                  </Form.Item>
+                  </BAIFormItem>
                 ))}
-                <BAIButton
-                  type="dashed"
+                {/* PILOT-DECISION: antd `type="dashed"` has no Astryx
+                    equivalent -> `variant="secondary"` (MAPPING.md §3.3);
+                    `block` -> width="100%". */}
+                <Button
+                  variant="secondary"
                   onClick={() => add()}
-                  block
+                  width="100%"
                   icon={<PlusIcon />}
-                  disabled={!image}
-                >
-                  {t('button.Add')}
-                </BAIButton>
+                  isDisabled={!image}
+                  label={t('button.Add')}
+                />
               </BAIFlex>
             )}
           </Form.List>

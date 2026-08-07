@@ -20,10 +20,10 @@ import { theme } from '../theme-shim';
 import AliasedImageDoubleTags from './AliasedImageDoubleTags';
 import { ImageTags } from './ImageTags';
 import TextHighlighter from './TextHighlighter';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Text } from '@astryxdesign/core/Text';
+import { TextInput } from '@astryxdesign/core/TextInput';
 import { useToggle } from 'ahooks';
-import { Button, Input, Typography } from 'antd';
-import { AnyObject } from 'antd/es/_util/type';
-import type { ColumnsType, ColumnType } from 'antd/es/table';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -32,6 +32,8 @@ import {
   BAITable,
   BAIText,
   useUpdatableState,
+  type BAIColumnsType,
+  type BAIColumnType,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Trash2, RotateCw, Search, Settings } from 'lucide-react';
@@ -57,6 +59,9 @@ const CustomizedImageList: React.FC = () => {
   const [customizedImageListFetchKey, updateCustomizedImageListFetchKey] =
     useUpdatableState('initial-fetch');
   const [imageSearch, setImageSearch] = useState('');
+  // Urgent mirror of the (transition-deferred) search keyword — a controlled
+  // Astryx TextInput cannot be fed transition state without losing keystrokes.
+  const [imageSearchInput, setImageSearchInput] = useState('');
   const [isPendingSearchTransition, startSearchTransition] = useTransition();
   const [imageToDelete, setImageToDelete] = useState<CommittedImage | null>(
     null,
@@ -216,7 +221,7 @@ const CustomizedImageList: React.FC = () => {
     });
   }, [imageSearch, imageFilterValues, defaultSortedImages]);
 
-  const columns: ColumnsType<CommittedImage> = filterOutEmpty([
+  const columns: BAIColumnsType<CommittedImage> = filterOutEmpty([
     {
       title: t('environment.FullImagePath'),
       key: 'fullImagePath',
@@ -240,13 +245,18 @@ const CustomizedImageList: React.FC = () => {
       key: 'control',
       render: (_text, row) => (
         <BAIFlex direction="row" align="stretch" justify="center" gap="xxs">
-          <Button
-            type="text"
+          {/* PILOT-DECISION: antd `type="text" danger` (red-tinted ghost) ->
+              Astryx ghost IconButton; IconButton's closed variant enum has no
+              ghost-destructive, and a solid `destructive` per row is louder
+              than the original — the red tint is dropped (P5/P11). */}
+          <IconButton
+            variant="ghost"
             icon={<Trash2 size="1em" />}
+            label={t('button.Delete')}
+            tooltip={t('button.Delete')}
             onClick={() => {
               setImageToDelete(row || null);
             }}
-            danger
           />
         </BAIFlex>
       ),
@@ -369,9 +379,13 @@ const CustomizedImageList: React.FC = () => {
       key: 'digest',
       sorter: (a, b) => localeCompare(a?.digest, b?.digest),
       render: (text) => (
-        <Typography.Text ellipsis={{ tooltip: true }} style={{ maxWidth: 200 }}>
-          <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
-        </Typography.Text>
+        // antd `Text ellipsis={{tooltip}} maxWidth 200` -> Astryx Text
+        // maxLines; width lives on the BAIFlex wrapper (Text has no style).
+        <BAIFlex style={{ maxWidth: 200 }} align="stretch">
+          <Text maxLines={1}>
+            <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
+          </Text>
+        </BAIFlex>
       ),
     },
   ]);
@@ -384,20 +398,28 @@ const CustomizedImageList: React.FC = () => {
     <BAIFlex direction="column" align="stretch">
       <BAIFlex direction="column" align="stretch" gap="sm">
         <BAIFlex justify="between" gap="xs" wrap="wrap">
-          <Input
-            allowClear
-            prefix={<Search size="1em" />}
+          {/* antd Input prefix/allowClear -> Astryx TextInput startIcon/
+              hasClear; label is required and visually hidden (P2/P8). The
+              filter input is uncontrolled in the original, so the local
+              search state stays the source of truth here too. */}
+          <TextInput
+            label={t('environment.SearchImages')}
+            isLabelHidden
+            value={imageSearchInput}
+            hasClear
+            startIcon={Search}
             placeholder={t('environment.SearchImages')}
-            onChange={(e) => {
-              startSearchTransition(() => setImageSearch(e.target.value));
+            onChange={(value) => {
+              setImageSearchInput(value);
+              startSearchTransition(() => setImageSearch(value));
             }}
-            style={{
-              width: 200,
-            }}
+            width={200}
           />
-          <Button
+          <IconButton
+            label={t('button.Refresh')}
+            tooltip={t('button.Refresh')}
             icon={<RotateCw size="1em" />}
-            loading={isRefetchPending}
+            isLoading={isRefetchPending}
             onClick={() => {
               startRefetchTransition(() => updateCustomizedImageListFetchKey());
             }}
@@ -411,16 +433,17 @@ const CustomizedImageList: React.FC = () => {
               columns,
               (column) =>
                 !_.includes(hiddenColumnKeys, _.toString(column?.key)),
-            ) as ColumnType<AnyObject>[]
+            ) as BAIColumnType<any>[]
           }
           dataSource={filterOutNullAndUndefined(filteredImageData)}
           rowKey="id"
           scroll={{ x: 'max-content' }}
           pagination={{
             extraContent: (
-              <Button
-                type="text"
+              <IconButton
+                variant="ghost"
                 icon={<Settings size="1em" />}
+                label={t('table.SettingTable')}
                 onClick={() => {
                   toggleColumnSettingModal();
                 }}

@@ -2,11 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { theme } from '../theme-shim';
-import { Checkbox, Input, Form } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
-import { FormInstance } from 'antd/lib';
-import { BAIModal, BAIModalProps } from 'backend.ai-ui';
+import BAIFormItem from './BAIFormItem';
+import { AstryxFormTextInput } from './astryxFormControls';
+import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
+import { VStack } from '@astryxdesign/core/Stack';
+import { Form } from 'antd';
+import type { FormInstance } from 'antd';
+import { BAIModal, BAIModalProps, type BAIColumnsType } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Search } from 'lucide-react';
 import React, { useRef } from 'react';
@@ -20,9 +22,54 @@ interface FormValues {
 interface TableColumnsSettingProps extends BAIModalProps {
   open: boolean;
   onRequestClose: (formValues?: FormValues) => void;
-  columns: ColumnsType<any>;
+  // Frontier note (ticket 19): typed against BUI's re-exported BAIColumnsType
+  // so this shared modal no longer imports antd types directly; consumers'
+  // antd `ColumnsType` values are structurally identical.
+  columns: BAIColumnsType<any>;
   hiddenColumnKeys?: Array<string>;
 }
+
+interface ColumnOption {
+  label?: string;
+  value: string;
+  isHidden?: boolean;
+}
+
+/**
+ * Replacement for antd `Checkbox.Group` inside a `Form.Item` (the antd Form
+ * ENGINE stays; MAPPING.md maps Checkbox.Group -> Astryx CheckboxList, but
+ * the search-filter behaviour here needs options to disappear from view while
+ * their checked state is preserved, so a thin controlled list of
+ * `CheckboxInput`s is the simpler composition). `value`/`onChange` are
+ * injected by `Form.Item`.
+ */
+const ColumnKeysChecklist: React.FC<{
+  value?: Array<string>;
+  onChange?: (value: Array<string>) => void;
+  options: Array<ColumnOption>;
+}> = ({ value = [], onChange, options }) => {
+  'use memo';
+  return (
+    <VStack gap={1} align="stretch">
+      {options
+        .filter((option) => !option.isHidden)
+        .map((option) => (
+          <CheckboxInput
+            key={option.value}
+            label={option.label ?? option.value}
+            value={_.includes(value, option.value)}
+            onChange={(checked) => {
+              onChange?.(
+                checked
+                  ? [...value, option.value]
+                  : _.without(value, option.value),
+              );
+            }}
+          />
+        ))}
+    </VStack>
+  );
+};
 
 const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
   open,
@@ -33,7 +80,6 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
 }) => {
   const formRef = useRef<FormInstance>(null);
   const { t } = useTranslation();
-  const { token } = theme.useToken();
 
   const onChangeTitleToString: any = (element: any) => {
     const text = React.Children.map(element.props.children, (child) => {
@@ -44,7 +90,7 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
     return text;
   };
 
-  const columnOptions = _.map(columns, (column) => {
+  const columnOptions: Array<ColumnOption> = _.map(columns, (column) => {
     if (typeof column.title === 'string') {
       return {
         label: column.title,
@@ -92,22 +138,23 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
         }}
         layout="vertical"
       >
-        <Form.Item
+        <BAIFormItem
           name="searchInput"
           label={t('table.SelectColumnToDisplay')}
           style={{ marginBottom: 0 }}
         >
-          <Input
-            prefix={<Search size="1em" />}
-            style={{ marginBottom: token.marginSM }}
+          <AstryxFormTextInput
+            label={t('table.SearchTableColumn')}
+            startIcon={Search}
             placeholder={t('table.SearchTableColumn')}
           />
-        </Form.Item>
-        <Form.Item
+        </BAIFormItem>
+        <BAIFormItem
           noStyle
           shouldUpdate={(prev, cur) => prev.searchInput !== cur.searchInput}
         >
-          {({ getFieldValue }) => {
+          {(form) => {
+            const { getFieldValue } = form as FormInstance<FormValues>;
             const searchKeyword = getFieldValue('searchInput')
               ? _.toLower(getFieldValue('searchInput'))
               : undefined;
@@ -119,13 +166,11 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
                 ? columnOption
                 : {
                     ...columnOption,
-                    style: {
-                      display: 'none',
-                    },
+                    isHidden: true,
                   },
             );
             return (
-              <Form.Item
+              <BAIFormItem
                 name="selectedColumnKeys"
                 style={{
                   height: 220,
@@ -138,14 +183,11 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
                   },
                 ]}
               >
-                <Checkbox.Group
-                  options={filteredColumns}
-                  style={{ flexDirection: 'column' }}
-                />
-              </Form.Item>
+                <ColumnKeysChecklist options={filteredColumns} />
+              </BAIFormItem>
             );
           }}
-        </Form.Item>
+        </BAIFormItem>
       </Form>
     </BAIModal>
   );

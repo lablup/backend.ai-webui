@@ -9,9 +9,15 @@ import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { theme } from '../theme-shim';
 import BAICodeEditor from './BAICodeEditor';
+import BAIFormItem from './BAIFormItem';
 import HiddenFormItem from './HiddenFormItem';
 import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
-import { Form, Input, Select, Checkbox, type FormInstance } from 'antd';
+import {
+  AstryxFormCheckbox,
+  AstryxFormSelector,
+  AstryxFormTextInput,
+} from './astryxFormControls';
+import { Form, type FormInstance } from 'antd';
 import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useRef } from 'react';
@@ -273,7 +279,7 @@ const ContainerRegistryEditorModal: React.FC<
         {containerRegistry && (
           <HiddenFormItem name="row_id" value={containerRegistry.row_id} />
         )}
-        <Form.Item
+        <BAIFormItem
           label={t('registry.RegistryName')}
           name="registry_name"
           required
@@ -290,12 +296,12 @@ const ContainerRegistryEditorModal: React.FC<
             },
           ]}
         >
-          <Input
+          <AstryxFormTextInput
+            label={t('registry.RegistryName')}
             disabled={!!containerRegistry}
-            value={containerRegistry?.registry_name || undefined}
           />
-        </Form.Item>
-        <Form.Item
+        </BAIFormItem>
+        <BAIFormItem
           name={'url'}
           label={t('registry.RegistryURL')}
           required
@@ -327,19 +333,21 @@ const ContainerRegistryEditorModal: React.FC<
             },
           ]}
         >
-          <Input />
-        </Form.Item>
+          <AstryxFormTextInput label={t('registry.RegistryURL')} />
+        </BAIFormItem>
 
-        <Form.Item
+        <BAIFormItem
           noStyle
           shouldUpdate={(prev, next) =>
             _.isEmpty(prev?.password) !== _.isEmpty(next?.password)
           }
         >
-          {({ validateFields, getFieldValue }) => {
+          {(form) => {
+            const { validateFields, getFieldValue } =
+              form as FormInstance<RegistryFormInput>;
             validateFields(['username']);
             return (
-              <Form.Item
+              <BAIFormItem
                 name={'username'}
                 label={t('registry.Username')}
                 rules={[
@@ -353,45 +361,52 @@ const ContainerRegistryEditorModal: React.FC<
                   },
                 ]}
               >
-                <Input />
-              </Form.Item>
+                <AstryxFormTextInput label={t('registry.Username')} />
+              </BAIFormItem>
             );
           }}
-        </Form.Item>
+        </BAIFormItem>
 
-        <Form.Item label={t('registry.Password')}>
-          <Form.Item
+        <BAIFormItem label={t('registry.Password')}>
+          <BAIFormItem
             noStyle
             shouldUpdate={(prev, next) =>
               prev.isChangedPassword !== next.isChangedPassword
             }
           >
-            {({ getFieldValue }) => (
-              <Form.Item noStyle name={'password'}>
-                <Input.Password
+            {(form) => (
+              <BAIFormItem noStyle name={'password'}>
+                {/* antd Input.Password -> Astryx TextInput type="password"
+                    (MAPPING.md §3.6). PILOT-DECISION: the visibility-toggle
+                    eye affordance is antd sugar with no TextInput
+                    counterpart; dropped (simplicity policy). */}
+                <AstryxFormTextInput
+                  label={t('registry.Password')}
+                  type="password"
                   disabled={
                     !_.isEmpty(containerRegistry) &&
-                    !getFieldValue('isChangedPassword')
+                    !(form as FormInstance<RegistryFormInput>).getFieldValue(
+                      'isChangedPassword',
+                    )
                   }
                 />
-              </Form.Item>
+              </BAIFormItem>
             )}
-          </Form.Item>
+          </BAIFormItem>
           {!_.isEmpty(containerRegistry) && (
-            <Form.Item noStyle name="isChangedPassword" valuePropName="checked">
-              <Checkbox
-                onChange={(e) => {
-                  if (!e.target.checked) {
+            <BAIFormItem noStyle name="isChangedPassword">
+              <AstryxFormCheckbox
+                label={t('webui.menu.ChangePassword')}
+                onValueChange={(checked) => {
+                  if (!checked) {
                     formRef.current?.setFieldValue('password', '');
                   }
                 }}
-              >
-                {t('webui.menu.ChangePassword')}
-              </Checkbox>
-            </Form.Item>
+              />
+            </BAIFormItem>
           )}
-        </Form.Item>
-        <Form.Item
+        </BAIFormItem>
+        <BAIFormItem
           name={'type'}
           label={t('registry.RegistryType')}
           required
@@ -402,39 +417,26 @@ const ContainerRegistryEditorModal: React.FC<
             },
           ]}
         >
-          <Select
+          <AstryxFormSelector
+            label={t('registry.RegistryType')}
             options={[
-              {
-                value: 'docker',
-              },
-              {
-                value: 'harbor',
-              },
-              {
-                value: 'harbor2',
-              },
-              {
-                value: 'github',
-              },
-              {
-                value: 'gitlab',
-              },
-              {
-                value: 'ecr',
-              },
-              {
-                value: 'ecr-public',
-              },
+              'docker',
+              'harbor',
+              'harbor2',
+              'github',
+              'gitlab',
+              'ecr',
+              'ecr-public',
             ]}
-          ></Select>
-        </Form.Item>
-        <Form.Item
+          />
+        </BAIFormItem>
+        <BAIFormItem
           shouldUpdate={(prev, next) => prev?.type !== next?.type}
           noStyle
         >
           {() => {
             return (
-              <Form.Item
+              <BAIFormItem
                 name={'project'}
                 label={t('registry.ProjectName')}
                 required
@@ -450,26 +452,22 @@ const ContainerRegistryEditorModal: React.FC<
                   },
                 ]}
               >
-                <Input allowClear />
-              </Form.Item>
+                <AstryxFormTextInput
+                  label={t('registry.ProjectName')}
+                  allowClear
+                />
+              </BAIFormItem>
             );
           }}
-        </Form.Item>
-        <Form.Item
-          name="ssl_verify"
-          label={t('registry.SSLVerify')}
-          valuePropName="checked"
-        >
-          <Checkbox>{t('registry.SSLVerifyDescription')}</Checkbox>
-        </Form.Item>
-        <Form.Item
-          name="is_global"
-          label={t('registry.IsGlobal')}
-          valuePropName="checked"
-        >
-          <Checkbox
-            onChange={(e) => {
-              if (!e.target.checked) {
+        </BAIFormItem>
+        <BAIFormItem name="ssl_verify" label={t('registry.SSLVerify')}>
+          <AstryxFormCheckbox label={t('registry.SSLVerifyDescription')} />
+        </BAIFormItem>
+        <BAIFormItem name="is_global" label={t('registry.IsGlobal')}>
+          <AstryxFormCheckbox
+            label={t('registry.IsGlobalDescription')}
+            onValueChange={(checked) => {
+              if (!checked) {
                 // Restore original allowed groups from fragment data on uncheck
                 const originalGroupIds =
                   containerRegistry?.allowed_groups?.edges
@@ -481,17 +479,17 @@ const ContainerRegistryEditorModal: React.FC<
                 );
               }
             }}
-          >
-            {t('registry.IsGlobalDescription')}
-          </Checkbox>
-        </Form.Item>
-        <Form.Item
+          />
+        </BAIFormItem>
+        <BAIFormItem
           noStyle
           shouldUpdate={(prev, next) => prev?.is_global !== next?.is_global}
         >
-          {({ getFieldValue }) =>
-            !getFieldValue('is_global') && (
-              <Form.Item
+          {(form) =>
+            !(form as FormInstance<RegistryFormInput>).getFieldValue(
+              'is_global',
+            ) && (
+              <BAIFormItem
                 name="allowed_group_ids"
                 label={t('registry.AllowedProjects')}
               >
@@ -500,12 +498,12 @@ const ContainerRegistryEditorModal: React.FC<
                   mode="multiple"
                   allowClear
                 />
-              </Form.Item>
+              </BAIFormItem>
             )
           }
-        </Form.Item>
+        </BAIFormItem>
         {isSupportExtraField && (
-          <Form.Item label={t('registry.ExtraInformation')}>
+          <BAIFormItem label={t('registry.ExtraInformation')}>
             <BAIFlex
               style={{
                 border: `1px solid ${token.colorBorder}`,
@@ -513,7 +511,7 @@ const ContainerRegistryEditorModal: React.FC<
                 overflow: 'hidden',
               }}
             >
-              <Form.Item
+              <BAIFormItem
                 name="extra"
                 noStyle
                 rules={[
@@ -538,9 +536,9 @@ const ContainerRegistryEditorModal: React.FC<
                   language="json"
                   style={{ width: '100%' }}
                 />
-              </Form.Item>
+              </BAIFormItem>
             </BAIFlex>
-          </Form.Item>
+          </BAIFormItem>
         )}
       </Form>
     </BAIModal>

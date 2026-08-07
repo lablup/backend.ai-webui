@@ -2,32 +2,39 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- PILOT (cn-oss-removal / ticket 10) — adapters that let Astryx form controls sit
- inside an antd `Form.Item` (the engine we keep, per ticket 08).
+ Adapters that let Astryx form controls sit inside an antd `Form.Item` /
+ `BAIFormItem` (the antd form ENGINE we keep, per MIGRATION-SPEC §0; visuals
+ come from BAIFormItem). Ported from the pilot (cn-oss-removal ticket 10) and
+ extended by the page-group tickets (16/17: TextInput/Switch/RadioList/
+ Selector; 19: password/startIcon TextInput, NumberInput, Checkbox, hasClear
+ Selector).
 
- THREE deltas make raw Astryx controls unusable as direct `Form.Item` children.
- Each one bit during the pilot; each is a codemod / lint-rule candidate:
+ THREE deltas make raw Astryx controls unusable as direct `Form.Item`
+ children (pilot patterns P3/P4; each is a codemod / lint-rule candidate):
 
- 1. `value` is REQUIRED and typed non-nullable on every Astryx control
-    (`TextInput.value: string`, `Switch.value: boolean`, `RadioList.value:
-    string`). antd's `Form.Item` clones its child with `value={undefined}`
-    until the field is first touched, which makes React flip the input from
-    uncontrolled to controlled and log a warning. The adapters coalesce.
+ 1. `value` is REQUIRED and typed non-nullable on most Astryx controls.
+    antd's `Form.Item` clones its child with `value={undefined}` until the
+    field is first touched, which flips the input from uncontrolled to
+    controlled and logs a warning. The adapters coalesce.
 
- 2. `label` is REQUIRED on every Astryx control and is rendered by the control
-    itself. `BAIFormItem` already renders the label. Passing both double-renders
-    it; omitting it fails typecheck and drops the accessible name. Every control
-    therefore needs `label={<same string>} isLabelHidden`.
+ 2. `label` is REQUIRED on every Astryx control and rendered by the control
+    itself. `BAIFormItem` already renders the visible label, so the adapters
+    pass `label={sameString} isLabelHidden` to keep the accessible name
+    without double-rendering.
 
  3. `onChange` receives the VALUE, not the event. antd's default
-    `getValueFromEvent` reads `e.target.value`, so it happens to work for the
-    string case by accident — but not for `Switch` (boolean) and not for any
-    control whose second argument matters. The adapters normalise explicitly
-    rather than relying on that accident.
+    `getValueFromEvent` happens to pass a non-event first argument through
+    unchanged, but the adapters normalise explicitly instead of relying on
+    that accident (and it does NOT hold for booleans read via
+    `e.target.checked`).
 */
+import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
+import { NumberInput } from '@astryxdesign/core/NumberInput';
 import { RadioList, RadioListItem } from '@astryxdesign/core/RadioList';
+import type { SelectorOptionType } from '@astryxdesign/core/Selector';
 import { Selector } from '@astryxdesign/core/Selector';
 import { Switch } from '@astryxdesign/core/Switch';
+import type { TextInputProps } from '@astryxdesign/core/TextInput';
 import { TextInput } from '@astryxdesign/core/TextInput';
 import React from 'react';
 
@@ -38,8 +45,12 @@ export interface AstryxFormTextInputProps {
   onChange?: (value: string) => void;
   /** Accessible name. Visually hidden — `BAIFormItem` renders the visible one. */
   label: string;
+  type?: 'text' | 'password' | 'email';
   placeholder?: string;
   disabled?: boolean;
+  allowClear?: boolean;
+  /** antd `prefix` icon -> Astryx `startIcon` (icon component, not element). */
+  startIcon?: TextInputProps['startIcon'];
   /** Astryx `TextInput.hasAutoFocus` passthrough (inline edit flows). */
   hasAutoFocus?: boolean;
 }
@@ -48,19 +59,25 @@ export const AstryxFormTextInput: React.FC<AstryxFormTextInputProps> = ({
   value,
   onChange,
   label,
+  type = 'text',
   placeholder,
   disabled,
+  allowClear,
+  startIcon,
   hasAutoFocus,
 }) => {
   'use memo';
   return (
     <TextInput
+      type={type}
       value={value ?? ''}
       onChange={(next) => onChange?.(next)}
       label={label}
       isLabelHidden
       placeholder={placeholder}
       isDisabled={disabled}
+      hasClear={allowClear}
+      startIcon={startIcon}
       hasAutoFocus={hasAutoFocus}
       width="100%"
     />
@@ -157,16 +174,99 @@ export const AstryxFormRadioList: React.FC<AstryxFormRadioListProps> = ({
   );
 };
 
+export interface AstryxFormNumberInputProps {
+  /** Injected by `Form.Item`. antd InputNumber values may arrive as strings. */
+  value?: number | string | null;
+  onChange?: (value: number | null) => void;
+  label: string;
+  min?: number;
+  max?: number;
+  step?: number;
+  /** antd `suffix` (a unit string) → Astryx `units`. */
+  units?: string;
+  placeholder?: string;
+  disabled?: boolean;
+}
+
+export const AstryxFormNumberInput: React.FC<AstryxFormNumberInputProps> = ({
+  value,
+  onChange,
+  label,
+  min,
+  max,
+  step,
+  units,
+  placeholder,
+  disabled,
+}) => {
+  'use memo';
+  const numericValue =
+    value === undefined || value === null || value === ''
+      ? null
+      : Number(value);
+  return (
+    <NumberInput
+      value={Number.isNaN(numericValue as number) ? null : numericValue}
+      onChange={(next) => onChange?.(next)}
+      label={label}
+      isLabelHidden
+      min={min}
+      max={max}
+      step={step}
+      units={units || undefined}
+      placeholder={placeholder}
+      isDisabled={disabled}
+      width="100%"
+    />
+  );
+};
+
+export interface AstryxFormCheckboxProps {
+  /** Injected by `Form.Item` (default `valuePropName`, i.e. `value`). */
+  value?: boolean;
+  onChange?: (value: boolean) => void;
+  /** The visible checkbox label (antd `<Checkbox>{children}</Checkbox>`). */
+  label: string;
+  disabled?: boolean;
+  /**
+   * Side effect to run alongside the Form-injected `onChange` (e.g. clearing
+   * a sibling field). The adapter owns the `onChange` slot, so the escape
+   * hatch is explicit (same convention as AstryxFormRadioList).
+   */
+  onValueChange?: (value: boolean) => void;
+}
+
+export const AstryxFormCheckbox: React.FC<AstryxFormCheckboxProps> = ({
+  value,
+  onChange,
+  label,
+  disabled,
+  onValueChange,
+}) => {
+  'use memo';
+  return (
+    <CheckboxInput
+      value={value ?? false}
+      onChange={(checked) => {
+        onChange?.(checked);
+        onValueChange?.(checked);
+      }}
+      label={label}
+      isDisabled={disabled}
+    />
+  );
+};
+
 export interface AstryxFormSelectorProps {
   /** Injected by `Form.Item`. */
   value?: string;
-  /** Injected by `Form.Item`. */
-  onChange?: (value: string) => void;
+  onChange?: (value: string | null) => void;
   /** Accessible name. Visually hidden — `BAIFormItem` renders the visible one. */
   label: string;
-  options: Array<{ label: string; value: string; disabled?: boolean }>;
+  options: SelectorOptionType[];
   placeholder?: string;
   disabled?: boolean;
+  hasClear?: boolean;
   width?: number | string;
 }
 
@@ -183,13 +283,28 @@ export const AstryxFormSelector: React.FC<AstryxFormSelectorProps> = ({
   options,
   placeholder,
   disabled,
-  width,
+  hasClear,
+  width = '100%',
 }) => {
   'use memo';
-  return (
+  // `hasClear` is a discriminated union on Selector (with it, value/onChange
+  // become nullable) — branch instead of passing `boolean | undefined`.
+  return hasClear ? (
     <Selector
-      value={value}
-      onChange={(next) => onChange?.(next)}
+      hasClear
+      value={value ?? null}
+      onChange={(next: string | null) => onChange?.(next)}
+      label={label}
+      isLabelHidden
+      options={options}
+      placeholder={placeholder}
+      isDisabled={disabled}
+      width={width}
+    />
+  ) : (
+    <Selector
+      value={value ?? undefined}
+      onChange={(next: string) => onChange?.(next)}
       label={label}
       isLabelHidden
       options={options}
