@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { Collapse, Form, Input, Select, theme } from 'antd';
+import { Collapse, Form, Input, Select } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -15,7 +15,6 @@ const ModelConfigItem: React.FC<{
 }> = ({ listItemName, restField }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
 
   // Rendered only when the model-definition switch is ON, so sub-fields are
   // unconditionally required here; the switch lives in the parent card.
@@ -27,6 +26,12 @@ const ModelConfigItem: React.FC<{
           name={[listItemName, 'name']}
           label={t('adminDeploymentPreset.modelDef.ModelName')}
           style={{ flex: 1, minWidth: 160 }}
+          // The server has a default for the model name and the field is
+          // nullable in the schema, so this `required` rule is a deliberate
+          // UI-only tightening (not a backend constraint) — enabling the
+          // model definition without a name is the kind of deployment that
+          // tends to fail at runtime, so the form blocks it up front rather
+          // than letting it reach the server.
           rules={[{ required: true }]}
         >
           <Input
@@ -40,6 +45,8 @@ const ModelConfigItem: React.FC<{
           name={[listItemName, 'modelPath']}
           label={t('adminDeploymentPreset.modelDef.ModelPath')}
           style={{ flex: 2, minWidth: 200 }}
+          // Same reasoning as `name` above: nullable/defaulted server-side,
+          // required here only to reduce the risk of deployment failures.
           rules={[{ required: true }]}
         >
           <Input
@@ -52,7 +59,6 @@ const ModelConfigItem: React.FC<{
 
       <Collapse
         defaultActiveKey={['metadata']}
-        style={{ marginTop: token.marginSM }}
         items={[
           {
             key: 'metadata',

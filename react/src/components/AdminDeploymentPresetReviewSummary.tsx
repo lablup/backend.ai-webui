@@ -98,6 +98,11 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
         title={t('adminDeploymentPreset.step.BasicInfo')}
         extra={editLink(0, 'preset-form-card-basic')}
       >
+        {/* Field order below mirrors the Basic Info step's actual input
+            order (name → description → runtime → runtime params → service
+            configuration → health check → pre-start actions → image), not
+            the order fields were originally added to this summary — see
+            AdminDeploymentPresetSettingPageContent.tsx's Basic Info card. */}
         <Descriptions column={1} size="small">
           <Descriptions.Item label={t('adminDeploymentPreset.Name')}>
             <Typography.Text strong>{values.name || '-'}</Typography.Text>
@@ -109,19 +114,6 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
           )}
           <Descriptions.Item label={t('adminDeploymentPreset.Runtime')}>
             {runtimeName || '-'}
-          </Descriptions.Item>
-          <Descriptions.Item label={t('adminDeploymentPreset.Image')}>
-            {imageReference ? (
-              <Typography.Text
-                code
-                style={{ wordBreak: 'break-all' }}
-                copyable={{ text: imageReference }}
-              >
-                {imageReference}
-              </Typography.Text>
-            ) : (
-              '-'
-            )}
           </Descriptions.Item>
           {runtimeParamRows.length > 0 && (
             <Descriptions.Item label={t('modelService.RuntimeParamTitle')}>
@@ -139,9 +131,15 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
             const svc = values.modelDefinition?.models?.[0]?.service;
             return (
               <>
-                {svc?.port != null && (
-                  <Descriptions.Item label={t('modelService.Port')}>
-                    {svc.port}
+                {/* Exec mode sends `shell: null` regardless of what's typed
+                    in the (now-hidden) Shell input — resolveCommandShell()
+                    discards it. The field's stale value otherwise lingers in
+                    the form store after switching Execution away from
+                    Shell, so gate the display on the mode actually being
+                    submitted, not just on the raw value being present. */}
+                {svc?.shell && svc?.execution !== 'exec' && (
+                  <Descriptions.Item label={t('modelService.Shell')}>
+                    <Typography.Text code>{svc.shell}</Typography.Text>
                   </Descriptions.Item>
                 )}
                 {svc?.startCommand && (
@@ -151,24 +149,9 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
                     </SourceCodeView>
                   </Descriptions.Item>
                 )}
-                {svc?.shell && (
-                  <Descriptions.Item label={t('modelService.Shell')}>
-                    <Typography.Text code>{svc.shell}</Typography.Text>
-                  </Descriptions.Item>
-                )}
-                {(svc?.preStartActions?.length ?? 0) > 0 && (
-                  <Descriptions.Item label={t('modelService.PreStartActions')}>
-                    <BAIFlex direction="column" align="start" gap="xxs">
-                      {svc?.preStartActions?.filter(Boolean).map((a, ai) => (
-                        <Typography.Text
-                          key={ai}
-                          code
-                          style={{ display: 'block' }}
-                        >
-                          {a?.action}: {a?.args || '{}'}
-                        </Typography.Text>
-                      ))}
-                    </BAIFlex>
+                {svc?.port != null && (
+                  <Descriptions.Item label={t('modelService.Port')}>
+                    {svc.port}
                   </Descriptions.Item>
                 )}
                 <Descriptions.Item
@@ -238,9 +221,37 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
                     )}
                   </>
                 )}
+                {(svc?.preStartActions?.length ?? 0) > 0 && (
+                  <Descriptions.Item label={t('modelService.PreStartActions')}>
+                    <BAIFlex direction="column" align="start" gap="xxs">
+                      {svc?.preStartActions?.filter(Boolean).map((a, ai) => (
+                        <Typography.Text
+                          key={ai}
+                          code
+                          style={{ display: 'block' }}
+                        >
+                          {a?.action}: {a?.args || '{}'}
+                        </Typography.Text>
+                      ))}
+                    </BAIFlex>
+                  </Descriptions.Item>
+                )}
               </>
             );
           })()}
+          <Descriptions.Item label={t('adminDeploymentPreset.Image')}>
+            {imageReference ? (
+              <Typography.Text
+                code
+                style={{ wordBreak: 'break-all' }}
+                copyable={{ text: imageReference }}
+              >
+                {imageReference}
+              </Typography.Text>
+            ) : (
+              '-'
+            )}
+          </Descriptions.Item>
         </Descriptions>
       </BAICard>
 
@@ -416,6 +427,13 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
                       {m.metadata.version}
                     </Descriptions.Item>
                   )}
+                  {m.metadata?.license && (
+                    <Descriptions.Item
+                      label={t('adminDeploymentPreset.modelDef.License')}
+                    >
+                      {m.metadata.license}
+                    </Descriptions.Item>
+                  )}
                   {m.metadata?.description && (
                     <Descriptions.Item
                       label={t('adminDeploymentPreset.modelDef.Description')}
@@ -464,13 +482,6 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
                           <Tag key={li}>{l}</Tag>
                         ))}
                       </Space>
-                    </Descriptions.Item>
-                  )}
-                  {m.metadata?.license && (
-                    <Descriptions.Item
-                      label={t('adminDeploymentPreset.modelDef.License')}
-                    >
-                      {m.metadata.license}
                     </Descriptions.Item>
                   )}
                 </Descriptions>
