@@ -403,6 +403,7 @@ const AdminComputeSessionListPage = () => {
         {computeSessionNodeResult.ok ? (
           <SessionNodes
             order={queryParams.order}
+            enablePriorityColumn
             onClickSessionName={(session) => {
               const newSearchParams = new URLSearchParams(location.search);
               newSearchParams.set('sessionDetail', session.row_id);
