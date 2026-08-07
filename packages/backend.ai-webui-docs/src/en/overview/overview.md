@@ -153,3 +153,28 @@ achieves more intuitive use.
 |                      | Customized container image / kernel or kernel repository |
 
 \* ONLY Available on storage supports directory quota management
+
+
+<a id="common-ui-behaviors"></a>
+
+## Common UI behaviors
+
+The behaviors described in this section are shared across many pages of the
+WebUI. Later chapters link back here instead of repeating them.
+
+<a id="common-auto-refresh"></a>
+
+### Auto-refresh
+
+Most lists and detail views in the WebUI share the same refresh control. The
+refresh button reloads the data on demand. When the view supports auto-refresh,
+an arrow next to the button opens the **Auto Refresh** menu, where you choose
+how often the view reloads by itself — **Off** or one of the interval presets.
+Most lists offer intervals between 5 and 60 seconds; a few admin pages whose
+queries are expensive offer longer intervals instead.
+
+While auto-refresh is on, the selected interval is shown on the control, and a
+countdown border fills around it to show when the next reload is due. A manual
+refresh restarts the countdown. Each page or list remembers its own interval
+choice — including **Off** — in your browser and keeps it across page reloads,
+so changing the interval on one list does not affect any other page.
