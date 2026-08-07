@@ -310,12 +310,36 @@ const BAINameActionCellAstryx: React.FC<BAINameActionCellAstryxProps> = ({
   };
 
   const renderTitle = () => {
+    // FEEDBACK FIX (pilot 7): a link-shaped cell must READ as a link.
+    //
+    // The anchor was already an Astryx `Link` and already carried the accent
+    // colour + hover underline — but the `Text` nested inside it re-declared
+    // `color` (Astryx `Text` defaults to `primary`), so the visible name
+    // painted in body-text colour and only the invisible anchor box was
+    // accent. Astryx's own answer is `color="inherit"` / `type="inherit"`,
+    // documented on `Text` for exactly this case ("an inline link inside an
+    // existing Text"). No call-site CSS and no theme override needed: Astryx
+    // `Link`'s DEFAULT styling is already right, it was being overridden from
+    // the inside.
+    //
+    // `hasTruncateTooltip` is why the `Text` stays rather than folding into
+    // `Link maxLines={1}`: `Link` forwards `maxLines` to its internal `Text`
+    // but does NOT forward `hasTruncateTooltip`, and its own `tooltip` prop is
+    // unconditional — it would pop a tooltip on every folder name, truncated
+    // or not. Keeping the child (colour-neutral) preserves the
+    // only-when-ellipsized tooltip the original had.
+    const isLinked = !!(to || onTitleClick);
     const text = (
-      <Text maxLines={1} hasTruncateTooltip>
+      <Text
+        maxLines={1}
+        hasTruncateTooltip
+        color={isLinked ? 'inherit' : undefined}
+        type={isLinked ? 'inherit' : undefined}
+      >
         {title}
       </Text>
     );
-    if (to || onTitleClick) {
+    if (isLinked) {
       return (
         <Link
           href={to ?? '#'}

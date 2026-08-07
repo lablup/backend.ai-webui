@@ -27,7 +27,6 @@ import {
 } from './astryxFormControls';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
-import { Divider } from '@astryxdesign/core/Divider';
 import { Skeleton } from '@astryxdesign/core/Skeleton';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
@@ -480,7 +479,6 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
               ]}
             />
           </BAIFormItem>
-          <Divider />
 
           <BAIFormItem
             label={t('data.Foldername')}
@@ -530,7 +528,6 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
               placeholder={t('maxLength.64chars')}
             />
           </BAIFormItem>
-          <Divider />
 
           <BAIFormItem
             label={t('data.folders.Location')}
@@ -556,7 +553,6 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
               />
             </Suspense>
           </BAIFormItem>
-          <Divider />
           <Form.Item dependencies={['usage_mode']} noStyle required>
             {({ getFieldValue }) => {
               const usageMode = getFieldValue('usage_mode');
@@ -571,7 +567,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
                   name={'type'}
                   layout="horizontal"
                   required
-                  style={{ flex: 1, marginBottom: 0 }}
+                  style={{ flex: 1 }}
                   rules={[
                     ({ getFieldValue }) => ({
                       validator(__, value) {
@@ -684,7 +680,6 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
               );
             }}
           </Form.Item>
-          <Divider />
 
           <Form.Item hidden name={'group'} />
 
@@ -762,7 +757,6 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
               return (
                 getFieldValue('usage_mode') === 'model' && (
                   <>
-                    <Divider />
                     <BAIFormItem
                       label={t('data.folders.Cloneable')}
                       name={'cloneable'}
