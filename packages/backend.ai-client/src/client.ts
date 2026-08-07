@@ -960,6 +960,12 @@ export class Client {
       // nested field (DataLoader-resolved name/description). FR-3256.
       this._features['runtime-variant-preset-runtime-variant-field'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('26.9.0')) {
+      // BA-7253 / backend PR #13562 — category/displayName/uiOption became
+      // writable on Create/UpdateRuntimeVariantPresetInput (previously
+      // read-only on the RuntimeVariantPreset type). FR-3476.
+      this._features['runtime-variant-preset-ui-metadata'] = true;
+    }
   }
 
   /**
