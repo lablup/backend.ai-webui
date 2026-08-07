@@ -15,11 +15,6 @@ import { theme } from '../theme-shim';
 import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import FolderLink from './FolderLink';
-import {
-  LoadingOutlined,
-  MoreOutlined,
-  PlayCircleOutlined,
-} from '@ant-design/icons';
 import { Dropdown, Popconfirm, Space, Typography } from 'antd';
 import {
   type BAIColumnType,
@@ -45,7 +40,12 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { CopyPlusIcon } from 'lucide-react';
+import {
+  LoaderCircle,
+  EllipsisVertical,
+  CirclePlay,
+  CopyPlusIcon,
+} from 'lucide-react';
 import {
   parseAsInteger,
   parseAsString,
@@ -426,7 +426,10 @@ const DeploymentRevisionHistoryTab: React.FC<
                   // `deployingRevisionId` set after promotion until the
                   // reconciler clears it, and showing both tags side by
                   // side reads as a contradiction.
-                  <BAITag color="warning" icon={<LoadingOutlined spin />}>
+                  <BAITag
+                    color="warning"
+                    icon={<LoaderCircle className="anticon-spin" size="1em" />}
+                  >
                     {t('deployment.Applying')}
                   </BAITag>
                 ) : null}
@@ -442,7 +445,7 @@ const DeploymentRevisionHistoryTab: React.FC<
               {
                 key: 'deploy',
                 title: t('deployment.Apply'),
-                icon: <PlayCircleOutlined />,
+                icon: <CirclePlay size="1em" />,
                 disabled: isDeployDisabled,
                 disabledReason: deployDisabledReason,
                 popConfirm: {
@@ -640,7 +643,7 @@ const DeploymentRevisionHistoryTab: React.FC<
                 >
                   <BAIButton
                     type="primary"
-                    icon={<PlayCircleOutlined />}
+                    icon={<CirclePlay size="1em" />}
                     disabled={
                       drawerRevision.status === 'current' ||
                       drawerRevision.status === 'deploying' ||
@@ -677,7 +680,7 @@ const DeploymentRevisionHistoryTab: React.FC<
                       are added, disable per-item instead. */}
                   <BAIButton
                     type="primary"
-                    icon={<MoreOutlined />}
+                    icon={<EllipsisVertical size="1em" />}
                     aria-label={t('button.More')}
                     disabled={isDeploymentInStoppedCategory(deploymentStatus)}
                   />

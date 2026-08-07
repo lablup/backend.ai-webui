@@ -7,7 +7,6 @@ import { localeCompare, useBaiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import { theme } from '../theme-shim';
-import { CloseCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import {
   Button,
   Descriptions,
@@ -27,6 +26,7 @@ import {
   BAIModal,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { CircleX, CircleHelp } from 'lucide-react';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -244,8 +244,9 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
             <BAIFlex gap={'xs'}>
               {t('data.folders.SharedUser')}
               <Tooltip title={t('data.folders.SharedUserDesc')}>
-                <QuestionCircleOutlined
+                <CircleHelp
                   style={{ color: token.colorTextSecondary }}
+                  size="1em"
                 />
               </Tooltip>
             </BAIFlex>
@@ -305,7 +306,7 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
                             style={{
                               color: token.colorError,
                             }}
-                            icon={<CloseCircleOutlined />}
+                            icon={<CircleX size="1em" />}
                           />
                         </Tooltip>
                       </Popconfirm>

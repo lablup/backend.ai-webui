@@ -16,11 +16,6 @@ import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import KeypairResourcePolicyInfoModal from './KeypairResourcePolicyInfoModal';
 import KeypairResourcePolicySettingModal from './KeypairResourcePolicySettingModal';
-import {
-  DeleteFilled,
-  InfoCircleOutlined,
-  ReloadOutlined,
-} from '@ant-design/icons';
 import { Button, Tooltip } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
 import type { ColumnsType, ColumnType } from 'antd/es/table';
@@ -38,7 +33,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { PlusIcon, SquarePenIcon } from 'lucide-react';
+import { Trash2, Info, RotateCw, PlusIcon, SquarePenIcon } from 'lucide-react';
 import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
@@ -125,7 +120,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
             {
               key: 'info',
               title: t('button.Info'),
-              icon: <InfoCircleOutlined />,
+              icon: <Info size="1em" />,
               onClick: () => {
                 startInfoModalOpenTransition(() => {
                   setCurrentResourcePolicy(row || null);
@@ -143,7 +138,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
             {
               key: 'delete',
               title: t('button.Delete'),
-              icon: <DeleteFilled />,
+              icon: <Trash2 size="1em" />,
               type: 'danger',
               onClick: () => {
                 setDeletingPolicyName(row?.name ?? null);
@@ -341,7 +336,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
         <BAIFlex gap={'xs'}>
           <Tooltip title={t('button.Refresh')}>
             <Button
-              icon={<ReloadOutlined />}
+              icon={<RotateCw size="1em" />}
               loading={isRefetchPending}
               onClick={() => {
                 startRefetchTransition(() =>

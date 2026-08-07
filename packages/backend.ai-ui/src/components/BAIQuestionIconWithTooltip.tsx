@@ -1,13 +1,13 @@
 import { theme } from '../theme-shim';
-import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Tooltip, type TooltipProps } from 'antd';
+import { CircleHelp } from 'lucide-react';
 import React from 'react';
 
 interface BAIQuestionIconWithTooltipProps extends Omit<
   TooltipProps,
   'children'
 > {
-  iconProps?: React.ComponentProps<typeof QuestionCircleOutlined>;
+  iconProps?: React.ComponentProps<typeof CircleHelp>;
 }
 const BAIQuestionIconWithTooltip = ({
   iconProps,
@@ -16,12 +16,13 @@ const BAIQuestionIconWithTooltip = ({
   const { token } = theme.useToken();
   return (
     <Tooltip {...tooltipProps}>
-      <QuestionCircleOutlined
+      <CircleHelp
         style={{
           color: token.colorTextTertiary,
           cursor: 'help',
         }}
         {...iconProps}
+        size="1em"
       />
     </Tooltip>
   );

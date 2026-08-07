@@ -5,9 +5,9 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import { theme } from '../theme-shim';
-import { LoadingOutlined } from '@ant-design/icons';
 import { Button, Popconfirm, Spin, Typography } from 'antd';
 import { BAIModal, BAIModalProps, BAIFlex } from 'backend.ai-ui';
+import { LoaderCircle } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -51,7 +51,10 @@ const SSHKeypairGenerationModal: React.FC<SSHKeypairGenerationModalProps> = ({
       ]}
       {...baiModalProps}
     >
-      <Spin spinning={isRefreshModalPending} indicator={<LoadingOutlined />}>
+      <Spin
+        spinning={isRefreshModalPending}
+        indicator={<LoaderCircle size="1em" />}
+      >
         <Typography.Text strong>{t('userSettings.PublicKey')}</Typography.Text>
         <BAIFlex direction="row" align="start" justify="between">
           <Typography.Paragraph>

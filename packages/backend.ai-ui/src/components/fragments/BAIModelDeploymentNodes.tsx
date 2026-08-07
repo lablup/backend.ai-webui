@@ -21,10 +21,10 @@ import {
 } from '../Table';
 import BAIDeploymentOwnerInfo from './BAIDeploymentOwnerInfo';
 import BAIDeploymentTagChips from './BAIDeploymentTagChips';
-import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Tooltip, Typography } from 'antd';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
+import { CircleHelp } from 'lucide-react';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
 
@@ -163,11 +163,12 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
             <Tooltip
               title={t('comp:BAIModelDeploymentNodes.RevisionNumberTooltip')}
             >
-              <QuestionCircleOutlined
+              <CircleHelp
                 style={{
                   color: token.colorTextTertiary,
                   cursor: 'help',
                 }}
+                size="1em"
               />
             </Tooltip>
           </BAIFlex>
@@ -204,11 +205,12 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
             <Tooltip
               title={t('comp:BAIModelDeploymentNodes.ReplicaSummaryTooltip')}
             >
-              <QuestionCircleOutlined
+              <CircleHelp
                 style={{
                   color: token.colorTextTertiary,
                   cursor: 'help',
                 }}
+                size="1em"
               />
             </Tooltip>
           </BAIFlex>

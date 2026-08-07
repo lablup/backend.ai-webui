@@ -8,10 +8,9 @@ import AgentLifeCycleControlModal, {
   AgentLifeCycleType,
 } from '../AgentLifeCycleControlModal';
 import AgentSettingModal from '../AgentSettingModal';
-import { PlayCircleOutlined, SettingOutlined } from '@ant-design/icons';
 import { Space, Tooltip } from 'antd';
 import { BAIButton, BAIButtonProps, BAITerminateIcon } from 'backend.ai-ui';
-import { RefreshCw } from 'lucide-react';
+import { CirclePlay, Settings, RefreshCw } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -50,7 +49,7 @@ const AgentActionButtons: React.FC<AgentActionButtonsProps> = ({
       <Space.Compact>
         <Tooltip title={t('agent.Settings')}>
           <BAIButton
-            icon={<SettingOutlined />}
+            icon={<Settings size="1em" />}
             size={size}
             onClick={() => setOpenSettingModal(true)}
           />
@@ -64,7 +63,7 @@ const AgentActionButtons: React.FC<AgentActionButtonsProps> = ({
         </Tooltip>
         <Tooltip title={t('agent.WatcherStart')}>
           <BAIButton
-            icon={<PlayCircleOutlined />}
+            icon={<CirclePlay size="1em" />}
             size={size}
             disabled={agent?.status === 'ALIVE'}
             onClick={() => setLifeCycleType('start')}

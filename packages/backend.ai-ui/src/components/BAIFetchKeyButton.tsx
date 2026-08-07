@@ -3,7 +3,6 @@ import { useBAIi18n } from '../hooks/useBAIi18n';
 import { useInterval, useIntervalValue } from '../hooks/useIntervalValue';
 import { theme } from '../theme-shim';
 import BAICountdownBorder from './BAICountdownBorder';
-import { CheckOutlined, ReloadOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
 import {
   Button,
@@ -16,7 +15,7 @@ import {
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import * as _ from 'lodash-es';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { Check, RotateCw, ChevronDown, ChevronUp } from 'lucide-react';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 dayjs.extend(duration);
@@ -277,7 +276,7 @@ const BAIFetchKeyButton: React.FC<BAIFetchKeyButtonProps> = ({
       title={tooltipTitle ? undefined : t('comp:BAIFetchKeyButton.Refresh')}
       loading={displayLoading}
       size={size}
-      icon={<ReloadOutlined />}
+      icon={<RotateCw size="1em" />}
       onClick={triggerRefresh}
       {...buttonProps}
     />
@@ -326,7 +325,7 @@ const BAIFetchKeyButton: React.FC<BAIFetchKeyButtonProps> = ({
   // menu option carries a check mark. Inactive options render the same icon
   // hidden so every row stays aligned without a hardcoded spacer width.
   const checkMark = (active: boolean) => (
-    <CheckOutlined style={{ visibility: active ? 'visible' : 'hidden' }} />
+    <Check style={{ visibility: active ? 'visible' : 'hidden' }} size="1em" />
   );
   // Render an interval (ms) as a compact label, using the largest whole unit:
   // "30s" / "5m" / "1h". `dayjs.duration` only picks the unit; the unit text

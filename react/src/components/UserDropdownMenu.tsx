@@ -13,17 +13,6 @@ import { theme } from '../theme-shim';
 import AboutBackendAIModal from './AboutBackendAIModal';
 import DownloadModal from './DownloadModal';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
-import {
-  UserOutlined,
-  MailOutlined,
-  SecurityScanOutlined,
-  ExclamationCircleOutlined,
-  LockOutlined,
-  FileTextOutlined,
-  LogoutOutlined,
-  SettingOutlined,
-  DownloadOutlined,
-} from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { Avatar, Button, Dropdown, Grid, MenuProps, Typography } from 'antd';
 import {
@@ -32,6 +21,17 @@ import {
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import {
+  User,
+  Mail,
+  ShieldCheck,
+  CircleAlert,
+  Lock,
+  FileText,
+  LogOut,
+  Settings,
+  Download,
+} from 'lucide-react';
 import React, { CSSProperties, Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -102,7 +102,7 @@ const UserDropdownMenu: React.FC<{
       'data-testid': 'dropdown-user-name',
       label: <Typography.Text>{displayName}</Typography.Text>,
       key: 'userFullName',
-      icon: <UserOutlined />,
+      icon: <User size="1em" />,
       disabled: true,
       style: {
         color: token.colorText,
@@ -113,7 +113,7 @@ const UserDropdownMenu: React.FC<{
       'data-testid': 'dropdown-user-email',
       label: userInfo.email,
       key: 'userEmail',
-      icon: <MailOutlined />,
+      icon: <Mail size="1em" />,
       disabled: true,
       style: {
         cursor: 'default',
@@ -126,7 +126,7 @@ const UserDropdownMenu: React.FC<{
       'data-testid': 'dropdown-user-role',
       label: userRole,
       key: 'userRole',
-      icon: <SecurityScanOutlined />,
+      icon: <ShieldCheck size="1em" />,
       disabled: true,
       style: {
         cursor: 'default',
@@ -139,7 +139,7 @@ const UserDropdownMenu: React.FC<{
       'data-testid': 'dropdown-about-backend-ai',
       label: t('webui.menu.AboutBackendAI'),
       key: 'description',
-      icon: <ExclamationCircleOutlined />,
+      icon: <CircleAlert size="1em" />,
       onClick: () => {
         toggleAboutBAIModal();
       },
@@ -148,7 +148,7 @@ const UserDropdownMenu: React.FC<{
       'data-testid': 'dropdown-my-account',
       label: t('webui.menu.MyAccount'),
       key: 'userProfileSetting',
-      icon: <LockOutlined />,
+      icon: <Lock size="1em" />,
       onClick: () => {
         setIsOpenUserSettingModal(true);
       },
@@ -157,7 +157,7 @@ const UserDropdownMenu: React.FC<{
       'data-testid': 'dropdown-preferences',
       label: t('webui.menu.Preferences'),
       key: 'preferences',
-      icon: <SettingOutlined />,
+      icon: <Settings size="1em" />,
       onClick: () => {
         webuiNavigate('/usersettings?tab=general');
       },
@@ -166,7 +166,7 @@ const UserDropdownMenu: React.FC<{
       'data-testid': 'dropdown-logs-errors',
       label: t('webui.menu.LogsErrors'),
       key: 'logs',
-      icon: <FileTextOutlined />,
+      icon: <FileText size="1em" />,
       onClick: () => {
         webuiNavigate('/usersettings?tab=logs');
       },
@@ -175,14 +175,14 @@ const UserDropdownMenu: React.FC<{
       baiClient._config.allowCLIDownloadPanel) && {
       label: t('summary.Downloads'),
       key: 'downloads',
-      icon: <DownloadOutlined />,
+      icon: <Download size="1em" />,
       onClick: () => toggleDownloadModal(),
     },
     {
       'data-testid': 'dropdown-logout',
       label: t('webui.menu.LogOut'),
       key: 'logout',
-      icon: <LogoutOutlined />,
+      icon: <LogOut size="1em" />,
       onClick: () => {
         const event: CustomEvent = new CustomEvent('backend-ai-logout');
         document.dispatchEvent(event);
@@ -223,7 +223,7 @@ const UserDropdownMenu: React.FC<{
                   backgroundColor: token.colorBgBase,
                 }}
               >
-                <UserOutlined style={{ color: token.colorPrimary }} />
+                <User style={{ color: token.colorPrimary }} size="1em" />
               </Avatar>
             }
           >

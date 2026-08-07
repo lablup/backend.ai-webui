@@ -8,7 +8,6 @@ import type {
 } from '../../__generated__/DeploymentTokenSelectQuery.graphql';
 import { theme } from '../../theme-shim';
 import WebUILink from '../WebUILink';
-import { SettingOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
 import { Input, Select, Tooltip } from 'antd';
 import type { SelectProps } from 'antd';
@@ -20,6 +19,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { castArray, maxBy } from 'lodash-es';
+import { Settings } from 'lucide-react';
 import { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -172,7 +172,10 @@ const DeploymentTokenSelectWithQuery: React.FC<
         style={{ flexShrink: 0, display: 'inline-flex' }}
       >
         <Tooltip title={t('deployment.AccessTokenSettings')}>
-          <SettingOutlined style={{ color: themeToken.colorTextSecondary }} />
+          <Settings
+            style={{ color: themeToken.colorTextSecondary }}
+            size="1em"
+          />
         </Tooltip>
       </WebUILink>
     </BAIFlex>

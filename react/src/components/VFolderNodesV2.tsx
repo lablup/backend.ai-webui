@@ -27,12 +27,6 @@ import SharedFolderPermissionInfoModalV2 from './SharedFolderPermissionInfoModal
 import VFolderDeployModal from './VFolderDeployModal';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
 import VFolderPermissionCellV2 from './VFolderPermissionCellV2';
-import {
-  DeleteFilled,
-  DeleteOutlined,
-  QuestionCircleOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { Modal, Skeleton, Tooltip, Typography } from 'antd';
 import {
@@ -57,6 +51,7 @@ import {
 import type { BAINameActionCellAction } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
+import { Trash2, Trash, CircleHelp, User } from 'lucide-react';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -177,7 +172,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
       ? {
           key: 'delete',
           title: t('data.folders.MoveToTrash'),
-          icon: <DeleteOutlined />,
+          icon: <Trash size="1em" />,
           type: 'danger' as const,
           // TODO(needs-backend): V2 `VFolder` does not expose a per-user
           // action permission (legacy `VirtualFolderNode.permissions` had
@@ -223,7 +218,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
       ? {
           key: 'delete-forever',
           title: t('data.folders.Delete'),
-          icon: <DeleteFilled />,
+          icon: <Trash2 size="1em" />,
           type: 'danger' as const,
           disabled: vfolder?.vfolderStatus !== 'DELETE_PENDING',
           onClick: onDeleteForever,
@@ -404,8 +399,9 @@ const HostQuotaModal: React.FC<HostQuotaModalProps> = ({ open, onCancel }) => {
         <BAIFlex gap={'xs'} align="center">
           {t('data.QuotaPerStorageVolume')}
           <Tooltip title={t('data.HostDetails')}>
-            <QuestionCircleOutlined
+            <CircleHelp
               style={{ color: token.colorTextDescription }}
+              size="1em"
             />
           </Tooltip>
         </BAIFlex>
@@ -715,7 +711,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
               return type === 'USER' ? (
                 <BAIFlex gap={'xs'}>
                   <Typography.Text>{t('data.User')}</Typography.Text>
-                  <UserOutlined style={{ color: token.colorTextTertiary }} />
+                  <User style={{ color: token.colorTextTertiary }} size="1em" />
                 </BAIFlex>
               ) : (
                 <BAIFlex gap={'xs'}>

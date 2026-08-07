@@ -10,11 +10,6 @@ import WebServerConfigDiagnosticsSection from '../components/WebServerConfigDiag
 import { downloadCSV } from '../helper/csv-util';
 import { DiagnosticResult } from '../types/diagnostics';
 import {
-  DownloadOutlined,
-  MoreOutlined,
-  ReloadOutlined,
-} from '@ant-design/icons';
-import {
   Collapse,
   Dropdown,
   Empty,
@@ -24,6 +19,7 @@ import {
   message,
 } from 'antd';
 import { BAIButton, BAICard, BAIFlex, useFetchKey } from 'backend.ai-ui';
+import { Download, EllipsisVertical, RotateCw } from 'lucide-react';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { Suspense, useCallback, useRef, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -235,7 +231,12 @@ const DiagnosticsPage = () => {
             {t('diagnostics.ShowOnlyFailedItems')}
           </Typography.Text>
           <BAIButton
-            icon={<ReloadOutlined spin={isPending} />}
+            icon={
+              <RotateCw
+                className={isPending ? 'anticon-spin' : undefined}
+                size="1em"
+              />
+            }
             onClick={handleRefresh}
             loading={isPending}
           >
@@ -246,7 +247,7 @@ const DiagnosticsPage = () => {
               items: [
                 {
                   key: 'export-csv',
-                  icon: <DownloadOutlined />,
+                  icon: <Download size="1em" />,
                   label: t('diagnostics.ExportCSV'),
                   onClick: handleExport,
                 },
@@ -254,7 +255,7 @@ const DiagnosticsPage = () => {
             }}
             trigger={['click']}
           >
-            <BAIButton icon={<MoreOutlined />} />
+            <BAIButton icon={<EllipsisVertical size="1em" />} />
           </Dropdown>
         </BAIFlex>
       }

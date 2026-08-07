@@ -4,8 +4,8 @@
  */
 import { useCurrentMenuKey } from '../hooks/useRouteScope';
 import { useCurrentLanguage } from './DefaultProviders';
-import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Button, type ButtonProps } from 'antd';
+import { CircleHelp } from 'lucide-react';
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -153,7 +153,7 @@ const WEBUIHelpButton: React.FC<WEBUIHelpButtonProps> = ({ ...props }) => {
 
   return (
     <Button
-      icon={<QuestionCircleOutlined />}
+      icon={<CircleHelp size="1em" />}
       type="text"
       target="_blank"
       href={URL}

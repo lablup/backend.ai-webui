@@ -2,7 +2,6 @@ import { filterOutEmpty } from '../helper';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
-import { CloseCircleOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
 import {
   AutoComplete,
@@ -16,6 +15,7 @@ import {
   Tooltip,
 } from 'antd';
 import * as _ from 'lodash-es';
+import { CircleX } from 'lucide-react';
 import React, { ComponentProps, ReactNode, useRef, useState } from 'react';
 
 //github.com/lablup/backend.ai/blob/main/src/ai/backend/manager/models/minilang/queryfilter.py
@@ -519,8 +519,9 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
               <Button
                 size="small"
                 icon={
-                  <CloseCircleOutlined
+                  <CircleX
                     style={{ color: token.colorTextSecondary }}
+                    size="1em"
                   />
                 }
                 type="text"

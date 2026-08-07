@@ -21,7 +21,6 @@ import RouteSchedulingHistoryModal, {
   RouteSchedulingHistoryQuery,
 } from './RouteSchedulingHistoryModal';
 import SessionDetailDrawer from './SessionDetailDrawer';
-import { HistoryOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Skeleton, Tooltip, Typography } from 'antd';
 import {
   BAIButton,
@@ -44,6 +43,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
+import { History, CircleHelp } from 'lucide-react';
 import {
   parseAsInteger,
   parseAsString,
@@ -120,8 +120,9 @@ const DeploymentReplicasCard: React.FC<DeploymentReplicasCardProps> = ({
         <BAIFlex gap="xs" align="center">
           {t('deployment.tab.Replicas')}
           <Tooltip title={t('deployment.tab.description.Replicas')}>
-            <QuestionCircleOutlined
+            <CircleHelp
               style={{ color: token.colorTextDescription }}
+              size="1em"
             />
           </Tooltip>
         </BAIFlex>
@@ -366,7 +367,7 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
             <Tooltip title={t('route.RouteSchedulingHistory')}>
               <BAIButton
                 type="link"
-                icon={<HistoryOutlined />}
+                icon={<History size="1em" />}
                 size="small"
                 style={{ padding: 0 }}
                 action={async () => {

@@ -14,14 +14,13 @@ import ThemeColorPicker, {
 } from './BrandingSettingItems/ThemeColorPicker';
 import ThemeJsonConfigModal from './BrandingSettingItems/ThemeJsonConfigModal';
 import SettingList, { SettingGroup } from './SettingList';
-import { SettingOutlined } from '@ant-design/icons';
 import {
   BAIAlert,
   BAIButton,
   BAIFlex,
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
-import { Fullscreen } from 'lucide-react';
+import { Settings, Fullscreen } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -314,7 +313,7 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
         }
         extraButton={
           <BAIButton
-            icon={<SettingOutlined />}
+            icon={<Settings size="1em" />}
             action={async () => {
               setOpenThemeConfigModal(true);
             }}

@@ -14,7 +14,6 @@ import TextHighlighter from '../components/TextHighlighter';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useModelStoreProject } from '../hooks/useModelStoreProject';
 import { theme } from '../theme-shim';
-import { SwapOutlined } from '@ant-design/icons';
 import {
   Alert,
   Card,
@@ -36,6 +35,7 @@ import {
   useUpdatableState,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
+import { ArrowUpDown } from 'lucide-react';
 import {
   parseAsJson,
   parseAsString,
@@ -440,7 +440,7 @@ const ModelStoreListPageV2: React.FC = () => {
             options={sortOptions}
             labelRender={({ label }) => (
               <BAIFlex direction="row" align="center" gap="xxs">
-                <SwapOutlined rotate={90} />
+                <ArrowUpDown size="1em" />
                 {t('modelStore.Sort')}: {label}
               </BAIFlex>
             )}

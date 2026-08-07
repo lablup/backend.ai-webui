@@ -9,10 +9,10 @@ import { RemainingSlots } from '../../hooks/useResourceLimitAndRemaining';
 import { theme } from '../../theme-shim';
 import InputNumberWithSlider from '../InputNumberWithSlider';
 import RemainingMark from './RemainingMark';
-import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Form, Radio, Tooltip } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { CircleHelp } from 'lucide-react';
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
@@ -69,8 +69,9 @@ const ClusterModeFormItems: React.FC<ClusterModeFormItemsProps> = ({
                         <Trans i18nKey={'session.launcher.DescMultiNode'} />
                       }
                     >
-                      <QuestionCircleOutlined
+                      <CircleHelp
                         style={{ marginLeft: token.marginXXS }}
+                        size="1em"
                       />
                     </Tooltip>
                   </Radio.Button>
@@ -81,8 +82,9 @@ const ClusterModeFormItems: React.FC<ClusterModeFormItemsProps> = ({
                         <Trans i18nKey={'session.launcher.DescSingleNode'} />
                       }
                     >
-                      <QuestionCircleOutlined
+                      <CircleHelp
                         style={{ marginLeft: token.marginXXS }}
+                        size="1em"
                       />
                     </Tooltip>
                   </Radio.Button>

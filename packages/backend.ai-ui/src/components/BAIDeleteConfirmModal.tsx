@@ -4,8 +4,8 @@ import BAIFlex from './BAIFlex';
 import BAIModal, { type BAIModalProps } from './BAIModal';
 import BAIText from './BAIText';
 import { BAITrans } from './BAITrans';
-import { ExclamationCircleFilled } from '@ant-design/icons';
 import { Form, Input, Typography, type InputProps } from 'antd';
+import { CircleAlert } from 'lucide-react';
 import React from 'react';
 
 const { Text } = Typography;
@@ -146,8 +146,9 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
         strong
         style={{ overflowWrap: 'anywhere', wordBreak: 'break-word' }}
       >
-        <ExclamationCircleFilled
+        <CircleAlert
           style={{ color: token.colorWarning, marginRight: token.sizeXXS }}
+          size="1em"
         />
         {resolvedTitle}
       </Text>

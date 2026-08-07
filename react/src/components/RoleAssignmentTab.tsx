@@ -14,7 +14,6 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { theme } from '../theme-shim';
 import AssignRoleModal from './AssignRoleModal';
-import { DeleteFilled } from '@ant-design/icons';
 import { Alert, Tooltip } from 'antd';
 import {
   BAIButton,
@@ -32,7 +31,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { PlusIcon } from 'lucide-react';
+import { Trash2, PlusIcon } from 'lucide-react';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
@@ -259,7 +258,9 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
               />
               <Tooltip title={t('rbac.RevokeUser')}>
                 <BAIButton
-                  icon={<DeleteFilled style={{ color: token.colorError }} />}
+                  icon={
+                    <Trash2 style={{ color: token.colorError }} size="1em" />
+                  }
                   onClick={() => {
                     const userIds = assignments
                       .filter((a) => selectedRowKeys.includes(a?.id ?? ''))
@@ -336,7 +337,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
                         {
                           key: 'delete',
                           title: t('rbac.RevokeUser'),
-                          icon: <DeleteFilled />,
+                          icon: <Trash2 size="1em" />,
                           type: 'danger',
                           onClick: () => handleBulkRevoke([record?.userId]),
                         },

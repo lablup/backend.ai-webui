@@ -10,11 +10,6 @@ import { useSuspenseTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { theme } from '../theme-shim';
-import {
-  CloudUploadOutlined,
-  FilterOutlined,
-  RocketOutlined,
-} from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {
   Button,
@@ -37,7 +32,7 @@ import {
   useErrorMessageResolver,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { CheckIcon } from 'lucide-react';
+import { CloudUpload, Filter, Rocket, CheckIcon } from 'lucide-react';
 import Markdown from 'markdown-to-jsx';
 import React, {
   Suspense,
@@ -73,7 +68,7 @@ const ReadmeFallbackCard = () => {
       size="small"
       title={
         <BAIFlex direction="row" gap="xs">
-          <FilterOutlined />
+          <Filter size="1em" />
           README.md
         </BAIFlex>
       }
@@ -357,7 +352,7 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
                 size="small"
                 title={
                   <BAIFlex direction="row" gap="xs">
-                    <FilterOutlined />
+                    <Filter size="1em" />
                     README.md
                   </BAIFlex>
                 }
@@ -470,8 +465,9 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
               {importResult?.folder?.name && (
                 <Typography.Paragraph>
                   <Typography.Text>
-                    <CloudUploadOutlined
+                    <CloudUpload
                       style={{ marginRight: token.marginXXS }}
+                      size="1em"
                     />
                     {t('data.modelStore.ModelFolderName')}:{' '}
                     <Typography.Text copyable>
@@ -483,7 +479,10 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
               {importResult?.service?.name && (
                 <Typography.Paragraph>
                   <Typography.Text>
-                    <RocketOutlined style={{ marginRight: token.marginXXS }} />
+                    <Rocket
+                      style={{ marginRight: token.marginXXS }}
+                      size="1em"
+                    />
                     {t('data.modelStore.ServiceName')}:{' '}
                     <Typography.Text copyable>
                       {importResult?.service?.name}

@@ -9,7 +9,6 @@ import {
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
-import { SettingOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { Button, Tag, Tooltip, Typography } from 'antd';
 import {
@@ -24,6 +23,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
+import { Settings } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -237,7 +237,7 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
                 extraContent: (
                   <Button
                     type="text"
-                    icon={<SettingOutlined />}
+                    icon={<Settings size="1em" />}
                     onClick={() => toggleColumnSettingModal()}
                   />
                 ),

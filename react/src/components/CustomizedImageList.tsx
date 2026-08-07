@@ -20,12 +20,6 @@ import { theme } from '../theme-shim';
 import AliasedImageDoubleTags from './AliasedImageDoubleTags';
 import { ImageTags } from './ImageTags';
 import TextHighlighter from './TextHighlighter';
-import {
-  DeleteFilled,
-  ReloadOutlined,
-  SearchOutlined,
-  SettingOutlined,
-} from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { Button, Input, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
@@ -40,6 +34,7 @@ import {
   useUpdatableState,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { Trash2, RotateCw, Search, Settings } from 'lucide-react';
 import React, { useMemo, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
@@ -247,7 +242,7 @@ const CustomizedImageList: React.FC = () => {
         <BAIFlex direction="row" align="stretch" justify="center" gap="xxs">
           <Button
             type="text"
-            icon={<DeleteFilled />}
+            icon={<Trash2 size="1em" />}
             onClick={() => {
               setImageToDelete(row || null);
             }}
@@ -391,7 +386,7 @@ const CustomizedImageList: React.FC = () => {
         <BAIFlex justify="between" gap="xs" wrap="wrap">
           <Input
             allowClear
-            prefix={<SearchOutlined />}
+            prefix={<Search size="1em" />}
             placeholder={t('environment.SearchImages')}
             onChange={(e) => {
               startSearchTransition(() => setImageSearch(e.target.value));
@@ -401,7 +396,7 @@ const CustomizedImageList: React.FC = () => {
             }}
           />
           <Button
-            icon={<ReloadOutlined />}
+            icon={<RotateCw size="1em" />}
             loading={isRefetchPending}
             onClick={() => {
               startRefetchTransition(() => updateCustomizedImageListFetchKey());
@@ -425,7 +420,7 @@ const CustomizedImageList: React.FC = () => {
             extraContent: (
               <Button
                 type="text"
-                icon={<SettingOutlined />}
+                icon={<Settings size="1em" />}
                 onClick={() => {
                   toggleColumnSettingModal();
                 }}

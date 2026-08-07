@@ -4,12 +4,12 @@
  */
 import { theme } from '../theme-shim';
 import SettingItem, { SettingItemProps } from './SettingItem';
-import { RedoOutlined, SearchOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { Alert, Checkbox, Divider, Empty, Input, Tabs, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIModal, BAIFlex, BAIButton } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { Redo2, Search } from 'lucide-react';
 import React, { useState, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -172,7 +172,7 @@ const SettingList: React.FC<SettingPageProps> = ({
         <BAIFlex justify="start" gap={'xs'}>
           {!!showSearchBar && (
             <Input
-              prefix={<SearchOutlined />}
+              prefix={<Search size="1em" />}
               placeholder={t('settings.SearchPlaceholder')}
               onChange={(e) => setSearchValue(e.target.value)}
               value={searchValue}
@@ -190,7 +190,7 @@ const SettingList: React.FC<SettingPageProps> = ({
           {!!showResetButton && (
             <BAIButton
               danger
-              icon={<RedoOutlined />}
+              icon={<Redo2 size="1em" />}
               onClick={() => setIsOpenResetChangesModal()}
             >
               {t('button.Reset')}

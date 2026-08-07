@@ -18,9 +18,9 @@ import BAIText from '../BAIText';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
 import { BAIColumnsType, BAITable } from '../Table';
 import BAIArtifactDescriptions from './BAIArtifactDescriptions';
-import { QuestionCircleFilled } from '@ant-design/icons';
 import { Alert, Modal, Tooltip, type ModalProps } from 'antd';
 import * as _ from 'lodash-es';
+import { CircleHelp } from 'lucide-react';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
 type ArtifactRevision =
@@ -187,11 +187,12 @@ const BAIDeleteArtifactRevisionsModal = ({
                     'comp:BAIDeleteArtifactModal.OnlyVersionsNotInPULLINGOrSCANNED',
                   )}
                 >
-                  <QuestionCircleFilled
+                  <CircleHelp
                     style={{
                       color: token.colorInfo,
                       marginRight: token.marginXS,
                     }}
+                    size="1em"
                   />
                 </Tooltip>
               }

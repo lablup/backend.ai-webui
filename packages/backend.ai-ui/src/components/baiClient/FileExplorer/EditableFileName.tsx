@@ -6,12 +6,11 @@ import BAILink from '../../BAILink';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import { FolderInfoContext } from './BAIFileExplorer';
-import { FileOutlined, FolderOutlined } from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
 import { Form, Input, Typography, type GetProps } from 'antd';
 import { createStyles } from 'antd-style';
 import * as _ from 'lodash-es';
-import { CornerDownLeftIcon } from 'lucide-react';
+import { File, Folder, CornerDownLeftIcon } from 'lucide-react';
 import { use, useRef, useState } from 'react';
 
 interface ServerError extends Error {
@@ -155,12 +154,12 @@ const EditableFileName: React.FC<EditableNameProps> = ({
               ellipsis
               title={fileInfo.name}
             >
-              <FolderOutlined style={{ color: token.colorLink }} /> &nbsp;
+              <Folder style={{ color: token.colorLink }} size="1em" /> &nbsp;
               {isPendingRenamingAndRefreshing ? optimisticName : fileInfo.name}
             </BAILink>
           ) : (
             <BAIFlex gap="xs" style={{ display: 'inline-flex' }}>
-              <FileOutlined />
+              <File size="1em" />
               <Typography.Text
                 style={{
                   maxWidth: 200,

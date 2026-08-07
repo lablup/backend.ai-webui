@@ -7,9 +7,9 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import OverlayNetworkSettingModal from './OverlayNetworkSettingModal';
 import SchedulerSettingModal from './SchedulerSettingModal';
 import SettingList, { SettingGroup } from './SettingList';
-import { SettingOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { Alert, Button } from 'antd';
+import { Settings } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -175,7 +175,7 @@ const ConfigurationsSettingList = () => {
           description: t('settings.OverlayNetworkConfiguration'),
           children: (
             <Button
-              icon={<SettingOutlined />}
+              icon={<Settings size="1em" />}
               onClick={toggleOverlayNetworkModal}
             >
               {t('settings.Config')}
@@ -188,7 +188,10 @@ const ConfigurationsSettingList = () => {
           title: t('settings.Scheduler'),
           description: t('settings.SchedulerConfiguration'),
           children: (
-            <Button icon={<SettingOutlined />} onClick={toggleSchedulerModal}>
+            <Button
+              icon={<Settings size="1em" />}
+              onClick={toggleSchedulerModal}
+            >
               {t('settings.Config')}
             </Button>
           ),

@@ -3,10 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { theme } from '../theme-shim';
-import { MinusCircleOutlined } from '@ant-design/icons';
 import { Checkbox, Collapse, Form, Input, InputNumber, Select } from 'antd';
 import { BAIButton, BAICard, BAIFlex } from 'backend.ai-ui';
-import { PlusIcon } from 'lucide-react';
+import { CircleMinus, PlusIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -148,7 +147,7 @@ const ModelConfigItem: React.FC<{
                           placeholder={t('general.Example', { value: '{}' })}
                         />
                       </Form.Item>
-                      <MinusCircleOutlined onClick={() => remove(name)} />
+                      <CircleMinus size="1em" onClick={() => remove(name)} />
                     </BAIFlex>
                   ))}
                   <Form.Item noStyle>

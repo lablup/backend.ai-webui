@@ -8,7 +8,6 @@ import { useWebUINavigate } from '../hooks';
 import { AIAgent, useAIAgent } from '../hooks/useAIAgent';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { theme } from '../theme-shim';
-import { DeleteFilled, MoreOutlined, UndoOutlined } from '@ant-design/icons';
 import { Button, Col, Dropdown, Row, Skeleton, Tag, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import {
@@ -19,7 +18,13 @@ import {
   BAIDeleteConfirmModal,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { PlusIcon, SquarePenIcon } from 'lucide-react';
+import {
+  Trash2,
+  EllipsisVertical,
+  Undo2,
+  PlusIcon,
+  SquarePenIcon,
+} from 'lucide-react';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -74,7 +79,7 @@ const AIAgentCard: React.FC<AIAgentCardProps> = ({
       onReset && {
         key: 'reset',
         label: t('aiAgent.ResetToDefault'),
-        icon: <UndoOutlined />,
+        icon: <Undo2 size="1em" />,
         onClick: (e: { domEvent: React.MouseEvent | React.KeyboardEvent }) => {
           e.domEvent.stopPropagation();
           onReset(agent);
@@ -89,7 +94,7 @@ const AIAgentCard: React.FC<AIAgentCardProps> = ({
         key: 'delete',
         danger: true,
         label: t('aiAgent.DeleteAgent'),
-        icon: <DeleteFilled />,
+        icon: <Trash2 size="1em" />,
         onClick: (e: { domEvent: React.MouseEvent | React.KeyboardEvent }) => {
           e.domEvent.stopPropagation();
           onDelete(agent);
@@ -104,7 +109,7 @@ const AIAgentCard: React.FC<AIAgentCardProps> = ({
           <Button
             type="text"
             className="agent-more-button"
-            icon={<MoreOutlined />}
+            icon={<EllipsisVertical size="1em" />}
             size="small"
             style={{
               position: 'absolute',

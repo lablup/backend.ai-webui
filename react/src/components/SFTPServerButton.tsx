@@ -20,7 +20,6 @@ import {
   StartSessionWithDefaultValue,
   useStartSession,
 } from '../hooks/useStartSession';
-import { EllipsisOutlined } from '@ant-design/icons';
 import { Dropdown, Image, Space, Tooltip } from 'antd';
 import {
   BAIButton,
@@ -30,6 +29,7 @@ import {
   useErrorMessageResolver,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { Ellipsis } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
@@ -206,7 +206,7 @@ const SFTPServerButton: React.FC<SFTPServerButtonProps> = ({
             ],
           }}
         >
-          <BAIButton icon={<EllipsisOutlined />} />
+          <BAIButton icon={<Ellipsis size="1em" />} />
         </Dropdown>
       </Space.Compact>
     </Tooltip>

@@ -10,7 +10,6 @@ import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
-import { ReloadOutlined } from '@ant-design/icons';
 import { Button, Select, type SelectProps, Space, Tooltip } from 'antd';
 import {
   BAIButton,
@@ -20,7 +19,7 @@ import {
   toLocalId,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { FolderOpenIcon, PlusIcon } from 'lucide-react';
+import { RotateCw, FolderOpenIcon, PlusIcon } from 'lucide-react';
 import React, {
   Suspense,
   startTransition,
@@ -298,7 +297,7 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
         {showRefreshButton ? (
           <Tooltip title={t('button.Refresh')}>
             <Button
-              icon={<ReloadOutlined />}
+              icon={<RotateCw size="1em" />}
               variant="text"
               onClick={() => {
                 startTransition(() => {

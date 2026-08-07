@@ -9,10 +9,10 @@ import {
 } from '../../hooks';
 import { useTanMutation } from '../../hooks/reactQueryAlias';
 import { theme } from '../../theme-shim';
-import { EditOutlined } from '@ant-design/icons';
 import { Button, Form, type FormInstance, Input, Typography } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { SquarePen } from 'lucide-react';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -158,7 +158,7 @@ const SessionInfoCell: React.FC<{
             <Button
               loading={isPendingRename}
               type="text"
-              icon={<EditOutlined />}
+              icon={<SquarePen size="1em" />}
               style={{ color: token.colorLink }}
               onClick={() => {
                 formRef.current?.setFieldsValue({

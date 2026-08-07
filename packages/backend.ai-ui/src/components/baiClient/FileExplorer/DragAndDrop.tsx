@@ -1,9 +1,9 @@
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
 import { theme } from '../../../theme-shim';
 import { useUploadVFolderFiles } from './hooks';
-import { InboxOutlined } from '@ant-design/icons';
 import { Typography, Upload } from 'antd';
 import type { RcFile } from 'antd/es/upload';
+import { Inbox } from 'lucide-react';
 import { useRef } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -43,7 +43,7 @@ const DragAndDrop: React.FC<DragAndDropProps> = ({
       }}
     >
       <p>
-        <InboxOutlined style={{ fontSize: token.fontSizeHeading1 }} />
+        <Inbox style={{ fontSize: token.fontSizeHeading1 }} size="1em" />
       </p>
       <Typography.Text style={{ fontSize: token.fontSizeHeading4 }}>
         {t('comp:FileExplorer.DragAndDropDesc')}

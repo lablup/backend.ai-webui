@@ -16,10 +16,10 @@ import {
   BAITableProps,
 } from '../Table';
 import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
-import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
+import { CircleHelp } from 'lucide-react';
 import { graphql, useFragment } from 'react-relay';
 
 export type RuntimeVariantPresetNodeInList = NonNullable<
@@ -200,8 +200,9 @@ const BAIRuntimeVariantPresetTable = ({
           <BAIFlex gap="xs" align="center">
             {t('comp:BAIRuntimeVariantPresetTable.Rank')}
             <Tooltip title={t('comp:BAIRuntimeVariantPresetTable.RankTooltip')}>
-              <QuestionCircleOutlined
+              <CircleHelp
                 style={{ color: token.colorTextDescription }}
+                size="1em"
               />
             </Tooltip>
           </BAIFlex>

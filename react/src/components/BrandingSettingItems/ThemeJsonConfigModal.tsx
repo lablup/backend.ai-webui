@@ -8,7 +8,6 @@ import { loadMonacoEditor } from '../../helper/monacoEditor';
 import { useDefaultTheme } from '../../hooks/useDefaultTheme';
 import { useThemeMode } from '../../hooks/useThemeMode';
 import { theme } from '../../theme-shim';
-import { ExportOutlined, ImportOutlined } from '@ant-design/icons';
 import type { Monaco } from '@monaco-editor/react';
 import { Alert, Skeleton, Upload } from 'antd';
 import {
@@ -19,6 +18,7 @@ import {
   useBAILogger,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { ExternalLink, Import } from 'lucide-react';
 import React, { Suspense, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -97,12 +97,12 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
                 return false;
               }}
             >
-              <BAIButton icon={<ImportOutlined />}>
+              <BAIButton icon={<Import size="1em" />}>
                 {t('theme.button.ImportFromJson')}
               </BAIButton>
             </Upload>
             <BAIButton
-              icon={<ExportOutlined />}
+              icon={<ExternalLink size="1em" />}
               action={async () => {
                 const markers =
                   await monacoRef.current?.editor.getModelMarkers();

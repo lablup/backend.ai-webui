@@ -2,13 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import {
-  CheckCircleOutlined,
-  ClockCircleOutlined,
-  CloseCircleOutlined,
-  LoadingOutlined,
-} from '@ant-design/icons';
 import { Spin, Tag } from 'antd';
+import { CircleCheck, Clock, CircleX, LoaderCircle } from 'lucide-react';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -37,18 +32,24 @@ const ValidationStatusTag: React.FC<ValidationStatusTagProps> = ({
   };
 
   return (
-    <Suspense fallback={<Spin indicator={<LoadingOutlined spin />} />}>
+    <Suspense
+      fallback={
+        <Spin
+          indicator={<LoaderCircle className="anticon-spin" size="1em" />}
+        />
+      }
+    >
       <Tag
         color={getStatusColor(status)}
         icon={
           status === 'processing' ? (
-            <LoadingOutlined spin />
+            <LoaderCircle className="anticon-spin" size="1em" />
           ) : status === 'finished' ? (
-            <CheckCircleOutlined />
+            <CircleCheck size="1em" />
           ) : status === 'error' ? (
-            <CloseCircleOutlined />
+            <CircleX size="1em" />
           ) : (
-            <ClockCircleOutlined />
+            <Clock size="1em" />
           )
         }
       >

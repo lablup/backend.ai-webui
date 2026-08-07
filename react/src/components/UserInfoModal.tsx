@@ -5,10 +5,10 @@
 import { UserInfoModalFragment$key } from '../__generated__/UserInfoModalFragment.graphql';
 import { useTOTPSupported } from '../hooks/backendai';
 import { theme } from '../theme-shim';
-import { WarningOutlined } from '@ant-design/icons';
 import { Descriptions, type DescriptionsProps, Tag, Spin, Tooltip } from 'antd';
 import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { TriangleAlert } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -148,7 +148,7 @@ const UserInfoModal: React.FC<Props> = ({
         <Descriptions.Item>
           {user && !user.projects ? (
             <Tooltip title={t('credential.FailedToLoadProjects')}>
-              <WarningOutlined style={{ color: token.colorError }} />
+              <TriangleAlert style={{ color: token.colorError }} size="1em" />
             </Tooltip>
           ) : (
             <BAIFlex gap="xs" wrap="wrap">

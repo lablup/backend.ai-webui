@@ -9,7 +9,6 @@ import { useCurrentDomainValue } from '../hooks';
 import { theme } from '../theme-shim';
 import DomainStoragePermissionTable from './DomainStoragePermissionTable';
 import ProjectStoragePermissionTable from './ProjectStoragePermissionTable';
-import { CheckCircleOutlined } from '@ant-design/icons';
 import { Space, Typography } from 'antd';
 import {
   BAIAlert,
@@ -20,6 +19,7 @@ import {
   BAISelect,
   useFetchKey,
 } from 'backend.ai-ui';
+import { CircleCheck } from 'lucide-react';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
@@ -166,7 +166,7 @@ const ProjectFolderPermissionPanel: React.FC<
         extra={
           <BAIFlex gap="sm" align="center" wrap="wrap">
             <BAIFlex gap="xxs" align="center">
-              <CheckCircleOutlined style={{ color: token.colorSuccess }} />
+              <CircleCheck style={{ color: token.colorSuccess }} size="1em" />
               <Typography.Text
                 type="secondary"
                 style={{ fontSize: token.fontSizeSM }}
@@ -175,7 +175,7 @@ const ProjectFolderPermissionPanel: React.FC<
               </Typography.Text>
             </BAIFlex>
             <BAIFlex gap="xxs" align="center">
-              <CheckCircleOutlined style={{ color: token.purple5 }} />
+              <CircleCheck style={{ color: token.purple5 }} size="1em" />
               <Typography.Text
                 type="secondary"
                 style={{ fontSize: token.fontSizeSM }}

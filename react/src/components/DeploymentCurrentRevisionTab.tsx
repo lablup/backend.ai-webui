@@ -7,9 +7,9 @@ import type { DeploymentRevisionDetail_revision$key } from '../__generated__/Dep
 import { theme } from '../theme-shim';
 import DeploymentRevisionDetail from './DeploymentRevisionDetail';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
-import { LoadingOutlined } from '@ant-design/icons';
 import { Alert, Button, Empty } from 'antd';
 import { BAIUnmountAfterClose, toLocalId } from 'backend.ai-ui';
+import { LoaderCircle } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -78,7 +78,7 @@ const DeploymentCurrentRevisionTab: React.FC<
       {isDeployingDifferentRevision && (
         <Alert
           type="info"
-          icon={<LoadingOutlined spin />}
+          icon={<LoaderCircle className="anticon-spin" size="1em" />}
           showIcon
           style={{ marginBottom: token.marginMD }}
           title={t('deployment.ApplyingRevision', {

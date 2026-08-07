@@ -13,15 +13,13 @@ import type { ChatModel, ChatParameters } from './ChatModel';
 import { ChatParametersSliders } from './ChatParametersSliders';
 import DeploymentSelect, { DeploymentSelectProps } from './DeploymentSelect';
 import ModelSelect from './ModelSelect';
-import {
-  CloseOutlined,
-  ControlOutlined,
-  MoreOutlined,
-} from '@ant-design/icons';
 import { Dropdown, Button, type MenuProps, Popover, Tooltip } from 'antd';
 import { filterOutEmpty, BAIFlex, toLocalId } from 'backend.ai-ui';
 import { isEmpty } from 'lodash-es';
 import {
+  X,
+  SlidersHorizontal,
+  EllipsisVertical,
   ScaleIcon,
   EraserIcon,
   ToggleRightIcon,
@@ -164,7 +162,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
       key: 'close',
       danger: true,
       label: t('chatui.DeleteChattingSession'),
-      icon: <CloseOutlined />,
+      icon: <X size="1em" />,
       onClick: () => {
         onRemoveChat?.();
       },
@@ -271,10 +269,11 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
             <Button
               type="text"
               icon={
-                <ControlOutlined
+                <SlidersHorizontal
                   style={{
                     color: usingParameters ? token.colorPrimary : undefined,
                   }}
+                  size="1em"
                 />
               }
             />
@@ -293,7 +292,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
           <Button
             type="text"
             onClick={(e) => e.preventDefault()}
-            icon={<MoreOutlined />}
+            icon={<EllipsisVertical size="1em" />}
             style={{ color: token.colorTextSecondary }}
           />
         </Dropdown>

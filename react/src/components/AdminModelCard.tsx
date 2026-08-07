@@ -22,7 +22,6 @@ import { theme } from '../theme-shim';
 import AdminModelCardSettingModal from './AdminModelCardSettingModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
-import { DeleteFilled, ExclamationCircleFilled } from '@ant-design/icons';
 import { Checkbox, Tooltip, Typography } from 'antd';
 import {
   BAIButton,
@@ -49,7 +48,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { PlusIcon, SquarePenIcon } from 'lucide-react';
+import { Trash2, CircleAlert, PlusIcon, SquarePenIcon } from 'lucide-react';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -246,7 +245,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
             {
               key: 'delete',
               title: t('button.Delete'),
-              icon: <DeleteFilled />,
+              icon: <Trash2 size="1em" />,
               type: 'danger' as const,
               onClick: () => handleDeleteModelCard(modelCard),
             },
@@ -378,7 +377,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                 onClearSelection={() => setSelectedModelCards([])}
               />
               <BAIButton
-                icon={<DeleteFilled style={{ color: token.colorError }} />}
+                icon={<Trash2 style={{ color: token.colorError }} size="1em" />}
                 onClick={handleBulkDelete}
                 loading={isBulkDeleteInFlight}
               />
@@ -511,7 +510,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
             {alsoDeleteFolder && (
               <BAIAlert
                 type="error"
-                icon={<ExclamationCircleFilled />}
+                icon={<CircleAlert size="1em" />}
                 showIcon
                 description={t(
                   'adminModelCard.AlsoDeleteModelFolderCascadeWarning',
@@ -611,7 +610,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
             {alsoDeleteFoldersBulk && (
               <BAIAlert
                 type="error"
-                icon={<ExclamationCircleFilled />}
+                icon={<CircleAlert size="1em" />}
                 showIcon
                 description={t(
                   'adminModelCard.AlsoDeleteModelFoldersCascadeWarning',

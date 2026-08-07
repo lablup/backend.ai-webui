@@ -24,10 +24,10 @@ import {
   BAITableProps,
 } from '../Table';
 import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
-import { ExclamationCircleOutlined, HistoryOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
+import { CircleAlert, History } from 'lucide-react';
 import { graphql, useFragment } from 'react-relay';
 
 export type RouteNodeInList = NonNullable<BAIRouteNodesFragment$data[number]>;
@@ -130,7 +130,7 @@ const BAIRouteNodes = ({
               <BAIButton
                 size="small"
                 type="text"
-                icon={<ExclamationCircleOutlined />}
+                icon={<CircleAlert size="1em" />}
                 style={{ color: token.colorError }}
                 onClick={() => {
                   onClickErrorData?.(record.errorData);
@@ -183,7 +183,7 @@ const BAIRouteNodes = ({
               <Tooltip title={t('comp:BAIRouteNodes.SchedulingHistory')}>
                 <BAIButton
                   type="text"
-                  icon={<HistoryOutlined />}
+                  icon={<History size="1em" />}
                   size="small"
                   onClick={() =>
                     onClickSchedulingHistory(

@@ -6,12 +6,12 @@ import { useBAINotificationState } from '../hooks/useBAINotification';
 import useKeyboardShortcut from '../hooks/useKeyboardShortcut';
 import ReverseThemeProvider from './ReverseThemeProvider';
 import WEBUINotificationDrawer from './WEBUINotificationDrawer';
-import { BellOutlined } from '@ant-design/icons';
 import { Badge, Button, Tooltip, Typography, type ButtonProps } from 'antd';
 import { BAIText } from 'backend.ai-ui';
 import { t } from 'i18next';
 import { atom, useAtom } from 'jotai';
 import * as _ from 'lodash-es';
+import { Bell } from 'lucide-react';
 import React from 'react';
 
 export const isOpenDrawerState = atom(false);
@@ -59,7 +59,7 @@ const BAINotificationButton: React.FC<ButtonProps> = ({ ...props }) => {
                 <Badge color="red" dot={hasRunningBackgroundTask}>
                   <ReverseThemeProvider>
                     <Typography.Text>
-                      <BellOutlined />
+                      <Bell size="1em" />
                     </Typography.Text>
                   </ReverseThemeProvider>
                 </Badge>

@@ -1,8 +1,8 @@
 import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
-import { CloseCircleTwoTone, WarningTwoTone } from '@ant-design/icons';
 import { Button, Card, type CardProps } from 'antd';
 import * as _ from 'lodash-es';
+import { CircleX, TriangleAlert } from 'lucide-react';
 import React, { cloneElement, isValidElement } from 'react';
 import type { ReactNode } from 'react';
 
@@ -102,9 +102,9 @@ const BAICard: React.FC<BAICardProps> = ({
         type="link"
         icon={
           status === 'error' ? (
-            <CloseCircleTwoTone twoToneColor={token.colorError} />
+            <CircleX style={{ color: token.colorError }} size="1em" />
           ) : status === 'warning' ? (
-            <WarningTwoTone twoToneColor={token.colorWarning} />
+            <TriangleAlert style={{ color: token.colorWarning }} size="1em" />
           ) : undefined
         }
         onClick={onClickExtraButton}

@@ -8,7 +8,6 @@ import {
 } from '../../__generated__/DomainFairShareTableFragment.graphql';
 import { theme } from '../../theme-shim';
 import DomainResourceGroupWarningIcon from './DomainResourceGroupWarningIcon';
-import { SettingOutlined } from '@ant-design/icons';
 import { Divider, Typography } from 'antd';
 import {
   BAIQuestionIconWithTooltip,
@@ -22,6 +21,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
+import { Settings } from 'lucide-react';
 import { parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -137,7 +137,7 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
             {
               key: 'settings',
               title: t('button.Settings'),
-              icon: <SettingOutlined />,
+              icon: <Settings size="1em" />,
               onClick: () => {
                 onOpenWeightSetting?.(record);
               },

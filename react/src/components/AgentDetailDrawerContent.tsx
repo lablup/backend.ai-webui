@@ -10,7 +10,6 @@ import AgentComputePlugins from './AgentNodeItems/AgentComputePlugins';
 import AgentResources from './AgentNodeItems/AgentResources';
 import AgentStatusTag from './AgentNodeItems/AgentStatusTag';
 import BAIErrorBoundary from './BAIErrorBoundary';
-import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { Descriptions, Grid, Tabs, Typography } from 'antd';
 import {
   BAIDoubleTag,
@@ -20,6 +19,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
+import { Check, X } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -104,9 +104,9 @@ const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
         </Descriptions.Item>
         <Descriptions.Item label={t('agent.Schedulable')}>
           {agent?.schedulable ? (
-            <CheckOutlined style={{ color: token.colorSuccess }} />
+            <Check style={{ color: token.colorSuccess }} size="1em" />
           ) : (
-            <CloseOutlined style={{ color: token.colorTextDisabled }} />
+            <X style={{ color: token.colorTextDisabled }} size="1em" />
           )}
         </Descriptions.Item>
         <Descriptions.Item label={t('agent.Status')} span={md ? 2 : 1}>

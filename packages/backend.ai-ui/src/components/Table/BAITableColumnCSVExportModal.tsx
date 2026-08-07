@@ -3,10 +3,10 @@ import { theme } from '../../theme-shim';
 import BAIButton from '../BAIButton';
 import BAIModal, { BAIModalProps } from '../BAIModal';
 import { BAIColumnsType } from './BAITable';
-import { SearchOutlined } from '@ant-design/icons';
 import { Input, Form, Table, Checkbox, Typography } from 'antd';
 import type { TableColumnsType } from 'antd';
 import * as _ from 'lodash-es';
+import { Search } from 'lucide-react';
 import React, { useState } from 'react';
 
 interface BAITableColumnCSVExportModalProps<T = unknown> extends BAIModalProps {
@@ -183,7 +183,7 @@ const BAITableColumnCSVExportModal = <T,>({
           style={{ marginBottom: token.marginSM }}
         >
           <Input
-            prefix={<SearchOutlined />}
+            prefix={<Search size="1em" />}
             placeholder={t('comp:BAITable.SearchTableColumn')}
             value={searchKeyword}
             onChange={(e) => setSearchKeyword(e.target.value)}

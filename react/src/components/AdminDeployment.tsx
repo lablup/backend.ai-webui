@@ -17,7 +17,6 @@ import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import BAIRadioGroup from './BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import DeploymentSettingModal from './DeploymentSettingModal';
-import { DeleteFilled } from '@ant-design/icons';
 import { Typography } from 'antd';
 import {
   BAIDeleteConfirmModal,
@@ -38,7 +37,7 @@ import {
   useBAILogger,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { SquarePenIcon } from 'lucide-react';
+import { Trash2, SquarePenIcon } from 'lucide-react';
 import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -388,7 +387,7 @@ const AdminDeployment = ({
                             {
                               key: 'delete',
                               title: t('deployment.DeleteDeployment'),
-                              icon: <DeleteFilled />,
+                              icon: <Trash2 size="1em" />,
                               type: 'danger',
                               disabled: destroying,
                               onClick: () => setDeletingDeploymentId(record.id),

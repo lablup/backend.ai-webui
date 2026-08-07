@@ -9,7 +9,6 @@ import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { theme } from '../theme-shim';
 import VFolderPermissionCellV2 from './VFolderPermissionCellV2';
-import { UserOutlined } from '@ant-design/icons';
 import {
   Alert,
   Button,
@@ -28,7 +27,7 @@ import {
   useErrorMessageResolver,
   toLocalId,
 } from 'backend.ai-ui';
-import { LogOut } from 'lucide-react';
+import { User, LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
@@ -107,7 +106,7 @@ const SharedFolderPermissionInfoModalV2: React.FC<
             {isUserOwned ? (
               <BAIFlex gap={'xs'}>
                 <Typography.Text>{t('data.User')}</Typography.Text>
-                <UserOutlined style={{ color: token.colorTextTertiary }} />
+                <User style={{ color: token.colorTextTertiary }} size="1em" />
               </BAIFlex>
             ) : (
               <BAIFlex gap={'xs'}>

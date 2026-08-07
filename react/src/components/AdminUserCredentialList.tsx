@@ -16,11 +16,6 @@ import { theme } from '../theme-shim';
 import BAIRadioGroup from './BAIRadioGroup';
 import KeypairInfoModal from './KeypairInfoModal';
 import KeypairSettingModal from './KeypairSettingModal';
-import {
-  DeleteFilled,
-  InfoCircleOutlined,
-  ReloadOutlined,
-} from '@ant-design/icons';
 import { Button, Tag, Tooltip, Typography } from 'antd';
 import {
   filterOutEmpty,
@@ -39,7 +34,15 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { BanIcon, PlusIcon, SquarePenIcon, UndoIcon } from 'lucide-react';
+import {
+  Trash2,
+  Info,
+  RotateCw,
+  BanIcon,
+  PlusIcon,
+  SquarePenIcon,
+  UndoIcon,
+} from 'lucide-react';
 import { parseAsString, useQueryState, useQueryStates } from 'nuqs';
 import { useDeferredValue, useEffect, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -356,7 +359,7 @@ const AdminUserCredentialList: React.FC = () => {
               onClick={() => {
                 updateFetchKey();
               }}
-              icon={<ReloadOutlined />}
+              icon={<RotateCw size="1em" />}
             />
           </Tooltip>
           <BAIButton
@@ -410,7 +413,7 @@ const AdminUserCredentialList: React.FC = () => {
                 {
                   key: 'info',
                   title: t('button.Info'),
-                  icon: <InfoCircleOutlined />,
+                  icon: <Info size="1em" />,
                   onClick: () => {
                     startInfoModalOpenTransition(() => {
                       setKeypairInfoModalFrgmt(record);
@@ -534,7 +537,7 @@ const AdminUserCredentialList: React.FC = () => {
                       {
                         key: 'delete',
                         title: t('button.Delete'),
-                        icon: <DeleteFilled />,
+                        icon: <Trash2 size="1em" />,
                         type: 'danger' as const,
                         onClick: () => {
                           setDeletingKeypair(record);

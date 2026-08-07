@@ -23,11 +23,6 @@ import PurgeUsersModal from './PurgeUsersModal';
 import UpdateUsersModal from './UpdateUsersModal';
 import UserInfoModal from './UserInfoModal';
 import UserSettingModal from './UserSettingModal';
-import {
-  DeleteFilled,
-  EllipsisOutlined,
-  InfoCircleOutlined,
-} from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { Button, Dropdown, Space } from 'antd';
 import {
@@ -50,7 +45,15 @@ import {
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { BanIcon, PlusIcon, SquarePenIcon, UndoIcon } from 'lucide-react';
+import {
+  Trash2,
+  Ellipsis,
+  Info,
+  BanIcon,
+  PlusIcon,
+  SquarePenIcon,
+  UndoIcon,
+} from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, { useState, useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -218,7 +221,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
           {
             key: 'info',
             title: t('credential.UserDetail'),
-            icon: <InfoCircleOutlined />,
+            icon: <Info size="1em" />,
             onClick: () => {
               setSelectedUserForInfoModal(findUserNode(record.id));
             },
@@ -290,7 +293,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
           !isActive && {
             key: 'purge',
             title: t('credential.PermanentlyDelete'),
-            icon: <DeleteFilled />,
+            icon: <Trash2 size="1em" />,
             type: 'danger' as const,
             onClick: () => {
               if (record?.id) {
@@ -464,7 +467,9 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
               />
               {queryParams.status === 'INACTIVE' && (
                 <BAIButton
-                  icon={<DeleteFilled style={{ color: token.colorError }} />}
+                  icon={
+                    <Trash2 style={{ color: token.colorError }} size="1em" />
+                  }
                   onClick={togglePurgeUsersModal}
                 />
               )}
@@ -508,7 +513,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
                 }}
                 placement="bottomRight"
               >
-                <Button type="primary" icon={<EllipsisOutlined />} />
+                <Button type="primary" icon={<Ellipsis size="1em" />} />
               </Dropdown>
             )}
           </Space.Compact>

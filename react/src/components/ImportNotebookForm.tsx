@@ -11,7 +11,6 @@ import {
 } from '../hooks/useStartSession';
 import CopyButton from './Chat/CopyButton';
 import { PrimaryAppOption } from './ComputeSessionNodeItems/SessionActionButtons';
-import { EllipsisOutlined } from '@ant-design/icons';
 import {
   Divider,
   Dropdown,
@@ -29,7 +28,7 @@ import {
   useBAILogger,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
-import { FolderInput } from 'lucide-react';
+import { Ellipsis, FolderInput } from 'lucide-react';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -185,7 +184,7 @@ const ImportNotebookForm: React.FC<ImportNotebookFormProps> = ({
             ],
           }}
         >
-          <BAIButton icon={<EllipsisOutlined />} type="primary" />
+          <BAIButton icon={<Ellipsis size="1em" />} type="primary" />
         </Dropdown>
       </Space.Compact>
       <BAIFlex

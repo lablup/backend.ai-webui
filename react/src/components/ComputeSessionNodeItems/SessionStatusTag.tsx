@@ -9,11 +9,10 @@ import {
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { theme } from '../../theme-shim';
 import { statusInfoTagColor } from './SessionStatusDetailModal';
-import { LoadingOutlined } from '@ant-design/icons';
 import { Tag, Tooltip } from 'antd';
 import { BAIFlex, BAITag } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { CircleAlertIcon } from 'lucide-react';
+import { LoaderCircle, CircleAlertIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -89,7 +88,11 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
             zIndex: 1,
             paddingLeft: token.paddingSM,
           }}
-          icon={isTransitional(session) ? <LoadingOutlined spin /> : undefined}
+          icon={
+            isTransitional(session) ? (
+              <LoaderCircle className="anticon-spin" size="1em" />
+            ) : undefined
+          }
           color={
             session.status ? _.get(statusTagColor, session.status) : undefined
           }
@@ -114,7 +117,9 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
               session.status ? _.get(statusTagColor, session.status) : undefined
             }
             icon={
-              isTransitional(session) ? <LoadingOutlined spin /> : undefined
+              isTransitional(session) ? (
+                <LoaderCircle className="anticon-spin" size="1em" />
+              ) : undefined
             }
             style={{
               borderRadius: 11,
@@ -155,7 +160,9 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
               borderBottomLeftRadius: 11,
             }}
             icon={
-              isTransitional(session) ? <LoadingOutlined spin /> : undefined
+              isTransitional(session) ? (
+                <LoaderCircle className="anticon-spin" size="1em" />
+              ) : undefined
             }
             color={
               session.status ? _.get(statusTagColor, session.status) : undefined

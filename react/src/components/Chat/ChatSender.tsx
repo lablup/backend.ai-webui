@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { CloudUploadOutlined, LinkOutlined } from '@ant-design/icons';
 import {
   Attachments,
   AttachmentsProps,
@@ -12,6 +11,7 @@ import {
 import { Attachment } from '@ant-design/x/es/attachments';
 import { Badge, Button, type GetRef, type UploadProps } from 'antd';
 import { isEmpty } from 'lodash-es';
+import { CloudUpload, Link } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -40,7 +40,7 @@ const ChatAttachments: React.FC<ChatAttachmentsProps & AttachmentsProps> = ({
               title: t('chatui.DropFileHere'),
             }
           : {
-              icon: <CloudUploadOutlined />,
+              icon: <CloudUpload size="1em" />,
               title: t('chatui.UploadFiles'),
               description: t('chatui.UploadFilesDescription'),
             }
@@ -131,7 +131,7 @@ const ChatSender: React.FC<ChatSenderProps> = ({
           onChange={(info) => onAttachmentChange?.('prefix', info)}
         >
           <Badge dot={!isEmpty(items) && !openAttachment}>
-            <Button type="text" icon={<LinkOutlined />} />
+            <Button type="text" icon={<Link size="1em" />} />
           </Badge>
         </ChatAttachments>
       }

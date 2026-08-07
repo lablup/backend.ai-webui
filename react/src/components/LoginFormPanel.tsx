@@ -25,17 +25,6 @@ import {
   type TOTPActivateFormData,
 } from './TOTPActivateModal';
 import {
-  CloseOutlined,
-  CloudOutlined,
-  DownOutlined,
-  InfoCircleOutlined,
-  LockOutlined,
-  MailOutlined,
-  KeyOutlined,
-  RightOutlined,
-  WarningTwoTone,
-} from '@ant-design/icons';
-import {
   Alert,
   Button,
   Dropdown,
@@ -54,6 +43,17 @@ import {
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import DOMPurify from 'dompurify';
+import {
+  X,
+  Cloud,
+  ChevronDown,
+  Info,
+  Lock,
+  Mail,
+  KeyRound,
+  ChevronRight,
+  TriangleAlert,
+} from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -228,7 +228,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                 style={{ marginBottom: token.marginSM }}
               >
                 <Input
-                  prefix={<MailOutlined />}
+                  prefix={<Mail size="1em" />}
                   placeholder={t('login.E-mailOrUsername', { postProcess: [] })}
                   aria-label={t('login.E-mailOrUsername', { postProcess: [] })}
                   maxLength={64}
@@ -245,7 +245,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                 style={{ marginBottom: token.marginSM }}
               >
                 <Input.Password
-                  prefix={<KeyOutlined />}
+                  prefix={<KeyRound size="1em" />}
                   placeholder={t('login.Password', { postProcess: [] })}
                   aria-label={t('login.Password', { postProcess: [] })}
                   autoComplete="current-password"
@@ -255,7 +255,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
               {otpRequired && (
                 <Form.Item name="otp" style={{ marginBottom: token.marginSM }}>
                   <Input
-                    prefix={<LockOutlined />}
+                    prefix={<Lock size="1em" />}
                     placeholder={t('totp.OTP', { postProcess: [] })}
                     disabled={isLoading}
                     autoFocus
@@ -273,7 +273,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                 style={{ marginBottom: token.marginSM }}
               >
                 <Input
-                  prefix={<LockOutlined />}
+                  prefix={<Lock size="1em" />}
                   placeholder={t('login.APIKey', { postProcess: [] })}
                   maxLength={20}
                   autoFocus
@@ -285,7 +285,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                 style={{ marginBottom: token.marginSM }}
               >
                 <Input.Password
-                  prefix={<KeyOutlined />}
+                  prefix={<KeyRound size="1em" />}
                   placeholder={t('login.SecretKey', { postProcess: [] })}
                   maxLength={40}
                   disabled={isLoading}
@@ -348,9 +348,15 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                 style={{ fontSize: 13, userSelect: 'none' }}
               >
                 {isEndpointExpanded ? (
-                  <DownOutlined style={{ fontSize: 10, marginRight: 4 }} />
+                  <ChevronDown
+                    style={{ fontSize: 10, marginRight: 4 }}
+                    size="1em"
+                  />
                 ) : (
-                  <RightOutlined style={{ fontSize: 10, marginRight: 4 }} />
+                  <ChevronRight
+                    style={{ fontSize: 10, marginRight: 4 }}
+                    size="1em"
+                  />
                 )}
                 {t('login.AdvancedSettings')}
               </Typography.Link>
@@ -369,7 +375,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                     overlayStyle={{ zIndex: 10001 }}
                   >
                     <Button
-                      icon={<CloudOutlined />}
+                      icon={<Cloud size="1em" />}
                       type="text"
                       style={{ color: token.colorInfo }}
                     />
@@ -393,7 +399,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                     />
                   </Form.Item>
                   <Button
-                    icon={<InfoCircleOutlined />}
+                    icon={<Info size="1em" />}
                     type="text"
                     onClick={() =>
                       setHelpPanel({
@@ -484,7 +490,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
             <Button
               type="text"
               size="small"
-              icon={<CloseOutlined />}
+              icon={<X size="1em" />}
               onClick={() => setHelpPanel(null)}
             />
           </BAIFlex>
@@ -642,7 +648,7 @@ const ResetPasswordRequiredInline: React.FC<{
         }}
       >
         <Typography.Title level={3} style={{ margin: 0 }}>
-          <WarningTwoTone twoToneColor={token.colorWarning} />{' '}
+          <TriangleAlert style={{ color: token.colorWarning }} size="1em" />{' '}
           {t('webui.menu.PleaseChangeYourPassword')}
         </Typography.Title>
         {t('webui.menu.YouMushChangeYourPassword')}

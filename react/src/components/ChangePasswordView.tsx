@@ -5,7 +5,6 @@
 import { App } from '../app-shim';
 import { useAnonymousBackendaiClient } from '../hooks';
 import { theme } from '../theme-shim';
-import { CheckCircleOutlined } from '@ant-design/icons';
 import { Form, Input, Typography } from 'antd';
 import {
   BAIButton,
@@ -13,6 +12,7 @@ import {
   BAIModal,
   ESMClientErrorResponse,
 } from 'backend.ai-ui';
+import { CircleCheck } from 'lucide-react';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -206,8 +206,9 @@ const ChangePasswordView: React.FC<ChangePasswordViewProps> = ({
         mask={{ closable: false }}
       >
         <BAIFlex gap="xs" align="center">
-          <CheckCircleOutlined
+          <CircleCheck
             style={{ color: token.colorSuccess, fontSize: token.fontSizeLG }}
+            size="1em"
           />
           <Typography.Text>{t('login.PasswordChanged')}</Typography.Text>
         </BAIFlex>

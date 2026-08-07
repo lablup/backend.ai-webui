@@ -13,7 +13,6 @@ import {
 } from '../helper/storageHostPermission';
 import { theme } from '../theme-shim';
 import StoragePermissionEditModal from './StoragePermissionEditModal';
-import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { Typography } from 'antd';
 import {
   BAINameActionCell,
@@ -22,7 +21,7 @@ import {
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { SquarePenIcon } from 'lucide-react';
+import { CircleCheck, CircleX, SquarePenIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -200,10 +199,11 @@ const DomainStoragePermissionTable: React.FC<
               align: 'center' as const,
               render: () =>
                 enabledSet.has(permKey) ? (
-                  <CheckCircleOutlined style={{ color: token.purple5 }} />
+                  <CircleCheck style={{ color: token.purple5 }} size="1em" />
                 ) : (
-                  <CloseCircleOutlined
+                  <CircleX
                     style={{ color: token.colorTextDisabled }}
+                    size="1em"
                   />
                 ),
             };

@@ -5,10 +5,10 @@
 import { ResourceGroupInfoModalFragment$key } from '../__generated__/ResourceGroupInfoModalFragment.graphql';
 import { theme } from '../theme-shim';
 import { ScalingGroupOpts } from './ResourceGroupList';
-import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { Descriptions, Tag, Typography } from 'antd';
 import { BAIModal, BAIModalProps, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { Check, X } from 'lucide-react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -73,16 +73,16 @@ const ResourceGroupInfoModal: React.FC<ResourceGroupInfoModalProps> = ({
         </Descriptions.Item>
         <Descriptions.Item label={t('resourceGroup.Active')}>
           {resourceGroup?.is_active ? (
-            <CheckOutlined style={{ color: token.colorSuccess }} />
+            <Check style={{ color: token.colorSuccess }} size="1em" />
           ) : (
-            <CloseOutlined style={{ color: token.colorTextSecondary }} />
+            <X style={{ color: token.colorTextSecondary }} size="1em" />
           )}
         </Descriptions.Item>
         <Descriptions.Item label={t('resourceGroup.Public')}>
           {resourceGroup?.is_public ? (
-            <CheckOutlined style={{ color: token.colorSuccess }} />
+            <Check style={{ color: token.colorSuccess }} size="1em" />
           ) : (
-            <CloseOutlined style={{ color: token.colorTextSecondary }} />
+            <X style={{ color: token.colorTextSecondary }} size="1em" />
           )}
         </Descriptions.Item>
         <Descriptions.Item label={t('resourceGroup.Driver')}>

@@ -11,7 +11,6 @@ import {
 } from '../hooks/useRuntimeParameterSchema';
 import { theme } from '../theme-shim';
 import InputNumberWithSlider from './InputNumberWithSlider';
-import { UndoOutlined } from '@ant-design/icons';
 import {
   Checkbox,
   Collapse,
@@ -24,6 +23,7 @@ import {
   Tabs,
 } from 'antd';
 import { BAIButton, BAIFlex, toLocalId } from 'backend.ai-ui';
+import { Undo2 } from 'lucide-react';
 import React, { useEffect, useEffectEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -244,7 +244,7 @@ const RuntimeParameterFormSection: React.FC<
                 <BAIButton
                   type="link"
                   size="small"
-                  icon={<UndoOutlined />}
+                  icon={<Undo2 size="1em" />}
                   aria-label={t('button.Reset')}
                   onClick={(e) => {
                     e.stopPropagation();

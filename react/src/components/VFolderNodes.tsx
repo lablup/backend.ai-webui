@@ -22,7 +22,6 @@ import SharedFolderPermissionInfoModal from './SharedFolderPermissionInfoModal';
 import VFolderDeployModal from './VFolderDeployModal';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
 import VFolderPermissionCell from './VFolderPermissionCell';
-import { DeleteFilled, DeleteOutlined, UserOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { Typography } from 'antd';
 import {
@@ -47,6 +46,7 @@ import {
 import type { BAINameActionCellAction } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
+import { Trash2, Trash, User } from 'lucide-react';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -177,7 +177,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
       ? {
           key: 'delete',
           title: t('data.folders.MoveToTrash'),
-          icon: <DeleteOutlined />,
+          icon: <Trash size="1em" />,
           type: 'danger' as const,
           disabled:
             !hasDeletePermission ||
@@ -218,7 +218,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
       ? {
           key: 'delete-forever',
           title: t('data.folders.Delete'),
-          icon: <DeleteFilled />,
+          icon: <Trash2 size="1em" />,
           type: 'danger' as const,
           disabled:
             vfolder?.status !== 'delete-pending' ||
@@ -512,7 +512,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
               return type === 'user' ? (
                 <BAIFlex gap={'xs'}>
                   <Typography.Text>{t('data.User')}</Typography.Text>
-                  <UserOutlined style={{ color: token.colorTextTertiary }} />
+                  <User style={{ color: token.colorTextTertiary }} size="1em" />
                 </BAIFlex>
               ) : (
                 <BAIFlex gap={'xs'}>

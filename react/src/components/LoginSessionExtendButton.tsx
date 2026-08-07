@@ -4,12 +4,11 @@
  */
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
-import { ClockCircleOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider, Grid, Tooltip } from 'antd';
 import { useUpdatableState, BAIFlex, BAIIntervalView } from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
 import { atom, useAtom } from 'jotai';
-import { Repeat2Icon } from 'lucide-react';
+import { Clock, Repeat2Icon } from 'lucide-react';
 import React, { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -70,7 +69,7 @@ const LoginSessionExtendButton: React.FC<
           return (
             <Tooltip title={t('general.RemainingLoginSessionTime')}>
               <BAIFlex gap={'xxs'}>
-                <ClockCircleOutlined />
+                <Clock size="1em" />
                 {text}
               </BAIFlex>
             </Tooltip>

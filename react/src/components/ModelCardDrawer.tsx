@@ -11,7 +11,6 @@ import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ModelBrandIcon from './ModelBrandIcon';
 import ModelCardDeployModal from './ModelCardDeployModal';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
-import { BankOutlined, FileOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {
   Card,
@@ -33,6 +32,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
+import { Landmark, File } from 'lucide-react';
 import Markdown from 'markdown-to-jsx';
 import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -196,7 +196,9 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
                   </Tag>
                 ))}
               {modelCard.metadata?.license && (
-                <Tag icon={<BankOutlined />}>{modelCard.metadata.license}</Tag>
+                <Tag icon={<Landmark size="1em" />}>
+                  {modelCard.metadata.license}
+                </Tag>
               )}
             </BAIFlex>
 
@@ -325,7 +327,7 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
                 size="small"
                 title={
                   <BAIFlex direction="row" gap="xs">
-                    <FileOutlined />
+                    <File size="1em" />
                     README.md
                   </BAIFlex>
                 }

@@ -33,16 +33,6 @@ import { passwordPattern } from './LoginFormPanel';
 import ProjectSelect from './ProjectSelect';
 import UserResourcePolicySelect from './UserResourcePolicySelect';
 import {
-  CheckCircleFilled,
-  CloseCircleFilled,
-  DeleteOutlined,
-  DownloadOutlined,
-  ExclamationCircleFilled,
-  FileTextOutlined,
-  PlusOutlined,
-  ReloadOutlined,
-} from '@ant-design/icons';
-import {
   Checkbox,
   Empty,
   Form,
@@ -69,6 +59,16 @@ import {
   useBAISignedRequestWithPromise,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import {
+  CircleCheck,
+  CircleX,
+  Trash,
+  Download,
+  CircleAlert,
+  FileText,
+  Plus,
+  RotateCw,
+} from 'lucide-react';
 import React, {
   Suspense,
   useEffect,
@@ -698,10 +698,11 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
           styles={{ container: { color: token.colorWhite } }}
         >
           <BAIFlex gap="xs" align="center" style={{ cursor: 'default' }}>
-            <ExclamationCircleFilled
+            <CircleAlert
               role="img"
               aria-label={errorMsg}
               style={{ color: token.colorError, flexShrink: 0 }}
+              size="1em"
             />
             {mask && val ? (
               // Never surface a raw password, even when it fails validation —
@@ -774,9 +775,9 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
       width: 36,
       render: (_: unknown, record: ValidatedRow) =>
         record.isValid ? (
-          <CheckCircleFilled style={{ color: token.colorSuccess }} />
+          <CircleCheck style={{ color: token.colorSuccess }} size="1em" />
         ) : (
-          <CloseCircleFilled style={{ color: token.colorError }} />
+          <CircleX style={{ color: token.colorError }} size="1em" />
         ),
     },
     {
@@ -1045,7 +1046,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
           </BAIButton>
           <BAIButton
             type="primary"
-            icon={<PlusOutlined />}
+            icon={<Plus size="1em" />}
             disabled={!canSubmit}
             loading={isInFlight}
             action={handleSubmit}
@@ -1126,7 +1127,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                     flexShrink: 0,
                   }}
                 >
-                  <FileTextOutlined />
+                  <FileText size="1em" />
                 </BAIFlex>
                 <BAIFlex
                   direction="column"
@@ -1146,7 +1147,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
               <BAIFlex gap="xs">
                 <BAIButton
                   size="small"
-                  icon={<ReloadOutlined />}
+                  icon={<RotateCw size="1em" />}
                   onClick={() => fileInputRef.current?.click()}
                 >
                   {t('credential.ReplaceFile')}
@@ -1154,7 +1155,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                 <BAIButton
                   size="small"
                   danger
-                  icon={<DeleteOutlined />}
+                  icon={<Trash size="1em" />}
                   onClick={resetState}
                 >
                   {t('credential.RemoveFile')}
@@ -1185,7 +1186,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                   marginBottom: token.marginSM,
                 }}
               >
-                <FileTextOutlined />
+                <FileText size="1em" />
               </BAIFlex>
               <Typography.Text
                 style={{ display: 'block', marginBottom: token.marginXXS }}
@@ -1205,7 +1206,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
           <BAIFlex gap="xs" wrap="wrap">
             <BAIButton
               size="small"
-              icon={<DownloadOutlined />}
+              icon={<Download size="1em" />}
               onClick={handleDownloadTemplate}
             >
               {t('credential.DownloadCSVTemplate')}
@@ -1433,7 +1434,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                 }}
               >
                 <BAIFlex gap="xs" align="center">
-                  <CloseCircleFilled style={{ color: token.colorError }} />
+                  <CircleX style={{ color: token.colorError }} size="1em" />
                   <Typography.Text strong style={{ color: token.colorError }}>
                     {t('credential.NOfMRowsError', {
                       errorCount: stats.withErrors,

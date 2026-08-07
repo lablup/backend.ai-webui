@@ -35,12 +35,6 @@ import ScopedAuditLog, { ScopedAuditLogQuery } from './ScopedAuditLog';
 import { getUnifiedSlotNameFromTag } from './SessionFormItems/ResourceAllocationFormItems';
 import SessionSchedulingHistoryModal from './SessionSchedulingHistoryModal';
 import SessionUsageMonitor from './SessionUsageMonitor';
-import {
-  HistoryOutlined,
-  InfoCircleOutlined,
-  QuestionCircleOutlined,
-  WarningOutlined,
-} from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {
   Alert,
@@ -69,6 +63,7 @@ import {
   BAIButton,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { History, Info, CircleHelp, TriangleAlert } from 'lucide-react';
 import { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -428,7 +423,7 @@ const SessionDetailContent: React.FC<{
                 <Tooltip title={t('button.ClickForMoreDetails')}>
                   <Button
                     type="link"
-                    icon={<InfoCircleOutlined />}
+                    icon={<Info size="1em" />}
                     onClick={() => {
                       setOpenStatusDetailModal(true);
                     }}
@@ -440,7 +435,7 @@ const SessionDetailContent: React.FC<{
                   <BAIButton
                     type="link"
                     onClick={() => toggleOpenSessionSchedulingHistoryModal()}
-                    icon={<HistoryOutlined />}
+                    icon={<History size="1em" />}
                   />
                 </Tooltip>
               )}
@@ -452,7 +447,7 @@ const SessionDetailContent: React.FC<{
               <Tooltip title={t('session.ViewStartupCommand')}>
                 <BAIButton
                   type="link"
-                  icon={<InfoCircleOutlined />}
+                  icon={<Info size="1em" />}
                   onClick={() => toggleOpenCodeHighlighterModal()}
                 />
               </Tooltip>
@@ -488,7 +483,7 @@ const SessionDetailContent: React.FC<{
                     }}
                   >
                     {t('session.launcher.ResourceAllocation')}
-                    <WarningOutlined />
+                    <TriangleAlert size="1em" />
                   </BAIFlex>
                 </Tooltip>
               ) : (
@@ -530,7 +525,8 @@ const SessionDetailContent: React.FC<{
                 <BAIFlex gap="xxs">
                   {t('session.ReclamationStatus')}
                   <Tooltip title={t('button.ClickForMoreDetails')}>
-                    <QuestionCircleOutlined
+                    <CircleHelp
+                      size="1em"
                       style={{ cursor: 'pointer' }}
                       onClick={() => setOpenIdleCheckDescriptionModal(true)}
                     />

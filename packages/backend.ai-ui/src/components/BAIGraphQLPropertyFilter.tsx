@@ -3,7 +3,6 @@ import { theme } from '../theme-shim';
 import BAIButton from './BAIButton';
 import BAIFlex from './BAIFlex';
 import BAISelect from './BAISelect';
-import { CloseCircleOutlined, SearchOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
 import {
   AutoComplete,
@@ -18,6 +17,7 @@ import {
 import type { AutoCompleteProps, GetRef } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import * as _ from 'lodash-es';
+import { CircleX, Search } from 'lucide-react';
 import React, {
   useEffect,
   useEffectEvent,
@@ -835,7 +835,7 @@ const BAIGraphQLPropertyFilter = <
               }
             />
             <BAIButton
-              icon={<SearchOutlined />}
+              icon={<Search size="1em" />}
               onClick={() => addCondition(search)}
             />
           </>
@@ -889,8 +889,9 @@ const BAIGraphQLPropertyFilter = <
               <Button
                 size="small"
                 icon={
-                  <CloseCircleOutlined
+                  <CircleX
                     style={{ color: token.colorTextSecondary }}
+                    size="1em"
                   />
                 }
                 type="text"

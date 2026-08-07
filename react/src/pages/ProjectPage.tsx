@@ -20,7 +20,6 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useCSVExport } from '../hooks/useCSVExport';
 import { theme } from '../theme-shim';
-import { DeleteFilled } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { Tooltip } from 'antd';
 import {
@@ -48,6 +47,7 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
+  Trash2,
   BanIcon,
   PlusIcon,
   ShieldUserIcon,
@@ -577,7 +577,7 @@ const ProjectPage = () => {
                                   {
                                     key: 'purge',
                                     title: t('project.Purge'),
-                                    icon: <DeleteFilled />,
+                                    icon: <Trash2 size="1em" />,
                                     type: 'danger' as const,
                                     disabled: isModelStore,
                                     onClick: () => {

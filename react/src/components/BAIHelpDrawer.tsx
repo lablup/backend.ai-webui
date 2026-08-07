@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { ExportOutlined } from '@ant-design/icons';
 import { Button, Drawer, type DrawerProps } from 'antd';
+import { ExternalLink } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -45,7 +45,9 @@ const BAIHelpDrawer: React.FC<BAIHelpDrawerProps> = ({
   return (
     <Drawer
       title={t('webui.menu.Help')}
-      extra={<Button icon={<ExportOutlined />} type="link" href={URL} />}
+      extra={
+        <Button icon={<ExternalLink size="1em" />} type="link" href={URL} />
+      }
       size="large"
       styles={{
         // mask: { backgroundColor: 'transparent' },

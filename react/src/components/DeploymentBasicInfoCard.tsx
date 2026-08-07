@@ -15,7 +15,6 @@ import DeploymentSchedulingHistoryModal, {
   DeploymentSchedulingHistoryQuery,
 } from './DeploymentSchedulingHistoryModal';
 import DeploymentSettingModal from './DeploymentSettingModal';
-import { DeleteFilled, HistoryOutlined, MoreOutlined } from '@ant-design/icons';
 import {
   Button,
   Descriptions,
@@ -43,7 +42,7 @@ import {
   useConnectedBAIClient,
 } from 'backend.ai-ui';
 import type { BAIDeploymentStatus } from 'backend.ai-ui';
-import { SquarePenIcon } from 'lucide-react';
+import { Trash2, History, EllipsisVertical, SquarePenIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation, useQueryLoader } from 'react-relay';
@@ -100,7 +99,7 @@ const DeploymentOverviewContent: React.FC<{
               <BAIButton
                 type="link"
                 size="small"
-                icon={<HistoryOutlined />}
+                icon={<History size="1em" />}
                 style={{ padding: 0 }}
                 action={async () => {
                   await onClickSchedulingHistory();
@@ -343,7 +342,7 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
                     {
                       key: 'delete',
                       label: t('deployment.DeleteDeployment'),
-                      icon: <DeleteFilled />,
+                      icon: <Trash2 size="1em" />,
                       danger: true,
                       disabled:
                         isDeploymentInStoppedCategory(deploymentStatus) ||
@@ -353,7 +352,10 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
                   ],
                 }}
               >
-                <Button icon={<MoreOutlined />} aria-label={t('button.More')} />
+                <Button
+                  icon={<EllipsisVertical size="1em" />}
+                  aria-label={t('button.More')}
+                />
               </Dropdown>
             </Space.Compact>
           </BAIFlex>

@@ -8,8 +8,9 @@ import BAITabs from './BAITabs';
 import ImportHuggingFaceModelForm from './ImportHuggingFaceModelForm';
 import ImportNotebookForm from './ImportNotebookForm';
 import ImportRepoForm from './ImportRepoForm';
-import { GithubOutlined, GitlabOutlined } from '@ant-design/icons';
 import {
+  BAIGitHubIcon,
+  BAIGitLabIcon,
   BAIFlex,
   BAIHuggingFaceIcon,
   BAIJupyterIcon,
@@ -101,7 +102,7 @@ const StartFromURLModal: React.FC<StartFromURLModalProps> = ({
             ),
             label: (
               <BAIFlex gap="xs">
-                <GithubOutlined style={{ display: 'inline' }} />
+                <BAIGitHubIcon style={{ display: 'inline' }} />
                 {t('import.ImportGithubRepo')}
               </BAIFlex>
             ),
@@ -117,7 +118,7 @@ const StartFromURLModal: React.FC<StartFromURLModalProps> = ({
             ),
             label: (
               <BAIFlex gap="xs">
-                <GitlabOutlined style={{ display: 'inline' }} />
+                <BAIGitLabIcon style={{ display: 'inline' }} />
                 {t('import.ImportGitlabRepo')}
               </BAIFlex>
             ),

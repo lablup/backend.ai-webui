@@ -18,13 +18,12 @@ import EditableFileName from './EditableFileName';
 import ExplorerActionControls from './ExplorerActionControls';
 import FileItemControls from './FileItemControls';
 import { useSearchVFolderFiles } from './hooks';
-import { FileOutlined, FolderOutlined } from '@ant-design/icons';
 import { Breadcrumb, Skeleton, Typography, type TableColumnsType } from 'antd';
 import type { ItemType } from 'antd/es/breadcrumb/Breadcrumb';
 import type { RcFile } from 'antd/es/upload';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { HouseIcon } from 'lucide-react';
+import { File, Folder, HouseIcon } from 'lucide-react';
 import {
   createContext,
   Suspense,
@@ -202,7 +201,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
               setSelectedItems([]);
             }}
           >
-            <FolderOutlined />
+            <Folder size="1em" />
             {dir.name}
           </BAIFlex>
         ),
@@ -232,7 +231,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
           // In the directory picker, files are shown for context but are not
           // interactive — only directories can be entered and chosen.
           <BAIFlex gap="xs" style={{ display: 'inline-flex' }}>
-            <FileOutlined style={{ color: token.colorTextDisabled }} />
+            <File style={{ color: token.colorTextDisabled }} size="1em" />
             <Typography.Text disabled ellipsis style={{ maxWidth: 200 }}>
               {name}
             </Typography.Text>

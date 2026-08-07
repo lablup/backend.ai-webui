@@ -5,10 +5,10 @@
 import { type ErrorWithGraphQL } from '../components/BAIErrorBoundary';
 import FairShareList from '../components/FairShareItems/FairShareList';
 import { theme } from '../theme-shim';
-import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Button, Result, Skeleton, Tooltip } from 'antd';
 import { BAICard, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { CircleHelp } from 'lucide-react';
 import {
   parseAsString,
   parseAsStringLiteral,
@@ -42,7 +42,7 @@ const SchedulerPage: React.FC<SchedulerPageProps> = () => {
               <Tooltip
                 title={<Trans i18nKey={t('fairShare.SchedulerDescription')} />}
               >
-                <QuestionCircleOutlined style={{ fontSize: token.fontSize }} />
+                <CircleHelp style={{ fontSize: token.fontSize }} size="1em" />
               </Tooltip>
             </BAIFlex>
           ),

@@ -19,11 +19,6 @@ import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting'
 import { theme } from '../theme-shim';
 import BAIRadioGroup from './BAIRadioGroup';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
-import {
-  CheckCircleOutlined,
-  MinusCircleOutlined,
-  ReloadOutlined,
-} from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { Button, type TableProps, Tooltip, Typography } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
@@ -40,6 +35,7 @@ import {
   INITIAL_FETCH_KEY,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { CircleCheck, CircleMinus, RotateCw } from 'lucide-react';
 import { parseAsString, useQueryStates } from 'nuqs';
 import React, { useDeferredValue, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -343,18 +339,20 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
         return (
           <BAIFlex justify="center">
             {value === true ? (
-              <CheckCircleOutlined
+              <CircleCheck
                 style={{
                   color: token.colorSuccess,
                   fontSize: token.fontSizeXL,
                 }}
+                size="1em"
               />
             ) : (
-              <MinusCircleOutlined
+              <CircleMinus
                 style={{
                   color: token.colorTextDisabled,
                   fontSize: token.fontSizeXL,
                 }}
+                size="1em"
               />
             )}
           </BAIFlex>
@@ -429,7 +427,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
             <Button
               loading={deferredFetchKey !== fetchKey}
               onClick={() => updateFetchKey()}
-              icon={<ReloadOutlined />}
+              icon={<RotateCw size="1em" />}
             ></Button>
           </Tooltip>
         </BAIFlex>

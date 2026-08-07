@@ -17,12 +17,18 @@ import { BAIColumnType, BAITable, BAITableProps } from '../Table';
 import BAIArtifactRevisionDownloadButton from './BAIArtifactRevisionDownloadButton';
 import BAIArtifactStatusTag from './BAIArtifactStatusTag';
 import BAIArtifactTypeTag from './BAIArtifactTypeTag';
-import { SyncOutlined } from '@ant-design/icons';
 import { Button, Typography } from 'antd';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import * as _ from 'lodash-es';
-import { Package, Container, Brain, BanIcon, UndoIcon } from 'lucide-react';
+import {
+  RefreshCw,
+  Package,
+  Container,
+  Brain,
+  BanIcon,
+  UndoIcon,
+} from 'lucide-react';
 import { graphql, useFragment } from 'react-relay';
 
 dayjs.extend(relativeTime);
@@ -46,7 +52,7 @@ export const getStatusIcon = (status: string) => {
   switch (status.toLowerCase()) {
     case 'pulling':
     case 'verifying':
-      return <SyncOutlined spin />;
+      return <RefreshCw className="anticon-spin" size="1em" />;
     default:
       return null;
   }

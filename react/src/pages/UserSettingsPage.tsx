@@ -25,11 +25,11 @@ import {
   useCustomThemeConfig,
 } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
-import { SettingOutlined } from '@ant-design/icons';
 import { useSessionStorageState, useToggle } from 'ahooks';
 import { Button, Skeleton, Typography } from 'antd';
 import { BAICard, filterOutEmpty } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { Settings } from 'lucide-react';
 import { parseAsStringLiteral } from 'nuqs';
 import { Suspense, useEffect, useEffectEvent, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
@@ -367,7 +367,7 @@ const UserPreferencesPage = () => {
           description: t('userSettings.DescMyKeypairInfo'),
           children: (
             <Button
-              icon={<SettingOutlined />}
+              icon={<Settings size="1em" />}
               onClick={() => toggleSSHKeypairInfoModal()}
             >
               {t('button.Config')}
@@ -382,7 +382,7 @@ const UserPreferencesPage = () => {
           description: t('userSettings.DescSSHKeypairManagement'),
           children: (
             <Button
-              icon={<SettingOutlined />}
+              icon={<Settings size="1em" />}
               onClick={() => toggleSSHKeypairManagementModal()}
             >
               {t('button.Config')}
@@ -431,7 +431,7 @@ const UserPreferencesPage = () => {
           title: t('userSettings.EditBootstrapScript'),
           children: (
             <Button
-              icon={<SettingOutlined />}
+              icon={<Settings size="1em" />}
               onClick={() => {
                 setShellInfo('bootstrap');
                 toggleShellScriptEditModal();
@@ -448,7 +448,7 @@ const UserPreferencesPage = () => {
           title: t('userSettings.EditUserConfigScript'),
           children: (
             <Button
-              icon={<SettingOutlined />}
+              icon={<Settings size="1em" />}
               onClick={() => {
                 setShellInfo('userconfig');
                 toggleShellScriptEditModal();

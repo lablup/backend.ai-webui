@@ -3,9 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { theme } from '../theme-shim';
-import { LoadingOutlined } from '@ant-design/icons';
 import { Typography } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
+import { LoaderCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 const TotalFooter: React.FC<{
@@ -17,11 +17,12 @@ const TotalFooter: React.FC<{
   return (
     <BAIFlex justify="end" gap={'xs'}>
       {loading ? (
-        <LoadingOutlined
-          spin
+        <LoaderCircle
+          className="anticon-spin"
           style={{
             color: token.colorTextSecondary,
           }}
+          size="1em"
         />
       ) : (
         <div />

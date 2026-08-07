@@ -22,6 +22,10 @@
    (none) | popconfirm | notifications
  Colour mode follows `prefers-color-scheme` (Playwright's `colorScheme`).
 */
+import {
+  BAI_BREAKPOINT_QUERIES,
+  useBAIBreakpoint,
+} from '../../packages/backend.ai-ui/src/theme-shim/breakpoints';
 import { backendAiBrandTheme } from '../src/astryx-theme/backendAiTheme';
 import BAIBadgeCount from '../src/components/astryx-bui/BAIBadgeCountAstryx';
 import BAICopyableText from '../src/components/astryx-bui/BAICopyableText';
@@ -31,10 +35,6 @@ import BAIPopconfirm from '../src/components/astryx-bui/BAIPopconfirmAstryx';
 import BAISelectionLabel from '../src/components/astryx-bui/BAISelectionLabel';
 import BAISkeleton from '../src/components/astryx-bui/BAISkeletonAstryx';
 import '../src/index.css';
-import {
-  BAI_BREAKPOINT_QUERIES,
-  useBAIBreakpoint,
-} from '../src/theme-shim/breakpoints';
 import './gap.css';
 import { Button } from '@astryxdesign/core/Button';
 import { Card } from '@astryxdesign/core/Card';

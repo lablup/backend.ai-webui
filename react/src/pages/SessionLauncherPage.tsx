@@ -45,15 +45,6 @@ import { useRecentSessionHistory } from '../hooks/useRecentSessionHistory';
 import { useStartSession } from '../hooks/useStartSession';
 import { theme } from '../theme-shim';
 import './SessionLauncherPage.css';
-import {
-  DoubleRightOutlined,
-  EllipsisOutlined,
-  LeftOutlined,
-  PlayCircleFilled,
-  PlayCircleOutlined,
-  QuestionCircleOutlined,
-  RightOutlined,
-} from '@ant-design/icons';
 import { useDebounceFn, useToggle } from 'ahooks';
 import {
   Button,
@@ -93,6 +84,14 @@ import {
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
 import * as _ from 'lodash-es';
+import {
+  ChevronsRight,
+  Ellipsis,
+  ChevronLeft,
+  CirclePlay,
+  CircleHelp,
+  ChevronRight,
+} from 'lucide-react';
 import {
   parseAsInteger,
   parseAsJson,
@@ -381,7 +380,7 @@ const SessionLauncherPage = () => {
     },
     {
       title: t('session.launcher.ConfirmAndLaunch'),
-      icon: <PlayCircleFilled />,
+      icon: <CirclePlay size="1em" />,
       // @ts-ignore
       key: 'review',
     },
@@ -1244,8 +1243,9 @@ const SessionLauncherPage = () => {
                         setIsQueryReset(true);
                       }}
                       icon={
-                        <QuestionCircleOutlined
+                        <CircleHelp
                           style={{ color: token.colorError }}
+                          size="1em"
                         />
                       }
                       okText={t('button.Reset')}
@@ -1285,7 +1285,7 @@ const SessionLauncherPage = () => {
                         onClick={() => {
                           setCurrentStep(currentStep - 1);
                         }}
-                        icon={<LeftOutlined />}
+                        icon={<ChevronLeft size="1em" />}
                       >
                         {t('button.Previous')}
                       </Button>
@@ -1301,7 +1301,7 @@ const SessionLauncherPage = () => {
                         <Space.Compact>
                           <BAIButton
                             type="primary"
-                            icon={<PlayCircleOutlined />}
+                            icon={<CirclePlay size="1em" />}
                             disabled={hasError}
                             action={() => performLaunch(1)}
                           >
@@ -1326,7 +1326,7 @@ const SessionLauncherPage = () => {
                           >
                             <BAIButton
                               type="primary"
-                              icon={<EllipsisOutlined />}
+                              icon={<Ellipsis size="1em" />}
                               disabled={hasError}
                             />
                           </Dropdown>
@@ -1340,7 +1340,7 @@ const SessionLauncherPage = () => {
                           setCurrentStep(currentStep + 1);
                         }}
                       >
-                        {t('button.Next')} <RightOutlined />
+                        {t('button.Next')} <ChevronRight size="1em" />
                       </Button>
                     )}
                     {currentStep !== steps.length - 1 && (
@@ -1350,7 +1350,7 @@ const SessionLauncherPage = () => {
                         }}
                       >
                         {t('session.launcher.SkipToConfirmAndLaunch')}
-                        <DoubleRightOutlined />
+                        <ChevronsRight size="1em" />
                       </Button>
                     )}
                   </BAIFlex>

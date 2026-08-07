@@ -30,7 +30,6 @@ import InputNumberWithSlider from '../InputNumberWithSlider';
 import ResourcePresetSelect from '../ResourcePresetSelect';
 import RemainingMark from './RemainingMark';
 import SharedMemoryFormItems from './SharedMemoryFormItems';
-import { QuestionCircleOutlined, ReloadOutlined } from '@ant-design/icons';
 import { Button, Card, Col, Form, Radio, Row, Tooltip } from 'antd';
 import {
   BAIFlex,
@@ -41,6 +40,7 @@ import {
   BAISelect,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { CircleHelp, RotateCw } from 'lucide-react';
 import React, { Suspense, useEffect, useMemo, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -1455,7 +1455,7 @@ const ResourceAllocationFormItems: React.FC<
                 onClick={() => {
                   startAgentListTransition(() => updateAgentFetchKey());
                 }}
-                icon={<ReloadOutlined />}
+                icon={<RotateCw size="1em" />}
               ></Button>
             </Form.Item>
           </BAIFlex>
@@ -1494,8 +1494,9 @@ const ResourceAllocationFormItems: React.FC<
                               />
                             }
                           >
-                            <QuestionCircleOutlined
+                            <CircleHelp
                               style={{ marginLeft: token.marginXXS }}
+                              size="1em"
                             />
                           </Tooltip>
                         </Radio.Button>
@@ -1508,8 +1509,9 @@ const ResourceAllocationFormItems: React.FC<
                               />
                             }
                           >
-                            <QuestionCircleOutlined
+                            <CircleHelp
                               style={{ marginLeft: token.marginXXS }}
+                              size="1em"
                             />
                           </Tooltip>
                         </Radio.Button>

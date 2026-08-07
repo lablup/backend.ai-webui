@@ -3,16 +3,10 @@ import { BAIConfigProvider } from '../provider';
 import { BAIClient } from '../provider/BAIClientProvider';
 import BAINameActionCell from './BAINameActionCell';
 import type { BAINameActionCellAction } from './BAINameActionCell';
-import {
-  CopyOutlined,
-  DeleteOutlined,
-  FolderOutlined,
-  ShareAltOutlined,
-} from '@ant-design/icons';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import enUS from 'antd/locale/en_US';
 import koKR from 'antd/locale/ko_KR';
-import { SquarePenIcon } from 'lucide-react';
+import { Copy, Trash, Folder, Share2, SquarePenIcon } from 'lucide-react';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
@@ -145,19 +139,19 @@ const sampleActions: BAINameActionCellAction[] = [
   {
     key: 'share',
     title: 'Share',
-    icon: <ShareAltOutlined />,
+    icon: <Share2 size="1em" />,
     onClick: () => console.log('Share clicked'),
   },
   {
     key: 'copy',
     title: 'Copy',
-    icon: <CopyOutlined />,
+    icon: <Copy size="1em" />,
     onClick: () => console.log('Copy clicked'),
   },
   {
     key: 'delete',
     title: 'Delete',
-    icon: <DeleteOutlined />,
+    icon: <Trash size="1em" />,
     type: 'danger',
     onClick: () => console.log('Delete clicked'),
   },
@@ -173,7 +167,7 @@ export const Default: Story = {
     },
   },
   args: {
-    icon: <FolderOutlined />,
+    icon: <Folder size="1em" />,
     title: 'My Project Folder',
     actions: sampleActions,
   },
@@ -188,7 +182,7 @@ export const WithNavigation: Story = {
     },
   },
   args: {
-    icon: <FolderOutlined />,
+    icon: <Folder size="1em" />,
     title: 'Navigable Folder',
     to: '/folders/123',
     actions: sampleActions.slice(0, 2),
@@ -204,7 +198,7 @@ export const AlwaysShowActions: Story = {
     },
   },
   args: {
-    icon: <FolderOutlined />,
+    icon: <Folder size="1em" />,
     title: 'Always Visible Actions',
     actions: sampleActions,
     showActions: 'always',
@@ -220,14 +214,14 @@ export const WithDisabledAction: Story = {
     },
   },
   args: {
-    icon: <FolderOutlined />,
+    icon: <Folder size="1em" />,
     title: 'Has Disabled Action',
     actions: [
       ...sampleActions.slice(0, 2),
       {
         key: 'restore',
         title: 'Restore',
-        icon: <CopyOutlined />,
+        icon: <Copy size="1em" />,
         disabled: true,
         disabledReason: 'Cannot restore pipeline folders',
       },
@@ -244,7 +238,7 @@ export const LongTitle: Story = {
     },
   },
   args: {
-    icon: <FolderOutlined />,
+    icon: <Folder size="1em" />,
     title:
       'This is a very long folder name that should be truncated with ellipsis when the column is narrow',
     actions: sampleActions,
@@ -293,7 +287,7 @@ export const ResponsiveOverflow: Story = {
           }}
         >
           <BAINameActionCell
-            icon={<FolderOutlined />}
+            icon={<Folder size="1em" />}
             title="Resize to see overflow"
             actions={sampleActions}
             showActions="always"
@@ -338,7 +332,7 @@ export const ResponsiveOverflowWithLink: Story = {
           }}
         >
           <BAINameActionCell
-            icon={<FolderOutlined />}
+            icon={<Folder size="1em" />}
             title="This is a long navigable folder name for ellipsis testing"
             to="/folders/123"
             actions={sampleActions}
@@ -360,7 +354,7 @@ export const MenuOnlyActions: Story = {
     },
   },
   args: {
-    icon: <FolderOutlined />,
+    icon: <Folder size="1em" />,
     title: 'Some actions are menu-only',
     actions: [
       {
@@ -372,20 +366,20 @@ export const MenuOnlyActions: Story = {
       {
         key: 'share',
         title: 'Share',
-        icon: <ShareAltOutlined />,
+        icon: <Share2 size="1em" />,
         onClick: () => console.log('Share clicked'),
       },
       {
         key: 'copy',
         title: 'Copy',
-        icon: <CopyOutlined />,
+        icon: <Copy size="1em" />,
         showInMenu: 'always',
         onClick: () => console.log('Copy clicked'),
       },
       {
         key: 'delete',
         title: 'Delete',
-        icon: <DeleteOutlined />,
+        icon: <Trash size="1em" />,
         type: 'danger',
         showInMenu: 'always',
         onClick: () => console.log('Delete clicked'),
@@ -405,7 +399,7 @@ export const CopyableName: Story = {
     },
   },
   args: {
-    icon: <FolderOutlined />,
+    icon: <Folder size="1em" />,
     title: 'Copyable Folder Name',
     actions: sampleActions.slice(0, 2),
     copyable: true,
@@ -422,7 +416,7 @@ export const CopyableNameWithLink: Story = {
     },
   },
   args: {
-    icon: <FolderOutlined />,
+    icon: <Folder size="1em" />,
     title: 'Navigable Copyable Folder',
     to: '/folders/123',
     actions: sampleActions.slice(0, 2),
@@ -440,7 +434,7 @@ export const CopyableNameWithAlwaysVisibleActions: Story = {
     },
   },
   args: {
-    icon: <FolderOutlined />,
+    icon: <Folder size="1em" />,
     title: 'Copyable With Always Actions',
     actions: sampleActions.slice(0, 2),
     copyable: true,
@@ -457,7 +451,7 @@ export const TitleOnly: Story = {
     },
   },
   args: {
-    icon: <FolderOutlined />,
+    icon: <Folder size="1em" />,
     title: 'No actions, title only',
   },
 };
@@ -472,13 +466,13 @@ export const AsyncAction: Story = {
     },
   },
   args: {
-    icon: <FolderOutlined />,
+    icon: <Folder size="1em" />,
     title: 'With Async Action',
     actions: [
       {
         key: 'deploy',
         title: 'Deploy (takes 2s)',
-        icon: <CopyOutlined />,
+        icon: <Copy size="1em" />,
         action: () => new Promise((resolve) => setTimeout(resolve, 2000)),
       },
     ],

@@ -26,11 +26,11 @@ import {
   useBAIResourceSlots,
   useConnectedBAIClient,
 } from '../provider';
-import { CheckCircleOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { Typography } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
+import { CircleCheck, CircleMinus } from 'lucide-react';
 import { type ErrorInfo } from 'react';
 import {
   ErrorBoundary,
@@ -756,18 +756,20 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
         return (
           <BAIFlex justify="center">
             {value === true ? (
-              <CheckCircleOutlined
+              <CircleCheck
                 style={{
                   color: token.colorSuccess,
                   fontSize: token.fontSizeXL,
                 }}
+                size="1em"
               />
             ) : (
-              <MinusCircleOutlined
+              <CircleMinus
                 style={{
                   color: token.colorTextDisabled,
                   fontSize: token.fontSizeXL,
                 }}
+                size="1em"
               />
             )}
           </BAIFlex>

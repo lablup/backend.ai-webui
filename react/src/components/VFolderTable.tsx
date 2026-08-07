@@ -16,11 +16,6 @@ import TextHighlighter from './TextHighlighter';
 import VFolderPermissionTag from './VFolderPermissionTag';
 import { VFolder } from './VFolderSelect';
 import {
-  QuestionCircleOutlined,
-  ReloadOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
-import {
   Button,
   Descriptions,
   Form,
@@ -43,7 +38,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { PlusIcon } from 'lucide-react';
+import { CircleHelp, RotateCw, User, PlusIcon } from 'lucide-react';
 import React, {
   useCallback,
   useEffect,
@@ -391,7 +386,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
                 <Tooltip
                   title={<Trans i18nKey={'session.launcher.DescFolderAlias'} />}
                 >
-                  <QuestionCircleOutlined />
+                  <CircleHelp size="1em" />
                 </Tooltip>
                 )
               </Typography.Text>
@@ -554,7 +549,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
             {record.ownership_type === 'user' ? (
               <BAIFlex gap={'xs'}>
                 <Typography.Text>{t('data.User')}</Typography.Text>
-                <UserOutlined style={{ color: token.colorTextTertiary }} />
+                <User style={{ color: token.colorTextTertiary }} size="1em" />
               </BAIFlex>
             ) : (
               <BAIFlex gap={'xs'}>
@@ -569,7 +564,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
       //   value === 'group' ? (
       //     <GroupOutlined />
       //   ) : value === 'user' ? (
-      //     <UserOutlined />
+      //     <User size="1em" />
       //   ) : value ? (
       //     value
       //   ) : (
@@ -649,7 +644,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
           <Tooltip title={t('button.Refresh')}>
             <Button
               loading={isPendingRefetch}
-              icon={<ReloadOutlined />}
+              icon={<RotateCw size="1em" />}
               onClick={() => {
                 startRefetchTransition(() => {
                   updateFetchKey();

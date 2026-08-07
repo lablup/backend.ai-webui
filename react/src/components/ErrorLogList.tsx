@@ -7,13 +7,6 @@ import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting'
 import { theme } from '../theme-shim';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import TextHighlighter from './TextHighlighter';
-import {
-  DeleteFilled,
-  SearchOutlined,
-  SettingOutlined,
-  LoadingOutlined,
-  ReloadOutlined,
-} from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { Button, Typography, Alert, Checkbox, Input } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
@@ -26,6 +19,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
+import { Trash2, Search, Settings, LoaderCircle, RotateCw } from 'lucide-react';
 import React, { useState, useMemo, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -223,7 +217,7 @@ const ErrorLogList: React.FC<{
           <BAIFlex gap={'xs'}>
             <Input
               allowClear
-              prefix={<SearchOutlined />}
+              prefix={<Search size="1em" />}
               placeholder={t('logs.SearchLogs')}
               onChange={(e) => {
                 startSearchTransition(() => setLogSearch(e.target.value));
@@ -240,7 +234,7 @@ const ErrorLogList: React.FC<{
           </BAIFlex>
           <BAIFlex gap={'xs'}>
             <Button
-              icon={<ReloadOutlined />}
+              icon={<RotateCw size="1em" />}
               loading={isPendingRefreshTransition}
               onClick={() => {
                 startRefreshTransition(() => checkUpdateKey());
@@ -250,7 +244,7 @@ const ErrorLogList: React.FC<{
             </Button>
             <Button
               danger
-              icon={<DeleteFilled />}
+              icon={<Trash2 size="1em" />}
               onClick={() => {
                 setIsOpenClearLogsModal(true);
               }}
@@ -270,7 +264,7 @@ const ErrorLogList: React.FC<{
         loading={
           isPendingSearchTransition
             ? {
-                indicator: <LoadingOutlined />,
+                indicator: <LoaderCircle size="1em" />,
               }
             : false
         }
@@ -307,7 +301,7 @@ const ErrorLogList: React.FC<{
       >
         <Button
           type="text"
-          icon={<SettingOutlined />}
+          icon={<Settings size="1em" />}
           onClick={() => {
             toggleColumnSettingModal();
           }}

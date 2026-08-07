@@ -8,7 +8,6 @@ import { DeploymentAccessTokensCardListQuery } from '../__generated__/Deployment
 import { DeploymentAccessTokensCard_deployment$key } from '../__generated__/DeploymentAccessTokensCard_deployment.graphql';
 import { App } from '../app-shim';
 import { theme } from '../theme-shim';
-import { DeleteFilled, QuestionCircleOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
 import { DatePicker, Form, Select, Skeleton, Tooltip, Typography } from 'antd';
 import {
@@ -30,7 +29,7 @@ import {
   useMutationWithPromise,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import { PlusIcon } from 'lucide-react';
+import { Trash2, CircleHelp, PlusIcon } from 'lucide-react';
 import React, {
   Suspense,
   useDeferredValue,
@@ -142,8 +141,9 @@ const DeploymentAccessTokensCard: React.FC<DeploymentAccessTokensCardProps> = ({
           <BAIFlex gap="xs" align="center">
             {t('deployment.tab.AccessTokens')}
             <Tooltip title={t('deployment.tab.description.AccessTokens')}>
-              <QuestionCircleOutlined
+              <CircleHelp
                 style={{ color: token.colorTextDescription }}
+                size="1em"
               />
             </Tooltip>
           </BAIFlex>
@@ -381,7 +381,7 @@ const DeploymentAccessTokensTable: React.FC<
                     {
                       key: 'delete',
                       title: t('deployment.accessToken.Delete'),
-                      icon: <DeleteFilled />,
+                      icon: <Trash2 size="1em" />,
                       type: 'danger',
                       disabled: isDeleteDisabled,
                       onClick: () =>

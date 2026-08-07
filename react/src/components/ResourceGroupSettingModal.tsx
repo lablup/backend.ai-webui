@@ -17,7 +17,6 @@ import {
 } from '../hooks/useSFTPResourceGroups';
 import { theme } from '../theme-shim';
 import { ScalingGroupOpts } from './ResourceGroupList';
-import { QuestionCircleOutlined } from '@ant-design/icons';
 import {
   Col,
   Form,
@@ -41,6 +40,7 @@ import {
   useBAILogger,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { CircleHelp } from 'lucide-react';
 import React, { Suspense, useDeferredValue, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -511,8 +511,9 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                         t('resourceGroup.PendingTimeoutDesc'),
                       )}
                     >
-                      <QuestionCircleOutlined
+                      <CircleHelp
                         style={{ color: token.colorTextSecondary }}
+                        size="1em"
                       />
                     </Tooltip>
                   </BAIFlex>

@@ -15,7 +15,6 @@ import { useVirtualFolderPath } from '../hooks/useVirtualFolderNodePath';
 import { theme } from '../theme-shim';
 import { statusTagColor } from './VFolderNodesV2';
 import VirtualFolderPath from './VirtualFolderNodeItems/VirtualFolderPath';
-import { CheckCircleOutlined, UserOutlined } from '@ant-design/icons';
 import { Descriptions, Typography, type DescriptionsProps } from 'antd';
 import {
   filterOutEmpty,
@@ -28,6 +27,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
+import { CircleCheck, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -144,7 +144,7 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
         vfolderNode?.ownership_type === 'user' ? (
           <BAIFlex gap={'xs'}>
             <Typography.Text>{t('data.User')}</Typography.Text>
-            <UserOutlined style={{ color: token.colorTextTertiary }} />
+            <User style={{ color: token.colorTextTertiary }} size="1em" />
           </BAIFlex>
         ) : (
           <BAIFlex gap={'xs'}>
@@ -211,7 +211,7 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
         vfolderNode?.user === currentUser?.uuid ||
         (baiClient.is_admin && vfolderNode?.group === currentProject?.id) ? (
           <BAIFlex justify="start">
-            <CheckCircleOutlined />
+            <CircleCheck size="1em" />
           </BAIFlex>
         ) : null,
     },
@@ -232,7 +232,7 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
       label: t('data.folders.Cloneable'),
       children: vfolderNode.cloneable ? (
         <BAIFlex justify="start">
-          <CheckCircleOutlined />
+          <CircleCheck size="1em" />
         </BAIFlex>
       ) : null,
     },

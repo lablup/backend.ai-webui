@@ -8,7 +8,6 @@ import {
   useSuspendedBackendaiClient,
 } from '../hooks';
 import SourceCodeView from './SourceCodeView';
-import { DownloadOutlined } from '@ant-design/icons';
 import {
   Alert,
   Select,
@@ -26,6 +25,7 @@ import {
   filterOutEmpty,
 } from 'backend.ai-ui';
 import { map, toUpper } from 'lodash-es';
+import { Download } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -66,7 +66,7 @@ const DesktopAppDownloadTab: React.FC = () => {
                 style={{ flex: 1 }}
                 variant="outlined"
                 color="primary"
-                icon={<DownloadOutlined />}
+                icon={<Download size="1em" />}
               >
                 {toUpper(arch)}
               </Button>
@@ -179,7 +179,7 @@ const CLIDownloadTab: React.FC = () => {
                         style={{ flex: 1 }}
                         variant="outlined"
                         color="primary"
-                        icon={<DownloadOutlined />}
+                        icon={<Download size="1em" />}
                       >
                         {arch}
                       </Button>

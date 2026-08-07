@@ -52,7 +52,6 @@ import ResourceAllocationFormItems, {
 import VFolderTableFormItem, {
   type VFolderTableFormValues,
 } from './VFolderTableFormItem';
-import { InfoCircleOutlined, ReloadOutlined } from '@ant-design/icons';
 import {
   Alert,
   Button,
@@ -86,7 +85,7 @@ import {
   useBAILogger,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { FolderOpenIcon, PlusIcon } from 'lucide-react';
+import { Info, RotateCw, FolderOpenIcon, PlusIcon } from 'lucide-react';
 import React, {
   Suspense,
   startTransition,
@@ -1509,7 +1508,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                           title={t('modelService.DeploymentPresetDetail')}
                         >
                           <Button
-                            icon={<InfoCircleOutlined />}
+                            icon={<Info size="1em" />}
                             disabled={!selectedId}
                             onClick={() => {
                               if (!selectedId) return;
@@ -1573,7 +1572,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                         </Tooltip>
                         <Tooltip title={t('button.Refresh')}>
                           <Button
-                            icon={<ReloadOutlined />}
+                            icon={<RotateCw size="1em" />}
                             onClick={() => {
                               startTransition(() => {
                                 presetVFolderSelectRef.current?.refetch();
@@ -1652,7 +1651,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                       </Tooltip>
                       <Tooltip title={t('button.Refresh')}>
                         <Button
-                          icon={<ReloadOutlined />}
+                          icon={<RotateCw size="1em" />}
                           onClick={() => {
                             startTransition(() => {
                               customVFolderSelectRef.current?.refetch();

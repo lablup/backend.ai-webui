@@ -15,17 +15,17 @@ import DeleteSelectedItemsModal, {
   DeleteSelectedItemsModalProps,
 } from './DeleteSelectedItemsModal';
 import { useUploadVFolderFiles } from './hooks';
-import {
-  DeleteFilled,
-  FileAddOutlined,
-  FolderAddOutlined,
-  UploadOutlined,
-} from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { Button, Dropdown, Grid, Tooltip, Upload } from 'antd';
 import { createStyles } from 'antd-style';
 import type { RcFile } from 'antd/es/upload';
-import { DownloadIcon } from 'lucide-react';
+import {
+  DownloadIcon,
+  FilePlus,
+  FolderPlus,
+  Trash2,
+  Upload as UploadIcon,
+} from 'lucide-react';
 import { use, useRef } from 'react';
 
 const useStyles = createStyles(({ css }) => ({
@@ -149,7 +149,8 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
               <Button
                 disabled={!enableDelete}
                 icon={
-                  <DeleteFilled
+                  <Trash2
+                    size="1em"
                     style={{
                       color: enableDelete
                         ? token.colorError
@@ -194,7 +195,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
         <Tooltip title={!lg && t('comp:FileExplorer.CreateFolder')}>
           <Button
             disabled={!enableWrite}
-            icon={<FolderAddOutlined />}
+            icon={<FolderPlus size="1em" />}
             onClick={() => {
               toggleCreateModal();
             }}
@@ -206,7 +207,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
           <Tooltip title={!lg && t('comp:FileExplorer.CreateFile')}>
             <Button
               disabled={!enableWrite}
-              icon={<FileAddOutlined />}
+              icon={<FilePlus size="1em" />}
               onClick={() => {
                 toggleCreateFileModal();
               }}
@@ -247,7 +248,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
                   >
                     <Button
                       type="text"
-                      icon={<FileAddOutlined />}
+                      icon={<FilePlus size="1em" />}
                       onClick={() => toggleUploadDropdown()}
                     >
                       {t('comp:FileExplorer.UploadFiles')}
@@ -266,7 +267,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
                   >
                     <Button
                       type="text"
-                      icon={<FolderAddOutlined />}
+                      icon={<FolderPlus size="1em" />}
                       onClick={() => toggleUploadDropdown()}
                     >
                       {t('comp:FileExplorer.UploadFolder')}
@@ -285,7 +286,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
                     : undefined
               }
             >
-              <Button icon={<UploadOutlined />} disabled={!enableUpload}>
+              <Button icon={<UploadIcon size="1em" />} disabled={!enableUpload}>
                 {lg && t('general.button.Upload')}
               </Button>
             </Tooltip>

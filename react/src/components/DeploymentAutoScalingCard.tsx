@@ -16,7 +16,6 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { theme } from '../theme-shim';
 import AutoScalingRuleEditorModal from './AutoScalingRuleEditorModal';
 import AutoScalingRuleListNodes from './AutoScalingRuleListNodes';
-import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Skeleton, Tooltip } from 'antd';
 import {
   BAIButton,
@@ -33,7 +32,7 @@ import {
   useMutationWithPromise,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { PlusIcon } from 'lucide-react';
+import { CircleHelp, PlusIcon } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, {
   Suspense,
@@ -100,8 +99,9 @@ const DeploymentAutoScalingCard: React.FC<DeploymentAutoScalingCardProps> = ({
         <BAIFlex gap="xs" align="center">
           {t('deployment.tab.AutoScaling')}
           <Tooltip title={t('deployment.tab.description.AutoScaling')}>
-            <QuestionCircleOutlined
+            <CircleHelp
               style={{ color: token.colorTextDescription }}
+              size="1em"
             />
           </Tooltip>
         </BAIFlex>

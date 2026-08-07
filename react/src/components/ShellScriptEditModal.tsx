@@ -7,7 +7,6 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { ShellScriptType } from '../pages/UserSettingsPage';
 import BAICodeEditor from './BAICodeEditor';
-import { DeleteFilled, DownOutlined } from '@ant-design/icons';
 import {
   Button,
   Dropdown,
@@ -26,6 +25,7 @@ import {
   useBAILogger,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { Trash2, ChevronDown } from 'lucide-react';
 import { useEffect, useEffectEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -210,7 +210,7 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
                   setIsDeleteConfirmOpen(true);
                 }}
               >
-                <DeleteFilled />
+                <Trash2 size="1em" />
               </Button>
               <Popconfirm
                 open={isResetConfirmOpen}
@@ -237,7 +237,11 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
                     ],
                   }}
                 >
-                  <Button type="default" danger icon={<DownOutlined />} />
+                  <Button
+                    type="default"
+                    danger
+                    icon={<ChevronDown size="1em" />}
+                  />
                 </Dropdown>
               </Popconfirm>
             </Space.Compact>
@@ -271,7 +275,7 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
                   ],
                 }}
               >
-                <Button type="primary" icon={<DownOutlined />} />
+                <Button type="primary" icon={<ChevronDown size="1em" />} />
               </Dropdown>
             </Space.Compact>
           </BAIFlex>

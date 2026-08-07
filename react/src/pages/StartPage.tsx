@@ -15,7 +15,6 @@ import { useProjectPath } from '../hooks/useRouteScope';
 import { useVFolderInvitations } from '../hooks/useVFolderInvitations';
 import { MenuKeys } from '../hooks/useWebUIMenuItems';
 import { SessionLauncherFormValue } from './SessionLauncherPage';
-import { AppstoreAddOutlined } from '@ant-design/icons';
 import {
   filterOutEmpty,
   BAIFlex,
@@ -27,6 +26,7 @@ import {
   BAIAlert,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { Grid2x2Plus } from 'lucide-react';
 import { parseAsJson, parseAsString, useQueryStates } from 'nuqs';
 import { useEffect, useState, useMemo, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -223,7 +223,7 @@ const StartPage: React.FC = () => {
               title={t('start.StartDeployment')}
               description={t('start.StartDeploymentDesc')}
               buttonText={t('start.button.StartDeployment')}
-              icon={<AppstoreAddOutlined />}
+              icon={<Grid2x2Plus size="1em" />}
               onClick={() => webuiNavigate(buildProjectPath('deployments'))}
             />
           </ThemeSecondaryProvider>

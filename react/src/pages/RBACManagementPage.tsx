@@ -21,7 +21,6 @@ import RoleNodes, {
 import { convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
-import { DeleteFilled } from '@ant-design/icons';
 import {
   BAIButton,
   BAICard,
@@ -38,7 +37,7 @@ import {
   useFetchKey,
   useMutationWithPromise,
 } from 'backend.ai-ui';
-import { BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
+import { Trash2, BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
 import {
   parseAsJson,
   parseAsString,
@@ -378,7 +377,7 @@ const RBACManagementPage: React.FC = () => {
                                 {
                                   key: 'purge',
                                   title: t('rbac.PurgeRole'),
-                                  icon: <DeleteFilled />,
+                                  icon: <Trash2 size="1em" />,
                                   type: 'danger' as const,
                                   onClick: () => handlePurgeRole(role),
                                 },

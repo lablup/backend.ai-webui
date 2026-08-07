@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useTanQuery } from '../hooks/reactQueryAlias';
-import { LoadingOutlined } from '@ant-design/icons';
 import { Alert, Tag, Tooltip, Typography } from 'antd';
 import {
   BAICard,
@@ -12,6 +11,7 @@ import {
   useDebouncedDeferredValue,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
+import { LoaderCircle } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -105,7 +105,7 @@ const HuggingFaceModelPreview: React.FC<HuggingFaceModelPreviewProps> = ({
   // While the input is still settling, any previously rendered card belongs
   // to a different model, so hide it instead of showing stale information.
   if (debouncedModelId !== modelId || isFetching) {
-    return <LoadingOutlined spin />;
+    return <LoaderCircle className="anticon-spin" size="1em" />;
   }
 
   if (isError) {

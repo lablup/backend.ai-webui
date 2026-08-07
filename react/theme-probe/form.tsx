@@ -45,11 +45,6 @@
 import { backendAiBrandTheme } from '../src/astryx-theme/backendAiTheme';
 import BAIFormItem from '../src/components/BAIFormItem';
 import '../src/index.css';
-import {
-  InfoCircleOutlined,
-  MinusCircleOutlined,
-  PlusOutlined,
-} from '@ant-design/icons';
 import { Theme } from '@astryxdesign/core/theme';
 import {
   Button,
@@ -63,6 +58,7 @@ import {
   Typography,
 } from 'antd';
 import type { FormInstance } from 'antd';
+import { CircleMinus, Info, Plus } from 'lucide-react';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 
@@ -125,7 +121,7 @@ const AutoScalingRuleFormBody: React.FC<BodyProps> = ({ Item, form }) => {
         label="Metric source"
         name="metricSource"
         rules={[{ required: true }]}
-        tooltip={<InfoCircleOutlined />}
+        tooltip={<Info size="1em" />}
       >
         <Select
           options={[
@@ -147,7 +143,7 @@ const AutoScalingRuleFormBody: React.FC<BodyProps> = ({ Item, form }) => {
 
       {/* Layout-only item with nested noStyle fields — the pattern that makes
           the visual/engine split interesting (NoStyleItemContext aggregation). */}
-      <Item label="Condition" required tooltip={<InfoCircleOutlined />}>
+      <Item label="Condition" required tooltip={<Info size="1em" />}>
         <Form.Item name="conditionMode" noStyle>
           <Radio.Group
             optionType="button"
@@ -249,7 +245,7 @@ const AutoScalingRuleFormBody: React.FC<BodyProps> = ({ Item, form }) => {
       <Item
         label="Step size"
         name="stepSize"
-        tooltip={<InfoCircleOutlined />}
+        tooltip={<Info size="1em" />}
         rules={[
           { required: true },
           { type: 'number', min: 1, max: SIGNED_32BIT_MAX_INT },
@@ -333,7 +329,7 @@ const AutoScalingRuleFormBody: React.FC<BodyProps> = ({ Item, form }) => {
                 </Item>
                 <Button
                   type="text"
-                  icon={<MinusCircleOutlined />}
+                  icon={<CircleMinus size="1em" />}
                   onClick={() => remove(field.name)}
                   style={{ marginTop: 28 }}
                 />
@@ -341,7 +337,7 @@ const AutoScalingRuleFormBody: React.FC<BodyProps> = ({ Item, form }) => {
             ))}
             <Button
               type="dashed"
-              icon={<PlusOutlined />}
+              icon={<Plus size="1em" />}
               onClick={() => add({ key: '', value: '' })}
             >
               Add tag

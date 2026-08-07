@@ -1,8 +1,8 @@
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
-import { LoadingOutlined } from '@ant-design/icons';
 import { Typography } from 'antd';
+import { LoaderCircle } from 'lucide-react';
 
 const TotalFooter: React.FC<{
   loading?: boolean;
@@ -13,11 +13,12 @@ const TotalFooter: React.FC<{
   return (
     <BAIFlex justify="end" gap={'xs'}>
       {loading ? (
-        <LoadingOutlined
-          spin
+        <LoaderCircle
+          className="anticon-spin"
           style={{
             color: token.colorTextSecondary,
           }}
+          size="1em"
         />
       ) : (
         <div />

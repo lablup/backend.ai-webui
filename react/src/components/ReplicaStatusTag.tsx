@@ -2,10 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { LoadingOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import type { TagProps } from 'antd';
 import { BAITag } from 'backend.ai-ui';
+import { LoaderCircle } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -47,11 +47,7 @@ export interface ReplicaStatusTagProps extends Omit<TagProps, 'color'> {
  * transparent via the `colorInfoBg` override.
  */
 type TagPresetStatusColor =
-  | 'success'
-  | 'processing'
-  | 'error'
-  | 'warning'
-  | 'default';
+  'success' | 'processing' | 'error' | 'warning' | 'default';
 
 const replicaStatusColorMap: Record<ReplicaStatus, TagPresetStatusColor> = {
   HEALTHY: 'success',
@@ -97,7 +93,10 @@ const ReplicaStatusTag: React.FC<ReplicaStatusTagProps> = ({
   // WARMING_UP and PROVISIONING share the `processing` (info) status color;
   // render a spinner on WARMING_UP so the two states stay visually distinct in
   // the status column.
-  const icon = status === 'WARMING_UP' ? <LoadingOutlined spin /> : undefined;
+  const icon =
+    status === 'WARMING_UP' ? (
+      <LoaderCircle className="anticon-spin" size="1em" />
+    ) : undefined;
 
   const tag = (
     <BAITag {...tagProps} color={color} icon={icon}>

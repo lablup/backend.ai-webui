@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { PrometheusQueryTemplatePreviewQuery } from '../__generated__/PrometheusQueryTemplatePreviewQuery.graphql';
-import { LoadingOutlined, ReloadOutlined } from '@ant-design/icons';
 import { Typography } from 'antd';
 import {
   BAIButton,
@@ -11,6 +10,7 @@ import {
   useDebouncedDeferredValue,
   useFetchKey,
 } from 'backend.ai-ui';
+import { LoaderCircle, RotateCw } from 'lucide-react';
 import React, { Suspense, useDeferredValue } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
@@ -51,7 +51,7 @@ const PrometheusQueryTemplatePreview: React.FC<{
         );
       }}
     >
-      <Suspense fallback={<LoadingOutlined spin />}>
+      <Suspense fallback={<LoaderCircle className="anticon-spin" size="1em" />}>
         <PrometheusQueryTemplatePreviewContent queryTemplate={queryTemplate} />
       </Suspense>
     </ErrorBoundary>
@@ -116,7 +116,7 @@ const PrometheusQueryTemplatePreviewContent: React.FC<{
     : formatPreviewValue(adminPreviewPrometheusQueryPreset?.result, t);
 
   return fetchTemplate !== trimmed ? (
-    <LoadingOutlined spin />
+    <LoaderCircle className="anticon-spin" size="1em" />
   ) : !fetchTemplate ? null : hadDomainError ? (
     <BAIFlex gap="xxs">
       <Typography.Text type="danger">
@@ -134,7 +134,7 @@ const PrometheusQueryTemplatePreviewContent: React.FC<{
       <BAIButton
         type="link"
         size="small"
-        icon={<ReloadOutlined />}
+        icon={<RotateCw size="1em" />}
         loading={fetchKey !== deferredKey}
         onClick={() => updateFetchKey()}
         title={t('autoScalingRule.RefreshPreview')}

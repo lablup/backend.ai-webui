@@ -2,19 +2,19 @@
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
-import {
-  BlockOutlined,
-  BorderOutlined,
-  CloseOutlined,
-  FullscreenExitOutlined,
-  FullscreenOutlined,
-  HolderOutlined,
-  MinusOutlined,
-} from '@ant-design/icons';
 import { Button, Modal, Tooltip, type ModalProps } from 'antd';
 import { createStyles } from 'antd-style';
 import classNames from 'classnames';
 import * as _ from 'lodash-es';
+import {
+  SquareStack,
+  Square,
+  X,
+  Minimize,
+  Maximize,
+  GripVertical,
+  Minus,
+} from 'lucide-react';
 import React, { useState, useRef, useEffect } from 'react';
 import Draggable, {
   type DraggableData,
@@ -432,7 +432,7 @@ const BAIModal: React.FC<BAIModalProps> = ({
               className={styles.windowControlButton}
               type="text"
               size="small"
-              icon={<MinusOutlined />}
+              icon={<Minus size="1em" />}
               onClick={() => handleWindowStateChange('minimize')}
               aria-label={t('comp:BAIModal.Minimize')}
             />
@@ -452,9 +452,9 @@ const BAIModal: React.FC<BAIModalProps> = ({
               size="small"
               icon={
                 windowState === 'maximized' ? (
-                  <BlockOutlined />
+                  <SquareStack size="1em" />
                 ) : (
-                  <BorderOutlined />
+                  <Square size="1em" />
                 )
               }
               onClick={() => handleWindowStateChange('maximize')}
@@ -480,9 +480,9 @@ const BAIModal: React.FC<BAIModalProps> = ({
               size="small"
               icon={
                 windowState === 'fullscreen' ? (
-                  <FullscreenExitOutlined />
+                  <Minimize size="1em" />
                 ) : (
-                  <FullscreenOutlined />
+                  <Maximize size="1em" />
                 )
               }
               onClick={() => handleWindowStateChange('fullscreen')}
@@ -500,7 +500,7 @@ const BAIModal: React.FC<BAIModalProps> = ({
               className={styles.windowControlButton}
               type="text"
               size="small"
-              icon={<CloseOutlined />}
+              icon={<X size="1em" />}
               onClick={(e) =>
                 handleCancel(
                   e as unknown as React.MouseEvent<HTMLButtonElement>,
@@ -631,7 +631,8 @@ const BAIModal: React.FC<BAIModalProps> = ({
             style={{ width: '100%', overflow: 'hidden' }}
           >
             <BAIFlex gap={'xs'} style={{ overflow: 'hidden', flex: 1 }}>
-              <HolderOutlined
+              <GripVertical
+                size="1em"
                 style={{
                   cursor:
                     modalProps.draggable && !isDraggingDisabled ? 'move' : '',
@@ -667,7 +668,8 @@ const BAIModal: React.FC<BAIModalProps> = ({
           </BAIFlex>
         ) : (
           <BAIFlex gap={'xs'}>
-            <HolderOutlined
+            <GripVertical
+              size="1em"
               style={{
                 cursor: modalProps.draggable ? 'move' : '',
                 display: !modalProps.draggable ? 'none' : '',

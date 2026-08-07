@@ -4,9 +4,9 @@
  */
 import { theme } from '../theme-shim';
 import type { ResourceSlotTypeInfo } from './AdminDeploymentPresetFormTypes';
-import { MinusCircleOutlined } from '@ant-design/icons';
 import { Form, Input, InputNumber, Select, Space } from 'antd';
 import { BAIDynamicUnitInputNumber, BAIFlex } from 'backend.ai-ui';
+import { CircleMinus } from 'lucide-react';
 import React from 'react';
 
 // ---------------------------------------------------------------------------
@@ -101,7 +101,7 @@ export const ResourceSlotRow: React.FC<{
           <Input />
         )}
       </Form.Item>
-      <MinusCircleOutlined onClick={onRemove} />
+      <CircleMinus onClick={onRemove} size="1em" />
     </BAIFlex>
   );
 };
@@ -160,9 +160,9 @@ export const FixedResourceSlotField: React.FC<{
           />
         </Form.Item>
       )}
-      {/* Spacer matching the MinusCircleOutlined delete icon in ResourceSlotRow */}
+      {/* Spacer matching the CircleMinus delete icon in ResourceSlotRow */}
       <span style={{ visibility: 'hidden', fontSize: token.fontSize }}>
-        <MinusCircleOutlined />
+        <CircleMinus size="1em" />
       </span>
     </BAIFlex>
   );

@@ -9,7 +9,6 @@ import { theme } from '../theme-shim';
 import AutoScalingRuleEditorModalLegacy, {
   COMPARATOR_LABELS,
 } from './AutoScalingRuleEditorModalLegacy';
-import { DeleteFilled } from '@ant-design/icons';
 import { Button, Tag, Tooltip, Typography } from 'antd';
 import {
   BAIButton,
@@ -22,6 +21,7 @@ import {
 import { default as dayjs } from 'dayjs';
 import * as _ from 'lodash-es';
 import {
+  Trash2,
   CircleArrowDownIcon,
   CircleArrowUpIcon,
   PlusIcon,
@@ -192,7 +192,7 @@ const AutoScalingRuleListLegacy: React.FC<AutoScalingRuleListLegacyProps> = ({
                   <Button
                     type="text"
                     icon={
-                      <DeleteFilled
+                      <Trash2
                         style={
                           isEndpointDestroying
                             ? undefined
@@ -200,6 +200,7 @@ const AutoScalingRuleListLegacy: React.FC<AutoScalingRuleListLegacyProps> = ({
                                 color: token.colorError,
                               }
                         }
+                        size="1em"
                       />
                     }
                     disabled={isEndpointDestroying || !isOwnedByCurrentUser}

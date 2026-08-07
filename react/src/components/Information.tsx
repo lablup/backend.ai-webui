@@ -7,7 +7,6 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import { theme } from '../theme-shim';
 import DescriptionLabel from './DescriptionLabel';
-import { CheckOutlined, WarningOutlined } from '@ant-design/icons';
 import {
   Descriptions,
   Tag,
@@ -18,6 +17,7 @@ import {
   Col,
 } from 'antd';
 import { BAIDoubleTag, BAIFlex } from 'backend.ai-ui';
+import { Check, TriangleAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 interface InformationProps {}
@@ -125,12 +125,16 @@ const Information: React.FC<InformationProps> = () => {
               >
                 {/* TODO: accountChanged  */}
                 {true ? (
-                  <CheckOutlined title="Yes" />
+                  <span title="Yes">
+                    <Check size="1em" />
+                  </span>
                 ) : (
-                  <WarningOutlined
-                    style={{ color: token.colorWarning }}
-                    title="No"
-                  />
+                  <span title="No">
+                    <TriangleAlert
+                      style={{ color: token.colorWarning }}
+                      size="1em"
+                    />
+                  </span>
                 )}
               </Descriptions.Item>
               <Descriptions.Item
@@ -142,12 +146,16 @@ const Information: React.FC<InformationProps> = () => {
                 }
               >
                 {baiClient?._config.endpoint.startsWith('https:') ? (
-                  <CheckOutlined title="Yes" />
+                  <span title="Yes">
+                    <Check size="1em" />
+                  </span>
                 ) : (
-                  <WarningOutlined
-                    style={{ color: token.colorWarning }}
-                    title="No"
-                  />
+                  <span title="No">
+                    <TriangleAlert
+                      style={{ color: token.colorWarning }}
+                      size="1em"
+                    />
+                  </span>
                 )}
               </Descriptions.Item>
             </Descriptions>
@@ -226,9 +234,12 @@ const Information: React.FC<InformationProps> = () => {
               }
             >
               {licenseInfo.valid ? (
-                <CheckOutlined />
+                <Check size="1em" />
               ) : (
-                <WarningOutlined style={{ color: token.colorWarning }} />
+                <TriangleAlert
+                  style={{ color: token.colorWarning }}
+                  size="1em"
+                />
               )}
             </Descriptions.Item>
             <Descriptions.Item

@@ -9,7 +9,6 @@ import {
 import { useResourceSlotsDetails } from '../../hooks/backendai';
 import { theme } from '../../theme-shim';
 import ResourceGroupFairShareSettingModal from './ResourceGroupFairShareSettingModal';
-import { SettingOutlined } from '@ant-design/icons';
 import { Divider, Typography } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import {
@@ -23,6 +22,7 @@ import {
   ResourceTypeIcon,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { Settings } from 'lucide-react';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -129,7 +129,7 @@ const ResourceGroupFairShareTable: React.FC<
             {
               key: 'settings',
               title: t('button.Settings'),
-              icon: <SettingOutlined />,
+              icon: <Settings size="1em" />,
               onClick: () => setSelectedResourceGroup(record),
             },
           ]}

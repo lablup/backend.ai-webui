@@ -5,7 +5,6 @@
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useTanQuery } from '../../hooks/reactQueryAlias';
 import SourceCodeView from '../SourceCodeView';
-import { ReloadOutlined } from '@ant-design/icons';
 import { Descriptions, Skeleton, Typography } from 'antd';
 import {
   BAIAlert,
@@ -15,6 +14,7 @@ import {
   BAIModalProps,
   BAIText,
 } from 'backend.ai-ui';
+import { RotateCw } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 const PASSWORD_FILE_PATH = '/home/work/.password';
@@ -104,7 +104,7 @@ const VSCodeDesktopConnectionModal: React.FC<
               action={
                 <BAIButton
                   size="small"
-                  icon={<ReloadOutlined />}
+                  icon={<RotateCw size="1em" />}
                   action={async () => {
                     await refetch();
                   }}

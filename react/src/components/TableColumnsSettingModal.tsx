@@ -3,12 +3,12 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { theme } from '../theme-shim';
-import { SearchOutlined } from '@ant-design/icons';
 import { Checkbox, Input, Form } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { FormInstance } from 'antd/lib';
 import { BAIModal, BAIModalProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { Search } from 'lucide-react';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -98,7 +98,7 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
           style={{ marginBottom: 0 }}
         >
           <Input
-            prefix={<SearchOutlined />}
+            prefix={<Search size="1em" />}
             style={{ marginBottom: token.marginSM }}
             placeholder={t('table.SearchTableColumn')}
           />

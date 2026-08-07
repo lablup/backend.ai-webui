@@ -10,7 +10,6 @@ import {
 } from '../hooks/useVFolderInvitations';
 import { theme } from '../theme-shim';
 import VFolderPermissionCell from './VFolderPermissionCell';
-import { FolderOutlined } from '@ant-design/icons';
 import { List, Typography, Descriptions } from 'antd';
 import {
   BAIButton,
@@ -19,6 +18,7 @@ import {
   BAIModalProps,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
+import { Folder } from 'lucide-react';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -114,7 +114,7 @@ const FolderInvitationResponseModal: React.FC<
       <List.Item.Meta
         title={
           <BAIFlex gap={'xxs'}>
-            <FolderOutlined />
+            <Folder size="1em" />
             <Typography.Text strong>{item.vfolder_name}</Typography.Text>
           </BAIFlex>
         }

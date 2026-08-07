@@ -5,16 +5,11 @@
 import { NotificationState } from '../hooks/useBAINotification';
 import { theme } from '../theme-shim';
 import BAINotificationBackgroundProgress from './BAINotificationBackgroundProgress';
-import {
-  CheckCircleOutlined,
-  ClockCircleOutlined,
-  CloseCircleOutlined,
-} from '@ant-design/icons';
 import { Button, Card, List, Typography } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { FolderIcon } from 'lucide-react';
+import { CircleCheck, Clock, CircleX, FolderIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -35,14 +30,16 @@ const BAIGeneralNotificationItem: React.FC<{
     explicitIcon ||
     (notification.backgroundTask &&
       {
-        pending: <ClockCircleOutlined style={{ color: token.colorInfo }} />,
-        resolved: <CheckCircleOutlined style={{ color: token.colorSuccess }} />,
-        rejected: <CloseCircleOutlined style={{ color: token.colorError }} />,
+        pending: <Clock style={{ color: token.colorInfo }} size="1em" />,
+        resolved: (
+          <CircleCheck style={{ color: token.colorSuccess }} size="1em" />
+        ),
+        rejected: <CircleX style={{ color: token.colorError }} size="1em" />,
       }[notification.backgroundTask.status]) ||
     (notification.type === 'error' ? (
-      <CloseCircleOutlined style={{ color: token.colorError }} />
+      <CircleX style={{ color: token.colorError }} size="1em" />
     ) : notification.type === 'success' ? (
-      <CheckCircleOutlined style={{ color: token.colorSuccess }} />
+      <CircleCheck style={{ color: token.colorSuccess }} size="1em" />
     ) : null);
 
   return (

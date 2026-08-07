@@ -6,10 +6,9 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import AnnouncementEditModal from './AnnouncementEditModal';
 import SettingList, { SettingGroup } from './SettingList';
-import { RedoOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { BAIUnmountAfterClose } from 'backend.ai-ui';
-import { SquarePenIcon } from 'lucide-react';
+import { Redo2, SquarePenIcon } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -99,7 +98,7 @@ const MaintenanceSettingList = () => {
           description: t('maintenance.DescMatchDatabase'),
           children: (
             <Button
-              icon={<RedoOutlined />}
+              icon={<Redo2 size="1em" />}
               onClick={recalculateUsage}
               loading={isRecalculating}
             >
@@ -122,7 +121,7 @@ const MaintenanceSettingList = () => {
           description: t('maintenance.DescRescanImageList'),
           children: (
             <Button
-              icon={<RedoOutlined />}
+              icon={<Redo2 size="1em" />}
               onClick={rescanImages}
               loading={isRescanning}
             >

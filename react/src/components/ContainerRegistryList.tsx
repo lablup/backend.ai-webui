@@ -16,12 +16,6 @@ import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting'
 import { usePainKiller } from '../hooks/usePainKiller';
 import ContainerRegistryEditorModal from './ContainerRegistryEditorModal';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
-import {
-  DeleteFilled,
-  ReloadOutlined,
-  SettingOutlined,
-  SyncOutlined,
-} from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { Button, Switch, Tag, Tooltip } from 'antd';
 import { AnyObject } from 'antd/es/_util/type';
@@ -39,7 +33,14 @@ import {
   INITIAL_FETCH_KEY,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { PlusIcon, SquarePenIcon } from 'lucide-react';
+import {
+  Trash2,
+  RotateCw,
+  Settings,
+  RefreshCw,
+  PlusIcon,
+  SquarePenIcon,
+} from 'lucide-react';
 import { parseAsString, useQueryStates } from 'nuqs';
 import { useState, useDeferredValue, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -287,7 +288,7 @@ const ContainerRegistryList: React.FC<{
             {
               key: 'delete',
               title: t('button.Delete'),
-              icon: <DeleteFilled />,
+              icon: <Trash2 size="1em" />,
               type: 'danger',
               onClick: () => {
                 setDeletingRegistry(record);
@@ -296,7 +297,7 @@ const ContainerRegistryList: React.FC<{
             {
               key: 'rescan',
               title: t('maintenance.RescanImages'),
-              icon: <SyncOutlined />,
+              icon: <RefreshCw size="1em" />,
               onClick: () => {
                 record.registry_name &&
                   rescanImage(record.registry_name, record.project);
@@ -445,7 +446,7 @@ const ContainerRegistryList: React.FC<{
           <Tooltip title={t('button.Refresh')}>
             <Button
               loading={deferredFetchKey !== fetchKey}
-              icon={<ReloadOutlined />}
+              icon={<RotateCw size="1em" />}
               onClick={() => {
                 updateFetchKey();
               }}
@@ -481,7 +482,7 @@ const ContainerRegistryList: React.FC<{
           extraContent: (
             <Button
               type="text"
-              icon={<SettingOutlined />}
+              icon={<Settings size="1em" />}
               onClick={() => {
                 toggleColumnSettingModal();
               }}

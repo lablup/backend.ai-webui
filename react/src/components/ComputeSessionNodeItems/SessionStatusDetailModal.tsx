@@ -7,11 +7,11 @@ import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import { theme } from '../../theme-shim';
 import SessionStatusTag from './SessionStatusTag';
-import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { Descriptions, type ModalProps, Tag, Typography } from 'antd';
 import { BAIFlex, BAIModal } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
+import { CircleCheck, CircleX } from 'lucide-react';
 import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -152,13 +152,14 @@ const SessionStatusDetailModal: React.FC<SessionStatusDetailModalProps> = ({
                     {_.map(statusData.scheduler?.failed_predicates, (p) => {
                       return (
                         <BAIFlex gap="xs" align="start">
-                          <CloseCircleOutlined
+                          <CircleX
                             style={{
                               color: token.colorError,
                               fontSize: 16,
                               marginTop: 4,
                               flexShrink: 0,
                             }}
+                            size="1em"
                           />
                           <BAIFlex direction="column" align="stretch">
                             <Typography.Text>{p.name}</Typography.Text>
@@ -175,13 +176,14 @@ const SessionStatusDetailModal: React.FC<SessionStatusDetailModalProps> = ({
                     {_.map(statusData.scheduler?.passed_predicates, (p) => {
                       return (
                         <BAIFlex gap="xs" align="start">
-                          <CheckCircleOutlined
+                          <CircleCheck
                             style={{
                               color: token.colorSuccess,
                               fontSize: 16,
                               marginTop: 4,
                               flexShrink: 0,
                             }}
+                            size="1em"
                           />
                           <BAIFlex direction="column" align="stretch">
                             <Typography.Text>{p.name}</Typography.Text>

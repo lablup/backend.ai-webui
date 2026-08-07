@@ -23,7 +23,6 @@ import GeneratedKeypairListModal from './GeneratedKeypairListModal';
 import ProjectSelect from './ProjectSelect';
 import TOTPActivateModal from './TOTPActivateModal';
 import UserResourcePolicySelect from './UserResourcePolicySelect';
-import { ExclamationCircleFilled } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {
   Form,
@@ -52,6 +51,7 @@ import {
   useUpdatableState,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { CircleAlert } from 'lucide-react';
 import React, { Suspense, useDeferredValue, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useMutation, useFragment } from 'react-relay';
@@ -886,7 +886,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                       formRef.current?.setFieldValue('totp_activated', true);
                       modal.confirm({
                         title: t('totp.TurnOffTotp'),
-                        icon: <ExclamationCircleFilled />,
+                        icon: <CircleAlert size="1em" />,
                         content: t('totp.ConfirmTotpRemovalBody'),
                         okText: t('button.Yes'),
                         okType: 'danger',

@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { theme } from '../theme-shim';
-import { SettingOutlined } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {
   Alert,
@@ -18,6 +17,7 @@ import { createStyles } from 'antd-style';
 import { BAIButton, BAIFlex, BAIModal, BAISelectProps } from 'backend.ai-ui';
 import { t } from 'i18next';
 import * as _ from 'lodash-es';
+import { Settings } from 'lucide-react';
 import React, { ReactElement, ReactNode, useState } from 'react';
 
 type BaseSettingItemProps = {
@@ -142,7 +142,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
               onOpenChange={(e) => e && setIsDropdownOpen(true)}
             >
               <BAIButton
-                icon={<SettingOutlined />}
+                icon={<Settings size="1em" />}
                 type="text"
                 style={{
                   width: 20,

@@ -1,11 +1,11 @@
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
-import { DownOutlined } from '@ant-design/icons';
 import { useControllableValue } from 'ahooks';
 import { Form, FormItemProps, Input, Typography } from 'antd';
 import type { RuleObject, RuleRender } from 'antd/es/form';
 import * as _ from 'lodash-es';
+import { ChevronDown } from 'lucide-react';
 import React, {
   cloneElement,
   ReactElement,
@@ -174,11 +174,12 @@ const BAIBulkEditFormItem: React.FC<BAIBulkEditFormItemProps> = ({
           onFocus={handlePlaceholderClick}
           variant="filled"
           suffix={
-            <DownOutlined
+            <ChevronDown
               style={{
                 color: token.colorTextQuaternary,
                 fontSize: token.fontSizeSM,
               }}
+              size="1em"
             />
           }
         />
@@ -190,11 +191,12 @@ const BAIBulkEditFormItem: React.FC<BAIBulkEditFormItemProps> = ({
           onFocus={handlePlaceholderClick}
           variant="filled"
           suffix={
-            <DownOutlined
+            <ChevronDown
               style={{
                 color: token.colorTextQuaternary,
                 fontSize: token.fontSizeSM,
               }}
+              size="1em"
             />
           }
         />

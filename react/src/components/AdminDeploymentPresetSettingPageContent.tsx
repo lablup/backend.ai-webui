@@ -29,12 +29,6 @@ import RuntimeParameterFormSection, {
   RUNTIME_PARAMS_NAMESPACE,
   type RuntimeParameterValues,
 } from './RuntimeParameterFormSection';
-import {
-  DoubleRightOutlined,
-  LeftOutlined,
-  MinusCircleOutlined,
-  RightOutlined,
-} from '@ant-design/icons';
 import { useDebounceFn } from 'ahooks';
 import {
   AutoComplete,
@@ -58,7 +52,13 @@ import {
   toLocalId,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { PlusIcon } from 'lucide-react';
+import {
+  ChevronsRight,
+  ChevronLeft,
+  CircleMinus,
+  ChevronRight,
+  PlusIcon,
+} from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, {
   Suspense,
@@ -886,7 +886,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                             placeholder={t('general.Example', { value: '64m' })}
                           />
                         </Form.Item>
-                        <MinusCircleOutlined onClick={() => remove(name)} />
+                        <CircleMinus size="1em" onClick={() => remove(name)} />
                       </BAIFlex>
                     ))}
                     <Form.Item noStyle>
@@ -1131,7 +1131,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
           >
             {!isFirstStep && (
               <Button
-                icon={<LeftOutlined />}
+                icon={<ChevronLeft size="1em" />}
                 onClick={() => goToStep(currentStepIndex - 1)}
               >
                 {t('button.Previous')}
@@ -1155,11 +1155,11 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                   ghost
                   onClick={() => goToStep(currentStepIndex + 1)}
                 >
-                  {t('button.Next')} <RightOutlined />
+                  {t('button.Next')} <ChevronRight size="1em" />
                 </Button>
                 <Button onClick={() => goToStep(STEP_KEYS.length - 1)}>
                   {t('adminDeploymentPreset.nav.SkipToReview')}
-                  <DoubleRightOutlined />
+                  <ChevronsRight size="1em" />
                 </Button>
               </>
             )}

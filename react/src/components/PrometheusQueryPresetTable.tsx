@@ -6,7 +6,6 @@ import {
   PrometheusQueryPresetTableFragment$data,
   PrometheusQueryPresetTableFragment$key,
 } from '../__generated__/PrometheusQueryPresetTableFragment.graphql';
-import { DeleteFilled } from '@ant-design/icons';
 import { Tag } from 'antd';
 import {
   BAIColumnsType,
@@ -20,7 +19,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { SquarePenIcon } from 'lucide-react';
+import { Trash2, SquarePenIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -120,7 +119,7 @@ const PrometheusQueryPresetTable: React.FC<PrometheusQueryPresetTableProps> = ({
             {
               key: 'delete',
               title: t('button.Delete'),
-              icon: <DeleteFilled />,
+              icon: <Trash2 size="1em" />,
               type: 'danger',
               onClick: () => onDeletePreset?.(row),
             },

@@ -1,7 +1,7 @@
 import BAIBoardItemTitle from './BAIBoardItemTitle';
-import { SettingOutlined, ReloadOutlined } from '@ant-design/icons';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Button, Space, Tag, Typography } from 'antd';
+import { Settings, RotateCw } from 'lucide-react';
 
 /**
  * BAIBoardItemTitle is a header component designed for board items, featuring a title, optional tooltip, and extra content area.
@@ -105,8 +105,8 @@ export const WithTooltipAndExtra: Story = {
     extra: (
       <Space>
         <Tag color="blue">12 Active</Tag>
-        <Button type="text" size="small" icon={<ReloadOutlined />} />
-        <Button type="text" size="small" icon={<SettingOutlined />} />
+        <Button type="text" size="small" icon={<RotateCw size="1em" />} />
+        <Button type="text" size="small" icon={<Settings size="1em" />} />
       </Space>
     ),
   },

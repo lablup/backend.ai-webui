@@ -17,12 +17,6 @@ import BAIRadioGroup from './BAIRadioGroup';
 import ResourceGroupInfoModal from './ResourceGroupInfoModal';
 import ResourceGroupSettingModal from './ResourceGroupSettingModal';
 import UpdateResourceGroupsModal from './UpdateResourceGroupsModal';
-import {
-  CheckOutlined,
-  CloseOutlined,
-  DeleteFilled,
-  InfoCircleOutlined,
-} from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { Tag, Tooltip } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
@@ -41,7 +35,16 @@ import {
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { BanIcon, PlusIcon, SquarePenIcon, UndoIcon } from 'lucide-react';
+import {
+  Check,
+  X,
+  Trash2,
+  Info,
+  BanIcon,
+  PlusIcon,
+  SquarePenIcon,
+  UndoIcon,
+} from 'lucide-react';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
@@ -162,7 +165,7 @@ const ResourceGroupList: React.FC = () => {
             {
               key: 'info',
               title: t('button.Info'),
-              icon: <InfoCircleOutlined />,
+              icon: <Info size="1em" />,
               onClick: () => {
                 setSelectedResourceGroup(record);
                 toggleOpenInfoModal();
@@ -246,7 +249,7 @@ const ResourceGroupList: React.FC = () => {
                   {
                     key: 'delete',
                     title: t('button.Delete'),
-                    icon: <DeleteFilled />,
+                    icon: <Trash2 size="1em" />,
                     type: 'danger' as const,
                     onClick: () => {
                       setSelectedResourceGroupName(record?.name || '');
@@ -270,9 +273,9 @@ const ResourceGroupList: React.FC = () => {
       dataIndex: 'is_public',
       render: (value) => {
         return value ? (
-          <CheckOutlined style={{ color: token.colorSuccess }} />
+          <Check style={{ color: token.colorSuccess }} size="1em" />
         ) : (
-          <CloseOutlined style={{ color: token.colorTextSecondary }} />
+          <X style={{ color: token.colorTextSecondary }} size="1em" />
         );
       },
     },

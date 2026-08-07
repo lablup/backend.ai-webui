@@ -5,7 +5,6 @@ import {
   isColumnVisible,
   BAITableColumnOverrideItem,
 } from './BAITable';
-import { SearchOutlined, HolderOutlined } from '@ant-design/icons';
 import { DndContext, type DragEndEvent } from '@dnd-kit/core';
 import type { SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
@@ -28,6 +27,7 @@ import {
 import type { TableColumnsType } from 'antd';
 import { FormInstance } from 'antd/lib';
 import * as _ from 'lodash-es';
+import { Search, GripVertical } from 'lucide-react';
 import React, { use, useRef, useState, useCallback, useMemo } from 'react';
 
 /**
@@ -107,7 +107,7 @@ const DragHandle: React.FC<{ disabled?: boolean }> = ({ disabled }) => {
       ref={disabled ? undefined : setActivatorNodeRef}
       {...(disabled ? {} : listeners)}
     >
-      <HolderOutlined />
+      <GripVertical size="1em" />
     </Typography.Text>
   );
 };
@@ -429,7 +429,7 @@ const BAITableSettingModal: React.FC<TableSettingProps> = ({
           style={{ marginBottom: token.marginSM }}
         >
           <Input
-            prefix={<SearchOutlined />}
+            prefix={<Search size="1em" />}
             placeholder={t('comp:BAITable.SearchTableColumn')}
             value={searchKeyword}
             onChange={(e) => setSearchKeyword(e.target.value)}

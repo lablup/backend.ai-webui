@@ -18,7 +18,6 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
 import { theme } from '../theme-shim';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
-import { QuestionCircleOutlined } from '@ant-design/icons';
 import {
   Card,
   Col,
@@ -39,6 +38,7 @@ import {
   BAIModalProps,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { CircleHelp } from 'lucide-react';
 import React, { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -362,8 +362,9 @@ const KeypairResourcePolicySettingModal: React.FC<
                 }
                 placement="right"
               >
-                <QuestionCircleOutlined
+                <CircleHelp
                   style={{ color: token.colorTextSecondary, cursor: 'pointer' }}
+                  size="1em"
                 />
               </Tooltip>
             </BAIFlex>

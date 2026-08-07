@@ -2,9 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { LoadingOutlined } from '@ant-design/icons';
 import { Spin, type SpinProps } from 'antd';
 import { BAIFlex, BAIFlexProps } from 'backend.ai-ui';
+import { LoaderCircle } from 'lucide-react';
 import React from 'react';
 
 interface FlexActivityIndicatorProps extends BAIFlexProps {
@@ -23,7 +23,10 @@ const FlexActivityIndicator: React.FC<FlexActivityIndicatorProps> = ({
       align="center"
       style={{ width: '100%', height: '100%', ...style }}
     >
-      <Spin indicator={<LoadingOutlined spin />} size={spinSize} />
+      <Spin
+        indicator={<LoaderCircle className="anticon-spin" size="1em" />}
+        size={spinSize}
+      />
       {children}
     </BAIFlex>
   );

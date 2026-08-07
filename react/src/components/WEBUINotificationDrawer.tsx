@@ -9,7 +9,6 @@ import BAIGeneralNotificationItem from './BAIGeneralNotificationItem';
 import BAIMultiStepNotificationItem from './BAIMultiStepNotificationItem';
 import BAINodeNotificationItem from './BAINodeNotificationItem';
 import './WEBUINotificationDrawer.css';
-import { MoreOutlined } from '@ant-design/icons';
 import {
   Drawer,
   List,
@@ -20,6 +19,7 @@ import {
   Dropdown,
 } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
+import { EllipsisVertical } from 'lucide-react';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -86,7 +86,7 @@ const WEBUINotificationDrawer: React.FC<Props> = ({ ...drawerProps }) => {
         >
           <Button
             type="text"
-            icon={<MoreOutlined />}
+            icon={<EllipsisVertical size="1em" />}
             disabled={notifications.length === 0}
           />
         </Dropdown>

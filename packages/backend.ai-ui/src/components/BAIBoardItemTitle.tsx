@@ -1,7 +1,7 @@
 import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
-import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Typography, Tooltip } from 'antd';
+import { CircleHelp } from 'lucide-react';
 import React from 'react';
 
 export interface BAIBoardItemTitleProps {
@@ -49,8 +49,9 @@ const BAIBoardItemTitle: React.FC<BAIBoardItemTitleProps> = ({
         )}
         {tooltip ? (
           <Tooltip title={tooltip}>
-            <QuestionCircleOutlined
+            <CircleHelp
               style={{ color: token.colorTextSecondary }}
+              size="1em"
             />
           </Tooltip>
         ) : null}

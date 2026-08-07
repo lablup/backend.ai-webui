@@ -128,9 +128,13 @@ for (const abs of SCAN_ROOTS.flatMap((r) => walk(r))) {
       }
       // Collision guard: target identifier already bound in this file from a
       // non-lucide source (import or declaration) — skip the whole file.
-      const already = new RegExp(
-        `(?:import|const|let|var|function)[^;]*\\b${g.lucide}\\b`,
-      ).test(src);
+      // Import bindings sit before `from`; declarations bind the name right
+      // after the keyword. (A looser `[^;]*`-only form also matched string
+      // literals like t('button.Info') — 11 of the 12 ticket-07 skips were
+      // that false positive; tightened in ticket 12.)
+      const already =
+        new RegExp(`import[^;]*\\b${g.lucide}\\b[^;]*from`).test(src) ||
+        new RegExp(`\\b(?:const|let|var|function)\\s+${g.lucide}\\b`).test(src);
       const fromLucide = new RegExp(
         `import[^;]*\\b${g.lucide}\\b[^;]*from\\s*'lucide-react'`,
       ).test(src);

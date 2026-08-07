@@ -19,12 +19,6 @@ import ImageInstallModal from './ImageInstallModal';
 import ManageAppsModal from './ManageAppsModal';
 import ManageImageResourceLimitModal from './ManageImageResourceLimitModal';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
-import {
-  AppstoreOutlined,
-  ReloadOutlined,
-  SettingOutlined,
-  VerticalAlignBottomOutlined,
-} from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { Button, Tag, Tooltip, Typography } from 'antd';
 import type { ColumnType } from 'antd/es/table';
@@ -40,7 +34,13 @@ import {
   INITIAL_FETCH_KEY,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { SquarePenIcon } from 'lucide-react';
+import {
+  LayoutGrid,
+  RotateCw,
+  Settings,
+  ArrowDownToLine,
+  SquarePenIcon,
+} from 'lucide-react';
 import { parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { Key, useDeferredValue, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -297,10 +297,11 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
           <Button
             type="text"
             icon={
-              <AppstoreOutlined
+              <LayoutGrid
                 style={{
                   color: token.colorInfo,
                 }}
+                size="1em"
               />
             }
             onClick={() => {
@@ -420,7 +421,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             ) : null}
             <Tooltip title={t('button.Refresh')}>
               <Button
-                icon={<ReloadOutlined />}
+                icon={<RotateCw size="1em" />}
                 loading={isPendingRefreshTransition}
                 onClick={() => {
                   setSelectedRows([]);
@@ -430,7 +431,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             </Tooltip>
 
             <Button
-              icon={<VerticalAlignBottomOutlined />}
+              icon={<ArrowDownToLine size="1em" />}
               style={{ backgroundColor: token.colorPrimary, color: 'white' }}
               onClick={() => {
                 if (selectedRows.length === 0) {
@@ -461,7 +462,7 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             extraContent: (
               <Button
                 type="text"
-                icon={<SettingOutlined />}
+                icon={<Settings size="1em" />}
                 onClick={() => {
                   toggleColumnSettingModal();
                 }}

@@ -5,7 +5,6 @@
 import { ManageAppsModalMutation } from '../__generated__/ManageAppsModalMutation.graphql';
 import { ManageAppsModal_image$key } from '../__generated__/ManageAppsModal_image.graphql';
 import { theme } from '../theme-shim';
-import { DeleteOutlined } from '@ant-design/icons';
 import {
   Input,
   Button,
@@ -17,7 +16,7 @@ import {
 } from 'antd';
 import { BAIButton, BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { PlusIcon } from 'lucide-react';
+import { Trash, PlusIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -297,7 +296,7 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
                             ? { width: '10%', marginTop: 8 }
                             : { width: '10%' }
                         }
-                        icon={<DeleteOutlined />}
+                        icon={<Trash size="1em" />}
                       />
                     </BAIFlex>
                   </Form.Item>

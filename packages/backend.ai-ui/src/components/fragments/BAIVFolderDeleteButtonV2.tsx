@@ -1,8 +1,8 @@
 import { BAIVFolderDeleteButtonV2Fragment$key } from '../../__generated__/BAIVFolderDeleteButtonV2Fragment.graphql';
 import { theme } from '../../theme-shim';
 import BAIButton from '../BAIButton';
-import { DeleteOutlined } from '@ant-design/icons';
 import { type ButtonProps } from 'antd';
+import { Trash } from 'lucide-react';
 import { graphql, useFragment } from 'react-relay';
 
 export interface BAIVFolderDeleteButtonV2Props extends ButtonProps {
@@ -33,7 +33,7 @@ const BAIVFolderDeleteButtonV2 = ({
   // enabled and let the backend reject unauthorized requests.
   return (
     <BAIButton
-      icon={<DeleteOutlined style={{ color: token.colorError }} />}
+      icon={<Trash style={{ color: token.colorError }} size="1em" />}
       {...buttonProps}
     />
   );

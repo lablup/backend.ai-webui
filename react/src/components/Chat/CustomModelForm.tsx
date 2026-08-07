@@ -4,11 +4,11 @@
  */
 import { theme } from '../../theme-shim';
 import DeploymentTokenSelect from './DeploymentTokenSelect';
-import { ReloadOutlined } from '@ant-design/icons';
 import useResizeObserver from '@react-hook/resize-observer';
 import { Alert, Button, Form, Input } from 'antd';
 import type { FormInstance } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
+import { RotateCw } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -104,7 +104,7 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
           />
         </Form.Item>
         <Button
-          icon={<ReloadOutlined />}
+          icon={<RotateCw size="1em" />}
           loading={loading}
           onClick={() => {
             onSubmit?.({

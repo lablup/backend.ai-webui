@@ -5,11 +5,11 @@
 import { useActiveErrorBoundaryControl } from '../hooks/useActiveErrorBoundary';
 import { theme } from '../theme-shim';
 import { isLoginSessionExpiredState } from './LoginSessionExtendButton';
-import { ReloadOutlined } from '@ant-design/icons';
 import { Alert, Button, Result, Typography } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import type { GraphQLFormattedError } from 'graphql';
 import { useAtomValue } from 'jotai';
+import { RotateCw } from 'lucide-react';
 import React from 'react';
 import {
   ErrorBoundary,
@@ -127,7 +127,7 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
                         globalThis.location.reload();
                       }
                     }}
-                    icon={<ReloadOutlined />}
+                    icon={<RotateCw size="1em" />}
                   >
                     {isLoginSessionExpiredError
                       ? t('errorBoundary.ExpiredLoginSessionReLogin')
@@ -153,7 +153,7 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
                             >
                               <Button
                                 type="default"
-                                icon={<ReloadOutlined />}
+                                icon={<RotateCw size="1em" />}
                                 onClick={() => {
                                   resetErrorBoundary();
                                 }}
@@ -303,7 +303,7 @@ export const ErrorView = () => {
                 globalThis.location.reload();
               }
             }}
-            icon={<ReloadOutlined />}
+            icon={<RotateCw size="1em" />}
           >
             {t('errorBoundary.ReloadPage')}
           </Button>

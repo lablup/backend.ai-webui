@@ -4,8 +4,8 @@
  */
 import { findBrandIconLoader } from '../helper/modelBrandIcons';
 import { theme } from '../theme-shim';
-import { RobotOutlined } from '@ant-design/icons';
 import type { IconType } from '@lobehub/icons/es/types';
+import { Bot } from 'lucide-react';
 import React, { Suspense, use } from 'react';
 
 export interface ModelBrandIconProps {
@@ -41,7 +41,7 @@ const DefaultIcon: React.FC<{
   'use memo';
   const { token } = theme.useToken();
   return (
-    <RobotOutlined
+    <Bot
       className={className}
       style={{
         fontSize: size,
@@ -49,6 +49,7 @@ const DefaultIcon: React.FC<{
         flexShrink: 0,
         ...style,
       }}
+      size="1em"
     />
   );
 };

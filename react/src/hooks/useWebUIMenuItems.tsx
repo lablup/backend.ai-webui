@@ -21,23 +21,6 @@ import {
   useWebUIPluginLoadedValue,
   useWebUIPluginValue,
 } from './useWebUIPluginState';
-import {
-  PlayCircleOutlined,
-  DashboardOutlined,
-  MessageOutlined,
-  CloudUploadOutlined,
-  HddOutlined,
-  BarChartOutlined,
-  UserOutlined,
-  FileDoneOutlined,
-  SolutionOutlined,
-  ControlOutlined,
-  ToolOutlined,
-  InfoCircleOutlined,
-  ApiOutlined,
-  TeamOutlined,
-  SafetyCertificateOutlined,
-} from '@ant-design/icons';
 import { useSessionStorageState } from 'ahooks';
 import { Badge, Typography } from 'antd';
 import { MenuItemType } from 'antd/lib/menu/interface';
@@ -52,6 +35,21 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
+  CirclePlay,
+  Gauge,
+  MessageSquare,
+  CloudUpload,
+  HardDrive,
+  ChartColumn,
+  User,
+  FileCheck,
+  FileUser,
+  SlidersHorizontal,
+  Wrench,
+  Info,
+  Plug,
+  Users,
+  BadgeCheck,
   Activity,
   BotMessageSquare,
   ClipboardClock,
@@ -313,13 +311,13 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   const generalMenu = filterOutEmpty<WebUIGeneralMenuItemType>([
     createMenuItem(
       t('webui.menu.Start'),
-      <PlayCircleOutlined style={{ color: token.colorPrimary }} />,
+      <CirclePlay style={{ color: token.colorPrimary }} size="1em" />,
       'start',
       'none',
     ),
     createMenuItem(
       t('webui.menu.Dashboard'),
-      <DashboardOutlined style={{ color: token.colorPrimary }} />,
+      <Gauge style={{ color: token.colorPrimary }} size="1em" />,
       'dashboard',
       'none',
     ),
@@ -350,13 +348,13 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       ),
     createMenuItem(
       t('webui.menu.Chat'),
-      <MessageOutlined style={{ color: token.colorPrimary }} />,
+      <MessageSquare style={{ color: token.colorPrimary }} size="1em" />,
       'chat',
       'playground',
     ),
     createMenuItem(
       t('webui.menu.Data'),
-      <CloudUploadOutlined style={{ color: token.colorPrimary }} />,
+      <CloudUpload style={{ color: token.colorPrimary }} size="1em" />,
       'data',
       'storage',
     ),
@@ -369,13 +367,13 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     !isHideAgents &&
       createMenuItem(
         t('webui.menu.AgentSummary'),
-        <HddOutlined style={{ color: token.colorPrimary }} />,
+        <HardDrive style={{ color: token.colorPrimary }} size="1em" />,
         'agent-summary',
         'metrics',
       ),
     createMenuItem(
       t('webui.menu.Statistics'),
-      <BarChartOutlined style={{ color: token.colorPrimary }} />,
+      <ChartColumn style={{ color: token.colorPrimary }} size="1em" />,
       'statistics',
       'metrics',
     ),
@@ -413,19 +411,19 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     // --- Operations group ---
     createAdminMenuItem(
       t('webui.menu.Users'),
-      <UserOutlined style={{ color: token.colorInfo }} />,
+      <User style={{ color: token.colorInfo }} size="1em" />,
       'credential',
       'admin-operations',
     ),
     createAdminMenuItem(
       t('webui.menu.ProjectMembers'),
-      <TeamOutlined style={{ color: token.colorInfo }} />,
+      <Users style={{ color: token.colorInfo }} size="1em" />,
       'project-admin-users',
       'admin-operations',
     ),
     createAdminMenuItem(
       t('webui.menu.Data'),
-      <CloudUploadOutlined style={{ color: token.colorInfo }} />,
+      <CloudUpload style={{ color: token.colorInfo }} size="1em" />,
       'project-data',
       'admin-operations',
     ),
@@ -444,14 +442,14 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     isSuperAdmin &&
       createAdminMenuItem(
         t('webui.menu.Projects'),
-        <TeamOutlined style={{ color: token.colorInfo }} />,
+        <Users style={{ color: token.colorInfo }} size="1em" />,
         'project',
         'admin-operations',
       ),
     isSuperAdmin &&
       createAdminMenuItem(
         t('webui.menu.Data'),
-        <CloudUploadOutlined style={{ color: token.colorInfo }} />,
+        <CloudUpload style={{ color: token.colorInfo }} size="1em" />,
         'admin-data',
         'admin-operations',
       ),
@@ -470,7 +468,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       ),
     createAdminMenuItem(
       t('webui.menu.Environments'),
-      <FileDoneOutlined style={{ color: token.colorInfo }} />,
+      <FileCheck style={{ color: token.colorInfo }} size="1em" />,
       'environment',
       'admin-operations',
     ),
@@ -491,7 +489,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       ),
     createAdminMenuItem(
       t('webui.menu.ResourcePolicies'),
-      <SolutionOutlined style={{ color: token.colorInfo }} />,
+      <FileUser style={{ color: token.colorInfo }} size="1em" />,
       'resource-policy',
       'admin-operations',
     ),
@@ -499,21 +497,21 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     isSuperAdmin &&
       createAdminMenuItem(
         t('webui.menu.Resources'),
-        <HddOutlined style={{ color: token.colorInfo }} />,
+        <HardDrive style={{ color: token.colorInfo }} size="1em" />,
         'agent',
         'admin-infrastructure',
       ),
     isSuperAdmin &&
       createAdminMenuItem(
         t('webui.menu.Configurations'),
-        <ControlOutlined style={{ color: token.colorInfo }} />,
+        <SlidersHorizontal style={{ color: token.colorInfo }} size="1em" />,
         'settings',
         'admin-infrastructure',
       ),
     isSuperAdmin &&
       createAdminMenuItem(
         t('webui.menu.Maintenance'),
-        <ToolOutlined style={{ color: token.colorInfo }} />,
+        <Wrench style={{ color: token.colorInfo }} size="1em" />,
         'maintenance',
         'admin-infrastructure',
       ),
@@ -529,7 +527,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       baiClient?.supports('rbac') &&
       createAdminMenuItem(
         t('webui.menu.RBACManagement'),
-        <SafetyCertificateOutlined style={{ color: token.colorInfo }} />,
+        <BadgeCheck style={{ color: token.colorInfo }} size="1em" />,
         'rbac',
         'admin-system',
       ),
@@ -544,7 +542,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     isSuperAdmin &&
       createAdminMenuItem(
         t('webui.menu.Information'),
-        <InfoCircleOutlined style={{ color: token.colorInfo }} />,
+        <Info style={{ color: token.colorInfo }} size="1em" />,
         'information',
         'admin-system',
       ),
@@ -598,7 +596,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
         if (page && page.menuitem) {
           const menuItem: MenuItem = {
             label: <WebUILink to={`/${page?.url}`}>{page?.menuitem}</WebUILink>,
-            icon: pluginIconMap[page.icon || ''] || <ApiOutlined />,
+            icon: pluginIconMap[page.icon || ''] || <Plug size="1em" />,
             key: page?.url,
             group: page.group || 'none',
           };

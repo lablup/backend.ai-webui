@@ -2,11 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useResourceSlotsDetails } from '../../hooks/backendai';
 import { AgentResourcesFragment$key } from '../../__generated__/AgentResourcesFragment.graphql';
+import { useResourceSlotsDetails } from '../../hooks/backendai';
 import AgentDetailModal from '../AgentDetailModal';
 import SimpleProgressWithLabel from '../SimpleProgressWithLabel';
-import { InfoCircleOutlined } from '@ant-design/icons';
 import { Col, Descriptions, Row, Tooltip } from 'antd';
 import {
   BAIButton,
@@ -20,6 +19,7 @@ import {
   toFixedFloorWithoutTrailingZeros,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { Info } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -206,7 +206,7 @@ const AgentResources: React.FC<AgentResourcesProps> = ({ agentNodeFrgmt }) => {
               <Tooltip title={t('agent.DetailedInformation')}>
                 <BAIButton
                   type="link"
-                  icon={<InfoCircleOutlined />}
+                  icon={<Info size="1em" />}
                   onClick={() => {
                     setOpenInfoModal(true);
                   }}

@@ -9,17 +9,6 @@ import { announcementQueryOptions } from '../hooks/useSuspenseGetAnnouncement';
 import { theme } from '../theme-shim';
 import BAICodeEditor from './BAICodeEditor';
 import { SyntaxHighlighter } from './Chat/SyntaxHighlighter';
-import {
-  BoldOutlined,
-  CodeOutlined,
-  FontSizeOutlined,
-  ItalicOutlined,
-  LinkOutlined,
-  OrderedListOutlined,
-  PictureOutlined,
-  StrikethroughOutlined,
-  UnorderedListOutlined,
-} from '@ant-design/icons';
 import type { OnMount } from '@monaco-editor/react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button, Dropdown, Skeleton, Tooltip, Typography } from 'antd';
@@ -33,6 +22,17 @@ import {
 } from 'backend.ai-ui';
 // `rehype-katex` does not import the CSS file, so we need to import it manually.
 import 'katex/dist/katex.min.css';
+import {
+  Bold,
+  Code,
+  ALargeSmall,
+  Italic,
+  Link,
+  ListOrdered,
+  Image,
+  Strikethrough,
+  List,
+} from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Markdown from 'react-markdown';
@@ -529,14 +529,18 @@ const MarkdownEditorField: React.FC<{
           }}
         >
           <Tooltip title={t('summary.MarkdownHeading')}>
-            <Button type="text" size="small" icon={<FontSizeOutlined />} />
+            <Button
+              type="text"
+              size="small"
+              icon={<ALargeSmall size="1em" />}
+            />
           </Tooltip>
         </Dropdown>
         <Tooltip title={t('summary.MarkdownBold')}>
           <Button
             type="text"
             size="small"
-            icon={<BoldOutlined />}
+            icon={<Bold size="1em" />}
             onClick={() => wrapSelection('**', '**', t('summary.MarkdownBold'))}
           />
         </Tooltip>
@@ -544,7 +548,7 @@ const MarkdownEditorField: React.FC<{
           <Button
             type="text"
             size="small"
-            icon={<ItalicOutlined />}
+            icon={<Italic size="1em" />}
             onClick={() => wrapSelection('*', '*', t('summary.MarkdownItalic'))}
           />
         </Tooltip>
@@ -552,7 +556,7 @@ const MarkdownEditorField: React.FC<{
           <Button
             type="text"
             size="small"
-            icon={<StrikethroughOutlined />}
+            icon={<Strikethrough size="1em" />}
             onClick={() =>
               wrapSelection('~~', '~~', t('summary.MarkdownStrikethrough'))
             }
@@ -574,7 +578,7 @@ const MarkdownEditorField: React.FC<{
           <Button
             type="text"
             size="small"
-            icon={<CodeOutlined />}
+            icon={<Code size="1em" />}
             onClick={() => wrapSelection('`', '`', 'code')}
           />
         </Tooltip>
@@ -582,7 +586,7 @@ const MarkdownEditorField: React.FC<{
           <Button
             type="text"
             size="small"
-            icon={<LinkOutlined />}
+            icon={<Link size="1em" />}
             onClick={() =>
               wrapSelection('[', '](https://)', t('summary.MarkdownLink'))
             }
@@ -592,7 +596,7 @@ const MarkdownEditorField: React.FC<{
           <Button
             type="text"
             size="small"
-            icon={<PictureOutlined />}
+            icon={<Image size="1em" />}
             onClick={() => wrapSelection('![', '](https://)', 'alt')}
           />
         </Tooltip>
@@ -600,7 +604,7 @@ const MarkdownEditorField: React.FC<{
           <Button
             type="text"
             size="small"
-            icon={<UnorderedListOutlined />}
+            icon={<List size="1em" />}
             onClick={() => prependLines('- ')}
           />
         </Tooltip>
@@ -608,7 +612,7 @@ const MarkdownEditorField: React.FC<{
           <Button
             type="text"
             size="small"
-            icon={<OrderedListOutlined />}
+            icon={<ListOrdered size="1em" />}
             onClick={() => prependLines('1. ')}
           />
         </Tooltip>

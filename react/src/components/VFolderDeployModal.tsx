@@ -10,7 +10,6 @@ import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { theme } from '../theme-shim';
 import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
-import { InfoCircleOutlined } from '@ant-design/icons';
 import { Alert, Button, Form, Space, Tooltip } from 'antd';
 import {
   BAIAvailablePresetSelect,
@@ -23,6 +22,7 @@ import {
   useErrorMessageResolver,
   useProjectResourceGroups,
 } from 'backend.ai-ui';
+import { Info } from 'lucide-react';
 import React, {
   Suspense,
   useDeferredValue,
@@ -328,7 +328,7 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
             <Space.Compact>
               <Tooltip title={t('modelService.DeploymentPresetDetail')}>
                 <Button
-                  icon={<InfoCircleOutlined />}
+                  icon={<Info size="1em" />}
                   disabled={!effectivePresetId || noAvailablePresets}
                   onClick={() => {
                     if (!effectivePresetId) return;

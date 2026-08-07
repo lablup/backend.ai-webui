@@ -23,7 +23,6 @@ import { theme } from '../theme-shim';
 import StoragePermissionEditModal, {
   type PermissionEditTarget,
 } from './StoragePermissionEditModal';
-import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { Tooltip, Typography } from 'antd';
 import {
   BAIButton,
@@ -39,7 +38,7 @@ import {
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { SquarePenIcon } from 'lucide-react';
+import { CircleCheck, CircleX, SquarePenIcon } from 'lucide-react';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -441,19 +440,21 @@ const ProjectStoragePermissionTable: React.FC<
                 // granted on neither → gray.
                 if (enabledKeysOf(row).has(permKey)) {
                   return (
-                    <CheckCircleOutlined
+                    <CircleCheck
                       style={{ color: token.colorSuccess }}
+                      size="1em"
                     />
                   );
                 }
                 if (domainPermissions.has(permKey)) {
                   return (
-                    <CheckCircleOutlined style={{ color: token.purple5 }} />
+                    <CircleCheck style={{ color: token.purple5 }} size="1em" />
                   );
                 }
                 return (
-                  <CloseCircleOutlined
+                  <CircleX
                     style={{ color: token.colorTextDisabled }}
+                    size="1em"
                   />
                 );
               },

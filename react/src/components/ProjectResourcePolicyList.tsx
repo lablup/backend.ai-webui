@@ -18,7 +18,6 @@ import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import ProjectResourcePolicySettingModal from './ProjectResourcePolicySettingModal';
-import { DeleteFilled, ReloadOutlined } from '@ant-design/icons';
 import { Button, Tooltip } from 'antd';
 import type { ColumnType } from 'antd/es/table';
 import {
@@ -33,7 +32,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { PlusIcon, SquarePenIcon } from 'lucide-react';
+import { Trash2, RotateCw, PlusIcon, SquarePenIcon } from 'lucide-react';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
@@ -124,7 +123,7 @@ const ProjectResourcePolicyList: React.FC<
             {
               key: 'delete',
               title: t('button.Delete'),
-              icon: <DeleteFilled />,
+              icon: <Trash2 size="1em" />,
               type: 'danger',
               onClick: () => {
                 setDeletingPolicyName(row?.name ?? null);
@@ -224,7 +223,7 @@ const ProjectResourcePolicyList: React.FC<
         <BAIFlex gap={'xs'}>
           <Tooltip title={t('button.Refresh')}>
             <Button
-              icon={<ReloadOutlined />}
+              icon={<RotateCw size="1em" />}
               loading={isRefetchPending}
               onClick={() => {
                 startRefetchTransition(() =>

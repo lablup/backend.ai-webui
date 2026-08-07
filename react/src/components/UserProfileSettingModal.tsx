@@ -9,7 +9,6 @@ import { isIpIncludedInList, isValidIPOrCidr } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import TOTPActivateModal from './TOTPActivateModal';
-import { ExclamationCircleFilled } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import {
   type ModalProps,
@@ -27,6 +26,7 @@ import {
   useErrorMessageResolver,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { CircleAlert } from 'lucide-react';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -341,7 +341,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
                       formRef.current?.setFieldValue('totp_activated', true);
                       modal.confirm({
                         title: t('totp.TurnOffTotp'),
-                        icon: <ExclamationCircleFilled />,
+                        icon: <CircleAlert size="1em" />,
                         content: t('totp.ConfirmTotpRemovalBody'),
                         okText: t('button.Yes'),
                         okType: 'danger',

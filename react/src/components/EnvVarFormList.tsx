@@ -2,12 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { MinusCircleOutlined } from '@ant-design/icons';
 import { AutoComplete, Form, FormItemProps, Input, InputRef } from 'antd';
 import { FormListProps } from 'antd/lib/form';
 import { BAIButton, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { PlusIcon } from 'lucide-react';
+import { CircleMinus, PlusIcon } from 'lucide-react';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -230,7 +229,7 @@ const EnvVarFormList: React.FC<EnvVarFormListProps> = ({
                     )}
                   />
                 </Form.Item>
-                <MinusCircleOutlined onClick={() => remove(name)} />
+                <CircleMinus size="1em" onClick={() => remove(name)} />
               </BAIFlex>
             ))}
             <Form.Item noStyle>

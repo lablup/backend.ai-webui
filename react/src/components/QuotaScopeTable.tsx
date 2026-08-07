@@ -7,14 +7,13 @@ import { QuotaScopeTableUnsetMutation } from '../__generated__/QuotaScopeTableUn
 import { App } from '../app-shim';
 import { bytesToGB } from '../helper/index';
 import QuotaSettingModal from './QuotaSettingModal';
-import { CloseOutlined } from '@ant-design/icons';
 import { Empty } from 'antd';
 import {
   BAINameActionCell,
   BAITable,
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
-import { SquarePenIcon } from 'lucide-react';
+import { X, SquarePenIcon } from 'lucide-react';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
@@ -135,7 +134,7 @@ const QuotaScopeTable: React.FC<Props> = ({ scopeId, hostName }) => {
                   {
                     key: 'unset',
                     title: t('button.Unset'),
-                    icon: <CloseOutlined />,
+                    icon: <X size="1em" />,
                     type: 'danger',
                     disabled: queryVariables !== deferredQueryVariables, // Disable unset button while loading new data
                     popConfirm: {

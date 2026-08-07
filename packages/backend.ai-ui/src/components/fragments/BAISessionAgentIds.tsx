@@ -2,9 +2,9 @@ import { BAISessionAgentIdsFragment$key } from '../../__generated__/BAISessionAg
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { theme } from '../../theme-shim';
 import BAIFlex from '../BAIFlex';
-import { CopyOutlined } from '@ant-design/icons';
 import { Popover, Typography, Button } from 'antd';
 import * as _ from 'lodash-es';
+import { Copy } from 'lucide-react';
 import React, { useMemo } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { graphql, useFragment } from 'react-relay';
@@ -55,7 +55,7 @@ const BAISessionAgentIds: React.FC<BAISessionAgentIdsProps> = ({
                   {t('comp:BAISessionAgentIds.Agent')} ({agents.length})
                 </span>
                 <CopyToClipboard text={agents.join(', ')}>
-                  <Button size="small" type="text" icon={<CopyOutlined />}>
+                  <Button size="small" type="text" icon={<Copy size="1em" />}>
                     {t('general.button.CopyAll')}
                   </Button>
                 </CopyToClipboard>

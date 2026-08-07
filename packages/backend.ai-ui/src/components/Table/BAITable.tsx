@@ -9,11 +9,6 @@ import { BAIConfigProvider } from '../provider';
 import BAIPaginationInfoText from './BAIPaginationInfoText';
 import BAITableColumnCSVExportModal from './BAITableColumnCSVExportModal';
 import BAITableSettingModal from './BAITableSettingModal';
-import {
-  LoadingOutlined,
-  MoreOutlined,
-  SettingOutlined,
-} from '@ant-design/icons';
 import { useControllableValue, useDebounce } from 'ahooks';
 import {
   Dropdown,
@@ -28,6 +23,7 @@ import type { AnyObject, GetProps } from 'antd/es/_util/type';
 import type { ColumnType, ColumnsType } from 'antd/es/table';
 import classNames from 'classnames';
 import * as _ from 'lodash-es';
+import { LoaderCircle, EllipsisVertical, Settings } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Resizable, type ResizeCallbackData } from 'react-resizable';
 
@@ -468,7 +464,9 @@ const BAITable = <RecordType extends AnyObject = AnyObject>({
           loading={
             spinnerLoading
               ? {
-                  indicator: <LoadingOutlined spin />,
+                  indicator: (
+                    <LoaderCircle className="anticon-spin" size="1em" />
+                  ),
                   spinning: true,
                 }
               : undefined
@@ -542,7 +540,7 @@ const BAITable = <RecordType extends AnyObject = AnyObject>({
             {tableSettings && (
               <BAIButton
                 type="text"
-                icon={<SettingOutlined />}
+                icon={<Settings size="1em" />}
                 onClick={() => setIsColumnSettingModalOpen(true)}
                 size={tableProps.size || 'small'}
               />
@@ -562,7 +560,7 @@ const BAITable = <RecordType extends AnyObject = AnyObject>({
               >
                 <BAIButton
                   type="text"
-                  icon={<MoreOutlined />}
+                  icon={<EllipsisVertical size="1em" />}
                   size={tableProps.size || 'small'}
                 />
               </Dropdown>

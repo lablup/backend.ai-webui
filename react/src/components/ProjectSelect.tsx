@@ -6,11 +6,10 @@ import { useAccessibleProjects } from '../hooks/useAccessibleProjects';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles';
 import { theme } from '../theme-shim';
-import { InfoCircleOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import { BAIFlex, BAISelect, BAISelectProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { ShieldUser } from 'lucide-react';
+import { Info, ShieldUser } from 'lucide-react';
 import React, { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -152,7 +151,7 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
       }
       aria-label={showNoProjectError ? noAccessibleProjectsMessage : ariaLabel}
       suffixIcon={
-        showNoProjectError ? <InfoCircleOutlined /> : selectProps.suffixIcon
+        showNoProjectError ? <Info size="1em" /> : selectProps.suffixIcon
       }
       // Prevent the dropdown from opening in the empty-error state so it
       // does not visually overlap the explanation tooltip. The tooltip

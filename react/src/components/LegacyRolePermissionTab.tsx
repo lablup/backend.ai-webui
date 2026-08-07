@@ -16,7 +16,6 @@ import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOption
 import LegacyCreatePermissionModal, {
   PermissionMatrixQuery,
 } from './LegacyCreatePermissionModal';
-import { DeleteFilled } from '@ant-design/icons';
 import { Tag } from 'antd';
 import {
   BAIButton,
@@ -33,7 +32,7 @@ import {
   useFetchKey,
   useMutationWithPromise,
 } from 'backend.ai-ui';
-import { EditIcon, PlusIcon } from 'lucide-react';
+import { Trash2, EditIcon, PlusIcon } from 'lucide-react';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -446,7 +445,7 @@ const LegacyRolePermissionTab: React.FC<LegacyRolePermissionTabProps> = ({
                     {
                       key: 'delete',
                       title: t('rbac.RemovePermission'),
-                      icon: <DeleteFilled />,
+                      icon: <Trash2 size="1em" />,
                       type: 'danger',
                       onClick: () => handleDelete(record),
                     },

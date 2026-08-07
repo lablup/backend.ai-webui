@@ -12,10 +12,10 @@ import MyResourceWithinResourceGroup from './MyResourceWithinResourceGroup';
 import TotalResourceWithinResourceGroup, {
   useIsAvailableTotalResourceWithinResourceGroup,
 } from './TotalResourceWithinResourceGroup';
-import { SettingOutlined } from '@ant-design/icons';
 import { Button, Dropdown, type MenuProps, Skeleton } from 'antd';
 import { filterOutEmpty, BAICard, BAICardProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { Settings } from 'lucide-react';
 import React, { Suspense, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -126,7 +126,7 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
     >
       <Button
         type="text"
-        icon={<SettingOutlined />}
+        icon={<Settings size="1em" />}
         style={{
           backgroundColor: 'transparent',
           margin: -token.marginXS,

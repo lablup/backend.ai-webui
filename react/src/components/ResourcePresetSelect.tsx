@@ -10,7 +10,6 @@ import { localeCompare } from '../helper';
 import { ResourceSlotName, useResourceSlots } from '../hooks/backendai';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { theme } from '../theme-shim';
-import { EditOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { useThrottleFn } from 'ahooks';
 import { Select, Tooltip } from 'antd';
 import { SelectProps } from 'antd/lib';
@@ -20,6 +19,7 @@ import {
   BAIResourceNumberWithIcon,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { SquarePen, Info } from 'lucide-react';
 import React, { useEffect, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -131,7 +131,8 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
                 value: 'custom',
                 label: (
                   <BAIFlex gap={'xs'} style={{ display: 'inline-flex' }}>
-                    <EditOutlined /> {t('session.launcher.CustomAllocation')}
+                    <SquarePen size="1em" />{' '}
+                    {t('session.launcher.CustomAllocation')}
                   </BAIFlex>
                 ),
                 selectedLabel: t('session.launcher.CustomAllocation'),
@@ -148,10 +149,11 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
                     <Tooltip
                       title={t('session.launcher.MiniumAllocationTooltip')}
                     >
-                      <InfoCircleOutlined
+                      <Info
                         style={{
                           color: token.colorTextSecondary,
                         }}
+                        size="1em"
                       />
                     </Tooltip>
                   </BAIFlex>

@@ -12,7 +12,6 @@ import {
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import HuggingFaceModelPreview from './HuggingFaceModelPreview';
-import { ReloadOutlined } from '@ant-design/icons';
 import {
   Button,
   Form,
@@ -35,7 +34,12 @@ import {
   useBAILogger,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
-import { CloudDownload, FolderOpenIcon, PlusIcon } from 'lucide-react';
+import {
+  RotateCw,
+  CloudDownload,
+  FolderOpenIcon,
+  PlusIcon,
+} from 'lucide-react';
 import { startTransition, Suspense, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -359,7 +363,7 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
                     </Tooltip>
                     <Tooltip title={t('button.Refresh')}>
                       <Button
-                        icon={<ReloadOutlined />}
+                        icon={<RotateCw size="1em" />}
                         onClick={() => {
                           startTransition(() => {
                             vfolderSelectRef.current?.refetch();

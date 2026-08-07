@@ -8,9 +8,8 @@ import BAIFlex from '../../BAIFlex';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import { FolderInfoContext } from './BAIFileExplorer';
-import { DeleteFilled, MoreOutlined } from '@ant-design/icons';
 import { Dropdown, Tooltip } from 'antd';
-import { DownloadIcon, EditIcon } from 'lucide-react';
+import { Trash2, EllipsisVertical, DownloadIcon, EditIcon } from 'lucide-react';
 import { use, useState } from 'react';
 
 const MAX_EDITABLE_FILE_SIZE = 1024 * 1024; // 1 MB
@@ -116,10 +115,11 @@ const FileItemControls: React.FC<FileItemControlsProps> = ({
         type="text"
         size="small"
         icon={
-          <DeleteFilled
+          <Trash2
             style={{
               color: enableDelete ? token.colorError : token.colorTextDisabled,
             }}
+            size="1em"
           />
         }
         disabled={!enableDelete}
@@ -184,7 +184,7 @@ const FileItemControls: React.FC<FileItemControlsProps> = ({
           onClick={(e) => {
             e.stopPropagation();
           }}
-          icon={<MoreOutlined />}
+          icon={<EllipsisVertical size="1em" />}
           aria-label={t('comp:FileExplorer.MoreOptions')}
         />
       </Dropdown>

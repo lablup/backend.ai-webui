@@ -1,8 +1,8 @@
 import { SemanticColor, useSemanticColorMap } from '../helper';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import BAITag from './BAITag';
-import { LoadingOutlined } from '@ant-design/icons';
 import type { TagProps } from 'antd';
+import { LoaderCircle } from 'lucide-react';
 import React from 'react';
 
 export type BAIDeploymentStatus =
@@ -117,7 +117,9 @@ const BAIDeploymentStatusTag: React.FC<BAIDeploymentStatusTagProps> = ({
     <BAITag
       {...tagProps}
       icon={
-        isDeploymentInProgress(status) ? <LoadingOutlined spin /> : undefined
+        isDeploymentInProgress(status) ? (
+          <LoaderCircle className="anticon-spin" size="1em" />
+        ) : undefined
       }
       color={semanticColorMap[deploymentStatusSemanticMap[status]]}
     >

@@ -13,7 +13,6 @@ import { RoleFormModalResourceGroupQuery } from '../__generated__/RoleFormModalR
 import { RoleFormModalUpdateMutation } from '../__generated__/RoleFormModalUpdateMutation.graphql';
 import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { DeleteOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Form, Input, type SelectProps } from 'antd';
 import {
   BAIAdminContainerRegistrySelect,
@@ -33,7 +32,7 @@ import {
   toLocalId,
   useBAILogger,
 } from 'backend.ai-ui';
-import { PlusIcon } from 'lucide-react';
+import { Trash, PlusIcon } from 'lucide-react';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -293,7 +292,7 @@ const ScopeRow: React.FC<ScopeRowProps> = ({
       <Button
         type="text"
         danger
-        icon={<DeleteOutlined />}
+        icon={<Trash size="1em" />}
         disabled={!canRemove}
         onClick={onRemove}
         aria-label={t('button.Delete')}

@@ -5,19 +5,19 @@
 import { NotificationState } from '../hooks/useBAINotification';
 import { theme } from '../theme-shim';
 import BAINotificationBackgroundProgress from './BAINotificationBackgroundProgress';
-import {
-  CheckCircleOutlined,
-  ClockCircleOutlined,
-  CloseCircleOutlined,
-  DownOutlined,
-  ExclamationCircleOutlined,
-  LoadingOutlined,
-  MinusCircleOutlined,
-} from '@ant-design/icons';
 import { Button, List, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import { BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
+import {
+  CircleCheck,
+  Clock,
+  CircleX,
+  ChevronDown,
+  CircleAlert,
+  LoaderCircle,
+  CircleMinus,
+} from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -102,36 +102,40 @@ const StepIcon: React.FC<{
 
   if (status === 'resolved') {
     return (
-      <CheckCircleOutlined
+      <CircleCheck
         style={{ color: token.colorSuccess, fontSize: size }}
+        size="1em"
       />
     );
   }
   if (status === 'rejected') {
     return (
-      <CloseCircleOutlined
-        style={{ color: token.colorError, fontSize: size }}
-      />
+      <CircleX style={{ color: token.colorError, fontSize: size }} size="1em" />
     );
   }
   if (status === 'warned') {
     return (
-      <ExclamationCircleOutlined
+      <CircleAlert
         style={{ color: token.colorWarning, fontSize: size }}
+        size="1em"
       />
     );
   }
   if (status === 'pending') {
     return animated ? (
-      <LoadingOutlined style={{ color: token.colorInfo, fontSize: size }} />
+      <LoaderCircle
+        style={{ color: token.colorInfo, fontSize: size }}
+        size="1em"
+      />
     ) : (
-      <ClockCircleOutlined style={{ color: token.colorInfo, fontSize: size }} />
+      <Clock style={{ color: token.colorInfo, fontSize: size }} size="1em" />
     );
   }
   if (status === 'cancelled') {
     return (
-      <MinusCircleOutlined
+      <CircleMinus
         style={{ color: token.colorTextDisabled, fontSize: size }}
+        size="1em"
       />
     );
   }
@@ -210,15 +214,15 @@ const BAIMultiStepNotificationItem: React.FC<{
 
   const overallIcon =
     overallStatus === 'completed' ? (
-      <CheckCircleOutlined style={{ color: token.colorSuccess }} />
+      <CircleCheck style={{ color: token.colorSuccess }} size="1em" />
     ) : overallStatus === 'failed' ? (
-      <CloseCircleOutlined style={{ color: token.colorError }} />
+      <CircleX style={{ color: token.colorError }} size="1em" />
     ) : overallStatus === 'warned' ? (
-      <ExclamationCircleOutlined style={{ color: token.colorWarning }} />
+      <CircleAlert style={{ color: token.colorWarning }} size="1em" />
     ) : overallStatus === 'cancelled' ? (
-      <MinusCircleOutlined style={{ color: token.colorTextDisabled }} />
+      <CircleMinus style={{ color: token.colorTextDisabled }} size="1em" />
     ) : (
-      <ClockCircleOutlined style={{ color: token.colorInfo }} />
+      <Clock style={{ color: token.colorInfo }} size="1em" />
     );
 
   const stepLabel =
@@ -343,11 +347,12 @@ const BAIMultiStepNotificationItem: React.FC<{
             </div>
           )}
           {isDetailView && totalSteps > 1 && (
-            <DownOutlined
+            <ChevronDown
               className={`${styles.expandIcon} ${
                 expanded ? styles.expandIconOpen : styles.expandIconClosed
               }`}
               style={{ color: token.colorTextSecondary }}
+              size="1em"
             />
           )}
         </BAIFlex>

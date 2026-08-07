@@ -21,7 +21,6 @@ import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginati
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
-import { DeleteFilled } from '@ant-design/icons';
 import { useToggle } from 'ahooks';
 import { Button, Skeleton, Typography } from 'antd';
 import {
@@ -44,7 +43,7 @@ import {
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { SquarePenIcon } from 'lucide-react';
+import { Trash2, SquarePenIcon } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -338,7 +337,7 @@ const DeploymentListPageContent: React.FC = () => {
                             {
                               key: 'delete',
                               title: t('deployment.DeleteDeployment'),
-                              icon: <DeleteFilled />,
+                              icon: <Trash2 size="1em" />,
                               type: 'danger',
                               disabled: destroying,
                               onClick: () => setDeletingDeploymentId(record.id),
