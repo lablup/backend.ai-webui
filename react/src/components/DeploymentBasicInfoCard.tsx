@@ -15,14 +15,15 @@ import DeploymentSchedulingHistoryModal, {
   DeploymentSchedulingHistoryQuery,
 } from './DeploymentSchedulingHistoryModal';
 import DeploymentSettingModal from './DeploymentSettingModal';
+import BAICopyableText from './astryx-bui/BAICopyableText';
+import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
+import { Divider } from '@astryxdesign/core/Divider';
+import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
 import {
-  Button,
-  Descriptions,
-  Divider,
-  Dropdown,
-  Space,
-  Typography,
-} from 'antd';
+  MetadataList,
+  MetadataListItem,
+} from '@astryxdesign/core/MetadataList';
+import { Text } from '@astryxdesign/core/Text';
 import {
   BAIButton,
   BAICard,
@@ -34,7 +35,6 @@ import {
   BAIId,
   BAIUnmountAfterClose,
   BooleanTag,
-  filterOutEmpty,
   isDeploymentInStoppedCategory,
   safeDecodeUuid,
   toLocalId,
@@ -64,9 +64,7 @@ interface DeploymentBasicInfoCardProps {
 type DeploymentSectionData =
   DeploymentBasicInfoCard_deployment$data | null | undefined;
 
-const renderFallback = () => (
-  <Typography.Text type="secondary">-</Typography.Text>
-);
+const renderFallback = () => <Text color="secondary">-</Text>;
 
 const DeploymentOverviewContent: React.FC<{
   deployment: DeploymentSectionData;
@@ -84,98 +82,81 @@ const DeploymentOverviewContent: React.FC<{
     deployment?.metadata.projectV2?.basicInfo?.name ??
     deployment?.metadata.projectId;
 
-  const deploymentItems = filterOutEmpty([
-    {
-      key: 'lifecycle',
-      label: t('deployment.Lifecycle'),
-      children: deployment?.metadata.status ? (
-        <BAIFlex align="center" gap="xs">
-          <BAIDeploymentStatusTag
-            status={deployment.metadata.status as BAIDeploymentStatus}
+  // PILOT-DECISION: antd Descriptions `bordered` and its responsive column
+  // map ({xs:1..xxl:2}) have no MetadataList equivalent — Astryx's flat list
+  // is the design, and the container-driven layout handles narrow widths.
+  // Rendered with the wide-case `columns={2}`.
+  return (
+    <MetadataList columns={2}>
+      <MetadataListItem label={t('deployment.Lifecycle')}>
+        {deployment?.metadata.status ? (
+          <BAIFlex align="center" gap="xs">
+            <BAIDeploymentStatusTag
+              status={deployment.metadata.status as BAIDeploymentStatus}
+            />
+            {onClickSchedulingHistory && (
+              <>
+                <Divider orientation="vertical" />
+                <BAIButton
+                  type="link"
+                  size="small"
+                  icon={<History size="1em" />}
+                  style={{ padding: 0 }}
+                  action={async () => {
+                    await onClickSchedulingHistory();
+                  }}
+                >
+                  {t('deployment.SchedulingHistory')}
+                </BAIButton>
+              </>
+            )}
+          </BAIFlex>
+        ) : (
+          renderFallback()
+        )}
+      </MetadataListItem>
+      <MetadataListItem label={t('deployment.DeploymentId')}>
+        {deployment?.id ? (
+          <BAIId
+            globalId={deployment.id}
+            copyable
+            ellipsis={false}
+            style={{ maxWidth: 'none' }}
           />
-          {onClickSchedulingHistory && (
-            <>
-              <Divider type="vertical" style={{ margin: 0 }} />
-              <BAIButton
-                type="link"
-                size="small"
-                icon={<History size="1em" />}
-                style={{ padding: 0 }}
-                action={async () => {
-                  await onClickSchedulingHistory();
-                }}
-              >
-                {t('deployment.SchedulingHistory')}
-              </BAIButton>
-            </>
-          )}
-        </BAIFlex>
-      ) : (
-        renderFallback()
-      ),
-    },
-    {
-      key: 'id',
-      label: t('deployment.DeploymentId'),
-      children: deployment?.id ? (
-        <BAIId
-          globalId={deployment.id}
-          copyable
-          ellipsis={false}
-          style={{ maxWidth: 'none' }}
-        />
-      ) : (
-        renderFallback()
-      ),
-    },
-    {
-      key: 'project',
-      label: t('deployment.Project'),
-      children: projectName || renderFallback(),
-    },
-    {
-      key: 'domain',
-      label: t('deployment.Domain'),
-      children: deployment?.metadata.domainName || renderFallback(),
-    },
-    {
-      key: 'resource-group',
-      label: t('modelStore.ResourceGroup'),
-      children: deployment?.metadata.resourceGroupName || renderFallback(),
-    },
-    {
-      key: 'endpoint-url',
-      label: t('deployment.EndpointUrl'),
-      children: deployment?.networkAccess.endpointUrl ? (
-        <Typography.Text copyable style={{ wordBreak: 'break-all' }}>
-          {deployment.networkAccess.endpointUrl}
-        </Typography.Text>
-      ) : (
-        renderFallback()
-      ),
-    },
-    {
-      key: 'visibility',
-      label: t('deployment.Visibility'),
-      children: (
+        ) : (
+          renderFallback()
+        )}
+      </MetadataListItem>
+      <MetadataListItem label={t('deployment.Project')}>
+        {projectName || renderFallback()}
+      </MetadataListItem>
+      <MetadataListItem label={t('deployment.Domain')}>
+        {deployment?.metadata.domainName || renderFallback()}
+      </MetadataListItem>
+      <MetadataListItem label={t('modelStore.ResourceGroup')}>
+        {deployment?.metadata.resourceGroupName || renderFallback()}
+      </MetadataListItem>
+      <MetadataListItem label={t('deployment.EndpointUrl')}>
+        {deployment?.networkAccess.endpointUrl ? (
+          <BAICopyableText copyLabel={t('sourceCodeViewer.Copy')}>
+            {deployment.networkAccess.endpointUrl}
+          </BAICopyableText>
+        ) : (
+          renderFallback()
+        )}
+      </MetadataListItem>
+      <MetadataListItem label={t('deployment.Visibility')}>
         <BooleanTag
           value={deployment?.networkAccess.openToPublic}
           trueLabel={t('deployment.Public')}
           falseLabel={t('deployment.Private')}
           fallback={renderFallback()}
         />
-      ),
-    },
-    {
-      key: 'desired-replicas',
-      label: t('deployment.DesiredReplicas'),
-      children:
-        deployment?.replicaState?.desiredReplicaCount ?? renderFallback(),
-    },
-    {
-      key: 'tags',
-      label: t('deployment.Tags'),
-      children: (
+      </MetadataListItem>
+      <MetadataListItem label={t('deployment.DesiredReplicas')}>
+        {deployment?.replicaState?.desiredReplicaCount ?? renderFallback()}
+      </MetadataListItem>
+      <MetadataListItem label={t('deployment.Tags')}>
         <BAIDeploymentTagChips
           metadataFrgmt={deployment?.metadata ?? null}
           onTagClick={(tag) => {
@@ -195,16 +176,8 @@ const DeploymentOverviewContent: React.FC<{
           }}
           fallback={renderFallback()}
         />
-      ),
-    },
-  ]);
-
-  return (
-    <Descriptions
-      bordered
-      column={{ xs: 1, sm: 1, md: 2, lg: 2, xl: 2, xxl: 2 }}
-      items={deploymentItems}
-    />
+      </MetadataListItem>
+    </MetadataList>
   );
 };
 
@@ -325,7 +298,7 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
               onChange={onRefetch}
               autoUpdateDelay={autoUpdateDelay}
             />
-            <Space.Compact>
+            <ButtonGroup label={t('general.Control')}>
               <BAIButton
                 icon={<SquarePenIcon />}
                 disabled={isDeploymentInStoppedCategory(deploymentStatus)}
@@ -335,29 +308,27 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
               >
                 {t('button.Edit')}
               </BAIButton>
-              <Dropdown
-                trigger={['click']}
-                menu={{
-                  items: [
-                    {
-                      key: 'delete',
-                      label: t('deployment.DeleteDeployment'),
-                      icon: <Trash2 size="1em" />,
-                      danger: true,
-                      disabled:
-                        isDeploymentInStoppedCategory(deploymentStatus) ||
-                        isInFlightDeleteMutation,
-                      onClick: () => setIsDeleteModalOpen(true),
-                    },
-                  ],
+              {/* PILOT-DECISION: antd menu-item `danger: true` (red tint on
+                  the Delete entry) has no DropdownMenu equivalent — dropped. */}
+              <DropdownMenu
+                button={{
+                  label: t('button.More'),
+                  icon: <EllipsisVertical size="1em" />,
+                  isIconOnly: true,
                 }}
-              >
-                <Button
-                  icon={<EllipsisVertical size="1em" />}
-                  aria-label={t('button.More')}
-                />
-              </Dropdown>
-            </Space.Compact>
+                hasChevron={false}
+                items={[
+                  {
+                    label: t('deployment.DeleteDeployment'),
+                    icon: <Trash2 size="1em" />,
+                    isDisabled:
+                      isDeploymentInStoppedCategory(deploymentStatus) ||
+                      isInFlightDeleteMutation,
+                    onClick: () => setIsDeleteModalOpen(true),
+                  },
+                ]}
+              />
+            </ButtonGroup>
           </BAIFlex>
         }
         styles={{ body: { paddingTop: 0 } }}

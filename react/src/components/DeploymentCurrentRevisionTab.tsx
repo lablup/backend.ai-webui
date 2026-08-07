@@ -7,7 +7,9 @@ import type { DeploymentRevisionDetail_revision$key } from '../__generated__/Dep
 import { theme } from '../theme-shim';
 import DeploymentRevisionDetail from './DeploymentRevisionDetail';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
-import { Alert, Button, Empty } from 'antd';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Button } from '@astryxdesign/core/Button';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { BAIUnmountAfterClose, toLocalId } from 'backend.ai-ui';
 import { LoaderCircle } from 'lucide-react';
 import React, { useState } from 'react';
@@ -76,10 +78,9 @@ const DeploymentCurrentRevisionTab: React.FC<
   return (
     <>
       {isDeployingDifferentRevision && (
-        <Alert
-          type="info"
+        <Banner
+          status="info"
           icon={<LoaderCircle className="anticon-spin" size="1em" />}
-          showIcon
           style={{ marginBottom: token.marginMD }}
           title={t('deployment.ApplyingRevision', {
             revisionNumber:
@@ -87,8 +88,10 @@ const DeploymentCurrentRevisionTab: React.FC<
                 ? `#${deployingRevision.revisionNumber}`
                 : (toLocalId(deployingRevision.id) ?? ''),
           })}
-          action={
+          endContent={
             <Button
+              variant="secondary"
+              label={t('deployment.ViewRevision')}
               onClick={() =>
                 handleShowRevisionDrawer(
                   deployingRevision,
@@ -96,9 +99,7 @@ const DeploymentCurrentRevisionTab: React.FC<
                   t('deployment.ApplyingRevisionDetail'),
                 )
               }
-            >
-              {t('deployment.ViewRevision')}
-            </Button>
+            />
           }
         />
       )}
@@ -108,10 +109,11 @@ const DeploymentCurrentRevisionTab: React.FC<
           status="current"
         />
       ) : !isDeployingDifferentRevision ? (
-        <Empty
-          image={Empty.PRESENTED_IMAGE_SIMPLE}
-          description={t('deployment.NoCurrentRevisionDeployed')}
-        />
+        // PILOT-DECISION: antd `Empty image={PRESENTED_IMAGE_SIMPLE}` →
+        // `EmptyState`. The former `description` string becomes the required
+        // `title`; the simple placeholder illustration is dropped (EmptyState
+        // renders fine without an icon; no icon carries equivalent meaning).
+        <EmptyState title={t('deployment.NoCurrentRevisionDeployed')} />
       ) : null}
       <BAIUnmountAfterClose>
         <DeploymentRevisionDetailDrawer

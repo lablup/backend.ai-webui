@@ -3,11 +3,62 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { theme } from '../theme-shim';
-import { Checkbox, Collapse, Form, Input, InputNumber, Select } from 'antd';
+import BAIFormItem from './BAIFormItem';
+import {
+  AstryxFormCheckbox,
+  AstryxFormNumberInput,
+  AstryxFormTextArea,
+  AstryxFormTextInput,
+} from './astryx-bui/astryxFormControls';
+import { Collapsible } from '@astryxdesign/core/Collapsible';
+import { Tokenizer } from '@astryxdesign/core/Tokenizer';
+import { Form } from 'antd';
+import type { FormInstance } from 'antd';
 import { BAIButton, BAICard, BAIFlex } from 'backend.ai-ui';
 import { CircleMinus, PlusIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+
+// ---------------------------------------------------------------------------
+// TagsField — replaces antd `Select mode="tags"` for free-form string lists
+// (metadata framework / label). Form.Item injects value/onChange (string[]).
+//
+// PILOT-DECISION: antd `Select mode="tags"` → Astryx `Tokenizer` with
+// `hasCreate` over an empty search source (there were no suggestions to
+// search). `tokenSeparators={[',']}` (comma splits a paste into tags) has no
+// Tokenizer equivalent and is dropped — tags are committed with Enter.
+// `allowClear` → `hasClear`.
+// ---------------------------------------------------------------------------
+
+const EMPTY_SEARCH_SOURCE = {
+  search: () => [],
+  bootstrap: () => [],
+};
+
+const TagsField: React.FC<{
+  /** Injected by `Form.Item`. */
+  value?: string[];
+  /** Injected by `Form.Item`. */
+  onChange?: (value: string[]) => void;
+  /** Accessible name (visually hidden — BAIFormItem renders the visible one). */
+  label: string;
+  placeholder?: string;
+}> = ({ value, onChange, label, placeholder }) => {
+  'use memo';
+  return (
+    <Tokenizer
+      label={label}
+      isLabelHidden
+      searchSource={EMPTY_SEARCH_SOURCE}
+      hasCreate
+      hasClear
+      value={(value ?? []).map((v) => ({ id: v, label: v }))}
+      onChange={(items) => onChange?.(items.map((item) => item.label))}
+      placeholder={placeholder}
+      width="100%"
+    />
+  );
+};
 
 // The UI exposes only one model (index 0); the form keeps the
 // `modelDefinition.models` array shape for the submit mutation.
@@ -24,32 +75,34 @@ const ModelConfigItem: React.FC<{
   return (
     <BAIFlex direction="column" align="stretch" gap="md">
       <BAIFlex gap="md" wrap="wrap">
-        <Form.Item
+        <BAIFormItem
           {...restField}
           name={[listItemName, 'name']}
           label={t('adminDeploymentPreset.modelDef.ModelName')}
           style={{ flex: 1, minWidth: 160 }}
           rules={[{ required: true }]}
         >
-          <Input
+          <AstryxFormTextInput
+            label={t('adminDeploymentPreset.modelDef.ModelName')}
             placeholder={t(
               'adminDeploymentPreset.modelDef.ModelNamePlaceholder',
             )}
           />
-        </Form.Item>
-        <Form.Item
+        </BAIFormItem>
+        <BAIFormItem
           {...restField}
           name={[listItemName, 'modelPath']}
           label={t('adminDeploymentPreset.modelDef.ModelPath')}
           style={{ flex: 2, minWidth: 200 }}
           rules={[{ required: true }]}
         >
-          <Input
+          <AstryxFormTextInput
+            label={t('adminDeploymentPreset.modelDef.ModelPath')}
             placeholder={t(
               'adminDeploymentPreset.modelDef.ModelPathPlaceholder',
             )}
           />
-        </Form.Item>
+        </BAIFormItem>
       </BAIFlex>
 
       <BAICard
@@ -69,22 +122,22 @@ const ModelConfigItem: React.FC<{
             until the shell/command UX is decided. Any existing value still
             round-trips on edit via `form.getFieldsValue(true)`. (FR-3221)
           */}
-          <Form.Item
+          <BAIFormItem
             {...restField}
             name={[listItemName, 'service', 'port']}
             label={t('adminDeploymentPreset.modelDef.Port')}
             rules={[{ required: true }]}
           >
-            <InputNumber
+            <AstryxFormNumberInput
+              label={t('adminDeploymentPreset.modelDef.Port')}
               // Backend `PresetModelServiceConfigInput.port` is `gt=1`
               // (exclusive), so the lowest accepted port is 2.
               min={2}
               max={65535}
-              style={{ width: '100%' }}
               placeholder={t('general.Example', { value: '8080' })}
             />
-          </Form.Item>
-          <Form.Item
+          </BAIFormItem>
+          <BAIFormItem
             {...restField}
             name={[listItemName, 'service', 'startCommand']}
             label={t('adminDeploymentPreset.modelDef.StartCommand')}
@@ -92,14 +145,15 @@ const ModelConfigItem: React.FC<{
             extra={t('modelService.StartCommandHelperShell')}
             rules={[{ required: true }]}
           >
-            <Input
+            <AstryxFormTextInput
+              label={t('adminDeploymentPreset.modelDef.StartCommand')}
               placeholder={t(
                 'adminDeploymentPreset.modelDef.StartCommandPlaceholder',
               )}
             />
-          </Form.Item>
+          </BAIFormItem>
 
-          <Form.Item
+          <BAIFormItem
             label={t('adminDeploymentPreset.modelDef.PreStartActions')}
             style={{ marginBottom: 0 }}
           >
@@ -113,19 +167,20 @@ const ModelConfigItem: React.FC<{
                       align="baseline"
                       gap="xs"
                     >
-                      <Form.Item
+                      <BAIFormItem
                         {...rest}
                         name={[name, 'action']}
                         style={{ marginBottom: 0, flex: 1 }}
                         rules={[{ required: true, message: '' }]}
                       >
-                        <Input
+                        <AstryxFormTextInput
+                          label={t('adminDeploymentPreset.modelDef.Action')}
                           placeholder={t(
                             'adminDeploymentPreset.modelDef.ActionPlaceholder',
                           )}
                         />
-                      </Form.Item>
-                      <Form.Item
+                      </BAIFormItem>
+                      <BAIFormItem
                         {...rest}
                         name={[name, 'args']}
                         style={{ marginBottom: 0, flex: 2 }}
@@ -143,14 +198,15 @@ const ModelConfigItem: React.FC<{
                           },
                         ]}
                       >
-                        <Input
+                        <AstryxFormTextInput
+                          label={t('adminDeploymentPreset.modelDef.Args')}
                           placeholder={t('general.Example', { value: '{}' })}
                         />
-                      </Form.Item>
+                      </BAIFormItem>
                       <CircleMinus size="1em" onClick={() => remove(name)} />
                     </BAIFlex>
                   ))}
-                  <Form.Item noStyle>
+                  <BAIFormItem noStyle>
                     <BAIButton
                       type="dashed"
                       onClick={() => add({ action: '', args: '{}' })}
@@ -159,24 +215,24 @@ const ModelConfigItem: React.FC<{
                     >
                       {t('adminDeploymentPreset.modelDef.AddPreStartAction')}
                     </BAIButton>
-                  </Form.Item>
+                  </BAIFormItem>
                 </BAIFlex>
               )}
             </Form.List>
-          </Form.Item>
+          </BAIFormItem>
 
-          <Form.Item
+          <BAIFormItem
             {...restField}
             name={[listItemName, 'service', 'enableHealthCheck']}
             valuePropName="checked"
             style={{ marginTop: token.marginXS, marginBottom: 0 }}
           >
-            <Checkbox>
-              {t('adminDeploymentPreset.modelDef.EnableHealthCheck')}
-            </Checkbox>
-          </Form.Item>
+            <AstryxFormCheckbox
+              label={t('adminDeploymentPreset.modelDef.EnableHealthCheck')}
+            />
+          </BAIFormItem>
 
-          <Form.Item
+          <BAIFormItem
             noStyle
             dependencies={[
               [
@@ -188,8 +244,8 @@ const ModelConfigItem: React.FC<{
               ],
             ]}
           >
-            {({ getFieldValue }) =>
-              getFieldValue([
+            {(formArg) =>
+              (formArg as FormInstance).getFieldValue([
                 'modelDefinition',
                 'models',
                 listItemName,
@@ -197,19 +253,22 @@ const ModelConfigItem: React.FC<{
                 'enableHealthCheck',
               ]) ? (
                 <BAIFlex direction="column" align="stretch" gap="xs">
-                  <Form.Item
+                  <BAIFormItem
                     {...restField}
                     name={[listItemName, 'service', 'healthCheck', 'path']}
                     label={t('adminDeploymentPreset.modelDef.HealthCheckPath')}
                     tooltip={t('modelService.HealthCheckTooltip')}
                     rules={[{ required: true }]}
                   >
-                    <Input
+                    <AstryxFormTextInput
+                      label={t(
+                        'adminDeploymentPreset.modelDef.HealthCheckPath',
+                      )}
                       placeholder={t('general.Example', { value: '/health' })}
                     />
-                  </Form.Item>
+                  </BAIFormItem>
                   <BAIFlex gap="md" wrap="wrap" align="end">
-                    <Form.Item
+                    <BAIFormItem
                       {...restField}
                       name={[
                         listItemName,
@@ -224,14 +283,16 @@ const ModelConfigItem: React.FC<{
                       style={{ flex: 1, minWidth: 160 }}
                       rules={[{ required: true }]}
                     >
-                      <InputNumber
+                      <AstryxFormNumberInput
+                        label={t(
+                          'adminDeploymentPreset.modelDef.HealthCheckInterval',
+                        )}
                         min={1}
                         placeholder={t('general.Example', { value: '10' })}
-                        suffix={t('time.Sec')}
-                        style={{ width: '100%' }}
+                        units={t('time.Sec')}
                       />
-                    </Form.Item>
-                    <Form.Item
+                    </BAIFormItem>
+                    <BAIFormItem
                       {...restField}
                       name={[
                         listItemName,
@@ -246,13 +307,15 @@ const ModelConfigItem: React.FC<{
                       style={{ flex: 1, minWidth: 160 }}
                       rules={[{ required: true }]}
                     >
-                      <InputNumber
+                      <AstryxFormNumberInput
+                        label={t(
+                          'adminDeploymentPreset.modelDef.HealthCheckMaxRetries',
+                        )}
                         min={1}
                         placeholder={t('general.Example', { value: '10' })}
-                        style={{ width: '100%' }}
                       />
-                    </Form.Item>
-                    <Form.Item
+                    </BAIFormItem>
+                    <BAIFormItem
                       {...restField}
                       name={[
                         listItemName,
@@ -267,16 +330,18 @@ const ModelConfigItem: React.FC<{
                       style={{ flex: 1, minWidth: 160 }}
                       rules={[{ required: true }]}
                     >
-                      <InputNumber
+                      <AstryxFormNumberInput
+                        label={t(
+                          'adminDeploymentPreset.modelDef.HealthCheckMaxWaitTime',
+                        )}
                         min={1}
                         placeholder={t('general.Example', { value: '15' })}
-                        suffix={t('time.Sec')}
-                        style={{ width: '100%' }}
+                        units={t('time.Sec')}
                       />
-                    </Form.Item>
+                    </BAIFormItem>
                   </BAIFlex>
                   <BAIFlex gap="md" wrap="wrap" align="end">
-                    <Form.Item
+                    <BAIFormItem
                       {...restField}
                       name={[
                         listItemName,
@@ -291,16 +356,18 @@ const ModelConfigItem: React.FC<{
                       style={{ flex: 1, minWidth: 160 }}
                       rules={[{ required: true }]}
                     >
-                      <InputNumber
+                      <AstryxFormNumberInput
+                        label={t(
+                          'adminDeploymentPreset.modelDef.HealthCheckExpectedStatus',
+                        )}
                         // Backend `expected_status_code` is `gt=100`
                         // (exclusive), so the lowest accepted code is 101.
                         min={101}
                         max={599}
                         placeholder={t('general.Example', { value: '200' })}
-                        style={{ width: '100%' }}
                       />
-                    </Form.Item>
-                    <Form.Item
+                    </BAIFormItem>
+                    <BAIFormItem
                       {...restField}
                       name={[
                         listItemName,
@@ -315,139 +382,150 @@ const ModelConfigItem: React.FC<{
                       style={{ flex: 1, minWidth: 160 }}
                       rules={[{ required: true }]}
                     >
-                      <InputNumber
+                      <AstryxFormNumberInput
+                        label={t(
+                          'adminDeploymentPreset.modelDef.HealthCheckInitialDelay',
+                        )}
                         min={0}
                         placeholder={t('general.Example', { value: '60' })}
-                        suffix={t('time.Sec')}
-                        style={{ width: '100%' }}
+                        units={t('time.Sec')}
                       />
-                    </Form.Item>
+                    </BAIFormItem>
                     <div style={{ flex: 1, minWidth: 160 }} />
                   </BAIFlex>
                 </BAIFlex>
               ) : null
             }
-          </Form.Item>
+          </BAIFormItem>
         </BAIFlex>
       </BAICard>
 
-      <Collapse
-        defaultActiveKey={['metadata']}
+      {/* PILOT-DECISION: antd Collapse (items API) → Astryx Collapsible.
+          `label`→`trigger`, `defaultActiveKey={['metadata']}`→`defaultIsOpen`;
+          the single-panel accordion frame (bordered antd panel chrome) is
+          replaced by Collapsible's flat default. */}
+      <Collapsible
+        trigger={t('adminDeploymentPreset.modelDef.EnableMetadata')}
+        defaultIsOpen
         style={{ marginTop: token.marginSM }}
-        items={[
-          {
-            key: 'metadata',
-            label: t('adminDeploymentPreset.modelDef.EnableMetadata'),
-            children: (
-              <BAIFlex direction="column" align="stretch" gap="xs">
-                <BAIFlex gap="md" wrap="wrap">
-                  <Form.Item
-                    {...restField}
-                    name={[listItemName, 'metadata', 'title']}
-                    label={t('adminDeploymentPreset.modelDef.Title')}
-                    style={{ flex: 1, minWidth: 160 }}
-                  >
-                    <Input />
-                  </Form.Item>
-                  <Form.Item
-                    {...restField}
-                    name={[listItemName, 'metadata', 'author']}
-                    label={t('adminDeploymentPreset.modelDef.Author')}
-                    style={{ flex: 1, minWidth: 160 }}
-                  >
-                    <Input />
-                  </Form.Item>
-                </BAIFlex>
-                <BAIFlex gap="md" wrap="wrap">
-                  <Form.Item
-                    {...restField}
-                    name={[listItemName, 'metadata', 'version']}
-                    label={t('adminDeploymentPreset.modelDef.Version')}
-                    style={{ flex: 1, minWidth: 120 }}
-                  >
-                    <Input />
-                  </Form.Item>
-                  <Form.Item
-                    {...restField}
-                    name={[listItemName, 'metadata', 'license']}
-                    label={t('adminDeploymentPreset.modelDef.License')}
-                    style={{ flex: 1, minWidth: 120 }}
-                  >
-                    <Input />
-                  </Form.Item>
-                </BAIFlex>
-                <Form.Item
-                  {...restField}
-                  name={[listItemName, 'metadata', 'description']}
-                  label={t('adminDeploymentPreset.modelDef.Description')}
-                >
-                  <Input.TextArea rows={2} />
-                </Form.Item>
-                <BAIFlex gap="md" wrap="wrap">
-                  <Form.Item
-                    {...restField}
-                    name={[listItemName, 'metadata', 'task']}
-                    label={t('adminDeploymentPreset.modelDef.Task')}
-                    style={{ flex: 1, minWidth: 120 }}
-                  >
-                    <Input />
-                  </Form.Item>
-                  <Form.Item
-                    {...restField}
-                    name={[listItemName, 'metadata', 'category']}
-                    label={t('adminDeploymentPreset.modelDef.Category')}
-                    style={{ flex: 1, minWidth: 120 }}
-                  >
-                    <Input />
-                  </Form.Item>
-                  <Form.Item
-                    {...restField}
-                    name={[listItemName, 'metadata', 'architecture']}
-                    label={t('adminDeploymentPreset.modelDef.Architecture')}
-                    style={{ flex: 1, minWidth: 120 }}
-                  >
-                    <Input />
-                  </Form.Item>
-                </BAIFlex>
-                <BAIFlex gap="md" wrap="wrap">
-                  <Form.Item
-                    {...restField}
-                    name={[listItemName, 'metadata', 'framework']}
-                    label={t('adminDeploymentPreset.modelDef.Framework')}
-                    style={{ flex: 1, minWidth: 160 }}
-                  >
-                    <Select
-                      mode="tags"
-                      tokenSeparators={[',']}
-                      placeholder={t(
-                        'adminDeploymentPreset.modelDef.FrameworkPlaceholder',
-                      )}
-                      style={{ width: '100%' }}
-                      allowClear
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    {...restField}
-                    name={[listItemName, 'metadata', 'label']}
-                    label={t('adminDeploymentPreset.modelDef.Label')}
-                    style={{ flex: 1, minWidth: 160 }}
-                  >
-                    <Select
-                      mode="tags"
-                      tokenSeparators={[',']}
-                      placeholder={t(
-                        'adminDeploymentPreset.modelDef.LabelPlaceholder',
-                      )}
-                      style={{ width: '100%' }}
-                      allowClear
-                    />
-                  </Form.Item>
-                </BAIFlex>
-              </BAIFlex>
-            ),
-          },
-        ]}
-      />
+      >
+        <BAIFlex direction="column" align="stretch" gap="xs">
+          <BAIFlex gap="md" wrap="wrap">
+            <BAIFormItem
+              {...restField}
+              name={[listItemName, 'metadata', 'title']}
+              label={t('adminDeploymentPreset.modelDef.Title')}
+              style={{ flex: 1, minWidth: 160 }}
+            >
+              <AstryxFormTextInput
+                label={t('adminDeploymentPreset.modelDef.Title')}
+              />
+            </BAIFormItem>
+            <BAIFormItem
+              {...restField}
+              name={[listItemName, 'metadata', 'author']}
+              label={t('adminDeploymentPreset.modelDef.Author')}
+              style={{ flex: 1, minWidth: 160 }}
+            >
+              <AstryxFormTextInput
+                label={t('adminDeploymentPreset.modelDef.Author')}
+              />
+            </BAIFormItem>
+          </BAIFlex>
+          <BAIFlex gap="md" wrap="wrap">
+            <BAIFormItem
+              {...restField}
+              name={[listItemName, 'metadata', 'version']}
+              label={t('adminDeploymentPreset.modelDef.Version')}
+              style={{ flex: 1, minWidth: 120 }}
+            >
+              <AstryxFormTextInput
+                label={t('adminDeploymentPreset.modelDef.Version')}
+              />
+            </BAIFormItem>
+            <BAIFormItem
+              {...restField}
+              name={[listItemName, 'metadata', 'license']}
+              label={t('adminDeploymentPreset.modelDef.License')}
+              style={{ flex: 1, minWidth: 120 }}
+            >
+              <AstryxFormTextInput
+                label={t('adminDeploymentPreset.modelDef.License')}
+              />
+            </BAIFormItem>
+          </BAIFlex>
+          <BAIFormItem
+            {...restField}
+            name={[listItemName, 'metadata', 'description']}
+            label={t('adminDeploymentPreset.modelDef.Description')}
+          >
+            <AstryxFormTextArea
+              label={t('adminDeploymentPreset.modelDef.Description')}
+              rows={2}
+            />
+          </BAIFormItem>
+          <BAIFlex gap="md" wrap="wrap">
+            <BAIFormItem
+              {...restField}
+              name={[listItemName, 'metadata', 'task']}
+              label={t('adminDeploymentPreset.modelDef.Task')}
+              style={{ flex: 1, minWidth: 120 }}
+            >
+              <AstryxFormTextInput
+                label={t('adminDeploymentPreset.modelDef.Task')}
+              />
+            </BAIFormItem>
+            <BAIFormItem
+              {...restField}
+              name={[listItemName, 'metadata', 'category']}
+              label={t('adminDeploymentPreset.modelDef.Category')}
+              style={{ flex: 1, minWidth: 120 }}
+            >
+              <AstryxFormTextInput
+                label={t('adminDeploymentPreset.modelDef.Category')}
+              />
+            </BAIFormItem>
+            <BAIFormItem
+              {...restField}
+              name={[listItemName, 'metadata', 'architecture']}
+              label={t('adminDeploymentPreset.modelDef.Architecture')}
+              style={{ flex: 1, minWidth: 120 }}
+            >
+              <AstryxFormTextInput
+                label={t('adminDeploymentPreset.modelDef.Architecture')}
+              />
+            </BAIFormItem>
+          </BAIFlex>
+          <BAIFlex gap="md" wrap="wrap">
+            <BAIFormItem
+              {...restField}
+              name={[listItemName, 'metadata', 'framework']}
+              label={t('adminDeploymentPreset.modelDef.Framework')}
+              style={{ flex: 1, minWidth: 160 }}
+            >
+              <TagsField
+                label={t('adminDeploymentPreset.modelDef.Framework')}
+                placeholder={t(
+                  'adminDeploymentPreset.modelDef.FrameworkPlaceholder',
+                )}
+              />
+            </BAIFormItem>
+            <BAIFormItem
+              {...restField}
+              name={[listItemName, 'metadata', 'label']}
+              label={t('adminDeploymentPreset.modelDef.Label')}
+              style={{ flex: 1, minWidth: 160 }}
+            >
+              <TagsField
+                label={t('adminDeploymentPreset.modelDef.Label')}
+                placeholder={t(
+                  'adminDeploymentPreset.modelDef.LabelPlaceholder',
+                )}
+              />
+            </BAIFormItem>
+          </BAIFlex>
+        </BAIFlex>
+      </Collapsible>
     </BAIFlex>
   );
 };

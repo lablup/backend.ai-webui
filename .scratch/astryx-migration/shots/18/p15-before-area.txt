@@ -1,0 +1,76 @@
+== react/src/pages/DeploymentListPage.tsx
+25:import { Button, Skeleton, Typography } from 'antd';
+== react/src/pages/DeploymentDetailPage.tsx
+27:import { Alert, Button, Result, Typography } from 'antd';
+== react/src/pages/AdminDeploymentPage.tsx
+48:import { Skeleton } from 'antd';
+49:import type { CardTabListType } from 'antd/es/card';
+== react/src/pages/AdminDeploymentPresetSettingPage.tsx
+20:import { Form, Typography } from 'antd';
+== react/src/pages/ProjectAdminDeploymentsPage.tsx
+25:import { Skeleton, Typography } from 'antd';
+== react/src/components/AdminDeployment.tsx
+20:import { Typography } from 'antd';
+== react/src/components/AdminDeploymentPreset.tsx
+  (no antd-family import)
+== react/src/components/AdminDeploymentPresetModelConfigItem.tsx
+6:import { Checkbox, Collapse, Form, Input, InputNumber, Select } from 'antd';
+== react/src/components/AdminDeploymentPresetResourceFields.tsx
+7:import { Form, Input, InputNumber, Select, Space } from 'antd';
+== react/src/components/AdminDeploymentPresetReviewSummary.tsx
+10:import { Button, Descriptions, Space, Tag, Typography } from 'antd';
+11:import type { FormInstance } from 'antd';
+== react/src/components/AdminDeploymentPresetSettingPageContent.tsx
+45:} from 'antd';
+46:import type { FormInstance, StepsProps } from 'antd';
+== react/src/components/AdminDeploymentPresetTable.tsx
+  (no antd-family import)
+== react/src/components/AdminDeploymentPresetValidationTour.tsx
+6:import { Tour } from 'antd';
+7:import type { TourProps } from 'antd';
+== react/src/components/AdminModelCard.tsx
+25:import { Checkbox, Tooltip, Typography } from 'antd';
+== react/src/components/AdminModelCardSettingModal.tsx
+24:} from 'antd';
+== react/src/components/AdminPrometheusPreset.tsx
+  (no antd-family import)
+== react/src/components/AdminRuntimeVariantPreset.tsx
+  (no antd-family import)
+== react/src/components/DeploymentAccessTokensCard.tsx
+12:import { DatePicker, Form, Select, Skeleton, Tooltip, Typography } from 'antd';
+== react/src/components/DeploymentAddRevisionModal.tsx
+69:} from 'antd';
+70:import type { FormInstance } from 'antd';
+71:import type { CheckboxChangeEvent } from 'antd/es/checkbox';
+== react/src/components/DeploymentAuditLogTab.tsx
+9:import { Skeleton } from 'antd';
+== react/src/components/DeploymentAutoScalingCard.tsx
+19:import { Skeleton, Tooltip } from 'antd';
+== react/src/components/DeploymentBasicInfoCard.tsx
+25:} from 'antd';
+== react/src/components/DeploymentCurrentRevisionTab.tsx
+10:import { Alert, Button, Empty } from 'antd';
+== react/src/components/DeploymentPresetDetailModal.tsx
+8:import { Descriptions, Typography } from 'antd';
+== react/src/components/DeploymentReplicasCard.tsx
+24:import { Skeleton, Tooltip, Typography } from 'antd';
+== react/src/components/DeploymentRevisionCard.tsx
+10:import { Skeleton } from 'antd';
+== react/src/components/DeploymentRevisionDetail.tsx
+10:import { Descriptions, Grid, Typography } from 'antd';
+11:import { createStyles } from 'antd-style';
+12:import { DescriptionsItemType } from 'antd/es/descriptions';
+== react/src/components/DeploymentRevisionDetailDrawer.tsx
+7:import { Drawer, Skeleton } from 'antd';
+8:import { DrawerProps } from 'antd/lib';
+== react/src/components/DeploymentRevisionHistoryTab.tsx
+18:import { Dropdown, Popconfirm, Space, Typography } from 'antd';
+== react/src/components/DeploymentSchedulingHistoryModal.tsx
+  (no antd-family import)
+== react/src/components/DeploymentSettingModal.tsx
+23:} from 'antd';
+== react/src/components/ReplicaStatusTag.tsx
+5:import { Tooltip } from 'antd';
+6:import type { TagProps } from 'antd';
+== react/src/components/RouteSchedulingHistoryModal.tsx
+  (no antd-family import)

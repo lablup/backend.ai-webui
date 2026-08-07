@@ -4,26 +4,53 @@
  */
 import { theme } from '../theme-shim';
 import type { ResourceSlotTypeInfo } from './AdminDeploymentPresetFormTypes';
-import { Form, Input, InputNumber, Select, Space } from 'antd';
+import BAIFormItem from './BAIFormItem';
+import {
+  AstryxFormNumberInput,
+  AstryxFormSelector,
+  AstryxFormTextInput,
+  type AstryxFormNumberInputProps,
+} from './astryx-bui/astryxFormControls';
+import { TextInput } from '@astryxdesign/core/TextInput';
+import { Form } from 'antd';
 import { BAIDynamicUnitInputNumber, BAIFlex } from 'backend.ai-ui';
 import { CircleMinus } from 'lucide-react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 // ---------------------------------------------------------------------------
-// InputNumberWithUnit — InputNumber in Space.Compact with an addon unit.
+// InputNumberWithUnit — NumberInput with a trailing unit.
 // Form.Item injects value/onChange into this component directly.
+//
+// PILOT-DECISION: the antd `Space.Compact` + `Space.Addon` composition is
+// gone — Astryx `NumberInput` renders unit text natively via `units`, so the
+// former `unit` prop maps straight onto it. antd's `precision` (decimal-place
+// rounding) has no Astryx equivalent: `precision === 0` becomes
+// `isIntegerOnly`; fractional precisions are dropped (the `step` increment
+// still guides fractional entry).
 // ---------------------------------------------------------------------------
 
-export const InputNumberWithUnit: React.FC<
-  React.ComponentProps<typeof InputNumber> & { unit?: string }
-> = ({ unit, ...props }) => {
+export interface InputNumberWithUnitProps extends Omit<
+  AstryxFormNumberInputProps,
+  'units' | 'isIntegerOnly'
+> {
+  unit?: string;
+  /** antd `InputNumber precision`. Only `0` (integer-only) survives. */
+  precision?: number;
+}
+
+export const InputNumberWithUnit: React.FC<InputNumberWithUnitProps> = ({
+  unit,
+  precision,
+  ...props
+}) => {
   'use memo';
-  if (!unit) return <InputNumber {...props} />;
   return (
-    <Space.Compact block style={{ display: 'flex' }}>
-      <InputNumber {...props} style={{ width: '100%', ...props.style }} />
-      <Space.Addon>{unit}</Space.Addon>
-    </Space.Compact>
+    <AstryxFormNumberInput
+      units={unit}
+      isIntegerOnly={precision === 0}
+      {...props}
+    />
   );
 };
 
@@ -39,6 +66,7 @@ export const ResourceSlotRow: React.FC<{
   onRemove: () => void;
 }> = ({ listItemName, restField, resourceSlotTypes, onRemove }) => {
   'use memo';
+  const { t } = useTranslation();
 
   const selectedSlotName = Form.useWatch([
     'resourceSlots',
@@ -62,25 +90,26 @@ export const ResourceSlotRow: React.FC<{
     slotType?.slotType === 'bytes';
   const precision = slotType?.numberFormat?.roundLength ?? 0;
 
+  const quantityLabel =
+    slotType?.displayName ?? t('session.launcher.EnvironmentVariableValue');
+
   return (
     <BAIFlex direction="row" align="baseline" gap="xs">
-      <Form.Item
+      <BAIFormItem
         {...restField}
         name={[listItemName, 'resourceType']}
         style={{ marginBottom: 0, flex: 1 }}
         rules={[{ required: true, message: '' }]}
       >
-        <Select
+        {/* PILOT-DECISION: antd's custom `showSearch.filterOption` dropped —
+            Astryx Selector's built-in `hasSearch` filtering covers it. */}
+        <AstryxFormSelector
+          label={t('adminDeploymentPreset.ResourceSlots')}
           options={slotOptions}
-          showSearch={{
-            filterOption: (input, option) =>
-              String(option?.label ?? '')
-                .toLowerCase()
-                .includes(input.toLowerCase()),
-          }}
+          hasSearch
         />
-      </Form.Item>
-      <Form.Item
+      </BAIFormItem>
+      <BAIFormItem
         {...restField}
         name={[listItemName, 'quantity']}
         style={{ marginBottom: 0, flex: 1 }}
@@ -92,15 +121,16 @@ export const ResourceSlotRow: React.FC<{
       >
         {isNumericType ? (
           <InputNumberWithUnit
+            label={quantityLabel}
             min={0}
             precision={precision}
             step={precision > 0 ? Math.pow(10, -precision) : 1}
             unit={slotType?.displayUnit || undefined}
           />
         ) : (
-          <Input />
+          <AstryxFormTextInput label={quantityLabel} />
         )}
-      </Form.Item>
+      </BAIFormItem>
       <CircleMinus onClick={onRemove} size="1em" />
     </BAIFlex>
   );
@@ -116,21 +146,28 @@ export const FixedResourceSlotField: React.FC<{
   required?: boolean;
 }> = ({ slotName, resourceSlotTypes, required = true }) => {
   'use memo';
+  const { t } = useTranslation();
   const { token } = theme.useToken();
   const slotType = resourceSlotTypes.find((s) => s.slotName === slotName);
   const precision = slotType?.numberFormat?.roundLength ?? 0;
 
   return (
     <BAIFlex direction="row" align="baseline" gap="xs">
-      <Form.Item style={{ marginBottom: 0, flex: 1 }}>
-        <Input
-          readOnly
+      <BAIFormItem style={{ marginBottom: 0, flex: 1 }}>
+        {/* PILOT-DECISION: antd `Input readOnly` with a dashed border showed
+            the fixed slot name as an uneditable input. Astryx TextInput has no
+            readOnly mode, so `isDisabled` carries the "not editable" state;
+            the dashed-border decoration is dropped (defaults-first). */}
+        <TextInput
+          label={t('adminDeploymentPreset.ResourceSlots')}
+          isLabelHidden
           value={slotName.toUpperCase()}
-          style={{ borderStyle: 'dashed', cursor: 'default' }}
+          isDisabled
+          width="100%"
         />
-      </Form.Item>
+      </BAIFormItem>
       {slotName === 'mem' ? (
-        <Form.Item
+        <BAIFormItem
           name={slotName}
           style={{ marginBottom: 0, flex: 1 }}
           required={required}
@@ -140,9 +177,9 @@ export const FixedResourceSlotField: React.FC<{
             defaultUnit="g"
             style={{ width: '100%' }}
           />
-        </Form.Item>
+        </BAIFormItem>
       ) : (
-        <Form.Item
+        <BAIFormItem
           name={slotName}
           style={{ marginBottom: 0, flex: 1 }}
           required={required}
@@ -153,12 +190,13 @@ export const FixedResourceSlotField: React.FC<{
           })}
         >
           <InputNumberWithUnit
+            label={slotType?.displayName ?? slotName.toUpperCase()}
             min={0}
             precision={precision}
             step={precision > 0 ? Math.pow(10, -precision) : 1}
             unit={slotType?.displayUnit || undefined}
           />
-        </Form.Item>
+        </BAIFormItem>
       )}
       {/* Spacer matching the CircleMinus delete icon in ResourceSlotRow */}
       <span style={{ visibility: 'hidden', fontSize: token.fontSize }}>

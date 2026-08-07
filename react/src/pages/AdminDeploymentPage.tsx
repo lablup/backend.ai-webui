@@ -3,14 +3,14 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type {
+  AdminDeploymentPresetQuery as AdminDeploymentPresetQueryType,
+  DeploymentRevisionPresetOrderBy,
+} from '../__generated__/AdminDeploymentPresetQuery.graphql';
+import type {
   AdminDeploymentQuery as AdminDeploymentQueryType,
   DeploymentFilter,
   DeploymentOrderBy,
 } from '../__generated__/AdminDeploymentQuery.graphql';
-import type {
-  AdminDeploymentPresetQuery as AdminDeploymentPresetQueryType,
-  DeploymentRevisionPresetOrderBy,
-} from '../__generated__/AdminDeploymentPresetQuery.graphql';
 import type {
   AdminModelCardQuery as AdminModelCardQueryType,
   ModelCardV2OrderBy,
@@ -40,12 +40,13 @@ import AdminRuntimeVariantPreset, {
   AdminRuntimeVariantPresetQuery,
 } from '../components/AdminRuntimeVariantPreset';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
+import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { Skeleton } from 'antd';
+// frontier type import (BAICard tabList shape, ticket 30)
 import type { CardTabListType } from 'antd/es/card';
 import { BAICard, filterOutEmpty } from 'backend.ai-ui';
 import {
@@ -83,7 +84,7 @@ const DEPLOYMENT_RUNNING_FILTER: DeploymentFilter = {
 // (see below), these defaults are applied explicitly on tab switch and on the
 // initial load of each tab (in `loadTab`).
 const DEFAULT_ORDER_BY_TAB: Record<TabKey, string | null> = {
-  'deployments': null,
+  deployments: null,
   'model-store-management': null,
   'prometheus-preset': null,
   'deployment-presets': '-createdAt',
@@ -148,7 +149,12 @@ const AdminDeploymentPage: React.FC = () => {
       queryParams: { filter: queryParams.filter, order: queryParams.order },
       tablePaginationOption,
     };
-  }, [currentTab, queryParams.filter, queryParams.order, tablePaginationOption]);
+  }, [
+    currentTab,
+    queryParams.filter,
+    queryParams.order,
+    tablePaginationOption,
+  ]);
 
   // Every tab's query ref is owned here (not inside the tab component) so the
   // ref — and its already-fetched rows — survive the tab unmounting on a tab
@@ -367,8 +373,7 @@ const AdminDeploymentPage: React.FC = () => {
                 (params.filter as RuntimeVariantPresetFilter | null) ??
                 undefined,
               orderBy: convertToOrderBy<RuntimeVariantPresetOrderBy>(
-                params.order ??
-                  DEFAULT_ORDER_BY_TAB['runtime-variant-presets'],
+                params.order ?? DEFAULT_ORDER_BY_TAB['runtime-variant-presets'],
               ),
               limit,
               offset,
@@ -456,7 +461,7 @@ const AdminDeploymentPage: React.FC = () => {
       onTabChange={onTabChange}
       tabList={tabItems}
     >
-      <Suspense fallback={<Skeleton active />}>
+      <Suspense fallback={<BAISkeletonAstryx />}>
         {currentTab === 'deployments' && (
           <BAIErrorBoundary>
             {deploymentQueryRef ? (
@@ -469,7 +474,7 @@ const AdminDeploymentPage: React.FC = () => {
                 }}
               />
             ) : (
-              <Skeleton active />
+              <BAISkeletonAstryx />
             )}
           </BAIErrorBoundary>
         )}
@@ -485,7 +490,7 @@ const AdminDeploymentPage: React.FC = () => {
                 }}
               />
             ) : (
-              <Skeleton active />
+              <BAISkeletonAstryx />
             )}
           </BAIErrorBoundary>
         )}
@@ -501,7 +506,7 @@ const AdminDeploymentPage: React.FC = () => {
                 }}
               />
             ) : (
-              <Skeleton active />
+              <BAISkeletonAstryx />
             )}
           </BAIErrorBoundary>
         )}
@@ -517,7 +522,7 @@ const AdminDeploymentPage: React.FC = () => {
                 }}
               />
             ) : (
-              <Skeleton active />
+              <BAISkeletonAstryx />
             )}
           </BAIErrorBoundary>
         )}
@@ -533,7 +538,7 @@ const AdminDeploymentPage: React.FC = () => {
                 }}
               />
             ) : (
-              <Skeleton active />
+              <BAISkeletonAstryx />
             )}
           </BAIErrorBoundary>
         )}

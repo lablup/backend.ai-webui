@@ -2,9 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { Tooltip } from 'antd';
-import type { TagProps } from 'antd';
-import { BAITag } from 'backend.ai-ui';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { badgeVariantForStatus } from 'backend.ai-ui';
 import { LoaderCircle } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -21,7 +21,13 @@ export type ReplicaStatus =
   | 'TERMINATED'
   | 'FAILED_TO_START';
 
-export interface ReplicaStatusTagProps extends Omit<TagProps, 'color'> {
+// PILOT-DECISION: props no longer extend antd `Omit<TagProps, 'color'>`.
+// Grepped consumers (DeploymentReplicasCard) pass only `status` and
+// `showTooltip`, so the explicit minimal interface below is the whole public
+// surface. The local status→antd-preset color map is gone too — the Badge
+// variant comes from the repo-global `badgeVariantForStatus('replica', …)`
+// lookup in backend.ai-ui.
+export interface ReplicaStatusTagProps {
   /**
    * Replica health/lifecycle state.
    * Health states: `HEALTHY`, `UNHEALTHY`, `DEGRADED`, `NOT_CHECKED`.
@@ -30,37 +36,11 @@ export interface ReplicaStatusTagProps extends Omit<TagProps, 'color'> {
    */
   status: ReplicaStatus;
   /**
-   * When true, wraps the tag in a tooltip explaining the state.
+   * When true, wraps the badge in a tooltip explaining the state.
    * @default true
    */
   showTooltip?: boolean;
 }
-
-/**
- * Antd `Tag` preset status colors. Only these five values are recognized by
- * antd as status presets (`success | processing | error | warning | default`)
- * and therefore resolve to theme tokens (`colorSuccess`, `colorInfo`, …) that
- * adapt to dark mode. `'info'` is NOT an antd status preset — passing it makes
- * antd treat the tag as a custom color and fall back to hardcoded white text,
- * which glares in dark mode. Use `'processing'` for info-colored states: it
- * maps to the `colorInfo` token and `BAITag` already renders its background
- * transparent via the `colorInfoBg` override.
- */
-type TagPresetStatusColor =
-  'success' | 'processing' | 'error' | 'warning' | 'default';
-
-const replicaStatusColorMap: Record<ReplicaStatus, TagPresetStatusColor> = {
-  HEALTHY: 'success',
-  UNHEALTHY: 'error',
-  DEGRADED: 'warning',
-  NOT_CHECKED: 'default',
-  PROVISIONING: 'processing',
-  WARMING_UP: 'processing',
-  RUNNING: 'success',
-  TERMINATING: 'warning',
-  TERMINATED: 'default',
-  FAILED_TO_START: 'error',
-};
 
 const replicaStatusI18nKey: Record<ReplicaStatus, string> = {
   HEALTHY: 'Healthy',
@@ -78,41 +58,36 @@ const replicaStatusI18nKey: Record<ReplicaStatus, string> = {
 const ReplicaStatusTag: React.FC<ReplicaStatusTagProps> = ({
   status,
   showTooltip = true,
-  ...tagProps
 }) => {
   'use memo';
   const { t } = useTranslation();
 
-  const color = replicaStatusColorMap[status];
   const i18nKey = replicaStatusI18nKey[status];
   const label = t(`replicaStatus.${i18nKey}`);
-  const tooltipTitle = showTooltip
+  const tooltipContent = showTooltip
     ? t(`replicaStatus.tooltip.${i18nKey}`, { defaultValue: '' })
     : undefined;
 
-  // WARMING_UP and PROVISIONING share the `processing` (info) status color;
-  // render a spinner on WARMING_UP so the two states stay visually distinct in
-  // the status column.
+  // WARMING_UP and PROVISIONING share the info variant; render a spinner on
+  // WARMING_UP so the two states stay visually distinct in the status column.
   const icon =
     status === 'WARMING_UP' ? (
       <LoaderCircle className="anticon-spin" size="1em" />
     ) : undefined;
 
-  const tag = (
-    <BAITag {...tagProps} color={color} icon={icon}>
-      {label}
-    </BAITag>
+  const badge = (
+    <Badge
+      variant={badgeVariantForStatus('replica', status)}
+      icon={icon}
+      label={label}
+    />
   );
 
-  if (!showTooltip || !tooltipTitle) {
-    return tag;
+  if (!showTooltip || !tooltipContent) {
+    return badge;
   }
 
-  return (
-    <Tooltip title={tooltipTitle}>
-      <span>{tag}</span>
-    </Tooltip>
-  );
+  return <Tooltip content={tooltipContent}>{badge}</Tooltip>;
 };
 
 export default ReplicaStatusTag;

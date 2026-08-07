@@ -22,7 +22,9 @@ import { theme } from '../theme-shim';
 import AdminModelCardSettingModal from './AdminModelCardSettingModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
-import { Checkbox, Tooltip, Typography } from 'antd';
+import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
+import { Text } from '@astryxdesign/core/Text';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIButton,
   BAIColumnType,
@@ -258,9 +260,9 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
       title: t('adminModelCard.Title'),
       render: (_, record) =>
         record.metadata?.title ? (
-          <Typography.Text ellipsis style={{ maxWidth: 200 }}>
+          <Text maxLines={1} style={{ maxWidth: 200 }}>
             {record.metadata.title}
-          </Typography.Text>
+          </Text>
         ) : (
           '-'
         ),
@@ -478,34 +480,36 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
         extraContent={
           <BAIFlex direction="column" align="stretch" gap="xs">
             <BAIFlex align="start" gap="xs">
-              <Tooltip title={t('adminModelCard.AlsoDeleteModelFolderTooltip')}>
-                <Checkbox
-                  checked={alsoDeleteFolder}
-                  onChange={(e) => setAlsoDeleteFolder(e.target.checked)}
+              <Tooltip
+                content={t('adminModelCard.AlsoDeleteModelFolderTooltip')}
+              >
+                {/* The adjacent visible text is the checkbox label now —
+                    CheckboxInput renders it itself. */}
+                <CheckboxInput
+                  label={t('adminModelCard.AlsoDeleteModelFolder')}
+                  value={alsoDeleteFolder}
+                  onChange={(checked) => setAlsoDeleteFolder(checked)}
                 />
               </Tooltip>
-              <span>
-                {t('adminModelCard.AlsoDeleteModelFolder')}
-                {deletingModelCard?.vfolder && (
-                  <span style={{ marginLeft: token.marginXXS }}>
-                    {'('}
-                    <VFolderNodeIdenticonV2
-                      vfolderNodeIdenticonFrgmt={deletingModelCard.vfolder}
-                      style={{
-                        verticalAlign: 'middle',
-                        marginInline: token.marginXXS,
-                      }}
-                    />
-                    <BAILink
-                      to={generateFolderPath(deletingModelCard.vfolderId)}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {deletingModelCard.vfolder.metadata.name}
-                    </BAILink>
-                    {')'}
-                  </span>
-                )}
-              </span>
+              {deletingModelCard?.vfolder && (
+                <span>
+                  {'('}
+                  <VFolderNodeIdenticonV2
+                    vfolderNodeIdenticonFrgmt={deletingModelCard.vfolder}
+                    style={{
+                      verticalAlign: 'middle',
+                      marginInline: token.marginXXS,
+                    }}
+                  />
+                  <BAILink
+                    to={generateFolderPath(deletingModelCard.vfolderId)}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {deletingModelCard.vfolder.metadata.name}
+                  </BAILink>
+                  {')'}
+                </span>
+              )}
             </BAIFlex>
             {alsoDeleteFolder && (
               <BAIAlert
@@ -599,13 +603,17 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
         extraContent={
           <BAIFlex direction="column" align="stretch" gap="xs">
             <BAIFlex align="center" gap="xs">
-              <Tooltip title={t('adminModelCard.AlsoDeleteModelFolderTooltip')}>
-                <Checkbox
-                  checked={alsoDeleteFoldersBulk}
-                  onChange={(e) => setAlsoDeleteFoldersBulk(e.target.checked)}
+              <Tooltip
+                content={t('adminModelCard.AlsoDeleteModelFolderTooltip')}
+              >
+                {/* The adjacent visible text is the checkbox label now —
+                    CheckboxInput renders it itself. */}
+                <CheckboxInput
+                  label={t('adminModelCard.AlsoDeleteModelFolders')}
+                  value={alsoDeleteFoldersBulk}
+                  onChange={(checked) => setAlsoDeleteFoldersBulk(checked)}
                 />
               </Tooltip>
-              <span>{t('adminModelCard.AlsoDeleteModelFolders')}</span>
             </BAIFlex>
             {alsoDeleteFoldersBulk && (
               <BAIAlert
@@ -667,18 +675,17 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                             )?.name ?? f.cardId;
                           return (
                             <div key={f.cardId}>
-                              <Typography.Text strong>
-                                {cardName}
-                              </Typography.Text>
-                              <Typography.Text type="secondary">
-                                {' — '}
-                              </Typography.Text>
-                              <Typography.Text
-                                type="danger"
-                                style={{ fontSize: token.fontSizeSM }}
-                              >
+                              <Text weight="semibold">{cardName}</Text>
+                              <Text color="secondary">{' — '}</Text>
+                              {/* PILOT-DECISION: antd `type="danger"` has no
+                                  Astryx TextColor equivalent — the red tint is
+                                  dropped; `type="supporting"` keeps the small
+                                  font (was token.fontSizeSM) and the failure
+                                  context is already carried by the warning
+                                  notification. */}
+                              <Text type="supporting" color="primary">
                                 {f.message}
-                              </Typography.Text>
+                              </Text>
                             </div>
                           );
                         })}

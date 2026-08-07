@@ -16,7 +16,8 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { theme } from '../theme-shim';
 import AutoScalingRuleEditorModal from './AutoScalingRuleEditorModal';
 import AutoScalingRuleListNodes from './AutoScalingRuleListNodes';
-import { Skeleton, Tooltip } from 'antd';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIButton,
   BAICard,
@@ -98,7 +99,7 @@ const DeploymentAutoScalingCard: React.FC<DeploymentAutoScalingCardProps> = ({
       title={
         <BAIFlex gap="xs" align="center">
           {t('deployment.tab.AutoScaling')}
-          <Tooltip title={t('deployment.tab.description.AutoScaling')}>
+          <Tooltip content={t('deployment.tab.description.AutoScaling')}>
             <CircleHelp
               style={{ color: token.colorTextDescription }}
               size="1em"
@@ -108,7 +109,7 @@ const DeploymentAutoScalingCard: React.FC<DeploymentAutoScalingCardProps> = ({
       }
       styles={{ body: { paddingTop: 0 } }}
     >
-      <Suspense fallback={<Skeleton active />}>
+      <Suspense fallback={<BAISkeletonAstryx />}>
         <DeploymentAutoScalingCardContent
           deploymentId={deployment.id}
           isEndpointDestroying={isEndpointDestroying}

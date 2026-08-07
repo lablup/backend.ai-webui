@@ -34,6 +34,7 @@ import {
   type RuntimeVariantPresetValueEntry,
 } from '../hooks/useRuntimeParameterSchema';
 import { theme } from '../theme-shim';
+import BAIFormItem from './BAIFormItem';
 import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
 import EnvVarFormList, { type EnvVarFormListValue } from './EnvVarFormList';
 import FolderCreateModalV2 from './FolderCreateModalV2';
@@ -52,23 +53,27 @@ import ResourceAllocationFormItems, {
 import VFolderTableFormItem, {
   type VFolderTableFormValues,
 } from './VFolderTableFormItem';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import {
-  Alert,
-  Button,
-  Checkbox,
-  Collapse,
-  Divider,
-  Form,
-  Input,
-  InputNumber,
-  Segmented,
-  Skeleton,
-  Space,
-  Tooltip,
-  Typography,
-} from 'antd';
+  AstryxFormCheckbox,
+  AstryxFormNumberInput,
+  AstryxFormTextArea,
+  AstryxFormTextInput,
+} from './astryx-bui/astryxFormControls';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Button } from '@astryxdesign/core/Button';
+import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
+import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
+import { Collapsible } from '@astryxdesign/core/Collapsible';
+import { Divider } from '@astryxdesign/core/Divider';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import {
+  SegmentedControl,
+  SegmentedControlItem,
+} from '@astryxdesign/core/SegmentedControl';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Form } from 'antd';
 import type { FormInstance } from 'antd';
-import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import {
   BAIAvailablePresetSelect,
   BAIFlex,
@@ -168,13 +173,56 @@ type RevisionPrefillData = DeploymentAddRevisionModal_revisionSource$data;
 const SectionHeader: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  'use memo';
+  // PILOT-DECISION: antd `Divider titlePlacement="left"` with a hand-styled
+  // secondary/small Text label → Astryx `Divider label`. Astryx renders divider
+  // labels centered with small secondary styling built in; there is no
+  // placement prop, so the left placement (and the manual fontSizeSM Text) is
+  // dropped per defaults-first.
+  return <Divider label={children} />;
+};
+
+// antd `Form.Item tooltip` rendered a hoverable (i) icon next to the label.
+// `BAIFormItem` renders its `tooltip` node verbatim in the label row, so the
+// icon + hover popup is composed here with the Astryx Tooltip.
+const LabelTooltip: React.FC<{ title: React.ReactNode }> = ({ title }) => {
+  'use memo';
+  return (
+    <Tooltip content={title}>
+      <Info size="1em" style={{ display: 'block', cursor: 'help' }} />
+    </Tooltip>
+  );
+};
+
+// Bridge for the antd form engine: `BAIFormItem name="customDefinitionMode"
+// noStyle` clones its child with `value`/`onChange`, and Astryx
+// `SegmentedControl` requires a non-nullable `value` plus a `label` string —
+// so the injected props are coalesced/forwarded here instead of putting the
+// raw control under the Form.Item.
+const DefinitionModeSegmented: React.FC<{
+  value?: 'command' | 'file';
+  onChange?: (next: 'command' | 'file') => void;
+}> = ({ value, onChange }) => {
+  'use memo';
+  const { t } = useTranslation();
   const { token } = theme.useToken();
   return (
-    <Divider titlePlacement="left">
-      <Typography.Text type="secondary" style={{ fontSize: token.fontSizeSM }}>
-        {children}
-      </Typography.Text>
-    </Divider>
+    <SegmentedControl
+      value={value ?? 'command'}
+      onChange={(next) => onChange?.(next as 'command' | 'file')}
+      // Aria-only group label; reuses an existing key (no new i18n keys).
+      label={t('modelService.ModelDefinition')}
+      style={{ marginBottom: token.marginMD }}
+    >
+      <SegmentedControlItem
+        value="command"
+        label={t('modelService.EnterCommand')}
+      />
+      <SegmentedControlItem
+        value="file"
+        label={t('modelService.UseConfigFile')}
+      />
+    </SegmentedControl>
   );
 };
 
@@ -1022,12 +1070,26 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   };
 
   // antd's built-in `scrollToFirstError` walks `errorFields` in field
-  // *registration* order, not DOM order. Walk the DOM instead and scroll to
-  // whichever errored Form.Item is highest on screen.
+  // *registration* order, not DOM order — and `form.getFieldsError()` has the
+  // same registration-order problem — so DOM order is still resolved by
+  // querying the document. The status surface queried is no longer antd's
+  // `.ant-form-item-has-error` class (gone with the antd visual layer) but
+  // BAIFormItem's own `data-status="error"` attribute (see BAIFormItem.tsx,
+  // which also aggregates nested noStyle children's errors into the wrapper).
+  // The legacy `.ant-form-item-has-error` selector is kept ONLY as a
+  // transitional fallback for the embedded, not-yet-converted form sections
+  // (ImageEnvironmentSelectFormItems / ResourceAllocationFormItems /
+  // EnvVarFormList / VFolderTableFormItem) that still render antd Form.Items;
+  // drop it when those files migrate to BAIFormItem. `.ant-modal-body` is
+  // BAIModal's DOM — BAIModal is frontier (still antd-based) and scopes the
+  // query to the open modal.
   const handleFinishFailed = () => {
     requestAnimationFrame(() => {
+      // querySelector over a compound selector returns the first match in
+      // document order, i.e. the errored item highest on screen.
       const firstErrorEl = document.querySelector<HTMLElement>(
-        '.ant-modal-body .ant-form-item-has-error',
+        '.ant-modal-body [data-bai-form-item][data-status="error"], ' +
+          '.ant-modal-body .ant-form-item-has-error',
       );
       if (firstErrorEl) {
         firstErrorEl.scrollIntoView({
@@ -1397,41 +1459,51 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           style={{ paddingRight: token.paddingLG }}
         >
           <span>{t('deployment.AddRevision')}</span>
-          <Segmented<'preset' | 'custom'>
+          {/* PILOT-DECISION: antd's `style={{fontWeight: 'normal'}}` counter-
+              acted the modal title's bold leaking into the Segmented — Astryx
+              SegmentedControl styles its own items, so the override is
+              dropped. The `label` is aria-only; reuses an existing key. */}
+          <SegmentedControl
             value={effectiveMode}
-            onChange={handleModeChange}
-            options={[
-              { label: t('deployment.PresetMode'), value: 'preset' },
-              { label: t('deployment.CustomMode'), value: 'custom' },
-            ]}
-            style={{ fontWeight: 'normal' }}
-          />
+            onChange={(next) => {
+              void handleModeChange(next as 'preset' | 'custom');
+            }}
+            label={t('deployment.AddRevision')}
+          >
+            <SegmentedControlItem
+              value="preset"
+              label={t('deployment.PresetMode')}
+            />
+            <SegmentedControlItem
+              value="custom"
+              label={t('deployment.CustomMode')}
+            />
+          </SegmentedControl>
         </BAIFlex>
       }
       width={720}
       footer={
         <BAIFlex direction="row" align="center" justify="between" gap="sm">
-          <Checkbox
-            checked={autoActivate}
-            onChange={(e: CheckboxChangeEvent) =>
-              setAutoActivate(e.target.checked)
-            }
-            disabled={effectiveMode === 'preset' && hasNoPresets}
-          >
-            {t('deployment.AutoApply')}
-          </Checkbox>
+          {/* Standalone (non-form) checkbox → Astryx CheckboxInput: onChange
+              receives the boolean value directly (no CheckboxChangeEvent). */}
+          <CheckboxInput
+            label={t('deployment.AutoApply')}
+            value={autoActivate}
+            onChange={(next) => setAutoActivate(next)}
+            isDisabled={effectiveMode === 'preset' && hasNoPresets}
+          />
           <BAIFlex direction="row" align="center" gap="xs">
-            <Button onClick={() => onRequestClose()}>
-              {t('button.Cancel')}
-            </Button>
             <Button
-              type="primary"
-              loading={isAddInFlight || isResolvingImage}
+              label={t('button.Cancel')}
+              onClick={() => onRequestClose()}
+            />
+            <Button
+              variant="primary"
+              label={t('deployment.AddRevision')}
+              isLoading={isAddInFlight || isResolvingImage}
               onClick={handleOk}
-              disabled={effectiveMode === 'preset' && hasNoPresets}
-            >
-              {t('deployment.AddRevision')}
-            </Button>
+              isDisabled={effectiveMode === 'preset' && hasNoPresets}
+            />
           </BAIFlex>
         </BAIFlex>
       }
@@ -1449,15 +1521,18 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           flips to Custom first and applies once the form mounts (see
           `handleLoadCurrent`). */}
       {currentRevision && !sourceRevisionFrgmt && !hasLoadedCurrent ? (
-        <Alert
-          type="info"
-          showIcon
+        // antd Alert → Astryx Banner (`showIcon` dropped: Banner always shows
+        // the status icon; `action` → `endContent`).
+        <Banner
+          status="info"
           style={{ marginBottom: token.marginMD }}
           title={t('deployment.CurrentRevisionAvailableDescription')}
-          action={
-            <Button size="small" onClick={handleLoadCurrent}>
-              {t('deployment.LoadCurrentRevision')}
-            </Button>
+          endContent={
+            <Button
+              size="sm"
+              label={t('deployment.LoadCurrentRevision')}
+              onClick={handleLoadCurrent}
+            />
           }
         />
       ) : null}
@@ -1465,9 +1540,8 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         hasNoPresets ? (
           // Empty-state: per spec, when no preset is available in Preset Mode,
           // guide the user to switch to Custom Mode.
-          <Alert
-            type="info"
-            showIcon
+          <Banner
+            status="info"
             style={{ marginTop: token.marginXS }}
             title={t('deployment.NoPresetsAvailable')}
             description={t('deployment.NoPresetsAvailableSwitchToCustom')}
@@ -1484,55 +1558,65 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               modelFolderId: defaultModelFolderId,
             }}
           >
-            <Form.Item
+            <BAIFormItem
               label={t('modelStore.Preset')}
-              tooltip={t('modelStore.PresetTooltip')}
+              tooltip={<LabelTooltip title={t('modelStore.PresetTooltip')} />}
               required
             >
               <BAIFlex direction="row" gap="xs">
                 <Suspense fallback={<BAISelect loading style={{ flex: 1 }} />}>
-                  <Form.Item
+                  <BAIFormItem
                     name="revisionPresetId"
                     noStyle
                     rules={[{ required: true }]}
                   >
                     <BAIAvailablePresetSelect style={{ flex: 1 }} />
-                  </Form.Item>
+                  </BAIFormItem>
                 </Suspense>
-                <Form.Item dependencies={['revisionPresetId']} noStyle>
-                  {({ getFieldValue }: FormInstance<PresetFormValues>) => {
+                <BAIFormItem dependencies={['revisionPresetId']} noStyle>
+                  {(form) => {
+                    // BAIFormItem render-prop children receive `unknown`
+                    // (antd typed this as FormInstance); narrow it back.
+                    const { getFieldValue } =
+                      form as FormInstance<PresetFormValues>;
                     const selectedId = getFieldValue('revisionPresetId');
+                    // PILOT-DECISION: antd `Space.Compact` around a SINGLE
+                    // button carried no grouping — dropped, plain IconButton.
+                    // The external antd Tooltip becomes the Button's built-in
+                    // `tooltip` prop (Astryx forbids wrapping a disabled
+                    // control in Tooltip).
                     return (
-                      <Space.Compact>
-                        <Tooltip
-                          title={t('modelService.DeploymentPresetDetail')}
-                        >
-                          <Button
-                            icon={<Info size="1em" />}
-                            disabled={!selectedId}
-                            onClick={() => {
-                              if (!selectedId) return;
-                              setPresetDetailId(selectedId);
-                            }}
-                          />
-                        </Tooltip>
-                      </Space.Compact>
+                      <IconButton
+                        icon={<Info size="1em" />}
+                        label={t('modelService.DeploymentPresetDetail')}
+                        tooltip={t('modelService.DeploymentPresetDetail')}
+                        isDisabled={!selectedId}
+                        onClick={() => {
+                          if (!selectedId) return;
+                          setPresetDetailId(selectedId);
+                        }}
+                      />
                     );
                   }}
-                </Form.Item>
+                </BAIFormItem>
               </BAIFlex>
-            </Form.Item>
+            </BAIFormItem>
 
-            <Form.Item
+            <BAIFormItem
               label={t('deployment.ModelFolder')}
-              tooltip={t('deployment.ModelFolderTooltip')}
+              tooltip={
+                <LabelTooltip title={t('deployment.ModelFolderTooltip')} />
+              }
               required
             >
               <BAIFlex direction="row" gap="xs">
                 <Suspense fallback={<BAISelect loading style={{ flex: 1 }} />}>
-                  <Form.Item
+                  <BAIFormItem
                     name="modelFolderId"
-                    label={t('deployment.ModelFolder')}
+                    // BAIFormItem drops `label` on noStyle items (the outer
+                    // layout item renders it); keep antd's default required-
+                    // message interpolation via messageVariables instead.
+                    messageVariables={{ label: t('deployment.ModelFolder') }}
                     noStyle
                     rules={[{ required: true }]}
                   >
@@ -1544,48 +1628,53 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                       filter='usage_mode == "model"'
                       style={{ flex: 1 }}
                     />
-                  </Form.Item>
+                  </BAIFormItem>
                 </Suspense>
-                <Form.Item dependencies={['modelFolderId']} noStyle>
-                  {({ getFieldValue }: FormInstance<PresetFormValues>) => {
+                <BAIFormItem dependencies={['modelFolderId']} noStyle>
+                  {(form) => {
+                    // BAIFormItem render-prop children receive `unknown`
+                    // (antd typed this as FormInstance); narrow it back.
+                    const { getFieldValue } =
+                      form as FormInstance<PresetFormValues>;
                     const modelFolderId = getFieldValue('modelFolderId');
+                    // antd Space.Compact → Astryx ButtonGroup; per-button antd
+                    // Tooltips become the Button's built-in `tooltip` prop.
+                    // The group `label` is aria-only (existing key reused).
                     return (
-                      <Space.Compact>
-                        <Tooltip title={t('modelService.OpenFolder')}>
-                          <Button
-                            icon={<FolderOpenIcon />}
-                            disabled={!modelFolderId}
-                            onClick={() => {
-                              if (modelFolderId) {
-                                openFolderExplorer(toLocalId(modelFolderId));
-                              }
-                            }}
-                          />
-                        </Tooltip>
-                        <Tooltip title={t('data.CreateANewStorageFolder')}>
-                          <Button
-                            icon={<PlusIcon />}
-                            onClick={() =>
-                              setIsModelFolderCreateModalOpen(true)
+                      <ButtonGroup label={t('deployment.ModelFolder')}>
+                        <IconButton
+                          icon={<FolderOpenIcon />}
+                          label={t('modelService.OpenFolder')}
+                          tooltip={t('modelService.OpenFolder')}
+                          isDisabled={!modelFolderId}
+                          onClick={() => {
+                            if (modelFolderId) {
+                              openFolderExplorer(toLocalId(modelFolderId));
                             }
-                          />
-                        </Tooltip>
-                        <Tooltip title={t('button.Refresh')}>
-                          <Button
-                            icon={<RotateCw size="1em" />}
-                            onClick={() => {
-                              startTransition(() => {
-                                presetVFolderSelectRef.current?.refetch();
-                              });
-                            }}
-                          />
-                        </Tooltip>
-                      </Space.Compact>
+                          }}
+                        />
+                        <IconButton
+                          icon={<PlusIcon />}
+                          label={t('data.CreateANewStorageFolder')}
+                          tooltip={t('data.CreateANewStorageFolder')}
+                          onClick={() => setIsModelFolderCreateModalOpen(true)}
+                        />
+                        <IconButton
+                          icon={<RotateCw size="1em" />}
+                          label={t('button.Refresh')}
+                          tooltip={t('button.Refresh')}
+                          onClick={() => {
+                            startTransition(() => {
+                              presetVFolderSelectRef.current?.refetch();
+                            });
+                          }}
+                        />
+                      </ButtonGroup>
                     );
                   }}
-                </Form.Item>
+                </BAIFormItem>
               </BAIFlex>
-            </Form.Item>
+            </BAIFormItem>
           </Form>
         )
       ) : (
@@ -1604,16 +1693,21 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           })}
         >
           <SectionHeader>{t('deployment.step.ModelAndRuntime')}</SectionHeader>
-          <Form.Item
+          <BAIFormItem
             label={t('deployment.ModelFolder')}
-            tooltip={t('deployment.ModelFolderTooltip')}
+            tooltip={
+              <LabelTooltip title={t('deployment.ModelFolderTooltip')} />
+            }
             required
           >
             <BAIFlex direction="row" gap="xs">
               <Suspense fallback={<BAISelect loading style={{ flex: 1 }} />}>
-                <Form.Item
+                <BAIFormItem
                   name="modelFolderId"
-                  label={t('deployment.ModelFolder')}
+                  // BAIFormItem drops `label` on noStyle items (the outer
+                  // layout item renders it); keep antd's default required-
+                  // message interpolation via messageVariables instead.
+                  messageVariables={{ label: t('deployment.ModelFolder') }}
                   noStyle
                   rules={[{ required: true }]}
                 >
@@ -1625,51 +1719,54 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                     filter='usage_mode == "model"'
                     style={{ flex: 1 }}
                   />
-                </Form.Item>
+                </BAIFormItem>
               </Suspense>
-              <Form.Item dependencies={['modelFolderId']} noStyle>
-                {({ getFieldValue }: FormInstance<FormValues>) => {
+              <BAIFormItem dependencies={['modelFolderId']} noStyle>
+                {(form) => {
+                  const { getFieldValue } = form as FormInstance<FormValues>;
                   const modelFolderId = getFieldValue('modelFolderId');
                   return (
-                    <Space.Compact>
-                      <Tooltip title={t('modelService.OpenFolder')}>
-                        <Button
-                          icon={<FolderOpenIcon />}
-                          disabled={!modelFolderId}
-                          onClick={() => {
-                            if (modelFolderId) {
-                              openFolderExplorer(toLocalId(modelFolderId));
-                            }
-                          }}
-                        />
-                      </Tooltip>
-                      <Tooltip title={t('data.CreateANewStorageFolder')}>
-                        <Button
-                          icon={<PlusIcon />}
-                          onClick={() => setIsModelFolderCreateModalOpen(true)}
-                        />
-                      </Tooltip>
-                      <Tooltip title={t('button.Refresh')}>
-                        <Button
-                          icon={<RotateCw size="1em" />}
-                          onClick={() => {
-                            startTransition(() => {
-                              customVFolderSelectRef.current?.refetch();
-                            });
-                          }}
-                        />
-                      </Tooltip>
-                    </Space.Compact>
+                    <ButtonGroup label={t('deployment.ModelFolder')}>
+                      <IconButton
+                        icon={<FolderOpenIcon />}
+                        label={t('modelService.OpenFolder')}
+                        tooltip={t('modelService.OpenFolder')}
+                        isDisabled={!modelFolderId}
+                        onClick={() => {
+                          if (modelFolderId) {
+                            openFolderExplorer(toLocalId(modelFolderId));
+                          }
+                        }}
+                      />
+                      <IconButton
+                        icon={<PlusIcon />}
+                        label={t('data.CreateANewStorageFolder')}
+                        tooltip={t('data.CreateANewStorageFolder')}
+                        onClick={() => setIsModelFolderCreateModalOpen(true)}
+                      />
+                      <IconButton
+                        icon={<RotateCw size="1em" />}
+                        label={t('button.Refresh')}
+                        tooltip={t('button.Refresh')}
+                        onClick={() => {
+                          startTransition(() => {
+                            customVFolderSelectRef.current?.refetch();
+                          });
+                        }}
+                      />
+                    </ButtonGroup>
                   );
                 }}
-              </Form.Item>
+              </BAIFormItem>
             </BAIFlex>
-          </Form.Item>
+          </BAIFormItem>
           <Suspense fallback={<BAISelect loading style={{ width: '100%' }} />}>
-            <Form.Item
+            <BAIFormItem
               name="runtimeVariantId"
               label={t('deployment.RuntimeVariant')}
-              tooltip={t('deployment.RuntimeVariantTooltip')}
+              tooltip={
+                <LabelTooltip title={t('deployment.RuntimeVariantTooltip')} />
+              }
               rules={[
                 { required: true },
                 {
@@ -1693,11 +1790,12 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                   setRuntimeVariantNameMap((prev) => ({ ...prev, ...map }))
                 }
               />
-            </Form.Item>
+            </BAIFormItem>
           </Suspense>
 
-          <Form.Item dependencies={['runtimeVariantId']} noStyle>
-            {({ getFieldValue }: FormInstance<FormValues>) => {
+          <BAIFormItem dependencies={['runtimeVariantId']} noStyle>
+            {(form) => {
+              const { getFieldValue } = form as FormInstance<FormValues>;
               const variantId = getFieldValue('runtimeVariantId');
               const variantName = runtimeVariantNameMap[variantId];
               if (!variantName || variantName === 'custom') return null;
@@ -1718,10 +1816,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 </div>
               );
             }}
-          </Form.Item>
+          </BAIFormItem>
 
-          <Form.Item dependencies={['runtimeVariantId']} noStyle>
-            {({ getFieldValue }: FormInstance<FormValues>) => {
+          <BAIFormItem dependencies={['runtimeVariantId']} noStyle>
+            {(form) => {
+              const { getFieldValue } = form as FormInstance<FormValues>;
               const variantId = getFieldValue('runtimeVariantId');
               const variantName = runtimeVariantNameMap[variantId];
               if (variantName !== 'custom') {
@@ -1729,220 +1828,282 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               }
               return (
                 <>
-                  <Form.Item name="customDefinitionMode" noStyle>
-                    <Segmented
-                      options={[
-                        {
-                          label: t('modelService.EnterCommand'),
-                          value: 'command',
-                        },
-                        {
-                          label: t('modelService.UseConfigFile'),
-                          value: 'file',
-                        },
-                      ]}
-                      style={{ marginBottom: token.marginMD }}
-                    />
-                  </Form.Item>
-                  <Form.Item dependencies={['customDefinitionMode']} noStyle>
-                    {({ getFieldValue: getField }: FormInstance<FormValues>) =>
-                      getField('customDefinitionMode') === 'command' ? (
+                  <BAIFormItem name="customDefinitionMode" noStyle>
+                    <DefinitionModeSegmented />
+                  </BAIFormItem>
+                  <BAIFormItem dependencies={['customDefinitionMode']} noStyle>
+                    {(form) =>
+                      (form as FormInstance<FormValues>).getFieldValue(
+                        'customDefinitionMode',
+                      ) === 'command' ? (
                         <>
-                          <Form.Item
+                          <BAIFormItem
                             name="startCommand"
                             label={t('modelService.StartCommand')}
-                            tooltip={t('modelService.StartCommandTooltip')}
+                            tooltip={
+                              <LabelTooltip
+                                title={t('modelService.StartCommandTooltip')}
+                              />
+                            }
                             extra={t('modelService.StartCommandHelperShell')}
                             rules={[{ required: true, whitespace: true }]}
                           >
-                            <Input.TextArea
+                            {/* PILOT-DECISION: antd `autoSize={{minRows: 2}}`
+                                (grow-with-content) has no Astryx TextArea
+                                equivalent — fixed `rows={2}` instead. */}
+                            <AstryxFormTextArea
+                              label={t('modelService.StartCommand')}
                               placeholder={t(
                                 'modelService.StartCommandPlaceholder',
                               )}
-                              autoSize={{ minRows: 2 }}
+                              rows={2}
                             />
-                          </Form.Item>
-                          <Form.Item
+                          </BAIFormItem>
+                          <BAIFormItem
                             name="commandModelMount"
                             label={t('modelService.ModelMountDestination')}
-                            tooltip={t('modelService.ModelMountTooltip')}
+                            tooltip={
+                              <LabelTooltip
+                                title={t('modelService.ModelMountTooltip')}
+                              />
+                            }
                           >
-                            <Input placeholder="/models" allowClear />
-                          </Form.Item>
-                          <Form.Item
+                            <AstryxFormTextInput
+                              label={t('modelService.ModelMountDestination')}
+                              placeholder="/models"
+                              hasClear
+                            />
+                          </BAIFormItem>
+                          <BAIFormItem
                             name="commandPort"
                             label={t('modelService.Port')}
-                            tooltip={t('modelService.PortTooltip')}
+                            tooltip={
+                              <LabelTooltip
+                                title={t('modelService.PortTooltip')}
+                              />
+                            }
                           >
-                            <InputNumber
+                            <AstryxFormNumberInput
+                              label={t('modelService.Port')}
                               min={2}
                               max={65535}
                               placeholder="8000"
-                              style={{ width: '100%' }}
                             />
-                          </Form.Item>
+                          </BAIFormItem>
                         </>
                       ) : (
                         <BAIFlex gap="sm">
-                          <Form.Item
+                          <BAIFormItem
                             name="mountDestination"
                             label={t('modelService.ModelMountDestination')}
-                            tooltip={t('modelService.ModelMountTooltip')}
+                            tooltip={
+                              <LabelTooltip
+                                title={t('modelService.ModelMountTooltip')}
+                              />
+                            }
                             rules={[{ required: true }]}
                             style={{ flex: 1 }}
                           >
-                            <Input allowClear placeholder="/models" />
-                          </Form.Item>
-                          <Form.Item
+                            <AstryxFormTextInput
+                              label={t('modelService.ModelMountDestination')}
+                              hasClear
+                              placeholder="/models"
+                            />
+                          </BAIFormItem>
+                          <BAIFormItem
                             name="definitionPath"
                             label={t('deployment.ModelDefinitionPath')}
-                            tooltip={t(
-                              'modelService.ModelDefinitionPathTooltip',
-                            )}
+                            tooltip={
+                              <LabelTooltip
+                                title={t(
+                                  'modelService.ModelDefinitionPathTooltip',
+                                )}
+                              />
+                            }
                             style={{ flex: 1 }}
                           >
-                            <Input
-                              allowClear
+                            <AstryxFormTextInput
+                              label={t('deployment.ModelDefinitionPath')}
+                              hasClear
                               placeholder="model-definition.yaml"
                             />
-                          </Form.Item>
+                          </BAIFormItem>
                         </BAIFlex>
                       )
                     }
-                  </Form.Item>
+                  </BAIFormItem>
                 </>
               );
             }}
-          </Form.Item>
+          </BAIFormItem>
 
           {/* Health check is shown for every runtime variant and definition
               mode (FR-3068); enabling it submits a health-check override. */}
-          <Form.Item
+          <BAIFormItem
             name="commandEnableHealthCheck"
             valuePropName="checked"
             style={{ marginBottom: token.marginXS }}
           >
-            <Checkbox>{t('modelService.EnableHealthCheck')}</Checkbox>
-          </Form.Item>
-          <Form.Item dependencies={['commandEnableHealthCheck']} noStyle>
-            {({ getFieldValue: getHc }: FormInstance<FormValues>) =>
-              getHc('commandEnableHealthCheck') ? (
+            <AstryxFormCheckbox label={t('modelService.EnableHealthCheck')} />
+          </BAIFormItem>
+          <BAIFormItem dependencies={['commandEnableHealthCheck']} noStyle>
+            {(form) =>
+              (form as FormInstance<FormValues>).getFieldValue(
+                'commandEnableHealthCheck',
+              ) ? (
                 <BAIFlex direction="column" align="stretch" gap="xs">
-                  <Form.Item
+                  <BAIFormItem
                     name="commandHealthCheck"
                     label={t('adminDeploymentPreset.modelDef.HealthCheckPath')}
-                    tooltip={t('modelService.HealthCheckTooltip')}
+                    tooltip={
+                      <LabelTooltip
+                        title={t('modelService.HealthCheckTooltip')}
+                      />
+                    }
                     rules={[{ required: true }]}
                   >
-                    <Input
+                    <AstryxFormTextInput
+                      label={t(
+                        'adminDeploymentPreset.modelDef.HealthCheckPath',
+                      )}
                       placeholder={t('general.Example', {
                         value: '/health',
                       })}
-                      allowClear
+                      hasClear
                     />
-                  </Form.Item>
+                  </BAIFormItem>
                   <BAIFlex gap="md" wrap="wrap" align="end">
-                    <Form.Item
+                    <BAIFormItem
                       name="commandInterval"
                       label={t(
                         'adminDeploymentPreset.modelDef.HealthCheckInterval',
                       )}
-                      tooltip={t('modelService.IntervalTooltip')}
+                      tooltip={
+                        <LabelTooltip
+                          title={t('modelService.IntervalTooltip')}
+                        />
+                      }
                       rules={[{ required: true }]}
                       style={{ flex: 1, minWidth: 160 }}
                     >
-                      <InputNumber
+                      <AstryxFormNumberInput
+                        label={t(
+                          'adminDeploymentPreset.modelDef.HealthCheckInterval',
+                        )}
                         min={1}
                         placeholder={t('general.Example', {
                           value: '10',
                         })}
-                        suffix={t('time.Sec')}
-                        style={{ width: '100%' }}
+                        units={t('time.Sec')}
                       />
-                    </Form.Item>
-                    <Form.Item
+                    </BAIFormItem>
+                    <BAIFormItem
                       name="commandMaxRetries"
                       label={t(
                         'adminDeploymentPreset.modelDef.HealthCheckMaxRetries',
                       )}
-                      tooltip={t('modelService.MaxRetriesTooltip')}
+                      tooltip={
+                        <LabelTooltip
+                          title={t('modelService.MaxRetriesTooltip')}
+                        />
+                      }
                       rules={[{ required: true }]}
                       style={{ flex: 1, minWidth: 160 }}
                     >
-                      <InputNumber
+                      <AstryxFormNumberInput
+                        label={t(
+                          'adminDeploymentPreset.modelDef.HealthCheckMaxRetries',
+                        )}
                         min={1}
                         placeholder={t('general.Example', {
                           value: '10',
                         })}
-                        style={{ width: '100%' }}
                       />
-                    </Form.Item>
-                    <Form.Item
+                    </BAIFormItem>
+                    <BAIFormItem
                       name="commandMaxWaitTime"
                       label={t(
                         'adminDeploymentPreset.modelDef.HealthCheckMaxWaitTime',
                       )}
-                      tooltip={t('modelService.MaxWaitTimeTooltip')}
+                      tooltip={
+                        <LabelTooltip
+                          title={t('modelService.MaxWaitTimeTooltip')}
+                        />
+                      }
                       rules={[{ required: true }]}
                       style={{ flex: 1, minWidth: 160 }}
                     >
-                      <InputNumber
+                      <AstryxFormNumberInput
+                        label={t(
+                          'adminDeploymentPreset.modelDef.HealthCheckMaxWaitTime',
+                        )}
                         min={1}
                         placeholder={t('general.Example', {
                           value: '15',
                         })}
-                        suffix={t('time.Sec')}
-                        style={{ width: '100%' }}
+                        units={t('time.Sec')}
                       />
-                    </Form.Item>
+                    </BAIFormItem>
                   </BAIFlex>
                   <BAIFlex gap="md" wrap="wrap" align="end">
-                    <Form.Item
+                    <BAIFormItem
                       name="commandExpectedStatusCode"
                       label={t(
                         'adminDeploymentPreset.modelDef.HealthCheckExpectedStatus',
                       )}
-                      tooltip={t('modelService.ExpectedStatusTooltip')}
+                      tooltip={
+                        <LabelTooltip
+                          title={t('modelService.ExpectedStatusTooltip')}
+                        />
+                      }
                       rules={[{ required: true }]}
                       style={{ flex: 1, minWidth: 160 }}
                     >
-                      <InputNumber
+                      <AstryxFormNumberInput
+                        label={t(
+                          'adminDeploymentPreset.modelDef.HealthCheckExpectedStatus',
+                        )}
                         min={101}
                         max={599}
                         placeholder={t('general.Example', {
                           value: '200',
                         })}
-                        style={{ width: '100%' }}
                       />
-                    </Form.Item>
-                    <Form.Item
+                    </BAIFormItem>
+                    <BAIFormItem
                       name="commandInitialDelay"
                       label={t(
                         'adminDeploymentPreset.modelDef.HealthCheckInitialDelay',
                       )}
-                      tooltip={t('modelService.InitialDelayTooltip')}
+                      tooltip={
+                        <LabelTooltip
+                          title={t('modelService.InitialDelayTooltip')}
+                        />
+                      }
                       rules={[{ required: true }]}
                       style={{ flex: 1, minWidth: 160 }}
                     >
-                      <InputNumber
+                      <AstryxFormNumberInput
+                        label={t(
+                          'adminDeploymentPreset.modelDef.HealthCheckInitialDelay',
+                        )}
                         min={0}
                         placeholder={t('general.Example', {
                           value: '60',
                         })}
-                        suffix={t('time.Sec')}
-                        style={{ width: '100%' }}
+                        units={t('time.Sec')}
                       />
-                    </Form.Item>
+                    </BAIFormItem>
                     <div style={{ flex: 1, minWidth: 160 }} />
                   </BAIFlex>
                 </BAIFlex>
               ) : null
             }
-          </Form.Item>
+          </BAIFormItem>
 
           <SectionHeader>{t('session.launcher.Environments')}</SectionHeader>
 
-          <Suspense fallback={<Skeleton active paragraph={{ rows: 2 }} />}>
+          <Suspense fallback={<BAISkeletonAstryx rows={2} />}>
             <ImageEnvironmentSelectFormItems />
           </Suspense>
           <EnvVarFormList
@@ -1955,59 +2116,53 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           <SectionHeader>
             {t('deployment.step.ClusterAndResources')}
           </SectionHeader>
-          <Suspense fallback={<Skeleton active paragraph={{ rows: 4 }} />}>
+          <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
             <ResourceAllocationFormItems
               enableResourcePresets
               hideResourceGroupFormItem
             />
           </Suspense>
 
-          <Collapse
-            items={[
-              {
-                key: 'advanced',
-                label: t('session.launcher.AdvancedSettings'),
-                children: (
-                  <Suspense fallback={<Skeleton active />}>
-                    <Form.Item
-                      noStyle
-                      dependencies={[
-                        'modelFolderId',
-                        'mount_id_map',
-                        'mount_ids',
-                      ]}
-                    >
-                      {({ getFieldValue }: FormInstance<FormValues>) => {
-                        const modelFolderId = getFieldValue('modelFolderId');
-                        const modelFolderIdNoDash = modelFolderId
-                          ? safeDecodeUuid(String(modelFolderId))?.replace(
-                              /-/g,
-                              '',
-                            )
-                          : undefined;
-                        return (
-                          <VFolderTableFormItem
-                            label={t('modelService.AdditionalMounts')}
-                            tooltip={t('modelService.AdditionalMountsTooltip')}
-                            rowKey="id"
-                            tableProps={{
-                              scroll: { x: 'max-content', y: 300 },
-                            }}
-                            rowFilter={(vfolder) =>
-                              vfolder.usage_mode !== 'model' &&
-                              vfolder.status === 'ready' &&
-                              !vfolder.name?.startsWith('.') &&
-                              vfolder.id !== modelFolderIdNoDash
-                            }
-                          />
-                        );
+          {/* PILOT-DECISION: antd Collapse (single bordered panel) → Astryx
+              Collapsible: the boxed/bordered panel chrome is dropped (Astryx
+              Collapsible is a flat "ghost" trigger + content — the design's
+              default). `defaultIsOpen={false}` is required: antd panels start
+              collapsed, Astryx Collapsible defaults to open. */}
+          <Collapsible
+            trigger={t('session.launcher.AdvancedSettings')}
+            defaultIsOpen={false}
+          >
+            <Suspense fallback={<BAISkeletonAstryx />}>
+              <BAIFormItem
+                noStyle
+                dependencies={['modelFolderId', 'mount_id_map', 'mount_ids']}
+              >
+                {(form) => {
+                  const { getFieldValue } = form as FormInstance<FormValues>;
+                  const modelFolderId = getFieldValue('modelFolderId');
+                  const modelFolderIdNoDash = modelFolderId
+                    ? safeDecodeUuid(String(modelFolderId))?.replace(/-/g, '')
+                    : undefined;
+                  return (
+                    <VFolderTableFormItem
+                      label={t('modelService.AdditionalMounts')}
+                      tooltip={t('modelService.AdditionalMountsTooltip')}
+                      rowKey="id"
+                      tableProps={{
+                        scroll: { x: 'max-content', y: 300 },
                       }}
-                    </Form.Item>
-                  </Suspense>
-                ),
-              },
-            ]}
-          />
+                      rowFilter={(vfolder) =>
+                        vfolder.usage_mode !== 'model' &&
+                        vfolder.status === 'ready' &&
+                        !vfolder.name?.startsWith('.') &&
+                        vfolder.id !== modelFolderIdNoDash
+                      }
+                    />
+                  );
+                }}
+              </BAIFormItem>
+            </Suspense>
+          </Collapsible>
         </Form>
       )}
       {presetDetailId && (

@@ -17,7 +17,8 @@ import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import BAIRadioGroup from './BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import DeploymentSettingModal from './DeploymentSettingModal';
-import { Typography } from 'antd';
+import { Link } from '@astryxdesign/core/Link';
+import { Text } from '@astryxdesign/core/Text';
 import {
   BAIDeleteConfirmModal,
   BAIDeploymentTagChips,
@@ -410,14 +411,12 @@ const AdminDeployment = ({
                         (n) => n.id === record.id,
                       )?.currentRevision?.revisionNumber;
                       if (revisionNumber == null) {
-                        return (
-                          <Typography.Text type="secondary">-</Typography.Text>
-                        );
+                        return <Text color="secondary">-</Text>;
                       }
                       return (
-                        <Typography.Link
+                        <Link
                           onClick={() => setDrawerRevisionId(record.id)}
-                        >{`#${revisionNumber}`}</Typography.Link>
+                        >{`#${revisionNumber}`}</Link>
                       );
                     },
                   };
@@ -440,9 +439,7 @@ const AdminDeployment = ({
                             }).toString(),
                           });
                         }}
-                        fallback={
-                          <Typography.Text type="secondary">-</Typography.Text>
-                        }
+                        fallback={<Text color="secondary">-</Text>}
                       />
                     ),
                   };

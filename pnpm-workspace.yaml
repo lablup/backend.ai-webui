@@ -89,6 +89,11 @@ minimumReleaseAgeExclude:
   - "@astryxdesign/core@0.3.0"
   - "@astryxdesign/theme-neutral@0.3.0"
   - "@astryxdesign/cli@0.3.0"
+  # Astryx Lab canary (to-astryx, ticket 18): MIGRATION-SPEC §1-④ decided
+  # canary adoption with an exact pin; canary releases never age past the
+  # quarantine window by design, so the exclusion is permanent while the
+  # pin exists. Tarball-verified build (MAPPING.md header).
+  - "@astryxdesign/lab@0.3.0-canary.12db2a1"
 minimumReleaseAgeIgnoreMissingTime: false
 resolutionMode: time-based
 

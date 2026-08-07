@@ -10,17 +10,22 @@ import { useCurrentDomainValue, useWebUINavigate } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { theme } from '../theme-shim';
+import BAIFormItem from './BAIFormItem';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import {
-  Button,
-  Checkbox,
-  Form,
-  Input,
-  InputNumber,
-  Select,
-  Skeleton,
-  Tooltip,
-  Typography,
-} from 'antd';
+  AstryxFormNumberInput,
+  AstryxFormTextInput,
+} from './astryx-bui/astryxFormControls';
+import { Button } from '@astryxdesign/core/Button';
+import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
+import { Text } from '@astryxdesign/core/Text';
+import { Tokenizer } from '@astryxdesign/core/Tokenizer';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
+import type {
+  SearchableItem,
+  SearchSource,
+} from '@astryxdesign/core/Typeahead';
+import { Form } from 'antd';
 import {
   BAIButton,
   BAIFlex,
@@ -29,6 +34,7 @@ import {
   BAIProjectResourceGroupSelect,
   toLocalId,
 } from 'backend.ai-ui';
+import { Info } from 'lucide-react';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -46,6 +52,87 @@ export interface DeploymentSettingModalProps extends BAIModalProps {
   deploymentFrgmt?: DeploymentSettingModal_deployment$key | null;
   onRequestClose: (success: boolean) => void;
 }
+
+// antd `Form.Item tooltip` rendered a hoverable (i) icon next to the label.
+// `BAIFormItem` renders its `tooltip` node verbatim in the label row, so the
+// icon + hover popup is composed here with the Astryx Tooltip.
+const LabelTooltip: React.FC<{ title: React.ReactNode }> = ({ title }) => {
+  'use memo';
+  return (
+    <Tooltip content={title}>
+      <Info size="1em" style={{ display: 'block', cursor: 'help' }} />
+    </Tooltip>
+  );
+};
+
+// Free-tag entry has no options to search — the source is intentionally empty
+// and `hasCreate` commits typed text as new tokens. Module-level so the
+// Tokenizer never sees a fresh identity per render.
+const EMPTY_TAG_SEARCH_SOURCE: SearchSource<SearchableItem> = {
+  search: () => [],
+  bootstrap: () => [],
+};
+
+// antd `Select mode="tags"` → Astryx Tokenizer bridge for the antd form
+// engine: the form field holds `string[]`, the Tokenizer works on
+// `SearchableItem[]` ({id, label}), so the shapes are translated here.
+// PILOT-DECISION: antd's `tokenSeparators={[',', '\n']}` (splitting pasted
+// comma/newline-separated text into multiple tags) has no Tokenizer
+// equivalent and is dropped — tags are committed one at a time with Enter
+// (`hasCreate`). `notFoundContent={null}` maps to nothing: the empty search
+// source simply yields no dropdown suggestions.
+const TagsInput: React.FC<{
+  value?: string[];
+  onChange?: (next: string[]) => void;
+  label: string;
+  placeholder?: string;
+}> = ({ value, onChange, label, placeholder }) => {
+  'use memo';
+  return (
+    <Tokenizer
+      label={label}
+      isLabelHidden
+      value={(value ?? []).map((tag) => ({ id: tag, label: tag }))}
+      onChange={(items) =>
+        // antd tags mode deduplicated entries; keep that behavior.
+        onChange?.(
+          Array.from(new Set(items.map((item) => item.label))).filter(Boolean),
+        )
+      }
+      searchSource={EMPTY_TAG_SEARCH_SOURCE}
+      hasCreate
+      placeholder={placeholder}
+      width="100%"
+    />
+  );
+};
+
+// Bridge for `BAIFormItem name="openToPublic" valuePropName="checked"`: antd
+// injects `checked` + `onChange`, Astryx CheckboxInput wants `value` +
+// value-first `onChange`. The read-only-in-edit-mode explanation moves from
+// the antd "Tooltip around a span around a disabled Checkbox" hack to
+// CheckboxInput's own `disabledMessage`, which is Astryx's sanctioned way to
+// explain a disabled control (external tooltips never fire on disabled
+// controls; disabledMessage keeps the control focusable via aria-disabled so
+// the reason stays discoverable).
+const PublicCheckbox: React.FC<{
+  checked?: boolean;
+  onChange?: (next: boolean) => void;
+  label: string;
+  disabled?: boolean;
+  disabledMessage?: string;
+}> = ({ checked, onChange, label, disabled, disabledMessage }) => {
+  'use memo';
+  return (
+    <CheckboxInput
+      label={label}
+      value={checked ?? false}
+      onChange={(next) => onChange?.(next)}
+      isDisabled={disabled}
+      disabledMessage={disabledMessage}
+    />
+  );
+};
 
 const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
   deploymentFrgmt,
@@ -222,9 +309,10 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
       confirmLoading={isCreating || isUpdating}
       footer={
         <BAIFlex justify="end" gap="xs">
-          <Button onClick={() => onRequestClose(false)}>
-            {t('button.Cancel')}
-          </Button>
+          <Button
+            label={t('button.Cancel')}
+            onClick={() => onRequestClose(false)}
+          />
           <BAIButton
             type="primary"
             loading={isCreating || isUpdating}
@@ -235,7 +323,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
         </BAIFlex>
       }
     >
-      <Suspense fallback={<Skeleton active />}>
+      <Suspense fallback={<BAISkeletonAstryx />}>
         <Form<FormValues>
           form={form}
           layout="vertical"
@@ -258,54 +346,63 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
           }
           style={{ marginTop: token.marginXS }}
         >
-          <Form.Item
+          <BAIFormItem
             name="name"
             label={t('deployment.DeploymentName')}
-            tooltip={t('deployment.DeploymentNameTooltip')}
+            tooltip={
+              <LabelTooltip title={t('deployment.DeploymentNameTooltip')} />
+            }
             rules={[{ required: true, message: t('deployment.NameRequired') }]}
           >
-            <Input placeholder={t('deployment.NamePlaceholder')} />
-          </Form.Item>
+            <AstryxFormTextInput
+              label={t('deployment.DeploymentName')}
+              placeholder={t('deployment.NamePlaceholder')}
+            />
+          </BAIFormItem>
           {deployment ? (
-            <Form.Item
+            <BAIFormItem
               label={t('modelStore.ResourceGroup')}
-              tooltip={t('modelStore.ResourceGroupTooltip')}
-              required
-              extra={
-                <Typography.Text type="warning">
-                  {t('deployment.ResourceGroupCannotBeChanged')}
-                </Typography.Text>
+              tooltip={
+                <LabelTooltip title={t('modelStore.ResourceGroupTooltip')} />
               }
+              required
+              // PILOT-DECISION: the extra note used antd
+              // `Typography.Text type="warning"` — Astryx Text has no warning
+              // TextColor, and BAIFormItem's `extra` slot already renders in
+              // secondary color, so the warning tint is dropped and the plain
+              // string is passed (defaults-first; a Banner would over-signal a
+              // static informational note).
+              extra={t('deployment.ResourceGroupCannotBeChanged')}
             >
               {currentResourceGroup ? (
-                <Typography.Text>{currentResourceGroup}</Typography.Text>
+                <Text>{currentResourceGroup}</Text>
               ) : (
-                <Typography.Text type="secondary">—</Typography.Text>
+                <Text color="secondary">—</Text>
               )}
-            </Form.Item>
+            </BAIFormItem>
           ) : (
-            <Form.Item
+            <BAIFormItem
               name="resourceGroup"
               label={t('modelStore.ResourceGroup')}
-              tooltip={t('modelStore.ResourceGroupTooltip')}
-              rules={[{ required: true }]}
-              extra={
-                <Typography.Text type="warning">
-                  {t('deployment.ResourceGroupCannotBeChanged')}
-                </Typography.Text>
+              tooltip={
+                <LabelTooltip title={t('modelStore.ResourceGroupTooltip')} />
               }
+              rules={[{ required: true }]}
+              extra={t('deployment.ResourceGroupCannotBeChanged')}
             >
               <BAIProjectResourceGroupSelect
                 projectName={projectName ?? ''}
                 autoSelectDefault
                 style={{ width: '100%' }}
               />
-            </Form.Item>
+            </BAIFormItem>
           )}
-          <Form.Item
+          <BAIFormItem
             name="replicaCount"
             label={t('deployment.DesiredReplicas')}
-            tooltip={t('deployment.DesiredReplicasTooltip')}
+            tooltip={
+              <LabelTooltip title={t('deployment.DesiredReplicasTooltip')} />
+            }
             rules={[
               {
                 required: true,
@@ -313,45 +410,44 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
               },
             ]}
           >
-            <InputNumber min={deployment ? 0 : 1} style={{ width: '100%' }} />
-          </Form.Item>
-          <Form.Item
+            <AstryxFormNumberInput
+              label={t('deployment.DesiredReplicas')}
+              min={deployment ? 0 : 1}
+            />
+          </BAIFormItem>
+          <BAIFormItem
             name="tags"
             label={t('deployment.Tags')}
-            tooltip={t('deployment.TagsTooltip')}
+            tooltip={<LabelTooltip title={t('deployment.TagsTooltip')} />}
           >
-            <Select
-              mode="tags"
+            <TagsInput
+              label={t('deployment.Tags')}
               placeholder={t('deployment.TagsPlaceholder')}
-              tokenSeparators={[',', '\n']}
-              notFoundContent={null}
             />
-          </Form.Item>
+          </BAIFormItem>
           {/* TODO(needs-backend): the manager currently rejects changes to
               openToPublic after a deployment is created, so the field is
-              forced read-only in edit mode. Drop the `disabled` + Tooltip
-              wrapping once the backend supports updating this setting. */}
-          <Form.Item
+              forced read-only in edit mode. Drop the `disabled` +
+              `disabledMessage` once the backend supports updating this
+              setting. */}
+          <BAIFormItem
             label={t('deployment.OpenToPublic')}
-            tooltip={t('deployment.OpenToPublicTooltip')}
+            tooltip={
+              <LabelTooltip title={t('deployment.OpenToPublicTooltip')} />
+            }
           >
-            <Tooltip
-              title={
-                deployment ? t('deployment.OpenToPublicCannotBeChanged') : ''
-              }
-            >
-              {/* Wrap with span so the Tooltip still receives mouseenter when
-                  the inner Checkbox is disabled (disabled controls swallow
-                  pointer events). */}
-              <span style={{ display: 'inline-block' }}>
-                <Form.Item name="openToPublic" valuePropName="checked" noStyle>
-                  <Checkbox disabled={!!deployment}>
-                    {t('deployment.Public')}
-                  </Checkbox>
-                </Form.Item>
-              </span>
-            </Tooltip>
-          </Form.Item>
+            <BAIFormItem name="openToPublic" valuePropName="checked" noStyle>
+              <PublicCheckbox
+                label={t('deployment.Public')}
+                disabled={!!deployment}
+                disabledMessage={
+                  deployment
+                    ? t('deployment.OpenToPublicCannotBeChanged')
+                    : undefined
+                }
+              />
+            </BAIFormItem>
+          </BAIFormItem>
         </Form>
       </Suspense>
     </BAIModal>

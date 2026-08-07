@@ -15,7 +15,11 @@ import { theme } from '../theme-shim';
 import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import FolderLink from './FolderLink';
-import { Dropdown, Popconfirm, Space, Typography } from 'antd';
+import BAIPopconfirmAstryx from './astryx-bui/BAIPopconfirmAstryx';
+import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
+import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
+import { Link } from '@astryxdesign/core/Link';
+import { Text } from '@astryxdesign/core/Text';
 import {
   type BAIColumnType,
   BAIButton,
@@ -396,7 +400,7 @@ const DeploymentRevisionHistoryTab: React.FC<
           <BAINameActionCell
             title={
               <BAIFlex gap="xs" align="center" wrap="nowrap">
-                <Typography.Link
+                <Link
                   onClick={() =>
                     setDrawerRevision({
                       frgmt: record,
@@ -411,7 +415,7 @@ const DeploymentRevisionHistoryTab: React.FC<
                   {record.revisionNumber != null
                     ? `#${record.revisionNumber}`
                     : '-'}
-                </Typography.Link>
+                </Link>
                 <BAIFlex gap={0} align="center">
                   {'('}
                   <BAIId globalId={record.id} />
@@ -548,7 +552,7 @@ const DeploymentRevisionHistoryTab: React.FC<
         if (vfolder) {
           return <FolderLink vfolderNodeFragment={vfolder} />;
         }
-        return <Typography.Text type="secondary">{vfolderId}</Typography.Text>;
+        return <Text color="secondary">{vfolderId}</Text>;
       },
     },
     {
@@ -627,15 +631,15 @@ const DeploymentRevisionHistoryTab: React.FC<
           onClose={() => setDrawerRevision(null)}
           extra={
             drawerRevision ? (
-              <Space.Compact>
-                <Popconfirm
+              <ButtonGroup label={t('general.Control')}>
+                <BAIPopconfirmAstryx
                   title={t('deployment.ApplyRevision')}
                   description={t('deployment.ApplyConfirm', {
                     revisionNumber: drawerRevision.frgmt.revisionNumber,
                   })}
                   okText={t('deployment.Apply')}
                   cancelText={t('button.Cancel')}
-                  okButtonProps={{ danger: true }}
+                  isDanger
                   onConfirm={async () => {
                     const success = await handleRollback(drawerRevision.frgmt);
                     if (success) setDrawerRevision(null);
@@ -653,39 +657,36 @@ const DeploymentRevisionHistoryTab: React.FC<
                   >
                     {t('deployment.Apply')}
                   </BAIButton>
-                </Popconfirm>
-                <Dropdown
-                  trigger={['click']}
-                  menu={{
-                    items: [
-                      {
-                        key: 'duplicate',
-                        label: t('deployment.AddNewRevisionFromThis'),
-                        icon: <CopyPlusIcon size={token.fontSize} />,
-                        disabled:
-                          isDeploymentInStoppedCategory(deploymentStatus),
-                        onClick: () => {
-                          // Capture the fragment ref before closing the
-                          // drawer so the source survives the drawer unmount.
-                          const source = drawerRevision.frgmt;
-                          setDrawerRevision(null);
-                          setSourceRevisionFrgmt(source);
-                        },
-                      },
-                    ],
+                </BAIPopconfirmAstryx>
+                {/* TODO: "AddNewRevisionFromThis" is the only menu item.
+                    Disable the entire button when stopped. When more items
+                    are added, disable per-item instead. */}
+                <DropdownMenu
+                  button={{
+                    label: t('button.More'),
+                    icon: <EllipsisVertical size="1em" />,
+                    isIconOnly: true,
+                    variant: 'primary',
+                    isDisabled: isDeploymentInStoppedCategory(deploymentStatus),
                   }}
-                >
-                  {/* TODO: "AddNewRevisionFromThis" is the only menu item.
-                      Disable the entire button when stopped. When more items
-                      are added, disable per-item instead. */}
-                  <BAIButton
-                    type="primary"
-                    icon={<EllipsisVertical size="1em" />}
-                    aria-label={t('button.More')}
-                    disabled={isDeploymentInStoppedCategory(deploymentStatus)}
-                  />
-                </Dropdown>
-              </Space.Compact>
+                  hasChevron={false}
+                  items={[
+                    {
+                      label: t('deployment.AddNewRevisionFromThis'),
+                      icon: <CopyPlusIcon size={token.fontSize} />,
+                      isDisabled:
+                        isDeploymentInStoppedCategory(deploymentStatus),
+                      onClick: () => {
+                        // Capture the fragment ref before closing the
+                        // drawer so the source survives the drawer unmount.
+                        const source = drawerRevision.frgmt;
+                        setDrawerRevision(null);
+                        setSourceRevisionFrgmt(source);
+                      },
+                    },
+                  ]}
+                />
+              </ButtonGroup>
             ) : undefined
           }
         />

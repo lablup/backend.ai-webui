@@ -7,7 +7,7 @@ import DeploymentAuditLogTab from './DeploymentAuditLogTab';
 import DeploymentCurrentRevisionTab from './DeploymentCurrentRevisionTab';
 import DeploymentRevisionHistoryTab from './DeploymentRevisionHistoryTab';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
-import { Skeleton } from 'antd';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import { BAIButton, BAICard, BAIFlex } from 'backend.ai-ui';
 import { PlusIcon } from 'lucide-react';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
@@ -113,7 +113,7 @@ const DeploymentRevisionCard: React.FC<DeploymentRevisionCardProps> = ({
       )}
       {activeRevisionTab === 'revisionHistory' && deployment && (
         <ErrorBoundaryWithNullFallback>
-          <Suspense fallback={<Skeleton active paragraph={{ rows: 4 }} />}>
+          <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
             <DeploymentRevisionHistoryTab
               deploymentFrgmt={deployment}
               deploymentId={deployment.id}

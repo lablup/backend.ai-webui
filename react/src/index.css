@@ -10,6 +10,9 @@
 
 @import '@astryxdesign/core/reset.css';
 @import '@astryxdesign/core/astryx.css';
+/* Astryx Lab (canary, exact pin — MIGRATION-SPEC §1-④; to-astryx ticket 18):
+   layered styles for lab components (Drawer, Tour, Stepper, …). */
+@import '@astryxdesign/lab/lab.css';
 @import '@astryxdesign/theme-neutral/theme.css';
 
 /* fix: match the icon size between Lucide and Ant.d icons */
