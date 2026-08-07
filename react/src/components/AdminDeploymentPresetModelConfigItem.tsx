@@ -60,7 +60,7 @@ const ModelConfigItem: React.FC<{
 
       <Collapse
         defaultActiveKey={['metadata']}
-        style={{ marginTop: token.marginSM }}
+        style={{ marginTop: token.marginXS }}
         items={[
           {
             key: 'metadata',
