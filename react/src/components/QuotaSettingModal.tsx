@@ -5,8 +5,9 @@
 import { QuotaSettingModalFragment$key } from '../__generated__/QuotaSettingModalFragment.graphql';
 import { QuotaSettingModalSetMutation } from '../__generated__/QuotaSettingModalSetMutation.graphql';
 import { message } from '../app-shim';
+import { Form, type FormInstance } from '../form-engine';
 import { GBToBytes, bytesToGB } from '../helper';
-import { Form, type FormInstance, Input } from 'antd';
+import { Input } from 'antd';
 import { BAIModal, BAIModalProps, useBAILogger } from 'backend.ai-ui';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';

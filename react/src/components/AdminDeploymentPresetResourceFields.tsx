@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { Form } from '../form-engine';
 import { theme } from '../theme-shim';
 import type { ResourceSlotTypeInfo } from './AdminDeploymentPresetFormTypes';
 import BAIFormItem from './BAIFormItem';
@@ -12,7 +13,6 @@ import {
   type AstryxFormNumberInputProps,
 } from './astryx-bui/astryxFormControls';
 import { TextInput } from '@astryxdesign/core/TextInput';
-import { Form } from 'antd';
 import { BAIDynamicUnitInputNumber, BAIFlex } from 'backend.ai-ui';
 import { CircleMinus } from 'lucide-react';
 import React from 'react';

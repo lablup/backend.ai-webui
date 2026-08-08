@@ -3,18 +3,13 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 'use memo';
+import { Form, FormInstance } from '../form-engine';
 import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../hooks/hooksUsingRelay';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
 import { theme } from '../theme-shim';
 import { ResourceAllocationFormValue } from './SessionFormItems/ResourceAllocationFormItems';
-import {
-  Descriptions,
-  Form,
-  FormInstance,
-  InputNumber,
-  Typography,
-} from 'antd';
+import { Descriptions, InputNumber, Typography } from 'antd';
 import {
   BAIFlex,
   BAIModal,

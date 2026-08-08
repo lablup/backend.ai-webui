@@ -2,10 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { FormItemInputContext } from '../form-engine';
 import './BAICheckbox.css';
 import { Checkbox } from 'antd';
 import type { CheckboxProps } from 'antd';
-import { FormItemInputContext } from 'antd/es/form/context';
 import classNames from 'classnames';
 import React, { use } from 'react';
 

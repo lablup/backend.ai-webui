@@ -5,13 +5,13 @@
 import { ManageAppsModalMutation } from '../__generated__/ManageAppsModalMutation.graphql';
 import { ManageAppsModal_image$key } from '../__generated__/ManageAppsModal_image.graphql';
 import { App } from '../app-shim';
+import { Form, FormInstance } from '../form-engine';
 import BAIFormItem from './BAIFormItem';
 import { AstryxFormTextInput } from './astryxFormControls';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Text } from '@astryxdesign/core/Text';
-import { Form, FormInstance } from 'antd';
 import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Trash, PlusIcon } from 'lucide-react';

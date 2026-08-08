@@ -1,4 +1,5 @@
 import { App } from '../../../app-shim';
+import { Form } from '../../../form-engine';
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
 import { theme } from '../../../theme-shim';
 import BAIFlex from '../../BAIFlex';
@@ -8,7 +9,7 @@ import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import { FolderInfoContext } from './BAIFileExplorer';
 import './EditableFileName.css';
 import { useMutation } from '@tanstack/react-query';
-import { Form, Input, Typography, type GetProps } from 'antd';
+import { Input, Typography, type GetProps } from 'antd';
 import * as _ from 'lodash-es';
 import { File, Folder, CornerDownLeftIcon } from 'lucide-react';
 import { use, useRef, useState } from 'react';

@@ -8,10 +8,10 @@ import {
   ResourceGroupFairShareSettingModalMutation$variables,
 } from '../../__generated__/ResourceGroupFairShareSettingModalMutation.graphql';
 import { App } from '../../app-shim';
+import { Form, FormInstance } from '../../form-engine';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
 import { theme } from '../../theme-shim';
-import { Col, Form, Input, InputNumber, Row } from 'antd';
-import { FormInstance } from 'antd/lib';
+import { Col, Input, InputNumber, Row } from 'antd';
 import {
   BAIQuestionIconWithTooltip,
   BAIAlert,

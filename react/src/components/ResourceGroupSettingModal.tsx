@@ -7,6 +7,7 @@ import { ResourceGroupSettingModalCreateMutation } from '../__generated__/Resour
 import { ResourceGroupSettingModalFragment$key } from '../__generated__/ResourceGroupSettingModalFragment.graphql';
 import { ResourceGroupSettingModalUpdateMutation } from '../__generated__/ResourceGroupSettingModalUpdateMutation.graphql';
 import { App } from '../app-shim';
+import { Form, FormInstance } from '../form-engine';
 import { newLineToBrElement } from '../helper';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import {
@@ -29,7 +30,6 @@ import {
 } from './astryx-bui/astryxFormControls';
 import { Grid } from '@astryxdesign/core/Grid';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { Form, FormInstance } from 'antd';
 import {
   BAIModal,
   BAIModalProps,

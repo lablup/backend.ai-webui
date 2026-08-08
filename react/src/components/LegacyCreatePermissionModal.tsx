@@ -11,8 +11,8 @@ import { LegacyCreatePermissionModalPermissionMatrixQuery } from '../__generated
 import { LegacyCreatePermissionModalUpdateMutation } from '../__generated__/LegacyCreatePermissionModalUpdateMutation.graphql';
 import { LegacyCreatePermissionModal_roleScopeFragment$key } from '../__generated__/LegacyCreatePermissionModal_roleScopeFragment.graphql';
 import { App } from '../app-shim';
+import { Form } from '../form-engine';
 import { RBAC_ELEMENT_TYPES, ScopeIdSelect } from './RoleFormModal';
-import { Form } from 'antd';
 import {
   BAIModal,
   BAIModalProps,

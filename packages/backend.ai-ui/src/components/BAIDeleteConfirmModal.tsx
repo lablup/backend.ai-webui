@@ -1,10 +1,11 @@
+import { Form } from '../form-engine';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
 import BAIModal, { type BAIModalProps } from './BAIModal';
 import BAIText from './BAIText';
 import { BAITrans } from './BAITrans';
-import { Form, Input, Typography, type InputProps } from 'antd';
+import { Input, Typography, type InputProps } from 'antd';
 import { CircleAlert } from 'lucide-react';
 import React from 'react';
 

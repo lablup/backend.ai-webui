@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { FormInstance } from '../form-engine';
 import { useAdminImageReference } from '../hooks/hooksUsingRelay';
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
 import { theme } from '../theme-shim';
@@ -17,7 +18,6 @@ import {
 } from '@astryxdesign/core/MetadataList';
 import { HStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
-import type { FormInstance } from 'antd';
 import {
   BAICard,
   BAIFlex,

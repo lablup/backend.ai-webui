@@ -6,12 +6,12 @@ import { KeypairSettingModalCreateMutation } from '../__generated__/KeypairSetti
 import { KeypairSettingModalFragment$key } from '../__generated__/KeypairSettingModalFragment.graphql';
 import { KeypairSettingModalModifyMutation } from '../__generated__/KeypairSettingModalModifyMutation.graphql';
 import { App } from '../app-shim';
+import { Form, FormInstance } from '../form-engine';
 import BAIFormItem from './BAIFormItem';
 import KeypairResourcePolicySelect from './KeypairResourcePolicySelect';
 import { AstryxFormNumberInput } from './astryx-bui/astryxFormControls';
 import { Grid, GridSpan } from '@astryxdesign/core/Grid';
-import { Form, type ModalProps } from 'antd';
-import { FormInstance } from 'antd/lib';
+import { type ModalProps } from 'antd';
 import { BAIModal, BAISelect, BAIUserSelect } from 'backend.ai-ui';
 import { Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';

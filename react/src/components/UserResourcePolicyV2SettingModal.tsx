@@ -12,6 +12,7 @@ import {
   UserResourcePolicyV2SettingModalModifyMutation,
 } from '../__generated__/UserResourcePolicyV2SettingModalModifyMutation.graphql';
 import { App } from '../app-shim';
+import { Form, FormInstance } from '../form-engine';
 import { GBToBytes, bytesToGB } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { theme } from '../theme-shim';
@@ -22,7 +23,6 @@ import {
   AstryxFormTextInput,
 } from './astryx-bui/astryxFormControls';
 import { Banner } from '@astryxdesign/core/Banner';
-import { Form, FormInstance } from 'antd';
 import { BAIModal, BAIModalProps, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useRef } from 'react';

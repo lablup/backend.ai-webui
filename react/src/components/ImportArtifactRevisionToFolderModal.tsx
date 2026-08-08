@@ -6,12 +6,13 @@ import { ImportArtifactRevisionToFolderModalArtifactRevisionFragment$key } from 
 import { ImportArtifactRevisionToFolderModalModelStoreProjectsFragment$key } from '../__generated__/ImportArtifactRevisionToFolderModalModelStoreProjectsFragment.graphql';
 import { ImportArtifactRevisionToFolderModalMutation } from '../__generated__/ImportArtifactRevisionToFolderModalMutation.graphql';
 import { App } from '../app-shim';
+import { Form, FormInstance } from '../form-engine';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useSwitchProject } from '../hooks/useRouteScope';
 import { theme } from '../theme-shim';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useToggle } from 'ahooks';
-import { Alert, Form, FormInstance, Popconfirm } from 'antd';
+import { Alert, Popconfirm } from 'antd';
 import {
   BAIButton,
   BAIModalProps,

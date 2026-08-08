@@ -4,6 +4,7 @@
  */
 import { ImportFromHuggingFaceModalQuery } from '../__generated__/ImportFromHuggingFaceModalQuery.graphql';
 import { App } from '../app-shim';
+import { Form, FormInstance } from '../form-engine';
 import { baiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useSuspenseTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
@@ -15,8 +16,6 @@ import {
   Button,
   Card,
   Empty,
-  Form,
-  FormInstance,
   Input,
   Modal,
   Result,

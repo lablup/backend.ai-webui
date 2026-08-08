@@ -899,7 +899,7 @@ test.describe(
           // paired slider's own input (which `.fill()` cannot set).
           const cpuInput = dialog
             .locator(
-              '.ant-form-item-row:has-text("CPU") .ant-input-number input',
+              '[data-bai-form-item]:has-text("CPU") .ant-input-number input',
             )
             .first();
           await cpuInput.click();
@@ -907,7 +907,7 @@ test.describe(
           await cpuInput.blur();
           const memInput = dialog
             .locator(
-              '.ant-form-item-row:has-text("Memory") .ant-input-number input',
+              '[data-bai-form-item]:has-text("Memory") .ant-input-number input',
             )
             .first();
           await memInput.fill('4'); // GiB (default unit) — comfortably over 1088MiB

@@ -6,6 +6,7 @@ import {
   ImageEnvironmentSelectFormItemsQuery,
   ImageEnvironmentSelectFormItemsQuery$data,
 } from '../__generated__/ImageEnvironmentSelectFormItemsQuery.graphql';
+import { Form } from '../form-engine';
 import {
   compareImageVersions,
   getImageFullName,
@@ -25,15 +26,7 @@ import { theme } from '../theme-shim';
 import ImageMetaIcon from './ImageMetaIcon';
 import { ImageTags } from './ImageTags';
 import TextHighlighter from './TextHighlighter';
-import {
-  Divider,
-  Form,
-  Input,
-  RefSelectProps,
-  Select,
-  Tag,
-  Typography,
-} from 'antd';
+import { Divider, Input, RefSelectProps, Select, Tag, Typography } from 'antd';
 import { BAIDoubleTag, BAIFlex, BAISelect } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useEffect, useMemo, useRef, useState } from 'react';

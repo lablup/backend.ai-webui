@@ -13,6 +13,7 @@ import {
 } from '../__generated__/ResourcePresetSettingModalModifyByIdMutation.graphql';
 import { ResourcePresetSettingModalModifyByNameMutation } from '../__generated__/ResourcePresetSettingModalModifyByNameMutation.graphql';
 import { App } from '../app-shim';
+import { Form, type FormInstance } from '../form-engine';
 import { convertToBinaryUnit } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
@@ -22,7 +23,6 @@ import {
   AstryxFormNumberInput,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { Form, type FormInstance } from 'antd';
 import {
   BAIDynamicUnitInputNumber,
   BAIModal,

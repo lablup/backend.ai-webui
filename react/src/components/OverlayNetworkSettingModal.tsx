@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { App } from '../app-shim';
+import { Form, FormInstance } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import BAIFormItem from './BAIFormItem';
@@ -10,8 +11,6 @@ import {
   AstryxFormCheckbox,
   AstryxFormNumberInput,
 } from './astryx-bui/astryxFormControls';
-import { Form } from 'antd';
-import { FormInstance } from 'antd/lib';
 import {
   BAIQuestionIconWithTooltip,
   BAIModal,

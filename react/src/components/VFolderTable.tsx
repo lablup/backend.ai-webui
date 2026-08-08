@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { VFolderTableProjectQuery } from '../__generated__/VFolderTableProjectQuery.graphql';
+import { Form } from '../form-engine';
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useKeyPairLazyLoadQuery } from '../hooks/hooksUsingRelay';
@@ -18,7 +19,6 @@ import { VFolder } from './VFolderSelect';
 import {
   Button,
   Descriptions,
-  Form,
   Input,
   Space,
   TableProps,

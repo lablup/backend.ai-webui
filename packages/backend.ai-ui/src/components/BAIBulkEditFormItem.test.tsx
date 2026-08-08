@@ -1,7 +1,8 @@
+import { Form, FormInstance } from '../form-engine';
 import BAIBulkEditFormItem from './BAIBulkEditFormItem';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Form, FormInstance, Select } from 'antd';
+import { Select } from 'antd';
 import React, { useEffect } from 'react';
 
 // Partial mock: preserve every real export from `react-i18next` (notably
@@ -453,9 +454,12 @@ describe('BAIBulkEditFormItem', () => {
         </FormWrapper>,
       );
 
-      // Required marker should be present (BAIBulkEditFormItem always sets required=true internally)
+      // Required marker should be present (BAIBulkEditFormItem always sets
+      // required=true internally). The anchor is `[data-bai-form-item-required]`
+      // since ticket 34 — the form item's visual shell is BAI's, not antd's;
+      // see the DOM-attribute mapping in the ticket-31 selector migration.
       expect(
-        document.querySelector('.ant-form-item-required'),
+        document.querySelector('[data-bai-form-item-required]'),
       ).toBeInTheDocument();
     });
 

@@ -12,13 +12,13 @@ import AdminDeploymentPresetSettingPageContent, {
   type AdminDeploymentPresetFormValue,
   type ModelDefinitionFormValue,
 } from '../components/AdminDeploymentPresetSettingPageContent';
+import { Form } from '../form-engine';
 import { tokenizeShellCommand } from '../helper/parseCliCommand';
 import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { type RuntimeVariantPresetValueEntry } from '../hooks/useRuntimeParameterSchema';
 import { theme } from '../theme-shim';
 import { Heading } from '@astryxdesign/core/Heading';
-import { Form } from 'antd';
 import { BAIFlex, useBAILogger, useMutationWithPromise } from 'backend.ai-ui';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';

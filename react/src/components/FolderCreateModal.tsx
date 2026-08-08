@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { App } from '../app-shim';
+import { Form, FormInstance } from '../form-engine';
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
@@ -12,8 +13,7 @@ import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { theme } from '../theme-shim';
 import './FolderCreateModal.css';
 import StorageSelect from './StorageSelect';
-import { Divider, Form, Input, Radio, Skeleton, Switch, Tooltip } from 'antd';
-import { FormInstance } from 'antd/lib';
+import { Divider, Input, Radio, Skeleton, Switch, Tooltip } from 'antd';
 import {
   BAIQuestionIconWithTooltip,
   BAIButton,

@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { App } from '../app-shim';
+import { Form, FormInstance, FormProps } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import {
@@ -12,15 +13,7 @@ import {
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import HuggingFaceModelPreview from './HuggingFaceModelPreview';
-import {
-  Button,
-  Form,
-  FormInstance,
-  FormProps,
-  Input,
-  Space,
-  Tooltip,
-} from 'antd';
+import { Button, Input, Space, Tooltip } from 'antd';
 import {
   BAIButton,
   BAIFlex,

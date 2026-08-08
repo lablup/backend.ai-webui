@@ -1,3 +1,4 @@
+import { Form } from '../../form-engine';
 import { RelayResolverProps } from '../../tests/RelayResolver';
 import BAIVFolderMountConfigInput, {
   BAIVFolderMountConfigInputProps,
@@ -5,7 +6,7 @@ import BAIVFolderMountConfigInput, {
   isVFolderMountConfigValid,
 } from './BAIVFolderMountConfigInput';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Button, Form, Typography } from 'antd';
+import { Button, Typography } from 'antd';
 import { Suspense, useMemo, useState } from 'react';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';

@@ -12,6 +12,7 @@ import { UserSettingModalCreateMutation } from '../__generated__/UserSettingModa
 import { UserSettingModalFragment$key } from '../__generated__/UserSettingModalFragment.graphql';
 import { UserSettingModalUpdateMutation } from '../__generated__/UserSettingModalUpdateMutation.graphql';
 import { App } from '../app-shim';
+import { Form, FormInstance } from '../form-engine';
 import { isValidIPOrCidr } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
@@ -41,7 +42,6 @@ import type {
   SearchSource,
 } from '@astryxdesign/core/Typeahead';
 import { useToggle } from 'ahooks';
-import { Form, FormInstance } from 'antd';
 import {
   BAIDomainSelect,
   BAIAlert,

@@ -2,17 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { Form } from '../../form-engine';
 import { compareNumberWithUnits, convertToBinaryUnit } from '../../helper';
 import { theme } from '../../theme-shim';
 import { MergedResourceAllocationFormValue } from './ResourceAllocationFormItems';
-import {
-  ConfigProvider,
-  Divider,
-  Form,
-  Slider,
-  Switch,
-  SwitchProps,
-} from 'antd';
+import { ConfigProvider, Divider, Slider, Switch, SwitchProps } from 'antd';
 import {
   BAIQuestionIconWithTooltip,
   BAIDynamicUnitInputNumber,

@@ -3,6 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { App } from '../app-shim';
+// `Form` state engine stays (SHIM); visuals are BAIFormItem.
+import { Form } from '../form-engine';
 import {
   AgentEndpointBinding,
   AgentProfile,
@@ -24,8 +26,6 @@ import { Code } from '@astryxdesign/core/Code';
 import { Divider } from '@astryxdesign/core/Divider';
 import { Switch } from '@astryxdesign/core/Switch';
 import { Text } from '@astryxdesign/core/Text';
-// `Form` state engine stays (SHIM); visuals are BAIFormItem.
-import { Form } from 'antd';
 import {
   BAIFlex,
   BAIModal,

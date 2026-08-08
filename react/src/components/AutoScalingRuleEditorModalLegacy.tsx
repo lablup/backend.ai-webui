@@ -11,11 +11,10 @@ import {
 import { AutoScalingRuleEditorModalLegacyFragment$key } from '../__generated__/AutoScalingRuleEditorModalLegacyFragment.graphql';
 import { AutoScalingRuleEditorModalLegacyModifyMutation } from '../__generated__/AutoScalingRuleEditorModalLegacyModifyMutation.graphql';
 import { App } from '../app-shim';
+import { Form, FormInstance } from '../form-engine';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import {
   AutoComplete,
-  Form,
-  FormInstance,
   Input,
   InputNumber,
   Radio,

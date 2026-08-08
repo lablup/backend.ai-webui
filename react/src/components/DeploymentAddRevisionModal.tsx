@@ -20,6 +20,8 @@ import type {
   DeploymentAddRevisionModal_revisionSource$key,
 } from '../__generated__/DeploymentAddRevisionModal_revisionSource.graphql';
 import { App } from '../app-shim';
+import { Form } from '../form-engine';
+import type { FormInstance } from '../form-engine';
 import { convertToBinaryUnit } from '../helper';
 import {
   formatShellCommand,
@@ -72,8 +74,6 @@ import {
   SegmentedControlItem,
 } from '@astryxdesign/core/SegmentedControl';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { Form } from 'antd';
-import type { FormInstance } from 'antd';
 import {
   BAIAvailablePresetSelect,
   BAIFlex,

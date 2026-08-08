@@ -5,6 +5,7 @@
 import { EditableSessionNameFragment$key } from '../../__generated__/EditableSessionNameFragment.graphql';
 import { EditableSessionNameRefetchQuery } from '../../__generated__/EditableSessionNameRefetchQuery.graphql';
 import { App } from '../../app-shim';
+import { Form } from '../../form-engine';
 import { useBaiSignedRequestWithPromise } from '../../helper';
 import { useCurrentUserInfo } from '../../hooks/backendai';
 import { useTanMutation } from '../../hooks/reactQueryAlias';
@@ -16,7 +17,7 @@ import { Text } from '@astryxdesign/core/Text';
 // FRONTIER (ticket 17 / ticket 34): the inline rename editor keeps the antd
 // Form engine (Form + Form.Item + Input) — locked SHIM decision. Only the
 // display (name + copy/edit affordances) is Astryx.
-import { Form, Input } from 'antd';
+import { Input } from 'antd';
 import {
   CheckIcon,
   CopyIcon,

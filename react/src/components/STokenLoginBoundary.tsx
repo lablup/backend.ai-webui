@@ -12,6 +12,8 @@
  unit test (`STokenLoginBoundary.test.tsx`) enforces this in CI.
  */
 import { App } from '../app-shim';
+// Ticket 34: `Form` is the self-hosted engine (was the antd SHIM).
+import { Form } from '../form-engine';
 import { getDefaultLoginConfig } from '../helper/loginConfig';
 import {
   connectViaGQL,
@@ -29,8 +31,6 @@ import { Button } from '@astryxdesign/core/Button';
 import { Heading } from '@astryxdesign/core/Heading';
 import { Spinner } from '@astryxdesign/core/Spinner';
 import { Text } from '@astryxdesign/core/Text';
-// SHIM (MAPPING §2): the antd Form engine stays until ticket 34.
-import { Form } from 'antd';
 import { BAICard, BAIFlex, useBAILogger } from 'backend.ai-ui';
 import { useAtomValue, useStore } from 'jotai';
 import {

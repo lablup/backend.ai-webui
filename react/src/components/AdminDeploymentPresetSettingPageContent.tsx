@@ -4,6 +4,8 @@
  */
 import type { AdminDeploymentPresetSettingPageContent_preset$key } from '../__generated__/AdminDeploymentPresetSettingPageContent_preset.graphql';
 import EnvVarFormList from '../components/EnvVarFormList';
+import { Form } from '../form-engine';
+import type { FormInstance } from '../form-engine';
 import { formatShellCommand } from '../helper/parseCliCommand';
 import {
   buildRuntimeVariantPresetValues,
@@ -43,8 +45,6 @@ import { Button } from '@astryxdesign/core/Button';
 import { Selector } from '@astryxdesign/core/Selector';
 import { Step, Stepper } from '@astryxdesign/lab';
 import { useDebounceFn } from 'ahooks';
-import { Form } from 'antd';
-import type { FormInstance } from 'antd';
 import {
   BAIAdminImageSelect,
   BAIButton,

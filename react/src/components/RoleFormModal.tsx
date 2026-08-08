@@ -12,8 +12,9 @@ import { RoleFormModalPermissionMatrixQuery } from '../__generated__/RoleFormMod
 import { RoleFormModalResourceGroupQuery } from '../__generated__/RoleFormModalResourceGroupQuery.graphql';
 import { RoleFormModalUpdateMutation } from '../__generated__/RoleFormModalUpdateMutation.graphql';
 import { App } from '../app-shim';
+import { Form } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { Button, Checkbox, Form, Input, type SelectProps } from 'antd';
+import { Button, Checkbox, Input, type SelectProps } from 'antd';
 import {
   BAIAdminContainerRegistrySelect,
   BAIAdminModelServiceSelect,

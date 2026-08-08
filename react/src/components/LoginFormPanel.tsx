@@ -12,6 +12,10 @@
 // to-astryx ticket 04: this screen's `App.useApp()` is served by the Astryx
 // app-shim (message → Toast) instead of antd.
 import { App } from '../app-shim';
+// SHIM (MAPPING §2): the antd Form ENGINE stays until ticket 34; only its
+// visual layer moves (`Form.Item` -> `BAIFormItem`, antd controls -> the
+// Astryx form-control adapters).
+import { Form, type FormInstance } from '../form-engine';
 import { baiSignedRequestWithPromise } from '../helper';
 import type { LoginConfigState } from '../helper/loginConfig';
 import { useAnonymousBackendaiClient } from '../hooks';
@@ -40,10 +44,6 @@ import {
   SegmentedControlItem,
 } from '@astryxdesign/core/SegmentedControl';
 import { Text } from '@astryxdesign/core/Text';
-// SHIM (MAPPING §2): the antd Form ENGINE stays until ticket 34; only its
-// visual layer moves (`Form.Item` -> `BAIFormItem`, antd controls -> the
-// Astryx form-control adapters).
-import { Form, type FormInstance } from 'antd';
 import {
   BAIModal,
   BAIFlex,

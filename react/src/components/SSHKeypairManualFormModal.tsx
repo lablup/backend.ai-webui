@@ -2,11 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { Form, type FormInstance } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIFormItem from './BAIFormItem';
 import { AstryxFormTextArea } from './astryx-bui/astryxFormControls';
-import { Form, type FormInstance } from 'antd';
 import { BAIModal, BAIModalProps } from 'backend.ai-ui';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';

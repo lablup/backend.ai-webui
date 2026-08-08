@@ -4,13 +4,14 @@
  */
 import { TensorboardPathModalFragment$key } from '../../__generated__/TensorboardPathModalFragment.graphql';
 import { App } from '../../app-shim';
+import { Form } from '../../form-engine';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useBackendAIAppLauncher } from '../../hooks/useBackendAIAppLauncher';
 import { Button } from '@astryxdesign/core/Button';
 import { Text } from '@astryxdesign/core/Text';
 // FRONTIER (ticket 17 / ticket 34): Form + Form.Item + Input stay on the antd
 // form engine (locked SHIM decision).
-import { Form, Input } from 'antd';
+import { Input } from 'antd';
 import {
   BAIFlex,
   BAIModal,

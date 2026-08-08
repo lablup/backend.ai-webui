@@ -3,18 +3,18 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { SessionOwnerSetterCardQuery } from '../__generated__/SessionOwnerSetterCardQuery.graphql';
+import { Form } from '../form-engine';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import { theme } from '../theme-shim';
 import HiddenFormItem from './HiddenFormItem';
-// FRONTIER (ticket 17 / ticket 34): form-heavy card (Form.useWatch + Form.Item
-// controls). Stays antd until the form-engine ticket.
+// FRONTIER (ticket 17): form-heavy card. `Form.useWatch` / `Form.Item` are
+// self-hosted since ticket 34; the controls below are still antd.
 import {
   Button,
   Card,
   Col,
   Descriptions,
-  Form,
   Input,
   Row,
   Select,

@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { App } from '../app-shim';
+import { Form } from '../form-engine';
 import {
   proxiesServingGroups,
   useSFTPProxyResourceGroupsQuery,
@@ -11,7 +12,6 @@ import {
 import BAIFormItem from './BAIFormItem';
 import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import { Code } from '@astryxdesign/core/Code';
-import { Form } from 'antd';
 import {
   BAIFlex,
   BAIListAlert,

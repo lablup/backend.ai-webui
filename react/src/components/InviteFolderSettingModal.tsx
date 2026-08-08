@@ -15,6 +15,8 @@
    Astryx `Selector` sizes its own popup. Dropped.
 */
 import { App } from '../app-shim';
+// Ticket 34: `Form` is the self-hosted engine; `Form.Item` IS BAIFormItem.
+import { Form, FormInstance } from '../form-engine';
 import { localeCompare, useBaiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
@@ -29,8 +31,6 @@ import { IconButton } from '@astryxdesign/core/IconButton';
 import { Selector } from '@astryxdesign/core/Selector';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Heading } from '@astryxdesign/core/Text';
-// `Form` (the state engine) stays antd, per the locked ticket-05 decision.
-import { Form, FormInstance } from 'antd';
 import { BAITable, useErrorMessageResolver } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CircleXIcon } from 'lucide-react';

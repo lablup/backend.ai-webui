@@ -2,12 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { Form } from '../form-engine';
+import type { FormInstance } from '../form-engine';
 import BAIFormItem from './BAIFormItem';
 import { AstryxFormTextInput } from './astryxFormControls';
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
 import { VStack } from '@astryxdesign/core/Stack';
-import { Form } from 'antd';
-import type { FormInstance } from 'antd';
 import { BAIModal, BAIModalProps, type BAIColumnsType } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Search } from 'lucide-react';

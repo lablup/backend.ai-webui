@@ -9,10 +9,10 @@ import {
 import { AgentSettingModalMutation } from '../__generated__/AgentSettingModalMutation.graphql';
 import { AgentSettingModalQuery } from '../__generated__/AgentSettingModalQuery.graphql';
 import { App } from '../app-shim';
+import { Form, type FormInstance } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import BAIFormItem from './BAIFormItem';
 import { AstryxFormSwitch } from './astryx-bui/astryxFormControls';
-import { Form, type FormInstance } from 'antd';
 import {
   BAIAdminResourceGroupSelect,
   BAIModal,

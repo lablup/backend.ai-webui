@@ -12,6 +12,7 @@ import {
   ModifyKeyPairResourcePolicyInput,
 } from '../__generated__/KeypairResourcePolicySettingModalModifyMutation.graphql';
 import { App } from '../app-shim';
+import { Form, FormInstance } from '../form-engine';
 import { convertToBinaryUnit } from '../helper';
 import { MAX_CPU_QUOTA, SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { useSuspendedBackendaiClient } from '../hooks';
@@ -28,7 +29,6 @@ import { Card } from '@astryxdesign/core/Card';
 import { Icon } from '@astryxdesign/core/Icon';
 import { HStack } from '@astryxdesign/core/Stack';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { Form, FormInstance } from 'antd';
 import {
   BAIDynamicUnitInputNumber,
   BAIAllowedHostNamesSelect,

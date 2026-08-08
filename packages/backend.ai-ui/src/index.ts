@@ -13,3 +13,7 @@ export * from './icons';
 export * from './tests';
 export * from './theme-shim';
 export * from './app-shim';
+// The self-hosted form engine (ticket 34). `Form` is exported as a NAMED
+// export only — BUI has no default export — and `react/src/form-engine`
+// re-exports it for app files, mirroring app-shim / theme-shim.
+export * from './form-engine';

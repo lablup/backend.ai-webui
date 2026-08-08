@@ -4,8 +4,9 @@
  */
 import { ScanArtifactModelsFromHuggingFaceModalMutation } from '../__generated__/ScanArtifactModelsFromHuggingFaceModalMutation.graphql';
 import { App } from '../app-shim';
+import { Form, type FormInstance } from '../form-engine';
 import { theme } from '../theme-shim';
-import { Form, type FormInstance, Input } from 'antd';
+import { Input } from 'antd';
 import {
   BAIFlex,
   BAIModal,

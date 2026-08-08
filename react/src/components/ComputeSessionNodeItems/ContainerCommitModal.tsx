@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ContainerCommitModalFragment$key } from '../../__generated__/ContainerCommitModalFragment.graphql';
+import { Form, FormInstance } from '../../form-engine';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useSetBAINotification } from '../../hooks/useBAINotification';
 import { Divider } from '@astryxdesign/core/Divider';
@@ -13,7 +14,7 @@ import {
 import { Text } from '@astryxdesign/core/Text';
 // FRONTIER (ticket 17 / ticket 34): Form + Form.Item + Input stay on the antd
 // form engine (locked SHIM decision).
-import { Form, FormInstance, Input } from 'antd';
+import { Input } from 'antd';
 import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';

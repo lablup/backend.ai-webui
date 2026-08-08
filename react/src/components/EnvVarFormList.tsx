@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { AutoComplete, Form, FormItemProps, Input, InputRef } from 'antd';
-import { FormListProps } from 'antd/lib/form';
+import { Form, FormItemProps, FormListProps } from '../form-engine';
+import { AutoComplete, Input, InputRef } from 'antd';
 import { BAIButton, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CircleMinus, PlusIcon } from 'lucide-react';

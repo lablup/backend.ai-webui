@@ -2,6 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { Form } from '../form-engine';
+import type { FormInstance } from '../form-engine';
 import { theme } from '../theme-shim';
 import BAIFormItem from './BAIFormItem';
 import {
@@ -12,8 +14,6 @@ import {
 } from './astryx-bui/astryxFormControls';
 import { Collapsible } from '@astryxdesign/core/Collapsible';
 import { Tokenizer } from '@astryxdesign/core/Tokenizer';
-import { Form } from 'antd';
-import type { FormInstance } from 'antd';
 import { BAIButton, BAICard, BAIFlex } from 'backend.ai-ui';
 import { CircleMinus, PlusIcon } from 'lucide-react';
 import React from 'react';

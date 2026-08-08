@@ -6,6 +6,7 @@ import { DeploymentSettingModalCreateMutation } from '../__generated__/Deploymen
 import { DeploymentSettingModalUpdateMutation } from '../__generated__/DeploymentSettingModalUpdateMutation.graphql';
 import { DeploymentSettingModal_deployment$key } from '../__generated__/DeploymentSettingModal_deployment.graphql';
 import { App } from '../app-shim';
+import { Form } from '../form-engine';
 import { useCurrentDomainValue, useWebUINavigate } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
@@ -25,7 +26,6 @@ import type {
   SearchableItem,
   SearchSource,
 } from '@astryxdesign/core/Typeahead';
-import { Form } from 'antd';
 import {
   BAIButton,
   BAIFlex,

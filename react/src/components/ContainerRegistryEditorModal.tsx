@@ -6,6 +6,7 @@ import { ContainerRegistryEditorModalCreateMutation } from '../__generated__/Con
 import { ContainerRegistryEditorModalFragment$key } from '../__generated__/ContainerRegistryEditorModalFragment.graphql';
 import { ContainerRegistryEditorModalModifyRegistryMutation } from '../__generated__/ContainerRegistryEditorModalModifyRegistryMutation.graphql';
 import { App } from '../app-shim';
+import { Form, type FormInstance } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { theme } from '../theme-shim';
 import BAICodeEditor from './BAICodeEditor';
@@ -17,7 +18,6 @@ import {
   AstryxFormSelector,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { Form, type FormInstance } from 'antd';
 import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useRef } from 'react';

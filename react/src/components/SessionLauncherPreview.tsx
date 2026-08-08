@@ -3,6 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { App } from '../app-shim';
+// FRONTIER (ticket 17 / ticket 34): `Form.useFormInstance` / `Form.useWatch`
+// keep reading the antd form engine (locked SHIM decision).
+import { Form } from '../form-engine';
 import { preserveDotStartCase, getImageFullName } from '../helper';
 import {
   useBackendAIImageMetaData,
@@ -32,9 +35,6 @@ import {
   MetadataListItem,
 } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
-// FRONTIER (ticket 17 / ticket 34): `Form.useFormInstance` / `Form.useWatch`
-// keep reading the antd form engine (locked SHIM decision).
-import { Form } from 'antd';
 import { BAICard, BAIDoubleTag, BAIFlex, BAITable } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';

@@ -2,10 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { Form, type FormItemProps } from '../form-engine';
 import { useValidateSessionName } from '../hooks/useValidateSessionName';
-// FRONTIER (ticket 17 / ticket 34): Form.Item + Input stay on the antd form
-// engine (locked SHIM decision) until the form-engine ticket.
-import { Form, type FormItemProps, Input } from 'antd';
+// FRONTIER (ticket 17): Form.Item is self-hosted since ticket 34; `Input` is
+// still an antd control.
+import { Input } from 'antd';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 

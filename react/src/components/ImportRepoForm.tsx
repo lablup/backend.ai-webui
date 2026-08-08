@@ -7,6 +7,7 @@ import {
   ImportRepoFormCreateVFolderMutation$data,
 } from '../__generated__/ImportRepoFormCreateVFolderMutation.graphql';
 import { App } from '../app-shim';
+import { Form, FormInstance, FormProps } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import {
@@ -14,7 +15,7 @@ import {
   useStartSession,
 } from '../hooks/useStartSession';
 import StorageSelect from './StorageSelect';
-import { Form, FormInstance, FormProps, Input, message, Radio } from 'antd';
+import { Input, message, Radio } from 'antd';
 import {
   BAIButton,
   toLocalId,

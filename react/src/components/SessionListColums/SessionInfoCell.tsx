@@ -3,13 +3,14 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { SessionInfoCellFragment$key } from '../../__generated__/SessionInfoCellFragment.graphql';
+import { Form, type FormInstance } from '../../form-engine';
 import {
   // useBackendaiImageMetaData,
   useSuspendedBackendaiClient,
 } from '../../hooks';
 import { useTanMutation } from '../../hooks/reactQueryAlias';
 import { theme } from '../../theme-shim';
-import { Button, Form, type FormInstance, Input, Typography } from 'antd';
+import { Button, Input, Typography } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { SquarePen } from 'lucide-react';

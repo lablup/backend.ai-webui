@@ -8,6 +8,7 @@ import type {
   UpdateRuntimeVariantPresetInput,
 } from '../../__generated__/BAIRuntimeVariantPresetSettingModalUpdateMutation.graphql';
 import { App } from '../../app-shim';
+import { Form, FormInstance } from '../../form-engine';
 import { toLocalId } from '../../helper';
 import { useBAILogger } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
@@ -15,7 +16,7 @@ import BAIModal, { BAIModalProps } from '../BAIModal';
 import BAISelect from '../BAISelect';
 import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import BAIRuntimeVariantSelect from './BAIRuntimeVariantSelect';
-import { Form, FormInstance, Input, InputNumber, Switch } from 'antd';
+import { Input, InputNumber, Switch } from 'antd';
 import React, { Suspense, useRef } from 'react';
 import { graphql, useFragment, useMutation } from 'react-relay';
 import { PayloadError } from 'relay-runtime';

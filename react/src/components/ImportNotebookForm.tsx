@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { App } from '../app-shim';
+import { Form, FormInstance, FormProps } from '../form-engine';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useProjectPath } from '../hooks/useRouteScope';
 import {
@@ -11,16 +12,7 @@ import {
 } from '../hooks/useStartSession';
 import CopyButton from './Chat/CopyButton';
 import { PrimaryAppOption } from './ComputeSessionNodeItems/SessionActionButtons';
-import {
-  Divider,
-  Dropdown,
-  Form,
-  FormInstance,
-  FormProps,
-  Input,
-  Space,
-  Typography,
-} from 'antd';
+import { Divider, Dropdown, Input, Space, Typography } from 'antd';
 import {
   BAIButton,
   BAIFlex,

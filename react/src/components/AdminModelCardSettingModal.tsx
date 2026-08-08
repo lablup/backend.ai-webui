@@ -6,6 +6,7 @@ import type { AdminModelCardSettingModalCreateMutation } from '../__generated__/
 import type { AdminModelCardSettingModalFragment$key } from '../__generated__/AdminModelCardSettingModalFragment.graphql';
 import type { AdminModelCardSettingModalUpdateMutation } from '../__generated__/AdminModelCardSettingModalUpdateMutation.graphql';
 import { App } from '../app-shim';
+import { Form, type FormInstance } from '../form-engine';
 import { useCurrentDomainValue } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useSwitchProject } from '../hooks/useRouteScope';
@@ -23,7 +24,6 @@ import { Banner } from '@astryxdesign/core/Banner';
 import { Text } from '@astryxdesign/core/Text';
 import { TextInput } from '@astryxdesign/core/TextInput';
 import { Tokenizer } from '@astryxdesign/core/Tokenizer';
-import { Form, type FormInstance } from 'antd';
 import {
   BAIButton,
   BAIDomainSelect,

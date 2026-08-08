@@ -236,7 +236,7 @@ async function createServiceViaUI(
   // the spinbutton inside it. Ant Design Form.Item uses a `label` element that
   // may not have a `for` attribute in all versions, so we use a compound selector.
   const acceleratorFormItem = page
-    .locator('.ant-form-item')
+    .locator('[data-bai-form-item]')
     .filter({ hasText: 'AI Accelerator' })
     .first();
   const acceleratorSpinbutton = acceleratorFormItem.getByRole('spinbutton');
@@ -306,15 +306,11 @@ async function createServiceViaUI(
     }
 
     // 2) Inline Form.Item validation errors (handleOk's validateFields catch).
-    // The service-start form mixes migrated (`BAIFormItem`,
-    // `[data-bai-form-item-explain-error]`) and not-yet-migrated sub-forms
-    // (`ResourceAllocationFormItems`, `ImageEnvironmentSelectFormItems` — raw
-    // antd `Form.Item`, `.ant-form-item-explain-error`), so this whole-page
-    // scan checks both.
+    // Since to-astryx ticket 34 every sub-form of the service-start dialog
+    // renders the same shell — `Form.Item` IS `BAIFormItem` — so one anchor
+    // covers the whole page (it used to need a migrated/unmigrated pair).
     const fieldErrorTexts = await page
-      .locator(
-        '.ant-form-item-explain-error, [data-bai-form-item-explain-error]',
-      )
+      .locator('[data-bai-form-item-explain-error]')
       .allTextContents()
       .catch(() => [] as string[]);
     const fieldErrors = fieldErrorTexts.filter((t) => t.trim().length > 0);

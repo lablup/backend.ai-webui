@@ -74,10 +74,9 @@ export class FolderCreationModal {
   }
 
   async getFormItemByLabel(label: string): Promise<Locator> {
-    // FolderCreateModalV2 (the live component) renders form items via
-    // `BAIFormItem` (`react/src/components/FolderCreateModalV2.tsx`), whose
-    // visual shell root carries `data-bai-form-item`
-    // (`react/src/components/BAIFormItem.tsx`) — no more `.ant-form-item-row`.
+    // Every form item renders the BAI visual shell, whose root carries
+    // `data-bai-form-item`
+    // (`packages/backend.ai-ui/src/form-engine/FormItemVisual.tsx`).
     const RadioContainer = this.modal.locator(
       `[data-bai-form-item]:has-text("${label}")`,
     );

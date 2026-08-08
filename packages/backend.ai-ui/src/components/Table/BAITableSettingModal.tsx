@@ -1,3 +1,4 @@
+import { Form, FormInstance } from '../../form-engine';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { theme } from '../../theme-shim';
 import {
@@ -15,17 +16,8 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import {
-  Input,
-  Form,
-  Modal,
-  ModalProps,
-  Table,
-  Checkbox,
-  Typography,
-} from 'antd';
+import { Input, Modal, ModalProps, Table, Checkbox, Typography } from 'antd';
 import type { TableColumnsType } from 'antd';
-import { FormInstance } from 'antd/lib';
 import * as _ from 'lodash-es';
 import { Search, GripVertical } from 'lucide-react';
 import React, { use, useRef, useState, useCallback, useMemo } from 'react';

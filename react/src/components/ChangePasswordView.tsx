@@ -3,14 +3,14 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { App } from '../app-shim';
+// Ticket 34: `Form` is the self-hosted engine (was the antd SHIM).
+import { Form } from '../form-engine';
 import { useAnonymousBackendaiClient } from '../hooks';
 import { theme } from '../theme-shim';
 import BAIFormItem from './BAIFormItem';
 import { AstryxFormTextInput } from './astryx-bui/astryxFormControls';
 import { Button } from '@astryxdesign/core/Button';
 import { Text } from '@astryxdesign/core/Text';
-// SHIM (MAPPING §2): the antd Form engine stays until ticket 34.
-import { Form } from 'antd';
 import { BAIFlex, BAIModal, ESMClientErrorResponse } from 'backend.ai-ui';
 import { CircleCheck } from 'lucide-react';
 import React, { useRef, useState } from 'react';

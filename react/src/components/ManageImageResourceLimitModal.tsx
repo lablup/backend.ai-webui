@@ -8,13 +8,13 @@ import {
 } from '../__generated__/ManageImageResourceLimitModalMutation.graphql';
 import { ManageImageResourceLimitModal_image$key } from '../__generated__/ManageImageResourceLimitModal_image.graphql';
 import { App } from '../app-shim';
+import { Form, type FormInstance } from '../form-engine';
 import { compareNumberWithUnits } from '../helper';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import BAIFormItem from './BAIFormItem';
 import { AstryxFormNumberInput } from './astryxFormControls';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Grid } from '@astryxdesign/core/Grid';
-import { Form, type FormInstance } from 'antd';
 import {
   BAIFlex,
   BAIModal,

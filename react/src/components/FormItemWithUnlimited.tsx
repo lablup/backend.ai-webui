@@ -2,10 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { Form } from '../form-engine';
 import BAIFormItem from './BAIFormItem';
 import type { BAIFormItemProps } from './BAIFormItem';
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
-import { Form } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import React, {
   Attributes,

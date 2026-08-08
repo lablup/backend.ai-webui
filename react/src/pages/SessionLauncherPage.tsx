@@ -35,6 +35,7 @@ import VFolderTableFormItem, {
   VFolderTableFormValues,
 } from '../components/VFolderTableFormItem';
 import BAIPopconfirmAstryx from '../components/astryx-bui/BAIPopconfirmAstryx';
+import { Form } from '../form-engine';
 import { formatDuration, convertToBinaryUnit } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import {
@@ -58,14 +59,14 @@ import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import * as stylex from '@stylexjs/stylex';
 import { useDebounceFn, useToggle } from 'ahooks';
-// FRONTIER (ticket 17 / ticket 34): the antd Form ENGINE and its Form.Item
-// controls (Checkbox/Input/InputNumber/Radio/Select/Switch inside Form.Item)
-// stay antd until the form-engine ticket. `Steps` stays antd because the
+// FRONTIER (ticket 17): the Form ENGINE moved off antd in ticket 34 — this
+// page was its primary acceptance target. The CONTROLS inside the items
+// (Checkbox/Input/InputNumber/Radio/Select/Switch) are still antd, and
+// `Steps` stays antd because the
 // Astryx Stepper lives only in `@astryxdesign/lab@canary`, which is not yet a
 // dependency of this branch (same LAB frontier as Drawer/Tour).
 import {
   Checkbox,
-  Form,
   Input,
   InputNumber,
   Radio,

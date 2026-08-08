@@ -8,14 +8,13 @@ import {
 } from '../__generated__/UpdateUsersModalBulkUpdateMutation.graphql';
 import { UpdateUsersModalFragment$key } from '../__generated__/UpdateUsersModalFragment.graphql';
 import { App } from '../app-shim';
+import { Form, FormInstance } from '../form-engine';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { theme } from '../theme-shim';
 import BAIFormItem from './BAIFormItem';
 import ProjectSelect from './ProjectSelect';
 import UserResourcePolicySelect from './UserResourcePolicySelect';
 import { AstryxFormNumberInput } from './astryx-bui/astryxFormControls';
-import { Form } from 'antd';
-import { FormInstance } from 'antd/lib';
 import {
   BAIDomainSelect,
   BAIFlex,

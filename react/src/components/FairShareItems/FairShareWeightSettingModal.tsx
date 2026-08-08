@@ -13,12 +13,12 @@ import { FairShareWeightSettingModal_ProjectFragment$key } from '../../__generat
 import { FairShareWeightSettingModal_ResourceGroupFragment$key } from '../../__generated__/FairShareWeightSettingModal_ResourceGroupFragment.graphql';
 import { FairShareWeightSettingModal_UserFragment$key } from '../../__generated__/FairShareWeightSettingModal_UserFragment.graphql';
 import { App } from '../../app-shim';
+import { Form, FormInstance } from '../../form-engine';
 import { theme } from '../../theme-shim';
 import DomainResourceGroupAlert from './DomainResourceGroupAlert';
 import ProjectResourceGroupAlert from './ProjectResourceGroupAlert';
 import UserResourceGroupAlert from './UserResourceGroupAlert';
-import { Alert, Form, Input, InputNumber, Skeleton } from 'antd';
-import { FormInstance } from 'antd/lib';
+import { Alert, Input, InputNumber, Skeleton } from 'antd';
 import {
   BAIQuestionIconWithTooltip,
   BAIBulkEditFormItem,

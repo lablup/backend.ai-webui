@@ -2,6 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+// `Form` state engine stays (SHIM); visuals are BAIFormItem.
+import { Form } from '../../form-engine';
 import BAIFormItem from '../BAIFormItem';
 import InputNumberWithSlider from '../InputNumberWithSlider';
 import BAIQuestionIconWithTooltipAstryx from '../astryx-bui/BAIQuestionIconWithTooltipAstryx';
@@ -9,8 +11,6 @@ import { DEFAULT_CHAT_PARAMETERS, type ChatParameters } from './ChatModel';
 import { Divider } from '@astryxdesign/core/Divider';
 import { Switch } from '@astryxdesign/core/Switch';
 import { Text } from '@astryxdesign/core/Text';
-// `Form` state engine stays (SHIM); visuals are BAIFormItem.
-import { Form } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import { t } from 'i18next';
 import { useRef } from 'react';

@@ -1,9 +1,10 @@
+import { Form, FormItemProps } from '../form-engine';
+import type { RuleObject, RuleRender } from '../form-engine';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
 import { useControllableValue } from 'ahooks';
-import { Form, FormItemProps, Input, Typography } from 'antd';
-import type { RuleObject, RuleRender } from 'antd/es/form';
+import { Input, Typography } from 'antd';
 import * as _ from 'lodash-es';
 import { ChevronDown } from 'lucide-react';
 import React, {

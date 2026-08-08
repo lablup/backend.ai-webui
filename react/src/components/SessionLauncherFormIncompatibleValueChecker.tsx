@@ -3,8 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { App } from '../app-shim';
+import { Form, type FormInstance } from '../form-engine';
 import { SessionLauncherFormValue } from '../pages/SessionLauncherPage';
-import { Form, type FormInstance } from 'antd';
 import * as _ from 'lodash-es';
 import React, { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';

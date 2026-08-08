@@ -2,8 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { Form } from '../form-engine';
 import AllocationHistoryStatistics from './AllocationHistoryStatistics';
-import { Alert, Form, Select, Skeleton } from 'antd';
+import { Alert, Select, Skeleton } from 'antd';
 import { useUpdatableState, BAIFlex, BAIFetchKeyButton } from 'backend.ai-ui';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { Suspense, useTransition } from 'react';

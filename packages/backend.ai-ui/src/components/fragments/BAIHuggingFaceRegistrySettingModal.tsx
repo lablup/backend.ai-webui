@@ -1,10 +1,11 @@
 import { BAIHuggingFaceRegistrySettingModalFragment$key } from '../../__generated__/BAIHuggingFaceRegistrySettingModalFragment.graphql';
 import { BAIHuggingFaceRegistrySettingModalMutation } from '../../__generated__/BAIHuggingFaceRegistrySettingModalMutation.graphql';
 import { App } from '../../app-shim';
+import { Form, FormInstance } from '../../form-engine';
 import { toLocalId } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIModal, { BAIModalProps } from '../BAIModal';
-import { Form, Input, FormInstance } from 'antd';
+import { Input } from 'antd';
 import { useRef, useState } from 'react';
 import { graphql, useFragment, useMutation } from 'react-relay';
 

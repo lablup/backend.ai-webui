@@ -3,18 +3,11 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { TOTPActivateModalFragment$key } from '../__generated__/TOTPActivateModalFragment.graphql';
+import { Form, FormInstance } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import { theme } from '../theme-shim';
-import {
-  QRCode,
-  Typography,
-  Input,
-  Form,
-  message,
-  Spin,
-  FormInstance,
-} from 'antd';
+import { QRCode, Typography, Input, message, Spin } from 'antd';
 import { BAIModal, BAIModalProps, BAIFlex } from 'backend.ai-ui';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';

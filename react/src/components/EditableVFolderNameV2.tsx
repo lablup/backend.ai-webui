@@ -5,8 +5,8 @@
  Ticket 16 — rebuilt on Astryx. antd `Typography.Text/Title editable` is
  verdict NONE in MAPPING.md §3.4 (`editable` ×2 → self-build), so the edit
  affordance is hand-rolled: display text (Astryx `Text`/`Heading`) plus a
- pencil `IconButton`, switching to the antd Form engine (SHIM) with an Astryx
- `TextInput` while editing.
+ pencil `IconButton`, switching to the form engine (self-hosted since
+ ticket 34) with an Astryx `TextInput` while editing.
 
  PILOT-DECISIONs:
  - The antd `editable` config object (`triggerType`, custom icons) collapses
@@ -22,6 +22,8 @@
 import { EditableVFolderNameV2Fragment$key } from '../__generated__/EditableVFolderNameV2Fragment.graphql';
 import { EditableVFolderNameV2RefetchQuery } from '../__generated__/EditableVFolderNameV2RefetchQuery.graphql';
 import { App } from '../app-shim';
+// Ticket 34: `Form` is the self-hosted engine; `Form.Item` IS BAIFormItem.
+import { Form } from '../form-engine';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
@@ -34,8 +36,6 @@ import { IconButton } from '@astryxdesign/core/IconButton';
 import { Link } from '@astryxdesign/core/Link';
 import { HStack } from '@astryxdesign/core/Stack';
 import { Heading, Text } from '@astryxdesign/core/Text';
-// `Form` (the state engine) stays antd, per the locked ticket-05 decision.
-import { Form } from 'antd';
 import { toLocalId, useErrorMessageResolver } from 'backend.ai-ui';
 import { PencilIcon } from 'lucide-react';
 import React, { useState } from 'react';

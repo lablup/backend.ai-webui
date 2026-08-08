@@ -53,23 +53,19 @@ export const getCardItemByCardTitle = (page: Page, title: string) => {
 };
 
 /**
- * Dual-mode: some callers target pages that adopted `BAIFormItem`
- * (`data-bai-form-item`, e.g. `FolderCreateModalV2`'s "Location" field) and
- * some still target raw antd `Form.Item` (`.ant-form-item-row`, e.g.
- * `AutoScalingRuleEditorModal`'s "Metric Source" — not yet migrated as of
- * to-astryx ticket 31). The combined selector matches whichever DOM shape
- * the target page renders; see `BAIFormItem.tsx` for the new attribute set.
+ * Ticket 31 made this dual-mode because some pages still rendered a raw antd
+ * `Form.Item` (`.ant-form-item-row`) while others had adopted `BAIFormItem`.
+ * Ticket 34 ended that split: `Form.Item` IS `BAIFormItem` now, the form
+ * engine is self-hosted, and no screen renders antd's form DOM — so the antd
+ * half of each selector could never match again and is gone.
+ *
+ * Attribute set: `packages/backend.ai-ui/src/form-engine/FormItemVisual.tsx`.
  */
 export const getFormItemControlByLabel = (page: Page, label: string) => {
   return page
-    .locator('.ant-form-item-row, [data-bai-form-item]')
+    .locator('[data-bai-form-item]')
     .filter({
-      has: page.locator(
-        '.ant-form-item-label label, [data-bai-form-item-label]',
-        { hasText: label },
-      ),
+      has: page.locator('[data-bai-form-item-label]', { hasText: label }),
     })
-    .locator(
-      '.ant-form-item-control-input, [data-bai-form-item-control-input]',
-    );
+    .locator('[data-bai-form-item-control-input]');
 };

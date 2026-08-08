@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { Form } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import {
   RuntimeVariantPresetDef,
@@ -14,7 +15,6 @@ import InputNumberWithSlider from './InputNumberWithSlider';
 import {
   Checkbox,
   Collapse,
-  Form,
   InputNumber,
   Select,
   Input,

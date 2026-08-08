@@ -16,6 +16,16 @@
 // to-astryx ticket 04: this screen's `App.useApp()` is served by the Astryx
 // app-shim (message → Toast, modal.confirm → AlertDialog) instead of antd.
 import { App } from '../app-shim';
+// SHIM (MAPPING §2): the antd Form ENGINE stays until ticket 34. Everything
+// else antd used to supply here is gone:
+//   - `App as AntdApp` — the ticket-11 survivor, kept because SignupModal
+//     still read antd's App context. SignupModal is Astryx now (its
+//     `App.useApp()` is the app-shim), so the nested provider goes.
+//   - `ConfigProvider` — it existed ONLY to raise antd Message's
+//     `zIndexPopup` above the block panel. This screen's `App.useApp()` is
+//     served by the Astryx app-shim (see the header comment), so no antd
+//     Message is rendered here at all and the override was already dead.
+import { Form } from '../form-engine';
 import {
   devApiEndpointOverride,
   devEmailOverride,
@@ -48,16 +58,6 @@ import LoginFormPanel from './LoginFormPanel';
 // children in this subtree (e.g. SignupModal) still read antd's context.
 import { Button } from '@astryxdesign/core/Button';
 import type { DropdownMenuOption } from '@astryxdesign/core/DropdownMenu';
-// SHIM (MAPPING §2): the antd Form ENGINE stays until ticket 34. Everything
-// else antd used to supply here is gone:
-//   - `App as AntdApp` — the ticket-11 survivor, kept because SignupModal
-//     still read antd's App context. SignupModal is Astryx now (its
-//     `App.useApp()` is the app-shim), so the nested provider goes.
-//   - `ConfigProvider` — it existed ONLY to raise antd Message's
-//     `zIndexPopup` above the block panel. This screen's `App.useApp()` is
-//     served by the Astryx app-shim (see the header comment), so no antd
-//     Message is rendered here at all and the override was already dead.
-import { Form } from 'antd';
 import { BAIModal, useBAILogger } from 'backend.ai-ui';
 import i18n from 'i18next';
 import { useAtomValue, useSetAtom } from 'jotai';

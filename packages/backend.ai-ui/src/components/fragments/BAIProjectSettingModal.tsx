@@ -14,13 +14,14 @@ import { BAIProjectSettingModalFragment$key } from '../../__generated__/BAIProje
 import { BAIProjectSettingModalModifyMutation } from '../../__generated__/BAIProjectSettingModalModifyMutation.graphql';
 import { BAIProjectSettingModalQuery } from '../../__generated__/BAIProjectSettingModalQuery.graphql';
 import { App } from '../../app-shim';
+import { Form, FormInstance } from '../../form-engine';
 import { convertToBinaryUnit } from '../../helper';
 import { useErrorMessageResolver } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { theme } from '../../theme-shim';
 import BAIModal, { BAIModalProps } from '../BAIModal';
 import { useBAIResourceSlots } from '../provider';
-import { Checkbox, Form, FormInstance, Input, InputNumber } from 'antd';
+import { Checkbox, Input, InputNumber } from 'antd';
 import * as _ from 'lodash-es';
 import { useDeferredValue, useRef } from 'react';
 import {

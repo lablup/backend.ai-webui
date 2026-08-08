@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { App } from '../app-shim';
+import { Form, FormInstance } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import BAIFormItem from './BAIFormItem';
 import { SchedulerType } from './ConfigurationsSettingList';
@@ -12,8 +13,6 @@ import {
   AstryxFormSelector,
 } from './astryx-bui/astryxFormControls';
 import { Text } from '@astryxdesign/core/Text';
-import { Form } from 'antd';
-import { FormInstance } from 'antd/lib';
 import {
   BAIQuestionIconWithTooltip,
   BAIModal,

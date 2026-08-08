@@ -13,6 +13,7 @@ import {
   UserStatusV2,
 } from '../__generated__/UserSettingModalBulkCreateMutation.graphql';
 import { App } from '../app-shim';
+import { Form } from '../form-engine';
 import {
   buildDynamicColumnAliases,
   CanonicalUserColumn,
@@ -47,7 +48,7 @@ import { Switch } from '@astryxdesign/core/Switch';
 import { Text } from '@astryxdesign/core/Text';
 // Raw antd Table/Tooltip/Typography — kept for the CSV preview grid. See the
 // frontier comment above the "Cell renderer helpers" section for why.
-import { Form, Table, Tooltip, Typography } from 'antd';
+import { Table, Tooltip, Typography } from 'antd';
 import {
   BAIAlert,
   BAIButton,

@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ResourceAllocationFormItemsQuery } from '../../__generated__/ResourceAllocationFormItemsQuery.graphql';
+import { Form } from '../../form-engine';
 import {
   addNumberWithUnits,
   compareNumberWithUnits,
@@ -30,11 +31,11 @@ import InputNumberWithSlider from '../InputNumberWithSlider';
 import ResourcePresetSelect from '../ResourcePresetSelect';
 import RemainingMark from './RemainingMark';
 import SharedMemoryFormItems from './SharedMemoryFormItems';
-// FRONTIER (ticket 17 / ticket 34): this module is the launcher's form-visual
-// core (Form engine + Form.Item controls + tightly coupled chrome). It stays
-// antd until the form-engine ticket rebuilds the form surface; recorded as
-// the explicit form-visual remainder of the Sessions page-group migration.
-import { Button, Card, Col, Form, Radio, Row, Tooltip } from 'antd';
+// FRONTIER (ticket 17): the launcher's form-visual core. The Form engine and
+// Form.Item are self-hosted since ticket 34; the CONTROLS and chrome below
+// (Button / Card / Col / Radio / Row / Tooltip) are the remaining antd
+// surface of the Sessions page-group migration.
+import { Button, Card, Col, Radio, Row, Tooltip } from 'antd';
 import {
   BAIFlex,
   useEventNotStable,

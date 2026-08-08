@@ -5,12 +5,13 @@
 import type { ModelCardDeployModalFragment$key } from '../__generated__/ModelCardDeployModalFragment.graphql';
 import { ModelCardDeployModalMutation } from '../__generated__/ModelCardDeployModalMutation.graphql';
 import { App } from '../app-shim';
+import { Form } from '../form-engine';
 import { useWebUINavigate } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { theme } from '../theme-shim';
 import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
-import { Alert, Button, Form, Space, Tooltip } from 'antd';
+import { Alert, Button, Space, Tooltip } from 'antd';
 import {
   BAIAvailablePresetSelect,
   BAIFlex,

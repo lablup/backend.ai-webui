@@ -10,6 +10,9 @@ import {
   FolderCreateModalV2ProjectMutation,
   FolderCreateModalV2ProjectMutation$data,
 } from '../__generated__/FolderCreateModalV2ProjectMutation.graphql';
+// `Form` and `Form.Item` both come from the self-hosted engine since
+// ticket 34; `Form.Item` IS `BAIFormItem` (visual shell + engine binding).
+import { Form, FormInstance } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
@@ -34,10 +37,6 @@ import { Button } from '@astryxdesign/core/Button';
 import { Skeleton } from '@astryxdesign/core/Skeleton';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
-// `Form` (the state engine) stays antd, per the locked ticket-05 decision.
-// Only `Form.Item`'s VISUAL layer moves, to `BAIFormItem`.
-import { Form } from 'antd';
-import { FormInstance } from 'antd/lib';
 import {
   toLocalId,
   useBAILogger,
