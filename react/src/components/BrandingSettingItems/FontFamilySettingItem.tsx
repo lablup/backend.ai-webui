@@ -3,6 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useDefaultTheme } from '../../hooks/useDefaultTheme';
+// FRONTIER (astryx/22): theme-ALGORITHM producer, skip-listed since ticket 09
+// (`getDesignToken` reads the real antd default palette as a fallback). No
+// other antd import/render lives in this file — its only "chrome" is
+// `BAIUncontrolledInput`, a BUI frontier component (tickets 25/30).
 import { theme } from 'antd';
 import { BAIUncontrolledInput } from 'backend.ai-ui';
 

@@ -7,8 +7,9 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import OverlayNetworkSettingModal from './OverlayNetworkSettingModal';
 import SchedulerSettingModal from './SchedulerSettingModal';
 import SettingList, { SettingGroup } from './SettingList';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Button } from '@astryxdesign/core/Button';
 import { useToggle } from 'ahooks';
-import { Alert, Button } from 'antd';
 import { Settings } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -176,10 +177,9 @@ const ConfigurationsSettingList = () => {
           children: (
             <Button
               icon={<Settings size="1em" />}
+              label={t('settings.Config')}
               onClick={toggleOverlayNetworkModal}
-            >
-              {t('settings.Config')}
-            </Button>
+            />
           ),
           showResetButton: false,
         },
@@ -190,10 +190,9 @@ const ConfigurationsSettingList = () => {
           children: (
             <Button
               icon={<Settings size="1em" />}
+              label={t('settings.Config')}
               onClick={toggleSchedulerModal}
-            >
-              {t('settings.Config')}
-            </Button>
+            />
           ),
           showResetButton: false,
         },
@@ -203,7 +202,7 @@ const ConfigurationsSettingList = () => {
       'data-testid': 'settings-plugins',
       title: t('settings.Plugins'),
       description: (
-        <Alert title={t('settings.NoteAboutFixedSetup')} type="info" showIcon />
+        <Banner title={t('settings.NoteAboutFixedSetup')} status="info" />
       ),
       settingItems: [
         {
@@ -242,7 +241,7 @@ const ConfigurationsSettingList = () => {
       'data-testid': 'settings-enterprise',
       title: t('settings.EnterpriseFeatures'),
       description: (
-        <Alert title={t('settings.NoteAboutFixedSetup')} type="info" showIcon />
+        <Banner title={t('settings.NoteAboutFixedSetup')} status="info" />
       ),
       settingItems: [
         {

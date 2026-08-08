@@ -18,9 +18,13 @@ import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOption
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { theme } from '../theme-shim';
 import BAIRadioGroup from './BAIRadioGroup';
-import { Alert, Empty, Popconfirm, Tooltip } from 'antd';
+import BAIPopconfirmAstryx from './astryx-bui/BAIPopconfirmAstryx';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Button } from '@astryxdesign/core/Button';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
-  BAIButton,
   BAIDeleteConfirmModal,
   BAIFetchKeyButton,
   BAIFlex,
@@ -362,9 +366,8 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
       >
         <BAIFlex direction="column" align="stretch" gap="sm">
           {mainAccessKey && (
-            <Alert
-              type="info"
-              showIcon
+            <Banner
+              status="info"
               icon={
                 <KeyRoundIcon
                   style={{ width: token.fontSizeLG, height: token.fontSizeLG }}
@@ -437,13 +440,12 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                   updateFetchKey(newFetchKey);
                 }}
               />
-              <BAIButton
-                type="primary"
-                icon={<PlusIcon />}
+              <Button
+                variant="primary"
+                icon={<PlusIcon size="1em" />}
+                label={t('credential.IssueNewKeypair')}
                 onClick={handleIssueKeypair}
-              >
-                {t('credential.IssueNewKeypair')}
-              </BAIButton>
+              />
             </BAIFlex>
           </BAIFlex>
           <BAITable<KeypairNode>
@@ -472,10 +474,24 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                       {value}
                     </BAIText>
                     {value === mainAccessKey && (
-                      <Tooltip title={t('credential.MainAccessKey')}>
-                        <KeyRoundIcon
-                          style={{ color: token.colorTextSecondary }}
-                        />
+                      // Astryx `Tooltip` anchors to an interactive child (see
+                      // `BAIQuestionIconWithTooltipAstryx`) — this decorative
+                      // status icon gets the same unstyled-button wrapper.
+                      <Tooltip content={t('credential.MainAccessKey')}>
+                        <button
+                          type="button"
+                          aria-label={t('credential.MainAccessKey')}
+                          style={{
+                            all: 'unset',
+                            cursor: 'default',
+                            display: 'inline-flex',
+                          }}
+                        >
+                          <KeyRoundIcon
+                            size="1em"
+                            style={{ color: token.colorTextSecondary }}
+                          />
+                        </button>
                       </Tooltip>
                     )}
                   </BAIFlex>
@@ -491,96 +507,96 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                     return (
                       <BAIFlex gap="xxs">
                         {!isMain && (
-                          <Popconfirm
+                          <BAIPopconfirmAstryx
                             title={t('credential.SetAsMain')}
                             description={t('credential.SetAsMainConfirm')}
                             okText={t('button.Confirm')}
                             cancelText={t('button.Cancel')}
-                            placement="left"
+                            placement="start"
                             onConfirm={() =>
                               handleSwitchMainKey(record.accessKey ?? '')
                             }
                           >
-                            <Tooltip title={t('credential.SetAsMain')}>
-                              <BAIButton
-                                type="text"
-                                icon={<KeyRoundIcon />}
-                                size="small"
-                                style={{ color: token.colorInfo }}
-                              />
-                            </Tooltip>
-                          </Popconfirm>
+                            {/* PILOT-DECISION: antd's `color: token.colorInfo`
+                                icon tint has no ghost-`IconButton` colour
+                                escape hatch (P5, closed variant enum) —
+                                dropped, default ghost styling. */}
+                            <IconButton
+                              icon={<KeyRoundIcon size="1em" />}
+                              label={t('credential.SetAsMain')}
+                              tooltip={t('credential.SetAsMain')}
+                              variant="ghost"
+                              size="sm"
+                            />
+                          </BAIPopconfirmAstryx>
                         )}
                         {isMain ? (
-                          <Tooltip
-                            title={t('credential.MainKeyCannotDeactivate')}
-                          >
-                            <BAIButton
-                              type="text"
-                              danger
-                              icon={<BanIcon />}
-                              size="small"
-                              disabled
-                            />
-                          </Tooltip>
+                          // PILOT-DECISION (P18, ticket-18 precedent): antd's
+                          // `Tooltip` wrapping a `disabled` icon button has no
+                          // Astryx destination — `IconButton` has no
+                          // `disabledMessage`. The hover explanation is
+                          // dropped; the disabled state itself is preserved.
+                          <IconButton
+                            icon={<BanIcon size="1em" />}
+                            label={t('credential.MainKeyCannotDeactivate')}
+                            variant="destructive"
+                            size="sm"
+                            isDisabled
+                          />
                         ) : (
-                          <Popconfirm
+                          <BAIPopconfirmAstryx
                             title={t('credential.Deactivate')}
                             description={t('credential.DeactivateConfirm')}
                             okText={t('button.Confirm')}
-                            okType="danger"
+                            isDanger
                             cancelText={t('button.Cancel')}
-                            placement="left"
+                            placement="start"
                             onConfirm={() =>
                               handleDeactivateKeypair(record.accessKey ?? '')
                             }
                           >
-                            <Tooltip title={t('credential.Deactivate')}>
-                              <BAIButton
-                                type="text"
-                                danger
-                                icon={<BanIcon />}
-                                size="small"
-                              />
-                            </Tooltip>
-                          </Popconfirm>
+                            <IconButton
+                              icon={<BanIcon size="1em" />}
+                              label={t('credential.Deactivate')}
+                              tooltip={t('credential.Deactivate')}
+                              variant="destructive"
+                              size="sm"
+                            />
+                          </BAIPopconfirmAstryx>
                         )}
                       </BAIFlex>
                     );
                   }
                   return (
                     <BAIFlex gap="xxs">
-                      <Popconfirm
+                      <BAIPopconfirmAstryx
                         title={t('credential.Restore')}
                         description={t('credential.RestoreConfirm')}
                         okText={t('button.Confirm')}
                         cancelText={t('button.Cancel')}
-                        placement="left"
+                        placement="start"
                         onConfirm={() =>
                           handleActivateKeypair(record.accessKey ?? '')
                         }
                       >
-                        <Tooltip title={t('credential.Restore')}>
-                          <BAIButton
-                            type="text"
-                            icon={<UndoIcon />}
-                            size="small"
-                          />
-                        </Tooltip>
-                      </Popconfirm>
-                      <Tooltip title={t('credential.DeleteKeypair')}>
-                        <BAIButton
-                          type="text"
-                          danger
-                          icon={<Trash2Icon />}
-                          size="small"
-                          onClick={() =>
-                            setDeletingKeypairAccessKey(
-                              record.accessKey ?? null,
-                            )
-                          }
+                        <IconButton
+                          icon={<UndoIcon size="1em" />}
+                          label={t('credential.Restore')}
+                          tooltip={t('credential.Restore')}
+                          variant="ghost"
+                          size="sm"
                         />
-                      </Tooltip>
+                      </BAIPopconfirmAstryx>
+                      <IconButton
+                        icon={<Trash2Icon size="1em" />}
+                        label={t('credential.DeleteKeypair')}
+                        tooltip={t('credential.DeleteKeypair')}
+                        variant="destructive"
+                        size="sm"
+                        onClick={() =>
+                          setDeletingKeypairAccessKey(record.accessKey ?? null)
+                        }
+                      />
                     </BAIFlex>
                   );
                 },
@@ -619,13 +635,13 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
             showSorterTooltip={false}
             locale={{
               emptyText: (
-                <Empty
-                  image={Empty.PRESENTED_IMAGE_SIMPLE}
-                  description={
+                <EmptyState
+                  title={
                     deferredActiveFilter === 'active'
                       ? t('credential.NoActiveKeypairs')
                       : t('credential.NoInactiveKeypairs')
                   }
+                  isCompact
                 />
               ),
             }}
@@ -649,24 +665,22 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
         width={640}
         footer={
           <BAIFlex justify="end">
-            <BAIButton
-              type="primary"
-              icon={<DownloadIcon />}
+            <Button
+              variant="primary"
+              icon={<DownloadIcon size="1em" />}
+              label={t('credential.DownloadCSV')}
               onClick={() => {
                 if (credentialResult) {
                   downloadCredentialCSV(credentialResult);
                 }
               }}
-            >
-              {t('credential.DownloadCSV')}
-            </BAIButton>
+            />
           </BAIFlex>
         }
       >
         <BAIFlex direction="column" gap="sm">
-          <Alert
-            type="warning"
-            showIcon
+          <Banner
+            status="warning"
             icon={
               <TriangleAlertIcon
                 style={{ width: token.fontSizeLG, height: token.fontSizeLG }}

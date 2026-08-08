@@ -7,8 +7,13 @@ import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting'
 import { theme } from '../theme-shim';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import TextHighlighter from './TextHighlighter';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Button } from '@astryxdesign/core/Button';
+import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Text } from '@astryxdesign/core/Text';
+import { TextInput } from '@astryxdesign/core/TextInput';
 import { useToggle } from 'ahooks';
-import { Button, Typography, Alert, Checkbox, Input } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import {
   BAIFlex,
@@ -207,7 +212,7 @@ const ErrorLogList: React.FC<{
   return (
     <BAIFlex direction="column" align="stretch" gap={'xs'}>
       <BAIFlex direction="row" justify="between" wrap="wrap" gap={'xs'}>
-        <Typography.Text>{t('logs.UpTo3000Logs')}</Typography.Text>
+        <Text>{t('logs.UpTo3000Logs')}</Text>
         <BAIFlex
           direction="row"
           gap={'xs'}
@@ -215,42 +220,41 @@ const ErrorLogList: React.FC<{
           style={{ flexShrink: 1 }}
         >
           <BAIFlex gap={'xs'}>
-            <Input
-              allowClear
-              prefix={<Search size="1em" />}
+            <TextInput
+              label={t('logs.SearchLogs')}
+              isLabelHidden
+              hasClear
+              startIcon={Search}
               placeholder={t('logs.SearchLogs')}
-              onChange={(e) => {
-                startSearchTransition(() => setLogSearch(e.target.value));
+              value={logSearch}
+              onChange={(value) => {
+                startSearchTransition(() => setLogSearch(value));
               }}
-              style={{
-                width: 200,
-              }}
+              width={200}
             />
-            <Checkbox
-              onChange={(e) => setCheckedShowOnlyError(e.target.checked)}
-            >
-              {t('logs.ShowOnlyError')}
-            </Checkbox>
+            <CheckboxInput
+              label={t('logs.ShowOnlyError')}
+              value={checkedShowOnlyError}
+              onChange={(checked) => setCheckedShowOnlyError(checked)}
+            />
           </BAIFlex>
           <BAIFlex gap={'xs'}>
             <Button
               icon={<RotateCw size="1em" />}
-              loading={isPendingRefreshTransition}
+              isLoading={isPendingRefreshTransition}
+              label={t('button.Refresh')}
               onClick={() => {
                 startRefreshTransition(() => checkUpdateKey());
               }}
-            >
-              {t('button.Refresh')}
-            </Button>
+            />
             <Button
-              danger
+              variant="destructive"
               icon={<Trash2 size="1em" />}
+              label={t('button.ClearLogs')}
               onClick={() => {
                 setIsOpenClearLogsModal(true);
               }}
-            >
-              {t('button.ClearLogs')}
-            </Button>
+            />
           </BAIFlex>
         </BAIFlex>
       </BAIFlex>
@@ -299,9 +303,11 @@ const ErrorLogList: React.FC<{
           paddingBottom: token.paddingXS,
         }}
       >
-        <Button
-          type="text"
+        <IconButton
           icon={<Settings size="1em" />}
+          label={t('logs.ColumnSettings', 'Column settings')}
+          tooltip={t('logs.ColumnSettings', 'Column settings')}
+          variant="ghost"
           onClick={() => {
             toggleColumnSettingModal();
           }}
@@ -323,7 +329,7 @@ const ErrorLogList: React.FC<{
         cancelText={t('button.Cancel')}
         onCancel={() => setIsOpenClearLogsModal(false)}
       >
-        <Alert title={t('dialog.warning.CannotBeUndone')} type="warning" />
+        <Banner status="warning" title={t('dialog.warning.CannotBeUndone')} />
       </BAIModal>
       <BAIUnmountAfterClose>
         <TableColumnsSettingModal

@@ -2,27 +2,22 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { theme } from '../theme-shim';
+import BAITabs from './BAITabs';
 import SettingItem, { SettingItemProps } from './SettingItem';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Banner } from '@astryxdesign/core/Banner';
+import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
+import { Divider } from '@astryxdesign/core/Divider';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { Heading } from '@astryxdesign/core/Heading';
+import { Text } from '@astryxdesign/core/Text';
+import { TextInput } from '@astryxdesign/core/TextInput';
 import { useToggle } from 'ahooks';
-import { Alert, Checkbox, Divider, Empty, Input, Tabs, Typography } from 'antd';
-import { createStyles } from 'antd-style';
 import { BAIModal, BAIFlex, BAIButton } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Redo2, Search } from 'lucide-react';
 import React, { useState, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-
-const useStyles = createStyles(({ css }) => ({
-  TabStyles: css`
-    .ant-tabs-tab-active {
-      font-weight: 700;
-    }
-    .ant-typography-secondary {
-      font-weight: normal !important;
-    }
-  `,
-}));
 
 export type SettingGroup = {
   'data-testid': string;
@@ -35,7 +30,14 @@ export type SettingGroup = {
 
 interface SettingPageProps {
   settingGroups: Array<SettingGroup>;
-  tabDirection?: 'top' | 'left';
+  // PILOT-DECISION: dropped `tabDirection`. antd's `tabPlacement="start"`
+  // (the default, `tabDirection='left'`) genuinely rendered a vertical
+  // left-rail tab list (verified against the pre-conversion render — see
+  // `.scratch/astryx-migration/shots/22/before-settingList-*.png`) —
+  // Astryx `TabList` (wrapped by `BAITabs`) has no vertical/side-placement
+  // orientation at all (core 0.3.0, checked via `astryx component TabList`),
+  // so this is a genuine layout capability gap, not a no-op cleanup.
+  // Collapsed to Astryx's only supported layout: horizontal tabs at top.
   showChangedOptionFilter?: boolean;
   showResetButton?: boolean;
   showSearchBar?: boolean;
@@ -44,66 +46,25 @@ interface SettingPageProps {
   onReset?: () => void;
 }
 
-const TabTitle: React.FC<{
-  title: string;
-  count: number;
-}> = ({ title, count }) => {
-  return (
-    <>
-      <Typography.Text>{title}</Typography.Text>
-      <Typography.Text type="secondary">{` (${count})`}</Typography.Text>
-    </>
-  );
-};
-
 const GroupSettingItems: React.FC<
   {
     group: SettingGroup;
     hideEmpty?: boolean;
   } & React.HTMLAttributes<HTMLDivElement>
 > = ({ group, hideEmpty = true, ...props }) => {
-  const { token } = theme.useToken();
-
   if (hideEmpty && group.settingItems.length === 0) return false;
   return (
-    <BAIFlex
-      direction="column"
-      align="stretch"
-      style={{
-        marginBottom: token.marginMD,
-      }}
-      {...props}
-    >
-      <BAIFlex
-        direction="column"
-        align="stretch"
-        style={{
-          zIndex: 1,
-          marginBottom: token.marginMD,
-          background: token.colorBgContainer,
-        }}
-      >
+    <BAIFlex direction="column" align="stretch" gap="md" {...props}>
+      <BAIFlex direction="column" align="stretch" gap="xs">
         <BAIFlex align="start" justify="between">
           <BAIFlex gap="sm" align="start">
-            <Typography.Title
-              level={5}
-              style={{
-                marginTop: 0,
-              }}
-            >
-              {group.title}
-            </Typography.Title>
+            <Heading level={5}>{group.title}</Heading>
             {group.titleExtra && <div>{group.titleExtra}</div>}
           </BAIFlex>
         </BAIFlex>
-        <Divider style={{ marginTop: 0, marginBottom: 0 }} />
+        <Divider />
         {group.description && (
-          <Typography.Text
-            type="secondary"
-            style={{ marginTop: token.marginSM }}
-          >
-            {group.description}
-          </Typography.Text>
+          <Text color="secondary">{group.description}</Text>
         )}
       </BAIFlex>
       <BAIFlex direction="column" align="stretch" gap={'lg'}>
@@ -118,7 +79,6 @@ const GroupSettingItems: React.FC<
 
 const SettingList: React.FC<SettingPageProps> = ({
   settingGroups,
-  tabDirection = 'left',
   showChangedOptionFilter,
   showResetButton,
   showSearchBar,
@@ -129,7 +89,6 @@ const SettingList: React.FC<SettingPageProps> = ({
   'use memo';
 
   const { t } = useTranslation();
-  const { styles } = useStyles();
   const [searchValue, setSearchValue] = useState('');
   const [changedOptionFilter, setChangedOptionFilter] = useState(false);
   const [isOpenResetChangesModal, { toggle: setIsOpenResetChangesModal }] =
@@ -166,25 +125,31 @@ const SettingList: React.FC<SettingPageProps> = ({
     };
   });
 
+  const totalItemCount = _.sumBy(
+    filteredSettingGroups,
+    (group) => group.settingItems.length,
+  );
+
   return (
     <>
       <BAIFlex direction="column" gap={'md'} align="stretch">
         <BAIFlex justify="start" gap={'xs'}>
           {!!showSearchBar && (
-            <Input
-              prefix={<Search size="1em" />}
+            <TextInput
+              label={t('settings.SearchPlaceholder')}
+              isLabelHidden
+              startIcon={Search}
               placeholder={t('settings.SearchPlaceholder')}
-              onChange={(e) => setSearchValue(e.target.value)}
+              onChange={(nextValue) => setSearchValue(nextValue)}
               value={searchValue}
             />
           )}
           {!!showChangedOptionFilter && (
-            <Checkbox
-              onChange={(e) => setChangedOptionFilter(e.target.checked)}
-              style={{ whiteSpace: 'nowrap' }}
-            >
-              {t('settings.ShowOnlyChanged')}
-            </Checkbox>
+            <CheckboxInput
+              label={t('settings.ShowOnlyChanged')}
+              value={changedOptionFilter}
+              onChange={(checked) => setChangedOptionFilter(checked)}
+            />
           )}
           {extraButton}
           {!!showResetButton && (
@@ -198,76 +163,50 @@ const SettingList: React.FC<SettingPageProps> = ({
           )}
           {primaryButton}
         </BAIFlex>
-        <Tabs
+        <BAITabs
           activeKey={activeTabKey}
           onChange={setActiveTabKey}
-          className={styles.TabStyles}
-          tabPlacement={tabDirection ? 'start' : 'top'}
-          tabBarStyle={{ minWidth: 200 }}
           items={[
             {
               key: 'all',
-              label: (
-                <TabTitle
-                  title={t('general.All')}
-                  count={_.sumBy(
-                    filteredSettingGroups,
-                    (group) => group.settingItems.length,
-                  )}
-                />
-              ),
-              children: (
-                <BAIFlex direction="column" align="stretch" gap={'xl'}>
-                  {_.sumBy(
-                    filteredSettingGroups,
-                    (group) => group.settingItems.length,
-                  ) > 0 ? (
-                    _.map(filteredSettingGroups, (group) => (
+              label: t('general.All'),
+              endContent: <Badge label={totalItemCount} variant="neutral" />,
+              children:
+                totalItemCount > 0 ? (
+                  <BAIFlex direction="column" align="stretch" gap={'xl'}>
+                    {_.map(filteredSettingGroups, (group) => (
                       <GroupSettingItems
                         data-testid={group?.['data-testid']}
                         key={group.title}
                         group={group}
                         hideEmpty
-                        onReset={() => {
-                          setIsOpenResetChangesModal();
-                        }}
                       />
-                    ))
-                  ) : (
-                    <Empty
-                      image={Empty.PRESENTED_IMAGE_SIMPLE}
-                      description={t('settings.NoChangesToDisplay')}
-                    />
-                  )}
-                </BAIFlex>
-              ),
+                    ))}
+                  </BAIFlex>
+                ) : (
+                  <EmptyState
+                    title={t('settings.NoChangesToDisplay')}
+                    isCompact
+                  />
+                ),
             },
             ..._.map(filteredSettingGroups, (group, idx) => ({
               key: `index${idx}`,
-              label: (
-                <TabTitle
-                  title={group.title}
-                  count={group.settingItems.length}
-                />
+              label: group.title,
+              endContent: (
+                <Badge label={group.settingItems.length} variant="neutral" />
               ),
-              children: (
-                <BAIFlex direction="column" align="stretch" gap={'xl'}>
-                  {group.settingItems.length > 0 ? (
-                    <GroupSettingItems
-                      group={group}
-                      hideEmpty
-                      onReset={() => {
-                        setIsOpenResetChangesModal();
-                      }}
-                    />
-                  ) : (
-                    <Empty
-                      image={Empty.PRESENTED_IMAGE_SIMPLE}
-                      description={t('settings.NoChangesToDisplay')}
-                    />
-                  )}
-                </BAIFlex>
-              ),
+              children:
+                group.settingItems.length > 0 ? (
+                  <BAIFlex direction="column" align="stretch" gap={'xl'}>
+                    <GroupSettingItems group={group} hideEmpty />
+                  </BAIFlex>
+                ) : (
+                  <EmptyState
+                    title={t('settings.NoChangesToDisplay')}
+                    isCompact
+                  />
+                ),
             })),
           ]}
         />
@@ -284,11 +223,7 @@ const SettingList: React.FC<SettingPageProps> = ({
         cancelText={t('button.Cancel')}
         onCancel={() => setIsOpenResetChangesModal()}
       >
-        <Alert
-          showIcon
-          title={t('dialog.warning.CannotBeUndone')}
-          type="warning"
-        />
+        <Banner status="warning" title={t('dialog.warning.CannotBeUndone')} />
       </BAIModal>
     </>
   );

@@ -7,12 +7,16 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import { announcementQueryOptions } from '../hooks/useSuspenseGetAnnouncement';
 import { theme } from '../theme-shim';
+import './AnnouncementEditModal.css';
 import BAICodeEditor from './BAICodeEditor';
 import { SyntaxHighlighter } from './Chat/SyntaxHighlighter';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
+import { Button } from '@astryxdesign/core/Button';
+import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Text } from '@astryxdesign/core/Text';
 import type { OnMount } from '@monaco-editor/react';
 import { useQueryClient } from '@tanstack/react-query';
-import { Button, Dropdown, Skeleton, Tooltip, Typography } from 'antd';
-import { createStyles } from 'antd-style';
 import {
   BAIModal,
   BAIModalProps,
@@ -43,151 +47,6 @@ import remarkMath from 'remark-math';
 type MonacoEditorInstance = Parameters<OnMount>[0];
 type MonacoNamespace = Parameters<OnMount>[1];
 
-const useStyles = createStyles(({ css, token }) => ({
-  // velog-style reading typography for the live preview: comfortable line
-  // height, bordered headings, accented blockquotes, GitHub-flavored tables.
-  markdownPreview: css`
-    color: ${token.colorText};
-    font-size: ${token.fontSize}px;
-    line-height: 1.7;
-    word-break: break-word;
-
-    & > *:first-child {
-      margin-top: 0;
-    }
-    & > *:last-child {
-      margin-bottom: 0;
-    }
-
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-      margin: 1.5em 0 0.75em;
-      font-weight: ${token.fontWeightStrong};
-      line-height: 1.4;
-    }
-    h1 {
-      font-size: 1.9em;
-      padding-bottom: 0.3em;
-      border-bottom: 1px solid ${token.colorBorderSecondary};
-    }
-    h2 {
-      font-size: 1.5em;
-      padding-bottom: 0.3em;
-      border-bottom: 1px solid ${token.colorBorderSecondary};
-    }
-    h3 {
-      font-size: 1.25em;
-    }
-    h4 {
-      font-size: 1em;
-    }
-
-    p {
-      margin: 0 0 1em;
-    }
-
-    a {
-      color: ${token.colorLink};
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-
-    img {
-      max-width: 100%;
-      border-radius: ${token.borderRadius}px;
-    }
-
-    /* Restore list markers: the global reset in resources/webui.css sets
-       \`ul { list-style-type: none }\`, which otherwise hides bullets here. */
-    ul,
-    ol {
-      margin: 0 0 1em;
-      padding-left: 1.6em;
-    }
-    ul {
-      list-style: disc;
-    }
-    ul ul {
-      list-style: circle;
-    }
-    ol {
-      list-style: decimal;
-    }
-    li {
-      margin: 0.25em 0;
-    }
-    li > p {
-      margin: 0;
-    }
-    li > input[type='checkbox'] {
-      margin-right: 0.4em;
-    }
-
-    blockquote {
-      margin: 0 0 1em;
-      padding: 0.4em 1em;
-      color: ${token.colorTextSecondary};
-      border-left: 4px solid ${token.colorPrimary};
-      background: ${token.colorFillQuaternary};
-      border-radius: ${token.borderRadiusSM}px;
-    }
-    blockquote > *:last-child {
-      margin-bottom: 0;
-    }
-
-    hr {
-      margin: 1.5em 0;
-      border: none;
-      border-top: 1px solid ${token.colorBorderSecondary};
-    }
-
-    /* Inline code only; fenced blocks are rendered by SyntaxHighlighter. */
-    :not(pre) > code {
-      padding: 0.15em 0.4em;
-      font-family: ${token.fontFamilyCode};
-      font-size: 0.9em;
-      background: ${token.colorFillSecondary};
-      border-radius: ${token.borderRadiusSM}px;
-    }
-    pre {
-      margin: 0 0 1em;
-      border-radius: ${token.borderRadius}px;
-      overflow: auto;
-    }
-
-    table {
-      width: 100%;
-      margin: 0 0 1em;
-      border-collapse: collapse;
-      font-size: 0.95em;
-    }
-    th,
-    td {
-      padding: ${token.paddingXS}px ${token.paddingSM}px;
-      border: 1px solid ${token.colorBorderSecondary};
-    }
-    th {
-      background: ${token.colorFillTertiary};
-      font-weight: ${token.fontWeightStrong};
-      text-align: left;
-    }
-  `,
-  toolbar: css`
-    padding: ${token.paddingXXS}px ${token.paddingXS}px;
-    border: 1px solid ${token.colorBorder};
-    border-bottom: none;
-    border-top-left-radius: ${token.borderRadius}px;
-    border-top-right-radius: ${token.borderRadius}px;
-    background: ${token.colorFillQuaternary};
-  `,
-}));
-
 // Height of the markdown editor. Sized relative to the viewport so the whole
 // editor + label + toolbar + validation message fits inside the modal body's
 // max-height without producing a scrollbar. The `- 320px` budget covers the
@@ -214,7 +73,6 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { styles } = useStyles();
   const { message: appMessage, modal } = App.useApp();
   const { logger } = useBAILogger();
   const { getErrorMessage } = useErrorMessageResolver();
@@ -335,34 +193,33 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
           </Checkbox> */}
           <BAIFlex>
             <Button
-              type="text"
-              danger
-              disabled={isLoading || !announcement?.enabled}
-              loading={deleteMutation.isPending}
+              variant="destructive"
+              label={t('button.Delete')}
+              isDisabled={isLoading || !announcement?.enabled}
+              isLoading={deleteMutation.isPending}
               onClick={confirmDelete}
-            >
-              {t('button.Delete')}
-            </Button>
+            />
           </BAIFlex>
           <BAIFlex gap="xs" align="center">
-            <Button onClick={() => onRequestClose()}>
-              {t('button.Cancel')}
-            </Button>
             <Button
-              type="primary"
-              disabled={isLoading || isMessageMissing}
-              loading={updateMutation.isPending}
+              variant="secondary"
+              label={t('button.Cancel')}
+              onClick={() => onRequestClose()}
+            />
+            <Button
+              variant="primary"
+              label={t('button.Publish')}
+              isDisabled={isLoading || isMessageMissing}
+              isLoading={updateMutation.isPending}
               onClick={handleSubmit}
-            >
-              {t('button.Publish')}
-            </Button>
+            />
           </BAIFlex>
         </BAIFlex>
       }
       {...modalProps}
     >
       {isLoading ? (
-        <Skeleton active />
+        <BAISkeletonAstryx rows={4} />
       ) : (
         <BAIFlex direction="row" align="stretch" gap="sm" wrap="wrap">
           <BAIFlex
@@ -371,18 +228,20 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
             gap="xxs"
             style={{ flex: 1, minWidth: 0 }}
           >
-            <Typography.Text strong>
-              {t('summary.AnnouncementMessage')}
-            </Typography.Text>
+            <Text weight="semibold">{t('summary.AnnouncementMessage')}</Text>
             <MarkdownEditorField
               height={EDITOR_HEIGHT}
               value={message}
               onChange={setMessageDraft}
             />
             {isMessageMissing && (
-              <Typography.Text type="danger">
+              // PILOT-DECISION: antd `Typography.Text type="danger"` has no
+              // Astryx TextColor equivalent (MAPPING §3.4) — same drop as
+              // AdminModelCard.tsx: red tint dropped, `type="supporting"`
+              // keeps the small caption size.
+              <Text type="supporting" color="primary">
                 {t('summary.AnnouncementMessageRequired')}
-              </Typography.Text>
+              </Text>
             )}
           </BAIFlex>
           <BAIFlex
@@ -391,11 +250,9 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
             gap="xxs"
             style={{ flex: 1, minWidth: 0 }}
           >
-            <Typography.Text strong>
-              {t('summary.AnnouncementPreview')}
-            </Typography.Text>
+            <Text weight="semibold">{t('summary.AnnouncementPreview')}</Text>
             <div
-              className={styles.markdownPreview}
+              className="announcement-markdown-preview"
               style={{
                 border: `1px solid ${token.colorBorder}`,
                 borderRadius: token.borderRadius,
@@ -454,7 +311,6 @@ const MarkdownEditorField: React.FC<{
   'use memo';
 
   const { t } = useTranslation();
-  const { styles } = useStyles();
   const editorRef = useRef<MonacoEditorInstance | null>(null);
   const monacoRef = useRef<MonacoNamespace | null>(null);
 
@@ -516,106 +372,112 @@ const MarkdownEditorField: React.FC<{
 
   return (
     <BAIFlex direction="column" align="stretch" gap={0}>
-      <BAIFlex className={styles.toolbar} gap="xxs" align="center" wrap="wrap">
-        <Dropdown
-          trigger={['click']}
-          menu={{
-            items: [
-              { key: '1', label: 'H1' },
-              { key: '2', label: 'H2' },
-              { key: '3', label: 'H3' },
-            ],
-            onClick: ({ key }) => prependLines(`${'#'.repeat(Number(key))} `),
+      {/* PILOT-DECISION: antd's `Tooltip` wrapping a text-only `Button` per
+          toolbar action is replaced by `IconButton`'s own native `tooltip`
+          prop — one component instead of two, same hover hint (P8: `label`
+          supplies the accessible name; `tooltip` the visible hint). */}
+      <BAIFlex
+        className="announcement-toolbar"
+        gap="xxs"
+        align="center"
+        wrap="wrap"
+      >
+        <DropdownMenu
+          button={{
+            icon: <ALargeSmall size="1em" />,
+            isIconOnly: true,
+            label: t('summary.MarkdownHeading'),
+            variant: 'ghost',
+            size: 'sm',
+            tooltip: t('summary.MarkdownHeading'),
           }}
-        >
-          <Tooltip title={t('summary.MarkdownHeading')}>
-            <Button
-              type="text"
-              size="small"
-              icon={<ALargeSmall size="1em" />}
-            />
-          </Tooltip>
-        </Dropdown>
-        <Tooltip title={t('summary.MarkdownBold')}>
-          <Button
-            type="text"
-            size="small"
-            icon={<Bold size="1em" />}
-            onClick={() => wrapSelection('**', '**', t('summary.MarkdownBold'))}
-          />
-        </Tooltip>
-        <Tooltip title={t('summary.MarkdownItalic')}>
-          <Button
-            type="text"
-            size="small"
-            icon={<Italic size="1em" />}
-            onClick={() => wrapSelection('*', '*', t('summary.MarkdownItalic'))}
-          />
-        </Tooltip>
-        <Tooltip title={t('summary.MarkdownStrikethrough')}>
-          <Button
-            type="text"
-            size="small"
-            icon={<Strikethrough size="1em" />}
-            onClick={() =>
-              wrapSelection('~~', '~~', t('summary.MarkdownStrikethrough'))
-            }
-          />
-        </Tooltip>
-        <Tooltip title={t('summary.MarkdownQuote')}>
-          <Button
-            type="text"
-            size="small"
-            icon={
-              <span style={{ fontFamily: 'Georgia, serif', fontWeight: 700 }}>
-                &ldquo;
-              </span>
-            }
-            onClick={() => prependLines('> ')}
-          />
-        </Tooltip>
-        <Tooltip title={t('summary.MarkdownCode')}>
-          <Button
-            type="text"
-            size="small"
-            icon={<Code size="1em" />}
-            onClick={() => wrapSelection('`', '`', 'code')}
-          />
-        </Tooltip>
-        <Tooltip title={t('summary.MarkdownLink')}>
-          <Button
-            type="text"
-            size="small"
-            icon={<Link size="1em" />}
-            onClick={() =>
-              wrapSelection('[', '](https://)', t('summary.MarkdownLink'))
-            }
-          />
-        </Tooltip>
-        <Tooltip title={t('summary.MarkdownImage')}>
-          <Button
-            type="text"
-            size="small"
-            icon={<Image size="1em" />}
-            onClick={() => wrapSelection('![', '](https://)', 'alt')}
-          />
-        </Tooltip>
-        <Tooltip title={t('summary.MarkdownBulletList')}>
-          <Button
-            type="text"
-            size="small"
-            icon={<List size="1em" />}
-            onClick={() => prependLines('- ')}
-          />
-        </Tooltip>
-        <Tooltip title={t('summary.MarkdownNumberedList')}>
-          <Button
-            type="text"
-            size="small"
-            icon={<ListOrdered size="1em" />}
-            onClick={() => prependLines('1. ')}
-          />
-        </Tooltip>
+          hasChevron={false}
+          items={[
+            { label: 'H1', onClick: () => prependLines('# ') },
+            { label: 'H2', onClick: () => prependLines('## ') },
+            { label: 'H3', onClick: () => prependLines('### ') },
+          ]}
+        />
+        <IconButton
+          icon={<Bold size="1em" />}
+          label={t('summary.MarkdownBold')}
+          tooltip={t('summary.MarkdownBold')}
+          variant="ghost"
+          size="sm"
+          onClick={() => wrapSelection('**', '**', t('summary.MarkdownBold'))}
+        />
+        <IconButton
+          icon={<Italic size="1em" />}
+          label={t('summary.MarkdownItalic')}
+          tooltip={t('summary.MarkdownItalic')}
+          variant="ghost"
+          size="sm"
+          onClick={() => wrapSelection('*', '*', t('summary.MarkdownItalic'))}
+        />
+        <IconButton
+          icon={<Strikethrough size="1em" />}
+          label={t('summary.MarkdownStrikethrough')}
+          tooltip={t('summary.MarkdownStrikethrough')}
+          variant="ghost"
+          size="sm"
+          onClick={() =>
+            wrapSelection('~~', '~~', t('summary.MarkdownStrikethrough'))
+          }
+        />
+        <IconButton
+          icon={
+            <span style={{ fontFamily: 'Georgia, serif', fontWeight: 700 }}>
+              &ldquo;
+            </span>
+          }
+          label={t('summary.MarkdownQuote')}
+          tooltip={t('summary.MarkdownQuote')}
+          variant="ghost"
+          size="sm"
+          onClick={() => prependLines('> ')}
+        />
+        <IconButton
+          icon={<Code size="1em" />}
+          label={t('summary.MarkdownCode')}
+          tooltip={t('summary.MarkdownCode')}
+          variant="ghost"
+          size="sm"
+          onClick={() => wrapSelection('`', '`', 'code')}
+        />
+        <IconButton
+          icon={<Link size="1em" />}
+          label={t('summary.MarkdownLink')}
+          tooltip={t('summary.MarkdownLink')}
+          variant="ghost"
+          size="sm"
+          onClick={() =>
+            wrapSelection('[', '](https://)', t('summary.MarkdownLink'))
+          }
+        />
+        <IconButton
+          icon={<Image size="1em" />}
+          label={t('summary.MarkdownImage')}
+          tooltip={t('summary.MarkdownImage')}
+          variant="ghost"
+          size="sm"
+          onClick={() => wrapSelection('![', '](https://)', 'alt')}
+        />
+        <IconButton
+          icon={<List size="1em" />}
+          label={t('summary.MarkdownBulletList')}
+          tooltip={t('summary.MarkdownBulletList')}
+          variant="ghost"
+          size="sm"
+          onClick={() => prependLines('- ')}
+        />
+        <IconButton
+          icon={<ListOrdered size="1em" />}
+          label={t('summary.MarkdownNumberedList')}
+          tooltip={t('summary.MarkdownNumberedList')}
+          variant="ghost"
+          size="sm"
+          onClick={() => prependLines('1. ')}
+        />
       </BAIFlex>
       <BAICodeEditor
         language="markdown"

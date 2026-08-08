@@ -4,6 +4,11 @@
  */
 import { theme } from '../theme-shim';
 import { Grid } from '@astryxdesign/core/Grid';
+// FRONTIER (astryx/22): Astryx has no ColorPicker component (checked via
+// `astryx search "color picker"` — no `component` hit, only Selector-family
+// results). antd's `ColorPicker` is a genuine gap component, kept as-is; the
+// surrounding layout (this file) is otherwise fully migrated (theme-shim +
+// Astryx `Grid` + `BAIFlex`).
 import { ColorPicker, type ColorPickerProps } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';

@@ -4,10 +4,15 @@
  */
 import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { theme } from '../theme-shim';
+import BAIFormItem from './BAIFormItem';
 import { SchedulerType } from './ConfigurationsSettingList';
-import { Form, InputNumber, Select, Typography } from 'antd';
-import Checkbox from 'antd/es/checkbox/Checkbox';
+import {
+  AstryxFormCheckbox,
+  AstryxFormNumberInput,
+  AstryxFormSelector,
+} from './astryx-bui/astryxFormControls';
+import { Text } from '@astryxdesign/core/Text';
+import { Form } from 'antd';
 import { FormInstance } from 'antd/lib';
 import {
   BAIQuestionIconWithTooltip,
@@ -32,7 +37,6 @@ const SchedulerSettingModal = ({
   const [isUpdatingSchedulerOptions, setIsUpdatingSchedulerOptions] =
     useState(false);
   const formRef = useRef<FormInstance>(null);
-  const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
   const { message } = App.useApp();
 
@@ -104,7 +108,7 @@ const SchedulerSettingModal = ({
       destroyOnHidden
     >
       <Form ref={formRef} layout="vertical">
-        <Form.Item
+        <BAIFormItem
           label={t('settings.Scheduler')}
           name="schedulerType"
           required
@@ -115,17 +119,14 @@ const SchedulerSettingModal = ({
             },
           ]}
           extra={
-            <Typography.Text
-              type="secondary"
-              style={{ fontSize: token.fontSizeSM }}
-            >
+            <Text color="secondary" size="sm">
               {t('settings.SchedulerSelectComment')}
-            </Typography.Text>
+            </Text>
           }
         >
-          <Select
-            loading={isUpdatingSchedulerOptions}
-            popupMatchSelectWidth={false}
+          <AstryxFormSelector
+            label={t('settings.Scheduler')}
+            isLoading={isUpdatingSchedulerOptions}
             onChange={(value) => {
               if (value !== null) {
                 setIsUpdatingSchedulerOptions(true);
@@ -161,12 +162,10 @@ const SchedulerSettingModal = ({
               },
             ]}
           />
-        </Form.Item>
+        </BAIFormItem>
         <BAIFlex direction="column" align="start" style={{ width: '100%' }}>
-          <Typography.Text strong>
-            {t('settings.SchedulerOptions')}
-          </Typography.Text>
-          <Form.Item
+          <Text weight="semibold">{t('settings.SchedulerOptions')}</Text>
+          <BAIFormItem
             label={t('settings.SessionCreationRetries')}
             required
             style={{
@@ -183,9 +182,6 @@ const SchedulerSettingModal = ({
               <Form.Item
                 noStyle
                 dependencies={['schedulerType', 'num_retries_to_skip_checkbox']}
-                style={{
-                  width: '100%',
-                }}
               >
                 {() => {
                   return (
@@ -212,21 +208,21 @@ const SchedulerSettingModal = ({
                         },
                       ]}
                     >
-                      <InputNumber
-                        min={0}
-                        max={1000}
-                        disabled={
-                          formRef.current?.getFieldValue(
-                            'num_retries_to_skip_checkbox',
-                          ) === true ||
-                          formRef.current?.getFieldValue('schedulerType') ===
-                            undefined ||
-                          isUpdatingSchedulerOptions
-                        }
-                        style={{
-                          flex: 1,
-                        }}
-                      />
+                      <div style={{ flex: 1 }}>
+                        <AstryxFormNumberInput
+                          label={t('settings.SessionCreationRetries')}
+                          min={0}
+                          max={1000}
+                          disabled={
+                            formRef.current?.getFieldValue(
+                              'num_retries_to_skip_checkbox',
+                            ) === true ||
+                            formRef.current?.getFieldValue('schedulerType') ===
+                              undefined ||
+                            isUpdatingSchedulerOptions
+                          }
+                        />
+                      </div>
                     </Form.Item>
                   );
                 }}
@@ -238,26 +234,25 @@ const SchedulerSettingModal = ({
                     name="num_retries_to_skip_checkbox"
                     valuePropName="checked"
                   >
-                    <Checkbox
+                    <AstryxFormCheckbox
+                      label={t('settings.Unset')}
                       disabled={
                         formRef.current?.getFieldValue('schedulerType') ===
                           undefined || isUpdatingSchedulerOptions
                       }
-                      onChange={(e) => {
-                        if (e.target.checked) {
+                      onChange={(checked) => {
+                        if (checked) {
                           formRef.current?.setFieldsValue({
                             num_retries_to_skip: null,
                           });
                         }
                       }}
-                    >
-                      {t('settings.Unset')}
-                    </Checkbox>
+                    />
                   </Form.Item>
                 )}
               </Form.Item>
             </BAIFlex>
-          </Form.Item>
+          </BAIFormItem>
         </BAIFlex>
       </Form>
     </BAIModal>

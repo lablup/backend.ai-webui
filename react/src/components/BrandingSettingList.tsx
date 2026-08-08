@@ -14,12 +14,9 @@ import ThemeColorPicker, {
 } from './BrandingSettingItems/ThemeColorPicker';
 import ThemeJsonConfigModal from './BrandingSettingItems/ThemeJsonConfigModal';
 import SettingList, { SettingGroup } from './SettingList';
-import {
-  BAIAlert,
-  BAIButton,
-  BAIFlex,
-  BAIUnmountAfterClose,
-} from 'backend.ai-ui';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Button } from '@astryxdesign/core/Button';
+import { BAIFlex, BAIUnmountAfterClose } from 'backend.ai-ui';
 import { Settings, Fullscreen } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -278,10 +275,12 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
 
   return (
     <BAIFlex direction="column" gap="md" align="stretch">
-      <BAIAlert
-        description={t('userSettings.theme.CustomThemeSettingAlert')}
-        type="warning"
-        showIcon
+      {/* antd `Alert description` (no `message`) -> Banner. Banner's `title`
+          is unconditionally required (ground-truth .d.ts, not just the doc
+          narrative) — the single line of text goes there. */}
+      <Banner
+        title={t('userSettings.theme.CustomThemeSettingAlert')}
+        status="warning"
       />
       <SettingList
         showSearchBar
@@ -291,10 +290,11 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
         }}
         settingGroups={settingGroups}
         primaryButton={
-          <BAIButton
-            type="primary"
-            icon={<Fullscreen />}
-            action={async () => {
+          <Button
+            variant="primary"
+            icon={<Fullscreen size="1em" />}
+            label={t('userSettings.theme.Preview')}
+            clickAction={async () => {
               const previewWindow = window.open(
                 window.location.origin,
                 '_blank',
@@ -307,19 +307,16 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
                 previewWindow?.location.reload();
               });
             }}
-          >
-            {t('userSettings.theme.Preview')}
-          </BAIButton>
+          />
         }
         extraButton={
-          <BAIButton
+          <Button
             icon={<Settings size="1em" />}
-            action={async () => {
+            label={t('theme.button.JsonConfig')}
+            clickAction={async () => {
               setOpenThemeConfigModal(true);
             }}
-          >
-            {t('theme.button.JsonConfig')}
-          </BAIButton>
+          />
         }
       />
       <BAIUnmountAfterClose>

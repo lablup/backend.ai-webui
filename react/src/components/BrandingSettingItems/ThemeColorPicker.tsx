@@ -4,6 +4,12 @@
  */
 import { useDefaultTheme } from '../../hooks/useDefaultTheme';
 import LightDarkColorPicker from '../LightDarkColorPicker';
+// FRONTIER (astryx/22): theme-ALGORITHM producer, skip-listed since ticket 09
+// (`getDesignToken` reads the real antd default palette as the fallback for
+// an unset token). `ColorPickerProps`/`ComponentTokenMap`/`AliasToken` are
+// type-only. This component's only "chrome" is `LightDarkColorPicker`,
+// already migrated (Astryx `Grid` + `BAIFlex`; the antd `ColorPicker` widget
+// itself is a genuine gap component — see that file).
 import { type ColorPickerProps, theme } from 'antd';
 import { ComponentTokenMap } from 'antd/es/theme/interface';
 import { AliasToken } from 'antd/lib/theme/internal';

@@ -8,15 +8,11 @@ import { loadMonacoEditor } from '../../helper/monacoEditor';
 import { useDefaultTheme } from '../../hooks/useDefaultTheme';
 import { useThemeMode } from '../../hooks/useThemeMode';
 import { theme } from '../../theme-shim';
+import BAISkeletonAstryx from '../astryx-bui/BAISkeletonAstryx';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Button } from '@astryxdesign/core/Button';
 import type { Monaco } from '@monaco-editor/react';
-import { Alert, Skeleton, Upload } from 'antd';
-import {
-  BAIButton,
-  BAIFlex,
-  BAIModal,
-  BAIModalProps,
-  useBAILogger,
-} from 'backend.ai-ui';
+import { BAIFlex, BAIModal, BAIModalProps, useBAILogger } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { ExternalLink, Import } from 'lucide-react';
 import React, { Suspense, useRef, useState } from 'react';
@@ -49,16 +45,19 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
     JSON.stringify(defaultTheme ?? {}, null, 2) ?? '',
   );
   const monacoRef = useRef<Monaco | null>(null);
+  const jsonFileInputRef = useRef<HTMLInputElement>(null);
 
   const skeletonWithPadding = (
-    <Skeleton
-      active
+    <div
       style={{
         alignSelf: 'start',
         paddingInline: token.paddingContentHorizontal,
         paddingBlock: token.paddingContentVertical,
+        width: '100%',
       }}
-    />
+    >
+      <BAISkeletonAstryx rows={6} />
+    </div>
   );
 
   return (
@@ -70,10 +69,19 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
       footer={
         <BAIFlex direction="row" justify="between" gap="xs">
           <BAIFlex gap="sm">
-            <Upload
-              showUploadList={false}
+            {/* Self-built hidden-input picker (MAPPING §3.12: FileInput
+                renders a full field, not a labeled button — the icon+text
+                trigger button here is closer to what antd's
+                `Upload type="select"` does internally). */}
+            <input
+              ref={jsonFileInputRef}
+              type="file"
               accept=".json,application/json"
-              beforeUpload={async (file) => {
+              style={{ display: 'none' }}
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                e.target.value = '';
+                if (!file) return;
                 // Separate error handling for file read errors vs JSON parse errors.
                 // Schema validation errors are shown in the Monaco editor.
                 let content: string;
@@ -82,7 +90,7 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
                 } catch (error) {
                   message.error(t('theme.FailedToReadFile'));
                   logger.error('Failed to read file', error);
-                  return false;
+                  return;
                 }
 
                 try {
@@ -94,16 +102,17 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
                   message.error(t('theme.InvalidJsonFileAlert'));
                   logger.warn('Invalid JSON format in imported file', error);
                 }
-                return false;
               }}
-            >
-              <BAIButton icon={<Import size="1em" />}>
-                {t('theme.button.ImportFromJson')}
-              </BAIButton>
-            </Upload>
-            <BAIButton
+            />
+            <Button
+              icon={<Import size="1em" />}
+              label={t('theme.button.ImportFromJson')}
+              onClick={() => jsonFileInputRef.current?.click()}
+            />
+            <Button
               icon={<ExternalLink size="1em" />}
-              action={async () => {
+              label={t('theme.button.ExportToJson')}
+              clickAction={async () => {
                 const markers =
                   await monacoRef.current?.editor.getModelMarkers();
                 if (_.isEmpty(defaultTheme)) {
@@ -127,15 +136,18 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
                   downloadBlob(blob, `theme.json`);
                 }
               }}
-            >
-              {t('theme.button.ExportToJson')}
-            </BAIButton>
+            />
           </BAIFlex>
           <BAIFlex gap="sm">
-            <BAIButton onClick={onRequestClose}>{t('button.Cancel')}</BAIButton>
-            <BAIButton
-              type="primary"
-              action={async () => {
+            <Button
+              variant="secondary"
+              label={t('button.Cancel')}
+              onClick={onRequestClose}
+            />
+            <Button
+              variant="primary"
+              label={t('button.OK')}
+              clickAction={async () => {
                 const markers =
                   await monacoRef.current?.editor.getModelMarkers();
                 if (markers && markers.length > 0) {
@@ -154,9 +166,7 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
                 message.success(t('theme.JsonConfigAppliedSuccessfully'));
                 onRequestClose();
               }}
-            >
-              {t('button.OK')}
-            </BAIButton>
+            />
           </BAIFlex>
         </BAIFlex>
       }
@@ -172,11 +182,12 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
         },
       }}
     >
-      <Alert
-        banner
-        type="info"
-        description={t('theme.ThemeJsonConfigurationDesc')}
-        showIcon
+      {/* antd `banner` (full-width, no radius) -> Banner `container="section"`.
+          `title` is unconditionally required (ground-truth .d.ts). */}
+      <Banner
+        container="section"
+        status="info"
+        title={t('theme.ThemeJsonConfigurationDesc')}
         style={{ flexShrink: 0 }}
       />
       <Suspense fallback={skeletonWithPadding}>

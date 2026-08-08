@@ -6,7 +6,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import AnnouncementEditModal from './AnnouncementEditModal';
 import SettingList, { SettingGroup } from './SettingList';
-import { Button } from 'antd';
+import { Button } from '@astryxdesign/core/Button';
 import { BAIUnmountAfterClose } from 'backend.ai-ui';
 import { Redo2, SquarePenIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -100,12 +100,13 @@ const MaintenanceSettingList = () => {
             <Button
               icon={<Redo2 size="1em" />}
               onClick={recalculateUsage}
-              loading={isRecalculating}
-            >
-              {isRecalculating
-                ? t('maintenance.Recalculating')
-                : t('maintenance.RecalculateUsage')}
-            </Button>
+              isLoading={isRecalculating}
+              label={
+                isRecalculating
+                  ? t('maintenance.Recalculating')
+                  : t('maintenance.RecalculateUsage')
+              }
+            />
           ),
           showResetButton: false,
         },
@@ -123,12 +124,13 @@ const MaintenanceSettingList = () => {
             <Button
               icon={<Redo2 size="1em" />}
               onClick={rescanImages}
-              loading={isRescanning}
-            >
-              {isRescanning
-                ? t('maintenance.RescanImageScanning')
-                : t('maintenance.RescanImages')}
-            </Button>
+              isLoading={isRescanning}
+              label={
+                isRescanning
+                  ? t('maintenance.RescanImageScanning')
+                  : t('maintenance.RescanImages')
+              }
+            />
           ),
           showResetButton: false,
         },
@@ -144,11 +146,10 @@ const MaintenanceSettingList = () => {
           description: t('maintenance.DescSystemAnnouncement'),
           children: (
             <Button
-              icon={<SquarePenIcon />}
+              icon={<SquarePenIcon size="1em" />}
               onClick={() => setIsAnnouncementModalOpen(true)}
-            >
-              {t('summary.EditAnnouncement')}
-            </Button>
+              label={t('summary.EditAnnouncement')}
+            />
           ),
           showResetButton: false,
         },

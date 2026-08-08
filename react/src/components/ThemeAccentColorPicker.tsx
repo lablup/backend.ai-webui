@@ -5,6 +5,11 @@
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import LightDarkColorPicker from './LightDarkColorPicker';
+// FRONTIER (astryx/22): theme-ALGORITHM producer, skip-listed since ticket 09
+// (`getDesignToken` reads real antd design tokens as the palette fallback —
+// not a token-shim consumer). No other antd import/render lives in this
+// file; it has no "chrome" of its own beyond delegating to
+// `LightDarkColorPicker`, which is already migrated.
 import { theme } from 'antd';
 import * as _ from 'lodash-es';
 
