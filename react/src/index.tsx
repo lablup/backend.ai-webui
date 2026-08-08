@@ -11,7 +11,7 @@ import './global-stores';
 import { loadCustomThemeConfig } from './helper/customThemeConfig';
 import { applyDevServerTitle } from './helper/devServerTitle';
 import { ThemeModeProvider } from './hooks/useThemeMode';
-import { ConfigProvider } from 'antd';
+import { ConfigProvider, theme as antdTheme } from 'antd';
 import { Provider as JotaiProvider } from 'jotai';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -63,12 +63,52 @@ loadCustomThemeConfig();
 // `holderRender` in a ConfigProvider carrying the per-request nonce so the
 // injected <style> nodes survive a strict `style-src 'nonce-...'` policy.
 // (globalThis.baiNonce is empty in dev, like the inline scripts in index.html.)
-ConfigProvider.config({
-  holderRender: (children) => (
-    <ConfigProvider csp={{ nonce: globalThis.baiNonce }}>
+//
+// The holder is also outside the app's THEME, which is why it carries the
+// dark algorithm explicitly here. Without it every statically-invoked toast /
+// confirm painted with antd's default (light) algorithm on a dark page — the
+// same "renders outside the themed subtree" hazard the Astryx side solves by
+// syncing `data-theme` onto <html>. `ThemeModeProvider` is the single source
+// of truth: it publishes `globalThis.isDarkMode` and fires
+// `change:backendaiwebui.setting.isDarkMode` on every flip, and this holder
+// subscribes so a mid-session toggle repaints it (the holder is created once
+// and never remounted).
+const StaticHolderTheme: React.FC<{ children?: React.ReactNode }> = ({
+  children,
+}) => {
+  'use memo';
+  const [isDark, setIsDark] = React.useState(
+    () => globalThis.isDarkMode ?? false,
+  );
+  React.useEffect(() => {
+    const handler = (e: Event) => setIsDark(!!(e as CustomEvent).detail);
+    document.addEventListener(
+      'change:backendaiwebui.setting.isDarkMode',
+      handler,
+    );
+    return () =>
+      document.removeEventListener(
+        'change:backendaiwebui.setting.isDarkMode',
+        handler,
+      );
+  }, []);
+
+  return (
+    <ConfigProvider
+      csp={{ nonce: globalThis.baiNonce }}
+      theme={{
+        algorithm: isDark
+          ? antdTheme.darkAlgorithm
+          : antdTheme.defaultAlgorithm,
+      }}
+    >
       {children}
     </ConfigProvider>
-  ),
+  );
+};
+
+ConfigProvider.config({
+  holderRender: (children) => <StaticHolderTheme>{children}</StaticHolderTheme>,
 });
 
 // In dev, distinguish multiple dev-server tabs by prefixing the tab title with

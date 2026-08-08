@@ -249,23 +249,71 @@ export const ThemeShimProvider = ({
 };
 
 /**
- * Provider-less fallback (tests, plain Storybook stories): computed once and
- * cached — these contexts never mount a real Astryx root `<Theme>`, so
- * re-probing per render would only add cost (BUI tables call `useToken()`
- * per cell), never a different answer.
+ * The mode/scope the document is actually painting in, for consumers that
+ * render OUTSIDE `ThemeShimProvider`.
+ *
+ * A root Astryx `<Theme>` syncs BOTH `data-theme` (light|dark) and
+ * `data-astryx-theme` (theme name) onto `<html>` precisely so that CSS which
+ * escapes the provider subtree — portals, toast viewports, whole React roots
+ * that are not ours — still resolves against the live cascade. This reads the
+ * same two attributes, so the shim follows the document instead of guessing.
+ *
+ * Before that sync happens (or with no Astryx `<Theme>` at all) the name is
+ * absent and `buildTokens` opens `FALLBACK_SCOPE` on its own probe host.
  */
-let fallbackValue: ShimValue | undefined;
+const readDocumentScope = (): { mode: Mode; themeName: string } => {
+  if (typeof document === 'undefined') {
+    return { mode: 'light', themeName: '' };
+  }
+  const attr = document.documentElement.getAttribute('data-theme');
+  const mode: Mode =
+    attr === 'dark' || attr === 'light'
+      ? attr
+      : typeof window !== 'undefined' &&
+          window.matchMedia?.('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light';
+  return {
+    mode,
+    themeName: document.documentElement.getAttribute('data-astryx-theme') ?? '',
+  };
+};
+
+/**
+ * Provider-less fallback (tests, Storybook stories, harness pages, and any
+ * app subtree mounted outside `DefaultProviders` — e.g. the route-level
+ * `errorElement` / `BAIErrorBoundary`, which sit ABOVE the provider stack).
+ *
+ * Cached PER (mode, theme-name) rather than once-globally. The previous
+ * single cached `'light'` entry made every such surface paint light tokens in
+ * a dark document, and — because the entry was frozen at whatever the cascade
+ * looked like on the very first `useToken()` call — usually the *neutral*
+ * fallback scope rather than the brand theme (measured: `colorBgContainer`
+ * `#FFFFFF`, `colorBgLayout` `#F1F4F7` while the page painted `#180F08`).
+ *
+ * No subscription is installed: `useToken()` is called per table cell, so a
+ * per-call `useSyncExternalStore` would cost thousands of subscriptions to
+ * serve a path the app root never takes. Reading the attributes at render
+ * time is enough — a mode flip re-renders the tree that owns it.
+ */
+const fallbackCache = new Map<string, ShimValue>();
 
 /** Drop-in for antd's `theme.useToken()`. */
 export function useToken(): ShimValue {
   const ctx = use(ThemeShimContext);
   if (ctx) return ctx;
-  fallbackValue ??= {
-    token: buildTokens('light', FALLBACK_SEEDS),
-    hashId: 'bai-light',
-    theme: { id: 0 },
-  };
-  return fallbackValue;
+  const { mode, themeName } = readDocumentScope();
+  const key = `${mode}|${themeName}`;
+  let value = fallbackCache.get(key);
+  if (!value) {
+    value = {
+      token: buildTokens(mode, FALLBACK_SEEDS),
+      hashId: `bai-${mode}`,
+      theme: { id: 0 },
+    };
+    fallbackCache.set(key, value);
+  }
+  return value;
 }
 
 /** `import { theme } from '../theme-shim'` — same call shape as antd's. */

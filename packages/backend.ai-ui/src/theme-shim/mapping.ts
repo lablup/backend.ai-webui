@@ -65,7 +65,7 @@ const sp = (v: string): MapEntry => ({
 });
 
 export const TOKEN_MAP: Record<string, MapEntry> = {
-  // ---- spacing: 25 names, all EXACT -------------------------------------
+  // ---- spacing: 29 names, all EXACT -------------------------------------
   marginXXS: sp('--spacing-1'), //  4
   marginXS: sp('--spacing-2'), //  8
   marginSM: sp('--spacing-3'), // 12
@@ -81,11 +81,21 @@ export const TOKEN_MAP: Record<string, MapEntry> = {
   paddingMD: sp('--spacing-5'),
   paddingLG: sp('--spacing-6'),
   paddingXL: sp('--spacing-8'),
-  sizeXXS: sp('--spacing-1'),
-  sizeXS: sp('--spacing-2'),
-  size: sp('--spacing-4'),
-  sizeXL: sp('--spacing-8'),
-  sizeXXL: sp('--spacing-12'),
+  // The `size*` ladder must be COMPLETE: `BAIFlex`'s `gap="sm" | "ms" |
+  // "md" | "lg"` resolves the token by name (`'size' + size.toUpperCase()`),
+  // so a hole here does not fall back to anything — it hands React
+  // `gap: undefined` and the flex gap silently collapses to 0. The four
+  // middle rungs were missing until 2026-08-08, which flattened ~470 call
+  // sites (`gap="sm"` 275, `gap="md"` 180, `gap="lg"` 19).
+  sizeXXS: sp('--spacing-1'), //  4
+  sizeXS: sp('--spacing-2'), //  8
+  sizeSM: sp('--spacing-3'), // 12
+  size: sp('--spacing-4'), // 16
+  sizeMS: sp('--spacing-4'), // 16
+  sizeMD: sp('--spacing-5'), // 20
+  sizeLG: sp('--spacing-6'), // 24
+  sizeXL: sp('--spacing-8'), // 32
+  sizeXXL: sp('--spacing-12'), // 48
   paddingContentVertical: sp('--spacing-3'), // 12
   paddingContentVerticalLG: sp('--spacing-4'), // 16
   paddingContentHorizontal: sp('--spacing-4'), // 16

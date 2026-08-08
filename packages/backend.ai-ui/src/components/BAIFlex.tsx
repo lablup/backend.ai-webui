@@ -1,8 +1,42 @@
 import { theme } from '../theme-shim';
+import type { GlobalToken } from 'antd';
 import React, { type CSSProperties, type PropsWithChildren } from 'react';
 
 type GapSize = number | 'xxs' | 'xs' | 'sm' | 'ms' | 'md' | 'lg' | 'xl' | 'xxl';
 type GapProp = GapSize | [GapSize | undefined, GapSize | undefined];
+
+/**
+ * Named gap -> theme token. Declared as an explicit, TYPED table rather than
+ * the old `token['size' + size.toUpperCase()]` string concatenation: that
+ * form type-checks against any token object, so when `sizeSM`/`sizeMS`/
+ * `sizeMD`/`sizeLG` were missing from the theme-shim's map the lookup
+ * returned `undefined`, React dropped the `gap` declaration entirely, and
+ * ~470 call sites collapsed to a 0 gap with nothing failing. Keying
+ * `GlobalToken` makes any future hole a compile error here instead.
+ */
+const GAP_TOKEN: Record<
+  Exclude<GapSize, number>,
+  keyof Pick<
+    GlobalToken,
+    | 'sizeXXS'
+    | 'sizeXS'
+    | 'sizeSM'
+    | 'sizeMS'
+    | 'sizeMD'
+    | 'sizeLG'
+    | 'sizeXL'
+    | 'sizeXXL'
+  >
+> = {
+  xxs: 'sizeXXS',
+  xs: 'sizeXS',
+  sm: 'sizeSM',
+  ms: 'sizeMS',
+  md: 'sizeMD',
+  lg: 'sizeLG',
+  xl: 'sizeXL',
+  xxl: 'sizeXXL',
+};
 
 export interface BAIFlexProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'dir'>, PropsWithChildren {
@@ -30,10 +64,12 @@ const BAIFlex = React.forwardRef<HTMLDivElement, BAIFlexProps>(
     const { token } = theme.useToken();
 
     const getGapSize = (size: GapSize | undefined) => {
-      if (size === undefined) return '0px';
-      return typeof size === 'string'
-        ? (token as any)['size' + size.toUpperCase()]
-        : size;
+      if (size === undefined) return 0;
+      // `?? 0` is a last-resort guard only: the table above plus
+      // `GlobalToken` keying make an unresolved name impossible at compile
+      // time. It exists so a runtime token object that predates a new rung
+      // degrades to a flat gap rather than dropping the declaration.
+      return typeof size === 'string' ? (token[GAP_TOKEN[size]] ?? 0) : size;
     };
 
     const gapStyle = Array.isArray(gap)
