@@ -9,7 +9,8 @@ import {
 import { useResourceSlotsDetails } from '../../hooks/backendai';
 import { theme } from '../../theme-shim';
 import ResourceGroupFairShareSettingModal from './ResourceGroupFairShareSettingModal';
-import { Divider, Typography } from 'antd';
+import { Divider } from '@astryxdesign/core/Divider';
+import { Text } from '@astryxdesign/core/Text';
 import {
   BAIQuestionIconWithTooltip,
   BAIFlex,
@@ -158,17 +159,14 @@ const ResourceGroupFairShareTable: React.FC<
                           placement: 'left',
                         }}
                       />
-                      <Typography.Text>
+                      <Text>
                         {resourceType === 'mem'
                           ? `${convertToBinaryUnit(usedEntries?.find((e) => e.resourceType === resourceType)?.quantity ?? 0, 'g', 0)?.numberFixed ?? 0} / ${convertToBinaryUnit(quantity, 'g', 0)?.numberFixed ?? 0}`
                           : `${usedEntries?.find((e) => e.resourceType === resourceType)?.quantity ?? 0} / ${quantity}`}
-                      </Typography.Text>
-                      <Typography.Text
-                        type="secondary"
-                        style={{ fontSize: token.sizeXS }}
-                      >
+                      </Text>
+                      <Text color="secondary" style={{ fontSize: token.sizeXS }}>
                         {mergedResourceSlots?.[resourceType]?.display_unit}
-                      </Typography.Text>
+                      </Text>
                     </BAIFlex>
                   </BAIFlex>
                   {index !== (capacityEntries?.length ?? 0) - 1 && (
@@ -217,12 +215,9 @@ const ResourceGroupFairShareTable: React.FC<
                       }}
                     />
                     {rw.weight}
-                    <Typography.Text
-                      type="secondary"
-                      style={{ fontSize: token.fontSizeSM }}
-                    >
+                    <Text color="secondary" style={{ fontSize: token.fontSizeSM }}>
                       {rw.usesDefault ? `(${t('fairShare.UsingDefault')})` : ''}
-                    </Typography.Text>
+                    </Text>
                   </BAIFlex>
                   {index !== entries.length - 1 && (
                     <Divider orientation="vertical" />

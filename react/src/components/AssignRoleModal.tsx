@@ -8,7 +8,8 @@ import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { reasonMessage } from '../helper/mutationError';
 import { theme } from '../theme-shim';
-import { Tooltip, Typography } from 'antd';
+import { Text } from '@astryxdesign/core/Text';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIBulkErrorModal,
   type BAIColumnsType,
@@ -262,15 +263,12 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
             allowClear
             maxTagPlaceholder={(omittedValues) => (
               <Tooltip
-                title={
+                content={
                   <BAIFlex direction="column" align="start" gap="xxs">
                     {omittedValues.map((v) => (
-                      <Typography.Text
-                        key={v.value}
-                        style={{ color: 'inherit' }}
-                      >
+                      <Text key={v.value} color="inherit">
                         {v.label}
-                      </Typography.Text>
+                      </Text>
                     ))}
                   </BAIFlex>
                 }
@@ -316,17 +314,12 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
         alertDescription={
           <>
             {t('rbac.UserAssignmentsPartialFailureDescription')}{' '}
-            <Typography.Text
-              style={{
-                color: token.colorTextSecondary,
-                fontSize: token.fontSizeSM,
-              }}
-            >
+            <Text color="secondary" style={{ fontSize: token.fontSizeSM }}>
               {t('rbac.PermissionsPartialFailureCounts', {
                 succeeded: succeededRequestCount,
                 failed: failedAssignments.length,
               })}
-            </Typography.Text>
+            </Text>
           </>
         }
         columns={failureColumns}

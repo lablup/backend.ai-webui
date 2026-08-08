@@ -14,8 +14,7 @@ import {
 } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
 import * as stylex from '@stylexjs/stylex';
-import { type ModalProps } from 'antd';
-import { BAIFlex, BAIModal } from 'backend.ai-ui';
+import { BAIFlex, BAIModal, type BAIModalProps } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { CircleCheck, CircleX } from 'lucide-react';
@@ -64,7 +63,9 @@ type StatusData = {
   };
 };
 
-interface SessionStatusDetailModalProps extends ModalProps {
+// antd `ModalProps` -> BUI `BAIModalProps` (§6: a type-only antd import is
+// still an antd import). The render was already `BAIModal`.
+interface SessionStatusDetailModalProps extends BAIModalProps {
   sessionFrgmt: SessionStatusDetailModalFragment$key;
 }
 

@@ -13,7 +13,8 @@ import useUserUsageStats from '../hooks/useUserUsageStats';
 import { theme } from '../theme-shim';
 import { Period } from './AllocationHistory';
 import './AllocationHistoryStatistics.css';
-import { Card } from 'antd';
+import BAICardAstryx from './astryx-bui/BAICardAstryx';
+import { Heading } from '@astryxdesign/core/Heading';
 import { BAIQuestionIconWithTooltip, BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
@@ -38,21 +39,29 @@ interface GraphCardProps {
   tooltipText?: string;
   children: React.ReactNode;
 }
+// PILOT-DECISION: antd `Card type="inner"` -> `BAICardAstryx` (MAPPING §5.1 —
+// Astryx `Card` is a bare surface, the header is composition). antd's inner
+// variant differed from the outer one by a tinted header strip, a 14px title
+// and 16px body padding; Astryx has no header strip to tint, so the two
+// carried-over metrics are `Heading level={4}` (the 14px rung of Astryx's
+// ramp) and `padding={4}` (16px). The tint itself is DROPPED — reproducing it
+// would be a per-component CSS block fighting `astryx-card`, which the
+// defaults-first policy rules out.
 export const GraphCard = ({ title, tooltipText, children }: GraphCardProps) => (
-  <Card
-    type="inner"
+  <BAICardAstryx
+    padding={4}
+    width="100%"
     title={
-      <BAIFlex gap={'xxs'}>
-        {title}
+      <BAIFlex gap={'xxs'} align="center">
+        <Heading level={4}>{title}</Heading>
         {tooltipText ? (
           <BAIQuestionIconWithTooltip title={tooltipText} />
         ) : null}
       </BAIFlex>
     }
-    style={{ width: '100%' }}
   >
     {children}
-  </Card>
+  </BAICardAstryx>
 );
 
 interface UsageBarChartProps {

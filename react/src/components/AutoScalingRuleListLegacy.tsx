@@ -9,7 +9,10 @@ import { theme } from '../theme-shim';
 import AutoScalingRuleEditorModalLegacy, {
   COMPARATOR_LABELS,
 } from './AutoScalingRuleEditorModalLegacy';
-import { Button, Tag, Tooltip, Typography } from 'antd';
+import { Badge } from '@astryxdesign/core/Badge';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Text } from '@astryxdesign/core/Text';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIButton,
   BAICard,
@@ -66,8 +69,10 @@ const renderCondition = (row: any) => {
       <BAIFlex gap={'xs'}>
         {threshold}
         {suffix}
-        <Tooltip title={comparator}>{'<'}</Tooltip>
-        <Tag>{metricName}</Tag>
+        <Tooltip content={comparator}>
+          <span>{'<'}</span>
+        </Tooltip>
+        <Badge label={metricName} />
       </BAIFlex>
     );
   }
@@ -75,11 +80,13 @@ const renderCondition = (row: any) => {
   // LESS_THAN or default: metric_name < threshold
   return (
     <BAIFlex gap={'xs'}>
-      <Tag>{metricName}</Tag>
+      <Badge label={metricName} />
       {comparator ? (
-        <Tooltip title={comparator}>
-          {COMPARATOR_LABELS[comparator as keyof typeof COMPARATOR_LABELS] ||
-            comparator}
+        <Tooltip content={comparator}>
+          <span>
+            {COMPARATOR_LABELS[comparator as keyof typeof COMPARATOR_LABELS] ||
+              comparator}
+          </span>
         </Tooltip>
       ) : (
         '-'
@@ -167,9 +174,20 @@ const AutoScalingRuleListLegacy: React.FC<AutoScalingRuleListLegacyProps> = ({
               dataIndex: 'controls',
               key: 'controls',
               render: (_text, row) => (
+                // PILOT-DECISION: antd icon-only `Button type="text"` ->
+                // `IconButton variant="ghost"` (MAPPING §3.3 "icon and no
+                // children"). Both buttons had NO accessible name under antd
+                // (P8); they now carry the same i18n strings the V2 list's
+                // `BAINameActionCell` actions use, as label + tooltip. The
+                // per-state `color` inline styles are kept verbatim rather
+                // than mapped to `variant="destructive"` — that variant is a
+                // filled treatment, far heavier than this text-button row
+                // (the same call `BAINameActionCellAstryx` records).
                 <BAIFlex direction="row" align="stretch">
-                  <Button
-                    type="text"
+                  <IconButton
+                    variant="ghost"
+                    label={t('button.Edit')}
+                    tooltip={t('button.Edit')}
                     icon={<SquarePenIcon />}
                     style={
                       isEndpointDestroying || !isOwnedByCurrentUser
@@ -180,7 +198,7 @@ const AutoScalingRuleListLegacy: React.FC<AutoScalingRuleListLegacyProps> = ({
                             color: token.colorInfo,
                           }
                     }
-                    disabled={isEndpointDestroying || !isOwnedByCurrentUser}
+                    isDisabled={isEndpointDestroying || !isOwnedByCurrentUser}
                     onClick={() => {
                       if (row) {
                         setEditingAutoScalingRule(row);
@@ -188,8 +206,10 @@ const AutoScalingRuleListLegacy: React.FC<AutoScalingRuleListLegacyProps> = ({
                       }
                     }}
                   />
-                  <Button
-                    type="text"
+                  <IconButton
+                    variant="ghost"
+                    label={t('button.Delete')}
+                    tooltip={t('button.Delete')}
                     icon={
                       <Trash2
                         style={
@@ -202,7 +222,7 @@ const AutoScalingRuleListLegacy: React.FC<AutoScalingRuleListLegacyProps> = ({
                         size="1em"
                       />
                     }
-                    disabled={isEndpointDestroying || !isOwnedByCurrentUser}
+                    isDisabled={isEndpointDestroying || !isOwnedByCurrentUser}
                     onClick={() => {
                       if (row) {
                         setDeletingRule(row);
@@ -219,16 +239,14 @@ const AutoScalingRuleListLegacy: React.FC<AutoScalingRuleListLegacyProps> = ({
                 if (row?.step_size) {
                   return (
                     <BAIFlex gap={'xs'}>
-                      <Typography.Text>
+                      <Text>
                         {row?.step_size > 0 ? (
                           <CircleArrowUpIcon />
                         ) : (
                           <CircleArrowDownIcon />
                         )}
-                      </Typography.Text>
-                      <Typography.Text>
-                        {Math.abs(row?.step_size)}
-                      </Typography.Text>
+                      </Text>
+                      <Text>{Math.abs(row?.step_size)}</Text>
                     </BAIFlex>
                   );
                 } else {

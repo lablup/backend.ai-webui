@@ -5,8 +5,11 @@
 import { NotificationState } from '../hooks/useBAINotification';
 import { theme } from '../theme-shim';
 import BAINotificationBackgroundProgress from './BAINotificationBackgroundProgress';
-import { Button, Card, List, Typography } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
+import './BAINotificationListItem.css';
+import { Card } from '@astryxdesign/core/Card';
+import { Link } from '@astryxdesign/core/Link';
+import { Text } from '@astryxdesign/core/Text';
+import { BAIFlex, BAIText } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { CircleCheck, Clock, CircleX, FolderIcon } from 'lucide-react';
@@ -44,7 +47,12 @@ const BAIGeneralNotificationItem: React.FC<{
 
   return (
     <>
-      <List.Item>
+      {/* PILOT-DECISION: antd `List.Item` -> a plain block carrying the two
+          things it actually supplied here (16px vertical padding + the row
+          hairline), moved into `BAINotificationListItem.css`. Astryx
+          `ListItem` is a fixed label/description/start/end row and cannot hold
+          a multi-row notification body (MAPPING §4 `List`). */}
+      <div className="bai-notification-list-item">
         <BAIFlex direction="column" align="stretch" gap={'xxs'}>
           <BAIFlex
             direction="row"
@@ -55,9 +63,15 @@ const BAIGeneralNotificationItem: React.FC<{
             }}
           >
             {icon && <BAIFlex style={{ height: 22 }}>{icon}</BAIFlex>}
-            <Typography.Paragraph
+            {/* antd `Typography.Paragraph` -> `Text as="p" display="block"`
+                (MAPPING §4). antd's paragraph margin-bottom (1em) is restated
+                literally; Astryx's reset gives block text no margin. */}
+            <Text
+              as="p"
+              display="block"
               style={{
                 fontWeight: 500,
+                marginBottom: '1em',
               }}
             >
               {_.isString(notification.message)
@@ -65,10 +79,12 @@ const BAIGeneralNotificationItem: React.FC<{
                     length: 200,
                   })
                 : notification.message}
-            </Typography.Paragraph>
+            </Text>
           </BAIFlex>
           <BAIFlex direction="row" align="end" gap={'xxs'} justify="between">
-            <Typography.Paragraph
+            <Text
+              as="p"
+              display="block"
               style={{ flex: 1, minWidth: 0, marginBottom: 0 }}
             >
               {_.isString(notification.description)
@@ -76,10 +92,14 @@ const BAIGeneralNotificationItem: React.FC<{
                     length: 300,
                   })
                 : notification.description}
-            </Typography.Paragraph>
+            </Text>
             {notification.to ? (
               <BAIFlex style={{ flexShrink: 0 }}>
-                <Typography.Link
+                {/* antd `Typography.Link` with `onClick` and no `href` ->
+                    Astryx `Link`, which renders a `<button>` with link styling
+                    when no href is given — the correct semantics antd faked
+                    with a destination-less `<a>` (MAPPING §3.16). */}
+                <Link
                   style={{ whiteSpace: 'nowrap' }}
                   onClick={(e) => {
                     onClickAction && onClickAction(e, notification);
@@ -88,19 +108,18 @@ const BAIGeneralNotificationItem: React.FC<{
                   {notification.toText ??
                     notification.toTextKey ??
                     t('notification.SeeDetail')}
-                </Typography.Link>
+                </Link>
               </BAIFlex>
             ) : null}
             {notification?.onCancel ? (
               <BAIFlex style={{ flexShrink: 0 }}>
-                <Button type="link" onClick={notification.onCancel}>
-                  {t('button.Cancel')}
-                </Button>
+                {/* antd `Button type="link"` -> `Link` (MAPPING §3.3). */}
+                <Link onClick={notification.onCancel}>{t('button.Cancel')}</Link>
               </BAIFlex>
             ) : null}
             {notification.extraDescription && !notification?.onCancel ? (
               <BAIFlex style={{ flexShrink: 0 }}>
-                <Typography.Link
+                <Link
                   style={{ whiteSpace: 'nowrap' }}
                   onClick={() => {
                     // onClickAction && onClickAction(e, notification);
@@ -112,13 +131,15 @@ const BAIGeneralNotificationItem: React.FC<{
                     : showExtraDescription
                       ? t('notification.SeeSummary')
                       : t('notification.SeeDetail')}
-                </Typography.Link>
+                </Link>
               </BAIFlex>
             ) : null}
           </BAIFlex>
           {notification.extraDescription && showExtraDescription ? (
+            // antd `Card size="small"` -> Astryx `Card padding={4}`
+            // (MAPPING §5.1); no header, so the bare surface is enough.
             <Card
-              size="small"
+              padding={4}
               style={{
                 maxHeight: '300px',
                 overflow: 'auto',
@@ -127,9 +148,11 @@ const BAIGeneralNotificationItem: React.FC<{
               }}
             >
               {_.isString(notification.extraDescription) ? (
-                <Typography.Text type="secondary" copyable>
+                // `copyable` lives on BUI's `BAIText` (the repo's Astryx-native
+                // home for it); plain Astryx `Text` has no copy affordance.
+                <BAIText type="secondary" copyable>
                   {notification.extraDescription}
-                </Typography.Text>
+                </BAIText>
               ) : (
                 notification.extraDescription
               )}
@@ -145,14 +168,14 @@ const BAIGeneralNotificationItem: React.FC<{
             )}
             {showDate ? (
               <BAIFlex>
-                <Typography.Text type="secondary">
+                <Text color="secondary">
                   {dayjs(notification.created).format('lll')}
-                </Typography.Text>
+                </Text>
               </BAIFlex>
             ) : null}
           </BAIFlex>
         </BAIFlex>
-      </List.Item>
+      </div>
     </>
   );
 };

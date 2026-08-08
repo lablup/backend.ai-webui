@@ -18,7 +18,6 @@ import {
 } from '@ant-design/x';
 import { Attachment } from '@ant-design/x/es/attachments';
 import { IconButton } from '@astryxdesign/core/IconButton';
-import { type GetRef, type UploadProps } from 'antd';
 import { isEmpty } from 'lodash-es';
 import { CloudUpload, Link } from 'lucide-react';
 import { useEffect, useRef } from 'react';
@@ -60,8 +59,13 @@ const ChatAttachments: React.FC<ChatAttachmentsProps & AttachmentsProps> = ({
   );
 };
 
+// The change payload is re-derived from `AttachmentsProps` (which extends
+// antd's `UploadProps`) instead of importing `UploadProps` from antd directly:
+// `@ant-design/x` is the documented carrier here, so the type has a home that
+// does not put THIS file in the antd import graph (P15/§6 — a type-only antd
+// import still counts).
 export type AttachmentChangeInfo = Parameters<
-  NonNullable<UploadProps['onChange']>
+  NonNullable<AttachmentsProps['onChange']>
 >[0];
 
 interface ChatSenderProps
@@ -95,7 +99,9 @@ const ChatSender: React.FC<ChatSenderProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const senderRef = useRef<GetRef<typeof Sender>>(null);
+  // antd's `GetRef` has no Astryx analog (MAPPING §6.2); React's own
+  // `ComponentRef` is the drop-in.
+  const senderRef = useRef<React.ComponentRef<typeof Sender>>(null);
 
   useEffect(() => {
     if (autoFocus && senderRef.current) {

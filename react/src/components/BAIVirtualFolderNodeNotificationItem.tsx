@@ -11,7 +11,8 @@ import { theme } from '../theme-shim';
 import BAINotificationBackgroundProgress from './BAINotificationBackgroundProgress';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { useToggle } from 'ahooks';
-import { Card, List, Typography } from 'antd';
+import { Card } from '@astryxdesign/core/Card';
+import { Link } from '@astryxdesign/core/Link';
 import { BAIFlex, BAILink, BAINotificationItem, BAIText } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -77,8 +78,12 @@ const BAIVirtualFolderNodeNotificationItem: React.FC<
           </BAIText>
         }
         description={
-          <List.Item>
-            <BAIFlex direction="column" align="stretch" gap={'xxs'}>
+          /* PILOT-DECISION: the `List.Item` here was NESTED inside the one
+             `BAINotificationItem` already renders, so it only added a second
+             padding box. Dropped rather than translated (MAPPING §4 `List`
+             maps `List.Item` to Astryx `ListItem`, a fixed
+             label/description row this body does not fit). */
+          <BAIFlex direction="column" align="stretch" gap={'xxs'}>
               <BAIFlex
                 direction="row"
                 align="end"
@@ -95,7 +100,7 @@ const BAIVirtualFolderNodeNotificationItem: React.FC<
 
                 {notification.extraDescription && !notification?.onCancel ? (
                   <BAIFlex style={{ flexShrink: 0 }}>
-                    <Typography.Link
+                    <Link
                       style={{ whiteSpace: 'nowrap' }}
                       onClick={() => {
                         toggleShowExtraDescription();
@@ -104,14 +109,14 @@ const BAIVirtualFolderNodeNotificationItem: React.FC<
                       {showExtraDescription
                         ? t('notification.SeeSummary')
                         : t('notification.SeeDetail')}
-                    </Typography.Link>
+                    </Link>
                   </BAIFlex>
                 ) : null}
               </BAIFlex>
 
               {notification.extraDescription && showExtraDescription ? (
                 <Card
-                  size="small"
+                  padding={4}
                   style={{
                     maxHeight: '300px',
                     overflow: 'auto',
@@ -120,9 +125,9 @@ const BAIVirtualFolderNodeNotificationItem: React.FC<
                   }}
                 >
                   {_.isString(notification.extraDescription) ? (
-                    <Typography.Text type="secondary" copyable>
+                    <BAIText type="secondary" copyable>
                       {notification.extraDescription}
-                    </Typography.Text>
+                    </BAIText>
                   ) : (
                     notification.extraDescription
                   )}
@@ -136,7 +141,6 @@ const BAIVirtualFolderNodeNotificationItem: React.FC<
                 />
               )}
             </BAIFlex>
-          </List.Item>
         }
         footer={
           showDate ? dayjs(notification.created).format('lll') : undefined

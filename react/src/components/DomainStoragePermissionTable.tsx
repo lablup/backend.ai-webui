@@ -13,7 +13,7 @@ import {
 } from '../helper/storageHostPermission';
 import { theme } from '../theme-shim';
 import StoragePermissionEditModal from './StoragePermissionEditModal';
-import { Typography } from 'antd';
+import { Text } from '@astryxdesign/core/Text';
 import {
   BAINameActionCell,
   BAITableAstryx,
@@ -171,12 +171,12 @@ const DomainStoragePermissionTable: React.FC<
             render: (name: string) => (
               <BAINameActionCell
                 title={
-                  <Typography.Text
-                    ellipsis={{ tooltip: name }}
-                    style={{ maxWidth: 160 }}
-                  >
+                  // antd `ellipsis={{ tooltip: name }}` -> `maxLines={1}`;
+                  // Astryx shows the full text in a tooltip on truncation by
+                  // default (MAPPING §3.4 `ellipsis` row).
+                  <Text maxLines={1} style={{ maxWidth: 160 }}>
                     {name}
-                  </Typography.Text>
+                  </Text>
                 }
                 showActions="always"
                 actions={[

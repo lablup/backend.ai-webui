@@ -20,8 +20,12 @@ import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
 import { Heading } from '@astryxdesign/core/Heading';
 import { Text } from '@astryxdesign/core/Text';
 import * as stylex from '@stylexjs/stylex';
-import { type ModalProps } from 'antd';
-import { filterOutEmpty, BAIFlex, BAIModal } from 'backend.ai-ui';
+import {
+  filterOutEmpty,
+  BAIFlex,
+  BAIModal,
+  type BAIModalProps,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -32,8 +36,10 @@ import {
   useRelayEnvironment,
 } from 'react-relay';
 
+// antd `ModalProps` -> BUI `BAIModalProps` (§6: a type-only antd import is
+// still an antd import). The render was already `BAIModal`.
 interface TerminateSessionModalProps extends Omit<
-  ModalProps,
+  BAIModalProps,
   'onOk' | 'onCancel'
 > {
   sessionFrgmts?: TerminateSessionModalFragment$key;

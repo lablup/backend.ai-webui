@@ -1,0 +1,21 @@
+{
+  "light-domainStep": {
+    "rows": 2,
+    "steps": 4,
+    "dividers": 4
+  },
+  "light-weightModal": {
+    "dialogs": 1,
+    "spinbuttons": 1
+  },
+  "dark-domainStep": {
+    "rows": 2,
+    "steps": 4,
+    "dividers": 4
+  },
+  "dark-weightModal": {
+    "dialogs": 1,
+    "spinbuttons": 1
+  },
+  "pageErrors": []
+}

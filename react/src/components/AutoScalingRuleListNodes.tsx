@@ -6,7 +6,9 @@ import {
   AutoScalingRuleListNodesFragment$data,
   AutoScalingRuleListNodesFragment$key,
 } from '../__generated__/AutoScalingRuleListNodesFragment.graphql';
-import { Tag, Tooltip, Typography } from 'antd';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Text } from '@astryxdesign/core/Text';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIQuestionIconWithTooltip,
   BAIFlex,
@@ -51,14 +53,14 @@ const renderCondition = (
     return (
       <BAIFlex direction="column" gap={'xxs'}>
         <BAIFlex gap={'xs'}>
-          <Tag>{tagLabel}</Tag>
+          <Badge label={tagLabel} />
           {' < '}
           {minThreshold}
         </BAIFlex>
         <BAIFlex gap={'xs'}>
           {maxThreshold}
           {' < '}
-          <Tag>{tagLabel}</Tag>
+          <Badge label={tagLabel} />
         </BAIFlex>
       </BAIFlex>
     );
@@ -68,8 +70,10 @@ const renderCondition = (
     return (
       <BAIFlex gap={'xs'}>
         {maxThreshold}
-        <Tooltip title={t('autoScalingRule.MaxThreshold')}>{'<'}</Tooltip>
-        <Tag>{tagLabel}</Tag>
+        <Tooltip content={t('autoScalingRule.MaxThreshold')}>
+          <span>{'<'}</span>
+        </Tooltip>
+        <Badge label={tagLabel} />
       </BAIFlex>
     );
   }
@@ -77,8 +81,10 @@ const renderCondition = (
   if (minThreshold != null) {
     return (
       <BAIFlex gap={'xs'}>
-        <Tag>{tagLabel}</Tag>
-        <Tooltip title={t('autoScalingRule.MinThreshold')}>{'<'}</Tooltip>
+        <Badge label={tagLabel} />
+        <Tooltip content={t('autoScalingRule.MinThreshold')}>
+          <span>{'<'}</span>
+        </Tooltip>
         {minThreshold}
       </BAIFlex>
     );
@@ -231,8 +237,8 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
             const sign = hasMin && hasMax ? '±' : hasMax ? '+' : '−';
             return (
               <BAIFlex gap={'xs'}>
-                <Typography.Text>{sign}</Typography.Text>
-                <Typography.Text>{Math.abs(row.stepSize)}</Typography.Text>
+                <Text>{sign}</Text>
+                <Text>{Math.abs(row.stepSize)}</Text>
               </BAIFlex>
             );
           },

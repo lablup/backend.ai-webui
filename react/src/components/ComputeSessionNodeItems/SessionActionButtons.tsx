@@ -19,10 +19,6 @@ import TerminateSessionModal from './TerminateSessionModal';
 import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { HStack } from '@astryxdesign/core/Stack';
-// FRONTIER (ticket 17): `ButtonProps['size']` keeps the antd-shaped `size`
-// prop for unmigrated consumers (BAIComputeSessionNodeNotificationItem);
-// translated to the Astryx size enum internally. Type-only import.
-import { type ButtonProps } from 'antd';
 import {
   BAIAppIcon,
   BAIContainerCommitIcon,
@@ -48,6 +44,15 @@ type SessionActionButtonKey =
   | 'sftp'
   | 'terminate';
 
+/**
+ * FRONTIER (ticket 17): the antd-shaped `size` union is RESTATED here instead
+ * of imported from `antd` (§6 — a type-only antd import still blocks the
+ * zero-antd gate). Both consumers — `SessionDetailContent` (`"large"`) and
+ * `BAIComputeSessionNodeNotificationItem` (`"small"`) — stay at zero diff, and
+ * the translation to the Astryx enum below is unchanged.
+ */
+export type SessionActionButtonSize = 'small' | 'middle' | 'large';
+
 export type PrimaryAppOption = {
   appName: 'jupyter' | 'filebrowser';
   urlPostfix?: string;
@@ -55,7 +60,7 @@ export type PrimaryAppOption = {
 
 interface SessionActionButtonsProps {
   sessionFrgmt: SessionActionButtonsFragment$key | null;
-  size?: ButtonProps['size'];
+  size?: SessionActionButtonSize;
   compact?: boolean;
   hiddenButtonKeys?: SessionActionButtonKey[];
   onAction?: (action: SessionActionButtonKey) => void;
@@ -78,8 +83,8 @@ const isAppSupported = (session: SessionActionButtonsFragment$data) => {
   );
 };
 
-/** antd `ButtonProps['size']` -> Astryx size enum (frontier translation). */
-const toAstryxSize = (size?: ButtonProps['size']): 'sm' | 'md' | 'lg' =>
+/** antd button `size` -> Astryx size enum (frontier translation). */
+const toAstryxSize = (size?: SessionActionButtonSize): 'sm' | 'md' | 'lg' =>
   size === 'small' ? 'sm' : size === 'large' ? 'lg' : 'md';
 
 const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({

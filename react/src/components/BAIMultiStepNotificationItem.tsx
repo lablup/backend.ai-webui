@@ -6,7 +6,9 @@ import { NotificationState } from '../hooks/useBAINotification';
 import { theme } from '../theme-shim';
 import './BAIMultiStepNotificationItem.css';
 import BAINotificationBackgroundProgress from './BAINotificationBackgroundProgress';
-import { Button, List, Typography } from 'antd';
+import './BAINotificationListItem.css';
+import { Link } from '@astryxdesign/core/Link';
+import { Text } from '@astryxdesign/core/Text';
 import { BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import {
@@ -197,7 +199,12 @@ const BAIMultiStepNotificationItem: React.FC<{
   const outgoingStepDef = outgoing != null ? steps[outgoing] : null;
 
   return (
-    <List.Item>
+    // PILOT-DECISION: antd `List.Item` -> a plain block carrying the 16px
+    // vertical padding and row hairline it supplied, moved into
+    // `BAINotificationListItem.css`. Astryx `ListItem` is a fixed
+    // label/description/start/end row and cannot hold this multi-row body
+    // (MAPPING §4 `List`).
+    <div className="bai-notification-list-item">
       <BAIFlex direction="column" align="stretch" gap={'xxs'}>
         {/* Header: icon + message */}
         <BAIFlex
@@ -207,9 +214,16 @@ const BAIMultiStepNotificationItem: React.FC<{
           style={{ paddingRight: token.paddingMD }}
         >
           <BAIFlex style={{ height: 22 }}>{overallIcon}</BAIFlex>
-          <Typography.Paragraph style={{ fontWeight: 500 }}>
+          {/* antd `Typography.Paragraph` -> `Text as="p" display="block"`;
+              antd's 1em paragraph margin is restated (Astryx's reset gives
+              block text none). */}
+          <Text
+            as="p"
+            display="block"
+            style={{ fontWeight: 500, marginBottom: '1em' }}
+          >
             {notification.message}
-          </Typography.Paragraph>
+          </Text>
         </BAIFlex>
 
         {/* Current step: icon + counter + animated label */}
@@ -235,20 +249,17 @@ const BAIMultiStepNotificationItem: React.FC<{
             />
           )}
           {!isTerminal && (
-            <Typography.Text
+            <Text
+              color="secondary"
               style={{ fontSize: token.fontSizeSM, whiteSpace: 'nowrap' }}
-              type="secondary"
             >
               {currentStep + 1}/{totalSteps}
-            </Typography.Text>
+            </Text>
           )}
           {isTerminal ? (
-            <Typography.Text
-              style={{ fontSize: token.fontSizeSM }}
-              type="secondary"
-            >
+            <Text color="secondary" style={{ fontSize: token.fontSizeSM }}>
               {stepLabel}
-            </Typography.Text>
+            </Text>
           ) : (
             <div className="bai-step-slider" style={{ flex: 1 }}>
               {outgoing != null && outgoingStepDef && (
@@ -259,9 +270,9 @@ const BAIMultiStepNotificationItem: React.FC<{
                       : 'bai-step-slide-up'
                   }`}
                 >
-                  <Typography.Text style={{ fontSize: token.fontSizeSM }}>
+                  <Text style={{ fontSize: token.fontSizeSM }}>
                     {outgoingStepDef.label}
-                  </Typography.Text>
+                  </Text>
                 </div>
               )}
               <div
@@ -271,9 +282,9 @@ const BAIMultiStepNotificationItem: React.FC<{
                     : 'bai-step-slide-center'
                 }`}
               >
-                <Typography.Text style={{ fontSize: token.fontSizeSM }}>
+                <Text style={{ fontSize: token.fontSizeSM }}>
                   {incomingStepDef?.label}
-                </Typography.Text>
+                </Text>
               </div>
             </div>
           )}
@@ -318,7 +329,7 @@ const BAIMultiStepNotificationItem: React.FC<{
                       animated={step.status === 'pending'}
                     />
                   </BAIFlex>
-                  <Typography.Text
+                  <Text
                     style={{
                       fontSize: token.fontSizeSM,
                       color:
@@ -328,7 +339,7 @@ const BAIMultiStepNotificationItem: React.FC<{
                     }}
                   >
                     {step.label}
-                  </Typography.Text>
+                  </Text>
                 </BAIFlex>
               ))}
             </BAIFlex>
@@ -337,7 +348,7 @@ const BAIMultiStepNotificationItem: React.FC<{
 
         {/* Description: shown on failure/cancellation with detail message */}
         {isTerminal && notification.description && (
-          <Typography.Text
+          <Text
             style={{
               fontSize: token.fontSizeSM,
               color:
@@ -349,26 +360,21 @@ const BAIMultiStepNotificationItem: React.FC<{
             }}
           >
             {notification.description}
-          </Typography.Text>
+          </Text>
         )}
 
         {/* Buttons: retry / cancel / action */}
         <BAIFlex direction="row" align="end" gap={'xxs'} justify="end">
           <BAIFlex gap={'xxs'}>
-            {showRetry && (
-              <Button type="link" size="small" onClick={onRetry}>
-                {t('button.Retry')}
-              </Button>
-            )}
-            {showCancel && (
-              <Button type="link" size="small" onClick={onCancel}>
-                {t('button.Cancel')}
-              </Button>
-            )}
+            {/* antd `Button type="link"` -> Astryx `Link` (MAPPING §3.3).
+                With no `href` it renders a `<button>` with link styling.
+                `size="small"` has no Link equivalent and is dropped — Link
+                inherits the surrounding text size, which is what the antd
+                small link button approximated here. */}
+            {showRetry && <Link onClick={onRetry}>{t('button.Retry')}</Link>}
+            {showCancel && <Link onClick={onCancel}>{t('button.Cancel')}</Link>}
             {actionButton && (
-              <Button type="link" size="small" onClick={actionButton.onClick}>
-                {actionButton.label}
-              </Button>
+              <Link onClick={actionButton.onClick}>{actionButton.label}</Link>
             )}
           </BAIFlex>
         </BAIFlex>
@@ -389,14 +395,14 @@ const BAIMultiStepNotificationItem: React.FC<{
             )}
           {isDetailView && (
             <BAIFlex>
-              <Typography.Text type="secondary">
+              <Text color="secondary">
                 {dayjs(notification.created).format('lll')}
-              </Typography.Text>
+              </Text>
             </BAIFlex>
           )}
         </BAIFlex>
       </BAIFlex>
-    </List.Item>
+    </div>
   );
 };
 

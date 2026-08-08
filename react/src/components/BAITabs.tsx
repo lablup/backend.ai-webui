@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { Tab, TabList } from '@astryxdesign/core/TabList';
-import type { TabsProps } from 'antd';
 import React from 'react';
 
 /**
@@ -23,6 +22,11 @@ import React from 'react';
  *    -> `endContent` is added to the item shape so call sites CAN split
  *       "string label" from "trailing badge", which is the correct fix.
  *       `AdminVFolderNodeListPage` does exactly that; the rest still pass JSX.
+ * PHASE 3 (wave 2 A): the antd `TabsProps` TYPE import is gone. §6 of the
+ * mapping counts a type-only antd import as an antd import, so the four props
+ * this file borrowed from it (`activeKey`, `defaultActiveKey`, `onChange`,
+ * `className`) are restated below. The public contract is unchanged.
+ *
  * 2. antd's `type="card"` visual (boxed tabs with a primary-coloured rail) has
  *    no Astryx counterpart. `hasDivider` is the nearest equivalent — an
  *    underlined tab strip. PILOT-DECISION: accepted the underline look rather
@@ -44,10 +48,11 @@ export interface BAITabItem {
   children?: React.ReactNode;
 }
 
-export interface BAITabsProps extends Pick<
-  TabsProps,
-  'activeKey' | 'defaultActiveKey' | 'onChange' | 'className'
-> {
+export interface BAITabsProps {
+  activeKey?: string;
+  defaultActiveKey?: string;
+  onChange?: (activeKey: string) => void;
+  className?: string;
   items?: Array<BAITabItem>;
   size?: 'sm' | 'md' | 'lg';
   /**

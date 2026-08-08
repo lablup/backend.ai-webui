@@ -1,0 +1,29 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Row shell for the notification-drawer items (to-astryx phase 3, wave 2 A).
+
+ antd `List.Item` supplied two things to `BAIGeneralNotificationItem` /
+ `BAIMultiStepNotificationItem`: a 16px vertical padding and a hairline between
+ consecutive rows (`.ant-list-item` + `:last-child` reset). Astryx `ListItem`
+ cannot stand in — it is a fixed label/description/start/end row and these
+ notifications are multi-row blocks — so the two metrics move here, imported by
+ the components themselves (P17, component-scoped rather than app-global).
+
+ Self-contained on purpose: it keeps the divider correct whether the surrounding
+ list is still antd's `List` or Astryx's, so this file and
+ `WEBUINotificationDrawer` (a sibling partition) can land in either order.
+
+ Token mapping (P19-checked against Astryx's declared variables):
+   token.paddingContentVertical (16px) -> a literal, no Astryx token is 16px
+                                          "content padding"
+   token.colorSplit                    -> var(--color-border)
+*/
+.bai-notification-list-item {
+  padding-block: 16px;
+}
+
+.bai-notification-list-item:not(:last-child) {
+  border-block-end: 1px solid var(--color-border);
+}

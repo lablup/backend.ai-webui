@@ -15,7 +15,10 @@ import {
   TCP_APPS,
   useBackendAIAppLauncher,
 } from '../../hooks/useBackendAIAppLauncher';
-import { AstryxFormTagsInput } from '../astryx-bui/astryxFormControls';
+import {
+  AstryxFormNumberInput,
+  AstryxFormTagsInput,
+} from '../astryx-bui/astryxFormControls';
 import AppLaunchConfirmationModal from './AppLaunchConfirmationModal';
 import SFTPConnectionInfoModal from './SFTPConnectionInfoModal';
 import TCPConnectionInfoModal from './TCPConnectionInfoModal';
@@ -29,14 +32,15 @@ import { Heading } from '@astryxdesign/core/Heading';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Text } from '@astryxdesign/core/Text';
 import * as stylex from '@stylexjs/stylex';
-// FRONTIER (ticket 17): the Form engine is antd's — ticket 34's self-hosted
-// replacement is parked — and so are the remaining CONTROLS inside the items
-// (InputNumber, Input), which migrate with the remaining component tickets.
-// The tags-mode select is done: it is `AstryxFormTagsInput` now.
-import { Input, InputNumber, ModalProps } from 'antd';
+import { TextInput } from '@astryxdesign/core/TextInput';
+// FRONTIER (ticket 17): the Form ENGINE stays antd's (ticket 34's self-hosted
+// replacement is parked). The CONTROLS inside the items are Astryx now — the
+// `astryxFormControls` adapters where a `Form.Item` injects `value`/`onChange`,
+// raw Astryx components where it does not.
 import {
   BAIFlex,
   BAIModal,
+  type BAIModalProps,
   BAIUnmountAfterClose,
   useBAILogger,
   useErrorMessageResolver,
@@ -46,7 +50,10 @@ import { useRef, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
-interface AppLauncherModalProps extends ModalProps {
+// PILOT-DECISION: antd `ModalProps` -> BUI `BAIModalProps` (§6 — a type-only
+// antd import is still an antd import). The render was already `BAIModal`, so
+// this only removes the mismatch between the declared and the actual surface.
+interface AppLauncherModalProps extends BAIModalProps {
   onRequestClose: () => void;
   sessionFrgmt: AppLauncherModalFragment$key | null;
 }
@@ -424,10 +431,10 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                   },
                 ]}
               >
-                <InputNumber
+                <AstryxFormNumberInput
+                  label={t('session.TryPreferredPort')}
                   placeholder="10250"
                   disabled={!tryPreferredPort}
-                  style={{ width: '100%' }}
                 />
               </Form.Item>
             ) : null}
@@ -446,10 +453,16 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                     </BAIFlex>
                   }
                 >
-                  <Input
-                    disabled={!useSubDomain}
+                  {/* Not a bound field (the `Form.Item` has no `name`), so
+                      the raw Astryx control is used rather than an adapter.
+                      `onChange` takes the VALUE, not the event (P3). */}
+                  <TextInput
+                    label={t('session.UseSubdomain')}
+                    isLabelHidden
+                    isDisabled={!useSubDomain}
                     value={subDomainValue}
-                    onChange={(e) => setSubDomainValue(e.target.value)}
+                    onChange={(next) => setSubDomainValue(next)}
+                    width="100%"
                   />
                 </Form.Item>
                 <Form.Item>

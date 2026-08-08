@@ -1,0 +1,23 @@
+{
+  "light-envVarRows": {
+    "inputs": 6,
+    "astryxInputs": 0
+  },
+  "light-rgFairShareModal": {
+    "dialogs": 0,
+    "numberInputs": 0
+  },
+  "light-fairShareDomain": "TimeoutError: locator.click: Timeout 8000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('link', { name: /default/i }).first()\u001b[22m\n",
+  "light-deploymentDetail": "no deployments on this cluster",
+  "dark-envVarRows": {
+    "inputs": 6,
+    "astryxInputs": 0
+  },
+  "dark-rgFairShareModal": {
+    "dialogs": 0,
+    "numberInputs": 0
+  },
+  "dark-fairShareDomain": "TimeoutError: locator.click: Timeout 8000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('link', { name: /default/i }).first()\u001b[22m\n",
+  "dark-deploymentDetail": "no deployments on this cluster",
+  "pageErrors": []
+}

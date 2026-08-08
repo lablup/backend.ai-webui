@@ -6,7 +6,6 @@ import {
   SegmentedControl,
   SegmentedControlItem,
 } from '@astryxdesign/core/SegmentedControl';
-import type { RadioGroupProps } from 'antd';
 import React from 'react';
 
 /**
@@ -24,16 +23,35 @@ import React from 'react';
  * Astryx's controlled inputs pass the VALUE to `onChange`, antd passes the
  * EVENT. Absorbing that at the wrapper avoids editing 20 files.
  *
+ * PHASE 3 (wave 2 A): the antd `RadioGroupProps` TYPE import is gone too. §6
+ * of the mapping is explicit that a type-only antd import is still an antd
+ * import and still blocks the zero-antd gate, so the three props this file
+ * borrowed (`value`, `onChange`, `className`) and the antd change-event shape
+ * `onChange` re-creates are RESTATED locally. The public contract is
+ * byte-identical for the 20 call sites — they keep reading `e.target.value`.
+ *
  * PILOT-DECISION: the deleted `createStyles` block and the `ConfigProvider`
  * component-token override existed solely to tint antd's checked radio button
  * with `rgba(colorPrimary, .15/.30)`. Astryx's SegmentedControl renders its own
  * selected treatment from theme tokens; the alpha-tint override is dropped
  * rather than re-implemented. Needs a design call before rollout.
  */
-export interface BAIRadioGroupProps extends Pick<
-  RadioGroupProps,
-  'value' | 'onChange' | 'className'
-> {
+/**
+ * The subset of antd's radio change event that call sites read. Restated here
+ * so the wrapper carries no antd type import.
+ */
+export interface BAIRadioChangeEvent {
+  /* antd typed `RadioGroupProps['value']` as `any`; narrowing it here would
+     break the 20 call sites that read `e.target.value` into their own typed
+     state. */
+  target: { value: any };
+}
+
+export interface BAIRadioGroupProps {
+  /* `any`, for the reason stated on `BAIRadioChangeEvent` above. */
+  value?: any;
+  onChange?: (e: BAIRadioChangeEvent) => void;
+  className?: string;
   options?: Array<{ label: React.ReactNode; value: string }>;
   /** Accessible name for the group. Astryx requires one (never rendered). */
   label?: string;
@@ -69,9 +87,7 @@ const BAIRadioGroup: React.FC<BAIRadioGroupProps> = ({
       onChange={(next) => {
         // Re-shape Astryx's `(value) => void` back into antd's
         // `(event) => void` so `e.target.value` still works at call sites.
-        onChange?.({
-          target: { value: next },
-        } as Parameters<NonNullable<RadioGroupProps['onChange']>>[0]);
+        onChange?.({ target: { value: next } });
       }}
     >
       {options?.map((option) => (

@@ -8,7 +8,8 @@ import {
 } from '../../__generated__/DomainFairShareTableFragment.graphql';
 import { theme } from '../../theme-shim';
 import DomainResourceGroupWarningIcon from './DomainResourceGroupWarningIcon';
-import { Divider, Typography } from 'antd';
+import { Divider } from '@astryxdesign/core/Divider';
+import { Text } from '@astryxdesign/core/Text';
 import {
   BAIQuestionIconWithTooltip,
   BAIColumnsType,
@@ -160,19 +161,16 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
       render: (weight, record) => {
         return (
           <BAIFlex gap="xxs">
-            <Typography.Text>
+            <Text>
               {_.isNil(weight)
                 ? '-'
                 : toFixedFloorWithoutTrailingZeros(weight, 1)}
-            </Typography.Text>
-            <Typography.Text
-              type="secondary"
-              style={{ fontSize: token.fontSizeSM }}
-            >
+            </Text>
+            <Text color="secondary" style={{ fontSize: token.fontSizeSM }}>
               {record.spec.usesDefault
                 ? `(${t('fairShare.UsingDefault')})`
                 : ''}
-            </Typography.Text>
+            </Text>
           </BAIFlex>
         );
       },
@@ -217,15 +215,15 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
               (entry: { resourceType: string; quantity: number }, index) => (
                 <BAIFlex key={entry.resourceType} gap="sm" align="center">
                   {index > 0 && (
-                    <Divider type="vertical" style={{ margin: 0 }} />
+                    <Divider orientation="vertical" />
                   )}
                   <BAIResourceNumberWithIcon
                     type={entry.resourceType}
                     value={toFixedFloorWithoutTrailingZeros(entry.quantity, 2)}
                     extra={
-                      <Typography.Text type="secondary">
+                      <Text color="secondary">
                         / {t('fairShare.DayUnit')}
-                      </Typography.Text>
+                      </Text>
                     }
                   />
                 </BAIFlex>

@@ -7,17 +7,18 @@ import {
   useCliDownloadMap,
   useSuspendedBackendaiClient,
 } from '../hooks';
+import BAITabs from './BAITabs';
 import SourceCodeView from './SourceCodeView';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Button } from '@astryxdesign/core/Button';
+import { Divider } from '@astryxdesign/core/Divider';
 import {
-  Alert,
-  Select,
-  Button,
-  Descriptions,
-  Divider,
-  Tooltip,
-  Tabs,
-  Typography,
-} from 'antd';
+  MetadataList,
+  MetadataListItem,
+} from '@astryxdesign/core/MetadataList';
+import { Selector } from '@astryxdesign/core/Selector';
+import { Text } from '@astryxdesign/core/Text';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIFlex,
   BAIModal,
@@ -36,24 +37,32 @@ const DesktopAppDownloadTab: React.FC = () => {
     useAppDownloadMap();
 
   return (
-    <Descriptions column={1} bordered>
-      <Descriptions.Item label={t('summary.OS')}>
-        <Select
+    // antd `Descriptions column={1} bordered` -> Astryx `MetadataList
+    // columns="single"` (MAPPING §4). `bordered` has NO destination and is
+    // dropped: MetadataList lays out label/value rows without a grid frame.
+    <MetadataList columns="single">
+      <MetadataListItem label={t('summary.OS')}>
+        {/* antd `Select` with `Select.Option` children -> `Selector` with an
+            `options` array; `label` is required and hidden because the
+            metadata row already prints it. */}
+        <Selector
+          label={t('summary.OS')}
+          isLabelHidden
           value={selectedOS}
-          onChange={(value) => setSelectedOS(value)}
-          style={{ width: '100%' }}
-        >
-          {map(OS, (os) => (
-            <Select.Option key={os} value={os}>
-              {os}
-            </Select.Option>
-          ))}
-        </Select>
-      </Descriptions.Item>
-      <Descriptions.Item label={t('webui.menu.Architecture')}>
+          // Astryx `Selector` commits a plain `string`; the hook's setter is
+          // typed on the OS literal union, so the narrowing happens here.
+          onChange={(value) => setSelectedOS(value as typeof selectedOS)}
+          options={map(OS, (os) => ({ value: os, label: os }))}
+        />
+      </MetadataListItem>
+      <MetadataListItem label={t('webui.menu.Architecture')}>
         <BAIFlex gap={'xs'} justify="between">
           {map(architectures, (arch: 'arm64' | 'x64') => (
-            <Tooltip title={t('webui.menu.ClickToDownload')} key={arch}>
+            // antd v6 `Button variant="outlined" color="primary"` ->
+            // Astryx `variant="secondary"` (the bordered, non-filled
+            // treatment); `style={{flex:1}}` -> `width="100%"` inside the
+            // flex row, and the children become the required `label`.
+            <Tooltip content={t('webui.menu.ClickToDownload')} key={arch}>
               <Button
                 key={arch}
                 onClick={() =>
@@ -63,18 +72,16 @@ const DesktopAppDownloadTab: React.FC = () => {
                     'noopener,noreferrer',
                   )
                 }
-                style={{ flex: 1 }}
-                variant="outlined"
-                color="primary"
+                width="100%"
+                variant="secondary"
                 icon={<Download size="1em" />}
-              >
-                {toUpper(arch)}
-              </Button>
+                label={toUpper(arch)}
+              />
             </Tooltip>
           ))}
         </BAIFlex>
-      </Descriptions.Item>
-    </Descriptions>
+      </MetadataListItem>
+    </MetadataList>
   );
 };
 
@@ -146,27 +153,26 @@ const CLIDownloadTab: React.FC = () => {
       {cliDownloadUrl ? (
         <>
           <BAIFlex direction="column" align="stretch" gap="sm">
-            <Typography.Text strong>
+            <Text weight="semibold">
               {t('summary.CLIDownloadExecutable')}
-            </Typography.Text>
-            <Descriptions column={1} bordered>
-              <Descriptions.Item label={t('summary.OS')}>
-                <Select
+            </Text>
+            <MetadataList columns="single">
+              <MetadataListItem label={t('summary.OS')}>
+                <Selector
+                  label={t('summary.OS')}
+                  isLabelHidden
                   value={selectedOS}
-                  onChange={(value) => setSelectedOS(value)}
-                  style={{ width: '100%' }}
-                >
-                  {map(OS, (os) => (
-                    <Select.Option key={os} value={os}>
-                      {os}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </Descriptions.Item>
-              <Descriptions.Item label={t('webui.menu.Architecture')}>
+                  onChange={(value) => setSelectedOS(value as typeof selectedOS)}
+                  options={map(OS, (os) => ({ value: os, label: os }))}
+                />
+              </MetadataListItem>
+              <MetadataListItem label={t('webui.menu.Architecture')}>
                 <BAIFlex gap={'xs'} justify="between">
                   {map(architectures, (arch: 'x86_64' | 'aarch64') => (
-                    <Tooltip title={t('webui.menu.ClickToDownload')} key={arch}>
+                    <Tooltip
+                      content={t('webui.menu.ClickToDownload')}
+                      key={arch}
+                    >
                       <Button
                         key={arch}
                         onClick={() =>
@@ -176,28 +182,25 @@ const CLIDownloadTab: React.FC = () => {
                             'noopener,noreferrer',
                           )
                         }
-                        style={{ flex: 1 }}
-                        variant="outlined"
-                        color="primary"
+                        width="100%"
+                        variant="secondary"
                         icon={<Download size="1em" />}
-                      >
-                        {arch}
-                      </Button>
+                        label={arch}
+                      />
                     </Tooltip>
                   ))}
                 </BAIFlex>
-              </Descriptions.Item>
-            </Descriptions>
+              </MetadataListItem>
+            </MetadataList>
             {selectedOS === 'MacOS' ? (
-              <Alert
-                type="warning"
-                showIcon
+              <Banner
+                status="warning"
                 title={t('summary.CLIMacOSUnsignedTitle')}
                 description={
                   <BAIFlex direction="column" align="stretch" gap="xs">
-                    <Typography.Text type="secondary">
+                    <Text color="secondary">
                       {t('summary.CLIMacOSUnsignedDescription')}
-                    </Typography.Text>
+                    </Text>
                     <SourceCodeView language="shell">
                       {macOSUnblockSnippet}
                     </SourceCodeView>
@@ -206,23 +209,19 @@ const CLIDownloadTab: React.FC = () => {
               />
             ) : (
               <BAIFlex direction="column" align="stretch" gap="xs">
-                <Typography.Text type="secondary">
+                <Text color="secondary">
                   {t('summary.CLIRunExecutableDescription')}
-                </Typography.Text>
+                </Text>
                 <SourceCodeView language="shell">{runSnippet}</SourceCodeView>
               </BAIFlex>
             )}
           </BAIFlex>
-          <Divider style={{ margin: 0 }} />
+          <Divider />
         </>
       ) : null}
       <BAIFlex direction="column" align="stretch" gap="sm">
-        <Typography.Text strong>
-          {t('summary.CLIInstallViaPip')}
-        </Typography.Text>
-        <Typography.Text type="secondary">
-          {t('summary.CLIGetStartedDescription')}
-        </Typography.Text>
+        <Text weight="semibold">{t('summary.CLIInstallViaPip')}</Text>
+        <Text color="secondary">{t('summary.CLIGetStartedDescription')}</Text>
         <SourceCodeView language="shell">{pipSnippet}</SourceCodeView>
       </BAIFlex>
     </BAIFlex>
@@ -265,7 +264,11 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
       styles={{ body: { paddingTop: 0 } }}
       {...baiModalProps}
     >
-      <Tabs items={tabItems} />
+      {/* antd `Tabs items` (with `children` panels) -> `BAITabs`, the
+          frontier wrapper that keeps the antd-shaped `items` contract and
+          renders the active panel itself (Astryx `TabList` is navigation
+          only). */}
+      <BAITabs items={tabItems} />
     </BAIModal>
   );
 };

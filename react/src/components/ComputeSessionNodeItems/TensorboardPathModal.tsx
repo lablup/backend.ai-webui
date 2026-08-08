@@ -7,11 +7,11 @@ import { App } from '../../app-shim';
 import { Form } from '../../form-engine';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useBackendAIAppLauncher } from '../../hooks/useBackendAIAppLauncher';
+import { AstryxFormTextInput } from '../astryxFormControls';
 import { Button } from '@astryxdesign/core/Button';
 import { Text } from '@astryxdesign/core/Text';
-// FRONTIER (ticket 17 / ticket 34): Form + Form.Item + Input stay on the antd
+// FRONTIER (ticket 17 / ticket 34): Form + Form.Item stay on the antd
 // form engine (locked SHIM decision).
-import { Input } from 'antd';
 import {
   BAIFlex,
   BAIModal,
@@ -120,7 +120,10 @@ const TensorboardPathModal: React.FC<TensorboardPathModalProps> = ({
           }}
         >
           <Form.Item name="tensorboardPath">
-            <Input placeholder={t('session.DefaultTensorboardPath')} />
+            <AstryxFormTextInput
+              label={t('session.TensorboardPath')}
+              placeholder={t('session.DefaultTensorboardPath')}
+            />
           </Form.Item>
         </Form>
 

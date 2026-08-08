@@ -6,7 +6,9 @@ import { useBAINotificationState } from '../hooks/useBAINotification';
 import useKeyboardShortcut from '../hooks/useKeyboardShortcut';
 import ReverseThemeProvider from './ReverseThemeProvider';
 import WEBUINotificationDrawer from './WEBUINotificationDrawer';
-import { Badge, Button, Tooltip, type ButtonProps } from 'antd';
+import BAIBadgeCountAstryx from './astryx-bui/BAIBadgeCountAstryx';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { BAIText } from 'backend.ai-ui';
 import { t } from 'i18next';
 import { atom, useAtom } from 'jotai';
@@ -19,7 +21,19 @@ export const isOpenDrawerState = atom(false);
 // Pure UI: badge + drawer toggle. Notification event handling and toast
 // rendering live in the app-wide <NotificationHost /> (DefaultProviders),
 // which stays mounted regardless of authentication state.
-const BAINotificationButton: React.FC<ButtonProps> = ({ ...props }) => {
+/**
+ * PILOT-DECISION: the props no longer extend antd `ButtonProps` (P1 grep — the
+ * single consumer, `WebUIHeader`, passes only `data-testid`). Astryx's
+ * `IconButton` props are the natural base now that the render is one.
+ */
+type BAINotificationButtonProps = Pick<
+  React.ComponentProps<typeof IconButton>,
+  'style' | 'className' | 'isDisabled'
+> & { 'data-testid'?: string };
+
+const BAINotificationButton: React.FC<BAINotificationButtonProps> = ({
+  ...props
+}) => {
   const [notifications] = useBAINotificationState();
 
   const [isOpenDrawer, setIsOpenDrawer] = useAtom(isOpenDrawerState);
@@ -56,26 +70,39 @@ const BAINotificationButton: React.FC<ButtonProps> = ({ ...props }) => {
   return (
     <>
       <ReverseThemeProvider>
+        {/* antd `Tooltip title` -> `content`; `placement="left"` -> `"start"`
+            (Astryx uses logical placements — MAPPING §4). */}
         <Tooltip
-          title={
+          content={
             <>
               {t('notification.Notifications')}{' '}
               <BAIText keyboardWithLightBorder>{']'}</BAIText>
             </>
           }
-          placement="left"
+          placement="start"
         >
-          <Button
+          {/* antd icon-only `Button type="text"` -> `IconButton
+              variant="ghost"`, which requires the accessible name antd let
+              this button ship without (P8). The `Badge dot` overlay is
+              MAPPING §3.8's NONE branch, already self-built once as
+              `BAIBadgeCountAstryx`; antd `color="red"` becomes
+              `variant="error"` (the closed-enum equivalent). */}
+          <IconButton
+            variant="ghost"
+            label={t('notification.Notifications')}
             icon={
-              <Badge color="red" dot={hasRunningBackgroundTask}>
-                {/* On the glyph itself, not just the button: antd's `.ant-badge`
-                    declares its own `color`, so it intercepts inheritance from
-                    the button before the icon sees it. `Bell` strokes with
-                    `currentColor`. */}
+              <BAIBadgeCountAstryx
+                hasDot={hasRunningBackgroundTask}
+                variant="error"
+                title={t('notification.Notifications')}
+              >
+                {/* On the glyph itself, not just the button: the overlay
+                    wrapper declares its own `color`, so it intercepts
+                    inheritance from the button before the icon sees it.
+                    `Bell` strokes with `currentColor`. */}
                 <Bell size="1em" style={{ color: 'var(--color-on-dark)' }} />
-              </Badge>
+              </BAIBadgeCountAstryx>
             }
-            type="text"
             onClick={() => setIsOpenDrawer((v) => !v)}
             {...props}
             style={{ color: 'var(--color-on-dark)', ...props.style }}

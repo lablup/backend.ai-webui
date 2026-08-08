@@ -12,9 +12,12 @@ import {
   MetadataListItem,
 } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
-// FRONTIER (ticket 17 / ticket 34): Form + Form.Item + Input stay on the antd
-// form engine (locked SHIM decision).
-import { Input } from 'antd';
+// FRONTIER (ticket 17 / ticket 34): Form + Form.Item stay on the antd
+// form engine (locked SHIM decision); the CONTROL inside the item is Astryx,
+// through the `astryxFormControls` adapter that reconciles the three deltas
+// (required non-null `value`, self-rendered `label`, value-not-event
+// `onChange`).
+import { AstryxFormTextInput } from '../astryxFormControls';
 import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -144,7 +147,10 @@ const ContainerCommitModal: React.FC<ContainerCommitModalProps> = ({
               },
             ]}
           >
-            <Input placeholder={t('inputLimit.4to32chars')} />
+            <AstryxFormTextInput
+              label={t('session.CommitImageName')}
+              placeholder={t('inputLimit.4to32chars')}
+            />
           </Form.Item>
         </Form>
       </BAIFlex>
