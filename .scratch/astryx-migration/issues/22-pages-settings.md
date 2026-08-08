@@ -80,12 +80,16 @@
 
 ### 주요 PILOT-DECISION (전체 목록은 각 파일 in-code 주석)
 
-1. **SettingList 세로 탭(`tabDirection`/antd `tabPlacement="start"`) 드롭.**
-   최초에는 `tabPlacement`를 존재하지 않는 prop으로 오판했으나(antd 실제
-   prop은 `tabPosition`이 **deprecated**, `tabPlacement`가 현재 prop) —
-   before 스크린샷으로 실제로 좌측 세로 탭이 렌더됨을 확인 후 정정. Astryx
-   `TabList`는 세로/사이드 배치 자체가 없는 진짜 capability gap(코드 정리가
-   아님) — 수평 상단 탭으로 수렴, in-code 주석에 before 스크린샷 경로 기록.
+1. ~~**SettingList 세로 탭(`tabDirection`/antd `tabPlacement="start"`) 드롭.**~~
+   **SUPERSEDED 2026-08-08 — 세로 내비게이션 복원.** 아래 "PILOT-DECISION #1
+   철회" 참조.
+
+   (원문, 기록 보존) 최초에는 `tabPlacement`를 존재하지 않는 prop으로
+   오판했으나(antd 실제 prop은 `tabPosition`이 **deprecated**, `tabPlacement`가
+   현재 prop) — before 스크린샷으로 실제로 좌측 세로 탭이 렌더됨을 확인 후
+   정정. Astryx `TabList`는 세로/사이드 배치 자체가 없는 진짜 capability
+   gap(코드 정리가 아님) — 수평 상단 탭으로 수렴, in-code 주석에 before
+   스크린샷 경로 기록.
 2. SettingItem 리셋: antd `Dropdown`(단일 "Reset" 항목, danger 틴트) 감싼
    구조 → 직접 클릭 `IconButton`(ShellScriptEditModal의 reset도 동일 패턴).
    메뉴 한 항목짜리 인디렉션 제거(단순성).
@@ -146,11 +150,58 @@ Direct antd value-imports(영역 30파일): **before 37 → after 12**. 잔여 1
 제외), `createStyles` 0(co-located CSS로 이관). 재생성:
 `shots/22/p15-area.sh HEAD|WORK`.
 
+### PILOT-DECISION #1 철회 (2026-08-08) — settings-sidebar 패턴 채택
+
+**결론: #1은 틀렸다.** `TabList`에 세로 배치가 없다는 관찰은 맞지만, 좌측 탭
+레일의 Astryx 등가물은 "세로 TabList"가 아니라 **페이지 셸**이고, Astryx는 그걸
+`settings-sidebar` 페이지 템플릿("Settings Panels")으로 이미 제공한다. 컴포넌트
+레벨 조회(`astryx component TabList`)만으로는 안 보이고 `astryx template --list`
+/ `astryx search "settings sidebar"`로 발견된다 — discover-don't-guess의 범위를
+컴포넌트에서 템플릿까지 넓혀야 했던 사례.
+
+`SettingList`는 이제 템플릿 조합을 그대로 따른다:
+
+- `Layout height="auto" padding={0}`
+  + `start={<LayoutPanel hasDivider padding={0} width={240} role="navigation">}`
+  + `content={<LayoutContent padding={4}>}`
+- 내비 열은 `List density="spacious"` + `ListItem`
+  (`isSelected` 활성 표시, `endContent`에 카운트 `Badge` — 22에서 만든 카운트
+  뱃지 그대로 이동)
+- 좁은 화면(< `md`, 768px)은 템플릿과 동일한 master→detail 드릴다운:
+  `start` 슬롯을 통째로 제거하고 내비 리스트를 전폭으로, 선택 시 `Toolbar` +
+  ghost 백 버튼 + 섹션명. 이 모드에서는 pane 안의 그룹 제목을 숨겨 중복 제거
+  (`GroupSettingItems hideTitle`).
+- 브레이크포인트는 RESPONSIVE-POLICY §2대로 `useBAIBreakpoint()`
+  (Astryx `useMediaQuery`는 첫 렌더 `false` → 플래시).
+- `width={240}`: 레거시는 `tabBarStyle={{ minWidth: 200 }}`(콘텐츠에 맞춰 성장),
+  `LayoutPanel.width`는 고정 예산이라 200에서 "Experimental features"가 잘려
+  한 단계 넓힘. 프레임 우선(frame-first) 규칙에 따른 px 예산이며 per-component
+  색/위치 해킹이 아니다.
+- 신규 i18n 키 0: 백 버튼 `webui.menu.GoBack`, 내비 랜드마크 라벨
+  `webui.menu.Settings` 재사용.
+
+**URL 계약 무영향.** 좌측 레일 선택은 antd `Tabs`가 들고 있던 것과 동일한
+페이지 내부 state(`activeTabKey`, `useState`)다. 페이지 레벨 `?tab=`
+(nuqs `useTabQuerySnapshot` on `BAICard`)은 손대지 않았고, 라이브에서
+`?tab=logs` 클릭 → 새로고침 → `?tab=logs` + Logs 탭 활성 확인.
+
+**증거:** `.scratch/astryx-migration/shots/settings-sidebar/{before,after}-*.png`
+(usersettings / configurations / maintenance / branding × 라이트·다크 wide,
+usersettings 좁은 화면 nav·detail × 라이트·다크, 활성 항목 하이라이트,
+`?tab=` 왕복). 캡처 스크립트: `.scratch/astryx-migration/settings-sidebar-shots.mjs`
+(`PHASE=before|after`, before는 `git show HEAD:...`로 파일만 임시 교체 후 복원 —
+git stash 금지 정책 준수).
+
+**일반화:** 이 조합은 앞으로 antd 세로 탭을 만나는 모든 표면의 표준 관용구다.
+`.scratch/astryx-migration/CONVERSION-IDIOMS.md` §1에 레시피로 기록.
+
 ### 시각 게이트 판독 노트
 
 - settingList: 탭 카운트 뱃지, StatusDot(변경됨 표시), Selector, hover 리셋
   아이콘 버튼 — 라이트/다크 모두 레이아웃 해부도 동일(탭 구조·행 구조·모달
-  anatomy), 세로→가로 탭 배치 변경은 PILOT-DECISION #1 기록.
+  anatomy), 세로→가로 탭 배치 변경은 PILOT-DECISION #1 기록. **(2026-08-08:
+  #1 철회 — 세로 내비게이션이 `settings-sidebar` 조합으로 복원됨. 최신 시각
+  증거는 `shots/settings-sidebar/`.)**
 - information: 2열 그리드(Core/Security) + 전폭 카드(Component/License),
   MetadataList 단일 컬럼(antd bordered 4/2열 그리드 대비 밀도 하락은
   PILOT-DECISION #4), 헬프 툴팁 아이콘, Badge 파일, BAIDoubleTag.

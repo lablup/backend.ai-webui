@@ -33,3 +33,18 @@ MORE CLI:
   swizzle <Name>     eject component source for deep customization
   upgrade --apply    run after any @astryxdesign/core bump
 <!-- ASTRYX:END -->
+
+## Migration conversion idioms (branch `to-astryx`)
+
+Some antd patterns have no one-to-one Astryx component and are **not** allowed
+to be dropped ad hoc — they have a standing composition recipe in
+`.scratch/astryx-migration/CONVERSION-IDIOMS.md`. Read it before recording a
+PILOT-DECISION that gives up a layout capability. Currently:
+
+- **antd vertical tabs** (`tabPosition`/`tabPlacement="left" | "start"`) →
+  the Astryx `settings-sidebar` template composition
+  (`Layout` + `LayoutPanel` nav column of `List`/`ListItem isSelected` +
+  `LayoutContent` pane), **not** a horizontal `TabList`. Run
+  `pnpm exec astryx template settings-sidebar`. The "discover, don't guess"
+  workflow above includes `astryx template --list` / `astryx search` — a
+  component-level lookup alone will wrongly report the capability as missing.
