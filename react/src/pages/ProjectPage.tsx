@@ -21,7 +21,6 @@ import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginati
 import { useCSVExport } from '../hooks/useCSVExport';
 import { theme } from '../theme-shim';
 import { useToggle } from 'ahooks';
-import { Tooltip } from 'antd';
 import {
   availableProjectSorterValues,
   BAIButton,
@@ -455,12 +454,15 @@ const ProjectPage = () => {
                   count={selectedProjectList.length}
                   onClearSelection={() => setSelectedProjectList([])}
                 />
-                <Tooltip title={t('project.BulkEdit')}>
-                  <BAIButton
-                    icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
-                    onClick={toggleBulkEditModal}
-                  />
-                </Tooltip>
+                {/* antd `Tooltip title=` wrapper dropped: `BAIButton` now
+                    forwards `title` to Astryx's own `tooltip` prop AND uses it
+                    as the icon-only button's accessible name, so the wrapper
+                    was a second, weaker channel for the same string. */}
+                <BAIButton
+                  title={t('project.BulkEdit')}
+                  icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
+                  onClick={toggleBulkEditModal}
+                />
               </>
             )}
             <BAIFetchKeyButton

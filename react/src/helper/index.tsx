@@ -6,7 +6,10 @@ import { CommittedImage } from '../components/CustomizedImageList';
 import { Image } from '../components/ImageEnvironmentSelectFormItems';
 import { EnvironmentImage } from '../components/ImageList';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { AttachmentsProps } from '@ant-design/x';
+// `@ant-design/x` is the documented CARRIER package (REMAINDER bucket 3) and
+// stays, but this is a TYPE — marking it `import type` erases it at build time
+// and moves this file out of the render bucket into the type-only one.
+import type { AttachmentsProps } from '@ant-design/x';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import Big from 'big.js';
 import dayjs from 'dayjs';

@@ -29,17 +29,18 @@ import TextHighlighter from './TextHighlighter';
 import { AstryxFormTextInput } from './astryxFormControls';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Divider } from '@astryxdesign/core/Divider';
-// FRONTIER RESIDUE (MAPPING §8): `BAISelect` is still the BUI antd `Select`
-// wrapper, and `Select.Option` / `Select.OptGroup` / `RefSelectProps` are its
-// required child and ref vocabulary. They convert together with the
-// ComplexSelector rebuild of `BAISelect`, not here — replacing them in this
-// file alone would mean rewriting the select for every one of its consumers.
-import { RefSelectProps, Select } from 'antd';
 import {
   badgeVariantForTagColor,
   BAIDoubleTag,
   BAIFlex,
   BAISelect,
+  // `BAISelect` was rebuilt on Astryx in wave 2 and still accepts antd's
+  // children option API — it flattens the element tree by reading PROPS, never
+  // the element type. So `Select.Option` / `Select.OptGroup` are replaced by
+  // BUI's own render-null carriers, and the rich JSX option rows below (image
+  // icon + highlighted name + metadata badges) stay exactly as they are.
+  BAISelectOptionItem as SelectOption,
+  BAISelectOptionGroup as SelectOptGroup,
   BAIText,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -96,8 +97,14 @@ const ImageEnvironmentSelectFormItems: React.FC<
   const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();
 
-  const envSelectRef = useRef<RefSelectProps>(null);
-  const versionSelectRef = useRef<RefSelectProps>(null);
+  // antd `RefSelectProps` restated as the one method these two refs ever
+  // called. `BAISelect` accepts `ref` and never attaches it (P26-8 — Astryx's
+  // `Selector` exposes no imperative handle), so `.focus()` below has already
+  // been a no-op since wave 2; the optional-chained call keeps that harmless
+  // and the declarations keep compiling without antd.
+  type SelectFocusHandle = { focus: () => void };
+  const envSelectRef = useRef<SelectFocusHandle>(null);
+  const versionSelectRef = useRef<SelectFocusHandle>(null);
   const [envSelectOpen, setEnvSelectOpen] = useState<boolean | undefined>(
     searchPrefill ? true : undefined,
   );
@@ -475,7 +482,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
           }
         >
           {fullNameMatchedImage ? (
-            <Select.Option
+            <SelectOption
               value={
                 supportExtendedImageInfo
                   ? fullNameMatchedImage?.namespace
@@ -498,11 +505,11 @@ const ImageEnvironmentSelectFormItems: React.FC<
                 />
                 {getImageFullName(fullNameMatchedImage)}
               </BAIFlex>
-            </Select.Option>
+            </SelectOption>
           ) : (
             _.map(imageGroups, (group) => {
               return (
-                <Select.OptGroup key={group.groupName} label={group.groupName}>
+                <SelectOptGroup key={group.groupName} label={group.groupName}>
                   {_.map(group.environmentGroups, (environmentGroup) => {
                     const firstImage = environmentGroup.images[0];
                     const currentMetaImageInfo =
@@ -565,7 +572,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                       },
                     );
                     return (
-                      <Select.Option
+                      <SelectOption
                         key={environmentGroup.environmentName}
                         value={environmentGroup.environmentName}
                         filterValue={
@@ -604,10 +611,10 @@ const ImageEnvironmentSelectFormItems: React.FC<
                             {tagsFromMetaImageInfoLabel}
                           </BAIFlex>
                         </BAIFlex>
-                      </Select.Option>
+                      </SelectOption>
                     );
                   })}
-                </Select.OptGroup>
+                </SelectOptGroup>
               );
             })
           )}
@@ -768,7 +775,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                       }
                     }
                     return (
-                      <Select.Option
+                      <SelectOption
                         key={image?.id}
                         value={getImageFullName(image)}
                         filterValue={[
@@ -866,7 +873,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                             </BAIFlex>
                           </BAIFlex>
                         )}
-                      </Select.Option>
+                      </SelectOption>
                     );
                   },
                 )}

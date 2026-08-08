@@ -10,15 +10,6 @@ import FileBrowserButton from './FileBrowserButton';
 import SFTPServerButton from './SFTPServerButton';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
 import BAISkeleton from './astryx-bui/BAISkeletonAstryx';
-// FRONTIER RESIDUE (MAPPING §8): the only remaining antd symbol here is
-// `Typography.Title`, and it is not rendered by this file — it is passed as the
-// `component` argument to the still-antd `EditableVFolderName`, whose
-// polymorphic `component?: typeof Typography.Text | typeof Typography.Title`
-// prop is the contract. `EditableVFolderNameV2` already replaced that
-// polymorphism with `variant="title"` (see `FolderExplorerHeaderV2`); this
-// import disappears when the V1 editable name follows. Converting it here
-// would mean editing a component outside this batch and its other consumers.
-import { Typography } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense } from 'react';
@@ -90,28 +81,23 @@ const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
           />
         )}
         {vfolderNode && (
+          // Closes the W2A-13 cross-partition note: `EditableVFolderName` was
+          // rebuilt on Astryx in wave 2 and only KEPT the antd-shaped
+          // `component` / `ellipsis` / `inputProps` props so this file could
+          // stay at zero diff. It no longer needs to — `variant="title"` +
+          // `level` is the real contract, `ellipsis` is always on (Astryx
+          // truncates via `maxLines`), and `inputProps` was already inert.
           <EditableVFolderName
             vfolderFrgmt={vfolderNode}
             enableLink={false}
-            component={Typography.Title}
+            variant="title"
             level={3}
             style={{
               margin: 0,
               width: '100%',
             }}
-            ellipsis
             editable={{
               triggerType: ['icon', 'text'],
-            }}
-            inputProps={{
-              size: 'large',
-              count: {
-                max: 64,
-                show: true,
-              },
-              style: {
-                fontWeight: 'normal',
-              },
             }}
           />
         )}

@@ -7,9 +7,10 @@ import AdminUserManagement from '../components/AdminUserManagement';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
 import { useTabQuerySnapshot } from '../hooks';
-// frontier type import (BAICard tabList shape, ticket 30)
-import { CardTabListType } from 'antd/es/card';
-import { BAIFlex, BAICard } from 'backend.ai-ui';
+// The tab-list item shape now comes from `BAICard` itself (`BAICardTabItem`,
+// restated in BUI when the card stopped being antd's) instead of the deep
+// `antd/es/card` subpath the frontier note used to point at (P15).
+import { BAIFlex, BAICard, type BAICardTabItem } from 'backend.ai-ui';
 import { parseAsStringLiteral } from 'nuqs';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -23,7 +24,7 @@ const AdminUsersPage: React.FC = () => {
   const { t } = useTranslation();
   const { currentTab, onTabChange } = useTabQuerySnapshot(tabParser);
 
-  const tabItems: CardTabListType[] = [
+  const tabItems: BAICardTabItem[] = [
     {
       key: 'users',
       label: t('credential.Users'),

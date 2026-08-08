@@ -5,9 +5,9 @@
 import AllocationHistory from '../components/AllocationHistory';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import UserSessionsMetrics from '../components/UserSessionsMetrics';
+import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
 import { useSuspendedBackendaiClient, useTabQuerySnapshot } from '../hooks';
 import { theme } from '../theme-shim';
-import { Skeleton } from 'antd';
 import { filterOutEmpty, BAICard } from 'backend.ai-ui';
 import { parseAsStringLiteral } from 'nuqs';
 import React, { Suspense } from 'react';
@@ -52,10 +52,13 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
         <BAIErrorBoundary>
           <Suspense
             fallback={
-              <Skeleton
-                active
-                style={{ padding: token.paddingContentVerticalLG }}
-              />
+              // antd `Skeleton active style={{padding}}` -> `BAISkeletonAstryx`
+              // inside a padded box. The padding cannot ride on the component:
+              // in `paragraph` mode it forwards `style` to EVERY line box, so
+              // one shared style would repeat the inset per row.
+              <div style={{ padding: token.paddingContentVerticalLG }}>
+                <BAISkeletonAstryx />
+              </div>
             }
           >
             <AllocationHistory />
@@ -66,10 +69,13 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
         <BAIErrorBoundary>
           <Suspense
             fallback={
-              <Skeleton
-                active
-                style={{ padding: token.paddingContentVerticalLG }}
-              />
+              // antd `Skeleton active style={{padding}}` -> `BAISkeletonAstryx`
+              // inside a padded box. The padding cannot ride on the component:
+              // in `paragraph` mode it forwards `style` to EVERY line box, so
+              // one shared style would repeat the inset per row.
+              <div style={{ padding: token.paddingContentVerticalLG }}>
+                <BAISkeletonAstryx />
+              </div>
             }
           >
             <UserSessionsMetrics />

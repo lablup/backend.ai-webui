@@ -1,0 +1,12 @@
+{
+  "loggedIn": true,
+  "light-schedulerTabText": "",
+  "light-diagnosticsOpenTriggers": 4,
+  "light-timeoutLabelOccurrences": 4,
+  "light-hpcSpinbuttons": 8,
+  "dark-schedulerTabText": "",
+  "dark-diagnosticsOpenTriggers": 4,
+  "dark-timeoutLabelOccurrences": 4,
+  "dark-hpcSpinbuttons": 8,
+  "pageErrors": []
+}

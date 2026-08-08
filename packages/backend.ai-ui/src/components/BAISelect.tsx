@@ -502,4 +502,41 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
   );
 }
 
+/**
+ * Carrier element for the `<Select.Option>` children API, replacing antd's
+ * (phase 3, wave 3).
+ *
+ * `BAISelect` already accepts the children form and flattens it into Astryx's
+ * `options` model — but the elements themselves were still antd's
+ * `Select.Option` / `Select.OptGroup`, which kept three otherwise-converted
+ * files importing antd for a component that is never rendered. The flattener
+ * reads PROPS only and never looks at the element type (see `collect` above),
+ * so a render-null marker is a complete replacement.
+ *
+ * These do NOT render. They exist to be walked by `BAISelect`; putting one
+ * anywhere else produces nothing.
+ */
+export interface BAISelectOptionProps {
+  value?: BAISelectOption['value'];
+  disabled?: boolean;
+  /**
+   * Extra text folded into the option's search key, on top of the flattened
+   * children. antd's `optionFilterProp="filterValue"` convention.
+   */
+  filterValue?: string;
+  /** The option row. May be rich JSX — it survives via `renderOption`. */
+  children?: ReactNode;
+}
+
+export const BAISelectOptionItem: React.FC<BAISelectOptionProps> = () => null;
+
+export interface BAISelectOptionGroupProps {
+  /** Section heading. Flattened to a string for the accessible name. */
+  label?: ReactNode;
+  children?: ReactNode;
+}
+
+export const BAISelectOptionGroup: React.FC<BAISelectOptionGroupProps> = () =>
+  null;
+
 export default BAISelect;

@@ -9,7 +9,7 @@ export type { BAIBulkEditFormItemProps } from './BAIBulkEditFormItem';
 export { default as BAIFlex } from './BAIFlex';
 export type { BAIFlexProps } from './BAIFlex';
 export { default as BAICard } from './BAICard';
-export type { BAICardProps } from './BAICard';
+export type { BAICardProps, BAICardTabItem } from './BAICard';
 export {
   default as BAIPropertyFilter,
   mergeFilterValues,
@@ -48,8 +48,16 @@ export { default as BAIText } from './BAIText';
 export type { BAITextProps } from './BAIText';
 export { default as BAIId } from './BAIId';
 export type { BAIIdProps } from './BAIId';
-export { default as BAISelect } from './BAISelect';
-export type { BAISelectProps } from './BAISelect';
+export {
+  default as BAISelect,
+  BAISelectOptionItem,
+  BAISelectOptionGroup,
+} from './BAISelect';
+export type {
+  BAISelectProps,
+  BAISelectOptionProps,
+  BAISelectOptionGroupProps,
+} from './BAISelect';
 export { default as BAIComplexSelect } from './BAIComplexSelect';
 export type {
   BAIComplexSelectProps,

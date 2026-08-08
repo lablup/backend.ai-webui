@@ -15,34 +15,38 @@ of *why* it is not green yet.
 | Metric | Files |
 |---|---:|
 | Scanned (shipping source) | 972 |
-| Import antd directly | 64 |
-| Reach antd transitively | 627 |
+| Import antd directly | 60 |
+| Reach antd transitively | 631 |
 | antd-free | 281 |
 
 ## Bucket 1 — RENDER (real conversion work)
 
-58 files import antd **values**. Each needs an Astryx
+50 files import antd **values**. Each needs an Astryx
 equivalent and a visual check — this is the number to plan against.
 
 | Owner | Files |
 |---|---:|
-| BUI · infrastructure (shims, hooks, helper) | 23 |
-| app · components | 22 |
-| app · pages | 9 |
-| app · other | 2 |
-| BUI · fragments | 1 |
+| BUI · infrastructure (shims, hooks, helper) | 29 |
+| app · components | 16 |
+| app · other | 4 |
 | BUI · components | 1 |
 
 ## Bucket 2 — TYPE-ONLY (cheap, ships nothing)
 
-4 files import only antd **types**. Erased at build
+10 files import only antd **types**. Erased at build
 time, so they add nothing to the bundle; they only keep antd required for
 `tsc`. Closing them does not move the bundle scan.
 
-- `packages/backend.ai-ui/src/locale/index.ts`
-- `packages/backend.ai-ui/src/theme-shim/index.tsx`
-- `react/src/components/Chat/ChatInput.tsx`
-- `react/src/hooks/reactPaginationQueryOptions.tsx`
+- `packages/backend.ai-ui/src/components/fragments/BAIRuntimeVariantPresetSettingModal.tsx`
+- `react/src/components/BulkCreateUserFromCSVModal.tsx`
+- `react/src/components/FairShareItems/DomainResourceGroupAlert.tsx`
+- `react/src/components/FairShareItems/DomainResourceGroupWarningIcon.tsx`
+- `react/src/components/FairShareItems/ProjectResourceGroupAlert.tsx`
+- `react/src/components/FairShareItems/ProjectResourceGroupWarningIcon.tsx`
+- `react/src/components/FairShareItems/UserResourceGroupAlert.tsx`
+- `react/src/components/ModelCardDeployModal.tsx`
+- `react/src/helper/customThemeConfig.ts`
+- `react/src/pages/AdminDeploymentPage.tsx`
 
 ## Bucket 3 — CARRIER PACKAGES (not closable by conversion)
 
@@ -73,7 +77,7 @@ recorded, not patched away: each is a known way the verdict can mislead.
 ### `anticon` is now OUR class name, not antd's.
 
 - **Risk**: false FAIL (active)
-- `packages/backend.ai-ui/src/icons/iconShim.tsx` deliberately renders `class="anticon"`, and BUI ships the matching reset — measured: `packages/backend.ai-ui/dist/backend.ai-ui.css` contains `anticon` and `anticon-spin` as first-party rules. Two e2e locators still use the class — `e2e/user-profile/user-profile.spec.ts` (`.anticon-close`) and `e2e/auto-scaling-rule-preset/preset-table-settings.spec.ts` (`.anticon-check`); every other `.anticon-*` hit under `e2e/` is a comment recording that the class is GONE. So part (b)'s `anticon` signature will keep firing after antd is entirely gone. The fix is to rename the shim's class and repoint the e2e locators — NOT to drop the signature, which would also stop catching real @ant-design/icons reintroduction.
+- `packages/backend.ai-ui/src/icons/iconShim.tsx` deliberately renders `class="anticon"`, and BUI ships the matching reset — measured: `packages/backend.ai-ui/dist/backend.ai-ui.css` contains `anticon` and `anticon-spin` as first-party rules. Three e2e specs still locate by `.anticon-close` / `.anticon-check`. So part (b)'s `anticon` signature will keep firing after antd is entirely gone. The fix is to rename the shim's class and repoint the e2e locators — NOT to drop the signature, which would also stop catching real @ant-design/icons reintroduction.
 
 ## Top taint hubs
 
@@ -82,24 +86,24 @@ Converting a hub clears its whole dependent set at once.
 
 | File | Taints |
 |---|---:|
-| `packages/backend.ai-ui/src/locale/index.ts` | 658 |
-| `packages/backend.ai-ui/src/theme-shim/index.tsx` | 619 |
-| `packages/backend.ai-ui/src/form-engine/index.ts` | 562 |
-| `packages/backend.ai-ui/src/hooks/useSchedulingHistoryExpandable.tsx` | 549 |
-| `packages/backend.ai-ui/src/components/provider/BAIConfigProvider/BAIConfigProvider.tsx` | 547 |
-| `packages/backend.ai-ui/src/components/fragments/BAIRuntimeVariantPresetSettingModal.tsx` | 545 |
-| `react/src/form-engine/index.ts` | 405 |
-| `react/src/components/BAIFormItem.tsx` | 390 |
-| `react/src/hooks/reactPaginationQueryOptions.tsx` | 388 |
-| `packages/backend.ai-ui/src/locale/de_DE.ts` | 385 |
-| `packages/backend.ai-ui/src/locale/el_GR.ts` | 385 |
-| `packages/backend.ai-ui/src/locale/en_US.ts` | 385 |
-| `packages/backend.ai-ui/src/locale/es_ES.ts` | 385 |
-| `packages/backend.ai-ui/src/locale/fi_FI.ts` | 385 |
-| `packages/backend.ai-ui/src/locale/fr_FR.ts` | 385 |
-| `packages/backend.ai-ui/src/locale/id_ID.ts` | 385 |
-| `packages/backend.ai-ui/src/locale/it_IT.ts` | 385 |
-| `packages/backend.ai-ui/src/locale/ja_JP.ts` | 385 |
-| `packages/backend.ai-ui/src/locale/ko_KR.ts` | 385 |
-| `packages/backend.ai-ui/src/locale/mn_MN.ts` | 385 |
+| `packages/backend.ai-ui/src/locale/index.ts` | 652 |
+| `packages/backend.ai-ui/src/theme-shim/index.tsx` | 613 |
+| `packages/backend.ai-ui/src/app-shim/bridge.ts` | 579 |
+| `packages/backend.ai-ui/src/app-shim/index.tsx` | 577 |
+| `packages/backend.ai-ui/src/form-engine/index.ts` | 576 |
+| `packages/backend.ai-ui/src/components/provider/BAIConfigProvider/BAIConfigProvider.tsx` | 573 |
+| `packages/backend.ai-ui/src/hooks/useSchedulingHistoryExpandable.tsx` | 572 |
+| `packages/backend.ai-ui/src/components/fragments/BAIRuntimeVariantPresetSettingModal.tsx` | 571 |
+| `react/src/form-engine/index.ts` | 408 |
+| `react/src/components/BAIFormItem.tsx` | 395 |
+| `packages/backend.ai-ui/src/locale/de_DE.ts` | 390 |
+| `packages/backend.ai-ui/src/locale/el_GR.ts` | 390 |
+| `packages/backend.ai-ui/src/locale/en_US.ts` | 390 |
+| `packages/backend.ai-ui/src/locale/es_ES.ts` | 390 |
+| `packages/backend.ai-ui/src/locale/fi_FI.ts` | 390 |
+| `packages/backend.ai-ui/src/locale/fr_FR.ts` | 390 |
+| `packages/backend.ai-ui/src/locale/id_ID.ts` | 390 |
+| `packages/backend.ai-ui/src/locale/it_IT.ts` | 390 |
+| `packages/backend.ai-ui/src/locale/ja_JP.ts` | 390 |
+| `packages/backend.ai-ui/src/locale/ko_KR.ts` | 390 |
 

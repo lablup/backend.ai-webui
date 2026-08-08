@@ -87,6 +87,16 @@ export interface BAICardTabItem {
   /** antd's pre-v5 name for `label`; still passed by a few call sites. */
   tab?: ReactNode;
   /**
+   * Trailing slot inside the tab (a count badge, a help tooltip icon).
+   *
+   * Astryx `Tab` is `label` (a required STRING that doubles as the accessible
+   * name) plus `endContent`. A JSX `label` therefore has to be SPLIT, and only
+   * the call site knows where the seam is — so it passes the extras here and
+   * keeps `label` a plain string. See the render note below for what used to
+   * happen when it did not.
+   */
+  endContent?: ReactNode;
+  /**
    * Accepted and ignored: Astryx `Tab` has no disabled state. No call site in
    * the repo passes it, so nothing regresses — it stays in the type only so an
    * antd-shaped `tabList` literal keeps type-checking.
@@ -247,16 +257,19 @@ const BAICard: React.FC<BAICardProps> = ({
                     key={tab.key}
                     value={tab.key}
                     // `Tab.label` is a required STRING that doubles as the
-                    // accessible name (P2). A JSX tab label (count badge, icon)
-                    // is split: the text becomes the name, the node the
-                    // trailing slot.
+                    // accessible name (P2), so a JSX tab label is flattened
+                    // for the name.
+                    //
+                    // DEFECT FIXED (phase 3, wave 3): the trailing slot used to
+                    // fall back to the WHOLE `rawLabel` node whenever the label
+                    // was JSX. Since `label` already renders the flattened text,
+                    // the text came out TWICE — measured on `SchedulerPage`,
+                    // whose tab read "Fair Share Setting Fair Share Setting ⓘ".
+                    // Only the call site knows where a rich label splits, so it
+                    // now passes `endContent` explicitly and keeps `label` a
+                    // string; there is no guess to get wrong.
                     label={nodeToAccessibleLabel(rawLabel)}
-                    endContent={
-                      typeof rawLabel === 'string' ||
-                      typeof rawLabel === 'number'
-                        ? undefined
-                        : rawLabel
-                    }
+                    endContent={tab.endContent}
                   />
                 );
               })}

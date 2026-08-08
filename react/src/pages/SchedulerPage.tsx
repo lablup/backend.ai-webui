@@ -4,11 +4,14 @@
  */
 import { type ErrorWithGraphQL } from '../components/BAIErrorBoundary';
 import FairShareList from '../components/FairShareItems/FairShareList';
+import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
 import { theme } from '../theme-shim';
-import { Button, Result, Skeleton, Tooltip } from 'antd';
-import { BAICard, BAIFlex } from 'backend.ai-ui';
+import { Button } from '@astryxdesign/core/Button';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { BAICard } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { CircleHelp } from 'lucide-react';
+import { CircleHelp, TriangleAlertIcon } from 'lucide-react';
 import {
   parseAsString,
   parseAsStringLiteral,
@@ -36,20 +39,37 @@ const SchedulerPage: React.FC<SchedulerPageProps> = () => {
       tabList={[
         {
           key: 'fair-share',
-          label: (
-            <BAIFlex gap="xxs">
-              {t('fairShare.FairShareSetting')}
-              <Tooltip
-                title={<Trans i18nKey={t('fairShare.SchedulerDescription')} />}
+          // The tab's own text stays a plain STRING and the help affordance
+          // moves to `endContent` (added to `BAICardTabItem` in this wave).
+          // A JSX label was rendered twice — once flattened into Astryx `Tab`'s
+          // required string `label`, once again as the trailing node.
+          label: t('fairShare.FairShareSetting'),
+          endContent: (
+            // antd `Tooltip title=` -> Astryx `Tooltip content=`. The trigger
+            // has to be an interactive element for the hint to be
+            // keyboard-reachable, so the bare lucide glyph gets the same reset
+            // `<button>` wrapper `BAIQuestionIconWithTooltipAstryx` uses.
+            <Tooltip
+              content={<Trans i18nKey={t('fairShare.SchedulerDescription')} />}
+            >
+              <button
+                type="button"
+                aria-label={t('fairShare.SchedulerDescription')}
+                style={{
+                  all: 'unset',
+                  cursor: 'help',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                }}
               >
                 <CircleHelp style={{ fontSize: token.fontSize }} size="1em" />
-              </Tooltip>
-            </BAIFlex>
+              </button>
+            </Tooltip>
           ),
         },
       ]}
     >
-      <Suspense fallback={<Skeleton active />}>
+      <Suspense fallback={<BAISkeletonAstryx />}>
         {currentTab === 'fair-share' && (
           <ErrorBoundary
             fallbackRender={({ error, resetErrorBoundary }) => {
@@ -95,21 +115,25 @@ const FairShareErrorFallback: React.FC<{
   );
 
   return (
-    <Result
-      status="warning"
+    // antd `Result status="warning"` -> Astryx `EmptyState`, the same route
+    // `BAIErrorBoundary` already took: `subTitle` -> `description`, `extra` ->
+    // `actions`, and the status illustration becomes an explicit lucide icon.
+    <EmptyState
+      icon={<TriangleAlertIcon size={40} />}
       title={
         isInvalidURLParameterError
           ? t('fairShare.InvalidParameterTitle')
           : t('fairShare.UnknownErrorOccurred')
       }
-      subTitle={
+      description={
         isInvalidURLParameterError
           ? t('fairShare.InvalidParameterDescription')
           : t('fairShare.UnknownErrorDescription')
       }
-      extra={
+      actions={
         <Button
-          type="primary"
+          variant="primary"
+          label={t('fairShare.GoBackToFirstStep')}
           onClick={() => {
             setStepQueryParams({
               resourceGroup: null,
@@ -119,9 +143,7 @@ const FairShareErrorFallback: React.FC<{
             });
             onReset();
           }}
-        >
-          {t('fairShare.GoBackToFirstStep')}
-        </Button>
+        />
       }
     />
   );

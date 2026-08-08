@@ -29,7 +29,6 @@ import { VStack } from '@astryxdesign/core/Layout';
 import { Text } from '@astryxdesign/core/Text';
 import { colorVars, spacingVars } from '@astryxdesign/core/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
-import { Button as AntdButton } from 'antd';
 import { BAICard } from 'backend.ai-ui';
 import { useState } from 'react';
 
@@ -180,9 +179,11 @@ const AstryxStylexProbePage: React.FC = () => {
           variant="primary"
         />
 
-        <AntdButton id="antd-btn" type="primary">
-          antd primary
-        </AntdButton>
+        {/* The `#antd-btn` side-by-side reference button is gone. It existed
+            only to eyeball Astryx against antd while both stacks shipped; the
+            probe's actual assertions (StyleX beating `@layer astryx-base`,
+            token resolution, `cssInjectionTarget`) never referenced it, and
+            neither does `scripts/verify.sh` or any e2e locator. */}
       </VStack>
     </BAICard>
   );
