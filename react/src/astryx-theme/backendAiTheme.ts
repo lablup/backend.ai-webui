@@ -64,7 +64,7 @@ import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from 'backend.ai-ui';
 export { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 2;
+export const THEME_NAME_REV = 3;
 
 /**
  * Sidebar navigation density — THEME DEFAULTS, not per-component CSS.
@@ -99,17 +99,25 @@ export const THEME_NAME_REV = 2;
  *                                   |   SideNav's scroll column already
  *                                   |   contributes 8px, so 24px here lands on
  *                                   |   the same 32px.
- *   group title padding-top:        | side-nav-section paddingBlockStart: 20px
- *     paddingMD (20)                |   (Astryx default is --spacing-1, 4px)
+ *   group title padding-top:        | side-nav-section paddingBlockStart: 16px
+ *     paddingMD (20)                |   — `SideNavSection`'s own header adds
+ *                                   |   `--spacing-1` (4px) on top, so 16
+ *                                   |   here lands on the legacy 20px gap.
+ *                                   |   (Astryx default is --spacing-1, 4px)
  *
- * NOT ported, deliberately: the group title's own `padding-left: paddingXL`,
- * `font-weight: 500` and `colorTextDescription`. `SideNavSection` renders its
- * title as a bare `<span>` with no `astryx-*` class, so it is not addressable
- * from `components` — reaching it would need a raw descendant selector in
- * `BAISider.css`, i.e. exactly the per-component patch this migration avoids.
- * Astryx's own title treatment (`--text-supporting-size`, semibold,
- * `--color-text-secondary`) is already within a hair of antd's, so the
- * ticket-24 visual-values policy applies: take the Astryx default.
+ * STILL not portable, and now overridden elsewhere: the group title's
+ * `padding-left: paddingXL` and `font-weight: 500`. `SideNavSection` renders
+ * its title as a bare `<span>` inside a bare `<div>` header, neither carrying
+ * an `astryx-*` class, and `defineTheme({components})` can only emit
+ * `.astryx-<name><variant-classes>` — style keys become CLASS SUFFIXES on the
+ * element that owns the class (see the CLI's `parseStyleKey`), never
+ * descendant combinators. Ticket 24 deferred those two values on the
+ * visual-values policy; the user has since asked for the legacy metrics, so
+ * they live in `react/src/components/BAISider.css`, scoped to `.bai-sider` and
+ * expressed in Astryx tokens. That file carries the justification. `color` is
+ * still NOT overridden anywhere — antd's `groupTitleColor`
+ * (`colorTextDescription`) and Astryx's `--color-text-secondary` are the same
+ * role, so the Astryx default stands.
  */
 const SIDE_NAV_DENSITY = {
   // `SideNav`'s own StyleX sets `background-color: inherit` on the root AND on
@@ -135,7 +143,7 @@ const SIDE_NAV_DENSITY = {
   },
   'side-nav-section': {
     base: {
-      paddingBlockStart: '20px',
+      paddingBlockStart: '16px',
     },
   },
 };

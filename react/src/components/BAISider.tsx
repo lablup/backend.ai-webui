@@ -119,7 +119,15 @@ const BAISider: React.FC<BAISiderProps> = ({
       }}
     >
       <SideNav
-        className={classNames('bai-sider', className)}
+        className={classNames(
+          'bai-sider',
+          // The collapsed rail needs a selector of its own: `SideNav` reflects
+          // no collapsed state onto the DOM (`themeProps('side-nav')` carries
+          // no `data-*` for it), and the theme's nav-item density has to be
+          // stood down at rail width. See `BAISider.css`.
+          collapsed && 'bai-sider--collapsed',
+          className,
+        )}
         style={{
           boxShadow: '0px 0px 10px 0px rgba(0, 0, 0, 0.10)',
           height: '100vh',
@@ -132,7 +140,9 @@ const BAISider: React.FC<BAISiderProps> = ({
         header={
           <div className="logo-and-text-container draggable">
             <div className="logo-img-wrap non-draggable">
-              <div style={{ display: collapsed ? 'none' : 'block' }}>{logo}</div>
+              <div style={{ display: collapsed ? 'none' : 'block' }}>
+                {logo}
+              </div>
               <div style={{ display: collapsed ? 'block' : 'none' }}>
                 {logoCollapsed}
               </div>

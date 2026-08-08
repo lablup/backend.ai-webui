@@ -125,14 +125,39 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   }, [setGoBackPath, location.pathname, isCurrentPathAdminCategory]);
 
   // PILOT-DECISION: antd `Tooltip` + circular `Button type="text" icon` →
-  // Astryx `IconButton` with its own `tooltip` (MAPPING §3.3 / §4). Both
-  // hand-set sizes go away: the 40×42 box that matched antd's menu-item
-  // height, and the `Typography` heading whose only job was to restate
-  // `fontSizeLG`/`fontWeightStrong` — Astryx `Text type="large"` carries
-  // both. The tooltip's `placement` no longer flips with `collapsed`; the
-  // default placement is used.
+  // Astryx `IconButton` with its own `tooltip` (MAPPING §3.3 / §4). The
+  // `Typography` heading whose only job was to restate
+  // `fontSizeLG`/`fontWeightStrong` goes away — Astryx `Text type="large"
+  // weight="semibold"` carries both. The tooltip's `placement` no longer flips
+  // with `collapsed`; the default placement is used.
+  //
+  // The legacy geometry, though, is load-bearing and comes back — expressed as
+  // PROPS + spacing tokens rather than the hand-set `40×42 + marginLeft: 16 +
+  // marginBottom: 4` box it used to be. Dropping it left the back arrow 16px
+  // to the LEFT of every menu icon under it, which is what reads as "the back
+  // button looks wrong":
+  //
+  //   `SideNav`'s scroll column contributes 8px, `SIDE_NAV_DENSITY` gives
+  //   `side-nav-item` `paddingInline: 24px`, so a row's 16px icon occupies
+  //   32–48px from the rail edge and its label starts at 56px. A 32px
+  //   (`--size-element-md`) icon button offset by `--spacing-4` therefore puts
+  //   its glyph at exactly 32–48, and `gap={0}` puts the heading at exactly 56
+  //   — the icon→label gap is then the button's own padding, not a stack gap.
+  //   `height={40}` restores the menu-item row height (the same 40px
+  //   `SIDE_NAV_DENSITY` gives `side-nav-item`) without resizing the button.
+  //
+  // Collapsed, the offset is dropped: the 48px rail centers the button itself,
+  // and 16px of inline padding would push it out of the rail.
   const adminHeader = (
-    <HStack align="center" gap={2} style={{ paddingBlockEnd: token.marginXS }}>
+    <HStack
+      align="center"
+      gap={0}
+      height={40}
+      style={{
+        paddingInlineStart: props.collapsed ? undefined : 'var(--spacing-4)',
+        paddingBlockEnd: 'var(--spacing-1)',
+      }}
+    >
       <IconButton
         variant="ghost"
         label={t('webui.menu.GoBack')}

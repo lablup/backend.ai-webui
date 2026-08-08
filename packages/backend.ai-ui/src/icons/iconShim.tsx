@@ -89,11 +89,23 @@ const Icon = forwardRef<HTMLSpanElement, IconComponentProps>((props, ref) => {
   // No annotation on purpose: inference keeps `width: '1em'` et al. as
   // literals, which satisfies CustomIconComponentProps' required width/height
   // in the `component` union type.
+  //
+  // `viewBox` is spread ONLY when the caller supplied one. antd's `IconBase`
+  // does the same (`if (!viewBox) delete innerSvgProps.viewBox`) and the
+  // reason is load-bearing here: every `BAI*Icon` renders an SVGR component
+  // whose generated JSX is `<svg viewBox="0 0 24 24" … {...props}/>` — the
+  // spread comes LAST, so passing `viewBox: undefined` did not "leave it
+  // alone", it ERASED the file's own viewBox (React omits undefined
+  // attributes). Without a viewBox an SVG has no user-unit→CSS-pixel mapping:
+  // `width/height: 1em` sizes the box, but the paths keep drawing at raw user
+  // units, so a 24-unit glyph rendered ~24px inside a 16px box and was
+  // clipped. Most visible on the Model Store rail icon (24×24 source, the
+  // largest viewBox of the bespoke set); every 51 `BAI*Icon` was affected.
   const innerSvgProps = {
     ...svgBaseProps,
     className: svgClassName,
     style: svgStyle,
-    viewBox,
+    ...(viewBox ? { viewBox } : {}),
   };
 
   return (

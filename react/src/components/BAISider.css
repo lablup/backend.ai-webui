@@ -87,3 +87,134 @@
 .bai-sider a.astryx-side-nav-item[data-selected='selected']:hover {
   background-color: var(--color-neutral);
 }
+
+/*
+ * COLLAPSED RAIL — stand the expanded nav-item density back down.
+ *
+ * `SIDE_NAV_DENSITY` gives `side-nav-item` `padding-inline: 24px` so an
+ * expanded row's content sits 32px from the rail edge, like antd's Menu did.
+ * That rule is emitted into `@layer astryx-theme`, which by the project's
+ * layer order sits ABOVE `astryx-base` — where `SideNav`'s own prebuilt
+ * StyleX lives, including its `itemCollapsed { padding-inline: 0 }`. So the
+ * theme padding also applied to the 48px collapsed rail, leaving each row a
+ * content box of exactly 0px (measured: 48px wide, 24px/24px padding).
+ *
+ * The visible symptom was selective, which is what made it easy to miss: an
+ * `<svg>` is a replaced element whose `min-width: auto` resolves to 0 when it
+ * has only a viewBox and no intrinsic width, so the bare lucide glyphs
+ * (Start, Dashboard, Data, Chat, Statistics, Admin Settings) shrank to zero
+ * and DISAPPEARED, while the `BAI*Icon` glyphs survived — those sit inside a
+ * `<span class="anticon">`, a non-replaced flex item whose automatic minimum
+ * size is its 16px min-content.
+ *
+ * `.bai-sider--collapsed` is set by `BAISider` because `SideNav` reflects no
+ * collapsed state onto the DOM. Unlayered app CSS + (0,2,0) specificity, so
+ * it wins over the theme layer.
+ */
+.bai-sider--collapsed .astryx-side-nav-item {
+  padding-inline: 0;
+}
+
+/*
+ * SECTION TITLES — the sanctioned scoped override.
+ *
+ * `SIDE_NAV_DENSITY` in `react/src/astryx-theme/backendAiTheme.ts` carries
+ * everything about the rail that IS theme-addressable, including
+ * `side-nav-section`'s own block padding. The group TITLE is the one piece
+ * that is not: `SideNavSection` renders it as a bare `<span>` inside a bare
+ * `<div>` header, neither of which carries an `astryx-*` class, and
+ * `defineTheme({components})` can only emit `.astryx-<name><variant-classes>`
+ * selectors on the element that owns the class (see `parseStyleKey` — style
+ * keys become class suffixes, never descendant combinators). Ticket 24's
+ * commit recorded this as "not portable"; the deltas below are the legacy
+ * values it deferred, reproduced at the smallest possible blast radius —
+ * `.bai-sider` only, so no other `SideNav` in the app (or in Storybook) is
+ * touched, and every value is an Astryx token.
+ *
+ *   antd (legacy `.ant-menu-item-group-title` + BAIMenu's createStyles)
+ *   --------------------------------------------------------------------
+ *   font-size: groupTitleFontSize = token.fontSize (14px)
+ *                                     -> var(--font-size-base)
+ *     [Astryx default is `--text-supporting-size` = 0.75rem = 12px]
+ *   font-weight: 500 (BAIMenu: `... -group-title div span { font-weight: 500 }`)
+ *                                     -> var(--font-weight-medium)
+ *     [Astryx default is `--font-weight-semibold` = 600]
+ *   padding-left: token.paddingXL (32px from the rail's edge)
+ *                                     -> var(--spacing-6) (24px) on top of
+ *                                        SideNav's own 8px scroll-column pad
+ *     [Astryx default is `--spacing-2` = 8px, i.e. 16px from the edge]
+ *
+ * `color` is NOT overridden: antd's `groupTitleColor` is `colorTextDescription`
+ * and Astryx's default is `--color-text-secondary`, the same role — the
+ * ticket-24 visual-values policy takes the Astryx default there.
+ *
+ * Two rules, because the two properties live on two boxes: the inline padding
+ * belongs to the header (first child of the section root, the box that owns
+ * it), while the typography must land on the title span itself — the span
+ * DECLARES `font-size: var(--text-supporting-size)` and
+ * `font-weight: var(--font-weight-semibold)` through StyleX, so inheritance
+ * from the header would never reach it. StyleX output is unlayered
+ * single-class (0,1,0); these selectors outrank it on specificity, the same
+ * mechanism the `a.astryx-side-nav-item` rules above rely on.
+ */
+.bai-sider .astryx-side-nav-section > div:first-child {
+  padding-inline-start: var(--spacing-6);
+}
+
+.bai-sider .astryx-side-nav-section > div:first-child > span > span {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+}
+
+/*
+ * THE RAIL COLLAPSE TOGGLE — the second sanctioned scoped override.
+ *
+ * Legacy was `antd Button shape="circle" size="small"` wrapped in a
+ * `ConfigProvider` whose only job was to repaint the border. Astryx
+ * `IconButton` (which this still is) renders `size="sm"` as a 28px rounded
+ * square on the `secondary` fill: no `shape` enum, and the radius/size scales
+ * are closed (P5), so the shape is unreachable from props.
+ *
+ * NOT a theme default, deliberately. The only theme knob for this is
+ * `components: {button: {'variant:secondary+size:sm': …}}`, which emits a bare
+ * `.astryx-button.secondary.sm` — i.e. EVERY small secondary button in the
+ * app. This is one floating control with a bespoke shape; re-shaping the whole
+ * button scale to match it would be strictly wrong. Astryx's own styling
+ * policy names this fallback ("component props first; else style/className
+ * with tokens"), and every value below is a token or the legacy metric:
+ *
+ *   antd (legacy)                       | here
+ *   ------------------------------------|-----------------------------------
+ *   controlHeightSM = 24px              | 24px (no Astryx size token is 24;
+ *                                       |   --size-element-sm is 28)
+ *   shape="circle" -> border-radius 50% | var(--radius-full)
+ *   colorBgContainer (default fill)     | var(--color-background-surface)
+ *   colorBorderSecondary (the override) | var(--color-border)
+ *   boxShadow: 'none' (set explicitly)  | none
+ *   colorTextTertiary (icon color)      | var(--color-icon-secondary)
+ *
+ * The chevron needs no size prop: `react/src/index.css` pins
+ * `.lucide { width/height: 1em }`, so it follows this font-size.
+ *
+ * Hover/active keep the legacy semantics — antd's default button kept its
+ * white fill and moved the border/text to the primary hover ramp — which is
+ * why the accent tokens appear here instead of Astryx's grey overlay fill.
+ */
+.bai-sider-shell button.bai-sider-toggle {
+  width: 24px;
+  min-width: 24px;
+  height: 24px;
+  padding: 0;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-background-surface);
+  box-shadow: none;
+  color: var(--color-icon-secondary);
+  font-size: var(--font-size-base);
+}
+
+.bai-sider-shell button.bai-sider-toggle:hover {
+  border-color: var(--color-accent);
+  background-color: var(--color-background-surface);
+  color: var(--color-accent);
+}
