@@ -6,7 +6,7 @@ import { ScanArtifactModelsFromHuggingFaceModalMutation } from '../__generated__
 import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { theme } from '../theme-shim';
-import { Input } from 'antd';
+import { AstryxFormTextInput } from './astryxFormControls';
 import {
   BAIFlex,
   BAIModal,
@@ -150,7 +150,8 @@ const ScanArtifactModelsFromHuggingFaceModal = ({
               required
               rules={[{ required: true }]}
             >
-              <Input
+              <AstryxFormTextInput
+                label={t('scanArtifactModelsFromHuggingFaceModal.ModelID')}
                 placeholder={t(
                   'scanArtifactModelsFromHuggingFaceModal.EnterAModelID',
                 )}
@@ -160,7 +161,8 @@ const ScanArtifactModelsFromHuggingFaceModal = ({
               label={t('scanArtifactModelsFromHuggingFaceModal.Version')}
               name="revision"
             >
-              <Input
+              <AstryxFormTextInput
+                label={t('scanArtifactModelsFromHuggingFaceModal.Version')}
                 placeholder={t(
                   'scanArtifactModelsFromHuggingFaceModal.EnterAVersion',
                 )}

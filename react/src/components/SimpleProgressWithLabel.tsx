@@ -3,7 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { theme } from '../theme-shim';
-import { Tooltip, Typography } from 'antd';
+import { Text } from '@astryxdesign/core/Text';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIFlex,
   BAIProgressWithLabel,
@@ -37,15 +38,11 @@ const SimpleProgressWithLabel: React.FC<SimpleProgressWithLabelProps> = ({
     return (
       <>
         <BAIFlex justify="between">
-          <Typography.Text>{title}</Typography.Text>
-          {description && (
-            <Typography.Text
-              type="secondary"
-              style={{ fontSize: token.fontSizeSM }}
-            >
-              {description}
-            </Typography.Text>
-          )}
+          <Text>{title}</Text>
+          {/* antd `type="secondary" fontSize={fontSizeSM}` is exactly Astryx's
+              `supporting` semantic type (smaller + secondary colour) — the
+              defaults-first mapping, no inline font size. */}
+          {description && <Text type="supporting">{description}</Text>}
         </BAIFlex>
         <BAIProgressWithLabel
           percent={_.toNumber(percent)}
@@ -70,7 +67,7 @@ const SimpleProgressWithLabel: React.FC<SimpleProgressWithLabelProps> = ({
   }
 
   return (
-    <Tooltip title={tooltipTitle || title} placement="left">
+    <Tooltip content={tooltipTitle || title} placement="start">
       <BAIFlex direction="row" gap={'xxs'}>
         <BAIFlex
           style={{
@@ -85,14 +82,12 @@ const SimpleProgressWithLabel: React.FC<SimpleProgressWithLabelProps> = ({
             backgroundColor: token.colorTextQuaternary,
           }}
         ></BAIFlex>
-        <Typography.Text
-          style={{
-            fontSize: token.fontSizeSM,
-            lineHeight: `${token.fontSizeSM}px`,
-          }}
-        >
+        {/* PILOT-DECISION: the tight `lineHeight: fontSizeSM` is dropped —
+            Astryx's `supporting` type owns its line-height, and the row is
+            already vertically centred by BAIFlex. */}
+        <Text type="supporting" color="primary">
           {_.toNumber(percent).toFixed(0) + '%'}
-        </Typography.Text>
+        </Text>
       </BAIFlex>
     </Tooltip>
   );

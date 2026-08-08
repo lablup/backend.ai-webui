@@ -9,8 +9,10 @@ import {
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
+import { Badge } from '@astryxdesign/core/Badge';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Text } from '@astryxdesign/core/Text';
 import { useToggle } from 'ahooks';
-import { Button, Tag, Tooltip, Typography } from 'antd';
 import {
   BAIColumnType,
   BAIDoubleTag,
@@ -18,7 +20,8 @@ import {
   BAIId,
   BAITableAstryx,
   BAITableProps,
-  BAITag,
+  badgeVariantForStatus,
+  badgeVariantForTagColor,
   filterOutEmpty,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -120,12 +123,14 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
       key: 'description',
       title: t('rbac.RoleDescription'),
       dataIndex: 'description',
+      // MAPPING §3.4: `ellipsis` + a manual hover Tooltip collapses into
+      // `maxLines` + `hasTruncateTooltip` — Astryx shows the tooltip only
+      // when the text is actually clamped, which is what the antd pair was
+      // approximating. The 200px cap moves to the cell wrapper.
       render: (description: string) => (
-        <Tooltip title={description} placement="topLeft">
-          <Typography.Text ellipsis style={{ maxWidth: 200 }}>
-            {description ?? '-'}
-          </Typography.Text>
-        </Tooltip>
+        <Text maxLines={1} hasTruncateTooltip style={{ maxWidth: 200 }}>
+          {description ?? '-'}
+        </Text>
       ),
     },
     {
@@ -153,7 +158,12 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
                 { label: scopeName, color: 'default' },
               ]}
             />
-            {totalCount > 1 && <Tag color="default">+{totalCount - 1}</Tag>}
+            {totalCount > 1 && (
+              <Badge
+                variant={badgeVariantForTagColor('default')}
+                label={`+${totalCount - 1}`}
+              />
+            )}
           </BAIFlex>
         );
       },
@@ -169,7 +179,12 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
         return (
           <BAIFlex gap="xxs" wrap="wrap" align="center">
             <BAIId uuid={scopeNodes[0]?.scopeId} />
-            {totalCount > 1 && <Tag color="default">+{totalCount - 1}</Tag>}
+            {totalCount > 1 && (
+              <Badge
+                variant={badgeVariantForTagColor('default')}
+                label={`+${totalCount - 1}`}
+              />
+            )}
           </BAIFlex>
         );
       },
@@ -178,11 +193,14 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
       key: 'source',
       title: t('rbac.Source'),
       dataIndex: 'source',
+      // BUI `BAITag` DISSOLVES into Astryx `Badge` at the call site
+      // (MAPPING §8); the variant comes from the repo-global ticket-13 lookup.
       render: (source: string) => {
         return (
-          <BAITag color={source === 'SYSTEM' ? 'default' : 'green'}>
-            {source === 'SYSTEM' ? t('rbac.System') : t('rbac.Custom')}
-          </BAITag>
+          <Badge
+            variant={badgeVariantForStatus('role', source)}
+            label={source === 'SYSTEM' ? t('rbac.System') : t('rbac.Custom')}
+          />
         );
       },
     },
@@ -191,9 +209,10 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
       title: t('rbac.AutoAssign'),
       dataIndex: 'autoAssign',
       render: (autoAssign: boolean) => (
-        <BAITag color={autoAssign ? 'green' : 'default'}>
-          {autoAssign ? t('general.Active') : t('general.Inactive')}
-        </BAITag>
+        <Badge
+          variant={badgeVariantForTagColor(autoAssign ? 'green' : 'default')}
+          label={autoAssign ? t('general.Active') : t('general.Inactive')}
+        />
       ),
     },
     {
@@ -233,10 +252,14 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
           pagination
             ? {
                 ...pagination,
+                // MAPPING §3.3: icon-only, no children -> `IconButton`, whose
+                // required `label` finally gives this control an accessible
+                // name (antd allowed none).
                 extraContent: (
-                  <Button
-                    type="text"
+                  <IconButton
+                    variant="ghost"
                     icon={<Settings size="1em" />}
+                    label={t('table.SettingTable')}
                     onClick={() => toggleColumnSettingModal()}
                   />
                 ),

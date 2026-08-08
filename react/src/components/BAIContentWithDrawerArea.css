@@ -16,17 +16,21 @@
  `drawerWidth` is a prop, so it arrives as a custom property the component
  sets inline on its own element (`--bai-drawer-area-width`).
 
- `drawerStyle` used to select whether the `.ant-drawer-content-wrapper` rule
- was emitted at all. That element lives in a PORTAL at <body> level, so it
- cannot read a custom property set on the content div. Rather than reach for
- an imperative attribute toggle, the rule keys off the content div's own
+ `drawerStyle` used to select whether the drawer-panel rule was emitted at
+ all. That element lives in the TOP LAYER (a native `<dialog>`), so it cannot
+ read a custom property set on the content div. Rather than reach for an
+ imperative attribute toggle, the rule keys off the content div's own
  `margin-style` class through `:has()` — declarative, and it reproduces the
  original's global (all-drawers) scope exactly. Chromium 105+/Safari 15.4+/
  Firefox 121+, i.e. every browser this app supports and Electron 35's
  Chromium.
 
- The `.ant-drawer-content-wrapper` selector is still LIVE
- (WEBUINotificationDrawer is an antd `Drawer`), so it is preserved (P6).
+ to-astryx phase 3 wave 2 (partition C): the drawer target moved from
+ `.ant-drawer-content-wrapper` to `.astryx-drawer`. `WEBUINotificationDrawer`
+ — the drawer whose open state drives `margin-style` in the first place — is
+ now the lab `Drawer`, so the antd selector became DEAD (P6: it still
+ compiles and silently stops applying). The scope is unchanged: the rule fires
+ only while the notification drawer holds the layout in margin-style.
 
  Token mapping (P19-checked): theme.colorBorder -> var(--color-border-emphasized).
 */
@@ -38,7 +42,7 @@
   margin-right: var(--bai-drawer-area-width, 256px);
 }
 
-body:has(.main-layout-main-content.margin-style) .ant-drawer-content-wrapper {
+body:has(.main-layout-main-content.margin-style) .astryx-drawer {
   box-shadow: none !important;
   border-left: 1px solid var(--color-border-emphasized);
 }

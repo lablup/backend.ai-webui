@@ -10,22 +10,64 @@ import { isIpIncludedInList, isValidIPOrCidr } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import TOTPActivateModal from './TOTPActivateModal';
-import { AstryxFormTagsInput } from './astryx-bui/astryxFormControls';
+import {
+  AstryxFormTagsInput,
+  AstryxFormTextInput,
+} from './astryx-bui/astryxFormControls';
+import { Switch } from '@astryxdesign/core/Switch';
+import { Text } from '@astryxdesign/core/Text';
 import { useToggle } from 'ahooks';
-import { type ModalProps, Input, Switch, Typography } from 'antd';
-import { BAIModal, BAIText, useErrorMessageResolver } from 'backend.ai-ui';
+import {
+  BAIModal,
+  type BAIModalProps,
+  BAIText,
+  useErrorMessageResolver,
+} from 'backend.ai-ui';
 import { CircleAlert } from 'lucide-react';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
-interface Props extends ModalProps {
+// The antd `ModalProps` type import is replaced by BUI's own `BAIModalProps`
+// — the modal this component actually renders (P15: a type-only antd import
+// still keeps the module in the antd import graph).
+interface Props extends BAIModalProps {
   userFrgmt: UserProfileSettingModalFragment$key | null | undefined;
   currentClientIp?: string;
   onRequestClose: (success?: boolean) => void;
   onRequestRefresh: () => void;
   totpSupported?: boolean;
 }
+
+/**
+ * The TOTP toggle. A raw Astryx `Switch` rather than the shared
+ * `AstryxFormSwitch` adapter, which carries no `isLoading` passthrough. The
+ * two `Form.Item` contracts are honoured inline: `value` is coalesced (Astryx
+ * types it non-nullable) and the change handler receives the VALUE.
+ */
+const TotpSwitch: React.FC<{
+  label: string;
+  isLoading?: boolean;
+  onToggle: (checked: boolean) => void;
+  /** Injected by `Form.Item valuePropName="checked"`. */
+  checked?: boolean;
+  /** Injected by `Form.Item`. */
+  onChange?: (value: boolean) => void;
+}> = ({ label, isLoading, onToggle, checked, onChange }) => {
+  'use memo';
+  return (
+    <Switch
+      label={label}
+      isLabelHidden
+      isLoading={isLoading}
+      value={checked ?? false}
+      onChange={(next) => {
+        onChange?.(next);
+        onToggle(next);
+      }}
+    />
+  );
+};
 
 type UserProfileFormValues = {
   full_name: string;
@@ -203,7 +245,32 @@ const UserProfileSettingModal: React.FC<Props> = ({
               }),
             ]}
           >
-            <Input autoComplete="off" />
+            {/* PILOT-DECISION 1: `autoComplete` is dropped on all three text
+                fields — `TextInputProps` is a closed surface with no
+                raw-attribute passthrough. The password fields lose only the
+                browser hint that this is a NEW password, not any validation
+                (the Form.Item rules are unchanged).
+
+                PILOT-DECISION 2: `Input.Password` -> `TextInput
+                type="password"` (MAPPING §3.6) drops antd's reveal-eye
+                toggle; Astryx's TextInput has no show/hide affordance and
+                rebuilding one is out of scope. Both password fields are
+                write-only here (they are never pre-filled), so nothing the
+                user cannot re-type is hidden from them.
+
+                HANDOFF (not ours to fix): the antd `Form.Item` LABELS in this
+                modal render at `rgb(20,20,20)` against the dialog's dark
+                surface, i.e. invisible — measured with
+                `.scratch/astryx-migration/p3-w2c-ab-account.mjs`. It is
+                PRE-EXISTING: the same probe against this file's
+                pre-conversion revision reproduces it exactly. The cause is
+                the header's reverse-theme region (this modal is opened from
+                the account menu) meeting the Astryx `Dialog` surface that
+                wave 1 introduced, while the antd Form layer still paints its
+                labels from the LIGHT antd theme — MAPPING §5's "a nested
+                <Theme> with no explicit `mode`" hazard. Fixing it belongs to
+                the modal/theme layer, not to this call site. */}
+            <AstryxFormTextInput label={t('webui.menu.FullName')} />
           </Form.Item>
           <Form.Item
             name="password"
@@ -215,7 +282,10 @@ const UserProfileSettingModal: React.FC<Props> = ({
               },
             ]}
           >
-            <Input.Password autoComplete="new-password" />
+            <AstryxFormTextInput
+              label={t('general.NewPassword')}
+              type="password"
+            />
           </Form.Item>
           <Form.Item
             name="passwordConfirm"
@@ -243,16 +313,19 @@ const UserProfileSettingModal: React.FC<Props> = ({
               }),
             ]}
           >
-            <Input.Password autoComplete="new-password" />
+            <AstryxFormTextInput
+              label={t('webui.menu.NewPasswordAgain')}
+              type="password"
+            />
           </Form.Item>
           <Form.Item
             name="allowed_client_ip"
             label={t('credential.AllowedClientIP')}
             extra={
               <>
-                <Typography.Text type="secondary">
+                <Text color="secondary">
                   {t('credential.AllowedClientIPHint')}
-                </Typography.Text>
+                </Text>
                 <br />
                 <BAIText
                   type="secondary"
@@ -307,9 +380,13 @@ const UserProfileSettingModal: React.FC<Props> = ({
               label={t('webui.menu.TotpActivated')}
               valuePropName="checked"
             >
-              <Switch
-                loading={mutationToRemoveTotp.isPending}
-                onChange={(checked: boolean) => {
+              {/* MAPPING §4: `checked` -> `value` (coalesced by the local
+                  adapter below, since Form.Item injects `undefined` until the
+                  field is touched), `loading` -> `isLoading`. */}
+              <TotpSwitch
+                label={t('webui.menu.TotpActivated')}
+                isLoading={mutationToRemoveTotp.isPending}
+                onToggle={(checked: boolean) => {
                   if (checked) {
                     toggleTOTPActivateModal();
                   } else {

@@ -5,11 +5,14 @@
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import LightDarkColorPicker from './LightDarkColorPicker';
-// FRONTIER (astryx/22): theme-ALGORITHM producer, skip-listed since ticket 09
-// (`getDesignToken` reads real antd design tokens as the palette fallback —
-// not a token-shim consumer). No other antd import/render lives in this
-// file; it has no "chrome" of its own beyond delegating to
-// `LightDarkColorPicker`, which is already migrated.
+// DOCUMENTED EXCLUSION (astryx/22, re-confirmed phase 3 wave 2 partition C):
+// theme-ALGORITHM producer, skip-listed since ticket 09. `theme.getDesignToken`
+// runs antd's real palette algorithm to derive the family's fallback accent —
+// it is a *producer* call, not a token-shim read, and it has no Astryx
+// counterpart (Astryx derives its ramps inside `defineTheme`, at build time).
+// It renders NOTHING: the only markup this file emits is `LightDarkColorPicker`,
+// which is already migrated. Dies with the final switch, together with
+// ThemeAdminProvider / ThemeSecondaryProvider and the theme-shim.
 import { theme } from 'antd';
 import * as _ from 'lodash-es';
 

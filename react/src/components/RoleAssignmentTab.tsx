@@ -14,7 +14,8 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { theme } from '../theme-shim';
 import AssignRoleModal from './AssignRoleModal';
-import { Alert, Tooltip } from 'antd';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIButton,
   BAIDeleteConfirmModal,
@@ -225,12 +226,9 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
 
   return (
     <BAIFlex align="stretch" direction="column" gap="sm">
+      {/* `showIcon` dropped — Banner always shows its status icon (MAPPING §4). */}
       {isReadOnly && (
-        <Alert
-          type="warning"
-          showIcon
-          title={t('rbac.SystemRoleNoAssignments')}
-        />
+        <Banner status="warning" title={t('rbac.SystemRoleNoAssignments')} />
       )}
       <BAIFlex justify="between" align="start" gap="sm" wrap="wrap">
         <BAIGraphQLPropertyFilter<RoleAssignmentFilter>
@@ -256,7 +254,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
                 count={selectedRowKeys.length}
                 onClearSelection={() => setSelectedRowKeys([])}
               />
-              <Tooltip title={t('rbac.RevokeUser')}>
+              <Tooltip content={t('rbac.RevokeUser')}>
                 <BAIButton
                   icon={
                     <Trash2 style={{ color: token.colorError }} size="1em" />

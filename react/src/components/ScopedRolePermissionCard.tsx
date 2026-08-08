@@ -15,11 +15,12 @@ import {
   type RBACGrantState,
 } from '../helper/rbacGrantState';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
-import { theme } from '../theme-shim';
 import RoleScopePermissionEditModal, {
   resolveScopeName,
 } from './RoleScopePermissionEditModal';
-import { Button, Tag, Tooltip } from 'antd';
+import { Badge } from '@astryxdesign/core/Badge';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAICard,
   type BAIColumnsType,
@@ -32,6 +33,7 @@ import {
   BAITableAstryx,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
+  badgeVariantForStatus,
   toLocalId,
   useFetchKey,
 } from 'backend.ai-ui';
@@ -57,11 +59,11 @@ import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
  */
 const PERMISSION_FETCH_LIMIT = 500;
 
-const GRANT_STATE_TAG_COLOR: Record<RBACGrantState, string | undefined> = {
-  full: 'success',
-  partial: 'warning',
-  none: undefined,
-};
+// The former local `GRANT_STATE_TAG_COLOR` map is gone: the repo-global
+// ticket-13 lookup already carries this domain as
+// `badgeVariantForStatus('grantState', …)` (full -> success, partial ->
+// warning, none -> neutral). Per-file colour maps are exactly what that
+// module exists to prevent.
 
 /** A scope row node as returned by this card's query. */
 type ScopeRowNode = NonNullable<
@@ -85,7 +87,6 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
 
   const role = useFragment(
     graphql`
@@ -365,12 +366,16 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
                 grantedOperations,
               );
               return (
-                <Tooltip key={entity.entityType} title={stateLabel[grantState]}>
-                  <Tag color={GRANT_STATE_TAG_COLOR[grantState]}>
-                    {t(`rbac.types.${entity.entityType}`, {
+                <Tooltip
+                  key={entity.entityType}
+                  content={stateLabel[grantState]}
+                >
+                  <Badge
+                    variant={badgeVariantForStatus('grantState', grantState)}
+                    label={t(`rbac.types.${entity.entityType}`, {
                       defaultValue: entity.entityType,
                     })}
-                  </Tag>
+                  />
                 </Tooltip>
               );
             })}
@@ -423,13 +428,16 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
                 />
                 {/* Icon-only with a tooltip — the row above already hosts the
                     filter, so a labeled button crowds it (same pattern as the
-                    session list's bulk actions). */}
-                <Tooltip title={t('rbac.EditScopePermissions')}>
-                  <Button
-                    icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
-                    onClick={() => setIsSelectionEditOpen(true)}
-                  />
-                </Tooltip>
+                    session list's bulk actions). MAPPING §3.3: an icon-only
+                    Button becomes `IconButton`, which owns its own tooltip
+                    and finally has an accessible name. The `colorInfo` glyph
+                    tint is dropped (P5, closed variant enum). */}
+                <IconButton
+                  icon={<SquarePenIcon aria-hidden />}
+                  label={t('rbac.EditScopePermissions')}
+                  tooltip={t('rbac.EditScopePermissions')}
+                  onClick={() => setIsSelectionEditOpen(true)}
+                />
               </>
             )}
             <BAIFetchKeyButton

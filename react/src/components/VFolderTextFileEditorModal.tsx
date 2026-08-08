@@ -24,7 +24,6 @@ import { Layout, LayoutContent, LayoutFooter } from '@astryxdesign/core/Layout';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import type { Monaco, OnMount } from '@monaco-editor/react';
 import { useQueryClient } from '@tanstack/react-query';
-import { RcFile } from 'antd/es/upload';
 import {
   VFolderFile,
   convertToDecimalUnit,
@@ -40,6 +39,26 @@ const MonacoEditor = React.lazy(() =>
   })),
 );
 
+/**
+ * The file shape `FileUploadManager.uploadFiles` accepts.
+ *
+ * P15: `import { RcFile } from 'antd/es/upload'` is a deep antd SUBPATH
+ * import — it renders nothing, but it still keeps this module in the antd
+ * import graph, and subpath imports are the ones that slip past a
+ * `from 'antd'` grep. Structurally `RcFile` is `File` plus rc-upload's own
+ * bookkeeping fields; this file only ever builds one and hands it straight to
+ * `uploadFiles`, so the local declaration below covers the whole use. The
+ * upload manager itself still owns the antd type (frontier — its conversion is
+ * a different partition's work), and rc-upload additionally stamps a
+ * deprecated `lastModifiedDate` onto every file it hands around, so the local
+ * declaration reproduces that field too. Once FileUploadManager sheds
+ * `antd/es/upload`, both sides can settle on a single shared type.
+ */
+type UploadableFile = File & {
+  uid: string;
+  readonly lastModifiedDate: Date;
+};
+
 interface VFolderTextFileEditorModalProps extends Omit<
   BAIModalProps,
   'children' | 'title' | 'isOpen' | 'onOpenChange' | 'onAction'
@@ -51,7 +70,7 @@ interface VFolderTextFileEditorModalProps extends Omit<
   fileInfo: VFolderFile | null;
   onRequestClose: (success?: boolean) => void;
   uploadFiles: (
-    files: RcFile[],
+    files: UploadableFile[],
     vfolderId: string,
     currentPath: string,
   ) => Promise<void>;
@@ -167,7 +186,7 @@ const VFolderTextFileEditorModal: React.FC<VFolderTextFileEditorModalProps> = ({
       });
       const file = new File([blob], fileInfo.name, {
         type: detectedMimeTypeRef.current,
-      }) as RcFile;
+      }) as UploadableFile;
 
       // Workaround: tus-js-client skips PATCH requests for 0-byte files,
       // immediately calling onSuccess without uploading any data.

@@ -14,8 +14,13 @@ import { RoleFormModalUpdateMutation } from '../__generated__/RoleFormModalUpdat
 import { App } from '../app-shim';
 import { Form } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { AstryxFormSelector } from './astryxFormControls';
-import { Button, Checkbox, Input } from 'antd';
+import {
+  AstryxFormCheckbox,
+  AstryxFormSelector,
+  AstryxFormTextArea,
+  AstryxFormTextInput,
+} from './astryxFormControls';
+import { IconButton } from '@astryxdesign/core/IconButton';
 import {
   BAIAdminContainerRegistrySelectAstryx,
   BAIAdminModelServiceSelectAstryx,
@@ -338,13 +343,15 @@ const ScopeRow: React.FC<ScopeRowProps> = ({
       >
         <ScopeIdSelect scopeType={scopeType} placeholder={t('rbac.ScopeId')} />
       </Form.Item>
-      <Button
-        type="text"
-        danger
+      {/* MAPPING §3.3: icon-only + `danger` -> `IconButton
+          variant="destructive"`; the ad-hoc `aria-label` becomes the
+          component's required `label`. */}
+      <IconButton
+        variant="destructive"
         icon={<Trash size="1em" />}
-        disabled={!canRemove}
+        isDisabled={!canRemove}
         onClick={onRemove}
-        aria-label={t('button.Delete')}
+        label={t('button.Delete')}
       />
     </BAIFlex>
   );
@@ -606,10 +613,10 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
             },
           ]}
         >
-          <Input autoFocus />
+          <AstryxFormTextInput label={t('rbac.RoleName')} hasAutoFocus />
         </Form.Item>
         <Form.Item name="description" label={t('rbac.RoleDescription')}>
-          <Input.TextArea rows={1} />
+          <AstryxFormTextArea label={t('rbac.RoleDescription')} rows={1} />
         </Form.Item>
         {supportsAutoAssign && (
           <Form.Item
@@ -618,7 +625,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
             valuePropName="checked"
             tooltip={t('rbac.AutoAssignDescription')}
           >
-            <Checkbox>{t('general.Enable')}</Checkbox>
+            <AstryxFormCheckbox label={t('general.Enable')} />
           </Form.Item>
         )}
         {!isEditMode && (

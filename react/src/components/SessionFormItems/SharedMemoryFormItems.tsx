@@ -6,7 +6,8 @@ import { Form } from '../../form-engine';
 import { compareNumberWithUnits, convertToBinaryUnit } from '../../helper';
 import { theme } from '../../theme-shim';
 import { MergedResourceAllocationFormValue } from './ResourceAllocationFormItems';
-import { ConfigProvider, Divider, Slider, Switch, SwitchProps } from 'antd';
+import { Divider } from '@astryxdesign/core/Divider';
+import { Switch } from '@astryxdesign/core/Switch';
 import {
   BAIQuestionIconWithTooltip,
   BAIDynamicUnitInputNumber,
@@ -17,10 +18,43 @@ import * as _ from 'lodash-es';
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
+/**
+ * The auto/manual shared-memory toggle. A local adapter rather than the shared
+ * `AstryxFormSwitch`, because the visible label flips with the state. The two
+ * `Form.Item` contracts are honoured inline.
+ */
+const AutomaticShmemSwitch: React.FC<{
+  autoLabel: string;
+  manualLabel: string;
+  onToggle?: (checked: boolean) => void;
+  /** Injected by `Form.Item valuePropName="checked"`. */
+  checked?: boolean;
+  /** Injected by `Form.Item`. */
+  onChange?: (value: boolean) => void;
+}> = ({ autoLabel, manualLabel, onToggle, checked, onChange }) => {
+  'use memo';
+  return (
+    <Switch
+      size="sm"
+      label={checked ? autoLabel : manualLabel}
+      value={checked ?? false}
+      onChange={(next) => {
+        onChange?.(next);
+        onToggle?.(next);
+      }}
+    />
+  );
+};
+
 interface SharedMemoryFormItemsProps {
   min?: string;
   onChangeResourceShmem?: BAIDynamicUnitInputNumberProps['onChange'];
-  onChangeAutomaticShmem?: SwitchProps['onChange'];
+  /**
+   * antd `SwitchProps['onChange']` was `(checked, event) => void`; Astryx
+   * `Switch` fires the same shape, so the callback contract is unchanged —
+   * only the antd TYPE import is gone (P15).
+   */
+  onChangeAutomaticShmem?: (checked: boolean) => void;
 }
 
 const SharedMemoryFormItems: React.FC<SharedMemoryFormItemsProps> = ({
@@ -56,42 +90,45 @@ const SharedMemoryFormItems: React.FC<SharedMemoryFormItemsProps> = ({
 
         return (
           <BAIFlex direction="column" align="stretch" gap="xs">
+            {/* PILOT-DECISION: this was never an input. It was an antd
+                `Slider` with its handle hidden, `cursor: default`, and a
+                `ConfigProvider` block repainting rail/track — i.e. a two-tone
+                READ-ONLY bar showing the application-memory / shared-memory
+                split. MAPPING §3.11 gives `ProgressBar`, but its track colour
+                is theme-owned and cannot carry the warning hue that the legend
+                directly below names ("yellow = shared memory"), so flattening
+                to a ProgressBar would break the legend's contract.
+                It becomes two plain boxes sized by the same numbers, painted
+                from the SAME theme-shim tokens the legend swatches already
+                use — no antd, no per-component CSS file, and the light/dark
+                pairs come from the shim. */}
             <BAIFlex direction="row" gap={'sm'}>
-              <ConfigProvider
-                theme={{
-                  components: {
-                    Slider: {
-                      railBg: token.colorWarningBorderHover,
-                      railHoverBg: token.colorWarningBorderHover,
-                      trackBg: token.colorSuccessBorderHover,
-                      trackHoverBg: token.colorSuccessBorderHover,
-                      railSize: token.fontSize,
-                    },
-                  },
+              <div
+                role="img"
+                aria-label={t('session.launcher.SharedMemory', {
+                  value: shmemUnitResult?.value,
+                })}
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  height: token.fontSize,
+                  overflow: 'hidden',
+                  backgroundColor: token.colorWarningBorderHover,
                 }}
               >
-                <Slider
+                <div
                   style={{
-                    flex: 1,
-                    margin: 0,
-                    cursor: 'default',
-                    padding: 0,
+                    // Set the denominator to 1 so the bar still renders when
+                    // both the value and the max are 0.
+                    width: `${
+                      ((appMemUnitResult?.number ?? 0) /
+                        (memUnitResult?.number || 1)) *
+                      100
+                    }%`,
+                    backgroundColor: token.colorSuccessBorderHover,
                   }}
-                  styles={{
-                    handle: {
-                      display: 'none',
-                      top: 2,
-                    },
-                    root: {
-                      height: '1em',
-                    },
-                  }}
-                  step={0.001}
-                  value={appMemUnitResult?.number}
-                  // Set to 1 to fix UI update issue where slider doesn't rerender when both value and max are 0
-                  max={memUnitResult?.number || 1}
                 />
-              </ConfigProvider>
+              </div>
             </BAIFlex>
             <BAIFlex
               direction="row"
@@ -208,25 +245,27 @@ const SharedMemoryFormItems: React.FC<SharedMemoryFormItemsProps> = ({
                     name={'enabledAutomaticShmem'}
                     valuePropName="checked"
                   >
-                    <Switch
-                      size="small"
-                      title="auto"
-                      checkedChildren={t('general.Auto')}
-                      unCheckedChildren={t('general.Manual')}
-                      onChange={onChangeAutomaticShmem}
+                    {/* MAPPING §4: `checked` -> `value`, `size="small"` ->
+                        `sm`. PILOT-DECISION: `checkedChildren` /
+                        `unCheckedChildren` (the "Auto"/"Manual" text INSIDE
+                        the track) have no Astryx counterpart and become the
+                        Switch's own `label`, rendered beside it — the same two
+                        words, now also the accessible name the antd version
+                        lacked (it only had a `title` attribute). */}
+                    <AutomaticShmemSwitch
+                      autoLabel={t('general.Auto')}
+                      manualLabel={t('general.Manual')}
+                      onToggle={onChangeAutomaticShmem}
                     />
                   </Form.Item>
                   <BAIQuestionIconWithTooltip
                     title={
                       <BAIFlex direction="column">
                         {t('session.launcher.AutoSharedMemoryTooltip')}
-                        <Divider
-                          style={{
-                            margin: 0,
-                            marginBlock: token.marginSM,
-                            backgroundColor: token.colorBorderSecondary,
-                          }}
-                        />
+                        {/* The explicit margin/background overrides go with
+                            the antd Divider — Astryx's owns its spacing and
+                            colour from the theme. */}
+                        <Divider />
                         <Trans i18nKey={'session.launcher.DescSharedMemory'} />
                         <br />
                         <br />

@@ -2,7 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { Spin, Tag } from 'antd';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Spinner } from '@astryxdesign/core/Spinner';
+import { badgeVariantForStatus } from 'backend.ai-ui';
 import { CircleCheck, Clock, CircleX, LoaderCircle } from 'lucide-react';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -14,33 +16,24 @@ interface ValidationStatusTagProps {
 const ValidationStatusTag: React.FC<ValidationStatusTagProps> = ({
   status = 'default',
 }) => {
+  'use memo';
   const { t } = useTranslation();
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'default':
-      case 'finished':
-      default:
-        return 'default';
-      case 'processing':
-        return 'processing';
-      case 'error':
-        return 'error';
-      case 'success':
-        return 'success';
-    }
-  };
+  // The local `getStatusColor` switch is gone: the repo-global ticket-13
+  // lookup already carries this domain as `badgeVariantForStatus('validation',
+  // …)` — default/finished -> neutral, processing -> info (Astryx has no
+  // `processing` variant), error -> error, success -> success.
 
   return (
-    <Suspense
-      fallback={
-        <Spin
-          indicator={<LoaderCircle className="anticon-spin" size="1em" />}
-        />
-      }
-    >
-      <Tag
-        color={getStatusColor(status)}
+    // MAPPING §3.14: a bare `Spin` indicator is `Spinner`. The custom
+    // `indicator` node is dropped — Spinner owns its glyph.
+    <Suspense fallback={<Spinner size="sm" />}>
+      {/* antd `Tag` (no `closable`) -> `Badge`; `icon` survives, children
+          become `label`. The spinning glyph keeps the shared `anticon-spin`
+          keyframe class (see REMAINDER's note: that class is now OURS, shipped
+          by BUI's reset, not antd's). */}
+      <Badge
+        variant={badgeVariantForStatus('validation', status)}
         icon={
           status === 'processing' ? (
             <LoaderCircle className="anticon-spin" size="1em" />
@@ -52,15 +45,16 @@ const ValidationStatusTag: React.FC<ValidationStatusTagProps> = ({
             <Clock size="1em" />
           )
         }
-      >
-        {status === 'processing'
-          ? t('modelService.Processing')
-          : status === 'finished'
-            ? t('modelService.Finished')
-            : status === 'error'
-              ? t('modelService.Error')
-              : t('modelService.Ready')}
-      </Tag>
+        label={
+          status === 'processing'
+            ? t('modelService.Processing')
+            : status === 'finished'
+              ? t('modelService.Finished')
+              : status === 'error'
+                ? t('modelService.Error')
+                : t('modelService.Ready')
+        }
+      />
     </Suspense>
   );
 };

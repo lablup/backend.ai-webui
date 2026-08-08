@@ -8,11 +8,15 @@ import { App } from '../app-shim';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { theme } from '../theme-shim';
 import './TerminateSessionModalForProjectAdmin.css';
-import { Checkbox, type ModalProps, Typography } from 'antd';
+import BAICopyableText from './astryx-bui/BAICopyableText';
+import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
+import { Text } from '@astryxdesign/core/Text';
 import {
   BAICard,
   BAIFlex,
   BAIModal,
+  type BAIModalProps,
+  BAIText,
   filterOutNullAndUndefined,
   toLocalId,
 } from 'backend.ai-ui';
@@ -21,8 +25,11 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
+// The antd `ModalProps` type import is replaced by BUI's own `BAIModalProps`
+// — the modal this component actually renders. A type-only antd import still
+// keeps the module in the antd import graph (P15/MAPPING §6).
 export interface TerminateSessionModalForProjectAdminProps extends Omit<
-  ModalProps,
+  BAIModalProps,
   'onOk' | 'onCancel'
 > {
   /** Sessions to terminate. A single-element list terminates one session;
@@ -146,27 +153,31 @@ const TerminateSessionModalForProjectAdmin: React.FC<
         align="stretch"
         gap={'xs'}
       >
-        <Typography.Text>
-          {t('userSettings.SessionTerminationDialog')}
-        </Typography.Text>
-        <Typography.Text mark>
+        <Text>{t('userSettings.SessionTerminationDialog')}</Text>
+        {/* `Typography.Text mark` is MAPPING §3.4 **NONE** in Astryx core, but
+            BUI's `BAIText` already rebuilt the highlight chip in tokens
+            (p3-a), so the frontier wrapper is the right home for this one
+            prop rather than a second local reimplementation. */}
+        <BAIText mark>
           {sessions.length === 1
             ? (sessions[0]?.metadata?.name ?? '')
             : `${sessions.length} sessions`}
-        </Typography.Text>
-        <Checkbox
-          checked={isForce}
-          onChange={(e) => {
-            setIsForce(e.target.checked);
-          }}
-        >
-          {t('button.ForceTerminate')}
-        </Checkbox>
+        </BAIText>
+        {/* MAPPING §4: `checked` -> `value`, `onChange(e)` ->
+            `onChange(checked)`, children -> the required `label`. */}
+        <CheckboxInput
+          label={t('button.ForceTerminate')}
+          value={isForce}
+          onChange={(checked) => setIsForce(checked)}
+        />
         {isForce && (
           <BAICard styles={{ body: { padding: token.padding } }}>
-            <Typography.Paragraph type="danger">
+            {/* `Typography.Paragraph` -> `Text as="p" display="block"`; the
+                `danger` type resolves through the brand theme's custom
+                `color:danger` Text colour added in p3-a. */}
+            <Text as="p" display="block" color="danger">
               {t('session.ForceTerminateWarningMsg')}
-            </Typography.Paragraph>
+            </Text>
             <ul>
               <li>{t('session.ForceTerminateWarningMsg2')}</li>
               <li>{t('session.ForceTerminateWarningMsg3')}</li>
@@ -179,9 +190,10 @@ const TerminateSessionModalForProjectAdmin: React.FC<
                     <ul>
                       {kernels.map((kernel) => (
                         <li key={kernel?.id}>
-                          <Typography.Text copyable>
-                            {kernel?.resource?.containerId}
-                          </Typography.Text>
+                          {/* MAPPING §3.4: `copyable` -> BAICopyableText. */}
+                          <BAICopyableText copyLabel={t('button.Copy')}>
+                            {kernel?.resource?.containerId ?? ''}
+                          </BAICopyableText>
                         </li>
                       ))}
                     </ul>

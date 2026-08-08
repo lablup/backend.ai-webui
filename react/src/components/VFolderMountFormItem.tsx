@@ -11,17 +11,16 @@ import {
   vFolderAliasNameRegExp,
   DEFAULT_ALIAS_BASE_PATH,
 } from './VFolderTable';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
+import { Badge } from '@astryxdesign/core/Badge';
+import { IconButton } from '@astryxdesign/core/IconButton';
 import {
-  Button,
-  Descriptions,
-  Input,
-  Skeleton,
-  Tag,
-  Tooltip,
-  Typography,
-} from 'antd';
+  MetadataList,
+  MetadataListItem,
+} from '@astryxdesign/core/MetadataList';
+import { Text } from '@astryxdesign/core/Text';
+import { TextInput } from '@astryxdesign/core/TextInput';
 import {
-  BAIButton,
   BAIFlex,
   BAIVFolderSelectAstryx,
   BAIVFolderSelectAstryxRef,
@@ -62,6 +61,31 @@ interface VFolderMountFormItemProps {
  * as well as pre-existing ones.
  */
 type FolderNameMap = Record<string, string>;
+
+/**
+ * The per-folder mount-path field. A raw Astryx `TextInput` (not the shared
+ * `AstryxFormTextInput` adapter) so it can stay at `sm` size inside the row.
+ * `Form.Item`'s two contracts are honoured inline.
+ */
+const MountPathInput: React.FC<{
+  label: string;
+  /** Injected by `Form.Item`. */
+  value?: string;
+  /** Injected by `Form.Item`. */
+  onChange?: (value: string) => void;
+}> = ({ label, value, onChange }) => {
+  'use memo';
+  return (
+    <TextInput
+      label={label}
+      isLabelHidden
+      size="sm"
+      width="100%"
+      value={value ?? ''}
+      onChange={(next) => onChange?.(next)}
+    />
+  );
+};
 
 const VFolderMountFormItem: React.FC<VFolderMountFormItemProps> = ({
   filter,
@@ -120,7 +144,7 @@ const VFolderMountFormItem: React.FC<VFolderMountFormItemProps> = ({
   return (
     <>
       <Form.Item name={'mount_ids'} label={label}>
-        <Suspense fallback={<Skeleton.Input active block />}>
+        <Suspense fallback={<BAISkeletonAstryx variant="input" />}>
           <BAIVFolderSelectAstryx
             ref={vFolderSelectRef}
             label={t('session.launcher.FolderToMount')}
@@ -154,40 +178,43 @@ const VFolderMountFormItem: React.FC<VFolderMountFormItemProps> = ({
                   borderTop: `1px solid ${token.colorBorderSecondary}`,
                 }}
               >
-                <Tooltip title={t('modelService.OpenFolder')}>
-                  <Button
-                    type="text"
-                    size="small"
-                    icon={<FolderOpenIcon />}
-                    disabled={_.isEmpty(form.getFieldValue('mount_ids'))}
-                    onClick={() => {
-                      const mountIds = form.getFieldValue('mount_ids') || [];
-                      if (mountIds.length > 0) {
-                        openFolderExplorer(toLocalId(mountIds[0]));
-                      }
-                    }}
-                  />
-                </Tooltip>
-                <Tooltip title={t('data.CreateANewStorageFolder')}>
-                  <BAIButton
-                    type="text"
-                    size="small"
-                    icon={<PlusIcon />}
-                    onClick={() => setIsFolderCreateModalOpen(true)}
-                  />
-                </Tooltip>
-                <Tooltip title={t('button.Refresh')}>
-                  <Button
-                    type="text"
-                    size="small"
-                    icon={<RefreshCwIcon />}
-                    onClick={() => {
-                      startTransition(() => {
-                        vFolderSelectRef.current?.refetch();
-                      });
-                    }}
-                  />
-                </Tooltip>
+                {/* MAPPING §3.3: `type="text"` icon-only buttons wrapped in
+                    Tooltips collapse into ghost `IconButton`s, which own both
+                    the tooltip and the accessible name. */}
+                <IconButton
+                  variant="ghost"
+                  size="sm"
+                  icon={<FolderOpenIcon />}
+                  label={t('modelService.OpenFolder')}
+                  tooltip={t('modelService.OpenFolder')}
+                  isDisabled={_.isEmpty(form.getFieldValue('mount_ids'))}
+                  onClick={() => {
+                    const mountIds = form.getFieldValue('mount_ids') || [];
+                    if (mountIds.length > 0) {
+                      openFolderExplorer(toLocalId(mountIds[0]));
+                    }
+                  }}
+                />
+                <IconButton
+                  variant="ghost"
+                  size="sm"
+                  icon={<PlusIcon />}
+                  label={t('data.CreateANewStorageFolder')}
+                  tooltip={t('data.CreateANewStorageFolder')}
+                  onClick={() => setIsFolderCreateModalOpen(true)}
+                />
+                <IconButton
+                  variant="ghost"
+                  size="sm"
+                  icon={<RefreshCwIcon />}
+                  label={t('button.Refresh')}
+                  tooltip={t('button.Refresh')}
+                  onClick={() => {
+                    startTransition(() => {
+                      vFolderSelectRef.current?.refetch();
+                    });
+                  }}
+                />
               </BAIFlex>
             }
           />
@@ -214,8 +241,11 @@ const VFolderMountFormItem: React.FC<VFolderMountFormItemProps> = ({
                     align="start"
                     gap={token.sizeXXS}
                   >
-                    <Typography.Text
-                      ellipsis={{ tooltip: true }}
+                    {/* `ellipsis={{tooltip:true}}` -> `maxLines` +
+                        `hasTruncateTooltip` (MAPPING §3.4). */}
+                    <Text
+                      maxLines={1}
+                      hasTruncateTooltip
                       style={{
                         width: 150,
                         flexShrink: 0,
@@ -223,7 +253,7 @@ const VFolderMountFormItem: React.FC<VFolderMountFormItemProps> = ({
                       }}
                     >
                       {folderName}
-                    </Typography.Text>
+                    </Text>
                     <Form.Item
                       name={['mount_id_map', localId]}
                       style={{ flex: 1, marginBottom: 0 }}
@@ -257,7 +287,9 @@ const VFolderMountFormItem: React.FC<VFolderMountFormItemProps> = ({
                         },
                       ]}
                     >
-                      <Input size="small" />
+                      <MountPathInput
+                        label={t('session.launcher.FolderAlias')}
+                      />
                     </Form.Item>
                     <XIcon
                       size={16}
@@ -277,7 +309,7 @@ const VFolderMountFormItem: React.FC<VFolderMountFormItemProps> = ({
         }}
       </Form.Item>
       {currentProjectId && (
-        <Suspense fallback={<Skeleton.Input active size="small" block />}>
+        <Suspense fallback={<BAISkeletonAstryx variant="input" size="small" />}>
           <AutoMountFolderSection currentProjectId={currentProjectId} />
         </Suspense>
       )}
@@ -351,13 +383,18 @@ const AutoMountFolderSection: React.FC<{ currentProjectId: string }> = ({
   if (autoMountNames.length === 0) return null;
 
   return (
-    <Descriptions size="small" style={{ marginBottom: 8 }}>
-      <Descriptions.Item label={t('data.AutomountFolders')}>
-        {autoMountNames.map((name) => (
-          <Tag key={name}>{name}</Tag>
-        ))}
-      </Descriptions.Item>
-    </Descriptions>
+    // antd `Descriptions size="small"` -> `MetadataList` (MAPPING §4; `size`
+    // has no destination). The colourless `<Tag>`s are Astryx's default
+    // `neutral` Badge.
+    <MetadataList columns="single">
+      <MetadataListItem label={t('data.AutomountFolders')}>
+        <BAIFlex gap="xxs" wrap="wrap">
+          {autoMountNames.map((name) => (
+            <Badge key={name} label={name} />
+          ))}
+        </BAIFlex>
+      </MetadataListItem>
+    </MetadataList>
   );
 };
 

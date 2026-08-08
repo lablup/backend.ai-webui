@@ -9,8 +9,9 @@ import {
   useSuspendedBackendaiClient,
 } from '../../hooks';
 import { useTanMutation } from '../../hooks/reactQueryAlias';
-import { theme } from '../../theme-shim';
-import { Button, Input, Typography } from 'antd';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Text } from '@astryxdesign/core/Text';
+import { TextInput } from '@astryxdesign/core/TextInput';
 import { BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { SquarePen } from 'lucide-react';
@@ -42,13 +43,50 @@ const isPreparing = (status: string = '') => {
   ].includes(status);
 };
 
+/**
+ * The inline rename field.
+ *
+ * Raw Astryx `TextInput` rather than the shared `AstryxFormTextInput` adapter:
+ * this field needs Enter-to-save and Escape-to-cancel, which the adapter's
+ * prop surface does not carry. The two `Form.Item` contracts the adapter
+ * exists for are honoured here instead — `value` is coalesced (Astryx types it
+ * non-nullable, antd injects `undefined` until the field is touched) and
+ * `onChange` receives the VALUE, not the event.
+ *
+ * antd's `onPressEnter` is Astryx's `onEnter`; the `onKeyUp` Escape handler
+ * becomes `onKeyDown`, the key event Astryx exposes.
+ */
+const InlineNameInput: React.FC<{
+  label: string;
+  onEnter: () => void;
+  onEscape: () => void;
+  /** Injected by `Form.Item`. */
+  value?: string;
+  /** Injected by `Form.Item`. */
+  onChange?: (value: string) => void;
+}> = ({ label, onEnter, onEscape, value, onChange }) => {
+  'use memo';
+  return (
+    <TextInput
+      label={label}
+      isLabelHidden
+      hasAutoFocus
+      value={value ?? ''}
+      onChange={(next) => onChange?.(next)}
+      onEnter={onEnter}
+      onKeyDown={(e) => {
+        if (e.key === 'Escape') onEscape();
+      }}
+    />
+  );
+};
+
 const SessionInfoCell: React.FC<{
   sessionFrgmt: SessionInfoCellFragment$key;
   sessionNameList: string[];
   onRename?: () => void;
 }> = ({ sessionFrgmt, sessionNameList, onRename }) => {
   const baiClient = useSuspendedBackendaiClient();
-  const { token } = theme.useToken();
   const session = useFragment(
     graphql`
       fragment SessionInfoCellFragment on ComputeSession {
@@ -137,37 +175,42 @@ const SessionInfoCell: React.FC<{
             }),
           ]}
         >
-          <Input
-            autoFocus
-            onPressEnter={() => save()}
-            onKeyUp={(e) => {
-              if (e.key === 'Escape') setEditing(false);
-            }}
+          <InlineNameInput
+            label={t('session.launcher.SessionName')}
+            onEnter={save}
+            onEscape={() => setEditing(false)}
           />
         </Form.Item>
       ) : (
         <BAIFlex style={{ maxWidth: 250 }}>
-          <Typography.Text
-            ellipsis={{
-              tooltip: { overlayInnerStyle: { width: 'max-content' } },
-            }}
-            style={{ opacity: isPendingRename ? 0.5 : 1 }}
+          {/* `ellipsis={{tooltip}}` -> `maxLines` + `hasTruncateTooltip`
+              (MAPPING §3.4); the tooltip's `overlayInnerStyle` width override
+              is dropped — Astryx's truncation tooltip sizes itself. */}
+          <Text
+            maxLines={1}
+            hasTruncateTooltip
+            color={isPendingRename ? 'secondary' : undefined}
           >
             {optimisticName}
-          </Typography.Text>
+          </Text>
           {editable && (
-            <Button
-              loading={isPendingRename}
-              type="text"
+            // MAPPING §3.3: icon-only -> `IconButton`. The `colorLink` glyph
+            // tint is dropped (P5, closed variant enum), and the required
+            // `label` gives the control its first accessible name.
+            <IconButton
+              isLoading={isPendingRename}
+              variant="ghost"
+              size="sm"
               icon={<SquarePen size="1em" />}
-              style={{ color: token.colorLink }}
+              label={t('button.Edit')}
+              tooltip={t('button.Edit')}
               onClick={() => {
                 formRef.current?.setFieldsValue({
                   name: session.name,
                 });
                 setEditing(true);
               }}
-            ></Button>
+            />
           )}
         </BAIFlex>
       )}

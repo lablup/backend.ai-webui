@@ -11,7 +11,8 @@ import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { theme } from '../theme-shim';
 import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
-import { Alert, Button, Space, Tooltip } from 'antd';
+import { Banner } from '@astryxdesign/core/Banner';
+import { IconButton } from '@astryxdesign/core/IconButton';
 import {
   BAIAvailablePresetSelectAstryx,
   BAIFlex,
@@ -289,9 +290,9 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
       onCancel={onClose}
     >
       {noAvailablePresets && (
-        <Alert
-          type="info"
-          showIcon
+        // `type` -> `status`; `showIcon` dropped (Banner always shows it).
+        <Banner
+          status="info"
           title={t('deployment.NoPresetsAvailable')}
           description={
             <Trans
@@ -327,18 +328,20 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
               }
               isDisabled={noAvailablePresets}
             />
-            <Space.Compact>
-              <Tooltip title={t('modelService.DeploymentPresetDetail')}>
-                <Button
-                  icon={<Info size="1em" />}
-                  disabled={!effectivePresetId || noAvailablePresets}
-                  onClick={() => {
-                    if (!effectivePresetId) return;
-                    setPresetDetailId(effectivePresetId);
-                  }}
-                />
-              </Tooltip>
-            </Space.Compact>
+            {/* MAPPING §3.3: an icon-only button is `IconButton`, which
+                carries its own tooltip and required accessible name — so both
+                the `Tooltip` wrapper and the single-child `Space.Compact`
+                (which welded nothing to anything) disappear. */}
+            <IconButton
+              icon={<Info size="1em" />}
+              label={t('modelService.DeploymentPresetDetail')}
+              tooltip={t('modelService.DeploymentPresetDetail')}
+              isDisabled={!effectivePresetId || noAvailablePresets}
+              onClick={() => {
+                if (!effectivePresetId) return;
+                setPresetDetailId(effectivePresetId);
+              }}
+            />
           </BAIFlex>
         </Form.Item>
         <Form.Item

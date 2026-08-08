@@ -2,8 +2,40 @@
  * Static global styles for <WEBUINotificationDrawer>. Extracted from an inline
  * <style> element (forbidden under strict CSP); a same-origin stylesheet is
  * covered by `style-src 'self'` and needs no nonce.
+ *
+ * to-astryx phase 3 wave 2 (partition C): the drawer moved from antd `Drawer`
+ * to the lab `Drawer`, so the old `.ant-drawer-*` selectors are gone (P6 —
+ * they would still compile and silently stop applying).
+ *
+ * What survives is the ELECTRON affordance, which is the only reason this
+ * file exists. The frameless Electron window makes the drawer's header row
+ * draggable (`-webkit-app-region: drag`) while its interactive children stay
+ * clickable (`no-drag`). The lab Drawer has no header of its own, so the
+ * rules now target the header row the component renders as its first child,
+ * plus the built-in close button the drawer paints over it.
+ *
+ * Padding: the antd body used `paddingContentHorizontalSM` (16px) on the
+ * inline axis and 0 on the block axis. The lab Drawer renders content flush,
+ * so the same budget is restored here in tokens (`--spacing-4` = 16px).
  */
-.ant-drawer-header-title .ant-drawer-close,
-.ant-drawer-header .ant-drawer-extra {
+.webui-notification-drawer-body {
+  padding-inline: var(--spacing-4);
+  padding-block: var(--spacing-4) 0;
+}
+
+.webui-notification-drawer-header {
+  -webkit-app-region: drag;
+}
+
+/*
+ * NOTE: the header's inline-end reserve for the drawer's built-in close button
+ * canNOT live here. `BAIFlex` hard-codes `padding: 0` as an INLINE style, which
+ * no stylesheet rule can outrank; the reserve is applied as an inline
+ * `paddingInlineEnd` on that BAIFlex instead, with the measurement recorded at
+ * the call site.
+ */
+
+.webui-notification-drawer-header button,
+.webui-notification-drawer-header [role='button'] {
   -webkit-app-region: no-drag;
 }

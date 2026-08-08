@@ -10,23 +10,22 @@ import { useKeyPairLazyLoadQuery } from '../hooks/hooksUsingRelay';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { theme } from '../theme-shim';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import TextHighlighter from './TextHighlighter';
 import VFolderPermissionTag from './VFolderPermissionTag';
 import { VFolder } from './VFolderSelect';
+import { Badge } from '@astryxdesign/core/Badge';
+import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
+import { IconButton } from '@astryxdesign/core/IconButton';
 import {
-  Button,
-  Descriptions,
-  Input,
-  Space,
-  Tag,
-  Tooltip,
-  Typography,
-} from 'antd';
+  MetadataList,
+  MetadataListItem,
+} from '@astryxdesign/core/MetadataList';
+import { Text } from '@astryxdesign/core/Text';
+import { TextInput } from '@astryxdesign/core/TextInput';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
-  BAIButton,
   BAIUserUnionIcon,
   BAIFlex,
   BAILink,
@@ -96,6 +95,39 @@ export interface VFolderTableProps extends Omit<
 
 export const vFolderAliasNameRegExp = /^[a-zA-Z0-9_/.-]*$/;
 export const DEFAULT_ALIAS_BASE_PATH = '/home/work/';
+/**
+ * The per-row folder-alias field. A raw Astryx `TextInput` (not the shared
+ * `AstryxFormTextInput` adapter) so it can stop click propagation to the row.
+ * The two `Form.Item` contracts are honoured inline: `value` is coalesced and
+ * the change handler receives the VALUE.
+ */
+const AliasInput: React.FC<{
+  label: string;
+  onValueChange: () => void;
+  /** Injected by `Form.Item`. */
+  value?: string;
+  /** Injected by `Form.Item`. */
+  onChange?: (value: string) => void;
+}> = ({ label, onValueChange, value, onChange }) => {
+  'use memo';
+  return (
+    <div onClick={(e) => e.stopPropagation()}>
+      <TextInput
+        label={label}
+        isLabelHidden
+        placeholder={label}
+        hasClear
+        width="100%"
+        value={value ?? ''}
+        onChange={(next) => {
+          onChange?.(next);
+          onValueChange();
+        }}
+      />
+    </div>
+  );
+};
+
 const VFolderTable: React.FC<VFolderTableProps> = ({
   rowFilter,
   showAliasInput = false,
@@ -169,7 +201,6 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   }, [aliasMap, internalForm, aliasBasePath]);
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const currentProject = useCurrentProjectValue();
 
@@ -378,22 +409,17 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     {
       title: (
         <BAIFlex direction="row" gap="xxs">
-          <Typography.Text>{t('data.folders.Name')}</Typography.Text>
+          <Text>{t('data.folders.Name')}</Text>
           {showAliasInput && (
-            <>
-              <Typography.Text
-                type="secondary"
-                style={{ fontWeight: 'normal' }}
+            <Text type="supporting" weight="normal">
+              ({t('session.launcher.FolderAlias')}{' '}
+              <Tooltip
+                content={<Trans i18nKey={'session.launcher.DescFolderAlias'} />}
               >
-                ({t('session.launcher.FolderAlias')}{' '}
-                <Tooltip
-                  title={<Trans i18nKey={'session.launcher.DescFolderAlias'} />}
-                >
-                  <CircleHelp size="1em" />
-                </Tooltip>
-                )
-              </Typography.Text>
-            </>
+                <CircleHelp size="1em" />
+              </Tooltip>
+              )
+            </Text>
           )}
         </BAIFlex>
       ),
@@ -513,16 +539,10 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
                         internalForm.getFieldValue(getRowKey(record)),
                       )}
                     >
-                      <Input
-                        onClick={(e) => {
-                          e.stopPropagation();
-                        }}
-                        placeholder={t('session.launcher.FolderAlias')}
-                        allowClear
-                        onChange={() => {
-                          handleAliasUpdate();
-                        }}
-                      ></Input>
+                      <AliasInput
+                        label={t('session.launcher.FolderAlias')}
+                        onValueChange={handleAliasUpdate}
+                      />
                     </Form.Item>
                   );
                 }}
@@ -551,13 +571,15 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
           <BAIFlex direction="column">
             {record.ownership_type === 'user' ? (
               <BAIFlex gap={'xs'}>
-                <Typography.Text>{t('data.User')}</Typography.Text>
-                <User style={{ color: token.colorTextTertiary }} size="1em" />
+                <Text>{t('data.User')}</Text>
+                {/* The `colorTextTertiary` glyph tint is dropped (P5) — the
+                    V2 twin renders these icons at inherited colour. */}
+                <User size="1em" />
               </BAIFlex>
             ) : (
               <BAIFlex gap={'xs'}>
-                <Typography.Text>{t('data.Project')}</Typography.Text>
-                <BAIUserUnionIcon style={{ color: token.colorTextTertiary }} />
+                <Text>{t('data.Project')}</Text>
+                <BAIUserUnionIcon />
               </BAIFlex>
             )}
           </BAIFlex>
@@ -629,33 +651,43 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   return (
     <BAIFlex direction="column" align="stretch" gap={'xs'}>
       <BAIFlex direction="row" gap="xs" justify="between">
-        <Input
+        {/* MAPPING §3.6: a bare `Input` -> `TextInput`; `onChange` takes the
+            VALUE, `allowClear` -> `hasClear`, and the required `label` is
+            hidden because the placeholder plus the surrounding table already
+            name it. */}
+        <TextInput
+          label={t('data.SearchByName')}
+          isLabelHidden
           value={searchKey}
-          onChange={(e) => setSearchKey(e.target.value)}
-          allowClear
+          onChange={(next) => setSearchKey(next)}
+          hasClear
           placeholder={t('data.SearchByName')}
+          width="100%"
         />
-        <Space.Compact>
-          <Tooltip title={t('data.CreateANewStorageFolder')}>
-            <BAIButton
-              icon={<PlusIcon />}
-              onClick={() => {
-                setIsOpenCreateModal(true);
-              }}
-            />
-          </Tooltip>
-          <Tooltip title={t('button.Refresh')}>
-            <Button
-              loading={isPendingRefetch}
-              icon={<RotateCw size="1em" />}
-              onClick={() => {
-                startRefetchTransition(() => {
-                  updateFetchKey();
-                });
-              }}
-            />
-          </Tooltip>
-        </Space.Compact>
+        {/* `Space.Compact` -> `ButtonGroup`; the Tooltip+icon-Button pairs
+            collapse into `IconButton`s that own their tooltip and accessible
+            name (MAPPING §3.3). */}
+        <ButtonGroup label={t('data.Folders')}>
+          <IconButton
+            icon={<PlusIcon />}
+            label={t('data.CreateANewStorageFolder')}
+            tooltip={t('data.CreateANewStorageFolder')}
+            onClick={() => {
+              setIsOpenCreateModal(true);
+            }}
+          />
+          <IconButton
+            isLoading={isPendingRefetch}
+            icon={<RotateCw size="1em" />}
+            label={t('button.Refresh')}
+            tooltip={t('button.Refresh')}
+            onClick={() => {
+              startRefetchTransition(() => {
+                updateFetchKey();
+              });
+            }}
+          />
+        </ButtonGroup>
       </BAIFlex>
       <Form form={internalForm} component={false}>
         <BAITableAstryx
@@ -681,13 +713,19 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
       </Form>
       {showAutoMountedFoldersSection && autoMountedFolderNames.length > 0 ? (
         <>
-          <Descriptions size="small">
-            <Descriptions.Item label={t('data.AutomountFolders')}>
-              {_.map(autoMountedFolderNames, (name) => {
-                return <Tag key={name}>{name}</Tag>;
-              })}
-            </Descriptions.Item>
-          </Descriptions>
+          {/* antd `Descriptions size="small"` -> `MetadataList` (MAPPING §4;
+              `size` has no destination and is dropped). Each auto-mounted
+              folder name was a colourless `<Tag>`, i.e. Astryx's default
+              `neutral` Badge. */}
+          <MetadataList columns="single">
+            <MetadataListItem label={t('data.AutomountFolders')}>
+              <BAIFlex gap="xxs" wrap="wrap">
+                {_.map(autoMountedFolderNames, (name) => {
+                  return <Badge key={name} label={name} />;
+                })}
+              </BAIFlex>
+            </MetadataListItem>
+          </MetadataList>
         </>
       ) : null}
       <FolderCreateModalV2

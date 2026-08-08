@@ -1,0 +1,61 @@
+{
+  "loggedIn": true,
+  "statistics_light": {
+    "url": "http://127.0.0.1:5870/project/a%ED%95%9C%EA%B5%AD%EC%96%B4%EA%B0%80%EB%8A%A5_cde/statistics",
+    "dateRangeTrigger": 0,
+    "antdPicker": 0,
+    "banners": 0,
+    "emptyStates": 0
+  },
+  "myAccount_light": {
+    "headerButtons": 0,
+    "textInputs": 0,
+    "switches": 0,
+    "antdInputs": 0,
+    "tokenizers": 0
+  },
+  "themeSwitch": {
+    "bodyClass": "dark-theme",
+    "rootTheme": null,
+    "stored": "\"dark\""
+  },
+  "notificationDrawer_dark": {
+    "drawerOpen": 1,
+    "segmented": 1,
+    "antdDrawer": 0
+  },
+  "rbac_dark": {
+    "astryxBadges": 40,
+    "antdTags": 0,
+    "roleDrawer": 2,
+    "metadataLists": 1,
+    "antdDescriptions": 0
+  },
+  "sessions_dark": {
+    "detailDrawer": 1
+  },
+  "launcher_dark": {
+    "segmented": 2,
+    "antdRadio": 1
+  },
+  "data_dark": {
+    "metadataLists": 1
+  },
+  "statistics_dark": {
+    "url": "http://127.0.0.1:5870/project/a%ED%95%9C%EA%B5%AD%EC%96%B4%EA%B0%80%EB%8A%A5_cde/statistics",
+    "dateRangeTrigger": 0,
+    "antdPicker": 0,
+    "banners": 0,
+    "emptyStates": 0
+  },
+  "pageErrors": [],
+  "consoleErrors": [
+    "Loading the stylesheet 'https://fonts.googleapis.com/css2?family=Geist:wght@500&display=swap' violates the following Content Security Policy directive: \"style-src 'self' 'unsafe-inline'\". Note that 's",
+    "Warning: RelayResponseNormalizer: Invalid record `85a721b9-65fd-47ad-9480-66ea06495c25`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. Th",
+    "Warning: RelayResponseNormalizer: Invalid record `8e32dd28-d319-4e3b-8851-ea37837699a5`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. Th",
+    "Warning: RelayResponseNormalizer: Invalid record `2de2b969-1d04-48a6-af16-0bc8adb3c831`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. Th",
+    "Warning: RelayResponseNormalizer: Invalid record `031f5252-bd5d-4519-8400-f933e624bfa0`. Expected __typename to be consistent, but the record was assigned conflicting types `Group` and `UserGroup`. Th",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "React does not recognize the `%s` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `%s` instead. If you accidentally passed it from"
+  ]
+}
