@@ -175,6 +175,8 @@
     "operator": {
       "After": "after",
       "Before": "before",
+      "Contains": "contains",
+      "EndsWith": "ends with",
       "Equals": "equals",
       "GreaterThan": "greater than",
       "GreaterThanOrEqual": "greater or equal",
@@ -189,8 +191,12 @@
       "In": "in",
       "LessThan": "less than",
       "LessThanOrEqual": "less or equal",
+      "NotContains": "not contains",
+      "NotEndsWith": "not ends with",
       "NotEquals": "not equals",
-      "NotIn": "not in"
+      "NotIn": "not in",
+      "NotStartsWith": "not starts with",
+      "StartsWith": "starts with"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
@@ -316,8 +322,20 @@
     "SelectFolder": "Select Folder"
   },
   "comp:BAIPropertyFilter": {
+    "Apply": "Apply",
     "PlaceHolder": "Search",
-    "ResetFilter": "Reset filters"
+    "ResetFilter": "Reset filters",
+    "SearchLabel": "Search filters",
+    "operator": {
+      "Contains": "contains",
+      "Equals": "is",
+      "GreaterThan": "greater than",
+      "GreaterThanOrEqual": "greater or equal",
+      "In": "in",
+      "LessThan": "less than",
+      "LessThanOrEqual": "less or equal",
+      "NotEquals": "is not"
+    }
   },
   "comp:BAIPullingArtifactRevisionAlert": {
     "CancelPull": "Cancel Pull",

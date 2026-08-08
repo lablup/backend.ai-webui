@@ -16,7 +16,6 @@ import FolderCreateModalV2 from '../components/FolderCreateModalV2';
 import RestoreVFolderModal from '../components/RestoreVFolderModal';
 import VFolderNodes, { VFolderNodeInList } from '../components/VFolderNodes';
 import BAICard from '../components/astryx-bui/BAICardAstryx';
-import BAIPropertyFilter from '../components/astryx-bui/BAIPropertyFilterAstryx';
 import BAISelectionLabel from '../components/astryx-bui/BAISelectionLabel';
 import BAIVFolderDeleteButton from '../components/astryx-bui/BAIVFolderDeleteButtonAstryx';
 import { handleRowSelectionChange } from '../helper';
@@ -31,6 +30,7 @@ import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { useToggle } from 'ahooks';
 import {
+  BAIPropertyFilter,
   filterOutEmpty,
   filterOutNullAndUndefined,
   mergeFilterValues,
@@ -323,11 +323,6 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                   resultCount={t('general.TotalItems', {
                     total: vfolder_nodes?.count ?? 0,
                   })}
-                  operatorLabels={{
-                    contains: t('propertyFilter.Contains', 'contains'),
-                    equals: t('propertyFilter.Equals', 'is'),
-                    notEquals: t('propertyFilter.NotEquals', 'is not'),
-                  }}
                   filterProperties={[
                     {
                       key: 'name',

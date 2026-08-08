@@ -19,7 +19,9 @@ const meta: Meta<typeof BAIPropertyFilter> = {
 - **Autocomplete support**: Predefined options and suggestions for property values
 - **Validation rules**: Custom validation for property values
 - **Query language**: Based on Backend.AI's query filter minilang specification
-- **Custom input via \`renderInput\`**: Replace the default AutoComplete input with any controlled control (e.g., a user or storage-host picker). The control commits a condition via \`onAddCondition(value, label?)\` as soon as a value is selected; pass a human-readable \`label\` when the committed value is opaque (e.g. a UUID) so the condition tag shows the label instead. Give the control \`value={null}\` so it stays controlled and clears after each commit. Same contract as the one \`BAIGraphQLPropertyFilter\` adopts in FR-3011 (#8082), so controls become interchangeable once both land.
+- **Custom input via \`renderInput\`**: Replace the built-in value editor with any controlled control (e.g., a user or storage-host picker). The control stages a value via \`onAddCondition(value, label?)\` and the edit popover's Apply button commits it; pass a human-readable \`label\` when the committed value is opaque (e.g. a UUID) so the token shows the label instead. Same contract as \`BAIGraphQLPropertyFilter\`, so controls are interchangeable.
+
+> **to-astryx ticket 28** — the engine is now Astryx \`PowerSearch\`. The prop contract is unchanged, but the antd chrome it documented (property \`Select\` + \`AutoComplete\` + closable \`Tag\`s + the bespoke reset button) is replaced by PowerSearch's typeahead, tokens and built-in clear. \`rule.validate\` is advisory now: a violating token is reported through the control's error status instead of being refused. These stories are refreshed in ticket 32.
 
 The component generates filter query strings that can be used with Backend.AI's query system, enabling powerful data filtering capabilities across the platform.
 
