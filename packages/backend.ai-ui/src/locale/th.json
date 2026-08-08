@@ -95,6 +95,10 @@
     "ActionExecutionFailed": "การดำเนินการล้มเหลว",
     "ErrorOccurred": "เกิดข้อผิดพลาด"
   },
+  "comp:BAIComplexSelect": {
+    "NoResults": "ไม่พบผลลัพธ์",
+    "Search": "ค้นหา"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "เลือกรีจิสทรีคอนเทนเนอร์"
   },

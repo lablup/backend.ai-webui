@@ -95,6 +95,10 @@
     "ActionExecutionFailed": "Eksekusi gagal",
     "ErrorOccurred": "Terjadi kesalahan"
   },
+  "comp:BAIComplexSelect": {
+    "NoResults": "Tidak ada hasil",
+    "Search": "Pencarian"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Pilih Registri Container"
   },

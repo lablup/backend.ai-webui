@@ -95,6 +95,10 @@
     "ActionExecutionFailed": "Suoritus epäonnistui",
     "ErrorOccurred": "Tapahtui virhe"
   },
+  "comp:BAIComplexSelect": {
+    "NoResults": "Ei tuloksia",
+    "Search": "Etsi"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Valitse konttirekisteri"
   },

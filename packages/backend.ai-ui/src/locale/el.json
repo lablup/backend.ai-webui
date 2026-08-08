@@ -95,6 +95,10 @@
     "ActionExecutionFailed": "Η εκτέλεση απέτυχε",
     "ErrorOccurred": "Παρουσιάστηκε σφάλμα"
   },
+  "comp:BAIComplexSelect": {
+    "NoResults": "Δεν βρέθηκαν αποτελέσματα",
+    "Search": "Αναζήτηση"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Επιλέξτε μητρώο εμπορευματοκιβωτίων"
   },

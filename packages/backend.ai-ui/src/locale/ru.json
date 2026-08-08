@@ -95,6 +95,10 @@
     "ActionExecutionFailed": "Ошибка выполнения",
     "ErrorOccurred": "Произошла ошибка"
   },
+  "comp:BAIComplexSelect": {
+    "NoResults": "Нет результатов",
+    "Search": "Поиск"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Выберите реестр контейнеров"
   },

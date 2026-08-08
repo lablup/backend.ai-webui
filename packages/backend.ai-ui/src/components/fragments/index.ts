@@ -134,6 +134,12 @@ export type {
   UserNode,
   BAIUserSelectRef,
 } from './BAIUserSelect';
+export { default as BAIUserSelectAstryx } from './BAIUserSelectAstryx';
+export type {
+  BAIUserSelectAstryxProps,
+  AstryxUserNode,
+  BAIUserSelectAstryxRef,
+} from './BAIUserSelectAstryx';
 export { default as BAIProjectSelect } from './BAIProjectSelect';
 export type {
   BAIProjectSelectProps,

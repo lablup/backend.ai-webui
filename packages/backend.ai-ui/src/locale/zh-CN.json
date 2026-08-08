@@ -95,6 +95,10 @@
     "ActionExecutionFailed": "执行错误",
     "ErrorOccurred": "发生错误"
   },
+  "comp:BAIComplexSelect": {
+    "NoResults": "无结果",
+    "Search": "搜索"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "选择容器镜像仓库"
   },

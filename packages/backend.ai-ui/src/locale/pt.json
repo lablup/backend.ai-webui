@@ -95,6 +95,10 @@
     "ActionExecutionFailed": "Falha na execução",
     "ErrorOccurred": "Ocorreu um erro"
   },
+  "comp:BAIComplexSelect": {
+    "NoResults": "Sem resultados",
+    "Search": "Pesquisar"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Selecionar registro de contêiner"
   },

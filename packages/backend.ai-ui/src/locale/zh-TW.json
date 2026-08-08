@@ -95,6 +95,10 @@
     "ActionExecutionFailed": "執行錯誤",
     "ErrorOccurred": "發生錯誤"
   },
+  "comp:BAIComplexSelect": {
+    "NoResults": "無結果",
+    "Search": "搜索"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "選擇容器映像倉庫"
   },

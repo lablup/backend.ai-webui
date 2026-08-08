@@ -95,6 +95,10 @@
     "ActionExecutionFailed": "Pelaksanaan gagal",
     "ErrorOccurred": "Ralat berlaku"
   },
+  "comp:BAIComplexSelect": {
+    "NoResults": "Tiada keputusan",
+    "Search": "Cari"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Pilih Registri Kontena"
   },

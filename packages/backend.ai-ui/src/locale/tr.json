@@ -95,6 +95,10 @@
     "ActionExecutionFailed": "Yürütme başarısız oldu",
     "ErrorOccurred": "Bir hata oluştu"
   },
+  "comp:BAIComplexSelect": {
+    "NoResults": "Sonuç yok",
+    "Search": "Arama"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Konteyner Kayıt Defteri Seç"
   },

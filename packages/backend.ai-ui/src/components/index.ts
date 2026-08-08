@@ -50,6 +50,13 @@ export { default as BAIId } from './BAIId';
 export type { BAIIdProps } from './BAIId';
 export { default as BAISelect } from './BAISelect';
 export type { BAISelectProps } from './BAISelect';
+export { default as BAIComplexSelect } from './BAIComplexSelect';
+export type {
+  BAIComplexSelectProps,
+  BAIComplexSelectOption,
+  BAIComplexSelectValue,
+  BAILabeledValue,
+} from './BAIComplexSelect';
 export { default as BAINotificationItem } from './BAINotificationItem';
 export type {
   BAINotificationItemProps,

@@ -95,6 +95,10 @@
     "ActionExecutionFailed": "실행 오류",
     "ErrorOccurred": "문제가 발생했습니다."
   },
+  "comp:BAIComplexSelect": {
+    "NoResults": "결과 없음",
+    "Search": "검색"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "컨테이너 레지스트리를 선택해주세요"
   },

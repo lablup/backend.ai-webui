@@ -95,6 +95,10 @@
     "ActionExecutionFailed": "Гүйцэтгэл амжилтгүй боллоо",
     "ErrorOccurred": "Алдаа гарлаа"
   },
+  "comp:BAIComplexSelect": {
+    "NoResults": "Үр дүн олдсонгүй",
+    "Search": "Хайх"
+  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Контейнер бүртгэл сонгох"
   },
