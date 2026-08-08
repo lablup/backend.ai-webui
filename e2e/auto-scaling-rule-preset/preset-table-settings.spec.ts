@@ -47,7 +47,7 @@ async function deletePreset(page: Page, presetName: string): Promise<void> {
   });
   const row = page.getByRole('row').filter({ hasText: presetName });
   if ((await row.count()) === 0) return;
-  await row.locator('button:has(.anticon-delete)').click();
+  await row.getByRole('button', { name: 'Delete', exact: true }).click();
   const confirmModal = page.getByRole('dialog');
   await expect(confirmModal).toBeVisible({ timeout: 30000 });
   await expect(confirmModal).not.toHaveClass(/ant-zoom-appear/, {

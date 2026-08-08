@@ -249,12 +249,12 @@ test.describe(
       await expect(drawerPanel).toBeVisible({ timeout: 10000 });
       await expect(drawer.getByText('RBAC Role Info')).toBeVisible();
 
-      // 6. Verify a Refresh button (reload icon) is visible in the drawer header
-      await expect(
-        drawer
-          .locator('button')
-          .filter({ has: page.locator('.anticon-reload') }),
-      ).toBeVisible();
+      // 6. Verify a Refresh button is visible in the drawer header.
+      // `RoleDetailDrawer.tsx` uses `BAIFetchKeyButton`, whose icon is lucide
+      // `RotateCw` (no antd `.anticon-reload` class since ticket 12); the
+      // button carries the native `title="Refresh"` attribute instead
+      // (`packages/backend.ai-ui/src/components/BAIFetchKeyButton.tsx`).
+      await expect(drawer.locator('button[title="Refresh"]')).toBeVisible();
 
       // 7. Close the drawer
       await drawer.getByRole('button', { name: 'close' }).click();

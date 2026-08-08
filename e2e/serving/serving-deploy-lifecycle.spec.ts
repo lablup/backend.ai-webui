@@ -56,13 +56,12 @@ const HEALTH_CHECK_INTERVAL = 5_000; // 5 seconds
 
 /**
  * Locates the BAIFetchKeyButton (refresh/reload button) on the serving page.
- * The button renders a ReloadOutlined icon with title="Refresh".
+ * The icon is lucide `RotateCw` (no antd `.anticon-reload` class since ticket
+ * 12); the button carries the native `title="Refresh"` attribute instead
+ * (`packages/backend.ai-ui/src/components/BAIFetchKeyButton.tsx`).
  */
 function getTableRefreshButton(page: Page) {
-  return page
-    .locator('button')
-    .filter({ has: page.locator('.anticon-reload') })
-    .first();
+  return page.locator('button[title="Refresh"]').first();
 }
 
 /**
@@ -184,16 +183,15 @@ async function createServiceViaUI(
   // the test free of duplicated command wiring that has to be maintained in
   // lockstep with the yaml.
   //
-  // Ant Design's Segmented renders its radios as visually-hidden inputs, so
-  // `toBeVisible` on the radio itself fails. Click the segment label instead
-  // (the label's <div> is the actual click target) and assert via `toBeChecked`
-  // on the hidden radio once the state flips.
+  // This toggle is `DeploymentAddRevisionModal.tsx`'s `DefinitionModeSegmented`,
+  // built on Astryx `SegmentedControl` (`@astryxdesign/core/SegmentedControl`)
+  // — a real, directly-clickable `<button role="radio">`
+  // (`SegmentedControlItem.tsx`), unlike antd's Segmented (visually-hidden
+  // input behind a clickable label div), so no separate label click is needed.
   const useConfigFileRadio = page.getByRole('radio', {
     name: 'Use Config File',
   });
-  await page
-    .locator('.ant-segmented-item-label', { hasText: 'Use Config File' })
-    .click({ timeout: 10000 });
+  await useConfigFileRadio.click({ timeout: 10000 });
   await expect(useConfigFileRadio).toBeChecked({ timeout: 3000 });
 
   // Select resource group - click to open dropdown, search, then select option
@@ -283,8 +281,15 @@ async function createServiceViaUI(
   // timed out with an opaque message and no clue as to which field was
   // invalid. Replace the race with a sequential wait that, on URL timeout,
   // scans all three error channels and surfaces whichever it finds.
+  // The floating notification stack is now `BAINotificationStack` (ticket 29
+  // rewire) — an error notice carries `data-status="error"` on its item root
+  // (`react/src/components/astryx-bui/BAINotificationStackAstryx.tsx:217`).
+  // The toast channel (`App.useApp().message`) is unmigrated antd, so
+  // `.ant-message-error` stays.
   const errorNotification = page
-    .locator('.ant-notification-notice-error, .ant-message-error')
+    .locator(
+      '[data-testid="bai-notification-stack"] [data-status="error"], .ant-message-error',
+    )
     .first();
 
   try {
@@ -300,9 +305,16 @@ async function createServiceViaUI(
       );
     }
 
-    // 2) Inline Form.Item validation errors (handleOk's validateFields catch)
+    // 2) Inline Form.Item validation errors (handleOk's validateFields catch).
+    // The service-start form mixes migrated (`BAIFormItem`,
+    // `[data-bai-form-item-explain-error]`) and not-yet-migrated sub-forms
+    // (`ResourceAllocationFormItems`, `ImageEnvironmentSelectFormItems` — raw
+    // antd `Form.Item`, `.ant-form-item-explain-error`), so this whole-page
+    // scan checks both.
     const fieldErrorTexts = await page
-      .locator('.ant-form-item-explain-error')
+      .locator(
+        '.ant-form-item-explain-error, [data-bai-form-item-explain-error]',
+      )
       .allTextContents()
       .catch(() => [] as string[]);
     const fieldErrors = fieldErrorTexts.filter((t) => t.trim().length > 0);

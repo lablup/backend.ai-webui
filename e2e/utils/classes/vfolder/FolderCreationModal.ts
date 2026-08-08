@@ -74,8 +74,12 @@ export class FolderCreationModal {
   }
 
   async getFormItemByLabel(label: string): Promise<Locator> {
+    // FolderCreateModalV2 (the live component) renders form items via
+    // `BAIFormItem` (`react/src/components/FolderCreateModalV2.tsx`), whose
+    // visual shell root carries `data-bai-form-item`
+    // (`react/src/components/BAIFormItem.tsx`) — no more `.ant-form-item-row`.
     const RadioContainer = this.modal.locator(
-      `.ant-form-item-row:has-text("${label}")`,
+      `[data-bai-form-item]:has-text("${label}")`,
     );
     // The modal shell becomes visible before its form body finishes
     // mounting, and on a busy shared cluster that hydration was directly
@@ -169,13 +173,19 @@ export class FolderCreationModal {
    * subtree intercepts pointer events.
    */
   async dismissOverlappingNotifications(): Promise<void> {
-    const notifications = this.page.locator('.ant-notification-notice');
+    // `BAINotificationStack` (to-astryx ticket 29 rewire) — each notice is
+    // `[data-notification-key]` inside `[data-testid="bai-notification-stack"]`
+    // (`react/src/components/astryx-bui/BAINotificationStackAstryx.tsx`).
+    const notifications = this.page.locator(
+      '[data-testid="bai-notification-stack"] [data-notification-key]',
+    );
     // Closing a notification removes it from the DOM and shifts the remaining
     // notices up, so iterating by a snapshotted index skips entries. Always
     // close the first remaining notice and wait for it to detach.
     for (let safety = 0; safety < 20; safety++) {
       const first = notifications.first();
-      const closeBtn = first.locator('.ant-notification-notice-close');
+      // Astryx `Banner`'s built-in dismiss button, accessible name "Dismiss".
+      const closeBtn = first.getByRole('button', { name: 'Dismiss' });
       const isVisible = await closeBtn.isVisible().catch(() => false);
       if (!isVisible) return;
       await closeBtn.click().catch(() => {});

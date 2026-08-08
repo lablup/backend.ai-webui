@@ -72,7 +72,7 @@ async function deletePreset(page: Page, presetName: string): Promise<void> {
   await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
   const row = page.getByRole('row').filter({ hasText: presetName });
   if ((await row.count()) === 0) return;
-  await row.locator('button:has(.anticon-delete)').click();
+  await row.getByRole('button', { name: 'Delete', exact: true }).click();
   const confirmModal = page.getByRole('dialog');
   await expect(confirmModal).toBeVisible({ timeout: 30000 });
   await expect(confirmModal).not.toHaveClass(/ant-zoom-appear/, {
@@ -188,12 +188,15 @@ async function createServiceViaUI(
     .first()
     .click({ timeout: 10000 });
 
+  // This toggle is `DeploymentAddRevisionModal.tsx`'s `DefinitionModeSegmented`,
+  // built on Astryx `SegmentedControl` (`@astryxdesign/core/SegmentedControl`)
+  // — a real, directly-clickable `<button role="radio">`
+  // (`SegmentedControlItem.tsx`), unlike antd's Segmented (visually-hidden
+  // input behind a clickable label div), so no separate label click is needed.
   const useConfigFileRadio = page.getByRole('radio', {
     name: 'Use Config File',
   });
-  await page
-    .locator('.ant-segmented-item-label', { hasText: 'Use Config File' })
-    .click({ timeout: 10000 });
+  await useConfigFileRadio.click({ timeout: 10000 });
   await expect(useConfigFileRadio).toBeChecked({ timeout: 3000 });
 
   const resourceGroupSelect = page
@@ -255,8 +258,12 @@ async function createServiceViaUI(
   try {
     await page.waitForURL('**/serving', { timeout: 60_000 });
   } catch {
+    // BAINotificationStack error notices carry `data-status="error"`
+    // (to-astryx ticket 29 rewire); the antd `message` toast is unmigrated.
     const errorNotification = page
-      .locator('.ant-notification-notice-error, .ant-message-error')
+      .locator(
+        '[data-testid="bai-notification-stack"] [data-status="error"], .ant-message-error',
+      )
       .first();
     const toastText = await errorNotification
       .textContent({ timeout: 1000 })

@@ -228,7 +228,17 @@ const BAINotificationStackItemView: React.FC<{
         status={item.status ?? 'info'}
         // `content` is a whole notice body (the `node` / `multiStep`
         // renderers); it takes the header's content column outright.
-        title={hasOwnContent ? item.content : item.title}
+        // `Banner`'s `title`/`description` are plain unlabelled `<div>`s
+        // (no stable class of their own), so the header text gets a
+        // `data-testid` here — the one stable e2e anchor for "the notice's
+        // headline" (`NotificationHandler.getNotificationMessage`).
+        title={
+          hasOwnContent ? (
+            item.content
+          ) : (
+            <span data-testid="notification-title">{item.title}</span>
+          )
+        }
         icon={item.icon}
         // A floating surface needs a shadow to detach from the page; `Banner`
         // defaults to `none` because it is normally in flow.
@@ -241,7 +251,11 @@ const BAINotificationStackItemView: React.FC<{
             hasActions ? (
             <VStack gap={2} align="stretch">
               {typeof item.description === 'string' ? (
-                <Text type="supporting">{item.description}</Text>
+                <Text type="supporting">
+                  <span data-testid="notification-description">
+                    {item.description}
+                  </span>
+                </Text>
               ) : (
                 item.description
               )}

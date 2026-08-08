@@ -774,11 +774,17 @@ test.describe(
         timeout: 10000,
       });
 
-      // An Ant Design error message notification should appear
+      // An error surfaces via either the (unmigrated) antd message toast or
+      // the BAINotificationStack (to-astryx ticket 29 rewire — error notices
+      // carry `data-status="error"` on their item root).
       await expect(
         page
           .locator('.ant-message-error')
-          .or(page.locator('.ant-notification-notice-error'))
+          .or(
+            page.locator(
+              '[data-testid="bai-notification-stack"] [data-status="error"]',
+            ),
+          )
           .first(),
       ).toBeVisible({ timeout: 15000 });
 

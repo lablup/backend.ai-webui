@@ -164,12 +164,10 @@ test.describe(
       await expect(defaultRow).toBeVisible();
 
       // 5. Verify the Active radio button is selected and the default row has Type = GENERAL
-      // (Active is a filter tab, not a table column; the default project is active by default)
-      await expect(
-        page.locator('.ant-radio-button-wrapper-checked', {
-          hasText: 'Active',
-        }),
-      ).toBeVisible();
+      // (Active is a filter tab, not a table column; the default project is active by default).
+      // `ProjectPage.tsx`'s status toggle is `BAIRadioGroup`, rendered on
+      // Astryx `SegmentedControl` since ticket 10 (`BAIRadioGroup.tsx`).
+      await expect(page.getByRole('radio', { name: 'Active' })).toBeChecked();
       await expect(
         defaultRow.getByRole('cell', { name: 'GENERAL' }),
       ).toBeVisible();
@@ -251,13 +249,22 @@ test.describe(
       // Provision this test's own project to filter for.
       await createProject(page, name, PROJECT_DESCRIPTION);
 
-      // Type the project name in the filter value search
+      // to-astryx ticket 28 rebuilt BAIPropertyFilter on Astryx `PowerSearch`
+      // (packages/backend.ai-ui/src/components/BAIPropertyFilter.tsx). "Name"
+      // is unset for `contentSearchFieldKey` but is the first free-text,
+      // non-strict-selection property in `ProjectPage.tsx`'s
+      // `filterProperties`, so it is PowerSearch's own default content-search
+      // field (`defaultContentSearchFieldKey`, `BAIPropertyFilter.tsx`):
+      // typed text matches a `"<query>"` content-search suggestion whose
+      // value is already filled in, committing immediately on click — no
+      // separate field pick + edit-popover + Apply step
+      // (`usePowerSearchSource.ts`'s content-search branch).
+      const searchBar = page.getByRole('combobox', { name: 'Search filters' });
+      await searchBar.click();
+      await searchBar.fill(name);
       await page
-        .getByRole('combobox', { name: 'Filter value search' })
-        .fill(name);
-
-      // Click the search button
-      await page.getByRole('button', { name: 'search' }).click();
+        .getByRole('option', { name: `"${name}"`, exact: true })
+        .click();
 
       // Verify table shows only the matching project. The Name cell renders
       // BAINameActionCell, so its accessible name also includes hover-only
@@ -270,11 +277,15 @@ test.describe(
       const dataRows = page.locator('tbody tr:not(.ant-table-measure-row)');
       await expect(dataRows).toHaveCount(1);
 
-      // Clear the filter by clicking the close button on the specific "Name" filter tag
-      const nameFilterTag = page
-        .locator('.ant-tag')
-        .filter({ hasText: `Name: ${name}` });
-      await nameFilterTag.locator('[aria-label="Close"]').click();
+      // Clear the filter by clicking its token's remove button. Token labels
+      // follow `"<Field>: <operator> <value>"` (`PowerSearch.tsx`
+      // `tokenizerValue` -> `displayLabel`); "name" has no `defaultOperator`
+      // override, so it uses the BUI default `ilike` = "contains". The
+      // remove control carries `aria-label="Remove {label}"`
+      // (`t('@astryx.token.remove', {label})`, `Token.tsx` / locales/en.json).
+      await page
+        .getByRole('button', { name: `Remove Name: contains ${name}` })
+        .click();
 
       // Verify the default project is visible again (filter cleared)
       await expect(

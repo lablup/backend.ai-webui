@@ -1,7 +1,10 @@
 import { expect, Locator, Page } from '@playwright/test';
 
 /**
- * NotificationHandler class for managing Ant Design notifications in E2E tests.
+ * NotificationHandler class for managing `BAINotificationStack` notices in
+ * E2E tests (to-astryx ticket 29 rewire — antd `notification` -> Astryx
+ * `Banner`-based stack,
+ * `react/src/components/astryx-bui/BAINotificationStackAstryx.tsx`).
  *
  * Handles notification interactions including:
  * - Waiting for notifications to appear/disappear
@@ -11,7 +14,12 @@ import { expect, Locator, Page } from '@playwright/test';
  */
 export class NotificationHandler {
   private readonly page: Page;
-  private readonly notificationSelector = '.ant-notification-notice';
+  // Each notice is `.bai-notification-stack-item`, carrying
+  // `data-notification-key` / `data-status` / `data-exiting` / `data-paused`
+  // (BAINotificationStackAstryx.tsx:213-225), inside the single stack root
+  // `[data-testid="bai-notification-stack"]` (…:312).
+  private readonly notificationSelector =
+    '[data-testid="bai-notification-stack"] [data-notification-key]';
 
   constructor(page: Page) {
     this.page = page;
@@ -71,7 +79,10 @@ export class NotificationHandler {
       return;
     }
 
-    const closeButton = notification.locator('.ant-notification-notice-close');
+    // The dismiss control is Astryx `Banner`'s built-in ✕ button
+    // (`@astryxdesign/core/Banner/Banner.tsx`), accessible name "Dismiss"
+    // (`t('@astryx.banner.dismiss')`, locales/en.json).
+    const closeButton = notification.getByRole('button', { name: 'Dismiss' });
     const closeButtonVisible = await closeButton.isVisible().catch(() => false);
 
     if (closeButtonVisible) {
@@ -99,7 +110,10 @@ export class NotificationHandler {
    */
   async getNotificationMessage(index: number = 0): Promise<string> {
     const notification = this.getNotificationByIndex(index);
-    const message = notification.locator('.ant-notification-notice-message');
+    // `Banner`'s title/description are plain unlabelled `<div>`s, so the
+    // headline gets an explicit anchor
+    // (`react/src/components/astryx-bui/BAINotificationStackAstryx.tsx`).
+    const message = notification.getByTestId('notification-title');
     return await message.textContent().then((text) => text || '');
   }
 
@@ -109,9 +123,7 @@ export class NotificationHandler {
    */
   async getNotificationDescription(index: number = 0): Promise<string> {
     const notification = this.getNotificationByIndex(index);
-    const description = notification.locator(
-      '.ant-notification-notice-description',
-    );
+    const description = notification.getByTestId('notification-description');
     return await description.textContent().then((text) => text || '');
   }
 
@@ -137,8 +149,10 @@ export class NotificationHandler {
   getNotificationByType(
     type: 'success' | 'error' | 'warning' | 'info',
   ): Locator {
+    // `data-status` mirrors antd's per-type modifier class
+    // (BAINotificationStackAstryx.tsx:217, `item.status ?? 'info'`).
     return this.page.locator(
-      `${this.notificationSelector}.ant-notification-notice-${type}`,
+      `${this.notificationSelector}[data-status="${type}"]`,
     );
   }
 

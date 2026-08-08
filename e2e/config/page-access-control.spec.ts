@@ -9,7 +9,30 @@ import {
   notFoundPageHeading,
   webuiEndpoint,
 } from '../utils/test-util';
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
+
+/**
+ * Locates a top-level sidebar nav item by its visible label.
+ *
+ * Astryx `SideNavItem` (to-astryx ticket 24, `react/src/components/BAIMenu.tsx`)
+ * renders an enabled item as a real `<a>` (role "link") and a *disabled* item
+ * as a `<button disabled>` (role "button") — see
+ * `@astryxdesign/core/SideNav/SideNavItem.tsx`'s `NavItemElement`
+ * (`if (href && !isDisabled) <a> else <button disabled>`). There is no single
+ * ARIA role that covers both states (antd's old `role="menuitem"` no longer
+ * exists), so this matches either role, scoped to the sidebar landmark
+ * (`<nav aria-label="Side navigation">`) to avoid colliding with same-named
+ * links elsewhere on the page (e.g. the breadcrumb).
+ */
+function getSideNavItem(
+  page: Page,
+  name: string | RegExp,
+): ReturnType<Page['getByRole']> {
+  const sideNav = page.getByRole('navigation', { name: 'Side navigation' });
+  return sideNav
+    .getByRole('link', { name, exact: typeof name === 'string' })
+    .or(sideNav.getByRole('button', { name, exact: typeof name === 'string' }));
+}
 
 test.describe(
   'Page Access Control - Config-Based Menu Management',
@@ -46,9 +69,7 @@ test.describe(
         ).toBeHidden();
 
         // 4. Verify "Sessions" menu item is not visible in sidebar
-        await expect(
-          page.getByRole('menuitem', { name: 'Sessions' }),
-        ).toBeHidden();
+        await expect(getSideNavItem(page, 'Sessions')).toBeHidden();
 
         // 5. Navigate directly to /session (legacy URL). The guard 404s the
         // blocklisted page at the legacy URL itself — no redirect happens,
@@ -103,11 +124,9 @@ test.describe(
         await loginAsAdmin(page, request);
 
         // 3. Verify "Dashboard" menu item is visible but has disabled attribute
-        const dashboardMenuItem = page.getByRole('menuitem', {
-          name: 'Dashboard',
-        });
+        const dashboardMenuItem = getSideNavItem(page, 'Dashboard');
         await expect(dashboardMenuItem).toBeVisible();
-        await expect(dashboardMenuItem).toHaveClass(/ant-menu-item-disabled/);
+        await expect(dashboardMenuItem).toBeDisabled();
 
         // 4. Click on disabled "Dashboard" menu item
         const currentUrl = page.url();
@@ -150,10 +169,8 @@ test.describe(
         await page.waitForURL((url) => !url.pathname.endsWith('/'));
 
         // 4. Verify "Start" menu item appears disabled in sidebar
-        const startMenuItem = page.getByRole('menuitem', {
-          name: /Start/,
-        });
-        await expect(startMenuItem).toHaveClass(/ant-menu-item-disabled/);
+        const startMenuItem = getSideNavItem(page, /Start/);
+        await expect(startMenuItem).toBeDisabled();
 
         // 5. Verify the page can still be accessed directly (inactive ≠
         // blocked): wait for real Start-page content — a missing 404 heading
@@ -182,10 +199,8 @@ test.describe(
         await loginAsAdmin(page, request);
 
         // 3. Verify "Dashboard" menu item is disabled
-        const dashboardMenuItem = page.getByRole('menuitem', {
-          name: 'Dashboard',
-        });
-        await expect(dashboardMenuItem).toHaveClass(/ant-menu-item-disabled/);
+        const dashboardMenuItem = getSideNavItem(page, 'Dashboard');
+        await expect(dashboardMenuItem).toBeDisabled();
 
         // 4. Modify config.toml to clear inactiveList
         await modifyConfigToml(page, request, {
@@ -200,11 +215,11 @@ test.describe(
 
         // 6. Verify "Dashboard" menu item is now active (no disabled attribute).
         // The reload is a full app boot against the remote backend, so wait
-        // for the menu to re-render before asserting its class.
+        // for the menu to re-render before asserting its state. Re-enabling
+        // also flips the element from `<button disabled>` to `<a>` (see
+        // `getSideNavItem`), which the `.or()` locator picks up live.
         await expect(dashboardMenuItem).toBeVisible({ timeout: 15_000 });
-        await expect(dashboardMenuItem).not.toHaveClass(
-          /ant-menu-item-disabled/,
-        );
+        await expect(dashboardMenuItem).not.toBeDisabled();
 
         // 7. Click "Dashboard" menu item
         await dashboardMenuItem.click();
@@ -657,11 +672,9 @@ test.describe(
         ).toBeHidden();
 
         // 4. Verify "Dashboard" menu item is disabled
-        const dashboardMenuItem = page.getByRole('menuitem', {
-          name: 'Dashboard',
-        });
+        const dashboardMenuItem = getSideNavItem(page, 'Dashboard');
         await expect(dashboardMenuItem).toBeVisible();
-        await expect(dashboardMenuItem).toHaveClass(/ant-menu-item-disabled/);
+        await expect(dashboardMenuItem).toBeDisabled();
 
         // 5. Navigate to /start
         await page.goto(`${webuiEndpoint}/start`);
@@ -729,10 +742,8 @@ test.describe(
         ).toBeHidden();
 
         // 4. Verify "Dashboard" is disabled
-        const dashboardMenuItem = page.getByRole('menuitem', {
-          name: 'Dashboard',
-        });
-        await expect(dashboardMenuItem).toHaveClass(/ant-menu-item-disabled/);
+        const dashboardMenuItem = getSideNavItem(page, 'Dashboard');
+        await expect(dashboardMenuItem).toBeDisabled();
 
         // 5. Modify config.toml to clear both
         await modifyConfigToml(page, request, {
@@ -752,9 +763,7 @@ test.describe(
         ).toBeVisible({ timeout: 15_000 });
 
         // 8. Verify "Dashboard" menu item is now active (not disabled)
-        await expect(dashboardMenuItem).not.toHaveClass(
-          /ant-menu-item-disabled/,
-        );
+        await expect(dashboardMenuItem).not.toBeDisabled();
 
         // 9. Navigate to /start
         await page.goto(`${webuiEndpoint}/start`);

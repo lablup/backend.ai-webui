@@ -9,10 +9,8 @@ test.describe(
   () => {
     test.beforeEach(async ({ page, request }) => {
       await loginAsAdmin(page, request);
-      await page.getByRole('menuitem', { name: 'Admin Settings' }).click();
-      await page
-        .getByRole('menuitem', { name: 'file-done Environments' })
-        .click();
+      await page.getByRole('link', { name: 'Admin Settings' }).click();
+      await page.getByRole('link', { name: 'file-done Environments' }).click();
       await expect(page).toHaveURL(/\/environment/);
       await page.waitForLoadState('networkidle');
       // Wait for the table to be visible
@@ -104,14 +102,19 @@ test.describe(
 
       await expect(resourceLimitControlModal).toBeVisible();
 
+      // ManageImageResourceLimitModal.tsx renders each field via
+      // `BAIFormItem` (`[data-bai-form-item]`) — the value control itself
+      // (`BAIDynamicUnitInputNumber` for "mem", still wrapping antd
+      // `InputNumber`/`Select`/`Typography.Text`) is unmigrated, so
+      // `.ant-input-number` / `.ant-select` / `.ant-typography` below stay.
       const cpuFormItem = resourceLimitControlModal.locator(
-        '.ant-form-item-row:has-text("CPU")',
+        '[data-bai-form-item]:has-text("CPU")',
       );
       const cpuFormItemInput = cpuFormItem.locator('input');
       const cpuValue = await cpuFormItemInput.getAttribute('value');
 
       const memoryFormItem = resourceLimitControlModal.locator(
-        '.ant-form-item-row:has-text("Memory")',
+        '[data-bai-form-item]:has-text("Memory")',
       );
       const memoryFormItemInput = memoryFormItem.locator(
         '.ant-input-number input',
@@ -152,18 +155,20 @@ test.describe(
       await expect(modifiedResourceLimitControlModal).toBeVisible();
       const modifiedCpuFormItemInput =
         modifiedResourceLimitControlModal.locator(
-          '.ant-form-item-row:has-text("CPU") input',
+          '[data-bai-form-item]:has-text("CPU") input',
         );
       const modifiedMemoryFormItemInput =
         modifiedResourceLimitControlModal.locator(
-          '.ant-form-item-row:has-text("Memory") .ant-input-number input',
+          '[data-bai-form-item]:has-text("Memory") .ant-input-number input',
         );
       await expect(modifiedCpuFormItemInput).toHaveValue(CPU_CORE);
       await expect(modifiedMemoryFormItemInput).toHaveValue(MEMORY_SIZE);
-      // In Ant Design 6, the unit selector structure changed - use .ant-select .ant-typography
+      // The unit selector (`BAIDynamicUnitInputNumber`) still wraps antd
+      // `Select`/`Typography.Text` — only the outer `BAIFormItem` wrapper
+      // migrated.
       await expect(
         modifiedResourceLimitControlModal
-          .locator('.ant-form-item-row:has-text("Memory")')
+          .locator('[data-bai-form-item]:has-text("Memory")')
           .locator('.ant-select .ant-typography'),
       ).toHaveText('GiB');
 
@@ -176,7 +181,7 @@ test.describe(
       );
       // In Ant Design 6, click on the select component wrapper
       const memorySizeAddon = modifiedResourceLimitControlModal.locator(
-        '.ant-form-item-row:has-text("Memory") .ant-select',
+        '[data-bai-form-item]:has-text("Memory") .ant-select',
       );
       await memorySizeAddon.click();
       await page
@@ -215,8 +220,12 @@ test.describe(
       // In Ant Design 6, use role-based selector for dialog
       const modal = page.getByRole('dialog', { name: /Manage Apps/i });
       await expect(modal).toBeVisible();
+      // ManageAppsModal.tsx renders one un-`noStyle` outer `BAIFormItem` per
+      // app row (`[data-bai-form-item]`); the 3 nested per-field
+      // BAIFormItems inside it are all `noStyle` and render no DOM of their
+      // own, so this still counts exactly one element per row.
       const numberOfAppsBeforeAdd = await modal
-        .locator('.ant-form-item')
+        .locator('[data-bai-form-item]')
         .count();
       await modal.getByRole('button', { name: 'Add', exact: true }).click();
       const addInfo = {
@@ -255,14 +264,12 @@ test.describe(
       // Retry the count assertion: the freshly-reopened modal renders its
       // app form-items asynchronously, so a one-shot `.count()` can read the
       // old total before the added row mounts (flaky off by one).
-      await expect(modalAfterAdd.locator('.ant-form-item')).toHaveCount(
+      await expect(modalAfterAdd.locator('[data-bai-form-item]')).toHaveCount(
         numberOfAppsBeforeAdd + 1,
       );
       const numberOfApps = numberOfAppsBeforeAdd + 1;
       // Verify the last row has the added app info
-      const lastRow = modalAfterAdd
-        .locator('.ant-form-item-control-input-content > div')
-        .last();
+      const lastRow = modalAfterAdd.locator('[data-bai-form-item]').last();
       await expect(lastRow.getByPlaceholder('App Name')).toHaveValue(
         addInfo.app,
       );
@@ -285,36 +292,79 @@ test.describe(
 );
 
 // ---------------------------------------------------------------------------
-// Helper functions for BAIPropertyFilter interaction
+// Helper functions for BAIPropertyFilter (Astryx PowerSearch) interaction
+//
+// to-astryx ticket 28 rebuilt BAIPropertyFilter on Astryx `PowerSearch`
+// (packages/backend.ai-ui/src/components/BAIPropertyFilter.tsx). The
+// interaction model changed from antd's two-input bar (property Select +
+// value Input.Search + submit button) to a single typeahead that opens an
+// edit popover: type/click the field -> Field/Operator/Value popover ->
+// Apply. Anchors below are cited against the Astryx source
+// (react/node_modules/@astryxdesign/core/src/PowerSearch/…) and
+// locales/en.json, since PowerSearch ships its own (currently English-only)
+// InternationalizationProvider catalog (ticket 28 notes, P13 follow-up).
 // ---------------------------------------------------------------------------
 
 /**
- * Apply a filter using BAIPropertyFilter on the Image List page.
- * BAIPropertyFilter.onSearch validates strict selection values against the options
- * list internally, so clicking the search button works for both free-text and
- * strict-selection properties.
+ * Committed-filter token labels follow `"<Field>: <operator> <value>"`
+ * (`PowerSearch.tsx` `tokenizerValue` -> `displayLabel`). `defaultOperator`
+ * per field comes straight from `ImageList.tsx`'s `filterProperties` (`==`
+ * for the strict-selection fields, the BUI default `ilike` -> "contains" for
+ * free-text ones); the operator word itself is
+ * `comp:BAIPropertyFilter.operator.*` (packages/backend.ai-ui/src/locale/en.json).
+ */
+function imageFilterTokenLabel(
+  propertyLabel: string,
+  operatorWord: 'contains' | 'is',
+  value: string,
+): string {
+  return `${propertyLabel}: ${operatorWord} ${value}`;
+}
+
+/**
+ * Apply a filter using BAIPropertyFilter (PowerSearch) on the Image List
+ * page: open the typeahead, pick the field, then fill/pick the Value in the
+ * edit popover it opens (`PowerSearch.tsx` `handleTokenizerChange` ->
+ * `setPopoverState({type: 'adding', ...})` when the picked field has no
+ * pre-filled value). Free-text fields (`StringEditor`,
+ * `PowerSearchValueEditor.tsx`) commit on the popover's "Apply" button;
+ * strict-selection fields (`EnumEditor`, same file) render the value as a
+ * `Selector` whose `onChange` passes `shouldSave: true`
+ * (`PowerSearchEditPopover.tsx` `handleValueChange`), so picking an option
+ * auto-commits and there is no separate Apply click.
  */
 async function applyImageFilter(
   page: Page,
   propertyLabel: string,
   value: string,
 ) {
-  // Scroll the filter selector to the center of the viewport so it is not
-  // obscured by the sticky header, then click to open the dropdown.
-  const filterSelector = page.getByRole('combobox', {
-    name: 'Filter property selector',
-  });
-  await filterSelector.evaluate((el) =>
+  // Scroll the search bar to the center of the viewport so it is not
+  // obscured by the sticky header, then click to open the typeahead.
+  // `label={t('comp:BAIPropertyFilter.SearchLabel')}` = "Search filters"
+  // (packages/backend.ai-ui/src/locale/en.json) names the combobox
+  // (`role="combobox"`, `BaseTypeahead.tsx`).
+  const searchBar = page.getByRole('combobox', { name: 'Search filters' });
+  await searchBar.evaluate((el) =>
     el.scrollIntoView({ block: 'center', inline: 'nearest' }),
   );
   // Use force:true because the sticky header (data-testid="label-selector-project")
   // can intercept pointer events even after scrolling into view.
-  await filterSelector.click({ force: true });
+  await searchBar.click({ force: true });
   await page.getByRole('option', { name: propertyLabel, exact: true }).click();
 
-  const valueInput = page.locator('[aria-label="Filter value search"]');
-  await valueInput.fill(value);
-  await page.getByRole('button', { name: 'search' }).click();
+  // The value editor's accessible name is "Value"
+  // (`t('@astryx.powersearch.valueEditor.value')`) regardless of which
+  // control renders it; the two field kinds this page uses render different
+  // roles (`TextInput` -> textbox, `Selector` -> combobox), so branch on
+  // whichever appears.
+  const valueTextbox = page.getByRole('textbox', { name: 'Value' });
+  if (await valueTextbox.isVisible({ timeout: 3000 }).catch(() => false)) {
+    await valueTextbox.fill(value);
+    await page.getByRole('button', { name: 'Apply', exact: true }).click();
+  } else {
+    await page.getByRole('combobox', { name: 'Value' }).click();
+    await page.getByRole('option', { name: value, exact: true }).click();
+  }
 
   // Wait for table to reflect updated results
   await page
@@ -324,15 +374,19 @@ async function applyImageFilter(
 }
 
 /**
- * Remove a specific filter tag by its displayed text.
- * Scopes tag lookup to closable .ant-tag elements to avoid matching
- * status badges or other non-closable tags in the table.
+ * Remove a committed filter token by its full display label
+ * (`"<Field>: <operator> <value>"`, see `imageFilterTokenLabel`). Each
+ * token's own remove control carries `aria-label="Remove {label}"`
+ * (`t('@astryx.token.remove', {label})`, `Token.tsx` /
+ * locales/en.json) — used directly as both the "is this filter still
+ * present" probe and the click target, since the button and the token it
+ * belongs to appear/disappear together.
  */
-async function removeFilterTag(page: Page, tagText: string) {
-  const tag = page
-    .locator('.ant-tag')
-    .filter({ has: page.locator('[aria-label="Close"]') })
-    .filter({ hasText: tagText });
+async function removeFilterTag(page: Page, tokenLabel: string) {
+  const removeButton = page.getByRole('button', {
+    name: `Remove ${tokenLabel}`,
+    exact: true,
+  });
 
   // Under concurrent E2E load against the shared nightly server, the close
   // click can occasionally land while the filter row is mid re-render (e.g.
@@ -341,8 +395,8 @@ async function removeFilterTag(page: Page, tagText: string) {
   // a unit — the recommended Playwright pattern for this kind of transient
   // UI flake — rather than asserting on a single attempt.
   await expect(async () => {
-    await tag.locator('[aria-label="Close"]').click();
-    await expect(tag).not.toBeVisible({ timeout: 2000 });
+    await removeButton.click();
+    await expect(removeButton).not.toBeVisible({ timeout: 2000 });
   }).toPass({ timeout: 20000 });
 
   // Wait for any loading spinner to disappear after filter removal
@@ -353,11 +407,12 @@ async function removeFilterTag(page: Page, tagText: string) {
 }
 
 /**
- * Click the BAIPropertyFilter's reset-all button and wait for the button
- * itself to disappear (it renders only while filters are active, so its
- * absence signals all filters were cleared) and the loading spinner to
- * detach, retrying the click if it is swallowed by a concurrent re-render
- * (see `removeFilterTag`).
+ * Click PowerSearch's built-in "Clear all" button
+ * (`t('@astryx.tokenizer.clearAll')`, `Tokenizer.tsx` / locales/en.json —
+ * replaces the antd-era bespoke reset-all button, ticket 28 PILOT-DECISION
+ * #6) and wait for it to disappear (it renders only while at least one
+ * filter is active) and the loading spinner to detach, retrying the click if
+ * it is swallowed by a concurrent re-render (see `removeFilterTag`).
  */
 async function resetAllFilters(page: Page, resetAllButton: Locator) {
   await expect(async () => {
@@ -381,14 +436,12 @@ test.describe(
   () => {
     test.beforeEach(async ({ page, request }) => {
       await loginAsAdmin(page, request);
-      await page.getByRole('menuitem', { name: 'Admin Settings' }).click();
-      await page
-        .getByRole('menuitem', { name: 'file-done Environments' })
-        .click();
+      await page.getByRole('link', { name: 'Admin Settings' }).click();
+      await page.getByRole('link', { name: 'file-done Environments' }).click();
       await expect(page).toHaveURL(/\/environment/);
-      // Wait for the BAIPropertyFilter and table to be ready
+      // Wait for the BAIPropertyFilter (PowerSearch) and table to be ready
       await expect(
-        page.getByRole('combobox', { name: 'Filter property selector' }),
+        page.getByRole('combobox', { name: 'Search filters' }),
       ).toBeVisible();
       await expect(page.getByRole('table')).toBeVisible();
     });
@@ -397,21 +450,12 @@ test.describe(
     test('Admin can see the BAIPropertyFilter on the Images tab', async ({
       page,
     }) => {
-      // 1. Verify the Space.Compact container of BAIPropertyFilter is visible
-      await expect(page.locator('.ant-space-compact').first()).toBeVisible();
-
-      // 2. Verify the property selector combobox is present with its aria-label
+      // 1. Verify the PowerSearch search bar is present, named "Search filters"
+      // (`label={t('comp:BAIPropertyFilter.SearchLabel')}`,
+      // packages/backend.ai-ui/src/locale/en.json).
       await expect(
-        page.getByRole('combobox', { name: 'Filter property selector' }),
+        page.getByRole('combobox', { name: 'Search filters' }),
       ).toBeVisible();
-
-      // 3. Verify the value search input is present with its aria-label
-      await expect(
-        page.locator('[aria-label="Filter value search"]'),
-      ).toBeVisible();
-
-      // 4. Verify the BAIPropertyFilter search button (Input.Search submit) exists
-      await expect(page.getByRole('button', { name: 'search' })).toBeVisible();
     });
 
     // Scenario 2.2 — Filter by name (free text)
@@ -421,18 +465,18 @@ test.describe(
       // 1. Apply the Name filter with value "python" (assumes at least one python image is installed)
       await applyImageFilter(page, 'Name', 'python');
 
-      // 2. Verify a filter tag "Name: python" appears below the filter inputs
-      const nameTag = page
-        .locator('.ant-tag')
-        .filter({ has: page.locator('[aria-label="Close"]') })
-        .filter({ hasText: 'Name: python' });
+      // 2. Verify the committed token "Name: contains python" appears
+      const nameLabel = imageFilterTokenLabel('Name', 'contains', 'python');
+      const nameTag = page.getByRole('button', {
+        name: `Remove ${nameLabel}`,
+      });
       await expect(nameTag).toBeVisible();
 
       // 3. Verify the table is still visible (filtered results shown)
       await expect(page.locator('.ant-table-content')).toBeVisible();
 
-      // 4. Cleanup: remove the filter tag
-      await removeFilterTag(page, 'Name: python');
+      // 4. Cleanup: remove the filter token
+      await removeFilterTag(page, nameLabel);
       await expect(nameTag).not.toBeVisible({ timeout: 10000 });
     });
 
@@ -443,11 +487,12 @@ test.describe(
       // 1. Apply Architecture filter with strict selection value "x86_64"
       await applyImageFilter(page, 'Architecture', 'x86_64');
 
-      // 2. Verify filter tag "Architecture: x86_64" appears
-      const archTag = page
-        .locator('.ant-tag')
-        .filter({ has: page.locator('[aria-label="Close"]') })
-        .filter({ hasText: 'Architecture: x86_64' });
+      // 2. Verify the committed token "Architecture: is x86_64" appears
+      // (`defaultOperator: '=='` in ImageList.tsx's filterProperties -> "is")
+      const archLabel = imageFilterTokenLabel('Architecture', 'is', 'x86_64');
+      const archTag = page.getByRole('button', {
+        name: `Remove ${archLabel}`,
+      });
       await expect(archTag).toBeVisible();
 
       // 3. Verify the table has at least one row with images
@@ -455,8 +500,8 @@ test.describe(
         page.locator('.ant-table-content .ant-table-row').first(),
       ).toBeVisible();
 
-      // 4. Cleanup: remove the filter tag
-      await removeFilterTag(page, 'Architecture: x86_64');
+      // 4. Cleanup: remove the filter token
+      await removeFilterTag(page, archLabel);
       await expect(archTag).not.toBeVisible({ timeout: 10000 });
     });
 
@@ -467,11 +512,11 @@ test.describe(
       // 1. Apply Status filter with strict selection value "ALIVE"
       await applyImageFilter(page, 'Status', 'ALIVE');
 
-      // 2. Verify filter tag "Status: ALIVE" appears
-      const statusTag = page
-        .locator('.ant-tag')
-        .filter({ has: page.locator('[aria-label="Close"]') })
-        .filter({ hasText: 'Status: ALIVE' });
+      // 2. Verify the committed token "Status: is ALIVE" appears
+      const statusLabel = imageFilterTokenLabel('Status', 'is', 'ALIVE');
+      const statusTag = page.getByRole('button', {
+        name: `Remove ${statusLabel}`,
+      });
       await expect(statusTag).toBeVisible();
 
       // 3. Verify the table is not empty (all installed images should be ALIVE)
@@ -479,8 +524,8 @@ test.describe(
         page.locator('.ant-table-content .ant-table-row').first(),
       ).toBeVisible();
 
-      // 4. Cleanup: remove the filter tag
-      await removeFilterTag(page, 'Status: ALIVE');
+      // 4. Cleanup: remove the filter token
+      await removeFilterTag(page, statusLabel);
       await expect(statusTag).not.toBeVisible({ timeout: 10000 });
     });
 
@@ -491,11 +536,11 @@ test.describe(
       // 1. Apply Type filter with strict selection value "COMPUTE"
       await applyImageFilter(page, 'Type', 'COMPUTE');
 
-      // 2. Verify filter tag "Type: COMPUTE" appears
-      const typeTag = page
-        .locator('.ant-tag')
-        .filter({ has: page.locator('[aria-label="Close"]') })
-        .filter({ hasText: 'Type: COMPUTE' });
+      // 2. Verify the committed token "Type: is COMPUTE" appears
+      const typeLabel = imageFilterTokenLabel('Type', 'is', 'COMPUTE');
+      const typeTag = page.getByRole('button', {
+        name: `Remove ${typeLabel}`,
+      });
       await expect(typeTag).toBeVisible();
 
       // 3. Verify the table has at least one row
@@ -503,8 +548,8 @@ test.describe(
         page.locator('.ant-table-content .ant-table-row').first(),
       ).toBeVisible();
 
-      // 4. Cleanup: remove the filter tag
-      await removeFilterTag(page, 'Type: COMPUTE');
+      // 4. Cleanup: remove the filter token
+      await removeFilterTag(page, typeLabel);
       await expect(typeTag).not.toBeVisible({ timeout: 10000 });
     });
 
@@ -515,130 +560,133 @@ test.describe(
       // 1. Apply Registry filter with partial registry hostname "cr" (assumes cr.* registry exists)
       await applyImageFilter(page, 'Registry', 'cr');
 
-      // 2. Verify filter tag "Registry: cr" appears
-      const registryTag = page
-        .locator('.ant-tag')
-        .filter({ has: page.locator('[aria-label="Close"]') })
-        .filter({ hasText: 'Registry: cr' });
+      // 2. Verify the committed token "Registry: contains cr" appears
+      const registryLabel = imageFilterTokenLabel('Registry', 'contains', 'cr');
+      const registryTag = page.getByRole('button', {
+        name: `Remove ${registryLabel}`,
+      });
       await expect(registryTag).toBeVisible();
 
       // 3. Verify the table content is visible (rows exist for the registry)
       await expect(page.locator('.ant-table-content')).toBeVisible();
 
-      // 4. Cleanup: remove the filter tag
-      await removeFilterTag(page, 'Registry: cr');
+      // 4. Cleanup: remove the filter token
+      await removeFilterTag(page, registryLabel);
       await expect(registryTag).not.toBeVisible({ timeout: 10000 });
     });
 
-    // Scenario 2.7 — Multiple filters with reset-all button
-    test('Admin can apply multiple filters simultaneously and see reset-all button', async ({
+    // Scenario 2.7 — Multiple filters with the "Clear all" button
+    test('Admin can apply multiple filters simultaneously and see the clear-all button', async ({
       page,
     }) => {
       // 1. Apply Name filter with value "python"
+      const nameLabel = imageFilterTokenLabel('Name', 'contains', 'python');
       await applyImageFilter(page, 'Name', 'python');
-      const nameTag = page
-        .locator('.ant-tag')
-        .filter({ has: page.locator('[aria-label="Close"]') })
-        .filter({ hasText: 'Name: python' });
+      const nameTag = page.getByRole('button', {
+        name: `Remove ${nameLabel}`,
+      });
       await expect(nameTag).toBeVisible();
 
       // 2. Apply Architecture filter with strict selection "x86_64"
+      const archLabel = imageFilterTokenLabel('Architecture', 'is', 'x86_64');
       await applyImageFilter(page, 'Architecture', 'x86_64');
-      const archTag = page
-        .locator('.ant-tag')
-        .filter({ has: page.locator('[aria-label="Close"]') })
-        .filter({ hasText: 'Architecture: x86_64' });
+      const archTag = page.getByRole('button', {
+        name: `Remove ${archLabel}`,
+      });
       await expect(archTag).toBeVisible();
 
-      // 3. Verify both tags are visible
+      // 3. Verify both tokens are visible
       await expect(nameTag).toBeVisible();
       await expect(archTag).toBeVisible();
 
-      // 4. Verify the reset-all button appears (only shown when 2+ active filters)
-      const resetAllButton = page
-        .locator('button.ant-btn')
-        .filter({ has: page.locator('[aria-label="close-circle"]') });
+      // 4. Verify the "Clear all" button appears. PowerSearch's built-in
+      // `hasClear` shows it whenever at least one filter is active (ticket 28
+      // PILOT-DECISION #6 — antd's bespoke reset-all button, which only
+      // appeared with 2+ filters, is gone).
+      const resetAllButton = page.getByRole('button', { name: 'Clear all' });
       await expect(resetAllButton).toBeVisible();
 
-      // 5. Cleanup: click reset-all to remove all filters at once
+      // 5. Cleanup: click "Clear all" to remove all filters at once
       await resetAllFilters(page, resetAllButton);
       await expect(nameTag).not.toBeVisible({ timeout: 10000 });
       await expect(archTag).not.toBeVisible({ timeout: 10000 });
     });
 
-    // Scenario 2.8 — Clear single filter tag
-    test('Admin can clear a single filter tag by clicking its close button', async ({
+    // Scenario 2.8 — Clear single filter token
+    test('Admin can clear a single filter token by clicking its remove button', async ({
       page,
     }) => {
       // 1. Apply Name filter with value "python"
+      const nameLabel = imageFilterTokenLabel('Name', 'contains', 'python');
       await applyImageFilter(page, 'Name', 'python');
-      const nameTag = page
-        .locator('.ant-tag')
-        .filter({ has: page.locator('[aria-label="Close"]') })
-        .filter({ hasText: 'Name: python' });
+      const nameTag = page.getByRole('button', {
+        name: `Remove ${nameLabel}`,
+      });
       await expect(nameTag).toBeVisible();
 
       // 2. Apply Architecture filter with strict selection "x86_64"
+      const archLabel = imageFilterTokenLabel('Architecture', 'is', 'x86_64');
       await applyImageFilter(page, 'Architecture', 'x86_64');
-      const archTag = page
-        .locator('.ant-tag')
-        .filter({ has: page.locator('[aria-label="Close"]') })
-        .filter({ hasText: 'Architecture: x86_64' });
+      const archTag = page.getByRole('button', {
+        name: `Remove ${archLabel}`,
+      });
       await expect(archTag).toBeVisible();
 
-      // 3. Verify the reset-all button appears with 2 active filters
-      const resetAllButton = page
-        .locator('button.ant-btn')
-        .filter({ has: page.locator('[aria-label="close-circle"]') });
+      // 3. Verify the "Clear all" button appears with 2 active filters
+      const resetAllButton = page.getByRole('button', { name: 'Clear all' });
       await expect(resetAllButton).toBeVisible();
 
-      // 4. Remove only the Architecture tag by clicking its close button
-      await removeFilterTag(page, 'Architecture: x86_64');
+      // 4. Remove only the Architecture token
+      await removeFilterTag(page, archLabel);
 
-      // 5. Verify the Architecture tag is gone
+      // 5. Verify the Architecture token is gone
       await expect(archTag).not.toBeVisible({ timeout: 10000 });
 
-      // 6. Verify the Name tag still remains
+      // 6. Verify the Name token still remains
       await expect(nameTag).toBeVisible();
 
-      // 7. Verify the reset-all button disappears (only 1 tag remains)
+      // 7. The "Clear all" button stays visible with 1 filter remaining —
+      // unlike antd's bespoke reset-all button (which only appeared at 2+),
+      // PowerSearch's `hasClear` gates on `value.length > 0`, not a count
+      // threshold (`Tokenizer.tsx`).
+      await expect(resetAllButton).toBeVisible();
+
+      // 8. Remove the remaining Name token
+      await removeFilterTag(page, nameLabel);
+      await expect(nameTag).not.toBeVisible({ timeout: 10000 });
+      // With zero filters left, PowerSearch hides "Clear all" entirely
+      // (`Tokenizer.tsx`: `hasClear && value.length > 0`).
       await expect(resetAllButton).not.toBeVisible({ timeout: 10000 });
-
-      // 8. Remove the remaining Name tag
-      await removeFilterTag(page, 'Name: python');
-      await expect(nameTag).not.toBeVisible({ timeout: 10000 });
     });
 
-    // Scenario 2.9 — Clear all with reset-all button
-    test('Admin can clear all filters at once using the reset-all button', async ({
+    // Scenario 2.9 — Clear all with the "Clear all" button
+    test('Admin can clear all filters at once using the clear-all button', async ({
       page,
     }) => {
       // 1. Apply Name filter with value "python"
+      const nameLabel = imageFilterTokenLabel('Name', 'contains', 'python');
       await applyImageFilter(page, 'Name', 'python');
-      const nameTag = page
-        .locator('.ant-tag')
-        .filter({ has: page.locator('[aria-label="Close"]') })
-        .filter({ hasText: 'Name: python' });
+      const nameTag = page.getByRole('button', {
+        name: `Remove ${nameLabel}`,
+      });
       await expect(nameTag).toBeVisible();
 
       // 2. Apply Architecture filter with strict selection "x86_64"
+      const archLabel = imageFilterTokenLabel('Architecture', 'is', 'x86_64');
       await applyImageFilter(page, 'Architecture', 'x86_64');
-      const archTag = page
-        .locator('.ant-tag')
-        .filter({ has: page.locator('[aria-label="Close"]') })
-        .filter({ hasText: 'Architecture: x86_64' });
+      const archTag = page.getByRole('button', {
+        name: `Remove ${archLabel}`,
+      });
       await expect(archTag).toBeVisible();
 
-      // 3. Verify both filter tags and the reset-all button are visible
-      const resetAllButton = page
-        .locator('button.ant-btn')
-        .filter({ has: page.locator('[aria-label="close-circle"]') });
+      // 3. Verify both filter tokens and the "Clear all" button are visible
+      const resetAllButton = page.getByRole('button', { name: 'Clear all' });
       await expect(resetAllButton).toBeVisible();
 
-      // 4. Click the reset-all button to clear all filters at once
+      // 4. Click "Clear all" to clear all filters at once
       await resetAllFilters(page, resetAllButton);
 
-      // 5. Verify no filter tags remain
+      // 5. Verify no filter tokens remain
       await expect(nameTag).not.toBeVisible({ timeout: 10000 });
       await expect(archTag).not.toBeVisible({ timeout: 10000 });
       await expect(resetAllButton).not.toBeVisible({ timeout: 10000 });
@@ -704,11 +752,11 @@ test.describe(
         ).toHaveText('2');
 
         // 4. Apply a Name filter with value "python"
+        const nameLabel = imageFilterTokenLabel('Name', 'contains', 'python');
         await applyImageFilter(page, 'Name', 'python');
-        const nameTag = page
-          .locator('.ant-tag')
-          .filter({ has: page.locator('[aria-label="Close"]') })
-          .filter({ hasText: 'Name: python' });
+        const nameTag = page.getByRole('button', {
+          name: `Remove ${nameLabel}`,
+        });
         await expect(nameTag).toBeVisible();
 
         // 5. Verify pagination has reset to page 1
@@ -716,46 +764,60 @@ test.describe(
           visiblePagination.locator('.ant-pagination-item-active'),
         ).toHaveText('1');
 
-        // 6. Cleanup: remove the filter tag
-        await removeFilterTag(page, 'Name: python');
+        // 6. Cleanup: remove the filter token
+        await removeFilterTag(page, nameLabel);
         await expect(nameTag).not.toBeVisible();
       },
     );
 
-    // Scenario 2.11 — Strict selection rejects freeform input
-    test('Admin cannot add a filter for architecture with an invalid freeform value', async ({
+    // Scenario 2.11 — Strict selection has no freeform value entry point
+    //
+    // antd's AutoComplete accepted arbitrary typed text and rejected it at
+    // submit time (`rule.validate`); PowerSearch's strict-selection value
+    // editor is a closed `Selector` (`EnumEditor`,
+    // `PowerSearchValueEditor.tsx`) with no free-text control at all, so
+    // there is no longer a submit-time rejection to exercise (ticket 28
+    // PILOT-DECISION #1: `rule.validate` is advisory-only now; the real
+    // protection here is structural — a value that isn't a registered
+    // option is not selectable in the first place).
+    test('Admin cannot select an architecture value that is not a registered option', async ({
       page,
     }) => {
-      // 1. Select "Architecture" as the filter property
-      const filterSelector = page.getByRole('combobox', {
-        name: 'Filter property selector',
-      });
-      await filterSelector.evaluate((el) =>
+      // 1. Select "Architecture" as the filter field — opens the edit popover.
+      const searchBar = page.getByRole('combobox', { name: 'Search filters' });
+      await searchBar.evaluate((el) =>
         el.scrollIntoView({ block: 'center', inline: 'nearest' }),
       );
-      await filterSelector.click({ force: true });
+      await searchBar.click({ force: true });
       await page
         .getByRole('option', { name: 'Architecture', exact: true })
         .click();
 
-      // 2. Type an invalid value not in the predefined strictSelection options
-      const valueInput = page.locator('[aria-label="Filter value search"]');
-      await valueInput.fill('arm64');
+      // 2. The value editor is a closed Selector, not a free-text input.
+      await expect(
+        page.getByRole('textbox', { name: 'Value' }),
+      ).not.toBeVisible();
+      const valueSelector = page.getByRole('combobox', { name: 'Value' });
+      await expect(valueSelector).toBeVisible();
 
-      // 3. Click the search button to attempt to submit the freeform value
-      await page.getByRole('button', { name: 'search' }).click();
-      await page
-        .locator('.ant-spin-spinning')
-        .waitFor({ state: 'detached', timeout: 5000 })
-        .catch(() => {});
+      // 3. Typing an architecture that is not among the currently-registered
+      // options (a real but unregistered-in-this-cluster value) surfaces no
+      // matching option to select.
+      await valueSelector.click();
+      await valueSelector.fill('arm64-unregistered-e2e-probe');
+      await expect(
+        page.getByRole('option', { name: 'arm64-unregistered-e2e-probe' }),
+      ).toHaveCount(0);
 
-      // 4. Verify no closable filter tag was created (strict selection rejects freeform input)
-      const filterTags = page
-        .locator('.ant-tag')
-        .filter({ has: page.locator('[aria-label="Close"]') });
-      await expect(filterTags).toHaveCount(0);
+      // 4. Close the popover without committing (Cancel — no value was ever
+      // selectable, so there is nothing to Apply).
+      await page.getByRole('button', { name: 'Cancel', exact: true }).click();
 
-      // 5. Verify the table remains in its unfiltered state (rows visible)
+      // 5. Verify no filter token was created and the table remains
+      // unfiltered.
+      await expect(page.getByRole('button', { name: /^Remove / })).toHaveCount(
+        0,
+      );
       await expect(
         page.locator('.ant-table-content .ant-table-row').first(),
       ).toBeVisible();
@@ -766,20 +828,24 @@ test.describe(
       page,
     }) => {
       // 1. Apply a Name filter with a value that matches no images
+      const noResultsLabel = imageFilterTokenLabel(
+        'Name',
+        'contains',
+        'zzz-nonexistent-image-000',
+      );
       await applyImageFilter(page, 'Name', 'zzz-nonexistent-image-000');
 
-      // 2. Verify a closable filter tag with the entered text is visible
-      const noResultsTag = page
-        .locator('.ant-tag')
-        .filter({ has: page.locator('[aria-label="Close"]') })
-        .filter({ hasText: 'Name: zzz-nonexistent-image-000' });
+      // 2. Verify the committed filter token is visible
+      const noResultsTag = page.getByRole('button', {
+        name: `Remove ${noResultsLabel}`,
+      });
       await expect(noResultsTag).toBeVisible();
 
       // 3. Verify the table shows an empty state (Ant Design no-data placeholder)
       await expect(page.locator('.ant-table-placeholder')).toBeVisible();
 
-      // 4. Cleanup: remove the filter tag
-      await removeFilterTag(page, 'Name: zzz-nonexistent-image-000');
+      // 4. Cleanup: remove the filter token
+      await removeFilterTag(page, noResultsLabel);
       await expect(noResultsTag).not.toBeVisible();
     });
   },

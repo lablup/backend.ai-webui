@@ -251,7 +251,10 @@ const MyResourceWithinResourceGroup: React.FC<
         }
       />
       {resourceSlotsDetails.isLoading ? (
-        <BAISkeletonAstryx />
+        // `data-testid` anchor for e2e (`dashboard.spec.ts`): Astryx
+        // `Skeleton` renders `aria-hidden="true"` with no default class, so
+        // there is no other stable "still loading" selector.
+        <BAISkeletonAstryx data-testid="my-resource-skeleton" />
       ) : (
         <ResourceStatistics
           resourceData={resourceData}
