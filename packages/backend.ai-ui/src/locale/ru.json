@@ -451,14 +451,18 @@
     "Step": "Шаг"
   },
   "comp:BAITable": {
+    "Apply": "Применить",
+    "Cancel": "Отмена",
     "CollapseAll": "Свернуть все",
     "ExpandAll": "Развернуть все",
     "ExpandErrorsOnly": "Развернуть только ошибки",
     "ExpandOptions": "Параметры разворачивания",
+    "ExpandRow": "Развернуть строку",
     "Export": "Экспорт",
     "ExportCSV": "Экспорт в CSV",
     "GoToFirstPage": "Перейти на первую страницу",
     "InvalidPageNumber": "Неверный номер страницы",
+    "Pagination": "Разбиение на страницы",
     "SearchTableColumn": "Поиск таблицы столбцов",
     "SelectColumnToDisplay": "Выберите столбцы, чтобы отобразить",
     "SettingTable": "Настройки таблицы"

@@ -451,14 +451,18 @@
     "Step": "ขั้นตอน"
   },
   "comp:BAITable": {
+    "Apply": "ใช้",
+    "Cancel": "ยกเลิก",
     "CollapseAll": "ยุบทั้งหมด",
     "ExpandAll": "ขยายทั้งหมด",
     "ExpandErrorsOnly": "ขยายเฉพาะข้อผิดพลาด",
     "ExpandOptions": "ตัวเลือกการขยาย",
+    "ExpandRow": "ขยายแถว",
     "Export": "ส่งออก",
     "ExportCSV": "ส่งออก CSV",
     "GoToFirstPage": "ไปยังหน้าแรก",
     "InvalidPageNumber": "หมายเลขหน้าไม่ถูกต้อ",
+    "Pagination": "การแบ่งหน้า",
     "SearchTableColumn": "คอลัมน์ตารางค้นหา",
     "SelectColumnToDisplay": "เลือกคอลัมน์ที่จะแสดง",
     "SettingTable": "การตั้งค่าตาราง"

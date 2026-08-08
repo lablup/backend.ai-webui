@@ -451,14 +451,18 @@
     "Step": "Adım"
   },
   "comp:BAITable": {
+    "Apply": "Uygula",
+    "Cancel": "İptal",
     "CollapseAll": "Tümünü daralt",
     "ExpandAll": "Tümünü genişlet",
     "ExpandErrorsOnly": "Yalnızca hataları genişlet",
     "ExpandOptions": "Genişletme seçenekleri",
+    "ExpandRow": "Satırı genişlet",
     "Export": "Dışa aktar",
     "ExportCSV": "CSV Dışa Aktar",
     "GoToFirstPage": "İlk sayfaya git",
     "InvalidPageNumber": "Geçersiz sayfa numarası",
+    "Pagination": "Sayfalama",
     "SearchTableColumn": "Arama Tablosu sütunları",
     "SelectColumnToDisplay": "Görüntülemek için sütunları seçin",
     "SettingTable": "Masa Ayarları"

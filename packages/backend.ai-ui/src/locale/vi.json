@@ -451,14 +451,18 @@
     "Step": "Bước"
   },
   "comp:BAITable": {
+    "Apply": "Áp dụng",
+    "Cancel": "Hủy",
     "CollapseAll": "Thu gọn tất cả",
     "ExpandAll": "Mở rộng tất cả",
     "ExpandErrorsOnly": "Chỉ mở rộng lỗi",
     "ExpandOptions": "Tùy chọn mở rộng",
+    "ExpandRow": "Mở rộng hàng",
     "Export": "Xuất",
     "ExportCSV": "Xuất CSV",
     "GoToFirstPage": "Đến trang đầu",
     "InvalidPageNumber": "Số trang không hợp lệ",
+    "Pagination": "Phân trang",
     "SearchTableColumn": "Các cột bảng tìm kiếm",
     "SelectColumnToDisplay": "Chọn các cột để hiển thị",
     "SettingTable": "Cài đặt bảng"

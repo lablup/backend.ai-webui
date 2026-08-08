@@ -53,7 +53,14 @@ export interface BAITableColumnOverrideItem {
    * from their natural (declaration) order; see `disableColumnReorder`.
    */
   order?: number;
-  // Future extensibility: width?, pinned?, etc.
+  /**
+   * Persisted column width in pixels. Written by `BAITableAstryx` when the
+   * user drags a column border, so a resize survives a reload exactly like a
+   * visibility toggle (ticket 25). The legacy antd `BAITable` keeps resized
+   * widths in component state and ignores this field.
+   */
+  width?: number;
+  // Future extensibility: pinned?, etc.
 }
 /**
  * Record type mapping column keys to their override configurations

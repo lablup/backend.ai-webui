@@ -451,14 +451,18 @@
     "Step": "Paso"
   },
   "comp:BAITable": {
+    "Apply": "Aplicar",
+    "Cancel": "Cancelar",
     "CollapseAll": "Contraer todo",
     "ExpandAll": "Expandir todo",
     "ExpandErrorsOnly": "Expandir solo errores",
     "ExpandOptions": "Opciones de expansión",
+    "ExpandRow": "Expandir fila",
     "Export": "Exportar",
     "ExportCSV": "Exportar CSV",
     "GoToFirstPage": "Ir a la primera página",
     "InvalidPageNumber": "Número de página no válido",
+    "Pagination": "Paginación",
     "SearchTableColumn": "Columnas de la tabla de búsqueda",
     "SelectColumnToDisplay": "Seleccionar columnas para mostrar",
     "SettingTable": "Configuración de tabla"

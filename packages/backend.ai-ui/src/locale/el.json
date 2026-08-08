@@ -451,14 +451,18 @@
     "Step": "Βήμα"
   },
   "comp:BAITable": {
+    "Apply": "Εφαρμογή",
+    "Cancel": "Άκυρο",
     "CollapseAll": "Σύμπτυξη όλων",
     "ExpandAll": "Ανάπτυξη όλων",
     "ExpandErrorsOnly": "Ανάπτυξη μόνο σφαλμάτων",
     "ExpandOptions": "Επιλογές ανάπτυξης",
+    "ExpandRow": "Ανάπτυξη γραμμής",
     "Export": "Εξαγωγή",
     "ExportCSV": "Εξαγωγή CSV",
     "GoToFirstPage": "Μετάβαση στην πρώτη σελίδα",
     "InvalidPageNumber": "Μη έγκυρος αριθμός σελίδας",
+    "Pagination": "Σελιδοποίηση",
     "SearchTableColumn": "Στήλες πίνακα αναζήτησης",
     "SelectColumnToDisplay": "Επιλέξτε στήλες για εμφάνιση",
     "SettingTable": "Ρυθμίσεις πίνακα"

@@ -451,14 +451,18 @@
     "Step": "Алхам"
   },
   "comp:BAITable": {
+    "Apply": "Хэрэглэх",
+    "Cancel": "Цуцлах",
     "CollapseAll": "Бүгдийг хураах",
     "ExpandAll": "Бүгдийг дэлгэх",
     "ExpandErrorsOnly": "Зөвхөн алдааг дэлгэх",
     "ExpandOptions": "Дэлгэх сонголтууд",
+    "ExpandRow": "Мөрийг дэлгэх",
     "Export": "Экспорт",
     "ExportCSV": "CSV экспортлах",
     "GoToFirstPage": "Эх хуудас руу шилжих",
     "InvalidPageNumber": "Хуудасны дугаар буруу байна",
+    "Pagination": "Хуудаслалт",
     "SearchTableColumn": "Хүснэгтийн баганыг хайх",
     "SelectColumnToDisplay": "Дэлгэцийн баганыг сонгоно уу",
     "SettingTable": "Хүснэгтийн тохиргоо"

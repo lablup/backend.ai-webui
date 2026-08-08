@@ -451,14 +451,18 @@
     "Step": "ステップ"
   },
   "comp:BAITable": {
+    "Apply": "適用",
+    "Cancel": "キャンセル",
     "CollapseAll": "すべて折りたたむ",
     "ExpandAll": "すべて展開",
     "ExpandErrorsOnly": "エラーのみ展開",
     "ExpandOptions": "展開オプション",
+    "ExpandRow": "行を展開",
     "Export": "エクスポート",
     "ExportCSV": "CSV をエクスポート",
     "GoToFirstPage": "最初のページへ",
     "InvalidPageNumber": "無効なページ番号です",
+    "Pagination": "ページネーション",
     "SearchTableColumn": "テーブル列を検索します",
     "SelectColumnToDisplay": "表示する列を選択します",
     "SettingTable": "テーブル設定"

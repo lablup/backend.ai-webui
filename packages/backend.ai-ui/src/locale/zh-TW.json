@@ -451,14 +451,18 @@
     "Step": "步驟"
   },
   "comp:BAITable": {
+    "Apply": "套用",
+    "Cancel": "取消",
     "CollapseAll": "收合全部",
     "ExpandAll": "展開全部",
     "ExpandErrorsOnly": "僅展開錯誤",
     "ExpandOptions": "展開選項",
+    "ExpandRow": "展開列",
     "Export": "匯出",
     "ExportCSV": "匯出 CSV",
     "GoToFirstPage": "跳到第一頁",
     "InvalidPageNumber": "無效的頁碼",
+    "Pagination": "分頁",
     "SearchTableColumn": "搜索表列",
     "SelectColumnToDisplay": "選擇要顯示的列",
     "SettingTable": "表設置"

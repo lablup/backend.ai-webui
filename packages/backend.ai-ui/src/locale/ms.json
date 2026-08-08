@@ -451,14 +451,18 @@
     "Step": "Langkah"
   },
   "comp:BAITable": {
+    "Apply": "Guna",
+    "Cancel": "Batal",
     "CollapseAll": "Runtuhkan semua",
     "ExpandAll": "Kembangkan semua",
     "ExpandErrorsOnly": "Kembangkan ralat sahaja",
     "ExpandOptions": "Pilihan pengembangan",
+    "ExpandRow": "Kembangkan baris",
     "Export": "Eksport",
     "ExportCSV": "Eksport CSV",
     "GoToFirstPage": "Pergi ke halaman pertama",
     "InvalidPageNumber": "Nombor halaman tidak sah",
+    "Pagination": "Penomboran halaman",
     "SearchTableColumn": "Lajur jadual carian",
     "SelectColumnToDisplay": "Pilih lajur untuk dipaparkan",
     "SettingTable": "Tetapan Jadual"

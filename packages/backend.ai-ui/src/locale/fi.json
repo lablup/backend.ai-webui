@@ -451,14 +451,18 @@
     "Step": "Vaihe"
   },
   "comp:BAITable": {
+    "Apply": "Käytä",
+    "Cancel": "Peruuta",
     "CollapseAll": "Tiivistä kaikki",
     "ExpandAll": "Laajenna kaikki",
     "ExpandErrorsOnly": "Laajenna vain virheet",
     "ExpandOptions": "Laajenemisvaihtoehdot",
+    "ExpandRow": "Laajenna rivi",
     "Export": "Vie",
     "ExportCSV": "Vie CSV",
     "GoToFirstPage": "Siirry ensimmäiselle sivulle",
     "InvalidPageNumber": "Virheellinen sivunumero",
+    "Pagination": "Sivutus",
     "SearchTableColumn": "Hakutaulukon sarakkeet",
     "SelectColumnToDisplay": "Valitse näytettävä sarakkeet",
     "SettingTable": "Taulukon asetukset"

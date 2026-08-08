@@ -451,14 +451,18 @@
     "Step": "Schritt"
   },
   "comp:BAITable": {
+    "Apply": "Anwenden",
+    "Cancel": "Abbrechen",
     "CollapseAll": "Alle einklappen",
     "ExpandAll": "Alle ausklappen",
     "ExpandErrorsOnly": "Nur Fehler ausklappen",
     "ExpandOptions": "Ausklappoptionen",
+    "ExpandRow": "Zeile ausklappen",
     "Export": "Exportieren",
     "ExportCSV": "Als CSV exportieren",
     "GoToFirstPage": "Zur ersten Seite",
     "InvalidPageNumber": "Ungültige Seitenzahl",
+    "Pagination": "Seitennummerierung",
     "SearchTableColumn": "Suchtabellenspalten",
     "SelectColumnToDisplay": "Wählen Sie Spalten aus, um angezeigt zu werden",
     "SettingTable": "Tabelleneinstellungen"
