@@ -6,8 +6,11 @@ import { KeypairSettingModalCreateMutation } from '../__generated__/KeypairSetti
 import { KeypairSettingModalFragment$key } from '../__generated__/KeypairSettingModalFragment.graphql';
 import { KeypairSettingModalModifyMutation } from '../__generated__/KeypairSettingModalModifyMutation.graphql';
 import { App } from '../app-shim';
+import BAIFormItem from './BAIFormItem';
 import KeypairResourcePolicySelect from './KeypairResourcePolicySelect';
-import { Col, Form, InputNumber, type ModalProps, Row } from 'antd';
+import { AstryxFormNumberInput } from './astryx-bui/astryxFormControls';
+import { Grid, GridSpan } from '@astryxdesign/core/Grid';
+import { Form, type ModalProps } from 'antd';
 import { FormInstance } from 'antd/lib';
 import { BAIModal, BAISelect, BAIUserSelect } from 'backend.ai-ui';
 import { Suspense, useRef } from 'react';
@@ -145,13 +148,13 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
         initialValues={keypair ? { ...keypair } : {}}
       >
         {!keypair && (
-          // `BAIUserSelect` is the direct child of `Form.Item` so antd binds
+          // `BAIUserSelect` is the direct child of `BAIFormItem` so antd binds
           // its value/onChange automatically. The fallback mirrors the same
-          // `Form.Item` to keep the field and its required rule registered
+          // `BAIFormItem` to keep the field and its required rule registered
           // while the select fetches. Same shape as `ProjectAdminSettingModal`.
           <Suspense
             fallback={
-              <Form.Item
+              <BAIFormItem
                 name="user_id"
                 label={t('general.User')}
                 rules={[
@@ -162,10 +165,10 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
                 ]}
               >
                 <BAISelect loading style={{ width: '100%' }} />
-              </Form.Item>
+              </BAIFormItem>
             }
           >
-            <Form.Item
+            <BAIFormItem
               name="user_id"
               label={t('general.User')}
               rules={[
@@ -179,18 +182,21 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
                 placeholder={t('credential.SelectUser')}
                 style={{ width: '100%' }}
               />
-            </Form.Item>
+            </BAIFormItem>
           </Suspense>
         )}
-        <Row gutter={16}>
-          <Col span={12}>
+        {/* PILOT-DECISION: antd `Row gutter={16}` + `Col span={12}` (no
+            breakpoint props) → `Grid columns={24}` + `GridSpan columns={12}`
+            per MAPPING.md §3.9 (gutter 16px = spacing step 4). */}
+        <Grid columns={24} gap={4}>
+          <GridSpan columns={12}>
             {/* Same Suspense shape as the user field: `KeypairResourcePolicySelect`
-                is the direct child of `Form.Item` (auto value/onChange binding),
-                and the fallback mirrors the same `Form.Item` so the field and its
+                is the direct child of `BAIFormItem` (auto value/onChange binding),
+                and the fallback mirrors the same `BAIFormItem` so the field and its
                 required rule stay registered while the query loads. */}
             <Suspense
               fallback={
-                <Form.Item
+                <BAIFormItem
                   name="resource_policy"
                   label={t('credential.ResourcePolicy')}
                   rules={[
@@ -200,10 +206,10 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
                   ]}
                 >
                   <BAISelect loading style={{ width: '100%' }} />
-                </Form.Item>
+                </BAIFormItem>
               }
             >
-              <Form.Item
+              <BAIFormItem
                 name="resource_policy"
                 label={t('credential.ResourcePolicy')}
                 rules={[
@@ -213,11 +219,11 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
                 ]}
               >
                 <KeypairResourcePolicySelect />
-              </Form.Item>
+              </BAIFormItem>
             </Suspense>
-          </Col>
-          <Col span={12}>
-            <Form.Item
+          </GridSpan>
+          <GridSpan columns={12}>
+            <BAIFormItem
               name="rate_limit"
               label={t('credential.RateLimitFor15min')}
               rules={[
@@ -243,10 +249,12 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
                 },
               ]}
             >
-              <InputNumber style={{ width: '100%' }} />
-            </Form.Item>
-          </Col>
-        </Row>
+              <AstryxFormNumberInput
+                label={t('credential.RateLimitFor15min')}
+              />
+            </BAIFormItem>
+          </GridSpan>
+        </Grid>
       </Form>
     </BAIModal>
   );

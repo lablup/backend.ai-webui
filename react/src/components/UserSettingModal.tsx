@@ -19,25 +19,29 @@ import { useCurrentUserRole, useTOTPSupported } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { theme } from '../theme-shim';
 import AccessKeySelect from './AccessKeySelect';
+import BAIFormItem from './BAIFormItem';
 import GeneratedKeypairListModal from './GeneratedKeypairListModal';
 import ProjectSelect from './ProjectSelect';
 import TOTPActivateModal from './TOTPActivateModal';
 import UserResourcePolicySelect from './UserResourcePolicySelect';
-import { useToggle } from 'ahooks';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import {
-  Form,
-  Input,
-  InputNumber,
-  Select,
-  Switch,
-  message,
-  Typography,
-  FormInstance,
-  Checkbox,
-  Skeleton,
-  Tag,
-  Space,
-} from 'antd';
+  AstryxFormCheckbox,
+  AstryxFormNumberInput,
+  AstryxFormSelector,
+  AstryxFormTextArea,
+  AstryxFormTextInput,
+} from './astryx-bui/astryxFormControls';
+import { HStack } from '@astryxdesign/core/Stack';
+import { Switch } from '@astryxdesign/core/Switch';
+import { Text } from '@astryxdesign/core/Text';
+import { Tokenizer } from '@astryxdesign/core/Tokenizer';
+import type {
+  SearchableItem,
+  SearchSource,
+} from '@astryxdesign/core/Typeahead';
+import { useToggle } from 'ahooks';
+import { Form, FormInstance } from 'antd';
 import {
   BAIDomainSelect,
   BAIAlert,
@@ -148,6 +152,76 @@ const formatBulkUsername = (
   return `${prefix}${String(index).padStart(padLength, '0')}`;
 };
 
+// Free-tag entry has no options to search — the source is intentionally empty
+// and `hasCreate` commits typed text as new tokens. Module-level so the
+// Tokenizer never sees a fresh identity per render.
+const EMPTY_TAG_SEARCH_SOURCE: SearchSource<SearchableItem> = {
+  search: () => [],
+  bootstrap: () => [],
+};
+
+// antd `Select mode="tags"` → Astryx Tokenizer bridge for the antd form
+// engine: the form field holds `string[]`, the Tokenizer works on
+// `SearchableItem[]` ({id, label}), so the shapes are translated here.
+// PILOT-DECISION: antd's `tokenSeparators={[',', ' ']}` (splitting pasted
+// comma/space-separated text into multiple tags) has no Tokenizer
+// equivalent and is dropped — tags are committed one at a time with Enter
+// (`hasCreate`). The per-tag red highlight for invalid IPs (the antd
+// `tagRender`) is also dropped: `astryx component Tokenizer` best practices
+// explicitly discourage custom per-token colors, and the field's own
+// `rules` validator (kept unchanged below) already surfaces every invalid
+// IP in the BAIFormItem's error text under the control, so the same
+// information still reaches the user without per-chip coloring.
+const AllowedClientIpInput: React.FC<{
+  value?: string[];
+  onChange?: (next: string[]) => void;
+  label: string;
+  placeholder?: string;
+}> = ({ value, onChange, label, placeholder }) => {
+  'use memo';
+  return (
+    <Tokenizer
+      label={label}
+      isLabelHidden
+      value={(value ?? []).map((ip) => ({ id: ip, label: ip }))}
+      onChange={(items) =>
+        onChange?.(
+          Array.from(new Set(items.map((item) => item.label))).filter(Boolean),
+        )
+      }
+      searchSource={EMPTY_TAG_SEARCH_SOURCE}
+      hasCreate
+      placeholder={placeholder}
+      width="100%"
+    />
+  );
+};
+
+// Bridge for `BAIFormItem name="totp_activated" valuePropName="checked"`:
+// this field needs `isLoading` (while the TOTP-support check / removal
+// mutation is in flight), which `AstryxFormSwitch`'s adapter surface does
+// not expose, so the raw Astryx `Switch` is used directly here — coalescing
+// antd's injected `checked` the same way the adapter does elsewhere.
+const TotpSwitch: React.FC<{
+  checked?: boolean;
+  onChange?: (checked: boolean) => void;
+  label: string;
+  isLoading?: boolean;
+  disabled?: boolean;
+}> = ({ checked, onChange, label, isLoading, disabled }) => {
+  'use memo';
+  return (
+    <Switch
+      value={checked ?? false}
+      onChange={(next) => onChange?.(next)}
+      label={label}
+      isLabelHidden
+      isLoading={isLoading}
+      isDisabled={disabled}
+    />
+  );
+};
+
 interface UserSettingModalProps extends BAIModalProps {
   userSettingFrgmt?: UserSettingModalFragment$key | null;
   bulkCreate?: boolean;
@@ -163,7 +237,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { modal } = App.useApp();
+  const { modal, message } = App.useApp();
   const formRef = useRef<FormInstance<FormValues>>(null);
   const { logger } = useBAILogger();
 
@@ -555,7 +629,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
       loading={deferredOpen !== baiModalProps.open}
       {...baiModalProps}
     >
-      <Suspense fallback={<Skeleton active />}>
+      <Suspense fallback={<BAISkeletonAstryx />}>
         <Form
           ref={formRef}
           preserve={false}
@@ -614,8 +688,13 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                 description={t('credential.BulkCreateUserDescription')}
                 style={{ marginBottom: token.marginMD }}
               />
-              <Space.Compact style={{ width: '100%' }}>
-                <Form.Item
+              {/* antd `Space.Compact` welded the two inputs' borders together;
+                  Astryx has no equivalent weld for arbitrary form controls
+                  (only ButtonGroup/InputGroup, MAPPING §"Space/Space.Compact"),
+                  so the two fields are laid out with a plain gapless HStack
+                  instead (PILOT-DECISION). */}
+              <HStack gap={0} style={{ width: '100%' }}>
+                <BAIFormItem
                   name="email_prefix"
                   label={t('credential.EmailPrefix')}
                   style={{ flex: 1 }}
@@ -628,9 +707,12 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                     { max: 30 },
                   ]}
                 >
-                  <Input placeholder={t('maxLength.30chars')} />
-                </Form.Item>
-                <Form.Item
+                  <AstryxFormTextInput
+                    label={t('credential.EmailPrefix')}
+                    placeholder={t('maxLength.30chars')}
+                  />
+                </BAIFormItem>
+                <BAIFormItem
                   name="email_suffix"
                   label={t('credential.EmailSuffix')}
                   style={{ flex: 1 }}
@@ -644,10 +726,17 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                     { max: 30 },
                   ]}
                 >
-                  <Input prefix="@" placeholder={t('maxLength.30chars')} />
-                </Form.Item>
-              </Space.Compact>
-              <Form.Item
+                  {/* PILOT-DECISION: antd `Input prefix="@"` rendered a static
+                      "@" glyph inline before the text; Astryx TextInput only
+                      supports an icon `startIcon`, not arbitrary prefix text
+                      (no equivalent), so the "@" adornment is dropped. */}
+                  <AstryxFormTextInput
+                    label={t('credential.EmailSuffix')}
+                    placeholder={t('maxLength.30chars')}
+                  />
+                </BAIFormItem>
+              </HStack>
+              <BAIFormItem
                 name="user_count"
                 label={t('credential.UserCount')}
                 rules={[
@@ -661,7 +750,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   },
                 ]}
                 extra={
-                  <Form.Item
+                  <BAIFormItem
                     noStyle
                     dependencies={[
                       'email_prefix',
@@ -669,7 +758,11 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                       'user_count',
                     ]}
                   >
-                    {({ getFieldValue }) => {
+                    {(form) => {
+                      // BAIFormItem render-prop children receive `unknown`
+                      // (antd typed this as FormInstance); narrow it back.
+                      const { getFieldValue } =
+                        form as FormInstance<BulkFormValues>;
                       const prefix = getFieldValue('email_prefix');
                       const suffix = getFieldValue('email_suffix');
                       const count = getFieldValue('user_count');
@@ -698,28 +791,35 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                             )
                           : undefined;
                       return (
-                        <Typography.Text type="secondary">
+                        <Text color="secondary">
                           {previewEmails.join(', ')}
                           {lastEmail && ` … ${lastEmail}`}
-                        </Typography.Text>
+                        </Text>
                       );
                     }}
-                  </Form.Item>
+                  </BAIFormItem>
                 }
               >
-                <InputNumber style={{ width: '100%' }} min={1} />
-              </Form.Item>
+                <AstryxFormNumberInput
+                  label={t('credential.UserCount')}
+                  min={1}
+                />
+              </BAIFormItem>
             </>
           ) : (
             <>
-              <Form.Item
+              <BAIFormItem
                 name="email"
                 label={t('general.E-Mail')}
                 rules={[{ required: !user }, { type: 'email' }]}
               >
-                <Input disabled={!!user} />
-              </Form.Item>
-              <Form.Item
+                <AstryxFormTextInput
+                  label={t('general.E-Mail')}
+                  type="email"
+                  disabled={!!user}
+                />
+              </BAIFormItem>
+              <BAIFormItem
                 name="username"
                 label={t('credential.UserName')}
                 rules={[
@@ -731,9 +831,12 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   },
                 ]}
               >
-                <Input placeholder={t('maxLength.64chars')} />
-              </Form.Item>
-              <Form.Item
+                <AstryxFormTextInput
+                  label={t('credential.UserName')}
+                  placeholder={t('maxLength.64chars')}
+                />
+              </BAIFormItem>
+              <BAIFormItem
                 name="full_name"
                 label={t('credential.FullName')}
                 rules={[
@@ -742,11 +845,14 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   },
                 ]}
               >
-                <Input placeholder={t('maxLength.64chars')} />
-              </Form.Item>
+                <AstryxFormTextInput
+                  label={t('credential.FullName')}
+                  placeholder={t('maxLength.64chars')}
+                />
+              </BAIFormItem>
             </>
           )}
-          <Form.Item
+          <BAIFormItem
             name="password"
             label={user ? t('general.NewPassword') : t('general.Password')}
             rules={[
@@ -759,9 +865,12 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               },
             ]}
           >
-            <Input.Password />
-          </Form.Item>
-          <Form.Item
+            <AstryxFormTextInput
+              label={user ? t('general.NewPassword') : t('general.Password')}
+              type="password"
+            />
+          </BAIFormItem>
+          <BAIFormItem
             name="password_confirm"
             dependencies={['password']}
             label={
@@ -791,25 +900,36 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               }),
             ]}
           >
-            <Input.Password />
-          </Form.Item>
-          <Form.Item
+            <AstryxFormTextInput
+              label={
+                user
+                  ? t('webui.menu.NewPasswordAgain')
+                  : t('general.ConfirmPassword')
+              }
+              type="password"
+            />
+          </BAIFormItem>
+          <BAIFormItem
             name="need_password_change"
             label={t('credential.DescRequirePasswordChange')}
             valuePropName="checked"
             tooltip={t('credential.TooltipForRequirePasswordChange')}
           >
-            <Checkbox>{t('general.Enable')}</Checkbox>
-          </Form.Item>
-          <Form.Item
+            <AstryxFormCheckbox label={t('general.Enable')} />
+          </BAIFormItem>
+          <BAIFormItem
             name="description"
             label={t('credential.Description')}
             rules={[{ max: 500 }]}
           >
-            <Input.TextArea placeholder={t('maxLength.500chars')} />
-          </Form.Item>
-          <Form.Item name="status" label={t('credential.UserStatus')}>
-            <Select
+            <AstryxFormTextArea
+              label={t('credential.Description')}
+              placeholder={t('maxLength.500chars')}
+            />
+          </BAIFormItem>
+          <BAIFormItem name="status" label={t('credential.UserStatus')}>
+            <AstryxFormSelector
+              label={t('credential.UserStatus')}
               options={[
                 {
                   value: 'active',
@@ -829,11 +949,12 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                 },
               ]}
             />
-          </Form.Item>
+          </BAIFormItem>
           {!!currentUserRole &&
             currentUserRole in permissionRangeOfRoleChanges && (
-              <Form.Item name="role" label={t('credential.Role')}>
-                <Select
+              <BAIFormItem name="role" label={t('credential.Role')}>
+                <AstryxFormSelector
+                  label={t('credential.Role')}
                   options={_.map(
                     permissionRangeOfRoleChanges[currentUserRole],
                     (item) => {
@@ -844,33 +965,31 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                     },
                   )}
                 />
-              </Form.Item>
+              </BAIFormItem>
             )}
-          <Form.Item
+          <BAIFormItem
             name="sudo_session_enabled"
             label={t('credential.EnableSudoSession')}
             valuePropName="checked"
           >
-            <Checkbox>{t('general.Allow')}</Checkbox>
-          </Form.Item>
+            <AstryxFormCheckbox label={t('general.Allow')} />
+          </BAIFormItem>
           {!!isTOTPSupported && !bulkCreate && (
-            <Form.Item
+            <BAIFormItem
               name="totp_activated"
               label={t('webui.menu.TotpActivated')}
               valuePropName="checked"
               extra={
                 user?.basicInfo.email !== baiClient?.email && (
-                  <Typography.Text
-                    type="secondary"
-                    style={{ fontSize: token.fontSizeSM }}
-                  >
+                  <Text type="supporting">
                     {t('credential.AdminCanOnlyRemoveTotp')}
-                  </Typography.Text>
+                  </Text>
                 )
               }
             >
-              <Switch
-                loading={
+              <TotpSwitch
+                label={t('webui.menu.TotpActivated')}
+                isLoading={
                   isLoadingManagerSupportingTOTP ||
                   mutationToRemoveTotp.isPending
                 }
@@ -922,16 +1041,16 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   }
                 }}
               />
-            </Form.Item>
+            </BAIFormItem>
           )}
-          <Form.Item
+          <BAIFormItem
             name="resource_policy"
             label={t('resourcePolicy.ResourcePolicy')}
             rules={[{ required: !user }]}
           >
             <UserResourcePolicySelect />
-          </Form.Item>
-          <Form.Item
+          </BAIFormItem>
+          <BAIFormItem
             name="domain_name"
             label={t('credential.Domain')}
             rules={[{ required: true }]}
@@ -941,41 +1060,46 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                 formRef.current?.setFieldValue('group_ids', []);
               }}
             />
-          </Form.Item>
+          </BAIFormItem>
           <Suspense
             fallback={
-              <Form.Item label={t('credential.Projects')}>
-                <Select loading />
-              </Form.Item>
+              <BAIFormItem label={t('credential.Projects')}>
+                <BAISelect loading style={{ width: '100%' }} />
+              </BAIFormItem>
             }
           >
-            <Form.Item noStyle dependencies={['domain_name']}>
-              {({ getFieldValue }) => (
-                <Form.Item
-                  name="group_ids"
-                  label={t('credential.Projects')}
-                  getValueFromEvent={(value) => value}
-                  getValueProps={(value) => ({
-                    value: _.isArray(value)
-                      ? value
-                      : _.compact(
-                          _.map(user?.projects?.edges, (edge) =>
-                            edge?.node?.id ? toLocalId(edge.node.id) : null,
+            <BAIFormItem noStyle dependencies={['domain_name']}>
+              {(form) => {
+                // BAIFormItem render-prop children receive `unknown` (antd
+                // typed this as FormInstance); narrow it back.
+                const { getFieldValue } = form as FormInstance<FormValues>;
+                return (
+                  <BAIFormItem
+                    name="group_ids"
+                    label={t('credential.Projects')}
+                    getValueFromEvent={(value) => value}
+                    getValueProps={(value) => ({
+                      value: _.isArray(value)
+                        ? value
+                        : _.compact(
+                            _.map(user?.projects?.edges, (edge) =>
+                              edge?.node?.id ? toLocalId(edge.node.id) : null,
+                            ),
                           ),
-                        ),
-                  })}
-                >
-                  <ProjectSelect
-                    mode="multiple"
-                    domain={getFieldValue('domain_name')}
-                    disableDefaultFilter
-                    lockedProjectTypes={!user ? ['MODEL_STORE'] : undefined}
-                  />
-                </Form.Item>
-              )}
-            </Form.Item>
+                    })}
+                  >
+                    <ProjectSelect
+                      mode="multiple"
+                      domain={getFieldValue('domain_name')}
+                      disableDefaultFilter
+                      lockedProjectTypes={!user ? ['MODEL_STORE'] : undefined}
+                    />
+                  </BAIFormItem>
+                );
+              }}
+            </BAIFormItem>
           </Suspense>
-          <Form.Item
+          <BAIFormItem
             name="allowed_client_ip"
             label={t('credential.AllowedClientIP')}
             extra={t('credential.AllowedClientIPHint')}
@@ -998,27 +1122,15 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               },
             ]}
           >
-            <Select
-              mode="tags"
-              tokenSeparators={[',', ' ']}
-              tagRender={(props) => {
-                const isValid =
-                  _.isString(props.label) && isValidIPOrCidr(props.label);
-                return (
-                  <Tag color={!isValid ? 'red' : undefined} {...props}>
-                    {props.label}
-                  </Tag>
-                );
-              }}
-              open={false}
-              suffixIcon={null}
+            <AllowedClientIpInput
+              label={t('credential.AllowedClientIP')}
               placeholder={t('credential.AllowedClientIPPlaceholder')}
             />
-          </Form.Item>
+          </BAIFormItem>
 
           {!bulkCreate && (
             <>
-              <Form.Item
+              <BAIFormItem
                 name="container_uid"
                 label={t('credential.ContainerUID')}
                 tooltip={t('credential.ContainerUIDTooltip')}
@@ -1032,13 +1144,13 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   },
                 ]}
               >
-                <InputNumber
-                  style={{ width: '100%' }}
+                <AstryxFormNumberInput
+                  label={t('credential.ContainerUID')}
                   max={SIGNED_32BIT_MAX_INT}
                   min={1}
                 />
-              </Form.Item>
-              <Form.Item
+              </BAIFormItem>
+              <BAIFormItem
                 name="container_main_gid"
                 label={t('credential.ContainerGID')}
                 tooltip={t('credential.ContainerGIDTooltip')}
@@ -1052,13 +1164,13 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   },
                 ]}
               >
-                <InputNumber
-                  style={{ width: '100%' }}
+                <AstryxFormNumberInput
+                  label={t('credential.ContainerGID')}
                   max={SIGNED_32BIT_MAX_INT}
                   min={1}
                 />
-              </Form.Item>
-              <Form.Item
+              </BAIFormItem>
+              <BAIFormItem
                 name="container_gids"
                 label={t('credential.ContainerSupplementaryGIDs')}
                 tooltip={t('credential.ContainerSupplementaryGIDsTooltip')}
@@ -1128,18 +1240,18 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                     'credential.ContainerSupplementaryGIDsPlaceholder',
                   )}
                 />
-              </Form.Item>
+              </BAIFormItem>
             </>
           )}
           {!!user && (
             <Suspense
               fallback={
-                <Form.Item label={t('credential.MainAccessKey')}>
-                  <Select loading />
-                </Form.Item>
+                <BAIFormItem label={t('credential.MainAccessKey')}>
+                  <BAISelect loading style={{ width: '100%' }} />
+                </BAIFormItem>
               }
             >
-              <Form.Item
+              <BAIFormItem
                 name="main_access_key"
                 label={t('credential.MainAccessKey')}
               >
@@ -1147,7 +1259,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   userEmail={user.basicInfo.email}
                   fetchKey={fetchKey}
                 />
-              </Form.Item>
+              </BAIFormItem>
             </Suspense>
           )}
         </Form>

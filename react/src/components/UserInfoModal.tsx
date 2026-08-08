@@ -5,7 +5,13 @@
 import { UserInfoModalFragment$key } from '../__generated__/UserInfoModalFragment.graphql';
 import { useTOTPSupported } from '../hooks/backendai';
 import { theme } from '../theme-shim';
-import { Descriptions, type DescriptionsProps, Tag, Spin, Tooltip } from 'antd';
+import { Badge } from '@astryxdesign/core/Badge';
+import {
+  MetadataList,
+  MetadataListItem,
+} from '@astryxdesign/core/MetadataList';
+import { Spinner } from '@astryxdesign/core/Spinner';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { TriangleAlert } from 'lucide-react';
@@ -68,15 +74,11 @@ const UserInfoModal: React.FC<Props> = ({
     userInfoFrgmt ?? null,
   );
 
-  const columnSetting: DescriptionsProps['column'] = {
-    xxl: 1,
-    xl: 1,
-    lg: 1,
-    md: 1,
-    sm: 1,
-    xs: 1,
-  };
-
+  // PILOT-DECISION: antd Descriptions `size="small"`, the responsive
+  // `column` breakpoint map (all forced to 1), and `labelStyle` have no
+  // MetadataList destination — MetadataList's single-column defaults already
+  // match (defaults-first / simplicity policy); `label={{ width: '50%' }}`
+  // reproduces the label column width.
   return (
     <BAIModal
       centered
@@ -85,82 +87,85 @@ const UserInfoModal: React.FC<Props> = ({
       onCancel={onRequestClose}
       {...baiModalProps}
     >
-      <Descriptions
-        size="small"
-        column={columnSetting}
+      <MetadataList
         title={t('credential.Information')}
-        labelStyle={{ width: '50%' }}
+        label={{ position: 'start', width: '50%' }}
       >
-        <Descriptions.Item label={t('credential.UserID')}>
+        <MetadataListItem label={t('credential.UserID')}>
           {user?.basicInfo.email}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('credential.Description')}>
+        </MetadataListItem>
+        <MetadataListItem label={t('credential.Description')}>
           {user?.basicInfo.description}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('credential.UserName')}>
+        </MetadataListItem>
+        <MetadataListItem label={t('credential.UserName')}>
           {user?.basicInfo.username}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('credential.FullName')}>
+        </MetadataListItem>
+        <MetadataListItem label={t('credential.FullName')}>
           {user?.basicInfo.fullName}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('credential.MainAccessKey')}>
+        </MetadataListItem>
+        <MetadataListItem label={t('credential.MainAccessKey')}>
           {user?.organization.mainAccessKey}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('credential.DescActiveUser')}>
+        </MetadataListItem>
+        <MetadataListItem label={t('credential.DescActiveUser')}>
           {user?.status.status === 'ACTIVE' ? t('button.Yes') : t('button.No')}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('credential.DescRequirePasswordChange')}>
+        </MetadataListItem>
+        <MetadataListItem label={t('credential.DescRequirePasswordChange')}>
           {user?.status.needPasswordChange ? t('button.Yes') : t('button.No')}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('credential.EnableSudoSession')}>
+        </MetadataListItem>
+        <MetadataListItem label={t('credential.EnableSudoSession')}>
           {user?.security.sudoSessionEnabled ? t('button.Yes') : t('button.No')}
-        </Descriptions.Item>
+        </MetadataListItem>
         {isTOTPSupported && (
-          <Descriptions.Item label={t('webui.menu.TotpActivated')}>
-            <Spin spinning={isLoadingManagerSupportingTOTP}>
-              {user?.security.totpActivated ? t('button.Yes') : t('button.No')}
-            </Spin>
-          </Descriptions.Item>
+          <MetadataListItem label={t('webui.menu.TotpActivated')}>
+            {/* PILOT-DECISION: antd `Spin spinning` overlays a dimmed
+                spinner on top of existing content; Astryx `Spinner` has no
+                wrap/overlay mode, so the loading state replaces the value
+                outright instead of dimming it. */}
+            {isLoadingManagerSupportingTOTP ? (
+              <Spinner size="sm" />
+            ) : user?.security.totpActivated ? (
+              t('button.Yes')
+            ) : (
+              t('button.No')
+            )}
+          </MetadataListItem>
         )}
-      </Descriptions>
-      <br />
-      <Descriptions
-        size="small"
-        column={columnSetting}
+      </MetadataList>
+      <MetadataList
         title={t('credential.Association')}
-        labelStyle={{ width: '50%' }}
+        label={{ position: 'start', width: '50%' }}
       >
-        <Descriptions.Item label={t('credential.Role')}>
+        <MetadataListItem label={t('credential.Role')}>
           {user?.organization.role}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('credential.Domain')}>
+        </MetadataListItem>
+        <MetadataListItem label={t('credential.Domain')}>
           {user?.organization.domainName}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('credential.ResourcePolicy')}>
+        </MetadataListItem>
+        <MetadataListItem label={t('credential.ResourcePolicy')}>
           {user?.organization.resourcePolicy}
-        </Descriptions.Item>
-      </Descriptions>
-      <br />
-      <Descriptions
-        title={t('credential.ProjectAndGroup')}
-        labelStyle={{ width: '50%' }}
-      >
-        <Descriptions.Item>
+        </MetadataListItem>
+      </MetadataList>
+      <MetadataList label={{ position: 'start', width: '50%' }}>
+        <MetadataListItem label={t('credential.ProjectAndGroup')}>
           {user && !user.projects ? (
-            <Tooltip title={t('credential.FailedToLoadProjects')}>
+            <Tooltip content={t('credential.FailedToLoadProjects')}>
               <TriangleAlert style={{ color: token.colorError }} size="1em" />
             </Tooltip>
           ) : (
             <BAIFlex gap="xs" wrap="wrap">
               {_.map(user?.projects?.edges, (edge) => {
                 return (
-                  <Tag key={edge?.node?.id}>{edge?.node?.basicInfo.name}</Tag>
+                  <Badge
+                    key={edge?.node?.id}
+                    variant="neutral"
+                    label={edge?.node?.basicInfo.name}
+                  />
                 );
               })}
             </BAIFlex>
           )}
-        </Descriptions.Item>
-      </Descriptions>
+        </MetadataListItem>
+      </MetadataList>
     </BAIModal>
   );
 };

@@ -16,7 +16,7 @@ import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import KeypairResourcePolicyInfoModal from './KeypairResourcePolicyInfoModal';
 import KeypairResourcePolicySettingModal from './KeypairResourcePolicySettingModal';
-import { Button, Tooltip } from 'antd';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { AnyObject } from 'antd/es/_util/type';
 import type { ColumnsType, ColumnType } from 'antd/es/table';
 import {
@@ -334,8 +334,8 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
     <BAIFlex direction="column" align="stretch" gap="sm" {...props}>
       <BAIFlex direction="row" justify="end" wrap="wrap" gap={'xs'}>
         <BAIFlex gap={'xs'}>
-          <Tooltip title={t('button.Refresh')}>
-            <Button
+          <Tooltip content={t('button.Refresh')}>
+            <BAIButton
               icon={<RotateCw size="1em" />}
               loading={isRefetchPending}
               onClick={() => {

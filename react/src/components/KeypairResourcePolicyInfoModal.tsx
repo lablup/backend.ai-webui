@@ -4,9 +4,11 @@
  */
 import { KeypairResourcePolicyInfoModalFragment$key } from '../__generated__/KeypairResourcePolicyInfoModalFragment.graphql';
 import { BAI_BREAKPOINTS } from '../theme-shim';
-import { Descriptions, Typography } from 'antd';
-import { createStyles } from 'antd-style';
-import { DescriptionsItemType } from 'antd/es/descriptions';
+import BAICopyableText from './astryx-bui/BAICopyableText';
+import {
+  MetadataList,
+  MetadataListItem,
+} from '@astryxdesign/core/MetadataList';
 import {
   filterOutEmpty,
   BAIFlex,
@@ -17,24 +19,20 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment, graphql } from 'react-relay';
-
-const useStyles = createStyles(({ css }) => ({
-  description: css`
-    .ant-descriptions-row {
-      border: none !important;
-    }
-    .ant-descriptions-view > table {
-      width: fit-content !important;
-    }
-  `,
-}));
 
 interface InfoModalProps extends BAIModalProps {
   open: boolean;
   onRequestClose: () => void;
   resourcePolicyFrgmt: KeypairResourcePolicyInfoModalFragment$key | null;
+}
+
+interface ResourcePolicyInfoItem {
+  key: string;
+  label: string;
+  children: ReactNode;
 }
 
 const KeypairResourcePolicyInfoModal: React.FC<InfoModalProps> = ({
@@ -43,7 +41,6 @@ const KeypairResourcePolicyInfoModal: React.FC<InfoModalProps> = ({
   resourcePolicyFrgmt,
   ...modalProps
 }) => {
-  const { styles } = useStyles();
   const { t } = useTranslation();
 
   const resourcePolicy = useFragment(
@@ -67,45 +64,53 @@ const KeypairResourcePolicyInfoModal: React.FC<InfoModalProps> = ({
     resourcePolicyFrgmt,
   );
 
-  const descriptionItems: DescriptionsItemType[] = filterOutEmpty([
+  // PILOT-DECISION: the nested antd `Descriptions size="small" column={2}`
+  // wrapping a single unlabeled `Descriptions.Item` was only a styling hack
+  // (the accompanying `antd-style` `createStyles` stripped its row border and
+  // shrank its table to fit-content) used to lay out the resource-slot chips
+  // — it carried no real key/value structure of its own. `MetadataList` has
+  // no destination for that hack, and per the simplicity-over-parity policy
+  // it is dropped entirely: the `BAIFlex` of resource chips now renders
+  // directly as the outer item's children.
+  const descriptionItems: ResourcePolicyInfoItem[] = filterOutEmpty([
     {
+      key: 'name',
       label: t('resourcePolicy.Name'),
-      children: (
-        <Typography.Text copyable>{resourcePolicy?.name}</Typography.Text>
+      children: resourcePolicy?.name ? (
+        <BAICopyableText copyLabel={t('sourceCodeViewer.Copy')}>
+          {resourcePolicy.name}
+        </BAICopyableText>
+      ) : (
+        '-'
       ),
     },
     {
+      key: 'default-for-unspecified',
       label: t('resourcePolicy.DefaultForUnspecified'),
       children: resourcePolicy?.default_for_unspecified || '∞',
     },
     {
+      key: 'created-at',
       label: t('resourcePolicy.CreatedAt'),
       children: dayjs(resourcePolicy?.created_at).format('lll') || '∞',
     },
     {
+      key: 'resource-policy',
       label: t('resourcePolicy.ResourcePolicy'),
       children: resourcePolicy?.total_resource_slots ? (
         !_.isEmpty(JSON.parse(resourcePolicy?.total_resource_slots)) ? (
-          <Descriptions className={styles.description} size="small" column={2}>
-            <Descriptions.Item>
-              <BAIFlex
-                direction="column"
-                align="start"
-                style={{ width: '100%' }}
-              >
-                {_.map(
-                  JSON.parse(resourcePolicy?.total_resource_slots),
-                  (v, type) => (
-                    <BAIResourceNumberWithIcon
-                      key={type}
-                      type={type}
-                      value={_.toString(v)}
-                    />
-                  ),
-                )}
-              </BAIFlex>
-            </Descriptions.Item>
-          </Descriptions>
+          <BAIFlex direction="column" align="start" style={{ width: '100%' }}>
+            {_.map(
+              JSON.parse(resourcePolicy?.total_resource_slots),
+              (v, type) => (
+                <BAIResourceNumberWithIcon
+                  key={type}
+                  type={type}
+                  value={_.toString(v)}
+                />
+              ),
+            )}
+          </BAIFlex>
         ) : (
           '-'
         )
@@ -114,6 +119,7 @@ const KeypairResourcePolicyInfoModal: React.FC<InfoModalProps> = ({
       ),
     },
     {
+      key: 'storage-nodes',
       label: t('resourcePolicy.StorageNodes'),
       children:
         resourcePolicy &&
@@ -128,22 +134,27 @@ const KeypairResourcePolicyInfoModal: React.FC<InfoModalProps> = ({
         ),
     },
     {
+      key: 'concurrency',
       label: t('resourcePolicy.Concurrency'),
       children: resourcePolicy?.max_concurrent_sessions || '∞',
     },
     {
+      key: 'cluster-size',
       label: t('resourcePolicy.ClusterSize'),
       children: resourcePolicy?.max_containers_per_session,
     },
     {
+      key: 'idle-timeout',
       label: t('resourcePolicy.IdleTimeout'),
       children: resourcePolicy?.idle_timeout || '∞',
     },
     {
+      key: 'max-session-lifetime',
       label: t('session.MaxSessionLifetime'),
       children: resourcePolicy?.max_session_lifetime || '∞',
     },
     {
+      key: 'max-pending-session-count',
       label: t('resourcePolicy.MaxPendingSessionCount'),
       children:
         _.isNull(resourcePolicy?.max_pending_session_count) ||
@@ -152,33 +163,29 @@ const KeypairResourcePolicyInfoModal: React.FC<InfoModalProps> = ({
           : resourcePolicy?.max_pending_session_count,
     },
     {
+      key: 'max-concurrent-sftp-sessions',
       label: t('resourcePolicy.MaxConcurrentSFTPSessions'),
       children: resourcePolicy?.max_concurrent_sftp_sessions || '∞',
     },
     {
+      key: 'max-pending-session-resource-slots',
       label: t('resourcePolicy.MaxPendingSessionResourceSlots'),
       children: resourcePolicy?.max_pending_session_resource_slots ? (
         !_.isEmpty(
           JSON.parse(resourcePolicy?.max_pending_session_resource_slots),
         ) ? (
-          <Descriptions className={styles.description} size="small" column={2}>
-            <Descriptions.Item>
-              <BAIFlex direction="column" align="start">
-                {_.map(
-                  JSON.parse(
-                    resourcePolicy?.max_pending_session_resource_slots,
-                  ),
-                  (v, type) => (
-                    <BAIResourceNumberWithIcon
-                      key={type}
-                      type={type}
-                      value={_.toString(v)}
-                    />
-                  ),
-                )}
-              </BAIFlex>
-            </Descriptions.Item>
-          </Descriptions>
+          <BAIFlex direction="column" align="start">
+            {_.map(
+              JSON.parse(resourcePolicy?.max_pending_session_resource_slots),
+              (v, type) => (
+                <BAIResourceNumberWithIcon
+                  key={type}
+                  type={type}
+                  value={_.toString(v)}
+                />
+              ),
+            )}
+          </BAIFlex>
         ) : (
           '-'
         )
@@ -201,7 +208,13 @@ const KeypairResourcePolicyInfoModal: React.FC<InfoModalProps> = ({
       width={BAI_BREAKPOINTS.sm}
       {...modalProps}
     >
-      <Descriptions bordered column={1} items={descriptionItems} />
+      <MetadataList>
+        {descriptionItems.map((item) => (
+          <MetadataListItem key={item.key} label={item.label}>
+            {item.children}
+          </MetadataListItem>
+        ))}
+      </MetadataList>
     </BAIModal>
   );
 };

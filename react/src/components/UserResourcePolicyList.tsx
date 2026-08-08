@@ -17,7 +17,7 @@ import {
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import UserResourcePolicySettingModal from './UserResourcePolicySettingModal';
-import { Button, Tooltip } from 'antd';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import type { ColumnType } from 'antd/es/table';
 import {
   useUpdatableState,
@@ -222,8 +222,8 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
     <BAIFlex direction="column" align="stretch" gap="sm">
       <BAIFlex direction="row" justify="end" wrap="wrap" gap={'xs'}>
         <BAIFlex gap={'xs'}>
-          <Tooltip title={t('button.Refresh')}>
-            <Button
+          <Tooltip content={t('button.Refresh')}>
+            <BAIButton
               icon={<RotateCw size="1em" />}
               loading={isRefetchPending}
               onClick={() => {

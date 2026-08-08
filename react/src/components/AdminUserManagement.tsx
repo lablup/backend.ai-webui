@@ -23,8 +23,9 @@ import PurgeUsersModal from './PurgeUsersModal';
 import UpdateUsersModal from './UpdateUsersModal';
 import UserInfoModal from './UserInfoModal';
 import UserSettingModal from './UserSettingModal';
+import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
+import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
 import { useToggle } from 'ahooks';
-import { Button, Dropdown, Space } from 'antd';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -480,7 +481,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
             value={fetchKey}
             onChange={updateFetchKey}
           />
-          <Space.Compact>
+          <ButtonGroup label={t('credential.CreateUser')}>
             <BAIButton
               type="primary"
               icon={<PlusIcon />}
@@ -491,32 +492,33 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
               {t('credential.CreateUser')}
             </BAIButton>
             {bailClient.supports('bulk-create-user') && (
-              <Dropdown
-                trigger={['click']}
-                menu={{
-                  items: [
-                    {
-                      key: 'bulk-create',
-                      label: t('credential.BulkCreateUser'),
-                      onClick: () => {
-                        setOpenBulkCreateModal(true);
-                      },
-                    },
-                    {
-                      key: 'bulk-create-csv',
-                      label: t('credential.BulkCreateUserFromCSV'),
-                      onClick: () => {
-                        setOpenBulkCreateCSVModal(true);
-                      },
-                    },
-                  ],
+              <DropdownMenu
+                button={{
+                  label: t('button.More'),
+                  variant: 'primary',
+                  isIconOnly: true,
+                  icon: <Ellipsis size="1em" />,
                 }}
-                placement="bottomRight"
-              >
-                <Button type="primary" icon={<Ellipsis size="1em" />} />
-              </Dropdown>
+                hasChevron={false}
+                placement="below"
+                alignment="end"
+                items={[
+                  {
+                    label: t('credential.BulkCreateUser'),
+                    onClick: () => {
+                      setOpenBulkCreateModal(true);
+                    },
+                  },
+                  {
+                    label: t('credential.BulkCreateUserFromCSV'),
+                    onClick: () => {
+                      setOpenBulkCreateCSVModal(true);
+                    },
+                  },
+                ]}
+              />
             )}
-          </Space.Compact>
+          </ButtonGroup>
         </BAIFlex>
       </BAIFlex>
       <BAIAdminUserV2Table

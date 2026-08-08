@@ -27,24 +27,27 @@ import {
 import { downloadBlob, parseCSV } from '../helper/csv-util';
 import { useCurrentDomainValue } from '../hooks';
 import { theme } from '../theme-shim';
+import BAIFormItem from './BAIFormItem';
 import BAIPanelItem from './BAIPanelItem';
 import GeneratedKeypairListModal from './GeneratedKeypairListModal';
 import { passwordPattern } from './LoginFormPanel';
 import ProjectSelect from './ProjectSelect';
 import UserResourcePolicySelect from './UserResourcePolicySelect';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import {
-  Checkbox,
-  Empty,
-  Form,
-  Input,
-  Skeleton,
-  Switch,
-  Table,
-  Tag,
-  Tooltip,
-  Typography,
-  Upload,
-} from 'antd';
+  AstryxFormCheckbox,
+  AstryxFormTextArea,
+  AstryxFormTextInput,
+} from './astryx-bui/astryxFormControls';
+import { Badge } from '@astryxdesign/core/Badge';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { FileInput } from '@astryxdesign/core/FileInput';
+import { Heading } from '@astryxdesign/core/Heading';
+import { Switch } from '@astryxdesign/core/Switch';
+import { Text } from '@astryxdesign/core/Text';
+// Raw antd Table/Tooltip/Typography — kept for the CSV preview grid. See the
+// frontier comment above the "Cell renderer helpers" section for why.
+import { Form, Table, Tooltip, Typography } from 'antd';
 import {
   BAIAlert,
   BAIButton,
@@ -55,6 +58,7 @@ import {
   BAIQuestionIconWithTooltip,
   BAIRowWrapWithDividers,
   BAIText,
+  badgeVariantForTagColor,
   useBAILogger,
   useBAISignedRequestWithPromise,
 } from 'backend.ai-ui';
@@ -671,6 +675,21 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
   };
 
   // ── Cell renderer helpers ─────────────────────────────────────────────────
+  //
+  // frontier (ticket 21, MIGRATION-SPEC §0 simplicity policy): the CSV
+  // preview grid below is a raw antd `Table` (12 conditional columns, a
+  // shared error/mask cell renderer, per-field `onCell` background styling,
+  // row-validity classing) plus a second, simpler failed-rows `Table`. Astryx
+  // has no direct `Table` replacement in this ticket's scope — that's the
+  // ticket-25 `BAITable` frontier — and rebuilding this bespoke validation
+  // grid on top of it here would be exactly the "complex rebuild chasing
+  // antd parity" the simplicity policy says to avoid. PILOT-DECISION: both
+  // `<Table>` instances and every antd primitive used only inside their cell
+  // renderers (`Typography.Text`, `Tooltip`, and this helper block) are left
+  // untouched as a single unit; everything outside this Table island in the
+  // file (headings, banners, form controls, the file picker, the error-tag
+  // summary) is converted normally. Flagged in the ticket-21 batch report for
+  // the orchestrator to route to a dedicated BAITable-based rebuild.
 
   const cellStyle = (record: ValidatedRow, field: string) => ({
     style: record.fieldErrors[field]
@@ -1014,9 +1033,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
       destroyOnHidden
       title={
         <BAIFlex align="center" gap="xs">
-          <Typography.Title level={5} style={{ margin: 0 }}>
-            {t('credential.BulkCreateUserFromCSV')}
-          </Typography.Title>
+          <Heading level={5}>{t('credential.BulkCreateUserFromCSV')}</Heading>
           <BAIQuestionIconWithTooltip
             title={t('credential.BulkCreateUserFromCSVSubtitle')}
           />
@@ -1078,9 +1095,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
         {/* ── Source file section ── */}
         <BAIFlex direction="column" align="stretch" gap="sm">
           <BAIFlex align="center" gap="xs">
-            <Typography.Title level={5} style={{ margin: 0 }}>
-              {t('credential.SourceFile')}
-            </Typography.Title>
+            <Heading level={5}>{t('credential.SourceFile')}</Heading>
             <BAIQuestionIconWithTooltip
               title={t('credential.SourceFileHint')}
             />
@@ -1163,43 +1178,31 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
               </BAIFlex>
             </BAIFlex>
           ) : (
-            <Upload.Dragger
+            // antd `Upload.Dragger` was used purely as a file *picker*
+            // (`beforeUpload` returns false, `showUploadList={false}`) →
+            // `FileInput mode="dropzone"` per MAPPING.md §3.12. PILOT-DECISION:
+            // the hand-built icon-in-a-box + two-line text layout is dropped
+            // in favor of FileInput's own label/description slots
+            // (defaults-first; MIGRATION-SPEC §0 simplicity policy) — the
+            // primary/secondary line pairing is preserved via `label`/
+            // `description` instead of custom styling.
+            <FileInput
+              label={t('credential.UploadCSVFile')}
+              description={t('credential.CSVOneRowPerUser')}
+              mode="dropzone"
               accept=".csv,text/csv"
-              showUploadList={false}
-              beforeUpload={(file) => {
-                file
+              value={null}
+              onChange={(file) => {
+                const selected = Array.isArray(file) ? file[0] : file;
+                if (!selected) return;
+                selected
                   .text()
-                  .then((text) => loadCSVText(file.name, text))
+                  .then((text) => loadCSVText(selected.name, text))
                   .catch(() => {
                     message.error(t('credential.validation.CSVParseFailed'));
                   });
-                return false;
               }}
-              style={{ background: token.colorFillQuaternary }}
-            >
-              <BAIFlex
-                justify="center"
-                style={{
-                  fontSize: 40,
-                  color: token.colorPrimary,
-                  lineHeight: 1,
-                  marginBottom: token.marginSM,
-                }}
-              >
-                <FileText size="1em" />
-              </BAIFlex>
-              <Typography.Text
-                style={{ display: 'block', marginBottom: token.marginXXS }}
-              >
-                {t('credential.UploadCSVFile')}
-              </Typography.Text>
-              <Typography.Text
-                type="secondary"
-                style={{ fontSize: token.fontSizeSM }}
-              >
-                {t('credential.CSVOneRowPerUser')}
-              </Typography.Text>
-            </Upload.Dragger>
+            />
           )}
 
           {/* Action buttons */}
@@ -1217,20 +1220,18 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
         {/* ── Global defaults section ── */}
         <BAIFlex direction="column" align="stretch" gap="sm">
           <BAIFlex align="center" gap="xs">
-            <Typography.Title level={5} style={{ margin: 0 }}>
-              {t('credential.GlobalDefaults')}
-            </Typography.Title>
+            <Heading level={5}>{t('credential.GlobalDefaults')}</Heading>
             <BAIQuestionIconWithTooltip
               title={t('credential.GlobalDefaultsHint')}
             />
           </BAIFlex>
 
           <Form layout="vertical" requiredMark={false} component={false}>
-            <Form.Item
+            <BAIFormItem
               label={t('credential.Domain')}
               style={{ marginBottom: token.marginSM }}
             >
-              <Suspense fallback={<Skeleton.Input active block />}>
+              <Suspense fallback={<BAISkeletonAstryx />}>
                 <BAIDomainSelect
                   value={globalDefaults.domainName}
                   onChange={(v) => {
@@ -1243,15 +1244,15 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                   style={{ width: '100%' }}
                 />
               </Suspense>
-            </Form.Item>
+            </BAIFormItem>
 
-            <Form.Item
+            <BAIFormItem
               label={t('session.launcher.Project')}
               style={{ marginBottom: token.marginSM }}
             >
               <Suspense
                 key={globalDefaults.domainName}
-                fallback={<Skeleton.Input active block />}
+                fallback={<BAISkeletonAstryx />}
               >
                 <ProjectSelect
                   key={globalDefaults.domainName}
@@ -1274,13 +1275,13 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                   style={{ width: '100%' }}
                 />
               </Suspense>
-            </Form.Item>
+            </BAIFormItem>
 
-            <Form.Item
+            <BAIFormItem
               label={t('credential.UserResourcePolicy')}
               style={{ marginBottom: token.marginSM }}
             >
-              <Suspense fallback={<Skeleton.Input active block />}>
+              <Suspense fallback={<BAISkeletonAstryx />}>
                 <UserResourcePolicySelect
                   value={globalDefaults.resourcePolicy}
                   onChange={(v) =>
@@ -1295,63 +1296,67 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                   style={{ width: '100%' }}
                 />
               </Suspense>
-            </Form.Item>
+            </BAIFormItem>
 
-            <Form.Item
+            <BAIFormItem
               label={t('general.Password')}
               style={{ marginBottom: token.marginSM }}
             >
-              <Input.Password
-                // "new-password" takes the modal out of the browser's
-                // login-form heuristic, so Chrome stops autofilling saved
-                // credentials here and into the adjacent resource-policy
-                // combobox it would otherwise treat as the username field.
-                autoComplete="new-password"
+              {/* PILOT-DECISION: antd `Input.Password autoComplete="new-password"`
+                  (the Chrome-autofill-suppression workaround) is dropped —
+                  `AstryxFormTextInputProps` has no `autoComplete` passthrough
+                  (MIGRATION-SPEC §0 simplicity policy; not worth widening the
+                  shared adapter's type for one call site). Worst case Chrome
+                  may offer to autofill this field; it does not affect
+                  behavior. */}
+              <AstryxFormTextInput
+                label={t('general.Password')}
+                type="password"
                 value={globalDefaults.defaultPassword}
-                onChange={(e) =>
+                onChange={(next) =>
                   setGlobalDefaults((prev) => ({
                     ...prev,
-                    defaultPassword: e.target.value,
+                    defaultPassword: next,
                   }))
                 }
                 placeholder={t('credential.NoDefaultPlaceholder')}
               />
-            </Form.Item>
+            </BAIFormItem>
 
-            <Form.Item
+            <BAIFormItem
               label={t('credential.DescRequirePasswordChange')}
               tooltip={t('credential.TooltipForRequirePasswordChange')}
               style={{ marginBottom: token.marginSM }}
             >
-              <Checkbox
-                checked={globalDefaults.needPasswordChange}
-                onChange={(e) =>
+              <AstryxFormCheckbox
+                label={t('general.Enable')}
+                value={globalDefaults.needPasswordChange}
+                onChange={(next) =>
                   setGlobalDefaults((prev) => ({
                     ...prev,
-                    needPasswordChange: e.target.checked,
+                    needPasswordChange: next,
                   }))
                 }
-              >
-                {t('general.Enable')}
-              </Checkbox>
-            </Form.Item>
+              />
+            </BAIFormItem>
 
-            <Form.Item
+            <BAIFormItem
               label={t('credential.Description')}
               style={{ marginBottom: 0 }}
             >
-              <Input.TextArea
+              <AstryxFormTextArea
+                label={t('credential.Description')}
                 value={globalDefaults.description}
-                onChange={(e) =>
+                onChange={(next) =>
                   setGlobalDefaults((prev) => ({
                     ...prev,
-                    description: e.target.value,
+                    description: next,
                   }))
                 }
                 placeholder={t('credential.NoDefaultPlaceholder')}
                 rows={2}
               />
-            </Form.Item>
+            </BAIFormItem>
           </Form>
         </BAIFlex>
       </BAIFlex>
@@ -1369,9 +1374,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
         }}
       >
         <BAIFlex align="center" gap="xs">
-          <Typography.Title level={5} style={{ margin: 0 }}>
-            {t('credential.PreviewAndValidation')}
-          </Typography.Title>
+          <Heading level={5}>{t('credential.PreviewAndValidation')}</Heading>
           <BAIQuestionIconWithTooltip
             title={t('credential.ReviewBeforeCreating')}
           />
@@ -1409,14 +1412,14 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
               </BAIRowWrapWithDividers>
               <BAIFlex gap="xs" align="center">
                 <Switch
-                  size="small"
-                  checked={onlyErrors}
+                  size="sm"
+                  label={t('credential.OnlyShowErrors')}
+                  isLabelHidden
+                  value={onlyErrors}
                   onChange={setOnlyErrors}
-                  disabled={stats.withErrors === 0}
+                  isDisabled={stats.withErrors === 0}
                 />
-                <Typography.Text style={{ fontSize: token.fontSizeSM }}>
-                  {t('credential.OnlyShowErrors')}
-                </Typography.Text>
+                <Text size="sm">{t('credential.OnlyShowErrors')}</Text>
               </BAIFlex>
             </BAIFlex>
 
@@ -1435,28 +1438,23 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
               >
                 <BAIFlex gap="xs" align="center">
                   <CircleX style={{ color: token.colorError }} size="1em" />
-                  <Typography.Text strong style={{ color: token.colorError }}>
+                  <Text weight="semibold" style={{ color: token.colorError }}>
                     {t('credential.NOfMRowsError', {
                       errorCount: stats.withErrors,
                       total: stats.total,
                     })}
-                  </Typography.Text>
+                  </Text>
                 </BAIFlex>
                 <BAIFlex gap="xs" align="center" wrap="wrap">
-                  <Typography.Text
-                    type="secondary"
-                    style={{ fontSize: token.fontSizeSM, flexShrink: 0 }}
-                  >
+                  <Text color="secondary" size="sm" style={{ flexShrink: 0 }}>
                     {t('credential.IssuesFound')}
-                  </Typography.Text>
+                  </Text>
                   {errorCategories.map((cat) => (
-                    <Tag
+                    <Badge
                       key={cat.key}
-                      color="error"
-                      style={{ fontSize: token.fontSizeSM, margin: 0 }}
-                    >
-                      {cat.label} · {cat.count}
-                    </Tag>
+                      variant={badgeVariantForTagColor('error')}
+                      label={`${cat.label} · ${cat.count}`}
+                    />
                   ))}
                 </BAIFlex>
               </BAIFlex>
@@ -1484,9 +1482,11 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
             />
           </>
         ) : (
-          <Empty
-            image={Empty.PRESENTED_IMAGE_SIMPLE}
-            description={t('credential.NoFileLoaded')}
+          // The former `description` string becomes the required `title`;
+          // the simple placeholder illustration is dropped (EmptyState has
+          // no built-in "simple" image, only an optional custom `icon`).
+          <EmptyState
+            title={t('credential.NoFileLoaded')}
             style={{
               flex: 1,
               display: 'flex',

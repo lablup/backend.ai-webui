@@ -5,8 +5,9 @@
 import AdminUserCredentialList from '../components/AdminUserCredentialList';
 import AdminUserManagement from '../components/AdminUserManagement';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
+import BAISkeletonAstryx from '../components/astryx-bui/BAISkeletonAstryx';
 import { useTabQuerySnapshot } from '../hooks';
-import { Skeleton } from 'antd';
+// frontier type import (BAICard tabList shape, ticket 30)
 import { CardTabListType } from 'antd/es/card';
 import { BAIFlex, BAICard } from 'backend.ai-ui';
 import { parseAsStringLiteral } from 'nuqs';
@@ -39,7 +40,7 @@ const AdminUsersPage: React.FC = () => {
       onTabChange={onTabChange}
       tabList={tabItems}
     >
-      <Suspense fallback={<Skeleton active />}>
+      <Suspense fallback={<BAISkeletonAstryx />}>
         {currentTab === 'users' && (
           <BAIErrorBoundary>
             <BAIFlex direction="column" align="stretch">

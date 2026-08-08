@@ -2,8 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { Form, Checkbox, type FormItemProps } from 'antd';
-import { CheckboxChangeEvent } from 'antd/es/checkbox';
+import BAIFormItem from './BAIFormItem';
+import type { BAIFormItemProps } from './BAIFormItem';
+import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
+import { Form } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import React, {
   Attributes,
@@ -14,7 +16,7 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 
-interface FormItemWithUnlimitedProps extends FormItemProps {
+interface FormItemWithUnlimitedProps extends BAIFormItemProps {
   unlimitedValue?: number | string | null;
   disableUnlimited?: boolean;
 }
@@ -61,27 +63,31 @@ const FormItemWithUnlimited: React.FC<FormItemWithUnlimitedProps> = ({
 
   return (
     <BAIFlex direction="column" align="start">
-      <Form.Item
+      <BAIFormItem
         style={{ margin: 0 }}
         name={name}
         hidden={isUnlimited}
         {...formItemPropsWithoutNameAndChildren}
       >
         {childrenWithProps}
-      </Form.Item>
+      </BAIFormItem>
       {isUnlimited ? (
-        <Form.Item
+        <BAIFormItem
           style={{ margin: 0 }}
           {...formItemPropsWithoutNameAndChildren}
         >
           {childrenWithUndefinedValue}
-        </Form.Item>
+        </BAIFormItem>
       ) : null}
-      <Checkbox
-        checked={isUnlimited}
-        disabled={disableUnlimited}
-        onChange={(e: CheckboxChangeEvent) => {
-          const checked = e.target.checked;
+      {/* Outside the Form.Item value-binding contract: this checkbox drives
+          isUnlimited local state and imperatively pokes the form value, so
+          it stays a plain Astryx control rather than the AstryxFormCheckbox
+          adapter (which exists for controls Form.Item clones props onto). */}
+      <CheckboxInput
+        label={t('resourcePolicy.Unlimited')}
+        value={isUnlimited}
+        isDisabled={disableUnlimited}
+        onChange={(checked) => {
           setIsUnlimited(checked);
           if (checked) {
             // Use null instead of undefined because Ant Design may treat
@@ -91,9 +97,7 @@ const FormItemWithUnlimited: React.FC<FormItemWithUnlimitedProps> = ({
             form.resetFields([name]);
           }
         }}
-      >
-        {t('resourcePolicy.Unlimited')}
-      </Checkbox>
+      />
     </BAIFlex>
   );
 };

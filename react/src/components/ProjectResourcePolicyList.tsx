@@ -18,7 +18,7 @@ import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import ProjectResourcePolicySettingModal from './ProjectResourcePolicySettingModal';
-import { Button, Tooltip } from 'antd';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import type { ColumnType } from 'antd/es/table';
 import {
   filterOutEmpty,
@@ -221,8 +221,8 @@ const ProjectResourcePolicyList: React.FC<
     <BAIFlex direction="column" align="stretch" gap="sm">
       <BAIFlex direction="row" justify="end" wrap="wrap" gap={'xs'}>
         <BAIFlex gap={'xs'}>
-          <Tooltip title={t('button.Refresh')}>
-            <Button
+          <Tooltip content={t('button.Refresh')}>
+            <BAIButton
               icon={<RotateCw size="1em" />}
               loading={isRefetchPending}
               onClick={() => {

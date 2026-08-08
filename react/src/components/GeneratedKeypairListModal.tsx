@@ -8,7 +8,7 @@ import {
 } from '../__generated__/GeneratedKeypairListModalFragment.graphql';
 import { localeCompare } from '../helper';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
-import { Alert } from 'antd';
+import { Banner } from '@astryxdesign/core/Banner';
 import {
   BAIFlex,
   BAIModal,
@@ -89,14 +89,12 @@ const GeneratedKeypairListModal: React.FC<GeneratedKeypairListModalProps> = ({
       {...modalProps}
     >
       <BAIFlex direction="column" align="stretch" gap="sm">
-        <Alert
-          showIcon
-          type="success"
+        <Banner
+          status="success"
           title={t('credential.GeneratedKeypairSuccess')}
         />
-        <Alert
-          showIcon
-          type="warning"
+        <Banner
+          status="warning"
           title={t('credential.GeneratedKeypairWarning')}
         />
         <BAIText>{t('credential.GeneratedKeypairInfo')}</BAIText>
