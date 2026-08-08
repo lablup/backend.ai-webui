@@ -14,25 +14,23 @@ of *why* it is not green yet.
 
 | Metric | Files |
 |---|---:|
-| Scanned (shipping source) | 968 |
-| Import antd directly | 256 |
-| Reach antd transitively | 446 |
-| antd-free | 266 |
+| Scanned (shipping source) | 972 |
+| Import antd directly | 71 |
+| Reach antd transitively | 620 |
+| antd-free | 281 |
 
 ## Bucket 1 — RENDER (real conversion work)
 
-246 files import antd **values**. Each needs an Astryx
+61 files import antd **values**. Each needs an Astryx
 equivalent and a visual check — this is the number to plan against.
 
 | Owner | Files |
 |---|---:|
-| app · components | 143 |
-| BUI · components | 33 |
 | BUI · infrastructure (shims, hooks, helper) | 29 |
-| BUI · fragments | 27 |
+| app · components | 18 |
 | app · pages | 9 |
 | app · other | 4 |
-| BUI · Table | 1 |
+| BUI · components | 1 |
 
 ## Bucket 2 — TYPE-ONLY (cheap, ships nothing)
 
@@ -89,24 +87,24 @@ Converting a hub clears its whole dependent set at once.
 
 | File | Taints |
 |---|---:|
-| `packages/backend.ai-ui/src/locale/index.ts` | 636 |
-| `packages/backend.ai-ui/src/theme-shim/index.tsx` | 624 |
-| `packages/backend.ai-ui/src/app-shim/bridge.ts` | 578 |
-| `packages/backend.ai-ui/src/app-shim/index.tsx` | 576 |
-| `packages/backend.ai-ui/src/components/BAIButton.tsx` | 576 |
-| `packages/backend.ai-ui/src/form-engine/index.ts` | 575 |
-| `packages/backend.ai-ui/src/components/BAISelect.tsx` | 574 |
-| `packages/backend.ai-ui/src/components/provider/BAIConfigProvider/BAIConfigProvider.tsx` | 572 |
-| `packages/backend.ai-ui/src/components/unsafe/UNSAFELazyUserEmailView.tsx` | 572 |
-| `packages/backend.ai-ui/src/components/BAIBackButton.tsx` | 571 |
-| `packages/backend.ai-ui/src/components/BAIBulkEditFormItem.tsx` | 571 |
-| `packages/backend.ai-ui/src/components/BAICard.tsx` | 571 |
-| `packages/backend.ai-ui/src/components/BAICheckbox.tsx` | 571 |
-| `packages/backend.ai-ui/src/components/BAIDynamicUnitInputNumber.tsx` | 571 |
-| `packages/backend.ai-ui/src/components/BAIFetchKeyButton.tsx` | 571 |
-| `packages/backend.ai-ui/src/components/BAINotificationItem.tsx` | 571 |
-| `packages/backend.ai-ui/src/components/BAINumberWithUnit.tsx` | 571 |
-| `packages/backend.ai-ui/src/components/BAIProgressWithLabel.tsx` | 571 |
-| `packages/backend.ai-ui/src/components/BAIQuestionIconWithTooltip.tsx` | 571 |
-| `packages/backend.ai-ui/src/components/BAISelectionLabel.tsx` | 571 |
+| `packages/backend.ai-ui/src/locale/index.ts` | 652 |
+| `packages/backend.ai-ui/src/theme-shim/index.tsx` | 613 |
+| `packages/backend.ai-ui/src/app-shim/bridge.ts` | 579 |
+| `packages/backend.ai-ui/src/app-shim/index.tsx` | 577 |
+| `packages/backend.ai-ui/src/form-engine/index.ts` | 576 |
+| `packages/backend.ai-ui/src/components/provider/BAIConfigProvider/BAIConfigProvider.tsx` | 573 |
+| `packages/backend.ai-ui/src/hooks/useSchedulingHistoryExpandable.tsx` | 572 |
+| `packages/backend.ai-ui/src/components/fragments/BAIRuntimeVariantPresetSettingModal.tsx` | 571 |
+| `react/src/form-engine/index.ts` | 408 |
+| `react/src/components/BAIFormItem.tsx` | 395 |
+| `packages/backend.ai-ui/src/locale/de_DE.ts` | 390 |
+| `packages/backend.ai-ui/src/locale/el_GR.ts` | 390 |
+| `packages/backend.ai-ui/src/locale/en_US.ts` | 390 |
+| `packages/backend.ai-ui/src/locale/es_ES.ts` | 390 |
+| `packages/backend.ai-ui/src/locale/fi_FI.ts` | 390 |
+| `packages/backend.ai-ui/src/locale/fr_FR.ts` | 390 |
+| `packages/backend.ai-ui/src/locale/id_ID.ts` | 390 |
+| `packages/backend.ai-ui/src/locale/it_IT.ts` | 390 |
+| `packages/backend.ai-ui/src/locale/ja_JP.ts` | 390 |
+| `packages/backend.ai-ui/src/locale/ko_KR.ts` | 390 |
 
