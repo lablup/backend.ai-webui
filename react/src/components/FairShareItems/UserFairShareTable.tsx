@@ -7,7 +7,7 @@ import {
   UserFairShareTableFragment$key,
 } from '../../__generated__/UserFairShareTableFragment.graphql';
 import { theme } from '../../theme-shim';
-import { Divider, Typography } from 'antd';
+import { Divider } from '@astryxdesign/core/Divider';
 import {
   BAIQuestionIconWithTooltip,
   BAIColumnsType,
@@ -15,6 +15,7 @@ import {
   BAINameActionCell,
   BAIResourceNumberWithIcon,
   BAITableAstryx,
+  BAIText,
   BAITableProps,
   toFixedFloorWithoutTrailingZeros,
 } from 'backend.ai-ui';
@@ -157,17 +158,14 @@ const UserFairShareTable: React.FC<UserFairShareTableProps> = ({
       dataIndex: ['spec', 'weight'],
       render: (weight, record) => (
         <BAIFlex gap="xxs">
-          <Typography.Text>
+          <BAIText>
             {_.isNil(weight)
               ? '-'
               : toFixedFloorWithoutTrailingZeros(weight, 1)}
-          </Typography.Text>
-          <Typography.Text
-            type="secondary"
-            style={{ fontSize: token.fontSizeSM }}
-          >
+          </BAIText>
+          <BAIText type="secondary" style={{ fontSize: token.fontSizeSM }}>
             {record.spec.usesDefault ? `(${t('fairShare.UsingDefault')})` : ''}
-          </Typography.Text>
+          </BAIText>
         </BAIFlex>
       ),
     },
@@ -211,15 +209,15 @@ const UserFairShareTable: React.FC<UserFairShareTableProps> = ({
               (entry: { resourceType: string; quantity: number }, index) => (
                 <BAIFlex key={entry.resourceType} gap="sm" align="center">
                   {index > 0 && (
-                    <Divider type="vertical" style={{ margin: 0 }} />
+                    <Divider orientation="vertical" style={{ margin: 0 }} />
                   )}
                   <BAIResourceNumberWithIcon
                     type={entry.resourceType}
                     value={toFixedFloorWithoutTrailingZeros(entry.quantity, 2)}
                     extra={
-                      <Typography.Text type="secondary">
+                      <BAIText type="secondary">
                         / {t('fairShare.DayUnit')}
-                      </Typography.Text>
+                      </BAIText>
                     }
                   />
                 </BAIFlex>

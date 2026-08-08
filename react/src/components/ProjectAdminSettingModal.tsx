@@ -9,7 +9,8 @@ import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { useWebUINavigate } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { Alert, Tooltip } from 'antd';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIButton,
   BAIFlex,
@@ -234,7 +235,7 @@ const ProjectAdminSettingModal = ({
         <BAIFlex align="center">
           {t('project.SetProjectAdmin')}
           {role && (
-            <Tooltip title={t('project.ViewRBACPermissions')}>
+            <Tooltip content={t('project.ViewRBACPermissions')}>
               <BAIButton
                 type="text"
                 size="small"
@@ -260,12 +261,10 @@ const ProjectAdminSettingModal = ({
       {...modalProps}
     >
       <BAIFlex direction="column" align="stretch" gap="sm">
-        <Alert type="info" showIcon title={t('project.DescSetProjectAdmin')} />
-        <Alert
-          type="warning"
-          showIcon
-          title={t('project.DescRevokeProjectAdmin')}
-        />
+        {/* antd `Alert` → `Banner` (MAPPING §4): `type` → `status`, `showIcon`
+            dropped (Banner always renders its status icon). */}
+        <Banner status="info" title={t('project.DescSetProjectAdmin')} />
+        <Banner status="warning" title={t('project.DescRevokeProjectAdmin')} />
         <Form ref={formRef}>
           <BAIFlex gap="xs" align="start">
             <Suspense
@@ -315,7 +314,7 @@ const ProjectAdminSettingModal = ({
               key: 'control',
               title: t('general.Control'),
               render: (__, record) => (
-                <Tooltip title={t('project.RevokeProjectAdmin')}>
+                <Tooltip content={t('project.RevokeProjectAdmin')}>
                   <BAIButton
                     type="text"
                     size="small"

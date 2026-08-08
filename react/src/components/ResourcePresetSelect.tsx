@@ -10,9 +10,13 @@ import { localeCompare } from '../helper';
 import { ResourceSlotName, useResourceSlots } from '../hooks/backendai';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { theme } from '../theme-shim';
+import type {
+  SelectorOptionData,
+  SelectorOptionType,
+} from '@astryxdesign/core/Selector';
+import { Selector } from '@astryxdesign/core/Selector';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { useThrottleFn } from 'ahooks';
-import { Select, Tooltip } from 'antd';
-import { SelectProps } from 'antd/lib';
 import {
   useUpdatableState,
   BAIFlex,
@@ -21,32 +25,42 @@ import {
 import * as _ from 'lodash-es';
 import { SquarePen, Info } from 'lucide-react';
 import React, { useEffect, useTransition } from 'react';
+import type { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-type Y = ArrayElement<NonNullable<SelectProps['options']>>;
-interface PresetOptionType extends Y {
-  options?: PresetOptionType[];
-  preset?: {
-    name: string;
-    resource_slots: string;
-    shared_memory: string;
-  };
+/**
+ * The option shape this component hands back through `onChange`. It used to be
+ * derived from antd's `SelectProps['options']` element; now it is stated
+ * directly, because the only consumer
+ * (`SessionFormItems/ResourceAllocationFormItems`) reads nothing but the value.
+ */
+export interface PresetOptionType extends SelectorOptionData {
+  preset?: ResourcePreset;
 }
 
 export type ResourcePreset = NonNullable<
   NonNullable<ResourcePresetSelectQuery$data['resource_presets']>[number]
 >;
-export interface ResourcePresetSelectProps extends Omit<
-  SelectProps,
-  'onChange'
-> {
+
+/**
+ * PILOT-DECISION: the `extends Omit<SelectProps,'onChange'>` surface is
+ * replaced by the props the single call site actually passes (P1 — grepped,
+ * not guessed: `showCustom`, `showMinimumRequired`, `onChange`,
+ * `allocatablePresetNames`, `resourceGroup`; the Form injects `value`), plus
+ * the usual disabled/loading/style trio.
+ */
+export interface ResourcePresetSelectProps {
+  /** Injected by `Form.Item`. */
+  value?: string;
   onChange?: (value: string, options: PresetOptionType) => void;
   allocatablePresetNames?: string[];
   showMinimumRequired?: boolean;
   showCustom?: boolean;
   resourceGroup?: string;
   autoSelectDefault?: boolean;
+  disabled?: boolean;
+  style?: CSSProperties;
 }
 const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
   allocatablePresetNames,
@@ -54,6 +68,8 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
   showMinimumRequired,
   resourceGroup,
   autoSelectDefault,
+  disabled,
+  style,
   ...selectProps
 }) => {
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
@@ -114,131 +130,135 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     if (autoSelectDefault && !controllableValue && firstAvailablePresetName) {
       setControllableValue(firstAvailablePresetName, {
         value: firstAvailablePresetName,
-        selectedLabel: firstAvailablePresetName,
+        label: firstAvailablePresetName,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoSelectDefault, firstAvailablePresetName]);
 
+  // PILOT-DECISION: antd `optionLabelProp="selectedLabel"` let an option carry
+  // a rich `label` node for the popup and a plain string for the trigger.
+  // Astryx `Selector` splits that natively — `label` IS the plain string (P2,
+  // required), and the rich row moves into `renderOption` — so the parallel
+  // `selectedLabel` field disappears rather than being emulated.
+  const presetOptions: PresetOptionType[] = _.map(
+    resourcePresets,
+    (preset) => ({
+      value: preset?.name ?? '',
+      label: preset?.name ?? '',
+      disabled: allocatablePresetNames
+        ? !allocatablePresetNames.includes(preset?.name || '')
+        : undefined,
+      preset: preset ?? undefined,
+    }),
+  )
+    .sort((a, b) => (a.disabled === b.disabled ? 0 : a.disabled ? 1 : -1))
+    .sort((a, b) => localeCompare(a.value, b.value));
+
+  const renderResourceRow = (option: SelectorOptionData) => {
+    if (option.value === 'minimum-required') {
+      return (
+        <BAIFlex gap={'xs'}>
+          {t('session.launcher.MiniumAllocation')}
+          <Tooltip content={t('session.launcher.MiniumAllocationTooltip')}>
+            <Info
+              style={{
+                color: token.colorTextSecondary,
+              }}
+              size="1em"
+            />
+          </Tooltip>
+        </BAIFlex>
+      );
+    }
+    const preset = presetOptions.find((o) => o.value === option.value)?.preset;
+    if (!preset) return option.label;
+    const slotsInfo: {
+      [key in ResourceSlotName]: string;
+    } = JSON.parse(preset.resource_slots || '{}');
+    return (
+      <BAIFlex direction="row" justify="between" gap={'xs'} style={{ flex: 1 }}>
+        {preset.name}
+        <BAIFlex direction="row" gap={'xxs'}>
+          {_.map(
+            _.omitBy(slotsInfo, (_slot, key) =>
+              _.isEmpty(resourceSlots[key as ResourceSlotName]),
+            ),
+            (slot, key) => {
+              return (
+                <BAIResourceNumberWithIcon
+                  key={key}
+                  // @ts-ignore
+                  type={key}
+                  value={slot}
+                  hideTooltip
+                  opts={
+                    key === 'mem' && preset.shared_memory
+                      ? { shmem: Number(preset.shared_memory) }
+                      : {}
+                  }
+                />
+              );
+            },
+          )}
+        </BAIFlex>
+      </BAIFlex>
+    );
+  };
+
+  const options: SelectorOptionType[] = [
+    ...(showCustom
+      ? [
+          {
+            value: 'custom',
+            label: t('session.launcher.CustomAllocation'),
+            icon: <SquarePen size="1em" />,
+          },
+        ]
+      : []),
+    ...(showMinimumRequired
+      ? [
+          {
+            value: 'minimum-required',
+            label: t('session.launcher.MiniumAllocation'),
+          },
+        ]
+      : []),
+    // antd `Select.OptGroup` → Astryx `{type: 'section'}` (a native option
+    // kind, MAPPING §3.1 notwithstanding — `Selector` grew sections in 0.3.0).
+    { type: 'section' as const, title: 'Preset', options: presetOptions },
+  ];
+
   return (
-    <Select
-      loading={isPendingUpdate}
-      popupMatchSelectWidth={false}
-      options={[
-        ...(showCustom
-          ? [
-              {
-                value: 'custom',
-                label: (
-                  <BAIFlex gap={'xs'} style={{ display: 'inline-flex' }}>
-                    <SquarePen size="1em" />{' '}
-                    {t('session.launcher.CustomAllocation')}
-                  </BAIFlex>
-                ),
-                selectedLabel: t('session.launcher.CustomAllocation'),
-              },
-            ]
-          : []),
-        ...(showMinimumRequired
-          ? [
-              {
-                value: 'minimum-required',
-                label: (
-                  <BAIFlex gap={'xs'}>
-                    {t('session.launcher.MiniumAllocation')}
-                    <Tooltip
-                      title={t('session.launcher.MiniumAllocationTooltip')}
-                    >
-                      <Info
-                        style={{
-                          color: token.colorTextSecondary,
-                        }}
-                        size="1em"
-                      />
-                    </Tooltip>
-                  </BAIFlex>
-                ),
-                selectedLabel: t('session.launcher.MiniumAllocation'),
-              },
-            ]
-          : []),
-        {
-          // value: 'preset1',
-          label: 'Preset',
-          // @ts-ignore
-          options: _.map(resourcePresets, (preset) => {
-            const slotsInfo: {
-              [key in ResourceSlotName]: string;
-            } = JSON.parse(preset?.resource_slots || '{}');
-            const disabled = allocatablePresetNames
-              ? !allocatablePresetNames.includes(preset?.name || '')
-              : undefined;
-            return {
-              value: preset?.name,
-              selectedLabel: preset?.name,
-              label: (
-                <BAIFlex direction="row" justify="between" gap={'xs'}>
-                  {preset?.name}
-                  <BAIFlex
-                    direction="row"
-                    gap={'xxs'}
-                    style={
-                      {
-                        // color: 'black',
-                        // opacity: isAvailable ? 1 : 0.4,
-                      }
-                    }
-                  >
-                    {_.map(
-                      _.omitBy(slotsInfo, (_slot, key) =>
-                        _.isEmpty(resourceSlots[key as ResourceSlotName]),
-                      ),
-                      (slot, key) => {
-                        return (
-                          <BAIResourceNumberWithIcon
-                            key={key}
-                            // @ts-ignore
-                            type={key}
-                            value={slot}
-                            hideTooltip
-                            opts={
-                              key === 'mem' && preset?.shared_memory
-                                ? { shmem: preset?.shared_memory }
-                                : {}
-                            }
-                          />
-                        );
-                      },
-                    )}
-                  </BAIFlex>
-                </BAIFlex>
-              ),
-              preset,
-              disabled: disabled,
-            };
-          })
-            .sort(
-              (
-                a,
-                b, // by disabled
-              ) => (a.disabled === b.disabled ? 0 : a.disabled ? 1 : -1),
-            )
-            .sort((a, b) => localeCompare(a.value, b.value)), // by name
-        },
-      ]}
-      showSearch
-      // Set props from parent and override it
-      {...selectProps}
-      value={controllableValue}
-      onChange={setControllableValue}
-      optionLabelProp="selectedLabel"
-      onOpenChange={(open) => {
-        selectProps.onOpenChange && selectProps.onOpenChange(open);
-        if (open) {
-          updateFetchKeyUnderTransition();
-        }
+    // PILOT-DECISION: antd `onOpenChange` (used only to throttle-refetch the
+    // presets when the popup opens) has no Astryx equivalent. Rather than lose
+    // the refresh, the same trigger is read one level up — a `display:contents`
+    // wrapper that sees the pointer-down that opens the popup.
+    <div
+      style={{ display: 'contents' }}
+      onPointerDownCapture={() => {
+        updateFetchKeyUnderTransition();
       }}
-    ></Select>
+    >
+      <Selector
+        label={t('session.launcher.ResourcePresets')}
+        isLabelHidden
+        isLoading={isPendingUpdate}
+        isDisabled={disabled}
+        style={style}
+        width="100%"
+        hasSearch
+        options={options}
+        renderOption={renderResourceRow}
+        value={controllableValue ?? ''}
+        onChange={(next) =>
+          setControllableValue(
+            next,
+            presetOptions.find((o) => o.value === next) ?? { value: next },
+          )
+        }
+      />
+    </div>
   );
 };
 

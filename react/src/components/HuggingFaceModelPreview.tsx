@@ -3,10 +3,15 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useTanQuery } from '../hooks/reactQueryAlias';
-import { Alert, Tag, Tooltip, Typography } from 'antd';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Link } from '@astryxdesign/core/Link';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
+  badgeVariantForTagColor,
   BAICard,
   BAIFlex,
+  BAIText,
   convertToBinaryUnit,
   useDebouncedDeferredValue,
 } from 'backend.ai-ui';
@@ -110,9 +115,9 @@ const HuggingFaceModelPreview: React.FC<HuggingFaceModelPreviewProps> = ({
 
   if (isError) {
     return (
-      <Typography.Text type="secondary">
+      <BAIText type="secondary">
         {t('import.HuggingFaceModelInfoUnavailable')}
-      </Typography.Text>
+      </BAIText>
     );
   }
 
@@ -122,9 +127,9 @@ const HuggingFaceModelPreview: React.FC<HuggingFaceModelPreviewProps> = ({
 
   if ('isMissingOrPrivate' in data) {
     return (
-      <Typography.Text type="danger">
+      <BAIText type="danger">
         {t('import.HuggingFaceModelNotFoundOrPrivate')}
-      </Typography.Text>
+      </BAIText>
     );
   }
 
@@ -134,21 +139,35 @@ const HuggingFaceModelPreview: React.FC<HuggingFaceModelPreviewProps> = ({
     <BAICard
       size="small"
       title={
-        <Typography.Link
+        // antd `Typography.Link` → Astryx `Link` (MAPPING §3.16); this site
+        // already carries an `href`, so it is the anchor-first branch.
+        <Link
           href={`https://huggingface.co/${data.id}`}
           target="_blank"
           rel="noreferrer"
         >
           {data.id}
-        </Typography.Link>
+        </Link>
       }
       styles={{ body: { paddingTop: 0 } }}
     >
       <BAIFlex direction="column" align="stretch" gap="xs">
         {(data.pipeline_tag || data.library_name) && (
           <BAIFlex gap="xxs" wrap="wrap">
-            {data.pipeline_tag && <Tag>{data.pipeline_tag}</Tag>}
-            {data.library_name && <Tag>{data.library_name}</Tag>}
+            {/* antd `Tag` with no `color` → Astryx `Badge` through the
+                repo-global lookup (ticket 13); never a hand-picked hue. */}
+            {data.pipeline_tag && (
+              <Badge
+                label={data.pipeline_tag}
+                variant={badgeVariantForTagColor(undefined)}
+              />
+            )}
+            {data.library_name && (
+              <Badge
+                label={data.library_name}
+                variant={badgeVariantForTagColor(undefined)}
+              />
+            )}
           </BAIFlex>
         )}
         <BAIFlex gap="md" wrap="wrap">
@@ -156,32 +175,35 @@ const HuggingFaceModelPreview: React.FC<HuggingFaceModelPreviewProps> = ({
             // The caveat behind this tooltip changes what the number means,
             // so it has to be reachable without a pointer: the trigger is
             // focusable and opens on focus as well as hover.
+            // antd `trigger={['hover','focus']}` → `focusTrigger="always"`:
+            // Astryx attaches focus listeners only to naturally focusable
+            // triggers by default, and this one is a `tabIndex={0}` span.
             <Tooltip
-              title={t('import.HuggingFaceModelSizeIncludesAllRevisions')}
-              trigger={['hover', 'focus']}
+              content={t('import.HuggingFaceModelSizeIncludesAllRevisions')}
+              focusTrigger="always"
             >
-              <Typography.Text type="secondary" tabIndex={0}>
+              <BAIText type="secondary" tabIndex={0}>
                 {t('import.HuggingFaceModelSize')}: {size}
-              </Typography.Text>
+              </BAIText>
             </Tooltip>
           )}
           {data.lastModified && (
-            <Typography.Text type="secondary">
+            <BAIText type="secondary">
               {t('general.UpdatedAt')}:{' '}
               {dayjs(data.lastModified).format('ll LT')}
-            </Typography.Text>
+            </BAIText>
           )}
         </BAIFlex>
+        {/* antd `Alert` → `Banner` (MAPPING §4): `type` → `status`, `showIcon`
+            dropped (Banner always shows its status icon). */}
         {data.disabled ? (
-          <Alert
-            type="error"
-            showIcon
+          <Banner
+            status="error"
             title={t('import.HuggingFaceModelIsDisabled')}
           />
         ) : data.gated ? (
-          <Alert
-            type="warning"
-            showIcon
+          <Banner
+            status="warning"
             title={t('import.HuggingFaceModelIsGated')}
           />
         ) : null}

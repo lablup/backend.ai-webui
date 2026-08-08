@@ -8,7 +8,6 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
-import { RcFile } from 'antd/es/upload';
 import { BAILink, toLocalId, useConnectedBAIClient } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { atom, useAtom, useSetAtom } from 'jotai';
@@ -18,6 +17,19 @@ import PQueue from 'p-queue';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as tus from 'tus-js-client';
+
+/**
+ * antd/rc-upload `RcFile`, restated locally (MAPPING §6 — a type-only antd
+ * import still keeps the file in the antd import graph, P15). The shape is
+ * verbatim: rc-upload's `interface RcFile extends File { uid: string }` plus
+ * antd's `readonly lastModifiedDate: Date`. Declared structurally so it stays
+ * mutually assignable with BUI's own (still antd-typed) `onUpload` signature
+ * while that side of the frontier catches up.
+ */
+export interface RcFile extends File {
+  uid: string;
+  readonly lastModifiedDate: Date;
+}
 
 type uploadStartFunction = (callbacks?: {
   onProgress?: (

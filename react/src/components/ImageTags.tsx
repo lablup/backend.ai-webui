@@ -9,7 +9,6 @@ import { theme } from '../theme-shim';
 import ImageMetaIcon from './ImageMetaIcon';
 import TextHighlighter from './TextHighlighter';
 import { Badge } from '@astryxdesign/core/Badge';
-import type { TagProps } from 'antd';
 import {
   BAIDoubleTag,
   BAIFlex,
@@ -19,6 +18,18 @@ import {
 import * as _ from 'lodash-es';
 import React from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
+
+/**
+ * The antd-shaped slice of `TagProps` these components actually read, restated
+ * locally (MAPPING §6): a type-only antd import still holds the module — and
+ * everything downstream of it — inside the antd import graph (P15). Grepped,
+ * not guessed: no call site of `ImageTags` / `SessionKernelTags` passes any
+ * `TagProps` key other than `color`.
+ */
+interface ImageTagColorProps {
+  /** antd `Tag` colour, routed through `badgeVariantForTagColor`. */
+  color?: string;
+}
 
 interface ImageAliasNameAndBaseVersionTagsProps extends Omit<
   DoubleTagObjectValue,
@@ -49,7 +60,7 @@ const ImageAliasNameAndBaseVersionTags: React.FC<
   );
 };
 
-interface BaseImageTagsProps extends TagProps {
+interface BaseImageTagsProps extends ImageTagColorProps {
   image: string | null;
 }
 // Frontier note (ticket 19): the public prop surfaces keep their antd shape
@@ -68,7 +79,7 @@ const BaseImageTags: React.FC<BaseImageTagsProps> = ({ image, ...props }) => {
   );
 };
 
-interface ArchitectureTagsProps extends TagProps {
+interface ArchitectureTagsProps extends ImageTagColorProps {
   image: string | null;
 }
 const ArchitectureTags: React.FC<ArchitectureTagsProps> = ({
@@ -99,7 +110,7 @@ const SessionKernelTags: React.FC<{
   );
 });
 
-interface ImageTagsProps extends TagProps {
+interface ImageTagsProps extends ImageTagColorProps {
   tag: string;
   labels: Array<{ key: string; value: string }>;
   highlightKeyword?: string;

@@ -23,7 +23,7 @@ import { theme } from '../theme-shim';
 import StoragePermissionEditModal, {
   type PermissionEditTarget,
 } from './StoragePermissionEditModal';
-import { Tooltip, Typography } from 'antd';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIButton,
   BAIFetchKeyButton,
@@ -36,6 +36,7 @@ import {
   BAIUnmountAfterClose,
   toLocalId,
   useFetchKey,
+  BAIText,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CircleCheck, CircleX, SquarePenIcon } from 'lucide-react';
@@ -336,7 +337,7 @@ const ProjectStoragePermissionTable: React.FC<
                 onClearSelection={() => setSelectedRowKeys([])}
               />
               <Tooltip
-                title={t('storageHost.permission.EditPermissionsAction')}
+                content={t('storageHost.permission.EditPermissionsAction')}
               >
                 <BAIButton
                   icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
@@ -408,12 +409,12 @@ const ProjectStoragePermissionTable: React.FC<
             render: (_value: ProjectRow, row: ProjectRow) => (
               <BAINameActionCell
                 title={
-                  <Typography.Text
+                  <BAIText
                     ellipsis={{ tooltip: row.basicInfo?.name }}
                     style={{ maxWidth: 160 }}
                   >
                     {row.basicInfo?.name}
-                  </Typography.Text>
+                  </BAIText>
                 }
                 showActions="always"
                 actions={[

@@ -11,8 +11,9 @@ import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useSwitchProject } from '../hooks/useRouteScope';
 import { theme } from '../theme-shim';
 import FolderCreateModalV2 from './FolderCreateModalV2';
+import BAIPopconfirm from './astryx-bui/BAIPopconfirmAstryx';
+import { Banner } from '@astryxdesign/core/Banner';
 import { useToggle } from 'ahooks';
-import { Alert, Popconfirm } from 'antd';
 import {
   BAIButton,
   BAIModalProps,
@@ -238,10 +239,11 @@ const ImportArtifactRevisionToFolderModal = ({
           validateTrigger={['onChange', 'onBlur']}
         >
           <BAIFlex direction="column" align="stretch">
-            <Alert
-              type="warning"
+            {/* antd `Alert` → `Banner` (MAPPING §4): `type` → `status`,
+                `showIcon` dropped (Banner always renders its status icon). */}
+            <Banner
+              status="warning"
               title={t('importArtifactRevisionToFolderModal.OverwriteWarning')}
-              showIcon
               style={{ marginBottom: token.marginMD }}
             />
             <Form.Item
@@ -281,7 +283,12 @@ const ImportArtifactRevisionToFolderModal = ({
                     }}
                   />
                 ) : (
-                  <Popconfirm
+                  // antd `Popconfirm` → `BAIPopconfirmAstryx` (MAPPING §2
+                  // "NONE" → Popover + buttons). Switching the current project
+                  // is reversible, so it stays in the anchored-confirmation
+                  // tier rather than escalating to an AlertDialog
+                  // (`.claude/rules/destructive-confirmation.md`).
+                  <BAIPopconfirm
                     title={t(
                       'importArtifactRevisionToFolderModal.ModelStoreProjectRequired',
                     )}
@@ -318,7 +325,7 @@ const ImportArtifactRevisionToFolderModal = ({
                     }}
                   >
                     <BAIButton icon={<PlusIcon />} />
-                  </Popconfirm>
+                  </BAIPopconfirm>
                 )}
               </BAIFlex>
             </Form.Item>

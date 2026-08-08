@@ -13,7 +13,9 @@ import {
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import HuggingFaceModelPreview from './HuggingFaceModelPreview';
-import { Button, Input, Space, Tooltip } from 'antd';
+import { AstryxFormTextInput } from './astryxFormControls';
+import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
+import { IconButton } from '@astryxdesign/core/IconButton';
 import {
   BAIButton,
   BAIFlex,
@@ -255,7 +257,10 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
             },
           ]}
         >
-          <Input placeholder="https://huggingface.co/openai/gpt-oss-20b" />
+          <AstryxFormTextInput
+            label={t('import.HuggingFaceModelUrlOrId')}
+            placeholder="https://huggingface.co/openai/gpt-oss-20b"
+          />
         </Form.Item>
         {/* The preview must stay mounted even while the input is
             unparseable: `useDebounce` seeds its state with the current
@@ -283,7 +288,10 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
           label={t('import.HuggingFaceRevision')}
           rules={[{ type: 'string', max: 200 }]}
         >
-          <Input placeholder="main" />
+          <AstryxFormTextInput
+            label={t('import.HuggingFaceRevision')}
+            placeholder="main"
+          />
         </Form.Item>
         <Form.Item
           name="token"
@@ -291,7 +299,14 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
           rules={[{ type: 'string', max: 512 }]}
           extra={t('import.HuggingFaceTokenAdminVisibleWarning')}
         >
-          <Input.Password autoComplete="off" />
+          {/* antd `Input.Password` → `TextInput type="password"`
+              (MAPPING §3.6). PILOT-DECISION: antd's built-in reveal toggle has
+              no Astryx counterpart and is dropped; `autoComplete="off"` has no
+              adapter prop, and the field is not a login credential. */}
+          <AstryxFormTextInput
+            label={t('import.HuggingFaceToken')}
+            type="password"
+          />
         </Form.Item>
         <Form.Item
           label={t('deployment.ModelFolder')}
@@ -337,35 +352,42 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
               }: FormInstance<ImportHuggingFaceModelFormValues>) => {
                 const vfolderId = getFieldValue('vfolderId');
                 return (
-                  <Space.Compact>
-                    <Tooltip title={t('modelService.OpenFolder')}>
-                      <Button
-                        icon={<FolderOpenIcon />}
-                        disabled={!vfolderId}
-                        onClick={() => {
-                          if (vfolderId) {
-                            openFolderExplorer(toLocalId(vfolderId));
-                          }
-                        }}
-                      />
-                    </Tooltip>
-                    <Tooltip title={t('data.CreateANewStorageFolder')}>
-                      <Button
-                        icon={<PlusIcon />}
-                        onClick={() => setIsFolderCreateModalOpen(true)}
-                      />
-                    </Tooltip>
-                    <Tooltip title={t('button.Refresh')}>
-                      <Button
-                        icon={<RotateCw size="1em" />}
-                        onClick={() => {
-                          startTransition(() => {
-                            vfolderSelectRef.current?.refetch();
-                          });
-                        }}
-                      />
-                    </Tooltip>
-                  </Space.Compact>
+                  // antd `Space.Compact` of icon-only buttons → `ButtonGroup` +
+                  // `IconButton` (MAPPING §3.3). Each Tooltip-wrapped button
+                  // becomes an `IconButton` with a required accessible `label`
+                  // plus its own `tooltip` — the wrapping Tooltip is dropped
+                  // because Astryx forbids wrapping a disabled trigger (P18:
+                  // `IconButton` has no `disabledMessage`, so the disabled
+                  // "Open folder" action carries `tooltip` instead).
+                  <ButtonGroup label={t('deployment.ModelFolder')}>
+                    <IconButton
+                      icon={<FolderOpenIcon size="1em" />}
+                      label={t('modelService.OpenFolder')}
+                      tooltip={t('modelService.OpenFolder')}
+                      isDisabled={!vfolderId}
+                      onClick={() => {
+                        if (vfolderId) {
+                          openFolderExplorer(toLocalId(vfolderId));
+                        }
+                      }}
+                    />
+                    <IconButton
+                      icon={<PlusIcon size="1em" />}
+                      label={t('data.CreateANewStorageFolder')}
+                      tooltip={t('data.CreateANewStorageFolder')}
+                      onClick={() => setIsFolderCreateModalOpen(true)}
+                    />
+                    <IconButton
+                      icon={<RotateCw size="1em" />}
+                      label={t('button.Refresh')}
+                      tooltip={t('button.Refresh')}
+                      onClick={() => {
+                        startTransition(() => {
+                          vfolderSelectRef.current?.refetch();
+                        });
+                      }}
+                    />
+                  </ButtonGroup>
                 );
               }}
             </Form.Item>

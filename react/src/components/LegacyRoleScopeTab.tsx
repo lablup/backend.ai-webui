@@ -10,7 +10,7 @@ import {
 import { convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
-import { Tag } from 'antd';
+import { Badge } from '@astryxdesign/core/Badge';
 import {
   BAIColumnType,
   BAIFetchKeyButton,
@@ -21,6 +21,7 @@ import {
   filterOutEmpty,
   INITIAL_FETCH_KEY,
   useFetchKey,
+  badgeVariantForTagColor,
 } from 'backend.ai-ui';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -142,7 +143,10 @@ const LegacyRoleScopeTab: React.FC<LegacyRoleScopeTabProps> = ({ roleId }) => {
       dataIndex: 'scopeType',
       sorter: true,
       render: (value: string) => (
-        <Tag>{t(`rbac.types.${value}`, { defaultValue: value })}</Tag>
+        <Badge
+          variant={badgeVariantForTagColor(undefined)}
+          label={t(`rbac.types.${value}`, { defaultValue: value })}
+        />
       ),
     },
     {

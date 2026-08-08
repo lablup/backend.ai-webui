@@ -26,8 +26,22 @@ import { theme } from '../theme-shim';
 import ImageMetaIcon from './ImageMetaIcon';
 import { ImageTags } from './ImageTags';
 import TextHighlighter from './TextHighlighter';
-import { Divider, Input, RefSelectProps, Select, Tag, Typography } from 'antd';
-import { BAIDoubleTag, BAIFlex, BAISelect } from 'backend.ai-ui';
+import { AstryxFormTextInput } from './astryxFormControls';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Divider } from '@astryxdesign/core/Divider';
+// FRONTIER RESIDUE (MAPPING §8): `BAISelect` is still the BUI antd `Select`
+// wrapper, and `Select.Option` / `Select.OptGroup` / `RefSelectProps` are its
+// required child and ref vocabulary. They convert together with the
+// ComplexSelector rebuild of `BAISelect`, not here — replacing them in this
+// file alone would mean rewriting the select for every one of its consumers.
+import { RefSelectProps, Select } from 'antd';
+import {
+  badgeVariantForTagColor,
+  BAIDoubleTag,
+  BAIFlex,
+  BAISelect,
+  BAIText,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -388,7 +402,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
         className="image-environment-select-form-item"
         name={['environments', 'environment']}
         label={
-          <Typography.Text
+          <BAIText
             copyable={{
               text: getImageFullName(
                 form.getFieldValue(['environments', 'image']),
@@ -397,7 +411,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
           >
             {t('session.launcher.Environments')} /{' '}
             {t('session.launcher.Version')}
-          </Typography.Text>
+          </BAIText>
         }
         rules={[
           {
@@ -505,12 +519,17 @@ const ImageEnvironmentSelectFormItems: React.FC<
                       )
                     ) {
                       extraFilterValues.push(environmentGroup.prefix);
+                      // antd `Tag color` → Astryx `Badge variant` through the
+                      // repo-global lookup (ticket 13). Never a raw hue/hex.
                       environmentPrefixTag = (
-                        <Tag color="purple">
-                          <TextHighlighter keyword={environmentSearch}>
-                            {environmentGroup.prefix}
-                          </TextHighlighter>
-                        </Tag>
+                        <Badge
+                          variant={badgeVariantForTagColor('purple')}
+                          label={
+                            <TextHighlighter keyword={environmentSearch}>
+                              {environmentGroup.prefix}
+                            </TextHighlighter>
+                          }
+                        />
                       );
                     }
 
@@ -523,15 +542,23 @@ const ImageEnvironmentSelectFormItems: React.FC<
                           label.color
                         ) {
                           extraFilterValues.push(label.tag);
+                          // `label.color` is a runtime-arbitrary string from
+                          // the image metadata JSON; the lookup normalises it
+                          // and falls back to `neutral` for anything it does
+                          // not recognise (ticket 13 §5).
                           return (
-                            <Tag color={label.color} key={label.tag}>
-                              <TextHighlighter
-                                keyword={environmentSearch}
-                                key={label.tag}
-                              >
-                                {label.tag}
-                              </TextHighlighter>
-                            </Tag>
+                            <Badge
+                              key={label.tag}
+                              variant={badgeVariantForTagColor(label.color)}
+                              label={
+                                <TextHighlighter
+                                  keyword={environmentSearch}
+                                  key={label.tag}
+                                >
+                                  {label.tag}
+                                </TextHighlighter>
+                              }
+                            />
                           );
                         }
                         return null;
@@ -644,9 +671,9 @@ const ImageEnvironmentSelectFormItems: React.FC<
                       }}
                     >
                       {t('session.launcher.Version')}
-                      <Divider type="vertical" />
+                      <Divider orientation="vertical" />
                       {t('session.launcher.Architecture')}
-                      <Divider type="vertical" />
+                      <Divider orientation="vertical" />
                       {t('session.launcher.Tags')}
                     </BAIFlex>
                     <Divider style={{ margin: '8px 0' }} />
@@ -797,14 +824,19 @@ const ImageEnvironmentSelectFormItems: React.FC<
                                       ]}
                                     />
                                   ) : (
-                                    <Tag
+                                    <Badge
                                       key={tag.key}
-                                      color={isCustomized ? 'cyan' : 'blue'}
-                                    >
-                                      <TextHighlighter keyword={versionSearch}>
-                                        {aliasedTag}
-                                      </TextHighlighter>
-                                    </Tag>
+                                      variant={badgeVariantForTagColor(
+                                        isCustomized ? 'cyan' : 'blue',
+                                      )}
+                                      label={
+                                        <TextHighlighter
+                                          keyword={versionSearch}
+                                        >
+                                          {aliasedTag}
+                                        </TextHighlighter>
+                                      }
+                                    />
                                   );
                                 },
                               )}
@@ -852,8 +884,12 @@ const ImageEnvironmentSelectFormItems: React.FC<
             : 'none',
         }}
       >
-        <Input
-          allowClear
+        {/* antd `Input allowClear` → `AstryxFormTextInput hasClear`
+            (MAPPING §3.6). The handler already read the value rather than the
+            event, which the adapter now guarantees. */}
+        <AstryxFormTextInput
+          label={t('session.launcher.ManualImageName')}
+          hasClear
           onChange={(value) => {
             if (!_.isEmpty(value)) {
               form.setFieldsValue({
@@ -869,7 +905,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
         />
       </Form.Item>
       <Form.Item noStyle hidden name={['environments', 'image']}>
-        <Input />
+        <AstryxFormTextInput label={t('session.launcher.Environments')} />
       </Form.Item>
     </>
   );

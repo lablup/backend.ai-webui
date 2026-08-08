@@ -7,8 +7,14 @@ import { preserveDotStartCase } from '../helper';
 import { useBackendAIImageMetaData } from '../hooks';
 import { theme } from '../theme-shim';
 import ImageMetaIcon from './ImageMetaIcon';
-import { Divider, Tag, Typography } from 'antd';
-import { BAIDoubleTag, BAIFlex } from 'backend.ai-ui';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Divider } from '@astryxdesign/core/Divider';
+import {
+  badgeVariantForTagColor,
+  BAIDoubleTag,
+  BAIFlex,
+  BAIText,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
@@ -56,21 +62,21 @@ const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
   return (
     <BAIFlex direction="row" gap={'xs'} wrap="wrap">
       <ImageMetaIcon image={fullName} />
-      <Typography.Text>{tagAlias(image.base_image_name || '')}</Typography.Text>
+      <BAIText>{tagAlias(image.base_image_name || '')}</BAIText>
       <Divider
         orientation="vertical"
         style={{
           marginInline: 0,
         }}
       />
-      <Typography.Text>{image.version}</Typography.Text>
+      <BAIText>{image.version}</BAIText>
       <Divider
         orientation="vertical"
         style={{
           marginInline: 0,
         }}
       />
-      <Typography.Text>{image.architecture}</Typography.Text>
+      <BAIText>{image.architecture}</BAIText>
       {withoutTag ? null : (
         <>
           <Divider
@@ -110,18 +116,19 @@ const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
                 ]}
               />
             ) : (
-              <Tag
+              <Badge
                 key={`${tag.key}-${index}`}
-                color={isCustomized ? 'cyan' : undefined}
-              >
-                {aliasedTag}
-              </Tag>
+                variant={badgeVariantForTagColor(
+                  isCustomized ? 'cyan' : undefined,
+                )}
+                label={aliasedTag}
+              />
             );
           })}
         </>
       )}
       {copyable && (
-        <Typography.Text
+        <BAIText
           style={{ color: token.colorLink }}
           copyable={{
             text: fullName,

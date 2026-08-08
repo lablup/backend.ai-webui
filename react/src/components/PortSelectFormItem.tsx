@@ -5,9 +5,10 @@
 import { Form, type FormItemProps } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { AstryxFormTagsInput } from './astryx-bui/astryxFormControls';
-import { Tag } from 'antd';
-import { TagProps } from 'antd/lib';
+import { Badge } from '@astryxdesign/core/Badge';
+import { badgeVariantForTagColor } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import type { CSSProperties, ReactNode } from 'react';
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
@@ -114,20 +115,34 @@ const PortSelectFormItem: React.FC<Props> = ({
   );
 };
 
-interface PortTagProps extends TagProps {
+/**
+ * antd `Tag` → Astryx `Badge` (MAPPING §3.5), with the colour routed through
+ * the repo-global lookup (ticket 13) instead of a literal hue.
+ *
+ * P1 note: the props were grepped, not guessed — the only call site
+ * (`SessionLauncherPreview`) passes `value`, `style` and `children`.
+ */
+interface PortTagProps {
   value: string;
   inValid?: boolean;
+  children?: ReactNode;
+  style?: CSSProperties;
+  className?: string;
 }
 
 export const PortTag: React.FC<PortTagProps> = ({
   inValid,
   value,
+  children,
   ...tagProps
 }) => {
   return (
-    <Tag
-      color={!inValid && isValidPortStr(value) ? undefined : 'red'}
+    <Badge
       {...tagProps}
+      variant={badgeVariantForTagColor(
+        !inValid && isValidPortStr(value) ? undefined : 'red',
+      )}
+      label={children ?? value}
     />
   );
 };

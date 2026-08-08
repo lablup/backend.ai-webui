@@ -1,7 +1,36 @@
 /**
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
- */
+
+ PARKED — FRONTIER-TRANSLATES (MAPPING §8 / SKILL "the frontier rule").
+ phase-3 wave 2, partition B.
+
+ This wrapper's PUBLIC API *is* two antd prop bags: `inputNumberProps:
+ InputNumberProps` and `sliderProps: SliderSingleProps | SliderRangeProps`.
+ All three call sites are outside this batch — `RuntimeParameterFormSection`,
+ `SessionFormItems/ClusterModeFormItems`, `SessionFormItems/
+ ResourceAllocationFormItems` — and they were grepped, not guessed: between
+ them they pass `marks`, `tooltip: {formatter, open}`, `suffix`, `addonAfter`,
+ `placeholder` and `style`.
+
+ Two of those have no Astryx destination, so converting here would be a silent
+ UX regression on the session launcher rather than a rename:
+
+ 1. **`marks` labels are React nodes.** Astryx `Slider.marks` is
+    `{value: number; label?: string}[]` — a plain STRING label. Every consumer
+    puts `<RemainingMark />` (the "resource remaining" marker) at a computed
+    position; that element is inexpressible and would have to be dropped.
+ 2. **`tooltip.open`** (ResourceAllocationFormItems force-hides the accelerator
+    tooltip when no accelerator type is available) has no Astryx knob;
+    `formatValue` covers only `tooltip.formatter`.
+
+ `Space.Compact` + `addonBefore`/`addonAfter` would additionally have to become
+ an `InputGroup`, whose children the consumers supply as antd nodes.
+
+ Per the frontier rule this file converts *with* its consumers, in the wave
+ that owns `SessionFormItems/`. Recorded in
+ `.scratch/astryx-migration/issues/p3-w2b.md`.
+*/
 import useControllableState_deprecated from '../hooks/useControllableState';
 import {
   InputNumber,

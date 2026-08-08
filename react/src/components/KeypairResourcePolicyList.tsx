@@ -17,7 +17,6 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import KeypairResourcePolicyInfoModal from './KeypairResourcePolicyInfoModal';
 import KeypairResourcePolicySettingModal from './KeypairResourcePolicySettingModal';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { AnyObject } from 'antd/es/_util/type';
 import {
   useUpdatableState,
   filterOutEmpty,
@@ -38,6 +37,13 @@ import { Trash2, Info, RotateCw, PlusIcon, SquarePenIcon } from 'lucide-react';
 import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
+
+/**
+ * antd `AnyObject` (`antd/es/_util/type`) restated locally: a type-only antd
+ * import still holds this module — and everything downstream of it — inside
+ * the antd import graph (MAPPING §6 / P15), and the declaration is one line.
+ */
+type AnyObject = Record<PropertyKey, any>;
 
 type KeypairResourcePolicies = NonNullable<
   KeypairResourcePolicyListQuery$data['keypair_resource_policies']

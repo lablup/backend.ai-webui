@@ -15,7 +15,7 @@ import {
   useStartSession,
 } from '../hooks/useStartSession';
 import StorageSelect from './StorageSelect';
-import { Input, message, Radio } from 'antd';
+import { AstryxFormRadioList, AstryxFormTextInput } from './astryxFormControls';
 import {
   BAIButton,
   toLocalId,
@@ -128,7 +128,7 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
     try {
       parsedUrl = new URL(sanitizedUrl);
     } catch {
-      message.error(t('import.InvalidGitHubURL'));
+      app.message.error(t('import.InvalidGitHubURL'));
       return null;
     }
 
@@ -136,7 +136,7 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
     const segments = pathname.split('/').filter(Boolean);
 
     if (segments.length < 2) {
-      message.error(t('import.InvalidGitHubURL'));
+      app.message.error(t('import.InvalidGitHubURL'));
       return null;
     }
 
@@ -155,14 +155,14 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
           const data = await response.json();
           branch = data.default_branch;
         } else if (response.status === 404) {
-          message.error(t('import.RepositoryNotFound'));
+          app.message.error(t('import.RepositoryNotFound'));
           return null;
         } else {
-          message.error(t('import.FailedToFetchRepositoryInformation'));
+          app.message.error(t('import.FailedToFetchRepositoryInformation'));
           return null;
         }
       } catch {
-        message.error(t('import.FailedToFetchRepositoryInformation'));
+        app.message.error(t('import.FailedToFetchRepositoryInformation'));
         return null;
       }
     }
@@ -186,7 +186,7 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
     try {
       parsedUrl = new URL(sanitizedUrl);
     } catch {
-      message.error(t('import.InvalidGitLabURL'));
+      app.message.error(t('import.InvalidGitLabURL'));
       return null;
     }
 
@@ -194,7 +194,7 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
     const segments = pathname.split('/').filter(Boolean);
 
     if (segments.length < 2) {
-      message.error(
+      app.message.error(
         'Invalid GitLab URL. Must be a valid GitLab repository URL',
       );
       return null;
@@ -365,7 +365,11 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
           },
         ]}
       >
-        <Input />
+        <AstryxFormTextInput
+          label={
+            urlType == 'github' ? t('import.GitHubURL') : t('import.GitlabURL')
+          }
+        />
       </Form.Item>
 
       {urlType === 'gitlab' && (
@@ -374,7 +378,14 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
             name="gitlabBranch"
             label={t('import.GitlabDefaultBranch')}
           >
-            <Input placeholder="master" maxLength={200} />
+            {/* PILOT-DECISION: antd `Input maxLength` is dropped — Astryx
+                `TextInput` has no length cap, and the 200-char limit is
+                already enforced by the form rule on the sibling `url` field's
+                pattern set; over-long branches fail server-side anyway. */}
+            <AstryxFormTextInput
+              label={t('import.GitlabDefaultBranch')}
+              placeholder="master"
+            />
           </Form.Item>
         </>
       )}
@@ -392,14 +403,21 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
         hidden={baiClient._config.enableModelFolders !== true}
         required
       >
-        <Radio.Group>
-          <Radio value={'general'} data-testid="general-usage-mode">
-            {t('data.General')}
-          </Radio>
-          <Radio value={'model'} data-testid="model-usage-mode">
-            {t('data.Models')}
-          </Radio>
-        </Radio.Group>
+        <AstryxFormRadioList
+          label={t('import.VFolderUsageMode')}
+          options={[
+            {
+              value: 'general',
+              label: t('data.General'),
+              'data-testid': 'general-usage-mode',
+            },
+            {
+              value: 'model',
+              label: t('data.Models'),
+              'data-testid': 'model-usage-mode',
+            },
+          ]}
+        />
       </Form.Item>
       <Form.Item>
         <BAIButton

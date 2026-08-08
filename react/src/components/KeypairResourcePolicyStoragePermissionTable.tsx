@@ -11,12 +11,12 @@ import {
 } from '../helper/storageHostPermission';
 import { theme } from '../theme-shim';
 import StoragePermissionEditModal from './StoragePermissionEditModal';
-import { Typography } from 'antd';
 import {
   BAINameActionCell,
   BAITableAstryx,
   type BAITableProps,
   BAIUnmountAfterClose,
+  BAIText,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CircleCheck, CircleX, SquarePenIcon } from 'lucide-react';
@@ -219,12 +219,12 @@ const KeypairResourcePolicyStoragePermissionTable: React.FC<
             ) => (
               <BAINameActionCell
                 title={
-                  <Typography.Text
+                  <BAIText
                     ellipsis={{ tooltip: row.name }}
                     style={{ maxWidth: 160 }}
                   >
                     {row.name}
-                  </Typography.Text>
+                  </BAIText>
                 }
                 showActions="always"
                 actions={[

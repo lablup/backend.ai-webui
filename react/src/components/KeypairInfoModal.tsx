@@ -12,9 +12,9 @@ import {
 } from '@astryxdesign/core/MetadataList';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
-import { type ModalProps } from 'antd';
 import {
   BAIModal,
+  type BAIModalProps,
   PRIMARY_TAG_VARIANT,
   badgeVariantForTagColor,
 } from 'backend.ai-ui';
@@ -22,7 +22,7 @@ import dayjs from 'dayjs';
 import { t } from 'i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
-interface KeypairInfoModalProps extends ModalProps {
+interface KeypairInfoModalProps extends BAIModalProps {
   keypairInfoModalFrgmt: KeypairInfoModalFragment$key | null;
   onRequestClose: () => void;
 }

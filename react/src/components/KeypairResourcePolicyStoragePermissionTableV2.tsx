@@ -15,7 +15,7 @@ import {
 } from '../helper/storageHostPermission';
 import { theme } from '../theme-shim';
 import StoragePermissionEditModal from './StoragePermissionEditModal';
-import { Tooltip, Typography } from 'antd';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIFlex,
   BAINameActionCell,
@@ -23,6 +23,7 @@ import {
   type BAITableProps,
   BAITag,
   BAIUnmountAfterClose,
+  BAIText,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
@@ -231,12 +232,12 @@ const KeypairResourcePolicyStoragePermissionTableV2: React.FC<
             ) => (
               <BAINameActionCell
                 title={
-                  <Typography.Text
+                  <BAIText
                     ellipsis={{ tooltip: row.name }}
                     style={{ maxWidth: 160 }}
                   >
                     {row.name}
-                  </Typography.Text>
+                  </BAIText>
                 }
                 showActions="always"
                 actions={[
@@ -263,7 +264,9 @@ const KeypairResourcePolicyStoragePermissionTableV2: React.FC<
               if (!selectedUserId) {
                 return (
                   <Tooltip
-                    title={t('storageHost.permission.SelectUserToSeeKeypairs')}
+                    content={t(
+                      'storageHost.permission.SelectUserToSeeKeypairs',
+                    )}
                   >
                     <CircleAlert
                       style={{ color: token.colorWarning }}
@@ -276,7 +279,7 @@ const KeypairResourcePolicyStoragePermissionTableV2: React.FC<
                 row.keypairs?.edges?.map((edge) => edge?.node),
               );
               if (keypairNodes.length === 0) {
-                return <Typography.Text type="secondary">-</Typography.Text>;
+                return <BAIText type="secondary">-</BAIText>;
               }
               const isMainAccessKey = (
                 kp: (typeof keypairNodes)[number],
@@ -296,7 +299,7 @@ const KeypairResourcePolicyStoragePermissionTableV2: React.FC<
                     isMainAccessKey(kp) ? (
                       <Tooltip
                         key={kp.id}
-                        title={t('credential.MainAccessKey')}
+                        content={t('credential.MainAccessKey')}
                       >
                         <BAITag
                           icon={<Info size="1em" />}

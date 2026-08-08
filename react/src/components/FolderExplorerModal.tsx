@@ -7,14 +7,17 @@ import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useMergedAllowedStorageHostPermission } from '../hooks/useMergedAllowedStorageHostPermission';
-import { theme } from '../theme-shim';
+import { theme, useBAIBreakpoint } from '../theme-shim';
 import { useFileUploadManager } from './FileUploadManager';
+import type { RcFile } from './FileUploadManager';
 import FolderExplorerHeader from './FolderExplorerHeader';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderNodeDescription from './VFolderNodeDescription';
 import VFolderTextFileEditorModal from './VFolderTextFileEditorModal';
-import { Alert, Divider, Grid, Skeleton, Splitter } from 'antd';
-import { RcFile } from 'antd/es/upload';
+import BAISkeleton from './astryx-bui/BAISkeletonAstryx';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Divider } from '@astryxdesign/core/Divider';
+import { ResizeHandle, useResizable } from '@astryxdesign/core/Resizable';
 import {
   BAIFileExplorer,
   BAIFileExplorerRef,
@@ -63,7 +66,8 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { xl } = Grid.useBreakpoint();
+  // antd `Grid.useBreakpoint` → `useBAIBreakpoint` (RESPONSIVE-POLICY R2).
+  const { xl } = useBAIBreakpoint();
 
   const [fetchKey, updateFetchKey] = useFetchKey();
   const baiClient = useSuspendedBackendaiClient();
@@ -81,6 +85,13 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
       currentUserAccessKey,
     );
   const bodyRef = useRef<HTMLDivElement | null>(null);
+
+  // antd `Splitter.Panel defaultSize={500}` → `useResizable` (MAPPING §5):
+  // the description panel keeps its 500px default and stays drag-resizable.
+  const infoPanel = useResizable({
+    defaultSize: 500,
+    minSizePx: 320,
+  });
 
   const deferredOpen = useDeferredValue(modalProps.open);
   const { vfolder_node } = useLazyLoadQuery<FolderExplorerModalQuery>(
@@ -149,8 +160,13 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
   // TODO: Skip permission check due to inaccurate API response. Update when API is fixed.
   const hasNoPermissions = false;
 
+  // antd `Alert` → Astryx `Banner` (MAPPING §4): `type` → `status`, and
+  // `showIcon` is dropped because Banner always renders its status icon.
   const fileExplorerElement = vfolder_node?.unmanaged_path ? (
-    <Alert title={t('explorer.NoExplorerSupportForUnmanagedFolder')} showIcon />
+    <Banner
+      title={t('explorer.NoExplorerSupportForUnmanagedFolder')}
+      status="info"
+    />
   ) : !hasNoPermissions && vfolder_node ? (
     <BAIFileExplorer
       ref={fileExplorerRef}
@@ -258,27 +274,22 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
       }}
       {...modalProps}
     >
-      <Suspense fallback={<Skeleton active />}>
-        {/* Use <Skeleton/> instead of using `loading` prop because layout align issue. */}
+      <Suspense fallback={<BAISkeleton rows={4} />}>
+        {/* Use a skeleton instead of the `loading` prop because of layout align issue. */}
         {deferredOpen !== modalProps.open || vfolder_node === undefined ? (
-          <Skeleton active />
+          <BAISkeleton rows={4} />
         ) : (
           <BAIFlex direction="column" gap={'lg'} align="stretch">
             {vfolder_node === null ? (
-              <Alert
+              <Banner
                 title={t('explorer.FolderNotFoundOrNoAccess')}
-                type="error"
-                showIcon
+                status="error"
               />
             ) : hasNoPermissions ? (
-              <Alert
-                title={t('explorer.NoPermissions')}
-                type="error"
-                showIcon
-              />
+              <Banner title={t('explorer.NoPermissions')} status="error" />
             ) : currentProject?.id !== vfolder_node?.group &&
               !!vfolder_node?.group ? (
-              <Alert
+              <Banner
                 title={
                   vfolder_node.group_name
                     ? t('data.NotInProject', {
@@ -286,33 +297,33 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
                       })
                     : t('data.BelongsToDifferentProject')
                 }
-                type="info"
-                showIcon
+                status="info"
               />
             ) : null}
 
             {xl ? (
-              <Splitter
-                style={{
-                  gap: token.size,
-                }}
-                orientation={'horizontal'}
-              >
-                <Splitter.Panel resizable={false}>
+              // antd `Splitter` → Astryx `useResizable` + `ResizeHandle`
+              // (MAPPING §5). The explorer panel was `resizable={false}`, so it
+              // simply flexes; the description panel keeps the drag handle.
+              <div style={{ display: 'flex', flex: 1, minWidth: 0 }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
                   {fileExplorerElement}
-                </Splitter.Panel>
-                <Splitter.Panel defaultSize={500}>
+                </div>
+                <ResizeHandle
+                  direction="horizontal"
+                  isReversed
+                  hasDivider
+                  label={t('explorer.Metadata')}
+                  resizable={infoPanel.props}
+                />
+                <div style={{ width: infoPanel.size, flexShrink: 0 }}>
                   {vFolderDescriptionElement}
-                </Splitter.Panel>
-              </Splitter>
+                </div>
+              </div>
             ) : (
               <BAIFlex direction="column" align="stretch">
                 {fileExplorerElement}
-                <Divider
-                  style={{
-                    borderColor: token.colorBorderSecondary,
-                  }}
-                />
+                <Divider />
                 {vFolderDescriptionElement}
               </BAIFlex>
             )}

@@ -7,7 +7,7 @@ import { QuotaScopeTableUnsetMutation } from '../__generated__/QuotaScopeTableUn
 import { App } from '../app-shim';
 import { bytesToGB } from '../helper/index';
 import QuotaSettingModal from './QuotaSettingModal';
-import { Empty } from 'antd';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
 import {
   BAINameActionCell,
   BAITableAstryx,
@@ -101,10 +101,12 @@ const QuotaScopeTable: React.FC<Props> = ({ scopeId, hostName }) => {
   );
 
   const selectProjectOrUserFirst = (
-    <Empty
+    // antd `Empty` → `EmptyState` (MAPPING §4): `description` becomes the
+    // required string `title`; the simple placeholder illustration has no
+    // Astryx counterpart and is dropped.
+    <EmptyState
       style={{ width: '100%' }}
-      image={Empty.PRESENTED_IMAGE_SIMPLE}
-      description={<div>{t('storageHost.quotaSettings.SelectFirst')}</div>}
+      title={t('storageHost.quotaSettings.SelectFirst')}
     />
   );
 

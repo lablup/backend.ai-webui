@@ -3,13 +3,22 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { FolderExplorerHeaderFragment$key } from '../__generated__/FolderExplorerHeaderFragment.graphql';
-import { theme } from '../theme-shim';
+import { theme, useBAIBreakpoint } from '../theme-shim';
 import EditableVFolderName from './EditableVFolderName';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import FileBrowserButton from './FileBrowserButton';
 import SFTPServerButton from './SFTPServerButton';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
-import { Typography, Skeleton, Grid } from 'antd';
+import BAISkeleton from './astryx-bui/BAISkeletonAstryx';
+// FRONTIER RESIDUE (MAPPING §8): the only remaining antd symbol here is
+// `Typography.Title`, and it is not rendered by this file — it is passed as the
+// `component` argument to the still-antd `EditableVFolderName`, whose
+// polymorphic `component?: typeof Typography.Text | typeof Typography.Title`
+// prop is the contract. `EditableVFolderNameV2` already replaced that
+// polymorphism with `variant="title"` (see `FolderExplorerHeaderV2`); this
+// import disappears when the V1 editable name follows. Converting it here
+// would mean editing a component outside this batch and its other consumers.
+import { Typography } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense } from 'react';
@@ -27,7 +36,9 @@ const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
   'use memo';
 
   const { token } = theme.useToken();
-  const { lg } = Grid.useBreakpoint();
+  // antd `Grid.useBreakpoint` → `useBAIBreakpoint` (RESPONSIVE-POLICY R2);
+  // Astryx `useMediaQuery` returns false on first render and flashes.
+  const { lg } = useBAIBreakpoint();
 
   const vfolderNode = useFragment(
     graphql`
@@ -111,7 +122,7 @@ const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
         gap={token.marginSM}
       >
         {vfolderNode && !vfolderNode?.unmanaged_path ? (
-          <Suspense fallback={<Skeleton.Button active />}>
+          <Suspense fallback={<BAISkeleton variant="button" />}>
             <ErrorBoundaryWithNullFallback>
               <FileBrowserButton vfolderFrgmt={vfolderNode} showTitle={lg} />
             </ErrorBoundaryWithNullFallback>

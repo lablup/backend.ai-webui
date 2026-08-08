@@ -3,12 +3,12 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { PrometheusQueryTemplatePreviewQuery } from '../__generated__/PrometheusQueryTemplatePreviewQuery.graphql';
-import { Typography } from 'antd';
 import {
   BAIButton,
   BAIFlex,
   useDebouncedDeferredValue,
   useFetchKey,
+  BAIText,
 } from 'backend.ai-ui';
 import { LoaderCircle, RotateCw } from 'lucide-react';
 import React, { Suspense, useDeferredValue } from 'react';
@@ -41,12 +41,12 @@ const PrometheusQueryTemplatePreview: React.FC<{
       fallbackRender={({ error }) => {
         return (
           <BAIFlex gap="xxs">
-            <Typography.Text type="danger">
+            <BAIText type="danger">
               {extractErrorMessage(
                 error,
                 t('autoScalingRule.QueryExecutionFailed'),
               )}
-            </Typography.Text>
+            </BAIText>
           </BAIFlex>
         );
       }}
@@ -119,18 +119,16 @@ const PrometheusQueryTemplatePreviewContent: React.FC<{
     <LoaderCircle className="anticon-spin" size="1em" />
   ) : !fetchTemplate ? null : hadDomainError ? (
     <BAIFlex gap="xxs">
-      <Typography.Text type="danger">
+      <BAIText type="danger">
         {t('autoScalingRule.QueryExecutionFailed')}
-      </Typography.Text>
+      </BAIText>
     </BAIFlex>
   ) : (
     <BAIFlex gap="xxs">
-      <Typography.Text type="secondary">
-        {t('autoScalingRule.CurrentValue')}:
-      </Typography.Text>
-      <Typography.Text type="secondary">
+      <BAIText type="secondary">{t('autoScalingRule.CurrentValue')}:</BAIText>
+      <BAIText type="secondary">
         {value ?? t('autoScalingRule.NoDataAvailable')}
-      </Typography.Text>
+      </BAIText>
       <BAIButton
         type="link"
         size="small"

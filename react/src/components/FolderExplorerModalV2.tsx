@@ -31,6 +31,7 @@ import { useBAIBreakpoint } from '../theme-shim';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import BAITabs from './BAITabs';
 import { useFileUploadManager } from './FileUploadManager';
+import type { RcFile } from './FileUploadManager';
 import FolderExplorerHeaderV2 from './FolderExplorerHeaderV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ScopedAuditLog, { ScopedAuditLogQuery } from './ScopedAuditLog';
@@ -42,7 +43,6 @@ import BAISkeleton from './astryx-bui/BAISkeletonAstryx';
 import { Banner } from '@astryxdesign/core/Banner';
 import { ResizeHandle, useResizable } from '@astryxdesign/core/Resizable';
 import { VStack } from '@astryxdesign/core/Stack';
-import { RcFile } from 'antd/es/upload';
 import {
   BAIFileExplorer,
   BAIFileExplorerRef,

@@ -11,8 +11,12 @@ import BAIFormItem from './BAIFormItem';
 import KeypairResourcePolicySelect from './KeypairResourcePolicySelect';
 import { AstryxFormNumberInput } from './astryx-bui/astryxFormControls';
 import { Grid, GridSpan } from '@astryxdesign/core/Grid';
-import { type ModalProps } from 'antd';
-import { BAIModal, BAISelect, BAIUserSelectAstryx } from 'backend.ai-ui';
+import {
+  BAIModal,
+  type BAIModalProps,
+  BAISelect,
+  BAIUserSelectAstryx,
+} from 'backend.ai-ui';
 import { Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -23,7 +27,7 @@ type KeypairSettingModalFormInput = {
   resource_policy: string;
 };
 
-interface KeypairSettingModalProps extends ModalProps {
+interface KeypairSettingModalProps extends BAIModalProps {
   keypairSettingModalFrgmt?: KeypairSettingModalFragment$key | null;
   onRequestClose: (success: boolean) => void;
 }

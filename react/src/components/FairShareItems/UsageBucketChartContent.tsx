@@ -15,16 +15,18 @@ import { UsageBucketChartContent_UserFragment$key } from '../../__generated__/Us
 import { useResourceSlotsDetails } from '../../hooks/backendai';
 import { presetPalettes, theme } from '../../theme-shim';
 import './UsageBucketChartContent.css';
-import { Empty, Tabs, Typography } from 'antd';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { Tab, TabList } from '@astryxdesign/core/TabList';
 import {
   convertToBinaryUnit,
   INITIAL_FETCH_KEY,
   toFixedFloorWithoutTrailingZeros,
   BAIFlex,
+  BAIText,
 } from 'backend.ai-ui';
 import dayjs, { Dayjs } from 'dayjs';
 import * as _ from 'lodash-es';
-import { useDeferredValue } from 'react';
+import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 import {
@@ -58,6 +60,11 @@ const UsageBucketChartContent: React.FC<UsageBucketChartContentProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { mergedResourceSlots } = useResourceSlotsDetails();
+  // antd `Tabs items` rendered the active panel itself; Astryx `TabList` is
+  // navigation only (MAPPING §4), so the selected key becomes local state and
+  // the panel is rendered below the rail. Declared with the other hooks so the
+  // "no data" early return below cannot change the hook order.
+  const [activeResourceType, setActiveResourceType] = useState<string>();
 
   const domainFairShares = useFragment(
     graphql`
@@ -393,15 +400,21 @@ const UsageBucketChartContent: React.FC<UsageBucketChartContentProps> = ({
   );
 
   if (!buckets || buckets.length === 0) {
+    // antd `Empty description` → `EmptyState title` (a required string, MAPPING
+    // §4). The default antd illustration has no destination and is dropped.
     return (
-      <Empty
-        description={t('fairShare.usageBucket.NoDataAvailable')}
+      <EmptyState
+        title={t('fairShare.usageBucket.NoDataAvailable')}
         style={{ padding: token.paddingLG }}
       />
     );
   }
 
   const resourceTypes: string[] = Object.keys(chartDataMap);
+  const activeKey =
+    activeResourceType && resourceTypes.includes(activeResourceType)
+      ? activeResourceType
+      : resourceTypes[0];
 
   const getResourceDisplayName = (resourceType: string): string => {
     const slotInfo = mergedResourceSlots[resourceType];
@@ -433,168 +446,171 @@ const UsageBucketChartContent: React.FC<UsageBucketChartContentProps> = ({
         ? t('fairShare.Project')
         : t('fairShare.User');
 
-  return (
-    <Tabs
-      items={resourceTypes.map((resourceType) => {
-        const chartData = chartDataMap[resourceType];
-        return {
-          key: resourceType,
-          label: getResourceDisplayName(resourceType),
-          children: (
-            <div className="usage-bucket-chart">
-              <ResponsiveContainer width="100%" height={300}>
-                <AreaChart data={chartData.data}>
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    stroke={token.colorBorderSecondary}
-                  />
-                  <XAxis dataKey="periodStart" tick={{ fontSize: 12 }} />
-                  <YAxis
-                    tick={{ fontSize: 12 }}
-                    tickFormatter={(value) => {
-                      const slotInfo = mergedResourceSlots[resourceType];
-                      if (slotInfo?.number_format?.binary) {
-                        return (
-                          convertToBinaryUnit(value, 'auto', 1)?.displayValue ||
-                          ''
-                        );
-                      }
-                      return toFixedFloorWithoutTrailingZeros(value, 1);
+  const renderChart = (resourceType: string) => {
+    const chartData = chartDataMap[resourceType];
+    return (
+      <div className="usage-bucket-chart">
+        <ResponsiveContainer width="100%" height={300}>
+          <AreaChart data={chartData.data}>
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke={token.colorBorderSecondary}
+            />
+            <XAxis dataKey="periodStart" tick={{ fontSize: 12 }} />
+            <YAxis
+              tick={{ fontSize: 12 }}
+              tickFormatter={(value) => {
+                const slotInfo = mergedResourceSlots[resourceType];
+                if (slotInfo?.number_format?.binary) {
+                  return (
+                    convertToBinaryUnit(value, 'auto', 1)?.displayValue || ''
+                  );
+                }
+                return toFixedFloorWithoutTrailingZeros(value, 1);
+              }}
+            />
+            <ChartTooltip
+              content={({ active, payload, label }) => {
+                if (!active || !payload?.length) return null;
+                const capacityEntries = payload.filter(
+                  (p) => p.dataKey === CAPACITY_KEY,
+                );
+                const entityEntries = payload.filter(
+                  (p) => p.dataKey !== CAPACITY_KEY,
+                );
+                return (
+                  <BAIFlex
+                    direction="column"
+                    align="stretch"
+                    style={{
+                      backgroundColor: token.colorBgBase,
+                      borderRadius: token.borderRadius,
+                      padding: token.paddingSM,
                     }}
-                  />
-                  <ChartTooltip
-                    content={({ active, payload, label }) => {
-                      if (!active || !payload?.length) return null;
-                      const capacityEntries = payload.filter(
-                        (p) => p.dataKey === CAPACITY_KEY,
-                      );
-                      const entityEntries = payload.filter(
-                        (p) => p.dataKey !== CAPACITY_KEY,
-                      );
-                      return (
-                        <BAIFlex
-                          direction="column"
-                          align="stretch"
+                  >
+                    <BAIText
+                      style={{
+                        color: 'inherit',
+                        marginBottom: token.marginSM,
+                      }}
+                    >
+                      {`${label} - ${t('fairShare.usageBucket.AverageDailyUsage')}`}
+                    </BAIText>
+                    {capacityEntries.length > 0 && (
+                      <BAIFlex
+                        direction="column"
+                        align="stretch"
+                        style={{
+                          marginBottom: token.marginXS,
+                        }}
+                      >
+                        <BAIText style={{ color: 'inherit' }}>
+                          {parentScopeLabel}
+                        </BAIText>
+                        <BAIText
                           style={{
-                            backgroundColor: token.colorBgBase,
-                            borderRadius: token.borderRadius,
-                            padding: token.paddingSM,
+                            color: token.colorTextTertiary,
                           }}
                         >
-                          <Typography.Text
+                          {capacityName} :
+                          {resourceType === 'mem'
+                            ? convertToBinaryUnit(
+                                Number(capacityEntries[0].value),
+                                'g',
+                                2,
+                              )?.numberFixed
+                            : toFixedFloorWithoutTrailingZeros(
+                                Number(capacityEntries[0].value),
+                                2,
+                              )}
+                          <BAIText
                             style={{
+                              fontSize: token.fontSizeSM,
                               color: 'inherit',
-                              marginBottom: token.marginSM,
                             }}
                           >
-                            {`${label} - ${t('fairShare.usageBucket.AverageDailyUsage')}`}
-                          </Typography.Text>
-                          {capacityEntries.length > 0 && (
-                            <BAIFlex
-                              direction="column"
-                              align="stretch"
+                            {` ${mergedResourceSlots[resourceType]?.display_unit}/${t('fairShare.Days')}`}
+                          </BAIText>
+                        </BAIText>
+                      </BAIFlex>
+                    )}
+                    {entityEntries.length > 0 && (
+                      <BAIFlex direction="column" align="stretch">
+                        <BAIText style={{ color: 'inherit' }}>
+                          {entityTypeLabel}
+                        </BAIText>
+                        {entityEntries.map((entry) => (
+                          <BAIText
+                            key={entry.dataKey}
+                            style={{ color: entry.color || 'inherit' }}
+                          >
+                            {entry.name} :
+                            {resourceType === 'mem'
+                              ? convertToBinaryUnit(Number(entry.value), 'g', 2)
+                                  ?.numberFixed
+                              : toFixedFloorWithoutTrailingZeros(
+                                  Number(entry.value),
+                                  2,
+                                )}
+                            <BAIText
                               style={{
-                                marginBottom: token.marginXS,
+                                fontSize: token.fontSizeSM,
+                                color: 'inherit',
                               }}
                             >
-                              <Typography.Text style={{ color: 'inherit' }}>
-                                {parentScopeLabel}
-                              </Typography.Text>
-                              <Typography.Text
-                                style={{
-                                  color: token.colorTextTertiary,
-                                }}
-                              >
-                                {capacityName} :
-                                {resourceType === 'mem'
-                                  ? convertToBinaryUnit(
-                                      Number(capacityEntries[0].value),
-                                      'g',
-                                      2,
-                                    )?.numberFixed
-                                  : toFixedFloorWithoutTrailingZeros(
-                                      Number(capacityEntries[0].value),
-                                      2,
-                                    )}
-                                <Typography.Text
-                                  style={{
-                                    fontSize: token.fontSizeSM,
-                                    color: 'inherit',
-                                  }}
-                                >
-                                  {` ${mergedResourceSlots[resourceType]?.display_unit}/${t('fairShare.Days')}`}
-                                </Typography.Text>
-                              </Typography.Text>
-                            </BAIFlex>
-                          )}
-                          {entityEntries.length > 0 && (
-                            <BAIFlex direction="column" align="stretch">
-                              <Typography.Text style={{ color: 'inherit' }}>
-                                {entityTypeLabel}
-                              </Typography.Text>
-                              {entityEntries.map((entry) => (
-                                <Typography.Text
-                                  key={entry.dataKey}
-                                  style={{ color: entry.color || 'inherit' }}
-                                >
-                                  {entry.name} :
-                                  {resourceType === 'mem'
-                                    ? convertToBinaryUnit(
-                                        Number(entry.value),
-                                        'g',
-                                        2,
-                                      )?.numberFixed
-                                    : toFixedFloorWithoutTrailingZeros(
-                                        Number(entry.value),
-                                        2,
-                                      )}
-                                  <Typography.Text
-                                    style={{
-                                      fontSize: token.fontSizeSM,
-                                      color: 'inherit',
-                                    }}
-                                  >
-                                    {` ${mergedResourceSlots[resourceType]?.display_unit}/${t('fairShare.Days')}`}
-                                  </Typography.Text>
-                                </Typography.Text>
-                              ))}
-                            </BAIFlex>
-                          )}
-                        </BAIFlex>
-                      );
-                    }}
-                  />
-                  <Legend />
-                  {chartData.hasCapacity && (
-                    <Area
-                      type="monotone"
-                      dataKey={CAPACITY_KEY}
-                      name={`${parentScopeLabel} (${capacityName})`}
-                      stroke={token.colorFill}
-                      fill={token.colorFill}
-                      fillOpacity={0.75}
-                      legendType="square"
-                    />
-                  )}
-                  {chartData.entities.map((entity, idx) => (
-                    <Area
-                      key={entity}
-                      type="monotone"
-                      dataKey={entity}
-                      name={entity}
-                      stackId="1"
-                      stroke={CHART_COLORS[idx % CHART_COLORS.length]}
-                      fill={CHART_COLORS[idx % CHART_COLORS.length]}
-                      fillOpacity={0.3}
-                    />
-                  ))}
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          ),
-        };
-      })}
-    />
+                              {` ${mergedResourceSlots[resourceType]?.display_unit}/${t('fairShare.Days')}`}
+                            </BAIText>
+                          </BAIText>
+                        ))}
+                      </BAIFlex>
+                    )}
+                  </BAIFlex>
+                );
+              }}
+            />
+            <Legend />
+            {chartData.hasCapacity && (
+              <Area
+                type="monotone"
+                dataKey={CAPACITY_KEY}
+                name={`${parentScopeLabel} (${capacityName})`}
+                stroke={token.colorFill}
+                fill={token.colorFill}
+                fillOpacity={0.75}
+                legendType="square"
+              />
+            )}
+            {chartData.entities.map((entity, idx) => (
+              <Area
+                key={entity}
+                type="monotone"
+                dataKey={entity}
+                name={entity}
+                stackId="1"
+                stroke={CHART_COLORS[idx % CHART_COLORS.length]}
+                fill={CHART_COLORS[idx % CHART_COLORS.length]}
+                fillOpacity={0.3}
+              />
+            ))}
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
+    );
+  };
+
+  return (
+    <BAIFlex direction="column" align="stretch" gap="md">
+      <TabList value={activeKey} onChange={setActiveResourceType}>
+        {resourceTypes.map((resourceType) => (
+          <Tab
+            key={resourceType}
+            value={resourceType}
+            label={getResourceDisplayName(resourceType)}
+          />
+        ))}
+      </TabList>
+      {activeKey ? renderChart(activeKey) : null}
+    </BAIFlex>
   );
 };
 

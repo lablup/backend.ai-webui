@@ -13,8 +13,11 @@ import { Form } from '../form-engine';
 import { useCurrentUserRole } from '../hooks/backendai';
 import PrometheusCategorySelect from './PrometheusCategorySelect';
 import PrometheusQueryTemplatePreview from './PrometheusQueryTemplatePreview';
-import { AstryxFormTagsInput } from './astryx-bui/astryxFormControls';
-import { Input } from 'antd';
+import {
+  AstryxFormTagsInput,
+  AstryxFormTextArea,
+  AstryxFormTextInput,
+} from './astryxFormControls';
 import {
   BAIModal,
   BAIModalProps,
@@ -26,8 +29,6 @@ import * as _ from 'lodash-es';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
-
-const { TextArea } = Input;
 
 type PrometheusQueryPresetFormValues = {
   name: string;
@@ -312,14 +313,21 @@ const PrometheusQueryPresetEditorModal: React.FC<
           ]}
           extra={t('prometheusQueryPreset.NameMustBeUnique')}
         >
-          <Input />
+          <AstryxFormTextInput label={t('prometheusQueryPreset.Name')} />
         </Form.Item>
 
         <Form.Item
           label={t('prometheusQueryPreset.Description')}
           name="description"
         >
-          <TextArea autoSize={{ minRows: 2, maxRows: 4 }} />
+          {/* antd `Input.TextArea autoSize={{minRows,maxRows}}` →
+              `AstryxFormTextArea rows` (MAPPING §3.6). PILOT-DECISION:
+              auto-growing has no Astryx equivalent, so the box is fixed at the
+              former minimum height. */}
+          <AstryxFormTextArea
+            label={t('prometheusQueryPreset.Description')}
+            rows={2}
+          />
         </Form.Item>
 
         <Suspense
@@ -347,7 +355,7 @@ const PrometheusQueryPresetEditorModal: React.FC<
             },
           ]}
         >
-          <Input />
+          <AstryxFormTextInput label={t('prometheusQueryPreset.MetricName')} />
         </Form.Item>
 
         <Form.Item
@@ -374,14 +382,20 @@ const PrometheusQueryPresetEditorModal: React.FC<
             ) : undefined
           }
         >
-          <TextArea autoSize={{ minRows: 4, maxRows: 12 }} />
+          <AstryxFormTextArea
+            label={t('prometheusQueryPreset.QueryTemplate')}
+            rows={4}
+          />
         </Form.Item>
 
         <Form.Item
           label={t('prometheusQueryPreset.TimeWindow')}
           name="timeWindow"
         >
-          <Input placeholder="5m" />
+          <AstryxFormTextInput
+            label={t('prometheusQueryPreset.TimeWindow')}
+            placeholder="5m"
+          />
         </Form.Item>
 
         <Form.Item

@@ -4,7 +4,11 @@
  */
 import { InferenceSessionErrorModalFragment$key } from '../__generated__/InferenceSessionErrorModalFragment.graphql';
 import CopyableCodeText from './CopyableCodeText';
-import { Descriptions, type DescriptionsProps, Button } from 'antd';
+import { Button } from '@astryxdesign/core/Button';
+import {
+  MetadataList,
+  MetadataListItem,
+} from '@astryxdesign/core/MetadataList';
 import { BAIModal, BAIModalProps } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -34,15 +38,6 @@ const InferenceSessionErrorModal: React.FC<Props> = ({
     inferenceSessionErrorFrgmt,
   );
 
-  const columnSetting: DescriptionsProps['column'] = {
-    xxl: 1,
-    xl: 1,
-    lg: 1,
-    md: 1,
-    sm: 1,
-    xs: 1,
-  };
-
   return (
     <BAIModal
       centered
@@ -52,28 +47,31 @@ const InferenceSessionErrorModal: React.FC<Props> = ({
       }}
       footer={
         <Button
+          label={t('button.Close')}
           onClick={() => {
             onRequestClose();
           }}
-        >
-          {t('button.Close')}
-        </Button>
+        />
       }
       {...baiModalProps}
     >
-      <Descriptions
-        bordered
-        column={columnSetting}
-        labelStyle={{ minWidth: 100 }}
+      {/* antd `Descriptions` → `MetadataList` + `MetadataListItem`
+          (MAPPING §4). `bordered` has no destination and is dropped; the
+          breakpoint-map `column` collapses to `columns="single"` because every
+          breakpoint asked for one column anyway; `labelStyle.minWidth` becomes
+          the `label.width` budget. */}
+      <MetadataList
+        columns="single"
+        label={{ position: 'start', width: 100 }}
         style={{ marginTop: 20 }}
       >
-        <Descriptions.Item label={t('modelService.SessionId')}>
+        <MetadataListItem label={t('modelService.SessionId')}>
           <CopyableCodeText>{iSessionError?.session_id}</CopyableCodeText>
-        </Descriptions.Item>
-        <Descriptions.Item label={t('dialog.error.Error')}>
+        </MetadataListItem>
+        <MetadataListItem label={t('dialog.error.Error')}>
           {iSessionError?.errors[0].repr}
-        </Descriptions.Item>
-      </Descriptions>
+        </MetadataListItem>
+      </MetadataList>
     </BAIModal>
   );
 };

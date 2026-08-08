@@ -18,7 +18,9 @@ import {
   useStartSession,
 } from '../hooks/useStartSession';
 import { PrimaryAppOption } from './ComputeSessionNodeItems/SessionActionButtons';
-import { Dropdown, Image, Space, Tooltip } from 'antd';
+import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
+import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIButton,
   BAIButtonProps,
@@ -108,16 +110,25 @@ const FileBrowserButtonV2: React.FC<FileBrowserButtonV2Props> = ({
     reuseIfExists: true,
   });
 
+  const tooltipTitle = getTooltipTitle();
+
   return (
-    <Tooltip title={getTooltipTitle()}>
-      <Space.Compact>
+    // antd `Tooltip title` → Astryx `Tooltip content` (MAPPING §4). The antd
+    // original rendered an empty tooltip when the title resolved to '';
+    // `isEnabled` expresses that intent instead.
+    <Tooltip content={tooltipTitle} isEnabled={!!tooltipTitle}>
+      {/* antd `Space.Compact` → `ButtonGroup` (MAPPING §4). */}
+      <ButtonGroup label={t('data.explorer.ExecuteFileBrowser')}>
         <BAIButton
           icon={
-            <Image
+            // antd `Image preview={false}` was a plain 18px raster with the
+            // lightbox switched off; Astryx's Image family (Thumbnail /
+            // Lightbox) is for previewable media, so a bare <img> is the
+            // faithful mapping here (PILOT-DECISION).
+            <img
               width="18px"
               src="/resources/icons/filebrowser.svg"
               alt="File Browser"
-              preview={false}
               style={
                 filebrowserImage
                   ? undefined
@@ -165,31 +176,35 @@ const FileBrowserButtonV2: React.FC<FileBrowserButtonV2Props> = ({
         >
           {showTitle && t('data.explorer.ExecuteFileBrowser')}
         </BAIButton>
-        <Dropdown
-          disabled={!filebrowserImage || !hasAccessPermission}
-          trigger={['click']}
-          menu={{
-            items: [
-              {
-                key: 'custom',
-                label: t('import.StartWithOptions'),
-                onClick: () => {
-                  const launcherValue = createFilebrowserLauncherValue();
-                  const params = new URLSearchParams();
-                  params.set('formValues', JSON.stringify(launcherValue));
-                  params.set('step', '4');
-                  webuiNavigate({
-                    pathname: buildProjectPath('session/start'),
-                    search: params.toString(),
-                  });
-                },
-              },
-            ],
+        {/* antd `Dropdown menu={{items}}` with a click trigger →
+            `DropdownMenu items` (MAPPING §3.7). The trigger moves from
+            `children` to the `button` slot, which is where the disabled state
+            and the accessible name now live. */}
+        <DropdownMenu
+          button={{
+            label: t('import.StartWithOptions'),
+            icon: <Ellipsis size="1em" />,
+            isIconOnly: true,
+            isDisabled: !filebrowserImage || !hasAccessPermission,
           }}
-        >
-          <BAIButton icon={<Ellipsis size="1em" />} />
-        </Dropdown>
-      </Space.Compact>
+          hasChevron={false}
+          items={[
+            {
+              label: t('import.StartWithOptions'),
+              onClick: () => {
+                const launcherValue = createFilebrowserLauncherValue();
+                const params = new URLSearchParams();
+                params.set('formValues', JSON.stringify(launcherValue));
+                params.set('step', '4');
+                webuiNavigate({
+                  pathname: buildProjectPath('session/start'),
+                  search: params.toString(),
+                });
+              },
+            },
+          ]}
+        />
+      </ButtonGroup>
     </Tooltip>
   );
 };
