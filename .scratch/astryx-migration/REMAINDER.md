@@ -14,33 +14,32 @@ of *why* it is not green yet.
 
 | Metric | Files |
 |---|---:|
-| Scanned (shipping source) | 986 |
-| Import antd directly | 296 |
-| Reach antd transitively | 432 |
-| antd-free | 258 |
+| Scanned (shipping source) | 968 |
+| Import antd directly | 256 |
+| Reach antd transitively | 446 |
+| antd-free | 266 |
 
 ## Bucket 1 — RENDER (real conversion work)
 
-285 files import antd **values**. Each needs an Astryx
+246 files import antd **values**. Each needs an Astryx
 equivalent and a visual check — this is the number to plan against.
 
 | Owner | Files |
 |---|---:|
-| app · components | 149 |
-| BUI · fragments | 46 |
-| BUI · components | 45 |
+| app · components | 143 |
+| BUI · components | 33 |
 | BUI · infrastructure (shims, hooks, helper) | 29 |
+| BUI · fragments | 27 |
 | app · pages | 9 |
-| BUI · Table | 4 |
-| app · other | 3 |
+| app · other | 4 |
+| BUI · Table | 1 |
 
 ## Bucket 2 — TYPE-ONLY (cheap, ships nothing)
 
-11 files import only antd **types**. Erased at build
+10 files import only antd **types**. Erased at build
 time, so they add nothing to the bundle; they only keep antd required for
 `tsc`. Closing them does not move the bundle scan.
 
-- `packages/backend.ai-ui/src/components/BAIUnmountAfterClose.tsx`
 - `packages/backend.ai-ui/src/components/fragments/BAIRuntimeVariantPresetSettingModal.tsx`
 - `react/src/components/BulkCreateUserFromCSVModal.tsx`
 - `react/src/components/FairShareItems/DomainResourceGroupAlert.tsx`
@@ -90,71 +89,24 @@ Converting a hub clears its whole dependent set at once.
 
 | File | Taints |
 |---|---:|
-| `packages/backend.ai-ui/src/locale/index.ts` | 664 |
-| `packages/backend.ai-ui/src/theme-shim/index.tsx` | 660 |
-| `packages/backend.ai-ui/src/helper/index.ts` | 616 |
-| `packages/backend.ai-ui/src/app-shim/bridge.ts` | 604 |
-| `packages/backend.ai-ui/src/components/BAIText.tsx` | 604 |
-| `packages/backend.ai-ui/src/components/BAISelect.tsx` | 603 |
-| `packages/backend.ai-ui/src/app-shim/index.tsx` | 602 |
-| `packages/backend.ai-ui/src/components/BAIButton.tsx` | 602 |
-| `packages/backend.ai-ui/src/components/BAIBadge.tsx` | 601 |
-| `packages/backend.ai-ui/src/form-engine/index.ts` | 601 |
-| `packages/backend.ai-ui/src/components/TotalFooter.tsx` | 600 |
-| `packages/backend.ai-ui/src/components/BAILink.tsx` | 599 |
-| `packages/backend.ai-ui/src/components/BAIModal.tsx` | 599 |
-| `packages/backend.ai-ui/src/components/BAITag.tsx` | 599 |
-| `packages/backend.ai-ui/src/components/BAIUnmountAfterClose.tsx` | 599 |
-| `packages/backend.ai-ui/src/components/BAIAlert.tsx` | 598 |
-| `packages/backend.ai-ui/src/components/BAIAlertIconWithTooltip.tsx` | 598 |
-| `packages/backend.ai-ui/src/components/BAIStatistic.tsx` | 598 |
-| `packages/backend.ai-ui/src/components/fragments/BAIArtifactTypeTag.tsx` | 598 |
-| `packages/backend.ai-ui/src/components/provider/BAIConfigProvider/BAIConfigProvider.tsx` | 598 |
+| `packages/backend.ai-ui/src/locale/index.ts` | 636 |
+| `packages/backend.ai-ui/src/theme-shim/index.tsx` | 624 |
+| `packages/backend.ai-ui/src/app-shim/bridge.ts` | 578 |
+| `packages/backend.ai-ui/src/app-shim/index.tsx` | 576 |
+| `packages/backend.ai-ui/src/components/BAIButton.tsx` | 576 |
+| `packages/backend.ai-ui/src/form-engine/index.ts` | 575 |
+| `packages/backend.ai-ui/src/components/BAISelect.tsx` | 574 |
+| `packages/backend.ai-ui/src/components/provider/BAIConfigProvider/BAIConfigProvider.tsx` | 572 |
+| `packages/backend.ai-ui/src/components/unsafe/UNSAFELazyUserEmailView.tsx` | 572 |
+| `packages/backend.ai-ui/src/components/BAIBackButton.tsx` | 571 |
+| `packages/backend.ai-ui/src/components/BAIBulkEditFormItem.tsx` | 571 |
+| `packages/backend.ai-ui/src/components/BAICard.tsx` | 571 |
+| `packages/backend.ai-ui/src/components/BAICheckbox.tsx` | 571 |
+| `packages/backend.ai-ui/src/components/BAIDynamicUnitInputNumber.tsx` | 571 |
+| `packages/backend.ai-ui/src/components/BAIFetchKeyButton.tsx` | 571 |
+| `packages/backend.ai-ui/src/components/BAINotificationItem.tsx` | 571 |
+| `packages/backend.ai-ui/src/components/BAINumberWithUnit.tsx` | 571 |
+| `packages/backend.ai-ui/src/components/BAIProgressWithLabel.tsx` | 571 |
+| `packages/backend.ai-ui/src/components/BAIQuestionIconWithTooltip.tsx` | 571 |
+| `packages/backend.ai-ui/src/components/BAISelectionLabel.tsx` | 571 |
 
-
-## Select family — carry-over after p3-c
-
-p3-c flipped every consumer of the 19 legacy `*Select` wrappers onto their
-ticket-27 Astryx siblings and deleted the wrappers (see
-`issues/p3-c-select-flip.md`). `BAISelect.tsx` (antd) survives, so it stays a
-taint hub. What still has to go through it:
-
-**Mechanical `AstryxFormSelector` conversions** — single-shot query, plain
-string options, no rich rendering. Each gains a required `label`, so give the
-wrapper a fixed domain label internally rather than pushing the prop onto its
-consumers:
-`AccessKeySelect`, `KeypairResourcePolicySelect`, `PrometheusCategorySelect`,
-`UserResourcePolicySelect`, `UserSelect`, `Chat/ModelSelect`, `BAIDomainSelect`,
-`BAIResourceGroupSelect`, `BAIProjectResourcePolicySelect`,
-`BAIStorageProxySelect`, `BAIAllowedHostNamesSelect`,
-`BAIProjectResourceGroupSelect`. The BUI ones cannot import
-`AstryxFormSelector` (it lives in `react/src`) — they go to Astryx `Selector`
-directly, or BUI grows its own adapter.
-
-**NOT mechanical — real `BAIComplexSelect` conversions with P26-3 drops:**
-
-- `StorageSelect` — ReactNode option labels (`StorageUsageBadge` +
-  `TextHighlighter`), `optionLabelProp`, client-side `filterOption`. The badge
-  becomes `extra`, the highlighter is dropped (server search has no local
-  highlight), and REST/TanQuery paging has to be introduced or the list capped.
-- `ResourcePresetSelect` — per-option resource figures and a `Tooltip`.
-- `AgentSelect` — Relay-backed but on `useBAIPaginationOptionState` (fixed
-  window, not scroll `loadNext`); converting means choosing a mode first.
-- `ProjectSelect` — non-Relay client hook with role icons in the label.
-- `BAIProjectSettingModal`'s `<BAIResourceGroupSelect mode="tags">` — the one
-  remaining tags-mode site, and it is tags-over-a-remote-source, which
-  `Tokenizer`'s `SearchSource` can express but the empty-source
-  `AstryxFormTagsInput` adapter cannot.
-
-**Dead code with a live type:** `react/src/components/VFolderSelect.tsx` is
-never rendered (ticket 27 confirmed; the `SessionLauncherPage` use is commented
-out), but `VFolderTable` and `VFolderTableFormItem` import its `VFolder` type.
-Move the type, then delete the file.
-
-**e2e:** `e2e/utils/classes/AdminModelCardPage.ts`,
-`e2e/utils/deployment-fixtures.ts` and `e2e/serving/model-card-drawer.spec.ts`
-only *mention* the retired wrappers in comments, but they drive the DOM those
-wrappers used to render (antd `.ant-select-*`). Every flipped surface now
-renders a ComplexSelector (`role="dialog"` > `role="listbox"` >
-`role="option"`), so those specs need the ticket-31 selector pass before they
-pass again.
