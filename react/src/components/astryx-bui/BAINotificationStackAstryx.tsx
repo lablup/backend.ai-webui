@@ -10,42 +10,52 @@
  background-task progress bar, retry / cancel actions and a navigation link,
  and several of them stack at once, which is more than a toast is.
 
- BLAST RADIUS is exactly one file: `react/src/hooks/useBAINotification.tsx`,
- the single place that calls `app.notification.open()` / `.destroy()`. Read
- that file for the shape being replaced:
+ LIVE SINCE TICKET 29. `react/src/hooks/useBAINotification.tsx` — which used
+ to be the single place calling antd's imperative notification API — now maps
+ its jotai list through `BAINotificationStackAdapter` and renders this
+ component from `BAINotificationStackHost`, mounted once in
+ `components/NotificationHost.tsx`. The shape it feeds in:
 
-   - it opens every notice with `placement: 'bottomRight'` (hence the corner
-     this component anchors to) and suppresses antd's own header, putting all
-     content into `description`;
+   - the old opener anchored every notice to `placement: 'bottomRight'`, hence
+     the corner this component anchors to;
    - `NotificationState` carries `key`, `message`, `description`, `type`,
      `duration`, `to`/`toText` (a navigation link), `backgroundTask`
      ({status, percent}), `onCancel`, `onRetry`, `open`, `icon: 'folder'`,
      `skipDesktopNotification`, `node` (a Relay fragment) and `multiStep`.
 
- This component is the PRESENTATIONAL layer only. The jotai hook is not
- rewired here — see `BAINotificationStackAdapter.tsx` for the mapping that
- makes the future rewiring a one-file change.
+ This component stays the PRESENTATIONAL layer only: no routing, no i18n, no
+ Relay, no jotai — the host injects all four, which is what keeps this file
+ and the adapter inside the antd-free graph.
 
- SUPPORTED (what the hook actually renders today): title, description, status
- icon/colour, background-task progress (determinate and indeterminate), the
- `to`/`toText` action link, retry + cancel buttons, per-notice auto-close
- duration, manual close, stacking with newest nearest the corner, enter/exit
- transitions that respect `prefers-reduced-motion`, and a `data-*` hook for
+ SUPPORTED: title, description, status icon/colour, background-task progress
+ (determinate and indeterminate), the `to`/`toText` action link, retry +
+ cancel buttons, per-notice auto-close duration that pauses on hover/focus,
+ manual close, a `content` slot for a caller-drawn notice body, a collapsible
+ `children` disclosure, stacking with newest nearest the corner, enter/exit
+ transitions that respect `prefers-reduced-motion`, and `data-*` hooks for
  e2e (`data-testid="bai-notification-stack"`, `data-notification-key`,
- `data-status`).
+ `data-status`, `data-paused`).
 
- DEFERRED, deliberately, and annotated rather than faked:
-   - `node` -> `BAINodeNotificationItem` renders a Relay fragment; it needs a
-     RelayEnvironment, so it stays a `children` slot the adapter fills.
-   - `multiStep` -> `BAIMultiStepNotificationItem` is a step list with its own
-     per-step status; it is a second component, not a prop on this one.
-   - `extraDescription` (the "show more" disclosure) — Astryx `Banner` HAS a
-     collapsible `children` area with a built-in toggle, which is the natural
-     home; not wired until a call site needs it.
+ SETTLED IN TICKET 29 (the rewire), each item ticket 08 had deferred:
+   - `node` / `multiStep` -> the `content` slot. Those two renderers draw a
+     complete notice body of their own (folder/session link, status tag, step
+     list), so they REPLACE title/description/progress rather than sitting
+     under them; the adapter fills `content` and the Banner header renders it
+     in place of the title.
+   - `extraDescription` (the "show more" disclosure) -> `children`. Astryx
+     `Banner` collapses `children` behind a built-in chevron toggle, which is
+     exactly the disclosure antd's `BAIGeneralNotificationItem` hand-rolled.
+   - `duration`-pause-on-hover -> IMPLEMENTED here (open decision #3). It is a
+     timer that banks its remaining budget on pointer-enter / focus-in and
+     resumes from it on leave / focus-out — ~15 lines, no new dependency, so
+     the "drop it if it gets complex" clause never triggered.
+
+ STILL DEFERRED:
    - the desktop `Notification` mirror and `skipDesktopNotification` stay in
      the hook. They are a side effect, not a rendering concern.
-   - `duration`-pause-on-hover: antd paused its timer while hovered. Not
-     reproduced; recorded as a behaviour loss.
+   - `icon: 'folder'`: every call site that sets it also sets `node`, so the
+     folder glyph arrives with the `content` renderer. The `icon` prop below
+     stays available for a call site that needs it alone.
 */
 import './astryxBui.css';
 import { Banner } from '@astryxdesign/core/Banner';
@@ -82,15 +92,22 @@ export interface BAINotificationStackItem {
   cancelText?: string;
   onCancel?: () => void;
   /**
-   * Seconds until auto-close; `null` keeps it until dismissed. Mirrors antd's
-   * `duration` (the hook uses `CLOSING_DURATION = 4` for settled tasks).
+   * Seconds until auto-close; `null` (or `0`, antd's own "stay open" value)
+   * keeps it until dismissed. Mirrors antd's `duration` (the hook uses
+   * `CLOSING_DURATION = 4` for settled tasks). The countdown pauses while the
+   * notice is hovered or holds focus.
    */
   duration?: number | null;
   /** @default true */
   isClosable?: boolean;
   /** Overrides the status icon (`NotificationState.icon === 'folder'`). */
   icon?: React.ReactNode;
-  /** Escape hatch for the deferred `node` / `multiStep` renderers. */
+  /**
+   * A complete notice body that REPLACES title / description / progress —
+   * the `node` and `multiStep` renderers, which draw all three themselves.
+   */
+  content?: React.ReactNode;
+  /** Collapsible disclosure below the header (`extraDescription`). */
   children?: React.ReactNode;
 }
 
@@ -120,17 +137,47 @@ const BAINotificationStackItemView: React.FC<{
   // firing must still see the latest one.
   const fireClose = useEffectEvent(() => onClose?.(key));
 
+  // Open decision #3 — antd paused the auto-close countdown while the notice
+  // was hovered, and a notice that closes under the pointer the user moved
+  // there to read it is the one loss the migration would actually be felt as.
+  // `isPaused` also covers focus, so a keyboard user tabbing into the action
+  // buttons gets the same reprieve a mouse user does.
+  const [isPaused, setIsPaused] = useState(false);
+  // `0` is antd's "stay open" value, not "close immediately".
+  const autoCloseMs =
+    typeof duration === 'number' && duration > 0 ? duration * 1000 : null;
+  // What is left of the countdown. Banked by the timer effect's cleanup so a
+  // pause/resume cycle continues rather than restarts.
+  const remainingMsRef = useRef<number | null>(autoCloseMs);
+
+  // A fresh duration is a fresh budget (a background task that settles swaps
+  // `duration: 0` for `CLOSING_DURATION`). React runs every cleanup before
+  // every effect, so this lands after the timer effect's cleanup banked the
+  // old value and before the timer effect below reads it.
   useEffect(() => {
-    if (duration === null || duration === undefined || isExiting) return;
-    const timer = window.setTimeout(() => fireClose(), duration * 1000);
-    return () => window.clearTimeout(timer);
-  }, [duration, isExiting]);
+    remainingMsRef.current = autoCloseMs;
+  }, [autoCloseMs]);
+
+  useEffect(() => {
+    if (autoCloseMs === null || isExiting || isPaused) return;
+    const budget = remainingMsRef.current ?? autoCloseMs;
+    const startedAt = Date.now();
+    const timer = window.setTimeout(() => fireClose(), budget);
+    return () => {
+      window.clearTimeout(timer);
+      remainingMsRef.current = Math.max(0, budget - (Date.now() - startedAt));
+    };
+  }, [autoCloseMs, isExiting, isPaused]);
 
   const hasProgress =
     item.percent !== undefined || item.isProgressIndeterminate === true;
 
+  // Actions sit UNDER the text, not in the Banner's header end area. The
+  // stack is 384px wide: two buttons in the header squeeze the title into a
+  // three-line column (measured), whereas antd put the link and Cancel on
+  // their own row below the message. Same place, same reading order.
   const actions = (
-    <HStack gap={2} align="center">
+    <HStack gap={2} align="center" justify="end" wrap="wrap">
       {item.onCancel ? (
         <Button
           size="sm"
@@ -160,25 +207,38 @@ const BAINotificationStackItemView: React.FC<{
 
   const hasActions = !!(item.onCancel || item.onRetry || item.onAction);
 
+  const hasOwnContent = item.content != null;
+
   return (
     <div
       className="bai-notification-stack-item"
       data-exiting={isExiting ? 'true' : 'false'}
       data-notification-key={String(key)}
       data-status={item.status ?? 'info'}
+      // e2e/measure anchor for the hover-pause contract.
+      data-paused={isPaused ? 'true' : 'false'}
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      // React's onFocus/onBlur are the delegated focusin/focusout pair, so
+      // focus anywhere inside the notice counts.
+      onFocus={() => setIsPaused(true)}
+      onBlur={() => setIsPaused(false)}
     >
       <Banner
         status={item.status ?? 'info'}
-        title={item.title}
+        // `content` is a whole notice body (the `node` / `multiStep`
+        // renderers); it takes the header's content column outright.
+        title={hasOwnContent ? item.content : item.title}
         icon={item.icon}
         // A floating surface needs a shadow to detach from the page; `Banner`
         // defaults to `none` because it is normally in flow.
         elevation="high"
         isDismissable={item.isClosable ?? true}
         onDismiss={() => onClose?.(key)}
-        endContent={hasActions ? actions : undefined}
         description={
-          item.description || hasProgress ? (
+          hasOwnContent ? undefined : item.description ||
+            hasProgress ||
+            hasActions ? (
             <VStack gap={2} align="stretch">
               {typeof item.description === 'string' ? (
                 <Text type="supporting">{item.description}</Text>
@@ -200,6 +260,7 @@ const BAINotificationStackItemView: React.FC<{
                   isIndeterminate={item.isProgressIndeterminate}
                 />
               ) : null}
+              {hasActions ? actions : null}
             </VStack>
           ) : undefined
         }

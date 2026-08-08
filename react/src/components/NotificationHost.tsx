@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
+  BAINotificationStackHost,
   useBAINotificationEffect,
   useSetBAINotification,
 } from '../hooks/useBAINotification';
@@ -14,8 +15,8 @@ import React, { useEffect, useEffectEvent } from 'react';
  * Mounted once inside antd's `<App>` in `DefaultProvidersForReactRoot`, so it
  * is alive on every route (login screen, interactive-login, edu-applauncher,
  * authenticated main layout, ...) regardless of authentication state. It is
- * the ONLY place that subscribes to the `add-bai-notification` DOM event and
- * (via `useBAINotificationEffect`) the only driver of antd toast open/close.
+ * the ONLY place that subscribes to the `add-bai-notification` DOM event, and
+ * the single mount point of the floating notification stack.
  *
  * History: notifications used to be driven from two places — the
  * authenticated header's BAINotificationButton (suspended until login) and a
@@ -62,7 +63,8 @@ const NotificationHost: React.FC = () => {
     };
   }, []);
 
-  return null;
+  // Ticket 29: the floating stack is rendered, not opened imperatively.
+  return <BAINotificationStackHost />;
 };
 
 export default NotificationHost;

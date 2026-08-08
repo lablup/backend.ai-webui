@@ -21,16 +21,10 @@
  `NotificationState` satisfies `BAINotificationSource` structurally, so the
  call site type-checks with no cast.
 
- With this split, rewiring the app is a ONE-FILE change in
- `useBAINotification.tsx`: delete the `app.notification.open()` effect and
- render
-
-     <BAINotificationStackAstryx
-       notifications={toBAINotificationStackItems(notifications, { … })}
-       onClose={(key) => closeNotification(key)}
-     />
-
- once, at the host that already mounts `useBAINotificationEffect`.
+ Ticket 29 did the rewire on exactly that seam: `useBAINotification.tsx` lost
+ its `app.notification.open()` effect and gained `BAINotificationStackHost`,
+ which `components/NotificationHost.tsx` now renders (one line) where it
+ already mounts `useBAINotificationEffect`.
 
  The `type`/`backgroundTask.status` -> `BannerStatus` table is the only real
  decision in here, and it follows what `BAIGeneralNotificationItem` draws
@@ -70,8 +64,22 @@ export interface ToBAINotificationStackItemsOptions<
 > {
   /** Navigate to `notification.to` — the hook owns routing, not the view. */
   onNavigate?: (notification: T) => void;
-  /** Renders the deferred `node` / `multiStep` bodies, if the host wires them. */
+  /**
+   * Label for the `to` action. The host resolves it because `toText` /
+   * `toTextKey` / the "See detail" fallback are an i18n concern and this
+   * module is a pure mapper (translation frontier, spec §0).
+   */
+  getActionText?: (notification: T) => string | undefined;
+  /**
+   * The `node` / `multiStep` bodies. Each draws a complete notice of its own,
+   * so what it returns REPLACES title / description / progress.
+   */
+  renderContent?: (notification: T) => React.ReactNode;
+  /** The `extraDescription` disclosure, shown in the Banner's collapsible area. */
   renderExtra?: (notification: T) => React.ReactNode;
+  /** Translated button labels; the view's own defaults are English literals. */
+  cancelText?: string;
+  retryText?: string;
 }
 
 function resolveStatus(notification: BAINotificationSource): BannerStatus {
@@ -100,41 +108,67 @@ function resolveStatus(notification: BAINotificationSource): BannerStatus {
 /**
  * Map the jotai state to the presentational item list.
  *
+ * Order in = order out; the host reverses so the newest notice sits nearest
+ * the corner, which is where antd's `bottomRight` stack put it.
+ *
  * DROPPED here (not silently — each has a home elsewhere):
  *   `skipDesktopNotification` / the desktop `Notification` mirror -> stays a
  *   side effect in the hook. `placement` -> the stack owns its corner.
  *   `className` -> the antd-only notification-description margin patch,
  *   which has nothing to target any more (P6).
+ *   the 200/300-character `_.truncate` the antd item applied to
+ *   message/description -> the stack is 384px wide and wraps; a hard clip on
+ *   an error message is a worse default than a taller notice.
  */
 export function toBAINotificationStackItems<T extends BAINotificationSource>(
   notifications: Array<T>,
-  { onNavigate, renderExtra }: ToBAINotificationStackItemsOptions<T> = {},
+  {
+    onNavigate,
+    getActionText,
+    renderContent,
+    renderExtra,
+    cancelText,
+    retryText,
+  }: ToBAINotificationStackItemsOptions<T> = {},
 ): Array<BAINotificationStackItem> {
-  return notifications
-    .filter((notification) => notification.open !== false)
-    .map((notification) => {
-      const percent = notification.backgroundTask?.percent;
-      const isPending = notification.backgroundTask?.status === 'pending';
-      return {
-        key: notification.key,
-        title: notification.title ?? notification.message,
-        description: notification.description,
-        status: resolveStatus(notification),
-        percent,
-        // A task that has started but reported no progress yet: antd showed a
-        // 0% bar, which reads as "stuck". An indeterminate bar reads as "busy".
-        isProgressIndeterminate: isPending && percent === undefined,
-        actionText: notification.toText,
-        onAction: notification.to
-          ? () => onNavigate?.(notification)
-          : undefined,
-        onRetry: notification.onRetry ?? undefined,
-        onCancel: notification.onCancel ?? undefined,
-        duration:
-          typeof notification.duration === 'number'
-            ? notification.duration
-            : null,
-        children: renderExtra?.(notification),
-      } satisfies BAINotificationStackItem;
-    });
+  return (
+    notifications
+      // `open === true`, not `!== false`: a notification that never asked to be
+      // shown (no `open`) belongs to the drawer only. antd's opener made the
+      // same distinction, and widening it here would float notices that have
+      // never been toasts.
+      .filter((notification) => notification.open === true)
+      .map((notification) => {
+        const percent = notification.backgroundTask?.percent;
+        const isPending = notification.backgroundTask?.status === 'pending';
+        const content = renderContent?.(notification);
+        return {
+          key: notification.key,
+          title: notification.title ?? notification.message,
+          description: notification.description,
+          status: resolveStatus(notification),
+          percent,
+          // A task that has started but reported no progress yet: antd showed a
+          // 0% bar, which reads as "stuck". An indeterminate bar reads as "busy".
+          isProgressIndeterminate: isPending && percent === undefined,
+          actionText: getActionText?.(notification) ?? notification.toText,
+          onAction: notification.to
+            ? () => onNavigate?.(notification)
+            : undefined,
+          onRetry: notification.onRetry ?? undefined,
+          onCancel: notification.onCancel ?? undefined,
+          cancelText,
+          retryText,
+          // antd treats `0` as "no auto-close" (the hook sets it on every
+          // pending background task); the view's "stay open" value is `null`.
+          duration:
+            typeof notification.duration === 'number' &&
+            notification.duration > 0
+              ? notification.duration
+              : null,
+          content: content ?? undefined,
+          children: renderExtra?.(notification),
+        } satisfies BAINotificationStackItem;
+      })
+  );
 }

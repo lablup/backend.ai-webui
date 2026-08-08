@@ -3,11 +3,17 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
+  BAINotificationStackHost,
   useBAINotificationEffect,
   useBAINotificationState,
 } from '../useBAINotification';
-import { act, render, screen, waitFor } from '@testing-library/react';
-import { App } from 'antd';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import React from 'react';
 
 vi.mock('..', () => ({
@@ -32,13 +38,6 @@ vi.mock('../../components/BAINodeNotificationItem', () => ({
 vi.mock('../../components/BAIMultiStepNotificationItem', () => ({
   default: () => <div>multistep-item</div>,
 }));
-vi.mock('../../components/BAIGeneralNotificationItem', () => ({
-  default: ({ notification }: any) => (
-    <div data-testid={`general-item-${notification.key}`}>
-      {String(notification.description ?? '')}
-    </div>
-  ),
-}));
 
 const Effects: React.FC = () => {
   useBAINotificationEffect();
@@ -57,14 +56,22 @@ const StateProbe: React.FC = () => {
   return null;
 };
 
+// The whole app-side wiring: the background-task effect, the state, and the
+// floating stack that renders it. No antd provider — ticket 29 removed the
+// last `App.useApp().notification` dependency from this module.
 const Harness: React.FC = () => (
-  <App>
+  <>
     <Effects />
     <StateProbe />
-  </App>
+    <BAINotificationStackHost />
+  </>
 );
 
 const getOpen = (key: string) => latestState?.find((n) => n.key === key)?.open;
+
+/** The notice as it is actually rendered by the stack, or null when hidden. */
+const queryNotice = (key: string) =>
+  document.querySelector(`[data-notification-key="${key}"]`);
 
 const upsertOpen = (key: string) => {
   act(() => {
@@ -77,24 +84,47 @@ const upsertOpen = (key: string) => {
   });
 };
 
-describe('useBAINotification antd <-> state sync', () => {
+describe('useBAINotification state <-> stack sync', () => {
   beforeEach(() => {
     act(() => {
       latestSetters?.clearAllNotifications?.();
     });
   });
 
-  // Regression: since antd 6.5 (rc-notification 2.x),
-  // `notification.destroy(key)` no longer fires the notice's `onClose`
-  // callback, so closeNotification must flip `open` in the state itself.
-  // Otherwise the reactive opener re-shows the closed notification whenever
-  // any other notification changes ("zombie re-open").
-  it('closeNotification flips state open to false', async () => {
+  it('renders an opened notification into the stack', async () => {
     render(<Harness />);
 
     upsertOpen('session-A');
     await waitFor(() => {
-      expect(screen.getByTestId('general-item-session-A')).toBeInTheDocument();
+      expect(queryNotice('session-A')).not.toBeNull();
+    });
+    expect(screen.getByText('session-A')).toBeInTheDocument();
+  });
+
+  // A notification that never asked to be shown belongs to the drawer only —
+  // the same distinction antd's imperative opener made with `open === true`.
+  it('does not float a notification that was never opened', async () => {
+    render(<Harness />);
+
+    act(() => {
+      latestSetters?.upsertNotification({
+        key: 'drawer-only',
+        description: 'drawer only',
+      });
+    });
+
+    await waitFor(() => {
+      expect(latestState?.some((n) => n.key === 'drawer-only')).toBe(true);
+    });
+    expect(queryNotice('drawer-only')).toBeNull();
+  });
+
+  it('closeNotification flips state open to false and unmounts the notice', async () => {
+    render(<Harness />);
+
+    upsertOpen('session-A');
+    await waitFor(() => {
+      expect(queryNotice('session-A')).not.toBeNull();
     });
     expect(getOpen('session-A')).toBe(true);
 
@@ -116,7 +146,7 @@ describe('useBAINotification antd <-> state sync', () => {
 
     upsertOpen('session-A');
     await waitFor(() => {
-      expect(screen.getByTestId('general-item-session-A')).toBeInTheDocument();
+      expect(queryNotice('session-A')).not.toBeNull();
     });
 
     act(() => {
@@ -129,14 +159,28 @@ describe('useBAINotification antd <-> state sync', () => {
     // An unrelated notification appears.
     upsertOpen('other-B');
     await waitFor(() => {
-      expect(screen.getByTestId('general-item-other-B')).toBeInTheDocument();
+      expect(queryNotice('other-B')).not.toBeNull();
     });
 
     // session-A must stay closed.
     expect(getOpen('session-A')).toBe(false);
   });
 
-  it('duration-based auto close flips state open to false via onClose', async () => {
+  // `duration: 0` is antd's "stay open", and the value this hook puts on every
+  // pending background task — it must never be read as "close immediately".
+  it('duration 0 keeps the notice open', async () => {
+    render(<Harness />);
+
+    upsertOpen('sticky-D');
+    await waitFor(() => {
+      expect(queryNotice('sticky-D')).not.toBeNull();
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    expect(getOpen('sticky-D')).toBe(true);
+  });
+
+  it('duration-based auto close flips state open to false', async () => {
     render(<Harness />);
 
     act(() => {
@@ -149,7 +193,7 @@ describe('useBAINotification antd <-> state sync', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByTestId('general-item-auto-C')).toBeInTheDocument();
+      expect(queryNotice('auto-C')).not.toBeNull();
     });
     expect(getOpen('auto-C')).toBe(true);
 
@@ -161,12 +205,52 @@ describe('useBAINotification antd <-> state sync', () => {
     );
   });
 
+  // Open decision #3: antd paused the countdown on hover, and ticket 29 keeps
+  // that behaviour rather than recording it as a loss.
+  it('hovering pauses the auto-close countdown and leaving resumes it', async () => {
+    render(<Harness />);
+
+    act(() => {
+      latestSetters?.upsertNotification({
+        key: 'hover-E',
+        description: 'hover E',
+        open: true,
+        duration: 0.3,
+      });
+    });
+
+    const notice = await waitFor(() => {
+      const el = queryNotice('hover-E');
+      expect(el).not.toBeNull();
+      return el!;
+    });
+
+    act(() => {
+      fireEvent.mouseEnter(notice);
+    });
+    expect(notice.getAttribute('data-paused')).toBe('true');
+
+    // Well past the 300ms budget — a running timer would have fired by now.
+    await new Promise((resolve) => setTimeout(resolve, 900));
+    expect(getOpen('hover-E')).toBe(true);
+
+    act(() => {
+      fireEvent.mouseLeave(notice);
+    });
+    await waitFor(
+      () => {
+        expect(getOpen('hover-E')).toBe(false);
+      },
+      { timeout: 3000 },
+    );
+  });
+
   it('clearNotification removes the entry from the list', async () => {
     render(<Harness />);
 
     upsertOpen('session-A');
     await waitFor(() => {
-      expect(screen.getByTestId('general-item-session-A')).toBeInTheDocument();
+      expect(queryNotice('session-A')).not.toBeNull();
     });
 
     act(() => {
@@ -180,7 +264,7 @@ describe('useBAINotification antd <-> state sync', () => {
     // A later unrelated notification must not resurrect it.
     upsertOpen('other-B');
     await waitFor(() => {
-      expect(screen.getByTestId('general-item-other-B')).toBeInTheDocument();
+      expect(queryNotice('other-B')).not.toBeNull();
     });
     expect(latestState?.some((n) => n.key === 'session-A')).toBe(false);
   });
