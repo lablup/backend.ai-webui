@@ -9,10 +9,9 @@ import {
 import { useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
+import AllResourceGroupSelect from './AllResourceGroupSelect';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import SessionNodes from './SessionNodes';
-import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
 import { Form } from 'antd';
 import {
   BAIAlert,
@@ -22,6 +21,7 @@ import {
   INITIAL_FETCH_KEY,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { parseAsString, useQueryState } from 'nuqs';
 import { useDeferredValue, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -30,10 +30,12 @@ import { useLocation } from 'react-router-dom';
 const PendingSessionNodeList: React.FC = () => {
   const { t } = useTranslation();
   const [fetchKey, updateFetchKey] = useFetchKey();
-  // const [selectedResourceGroup, setSelectedResourceGroup] = useState<string>();
-  const currentResourceGroup = useCurrentResourceGroupValue();
+  const [selectedResourceGroup, setSelectedResourceGroup] = useQueryState(
+    'resourceGroup',
+    parseAsString.withOptions({ history: 'replace' }),
+  );
   const deferredFetchKey = useDeferredValue(fetchKey);
-  const deferredCurrentResourceGroup = useDeferredValue(currentResourceGroup);
+  const deferredSelectedResourceGroup = useDeferredValue(selectedResourceGroup);
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.PendingSessionNodeList',
@@ -53,11 +55,11 @@ const PendingSessionNodeList: React.FC = () => {
 
   const queryVariables: PendingSessionNodeListQuery$variables = useMemo(
     () => ({
-      resource_group_id: deferredCurrentResourceGroup ?? '',
+      resource_group_id: deferredSelectedResourceGroup ?? '',
       first: baiPaginationOption.first,
       offset: baiPaginationOption.offset,
     }),
-    [deferredCurrentResourceGroup, baiPaginationOption],
+    [deferredSelectedResourceGroup, baiPaginationOption],
   );
   const deferredQueryVariables = useDeferredValue(queryVariables);
 
@@ -106,15 +108,18 @@ const PendingSessionNodeList: React.FC = () => {
           label={t('session.ResourceGroup')}
           style={{ marginBottom: 0 }}
         >
-          <SharedResourceGroupSelectForCurrentProject
+          <AllResourceGroupSelect
+            autoSelectFirst
             showSearch
             style={{ minWidth: 100 }}
-            onChangeInTransition={() => {
-              setTablePaginationOption({ current: 1 });
-            }}
-            loading={currentResourceGroup !== deferredCurrentResourceGroup}
+            loading={selectedResourceGroup !== deferredSelectedResourceGroup}
             popupMatchSelectWidth={false}
             tooltip={t('general.ResourceGroup')}
+            value={selectedResourceGroup ?? undefined}
+            onChange={(value) => {
+              setSelectedResourceGroup(value ?? null);
+              setTablePaginationOption({ current: 1 });
+            }}
           />
         </Form.Item>
         <AutoUpdateFetchKeyButton
