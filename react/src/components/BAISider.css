@@ -34,6 +34,31 @@
  * because the row WAS the sider's first child; Astryx `SideNav` puts `header`
  * inside a padded sticky area (spacing-2 = 8px all round), so the band bleeds
  * back out with a negative margin to keep the full-width brand bar.
+ *
+ * POLISH-3 item 4 — the EXPANDED logo is LEFT-aligned, as legacy had it.
+ *
+ * Legacy `BAISider` wrote the polarity as a prop on the band's flex box:
+ * `align={collapsed ? 'center' : 'start'}` with `padding: '0 30px'`, so the
+ * 159px wide-logo sat at x=30 in the 240px rail and was centred only in the
+ * collapsed rail. The conversion expressed that as
+ * `:has(.logo-collapsed:not([hidden]))` — which is true in BOTH states: the
+ * collapsed mark is always in the DOM (`BAISider` toggles the visibility of
+ * its WRAPPER with `display: none`, and `display: none` is not the `hidden`
+ * attribute), so the `:has()` matched permanently and every rail centred its
+ * logo. Measured before: `img.logo-wide` at x=40.5 (i.e. centred in the
+ * 24/24-padded 192px content box) instead of hugging the start edge.
+ *
+ * The state is already on the DOM as `.bai-sider--collapsed` (BAISider adds
+ * it because `SideNav` reflects no collapsed state itself — see the collapsed
+ * rules further down), so the centring is keyed off that instead. Default =
+ * start, which is also `align-items`' initial `normal` for a column box, so
+ * only the collapsed override has to be stated.
+ *
+ * `padding-inline` moves 24px -> 32px (`--spacing-6` -> `--spacing-8`):
+ * legacy's inset was 30px, and 32px is both the nearest step on the spacing
+ * scale and exactly where every nav row's icon starts (8px scroll-column pad
+ * + 24px `side-nav-item` padding), so the brand mark and the menu column now
+ * share one optical left edge.
  */
 .bai-sider .logo-and-text-container {
   display: flex;
@@ -41,14 +66,28 @@
   justify-content: center;
   margin: calc(var(--spacing-2) * -1);
   margin-bottom: 0;
-  padding-inline: var(--spacing-6);
+  padding-inline: var(--spacing-8);
   height: 60px;
   background-color: var(--color-accent);
   transition: all 0.2s ease-in-out;
 }
 
-.bai-sider .logo-and-text-container:has(.logo-collapsed:not([hidden])) {
+/*
+ * The collapsed rail: the mark is centred, and the band must still paint the
+ * full 74px brand bar.
+ *
+ * `align-self: stretch` is load-bearing. `SideNav`'s collapsed header area is
+ * `align-items: center`, so the band is only as wide as its own content — the
+ * 24/24 padding this rule drops used to make that content box 34+48 = 82px,
+ * wider than the rail, so it was clamped back to 74 and the 34px mark was
+ * squeezed to 26px instead (measured before: `img.logo-collapsed` w = 26).
+ * Removing the padding fixes the mark but would shrink the orange band to
+ * 34px; stretching the band back to the rail keeps both right.
+ */
+.bai-sider--collapsed .logo-and-text-container {
+  align-self: stretch;
   align-items: center;
+  padding-inline: 0;
 }
 
 /*

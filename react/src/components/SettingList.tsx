@@ -253,6 +253,14 @@ const SettingList: React.FC<SettingPageProps> = ({
               placeholder={t('settings.SearchPlaceholder')}
               onChange={(nextValue) => setSearchValue(nextValue)}
               value={searchValue}
+              // POLISH-3 item 5 — the search box fills the rest of the row,
+              // as legacy did. antd `Input` carries `width: 100%`, so as a
+              // flex item it claimed the row and shrank to leave room for the
+              // filter checkbox and the buttons beside it; Astryx `TextInput`
+              // sizes to its own content box instead (measured 252px against
+              // a 1262px row). `width` is TextInput's own prop for this and
+              // sizes the whole field (label + control + status) together.
+              width="100%"
             />
           )}
           {!!showChangedOptionFilter && (

@@ -4,7 +4,6 @@
  */
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useSuspenseGetAnnouncement } from '../hooks/useSuspenseGetAnnouncement';
-import { theme } from '../theme-shim';
 import AnnouncementEditModal from './AnnouncementEditModal';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
@@ -34,7 +33,6 @@ const AnnouncementAlert: React.FC<Props> = ({ closable }) => {
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const userRole = useCurrentUserRole();
   const isSuperAdmin = userRole === 'superadmin';
   const [isEditOpen, { toggle: toggleEditModal }] = useToggle(false);
@@ -46,22 +44,19 @@ const AnnouncementAlert: React.FC<Props> = ({ closable }) => {
         status="info"
         isDismissable={closable}
         title={
-          <div style={{ marginBottom: token.marginSM * -1 }}>
-            <Markdown
-              options={{
-                overrides: {
-                  p: {
-                    props: {
-                      style: { marginTop: 0, marginBottom: token.marginSM },
-                    },
-                  },
-                },
-              }}
-            >
-              {/* trailing <p> collapses the last paragraph's bottom margin */}
-              {announcement.message + '<p></p>'}
-            </Markdown>
-          </div>
+          // POLISH-3 item 2: no styling of the Banner's own boxes. What used
+          // to be here was a negative `marginBottom` on a wrapper plus a
+          // trailing empty `<p>` — a pair of hacks whose only job was to
+          // cancel the bottom margin the markdown paragraphs added inside
+          // Banner's header. Zeroing the paragraph margin removes the cause,
+          // so the Banner keeps its default padding untouched.
+          <Markdown
+            options={{
+              overrides: { p: { props: { style: { margin: 0 } } } },
+            }}
+          >
+            {announcement.message}
+          </Markdown>
         }
         endContent={
           isSuperAdmin ? (

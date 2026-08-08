@@ -925,13 +925,16 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
             style={{ marginTop: 16 }}
             status="success"
             title={t('eduapi.LaunchCompleted')}
-            description={
-              // Always render a clickable link to the app URL. The
-              // best-effort `window.open` in `handleLaunchSuccess` may have
-              // been blocked by the browser's popup blocker (the call is
-              // not directly tied to a user gesture); a single click on
-              // this link is a fresh user gesture and is guaranteed to
-              // open the new tab.
+            // Always render a clickable link to the app URL. The best-effort
+            // `window.open` in `handleLaunchSuccess` may have been blocked by
+            // the browser's popup blocker (the call is not directly tied to a
+            // user gesture); a single click on this link is a fresh user
+            // gesture and is guaranteed to open the new tab.
+            //
+            // POLISH-3 item 1: it is the banner's ACTION, so it belongs in
+            // `endContent` (Banner's "Action button" anatomy slot) rather
+            // than in the description column.
+            endContent={
               <Link
                 href={stage.appConnectUrl}
                 target="_blank"

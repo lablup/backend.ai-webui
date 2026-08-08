@@ -148,6 +148,17 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   //
   // Collapsed, the offset is dropped: the 48px rail centers the button itself,
   // and 16px of inline padding would push it out of the rail.
+  //
+  // POLISH-3 item 3 — the row must occupy the SAME box a menu row does, or
+  // toggling between the general and the admin menu makes the top row appear
+  // to jump. `SIDE_NAV_DENSITY` gives `side-nav-item` `height: 40px` AND
+  // `margin-block: 2px`; this row had the height but no margin, and instead
+  // carried a 4px `padding-block-end` that pushed its content 4px up inside
+  // its own 40px box. Measured before: the back arrow's centre sat at y=90
+  // while the "Admin Settings" menu row's icon sat at y=94. Replacing the
+  // bottom padding with the same 2px block margin makes the two boxes
+  // identical (border box y=74..114, icon centre y=94, icon x=32,
+  // label x=56) — the geometry is now stated once, as the menu-item metric.
   const adminHeader = (
     <HStack
       align="center"
@@ -155,7 +166,9 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       height={40}
       style={{
         paddingInlineStart: props.collapsed ? undefined : 'var(--spacing-4)',
-        paddingBlockEnd: 'var(--spacing-1)',
+        // `--spacing-0-5` = 2px = `SIDE_NAV_DENSITY`'s `side-nav-item`
+        // `marginBlock`.
+        marginBlock: 'var(--spacing-0-5)',
       }}
     >
       <IconButton

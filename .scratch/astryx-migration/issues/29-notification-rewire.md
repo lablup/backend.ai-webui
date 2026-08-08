@@ -89,13 +89,19 @@ the distinction antd's opener made. Also unit-tested.
    settles ticket 08's third deferred item essentially for free, and the
    disclosure is closer to antd's hand-rolled "See detail" toggle than
    anything else on offer.
-3. **Actions moved out of the Banner's `endContent` into the description
-   column.** Measured first: at the stack's 384px, `Cancel` + `View folder` in
-   the header end area squeezed "Cloning folder my-training-data" into three
-   wrapped lines. antd put the link and Cancel on their own row *below* the
-   message; the description slot reproduces that placement exactly. Before/after
-   is visible between the two `29-5-stack-light.png` captures in the run log.
-   Only the dismiss ✕ and the disclosure chevron stay in the header.
+3. ~~**Actions moved out of the Banner's `endContent` into the description
+   column.**~~ **SUPERSEDED — POLISH-3 item 1 (see `POLISH-3.md`).** The
+   original reasoning, kept for the record: measured first, at the stack's
+   384px, `Cancel` + `View folder` in the header end area squeezed "Cloning
+   folder my-training-data" into three wrapped lines; antd put the link and
+   Cancel on their own row *below* the message, and the description slot
+   reproduced that placement exactly (before/after is visible between the two
+   `29-5-stack-light.png` captures in the run log).
+   The user has since ruled that a Banner's actions belong in `endContent`
+   everywhere — that is the slot Banner's own anatomy names for them — and
+   **accepted the 384px squeeze this decision was measuring**. The actions are
+   back in `endContent` (`BAINotificationStackAstryx.tsx`); the description
+   column now carries only the description text and the progress bar.
 4. **`toText` / `toTextKey` / "See detail" resolve in the host, via a
    `getActionText` option** — the adapter stays a pure mapper and the
    translation frontier stays on the app side (spec §0). Same for the

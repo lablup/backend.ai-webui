@@ -155,19 +155,25 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
                       >
                         <Banner
                           status="info"
+                          // POLISH-3 item 1: a Banner's action belongs in
+                          // `endContent` (Banner's own "Action button"
+                          // anatomy slot), not stacked on top of the
+                          // description column.
+                          endContent={
+                            <Button
+                              icon={<RotateCw size="1em" />}
+                              onClick={() => {
+                                resetErrorBoundary();
+                              }}
+                              label={t('errorBoundary.ResetErrorBoundary')}
+                            />
+                          }
                           description={
                             <BAIFlex
                               direction="column"
                               align="center"
                               gap={'md'}
                             >
-                              <Button
-                                icon={<RotateCw size="1em" />}
-                                onClick={() => {
-                                  resetErrorBoundary();
-                                }}
-                                label={t('errorBoundary.ResetErrorBoundary')}
-                              />
                               <BAIFlex direction="column" gap="sm">
                                 <Text weight="semibold">
                                   {t('errorBoundary.ErrorMessage')}

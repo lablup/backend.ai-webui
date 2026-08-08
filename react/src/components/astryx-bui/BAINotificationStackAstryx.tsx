@@ -172,10 +172,14 @@ const BAINotificationStackItemView: React.FC<{
   const hasProgress =
     item.percent !== undefined || item.isProgressIndeterminate === true;
 
-  // Actions sit UNDER the text, not in the Banner's header end area. The
-  // stack is 384px wide: two buttons in the header squeeze the title into a
-  // three-line column (measured), whereas antd put the link and Cancel on
-  // their own row below the message. Same place, same reading order.
+  // Actions go in the Banner's `endContent` — the slot Banner's own anatomy
+  // names for them ("Action button ... a button for the user to act on the
+  // message"). Ticket 29 had moved them into the description column instead,
+  // to keep the 384px stack from wrapping the title onto three lines; the
+  // user accepted that squeeze in exchange for using the component as
+  // designed, so POLISH-3 supersedes that PILOT-DECISION. `wrap="wrap"` is
+  // what absorbs the narrow width: two buttons stack inside the end area
+  // rather than pushing the header wider.
   const actions = (
     <HStack gap={2} align="center" justify="end" wrap="wrap">
       {item.onCancel ? (
@@ -245,10 +249,10 @@ const BAINotificationStackItemView: React.FC<{
         elevation="high"
         isDismissable={item.isClosable ?? true}
         onDismiss={() => onClose?.(key)}
+        // POLISH-3 item 1 (supersedes ticket 29 PILOT-DECISION 3).
+        endContent={hasActions ? actions : undefined}
         description={
-          hasOwnContent ? undefined : item.description ||
-            hasProgress ||
-            hasActions ? (
+          hasOwnContent ? undefined : item.description || hasProgress ? (
             <VStack gap={2} align="stretch">
               {typeof item.description === 'string' ? (
                 <Text type="supporting">
@@ -274,7 +278,6 @@ const BAINotificationStackItemView: React.FC<{
                   isIndeterminate={item.isProgressIndeterminate}
                 />
               ) : null}
-              {hasActions ? actions : null}
             </VStack>
           ) : undefined
         }

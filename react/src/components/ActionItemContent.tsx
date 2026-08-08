@@ -47,9 +47,16 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
   // hatch), so the admin/`themeColor` tint is DROPPED and every action button
   // takes the theme accent. The nested `Typography.Text` that only resized
   // and whitened the label goes away too — `label` is the button's own text.
+  //
+  // POLISH-3 item 6 — the SIZE comes back. Legacy hand-set `height: 40` on
+  // the button and `fontSize: token.fontSizeHeading5` (16px) on its label;
+  // the conversion took the default `md` (32px tall, 14px label), which is
+  // the size difference the user reads on these cards. Astryx's `lg` step is
+  // that metric as a prop, so no hand-set height or font-size returns.
   const actionButton = (
     <Button
       variant="primary"
+      size="lg"
       width="100%"
       onClick={onClick}
       label={buttonText}
@@ -93,8 +100,18 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
         </BAIFlex>
         <BAIFlex style={{ minHeight: 60 }}>
           {typeof title === 'string' ? (
+            // POLISH-3 item 6 — the card title is 20px, as legacy had it.
+            // Legacy was `Typography.Text strong` at `token.fontSizeHeading4`
+            // (20px / weight 600). `type="large"` carries the 600 but its
+            // size token is `--font-size-lg`, which `ANTD_ALIGN_TOKENS` pins
+            // to antd's `fontSizeLG` = 16px — so the title rendered 4px
+            // small. `size="xl"` is `--font-size-xl` = 1.25rem = 20px, i.e.
+            // exactly `fontSizeHeading4`, and Text's `size` prop is the
+            // documented way to move the size while keeping the rest of the
+            // semantic type (weight, leading, colour role) intact.
             <Text
               type="large"
+              size="xl"
               weight="semibold"
               style={{
                 color: themeColor
