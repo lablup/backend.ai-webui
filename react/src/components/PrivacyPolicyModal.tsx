@@ -4,7 +4,7 @@
  */
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { Skeleton } from 'antd';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import { BAIModal, BAIModalProps } from 'backend.ai-ui';
 import DOMPurify from 'dompurify';
 import { Suspense, useMemo } from 'react';
@@ -54,7 +54,7 @@ const PrivacyPolicyModal = ({
       width={'80%'}
       {...props}
     >
-      <Suspense fallback={<Skeleton active />}>
+      <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
         <RenderPrivacyPolicyHtml />
       </Suspense>
     </BAIModal>

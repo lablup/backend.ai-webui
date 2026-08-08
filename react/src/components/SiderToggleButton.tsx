@@ -2,10 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { theme } from '../theme-shim';
 import { HEADER_Z_INDEX_IN_MAIN_LAYOUT } from './MainLayout/MainLayout';
-import { Button, ConfigProvider, Tooltip } from 'antd';
-import { BAIFlex, BAIText } from 'backend.ai-ui';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { BAIFlex } from 'backend.ai-ui';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -24,7 +23,6 @@ const SiderToggleButton: React.FC<SiderToggleButtonProps> = ({
   hidden,
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   return (
     <BAIFlex
       style={{
@@ -37,48 +35,31 @@ const SiderToggleButton: React.FC<SiderToggleButtonProps> = ({
       direction="column"
       justify={buttonTop ? 'start' : 'center'}
     >
-      <ConfigProvider
-        theme={{
-          components: {
-            Button: {
-              defaultBorderColor: token.colorBorderSecondary,
-            },
-          },
+      {/* PILOT-DECISION: antd `Tooltip` + `Button shape="circle" size="small"`
+          → Astryx `IconButton size="sm"` with its OWN `tooltip` prop
+          (MAPPING §3.3 icon-only branch / §4 Tooltip). Three drops:
+          (1) the `ConfigProvider` component-token override that repainted the
+          button border (`defaultBorderColor`) — component tokens are closed
+          enums in Astryx (P5/P11), and this wrapper existed only to re-theme
+          antd; (2) the `[` keyboard hint that antd rendered as a JSX tooltip
+          title — Astryx `tooltip` is a plain `string` (P2), so the shortcut
+          glyph is folded into the text; (3) the circle shape — Astryx
+          IconButton is a rounded square. */}
+      <IconButton
+        size="sm"
+        tooltip={`${collapsed ? t('button.Expand') : t('button.Collapse')} [`}
+        label={collapsed ? t('button.Expand') : t('button.Collapse')}
+        icon={collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+        onClick={() => {
+          onClick && onClick(!collapsed);
         }}
-      >
-        <Tooltip
-          title={
-            <>
-              {collapsed ? t('button.Expand') : t('button.Collapse')}{' '}
-              <BAIText keyboardWithLightBorder>{'['}</BAIText>
-            </>
-          }
-          placement="right"
-        >
-          <Button
-            shape="circle"
-            // className={classNames(styles.toggleBtn, 'toggle-btn')}
-            size="small"
-            icon={
-              collapsed ? (
-                <ChevronRightIcon color={token.colorTextTertiary} />
-              ) : (
-                <ChevronLeftIcon color={token.colorTextTertiary} />
-              )
-            }
-            onClick={() => {
-              onClick && onClick(!collapsed);
-            }}
-            style={{
-              boxShadow: 'none',
-              visibility: 'hidden',
-              opacity: 0,
-              transition: 'opacity 0.2s ease, visibility 0.2s ease',
-              ...(!hidden ? { visibility: 'visible', opacity: 1 } : {}),
-            }}
-          />
-        </Tooltip>
-      </ConfigProvider>
+        style={{
+          visibility: 'hidden',
+          opacity: 0,
+          transition: 'opacity 0.2s ease, visibility 0.2s ease',
+          ...(!hidden ? { visibility: 'visible', opacity: 1 } : {}),
+        }}
+      />
     </BAIFlex>
   );
 };

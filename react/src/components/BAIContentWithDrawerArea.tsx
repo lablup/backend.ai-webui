@@ -4,14 +4,24 @@
  */
 import { useBAIBreakpoint } from '../theme-shim';
 import { isOpenDrawerState } from './BAINotificationButton';
-import { Layout } from 'antd';
 import { createGlobalStyle } from 'antd-style';
-import { BasicProps } from 'antd/lib/layout/layout';
 import { useAtomValue } from 'jotai';
 import React from 'react';
 
-interface Props extends BasicProps {
+// PILOT-DECISION: antd `Layout.Content` (MAPPING §5 `Layout` → COMPOSITION)
+// carried no behaviour here — it is a `<main>`-ish block that this component
+// only uses to hang a className on. It becomes a plain block element, and the
+// props interface drops `antd/lib/layout/layout`'s `BasicProps` for the
+// grepped surface (P1: MainLayout passes `drawerWidth` + `children` only).
+//
+// The `createGlobalStyle` block STAYS (ticket 33 owns the antd-style →
+// plain-CSS pass): its `.ant-drawer-content-wrapper` rule is still live —
+// WEBUINotificationDrawer is an antd `Drawer` until ticket 29 — and
+// createGlobalStyle is what makes the injected <style> carry the CSP nonce.
+interface Props {
   drawerWidth?: number;
+  className?: string;
+  children?: React.ReactNode;
 }
 
 type DrawerStyle = 'margin-style' | 'overlay-style';
@@ -61,7 +71,7 @@ const BAIContentWithDrawerArea: React.FC<Props> = ({
         drawerWidth={drawerWidth}
         drawerStyle={drawerStyle}
       />
-      <Layout.Content
+      <div
         {...contextProps}
         className={
           `main-layout-main-content ${drawerStyle}` +

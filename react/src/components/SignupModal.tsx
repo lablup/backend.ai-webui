@@ -6,11 +6,20 @@ import { App } from '../app-shim';
 import { baiSignedRequestWithPromise } from '../helper';
 import { useAnonymousBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { theme } from '../theme-shim';
+import BAIFormItem from './BAIFormItem';
 import PrivacyPolicyModal from './PrivacyPolicyModal';
 import TermsOfServiceModal from './TermsOfServiceModal';
-import { Checkbox, Form, Input, Typography } from 'antd';
-import { BAIButton, BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
+import {
+  AstryxFormCheckbox,
+  AstryxFormTextInput,
+} from './astryx-bui/astryxFormControls';
+import { Button } from '@astryxdesign/core/Button';
+import { Link } from '@astryxdesign/core/Link';
+import { HStack } from '@astryxdesign/core/Stack';
+import { Text } from '@astryxdesign/core/Text';
+// SHIM (MAPPING §2): the antd Form engine stays until ticket 34.
+import { Form } from 'antd';
+import { BAIModal, BAIModalProps } from 'backend.ai-ui';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -42,7 +51,6 @@ const SignupModal: React.FC<SignupModalProps> = ({
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { message } = App.useApp();
   const [form] = Form.useForm<SignupFormValues>();
   const [showTOS, setShowTOS] = useState(false);
@@ -107,12 +115,17 @@ const SignupModal: React.FC<SignupModalProps> = ({
           body: { fontSize: 14 },
         }}
         footer={
-          <BAIFlex justify="end" gap="sm">
-            <BAIButton onClick={onRequestClose}>{t('button.Cancel')}</BAIButton>
-            <BAIButton type="primary" action={handleSubmit}>
-              {t('signUp.SignUp')}
-            </BAIButton>
-          </BAIFlex>
+          // BUI `BAIButton.action` (async click + auto loading) IS Astryx's
+          // native `clickAction` (SKILL.md wrapper policy: BAIButton
+          // DISSOLVES), so the footer drops the wrapper entirely.
+          <HStack justify="end" gap={2}>
+            <Button onClick={onRequestClose} label={t('button.Cancel')} />
+            <Button
+              variant="primary"
+              clickAction={handleSubmit}
+              label={t('signUp.SignUp')}
+            />
+          </HStack>
         }
         {...modalProps}
       >
@@ -126,7 +139,10 @@ const SignupModal: React.FC<SignupModalProps> = ({
           disabled={signupMutation.isPending}
           requiredMark="optional"
         >
-          <Form.Item
+          {/* `Input maxLength` has no destination on Astryx `TextInput`
+              (MAPPING §3.6) — dropped everywhere in this form; the server
+              still validates length and the placeholder still states it. */}
+          <BAIFormItem
             name="email"
             label={t('signUp.E-mail')}
             rules={[
@@ -140,18 +156,21 @@ const SignupModal: React.FC<SignupModalProps> = ({
               },
             ]}
           >
-            <Input
+            <AstryxFormTextInput
               type="email"
-              maxLength={64}
+              label={t('signUp.E-mail')}
               placeholder={t('maxLength.64chars')}
-              autoFocus
+              hasAutoFocus
             />
-          </Form.Item>
-          <Form.Item name="user_name" label={t('signUp.UserName')}>
-            <Input maxLength={64} placeholder={t('maxLength.64chars')} />
-          </Form.Item>
+          </BAIFormItem>
+          <BAIFormItem name="user_name" label={t('signUp.UserName')}>
+            <AstryxFormTextInput
+              label={t('signUp.UserName')}
+              placeholder={t('maxLength.64chars')}
+            />
+          </BAIFormItem>
           {!allowSignupWithoutConfirmation && (
-            <Form.Item
+            <BAIFormItem
               name="token"
               label={t('signUp.InvitationToken')}
               rules={[
@@ -161,10 +180,10 @@ const SignupModal: React.FC<SignupModalProps> = ({
                 },
               ]}
             >
-              <Input maxLength={50} />
-            </Form.Item>
+              <AstryxFormTextInput label={t('signUp.InvitationToken')} />
+            </BAIFormItem>
           )}
-          <Form.Item
+          <BAIFormItem
             name="password"
             label={t('signUp.Password')}
             rules={[
@@ -179,9 +198,9 @@ const SignupModal: React.FC<SignupModalProps> = ({
             ]}
             hasFeedback
           >
-            <Input.Password maxLength={64} />
-          </Form.Item>
-          <Form.Item
+            <AstryxFormTextInput type="password" label={t('signUp.Password')} />
+          </BAIFormItem>
+          <BAIFormItem
             name="passwordConfirm"
             label={t('signUp.PasswordAgain')}
             dependencies={['password']}
@@ -203,11 +222,37 @@ const SignupModal: React.FC<SignupModalProps> = ({
               }),
             ]}
           >
-            <Input.Password maxLength={64} />
-          </Form.Item>
-          <Form.Item
+            <AstryxFormTextInput
+              type="password"
+              label={t('signUp.PasswordAgain')}
+            />
+          </BAIFormItem>
+          <BAIFormItem
             name="agreement"
             valuePropName="checked"
+            extra={
+              <HStack gap={2} align="center">
+                <Link
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setShowTOS(true);
+                  }}
+                >
+                  {t('signUp.TermsOfService')}
+                </Link>
+                <Text type="supporting">·</Text>
+                <Link
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setShowPrivacyPolicy(true);
+                  }}
+                >
+                  {t('signUp.PrivacyPolicy')}
+                </Link>
+              </HStack>
+            }
             rules={[
               {
                 validator: (_, value) =>
@@ -219,30 +264,19 @@ const SignupModal: React.FC<SignupModalProps> = ({
               },
             ]}
           >
-            <Checkbox>
-              <Typography.Text style={{ fontSize: token.fontSizeSM }}>
-                {t('signUp.PolicyAgreement_1')}
-                <Typography.Link
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setShowTOS(true);
-                  }}
-                >
-                  {t('signUp.TermsOfService')}
-                </Typography.Link>
-                {t('signUp.PolicyAgreement_2')}
-                <Typography.Link
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setShowPrivacyPolicy(true);
-                  }}
-                >
-                  {t('signUp.PrivacyPolicy')}
-                </Typography.Link>
-                {t('signUp.PolicyAgreement_3')}
-              </Typography.Text>
-            </Checkbox>
-          </Form.Item>
+            {/* PILOT-DECISION: antd let a `Checkbox` take arbitrary JSX
+                children, which is how the policy sentence carried two inline
+                links. Astryx `CheckboxInput` has a REQUIRED STRING `label`
+                (§1 contract 1) and no slot for trailing content, so the
+                sentence becomes the label (plain text — the accessible name
+                is now complete, which it was not before) and the two policy
+                links move to the field's `extra` row, where they are real
+                links instead of anchors nested inside a `<label>` that
+                swallowed their clicks. */}
+            <AstryxFormCheckbox
+              label={`${t('signUp.PolicyAgreement_1')}${t('signUp.TermsOfService')}${t('signUp.PolicyAgreement_2')}${t('signUp.PrivacyPolicy')}${t('signUp.PolicyAgreement_3')}`}
+            />
+          </BAIFormItem>
         </Form>
       </BAIModal>
       <TermsOfServiceModal
@@ -262,18 +296,17 @@ const SignupModal: React.FC<SignupModalProps> = ({
         destroyOnHidden
         getContainer={false}
         footer={
-          <BAIButton
-            type="primary"
+          <Button
+            variant="primary"
             onClick={() => setShowEmailSentDialog(false)}
-          >
-            {t('button.Okay')}
-          </BAIButton>
+            label={t('button.Okay')}
+          />
         }
         width={400}
       >
-        <Typography.Paragraph style={{ maxWidth: 350 }}>
+        <Text as="p" display="block" style={{ maxWidth: 350 }}>
           {t('signUp.VerificationMessage')}
-        </Typography.Paragraph>
+        </Text>
       </BAIModal>
     </>
   );

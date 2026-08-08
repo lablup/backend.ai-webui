@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '.';
-import WebUILink from '../components/WebUILink';
+import BAIBadgeCountAstryx from '../components/astryx-bui/BAIBadgeCountAstryx';
 import { buildPath, MENU_KEY_TO_SCOPE_FEATURE } from '../helper/pathBuilder';
 import { theme } from '../theme-shim';
 import { useCurrentUserRole } from './backendai';
@@ -22,11 +22,8 @@ import {
   useWebUIPluginValue,
 } from './useWebUIPluginState';
 import { useSessionStorageState } from 'ahooks';
-import { Badge, Typography } from 'antd';
-import { MenuItemType } from 'antd/lib/menu/interface';
 import {
   BAIEndpointsIcon,
-  BAIFlex,
   BAIModelStoreIcon,
   BAIMyEnvironmentsIcon,
   BAIPipelinesIcon,
@@ -58,7 +55,6 @@ import {
   ExternalLinkIcon,
   Palette,
 } from 'lucide-react';
-import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
@@ -207,22 +203,43 @@ export const getPathFromMenuKey = (
   return buildPath(scope, featureKey, projectName);
 };
 
-type MenuItem = {
-  label: ReactNode;
-  icon: React.ReactNode;
-  group?: string;
-  key: string;
-};
-
-interface WebUIGeneralMenuItemType extends MenuItemType {
-  group: MenuGroupName;
+/**
+ * to-astryx ticket 24 — the menu model is now UI-library-neutral.
+ *
+ * It used to extend antd's `MenuItemType` and carry a `label` that was
+ * already a rendered `<WebUILink>` element. Astryx `SideNavItem` takes a
+ * **required `label: string`** plus `href` + `as` (the three universal
+ * contracts, §1), so the link is built by the renderer (`BAIMenu`) from
+ * `labelText` + `to` instead of being baked into the data.
+ */
+export interface WebUIMenuItemBase {
   key: MenuKeys;
+  /** Accessible/visible label — a plain string, never JSX (P2). */
   labelText: string;
+  icon: React.ReactNode;
+  /** Router destination; absent for action-only entries (e.g. FastTrack). */
+  to?: string;
+  disabled?: boolean;
+  onClick?: () => void;
 }
 
-interface WebUIAdminMenuItemType extends MenuItemType {
+type MenuItem = WebUIMenuItemBase & { group?: string };
+
+export interface WebUIGeneralMenuItemType extends WebUIMenuItemBase {
+  group: MenuGroupName;
+}
+
+export interface WebUIAdminMenuItemType extends WebUIMenuItemBase {
   group: AdminMenuGroupName;
-  key: MenuKeys;
+}
+
+/** A titled group of menu items (antd's `{type:'group'}` shape, de-antd'd). */
+export interface WebUIMenuGroupType<T> {
+  type: 'group';
+  name: string;
+  /** Plain string — `SideNavSection.title` is a required string. */
+  labelText: string;
+  children: Array<T>;
 }
 
 export interface UseWebUIMenuItemsProps {
@@ -232,7 +249,10 @@ export interface UseWebUIMenuItemsProps {
 export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   'use memo';
 
-  const { hideGroupName = false } = props || {};
+  // `hideGroupName` is now consumed by the RENDERER (`BAIMenu` passes it
+  // to `SideNavSection.isHeaderHidden`); the grouped data always carries
+  // its title string. Kept on the props type for call-site compatibility.
+  void props?.hideGroupName;
   const plugins = useWebUIPluginValue();
   const isPluginLoaded = useWebUIPluginLoadedValue();
   const currentUserRole = useCurrentUserRole();
@@ -279,11 +299,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     key: MenuKeys,
     group: MenuGroupName,
   ): WebUIGeneralMenuItemType => ({
-    label: (
-      <WebUILink to={getPathFromMenuKey(key, activeProjectName)}>
-        {labelText}
-      </WebUILink>
-    ),
+    to: getPathFromMenuKey(key, activeProjectName),
     icon,
     key,
     group,
@@ -298,14 +314,11 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     key: MenuKeys,
     group: AdminMenuGroupName,
   ): WebUIAdminMenuItemType => ({
-    label: (
-      <WebUILink to={getPathFromMenuKey(key, activeProjectName)}>
-        {labelText}
-      </WebUILink>
-    ),
+    to: getPathFromMenuKey(key, activeProjectName),
     icon,
     key,
     group,
+    labelText,
   });
 
   const generalMenu = filterOutEmpty<WebUIGeneralMenuItemType>([
@@ -378,7 +391,6 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       'metrics',
     ),
     !!fasttrackEndpoint && {
-      label: t('webui.menu.FastTrack'),
       icon: <BAIPipelinesIcon style={{ color: token.colorPrimary }} />,
       key: 'pipeline' as MenuKeys,
       onClick: () => {
@@ -391,18 +403,21 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
 
   const isSuperAdmin = currentUserRole === 'superadmin';
 
+  // PILOT-DECISION: antd `Badge dot offset color` — a DOT OVERLAY on a child
+  // — is MAPPING §3.8's explicit NONE ("no count overlay, no Badge.Ribbon;
+  // self-build, build once"). The gap component built for exactly that in
+  // ticket 08 is `BAIBadgeCountAstryx`, used here in its `dot` form. The
+  // arbitrary `color={token.colorError|colorWarning}` becomes the component's
+  // closed `variant` enum.
   const diagnosticsIcon = diagnosticsBadgeSeverity ? (
-    <Badge
-      dot
+    <BAIBadgeCountAstryx
+      hasDot
       offset={[-2, 2]}
-      color={
-        diagnosticsBadgeSeverity === 'critical'
-          ? token.colorError
-          : token.colorWarning
-      }
+      variant={diagnosticsBadgeSeverity === 'critical' ? 'error' : 'warning'}
+      title={t('webui.menu.Diagnostics')}
     >
       <Activity style={{ color: token.colorInfo }} />
-    </Badge>
+    </BAIBadgeCountAstryx>
   ) : (
     <Activity style={{ color: token.colorInfo }} />
   );
@@ -595,9 +610,10 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
         // if menuitem is empty, skip adding menu item
         if (page && page.menuitem) {
           const menuItem: MenuItem = {
-            label: <WebUILink to={`/${page?.url}`}>{page?.menuitem}</WebUILink>,
+            labelText: page?.menuitem,
+            to: `/${page?.url}`,
             icon: pluginIconMap[page.icon || ''] || <Plug size="1em" />,
-            key: page?.url,
+            key: page?.url as MenuKeys,
             group: page.group || 'none',
           };
           menu?.push(menuItem);
@@ -646,22 +662,16 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       if (group === 'none') {
         return items;
       }
+      // The group header used to be a JSX node (a bordered flex with a
+      // secondary `Typography.Text`). `SideNavSection.title` is a required
+      // string and the section renders its own header, so the group carries
+      // only the STRING; `hideGroupName` (collapsed sider) is passed to
+      // `SideNavSection.isHeaderHidden` by the renderer instead of blanking
+      // the label here. The 1px bottom rule has no destination.
       return {
-        type: 'group',
+        type: 'group' as const,
         name: group,
-        label: (
-          <BAIFlex
-            style={{
-              borderBottom: `1px solid ${token.colorBorder}`,
-            }}
-          >
-            {!hideGroupName && (
-              <Typography.Text type="secondary" ellipsis>
-                {aliasGroupNameMap[group as MenuGroupName] ?? group}
-              </Typography.Text>
-            )}
-          </BAIFlex>
-        ),
+        labelText: aliasGroupNameMap[group as MenuGroupName] ?? group,
         children: items,
       };
     },
@@ -691,30 +701,21 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     });
 
   const buildGroupedMenu = <T extends AdminMenuGroupName>(
-    menu: Array<{ group?: T; key?: MenuKeys; [key: string]: any }>,
+    menu: Array<WebUIMenuItemBase & { group?: T }>,
     groupNameMap: Record<T, string>,
     groupOrder: Array<T | undefined>,
-  ) => {
+  ): Array<
+    | (WebUIMenuItemBase & { group?: T })
+    | WebUIMenuGroupType<WebUIMenuItemBase & { group?: T }>
+  > => {
     return _.map(_.groupBy(menu, 'group'), (items, group) => {
       if (group === 'none' || !group) {
         return items;
       }
       return {
-        type: 'group',
+        type: 'group' as const,
         name: group,
-        label: (
-          <BAIFlex
-            style={{
-              borderBottom: `1px solid ${token.colorBorder}`,
-            }}
-          >
-            {!hideGroupName && (
-              <Typography.Text type="secondary" ellipsis>
-                {groupNameMap[group as T] ?? group}
-              </Typography.Text>
-            )}
-          </BAIFlex>
-        ),
+        labelText: groupNameMap[group as T] ?? group,
         children: items,
       };
     })

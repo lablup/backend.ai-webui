@@ -6,17 +6,31 @@ import { useCurrentUserRole } from '../hooks/backendai';
 import { useSuspenseGetAnnouncement } from '../hooks/useSuspenseGetAnnouncement';
 import { theme } from '../theme-shim';
 import AnnouncementEditModal from './AnnouncementEditModal';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Button } from '@astryxdesign/core/Button';
 import { useToggle } from 'ahooks';
-import { Button } from 'antd';
-import { BAIAlert, BAIAlertProps, BAIUnmountAfterClose } from 'backend.ai-ui';
+import { BAIUnmountAfterClose } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { SquarePenIcon } from 'lucide-react';
 import Markdown from 'markdown-to-jsx';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-interface Props extends BAIAlertProps {}
-const AnnouncementAlert: React.FC<Props> = ({ ...otherProps }) => {
+// PILOT-DECISION: BUI `BAIAlert` (an antd `Alert` wrapper) → Astryx `Banner`
+// at the call site (MAPPING §4 / §8 DISSOLVES; same treatment as ticket 20's
+// Banner conversions). P1 grep: the only consumer, StartPage, passes
+// `showIcon closable` — `showIcon` is dropped (Banner always shows its status
+// icon) and `closable` becomes `isDismissable`, so the interface declares
+// exactly that surface instead of `extends BAIAlertProps`.
+// The announcement has no severity in the data model; antd's untyped Alert
+// defaulted to `info`, which is the status kept here. The markdown body was
+// antd's `description` (BAIAlert forced an empty `message`); Banner requires
+// a `title`, so the body moves there — one content block either way.
+interface Props {
+  showIcon?: boolean;
+  closable?: boolean;
+}
+const AnnouncementAlert: React.FC<Props> = ({ closable }) => {
   'use memo';
 
   const { t } = useTranslation();
@@ -28,8 +42,10 @@ const AnnouncementAlert: React.FC<Props> = ({ ...otherProps }) => {
 
   return !_.isEmpty(announcement.message) ? (
     <>
-      <BAIAlert
-        description={
+      <Banner
+        status="info"
+        isDismissable={closable}
+        title={
           <div style={{ marginBottom: token.marginSM * -1 }}>
             <Markdown
               options={{
@@ -47,19 +63,17 @@ const AnnouncementAlert: React.FC<Props> = ({ ...otherProps }) => {
             </Markdown>
           </div>
         }
-        action={
+        endContent={
           isSuperAdmin ? (
             <Button
-              type="text"
-              size="small"
-              icon={<SquarePenIcon />}
+              variant="ghost"
+              size="sm"
+              icon={<SquarePenIcon size="1em" />}
+              label={t('button.Edit')}
               onClick={toggleEditModal}
-            >
-              {t('button.Edit')}
-            </Button>
+            />
           ) : undefined
         }
-        {...otherProps}
       />
       {isSuperAdmin && (
         <BAIUnmountAfterClose>

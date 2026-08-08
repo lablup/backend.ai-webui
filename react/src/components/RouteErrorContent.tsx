@@ -4,7 +4,8 @@
  */
 import { useThemeMode } from '../hooks/useThemeMode';
 import { theme } from '../theme-shim';
-import { Typography } from 'antd';
+import { Heading } from '@astryxdesign/core/Heading';
+import { Text } from '@astryxdesign/core/Text';
 import { BAIFlex } from 'backend.ai-ui';
 import React from 'react';
 
@@ -121,27 +122,29 @@ const RouteErrorContent: React.FC<RouteErrorContentProps> = ({
           </BAIFlex>
         ) : null}
 
-        <Typography.Title
+        {/* PILOT-DECISION: antd `Typography.Title level={4}` → Astryx
+            `Heading level={4}` (MAPPING §4). The hand-tuned type ramp
+            (`fontSizeHeading3` + letter-spacing + line-height) is dropped —
+            Astryx's heading scale is theme-owned and the visual-values policy
+            keeps component defaults. `justify="center"` replaces
+            `textAlign`. */}
+        <Heading
           level={4}
-          style={{
-            margin: 0,
-            textAlign: 'center',
-            fontSize: token.fontSizeHeading3,
-            letterSpacing: '-0.015em',
-            lineHeight: 1.32,
-            maxWidth: 560,
-          }}
+          justify="center"
+          style={{ margin: 0, maxWidth: 560 }}
         >
           {title}
-        </Typography.Title>
+        </Heading>
 
         {description ? (
-          <Typography.Text
-            type="secondary"
-            style={{ marginTop: token.marginSM, textAlign: 'center' }}
+          <Text
+            color="secondary"
+            justify="center"
+            display="block"
+            style={{ marginTop: token.marginSM }}
           >
             {description}
-          </Typography.Text>
+          </Text>
         ) : null}
 
         {extra ? (

@@ -19,6 +19,7 @@ import RouteErrorBoundary from './components/RouteErrorBoundary';
 import { STokenLoginBoundary } from './components/STokenLoginBoundary';
 import StorageHostFetchErrorBoundary from './components/StorageHostFetchErrorBoundary';
 import WebUINavigate from './components/WebUINavigate';
+import BAISkeletonAstryx from './components/astryx-bui/BAISkeletonAstryx';
 import { persistPostLoginState } from './helper/loginSessionAuth';
 import { useSuspendedBackendaiClient } from './hooks';
 import { useAutoDiagnostics } from './hooks/useAutoDiagnostics';
@@ -38,7 +39,6 @@ import Page404 from './pages/Page404';
 import UnknownRoutePage from './pages/UnknownRoutePage';
 import VFolderNodeListPage from './pages/VFolderNodeListPage';
 import { theme } from './theme-shim';
-import { Skeleton } from 'antd';
 import { BAIFlex, BAICard } from 'backend.ai-ui';
 import { useSetAtom } from 'jotai';
 import { parseAsString, useQueryStates } from 'nuqs';
@@ -256,7 +256,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         // from any menu; remove once real Astryx pages carry authored styles.
         path: 'stylex-probe',
         element: (
-          <Suspense fallback={<Skeleton active />}>
+          <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
             <AstryxStylexProbePage />
           </Suspense>
         ),
@@ -265,7 +265,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       {
         path: 'start',
         element: (
-          <Suspense fallback={<Skeleton active />}>
+          <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
             <StartPage />
           </Suspense>
         ),
@@ -280,7 +280,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         Component: () => {
           return (
             <BAIErrorBoundary>
-              <Suspense fallback={<Skeleton active />}>
+              <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
                 <DashboardPage />
               </Suspense>
             </BAIErrorBoundary>
@@ -305,7 +305,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
             Component: () => {
               useSuspendedBackendaiClient();
               return (
-                <Suspense fallback={<Skeleton active />}>
+                <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
                   <ComputeSessionListPage />
                   <SessionDetailAndContainerLogOpenerLegacy />
                 </Suspense>
@@ -329,7 +329,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
                     <Suspense
                       fallback={
                         <BAIFlex direction="column" style={{ maxWidth: 700 }}>
-                          <Skeleton active />
+                          <BAISkeletonAstryx rows={4} />
                         </BAIFlex>
                       }
                     >
@@ -375,7 +375,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
           {
             path: ':deploymentId',
             element: (
-              <Suspense fallback={<Skeleton active />}>
+              <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
                 <DeploymentDetailPage />
               </Suspense>
             ),
@@ -390,7 +390,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       {
         path: 'model-store',
         Component: () => (
-          <Suspense fallback={<Skeleton active />}>
+          <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
             <ModelStoreListPageV2 />
           </Suspense>
         ),
@@ -430,7 +430,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       {
         path: 'my-environment',
         element: (
-          <Suspense fallback={<Skeleton active />}>
+          <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
             <MyEnvironmentPage />
           </Suspense>
         ),
@@ -443,7 +443,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       {
         path: 'agent-summary',
         element: (
-          <Suspense fallback={<Skeleton active />}>
+          <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
             <AgentSummaryPage />
           </Suspense>
         ),
@@ -461,7 +461,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
             <Suspense
               fallback={
                 <BAIFlex direction="column" style={{ maxWidth: 700 }}>
-                  <Skeleton active />
+                  <BAISkeletonAstryx rows={4} />
                 </BAIFlex>
               }
             >
@@ -482,7 +482,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
             'experimental_ai_agents',
           );
           return experimentalAIAgents ? (
-            <Suspense fallback={<Skeleton active />}>
+            <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
               <AIAgentPage />
             </Suspense>
           ) : (
@@ -516,7 +516,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
             Component: () => {
               useSuspendedBackendaiClient();
               return (
-                <Suspense fallback={<Skeleton active />}>
+                <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
                   <ProjectAdminSessionPage />
                 </Suspense>
               );
@@ -540,7 +540,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
                 Component: () => {
                   useSuspendedBackendaiClient();
                   return (
-                    <Suspense fallback={<Skeleton active />}>
+                    <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
                       <ProjectAdminDeploymentsPage />
                     </Suspense>
                   );
@@ -553,7 +553,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
               {
                 path: ':deploymentId',
                 element: (
-                  <Suspense fallback={<Skeleton active />}>
+                  <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
                     <DeploymentDetailPage />
                   </Suspense>
                 ),
@@ -570,7 +570,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
             Component: () => {
               useSuspendedBackendaiClient();
               return (
-                <Suspense fallback={<Skeleton active />}>
+                <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
                   <ProjectAdminDataPage />
                 </Suspense>
               );
@@ -586,7 +586,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
             Component: () => {
               useSuspendedBackendaiClient();
               return (
-                <Suspense fallback={<Skeleton active />}>
+                <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
                   <ProjectAdminUsersPage />
                 </Suspense>
               );
@@ -626,7 +626,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       {
         path: 'session',
         element: (
-          <Suspense fallback={<Skeleton active />}>
+          <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
             <AdminSessionPage />
           </Suspense>
         ),
@@ -666,7 +666,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
             path: 'deployment-presets/new',
             element: (
               <BAIErrorBoundary>
-                <Suspense fallback={<Skeleton active />}>
+                <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
                   <AdminDeploymentPresetSettingPage />
                 </Suspense>
               </BAIErrorBoundary>
@@ -682,7 +682,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
             path: 'deployment-presets/:presetId/edit',
             element: (
               <BAIErrorBoundary>
-                <Suspense fallback={<Skeleton active />}>
+                <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
                   <AdminDeploymentPresetSettingPage />
                 </Suspense>
               </BAIErrorBoundary>
@@ -697,7 +697,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
           {
             path: ':deploymentId',
             element: (
-              <Suspense fallback={<Skeleton active />}>
+              <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
                 <DeploymentDetailPage />
               </Suspense>
             ),
@@ -715,7 +715,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         Component: () => {
           useSuspendedBackendaiClient();
           return (
-            <Suspense fallback={<Skeleton active />}>
+            <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
               <AdminVFolderNodeListPage />
             </Suspense>
           );
@@ -732,7 +732,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         Component: () => {
           return (
             <BAIErrorBoundary>
-              <Suspense fallback={<Skeleton active />}>
+              <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
                 <AdminDashboardPage />
               </Suspense>
             </BAIErrorBoundary>
@@ -748,7 +748,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       {
         path: 'users',
         element: (
-          <Suspense fallback={<Skeleton active />}>
+          <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
             <AdminUsersPage />
           </Suspense>
         ),
@@ -761,7 +761,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       {
         path: 'environment',
         element: (
-          <Suspense fallback={<Skeleton active />}>
+          <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
             <EnvironmentPage />
           </Suspense>
         ),
@@ -774,7 +774,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       {
         path: 'resource-policy',
         element: (
-          <Suspense fallback={<Skeleton active />}>
+          <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
             <ResourcePolicyPage />
           </Suspense>
         ),
@@ -800,7 +800,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
                 <Suspense
                   fallback={
                     <BAIFlex direction="column" style={{ maxWidth: 700 }}>
-                      <Skeleton active />
+                      <BAISkeletonAstryx rows={4} />
                     </BAIFlex>
                   }
                 >
@@ -817,7 +817,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
             Component: () => {
               const baiClient = useSuspendedBackendaiClient();
               return baiClient?.supports('reservoir') ? (
-                <Suspense fallback={<Skeleton active />}>
+                <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
                   <ReservoirArtifactDetailPage />
                 </Suspense>
               ) : (
@@ -837,7 +837,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         Component: () => {
           const baiClient = useSuspendedBackendaiClient();
           return baiClient?.supports('fair-share-scheduling') ? (
-            <Suspense fallback={<Skeleton active />}>
+            <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
               <SchedulerPage />
               <SessionDetailAndContainerLogOpenerLegacy />
             </Suspense>
@@ -854,7 +854,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       {
         path: 'agent',
         element: (
-          <Suspense fallback={<Skeleton active />}>
+          <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
             <ResourcesPage />
           </Suspense>
         ),
@@ -869,7 +869,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         path: 'project',
         element: (
           <BAIErrorBoundary>
-            <Suspense fallback={<Skeleton active />}>
+            <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
               <ProjectPage />
             </Suspense>
           </BAIErrorBoundary>
@@ -884,7 +884,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       {
         path: 'settings',
         element: (
-          <Suspense fallback={<Skeleton active />}>
+          <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
             <ConfigurationsPage />
           </Suspense>
         ),
@@ -898,7 +898,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       {
         path: 'maintenance',
         element: (
-          <Suspense fallback={<Skeleton active />}>
+          <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
             <MaintenancePage />
           </Suspense>
         ),
@@ -912,7 +912,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       {
         path: 'diagnostics',
         element: (
-          <Suspense fallback={<Skeleton active />}>
+          <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
             <DiagnosticsPage />
           </Suspense>
         ),
@@ -928,7 +928,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         Component: () => {
           const baiClient = useSuspendedBackendaiClient();
           return baiClient?.supports('rbac') ? (
-            <Suspense fallback={<Skeleton active />}>
+            <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
               <RBACManagementPage />
             </Suspense>
           ) : (
@@ -945,7 +945,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       {
         path: 'branding',
         element: (
-          <Suspense fallback={<Skeleton active />}>
+          <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
             <BrandingPage />
           </Suspense>
         ),
@@ -959,7 +959,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       {
         path: 'information',
         element: (
-          <Suspense fallback={<Skeleton active />}>
+          <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
             <Information />
           </Suspense>
         ),
@@ -1381,7 +1381,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     path: '/usersettings',
     handle: { labelKey: 'webui.menu.Settings&Logs' },
     element: (
-      <Suspense fallback={<Skeleton active />}>
+      <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
         <UserSettingsPage />
       </Suspense>
     ),
@@ -1498,7 +1498,7 @@ export const routes: RouteObject[] = [
               <LoginView waitForMainLayout={false} />
             </Suspense>
             <LogoutEventHandler />
-            <Suspense fallback={<Skeleton active />}>
+            <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
               <InteractiveLoginPage />
             </Suspense>
           </STokenGuard>
@@ -1512,7 +1512,7 @@ export const routes: RouteObject[] = [
     element: (
       <BAIErrorBoundary>
         <DefaultProvidersForReactRoot>
-          <Suspense fallback={<Skeleton active />}>
+          <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
             <EmailVerificationPage />
           </Suspense>
         </DefaultProvidersForReactRoot>
@@ -1525,7 +1525,7 @@ export const routes: RouteObject[] = [
     element: (
       <BAIErrorBoundary>
         <DefaultProvidersForReactRoot>
-          <Suspense fallback={<Skeleton active />}>
+          <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
             <ChangePasswordPage />
           </Suspense>
         </DefaultProvidersForReactRoot>
@@ -1568,7 +1568,7 @@ export const routes: RouteObject[] = [
               // history is considered acceptable in this flow.
               onSuccess={persistPostLoginState}
             >
-              <Suspense fallback={<Skeleton active />}>
+              <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
                 <EduAppLauncherPage sToken={sToken} extraParams={extraParams} />
               </Suspense>
             </STokenLoginBoundary>
@@ -1607,7 +1607,7 @@ export const routes: RouteObject[] = [
               // URL retained — see comment on `/edu-applauncher`.
               onSuccess={persistPostLoginState}
             >
-              <Suspense fallback={<Skeleton active />}>
+              <Suspense fallback={<BAISkeletonAstryx rows={4} />}>
                 <EduAppLauncherPage sToken={sToken} extraParams={extraParams} />
               </Suspense>
             </STokenLoginBoundary>

@@ -4,8 +4,12 @@
  */
 import { App } from '../app-shim';
 import { useAnonymousBackendaiClient } from '../hooks';
-import { Form, Input } from 'antd';
-import { BAIButton, BAIFlex, BAIModal } from 'backend.ai-ui';
+import BAIFormItem from './BAIFormItem';
+import { AstryxFormTextInput } from './astryx-bui/astryxFormControls';
+import { Button } from '@astryxdesign/core/Button';
+// SHIM (MAPPING §2): the antd Form engine stays until ticket 34.
+import { Form } from 'antd';
+import { BAIFlex, BAIModal } from 'backend.ai-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -89,9 +93,12 @@ const EmailVerificationView: React.FC<EmailVerificationViewProps> = ({
         open={verificationState === 'success'}
         title={t('signUp.EmailVerified')}
         footer={
-          <BAIButton type="primary" block onClick={redirectToLoginPage}>
-            {t('login.Login')}
-          </BAIButton>
+          <Button
+            variant="primary"
+            width="100%"
+            onClick={redirectToLoginPage}
+            label={t('login.Login')}
+          />
         }
         closable={false}
         maskClosable={false}
@@ -106,15 +113,14 @@ const EmailVerificationView: React.FC<EmailVerificationViewProps> = ({
         open={verificationState === 'failed'}
         title={t('signUp.EmailVerificationFailed')}
         footer={
-          <BAIButton
-            type="primary"
-            block
-            action={async () => {
+          <Button
+            variant="primary"
+            width="100%"
+            clickAction={async () => {
               await handleResendVerification();
             }}
-          >
-            {t('signUp.SendEmail')}
-          </BAIButton>
+            label={t('signUp.SendEmail')}
+          />
         }
         closable={false}
         maskClosable={false}
@@ -125,7 +131,7 @@ const EmailVerificationView: React.FC<EmailVerificationViewProps> = ({
             {t('signUp.EmailVerificationFailedMessage')}
           </p>
           <Form form={form} style={{ marginTop: 20 }}>
-            <Form.Item
+            <BAIFormItem
               name="email"
               rules={[
                 {
@@ -143,12 +149,12 @@ const EmailVerificationView: React.FC<EmailVerificationViewProps> = ({
                 },
               ]}
             >
-              <Input
+              <AstryxFormTextInput
+                label={t('data.explorer.EnterEmailAddress')}
                 placeholder={t('data.explorer.EnterEmailAddress')}
-                autoFocus
-                maxLength={64}
+                hasAutoFocus
               />
-            </Form.Item>
+            </BAIFormItem>
           </Form>
         </BAIFlex>
       </BAIModal>

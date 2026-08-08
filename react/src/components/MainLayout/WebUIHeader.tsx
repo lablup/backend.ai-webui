@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { modal } from '../../app-shim';
+import { AstryxReverseTheme } from '../../astryx-theme';
 import { buildPath, MENU_KEY_TO_SCOPE_FEATURE } from '../../helper/pathBuilder';
 import {
   useCurrentDomainValue,
@@ -26,35 +27,23 @@ import {
 } from '../../hooks/useRouteScope';
 import { useUrlProjectValidity } from '../../hooks/useUrlProjectValidity';
 import { useWebUIMenuItems } from '../../hooks/useWebUIMenuItems';
-import { theme } from '../../theme-shim';
+import { theme, useBAIBreakpoint } from '../../theme-shim';
 import BAINotificationButton from '../BAINotificationButton';
 import LoginSessionExtendButton from '../LoginSessionExtendButton';
 import ProjectSelect from '../ProjectSelect';
-import ReverseThemeProvider from '../ReverseThemeProvider';
 import UserDropdownMenu from '../UserDropdownMenu';
 import WEBUIHelpButton from '../WEBUIHelpButton';
 import WebUIThemeToggleButton from '../WebUIThemeToggleButton';
+import './WebUIHeader.css';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Text } from '@astryxdesign/core/Text';
 import { useSessionStorageState } from 'ahooks';
-import { Button, Typography, Grid, Divider } from 'antd';
-import { createStyles } from 'antd-style';
 import { BAIFlex, BAIFlexProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { MenuIcon } from 'lucide-react';
 import { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMatches } from 'react-router-dom';
-
-const useStyles = createStyles(({ css }) => ({
-  webuiHeader: css`
-    &,
-    & .draggable {
-      -webkit-app-region: drag;
-    }
-    & .non-draggable {
-      -webkit-app-region: no-drag;
-    }
-  `,
-}));
 
 export interface WebUIHeaderProps extends BAIFlexProps {
   onClickMenuIcon?: () => void;
@@ -67,7 +56,8 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
   const currentProject = useCurrentProjectValue();
   const setCurrentProject = useSetCurrentProject();
   const baiClient = useSuspendedBackendaiClient();
-  const gridBreakpoint = Grid.useBreakpoint();
+  // RESPONSIVE-POLICY R3: `Grid.useBreakpoint()` → theme-shim hook.
+  const gridBreakpoint = useBAIBreakpoint();
   const webuiNavigate = useWebUINavigate();
   const matches = useMatches();
   const currentMenuKey = useCurrentMenuKey();
@@ -135,8 +125,6 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
     });
   };
 
-  const { styles } = useStyles();
-
   return (
     <BAIFlex
       data-testid="webui-header"
@@ -150,14 +138,21 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
         paddingLeft: token.marginLG,
         color: token.colorBgBase,
       }}
-      className={`${styles.webuiHeader} bai-webui-header`}
+      className="bai-webui-header"
     >
       <BAIFlex data-testid="label-selector-project" direction="row" gap={'sm'}>
-        <ReverseThemeProvider>
+        {/* The header paints itself with the brand accent, so its contents
+            need the opposite light/dark polarity from the page. antd did that
+            with `ReverseThemeProvider` (a nested ConfigProvider with the
+            flipped algorithm); `AstryxReverseTheme` is the Astryx adapter
+            (a nested `<Theme>` with the inverted RESOLVED mode — a nested
+            Theme with no `mode` would fall back to `system`, MAPPING §5). */}
+        <AstryxReverseTheme>
           {!gridBreakpoint.sm && (
-            <Button
-              icon={<MenuIcon />}
-              type="text"
+            <IconButton
+              icon={<MenuIcon size="1em" />}
+              variant="ghost"
+              label={t('webui.menu.Menu')}
               onClick={() => {
                 onClickMenuIcon?.();
               }}
@@ -168,16 +163,11 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
             />
           )}
           {gridBreakpoint.sm && (
-            <Typography.Text
-              style={{
-                fontWeight: 600, // semi-bold
-                fontSize: token.fontSizeLG,
-              }}
-            >
+            <Text type="large" weight="semibold">
               {t('webui.menu.Project')}
-            </Typography.Text>
+            </Text>
           )}
-        </ReverseThemeProvider>
+        </AstryxReverseTheme>
         <Suspense>
           <ProjectSelect
             data-testid="selector-project"
@@ -286,34 +276,32 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
           baiClient._config.enableExtendLoginSession && (
             <Suspense>
               <LoginSessionExtendButton data-testid="button-extend-login-session" />
-              {gridBreakpoint.md && (
-                <Divider
-                  orientation="vertical"
-                  style={{ borderColor: 'transparent' }}
-                />
-              )}
+              {/* PILOT-DECISION: the antd `Divider orientation="vertical"`
+                  here was painted `borderColor: 'transparent'` — i.e. it was
+                  a SPACER, not a rule. Astryx `Divider` has no colour prop
+                  (closed enums, P5), so the spacer is expressed as spacing
+                  instead of a hidden rule. */}
+              {gridBreakpoint.md && <span style={{ width: token.marginXS }} />}
             </Suspense>
           )}
         <BAINotificationButton data-testid="button-notification" />
-        <ReverseThemeProvider>
+        <AstryxReverseTheme>
           <WebUIThemeToggleButton data-testid="button-theme" />
           <WEBUIHelpButton data-testid="button-help" />
-        </ReverseThemeProvider>
-        <UserDropdownMenu
-          data-testid="dropdown-user-menu"
-          buttonRender={(btn) => (
-            //  Add a `div` to resolve the Dropdown bug when the child is a `ConfigProvider`(ReverseThemeProvider).
-            <div>
-              <ReverseThemeProvider>{btn}</ReverseThemeProvider>
-            </div>
-          )}
-          style={{
-            marginLeft: token.marginXXS,
-            marginRight: token.marginSM * -1,
-            paddingLeft: token.paddingSM,
-            paddingRight: token.paddingSM,
-          }}
-        />
+          {/* `DropdownMenu` owns its trigger button, so the old
+              `buttonRender` hook (whose only job was to wrap the trigger in
+              ReverseThemeProvider, plus a `<div>` working around an antd
+              Dropdown/ConfigProvider bug) is gone — the whole dropdown sits
+              inside the reversed theme instead. */}
+          <UserDropdownMenu
+            style={{
+              marginLeft: token.marginXXS,
+              marginRight: token.marginSM * -1,
+              paddingLeft: token.paddingSM,
+              paddingRight: token.paddingSM,
+            }}
+          />
+        </AstryxReverseTheme>
       </BAIFlex>
     </BAIFlex>
   );

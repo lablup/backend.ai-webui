@@ -2,9 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { AstryxAdminTheme, AstryxReverseTheme } from '../../astryx-theme';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
-import usePrimaryColors from '../../hooks/usePrimaryColors';
 import { useRouteAccessDecision } from '../../hooks/useRouteAccess';
 import {
   getRouteScopeAndKey,
@@ -16,37 +16,32 @@ import {
   getPathFromMenuKey,
   useWebUIMenuItems,
 } from '../../hooks/useWebUIMenuItems';
+import { theme, useBAIBreakpoint } from '../../theme-shim';
 import AboutBackendAIModal from '../AboutBackendAIModal';
 import BAIMenu from '../BAIMenu';
-import BAISider, { BAISiderProps } from '../BAISider';
+import BAISider from '../BAISider';
 import PrivacyPolicyModal from '../PrivacyPolicyModal';
-import ThemeReverseProvider from '../ReverseThemeProvider';
 import SiderToggleButton from '../SiderToggleButton';
 import SignoutModal from '../SignoutModal';
 import TermsOfServiceModal from '../TermsOfServiceModal';
-import WebUILink from '../WebUILink';
+import { Divider } from '@astryxdesign/core/Divider';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Link } from '@astryxdesign/core/Link';
+import { HStack, VStack } from '@astryxdesign/core/Stack';
+import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import { useHover, useSessionStorageState, useToggle } from 'ahooks';
-import {
-  theme,
-  Typography,
-  ConfigProvider,
-  Divider,
-  Grid,
-  Tooltip,
-  Button,
-  type MenuProps,
-} from 'antd';
-import { filterOutEmpty, BAIFlex } from 'backend.ai-ui';
-import * as _ from 'lodash-es';
+import { filterOutEmpty } from 'backend.ai-ui';
 import { ArrowLeftIcon, ShieldUserIcon } from 'lucide-react';
-import React, { use, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
-interface WebUISiderProps extends Pick<
-  BAISiderProps,
-  'collapsed' | 'collapsedWidth' | 'onBreakpoint' | 'onCollapse'
-> {}
+interface WebUISiderProps {
+  collapsed?: boolean;
+  onBreakpoint?: (broken: boolean) => void;
+  onCollapse?: (collapsed: boolean, type: 'clickTrigger') => void;
+}
 
 const WebUISider: React.FC<WebUISiderProps> = (props) => {
   'use memo';
@@ -54,9 +49,13 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const { token } = theme.useToken();
   const { themeConfig } = useCustomThemeConfig();
 
-  const config = use(ConfigProvider.ConfigContext);
-  const currentSiderTheme =
-    config.theme?.algorithm === theme.darkAlgorithm ? 'dark' : 'light';
+  // PILOT-DECISION: the sider's own light/dark polarity used to be read off
+  // the parent antd `ConfigProvider`'s `algorithm`; the Astryx equivalent is
+  // the nearest ancestor `<Theme>`'s RESOLVED mode (MAPPING §5). This picks
+  // the logo asset only — the actual polarity switch is applied by
+  // `WebUISiderWithCustomTheme` below.
+  const { mode } = useTheme();
+  const currentSiderTheme = mode === 'dark' ? 'dark' : 'light';
 
   const webuiNavigate = useWebUINavigate();
   const location = useLocation();
@@ -77,10 +76,18 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
   const [isOpenAboutBackendAIModal, { toggle: toggleAboutBackendAIModal }] =
     useToggle(false);
 
-  const siderRef = useRef<HTMLDivElement>(null);
+  const siderRef = useRef<HTMLElement>(null);
   const isSiderHover = useHover(siderRef);
-  const gridBreakpoint = Grid.useBreakpoint();
-  const primaryColors = usePrimaryColors();
+  // RESPONSIVE-POLICY R3: antd `Grid.useBreakpoint()` → theme-shim hook.
+  // This also replaces `Layout.Sider`'s own `breakpoint="md"` callback, which
+  // Astryx `SideNav` has no equivalent for (MAPPING §3.9 — no breakpoint
+  // system) — see the effect below.
+  const gridBreakpoint = useBAIBreakpoint();
+  const onBreakpoint = props.onBreakpoint;
+  const isBelowMd = !gridBreakpoint.md;
+  useEffect(() => {
+    onBreakpoint?.(isBelowMd);
+  }, [onBreakpoint, isBelowMd]);
 
   const {
     groupedGeneralMenu,
@@ -117,78 +124,59 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
     // react-doctor-disable-next-line react-doctor/no-mutable-in-deps
   }, [setGoBackPath, location.pathname, isCurrentPathAdminCategory]);
 
+  // PILOT-DECISION: antd `Tooltip` + circular `Button type="text" icon` →
+  // Astryx `IconButton` with its own `tooltip` (MAPPING §3.3 / §4). Both
+  // hand-set sizes go away: the 40×42 box that matched antd's menu-item
+  // height, and the `Typography` heading whose only job was to restate
+  // `fontSizeLG`/`fontWeightStrong` — Astryx `Text type="large"` carries
+  // both. The tooltip's `placement` no longer flips with `collapsed`; the
+  // default placement is used.
   const adminHeader = (
-    <BAIFlex align="center">
-      <Tooltip
-        title={t('webui.menu.GoBack')}
-        placement={props.collapsed ? 'right' : 'top'}
-        styles={{
-          // adjust height to match menu item height
-          container: {
-            height: 40,
-            display: 'flex',
-            alignItems: 'center',
-            fontSize: token.fontSizeLG,
-          },
+    <HStack align="center" gap={2} style={{ paddingBlockEnd: token.marginXS }}>
+      <IconButton
+        variant="ghost"
+        label={t('webui.menu.GoBack')}
+        tooltip={t('webui.menu.GoBack')}
+        icon={<ArrowLeftIcon size="1em" />}
+        onClick={() => {
+          // `goBackPath` stores the last visited general (project-scoped)
+          // path, e.g. `/project/<oldName>/session`. If the user switched
+          // projects while in admin mode, rewrite its `:projectName` segment
+          // to the current project so "go back" lands on the active project,
+          // not the stale one. Non-project paths pass through unchanged.
+          //
+          // Healing guard: a stored path that itself parses to an admin
+          // scope (e.g. `/admin` polluted by the pre-fix bare-scope-root
+          // bug, possibly persisted in sessionStorage from an older build)
+          // would make "go back" a no-op loop — fall back to the default
+          // general page instead of navigating back into admin.
+          const storedTarget = goBackPath
+            ? rewriteProjectNameInPath(goBackPath, activeProjectName)
+            : undefined;
+          const isStoredTargetAdmin =
+            !!storedTarget &&
+            getRouteScopeAndKey(storedTarget).scope !== 'project';
+          webuiNavigate(
+            storedTarget && !isStoredTargetAdmin
+              ? storedTarget
+              : defaultMenuPath,
+          );
         }}
-      >
-        <Button
-          type="text"
-          shape="circle"
-          icon={<ArrowLeftIcon />}
-          onClick={() => {
-            // `goBackPath` stores the last visited general (project-scoped)
-            // path, e.g. `/project/<oldName>/session`. If the user switched
-            // projects while in admin mode, rewrite its `:projectName` segment
-            // to the current project so "go back" lands on the active project,
-            // not the stale one. Non-project paths pass through unchanged.
-            //
-            // Healing guard: a stored path that itself parses to an admin
-            // scope (e.g. `/admin` polluted by the pre-fix bare-scope-root
-            // bug, possibly persisted in sessionStorage from an older build)
-            // would make "go back" a no-op loop — fall back to the default
-            // general page instead of navigating back into admin.
-            const storedTarget = goBackPath
-              ? rewriteProjectNameInPath(goBackPath, activeProjectName)
-              : undefined;
-            const isStoredTargetAdmin =
-              !!storedTarget &&
-              getRouteScopeAndKey(storedTarget).scope !== 'project';
-            webuiNavigate(
-              storedTarget && !isStoredTargetAdmin
-                ? storedTarget
-                : defaultMenuPath,
-            );
-          }}
-          aria-label={t('webui.menu.GoBack')}
-          style={{
-            color: token.colorTextSecondary,
-            // set specific size like menu items
-            height: 40,
-            width: 42,
-            marginLeft: token.margin,
-            marginBottom: 4,
-          }}
-        />
-      </Tooltip>
+      />
       {!props.collapsed && (
-        <Typography
-          style={{
-            fontSize: token.fontSizeLG,
-            fontWeight: token.fontWeightStrong,
-            color: token.colorText,
-          }}
-        >
+        <Text type="large" weight="semibold">
           {t('webui.menu.AdminSettings')}
-        </Typography>
+        </Text>
       )}
-    </BAIFlex>
+    </HStack>
   );
 
   return (
     <BAISider
       className="webui-sider"
       ref={siderRef}
+      collapsed={props.collapsed}
+      onCollapse={(collapsed) => props.onCollapse?.(collapsed, 'clickTrigger')}
       logo={
         <img
           className="logo-wide"
@@ -208,7 +196,6 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           onClick={() => webuiNavigate(defaultMenuPath)}
         />
       }
-      theme={currentSiderTheme}
       logoCollapsed={
         <img
           className="logo-collapsed"
@@ -229,167 +216,129 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
           onClick={() => webuiNavigate(defaultMenuPath)}
         />
       }
-      {...props}
+      footer={
+        props.collapsed ? undefined : (
+          // PILOT-DECISION: the footer used to be a `Typography.Text
+          // type="secondary"` wrapping a `<div class="terms-of-use">` with
+          // three `Typography.Link type="secondary"` entries at a hand-set
+          // 11px. Astryx `Link` has no `type="secondary"` and no font-size
+          // prop (closed enums, P5), so the links take the default link
+          // treatment and the block keeps only its `supporting` text tone.
+          // The `data-testid`s are preserved — the e2e suite anchors on them.
+          <VStack
+            gap={2}
+            align="center"
+            className="terms-of-use"
+            style={{ textAlign: 'center', paddingBlockEnd: token.paddingSM }}
+          >
+            <Divider />
+            <HStack gap={1} justify="center" wrap="wrap">
+              <Link
+                data-testid="button-terms-of-service"
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  toggleTOSModal();
+                }}
+              >
+                {t('webui.menu.TermsOfService')}
+              </Link>
+              <Text type="supporting">·</Text>
+              <Link
+                data-testid="button-privacy-policy"
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  togglePrivacyPolicyModal();
+                }}
+              >
+                {t('webui.menu.PrivacyPolicy')}
+              </Link>
+              <Text type="supporting">·</Text>
+              <Link
+                data-testid="button-about-backend-ai"
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  toggleAboutBackendAIModal();
+                }}
+              >
+                {t('webui.menu.AboutBackendAI')}
+              </Link>
+              {!!baiClient?._config?.allowSignout && (
+                <>
+                  <Text type="supporting">·</Text>
+                  <Link
+                    data-testid="button-leave-service"
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      toggleSignoutModal();
+                    }}
+                  >
+                    {t('webui.menu.LeaveService')}
+                  </Link>
+                </>
+              )}
+            </HStack>
+            <Text type="supporting" as="div">
+              <address className="sidebar-footer">
+                {themeConfig?.branding?.companyName || 'Lablup Inc.'}
+                &nbsp;
+                {/* @ts-ignore */}
+                {`${globalThis.packageVersion}.${globalThis.buildNumber}`}
+              </address>
+            </Text>
+          </VStack>
+        )
+      }
     >
       <SiderToggleButton
         collapsed={props.collapsed}
         buttonTop={68}
-        // buttonTop={18}
         onClick={(collapsed) => {
           props.onCollapse?.(collapsed, 'clickTrigger');
         }}
         hidden={!gridBreakpoint.sm || !isSiderHover}
       />
-      <BAIFlex
-        direction="column"
-        align="stretch"
-        justify="start"
-        style={{
-          flex: 1,
-          overflowY: 'auto',
-          paddingTop: token.paddingLG,
-          paddingBottom: token.paddingSM,
-        }}
-      >
-        {(!isSelectedAdminCategoryMenu || isCurrentPageUnauthorized) && (
+      {(!isSelectedAdminCategoryMenu || isCurrentPageUnauthorized) && (
+        <BAIMenu
+          hideGroupName={props.collapsed}
+          selectedKeys={filterOutEmpty([
+            currentMenuKey || 'start',
+            // TODO: After 'SessionListPage' is completed and used as the main page, remove this code
+            //       and change 'job' key to 'session'
+            currentMenuKey === 'session' ? 'job' : '',
+          ])}
+          items={filterOutEmpty([
+            firstAvailableAdminMenuItem && {
+              // Go to first page of admin setting pages.
+              key: 'admin-settings',
+              labelText: t('webui.menu.AdminSettings'),
+              to: getPathFromMenuKey(
+                firstAvailableAdminMenuItem.key,
+                activeProjectName,
+              ),
+              icon: <ShieldUserIcon style={{ color: token.colorInfo }} />,
+            },
+            ...groupedGeneralMenu,
+          ])}
+        />
+      )}
+      {firstAvailableAdminMenuItem && isSelectedAdminCategoryMenu && (
+        // The admin region carried its own accent through a nested antd
+        // `ConfigProvider token.colorPrimary`; `AstryxAdminTheme` (ticket 02)
+        // is the Astryx adapter for exactly that, and it re-passes `mode`
+        // explicitly because a nested `<Theme>` otherwise falls back to
+        // `system` (MAPPING §5).
+        <AstryxAdminTheme>
+          {adminHeader}
           <BAIMenu
-            collapsed={props.collapsed}
-            selectedKeys={[
-              currentMenuKey || 'start',
-              // TODO: After 'SessionListPage' is completed and used as the main page, remove this code
-              //       and change 'job' key to 'session'
-              currentMenuKey === 'session' ? 'job' : '',
-            ]}
-            // @ts-ignore
-            items={filterOutEmpty([
-              firstAvailableAdminMenuItem && {
-                // Go to first page of admin setting pages.
-                label: (
-                  <WebUILink
-                    to={getPathFromMenuKey(
-                      firstAvailableAdminMenuItem.key,
-                      activeProjectName,
-                    )}
-                  >
-                    {t('webui.menu.AdminSettings')}
-                  </WebUILink>
-                ),
-                icon: <ShieldUserIcon style={{ color: token.colorInfo }} />,
-                key: 'admin-settings',
-              },
-              ...groupedGeneralMenu,
-            ])}
+            hideGroupName={props.collapsed}
+            selectedKeys={currentMenuKey ? [currentMenuKey] : []}
+            items={groupedAdminMenu}
           />
-        )}
-        {firstAvailableAdminMenuItem && isSelectedAdminCategoryMenu && (
-          <ConfigProvider
-            theme={{
-              token: {
-                colorPrimary: primaryColors.admin,
-              },
-            }}
-          >
-            {adminHeader}
-            <BAIMenu
-              collapsed={props.collapsed}
-              selectedKeys={currentMenuKey ? [currentMenuKey] : []}
-              items={groupedAdminMenu as MenuProps['items']}
-            />
-          </ConfigProvider>
-        )}
-      </BAIFlex>
-      {props.collapsed ? null : (
-        <BAIFlex
-          justify="center"
-          className="sider-footer-wrap"
-          direction="column"
-          style={{
-            width: '100%',
-            padding: 30,
-            paddingTop: 0,
-            textAlign: 'center',
-          }}
-        >
-          <Typography.Text
-            type="secondary"
-            style={{
-              fontSize: '12px',
-              wordBreak: 'normal',
-            }}
-          >
-            <div className="terms-of-use">
-              <Divider style={{ marginTop: 0, marginBottom: token.margin }} />
-              <BAIFlex
-                wrap="wrap"
-                style={{ fontSize: token.sizeXS }}
-                justify="center"
-              >
-                <Typography.Link
-                  data-testid="button-terms-of-service"
-                  type="secondary"
-                  style={{ fontSize: 11 }}
-                  onClick={() => {
-                    toggleTOSModal();
-                  }}
-                >
-                  {t('webui.menu.TermsOfService')}
-                </Typography.Link>
-                &nbsp;·&nbsp;
-                <Typography.Link
-                  data-testid="button-privacy-policy"
-                  type="secondary"
-                  style={{ fontSize: 11 }}
-                  onClick={() => {
-                    togglePrivacyPolicyModal();
-                  }}
-                >
-                  {t('webui.menu.PrivacyPolicy')}
-                </Typography.Link>
-                &nbsp;·&nbsp;
-                <Typography.Link
-                  data-testid="button-about-backend-ai"
-                  type="secondary"
-                  style={{ fontSize: 11 }}
-                  onClick={() => {
-                    toggleAboutBackendAIModal();
-                  }}
-                >
-                  {t('webui.menu.AboutBackendAI')}
-                </Typography.Link>
-                {!!baiClient?._config?.allowSignout && (
-                  <>
-                    &nbsp;·&nbsp;
-                    <Typography.Link
-                      data-testid="button-leave-service"
-                      type="secondary"
-                      style={{ fontSize: 11 }}
-                      onClick={toggleSignoutModal}
-                    >
-                      {t('webui.menu.LeaveService')}
-                    </Typography.Link>
-                    <SignoutModal
-                      open={isOpenSignoutModal}
-                      onRequestClose={toggleSignoutModal}
-                    />
-                  </>
-                )}
-              </BAIFlex>
-            </div>
-            <address>
-              <small className="sidebar-footer">
-                {themeConfig?.branding?.companyName || 'Lablup Inc.'}
-              </small>
-              &nbsp;
-              <small
-                className="sidebar-footer"
-                style={{ fontSize: token.sizeXS }}
-              >
-                {/* @ts-ignore */}
-                {`${globalThis.packageVersion}.${globalThis.buildNumber}`}
-              </small>
-            </address>
-          </Typography.Text>
-        </BAIFlex>
+        </AstryxAdminTheme>
       )}
       <TermsOfServiceModal
         open={isOpenTOSModal}
@@ -403,23 +352,34 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
         open={isOpenAboutBackendAIModal}
         onRequestClose={toggleAboutBackendAIModal}
       />
+      <SignoutModal
+        open={isOpenSignoutModal}
+        onRequestClose={toggleSignoutModal}
+      />
     </BAISider>
   );
 };
 
+/**
+ * Applies the operator's `sider.theme` override. antd expressed "render this
+ * subtree with the opposite polarity" as a nested `ConfigProvider` with the
+ * flipped `algorithm` (`ReverseThemeProvider`); the Astryx expression is
+ * `AstryxReverseTheme`, a nested `<Theme>` with the inverted resolved mode.
+ */
 const WebUISiderWithCustomTheme: React.FC<WebUISiderProps> = (props) => {
+  'use memo';
   const { themeConfig } = useCustomThemeConfig();
-  const config = use(ConfigProvider.ConfigContext);
-  const isParentDark = config.theme?.algorithm === theme.darkAlgorithm;
+  const { mode } = useTheme();
+  const isParentDark = mode === 'dark';
 
   const shouldReverse =
     (isParentDark && themeConfig?.sider?.theme === 'light') ||
     (!isParentDark && themeConfig?.sider?.theme === 'dark');
 
   return shouldReverse ? (
-    <ThemeReverseProvider>
+    <AstryxReverseTheme>
       <WebUISider {...props} />
-    </ThemeReverseProvider>
+    </AstryxReverseTheme>
   ) : (
     <WebUISider {...props} />
   );

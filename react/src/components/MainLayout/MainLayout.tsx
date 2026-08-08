@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { AstryxAdminTheme } from '../../astryx-theme';
 import { useWebUINavigate } from '../../hooks';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
@@ -28,7 +29,7 @@ import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIBreadcrumb from '../WebUIBreadcrumb';
 import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
-import { App, ConfigProvider, Layout, type LayoutProps } from 'antd';
+import { App, ConfigProvider } from 'antd';
 import { createGlobalStyle, createStyles } from 'antd-style';
 import { BAIFlex, BAIResourceSlotsProvider } from 'backend.ai-ui';
 import { atom, useSetAtom } from 'jotai';
@@ -173,8 +174,12 @@ function MainLayout() {
             type === 'clickTrigger' && setSideCollapsed(collapsed);
           }}
         />
-        <Layout
+        <div
           style={{
+            display: 'flex',
+            flexDirection: 'column',
+            flex: 'auto',
+            minWidth: 0,
             backgroundColor: 'transparent',
           }}
         >
@@ -307,7 +312,7 @@ function MainLayout() {
               </BAIErrorBoundary>
             </BAIFlex>
           </BAIContentWithDrawerArea>
-        </Layout>
+        </div>
       </Suspense>
     </LayoutWithPageTestId>
   );
@@ -368,27 +373,60 @@ const AutoAdminPrimaryColorProvider = ({
   const isAdminScope = useRouteScope() !== 'project';
   if (isAdminScope) {
     return (
-      <ConfigProvider
-        theme={{
-          token: {
-            colorPrimary: primaryColors.admin,
-          },
-        }}
-      >
-        {/* `display: contents` removes App's structural div from layout so
-            admin-scope Outlet content participates in the same flex context
-            as the other scopes (keeps route-error screens centered). */}
-        <App {...commonAppProps} style={{ display: 'contents' }}>
-          {children}
-        </App>
-      </ConfigProvider>
+      // `AstryxAdminTheme` is the Astryx half of this accent swap (ticket 02);
+      // the antd `ConfigProvider` + `App` pair below is the antd half and
+      // STAYS until the Form engine and the remaining antd surfaces go
+      // (ticket 35) — the two switches are independent (MAPPING §5), so both
+      // must be driven for an admin page to look right in either library.
+      <AstryxAdminTheme>
+        <ConfigProvider
+          theme={{
+            token: {
+              colorPrimary: primaryColors.admin,
+            },
+          }}
+        >
+          {/* `display: contents` removes App's structural div from layout so
+              admin-scope Outlet content participates in the same flex context
+              as the other scopes (keeps route-error screens centered). */}
+          <App {...commonAppProps} style={{ display: 'contents' }}>
+            {children}
+          </App>
+        </ConfigProvider>
+      </AstryxAdminTheme>
     );
   }
 
   return children;
 };
 
-const LayoutWithPageTestId: React.FC<LayoutProps> = (props) => {
+/**
+ * PILOT-DECISION (the frame): antd `Layout` → a plain flex row, and Astryx
+ * **`AppShell` is deliberately NOT adopted** even though MAPPING §5 names it
+ * as `Layout`'s destination. `AppShell` is an opinionated frame, not a
+ * translation of this one:
+ *
+ *  - It owns the scroll containers and renders its own `<main>`. This layout
+ *    publishes ITS scroll container through a jotai atom
+ *    (`mainContentDivRefState`) that pages read for scroll-to-top and
+ *    infinite scroll, and it relies on that same element being the scroll
+ *    parent for the sticky header. `AppShell` exposes no ref to its scroller,
+ *    so adopting it would mean nesting a second scroll container inside
+ *    `main` — which breaks the sticky header outright.
+ *  - Its `topNav` slot spans the FULL width, above the side nav. This app's
+ *    header spans only the content column, beside the sider's own branded
+ *    logo band. Moving it into `topNav` would relocate the brand bar, i.e.
+ *    change the layout rather than port it (original-fidelity rule).
+ *  - `BAIContentWithDrawerArea` shifts the content region when the
+ *    notification drawer opens; there is no `AppShell` slot for that.
+ *
+ * `SideNav` — the other half of the §5 recipe — IS adopted (see `BAISider`).
+ * Revisit `AppShell` at ticket 35, when the notification drawer and the
+ * scroll-ref consumers have themselves moved.
+ */
+const LayoutWithPageTestId: React.FC<{
+  children?: React.ReactNode;
+}> = (props) => {
   'use memo';
   const location = useLocation();
   // Prefer the scope-aware menu key (route handle) so the page test id stays
@@ -403,7 +441,13 @@ const LayoutWithPageTestId: React.FC<LayoutProps> = (props) => {
     : cleanPath
       ? `page-${cleanPath}`
       : 'page-root';
-  return <Layout {...props} data-testid={pageTest} />;
+  return (
+    <div
+      {...props}
+      style={{ display: 'flex', flexDirection: 'row', minHeight: '100vh' }}
+      data-testid={pageTest}
+    />
+  );
 };
 
 type ThemeToken = ReturnType<typeof theme.useToken>['token'];

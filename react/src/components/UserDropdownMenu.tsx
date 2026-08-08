@@ -9,12 +9,15 @@ import {
   useCurrentUserRole,
   useTOTPSupported,
 } from '../hooks/backendai';
-import { theme } from '../theme-shim';
+import { useBAIBreakpoint } from '../theme-shim';
 import AboutBackendAIModal from './AboutBackendAIModal';
 import DownloadModal from './DownloadModal';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
+import {
+  DropdownMenu,
+  type DropdownMenuOption,
+} from '@astryxdesign/core/DropdownMenu';
 import { useToggle } from 'ahooks';
-import { Avatar, Button, Dropdown, Grid, MenuProps, Typography } from 'antd';
 import {
   BAIUnmountAfterClose,
   filterOutEmpty,
@@ -40,15 +43,25 @@ const UserProfileSettingModal = React.lazy(
   () => import('./UserProfileSettingModal'),
 );
 
+// PILOT-DECISION: antd `Dropdown menu={{items}} trigger={['click']}` →
+// Astryx `DropdownMenu items` (MAPPING §3.7 — the `menu={{items}}` branch;
+// `placement="bottomRight"` splits into `placement="below" alignment="end"`).
+// Astryx `DropdownMenu` OWNS its trigger button (`button` prop), so the
+// `buttonRender` escape hatch — whose only caller wrapped the trigger in
+// `ReverseThemeProvider` — is dropped: WebUIHeader now wraps the whole
+// dropdown in `AstryxReverseTheme` instead.
+// P7: the per-item `data-testid`s are dropped (Astryx `DropdownMenuItemData`
+// has no passthrough). The e2e suite clicks these rows by TEXT
+// (`getByText('My Account')`, `getByText('Log Out')`) and only anchors on
+// `user-dropdown-button`, which survives on the trigger.
 const UserDropdownMenu: React.FC<{
-  buttonRender?: (defaultButton: React.ReactNode) => React.ReactNode;
   style?: CSSProperties;
-}> = ({ buttonRender = (btn) => btn, style }) => {
+}> = ({ style }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const [userInfo] = useCurrentUserInfo();
-  const screens = Grid.useBreakpoint();
+  // RESPONSIVE-POLICY R3: `Grid.useBreakpoint()` → theme-shim hook.
+  const screens = useBAIBreakpoint();
   const baiClient = useSuspendedBackendaiClient();
 
   const [isOpenUserSettingModal, { set: setIsOpenUserSettingModal }] =
@@ -97,75 +110,51 @@ const UserDropdownMenu: React.FC<{
       ? (user?.basicInfo?.fullName ?? '')
       : userInfo.email;
 
-  const items: MenuProps['items'] = filterOutEmpty([
+  // The three leading rows (name / email / role) are read-only identity
+  // display; antd expressed that with `disabled` + a `cursor: default` style
+  // override. `isDisabled` keeps the same non-interactive semantics — the
+  // cursor/colour overrides have no destination (P5, closed enums).
+  const items: DropdownMenuOption[] = filterOutEmpty<DropdownMenuOption>([
     {
-      'data-testid': 'dropdown-user-name',
-      label: <Typography.Text>{displayName}</Typography.Text>,
-      key: 'userFullName',
+      label: displayName,
       icon: <User size="1em" />,
-      disabled: true,
-      style: {
-        color: token.colorText,
-        cursor: 'default',
-      },
+      isDisabled: true,
     },
     {
-      'data-testid': 'dropdown-user-email',
       label: userInfo.email,
-      key: 'userEmail',
       icon: <Mail size="1em" />,
-      disabled: true,
-      style: {
-        cursor: 'default',
-      },
+      isDisabled: true,
     },
+    { type: 'divider' },
     {
-      type: 'divider',
-    },
-    {
-      'data-testid': 'dropdown-user-role',
-      label: userRole,
-      key: 'userRole',
+      label: userRole ?? '',
       icon: <ShieldCheck size="1em" />,
-      disabled: true,
-      style: {
-        cursor: 'default',
-      },
+      isDisabled: true,
     },
+    { type: 'divider' },
     {
-      type: 'divider',
-    },
-    {
-      'data-testid': 'dropdown-about-backend-ai',
       label: t('webui.menu.AboutBackendAI'),
-      key: 'description',
       icon: <CircleAlert size="1em" />,
       onClick: () => {
         toggleAboutBAIModal();
       },
     },
     {
-      'data-testid': 'dropdown-my-account',
       label: t('webui.menu.MyAccount'),
-      key: 'userProfileSetting',
       icon: <Lock size="1em" />,
       onClick: () => {
         setIsOpenUserSettingModal(true);
       },
     },
     {
-      'data-testid': 'dropdown-preferences',
       label: t('webui.menu.Preferences'),
-      key: 'preferences',
       icon: <Settings size="1em" />,
       onClick: () => {
         webuiNavigate('/usersettings?tab=general');
       },
     },
     {
-      'data-testid': 'dropdown-logs-errors',
       label: t('webui.menu.LogsErrors'),
-      key: 'logs',
       icon: <FileText size="1em" />,
       onClick: () => {
         webuiNavigate('/usersettings?tab=logs');
@@ -174,14 +163,11 @@ const UserDropdownMenu: React.FC<{
     (baiClient._config.allowAppDownloadPanel ||
       baiClient._config.allowCLIDownloadPanel) && {
       label: t('summary.Downloads'),
-      key: 'downloads',
       icon: <Download size="1em" />,
       onClick: () => toggleDownloadModal(),
     },
     {
-      'data-testid': 'dropdown-logout',
       label: t('webui.menu.LogOut'),
-      key: 'logout',
       icon: <LogOut size="1em" />,
       onClick: () => {
         const event: CustomEvent = new CustomEvent('backend-ai-logout');
@@ -192,45 +178,26 @@ const UserDropdownMenu: React.FC<{
 
   return (
     <>
-      <Dropdown
-        menu={{ items }}
-        trigger={['click']}
-        styles={{
-          root: {
-            maxWidth: 300,
-          },
+      {/* antd wrapped a `<User>` glyph in a 17px `Avatar` purely to give it a
+          light disc behind it; Astryx `Avatar` renders images/initials and
+          takes no children (MAPPING §4), so the trigger uses the bare lucide
+          icon as the Button's `icon`. On < lg the label collapses to the icon
+          (`isIconOnly`), which is what the old `screens.lg &&` children
+          expression did. */}
+      <DropdownMenu
+        placement="below"
+        alignment="end"
+        menuWidth={300}
+        button={{
+          'data-testid': 'user-dropdown-button',
+          variant: 'ghost',
+          icon: <User size="1em" />,
+          isIconOnly: !screens.lg,
+          label: _.truncate(displayName, { length: 30 }),
+          style,
         }}
-        placement="bottomRight"
-      >
-        {buttonRender(
-          <Button
-            type="text"
-            data-testid="user-dropdown-button"
-            style={{
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginTop: -2,
-              fontSize: token.fontSizeLG,
-              ...style,
-            }}
-            icon={
-              <Avatar
-                size={17}
-                style={{
-                  backgroundColor: token.colorBgBase,
-                }}
-              >
-                <User style={{ color: token.colorPrimary }} size="1em" />
-              </Avatar>
-            }
-          >
-            {screens.lg && _.truncate(displayName, { length: 30 })}
-          </Button>,
-        )}
-      </Dropdown>
+        items={items}
+      />
       <ErrorBoundaryWithNullFallback>
         <Suspense>
           {isOpenUserSettingModal && (

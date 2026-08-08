@@ -2,12 +2,13 @@
  * Static global styles for <BAISider>. Extracted from an inline <style>
  * element (forbidden under strict CSP); a same-origin stylesheet is covered
  * by `style-src 'self'` and needs no nonce.
+ *
+ * to-astryx ticket 24: the `.bai-sider .ant-layout-sider-children` flex rule
+ * is gone with antd `Layout.Sider` — Astryx `SideNav` is already a flex
+ * column (P6: an `.ant-*` rule left behind here would keep compiling and stop
+ * applying). The scrollbar-hiding and the Electron drag regions are DOM-shape
+ * independent and stay.
  */
-.bai-sider .ant-layout-sider-children {
-  display: flex;
-  flex-direction: column;
-}
-
 .bai-sider::-webkit-scrollbar {
   width: 0px;
 }
@@ -26,4 +27,63 @@
 
 .bai-sider .non-draggable {
   -webkit-app-region: no-drag;
+}
+
+/*
+ * The branded logo band. antd's Sider let the logo row paint edge-to-edge
+ * because the row WAS the sider's first child; Astryx `SideNav` puts `header`
+ * inside a padded sticky area (spacing-2 = 8px all round), so the band bleeds
+ * back out with a negative margin to keep the full-width brand bar.
+ */
+.bai-sider .logo-and-text-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: calc(var(--spacing-2) * -1);
+  margin-bottom: 0;
+  padding-inline: var(--spacing-6);
+  height: 60px;
+  background-color: var(--color-accent);
+  transition: all 0.2s ease-in-out;
+}
+
+.bai-sider .logo-and-text-container:has(.logo-collapsed:not([hidden])) {
+  align-items: center;
+}
+
+/*
+ * P6/P17 guard — antd's anchor reset vs. Astryx nav items.
+ *
+ * `SideNavItem` renders a real `<a>` (that is the point: middle-click and
+ * "open in new tab" keep working through the router), and antd's global
+ * anchor reset — still mounted app-wide while the antd `ConfigProvider`/`App`
+ * survive, see MainLayout — paints every `<a>` with `colorLink`. antd's
+ * selector outranks StyleX's single-class output, so the nav labels came out
+ * link-blue instead of text-primary. This restores the Astryx token at a
+ * specificity antd cannot beat. Delete it with the antd providers (ticket 35).
+ *
+ * Only the enabled anchor needs it: a disabled item is not rendered as an
+ * anchor, so its `--color-text-disabled` treatment is untouched.
+ */
+.bai-sider a.astryx-side-nav-item {
+  color: var(--color-text-primary);
+}
+
+/*
+ * Same cause, second symptom: antd's anchor reset also forces
+ * `background-color: transparent`, which erased BOTH the selected-row tint
+ * and the hover overlay that `SideNavItem` paints. Restored here with the
+ * same Astryx tokens the component itself uses (`navItemStyles`), so the
+ * rail behaves exactly as Astryx intends while the antd providers remain.
+ */
+.bai-sider a.astryx-side-nav-item[data-selected='selected'] {
+  background-color: var(--color-neutral);
+}
+
+.bai-sider a.astryx-side-nav-item:hover {
+  background-color: var(--color-overlay-hover);
+}
+
+.bai-sider a.astryx-side-nav-item[data-selected='selected']:hover {
+  background-color: var(--color-neutral);
 }

@@ -4,7 +4,9 @@
  */
 import { theme } from '../theme-shim';
 import WebUILink from './WebUILink';
-import { Button, Divider, Typography } from 'antd';
+import { Button } from '@astryxdesign/core/Button';
+import { Divider } from '@astryxdesign/core/Divider';
+import { Text } from '@astryxdesign/core/Text';
 import { BAIFlex } from 'backend.ai-ui';
 import { ReactNode, useRef } from 'react';
 import { To } from 'react-router-dom';
@@ -38,29 +40,20 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const colorPrimaryWithAlpha = `rgba(${parseInt(token.colorPrimary.slice(1, 3), 16)}, ${parseInt(token.colorPrimary.slice(3, 5), 16)}, ${parseInt(token.colorPrimary.slice(5, 7), 16)}, 0.15)`;
 
+  // PILOT-DECISION: antd `Button type="primary"` hand-painted with
+  // `backgroundColor` (accent for user items, info blue for admin items) →
+  // Astryx `Button variant="primary"` (MAPPING §3.3). The per-instance
+  // background is inexpressible (P5: closed variant enum, no colour escape
+  // hatch), so the admin/`themeColor` tint is DROPPED and every action button
+  // takes the theme accent. The nested `Typography.Text` that only resized
+  // and whitened the label goes away too — `label` is the button's own text.
   const actionButton = (
     <Button
-      type="primary"
-      style={{
-        width: '100%',
-        height: 40,
-        backgroundColor: themeColor
-          ? themeColor
-          : itemRole === 'user'
-            ? token.colorPrimary
-            : token.colorInfo,
-      }}
+      variant="primary"
+      width="100%"
       onClick={onClick}
-    >
-      <Typography.Text
-        style={{
-          fontSize: token.fontSizeHeading5,
-          color: token.colorWhite,
-        }}
-      >
-        {buttonText}
-      </Typography.Text>
-    </Button>
+      label={buttonText}
+    />
   );
   return (
     <BAIFlex
@@ -100,10 +93,10 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
         </BAIFlex>
         <BAIFlex style={{ minHeight: 60 }}>
           {typeof title === 'string' ? (
-            <Typography.Text
-              strong
+            <Text
+              type="large"
+              weight="semibold"
               style={{
-                fontSize: token.fontSizeHeading4,
                 color: themeColor
                   ? themeColor
                   : itemRole === 'user'
@@ -112,17 +105,12 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
               }}
             >
               {title}
-            </Typography.Text>
+            </Text>
           ) : (
             title
           )}
         </BAIFlex>
-        <Typography.Text
-          type="secondary"
-          style={{ fontSize: token.fontSizeSM }}
-        >
-          {description}
-        </Typography.Text>
+        <Text type="supporting">{description}</Text>
       </BAIFlex>
       <BAIFlex
         direction="column"
@@ -137,11 +125,7 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
           paddingTop: 0,
         }}
       >
-        {description && (
-          <Divider
-            style={{ margin: 0, marginBottom: token.marginMD, borderWidth: 1 }}
-          />
-        )}
+        {description && <Divider style={{ marginBottom: token.marginMD }} />}
         {to ? <WebUILink to={to}>{actionButton}</WebUILink> : actionButton}
       </BAIFlex>
     </BAIFlex>

@@ -1,0 +1,84 @@
+== react/src/components/MainLayout/MainLayout.tsx
+31:import { App, ConfigProvider, Layout, type LayoutProps } from 'antd';
+32:import { createGlobalStyle, createStyles } from 'antd-style';
+== react/src/components/MainLayout/WebUIHeader.tsx
+38:import { Button, Typography, Grid, Divider } from 'antd';
+39:import { createStyles } from 'antd-style';
+== react/src/components/MainLayout/WebUISider.tsx
+38:} from 'antd';
+== react/src/components/MainLayout/ProjectScopeLayout.tsx
+14:import { Button } from 'antd';
+== react/src/components/BAISider.tsx
+6:import { ConfigProvider, Grid, type SiderProps, theme } from 'antd';
+7:import Sider from 'antd/es/layout/Sider';
+== react/src/components/BAIMenu.tsx
+6:import { ConfigProvider, Menu, type MenuProps } from 'antd';
+7:import { createStyles } from 'antd-style';
+== react/src/components/SiderToggleButton.tsx
+7:import { Button, ConfigProvider, Tooltip } from 'antd';
+== react/src/components/WebUIBreadcrumb.tsx
+7:import { Breadcrumb } from 'antd';
+== react/src/components/LocationStateBreadCrumb.tsx
+6:import { Breadcrumb } from 'antd';
+== react/src/components/BAIContentWithDrawerArea.tsx
+7:import { Layout } from 'antd';
+8:import { createGlobalStyle } from 'antd-style';
+9:import { BasicProps } from 'antd/lib/layout/layout';
+== react/src/components/UserDropdownMenu.tsx
+17:import { Avatar, Button, Dropdown, Grid, MenuProps, Typography } from 'antd';
+== react/src/components/WebUIThemeToggleButton.tsx
+6:import { Button, type ButtonProps } from 'antd';
+== react/src/components/WEBUIHelpButton.tsx
+7:import { Button, type ButtonProps } from 'antd';
+== react/src/components/BAIHelpDrawer.tsx
+5:import { Button, Drawer, type DrawerProps } from 'antd';
+== react/src/components/LoginSessionExtendButton.tsx
+7:import { Button, ConfigProvider, Grid, Tooltip } from 'antd';
+== react/src/components/NetworkStatusBanner.tsx
+7:import { Alert } from 'antd';
+8:import { createStyles } from 'antd-style';
+== react/src/components/AnnouncementAlert.tsx
+10:import { Button } from 'antd';
+== react/src/components/LoginView.tsx
+56:} from 'antd';
+== react/src/components/LoginFormPanel.tsx
+38:} from 'antd';
+== react/src/components/SignupModal.tsx
+12:import { Checkbox, Form, Input, Typography } from 'antd';
+== react/src/components/ChangePasswordView.tsx
+8:import { Form, Input, Typography } from 'antd';
+== react/src/components/EmailVerificationView.tsx
+7:import { Form, Input } from 'antd';
+== react/src/components/STokenLoginBoundary.tsx
+26:import { Form, Input, Spin, Typography } from 'antd';
+== react/src/components/SignoutModal.tsx
+8:import { Form, Input, Alert, type FormInstance } from 'antd';
+== react/src/components/TermsOfServiceModal.tsx
+7:import { Skeleton } from 'antd';
+== react/src/components/PrivacyPolicyModal.tsx
+7:import { Skeleton } from 'antd';
+== react/src/components/RouteErrorContent.tsx
+7:import { Typography } from 'antd';
+== react/src/components/BAIErrorBoundary.tsx
+8:import { Alert, Button, Result, Typography } from 'antd';
+== react/src/components/AboutBackendAIModal.tsx
+8:import { Typography } from 'antd';
+== react/src/components/FlexActivityIndicator.tsx
+5:import { Spin, type SpinProps } from 'antd';
+== react/src/components/ActionItemContent.tsx
+7:import { Button, Divider, Typography } from 'antd';
+== react/src/components/EduAppLauncher.tsx
+16:import { Alert, Button, Steps, Typography } from 'antd';
+== react/src/pages/InteractiveLoginPage.tsx
+8:import { Button, Card, Descriptions } from 'antd';
+== react/src/pages/Page404.tsx
+14:import { Button } from 'antd';
+== react/src/pages/ForbiddenPage.tsx
+14:import { Button } from 'antd';
+== react/src/pages/StartPage.tsx
+  (no antd-family import)
+== react/src/hooks/useWebUIMenuItems.tsx
+25:import { Badge, Typography } from 'antd';
+26:import { MenuItemType } from 'antd/lib/menu/interface';
+== react/src/routes.tsx
+41:import { Skeleton } from 'antd';

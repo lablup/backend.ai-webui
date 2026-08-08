@@ -5,7 +5,11 @@
 import { message } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { Form, Input, Alert, type FormInstance } from 'antd';
+import BAIFormItem from './BAIFormItem';
+import { AstryxFormTextInput } from './astryx-bui/astryxFormControls';
+import { Banner } from '@astryxdesign/core/Banner';
+// SHIM (MAPPING §2): the antd Form engine stays until ticket 34.
+import { Form, type FormInstance } from 'antd';
 import {
   BAIModal,
   BAIModalProps,
@@ -79,10 +83,11 @@ const SignoutModal: React.FC<SignoutModalProps> = ({
         labelCol={{ span: 6 }}
         disabled={signoutMutation.isPending}
       >
-        <Form.Item name="alert">
-          <Alert title={t('login.DescConfirmLeave')} type="warning" />
-        </Form.Item>
-        <Form.Item
+        {/* The warning was wrapped in a state-less `Form.Item name="alert"`
+            purely for spacing; it holds no field value, so the wrapper goes
+            and the `Alert` becomes an Astryx `Banner` (MAPPING §4). */}
+        <Banner title={t('login.DescConfirmLeave')} status="warning" />
+        <BAIFormItem
           name="email"
           label={t('general.E-Mail')}
           required
@@ -103,9 +108,9 @@ const SignoutModal: React.FC<SignoutModalProps> = ({
             }),
           ]}
         >
-          <Input autoComplete="off" />
-        </Form.Item>
-        <Form.Item
+          <AstryxFormTextInput label={t('general.E-Mail')} />
+        </BAIFormItem>
+        <BAIFormItem
           name="password"
           label={t('general.Password')}
           required
@@ -122,8 +127,8 @@ const SignoutModal: React.FC<SignoutModalProps> = ({
             }),
           ]}
         >
-          <Input.Password />
-        </Form.Item>
+          <AstryxFormTextInput type="password" label={t('general.Password')} />
+        </BAIFormItem>
       </Form>
     </BAIModal>
   );

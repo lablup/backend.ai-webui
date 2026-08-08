@@ -46,17 +46,22 @@ import { jotaiStore } from './DefaultProviders';
 import LoginFormPanel from './LoginFormPanel';
 // antd's <App> element stays mounted as a nested provider: unmigrated
 // children in this subtree (e.g. SignupModal) still read antd's context.
-import {
-  App as AntdApp,
-  Button,
-  ConfigProvider,
-  Form,
-  type MenuProps,
-  Tag,
-} from 'antd';
-import { BAIModal, BAIFlex, useBAILogger } from 'backend.ai-ui';
+import { Button } from '@astryxdesign/core/Button';
+import type { DropdownMenuOption } from '@astryxdesign/core/DropdownMenu';
+// SHIM (MAPPING §2): the antd Form ENGINE stays until ticket 34. Everything
+// else antd used to supply here is gone:
+//   - `App as AntdApp` — the ticket-11 survivor, kept because SignupModal
+//     still read antd's App context. SignupModal is Astryx now (its
+//     `App.useApp()` is the app-shim), so the nested provider goes.
+//   - `ConfigProvider` — it existed ONLY to raise antd Message's
+//     `zIndexPopup` above the block panel. This screen's `App.useApp()` is
+//     served by the Astryx app-shim (see the header comment), so no antd
+//     Message is rendered here at all and the override was already dead.
+import { Form } from 'antd';
+import { BAIModal, useBAILogger } from 'backend.ai-ui';
 import i18n from 'i18next';
 import { useAtomValue, useSetAtom } from 'jotai';
+import { Trash2Icon } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -1030,62 +1035,55 @@ const LoginView: React.FC<{
     ? endpoints.filter((ep) => ep !== devApiEndpointOverride)
     : endpoints;
 
-  const endpointMenuItems: MenuProps['items'] = [
-    { key: 'header', label: t('login.EndpointHistory'), disabled: true },
-    ...(devApiEndpointOverride
-      ? [
-          {
-            key: devApiEndpointOverride,
-            label: (
-              <BAIFlex
-                justify="between"
-                align="center"
-                gap="sm"
-                style={{ minWidth: 300 }}
-              >
-                <span>{devApiEndpointOverride}</span>
-                <Tag color="blue" style={{ marginInlineEnd: 0 }}>
-                  env
-                </Tag>
-              </BAIFlex>
-            ),
-          },
-        ]
-      : []),
-    ...(savedEndpoints.length === 0
-      ? devApiEndpointOverride
-        ? []
-        : [{ key: 'empty', label: t('login.NoEndpointSaved') }]
-      : savedEndpoints.map((ep) => ({
-          key: ep,
-          label: (
-            <BAIFlex justify="between" align="center" style={{ minWidth: 300 }}>
-              <span>{ep}</span>
-              <Button
-                type="text"
-                size="small"
-                danger
-                onClick={(e) => {
-                  e.stopPropagation();
-                  deleteEndpoint(ep);
-                }}
-              >
-                {t('button.Delete')}
-              </Button>
-            </BAIFlex>
-          ),
-        }))),
-  ];
-
-  const handleEndpointMenuClick: MenuProps['onClick'] = useCallback(
-    ({ key }: { key: string }) => {
-      if (key !== 'header' && key !== 'empty') {
-        setApiEndpoint(key);
-        form.setFieldValue('api_endpoint', key);
-      }
+  const selectEndpoint = useCallback(
+    (ep: string) => {
+      setApiEndpoint(ep);
+      form.setFieldValue('api_endpoint', ep);
     },
     [form],
   );
+
+  // PILOT-DECISION: antd `Dropdown` items carried a rendered `label` node and
+  // a single group-level `onClick({key})`; Astryx `DropdownMenuOption` has a
+  // required STRING `label` and a per-item `onClick` (MAPPING §3.7), so the
+  // handler is bound HERE instead of in LoginFormPanel. Consequences:
+  //   - the "Endpoint history" header row becomes a native
+  //     `{type: 'section', title}` (better than antd's disabled fake row);
+  //   - the per-row trailing controls (the blue `env` Tag and the red
+  //     `Delete` button) have no destination — `DropdownMenuItemData` has no
+  //     trailing slot — so the env marker folds into the label text and the
+  //     delete action becomes its own menu row per endpoint.
+  const endpointMenuItems: DropdownMenuOption[] = [
+    {
+      type: 'section',
+      title: t('login.EndpointHistory'),
+      items: [
+        ...(devApiEndpointOverride
+          ? [
+              {
+                label: `${devApiEndpointOverride} (env)`,
+                onClick: () => selectEndpoint(devApiEndpointOverride ?? ''),
+              },
+            ]
+          : []),
+        ...(savedEndpoints.length === 0
+          ? devApiEndpointOverride
+            ? []
+            : [{ label: t('login.NoEndpointSaved'), isDisabled: true }]
+          : savedEndpoints.flatMap((ep) => [
+              {
+                label: ep,
+                onClick: () => selectEndpoint(ep),
+              },
+              {
+                label: `${t('button.Delete')}: ${ep}`,
+                icon: <Trash2Icon size="1em" />,
+                onClick: () => deleteEndpoint(ep),
+              },
+            ])),
+      ],
+    },
+  ];
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -1118,97 +1116,82 @@ const LoginView: React.FC<{
   // Zero-sized so it doesn't intercept pointer events. Child modals use
   // position:fixed internally so they are visible and interactive.
   return (
-    // antd's plain ConfigProvider is used here (not BAIConfigProvider) so we
-    // don't re-introduce BUI's <I18nextProvider i18n={buiI18n}> shadow inside
-    // the host tree. Purpose is purely to override Message z-index for error
-    // notifications so they appear above the block panel (z-index 10000)
-    // instead of behind it.
-    <ConfigProvider
-      theme={{
-        components: {
-          Message: { zIndexPopup: 10001 },
-        },
-      }}
-    >
-      <AntdApp>
-        {/* The login screen background (Diagonal Weave + version/copyright
-            metadata) is the persisted splash element from index.html, switched
-            to backdrop mode via __enterLoginBackdrop(). It sits at z-index
-            10000, below the login panel wrapper (10001). */}
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: 0,
-            height: 0,
-            zIndex: 10001,
-            overflow: 'visible',
+    <>
+      {/* The login screen background (Diagonal Weave + version/copyright
+          metadata) is the persisted splash element from index.html, switched
+          to backdrop mode via __enterLoginBackdrop(). It sits at z-index
+          10000, below the login panel wrapper (10001). */}
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: 0,
+          height: 0,
+          zIndex: 10001,
+          overflow: 'visible',
+        }}
+      >
+        <LoginFormPanel
+          isOpen={isLoginPanelOpen}
+          isLoading={isLoading}
+          loginError={loginError}
+          onClearLoginError={() => setLoginError(null)}
+          connectionMode={connectionMode}
+          loginConfig={loginConfig}
+          apiEndpoint={apiEndpoint}
+          otpRequired={otpRequired}
+          needsOtpRegistration={needsOtpRegistration}
+          totpRegistrationToken={totpRegistrationToken}
+          needToResetPassword={needToResetPassword}
+          expiredCredentials={expiredCredentials}
+          showSignupModal={showSignupModal}
+          signupPreloadedToken={signupPreloadedToken}
+          showEndpointInput={showEndpointInput}
+          isEndpointDisabled={isEndpointDisabled}
+          form={form}
+          endpointMenuItems={endpointMenuItems}
+          onKeyDown={handleKeyDown}
+          onLogin={handleLogin}
+          onConnectionModeChange={handleConnectionModeChange}
+          onShowSignupDialog={showSignupDialog}
+          onSAMLLogin={handleSAMLLogin}
+          onOpenIDLogin={handleOpenIDLogin}
+          onSetApiEndpoint={setApiEndpoint}
+          onSetOtpRequired={setOtpRequired}
+          onSetNeedsOtpRegistration={setNeedsOtpRegistration}
+          onSetNeedToResetPassword={(v: boolean) => {
+            setNeedToResetPassword(v);
+            if (!v) expiredCredentialsRef.current = null;
           }}
-        >
-          <LoginFormPanel
-            isOpen={isLoginPanelOpen}
-            isLoading={isLoading}
-            loginError={loginError}
-            onClearLoginError={() => setLoginError(null)}
-            connectionMode={connectionMode}
-            loginConfig={loginConfig}
-            apiEndpoint={apiEndpoint}
-            otpRequired={otpRequired}
-            needsOtpRegistration={needsOtpRegistration}
-            totpRegistrationToken={totpRegistrationToken}
-            needToResetPassword={needToResetPassword}
-            expiredCredentials={expiredCredentials}
-            showSignupModal={showSignupModal}
-            signupPreloadedToken={signupPreloadedToken}
-            showEndpointInput={showEndpointInput}
-            isEndpointDisabled={isEndpointDisabled}
-            form={form}
-            endpointMenuItems={endpointMenuItems}
-            onEndpointMenuClick={handleEndpointMenuClick}
-            onKeyDown={handleKeyDown}
-            onLogin={handleLogin}
-            onConnectionModeChange={handleConnectionModeChange}
-            onShowSignupDialog={showSignupDialog}
-            onSAMLLogin={handleSAMLLogin}
-            onOpenIDLogin={handleOpenIDLogin}
-            onSetApiEndpoint={setApiEndpoint}
-            onSetOtpRequired={setOtpRequired}
-            onSetNeedsOtpRegistration={setNeedsOtpRegistration}
-            onSetNeedToResetPassword={(v: boolean) => {
-              setNeedToResetPassword(v);
-              if (!v) expiredCredentialsRef.current = null;
-            }}
-            onSetShowSignupModal={setShowSignupModal}
-          />
+          onSetShowSignupModal={setShowSignupModal}
+        />
 
-          {/* Block/Error Panel */}
-          <BAIModal
-            open={isBlockPanelOpen && blockMessage !== ''}
-            title={blockType || undefined}
-            footer={
-              <Button
-                block
-                onClick={() => {
-                  setIsBlockPanelOpen(false);
-                  open();
-                }}
-              >
-                {t('login.CancelLogin')}
-              </Button>
-            }
-            closable={false}
-            mask={{ closable: false }}
-            getContainer={false}
-            destroyOnHidden
-          >
-            <div style={{ textAlign: 'center', paddingTop: 15 }}>
-              {blockMessage}
-            </div>
-          </BAIModal>
-        </div>
-      </AntdApp>
-    </ConfigProvider>
+        {/* Block/Error Panel */}
+        <BAIModal
+          open={isBlockPanelOpen && blockMessage !== ''}
+          title={blockType || undefined}
+          footer={
+            <Button
+              width="100%"
+              onClick={() => {
+                setIsBlockPanelOpen(false);
+                open();
+              }}
+              label={t('login.CancelLogin')}
+            />
+          }
+          closable={false}
+          mask={{ closable: false }}
+          getContainer={false}
+          destroyOnHidden
+        >
+          <div style={{ textAlign: 'center', paddingTop: 15 }}>
+            {blockMessage}
+          </div>
+        </BAIModal>
+      </div>
+    </>
   );
 };
 
