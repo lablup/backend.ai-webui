@@ -234,20 +234,20 @@ const ImportNotebookForm: React.FC<ImportNotebookFormProps> = ({
                 />
                 <BAIFlex gap={'sm'}>
                   <CopyButton
-                    size="small"
+                    size="sm"
                     copyable={{
                       text: fullText,
                     }}
-                    disabled={isButtonDisabled}
+                    isDisabled={isButtonDisabled}
                   >
                     {t('import.NotebookBadgeCodeHTML')}
                   </CopyButton>
                   <CopyButton
-                    size="small"
+                    size="sm"
                     copyable={{
                       text: fullTextMarkdown,
                     }}
-                    disabled={isButtonDisabled}
+                    isDisabled={isButtonDisabled}
                   >
                     {t('import.NotebookBadgeCodeMarkdown')}
                   </CopyButton>

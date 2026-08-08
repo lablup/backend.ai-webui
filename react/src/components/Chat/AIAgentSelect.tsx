@@ -5,12 +5,17 @@
 import { AIAgent, useAIAgent } from '../../hooks/useAIAgent';
 import { theme } from '../../theme-shim';
 import { FluentEmojiIcon } from '../FluentEmojiIcon';
+import { Selector } from '@astryxdesign/core/Selector';
 import { useControllableValue } from 'ahooks';
-import { Select, type SelectProps } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import React, { useState, useTransition } from 'react';
+import { useTranslation } from 'react-i18next';
 
-interface ChatAgentSelectProps extends Omit<SelectProps, 'options'> {}
+interface ChatAgentSelectProps {
+  value?: string;
+  onChange?: (value: string, agent?: unknown) => void;
+  loading?: boolean;
+}
 
 function makeAgentOptions(agents: AIAgent[], filter?: string) {
   return agents
@@ -28,6 +33,7 @@ const AIAgentSelect: React.FC<ChatAgentSelectProps> = ({
   loading,
   ...props
 }) => {
+  const { t } = useTranslation();
   const { token } = theme.useToken();
   const [controllableValue, setControllableValue] = useControllableValue(props);
 
@@ -46,22 +52,24 @@ const AIAgentSelect: React.FC<ChatAgentSelectProps> = ({
             height={token.sizeXL}
             width={token.sizeXL}
           />
-          <Select
-            showSearch={{
-              filterOption: false,
-              onSearch: (v) => {
-                startSearchTransition(() => {
-                  setSearchAgent(v);
-                });
-              },
-            }}
-            loading={isSearchPending || loading}
+          {/* PILOT-DECISION: antd `showSearch={{filterOption:false, onSearch}}`
+              (remote-shaped incremental search) has no destination on
+              Astryx `Selector` beyond its own built-in `hasSearch` (which
+              filters the already-loaded `options` client-side, per
+              MAPPING.md §3.1). The agent catalog is small and fully loaded,
+              so client-side filtering is behaviourally equivalent here. */}
+          <Selector
+            label={t('chatui.SelectAgent')}
+            isLabelHidden
+            hasSearch
+            isLoading={isSearchPending || loading}
             options={makeAgentOptions(agents, searchAgent)}
-            value={controllableValue}
-            onChange={(v, agent) => {
+            value={controllableValue ?? undefined}
+            onChange={(v) => {
+              startSearchTransition(() => setSearchAgent(undefined));
+              const agent = agents.find((a) => a.id === v);
               setControllableValue(v, agent);
             }}
-            popupMatchSelectWidth={false}
           />
         </BAIFlex>
       )}

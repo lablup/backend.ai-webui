@@ -11,23 +11,23 @@ import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ModelBrandIcon from './ModelBrandIcon';
 import ModelCardDeployModal from './ModelCardDeployModal';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Button } from '@astryxdesign/core/Button';
+import { Card } from '@astryxdesign/core/Card';
+import {
+  MetadataList,
+  MetadataListItem,
+} from '@astryxdesign/core/MetadataList';
+import { HStack, VStack } from '@astryxdesign/core/Stack';
+import { Heading, Text } from '@astryxdesign/core/Text';
+import { Drawer } from '@astryxdesign/lab';
 import { useToggle } from 'ahooks';
 import {
-  Card,
-  Descriptions,
-  Drawer,
-  type DrawerProps,
-  Skeleton,
-  Tag,
-  Typography,
-} from 'antd';
-import {
-  BAIButton,
   BAIFlex,
   BAILink,
   BAIResourceNumberWithIcon,
   BAIUnmountAfterClose,
-  filterOutEmpty,
   toLocalId,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -38,11 +38,12 @@ import React, { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
-interface ModelCardDrawerProps extends Omit<
-  DrawerProps,
-  'children' | 'onClose'
-> {
+// PILOT-DECISION: props no longer extend antd `DrawerProps` (same tactic as
+// `DeploymentRevisionDetailDrawer.tsx`, ticket 18) — grepped call site
+// (ModelStoreListPageV2) only ever passes `modelCardId`/`open`/`onClose`.
+interface ModelCardDrawerProps {
   modelCardId: string | undefined;
+  open?: boolean;
   onClose?: () => void;
 }
 
@@ -50,7 +51,6 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
   modelCardId,
   open,
   onClose,
-  ...drawerProps
 }) => {
   'use memo';
 
@@ -130,97 +130,102 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
     modelCardDrawerFrgmt,
   );
 
+  const heading = modelCard?.metadata?.title || modelCard?.name || '';
+  const isLoadingCard = deferredOpen !== open;
+
   return (
     <>
       <Drawer
-        destroyOnHidden
-        placement="right"
+        isOpen={!!open}
+        side="end"
         size={800}
-        {...drawerProps}
-        open={open}
-        loading={deferredOpen !== open}
+        label={heading || t('modelStore.ModelDetails')}
         onClose={() => {
           setDeployModalOpen(false);
           closeCreateDeployment();
           onClose?.();
         }}
-        title={
-          <BAIFlex
-            direction="row"
-            align="center"
-            gap="xs"
-            style={{ flex: 1, minWidth: 0 }}
-          >
-            <ModelBrandIcon modelName={modelCard?.name ?? ''} />
-            <Typography.Text strong ellipsis>
-              {modelCard?.metadata?.title || modelCard?.name}
-            </Typography.Text>
-          </BAIFlex>
-        }
-        extra={
-          <BAIButton
-            type="primary"
-            disabled={!modelCard?.id}
-            // Use `action` (not `onClick`) so the state update that mounts
-            // `<ModelCardDeployModal>` (which suspends while its Relay
-            // query loads) runs inside `startTransition` — the drawer
-            // stays interactive instead of falling into Suspense fallback.
-            action={async () => {
-              setDeployModalOpen(true);
-            }}
-          >
-            {t('modelStore.Deploy')}
-          </BAIButton>
-        }
       >
-        {modelCard && (
-          <BAIFlex direction="column" align="stretch" gap="sm">
-            {modelCard.metadata?.description && (
-              <Typography.Paragraph
-                style={{ marginBottom: 0 }}
-                type="secondary"
+        {/* lab Drawer has no title bar (only its built-in close button); the
+            heading + `extra` Deploy button (former antd `title`/`extra`) are
+            rendered as the first content row (ticket-18 idiom). */}
+        <VStack gap={4} align="stretch" style={{ padding: 'var(--spacing-6)' }}>
+          <HStack justify="between" align="center" gap={2} wrap="wrap">
+            <HStack gap={2} align="center" style={{ flex: 1, minWidth: 0 }}>
+              <ModelBrandIcon modelName={modelCard?.name ?? ''} />
+              <Heading
+                level={4}
+                style={{
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
               >
-                {modelCard.metadata.description}
-              </Typography.Paragraph>
-            )}
+                {heading}
+              </Heading>
+            </HStack>
+            <Button
+              variant="primary"
+              label={t('modelStore.Deploy')}
+              isDisabled={!modelCard?.id}
+              // `clickAction` (not `onClick`) so the state update that mounts
+              // `<ModelCardDeployModal>` (which suspends while its Relay
+              // query loads) runs inside a transition — the drawer stays
+              // interactive instead of falling into Suspense fallback.
+              clickAction={async () => {
+                setDeployModalOpen(true);
+              }}
+            />
+          </HStack>
+          {isLoadingCard ? (
+            <BAISkeletonAstryx rows={6} />
+          ) : (
+            modelCard && (
+              <BAIFlex direction="column" align="stretch" gap="sm">
+                {modelCard.metadata?.description && (
+                  <Text as="p" style={{ marginBottom: 0 }} color="secondary">
+                    {modelCard.metadata.description}
+                  </Text>
+                )}
 
-            <BAIFlex direction="row" wrap="wrap" gap="xs">
-              {modelCard.metadata?.task && <Tag>{modelCard.metadata.task}</Tag>}
-              {modelCard.metadata?.category && (
-                <Tag>{modelCard.metadata.category}</Tag>
-              )}
-              {modelCard.metadata?.label &&
-                _.map(modelCard.metadata.label, (label) => (
-                  <Tag key={label} variant="filled">
-                    {label}
-                  </Tag>
-                ))}
-              {modelCard.metadata?.license && (
-                <Tag icon={<Landmark size="1em" />}>
-                  {modelCard.metadata.license}
-                </Tag>
-              )}
-            </BAIFlex>
+                <BAIFlex direction="row" wrap="wrap" gap="xs">
+                  {modelCard.metadata?.task && (
+                    <Badge variant="neutral" label={modelCard.metadata.task} />
+                  )}
+                  {modelCard.metadata?.category && (
+                    <Badge
+                      variant="neutral"
+                      label={modelCard.metadata.category}
+                    />
+                  )}
+                  {modelCard.metadata?.label &&
+                    _.map(modelCard.metadata.label, (label) => (
+                      <Badge key={label} variant="neutral" label={label} />
+                    ))}
+                  {modelCard.metadata?.license && (
+                    <Badge
+                      variant="neutral"
+                      icon={<Landmark size="1em" />}
+                      label={modelCard.metadata.license}
+                    />
+                  )}
+                </BAIFlex>
 
-            <Descriptions
-              size="small"
-              bordered
-              column={1}
-              items={filterOutEmpty([
-                {
-                  key: 'author',
-                  label: t('modelStore.Author'),
-                  children: modelCard.metadata?.author,
-                },
-                {
-                  key: 'architecture',
-                  label: t('modelStore.Architecture'),
-                  children: modelCard.metadata?.architecture,
-                },
-                {
-                  key: 'framework',
-                  label: t('modelStore.Framework'),
-                  children: (
+                {/* antd `Descriptions bordered column={1} size="small"` ->
+                    `MetadataList` (MAPPING.md §4, DIRECT). `bordered`/
+                    `size="small"` have no destination — dropped. */}
+                <MetadataList columns="single">
+                  {modelCard.metadata?.author && (
+                    <MetadataListItem label={t('modelStore.Author')}>
+                      {modelCard.metadata.author}
+                    </MetadataListItem>
+                  )}
+                  {modelCard.metadata?.architecture && (
+                    <MetadataListItem label={t('modelStore.Architecture')}>
+                      {modelCard.metadata.architecture}
+                    </MetadataListItem>
+                  )}
+                  <MetadataListItem label={t('modelStore.Framework')}>
                     <BAIFlex direction="row" gap="xs">
                       {_.map(
                         _.filter(
@@ -247,104 +252,92 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
                               {framework}
                             </BAIFlex>
                           ) : (
-                            <Typography.Text key={uniqueKey}>
-                              {framework}
-                            </Typography.Text>
+                            <Text key={uniqueKey}>{framework}</Text>
                           );
                         },
                       )}
                     </BAIFlex>
-                  ),
-                },
-                {
-                  key: 'version',
-                  label: t('modelStore.Version'),
-                  children: modelCard.metadata?.modelVersion,
-                },
-                {
-                  key: 'created',
-                  label: t('modelStore.Created'),
-                  children: modelCard.createdAt
-                    ? dayjs(modelCard.createdAt).format('lll')
-                    : undefined,
-                },
-                {
-                  key: 'lastModified',
-                  label: t('modelStore.LastModified'),
-                  children: modelCard.updatedAt
-                    ? dayjs(modelCard.updatedAt).format('lll')
-                    : '-',
-                },
-                {
-                  key: 'modelFolder',
-                  label: t('modelStore.ModelFolder'),
-                  children: modelCard.vfolder?.id ? (
-                    <ErrorBoundaryWithNullFallback>
-                      <Suspense
-                        fallback={<Skeleton.Input active size="small" />}
-                      >
-                        <BAILink
-                          type="hover"
-                          to={generateFolderPath(
-                            toLocalId(modelCard.vfolder.id),
-                          )}
+                  </MetadataListItem>
+                  {modelCard.metadata?.modelVersion && (
+                    <MetadataListItem label={t('modelStore.Version')}>
+                      {modelCard.metadata.modelVersion}
+                    </MetadataListItem>
+                  )}
+                  {modelCard.createdAt && (
+                    <MetadataListItem label={t('modelStore.Created')}>
+                      {dayjs(modelCard.createdAt).format('lll')}
+                    </MetadataListItem>
+                  )}
+                  <MetadataListItem label={t('modelStore.LastModified')}>
+                    {modelCard.updatedAt
+                      ? dayjs(modelCard.updatedAt).format('lll')
+                      : '-'}
+                  </MetadataListItem>
+                  <MetadataListItem label={t('modelStore.ModelFolder')}>
+                    {modelCard.vfolder?.id ? (
+                      <ErrorBoundaryWithNullFallback>
+                        <Suspense
+                          fallback={
+                            <BAISkeletonAstryx variant="input" size="small" />
+                          }
                         >
-                          <BAIFlex gap="xs" align="center">
-                            <VFolderNodeIdenticonV2
-                              vfolderNodeIdenticonFrgmt={modelCard.vfolder}
+                          <BAILink
+                            type="hover"
+                            to={generateFolderPath(
+                              toLocalId(modelCard.vfolder.id),
+                            )}
+                          >
+                            <BAIFlex gap="xs" align="center">
+                              <VFolderNodeIdenticonV2
+                                vfolderNodeIdenticonFrgmt={modelCard.vfolder}
+                              />
+                              {modelCard.vfolder.metadata?.name}
+                            </BAIFlex>
+                          </BAILink>
+                        </Suspense>
+                      </ErrorBoundaryWithNullFallback>
+                    ) : (
+                      '-'
+                    )}
+                  </MetadataListItem>
+                  {modelCard.minResource &&
+                    modelCard.minResource.length > 0 && (
+                      <MetadataListItem label={t('modelStore.MinResource')}>
+                        <BAIFlex gap="sm" wrap="wrap">
+                          {_.map(modelCard.minResource, (entry) => (
+                            <BAIResourceNumberWithIcon
+                              key={entry.resourceType}
+                              type={entry.resourceType}
+                              value={entry.quantity}
                             />
-                            {modelCard.vfolder.metadata?.name}
-                          </BAIFlex>
-                        </BAILink>
-                      </Suspense>
-                    </ErrorBoundaryWithNullFallback>
-                  ) : (
-                    '-'
-                  ),
-                },
-                {
-                  key: 'minResource',
-                  label: t('modelStore.MinResource'),
-                  children:
-                    modelCard.minResource &&
-                    modelCard.minResource.length > 0 ? (
-                      <BAIFlex gap="sm" wrap="wrap">
-                        {_.map(modelCard.minResource, (entry) => (
-                          <BAIResourceNumberWithIcon
-                            key={entry.resourceType}
-                            type={entry.resourceType}
-                            value={entry.quantity}
-                          />
-                        ))}
-                      </BAIFlex>
-                    ) : undefined,
-                },
-              ])}
-            />
+                          ))}
+                        </BAIFlex>
+                      </MetadataListItem>
+                    )}
+                </MetadataList>
 
-            {modelCard.readme && (
-              <Card
-                size="small"
-                title={
-                  <BAIFlex direction="row" gap="xs">
-                    <File size="1em" />
-                    README.md
-                  </BAIFlex>
-                }
-                style={{ width: '100%' }}
-              >
-                <Markdown options={{ disableParsingRawHTML: true }}>
-                  {modelCard.readme}
-                </Markdown>
-              </Card>
-            )}
-          </BAIFlex>
-        )}
+                {modelCard.readme && (
+                  <Card padding={4} style={{ width: '100%' }}>
+                    <VStack gap={4} align="stretch">
+                      <HStack gap={2} align="center">
+                        <File size="1em" />
+                        <Heading level={5}>README.md</Heading>
+                      </HStack>
+                      <Markdown options={{ disableParsingRawHTML: true }}>
+                        {modelCard.readme}
+                      </Markdown>
+                    </VStack>
+                  </Card>
+                )}
+              </BAIFlex>
+            )
+          )}
+        </VStack>
       </Drawer>
       {/* Local Suspense around the lazily-mounted modal so its initial
           Relay/`useProjectResourceGroups` suspend doesn't bubble up to the
           drawer-level Suspense fallback. The mount is triggered from a
-          `BAIButton.action` (transition), but `BAIUnmountAfterClose` defers
+          `Button.clickAction` (transition), but `BAIUnmountAfterClose` defers
           the mount via `useLayoutEffect` — that state update is no longer
           inside the transition, so we still need an explicit Suspense
           boundary here. */}

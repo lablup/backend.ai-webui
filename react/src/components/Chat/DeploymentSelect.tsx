@@ -15,15 +15,13 @@ import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
 import { useProjectPath } from '../../hooks/useRouteScope';
 import TotalFooter from '../TotalFooter';
+import BAISkeletonAstryx from '../astryx-bui/BAISkeletonAstryx';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { useControllableValue } from 'ahooks';
-import {
-  Button,
-  type GetRef,
-  type SelectProps,
-  Skeleton,
-  Space,
-  Tooltip,
-} from 'antd';
+// `SelectProps`/`GetRef` are type-only frontier imports: `BAISelect` (BUI)
+// stays antd-shaped until tickets 25-30 convert it.
+import { type GetRef, type SelectProps } from 'antd';
 import {
   BAIEndpointsIcon,
   BAIFlex,
@@ -293,7 +291,13 @@ const DeploymentSelect: React.FC<DeploymentSelectProps> = ({
   }, [isValueMatched]);
   return (
     <BAIFlex direction="row" gap="xs">
-      <Space.Compact>
+      {/* PILOT-DECISION: antd `Space.Compact` welded the select and the info
+          button into one bordered control. `BAISelect` (BUI) stays
+          antd-shaped (frontier) and isn't a native Astryx element, so
+          Astryx `ButtonGroup`/`InputGroup` can't reproduce the shared-border
+          weld here — dissolved to a plain gapped row instead (simplicity
+          policy). */}
+      <BAIFlex direction="row" gap="xxs" style={{ flex: 1 }}>
         <BAISelect
           ref={selectRef}
           placeholder={t('chatui.SelectEndpoint')}
@@ -331,7 +335,7 @@ const DeploymentSelect: React.FC<DeploymentSelectProps> = ({
           notFoundContent={
             _.isUndefined(paginationData) ? (
               // For the first loading options
-              <Skeleton.Input active size="small" block />
+              <BAISkeletonAstryx variant="input" size="small" />
             ) : undefined
           }
           footer={
@@ -344,15 +348,16 @@ const DeploymentSelect: React.FC<DeploymentSelectProps> = ({
           }
         />
         {showInfoButton ? (
-          <Tooltip title={t('deployment.GoToDetailPage')}>
-            <Button
+          <Tooltip content={t('deployment.GoToDetailPage')}>
+            <IconButton
               icon={<InfoIcon />}
-              disabled={!controllableValue}
+              label={t('deployment.GoToDetailPage')}
+              isDisabled={!controllableValue}
               onClick={goToDeploymentDetailPage}
             />
           </Tooltip>
         ) : null}
-      </Space.Compact>
+      </BAIFlex>
     </BAIFlex>
   );
 };

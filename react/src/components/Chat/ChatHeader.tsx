@@ -13,7 +13,13 @@ import type { ChatModel, ChatParameters } from './ChatModel';
 import { ChatParametersSliders } from './ChatParametersSliders';
 import DeploymentSelect, { DeploymentSelectProps } from './DeploymentSelect';
 import ModelSelect from './ModelSelect';
-import { Dropdown, Button, type MenuProps, Popover, Tooltip } from 'antd';
+import {
+  DropdownMenu,
+  type DropdownMenuOption,
+} from '@astryxdesign/core/DropdownMenu';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Popover } from '@astryxdesign/core/Popover';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { filterOutEmpty, BAIFlex, toLocalId } from 'backend.ai-ui';
 import { isEmpty } from 'lodash-es';
 import {
@@ -37,17 +43,17 @@ interface SyncSwitchProps {
 
 const SyncSwitch: React.FC<SyncSwitchProps> = ({ sync, onClick }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   return (
     <>
-      <Tooltip title={t('chatui.SyncInput')}>
-        <Button
-          type="text"
+      <Tooltip content={t('chatui.SyncInput')}>
+        <IconButton
+          variant="ghost"
           icon={sync ? <ToggleRightIcon /> : <ToggleLeftIcon />}
+          label={t('chatui.SyncInput')}
           onClick={() => onClick(!sync)}
           style={{
             marginLeft: 8,
-            color: sync ? token.colorPrimary : undefined,
+            color: sync ? 'var(--color-accent)' : undefined,
           }}
         />
       </Tooltip>
@@ -128,9 +134,12 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   // Relay ID.
   const deploymentId = deployment?.id ? toLocalId(deployment.id) : undefined;
 
-  const items: MenuProps['items'] = filterOutEmpty([
+  // PILOT-DECISION: antd `danger` (red text on the "Delete Chatting Session"
+  // item) has no destination on Astryx `DropdownMenuItemData` (no color/
+  // variant field, closed shape) — dropped (P5: closed enum, no colour
+  // escape hatch).
+  const items: DropdownMenuOption[] = filterOutEmpty([
     showCompareMenuItem && {
-      key: 'compare',
       label: t('chatui.CompareWithOtherModels'),
       icon: <ScaleIcon />,
       onClick: () => {
@@ -145,10 +154,9 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
       },
     },
     showCompareMenuItem && {
-      type: 'divider',
+      type: 'divider' as const,
     },
     {
-      key: 'clear',
       label: t('chatui.DeleteChatHistory'),
       icon: <EraserIcon />,
       onClick: () => {
@@ -156,11 +164,9 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
       },
     },
     closable && {
-      type: 'divider',
+      type: 'divider' as const,
     },
     closable && {
-      key: 'close',
-      danger: true,
       label: t('chatui.DeleteChattingSession'),
       icon: <X size="1em" />,
       onClick: () => {
@@ -259,19 +265,20 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
               }}
             />
           }
-          trigger="click"
-          placement="bottomLeft"
+          placement="below"
+          alignment="start"
           style={{
             padding: token.paddingXS,
           }}
         >
-          <Tooltip title={t('chatui.chat.parameter.Title')}>
-            <Button
-              type="text"
+          <Tooltip content={t('chatui.chat.parameter.Title')}>
+            <IconButton
+              variant="ghost"
+              label={t('chatui.chat.parameter.Title')}
               icon={
                 <SlidersHorizontal
                   style={{
-                    color: usingParameters ? token.colorPrimary : undefined,
+                    color: usingParameters ? 'var(--color-accent)' : undefined,
                   }}
                   size="1em"
                 />
@@ -280,22 +287,25 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
           </Tooltip>
         </Popover>
         {cloneable && (
-          <Tooltip title={t('chatui.CreateCompareChat')}>
-            <Button
-              type="text"
+          <Tooltip content={t('chatui.CreateCompareChat')}>
+            <IconButton
+              variant="ghost"
+              label={t('chatui.CreateCompareChat')}
               onClick={() => onAddChat?.()}
               icon={<ArrowRightLeftIcon />}
             />
           </Tooltip>
         )}
-        <Dropdown menu={{ items }} trigger={['click']}>
-          <Button
-            type="text"
-            onClick={(e) => e.preventDefault()}
-            icon={<EllipsisVertical size="1em" />}
-            style={{ color: token.colorTextSecondary }}
-          />
-        </Dropdown>
+        <DropdownMenu
+          items={items}
+          button={{
+            variant: 'ghost',
+            icon: <EllipsisVertical size="1em" />,
+            label: t('button.MoreActions'),
+            isIconOnly: true,
+            style: { color: token.colorTextSecondary },
+          }}
+        />
       </BAIFlex>
     </BAIFlex>
   );

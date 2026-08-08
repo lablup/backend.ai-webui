@@ -14,17 +14,13 @@ import TextHighlighter from '../components/TextHighlighter';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useModelStoreProject } from '../hooks/useModelStoreProject';
 import { theme } from '../theme-shim';
-import {
-  Alert,
-  Card,
-  Col,
-  ConfigProvider,
-  Empty,
-  Pagination,
-  Row,
-  Tag,
-  Typography,
-} from 'antd';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Card } from '@astryxdesign/core/Card';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { Grid } from '@astryxdesign/core/Grid';
+import { Pagination } from '@astryxdesign/core/Pagination';
+import { Text } from '@astryxdesign/core/Text';
 import {
   BAIFetchKeyButton,
   BAIFlex,
@@ -128,46 +124,46 @@ const ModelCardV2Card: React.FC<{
   const hasNoPresets = modelCard.availablePresets?.count === 0;
 
   return (
+    // PILOT-DECISION: antd `Card hoverable` (shadow-on-hover affordance) has
+    // no direct Astryx prop equivalent (no `isHoverable`) — `cursor: pointer`
+    // preserves the "this is clickable" affordance; the elevation change on
+    // hover is dropped (simplicity policy).
     <Card
-      hoverable
       onClick={onClick}
+      padding={3}
       style={{
         height: '100%',
         cursor: 'pointer',
         opacity: hasNoPresets ? 0.5 : 1,
       }}
-      styles={{ body: { padding: token.paddingSM } }}
     >
       <BAIFlex direction="column" align="stretch" gap="xs">
         <BAIFlex direction="row" align="center" gap="xs">
           <ModelBrandIcon modelName={modelCard.name} />
-          <Typography.Text strong ellipsis style={{ flex: 1 }}>
+          <Text weight="semibold" maxLines={1} style={{ flex: 1 }}>
             <TextHighlighter keyword={searchKeyword}>
               {modelCard.metadata?.title || modelCard.name}
             </TextHighlighter>
-          </Typography.Text>
+          </Text>
         </BAIFlex>
         <BAIFlex direction="row" justify="between" wrap="wrap" gap="xs">
           <BAIFlex direction="row" wrap="wrap" gap="xs">
             {modelCard.metadata?.task && (
-              <Tag variant="filled">{modelCard.metadata.task}</Tag>
+              <Badge variant="neutral" label={modelCard.metadata.task} />
             )}
             {(modelCard.updatedAt || modelCard.createdAt) && (
-              <Typography.Text
-                type="secondary"
-                style={{ fontSize: token.fontSizeSM }}
-              >
+              <Text color="secondary" style={{ fontSize: token.fontSizeSM }}>
                 {t('modelStore.RelativeTime', {
                   time: dayjs(
                     modelCard.updatedAt ?? modelCard.createdAt,
                   ).fromNow(),
                 })}
-              </Typography.Text>
+              </Text>
             )}
           </BAIFlex>
           {modelCard.metadata.author && (
-            <Typography.Text
-              type="secondary"
+            <Text
+              color="secondary"
               style={{
                 fontSize: token.fontSizeSM,
                 display: 'inline-flex',
@@ -180,7 +176,7 @@ const ModelCardV2Card: React.FC<{
                 size={token.fontSizeSM}
               />
               {modelCard.metadata.author}
-            </Typography.Text>
+            </Text>
           )}
         </BAIFlex>
       </BAIFlex>
@@ -266,30 +262,27 @@ const ModelCardV2Grid: React.FC<{
   }, [total]);
 
   if (items.length === 0) {
-    return (
-      <Empty
-        image={Empty.PRESENTED_IMAGE_SIMPLE}
-        description={t('modelStore.NoModelsFound')}
-      />
-    );
+    return <EmptyState title={t('modelStore.NoModelsFound')} />;
   }
 
+  // PILOT-DECISION (RESPONSIVE-POLICY.md R1): identical recipe to
+  // AIAgentPage's grid — `xs={24} sm={24} lg={12} xl={12} xxl={8} xxxl={6}`
+  // first goes 2-up at `lg` (992px) -> `minWidth: 496`; `xxxl={6}` -> `max: 4`.
   return (
-    <Row gutter={[16, 16]}>
+    <Grid columns={{ minWidth: 496, max: 4 }} gap={4}>
       {items.map((edge) => {
         const item = edge?.node;
         if (!item) return null;
         return (
-          <Col key={item.id} xs={24} sm={24} lg={12} xl={12} xxl={8} xxxl={6}>
-            <ModelCardV2Card
-              modelCardV2Frgmt={item}
-              searchKeyword={searchKeyword}
-              onClick={() => onCardClick?.(item.id)}
-            />
-          </Col>
+          <ModelCardV2Card
+            key={item.id}
+            modelCardV2Frgmt={item}
+            searchKeyword={searchKeyword}
+            onClick={() => onCardClick?.(item.id)}
+          />
         );
       })}
-    </Row>
+    </Grid>
   );
 };
 
@@ -378,9 +371,8 @@ const ModelStoreListPageV2: React.FC = () => {
 
   if (!modelStoreProject.id) {
     return (
-      <Alert
-        type="error"
-        showIcon
+      <Banner
+        status="error"
         title={t('modelStore.ProjectNotFound')}
         description={t('modelStore.ProjectNotFoundDescription')}
       />
@@ -477,38 +469,28 @@ const ModelStoreListPageV2: React.FC = () => {
         />
       </div>
       {total > 0 && (
-        <ConfigProvider
-          theme={{
-            components: {
-              Pagination: {
-                itemBg: 'transparent',
-                itemActiveBg: 'transparent',
-              },
-            },
-          }}
-        >
-          <BAIFlex justify="end" gap="xs">
-            <Pagination
-              size="small"
-              align="end"
-              pageSizeOptions={['10', '20', '50']}
-              showSizeChanger
-              showTotal={(total, range) =>
-                t('pagination.Total', {
-                  start: range[0],
-                  end: range[1],
-                  total,
-                })
-              }
-              current={tablePaginationOption.current}
-              pageSize={tablePaginationOption.pageSize}
-              total={total}
-              onChange={(page, pageSize) => {
-                setTablePaginationOption({ current: page, pageSize });
-              }}
-            />
-          </BAIFlex>
-        </ConfigProvider>
+        // PILOT-DECISION: antd's `ConfigProvider` Pagination component-token
+        // override (transparent item background) has no equivalent — Astryx
+        // `Pagination` has no per-instance background token (MAPPING.md §5.6
+        // notes Astryx theming is semantic-key, not per-call-site CSS).
+        // `variant="count"` replaces `showTotal` (ticket-19 idiom, see
+        // ImageInstallModal).
+        <BAIFlex justify="end" gap="xs">
+          <Pagination
+            size="sm"
+            variant="count"
+            pageSizeOptions={[10, 20, 50]}
+            onPageSizeChange={(pageSize) => {
+              setTablePaginationOption({ pageSize });
+            }}
+            page={tablePaginationOption.current}
+            pageSize={tablePaginationOption.pageSize}
+            totalItems={total}
+            onChange={(page) => {
+              setTablePaginationOption({ current: page });
+            }}
+          />
+        </BAIFlex>
       )}
 
       <ModelCardDrawer

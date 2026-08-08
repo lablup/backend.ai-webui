@@ -9,8 +9,16 @@ import {
 } from './ChatMessageContainer';
 import ChatMessageContent from './ChatMessageContent';
 import { UIMessage } from '@ai-sdk/react';
+// FRONTIER (documented, ticket 23 @ant-design/x judgment call): `FileCard`
+// has no Astryx equivalent (not in MAPPING.md — it is outside the antd core
+// surface the mapping measured) and rebuilding a file-attachment preview card
+// is disproportionate to one call site. Kept as-is, same treatment as the
+// lobehub icon packages — convert only the antd chrome AROUND it.
 import { FileCard } from '@ant-design/x';
-import { Image, Collapse, Typography, Spin } from 'antd';
+import { Collapsible } from '@astryxdesign/core/Collapsible';
+import { Spinner } from '@astryxdesign/core/Spinner';
+import { Text } from '@astryxdesign/core/Text';
+import { Thumbnail } from '@astryxdesign/core/Thumbnail';
 import { BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { memo, useState } from 'react';
@@ -88,7 +96,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             }}
             align="end"
           >
-            <Image
+            <Thumbnail
               src={part?.url}
               alt={filename}
               style={{
@@ -123,31 +131,28 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
         }}
       >
         {_.trim(reasoningText) && (
-          <Collapse
+          <Collapsible
+            defaultIsOpen={false}
             style={{
               marginTop: token.margin,
               marginBottom: hasContent ? 0 : token.margin,
               width: '100%',
             }}
-            items={[
-              {
-                key: 'reasoning',
-                label: !hasContent ? (
-                  <BAIFlex gap="xs">
-                    <Typography.Text>{t('chatui.Thinking')}</Typography.Text>
-                    <Spin size="small" />
-                  </BAIFlex>
-                ) : (
-                  <Typography.Text>{t('chatui.ViewReasoning')}</Typography.Text>
-                ),
-                children: (
-                  <ChatMessageContent isStreaming={isStreaming}>
-                    {reasoningText}
-                  </ChatMessageContent>
-                ),
-              },
-            ]}
-          />
+            trigger={
+              !hasContent ? (
+                <BAIFlex gap="xs">
+                  <Text>{t('chatui.Thinking')}</Text>
+                  <Spinner size="sm" />
+                </BAIFlex>
+              ) : (
+                <Text>{t('chatui.ViewReasoning')}</Text>
+              )
+            }
+          >
+            <ChatMessageContent isStreaming={isStreaming}>
+              {reasoningText}
+            </ChatMessageContent>
+          </Collapsible>
         )}
         <ChatMessageContent isStreaming={isStreaming}>
           {content + (isStreaming ? '\n' : '')}

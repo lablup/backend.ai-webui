@@ -31,9 +31,14 @@
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
 import { NumberInput } from '@astryxdesign/core/NumberInput';
 import { RadioList, RadioListItem } from '@astryxdesign/core/RadioList';
+import {
+  SegmentedControl,
+  SegmentedControlItem,
+} from '@astryxdesign/core/SegmentedControl';
 import type { SelectorOptionType } from '@astryxdesign/core/Selector';
 import { Selector } from '@astryxdesign/core/Selector';
 import { Switch } from '@astryxdesign/core/Switch';
+import { TextArea } from '@astryxdesign/core/TextArea';
 import type { TextInputProps } from '@astryxdesign/core/TextInput';
 import { TextInput } from '@astryxdesign/core/TextInput';
 import React from 'react';
@@ -79,6 +84,43 @@ export const AstryxFormTextInput: React.FC<AstryxFormTextInputProps> = ({
       hasClear={allowClear}
       startIcon={startIcon}
       hasAutoFocus={hasAutoFocus}
+      width="100%"
+    />
+  );
+};
+
+export interface AstryxFormTextAreaProps {
+  /** Injected by `Form.Item`. */
+  value?: string;
+  /** Injected by `Form.Item`. */
+  onChange?: (value: string) => void;
+  /** Accessible name. Visually hidden — `BAIFormItem` renders the visible one. */
+  label: string;
+  rows?: number;
+  placeholder?: string;
+  disabled?: boolean;
+}
+
+// extends astryxFormControls (ticket 23): antd `Input.TextArea` — the fourth
+// adapter this repo's Form modals need (MAPPING.md §3.6).
+export const AstryxFormTextArea: React.FC<AstryxFormTextAreaProps> = ({
+  value,
+  onChange,
+  label,
+  rows,
+  placeholder,
+  disabled,
+}) => {
+  'use memo';
+  return (
+    <TextArea
+      value={value ?? ''}
+      onChange={(next) => onChange?.(next)}
+      label={label}
+      isLabelHidden
+      rows={rows}
+      placeholder={placeholder}
+      isDisabled={disabled}
       width="100%"
     />
   );
@@ -171,6 +213,47 @@ export const AstryxFormRadioList: React.FC<AstryxFormRadioListProps> = ({
         />
       ))}
     </RadioList>
+  );
+};
+
+export interface AstryxFormSegmentedOption {
+  value: string;
+  label: string;
+}
+
+export interface AstryxFormSegmentedProps {
+  value?: string;
+  onChange?: (value: string) => void;
+  label: string;
+  options: Array<AstryxFormSegmentedOption>;
+  disabled?: boolean;
+}
+
+// extends astryxFormControls (ticket 23): antd `Radio.Group` with
+// `Radio.Button` children -> `SegmentedControl` (MAPPING.md §3.10).
+export const AstryxFormSegmented: React.FC<AstryxFormSegmentedProps> = ({
+  value,
+  onChange,
+  label,
+  options,
+  disabled,
+}) => {
+  'use memo';
+  return (
+    <SegmentedControl
+      value={value ?? ''}
+      onChange={(next) => onChange?.(next)}
+      label={label}
+      isDisabled={disabled}
+    >
+      {options.map((option) => (
+        <SegmentedControlItem
+          key={option.value}
+          value={option.value}
+          label={option.label}
+        />
+      ))}
+    </SegmentedControl>
   );
 };
 

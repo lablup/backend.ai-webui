@@ -95,7 +95,6 @@ const SourceCodeView: React.FC<SourceCodeViewProps> = ({
         lang={language}
         extra={
           <CopyButton
-            type="text"
             copyable={{ text: children ?? '' }}
             style={{
               display: 'block',

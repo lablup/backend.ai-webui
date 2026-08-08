@@ -5,7 +5,7 @@
 import { theme } from '../../theme-shim';
 import CopyButton from './CopyButton';
 import { SyntaxHighlighter } from './SyntaxHighlighter';
-import { Typography } from 'antd';
+import { Text } from '@astryxdesign/core/Text';
 import { createStyles } from 'antd-style';
 import { BAIFlex } from 'backend.ai-ui';
 // `rehype-katex` does not import the CSS file, so we need to import it manually.
@@ -17,8 +17,15 @@ import rehypeKatex from 'rehype-katex';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 
-const { Text } = Typography;
-
+// FRONTIER (documented, remaining direct-antd exception): `createStyles`
+// (`antd-style`) styles ~140 lines of markdown-element chrome (`tr`/`th`/
+// `td`/`ul`/`ol`/`hr`/`blockquote` — semantic HTML, NOT `.ant-*` selectors,
+// so P6 does not apply) driven by antd theme tokens. Rewriting it to a
+// static CSS file (MAPPING.md §1, P17) would mean re-deriving every
+// token-interpolated value as a `var()` reference and re-verifying each
+// against Astryx's declared token set (P19) — a disproportionate side-quest
+// for markdown-renderer chrome. Kept as `antd-style` for now; still
+// functions correctly (this is not the P6 silent-breakage failure mode).
 const useMarkdownStyles = createStyles(({ token }) => ({
   markdownTable: {
     '& tr:hover': {
@@ -156,7 +163,7 @@ const CodeHead = memo<{ lang: string; extra?: React.ReactNode }>(
             textOverflow: 'ellipsis',
           }}
         >
-          <Text style={{ fontWeight: 'normal' }} type="secondary">
+          <Text style={{ fontWeight: 'normal' }} color="secondary">
             {lang}
           </Text>
         </BAIFlex>
@@ -201,7 +208,6 @@ const ChatMessageContentBlock = memo<{ block?: string; isStreaming?: boolean }>(
               lang={match[1]}
               extra={
                 <CopyButton
-                  type="text"
                   copyable={{ text: content ?? '' }}
                   style={{
                     display: isStreaming ? 'none' : 'block',

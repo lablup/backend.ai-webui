@@ -2,6 +2,14 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+// FRONTIER (documented, ticket 23 @ant-design/x judgment call): `Attachments`
+// and `Sender` (drag-drop file zone + auto-resize composer input with
+// built-in submit/cancel/loading affordances) are not in MAPPING.md — they
+// sit outside the antd core surface the mapping measured, and neither has an
+// Astryx equivalent (NONE verdict by inspection: no chat-composer or
+// file-dropzone component in `@astryxdesign/core`). Rebuilding them is
+// disproportionate to this ticket's scope; kept as-is, same treatment as the
+// lobehub icon packages — convert only the antd chrome AROUND them.
 import {
   Attachments,
   AttachmentsProps,
@@ -9,7 +17,8 @@ import {
   SenderProps,
 } from '@ant-design/x';
 import { Attachment } from '@ant-design/x/es/attachments';
-import { Badge, Button, type GetRef, type UploadProps } from 'antd';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { type GetRef, type UploadProps } from 'antd';
 import { isEmpty } from 'lodash-es';
 import { CloudUpload, Link } from 'lucide-react';
 import { useEffect, useRef } from 'react';
@@ -130,9 +139,32 @@ const ChatSender: React.FC<ChatSenderProps> = ({
           dropContainerRef={dropContainerRef}
           onChange={(info) => onAttachmentChange?.('prefix', info)}
         >
-          <Badge dot={!isEmpty(items) && !openAttachment}>
-            <Button type="text" icon={<Link size="1em" />} />
-          </Badge>
+          {/* PILOT-DECISION: antd `Badge dot` (an overlay on a child) has no
+              Astryx destination (MAPPING.md §3.8 — no count/dot overlay).
+              Self-built as an absolutely-positioned dot in a
+              `position:relative` wrapper, per the mapping's prescribed
+              recipe. */}
+          <div style={{ position: 'relative', display: 'inline-flex' }}>
+            <IconButton
+              variant="ghost"
+              icon={<Link size="1em" />}
+              label={t('chatui.Attachments')}
+            />
+            {!isEmpty(items) && !openAttachment && (
+              <span
+                style={{
+                  position: 'absolute',
+                  top: 2,
+                  right: 2,
+                  width: 6,
+                  height: 6,
+                  borderRadius: '50%',
+                  backgroundColor: 'var(--color-error)',
+                  pointerEvents: 'none',
+                }}
+              />
+            )}
+          </div>
         </ChatAttachments>
       }
     />
