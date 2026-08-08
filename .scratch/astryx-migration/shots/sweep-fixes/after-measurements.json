@@ -1,0 +1,217 @@
+{
+  "curtain-light": {
+    "dataTheme": "light",
+    "colorScheme": "light",
+    "body": "rgb(247, 247, 246)",
+    "html": "rgba(0, 0, 0, 0)",
+    "tokenBody": "",
+    "tokenSurface": "",
+    "tokenCard": "",
+    "tokenPopover": "",
+    "tokenMuted": "",
+    "tokenNeutral": "",
+    "sider": null,
+    "card": null
+  },
+  "login-light": {
+    "dataTheme": "light",
+    "colorScheme": "light",
+    "body": "rgb(247, 247, 246)",
+    "html": "rgba(0, 0, 0, 0)",
+    "tokenBody": "light-dark(#F7F7F6, #191919)",
+    "tokenSurface": "light-dark(#FFFFFF, #141414)",
+    "tokenCard": "light-dark(#FFFFFF, #141414)",
+    "tokenPopover": "light-dark(#FFFFFF, #1F1F1F)",
+    "tokenMuted": "light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.08))",
+    "tokenNeutral": "light-dark(rgba(0,0,0,0.06), #262626)",
+    "sider": null,
+    "card": null
+  },
+  "dashboard-light": {
+    "dataTheme": "light",
+    "colorScheme": "light",
+    "body": "rgb(247, 247, 246)",
+    "html": "rgba(0, 0, 0, 0)",
+    "tokenBody": "light-dark(#F7F7F6, #191919)",
+    "tokenSurface": "light-dark(#FFFFFF, #141414)",
+    "tokenCard": "light-dark(#FFFFFF, #141414)",
+    "tokenPopover": "light-dark(#FFFFFF, #1F1F1F)",
+    "tokenMuted": "light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.08))",
+    "tokenNeutral": "light-dark(rgba(0,0,0,0.06), #262626)",
+    "sider": "rgb(255, 255, 255)",
+    "card": null
+  },
+  "rail-expanded": {
+    "navWidth": 240,
+    "shellWidth": 240,
+    "collapsedClass": false
+  },
+  "rail-collapsed": {
+    "navWidth": 74,
+    "shellWidth": 74,
+    "collapsedClass": true
+  },
+  "session-launcher-light": {
+    "dataTheme": "light",
+    "colorScheme": "light",
+    "body": "rgb(247, 247, 246)",
+    "html": "rgba(0, 0, 0, 0)",
+    "tokenBody": "light-dark(#F7F7F6, #191919)",
+    "tokenSurface": "light-dark(#FFFFFF, #141414)",
+    "tokenCard": "light-dark(#FFFFFF, #141414)",
+    "tokenPopover": "light-dark(#FFFFFF, #1F1F1F)",
+    "tokenMuted": "light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.08))",
+    "tokenNeutral": "light-dark(rgba(0,0,0,0.06), #262626)",
+    "sider": "rgb(255, 255, 255)",
+    "card": "rgb(255, 255, 255)"
+  },
+  "launcher-buttons": [
+    {
+      "text": "Next",
+      "w": 77,
+      "h": 32,
+      "bg": "rgba(0, 0, 0, 0.06)",
+      "bgImage": "none",
+      "color": "rgb(33, 26, 22)",
+      "lines": 2
+    },
+    {
+      "text": "Skip to review",
+      "w": 138,
+      "h": 32,
+      "bg": "rgba(0, 0, 0, 0)",
+      "bgImage": "none",
+      "color": "rgb(33, 26, 22)",
+      "lines": 2
+    }
+  ],
+  "launcher-walkthrough": {
+    "start": "Session Type",
+    "afterNext": "Environments & Resource Allocation",
+    "afterSkip": "Confirm and Launch",
+    "launchVisible": true
+  },
+  "admin-settings-light": {
+    "dataTheme": "light",
+    "colorScheme": "light",
+    "body": "rgb(247, 247, 246)",
+    "html": "rgba(0, 0, 0, 0)",
+    "tokenBody": "light-dark(#F7F7F6, #191919)",
+    "tokenSurface": "light-dark(#FFFFFF, #141414)",
+    "tokenCard": "light-dark(#FFFFFF, #141414)",
+    "tokenPopover": "light-dark(#FFFFFF, #1F1F1F)",
+    "tokenMuted": "light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.08))",
+    "tokenNeutral": "light-dark(rgba(0,0,0,0.06), #262626)",
+    "sider": "rgb(255, 255, 255)",
+    "card": null
+  },
+  "config-checkboxes": [
+    {
+      "label": "Display Only Changes",
+      "checked": false,
+      "disabled": false,
+      "box": "24x24",
+      "bg": "rgb(255, 255, 255)",
+      "border": "1px solid rgb(139, 145, 158)",
+      "radius": "6px",
+      "rowFlexDirection": "row",
+      "sameLineAsDescription": null
+    },
+    {
+      "label": "Open Source CUDA GPU support",
+      "checked": false,
+      "disabled": true,
+      "box": "24x24",
+      "bg": "rgba(0, 0, 0, 0.04)",
+      "border": "1px solid rgba(25, 28, 34, 0.1)",
+      "radius": "6px",
+      "rowFlexDirection": "row",
+      "sameLineAsDescription": true
+    },
+    {
+      "label": "ROCm GPU support",
+      "checked": false,
+      "disabled": true,
+      "box": "24x24",
+      "bg": "rgba(0, 0, 0, 0.04)",
+      "border": "1px solid rgba(25, 28, 34, 0.1)",
+      "radius": "6px",
+      "rowFlexDirection": "row",
+      "sameLineAsDescription": true
+    },
+    {
+      "label": "Fractional GPU",
+      "checked": false,
+      "disabled": true,
+      "box": "24x24",
+      "bg": "rgba(0, 0, 0, 0.04)",
+      "border": "1px solid rgba(25, 28, 34, 0.1)",
+      "radius": "6px",
+      "rowFlexDirection": "row",
+      "sameLineAsDescription": true
+    }
+  ],
+  "config-checkbox-binding": {
+    "before": false,
+    "mid": true,
+    "after": false,
+    "flips": true
+  },
+  "admin-settings-dark": {
+    "dataTheme": "dark",
+    "colorScheme": "dark",
+    "body": "rgb(25, 25, 25)",
+    "html": "rgba(0, 0, 0, 0)",
+    "tokenBody": "light-dark(#F7F7F6, #191919)",
+    "tokenSurface": "light-dark(#FFFFFF, #141414)",
+    "tokenCard": "light-dark(#FFFFFF, #141414)",
+    "tokenPopover": "light-dark(#FFFFFF, #1F1F1F)",
+    "tokenMuted": "light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.08))",
+    "tokenNeutral": "light-dark(rgba(0,0,0,0.06), #262626)",
+    "sider": "rgb(20, 20, 20)",
+    "card": null
+  },
+  "session-launcher-dark": {
+    "dataTheme": "dark",
+    "colorScheme": "dark",
+    "body": "rgb(25, 25, 25)",
+    "html": "rgba(0, 0, 0, 0)",
+    "tokenBody": "light-dark(#F7F7F6, #191919)",
+    "tokenSurface": "light-dark(#FFFFFF, #141414)",
+    "tokenCard": "light-dark(#FFFFFF, #141414)",
+    "tokenPopover": "light-dark(#FFFFFF, #1F1F1F)",
+    "tokenMuted": "light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.08))",
+    "tokenNeutral": "light-dark(rgba(0,0,0,0.06), #262626)",
+    "sider": "rgb(20, 20, 20)",
+    "card": "rgb(20, 20, 20)"
+  },
+  "dashboard-dark": {
+    "dataTheme": "dark",
+    "colorScheme": "dark",
+    "body": "rgb(25, 25, 25)",
+    "html": "rgba(0, 0, 0, 0)",
+    "tokenBody": "light-dark(#F7F7F6, #191919)",
+    "tokenSurface": "light-dark(#FFFFFF, #141414)",
+    "tokenCard": "light-dark(#FFFFFF, #141414)",
+    "tokenPopover": "light-dark(#FFFFFF, #1F1F1F)",
+    "tokenMuted": "light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.08))",
+    "tokenNeutral": "light-dark(rgba(0,0,0,0.06), #262626)",
+    "sider": "rgb(20, 20, 20)",
+    "card": null
+  },
+  "sessions-dark": {
+    "dataTheme": "dark",
+    "colorScheme": "dark",
+    "body": "rgb(25, 25, 25)",
+    "html": "rgba(0, 0, 0, 0)",
+    "tokenBody": "light-dark(#F7F7F6, #191919)",
+    "tokenSurface": "light-dark(#FFFFFF, #141414)",
+    "tokenCard": "light-dark(#FFFFFF, #141414)",
+    "tokenPopover": "light-dark(#FFFFFF, #1F1F1F)",
+    "tokenMuted": "light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.08))",
+    "tokenNeutral": "light-dark(rgba(0,0,0,0.06), #262626)",
+    "sider": "rgb(20, 20, 20)",
+    "card": null
+  },
+  "pageErrors": []
+}

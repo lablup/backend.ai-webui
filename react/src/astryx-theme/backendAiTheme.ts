@@ -64,7 +64,112 @@ import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from 'backend.ai-ui';
 export { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 3;
+export const THEME_NAME_REV = 4;
+
+/**
+ * NEUTRAL BACKGROUND FAMILY — pinned to the measured legacy antd values.
+ *
+ * ## The defect
+ *
+ * Users reported that everything from the boot curtain to the post-login
+ * screens had gone warm/yellowish ("누리끼리") against the legacy app's cool
+ * neutral greys. Measured on `to-astryx` before this change:
+ *
+ *   body      light rgb(250,239,233) = #FAEFE9   dark rgb(24,15,8)  = #180F08
+ *   surface   light rgb(255,251,248) = #FFFBF8   dark rgb(33,26,22) = #211A16
+ *
+ * ## Root cause
+ *
+ * `defineTheme({ color: { accent } })` runs Astryx's HCT generator over the
+ * accent seed, and that generator derives the ENTIRE neutral ramp —
+ * backgrounds, surfaces, text, borders — as low-chroma tints of the accent
+ * hue. Astryx's own default theme is blue-accented, which is why its stock
+ * neutrals are cool (`--color-background-body: #F1F4F7`). Seed the same
+ * generator with Backend.AI's brand orange and the identical machinery emits
+ * brown-tinted neutrals. Nothing was "wrong"; the tint is the accent, working
+ * as designed.
+ *
+ * The canonical knob for this is `color.neutralStyle` (`warm|cool|neutral`),
+ * and it was tried first (probe, `astryx theme build` on all three values):
+ * `cool` emitted byte-identical output to the default, and `neutral` only
+ * moved `#FAEFE9 -> #F6EFEC` — the accent hue still dominates. Dropping
+ * `color.accent` entirely does neutralise the ramp (`#F0F0F6`) but also
+ * collapses the derived accent ramp to grey, which the ticket-02 pilot
+ * measured as load-bearing. So the background family is pinned explicitly
+ * instead; `defineTheme` documents token overrides as taking precedence over
+ * scale-generated values, and this is the same mechanism `ANTD_ALIGN_TOKENS`
+ * already uses.
+ *
+ * ## The legacy targets (measured, not guessed)
+ *
+ * `theme.getDesignToken()` run over the shipped `resources/theme.json` seeds
+ * for the default family, light + `darkAlgorithm`
+ * (`.scratch/astryx-migration/antd-neutral-tokens.mjs`):
+ *
+ *   colorBgLayout     #f5f5f5              / #000000
+ *   colorBgContainer  #ffffff              / #141414
+ *   colorBgElevated   #ffffff              / #1f1f1f
+ *   colorFillTertiary rgba(0,0,0,0.04)     / rgba(255,255,255,0.08)
+ *   colorFillSecondary rgba(0,0,0,0.06)    / #262626
+ *
+ * The PAGE BACKDROP is the one value that is not simply `colorBgLayout`:
+ * legacy `MainLayout` painted its `Layout` `transparent`, so what the user
+ * actually saw was `<body>`, which `resources/webui.css` set to `#F7F7F6`
+ * (light) and `#191919` (`body.dark-theme`). Those are the values pinned
+ * here — they are what the legacy build rendered, and they also keep the boot
+ * curtain (`index.html`, which reads `--color-background-body`) identical to
+ * legacy.
+ *
+ * Cross-check that this is the right mapping: `resources/theme.json` sets
+ * `Layout.lightSiderBg: #FFF` / `siderBg: #141414`, and the sider is painted
+ * from `--color-background-surface` (see `SIDE_NAV_DENSITY`) — so pinning
+ * surface to #FFFFFF/#141414 reproduces the legacy rail exactly.
+ *
+ * ## Scope — the NEUTRAL BACKGROUND family only
+ *
+ * Deliberately NOT touched, so brand-accent surfaces survive: `--color-accent`
+ * and its ramp, every `--color-{status}`, the `--color-background-{hue}`
+ * chips, and the accent-tinted TEXT/BORDER/ICON tokens (`--color-text-primary`
+ * `#211A16`, `--color-border` at 10% alpha, `--color-track`). Those are either
+ * intentionally brand-tinted or so low-alpha that the hue is not perceptible;
+ * re-deriving them is a separate, larger decision.
+ * `--color-background-inverted` is also left alone: antd's counterpart
+ * (`colorBgSpotlight`) is `rgba(0,0,0,0.85)`/`#424242`, i.e. NOT an inversion
+ * in dark mode, so adopting it would break the Astryx semantic.
+ */
+const ANTD_NEUTRAL_SURFACES = {
+  // The page backdrop. Legacy `<body>` (webui.css) — the visible surface,
+  // since legacy `Layout` was transparent. antd's `colorBgLayout` (#f5f5f5 /
+  // #000000) is the same role and within a hair of the light value.
+  '--color-background-body': ['#F7F7F6', '#191919'] as [string, string],
+  // antd `colorBgContainer` — cards, tables, the sider rail, popovers' base.
+  '--color-background-surface': ['#FFFFFF', '#141414'] as [string, string],
+  '--color-background-card': ['#FFFFFF', '#141414'] as [string, string],
+  // antd `colorBgElevated` — dropdowns, popovers, modals.
+  '--color-background-popover': ['#FFFFFF', '#1F1F1F'] as [string, string],
+  // antd `colorFillTertiary` — the subtle "muted surface" fill.
+  '--color-background-muted': [
+    'rgba(0,0,0,0.04)',
+    'rgba(255,255,255,0.08)',
+  ] as [string, string],
+  // antd `colorFillSecondary` (theme.json declares the dark value directly) —
+  // the neutral component fill: secondary buttons, chips, selected nav rows.
+  '--color-neutral': ['rgba(0,0,0,0.06)', '#262626'] as [string, string],
+  // antd `colorBgMask` — the modal/drawer scrim. Same value in both modes.
+  '--color-overlay': ['rgba(0,0,0,0.45)', 'rgba(0,0,0,0.45)'] as [
+    string,
+    string,
+  ],
+  // antd `colorFill` — the Skeleton bar. In scope because the loading
+  // skeletons are the FIRST thing after the boot curtain on every route, so
+  // a warm skeleton is squarely inside the reported symptom ("everything from
+  // the loading curtain to the post-login screens"). Astryx's default was an
+  // opaque `#B8A89F`/`#51443C`; antd's was this alpha over the surface.
+  '--color-skeleton': ['rgba(0,0,0,0.15)', 'rgba(255,255,255,0.18)'] as [
+    string,
+    string,
+  ],
+};
 
 /**
  * Sidebar navigation density — THEME DEFAULTS, not per-component CSS.
@@ -130,6 +235,21 @@ const SIDE_NAV_DENSITY = {
   'side-nav': {
     base: {
       backgroundColor: 'var(--color-background-surface)',
+      // antd `Layout.Sider width={240}` (legacy `SIDER_WIDTH`). Ticket 24 took
+      // `SideNav`'s own 260px under the visual-values policy, but the rail
+      // width is not a component look — it is a page-layout metric the app
+      // owns, and users read the 20px difference immediately. `SideNav` has no
+      // `width` prop (its width is StyleX, `.x1hfn5x7 { width: 260px }`), so
+      // the theme layer is the only knob; `@layer astryx-theme` outranks
+      // `astryx-base`, where that StyleX lives.
+      //
+      // This is the EXPANDED width only. StyleX swaps in a different class for
+      // the collapsed rail (`width: var(--spacing-12)` = 48px), but both land
+      // on the same `.astryx-side-nav` element, so a theme rule would clobber
+      // the collapsed state too — legacy `COLLAPSED_SIDER_WIDTH` is 74px, and
+      // that value lives on `.bai-sider--collapsed` in `BAISider.css`
+      // (the same mechanism the collapsed nav-item padding already uses).
+      width: '240px',
     },
   },
   'side-nav-item': {
@@ -262,6 +382,7 @@ export const computeThemeName = (
       seeds.warning,
       seeds.fontFamily,
       ANTD_ALIGN_TOKENS,
+      ANTD_NEUTRAL_SURFACES,
     ]),
   );
   // `h` prefix: every name segment must start with a letter — `astryx theme
@@ -340,6 +461,10 @@ export function buildBackendAiTheme(
       '--font-family-heading': seeds.fontFamily,
       // The 6 antd↔Astryx value differences, pinned to antd values.
       ...ANTD_ALIGN_TOKENS,
+      // The neutral background family, pinned to the measured legacy antd
+      // neutrals so the accent-derived warm tint does not reach the page,
+      // surfaces or scrims. See ANTD_NEUTRAL_SURFACES above.
+      ...ANTD_NEUTRAL_SURFACES,
     },
     // Component-level theme defaults (see SIDE_NAV_DENSITY above). This is
     // the sanctioned place for "our look differs from the Astryx default" —

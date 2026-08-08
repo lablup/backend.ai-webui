@@ -50,7 +50,15 @@ const SimpleProgressWithLabel: React.FC<SimpleProgressWithLabelProps> = ({
         <BAIProgressWithLabel
           percent={_.toNumber(percent)}
           valueLabel={percentLabel}
-          strokeColor="#BFBFBF"
+          // Mode-blind hardcode fixed (sweep #3). `#BFBFBF` is exactly antd's
+          // `colorTextQuaternary` — rgba(0,0,0,0.25) composited on white —
+          // i.e. the neutral "bar" grey, never a brand value. Written as a
+          // literal it stayed #BFBFBF in dark mode too, where it all but
+          // vanished against the backdrop. The theme-shim carries that token
+          // verbatim (`selfTokens`, verdict 'self') as a light/dark pair, so
+          // routing through it restores the legacy light value EXACTLY and
+          // gets rgba(255,255,255,0.25) in dark for free.
+          strokeColor={token.colorTextQuaternary}
           progressStyle={{ border: 'none' }}
           showInfo={false}
           labelStyle={{
@@ -72,7 +80,9 @@ const SimpleProgressWithLabel: React.FC<SimpleProgressWithLabelProps> = ({
               140,
             ]),
             height: 12,
-            backgroundColor: '#BFBFBF',
+            // Same mode-blind hardcode as `strokeColor` above — this bare
+            // div IS the small-size variant's bar.
+            backgroundColor: token.colorTextQuaternary,
           }}
         ></BAIFlex>
         <Typography.Text

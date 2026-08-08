@@ -166,7 +166,18 @@ const SettingItem: React.FC<SettingItemProps> = ({
         // text below — clicking the description no longer toggles the
         // checkbox, a minor interaction loss traded for keeping the rich
         // JSX content intact.
-        <BAIFlex direction="column" gap="xs" align="start">
+        // ROW, not column (sweep defect: "boolean settings render as plain
+        // gray squares"). antd rendered `<Checkbox>{description}</Checkbox>`,
+        // so the box and its text shared one line and the box read as a
+        // labelled control. Stacking them put a bare 24px box on a line of its
+        // own between the row title and the description — an anonymous grey
+        // square. `CheckboxInput` itself is fine (measured 24x24, radius 6px,
+        // 1px border, disabled fill `--color-overlay-hover`), and its
+        // `value`/`isDisabled` binding is correct; only the adjacency was
+        // lost. `align="start"` keeps the box aligned to the first text line
+        // when the description wraps, which is what antd's `.ant-checkbox
+        // { align-self: flex-start }` rule did.
+        <BAIFlex direction="row" gap="sm" align="start">
           <CheckboxInput
             label={title}
             isLabelHidden

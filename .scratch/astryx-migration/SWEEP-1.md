@@ -71,6 +71,11 @@ Measured before: after clicking the toggle, `data-theme` → `dark`,
 All 16 swept routes report `light → rgb(250,239,233)`, `dark → rgb(24,15,8)` after a
 header-button toggle, with no reload. Screenshots confirm visually in both modes.
 
+> **Superseded (2026-08-08).** Those two values were the *warm* ones users then
+> reported as "누리끼리". The plumbing above is unchanged and still correct — only
+> the token VALUES moved, to `light → rgb(247,247,246)` / `dark → rgb(25,25,25)`.
+> See `SWEEP-FIXES.md` §A.
+
 ---
 
 ## Defect 2 — sider density differed from legacy
@@ -143,6 +148,12 @@ rail 260px · item height 40px · pitch 44px · font 16px · radius 20px ·
 paddingInline 24px · rail background `rgb(255,251,248)` (= `--color-background-surface`).
 No truncated labels.
 
+> **Superseded (2026-08-08).** Taking `SideNav`'s own 260/48 under the
+> visual-values policy was the wrong call: users read the difference from
+> legacy's 240/74 immediately. Rail is now **240px expanded / 74px collapsed**,
+> background `rgb(255,255,255)`. Item metrics are unchanged. See
+> `SWEEP-FIXES.md` §B.
+
 ---
 
 ## Defect 3 — hover collapse/expand button clipped and mispositioned
@@ -194,10 +205,10 @@ No uncaught page errors during the sweep (`pageerror` listener: empty).
 
 | # | Severity | Where | Symptom | Suspected cause | Level |
 |---|---|---|---|---|---|
-| 1 | **High** | Session launcher (`session-launcher-light.png`) | "Next" / "Skip to review" render as flat gray blocks with the chevron wrapped onto a second line; the primary action reads as disabled | Button `iconAfter`/label composition lost in the Astryx migration; likely a `BAIButton` → Astryx `Button` variant + icon-slot mapping gap, not a token issue | Component |
-| 2 | **High** | Admin → Configurations (`admin-settings-light.png`) | Boolean settings render as plain gray squares instead of toggle switches | antd `Switch` under the Astryx cascade, or a `Switch` → Astryx mapping that never landed | Component |
-| 3 | Medium | `SimpleProgressWithLabel.tsx:53,75` | `strokeColor="#BFBFBF"` / `backgroundColor: '#BFBFBF'` — identical in both modes; nearly invisible on the dark backdrop (visible on dashboard-dark) | Known mode-blind hardcode | Component → should become `var(--color-border)` / `--color-background-muted` |
-| 4 | Medium | `AssignRoleModal.tsx:295` | `color: '#999'` — mode-blind helper text | Known mode-blind hardcode | Component → `--color-text-secondary` |
+| 1 | ~~High~~ RESOLVED | Session launcher (`session-launcher-light.png`) | "Next" / "Skip to review" render as flat gray blocks with the chevron wrapped onto a second line; the primary action reads as disabled | Trailing icon passed as `children`, not `endContent` | Fixed — see `SWEEP-FIXES.md` §C |
+| 2 | ~~High~~ RESOLVED | Admin → Configurations (`admin-settings-light.png`) | Boolean settings render as plain gray squares instead of toggle switches | NOT a Switch/mapping gap — `SettingItem` stacked the checkbox above its description, so the box lost its label adjacency | Fixed — see `SWEEP-FIXES.md` §D |
+| 3 | ~~Medium~~ RESOLVED | `SimpleProgressWithLabel.tsx:53,75` | `strokeColor="#BFBFBF"` / `backgroundColor: '#BFBFBF'` — identical in both modes; nearly invisible on the dark backdrop (visible on dashboard-dark) | Known mode-blind hardcode | Fixed — `token.colorTextQuaternary` (the exact antd token `#BFBFBF` was). `SWEEP-FIXES.md` §E |
+| 4 | ~~Medium~~ RESOLVED | `AssignRoleModal.tsx:295` | `color: '#999'` — mode-blind helper text | Known mode-blind hardcode | Fixed — `var(--color-text-secondary)`. `SWEEP-FIXES.md` §E |
 | 5 | Medium | Admin → Configurations, Statistics | Info `Alert`s paint antd's cool blue (`#E6F4FF`/`#BAE0FF` family) inside a warm brand surface | `Alert` still on the antd engine with antd's own `colorInfo` ramp; Astryx brand theme has no `info` family (documented in `backendAiTheme.ts`) | Theme — needs an `info` decision, then `components.alert` or the antd `colorInfo` seed |
 | 6 | Medium | Header, both modes | The header stays full-saturation brand orange in dark mode | `Layout.headerBg` comes from `resources/theme.json` as a single mode-blind value | Theme (`theme.json` needs a `dark.components.Layout.headerBg`) |
 | 7 | Low | All tables, light | Table header rows are cool gray (`#FAFAFA`/`#F0F0F0`) against warm cream cards — visible warm/cool mismatch | antd Table header background still on the antd token, not `--color-background-muted` | Theme (align antd `Table.headerBg`, or finish the Table migration) |

@@ -116,6 +116,27 @@
 }
 
 /*
+ * COLLAPSED RAIL WIDTH — legacy `COLLAPSED_SIDER_WIDTH` (74px).
+ *
+ * The EXPANDED width (antd `width={240}`) is a theme default, in
+ * `SIDE_NAV_DENSITY` — see `react/src/astryx-theme/backendAiTheme.ts`. The
+ * collapsed width cannot go there: StyleX toggles a second width class on the
+ * SAME `.astryx-side-nav` element (`width: var(--spacing-12)` = 48px), so a
+ * `components['side-nav']` rule — which can only emit
+ * `.astryx-side-nav { … }` — applies to both states and would pin the
+ * collapsed rail to the expanded width. Astryx reflects no collapsed state
+ * onto the DOM, hence the `.bai-sider--collapsed` class `BAISider` already
+ * sets for the nav-item padding above; same mechanism, same justification.
+ *
+ * 74px is not arbitrary: it is the legacy rail, sized so a nav row's 16px
+ * glyph sits optically centred while the rail still reads as a column rather
+ * than a strip.
+ */
+.bai-sider--collapsed {
+  width: 74px;
+}
+
+/*
  * SECTION TITLES — the sanctioned scoped override.
  *
  * `SIDE_NAV_DENSITY` in `react/src/astryx-theme/backendAiTheme.ts` carries

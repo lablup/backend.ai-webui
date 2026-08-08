@@ -7,14 +7,14 @@
  */
 
 /**
- * bai-r3-default-brand-h14z92nn theme — built by `pnpm exec astryx theme build`
+ * bai-r4-default-brand-h8ey8er theme — built by `pnpm exec astryx theme build`
  * Import the CSS file alongside this module:
  *
- *   import { baiR3DefaultBrandH14z92nnTheme } from './bai-r3-default-brand-h14z92nn';
- *   import './bai-r3-default-brand-h14z92nn.css';
+ *   import { baiR4DefaultBrandH8ey8erTheme } from './bai-r4-default-brand-h8ey8er';
+ *   import './bai-r4-default-brand-h8ey8er.css';
  */
-export const baiR3DefaultBrandH14z92nnTheme = {
-  name: 'bai-r3-default-brand-h14z92nn',
+export const baiR4DefaultBrandH8ey8erTheme = {
+  name: 'bai-r4-default-brand-h8ey8er',
   __built: true,
   tokens: {
     "--font-size-4xs": "0.375rem",
@@ -97,15 +97,15 @@ export const baiR3DefaultBrandH14z92nnTheme = {
     "--color-syntax-property": "light-dark(#005348, #83dac9)",
     "--color-syntax-punctuation": "light-dark(#a3a3a3, #525252)",
     "--color-syntax-background": "light-dark(#fafafa, #0a0a0a)",
-    "--color-background-surface": "light-dark(#FFFBF8, #211A16)",
-    "--color-background-body": "light-dark(#FAEFE9, #180F08)",
-    "--color-background-card": "light-dark(#FFFBF8, #211A16)",
-    "--color-background-popover": "light-dark(#FFFBF8, #372F2A)",
-    "--color-background-muted": "light-dark(#211A160D, #211A1680)",
+    "--color-background-surface": "light-dark(#FFFFFF, #141414)",
+    "--color-background-body": "light-dark(#F7F7F6, #191919)",
+    "--color-background-card": "light-dark(#FFFFFF, #141414)",
+    "--color-background-popover": "light-dark(#FFFFFF, #1F1F1F)",
+    "--color-background-muted": "light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.08))",
     "--color-accent": "light-dark(#FF7A00, #be5e06)",
     "--color-accent-muted": "light-dark(color-mix(in srgb, var(--color-accent) 20%, transparent), color-mix(in srgb, var(--color-accent) 25%, transparent))",
-    "--color-neutral": "light-dark(#211A161A, #EBE0DA33)",
-    "--color-overlay": "light-dark(#211A1666, #211A1699)",
+    "--color-neutral": "light-dark(rgba(0,0,0,0.06), #262626)",
+    "--color-overlay": "light-dark(rgba(0,0,0,0.45), rgba(0,0,0,0.45))",
     "--color-overlay-hover": "light-dark(#211A160D, #FFFFFF0D)",
     "--color-overlay-pressed": "light-dark(#211A161A, #FFFFFF1A)",
     "--color-text-primary": "light-dark(#211A16, #EBE0DA)",
@@ -130,7 +130,7 @@ export const baiR3DefaultBrandH14z92nnTheme = {
     "--color-warning-muted": "light-dark(#FAAD1433, #d896143F)",
     "--color-border": "light-dark(#211A161A, #FAEFE91A)",
     "--color-border-emphasized": "light-dark(#9D8E85, #74655D)",
-    "--color-skeleton": "light-dark(#B8A89F, #51443C)",
+    "--color-skeleton": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))",
     "--color-shadow": "light-dark(#0000001A, #0000004D)",
     "--color-tint-hover": "light-dark(black, white)",
     "--color-background-red": "light-dark(#facecb, #ff9e973D)",

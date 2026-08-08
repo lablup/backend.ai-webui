@@ -32,7 +32,7 @@ body {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background-color: var(--color-background-body, light-dark(#faefe9, #180f08));
+  background-color: var(--color-background-body, light-dark(#f7f7f6, #191919));
   transition: opacity 0.3s ease-out;
   font-family:
     "Ubuntu",

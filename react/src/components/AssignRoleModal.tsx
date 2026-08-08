@@ -292,7 +292,14 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
               <div>
                 <div>{option.label}</div>
                 {option.data?.description && (
-                  <div style={{ fontSize: 12, color: '#999' }}>
+                  // Mode-blind hardcode fixed (sweep #4): `#999` was antd's
+                  // secondary/description text gray, identical in both modes.
+                  <div
+                    style={{
+                      fontSize: 12,
+                      color: 'var(--color-text-secondary)',
+                    }}
+                  >
                     {option.data.description}
                   </div>
                 )}

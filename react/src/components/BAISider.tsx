@@ -10,9 +10,15 @@
  `MainLayout.tsx` for that decision and its reasons.
 
  Mapping applied:
-   width={240}          -> SideNav's own 260px (visual-values policy: take
-                           the Astryx default, change it in the theme layer)
-   collapsedWidth={74}  -> SideNav's own rail (`--spacing-12`, 48px)
+   width={240}          -> theme default `components['side-nav'].width`.
+                           Ticket 24 originally took SideNav's own 260px on
+                           the visual-values policy; users read the 20px
+                           difference immediately, and a rail width is a
+                           page-layout metric the app owns rather than a
+                           component look, so it is pinned in the theme.
+   collapsedWidth={74}  -> `.bai-sider--collapsed` in BAISider.css (SideNav's
+                           own collapsed rail is `--spacing-12`, 48px, and the
+                           collapsed state is not theme-addressable)
    collapsed/onCollapse -> collapsible={{isCollapsed, onCollapsedChange,
                            hasButton: false}} (controlled; the app already
                            owns the state, incl. the `[` shortcut, and draws
@@ -89,8 +95,15 @@ export interface BAISiderProps {
   children?: React.ReactNode;
 }
 
-export const COLLAPSED_SIDER_WIDTH = 48;
-export const SIDER_WIDTH = 260;
+/**
+ * The legacy antd `Layout.Sider` metrics, restored (see the `width` note in
+ * the file header). These constants are the single source of truth for
+ * callers that need the rail's footprint; the values themselves are applied
+ * in the theme (expanded, `SIDE_NAV_DENSITY`) and in `BAISider.css`
+ * (collapsed, `.bai-sider--collapsed`) — Astryx `SideNav` takes no width prop.
+ */
+export const COLLAPSED_SIDER_WIDTH = 74;
+export const SIDER_WIDTH = 240;
 
 const BAISider: React.FC<BAISiderProps> = ({
   ref,

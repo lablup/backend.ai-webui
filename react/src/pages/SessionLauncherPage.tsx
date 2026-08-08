@@ -1342,26 +1342,41 @@ const SessionLauncherPage = () => {
                       // PILOT-DECISION: antd `type="primary" ghost` (outlined
                       // primary) has no Astryx variant; `secondary` is the
                       // closest closed-enum destination (P5).
+                      //
+                      // The trailing chevron goes in `endContent`, NOT in
+                      // `children`. Astryx `Button` lays out
+                      // `icon | label | endContent` as three slots and renders
+                      // `children` INSIDE the label slot — a truncating text
+                      // span. An `<svg>` dropped in there is an inline
+                      // replaced element inside that span, so the chevron
+                      // broke onto a second line inside a 32px-tall button
+                      // (measured: 55x32 box, glyph clipped below the text).
+                      // `endContent` is the documented slot for "trailing
+                      // icon or badge" and inherits the variant's color.
                       <Button
                         variant="secondary"
                         label={t('button.Next')}
+                        endContent={<ChevronRight size="1em" />}
                         onClick={() => {
                           setCurrentStep(currentStep + 1);
                         }}
-                      >
-                        {t('button.Next')} <ChevronRight size="1em" />
-                      </Button>
+                      />
                     )}
                     {currentStep !== steps.length - 1 && (
+                      // Same `endContent` fix. `ghost` rather than the default
+                      // `secondary`: legacy had TWO emphasis levels here
+                      // (Next = `primary ghost`, Skip = plain default), and
+                      // leaving both on `secondary` collapsed them into two
+                      // identical grey blocks. Within the closed variant enum,
+                      // secondary-over-ghost restores that ordering.
                       <Button
+                        variant="ghost"
                         label={t('session.launcher.SkipToConfirmAndLaunch')}
+                        endContent={<ChevronsRight size="1em" />}
                         onClick={() => {
                           setCurrentStep(steps.length - 1);
                         }}
-                      >
-                        {t('session.launcher.SkipToConfirmAndLaunch')}
-                        <ChevronsRight size="1em" />
-                      </Button>
+                      />
                     )}
                   </BAIFlex>
                 </BAIFlex>

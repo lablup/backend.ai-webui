@@ -39,7 +39,9 @@
             same attribute (`useRootThemeSync`) and rewrites it on every mode
             flip. One attribute, one owner at a time, always reactive.
          2. `--color-background-body` is the Astryx page-surface token
-            (`light-dark(#FAEFE9, #180F08)` in the brand theme). It resolves
+            (`light-dark(#F7F7F6, #191919)` in the brand theme — the measured
+            LEGACY antd page backdrop; see ANTD_NEUTRAL_SURFACES in
+            `react/src/astryx-theme/backendAiTheme.ts`). It resolves
             against `color-scheme`, so a mode flip repaints with NO JavaScript.
             The literal `light-dark()` fallback covers the window before the
             theme CSS is parsed.
@@ -50,11 +52,11 @@
   <style nonce="{{nonce}}">
     html[data-theme="light"] { color-scheme: light; }
     html[data-theme="dark"] { color-scheme: dark; }
-    body { margin: 0; background-color: var(--color-background-body, light-dark(#FAEFE9, #180F08)); }
+    body { margin: 0; background-color: var(--color-background-body, light-dark(#F7F7F6, #191919)); }
     #splash {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       z-index: 10000; display: flex; align-items: center; justify-content: center;
-      background-color: var(--color-background-body, light-dark(#FAEFE9, #180F08));
+      background-color: var(--color-background-body, light-dark(#F7F7F6, #191919));
       transition: opacity 0.3s ease-out;
     }
     .splash-hidden { opacity: 0; pointer-events: none; }
