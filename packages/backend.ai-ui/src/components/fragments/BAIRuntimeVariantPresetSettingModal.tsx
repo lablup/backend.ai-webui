@@ -15,7 +15,7 @@ import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIModal, { BAIModalProps } from '../BAIModal';
 import BAISelect from '../BAISelect';
 import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
-import BAIRuntimeVariantSelect from './BAIRuntimeVariantSelect';
+import BAIRuntimeVariantSelectAstryx from './BAIRuntimeVariantSelectAstryx';
 import { Input, InputNumber, Switch } from 'antd';
 import React, { Suspense, useRef } from 'react';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -269,9 +269,12 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
               },
             ]}
           >
-            <BAIRuntimeVariantSelect
-              disabled={!!preset}
-              style={{ width: '100%' }}
+            <BAIRuntimeVariantSelectAstryx
+              label={t(
+                'comp:BAIRuntimeVariantPresetSettingModal.RuntimeVariant',
+              )}
+              isLabelHidden
+              isDisabled={!!preset}
             />
           </Form.Item>
         </Suspense>

@@ -4,7 +4,8 @@
  */
 import { Form, type FormItemProps } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { Select, Tag } from 'antd';
+import { AstryxFormTagsInput } from './astryx-bui/astryxFormControls';
+import { Tag } from 'antd';
 import { TagProps } from 'antd/lib';
 import * as _ from 'lodash-es';
 import React from 'react';
@@ -24,7 +25,6 @@ const PortSelectFormItem: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
-  const form = Form.useFormInstance();
   return (
     <Form.Item
       label={t('session.launcher.PreOpenPortTitle')}
@@ -96,39 +96,20 @@ const PortSelectFormItem: React.FC<Props> = ({
       ]}
       {...formItemProps}
     >
-      <Select
-        mode="tags"
-        tagRender={(props) => {
-          const hasDuplicated =
-            _.filter(
-              transformPortValuesToNumbers(form.getFieldValue(name)),
-              (v) => v === parseInt(props.value),
-            ).length > 1;
-          return (
-            <PortTag
-              inValid={hasDuplicated}
-              closable={props.closable}
-              onClose={props.onClose}
-              onMouseDown={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
-              value={props.value}
-            >
-              {props.label}
-            </PortTag>
-          );
-        }}
-        style={{ width: '100%' }}
-        // placeholder={t('session.launcher.PreOpen')}
-        // options={_.map(portGuides, (v, k) => ({
-        //   value: parseInt(k),
-        //   // label: `${k} - ${v}`,
-        // }))}
-        suffixIcon={null}
-        open={false}
-        tokenSeparators={[',', ' ']}
-      />
+      {/*
+        PILOT-DECISION: this used to paint an individual chip red (`tagRender`
+        + `PortTag`) when the port string was malformed, out of range, or
+        duplicated. Astryx advises against per-token colors ("Avoid applying
+        custom colors to individual tokens inside a Tokenizer"), and the four
+        `rules` above already surface every one of those conditions as a
+        field-level error message — so the red chip is dropped rather than
+        reproduced. `PortTag` itself stays exported for
+        `SessionLauncherPreview`. `tokenSeparators={[',', ' ']}` is dropped
+        too (no Tokenizer equivalent — ports commit one at a time with Enter),
+        and `open={false}` / `suffixIcon={null}` map to nothing: the empty
+        search source yields no dropdown and no suffix affordance.
+      */}
+      <AstryxFormTagsInput label={t('session.launcher.PreOpenPortTitle')} />
     </Form.Item>
   );
 };

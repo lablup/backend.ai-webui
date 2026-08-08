@@ -28,7 +28,7 @@
     placeholder is dropped — shared "No results" text instead.
 */
 import { BAIAdminResourceGroupSelectAstryxPaginationQuery } from '../../__generated__/BAIAdminResourceGroupSelectAstryxPaginationQuery.graphql';
-import { BAIAdminResourceGroupSelect_resourceGroupsFragment$key } from '../../__generated__/BAIAdminResourceGroupSelect_resourceGroupsFragment.graphql';
+import { BAIAdminResourceGroupSelectAstryx_resourceGroupsFragment$key } from '../../__generated__/BAIAdminResourceGroupSelectAstryx_resourceGroupsFragment.graphql';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIComplexSelect, {
   type BAIComplexSelectProps,
@@ -45,7 +45,15 @@ export interface BAIAdminResourceGroupSelectAstryxProps extends Omit<
   BAIComplexSelectProps,
   'options' | 'value' | 'onChange' | 'searchValue' | 'onSearch' | 'total'
 > {
-  queryRef: BAIAdminResourceGroupSelect_resourceGroupsFragment$key;
+  /**
+   * P3C-6: this is the ASTRYX fragment key. Ticket 27 typed it as the legacy
+   * `BAIAdminResourceGroupSelect_resourceGroupsFragment$key` while the
+   * `graphql` tag below declares `BAIAdminResourceGroupSelectAstryx_...` — the
+   * two happen to be structurally identical, so tsc accepted a consumer that
+   * spread the LEGACY fragment into this component, which would then find no
+   * data at runtime. Fixed here as part of the flip.
+   */
+  queryRef: BAIAdminResourceGroupSelectAstryx_resourceGroupsFragment$key;
   /** Plain key(s), as the antd `BAIAdminResourceGroupSelect` exposes. */
   value?: string | Array<string> | null;
   onChange?: (value: string | Array<string> | undefined) => void;
@@ -67,7 +75,7 @@ const BAIAdminResourceGroupSelectAstryx: React.FC<
   const { data, loadNext, isLoadingNext, refetch, hasNext } =
     usePaginationFragment<
       BAIAdminResourceGroupSelectAstryxPaginationQuery,
-      BAIAdminResourceGroupSelect_resourceGroupsFragment$key
+      BAIAdminResourceGroupSelectAstryx_resourceGroupsFragment$key
     >(
       graphql`
         fragment BAIAdminResourceGroupSelectAstryx_resourceGroupsFragment on Query

@@ -61,7 +61,16 @@ export interface BAIAdminProjectSelectAstryxProps extends Omit<
 > {
   /** Plain key(s), as the antd `BAIAdminProjectSelect` exposes. */
   value?: string | Array<string> | null;
-  onChange?: (value: string | Array<string> | undefined) => void;
+  /**
+   * P3C-1: like `BAIUserSelectAstryx`, this wrapper keeps antd's second
+   * `option` argument because it is used inside
+   * `BAIGraphQLPropertyFilter.renderInput`, where the filter chip must show
+   * the project NAME while the raw UUID goes into the GraphQL filter.
+   */
+  onChange?: (
+    value: string | Array<string> | undefined,
+    option?: BAILabeledValue | Array<BAILabeledValue>,
+  ) => void;
   filter?: {
     type?: { equals?: 'GENERAL' | 'MODEL_STORE' };
   };
@@ -249,8 +258,13 @@ const BAIAdminProjectSelectAstryx: React.FC<
       options={options}
       value={labeledValue}
       onChange={(next) => {
-        const keys = _.map(_.compact(_.castArray(next ?? [])), (v) => v.value);
-        setControllableValue(multiple ? keys : keys[0], undefined);
+        const labeled = _.compact(_.castArray(next ?? []));
+        const keys = _.map(labeled, (v) => v.value);
+        // P3C-1: second argument carries the labelInValue pair(s).
+        setControllableValue(
+          multiple ? keys : keys[0],
+          multiple ? labeled : labeled[0],
+        );
       }}
       searchValue={searchStr}
       onSearch={setSearchStr}

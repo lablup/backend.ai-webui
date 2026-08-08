@@ -18,7 +18,7 @@ import {
   BAIModalProps,
   BAISelect,
   BAITableAstryx,
-  BAIUserSelect,
+  BAIUserSelectAstryx,
   filterOutNullAndUndefined,
   toLocalId,
   useBAILogger,
@@ -281,13 +281,12 @@ const ProjectAdminSettingModal = ({
                 ]}
                 style={{ flex: 1, marginBottom: 0 }}
               >
-                <BAIUserSelect
-                  mode="multiple"
+                <BAIUserSelectAstryx
+                  multiple
                   valuePropName="id"
-                  maxTagCount="responsive"
-                  style={{ width: '100%' }}
+                  label={t('rbac.SelectUsers')}
+                  isLabelHidden
                   placeholder={t('rbac.SelectUsers')}
-                  aria-label={t('rbac.SelectUsers')}
                 />
               </Form.Item>
             </Suspense>

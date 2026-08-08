@@ -13,7 +13,7 @@ import { theme } from '../theme-shim';
 import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
 import { Alert, Button, Space, Tooltip } from 'antd';
 import {
-  BAIAvailablePresetSelect,
+  BAIAvailablePresetSelectAstryx,
   BAIFlex,
   BAILink,
   BAIModal,
@@ -318,13 +318,14 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
           required
         >
           <BAIFlex direction="row" gap="xs">
-            <BAIAvailablePresetSelect
+            <BAIAvailablePresetSelectAstryx
+              label={t('modelStore.Preset')}
+              isLabelHidden
               value={effectivePresetId}
               onChange={(value) =>
                 setUserSelectedPresetId(value as string | undefined)
               }
-              style={{ flex: 1 }}
-              disabled={noAvailablePresets}
+              isDisabled={noAvailablePresets}
             />
             <Space.Compact>
               <Tooltip title={t('modelService.DeploymentPresetDetail')}>

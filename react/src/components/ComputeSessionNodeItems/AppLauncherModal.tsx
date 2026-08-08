@@ -15,6 +15,7 @@ import {
   TCP_APPS,
   useBackendAIAppLauncher,
 } from '../../hooks/useBackendAIAppLauncher';
+import { AstryxFormTagsInput } from '../astryx-bui/astryxFormControls';
 import AppLaunchConfirmationModal from './AppLaunchConfirmationModal';
 import SFTPConnectionInfoModal from './SFTPConnectionInfoModal';
 import TCPConnectionInfoModal from './TCPConnectionInfoModal';
@@ -29,14 +30,13 @@ import { IconButton } from '@astryxdesign/core/IconButton';
 import { Text } from '@astryxdesign/core/Text';
 import * as stylex from '@stylexjs/stylex';
 // FRONTIER (ticket 17): the Form engine is antd's — ticket 34's self-hosted
-// replacement is parked — and so are the CONTROLS inside the items
-// (BAISelect tags-mode, InputNumber, Input), which migrate with the
-// remaining component tickets.
+// replacement is parked — and so are the remaining CONTROLS inside the items
+// (InputNumber, Input), which migrate with the remaining component tickets.
+// The tags-mode select is done: it is `AstryxFormTagsInput` now.
 import { Input, InputNumber, ModalProps } from 'antd';
 import {
   BAIFlex,
   BAIModal,
-  BAISelect,
   BAIUnmountAfterClose,
   useBAILogger,
   useErrorMessageResolver,
@@ -394,11 +394,8 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                   </BAIFlex>
                 }
               >
-                <BAISelect
-                  mode="tags"
-                  suffixIcon={null}
-                  open={false}
-                  tokenSeparators={[',', ' ']}
+                <AstryxFormTagsInput
+                  label={t('session.OpenToPublic')}
                   disabled={!openToPublic}
                   placeholder={t('session.AllowedMultipleClientsIps')}
                 />

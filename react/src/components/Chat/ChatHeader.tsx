@@ -11,7 +11,9 @@ import { theme } from '../../theme-shim';
 import AIAgentSelect from './AIAgentSelect';
 import type { ChatModel, ChatParameters } from './ChatModel';
 import { ChatParametersSliders } from './ChatParametersSliders';
-import DeploymentSelect, { DeploymentSelectProps } from './DeploymentSelect';
+import DeploymentSelectAstryx, {
+  DeploymentSelectAstryxProps,
+} from './DeploymentSelectAstryx';
 import ModelSelect from './ModelSelect';
 import {
   DropdownMenu,
@@ -69,7 +71,7 @@ interface ChatHeaderProps {
   modelId: string;
   onChangeModel: (modelId: string) => void;
   deploymentFrgmt?: ChatHeader_Deployment$key | null;
-  onChangeDeployment: DeploymentSelectProps['onChange'];
+  onChangeDeployment: DeploymentSelectAstryxProps['onChange'];
   agents: AIAgent[];
   agent?: AIAgent;
   onChangeAgent: (agent: AIAgent) => void;
@@ -216,16 +218,15 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
           />
         )}
         {!agentBinding?.endpoint_url && (
-          <DeploymentSelect
+          <DeploymentSelectAstryx
             fetchKey={fetchKey}
-            loading={isPendingDeploymentTransition}
+            isLoading={isPendingDeploymentTransition}
             onChange={(id) => {
               startDeploymentTransition(() => {
                 onChangeDeployment?.(id);
               });
             }}
             value={deploymentId}
-            popupMatchSelectWidth={false}
             showDetailPageButton
           />
         )}

@@ -26,7 +26,7 @@ import { Badge } from '@astryxdesign/core/Badge';
 import { Banner } from '@astryxdesign/core/Banner';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import {
-  BAIAdminProjectSelect,
+  BAIAdminProjectSelectAstryx,
   BAIFlex,
   BAIPropertyFilter,
   BAISelectionLabel,
@@ -326,17 +326,19 @@ const AdminComputeSessionListPage = () => {
                   type: 'string',
                   defaultOperator: '==',
                   renderInput: ({ onAddCondition }) => (
-                    <BAIAdminProjectSelect
+                    <BAIAdminProjectSelectAstryx
+                      // The filter row already prints the property label.
+                      label={t('data.Project')}
+                      isLabelHidden
                       value={null}
-                      style={{ minWidth: 200 }}
+                      width={200}
                       onChange={(value, option) => {
-                        // The picker emits the project UUID; forward the
-                        // option label (project name) so the condition tag
-                        // stays readable.
-                        const label = _.castArray(option)[0]?.label;
+                        // P3C-1: the second argument survives on this wrapper so
+                        // the condition tag stays human-readable (project name)
+                        // while the UUID serializes into the filter.
                         onAddCondition(
                           value as string | undefined,
-                          _.isString(label) ? label : undefined,
+                          _.castArray(option ?? [])[0]?.label,
                         );
                       }}
                     />

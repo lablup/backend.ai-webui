@@ -72,6 +72,8 @@
 .bai-select .ant-select-content-has-search-value img,
 .bai-select .ant-select-content-has-search-value .ant-divider,
 .bai-select .ant-select-content-has-search-value .ant-badge,
+.bai-select .ant-select-content-has-search-value .astryx-badge,
+.bai-select .ant-select-content-has-search-value .astryx-text,
 .bai-select .ant-select-content-has-search-value span.text-high-lighter,
 .bai-select .ant-select-content-has-search-value span.ant-tag {
   opacity: 0 !important;
@@ -81,6 +83,7 @@
 /* Change the opacity of images and tags in the select option when the dropdown
    is open */
 .bai-select.ant-select-open .ant-select-content .ant-badge,
+.bai-select.ant-select-open .ant-select-content .astryx-badge,
 .bai-select.ant-select-open .ant-select-content img,
 .bai-select.ant-select-open .ant-select-content .ant-divider,
 .bai-select.ant-select-open .ant-select-content span.ant-tag {
@@ -88,11 +91,22 @@
 }
 
 /* Change the color of secondary/success/warning/danger text to placeholder
-   color when the dropdown is open */
+   color when the dropdown is open.
+
+ p3-c: the `.astryx-text` selector is the Astryx counterpart of the four
+ `.ant-typography-*` ones. `BAIText` / `BAIBadge` / `BAITag` are being rewritten
+ onto Astryx primitives in a sibling phase-3 batch, which renames these
+ descendants; both spellings are listed so this block keeps working on either
+ side of that merge and neither branch has to touch the other's lines. The
+ Astryx `Text` carries its tone as a prop rather than four separate classes, so
+ one selector replaces the four — the dimming is uniform anyway. Drop the
+ `.ant-*` spellings only when `BAISelect` itself is retired (it is still LIVE:
+ the static-option survivors and the property filters render through it). */
 .bai-select.ant-select-open .ant-select-content .ant-typography-secondary,
 .bai-select.ant-select-open .ant-select-content .ant-typography-success,
 .bai-select.ant-select-open .ant-select-content .ant-typography-warning,
-.bai-select.ant-select-open .ant-select-content .ant-typography-danger {
+.bai-select.ant-select-open .ant-select-content .ant-typography-danger,
+.bai-select.ant-select-open .ant-select-content .astryx-text {
   color: var(--color-text-disabled);
 }
 

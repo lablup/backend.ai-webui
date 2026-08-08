@@ -18,8 +18,8 @@ import {
   BAIButton,
   BAIFlex,
   BAISelect,
-  BAIVFolderSelect,
-  BAIVFolderSelectRef,
+  BAIVFolderSelectAstryx,
+  BAIVFolderSelectAstryxRef,
   generateRandomString,
   safeDecodeUuid,
   toGlobalId,
@@ -148,9 +148,9 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
     useStartSession();
   const { open: openFolderExplorer } = useFolderExplorerOpener();
 
-  const vfolderSelectRef = useRef<BAIVFolderSelectRef>(null);
+  const vfolderSelectRef = useRef<BAIVFolderSelectAstryxRef>(null);
   const [isFolderCreateModalOpen, setIsFolderCreateModalOpen] = useState(false);
-  // id → name for selected folders, resolved by BAIVFolderSelect (and seeded
+  // id → name for selected folders, resolved by BAIVFolderSelectAstryx (and seeded
   // directly when a folder is created through FolderCreateModalV2). The name
   // is needed to build the download path under `/home/work/<folder>/`.
   const [folderNameMap, setFolderNameMap] = useState<Record<string, string>>(
@@ -312,8 +312,10 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
                   },
                 ]}
               >
-                <BAIVFolderSelect
+                <BAIVFolderSelectAstryx
                   ref={vfolderSelectRef}
+                  label={t('deployment.ModelFolder')}
+                  isLabelHidden
                   excludeDeleted
                   // The session writes into the folder, so a read-only mount
                   // fails. `mount_rw` covers read-only *shares* and hosts, but
@@ -323,7 +325,6 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
                   filter='usage_mode == "model" & permission != "ro"'
                   requiredPermission="mount_rw"
                   currentProjectId={currentProject.id ?? undefined}
-                  style={{ flex: 1 }}
                   onResolvedNamesChange={(nameMap) => {
                     setFolderNameMap((prev) => ({ ...prev, ...nameMap }));
                   }}
@@ -400,7 +401,7 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
           }
           if (result?.id) {
             // `createVfolderV2` returns a `VFolder` (Strawberry) global ID,
-            // but BAIVFolderSelect's value query reads from `vfolder_nodes`
+            // but BAIVFolderSelectAstryx's value query reads from `vfolder_nodes`
             // (`VirtualFolderNode`, Graphene). Both encode the same UUID but
             // with different `__typename:` prefixes, so re-encode to the
             // VirtualFolderNode global ID form before selecting it.

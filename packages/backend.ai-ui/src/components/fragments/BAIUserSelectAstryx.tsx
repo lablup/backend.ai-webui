@@ -69,7 +69,18 @@ export interface BAIUserSelectAstryxProps extends Omit<
 > {
   /** Plain key(s), as the antd `BAIUserSelect` exposes. */
   value?: string | Array<string> | null;
-  onChange?: (value: string | Array<string> | undefined) => void;
+  /**
+   * P3C-1: the second `option` argument survives here (and only here). antd's
+   * `onChange(value, option)` was dropped wholesale by ticket 27, but
+   * `BAIGraphQLPropertyFilter.renderInput` needs the human-readable label to
+   * put on the filter chip while the raw UUID goes into the GraphQL filter —
+   * and the label is not derivable at the call site. Shape is the
+   * `labelInValue` pair the wrapper already holds, so nothing is rebuilt.
+   */
+  onChange?: (
+    value: string | Array<string> | undefined,
+    option?: BAILabeledValue | Array<BAILabeledValue>,
+  ) => void;
   filter?: string;
   excludeInactive?: boolean;
   valuePropName?: 'id' | 'email';
@@ -290,8 +301,13 @@ const BAIUserSelectAstryx: React.FC<BAIUserSelectAstryxProps> = ({
       options={options}
       value={labeledValue}
       onChange={(next) => {
-        const keys = _.map(_.compact(_.castArray(next ?? [])), (v) => v.value);
-        setControllableValue(multiple ? keys : keys[0], undefined);
+        const labeled = _.compact(_.castArray(next ?? []));
+        const keys = _.map(labeled, (v) => v.value);
+        // P3C-1: second argument carries the labelInValue pair(s).
+        setControllableValue(
+          multiple ? keys : keys[0],
+          multiple ? labeled : labeled[0],
+        );
       }}
       searchValue={searchStr}
       onSearch={setSearchStr}

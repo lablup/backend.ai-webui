@@ -13,7 +13,7 @@ import { theme } from '../theme-shim';
 import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
 import { Alert, Button, Space, Tooltip } from 'antd';
 import {
-  BAIAvailablePresetSelect,
+  BAIAvailablePresetSelectAstryx,
   BAIFlex,
   BAILink,
   BAIModal,
@@ -73,7 +73,7 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
   const { id: projectId, name: projectName } = useCurrentProjectValue();
 
   // TODO(needs-backend): `availablePresets` here is the server-filtered list
-  // scoped to this specific model card. `BAIAvailablePresetSelect` below
+  // scoped to this specific model card. `BAIAvailablePresetSelectAstryx` below
   // fetches from the project-wide `deploymentRevisionPresets` because
   // `DeploymentRevisionPresetFilter` has no model-card-scoped filter yet.
   // Once that filter exists, plumb it through the select so the dropdown
@@ -304,13 +304,14 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
           required
         >
           <BAIFlex direction="row" gap="xs">
-            <BAIAvailablePresetSelect
+            <BAIAvailablePresetSelectAstryx
+              label={t('modelStore.Preset')}
+              isLabelHidden
               value={effectivePresetId}
               onChange={(value) =>
                 setUserSelectedPresetId(value as string | undefined)
               }
-              style={{ flex: 1 }}
-              disabled={noAvailablePresets}
+              isDisabled={noAvailablePresets}
             />
             <Space.Compact>
               <Tooltip title={t('modelService.DeploymentPresetDetail')}>

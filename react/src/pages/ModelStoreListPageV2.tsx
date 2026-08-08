@@ -26,7 +26,7 @@ import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAISelect,
-  BAIStorageHostSelect,
+  BAIStorageHostSelectAstryx,
   safeDecodeUuid,
   useUpdatableState,
 } from 'backend.ai-ui';
@@ -410,10 +410,13 @@ const ModelStoreListPageV2: React.FC = () => {
                 operators: ['equals', 'notEquals'],
                 defaultOperator: 'equals',
                 renderInput: ({ onAddCondition }) => (
-                  <BAIStorageHostSelect
+                  <BAIStorageHostSelectAstryx
+                    // The filter row already prints the property label.
+                    label={t('import.StorageHost')}
+                    isLabelHidden
                     value={null}
                     onChange={(value) =>
-                      // Single-select mode (no `mode` prop) always emits a
+                      // Single-select mode (no `multiple` prop) always emits a
                       // single value.
                       onAddCondition(value as string | undefined)
                     }

@@ -30,6 +30,7 @@ import {
   AstryxFormCheckbox,
   AstryxFormNumberInput,
   AstryxFormSelector,
+  AstryxFormTagsInput,
   AstryxFormTextArea,
   AstryxFormTextInput,
 } from './astryx-bui/astryxFormControls';
@@ -657,7 +658,9 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   container_uid: user.container.containerUid ?? undefined,
                   container_main_gid:
                     user.container.containerMainGid ?? undefined,
-                  // Convert container_gids from number[] to string[] for Select mode="tags"
+                  // Convert container_gids from number[] to string[]: the tags
+                  // input (AstryxFormTagsInput) works on strings; the submit
+                  // handler converts back with _.toNumber.
                   container_gids: user.container.containerGids
                     ? _.map(user.container.containerGids, (gid) => String(gid))
                     : undefined,
@@ -1231,11 +1234,8 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   }),
                 ]}
               >
-                <BAISelect
-                  mode="tags"
-                  tokenSeparators={[',', ' ']}
-                  open={false}
-                  suffixIcon={null}
+                <AstryxFormTagsInput
+                  label={t('credential.ContainerSupplementaryGIDs')}
                   placeholder={t(
                     'credential.ContainerSupplementaryGIDsPlaceholder',
                   )}

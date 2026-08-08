@@ -46,7 +46,7 @@ import { Selector } from '@astryxdesign/core/Selector';
 import { Step, Stepper } from '@astryxdesign/lab';
 import { useDebounceFn } from 'ahooks';
 import {
-  BAIAdminImageSelect,
+  BAIAdminImageSelectAstryx,
   BAIButton,
   BAICard,
   BAIFlex,
@@ -112,12 +112,14 @@ export interface AdminDeploymentPresetSettingPageContentProps {
 }
 
 // ---------------------------------------------------------------------------
-// ImageSelectField — thin Suspense wrapper around BAIAdminImageSelect
+// ImageSelectField — thin Suspense wrapper around BAIAdminImageSelectAstryx
 // ---------------------------------------------------------------------------
 
 const ImageSelectField: React.FC<{
   value?: string;
-  onChange?: (value: string) => void;
+  // Widened to the Astryx sibling's emit type (`multiple` is off here, so the
+  // array arm never occurs in practice) — `Form.Item` injects this untyped.
+  onChange?: (value: string | Array<string> | undefined) => void;
 }> = ({ value, onChange }) => {
   'use memo';
   const { t } = useTranslation();
@@ -134,7 +136,12 @@ const ImageSelectField: React.FC<{
         />
       }
     >
-      <BAIAdminImageSelect value={value} onChange={onChange} />
+      <BAIAdminImageSelectAstryx
+        label={t('adminDeploymentPreset.Image')}
+        isLabelHidden
+        value={value}
+        onChange={onChange}
+      />
     </Suspense>
   );
 };

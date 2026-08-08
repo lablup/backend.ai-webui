@@ -75,14 +75,14 @@ import {
 } from '@astryxdesign/core/SegmentedControl';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
-  BAIAvailablePresetSelect,
+  BAIAvailablePresetSelectAstryx,
   BAIFlex,
   BAIModal,
   BAIModalProps,
-  BAIRuntimeVariantSelect,
+  BAIRuntimeVariantSelectAstryx,
   BAISelect,
-  BAIVFolderSelect,
-  BAIVFolderSelectRef,
+  BAIVFolderSelectAstryx,
+  BAIVFolderSelectAstryxRef,
   convertToUUID,
   safeDecodeUuid,
   toGlobalId,
@@ -227,7 +227,7 @@ const DefinitionModeSegmented: React.FC<{
 };
 
 // Loader for the preset-detail modal in this paginated context. The Preset
-// selector here (`BAIAvailablePresetSelect`) paginates independently of the
+// selector here (`BAIAvailablePresetSelectAstryx`) paginates independently of the
 // modal's main query, so we cannot spread `DeploymentPresetDetailModalFragment`
 // on a list edge. Instead, when the user opens the detail view, fire a tiny
 // singular query keyed by the selected presetId and hand the fragment ref
@@ -401,9 +401,9 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
 
   // Refs to refetch each form's model folder select after creating a new
   // model-usage folder, or via the manual refresh button. Two refs because
-  // the Preset and Custom forms each mount their own BAIVFolderSelect.
-  const presetVFolderSelectRef = useRef<BAIVFolderSelectRef>(null);
-  const customVFolderSelectRef = useRef<BAIVFolderSelectRef>(null);
+  // the Preset and Custom forms each mount their own BAIVFolderSelectAstryx.
+  const presetVFolderSelectRef = useRef<BAIVFolderSelectAstryxRef>(null);
+  const customVFolderSelectRef = useRef<BAIVFolderSelectAstryxRef>(null);
   const [isModelFolderCreateModalOpen, setIsModelFolderCreateModalOpen] =
     useState(false);
 
@@ -458,7 +458,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   // its own Relay query keyed by this id.
   const [presetDetailId, setPresetDetailId] = useState<string | null>(null);
 
-  // Map of runtime variant id → name, populated by `BAIRuntimeVariantSelect`
+  // Map of runtime variant id → name, populated by `BAIRuntimeVariantSelectAstryx`
   // as it resolves the currently selected value (via its `runtimeVariant(id:)`
   // point lookup) and the visible page of the paginated list. Used by the
   // form to branch on `variantName === 'custom'` and to look up the human-
@@ -530,7 +530,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       })
       .catch(() => {
         if (cancelled) return;
-        // On error, assume presets exist — the BAIAvailablePresetSelect's
+        // On error, assume presets exist — the BAIAvailablePresetSelectAstryx's
         // own paginated query will surface a per-select empty state if it
         // also fails.
         setHasNoPresets(false);
@@ -554,7 +554,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       )
     : undefined;
 
-  // The `BAIAvailablePresetSelect` paginates independently of this modal's
+  // The `BAIAvailablePresetSelectAstryx` paginates independently of this modal's
   // main query (it can scroll past the first page on demand), so the user
   // can select a preset that does not appear in any local list we hold.
   // Resolve the selected preset's full data on demand via the singular
@@ -762,7 +762,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       // Also carry the model folder the user picked in Preset mode (spec (d)).
       //
       // Read the preset id from the form (source of truth for the selection,
-      // since `BAIAvailablePresetSelect` is wrapped in a named `Form.Item`),
+      // since `BAIAvailablePresetSelectAstryx` is wrapped in a named `Form.Item`),
       // then resolve the preset's full data via the singular
       // `deploymentRevisionPreset(id:)` query so this works regardless of
       // which page the select scrolled to.
@@ -820,12 +820,12 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
 
     // The query selects `modelRuntimeConfig.runtimeVariant.name`, so the
     // prefill path knows the variant name without waiting for
-    // `BAIRuntimeVariantSelect` to resolve it.
+    // `BAIRuntimeVariantSelectAstryx` to resolve it.
     const variantName = rev.modelRuntimeConfig?.runtimeVariant?.name ?? '';
     const isCustom = variantName === 'custom';
     // Seed `runtimeVariantNameMap` so submit and any other consumers can
     // resolve `runtimeVariantId → name` immediately, without waiting for
-    // `BAIRuntimeVariantSelect`'s point lookup to finish.
+    // `BAIRuntimeVariantSelectAstryx`'s point lookup to finish.
     const variantId = rev.modelRuntimeConfig?.runtimeVariantId;
     if (variantId && variantName) {
       setRuntimeVariantNameMap((prev) => ({
@@ -1570,7 +1570,10 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                     noStyle
                     rules={[{ required: true }]}
                   >
-                    <BAIAvailablePresetSelect style={{ flex: 1 }} />
+                    <BAIAvailablePresetSelectAstryx
+                      label={t('modelStore.Preset')}
+                      isLabelHidden
+                    />
                   </BAIFormItem>
                 </Suspense>
                 <BAIFormItem dependencies={['revisionPresetId']} noStyle>
@@ -1620,13 +1623,14 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                     noStyle
                     rules={[{ required: true }]}
                   >
-                    <BAIVFolderSelect
+                    <BAIVFolderSelectAstryx
                       ref={presetVFolderSelectRef}
+                      label={t('deployment.ModelFolder')}
+                      isLabelHidden
                       currentProjectId={currentProjectId ?? undefined}
-                      disabled={!currentProjectId}
+                      isDisabled={!currentProjectId}
                       excludeDeleted
                       filter='usage_mode == "model"'
-                      style={{ flex: 1 }}
                     />
                   </BAIFormItem>
                 </Suspense>
@@ -1711,13 +1715,14 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                   noStyle
                   rules={[{ required: true }]}
                 >
-                  <BAIVFolderSelect
+                  <BAIVFolderSelectAstryx
                     ref={customVFolderSelectRef}
+                    label={t('deployment.ModelFolder')}
+                    isLabelHidden
                     currentProjectId={currentProjectId ?? undefined}
-                    disabled={!currentProjectId}
+                    isDisabled={!currentProjectId}
                     excludeDeleted
                     filter='usage_mode == "model"'
-                    style={{ flex: 1 }}
                   />
                 </BAIFormItem>
               </Suspense>
@@ -1785,7 +1790,9 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 },
               ]}
             >
-              <BAIRuntimeVariantSelect
+              <BAIRuntimeVariantSelectAstryx
+                label={t('deployment.RuntimeVariant')}
+                isLabelHidden
                 onResolvedNamesChange={(map) =>
                   setRuntimeVariantNameMap((prev) => ({ ...prev, ...map }))
                 }
@@ -2180,7 +2187,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           setIsModelFolderCreateModalOpen(false);
           if (result?.id) {
             // `createVfolderV2` returns a `VFolder` (Strawberry) global ID,
-            // but BAIVFolderSelect's value query reads from `vfolder_nodes`
+            // but BAIVFolderSelectAstryx's value query reads from `vfolder_nodes`
             // (`VirtualFolderNode`, Graphene). Both encode the same UUID
             // but with different `__typename:` prefixes, so the select's
             // option matching (`edge.node.id === value`) would fail if we

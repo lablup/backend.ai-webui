@@ -10,15 +10,10 @@ import { isIpIncludedInList, isValidIPOrCidr } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import TOTPActivateModal from './TOTPActivateModal';
+import { AstryxFormTagsInput } from './astryx-bui/astryxFormControls';
 import { useToggle } from 'ahooks';
-import { type ModalProps, Input, Switch, Tag, Typography } from 'antd';
-import {
-  BAIModal,
-  BAISelect,
-  BAIText,
-  useErrorMessageResolver,
-} from 'backend.ai-ui';
-import * as _ from 'lodash-es';
+import { type ModalProps, Input, Switch, Typography } from 'antd';
+import { BAIModal, BAIText, useErrorMessageResolver } from 'backend.ai-ui';
 import { CircleAlert } from 'lucide-react';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -301,20 +296,8 @@ const UserProfileSettingModal: React.FC<Props> = ({
             ]}
             style={{ marginBottom: 0 }}
           >
-            <BAISelect
-              mode="tags"
-              tokenSeparators={[',', ' ']}
-              tagRender={(props) => {
-                const isValid =
-                  _.isString(props.label) && isValidIPOrCidr(props.label);
-                return (
-                  <Tag color={!isValid ? 'red' : undefined} {...props}>
-                    {props.label}
-                  </Tag>
-                );
-              }}
-              open={false}
-              suffixIcon={null}
+            <AstryxFormTagsInput
+              label={t('credential.AllowedClientIP')}
               placeholder={t('credential.AllowedClientIPPlaceholder')}
             />
           </Form.Item>

@@ -8,7 +8,7 @@ import KeypairResourcePolicyStoragePermissionTable from './KeypairResourcePolicy
 import { Banner } from '@astryxdesign/core/Banner';
 import { Text } from '@astryxdesign/core/Text';
 import {
-  BAIAdminKeypairResourcePolicySelect,
+  BAIAdminKeypairResourcePolicySelectAstryx,
   BAICard,
   BAIFlex,
 } from 'backend.ai-ui';
@@ -92,17 +92,22 @@ const UserFolderPermissionPanel: React.FC<UserFolderPermissionPanelProps> = ({
         title={t('storageHost.permission.KeypairResourcePolicies')}
         extra={
           <BAIFlex direction="column" align="end" gap="xxs">
-            <BAIAdminKeypairResourcePolicySelect
-              mode="multiple"
-              maxTagCount="responsive"
+            <BAIAdminKeypairResourcePolicySelectAstryx
+              // The card title already prints "Keypair Resource Policies", so
+              // the field reuses it as its accessible name and hides it.
+              label={t('storageHost.permission.KeypairResourcePolicies')}
+              isLabelHidden
+              multiple
               value={selectedPolicyNames}
               onChange={(value) =>
                 setSelectedPolicyNames((value as string[]) ?? [])
               }
               status={
-                selectedPolicyNames.length > MAX_SELECTION ? 'error' : undefined
+                selectedPolicyNames.length > MAX_SELECTION
+                  ? { type: 'error' }
+                  : undefined
               }
-              style={{ width: 320 }}
+              width={320}
             />
             {renderLimitMessage(selectedPolicyNames.length)}
           </BAIFlex>

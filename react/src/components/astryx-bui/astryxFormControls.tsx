@@ -24,6 +24,7 @@ export {
   AstryxFormSegmented,
   AstryxFormSelector,
   AstryxFormSwitch,
+  AstryxFormTagsInput,
   AstryxFormTextArea,
   AstryxFormTextInput,
 } from '../astryxFormControls';
@@ -39,6 +40,7 @@ export type {
   AstryxFormSelectorOptions,
   AstryxFormSelectorProps,
   AstryxFormSwitchProps,
+  AstryxFormTagsInputProps,
   AstryxFormTextAreaProps,
   AstryxFormTextInputProps,
 } from '../astryxFormControls';

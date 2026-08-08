@@ -30,8 +30,8 @@ import {
   BAIFlex,
   BAIModal,
   type BAIModalProps,
-  BAIVFolderSelect,
-  BAIVFolderSelectRef,
+  BAIVFolderSelectAstryx,
+  BAIVFolderSelectAstryxRef,
   toGlobalId,
   toLocalId,
   useBAILogger,
@@ -111,7 +111,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const formRef = useRef<FormInstance<FormInputType>>(null);
-  const vfolderSelectRef = useRef<BAIVFolderSelectRef>(null);
+  const vfolderSelectRef = useRef<BAIVFolderSelectAstryxRef>(null);
   const [isOpenCreateFolderModal, setIsOpenCreateFolderModal] = useState(false);
 
   const currentProject = useCurrentProjectValue();
@@ -397,12 +397,13 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                         },
                       ]}
                     >
-                      <BAIVFolderSelect
+                      <BAIVFolderSelectAstryx
                         ref={vfolderSelectRef}
+                        label={t('adminModelCard.ModelStorageFolder')}
+                        isLabelHidden
                         excludeDeleted
                         filter='ownership_type == "group"'
                         currentProjectId={modelStoreProject?.id ?? undefined}
-                        style={{ flex: 1 }}
                       />
                     </BAIFormItem>
                   </Suspense>

@@ -112,23 +112,49 @@ Converting a hub clears its whole dependent set at once.
 | `packages/backend.ai-ui/src/components/provider/BAIConfigProvider/BAIConfigProvider.tsx` | 598 |
 
 
-## Phase 3 / ticket B carry-over — modal family
+## Select family — carry-over after p3-c
 
-- **Collapse the duplicate Astryx modal pair.** `BAIModal` and
-  `BAIDeleteConfirmModal` in `packages/backend.ai-ui/src/components/` are now
-  Astryx-native with the antd-shaped contract; the pilot's
-  `react/src/components/astryx-bui/BAIModalAstryx.tsx` and
-  `BAIDeleteConfirmModalAstryx.tsx` are the same components with an
-  Astryx-shaped contract (`isOpen` / `onAction` / `actionLabel`). BUI's props
-  already accept the aliases (`isOpen`, `onOpenChange`, `subtitle`,
-  `headerContent`, `closeLabel`, `bodyRef`, `maxHeight`), so the collapse is a
-  repoint of the ~19 react-side call sites plus two file deletions. Owned by
-  the pages tickets, not by the modal family.
-- **`okButtonProps.autoFocus` is not mapped.** Astryx focuses
-  `[data-autofocus]` inside the dialog on open; `Button` exposes no such flag.
-  No call site passes it today.
-- **`draggable` / `windowActions` are contract-only.** Both props still
-  type-check and `windowActions` still works (minimize/maximize/fullscreen via
-  `Dialog` props), but `draggable` is inert. If the API is ever declared dead,
-  drop the props and the `WindowState`/`WindowAction`/`MinimizedPlacement`
-  exports together — nothing in the app passes any of them.
+p3-c flipped every consumer of the 19 legacy `*Select` wrappers onto their
+ticket-27 Astryx siblings and deleted the wrappers (see
+`issues/p3-c-select-flip.md`). `BAISelect.tsx` (antd) survives, so it stays a
+taint hub. What still has to go through it:
+
+**Mechanical `AstryxFormSelector` conversions** — single-shot query, plain
+string options, no rich rendering. Each gains a required `label`, so give the
+wrapper a fixed domain label internally rather than pushing the prop onto its
+consumers:
+`AccessKeySelect`, `KeypairResourcePolicySelect`, `PrometheusCategorySelect`,
+`UserResourcePolicySelect`, `UserSelect`, `Chat/ModelSelect`, `BAIDomainSelect`,
+`BAIResourceGroupSelect`, `BAIProjectResourcePolicySelect`,
+`BAIStorageProxySelect`, `BAIAllowedHostNamesSelect`,
+`BAIProjectResourceGroupSelect`. The BUI ones cannot import
+`AstryxFormSelector` (it lives in `react/src`) — they go to Astryx `Selector`
+directly, or BUI grows its own adapter.
+
+**NOT mechanical — real `BAIComplexSelect` conversions with P26-3 drops:**
+
+- `StorageSelect` — ReactNode option labels (`StorageUsageBadge` +
+  `TextHighlighter`), `optionLabelProp`, client-side `filterOption`. The badge
+  becomes `extra`, the highlighter is dropped (server search has no local
+  highlight), and REST/TanQuery paging has to be introduced or the list capped.
+- `ResourcePresetSelect` — per-option resource figures and a `Tooltip`.
+- `AgentSelect` — Relay-backed but on `useBAIPaginationOptionState` (fixed
+  window, not scroll `loadNext`); converting means choosing a mode first.
+- `ProjectSelect` — non-Relay client hook with role icons in the label.
+- `BAIProjectSettingModal`'s `<BAIResourceGroupSelect mode="tags">` — the one
+  remaining tags-mode site, and it is tags-over-a-remote-source, which
+  `Tokenizer`'s `SearchSource` can express but the empty-source
+  `AstryxFormTagsInput` adapter cannot.
+
+**Dead code with a live type:** `react/src/components/VFolderSelect.tsx` is
+never rendered (ticket 27 confirmed; the `SessionLauncherPage` use is commented
+out), but `VFolderTable` and `VFolderTableFormItem` import its `VFolder` type.
+Move the type, then delete the file.
+
+**e2e:** `e2e/utils/classes/AdminModelCardPage.ts`,
+`e2e/utils/deployment-fixtures.ts` and `e2e/serving/model-card-drawer.spec.ts`
+only *mention* the retired wrappers in comments, but they drive the DOM those
+wrappers used to render (antd `.ant-select-*`). Every flipped surface now
+renders a ComplexSelector (`role="dialog"` > `role="listbox"` >
+`role="option"`), so those specs need the ticket-31 selector pass before they
+pass again.

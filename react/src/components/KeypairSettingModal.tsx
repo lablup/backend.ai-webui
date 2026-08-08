@@ -12,7 +12,7 @@ import KeypairResourcePolicySelect from './KeypairResourcePolicySelect';
 import { AstryxFormNumberInput } from './astryx-bui/astryxFormControls';
 import { Grid, GridSpan } from '@astryxdesign/core/Grid';
 import { type ModalProps } from 'antd';
-import { BAIModal, BAISelect, BAIUserSelect } from 'backend.ai-ui';
+import { BAIModal, BAISelect, BAIUserSelectAstryx } from 'backend.ai-ui';
 import { Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -148,7 +148,7 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
         initialValues={keypair ? { ...keypair } : {}}
       >
         {!keypair && (
-          // `BAIUserSelect` is the direct child of `BAIFormItem` so antd binds
+          // `BAIUserSelectAstryx` is the direct child of `BAIFormItem` so antd binds
           // its value/onChange automatically. The fallback mirrors the same
           // `BAIFormItem` to keep the field and its required rule registered
           // while the select fetches. Same shape as `ProjectAdminSettingModal`.
@@ -178,9 +178,10 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
                 },
               ]}
             >
-              <BAIUserSelect
+              <BAIUserSelectAstryx
+                label={t('general.User')}
+                isLabelHidden
                 placeholder={t('credential.SelectUser')}
-                style={{ width: '100%' }}
               />
             </BAIFormItem>
           </Suspense>

@@ -41,7 +41,8 @@ export interface KeypairResourcePolicyStoragePermissionTableProps extends BAITab
   /** Fragment for the storage host — its `id` is read internally. */
   storageVolumeFrgmt: KeypairResourcePolicyStoragePermissionTable_storageVolumeFrgmt$key;
   /**
-   * Policy names picked via `BAIAdminKeypairResourcePolicySelect` (multi).
+   * Policy names picked via `BAIAdminKeypairResourcePolicySelectAstryx`
+   * (`multiple`).
    * Empty array keeps the query skipped. Passed as `filter.name.in` to
    * `adminKeypairResourcePoliciesV2` and as `name` to
    * `adminUpdateKeypairResourcePolicyV2` on save.

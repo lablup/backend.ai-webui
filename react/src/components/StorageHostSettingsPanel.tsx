@@ -7,7 +7,11 @@ import { QuotaScopeType, addQuotaScopeTypePrefix } from '../helper/index';
 import BAIRadioGroup from './BAIRadioGroup';
 import QuotaScopeTable from './QuotaScopeTable';
 import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
-import { BAIAdminProjectSelect, BAIFlex, BAIUserSelect } from 'backend.ai-ui';
+import {
+  BAIAdminProjectSelectAstryx,
+  BAIFlex,
+  BAIUserSelectAstryx,
+} from 'backend.ai-ui';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -64,19 +68,25 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
           }}
         />
         {currentSettingType === 'project' ? (
-          <BAIAdminProjectSelect
+          <BAIAdminProjectSelectAstryx
+            // The adjacent radio group already prints "For Project", so the
+            // field's accessible name reuses it and stays visually hidden.
+            label={t('storageHost.ForProject')}
+            isLabelHidden
             value={projectId}
             onChange={(value) => setProjectId(value as string | undefined)}
-            style={{ minWidth: 240 }}
+            width={240}
           />
         ) : (
           // valuePropName="id" makes the picked value the user's id (used as
           // the quota scope entity id), not the email.
-          <BAIUserSelect
+          <BAIUserSelectAstryx
+            label={t('storageHost.ForUser')}
+            isLabelHidden
             valuePropName="id"
             value={userId}
             onChange={(value) => setUserId(value as string | undefined)}
-            style={{ minWidth: 240 }}
+            width={240}
           />
         )}
       </BAIFlex>

@@ -14,7 +14,10 @@ import { theme } from '../theme-shim';
 import BAIFormItem from './BAIFormItem';
 import ProjectSelect from './ProjectSelect';
 import UserResourcePolicySelect from './UserResourcePolicySelect';
-import { AstryxFormNumberInput } from './astryx-bui/astryxFormControls';
+import {
+  AstryxFormNumberInput,
+  AstryxFormTagsInput,
+} from './astryx-bui/astryxFormControls';
 import {
   BAIDomainSelect,
   BAIFlex,
@@ -379,11 +382,8 @@ const UpdateUsersModal = ({
               }),
             ]}
           >
-            <BAISelect
-              mode="tags"
-              tokenSeparators={[',', ' ']}
-              open={false}
-              suffixIcon={null}
+            <AstryxFormTagsInput
+              label={t('credential.ContainerSupplementaryGIDs')}
               placeholder={t(
                 'credential.ContainerSupplementaryGIDsPlaceholder',
               )}

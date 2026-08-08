@@ -16,10 +16,10 @@ import { Alert, Popconfirm } from 'antd';
 import {
   BAIButton,
   BAIModalProps,
-  BAIVFolderSelectRef,
+  BAIVFolderSelectAstryxRef,
   BAIModal,
   BAIFlex,
-  BAIVFolderSelect,
+  BAIVFolderSelectAstryx,
   toGlobalId,
   convertToUUID,
   useBAILogger,
@@ -69,7 +69,7 @@ const ImportArtifactRevisionToFolderModal = ({
 
   const formRef =
     useRef<FormInstance<ImportArtifactRevisionToFolderModalInput>>(null);
-  const vfolderSelectRef = useRef<BAIVFolderSelectRef>(null);
+  const vfolderSelectRef = useRef<BAIVFolderSelectAstryxRef>(null);
   const [isOpenCreateModal, { toggle: toggleIsOpenCreateModal }] =
     useToggle(false);
 
@@ -257,8 +257,12 @@ const ImportArtifactRevisionToFolderModal = ({
             >
               <BAIFlex gap="xs" align="center">
                 <Form.Item name="vfolderId" noStyle>
-                  <BAIVFolderSelect
+                  <BAIVFolderSelectAstryx
                     ref={vfolderSelectRef}
+                    label={t(
+                      'importArtifactRevisionToFolderModal.FolderMountForModelStore',
+                    )}
+                    isLabelHidden
                     excludeDeleted
                     // model-store-exclusive project folders only
                     filter={mergeFilterValues([

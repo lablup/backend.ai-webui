@@ -15,7 +15,7 @@ import {
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
-  BAIUserSelect,
+  BAIUserSelectAstryx,
   INITIAL_FETCH_KEY,
   useFetchKey,
 } from 'backend.ai-ui';
@@ -156,20 +156,24 @@ const UserFolderPermissionPanelV2: React.FC<
                   type: 'uuid',
                   fixedOperator: 'equals',
                   renderInput: ({ onAddCondition }) => (
-                    <BAIUserSelect
+                    <BAIUserSelectAstryx
+                      // The filter row already prints the property label.
+                      label={t('storageHost.permission.User')}
+                      isLabelHidden
                       valuePropName="id"
                       value={null}
                       onChange={(value, option) =>
-                        // Single-select mode (no `mode` prop) always emits a
-                        // single value. Pass the option label (email) so the
-                        // condition tag stays human-readable while the UUID
+                        // Single-select mode (no `multiple` prop) always emits
+                        // a single value, so the P3C-1 `option` argument is the
+                        // single labelInValue pair. Pass its label (email) so
+                        // the condition tag stays human-readable while the UUID
                         // serializes into the GraphQL filter.
                         onAddCondition(
                           value as string | undefined,
-                          option?.label,
+                          _.castArray(option ?? [])[0]?.label,
                         )
                       }
-                      style={{ minWidth: 200 }}
+                      width={200}
                     />
                   ),
                 },

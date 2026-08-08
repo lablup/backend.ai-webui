@@ -13,6 +13,7 @@ import { Form } from '../form-engine';
 import { useCurrentUserRole } from '../hooks/backendai';
 import PrometheusCategorySelect from './PrometheusCategorySelect';
 import PrometheusQueryTemplatePreview from './PrometheusQueryTemplatePreview';
+import { AstryxFormTagsInput } from './astryx-bui/astryxFormControls';
 import { Input } from 'antd';
 import {
   BAIModal,
@@ -387,11 +388,8 @@ const PrometheusQueryPresetEditorModal: React.FC<
           label={t('prometheusQueryPreset.FilterLabels')}
           name="filterLabels"
         >
-          <BAISelect
-            mode="tags"
-            tokenSeparators={[',']}
-            notFoundContent={null}
-            suffixIcon={null}
+          <AstryxFormTagsInput
+            label={t('prometheusQueryPreset.FilterLabels')}
           />
         </Form.Item>
 
@@ -399,12 +397,7 @@ const PrometheusQueryPresetEditorModal: React.FC<
           label={t('prometheusQueryPreset.GroupLabels')}
           name="groupLabels"
         >
-          <BAISelect
-            mode="tags"
-            tokenSeparators={[',']}
-            notFoundContent={null}
-            suffixIcon={null}
-          />
+          <AstryxFormTagsInput label={t('prometheusQueryPreset.GroupLabels')} />
         </Form.Item>
       </Form>
     </BAIModal>

@@ -59,6 +59,11 @@ import { Switch } from '@astryxdesign/core/Switch';
 import { TextArea } from '@astryxdesign/core/TextArea';
 import type { TextInputProps } from '@astryxdesign/core/TextInput';
 import { TextInput } from '@astryxdesign/core/TextInput';
+import { Tokenizer } from '@astryxdesign/core/Tokenizer';
+import type {
+  SearchableItem,
+  SearchSource,
+} from '@astryxdesign/core/Typeahead';
 import type { SizeValue } from '@astryxdesign/core/utils';
 import React from 'react';
 
@@ -567,6 +572,82 @@ export const AstryxFormMultiSelector: React.FC<
       isDisabled={disabled}
       hasSearch={hasSearch}
       isLoading={isLoading}
+      width={width}
+      {...(rest as object)}
+    />
+  );
+};
+
+/**
+ * Free-tag entry has no options to search — the source is intentionally empty
+ * and `hasCreate` is what commits typed text as a new token. Module-level so
+ * the Tokenizer never sees a fresh identity per render.
+ */
+const EMPTY_TAG_SEARCH_SOURCE: SearchSource<SearchableItem> = {
+  search: () => [],
+  bootstrap: () => [],
+};
+
+export interface AstryxFormTagsInputProps {
+  /** Injected by `Form.Item`; nullable until the field is first touched. */
+  value?: string[];
+  /** Injected by `Form.Item`. */
+  onChange?: (value: string[]) => void;
+  /** Accessible name. Visually hidden — `BAIFormItem` renders the visible one. */
+  label: string;
+  placeholder?: string;
+  disabled?: boolean;
+  /** antd `allowClear` — clears every token at once. */
+  hasClear?: boolean;
+  /** antd `maxCount`. */
+  maxEntries?: number;
+  width?: SizeValue;
+  'data-testid'?: string;
+}
+
+/**
+ * Free-form chip input — antd `Select mode="tags"` (MAPPING §3.1 tags branch).
+ * The form field holds `string[]`; the Tokenizer works on `SearchableItem[]`
+ * (`{id, label}`), so the shapes are translated here.
+ *
+ * PILOT-DECISION: antd `Select mode="tags"` → Astryx `Tokenizer` with
+ * `hasCreate` over an empty search source (there are no suggestions to
+ * search). `tokenSeparators` (comma/space splitting one paste into several
+ * tags) has no Tokenizer equivalent and is dropped — tags are committed one at
+ * a time with Enter. `allowClear` → `hasClear`; `maxTagCount` (how many chips
+ * render before a "+N" collapse) is dropped — Tokenizer owns that through
+ * `tokenOverflowBehavior`. `notFoundContent` maps to nothing: the empty search
+ * source simply yields no dropdown.
+ */
+export const AstryxFormTagsInput: React.FC<AstryxFormTagsInputProps> = ({
+  value,
+  onChange,
+  label,
+  placeholder,
+  disabled,
+  hasClear,
+  maxEntries,
+  width = '100%',
+  ...rest
+}) => {
+  'use memo';
+  return (
+    <Tokenizer
+      value={(value ?? []).map((tag) => ({ id: tag, label: tag }))}
+      onChange={(items) =>
+        // antd tags mode deduplicated entries; keep that behavior.
+        onChange?.(
+          Array.from(new Set(items.map((item) => item.label))).filter(Boolean),
+        )
+      }
+      label={label}
+      isLabelHidden
+      searchSource={EMPTY_TAG_SEARCH_SOURCE}
+      hasCreate
+      hasClear={hasClear}
+      maxEntries={maxEntries}
+      placeholder={placeholder}
+      isDisabled={disabled}
       width={width}
       {...(rest as object)}
     />
