@@ -1,6 +1,6 @@
+import BAIComplexSelect, { BAILabeledValue } from './BAIComplexSelect';
 import BAIPropertyFilter from './BAIPropertyFilter';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Select } from 'antd';
 import { useState } from 'react';
 
 const meta: Meta<typeof BAIPropertyFilter> = {
@@ -21,7 +21,7 @@ const meta: Meta<typeof BAIPropertyFilter> = {
 - **Query language**: Based on Backend.AI's query filter minilang specification
 - **Custom input via \`renderInput\`**: Replace the built-in value editor with any controlled control (e.g., a user or storage-host picker). The control stages a value via \`onAddCondition(value, label?)\` and the edit popover's Apply button commits it; pass a human-readable \`label\` when the committed value is opaque (e.g. a UUID) so the token shows the label instead. Same contract as \`BAIGraphQLPropertyFilter\`, so controls are interchangeable.
 
-> **to-astryx ticket 28** — the engine is now Astryx \`PowerSearch\`. The prop contract is unchanged, but the antd chrome it documented (property \`Select\` + \`AutoComplete\` + closable \`Tag\`s + the bespoke reset button) is replaced by PowerSearch's typeahead, tokens and built-in clear. \`rule.validate\` is advisory now: a violating token is reported through the control's error status instead of being refused. These stories are refreshed in ticket 32.
+> **to-astryx ticket 28** — the engine is now Astryx \`PowerSearch\`. The prop contract is unchanged, but the antd chrome it documented (property \`Select\` + \`AutoComplete\` + closable \`Tag\`s + the bespoke reset button) is replaced by PowerSearch's typeahead, tokens and built-in clear. \`rule.validate\` is advisory now: a violating token is reported through the control's error status instead of being refused. **to-astryx ticket 32** refreshed these stories: the \`renderInput\` demo below now uses \`BAIComplexSelect\` (Astryx-native) instead of antd \`Select\`, matching what a migrated call site actually renders.
 
 The component generates filter query strings that can be used with Backend.AI's query system, enabling powerful data filtering capabilities across the platform.
 
@@ -275,19 +275,17 @@ export const WithRenderInput: Story = {
         type: 'string',
         defaultOperator: '==',
         renderInput: ({ onAddCondition }) => (
-          <Select
-            showSearch
+          <BAIComplexSelect
+            label="Owner"
+            isLabelHidden
             placeholder="Select owner"
-            style={{ minWidth: 220 }}
-            value={null}
-            optionFilterProp="label"
+            width={220}
             options={sampleOwnerOptions}
-            onChange={(next) =>
-              onAddCondition(
-                next ?? undefined,
-                sampleOwnerOptions.find((o) => o.value === next)?.label,
-              )
-            }
+            value={null}
+            onChange={(next) => {
+              const labeled = next as BAILabeledValue | null;
+              onAddCondition(labeled?.value, labeled?.label);
+            }}
           />
         ),
       },

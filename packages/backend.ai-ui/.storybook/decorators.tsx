@@ -1,12 +1,15 @@
 import { BAIAppProvider } from '../src/app-shim';
 import BAIText from '../src/components/BAIText';
+import BAIConfigProvider from '../src/components/provider/BAIConfigProvider/BAIConfigProvider';
 import { i18n } from '../src/locale';
 import { ThemeShimProvider } from '../src/theme-shim';
+import { astryxBrandTheme } from './astryxBrandTheme';
 import { getAntdLocale } from './localeConfig';
 import { themeConfigs, type ThemeStyle } from './themeConfig';
+import { Theme as AstryxThemeProvider } from '@astryxdesign/core/theme';
 import type { Decorator } from '@storybook/react-vite';
 import { useDarkMode } from '@vueless/storybook-dark-mode';
-import { ConfigProvider, Skeleton, theme } from 'antd';
+import { Skeleton, theme } from 'antd';
 import dayjs from 'dayjs';
 import 'dayjs/locale/de';
 import 'dayjs/locale/el';
@@ -83,45 +86,20 @@ const GlobalConfigProvider: React.FC<StorybookProviderProps> = ({
     {};
 
   return (
-    <ConfigProvider
-      locale={antdLocale}
-      theme={{
-        ...(isDarkMode ? currentThemeConfig.dark : currentThemeConfig.light),
-        algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
-      }}
-      {...(isWebUIStyle && {
-        modal: {
-          mask: { blur: false },
-        },
-        drawer: {
-          mask: { blur: false },
-        },
-        tag: {
-          variant: 'outlined',
-        },
-        form: {
-          requiredMark: (label, { required }) => (
-            <>
-              {label}
-              {!required && (
-                <BAIText
-                  type="secondary"
-                  style={{
-                    marginLeft: token.marginXXS,
-                    wordBreak: 'keep-all',
-                  }}
-                >
-                  {`(${t('general.Optional')})`}
-                </BAIText>
-              )}
-            </>
-          ),
-        },
-      })}
+    // Astryx brand theme (ticket 32, mirrors the app's always-on
+    // `AstryxBrandTheme` — see DefaultProviders.tsx). Mounted unconditionally
+    // (not gated by the antd-only "Theme Style" toolbar below) so
+    // Astryx-native components (BAITableAstryx, BAIComplexSelect,
+    // PowerSearch, …) render the real Backend.AI palette instead of Astryx's
+    // theme-neutral default, in both light and dark.
+    <AstryxThemeProvider
+      theme={astryxBrandTheme}
+      mode={isDarkMode ? 'dark' : 'light'}
     >
-      {/* Astryx theme shim (ticket 10): BUI components read tokens from
-          ThemeShimProvider now, so mirror the story's mode/seeds here —
-          without it stories would fall back to light-mode default seeds. */}
+      {/* Astryx theme shim (ticket 10): BUI's legacy antd-consuming
+          components read tokens from ThemeShimProvider, so mirror the
+          story's mode/seeds here — without it they'd fall back to
+          light-mode default seeds. */}
       <ThemeShimProvider
         mode={isDarkMode ? 'dark' : 'light'}
         seeds={{
@@ -134,14 +112,60 @@ const GlobalConfigProvider: React.FC<StorybookProviderProps> = ({
           fontFamily: seedToken.fontFamily,
         }}
       >
-        {/* App.useApp shim (ticket 11): stories exercising imperative
-            message/modal flows read the shim's toast/dialog host from here
-            (replaces the per-story antd <App> wrappers). */}
-        <BAIAppProvider>
-          <ThemedContainer>{children}</ThemedContainer>
-        </BAIAppProvider>
+        {/* BAIConfigProvider (ticket 30): the real production wrapper —
+            antd ConfigProvider + Astryx InternationalizationProvider, both
+            driven from the same locale/theme so Astryx chrome strings and
+            plurals follow the story's locale instead of sitting on the
+            'en' context default (P13). */}
+        <BAIConfigProvider
+          locale={{ lang: locale, antdLocale }}
+          theme={{
+            ...(isDarkMode
+              ? currentThemeConfig.dark
+              : currentThemeConfig.light),
+            algorithm: isDarkMode
+              ? theme.darkAlgorithm
+              : theme.defaultAlgorithm,
+          }}
+          {...(isWebUIStyle && {
+            modal: {
+              mask: { blur: false },
+            },
+            drawer: {
+              mask: { blur: false },
+            },
+            tag: {
+              variant: 'outlined',
+            },
+            form: {
+              requiredMark: (label, { required }) => (
+                <>
+                  {label}
+                  {!required && (
+                    <BAIText
+                      type="secondary"
+                      style={{
+                        marginLeft: token.marginXXS,
+                        wordBreak: 'keep-all',
+                      }}
+                    >
+                      {`(${t('general.Optional')})`}
+                    </BAIText>
+                  )}
+                </>
+              ),
+            },
+          })}
+        >
+          {/* App.useApp shim (ticket 11): stories exercising imperative
+              message/modal flows read the shim's toast/dialog host from here
+              (replaces the per-story antd <App> wrappers). */}
+          <BAIAppProvider>
+            <ThemedContainer>{children}</ThemedContainer>
+          </BAIAppProvider>
+        </BAIConfigProvider>
       </ThemeShimProvider>
-    </ConfigProvider>
+    </AstryxThemeProvider>
   );
 };
 
