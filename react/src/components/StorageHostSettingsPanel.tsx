@@ -6,7 +6,7 @@ import { StorageHostSettingsPanel_storageVolumeFrgmt$key } from '../__generated_
 import { QuotaScopeType, addQuotaScopeTypePrefix } from '../helper/index';
 import BAIRadioGroup from './BAIRadioGroup';
 import QuotaScopeTable from './QuotaScopeTable';
-import { Skeleton } from 'antd';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import { BAIAdminProjectSelect, BAIFlex, BAIUserSelect } from 'backend.ai-ui';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -81,7 +81,7 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
         )}
       </BAIFlex>
 
-      <Suspense fallback={<Skeleton active />}>
+      <Suspense fallback={<BAISkeletonAstryx />}>
         <QuotaScopeTable scopeId={scopeId} hostName={storageVolume?.id ?? ''} />
       </Suspense>
     </BAIFlex>

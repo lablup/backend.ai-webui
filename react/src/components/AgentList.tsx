@@ -14,16 +14,18 @@ import { theme } from '../theme-shim';
 import AgentDetailDrawer from './AgentDetailDrawer';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import BAIRadioGroup from './BAIRadioGroup';
+import { Badge } from '@astryxdesign/core/Badge';
 import { useControllableValue } from 'ahooks';
-import { type TableProps, Tag } from 'antd';
 import {
   BAIFlex,
   BAIPropertyFilter,
   BAIFlexProps,
+  BAITableProps,
   INITIAL_FETCH_KEY,
   mergeFilterValues,
   BAIColumnType,
   BAIDoubleTag,
+  badgeVariantForStatus,
   filterOutEmpty,
   AgentNodeInList,
   BAIAgentTable,
@@ -40,7 +42,11 @@ type Agent = NonNullable<
 >['node'];
 
 interface AgentListProps {
-  tableProps?: Omit<TableProps, 'dataSource'>;
+  // BAITable itself still wraps antd Table internally (ticket 25 territory,
+  // unconverted) so its prop key remains `dataSource`, not `data` — only the
+  // direct `import { TableProps } from 'antd'` type-only import (MAPPING §6)
+  // is removed here in favor of BUI's forwarding type.
+  tableProps?: Omit<BAITableProps<AgentNodeInList>, 'dataSource'>;
   headerProps?: BAIFlexProps;
   fetchKey?: string;
   onChangeFetchKey?: (key: string) => void;
@@ -183,7 +189,14 @@ const AgentList: React.FC<AgentListProps> = ({
               ]}
             />
           ) : (
-            <Tag color={color}>{platform}</Tag>
+            // antd Tag → Badge (MAPPING §3.5), color routed through the
+            // repo-global `cloudPlatform` domain lookup (ticket 13) instead
+            // of the local platformData color map (kept above for
+            // BAIDoubleTag, a still-antd frontier component).
+            <Badge
+              variant={badgeVariantForStatus('cloudPlatform', platform)}
+              label={platform}
+            />
           )}
         </BAIFlex>
       );

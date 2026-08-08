@@ -8,7 +8,7 @@ import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { theme } from '../theme-shim';
-import { Typography } from 'antd';
+import { Text } from '@astryxdesign/core/Text';
 import {
   BAIFlex,
   BAIModal,
@@ -147,7 +147,7 @@ const AgentLifeCycleControlModal: React.FC<AgentLifeCycleControlModalProps> = ({
       width={400}
     >
       <BAIFlex direction="column" align="stretch" gap="xs">
-        <Typography.Text>{t('agent.WatcherActionWarning')}</Typography.Text>
+        <Text>{t('agent.WatcherActionWarning')}</Text>
         <div
           role="list"
           style={{

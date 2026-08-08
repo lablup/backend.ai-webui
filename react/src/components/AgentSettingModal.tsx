@@ -10,7 +10,9 @@ import { AgentSettingModalMutation } from '../__generated__/AgentSettingModalMut
 import { AgentSettingModalQuery } from '../__generated__/AgentSettingModalQuery.graphql';
 import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { Form, type FormInstance, Switch } from 'antd';
+import BAIFormItem from './BAIFormItem';
+import { AstryxFormSwitch } from './astryx-bui/astryxFormControls';
+import { Form, type FormInstance } from 'antd';
 import {
   BAIAdminResourceGroupSelect,
   BAIModal,
@@ -137,22 +139,22 @@ const AgentSettingModal: React.FC<AgentSettingModalProps> = ({
         initialValues={{ ...agent }}
       >
         {baiClient?.supports('admin-resource-group-select') && (
-          <Form.Item
+          <BAIFormItem
             name="scaling_group"
             label={t('agent.ResourceGroup')}
             required={true}
           >
             <BAIAdminResourceGroupSelect queryRef={queryRef} />
-          </Form.Item>
+          </BAIFormItem>
         )}
-        <Form.Item
+        <BAIFormItem
           name="schedulable"
           label={t('agent.Schedulable')}
           valuePropName="checked"
           required={true}
         >
-          <Switch />
-        </Form.Item>
+          <AstryxFormSwitch label={t('agent.Schedulable')} />
+        </BAIFormItem>
       </Form>
     </BAIModal>
   );

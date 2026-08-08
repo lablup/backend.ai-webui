@@ -4,13 +4,22 @@
  */
 import { StorageHostDetailDrawerFragment$key } from '../__generated__/StorageHostDetailDrawerFragment.graphql';
 import StorageHostDetailDrawerContent from './StorageHostDetailDrawerContent';
-import { Drawer, type DrawerProps, Skeleton } from 'antd';
+import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
+import { Heading } from '@astryxdesign/core/Heading';
+import { HStack, VStack } from '@astryxdesign/core/Stack';
+import { Drawer } from '@astryxdesign/lab';
 import { BAIFetchKeyButton } from 'backend.ai-ui';
 import { Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
-interface StorageHostDetailDrawerProps extends Omit<DrawerProps, 'title'> {
+// PILOT-DECISION: no longer extends antd `DrawerProps` (P1 grep — the only
+// consumer, StorageProxyList, passes `open`/`storageVolumeFrgmt`/
+// `onRefetchParentList`/`onRequestClose`). antd `Drawer` → lab `Drawer`
+// (MAPPING §2 LAB), same shape as the AgentDetailDrawer/
+// DeploymentRevisionDetailDrawer precedent (ticket 18): `open`→`isOpen`.
+interface StorageHostDetailDrawerProps {
+  open?: boolean;
   storageVolumeFrgmt?: StorageHostDetailDrawerFragment$key | null;
   /**
    * Callback to refetch the parent list query. The detail drawer reads the
@@ -24,10 +33,10 @@ interface StorageHostDetailDrawerProps extends Omit<DrawerProps, 'title'> {
 }
 
 const StorageHostDetailDrawer: React.FC<StorageHostDetailDrawerProps> = ({
+  open = false,
   storageVolumeFrgmt,
   onRefetchParentList,
   onRequestClose,
-  ...drawerProps
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -51,25 +60,32 @@ const StorageHostDetailDrawer: React.FC<StorageHostDetailDrawerProps> = ({
 
   return (
     <Drawer
-      title={t('storageHost.StorageHostInfo')}
+      isOpen={open}
+      onClose={() => onRequestClose?.()}
+      side="end"
       size={900}
-      onClose={onRequestClose}
-      {...drawerProps}
-      extra={
-        <BAIFetchKeyButton
-          loading={isPendingRefetch}
-          value=""
-          onChange={refreshAll}
-        />
-      }
+      label={t('storageHost.StorageHostInfo')}
     >
-      <Suspense fallback={<Skeleton active />}>
-        {storageVolume?.storageVolumeFrgmt ? (
-          <StorageHostDetailDrawerContent
-            storageVolumeFrgmt={storageVolume.storageVolumeFrgmt}
+      {/* lab Drawer renders flush to the panel edges; reproduce the antd
+          Drawer's 24px body padding with the spacing-6 token (ticket 18
+          precedent). */}
+      <VStack gap={4} align="stretch" style={{ padding: 'var(--spacing-6)' }}>
+        <HStack gap={2} align="center" justify="between">
+          <Heading level={5}>{t('storageHost.StorageHostInfo')}</Heading>
+          <BAIFetchKeyButton
+            loading={isPendingRefetch}
+            value=""
+            onChange={refreshAll}
           />
-        ) : null}
-      </Suspense>
+        </HStack>
+        <Suspense fallback={<BAISkeletonAstryx />}>
+          {storageVolume?.storageVolumeFrgmt ? (
+            <StorageHostDetailDrawerContent
+              storageVolumeFrgmt={storageVolume.storageVolumeFrgmt}
+            />
+          ) : null}
+        </Suspense>
+      </VStack>
     </Drawer>
   );
 };

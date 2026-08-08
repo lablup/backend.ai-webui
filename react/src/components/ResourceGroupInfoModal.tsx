@@ -5,7 +5,12 @@
 import { ResourceGroupInfoModalFragment$key } from '../__generated__/ResourceGroupInfoModalFragment.graphql';
 import { theme } from '../theme-shim';
 import { ScalingGroupOpts } from './ResourceGroupList';
-import { Descriptions, Tag, Typography } from 'antd';
+import { Badge } from '@astryxdesign/core/Badge';
+import {
+  MetadataList,
+  MetadataListItem,
+} from '@astryxdesign/core/MetadataList';
+import { Text } from '@astryxdesign/core/Text';
 import { BAIModal, BAIModalProps, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Check, X } from 'lucide-react';
@@ -59,126 +64,119 @@ const ResourceGroupInfoModal: React.FC<ResourceGroupInfoModalProps> = ({
       centered
       {...modalProps}
     >
-      <Descriptions
-        column={1}
-        size="small"
-        title={t('resourceGroup.Information')}
-        labelStyle={{ width: '50%' }}
-      >
-        <Descriptions.Item label={t('resourceGroup.Name')}>
-          {resourceGroup?.name}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('resourceGroup.Description')}>
-          {resourceGroup?.description || '-'}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('resourceGroup.Active')}>
-          {resourceGroup?.is_active ? (
-            <Check style={{ color: token.colorSuccess }} size="1em" />
-          ) : (
-            <X style={{ color: token.colorTextSecondary }} size="1em" />
-          )}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('resourceGroup.Public')}>
-          {resourceGroup?.is_public ? (
-            <Check style={{ color: token.colorSuccess }} size="1em" />
-          ) : (
-            <X style={{ color: token.colorTextSecondary }} size="1em" />
-          )}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('resourceGroup.Driver')}>
-          {resourceGroup?.driver}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('resourceGroup.Scheduler')}>
-          {_.toUpper(resourceGroup?.scheduler ?? '')}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('resourceGroup.AppProxyAddress')}>
-          {resourceGroup?.wsproxy_addr || '-'}
-        </Descriptions.Item>
-      </Descriptions>
-      <br />
-      <Descriptions
-        column={1}
-        size="small"
-        title={t('resourceGroup.SchedulerOptions')}
-        labelStyle={{ width: '50%' }}
-      >
-        <Descriptions.Item label={t('resourceGroup.AllowedSessionTypes')}>
-          <BAIFlex
-            wrap="wrap"
-            direction="row"
-            gap={'xs'}
-            style={{
-              width: '100%',
-            }}
+      {/* antd Descriptions column={1} size="small" title labelStyle →
+          MetadataList (MAPPING §4). `size`/`labelStyle` drop; `title` is
+          natively supported. The three blocks are separated by BAIFlex gap
+          instead of a bare `<br/>`. */}
+      <BAIFlex direction="column" align="stretch" gap="md">
+        <MetadataList
+          title={t('resourceGroup.Information')}
+          label={{ position: 'start', width: '50%' }}
+        >
+          <MetadataListItem label={t('resourceGroup.Name')}>
+            {resourceGroup?.name}
+          </MetadataListItem>
+          <MetadataListItem label={t('resourceGroup.Description')}>
+            {resourceGroup?.description || '-'}
+          </MetadataListItem>
+          <MetadataListItem label={t('resourceGroup.Active')}>
+            {resourceGroup?.is_active ? (
+              <Check style={{ color: token.colorSuccess }} size="1em" />
+            ) : (
+              <X style={{ color: token.colorTextSecondary }} size="1em" />
+            )}
+          </MetadataListItem>
+          <MetadataListItem label={t('resourceGroup.Public')}>
+            {resourceGroup?.is_public ? (
+              <Check style={{ color: token.colorSuccess }} size="1em" />
+            ) : (
+              <X style={{ color: token.colorTextSecondary }} size="1em" />
+            )}
+          </MetadataListItem>
+          <MetadataListItem label={t('resourceGroup.Driver')}>
+            {resourceGroup?.driver}
+          </MetadataListItem>
+          <MetadataListItem label={t('resourceGroup.Scheduler')}>
+            {_.toUpper(resourceGroup?.scheduler ?? '')}
+          </MetadataListItem>
+          <MetadataListItem label={t('resourceGroup.AppProxyAddress')}>
+            {resourceGroup?.wsproxy_addr || '-'}
+          </MetadataListItem>
+        </MetadataList>
+        <MetadataList
+          title={t('resourceGroup.SchedulerOptions')}
+          label={{ position: 'start', width: '50%' }}
+        >
+          <MetadataListItem label={t('resourceGroup.AllowedSessionTypes')}>
+            <BAIFlex
+              wrap="wrap"
+              direction="row"
+              gap={'xs'}
+              style={{
+                width: '100%',
+              }}
+            >
+              {_.map(schedulerOpts?.allowed_session_types, (value) => {
+                return (
+                  <Badge
+                    key={value}
+                    variant="neutral"
+                    label={_.startCase(value)}
+                  />
+                );
+              })}
+            </BAIFlex>
+          </MetadataListItem>
+          <MetadataListItem label={t('resourceGroup.PendingTimeout')}>
+            {!_.isNil(schedulerOpts?.pending_timeout) ? (
+              <BAIFlex gap={'xxs'} align="end">
+                <Text>
+                  {`${schedulerOpts.pending_timeout}
+                ${t('resourceGroup.TimeoutSeconds')}`}
+                </Text>
+                {!schedulerOpts?.pending_timeout ? (
+                  <Text color="secondary" size="xsm">
+                    {`(${t('general.Disabled')})`}
+                  </Text>
+                ) : null}
+              </BAIFlex>
+            ) : (
+              '-'
+            )}
+          </MetadataListItem>
+          <MetadataListItem label={t('resourceGroup.RetriesToSkipDesc')}>
+            {schedulerOpts?.config?.num_retries_to_skip
+              ? `${schedulerOpts.config.num_retries_to_skip} ${t('resourceGroup.RetriesToSkip')}`
+              : '-'}
+          </MetadataListItem>
+        </MetadataList>
+        {/* FIXME: Currently, the driver options feature is unimplemented. After the feature is implemented,
+        it should be changed to show each type instead of the map type. */}
+        {!_.isEmpty(driverOpts) ? (
+          <MetadataList
+            title={t('resourceGroup.DriverOptions')}
+            label={{ position: 'start', width: '50%' }}
           >
-            {_.map(schedulerOpts?.allowed_session_types, (value) => {
+            {_.map(driverOpts, (value, key) => {
               return (
-                <Tag
-                  key={value}
-                  style={{
-                    margin: 0,
-                  }}
-                >
-                  {_.startCase(value)}
-                </Tag>
+                <MetadataListItem key={key} label={_.startCase(key)}>
+                  {_.isArray(value) ? (
+                    <BAIFlex direction="column">
+                      {_.map(value, (item) => {
+                        return (
+                          <Badge key={item} variant="neutral" label={item} />
+                        );
+                      })}
+                    </BAIFlex>
+                  ) : (
+                    value
+                  )}
+                </MetadataListItem>
               );
             })}
-          </BAIFlex>
-        </Descriptions.Item>
-        <Descriptions.Item label={t('resourceGroup.PendingTimeout')}>
-          {!_.isNil(schedulerOpts?.pending_timeout) ? (
-            <BAIFlex gap={'xxs'} align="end">
-              <Typography.Text>
-                {`${schedulerOpts.pending_timeout}
-                ${t('resourceGroup.TimeoutSeconds')}`}
-              </Typography.Text>
-              {!schedulerOpts?.pending_timeout ? (
-                <Typography.Text
-                  style={{
-                    color: token.colorTextSecondary,
-                    fontSize: token.fontSizeSM,
-                  }}
-                >
-                  {`(${t('general.Disabled')})`}
-                </Typography.Text>
-              ) : null}
-            </BAIFlex>
-          ) : (
-            '-'
-          )}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('resourceGroup.RetriesToSkipDesc')}>
-          {schedulerOpts?.config?.num_retries_to_skip
-            ? `${schedulerOpts.config.num_retries_to_skip} ${t('resourceGroup.RetriesToSkip')}`
-            : '-'}
-        </Descriptions.Item>
-      </Descriptions>
-      {/* FIXME: Currently, the driver options feature is unimplemented. After the feature is implemented,
-      it should be changed to show each type instead of the map type. */}
-      {!_.isEmpty(driverOpts) ? (
-        <Descriptions
-          column={1}
-          size="small"
-          title={t('resourceGroup.DriverOptions')}
-          labelStyle={{ width: '50%' }}
-        >
-          {_.map(driverOpts, (value, key) => {
-            return (
-              <Descriptions.Item key={key} label={_.startCase(key)}>
-                {_.isArray(value) ? (
-                  <BAIFlex direction="column">
-                    {_.map(value, (item) => {
-                      return <Tag key={item}>{item}</Tag>;
-                    })}
-                  </BAIFlex>
-                ) : (
-                  value
-                )}
-              </Descriptions.Item>
-            );
-          })}
-        </Descriptions>
-      ) : null}
+          </MetadataList>
+        ) : null}
+      </BAIFlex>
     </BAIModal>
   );
 };

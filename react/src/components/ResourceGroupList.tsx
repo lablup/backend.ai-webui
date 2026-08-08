@@ -17,14 +17,15 @@ import BAIRadioGroup from './BAIRadioGroup';
 import ResourceGroupInfoModal from './ResourceGroupInfoModal';
 import ResourceGroupSettingModal from './ResourceGroupSettingModal';
 import UpdateResourceGroupsModal from './UpdateResourceGroupsModal';
+import { Badge } from '@astryxdesign/core/Badge';
+import { IconButton } from '@astryxdesign/core/IconButton';
 import { useToggle } from 'ahooks';
-import { Tag, Tooltip } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
 import {
   useUpdatableState,
   filterOutEmpty,
   filterOutNullAndUndefined,
   BAIButton,
+  BAIColumnsType,
   BAITable,
   BAIFlex,
   BAIDeleteConfirmModal,
@@ -152,7 +153,7 @@ const ResourceGroupList: React.FC = () => {
       }
     `);
 
-  const columns: ColumnsType<ResourceGroup> = filterOutEmpty([
+  const columns: BAIColumnsType<ResourceGroup> = filterOutEmpty([
     {
       key: 'name',
       title: t('resourceGroup.Name'),
@@ -298,9 +299,7 @@ const ResourceGroupList: React.FC = () => {
         return proxies.length > 0 ? (
           <BAIFlex gap="xxs" wrap="wrap">
             {_.map(proxies, (proxy) => (
-              <Tag key={proxy} color="blue">
-                {proxy}
-              </Tag>
+              <Badge key={proxy} variant="blue" label={proxy} />
             ))}
           </BAIFlex>
         ) : (
@@ -357,12 +356,14 @@ const ResourceGroupList: React.FC = () => {
                 count={selectedRowKeys.length}
                 onClearSelection={() => setSelectedRowKeys([])}
               />
-              <Tooltip title={t('general.BulkEdit')}>
-                <BAIButton
-                  icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
-                  onClick={() => setOpenSFTPModal(true)}
-                />
-              </Tooltip>
+              {/* antd Tooltip + icon-only BAIButton → IconButton with its own
+                  `tooltip` (ticket 15/18 idiom: never-disabled icon trigger). */}
+              <IconButton
+                icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
+                label={t('general.BulkEdit')}
+                tooltip={t('general.BulkEdit')}
+                onClick={() => setOpenSFTPModal(true)}
+              />
             </BAIFlex>
           )}
           <BAIFetchKeyButton

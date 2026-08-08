@@ -9,8 +9,8 @@ import {
 import { UserFolderPermissionPanelV2_storageVolumeFrgmt$key } from '../__generated__/UserFolderPermissionPanelV2_storageVolumeFrgmt.graphql';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import KeypairResourcePolicyStoragePermissionTableV2 from './KeypairResourcePolicyStoragePermissionTableV2';
+import { Banner } from '@astryxdesign/core/Banner';
 import {
-  BAIAlert,
   BAICard,
   BAIFetchKeyButton,
   BAIFlex,
@@ -130,10 +130,9 @@ const UserFolderPermissionPanelV2: React.FC<
 
   return (
     <BAIFlex direction="column" align="stretch" gap="md">
-      <BAIAlert
-        type="info"
-        showIcon
-        description={t('storageHost.permission.UserFolderPermissionsNote')}
+      <Banner
+        status="info"
+        title={t('storageHost.permission.UserFolderPermissionsNote')}
       />
 
       <BAICard

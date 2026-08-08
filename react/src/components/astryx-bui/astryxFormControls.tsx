@@ -29,6 +29,7 @@
  (P1: never narrow from memory) and extended per consumer as pages migrate.
 */
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
+import { MultiSelector } from '@astryxdesign/core/MultiSelector';
 import { NumberInput } from '@astryxdesign/core/NumberInput';
 import { Selector } from '@astryxdesign/core/Selector';
 import { Switch } from '@astryxdesign/core/Switch';
@@ -220,6 +221,66 @@ export const AstryxFormSelector: React.FC<AstryxFormSelectorProps> = ({
   return (
     <Selector
       value={value}
+      onChange={(next) => onChange?.(next)}
+      label={label}
+      isLabelHidden
+      options={options}
+      placeholder={placeholder}
+      isDisabled={disabled}
+      hasSearch={hasSearch}
+      isLoading={isLoading}
+      width={width}
+      {...(rest as object)}
+    />
+  );
+};
+
+export interface AstryxFormMultiSelectorOption {
+  value: string;
+  label: string;
+  description?: string;
+  isDisabled?: boolean;
+}
+
+export interface AstryxFormMultiSelectorProps {
+  /** Injected by `Form.Item`; antd `Select mode="multiple"` also nullable
+   *  until first touch. */
+  value?: string[];
+  onChange?: (value: string[]) => void;
+  label: string;
+  options: Array<AstryxFormMultiSelectorOption>;
+  placeholder?: string;
+  disabled?: boolean;
+  hasSearch?: boolean;
+  isLoading?: boolean;
+  width?: SizeValue;
+  'data-testid'?: string;
+}
+
+/**
+ * Static-options multi-select (MAPPING §3.1 `mode="multiple"` branch,
+ * ticket 20 addition — no prior Form-bound multi-select adapter existed).
+ * Relay / infinite-scroll multi-selects are NOT this — those stay on the BUI
+ * frontier until the ComplexSelector rebuild (tickets 26/27).
+ */
+export const AstryxFormMultiSelector: React.FC<
+  AstryxFormMultiSelectorProps
+> = ({
+  value,
+  onChange,
+  label,
+  options,
+  placeholder,
+  disabled,
+  hasSearch,
+  isLoading,
+  width = '100%',
+  ...rest
+}) => {
+  'use memo';
+  return (
+    <MultiSelector
+      value={value ?? []}
       onChange={(next) => onChange?.(next)}
       label={label}
       isLabelHidden
