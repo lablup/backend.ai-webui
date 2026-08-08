@@ -1,0 +1,20 @@
+{
+  "keypair_initialRows": 10,
+  "keypair_rowsAfterScroll": [20, 30, 35, 35],
+  "keypair_pageFetches": ["0/10", "10/10", "20/10", "30/10"],
+  "keypair_valueAfterKeyboardEnter": "\"PROBEKEY002\"",
+  "keypairDark_initialRows": 10,
+  "keypairDark_rowsAfterScroll": [20, 30, 35, 35],
+  "keypairDark_pageFetches": ["0/10", "10/10", "20/10", "30/10"],
+  "keypairDark_valueAfterKeyboardEnter": "\"PROBEKEY002\"",
+  "project_initialRows": 10,
+  "project_rowsAfterScroll": [20, 24, 24, 24],
+  "project_pageFetches": ["0/10", "10/10", "20/10"],
+  "project_valueAfterKeyboardEnter": "\"00000000-0000-0000-0000-000000000002\"",
+  "projectDark_initialRows": 10,
+  "projectDark_rowsAfterScroll": [20, 24, 24, 24],
+  "projectDark_pageFetches": ["0/10", "10/10", "20/10"],
+  "projectDark_valueAfterKeyboardEnter": "\"00000000-0000-0000-0000-000000000002\"",
+  "pageErrors": [],
+  "consoleWarnings_note": "Relay mock-environment warning 'Payload did not contain a value for field `id: id`' fired repeatedly for the keypair (KeyPair, non-Node type) mock responses. Benign — the mock resolver's payload matches the query's own selection set exactly; this is relay-test-utils' normalizer noting KeyPair has no `id` field to key on, not a component defect. All measured values (row counts, page offsets, keyboard-selected value) are correct."
+}
