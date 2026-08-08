@@ -147,7 +147,7 @@ test.describe.serial(
       // 8. Verify a validation error appears for the Role Name field.
       // Scope to the modal's form error area for reliability.
       await expect(
-        modal.locator('[data-bai-form-item-explain-error]').filter({
+        modal.locator('.ant-form-item-explain-error').filter({
           hasText: /Please enter Role Name/i,
         }),
       ).toBeVisible({ timeout: 10000 });

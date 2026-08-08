@@ -9,9 +9,15 @@
  once against antd's `Form` and once against the engine, so "the replacement
  behaves like the thing it replaces" is asserted rather than asserted-about.
  Keeping the antd row green is deliberate: it proves the tests describe antd
- rather than the engine, and it stays as the oracle until antd is uninstalled
- (ticket 35), at which point the `antd` row is dropped and the `engine` row
- becomes a plain regression suite.
+ rather than the engine, and it stays as the oracle until antd is uninstalled,
+ at which point the `antd` row is dropped and the `engine` row becomes a plain
+ regression suite.
+
+ STATUS (2026-08-08): the engine is PARKED — the `form-engine` alias forwards
+ to antd, so the app runs antd's engine and antd's `Form.Item` visuals. The
+ `antd` row is therefore the row that describes production. The `engine` row
+ stays green so the parked implementation does not rot, and so re-enabling it
+ later is a one-line alias flip rather than an archaeology exercise.
 
  Rules for editing this file:
    - Assert through the FormInstance API and rendered TEXT only. Any assertion
@@ -21,7 +27,13 @@
      two implementations agree on the default templates, but pinning generated
      English here would make the suite a locale test.
  */
-import { Form as EngineForm } from '../form-engine';
+// The engine is reached DIRECTLY, not through `../form-engine`. That alias
+// forwards to antd since the 2026-08-08 revert (see the banner in
+// `packages/backend.ai-ui/src/form-engine/engine.ts`); importing the engine
+// through it would silently run the suite against antd twice. The relative
+// path across the workspace boundary is deliberate — BUI's public index does
+// not re-export the parked engine, and this is its only consumer.
+import { Form as EngineForm } from '../../../packages/backend.ai-ui/src/form-engine/engine';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Form as AntdForm } from 'antd';

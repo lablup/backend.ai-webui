@@ -59,8 +59,9 @@ import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import * as stylex from '@stylexjs/stylex';
 import { useDebounceFn, useToggle } from 'ahooks';
-// FRONTIER (ticket 17): the Form ENGINE moved off antd in ticket 34 — this
-// page was its primary acceptance target. The CONTROLS inside the items
+// FRONTIER (ticket 17): the Form ENGINE is antd's. Ticket 34 replaced it with
+// a self-hosted engine — this page was its primary acceptance target — but
+// that engine is parked (see form-engine/engine.ts). The CONTROLS inside the items
 // (Checkbox/Input/InputNumber/Radio/Select/Switch) are still antd, and
 // `Steps` stays antd because the
 // Astryx Stepper lives only in `@astryxdesign/lab@canary`, which is not yet a

@@ -32,7 +32,8 @@ import ResourcePresetSelect from '../ResourcePresetSelect';
 import RemainingMark from './RemainingMark';
 import SharedMemoryFormItems from './SharedMemoryFormItems';
 // FRONTIER (ticket 17): the launcher's form-visual core. The Form engine and
-// Form.Item are self-hosted since ticket 34; the CONTROLS and chrome below
+// Form.Item are antd's — ticket 34's self-hosted engine is parked (see
+// form-engine/engine.ts) — and the CONTROLS and chrome below
 // (Button / Card / Col / Radio / Row / Tooltip) are the remaining antd
 // surface of the Sessions page-group migration.
 import { Button, Card, Col, Radio, Row, Tooltip } from 'antd';

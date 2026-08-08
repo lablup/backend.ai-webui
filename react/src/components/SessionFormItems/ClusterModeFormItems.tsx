@@ -10,8 +10,8 @@ import { RemainingSlots } from '../../hooks/useResourceLimitAndRemaining';
 import { theme } from '../../theme-shim';
 import InputNumberWithSlider from '../InputNumberWithSlider';
 import RemainingMark from './RemainingMark';
-// FRONTIER (ticket 17): the form engine is self-hosted since ticket 34;
-// `Radio` / `Tooltip` are still antd controls.
+// FRONTIER (ticket 17): the form engine is antd's (ticket 34's self-hosted
+// engine is parked); `Radio` / `Tooltip` are antd controls too.
 import { Radio, Tooltip } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';

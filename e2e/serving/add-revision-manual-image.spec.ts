@@ -226,10 +226,10 @@ test.describe('Model Serving — Add Revision with manual image name (FR-3278)',
     // (not the version dropdown, and not a generic toast): the manual field's
     // Form.Item shows the error in its own explain-error slot.
     const manualFormItem = modal
-      .locator('[data-bai-form-item]')
+      .locator('.ant-form-item')
       .filter({ hasText: 'Image Name (Manual)' });
     await expect(
-      manualFormItem.locator('[data-bai-form-item-explain-error]'),
+      manualFormItem.locator('.ant-form-item-explain-error'),
     ).toContainText('could not be found', { timeout: 15_000 });
 
     // No revision is created for an unresolved image.

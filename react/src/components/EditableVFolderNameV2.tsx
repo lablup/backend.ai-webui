@@ -5,8 +5,8 @@
  Ticket 16 — rebuilt on Astryx. antd `Typography.Text/Title editable` is
  verdict NONE in MAPPING.md §3.4 (`editable` ×2 → self-build), so the edit
  affordance is hand-rolled: display text (Astryx `Text`/`Heading`) plus a
- pencil `IconButton`, switching to the form engine (self-hosted since
- ticket 34) with an Astryx `TextInput` while editing.
+ pencil `IconButton`, switching to the form engine (antd's — ticket 34's
+ self-hosted engine is parked) with an Astryx `TextInput` while editing.
 
  PILOT-DECISIONs:
  - The antd `editable` config object (`triggerType`, custom icons) collapses

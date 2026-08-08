@@ -2,109 +2,73 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- Public surface of the self-hosted form engine (to-astryx ticket 34).
+ `form-engine` alias — currently pointed at **antd** (user decision,
+ 2026-08-08).
 
- A DROP-IN replacement for the slice of antd's form API this repository uses.
- Migrating a call site is an import rewrite and nothing else:
+ Ticket 34's codemod rewrote every form import in the repo from `'antd'` to
+ `'../form-engine'`, so this one module decides which implementation the
+ whole application runs on:
 
-   - import { Form } from 'antd';
-   + import { Form } from '../form-engine';
+   this file re-exports antd            → antd engine + antd `Form.Item` DOM
+   this file re-exports './engine'      → self-hosted engine + BAI item shell
 
- `scripts/codemods/antd-form-to-engine.mjs` performs that rewrite; the
- resulting diff touches import statements only.
+ It re-exports antd today. The self-hosted engine in `./engine.ts` (and the
+ modules behind it) is kept in the tree, compiled and tested, but is not part
+ of any runtime path — see the parked banner at the top of `./engine.ts` for
+ the full re-enable checklist.
 
- `Form.Item` renders BAIFormItem's visual shell rather than antd's grid, so
- the 277 remaining `<Form.Item>` sites become BAI-styled without being
- edited — which is the point of ticket 05's visual/engine split.
+ Because the indirection is the only thing that changed, no call site was
+ edited to revert: `<Form>`, `<Form.Item>`, `Form.useForm()` and friends are
+ antd's again, with antd's grid/label/error DOM (`.ant-form-item*`) and antd's
+ validation timing.
+
+ Call sites that want the BAI-rendered label/error visuals ask for them
+ EXPLICITLY via `<BAIFormItem>` (`react/src/components/BAIFormItem.tsx`,
+ tickets 05 + 18–23). That component binds to antd's `Form.Item noStyle`, so
+ it too runs on the antd engine.
+
+ TWO CONSTRAINTS on what may be written here:
+
+ 1. RE-EXPORTS ONLY — never read a property off the imported binding at module
+    scope (`const FormItem = Form.Item`). Tests that replace antd wholesale
+    (`vi.mock('antd', () => ({ … }))`, e.g.
+    `react/src/components/MyResourceWithinResourceGroup.test.tsx`) get a mock
+    without `Form`; an eager property read throws while merely re-exporting is
+    lazy and costs those tests nothing. This module is pulled into almost every
+    test through the BUI barrel, so the whole suite depends on it staying lazy.
+ 2. MEASURED SURFACE — the list below is exactly the symbols the rewritten
+    files import. The engine's `Form.Item` / `Form.List` / `useForm` /
+    `useWatch` / `useFormInstance` named exports have no consumers (call sites
+    reach them off the `Form` compound component) and are deliberately absent;
+    if one is ever needed, re-export it from its antd module
+    (`antd/es/form/FormItem`, `antd/es/form/Form`, …) rather than off `Form`.
+    Engine-internal exports (`FormConfigProvider`, `FormStore`,
+    `BAIFormItemVisual`, …) have no antd counterpart at all.
  */
-import ErrorList from './ErrorList';
-import InternalForm, { FormProvider, useForm } from './Form';
-import FormItem, { useFormItemStatus } from './FormItem';
-import List from './List';
-import useWatch, { useFormInstance } from './useWatch';
+export { Form, Form as default } from 'antd';
 
-type InternalFormType = typeof InternalForm;
+// Form-item status contexts. antd ships no `exports` map, so its internal
+// modules stay reachable; routing them through this alias keeps the deep
+// import in ONE place instead of spreading it back across call sites. antd is
+// pinned at 6.5.0 — re-verify this path on any antd bump.
+export { FormItemInputContext, NoStyleItemContext } from 'antd/es/form/context';
+export type { RequiredMark } from 'antd/es/form/Form';
 
-interface FormInterface extends InternalFormType {
-  Item: typeof FormItem;
-  List: typeof List;
-  ErrorList: typeof ErrorList;
-  useForm: typeof useForm;
-  useFormInstance: typeof useFormInstance;
-  useWatch: typeof useWatch;
-  Provider: typeof FormProvider;
-}
-
-type FormItemWithStatus = typeof FormItem & {
-  useStatus: typeof useFormItemStatus;
-};
-
-(FormItem as FormItemWithStatus).useStatus = useFormItemStatus;
-
-const Form = InternalForm as FormInterface;
-Form.Item = FormItem;
-Form.List = List;
-Form.ErrorList = ErrorList;
-Form.useForm = useForm;
-Form.useFormInstance = useFormInstance;
-Form.useWatch = useWatch;
-Form.Provider = FormProvider;
-
-export default Form;
-export { Form };
-
-// Named exports, for call sites that import a piece directly.
-export {
-  FormItem,
-  List as FormList,
-  ErrorList,
-  FormProvider,
-  useForm,
-  useWatch,
-  useFormInstance,
-};
-export { default as BAIFormItem } from './FormItem';
-export {
-  default as BAIFormItemVisual,
-  type BAIFormItemVisualProps,
-} from './FormItemVisual';
-export {
-  FormConfigProvider,
-  // Consumed outside the engine: BAICheckbox reads the item's validation
-  // status, and a custom item shell can publish sub-item metas. These were
-  // deep imports out of `antd/es/form/context` before ticket 34.
-  FormItemInputContext,
-  NoStyleItemContext,
-  type FormConfig,
-  type FormItemStatusContextValue,
-  type RequiredMark,
-} from './context';
-export { FormStore } from './FormStore';
-export { defaultValidateMessages } from './messages';
-
-export type { FormProps, FormRef } from './Form';
-export type { FormItemProps } from './FormItem';
 export type {
-  ListProps as FormListProps,
-  ListField,
-  ListOperations,
-} from './List';
-export type { ErrorListProps } from './ErrorList';
-export type { WatchOptions } from './useWatch';
-export type {
+  ErrorListProps,
   FormInstance,
-  FieldData,
-  FieldError,
-  Meta,
-  NamePath,
-  InternalNamePath,
+  FormItemProps,
+  FormListFieldData as ListField,
+  FormListOperation as ListOperations,
+  FormListProps,
+  FormProps,
   Rule,
   RuleObject,
   RuleRender,
-  RuleType,
+} from 'antd/es/form';
+export type {
+  InternalNamePath,
+  NamePath,
   Store,
   StoreValue,
-  ValidateErrorEntity,
-  ValidateMessages,
-  ValidatorRule,
-} from './interface';
+} from 'antd/es/form/interface';

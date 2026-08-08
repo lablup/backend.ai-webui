@@ -9,7 +9,6 @@ import { RelayEnvironment } from '../RelayEnvironment';
 // files (import { App } from '../app-shim') read this instead.
 import { BAIAppProvider } from '../app-shim';
 import AstryxBrandTheme from '../astryx-theme/AstryxBrandTheme';
-import { FormConfigProvider } from '../form-engine';
 import { backendaiOptions } from '../global-stores';
 import { buiLanguages } from '../helper/bui-language';
 import { resolveInitialLanguage } from '../helper/resolveInitialLanguage';
@@ -369,32 +368,19 @@ export const DefaultProvidersForReactRoot: React.FC<{
                       blur: false,
                     },
                   }}
-                  tag={{
-                    variant: 'outlined',
-                  }}
-                >
-                  {/* to-astryx ticket 34 — form configuration moved off
-                      `<ConfigProvider form={{…}}>` and onto the self-hosted
-                      form engine's own provider. The two settings are the
-                      same ones antd carried:
-
-                      - `validateMessages` still comes from the antd LOCALE
-                        bundle. The engine's built-in templates are English
-                        `${name}` fallbacks; these are the localized `${label}`
-                        ones users actually see, and they stay sourced from
-                        `currentLocale` until the locale bundle itself is
-                        migrated (ticket 35).
-                      - `requiredMark` as a FUNCTION suppresses the asterisk
-                        entirely (antd's rule, reproduced in the engine) and
-                        appends "(Optional)" to non-required labels instead.
-                        That inversion is deliberate product behaviour, not a
-                        default — dropping it would put an asterisk on every
-                        required field across the app. */}
-                  <FormConfigProvider
-                    validateMessages={
-                      currentLocale.antdLocale?.Form?.defaultValidateMessages
-                    }
-                    requiredMark={(label, { required }) => (
+                  form={{
+                    // Form config lives on antd's ConfigProvider again: ticket
+                    // 34 moved it to the self-hosted engine's
+                    // <FormConfigProvider>, and that engine is parked as of
+                    // 2026-08-08 (see form-engine/engine.ts). antd owns the
+                    // form runtime, so antd's provider is the one it reads.
+                    //
+                    // Explicitly set validateMessages from the antd locale so form
+                    // validation errors always appear in the user's selected language
+                    // (antd's built-in default falls back to English otherwise).
+                    validateMessages:
+                      currentLocale.antdLocale?.Form?.defaultValidateMessages,
+                    requiredMark: (label, { required }) => (
                       <>
                         {label}
                         {!required && (
@@ -409,49 +395,52 @@ export const DefaultProvidersForReactRoot: React.FC<{
                           </BAIText>
                         )}
                       </>
-                    )}
-                  >
-                    {/*
-                     * No <I18nextProvider> wrap needed here. BUI components
-                     * resolve their translations via `useBAIi18n()` which calls
-                     * `useTranslation(undefined, { i18n: buiI18n })` — explicit
-                     * instance binding bypasses React Context entirely, so the
-                     * host's i18n Context flows through to host components
-                     * unchanged. See FR-2986 / packages/backend.ai-ui/src/hooks/
-                     * useBAIi18n.ts.
-                     */}
-                    <BAIAppProvider message={commonAppProps.message}>
-                      <BAIMetaDataProviderWrapper>
-                        <App {...commonAppProps}>
-                          {/* Single app-wide notification renderer. Lives outside
+                    ),
+                  }}
+                  tag={{
+                    variant: 'outlined',
+                  }}
+                >
+                  {/*
+                   * No <I18nextProvider> wrap needed here. BUI components
+                   * resolve their translations via `useBAIi18n()` which calls
+                   * `useTranslation(undefined, { i18n: buiI18n })` — explicit
+                   * instance binding bypasses React Context entirely, so the
+                   * host's i18n Context flows through to host components
+                   * unchanged. See FR-2986 / packages/backend.ai-ui/src/hooks/
+                   * useBAIi18n.ts.
+                   */}
+                  <BAIAppProvider message={commonAppProps.message}>
+                    <BAIMetaDataProviderWrapper>
+                      <App {...commonAppProps}>
+                        {/* Single app-wide notification renderer. Lives outside
                         the Suspense below so toasts work on every route and
                         in both anonymous and authenticated states. */}
-                          <NotificationHost />
-                          {/*
-                           * to-astryx ticket 33 removed the emotion plumbing that
-                           * used to wrap this Suspense: an @emotion/react
-                           * <CacheProvider> (nonce for `createGlobalStyle`) inside
-                           * antd-style's <StyleProvider nonce> (nonce for
-                           * `createStyles`). With the last antd-style call site
-                           * gone, no style engine injects <style> at runtime on
-                           * our behalf — the replacement rules ship as bundled
-                           * same-origin stylesheets, which `style-src 'self'`
-                           * already covers.
-                           *
-                           * antd's OWN cssinjs output still needs a nonce; that
-                           * one comes from `<ConfigProvider csp={{ nonce }}>`
-                           * above and is untouched.
-                           */}
-                          <Suspense>
-                            {/* <BrowserRouter> */}
-                            {/* <RoutingEventHandler /> */}
-                            {children}
-                            {/* </BrowserRouter> */}
-                          </Suspense>
-                        </App>
-                      </BAIMetaDataProviderWrapper>
-                    </BAIAppProvider>
-                  </FormConfigProvider>
+                        <NotificationHost />
+                        {/*
+                         * to-astryx ticket 33 removed the emotion plumbing that
+                         * used to wrap this Suspense: an @emotion/react
+                         * <CacheProvider> (nonce for `createGlobalStyle`) inside
+                         * antd-style's <StyleProvider nonce> (nonce for
+                         * `createStyles`). With the last antd-style call site
+                         * gone, no style engine injects <style> at runtime on
+                         * our behalf — the replacement rules ship as bundled
+                         * same-origin stylesheets, which `style-src 'self'`
+                         * already covers.
+                         *
+                         * antd's OWN cssinjs output still needs a nonce; that
+                         * one comes from `<ConfigProvider csp={{ nonce }}>`
+                         * above and is untouched.
+                         */}
+                        <Suspense>
+                          {/* <BrowserRouter> */}
+                          {/* <RoutingEventHandler /> */}
+                          {children}
+                          {/* </BrowserRouter> */}
+                        </Suspense>
+                      </App>
+                    </BAIMetaDataProviderWrapper>
+                  </BAIAppProvider>
                 </BAIConfigProvider>
               </ThemeShimProvider>
             </AstryxBrandTheme>

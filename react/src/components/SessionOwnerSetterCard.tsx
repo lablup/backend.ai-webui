@@ -9,7 +9,7 @@ import { useTanQuery } from '../hooks/reactQueryAlias';
 import { theme } from '../theme-shim';
 import HiddenFormItem from './HiddenFormItem';
 // FRONTIER (ticket 17): form-heavy card. `Form.useWatch` / `Form.Item` are
-// self-hosted since ticket 34; the controls below are still antd.
+// antd's (ticket 34's self-hosted engine is parked); so are the controls below.
 import {
   Button,
   Card,

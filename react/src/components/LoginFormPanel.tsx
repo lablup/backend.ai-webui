@@ -12,7 +12,8 @@
 // to-astryx ticket 04: this screen's `App.useApp()` is served by the Astryx
 // app-shim (message → Toast) instead of antd.
 import { App } from '../app-shim';
-// SHIM (MAPPING §2): the antd Form ENGINE stays until ticket 34; only its
+// SHIM (MAPPING §2): the antd Form ENGINE stays (ticket 34's replacement is
+// parked — see form-engine/engine.ts); only its
 // visual layer moves (`Form.Item` -> `BAIFormItem`, antd controls -> the
 // Astryx form-control adapters).
 import { Form, type FormInstance } from '../form-engine';

@@ -28,9 +28,10 @@ import { Heading } from '@astryxdesign/core/Heading';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Text } from '@astryxdesign/core/Text';
 import * as stylex from '@stylexjs/stylex';
-// FRONTIER (ticket 17): the Form engine moved off antd in ticket 34; the
-// CONTROLS inside the items (BAISelect tags-mode, InputNumber, Input) are
-// still antd and migrate with the remaining component tickets.
+// FRONTIER (ticket 17): the Form engine is antd's — ticket 34's self-hosted
+// replacement is parked — and so are the CONTROLS inside the items
+// (BAISelect tags-mode, InputNumber, Input), which migrate with the
+// remaining component tickets.
 import { Input, InputNumber, ModalProps } from 'antd';
 import {
   BAIFlex,

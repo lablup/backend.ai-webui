@@ -4,8 +4,9 @@
  */
 import { Form, type FormItemProps } from '../form-engine';
 import { useValidateSessionName } from '../hooks/useValidateSessionName';
-// FRONTIER (ticket 17): Form.Item is self-hosted since ticket 34; `Input` is
-// still an antd control.
+// FRONTIER (ticket 17): Form.Item is antd's again — ticket 34's self-hosted
+// engine is parked (see form-engine/engine.ts) — and `Input` is an antd
+// control too.
 import { Input } from 'antd';
 import React from 'react';
 import { useTranslation } from 'react-i18next';

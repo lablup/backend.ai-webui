@@ -13,7 +13,9 @@ export * from './icons';
 export * from './tests';
 export * from './theme-shim';
 export * from './app-shim';
-// The self-hosted form engine (ticket 34). `Form` is exported as a NAMED
-// export only — BUI has no default export — and `react/src/form-engine`
-// re-exports it for app files, mirroring app-shim / theme-shim.
-export * from './form-engine';
+// NOTE: `./form-engine` is deliberately NOT re-exported here. It is an alias
+// module — it currently forwards to antd (ticket 34's self-hosted engine is
+// parked in `./form-engine/engine.ts`, see the banner there) — and republishing
+// antd's `Form` under BUI's name would put a second, ambiguous source for
+// `Form`/`FormInstance` on BUI's public API. BUI's own components import it
+// relatively (`../form-engine`); app files use `react/src/form-engine`.
