@@ -8,6 +8,7 @@ import {
   computeThemeName,
   resolveDarkSeed,
   themeOptionsFromConfig,
+  THEME_NAME_REV,
 } from './backendAiTheme';
 import { builtBackendAiBrandTheme } from './built';
 import { resolveRoleTheme } from './resolveRoleTheme';
@@ -62,7 +63,9 @@ describe('backendAiTheme', () => {
     it('is deterministic and encodes rev/family/role', () => {
       const name = computeThemeName();
       expect(name).toBe(computeThemeName({ family: 'default', role: 'brand' }));
-      expect(name).toMatch(/^bai-r1-default-brand-h[a-z0-9]+$/);
+      expect(name).toMatch(
+        new RegExp(`^bai-r${THEME_NAME_REV}-default-brand-h[a-z0-9]+$`),
+      );
     });
 
     it('changes when any CSS-affecting seed changes (no silent first-wins)', () => {

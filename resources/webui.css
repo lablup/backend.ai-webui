@@ -9,11 +9,11 @@ body {
   --lumo-font-family: var(--token-fontFamily);
   --lumo-primary-text-color: var(--token-colorPrimary, #27824f);
   --lumo-primary-color-50pct: var(--token-colorPrimary, #27824f);
-  background-color: var(--token-colorBgBase, rgba(247, 247, 246, 1));
-}
-
-body.dark-theme {
-  background-color: #191919;
+  /* The page backdrop is owned by the token-driven rule in index.html's
+     critical <style> (`--color-background-body`, which follows `color-scheme`).
+     Declaring it here too — and especially the old mode-blind
+     `body.dark-theme { background-color: #191919 }` pair — gave the backdrop a
+     second, non-reactive owner. */
 }
 
 /* ── Splash / loading curtain (Diagonal Weave) ─────────────────────────────
@@ -32,7 +32,7 @@ body.dark-theme {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background-color: var(--token-colorBgBase, rgba(247, 247, 246, 1));
+  background-color: var(--color-background-body, light-dark(#faefe9, #180f08));
   transition: opacity 0.3s ease-out;
   font-family:
     "Ubuntu",
@@ -53,7 +53,8 @@ body.dark-theme {
 }
 
 body.dark-theme .splash {
-  background-color: #191919;
+  /* Backdrop comes from `--color-background-body` above (mode-reactive via
+     `color-scheme`); only the weave palette differs per mode. */
   /* Diagonal Weave tokens — dark */
   --splash-fg: #dcdcdc;
   --splash-line: rgba(255, 255, 255, 0.05);

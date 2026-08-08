@@ -177,6 +177,21 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
       ref={siderRef}
       collapsed={props.collapsed}
       onCollapse={(collapsed) => props.onCollapse?.(collapsed, 'clickTrigger')}
+      // The hover-revealed collapse toggle protrudes past the rail's right
+      // edge. `SideNav` clips both axes (`overflow: hidden` on the root,
+      // `overflow-x: hidden` on the scroll column), so as a CHILD its outer
+      // half was cut off. `overlay` renders it as a sibling of `SideNav`
+      // inside BAISider's positioned shell — where antd's Sider had it.
+      overlay={
+        <SiderToggleButton
+          collapsed={props.collapsed}
+          buttonTop={68}
+          onClick={(collapsed) => {
+            props.onCollapse?.(collapsed, 'clickTrigger');
+          }}
+          hidden={!gridBreakpoint.sm || !isSiderHover}
+        />
+      }
       logo={
         <img
           className="logo-wide"
@@ -293,14 +308,6 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
         )
       }
     >
-      <SiderToggleButton
-        collapsed={props.collapsed}
-        buttonTop={68}
-        onClick={(collapsed) => {
-          props.onCollapse?.(collapsed, 'clickTrigger');
-        }}
-        hidden={!gridBreakpoint.sm || !isSiderHover}
-      />
       {(!isSelectedAdminCategoryMenu || isCurrentPageUnauthorized) && (
         <BAIMenu
           hideGroupName={props.collapsed}

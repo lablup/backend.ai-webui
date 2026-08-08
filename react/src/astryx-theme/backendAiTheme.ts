@@ -64,7 +64,81 @@ import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from 'backend.ai-ui';
 export { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 1;
+export const THEME_NAME_REV = 2;
+
+/**
+ * Sidebar navigation density — THEME DEFAULTS, not per-component CSS.
+ *
+ * antd expressed this as `ConfigProvider theme.components.Menu` tokens in
+ * `BAIMenu` (`itemHeight: 40`, `itemBorderRadius: 20`, `fontSize:
+ * fontSizeLG`, item `padding-inline: token.padding`) plus a `createStyles`
+ * block for the group headers. Ticket 24 dropped that block on the reasoning
+ * that "Astryx's nav-item styling is theme-owned and its enums are closed" —
+ * correct about the enums, but the conclusion skipped the part that IS open:
+ * `defineTheme({components})` targets Astryx's semantic component keys
+ * (`side-nav-item`, `side-nav-heading`) and emits `@layer astryx-theme` CSS,
+ * which outranks the components' own `@layer astryx-base` StyleX output.
+ * So the density lands here, in the theme, exactly once — no CSS sprinkled on
+ * `BAISider`/`BAIMenu`, and every deployment/theme family inherits it.
+ *
+ * Values are the legacy antd numbers, converted where the box model differs:
+ *
+ *   antd token                      | Astryx declaration
+ *   --------------------------------|-------------------------------------
+ *   Menu.itemHeight: 40             | height: 40px   (was --size-element-md, 32px)
+ *   Menu.itemMarginBlock: 4 (antd   | marginBlock: 2px — antd's items are in
+ *     default; adjacent margins     |   normal flow so 4+4 collapsed to a
+ *     collapse -> 44px pitch)       |   44px pitch; SideNav's column is FLEX,
+ *                                   |   where margins do NOT collapse, so 2px
+ *                                   |   each side reproduces the same pitch.
+ *   Menu.itemBorderRadius: 20       | borderRadius: 20px (pill; Astryx
+ *                                   |   default is --radius-element = 8px)
+ *   Menu.fontSize: fontSizeLG (16)  | fontSize: 16px (Astryx default 14px)
+ *   item padding-inline: padding    | paddingInline: 24px — legacy put the row
+ *     (16) + itemMarginInline (16)  |   content 32px from the rail edge;
+ *                                   |   SideNav's scroll column already
+ *                                   |   contributes 8px, so 24px here lands on
+ *                                   |   the same 32px.
+ *   group title padding-top:        | side-nav-section paddingBlockStart: 20px
+ *     paddingMD (20)                |   (Astryx default is --spacing-1, 4px)
+ *
+ * NOT ported, deliberately: the group title's own `padding-left: paddingXL`,
+ * `font-weight: 500` and `colorTextDescription`. `SideNavSection` renders its
+ * title as a bare `<span>` with no `astryx-*` class, so it is not addressable
+ * from `components` — reaching it would need a raw descendant selector in
+ * `BAISider.css`, i.e. exactly the per-component patch this migration avoids.
+ * Astryx's own title treatment (`--text-supporting-size`, semibold,
+ * `--color-text-secondary`) is already within a hair of antd's, so the
+ * ticket-24 visual-values policy applies: take the Astryx default.
+ */
+const SIDE_NAV_DENSITY = {
+  // `SideNav`'s own StyleX sets `background-color: inherit` on the root AND on
+  // its sticky top/bottom bands — it assumes an `AppShell` ancestor paints the
+  // rail. Without one, `inherit` bottoms out at the page backdrop, so the rail
+  // had NO surface of its own (antd's `Layout.Sider` painted
+  // `colorBgContainer`) and, worse, the sticky footer band was see-through:
+  // scrolled menu items visibly ran underneath the terms/version block on the
+  // admin sider. Naming the surface here fixes both, for every theme family.
+  'side-nav': {
+    base: {
+      backgroundColor: 'var(--color-background-surface)',
+    },
+  },
+  'side-nav-item': {
+    base: {
+      height: '40px',
+      marginBlock: '2px',
+      paddingInline: '24px',
+      borderRadius: '20px',
+      fontSize: '16px',
+    },
+  },
+  'side-nav-section': {
+    base: {
+      paddingBlockStart: '20px',
+    },
+  },
+};
 
 export interface BrandSeedPair {
   /** Light-scheme seed, as declared in theme.json. */
@@ -259,6 +333,11 @@ export function buildBackendAiTheme(
       // The 6 antd↔Astryx value differences, pinned to antd values.
       ...ANTD_ALIGN_TOKENS,
     },
+    // Component-level theme defaults (see SIDE_NAV_DENSITY above). This is
+    // the sanctioned place for "our look differs from the Astryx default" —
+    // it deep-merges over `neutralTheme`'s own component rules and applies to
+    // every role/family theme built from this recipe.
+    components: SIDE_NAV_DENSITY,
   });
 
   themeCache.set(name, theme);
