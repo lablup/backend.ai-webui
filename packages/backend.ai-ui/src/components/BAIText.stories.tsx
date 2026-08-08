@@ -99,14 +99,6 @@ For all other props, refer to [Ant Design Typography.Text](https://ant.design/co
         defaultValue: { summary: 'false' },
       },
     },
-    editable: {
-      control: false,
-      description: 'Enable inline editing functionality',
-      table: {
-        type: { summary: 'boolean | EditConfig' },
-        defaultValue: { summary: 'false' },
-      },
-    },
     strong: {
       control: { type: 'boolean' },
       description: 'Bold text',
@@ -361,10 +353,11 @@ export const EllipsisWithCustomTooltip: Story = {
         <BAIText
           ellipsis={{
             rows: 1,
-            tooltip: {
-              title: 'Custom tooltip content',
-              placement: 'topLeft',
-            },
+            // Astryx renders the ellipsis tooltip through its own Tooltip;
+            // antd's per-tooltip `placement`/`color` overrides have no
+            // destination (to-astryx phase 3, ticket A), so only `title`
+            // survives.
+            tooltip: { title: 'Custom tooltip content' },
           }}
         >
           Text with custom tooltip configuration and placement
@@ -374,10 +367,7 @@ export const EllipsisWithCustomTooltip: Story = {
         <BAIText
           ellipsis={{
             rows: 2,
-            tooltip: {
-              title: 'This tooltip has custom styling',
-              color: 'blue',
-            },
+            tooltip: { title: 'This tooltip has custom styling' },
           }}
         >
           Multi-line text with custom colored tooltip when it overflows beyond
@@ -509,35 +499,17 @@ export const Interactive: Story = {
   name: 'InteractiveText',
   render: () => (
     <BAIFlex direction="column">
-      <BAIText
-        editable={{
-          onChange: (str) => console.log('Content changed:', str),
-        }}
-      >
-        This is an editable text (click to edit)
-      </BAIText>
-      <BAIText
-        editable={{
-          tooltip: 'Click to edit',
-          triggerType: ['icon', 'text'],
-        }}
-      >
-        Editable with custom tooltip
-      </BAIText>
-      <BAIText
-        copyable
-        editable={{
-          onChange: (str) => console.log('Content changed:', str),
-        }}
-      >
-        Both editable and copyable
+      <BAIText copyable>Click the glyph to copy this line</BAIText>
+      <BAIText copyable={{ text: 'the-full-untruncated-value' }} ellipsis>
+        A truncated value whose copy target is the full string
       </BAIText>
     </BAIFlex>
   ),
   parameters: {
     docs: {
       description: {
-        story: 'Interactive text with editable functionality.',
+        story:
+          "Interactive text. PILOT-DECISION (to-astryx phase 3, ticket A): antd's `editable` inline-edit affordance is DROPPED — Astryx has no counterpart and no production call site used it, only this story. `copyable` is kept and rebuilt on `IconButton` + `navigator.clipboard`.",
       },
     },
   },

@@ -84,4 +84,23 @@ export const astryxBrandTheme = defineTheme({
     '--font-family-heading': fontFamily,
     ...ANTD_ALIGN_TOKENS,
   },
+  // KEEP IN SYNC with `STATUS_TEXT_COLORS` in
+  // `react/src/astryx-theme/backendAiTheme.ts` (to-astryx phase 3, ticket A).
+  // `BAIText type="danger|warning|success"` renders `Text color="danger|…"`,
+  // which Astryx resolves to the `primary` StyleX baseline plus theme CSS —
+  // without these three keys the semantic types render as plain body text in
+  // Storybook while looking correct in the app, which is exactly the kind of
+  // silent divergence this mirror file exists to prevent.
+  components: {
+    text: {
+      'color:danger': { color: 'var(--color-error)' },
+      'color:warning': { color: 'var(--color-warning)' },
+      'color:success': { color: 'var(--color-success)' },
+    },
+    heading: {
+      'color:danger': { color: 'var(--color-error)' },
+      'color:warning': { color: 'var(--color-warning)' },
+      'color:success': { color: 'var(--color-success)' },
+    },
+  },
 });

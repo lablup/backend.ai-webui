@@ -64,7 +64,7 @@ import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from 'backend.ai-ui';
 export { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 5;
+export const THEME_NAME_REV = 6;
 
 /**
  * NEUTRAL BACKGROUND FAMILY — pinned to the measured legacy antd values.
@@ -312,6 +312,48 @@ const ANTD_STATUS_ON_COLORS = {
  * (`colorTextDescription`) and Astryx's `--color-text-secondary` are the same
  * role, so the Astryx default stands.
  */
+/**
+ * STATUS TEXT COLORS — `Typography.Text type="danger|warning|success"` as
+ * THEME-DEFINED custom `Text`/`Heading` colors (to-astryx phase 3, ticket A).
+ *
+ * antd's `Typography.Text` carried four semantic `type`s; Astryx's `TextColor`
+ * ships `primary | secondary | disabled | placeholder | accent | inherit` and
+ * has NO danger/warning/success (MAPPING §3.4 calls this out as "a design
+ * decision, 12 times" — measured 14 live call sites in this repo:
+ * `type="danger"` ×8, `type="success"` ×3, `type="warning"` ×3).
+ *
+ * The escape hatch Astryx documents for exactly this is a THEME-defined custom
+ * color, not per-site inline CSS: `Text` resolves an unknown `color` to the
+ * `primary` StyleX baseline and then takes its actual colour from theme CSS
+ * (`.astryx-text.<color>` / `.astryx-heading.<color>`), and
+ * `astryx theme build` emits the matching `TextColorMap` module augmentation
+ * so `color="danger"` type-checks. That keeps the decision in ONE place and
+ * lets every theme family/role inherit it, which is what the per-component-CSS
+ * policy asks for.
+ *
+ * Values are the antd originals by construction: antd painted
+ * `type="danger"` with `colorError`, `warning` with `colorWarning` and
+ * `success` with `colorSuccess`, and those three seeds are the same
+ * `resources/theme.json` values this recipe already pins to
+ * `--color-error` / `--color-warning` / `--color-success` above. So the
+ * rendered hue is legacy-identical in both modes, with no new literal.
+ *
+ * `heading` carries the same three so a `Heading` never falls back to
+ * `primary` if a future surface needs a danger title.
+ */
+const STATUS_TEXT_COLORS = {
+  text: {
+    'color:danger': { color: 'var(--color-error)' },
+    'color:warning': { color: 'var(--color-warning)' },
+    'color:success': { color: 'var(--color-success)' },
+  },
+  heading: {
+    'color:danger': { color: 'var(--color-error)' },
+    'color:warning': { color: 'var(--color-warning)' },
+    'color:success': { color: 'var(--color-success)' },
+  },
+};
+
 const SIDE_NAV_DENSITY = {
   // `SideNav`'s own StyleX sets `background-color: inherit` on the root AND on
   // its sticky top/bottom bands — it assumes an `AppShell` ancestor paints the
@@ -593,7 +635,7 @@ export function buildBackendAiTheme(
     // the sanctioned place for "our look differs from the Astryx default" —
     // it deep-merges over `neutralTheme`'s own component rules and applies to
     // every role/family theme built from this recipe.
-    components: SIDE_NAV_DENSITY,
+    components: { ...SIDE_NAV_DENSITY, ...STATUS_TEXT_COLORS },
   });
 
   themeCache.set(name, theme);

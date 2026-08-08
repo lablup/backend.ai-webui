@@ -1,5 +1,4 @@
 import { theme } from '../theme-shim';
-import type { GlobalToken } from 'antd';
 import React, { type CSSProperties, type PropsWithChildren } from 'react';
 
 type GapSize = number | 'xxs' | 'xs' | 'sm' | 'ms' | 'md' | 'lg' | 'xl' | 'xxl';
@@ -12,12 +11,20 @@ type GapProp = GapSize | [GapSize | undefined, GapSize | undefined];
  * `sizeMD`/`sizeLG` were missing from the theme-shim's map the lookup
  * returned `undefined`, React dropped the `gap` declaration entirely, and
  * ~470 call sites collapsed to a 0 gap with nothing failing. Keying
- * `GlobalToken` makes any future hole a compile error here instead.
+ * the shim's token type makes any future hole a compile error here instead.
+ *
+ * The rung names are keyed off the SHIM's token object (`theme.useToken()`),
+ * not `antd`'s `GlobalToken` — the antd type import was this file's only tie
+ * to antd and, being a 615-file taint hub in the import graph, the single
+ * cheapest thing to remove (to-astryx phase 3, ticket A). The shim returns the
+ * same token shape, so the compile-time guarantee is unchanged.
  */
+type BAIGapToken = keyof ReturnType<typeof theme.useToken>['token'];
+
 const GAP_TOKEN: Record<
   Exclude<GapSize, number>,
-  keyof Pick<
-    GlobalToken,
+  Extract<
+    BAIGapToken,
     | 'sizeXXS'
     | 'sizeXS'
     | 'sizeSM'

@@ -119,7 +119,7 @@ describe('BAIStatistic', () => {
           progressMode="hidden"
         />,
       );
-      const progress = container.querySelector('.ant-progress');
+      const progress = container.querySelector('.bai-statistic-steps');
       expect(progress).not.toBeInTheDocument();
     });
 
@@ -132,7 +132,7 @@ describe('BAIStatistic', () => {
           progressMode="normal"
         />,
       );
-      const progress = container.querySelector('.ant-progress');
+      const progress = container.querySelector('.bai-statistic-steps');
       expect(progress).toBeInTheDocument();
     });
 
@@ -144,7 +144,7 @@ describe('BAIStatistic', () => {
       // - trailColor is transparent (line 130)
       // - No percent value passed (empty placeholder for layout consistency)
       // - No tooltip
-      const progress = container.querySelector('.ant-progress');
+      const progress = container.querySelector('.bai-statistic-steps');
       expect(progress).toBeInTheDocument();
 
       // Verify ghost mode characteristics
@@ -156,21 +156,22 @@ describe('BAIStatistic', () => {
       // Ghost mode has aria-valuenow="0" (no actual percent calculation)
       expect(progressBar).toHaveAttribute('aria-valuenow', '0');
 
-      // Verify transparent background (trailColor: 'transparent')
-      // In ghost mode, each step item has transparent background color
+      // Ghost mode paints nothing: antd expressed it as an inline
+      // `trailColor: 'transparent'`, the Astryx rebuild as a modifier class
+      // whose rule lives in BAIStatistic.css (P17 — Vite stubs `.css` under
+      // vitest, so the class is what is assertable here).
       const firstStepItem = container.querySelector(
-        '.ant-progress-steps-item',
+        '.bai-statistic-step',
       ) as HTMLElement;
       expect(firstStepItem).toBeInTheDocument();
-      const stepBgColor = firstStepItem.style.backgroundColor;
-      expect(stepBgColor).toBe('transparent');
+      expect(firstStepItem).toHaveClass('bai-statistic-step--ghost');
     });
 
     it('should not show progress when total is undefined', () => {
       const { container } = render(
         <BAIStatistic title="CPU" current={4} progressMode="normal" />,
       );
-      const progress = container.querySelector('.ant-progress');
+      const progress = container.querySelector('.bai-statistic-steps');
       expect(progress).not.toBeInTheDocument();
     });
 
@@ -186,9 +187,7 @@ describe('BAIStatistic', () => {
       );
       // Verify that custom progressSteps prop is applied
       // Should render exactly 10 step items (not the default 20)
-      const progressSteps = container.querySelectorAll(
-        '.ant-progress-steps-item',
-      );
+      const progressSteps = container.querySelectorAll('.bai-statistic-step');
       expect(progressSteps).toHaveLength(10);
     });
   });
@@ -455,12 +454,11 @@ describe('BAIStatistic', () => {
       );
 
       // Find the progress bar element (which has the tooltip)
-      const progressBar = container.querySelector('.ant-progress');
+      const progressBar = container.querySelector('.bai-statistic-steps');
       expect(progressBar).toBeInTheDocument();
 
-      // Hover over the progress bar to trigger tooltip using fireEvent
-      // Note: userEvent.hover() doesn't work well with Ant Design tooltips
-      // due to pointer-events: none on child elements
+      // Astryx `Tooltip` opens on pointerenter/focus of its trigger wrapper.
+      fireEvent.pointerEnter(progressBar!.parentElement ?? progressBar!);
       fireEvent.mouseOver(progressBar!);
 
       // Wait for tooltip to appear and verify content
@@ -479,7 +477,7 @@ describe('BAIStatistic', () => {
         />,
       );
       // No progress bar means no tooltip wrapper
-      const progressBar = container.querySelector('.ant-progress');
+      const progressBar = container.querySelector('.bai-statistic-steps');
       expect(progressBar).not.toBeInTheDocument();
     });
   });

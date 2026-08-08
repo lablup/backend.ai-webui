@@ -1,0 +1,61 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <BAIStatistic> (to-astryx phase 3, ticket A). Imported
+ by the component itself (P17).
+
+ JUSTIFICATION for per-component CSS: Astryx `ProgressBar` is a continuous
+ track and exposes no `steps`. The 20-notch bar is the recognisable shape of
+ the resource panel, so its geometry is rebuilt here rather than silently
+ redesigned — see the PILOT-DECISION in `BAIStatistic.tsx`.
+
+ The two `font-size` rules are the same class of value: antd rendered the
+ metric at a literal 32px and the caption at `fontSizeLG`. `Text`'s `size`
+ scale tops out below 32px for this role, so the value keeps its literal;
+ everything else is a token (P19 — names checked against the built theme's
+ declared variables).
+
+ Unlayered, matching the other co-located BUI stylesheets.
+*/
+
+/* antd: `fontSize: token.fontSizeLG; marginBottom: 16; lineHeight: 1em`. */
+.bai-statistic-title {
+  margin-bottom: 16px;
+  line-height: 1em;
+}
+
+/* antd: `fontSize: 32; lineHeight: 1em`. */
+.bai-statistic-value {
+  font-size: 32px;
+  line-height: 1em;
+}
+
+/* antd `<Progress steps={n} size={[3, 10]} />` — the notch strip. */
+.bai-statistic-steps {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.bai-statistic-step {
+  width: 3px;
+  height: 10px;
+  flex-shrink: 0;
+  /* antd's default `trailColor` (`colorFillSecondary`). */
+  background-color: var(--color-track);
+}
+
+/*
+ The default fill when the call site does not pin a colour: antd used
+ `token.colorTextTertiary`, whose Astryx counterpart in the same
+ "quiet foreground" role is the disabled text token.
+*/
+.bai-statistic-step--filled {
+  background-color: var(--color-text-disabled);
+}
+
+/* antd `trailColor: 'transparent'` — the layout-only placeholder bar. */
+.bai-statistic-step--ghost {
+  background-color: transparent;
+}
