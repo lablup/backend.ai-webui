@@ -46,9 +46,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-// frontier type import (BAICard tabList shape, ticket 30)
-import type { CardTabListType } from 'antd/es/card';
-import { BAICard, filterOutEmpty } from 'backend.ai-ui';
+import { BAICard, type BAICardProps, filterOutEmpty } from 'backend.ai-ui';
 import {
   parseAsJson,
   parseAsString,
@@ -431,7 +429,9 @@ const AdminDeploymentPage: React.FC = () => {
     loadActiveTab();
   }, [currentProject.id]);
 
-  const tabItems: CardTabListType[] = filterOutEmpty([
+  // The antd `CardTabListType` import is replaced by the tab-item shape
+  // `BAICard` itself accepts — this array's only consumer.
+  const tabItems: NonNullable<BAICardProps['tabList']> = filterOutEmpty([
     {
       key: 'deployments',
       label: t('webui.menu.Deployments'),

@@ -53,6 +53,7 @@ catalog:
   marked: ^16.4.2
   prettier: ^3.9.4
   prettier-plugin-sort-json: ^4.2.0
+  qrcode.react: ^4.2.0
   react: ^19.2.7
   react-copy-to-clipboard: ^5.1.1
   react-dom: ^19.2.7

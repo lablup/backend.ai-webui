@@ -327,33 +327,33 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
         <BAINotificationButton data-testid="button-notification" />
         {/* Same swap, same reason as the project group above: these controls
             sit ON the accent band, so they take the on-dark media context and
-            their glyphs come out white instead of the dark theme's grey.
-
-            The `UserDropdownMenu` PANEL is a DOM descendant here (Astryx
-            renders its popover as an inline `[popover]` sibling of the
-            trigger, not through a portal — measured), so it inherits this
-            context too. That is the intended outcome and matches legacy,
-            which also wrapped the whole dropdown in `ReverseThemeProvider`:
-            `color-scheme: dark` keeps `--color-background-popover` on its
-            dark value, so the panel stays a dark surface and the white text
-            lands on it legibly. */}
+            their glyphs come out white instead of the dark theme's grey. */}
         <MediaTheme mode="dark">
           <WebUIThemeToggleButton data-testid="button-theme" />
           <WEBUIHelpButton data-testid="button-help" />
-          {/* `DropdownMenu` owns its trigger button, so the old
-              `buttonRender` hook (whose only job was to wrap the trigger in
-              ReverseThemeProvider, plus a `<div>` working around an antd
-              Dropdown/ConfigProvider bug) is gone — the whole dropdown sits
-              inside the media context instead. */}
-          <UserDropdownMenu
-            style={{
-              marginLeft: token.marginXXS,
-              marginRight: token.marginSM * -1,
-              paddingLeft: token.paddingSM,
-              paddingRight: token.paddingSM,
-            }}
-          />
         </MediaTheme>
+        {/* `UserDropdownMenu` declares its OWN on-dark context, around just
+            the trigger and its popover panel.
+
+            It used to sit inside the `MediaTheme` above, and its dropdown
+            PANEL still wants that (Astryx renders the popover as an inline
+            `[popover]` sibling of the trigger, not through a portal —
+            measured — so it inherits the context, keeping
+            `--color-background-popover` dark exactly as legacy's
+            `ReverseThemeProvider` did). But the component ALSO mounts three
+            modals, and Astryx `Dialog` is likewise non-portalled: those were
+            DOM descendants of this context too, so they rendered as dark
+            surfaces in LIGHT mode. Scoping the context is therefore the
+            component's own business, not the header's — see
+            `UserDropdownMenu.tsx`. */}
+        <UserDropdownMenu
+          style={{
+            marginLeft: token.marginXXS,
+            marginRight: token.marginSM * -1,
+            paddingLeft: token.paddingSM,
+            paddingRight: token.paddingSM,
+          }}
+        />
       </BAIFlex>
     </BAIFlex>
   );

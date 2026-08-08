@@ -65,6 +65,7 @@
     "p-queue": "^8.1.1",
     "prettier": "catalog:",
     "prism-react-renderer": "^2.4.1",
+    "qrcode.react": "catalog:",
     "react": "catalog:",
     "react-copy-to-clipboard": "catalog:",
     "react-dom": "catalog:",

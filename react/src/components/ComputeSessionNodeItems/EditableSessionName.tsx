@@ -10,19 +10,15 @@ import { useBaiSignedRequestWithPromise } from '../../helper';
 import { useCurrentUserInfo } from '../../hooks/backendai';
 import { useTanMutation } from '../../hooks/reactQueryAlias';
 import { useValidateSessionName } from '../../hooks/useValidateSessionName';
+// FRONTIER (ticket 17 / ticket 34): the inline rename editor keeps the antd
+// Form ENGINE (Form + Form.Item) — locked SHIM decision. The control inside
+// the item is Astryx now.
+import { AstryxFormTextInput } from '../astryxFormControls';
 import { Heading } from '@astryxdesign/core/Heading';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { HStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
-// FRONTIER (ticket 17 / ticket 34): the inline rename editor keeps the antd
-// Form ENGINE (Form + Form.Item) — locked SHIM decision. The control inside
-// the item is Astryx now.
-import { TextInput } from '@astryxdesign/core/TextInput';
-import {
-  CheckIcon,
-  CopyIcon,
-  PencilIcon,
-} from 'lucide-react';
+import { CheckIcon, CopyIcon, PencilIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -51,44 +47,6 @@ type EditableSessionNameProps = {
   /** Muted display for terminated/cancelled sessions. */
   dimmed?: boolean;
 };
-
-/**
- * The rename field, shaped for antd `Form.Item`'s inject-clone contract
- * (`value` / `onChange`). It is local rather than the shared
- * `AstryxFormTextInput` because it needs two things that adapter does not
- * expose — `size="lg"` and the Escape-to-cancel `onKeyDown` — and widening the
- * shared surface for one inline editor is not worth the blast radius.
- *
- * PILOT-DECISION: the antd `suffix={<CornerDownLeftIcon/>}` "press Enter" hint
- * is DROPPED. MAPPING §3.6 gives `suffix` no `TextInput` destination; the only
- * route is `InputGroup`, which welds a separate bordered addon box onto the
- * field and reads as a button, not as the faint inline hint this was.
- */
-const SessionNameInput: React.FC<{
-  /** Injected by `Form.Item`. */
-  value?: string;
-  /** Injected by `Form.Item`. Astryx passes the VALUE, not the event (P3). */
-  onChange?: (value: string) => void;
-  label: string;
-  onCancel: () => void;
-}> = ({ value, onChange, label, onCancel }) => (
-  <TextInput
-    label={label}
-    isLabelHidden
-    size="lg"
-    width="100%"
-    value={value ?? ''}
-    onChange={(next) => onChange?.(next)}
-    hasAutoFocus
-    onKeyDown={(e) => {
-      // when press escape key, cancel editing
-      if (e.key === 'Escape') {
-        e.stopPropagation();
-        onCancel();
-      }
-    }}
-  />
-);
 
 const EditableSessionName: React.FC<EditableSessionNameProps> = ({
   sessionFrgmt,
@@ -246,9 +204,26 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
           }}
         >
           <Form.Item name="sessionName" rules={validationRules}>
-            <SessionNameInput
+            {/* PILOT-DECISION (kept): the antd
+                `suffix={<CornerDownLeftIcon/>}` "press Enter" hint is DROPPED
+                — MAPPING §3.6 gives `suffix` no `TextInput` destination, and
+                the only route (`InputGroup`) welds a bordered addon box that
+                reads as a button, not as the faint inline hint this was.
+
+                `size` and `onKeyDown` are on the SHARED adapter now (D10
+                fold-back), so this no longer needs a local copy of the
+                `Form.Item` contracts. */}
+            <AstryxFormTextInput
               label={t('session.SessionName')}
-              onCancel={() => setIsEditing(false)}
+              size="lg"
+              hasAutoFocus
+              onKeyDown={(e) => {
+                // when press escape key, cancel editing
+                if (e.key === 'Escape') {
+                  e.stopPropagation();
+                  setIsEditing(false);
+                }
+              }}
             />
           </Form.Item>
         </Form>

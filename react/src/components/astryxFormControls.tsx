@@ -86,6 +86,27 @@ export interface AstryxFormTextInputProps {
   /** Astryx `TextInput.hasAutoFocus` passthrough (inline edit flows). */
   hasAutoFocus?: boolean;
   width?: SizeValue;
+  /**
+   * Astryx `TextInput.size`. Inline editors want `lg`, in-row fields want
+   * `sm`; without it those call sites had to hand-roll a local adapter (D10).
+   */
+  size?: TextInputProps['size'];
+  /** antd `Input.onPressEnter` is Astryx's `onEnter`. */
+  onEnter?: () => void;
+  /**
+   * The key event Astryx exposes. antd's `onKeyUp`-based Escape-to-cancel
+   * becomes `onKeyDown` here; inline editors are the only users.
+   */
+  onKeyDown?: TextInputProps['onKeyDown'];
+  /** Native `name` attribute (autofill / password-manager hints). */
+  htmlName?: string;
+  /**
+   * Fired with the new value AFTER `Form.Item`'s injected `onChange`. This is
+   * the reason several call sites forked their own adapter: they need a side
+   * effect (mark dirty, clear a resolved lookup) alongside the form write,
+   * and `onChange` itself is owned by `Form.Item`.
+   */
+  onValueChange?: (value: string) => void;
   onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
   'data-testid'?: string;
 }
@@ -102,6 +123,11 @@ export const AstryxFormTextInput: React.FC<AstryxFormTextInputProps> = ({
   startIcon,
   hasAutoFocus,
   width = '100%',
+  size,
+  onEnter,
+  onKeyDown,
+  htmlName,
+  onValueChange,
   onBlur,
   ...rest
 }) => {
@@ -110,7 +136,10 @@ export const AstryxFormTextInput: React.FC<AstryxFormTextInputProps> = ({
     <TextInput
       type={type}
       value={value ?? ''}
-      onChange={(next) => onChange?.(next)}
+      onChange={(next) => {
+        onChange?.(next);
+        onValueChange?.(next);
+      }}
       label={label}
       isLabelHidden
       placeholder={placeholder}
@@ -119,6 +148,10 @@ export const AstryxFormTextInput: React.FC<AstryxFormTextInputProps> = ({
       startIcon={startIcon}
       hasAutoFocus={hasAutoFocus}
       width={width}
+      size={size}
+      onEnter={onEnter}
+      onKeyDown={onKeyDown}
+      htmlName={htmlName}
       onBlur={onBlur}
       {...(rest as object)}
     />
@@ -174,6 +207,19 @@ export interface AstryxFormSwitchProps {
   onChange?: (value: boolean) => void;
   label: string;
   disabled?: boolean;
+  /** Astryx `Switch.isLoading` — the toggle is awaiting a server round-trip. */
+  isLoading?: boolean;
+  size?: 'sm' | 'md';
+  /**
+   * Keep the control's own label visible instead of relying on `BAIFormItem`
+   * to render it. Needed where the switch has no form-item label of its own.
+   */
+  isLabelHidden?: boolean;
+  /**
+   * Fired with the new value AFTER `Form.Item`'s injected `onChange` — same
+   * role as on `AstryxFormTextInput`.
+   */
+  onValueChange?: (value: boolean) => void;
   'data-testid'?: string;
 }
 
@@ -183,16 +229,25 @@ export const AstryxFormSwitch: React.FC<AstryxFormSwitchProps> = ({
   onChange,
   label,
   disabled,
+  isLoading,
+  size,
+  isLabelHidden = true,
+  onValueChange,
   ...rest
 }) => {
   'use memo';
   return (
     <Switch
       value={value ?? checked ?? false}
-      onChange={(next) => onChange?.(next)}
+      onChange={(next) => {
+        onChange?.(next);
+        onValueChange?.(next);
+      }}
       label={label}
-      isLabelHidden
+      isLabelHidden={isLabelHidden}
       isDisabled={disabled}
+      isLoading={isLoading}
+      size={size}
       {...(rest as object)}
     />
   );

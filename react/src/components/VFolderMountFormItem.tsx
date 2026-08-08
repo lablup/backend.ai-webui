@@ -12,6 +12,7 @@ import {
   DEFAULT_ALIAS_BASE_PATH,
 } from './VFolderTable';
 import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
+import { AstryxFormTextInput } from './astryxFormControls';
 import { Badge } from '@astryxdesign/core/Badge';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import {
@@ -19,7 +20,6 @@ import {
   MetadataListItem,
 } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
-import { TextInput } from '@astryxdesign/core/TextInput';
 import {
   BAIFlex,
   BAIVFolderSelectAstryx,
@@ -61,31 +61,6 @@ interface VFolderMountFormItemProps {
  * as well as pre-existing ones.
  */
 type FolderNameMap = Record<string, string>;
-
-/**
- * The per-folder mount-path field. A raw Astryx `TextInput` (not the shared
- * `AstryxFormTextInput` adapter) so it can stay at `sm` size inside the row.
- * `Form.Item`'s two contracts are honoured inline.
- */
-const MountPathInput: React.FC<{
-  label: string;
-  /** Injected by `Form.Item`. */
-  value?: string;
-  /** Injected by `Form.Item`. */
-  onChange?: (value: string) => void;
-}> = ({ label, value, onChange }) => {
-  'use memo';
-  return (
-    <TextInput
-      label={label}
-      isLabelHidden
-      size="sm"
-      width="100%"
-      value={value ?? ''}
-      onChange={(next) => onChange?.(next)}
-    />
-  );
-};
 
 const VFolderMountFormItem: React.FC<VFolderMountFormItemProps> = ({
   filter,
@@ -287,8 +262,11 @@ const VFolderMountFormItem: React.FC<VFolderMountFormItemProps> = ({
                         },
                       ]}
                     >
-                      <MountPathInput
+                      {/* Stays at `sm` inside the row; `size` is on the
+                          SHARED adapter now (D10 fold-back). */}
+                      <AstryxFormTextInput
                         label={t('session.launcher.FolderAlias')}
+                        size="sm"
                       />
                     </Form.Item>
                     <XIcon

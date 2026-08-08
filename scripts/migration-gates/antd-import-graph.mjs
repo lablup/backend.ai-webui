@@ -62,8 +62,29 @@ export function isAntdSpecifier(spec) {
   );
 }
 
+/**
+ * Blank out comments and template literals so the import scanners below cannot
+ * match inside them.
+ *
+ * This is not cosmetic. This repo's migration comments quote the code they
+ * replaced — `// -import { Form } from 'antd';` — and the scanners were
+ * counting those quotations as real imports. Three files
+ * (`app-shim/bridge.ts`, `app-shim/index.tsx`, `form-engine/engine.ts`) were
+ * reported as antd-rendering hubs with 577-579 taint each while containing no
+ * antd import at all. Replacing with spaces (not deleting) keeps every offset
+ * stable, so line numbers in any downstream report still line up.
+ */
+export function stripComments(source) {
+  const blank = (m) => m.replace(/[^\n]/g, " ");
+  return source
+    .replace(/\/\*[\s\S]*?\*\//g, blank) // block comments
+    .replace(/(^|[^:])\/\/[^\n]*/g, (m, p1) => p1 + blank(m.slice(p1.length)))
+    .replace(/`[^`]*`/g, blank); // template literals (graphql tags, docs)
+}
+
 /** Pull every static/dynamic import specifier out of a source file. */
-export function parseSpecifiers(source) {
+export function parseSpecifiers(rawSource) {
+  const source = stripComments(rawSource);
   const specs = new Set();
   const patterns = [
     // import x from 'y' / import 'y' / import type {..} from 'y'

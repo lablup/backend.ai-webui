@@ -7,6 +7,7 @@ import { Form } from '../form-engine';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import HiddenFormItem from './HiddenFormItem';
+import { AstryxFormSwitch } from './astryxFormControls';
 // FRONTIER (ticket 17): form-heavy card. `Form.useWatch` / `Form.Item` are
 // still antd's (ticket 34's self-hosted engine is parked); every control and
 // every piece of chrome below is Astryx now.
@@ -20,7 +21,6 @@ import {
 } from '@astryxdesign/core/MetadataList';
 import { Selector } from '@astryxdesign/core/Selector';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Switch } from '@astryxdesign/core/Switch';
 import { Heading } from '@astryxdesign/core/Text';
 import { TextInput } from '@astryxdesign/core/TextInput';
 import {
@@ -55,30 +55,6 @@ export interface SessionOwnerSetterFormValues {
         domainName?: string;
       };
 }
-
-/**
- * The card's on/off toggle. A local adapter (not the shared
- * `AstryxFormSwitch`) so the accessible name can be the card title while the
- * label stays visually hidden. `Form.Item`'s two contracts are honoured
- * inline.
- */
-const OwnerEnabledSwitch: React.FC<{
-  label: string;
-  /** Injected by `Form.Item valuePropName="checked"`. */
-  checked?: boolean;
-  /** Injected by `Form.Item`. */
-  onChange?: (value: boolean) => void;
-}> = ({ label, checked, onChange }) => {
-  'use memo';
-  return (
-    <Switch
-      label={label}
-      isLabelHidden
-      value={checked ?? false}
-      onChange={(next) => onChange?.(next)}
-    />
-  );
-};
 
 /**
  * `Input.Search` has no Astryx counterpart (MAPPING 3.6 -- NONE). This is the
@@ -197,7 +173,10 @@ const SessionOwnerSetterCard: React.FC<SessionOwnerSetterCardProps> = (
             valuePropName="checked"
             noStyle
           >
-            <OwnerEnabledSwitch label={t('session.launcher.SetSessionOwner')} />
+            {/* The accessible name is the card title, kept visually hidden —
+                which is exactly what the shared adapter does by default
+                (D10 fold-back; the local copy added nothing else). */}
+            <AstryxFormSwitch label={t('session.launcher.SetSessionOwner')} />
           </Form.Item>
         </HStack>
         <div style={{ display: isActive ? 'block' : 'none' }}>

@@ -35,7 +35,11 @@ import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { dirname, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
-import { analyzeGraph, summarize } from "./antd-import-graph.mjs";
+import {
+  analyzeGraph,
+  stripComments,
+  summarize,
+} from "./antd-import-graph.mjs";
 
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const rel = (f) => relative(REPO_ROOT, f).split(sep).join("/");
@@ -89,19 +93,41 @@ const GATE_CAVEATS = [
       "`packages/backend.ai-ui/src/icons/iconShim.tsx` deliberately renders " +
       '`class="anticon"`, and BUI ships the matching reset — measured: ' +
       "`packages/backend.ai-ui/dist/backend.ai-ui.css` contains `anticon` and " +
-      "`anticon-spin` as first-party rules. Three e2e specs still locate by " +
-      "`.anticon-close` / `.anticon-check`. So part (b)'s `anticon` signature " +
+      "`anticon-spin` as first-party rules. Two e2e locators still use the " +
+      "class — `e2e/user-profile/user-profile.spec.ts` (`.anticon-close`) and " +
+      "`e2e/auto-scaling-rule-preset/preset-table-settings.spec.ts` " +
+      "(`.anticon-check`); every other `.anticon-*` hit under `e2e/` is a " +
+      "comment recording that the class is GONE. So part (b)'s `anticon` " +
+      "signature " +
       "will keep firing after antd is entirely gone. The fix is to rename the " +
       "shim's class and repoint the e2e locators — NOT to drop the signature, " +
       "which would also stop catching real @ant-design/icons reintroduction.",
   },
 ];
 
-/** Does this file import antd VALUES, or only antd TYPES? */
-export function classifyAntdImports(source) {
+/**
+ * Does this file import antd VALUES, or only antd TYPES?
+ *
+ * Two things the pattern below MUST keep doing, both learned the hard way
+ * (p3-w3b):
+ *
+ * 1. It runs over `stripComments(source)`. Migration comments in this repo
+ *    quote the antd import they replaced, and those quotations were being
+ *    counted as real imports.
+ * 2. The clause is `[^;'"]*?`, NOT `[\s\S]*?`. The lazy any-character form
+ *    could start a match at ANY earlier `import` keyword in the file and run
+ *    to the antd `from`, swallowing whole statements in between. Since nearly
+ *    every file here opens with `import type { …Fragment$key } from '…'`, the
+ *    captured clause usually began with `type `, hit the `^type\s` guard
+ *    below, and the antd import was skipped — silently classifying render
+ *    files as type-only. Barring `;` and quotes confines a match to a single
+ *    statement.
+ */
+export function classifyAntdImports(rawSource) {
+  const source = stripComments(rawSource);
   // `import ... from 'antd'` / `'antd/es/...'` / `'@ant-design/...'` etc.
   const re =
-    /import\s+([\s\S]*?)\s+from\s+['"](antd(?:\/[^'"]*)?|antd-style(?:\/[^'"]*)?|@ant-design\/[^'"]*|rc-[^'"]*|@rc-component\/[^'"]*)['"]/g;
+    /\bimport\s+([^;'"]*?)\s+from\s+['"](antd(?:\/[^'"]*)?|antd-style(?:\/[^'"]*)?|@ant-design\/[^'"]*|rc-[^'"]*|@rc-component\/[^'"]*)['"]/g;
   let m;
   let sawAny = false;
   let sawValue = false;

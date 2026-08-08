@@ -11,10 +11,10 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import TOTPActivateModal from './TOTPActivateModal';
 import {
+  AstryxFormSwitch,
   AstryxFormTagsInput,
   AstryxFormTextInput,
 } from './astryx-bui/astryxFormControls';
-import { Switch } from '@astryxdesign/core/Switch';
 import { Text } from '@astryxdesign/core/Text';
 import { useToggle } from 'ahooks';
 import {
@@ -38,36 +38,6 @@ interface Props extends BAIModalProps {
   onRequestRefresh: () => void;
   totpSupported?: boolean;
 }
-
-/**
- * The TOTP toggle. A raw Astryx `Switch` rather than the shared
- * `AstryxFormSwitch` adapter, which carries no `isLoading` passthrough. The
- * two `Form.Item` contracts are honoured inline: `value` is coalesced (Astryx
- * types it non-nullable) and the change handler receives the VALUE.
- */
-const TotpSwitch: React.FC<{
-  label: string;
-  isLoading?: boolean;
-  onToggle: (checked: boolean) => void;
-  /** Injected by `Form.Item valuePropName="checked"`. */
-  checked?: boolean;
-  /** Injected by `Form.Item`. */
-  onChange?: (value: boolean) => void;
-}> = ({ label, isLoading, onToggle, checked, onChange }) => {
-  'use memo';
-  return (
-    <Switch
-      label={label}
-      isLabelHidden
-      isLoading={isLoading}
-      value={checked ?? false}
-      onChange={(next) => {
-        onChange?.(next);
-        onToggle(next);
-      }}
-    />
-  );
-};
 
 type UserProfileFormValues = {
   full_name: string;
@@ -383,10 +353,14 @@ const UserProfileSettingModal: React.FC<Props> = ({
               {/* MAPPING §4: `checked` -> `value` (coalesced by the local
                   adapter below, since Form.Item injects `undefined` until the
                   field is touched), `loading` -> `isLoading`. */}
-              <TotpSwitch
+              {/* `isLoading` and the post-`onChange` side-effect slot
+                  (`onValueChange`) are on the SHARED adapter now — those two
+                  gaps were the whole reason for the local copy (D10
+                  fold-back). */}
+              <AstryxFormSwitch
                 label={t('webui.menu.TotpActivated')}
                 isLoading={mutationToRemoveTotp.isPending}
-                onToggle={(checked: boolean) => {
+                onValueChange={(checked: boolean) => {
                   if (checked) {
                     toggleTOTPActivateModal();
                   } else {

@@ -9,9 +9,9 @@ import {
   useSuspendedBackendaiClient,
 } from '../../hooks';
 import { useTanMutation } from '../../hooks/reactQueryAlias';
+import { AstryxFormTextInput } from '../astryxFormControls';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Text } from '@astryxdesign/core/Text';
-import { TextInput } from '@astryxdesign/core/TextInput';
 import { BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { SquarePen } from 'lucide-react';
@@ -41,44 +41,6 @@ const isPreparing = (status: string = '') => {
     'CREATING',
     'PULLING',
   ].includes(status);
-};
-
-/**
- * The inline rename field.
- *
- * Raw Astryx `TextInput` rather than the shared `AstryxFormTextInput` adapter:
- * this field needs Enter-to-save and Escape-to-cancel, which the adapter's
- * prop surface does not carry. The two `Form.Item` contracts the adapter
- * exists for are honoured here instead — `value` is coalesced (Astryx types it
- * non-nullable, antd injects `undefined` until the field is touched) and
- * `onChange` receives the VALUE, not the event.
- *
- * antd's `onPressEnter` is Astryx's `onEnter`; the `onKeyUp` Escape handler
- * becomes `onKeyDown`, the key event Astryx exposes.
- */
-const InlineNameInput: React.FC<{
-  label: string;
-  onEnter: () => void;
-  onEscape: () => void;
-  /** Injected by `Form.Item`. */
-  value?: string;
-  /** Injected by `Form.Item`. */
-  onChange?: (value: string) => void;
-}> = ({ label, onEnter, onEscape, value, onChange }) => {
-  'use memo';
-  return (
-    <TextInput
-      label={label}
-      isLabelHidden
-      hasAutoFocus
-      value={value ?? ''}
-      onChange={(next) => onChange?.(next)}
-      onEnter={onEnter}
-      onKeyDown={(e) => {
-        if (e.key === 'Escape') onEscape();
-      }}
-    />
-  );
 };
 
 const SessionInfoCell: React.FC<{
@@ -175,10 +137,16 @@ const SessionInfoCell: React.FC<{
             }),
           ]}
         >
-          <InlineNameInput
+          {/* The inline rename field. `onEnter` / `onKeyDown` / `hasAutoFocus`
+              are on the SHARED adapter now (D10 fold-back), so this no longer
+              needs a local copy of the two `Form.Item` contracts. */}
+          <AstryxFormTextInput
             label={t('session.launcher.SessionName')}
+            hasAutoFocus
             onEnter={save}
-            onEscape={() => setEditing(false)}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') setEditing(false);
+            }}
           />
         </Form.Item>
       ) : (

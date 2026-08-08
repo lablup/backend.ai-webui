@@ -15,6 +15,7 @@ import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import TextHighlighter from './TextHighlighter';
 import VFolderPermissionTag from './VFolderPermissionTag';
 import { VFolder } from './VFolderSelect';
+import { AstryxFormTextInput } from './astryxFormControls';
 import { Badge } from '@astryxdesign/core/Badge';
 import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
 import { IconButton } from '@astryxdesign/core/IconButton';
@@ -95,39 +96,6 @@ export interface VFolderTableProps extends Omit<
 
 export const vFolderAliasNameRegExp = /^[a-zA-Z0-9_/.-]*$/;
 export const DEFAULT_ALIAS_BASE_PATH = '/home/work/';
-/**
- * The per-row folder-alias field. A raw Astryx `TextInput` (not the shared
- * `AstryxFormTextInput` adapter) so it can stop click propagation to the row.
- * The two `Form.Item` contracts are honoured inline: `value` is coalesced and
- * the change handler receives the VALUE.
- */
-const AliasInput: React.FC<{
-  label: string;
-  onValueChange: () => void;
-  /** Injected by `Form.Item`. */
-  value?: string;
-  /** Injected by `Form.Item`. */
-  onChange?: (value: string) => void;
-}> = ({ label, onValueChange, value, onChange }) => {
-  'use memo';
-  return (
-    <div onClick={(e) => e.stopPropagation()}>
-      <TextInput
-        label={label}
-        isLabelHidden
-        placeholder={label}
-        hasClear
-        width="100%"
-        value={value ?? ''}
-        onChange={(next) => {
-          onChange?.(next);
-          onValueChange();
-        }}
-      />
-    </div>
-  );
-};
-
 const VFolderTable: React.FC<VFolderTableProps> = ({
   rowFilter,
   showAliasInput = false,
@@ -479,71 +447,86 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
                   );
 
                   return (
-                    <Form.Item
-                      name={getRowKey(record)}
-                      rules={[
-                        {
-                          // required: true,
-                          type: 'string',
-                          pattern: vFolderAliasNameRegExp,
-                          message: t('session.launcher.FolderAliasInvalid'),
-                        },
-                        {
-                          type: 'string',
-                          validator: async (_rule, value) => {
-                            if (
-                              value &&
-                              _.some(
-                                allAliasPathMap,
-                                (path, k) =>
-                                  k !== getRowKey(record) && // not current row
-                                  path ===
-                                    inputToAliasPath(getRowKey(record), value),
-                              )
-                            ) {
-                              return Promise.reject(
-                                t('session.launcher.FolderAliasOverlapping'),
-                              );
-                            }
-                            return Promise.resolve();
+                    // Keeps a click inside the alias field from toggling the
+                    // row's selection. This used to live inside a local
+                    // `AliasInput` adapter; the field itself is the SHARED
+                    // adapter now (D10 fold-back), so the guard moved out to
+                    // where it belongs — around the whole form item.
+                    <div onClick={(e) => e.stopPropagation()}>
+                      <Form.Item
+                        name={getRowKey(record)}
+                        rules={[
+                          {
+                            // required: true,
+                            type: 'string',
+                            pattern: vFolderAliasNameRegExp,
+                            message: t('session.launcher.FolderAliasInvalid'),
                           },
-                        },
-                        {
-                          type: 'string',
-                          validator: async (_rule, value) => {
-                            const aliasPath = inputToAliasPath(
-                              getRowKey(record),
-                              value,
-                            );
-                            if (
-                              value &&
-                              _.map(
-                                autoMountedFolderNames,
-                                // `n` is the name of the auto mounted folder. It cannot be empty.
-                                (n) => inputToAliasPath('', n),
-                              ).includes(aliasPath)
-                            ) {
-                              return Promise.reject(
-                                t(
-                                  'session.launcher.FolderAliasOverlappingToAutoMount',
-                                ),
-                              );
-                            }
-                            return Promise.resolve();
+                          {
+                            type: 'string',
+                            validator: async (_rule, value) => {
+                              if (
+                                value &&
+                                _.some(
+                                  allAliasPathMap,
+                                  (path, k) =>
+                                    k !== getRowKey(record) && // not current row
+                                    path ===
+                                      inputToAliasPath(
+                                        getRowKey(record),
+                                        value,
+                                      ),
+                                )
+                              ) {
+                                return Promise.reject(
+                                  t('session.launcher.FolderAliasOverlapping'),
+                                );
+                              }
+                              return Promise.resolve();
+                            },
                           },
-                        },
-                      ]}
-                      // dependencies={[getRowKey(record)]}
-                      extra={inputToAliasPath(
-                        record.name,
-                        internalForm.getFieldValue(getRowKey(record)),
-                      )}
-                    >
-                      <AliasInput
-                        label={t('session.launcher.FolderAlias')}
-                        onValueChange={handleAliasUpdate}
-                      />
-                    </Form.Item>
+                          {
+                            type: 'string',
+                            validator: async (_rule, value) => {
+                              const aliasPath = inputToAliasPath(
+                                getRowKey(record),
+                                value,
+                              );
+                              if (
+                                value &&
+                                _.map(
+                                  autoMountedFolderNames,
+                                  // `n` is the name of the auto mounted folder. It cannot be empty.
+                                  (n) => inputToAliasPath('', n),
+                                ).includes(aliasPath)
+                              ) {
+                                return Promise.reject(
+                                  t(
+                                    'session.launcher.FolderAliasOverlappingToAutoMount',
+                                  ),
+                                );
+                              }
+                              return Promise.resolve();
+                            },
+                          },
+                        ]}
+                        // dependencies={[getRowKey(record)]}
+                        extra={inputToAliasPath(
+                          record.name,
+                          internalForm.getFieldValue(getRowKey(record)),
+                        )}
+                      >
+                        {/* `onValueChange` fires after `Form.Item`'s injected
+                          `onChange` — that side-effect slot is what the local
+                          adapter existed for (D10 fold-back). */}
+                        <AstryxFormTextInput
+                          label={t('session.launcher.FolderAlias')}
+                          placeholder={t('session.launcher.FolderAlias')}
+                          hasClear
+                          onValueChange={handleAliasUpdate}
+                        />
+                      </Form.Item>
+                    </div>
                   );
                 }}
               </Form.Item>
