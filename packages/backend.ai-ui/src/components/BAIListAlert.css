@@ -1,0 +1,32 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <BAIListAlert> (to-astryx ticket 33). Replaces the
+ `antd-style` `createStyles` block; imported by the component itself (P17).
+
+ Scrollbar with no track background — only the thumb floats over content.
+ Token mapping: token.colorTextQuaternary (antd rgba(0,0,0,0.25), a 'self'
+ token with no Astryx counterpart) -> var(--color-text-disabled), the declared
+ faint-neutral in the same role (P19).
+*/
+.bai-list-alert-scroll {
+  /* Firefox, Chrome 121+ — thumb / track */
+  scrollbar-color: var(--color-text-disabled) transparent;
+  scrollbar-width: thin;
+}
+
+/* Safari and older WebKit (ignored where scrollbar-color is supported) */
+.bai-list-alert-scroll::-webkit-scrollbar,
+.bai-list-alert-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.bai-list-alert-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.bai-list-alert-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-text-disabled);
+  border-radius: 3px;
+}

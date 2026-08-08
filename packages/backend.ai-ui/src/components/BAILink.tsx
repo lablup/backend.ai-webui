@@ -1,29 +1,14 @@
 import { theme } from '../theme-shim';
+import './BAILink.css';
 import BAIText from './BAIText';
-import { Typography, type GlobalToken } from 'antd';
-import { createStyles } from 'antd-style';
+import { Typography } from 'antd';
 import React from 'react';
 import { Link, type LinkProps } from 'react-router-dom';
 
-// Token values come in as props from the shim (to-astryx ticket 10).
-const useStyles = createStyles(
-  ({ css }, { token }: { token: GlobalToken }) => ({
-    hover: css`
-      text-decoration: none;
-      color: ${token.colorLink};
-
-      &:hover {
-        color: ${token.colorLinkHover};
-        text-decoration: underline;
-      }
-    `,
-    disabled: css`
-      color: ${token.colorTextDisabled};
-      cursor: not-allowed;
-      pointer-events: none;
-    `,
-  }),
-);
+const LINK_TYPE_CLASS = {
+  hover: 'bai-link-hover',
+  disabled: 'bai-link-disabled',
+} as const;
 
 export interface BAILinkProps extends Omit<LinkProps, 'to'> {
   type?: 'hover' | 'disabled' | undefined;
@@ -41,11 +26,10 @@ const BAILink: React.FC<BAILinkProps> = ({
   ...linkProps
 }) => {
   const { token } = theme.useToken();
-  const { styles } = useStyles({ token });
   if (type !== 'disabled' && to) {
     return (
       <Link
-        className={type ? styles?.[type] : undefined}
+        className={type ? LINK_TYPE_CLASS[type] : undefined}
         to={to}
         {...linkProps}
         style={{ fontFamily: token.fontFamily, ...linkProps.style }}
@@ -58,7 +42,7 @@ const BAILink: React.FC<BAILinkProps> = ({
 
   const link = (
     <Typography.Link
-      className={type ? styles?.[type] : undefined}
+      className={type ? LINK_TYPE_CLASS[type] : undefined}
       onClick={linkProps.onClick}
       disabled={type === 'disabled'}
       {...linkProps}

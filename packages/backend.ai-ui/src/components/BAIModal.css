@@ -1,0 +1,249 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <BAIModal> (to-astryx ticket 33). Replaces the
+ `antd-style` `createStyles` block; imported by the component itself (P17).
+ Every selector targets antd `Modal` internals and is still LIVE, so the block
+ is preserved rather than dropped (P6).
+
+ UNLAYERED on purpose — see the note in BAIAlert.css.
+
+ ## How the dynamic block became static
+
+ The `createStyles` version interpolated eight props into one emotion class.
+ All eight are ENUMERABLE, so each becomes a modifier class on the same
+ element that already carries `bai-modal`:
+
+   stickyTitle            -> .bai-modal-sticky-title
+   type: warning | error  -> .bai-modal-type-warning | .bai-modal-type-error
+   hasWindowControls      -> .bai-modal-window-controls
+   windowState            -> .bai-modal-state-{maximized,fullscreen,minimized}
+   minimizedPlacement     -> .bai-modal-minimized-{top,bottom}
+                             + .bai-modal-minimized-{left,right}
+
+ The one genuinely continuous value — `controlHeightSM` — is a shim 'self'
+ token (antd 24px; Astryx's --size-element-sm is 28px, a delta the shim
+ explicitly refused). It stays a literal 24px, exposed once as
+ `--bai-modal-control-size` so the three `calc()`s below read from one place.
+
+ Token mapping (P19-checked against the declared Astryx set):
+   token.marginLG (24px)     -> var(--spacing-6)
+   token.borderRadiusLG      -> var(--radius-element)   (ticket 02 pinned 8px)
+   token.borderRadiusSM      -> var(--radius-none)      (4px in theme-neutral)
+   token.paddingXXS (4px)    -> var(--spacing-1)
+   token.colorWarning        -> var(--color-warning)
+   token.colorError          -> var(--color-error)
+   token.colorTextSecondary  -> var(--color-text-secondary)
+   token.colorTextBase       -> var(--color-text-primary)
+   token.colorFillSecondary  -> var(--color-overlay-pressed)  ('self' token;
+     the declared neutral overlay at the pressed/hover-emphasis weight)
+   token.colorFillTertiary   -> var(--color-overlay-hover)    ('self' token)
+
+ `--general-modal-*` are HOST-owned custom properties (resources/webui.css and
+ the per-deployment theme), NOT Astryx tokens — the fallbacks are the contract,
+ which is why the P19 gate allowlists them.
+*/
+.bai-modal {
+  --bai-modal-control-size: 24px;
+}
+
+.bai-modal .ant-modal-wrap.ant-modal-centered {
+  overflow: hidden;
+}
+
+.bai-modal .ant-modal-close {
+  width: var(--bai-modal-control-size);
+  height: var(--bai-modal-control-size);
+  top: calc(
+    (var(--general-modal-header-height, 69px) - var(--bai-modal-control-size)) /
+      2
+  );
+  right: calc(
+    (var(--general-modal-header-height, 69px) - var(--bai-modal-control-size)) /
+      2
+  );
+  -webkit-app-region: no-drag;
+}
+
+.bai-modal .ant-modal-title {
+  margin-right: 36px;
+}
+
+.bai-modal-window-controls .ant-modal-title {
+  margin-right: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+.bai-modal-type-warning .ant-modal-title {
+  color: var(--color-warning);
+}
+
+.bai-modal-type-error .ant-modal-title {
+  color: var(--color-error);
+}
+
+.bai-modal-sticky-title .ant-modal-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--color-background-popover);
+}
+
+/* ---------------------------------------------------------------- maximized */
+.bai-modal-state-maximized.ant-modal {
+  width: calc(100vw - var(--spacing-6) * 2) !important;
+  max-width: calc(100vw - var(--spacing-6) * 2) !important;
+  top: 0;
+  padding: 0;
+  margin: var(--spacing-6) auto;
+}
+
+.bai-modal-state-maximized .ant-modal-content,
+.bai-modal-state-maximized .ant-modal-container {
+  height: calc(100vh - var(--spacing-6) * 2);
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-element);
+}
+
+/* --------------------------------------------------------------- fullscreen */
+.bai-modal-state-fullscreen.ant-modal {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  height: 100vh !important;
+  top: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.bai-modal-state-fullscreen .ant-modal-content,
+.bai-modal-state-fullscreen .ant-modal-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: 0;
+}
+
+/* Shared by maximized + fullscreen. */
+.bai-modal-state-maximized .ant-modal-body,
+.bai-modal-state-fullscreen .ant-modal-body {
+  flex: 1;
+  max-height: none !important;
+  overflow: auto;
+}
+
+/* ---------------------------------------------------------------- minimized */
+.bai-modal-state-minimized.ant-modal {
+  width: min(320px, calc(100vw - var(--spacing-6) * 2)) !important;
+  max-width: min(320px, calc(100vw - var(--spacing-6) * 2)) !important;
+  position: fixed;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.bai-modal-minimized-bottom.ant-modal {
+  top: auto !important;
+  bottom: 0;
+}
+
+.bai-modal-minimized-top.ant-modal {
+  top: 0 !important;
+  bottom: auto;
+}
+
+.bai-modal-minimized-right.ant-modal {
+  right: var(--spacing-6);
+  left: auto;
+}
+
+.bai-modal-minimized-left.ant-modal {
+  left: var(--spacing-6);
+  right: auto;
+}
+
+.bai-modal-minimized-bottom .ant-modal-content,
+.bai-modal-minimized-bottom .ant-modal-container {
+  border-radius: var(--radius-element) var(--radius-element) 0 0;
+}
+
+.bai-modal-minimized-top .ant-modal-content,
+.bai-modal-minimized-top .ant-modal-container {
+  border-radius: 0 0 var(--radius-element) var(--radius-element);
+}
+
+.bai-modal-state-minimized .ant-modal-header {
+  background: transparent !important;
+  transition: background-color 0.2s ease;
+  border-radius: inherit;
+}
+
+.bai-modal-state-minimized .ant-modal-header:hover {
+  background-color: var(--color-overlay-hover) !important;
+}
+
+.bai-modal-state-minimized .ant-modal-body,
+.bai-modal-state-minimized .ant-modal-footer {
+  display: none !important;
+}
+
+.bai-modal-state-minimized .ant-modal-title {
+  max-width: 75%;
+  overflow: hidden;
+}
+
+/* ------------------------------------------------------------------ shared */
+.bai-modal .ant-modal-content {
+  transition:
+    height 0.3s ease,
+    border-radius 0.3s ease;
+}
+
+.bai-modal-minimized-title-content {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bai-modal-minimized-title-content * {
+  display: inline !important;
+  white-space: nowrap !important;
+  vertical-align: middle;
+}
+
+.bai-modal-window-controls-container {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  flex-shrink: 0;
+  margin-left: auto;
+  -webkit-app-region: no-drag;
+}
+
+.bai-modal-window-control-button.ant-btn {
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--radius-none);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  overflow: hidden;
+  transition:
+    color 0.2s,
+    background-color 0.2s;
+}
+
+.bai-modal-window-control-button.ant-btn:hover {
+  color: var(--color-text-primary);
+  background-color: var(--color-overlay-pressed);
+}

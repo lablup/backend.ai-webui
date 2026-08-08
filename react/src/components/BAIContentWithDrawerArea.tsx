@@ -3,8 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useBAIBreakpoint } from '../theme-shim';
+import './BAIContentWithDrawerArea.css';
 import { isOpenDrawerState } from './BAINotificationButton';
-import { createGlobalStyle } from 'antd-style';
 import { useAtomValue } from 'jotai';
 import React from 'react';
 
@@ -14,10 +14,9 @@ import React from 'react';
 // props interface drops `antd/lib/layout/layout`'s `BasicProps` for the
 // grepped surface (P1: MainLayout passes `drawerWidth` + `children` only).
 //
-// The `createGlobalStyle` block STAYS (ticket 33 owns the antd-style →
-// plain-CSS pass): its `.ant-drawer-content-wrapper` rule is still live —
-// WEBUINotificationDrawer is an antd `Drawer` until ticket 29 — and
-// createGlobalStyle is what makes the injected <style> carry the CSP nonce.
+// Ticket 33 retired the `createGlobalStyle` block that used to live here; the
+// rules moved to BAIContentWithDrawerArea.css, which explains how the two
+// dynamic inputs (`drawerWidth`, `drawerStyle`) survive the move.
 interface Props {
   drawerWidth?: number;
   className?: string;
@@ -25,35 +24,6 @@ interface Props {
 }
 
 type DrawerStyle = 'margin-style' | 'overlay-style';
-
-// Global rules that depend on the drawer's open/width state. createGlobalStyle
-// injects a nonce'd emotion <style> (via the <StyleProvider nonce> in
-// DefaultProviders), so it survives a strict CSP style-src policy — unlike a
-// raw <style> element. The non-theme values (drawerWidth, drawerStyle) are
-// forwarded as props; `theme` is antd-style's theme.
-const DrawerAreaGlobalStyle = createGlobalStyle((props) => {
-  const { drawerWidth, drawerStyle, theme } = props as unknown as {
-    drawerWidth: number;
-    drawerStyle: DrawerStyle;
-    theme: { colorBorder: string };
-  };
-  return `
-    .main-layout-main-content {
-      transition: margin-right 0.3s ease;
-    }
-    .main-layout-main-content.margin-style {
-      margin-right: ${drawerWidth}px;
-    }
-    .ant-drawer-content-wrapper {
-      ${
-        drawerStyle === 'margin-style'
-          ? `box-shadow: none !important;
-          border-left: 1px solid ${theme.colorBorder};`
-          : ''
-      }
-    }
-  `;
-}) as unknown as React.FC<{ drawerWidth: number; drawerStyle: DrawerStyle }>;
 
 const BAIContentWithDrawerArea: React.FC<Props> = ({
   drawerWidth = 256,
@@ -66,19 +36,18 @@ const BAIContentWithDrawerArea: React.FC<Props> = ({
   const drawerStyle: DrawerStyle =
     xl && isOpenDrawer ? 'margin-style' : 'overlay-style';
   return (
-    <>
-      <DrawerAreaGlobalStyle
-        drawerWidth={drawerWidth}
-        drawerStyle={drawerStyle}
-      />
-      <div
-        {...contextProps}
-        className={
-          `main-layout-main-content ${drawerStyle}` +
-          (contextProps.className || '')
-        }
-      />
-    </>
+    <div
+      {...contextProps}
+      className={
+        `main-layout-main-content ${drawerStyle}` +
+        (contextProps.className || '')
+      }
+      style={
+        {
+          '--bai-drawer-area-width': `${drawerWidth}px`,
+        } as React.CSSProperties
+      }
+    />
   );
 };
 

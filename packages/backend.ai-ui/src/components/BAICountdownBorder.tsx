@@ -1,28 +1,6 @@
 import { theme } from '../theme-shim';
-import { createStyles } from 'antd-style';
+import './BAICountdownBorder.css';
 import React, { useEffect, useRef, useState } from 'react';
-
-const useStyles = createStyles(({ css }) => ({
-  // `pathLength={100}` normalizes the stroke length so the offset animation is
-  // size-independent: draw the rounded-rect outline clockwise from the top-left
-  // (0 → 100%) over one cycle, then reset. Disabled under reduced-motion.
-  fill: css`
-    @keyframes bai-countdown-border-fill {
-      from {
-        stroke-dashoffset: 100;
-      }
-      to {
-        stroke-dashoffset: 0;
-      }
-    }
-    animation-name: bai-countdown-border-fill;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-    @media (prefers-reduced-motion: reduce) {
-      animation: none;
-    }
-  `,
-}));
 
 export interface BAICountdownBorderProps {
   /** Content to wrap; the countdown border is drawn around it. */
@@ -83,7 +61,6 @@ const BAICountdownBorder: React.FC<BAICountdownBorderProps> = ({
 }) => {
   'use memo';
   const { token } = theme.useToken();
-  const { styles } = useStyles();
   const ref = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ w: 0, h: 0 });
   useEffect(() => {
@@ -147,7 +124,7 @@ const BAICountdownBorder: React.FC<BAICountdownBorderProps> = ({
             strokeWidth={strokeWidth}
             pathLength={100}
             strokeDasharray={100}
-            className={styles.fill}
+            className="bai-countdown-border-fill"
             style={{
               animationDuration: `${durationMs}ms`,
               animationPlayState: paused ? 'paused' : 'running',

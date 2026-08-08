@@ -791,7 +791,7 @@ This project uses **Ant Design 6** (antd v6). Several props have been renamed or
 - Use Ant Design components when no BAI equivalent exists
 - Prefer using App context (`App.useApp()`) for modals, messages, notifications
 - Access theme tokens via `theme.useToken()`
-- **Only use `antd-style`** for creating styled components when styling cannot be achieved with Ant Design tokens alone
+- Styling that tokens/props cannot express goes in a **co-located `.css` file** the component imports (P17), written with `var(--…)` Astryx custom properties. `antd-style` (`createStyles` / `createGlobalStyle`) was removed in to-astryx ticket 33 — do not reintroduce it.
 
 ```typescript
 import { theme, App } from 'antd';

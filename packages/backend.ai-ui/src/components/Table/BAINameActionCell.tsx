@@ -4,9 +4,10 @@ import { theme } from '../../theme-shim';
 import BAIButton from '../BAIButton';
 import BAILink from '../BAILink';
 import BAIText from '../BAIText';
+import './BAINameActionCell.css';
 import { Dropdown, Popconfirm, Tooltip } from 'antd';
-import type { GlobalToken, MenuProps, PopconfirmProps } from 'antd';
-import { createStyles } from 'antd-style';
+import type { MenuProps, PopconfirmProps } from 'antd';
+import classNames from 'classnames';
 import { EllipsisVertical } from 'lucide-react';
 import React, { useEffect, useRef, useState, useTransition } from 'react';
 import type { LinkProps } from 'react-router-dom';
@@ -78,84 +79,6 @@ export interface BAINameActionCellProps {
   className?: string;
 }
 
-// Token values come in as props from the shim (to-astryx ticket 10).
-const useStyles = createStyles(
-  ({ css }, { token }: { token: GlobalToken }) => ({
-    wrapper: css`
-      display: flex;
-      align-items: center;
-      gap: ${token.marginXS}px;
-      width: 100%;
-      min-width: 0;
-      position: relative;
-    `,
-    titleArea: css`
-      flex: 1;
-      min-width: 0;
-      display: flex;
-      align-items: center;
-      gap: ${token.marginXXS}px;
-    `,
-    titleIcon: css`
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-    `,
-    actionsArea: css`
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      gap: 2px;
-    `,
-    actionsAreaHover: css`
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      gap: 2px;
-      max-width: 0;
-      overflow: hidden;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.15s ease;
-    `,
-    hoverWrapper: css`
-      &:hover .bai-name-action-cell-actions,
-      &:has(:focus-visible) .bai-name-action-cell-actions {
-        max-width: none;
-        overflow: visible;
-        opacity: 1;
-        pointer-events: auto;
-      }
-    `,
-    actionButtonDefault: css`
-      color: ${token.colorInfo};
-      background-color: transparent;
-      transition:
-        background-color 0.2s ease,
-        color 0.2s ease;
-      &:not(:disabled):hover {
-        color: ${token.colorInfo} !important;
-        background-color: ${token.colorInfoBg} !important;
-      }
-    `,
-    actionButtonDanger: css`
-      color: ${token.colorError};
-      background-color: transparent;
-      transition:
-        background-color 0.2s ease,
-        color 0.2s ease;
-      &:not(:disabled):hover {
-        color: ${token.colorError} !important;
-        background-color: ${token.colorErrorBg} !important;
-      }
-    `,
-    actionButtonDisabled: css`
-      color: ${token.colorTextDisabled};
-      background-color: ${token.colorBgContainerDisabled};
-    `,
-  }),
-);
-
 // Estimated width per action button (icon button small size)
 const ACTION_BUTTON_WIDTH = 24;
 const MORE_BUTTON_WIDTH = 24;
@@ -176,7 +99,6 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
 }) => {
   'use memo';
   const { token } = theme.useToken();
-  const { styles, cx } = useStyles({ token });
   const { modal } = App.useApp();
   const [, startTransition] = useTransition();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -375,18 +297,16 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
   return (
     <div
       ref={containerRef}
-      className={cx(
-        styles.wrapper,
-        showActions === 'hover' && styles.hoverWrapper,
+      className={classNames(
+        'bai-nac-wrapper',
+        showActions === 'hover' && 'bai-nac-hover-wrapper',
         className,
       )}
       style={style}
     >
-      <div ref={titleAreaRef} className={styles.titleArea}>
+      <div ref={titleAreaRef} className="bai-nac-title-area">
         {icon && (
-          <span
-            className={cx(styles.titleIcon, 'bai-name-action-cell-title-icon')}
-          >
+          <span className="bai-nac-title-icon bai-name-action-cell-title-icon">
             {icon}
           </span>
         )}
@@ -394,19 +314,19 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
       </div>
       {(autoActionCount > 0 || menuOnlyActions.length > 0) && (
         <div
-          className={cx(
+          className={classNames(
             showActions === 'hover'
-              ? styles.actionsAreaHover
-              : styles.actionsArea,
+              ? 'bai-nac-actions-hover'
+              : 'bai-nac-actions',
             'bai-name-action-cell-actions',
           )}
         >
           {visibleActions.map((action) => {
             const buttonClassName = action.disabled
-              ? styles.actionButtonDisabled
+              ? 'bai-nac-action-button-disabled'
               : action.type === 'danger'
-                ? styles.actionButtonDanger
-                : styles.actionButtonDefault;
+                ? 'bai-nac-action-button-danger'
+                : 'bai-nac-action-button-default';
 
             const button = (
               <BAIButton

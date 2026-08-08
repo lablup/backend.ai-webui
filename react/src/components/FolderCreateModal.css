@@ -1,0 +1,31 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <FolderCreateModal> (to-astryx ticket 33). Replaces the
+ antd-style `createStyles` block; imported by the component itself (P17).
+ Every selector targets antd `Modal` / `Form` internals and is still LIVE, so
+ the block is preserved verbatim rather than dropped (P6). Note that the
+ sibling `FolderCreateModalV2` keeps its own copy — the two modals are on
+ different migration tracks and must not share a class.
+
+ Token mapping (P19-checked): token.paddingSM (12px) -> var(--spacing-3).
+*/
+.folder-create-modal .ant-modal-body {
+  padding-top: 24px !important;
+  padding-bottom: 0 !important;
+}
+
+.folder-create-modal-form .ant-form-item-label {
+  display: flex;
+  align-items: start;
+  padding-left: var(--spacing-3);
+}
+
+.folder-create-modal-form .ant-form-item-control {
+  padding-right: var(--spacing-3);
+}
+
+.folder-create-modal-form .ant-form-item-label > label::after {
+  display: none !important;
+}

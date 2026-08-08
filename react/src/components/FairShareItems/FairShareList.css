@@ -1,0 +1,18 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for FairShareList's step navigator (to-astryx ticket 33).
+ Replaces the antd-style `createStyles` block; imported by the component
+ itself (P17). The `.ant-steps-*` selectors are still LIVE (the navigator is
+ an antd `Steps`), so they are preserved verbatim rather than dropped (P6).
+
+ Token mapping (P19-checked): token.colorBgContainerDisabled (antd
+ rgba(0,0,0,0.04), a 'self' token with no Astryx counterpart) ->
+ var(--color-background-muted), the declared subdued surface.
+*/
+.fair-share-steps .ant-steps-item-finish,
+.fair-share-steps .ant-steps-item-finish .ant-steps-panel-arrow > path {
+  background-color: var(--color-background-muted) !important;
+  fill: var(--color-background-muted) !important;
+}

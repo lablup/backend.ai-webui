@@ -2,26 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { theme } from '../theme-shim';
+import './BAICheckbox.css';
 import { Checkbox } from 'antd';
-import type { CheckboxProps, GlobalToken } from 'antd';
-import { createStyles } from 'antd-style';
+import type { CheckboxProps } from 'antd';
 import { FormItemInputContext } from 'antd/es/form/context';
+import classNames from 'classnames';
 import React, { use } from 'react';
-
-// Token values come in as props from the shim (to-astryx ticket 10).
-const useStyles = createStyles(
-  ({ css }, { token }: { token: GlobalToken }) => ({
-    errorCheckbox: css`
-      .ant-checkbox {
-        border-color: ${token.colorError} !important;
-      }
-      .ant-checkbox-checked {
-        background-color: ${token.colorErrorHover} !important;
-      }
-    `,
-  }),
-);
 
 export interface BAICheckboxProps extends CheckboxProps {}
 
@@ -44,14 +30,15 @@ const BAICheckbox: React.FC<BAICheckboxProps> = ({
   ...checkboxProps
 }) => {
   'use memo';
-  const { token } = theme.useToken();
-  const { styles, cx } = useStyles({ token });
   const { status } = use(FormItemInputContext);
 
   return (
     <Checkbox
       {...checkboxProps}
-      className={cx(className, status === 'error' && styles.errorCheckbox)}
+      className={classNames(
+        className,
+        status === 'error' && 'bai-checkbox-error',
+      )}
     />
   );
 };

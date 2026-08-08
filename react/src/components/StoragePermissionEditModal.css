@@ -1,0 +1,15 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <StoragePermissionEditModal> (to-astryx ticket 33).
+ Replaces the antd-style `createStyles` block; imported by the component
+ itself (P17). The `.ant-modal-title` selector is still LIVE (BAIModal wraps
+ antd `Modal`), so it is preserved verbatim rather than dropped (P6).
+
+ Token mapping (P19-checked): token.marginXL (32px) -> var(--spacing-8).
+*/
+.storage-permission-edit-modal-header .ant-modal-title {
+  width: 100%;
+  padding-inline-end: var(--spacing-8);
+}

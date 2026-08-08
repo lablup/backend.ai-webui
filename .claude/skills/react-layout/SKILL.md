@@ -28,7 +28,7 @@ been actively removed across 2025.
 - **`justify="between"` / `"around"`** are BAIFlex shorthands for `space-between` / `space-around`. Passing raw CSS values doesn't work.
 - **`Space.direction` is deprecated for layout** (antd v6). `Space.Compact` is still canonical for button + dropdown grouping — don't migrate it to BAIFlex.
 - **Hardcoded px breaks theming.** Admin primary colors (FR-1785 #4816) and dark mode rely on tokens. `padding: 8` compiles but diverges visually across themes.
-- **`createStyles` from antd-style re-renders on theme change.** Prefer inline `style={{ padding: token.paddingSM }}` when tokens suffice; reserve `createStyles` for pseudo-class / nested antd-class selectors.
+- **`antd-style` is gone (to-astryx ticket 33).** Prefer inline `style={{ padding: token.paddingSM }}` when tokens suffice; for pseudo-class / nested antd-class selectors, add a co-located `.css` file next to the component and import it there (P17).
 - **Tables without `scroll={{ x: 'max-content' }}`** overflow their parent on narrow viewports. Always set it on `BAITable`/`*Nodes`.
 - **Responsive `grid={{ xs, sm, md, lg, xl, xxl }}`** uses antd breakpoints (`xxl` = 1600px). Don't invent a custom breakpoint — the design system caps at xxl on purpose.
 
@@ -204,23 +204,27 @@ column resize / reordering.
 <BAIUserNodes usersFrgmt={…} scroll={{ x: 'max-content' }} />
 ```
 
-## 8. Don't `antd-style` what tokens can do
+## 8. Don't write a stylesheet for what tokens can do
 
-`antd-style` / `createStyles` is fine for selectors you can't express with
-inline `style` (pseudo-classes, nested antd class overrides). But if you're
-setting `padding`, `margin`, `background`, `color`, or any value that maps to a
-token — use tokens inline instead. It's cheaper and co-located with the JSX.
+A co-located `.css` file is the right tool for selectors you can't express with
+inline `style` (pseudo-classes, descendant/antd-class overrides, media
+queries). But if you're setting `padding`, `margin`, `background`, `color`, or
+any value that maps to a token — use tokens inline instead. It's cheaper and
+co-located with the JSX.
+
+`antd-style` / `createStyles` no longer exists in this repo (to-astryx ticket
+33 removed the dependency). Values that must vary at runtime ride CSS custom
+properties set inline; everything else is a static rule in the stylesheet, with
+`var(--…)` Astryx tokens for every value.
 
 ```tsx
 // ✅ Inline tokens
 <div style={{ padding: token.paddingSM, color: token.colorTextSecondary }} />
 
-// ✅ antd-style for pseudo-selectors
-const useStyles = createStyles(({ css }) => ({
-  modal: css`
-    .ant-modal-body { padding-top: 24px !important; }
-  `,
-}));
+// ✅ Co-located stylesheet for pseudo-/descendant selectors
+import './MyModal.css';
+// MyModal.css
+// .my-modal .ant-modal-body { padding-top: var(--spacing-6) !important; }
 ```
 
 ## Related Skills

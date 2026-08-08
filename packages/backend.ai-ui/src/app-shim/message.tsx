@@ -15,7 +15,7 @@
      await message.success('...');                   // thenable: resolves on close
 
  Semantics mapped onto Astryx `showToast`:
- - `duration` is antd-style SECONDS (default from <BAIAppProvider message>);
+ - `duration` is in antd's unit, SECONDS (default from <BAIAppProvider message>);
    `0` disables auto-dismiss. Astryx wants milliseconds -> converted here.
  - The returned handle is BOTH a function (closes the toast) and a
    PromiseLike<boolean> that resolves once the toast is gone (auto or manual)

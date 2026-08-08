@@ -8,8 +8,8 @@ import {
   hasMountWithoutFileOps,
 } from '../helper/storageHostPermission';
 import { theme } from '../theme-shim';
+import './StoragePermissionEditModal.css';
 import { Checkbox, Divider, Tooltip, Typography } from 'antd';
-import { createStyles } from 'antd-style';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { BAIFlex, BAIModal, type BAIModalProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -23,15 +23,6 @@ import { useTranslation } from 'react-i18next';
 // FolderExplorerModalV2). `padding-inline-end` then reserves room for the
 // absolutely-positioned close (X) button so the trailing `)` never collides
 // with it.
-const useStyles = createStyles(({ css, token }) => ({
-  modalHeader: css`
-    .ant-modal-title {
-      width: 100%;
-      padding-inline-end: ${token.marginXL}px;
-    }
-  `,
-}));
-
 /**
  * One entity whose permissions are being edited. `id` is the opaque key the
  * caller uses to fan out the save (domain name / project gid / KRP name);
@@ -76,7 +67,6 @@ const StoragePermissionEditModal: React.FC<Props> = ({
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { styles } = useStyles();
   const { message, modal } = App.useApp();
 
   // Single target → prefill its current permissions. Bulk (multiple targets)
@@ -165,7 +155,7 @@ const StoragePermissionEditModal: React.FC<Props> = ({
   return (
     <BAIModal
       {...baiModalProps}
-      className={styles.modalHeader}
+      className="storage-permission-edit-modal-header"
       title={resolvedTitle}
       open={open}
       destroyOnHidden

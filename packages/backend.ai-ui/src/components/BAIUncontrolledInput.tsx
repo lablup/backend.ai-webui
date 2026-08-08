@@ -1,22 +1,8 @@
 import { theme } from '../theme-shim';
+import './BAIUncontrolledInput.css';
 import { Input, type InputProps, type InputRef } from 'antd';
-import { createStyles } from 'antd-style';
 import { CornerDownLeftIcon } from 'lucide-react';
 import { useRef, useState } from 'react';
-
-const useStyles = createStyles(({ css }) => ({
-  noSpinner: css`
-    input[type='number']::-webkit-outer-spin-button,
-    input[type='number']::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-
-    input[type='number'] {
-      -moz-appearance: textfield;
-    }
-  `,
-}));
 
 export interface BAIUncontrolledInputProps extends Omit<
   InputProps,
@@ -46,14 +32,17 @@ const BAIUncontrolledInput: React.FC<BAIUncontrolledInputProps> = ({
   ...inputProps
 }) => {
   const inputRef = useRef<InputRef>(null);
-  const { styles } = useStyles();
   const { token } = theme.useToken();
   const [showEnterIcon, setShowEnterIcon] = useState(false);
 
   return (
     <Input
       key={defaultValue} // to reset internal state when path changes externally
-      className={inputProps.type === 'number' ? styles.noSpinner : undefined}
+      className={
+        inputProps.type === 'number'
+          ? 'bai-uncontrolled-input-no-spinner'
+          : undefined
+      }
       ref={inputRef}
       defaultValue={defaultValue}
       suffix={

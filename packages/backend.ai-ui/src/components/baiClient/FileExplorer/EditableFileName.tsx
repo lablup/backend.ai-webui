@@ -6,9 +6,9 @@ import BAILink from '../../BAILink';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import { FolderInfoContext } from './BAIFileExplorer';
+import './EditableFileName.css';
 import { useMutation } from '@tanstack/react-query';
 import { Form, Input, Typography, type GetProps } from 'antd';
-import { createStyles } from 'antd-style';
 import * as _ from 'lodash-es';
 import { File, Folder, CornerDownLeftIcon } from 'lucide-react';
 import { use, useRef, useState } from 'react';
@@ -17,25 +17,6 @@ interface ServerError extends Error {
   title?: string;
   msg?: string;
 }
-
-const useStyles = createStyles(({ css }) => ({
-  hoverEdit: css`
-    .ant-typography-edit {
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-
-    &:hover .ant-typography-edit {
-      opacity: 1;
-    }
-  `,
-  form: css`
-    .ant-form-item,
-    .ant-form-item-has-success {
-      margin-bottom: 0px !important;
-    }
-  `,
-}));
 
 type EditableNameProps = {
   fileInfo: VFolderFile;
@@ -67,7 +48,6 @@ const EditableFileName: React.FC<EditableNameProps> = ({
   const { t } = useBAIi18n();
   const { token } = theme.useToken();
   const { modal, message } = App.useApp();
-  const { styles } = useStyles();
   const { targetVFolderId, currentPath } = use(FolderInfoContext);
   const [isEditing, setIsEditing] = useState(false);
   const baiClient = useConnectedBAIClient();
@@ -134,7 +114,9 @@ const EditableFileName: React.FC<EditableNameProps> = ({
                 }
               : false
           }
-          className={!disabled ? styles.hoverEdit : undefined}
+          className={
+            !disabled ? 'bai-editable-file-name-hover-edit' : undefined
+          }
           style={{
             // after editing, focus this element, remove outline
             outline: 'none',
@@ -179,7 +161,7 @@ const EditableFileName: React.FC<EditableNameProps> = ({
         </Component>
       ) : (
         <Form
-          className={styles.form}
+          className="bai-editable-file-name-form"
           initialValues={{ newName: fileInfo?.name }}
           onFinish={(values) => {
             setIsEditing(false);

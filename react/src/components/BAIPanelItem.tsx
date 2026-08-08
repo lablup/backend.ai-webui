@@ -4,8 +4,8 @@
  */
 import usePrimaryColors from '../hooks/usePrimaryColors';
 import { theme } from '../theme-shim';
+import './BAIPanelItem.css';
 import { Progress, type ProgressProps, Typography } from 'antd';
-import { createStyles } from 'antd-style';
 import { BAIFlex, BAIFlexProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { ReactNode } from 'react';
@@ -19,14 +19,6 @@ interface BAIPanelItemProps extends Omit<BAIFlexProps, 'title'> {
   progressProps?: ProgressProps;
 }
 
-const useStyles = createStyles(({ css }) => ({
-  progressSteps: css`
-    .ant-progress-steps-item {
-      border-radius: 100px;
-    }
-  `,
-}));
-
 const BAIPanelItem: React.FC<BAIPanelItemProps> = ({
   title,
   value,
@@ -37,7 +29,6 @@ const BAIPanelItem: React.FC<BAIPanelItemProps> = ({
   ...props
 }) => {
   const { token } = theme.useToken();
-  const { styles } = useStyles();
   const primaryColors = usePrimaryColors();
   return (
     <BAIFlex
@@ -86,7 +77,7 @@ const BAIPanelItem: React.FC<BAIPanelItemProps> = ({
           showInfo={false}
           steps={12}
           size={[5, 12]}
-          className={styles.progressSteps}
+          className="bai-panel-item-progress-steps"
           {...progressProps}
         />
       )}

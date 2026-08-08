@@ -1,0 +1,38 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <BAITable> (to-astryx ticket 33). Replaces the
+ `antd-style` `createStyles` block; imported by the component itself (P17).
+ The `.ant-table-*` selectors are still LIVE (BAITable wraps antd `Table`), so
+ they are preserved verbatim rather than dropped (P6). `.react-resizable-handle`
+ comes from `react-resizable` and outlives antd entirely.
+
+ Token mapping (P19-checked): token.colorTextTertiary (antd rgba(0,0,0,0.45),
+ a 'self' token with no Astryx counterpart) -> var(--color-text-secondary);
+ the literal 500 header weight -> var(--font-weight-medium).
+*/
+.bai-table-resizable .react-resizable-handle {
+  position: absolute;
+  inset-inline-end: 0px;
+  bottom: 0;
+  z-index: 1;
+  width: 10px;
+  height: 100%;
+  cursor: col-resize;
+}
+
+.bai-table-resizable .ant-table-cell {
+  overflow: hidden;
+  white-space: 'pre';
+  word-wrap: 'break-word';
+}
+
+.bai-table-neo-header thead.ant-table-thead > tr > th.ant-table-cell {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
+.bai-table-zero-selection-column .ant-table-selection-column {
+  padding: 0 !important;
+}

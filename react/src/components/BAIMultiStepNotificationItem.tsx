@@ -4,9 +4,9 @@
  */
 import { NotificationState } from '../hooks/useBAINotification';
 import { theme } from '../theme-shim';
+import './BAIMultiStepNotificationItem.css';
 import BAINotificationBackgroundProgress from './BAINotificationBackgroundProgress';
 import { Button, List, Typography } from 'antd';
-import { createStyles } from 'antd-style';
 import { BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import {
@@ -22,76 +22,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const SLIDE_DURATION = 300;
-
-const useStyles = createStyles(({ css, token }) => ({
-  stepSlider: css`
-    position: relative;
-    overflow: hidden;
-    height: 20px;
-  `,
-  stepSlide: css`
-    position: absolute;
-    left: 0;
-    right: 0;
-    display: flex;
-    align-items: center;
-    gap: ${token.marginXXS}px;
-    height: 20px;
-    transition:
-      transform ${SLIDE_DURATION}ms ease-in-out,
-      opacity ${SLIDE_DURATION}ms ease-in-out;
-  `,
-  // Visible position (center)
-  slideCenter: css`
-    transform: translateY(0);
-    opacity: 1;
-  `,
-  // Exited upward (out of view)
-  slideUp: css`
-    transform: translateY(-100%);
-    opacity: 0;
-  `,
-  // Waiting below (before entering)
-  slideDown: css`
-    transform: translateY(100%);
-    opacity: 0;
-  `,
-  // Instantly position without transition (used to place new element below before animating in)
-  noTransition: css`
-    transition: none !important;
-  `,
-  expandToggle: css`
-    cursor: pointer;
-    user-select: none;
-    &:hover {
-      opacity: 0.7;
-    }
-  `,
-  expandIcon: css`
-    transition: transform 0.2s ease;
-    font-size: 10px;
-  `,
-  expandIconOpen: css`
-    transform: rotate(0deg);
-  `,
-  expandIconClosed: css`
-    transform: rotate(-90deg);
-  `,
-  stepList: css`
-    overflow: hidden;
-    transition:
-      max-height 0.25s ease-in-out,
-      opacity 0.25s ease-in-out;
-  `,
-  stepListExpanded: css`
-    max-height: 200px;
-    opacity: 1;
-  `,
-  stepListCollapsed: css`
-    max-height: 0;
-    opacity: 0;
-  `,
-}));
 
 const StepIcon: React.FC<{
   status: string;
@@ -162,7 +92,6 @@ const BAIMultiStepNotificationItem: React.FC<{
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { styles } = useStyles();
   const { multiStep } = notification;
 
   const [expanded, setExpanded] = useState(false);
@@ -288,7 +217,7 @@ const BAIMultiStepNotificationItem: React.FC<{
           direction="row"
           align="center"
           gap={'xxs'}
-          className={isDetailView ? styles.expandToggle : undefined}
+          className={isDetailView ? 'bai-step-expand-toggle' : undefined}
           onClick={isDetailView ? () => setExpanded((v) => !v) : undefined}
         >
           {overallStatus !== 'warned' && (
@@ -321,11 +250,13 @@ const BAIMultiStepNotificationItem: React.FC<{
               {stepLabel}
             </Typography.Text>
           ) : (
-            <div className={styles.stepSlider} style={{ flex: 1 }}>
+            <div className="bai-step-slider" style={{ flex: 1 }}>
               {outgoing != null && outgoingStepDef && (
                 <div
-                  className={`${styles.stepSlide} ${
-                    phase === 'ready' ? styles.slideCenter : styles.slideUp
+                  className={`bai-step-slide ${
+                    phase === 'ready'
+                      ? 'bai-step-slide-center'
+                      : 'bai-step-slide-up'
                   }`}
                 >
                   <Typography.Text style={{ fontSize: token.fontSizeSM }}>
@@ -334,10 +265,10 @@ const BAIMultiStepNotificationItem: React.FC<{
                 </div>
               )}
               <div
-                className={`${styles.stepSlide} ${
+                className={`bai-step-slide ${
                   phase === 'ready'
-                    ? `${styles.slideDown} ${styles.noTransition}`
-                    : styles.slideCenter
+                    ? 'bai-step-slide-down bai-step-slide-no-transition'
+                    : 'bai-step-slide-center'
                 }`}
               >
                 <Typography.Text style={{ fontSize: token.fontSizeSM }}>
@@ -348,8 +279,10 @@ const BAIMultiStepNotificationItem: React.FC<{
           )}
           {isDetailView && totalSteps > 1 && (
             <ChevronDown
-              className={`${styles.expandIcon} ${
-                expanded ? styles.expandIconOpen : styles.expandIconClosed
+              className={`bai-step-expand-icon ${
+                expanded
+                  ? 'bai-step-expand-icon-open'
+                  : 'bai-step-expand-icon-closed'
               }`}
               style={{ color: token.colorTextSecondary }}
               size="1em"
@@ -360,8 +293,8 @@ const BAIMultiStepNotificationItem: React.FC<{
         {/* Expandable step list: Drawer only */}
         {isDetailView && (
           <div
-            className={`${styles.stepList} ${
-              expanded ? styles.stepListExpanded : styles.stepListCollapsed
+            className={`bai-step-list ${
+              expanded ? 'bai-step-list-expanded' : 'bai-step-list-collapsed'
             }`}
           >
             <BAIFlex

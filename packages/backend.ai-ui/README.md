@@ -20,7 +20,7 @@ The design-system contract is **Astryx**:
 | `@tanstack/react-query`        | yes       | `BAIConfigProvider` owns the QueryClient.                            |
 | `react-router-dom`             | yes       | `BAILink` and friends.                                               |
 | `ahooks`                       | yes       | —                                                                     |
-| `antd`, `@ant-design/icons`, `antd-style` | **optional — legacy** | See "The residual antd surface".              |
+| `antd`, `@ant-design/icons`   | **optional — legacy** | See "The residual antd surface".                       |
 
 `@astryxdesign/core` and `@astryxdesign/theme-neutral` are peers, **not**
 dependencies and **not** bundled. They were `devDependencies` until ticket 30,
@@ -34,10 +34,11 @@ duplicated `@astryxdesign/core` first.
 ### The residual antd surface
 
 BUI is **not yet antd-free in its source** — the antd `Form` engine, the legacy
-`BAITable`, `BAIModal`/`BAICard` internals and a shrinking set of `antd-style`
-`createStyles` blocks still import it. What ticket 30 changed is the
-*contract*: `antd`, `@ant-design/icons` and `antd-style` are declared
-`optional` in `peerDependenciesMeta`, so
+`BAITable` and `BAIModal`/`BAICard` internals still import it. `antd-style` is
+gone as of ticket 33: every `createStyles` block became a co-located `.css`
+file next to its component (P17), so the styling engine no longer participates
+in the peer contract at all. What ticket 30 changed is the *contract*: `antd`
+and `@ant-design/icons` are declared `optional` in `peerDependenciesMeta`, so
 
 - a consumer that only touches the Astryx-native surface (`BAITableAstryx`,
   `BAIComplexSelect`, `BAIPropertyFilter`, the `*SelectAstryx` wrappers, the

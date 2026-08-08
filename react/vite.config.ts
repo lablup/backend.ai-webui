@@ -827,7 +827,6 @@ export default defineConfig(({ command, mode }) => {
         'react-dom/client',
         'react-router-dom',
         'antd',
-        'antd-style',
         '@ant-design/icons',
         '@ant-design/colors',
         'jotai',

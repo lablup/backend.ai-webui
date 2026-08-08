@@ -7,8 +7,8 @@ import { TerminateSessionModalForProjectAdminMutation } from '../__generated__/T
 import { App } from '../app-shim';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { theme } from '../theme-shim';
+import './TerminateSessionModalForProjectAdmin.css';
 import { Checkbox, type ModalProps, Typography } from 'antd';
-import { createStyles } from 'antd-style';
 import {
   BAICard,
   BAIFlex,
@@ -20,17 +20,6 @@ import * as _ from 'lodash-es';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
-
-const useStyle = createStyles(({ css, token }) => {
-  return {
-    custom: css`
-      ul {
-        list-style-type: circle;
-        padding-left: ${token.paddingMD}px;
-      }
-    `,
-  };
-});
 
 export interface TerminateSessionModalForProjectAdminProps extends Omit<
   ModalProps,
@@ -56,7 +45,6 @@ const TerminateSessionModalForProjectAdmin: React.FC<
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { styles } = useStyle();
   const { message } = App.useApp();
   const userRole = useCurrentUserRole();
   const [isForce, setIsForce] = useState(false);
@@ -153,7 +141,7 @@ const TerminateSessionModalForProjectAdmin: React.FC<
       {...modalProps}
     >
       <BAIFlex
-        className={styles.custom}
+        className="terminate-session-modal-admin-list"
         direction="column"
         align="stretch"
         gap={'xs'}

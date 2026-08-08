@@ -1,0 +1,116 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <BAINameActionCell> (to-astryx ticket 33). Replaces the
+ `antd-style` `createStyles` block; imported by the component itself (P17).
+ Nothing here targets `.ant-*` — the rules are plain flex plumbing plus the
+ hover reveal, so none of it dies when antd leaves (P6).
+
+ ## Class naming (READ BEFORE RENAMING)
+
+ The two `bai-name-action-cell-*` names below are LOAD-BEARING MARKERS, not
+ styling hooks: `calculateVisibleActions` measures the title icon through
+ `querySelector('.bai-name-action-cell-title-icon')`, and ~20 e2e specs locate
+ the action group through `.bai-name-action-cell-actions`. They stay.
+
+ The styling hooks that used to be emotion hashes are namespaced `bai-nac-*`
+ instead of reusing the `bai-name-action-cell-*` family, because the app's
+ Astryx rebuild (`react/src/components/astryx-bui/astryxBui.css`, ticket 16)
+ already owns that family with DIFFERENT action-button colours. Two sheets
+ defining one class name is decided by load order, which is exactly the kind
+ of silent, environment-dependent drift this migration keeps tripping over.
+
+ Token mapping (P19-checked against the declared Astryx set):
+   token.marginXS  (8px)          -> var(--spacing-2)
+   token.marginXXS (4px)          -> var(--spacing-1)
+   token.colorInfo / colorInfoBg  -> var(--color-text-blue) /
+                                     var(--color-background-blue)
+   token.colorError / colorErrorBg-> var(--color-text-red) /
+                                     var(--color-background-red)
+     (P19, from the pilot sweep: the semantic `--color-error` is the SOLID
+     fill; the text tier of the red family is `--color-text-red`, which is what
+     a danger *text* button needs.)
+   token.colorTextDisabled        -> var(--color-text-disabled)
+   token.colorBgContainerDisabled -> var(--color-background-muted)
+*/
+.bai-nac-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  width: 100%;
+  min-width: 0;
+  position: relative;
+}
+
+.bai-nac-title-area {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+}
+
+.bai-nac-title-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.bai-nac-actions {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.bai-nac-actions-hover {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  max-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.bai-nac-hover-wrapper:hover .bai-name-action-cell-actions,
+.bai-nac-hover-wrapper:has(:focus-visible) .bai-name-action-cell-actions {
+  max-width: none;
+  overflow: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.bai-nac-action-button-default {
+  color: var(--color-text-blue);
+  background-color: transparent;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.bai-nac-action-button-default:not(:disabled):hover {
+  color: var(--color-text-blue) !important;
+  background-color: var(--color-background-blue) !important;
+}
+
+.bai-nac-action-button-danger {
+  color: var(--color-text-red);
+  background-color: transparent;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.bai-nac-action-button-danger:not(:disabled):hover {
+  color: var(--color-text-red) !important;
+  background-color: var(--color-background-red) !important;
+}
+
+.bai-nac-action-button-disabled {
+  color: var(--color-text-disabled);
+  background-color: var(--color-background-muted);
+}

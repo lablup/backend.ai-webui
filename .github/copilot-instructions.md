@@ -12,7 +12,7 @@ Backend.AI WebUI is a **React web application** using React 19 + Ant Design 6 + 
 - **Component Library Build**: Vite (`packages/backend.ai-ui/`)
 - **Service Worker**: vite-plugin-pwa (Workbox under the hood, integrated into the Vite build)
 - **Package Manager**: pnpm with workspace monorepo
-- **Styling**: Ant Design + antd-style
+- **Styling**: Astryx (`@astryxdesign/core`) + StyleX `xstyle`; co-located `.css` files for rules props cannot express. Ant Design remains on the un-migrated surface; `antd-style` was removed in to-astryx ticket 33.
 - **State Management**: Jotai (global UI state), Relay (server/GraphQL state)
 - **GraphQL**: Relay compiler for React components and backend.ai-ui package
 - **Testing**: Vitest for unit tests, Playwright for E2E tests

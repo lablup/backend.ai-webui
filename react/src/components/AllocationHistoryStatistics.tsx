@@ -12,8 +12,8 @@ import { useThemeMode } from '../hooks/useThemeMode';
 import useUserUsageStats from '../hooks/useUserUsageStats';
 import { theme } from '../theme-shim';
 import { Period } from './AllocationHistory';
+import './AllocationHistoryStatistics.css';
 import { Card } from 'antd';
-import { createStyles } from 'antd-style';
 import { BAIQuestionIconWithTooltip, BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
@@ -26,34 +26,6 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-
-const useStyles = createStyles(({ css, token }) => ({
-  graphCard: css`
-    .recharts-cartesian-axis-line {
-      stroke: ${token.colorBorder};
-    }
-    .recharts-cartesian-axis-tick-line {
-      stroke: ${token.colorBorder};
-    }
-    .recharts-cartesian-axis-tick-value {
-      fill: ${token.colorTextDescription};
-    }
-    .recharts-label {
-      fill: ${token.colorTextDescription};
-    }
-    .recharts-default-tooltip {
-      background-color: ${token.colorBgBase} !important;
-      border: 1px solid ${token.colorBorderSecondary} !important;
-      color: ${token.colorText} !important;
-    }
-    .recharts-tooltip-label {
-      color: ${token.colorText} !important;
-    }
-    .recharts-tooltip-item {
-      color: ${token.colorText} !important;
-    }
-  `,
-}));
 
 type ByteUnit = 'B' | 'KiB' | 'MiB' | 'GiB' | 'TiB' | 'PiB' | 'EiB';
 type DecimalUnit = 'B' | 'KB' | 'MB' | 'GB' | 'TB' | 'PB' | 'EB';
@@ -104,7 +76,6 @@ const UsageBarChart: React.FC<UsageBarChartProps> = ({
 }) => {
   'use memo';
   const { token } = theme.useToken();
-  const { styles } = useStyles();
   const { isDarkMode } = useThemeMode();
 
   const formatValue = (value: number) => {
@@ -146,7 +117,7 @@ const UsageBarChart: React.FC<UsageBarChartProps> = ({
     <ResponsiveContainer
       width="100%"
       height={height}
-      className={styles.graphCard}
+      className="allocation-history-graph-card"
     >
       <BarChart
         data={chartData}

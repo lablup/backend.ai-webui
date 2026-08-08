@@ -10,11 +10,11 @@ import { useMergedAllowedStorageHostPermission } from '../hooks/useMergedAllowed
 import { theme } from '../theme-shim';
 import { useFileUploadManager } from './FileUploadManager';
 import FolderExplorerHeader from './FolderExplorerHeader';
+import './FolderExplorerModal.css';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderNodeDescription from './VFolderNodeDescription';
 import VFolderTextFileEditorModal from './VFolderTextFileEditorModal';
 import { Alert, Divider, Grid, Skeleton, Splitter } from 'antd';
-import { createStyles } from 'antd-style';
 import { RcFile } from 'antd/es/upload';
 import {
   BAIFileExplorer,
@@ -33,14 +33,6 @@ import * as _ from 'lodash-es';
 import { Suspense, useDeferredValue, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-
-const useStyles = createStyles(({ css }) => ({
-  baiModalHeader: css`
-    .ant-modal-title {
-      width: 100%;
-    }
-  `,
-}));
 
 export interface FolderExplorerElement extends HTMLDivElement {
   _fetchVFolder: () => void;
@@ -73,7 +65,6 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { xl } = Grid.useBreakpoint();
-  const { styles } = useStyles();
 
   const [fetchKey, updateFetchKey] = useFetchKey();
   const baiClient = useSuspendedBackendaiClient();
@@ -239,7 +230,7 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
 
   return (
     <BAIModal
-      className={styles.baiModalHeader}
+      className="folder-explorer-modal-header"
       width={'90%'}
       keyboard
       destroyOnHidden

@@ -10,9 +10,9 @@ import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { theme } from '../theme-shim';
+import './FolderCreateModal.css';
 import StorageSelect from './StorageSelect';
 import { Divider, Form, Input, Radio, Skeleton, Switch, Tooltip } from 'antd';
-import { createStyles } from 'antd-style';
 import { FormInstance } from 'antd/lib';
 import {
   BAIQuestionIconWithTooltip,
@@ -34,27 +34,6 @@ const MODEL_STORE_PROJECT_NAME = 'model-store';
 const FOLDER_NAME_MAX_LENGTH = 64;
 const MODAL_WIDTH = 650;
 
-const useStyles = createStyles(({ css, token }) => ({
-  modal: css`
-    .ant-modal-body {
-      padding-top: 24px !important;
-      padding-bottom: 0 !important;
-    }
-  `,
-  form: css`
-    .ant-form-item-label {
-      display: flex;
-      align-items: start;
-      padding-left: ${token.paddingSM}px;
-    }
-    .ant-form-item-control {
-      padding-right: ${token.paddingSM}px;
-    }
-    .ant-form-item-label > label::after {
-      display: none !important;
-    }
-  `,
-}));
 interface FolderCreateFormItemsType {
   name: string;
   host: string | undefined;
@@ -106,7 +85,6 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { styles } = useStyles();
   const { token } = theme.useToken();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
@@ -210,7 +188,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
   return (
     <BAIModal
       loading={isFetchingAllowedTypes}
-      className={styles.modal}
+      className="folder-create-modal"
       title={t('data.CreateANewStorageFolder')}
       footer={
         <BAIFlex justify="between">
@@ -262,7 +240,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
       }}
     >
       <Form
-        className={styles.form}
+        className="folder-create-modal-form"
         ref={formRef}
         initialValues={mergedInitialValues}
         labelCol={{ span: 8 }}

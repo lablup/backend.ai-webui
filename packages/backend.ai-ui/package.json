@@ -60,17 +60,13 @@
     "react-router-dom": "catalog:",
     "relay-runtime": "catalog:",
     "@ant-design/icons": "catalog:",
-    "antd": "catalog:",
-    "antd-style": "catalog:"
+    "antd": "catalog:"
   },
   "peerDependenciesMeta": {
     "@ant-design/icons": {
       "optional": true
     },
     "antd": {
-      "optional": true
-    },
-    "antd-style": {
       "optional": true
     }
   },

@@ -1,0 +1,94 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <BAISelect> (to-astryx ticket 33). Replaces the
+ `antd-style` `createStyles` block; imported by the component itself (P17).
+ Every selector below targets antd `Select` internals and is still LIVE, so
+ the block is preserved verbatim rather than dropped (P6).
+
+ UNLAYERED on purpose — see the note in BAIAlert.css.
+
+ Token mapping (P19-checked against the declared Astryx set):
+   token.colorBgBase          -> var(--color-background-body)
+   token.colorError           -> var(--color-error)
+   token.colorTextPlaceholder -> var(--color-text-disabled)  ('self' token in
+     the shim: antd rgba(0,0,0,0.25); the declared faint-neutral tier)
+*/
+.bai-select-ghost.ant-select {
+  background-color: transparent;
+  border-color: var(--color-background-body) !important;
+  color: var(--color-background-body);
+}
+
+.bai-select-ghost.ant-select:hover,
+.bai-select-ghost.ant-select:active {
+  background-color: rgb(255 255 255 / 10%);
+}
+
+.bai-select-ghost.ant-select .ant-select-suffix,
+.bai-select-ghost.ant-select:hover .ant-select-suffix,
+.bai-select-ghost.ant-select:active .ant-select-suffix {
+  color: var(--color-background-body);
+}
+
+/* In ghost mode the border-color is hard-overridden with !important, which
+   would otherwise swallow antd's status="error" red border. Restore the error
+   treatment with a higher-specificity rule so a ghost select (e.g. the header
+   ProjectSelect) can still surface an error state. */
+.bai-select-ghost.ant-select.ant-select-status-error {
+  border-color: var(--color-error) !important;
+}
+
+.bai-select-ghost.ant-select.ant-select-status-error .ant-select-suffix,
+.bai-select-ghost.ant-select.ant-select-status-error:hover .ant-select-suffix,
+.bai-select-ghost.ant-select.ant-select-status-error:active .ant-select-suffix {
+  color: var(--color-error);
+}
+
+/* Hide selected value content (except search input) when the user is typing a
+   search query. Matches antd's approach of using color: transparent instead of
+   display: none. Uses opacity: 0 with transition: none to avoid delay from
+   antd Tag's default transition. */
+.bai-select .ant-select-content-has-search-value img,
+.bai-select .ant-select-content-has-search-value .ant-divider,
+.bai-select .ant-select-content-has-search-value .ant-badge,
+.bai-select .ant-select-content-has-search-value span.text-high-lighter,
+.bai-select .ant-select-content-has-search-value span.ant-tag {
+  opacity: 0 !important;
+  transition: none;
+}
+
+/* Change the opacity of images and tags in the select option when the dropdown
+   is open */
+.bai-select.ant-select-open .ant-select-content .ant-badge,
+.bai-select.ant-select-open .ant-select-content img,
+.bai-select.ant-select-open .ant-select-content .ant-divider,
+.bai-select.ant-select-open .ant-select-content span.ant-tag {
+  opacity: 0.5;
+}
+
+/* Change the color of secondary/success/warning/danger text to placeholder
+   color when the dropdown is open */
+.bai-select.ant-select-open .ant-select-content .ant-typography-secondary,
+.bai-select.ant-select-open .ant-select-content .ant-typography-success,
+.bai-select.ant-select-open .ant-select-content .ant-typography-warning,
+.bai-select.ant-select-open .ant-select-content .ant-typography-danger {
+  color: var(--color-text-disabled);
+}
+
+/* TODO: re-enable this style after fixing flickering when theme changes */
+/* Add a gradient effect to the right side of the dropdown to indicate more
+   content:
+   .bai-select .ant-select-content::after {
+     content: '';
+     position: absolute;
+     inset: 0 0 0 auto;
+     width: 10px;
+     background: linear-gradient(
+       to right,
+       transparent,
+       var(--color-background-surface)
+     );
+     z-index: 2;
+   } */

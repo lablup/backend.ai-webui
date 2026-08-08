@@ -2,8 +2,8 @@
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
+import './BAIModal.css';
 import { Button, Modal, Tooltip, type ModalProps } from 'antd';
-import { createStyles } from 'antd-style';
 import classNames from 'classnames';
 import * as _ from 'lodash-es';
 import {
@@ -70,224 +70,6 @@ export interface BAIModalProps extends Omit<ModalProps, 'footer'> {
   minimizedPlacement?: MinimizedPlacement;
 }
 
-const useStyles = createStyles(
-  (
-    { css },
-    {
-      stickyTitle,
-      type,
-      colorWarning,
-      colorError,
-      windowState,
-      hasWindowControls,
-      minimizedPlacement,
-      marginLG,
-      borderRadiusLG,
-      borderRadiusSM,
-      controlHeightSM,
-      paddingXXS,
-      colorTextSecondary,
-      colorTextBase,
-      colorFillSecondary,
-      colorFillTertiary,
-    }: {
-      stickyTitle: boolean;
-      type: 'normal' | 'warning' | 'error';
-      colorWarning: string;
-      colorError: string;
-      windowState: WindowState;
-      hasWindowControls: boolean;
-      minimizedPlacement: MinimizedPlacement;
-      marginLG: number;
-      borderRadiusLG: number;
-      borderRadiusSM: number;
-      controlHeightSM: number;
-      paddingXXS: number;
-      colorTextSecondary: string;
-      colorTextBase: string;
-      colorFillSecondary: string;
-      colorFillTertiary: string;
-    },
-  ) => ({
-    modal: css`
-      .ant-modal-wrap.ant-modal-centered {
-        overflow: hidden;
-      }
-      .ant-modal-close {
-        width: ${controlHeightSM}px;
-        height: ${controlHeightSM}px;
-        top: calc(
-          (var(--general-modal-header-height, 69px) - ${controlHeightSM}px) / 2
-        );
-        right: calc(
-          (var(--general-modal-header-height, 69px) - ${controlHeightSM}px) / 2
-        );
-        -webkit-app-region: no-drag;
-      }
-      .ant-modal-title {
-        margin-right: ${hasWindowControls ? '0' : '36px'};
-        ${hasWindowControls ? 'width: 100%; max-width: 100%;' : ''}
-        ${type === 'warning' ? `color: ${colorWarning};` : ''}
-        ${type === 'error' ? `color: ${colorError};` : ''}
-      }
-      ${
-        stickyTitle
-          ? `
-        .ant-modal-header {
-          position: sticky;
-          top: 0;
-          z-index: 1;
-          background: var(--ant-color-bg-elevated, #fff);
-        }
-      `
-          : ''
-      }
-
-      ${
-        windowState === 'maximized'
-          ? `
-        &.ant-modal {
-          width: calc(100vw - ${marginLG * 2}px) !important;
-          max-width: calc(100vw - ${marginLG * 2}px) !important;
-          top: 0;
-          padding: 0;
-          margin: ${marginLG}px auto;
-        }
-        .ant-modal-content,
-        .ant-modal-container {
-          height: calc(100vh - ${marginLG * 2}px);
-          display: flex;
-          flex-direction: column;
-          border-radius: ${borderRadiusLG}px;
-        }
-        .ant-modal-body {
-          flex: 1;
-          max-height: none !important;
-          overflow: auto;
-        }
-      `
-          : ''
-      }
-
-      ${
-        windowState === 'fullscreen'
-          ? `
-        &.ant-modal {
-          width: 100vw !important;
-          max-width: 100vw !important;
-          height: 100vh !important;
-          top: 0 !important;
-          padding: 0 !important;
-          margin: 0 !important;
-        }
-        .ant-modal-content,
-        .ant-modal-container {
-          height: 100vh;
-          display: flex;
-          flex-direction: column;
-          border-radius: 0;
-        }
-        .ant-modal-body {
-          flex: 1;
-          max-height: none !important;
-          overflow: auto;
-        }
-      `
-          : ''
-      }
-
-      ${
-        windowState === 'minimized'
-          ? `
-        &.ant-modal {
-          width: min(320px, calc(100vw - ${marginLG * 2}px)) !important;
-          max-width: min(320px, calc(100vw - ${marginLG * 2}px)) !important;
-          position: fixed;
-          padding: 0;
-          margin: 0;
-          cursor: pointer;
-          pointer-events: auto;
-          ${minimizedPlacement.includes('bottom') ? 'top: auto !important; bottom: 0;' : 'top: 0 !important; bottom: auto;'}
-          ${minimizedPlacement.includes('Right') ? `right: ${marginLG}px; left: auto;` : `left: ${marginLG}px; right: auto;`}
-        }
-        .ant-modal-content,
-        .ant-modal-container {
-          ${minimizedPlacement.includes('bottom') ? `border-radius: ${borderRadiusLG}px ${borderRadiusLG}px 0 0;` : `border-radius: 0 0 ${borderRadiusLG}px ${borderRadiusLG}px;`}
-        }
-        .ant-modal-header {
-          background: transparent !important;
-          transition: background-color 0.2s ease;
-          border-radius: inherit;
-        }
-        .ant-modal-header:hover {
-          background-color: ${colorFillTertiary} !important;
-        }
-        .ant-modal-body,
-        .ant-modal-footer {
-          display: none !important;
-        }
-        .ant-modal-title {
-          max-width: 75%;
-          overflow: hidden;
-        }
-      `
-          : ''
-      }
-
-      .ant-modal-content {
-        transition:
-          height 0.3s ease,
-          border-radius 0.3s ease;
-      }
-    `,
-    minimizedTitleContent: css`
-      display: block;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-
-      & * {
-        display: inline !important;
-        white-space: nowrap !important;
-        vertical-align: middle;
-      }
-    `,
-    windowControlsContainer: css`
-      display: flex;
-      align-items: center;
-      gap: ${paddingXXS}px;
-      flex-shrink: 0;
-      margin-left: auto;
-      -webkit-app-region: no-drag;
-    `,
-    windowControlButton: css`
-      &.ant-btn {
-        width: ${controlHeightSM}px;
-        height: ${controlHeightSM}px;
-        min-width: ${controlHeightSM}px;
-        padding: 0;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border: none;
-        border-radius: ${borderRadiusSM}px;
-        background: transparent;
-        color: ${colorTextSecondary};
-        cursor: pointer;
-        overflow: hidden;
-        transition:
-          color 0.2s,
-          background-color 0.2s;
-
-        &:hover {
-          color: ${colorTextBase};
-          background-color: ${colorFillSecondary};
-        }
-      }
-    `,
-  }),
-);
-
 const BAIModal: React.FC<BAIModalProps> = ({
   className,
   confirmBeforeClose,
@@ -340,24 +122,9 @@ const BAIModal: React.FC<BAIModalProps> = ({
   const hasWindowControls = windowActions && windowActions.length > 0;
   const activeActions: WindowAction[] = windowActions ?? [];
 
-  const { styles } = useStyles({
-    stickyTitle,
-    type,
-    colorWarning: token.colorWarning,
-    colorError: token.colorError,
-    windowState: hasWindowControls ? windowState : 'default',
-    hasWindowControls: !!hasWindowControls,
-    minimizedPlacement,
-    marginLG: token.marginLG,
-    borderRadiusLG: token.borderRadiusLG,
-    borderRadiusSM: token.borderRadiusSM,
-    controlHeightSM: token.controlHeightSM,
-    paddingXXS: token.paddingXXS,
-    colorTextSecondary: token.colorTextSecondary,
-    colorTextBase: token.colorTextBase,
-    colorFillSecondary: token.colorFillSecondary,
-    colorFillTertiary: token.colorFillTertiary,
-  });
+  // The window-state rules only apply while window controls are rendered —
+  // same guard the `createStyles` call carried before ticket 33.
+  const effectiveWindowState = hasWindowControls ? windowState : 'default';
   const [disabled, setDisabled] = useState(true);
   const [bounds, setBounds] = useState({
     left: 0,
@@ -425,11 +192,11 @@ const BAIModal: React.FC<BAIModalProps> = ({
     if (windowState === 'minimized') return null;
 
     return (
-      <div className={styles.windowControlsContainer}>
+      <div className="bai-modal-window-controls-container">
         {activeActions.includes('minimize') && (
           <Tooltip title={t('comp:BAIModal.Minimize')}>
             <Button
-              className={styles.windowControlButton}
+              className="bai-modal-window-control-button"
               type="text"
               size="small"
               icon={<Minus size="1em" />}
@@ -447,7 +214,7 @@ const BAIModal: React.FC<BAIModalProps> = ({
             }
           >
             <Button
-              className={styles.windowControlButton}
+              className="bai-modal-window-control-button"
               type="text"
               size="small"
               icon={
@@ -475,7 +242,7 @@ const BAIModal: React.FC<BAIModalProps> = ({
             }
           >
             <Button
-              className={styles.windowControlButton}
+              className="bai-modal-window-control-button"
               type="text"
               size="small"
               icon={
@@ -497,7 +264,7 @@ const BAIModal: React.FC<BAIModalProps> = ({
         {modalProps.closable !== false && (
           <Tooltip title={t('general.button.Close')}>
             <Button
-              className={styles.windowControlButton}
+              className="bai-modal-window-control-button"
               type="text"
               size="small"
               icon={<X size="1em" />}
@@ -520,7 +287,24 @@ const BAIModal: React.FC<BAIModalProps> = ({
       centered={
         windowState === 'default' ? (modalProps.centered ?? true) : false
       }
-      className={classNames(`bai-modal ${className ?? ''}`, styles.modal)}
+      className={classNames(
+        'bai-modal',
+        className,
+        stickyTitle && 'bai-modal-sticky-title',
+        type === 'warning' && 'bai-modal-type-warning',
+        type === 'error' && 'bai-modal-type-error',
+        hasWindowControls && 'bai-modal-window-controls',
+        effectiveWindowState !== 'default' &&
+          `bai-modal-state-${effectiveWindowState}`,
+        effectiveWindowState === 'minimized' && [
+          minimizedPlacement.includes('bottom')
+            ? 'bai-modal-minimized-bottom'
+            : 'bai-modal-minimized-top',
+          minimizedPlacement.includes('Right')
+            ? 'bai-modal-minimized-right'
+            : 'bai-modal-minimized-left',
+        ],
+      )}
       wrapClassName={classNames(
         modalProps.draggable && !isDraggingDisabled ? 'draggable' : '',
         windowState === 'maximized' ? 'bai-modal-maximized' : '',
@@ -652,7 +436,7 @@ const BAIModal: React.FC<BAIModalProps> = ({
               <div
                 className={
                   windowState === 'minimized'
-                    ? styles.minimizedTitleContent
+                    ? 'bai-modal-minimized-title-content'
                     : undefined
                 }
                 style={{

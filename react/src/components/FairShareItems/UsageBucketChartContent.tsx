@@ -14,9 +14,9 @@ import { UsageBucketChartContent_ProjectFragment$key } from '../../__generated__
 import { UsageBucketChartContent_UserFragment$key } from '../../__generated__/UsageBucketChartContent_UserFragment.graphql';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
 import { theme } from '../../theme-shim';
+import './UsageBucketChartContent.css';
 import { presetPalettes } from '@ant-design/colors';
 import { Empty, Tabs, Typography } from 'antd';
-import { createStyles } from 'antd-style';
 import {
   convertToBinaryUnit,
   INITIAL_FETCH_KEY,
@@ -58,7 +58,6 @@ const UsageBucketChartContent: React.FC<UsageBucketChartContentProps> = ({
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { styles } = useStyles();
   const { mergedResourceSlots } = useResourceSlotsDetails();
 
   const domainFairShares = useFragment(
@@ -443,7 +442,7 @@ const UsageBucketChartContent: React.FC<UsageBucketChartContentProps> = ({
           key: resourceType,
           label: getResourceDisplayName(resourceType),
           children: (
-            <div className={styles.chart}>
+            <div className="usage-bucket-chart">
               <ResponsiveContainer width="100%" height={300}>
                 <AreaChart data={chartData.data}>
                   <CartesianGrid
@@ -605,34 +604,6 @@ export default UsageBucketChartContent;
 type EntityType = 'domain' | 'project' | 'user';
 
 const CHART_COLORS = Object.values(presetPalettes).map((palette) => palette[2]);
-
-const useStyles = createStyles(({ css, token }) => ({
-  chart: css`
-    .recharts-label {
-      fill: ${token.colorTextDescription};
-    }
-    .recharts-cartesian-axis-line {
-      stroke: ${token.colorBorder};
-    }
-    .recharts-cartesian-axis-tick-line {
-      stroke: ${token.colorBorder};
-    }
-    .recharts-cartesian-axis-tick-value {
-      fill: ${token.colorTextDescription};
-    }
-    .recharts-default-tooltip {
-      background-color: ${token.colorBgSpotlight} !important;
-      border: none !important;
-      border-radius: ${token.borderRadius}px !important;
-    }
-    .recharts-tooltip-label {
-      color: ${token.colorTextLightSolid} !important;
-    }
-    .recharts-tooltip-item {
-      color: ${token.colorTextLightSolid} !important;
-    }
-  `,
-}));
 
 interface ChartDataPoint {
   periodStart: string;

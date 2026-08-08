@@ -24,6 +24,7 @@ import DomainFairShareTable, {
   availableDomainFairShareSorterValues,
   DomainFairShare,
 } from './DomainFairShareTable';
+import './FairShareList.css';
 import FairShareWeightSettingModal from './FairShareWeightSettingModal';
 import ProjectFairShareTable, {
   availableProjectFairShareSorterValues,
@@ -39,7 +40,6 @@ import UserFairShareTable, {
 } from './UserFairShareTable';
 import UserResourceGroupAlert from './UserResourceGroupAlert';
 import { Alert, Skeleton, Steps, Tooltip, Typography } from 'antd';
-import { createStyles } from 'antd-style';
 import { StepsProps } from 'antd/lib';
 import {
   BAIQuestionIconWithTooltip,
@@ -72,16 +72,6 @@ import {
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-const useStyles = createStyles(({ css, token }) => ({
-  step: css`
-    .ant-steps-item-finish,
-    .ant-steps-item-finish .ant-steps-panel-arrow > path {
-      background-color: ${token.colorBgContainerDisabled} !important;
-      fill: ${token.colorBgContainerDisabled} !important;
-    }
-  `,
-}));
-
 type FairShareStepKey = 'resource-group' | 'domain' | 'project' | 'user';
 
 // Query variable types for each fair share step
@@ -105,7 +95,6 @@ const FairShareList: React.FC = () => {
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { styles } = useStyles();
 
   const [selectedRows, setSelectedRows] = useState<
     Array<DomainFairShare | ProjectFairShare | UserFairShare>
@@ -548,7 +537,7 @@ const FairShareList: React.FC = () => {
       )}
       <Alert type="info" title={t('fairShare.step.Description')} showIcon />
       <Steps
-        className={styles.step}
+        className="fair-share-steps"
         type="panel"
         current={stepItems.findIndex((item) => item.key === currentStep)}
         onChange={() => {

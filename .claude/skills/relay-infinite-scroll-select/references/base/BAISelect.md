@@ -126,6 +126,14 @@ Tooltip text for the select component.
 
 ## Implementation
 
+> **STALE SNAPSHOT — do not copy the styling.** The listing below is a point-in-time
+> copy of `packages/backend.ai-ui/src/components/BAISelect.tsx`, kept for the
+> scroll/pagination logic. Its `createStyles` block no longer exists: to-astryx
+> ticket 33 removed `antd-style` from the repo and moved those rules into
+> `packages/backend.ai-ui/src/components/BAISelect.css`, a co-located stylesheet
+> the component imports (P17) with `var(--…)` Astryx tokens. Read the real file
+> for anything style-related.
+
 ```typescript
 import BAIFlex from './BAIFlex';
 import { Divider, Select, SelectProps, theme, Tooltip, Typography } from 'antd';

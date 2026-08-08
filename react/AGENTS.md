@@ -23,7 +23,7 @@ RULES:
 - Custom styling: component props first; else the xstyle prop / StyleX tokens (@astryxdesign/core/theme/tokens.stylex). No raw hex/px.
 - Tokens for every value (`astryx docs tokens`). Brand/accent via `astryx theme` — never override --color-* in :root.
 - SELF-CHECK before you finish: re-read the file and replace any className=, style={{…}}, raw <div>/<span> layout, imported .css/@apply, or hardcoded #hex/px with the component or the xstyle prop + a token. If unsure a component/prop exists, run `astryx component <Name>` / `astryx search "<thing>"`; don't hand-roll CSS.
-- MIGRATION RELAXATION (antd → Astryx, branch to-astryx): the className=/style={{…}} part of the SELF-CHECK applies ONLY to Astryx-native code. Frontier components and un-migrated antd files keep their antd idioms (className, style, antd-style/createStyles) — do not rewrite them to xstyle until the file itself is migrated.
+- MIGRATION RELAXATION (antd → Astryx, branch to-astryx): the className=/style={{…}} part of the SELF-CHECK applies ONLY to Astryx-native code. Frontier components and un-migrated antd files keep their antd idioms (className, style) — do not rewrite them to xstyle until the file itself is migrated. `antd-style` is NOT among those idioms any more: ticket 33 removed the dependency, and a style that cannot be expressed with props/xstyle goes in a co-located `.css` file the component imports (P17), with `var(--…)` Astryx tokens.
 
 MORE CLI:
   search "<query>"   find any component / hook / doc / template / block

@@ -27,12 +27,9 @@ import '../index.css';
 // (rewritten by scripts/codemods/antd-theme-to-shim.mjs) consume it.
 import { ThemeShimProvider } from '../theme-shim';
 import NotificationHost from './NotificationHost';
-import createCache from '@emotion/cache';
-import { CacheProvider } from '@emotion/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useUpdateEffect } from 'ahooks';
 import { App, type AppProps, theme } from 'antd';
-import { StyleProvider } from 'antd-style';
 import { BAIConfigProvider, BAIText, BAIMetaDataProvider } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import 'dayjs/locale/de';
@@ -85,16 +82,6 @@ dayjs.extend(relativeTime);
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(duration);
-
-// @emotion/react's Global (used by createGlobalStyle) reads the nonce from
-// @emotion/react's own CacheContext, not from antd-style's StyleProvider.
-// Creating this cache at module load time is safe because globalThis.baiNonce
-// is set by the inline <script nonce="{{nonce}}"> in index.html, which
-// executes before any ES module bundle.
-const emotionGlobalCache = createCache({
-  key: 'css',
-  nonce: globalThis.baiNonce,
-});
 
 // Create a client
 const queryClient = new QueryClient({
@@ -422,36 +409,29 @@ export const DefaultProvidersForReactRoot: React.FC<{
                       <App {...commonAppProps}>
                         {/* Single app-wide notification renderer. Lives outside
                         the Suspense below so toasts work on every route and
-                        in both anonymous and authenticated states. Renders
-                        null, so its position relative to the emotion caches
-                        below is irrelevant. */}
+                        in both anonymous and authenticated states. */}
                         <NotificationHost />
                         {/*
-                         * Two separate emotion caches are needed for CSP nonce
-                         * coverage:
+                         * to-astryx ticket 33 removed the emotion plumbing that
+                         * used to wrap this Suspense: an @emotion/react
+                         * <CacheProvider> (nonce for `createGlobalStyle`) inside
+                         * antd-style's <StyleProvider nonce> (nonce for
+                         * `createStyles`). With the last antd-style call site
+                         * gone, no style engine injects <style> at runtime on
+                         * our behalf — the replacement rules ship as bundled
+                         * same-origin stylesheets, which `style-src 'self'`
+                         * already covers.
                          *
-                         * 1. StyleProvider (antd-style's custom EmotionContext):
-                         *    covers createStyles() and the antd-style css() helper.
-                         *    The nonce is passed directly as a prop.
-                         *
-                         * 2. CacheProvider (@emotion/react's CacheContext):
-                         *    covers createGlobalStyle(), which uses @emotion/react's
-                         *    Global component internally. Global reads the nonce from
-                         *    cache.sheet.nonce — it does NOT read antd-style's custom
-                         *    EmotionContext. Without this wrapper, style tags emitted
-                         *    by createGlobalStyle (e.g. ScrollbarGlobalStyle) carry no
-                         *    nonce and are blocked by `style-src 'nonce-...'` CSP.
+                         * antd's OWN cssinjs output still needs a nonce; that
+                         * one comes from `<ConfigProvider csp={{ nonce }}>`
+                         * above and is untouched.
                          */}
-                        <CacheProvider value={emotionGlobalCache}>
-                          <StyleProvider nonce={globalThis.baiNonce}>
-                            <Suspense>
-                              {/* <BrowserRouter> */}
-                              {/* <RoutingEventHandler /> */}
-                              {children}
-                              {/* </BrowserRouter> */}
-                            </Suspense>
-                          </StyleProvider>
-                        </CacheProvider>
+                        <Suspense>
+                          {/* <BrowserRouter> */}
+                          {/* <RoutingEventHandler /> */}
+                          {children}
+                          {/* </BrowserRouter> */}
+                        </Suspense>
                       </App>
                     </BAIMetaDataProviderWrapper>
                   </BAIAppProvider>

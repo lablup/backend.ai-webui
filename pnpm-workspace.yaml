@@ -27,7 +27,6 @@ catalog:
   "@types/relay-test-utils": ^19.0.0
   ahooks: ^3.9.7
   antd: ^6.5.0
-  antd-style: ^3.7.1
   babel-jest: ^30.3.0
   babel-plugin-react-compiler: ^1.0.0
   big.js: ^7.0.1

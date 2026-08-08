@@ -14,10 +14,10 @@ import CreateFileModal from './CreateFileModal';
 import DeleteSelectedItemsModal, {
   DeleteSelectedItemsModalProps,
 } from './DeleteSelectedItemsModal';
+import './ExplorerActionControls.css';
 import { useUploadVFolderFiles } from './hooks';
 import { useToggle } from 'ahooks';
 import { Button, Dropdown, Grid, Tooltip, Upload } from 'antd';
-import { createStyles } from 'antd-style';
 import type { RcFile } from 'antd/es/upload';
 import {
   DownloadIcon,
@@ -27,19 +27,6 @@ import {
   Upload as UploadIcon,
 } from 'lucide-react';
 import { use, useRef } from 'react';
-
-const useStyles = createStyles(({ css }) => ({
-  upload: css`
-    .ant-btn,
-    .ant-upload,
-    .ant-upload-wrapper {
-      width: 100% !important;
-    }
-    .ant-btn {
-      justify-content: start;
-    }
-  `,
-}));
 
 interface ExplorerActionControlsProps {
   selectedFiles: Array<VFolderFile>;
@@ -89,7 +76,6 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
   const { t } = useBAIi18n();
   const { lg } = Grid.useBreakpoint();
   const { token } = theme.useToken();
-  const { styles } = useStyles();
   const { message } = App.useApp();
   const { uploadFiles } = useUploadVFolderFiles();
   const { targetVFolderId, targetVFolderName, currentPath } =
@@ -227,7 +213,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
                 <BAIFlex
                   align="start"
                   direction="column"
-                  className={styles.upload}
+                  className="bai-explorer-upload"
                   style={{
                     padding: 5,
                     backgroundColor: token.colorBgElevated,

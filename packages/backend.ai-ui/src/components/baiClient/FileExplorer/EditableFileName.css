@@ -1,0 +1,23 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <EditableFileName> (to-astryx ticket 33). Replaces the
+ `antd-style` `createStyles` block; imported by the component itself (P17).
+ No theme token is involved. The `.ant-typography-edit` / `.ant-form-item*`
+ selectors are still LIVE (antd `Typography` + `Form`), so they are preserved
+ verbatim rather than dropped (P6).
+*/
+.bai-editable-file-name-hover-edit .ant-typography-edit {
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.bai-editable-file-name-hover-edit:hover .ant-typography-edit {
+  opacity: 1;
+}
+
+.bai-editable-file-name-form .ant-form-item,
+.bai-editable-file-name-form .ant-form-item-has-success {
+  margin-bottom: 0px !important;
+}

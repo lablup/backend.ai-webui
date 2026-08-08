@@ -27,10 +27,10 @@ import ProjectAdminScopeAlert from '../ProjectAdminScopeAlert';
 import ThemePreviewModeAlert from '../ThemePreviewModeAlert';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIBreadcrumb from '../WebUIBreadcrumb';
+import './MainLayout.css';
 import WebUIHeader from './WebUIHeader';
 import WebUISider from './WebUISider';
 import { App, ConfigProvider } from 'antd';
-import { createGlobalStyle, createStyles } from 'antd-style';
 import { BAIFlex, BAIResourceSlotsProvider } from 'backend.ai-ui';
 import { atom, useSetAtom } from 'jotai';
 import * as _ from 'lodash-es';
@@ -54,44 +54,6 @@ export const mainContentDivRefState = atom<React.RefObject<HTMLElement | null>>(
   },
 );
 
-// Global scrollbar styling. antd-style's createGlobalStyle injects a nonce'd
-// emotion <style> (via the <StyleProvider nonce> in DefaultProviders), so it
-// survives a strict CSP style-src policy — unlike a raw <style> element.
-const ScrollbarGlobalStyle = createGlobalStyle`
-  /* Scrollbar stylings */
-  /* Works on Firefox */
-  * {
-    scrollbar-width: 2px;
-    scrollbar-color: ${({ theme }) => theme.colorBorderSecondary}
-      ${({ theme }) => theme.colorBgElevated};
-  }
-
-  /* Works on Chrome, Edge, and Safari */
-  *::-webkit-scrollbar {
-    max-width: 2px;
-    background-color: ${({ theme }) => theme.colorBgElevated};
-  }
-
-  *::-webkit-scrollbar-track {
-    background: ${({ theme }) => theme.colorBgElevated};
-  }
-
-  *::-webkit-scrollbar-thumb {
-    background-color: ${({ theme }) => theme.colorBorderSecondary};
-  }
-`;
-
-const useStyle = createStyles(({ css, token }) => ({
-  alertWrapper: css`
-    & > *:first-child {
-      margin-top: ${token.margin}px;
-    }
-    & > *:last-child {
-      margin-bottom: ${token.margin}px;
-    }
-  `,
-}));
-
 function MainLayout() {
   'use memo';
   const navigate = useWebUINavigate();
@@ -102,7 +64,6 @@ function MainLayout() {
   const matches = useMatches();
   // @ts-ignore
   const isHiddenBreadcrumb = _.last(matches)?.handle?.hideBreadcrumb ?? false;
-  const { styles } = useStyle();
 
   const [prevCompactSidebarActive, setPrevCompactSidebarActive] =
     useState(compactSidebarActive);
@@ -158,7 +119,6 @@ function MainLayout() {
   return (
     <LayoutWithPageTestId>
       <CSSTokenVariables />
-      <ScrollbarGlobalStyle />
       <Suspense fallback={null}>
         <DismissSplashOnMount />
         <WebUISider
@@ -232,7 +192,7 @@ function MainLayout() {
                     direction="column"
                     gap={'sm'}
                     align="stretch"
-                    className={styles.alertWrapper}
+                    className="main-layout-alert-wrapper"
                   >
                     {/* Dev-only: warn when the connected backend differs from
                         VITE_DEFAULT_API_ENDPOINT. Guarded by import.meta.env.DEV
@@ -450,28 +410,39 @@ const LayoutWithPageTestId: React.FC<{
   );
 };
 
-type ThemeToken = ReturnType<typeof theme.useToken>['token'];
-
-// Minimal `:root` bridge exposing only the antd tokens that OUT-OF-TREE global
-// CSS still needs: `resources/webui.css` styles `body` (outside the React /
-// antd cssVar scope), so it reads these via `var(--token-...)`. In-tree styles
-// reference the antd token directly (createStyles / createGlobalStyle) and no
-// longer depend on this bridge. createGlobalStyle injects it as a nonce'd
-// <style>; `token` changes on theme switch, so the values stay in sync.
-const TokenCssVariables = createGlobalStyle((props) => {
-  const { token } = props as unknown as { token: ThemeToken };
-  return `:root {
-  --token-colorPrimary: ${token.colorPrimary};
-  --token-colorBgBase: ${token.colorBgBase};
-  --token-colorBgContainer: ${token.colorBgContainer};
-  --token-colorBorder: ${token.colorBorder};
-}`;
-}) as unknown as React.FC<{ token: ThemeToken }>;
-
+/**
+ * Minimal `:root` bridge exposing only the antd tokens that OUT-OF-TREE global
+ * CSS still needs: `resources/webui.css` styles `body` (outside the React /
+ * antd cssVar scope), so it reads these via `var(--token-...)`. In-tree styles
+ * reference Astryx custom properties directly (co-located CSS files, P17) and
+ * no longer depend on this bridge.
+ *
+ * to-astryx ticket 33: this used to be an antd-style `createGlobalStyle` that
+ * re-emitted a nonce'd `<style>` on every theme change. The values are now
+ * written straight to `document.documentElement` through the CSSOM, which the
+ * strict CSP does not intercept (`style-src` governs parsed `<style>` elements
+ * and `style` ATTRIBUTES, not `CSSStyleDeclaration.setProperty`) — so the
+ * nonce plumbing goes away with the last antd-style import.
+ */
 export const CSSTokenVariables = () => {
   const { token } = theme.useToken();
+  const { colorPrimary, colorBgBase, colorBgContainer, colorBorder } = token;
 
-  return <TokenCssVariables token={token} />;
+  useLayoutEffect(() => {
+    const root = document.documentElement;
+    const bridged: Record<string, string> = {
+      '--token-colorPrimary': colorPrimary,
+      '--token-colorBgBase': colorBgBase,
+      '--token-colorBgContainer': colorBgContainer,
+      '--token-colorBorder': colorBorder,
+    };
+    _.forEach(bridged, (value, name) => root.style.setProperty(name, value));
+    return () => {
+      _.forEach(bridged, (_value, name) => root.style.removeProperty(name));
+    };
+  }, [colorPrimary, colorBgBase, colorBgContainer, colorBorder]);
+
+  return null;
 };
 
 /**

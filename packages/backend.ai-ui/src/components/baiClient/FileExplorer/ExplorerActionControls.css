@@ -1,0 +1,19 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <ExplorerActionControls> (to-astryx ticket 33).
+ Replaces the `antd-style` `createStyles` block; imported by the component
+ itself (P17). No theme token is involved. The `.ant-btn` / `.ant-upload*`
+ selectors are still LIVE (antd `Button` + `Upload`), so they are preserved
+ verbatim rather than dropped (P6).
+*/
+.bai-explorer-upload .ant-btn,
+.bai-explorer-upload .ant-upload,
+.bai-explorer-upload .ant-upload-wrapper {
+  width: 100% !important;
+}
+
+.bai-explorer-upload .ant-btn {
+  justify-content: start;
+}
