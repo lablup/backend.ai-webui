@@ -64,7 +64,7 @@ import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from 'backend.ai-ui';
 export { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 4;
+export const THEME_NAME_REV = 5;
 
 /**
  * NEUTRAL BACKGROUND FAMILY — pinned to the measured legacy antd values.
@@ -169,6 +169,94 @@ const ANTD_NEUTRAL_SURFACES = {
     string,
     string,
   ],
+};
+
+/**
+ * NEUTRAL BORDER FAMILY — the second half of the same defect, pinned to the
+ * measured legacy antd values.
+ *
+ * ## The defect
+ *
+ * A user reported that the breadcrumb bar's bottom rule reads noticeably
+ * darker and warmer than legacy. Measured on `to-astryx` before this change,
+ * on `[data-testid="webui-breadcrumb"]`:
+ *
+ *   border-bottom-color  rgb(157,142,133) = #9D8E85   (legacy: #d9d9d9)
+ *
+ * ## Root cause — the same generator, one family further out
+ *
+ * `WebUIBreadcrumb` asks for `token.colorBorder`, and the theme-shim maps
+ * `colorBorder -> --color-border-emphasized` (`theme-shim/mapping.ts`). That
+ * mapping is CORRECT — antd's two-step border ramp is
+ * `colorBorder` (#d9d9d9, the stronger rule) over `colorBorderSecondary`
+ * (#f0f0f0, the hairline), which is exactly Astryx's
+ * `--color-border-emphasized` over `--color-border`. What was wrong is the
+ * VALUE: like the background family above, both border tokens are derived by
+ * Astryx's HCT generator from the brand accent, so seeding it with
+ * Backend.AI orange yields warm greys (`#9D8E85`, `#74655D`).
+ *
+ * `ANTD_NEUTRAL_SURFACES` deliberately left the border tokens alone, on the
+ * reasoning that they are "so low-alpha that the hue is not perceptible".
+ * That holds for `--color-border` (10% alpha) but NOT for
+ * `--color-border-emphasized`, which is a fully opaque mid-grey — the user
+ * saw it immediately. Both are pinned here so the ramp stays internally
+ * consistent (a hairline lighter than the rule) rather than mixing one
+ * generated and one legacy value.
+ *
+ * ## The legacy targets (measured, not guessed)
+ *
+ * `theme.getDesignToken()` over the shipped `resources/theme.json` seeds,
+ * light + `darkAlgorithm` — both are neutral constants in antd, independent
+ * of the brand seed:
+ *
+ *   colorBorder           #d9d9d9  /  #424242
+ *   colorBorderSecondary  #f0f0f0  /  #303030
+ *
+ * `colorSplit` also maps to `--color-border`; antd's own `colorSplit` is
+ * `rgba(5,5,5,0.06)` over the container, which resolves to #f0f0f0 on white
+ * — the same value, so one pin serves both use sites.
+ */
+const ANTD_NEUTRAL_BORDERS = {
+  // antd `colorBorderSecondary` / `colorSplit` — card outlines, table row
+  // rules, dividers. The hairline step.
+  '--color-border': ['#F0F0F0', '#303030'] as [string, string],
+  // antd `colorBorder` — input outlines, the breadcrumb rule, any border the
+  // user is meant to read as a real edge. The emphasized step.
+  '--color-border-emphasized': ['#D9D9D9', '#424242'] as [string, string],
+};
+
+/**
+ * STATUS (SEMANTIC) COLOR FAMILY — pinned to the legacy antd values.
+ *
+ * The status HUES themselves already come from `resources/theme.json` through
+ * `BAI_DEFAULT_SEEDS` (`--color-error`/`--color-success`/`--color-warning`
+ * below, plus their `-muted` steps), so those needed no change. What was
+ * NOT pinned is the ON-colour — the text/icon that sits on a solid status
+ * fill — which `neutralTheme` derives for contrast and therefore FLIPS with
+ * the mode:
+ *
+ *   --color-on-error    light #ffffff / dark #171717   (measured)
+ *   --color-on-success  light #ffffff / dark #171717   (measured)
+ *
+ * antd had exactly one token for this, `colorTextLightSolid`, and it is
+ * `#fff` in BOTH light and dark (measured; it is the same constant under
+ * `darkAlgorithm`). So legacy error/success chips carried white text in both
+ * modes, while today's dark mode inverts them to near-black — a mode-blind
+ * inconsistency of the same class this migration keeps removing. Pinned to
+ * white, which also matches `--color-on-accent` (already `#ffffff` in both
+ * modes for the same reason).
+ *
+ * `--color-on-warning` is deliberately NOT pinned. antd never painted text
+ * on a SOLID warning fill — its warning surfaces are `colorWarningBg` +
+ * `colorText` (Alert) or `colorWarningBg` + `colorWarning` (Tag) — so there
+ * is no legacy value to match, and Astryx's `#171717` is the legible choice
+ * on `#FAAD14` (white on that yellow is ~1.9:1). Leaving the Astryx default
+ * is the visual-values policy working as intended.
+ */
+const ANTD_STATUS_ON_COLORS = {
+  // antd `colorTextLightSolid` — #fff in both algorithms.
+  '--color-on-error': ['#ffffff', '#ffffff'] as [string, string],
+  '--color-on-success': ['#ffffff', '#ffffff'] as [string, string],
 };
 
 /**
@@ -294,6 +382,13 @@ export const BAI_DEFAULT_SEEDS = {
   success: { light: '#00BD9B', dark: '#03A487' } as BrandSeedPair,
   /** theme.json declares no colorWarning — antd default seed. */
   warning: { light: '#FAAD14', dark: '#FAAD14' } as BrandSeedPair,
+  /**
+   * colorInfo — the INFORMATIONAL status hue. Same declared pair as `admin`
+   * because antd overloads one seed for both roles (`colorInfo` is the admin
+   * accent AND the info-status colour); they are named separately so the two
+   * roles can diverge in theme.json without one silently dragging the other.
+   */
+  info: { light: '#028DF2', dark: '#009BDD' } as BrandSeedPair,
   /** theme.json `fontFamily` */
   fontFamily: "'Ubuntu', Roboto, sans-serif",
 };
@@ -310,6 +405,7 @@ export interface BuildBackendAiThemeOptions {
   error?: BrandSeedPair;
   success?: BrandSeedPair;
   warning?: BrandSeedPair;
+  info?: BrandSeedPair;
   fontFamily?: string;
 }
 
@@ -349,6 +445,7 @@ interface ResolvedSeeds {
   error: BrandSeedPair;
   success: BrandSeedPair;
   warning: BrandSeedPair;
+  info: BrandSeedPair;
   fontFamily: string;
 }
 
@@ -361,6 +458,7 @@ const resolveSeeds = (
   error: options.error ?? BAI_DEFAULT_SEEDS.error,
   success: options.success ?? BAI_DEFAULT_SEEDS.success,
   warning: options.warning ?? BAI_DEFAULT_SEEDS.warning,
+  info: options.info ?? BAI_DEFAULT_SEEDS.info,
   fontFamily: options.fontFamily ?? BAI_DEFAULT_SEEDS.fontFamily,
 });
 
@@ -380,9 +478,12 @@ export const computeThemeName = (
       seeds.error,
       seeds.success,
       seeds.warning,
+      seeds.info,
       seeds.fontFamily,
       ANTD_ALIGN_TOKENS,
       ANTD_NEUTRAL_SURFACES,
+      ANTD_NEUTRAL_BORDERS,
+      ANTD_STATUS_ON_COLORS,
     ]),
   );
   // `h` prefix: every name segment must start with a letter — `astryx theme
@@ -445,14 +546,33 @@ export function buildBackendAiTheme(
       // white-on-primary is what antd rendered.
       '--color-on-accent': ['#ffffff', '#ffffff'],
       // Status colors, brand-owned via theme.json (antd colorError /
-      // colorSuccess / colorWarning). Astryx has no info color; the admin
-      // accent (colorInfo) lives in the nested admin theme instead.
+      // colorSuccess / colorWarning), so the semantic hues equal the legacy
+      // applied values by construction.
+      //
+      // INFO — the fourth status role — has no Astryx token to pin. Astryx
+      // ships no `--color-info*` family at all: `CoreTokenName` (see
+      // `@astryxdesign/core/theme/defineTheme.d.ts` + `tokens.stylex.js`)
+      // enumerates error / success / warning and nothing else, and the
+      // `--color-info-*` variables visible in the page are StyleX-hashed
+      // component-private vars, not theme surface. The informational blue in
+      // this app is therefore rendered by the antd engine (`Alert type="info"`,
+      // `message.info`), which takes its ramp from `colorInfo` — resolved by
+      // the theme-shim from the SAME seed declared here (`seeds.info`, i.e.
+      // resources/theme.json `#028DF2` / `#009BDD`→`#0387bf`). That makes the
+      // blue an intentional, theme-declared legacy value rather than an
+      // accident of the shim's fallback table: SWEEP-1 row 5 is sanctioned,
+      // not outstanding. The seed participates in the theme-name hash below,
+      // so a deployment that rebrands `colorInfo` still forces a fresh
+      // registration.
       '--color-error': error,
       '--color-success': success,
       '--color-warning': warning,
       ...(errorMuted ? { '--color-error-muted': errorMuted } : {}),
       ...(successMuted ? { '--color-success-muted': successMuted } : {}),
       ...(warningMuted ? { '--color-warning-muted': warningMuted } : {}),
+      // Text/icons ON a solid status fill — antd `colorTextLightSolid`.
+      // See ANTD_STATUS_ON_COLORS.
+      ...ANTD_STATUS_ON_COLORS,
       // theme.json fontFamily (Ubuntu stack). Token-level override rather
       // than `typography` config: a partial `typography` block REPLACES the
       // base scale config wholesale (docs: "child config replaces base
@@ -465,6 +585,9 @@ export function buildBackendAiTheme(
       // neutrals so the accent-derived warm tint does not reach the page,
       // surfaces or scrims. See ANTD_NEUTRAL_SURFACES above.
       ...ANTD_NEUTRAL_SURFACES,
+      // Same generator, same fix, one family further out: the two-step border
+      // ramp. See ANTD_NEUTRAL_BORDERS above.
+      ...ANTD_NEUTRAL_BORDERS,
     },
     // Component-level theme defaults (see SIDE_NAV_DENSITY above). This is
     // the sanctioned place for "our look differs from the Astryx default" —
@@ -565,6 +688,10 @@ export const themeOptionsFromConfig = (
       'colorWarning',
       BAI_DEFAULT_SEEDS.warning,
     ),
+    // The info STATUS hue. Read from the same theme.json key the admin ACCENT
+    // uses, but kept as its own seed — a deployment that rebrands `colorInfo`
+    // moves both, and the hash must see it either way.
+    info: seedPairFromConfig(config, 'colorInfo', BAI_DEFAULT_SEEDS.info),
     fontFamily: config.fontFamily ?? BAI_DEFAULT_SEEDS.fontFamily,
   };
 };

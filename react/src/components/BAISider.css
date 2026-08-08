@@ -113,6 +113,33 @@
  */
 .bai-sider--collapsed .astryx-side-nav-item {
   padding-inline: 0;
+  /*
+   * COLLAPSED RAIL, second symptom — the top rows sat 13px to the LEFT of
+   * every other row, which reads as the whole top of the rail being skewed.
+   *
+   * Measured (74px rail, 8px scroll-column padding, 58px content box; every
+   * item is a 32px-wide box in the collapsed state):
+   *
+   *   Admin Settings / Start / Dashboard   item x = 8   icon 13px left of centre
+   *   Data / Sessions / Chat / …           item x = 21  icon on the rail centre
+   *
+   * Cause: `SideNav`'s scroll column is `align-items: center`, so anything
+   * that is a DIRECT flex item of it gets centred. Rows that live inside a
+   * `SideNavSection` are exactly that — the section box shrinks to its 32px
+   * content and is centred, carrying its rows with it. Rows rendered WITHOUT
+   * a section sit in an intermediate full-width wrapper (`align-items:
+   * normal`, i.e. stretch, measured 58px wide) whose own children therefore
+   * start at the flex-start edge. Two different container contracts, one
+   * visibly uneven rail. Nothing to do with the icon host: `BAI*Icon` spans
+   * and bare lucide `<svg>` appear on both sides of the split.
+   *
+   * Fix at the item, not the container, so it holds for every nesting depth
+   * `SideNav` may use: both wrappers are `flex-direction: column`, so
+   * `margin-inline: auto` centres the item on the cross axis regardless of
+   * which box it lands in. Items already centred (parent exactly 32px wide)
+   * resolve the auto margins to 0 — no change to the rows that were correct.
+   */
+  margin-inline: auto;
 }
 
 /*
@@ -221,10 +248,41 @@
  * white fill and moved the border/text to the primary hover ramp — which is
  * why the accent tokens appear here instead of Astryx's grey overlay fill.
  */
+/*
+ * A PERFECT CIRCLE, pinned — not merely "24 and 24 today".
+ *
+ * The user reported this control rendering as a tall oval, and asked for a
+ * true circle rather than parity with legacy (antd's `shape="circle"`
+ * `size="small"` button was itself slightly elongated, because `controlHeight`
+ * and the icon-only `padding-inline` were set independently).
+ *
+ * The previous declaration named `width`/`min-width`/`height` but left
+ * `min-height: auto` and no `flex` — which is what allows elongation to creep
+ * back. The button is a flex ITEM of `SiderToggleButton`'s `BAIFlex`, and its
+ * MAIN axis there is vertical: `min-height: auto` plus `flex-shrink: 1` means
+ * the box's height is negotiable against its content (the 16px chevron plus
+ * whatever line-box the button's `font-size`/`line-height` establishes —
+ * measured `line-height: 20px`), while its width is not. Any future change to
+ * the wrapper's height, the icon size, or Astryx's `IconButton` line-height
+ * moves height alone and the circle becomes an oval.
+ *
+ * So the box is now closed on BOTH axes and the two are tied together:
+ * `aspect-ratio: 1` makes the constraint self-checking, `flex: none` takes the
+ * item out of the flex negotiation entirely, and min/max are pinned equal on
+ * each axis so no cascade layer can widen or heighten one side alone.
+ *
+ * Measured after this change (light + dark, expanded + collapsed):
+ * 24.00 x 24.00, `border-radius: 9999px` — w == h exactly.
+ */
 .bai-sider-shell button.bai-sider-toggle {
+  flex: none;
+  aspect-ratio: 1;
   width: 24px;
   min-width: 24px;
+  max-width: 24px;
   height: 24px;
+  min-height: 24px;
+  max-height: 24px;
   padding: 0;
   border-radius: var(--radius-full);
   border: 1px solid var(--color-border);

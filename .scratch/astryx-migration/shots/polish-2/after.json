@@ -1,0 +1,192 @@
+{
+  "light": {
+    "tokens": {
+      "--color-border": "light-dark(#F0F0F0, #303030)",
+      "--color-border-emphasized": "light-dark(#D9D9D9, #424242)",
+      "--color-error": "light-dark(#FF4D4F, #be3d3f)",
+      "--color-success": "light-dark(#00BD9B, #068e76)",
+      "--color-warning": "light-dark(#FAAD14, #d89614)",
+      "--color-on-error": "light-dark(#ffffff, #ffffff)",
+      "--color-on-success": "light-dark(#ffffff, #ffffff)",
+      "--color-on-warning": "#171717",
+      "--color-on-dark": "#ffffff",
+      "--color-on-accent": "light-dark(#ffffff, #ffffff)"
+    },
+    "breadcrumb": "rgb(217, 217, 217)",
+    "header": {
+      "root": {
+        "color": "rgb(255, 255, 255)",
+        "bg": "rgb(255, 151, 41)"
+      },
+      "kids": [
+        {
+          "text": "Project",
+          "cls": "astryx-text large primary x1tgivj0 x18ju",
+          "color": "rgb(255, 255, 255)"
+        },
+        {
+          "text": "a한국어가능_cde",
+          "cls": "ant-select-content ant-select-content-ha",
+          "color": "rgb(255, 255, 255)"
+        },
+        {
+          "text": "",
+          "cls": "",
+          "color": "rgb(255, 255, 255)"
+        },
+        {
+          "text": "",
+          "cls": "lucide lucide-bell",
+          "color": "rgb(255, 255, 255)"
+        },
+        {
+          "text": "",
+          "cls": "lucide lucide-moon",
+          "color": "rgb(255, 255, 255)"
+        },
+        {
+          "text": "",
+          "cls": "lucide lucide-circle-question-mark",
+          "color": "rgb(255, 255, 255)"
+        },
+        {
+          "text": "",
+          "cls": "lucide lucide-user",
+          "color": "rgb(255, 255, 255)"
+        },
+        {
+          "text": "Admin Lablu",
+          "cls": "xb3r6kr xlyipyv xeuugli",
+          "color": "rgb(255, 255, 255)"
+        }
+      ]
+    },
+    "mode": "light"
+  },
+  "rail": [
+    {
+      "label": "Admin Settings",
+      "x": 21,
+      "offCenter": 0
+    },
+    {
+      "label": "Start",
+      "x": 21,
+      "offCenter": 0
+    },
+    {
+      "label": "Dashboard",
+      "x": 21,
+      "offCenter": 0
+    },
+    {
+      "label": "Data",
+      "x": 21,
+      "offCenter": 0
+    },
+    {
+      "label": "Sessions",
+      "x": 21,
+      "offCenter": 0
+    },
+    {
+      "label": "My Environments",
+      "x": 21,
+      "offCenter": 0
+    },
+    {
+      "label": "Chat",
+      "x": 21,
+      "offCenter": 0
+    },
+    {
+      "label": "Deployments",
+      "x": 21,
+      "offCenter": 0
+    },
+    {
+      "label": "Model Store",
+      "x": 21,
+      "offCenter": 0
+    },
+    {
+      "label": "Statistics",
+      "x": 21,
+      "offCenter": 0
+    }
+  ],
+  "toggleCollapsed": {
+    "w": 24,
+    "h": 24,
+    "radius": "9999px",
+    "aspect": "1 / 1"
+  },
+  "dark": {
+    "tokens": {
+      "--color-border": "light-dark(#F0F0F0, #303030)",
+      "--color-border-emphasized": "light-dark(#D9D9D9, #424242)",
+      "--color-error": "light-dark(#FF4D4F, #be3d3f)",
+      "--color-success": "light-dark(#00BD9B, #068e76)",
+      "--color-warning": "light-dark(#FAAD14, #d89614)",
+      "--color-on-error": "light-dark(#ffffff, #ffffff)",
+      "--color-on-success": "light-dark(#ffffff, #ffffff)",
+      "--color-on-warning": "#171717",
+      "--color-on-dark": "#ffffff",
+      "--color-on-accent": "light-dark(#ffffff, #ffffff)"
+    },
+    "breadcrumb": "rgb(66, 66, 66)",
+    "header": {
+      "root": {
+        "color": "rgb(255, 255, 255)",
+        "bg": "rgb(232, 138, 40)"
+      },
+      "kids": [
+        {
+          "text": "Project",
+          "cls": "astryx-text large primary x1tgivj0 x18ju",
+          "color": "rgb(255, 255, 255)"
+        },
+        {
+          "text": "a한국어가능_cde",
+          "cls": "ant-select-content ant-select-content-ha",
+          "color": "rgb(255, 255, 255)"
+        },
+        {
+          "text": "",
+          "cls": "",
+          "color": "rgb(255, 255, 255)"
+        },
+        {
+          "text": "",
+          "cls": "lucide lucide-bell",
+          "color": "rgb(255, 255, 255)"
+        },
+        {
+          "text": "",
+          "cls": "lucide lucide-sun",
+          "color": "rgb(255, 255, 255)"
+        },
+        {
+          "text": "",
+          "cls": "lucide lucide-circle-question-mark",
+          "color": "rgb(255, 255, 255)"
+        },
+        {
+          "text": "",
+          "cls": "lucide lucide-user",
+          "color": "rgb(255, 255, 255)"
+        },
+        {
+          "text": "Admin Lablu",
+          "cls": "xb3r6kr xlyipyv xeuugli",
+          "color": "rgb(255, 255, 255)"
+        }
+      ]
+    },
+    "mode": "dark"
+  },
+  "toggleCollapsedDark": {
+    "w": 24,
+    "h": 24
+  }
+}

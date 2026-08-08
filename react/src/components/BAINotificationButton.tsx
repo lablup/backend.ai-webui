@@ -6,7 +6,7 @@ import { useBAINotificationState } from '../hooks/useBAINotification';
 import useKeyboardShortcut from '../hooks/useKeyboardShortcut';
 import ReverseThemeProvider from './ReverseThemeProvider';
 import WEBUINotificationDrawer from './WEBUINotificationDrawer';
-import { Badge, Button, Tooltip, Typography, type ButtonProps } from 'antd';
+import { Badge, Button, Tooltip, type ButtonProps } from 'antd';
 import { BAIText } from 'backend.ai-ui';
 import { t } from 'i18next';
 import { atom, useAtom } from 'jotai';
@@ -40,7 +40,19 @@ const BAINotificationButton: React.FC<ButtonProps> = ({ ...props }) => {
     return n.backgroundTask?.status === 'pending';
   });
 
-  // To match complicated theme in WebUIHeader, we need to wrap the icon with nested `ReverseThemeProvider`.
+  // This button only ever renders on `WebUIHeader`'s brand-accent band. The
+  // three nested `ReverseThemeProvider`s here were the legacy way to force the
+  // bell to the OPPOSITE polarity of the page so it read white on the orange —
+  // but "opposite of the page" only coincides with white in light mode: in dark
+  // mode the flip resolves to the LIGHT palette and painted the bell near-black
+  // (measured `rgb(20,20,20)`) on a still-orange band.
+  //
+  // The band is a dark surface in BOTH modes, so the glyph is simply "on dark".
+  // Naming that directly (`--color-on-dark`, `#ffffff` in both modes) drops two
+  // of the three providers and the `Typography.Text` whose only job was to
+  // supply a colour, and matches what `WebUIHeader` now does for the rest of
+  // the band. The remaining provider still carries the antd `Tooltip`, whose
+  // inverted surface is a separate concern.
   return (
     <>
       <ReverseThemeProvider>
@@ -55,19 +67,18 @@ const BAINotificationButton: React.FC<ButtonProps> = ({ ...props }) => {
         >
           <Button
             icon={
-              <ReverseThemeProvider>
-                <Badge color="red" dot={hasRunningBackgroundTask}>
-                  <ReverseThemeProvider>
-                    <Typography.Text>
-                      <Bell size="1em" />
-                    </Typography.Text>
-                  </ReverseThemeProvider>
-                </Badge>
-              </ReverseThemeProvider>
+              <Badge color="red" dot={hasRunningBackgroundTask}>
+                {/* On the glyph itself, not just the button: antd's `.ant-badge`
+                    declares its own `color`, so it intercepts inheritance from
+                    the button before the icon sees it. `Bell` strokes with
+                    `currentColor`. */}
+                <Bell size="1em" style={{ color: 'var(--color-on-dark)' }} />
+              </Badge>
             }
             type="text"
             onClick={() => setIsOpenDrawer((v) => !v)}
             {...props}
+            style={{ color: 'var(--color-on-dark)', ...props.style }}
           />
         </Tooltip>
       </ReverseThemeProvider>

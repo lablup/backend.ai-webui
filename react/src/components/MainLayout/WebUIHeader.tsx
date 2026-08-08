@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { modal } from '../../app-shim';
-import { AstryxReverseTheme } from '../../astryx-theme';
 import { buildPath, MENU_KEY_TO_SCOPE_FEATURE } from '../../helper/pathBuilder';
 import {
   useCurrentDomainValue,
@@ -37,6 +36,7 @@ import WebUIThemeToggleButton from '../WebUIThemeToggleButton';
 import './WebUIHeader.css';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Text } from '@astryxdesign/core/Text';
+import { MediaTheme } from '@astryxdesign/core/theme';
 import { useSessionStorageState } from 'ahooks';
 import { BAIFlex, BAIFlexProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -136,18 +136,58 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
         backgroundColor: token.Layout?.headerBg,
         paddingRight: token.marginLG,
         paddingLeft: token.marginLG,
-        color: token.colorBgBase,
+        // The inherited text colour for everything on the band that is NOT an
+        // Astryx component declaring its own (the antd-engine `ProjectSelect`
+        // value, bare `currentColor` glyphs).
+        //
+        // This was `token.colorBgBase`, which is how legacy spelled "white":
+        // antd's `colorBgBase` is `#fff` in light mode, so the header text came
+        // out pure white. The shim maps `colorBgBase -> --color-background-body`
+        // (the correct role mapping), and this theme pins that to the legacy
+        // PAGE backdrop `#F7F7F6` — so the same expression now resolves to an
+        // off-white grey, which is the greying users reported. `--color-on-dark`
+        // is the Astryx token that actually means "content on a dark/inverted
+        // surface" and is `#ffffff` in both modes, matching both the legacy
+        // rendering and `--color-on-accent`, already pinned white for the same
+        // reason. The band's BACKGROUND is unchanged in both modes by design.
+        color: 'var(--color-on-dark)',
       }}
       className="bai-webui-header"
     >
       <BAIFlex data-testid="label-selector-project" direction="row" gap={'sm'}>
         {/* The header paints itself with the brand accent, so its contents
-            need the opposite light/dark polarity from the page. antd did that
-            with `ReverseThemeProvider` (a nested ConfigProvider with the
-            flipped algorithm); `AstryxReverseTheme` is the Astryx adapter
-            (a nested `<Theme>` with the inverted RESOLVED mode — a nested
-            Theme with no `mode` would fall back to `system`, MAPPING §5). */}
-        <AstryxReverseTheme>
+            need the opposite polarity from the page.
+
+            This was `AstryxReverseTheme` — a nested `<Theme>` carrying the
+            INVERTED RESOLVED MODE, the direct translation of antd's
+            `ReverseThemeProvider` (a ConfigProvider with the flipped
+            algorithm). That reproduces legacy's mechanism but not legacy's
+            RESULT: a full theme flip resolves `--color-text-primary` to the
+            other mode's ordinary body text — Astryx's dark-mode grey
+            `#EBE0DA` (measured) — whereas antd's flipped algorithm gave
+            `rgba(255,255,255,0.85)`, which over `#FF9729` renders as
+            ≈`rgb(255,239,223)`, i.e. white. Users read the difference as the
+            header text having gone grey.
+
+            `MediaTheme` is the Astryx primitive for this case and it is a
+            different thing from a theme flip: it declares the SURFACE
+            LUMINANCE the content sits on, and its `defaultOnDarkTokens`
+            (see `@astryxdesign/core/theme/onMediaTokens`) map
+            `--color-text-primary` and `--color-icon-primary` to
+            `var(--color-on-dark)` — pure white — on top of the
+            `color-scheme: dark` flip. That is exactly "white text and icons
+            on the accent band", expressed as a token context rather than a
+            per-component colour. It is also the same fix the sider's tooltip
+            took in c97189e60.
+
+            `mode="dark"` is CONSTANT, not derived from the app mode: the
+            orange band is a dark surface in both light and dark mode, so its
+            content is "on dark" in both. That is what makes the header text
+            white in both modes, which is the requested behaviour — the band's
+            BACKGROUND is deliberately untouched.
+
+            It renders `display: contents`, so it costs no layout. */}
+        <MediaTheme mode="dark">
           {!gridBreakpoint.sm && (
             <IconButton
               icon={<MenuIcon size="1em" />}
@@ -167,7 +207,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
               {t('webui.menu.Project')}
             </Text>
           )}
-        </AstryxReverseTheme>
+        </MediaTheme>
         <Suspense>
           <ProjectSelect
             data-testid="selector-project"
@@ -285,14 +325,26 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
             </Suspense>
           )}
         <BAINotificationButton data-testid="button-notification" />
-        <AstryxReverseTheme>
+        {/* Same swap, same reason as the project group above: these controls
+            sit ON the accent band, so they take the on-dark media context and
+            their glyphs come out white instead of the dark theme's grey.
+
+            The `UserDropdownMenu` PANEL is a DOM descendant here (Astryx
+            renders its popover as an inline `[popover]` sibling of the
+            trigger, not through a portal — measured), so it inherits this
+            context too. That is the intended outcome and matches legacy,
+            which also wrapped the whole dropdown in `ReverseThemeProvider`:
+            `color-scheme: dark` keeps `--color-background-popover` on its
+            dark value, so the panel stays a dark surface and the white text
+            lands on it legibly. */}
+        <MediaTheme mode="dark">
           <WebUIThemeToggleButton data-testid="button-theme" />
           <WEBUIHelpButton data-testid="button-help" />
           {/* `DropdownMenu` owns its trigger button, so the old
               `buttonRender` hook (whose only job was to wrap the trigger in
               ReverseThemeProvider, plus a `<div>` working around an antd
               Dropdown/ConfigProvider bug) is gone — the whole dropdown sits
-              inside the reversed theme instead. */}
+              inside the media context instead. */}
           <UserDropdownMenu
             style={{
               marginLeft: token.marginXXS,
@@ -301,7 +353,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = ({ onClickMenuIcon }) => {
               paddingRight: token.paddingSM,
             }}
           />
-        </AstryxReverseTheme>
+        </MediaTheme>
       </BAIFlex>
     </BAIFlex>
   );

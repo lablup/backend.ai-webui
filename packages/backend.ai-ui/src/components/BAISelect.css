@@ -10,15 +10,34 @@
  UNLAYERED on purpose — see the note in BAIAlert.css.
 
  Token mapping (P19-checked against the declared Astryx set):
-   token.colorBgBase          -> var(--color-background-body)
+   token.colorBgBase          -> var(--color-on-dark)          (see below)
    token.colorError           -> var(--color-error)
    token.colorTextPlaceholder -> var(--color-text-disabled)  ('self' token in
      the shim: antd rgba(0,0,0,0.25); the declared faint-neutral tier)
+
+ GHOST — why `--color-on-dark` and not `--color-background-body`.
+
+ The `ghost` variant exists for exactly one placement: a select sitting ON the
+ app header's brand-accent band (the header `ProjectSelect`). Legacy spelled
+ "white" as `token.colorBgBase`, which antd resolves to `#fff` in light mode —
+ so the ghost select's text and hairline border came out white on the orange.
+
+ The straight token translation is `colorBgBase -> --color-background-body`,
+ and that is the correct ROLE mapping, but this theme pins that token to the
+ legacy PAGE backdrop (`#F7F7F6` / `#191919`, see `ANTD_NEUTRAL_SURFACES` in
+ `react/src/astryx-theme/backendAiTheme.ts`). The expression therefore stopped
+ meaning "white": the header select rendered off-white grey in light mode and
+ near-BLACK on the orange band in dark mode. Users reported the header text as
+ grey; this was one of the two elements responsible.
+
+ `--color-on-dark` is the Astryx token that actually means "content on a
+ dark/inverted surface" and is `#ffffff` in both modes — the legacy rendering,
+ and the same token `WebUIHeader` uses for the band's inherited text colour.
 */
 .bai-select-ghost.ant-select {
   background-color: transparent;
-  border-color: var(--color-background-body) !important;
-  color: var(--color-background-body);
+  border-color: var(--color-on-dark) !important;
+  color: var(--color-on-dark);
 }
 
 .bai-select-ghost.ant-select:hover,
@@ -29,7 +48,7 @@
 .bai-select-ghost.ant-select .ant-select-suffix,
 .bai-select-ghost.ant-select:hover .ant-select-suffix,
 .bai-select-ghost.ant-select:active .ant-select-suffix {
-  color: var(--color-background-body);
+  color: var(--color-on-dark);
 }
 
 /* In ghost mode the border-color is hard-overridden with !important, which

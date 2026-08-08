@@ -7,14 +7,14 @@
  */
 
 /**
- * bai-r4-default-brand-h8ey8er theme — built by `pnpm exec astryx theme build`
+ * bai-r5-default-brand-h1gij33a theme — built by `pnpm exec astryx theme build`
  * Import the CSS file alongside this module:
  *
- *   import { baiR4DefaultBrandH8ey8erTheme } from './bai-r4-default-brand-h8ey8er';
- *   import './bai-r4-default-brand-h8ey8er.css';
+ *   import { baiR5DefaultBrandH1gij33aTheme } from './bai-r5-default-brand-h1gij33a';
+ *   import './bai-r5-default-brand-h1gij33a.css';
  */
-export const baiR4DefaultBrandH8ey8erTheme = {
-  name: 'bai-r4-default-brand-h8ey8er',
+export const baiR5DefaultBrandH1gij33aTheme = {
+  name: 'bai-r5-default-brand-h1gij33a',
   __built: true,
   tokens: {
     "--font-size-4xs": "0.375rem",
@@ -115,8 +115,8 @@ export const baiR4DefaultBrandH8ey8erTheme = {
     "--color-on-dark": "#ffffff",
     "--color-on-light": "#171717",
     "--color-on-accent": "light-dark(#ffffff, #ffffff)",
-    "--color-on-success": "light-dark(#ffffff, #171717)",
-    "--color-on-error": "light-dark(#ffffff, #171717)",
+    "--color-on-success": "light-dark(#ffffff, #ffffff)",
+    "--color-on-error": "light-dark(#ffffff, #ffffff)",
     "--color-on-warning": "#171717",
     "--color-icon-accent": "light-dark(#FF7A00, #be5e06)",
     "--color-icon-primary": "light-dark(#211A16, #EBE0DA)",
@@ -128,8 +128,8 @@ export const baiR4DefaultBrandH8ey8erTheme = {
     "--color-success-muted": "light-dark(#00BD9B33, #068e763F)",
     "--color-error-muted": "light-dark(#FF4D4F33, #be3d3f3F)",
     "--color-warning-muted": "light-dark(#FAAD1433, #d896143F)",
-    "--color-border": "light-dark(#211A161A, #FAEFE91A)",
-    "--color-border-emphasized": "light-dark(#9D8E85, #74655D)",
+    "--color-border": "light-dark(#F0F0F0, #303030)",
+    "--color-border-emphasized": "light-dark(#D9D9D9, #424242)",
     "--color-skeleton": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))",
     "--color-shadow": "light-dark(#0000001A, #0000004D)",
     "--color-tint-hover": "light-dark(black, white)",

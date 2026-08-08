@@ -324,3 +324,17 @@ now *easier* to judge against a neutral background — #5 (info `Alert`s paint
 antd's cool blue) no longer clashes with a warm surface, and #7/#8 (table
 header rows cool-grey against warm cards) should be re-checked, since the
 warm/cool mismatch that motivated them is gone.
+
+---
+
+## Superseded by POLISH-2
+
+A later pass (`POLISH-2.md`) closed **SWEEP-1 row 5** — resolved as
+*sanctioned*, not fixed: the info `Alert`'s cool blue IS the legacy applied
+`colorInfo` (`#028DF2` / `#0387bf` from `resources/theme.json`), and `info` is
+now a declared brand seed of the theme recipe. Astryx ships no `--color-info*`
+token to pin, so there is nothing further to do there.
+
+That pass also touched the theme recipe (`THEME_NAME_REV` 4 → 5: neutral BORDER
+family + status ON-colours pinned to the legacy antd values) and did require a
+`packages/backend.ai-ui` rebuild, unlike this change set. See `POLISH-2.md`.
