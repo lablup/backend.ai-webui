@@ -1,0 +1,42 @@
+{
+  "create-modal-before-submit": {
+    "open": true,
+    "label": "Create",
+    "variant": "primary",
+    "busy": false,
+    "disabled": false,
+    "hasSpinner": false
+  },
+  "create-modal-while-submitting": {
+    "open": true,
+    "label": "CreateLoading",
+    "variant": "primary",
+    "busy": true,
+    "disabled": true,
+    "hasSpinner": true
+  },
+  "create-modal-after-submit": {
+    "open": false
+  },
+  "row-created": 1,
+  "delete-modal-initial": {
+    "open": true,
+    "label": "Delete",
+    "variant": "destructive",
+    "busy": false,
+    "disabled": true,
+    "hasSpinner": false
+  },
+  "delete-modal-gate-open": {
+    "open": true,
+    "label": "Delete",
+    "variant": "destructive",
+    "busy": false,
+    "disabled": false,
+    "hasSpinner": false
+  },
+  "delete-modal-after-confirm": {
+    "open": false
+  },
+  "row-remaining": 0
+}

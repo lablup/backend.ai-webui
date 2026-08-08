@@ -10,7 +10,6 @@ import { useMergedAllowedStorageHostPermission } from '../hooks/useMergedAllowed
 import { theme } from '../theme-shim';
 import { useFileUploadManager } from './FileUploadManager';
 import FolderExplorerHeader from './FolderExplorerHeader';
-import './FolderExplorerModal.css';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderNodeDescription from './VFolderNodeDescription';
 import VFolderTextFileEditorModal from './VFolderTextFileEditorModal';

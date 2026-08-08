@@ -8,9 +8,17 @@ import BAIAlert from './BAIAlert';
 import BAIFlex from './BAIFlex';
 import BAIModal, { type BAIModalProps } from './BAIModal';
 import BAITable, { type BAIColumnsType } from './Table/BAITable';
-import type { AnyObject } from 'antd/es/_util/type';
 import { TriangleAlert } from 'lucide-react';
 import type { ReactNode } from 'react';
+
+/**
+ * to-astryx phase 3 / ticket B: was `import type { AnyObject } from
+ * 'antd/es/_util/type'` — a direct antd import for a two-line structural type.
+ * Inlined verbatim (antd's own definition) so the modal family carries no antd
+ * specifier of its own.
+ */
+
+type AnyObject = Record<PropertyKey, any>;
 
 export interface BAIBulkErrorModalProps<RecordType = AnyObject> extends Omit<
   BAIModalProps,

@@ -8,7 +8,6 @@ import {
   hasMountWithoutFileOps,
 } from '../helper/storageHostPermission';
 import { theme } from '../theme-shim';
-import './StoragePermissionEditModal.css';
 import { Checkbox, Divider, Tooltip, Typography } from 'antd';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { BAIFlex, BAIModal, type BAIModalProps } from 'backend.ai-ui';
@@ -16,13 +15,11 @@ import * as _ from 'lodash-es';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-// `.ant-modal-title` shrinks to its content by default, so an inner flex's
-// `width: 100%` resolves against a content-sized parent and the title grows
-// past the modal instead of truncating. Forcing the title to fill the header
-// gives the inner flex a definite width so the name ellipsizes (same fix as
-// FolderExplorerModalV2). `padding-inline-end` then reserves room for the
-// absolutely-positioned close (X) button so the trailing `)` never collides
-// with it.
+// to-astryx phase 3 / ticket B: the co-located `.ant-modal-title` override is
+// gone with the antd modal. Astryx's `DialogHeader` already gives the title
+// slot `flex: 1; min-width: 0` beside a laid-out (not absolutely positioned)
+// close button, so the inner flex has a definite width and the name ellipsizes
+// without any scoped CSS.
 /**
  * One entity whose permissions are being edited. `id` is the opaque key the
  * caller uses to fan out the save (domain name / project gid / KRP name);

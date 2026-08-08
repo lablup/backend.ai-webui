@@ -111,3 +111,24 @@ Converting a hub clears its whole dependent set at once.
 | `packages/backend.ai-ui/src/components/fragments/BAIArtifactTypeTag.tsx` | 598 |
 | `packages/backend.ai-ui/src/components/provider/BAIConfigProvider/BAIConfigProvider.tsx` | 598 |
 
+
+## Phase 3 / ticket B carry-over — modal family
+
+- **Collapse the duplicate Astryx modal pair.** `BAIModal` and
+  `BAIDeleteConfirmModal` in `packages/backend.ai-ui/src/components/` are now
+  Astryx-native with the antd-shaped contract; the pilot's
+  `react/src/components/astryx-bui/BAIModalAstryx.tsx` and
+  `BAIDeleteConfirmModalAstryx.tsx` are the same components with an
+  Astryx-shaped contract (`isOpen` / `onAction` / `actionLabel`). BUI's props
+  already accept the aliases (`isOpen`, `onOpenChange`, `subtitle`,
+  `headerContent`, `closeLabel`, `bodyRef`, `maxHeight`), so the collapse is a
+  repoint of the ~19 react-side call sites plus two file deletions. Owned by
+  the pages tickets, not by the modal family.
+- **`okButtonProps.autoFocus` is not mapped.** Astryx focuses
+  `[data-autofocus]` inside the dialog on open; `Button` exposes no such flag.
+  No call site passes it today.
+- **`draggable` / `windowActions` are contract-only.** Both props still
+  type-check and `windowActions` still works (minimize/maximize/fullscreen via
+  `Dialog` props), but `draggable` is inert. If the API is ever declared dead,
+  drop the props and the `WindowState`/`WindowAction`/`MinimizedPlacement`
+  exports together — nothing in the app passes any of them.

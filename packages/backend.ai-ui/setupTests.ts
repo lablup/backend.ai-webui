@@ -1,3 +1,18 @@
+// jest-dom adds custom matchers for asserting on DOM nodes.
+// allows you to do things like:
+// expect(element).toHaveTextContent(/react/i)
+// learn more: https://github.com/testing-library/jest-dom
+import './src/__test__/matchMedia.mock.cjs';
+import '@testing-library/jest-dom';
+// Expose `vi` under the global name `jest` so `@testing-library/dom`'s
+// `waitFor` detects "Jest fake timers are active" and switches to its
+// timer-aware polling path. Without this, tests that combine
+// `vi.useFakeTimers()` with `await waitFor(...)` hang — waitFor's default
+// polling uses `setTimeout`, which never fires under faked timers.
+// (None of our test code references `jest.*` directly anymore; this is
+// purely a `@testing-library/dom` integration hook.)
+import { vi } from 'vitest';
+
 // Auto-complete `@rc-component/motion` (used by antd v6 Modal, Drawer,
 // Button-loading-icon) animations under jsdom. rc-motion attaches a
 // `transitionend` listener on each element that has a `-leave-active`,
@@ -20,7 +35,10 @@
 // completes — rc-motion's listener fires its `onInternalMotionEnd`
 // callback, the active class gets removed, and the test sees the expected
 // post-transition DOM.
-if (typeof MutationObserver !== 'undefined' && typeof document !== 'undefined') {
+if (
+  typeof MutationObserver !== 'undefined' &&
+  typeof document !== 'undefined'
+) {
   const ACTIVE_CLASS_RE = /(?:-(?:leave|enter|appear))-active(?:\s|$)/;
   const fireTransitionEnd = (el: Element) => {
     if (!(el instanceof HTMLElement)) return;
@@ -53,23 +71,44 @@ if (typeof MutationObserver !== 'undefined' && typeof document !== 'undefined') 
   });
 }
 
-// jest-dom adds custom matchers for asserting on DOM nodes.
-// allows you to do things like:
-// expect(element).toHaveTextContent(/react/i)
-// learn more: https://github.com/testing-library/jest-dom
-import './src/__test__/matchMedia.mock.cjs';
-import '@testing-library/jest-dom';
-
-// Expose `vi` under the global name `jest` so `@testing-library/dom`'s
-// `waitFor` detects "Jest fake timers are active" and switches to its
-// timer-aware polling path. Without this, tests that combine
-// `vi.useFakeTimers()` with `await waitFor(...)` hang — waitFor's default
-// polling uses `setTimeout`, which never fires under faked timers.
-// (None of our test code references `jest.*` directly anymore; this is
-// purely a `@testing-library/dom` integration hook.)
-import { vi } from 'vitest';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (globalThis as any).jest = vi;
+
+// Polyfill the native <dialog> API for jsdom (to-astryx phase 3 / ticket B).
+//
+// Astryx `Dialog` — now the surface under `BAIModal`, `BAIDeleteConfirmModal`
+// and the app-shim's imperative modals — renders a real <dialog> and calls
+// `showModal()` / `close()` in an effect. jsdom implements the element but
+// none of its methods, so every test that opens a modal throws
+// "dialog.showModal is not a function" during the passive-effect commit.
+//
+// The polyfill reproduces the observable contract the component depends on:
+// `open` flips, `close` is dispatched, and `returnValue` is recorded. The
+// top-layer/backdrop/focus-trap behaviour is a browser concern that jsdom
+// cannot model either way, so it is deliberately not simulated.
+if (
+  typeof HTMLDialogElement !== 'undefined' &&
+  typeof HTMLDialogElement.prototype.showModal !== 'function'
+) {
+  HTMLDialogElement.prototype.show = function show(this: HTMLDialogElement) {
+    this.open = true;
+  };
+  HTMLDialogElement.prototype.showModal = function showModal(
+    this: HTMLDialogElement,
+  ) {
+    this.open = true;
+  };
+  HTMLDialogElement.prototype.close = function close(
+    this: HTMLDialogElement,
+    returnValue?: string,
+  ) {
+    this.open = false;
+    if (returnValue !== undefined) {
+      this.returnValue = returnValue;
+    }
+    this.dispatchEvent(new Event('close'));
+  };
+}
 
 // Mock ResizeObserver for Ant Design v6 components
 global.ResizeObserver = class ResizeObserver {
@@ -125,5 +164,6 @@ if (typeof global.MessageChannel === 'undefined') {
     }
   }
 
-  global.MessageChannel = MockMessageChannel as unknown as typeof MessageChannel;
+  global.MessageChannel =
+    MockMessageChannel as unknown as typeof MessageChannel;
 }

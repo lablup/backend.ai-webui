@@ -8,17 +8,15 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 
 /**
- * BAIModal extends Ant Design's Modal with dragging, confirm-before-close,
- * sticky headers, type variants, and window management controls.
+ * BAIModal renders an Astryx `Dialog` behind an antd-`Modal`-shaped prop
+ * surface (to-astryx phase 3 / ticket B).
  *
  * Key features:
- * - Draggable modal header
  * - Confirm before close with async support
- * - Sticky title for scrollable content
  * - Warning/error type variants
  * - Window controls: minimize, maximize, fullscreen
  *
- * @see BAIModal.tsx for implementation details
+ * @see BAIModal.tsx for implementation details and the recorded PILOT-DECISIONs
  */
 const meta: Meta<typeof BAIModal> = {
   title: 'Modal/BAIModal',
@@ -29,45 +27,36 @@ const meta: Meta<typeof BAIModal> = {
     docs: {
       description: {
         component: `
-**BAIModal** extends [Ant Design Modal](https://ant.design/components/modal).
+**BAIModal** is backed by Astryx \`Dialog\` and keeps an antd-\`Modal\`-shaped
+prop surface (\`open\`, \`onOk\`/\`onCancel\`, \`okButtonProps\`, \`footer\`,
+\`confirmLoading\`, \`styles\`) so existing call sites need no edit.
 
 ## BAI-Specific Props
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| \`draggable\` | \`boolean\` | \`false\` | Enable dragging modal by header |
 | \`confirmBeforeClose\` | \`boolean\` | \`false\` | When true, calls \`onConfirmClose\` before closing |
 | \`onConfirmClose\` | \`() => void \\| Promise<boolean>\` | - | Callback before close; return false/reject to prevent |
-| \`stickyTitle\` | \`boolean\` | \`false\` | Makes the header sticky when body content is scrolled |
 | \`type\` | \`'normal' \\| 'warning' \\| 'error'\` | \`'normal'\` | Visual variant that changes the header title color |
 | \`windowActions\` | \`Array<'minimize' \\| 'maximize' \\| 'fullscreen'>\` | - | Control which window actions are available. When provided (non-empty), window controls are rendered in the header. |
 | \`onWindowStateChange\` | \`(state: WindowState) => void\` | - | Callback when modal window state changes |
 | \`minimizedPlacement\` | \`'bottomRight' \\| 'bottomLeft' \\| 'topRight' \\| 'topLeft'\` | \`'bottomRight'\` | Placement of the minimized modal bar |
 
 ## Additional Features
-- **Fixed z-index**: Uses \`DEFAULT_BAI_MODAL_Z_INDEX = 1001\`
-- **Centered by default**: \`centered\` defaults to \`true\`
-- **Consistent styling**: Standard header, body, footer styles with dividers
+- **Always centered**: a native \`<dialog>\` centres itself; \`centered\` is accepted and ignored
+- **Consistent styling**: Astryx \`DialogHeader\` / \`LayoutContent\` / \`LayoutFooter\` slots with dividers
 - **Window controls**: Minimize (compact bar), maximize (viewport with margin), fullscreen (full viewport)
-- **Scroll unlock when minimized**: Page scroll lock is overridden when modal is minimized, allowing full page interaction
-- **Minimized hover effect**: The header area of the minimized bar shows a background-color hover transition
-- **Keyboard accessible minimized bar**: Press Enter or Space on the minimized bar to restore the modal
+- **Unmounts when closed**: \`destroyOnHidden\` semantics are unconditional
 
-For all other props, refer to [Ant Design Modal](https://ant.design/components/modal).
+## Dropped in the Astryx conversion
+- **\`draggable\`**: a native \`<dialog>\` lives in the CSS top layer; the prop is accepted and ignored (zero app call sites used it)
+- **Page interaction while minimized**: \`showModal()\` always paints a backdrop, so a minimized modal is still modal
+- **\`stickyTitle\`**: unconditionally true — the Astryx \`Layout\` header slot sits outside the scrolling content
         `,
       },
     },
   },
   argTypes: {
     // BAI-specific props - document fully
-    draggable: {
-      control: { type: 'boolean' },
-      description:
-        'Enable dragging modal by header. Hover over the drag icon to activate.',
-      table: {
-        type: { summary: 'boolean' },
-        defaultValue: { summary: 'false' },
-      },
-    },
     confirmBeforeClose: {
       control: { type: 'boolean' },
       description:
@@ -198,67 +187,6 @@ export const Default: Story = {
   },
   args: {
     title: 'Modal Title',
-    draggable: false,
-  },
-};
-
-// Draggable modal comparison
-export const DraggableModal: Story = {
-  name: 'Draggable Feature',
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Demonstrates the draggable feature. Hover over the drag handle icon in the modal header to activate dragging. The modal can be moved around the viewport while staying within bounds.',
-      },
-    },
-  },
-  render: () => {
-    const [openNormal, setOpenNormal] = useState(false);
-    const [openDraggable, setOpenDraggable] = useState(false);
-
-    return (
-      <BAIFlex gap="md">
-        <BAIButton type="primary" onClick={() => setOpenNormal(true)}>
-          Open Normal Modal
-        </BAIButton>
-        <BAIButton type="primary" onClick={() => setOpenDraggable(true)}>
-          Open Draggable Modal
-        </BAIButton>
-
-        <BAIModal
-          title="Normal Modal (Not Draggable)"
-          open={openNormal}
-          onOk={() => setOpenNormal(false)}
-          onCancel={() => setOpenNormal(false)}
-          draggable={false}
-        >
-          <BAIText>
-            This modal cannot be dragged. It stays in the center of the
-            viewport.
-          </BAIText>
-        </BAIModal>
-
-        <BAIModal
-          title="Draggable Modal"
-          open={openDraggable}
-          onOk={() => setOpenDraggable(false)}
-          onCancel={() => setOpenDraggable(false)}
-          draggable={true}
-        >
-          <BAIFlex direction="column" gap="sm">
-            <BAIText>
-              Hover over the drag handle icon to the left of the title, then
-              drag this modal around!
-            </BAIText>
-            <BAIText>
-              The modal will stay within the viewport bounds and cannot be
-              dragged outside the visible area.
-            </BAIText>
-          </BAIFlex>
-        </BAIModal>
-      </BAIFlex>
-    );
   },
 };
 
@@ -318,7 +246,7 @@ export const StickyTitle: Story = {
     docs: {
       description: {
         story:
-          'Demonstrates the `stickyTitle` feature. The modal header stays fixed at the top as you scroll through long content in the body.',
+          'The modal header stays fixed at the top as you scroll through long content in the body. Astryx `Layout` keeps the header slot outside the scrolling content, so `stickyTitle` is now unconditional and the prop is accepted-and-ignored.',
       },
     },
   },
@@ -557,11 +485,11 @@ export const MinimizedState: Story = {
         story: `Demonstrates the minimize/restore flow. Click the minimize button (minus icon) in the header to collapse the modal to a compact bar at the corner of the viewport.
 
 **Behaviors when minimized:**
-- The modal backdrop mask is removed so the page is visible
-- Page scrolling and interactions are unlocked (scroll lock override applied)
-- The minimized bar header shows a **hover effect** (background-color transition on \`.ant-modal-header\`)
-- Click anywhere on the minimized bar to restore the modal
-- Press **Enter** or **Space** while the bar is focused to restore via keyboard`,
+- The dialog collapses to its title bar and parks at \`minimizedPlacement\`
+- Body and footer are unmounted; only the header row renders
+- Use the restore control in the header (or Escape) to bring the modal back
+- PILOT-DECISION: a native \`<dialog>\` opened with \`showModal()\` always paints
+  a backdrop, so — unlike the antd version — the page behind stays inert`,
       },
     },
   },
@@ -619,7 +547,6 @@ export const MaximizedState: Story = {
           title="Maximizable Modal"
           open={open}
           windowActions={['maximize']}
-          draggable
           onOk={() => setOpen(false)}
           onCancel={() => setOpen(false)}
         >
@@ -763,72 +690,6 @@ export const MinimizedPlacement: Story = {
           <BAIText>
             Minimizes to <strong>top-left</strong> corner.
           </BAIText>
-        </BAIModal>
-      </BAIFlex>
-    );
-  },
-};
-
-// Scroll behavior when minimized story
-export const ScrollBehaviorWhenMinimized: Story = {
-  name: 'Scroll Unlock When Minimized',
-  parameters: {
-    docs: {
-      description: {
-        story: `Demonstrates that page scroll and interaction are fully unlocked when the modal is minimized.
-
-When a modal is open, Ant Design / rc-component locks page scrolling (injects \`html body { overflow-y: hidden }\`).
-BAIModal overrides this with a higher-specificity rule when minimized, so users can scroll the page content
-behind the minimized bar without closing the modal.
-
-Additionally:
-- The minimized modal wrapper has \`pointer-events: none\`, so all clicks pass through to the page
-- Only the minimized bar itself has \`pointer-events: auto\` so it remains clickable
-- The minimized bar header shows a **hover effect** (background-color transition) when hovered
-- Pressing **Enter** or **Space** on the minimized bar restores the modal (keyboard accessible)`,
-      },
-    },
-  },
-  render: () => {
-    const [open, setOpen] = useState(false);
-
-    return (
-      <BAIFlex direction="column" gap="md" style={{ position: 'relative' }}>
-        <BAIButton type="primary" onClick={() => setOpen(true)}>
-          Open Modal Then Minimize
-        </BAIButton>
-        <BAIText type="secondary">
-          After minimizing the modal, you can scroll this content and interact
-          with the buttons below — the page is fully unlocked.
-        </BAIText>
-        {Array.from({ length: 10 }, (_, i) => (
-          <BAIFlex key={i} gap="sm" align="center">
-            <BAIText>
-              Scrollable page content row {i + 1} — interactive while modal is
-              minimized
-            </BAIText>
-            <BAIButton size="small">Click me</BAIButton>
-          </BAIFlex>
-        ))}
-        <BAIModal
-          title="Scroll Unlock Demo"
-          open={open}
-          windowActions={['minimize']}
-          minimizedPlacement="bottomRight"
-          onOk={() => setOpen(false)}
-          onCancel={() => setOpen(false)}
-        >
-          <BAIFlex direction="column" gap="md">
-            <BAIText>
-              Click the <strong>minus icon</strong> to minimize this modal. The
-              page behind will become scrollable and interactive.
-            </BAIText>
-            <BAIText type="secondary">
-              The minimized bar shows a <strong>hover effect</strong> on the
-              header area. Press <strong>Enter</strong> or{' '}
-              <strong>Space</strong> on the bar to restore via keyboard.
-            </BAIText>
-          </BAIFlex>
         </BAIModal>
       </BAIFlex>
     );
