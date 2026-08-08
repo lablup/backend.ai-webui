@@ -7,7 +7,7 @@ import { theme } from '../theme-shim';
 import BAIAlert from './BAIAlert';
 import BAIFlex from './BAIFlex';
 import BAIModal, { type BAIModalProps } from './BAIModal';
-import BAITable, { type BAIColumnsType } from './Table/BAITable';
+import { BAITableAstryx, type BAIColumnsType } from './Table';
 import { TriangleAlert } from 'lucide-react';
 import type { ReactNode } from 'react';
 
@@ -94,7 +94,7 @@ const BAIBulkErrorModal = <RecordType extends AnyObject = AnyObject>({
             description={alertDescription}
           />
         )}
-        <BAITable<RecordType>
+        <BAITableAstryx<RecordType>
           columns={columns}
           dataSource={dataSource}
           // Client-side pagination: 10 rows per page, hidden entirely while
@@ -107,7 +107,6 @@ const BAIBulkErrorModal = <RecordType extends AnyObject = AnyObject>({
           resizable={false}
           size="small"
           bordered
-          scroll={{ x: 'max-content' }}
         />
       </BAIFlex>
     </BAIModal>

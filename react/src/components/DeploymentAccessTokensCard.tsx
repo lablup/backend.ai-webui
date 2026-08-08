@@ -25,7 +25,7 @@ import {
   BAIFlex,
   BAIModal,
   BAINameActionCell,
-  BAITable,
+  BAITableAstryx,
   BAIText,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
@@ -353,8 +353,7 @@ const DeploymentAccessTokensTable: React.FC<
 
   return (
     <>
-      <BAITable<AccessTokenNode>
-        scroll={{ x: 'max-content' }}
+      <BAITableAstryx<AccessTokenNode>
         rowKey="id"
         loading={isPendingRefetch || isDeletingToken}
         dataSource={accessTokens}

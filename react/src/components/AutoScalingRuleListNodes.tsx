@@ -11,7 +11,7 @@ import {
   BAIQuestionIconWithTooltip,
   BAIFlex,
   BAINameActionCell,
-  BAITable,
+  BAITableAstryx,
   filterOutNullAndUndefined,
 } from 'backend.ai-ui';
 import type { BAITableProps } from 'backend.ai-ui';
@@ -142,8 +142,7 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
   );
 
   return (
-    <BAITable<AutoScalingRuleNode>
-      scroll={{ x: 'max-content' }}
+    <BAITableAstryx<AutoScalingRuleNode>
       rowKey="id"
       columns={[
         {
@@ -288,7 +287,6 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
           title: t('autoScalingRule.CreatedAt'),
           dataIndex: 'createdAt',
           sorter: true,
-          sortDirections: ['descend', 'ascend'],
           render: (_text, row) => (
             <span>
               {row?.createdAt ? dayjs(row.createdAt).format('ll LT') : '-'}
@@ -314,7 +312,6 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
           ),
         },
       ]}
-      showSorterTooltip={false}
       dataSource={autoScalingRules}
       {...tableProps}
     />

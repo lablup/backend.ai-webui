@@ -19,7 +19,7 @@ import { Tooltip, Typography } from 'antd';
 import {
   BAIFlex,
   BAINameActionCell,
-  BAITable,
+  BAITableAstryx,
   type BAITableProps,
   BAITag,
   BAIUnmountAfterClose,
@@ -209,9 +209,8 @@ const KeypairResourcePolicyStoragePermissionTableV2: React.FC<
 
   return (
     <>
-      <BAITable
+      <BAITableAstryx
         size="small"
-        scroll={{ x: 'max-content' }}
         {...tableProps}
         rowKey="id"
         resizable={false}

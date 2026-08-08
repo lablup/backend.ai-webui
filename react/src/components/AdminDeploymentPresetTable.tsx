@@ -10,7 +10,7 @@ import {
   BAIColumnType,
   BAINameActionCell,
   BAISessionClusterMode,
-  BAITable,
+  BAITableAstryx,
   BAITableProps,
   BAIText,
   BooleanTag,
@@ -257,11 +257,10 @@ const AdminDeploymentPresetTable: React.FC<AdminDeploymentPresetTableProps> = ({
     : baseColumns;
 
   return (
-    <BAITable
+    <BAITableAstryx
       rowKey="id"
       dataSource={filteredPresets}
       columns={allColumns}
-      scroll={{ x: 'max-content' }}
       onChangeOrder={(order) => {
         onChangeOrder?.(
           (order as (typeof availablePresetSorterValues)[number]) || null,

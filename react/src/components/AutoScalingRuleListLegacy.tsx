@@ -15,7 +15,7 @@ import {
   BAICard,
   BAIDeleteConfirmModal,
   BAIFlex,
-  BAITable,
+  BAITableAstryx,
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
@@ -141,8 +141,7 @@ const AutoScalingRuleListLegacy: React.FC<AutoScalingRuleListLegacyProps> = ({
         }
         styles={{ body: { paddingTop: 0 } }}
       >
-        <BAITable
-          scroll={{ x: 'max-content' }}
+        <BAITableAstryx
           rowKey={'id'}
           columns={[
             {
@@ -276,9 +275,8 @@ const AutoScalingRuleListLegacy: React.FC<AutoScalingRuleListLegacyProps> = ({
             },
           ]}
           pagination={false}
-          showSorterTooltip={false}
           dataSource={autoScalingRules}
-        ></BAITable>
+        ></BAITableAstryx>
       </BAICard>
       <BAIUnmountAfterClose>
         <AutoScalingRuleEditorModalLegacy

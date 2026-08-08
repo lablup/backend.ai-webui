@@ -21,20 +21,20 @@ import {
   Descriptions,
   Input,
   Space,
-  TableProps,
   Tag,
   Tooltip,
   Typography,
 } from 'antd';
-import type { ColumnsType } from 'antd/lib/table';
 import {
   BAIButton,
   BAIUserUnionIcon,
   BAIFlex,
   BAILink,
-  BAITable,
+  BAITableAstryx,
   useEventNotStable,
   useUpdatableState,
+  type BAIColumnsType,
+  type BAITableProps,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -70,7 +70,10 @@ export interface AliasMap {
 
 type DataIndex = keyof VFolder;
 
-export interface VFolderTableProps extends Omit<TableProps<VFolder>, 'rowKey'> {
+export interface VFolderTableProps extends Omit<
+  BAITableProps<VFolder>,
+  'rowKey'
+> {
   showAliasInput?: boolean;
   selectedRowKeys?: VFolderKey[];
   onChangeSelectedRowKeys?: (
@@ -371,7 +374,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(selectedRowKeys), handleAliasUpdate]);
 
-  const columns: ColumnsType<VFolder> = [
+  const columns: BAIColumnsType<VFolder> = [
     {
       title: (
         <BAIFlex direction="row" gap="xxs">
@@ -655,9 +658,8 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
         </Space.Compact>
       </BAIFlex>
       <Form form={internalForm} component={false}>
-        <BAITable
+        <BAITableAstryx
           // size="small"
-          scroll={{ x: 'max-content' }}
           rowKey={getRowKey}
           rowSelection={{
             selectedRowKeys,
@@ -666,28 +668,14 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
               handleAliasUpdate();
             },
           }}
-          showSorterTooltip={false}
           columns={columns}
           dataSource={displayingFolders}
-          onRow={(record) => {
-            return {
-              onClick: (event) => {
-                const target = event.target as HTMLElement;
-                // allow click on selection column
-                if (target?.classList?.contains('ant-table-selection-column')) {
-                  event.stopPropagation();
-                  selectedRowKeys.includes(getRowKey(record))
-                    ? setSelectedRowKeys(
-                        selectedRowKeys.filter((k) => k !== getRowKey(record)),
-                      )
-                    : setSelectedRowKeys([
-                        ...selectedRowKeys,
-                        getRowKey(record),
-                      ]);
-                }
-              },
-            };
-          }}
+          // PILOT-DECISION (ticket 30-D): the old `onRow` handler existed only
+          // to re-implement "clicking the padding of antd's selection column
+          // toggles the row" by sniffing that column's antd class name. The
+          // class no longer exists on the Astryx engine, and the
+          // Astryx checkbox column handles its own clicks, so the handler is
+          // dropped rather than re-pointed at a design-system internal.
           {...tableProps}
         />
       </Form>

@@ -10,7 +10,7 @@ import {
   BAIIntervalView,
   BAISessionClusterModeV2,
   BAISessionTypeTagV2,
-  BAITable,
+  BAITableAstryx,
   BAITableProps,
   BAITag,
   filterOutEmpty,
@@ -382,13 +382,12 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
 
   return (
     <BAIFlex direction="column" align="stretch">
-      <BAITable
+      <BAITableAstryx
         resizable
         rowKey="id"
         size="small"
         dataSource={filteredSessions}
         columns={allColumns}
-        scroll={{ x: 'max-content' }}
         onChangeOrder={(order) => {
           onChangeOrder?.(
             (order as (typeof availableSessionV2SorterValues)[number]) || null,

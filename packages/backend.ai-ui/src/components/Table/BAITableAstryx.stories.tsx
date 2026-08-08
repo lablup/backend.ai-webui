@@ -1,5 +1,5 @@
-import { BAITableColumnOverrideItem, BAIColumnsType } from './BAITable';
 import BAITableAstryx from './BAITableAstryx';
+import { BAITableColumnOverrideItem, BAIColumnsType } from './tableTypes';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Tag } from 'antd';
 import { useState, type Key } from 'react';
@@ -12,7 +12,8 @@ import { useState, type Key } from 'react';
  * model — but renders through Astryx's `Table` primitive + plugin pipeline
  * instead of antd's `Table`.
  *
- * See `BAITable.stories.tsx` for the antd engine these stories mirror.
+ * The antd engine (and its `BAITable.stories.tsx`) was deleted in ticket 30-D
+ * once the last consumer flipped; these are now the table's only stories.
  */
 const meta: Meta<typeof BAITableAstryx> = {
   title: 'Table/BAITableAstryx',

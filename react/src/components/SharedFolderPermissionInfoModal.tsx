@@ -7,8 +7,8 @@
  defaults-first), `Alert` becomes `Banner`, `Popconfirm` becomes the
  `BAIPopconfirmAstryx` gap component (reversible-tier confirm per
  `.claude/rules/destructive-confirmation.md`), and the icon-only leave button
- becomes an `IconButton` with a real accessible name (P8). `BAITable` stays
- antd (frontier, ticket 25).
+ becomes an `IconButton` with a real accessible name (P8). The table crossed
+ to the Astryx engine in ticket 30-D.
 */
 import { SharedFolderPermissionInfoModalFragment$key } from '../__generated__/SharedFolderPermissionInfoModalFragment.graphql';
 import { App } from '../app-shim';
@@ -30,7 +30,7 @@ import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Heading, Text } from '@astryxdesign/core/Text';
 import {
   filterOutNullAndUndefined,
-  BAITable,
+  BAITableAstryx,
   useErrorMessageResolver,
   toGlobalId,
 } from 'backend.ai-ui';
@@ -125,7 +125,7 @@ const SharedFolderPermissionInfoModal: React.FC<
         {vfolder?.ownership_type === 'user' ? (
           <VStack align="stretch" gap={4}>
             <Heading level={5}>{t('data.folders.Permission')}</Heading>
-            <BAITable
+            <BAITableAstryx
               bordered
               pagination={false}
               dataSource={filterOutNullAndUndefined([vfolder])}

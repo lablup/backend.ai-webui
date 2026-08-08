@@ -46,9 +46,10 @@ import { FileInput } from '@astryxdesign/core/FileInput';
 import { Heading } from '@astryxdesign/core/Heading';
 import { Switch } from '@astryxdesign/core/Switch';
 import { Text } from '@astryxdesign/core/Text';
-// Raw antd Table/Tooltip/Typography — kept for the CSV preview grid. See the
-// frontier comment above the "Cell renderer helpers" section for why.
-import { Table, Tooltip, Typography } from 'antd';
+// Raw antd Tooltip/Typography — still used inside the CSV preview grid's cell
+// renderers. The grid's `Table` itself moved to `BAITableAstryx` in ticket
+// 30-D; these two primitives belong to sibling tickets.
+import { Tooltip, Typography } from 'antd';
 import {
   BAIAlert,
   BAIButton,
@@ -58,6 +59,7 @@ import {
   BAIModalProps,
   BAIQuestionIconWithTooltip,
   BAIRowWrapWithDividers,
+  BAITableAstryx,
   BAIText,
   badgeVariantForTagColor,
   useBAILogger,
@@ -677,20 +679,14 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
 
   // ── Cell renderer helpers ─────────────────────────────────────────────────
   //
-  // frontier (ticket 21, MIGRATION-SPEC §0 simplicity policy): the CSV
-  // preview grid below is a raw antd `Table` (12 conditional columns, a
-  // shared error/mask cell renderer, per-field `onCell` background styling,
-  // row-validity classing) plus a second, simpler failed-rows `Table`. Astryx
-  // has no direct `Table` replacement in this ticket's scope — that's the
-  // ticket-25 `BAITable` frontier — and rebuilding this bespoke validation
-  // grid on top of it here would be exactly the "complex rebuild chasing
-  // antd parity" the simplicity policy says to avoid. PILOT-DECISION: both
-  // `<Table>` instances and every antd primitive used only inside their cell
-  // renderers (`Typography.Text`, `Tooltip`, and this helper block) are left
-  // untouched as a single unit; everything outside this Table island in the
-  // file (headings, banners, form controls, the file picker, the error-tag
-  // summary) is converted normally. Flagged in the ticket-21 batch report for
-  // the orchestrator to route to a dedicated BAITable-based rebuild.
+  // Ticket 21 left the CSV preview grid (12 conditional columns, a shared
+  // error/mask cell renderer, per-field `onCell` background styling) and the
+  // failed-rows grid as a raw antd `Table` island, because no Astryx-backed
+  // table existed in that ticket's scope. Ticket 30-D closed that frontier:
+  // both grids now render through `BAITableAstryx`, which accepts this exact
+  // antd-shaped column model (`render` / `onCell` / `width` / `dataIndex`)
+  // unchanged. The cell renderers below still use antd `Typography.Text` and
+  // `Tooltip`, which belong to sibling tickets.
 
   const cellStyle = (record: ValidatedRow, field: string) => ({
     style: record.fieldErrors[field]
@@ -994,10 +990,9 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
               failCount: failedRows.length,
             })}
           />
-          <Table
+          <BAITableAstryx
             size="small"
             rowKey="index"
-            scroll={{ x: 'max-content' }}
             dataSource={failedRows}
             pagination={false}
             columns={[
@@ -1470,16 +1465,17 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
             )}
 
             {/* Preview table */}
-            <Table<ValidatedRow>
+            {/* PILOT-DECISION (ticket 30-D): the `rowClassName` that tagged
+                invalid rows with `bulk-csv-error-row` is dropped — no rule
+                for that class exists anywhere in the repo, and the invalid
+                state is already carried by the validity icon column plus the
+                per-cell error background that `onCell` paints. */}
+            <BAITableAstryx<ValidatedRow>
               size="small"
               rowKey="key"
               dataSource={displayRows}
               columns={tableColumns}
               pagination={false}
-              scroll={{ x: 'max-content' }}
-              rowClassName={(record) =>
-                record.isValid ? '' : 'bulk-csv-error-row'
-              }
             />
           </>
         ) : (

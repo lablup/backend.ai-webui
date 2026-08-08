@@ -31,7 +31,7 @@ import {
   filterOutNullAndUndefined,
   BAIFlex,
   BAIPropertyFilter,
-  BAITable,
+  BAITableAstryx,
   BAIResourceNumberWithIcon,
   badgeVariantForTagColor,
   useFetchKey,
@@ -458,10 +458,9 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             />
           </BAIFlex>
         </BAIFlex>
-        <BAITable
+        <BAITableAstryx
           resizable
           rowKey="id"
-          scroll={{ x: 'max-content' }}
           pagination={{
             total: image_nodes?.count ?? undefined,
             ...tablePaginationOption,
@@ -515,7 +514,6 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
               }
             },
           })}
-          showSorterTooltip={false}
         />
       </BAIFlex>
       <ManageImageResourceLimitModal

@@ -23,7 +23,7 @@ import {
   filterOutNullAndUndefined,
   BAIColumnType,
   BAIFlex,
-  BAITable,
+  BAITableAstryx,
   BAITableProps,
   BAISessionAgentIds,
   BAIAppIcon,
@@ -375,13 +375,12 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
 
   return (
     <>
-      <BAITable
+      <BAITableAstryx
         resizable
         rowKey={'id'}
         size="small"
         dataSource={filteredSessions}
         columns={columns}
-        scroll={{ x: 'max-content' }}
         onChangeOrder={(order) => {
           onChangeOrder?.(
             (order as (typeof availableSessionSorterValues)[number]) || null,

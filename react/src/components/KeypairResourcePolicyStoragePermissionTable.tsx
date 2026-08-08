@@ -14,7 +14,7 @@ import StoragePermissionEditModal from './StoragePermissionEditModal';
 import { Typography } from 'antd';
 import {
   BAINameActionCell,
-  BAITable,
+  BAITableAstryx,
   type BAITableProps,
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
@@ -198,9 +198,8 @@ const KeypairResourcePolicyStoragePermissionTable: React.FC<
 
   return (
     <>
-      <BAITable
+      <BAITableAstryx
         size="small"
-        scroll={{ x: 'max-content' }}
         {...tableProps}
         rowKey="id"
         resizable={false}

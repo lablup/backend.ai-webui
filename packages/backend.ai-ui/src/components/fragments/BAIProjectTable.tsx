@@ -6,7 +6,7 @@ import { toLocalId } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIResourceNumberWithIcon from '../BAIResourceNumberWithIcon';
 import BAIText from '../BAIText';
-import { BAIColumnsType, BAITable, BAITableProps } from '../Table';
+import { BAIColumnsType, BAITableAstryx, BAITableProps } from '../Table';
 import AllowedVfolderHostsWithPermission from './BAIAllowedVfolderHostsWithPermission';
 import { Tag } from 'antd';
 import dayjs from 'dayjs';
@@ -198,8 +198,7 @@ const BAIProjectTable = ({
   const allColumns = customizeColumns ? customizeColumns(columns) : columns;
 
   return (
-    <BAITable<ProjectInList>
-      scroll={{ x: 'max-content' }}
+    <BAITableAstryx<ProjectInList>
       {...tableProps}
       rowKey={(record) => record.id}
       dataSource={projects}

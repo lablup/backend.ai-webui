@@ -11,7 +11,7 @@ import {
   BAIColumnsType,
   BAIFlex,
   BAINameActionCell,
-  BAITable,
+  BAITableAstryx,
   BAITableProps,
   BAIText,
   filterOutNullAndUndefined,
@@ -277,13 +277,11 @@ const PrometheusQueryPresetTable: React.FC<PrometheusQueryPresetTableProps> = ({
     : baseColumns;
 
   return (
-    <BAITable
+    <BAITableAstryx
       size="small"
-      scroll={{ x: 'max-content' }}
       rowKey="id"
       dataSource={filterOutNullAndUndefined(presets)}
       columns={allColumns}
-      showSorterTooltip={false}
       onChangeOrder={(order) => {
         onChangeOrder?.(
           (order as (typeof availablePrometheusQueryPresetSorterValues)[number]) ||

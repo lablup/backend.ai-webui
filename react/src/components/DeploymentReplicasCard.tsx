@@ -33,7 +33,7 @@ import {
   BAIGraphQLPropertyFilter,
   BAIId,
   BAIQuestionIconWithTooltip,
-  BAITable,
+  BAITableAstryx,
   BAITag,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
@@ -571,13 +571,12 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
           }}
         />
       </BAIFlex>
-      <BAITable<ReplicaNode>
+      <BAITableAstryx<ReplicaNode>
         rowKey={(record) => record.id}
         dataSource={replicas}
         columns={columns}
         loading={isPending}
         size="small"
-        scroll={{ x: 'max-content' }}
         tableSettings={{
           columnOverrides,
           onColumnOverridesChange: setColumnOverrides,

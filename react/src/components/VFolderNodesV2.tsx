@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- Ticket 16 — converted to Astryx, with `BAITable` (BUI, antd inside) kept as
- the documented frontier until ticket 25. Cells and satellites are Astryx:
+ Ticket 16 — converted to Astryx; the table itself crossed in ticket 30-D
+ (`BAITableAstryx`, Astryx engine). Cells and satellites are Astryx:
  `BAINameActionCellAstryx`, `Badge` + the ticket-13 status lookup, `Text`,
  `BAICopyableText`, `BAIModalAstryx` (host-quota modal), `BAISkeletonAstryx`.
 */
@@ -48,7 +48,7 @@ import {
   filterOutNullAndUndefined,
   BAIAlertIconWithTooltip,
   BAIUnmountAfterClose,
-  BAITable,
+  BAITableAstryx,
   BAITableProps,
   toLocalId,
   useErrorMessageResolver,
@@ -605,13 +605,11 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
 
   return (
     <>
-      <BAITable
+      <BAITableAstryx
         resizable
-        showSorterTooltip={false}
         rowKey={(record) => record.id}
         size="small"
         dataSource={filteredVFolders}
-        scroll={{ x: 'max-content' }}
         columns={[
           {
             key: 'name',

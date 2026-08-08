@@ -18,18 +18,19 @@ import KeypairResourcePolicyInfoModal from './KeypairResourcePolicyInfoModal';
 import KeypairResourcePolicySettingModal from './KeypairResourcePolicySettingModal';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { AnyObject } from 'antd/es/_util/type';
-import type { ColumnsType, ColumnType } from 'antd/es/table';
 import {
   useUpdatableState,
   filterOutEmpty,
   BAIButton,
-  BAITable,
+  BAITableAstryx,
   BAIFlex,
   BAIAllowedVfolderHostsWithPermission,
   BAIResourceNumberWithIcon,
   BAINameActionCell,
   BAIDeleteConfirmModal,
   BAIQuestionIconWithTooltip,
+  type BAIColumnsType,
+  type BAIColumnType,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -105,7 +106,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
     }
   `);
 
-  const columns: ColumnsType<KeypairResourcePolicies> = filterOutEmpty([
+  const columns: BAIColumnsType<KeypairResourcePolicies> = filterOutEmpty([
     {
       title: t('resourcePolicy.Name'),
       dataIndex: 'name',
@@ -356,14 +357,12 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
           </BAIButton>
         </BAIFlex>
       </BAIFlex>
-      <BAITable
-        columns={columns as ColumnType<AnyObject>[]}
+      <BAITableAstryx
+        columns={columns as BAIColumnType<AnyObject>[]}
         dataSource={
           keypair_resource_policies as readonly AnyObject[] | undefined
         }
         rowKey="name"
-        scroll={{ x: 'max-content' }}
-        showSorterTooltip={false}
         tableSettings={{
           columnOverrides: columnOverrides,
           onColumnOverridesChange: setColumnOverrides,

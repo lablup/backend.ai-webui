@@ -10,7 +10,6 @@ import {
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useThemeMode } from '../hooks/useThemeMode';
-import { theme } from '../theme-shim';
 import AgentDetailDrawer from './AgentDetailDrawer';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import BAIRadioGroup from './BAIRadioGroup';
@@ -42,10 +41,10 @@ type Agent = NonNullable<
 >['node'];
 
 interface AgentListProps {
-  // BAITable itself still wraps antd Table internally (ticket 25 territory,
-  // unconverted) so its prop key remains `dataSource`, not `data` — only the
-  // direct `import { TableProps } from 'antd'` type-only import (MAPPING §6)
-  // is removed here in favor of BUI's forwarding type.
+  // `BAITableProps` keeps the antd-SHAPED contract (`dataSource`, not Astryx's
+  // `data`) on purpose — that is the ticket-25 migration seam. Since ticket
+  // 30-D it is an alias of the Astryx engine's own props type, and no antd
+  // declaration is reached (MAPPING §6).
   tableProps?: Omit<BAITableProps<AgentNodeInList>, 'dataSource'>;
   headerProps?: BAIFlexProps;
   fetchKey?: string;
@@ -59,7 +58,6 @@ const AgentList: React.FC<AgentListProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();
   const [currentAgentInfo, setCurrentAgentInfo] = useState<Agent | null>();
   const [queryParams, setQueryParams] = useQueryStates({
@@ -314,9 +312,6 @@ const AgentList: React.FC<AgentListProps> = ({
           pageSize: tablePaginationOption.pageSize,
           total: agent_nodes?.count || 0,
           current: tablePaginationOption.current,
-          style: {
-            marginRight: token.marginXS,
-          },
           onChange: (current, pageSize) => {
             if (_.isNumber(current) && _.isNumber(pageSize)) {
               setTablePaginationOption({

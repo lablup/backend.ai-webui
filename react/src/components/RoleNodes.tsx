@@ -16,7 +16,7 @@ import {
   BAIDoubleTag,
   BAIFlex,
   BAIId,
-  BAITable,
+  BAITableAstryx,
   BAITableProps,
   BAITag,
   filterOutEmpty,
@@ -224,11 +224,10 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
 
   return (
     <>
-      <BAITable<RoleNodeInList>
+      <BAITableAstryx<RoleNodeInList>
         rowKey="id"
         dataSource={roles as RoleNodeInList[]}
         columns={displayedColumns}
-        scroll={{ x: 'max-content' }}
         {...restTableProps}
         pagination={
           pagination

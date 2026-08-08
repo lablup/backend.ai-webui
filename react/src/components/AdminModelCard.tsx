@@ -36,7 +36,7 @@ import {
   BAINameActionCell,
   BAISelectionLabel,
   BAIStorageHostSelect,
-  BAITable,
+  BAITableAstryx,
   type BAITableSettings,
   BAIText,
   BAITag,
@@ -400,11 +400,10 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
           </BAIButton>
         </BAIFlex>
       </BAIFlex>
-      <BAITable<ModelCardNode>
+      <BAITableAstryx<ModelCardNode>
         rowKey="id"
         dataSource={modelCards as ModelCardNode[]}
         columns={columns}
-        scroll={{ x: 'max-content' }}
         loading={isRefetching}
         order={order}
         rowSelection={{

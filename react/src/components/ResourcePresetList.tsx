@@ -17,7 +17,7 @@ import { IconButton } from '@astryxdesign/core/IconButton';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
-  BAITable,
+  BAITableAstryx,
   BAIFlex,
   BAINumberWithUnit,
   useUpdatableState,
@@ -185,11 +185,9 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
           />
         </BAIFlex>
       </BAIFlex>
-      <BAITable
+      <BAITableAstryx
         rowKey={'name'}
         dataSource={filterOutNullAndUndefined(resource_presets)}
-        scroll={{ x: 'max-content' }}
-        showSorterTooltip={false}
         columns={columns}
       />
       <BAIDeleteConfirmModal

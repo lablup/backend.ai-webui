@@ -22,7 +22,7 @@ import {
   BAIQuestionIconWithTooltip,
   BAIModal,
   BAIModalProps,
-  BAITable,
+  BAITableAstryx,
   BAIFlex,
   BAILink,
 } from 'backend.ai-ui';
@@ -107,19 +107,22 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
     >
       <BAIFlex direction="column" align="stretch" gap="sm">
         <Text>{t('session.launcher.YouCanStartWithHistory')}</Text>
-        <BAITable<ParsedSessionHistory>
-          rowSelection={{
-            selectedRowKeys: pinnedSessionHistory?.map((item) => item.id),
-            columnWidth: 0,
-            hideSelectAll: true,
-            renderCell: () => null,
-          }}
-          scroll={{ x: 'max-content' }}
+        {/* PILOT-DECISION (ticket 30-D): this table used antd `rowSelection`
+            with `columnWidth: 0` + `hideSelectAll` + `renderCell: () => null`
+            purely to borrow antd's selected-row background for pinned rows —
+            an invisible checkbox column with no `onChange`.
+            Astryx owns its checkbox column and has no such hook, so the
+            highlight is applied directly through `onRow` instead, which is
+            what the hack was emulating. */}
+        <BAITableAstryx<ParsedSessionHistory>
           dataSource={parsedSessionHistory}
           pagination={false}
           onRow={(record) => ({
             onMouseEnter: () => setHoverRowKey(record.id),
             onMouseLeave: () => setHoverRowKey(null),
+            style: record.pinned
+              ? { backgroundColor: 'var(--color-background-blue)' }
+              : undefined,
           })}
           rowKey={(record) => record.id}
           columns={[

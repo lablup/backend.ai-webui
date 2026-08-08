@@ -23,7 +23,7 @@ import { Switch } from '@astryxdesign/core/Switch';
 import { useToggle } from 'ahooks';
 import {
   filterOutNullAndUndefined,
-  BAITable,
+  BAITableAstryx,
   BAIFlex,
   BAIPropertyFilter,
   BAIDeleteConfirmModal,
@@ -479,10 +479,8 @@ const ContainerRegistryList: React.FC<{
           />
         </BAIFlex>
       </BAIFlex>
-      <BAITable
+      <BAITableAstryx
         rowKey={(record) => record.id}
-        scroll={{ x: 'max-content' }}
-        showSorterTooltip={false}
         pagination={{
           pageSize: tablePaginationOption.pageSize,
           total: container_registry_nodes?.count ?? 0,

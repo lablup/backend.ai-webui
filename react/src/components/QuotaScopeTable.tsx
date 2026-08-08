@@ -10,7 +10,7 @@ import QuotaSettingModal from './QuotaSettingModal';
 import { Empty } from 'antd';
 import {
   BAINameActionCell,
-  BAITable,
+  BAITableAstryx,
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import { X, SquarePenIcon } from 'lucide-react';
@@ -110,7 +110,7 @@ const QuotaScopeTable: React.FC<Props> = ({ scopeId, hostName }) => {
 
   return (
     <>
-      <BAITable
+      <BAITableAstryx
         rowKey="id"
         pagination={false}
         loading={queryVariables !== deferredQueryVariables}

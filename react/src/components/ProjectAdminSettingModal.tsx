@@ -17,7 +17,7 @@ import {
   BAIModal,
   BAIModalProps,
   BAISelect,
-  BAITable,
+  BAITableAstryx,
   BAIUserSelect,
   filterOutNullAndUndefined,
   toLocalId,
@@ -296,7 +296,7 @@ const ProjectAdminSettingModal = ({
             </BAIButton>
           </BAIFlex>
         </Form>
-        <BAITable
+        <BAITableAstryx
           rowKey="id"
           size="small"
           dataSource={assignments}

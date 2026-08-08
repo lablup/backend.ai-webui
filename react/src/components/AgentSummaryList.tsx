@@ -24,7 +24,7 @@ import { Text } from '@astryxdesign/core/Text';
 import { useToggle } from 'ahooks';
 import {
   filterOutNullAndUndefined,
-  BAITable,
+  BAITableAstryx,
   BAIFlex,
   BAIPropertyFilter,
   mergeFilterValues,
@@ -49,8 +49,8 @@ type AgentSummary = NonNullable<
 
 interface AgentSummaryListProps {
   containerStyle?: React.CSSProperties;
-  // Typed against BAITable's own surface (frontier: BAITable stays antd-backed
-  // until ticket 25, but this file no longer imports antd types directly).
+  // Typed against the table's own forwarding type — since ticket 30-D that is
+  // the Astryx engine's props, so no antd declaration is reached.
   tableProps?: Partial<Omit<BAITableProps<AgentSummary>, 'dataSource'>>;
 }
 
@@ -427,12 +427,10 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
           />
         </BAIFlex>
       </BAIFlex>
-      <BAITable
+      <BAITableAstryx
         bordered
-        scroll={{ x: 'max-content' }}
         rowKey={'id'}
         dataSource={filterOutNullAndUndefined(agent_summary_list?.items)}
-        showSorterTooltip={false}
         columns={
           _.filter(
             columns,

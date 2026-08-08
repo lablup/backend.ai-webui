@@ -18,16 +18,16 @@ import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import UserResourcePolicySettingModal from './UserResourcePolicySettingModal';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
-import type { ColumnType } from 'antd/es/table';
 import {
   useUpdatableState,
   filterOutEmpty,
   filterOutNullAndUndefined,
   BAIButton,
-  BAITable,
+  BAITableAstryx,
   BAIFlex,
   BAINameActionCell,
   BAIDeleteConfirmModal,
+  type BAIColumnType,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -95,7 +95,7 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
     }
   `);
 
-  const columns = filterOutEmpty<ColumnType<UserResourcePolicies>>([
+  const columns = filterOutEmpty<BAIColumnType<UserResourcePolicies>>([
     {
       title: t('resourcePolicy.Name'),
       dataIndex: 'name',
@@ -244,12 +244,10 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
           </BAIButton>
         </BAIFlex>
       </BAIFlex>
-      <BAITable
+      <BAITableAstryx
         rowKey="id"
-        showSorterTooltip={false}
         columns={columns}
         dataSource={filterOutNullAndUndefined(user_resource_policies)}
-        scroll={{ x: 'max-content' }}
         tableSettings={{
           columnOverrides: columnOverrides,
           onColumnOverridesChange: setColumnOverrides,

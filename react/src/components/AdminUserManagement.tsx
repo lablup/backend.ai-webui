@@ -564,12 +564,10 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = () => {
             ...columns.slice(1),
           ];
         }}
-        scroll={{ x: 'max-content' }}
         pagination={{
           pageSize: tablePaginationOption.pageSize,
           total: adminUsersV2?.count || 0,
           current: tablePaginationOption.current,
-          style: { marginRight: token.marginXS },
           onChange: (current, pageSize) => {
             if (_.isNumber(current) && _.isNumber(pageSize)) {
               setTablePaginationOption({

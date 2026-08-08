@@ -15,7 +15,7 @@ import {
   BAIFlex,
   BAINameActionCell,
   BAIResourceNumberWithIcon,
-  BAITable,
+  BAITableAstryx,
   BAITableProps,
   toFixedFloorWithoutTrailingZeros,
 } from 'backend.ai-ui';
@@ -242,9 +242,8 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
 
   return (
     <>
-      <BAITable
+      <BAITableAstryx
         rowKey={'id'}
-        scroll={{ x: 'max-content' }}
         {...tableProps}
         dataSource={projectFairShares || []}
         columns={columns}

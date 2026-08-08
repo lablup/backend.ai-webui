@@ -3,7 +3,12 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { Tag, Typography } from 'antd';
-import { BAIPropertyFilter, BAIFlex, BAITable, BAIText } from 'backend.ai-ui';
+import {
+  BAIPropertyFilter,
+  BAIFlex,
+  BAITableAstryx,
+  BAIText,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { Activity, CheckCircle, XCircle } from 'lucide-react';
 import React from 'react';
@@ -89,7 +94,7 @@ const ReservoirAuditLogList: React.FC<ReservoirAuditLogListProps> = ({
           onChange={onFilterChange}
         />
       </BAIFlex>
-      <BAITable
+      <BAITableAstryx
         size="small"
         dataSource={auditLogs}
         rowKey="id"
@@ -140,7 +145,6 @@ const ReservoirAuditLogList: React.FC<ReservoirAuditLogListProps> = ({
           },
         ]}
         pagination={pagination}
-        scroll={{ x: 'max-content' }}
         // order={order}
         expandable={{
           expandedRowRender: (record) => (
@@ -178,7 +182,6 @@ const ReservoirAuditLogList: React.FC<ReservoirAuditLogListProps> = ({
               )}
             </BAIFlex>
           ),
-          expandRowByClick: true,
         }}
       />
     </BAIFlex>

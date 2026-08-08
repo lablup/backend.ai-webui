@@ -25,7 +25,7 @@ import { Heading, Text } from '@astryxdesign/core/Text';
 import { TextInput } from '@astryxdesign/core/TextInput';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { Drawer } from '@astryxdesign/lab';
-import { BAIFlex, BAITable, toLocalId } from 'backend.ai-ui';
+import { BAIFlex, BAITableAstryx, toLocalId } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { HistoryIcon, PencilIcon, PlusIcon, TrashIcon } from 'lucide-react';
@@ -145,7 +145,7 @@ const ChatHistoryDrawer = ({
     >
       <VStack gap={4} align="stretch" style={{ padding: 'var(--spacing-6)' }}>
         <Heading level={5}>{t('chatui.History')}</Heading>
-        <BAITable
+        <BAITableAstryx
           showHeader={false}
           dataSource={history.map((item) => ({
             title: item.label,

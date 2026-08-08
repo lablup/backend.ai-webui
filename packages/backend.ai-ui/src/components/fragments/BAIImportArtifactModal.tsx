@@ -16,7 +16,7 @@ import { theme } from '../../theme-shim';
 import BAIFlex from '../BAIFlex';
 import BAIText from '../BAIText';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
-import { BAIColumnsType, BAITable } from '../Table';
+import { BAIColumnsType, BAITableAstryx } from '../Table';
 import BAIArtifactDescriptions from './BAIArtifactDescriptions';
 import { Alert, Modal, Tooltip, type ModalProps } from 'antd';
 import * as _ from 'lodash-es';
@@ -238,7 +238,7 @@ const BAIImportArtifactModal = ({
           {selectedArtifact && (
             <BAIArtifactDescriptions artifactFrgmt={selectedArtifact} />
           )}
-          <BAITable<ArtifactRevision>
+          <BAITableAstryx<ArtifactRevision>
             columns={filterOutEmpty(columns)}
             dataSource={filterOutNullAndUndefined(filteredSelectedRevisions)}
             pagination={{

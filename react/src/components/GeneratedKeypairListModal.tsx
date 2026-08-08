@@ -13,7 +13,7 @@ import {
   BAIFlex,
   BAIModal,
   BAIModalProps,
-  BAITable,
+  BAITableAstryx,
   BAIText,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -98,7 +98,7 @@ const GeneratedKeypairListModal: React.FC<GeneratedKeypairListModalProps> = ({
           title={t('credential.GeneratedKeypairWarning')}
         />
         <BAIText>{t('credential.GeneratedKeypairInfo')}</BAIText>
-        <BAITable<KeypairType>
+        <BAITableAstryx<KeypairType>
           size="small"
           style={{ overflowX: 'auto' }}
           scroll={{ x: 'max-content', y: 500 }}

@@ -5,7 +5,8 @@
  Ticket 16 — converted to Astryx; see `SharedFolderPermissionInfoModal.tsx`
  for the conversion notes (Descriptions→MetadataList with `bordered` dropped,
  Alert→Banner, Popconfirm→BAIPopconfirmAstryx, icon-only button→IconButton
- with a real accessible name). `BAITable` stays antd (frontier, ticket 25).
+ with a real accessible name). The table crossed to the Astryx engine in
+ ticket 30-D.
 */
 import { SharedFolderPermissionInfoModalV2Fragment$key } from '../__generated__/SharedFolderPermissionInfoModalV2Fragment.graphql';
 import { App } from '../app-shim';
@@ -27,7 +28,7 @@ import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Heading, Text } from '@astryxdesign/core/Text';
 import {
   filterOutNullAndUndefined,
-  BAITable,
+  BAITableAstryx,
   useErrorMessageResolver,
   toLocalId,
 } from 'backend.ai-ui';
@@ -132,7 +133,7 @@ const SharedFolderPermissionInfoModalV2: React.FC<
         {isUserOwned ? (
           <VStack align="stretch" gap={4}>
             <Heading level={5}>{t('data.folders.Permission')}</Heading>
-            <BAITable
+            <BAITableAstryx
               bordered
               pagination={false}
               dataSource={filterOutNullAndUndefined([vfolder])}

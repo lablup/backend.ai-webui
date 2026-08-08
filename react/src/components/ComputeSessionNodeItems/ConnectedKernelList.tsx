@@ -13,15 +13,15 @@ import ContainerLogModal from './ContainerLogModal';
 import { Badge } from '@astryxdesign/core/Badge';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Text } from '@astryxdesign/core/Text';
-import type { ColumnType } from 'antd/lib/table';
 import {
   badgeVariantForStatus,
   filterOutEmpty,
   filterOutNullAndUndefined,
-  BAITable,
+  BAITableAstryx,
   BAIUnmountAfterClose,
   BAIDoubleTag,
   BAIId,
+  type BAIColumnType,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { ScrollTextIcon } from 'lucide-react';
@@ -85,7 +85,7 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
     kernelsFrgmt,
   );
 
-  const columns = filterOutEmpty<ColumnType<Kernel>>([
+  const columns = filterOutEmpty<BAIColumnType<Kernel>>([
     {
       title: t('kernel.Hostname'),
       dataIndex: 'cluster_hostname',
@@ -179,11 +179,10 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
           });
         }}
       /> */}
-      <BAITable
+      <BAITableAstryx
         bordered
         // loading={isPendingFilter}
         rowKey="id"
-        scroll={{ x: 'max-content' }}
         columns={columns}
         dataSource={sortedKernels} // TODO: implement pagination when compute_session_node query supports pagination
       />

@@ -31,7 +31,7 @@ import {
   BAIGraphQLPropertyFilter,
   BAIModal,
   BAIModalProps,
-  BAITable,
+  BAITableAstryx,
   BAIText,
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -448,9 +448,8 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
               />
             </BAIFlex>
           </BAIFlex>
-          <BAITable<KeypairNode>
+          <BAITableAstryx<KeypairNode>
             rowKey="id"
-            scroll={{ x: 'max-content' }}
             loading={deferredQueryVariables !== queryVariables}
             dataSource={keypairNodes}
             order={order}
@@ -632,7 +631,6 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                   value ? dayjs(value).format('lll') : '-',
               },
             ])}
-            showSorterTooltip={false}
             locale={{
               emptyText: (
                 <EmptyState

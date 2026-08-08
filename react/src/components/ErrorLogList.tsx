@@ -14,17 +14,17 @@ import { IconButton } from '@astryxdesign/core/IconButton';
 import { Text } from '@astryxdesign/core/Text';
 import { TextInput } from '@astryxdesign/core/TextInput';
 import { useToggle } from 'ahooks';
-import type { ColumnsType } from 'antd/es/table';
 import {
   BAIFlex,
   BAIModal,
-  BAITable,
+  BAITableAstryx,
   useUpdatableState,
   BAIUnmountAfterClose,
+  type BAIColumnsType,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { Trash2, Search, Settings, LoaderCircle, RotateCw } from 'lucide-react';
+import { Trash2, Search, Settings, RotateCw } from 'lucide-react';
 import React, { useState, useMemo, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -57,7 +57,7 @@ const ErrorLogList: React.FC<{
   const [isPendingReset, startResetTransition] = useTransition();
 
   useSuspendedBackendaiClient(); // TODO: remove this after react routing is stable. This is for remove flickering when browser reload
-  const columns: ColumnsType<LogType> = [
+  const columns: BAIColumnsType<LogType> = [
     {
       title: t('logs.TimeStamp'),
       dataIndex: 'formattedTimeStamp',
@@ -258,27 +258,17 @@ const ErrorLogList: React.FC<{
           </BAIFlex>
         </BAIFlex>
       </BAIFlex>
-      <BAITable
+      <BAITableAstryx
         pagination={{
           showSizeChanger: false,
-          style: {
-            marginBottom: 0,
-          },
         }}
-        loading={
-          isPendingSearchTransition
-            ? {
-                indicator: <LoaderCircle size="1em" />,
-              }
-            : false
-        }
-        scroll={{
-          x: 'max-content',
-          y:
-            _.filter(filteredLogData, (log) => log.isError).length === 0
-              ? undefined
-              : 'calc(100vh - 400px)',
-        }}
+        // PILOT-DECISION (ticket 25 §4): the Astryx engine dims the rows while
+        // a refetch is in flight but has no spinner slot, so the antd
+        // `{ indicator }` object collapses to a boolean.
+        loading={isPendingSearchTransition}
+        // PILOT-DECISION (ticket 25 §5): `scroll.y` — a fixed body height with
+        // a sticky header — is DROPPED. This log list now scrolls with the
+        // page instead of inside its own viewport-height box.
         dataSource={
           checkedShowOnlyError
             ? _.filter(filteredLogData, (log) => {

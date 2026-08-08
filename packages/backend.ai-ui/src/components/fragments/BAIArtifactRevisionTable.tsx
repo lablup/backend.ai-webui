@@ -8,7 +8,7 @@ import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIFlex from '../BAIFlex';
 import BAITag from '../BAITag';
 import BAIText from '../BAIText';
-import { BAIColumnType, BAITable, BAITableProps } from '../Table';
+import { BAIColumnType, BAITableAstryx, BAITableProps } from '../Table';
 import BAIArtifactStatusTag from './BAIArtifactStatusTag';
 import { Tag } from 'antd';
 import dayjs from 'dayjs';
@@ -135,14 +135,13 @@ const BAIArtifactRevisionTable = ({
     : baseColumns;
 
   return (
-    <BAITable<ArtifactRevision>
+    <BAITableAstryx<ArtifactRevision>
       rowKey={(record) => record.id}
       resizable
       columns={allColumns}
       dataSource={artifactRevision}
-      scroll={{ x: 'max-content' }}
       {...tableProps}
-    ></BAITable>
+    ></BAITableAstryx>
   );
 };
 

@@ -29,7 +29,7 @@ import {
   filterOutNullAndUndefined,
   BAIFlex,
   BAIDeleteConfirmModal,
-  BAITable,
+  BAITableAstryx,
   BAIText,
   useUpdatableState,
   type BAIColumnsType,
@@ -425,7 +425,7 @@ const CustomizedImageList: React.FC = () => {
             }}
           />
         </BAIFlex>
-        <BAITable
+        <BAITableAstryx
           resizable
           loading={isPendingSearchTransition}
           columns={
@@ -437,7 +437,6 @@ const CustomizedImageList: React.FC = () => {
           }
           dataSource={filterOutNullAndUndefined(filteredImageData)}
           rowKey="id"
-          scroll={{ x: 'max-content' }}
           pagination={{
             extraContent: (
               <IconButton

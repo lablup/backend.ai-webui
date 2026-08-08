@@ -10,16 +10,16 @@ import { useResourceSlotsDetails } from '../../hooks/backendai';
 import { theme } from '../../theme-shim';
 import ResourceGroupFairShareSettingModal from './ResourceGroupFairShareSettingModal';
 import { Divider, Typography } from 'antd';
-import { ColumnsType } from 'antd/es/table';
 import {
   BAIQuestionIconWithTooltip,
   BAIFlex,
   BAINameActionCell,
-  BAITable,
+  BAITableAstryx,
   BAITableProps,
   BAIUnmountAfterClose,
   convertToBinaryUnit,
   ResourceTypeIcon,
+  type BAIColumnsType,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Settings } from 'lucide-react';
@@ -113,7 +113,7 @@ const ResourceGroupFairShareTable: React.FC<
     resourceGroupNodeFragment,
   );
 
-  const columns: ColumnsType<ResourceGroup> = [
+  const columns: BAIColumnsType<ResourceGroup> = [
     {
       title: t('fairShare.Name'),
       key: 'name',
@@ -292,9 +292,8 @@ const ResourceGroupFairShareTable: React.FC<
 
   return (
     <>
-      <BAITable
+      <BAITableAstryx
         rowKey={'id'}
-        scroll={{ x: 'max-content' }}
         {...tableProps}
         dataSource={resourceGroups || []}
         columns={columns}

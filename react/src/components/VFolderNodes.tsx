@@ -2,9 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- Ticket 16 — converted to Astryx, with one deliberate exception: `BAITable`
- (BUI, antd `Table` inside) stays as the documented frontier until ticket 25
- promotes the Astryx table. Everything rendered AROUND and INSIDE the table's
+ Ticket 16 — converted to Astryx; the table itself crossed in ticket 30-D
+ (`BAITableAstryx`, Astryx engine). Everything rendered AROUND and INSIDE the table's
  cells is Astryx: `BAINameActionCellAstryx` (name + row actions),
  `Badge` + the repo-global status lookup (ticket 13) for the status tag,
  `Text` for text cells, `BAICopyableText` for the copyable id, and
@@ -43,7 +42,7 @@ import { useToggle } from 'ahooks';
 import {
   filterOutNullAndUndefined,
   BAIUnmountAfterClose,
-  BAITable,
+  BAITableAstryx,
   BAITableProps,
   toLocalId,
   useErrorMessageResolver,
@@ -387,13 +386,11 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
 
   return (
     <>
-      <BAITable
+      <BAITableAstryx
         resizable
-        showSorterTooltip={false}
         rowKey={(record) => record.id}
         size="small"
         dataSource={filteredVFolders}
-        scroll={{ x: 'max-content' }}
         columns={[
           {
             key: 'name',

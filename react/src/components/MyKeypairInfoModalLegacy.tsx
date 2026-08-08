@@ -14,7 +14,7 @@ import {
   BAIFlex,
   BAIModal,
   BAIModalProps,
-  BAITable,
+  BAITableAstryx,
   badgeVariantForTagColor,
 } from 'backend.ai-ui';
 import React from 'react';
@@ -80,8 +80,7 @@ const MyKeypairInfoModalLegacy: React.FC<MyKeypairInfoModalLegacyProps> = ({
         />,
       ]}
     >
-      <BAITable
-        scroll={{ x: 'max-content' }}
+      <BAITableAstryx
         rowKey={'access_key'}
         dataSource={keypairs}
         columns={[

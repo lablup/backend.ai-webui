@@ -19,16 +19,16 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import ProjectResourcePolicySettingModal from './ProjectResourcePolicySettingModal';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
-import type { ColumnType } from 'antd/es/table';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
   BAIButton,
-  BAITable,
+  BAITableAstryx,
   BAIFlex,
   useUpdatableState,
   BAINameActionCell,
   BAIDeleteConfirmModal,
+  type BAIColumnType,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -100,7 +100,7 @@ const ProjectResourcePolicyList: React.FC<
     }
   `);
 
-  const columns = filterOutEmpty<ColumnType<ProjectResourcePolicies>>([
+  const columns = filterOutEmpty<BAIColumnType<ProjectResourcePolicies>>([
     {
       title: t('resourcePolicy.Name'),
       dataIndex: 'name',
@@ -243,12 +243,10 @@ const ProjectResourcePolicyList: React.FC<
           </BAIButton>
         </BAIFlex>
       </BAIFlex>
-      <BAITable
+      <BAITableAstryx
         rowKey="id"
-        showSorterTooltip={false}
         columns={columns}
         dataSource={filterOutNullAndUndefined(project_resource_policies)}
-        scroll={{ x: 'max-content' }}
         tableSettings={{
           columnOverrides: columnOverrides,
           onColumnOverridesChange: setColumnOverrides,

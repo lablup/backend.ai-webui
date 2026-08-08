@@ -20,7 +20,7 @@ import BAIText from '../BAIText';
 import {
   BAIColumnsType,
   BAIColumnType,
-  BAITable,
+  BAITableAstryx,
   BAITableProps,
 } from '../Table';
 import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
@@ -261,11 +261,10 @@ const BAIRouteNodes = ({
     : baseColumns;
 
   return (
-    <BAITable
+    <BAITableAstryx
       rowKey={'id'}
       dataSource={filterOutNullAndUndefined(routes)}
       columns={allColumns}
-      scroll={{ x: 'max-content' }}
       onChangeOrder={(order) => {
         onChangeOrder?.(
           (order as (typeof availableRouteSorterValues)[number]) || null,

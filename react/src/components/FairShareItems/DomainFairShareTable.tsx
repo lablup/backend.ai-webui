@@ -15,7 +15,7 @@ import {
   BAIFlex,
   BAINameActionCell,
   BAIResourceNumberWithIcon,
-  BAITable,
+  BAITableAstryx,
   BAITableProps,
   toFixedFloorWithoutTrailingZeros,
 } from 'backend.ai-ui';
@@ -251,9 +251,8 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
   ];
 
   return (
-    <BAITable
+    <BAITableAstryx
       rowKey={'domainName'}
-      scroll={{ x: 'max-content' }}
       {...tableProps}
       dataSource={domain || []}
       columns={columns}

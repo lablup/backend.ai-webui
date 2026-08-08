@@ -9,7 +9,7 @@ import BAIFetchKeyButton from '../../BAIFetchKeyButton';
 import BAIFlex from '../../BAIFlex';
 import BAILink from '../../BAILink';
 import BAIUnmountAfterClose from '../../BAIUnmountAfterClose';
-import { BAITable, BAITableProps } from '../../Table';
+import { BAIColumnsType, BAITableAstryx, BAITableProps } from '../../Table';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import DeleteSelectedItemsModal from './DeleteSelectedItemsModal';
@@ -18,7 +18,7 @@ import EditableFileName from './EditableFileName';
 import ExplorerActionControls from './ExplorerActionControls';
 import FileItemControls from './FileItemControls';
 import { useSearchVFolderFiles } from './hooks';
-import { Breadcrumb, Skeleton, Typography, type TableColumnsType } from 'antd';
+import { Breadcrumb, Skeleton, Typography } from 'antd';
 import type { ItemType } from 'antd/es/breadcrumb/Breadcrumb';
 import type { RcFile } from 'antd/es/upload';
 import dayjs from 'dayjs';
@@ -221,7 +221,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPath, directoryTree]);
 
-  const tableColumns: TableColumnsType<VFolderFile> = filterOutEmpty([
+  const tableColumns: BAIColumnsType<VFolderFile> = filterOutEmpty([
     {
       title: t('comp:FileExplorer.Name'),
       dataIndex: 'name',
@@ -432,9 +432,8 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
           />
         </BAIFlex>
 
-        <BAITable
+        <BAITableAstryx
           rowKey="name"
-          scroll={{ x: 'max-content' }}
           dataSource={files?.items}
           columns={tableColumns}
           // If no files have been loaded yet (including cache), show spinner loading

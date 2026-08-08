@@ -16,7 +16,7 @@ import {
   BAIColumnType,
   BAIColumnsType,
   BAINameActionCell,
-  BAITable,
+  BAITableAstryx,
   BAITableProps,
 } from '../Table';
 import BAIDeploymentOwnerInfo from './BAIDeploymentOwnerInfo';
@@ -437,13 +437,12 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
     : baseColumns;
 
   return (
-    <BAITable<ModelDeploymentNodeInList>
+    <BAITableAstryx<ModelDeploymentNodeInList>
       resizable
       rowKey="id"
       size="small"
       dataSource={filterOutNullAndUndefined(deployments)}
       columns={allColumns}
-      scroll={{ x: 'max-content' }}
       onChangeOrder={(order) => {
         onChangeOrder?.(
           order

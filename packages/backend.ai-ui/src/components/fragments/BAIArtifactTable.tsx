@@ -13,7 +13,7 @@ import { theme } from '../../theme-shim';
 import BAIFlex from '../BAIFlex';
 import BAILink from '../BAILink';
 import BAIText from '../BAIText';
-import { BAIColumnType, BAITable, BAITableProps } from '../Table';
+import { BAIColumnType, BAITableAstryx, BAITableProps } from '../Table';
 import BAIArtifactRevisionDownloadButton from './BAIArtifactRevisionDownloadButton';
 import BAIArtifactStatusTag from './BAIArtifactStatusTag';
 import BAIArtifactTypeTag from './BAIArtifactTypeTag';
@@ -310,13 +310,12 @@ const BAIArtifactTable = ({
   ];
 
   return (
-    <BAITable<Artifact>
+    <BAITableAstryx<Artifact>
       rowKey={(record) => record.id}
       columns={filterOutEmpty(columns)}
       dataSource={filterOutNullAndUndefined(artifact)}
-      scroll={{ x: 'max-content' }}
       {...tableProps}
-    ></BAITable>
+    ></BAITableAstryx>
   );
 };
 

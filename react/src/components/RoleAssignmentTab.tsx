@@ -23,7 +23,7 @@ import {
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
   BAISelectionLabel,
-  BAITable,
+  BAITableAstryx,
   BAIUnmountAfterClose,
   toLocalId,
   useBAILogger,
@@ -288,7 +288,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
           )}
         </BAIFlex>
       </BAIFlex>
-      <BAITable
+      <BAITableAstryx
         rowKey="id"
         dataSource={assignments}
         loading={isPendingRefetch}

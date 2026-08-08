@@ -80,8 +80,7 @@
     "react-copy-to-clipboard": "catalog:",
     "react-draggable": "^4.7.0",
     "react-error-boundary": "^6.1.2",
-    "react-i18next": "catalog:",
-    "react-resizable": "^3.2.0"
+    "react-i18next": "catalog:"
   },
   "devDependencies": {
     "@ant-design/colors": "^7.2.1",
@@ -103,7 +102,6 @@
     "@types/react-copy-to-clipboard": "catalog:",
     "@types/react-dom": "catalog:",
     "@types/react-relay": "catalog:",
-    "@types/react-resizable": "^3.0.8",
     "@types/relay-runtime": "catalog:",
     "@types/relay-test-utils": "catalog:",
     "@vitejs/plugin-react": "^4.7.0",

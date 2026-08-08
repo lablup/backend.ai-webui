@@ -52,7 +52,7 @@ const meta: Meta<typeof BAIArtifactRevisionTable> = {
 - **Size**: Revision size in human-readable format
 - **Updated**: Time since last update (relative time)
 
-For other props (loading, pagination, etc.), refer to [BAITable](?path=/docs/table-baitable--docs).
+For other props (loading, pagination, etc.), refer to [BAITableAstryx](?path=/docs/table-baitable--docs).
         `,
       },
     },

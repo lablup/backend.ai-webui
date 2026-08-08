@@ -35,7 +35,7 @@ import {
   BAIListAlert,
   BAIModal,
   type BAIModalProps,
-  BAITable,
+  BAITableAstryx,
   toLocalId,
   useBAILogger,
   useMutationWithPromise,
@@ -845,7 +845,7 @@ const RoleScopePermissionEditModal: React.FC<
           {entities.length === 0 ? (
             <Empty description={t('rbac.NoPermissionsToDisplay')} />
           ) : (
-            <BAITable
+            <BAITableAstryx
               rowKey="entityType"
               columns={columns}
               dataSource={entities}
@@ -853,7 +853,6 @@ const RoleScopePermissionEditModal: React.FC<
               resizable={false}
               bordered
               size="small"
-              scroll={{ x: 'max-content' }}
             />
           )}
         </BAIFlex>

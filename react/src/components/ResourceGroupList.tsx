@@ -26,7 +26,7 @@ import {
   filterOutNullAndUndefined,
   BAIButton,
   BAIColumnsType,
-  BAITable,
+  BAITableAstryx,
   BAIFlex,
   BAIDeleteConfirmModal,
   BAIFetchKeyButton,
@@ -385,11 +385,10 @@ const ResourceGroupList: React.FC = () => {
         </BAIFlex>
       </BAIFlex>
 
-      <BAITable
+      <BAITableAstryx
         rowKey={'name'}
         resizable
         size="small"
-        scroll={{ x: 'max-content' }}
         columns={columns}
         dataSource={filterOutNullAndUndefined(scaling_groups)}
         loading={isActiveTypePending}

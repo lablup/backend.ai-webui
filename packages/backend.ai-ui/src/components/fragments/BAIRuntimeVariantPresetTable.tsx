@@ -12,7 +12,7 @@ import BooleanTag from '../BooleanTag';
 import {
   BAIColumnsType,
   BAIColumnType,
-  BAITable,
+  BAITableAstryx,
   BAITableProps,
 } from '../Table';
 import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
@@ -238,11 +238,10 @@ const BAIRuntimeVariantPresetTable = ({
     : baseColumns;
 
   return (
-    <BAITable
+    <BAITableAstryx
       rowKey="id"
       dataSource={filterOutNullAndUndefined(presets)}
       columns={allColumns}
-      scroll={{ x: 'max-content' }}
       onChangeOrder={(order) => {
         onChangeOrder?.(
           (order as (typeof availablePresetSorterValues)[number]) || null,

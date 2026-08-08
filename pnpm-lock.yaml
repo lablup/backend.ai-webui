@@ -538,9 +538,6 @@ importers:
       react-relay:
         specifier: 'catalog:'
         version: 20.1.1(react@19.2.7)
-      react-resizable:
-        specifier: ^3.2.0
-        version: 3.2.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react-router-dom:
         specifier: 'catalog:'
         version: 6.30.4(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -605,9 +602,6 @@ importers:
       '@types/react-relay':
         specifier: 'catalog:'
         version: 18.2.1
-      '@types/react-resizable':
-        specifier: ^3.0.8
-        version: 3.0.8
       '@types/relay-runtime':
         specifier: 'catalog:'
         version: 19.0.3
@@ -5224,9 +5218,6 @@ packages:
 
   '@types/react-relay@18.2.1':
     resolution: {integrity: sha512-KgmFapsxAylhxcFfaAv5GZZJhTHnDvV8IDZVsUm5afpJUvgZC1Y68ssfOGsFfiFY/2EhxHM/YPfpdKbfmF3Ecg==}
-
-  '@types/react-resizable@3.0.8':
-    resolution: {integrity: sha512-Pcvt2eGA7KNXldt1hkhVhAgZ8hK41m0mp89mFgQi7LAAEZiaLgm4fHJ5zbJZ/4m2LVaAyYrrRRv1LHDcrGQanA==}
 
   '@types/react-test-renderer@19.1.0':
     resolution: {integrity: sha512-XD0WZrHqjNrxA/MaR9O22w/RNidWR9YZmBdRGI7wcnWGrv/3dA8wKCJ8m63Sn+tLJhcjmuhOi629N66W6kgWzQ==}
@@ -10081,12 +10072,6 @@ packages:
     resolution: {integrity: sha512-pwl7wHHXCOx32dOg4TVNkhVojgGVvOBMo9pcMGeM1BIFYvmwGauKTtBB+qr5buXHGooCL8TXjMVg+ZLizIsbeQ==}
     peerDependencies:
       react: ^16.9.0 || ^17 || ^18 || ^19
-
-  react-resizable@3.2.0:
-    resolution: {integrity: sha512-3NKQ0SLZV7rs3LQHeXlOzDSRQfFrkX6TVet77/Qk03zqiZyee37b7N8/gwDJAA8UUjRz7PdWCCy49hcso45SMQ==}
-    peerDependencies:
-      react: '>= 16.3'
-      react-dom: '>= 16.3'
 
   react-router-dom@6.30.4:
     resolution: {integrity: sha512-q4HvNl+mmDdkS0g+MqiBZNteQJCuimWoOyHMy4T/RQLAn9Z29+E91QXRaxOujeMl2HTzRSS0KFPd7lxX3PjV0Q==}
@@ -16158,10 +16143,6 @@ snapshots:
     dependencies:
       '@types/react': 19.2.17
       '@types/relay-runtime': 19.0.3
-
-  '@types/react-resizable@3.0.8':
-    dependencies:
-      '@types/react': 19.2.17
 
   '@types/react-test-renderer@19.1.0':
     dependencies:
@@ -22283,13 +22264,6 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  react-resizable@3.2.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7):
-    dependencies:
-      prop-types: 15.8.1
-      react: 19.2.7
-      react-dom: 19.2.7(react@19.2.7)
-      react-draggable: 4.7.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-
   react-router-dom@6.30.4(react-dom@19.2.7(react@19.2.7))(react@19.2.7):
     dependencies:
       '@remix-run/router': 1.23.3
@@ -24770,7 +24744,6 @@ time:
   '@types/react-copy-to-clipboard@5.0.7': '2023-11-07T14:00:52.335Z'
   '@types/react-dom@19.2.3': '2025-11-12T04:37:39.524Z'
   '@types/react-relay@18.2.1': '2025-05-06T17:35:51.682Z'
-  '@types/react-resizable@3.0.8': '2024-07-01T23:35:52.801Z'
   '@types/react-test-renderer@19.1.0': '2025-04-02T07:33:46.626Z'
   '@types/react@19.2.17': '2026-06-05T20:10:24.692Z'
   '@types/relay-runtime@19.0.3': '2025-09-29T19:02:30.562Z'
@@ -24869,7 +24842,6 @@ time:
   react-i18next@16.6.6: '2026-03-24T15:35:20.832Z'
   react-markdown@10.1.0: '2025-03-07T10:32:53.222Z'
   react-relay@20.1.1: '2025-08-06T23:52:26.678Z'
-  react-resizable@3.2.0: '2026-05-11T21:43:37.128Z'
   react-router-dom@6.30.4: '2026-05-29T19:41:50.812Z'
   react-test-renderer@19.2.7: '2026-06-01T18:01:34.008Z'
   react-virtuoso@4.18.10: '2026-06-27T19:29:15.893Z'

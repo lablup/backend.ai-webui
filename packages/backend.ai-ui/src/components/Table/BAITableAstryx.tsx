@@ -22,9 +22,12 @@
    - import { BAITable }       from 'backend.ai-ui';  // antd engine (legacy)
    + import { BAITableAstryx } from 'backend.ai-ui';  // Astryx engine
 
- `BAITable` stays exported (and is additionally aliased as `BAITableLegacy`)
- so the ~71 call sites that have not flipped yet keep compiling. Ticket 30 /
- 35 do the final rename once the last consumer is across.
+ **Ticket 30-D completed that flip.** All 71 consumers are across, the antd
+ engine (`BAITable.tsx` / `BAITableSettingModal.tsx` / `BAITable.css`) is
+ deleted, and this is the only table engine in the package. `BAITableProps` is
+ kept as an alias of `BAIAstryxTableProps` because ~30 components embed it in
+ their own public prop interfaces; the column model and the persisted-override
+ shape moved to the engine-neutral `tableTypes.ts`.
 
  ## The plugin composition
 
@@ -75,16 +78,18 @@ import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { theme } from '../../theme-shim';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
 import BAIPaginationInfoText from './BAIPaginationInfoText';
+import './BAITableAstryx.css';
+import BAITableAstryxSettingModal from './BAITableAstryxSettingModal';
+import BAITableColumnCSVExportModal from './BAITableColumnCSVExportModal';
 import type {
+  BAIAnyObject,
   BAIColumnType,
   BAIColumnsType,
   BAIExportSettings,
   BAITableColumnOverrideItem,
   BAITableSettings,
-} from './BAITable';
-import { isColumnVisible } from './BAITable';
-import BAITableAstryxSettingModal from './BAITableAstryxSettingModal';
-import BAITableColumnCSVExportModal from './BAITableColumnCSVExportModal';
+} from './tableTypes';
+import { isColumnVisible } from './tableTypes';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Pagination } from '@astryxdesign/core/Pagination';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
@@ -112,6 +117,13 @@ import React, { useMemo, useState, type ReactNode } from 'react';
 
 /** Internal row shape Astryx's generic constraint requires. */
 type AnyRow = Record<string, unknown>;
+/**
+ * PUBLIC record constraint. Deliberately looser than `AnyRow`: it is the same
+ * shape antd's `AnyObject` had, so the ~70 consumers that write
+ * `BAITableProps<SomeRelayNode>` keep type-checking unchanged after the flip.
+ * Rows are cast to `AnyRow` at the Astryx boundary.
+ */
+type AnyRecord = BAIAnyObject;
 
 /** Synthetic key of the injected expand-chevron column. */
 const EXPAND_COLUMN_KEY = '__bai_expand__';
@@ -158,6 +170,19 @@ export interface BAIAstryxPaginationConfig {
   pageSizeOptions?: Array<number>;
   onChange?: (page: number, pageSize: number) => void;
   size?: 'sm' | 'md';
+  /**
+   * antd parity. Astryx's `Pagination` renders the size selector exactly when
+   * `pageSizeOptions` is passed, so `false` here simply withholds them — the
+   * page-size dropdown is noise inside the small fixed-page modals
+   * (`BAIBulkErrorModal`, the artifact modals) that ask for it.
+   */
+  showSizeChanger?: boolean;
+  /**
+   * antd parity: suppress the whole bottom bar while everything fits on one
+   * page. Only `BAIBulkErrorModal` asks for it (a 3-row failure list should
+   * not grow a pager).
+   */
+  hideOnSinglePage?: boolean;
   /** Extra node rendered at the end of the bottom bar. */
   extraContent?: ReactNode;
 }
@@ -173,7 +198,7 @@ export interface BAIAstryxExpandable<RecordType> {
   columnWidth?: number;
 }
 
-export interface BAIAstryxTableProps<RecordType extends AnyRow = AnyRow> {
+export interface BAIAstryxTableProps<RecordType extends AnyRecord = AnyRecord> {
   columns?: BAIColumnsType<RecordType>;
   dataSource?: ReadonlyArray<RecordType>;
   rowKey?: string | ((record: RecordType) => React.Key);
@@ -216,6 +241,14 @@ export interface BAIAstryxTableProps<RecordType extends AnyRow = AnyRow> {
   textOverflow?: 'wrap' | 'truncate';
   /** Accepted and ignored — Astryx's scroll wrapper owns overflow. */
   scroll?: unknown;
+  /**
+   * Hide the header row. Astryx's `Table` has no such prop (its header carries
+   * the sort controls and the select-all checkbox), so this is done in CSS:
+   * a wrapper class collapses `thead`. Only use it for list-shaped tables with
+   * a single unlabelled column — the ChatPage history drawer is the one call
+   * site. Sorting / selection remain unreachable while it is on.
+   */
+  showHeader?: boolean;
   className?: string;
   style?: React.CSSProperties;
 }
@@ -270,7 +303,7 @@ interface FlatColumn<RecordType> {
  * level is flattened recursively the same way (the captions concatenate with
  * ` / `).
  */
-const flattenColumns = <RecordType extends AnyRow>(
+const flattenColumns = <RecordType extends AnyRecord>(
   columns: BAIColumnsType<RecordType> | undefined,
   groupTitle?: ReactNode,
 ): Array<FlatColumn<RecordType>> =>
@@ -308,7 +341,7 @@ const renderTitle = (column: { title?: unknown }): ReactNode =>
 /* Component                                                                   */
 /* -------------------------------------------------------------------------- */
 
-const BAITableAstryx = <RecordType extends AnyRow = AnyRow>({
+const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
   columns,
   dataSource,
   rowKey = 'id',
@@ -331,6 +364,7 @@ const BAITableAstryx = <RecordType extends AnyRow = AnyRow>({
   isStriped,
   hasHover = true,
   textOverflow = 'truncate',
+  showHeader = true,
   className,
   style,
 }: BAIAstryxTableProps<RecordType>): React.ReactElement => {
@@ -405,14 +439,68 @@ const BAITableAstryx = <RecordType extends AnyRow = AnyRow>({
 
   /* ---- row keys ---------------------------------------------------------- */
 
-  const getRowKey = (record: RecordType): string =>
-    String(
-      typeof rowKey === 'function'
-        ? rowKey(record)
-        : (record as AnyRow)[rowKey as string],
-    );
+  /**
+   * Row identity. `rowKey` defaults to `'id'` here, but antd's `Table`
+   * defaulted to `'key'` — and 10 call sites relied on that default rather
+   * than declaring one. A missing key is not a cosmetic problem: every row
+   * would resolve to the string `"undefined"`, which collapses React's
+   * reconciliation keys, row selection and expansion onto a single identity
+   * (observed live on `ErrorLogList`). So an unresolved lookup falls back to
+   * antd's `key`, then `id`, and finally to the row's position.
+   */
+  const getRowKey = (record: RecordType): string => {
+    if (typeof rowKey === 'function') return String(rowKey(record));
+    const direct = (record as AnyRow)[rowKey as string];
+    if (direct != null) return String(direct);
+    const fallback = (record as AnyRow).key ?? (record as AnyRow).id;
+    if (fallback != null) return String(fallback);
+    const index = _.indexOf(dataSource, record);
+    return `__row_${index}`;
+  };
 
-  const rows = useMemo(() => (dataSource ? [...dataSource] : []), [dataSource]);
+  /* ---- sort state (controlled `order`, or internal for client sorting) ---- */
+
+  // A table that wires `onChangeOrder` (or drives `order` itself) is
+  // SERVER-sorted: the header only reports intent and the data arrives already
+  // ordered. A table that instead declares comparator `sorter`s and no order
+  // plumbing is CLIENT-sorted — 9 call sites, mostly modals over an
+  // already-fetched array. The antd engine sorted those rows itself; the sort
+  // state and the actual sorting therefore live here for that case, seeded
+  // from the first column that declares `defaultSortOrder`.
+  const isOrderControlled = !!onChangeOrder || order != null;
+  const [uncontrolledOrder, setUncontrolledOrder] = useState<
+    string | undefined
+  >(() => {
+    const seed = _.find(
+      flattenColumns<RecordType>(columns),
+      ({ column }) => !!column.defaultSortOrder,
+    );
+    if (!seed) return undefined;
+    const field = sortKeyOf(seed.column, seed.key);
+    return seed.column.defaultSortOrder === 'descend' ? `-${field}` : field;
+  });
+  const activeOrder = isOrderControlled ? order : uncontrolledOrder;
+
+  const rows = useMemo(() => {
+    const source = dataSource ? [...dataSource] : [];
+    if (isOrderControlled || !activeOrder) return source;
+    const isDescending = activeOrder.startsWith('-');
+    const field = isDescending ? activeOrder.slice(1) : activeOrder;
+    const sorter = _.find(
+      flatColumns,
+      ({ key, column }) => sortKeyOf(column, key) === field,
+    )?.column?.sorter;
+    const compare =
+      typeof sorter === 'function'
+        ? sorter
+        : sorter && typeof sorter === 'object'
+          ? sorter.compare
+          : undefined;
+    if (!compare) return source;
+    return source.sort((a, b) =>
+      isDescending ? -compare(a, b, 'descend') : compare(a, b, 'ascend'),
+    );
+  }, [dataSource, isOrderControlled, activeOrder, flatColumns]);
 
   /* ---- expandable -------------------------------------------------------- */
 
@@ -517,17 +605,34 @@ const BAITableAstryx = <RecordType extends AnyRow = AnyRow>({
             ? width
             : undefined;
 
-      const header =
-        groupTitle == null ? (
-          renderTitle(column)
-        ) : (
-          <VStack gap={0} align="start">
-            <Text type="supporting" color="secondary">
-              {groupTitle}
-            </Text>
-            <span>{renderTitle(column)}</span>
-          </VStack>
-        );
+      // Header text is clipped, not overflowed. Astryx puts a plain-string
+      // `header` straight into the `<th>` (which is `overflow: visible`), so a
+      // label longer than its column — `Sudo Session Enabled` in a 120px
+      // column on the user list — visibly runs over the NEXT header instead of
+      // truncating. Wrapping it restores the documented "header cells always
+      // truncate" behaviour without reaching into any design-system class.
+      const header = (
+        <span
+          style={{
+            display: 'block',
+            minWidth: 0,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {groupTitle == null ? (
+            renderTitle(column)
+          ) : (
+            <VStack gap={0} align="start">
+              <Text type="supporting" color="secondary">
+                {groupTitle}
+              </Text>
+              <span>{renderTitle(column)}</span>
+            </VStack>
+          )}
+        </span>
+      );
 
       built.push({
         key,
@@ -703,28 +808,28 @@ const BAITableAstryx = <RecordType extends AnyRow = AnyRow>({
   /* ---- sorting ----------------------------------------------------------- */
 
   const sortState: TableSortState = useMemo(() => {
-    if (!order) return [];
-    const isDescending = order.startsWith('-');
+    if (!activeOrder) return [];
+    const isDescending = activeOrder.startsWith('-');
     return [
       {
-        sortKey: isDescending ? order.slice(1) : order,
+        sortKey: isDescending ? activeOrder.slice(1) : activeOrder,
         direction: isDescending ? 'descending' : 'ascending',
       },
     ];
-  }, [order]);
+  }, [activeOrder]);
 
   const sortPlugin = useTableSortable<AnyRow>({
     sort: sortState,
     allowUnsortedState: true,
     onSortChange: (next) => {
       const first = next[0];
-      if (!first) {
-        onChangeOrder?.(undefined);
-        return;
-      }
-      onChangeOrder?.(
-        first.direction === 'descending' ? `-${first.sortKey}` : first.sortKey,
-      );
+      const nextOrder = !first
+        ? undefined
+        : first.direction === 'descending'
+          ? `-${first.sortKey}`
+          : first.sortKey;
+      if (isOrderControlled) onChangeOrder?.(nextOrder);
+      else setUncontrolledOrder(nextOrder);
     },
   });
 
@@ -874,8 +979,13 @@ const BAITableAstryx = <RecordType extends AnyRow = AnyRow>({
 
   const isDimmed = !!loading || !!spinnerLoading;
 
-  const hasBottomBar =
-    pagination !== false || !!tableSettings || !!exportSettings;
+  // antd `hideOnSinglePage`: the pager (not the settings / export buttons)
+  // disappears while everything fits on one page.
+  const isPagerVisible =
+    pagination !== false &&
+    !(pagination?.hideOnSinglePage && total <= currentPageSize);
+
+  const hasBottomBar = isPagerVisible || !!tableSettings || !!exportSettings;
 
   return (
     <div className={className} style={style}>
@@ -886,6 +996,7 @@ const BAITableAstryx = <RecordType extends AnyRow = AnyRow>({
           so a bottom bar inside it overlaps the last row. */}
       <div
         aria-busy={isDimmed || undefined}
+        className={showHeader ? undefined : 'bai-table-astryx-no-header'}
         style={
           isDimmed
             ? {
@@ -927,7 +1038,7 @@ const BAITableAstryx = <RecordType extends AnyRow = AnyRow>({
           gap={2}
           style={{ marginTop: token.marginXS }}
         >
-          {pagination !== false ? (
+          {isPagerVisible ? (
             <>
               <Text type="supporting" color="secondary">
                 <BAIPaginationInfoText
@@ -940,7 +1051,13 @@ const BAITableAstryx = <RecordType extends AnyRow = AnyRow>({
                 page={currentPage}
                 pageSize={currentPageSize}
                 totalItems={total}
-                pageSizeOptions={pagination?.pageSizeOptions ?? [10, 20, 50]}
+                // Astryx renders the size selector exactly when options are
+                // supplied, so antd's `showSizeChanger={false}` is "no options".
+                pageSizeOptions={
+                  pagination && pagination.showSizeChanger === false
+                    ? undefined
+                    : (pagination?.pageSizeOptions ?? [10, 20, 50])
+                }
                 size={pagination?.size ?? 'sm'}
                 variant="pages"
                 label={String(t('comp:BAITable.Pagination'))}

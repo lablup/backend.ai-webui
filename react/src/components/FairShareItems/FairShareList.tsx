@@ -681,9 +681,6 @@ const FairShareList: React.FC = () => {
                 pageSize: tablePaginationOption.pageSize,
                 total: resourceGroups?.count || 0,
                 current: tablePaginationOption.current,
-                style: {
-                  marginRight: token.marginXS,
-                },
                 onChange: (current, pageSize) => {
                   if (_.isNumber(current) && _.isNumber(pageSize)) {
                     setTablePaginationOption({
@@ -731,9 +728,6 @@ const FairShareList: React.FC = () => {
                 pageSize: tablePaginationOption.pageSize,
                 total: domainFairShares?.count || 0,
                 current: tablePaginationOption.current,
-                style: {
-                  marginRight: token.marginXS,
-                },
                 onChange: (current, pageSize) => {
                   if (_.isNumber(current) && _.isNumber(pageSize)) {
                     setTablePaginationOption({
@@ -781,9 +775,6 @@ const FairShareList: React.FC = () => {
                 pageSize: tablePaginationOption.pageSize,
                 total: projectFairShares?.count || 0,
                 current: tablePaginationOption.current,
-                style: {
-                  marginRight: token.marginXS,
-                },
                 onChange: (current, pageSize) => {
                   if (_.isNumber(current) && _.isNumber(pageSize)) {
                     setTablePaginationOption({
@@ -822,9 +813,6 @@ const FairShareList: React.FC = () => {
                 pageSize: tablePaginationOption.pageSize,
                 total: userFairShares?.count || 0,
                 current: tablePaginationOption.current,
-                style: {
-                  marginRight: token.marginXS,
-                },
                 onChange: (current, pageSize) => {
                   if (_.isNumber(current) && _.isNumber(pageSize)) {
                     setTablePaginationOption({

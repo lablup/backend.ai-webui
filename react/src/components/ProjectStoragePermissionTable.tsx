@@ -31,7 +31,7 @@ import {
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
   BAISelectionLabel,
-  BAITable,
+  BAITableAstryx,
   type BAITableProps,
   BAIUnmountAfterClose,
   toLocalId,
@@ -356,9 +356,8 @@ const ProjectStoragePermissionTable: React.FC<
           />
         </BAIFlex>
       </BAIFlex>
-      <BAITable
+      <BAITableAstryx
         size="small"
-        scroll={{ x: 'max-content' }}
         {...tableProps}
         locale={{
           // No domain picked yet vs. a domain picked that simply has no

@@ -29,7 +29,7 @@ import {
   BAIId,
   BAINameActionCell,
   BAISelectionLabel,
-  BAITable,
+  BAITableAstryx,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
   toLocalId,
@@ -442,13 +442,12 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
             />
           </BAIFlex>
         </BAIFlex>
-        <BAITable<(typeof scopeRows)[number]>
+        <BAITableAstryx<(typeof scopeRows)[number]>
           rowKey="scopeId"
           dataSource={scopeRows}
           columns={columns}
           loading={deferredQueryVariables !== queryVariables}
           size="small"
-          scroll={{ x: 'max-content' }}
           rowSelection={{
             type: 'checkbox',
             selectedRowKeys: selectedScopes.map((scope) => scope.scopeId),

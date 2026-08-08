@@ -52,11 +52,10 @@
   }
 }
 
-/* fix: fixed column shadow display outside of a table wrapper */
-.ant-table-wrapper {
-  border-radius: 8px 8px 0 0;
-  overflow: hidden;
-}
+/* to-astryx TICKET 30-D: the `ant-table-wrapper` rule that clipped the
+   fixed-column shadow lived here for the antd table. No antd `Table` is
+   rendered anywhere in the app any more (BAITableAstryx is the only table
+   engine), so the rule is dead and has been removed. */
 
 /* fix: the tooltip does not appear in the `<Form.Item tooltip={'something'}` when the popup container is a parent node of the trigger node. */
 .ant-form-item-label {

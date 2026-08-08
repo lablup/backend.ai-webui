@@ -1,21 +1,19 @@
 /**
- * to-astryx TICKET 25 — the BAITable migration seam.
+ * to-astryx TICKET 30-D — the BAITable seam, closed.
  *
- * Two engines ship side by side while the ~74 call sites move across:
+ * Ticket 25 shipped `BAITableAstryx` next to the antd `BAITable` and moved
+ * three `*Nodes` across. Ticket 30-D moved the remaining 71 consumers and
+ * deleted the antd engine, so there is exactly ONE table implementation now:
  *
- *   `BAITable`        antd `Table` (also exported as `BAITableLegacy`)
- *   `BAITableAstryx`  Astryx `Table` + plugin pipeline — the successor
+ *   `BAITableAstryx`  Astryx `Table` + plugin pipeline
  *
- * Both accept the SAME antd-shaped column model (`BAIColumnsType`), so a
- * consumer flips by swapping the import. `BAITableLegacy` is the name later
- * waves rename the stragglers to; ticket 30 / 35 do the final swap of the
- * `BAITable` identifier onto the Astryx implementation once nothing is left on
- * the antd one.
+ * The names that survive from the antd era are types, not components:
+ * `BAITableProps` (~30 components embed it in their own public prop
+ * interfaces) is an alias of `BAIAstryxTableProps`, and the column model
+ * (`BAIColumnsType`) plus the persisted-override shape (`BAITableSettings`,
+ * `BAITableColumnOverrideItem`) live in the engine-neutral `tableTypes`
+ * module, which imports no table implementation at all.
  */
-export { default as BAITable } from './BAITable';
-// Same component as `BAITable`, under the name the migration renames call
-// sites to when they must stay on antd for another wave.
-export { default as BAITableLegacy } from './BAITable';
 export { default as BAITableAstryx } from './BAITableAstryx';
 export { default as BAINameActionCell } from './BAINameActionCell';
 export type {
@@ -23,23 +21,25 @@ export type {
   BAINameActionCellProps,
 } from './BAINameActionCell';
 export type {
-  BAITableProps,
+  BAIAstryxTableProps,
+  BAIAstryxTableProps as BAITableProps,
+  BAIAstryxRowSelection,
+  BAIAstryxPaginationConfig,
+  BAIAstryxExpandable,
+} from './BAITableAstryx';
+export type {
+  BAIAnyObject,
   BAIColumnType,
+  BAIColumnGroupType,
   BAIColumnsType,
   BAITableSettings,
   BAITableColumnOverrideItem,
   BAITableColumnOverrideRecord,
   BAIExportSettings,
-} from './BAITable';
-export type {
-  BAIAstryxTableProps,
-  BAIAstryxRowSelection,
-  BAIAstryxPaginationConfig,
-  BAIAstryxExpandable,
-} from './BAITableAstryx';
+} from './tableTypes';
 export {
   isColumnVisible,
   getVisibleColumns,
   restoreColumnToDefault,
   restoreAllColumnsToDefault,
-} from './BAITable';
+} from './tableTypes';

@@ -17,7 +17,7 @@ import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAIId,
-  BAITable,
+  BAITableAstryx,
   filterOutEmpty,
   INITIAL_FETCH_KEY,
   useFetchKey,
@@ -211,13 +211,12 @@ const LegacyRoleScopeTab: React.FC<LegacyRoleScopeTabProps> = ({ roleId }) => {
           onChange={updateFetchKey}
         />
       </BAIFlex>
-      <BAITable<ScopeNode>
+      <BAITableAstryx<ScopeNode>
         rowKey={(record) => `${record.scopeType}|${record.scopeId}`}
         dataSource={scopeNodes as ScopeNode[]}
         columns={columns}
         loading={isLoading}
         size="small"
-        scroll={{ x: 'max-content' }}
         pagination={{
           pageSize: tablePaginationOption.pageSize,
           current: tablePaginationOption.current,

@@ -1,0 +1,21 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <BAITableAstryx> (to-astryx ticket 30-D). Replaces
+ `BAITable.css`, which is gone with the antd engine.
+
+ Only ONE rule survives the engine swap: antd's `showHeader={false}`. Astryx's
+ `Table` has no equivalent prop (its header owns the sort controls and the
+ select-all checkbox), so the header row is collapsed in CSS instead. The
+ selector targets the plain `thead` ELEMENT inside our own wrapper class — no
+ design-system class names are reached into, so this survives an Astryx bump.
+
+ `@layer components` matches the layer contract declared in
+ `src/styles/backend.ai-ui.css` (ticket 30).
+*/
+@layer components {
+  .bai-table-astryx-no-header thead {
+    display: none;
+  }
+}

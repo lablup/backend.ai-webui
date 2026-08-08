@@ -23,7 +23,7 @@ import {
   filterOutEmpty,
   filterOutNullAndUndefined,
   BAIButton,
-  BAITable,
+  BAITableAstryx,
   BAIFlex,
   BAIPropertyFilter,
   BAINameActionCell,
@@ -376,9 +376,8 @@ const AdminUserCredentialList: React.FC = () => {
           </BAIButton>
         </BAIFlex>
       </BAIFlex>
-      <BAITable<Keypair>
+      <BAITableAstryx<Keypair>
         rowKey={'id'}
-        scroll={{ x: 'max-content' }}
         loading={deferredQueryVariables !== queryVariables}
         dataSource={filterOutNullAndUndefined(keypair_list?.items)}
         rowSelection={{
@@ -629,7 +628,6 @@ const AdminUserCredentialList: React.FC = () => {
             },
           },
         ])}
-        showSorterTooltip={false}
         pagination={{
           pageSize: tablePaginationOption.pageSize,
           total: keypair_list?.total_count || 0,

@@ -16,7 +16,7 @@ import StoragePermissionEditModal from './StoragePermissionEditModal';
 import { Typography } from 'antd';
 import {
   BAINameActionCell,
-  BAITable,
+  BAITableAstryx,
   type BAITableProps,
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
@@ -154,9 +154,8 @@ const DomainStoragePermissionTable: React.FC<
 
   return (
     <>
-      <BAITable
+      <BAITableAstryx
         size="small"
-        scroll={{ x: 'max-content' }}
         {...tableProps}
         locale={{ emptyText: t('storageHost.permission.NoDomainSelected') }}
         rowKey="name"

@@ -64,7 +64,7 @@ const meta: Meta<typeof BAIProjectTable> = {
 - **Project ID**: Global ID (sortable, copyable)
 - **Integration ID**: External integration ID
 
-For other props (loading, pagination, etc.), refer to [BAITable](?path=/docs/table-baitable--docs).
+For other props (loading, pagination, etc.), refer to [BAITableAstryx](?path=/docs/table-baitable--docs).
         `,
       },
     },

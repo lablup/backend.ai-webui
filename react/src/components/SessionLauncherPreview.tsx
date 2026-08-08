@@ -35,7 +35,7 @@ import {
   MetadataListItem,
 } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
-import { BAICard, BAIDoubleTag, BAIFlex, BAITable } from 'backend.ai-ui';
+import { BAICard, BAIDoubleTag, BAIFlex, BAITableAstryx } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { CheckIcon, CopyIcon } from 'lucide-react';
@@ -513,9 +513,7 @@ const SessionLauncherPreview: React.FC<{
       >
         <BAIFlex direction="column" align="stretch" gap={'xs'}>
           {form.getFieldValue('mount_ids')?.length > 0 ? (
-            // antd Table -> BAITable (documented frontier; table internals
-            // stay antd until ticket 25).
-            <BAITable
+            <BAITableAstryx
               rowKey="name"
               size="small"
               pagination={false}
