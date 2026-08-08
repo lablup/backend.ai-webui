@@ -24,7 +24,7 @@ import {
   BAITableProps,
 } from '../Table';
 import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
-import { Tooltip } from 'antd';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { CircleAlert, History } from 'lucide-react';
@@ -180,7 +180,7 @@ const BAIRouteNodes = ({
               </BAITag>
             ) : null}
             {onClickSchedulingHistory && (
-              <Tooltip title={t('comp:BAIRouteNodes.SchedulingHistory')}>
+              <Tooltip content={t('comp:BAIRouteNodes.SchedulingHistory')}>
                 <BAIButton
                   type="text"
                   icon={<History size="1em" />}

@@ -1,3 +1,11 @@
+/*
+ to-astryx W2-D: `BAIButton` renders Astryx `Button` / `IconButton`, so the
+ antd class assertions (`ant-btn-primary`, `ant-btn-dangerous`,
+ `.ant-btn-loading-icon`) no longer describe anything. Astryx styles through
+ StyleX and its generated class names are not a contract, so the loading
+ assertions move to `aria-busy` — which is what Astryx sets and announces, and
+ which antd never exposed at all.
+*/
 import BAIButton from './BAIButton';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -11,16 +19,15 @@ describe('BAIButton', () => {
       ).toBeInTheDocument();
     });
 
-    it('should pass through Ant Design Button props', () => {
+    it('should keep the antd-shaped prop surface', () => {
       render(
         <BAIButton type="primary" danger disabled>
           Danger Button
         </BAIButton>,
       );
       const button = screen.getByRole('button');
-      expect(button).toHaveClass('ant-btn-primary');
-      expect(button).toHaveClass('ant-btn-dangerous');
       expect(button).toBeDisabled();
+      expect(button).toHaveAccessibleName('Danger Button');
     });
 
     it('should render with custom className', () => {
@@ -80,9 +87,7 @@ describe('BAIButton', () => {
 
       // Button should show loading state immediately after click
       await waitFor(() => {
-        expect(
-          button.querySelector('.ant-btn-loading-icon'),
-        ).toBeInTheDocument();
+        expect(button).toHaveAttribute('aria-busy', 'true');
       });
     });
 
@@ -101,9 +106,7 @@ describe('BAIButton', () => {
       // Wait for transition to complete
       await waitFor(
         () => {
-          expect(
-            button.querySelector('.ant-btn-loading-icon'),
-          ).not.toBeInTheDocument();
+          expect(button).not.toHaveAttribute('aria-busy');
         },
         { timeout: 3000 },
       );
@@ -142,9 +145,7 @@ describe('BAIButton', () => {
       // Loading state should clear after success
       await waitFor(
         () => {
-          expect(
-            button.querySelector('.ant-btn-loading-icon'),
-          ).not.toBeInTheDocument();
+          expect(button).not.toHaveAttribute('aria-busy');
         },
         { timeout: 3000 },
       );
@@ -154,9 +155,7 @@ describe('BAIButton', () => {
   describe('Loading Prop Override', () => {
     it('should show loading when loading prop is true', () => {
       render(<BAIButton loading>Loading Button</BAIButton>);
-      expect(
-        screen.getByRole('button').querySelector('.ant-btn-loading-icon'),
-      ).toBeInTheDocument();
+      expect(screen.getByRole('button')).toHaveAttribute('aria-busy', 'true');
     });
 
     it('should combine loading prop with action loading state', async () => {
@@ -175,18 +174,14 @@ describe('BAIButton', () => {
       const button = screen.getByRole('button');
 
       // Initially not loading
-      expect(
-        button.querySelector('.ant-btn-loading-icon'),
-      ).not.toBeInTheDocument();
+      expect(button).not.toHaveAttribute('aria-busy');
 
       // Click to start action
       await user.click(button);
 
       // Should show loading during action
       await waitFor(() => {
-        expect(
-          button.querySelector('.ant-btn-loading-icon'),
-        ).toBeInTheDocument();
+        expect(button).toHaveAttribute('aria-busy', 'true');
       });
 
       // Rerender with loading=true while action is still running
@@ -197,21 +192,17 @@ describe('BAIButton', () => {
       );
 
       // Should still be loading
-      expect(button.querySelector('.ant-btn-loading-icon')).toBeInTheDocument();
+      expect(button).toHaveAttribute('aria-busy', 'true');
     });
 
     it('should respect loading prop even without action', () => {
       const { rerender } = render(
         <BAIButton loading={false}>Button</BAIButton>,
       );
-      expect(
-        screen.getByRole('button').querySelector('.ant-btn-loading-icon'),
-      ).not.toBeInTheDocument();
+      expect(screen.getByRole('button')).not.toHaveAttribute('aria-busy');
 
       rerender(<BAIButton loading={true}>Button</BAIButton>);
-      expect(
-        screen.getByRole('button').querySelector('.ant-btn-loading-icon'),
-      ).toBeInTheDocument();
+      expect(screen.getByRole('button')).toHaveAttribute('aria-busy', 'true');
     });
   });
 

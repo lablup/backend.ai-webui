@@ -31,7 +31,7 @@ import {
   useBAIResourceSlots,
   useConnectedBAIClient,
 } from '../provider';
-import { Typography } from 'antd';
+import { Text } from '@astryxdesign/core/Text';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { CircleCheck, CircleMinus } from 'lucide-react';
@@ -120,7 +120,7 @@ const AllocationCell: React.FC<{ record: AgentNodeInList }> = ({ record }) => {
               >
                 <BAIFlex gap="xxs">
                   <ResourceTypeIcon key={key} type={key} />
-                  <Typography.Text>
+                  <Text>
                     {toFixedFloorWithoutTrailingZeros(
                       parsedOccupiedSlots.cpu || 0,
                       0,
@@ -130,13 +130,10 @@ const AllocationCell: React.FC<{ record: AgentNodeInList }> = ({ record }) => {
                       parsedAvailableSlots.cpu || 0,
                       0,
                     )}
-                  </Typography.Text>
-                  <Typography.Text
-                    type="secondary"
-                    style={{ fontSize: token.sizeXS }}
-                  >
+                  </Text>
+                  <Text color="secondary" style={{ fontSize: token.sizeXS }}>
                     {mergedResourceSlots.cpu?.display_unit}
-                  </Typography.Text>
+                  </Text>
                 </BAIFlex>
                 <BAIProgressWithLabel
                   percent={cpuPercent}
@@ -165,19 +162,16 @@ const AllocationCell: React.FC<{ record: AgentNodeInList }> = ({ record }) => {
               >
                 <BAIFlex gap="xxs">
                   <ResourceTypeIcon type={'mem'} />
-                  <Typography.Text>
+                  <Text>
                     {convertToBinaryUnit(parsedOccupiedSlots.mem, 'g', 0)
                       ?.numberFixed ?? 0}
                     &nbsp;/&nbsp;
                     {convertToBinaryUnit(parsedAvailableSlots.mem, 'g', 0)
                       ?.numberFixed ?? 0}
-                  </Typography.Text>
-                  <Typography.Text
-                    type="secondary"
-                    style={{ fontSize: token.sizeXS }}
-                  >
+                  </Text>
+                  <Text color="secondary" style={{ fontSize: token.sizeXS }}>
                     GiB
-                  </Typography.Text>
+                  </Text>
                 </BAIFlex>
                 <BAIProgressWithLabel
                   percent={memPercent}
@@ -206,7 +200,7 @@ const AllocationCell: React.FC<{ record: AgentNodeInList }> = ({ record }) => {
               >
                 <BAIFlex gap="xxs">
                   <ResourceTypeIcon key={key} type={key} />
-                  <Typography.Text>
+                  <Text>
                     {toFixedFloorWithoutTrailingZeros(
                       parsedOccupiedSlots[key] || 0,
                       2,
@@ -216,13 +210,10 @@ const AllocationCell: React.FC<{ record: AgentNodeInList }> = ({ record }) => {
                       parsedAvailableSlots[key],
                       2,
                     )}
-                  </Typography.Text>
-                  <Typography.Text
-                    type="secondary"
-                    style={{ fontSize: token.sizeXS }}
-                  >
+                  </Text>
+                  <Text color="secondary" style={{ fontSize: token.sizeXS }}>
                     {mergedResourceSlots[key]?.display_unit}
-                  </Typography.Text>
+                  </Text>
                 </BAIFlex>
                 <BAIProgressWithLabel
                   percent={percent}
@@ -304,9 +295,7 @@ const UtilizationCell: React.FC<{
           style={{ minWidth: 200, width: '100%' }}
           data-testid="live-stat-cpu"
         >
-          <Typography.Text>
-            {mergedResourceSlots.cpu?.human_readable_name}
-          </Typography.Text>
+          <Text>{mergedResourceSlots.cpu?.human_readable_name}</Text>
           <BAIProgressWithLabel
             percent={liveStat.cpu_util.ratio * 100}
             width={120}
@@ -324,9 +313,7 @@ const UtilizationCell: React.FC<{
           style={{ minWidth: 200, width: '100%' }}
           data-testid="live-stat-mem"
         >
-          <Typography.Text>
-            {mergedResourceSlots.mem?.human_readable_name}
-          </Typography.Text>
+          <Text>{mergedResourceSlots.mem?.human_readable_name}</Text>
           <BAIProgressWithLabel
             percent={liveStat.mem_util.ratio * 100}
             width={120}
@@ -357,10 +344,10 @@ const UtilizationCell: React.FC<{
                 gap="xxs"
                 data-testid={`live-stat-${statKey}`}
               >
-                <Typography.Text>
+                <Text>
                   {mergedResourceSlots[deviceName]?.human_readable_name}
                   (util)
-                </Typography.Text>
+                </Text>
                 <BAIProgressWithLabel
                   width={120}
                   percent={
@@ -395,10 +382,10 @@ const UtilizationCell: React.FC<{
                 gap="xxs"
                 data-testid={`live-stat-${statKey}`}
               >
-                <Typography.Text>
+                <Text>
                   {mergedResourceSlots[deviceName]?.human_readable_name}
                   (mem)
-                </Typography.Text>
+                </Text>
                 <BAIProgressWithLabel
                   width={120}
                   percent={
@@ -519,11 +506,11 @@ const DiskPctCell: React.FC<{ record: AgentNodeInList }> = ({ record }) => {
         width={120}
       />
       {!_.isEmpty(parsedDisk) && (
-        <Typography.Text style={{ fontSize: token.fontSizeSM }}>
+        <Text style={{ fontSize: token.fontSizeSM }}>
           {convertToDecimalUnit(parsedDisk?.current, baseUnit)?.numberFixed}
           &nbsp;/&nbsp;
           {convertToDecimalUnit(parsedDisk?.capacity, baseUnit)?.displayValue}
-        </Typography.Text>
+        </Text>
       )}
     </BAIFlex>
   );
@@ -654,9 +641,9 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
                 {value}
               </BAILink>
             ) : (
-              <Typography.Text>{value}</Typography.Text>
+              <Text>{value}</Text>
             )}
-            <Typography.Text type="secondary">{record?.addr}</Typography.Text>
+            <Text color="secondary">{record?.addr}</Text>
           </BAIFlex>
         );
       },
@@ -681,7 +668,7 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
       render: (value, record) => {
         return (
           <BAIFlex direction="column" align="start">
-            <Typography.Text>{dayjs(value).format('ll LTS')}</Typography.Text>
+            <Text>{dayjs(value).format('ll LTS')}</Text>
             {record?.status === 'ALIVE' && (
               <BAIIntervalView
                 callback={() => {

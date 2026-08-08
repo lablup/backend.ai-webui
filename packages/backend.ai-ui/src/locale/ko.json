@@ -161,6 +161,9 @@
   "comp:BAIDomainSelect": {
     "SelectDomain": "도메인 선택"
   },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "자동 새로고침",
     "EveryHours": "{{count}}시간",
@@ -264,6 +267,9 @@
     "StrategyType": "전략",
     "Tags": "태그",
     "UpdatedAt": "수정 시각"
+  },
+  "comp:BAINameActionCell": {
+    "MoreActions": "More actions"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "다음 프로젝트(들)이 업데이트됩니다.",
@@ -534,8 +540,10 @@
     "MoreOptions": "더 많은 옵션",
     "Name": "이름",
     "NoUploadPermissionForHost": "호스트에 대한 업로드 권한이 없습니다.",
+    "Path": "Path",
     "PleaseEnterAFileName": "파일 이름을 입력해 주세요.",
     "PleaseEnterAFolderName": "폴더 이름을 입력해 주세요.",
+    "RenameFile": "Rename",
     "RenameSuccess": "이름이 변경되었습니다.",
     "SelectedItemsDeletedSuccessfully": "선택한 파일 및 폴더가 삭제되었습니다.",
     "Size": "크기",
@@ -614,16 +622,23 @@
     "UnknownError": "알 수 없는 오류가 발생했습니다. 다시 시도해 주세요."
   },
   "general": {
+    "Decrease": "Decrease",
     "DeselectAll": "선택 취소",
     "File": "파일",
+    "Increase": "Increase",
     "NSelected": "{{count}}개 선택됨",
     "Optional": "선택",
     "Project": "프로젝트",
+    "Select": "Select",
     "TotalItems": "총 {{total}} 항목",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "취소",
       "Close": "닫기",
       "Collapse": "접기",
+      "Confirm": "Confirm",
       "Copied": "복사됨",
       "Copy": "복사",
       "CopyAll": "모두 복사",

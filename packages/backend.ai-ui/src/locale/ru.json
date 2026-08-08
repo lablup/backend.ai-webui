@@ -161,6 +161,9 @@
   "comp:BAIDomainSelect": {
     "SelectDomain": "Выберите домен"
   },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Автообновление",
     "EveryHours": "{{count}}ч",
@@ -264,6 +267,9 @@
     "StrategyType": "Стратегия",
     "Tags": "Теги",
     "UpdatedAt": "Обновлено"
+  },
+  "comp:BAINameActionCell": {
+    "MoreActions": "More actions"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Будут обновлены следующие проекты.",
@@ -534,8 +540,10 @@
     "MoreOptions": "Дополнительные параметры",
     "Name": "Имя",
     "NoUploadPermissionForHost": "У вас нет разрешения на загрузку для данного хоста.",
+    "Path": "Path",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Пожалуйста, введите имя папки.",
+    "RenameFile": "Rename",
     "RenameSuccess": "Имя было успешно изменено.",
     "SelectedItemsDeletedSuccessfully": "Выбранные файлы и папки были успешно удалены.",
     "Size": "Размер",
@@ -614,16 +622,23 @@
     "UnknownError": "Произошла неизвестная ошибка. \nПожалуйста, попробуйте еще раз."
   },
   "general": {
+    "Decrease": "Decrease",
     "DeselectAll": "Снять выделение",
     "File": "Файл",
+    "Increase": "Increase",
     "NSelected": "{{count}} выбрал",
     "Optional": "Необязательно",
     "Project": "Проект",
+    "Select": "Select",
     "TotalItems": "Total {{total}} элементы",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "Отмена",
       "Close": "Закрывать",
       "Collapse": "Крах",
+      "Confirm": "Confirm",
       "Copied": "Скопировано",
       "Copy": "Копировать",
       "CopyAll": "Копировать все",

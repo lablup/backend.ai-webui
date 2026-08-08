@@ -2,18 +2,26 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- Co-located styles for <EditableFileName> (to-astryx ticket 33). Replaces the
- `antd-style` `createStyles` block; imported by the component itself (P17).
- No theme token is involved. The `.ant-typography-edit` / `.ant-form-item*`
- selectors are still LIVE (antd `Typography` + `Form`), so they are preserved
- verbatim rather than dropped (P6).
+ Co-located styles for <EditableFileName>, imported by the component itself
+ (P17). No theme token is involved.
+
+ to-astryx W2-D: the hover-reveal rules were keyed on `.ant-typography-edit`,
+ the anchor antd injected for `Typography.Text editable`. That element no
+ longer exists (the affordance is an Astryx `IconButton` now), so the selector
+ is re-pointed at the button's own class rather than left silently matching
+ nothing (P6).
+
+ The `.ant-form-item*` rules are UNCHANGED and still live: the rename field
+ sits inside the PARKED antd form engine, which still renders antd's item DOM.
 */
-.bai-editable-file-name-hover-edit .ant-typography-edit {
+.bai-editable-file-name-hover-edit .bai-editable-file-name-edit-button {
   opacity: 0;
   transition: opacity 0.2s;
 }
 
-.bai-editable-file-name-hover-edit:hover .ant-typography-edit {
+.bai-editable-file-name-hover-edit:hover .bai-editable-file-name-edit-button,
+.bai-editable-file-name-hover-edit:focus-within
+  .bai-editable-file-name-edit-button {
   opacity: 1;
 }
 

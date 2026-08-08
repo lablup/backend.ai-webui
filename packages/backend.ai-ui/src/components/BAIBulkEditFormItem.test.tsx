@@ -540,8 +540,12 @@ describe('BAIBulkEditFormItem', () => {
         </FormWrapper>,
       );
 
-      const clearLink = screen.getByText('Clear');
-      expect(clearLink.tagName.toLowerCase()).toBe('a');
+      // to-astryx W2-D: "Clear" is an Astryx `Link` with no `href`, which
+      // renders a link-styled BUTTON — the correct semantics for a pure
+      // `onClick` action, and the call wave 1 ratified for `BAILink` (D3).
+      // antd's `Typography.Link` rendered a destination-less `<a>`, which is
+      // not keyboard-activatable as an action.
+      expect(screen.getByRole('button', { name: 'Clear' })).toBeInTheDocument();
     });
 
     it('should have accessible link for Undo changes action', async () => {
@@ -557,8 +561,9 @@ describe('BAIBulkEditFormItem', () => {
       // Switch to clear mode (which sets value to null, triggering Undo changes link)
       await user.click(screen.getByText('Clear'));
 
-      const undoLink = screen.getByText('Undo changes');
-      expect(undoLink.tagName.toLowerCase()).toBe('a');
+      expect(
+        screen.getByRole('button', { name: 'Undo changes' }),
+      ).toBeInTheDocument();
     });
   });
 });

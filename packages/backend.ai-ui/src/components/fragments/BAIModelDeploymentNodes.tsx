@@ -4,7 +4,6 @@ import {
 } from '../../__generated__/BAIModelDeploymentNodesFragment.graphql';
 import { filterOutEmpty, filterOutNullAndUndefined } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
-import { theme } from '../../theme-shim';
 import BAIDeploymentStatusTag, {
   BAIDeploymentStatus,
 } from '../BAIDeploymentStatusTag';
@@ -21,7 +20,9 @@ import {
 } from '../Table';
 import BAIDeploymentOwnerInfo from './BAIDeploymentOwnerInfo';
 import BAIDeploymentTagChips from './BAIDeploymentTagChips';
-import { Tooltip, Typography } from 'antd';
+import { Link } from '@astryxdesign/core/Link';
+import { Text } from '@astryxdesign/core/Text';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { CircleHelp } from 'lucide-react';
@@ -84,7 +85,6 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
 }) => {
   'use memo';
   const { t } = useBAIi18n();
-  const { token } = theme.useToken();
 
   const deployments = useFragment<BAIModelDeploymentNodesFragment$key>(
     graphql`
@@ -161,26 +161,20 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
           <BAIFlex gap="xxs" align="center">
             {t('comp:BAIModelDeploymentNodes.RevisionNumber')}
             <Tooltip
-              title={t('comp:BAIModelDeploymentNodes.RevisionNumberTooltip')}
+              content={t('comp:BAIModelDeploymentNodes.RevisionNumberTooltip')}
             >
-              <CircleHelp
-                style={{
-                  color: token.colorTextTertiary,
-                  cursor: 'help',
-                }}
-                size="1em"
-              />
+              <Text color="placeholder" style={{ cursor: 'help' }}>
+                <CircleHelp size="1em" />
+              </Text>
             </Tooltip>
           </BAIFlex>
         ),
         render: (__, record) => {
           const revision = record.currentRevision;
           if (revision?.revisionNumber == null) {
-            return <Typography.Text type="secondary">-</Typography.Text>;
+            return <Text color="secondary">-</Text>;
           }
-          return (
-            <Typography.Text>{`#${revision.revisionNumber}`}</Typography.Text>
-          );
+          return <Text>{`#${revision.revisionNumber}`}</Text>;
         },
       },
       {
@@ -203,15 +197,11 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
           <BAIFlex gap="xxs" align="center">
             {t('comp:BAIModelDeploymentNodes.ReplicaSummary')}
             <Tooltip
-              title={t('comp:BAIModelDeploymentNodes.ReplicaSummaryTooltip')}
+              content={t('comp:BAIModelDeploymentNodes.ReplicaSummaryTooltip')}
             >
-              <CircleHelp
-                style={{
-                  color: token.colorTextTertiary,
-                  cursor: 'help',
-                }}
-                size="1em"
-              />
+              <Text color="placeholder" style={{ cursor: 'help' }}>
+                <CircleHelp size="1em" />
+              </Text>
             </Tooltip>
           </BAIFlex>
         ),
@@ -219,12 +209,12 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
           const running = record.runningReplicas?.count ?? 0;
           const desired = record.replicaState?.desiredReplicaCount ?? 0;
           return (
-            <Typography.Text>
+            <Text>
               {t('comp:BAIModelDeploymentNodes.HealthySummary', {
                 healthy: running,
                 total: desired,
               })}
-            </Typography.Text>
+            </Text>
           );
         },
       },
@@ -235,15 +225,15 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
           const modelName =
             record.currentRevision?.modelMountConfig?.vfolder?.name ?? null;
           if (!modelName) {
-            return <Typography.Text type="secondary">-</Typography.Text>;
+            return <Text color="secondary">-</Text>;
           }
           return (
-            <Typography.Text
+            <BAIText
               ellipsis={{ tooltip: modelName }}
               style={{ maxWidth: 200 }}
             >
               {modelName}
-            </Typography.Text>
+            </BAIText>
           );
         },
       },
@@ -275,7 +265,7 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
           <BAIDeploymentTagChips
             metadataFrgmt={record.metadata}
             stopRowClick
-            fallback={<Typography.Text type="secondary">-</Typography.Text>}
+            fallback={<Text color="secondary">-</Text>}
           />
         ),
       },
@@ -288,7 +278,7 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         render: (__, record) => {
           const projectId = record.metadata?.projectId;
           if (!projectId) {
-            return <Typography.Text type="secondary">-</Typography.Text>;
+            return <Text color="secondary">-</Text>;
           }
           const projectName = record.metadata?.projectV2?.basicInfo?.name;
           if (!projectName) {
@@ -296,16 +286,16 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
           }
           return (
             <>
-              <Typography.Text
+              <BAIText
                 ellipsis={{ tooltip: projectName }}
                 style={{ maxWidth: 160 }}
               >
                 {projectName}
-              </Typography.Text>
+              </BAIText>
               &nbsp;
-              <Typography.Text type="secondary">
+              <Text color="secondary">
                 (<BAIId globalId={projectId} copyable type="secondary" />)
-              </Typography.Text>
+              </Text>
             </>
           );
         },
@@ -319,9 +309,9 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         render: (__, record) => {
           const domain = record.metadata?.domainName;
           return domain ? (
-            <Typography.Text>{domain}</Typography.Text>
+            <Text>{domain}</Text>
           ) : (
-            <Typography.Text type="secondary">-</Typography.Text>
+            <Text color="secondary">-</Text>
           );
         },
       },
@@ -334,9 +324,9 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         render: (__, record) => {
           const resourceGroup = record.metadata?.resourceGroupName;
           return resourceGroup ? (
-            <Typography.Text>{resourceGroup}</Typography.Text>
+            <Text>{resourceGroup}</Text>
           ) : (
-            <Typography.Text type="secondary">-</Typography.Text>
+            <Text color="secondary">-</Text>
           );
         },
       },
@@ -368,12 +358,12 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         render: (__, record) => {
           const url = record.networkAccess?.endpointUrl;
           if (!url) {
-            return <Typography.Text type="secondary">-</Typography.Text>;
+            return <Text color="secondary">-</Text>;
           }
           return (
-            <Typography.Link href={url} target="_blank" rel="noreferrer">
+            <Link href={url} target="_blank" rel="noreferrer">
               {url}
-            </Typography.Link>
+            </Link>
           );
         },
       },

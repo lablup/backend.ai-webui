@@ -2,7 +2,7 @@ import { App } from '../../../app-shim';
 import { initiateDownload } from '../../../helper';
 import { useTanMutation } from '../../../helper/reactQueryAlias';
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
-import { theme } from '../../../theme-shim';
+import { theme, useBAIBreakpoint } from '../../../theme-shim';
 import BAIButton from '../../BAIButton';
 import BAIFlex from '../../BAIFlex';
 import BAISelectionLabel from '../../BAISelectionLabel';
@@ -16,9 +16,10 @@ import DeleteSelectedItemsModal, {
 } from './DeleteSelectedItemsModal';
 import './ExplorerActionControls.css';
 import { useUploadVFolderFiles } from './hooks';
+import type { RcFile } from './hooks';
+import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { useToggle } from 'ahooks';
-import { Button, Dropdown, Grid, Tooltip, Upload } from 'antd';
-import type { RcFile } from 'antd/es/upload';
 import {
   DownloadIcon,
   FilePlus,
@@ -74,7 +75,12 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
   extra,
 }) => {
   const { t } = useBAIi18n();
-  const { lg } = Grid.useBreakpoint();
+  // to-astryx W2-D: `Grid.useBreakpoint()` -> the theme-shim's
+  // `useBAIBreakpoint()`. MAPPING §3.9 grades antd's breakpoint hook NONE and
+  // warns that Astryx's `useMediaQuery` returns `false` on FIRST RENDER for
+  // SSR safety — which would make every label here flash in and out. The shim
+  // exists for exactly this (RESPONSIVE-POLICY §2) and is a pure import swap.
+  const { lg } = useBAIBreakpoint();
   const { token } = theme.useToken();
   const { message } = App.useApp();
   const { uploadFiles } = useUploadVFolderFiles();
@@ -88,6 +94,26 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
     useToggle(false);
   const [openDeleteModal, { toggle: toggleDeleteModal }] = useToggle(false);
   const lastFileListRef = useRef<Array<RcFile>>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const directoryInputRef = useRef<HTMLInputElement>(null);
+
+  /**
+   * The half of antd `Upload` this component actually used: take the picked
+   * `FileList`, hand it to the existing tus uploader, and reset the input so
+   * picking the SAME selection twice fires again (antd's hidden input did the
+   * same). The `lastFileListRef` de-dupe guard is kept verbatim.
+   */
+  const handlePickedFiles = (fileList: FileList | null) => {
+    if (!fileList || fileList.length === 0) return;
+    const files = Array.from(fileList) as Array<RcFile>;
+    if (files !== lastFileListRef.current) {
+      uploadFiles(files, onUpload);
+    }
+    lastFileListRef.current = files;
+    toggleUploadDropdown();
+    if (fileInputRef.current) fileInputRef.current.value = '';
+    if (directoryInputRef.current) directoryInputRef.current.value = '';
+  };
 
   const downloadArchiveMutation = useTanMutation({
     mutationFn: async (filePaths: Array<string>) => {
@@ -131,9 +157,14 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
               count={selectedFiles.length}
               onClearSelection={onClearSelection}
             />
-            <Tooltip title={t('general.button.Delete')} placement="topLeft">
-              <Button
+            <Tooltip
+              content={t('general.button.Delete')}
+              placement="above"
+              alignment="start"
+            >
+              <BAIButton
                 disabled={!enableDelete}
+                aria-label={t('general.button.Delete')}
                 icon={
                   <Trash2
                     size="1em"
@@ -151,8 +182,9 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
             </Tooltip>
             {baiClient.supports('download-archive') && (
               <Tooltip
-                title={t('comp:FileExplorer.DownloadSelected')}
-                placement="topLeft"
+                content={t('comp:FileExplorer.DownloadSelected')}
+                placement="above"
+                alignment="start"
               >
                 <BAIButton
                   disabled={!enableDownload}
@@ -178,105 +210,96 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
             )}
           </>
         )}
-        <Tooltip title={!lg && t('comp:FileExplorer.CreateFolder')}>
-          <Button
+        <Tooltip content={t('comp:FileExplorer.CreateFolder')} isEnabled={!lg}>
+          <BAIButton
             disabled={!enableWrite}
+            aria-label={t('comp:FileExplorer.CreateFolder')}
             icon={<FolderPlus size="1em" />}
             onClick={() => {
               toggleCreateModal();
             }}
           >
-            {lg && t('comp:FileExplorer.CreateFolder')}
-          </Button>
+            {lg ? t('comp:FileExplorer.CreateFolder') : undefined}
+          </BAIButton>
         </Tooltip>
         {mode !== 'directoryPicker' && (
-          <Tooltip title={!lg && t('comp:FileExplorer.CreateFile')}>
-            <Button
+          <Tooltip content={t('comp:FileExplorer.CreateFile')} isEnabled={!lg}>
+            <BAIButton
               disabled={!enableWrite}
+              aria-label={t('comp:FileExplorer.CreateFile')}
               icon={<FilePlus size="1em" />}
               onClick={() => {
                 toggleCreateFileModal();
               }}
             >
-              {lg && t('comp:FileExplorer.CreateFile')}
-            </Button>
+              {lg ? t('comp:FileExplorer.CreateFile') : undefined}
+            </BAIButton>
           </Tooltip>
         )}
+        {/* PILOT-DECISION (to-astryx W2-D): antd `Dropdown popupRender` +
+            two `Upload` pickers -> `DropdownMenu items` + two HIDDEN native
+            `<input type="file">` elements.
+
+            MAPPING §3.12 records that this repo already uses `Upload` as a
+            file PICKER (`beforeUpload` returning `false`,
+            `showUploadList={false}`), so what it actually contributed was the
+            hidden input and the click proxy — both one line of DOM.
+            `FileInput` was rejected HERE (unlike `DragAndDrop`, which is a
+            real dropzone) for two reasons: it renders its own control, which
+            cannot live inside a menu row, and `webkitdirectory` — the whole
+            point of "Upload Folder" — has no `FileInput` prop (§3.12 lists
+            `directory` as NONE). Driving the inputs directly keeps folder
+            upload working AND makes the rows real `menuitem`s, so the menu is
+            keyboard-operable, which antd's button-inside-a-popup was not.
+
+            `popupRender`'s hand-built surface (elevated background, radius,
+            shadow from antd tokens) goes with it — `DropdownMenu` owns its own
+            surface, which is the defaults-first answer. */}
         {mode !== 'directoryPicker' && (
-          <Dropdown
-            disabled={!enableUpload}
-            trigger={['click']}
-            open={openUploadDropdown}
-            onOpenChange={toggleUploadDropdown}
-            popupRender={() => {
-              return (
-                <BAIFlex
-                  align="start"
-                  direction="column"
-                  className="bai-explorer-upload"
-                  style={{
-                    padding: 5,
-                    backgroundColor: token.colorBgElevated,
-                    borderRadius: token.borderRadiusLG,
-                    boxShadow: token.boxShadowSecondary,
-                  }}
-                >
-                  <Upload
-                    beforeUpload={(_, fileList) => {
-                      if (fileList !== lastFileListRef.current) {
-                        uploadFiles(fileList, onUpload);
-                      }
-                      lastFileListRef.current = fileList;
-                      return false; // Prevent default upload behavior
-                    }}
-                    multiple
-                    showUploadList={false}
-                  >
-                    <Button
-                      type="text"
-                      icon={<FilePlus size="1em" />}
-                      onClick={() => toggleUploadDropdown()}
-                    >
-                      {t('comp:FileExplorer.UploadFiles')}
-                    </Button>
-                  </Upload>
-                  <Upload
-                    directory
-                    beforeUpload={(_, fileList) => {
-                      if (fileList !== lastFileListRef.current) {
-                        uploadFiles(fileList, onUpload);
-                      }
-                      lastFileListRef.current = fileList;
-                      return false;
-                    }}
-                    showUploadList={false}
-                  >
-                    <Button
-                      type="text"
-                      icon={<FolderPlus size="1em" />}
-                      onClick={() => toggleUploadDropdown()}
-                    >
-                      {t('comp:FileExplorer.UploadFolder')}
-                    </Button>
-                  </Upload>
-                </BAIFlex>
-              );
-            }}
-          >
-            <Tooltip
-              title={
-                !enableUpload
+          <>
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              hidden
+              onChange={(e) => handlePickedFiles(e.target.files)}
+            />
+            <input
+              ref={directoryInputRef}
+              type="file"
+              hidden
+              // `webkitdirectory` is not in React's typings; it is the
+              // attribute antd's `Upload directory` set too.
+              {...{ webkitdirectory: '' }}
+              onChange={(e) => handlePickedFiles(e.target.files)}
+            />
+            <DropdownMenu
+              isMenuOpen={openUploadDropdown}
+              onOpenChange={toggleUploadDropdown}
+              items={[
+                {
+                  label: t('comp:FileExplorer.UploadFiles'),
+                  icon: <FilePlus size="1em" />,
+                  onClick: () => fileInputRef.current?.click(),
+                },
+                {
+                  label: t('comp:FileExplorer.UploadFolder'),
+                  icon: <FolderPlus size="1em" />,
+                  onClick: () => directoryInputRef.current?.click(),
+                },
+              ]}
+              button={{
+                icon: <UploadIcon size="1em" />,
+                label: t('general.button.Upload'),
+                isIconOnly: !lg,
+                isDisabled: !enableUpload,
+                tooltip: !enableUpload
                   ? t('comp:FileExplorer.NoUploadPermissionForHost')
-                  : !lg
-                    ? t('general.button.Upload')
-                    : undefined
-              }
-            >
-              <Button icon={<UploadIcon size="1em" />} disabled={!enableUpload}>
-                {lg && t('general.button.Upload')}
-              </Button>
-            </Tooltip>
-          </Dropdown>
+                  : t('general.button.Upload'),
+              }}
+              hasChevron={false}
+            />
+          </>
         )}
       </BAIFlex>
       <DeleteSelectedItemsModal

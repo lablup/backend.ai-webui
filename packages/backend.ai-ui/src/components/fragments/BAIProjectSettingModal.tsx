@@ -19,9 +19,14 @@ import { convertToBinaryUnit } from '../../helper';
 import { useErrorMessageResolver } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { theme } from '../../theme-shim';
+import BAICheckbox from '../BAICheckbox';
 import BAIModal, { BAIModalProps } from '../BAIModal';
+import {
+  AstryxFormNumberInput,
+  AstryxFormTextArea,
+  AstryxFormTextInput,
+} from '../astryxFormControls';
 import { useBAIResourceSlots } from '../provider';
-import { Checkbox, Input, InputNumber } from 'antd';
 import * as _ from 'lodash-es';
 import { useDeferredValue, useRef } from 'react';
 import {
@@ -437,13 +442,18 @@ const BAIProjectSettingModal = ({
             },
           ]}
         >
-          <Input />
+          <AstryxFormTextInput
+            label={t('comp:BAIProjectSettingModal.ProjectName')}
+          />
         </Form.Item>
         <Form.Item
           label={t('comp:BAIProjectSettingModal.Description')}
           name="description"
         >
-          <Input.TextArea rows={1} />
+          <AstryxFormTextArea
+            label={t('comp:BAIProjectSettingModal.Description')}
+            rows={1}
+          />
         </Form.Item>
         <Form.Item
           label={t('comp:BAIProjectSettingModal.Domain')}
@@ -511,12 +521,12 @@ const BAIProjectSettingModal = ({
                     style={{ width: '100%' }}
                   />
                 ) : (
-                  <InputNumber
-                    style={{ width: '100%' }}
+                  <AstryxFormNumberInput
+                    label={resourceSlotKey}
                     min={0}
-                    suffix={
+                    units={
                       resourceSlots?.[resourceSlotKey as ResourceSlotName]
-                        ?.display_unit
+                        ?.display_unit ?? undefined
                     }
                   />
                 )}
@@ -560,13 +570,11 @@ const BAIProjectSettingModal = ({
               },
             ]}
           >
-            <Input
+            <AstryxFormTextInput
+              label={t('comp:BAIProjectSettingModal.Registry')}
               placeholder={t('comp:BAIProjectSettingModal.Registry')}
-              style={{
-                width: 'calc(50% - 8px)',
-                margin: 0,
-                marginRight: token.sizeXS,
-              }}
+              width="calc(50% - 8px)"
+              style={{ margin: 0, marginRight: token.sizeXS }}
             />
           </Form.Item>
           <Form.Item
@@ -579,14 +587,15 @@ const BAIProjectSettingModal = ({
               },
             ]}
           >
-            <Input
+            <AstryxFormTextInput
+              label={t('comp:BAIProjectSettingModal.Project')}
               placeholder={t('comp:BAIProjectSettingModal.Project')}
-              style={{ width: 'calc(50% - 8px)' }}
+              width="calc(50% - 8px)"
             />
           </Form.Item>
         </Form.Item>
         <Form.Item valuePropName="checked" name="is_active">
-          <Checkbox>{t('comp:BAIProjectSettingModal.IsActive')}</Checkbox>
+          <BAICheckbox>{t('comp:BAIProjectSettingModal.IsActive')}</BAICheckbox>
         </Form.Item>
       </Form>
     </BAIModal>

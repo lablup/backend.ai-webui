@@ -1,4 +1,22 @@
+/*
+ to-astryx W2-D: antd `Tooltip` -> Astryx `Tooltip` (`title` -> `content`,
+ compound `placement` split into `placement` + `alignment` — MAPPING §4).
+
+ PILOT-DECISION: `ResourceTypeIcon.tooltipProps` is re-typed from the full antd
+ `TooltipProps` to the two keys its call sites pass (`title`, `placement`).
+ Keeping the antd type was the one thing holding this module in the antd import
+ graph, and the wide type advertised knobs Astryx cannot honour (`color`,
+ `overlayStyle`, `getPopupContainer`).
+
+ The theme-shim `token.fontSizeSM` read becomes `var(--font-size-sm)`, which is
+ the SAME value (0.75rem = 12px, checked against the built theme — P9/P19) and
+ is declared by the brand theme, so no `var(--x, literal)` fallback is needed.
+*/
 import { convertToBinaryUnit } from '../helper';
+import {
+  splitAntdPlacement,
+  type AntdPlacement,
+} from '../helper/astryxPlacement';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import { BAINvidiaIcon } from '../icons';
 import BAIFuriosaIcon from '../icons/BAIFuriosaIcon';
@@ -8,7 +26,6 @@ import BAIRebelIcon from '../icons/BAIRebelIcon';
 import BAIRocmIcon from '../icons/BAIRocmIcon';
 import BAITenstorrentIcon from '../icons/BAITenstorrentIcon';
 import BAITpuIcon from '../icons/BAITpuIcon';
-import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
 import BAIImageWithFallback from './BAIImageWithFallback';
 import NumberWithUnit from './BAINumberWithUnit';
@@ -18,7 +35,7 @@ import {
   useBAIIconPath,
   useBAIResourceSlots,
 } from './provider';
-import { Tooltip, TooltipProps } from 'antd';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import * as _ from 'lodash-es';
 import { CpuIcon, MemoryStickIcon, MicrochipIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
@@ -76,7 +93,6 @@ const BAIResourceNumberWithIcon = ({
 
   const { t } = useBAIi18n();
   const { mergedResourceSlots } = useBAIResourceSlots();
-  const { token } = theme.useToken();
 
   const formatAmount = (amount: string) => {
     const roundLength =
@@ -147,7 +163,7 @@ const BAIResourceNumberWithIcon = ({
         numberGroup
       ) : (
         <Tooltip
-          title={t('comp:BAIResourceNumberWithIcon.AllocatedVsRequested')}
+          content={t('comp:BAIResourceNumberWithIcon.AllocatedVsRequested')}
         >
           <BAIFlex direction="row" gap="xxs">
             {numberGroup}
@@ -156,7 +172,7 @@ const BAIResourceNumberWithIcon = ({
       )}
 
       {type === 'mem' && opts?.shmem && opts?.shmem > 0 ? (
-        <BAIText type="secondary" style={{ fontSize: token.fontSizeSM }}>
+        <BAIText type="secondary" style={{ fontSize: 'var(--font-size-sm)' }}>
           (SHM: {convertToBinaryUnit(opts.shmem, 'g', 2, true)?.numberFixed}
           GiB)
         </BAIText>
@@ -177,10 +193,20 @@ const knownDeviceIcons = {
   tenstorrent: <BAITenstorrentIcon />,
 } as const;
 
+/**
+ * The antd `TooltipProps` subset the two `tooltipProps` call sites actually
+ * pass, restated locally so this module carries no antd specifier (P15).
+ * Measured: `placement: 'left'` at both sites in `ResourceGroupFairShareTable`.
+ */
+export interface ResourceTypeIconTooltipProps {
+  title?: ReactNode;
+  placement?: AntdPlacement;
+}
+
 interface ResourceTypeIconProps {
   type: ResourceSlotName | string;
   showTooltip?: boolean;
-  tooltipProps?: TooltipProps;
+  tooltipProps?: ResourceTypeIconTooltipProps;
   size?: number;
 }
 
@@ -249,10 +275,15 @@ export const ResourceTypeIcon = ({
 
   const content = getIconContent();
 
+  const { placement, alignment } = splitAntdPlacement(tooltipProps?.placement);
+
   return showTooltip ? (
     <Tooltip
-      title={mergedResourceSlots[type]?.description || type}
-      {...tooltipProps}
+      content={
+        tooltipProps?.title ?? mergedResourceSlots[type]?.description ?? type
+      }
+      placement={placement}
+      alignment={alignment}
     >
       {content}
     </Tooltip>

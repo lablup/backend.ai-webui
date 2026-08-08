@@ -1,15 +1,21 @@
+/*
+ to-astryx W2-D: `ModalProps` -> `BAIModalProps`. The component renders
+ `BAIDeleteConfirmModal` (already Astryx-backed, ticket p3-b) and only used the
+ antd type to forward modal props, so this is a pure type re-point (P15) — the
+ prop surface is identical.
+*/
 import { App } from '../../../app-shim';
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
 import BAIDeleteConfirmModal from '../../BAIDeleteConfirmModal';
+import { type BAIModalProps } from '../../BAIModal';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import { FolderInfoContext } from './BAIFileExplorer';
 import { useMutation } from '@tanstack/react-query';
-import { type ModalProps } from 'antd';
 import * as _ from 'lodash-es';
 import { use } from 'react';
 
-export interface DeleteSelectedItemsModalProps extends ModalProps {
+export interface DeleteSelectedItemsModalProps extends BAIModalProps {
   onRequestClose: (success: boolean, deletingFilePaths?: Array<string>) => void;
   onDeleteFilesInBackground?: (
     bgTaskId: string,

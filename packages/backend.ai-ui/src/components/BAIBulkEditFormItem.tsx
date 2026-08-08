@@ -1,12 +1,29 @@
+/*
+ to-astryx W2-D: antd `Input` -> Astryx `TextInput`, antd `Typography.Link` ->
+ Astryx `Link` (which renders a real button when it has no `href` — the D3 call
+ wave 1 made for `BAILink`, and correct for these two pure-`onClick` actions).
+
+ PILOT-DECISION — **the "Keep as is" / "Clear" placeholder rows lose their
+ chevron and their filled variant.** They are not inputs at all: they are
+ read-only affordances that swap the row into edit mode on click or focus, so
+ antd's `variant="filled"` + a `suffix` chevron was a costume for a control the
+ user cannot type into. Astryx `TextInput` has neither a suffix slot (MAPPING
+ §3.6 routes `suffix` to `InputGroup`) nor a filled variant, and both are
+ closed-enum losses (P5). The affordance itself is unchanged — same click and
+ focus handlers, same labels — and `onChange` is a no-op because the value is
+ the label, not user input.
+
+ Two theme-shim `token` reads (`colorTextQuaternary`, `fontSizeSM`) existed
+ ONLY to tint that chevron, so the `useToken()` call goes with it.
+*/
 import { Form, FormItemProps } from '../form-engine';
 import type { RuleObject, RuleRender } from '../form-engine';
 import { useBAIi18n } from '../hooks/useBAIi18n';
-import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
+import { Link } from '@astryxdesign/core/Link';
+import { TextInput } from '@astryxdesign/core/TextInput';
 import { useControllableValue } from 'ahooks';
-import { Input, Typography } from 'antd';
 import * as _ from 'lodash-es';
-import { ChevronDown } from 'lucide-react';
 import React, {
   cloneElement,
   ReactElement,
@@ -98,7 +115,6 @@ const BAIBulkEditFormItem: React.FC<BAIBulkEditFormItemProps> = ({
   const [mode, setMode] = useState<BulkEditMode>('keep');
 
   const controlRef = useRef<ControlWrapperRef>(null);
-  const { token } = theme.useToken();
 
   const focusControl = () => {
     setTimeout(() => {
@@ -148,18 +164,18 @@ const BAIBulkEditFormItem: React.FC<BAIBulkEditFormItemProps> = ({
           {formItemProps.extra ?? <div />}
           <BAIFlex>
             {mode === 'keep' && showClear && (
-              <Typography.Link onClick={handleClear}>
+              <Link onClick={handleClear}>
                 {t('comp:BAIBulkEditFormItem.Clear')}
-              </Typography.Link>
+              </Link>
             )}
             {/* Use Form.Item to watch field value changes */}
             <Form.Item noStyle dependencies={[name]}>
               {({ getFieldValue }) =>
                 mode !== 'keep' &&
                 getFieldValue(name) !== undefined && (
-                  <Typography.Link onClick={handleUndo}>
+                  <Link onClick={handleUndo}>
                     {t('comp:BAIBulkEditFormItem.UndoChanges')}
-                  </Typography.Link>
+                  </Link>
                 )
               }
             </Form.Item>
@@ -169,37 +185,25 @@ const BAIBulkEditFormItem: React.FC<BAIBulkEditFormItemProps> = ({
     >
       {mode === 'keep' ? (
         // Keep as is mode: Show "Keep as is" placeholder
-        <Input
+        <TextInput
+          label={resolvedKeepValueLabel}
+          isLabelHidden
           value={resolvedKeepValueLabel}
+          onChange={_.noop}
           onMouseDown={handlePlaceholderClick}
           onFocus={handlePlaceholderClick}
-          variant="filled"
-          suffix={
-            <ChevronDown
-              style={{
-                color: token.colorTextQuaternary,
-                fontSize: token.fontSizeSM,
-              }}
-              size="1em"
-            />
-          }
+          width="100%"
         />
       ) : mode === 'clear' ? (
         // Clear mode: Show clear value label as placeholder
-        <Input
+        <TextInput
+          label={resolvedClearValueLabel}
+          isLabelHidden
           value={resolvedClearValueLabel}
+          onChange={_.noop}
           onMouseDown={handlePlaceholderClick}
           onFocus={handlePlaceholderClick}
-          variant="filled"
-          suffix={
-            <ChevronDown
-              style={{
-                color: token.colorTextQuaternary,
-                fontSize: token.fontSizeSM,
-              }}
-              size="1em"
-            />
-          }
+          width="100%"
         />
       ) : null}
       {/* Unmounted (not just hidden) while in keep mode so the field only

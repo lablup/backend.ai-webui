@@ -1,12 +1,16 @@
 import { Form } from '../../form-engine';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { theme } from '../../theme-shim';
+import BAIButton from '../BAIButton';
 import BAIFlex from '../BAIFlex';
 import BAIQuestionIconWithTooltip from '../BAIQuestionIconWithTooltip';
 import BAIText from '../BAIText';
 import BAIVFolderSelectAstryx from './BAIVFolderSelectAstryx';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Skeleton } from '@astryxdesign/core/Skeleton';
+import { TextInput } from '@astryxdesign/core/TextInput';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { useControllableValue } from 'ahooks';
-import { Button, Input, Skeleton, Tag, Tooltip } from 'antd';
 import * as _ from 'lodash-es';
 import { XIcon } from 'lucide-react';
 import React, { Suspense } from 'react';
@@ -215,7 +219,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
 
   return (
     <BAIFlex direction="column" align="stretch" gap="xs">
-      <Suspense fallback={<Skeleton.Input active block />}>
+      <Suspense fallback={<Skeleton height={28} width="100%" />}>
         <BAIVFolderSelectAstryx
           multiple
           label={t('comp:BAIVFolderSelect.SelectFolder')}
@@ -343,18 +347,22 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
                   }
                   style={{ flex: 1, marginBottom: 0 }}
                 >
-                  <Input
-                    size="small"
-                    disabled={disabled}
+                  <TextInput
+                    label={t(
+                      'comp:BAIVFolderMountConfigInput.AliasPlaceholder',
+                    )}
+                    isLabelHidden
+                    size="sm"
+                    isDisabled={disabled}
                     placeholder={t(
                       'comp:BAIVFolderMountConfigInput.AliasPlaceholder',
                     )}
-                    value={aliasInput}
-                    onChange={(e) =>
+                    value={aliasInput ?? ''}
+                    onChange={(next) =>
                       setValue(
                         mountConfigs.map((m) =>
                           m.vfolderId === entry.vfolderId
-                            ? { ...m, mountDestination: e.target.value }
+                            ? { ...m, mountDestination: next }
                             : m,
                         ),
                       )
@@ -370,18 +378,22 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
                   }
                   style={{ flex: 1, marginBottom: 0 }}
                 >
-                  <Input
-                    size="small"
-                    disabled={disabled}
+                  <TextInput
+                    label={t(
+                      'comp:BAIVFolderMountConfigInput.SubpathPlaceholder',
+                    )}
+                    isLabelHidden
+                    size="sm"
+                    isDisabled={disabled}
                     placeholder={t(
                       'comp:BAIVFolderMountConfigInput.SubpathPlaceholder',
                     )}
-                    value={entry.subpath}
-                    onChange={(e) =>
+                    value={entry.subpath ?? ''}
+                    onChange={(next) =>
                       setValue(
                         mountConfigs.map((m) =>
                           m.vfolderId === entry.vfolderId
-                            ? { ...m, subpath: e.target.value }
+                            ? { ...m, subpath: next }
                             : m,
                         ),
                       )
@@ -389,9 +401,9 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
                   />
                 </Form.Item>
                 <Tooltip
-                  title={t('comp:BAIVFolderMountConfigInput.RemoveFolder')}
+                  content={t('comp:BAIVFolderMountConfigInput.RemoveFolder')}
                 >
-                  <Button
+                  <BAIButton
                     type="text"
                     size="small"
                     disabled={disabled}
@@ -428,7 +440,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
             {t('comp:BAIVFolderMountConfigInput.AutoMountedFolders')}
           </BAIText>
           {autoMountedFolderNames.map((folderName) => (
-            <Tag key={folderName}>{folderName}</Tag>
+            <Badge key={folderName} variant="neutral" label={folderName} />
           ))}
         </BAIFlex>
       )}

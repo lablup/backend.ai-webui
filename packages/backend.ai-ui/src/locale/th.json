@@ -161,6 +161,9 @@
   "comp:BAIDomainSelect": {
     "SelectDomain": "เลือกโดเมน"
   },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "รีเฟรชอัตโนมัติ",
     "EveryHours": "{{count}}ชม.",
@@ -264,6 +267,9 @@
     "StrategyType": "กลยุทธ์",
     "Tags": "แท็ก",
     "UpdatedAt": "วันที่อัปเดต"
+  },
+  "comp:BAINameActionCell": {
+    "MoreActions": "More actions"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "โครงการต่อไปนี้จะถูกอัปเดต.",
@@ -534,8 +540,10 @@
     "MoreOptions": "ตัวเลือกเพิ่มเติม",
     "Name": "ชื่อ",
     "NoUploadPermissionForHost": "คุณไม่มีสิทธิ์อัปโหลดสำหรับโฮสต์นี้",
+    "Path": "Path",
     "PleaseEnterAFileName": "กรุณากรอกชื่อไฟล์",
     "PleaseEnterAFolderName": "กรุณากรอกชื่อโฟลเดอร์",
+    "RenameFile": "Rename",
     "RenameSuccess": "ชื่อได้รับการเปลี่ยนแปลงสำเร็จ",
     "SelectedItemsDeletedSuccessfully": "ไฟล์และโฟลเดอร์ที่เลือกได้ถูกลบไปแล้วสำเร็จ",
     "Size": "ขนาด",
@@ -614,16 +622,23 @@
     "UnknownError": "เกิดข้อผิดพลาดที่ไม่รู้จัก \nโปรดลองอีกครั้ง"
   },
   "general": {
+    "Decrease": "Decrease",
     "DeselectAll": "ยกเลิกการเลือกทั้งหมด",
     "File": "ไฟล์",
+    "Increase": "Increase",
     "NSelected": "{{count}} เลือก",
     "Optional": "ไม่บังคับ",
     "Project": "โครงการ",
+    "Select": "Select",
     "TotalItems": "รวม {{total}} รายการ",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "ยกเลิก",
       "Close": "ปิด",
       "Collapse": "ทรุด",
+      "Confirm": "Confirm",
       "Copied": "คัดลอกแล้ว",
       "Copy": "คัดลอก",
       "CopyAll": "คัดลอกทั้งหมด",

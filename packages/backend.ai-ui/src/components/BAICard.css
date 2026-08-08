@@ -1,0 +1,60 @@
+/*
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ `BAICard` co-located CSS (to-astryx phase 3, wave 2 / ticket W2-D).
+
+ Astryx `Card` exposes `variant`, `padding`, `elevation` and nothing else — no
+ border-colour knob and no hover treatment (P5). These three rules reproduce
+ the two antd behaviours the wrapper genuinely owned, in TOKENS ONLY.
+
+ P19: every custom property below is declared by the built brand theme
+ (`react/src/astryx-theme/built/backendai-default-built.css`) — verified by
+ grep, and deliberately written WITHOUT a literal fallback argument so a
+ renamed token fails loudly instead of silently pinning the literal forever.
+*/
+
+/*
+ `status` — the success/warning/error border tint. antd got it from
+ `style={{ borderColor: token.colorError }}`; the same three semantic colours
+ are Astryx theme variables, so the tint follows the theme (including dark
+ mode) instead of a resolved hex.
+*/
+.bai-card--success {
+  border-color: var(--color-success);
+}
+
+.bai-card--warning {
+  border-color: var(--color-warning);
+}
+
+.bai-card--error {
+  border-color: var(--color-error);
+}
+
+/*
+ `hoverable` — antd raised the card's shadow on hover. Astryx's `elevation` is
+ a RESTING depth with no hover state, so the transition is authored here off
+ the same shadow token scale `elevation` uses.
+*/
+.bai-card--hoverable {
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+
+.bai-card--hoverable:hover {
+  box-shadow: var(--shadow-med);
+}
+
+/*
+ The status glyph on the header's `extraButtonTitle` action. Astryx `Button`
+ has no `color` escape hatch, so the icon inherits from a class instead of the
+ `style={{ color: token.colorError }}` antd used.
+*/
+.bai-card-extra--warning svg {
+  color: var(--color-warning);
+}
+
+.bai-card-extra--error svg {
+  color: var(--color-error);
+}

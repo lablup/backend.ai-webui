@@ -161,6 +161,9 @@
   "comp:BAIDomainSelect": {
     "SelectDomain": "Pilih Domain"
   },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Penyegaran otomatis",
     "EveryHours": "{{count}}h",
@@ -264,6 +267,9 @@
     "StrategyType": "Strategi",
     "Tags": "Tag",
     "UpdatedAt": "Diperbarui pada"
+  },
+  "comp:BAINameActionCell": {
+    "MoreActions": "More actions"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Proyek berikut akan diperbarui.",
@@ -534,8 +540,10 @@
     "MoreOptions": "Opsi lainnya",
     "Name": "Nama",
     "NoUploadPermissionForHost": "Anda tidak memiliki izin unggah untuk host ini.",
+    "Path": "Path",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Harap masukkan nama folder.",
+    "RenameFile": "Rename",
     "RenameSuccess": "Namanya telah berhasil diubah.",
     "SelectedItemsDeletedSuccessfully": "File dan folder yang dipilih telah berhasil dihapus.",
     "Size": "Ukuran",
@@ -614,16 +622,23 @@
     "UnknownError": "Terjadi kesalahan yang tidak diketahui. \nTolong coba lagi."
   },
   "general": {
+    "Decrease": "Decrease",
     "DeselectAll": "Batalkan semua pilihan",
     "File": "Berkas",
+    "Increase": "Increase",
     "NSelected": "{{count}} dipilih",
     "Optional": "Opsional",
     "Project": "Proyek",
+    "Select": "Select",
     "TotalItems": "Total {{total}} item",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "Membatalkan",
       "Close": "Menutup",
       "Collapse": "Runtuh",
+      "Confirm": "Confirm",
       "Copied": "Disalin",
       "Copy": "Salin",
       "CopyAll": "Salin semua",

@@ -7,7 +7,6 @@ import { useBAIi18n } from '../../../hooks/useBAIi18n';
 import { theme } from '../../../theme-shim';
 import BAIFetchKeyButton from '../../BAIFetchKeyButton';
 import BAIFlex from '../../BAIFlex';
-import BAILink from '../../BAILink';
 import BAIUnmountAfterClose from '../../BAIUnmountAfterClose';
 import { BAIColumnsType, BAITableAstryx, BAITableProps } from '../../Table';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
@@ -18,9 +17,11 @@ import EditableFileName from './EditableFileName';
 import ExplorerActionControls from './ExplorerActionControls';
 import FileItemControls from './FileItemControls';
 import { useSearchVFolderFiles } from './hooks';
-import { Breadcrumb, Skeleton, Typography } from 'antd';
-import type { ItemType } from 'antd/es/breadcrumb/Breadcrumb';
-import type { RcFile } from 'antd/es/upload';
+import type { RcFile } from './hooks';
+import { BreadcrumbItem, Breadcrumbs } from '@astryxdesign/core/Breadcrumbs';
+import type { DropdownMenuOption } from '@astryxdesign/core/DropdownMenu';
+import { Skeleton } from '@astryxdesign/core/Skeleton';
+import { Text } from '@astryxdesign/core/Text';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { File, Folder, HouseIcon } from 'lucide-react';
@@ -162,16 +163,28 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
     notifyCurrentPath();
   }, [currentPath]);
 
-  const breadCrumbItems: Array<ItemType> = useMemo(() => {
+  // to-astryx W2-D: antd `Breadcrumb items={[{title, onClick, menu}]}` ->
+  // Astryx `Breadcrumbs` + `BreadcrumbItem` children (MAPPING §4).
+  //
+  // PILOT-DECISION: the sibling-folder dropdown moves onto `BreadcrumbItem`'s
+  // NATIVE `menu` prop, which takes `DropdownMenuOption[]` — `{label: string,
+  // onClick}` rows. antd's rows carried a JSX label whose own `onClick` did
+  // the navigating (a click handler on a `<div>` inside a menu row, reachable
+  // by mouse only). The Astryx rows are real menu items: the label is the
+  // folder name, the icon is the folder glyph, and `onClick` belongs to the
+  // ITEM — so keyboard selection works, which it did not before.
+  const breadCrumbItems = useMemo(() => {
     const pathParts = currentPath === '.' ? [] : currentPath.split('/');
 
-    const items: Array<ItemType> = [
+    const items: Array<{
+      key: string;
+      label: React.ReactNode;
+      onClick: () => void;
+      menu?: Array<DropdownMenuOption>;
+    }> = [
       {
-        title: (
-          <BAILink style={{ color: 'inherit' }}>
-            <HouseIcon />
-          </BAILink>
-        ),
+        key: '.',
+        label: <HouseIcon size="1em" />,
         onClick: () => {
           navigateToPath('.');
           setSelectedItems([]);
@@ -188,32 +201,25 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
           (item) => item.type === 'DIRECTORY',
         ) || [];
 
-      const menuItems = parentFolders.map((dir) => ({
-        key: dir.name,
-        label: (
-          <BAIFlex
-            align="center"
-            gap="xxs"
-            onClick={() => {
-              const newPath =
-                parentPath === '.' ? dir.name : `${parentPath}/${dir.name}`;
-              navigateToPath(newPath);
-              setSelectedItems([]);
-            }}
-          >
-            <Folder size="1em" />
-            {dir.name}
-          </BAIFlex>
-        ),
+      const menuItems: Array<DropdownMenuOption> = parentFolders.map((dir) => ({
+        label: dir.name,
+        icon: <Folder size="1em" />,
+        onClick: () => {
+          const newPath =
+            parentPath === '.' ? dir.name : `${parentPath}/${dir.name}`;
+          navigateToPath(newPath);
+          setSelectedItems([]);
+        },
       }));
 
       items.push({
-        title: <BAILink style={{ color: 'inherit' }}>{part}</BAILink>,
+        key: navigatePath,
+        label: part,
         onClick: () => {
           navigateToPath(navigatePath);
           setSelectedItems([]);
         },
-        menu: menuItems.length > 1 ? { items: menuItems } : undefined,
+        menu: menuItems.length > 1 ? menuItems : undefined,
       });
     });
 
@@ -232,9 +238,9 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
           // interactive — only directories can be entered and chosen.
           <BAIFlex gap="xs" style={{ display: 'inline-flex' }}>
             <File style={{ color: token.colorTextDisabled }} size="1em" />
-            <Typography.Text disabled ellipsis style={{ maxWidth: 200 }}>
+            <Text color="disabled" maxLines={1} style={{ maxWidth: 200 }}>
               {name}
-            </Typography.Text>
+            </Text>
           </BAIFlex>
         ) : (
           <EditableFileName
@@ -275,7 +281,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
         }
 
         return (
-          <Suspense fallback={<Skeleton.Button size="small" active />}>
+          <Suspense fallback={<Skeleton height={24} width={80} />}>
             <FileItemControls
               selectedItem={record}
               onClickDelete={() => {
@@ -373,12 +379,23 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
         style={{ height: '100%', ...style }}
       >
         <BAIFlex align="center" justify="between">
-          <Breadcrumb
-            items={breadCrumbItems}
+          <Breadcrumbs
+            label={t('comp:FileExplorer.Path')}
             style={{
               marginLeft: token.marginXXS,
             }}
-          />
+          >
+            {breadCrumbItems.map((item, index) => (
+              <BreadcrumbItem
+                key={item.key}
+                onClick={item.onClick}
+                menu={item.menu}
+                isCurrent={index === breadCrumbItems.length - 1}
+              >
+                {item.label}
+              </BreadcrumbItem>
+            ))}
+          </Breadcrumbs>
           <ExplorerActionControls
             selectedFiles={selectedItems}
             mode={mode}

@@ -16,7 +16,7 @@ import {
   BAITableProps,
 } from '../Table';
 import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
-import { Tooltip } from 'antd';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { CircleHelp } from 'lucide-react';
@@ -199,7 +199,9 @@ const BAIRuntimeVariantPresetTable = ({
         title: (
           <BAIFlex gap="xs" align="center">
             {t('comp:BAIRuntimeVariantPresetTable.Rank')}
-            <Tooltip title={t('comp:BAIRuntimeVariantPresetTable.RankTooltip')}>
+            <Tooltip
+              content={t('comp:BAIRuntimeVariantPresetTable.RankTooltip')}
+            >
               <CircleHelp
                 style={{ color: token.colorTextDescription }}
                 size="1em"

@@ -4,10 +4,11 @@
  */
 import { BAIDirectoryPickerModalQuery } from '../../../__generated__/BAIDirectoryPickerModalQuery.graphql';
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
+import BAIButton from '../../BAIButton';
 import BAIFlex from '../../BAIFlex';
 import BAIModal, { BAIModalProps } from '../../BAIModal';
+import BAIText from '../../BAIText';
 import BAIFileExplorer from './BAIFileExplorer';
-import { Button, Typography } from 'antd';
 import * as _ from 'lodash-es';
 import { useState } from 'react';
 import { graphql, PreloadedQuery, usePreloadedQuery } from 'react-relay';
@@ -104,18 +105,18 @@ const BAIDirectoryPickerModal: React.FC<BAIDirectoryPickerModalProps> = ({
       }}
       footer={
         <BAIFlex justify="between" align="center" gap="sm">
-          <Typography.Text type="secondary" ellipsis style={{ maxWidth: 460 }}>
+          <BAIText type="secondary" ellipsis style={{ maxWidth: 460 }}>
             {t('comp:VFolderPathPicker.SelectedPath')}:&nbsp;
-            <Typography.Text code>/{toSubPath(currentPath)}</Typography.Text>
-          </Typography.Text>
-          <Button
+            <BAIText code>/{toSubPath(currentPath)}</BAIText>
+          </BAIText>
+          <BAIButton
             type="primary"
             onClick={() => {
               onRequestClose(toSubPath(currentPath));
             }}
           >
             {t('comp:VFolderPathPicker.SelectThisLocation')}
-          </Button>
+          </BAIButton>
         </BAIFlex>
       }
       {...modalProps}

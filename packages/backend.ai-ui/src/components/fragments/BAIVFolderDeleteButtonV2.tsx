@@ -1,11 +1,9 @@
 import { BAIVFolderDeleteButtonV2Fragment$key } from '../../__generated__/BAIVFolderDeleteButtonV2Fragment.graphql';
-import { theme } from '../../theme-shim';
-import BAIButton from '../BAIButton';
-import { type ButtonProps } from 'antd';
+import BAIButton, { type BAIButtonProps } from '../BAIButton';
 import { Trash } from 'lucide-react';
 import { graphql, useFragment } from 'react-relay';
 
-export interface BAIVFolderDeleteButtonV2Props extends ButtonProps {
+export interface BAIVFolderDeleteButtonV2Props extends BAIButtonProps {
   vfolderFrgmt: BAIVFolderDeleteButtonV2Fragment$key;
 }
 
@@ -13,7 +11,6 @@ const BAIVFolderDeleteButtonV2 = ({
   vfolderFrgmt,
   ...buttonProps
 }: BAIVFolderDeleteButtonV2Props) => {
-  const { token } = theme.useToken();
   useFragment<BAIVFolderDeleteButtonV2Fragment$key>(
     graphql`
       fragment BAIVFolderDeleteButtonV2Fragment on VFolder
@@ -33,7 +30,7 @@ const BAIVFolderDeleteButtonV2 = ({
   // enabled and let the backend reject unauthorized requests.
   return (
     <BAIButton
-      icon={<Trash style={{ color: token.colorError }} size="1em" />}
+      icon={<Trash style={{ color: 'var(--color-error)' }} size="1em" />}
       {...buttonProps}
     />
   );

@@ -2,20 +2,25 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- Co-located styles for <BAISelect> (to-astryx ticket 33). Replaces the
- `antd-style` `createStyles` block; imported by the component itself (P17).
- Every selector below targets antd `Select` internals and is still LIVE, so
- the block is preserved verbatim rather than dropped (P6).
+ Co-located styles for <BAISelect> (imported by the component itself, P17).
 
- UNLAYERED on purpose — see the note in BAIAlert.css.
+ to-astryx W2-D: `BAISelect` now renders Astryx `Selector` / `MultiSelector`,
+ so every `.ant-select*` selector this file used to carry matches nothing and
+ was DELETED rather than left silently compiling (P6). That removed:
 
- Token mapping (P19-checked against the declared Astryx set):
-   token.colorBgBase          -> var(--color-on-dark)          (see below)
-   token.colorError           -> var(--color-error)
-   token.colorTextPlaceholder -> var(--color-text-disabled)  ('self' token in
-     the shim: antd rgba(0,0,0,0.25); the declared faint-neutral tier)
+   - `.bai-select-ghost.ant-select .ant-select-suffix` (×3 states)
+   - `.bai-select-ghost.ant-select.ant-select-status-error` (×2)
+   - the `.bai-select .ant-select-content-has-search-value …` dimming block
+   - the `.bai-select.ant-select-open .ant-select-content …` dimming block
+     (both the `.ant-*` and the `.astryx-*` spellings sibling A/C added — the
+     rules keyed off `.ant-select-open` / `.ant-select-content`, which no
+     longer exist, and Astryx's `Selector` owns its own popup states)
 
- GHOST — why `--color-on-dark` and not `--color-background-body`.
+ What survives is `ghost`, because it is the one thing the wrapper genuinely
+ owned and Astryx cannot express (P5: `Selector` has `variant`, not a colour
+ slot).
+
+ GHOST — why `--color-on-dark` (verbatim from the pre-Astryx file, still true).
 
  The `ghost` variant exists for exactly one placement: a select sitting ON the
  app header's brand-accent band (the header `ProjectSelect`). Legacy spelled
@@ -27,101 +32,37 @@
  legacy PAGE backdrop (`#F7F7F6` / `#191919`, see `ANTD_NEUTRAL_SURFACES` in
  `react/src/astryx-theme/backendAiTheme.ts`). The expression therefore stopped
  meaning "white": the header select rendered off-white grey in light mode and
- near-BLACK on the orange band in dark mode. Users reported the header text as
- grey; this was one of the two elements responsible.
+ near-BLACK on the orange band in dark mode.
 
  `--color-on-dark` is the Astryx token that actually means "content on a
  dark/inverted surface" and is `#ffffff` in both modes — the legacy rendering,
  and the same token `WebUIHeader` uses for the band's inherited text colour.
+ P19: both custom properties below are declared by the built brand theme, and
+ neither carries a literal fallback argument.
 */
-.bai-select-ghost.ant-select {
+.bai-select-ghost {
   background-color: transparent;
-  border-color: var(--color-on-dark) !important;
   color: var(--color-on-dark);
 }
 
-.bai-select-ghost.ant-select:hover,
-.bai-select-ghost.ant-select:active {
+/* The trigger is Astryx's own button-like element; target it structurally
+   (any direct child that is a button/`role=combobox`) rather than by a
+   design-system class name, so an Astryx bump cannot silently break it. */
+.bai-select-ghost button,
+.bai-select-ghost [role='combobox'] {
+  background-color: transparent;
+  border-color: var(--color-on-dark);
+  color: var(--color-on-dark);
+}
+
+.bai-select-ghost button:hover,
+.bai-select-ghost [role='combobox']:hover {
   background-color: rgb(255 255 255 / 10%);
 }
 
-.bai-select-ghost.ant-select .ant-select-suffix,
-.bai-select-ghost.ant-select:hover .ant-select-suffix,
-.bai-select-ghost.ant-select:active .ant-select-suffix {
-  color: var(--color-on-dark);
+/* The ghost border is a hard override, which would otherwise swallow the
+   error treatment; restore it at higher specificity so a ghost select (e.g.
+   the header ProjectSelect) can still surface an error state. */
+.bai-select-ghost [aria-invalid='true'] {
+  border-color: var(--color-error);
 }
-
-/* In ghost mode the border-color is hard-overridden with !important, which
-   would otherwise swallow antd's status="error" red border. Restore the error
-   treatment with a higher-specificity rule so a ghost select (e.g. the header
-   ProjectSelect) can still surface an error state. */
-.bai-select-ghost.ant-select.ant-select-status-error {
-  border-color: var(--color-error) !important;
-}
-
-.bai-select-ghost.ant-select.ant-select-status-error .ant-select-suffix,
-.bai-select-ghost.ant-select.ant-select-status-error:hover .ant-select-suffix,
-.bai-select-ghost.ant-select.ant-select-status-error:active .ant-select-suffix {
-  color: var(--color-error);
-}
-
-/* Hide selected value content (except search input) when the user is typing a
-   search query. Matches antd's approach of using color: transparent instead of
-   display: none. Uses opacity: 0 with transition: none to avoid delay from
-   antd Tag's default transition. */
-.bai-select .ant-select-content-has-search-value img,
-.bai-select .ant-select-content-has-search-value .ant-divider,
-.bai-select .ant-select-content-has-search-value .ant-badge,
-.bai-select .ant-select-content-has-search-value .astryx-badge,
-.bai-select .ant-select-content-has-search-value .astryx-text,
-.bai-select .ant-select-content-has-search-value span.text-high-lighter,
-.bai-select .ant-select-content-has-search-value span.ant-tag {
-  opacity: 0 !important;
-  transition: none;
-}
-
-/* Change the opacity of images and tags in the select option when the dropdown
-   is open */
-.bai-select.ant-select-open .ant-select-content .ant-badge,
-.bai-select.ant-select-open .ant-select-content .astryx-badge,
-.bai-select.ant-select-open .ant-select-content img,
-.bai-select.ant-select-open .ant-select-content .ant-divider,
-.bai-select.ant-select-open .ant-select-content span.ant-tag {
-  opacity: 0.5;
-}
-
-/* Change the color of secondary/success/warning/danger text to placeholder
-   color when the dropdown is open.
-
- p3-c: the `.astryx-text` selector is the Astryx counterpart of the four
- `.ant-typography-*` ones. `BAIText` / `BAIBadge` / `BAITag` are being rewritten
- onto Astryx primitives in a sibling phase-3 batch, which renames these
- descendants; both spellings are listed so this block keeps working on either
- side of that merge and neither branch has to touch the other's lines. The
- Astryx `Text` carries its tone as a prop rather than four separate classes, so
- one selector replaces the four — the dimming is uniform anyway. Drop the
- `.ant-*` spellings only when `BAISelect` itself is retired (it is still LIVE:
- the static-option survivors and the property filters render through it). */
-.bai-select.ant-select-open .ant-select-content .ant-typography-secondary,
-.bai-select.ant-select-open .ant-select-content .ant-typography-success,
-.bai-select.ant-select-open .ant-select-content .ant-typography-warning,
-.bai-select.ant-select-open .ant-select-content .ant-typography-danger,
-.bai-select.ant-select-open .ant-select-content .astryx-text {
-  color: var(--color-text-disabled);
-}
-
-/* TODO: re-enable this style after fixing flickering when theme changes */
-/* Add a gradient effect to the right side of the dropdown to indicate more
-   content:
-   .bai-select .ant-select-content::after {
-     content: '';
-     position: absolute;
-     inset: 0 0 0 auto;
-     width: 10px;
-     background: linear-gradient(
-       to right,
-       transparent,
-       var(--color-background-surface)
-     );
-     z-index: 2;
-   } */

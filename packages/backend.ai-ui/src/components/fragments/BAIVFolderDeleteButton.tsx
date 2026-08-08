@@ -1,12 +1,10 @@
 import { BAIVFolderDeleteButtonFragment$key } from '../../__generated__/BAIVFolderDeleteButtonFragment.graphql';
-import { theme } from '../../theme-shim';
-import BAIButton from '../BAIButton';
-import { type ButtonProps } from 'antd';
+import BAIButton, { type BAIButtonProps } from '../BAIButton';
 import * as _ from 'lodash-es';
 import { Trash } from 'lucide-react';
 import { graphql, useFragment } from 'react-relay';
 
-export interface BAIVFolderDeleteButtonProps extends ButtonProps {
+export interface BAIVFolderDeleteButtonProps extends BAIButtonProps {
   vfolderFrgmt: BAIVFolderDeleteButtonFragment$key;
 }
 
@@ -14,7 +12,6 @@ const BAIVFolderDeleteButton = ({
   vfolderFrgmt,
   ...buttonProps
 }: BAIVFolderDeleteButtonProps) => {
-  const { token } = theme.useToken();
   const vfolders = useFragment<BAIVFolderDeleteButtonFragment$key>(
     graphql`
       fragment BAIVFolderDeleteButtonFragment on VirtualFolderNode
@@ -31,7 +28,7 @@ const BAIVFolderDeleteButton = ({
 
   return (
     <BAIButton
-      icon={<Trash style={{ color: token.colorError }} size="1em" />}
+      icon={<Trash style={{ color: 'var(--color-error)' }} size="1em" />}
       disabled={buttonProps.disabled || !isDeletable}
       {..._.omit(buttonProps, ['disabled'])}
     />

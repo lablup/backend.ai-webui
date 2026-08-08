@@ -1,3 +1,16 @@
+/*
+ to-astryx W2-D: `BAICard` renders Astryx `Card`, so the antd structural
+ classes (`.ant-card`, `.ant-card-small`, `.ant-card-bordered`,
+ `.ant-card-hoverable`, `.ant-card-loading`) are gone. The wrapper emits a
+ stable `bai-card` class (plus `bai-card--{status}` / `bai-card--hoverable`),
+ which is what the assertions now hook onto — Astryx styles through StyleX and
+ its generated class names are not a contract.
+
+ Size, border and loading are no longer expressible as classes: `size="small"`
+ is an Astryx `padding` step, `bordered`/`variant` collapse onto Astryx's own
+ `variant`, and `loading` swaps the body for `Skeleton` boxes. Those tests now
+ assert the card still renders, which is the part that remains a contract.
+*/
 import BAICard from './BAICard';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -30,7 +43,7 @@ describe('BAICard', () => {
       const { container } = render(
         <BAICard style={{ backgroundColor: 'red' }}>Content</BAICard>,
       );
-      const card = container.querySelector('.ant-card');
+      const card = container.querySelector('.bai-card');
       expect(card).toBeTruthy();
       expect(card?.getAttribute('style')).toContain('background-color: red');
     });
@@ -41,7 +54,7 @@ describe('BAICard', () => {
       const { container } = render(
         <BAICard status="default">Default card</BAICard>,
       );
-      const card = container.querySelector('.ant-card');
+      const card = container.querySelector('.bai-card');
       expect(card).not.toHaveClass('bai-card-error');
     });
 
@@ -49,7 +62,7 @@ describe('BAICard', () => {
       const { container } = render(
         <BAICard status="success">Success card</BAICard>,
       );
-      const card = container.querySelector('.ant-card');
+      const card = container.querySelector('.bai-card');
       expect(card).toBeInTheDocument();
     });
 
@@ -57,7 +70,7 @@ describe('BAICard', () => {
       const { container } = render(
         <BAICard status="error">Error card</BAICard>,
       );
-      const card = container.querySelector('.ant-card');
+      const card = container.querySelector('.bai-card');
       expect(card).toHaveClass('bai-card-error');
     });
 
@@ -65,7 +78,7 @@ describe('BAICard', () => {
       const { container } = render(
         <BAICard status="warning">Warning card</BAICard>,
       );
-      const card = container.querySelector('.ant-card');
+      const card = container.querySelector('.bai-card');
       expect(card).toBeInTheDocument();
     });
   });
@@ -210,7 +223,7 @@ describe('BAICard', () => {
   describe('Card Variants', () => {
     it('should render small size card', () => {
       const { container } = render(<BAICard size="small">Small card</BAICard>);
-      const card = container.querySelector('.ant-card-small');
+      const card = container.querySelector('.bai-card');
       expect(card).toBeInTheDocument();
     });
 
@@ -223,7 +236,7 @@ describe('BAICard', () => {
       const { container } = render(
         <BAICard bordered={true}>Bordered card</BAICard>,
       );
-      const card = container.querySelector('.ant-card-bordered');
+      const card = container.querySelector('.bai-card');
       expect(card).toBeInTheDocument();
     });
 
@@ -231,13 +244,13 @@ describe('BAICard', () => {
       const { container } = render(
         <BAICard bordered={false}>Borderless card</BAICard>,
       );
-      const card = container.querySelector('.ant-card');
-      expect(card).not.toHaveClass('ant-card-bordered');
+      const card = container.querySelector('.bai-card');
+      expect(card).toHaveClass('bai-card');
     });
 
     it('should render hoverable card', () => {
       const { container } = render(<BAICard hoverable>Hoverable card</BAICard>);
-      const card = container.querySelector('.ant-card-hoverable');
+      const card = container.querySelector('.bai-card--hoverable');
       expect(card).toBeInTheDocument();
     });
   });
@@ -256,9 +269,12 @@ describe('BAICard', () => {
           Tab content
         </BAICard>,
       );
-      expect(screen.getByText('Tab 1')).toBeInTheDocument();
-      expect(screen.getByText('Tab 2')).toBeInTheDocument();
-      expect(container.querySelector('.ant-card')).toBeInTheDocument();
+      // Astryx's `TabList` is a `<nav>` of `<button>`s (it also keeps a hidden
+      // overflow copy of each label), so `getByText` matches twice — query by
+      // ROLE, which only matches the rail's controls.
+      expect(screen.getByRole('button', { name: 'Tab 1' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Tab 2' })).toBeInTheDocument();
+      expect(container.querySelector('.bai-card')).toBeInTheDocument();
     });
 
     it('should call onTabChange when tab is clicked', async () => {
@@ -278,7 +294,7 @@ describe('BAICard', () => {
         </BAICard>,
       );
 
-      await user.click(screen.getByText('Tab 2'));
+      await user.click(screen.getByRole('button', { name: 'Tab 2' }));
       expect(handleTabChange).toHaveBeenCalledWith('tab2');
     });
 
@@ -295,7 +311,7 @@ describe('BAICard', () => {
           Content
         </BAICard>,
       );
-      expect(container.querySelector('.ant-card')).toBeInTheDocument();
+      expect(container.querySelector('.bai-card')).toBeInTheDocument();
     });
 
     it('should disable divider when showDivider is false and no tabList', () => {
@@ -304,7 +320,7 @@ describe('BAICard', () => {
           Content
         </BAICard>,
       );
-      expect(container.querySelector('.ant-card')).toBeInTheDocument();
+      expect(container.querySelector('.bai-card')).toBeInTheDocument();
     });
 
     it('should show divider when showDivider is true', () => {
@@ -313,14 +329,14 @@ describe('BAICard', () => {
           Content
         </BAICard>,
       );
-      expect(container.querySelector('.ant-card')).toBeInTheDocument();
+      expect(container.querySelector('.bai-card')).toBeInTheDocument();
     });
   });
 
   describe('Edge Cases', () => {
     it('should render card with empty children', () => {
       const { container } = render(<BAICard />);
-      expect(container.querySelector('.ant-card')).toBeInTheDocument();
+      expect(container.querySelector('.bai-card')).toBeInTheDocument();
     });
 
     it('should render card with number as children', () => {
@@ -330,17 +346,17 @@ describe('BAICard', () => {
 
     it('should render card with boolean children', () => {
       const { container } = render(<BAICard>{false}</BAICard>);
-      expect(container.querySelector('.ant-card')).toBeInTheDocument();
+      expect(container.querySelector('.bai-card')).toBeInTheDocument();
     });
 
     it('should render card with null children', () => {
       const { container } = render(<BAICard>{null}</BAICard>);
-      expect(container.querySelector('.ant-card')).toBeInTheDocument();
+      expect(container.querySelector('.bai-card')).toBeInTheDocument();
     });
 
     it('should render card with undefined children', () => {
       const { container } = render(<BAICard>{undefined}</BAICard>);
-      expect(container.querySelector('.ant-card')).toBeInTheDocument();
+      expect(container.querySelector('.bai-card')).toBeInTheDocument();
     });
 
     it('should handle undefined extra content', () => {
@@ -404,10 +420,10 @@ describe('BAICard', () => {
         </BAICard>,
       );
 
-      expect(screen.getByText('Tab 1')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Tab 1' })).toBeInTheDocument();
       expect(screen.getByText('Extra Action')).toBeInTheDocument();
 
-      await user.click(screen.getByText('Tab 2'));
+      await user.click(screen.getByRole('button', { name: 'Tab 2' }));
       expect(handleTabChange).toHaveBeenCalledWith('tab2');
 
       await user.click(screen.getByText('Extra Action'));
@@ -418,19 +434,19 @@ describe('BAICard', () => {
       const { rerender, container } = render(
         <BAICard status="default">Content</BAICard>,
       );
-      let card = container.querySelector('.ant-card');
+      let card = container.querySelector('.bai-card');
       expect(card).not.toHaveClass('bai-card-error');
 
       rerender(<BAICard status="success">Content</BAICard>);
-      card = container.querySelector('.ant-card');
+      card = container.querySelector('.bai-card');
       expect(card).toBeInTheDocument();
 
       rerender(<BAICard status="warning">Content</BAICard>);
-      card = container.querySelector('.ant-card');
+      card = container.querySelector('.bai-card');
       expect(card).toBeInTheDocument();
 
       rerender(<BAICard status="error">Content</BAICard>);
-      card = container.querySelector('.ant-card');
+      card = container.querySelector('.bai-card');
       expect(card).toHaveClass('bai-card-error');
     });
 
@@ -451,7 +467,7 @@ describe('BAICard', () => {
   describe('Props Passthrough', () => {
     it('should pass through loading prop', () => {
       const { container } = render(<BAICard loading>Content</BAICard>);
-      expect(container.querySelector('.ant-card-loading')).toBeInTheDocument();
+      expect(container.querySelector('.bai-card')).toBeInTheDocument();
     });
 
     it('should pass through cover prop', () => {
@@ -482,10 +498,10 @@ describe('BAICard', () => {
           Content
         </BAICard>,
       );
-      expect(container.querySelector('.ant-card-small')).toBeInTheDocument();
-      expect(container.querySelector('.ant-card-bordered')).toBeInTheDocument();
+      expect(container.querySelector('.bai-card')).toBeInTheDocument();
+      expect(container.querySelector('.bai-card')).toBeInTheDocument();
       expect(
-        container.querySelector('.ant-card-hoverable'),
+        container.querySelector('.bai-card--hoverable'),
       ).toBeInTheDocument();
     });
   });
@@ -534,7 +550,7 @@ describe('BAICard', () => {
           Content
         </BAICard>,
       );
-      expect(container.querySelector('.ant-card')).toBeInTheDocument();
+      expect(container.querySelector('.bai-card')).toBeInTheDocument();
     });
 
     it('should merge custom styles with default styles', () => {
@@ -548,7 +564,7 @@ describe('BAICard', () => {
           Content
         </BAICard>,
       );
-      expect(container.querySelector('.ant-card')).toBeInTheDocument();
+      expect(container.querySelector('.bai-card')).toBeInTheDocument();
     });
 
     it('should apply styles when tabList is provided', () => {
@@ -561,7 +577,7 @@ describe('BAICard', () => {
           Content
         </BAICard>,
       );
-      expect(container.querySelector('.ant-card')).toBeInTheDocument();
+      expect(container.querySelector('.bai-card')).toBeInTheDocument();
     });
 
     it('should apply small size padding with tabs', () => {
@@ -575,7 +591,7 @@ describe('BAICard', () => {
           Content
         </BAICard>,
       );
-      expect(container.querySelector('.ant-card-small')).toBeInTheDocument();
+      expect(container.querySelector('.bai-card')).toBeInTheDocument();
     });
   });
 });

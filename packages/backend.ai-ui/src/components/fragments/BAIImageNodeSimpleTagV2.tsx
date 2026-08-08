@@ -1,11 +1,13 @@
 import { BAIImageNodeSimpleTagV2Fragment$key } from '../../__generated__/BAIImageNodeSimpleTagV2Fragment.graphql';
-import { preserveDotStartCase } from '../../helper';
-import { theme } from '../../theme-shim';
+import { badgeVariantForTagColor, preserveDotStartCase } from '../../helper';
 import BAIDoubleTag from '../BAIDoubleTag';
 import BAIFlex from '../BAIFlex';
 import BAIImageMetaIcon from '../BAIImageMetaIcon';
+import BAIText from '../BAIText';
 import { useBAIImageMetaData } from '../provider/BAIMetaDataProvider';
-import { Divider, Tag, Typography } from 'antd';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Divider } from '@astryxdesign/core/Divider';
+import { Text } from '@astryxdesign/core/Text';
 import * as _ from 'lodash-es';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
@@ -30,7 +32,6 @@ const BAIImageNodeSimpleTagV2: React.FC<BAIImageNodeSimpleTagV2Props> = ({
 }) => {
   'use memo';
   const [, { tagAlias, getBaseImage, getBaseVersion }] = useBAIImageMetaData();
-  const { token } = theme.useToken();
   const image = useFragment(
     graphql`
       fragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {
@@ -62,11 +63,11 @@ const BAIImageNodeSimpleTagV2: React.FC<BAIImageNodeSimpleTagV2Props> = ({
   return (
     <BAIFlex direction="row" gap={'xs'} wrap="wrap">
       <BAIImageMetaIcon image={fullName} />
-      <Typography.Text>{tagAlias(getBaseImage(fullName))}</Typography.Text>
+      <Text>{tagAlias(getBaseImage(fullName))}</Text>
       <Divider orientation="vertical" style={{ marginInline: 0 }} />
-      <Typography.Text>{getBaseVersion(fullName)}</Typography.Text>
+      <Text>{getBaseVersion(fullName)}</Text>
       <Divider orientation="vertical" style={{ marginInline: 0 }} />
-      <Typography.Text>{architecture}</Typography.Text>
+      <Text>{architecture}</Text>
       {withoutTag ? null : (
         <>
           <Divider orientation="vertical" style={{ marginInline: 0 }} />
@@ -101,19 +102,24 @@ const BAIImageNodeSimpleTagV2: React.FC<BAIImageNodeSimpleTagV2Props> = ({
                 ]}
               />
             ) : (
-              <Tag
+              <Badge
                 key={`${tag.key}-${index}`}
-                color={isCustomized ? 'cyan' : undefined}
-              >
-                {aliasedTag}
-              </Tag>
+                variant={badgeVariantForTagColor(isCustomized ? 'cyan' : null)}
+                label={aliasedTag}
+              />
             );
           })}
         </>
       )}
       {copyable && (
-        <Typography.Text
-          style={{ color: token.colorLink }}
+        // PILOT-DECISION (to-astryx W2-D): the copy affordance loses its
+        // `color: token.colorLink` tint. `BAIText`'s rebuilt copy control is a
+        // ghost `IconButton` that takes its colour from the theme, and Astryx
+        // `Text` has no arbitrary colour slot (P5) — the closed enum is
+        // `primary|secondary|disabled|placeholder|accent|inherit` plus the
+        // three status colours the theme adds. Defaults-first: the control now
+        // looks like every other icon action in the app.
+        <BAIText
           copyable={{
             text: fullName,
           }}

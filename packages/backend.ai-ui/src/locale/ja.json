@@ -161,6 +161,9 @@
   "comp:BAIDomainSelect": {
     "SelectDomain": "ドメインを選択"
   },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "自動更新",
     "EveryHours": "{{count}}時間",
@@ -264,6 +267,9 @@
     "StrategyType": "戦略",
     "Tags": "タグ",
     "UpdatedAt": "更新日時"
+  },
+  "comp:BAINameActionCell": {
+    "MoreActions": "More actions"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "以下のプロジェクトが更新されます.",
@@ -534,8 +540,10 @@
     "MoreOptions": "その他のオプション",
     "Name": "名前",
     "NoUploadPermissionForHost": "このホストへのアップロード権限がありません。",
+    "Path": "Path",
     "PleaseEnterAFileName": "ファイル名を入力してください。",
     "PleaseEnterAFolderName": "フォルダー名を入力してください。",
+    "RenameFile": "Rename",
     "RenameSuccess": "名前は正常に変更されました。",
     "SelectedItemsDeletedSuccessfully": "選択したファイルとフォルダーは正常に削除されました。",
     "Size": "サイズ",
@@ -614,16 +622,23 @@
     "UnknownError": "不明なエラーが発生しました。\nもう一度やり直してください。"
   },
   "general": {
+    "Decrease": "Decrease",
     "DeselectAll": "すべて選択解除",
     "File": "ファイル",
+    "Increase": "Increase",
     "NSelected": "{{count}}選択",
     "Optional": "任意",
     "Project": "プロジェクト",
+    "Select": "Select",
     "TotalItems": "Total {{total}}アイテム",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "キャンセル",
       "Close": "近い",
       "Collapse": "崩壊",
+      "Confirm": "Confirm",
       "Copied": "コピーしました",
       "Copy": "コピー",
       "CopyAll": "すべてをコピーします",

@@ -161,6 +161,9 @@
   "comp:BAIDomainSelect": {
     "SelectDomain": "Select Domain"
   },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Auto Refresh",
     "EveryHours": "{{count}}h",
@@ -270,6 +273,9 @@
     "StrategyType": "Strategy",
     "Tags": "Tags",
     "UpdatedAt": "Updated At"
+  },
+  "comp:BAINameActionCell": {
+    "MoreActions": "More actions"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "The following project(s) will be updated.",
@@ -552,8 +558,10 @@
     "MoreOptions": "More options",
     "Name": "Name",
     "NoUploadPermissionForHost": "You don't have upload permission for this host.",
+    "Path": "Path",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Please enter the folder name.",
+    "RenameFile": "Rename",
     "RenameSuccess": "The name has been successfully changed.",
     "SelectedItemsDeletedSuccessfully": "Selected files and folders have been deleted successfully.",
     "Size": "Size",
@@ -632,16 +640,23 @@
     "UnknownError": "An unknown error occurred. Please try again."
   },
   "general": {
+    "Decrease": "Decrease",
     "DeselectAll": "Deselect all",
     "File": "File",
+    "Increase": "Increase",
     "NSelected": "{{count}} selected",
     "Optional": "Optional",
     "Project": "Project",
+    "Select": "Select",
     "TotalItems": "Total {{total}} items",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "Cancel",
       "Close": "Close",
       "Collapse": "Collapse",
+      "Confirm": "Confirm",
       "Copied": "Copied",
       "Copy": "Copy",
       "CopyAll": "Copy All",

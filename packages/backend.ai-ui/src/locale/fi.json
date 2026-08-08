@@ -161,6 +161,9 @@
   "comp:BAIDomainSelect": {
     "SelectDomain": "Valitse toimialue"
   },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Automaattinen päivitys",
     "EveryHours": "{{count}}h",
@@ -264,6 +267,9 @@
     "StrategyType": "Strategia",
     "Tags": "Tunnisteet",
     "UpdatedAt": "Päivitetty"
+  },
+  "comp:BAINameActionCell": {
+    "MoreActions": "More actions"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Seuraavat projektit päivitetään.",
@@ -534,8 +540,10 @@
     "MoreOptions": "Lisää vaihtoehtoja",
     "Name": "Nimi",
     "NoUploadPermissionForHost": "Sinulla ei ole latausoikeutta tälle tallennuspalvelimelle.",
+    "Path": "Path",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Anna kansionimi.",
+    "RenameFile": "Rename",
     "RenameSuccess": "Nimi on muutettu onnistuneesti.",
     "SelectedItemsDeletedSuccessfully": "Valitut tiedostot ja kansiot on poistettu onnistuneesti.",
     "Size": "Koko",
@@ -614,16 +622,23 @@
     "UnknownError": "Tapahtui tuntematon virhe. \nYritä uudelleen."
   },
   "general": {
+    "Decrease": "Decrease",
     "DeselectAll": "Poista kaikki valinnat",
     "File": "Tiedosto",
+    "Increase": "Increase",
     "NSelected": "{{count}} valittu",
     "Optional": "Valinnainen",
     "Project": "Projekti",
+    "Select": "Select",
     "TotalItems": "Yhteensä {{total}} kohteet",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "Peruuttaa",
       "Close": "Lähellä",
       "Collapse": "Romahdus",
+      "Confirm": "Confirm",
       "Copied": "Kopioitu",
       "Copy": "Kopioi",
       "CopyAll": "Kopioida kaikki",

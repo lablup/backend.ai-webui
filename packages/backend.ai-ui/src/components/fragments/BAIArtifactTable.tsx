@@ -9,7 +9,7 @@ import {
   toLocalId,
 } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
-import { theme } from '../../theme-shim';
+import BAIButton from '../BAIButton';
 import BAIFlex from '../BAIFlex';
 import BAILink from '../BAILink';
 import BAIText from '../BAIText';
@@ -17,7 +17,8 @@ import { BAIColumnType, BAITableAstryx, BAITableProps } from '../Table';
 import BAIArtifactRevisionDownloadButton from './BAIArtifactRevisionDownloadButton';
 import BAIArtifactStatusTag from './BAIArtifactStatusTag';
 import BAIArtifactTypeTag from './BAIArtifactTypeTag';
-import { Button, Typography } from 'antd';
+import { Link } from '@astryxdesign/core/Link';
+import { Text } from '@astryxdesign/core/Text';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import * as _ from 'lodash-es';
@@ -97,7 +98,6 @@ const BAIArtifactTable = ({
   onClickRestore,
   ...tableProps
 }: BAIArtifactTableProps) => {
-  const { token } = theme.useToken();
   const { t } = useBAIi18n();
 
   const artifact = useFragment<BAIArtifactTableArtifactFragment$key>(
@@ -157,12 +157,9 @@ const BAIArtifactTable = ({
               <BAIArtifactTypeTag artifactTypeFrgmt={record} />
             </BAIFlex>
             {record.description && (
-              <Typography.Text
-                type="secondary"
-                style={{ display: 'block', fontSize: token.fontSizeSM }}
-              >
+              <Text color="secondary" size="sm" display="block">
                 {record.description}
-              </Typography.Text>
+              </Text>
             )}
           </BAIFlex>
         );
@@ -171,28 +168,39 @@ const BAIArtifactTable = ({
     {
       title: t('comp:BAIArtifactTable.Controls'),
       key: 'controls',
-      render: (record: Artifact) => {
+      // BUG FOUND WHILE CONVERTING (to-astryx W2-D), not a policy choice —
+      // recorded so it is not re-introduced: the column declared
+      // `render: (record) => …` but `render`'s FIRST argument is the cell
+      // VALUE, and this column has no `dataIndex`, so `record` was always
+      // `undefined` and every row threw
+      // `Cannot read properties of undefined (reading 'availability')`.
+      // The five `BAIArtifactTable` Storybook stories were failing on this
+      // before this ticket; the signature is now `(value, record)`.
+      render: (_value, record: Artifact) => {
         const availability = record.availability;
+        // PILOT-DECISION (to-astryx W2-D): antd v6's `color` + `variant`
+        // emphasis pair has no Astryx counterpart — `Button.variant` is a
+        // closed 4-value enum with no colour escape hatch (P5). Deactivate is
+        // the destructive half of the pair and keeps that reading via
+        // `danger`; Activate loses its blue fill and becomes the default
+        // secondary button. `title` now reaches Astryx's real `tooltip` prop
+        // AND supplies the icon-only button's accessible name (P8) — under
+        // antd it was only a native `title` attribute.
         if (availability === 'ALIVE') {
           return (
-            <Button
+            <BAIButton
               title={t('comp:BAIArtifactTable.Deactivate')}
               size="small"
-              // type="text"
-              color={'red'}
-              variant="filled"
+              danger
               icon={<BanIcon />}
               onClick={() => onClickDelete(record.id)}
             />
           );
         } else if (availability === 'DELETED') {
           return (
-            <Button
+            <BAIButton
               title={t('comp:BAIArtifactTable.Activate')}
               size="small"
-              color="blue"
-              variant="filled"
-              // type="text"
               icon={<UndoIcon />}
               onClick={() => onClickRestore(record.id)}
             />
@@ -247,13 +255,9 @@ const BAIArtifactTable = ({
       key: 'scanned_at',
       render: (value: string) => {
         if (!value || _.isEmpty(value))
-          return <Typography.Text type="secondary">N/A</Typography.Text>;
+          return <Text color="secondary">N/A</Text>;
 
-        return (
-          <Typography.Text type="secondary">
-            {dayjs(value).fromNow()}
-          </Typography.Text>
-        );
+        return <Text color="secondary">{dayjs(value).fromNow()}</Text>;
       },
     },
     {
@@ -262,13 +266,9 @@ const BAIArtifactTable = ({
       key: 'updated_at',
       render: (value: string) => {
         if (!value || _.isEmpty(value))
-          return <Typography.Text type="secondary">N/A</Typography.Text>;
+          return <Text color="secondary">N/A</Text>;
 
-        return (
-          <Typography.Text type="secondary">
-            {dayjs(value).fromNow()}
-          </Typography.Text>
-        );
+        return <Text color="secondary">{dayjs(value).fromNow()}</Text>;
       },
     },
     {
@@ -277,11 +277,11 @@ const BAIArtifactTable = ({
       key: 'registry.name',
       render: (_value, record: Artifact) => {
         return record?.source ? (
-          <Typography>
+          <Text>
             {record?.registry
               ? `${record.registry.name} (${record.registry.url})`
               : 'N/A'}
-          </Typography>
+          </Text>
         ) : (
           '-'
         );
@@ -294,13 +294,13 @@ const BAIArtifactTable = ({
       key: 'source.name',
       render: (_value, record: Artifact) => {
         return record?.source ? (
-          <Typography.Link
+          <Link
             href={record.source.url ?? ''}
             target="_blank"
             rel="noopener noreferrer"
           >
             {record.source.name || 'N/A'}
-          </Typography.Link>
+          </Link>
         ) : (
           '-'
         );

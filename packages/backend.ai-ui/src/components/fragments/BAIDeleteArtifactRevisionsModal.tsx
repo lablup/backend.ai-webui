@@ -13,12 +13,14 @@ import {
 } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { theme } from '../../theme-shim';
+import BAIAlert from '../BAIAlert';
 import BAIFlex from '../BAIFlex';
+import BAIModal, { type BAIModalProps } from '../BAIModal';
 import BAIText from '../BAIText';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
 import { BAIColumnsType, BAITableAstryx } from '../Table';
 import BAIArtifactDescriptions from './BAIArtifactDescriptions';
-import { Alert, Modal, Tooltip, type ModalProps } from 'antd';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import * as _ from 'lodash-es';
 import { CircleHelp } from 'lucide-react';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -33,13 +35,13 @@ export type BAIDeleteArtifactRevisionsModalArtifactRevisionFragmentKey =
   BAIDeleteArtifactRevisionsModalArtifactRevisionFragment$key;
 
 export interface BAIDeleteArtifactRevisionsModalProps extends Omit<
-  ModalProps,
+  BAIModalProps,
   'onOk' | 'onCancel'
 > {
   selectedArtifactFrgmt: BAIDeleteArtifactRevisionsModalArtifactFragment$key | null;
   selectedArtifactRevisionFrgmt: BAIDeleteArtifactRevisionsModalArtifactRevisionFragment$key;
   onOk: (e: React.MouseEvent<HTMLElement>) => void;
-  onCancel: NonNullable<ModalProps['onCancel']>;
+  onCancel: NonNullable<BAIModalProps['onCancel']>;
 }
 
 const BAIDeleteArtifactRevisionsModal = ({
@@ -119,7 +121,7 @@ const BAIDeleteArtifactRevisionsModal = ({
   ];
   return (
     <BAIUnmountAfterClose>
-      <Modal
+      <BAIModal
         title={t('comp:BAIDeleteArtifactModal.RemoveVersions')}
         centered
         onOk={(e) => {
@@ -180,10 +182,10 @@ const BAIDeleteArtifactRevisionsModal = ({
         <BAIFlex direction="column" gap={'sm'} align="stretch">
           {filteredSelectedRevisions.length !==
           selectedArtifactRevision.length ? (
-            <Alert
+            <BAIAlert
               icon={
                 <Tooltip
-                  title={t(
+                  content={t(
                     'comp:BAIDeleteArtifactModal.OnlyVersionsNotInPULLINGOrSCANNED',
                   )}
                 >
@@ -215,7 +217,7 @@ const BAIDeleteArtifactRevisionsModal = ({
             }}
           />
         </BAIFlex>
-      </Modal>
+      </BAIModal>
     </BAIUnmountAfterClose>
   );
 };

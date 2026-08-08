@@ -1,14 +1,17 @@
 import { App } from '../../../app-shim';
 import { Form, type FormInstance } from '../../../form-engine';
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
+import BAIModal, { type BAIModalProps } from '../../BAIModal';
+import { AstryxFormTextInput } from '../../astryxFormControls';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { FolderInfoContext } from './BAIFileExplorer';
 import { useMutation } from '@tanstack/react-query';
-import { Input, Modal, type ModalProps } from 'antd';
 import React, { use, useRef } from 'react';
 
-// TODO: swap to BAIModal (already available in this package) instead of antd's Modal
-interface CreateDirectoryModalProps extends ModalProps {
+// to-astryx W2-D: the standing TODO is done — this is `BAIModal` (Astryx
+// `Dialog` under an antd-`Modal`-shaped surface, ticket p3-b), matching its
+// `CreateFileModal` sibling, and the field is the shared Astryx form adapter.
+interface CreateDirectoryModalProps extends BAIModalProps {
   onRequestClose: (success: boolean, createdFolderName?: string) => void;
 }
 
@@ -53,7 +56,7 @@ const CreateDirectoryModal: React.FC<CreateDirectoryModalProps> = ({
   };
 
   return (
-    <Modal
+    <BAIModal
       title={t('comp:FileExplorer.CreateANewFolder')}
       onCancel={() => onRequestClose(false)}
       okText={t('general.button.Create')}
@@ -77,10 +80,10 @@ const CreateDirectoryModal: React.FC<CreateDirectoryModalProps> = ({
             },
           ]}
         >
-          <Input />
+          <AstryxFormTextInput label={t('comp:FileExplorer.FolderName')} />
         </Form.Item>
       </Form>
-    </Modal>
+    </BAIModal>
   );
 };
 

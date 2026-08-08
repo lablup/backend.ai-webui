@@ -161,6 +161,9 @@
   "comp:BAIDomainSelect": {
     "SelectDomain": "Επιλέξτε τομέα"
   },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Αυτόματη ανανέωση",
     "EveryHours": "{{count}}h",
@@ -264,6 +267,9 @@
     "StrategyType": "Στρατηγική",
     "Tags": "Ετικέτες",
     "UpdatedAt": "Ενημερώθηκε"
+  },
+  "comp:BAINameActionCell": {
+    "MoreActions": "More actions"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Τα ακόλουθα έργα θα ενημερωθούν.",
@@ -534,8 +540,10 @@
     "MoreOptions": "Περισσότερες επιλογές",
     "Name": "Ονομα",
     "NoUploadPermissionForHost": "Δεν έχετε άδεια μεταφόρτωσης για αυτόν τον κεντρικό χώρο αποθήκευσης.",
+    "Path": "Path",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Εισαγάγετε το όνομα του φακέλου.",
+    "RenameFile": "Rename",
     "RenameSuccess": "Το όνομα έχει αλλάξει με επιτυχία.",
     "SelectedItemsDeletedSuccessfully": "Επιλεγμένα αρχεία και φακέλους έχουν διαγραφεί με επιτυχία.",
     "Size": "Μέγεθος",
@@ -614,16 +622,23 @@
     "UnknownError": "Παρουσιάστηκε ένα άγνωστο σφάλμα. \nΔοκιμάστε ξανά."
   },
   "general": {
+    "Decrease": "Decrease",
     "DeselectAll": "Αποεπιλογή όλων",
     "File": "Αρχείο",
+    "Increase": "Increase",
     "NSelected": "{{count}} Επιλεγμένη",
     "Optional": "Προαιρετικό",
     "Project": "Έργο",
+    "Select": "Select",
     "TotalItems": "Σύνολο {{total}} στοιχεία",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "Ματαίωση",
       "Close": "Κοντά",
       "Collapse": "Κατάρρευση",
+      "Confirm": "Confirm",
       "Copied": "Αντιγράφηκε",
       "Copy": "Αντιγραφή",
       "CopyAll": "Αντιγράψτε όλα",

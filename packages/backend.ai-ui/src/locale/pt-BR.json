@@ -161,6 +161,9 @@
   "comp:BAIDomainSelect": {
     "SelectDomain": "Selecionar Domínio"
   },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Atualização automática",
     "EveryHours": "{{count}}h",
@@ -270,6 +273,9 @@
     "StrategyType": "Estratégia",
     "Tags": "Tag",
     "UpdatedAt": "Atualizado em"
+  },
+  "comp:BAINameActionCell": {
+    "MoreActions": "More actions"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "O(s) projeto(s) a seguir será(ão) atualizado(s).",
@@ -540,8 +546,10 @@
     "MoreOptions": "Mais opções",
     "Name": "Nome",
     "NoUploadPermissionForHost": "Você não tem permissão de upload para este host.",
+    "Path": "Path",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Por favor, insira o nome da pasta.",
+    "RenameFile": "Rename",
     "RenameSuccess": "O nome foi alterado com sucesso.",
     "SelectedItemsDeletedSuccessfully": "Arquivos e pastas selecionados foram excluídos com sucesso.",
     "Size": "Tamanho",
@@ -620,16 +628,23 @@
     "UnknownError": "Ocorreu um erro desconhecido. \nPor favor, tente novamente."
   },
   "general": {
+    "Decrease": "Decrease",
     "DeselectAll": "Desmarcar tudo",
     "File": "Arquivo",
+    "Increase": "Increase",
     "NSelected": "{{count}} selecionado",
     "Optional": "Opcional",
     "Project": "Projeto",
+    "Select": "Select",
     "TotalItems": "Total {{total}} itens",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "Cancelar",
       "Close": "Fechar",
       "Collapse": "Colapso",
+      "Confirm": "Confirm",
       "Copied": "Copiado",
       "Copy": "Copiar",
       "CopyAll": "Copie tudo",

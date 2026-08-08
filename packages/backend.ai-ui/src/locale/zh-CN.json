@@ -161,6 +161,9 @@
   "comp:BAIDomainSelect": {
     "SelectDomain": "选择域"
   },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "自动刷新",
     "EveryHours": "{{count}}小时",
@@ -264,6 +267,9 @@
     "StrategyType": "策略",
     "Tags": "标签",
     "UpdatedAt": "更新时间"
+  },
+  "comp:BAINameActionCell": {
+    "MoreActions": "More actions"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "以下项目将被更新。",
@@ -534,8 +540,10 @@
     "MoreOptions": "更多选项",
     "Name": "姓名",
     "NoUploadPermissionForHost": "您没有此存储主机的上传权限。",
+    "Path": "Path",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "请输入文件夹名称。",
+    "RenameFile": "Rename",
     "RenameSuccess": "该名称已成功更改。",
     "SelectedItemsDeletedSuccessfully": "选定的文件和文件夹已成功删除。",
     "Size": "尺寸",
@@ -614,16 +622,23 @@
     "UnknownError": "发生了未知错误。\n请重试。"
   },
   "general": {
+    "Decrease": "Decrease",
     "DeselectAll": "取消全选",
     "File": "文件",
+    "Increase": "Increase",
     "NSelected": "{{count}}选择",
     "Optional": "可选",
     "Project": "项目",
+    "Select": "Select",
     "TotalItems": "总计{{total}}项目",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "取消",
       "Close": "关闭",
       "Collapse": "坍塌",
+      "Confirm": "Confirm",
       "Copied": "已复制",
       "Copy": "复制",
       "CopyAll": "复制全部",

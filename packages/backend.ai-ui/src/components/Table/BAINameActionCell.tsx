@@ -1,12 +1,20 @@
 import { App } from '../../app-shim';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { useEventNotStable } from '../../hooks/useEventNotStable';
 import { theme } from '../../theme-shim';
 import BAIButton from '../BAIButton';
 import BAILink from '../BAILink';
 import BAIText from '../BAIText';
 import './BAINameActionCell.css';
-import { Dropdown, Popconfirm, Tooltip } from 'antd';
-import type { MenuProps, PopconfirmProps } from 'antd';
+import { Button } from '@astryxdesign/core/Button';
+import {
+  DropdownMenu,
+  type DropdownMenuOption,
+} from '@astryxdesign/core/DropdownMenu';
+import { Popover } from '@astryxdesign/core/Popover';
+import { HStack, VStack } from '@astryxdesign/core/Stack';
+import { Text } from '@astryxdesign/core/Text';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import classNames from 'classnames';
 import { EllipsisVertical } from 'lucide-react';
 import React, { useEffect, useRef, useState, useTransition } from 'react';
@@ -53,7 +61,37 @@ export interface BAINameActionCellAction {
    * If `onClick`/`action` is also set, those take precedence and the
    * popConfirm is ignored in the overflow menu.
    */
-  popConfirm?: Omit<PopconfirmProps, 'children'>;
+  popConfirm?: BAIPopconfirmConfig;
+}
+
+/**
+ * The antd `PopconfirmProps` subset every call site actually passes, restated
+ * locally (to-astryx W2-D). Measured across the 11 live `popConfirm` objects
+ * in `ResourceGroupList`, `AdminUserCredentialList` ×2, `AdminUserManagement`,
+ * `QuotaScopeTable`, `DeploymentRevisionHistoryTab`, `LoginSession`,
+ * `RBACManagementPage` ×2 and `ProjectPage` ×2: `title`, `description`,
+ * `okText`, `cancelText`, `okButtonProps.danger`, `onConfirm`, `onCancel`.
+ * Keeping antd's own type was the last thing holding this module in the antd
+ * import graph (P15), and the wide type advertised knobs — `placement`,
+ * `icon`, `overlayStyle`, `getPopupContainer` — that Astryx's `Popover` does
+ * not have.
+ */
+export interface BAIPopconfirmConfig {
+  title?: React.ReactNode;
+  /**
+   * Accepted and inert: Astryx's `Popover` splits antd's compound placement
+   * into `placement` + `alignment`, and the confirm popover anchors itself to
+   * the row action. One call site (`QuotaScopeTable`) passes `'bottom'`, which
+   * is already the Astryx default.
+   */
+  placement?: string;
+  description?: React.ReactNode;
+  okText?: React.ReactNode;
+  cancelText?: React.ReactNode;
+  okButtonProps?: { danger?: boolean; disabled?: boolean };
+  cancelButtonProps?: { disabled?: boolean };
+  onConfirm?: () => void | Promise<void>;
+  onCancel?: () => void;
 }
 
 export interface BAINameActionCellProps {
@@ -84,6 +122,88 @@ const ACTION_BUTTON_WIDTH = 24;
 const MORE_BUTTON_WIDTH = 24;
 const ACTIONS_GAP = 2;
 
+/**
+ * The anchored confirmation an antd `Popconfirm` used to provide.
+ *
+ * PILOT-DECISION (to-astryx W2-D): MAPPING §2 grades `Popconfirm` as **NONE** —
+ * "compose `Popover` + buttons, or escalate to `AlertDialog`". This is the
+ * compose branch, and it is the same shape the pilot's
+ * `BAINameActionCellAstryx` already shipped, so the two implementations agree.
+ * What changes against antd: the confirm/cancel pair is a real `HStack` of
+ * `Button`s inside the popover body rather than antd's built-in footer, and
+ * `okButtonProps.danger` maps onto `variant="destructive"`. What is preserved:
+ * the anchored placement, light dismiss, and the fact that the destructive
+ * action still needs two clicks (the contract
+ * `.claude/rules/destructive-confirmation.md` cares about).
+ */
+const ConfirmPopoverButton: React.FC<{
+  action: BAINameActionCellAction;
+  confirm: BAIPopconfirmConfig;
+  className?: string;
+}> = ({ action, confirm, className }) => {
+  'use memo';
+  const { t } = useBAIi18n();
+  const [isOpen, setIsOpen] = useState(false);
+  return (
+    <Popover
+      isOpen={isOpen}
+      onOpenChange={setIsOpen}
+      label={action.title}
+      role="dialog"
+      width={260}
+      content={
+        <VStack gap={2} padding={2} align="stretch">
+          <Text weight="semibold">{confirm.title}</Text>
+          {confirm.description ? (
+            <Text color="secondary">{confirm.description}</Text>
+          ) : null}
+          <HStack gap={2} justify="end">
+            <Button
+              size="sm"
+              variant="secondary"
+              label={
+                typeof confirm.cancelText === 'string'
+                  ? confirm.cancelText
+                  : t('general.button.Cancel')
+              }
+              onClick={() => {
+                setIsOpen(false);
+                confirm.onCancel?.();
+              }}
+            />
+            <Button
+              size="sm"
+              variant={
+                confirm.okButtonProps?.danger ? 'destructive' : 'primary'
+              }
+              label={
+                typeof confirm.okText === 'string'
+                  ? confirm.okText
+                  : t('general.button.Confirm')
+              }
+              isDisabled={confirm.okButtonProps?.disabled}
+              clickAction={async () => {
+                setIsOpen(false);
+                await confirm.onConfirm?.();
+              }}
+            />
+          </HStack>
+        </VStack>
+      }
+    >
+      <BAIButton
+        type="text"
+        size="small"
+        icon={action.icon}
+        aria-label={action.title}
+        title={action.title}
+        className={className}
+        style={action.style}
+      />
+    </Popover>
+  );
+};
+
 const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
   icon,
   title,
@@ -98,6 +218,7 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
   className,
 }) => {
   'use memo';
+  const { t } = useBAIi18n();
   const { token } = theme.useToken();
   const { modal } = App.useApp();
   const [, startTransition] = useTransition();
@@ -197,12 +318,15 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
 
   // More menu: overflowed auto actions + menu-only actions
   const hasMoreMenu = hasOverflow || menuOnlyActions.length > 0;
+  // PILOT-DECISION (to-astryx W2-D): `DropdownMenuItemData` has no `danger`
+  // flag — its rows are uniform (P5). A destructive overflow row therefore
+  // relies on its icon and label alone, exactly as it already does inside the
+  // `modal.confirm` it escalates to. The visible (non-overflowed) button keeps
+  // its danger tint through `bai-nac-action-button-danger`.
   const toMenuItem = (action: BAINameActionCellAction) => ({
-    key: action.key,
     label: action.title,
     icon: action.icon,
-    danger: action.type === 'danger',
-    disabled: action.disabled,
+    isDisabled: action.disabled,
     onClick: () => {
       if (action.onClick || action.action) {
         action.onClick?.();
@@ -224,10 +348,8 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
           onConfirm,
           onCancel,
         } = action.popConfirm;
-        const resolveNode = (
-          value: PopconfirmProps['title'] | PopconfirmProps['description'],
-        ): React.ReactNode =>
-          typeof value === 'function' ? value() : (value ?? null);
+        const resolveNode = (value: React.ReactNode): React.ReactNode =>
+          value ?? null;
         modal.confirm({
           title: resolveNode(confirmTitle),
           content: resolveNode(description),
@@ -242,7 +364,7 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
       }
     },
   });
-  const menuItems: MenuProps['items'] = [
+  const menuItems: Array<DropdownMenuOption> = [
     ...autoActions.slice(visibleCount).map(toMenuItem),
     ...(hasOverflow && menuOnlyActions.length > 0
       ? [{ type: 'divider' as const }]
@@ -342,29 +464,42 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
               />
             );
 
+            if (action.popConfirm && !action.disabled) {
+              return (
+                <ConfirmPopoverButton
+                  key={action.key}
+                  action={action}
+                  confirm={action.popConfirm}
+                  className={buttonClassName}
+                />
+              );
+            }
             return (
               <Tooltip
                 key={action.key}
-                title={action.disabled ? action.disabledReason : action.title}
+                content={action.disabled ? action.disabledReason : action.title}
+                isEnabled={
+                  !!(action.disabled ? action.disabledReason : action.title)
+                }
               >
-                {action.popConfirm && !action.disabled ? (
-                  <Popconfirm {...action.popConfirm}>{button}</Popconfirm>
-                ) : (
-                  button
-                )}
+                {button}
               </Tooltip>
             );
           })}
           {hasMoreMenu && (
-            <Dropdown menu={{ items: menuItems }} trigger={['click']}>
-              <BAIButton
-                type="text"
-                size="small"
-                icon={<EllipsisVertical size="1em" />}
-                aria-label="More actions"
-                disabled={moreMenuDisabled}
-              />
-            </Dropdown>
+            <DropdownMenu
+              items={menuItems}
+              button={{
+                variant: 'ghost',
+                size: 'sm',
+                isIconOnly: true,
+                icon: <EllipsisVertical size="1em" />,
+                label: t('comp:BAINameActionCell.MoreActions'),
+                tooltip: t('comp:BAINameActionCell.MoreActions'),
+                isDisabled: moreMenuDisabled,
+              }}
+              hasChevron={false}
+            />
           )}
         </div>
       )}

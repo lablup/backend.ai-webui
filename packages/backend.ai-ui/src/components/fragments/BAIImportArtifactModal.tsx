@@ -13,12 +13,14 @@ import {
 } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { theme } from '../../theme-shim';
+import BAIAlert from '../BAIAlert';
 import BAIFlex from '../BAIFlex';
+import BAIModal, { type BAIModalProps } from '../BAIModal';
 import BAIText from '../BAIText';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
 import { BAIColumnsType, BAITableAstryx } from '../Table';
 import BAIArtifactDescriptions from './BAIArtifactDescriptions';
-import { Alert, Modal, Tooltip, type ModalProps } from 'antd';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import * as _ from 'lodash-es';
 import { CircleHelp } from 'lucide-react';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -32,7 +34,7 @@ export type BAIImportArtifactModalArtifactRevisionFragmentKey =
   BAIImportArtifactModalArtifactRevisionFragment$key;
 
 export interface BAIImportArtifactModalProps extends Omit<
-  ModalProps,
+  BAIModalProps,
   'onOk' | 'onCancel'
 > {
   selectedArtifactFrgmt: BAIImportArtifactModalArtifactFragment$key | null;
@@ -48,7 +50,7 @@ export interface BAIImportArtifactModalProps extends Omit<
       };
     }[],
   ) => void;
-  onCancel: NonNullable<ModalProps['onCancel']>;
+  onCancel: NonNullable<BAIModalProps['onCancel']>;
   connectionIds?: string[];
 }
 
@@ -139,7 +141,7 @@ const BAIImportArtifactModal = ({
 
   return (
     <BAIUnmountAfterClose>
-      <Modal
+      <BAIModal
         title={t('comp:BAIImportArtifactModal.PullVersion')}
         centered
         onOk={(e) => {
@@ -211,10 +213,10 @@ const BAIImportArtifactModal = ({
         <BAIFlex direction="column" gap="md" align="stretch">
           {filteredSelectedRevisions.length !==
             selectedArtifactRevision.length && (
-            <Alert
+            <BAIAlert
               icon={
                 <Tooltip
-                  title={t(
+                  content={t(
                     'comp:BAIImportArtifactModal.OnlySCANNEDVersionsCanBePulled',
                   )}
                 >
@@ -246,7 +248,7 @@ const BAIImportArtifactModal = ({
             }}
           />
         </BAIFlex>
-      </Modal>
+      </BAIModal>
     </BAIUnmountAfterClose>
   );
 };

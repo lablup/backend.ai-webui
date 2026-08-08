@@ -1,7 +1,20 @@
+/*
+ to-astryx W2-D: antd `Typography.Text` -> Astryx `Text`, antd `Tag` -> Astryx
+ `Badge` (MAPPING §3.4 / §3.5).
+
+   `type="secondary"`               -> `color="secondary"`
+   `style={{fontSize: fontSizeSM}}` -> `size="sm"` (Astryx `--font-size-sm` is
+                                       0.75rem = 12px, the same value antd's
+                                       `fontSizeSM` resolved to — P9: the
+                                       token's VALUE was checked, not its name)
+
+ The theme-shim `useToken()` call goes with it, which is the idiomatic end
+ state for the shim.
+*/
 import { BAISessionClusterModeV2Fragment$key } from '../../__generated__/BAISessionClusterModeV2Fragment.graphql';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
-import { theme } from '../../theme-shim';
-import { Tag, Typography } from 'antd';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Text } from '@astryxdesign/core/Text';
 import * as _ from 'lodash-es';
 import React from 'react';
 import { useFragment, graphql } from 'react-relay';
@@ -26,7 +39,6 @@ const BAISessionClusterModeV2: React.FC<BAISessionClusterModeV2Props> = ({
 }) => {
   'use memo';
   const { t } = useBAIi18n();
-  const { token } = theme.useToken();
   const metadata = useFragment(
     graphql`
       fragment BAISessionClusterModeV2Fragment on SessionV2MetadataInfo {
@@ -48,32 +60,32 @@ const BAISessionClusterModeV2: React.FC<BAISessionClusterModeV2Props> = ({
       : '-';
 
   return mode === 'text' ? (
-    <Typography.Text>
+    <Text>
       {modeTitle}
       {canShowSize && (
         <>
           &nbsp;
-          <Typography.Text type="secondary">({clusterSize})</Typography.Text>
+          <Text color="secondary">({clusterSize})</Text>
         </>
       )}
-    </Typography.Text>
+    </Text>
   ) : (
-    <Tag>
-      {modeTitle}
-      {canShowSize && (
+    <Badge
+      variant="neutral"
+      label={
         <>
-          &nbsp;
-          <Typography.Text
-            type="secondary"
-            style={{
-              fontSize: token.fontSizeSM,
-            }}
-          >
-            ({clusterSize})
-          </Typography.Text>
+          {modeTitle}
+          {canShowSize && (
+            <>
+              &nbsp;
+              <Text color="secondary" size="sm">
+                ({clusterSize})
+              </Text>
+            </>
+          )}
         </>
-      )}
-    </Tag>
+      }
+    />
   );
 };
 

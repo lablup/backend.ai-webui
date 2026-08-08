@@ -161,6 +161,9 @@
   "comp:BAIDomainSelect": {
     "SelectDomain": "Domäne auswählen"
   },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Automatische Aktualisierung",
     "EveryHours": "{{count}}h",
@@ -264,6 +267,9 @@
     "StrategyType": "Strategie",
     "Tags": "Stichworte",
     "UpdatedAt": "Aktualisiert am"
+  },
+  "comp:BAINameActionCell": {
+    "MoreActions": "More actions"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Die folgenden Projekte werden aktualisiert.",
@@ -534,8 +540,10 @@
     "MoreOptions": "Weitere Optionen",
     "Name": "Name",
     "NoUploadPermissionForHost": "Sie haben keine Hochlade-Berechtigung für diesen Host.",
+    "Path": "Path",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Bitte geben Sie den Ordneramen ein.",
+    "RenameFile": "Rename",
     "RenameSuccess": "Der Name wurde erfolgreich geändert.",
     "SelectedItemsDeletedSuccessfully": "Ausgewählte Dateien und Ordner wurden erfolgreich gelöscht.",
     "Size": "Größe",
@@ -614,16 +622,23 @@
     "UnknownError": "Ein unbekannter Fehler ist aufgetreten. \nBitte versuchen Sie es erneut."
   },
   "general": {
+    "Decrease": "Decrease",
     "DeselectAll": "Alle abwählen",
     "File": "Datei",
+    "Increase": "Increase",
     "NSelected": "{{count}} ausgewählt",
     "Optional": "Optional",
     "Project": "Projekt",
+    "Select": "Select",
     "TotalItems": "Total {{total}} Elemente",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "Stornieren",
       "Close": "Schließen",
       "Collapse": "Zusammenbruch",
+      "Confirm": "Confirm",
       "Copied": "Kopiert",
       "Copy": "Kopieren",
       "CopyAll": "Alle kopieren",

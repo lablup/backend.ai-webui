@@ -161,6 +161,9 @@
   "comp:BAIDomainSelect": {
     "SelectDomain": "Домен сонгох"
   },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
+  },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Автоматаар сэргээх",
     "EveryHours": "{{count}}h",
@@ -264,6 +267,9 @@
     "StrategyType": "Стратеги",
     "Tags": "Шошго",
     "UpdatedAt": "Шинэчлэгдсэн огноо"
+  },
+  "comp:BAINameActionCell": {
+    "MoreActions": "More actions"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Дараах төсөл(үүд) шинэчлэгдэх болно.",
@@ -534,8 +540,10 @@
     "MoreOptions": "Нэмэлт сонголтууд",
     "Name": "Нэр",
     "NoUploadPermissionForHost": "Энэ хостод байршуулах эрх байхгүй байна.",
+    "Path": "Path",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Фолдерын нэрийг оруулна уу.",
+    "RenameFile": "Rename",
     "RenameSuccess": "Энэ нэр амжилттай өөрчлөгдсөн байна.",
     "SelectedItemsDeletedSuccessfully": "Сонгосон файлууд болон хавтасыг амжилттай устгасан байна.",
     "Size": "Хэмжээ",
@@ -614,16 +622,23 @@
     "UnknownError": "Үл мэдэгдэх алдаа гарлаа. \nДахин оролдоно уу."
   },
   "general": {
+    "Decrease": "Decrease",
     "DeselectAll": "Бүгдийг сонголтоос хасах",
     "File": "Файл",
+    "Increase": "Increase",
     "NSelected": "{{count}} сонгогдсон",
     "Optional": "Заавал биш",
     "Project": "Төсөл",
+    "Select": "Select",
     "TotalItems": "Нийт {{total}} зүйлүүд",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "Цуаах",
       "Close": "Ойр дөхөм",
       "Collapse": "Сүйрэл",
+      "Confirm": "Confirm",
       "Copied": "Хуулсан",
       "Copy": "Хуулах",
       "CopyAll": "Бүгдийг хуулбарлах",

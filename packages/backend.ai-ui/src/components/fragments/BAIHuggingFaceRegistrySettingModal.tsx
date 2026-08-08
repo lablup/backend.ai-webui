@@ -5,7 +5,9 @@ import { Form, FormInstance } from '../../form-engine';
 import { toLocalId } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIModal, { BAIModalProps } from '../BAIModal';
-import { Input } from 'antd';
+import { AstryxFormTextInput } from '../astryxFormControls';
+import { InputGroup } from '@astryxdesign/core/InputGroup';
+import { Link } from '@astryxdesign/core/Link';
 import { useRef, useState } from 'react';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
@@ -103,22 +105,37 @@ const BAIHuggingFaceRegistrySettingModal: React.FC<
           name="token"
           label={t('comp:BAIHuggingFaceRegistrySettingModal.Token')}
         >
+          {/* PILOT-DECISION (to-astryx W2-D): `Input.Password addonAfter` ->
+              an `InputGroup` with the Edit action as a sibling. Astryx's
+              `TextInput` has no addon slot at all (MAPPING §3.6 routes
+              `addonAfter` to `InputGroup`), and the affordance was an `<a>`
+              with an `onClick` and no `href` — i.e. a button wearing a link,
+              with no keyboard access. It is now an Astryx `Link`, which
+              renders a real button when it has no `href` (the same call
+              `BAILink` made in wave 1, decision D3). */}
           {hasExistingToken && !isEditing ? (
-            <Input.Password
-              value="••••••••••••"
-              disabled
-              addonAfter={
-                <a onClick={() => setIsEditing(true)}>
-                  {t('general.button.Edit')}
-                </a>
-              }
-            />
+            <InputGroup
+              label={t('comp:BAIHuggingFaceRegistrySettingModal.Token')}
+              isLabelHidden
+            >
+              <AstryxFormTextInput
+                label={t('comp:BAIHuggingFaceRegistrySettingModal.Token')}
+                type="password"
+                value="••••••••••••"
+                disabled
+              />
+              <Link onClick={() => setIsEditing(true)}>
+                {t('general.button.Edit')}
+              </Link>
+            </InputGroup>
           ) : (
-            <Input.Password
+            <AstryxFormTextInput
+              label={t('comp:BAIHuggingFaceRegistrySettingModal.Token')}
+              type="password"
               placeholder={t(
                 'comp:BAIHuggingFaceRegistrySettingModal.EnterToken',
               )}
-              autoFocus
+              hasAutoFocus
             />
           )}
         </Form.Item>
