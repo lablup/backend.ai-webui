@@ -16,18 +16,22 @@
  *   - svg receives `width/height: 1em`, `fill: currentColor`,
  *     `aria-hidden`, `focusable="false"` — same as antd's svgBaseProps
  *   - `spin` / `rotate` supported (antd IconBaseProps parity)
- *   - baseline styles + spin keyframes are injected once at runtime by this
- *     module itself, so the shim stays correct even after `fix_antd.css`
- *     shrinks (BUI has `sideEffects: false`, so a CSS-file import would be
- *     tree-shaken out of consumers — runtime injection is the P17-safe way
- *     to keep the styles travelling with the component).
+ *   - baseline styles + spin keyframes come from BUI's own stylesheet
+ *     (`src/styles/backend.ai-ui.css`, imported by `src/index.ts` and exported
+ *     as `backend.ai-ui/styles.css`), so the shim stays correct even after
+ *     `fix_antd.css` shrinks. Ticket 07 injected them from here at runtime
+ *     instead, because BUI declared `sideEffects: false` and a CSS import
+ *     would have been tree-shaken away; ticket 30 fixed `sideEffects` to keep
+ *     every CSS file, which makes the stylesheet the honest home. The injection
+ *     also never fired for the components that spin a bare lucide glyph
+ *     (`<LoaderCircle className="anticon-spin" />`) without rendering `Icon`.
  *
  * Type parity with `@ant-design/icons/lib/components/Icon` is deliberate:
  * `CustomIconComponentProps`, `IconBaseProps`, and `IconComponentProps`
  * mirror the antd declarations verbatim so `Omit<CustomIconComponentProps,
  * 'width' | 'height' | 'fill'>`-style consumer interfaces compile unchanged.
  */
-import React, { forwardRef, useInsertionEffect } from 'react';
+import React, { forwardRef } from 'react';
 
 export interface CustomIconComponentProps {
   width: string | number;
@@ -63,31 +67,6 @@ const svgBaseProps = {
   focusable: 'false',
 } as const;
 
-const STYLE_ELEMENT_ID = 'bai-icon-shim-style';
-
-/**
- * Baseline `.anticon` rules (copied from react/src/fix_antd.css, which in
- * turn mirrors @ant-design/icons' reset) + the spin animation. Injected once
- * per document on first Icon render.
- */
-const SHIM_CSS = `
-.anticon{display:inline-block;color:inherit;font-style:normal;line-height:0;text-align:center;text-transform:none;vertical-align:-0.125em;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
-.anticon>*{line-height:1}
-.anticon svg{display:inline-block}
-.anticon[tabindex]{cursor:pointer}
-.anticon-spin{display:inline-block;animation:baiIconSpin 1s infinite linear}
-@keyframes baiIconSpin{100%{transform:rotate(360deg)}}
-`;
-
-const ensureShimStyles = () => {
-  if (typeof document === 'undefined') return;
-  if (document.getElementById(STYLE_ELEMENT_ID)) return;
-  const el = document.createElement('style');
-  el.id = STYLE_ELEMENT_ID;
-  el.textContent = SHIM_CSS;
-  document.head.appendChild(el);
-};
-
 const Icon = forwardRef<HTMLSpanElement, IconComponentProps>((props, ref) => {
   'use memo';
   const {
@@ -101,12 +80,6 @@ const Icon = forwardRef<HTMLSpanElement, IconComponentProps>((props, ref) => {
     style,
     ...restProps
   } = props;
-
-  // useInsertionEffect: the CSS-in-JS injection slot — styles land before
-  // layout effects and paint, and the injection stays out of the render phase.
-  useInsertionEffect(() => {
-    ensureShimStyles();
-  }, []);
 
   const svgClassName = spin ? 'anticon-spin' : undefined;
   const svgStyle: React.CSSProperties | undefined = rotate

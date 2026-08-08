@@ -1,0 +1,98 @@
+/**
+ * backend.ai-ui — the package's own stylesheet.
+ *
+ * to-astryx TICKET 30. Before this file existed, BUI had no CSS of its own:
+ * the `.anticon*` baseline its icon surface needs came either from the HOST's
+ * `fix_antd.css` (an undeclared dependency on the consumer shipping antd's
+ * reset) or from an imperative `<style>` element that `iconShim` appended to
+ * `document.head` on first `<Icon>` render — which never fired for the several
+ * components that spin a lucide glyph directly (`<LoaderCircle
+ * className="anticon-spin" />`). Both are gone; the rules live here.
+ *
+ * ## Consumer contract
+ *
+ * `src/index.ts` imports this file, so anything that consumes BUI through a
+ * bundler gets it in the module graph automatically. Consumers that load BUI's
+ * built `dist` without bundling its CSS must import it explicitly:
+ *
+ *     import 'backend.ai-ui/styles.css';
+ *
+ * ## @layer requirement (READ THIS BEFORE ADDING RULES)
+ *
+ * Everything here is inside `@layer components`. Astryx ships its component
+ * CSS inside `@layer astryx-base`, and an UNLAYERED rule outranks every named
+ * layer regardless of specificity — if BUI's rules were unlayered they would
+ * silently beat Astryx component styles everywhere, the P6 failure mode one
+ * design system over. `components` puts BUI above `astryx-base` (so a BUI rule
+ * can intentionally override an Astryx default) and below `utilities` (so an
+ * app-level utility still wins).
+ *
+ * That relative order only holds if the FULL order is declared before any
+ * layered rule appears, because layer precedence is fixed by first appearance
+ * and later `@layer` statements can only append names, never reorder ones
+ * already seen. Since `src/index.ts` imports this file first, BUI's CSS is
+ * frequently the first layered sheet in the bundle — so the statement lives
+ * here as well as in the app.
+ *
+ * !! KEEP IN SYNC with `react/src/index.css`, which declares the identical
+ * !! list. Two identical statements are idempotent (the second is a no-op);
+ * !! two DIFFERENT ones silently give you whichever loads first.
+ */
+@layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
+
+@layer components {
+  /* antd `@ant-design/icons` baseline. `iconShim` renders `.anticon` wrappers
+     with the same contract, and BUI components that spin a bare lucide icon
+     use `.anticon-spin` directly. Copied from `@ant-design/icons`' reset (via
+     the host's `fix_antd.css`) so the rules survive antd's eventual removal. */
+  .anticon {
+    display: inline-block;
+    color: inherit;
+    font-style: normal;
+    line-height: 0;
+    text-align: center;
+    text-transform: none;
+    vertical-align: -0.125em;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .anticon > * {
+    line-height: 1;
+  }
+
+  .anticon svg {
+    display: inline-block;
+  }
+
+  .anticon::before {
+    display: none;
+  }
+
+  .anticon[tabindex] {
+    cursor: pointer;
+  }
+
+  .anticon-spin {
+    display: inline-block;
+    animation: bai-icon-spin 1s infinite linear;
+  }
+
+  /* A spinner that never stops is a vestibular hazard; a user who asked for
+     less motion gets a static glyph instead. */
+  @media (prefers-reduced-motion: reduce) {
+    .anticon-spin {
+      animation: none;
+    }
+  }
+}
+
+/* Keyframes are not layerable — `@keyframes` inside `@layer` is legal but the
+   name still resolves globally, so it is declared once at the top level with a
+   BUI-scoped name that cannot collide with the host's `loadingCircle`. */
+@keyframes bai-icon-spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}

@@ -2,6 +2,110 @@
 
 This is a React component project for WebUI.
 
+## Package contract
+
+What a consumer must provide, and what it must import. Everything in this
+section was (re)defined by the Astryx migration, ticket 30.
+
+### Peer dependencies
+
+The design-system contract is **Astryx**:
+
+| Peer                           | Required? | Why                                                                  |
+| ------------------------------ | --------- | -------------------------------------------------------------------- |
+| `@astryxdesign/core`           | yes       | Every component BUI renders. Must be a **single** copy — see below.  |
+| `@astryxdesign/theme-neutral`  | yes       | The token set `theme-shim` resolves `useToken()` against.            |
+| `react` / `react-dom`          | yes       | —                                                                     |
+| `react-relay` / `relay-runtime` / `graphql` | yes | The `fragments/` components are Relay-bound.                    |
+| `@tanstack/react-query`        | yes       | `BAIConfigProvider` owns the QueryClient.                            |
+| `react-router-dom`             | yes       | `BAILink` and friends.                                               |
+| `ahooks`                       | yes       | —                                                                     |
+| `antd`, `@ant-design/icons`, `antd-style` | **optional — legacy** | See "The residual antd surface".              |
+
+`@astryxdesign/core` and `@astryxdesign/theme-neutral` are peers, **not**
+dependencies and **not** bundled. They were `devDependencies` until ticket 30,
+which meant `rollupOptions.external` (derived from `peerDependencies`) did not
+cover them and BUI's `dist` carried its own inlined copy of Astryx. Two copies
+means two StyleX registries and two React contexts: a `<Theme>` mounted by the
+app would not be seen by BUI's components, and vice versa. If you ever see
+theme values diverge between app-level and BUI-level components, check for a
+duplicated `@astryxdesign/core` first.
+
+### The residual antd surface
+
+BUI is **not yet antd-free in its source** — the antd `Form` engine, the legacy
+`BAITable`, `BAIModal`/`BAICard` internals and a shrinking set of `antd-style`
+`createStyles` blocks still import it. What ticket 30 changed is the
+*contract*: `antd`, `@ant-design/icons` and `antd-style` are declared
+`optional` in `peerDependenciesMeta`, so
+
+- a consumer that only touches the Astryx-native surface (`BAITableAstryx`,
+  `BAIComplexSelect`, `BAIPropertyFilter`, the `*SelectAstryx` wrappers, the
+  `theme-shim` / `app-shim` / `iconShim` modules) **installs and runs with no
+  antd in its dependency tree** — nothing it imports pulls antd in, and pnpm no
+  longer warns about the missing peer, and
+- a consumer that reaches the legacy surface must supply antd itself.
+
+One honest caveat: this is a **runtime/install** guarantee, not yet a
+type-level one. `dist/index.d.ts` re-exports the whole surface, and the legacy
+wrappers still describe themselves in antd's types (`BAICardProps extends
+Omit<CardProps, 'extra'>`, and so on), so `tsc` against the barrel still wants
+antd's declarations present. Emptying that out is the job of the tickets that
+retire the remaining antd components, not of the peer contract.
+
+The alternative designs were considered and rejected: moving the antd files to
+a `backend.ai-ui/legacy` entrypoint would have split `BAITableProps` and the
+column helpers away from their Astryx successor mid-migration (every remaining
+call site imports both), and dropping antd from the peer list entirely would
+have made a real runtime requirement invisible. Optional-peer is the honest
+description of "some of this package needs antd, most of it no longer does".
+
+### CSS
+
+BUI owns one stylesheet, `src/styles/backend.ai-ui.css`, exported as:
+
+```ts
+import 'backend.ai-ui/styles.css';
+```
+
+`src/index.ts` imports it too, so consumers that bundle BUI **from source**
+(this repo's `react/` app does — see the `backend.ai-ui` → `src` alias in
+`react/vite.config.ts`) get it through the module graph and need no explicit
+import. Consumers of the built `dist` must import it: a Vite/Rollup library
+build strips CSS imports out of the emitted JS and writes
+`dist/backend.ai-ui.css` beside it.
+
+`package.json#sideEffects` is `["**/*.css"]`, **not** `false`. It was `false`
+before ticket 30, which is why the icon baseline had to be injected imperatively
+from `iconShim.tsx` — a `false` value licenses a bundler to drop a bare CSS
+import entirely.
+
+#### @layer requirement
+
+Every rule BUI ships lives in `@layer components`, and BUI's stylesheet opens
+with the full order statement:
+
+```css
+@layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
+```
+
+Astryx ships its component CSS in `@layer astryx-base`, and an *unlayered* rule
+outranks every named layer regardless of specificity. `components` sits above
+`astryx-base` (a BUI rule may deliberately override an Astryx default) and
+below `utilities` (an app-level utility still wins).
+
+The statement is repeated here rather than left to the app because layer
+precedence is fixed by **first appearance**, and a later `@layer` statement can
+only append names it has not seen — it cannot reorder. `src/index.ts` imports
+BUI's stylesheet first, so BUI's CSS is usually the first layered sheet in a
+consumer's bundle; without the statement, `components` would register ahead of
+`astryx-base` and every Astryx default would win over BUI.
+
+A consumer with its own layer names must therefore declare an **identical**
+list (this repo does, in `react/src/index.css`). Two identical statements are
+idempotent; two divergent ones silently hand the order to whichever loads
+first.
+
 ## How to setup relay
 
 > [!NOTE]
@@ -162,6 +266,41 @@ const App = ({ children }) => {
   return <BAIConfigProvider locale={en_US}>{children}</BAIConfigProvider>;
 };
 ```
+
+### How many i18n runtimes are there? (P13)
+
+Two catalogs, one language.
+
+- **BUI's own i18next instance** (`src/locale/index.ts`) holds BUI's strings.
+  It is deliberately separate from the host's instance — `useBAIi18n` and
+  `<BAITrans>` bind to it explicitly rather than through React context, so BUI
+  resolves its own keys no matter what i18n stack (or none) the host runs.
+  That is FR-2986 and it stays.
+- **Astryx's resolver** (`@astryxdesign/core/i18n`) holds the strings baked
+  into Astryx components. It is not configurable as a catalog you own; it
+  takes a locale plus sparse per-locale `overrides`.
+
+`BAIConfigProvider` is the single place a language change lands. It drives
+`buiI18n.changeLanguage`, `dayjs.locale` **and** Astryx's
+`InternationalizationProvider` from the one `locale.lang` prop. Before ticket
+30 the third one was missing entirely, so Astryx components formatted their
+plurals, numbers and dates as `en` in every non-English session.
+
+To translate an Astryx string, add its key under an `astryx` object in the
+matching BUI locale JSON — no new catalog, no host change:
+
+```json
+// src/locale/ko.json
+{
+  "astryx": {
+    "@astryx.pagination.next": "다음 페이지로 이동"
+  }
+}
+```
+
+Keys you do not override fall through to Astryx's shipped English, so the
+subtree can stay empty and grow one key at a time. See
+`src/locale/astryxOverrides.ts`.
 
 ### Adding i18n strings
 

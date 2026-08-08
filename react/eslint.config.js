@@ -9,7 +9,6 @@ import jsoncParser from 'jsonc-eslint-parser';
 // without duplicating these entries.
 const restrictedImportPatterns = [
   { group: ['backend.ai-ui/*', '!backend.ai-ui/dist'] },
-  { group: ['@lobehub/fluent-emoji'] },
 ];
 const restrictedImportPaths = [
   {

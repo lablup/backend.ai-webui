@@ -19,12 +19,15 @@
   "main": "./dist/backend.ai-ui.js",
   "module": "./dist/backend.ai-ui.js",
   "types": "./dist/index.d.ts",
-  "sideEffects": false,
+  "sideEffects": [
+    "**/*.css"
+  ],
   "exports": {
     ".": {
       "import": "./dist/backend.ai-ui.js",
       "types": "./dist/index.d.ts"
     },
+    "./styles.css": "./dist/backend.ai-ui.css",
     "./dist/locale/*": {
       "import": "./dist/locale/*.js",
       "types": "./dist/locale/*.d.ts"
@@ -46,17 +49,30 @@
     "prepublishOnly": "pnpm lint && pnpm test && pnpm build"
   },
   "peerDependencies": {
-    "@ant-design/icons": "catalog:",
+    "@astryxdesign/core": "0.3.0",
+    "@astryxdesign/theme-neutral": "0.3.0",
     "@tanstack/react-query": "catalog:",
     "ahooks": "catalog:",
-    "antd": "catalog:",
-    "antd-style": "catalog:",
     "graphql": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-relay": "catalog:",
     "react-router-dom": "catalog:",
-    "relay-runtime": "catalog:"
+    "relay-runtime": "catalog:",
+    "@ant-design/icons": "catalog:",
+    "antd": "catalog:",
+    "antd-style": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "@ant-design/icons": {
+      "optional": true
+    },
+    "antd": {
+      "optional": true
+    },
+    "antd-style": {
+      "optional": true
+    }
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

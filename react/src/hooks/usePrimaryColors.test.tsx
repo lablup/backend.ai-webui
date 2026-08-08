@@ -1,7 +1,15 @@
+import { ThemeShimProvider } from '../theme-shim';
 import usePrimaryColors from './usePrimaryColors';
 import { renderHook } from '@testing-library/react';
-import { ConfigProvider } from 'antd';
 import React from 'react';
+
+// `usePrimaryColors` reads `theme.useToken()` from the theme-shim, not from
+// antd's `ConfigProvider` (to-astryx ticket 10 moved every `useToken` call
+// site across). This test used to drive it through `<ConfigProvider theme>`,
+// which stopped having any effect on the hook — the assertions were reading
+// the shim's fallback brand seeds and failing against antd's old defaults.
+// Seeds now go in through the shim's own provider, which is the supported way
+// a deployment overrides them (`resources/theme.json` → `ThemeShimProvider`).
 
 // Mock @ant-design/colors
 vi.mock('@ant-design/colors', () => ({
@@ -19,19 +27,21 @@ vi.mock('@ant-design/colors', () => ({
   ]),
 }));
 
+// Hoisted so the identity is stable across re-renders: `ThemeShimProvider`
+// keys its token build on `seeds`, and an inline literal would hand it a new
+// object every render — which is exactly what the memoization test below is
+// asserting does NOT happen.
+const SEEDS = {
+  colorPrimary: '#1890ff',
+  colorSuccess: '#52c41a',
+  colorInfo: '#1677ff',
+};
+
 describe('usePrimaryColors', () => {
   const wrapper = ({ children }: { children: React.ReactNode }) => (
-    <ConfigProvider
-      theme={{
-        token: {
-          colorPrimary: '#1890ff',
-          colorSuccess: '#52c41a',
-          colorInfo: '#1677ff',
-        },
-      }}
-    >
+    <ThemeShimProvider mode="light" seeds={SEEDS}>
       {children}
-    </ConfigProvider>
+    </ThemeShimProvider>
   );
 
   it('should return custom colors object', () => {
@@ -100,17 +110,16 @@ describe('usePrimaryColors', () => {
 
   it('should update colors when theme token changes', () => {
     const customWrapper1 = ({ children }: { children: React.ReactNode }) => (
-      <ConfigProvider
-        theme={{
-          token: {
-            colorPrimary: '#ff0000',
-            colorSuccess: '#00ff00',
-            colorInfo: '#0000ff',
-          },
+      <ThemeShimProvider
+        mode="light"
+        seeds={{
+          colorPrimary: '#ff0000',
+          colorSuccess: '#00ff00',
+          colorInfo: '#0000ff',
         }}
       >
         {children}
-      </ConfigProvider>
+      </ThemeShimProvider>
     );
 
     const { result: result1 } = renderHook(() => usePrimaryColors(), {
@@ -123,17 +132,16 @@ describe('usePrimaryColors', () => {
     expect(result1.current.primary1).toBe('#ff0000-1');
 
     const customWrapper2 = ({ children }: { children: React.ReactNode }) => (
-      <ConfigProvider
-        theme={{
-          token: {
-            colorPrimary: '#00ff00',
-            colorSuccess: '#ff0000',
-            colorInfo: '#ffff00',
-          },
+      <ThemeShimProvider
+        mode="light"
+        seeds={{
+          colorPrimary: '#00ff00',
+          colorSuccess: '#ff0000',
+          colorInfo: '#ffff00',
         }}
       >
         {children}
-      </ConfigProvider>
+      </ThemeShimProvider>
     );
 
     const { result: result2 } = renderHook(() => usePrimaryColors(), {

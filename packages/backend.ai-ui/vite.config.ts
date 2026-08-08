@@ -22,7 +22,13 @@ const peerDependencyPatterns = Object.keys(peerDependencies).map(
 
 export default defineConfig(({ mode }) => {
   const isDevMode = mode === 'development';
-  const localeFiles = glob.sync('src/locale/*.ts', { cwd: __dirname });
+  // Only the per-language entry modules (`en_US.ts`, `pt_BR.ts`, …) become
+  // `dist/locale/*` build entries — that directory IS the `./dist/locale/*`
+  // package export, so anything else living in `src/locale/` (e.g.
+  // `astryxOverrides.ts`, which is plumbing rather than a locale) must not be
+  // published under it. The `*_*` shape is the naming convention every locale
+  // entry follows; `index.ts` is skipped below as well.
+  const localeFiles = glob.sync('src/locale/*_*.ts', { cwd: __dirname });
   const entries: Record<string, string> = {
     'backend.ai-ui': resolve(__dirname, 'src/index.ts'),
   };

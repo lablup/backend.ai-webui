@@ -19,7 +19,13 @@ import tr from './tr.json';
 import vi from './vi.json';
 import zh_CN from './zh-CN.json';
 import zh_TW from './zh-TW.json';
-import { Locale } from 'antd/es/locale';
+// TYPE-ONLY on purpose. `BAILocale.antdLocale` is the payload BUI hands to
+// antd's `ConfigProvider` for consumers that still render the legacy antd
+// surface — antd is an OPTIONAL peer (ticket 30), so this barrel, which almost
+// every BUI module reaches transitively, must not emit a runtime import for
+// it. `import type` guarantees the elision; a value-position import of a
+// type-only binding does not (bundlers differ on when they may drop it).
+import type { Locale } from 'antd/es/locale';
 import { createInstance, type i18n as I18nInstance } from 'i18next';
 import { initReactI18next } from 'react-i18next';
 

@@ -6,6 +6,10 @@
    over Astryx component base styles. During antd coexistence, do NOT add any
    unlayered global reset (e.g. `antd/dist/reset.css`): unlayered globals
    beat every Astryx layer and visibly break its components. */
+/* KEEP IN SYNC with `packages/backend.ai-ui/src/styles/backend.ai-ui.css`,
+   which repeats this list because BUI's own sheet is often the first layered
+   CSS in the bundle (ticket 30). Identical statements are idempotent; a
+   divergent one silently hands the order to whichever loads first. */
 @layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
 
 @import '@astryxdesign/core/reset.css';
