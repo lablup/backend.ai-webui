@@ -2,8 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { theme } from '../theme-shim';
-import { generate } from '@ant-design/colors';
+import { generate, theme } from '../theme-shim';
 import { useMemo } from 'react';
 
 const usePrimaryColors = () => {

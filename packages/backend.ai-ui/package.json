@@ -59,13 +59,9 @@
     "react-relay": "catalog:",
     "react-router-dom": "catalog:",
     "relay-runtime": "catalog:",
-    "@ant-design/icons": "catalog:",
     "antd": "catalog:"
   },
   "peerDependenciesMeta": {
-    "@ant-design/icons": {
-      "optional": true
-    },
     "antd": {
       "optional": true
     }

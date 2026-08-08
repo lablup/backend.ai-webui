@@ -217,11 +217,39 @@ scan_build_dir() {
   return $violations
 }
 
+# Build-completeness assertion (ticket 35).
+#
+# `-d "$BUILD_DIR"` is not enough to trust a clean scan. `pnpm run build`
+# creates build/web and copies index.html/resources/manifest into it BEFORE it
+# compiles the app; if a later step fails (ticket 35 hit exactly this — a
+# missing `config.toml` aborted `copyconfig`), the directory exists and holds a
+# handful of static files, and this scan happily reports PASS over them. That
+# is the worst possible failure mode for a compliance gate: a green light that
+# means "nothing was scanned", indistinguishable from "nothing was found".
+#
+# The app bundle lands in build/web/assets/ as hashed .js/.css. Requiring a
+# plausible number of them turns the silent false-pass into a loud failure.
+MIN_ASSET_FILES=50
+
+count_build_assets() {
+  find "$1" \( -name '*.js' -o -name '*.css' -o -name '*.mjs' \) -type f 2>/dev/null | wc -l
+}
+
 if [ -d "$BUILD_DIR" ]; then
-  if scan_build_dir "$BUILD_DIR"; then
-    echo "--- [b] PASS (scanned $BUILD_DIR) ---"
+  ASSET_COUNT="$(count_build_assets "$BUILD_DIR")"
+  if [ "$ASSET_COUNT" -lt "$MIN_ASSET_FILES" ]; then
+    echo "  VIOLATION: $BUILD_DIR holds only $ASSET_COUNT js/css file(s)," \
+      "expected >= $MIN_ASSET_FILES."
+    echo "  The production build did not complete — scanning it proves nothing."
+    echo "  Re-run \`pnpm run build\` and check its exit code before trusting"
+    echo "  this step. (A missing root \`config.toml\` is a common cause: copy"
+    echo "  it from config.toml.sample.)"
+    echo "--- [b] FAIL (incomplete build, not scanned) ---"
+    FAIL=1
+  elif scan_build_dir "$BUILD_DIR"; then
+    echo "--- [b] PASS (scanned $BUILD_DIR, $ASSET_COUNT js/css file(s)) ---"
   else
-    echo "--- [b] FAIL (scanned $BUILD_DIR) ---"
+    echo "--- [b] FAIL (scanned $BUILD_DIR, $ASSET_COUNT js/css file(s)) ---"
     FAIL=1
   fi
 else

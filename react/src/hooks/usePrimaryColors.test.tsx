@@ -11,8 +11,16 @@ import React from 'react';
 // Seeds now go in through the shim's own provider, which is the supported way
 // a deployment overrides them (`resources/theme.json` → `ThemeShimProvider`).
 
-// Mock @ant-design/colors
-vi.mock('@ant-design/colors', () => ({
+// Mock the palette algorithm only. Ticket 35 repointed `usePrimaryColors`
+// from `@ant-design/colors` to the theme-shim's re-export of the vendored,
+// parity-tested port of that same algorithm (so react/ no longer carries
+// `@ant-design/colors` as a production dependency). The palette assertions
+// below deliberately test the WIRING — that palette[n] lands on primaryN —
+// not the algorithm's real output, so `generate` stays stubbed. Everything
+// else in the module must remain real: the test drives the hook through the
+// genuine `ThemeShimProvider`.
+vi.mock('../theme-shim', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../theme-shim')>()),
   generate: vi.fn((color: string) => [
     `${color}-1`,
     `${color}-2`,

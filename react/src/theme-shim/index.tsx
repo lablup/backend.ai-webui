@@ -26,4 +26,10 @@ export {
   useBAIActiveBreakpoint,
   type BAIBreakpointKey,
   type BAIScreenMap,
+  // Palette algorithm (ticket 35): the vendored, parity-tested port of
+  // `@ant-design/colors`. Re-exported here so the two app call sites that
+  // needed it stop pulling the real package into react/'s production deps.
+  generate,
+  presetPalettes,
+  type GenerateOptions,
 } from 'backend.ai-ui';

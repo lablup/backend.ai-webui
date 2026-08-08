@@ -275,6 +275,17 @@ export const theme = { useToken };
 // via the `backend.ai-ui` public entry — see antdParity.ts).
 export { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from './antdParity';
 
+// Palette algorithm (ticket 35). `vendor/antdColors.ts` was already a
+// bit-identical port of `@ant-design/colors` (parity-tested in
+// themeShim.test.ts) but was internal to the shim, so the two app call sites
+// that needed `generate()` / `presetPalettes` kept importing the real package
+// and held `@ant-design/colors` in react/'s PRODUCTION dependencies. Promoting
+// the vendored copy to the public surface lets those call sites drop the
+// package: the dependency is now dev-only (the parity test's reference
+// implementation), which is exactly where a vendored-port baseline belongs.
+export { generate, presetPalettes } from './vendor/antdColors';
+export type { GenerateOptions } from './vendor/antdColors';
+
 // Breakpoint system (ticket 08 gap component; policy in ticket 14): the JS
 // side of the responsive policy. `Grid.useBreakpoint()` call sites convert by
 // import swap to `useBAIBreakpoint`; `token.screen*`-as-px-constant sites

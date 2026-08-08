@@ -6,9 +6,6 @@ settings:
 
 catalogs:
   default:
-    '@ant-design/icons':
-      specifier: ^6.3.2
-      version: 6.3.2
     '@babel/core':
       specifier: ^7.29.7
       version: 7.29.7
@@ -478,9 +475,6 @@ importers:
 
   packages/backend.ai-ui:
     dependencies:
-      '@ant-design/icons':
-        specifier: 'catalog:'
-        version: 6.3.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@dnd-kit/core':
         specifier: ^6.3.1
         version: 6.3.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -737,15 +731,6 @@ importers:
       '@ai-sdk/react':
         specifier: ^2.0.212
         version: 2.0.212(react@19.2.7)(zod@4.4.3)
-      '@ant-design/colors':
-        specifier: ^7.2.1
-        version: 7.2.1
-      '@ant-design/cssinjs':
-        specifier: ^2.1.2
-        version: 2.1.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@ant-design/icons':
-        specifier: 'catalog:'
-        version: 6.3.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@ant-design/x':
         specifier: ^2.8.0
         version: 2.8.0(antd@6.5.0(date-fns@2.30.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -24720,8 +24705,6 @@ time:
   '@ai-sdk/openai-compatible@1.0.42': '2026-06-29T17:32:48.127Z'
   '@ai-sdk/react@2.0.212': '2026-07-02T18:36:44.578Z'
   '@ant-design/colors@7.2.1': '2025-05-20T16:22:31.031Z'
-  '@ant-design/cssinjs@2.1.2': '2026-03-04T16:00:57.870Z'
-  '@ant-design/icons@6.3.2': '2026-06-27T15:41:52.029Z'
   '@ant-design/x@2.8.0': '2026-06-08T11:40:23.178Z'
   '@astryxdesign/cli@0.3.0': '2026-08-05T18:45:06.633Z'
   '@astryxdesign/core@0.3.0': '2026-08-05T18:45:47.261Z'

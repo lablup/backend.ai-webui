@@ -13,9 +13,8 @@ import { UsageBucketChartContent_DomainFragment$key } from '../../__generated__/
 import { UsageBucketChartContent_ProjectFragment$key } from '../../__generated__/UsageBucketChartContent_ProjectFragment.graphql';
 import { UsageBucketChartContent_UserFragment$key } from '../../__generated__/UsageBucketChartContent_UserFragment.graphql';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
-import { theme } from '../../theme-shim';
+import { presetPalettes, theme } from '../../theme-shim';
 import './UsageBucketChartContent.css';
-import { presetPalettes } from '@ant-design/colors';
 import { Empty, Tabs, Typography } from 'antd';
 import {
   convertToBinaryUnit,

@@ -141,9 +141,9 @@ You can debug the app.
 Backend.AI Web UI is built with
 
 - `react` 19 as library for web UI
-- `webpack` (via Craco) as bundler
+- `vite` 6 as bundler and dev server
 - `relay` / GraphQL as data-fetching layer
-- `antd` 6 (Ant Design) as component library
+- `@astryxdesign/core` (Astryx) as component library, with StyleX `xstyle` for styling
 - `jotai` for global UI state management
 - `typescript` for type safety
 - `eslint` 9 (flat config) + `prettier` for code quality

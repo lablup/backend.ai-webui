@@ -37,7 +37,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Architecture
 
-This is a **React web application** using React 19 + Ant Design 6 + Relay 20 (GraphQL).
+This is a **React web application** using React 19 + Astryx (`@astryxdesign/core`) + Relay 20 (GraphQL).
+
+**Astryx is the component system.** New UI is written against Astryx directly (see the
+`ASTRYX` block below for the discover-don't-guess workflow). Ant Design is being removed
+on the `to-astryx` branch and survives only on the not-yet-migrated surface — treat every
+remaining `from 'antd'` import as migration debt, never as a pattern to copy. Current
+remainder and the plan to close it: `.scratch/astryx-migration/REMAINDER.md`.
 
 ### Key Technologies
 
@@ -45,7 +51,7 @@ This is a **React web application** using React 19 + Ant Design 6 + Relay 20 (Gr
 - **Component Library Build**: Vite (`packages/backend.ai-ui/`)
 - **Service Worker**: `vite-plugin-pwa` (Workbox under the hood), integrated into the Vite build
 - **Package Manager**: pnpm with workspace monorepo
-- **Styling**: Astryx (`@astryxdesign/core`) + StyleX `xstyle`; co-located `.css` files for rules props cannot express. Ant Design remains on the un-migrated surface; `antd-style` was removed in to-astryx ticket 33.
+- **Styling**: Astryx (`@astryxdesign/core`) + StyleX `xstyle`; co-located `.css` files for rules props cannot express. Ant Design remains on the un-migrated surface; `antd-style` was removed in to-astryx ticket 33, and `@ant-design/icons` / `@ant-design/cssinjs` / `@ant-design/colors` in ticket 35.
 - **State Management**: Jotai (global UI state), Relay (server/GraphQL state)
 - **GraphQL**: Relay compiler with projects for both `react/` and `packages/backend.ai-ui/`
 - **React Compiler**: babel-plugin-react-compiler in annotation mode (`'use memo'` directive)
@@ -136,13 +142,14 @@ Production build (`pnpm run build`) runs these steps sequentially:
 ### Key Libraries
 
 - **react** 19, **react-dom** 19 - UI framework
-- **antd** 6 - Ant Design component library
+- **@astryxdesign/core** 0.3 (+ `@astryxdesign/lab`, `@astryxdesign/theme-neutral`) - component system
+- **antd** 6 - legacy component library, migration debt only (see Architecture above)
 - **react-relay** 20, **relay-runtime** 20 - GraphQL client
 - **jotai** - Atomic state management
 - **i18next**, **react-i18next** - Internationalization
 - **vite** 6 + **@vitejs/plugin-react** - React app bundler and dev server
 - **vitest** 4 - Unit test runner (jsdom env)
-- **electron** 35 - Desktop app framework
+- **electron** 39 - Desktop app framework
 
 ### GraphQL/Relay Setup
 
@@ -180,7 +187,7 @@ Production build (`pnpm run build`) runs these steps sequentially:
 ### React Essentials (detail: `.github/instructions/react.instructions.md`, auto-loaded via applyTo)
 
 - Use `'use memo'` directive at the top of component bodies for React Compiler optimization. Never remove existing `'use memo'`.
-- Use `BAIButton` `action` prop for async operations (auto loading state). Prefer BAI components over Ant Design equivalents.
+- Use `BAIButton` `action` prop for async operations (auto loading state). Reach for Astryx first, then a `BAI*` wrapper when it adds real behaviour; never introduce a new Ant Design import.
 - Follow Relay fragment architecture: query orchestrator (useLazyLoadQuery) + fragment component (useFragment).
 - Fragment prop naming: `queryRef` for Query types, `{typeName}Frgmt` for others.
 - Use `useBAILogger` instead of `console.log`. Use pre-defined error boundaries (`BAIErrorBoundary`, `ErrorBoundaryWithNullFallback`).
