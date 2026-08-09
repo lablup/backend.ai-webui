@@ -5,11 +5,39 @@
  Co-located styles for <BAITableAstryx> (to-astryx ticket 30-D). Replaces
  `BAITable.css`, which is gone with the antd engine.
 
- Only ONE rule survives the engine swap: antd's `showHeader={false}`. Astryx's
- `Table` has no equivalent prop (its header owns the sort controls and the
- select-all checkbox), so the header row is collapsed in CSS instead. The
- selector targets the plain `thead` ELEMENT inside our own wrapper class — no
- design-system class names are reached into, so this survives an Astryx bump.
+ Two rules survive the engine swap.
+
+ 1. antd's `showHeader={false}`. Astryx's `Table` has no equivalent prop (its
+    header owns the sort controls and the select-all checkbox), so the header
+    row is collapsed in CSS instead. The selector targets the plain `thead`
+    ELEMENT inside our own wrapper class — no design-system class names are
+    reached into, so this survives an Astryx bump.
+
+ 2. The block-axis container-bleed reset (qa2-c). Astryx's `Table` bleeds out
+    to its container's padding edges so rows can run edge-to-edge inside a
+    `Card`. The INLINE bleed is unconditional and intended. The BLOCK bleed is
+    deliberately scoped by Astryx to `:first-child` / `:last-child`:
+
+      .xkibk3:first-child { margin-top:    calc(-1 * var(--container-padding-block-start,0px)) }
+      .xlayyun:last-child { margin-bottom: calc(-1 * var(--container-padding-block-end,0px)) }
+
+    so a table that really IS the card's only content sits flush against the
+    card's top/bottom edges, and a table with siblings does not.
+
+    `BAITableAstryx` wraps Astryx's `<Table>` in its own dim layer (the
+    loading-state opacity wrapper) and renders the pagination bar as a SIBLING
+    of that layer. That makes Astryx's scroll wrapper the ONLY child of the dim
+    layer, so it matches BOTH `:first-child` AND `:last-child` regardless of
+    where the table actually sits on the page — and pulls -24px at the top and
+    -24px at the bottom. Measured on every table page: the filter/action row
+    above the table and the pagination bar below it were overlapped by the
+    table body (e.g. Data page, filter row `y=245..277` vs table `y=265`).
+
+    Astryx's own escape hatch for a nested container is to zero the
+    `--container-padding-*` custom properties (that is exactly what `Section`'s
+    `nestedStyles.inner` does). Zero only the BLOCK axis here: the inline bleed
+    stays, so rows keep running edge-to-edge, while the vertical rhythm falls
+    back to the parent stack's gap — which is what the antd `BAITable` did.
 
  `@layer components` matches the layer contract declared in
  `src/styles/backend.ai-ui.css` (ticket 30).
@@ -17,5 +45,10 @@
 @layer components {
   .bai-table-astryx-no-header thead {
     display: none;
+  }
+
+  .bai-table-astryx-dim-layer {
+    --container-padding-block-start: 0px;
+    --container-padding-block-end: 0px;
   }
 }

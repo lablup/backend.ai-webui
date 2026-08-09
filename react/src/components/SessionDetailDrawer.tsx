@@ -6,13 +6,8 @@ import { SessionDetailDrawerFragment$key } from '../__generated__/SessionDetailD
 import { useSuspendedBackendaiClient } from '../hooks';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import SessionDetailContent from './SessionDetailContent';
+import BAIDrawer from './astryx-bui/BAIDrawerAstryx';
 import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
-// Ticket 17's FRONTIER note is now discharged: ticket 18 pinned
-// `@astryxdesign/lab@0.3.0-canary.12db2a1`, so the Astryx Drawer is available
-// and this drawer follows the `DeploymentRevisionDetailDrawer` precedent.
-import { Heading } from '@astryxdesign/core/Heading';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Drawer } from '@astryxdesign/lab';
 import { useFetchKey } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { Suspense, useMemo, useTransition } from 'react';
@@ -76,43 +71,36 @@ const SessionDetailDrawer: React.FC<SessionDetailDrawerProps> = ({
   }, []);
 
   return (
-    <Drawer
-      isOpen={open}
-      onClose={() => onClose?.()}
+    <BAIDrawer
+      open={open}
+      onClose={onClose}
       side="end"
       size={800}
-      label={t('session.SessionInfo')}
+      title={t('session.SessionInfo')}
+      extra={
+        <AutoUpdateFetchKeyButton
+          settingId="session-detail"
+          defaultAutoUpdateDelay={10_000}
+          loading={isPendingReload}
+          value={fetchKey}
+          onChange={(newFetchKey) => {
+            startReloadTransition(() => {
+              updateFetchKey(newFetchKey);
+            });
+          }}
+        />
+      }
     >
-      {/* lab Drawer renders content flush to the panel edges; reproduce the
-          antd Drawer's 24px body padding with the spacing-6 token. */}
-      <VStack gap={4} align="stretch" style={{ padding: 'var(--spacing-6)' }}>
-        {/* lab Drawer has no title bar, so antd's `title` + `extra` become
-            the first content row (ticket 18 precedent). */}
-        <HStack gap={2} align="center" justify="between">
-          <Heading level={5}>{t('session.SessionInfo')}</Heading>
-          <AutoUpdateFetchKeyButton
-            settingId="session-detail"
-            defaultAutoUpdateDelay={10_000}
-            loading={isPendingReload}
-            value={fetchKey}
-            onChange={(newFetchKey) => {
-              startReloadTransition(() => {
-                updateFetchKey(newFetchKey);
-              });
-            }}
+      <Suspense fallback={<BAISkeletonAstryx />}>
+        {sessionId && (
+          <SessionDetailContent
+            id={sessionId}
+            fetchKey={fetchKey}
+            sessionFrgmt={cachedSessionFrgmt}
           />
-        </HStack>
-        <Suspense fallback={<BAISkeletonAstryx />}>
-          {sessionId && (
-            <SessionDetailContent
-              id={sessionId}
-              fetchKey={fetchKey}
-              sessionFrgmt={cachedSessionFrgmt}
-            />
-          )}
-        </Suspense>
-      </VStack>
-    </Drawer>
+        )}
+      </Suspense>
+    </BAIDrawer>
   );
 };
 

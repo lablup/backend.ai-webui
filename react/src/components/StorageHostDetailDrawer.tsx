@@ -4,10 +4,8 @@
  */
 import { StorageHostDetailDrawerFragment$key } from '../__generated__/StorageHostDetailDrawerFragment.graphql';
 import StorageHostDetailDrawerContent from './StorageHostDetailDrawerContent';
+import BAIDrawer from './astryx-bui/BAIDrawerAstryx';
 import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
-import { Heading } from '@astryxdesign/core/Heading';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Drawer } from '@astryxdesign/lab';
 import { BAIFetchKeyButton } from 'backend.ai-ui';
 import { Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -59,34 +57,28 @@ const StorageHostDetailDrawer: React.FC<StorageHostDetailDrawerProps> = ({
   };
 
   return (
-    <Drawer
-      isOpen={open}
-      onClose={() => onRequestClose?.()}
+    <BAIDrawer
+      open={open}
+      onClose={onRequestClose}
       side="end"
       size={900}
-      label={t('storageHost.StorageHostInfo')}
+      title={t('storageHost.StorageHostInfo')}
+      extra={
+        <BAIFetchKeyButton
+          loading={isPendingRefetch}
+          value=""
+          onChange={refreshAll}
+        />
+      }
     >
-      {/* lab Drawer renders flush to the panel edges; reproduce the antd
-          Drawer's 24px body padding with the spacing-6 token (ticket 18
-          precedent). */}
-      <VStack gap={4} align="stretch" style={{ padding: 'var(--spacing-6)' }}>
-        <HStack gap={2} align="center" justify="between">
-          <Heading level={5}>{t('storageHost.StorageHostInfo')}</Heading>
-          <BAIFetchKeyButton
-            loading={isPendingRefetch}
-            value=""
-            onChange={refreshAll}
+      <Suspense fallback={<BAISkeletonAstryx />}>
+        {storageVolume?.storageVolumeFrgmt ? (
+          <StorageHostDetailDrawerContent
+            storageVolumeFrgmt={storageVolume.storageVolumeFrgmt}
           />
-        </HStack>
-        <Suspense fallback={<BAISkeletonAstryx />}>
-          {storageVolume?.storageVolumeFrgmt ? (
-            <StorageHostDetailDrawerContent
-              storageVolumeFrgmt={storageVolume.storageVolumeFrgmt}
-            />
-          ) : null}
-        </Suspense>
-      </VStack>
-    </Drawer>
+        ) : null}
+      </Suspense>
+    </BAIDrawer>
   );
 };
 

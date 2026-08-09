@@ -111,6 +111,7 @@ import type {
 } from '@astryxdesign/core/Table';
 import { Text } from '@astryxdesign/core/Text';
 import { useControllableValue } from 'ahooks';
+import classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { ChevronDown, ChevronRight, FileDown, Settings } from 'lucide-react';
 import React, { useMemo, useState, type ReactNode } from 'react';
@@ -993,10 +994,21 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
           existing rows) has no Astryx equivalent. Dimming preserves "old data
           stays readable while refetching"; the spinner is lost. The wrapper
           holds ONLY the table — Astryx's scroll wrapper claims the full block,
-          so a bottom bar inside it overlaps the last row. */}
+          so a bottom bar inside it overlaps the last row.
+
+          qa2-c: holding only the table also makes Astryx's scroll wrapper the
+          wrapper's ONLY child, which is why it needs the block-bleed reset
+          below — see BAITableAstryx.css. */}
       <div
         aria-busy={isDimmed || undefined}
-        className={showHeader ? undefined : 'bai-table-astryx-no-header'}
+        className={classNames(
+          // Cancels Astryx's BLOCK-axis container bleed. See
+          // BAITableAstryx.css for why this dim wrapper makes the bleed
+          // misfire; without it every table page overlaps its filter row and
+          // its pagination bar by 24px.
+          'bai-table-astryx-dim-layer',
+          !showHeader && 'bai-table-astryx-no-header',
+        )}
         style={
           isDimmed
             ? {
@@ -1036,7 +1048,11 @@ const BAITableAstryx = <RecordType extends AnyRecord = AnyRecord>({
           justify="end"
           align="center"
           gap={2}
-          style={{ marginTop: token.marginXS }}
+          // Legacy rhythm (qa2-c): the antd `BAITable` root was
+          // `<BAIFlex direction="column" gap="sm">` wrapping [table,
+          // pagination row], i.e. a 12px table->pagination gap. `marginXS`
+          // (8px) shrank it; `marginSM` restores the measured legacy value.
+          style={{ marginTop: token.marginSM }}
         >
           {isPagerVisible ? (
             <>

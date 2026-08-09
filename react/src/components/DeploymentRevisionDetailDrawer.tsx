@@ -4,10 +4,8 @@
  */
 import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
 import DeploymentRevisionDetail from './DeploymentRevisionDetail';
+import BAIDrawer from './astryx-bui/BAIDrawerAstryx';
 import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
-import { Heading } from '@astryxdesign/core/Heading';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Drawer } from '@astryxdesign/lab';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -43,33 +41,23 @@ const DeploymentRevisionDetailDrawer: React.FC<
   const heading = title ?? t('deployment.RevisionDetail');
 
   return (
-    <Drawer
-      isOpen={open}
-      onClose={() => onClose?.()}
+    <BAIDrawer
+      open={open}
+      onClose={onClose}
       side="end"
       size={736}
-      label={heading}
+      title={heading}
+      extra={extra}
     >
-      {/* lab Drawer renders its content flush to the panel edges; reproduce
-          the antd Drawer's 24px body padding with the spacing-6 token. */}
-      <VStack gap={4} align="stretch" style={{ padding: 'var(--spacing-6)' }}>
-        {/* lab Drawer has no title bar (only its built-in close button in the
-            top-trailing corner), so render the visible heading — and the
-            former antd `extra` actions — as the first content row. */}
-        <HStack gap={2} align="center" justify="between">
-          <Heading level={5}>{heading}</Heading>
-          {extra}
-        </HStack>
-        {revisionFrgmt ? (
-          <DeploymentRevisionDetail
-            revisionFrgmt={revisionFrgmt}
-            status={status}
-          />
-        ) : (
-          <BAISkeletonAstryx />
-        )}
-      </VStack>
-    </Drawer>
+      {revisionFrgmt ? (
+        <DeploymentRevisionDetail
+          revisionFrgmt={revisionFrgmt}
+          status={status}
+        />
+      ) : (
+        <BAISkeletonAstryx />
+      )}
+    </BAIDrawer>
   );
 };
 

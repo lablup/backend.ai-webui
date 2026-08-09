@@ -7,9 +7,9 @@ import { RoleDetailDrawerRefetchQuery } from '../__generated__/RoleDetailDrawerR
 import RoleDetailDrawerContent from './RoleDetailDrawerContent';
 import RoleFormModal from './RoleFormModal';
 import BAICopyableText from './astryx-bui/BAICopyableText';
+import BAIDrawer from './astryx-bui/BAIDrawerAstryx';
 import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import { IconButton } from '@astryxdesign/core/IconButton';
-import { Drawer } from '@astryxdesign/lab';
 import { BAIFetchKeyButton, BAIFlex, useFetchKey } from 'backend.ai-ui';
 import { SquarePenIcon } from 'lucide-react';
 import React, { Suspense, useState, useTransition } from 'react';
@@ -64,82 +64,72 @@ const RoleDetailDrawer: React.FC<RoleDetailDrawerProps> = ({
   );
 
   return (
-    <Drawer
-      isOpen={open}
-      onClose={() => onClose?.()}
+    <BAIDrawer
+      open={open}
+      onClose={onClose}
       side="end"
       // Slightly wider than antd's `size="large"` (736px): the Detailed
       // Permissions cards host a filter row, selection actions, and a
       // three-column table.
       size={800}
       label={t('rbac.RoleDetailInfo')}
+      // MAPPING §3.4: `Typography.Title copyable` -> BAICopyableText (the only
+      // home for `copyable`). The role name is a `large`/`semibold` Text rather
+      // than an `<h3>`: BAICopyableText wraps `Text`, and the drawer already
+      // announces itself through `label`, so no heading level is lost.
+      title={
+        <BAICopyableText
+          type="large"
+          weight="semibold"
+          copyLabel={t('button.Copy')}
+        >
+          {role?.name ?? t('rbac.RoleDetailInfo')}
+        </BAICopyableText>
+      }
+      extra={
+        <>
+          {role?.source === 'CUSTOM' && (
+            // MAPPING §3.3: an icon-only button with no children is an
+            // Astryx `IconButton`, whose `label` doubles as the tooltip —
+            // so the antd `Tooltip` wrapper disappears. The `colorInfo`
+            // tint is dropped (P5, closed variant enum).
+            <IconButton
+              variant="ghost"
+              icon={<SquarePenIcon aria-hidden />}
+              label={t('rbac.EditRole')}
+              tooltip={t('rbac.EditRole')}
+              onClick={() => setIsEditModalOpen(true)}
+            />
+          )}
+          <BAIFetchKeyButton
+            loading={isPendingReload}
+            value={fetchKey}
+            onChange={(newFetchKey) => {
+              if (!role) return;
+              startReloadTransition(() => {
+                updateFetchKey(newFetchKey);
+                refetch({}, { fetchPolicy: 'network-only' });
+              });
+            }}
+          />
+        </>
+      }
     >
-      {/* lab Drawer renders its content flush to the panel edges; reproduce
-          the antd Drawer's 24px body padding with the spacing-6 token. */}
-      <BAIFlex
-        direction="column"
-        gap="sm"
-        align="stretch"
-        style={{ padding: 'var(--spacing-6)' }}
-      >
-        {/* lab Drawer has no title bar (only its built-in close button), so
-            the antd `title` + `extra` row becomes the first content row. */}
-        <BAIFlex direction="row" justify="between" align="center" gap="sm">
-          {/* MAPPING §3.4: `Typography.Title copyable` -> BAICopyableText
-              (the only home for `copyable`). The role name is now a
-              `large`/`semibold` Text rather than an `<h3>`: BAICopyableText
-              wraps `Text`, and the drawer already announces itself through
-              the lab Drawer's `label`, so no heading level is lost. */}
-          <BAICopyableText
-            type="large"
-            weight="semibold"
-            copyLabel={t('button.Copy')}
-          >
-            {role?.name ?? t('rbac.RoleDetailInfo')}
-          </BAICopyableText>
-          <BAIFlex direction="row" gap="xs" align="center">
-            {role?.source === 'CUSTOM' && (
-              // MAPPING §3.3: an icon-only button with no children is an
-              // Astryx `IconButton`, whose `label` doubles as the tooltip —
-              // so the antd `Tooltip` wrapper disappears. The `colorInfo`
-              // tint is dropped (P5, closed variant enum).
-              <IconButton
-                variant="ghost"
-                icon={<SquarePenIcon aria-hidden />}
-                label={t('rbac.EditRole')}
-                tooltip={t('rbac.EditRole')}
-                onClick={() => setIsEditModalOpen(true)}
-              />
-            )}
-            <BAIFetchKeyButton
-              loading={isPendingReload}
-              value={fetchKey}
-              onChange={(newFetchKey) => {
-                if (!role) return;
-                startReloadTransition(() => {
-                  updateFetchKey(newFetchKey);
-                  refetch({}, { fetchPolicy: 'network-only' });
-                });
+      <Suspense fallback={<BAISkeletonAstryx />}>
+        {role && (
+          <BAIFlex direction="column" gap="sm" align="stretch">
+            <RoleDetailDrawerContent roleNodeFrgmt={role} />
+            <RoleFormModal
+              open={isEditModalOpen}
+              roleNodeFrgmt={role}
+              onRequestClose={() => {
+                setIsEditModalOpen(false);
               }}
             />
           </BAIFlex>
-        </BAIFlex>
-        <Suspense fallback={<BAISkeletonAstryx />}>
-          {role && (
-            <BAIFlex direction="column" gap="sm" align="stretch">
-              <RoleDetailDrawerContent roleNodeFrgmt={role} />
-              <RoleFormModal
-                open={isEditModalOpen}
-                roleNodeFrgmt={role}
-                onRequestClose={() => {
-                  setIsEditModalOpen(false);
-                }}
-              />
-            </BAIFlex>
-          )}
-        </Suspense>
-      </BAIFlex>
-    </Drawer>
+        )}
+      </Suspense>
+    </BAIDrawer>
   );
 };
 

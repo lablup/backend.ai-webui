@@ -8,6 +8,7 @@ import BAIGeneralNotificationItem from './BAIGeneralNotificationItem';
 import BAIMultiStepNotificationItem from './BAIMultiStepNotificationItem';
 import BAINodeNotificationItem from './BAINodeNotificationItem';
 import './WEBUINotificationDrawer.css';
+import BAIDrawer from './astryx-bui/BAIDrawerAstryx';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
 import {
   SegmentedControl,
@@ -15,8 +16,6 @@ import {
 } from '@astryxdesign/core/SegmentedControl';
 import { VStack } from '@astryxdesign/core/Stack';
 import { StatusDot } from '@astryxdesign/core/StatusDot';
-import { Heading } from '@astryxdesign/core/Text';
-import { Drawer } from '@astryxdesign/lab';
 import { BAIFlex } from 'backend.ai-ui';
 import { EllipsisVertical } from 'lucide-react';
 import React, { useMemo, useState } from 'react';
@@ -63,62 +62,51 @@ const WEBUINotificationDrawer: React.FC<Props> = ({
     // antd `mask={false}` -> lab `hasScrim={false}`: this drawer is a
     // non-modal inspector — the page behind it stays interactive, which is
     // what `BAIContentWithDrawerArea`'s margin-style layout depends on.
-    <Drawer
-      isOpen={open}
-      onClose={() => onClose?.()}
+    <BAIDrawer
+      open={open}
+      onClose={onClose}
       side="end"
       size={DRAWER_WIDTH}
       hasScrim={false}
-      hasCloseButton
-      label={t('notification.Notifications')}
+      title={t('notification.Notifications')}
+      // antd's `styles.body` was `padding: 0` plus
+      // `paddingContentHorizontalSM` (16px) on the inline axis — restored on
+      // `.webui-notification-drawer-body` instead of the shared 24px budget.
+      hasBodyPadding={false}
+      bodyClassName="webui-notification-drawer-body"
+      // Electron: the frameless window's drag handle is the drawer header.
+      headerClassName="webui-notification-drawer-header"
+      // MAPPING §3.7: `Dropdown menu={{items}}` + an icon-only trigger ->
+      // `DropdownMenu` with its `button` slot. antd's per-item `danger` red
+      // tint is dropped (ticket 18 decision 2 — the item variant enum is
+      // closed).
+      //
+      // qa2-c: this used to sit in a hand-rolled first content row, which had
+      // to reserve 32px on the inline end so lab `Drawer`'s FLOATING close
+      // button (absolutely positioned, top-trailing) did not swallow the More
+      // button's hit box. `BAIDrawerAstryx` turns that floating button off and
+      // renders the close affordance inside the header at antd's `start`
+      // placement, so the reserve — and the overlap — are gone.
+      extra={
+        <DropdownMenu
+          button={{
+            label: t('button.More'),
+            icon: <EllipsisVertical size="1em" />,
+            isIconOnly: true,
+            variant: 'ghost',
+            isDisabled: notifications.length === 0,
+          }}
+          hasChevron={false}
+          items={[
+            {
+              label: t('notification.ClearNotifications'),
+              onClick: clearAllNotifications,
+            },
+          ]}
+        />
+      }
     >
-      <VStack
-        gap={2}
-        align="stretch"
-        className="webui-notification-drawer-body"
-      >
-        {/* lab Drawer has no title bar, so antd's `title` + `extra` become
-            the first content row (ticket 18 precedent). The row keeps the
-            Electron `-webkit-app-region: drag` affordance the antd header
-            had — see WEBUINotificationDrawer.css. */}
-        <BAIFlex
-          justify="between"
-          align="center"
-          gap="xs"
-          className="webui-notification-drawer-header"
-          // MEASURED (`.scratch/astryx-migration/p3-w2c-measure-drawer.mjs`,
-          // 280px drawer against the viewport's right edge): the lab Drawer's
-          // built-in Close button sits at x 1760..1792 / y 8..40 and paints
-          // ABOVE the drawer content, while this row's "More" menu landed at
-          // x 1752..1784 / y 16..48 — a 24x24 overlap that swallowed part of
-          // the More button's hit box. Reserving 32px on the inline end (on
-          // top of the body's own 16px) leaves an 8px gap between them.
-          // Inline rather than in the co-located CSS because `BAIFlex` sets
-          // `padding: 0` as an inline style, which no stylesheet can outrank.
-          style={{ paddingInlineEnd: 'var(--spacing-8)' }}
-        >
-          <Heading level={5}>{t('notification.Notifications')}</Heading>
-          {/* MAPPING §3.7: `Dropdown menu={{items}}` + an icon-only trigger
-              -> `DropdownMenu` with its `button` slot. antd's per-item
-              `danger` red tint is dropped (ticket 18 decision 2 — the item
-              variant enum is closed). */}
-          <DropdownMenu
-            button={{
-              label: t('button.More'),
-              icon: <EllipsisVertical size="1em" />,
-              isIconOnly: true,
-              variant: 'ghost',
-              isDisabled: notifications.length === 0,
-            }}
-            hasChevron={false}
-            items={[
-              {
-                label: t('notification.ClearNotifications'),
-                onClick: clearAllNotifications,
-              },
-            ]}
-          />
-        </BAIFlex>
+      <VStack gap={2} align="stretch">
         {/* PILOT-DECISION: antd `List` (`dataSource` + `renderItem` + `header`)
             becomes a plain `VStack` map. Astryx `List`/`ListItem` is a
             `<ul>`-shaped component for label/description rows; the three
@@ -183,7 +171,7 @@ const WEBUINotificationDrawer: React.FC<Props> = ({
           )}
         </VStack>
       </VStack>
-    </Drawer>
+    </BAIDrawer>
   );
 };
 

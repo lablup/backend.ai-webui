@@ -11,6 +11,7 @@ import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ModelBrandIcon from './ModelBrandIcon';
 import ModelCardDeployModal from './ModelCardDeployModal';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
+import BAIDrawer from './astryx-bui/BAIDrawerAstryx';
 import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
@@ -21,7 +22,6 @@ import {
 } from '@astryxdesign/core/MetadataList';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Heading, Text } from '@astryxdesign/core/Text';
-import { Drawer } from '@astryxdesign/lab';
 import { useToggle } from 'ahooks';
 import {
   BAIFlex,
@@ -135,8 +135,8 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
 
   return (
     <>
-      <Drawer
-        isOpen={!!open}
+      <BAIDrawer
+        open={!!open}
         side="end"
         size={800}
         label={heading || t('modelStore.ModelDetails')}
@@ -145,38 +145,36 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
           closeCreateDeployment();
           onClose?.();
         }}
-      >
-        {/* lab Drawer has no title bar (only its built-in close button); the
-            heading + `extra` Deploy button (former antd `title`/`extra`) are
-            rendered as the first content row (ticket-18 idiom). */}
-        <VStack gap={4} align="stretch" style={{ padding: 'var(--spacing-6)' }}>
-          <HStack justify="between" align="center" gap={2} wrap="wrap">
-            <HStack gap={2} align="center" style={{ flex: 1, minWidth: 0 }}>
-              <ModelBrandIcon modelName={modelCard?.name ?? ''} />
-              <Heading
-                level={4}
-                style={{
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {heading}
-              </Heading>
-            </HStack>
-            <Button
-              variant="primary"
-              label={t('modelStore.Deploy')}
-              isDisabled={!modelCard?.id}
-              // `clickAction` (not `onClick`) so the state update that mounts
-              // `<ModelCardDeployModal>` (which suspends while its Relay
-              // query loads) runs inside a transition — the drawer stays
-              // interactive instead of falling into Suspense fallback.
-              clickAction={async () => {
-                setDeployModalOpen(true);
+        title={
+          <HStack gap={2} align="center" wrap="nowrap">
+            <ModelBrandIcon modelName={modelCard?.name ?? ''} />
+            <span
+              style={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
               }}
-            />
+            >
+              {heading}
+            </span>
           </HStack>
+        }
+        extra={
+          <Button
+            variant="primary"
+            label={t('modelStore.Deploy')}
+            isDisabled={!modelCard?.id}
+            // `clickAction` (not `onClick`) so the state update that mounts
+            // `<ModelCardDeployModal>` (which suspends while its Relay
+            // query loads) runs inside a transition — the drawer stays
+            // interactive instead of falling into Suspense fallback.
+            clickAction={async () => {
+              setDeployModalOpen(true);
+            }}
+          />
+        }
+      >
+        <VStack gap={4} align="stretch">
           {isLoadingCard ? (
             <BAISkeletonAstryx rows={6} />
           ) : (
@@ -333,7 +331,7 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
             )
           )}
         </VStack>
-      </Drawer>
+      </BAIDrawer>
       {/* Local Suspense around the lazily-mounted modal so its initial
           Relay/`useProjectResourceGroups` suspend doesn't bubble up to the
           drawer-level Suspense fallback. The mount is triggered from a
