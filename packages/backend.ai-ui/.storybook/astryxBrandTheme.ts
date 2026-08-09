@@ -83,6 +83,38 @@ export const astryxBrandTheme = defineTheme({
     '--font-family-body': fontFamily,
     '--font-family-heading': fontFamily,
     ...ANTD_ALIGN_TOKENS,
+    // KEEP IN SYNC with `ANTD_NEUTRAL_TEXT` in
+    // `react/src/astryx-theme/backendAiTheme.ts` (audit 1, catalog G-1).
+    // The surface/border families are NOT mirrored here (Storybook renders on
+    // its own canvas, where the accent-derived neutrals never bothered
+    // anyone), but the TEXT ramp is: a story that reads as brown-on-white in
+    // Storybook and neutral in the app is exactly the divergence this mirror
+    // exists to prevent, and it is what reviewers screenshot.
+    '--color-text-primary': ['#141414', '#FFFFFF'] as [string, string],
+    '--color-text-secondary': ['rgba(0,0,0,0.65)', 'rgba(255,255,255,0.65)'] as [
+      string,
+      string,
+    ],
+    '--color-text-disabled': ['rgba(0,0,0,0.25)', 'rgba(255,255,255,0.25)'] as [
+      string,
+      string,
+    ],
+    '--color-icon-primary': ['#141414', '#FFFFFF'] as [string, string],
+    '--color-icon-secondary': ['rgba(0,0,0,0.45)', 'rgba(255,255,255,0.45)'] as [
+      string,
+      string,
+    ],
+    '--color-icon-disabled': ['rgba(0,0,0,0.25)', 'rgba(255,255,255,0.25)'] as [
+      string,
+      string,
+    ],
+    // KEEP IN SYNC with the interaction fills in `ANTD_NEUTRAL_SURFACES`
+    // (catalog G-4) — without them dark-mode stories have no hover state.
+    '--color-overlay-hover': ['rgba(0,0,0,0.06)', '#262626'] as [string, string],
+    '--color-overlay-pressed': [
+      'rgba(0,0,0,0.15)',
+      'rgba(255,255,255,0.18)',
+    ] as [string, string],
   },
   // KEEP IN SYNC with `STATUS_TEXT_COLORS` in
   // `react/src/astryx-theme/backendAiTheme.ts` (to-astryx phase 3, ticket A).
@@ -101,6 +133,14 @@ export const astryxBrandTheme = defineTheme({
       'color:danger': { color: 'var(--color-error)' },
       'color:warning': { color: 'var(--color-warning)' },
       'color:success': { color: 'var(--color-success)' },
+    },
+    // KEEP IN SYNC with `ANTD_DIALOG_SURFACE` in
+    // `react/src/astryx-theme/backendAiTheme.ts` (audit 1, catalog O-1/O-10).
+    dialog: {
+      base: {
+        padding: '16px 24px',
+        backgroundColor: 'var(--color-background-popover)',
+      },
     },
   },
 });

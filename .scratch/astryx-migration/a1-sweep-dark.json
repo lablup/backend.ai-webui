@@ -1,0 +1,1208 @@
+{
+ "p-start": {
+  "path": "project/a%ED%95%9C%EA%B5%AD%EC%96%B4%EA%B0%80%EB%8A%A5_cde/start",
+  "headings": [
+   {
+    "lvl": "5",
+    "text": "Notifications",
+    "size": "16px",
+    "lh": "26.6672px",
+    "w": 0,
+    "h": 0,
+    "overflowX": 0
+   }
+  ],
+  "smalls": [
+   {
+    "cls": "astryx-button secondary",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-text-input sm",
+    "h": 0,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 0,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   }
+  ],
+  "clipped": [
+   {
+    "tag": "LABEL",
+    "text": "Select Project",
+    "over": 11
+   }
+  ],
+  "textLen": 1037,
+  "errs": []
+ },
+ "p-dashboard": {
+  "path": "project/a%ED%95%9C%EA%B5%AD%EC%96%B4%EA%B0%80%EB%8A%A5_cde/dashboard",
+  "headings": [
+   {
+    "lvl": "5",
+    "text": "Notifications",
+    "size": "16px",
+    "lh": "26.6672px",
+    "w": 0,
+    "h": 0,
+    "overflowX": 0
+   },
+   {
+    "lvl": "3",
+    "text": "Active Sessions",
+    "size": "24px",
+    "lh": "33.8832px",
+    "w": 180,
+    "h": 34,
+    "overflowX": 0
+   },
+   {
+    "lvl": "3",
+    "text": "My Total Resource Usage",
+    "size": "24px",
+    "lh": "33.8832px",
+    "w": 288,
+    "h": 34,
+    "overflowX": 0
+   },
+   {
+    "lvl": "3",
+    "text": "My Resources in",
+    "size": "24px",
+    "lh": "33.8832px",
+    "w": 185,
+    "h": 34,
+    "overflowX": 0
+   },
+   {
+    "lvl": "3",
+    "text": "Folder Status",
+    "size": "24px",
+    "lh": "33.8832px",
+    "w": 157,
+    "h": 34,
+    "overflowX": 0
+   },
+   {
+    "lvl": "3",
+    "text": "Quota per storage volume",
+    "size": "24px",
+    "lh": "33.8832px",
+    "w": 303,
+    "h": 34,
+    "overflowX": 0
+   },
+   {
+    "lvl": "3",
+    "text": "Total Resources in",
+    "size": "24px",
+    "lh": "33.8832px",
+    "w": 210,
+    "h": 34,
+    "overflowX": 0
+   },
+   {
+    "lvl": "3",
+    "text": "Agent Statistics",
+    "size": "24px",
+    "lh": "33.8832px",
+    "w": 186,
+    "h": 34,
+    "overflowX": 0
+   },
+   {
+    "lvl": "3",
+    "text": "Active Agents",
+    "size": "24px",
+    "lh": "33.8832px",
+    "w": 162,
+    "h": 34,
+    "overflowX": 0
+   },
+   {
+    "lvl": "3",
+    "text": "Recently Created Sessions",
+    "size": "24px",
+    "lh": "33.8832px",
+    "w": 305,
+    "h": 34,
+    "overflowX": 0
+   }
+  ],
+  "smalls": [
+   {
+    "cls": "astryx-button secondary",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-text-input sm",
+    "h": 0,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 0,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-selector input",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-text-input sm",
+    "h": 0,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-selector input",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-text-input sm",
+    "h": 0,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   }
+  ],
+  "clipped": [
+   {
+    "tag": "LABEL",
+    "text": "Select Project",
+    "over": 11
+   }
+  ],
+  "textLen": 1351,
+  "errs": []
+ },
+ "p-data": {
+  "path": "project/a%ED%95%9C%EA%B5%AD%EC%96%B4%EA%B0%80%EB%8A%A5_cde/data",
+  "headings": [
+   {
+    "lvl": "5",
+    "text": "Notifications",
+    "size": "16px",
+    "lh": "26.6672px",
+    "w": 0,
+    "h": 0,
+    "overflowX": 0
+   },
+   {
+    "lvl": "3",
+    "text": "Folders",
+    "size": "24px",
+    "lh": "33.8832px",
+    "w": 88,
+    "h": 34,
+    "overflowX": 0
+   }
+  ],
+  "smalls": [
+   {
+    "cls": "astryx-button secondary",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-text-input sm",
+    "h": 0,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 0,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   }
+  ],
+  "clipped": [
+   {
+    "tag": "LABEL",
+    "text": "Search",
+    "over": 11
+   },
+   {
+    "tag": "SPAN",
+    "text": "Loading",
+    "over": 21
+   },
+   {
+    "tag": "LABEL",
+    "text": "Select all rows",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "Select VmlydHVhbEZvbGRlc",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "Select VmlydHVhbEZvbGRlc",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "Select VmlydHVhbEZvbGRlc",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "Select VmlydHVhbEZvbGRlc",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "Select VmlydHVhbEZvbGRlc",
+    "over": 11
+   }
+  ],
+  "textLen": 1581,
+  "errs": []
+ },
+ "p-session": {
+  "path": "project/a%ED%95%9C%EA%B5%AD%EC%96%B4%EA%B0%80%EB%8A%A5_cde/session",
+  "headings": [
+   {
+    "lvl": "5",
+    "text": "Notifications",
+    "size": "16px",
+    "lh": "26.6672px",
+    "w": 0,
+    "h": 0,
+    "overflowX": 0
+   },
+   {
+    "lvl": "3",
+    "text": "My Total Resource Usage",
+    "size": "24px",
+    "lh": "33.8832px",
+    "w": 288,
+    "h": 34,
+    "overflowX": 0
+   },
+   {
+    "lvl": "3",
+    "text": "Sessions",
+    "size": "24px",
+    "lh": "33.8832px",
+    "w": 100,
+    "h": 34,
+    "overflowX": 0
+   }
+  ],
+  "smalls": [
+   {
+    "cls": "astryx-button secondary",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-text-input sm",
+    "h": 0,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 0,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   }
+  ],
+  "clipped": [
+   {
+    "tag": "LABEL",
+    "text": "Select Project",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "Search filters",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "Select all rows",
+    "over": 11
+   }
+  ],
+  "textLen": 624,
+  "errs": []
+ },
+ "p-deployments": {
+  "path": "project/a%ED%95%9C%EA%B5%AD%EC%96%B4%EA%B0%80%EB%8A%A5_cde/deployments",
+  "headings": [
+   {
+    "lvl": "5",
+    "text": "Notifications",
+    "size": "16px",
+    "lh": "26.6672px",
+    "w": 0,
+    "h": 0,
+    "overflowX": 0
+   },
+   {
+    "lvl": "3",
+    "text": "Deployments",
+    "size": "24px",
+    "lh": "33.8832px",
+    "w": 155,
+    "h": 34,
+    "overflowX": 0
+   }
+  ],
+  "smalls": [
+   {
+    "cls": "astryx-button secondary",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-text-input sm",
+    "h": 0,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 0,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   }
+  ],
+  "clipped": [
+   {
+    "tag": "LABEL",
+    "text": "Select Project",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "Search filters",
+    "over": 11
+   }
+  ],
+  "textLen": 442,
+  "errs": []
+ },
+ "a-users": {
+  "path": "admin/users",
+  "headings": [
+   {
+    "lvl": "5",
+    "text": "Notifications",
+    "size": "16px",
+    "lh": "26.6672px",
+    "w": 0,
+    "h": 0,
+    "overflowX": 0
+   }
+  ],
+  "smalls": [
+   {
+    "cls": "astryx-button secondary",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-text-input sm",
+    "h": 0,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 0,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   }
+  ],
+  "clipped": [
+   {
+    "tag": "LABEL",
+    "text": "Select Project",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "Search filters",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "Select all rows",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "Select VXNlclYyOjQ2M2RhN",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "Select VXNlclYyOmZlYWZjO",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "Select VXNlclYyOjcyZTU4M",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "Select VXNlclYyOjBmOWU2Z",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "Select VXNlclYyOmVjMmZkY",
+    "over": 11
+   }
+  ],
+  "textLen": 3721,
+  "errs": []
+ },
+ "a-settings": {
+  "path": "admin/settings",
+  "headings": [
+   {
+    "lvl": "5",
+    "text": "Notifications",
+    "size": "16px",
+    "lh": "26.6672px",
+    "w": 0,
+    "h": 0,
+    "overflowX": 0
+   },
+   {
+    "lvl": "5",
+    "text": "General",
+    "size": "16px",
+    "lh": "26.6672px",
+    "w": 59,
+    "h": 27,
+    "overflowX": 0
+   },
+   {
+    "lvl": "5",
+    "text": "Plugins",
+    "size": "16px",
+    "lh": "26.6672px",
+    "w": 56,
+    "h": 27,
+    "overflowX": 0
+   },
+   {
+    "lvl": "5",
+    "text": "Enterprise Features",
+    "size": "16px",
+    "lh": "26.6672px",
+    "w": 152,
+    "h": 27,
+    "overflowX": 0
+   }
+  ],
+  "smalls": [
+   {
+    "cls": "astryx-button secondary",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-text-input sm",
+    "h": 0,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 0,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   }
+  ],
+  "clipped": [
+   {
+    "tag": "LABEL",
+    "text": "Select Project",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "Search",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "Image auto install / upd",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "Open Source CUDA GPU sup",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "ROCm GPU support",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "Fractional GPU",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "TPU",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "IPU",
+    "over": 11
+   }
+  ],
+  "textLen": 2236,
+  "errs": []
+ },
+ "a-information": {
+  "path": "admin/information",
+  "headings": [
+   {
+    "lvl": "5",
+    "text": "Notifications",
+    "size": "16px",
+    "lh": "26.6672px",
+    "w": 0,
+    "h": 0,
+    "overflowX": 0
+   }
+  ],
+  "smalls": [
+   {
+    "cls": "astryx-button secondary",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-text-input sm",
+    "h": 0,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 0,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   }
+  ],
+  "clipped": [
+   {
+    "tag": "LABEL",
+    "text": "Select Project",
+    "over": 11
+   }
+  ],
+  "textLen": 728,
+  "errs": []
+ },
+ "a-environment": {
+  "path": "admin/environment",
+  "headings": [
+   {
+    "lvl": "5",
+    "text": "Notifications",
+    "size": "16px",
+    "lh": "26.6672px",
+    "w": 0,
+    "h": 0,
+    "overflowX": 0
+   }
+  ],
+  "smalls": [
+   {
+    "cls": "astryx-button secondary",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-text-input sm",
+    "h": 0,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 0,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   }
+  ],
+  "clipped": [
+   {
+    "tag": "LABEL",
+    "text": "Select Project",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "Search filters",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "Select all rows",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "Select SW1hZ2VOb2RlOjAwM",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "Select SW1hZ2VOb2RlOjAyM",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "Select SW1hZ2VOb2RlOjAzN",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "Select SW1hZ2VOb2RlOjA0O",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "Select SW1hZ2VOb2RlOjA1Y",
+    "over": 11
+   }
+  ],
+  "textLen": 5900,
+  "errs": []
+ },
+ "a-resources": {
+  "path": "admin/agent",
+  "headings": [
+   {
+    "lvl": "5",
+    "text": "Notifications",
+    "size": "16px",
+    "lh": "26.6672px",
+    "w": 0,
+    "h": 0,
+    "overflowX": 0
+   }
+  ],
+  "smalls": [
+   {
+    "cls": "astryx-button secondary",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-text-input sm",
+    "h": 0,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 0,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-selector input",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 1,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 1,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   }
+  ],
+  "clipped": [
+   {
+    "tag": "LABEL",
+    "text": "Select Project",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "Search filters",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "Items per page",
+    "over": 11
+   }
+  ],
+  "textLen": 821,
+  "errs": []
+ },
+ "m-usersettings": {
+  "path": "usersettings",
+  "headings": [
+   {
+    "lvl": "5",
+    "text": "Notifications",
+    "size": "16px",
+    "lh": "26.6672px",
+    "w": 0,
+    "h": 0,
+    "overflowX": 0
+   },
+   {
+    "lvl": "5",
+    "text": "Preferences",
+    "size": "16px",
+    "lh": "26.6672px",
+    "w": 92,
+    "h": 27,
+    "overflowX": 0
+   },
+   {
+    "lvl": "5",
+    "text": "Shell Environments",
+    "size": "16px",
+    "lh": "26.6672px",
+    "w": 147,
+    "h": 27,
+    "overflowX": 0
+   },
+   {
+    "lvl": "5",
+    "text": "Experimental features",
+    "size": "16px",
+    "lh": "26.6672px",
+    "w": 172,
+    "h": 27,
+    "overflowX": 0
+   }
+  ],
+  "smalls": [
+   {
+    "cls": "astryx-button secondary",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-text-input sm",
+    "h": 0,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 0,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-text-input sm",
+    "h": 0,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   },
+   {
+    "cls": "astryx-button ghost",
+    "h": 24,
+    "fontSize": "14px",
+    "clipY": 0,
+    "clipX": 0
+   }
+  ],
+  "clipped": [
+   {
+    "tag": "LABEL",
+    "text": "Select Project",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "Search",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "Theme Mode",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "Enables Desktop Notifica",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "Set Compact Sidebar as D",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "Language",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "Automatic Update Check",
+    "over": 11
+   },
+   {
+    "tag": "LABEL",
+    "text": "Auto Logout",
+    "over": 11
+   }
+  ],
+  "textLen": 2115,
+  "errs": []
+ }
+}

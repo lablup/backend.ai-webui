@@ -35,8 +35,17 @@
  title/description natively, so the hack is dropped; a description-only call
  site (`<BAIAlert description={…} />`, no title) promotes its description into
  the required `title` slot rather than rendering an empty header.
+
+ The one exception to "Banner keeps its DEFAULT Astryx style" is the single
+ rule in `BAIAlert.css`, which RESTORES that default: Banner centres its
+ header slots whenever a banner has actions and no description, on the
+ assumption that such a banner is one line tall — and the promotion above
+ makes that predicate fire on exactly the call sites whose copy is longest.
+ See the file for the measurement and the reasoning.
 */
+import './BAIAlert.css';
 import { Banner } from '@astryxdesign/core/Banner';
+import classNames from 'classnames';
 import React from 'react';
 import type { ReactNode } from 'react';
 
@@ -75,6 +84,7 @@ const BAIAlert: React.FC<BAIAlertProps> = ({
   banner,
   action,
   ghostInfoBg: _ghostInfoBg,
+  className,
   children,
   ...restProps
 }) => {
@@ -84,6 +94,9 @@ const BAIAlert: React.FC<BAIAlertProps> = ({
   return (
     <Banner
       {...restProps}
+      // The hook `BAIAlert.css` needs; every call site's own className still
+      // rides along.
+      className={classNames('bai-alert', className)}
       status={type}
       title={hasTitle ? resolvedTitle : description}
       description={hasTitle ? description : undefined}

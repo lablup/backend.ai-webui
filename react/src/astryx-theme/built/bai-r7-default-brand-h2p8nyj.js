@@ -7,14 +7,14 @@
  */
 
 /**
- * bai-r6-default-brand-h1gij33a theme — built by `pnpm exec astryx theme build`
+ * bai-r7-default-brand-h2p8nyj theme — built by `pnpm exec astryx theme build`
  * Import the CSS file alongside this module:
  *
- *   import { baiR6DefaultBrandH1gij33aTheme } from './bai-r6-default-brand-h1gij33a';
- *   import './bai-r6-default-brand-h1gij33a.css';
+ *   import { baiR7DefaultBrandH2p8nyjTheme } from './bai-r7-default-brand-h2p8nyj';
+ *   import './bai-r7-default-brand-h2p8nyj.css';
  */
-export const baiR6DefaultBrandH1gij33aTheme = {
-  name: 'bai-r6-default-brand-h1gij33a',
+export const baiR7DefaultBrandH2p8nyjTheme = {
+  name: 'bai-r7-default-brand-h2p8nyj',
   __built: true,
   tokens: {
     "--font-size-4xs": "0.375rem",
@@ -26,22 +26,22 @@ export const baiR6DefaultBrandH1gij33aTheme = {
     "--font-size-lg": "16px",
     "--font-size-xl": "1.25rem",
     "--font-size-2xl": "1.5rem",
-    "--font-size-3xl": "1.8125rem",
+    "--font-size-3xl": "30px",
     "--font-size-4xl": "38px",
     "--font-size-5xl": "2.625rem",
-    "--text-heading-1-size": "var(--font-size-2xl)",
+    "--text-heading-1-size": "var(--font-size-4xl)",
     "--text-heading-1-weight": "var(--font-weight-semibold)",
     "--text-heading-1-leading": "1.3333",
-    "--text-heading-2-size": "var(--font-size-xl)",
+    "--text-heading-2-size": "var(--font-size-3xl)",
     "--text-heading-2-weight": "var(--font-weight-semibold)",
     "--text-heading-2-leading": "1.4",
-    "--text-heading-3-size": "var(--font-size-lg)",
+    "--text-heading-3-size": "var(--font-size-2xl)",
     "--text-heading-3-weight": "var(--font-weight-bold)",
     "--text-heading-3-leading": "1.4118",
-    "--text-heading-4-size": "var(--font-size-base)",
+    "--text-heading-4-size": "var(--font-size-xl)",
     "--text-heading-4-weight": "var(--font-weight-bold)",
     "--text-heading-4-leading": "1.4286",
-    "--text-heading-5-size": "var(--font-size-sm)",
+    "--text-heading-5-size": "var(--font-size-lg)",
     "--text-heading-5-weight": "var(--font-weight-semibold)",
     "--text-heading-5-leading": "1.6667",
     "--text-heading-6-size": "var(--font-size-xs)",
@@ -49,16 +49,16 @@ export const baiR6DefaultBrandH1gij33aTheme = {
     "--text-heading-6-leading": "1.6",
     "--text-body-size": "var(--font-size-base)",
     "--text-body-weight": "var(--font-weight-normal)",
-    "--text-body-leading": "1.4286",
+    "--text-body-leading": "1.5714",
     "--text-large-size": "var(--font-size-lg)",
     "--text-large-weight": "var(--font-weight-semibold)",
     "--text-large-leading": "1.4118",
     "--text-label-size": "var(--font-size-base)",
     "--text-label-weight": "var(--font-weight-medium)",
-    "--text-label-leading": "1.4286",
+    "--text-label-leading": "1.5714",
     "--text-code-size": "var(--font-size-base)",
     "--text-code-weight": "var(--font-weight-normal)",
-    "--text-code-leading": "1.4286",
+    "--text-code-leading": "1.5714",
     "--text-supporting-size": "var(--font-size-sm)",
     "--text-supporting-weight": "var(--font-weight-normal)",
     "--text-supporting-leading": "1.6667",
@@ -106,11 +106,11 @@ export const baiR6DefaultBrandH1gij33aTheme = {
     "--color-accent-muted": "light-dark(color-mix(in srgb, var(--color-accent) 20%, transparent), color-mix(in srgb, var(--color-accent) 25%, transparent))",
     "--color-neutral": "light-dark(rgba(0,0,0,0.06), #262626)",
     "--color-overlay": "light-dark(rgba(0,0,0,0.45), rgba(0,0,0,0.45))",
-    "--color-overlay-hover": "light-dark(#211A160D, #FFFFFF0D)",
-    "--color-overlay-pressed": "light-dark(#211A161A, #FFFFFF1A)",
-    "--color-text-primary": "light-dark(#211A16, #EBE0DA)",
-    "--color-text-secondary": "light-dark(#51443C, #B8A89F)",
-    "--color-text-disabled": "light-dark(#9D8E85, #6A5C53)",
+    "--color-overlay-hover": "light-dark(rgba(0,0,0,0.06), #262626)",
+    "--color-overlay-pressed": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))",
+    "--color-text-primary": "light-dark(#141414, #FFFFFF)",
+    "--color-text-secondary": "light-dark(rgba(0,0,0,0.65), rgba(255,255,255,0.65))",
+    "--color-text-disabled": "light-dark(rgba(0,0,0,0.25), rgba(255,255,255,0.25))",
     "--color-text-accent": "light-dark(#FF7A00, #be5e06)",
     "--color-on-dark": "#ffffff",
     "--color-on-light": "#171717",
@@ -119,9 +119,9 @@ export const baiR6DefaultBrandH1gij33aTheme = {
     "--color-on-error": "light-dark(#ffffff, #ffffff)",
     "--color-on-warning": "#171717",
     "--color-icon-accent": "light-dark(#FF7A00, #be5e06)",
-    "--color-icon-primary": "light-dark(#211A16, #EBE0DA)",
-    "--color-icon-secondary": "light-dark(#51443C, #B8A89F)",
-    "--color-icon-disabled": "light-dark(#9D8E85, #6A5C53)",
+    "--color-icon-primary": "light-dark(#141414, #FFFFFF)",
+    "--color-icon-secondary": "light-dark(rgba(0,0,0,0.45), rgba(255,255,255,0.45))",
+    "--color-icon-disabled": "light-dark(rgba(0,0,0,0.25), rgba(255,255,255,0.25))",
     "--color-success": "light-dark(#00BD9B, #068e76)",
     "--color-error": "light-dark(#FF4D4F, #be3d3f)",
     "--color-warning": "light-dark(#FAAD14, #d89614)",
@@ -176,19 +176,20 @@ export const baiR6DefaultBrandH1gij33aTheme = {
     "--radius-none": "0.25rem",
     "--radius-inner": "0.375rem",
     "--radius-element": "8px",
-    "--radius-container": "0.75rem",
+    "--radius-container": "8px",
     "--radius-page": "1.75rem",
     "--radius-full": "9999px",
     "--shadow-low": "0 2px 4px light-dark(oklch(0 0 0 / 5%), oklch(0 0 0 / 25%)), 0 4px 8px light-dark(oklch(0 0 0 / 10%), oklch(0 0 0 / 40%)), inset 0 0 0 1px light-dark(transparent, oklch(1 0 0 / 8%))",
     "--shadow-med": "0 6px 16px 0 light-dark(rgba(0,0,0,0.08), rgba(255,255,255,0.016)), 0 3px 6px -4px light-dark(rgba(0,0,0,0.12), rgba(255,255,255,0.024)), 0 9px 28px 8px light-dark(rgba(0,0,0,0.05), rgba(255,255,255,0.01))",
-    "--shadow-high": "0 4px 6px light-dark(oklch(0 0 0 / 10%), oklch(0 0 0 / 50%)), 0 12px 24px light-dark(oklch(0 0 0 / 15%), oklch(0 0 0 / 70%)), inset 0 0 0 1px light-dark(transparent, oklch(1 0 0 / 15%))",
+    "--shadow-high": "0 6px 16px 0 light-dark(rgba(0,0,0,0.08), rgba(255,255,255,0.016)), 0 3px 6px -4px light-dark(rgba(0,0,0,0.12), rgba(255,255,255,0.024)), 0 9px 28px 8px light-dark(rgba(0,0,0,0.05), rgba(255,255,255,0.01))",
     "--shadow-inset-hover": "inset 0px 0px 0px 2px #0074e24D",
     "--shadow-inset-selected": "inset 0px 0px 0px 2px #0074e280",
     "--shadow-inset-success": "inset 0px 0px 0px 2px #1981004D",
     "--shadow-inset-warning": "inset 0px 0px 0px 2px #ffce2f4D",
     "--shadow-inset-error": "inset 0px 0px 0px 2px #e33f4a4D",
     "--color-background-inverted": "light-dark(#211A16, #FFFBF8)",
-    "--color-track": "light-dark(#B8A89F, #51443C)"
+    "--color-track": "light-dark(#B8A89F, #51443C)",
+    "--size-element-sm": "24px"
   },
 
 };

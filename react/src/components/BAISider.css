@@ -21,6 +21,80 @@
   background: transparent;
 }
 
+/*
+ * THE RAIL'S SCROLL AFFORDANCE (audit 1, catalog S-1).
+ *
+ * ## What actually happens (measured, 1600x1000, `admin/settings`)
+ *
+ * The catalog reports the admin rail as "clipped and cannot scroll — Branding
+ * and Information are unreachable". Only the first half reproduces. Its probe
+ * read `overflow-y` off `nav.astryx-side-nav` (the ROOT, which Astryx clips on
+ * purpose: `styles.root { overflow: hidden }`) and paired it with the
+ * scroll-height delta of a DIFFERENT element. `SideNav`'s scroll contract is
+ * one level in — `styles.scrollable { flex: 1; overflow-y: auto }` on the
+ * middle child, between the sticky header band and the sticky footer band —
+ * and it works: measured `overflow-y: auto`, `scrollHeight - clientHeight =
+ * 75px`, and a real `mouse.wheel(0, 400)` over the rail moves `scrollTop` to
+ * 75 and brings `Information` fully above the footer (bottom 873 < footer top
+ * 883). So nothing needs to be made scrollable, and the three rules the
+ * catalog proposed (`overflow-y: auto` on the column, `flex-shrink: 0` on the
+ * footer, `flex: 1` on the column) are all already true.
+ *
+ * What IS broken is that the overflow is INVISIBLE. `MainLayout.css` styles
+ * every scrollbar in the app as a 2px bar with a `--color-border` thumb on a
+ * `--color-background-popover` track — that is `#F0F0F0` on `#FFFFFF`, a 2px
+ * near-white sliver on the white rail (and `#303030` on `#1F1F1F` in dark).
+ * With no readable thumb the rail simply appears to end: at rest the 14th row
+ * (`Branding`) is sliced 19px through its middle and the 15th (`Information`)
+ * is 65px past the fold, with nothing on screen saying there is more. That is
+ * the screenshot the catalog read as "unreachable", and it is a real defect
+ * even though the scrolling underneath it is fine.
+ *
+ * ## Why this is scoped CSS and not a theme default
+ *
+ * Scrollbar pseudo-elements are not addressable from `defineTheme()`
+ * (`components: {'side-nav': …}` emits declarations on `.astryx-side-nav`
+ * itself, never `::-webkit-scrollbar`), and the app-wide rule that has to be
+ * beaten lives in `MainLayout.css` — so the override belongs next to the other
+ * `.bai-sider` scoped rules, at the smallest blast radius. `> div` is the
+ * whole `SideNav` child set (sticky top / scroll column / sticky bottom); only
+ * the middle one ever scrolls, so the two bands are unaffected by definition
+ * and no `:has()` guesswork is needed to single the column out.
+ *
+ * `max-width` is restated on purpose: `MainLayout.css` caps the app-wide bar
+ * with `max-width: 2px`, and a `max-width` beats a larger `width` no matter
+ * which selector is more specific.
+ *
+ * The thumb is `--color-border-emphasized` — antd's `colorBorder`, the step
+ * this codebase already uses for "an edge the user is meant to read" (see
+ * ANTD_NEUTRAL_BORDERS) — over a transparent track, so the rail's surface
+ * shows through and the bar only registers when there is something to scroll.
+ * The 6px width is taken from the column's content box while it overflows,
+ * which on the admin rail narrows the 240px nav pills to 234px; the rows carry
+ * 24px of inline padding, so nothing reflows.
+ */
+.bai-sider > div::-webkit-scrollbar {
+  width: 6px;
+  max-width: 6px;
+  background-color: transparent;
+}
+
+.bai-sider > div::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.bai-sider > div::-webkit-scrollbar-thumb {
+  background-color: var(--color-border-emphasized);
+  border-radius: var(--radius-full);
+}
+
+/* Firefox has no pseudo-elements for this; it takes the two standard
+ * properties instead. `thin` is the closest analogue of the 6px bar above. */
+.bai-sider > div {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-emphasized) transparent;
+}
+
 .bai-sider .draggable {
   -webkit-app-region: drag;
 }

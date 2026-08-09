@@ -64,7 +64,7 @@ import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from 'backend.ai-ui';
 export { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 6;
+export const THEME_NAME_REV = 7;
 
 /**
  * NEUTRAL BACKGROUND FAMILY — pinned to the measured legacy antd values.
@@ -125,17 +125,18 @@ export const THEME_NAME_REV = 6;
  * from `--color-background-surface` (see `SIDE_NAV_DENSITY`) — so pinning
  * surface to #FFFFFF/#141414 reproduces the legacy rail exactly.
  *
- * ## Scope — the NEUTRAL BACKGROUND family only
+ * ## Scope — the NEUTRAL BACKGROUND family (+ the interaction fills)
  *
  * Deliberately NOT touched, so brand-accent surfaces survive: `--color-accent`
  * and its ramp, every `--color-{status}`, the `--color-background-{hue}`
- * chips, and the accent-tinted TEXT/BORDER/ICON tokens (`--color-text-primary`
- * `#211A16`, `--color-border` at 10% alpha, `--color-track`). Those are either
- * intentionally brand-tinted or so low-alpha that the hue is not perceptible;
- * re-deriving them is a separate, larger decision.
+ * chips, and `--color-track`. Those are intentionally brand-tinted.
  * `--color-background-inverted` is also left alone: antd's counterpart
  * (`colorBgSpotlight`) is `rgba(0,0,0,0.85)`/`#424242`, i.e. NOT an inversion
  * in dark mode, so adopting it would break the Astryx semantic.
+ *
+ * The TEXT/ICON ramp was originally deferred here on the reasoning that the
+ * warm tint is "not perceptible" at those alphas. Audit 1 measured otherwise
+ * and it is now pinned — see `ANTD_NEUTRAL_TEXT` below.
  */
 const ANTD_NEUTRAL_SURFACES = {
   // The page backdrop. Legacy `<body>` (webui.css) — the visible surface,
@@ -169,6 +170,120 @@ const ANTD_NEUTRAL_SURFACES = {
     string,
     string,
   ],
+  // antd `colorBgTextHover` / `colorBgTextActive` — the neutral INTERACTION
+  // fills behind ghost buttons, menu rows, table row hover, icon buttons.
+  // Astryx ships both as a flat 5% / 10% wash of the text colour, which on the
+  // dark surface (`#141414`) is effectively invisible: audit 1 (catalog G-4)
+  // measured `#FFFFFF0D` in dark, i.e. no readable hover state anywhere in the
+  // app. `resources/theme.json:49` declares the dark hover OPAQUE (`#262626`,
+  // = `--color-neutral` above, which is the same antd `colorFillSecondary`),
+  // and `colorBgTextActive` is antd's `colorFill` (= `--color-skeleton`).
+  '--color-overlay-hover': ['rgba(0,0,0,0.06)', '#262626'] as [string, string],
+  '--color-overlay-pressed': ['rgba(0,0,0,0.15)', 'rgba(255,255,255,0.18)'] as [
+    string,
+    string,
+  ],
+};
+
+/**
+ * NEUTRAL TEXT + ICON FAMILY — the third and last face of the warm-cast
+ * defect, pinned to the measured legacy antd values (audit 1, catalog G-1).
+ *
+ * ## The defect
+ *
+ * `ANTD_NEUTRAL_SURFACES` and `ANTD_NEUTRAL_BORDERS` pinned the surfaces and
+ * the borders but deliberately left the text/icon ramp to Astryx's HCT
+ * generator, on the reasoning that the accent tint would not be perceptible
+ * there. It is: the generator emits the accent hue at FULL opacity for body
+ * text. Measured on `to-astryx` before this change:
+ *
+ *   --color-text-primary    light #211A16   dark #EBE0DA
+ *   --color-text-secondary  light #51443C   dark #B8A89F
+ *   --color-text-disabled   light #9D8E85   dark #6A5C53
+ *   --color-icon-secondary  light #51443C   dark #B8A89F
+ *
+ * Every one of those is a brown, and body text is the largest ink area on the
+ * screen — so this single family carries most of what users reported as
+ * "누리끼리" even after the surfaces were fixed. It also drags derived
+ * surfaces along: the Tooltip bubble is painted from `--color-text-primary`,
+ * which is why the dark tooltip came out warm-white (catalog O-13/O-15).
+ *
+ * ## The legacy targets (measured, not guessed)
+ *
+ * `theme.getDesignToken()` over the shipped `resources/theme.json` seeds,
+ * light + `darkAlgorithm` (`.scratch/astryx-migration/antd-neutral-tokens.mjs`).
+ * `colorText` survives verbatim from `resources/theme.json:8,:43`; the rest are
+ * antd's neutral constants, independent of the brand seed:
+ *
+ *   colorText           #141414             / #FFFFFF
+ *   colorTextSecondary  rgba(0,0,0,0.65)    / rgba(255,255,255,0.65)
+ *   colorTextDisabled   rgba(0,0,0,0.25)    / rgba(255,255,255,0.25)
+ *   colorIcon           rgba(0,0,0,0.45)    / rgba(255,255,255,0.45)
+ *
+ * Astryx splits icons into their own ramp, so each antd value is applied to
+ * both faces: `--color-icon-primary` takes `colorText` (an icon rendered at
+ * full strength beside a label), `--color-icon-secondary` takes antd's
+ * dedicated `colorIcon` (= `colorTextTertiary`, the standalone-icon grey),
+ * and the disabled step is shared.
+ *
+ * `--color-text-placeholder` is NOT pinned: antd's `colorTextPlaceholder` is
+ * `colorTextQuaternary` (`rgba(0,0,0,0.25)`) — identical in role to the
+ * disabled step, and Astryx's generated value already sits between the two.
+ * Pinning it is a separate call with no measured defect behind it.
+ */
+const ANTD_NEUTRAL_TEXT = {
+  // antd `colorText` — body copy, table cells, labels, headings.
+  '--color-text-primary': ['#141414', '#FFFFFF'] as [string, string],
+  // antd `colorTextSecondary` — descriptions, captions, secondary rows.
+  '--color-text-secondary': ['rgba(0,0,0,0.65)', 'rgba(255,255,255,0.65)'] as [
+    string,
+    string,
+  ],
+  // antd `colorTextDisabled` (= colorTextQuaternary).
+  '--color-text-disabled': ['rgba(0,0,0,0.25)', 'rgba(255,255,255,0.25)'] as [
+    string,
+    string,
+  ],
+  // Icons at label strength — antd drew these with `colorText`.
+  '--color-icon-primary': ['#141414', '#FFFFFF'] as [string, string],
+  // antd `colorIcon` — the standalone-icon grey (close ✕, expand chevrons).
+  '--color-icon-secondary': ['rgba(0,0,0,0.45)', 'rgba(255,255,255,0.45)'] as [
+    string,
+    string,
+  ],
+  '--color-icon-disabled': ['rgba(0,0,0,0.25)', 'rgba(255,255,255,0.25)'] as [
+    string,
+    string,
+  ],
+};
+
+/**
+ * DIALOG SURFACE + GUTTERS (audit 1, catalog O-1 / O-2 / O-10).
+ *
+ * Legacy `BAIModal` carried an explicit `styles={{header, body, footer}}`
+ * block (`header 10px 24px`, `body 20px 24px`, `footer 12px 20px`); the
+ * migration deleted it with no replacement. Astryx's `Layout*` slots read
+ * `--astryx-dialog-padding`, which nothing set, so every dialog fell back to
+ * `--spacing-4` (16px) and lost 8px of horizontal gutter — measured
+ * identically on all 8 dialogs sampled, so this is a Dialog default and not
+ * call-site drift. `defineTheme` maps a container component's `padding` onto
+ * exactly those derived vars, which is why this lives in the theme rather
+ * than in `BAIModal`.
+ *
+ * The surface is the same story one token over: `--color-background-popover`
+ * is already pinned to antd's `colorBgElevated` (`#FFFFFF` / `#1F1F1F`) with
+ * the comment "dropdowns, popovers, MODALS", but Astryx's Dialog paints
+ * `--color-background-surface` — so in dark mode a modal rendered `#141414`,
+ * the same colour as the cards behind it, with no elevation cue beyond the
+ * shadow. Naming the popover surface here restores the legacy two-step.
+ */
+const ANTD_DIALOG_SURFACE = {
+  dialog: {
+    base: {
+      padding: '16px 24px',
+      backgroundColor: 'var(--color-background-popover)',
+    },
+  },
 };
 
 /**
@@ -525,7 +640,9 @@ export const computeThemeName = (
       ANTD_ALIGN_TOKENS,
       ANTD_NEUTRAL_SURFACES,
       ANTD_NEUTRAL_BORDERS,
+      ANTD_NEUTRAL_TEXT,
       ANTD_STATUS_ON_COLORS,
+      ANTD_DIALOG_SURFACE,
     ]),
   );
   // `h` prefix: every name segment must start with a letter — `astryx theme
@@ -630,12 +747,19 @@ export function buildBackendAiTheme(
       // Same generator, same fix, one family further out: the two-step border
       // ramp. See ANTD_NEUTRAL_BORDERS above.
       ...ANTD_NEUTRAL_BORDERS,
+      // …and one family further still: the text/icon ramp, which the first
+      // two passes deferred. See ANTD_NEUTRAL_TEXT above.
+      ...ANTD_NEUTRAL_TEXT,
     },
     // Component-level theme defaults (see SIDE_NAV_DENSITY above). This is
     // the sanctioned place for "our look differs from the Astryx default" —
     // it deep-merges over `neutralTheme`'s own component rules and applies to
     // every role/family theme built from this recipe.
-    components: { ...SIDE_NAV_DENSITY, ...STATUS_TEXT_COLORS },
+    components: {
+      ...SIDE_NAV_DENSITY,
+      ...STATUS_TEXT_COLORS,
+      ...ANTD_DIALOG_SURFACE,
+    },
   });
 
   themeCache.set(name, theme);
