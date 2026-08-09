@@ -139,9 +139,12 @@ const SignupModal: React.FC<SignupModalProps> = ({
           disabled={signupMutation.isPending}
           requiredMark="optional"
         >
-          {/* `Input maxLength` has no destination on Astryx `TextInput`
-              (MAPPING §3.6) — dropped everywhere in this form; the server
-              still validates length and the placeholder still states it. */}
+          {/* RESTORED (input-parity pass): `maxLength` DOES reach the
+              native `<input>` — Astryx spreads unknown props onto it, so the
+              adapter only had to declare the prop. The placeholders in this
+              form state the limit ("Up to 64 characters"), so silently
+              accepting a 200-character password was the UI contradicting
+              itself. */}
           <BAIFormItem
             name="email"
             label={t('signUp.E-mail')}
@@ -160,6 +163,7 @@ const SignupModal: React.FC<SignupModalProps> = ({
               type="email"
               label={t('signUp.E-mail')}
               placeholder={t('maxLength.64chars')}
+              maxLength={64}
               hasAutoFocus
             />
           </BAIFormItem>
@@ -167,6 +171,7 @@ const SignupModal: React.FC<SignupModalProps> = ({
             <AstryxFormTextInput
               label={t('signUp.UserName')}
               placeholder={t('maxLength.64chars')}
+              maxLength={64}
             />
           </BAIFormItem>
           {!allowSignupWithoutConfirmation && (
@@ -180,7 +185,10 @@ const SignupModal: React.FC<SignupModalProps> = ({
                 },
               ]}
             >
-              <AstryxFormTextInput label={t('signUp.InvitationToken')} />
+              <AstryxFormTextInput
+                label={t('signUp.InvitationToken')}
+                maxLength={50}
+              />
             </BAIFormItem>
           )}
           <BAIFormItem
@@ -198,7 +206,11 @@ const SignupModal: React.FC<SignupModalProps> = ({
             ]}
             hasFeedback
           >
-            <AstryxFormTextInput type="password" label={t('signUp.Password')} />
+            <AstryxFormTextInput
+              type="password"
+              label={t('signUp.Password')}
+              maxLength={64}
+            />
           </BAIFormItem>
           <BAIFormItem
             name="passwordConfirm"
@@ -225,6 +237,7 @@ const SignupModal: React.FC<SignupModalProps> = ({
             <AstryxFormTextInput
               type="password"
               label={t('signUp.PasswordAgain')}
+              maxLength={64}
             />
           </BAIFormItem>
           <BAIFormItem

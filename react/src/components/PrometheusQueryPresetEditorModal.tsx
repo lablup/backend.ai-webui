@@ -403,6 +403,7 @@ const PrometheusQueryPresetEditorModal: React.FC<
           name="filterLabels"
         >
           <AstryxFormTagsInput
+            tokenSeparators={[',', ' ']}
             label={t('prometheusQueryPreset.FilterLabels')}
           />
         </Form.Item>
@@ -411,7 +412,10 @@ const PrometheusQueryPresetEditorModal: React.FC<
           label={t('prometheusQueryPreset.GroupLabels')}
           name="groupLabels"
         >
-          <AstryxFormTagsInput label={t('prometheusQueryPreset.GroupLabels')} />
+          <AstryxFormTagsInput
+            tokenSeparators={[',', ' ']}
+            label={t('prometheusQueryPreset.GroupLabels')}
+          />
         </Form.Item>
       </Form>
     </BAIModal>

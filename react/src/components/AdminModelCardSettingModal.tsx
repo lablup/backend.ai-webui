@@ -18,12 +18,12 @@ import BAIPopconfirmAstryx from './astryx-bui/BAIPopconfirmAstryx';
 import {
   AstryxFormSelector,
   AstryxFormTextArea,
+  AstryxFormTagsInput,
   AstryxFormTextInput,
 } from './astryx-bui/astryxFormControls';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Text } from '@astryxdesign/core/Text';
 import { TextInput } from '@astryxdesign/core/TextInput';
-import { Tokenizer } from '@astryxdesign/core/Tokenizer';
 import {
   BAIButton,
   BAIDomainSelect,
@@ -57,35 +57,6 @@ type FormInputType = {
   license?: string;
   readme?: string;
   accessLevel: string;
-};
-
-// Free-text tags input (antd `Select mode="tags"`) adapted to the antd Form
-// engine's `string[]` value model via Astryx `Tokenizer` + `hasCreate`.
-// PILOT-DECISION: antd `tokenSeparators={[',']}` (FR-3121: commit a tag on
-// comma) and `notFoundContent={null}` have no Tokenizer equivalent — tokens
-// commit on Enter and the typeahead shows its default create affordance.
-const AstryxFormTagsInput: React.FC<{
-  /** Injected by `Form.Item`. */
-  value?: string[];
-  /** Injected by `Form.Item`. */
-  onChange?: (value: string[]) => void;
-  /** Accessible name. Visually hidden — `BAIFormItem` renders the visible one. */
-  label: string;
-  placeholder?: string;
-}> = ({ value, onChange, label, placeholder }) => {
-  'use memo';
-  return (
-    <Tokenizer
-      label={label}
-      isLabelHidden
-      hasCreate
-      searchSource={{ search: () => [], bootstrap: () => [] }}
-      value={(value ?? []).map((v) => ({ id: v, label: v }))}
-      onChange={(items) => onChange?.(items.map((item) => item.label))}
-      placeholder={placeholder}
-      width="100%"
-    />
-  );
 };
 
 interface AdminModelCardSettingModalProps extends BAIModalProps {
@@ -550,6 +521,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               tooltip={t('adminModelCard.FrameworkTooltip')}
             >
               <AstryxFormTagsInput
+                tokenSeparators={[',', ' ']}
                 label={t('adminModelCard.Framework')}
                 placeholder={t('adminModelCard.AddFramework')}
               />
@@ -561,6 +533,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
               tooltip={t('adminModelCard.LabelTooltip')}
             >
               <AstryxFormTagsInput
+                tokenSeparators={[',', ' ']}
                 label={t('adminModelCard.Label')}
                 placeholder={t('adminModelCard.AddLabel')}
               />

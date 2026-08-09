@@ -402,6 +402,7 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                 }
               >
                 <AstryxFormTagsInput
+                  tokenSeparators={[',', ' ']}
                   label={t('session.OpenToPublic')}
                   disabled={!openToPublic}
                   placeholder={t('session.AllowedMultipleClientsIps')}

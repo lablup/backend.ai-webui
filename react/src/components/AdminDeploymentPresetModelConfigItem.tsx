@@ -9,31 +9,22 @@ import BAIFormItem from './BAIFormItem';
 import {
   AstryxFormCheckbox,
   AstryxFormNumberInput,
+  AstryxFormTagsInput,
   AstryxFormTextArea,
   AstryxFormTextInput,
 } from './astryx-bui/astryxFormControls';
 import { Collapsible } from '@astryxdesign/core/Collapsible';
-import { Tokenizer } from '@astryxdesign/core/Tokenizer';
 import { BAIButton, BAICard, BAIFlex } from 'backend.ai-ui';
 import { CircleMinus, PlusIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 // ---------------------------------------------------------------------------
-// TagsField — replaces antd `Select mode="tags"` for free-form string lists
-// (metadata framework / label). Form.Item injects value/onChange (string[]).
-//
-// PILOT-DECISION: antd `Select mode="tags"` → Astryx `Tokenizer` with
-// `hasCreate` over an empty search source (there were no suggestions to
-// search). `tokenSeparators={[',']}` (comma splits a paste into tags) has no
-// Tokenizer equivalent and is dropped — tags are committed with Enter.
-// `allowClear` → `hasClear`.
+// TagsField — the shared `AstryxFormTagsInput` under the name this file's two
+// call sites already use. It replaced a local Tokenizer bridge that was the
+// same component minus `tokenSeparators`, which antd had on both fields
+// (`tokenSeparators={[',']}`) and which the adapter restores.
 // ---------------------------------------------------------------------------
-
-const EMPTY_SEARCH_SOURCE = {
-  search: () => [],
-  bootstrap: () => [],
-};
 
 const TagsField: React.FC<{
   /** Injected by `Form.Item`. */
@@ -46,16 +37,13 @@ const TagsField: React.FC<{
 }> = ({ value, onChange, label, placeholder }) => {
   'use memo';
   return (
-    <Tokenizer
+    <AstryxFormTagsInput
       label={label}
-      isLabelHidden
-      searchSource={EMPTY_SEARCH_SOURCE}
-      hasCreate
+      value={value}
+      onChange={onChange}
       hasClear
-      value={(value ?? []).map((v) => ({ id: v, label: v }))}
-      onChange={(items) => onChange?.(items.map((item) => item.label))}
+      tokenSeparators={[',']}
       placeholder={placeholder}
-      width="100%"
     />
   );
 };

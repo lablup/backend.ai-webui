@@ -90,6 +90,36 @@
       animation: none;
     }
   }
+
+  /* ===================== Slider mark-label reservation =====================
+
+     Astryx's `Slider` paints its mark LABELS with `position: absolute` inside
+     the track container (`markLabelHorizontal { top: THUMB_SIZE / 2 + 4 }`,
+     `Slider.tsx`), so they contribute ZERO height: the labels hang ~23px below
+     a slider box that measures exactly 20px. Whatever follows the slider is
+     therefore laid out as if the labels did not exist, and paints over them.
+
+     antd reserved exactly this band —
+     `.ant-slider-with-marks { margin-bottom: controlHeightLG - controlSize }`
+     (`antd/es/slider/style/index.js`) — which is why nothing collided before
+     the migration. Astryx exposes no equivalent prop, so the reservation is
+     restored here, once, for every marked slider in the app.
+
+     Measured symptom this fixes: on the session launcher, the memory slider's
+     "320m" / "30.34g" marks sat UNDER the shared-memory bar, and the whole
+     shared-memory block (bar, legend, SHM input) started flush against the
+     memory row with no breathing room — reported as "the shared-memory field
+     has no top padding".
+
+     The height is derived, not guessed: `--spacing-1` is Astryx's own label
+     offset below the slider box, and the label is one line of supporting text
+     (`--text-supporting-size` x `--text-supporting-leading`). */
+  .astryx-slider:has([data-testid='slider-mark-label']) {
+    margin-block-end: calc(
+      var(--spacing-1) + var(--text-supporting-size) *
+        var(--text-supporting-leading)
+    );
+  }
 }
 
 /* Keyframes are not layerable — `@keyframes` inside `@layer` is legal but the

@@ -443,6 +443,33 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
     onSelect?.(nextValue, original);
   };
 
+  /**
+   * RESTORED (input-parity pass) — **`autoSelectOption` tells the caller
+   * again.**
+   *
+   * antd's version ran a `useLayoutEffect` that CALLED `onChange` with the
+   * first (or caller-chosen) option whenever the value was still empty. That
+   * call is what wrote the value into the enclosing `Form.Item` or parent
+   * state. The migration replaced it with a purely visual default — the
+   * trigger rendered the first option, but nothing was ever emitted — so
+   * `SessionOwnerSetterCard`'s two required fields SHOWED a selection the form
+   * never received (submit then failed its own `required` rule), and
+   * `ContainerLogModal` never learned which kernel to fetch logs for.
+   */
+  const autoSelectedValue =
+    autoSelectOption && _.isEmpty(value) && rawOptions[0]
+      ? _.isFunction(autoSelectOption)
+        ? autoSelectOption(options)
+        : (rawOptions[0].value ?? rawOptions[0])
+      : undefined;
+  const emitAutoSelection = React.useEffectEvent(() => {
+    if (autoSelectedValue === undefined) return;
+    onChange?.(autoSelectedValue as ValueType, rawOptions[0] as OptionType);
+  });
+  React.useLayoutEffect(() => {
+    emitAutoSelection();
+  }, [autoSelectedValue]);
+
   const accessibleLabel =
     label ?? nodeToAccessibleLabel(placeholder) ?? t('general.Select');
 
@@ -461,7 +488,11 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
         : nodeToAccessibleLabel(placeholder) || undefined,
     isDisabled: disabled,
     isLoading: loading,
-    hasSearch: showSearch !== false && showSearch !== undefined,
+    // RESTORED (input-parity pass): antd's `composedShowSearch` returned
+    // `baseShowSearch ?? true`, so a `BAISelect` that says nothing about
+    // search was type-to-filter. Treating `undefined` as "no search" turned
+    // that off on every call site that omitted the prop.
+    hasSearch: showSearch !== false,
     status:
       status === 'error' || status === 'warning' ? { type: status } : undefined,
     size:

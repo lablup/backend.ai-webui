@@ -23,10 +23,23 @@
  keep their meaning. The unit-carry arithmetic (step past the top of the ladder
  -> next unit up, past the bottom -> next unit down) is ported verbatim.
 
- PILOT-DECISION — **`onStep` is replaced by explicit ladder controls.** Same
- call as the sibling `BAIDynamicStepInputNumber`; the rationale (Astryx's
- native spinner would silently linearise the ladder AND the unit carry) is
- written up in `astryxNumberStepper.tsx`.
+ PILOT-DECISION — **`onStep` is replaced by explicit ladder controls PLUS a
+ keydown handler.** Same call as the sibling `BAIDynamicStepInputNumber`; the
+ rationale (Astryx's native spinner would silently linearise the ladder AND the
+ unit carry) is written up in `astryxNumberStepper.tsx`. antd's `onStep` fired
+ for BOTH the spinner click and ↑/↓, so the buttons alone were only half of it:
+ `handleKeyDown` below cancels the browser's own linear step and runs the same
+ ladder, which is what makes ↑ from `4g` land on `8g` and ↑ from `512g` carry
+ to `1t`.
+
+ RESTORED — **typing a unit letter switches the unit.** antd's `InputNumber` is
+ a TEXT field, so `"512m"` reached a raw `input` listener that re-parsed it. A
+ native `<input type="number">` discards the letter before any value-level
+ listener can see it (which is why the original listener was deleted), but the
+ KEY event still fires: `handleKeyDown` matches the character against `units`
+ and re-serialises the current number under the new unit. Same affordance,
+ reached through the only event that survives on a number field — and it now
+ covers every unit in `units`, not just the `m|g` the old regex hard-coded.
 
  PILOT-DECISION — **`stringMode` is dropped, and nothing is lost here.**
  MAPPING §3.17 lists it as NONE. It existed so antd's `InputNumber` could hold
@@ -34,12 +47,13 @@
  string itself (`parseValueWithUnit`), and the numeric half is a size in a
  chosen unit — never large enough to exceed `Number.MAX_SAFE_INTEGER`.
 
- PILOT-DECISION — **the `input`-event listener on the raw DOM node is
- deleted.** It watched for a user typing `"512m"` INTO the number field and
- re-parsed it. Astryx's `NumberInput` is a native `<input type="number">`,
- which rejects the trailing letter at the DOM level, so the listener could
- never fire; the unit is chosen in the adjacent `Selector`, which is the
- affordance that actually works.
+ RESTORED — **an out-of-range entry is clamped on blur.** antd's `InputNumber`
+ clamped to `min`/`max` when the field lost focus; Astryx's `NumberInput`
+ instead REJECTS an out-of-range string outright (`parseNumberInput` returns
+ `null` past either bound), so the entry silently reverted to the previous
+ value and the user's intent was thrown away. `handleBlur` reads the raw field
+ text — the only place the rejected entry still exists — and commits the
+ clamped value, restoring antd's contract.
 */
 import { convertToBinaryUnit, parseValueWithUnit, SizeUnit } from '../helper';
 import { useControllableValue, usePrevious } from '../hooks';
@@ -171,10 +185,38 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
     }
   };
 
-  const handleBlur = () => {
+  const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+    // The raw field text is the only surviving trace of an entry Astryx's
+    // `NumberInput` rejected for being out of range (antd would have clamped
+    // it). React 19 does not pool events, so reading it here is safe.
+    const rawText = (event.target as HTMLInputElement).value;
+    const typed = rawText.trim() === '' ? NaN : Number(rawText);
+    let committed = numValue;
+
+    if (
+      Number.isFinite(typed) &&
+      typed !== numValue &&
+      (_.isNumber(minNumValueForCurrentUnit) ||
+        _.isNumber(maxNumValueForCurrentUnit))
+    ) {
+      const clamped = _.clamp(
+        typed,
+        _.isNumber(minNumValueForCurrentUnit)
+          ? minNumValueForCurrentUnit
+          : -Infinity,
+        _.isNumber(maxNumValueForCurrentUnit)
+          ? maxNumValueForCurrentUnit
+          : Infinity,
+      );
+      if (clamped !== numValue) {
+        committed = clamped;
+        setValue(`${clamped}${unit}`);
+      }
+    }
+
     if (!_.isNumber(roundStep) || roundStep <= 0) return;
     const nextRoundedNumValue =
-      Math.round((numValue ?? 0) / roundStep) * roundStep;
+      Math.round((committed ?? 0) / roundStep) * roundStep;
     if (isNaN(nextRoundedNumValue)) return;
     if (
       (minNumValueForCurrentUnit &&
@@ -186,6 +228,37 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
     }
     const decimalCount = roundStep.toString().split('.')[1]?.length || 0;
     setValue(`${nextRoundedNumValue.toFixed(decimalCount)}${unit}`);
+  };
+
+  /**
+   * antd drove BOTH of this component's keyboard affordances; a native
+   * `<input type="number">` drives neither, so they are reinstated here.
+   *
+   *  - ↑/↓ ran `onStep` with `step={0}`, i.e. the LADDER — the browser would
+   *    instead add/subtract 1. `preventDefault` cancels the native step before
+   *    it can fire an `input` event.
+   *  - a unit letter (`m`, `g`, `t`, `p`, …) switched the unit in place. The
+   *    number field discards the character, so the KEY is what we match on.
+   */
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (disabled) return;
+    if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+      event.preventDefault();
+      handleStep(event.key === 'ArrowUp' ? 'up' : 'down');
+      return;
+    }
+    // Modifier chords are shortcuts (Ctrl+V …), never unit entry.
+    if (event.ctrlKey || event.metaKey || event.altKey) return;
+    if (event.key.length !== 1) return;
+    const typedUnit = _.find(
+      units,
+      (candidate) => candidate.toLowerCase() === event.key.toLowerCase(),
+    );
+    if (!typedUnit) return;
+    event.preventDefault();
+    if (typedUnit !== unit) {
+      setValue(`${numValue ?? 0}${typedUnit}`);
+    }
   };
 
   const accessibleLabel = label ?? placeholder ?? t('general.Select');
@@ -208,6 +281,7 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
           setValue(_.isNil(next) ? undefined : `${next}${unit}`)
         }
         onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
         // TODO: when min and max carry different units they should be
         // converted first — carried over from the antd implementation.
         max={

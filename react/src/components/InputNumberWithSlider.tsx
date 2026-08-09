@@ -264,19 +264,43 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
               if (_.isNil(next)) return;
               setValue(next);
             }}
-            onBlur={() => {
+            onBlur={(event) => {
+              // RESTORED: antd's `InputNumber` CLAMPED an out-of-range entry
+              // on blur. Astryx's rejects it instead — `parseNumberInput`
+              // returns null past either bound, so `onChange` never fires and
+              // the entry silently reverts. The raw field text is the only
+              // surviving trace; clamp from there. (React 19 does not pool
+              // events, so reading `target.value` in the handler is safe.)
+              const rawText = (event.target as HTMLInputElement).value;
+              const typed = rawText.trim() === '' ? NaN : Number(rawText);
+              let current = value;
+              if (
+                Number.isFinite(typed) &&
+                typed !== value &&
+                (_.isNumber(min) || _.isNumber(max))
+              ) {
+                const clamped = _.clamp(
+                  typed,
+                  _.isNumber(min) ? min : -Infinity,
+                  _.isNumber(max) ? max : Infinity,
+                );
+                if (clamped !== value) {
+                  current = clamped;
+                  setValue(clamped);
+                }
+              }
               // Snap to the nearest step. antd needed the raw DOM value for
               // this because its own value could lag; Astryx commits on
               // change, so the controlled value is already current.
-              if (_.isNumber(step) && step > 0 && _.isNumber(value)) {
-                if (_.isNumber(max) && max < value) {
+              if (_.isNumber(step) && step > 0 && _.isNumber(current)) {
+                if (_.isNumber(max) && max < current) {
                   return; // do not update value if it is greater than max
                 }
                 const decimalCount = step.toString().split('.')[1]?.length || 0;
                 setValue(
                   _.max([
                     _.toNumber(
-                      (Math.round(value / step) * step).toFixed(decimalCount),
+                      (Math.round(current / step) * step).toFixed(decimalCount),
                     ),
                     min,
                   ]),

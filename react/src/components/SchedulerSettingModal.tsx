@@ -207,21 +207,24 @@ const SchedulerSettingModal = ({
                         },
                       ]}
                     >
-                      <div style={{ flex: 1 }}>
-                        <AstryxFormNumberInput
-                          label={t('settings.SessionCreationRetries')}
-                          min={0}
-                          max={1000}
-                          disabled={
-                            formRef.current?.getFieldValue(
-                              'num_retries_to_skip_checkbox',
-                            ) === true ||
-                            formRef.current?.getFieldValue('schedulerType') ===
-                              undefined ||
-                            isUpdatingSchedulerOptions
-                          }
-                        />
-                      </div>
+                      {/* No wrapper element: `Form.Item` clones its DIRECT
+                          child, so the former `<div style={{flex:1}}>`
+                          absorbed `value`/`onChange` and the field never
+                          bound. `width="100%"` (the adapter's default) covers
+                          what the flex wrapper did. */}
+                      <AstryxFormNumberInput
+                        label={t('settings.SessionCreationRetries')}
+                        min={0}
+                        max={1000}
+                        disabled={
+                          formRef.current?.getFieldValue(
+                            'num_retries_to_skip_checkbox',
+                          ) === true ||
+                          formRef.current?.getFieldValue('schedulerType') ===
+                            undefined ||
+                          isUpdatingSchedulerOptions
+                        }
+                      />
                     </Form.Item>
                   );
                 }}

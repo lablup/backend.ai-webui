@@ -92,6 +92,19 @@ const BAIDynamicStepInputNumber: React.FC<BAIDynamicStepInputNumberProps> = ({
     setValue(nextValue);
   };
 
+  /**
+   * antd's `onStep` fired for the spinner AND for ↑/↓, so the buttons alone
+   * only restored half of it. A native `<input type="number">` steps LINEARLY
+   * on the arrow keys, which is precisely the silent linearisation the ladder
+   * exists to prevent — cancel it and run the ladder instead.
+   */
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (disabled) return;
+    if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return;
+    event.preventDefault();
+    handleStep(event.key === 'ArrowUp' ? 'up' : 'down');
+  };
+
   const accessibleLabel = label ?? placeholder ?? t('general.Select');
 
   return (
@@ -106,6 +119,7 @@ const BAIDynamicStepInputNumber: React.FC<BAIDynamicStepInputNumberProps> = ({
         isLabelHidden
         value={value}
         onChange={(next) => setValue(next ?? 0)}
+        onKeyDown={handleKeyDown}
         min={min}
         max={max}
         units={

@@ -100,10 +100,12 @@ export interface FormItemProps<Values = any> extends Omit<
   label?: React.ReactNode;
   /**
    * A node, or antd's `{ title, icon, placement, ... }` object form (3 call
-   * sites). Only `title` survives: the visual shell renders the hint INLINE
-   * next to the label rather than behind a hover target — a ticket-05
-   * PILOT-DECISION carried forward, since a real tooltip would pull antd's
-   * `Tooltip` into a shell that is deliberately dependency-free.
+   * sites). `title` becomes the tooltip BODY and `icon` the trigger glyph,
+   * rendered by the visual shell behind a hover/focus target — antd's real
+   * behaviour. (The ticket-05 PILOT-DECISION to render it inline was reverted
+   * once Astryx's own `Tooltip` made a real one free of an antd dependency.)
+   * The remaining keys (`placement`, DOM props) are still dropped: they
+   * describe antd's overlay, which Astryx replaces wholesale.
    */
   tooltip?: React.ReactNode | FormItemTooltipConfig;
   extra?: React.ReactNode;
@@ -139,17 +141,24 @@ export interface FormItemTooltipConfig {
   [key: string]: unknown;
 }
 
-/** Reduce antd's tooltip config object to the node the shell can render. */
+const isTooltipConfig = (
+  tooltip: FormItemProps['tooltip'],
+): tooltip is FormItemTooltipConfig =>
+  !!tooltip &&
+  typeof tooltip === 'object' &&
+  !React.isValidElement(tooltip) &&
+  'title' in tooltip;
+
+/** The tooltip BODY — antd's `tooltip` node, or the config object's `title`. */
 function normalizeTooltip(tooltip: FormItemProps['tooltip']): React.ReactNode {
-  if (
-    tooltip &&
-    typeof tooltip === 'object' &&
-    !React.isValidElement(tooltip) &&
-    'title' in tooltip
-  ) {
-    return (tooltip as FormItemTooltipConfig).title;
-  }
-  return tooltip as React.ReactNode;
+  return isTooltipConfig(tooltip)
+    ? tooltip.title
+    : (tooltip as React.ReactNode);
+}
+
+/** The tooltip TRIGGER glyph — antd's `tooltip.icon`, when supplied. */
+function tooltipIcon(tooltip: FormItemProps['tooltip']): React.ReactNode {
+  return isTooltipConfig(tooltip) ? tooltip.icon : undefined;
 }
 
 type SubMetaMap = Record<
@@ -344,6 +353,7 @@ const FormItem = <Values,>(props: FormItemProps<Values>) => {
           label={mergedLabel}
           labelTitle={typeof label === 'string' ? label : undefined}
           tooltip={normalizeTooltip(tooltip)}
+          tooltipIcon={tooltipIcon(tooltip)}
           extra={extra}
           help={help}
           required={mergedRequired}

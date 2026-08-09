@@ -230,13 +230,16 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
           {connectionMode === 'SESSION' && (
             <>
               {/* PILOT-DECISION: antd `Input prefix={<icon/>}` (MAPPING
-                  §3.6) -> `TextInput startIcon`; the adapters do not expose
-                  `startIcon`, and `maxLength` / `autoComplete` have no
-                  destination on the Astryx control either, so the leading
-                  glyphs and both attributes are dropped. The placeholder
-                  already carries the field meaning, and the `label` (hidden,
-                  supplied for a11y) carries the accessible name that antd's
-                  `aria-label` used to. */}
+                  §3.6) -> `TextInput startIcon`; the leading glyphs stay
+                  dropped — the placeholder already carries the field meaning,
+                  and the `label` (hidden, supplied for a11y) carries the
+                  accessible name that antd's `aria-label` used to.
+
+                  RESTORED (input-parity pass): `maxLength` and `autoComplete`
+                  DO have a destination — Astryx spreads unknown props onto the
+                  native `<input>`, so the adapter only had to declare them.
+                  `autoComplete` in particular is what lets a password manager
+                  recognise this as a login form. */}
               <BAIFormItem
                 name="user_id"
                 style={{ marginBottom: token.marginSM }}
@@ -244,6 +247,8 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                 <AstryxFormTextInput
                   label={t('login.E-mailOrUsername', { postProcess: [] })}
                   placeholder={t('login.E-mailOrUsername', { postProcess: [] })}
+                  maxLength={64}
+                  autoComplete="username"
                   // Focus the first field when the login form opens. When OTP is
                   // later required, the OTP input mounts with its own autoFocus
                   // and takes over.
@@ -259,6 +264,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                   type="password"
                   label={t('login.Password', { postProcess: [] })}
                   placeholder={t('login.Password', { postProcess: [] })}
+                  autoComplete="current-password"
                   disabled={isLoading}
                 />
               </BAIFormItem>
@@ -288,6 +294,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                 <AstryxFormTextInput
                   label={t('login.APIKey', { postProcess: [] })}
                   placeholder={t('login.APIKey', { postProcess: [] })}
+                  maxLength={20}
                   hasAutoFocus
                   disabled={isLoading}
                 />
@@ -300,6 +307,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                   type="password"
                   label={t('login.SecretKey', { postProcess: [] })}
                   placeholder={t('login.SecretKey', { postProcess: [] })}
+                  maxLength={40}
                   disabled={isLoading}
                 />
               </BAIFormItem>

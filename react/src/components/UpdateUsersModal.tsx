@@ -383,6 +383,7 @@ const UpdateUsersModal = ({
             ]}
           >
             <AstryxFormTagsInput
+              tokenSeparators={[',', ' ']}
               label={t('credential.ContainerSupplementaryGIDs')}
               placeholder={t(
                 'credential.ContainerSupplementaryGIDsPlaceholder',

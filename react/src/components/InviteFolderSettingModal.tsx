@@ -211,20 +211,18 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
                 ]}
                 style={{ marginBottom: 0 }}
               >
-                {/* Enter-to-invite: keydown bubbles from the TextInput. */}
-                <span
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      handleInvite();
-                    }
-                  }}
-                >
-                  <AstryxFormTextInput
-                    label={t('general.E-Mail')}
-                    placeholder={t('data.explorer.EnterEmailAddress')}
-                  />
-                </span>
+                {/* Enter-to-invite. This used to be a `<span onKeyDown>`
+                    wrapped around the input — but `Form.Item` clones its
+                    DIRECT child, so `value`/`onChange` landed on the span and
+                    the field could not be typed into at all. The adapter's own
+                    `onEnter` (antd's `onPressEnter`) does the same job with
+                    the control back as the direct child. */}
+                <AstryxFormTextInput
+                  label={t('general.E-Mail')}
+                  placeholder={t('data.explorer.EnterEmailAddress')}
+                  maxLength={64}
+                  onEnter={handleInvite}
+                />
               </BAIFormItem>
               <BAIFormItem
                 name="permission"

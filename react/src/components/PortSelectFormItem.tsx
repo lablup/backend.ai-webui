@@ -105,12 +105,19 @@ const PortSelectFormItem: React.FC<Props> = ({
         `rules` above already surface every one of those conditions as a
         field-level error message — so the red chip is dropped rather than
         reproduced. `PortTag` itself stays exported for
-        `SessionLauncherPreview`. `tokenSeparators={[',', ' ']}` is dropped
-        too (no Tokenizer equivalent — ports commit one at a time with Enter),
-        and `open={false}` / `suffixIcon={null}` map to nothing: the empty
-        search source yields no dropdown and no suffix affordance.
+        `SessionLauncherPreview`. `open={false}` / `suffixIcon={null}` map to
+        nothing: the empty search source yields no dropdown and no suffix
+        affordance.
+
+        `tokenSeparators` is RESTORED (input-parity pass) — the `extra` line
+        directly above this field tells the user to separate values with a
+        comma or a space, so dropping it made the UI lie. The adapter splits on
+        commit; see `AstryxFormTagsInputProps.tokenSeparators`.
       */}
-      <AstryxFormTagsInput label={t('session.launcher.PreOpenPortTitle')} />
+      <AstryxFormTagsInput
+        tokenSeparators={[',', ' ']}
+        label={t('session.launcher.PreOpenPortTitle')}
+      />
     </Form.Item>
   );
 };

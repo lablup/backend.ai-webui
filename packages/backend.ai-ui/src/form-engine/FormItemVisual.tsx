@@ -34,11 +34,23 @@
  correctly with no provider mounted at all — every value resolves as
  `var(--bai-form-item-*, var(--astryx-token, antd-parity-literal))`.
 
+ The ONE design-system import is Astryx's `Tooltip` (plus the `CircleHelp`
+ glyph), which supersedes the ticket-05 PILOT-DECISION that rendered
+ `Form.Item tooltip` INLINE next to the label. That decision was taken because
+ the only tooltip available at the time was antd's, and this shell must not
+ import antd; Astryx's `Tooltip` carries no such cost, and the inline render
+ was a visible regression (33 call sites spilled a paragraph of help text into
+ the label row — e.g. the session launcher's "Resource allocation" card).
+ antd's own metrics are reproduced: a help glyph after the label,
+ `margin-inline-start: marginXXS`, `colorTextDescription`, `cursor: help`.
+
  Layout uses plain flex `div`s rather than `BAIFlex` so the visual layer keeps
  no dependency that could drag a build step (or antd) back into its graph.
  */
 import './FormItemVisual.css';
 import getFeedbackIcon from './feedbackIcons';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { CircleHelp } from 'lucide-react';
 import * as React from 'react';
 
 /**
@@ -118,7 +130,13 @@ export interface BAIFormItemVisualProps {
    * label into an element and the title would silently disappear.
    */
   labelTitle?: string;
+  /**
+   * The tooltip BODY. Rendered behind a help glyph that follows the label —
+   * never inline, exactly as antd's `Form.Item tooltip` behaves.
+   */
   tooltip?: React.ReactNode;
+  /** antd's `tooltip.icon` — the trigger glyph. Defaults to a question mark. */
+  tooltipIcon?: React.ReactNode;
   extra?: React.ReactNode;
   help?: React.ReactNode;
   /** Renders the required marker. Independent of the `required` RULE. */
@@ -195,6 +213,7 @@ export const BAIFormItemVisual: React.FC<BAIFormItemVisualProps> = ({
   label,
   labelTitle,
   tooltip,
+  tooltipIcon,
   extra,
   help,
   required,
@@ -290,12 +309,28 @@ export const BAIFormItemVisual: React.FC<BAIFormItemVisualProps> = ({
         >
           {label}
           {tooltip ? (
-            <span
-              data-bai-form-item-tooltip=""
-              style={{ color: V.descriptionColor }}
-            >
-              {tooltip}
-            </span>
+            /* antd renders `tooltip` behind a hover/focus target, not in the
+               label row. The trigger is a `<span tabIndex={0}>` so the hint is
+               reachable by keyboard — antd's own `<span class="…-tooltip">`
+               is not, which is a small accessibility win rather than a
+               divergence in geometry. */
+            <Tooltip content={tooltip}>
+              <span
+                data-bai-form-item-tooltip=""
+                role="button"
+                tabIndex={0}
+                aria-label={
+                  typeof label === 'string' ? `${label} — info` : 'info'
+                }
+                style={{ color: V.descriptionColor }}
+                /* The label is a `<label htmlFor>`; clicking anywhere inside
+                   it focuses the control, which would steal focus the moment
+                   the hint is tapped. */
+                onClick={(e) => e.preventDefault()}
+              >
+                {tooltipIcon ?? <CircleHelp size="1em" />}
+              </span>
+            </Tooltip>
           ) : null}
         </label>
       </div>

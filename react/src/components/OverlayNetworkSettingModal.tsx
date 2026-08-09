@@ -139,17 +139,20 @@ const OverlayNetworkSettingModal = ({
                       },
                     ]}
                   >
-                    <div style={{ flex: 1 }}>
-                      <AstryxFormNumberInput
-                        label="MTU"
-                        min={0}
-                        max={15000}
-                        disabled={
-                          formRef.current?.getFieldValue('mtu_checkbox') ===
-                            true || isFetchingMtu
-                        }
-                      />
-                    </div>
+                    {/* No wrapper element here: `Form.Item` clones its DIRECT
+                        child, so a `<div style={{flex:1}}>` in between
+                        swallowed `value`/`onChange` and the field never bound.
+                        The adapter already defaults to `width="100%"`, which
+                        is what the flex wrapper was for. */}
+                    <AstryxFormNumberInput
+                      label="MTU"
+                      min={0}
+                      max={15000}
+                      disabled={
+                        formRef.current?.getFieldValue('mtu_checkbox') ===
+                          true || isFetchingMtu
+                      }
+                    />
                   </Form.Item>
                 );
               }}

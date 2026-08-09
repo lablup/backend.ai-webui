@@ -15,17 +15,12 @@ import BAIFormItem from './BAIFormItem';
 import BAISkeletonAstryx from './astryx-bui/BAISkeletonAstryx';
 import {
   AstryxFormNumberInput,
+  AstryxFormTagsInput,
   AstryxFormTextInput,
 } from './astryx-bui/astryxFormControls';
 import { Button } from '@astryxdesign/core/Button';
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
 import { Text } from '@astryxdesign/core/Text';
-import { Tokenizer } from '@astryxdesign/core/Tokenizer';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
-import type {
-  SearchableItem,
-  SearchSource,
-} from '@astryxdesign/core/Typeahead';
 import {
   BAIButton,
   BAIFlex,
@@ -34,7 +29,6 @@ import {
   BAIProjectResourceGroupSelect,
   toLocalId,
 } from 'backend.ai-ui';
-import { Info } from 'lucide-react';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -52,60 +46,6 @@ export interface DeploymentSettingModalProps extends BAIModalProps {
   deploymentFrgmt?: DeploymentSettingModal_deployment$key | null;
   onRequestClose: (success: boolean) => void;
 }
-
-// antd `Form.Item tooltip` rendered a hoverable (i) icon next to the label.
-// `BAIFormItem` renders its `tooltip` node verbatim in the label row, so the
-// icon + hover popup is composed here with the Astryx Tooltip.
-const LabelTooltip: React.FC<{ title: React.ReactNode }> = ({ title }) => {
-  'use memo';
-  return (
-    <Tooltip content={title}>
-      <Info size="1em" style={{ display: 'block', cursor: 'help' }} />
-    </Tooltip>
-  );
-};
-
-// Free-tag entry has no options to search — the source is intentionally empty
-// and `hasCreate` commits typed text as new tokens. Module-level so the
-// Tokenizer never sees a fresh identity per render.
-const EMPTY_TAG_SEARCH_SOURCE: SearchSource<SearchableItem> = {
-  search: () => [],
-  bootstrap: () => [],
-};
-
-// antd `Select mode="tags"` → Astryx Tokenizer bridge for the antd form
-// engine: the form field holds `string[]`, the Tokenizer works on
-// `SearchableItem[]` ({id, label}), so the shapes are translated here.
-// PILOT-DECISION: antd's `tokenSeparators={[',', '\n']}` (splitting pasted
-// comma/newline-separated text into multiple tags) has no Tokenizer
-// equivalent and is dropped — tags are committed one at a time with Enter
-// (`hasCreate`). `notFoundContent={null}` maps to nothing: the empty search
-// source simply yields no dropdown suggestions.
-const TagsInput: React.FC<{
-  value?: string[];
-  onChange?: (next: string[]) => void;
-  label: string;
-  placeholder?: string;
-}> = ({ value, onChange, label, placeholder }) => {
-  'use memo';
-  return (
-    <Tokenizer
-      label={label}
-      isLabelHidden
-      value={(value ?? []).map((tag) => ({ id: tag, label: tag }))}
-      onChange={(items) =>
-        // antd tags mode deduplicated entries; keep that behavior.
-        onChange?.(
-          Array.from(new Set(items.map((item) => item.label))).filter(Boolean),
-        )
-      }
-      searchSource={EMPTY_TAG_SEARCH_SOURCE}
-      hasCreate
-      placeholder={placeholder}
-      width="100%"
-    />
-  );
-};
 
 // Bridge for `BAIFormItem name="openToPublic" valuePropName="checked"`: antd
 // injects `checked` + `onChange`, Astryx CheckboxInput wants `value` +
@@ -349,9 +289,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
           <BAIFormItem
             name="name"
             label={t('deployment.DeploymentName')}
-            tooltip={
-              <LabelTooltip title={t('deployment.DeploymentNameTooltip')} />
-            }
+            tooltip={t('deployment.DeploymentNameTooltip')}
             rules={[{ required: true, message: t('deployment.NameRequired') }]}
           >
             <AstryxFormTextInput
@@ -362,9 +300,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
           {deployment ? (
             <BAIFormItem
               label={t('modelStore.ResourceGroup')}
-              tooltip={
-                <LabelTooltip title={t('modelStore.ResourceGroupTooltip')} />
-              }
+              tooltip={t('modelStore.ResourceGroupTooltip')}
               required
               // PILOT-DECISION: the extra note used antd
               // `Typography.Text type="warning"` — Astryx Text has no warning
@@ -384,9 +320,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
             <BAIFormItem
               name="resourceGroup"
               label={t('modelStore.ResourceGroup')}
-              tooltip={
-                <LabelTooltip title={t('modelStore.ResourceGroupTooltip')} />
-              }
+              tooltip={t('modelStore.ResourceGroupTooltip')}
               rules={[{ required: true }]}
               extra={t('deployment.ResourceGroupCannotBeChanged')}
             >
@@ -400,9 +334,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
           <BAIFormItem
             name="replicaCount"
             label={t('deployment.DesiredReplicas')}
-            tooltip={
-              <LabelTooltip title={t('deployment.DesiredReplicasTooltip')} />
-            }
+            tooltip={t('deployment.DesiredReplicasTooltip')}
             rules={[
               {
                 required: true,
@@ -418,11 +350,16 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
           <BAIFormItem
             name="tags"
             label={t('deployment.Tags')}
-            tooltip={<LabelTooltip title={t('deployment.TagsTooltip')} />}
+            tooltip={t('deployment.TagsTooltip')}
           >
-            <TagsInput
+            {/* The shared adapter, not a local Tokenizer bridge: it is the
+                same component, and it carries `tokenSeparators`, which this
+                field's own placeholder ("Enter tags, separated by commas")
+                promises. */}
+            <AstryxFormTagsInput
               label={t('deployment.Tags')}
               placeholder={t('deployment.TagsPlaceholder')}
+              tokenSeparators={[',', ' ']}
             />
           </BAIFormItem>
           {/* TODO(needs-backend): the manager currently rejects changes to
@@ -432,9 +369,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
               setting. */}
           <BAIFormItem
             label={t('deployment.OpenToPublic')}
-            tooltip={
-              <LabelTooltip title={t('deployment.OpenToPublicTooltip')} />
-            }
+            tooltip={t('deployment.OpenToPublicTooltip')}
           >
             <BAIFormItem name="openToPublic" valuePropName="checked" noStyle>
               <PublicCheckbox

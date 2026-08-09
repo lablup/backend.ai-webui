@@ -340,6 +340,7 @@ const UserProfileSettingModal: React.FC<Props> = ({
             style={{ marginBottom: 0 }}
           >
             <AstryxFormTagsInput
+              tokenSeparators={[',', ' ']}
               label={t('credential.AllowedClientIP')}
               placeholder={t('credential.AllowedClientIPPlaceholder')}
             />

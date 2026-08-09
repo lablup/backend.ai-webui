@@ -73,7 +73,6 @@ import {
   SegmentedControl,
   SegmentedControlItem,
 } from '@astryxdesign/core/SegmentedControl';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIAvailablePresetSelectAstryx,
   BAIFlex,
@@ -180,18 +179,6 @@ const SectionHeader: React.FC<{ children: React.ReactNode }> = ({
   // placement prop, so the left placement (and the manual fontSizeSM Text) is
   // dropped per defaults-first.
   return <Divider label={children} />;
-};
-
-// antd `Form.Item tooltip` rendered a hoverable (i) icon next to the label.
-// `BAIFormItem` renders its `tooltip` node verbatim in the label row, so the
-// icon + hover popup is composed here with the Astryx Tooltip.
-const LabelTooltip: React.FC<{ title: React.ReactNode }> = ({ title }) => {
-  'use memo';
-  return (
-    <Tooltip content={title}>
-      <Info size="1em" style={{ display: 'block', cursor: 'help' }} />
-    </Tooltip>
-  );
 };
 
 // Bridge for the antd form engine: `BAIFormItem name="customDefinitionMode"
@@ -1567,7 +1554,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           >
             <BAIFormItem
               label={t('modelStore.Preset')}
-              tooltip={<LabelTooltip title={t('modelStore.PresetTooltip')} />}
+              tooltip={t('modelStore.PresetTooltip')}
               required
             >
               <BAIFlex direction="row" gap="xs">
@@ -1614,9 +1601,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
 
             <BAIFormItem
               label={t('deployment.ModelFolder')}
-              tooltip={
-                <LabelTooltip title={t('deployment.ModelFolderTooltip')} />
-              }
+              tooltip={t('deployment.ModelFolderTooltip')}
               required
             >
               <BAIFlex direction="row" gap="xs">
@@ -1706,9 +1691,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           <SectionHeader>{t('deployment.step.ModelAndRuntime')}</SectionHeader>
           <BAIFormItem
             label={t('deployment.ModelFolder')}
-            tooltip={
-              <LabelTooltip title={t('deployment.ModelFolderTooltip')} />
-            }
+            tooltip={t('deployment.ModelFolderTooltip')}
             required
           >
             <BAIFlex direction="row" gap="xs">
@@ -1776,9 +1759,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             <BAIFormItem
               name="runtimeVariantId"
               label={t('deployment.RuntimeVariant')}
-              tooltip={
-                <LabelTooltip title={t('deployment.RuntimeVariantTooltip')} />
-              }
+              tooltip={t('deployment.RuntimeVariantTooltip')}
               rules={[
                 { required: true },
                 {
@@ -1854,11 +1835,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                           <BAIFormItem
                             name="startCommand"
                             label={t('modelService.StartCommand')}
-                            tooltip={
-                              <LabelTooltip
-                                title={t('modelService.StartCommandTooltip')}
-                              />
-                            }
+                            tooltip={t('modelService.StartCommandTooltip')}
                             extra={t('modelService.StartCommandHelperShell')}
                             rules={[{ required: true, whitespace: true }]}
                           >
@@ -1876,11 +1853,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                           <BAIFormItem
                             name="commandModelMount"
                             label={t('modelService.ModelMountDestination')}
-                            tooltip={
-                              <LabelTooltip
-                                title={t('modelService.ModelMountTooltip')}
-                              />
-                            }
+                            tooltip={t('modelService.ModelMountTooltip')}
                           >
                             <AstryxFormTextInput
                               label={t('modelService.ModelMountDestination')}
@@ -1891,11 +1864,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                           <BAIFormItem
                             name="commandPort"
                             label={t('modelService.Port')}
-                            tooltip={
-                              <LabelTooltip
-                                title={t('modelService.PortTooltip')}
-                              />
-                            }
+                            tooltip={t('modelService.PortTooltip')}
                           >
                             <AstryxFormNumberInput
                               label={t('modelService.Port')}
@@ -1910,11 +1879,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                           <BAIFormItem
                             name="mountDestination"
                             label={t('modelService.ModelMountDestination')}
-                            tooltip={
-                              <LabelTooltip
-                                title={t('modelService.ModelMountTooltip')}
-                              />
-                            }
+                            tooltip={t('modelService.ModelMountTooltip')}
                             rules={[{ required: true }]}
                             style={{ flex: 1 }}
                           >
@@ -1927,13 +1892,9 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                           <BAIFormItem
                             name="definitionPath"
                             label={t('deployment.ModelDefinitionPath')}
-                            tooltip={
-                              <LabelTooltip
-                                title={t(
-                                  'modelService.ModelDefinitionPathTooltip',
-                                )}
-                              />
-                            }
+                            tooltip={t(
+                              'modelService.ModelDefinitionPathTooltip',
+                            )}
                             style={{ flex: 1 }}
                           >
                             <AstryxFormTextInput
@@ -1969,11 +1930,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                   <BAIFormItem
                     name="commandHealthCheck"
                     label={t('adminDeploymentPreset.modelDef.HealthCheckPath')}
-                    tooltip={
-                      <LabelTooltip
-                        title={t('modelService.HealthCheckTooltip')}
-                      />
-                    }
+                    tooltip={t('modelService.HealthCheckTooltip')}
                     rules={[{ required: true }]}
                   >
                     <AstryxFormTextInput
@@ -1992,11 +1949,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                       label={t(
                         'adminDeploymentPreset.modelDef.HealthCheckInterval',
                       )}
-                      tooltip={
-                        <LabelTooltip
-                          title={t('modelService.IntervalTooltip')}
-                        />
-                      }
+                      tooltip={t('modelService.IntervalTooltip')}
                       rules={[{ required: true }]}
                       style={{ flex: 1, minWidth: 160 }}
                     >
@@ -2016,11 +1969,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                       label={t(
                         'adminDeploymentPreset.modelDef.HealthCheckMaxRetries',
                       )}
-                      tooltip={
-                        <LabelTooltip
-                          title={t('modelService.MaxRetriesTooltip')}
-                        />
-                      }
+                      tooltip={t('modelService.MaxRetriesTooltip')}
                       rules={[{ required: true }]}
                       style={{ flex: 1, minWidth: 160 }}
                     >
@@ -2039,11 +1988,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                       label={t(
                         'adminDeploymentPreset.modelDef.HealthCheckMaxWaitTime',
                       )}
-                      tooltip={
-                        <LabelTooltip
-                          title={t('modelService.MaxWaitTimeTooltip')}
-                        />
-                      }
+                      tooltip={t('modelService.MaxWaitTimeTooltip')}
                       rules={[{ required: true }]}
                       style={{ flex: 1, minWidth: 160 }}
                     >
@@ -2065,11 +2010,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                       label={t(
                         'adminDeploymentPreset.modelDef.HealthCheckExpectedStatus',
                       )}
-                      tooltip={
-                        <LabelTooltip
-                          title={t('modelService.ExpectedStatusTooltip')}
-                        />
-                      }
+                      tooltip={t('modelService.ExpectedStatusTooltip')}
                       rules={[{ required: true }]}
                       style={{ flex: 1, minWidth: 160 }}
                     >
@@ -2089,11 +2030,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                       label={t(
                         'adminDeploymentPreset.modelDef.HealthCheckInitialDelay',
                       )}
-                      tooltip={
-                        <LabelTooltip
-                          title={t('modelService.InitialDelayTooltip')}
-                        />
-                      }
+                      tooltip={t('modelService.InitialDelayTooltip')}
                       rules={[{ required: true }]}
                       style={{ flex: 1, minWidth: 160 }}
                     >
